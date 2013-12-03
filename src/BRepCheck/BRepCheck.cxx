@@ -42,7 +42,7 @@ void BRepCheck::Add(BRepCheck_ListOfStatus& lst, const BRepCheck_Status stat)
     }
     else {
       if (it.Value() == stat) {
-        return;
+	return;
       }
       it.Next();
     }
@@ -55,15 +55,15 @@ void BRepCheck::Add(BRepCheck_ListOfStatus& lst, const BRepCheck_Status stat)
 //purpose  : 
 //=======================================================================
 Standard_Boolean BRepCheck::SelfIntersection(const TopoDS_Wire& W,
-          const TopoDS_Face& myFace,
-          TopoDS_Edge& RetE1,
-          TopoDS_Edge& RetE2)
+					     const TopoDS_Face& myFace,
+					     TopoDS_Edge& RetE1,
+					     TopoDS_Edge& RetE2)
 {
   Handle(BRepCheck_Wire) chkw = new BRepCheck_Wire(W);
   BRepCheck_Status stat = chkw->SelfIntersect(myFace,RetE1,RetE2);
   return (stat == BRepCheck_SelfIntersectingWire);
 }
-
+				  
 //=======================================================================
 //function : PrecCurve
 //purpose  : 
@@ -129,7 +129,7 @@ Standard_Real BRepCheck::PrecSurface(const Handle(Adaptor3d_Surface)& aAHSurf)
 //purpose  : 
 //=======================================================================
 void BRepCheck::Print(const BRepCheck_Status stat,
-                      Standard_OStream& OS)
+		      Standard_OStream& OS)
 {
 
   switch (stat) {
@@ -244,6 +244,10 @@ void BRepCheck::Print(const BRepCheck_Status stat,
   case BRepCheck_EnclosedRegion:
     OS << "BRepCheck_EnclosedRegion\n";
     break;
+  case BRepCheck_CollapsedEdge:
+    OS << "BRepCheck_CollapsedEdge\n";
+    break;
+
   default:
     break;
   }

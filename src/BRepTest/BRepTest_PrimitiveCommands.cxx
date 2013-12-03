@@ -19,7 +19,11 @@
 #include <Draw_Interpretor.hxx>
 #include <Draw_Appli.hxx>
 #include <DrawTrSurf.hxx>
+#include <TopExp.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Solid.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Edge.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI.hxx>
 #include <BRepPreviewAPI_MakeBox.hxx>
@@ -118,7 +122,7 @@ static Standard_Integer box(Draw_Interpretor& , Standard_Integer n, const char**
         aParams.SetY (Draw::Atof(a[anArgIter + 4]));
         aParams.SetZ (Draw::Atof(a[anArgIter + 5]));
         anArgIter += 5;
-      }
+  }
 
       else if (aCountReal == 3)
       {
@@ -126,7 +130,7 @@ static Standard_Integer box(Draw_Interpretor& , Standard_Integer n, const char**
         aParams.SetY (Draw::Atof(a[anArgIter + 1]));
         aParams.SetZ (Draw::Atof(a[anArgIter + 2]));
         anArgIter += 2;
-      }
+  }
       else
       {
         Message::SendFail() << "Syntax error";
@@ -159,7 +163,7 @@ static Standard_Integer box(Draw_Interpretor& , Standard_Integer n, const char**
     }
 
     S = aPreview;
-    DBRep::Set(a[1],S);
+  DBRep::Set(a[1],S);
   }
   else
   {
@@ -383,6 +387,78 @@ static Standard_Integer torus(Draw_Interpretor& , Standard_Integer n, const char
   return 0;
 }
 
+//=======================================================================
+//function : DrawTolerance
+//purpose  : 
+//=======================================================================
+static Standard_Integer DrawTolerance(Draw_Interpretor& theDI, Standard_Integer theNArg, const char** a)
+{
+  if(theNArg != 3)
+  {
+    theDI << "use toolsphere name vertex\\edge\n";
+    return 1;
+  }
+
+  TopoDS_Shape aS = DBRep::Get(a[2]);
+  if(aS.IsNull())
+  {
+    theDI << "No source shape found\n";
+    return 1;
+  }
+
+  Standard_Real aRadius;
+  gp_Pnt aCenter;
+
+  switch(aS.ShapeType())
+  {
+  case TopAbs_VERTEX:
+    {
+      TopoDS_Vertex aV = TopoDS::Vertex(aS);
+      aRadius = BRep_Tool::Tolerance(aV);
+      aCenter = BRep_Tool::Pnt(aV);
+    }
+    break;
+  case TopAbs_EDGE:
+    {
+      TopoDS_Edge anE = TopoDS::Edge(DBRep::Get(a[2]));
+      TopoDS_Vertex aV1 = TopExp::FirstVertex(anE),
+                  aV2 = TopExp::LastVertex(anE);
+
+      Standard_Real aTol1 = BRep_Tool::Tolerance(aV1);
+      Standard_Real aTol2 = BRep_Tool::Tolerance(aV2);
+
+      if( Precision::IsInfinite(aTol1) ||
+          Precision::IsInfinite(aTol2))
+      {
+        theDI << "Tolerance is infinity\n";
+        return 0;
+      }
+
+      gp_Pnt aPnt1 = BRep_Tool::Pnt(aV1);
+      gp_Pnt aPnt2 = BRep_Tool::Pnt(aV2);
+      
+      aCenter = gp_Pnt( (aPnt1.X() + aPnt2.X())/2.0,
+                        (aPnt1.Y() + aPnt2.Y())/2.0,
+                        (aPnt1.Z() + aPnt2.Z())/2.0);
+
+      aRadius = Max(aTol1,aTol2) + aPnt1.Distance(aPnt2)/2.0;
+    }
+    break;
+  default:
+    {
+      theDI << "Enter a vertex or an edge (see help)\n";
+      return 1;
+    }
+  }
+
+  TopoDS_Solid S = BRepPrimAPI_MakeSphere(aCenter,aRadius);
+
+  DBRep::Set(a[1],S);
+  return 0;
+}
+
+
+
 
 
 //=======================================================================
@@ -459,6 +535,9 @@ void  BRepTest::PrimitiveCommands(Draw_Interpretor& theCommands)
                   "\n\t\t: - angle2 second angle to create a torus ring segment"
                   "\n\t\t: - angle  angle to create a torus pipe segment",
                   __FILE__, torus, g);
+  theCommands.Add("tolsphere", "toolsphere name vertex\\edge (if vertex is given, center of sphere is the \"vertex\", "
+    "radius is a tolerance of vertex; if edge is given, sphere is built, which is determined in "
+    "BRepCheck_Edge::CheckTolerance(...) function)",__FILE__,DrawTolerance,g);
 }
 
 

@@ -1,0 +1,24 @@
+puts "============"
+puts "CR23731"
+puts "============"
+puts ""
+######################################################
+# The shape obtained by stepread is valid in terms of checkshape but it is not valid in terms of usability.
+######################################################
+
+catch { pload XDE }
+
+set filepath [locate_data_file OCC6289.stp]
+stepread $filepath a *
+
+explode a_1 f
+
+renamevar a_1_24 result
+
+smallview
+donly result
+fit
+
+set square 1
+
+set only_screen_axo 1

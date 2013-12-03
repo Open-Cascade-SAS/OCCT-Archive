@@ -516,6 +516,31 @@ void ContextualDump(Draw_Interpretor& theCommands,
 static void FillProblems(const BRepCheck_Status stat,
                          Handle(TColStd_HArray1OfInteger)& NbProblems)
 {
+  case BRepCheck_CollapsedEdge:
+    NbProblems->SetValue(13,NbProblems->Value(13)+1); break;
+    NbProblems->SetValue(14,NbProblems->Value(14)+1); break;
+    NbProblems->SetValue(15,NbProblems->Value(15)+1); break;
+    NbProblems->SetValue(16,NbProblems->Value(16)+1); break;
+    NbProblems->SetValue(17,NbProblems->Value(17)+1); break;
+    NbProblems->SetValue(18,NbProblems->Value(18)+1); break;
+    NbProblems->SetValue(19,NbProblems->Value(19)+1); break;
+    NbProblems->SetValue(20,NbProblems->Value(20)+1); break;
+    NbProblems->SetValue(21,NbProblems->Value(21)+1); break;
+    NbProblems->SetValue(22,NbProblems->Value(22)+1); break;
+    NbProblems->SetValue(23,NbProblems->Value(23)+1); break;
+    NbProblems->SetValue(24,NbProblems->Value(24)+1); break;
+    NbProblems->SetValue(25,NbProblems->Value(25)+1); break;
+    NbProblems->SetValue(26,NbProblems->Value(26)+1); break;
+    NbProblems->SetValue(27,NbProblems->Value(27)+1); break;
+    NbProblems->SetValue(28,NbProblems->Value(28)+1); break;
+    NbProblems->SetValue(29,NbProblems->Value(29)+1); break;
+    NbProblems->SetValue(30,NbProblems->Value(30)+1); break;
+    NbProblems->SetValue(31,NbProblems->Value(31)+1); break;
+    NbProblems->SetValue(32,NbProblems->Value(32)+1); break;
+  case BRepCheck_InvalidToleranceValue:
+    NbProblems->SetValue(33,NbProblems->Value(33)+1); break;
+  case BRepCheck_CheckFail:
+    NbProblems->SetValue(34,NbProblems->Value(34)+1); break;
 
   const Standard_Integer anID = static_cast<Standard_Integer> (stat);
 
@@ -524,7 +549,7 @@ static void FillProblems(const BRepCheck_Status stat,
 
   NbProblems->SetValue(anID, NbProblems->Value(anID)+1);
 
-}
+  }
 
 
 //=======================================================================
@@ -655,9 +680,78 @@ void StructuralDump(Draw_Interpretor& theCommands,
   GetProblemShapes(theAna, theShape, sl, NbProblems);
   theMap.Clear();
   
+  if(NbProblems->Value(13)>0)
+    theCommands<<"  Edge is collapsed in vertex............... "<<NbProblems->Value(13)<<"\n";
+    //cout<<"  Invalid Degenerated Flag ................. "<<NbProblems->Value(12)<<endl;
+  if(NbProblems->Value(14)>0)
+    theCommands<<"  Free Edge ................................ "<<NbProblems->Value(14)<<"\n";
+    //cout<<"  Free Edge ................................ "<<NbProblems->Value(14)<<endl;
+  if(NbProblems->Value(15)>0)
+    theCommands<<"  Invalid MultiConnexity ................... "<<NbProblems->Value(15)<<"\n";
+    //cout<<"  Invalid MultiConnexity ................... "<<NbProblems->Value(15)<<endl;
+  if(NbProblems->Value(16)>0)
+    theCommands<<"  Invalid Range ............................ "<<NbProblems->Value(16)<<"\n";
+    //cout<<"  Invalid Range ............................ "<<NbProblems->Value(16)<<endl;
+  if(NbProblems->Value(17)>0)
+    theCommands<<"  Empty Wire ............................... "<<NbProblems->Value(17)<<"\n";
+    //cout<<"  Empty Wire ............................... "<<NbProblems->Value(17)<<endl;
+  if(NbProblems->Value(18)>0)
+    theCommands<<"  Redundant Edge ........................... "<<NbProblems->Value(18)<<"\n";
+    //cout<<"  Redundant Edge ........................... "<<NbProblems->Value(18)<<endl;
+  if(NbProblems->Value(19)>0)
+    theCommands<<"  Self Intersecting Wire ................... "<<NbProblems->Value(19)<<"\n";
+    //cout<<"  Self Intersecting Wire ................... "<<NbProblems->Value(19)<<endl;
+  if(NbProblems->Value(20)>0)
+    theCommands<<"  No Surface ............................... "<<NbProblems->Value(20)<<"\n";
+    //cout<<"  No Surface ............................... "<<NbProblems->Value(20)<<endl;
+  if(NbProblems->Value(21)>0)
+    theCommands<<"  Invalid Wire ............................. "<<NbProblems->Value(21)<<"\n";
+    //cout<<"  Invalid Wire ............................. "<<NbProblems->Value(21)<<endl;
+  if(NbProblems->Value(22)>0)
+    theCommands<<"  Redundant Wire ........................... "<<NbProblems->Value(22)<<"\n";
+    //cout<<"  Redundant Wire ........................... "<<NbProblems->Value(22)<<endl;
+  if(NbProblems->Value(23)>0)
+    theCommands<<"  Intersecting Wires ....................... "<<NbProblems->Value(23)<<"\n";
+    //cout<<"  Intersecting Wires ....................... "<<NbProblems->Value(23)<<endl;
+  if(NbProblems->Value(24)>0)
+    theCommands<<"  Invalid Imbrication of Wires ............. "<<NbProblems->Value(24)<<"\n";
+    //cout<<"  Invalid Imbrication of Wires ............. "<<NbProblems->Value(24)<<endl;
+  if(NbProblems->Value(25)>0)
+    theCommands<<"  Empty Shell .............................. "<<NbProblems->Value(25)<<"\n";
+    //cout<<"  Empty Shell .............................. "<<NbProblems->Value(25)<<endl;
+  if(NbProblems->Value(26)>0)
+    theCommands<<"  Redundant Face ........................... "<<NbProblems->Value(26)<<"\n";
+    //cout<<"  Redundant Face ........................... "<<NbProblems->Value(26)<<endl;
+  if(NbProblems->Value(27)>0)
+    theCommands<<"  Unorientable Shape ....................... "<<NbProblems->Value(27)<<"\n";
+    //cout<<"  Unorientable Shape ....................... "<<NbProblems->Value(27)<<endl;
+  if(NbProblems->Value(28)>0)
+    theCommands<<"  Not Closed ............................... "<<NbProblems->Value(28)<<"\n";
+    //cout<<"  Not Closed ............................... "<<NbProblems->Value(28)<<endl;
+  if(NbProblems->Value(29)>0)
+    theCommands<<"  Not Connected ............................ "<<NbProblems->Value(29)<<"\n";
+    //cout<<"  Not Connected ............................ "<<NbProblems->Value(29)<<endl;
+  if(NbProblems->Value(30)>0)
+    theCommands<<"  Subshape not in Shape .................... "<<NbProblems->Value(30)<<"\n";
+    //cout<<"  Subshape not in Shape .................... "<<NbProblems->Value(30)<<endl;
+  if(NbProblems->Value(31)>0)
+    theCommands<<"  Bad Orientation .......................... "<<NbProblems->Value(31)<<"\n";
+    //cout<<"  Bad Orientation .......................... "<<NbProblems->Value(31)<<endl;
+  if(NbProblems->Value(32)>0)
+    theCommands<<"  Bad Orientation of Subshape .............. "<<NbProblems->Value(32)<<"\n";
+    //cout<<"  Bad Orientation of Subshape .............. "<<NbProblems->Value(32)<<endl;
+  if(NbProblems->Value(33)>0)
+    theCommands<<"  Invalid tolerance value................... "<<NbProblems->Value(33)<<"\n";
+    //cout<<"  checkshape failure......... .............. "<<NbProblems->Value(33)<<endl;
+  if(NbProblems->Value(34)>0)
+    theCommands<<"  checkshape failure......... .............. "<<NbProblems->Value(34)<<"\n";
+    //cout<<"  checkshape failure......... .............. "<<NbProblems->Value(34)<<endl;
   Standard_Integer aProblemID = static_cast<Standard_Integer>(BRepCheck_InvalidPointOnCurve);
   if(NbProblems->Value(aProblemID) > 0)
     theCommands<<"  Invalid Point on Curve ................... "<<NbProblems->Value(aProblemID)<<"\n";
+  if(NbProblems->Value(34)>0)
+    theCommands<<"  checkshape failure........................ "<<NbProblems->Value(34)<<"\n";
+    //cout<<"  checkshape failure......... .............. "<<NbProblems->Value(32)<<endl;
 
   aProblemID = static_cast<Standard_Integer>(BRepCheck_InvalidPointOnCurveOnSurface);
   if(NbProblems->Value(aProblemID)>0)
@@ -1082,7 +1176,7 @@ static Standard_Integer shapeG1continuity (Draw_Interpretor& di, Standard_Intege
   face1=TopoDS::Face(It.Value());
   It.Next();
   face2=TopoDS::Face(It.Value());
-
+    
   Standard_Boolean IsSeam = face1.IsEqual(face2);
     
 // calcul des deux pcurves 
@@ -1129,13 +1223,13 @@ static Standard_Integer shapeG1continuity (Draw_Interpretor& di, Standard_Intege
   { 
   case 7  : epsG1 = Draw::Atof(a[6]);
     Standard_FALLTHROUGH
-  case 6  : epsC0 = Draw::Atof(a[5]);
+      case 6  : epsC0   = Draw::Atof(a[5]);
     Standard_FALLTHROUGH
-  case 5  : epsnl = Draw::Atof(a[4]);
+      case 5  : epsnl    = Draw::Atof(a[4]);
     Standard_FALLTHROUGH
   case 4  : break;
-  default : return 1;
-  }
+      default : return 1;
+    }
 
 
   Standard_Real pard1, parf1, U, Uf, deltaU, nb = 0;
@@ -1263,11 +1357,11 @@ static Standard_Integer shapeG0continuity (Draw_Interpretor& di, Standard_Intege
   { 
   case 6  : epsC0   = Draw::Atof(a[5]);
     Standard_FALLTHROUGH
-  case 5  : epsnl    = Draw::Atof(a[4]);
+      case 5  : epsnl    = Draw::Atof(a[4]);
     Standard_FALLTHROUGH
   case 4  : break;
-  default : return 1;
-  }
+      default : return 1;
+    }
 
   Standard_Real pard1, parf1, U, Uf, deltaU, nb = 0;
   Standard_Boolean isconti = Standard_True;
@@ -1389,20 +1483,20 @@ static Standard_Integer shapeG2continuity (Draw_Interpretor& di, Standard_Intege
   nbeval = (Standard_Integer ) Draw::Atof( a[3]);
 
   switch(n)
-  { 
-  case 9  :  maxlen = Draw::Atof(a[8]);
+    { 
+      case 9  :  maxlen   = Draw::Atof(a[8]);
     Standard_FALLTHROUGH
-  case 8   : percent = Draw::Atof(a[7]);      
+      case 8   : percent   = Draw::Atof(a[7]);      
     Standard_FALLTHROUGH
-  case 7   : epsG1 = Draw::Atof(a[6]);
+      case 7   : epsG1 = Draw::Atof(a[6]);
     Standard_FALLTHROUGH
-  case 6  :  epsC0 = Draw::Atof(a[5]);
+      case 6  :  epsC0   = Draw::Atof(a[5]);
     Standard_FALLTHROUGH
-  case 5  :  epsnl = Draw::Atof(a[4]);
+      case 5  :  epsnl   = Draw::Atof(a[4]);
     Standard_FALLTHROUGH
   case 4  : break;
-  default : return 1;
-  }
+      default : return 1;
+    }
 
 
   Standard_Real pard1, parf1, U, Uf, deltaU, nb = 0;

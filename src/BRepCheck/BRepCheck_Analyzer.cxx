@@ -40,7 +40,7 @@
 //purpose  : 
 //=======================================================================
 void BRepCheck_Analyzer::Init(const TopoDS_Shape& S,
-         const Standard_Boolean B)
+			      const Standard_Boolean B)
 {
   if (S.IsNull()) {
     throw Standard_NullObject();
@@ -55,7 +55,7 @@ void BRepCheck_Analyzer::Init(const TopoDS_Shape& S,
 //purpose  : 
 //=======================================================================
 void BRepCheck_Analyzer::Put(const TopoDS_Shape& S,
-                             const Standard_Boolean B)
+			     const Standard_Boolean B)
 {
   if (!myMap.IsBound(S)) {
     Handle(BRepCheck_Result) HR;
@@ -114,7 +114,7 @@ void BRepCheck_Analyzer::Perform(const TopoDS_Shape& S)
     // modified by NIZHNY-MKK  Wed May 19 16:56:16 2004.BEGIN
     // There is no need to check anything.
     //       if (myShape.IsSame(S)) {
-    //  myMap(S)->Blind();
+    // 	myMap(S)->Blind();
     //       }
     // modified by NIZHNY-MKK  Wed May 19 16:56:23 2004.END
   
@@ -123,6 +123,48 @@ void BRepCheck_Analyzer::Perform(const TopoDS_Shape& S)
     {
       Handle(BRepCheck_Result)& aRes = myMap(S);
 
+      try
+      {
+        BRepCheck_Status ste = Handle(BRepCheck_Edge)::
+          DownCast(aRes)->CheckTolerance(TopoDS::Edge(S));
+
+        if(ste != BRepCheck_NoError)
+        {
+          Handle(BRepCheck_Edge)::DownCast(aRes)->SetStatus(ste);
+          break;
+        }
+      }
+      catch(Standard_Failure)
+      {
+#ifdef DEB
+        cout<<"BRepCheck_Analyzer : ";
+        Standard_Failure::Caught()->Print(cout);  
+        cout<<endl;
+#endif
+        if ( ! myMap(S).IsNull() )
+        {
+          myMap(S)->SetFailStatus(S);
+        }
+
+        if ( ! aRes.IsNull() )
+        {
+          aRes->SetFailStatus(exp.Current());
+          aRes->SetFailStatus(S);
+        }
+      }
+
+      TopTools_MapOfShape MapS;
+
+      for (exp.Init(S,TopAbs_VERTEX);exp.More(); exp.Next())
+      {
+        const TopoDS_Shape& aVertex = exp.Current();
+        try
+        {
+          OCC_CATCH_SIGNALS
+          if (MapS.Add(aVertex))
+            myMap(aVertex)->InContext(S);
+        }
+      }
       try
       {
         BRepCheck_Status ste = Handle(BRepCheck_Edge)::
@@ -143,13 +185,16 @@ void BRepCheck_Analyzer::Perform(const TopoDS_Shape& S)
         if ( ! myMap(S).IsNull() )
         {
           myMap(S)->SetFailStatus(S);
-        }
 
-        if ( ! aRes.IsNull() )
-        {
-          aRes->SetFailStatus(S);
-        }
-      }
+          Handle(BRepCheck_Result) aRes = myMap(aVertex);
+
+          if ( ! aRes.IsNull() ) 
+          {
+            aRes->SetFailStatus(aVertex);
+            aRes->SetFailStatus(S);
+          }
+
+    }
 
       TopTools_MapOfShape MapS;
       
@@ -256,6 +301,12 @@ void BRepCheck_Analyzer::Perform(const TopoDS_Shape& S)
                   performwire = Standard_False;
                   break;
                 }
+
+                //if(ste == BRepCheck_CollapsedEdge)
+                //{
+                //  isInvalidTolerance = Standard_True;
+                //  break;
+                //}
               }
             }
           }
@@ -392,15 +443,15 @@ void BRepCheck_Analyzer::Perform(const TopoDS_Shape& S)
 
   case TopAbs_SOLID:
     {
-      exp.Init(S,TopAbs_SHELL);
+    exp.Init(S,TopAbs_SHELL);
       for (; exp.More(); exp.Next())
         {
-          const TopoDS_Shape& aShell=exp.Current();
+      const TopoDS_Shape& aShell=exp.Current();
           try 
             {
-              OCC_CATCH_SIGNALS
-                myMap(aShell)->InContext(S);
-            }
+	OCC_CATCH_SIGNALS
+	myMap(aShell)->InContext(S);
+      }
           catch(Standard_Failure const& anException) {
 #ifdef OCCT_DEBUG
               std::cout<<"BRepCheck_Analyzer : ";
@@ -410,19 +461,19 @@ void BRepCheck_Analyzer::Perform(const TopoDS_Shape& S)
               (void)anException;
               if ( ! myMap(S).IsNull() )
                 {
-                  myMap(S)->SetFailStatus(S);
-                }
+	  myMap(S)->SetFailStatus(S);
+	}
               
-              //
-              Handle(BRepCheck_Result) aRes = myMap(aShell);
+	//
+	Handle(BRepCheck_Result) aRes = myMap(aShell);
               if (!aRes.IsNull() )
                 {
-                  aRes->SetFailStatus(exp.Current());
-                  aRes->SetFailStatus(S);
-                }
+	  aRes->SetFailStatus(exp.Current());
+	  aRes->SetFailStatus(S);
+	}
             }//catch(Standard_Failure)
         }//for (; exp.More(); exp.Next())
-    }
+      }
   break;//case TopAbs_SOLID
   default:
     break;
@@ -496,10 +547,10 @@ Standard_Boolean BRepCheck_Analyzer::ValidSub
 //  for (TopExp_Explorer exp(S,SubType);exp.More(); exp.Next()) {
     const Handle(BRepCheck_Result)& RV = myMap(exp.Current());
     for (RV->InitContextIterator();
-         RV->MoreShapeInContext(); 
-         RV->NextShapeInContext()) {
+	 RV->MoreShapeInContext(); 
+	 RV->NextShapeInContext()) {
       if (RV->ContextualShape().IsSame(S)) {
-        break;
+	break;
       }
     }
 
@@ -507,7 +558,7 @@ Standard_Boolean BRepCheck_Analyzer::ValidSub
 
     for (itl.Initialize(RV->StatusOnShape()); itl.More(); itl.Next()) {
       if (itl.Value() != BRepCheck_NoError) {
-        return Standard_False;
+	return Standard_False;
       }
     }
   }
