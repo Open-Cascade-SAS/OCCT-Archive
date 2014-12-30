@@ -598,7 +598,7 @@ if {[regexp "VOLUME_EXACTLY" $CompareDocumentsMode] || [regexp "ALL" $CompareDoc
 	# Perform sewing of resulting shape. If amount of closed shells of resulting shape is not equal to amount of 
 	# closed shells of initial shape increace tolerance and perform sewing again
 	set nbClosedShells_Second 0
-	set toler 0.00001
+	set toler 0.005
 	set IsSewingPerformedCorrectly 0
 	XGetOneShape Shape_Second D_Second
 	for {set k 0} {$k < 5} {incr k} {
