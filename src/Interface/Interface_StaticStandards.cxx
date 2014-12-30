@@ -82,7 +82,7 @@ void  Interface_Static::Standards ()
   Interface_Static::Init("XSTEP"  ,"write.surfacecurve.mode", '&',"eval Off");
   Interface_Static::Init("XSTEP"  ,"write.surfacecurve.mode", '&',"eval On");
 //  Interface_Static::Init("XSTEP"  ,"write.surfacecurve.mode", '&',"eval NoAnalytic");
-  Interface_Static::SetIVal ("write.surfacecurve.mode",1);
+  Interface_Static::SetIVal ("write.surfacecurve.mode",0);
 
 //  lastpreci : pour recuperer la derniere valeur codee (cf XSControl)
 //    (0 pour dire : pas codee)
