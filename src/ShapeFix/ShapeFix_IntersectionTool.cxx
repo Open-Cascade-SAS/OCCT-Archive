@@ -982,24 +982,84 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                 break;
               }
             }
-            if( !ModifE1 && !ModifE2 ) {
+            if( ModifE1 == ModifE2 ) {
               gp_Pnt P0( (pi1.X()+pi2.X())/2, (pi1.Y()+pi2.Y())/2, (pi1.Z()+pi2.Z())/2 );
               tolV = Max( (pi1.Distance(pi2)/2)*1.00001, Precision::Confusion() );
               B.MakeVertex(V,P0,tolV);
               MaxTolVert = Max(MaxTolVert,tolV);
-              Standard_Boolean isEdgeSplit2 = SplitEdge1(sewd, face, num2, param2,
-                                                         V, tolV, boxes);
-              if(isEdgeSplit2) {
-                NbSplit++;
-                num2--;
+              if( !ModifE1 && !ModifE2 ) {
+                Standard_Boolean isEdgeSplit2 = SplitEdge1(sewd, face, num2, param2,
+                  V, tolV, boxes);
+                if(isEdgeSplit2) {
+                  NbSplit++;
+                  num2--;
+                }
+                if(SplitEdge1(sewd, face, num1, param1, V, tolV, boxes)) {
+                  NbSplit++;
+                  num1--;
+                  break;
+                }
+                if(isEdgeSplit2)
+                  continue;
               }
-              if(SplitEdge1(sewd, face, num1, param1, V, tolV, boxes)) {
-                NbSplit++;
-                num1--;
-                break;
+              else if (PVF1.Distance(PVF2) < MaxTolVert || PVF1.Distance(PVL2) < MaxTolVert ||
+                PVL1.Distance(PVF2) < MaxTolVert || PVL1.Distance(PVL2) < MaxTolVert)
+              {
+                ShapeBuild_Edge sbe;
+                ShapeAnalysis_Edge sae;
+                Standard_Real dist1 = pi1.Distance(PVF1);
+                Standard_Real dist2 = pi1.Distance(PVL1);
+                TopoDS_Edge NewE1, NewAjE1, edgeAj1;
+                Standard_Integer n;
+                if(dist1 < dist2)
+                {
+                  NewE1 = sbe.CopyReplaceVertices(edge1,V,VL1);
+                  n = num1 - 1;
+                  edgeAj1 = sewd->Edge(n);
+                  NewAjE1 = sbe.CopyReplaceVertices(edgeAj1,sae.FirstVertex(edgeAj1),V);
+                }
+                else
+                {
+                  NewE1 = sbe.CopyReplaceVertices(edge1,VF1,V);
+                  n = num1 + 1;
+                  edgeAj1 = sewd->Edge(n);
+                  NewAjE1 = sbe.CopyReplaceVertices(edgeAj1,V,sae.LastVertex(edgeAj1));
+                }
+                myContext->Replace(edge1,NewE1);
+                myContext->Replace(edgeAj1,NewAjE1);
+                sewd->Set(NewE1,num1);
+                sewd->Set(NewAjE1,n);
+                boxes.Bind(NewE1,B1);
+                Bnd_Box2d BAj1 = boxes.Find(edgeAj1);
+                boxes.Bind(NewAjE1,BAj1);
+                edge1 = NewE1;
+
+                dist1 = pi2.Distance(PVF2);
+                dist2 = pi2.Distance(PVL2);
+                TopoDS_Edge NewE2, NewAjE2, edgeAj2;
+                if(dist1 < dist2)
+                {
+                  NewE2 = sbe.CopyReplaceVertices(edge2,V,VL2);
+                  n = num2 - 1;
+                  edgeAj2 = sewd->Edge(n);
+                  NewAjE2 = sbe.CopyReplaceVertices(edgeAj2,sae.FirstVertex(edgeAj2),V);
+                }
+                else
+                {
+                  NewE2 = sbe.CopyReplaceVertices(edge2,VF2,V);
+                  n = (num2 + 1 > sewd->NbEdges())?(num2 + 1 - sewd->NbEdges()):(num2 + 1);
+                  edgeAj2 = sewd->Edge(n);
+                  NewAjE2 = sbe.CopyReplaceVertices(edgeAj2,V,sae.LastVertex(edgeAj2));
+                }
+                myContext->Replace(edge2,NewE2);
+                myContext->Replace(edgeAj2,NewAjE2);
+                sewd->Set(NewE2,num2);
+                sewd->Set(NewAjE2,n);
+                boxes.Bind(NewE2,B2);
+                Bnd_Box2d BAj2 = boxes.Find(edgeAj2);
+                boxes.Bind(NewAjE2,BAj2);
+                edge2 = NewE2;
               }
-              if(isEdgeSplit2)
-                continue;
             }
           }
           if( Tr1.PositionOnCurve() == IntRes2d_Middle &&
@@ -1316,6 +1376,29 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                 if(P01.Distance(PV12)<tolV1) {
                   tolV1 += P01.Distance(PV12);
                   B.UpdateVertex(NewV1,tolV1);
+                  TopoDS_Edge NewE = sbe.CopyReplaceVertices(edge2,NewV1,V22);
+                  myContext->Replace(edge2,NewE);
+                  sewd->Set(NewE,num2+dnum1);
+                  boxes.Bind(NewE,B2); // update boxes
+                  edge2 = NewE;
+                  TopoDS_Edge eprev = sewd->Edge(num2+dnum1-1);                  
+                  if (sae.LastVertex(eprev).IsSame(V12))
+                  {
+                    TopoDS_Vertex VLprev = sae.LastVertex(eprev);
+                    TopoDS_Edge NewEprev = 
+                      sbe.CopyReplaceVertices(eprev,sae.FirstVertex(eprev),NewV1);
+                    myContext->Replace(eprev,NewEprev);
+                    sewd->Set(NewEprev,num2+dnum1-1);
+                    Bnd_Box2d Bprev = boxes.Find(eprev);
+                    boxes.Bind(NewEprev,Bprev); // update boxes
+
+                    if(VLprev.Orientation()==NewV1.Orientation()) {
+                      myContext->Replace(VLprev,NewV1);
+                    }
+                    else {
+                      myContext->Replace(VLprev,NewV1.Reversed());
+                    }
+                  }
                   if(V12.Orientation()==NewV1.Orientation()) {
                     myContext->Replace(V12,NewV1);
                     V12 = NewV1;
@@ -1325,16 +1408,36 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                     V12 = TopoDS::Vertex(NewV1.Reversed());
                   }
                   nbReplaced++; //gka 06.09.04
-                  TopoDS_Edge NewE = sbe.CopyReplaceVertices(edge2,NewV1,V22);
+                  akey1 = 1;
+                }
+                if(P01.Distance(PV22)<tolV1) { 
+                  tolV1 += P01.Distance(PV22);
+                  B.UpdateVertex(NewV1,tolV1);
+                  TopoDS_Edge NewE = sbe.CopyReplaceVertices(edge2,V12,NewV1);
                   myContext->Replace(edge2,NewE);
                   sewd->Set(NewE,num2+dnum1);
                   boxes.Bind(NewE,B2); // update boxes
                   edge2 = NewE;
-                  akey1 = 1;
-                }
-                if(P01.Distance(PV22)<tolV1) {
-                  tolV1 += P01.Distance(PV22);
-                  B.UpdateVertex(NewV1,tolV1);
+                  Standard_Integer n = 
+                    (num2+dnum1+1 > sewd->NbEdges())?(num2+dnum1+1 - sewd->NbEdges()):(num2+dnum1+1);
+                  TopoDS_Edge enext = sewd->Edge(n);
+                  if (sae.FirstVertex(enext).IsSame(V22))
+                  {
+                    TopoDS_Vertex VFnext = sae.FirstVertex(enext);
+                    TopoDS_Edge NewEnext = 
+                      sbe.CopyReplaceVertices(enext,NewV1,sae.LastVertex(enext));
+                    myContext->Replace(enext,NewEnext);
+                    sewd->Set(NewEnext,n);
+                    Bnd_Box2d Bnext = boxes.Find(enext);
+                    boxes.Bind(NewEnext,Bnext); // update boxes
+
+                    if(VFnext.Orientation()==NewV1.Orientation()) {
+                      myContext->Replace(VFnext,NewV1);
+                    }
+                    else {
+                      myContext->Replace(VFnext,NewV1.Reversed());
+                    }
+                  }
                   if(V22.Orientation()==NewV1.Orientation()) {
                     myContext->Replace(V22,NewV1);
                     V22 = NewV1;
@@ -1344,16 +1447,34 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                     V22 = TopoDS::Vertex(NewV1.Reversed());
                   }
                   nbReplaced++; //gka 06.09.04
-                  TopoDS_Edge NewE = sbe.CopyReplaceVertices(edge2,V12,NewV1);
-                  myContext->Replace(edge2,NewE);
-                  sewd->Set(NewE,num2+dnum1);
-                  boxes.Bind(NewE,B2); // update boxes
-                  edge2 = NewE;
                   akey1 = 2;
                 }
                 if(P02.Distance(PV12)<tolV2) {
                   tolV2 += P02.Distance(PV12);
                   B.UpdateVertex(NewV2,tolV2);
+                  TopoDS_Edge NewE = sbe.CopyReplaceVertices(edge2,NewV2,V22);
+                  myContext->Replace(edge2,NewE);
+                  sewd->Set(NewE,num2+dnum1);
+                  boxes.Bind(NewE,B2); // update boxes
+                  edge2 = NewE;
+                  TopoDS_Edge eprev = sewd->Edge(num2+dnum1-1);                  
+                  if (sae.LastVertex(eprev).IsSame(V12))
+                  {
+                    TopoDS_Vertex VLprev = sae.LastVertex(eprev);
+                    TopoDS_Edge NewEprev = 
+                      sbe.CopyReplaceVertices(eprev,sae.FirstVertex(eprev),NewV2);
+                    myContext->Replace(eprev,NewEprev);
+                    sewd->Set(NewEprev,num2+dnum1-1);
+                    Bnd_Box2d Bprev = boxes.Find(eprev);
+                    boxes.Bind(NewEprev,Bprev); // update boxes
+
+                    if(VLprev.Orientation()==NewV2.Orientation()) {
+                      myContext->Replace(VLprev,NewV2);
+                    }
+                    else {
+                      myContext->Replace(VLprev,NewV2.Reversed());
+                    }
+                  }
                   if(V12.Orientation()==NewV2.Orientation()) {
                     myContext->Replace(V12,NewV2);
                     V12 = NewV2;
@@ -1363,16 +1484,36 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                     V12 = TopoDS::Vertex(NewV2.Reversed());
                   }
                   nbReplaced++; //gka 06.09.04
-                  TopoDS_Edge NewE = sbe.CopyReplaceVertices(edge2,NewV2,V22);
-                  myContext->Replace(edge2,NewE);
-                  sewd->Set(NewE,num2+dnum1);
-                  boxes.Bind(NewE,B2); // update boxes
-                  edge2 = NewE;
                   akey2 = 1;
                 }
                 if(P02.Distance(PV22)<tolV2) {
                   tolV2 += P02.Distance(PV22);
                   B.UpdateVertex(NewV2,tolV2);
+                  TopoDS_Edge NewE = sbe.CopyReplaceVertices(edge2,V12,NewV2);
+                  myContext->Replace(edge2,NewE);
+                  sewd->Set(NewE,num2+dnum1);
+                  boxes.Bind(NewE,B2); // update boxes
+                  edge2 = NewE;
+                  Standard_Integer n = 
+                    (num2+dnum1+1 > sewd->NbEdges())?(num2+dnum1+1 - sewd->NbEdges()):(num2+dnum1+1);
+                  TopoDS_Edge enext = sewd->Edge(n); 
+                  if (sae.FirstVertex(enext).IsSame(V22))
+                  {
+                    TopoDS_Vertex VFnext = sae.FirstVertex(enext);
+                    TopoDS_Edge NewEnext = 
+                      sbe.CopyReplaceVertices(enext,NewV2,sae.LastVertex(enext));
+                    myContext->Replace(enext,NewEnext);
+                    sewd->Set(NewEnext,n);
+                    Bnd_Box2d Bnext = boxes.Find(enext);
+                    boxes.Bind(NewEnext,Bnext); // update boxes
+
+                    if(VFnext.Orientation()==NewV2.Orientation()) {
+                      myContext->Replace(VFnext,NewV2);
+                    }
+                    else {
+                      myContext->Replace(VFnext,NewV2.Reversed());
+                    }
+                  }
                   if(V22.Orientation()==NewV2.Orientation()) {
                     myContext->Replace(V22,NewV2);
                     V22 = NewV2;
@@ -1382,11 +1523,6 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                     V22 = TopoDS::Vertex(NewV2.Reversed());
                   }
                   nbReplaced++; //gka 06.09.04
-                  TopoDS_Edge NewE = sbe.CopyReplaceVertices(edge2,V12,NewV2);
-                  myContext->Replace(edge2,NewE);
-                  sewd->Set(NewE,num2+dnum1);
-                  boxes.Bind(NewE,B2); // update boxes
-                  edge2 = NewE;
                   akey2 = 2;
                 }
                 Standard_Integer dnum2=0, numseg2=num2+dnum1;
@@ -1431,6 +1567,11 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                     }
                   }
                 }
+                if( akey1>0 || akey2>0 ) {
+                  if( UnionVertexes(sewd, edge1, edge2, num2+dnum1, boxes, B2) )
+                    nbReplaced ++;
+                }
+
                 // remove segment
                 sewd->Remove(numseg2);
                 sewd->Remove(numseg1);
