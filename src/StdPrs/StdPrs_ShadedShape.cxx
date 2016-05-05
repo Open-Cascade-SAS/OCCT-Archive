@@ -133,6 +133,47 @@ namespace
     }
   }
 
+  //! Auxiliary function searching the degenerated node in the triangle.
+  //! Returns index of node in triangle (0, 1, 2) or -1 if degenerated node is not found.
+  Standard_Integer findDegenNodeInTri (const Handle(Poly_PolygonOnTriangulation)& theDegenPolygon,
+                                       const Standard_Integer* theTriNodeInd)
+  {
+    if (theTriNodeInd[0] == theDegenPolygon->Nodes().First()
+     || theTriNodeInd[0] == theDegenPolygon->Nodes().Last())
+    {
+      return 0;
+    }
+    else if (theTriNodeInd[1] == theDegenPolygon->Nodes().First()
+          || theTriNodeInd[1] == theDegenPolygon->Nodes().Last())
+    {
+      return 1;
+    }
+    else if (theTriNodeInd[2] == theDegenPolygon->Nodes().First()
+          || theTriNodeInd[2] == theDegenPolygon->Nodes().Last())
+    {
+      return 2;
+    }
+    return -1;
+  }
+
+  //! Auxiliary function searching the degenerated node in the triangle.
+  //! Returns index of node in triangle (0, 1, 2) or -1 if degenerated node is not found.
+  Standard_Integer findDegenNodeInTri (const NCollection_Sequence<Handle(Poly_PolygonOnTriangulation)>& thePolygons,
+                                       const Standard_Integer* theTriNodeInd)
+  {
+    Standard_Integer aTriNode = -1;
+    for (NCollection_Sequence<Handle(Poly_PolygonOnTriangulation)>::Iterator anIter (thePolygons);
+         anIter.More(); anIter.Next())
+    {
+      aTriNode = findDegenNodeInTri (anIter.Value(), theTriNodeInd);
+      if (aTriNode != -1)
+      {
+        return aTriNode;
+      }
+    }
+    return -1;
+  }
+
   //! Gets triangulation of every face of shape and fills output array of triangles
   static Handle(Graphic3d_ArrayOfTriangles) fillTriangles (const TopoDS_Shape&    theShape,
                                                            const Standard_Boolean theHasTexels,
@@ -141,10 +182,12 @@ namespace
                                                            const gp_Pnt2d&        theUVScale)
   {
     Handle(Poly_Triangulation) aT;
-    TopLoc_Location aLoc;
+    TopLoc_Location aLoc, aLocDummy;
     gp_Pnt aPoint;
     Standard_Integer aNbTriangles = 0;
     Standard_Integer aNbVertices  = 0;
+    Standard_Integer aNbDupNodes  = 0;
+    Standard_Integer anIndex[3];
 
     // Precision for compare square distances
     const Standard_Real aPreci = Precision::SquareConfusion();
@@ -154,12 +197,39 @@ namespace
     {
       const TopoDS_Face& aFace = TopoDS::Face(aFaceIt.Current());
       aT = BRep_Tool::Triangulation (aFace, aLoc);
-      if (!aT.IsNull())
+      if (aT.IsNull())
       {
-        aNbTriangles += aT->NbTriangles();
-        aNbVertices  += aT->NbNodes();
+        continue;
+      }
+
+      aNbTriangles += aT->NbTriangles();
+      aNbVertices  += aT->NbNodes();
+
+      // estimate number of degenerated nodes to be duplicated
+      for (TopExp_Explorer anEdgeIt (aFace, TopAbs_EDGE); anEdgeIt.More(); anEdgeIt.Next())
+      {
+        const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeIt.Current());
+        if (BRep_Tool::Degenerated (anEdge))
+        {
+          Handle(Poly_PolygonOnTriangulation) anEdgePoly = BRep_Tool::PolygonOnTriangulation (anEdge, aT, aLocDummy);
+          if (anEdgePoly.IsNull())
+          {
+            continue;
+          }
+
+          for (Standard_Integer aTriIter = 1; aTriIter <= aT->NbTriangles(); ++aTriIter)
+          {
+            aT->Triangle (aTriIter).Get (anIndex[0], anIndex[2], anIndex[1]);
+            Standard_Integer aDegenInTri = findDegenNodeInTri (anEdgePoly, anIndex);
+            if (aDegenInTri != -1)
+            {
+              ++aNbDupNodes;
+            }
+          }
+        }
       }
     }
+    aNbVertices += aNbDupNodes;
     if (aNbVertices  <  3 || aNbTriangles <= 0)
     {
       return Handle(Graphic3d_ArrayOfTriangles)();
@@ -222,7 +292,25 @@ namespace
       }
 
       // Fill array with vertex and edge visibility info
-      Standard_Integer anIndex[3];
+
+      // handle degenerated nodes
+      NCollection_Sequence<Handle(Poly_PolygonOnTriangulation)> aDegenPolygons;
+      if (aNbDupNodes > 0)
+      {
+        for (TopExp_Explorer anEdgeIt (aFace, TopAbs_EDGE); anEdgeIt.More(); anEdgeIt.Next())
+        {
+          const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeIt.Current());
+          if (BRep_Tool::Degenerated (anEdge))
+          {
+            Handle(Poly_PolygonOnTriangulation) aPoly = BRep_Tool::PolygonOnTriangulation (anEdge, aT, aLocDummy);
+            if (!aPoly.IsNull())
+            {
+              aDegenPolygons.Append (aPoly);
+            }
+          }
+        }
+      }
+
       for (Standard_Integer aTriIter = 1; aTriIter <= aT->NbTriangles(); ++aTriIter)
       {
         if ((aFace.Orientation() == TopAbs_REVERSED))
@@ -256,12 +344,43 @@ namespace
         aV1.Normalize();
         aV2.Normalize();
         aV1.Cross (aV2);
-        if (aV1.SquareMagnitude() > aPreci)
+        if (aV1.SquareMagnitude() <= aPreci)
         {
-          anArray->AddEdges (anIndex[0] + aDecal,
-                             anIndex[1] + aDecal,
-                             anIndex[2] + aDecal);
+          continue;
         }
+
+        // duplicate degenerated node using normal to the triangle
+        const Standard_Integer aDegenInTri = !aDegenPolygons.IsEmpty()
+                                           ? findDegenNodeInTri (aDegenPolygons, anIndex)
+                                           : -1;
+        if (aDegenInTri != -1)
+        {
+          aPoint = aT->Node (anIndex[aDegenInTri]);
+          if (!aLoc.IsIdentity())
+          {
+            aPoint.Transform (aTrsf);
+            aV1.Transform (aTrsf);
+            if (aV1.SquareMagnitude() > aPreci)
+            {
+              aV1.Normalize();
+            }
+          }
+          if (theHasTexels && aT->HasUVNodes())
+          {
+            const gp_Pnt2d aNode2d = aT->UVNode (anIndex[aDegenInTri]);
+            const gp_Pnt2d aTexel = gp_Pnt2d ((-theUVOrigin.X() + (theUVRepeat.X() * (aNode2d.X() - aUmin)) / dUmax) / theUVScale.X(),
+                                              (-theUVOrigin.Y() + (theUVRepeat.Y() * (aNode2d.Y() - aVmin)) / dVmax) / theUVScale.Y());
+            anIndex[aDegenInTri] = anArray->AddVertex (aPoint, aV1, aTexel) - aDecal;
+          }
+          else
+          {
+            anIndex[aDegenInTri] = anArray->AddVertex (aPoint, aV1) - aDecal;
+          }
+        }
+
+        anArray->AddEdge (anIndex[0] + aDecal);
+        anArray->AddEdge (anIndex[1] + aDecal);
+        anArray->AddEdge (anIndex[2] + aDecal);
       }
     }
     return anArray;
