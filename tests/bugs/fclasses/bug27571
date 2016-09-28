@@ -1,0 +1,118 @@
+puts "========"
+puts "OCC27571"
+puts "========"
+puts ""
+########################################################
+# Bad implementation of NCollection_Sequence::Iterator
+########################################################
+
+pload QAcommands
+
+set info [OCC27571]
+
+puts ""
+
+set Sequence "1 2 3 4 5"
+set Sequence_Last "5"
+set Sequence_Preult "4"
+set ReversedSequence "5 4 3 2 1"
+set ReversedSequence_Last "1"
+set ReversedSequence_Preult "2"
+
+# Iterator using Init(aSequence, Standard_True) method.
+if { [regexp "Iterator \\(More/Next\\): ${Sequence}" $info] } {
+  puts "OK : Iterator (More/Next)"
+} else {
+  puts "Error : Iterator (More/Next)"
+}
+
+# Method Previous() called after full iteration, current value of Iterator is equal to last element of sequence
+if { [regexp "Current \\(last\\) element - Iterator: ${Sequence_Last}" $info] } {
+  puts "OK : Current (last) element - Iterator"
+} else {
+  puts "Error : Current (last) element - Iterator"
+}
+
+# Method Previous() called once more again, current value of Iterator is equal to penult element of sequence
+if { [regexp "Previous element - Iterator: ${Sequence_Preult}" $info] } {
+  puts "OK : Previous element - Iterator"
+} else {
+  puts "Error : Previous element - Iterator"
+}
+
+# Reverse iterator using Init(aSequence, Standard_False) method.
+if { [regexp "Reverse iterator \\(More/Next\\): ${ReversedSequence}" $info] } {
+  puts "OK : Reverse iterator (More/Next)"
+} else {
+  puts "Error : Reverse iterator (More/Next)"
+}
+
+# Method Previous() called after full iteration, current value of Iterator is equal to last element of sequence
+if { [regexp "Current \\(last\\) element - Reverse iterator: ${ReversedSequence_Last}" $info] } {
+  puts "OK : Current (last) element - Reverse iterator"
+} else {
+  puts "Error : Current (last) element - Reverse iterator"
+}
+
+# Method Previous() called once more again, current value of Iterator is equal to penult element of sequence
+if { [regexp "Previous element - Reverse iterator: ${ReversedSequence_Preult}" $info] } {
+  puts "OK : Previous element - Reverse iterator"
+} else {
+  puts "Error : Previous element - Reverse iterator"
+}
+
+# Iterator using method "begin".
+if { [regexp "Iterator \\(begin/end\\): ${Sequence}" $info] } {
+  puts "OK : Iterator (begin/end)"
+} else {
+  puts "Error : Iterator (begin/end)"
+}
+
+# Check previous element after full iteration, current value of Iterator is equal to last element of sequence
+if { [regexp "Current \\(last\\) element - Iterator \\(begin/end\\): ${Sequence_Last}" $info] } {
+  puts "OK : Current (last) element - Iterator (begin/end)"
+} else {
+  puts "Error : Current (last) element - Iterator (begin/end)"
+}
+
+# Const iterator using method "begin".
+if { [regexp "Iterator \\(cbegin/cend\\) Const: ${Sequence}" $info] } {
+  puts "OK : Iterator (cbegin/cend) Const"
+} else {
+  puts "Error : Iterator (cbegin/cend) Const"
+}
+
+# Check previous element after full iteration, current value of Iterator is equal to last element of sequence
+if { [regexp "Current \\(last\\) element - Iterator \\(cbegin/cend\\) Const: ${Sequence_Last}" $info] } {
+  puts "OK : Current (last) element - Iterator (cbegin/cend) Const"
+} else {
+  puts "Error : Current (last) element - Iterator (cbegin/cend) Const"
+}
+
+# Reverse iterator using method "rbegin".
+if { [regexp "Reverse iterator \\(rbegin/rend\\): ${ReversedSequence}" $info] } {
+  puts "OK : Reverse iterator (rbegin/rend)"
+} else {
+  puts "Error : Reverse iterator (rbegin/rend)"
+}
+
+# Check previous element after full iteration, current value of Iterator is equal to last element of sequence
+if { [regexp "Current \\(last\\) element - Reverse iterator \\(rbegin/rend\\): ${ReversedSequence_Last}" $info] } {
+  puts "OK : Current (last) element - Iterator (rbegin/rend)"
+} else {
+  puts "Error : Current (last) element - Iterator (rbegin/rend)"
+}
+
+# Const reverse iterator using method "crbegin".
+if { [regexp "Reverse iterator \\(crbegin/crend\\) Const: ${ReversedSequence}" $info] } {
+  puts "OK : Reverse iterator (crbegin/crend) Const"
+} else {
+  puts "Error : Reverse iterator (crbegin/crend) Const"
+}
+
+# Check previous element after full iteration, current value of Iterator is equal to last element of sequence
+if { [regexp "Current \\(last\\) element - Reverse iterator \\(crbegin/crend\\) Const: ${ReversedSequence_Last}" $info] } {
+  puts "OK : Current (last) element - Iterator (rbegin/rend) Const"
+} else {
+  puts "Error : Current (last) element - Iterator (rbegin/rend) Const"
+}

@@ -71,7 +71,10 @@ public:
       if (myCurrent)
       {
         myPrevious = myCurrent;
-        myCurrent = myCurrent->Next();
+        if (myIsReversed)
+          myCurrent = myCurrent->Previous();
+        else
+          myCurrent = myCurrent->Next();
       }
     }
     //! Constant value access
@@ -93,19 +96,38 @@ public:
   //! Shorthand for a constant iterator type.
   typedef NCollection_StlIterator<std::bidirectional_iterator_tag, Iterator, TheItemType, true> const_iterator;
 
+  //! Shorthand for a reverse iterator type.
+  typedef NCollection_StlIterator<std::reverse_iterator<iterator>, Iterator, TheItemType, false> reverse_iterator;
+
+  //! Shorthand for a constant reverse iterator type.
+  typedef NCollection_StlIterator<std::reverse_iterator<const_iterator>, Iterator, TheItemType, true> const_reverse_iterator;
+
   //! Returns an iterator pointing to the first element in the sequence.
   iterator begin() const { return Iterator (*this, true); }
 
   //! Returns an iterator referring to the past-the-end element in the sequence.
-  iterator end() const { Iterator anIter (*this, false); anIter.Next(); return anIter; }
+  iterator end() const { Iterator anIter (*this, false); anIter.Previous(); return anIter; }
   
   //! Returns a const iterator pointing to the first element in the sequence.
   const_iterator cbegin() const { return Iterator (*this, true); }
 
   //! Returns a const iterator referring to the past-the-end element in the sequence.
-  const_iterator cend() const { Iterator anIter (*this, false); anIter.Next(); return anIter; }
+  const_iterator cend() const { Iterator anIter(*this, false); anIter.Previous(); return anIter; }
 
- public:
+  //! Returns a reverse iterator pointing to the last element in the sequence.
+  reverse_iterator rbegin() const { return Iterator(*this, false); }
+
+  //! Returns a reverse iterator referring to the past-the-end element in the reversed sequence.
+  reverse_iterator rend() const { Iterator anIter(*this, true); anIter.Previous(); return anIter; }
+
+  //! Returns a const reverse iterator pointing to the last element in the sequence.
+  const_reverse_iterator crbegin() const { return Iterator(*this, false); }
+
+  //! Returns a const reverse iterator referring to the past-the-end element in the reversed sequence.
+  const_reverse_iterator crend() const { Iterator anIter(*this, true); anIter.Previous(); return anIter; }
+
+
+public:
   // ---------- PUBLIC METHODS ------------
 
   //! Empty constructor.

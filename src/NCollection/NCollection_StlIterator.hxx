@@ -134,7 +134,9 @@ public: //! @name methods related to bidirectional STL iterator
   NCollection_StlIterator& operator--()
   {
     Standard_STATIC_ASSERT((opencascade::std::is_same<std::bidirectional_iterator_tag,Category>::value ||
-                            opencascade::std::is_same<std::random_access_iterator_tag,Category>::value));
+                            opencascade::std::is_same<std::random_access_iterator_tag,Category>::value ||
+                            opencascade::std::is_same<std::reverse_iterator<NCollection_StlIterator<std::bidirectional_iterator_tag, BaseIterator, ItemType, false>>, Category>::value ||
+                            opencascade::std::is_same<std::reverse_iterator<NCollection_StlIterator<std::bidirectional_iterator_tag, BaseIterator, ItemType, true>>, Category>::value));
     myIterator.Previous();
     return *this;
   }

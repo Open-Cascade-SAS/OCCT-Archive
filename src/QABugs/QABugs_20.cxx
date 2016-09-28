@@ -4359,7 +4359,74 @@ static Standard_Integer QACheckBends(Draw_Interpretor& theDI,
   return 0;
 }
 
+#include <NCollection_Sequence.hxx>
+static Standard_Integer OCC27571(Draw_Interpretor& di, Standard_Integer /*nb*/, const char ** /*a*/)
+{
+  // Create NCollection_Sequence<TCollection_AsciiString>
+  NCollection_Sequence<TCollection_AsciiString> aSequence;
+  aSequence.Append("1");
+  aSequence.Append("2");
+  aSequence.Append("3");
+  aSequence.Append("4");
+  aSequence.Append("5");
 
+  // Create iterator
+  NCollection_Sequence<TCollection_AsciiString>::Iterator anIterator(aSequence);
+
+  // Create reverse iterator
+  NCollection_Sequence<TCollection_AsciiString>::Iterator aReverseIterator(aSequence, Standard_False);
+
+  // Display elements using iterator (with More/Next)
+  di << "Iterator (More/Next):";
+  for (; anIterator.More(); anIterator.Next())
+    di << " " << anIterator.Value();
+  anIterator.Previous();
+  di << "\nCurrent (last) element - Iterator: " << anIterator.Value();
+  anIterator.Previous();
+  di << "\nPrevious element - Iterator: " << anIterator.Value();
+
+  // Display elements using reverse iterator (with More/Next)
+  di << "\nReverse iterator (More/Next):";
+  for (; aReverseIterator.More(); aReverseIterator.Next())
+    di << " " << aReverseIterator.Value();
+  aReverseIterator.Previous();
+  di << "\nCurrent (last) element - Reverse iterator: " << aReverseIterator.Value();
+  aReverseIterator.Previous();
+  di << "\nPrevious element - Reverse iterator: " << aReverseIterator.Value();
+
+  // Display elements using iterator (with begin/end)
+  di << "\nIterator (begin/end):";
+  NCollection_Sequence<TCollection_AsciiString>::iterator anIteratorBeginEnd = aSequence.begin();
+  for (; anIteratorBeginEnd != aSequence.end(); ++anIteratorBeginEnd)
+    di << " " << *anIteratorBeginEnd;
+  --anIteratorBeginEnd;
+  di << "\nCurrent (last) element - Iterator (begin/end): " << *anIteratorBeginEnd;
+
+  // Display elements using const_iterator (with cbegin/cend)
+  di << "\nIterator (cbegin/cend) Const:";
+  NCollection_Sequence<TCollection_AsciiString>::const_iterator anIteratorBeginEndConst = aSequence.cbegin();
+  for (; anIteratorBeginEndConst != aSequence.cend(); ++anIteratorBeginEndConst)
+    di << " " << *anIteratorBeginEndConst;
+  --anIteratorBeginEndConst;
+  di << "\nCurrent (last) element - Iterator (cbegin/cend) Const: " << *anIteratorBeginEndConst;
+
+  // Display elements using reverse_iterator (with rbegin/rend)
+  di << "\nReverse iterator (rbegin/rend):";
+  NCollection_Sequence<TCollection_AsciiString>::reverse_iterator aReverseIteratorBeginEnd = aSequence.rbegin();
+  for (; aReverseIteratorBeginEnd != aSequence.rend(); ++aReverseIteratorBeginEnd)
+    di << " " << *aReverseIteratorBeginEnd;
+  --aReverseIteratorBeginEnd;
+  di << "\nCurrent (last) element - Reverse iterator (rbegin/rend): " << *aReverseIteratorBeginEnd;
+
+  // Display elements using const_reverse_iterator (with crbegin/crend)
+  di << "\nReverse iterator (crbegin/crend) Const:";
+  NCollection_Sequence<TCollection_AsciiString>::const_reverse_iterator aReverseIteratorBeginEndConst = aSequence.crbegin();
+  for (; aReverseIteratorBeginEndConst != aSequence.crend(); ++aReverseIteratorBeginEndConst)
+    di << " " << *aReverseIteratorBeginEndConst;
+  --aReverseIteratorBeginEndConst;
+  di << "\nCurrent (last) element - Reverse iterator (crbegin/crend) Const: " << *aReverseIteratorBeginEndConst;
+  return 0;
+}
 
 void QABugs::Commands_20(Draw_Interpretor& theCommands) {
   const char *group = "QABugs";
@@ -4466,6 +4533,8 @@ void QABugs::Commands_20(Draw_Interpretor& theCommands) {
     "QACheckBends curve [CosMaxAngle [theNbPoints]]",
     __FILE__,
     QACheckBends, group);
+
+  theCommands.Add("OCC27571", "OCC27571", __FILE__, OCC27571, group);
 
   return;
 }
