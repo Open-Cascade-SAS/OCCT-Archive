@@ -26,6 +26,8 @@
 #include <TColgp_HArray1OfPnt.hxx>
 #include <TCollection_HAsciiString.hxx>
 #include <XCAFView_ProjectionType.hxx>
+#include <TColStd_HArray1OfByte.hxx>
+#include <TColStd_HArray1OfInteger.hxx>
 
 class XCAFView_Object;
 DEFINE_STANDARD_HANDLE(XCAFView_Object, Standard_Transient)
@@ -217,7 +219,104 @@ public:
     else
       return gp_Pnt();
   }
-  
+
+  Standard_EXPORT void SetImage(Handle(TColStd_HArray1OfByte) theImage)
+  {
+    myImage = theImage;
+  }
+
+  Standard_EXPORT  Handle(TColStd_HArray1OfByte) Image()
+  {
+    return myImage;
+  }
+
+  Standard_EXPORT Standard_Boolean HasImage()
+  {
+    return (!myImage.IsNull());
+  }
+
+  Standard_EXPORT void CreateEnabledShapes(const Standard_Integer theLenght)
+  {
+    if (theLenght > 0)
+	  myEnabledShapes = new TColStd_HArray1OfInteger(1, theLenght);
+  }
+
+  Standard_EXPORT void SetEnabledShapes(Handle(TColStd_HArray1OfInteger) theArray)
+  {
+    myEnabledShapes = theArray;
+  }
+
+  const Handle(TColStd_HArray1OfInteger)& GetEnabledShapes() const
+  {
+    return myEnabledShapes;
+  }
+
+  Standard_EXPORT Standard_Boolean HasEnabledShapes()
+  {
+    return (!myEnabledShapes.IsNull());
+  }
+
+  Standard_EXPORT Standard_Integer NbEnabledShapes()
+  {
+    if (myEnabledShapes.IsNull())
+      return 0;
+    return myEnabledShapes->Length();
+  }
+
+  Standard_EXPORT void SetEnabledShape(const Standard_Integer theIndex, const Standard_Boolean theVal)
+  {
+    if (myEnabledShapes.IsNull())
+      return;
+    if (theIndex > 0 && theIndex <= myEnabledShapes->Length())
+      myEnabledShapes->SetValue(theIndex, theVal);
+  }
+
+  Standard_EXPORT Standard_Boolean EnabledShape(const Standard_Integer theIndex)
+  {
+    if (myEnabledShapes.IsNull())
+      return Standard_False;
+    if (theIndex > 0 && theIndex <= myEnabledShapes->Length())
+      return myEnabledShapes->Value(theIndex) == 1;
+    else
+      return Standard_False;
+  }
+
+  Standard_EXPORT void CreateNotePoints(const Standard_Integer theLenght)
+  {
+    if (theLenght > 0)
+      myNotePoints = new TColgp_HArray1OfPnt(1, theLenght);
+  }
+
+  Standard_EXPORT Standard_Boolean HasNotePoints()
+  {
+    return (!myNotePoints.IsNull());
+  }
+
+  Standard_EXPORT Standard_Integer NbNotePoints()
+  {
+    if (myNotePoints.IsNull())
+      return 0;
+    return myNotePoints->Length();
+  }
+
+  Standard_EXPORT void SetNotePoint(const Standard_Integer theIndex, const gp_Pnt thePoint)
+  {
+    if (myNotePoints.IsNull())
+      return;
+    if (theIndex > 0 && theIndex <= myNotePoints->Length())
+      myNotePoints->SetValue(theIndex, thePoint);
+  }
+
+  Standard_EXPORT gp_Pnt NotePoint(const Standard_Integer theIndex)
+  {
+    if (myNotePoints.IsNull())
+      return gp_Pnt();
+    if (theIndex > 0 && theIndex <= myNotePoints->Length())
+      return myNotePoints->Value(theIndex);
+    else
+      return gp_Pnt();
+  }
+
   DEFINE_STANDARD_RTTIEXT(XCAFView_Object,Standard_Transient)
 
 private:
@@ -237,6 +336,9 @@ private:
   Standard_Real myBackPlaneDistance;
   Standard_Boolean myViewVolumeSidesClipping;
   Handle(TColgp_HArray1OfPnt) myGDTPoints; // Point for each GDT to describe position of GDT frame in View.
+  Handle(TColStd_HArray1OfByte) myImage;
+  Handle(TColStd_HArray1OfInteger) myEnabledShapes;
+  Handle(TColgp_HArray1OfPnt) myNotePoints;
 };
 
 #endif // _XCAFView_Object_HeaderFile
