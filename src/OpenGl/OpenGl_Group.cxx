@@ -25,6 +25,7 @@
 #include <OpenGl_Workspace.hxx>
 
 #include <Graphic3d_ArrayOfPrimitives.hxx>
+#include <Graphic3d_AspectFillCapping.hxx>
 #include <Graphic3d_GroupDefinitionError.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(OpenGl_Group,Graphic3d_Group)
@@ -87,6 +88,20 @@ void OpenGl_Group::SetGroupPrimitivesAspect (const Handle(Graphic3d_Aspects)& th
 {
   if (IsDeleted())
   {
+    return;
+  }
+
+  if (!theAspect.IsNull() && theAspect->IsKind (STANDARD_TYPE(Graphic3d_AspectFillCapping)))
+  {
+    Handle(Graphic3d_AspectFillCapping) aFillCappingAspect = Handle(Graphic3d_AspectFillCapping)::DownCast (theAspect);
+    if (myAspectFillCapping == NULL)
+    {
+      myAspectFillCapping = new OpenGl_CappingPlaneResource (aFillCappingAspect);
+    }
+    else
+    {
+      myAspectFillCapping->SetAspect (aFillCappingAspect);
+    }
     return;
   }
 

@@ -31,6 +31,7 @@
 #include <Standard_Transient.hxx>
 #include <GeomAbs_Shape.hxx>
 
+class Graphic3d_AspectFillCapping;
 class Prs3d_IsoAspect;
 class Prs3d_LineAspect;
 class Prs3d_TextAspect;
@@ -709,6 +710,16 @@ public:
   //! the appearance of dimensions that overrides the one in the link.
   Standard_Boolean HasOwnDimensionAspect() const { return myHasOwnDimensionAspect; }
 
+  //! Returns style for filling capping section created by clipping planes.
+  Standard_EXPORT const Handle(Graphic3d_AspectFillCapping)& FillCappingAspect();
+
+  //! Set style of filling capping section created by clipping planes.
+  Standard_EXPORT void SetFillCappingAspect (const Handle(Graphic3d_AspectFillCapping)& theStyle);
+
+  //! Returns true if the drawer has its own attribute for
+  //! the appearance of dimensions that overrides the one in the link.
+  Standard_Boolean HasOwnFillCappingAspect() const { return myHasOwnFillCappingAspect; }
+
   //! Sets dimension length model units for computing of dimension presentation.
   //! The method sets value owned by the drawer that will be used during
   //! visualization instead of the one set in link.
@@ -912,6 +923,10 @@ protected:
   Prs3d_DimensionUnits          myDimensionDisplayUnits;
   Standard_Boolean              myHasOwnDimLengthDisplayUnits;
   Standard_Boolean              myHasOwnDimAngleDisplayUnits;
+
+  Handle(Graphic3d_AspectFillCapping) myFillCappingAspect;
+  Standard_Boolean              myHasOwnFillCappingAspect;
+
 };
 
 Standard_DEPRECATED("Class name is deprecated - use Prs3d_Drawer instead")

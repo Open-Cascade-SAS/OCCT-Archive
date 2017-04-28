@@ -71,5 +71,5 @@ vdisplay pp1 pp2
 vzoom 0.8
 
 puts "Enable capping planes"
-vclipplane pln1 -set -equation 0 0 -1 $aPln1Z        -capping 1 -color 0.5 0.5 0.5 -texname $aHatch -texscale 0.02 -0.02 -useObjMaterial 1
-vclipplane pln2 -set -equation 0 1 0 [expr -$aPln2Y] -capping 1 -color 0.8 0.8 0.9 -texname $aHatch -texscale 0.02 -0.02
+vclipplane pln1 -set -equation 0 0 -1 $aPln1Z        -capping 1 -color 0.5 0.5 0.5 -hatchtexture $aHatch -hatchscale 0.02 -0.02 -useObjMaterial 1
+vclipplane pln2 -set -equation 0 1 0 [expr -$aPln2Y] -capping 1 -color 0.8 0.8 0.9 -hatchtexture $aHatch -hatchscale 0.02 -0.02
