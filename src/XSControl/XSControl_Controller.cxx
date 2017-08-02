@@ -61,6 +61,7 @@
 #include <XSControl_SignTransferStatus.hxx>
 #include <XSControl_TransferReader.hxx>
 #include <XSControl_WorkSession.hxx>
+#include <Standard_Mutex.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(XSControl_Controller,Standard_Transient)
 
@@ -74,15 +75,23 @@ static NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)> 
 //purpose  : Constructor
 //=======================================================================
 
-XSControl_Controller::XSControl_Controller (const Standard_CString theLongName, const Standard_CString theShortName)
-: myShortName(theShortName), myLongName(theLongName)
+XSControl_Controller::XSControl_Controller(const Standard_CString theLongName, const Standard_CString theShortName)
+  : myShortName(theShortName), myLongName(theLongName)
 {
-  // Standard parameters
-  Interface_Static::Standards();
-  TraceStatic ("read.precision.mode" , 5);
-  TraceStatic ("read.precision.val"  , 5);
-  TraceStatic ("write.precision.mode" , 6);
-  TraceStatic ("write.precision.val"  , 6);
+  if (!myLongName.IsEqual("STEP") && !myShortName.IsEqual("step"))
+  {
+    // Standard parameters
+    Interface_Static::Standards();
+    TraceStatic("read.precision.mode", 5);
+    TraceStatic("read.precision.val", 5);
+    TraceStatic("write.precision.mode", 6);
+    TraceStatic("write.precision.val", 6);
+  }
+}
+
+Standard_Boolean XSControl_Controller::Init(const Handle(XSControl_WorkSession)& /*theWS*/)
+{
+  return Standard_True;
 }
 
 //=======================================================================
@@ -95,6 +104,18 @@ void XSControl_Controller::TraceStatic (const Standard_CString theName, const St
   Handle(Interface_Static) val = Interface_Static::Static(theName);
   if (val.IsNull()) return;
   myParams.Append (val);
+  myParamUses.Append(theUse);
+}
+
+//=======================================================================
+//function : TraceNotStatic
+//purpose  : 
+//=======================================================================
+
+void XSControl_Controller::TraceNotStatic(const Handle(Interface_Static)& theParam, const Standard_Integer theUse)
+{
+  if (theParam.IsNull()) return;
+  myParams.Append(theParam);
   myParamUses.Append(theUse);
 }
 
@@ -120,15 +141,19 @@ void XSControl_Controller::SetNames (const Standard_CString theLongName, const S
 
 void XSControl_Controller::Record (const Standard_CString theName) const
 {
-  if (listad.IsBound(theName)) {
-    Handle(Standard_Transient) thisadapt(this);
-    Handle(Standard_Transient) newadapt = listad.ChangeFind(theName);
-    if (newadapt->IsKind(thisadapt->DynamicType()))
-      return;
-    if (!(thisadapt->IsKind(newadapt->DynamicType())) && thisadapt != newadapt)
-      throw Standard_DomainError("XSControl_Controller : Record");
+  static Standard_Mutex aPars;
+  {
+    Standard_Mutex::Sentry aLock(aPars);
+    if (listad.IsBound(theName)) {
+      Handle(Standard_Transient) thisadapt(this);
+      Handle(Standard_Transient) newadapt = listad.ChangeFind(theName);
+      if (newadapt->IsKind(thisadapt->DynamicType()))
+        return;
+      if (!(thisadapt->IsKind(newadapt->DynamicType())) && thisadapt != newadapt)
+        throw Standard_DomainError("XSControl_Controller : Record");
+    }
+    listad.Bind(theName, this);
   }
-  listad.Bind(theName, this);
 }
 
 //=======================================================================
@@ -138,10 +163,14 @@ void XSControl_Controller::Record (const Standard_CString theName) const
 
 Handle(XSControl_Controller) XSControl_Controller::Recorded(const Standard_CString theName)
 {
-  Handle(Standard_Transient) recorded;
-  return (listad.Find(theName, recorded)?
-    Handle(XSControl_Controller)::DownCast(recorded) :
-    Handle(XSControl_Controller)());
+  static Standard_Mutex aPars;
+  {
+    Standard_Mutex::Sentry aLock(aPars);
+    Handle(Standard_Transient) recorded;
+    return (listad.Find(theName, recorded) ?
+      Handle(XSControl_Controller)::DownCast(recorded) :
+      Handle(XSControl_Controller)());
+  }
 }
 
 //    ####    DEFINITION    ####
@@ -476,9 +505,13 @@ void XSControl_Controller::Customise (Handle(XSControl_WorkSession)& WS)
   // Here for the specific manufacturers of controllers could create the
   // Parameters: So wait here
 
-  Handle(TColStd_HSequenceOfHAsciiString) listat = Interface_Static::Items();
-  Handle(IFSelect_ParamEditor) paramed = IFSelect_ParamEditor::StaticEditor (listat,"All Static Parameters");
-  WS->AddNamedItem ("xst-static-params-edit",paramed);
-  Handle(IFSelect_EditForm) paramform = paramed->Form(Standard_False);
-  WS->AddNamedItem ("xst-static-params",paramform);
+  //for step it is not needed
+  if (!myLongName.IsEqual("STEP") && !myShortName.IsEqual("step"))
+  {
+    Handle(TColStd_HSequenceOfHAsciiString) listat = Interface_Static::Items();
+    Handle(IFSelect_ParamEditor) paramed = IFSelect_ParamEditor::StaticEditor(listat, "All Static Parameters");
+    WS->AddNamedItem("xst-static-params-edit", paramed);
+    Handle(IFSelect_EditForm) paramform = paramed->Form(Standard_False);
+    WS->AddNamedItem("xst-static-params", paramform);
+  }
 }

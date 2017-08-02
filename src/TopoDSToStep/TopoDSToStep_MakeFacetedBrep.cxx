@@ -17,6 +17,7 @@
 
 #include <BRepClass3d.hxx>
 #include <StdFail_NotDone.hxx>
+#include <Interface_InterfaceModel.hxx>
 #include <StepShape_ClosedShell.hxx>
 #include <StepShape_FacetedBrep.hxx>
 #include <StepShape_TopologicalRepresentationItem.hxx>
@@ -41,8 +42,9 @@ TopoDSToStep_MakeFacetedBrep::
   if (aShell.Closed()) {
     Handle(StepShape_TopologicalRepresentationItem) aItem;
     MoniTool_DataMapOfShapeTransient aMap;
-    
-    TopoDSToStep_Tool    aTool(aMap, Standard_True);
+    TopoDSToStep_Tool aTool(aMap,
+                            Standard_True,
+                            FP->Model()->IVal("write.surfacecurve.mode"));
     TopoDSToStep_Builder StepB(aShell, aTool, FP);
     TopoDSToStep::AddResult ( FP, aTool );
 
@@ -89,8 +91,9 @@ TopoDSToStep_MakeFacetedBrep::
     if (aOuterShell.Closed()) {
       Handle(StepShape_TopologicalRepresentationItem) aItem;
       MoniTool_DataMapOfShapeTransient aMap;
-      
-      TopoDSToStep_Tool    aTool(aMap, Standard_True);
+      TopoDSToStep_Tool aTool(aMap,
+                              Standard_True,
+                              FP->Model()->IVal("write.surfacecurve.mode"));
       TopoDSToStep_Builder StepB(aOuterShell, aTool, FP);
       TopoDSToStep::AddResult ( FP, aTool );
       

@@ -24,7 +24,8 @@
 #include <Standard_Integer.hxx>
 #include <TColStd_SequenceOfAsciiString.hxx>
 #include <Standard_Boolean.hxx>
-class TCollection_AsciiString;
+#include <NCollection_DataMap.hxx>
+#include <TCollection_AsciiString.hxx>
 class StepData_StepReaderData;
 class Interface_Check;
 class Standard_Transient;
@@ -76,7 +77,8 @@ protected:
 
 private:
 
-
+  NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typenums;
+  NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typeshor;
 
 
 };

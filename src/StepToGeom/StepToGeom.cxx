@@ -1508,7 +1508,8 @@ Handle(Geom_Surface) StepToGeom::MakeSurface (const Handle(StepGeom_Surface)& SS
           const BRepBuilderAPI_MakeFace aBFace(aBasisSurface, Precision::Confusion());
           if (aBFace.IsDone())
           {
-            const TopoDS_Shape aResult = ShapeAlgo::AlgoContainer()->C0ShapeToC1Shape(aBFace.Face(), Abs(anOffset));
+            Handle(ShapeAlgo_AlgoContainer) aContainer = new ShapeAlgo_AlgoContainer;
+            const TopoDS_Shape aResult = aContainer->C0ShapeToC1Shape(aBFace.Face(), Abs(anOffset));
             if (aResult.ShapeType() == TopAbs_FACE)
             {
               aBasisSurface = BRep_Tool::Surface(TopoDS::Face(aResult));

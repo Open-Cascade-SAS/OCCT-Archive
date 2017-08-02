@@ -17,6 +17,7 @@
 
 #include <Message_Printer.hxx>
 #include <Message_PrinterOStream.hxx>
+#include <Standard_Mutex.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(Message_Messenger,Standard_Transient)
 
@@ -87,6 +88,8 @@ Standard_Boolean Message_Messenger::RemovePrinter (const Handle(Message_Printer)
 
 Standard_Integer Message_Messenger::RemovePrinters (const Handle(Standard_Type)& theType)
 {
+  static Standard_Mutex aMutex;
+  Standard_Mutex::Sentry aLock(aMutex);
   // remove printers from the list
   Standard_Integer nb = 0;
   for (Message_SequenceOfPrinters::Iterator aPrinterIter (myPrinters); aPrinterIter.More();)

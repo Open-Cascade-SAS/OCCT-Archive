@@ -16,7 +16,6 @@
 
 
 #include <BRep_Tool.hxx>
-#include <Interface_Static.hxx>
 #include <StepShape_TopologicalRepresentationItem.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
@@ -31,9 +30,8 @@
 //purpose  : 
 //=======================================================================
 TopoDSToStep_Tool::TopoDSToStep_Tool()
-     :myLowestTol(0.),myReversedSurface (Standard_False)
+     :myLowestTol(0.),myReversedSurface (Standard_False),myPCurveMode(1)
 {
-  myPCurveMode = Interface_Static::IVal("write.surfacecurve.mode");
 }
 
 //=======================================================================
@@ -41,10 +39,12 @@ TopoDSToStep_Tool::TopoDSToStep_Tool()
 //purpose  : 
 //=======================================================================
 
-TopoDSToStep_Tool::TopoDSToStep_Tool(const MoniTool_DataMapOfShapeTransient& M, const Standard_Boolean FacetedContext)
+TopoDSToStep_Tool::TopoDSToStep_Tool(const MoniTool_DataMapOfShapeTransient& M,
+                                     const Standard_Boolean FacetedContext,
+                                     Standard_Integer theCurveMode)
      :myLowestTol(0.),myReversedSurface(Standard_False)
 {
-  Init ( M, FacetedContext );
+  Init ( M, FacetedContext, theCurveMode );
 }
 
 //=======================================================================
@@ -52,11 +52,13 @@ TopoDSToStep_Tool::TopoDSToStep_Tool(const MoniTool_DataMapOfShapeTransient& M, 
 //purpose  : 
 //=======================================================================
 
-void TopoDSToStep_Tool::Init(const MoniTool_DataMapOfShapeTransient& M, const Standard_Boolean FacetedContext)
+void TopoDSToStep_Tool::Init(const MoniTool_DataMapOfShapeTransient& M,
+                             const Standard_Boolean FacetedContext,
+                             Standard_Integer theCurveMode)
 {
   myDataMap = M;
   myFacetedContext = FacetedContext;
-  myPCurveMode = Interface_Static::IVal("write.surfacecurve.mode");
+  myPCurveMode = theCurveMode;
 }
 
 //=======================================================================

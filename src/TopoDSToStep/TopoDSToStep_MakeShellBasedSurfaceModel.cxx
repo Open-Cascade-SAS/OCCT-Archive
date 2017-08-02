@@ -17,6 +17,7 @@
 
 #include <MoniTool_DataMapOfShapeTransient.hxx>
 #include <StdFail_NotDone.hxx>
+#include <StepData_StepModel.hxx>
 #include <StepShape_ClosedShell.hxx>
 #include <StepShape_ConnectedFaceSet.hxx>
 #include <StepShape_FaceSurface.hxx>
@@ -50,7 +51,10 @@ TopoDSToStep_MakeShellBasedSurfaceModel::
   done = Standard_False;
   MoniTool_DataMapOfShapeTransient aMap;
 
-  TopoDSToStep_Tool    aTool(aMap, Standard_False);
+  Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(FP->Model());
+  TopoDSToStep_Tool    aTool(aMap,
+                             Standard_False,
+                             aModel->IVal("write.surfacecurve.mode"));
   TopoDSToStep_Builder StepB(aFace, aTool, FP);
 
   TopoDSToStep::AddResult ( FP, aTool );
@@ -97,8 +101,11 @@ TopoDSToStep_MakeShellBasedSurfaceModel::
   Handle(StepShape_OpenShell)                     aOpenShell;
   Handle(StepShape_ClosedShell)                   aClosedShell;
   MoniTool_DataMapOfShapeTransient                aMap;
-  
-  TopoDSToStep_Tool    aTool(aMap, Standard_False);
+
+  Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(FP->Model());
+  TopoDSToStep_Tool    aTool(aMap,
+                             Standard_False,
+                             aModel->IVal("write.surfacecurve.mode"));
   TopoDSToStep_Builder StepB(aShell, aTool, FP);
   //TopoDSToStep::AddResult ( FP, aTool );
 
@@ -155,7 +162,11 @@ TopoDSToStep_MakeShellBasedSurfaceModel::
     if (It.Value().ShapeType() == TopAbs_SHELL) {
       aShell = TopoDS::Shell(It.Value());
 
-      TopoDSToStep_Tool    aTool(aMap, Standard_False);
+
+      Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(FP->Model());
+      TopoDSToStep_Tool    aTool(aMap,
+                                 Standard_False,
+                                 aModel->IVal("write.surfacecurve.mode"));
       TopoDSToStep_Builder StepB(aShell, aTool, FP);
       TopoDSToStep::AddResult ( FP, aTool );
 

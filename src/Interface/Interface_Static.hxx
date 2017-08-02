@@ -130,6 +130,9 @@ public:
   //! Returns False if <type> does not match this list
   Standard_EXPORT static Standard_Boolean Init (const Standard_CString family, const Standard_CString name, const Standard_Character type, const Standard_CString init = "");
   
+  //! Edit current <theStatic> with some parameter <init>
+  Standard_EXPORT static Standard_Boolean InitValues(Handle(Interface_Static)& theStatic, const Standard_CString init);
+  
   //! Returns a Static from its name. Null Handle if not present
   Standard_EXPORT static Handle(Interface_Static) Static (const Standard_CString name);
   
@@ -235,7 +238,7 @@ public:
   //! Returns False if <name> is not present
   Standard_EXPORT static Standard_Boolean IsUpdated (const Standard_CString name);
   
-  //! Returns a list of names of statics :
+  //! Returns a list of names of statics:
   //! <mode> = 0 (D) : criter is for family
   //! <mode> = 1 : criter is regexp on names, takes final items
   //! (ignore wild cards)
@@ -250,7 +253,8 @@ public:
   //!
   //! This allows for instance to set new values after having loaded
   //! or reloaded a resource, then to update them as required
-  Standard_EXPORT static Handle(TColStd_HSequenceOfHAsciiString) Items (const Standard_Integer mode = 0, const Standard_CString criter = "");
+  Standard_EXPORT static Handle(TColStd_HSequenceOfHAsciiString) Items (const Standard_Integer mode = 0,
+                                                                        const Standard_CString criter = "");
   
   //! Initializes all standard static parameters, which can be used
   //! by every function. statics specific of a norm or a function

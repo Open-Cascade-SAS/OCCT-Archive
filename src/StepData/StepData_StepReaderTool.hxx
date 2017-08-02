@@ -26,6 +26,10 @@
 #include <Interface_FileReaderTool.hxx>
 #include <Standard_Boolean.hxx>
 #include <Standard_Integer.hxx>
+#include <NCollection_List.hxx>
+#include <StepData_GeneralModule.hxx>
+#include <StepData_ReadWriteModule.hxx>
+
 class StepData_FileRecognizer;
 class StepData_StepReaderData;
 class StepData_Protocol;
@@ -100,7 +104,8 @@ protected:
 
 private:
 
-
+  NCollection_List<Handle(StepData_GeneralModule)> myglib;
+  NCollection_List<Handle(StepData_ReadWriteModule)> myrlib;
 
   Handle(StepData_FileRecognizer) thereco;
   Interface_GeneralLib theglib;

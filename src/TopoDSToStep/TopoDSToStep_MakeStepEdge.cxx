@@ -30,8 +30,8 @@
 #include <GeomToStep_MakeCurve.hxx>
 #include <GeomToStep_MakeLine.hxx>
 #include <gp_Vec.hxx>
-#include <Interface_Static.hxx>
 #include <StdFail_NotDone.hxx>
+#include <StepData_StepModel.hxx>
 #include <StepGeom_HArray1OfPcurveOrSurface.hxx>
 #include <StepGeom_Line.hxx>
 #include <StepGeom_SeamCurve.hxx>
@@ -88,7 +88,9 @@ void TopoDSToStep_MakeStepEdge::Init(const TopoDS_Edge& aEdge,
   aTool.SetCurrentEdge(aEdge);
 
   // [BEGIN] Processing non-manifold topology (ssv; 11.11.2010)
-  Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
+
+  Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(FP->Model());
+  Standard_Boolean isNMMode = aModel->IVal("write.step.nonmanifold") != 0;
   if (isNMMode) {
     Handle(StepShape_EdgeCurve) anEC;
     Handle(TransferBRep_ShapeMapper) aSTEPMapper = TransferBRep::ShapeMapper(FP, aEdge);

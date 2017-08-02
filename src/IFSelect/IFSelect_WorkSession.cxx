@@ -71,7 +71,6 @@
 #include <Interface_ReportEntity.hxx>
 #include <Interface_ShareFlags.hxx>
 #include <Interface_ShareTool.hxx>
-#include <Interface_Static.hxx>
 #include <Message.hxx>
 #include <Message_Messenger.hxx>
 #include <OSD_Path.hxx>
@@ -212,7 +211,7 @@ IFSelect_ReturnStatus  IFSelect_WorkSession::ReadFile
 {
   if (thelibrary.IsNull()) return IFSelect_RetVoid;
   if (theprotocol.IsNull()) return IFSelect_RetVoid;
-  Handle(Interface_InterfaceModel) model;
+  Handle(Interface_InterfaceModel) model =myModel;
   IFSelect_ReturnStatus status = IFSelect_RetVoid;
   try {
     OCC_CATCH_SIGNALS
@@ -1081,30 +1080,6 @@ Standard_Integer IFSelect_WorkSession::NextIdentForLabel
 //purpose  : 
 //=======================================================================
 
-Handle(Standard_Transient) IFSelect_WorkSession::NewParamFromStatic
-  (const Standard_CString statname, const Standard_CString name)
-{
-  Handle(Standard_Transient) param;
-  Handle(Interface_Static) stat = Interface_Static::Static(statname);
-  if (stat.IsNull()) return param;
-  if (stat->Type() == Interface_ParamInteger) {
-    Handle(IFSelect_IntParam) intpar = new IFSelect_IntParam;
-    intpar->SetStaticName (statname);
-    param = intpar;
-  } else {
-    param = stat->HStringValue();
-  }
-  if (param.IsNull()) return param;
-  if ( AddNamedItem (name, param) == 0 ) param.Nullify();
-  return param;
-}
-
-
-//=======================================================================
-//function : 
-//purpose  : 
-//=======================================================================
-
 Handle(IFSelect_IntParam) IFSelect_WorkSession::IntParam
   (const Standard_Integer id) const
 {  return Handle(IFSelect_IntParam)::DownCast(Item(id));  }
@@ -1701,11 +1676,12 @@ Standard_Integer IFSelect_WorkSession::RunTransformer
 {
   Standard_Integer effect = 0;
   if (transf.IsNull() || !IsLoaded()) return effect;
+  
   Handle(Interface_InterfaceModel) newmod;    // Null au depart
   Interface_CheckIterator checks;
   checks.SetName("X-STEP WorkSession : RunTransformer");
   Standard_Boolean res = transf->Perform
-    (thegraph->Graph(),theprotocol,checks,newmod);
+    (thegraph->Graph(),theprotocol,checks,myModel);
 
   if (!checks.IsEmpty(Standard_False)) {
     Handle(Message_Messenger) sout = Message::DefaultMessenger();
@@ -3055,7 +3031,7 @@ Handle(IFSelect_Selection) IFSelect_WorkSession::GiveSelection
   }
 
   Handle(IFSelect_Selection) sel;
-  if (np >= 0)
+  if (np >= 0) 
   {
     nomsel[np] = 0;
   }

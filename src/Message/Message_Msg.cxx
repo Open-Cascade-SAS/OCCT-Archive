@@ -17,6 +17,7 @@
 #include <Message_MsgFile.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <stdio.h>
+#include <Standard_Mutex.hxx>
 
 typedef enum
 {
@@ -25,6 +26,9 @@ typedef enum
   Msg_StringType,
   Msg_IndefiniteType
 } FormatType;
+
+// mutex used to prevent concurrent access to message registry
+static Standard_Mutex theMutex;
 
 //=======================================================================
 //function : Message_Msg()
@@ -42,6 +46,7 @@ Message_Msg::Message_Msg ()
 
 Message_Msg::Message_Msg (const Message_Msg& theMsg)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   myMessageBody = theMsg.myMessageBody;
   myOriginal = theMsg.myOriginal;
   for ( Standard_Integer i = 1, n = theMsg.mySeqOfFormats.Length(); i <=n; i++ )
@@ -55,6 +60,7 @@ Message_Msg::Message_Msg (const Message_Msg& theMsg)
 
 Message_Msg::Message_Msg (const Standard_CString theMsgCode)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   TCollection_AsciiString aKey((char*)theMsgCode);
   Set ( Message_MsgFile::Msg(aKey) );
 }
@@ -66,6 +72,7 @@ Message_Msg::Message_Msg (const Standard_CString theMsgCode)
 
 Message_Msg::Message_Msg (const TCollection_ExtendedString& theMsgCode)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   Set ( Message_MsgFile::Msg(theMsgCode) );
 }
 
@@ -76,6 +83,7 @@ Message_Msg::Message_Msg (const TCollection_ExtendedString& theMsgCode)
 
 void Message_Msg::Set (const Standard_CString theMsg)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   TCollection_AsciiString aMsg((char*)theMsg);
   Set ( aMsg );
 }
@@ -87,6 +95,7 @@ void Message_Msg::Set (const Standard_CString theMsg)
 
 void Message_Msg::Set (const TCollection_ExtendedString& theMsg)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   myMessageBody = theMsg;
 
   const Standard_ExtString anExtString = myMessageBody.ToExtString();
@@ -157,6 +166,7 @@ void Message_Msg::Set (const TCollection_ExtendedString& theMsg)
 
 Message_Msg& Message_Msg::Arg (const Standard_CString theString)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   // get location and format
   TCollection_AsciiString aFormat;
   Standard_Integer aFirst = getFormat ( Msg_StringType, aFormat );
@@ -184,6 +194,7 @@ Message_Msg& Message_Msg::Arg (const Standard_CString theString)
 
 Message_Msg& Message_Msg::Arg (const TCollection_ExtendedString& theString)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   // get location and format
   TCollection_AsciiString aFormat;
   Standard_Integer aFirst = getFormat ( Msg_StringType, aFormat );
@@ -203,6 +214,7 @@ Message_Msg& Message_Msg::Arg (const TCollection_ExtendedString& theString)
 
 Message_Msg& Message_Msg::Arg (const Standard_Integer theValue)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   // get location and format
   TCollection_AsciiString aFormat;
   Standard_Integer aFirst = getFormat ( Msg_IntegerType, aFormat );
@@ -227,6 +239,7 @@ Message_Msg& Message_Msg::Arg (const Standard_Integer theValue)
 
 Message_Msg& Message_Msg::Arg (const Standard_Real theValue)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   // get location and format
   TCollection_AsciiString aFormat;
   Standard_Integer aFirst = getFormat ( Msg_RealType, aFormat );
@@ -251,6 +264,7 @@ Message_Msg& Message_Msg::Arg (const Standard_Real theValue)
 
 const TCollection_ExtendedString& Message_Msg::Get ()
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   // remove all non-initialised format specifications
   Standard_Integer i, anIncrement = 0;
   static const TCollection_ExtendedString anUnknown ("UNKNOWN");
@@ -279,6 +293,7 @@ const TCollection_ExtendedString& Message_Msg::Get ()
 Standard_Integer Message_Msg::getFormat (const Standard_Integer theType,
                                          TCollection_AsciiString &theFormat)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   for (Standard_Integer i = 1; i <= mySeqOfFormats.Length(); i += 3)
     if (mySeqOfFormats(i) == theType)
     {
@@ -307,6 +322,7 @@ void Message_Msg::replaceText (const Standard_Integer theFirst,
                                const Standard_Integer theNb,
                                const TCollection_ExtendedString &theStr)
 {
+  Standard_Mutex::Sentry aSentry(theMutex);
   myMessageBody.Remove ( theFirst, theNb );
   myMessageBody.Insert ( theFirst, theStr );
   

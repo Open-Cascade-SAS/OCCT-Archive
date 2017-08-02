@@ -19,7 +19,6 @@
 #include <Interface_CheckIterator.hxx>
 #include <Interface_InterfaceModel.hxx>
 #include <Interface_Macros.hxx>
-#include <Interface_Static.hxx>
 #include <Message.hxx>
 #include <Message_Messenger.hxx>
 #include <TColStd_HSequenceOfHAsciiString.hxx>
@@ -81,12 +80,13 @@ static IFSelect_ReturnStatus XSControl_xnorm(const Handle(IFSelect_SessionPilot)
       <<  "  Short name (resource) : "<<control->Name(Standard_True)<<Message_EndLine;
   if (argc == 1) return IFSelect_RetVoid;
 
-  control = XSControl_Controller::Recorded(arg1);
+  control = WS->Recorded(arg1);
   if (control.IsNull()) {
     sout<<" No norm named : "<<arg1<<Message_EndLine;
     return IFSelect_RetError;
   }
 
+ 
   WS->SetController(control);
   sout<<"new norm : "<<control->Name()<<Message_EndLine;
   return IFSelect_RetDone;

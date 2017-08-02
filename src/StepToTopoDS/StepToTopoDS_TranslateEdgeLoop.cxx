@@ -38,7 +38,6 @@
 #include <Geom_Surface.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
-#include <Interface_Static.hxx>
 #include <Precision.hxx>
 #include <ShapeAlgo.hxx>
 #include <ShapeAlgo_AlgoContainer.hxx>
@@ -50,6 +49,7 @@
 #include <ShapeFix_EdgeProjAux.hxx>
 #include <Standard_ErrorHandler.hxx>
 #include <StdFail_NotDone.hxx>
+#include <StepData_StepModel.hxx>
 #include <StepGeom_Curve.hxx>
 #include <StepGeom_Pcurve.hxx>
 #include <StepGeom_PcurveOrSurface.hxx>
@@ -174,7 +174,8 @@ static void CheckPCurves (TopoDS_Wire& aWire, const TopoDS_Face& aFace,
 
 
     // advanced check
-    XSAlgo::AlgoContainer()->CheckPCurve (myEdge, aFace, preci, sbwd->IsSeam(i));
+    Handle(XSAlgo_AlgoContainer) aContainer = new XSAlgo_AlgoContainer;
+    aContainer->CheckPCurve(myEdge, aFace, preci, sbwd->IsSeam(i));
   }
 }
 
@@ -225,7 +226,10 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
     done     = Standard_True;
     return;
   }
-  Standard_Integer modepcurve = Interface_Static::IVal("read.surfacecurve.mode");
+  Handle(StepData_StepModel) aModel =
+    Handle(StepData_StepModel)::DownCast(aTool.TransientProcess()->Model());
+
+  Standard_Integer modepcurve = aModel->IVal("read.surfacecurve.mode");
   //  0,1 : suivre le code,  2 : ne prendre que pcurve,  3 : ne prendre que C3D
 
   BRep_Builder B;
@@ -686,7 +690,8 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
   if (!aTool.ComputePCurve())
     for (TopoDS_Iterator EdgeIt(W);EdgeIt.More();EdgeIt.Next()) {
       TopoDS_Edge edge = TopoDS::Edge(EdgeIt.Value());
-      Handle(ShapeFix_EdgeProjAux) myEdgePro = ShapeAlgo::AlgoContainer()->ToolContainer()->EdgeProjAux();
+      Handle(ShapeAlgo_AlgoContainer) aContainer = new ShapeAlgo_AlgoContainer;
+      Handle(ShapeFix_EdgeProjAux) myEdgePro =aContainer->ToolContainer()->EdgeProjAux();
       myEdgePro->Init (Face, edge);
       myEdgePro->Compute(preci);
       if (myEdgePro->IsFirstDone() && myEdgePro->IsLastDone()) {

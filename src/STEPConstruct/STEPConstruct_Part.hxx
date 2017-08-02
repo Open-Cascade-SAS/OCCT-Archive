@@ -21,6 +21,7 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
+#include <Interface_InterfaceModel.hxx>
 #include <Standard_Boolean.hxx>
 class StepShape_ShapeDefinitionRepresentation;
 class StepBasic_ProductRelatedProductCategory;
@@ -48,7 +49,10 @@ public:
   
   Standard_EXPORT STEPConstruct_Part();
   
-  Standard_EXPORT void MakeSDR (const Handle(StepShape_ShapeRepresentation)& aShape, const Handle(TCollection_HAsciiString)& aName, const Handle(StepBasic_ApplicationContext)& AC);
+  Standard_EXPORT void MakeSDR (const Handle(StepShape_ShapeRepresentation)& theShape,
+                                const Handle(TCollection_HAsciiString)& theName,
+                                const Handle(StepBasic_ApplicationContext)& theAppContext,
+                                const Handle(Interface_InterfaceModel)& theModel );
   
   Standard_EXPORT void ReadSDR (const Handle(StepShape_ShapeDefinitionRepresentation)& aShape);
   

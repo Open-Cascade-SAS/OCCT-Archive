@@ -20,10 +20,10 @@
 #include <IFSelect_SessionPilot.hxx>
 #include <Interface_InterfaceModel.hxx>
 #include <Interface_Macros.hxx>
-#include <Interface_Static.hxx>
 #include <Message.hxx>
 #include <Message_Messenger.hxx>
 #include <Message_ProgressSentry.hxx>
+#include <Standard_Version.hxx>
 #include <STEPControl_ActorWrite.hxx>
 #include <STEPControl_Controller.hxx>
 #include <STEPControl_Reader.hxx>
@@ -49,6 +49,8 @@
 #include <XSControl_WorkSession.hxx>
 #include <XSDRAW.hxx>
 #include <XSDRAWSTEP.hxx>
+#include <TopoDS_Compound.hxx>
+#include <BRep_Builder.hxx>
 
 #include <stdio.h>
 //  Pour le transfert (write)
@@ -61,6 +63,151 @@ static void cleanpilot ()
 }
 }
 
+static void initStatics()
+{
+  //Be carefull using this method and static map.
+  //For step files all this parameters initialises in the model.
+  //They are initialised here to avoid errors during using auxiliary
+  //functions to work with step files particulary function "param" in IFSelect_Functions.cxx.
+  //Do NOT USE Interface_Static methods for getting param values while reading step.
+  //If you need the parameters values use StepData_StepModel::GetParam method
+  Interface_Static::Init("step", "write.step.product.name", 't', "Open CASCADE STEP translator " OCC_VERSION_STRING);
+  Interface_Static::Init("step", "write.step.assembly", 'e', "");
+  Interface_Static::Init("step", "write.step.assembly", '&', "enum 0");
+  Interface_Static::Init("step", "write.step.assembly", '&', "eval Off");
+  Interface_Static::Init("step", "write.step.assembly", '&', "eval On");
+  Interface_Static::Init("step", "write.step.assembly", '&', "eval Auto");
+  Interface_Static::SetCVal("write.step.assembly", "Auto");
+
+  Interface_Static::Init("step", "step.angleunit.mode", 'e', "");
+  Interface_Static::Init("step", "step.angleunit.mode", '&', "enum 0");
+  Interface_Static::Init("step", "step.angleunit.mode", '&', "eval File");
+  Interface_Static::Init("step", "step.angleunit.mode", '&', "eval Rad");
+  Interface_Static::Init("step", "step.angleunit.mode", '&', "eval Deg");
+  Interface_Static::SetCVal("step.angleunit.mode", "File");
+
+  Interface_Static::Init("step", "write.step.schema", 'e', "");
+  Interface_Static::Init("step", "write.step.schema", '&', "enum 1");
+  Interface_Static::Init("step", "write.step.schema", '&', "eval AP214CD");
+  Interface_Static::Init("step", "write.step.schema", '&', "eval AP214DIS");
+  Interface_Static::Init("step", "write.step.schema", '&', "eval AP203");
+  Interface_Static::Init("step", "write.step.schema", '&', "eval AP214IS");
+  Interface_Static::Init("step", "write.step.schema", '&', "eval AP242DIS");
+  Interface_Static::SetCVal("write.step.schema", "AP214IS");
+
+  // Type of Product Definition for reading
+  // Note: the numbers should be consistent with function FindShapeReprType()
+  // in STEPControl_ActorRead.cxx
+  Interface_Static::Init("step", "read.step.shape.repr", 'e', "");
+  Interface_Static::Init("step", "read.step.shape.repr", '&', "enum 1");
+  Interface_Static::Init("step", "read.step.shape.repr", '&', "eval All");   // 1
+  Interface_Static::Init("step", "read.step.shape.repr", '&', "eval ABSR");  // 2
+  Interface_Static::Init("step", "read.step.shape.repr", '&', "eval MSSR");  // 3
+  Interface_Static::Init("step", "read.step.shape.repr", '&', "eval GBSSR"); // 4
+  Interface_Static::Init("step", "read.step.shape.repr", '&', "eval FBSR");  // 5
+  Interface_Static::Init("step", "read.step.shape.repr", '&', "eval EBWSR"); // 6
+  Interface_Static::Init("step", "read.step.shape.repr", '&', "eval GBWSR"); // 7
+  Interface_Static::SetCVal("read.step.shape.repr", "All");
+
+  // Mode for reading shapes attached to main SDR by SRR
+  // (hybrid model representation in AP203 since 1998)
+  Interface_Static::Init("step", "read.step.shape.relationship", 'e', "");
+  Interface_Static::Init("step", "read.step.shape.relationship", '&', "enum 0");
+  Interface_Static::Init("step", "read.step.shape.relationship", '&', "eval OFF");
+  Interface_Static::Init("step", "read.step.shape.relationship", '&', "eval ON");
+  Interface_Static::SetCVal("read.step.shape.relationship", "ON");
+
+  // Mode for reading shapes attached to Product by ShapeAspect 
+  // (hybrid model representation in AP203 before 1998)
+  Interface_Static::Init("step", "read.step.shape.aspect", 'e', "");
+  Interface_Static::Init("step", "read.step.shape.aspect", '&', "enum 0");
+  Interface_Static::Init("step", "read.step.shape.aspect", '&', "eval OFF");
+  Interface_Static::Init("step", "read.step.shape.aspect", '&', "eval ON");
+  Interface_Static::SetCVal("read.step.shape.aspect", "ON");
+
+  // Mode for reading SDR and ShapeRepr if it is necessary
+  Interface_Static::Init("step", "read.step.product.mode", 'e', "");
+  Interface_Static::Init("step", "read.step.product.mode", '&', "enum 0");
+  Interface_Static::Init("step", "read.step.product.mode", '&', "eval OFF");
+  Interface_Static::Init("step", "read.step.product.mode", '&', "eval ON");
+  Interface_Static::SetCVal("read.step.product.mode", "ON");
+
+  // Order of reading ShapeDefinitionRepresentation in ProductDefinition
+  Interface_Static::Init("step", "read.step.product.context", 'e', "");
+  Interface_Static::Init("step", "read.step.product.context", '&', "enum 1");
+  Interface_Static::Init("step", "read.step.product.context", '&', "eval all");     // 1
+  Interface_Static::Init("step", "read.step.product.context", '&', "eval design");  // 2
+  Interface_Static::Init("step", "read.step.product.context", '&', "eval analysis");// 3
+  Interface_Static::SetCVal("read.step.product.context", "all");
+
+  // What we try to read in ProductDefinition
+  Interface_Static::Init("step", "read.step.assembly.level", 'e', "");
+  Interface_Static::Init("step", "read.step.assembly.level", '&', "enum 1");
+  Interface_Static::Init("step", "read.step.assembly.level", '&', "eval all");      // 1
+  Interface_Static::Init("step", "read.step.assembly.level", '&', "eval assembly"); // 2
+  Interface_Static::Init("step", "read.step.assembly.level", '&', "eval structure");// 3
+  Interface_Static::Init("step", "read.step.assembly.level", '&', "eval shape");    // 4
+  Interface_Static::SetCVal("read.step.assembly.level", "all");
+
+  // unit: supposed to be cascade unit (target unit for reading)
+  Interface_Static::Init("step", "write.step.unit", 'e', "");
+  Interface_Static::Init("step", "write.step.unit", '&', "enum 1");
+  Interface_Static::Init("step", "write.step.unit", '&', "eval INCH");  // 1
+  Interface_Static::Init("step", "write.step.unit", '&', "eval MM");    // 2
+  Interface_Static::Init("step", "write.step.unit", '&', "eval ??");    // 3
+  Interface_Static::Init("step", "write.step.unit", '&', "eval FT");    // 4
+  Interface_Static::Init("step", "write.step.unit", '&', "eval MI");    // 5
+  Interface_Static::Init("step", "write.step.unit", '&', "eval M");     // 6
+  Interface_Static::Init("step", "write.step.unit", '&', "eval KM");    // 7
+  Interface_Static::Init("step", "write.step.unit", '&', "eval MIL");   // 8
+  Interface_Static::Init("step", "write.step.unit", '&', "eval UM");    // 9
+  Interface_Static::Init("step", "write.step.unit", '&', "eval CM");    //10
+  Interface_Static::Init("step", "write.step.unit", '&', "eval UIN");   //11
+  Interface_Static::SetCVal("write.step.unit", "MM");
+
+  // Non-manifold topology reading: OFF by default (ssv; 26.11.2010)
+  Interface_Static::Init("step", "read.step.nonmanifold", 'e', "");
+  Interface_Static::Init("step", "read.step.nonmanifold", '&', "enum 0");
+  Interface_Static::Init("step", "read.step.nonmanifold", '&', "eval Off");
+  Interface_Static::Init("step", "read.step.nonmanifold", '&', "eval On");
+  Interface_Static::SetIVal("read.step.nonmanifold", 0);
+
+  // Non-manifold topology writing: OFF by default (ssv; 26.11.2010)
+  Interface_Static::Init("step", "write.step.nonmanifold", 'e', "");
+  Interface_Static::Init("step", "write.step.nonmanifold", '&', "enum 0");
+  Interface_Static::Init("step", "write.step.nonmanifold", '&', "eval Off");
+  Interface_Static::Init("step", "write.step.nonmanifold", '&', "eval On");
+  Interface_Static::SetIVal("write.step.nonmanifold", 0);
+
+  // I-Deas-like STEP processing: OFF by default (ssv; 22.11.2010)
+  Interface_Static::Init("step", "read.step.ideas", 'e', "");
+  Interface_Static::Init("step", "read.step.ideas", '&', "enum 0");
+  Interface_Static::Init("step", "read.step.ideas", '&', "eval Off");
+  Interface_Static::Init("step", "read.step.ideas", '&', "eval On");
+  Interface_Static::SetIVal("read.step.ideas", 0);
+
+  //Parameter to write all free vertices in one SDR (name and style of vertex are lost) (default) 
+  //or each vertex in its own SDR (name and style of vertex are exported). (ika; 21.07.2014) 
+  Interface_Static::Init("step", "write.step.vertex.mode", 'e', "");
+  Interface_Static::Init("step", "write.step.vertex.mode", '&', "enum 0");
+  Interface_Static::Init("step", "write.step.vertex.mode", '&', "eval One Compound");
+  Interface_Static::Init("step", "write.step.vertex.mode", '&', "eval Single Vertex");
+  Interface_Static::SetIVal("write.step.vertex.mode", 0);
+
+  // abv 15.11.00: ShapeProcessing
+  Interface_Static::Init("XSTEP", "write.step.resource.name", 't', "STEP");
+  Interface_Static::Init("XSTEP", "read.step.resource.name", 't', "STEP");
+  Interface_Static::Init("XSTEP", "write.step.sequence", 't', "ToSTEP");
+  Interface_Static::Init("XSTEP", "read.step.sequence", 't', "FromSTEP");
+
+  // ika 28.07.16: Paremeter to read all top level solids and shells,
+  // should be used only in case of invalid shape_representation without links to shapes.
+  Interface_Static::Init("step", "read.step.all.shapes", 'e', "");
+  Interface_Static::Init("step", "read.step.all.shapes", '&', "enum 0");
+  Interface_Static::Init("step", "read.step.all.shapes", '&', "eval Off");
+  Interface_Static::Init("step", "read.step.all.shapes", '&', "eval On");
+  Interface_Static::SetIVal("read.step.all.shapes", 0);
+}
 
 //=======================================================================
 //function : Init
@@ -69,12 +216,17 @@ static void cleanpilot ()
 
 void XSDRAWSTEP::Init ()
 {
-  Handle(StepSelect_Activator)   stepact = new StepSelect_Activator;
-  if (STEPControl_Controller::Init()) // XSDRAW::SetNorm("STEP AP-214"); trop tot
-    XSDRAW::SetController(XSControl_Controller::Recorded("STEP"));
+  static Standard_Boolean inic = Standard_False;
+  if (!inic) {
+    initStatics();
+    Handle(STEPControl_Controller) aStepCtl = new STEPControl_Controller;
+    XSDRAW::SetController(aStepCtl);
+    inic = Standard_True;
+  }
   
   atexit (cleanpilot);
 }
+
 
 //  ########  COMMANDE stepread  : teste le Reader  #########
 
@@ -91,15 +243,18 @@ static Standard_Integer stepread (Draw_Interpretor& di/*theCommands*/, Standard_
   }
   //  On admet le controller AP214 ou une variante
   DeclareAndCast(STEPControl_Controller,ctl,XSDRAW::Controller());
-  if (ctl.IsNull()) XSDRAW::SetNorm("STEP");
-
+  if (ctl.IsNull())
+  {
+    ctl = new STEPControl_Controller;
+    XSDRAW::SetController(ctl);
+  }
 
   // Progress indicator
   Handle(Draw_ProgressIndicator) progress = new Draw_ProgressIndicator ( di, 1 );
   progress->SetScale ( 0, 100, 1 );
   progress->Show();
 
-  STEPControl_Reader sr (XSDRAW::Session(),Standard_False);
+  STEPControl_Reader sr (XSDRAW::Session(), ctl, Standard_False);
   TCollection_AsciiString fnom,rnom;
   Standard_Boolean modfic = XSDRAW::FileAndVar
     (argv[1],argv[2],"STEP",fnom,rnom);
@@ -272,27 +427,27 @@ static Standard_Integer stepread (Draw_Interpretor& di/*theCommands*/, Standard_
 //=======================================================================
 static Standard_Integer testread (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
-  if (argc != 3)                                                                                      
-    {                                                                                             
-      di << "ERROR in " << argv[0] << "Wrong Number of Arguments.\n";                     
-      di << " Usage : " << argv[0] <<" file_name shape_name\n";                          
-      return 1;                                                                                 
-    }
+  if (argc != 3)
+  {
+    di << "ERROR in " << argv[0] << "Wrong Number of Arguments.\n";
+    di << " Usage : " << argv[0] << " file_name shape_name\n";
+    return 1;
+  }
   STEPControl_Reader Reader;
   Standard_CString filename = argv[1];
   IFSelect_ReturnStatus readstat = Reader.ReadFile(filename);
-  di<<"Status from reading STEP file "<<filename<<" : ";  
-  switch(readstat) {                                                              
-    case IFSelect_RetVoid  : { di<<"empty file\n"; return 1; }            
-    case IFSelect_RetDone  : { di<<"file read\n";    break; }             
-    case IFSelect_RetError : { di<<"file not found\n";   return 1; }      
-    case IFSelect_RetFail  : { di<<"error during read\n";  return 1; }    
-    default  :  { di<<"failure\n";   return 1; }                          
-  }  
+  di << "Status from reading STEP file " << filename << " : ";
+  switch (readstat) {
+  case IFSelect_RetVoid: { di << "empty file\n"; return 1; }
+  case IFSelect_RetDone: { di << "file read\n";    break; }
+  case IFSelect_RetError: { di << "file not found\n";   return 1; }
+  case IFSelect_RetFail: { di << "error during read\n";  return 1; }
+  default: { di << "failure\n";   return 1; }
+  }
   Reader.TransferRoots();
   TopoDS_Shape shape = Reader.OneShape();
-  DBRep::Set(argv[2],shape); 
-  di<<"Count of shapes produced : "<<Reader.NbShapes()<<"\n";
+  DBRep::Set(argv[2], shape);
+  di << "Count of shapes produced : " << Reader.NbShapes() << "\n";
   return 0;
 }
  
@@ -337,14 +492,13 @@ static Standard_Integer steptrans (Draw_Interpretor& di, Standard_Integer argc, 
 
 static Standard_Integer stepwrite (Draw_Interpretor& di, Standard_Integer argc, const char** argv) 
 {
-//  On admet le controller AP214 ou une variante
-  DeclareAndCast(STEPControl_Controller,ctl,XSDRAW::Controller());
-  if (ctl.IsNull()) {
-    XSDRAW::SetNorm("STEP");
-    //sln 14.01.2002 OCC51: assign new value to ctl in order to avoid exception during using one in the function
-    ctl = Handle(STEPControl_Controller)::DownCast(XSDRAW::Controller());
+  //  On admet le controller AP214 ou une variante
+  DeclareAndCast(STEPControl_Controller, ctl, XSDRAW::Controller());
+  if (ctl.IsNull())
+  {
+    ctl = new STEPControl_Controller;
+    XSDRAW::SetController(ctl);
   }
-
   if (argc < 3) {
     di<<"Give mode[1-4] and Shape name + optional file. Mode possible\n";
     di<<"f ou 1 : FacettedBRep        s ou 2 : ShellBasedSurfaceModel\n"
@@ -366,16 +520,15 @@ static Standard_Integer stepwrite (Draw_Interpretor& di, Standard_Integer argc, 
     default :  di<<"1st arg = mode, incorrect [give fsmw]\n"; return 1;
   }
 
-  //:k8 abv 6 Jan 98: using parameter for writing mode (assemblies/shapes)
-  Handle(STEPControl_ActorWrite) ActWrite = 
-    Handle(STEPControl_ActorWrite)::DownCast ( ctl->ActorWrite() );
-  if ( ! ActWrite.IsNull() ) 
-    ActWrite->SetGroupMode (Interface_Static::IVal("write.step.assembly"));
-
   TopoDS_Shape shape = DBRep::Get(argv[2]);
-  STEPControl_Writer sw (XSDRAW::Session(),Standard_False);
-  Handle(Interface_InterfaceModel) stepmodel = sw.Model();
+  STEPControl_Writer sw (XSDRAW::Session(), ctl, Standard_False);
+  Handle(StepData_StepModel) stepmodel = sw.Model();
   Standard_Integer nbavant = (stepmodel.IsNull() ? 0 : stepmodel->NbEntities());
+  //:k8 abv 6 Jan 98: using parameter for writing mode (assemblies/shapes)
+  Handle(STEPControl_ActorWrite) ActWrite =
+    Handle(STEPControl_ActorWrite)::DownCast(sw.WS()->NormAdaptor()->ActorWrite());
+  if (!ActWrite.IsNull())
+    ActWrite->SetGroupMode("write.step.assembly");
 
   Handle(Draw_ProgressIndicator) progress = new Draw_ProgressIndicator ( di, 1 );
   progress->NewScope(90,"Translating");

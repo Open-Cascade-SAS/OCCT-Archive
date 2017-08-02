@@ -692,7 +692,8 @@ void  XSDRAWIGES::InitSelect ()
   Handle(IGESSelect_Activator)    igesact = new IGESSelect_Activator;
   IGESControl_Controller::Init();
 //  XSDRAW::SetNorm ("IGES");  trop tot
-  XSDRAW::SetController (XSControl_Controller::Recorded("iges"));
+  Handle(IGESControl_Controller) igesCtl = new IGESControl_Controller;
+  XSDRAW::SetController (igesCtl);
   
   atexit (cleanpilot);
 }

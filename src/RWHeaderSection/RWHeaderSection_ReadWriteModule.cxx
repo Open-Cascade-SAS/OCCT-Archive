@@ -35,10 +35,10 @@
 IMPLEMENT_STANDARD_RTTIEXT(RWHeaderSection_ReadWriteModule,StepData_ReadWriteModule)
 
 // -- General Declarations (Recognize, StepType) ---
-static TCollection_AsciiString PasReco("");    // neutralise StartEntity de SW
-static TCollection_AsciiString Reco_FileName ("FILE_NAME");
-static TCollection_AsciiString Reco_FileDescription ("FILE_DESCRIPTION");
-static TCollection_AsciiString Reco_FileSchema ("FILE_SCHEMA");
+TCollection_AsciiString PasReco("");    // neutralise StartEntity de SW
+TCollection_AsciiString Reco_FileName ("FILE_NAME");
+TCollection_AsciiString Reco_FileDescription ("FILE_DESCRIPTION");
+TCollection_AsciiString Reco_FileSchema ("FILE_SCHEMA");
 
 	// -- Definition of the libraries --
 

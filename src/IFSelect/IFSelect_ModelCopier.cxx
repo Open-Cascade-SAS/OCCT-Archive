@@ -264,8 +264,8 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
 {
   Interface_CheckIterator checks;
   checks.SetName ("X-STEP WorkSession : Send All");
-  Message::DefaultMessenger() <<
-    "** WorkSession : Sending all data"<<Message_EndLine;
+  //Message::DefaultMessenger() <<
+  //  "** WorkSession : Sending all data"<<Message_EndLine;
   Handle(Interface_InterfaceModel)  model = G.Model();
   if (model.IsNull() || protocol.IsNull() || WL.IsNull()) return checks;
 

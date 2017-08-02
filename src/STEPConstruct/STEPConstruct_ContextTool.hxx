@@ -21,6 +21,7 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
+#include <Interface_InterfaceModel.hxx>
 #include <TColStd_SequenceOfInteger.hxx>
 #include <STEPConstruct_AP203Context.hxx>
 #include <Standard_Boolean.hxx>
@@ -55,7 +56,7 @@ public:
   
   //! Initialize ApplicationProtocolDefinition by the first
   //! entity of that type found in the model
-  Standard_EXPORT void SetModel (const Handle(StepData_StepModel)& aStepModel);
+  Standard_EXPORT void SetModel (const Handle(Interface_InterfaceModel)& aStepModel);
   
   Standard_EXPORT Handle(StepBasic_ApplicationProtocolDefinition) GetAPD();
   
@@ -141,6 +142,7 @@ private:
   Handle(StepBasic_ApplicationProtocolDefinition) theAPD;
   STEPConstruct_AP203Context theAP203;
   Handle(StepGeom_Axis2Placement3d) myAxis;
+  Handle(Interface_InterfaceModel) myModel;
 
 
 };

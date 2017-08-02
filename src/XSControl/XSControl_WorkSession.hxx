@@ -23,7 +23,8 @@
 #include <IFSelect_WorkSession.hxx>
 #include <IFSelect_ReturnStatus.hxx>
 #include <XSControl_TransferWriter.hxx>
-class XSControl_Controller;
+#include <XSControl_Controller.hxx>
+//class XSControl_Controller;
 class XSControl_TransferReader;
 class XSControl_Vars;
 class Message_Messenger;
@@ -180,6 +181,13 @@ class XSControl_WorkSession : public IFSelect_WorkSession
   //! resulting entities (in the resulting file model) rather than
   //! with original objects (in fact, their mappers)
   Standard_EXPORT Interface_CheckIterator TransferWriteCheckList() const;
+
+  Standard_EXPORT Handle(XSControl_Controller) Recorded(const Standard_CString theNormName)
+  {
+    if(!myMapCtl.IsBound(theNormName))
+      return 0;
+    return myMapCtl.Find(theNormName);
+  }
   
   const Handle(XSControl_Vars) & Vars() const
   { return myVars; }
@@ -199,6 +207,7 @@ class XSControl_WorkSession : public IFSelect_WorkSession
   Handle(XSControl_TransferWriter) myTransferWriter;
   NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)> myContext;
   Handle(XSControl_Vars) myVars;
+  NCollection_DataMap<TCollection_AsciiString, Handle(XSControl_Controller)> myMapCtl;
 };
 
 #endif // _XSControl_WorkSession_HeaderFile

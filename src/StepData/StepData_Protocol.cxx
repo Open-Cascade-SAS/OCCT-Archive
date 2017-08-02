@@ -70,11 +70,10 @@ Standard_Integer  StepData_Protocol::TypeNumber
 }
 
 
-Standard_CString StepData_Protocol::SchemaName () const
+Standard_CString StepData_Protocol::SchemaName (Standard_Integer /*theShematype*/)
 {
   return thename;
 }
-
 
 Handle(Interface_InterfaceModel)  StepData_Protocol::NewModel () const 
 {

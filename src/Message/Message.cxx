@@ -18,6 +18,7 @@
 #include <Message.hxx>
 #include <Message_Messenger.hxx>
 #include <TCollection_AsciiString.hxx>
+#include <Standard_Mutex.hxx>
 
 #include <stdio.h>
 #include <string.h>
@@ -27,6 +28,8 @@
 //=======================================================================
 const Handle(Message_Messenger)& Message::DefaultMessenger ()
 {
+  static Standard_Mutex aMutex;
+  Standard_Mutex::Sentry aLock(aMutex);
   static Handle(Message_Messenger) aMessenger = new Message_Messenger;
   return aMessenger;
 }

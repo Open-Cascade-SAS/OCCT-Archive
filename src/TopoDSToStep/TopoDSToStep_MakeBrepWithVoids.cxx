@@ -18,6 +18,7 @@
 #include <BRepClass3d.hxx>
 #include <MoniTool_DataMapOfShapeTransient.hxx>
 #include <StdFail_NotDone.hxx>
+#include <Interface_InterfaceModel.hxx>
 #include <StepShape_BrepWithVoids.hxx>
 #include <StepShape_ClosedShell.hxx>
 #include <StepShape_HArray1OfOrientedClosedShell.hxx>
@@ -76,7 +77,7 @@ TopoDSToStep_MakeBrepWithVoids::
 	  CurrentShell.Reverse(); 
 	//:d7 abv 16 Mar 98: try to treat 'open' shells as closed since flag 
 	// IsClosed() is often incorrect (taken from MakeManifoldSolid(Solid))
-	aTool.Init(aMap, Standard_False);
+	aTool.Init(aMap, Standard_False, FP->Model()->IVal("write.surfacecurve.mode"));
 	StepB.Init(CurrentShell, aTool, FP);
 	TopoDSToStep::AddResult ( FP, aTool );
 	if (StepB.IsDone()) {

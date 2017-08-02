@@ -47,6 +47,7 @@ extern "C" void recfile_modeprint (int mode);  // controle trace recfile
 
 #include <Message_Messenger.hxx>
 #include <Message.hxx>
+#include <Standard_Mutex.hxx>
 
 #ifdef OCCT_DEBUG
 #define CHRONOMESURE
@@ -117,115 +118,120 @@ Standard_Integer StepFile_Read
   const Handle(StepData_FileRecognizer)& recodata)
 
 {
-  Handle(Message_Messenger) sout = Message::DefaultMessenger();
-  char *ficnom = nomfic ;  // because const (non reconnu par C)
+  static Standard_Mutex aPars;
+  {
+    Standard_Mutex::Sentry aLock(aPars);
+      
+    Handle(Message_Messenger) sout = Message::DefaultMessenger();
+    char *ficnom = nomfic;  // because const (non reconnu par C)
 
-  checkread->Clear();
-  recfile_modeprint ( (modepr > 0 ? modepr-1 : 0) );
-  FILE* newin = stepread_setinput(ficnom);
-  if (!newin) return -1;
+    checkread->Clear();
+    recfile_modeprint(( modepr > 0 ? modepr - 1 : 0 ));
+    FILE* newin = stepread_setinput(ficnom);
+    if (!newin) return -1;
 #ifdef CHRONOMESURE
-  Standard_Integer n ; 
-  OSD_Timer c ; 
-  c.Reset () ; 
-  c.Start();
-  sout << "      ...    Step File Reading : " << ficnom << "" << Message_EndLine;  
+    Standard_Integer n;
+    OSD_Timer c;
+    c.Reset();
+    c.Start();
+    sout << "      ...    Step File Reading : " << ficnom << "" << Message_EndLine;
 #endif
 
-  try {
-    OCC_CATCH_SIGNALS
-    if (stepread () != 0) {  lir_file_fin(3);  stepread_endinput (newin,ficnom);  return 1;  }
-  }
-  catch (Standard_Failure const& anException) {
-#ifdef OCCT_DEBUG
-    sout << " ...  Exception Raised while reading Step File : " << ficnom << ":\n" << Message_EndLine;
-    sout << anException.GetMessageString();  
-    sout << "    ..." << Message_EndLine;
-#endif
-    (void)anException;
-    lir_file_fin(3);  
-    stepread_endinput (newin,ficnom);  
-    return 1;
-  }
-  // Continue reading of file despite of possible fails
-  //if (checkread->HasFailed()) {  lir_file_fin(3);  stepread_endinput (newin,ficnom);  return 1;  }
-#ifdef CHRONOMESURE
-  sout << "      ...    STEP File   Read    ... " << Message_EndLine;  
-  c.Show(); 
-#endif
-
-
-//  Creation du StepReaderData
-
-  LesTypes[rec_argNondef]    = Interface_ParamVoid ;
-  LesTypes[rec_argSub]       = Interface_ParamSub ;
-  LesTypes[rec_argIdent]     = Interface_ParamIdent ;
-  LesTypes[rec_argInteger]   = Interface_ParamInteger ;
-  LesTypes[rec_argFloat]     = Interface_ParamReal ;
-  LesTypes[rec_argEnum]      = Interface_ParamEnum ;
-  LesTypes[rec_argBinary]    = Interface_ParamBinary ;
-  LesTypes[rec_argText]      = Interface_ParamText ;
-  LesTypes[rec_argHexa]      = Interface_ParamHexa ;
-  LesTypes[rec_argMisc]      = Interface_ParamMisc ;
-
-  Standard_Integer nbhead, nbrec, nbpar;
-  lir_file_nbr (&nbhead,&nbrec,&nbpar);  // renvoi par lex/yacc
-  Handle(StepData_StepReaderData) undirec =
-    new StepData_StepReaderData(nbhead,nbrec,nbpar);  // creation tableau de records
-
-  for ( Standard_Integer nr = 1; nr <= nbrec; nr ++) {
-    int nbarg; char* ident; char* typrec = 0;
-    lir_file_rec (&ident, &typrec, &nbarg);
-    undirec->SetRecord (nr, ident, typrec, nbarg);
-
-    if (nbarg>0) {
-      int typa; char* val;
-      Interface_ParamType newtype;
-      while(lir_file_arg (&typa, &val) == 1) {
-        newtype = LesTypes[typa] ;
-        undirec->AddStepParam (nr, val, newtype);
-      }
+    try {
+      OCC_CATCH_SIGNALS
+        if (stepread() != 0) { lir_file_fin(3);  stepread_endinput(newin, ficnom);  return 1; }
     }
-    undirec->InitParams(nr);
-    lir_file_finrec();
+    catch (Standard_Failure const& anException) {
+#ifdef OCCT_DEBUG
+      sout << " ...  Exception Raised while reading Step File : " << ficnom << ":\n" << Message_EndLine;
+      sout << anException.GetMessageString();
+      sout << "    ..." << Message_EndLine;
+#endif
+      (void)anException;
+      lir_file_fin(3);
+      stepread_endinput(newin, ficnom);
+      return 1;
+    }
+    // Continue reading of file despite of possible fails
+    //if (checkread->HasFailed()) {  lir_file_fin(3);  stepread_endinput (newin,ficnom);  return 1;  }
+#ifdef CHRONOMESURE
+    sout << "      ...    STEP File   Read    ... " << Message_EndLine;
+    c.Show();
+#endif
+
+
+    //  Creation du StepReaderData
+
+    LesTypes[rec_argNondef] = Interface_ParamVoid;
+    LesTypes[rec_argSub] = Interface_ParamSub;
+    LesTypes[rec_argIdent] = Interface_ParamIdent;
+    LesTypes[rec_argInteger] = Interface_ParamInteger;
+    LesTypes[rec_argFloat] = Interface_ParamReal;
+    LesTypes[rec_argEnum] = Interface_ParamEnum;
+    LesTypes[rec_argBinary] = Interface_ParamBinary;
+    LesTypes[rec_argText] = Interface_ParamText;
+    LesTypes[rec_argHexa] = Interface_ParamHexa;
+    LesTypes[rec_argMisc] = Interface_ParamMisc;
+
+    Standard_Integer nbhead, nbrec, nbpar;
+    lir_file_nbr(&nbhead, &nbrec, &nbpar);  // renvoi par lex/yacc
+    Handle(StepData_StepReaderData) undirec =
+      new StepData_StepReaderData(nbhead, nbrec, nbpar);  // creation tableau de records
+
+    for (Standard_Integer nr = 1; nr <= nbrec; nr++) {
+      int nbarg; char* ident; char* typrec = 0;
+      lir_file_rec(&ident, &typrec, &nbarg);
+      undirec->SetRecord(nr, ident, typrec, nbarg);
+
+      if (nbarg > 0) {
+        int typa; char* val;
+        Interface_ParamType newtype;
+        while (lir_file_arg(&typa, &val) == 1) {
+          newtype = LesTypes[typa];
+          undirec->AddStepParam(nr, val, newtype);
+        }
+      }
+      undirec->InitParams(nr);
+      lir_file_finrec();
+    }
+    lir_file_fin(1);
+    //  on a undirec pret pour la suite
+
+#ifdef CHRONOMESURE
+    sout << "      ... Step File loaded  ... " << Message_EndLine;
+    c.Show();
+    sout << "   " << undirec->NbRecords() <<
+      " records (entities,sub-lists,scopes), " << nbpar << " parameters\n" << Message_EndLine;
+#endif
+
+    //   Analyse : par StepReaderTool
+
+    StepData_StepReaderTool readtool(undirec, protocol);
+    readtool.SetErrorHandle(Standard_True);
+
+    readtool.PrepareHeader(recoheader);  // Header. reco nul -> pour Protocol
+    readtool.Prepare(recodata);          // Data.   reco nul -> pour Protocol
+
+#ifdef CHRONOMESURE
+    sout << "      ... Parameters prepared ... ";
+    c.Show();
+#endif
+
+    readtool.LoadModel(stepmodel);
+    if (stepmodel->Protocol().IsNull()) stepmodel->SetProtocol(protocol);
+    lir_file_fin(2);
+
+    readtool.Clear();
+    undirec.Nullify();
+#ifdef CHRONOMESURE
+    sout << "      ...   Objets analysed  ... " << Message_EndLine;
+    c.Show();
+    n = stepmodel->NbEntities();
+    sout << "  STEP Loading done : " << n << " Entities" << Message_EndLine;
+#endif
+
+    stepread_endinput(newin, ficnom);  return 0;
   }
-  lir_file_fin(1);
-//  on a undirec pret pour la suite
-
-#ifdef CHRONOMESURE
-  sout << "      ... Step File loaded  ... " << Message_EndLine; 
-  c.Show();
-  sout << "   "<< undirec->NbRecords () <<
-      " records (entities,sub-lists,scopes), "<< nbpar << " parameters\n" << Message_EndLine;
-#endif
-
-//   Analyse : par StepReaderTool
-
-  StepData_StepReaderTool readtool (undirec,protocol);
-  readtool.SetErrorHandle (Standard_True);
-
-  readtool.PrepareHeader(recoheader);  // Header. reco nul -> pour Protocol
-  readtool.Prepare(recodata);          // Data.   reco nul -> pour Protocol
-
-#ifdef CHRONOMESURE
-  sout << "      ... Parameters prepared ... "; 
-  c.Show(); 
-#endif
-
-  readtool.LoadModel(stepmodel);
-  if (stepmodel->Protocol().IsNull()) stepmodel->SetProtocol (protocol);
-  lir_file_fin(2);
-  
-  readtool.Clear();
-  undirec.Nullify();
-#ifdef CHRONOMESURE
-  sout << "      ...   Objets analysed  ... " << Message_EndLine; 
-  c.Show();
-  n = stepmodel->NbEntities() ;
-  sout << "  STEP Loading done : " << n << " Entities" << Message_EndLine;
-#endif
-  
-  stepread_endinput (newin,ficnom);  return 0 ;
 }
 
 void StepFile_Interrupt (char* mess)

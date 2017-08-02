@@ -19,7 +19,6 @@
 #include <Interface_Check.hxx>
 #include <Interface_InterfaceModel.hxx>
 #include <Interface_ShareFlags.hxx>
-#include <Interface_Static.hxx>
 #include <Message_ProgressSentry.hxx>
 #include <ShapeExtend_Explorer.hxx>
 #include <Standard_Transient.hxx>
@@ -78,11 +77,19 @@ Standard_Boolean  XSControl_Reader::SetNorm (const Standard_CString norm)
 {
   if (thesession.IsNull()) SetWS (new XSControl_WorkSession);
   Standard_Boolean stat = thesession->SelectNorm (norm);
-  if (stat) {
-    thesession->InitTransferReader(0);
-    thesession->InitTransferReader(4);
-  }
+  if (stat) initTransferReader();
   return stat;
+}
+
+//=======================================================================
+//function : InitTransferReader
+//purpose  : 
+//=======================================================================
+void XSControl_Reader::initTransferReader()
+{
+  if (thesession.IsNull()) return;
+  thesession->InitTransferReader(0);
+  thesession->InitTransferReader(4);
 }
 
 
@@ -101,8 +108,7 @@ void XSControl_Reader::SetWS(const Handle(XSControl_WorkSession)& WS,
   if (thesession->NormAdaptor().IsNull()) return;
   Handle(Interface_InterfaceModel) model = thesession->Model ();
   if (scratch || model.IsNull())   model = thesession->NewModel ();
-  thesession->InitTransferReader(0);
-  thesession->InitTransferReader(4);
+  initTransferReader();
 }
 
 

@@ -1034,14 +1034,14 @@ Standard_Boolean StepData_StepReaderData::ReadEntity(const Standard_Integer num,
     if (FP.ParamType() == Interface_ParamIdent) {
       warn = (acceptvoid > 0);
       if (nent > 0) {
-	Handle(Standard_Transient) entent = BoundEntity(nent);
+        Handle(Standard_Transient) entent = BoundEntity(nent);
         if (entent.IsNull() || !entent->IsKind(atype))
         {
           errmess = new String("Parameter n0.%d (%s) : Entity has illegal type");
           if (!entent.IsNull() && entent->IsKind(STANDARD_TYPE(StepData_UndefinedEntity)))
             ent = entent;
         }
-	else ent = entent;
+        else ent = entent;
       }
       else errmess = new String("Parameter n0.%d (%s) : Unresolved reference");
     }
@@ -1082,15 +1082,15 @@ Standard_Boolean StepData_StepReaderData::ReadEntity(const Standard_Integer num,
     if (FP.ParamType() == Interface_ParamIdent) {
       warn = (acceptvoid > 0);
       if (nent > 0) {
-	Handle(Standard_Transient) entent = BoundEntity(nent);
+        Handle(Standard_Transient) entent = BoundEntity(nent);
         if (!sel.Matches(entent))
         {
           errmess = new String("Parameter n0.%d (%s) : Entity has illegal type");
-          //fot not suppported STEP entity
+          //for not suppported STEP entity
           if (!entent.IsNull() && entent->IsKind(STANDARD_TYPE(StepData_UndefinedEntity)))
             sel.SetValue(entent);
         }
-	else
+        else
           sel.SetValue(entent);
       }
       else

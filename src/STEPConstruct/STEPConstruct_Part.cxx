@@ -16,7 +16,6 @@
 //:j4 gka 16.03.99 S4134
 //    abv 20.11.99 renamed from StepPDR_SDRtool
 
-#include <Interface_Static.hxx>
 #include <StepBasic_ApplicationContext.hxx>
 #include <StepBasic_DesignContext.hxx>
 #include <StepBasic_HArray1OfProduct.hxx>
@@ -59,12 +58,13 @@ STEPConstruct_Part::STEPConstruct_Part()
 //purpose  : 
 //=======================================================================
 
-void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& SR,
-				 const Handle(TCollection_HAsciiString)& aName,
-				 const Handle(StepBasic_ApplicationContext)& AC)
+void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& theShape,
+                                 const Handle(TCollection_HAsciiString)& theName,
+                                 const Handle(StepBasic_ApplicationContext)& theAppContext,
+                                 const Handle(Interface_InterfaceModel)& theModel)
 {
   // get current schema
-  Standard_Integer schema = Interface_Static::IVal("write.step.schema");
+  Standard_Integer schema = theModel->IVal("write.step.schema"); 
   
   // create PC
   Handle(StepBasic_ProductContext) PC;
@@ -82,14 +82,14 @@ void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& SR
   Handle(TCollection_HAsciiString) PCname = new TCollection_HAsciiString("");
   Handle(TCollection_HAsciiString) PCdisciplineType = 
     new TCollection_HAsciiString("mechanical");
-  PC->Init(PCname, AC, PCdisciplineType);
+  PC->Init(PCname, theAppContext, PCdisciplineType);
   
   // create product
   Handle(StepBasic_Product) P = new StepBasic_Product;
   Handle(StepBasic_HArray1OfProductContext) PCs = new StepBasic_HArray1OfProductContext(1,1);  
   PCs->SetValue(1,PC);
   Handle(TCollection_HAsciiString) Pdescription = new TCollection_HAsciiString("");
-  P->Init(aName, aName, Pdescription, PCs);
+  P->Init(theName, theName, Pdescription, PCs);
 
   // create PDF
   Handle(StepBasic_ProductDefinitionFormation) PDF;
@@ -123,7 +123,7 @@ void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& SR
           break;
   }
   Handle(TCollection_HAsciiString) PDClifeCycleStage = new TCollection_HAsciiString("design");
-  PDC->Init(PDCname, AC, PDClifeCycleStage);
+  PDC->Init(PDCname, theAppContext, PDClifeCycleStage);
 
   // create PD
   Handle(StepBasic_ProductDefinition) PD = new StepBasic_ProductDefinition;
@@ -143,11 +143,12 @@ void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& SR
   mySDR  = new StepShape_ShapeDefinitionRepresentation;
   StepRepr_RepresentedDefinition RD;
   RD.SetValue ( PDS );
-  mySDR->Init(RD, SR);
+  mySDR->Init(RD, theShape);
 
   // and an associated PRPC
   Handle(TCollection_HAsciiString) PRPCName;
-  switch (Interface_Static::IVal("write.step.schema")) {
+  
+  switch (schema) {
   default:
   case 1: 
     myPRPC = new StepBasic_ProductType; 

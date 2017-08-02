@@ -86,12 +86,19 @@ Standard_Boolean  XSControl_WorkSession::SelectNorm(const Standard_CString normn
 {
   // Old norm and results
   myTransferReader->Clear(-1);
-  //  ????  En toute rigueur, menage a faire dans XWS : virer les items
-  //        ( a la limite, pourquoi pas, refaire XWS en entier)
-
-  Handle(XSControl_Controller) newadapt = XSControl_Controller::Recorded (normname);
+  if (!myController.IsNull())
+  {
+    TCollection_AsciiString aN1 =myController->Name(Standard_False);
+    TCollection_AsciiString aN2 = myController->Name(Standard_True);
+    
+    if (aN1.IsEqual(normname) || aN2.IsEqual(normname))
+      return Standard_True;
+  }
+ 
+  Handle(XSControl_Controller) newadapt = (!myMapCtl.IsBound(normname) ? 
+    XSControl_Controller::Recorded(normname) : myMapCtl.Find(normname));
   if (newadapt.IsNull()) return Standard_False;
-  if (newadapt == myController) return Standard_True;
+ 
   SetController (newadapt);
   return Standard_True;
 }
@@ -105,6 +112,7 @@ Standard_Boolean  XSControl_WorkSession::SelectNorm(const Standard_CString normn
 void XSControl_WorkSession::SetController(const Handle(XSControl_Controller)& ctl)
 {
   myController = ctl;
+  SetModel(myController->NewModel());
 
   SetLibrary   ( myController->WorkLibrary() );
   SetProtocol  ( myController->Protocol() );
@@ -120,6 +128,21 @@ void XSControl_WorkSession::SetController(const Handle(XSControl_Controller)& ct
 
   myTransferReader->SetController (myController);
   myTransferWriter->SetController (myController);
+  if (!myMapCtl.IsBound(ctl->Name(Standard_True)))
+  {
+    myMapCtl.Bind(ctl->Name(Standard_True), ctl);
+    myMapCtl.Bind(ctl->Name(Standard_False), ctl);
+  }
+  else
+  {
+    Handle(XSControl_Controller) aController = myMapCtl.Find(ctl->Name(Standard_True));
+    if (!aController->DynamicType()->IsKind(ctl->DynamicType()))
+    {
+      myMapCtl.Bind(ctl->Name(Standard_True), ctl);
+      myMapCtl.Bind(ctl->Name(Standard_False), ctl);
+    }
+      
+  }
 }
 
 

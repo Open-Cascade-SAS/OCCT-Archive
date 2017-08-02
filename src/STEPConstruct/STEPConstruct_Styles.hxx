@@ -21,6 +21,7 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
+#include <Interface_InterfaceModel.hxx>
 #include <TColStd_IndexedDataMapOfTransientTransient.hxx>
 #include <TColStd_IndexedMapOfTransient.hxx>
 #include <TColStd_SequenceOfTransient.hxx>
@@ -93,7 +94,9 @@ public:
   
   //! Create MDGPR, fill it with all the styles previously defined,
   //! and add it to the model
-  Standard_EXPORT Standard_Boolean CreateMDGPR (const Handle(StepRepr_RepresentationContext)& Context, Handle(StepVisual_MechanicalDesignGeometricPresentationRepresentation)& MDGPR);
+  Standard_EXPORT Standard_Boolean CreateMDGPR (const Handle(StepRepr_RepresentationContext)& theContext,
+                                                Handle(StepVisual_MechanicalDesignGeometricPresentationRepresentation)& theMDGPR,
+                                                const Handle(Interface_InterfaceModel) theModel);
   
   //! Create MDGPR, fill it with all the styles previously defined,
   //! and add it to the model

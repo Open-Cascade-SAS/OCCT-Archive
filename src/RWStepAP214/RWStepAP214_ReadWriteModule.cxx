@@ -2062,8 +2062,8 @@ static TCollection_AsciiString Reco_SurfaceStyleRenderingWithProperties("SURFACE
 
 // -- Definition of the libraries --
 
-static NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typenums;
-static NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typeshor;
+//static NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typenums;
+//static NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typeshor;
 
 RWStepAP214_ReadWriteModule::RWStepAP214_ReadWriteModule ()
 {

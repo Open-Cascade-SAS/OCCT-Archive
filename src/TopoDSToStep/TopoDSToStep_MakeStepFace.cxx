@@ -47,11 +47,11 @@
 #include <Geom_TrimmedCurve.hxx>
 #include <GeomToStep_MakeCurve.hxx>
 #include <GeomToStep_MakeSurface.hxx>
-#include <Interface_Static.hxx>
 #include <Precision.hxx>
 #include <ShapeAlgo.hxx>
 #include <ShapeAlgo_AlgoContainer.hxx>
 #include <StdFail_NotDone.hxx>
+#include <StepData_StepModel.hxx>
 #include <StepGeom_Curve.hxx>
 #include <StepGeom_DegenerateToroidalSurface.hxx>
 #include <StepGeom_GeometricRepresentationContextAndParametricRepresentationContext.hxx>
@@ -124,7 +124,8 @@ void TopoDSToStep_MakeStepFace::Init(const TopoDS_Face& aFace,
     new TransferBRep_ShapeMapper(aFace);  // on ne sait jamais
 
   // [BEGIN] Processing non-manifold topology (another approach) (ssv; 10.11.2010)
-  Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
+  Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(FP->Model());
+  Standard_Boolean isNMMode = aModel->IVal("write.step.nonmanifold") != 0;
   if (isNMMode) {
     Handle(StepShape_AdvancedFace) anAF;
     Handle(TransferBRep_ShapeMapper) aSTEPMapper = TransferBRep::ShapeMapper(FP, aFace);
@@ -220,16 +221,20 @@ void TopoDSToStep_MakeStepFace::Init(const TopoDS_Face& aFace,
       
       // create basis curve
       Standard_Real UF, VF, UL, VL;
-      ShapeAlgo::AlgoContainer()->GetFaceUVBounds ( aFace, UF, UL, VF, VL );
+      Handle(ShapeAlgo_AlgoContainer) aContainer = new ShapeAlgo_AlgoContainer;
+      aContainer->GetFaceUVBounds ( aFace, UF, UL, VF, VL );
       gp_Ax2 Ax2 ( pos.XYZ() + X.XYZ() * TS->MajorRadius(), X ^ dir, X );
       Handle(Geom_Curve) BasisCurve = new Geom_Circle ( Ax2, TS->MinorRadius() );
       
       // convert basis curve to bspline in order to avoid self-intersecting
       // surface of revolution (necessary e.g. for CATIA)
-      if ( VL - VF - 2 * M_PI < -Precision::PConfusion() ) 
-	BasisCurve = ShapeAlgo::AlgoContainer()->ConvertCurveToBSpline (BasisCurve, VF, VL, Precision::Approximation(),
-									GeomAbs_C1, 100, 9);
-//	BasisCurve = new Geom_TrimmedCurve ( BasisCurve, VF, VL );
+      if (VL - VF - 2 * M_PI < -Precision::PConfusion())
+      {
+        //Handle(ShapeAlgo_AlgoContainer) aContainer = new ShapeAlgo_AlgoContainer;
+        BasisCurve = aContainer->ConvertCurveToBSpline(BasisCurve, VF, VL, Precision::Approximation(),
+                                                         GeomAbs_C1, 100, 9);
+        //BasisCurve = new Geom_TrimmedCurve ( BasisCurve, VF, VL );
+      }
 
       // create surface of revolution
       gp_Ax1 Axis = Ax3.Axis();

@@ -17,7 +17,6 @@
 //abv 17.11.99: renamed from StepPDR_MakeUnitAndToleranceContext and merged with STEPControl_Unit
 //abv 30.02.00: ability to write file in units other than MM
 
-#include <Interface_Static.hxx>
 #include <StepBasic_ConversionBasedUnit.hxx>
 #include <StepBasic_ConversionBasedUnitAndAreaUnit.hxx>
 #include <StepBasic_ConversionBasedUnitAndLengthUnit.hxx>
@@ -68,7 +67,8 @@ STEPConstruct_UnitContext::STEPConstruct_UnitContext() : done(Standard_False)
 //purpose  : 
 //=======================================================================
 
-void STEPConstruct_UnitContext::Init(const Standard_Real Tol3d) 
+void STEPConstruct_UnitContext::Init(const Standard_Real Tol3d,
+                                     Handle(Interface_InterfaceModel)& theModel)
 {
   done = Standard_True;
 
@@ -85,18 +85,19 @@ void STEPConstruct_UnitContext::Init(const Standard_Real Tol3d)
   Standard_CString uName = 0;
   Standard_Boolean hasPref = Standard_True;
   StepBasic_SiPrefix siPref = StepBasic_spMilli;
-  switch ( Interface_Static::IVal ( "write.step.unit" ) ) {
-  case  1 : uName = "INCH";             break;
-  default :
-  case  2 :                             break;
-  case  4 : uName = "FOOT";             break;
-  case  5 : uName = "MILE";             break;
-  case  6 : hasPref = Standard_False;   break;
-  case  7 : siPref = StepBasic_spKilo;  break;
-  case  8 : uName = "MIL";              break;
-  case  9 : siPref = StepBasic_spMicro; break;
-  case 10 : siPref = StepBasic_spCenti; break;
-  case 11 : uName = "MICROINCH";        break;
+  Standard_Integer valunits = theModel->IVal("write.step.unit");
+  switch (valunits) {
+    case  1: uName = "INCH";             break;
+    default:
+    case  2:                             break;
+    case  4: uName = "FOOT";             break;
+    case  5: uName = "MILE";             break;
+    case  6: hasPref = Standard_False;   break;
+    case  7: siPref = StepBasic_spKilo;  break;
+    case  8: uName = "MIL";              break;
+    case  9: siPref = StepBasic_spMicro; break;
+    case 10: siPref = StepBasic_spCenti; break;
+    case 11: uName = "MICROINCH";        break;
   }
   
   Handle(StepBasic_SiUnitAndLengthUnit) siUnit =
@@ -106,7 +107,7 @@ void STEPConstruct_UnitContext::Init(const Standard_Real Tol3d)
   if ( uName ) { // for non-metric units, create conversion_based_unit
     Handle(StepBasic_MeasureValueMember) val = new StepBasic_MeasureValueMember;
     val->SetName("LENGTH_UNIT");
-    val->SetReal ( UnitsMethods::GetLengthFactorValue ( Interface_Static::IVal ( "write.step.unit" ) ) );
+    val->SetReal(UnitsMethods::GetLengthFactorValue(valunits));
 
     Handle(StepBasic_LengthMeasureWithUnit) measure = new StepBasic_LengthMeasureWithUnit;
     StepBasic_Unit Unit;

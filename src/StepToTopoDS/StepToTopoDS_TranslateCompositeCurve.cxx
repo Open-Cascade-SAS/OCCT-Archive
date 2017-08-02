@@ -22,7 +22,7 @@
 #include <Geom2d_Curve.hxx>
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
-#include <Interface_Static.hxx>
+#include <Interface_InterfaceModel.hxx>
 #include <Precision.hxx>
 #include <ShapeExtend_WireData.hxx>
 #include <ShapeFix_Wire.hxx>
@@ -94,9 +94,9 @@ Standard_Boolean StepToTopoDS_TranslateCompositeCurve::Init (const Handle(StepGe
 //=======================================================================
 
 Standard_Boolean StepToTopoDS_TranslateCompositeCurve::Init (const Handle(StepGeom_CompositeCurve) &CC,
-							     const Handle(Transfer_TransientProcess) &TP,
-							     const Handle(StepGeom_Surface) &S,
-							     const Handle(Geom_Surface) &Surf)
+                                                             const Handle(Transfer_TransientProcess) &TP,
+                                                             const Handle(StepGeom_Surface) &S,
+                                                             const Handle(Geom_Surface) &Surf)
 {
   myWire.Nullify();
   myInfiniteSegment = Standard_False;
@@ -106,7 +106,7 @@ Standard_Boolean StepToTopoDS_TranslateCompositeCurve::Init (const Handle(StepGe
   Standard_Boolean isClosed = Standard_False;
 
   if ( SurfMode ) {
-    Standard_Integer modepcurve = Interface_Static::IVal("read.surfacecurve.mode");
+    Standard_Integer modepcurve = TP->Model()->IVal("read.surfacecurve.mode");
     if ( modepcurve ==-3 ) SurfMode = Standard_False;
   }
   

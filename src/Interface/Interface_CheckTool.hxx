@@ -131,10 +131,12 @@ protected:
 private:
 
 
+  Standard_EXPORT void raisecheck(Standard_Failure& theException, Handle(Interface_Check)& ach);
 
   Handle(Interface_GTool) thegtool;
   Interface_ShareTool theshare;
   Standard_Integer thestat;
+  Standard_Integer errh;
 
 
 };
