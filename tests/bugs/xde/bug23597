@@ -13,10 +13,9 @@ if { [file exists ${filedir}/${TheFileName}.stp] } {
   puts "Error : There is old ${filedir}/${TheFileName}.stp file"
 }
 
-xnorm STEP
 restore [locate_data_file ${TheFileName}.brep] f
 param write.step.unit FT
-newmodel
+
 stepwrite a f ${filedir}/${TheFileName}.stp
 
 if { ![file exists ${filedir}/${TheFileName}.stp] } {

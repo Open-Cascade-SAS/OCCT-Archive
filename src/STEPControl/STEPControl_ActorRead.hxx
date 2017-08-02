@@ -25,8 +25,10 @@
 #include <Transfer_ActorOfTransientProcess.hxx>
 #include <Standard_Boolean.hxx>
 #include <Standard_Integer.hxx>
+#include <StepRepr_ProductDefinitionShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <XSAlgo_AlgoContainer.hxx>
 class StepRepr_Representation;
 class Standard_Transient;
 class Transfer_Binder;
@@ -75,6 +77,9 @@ public:
   //! reset units and tolerances context to default
   //! (mm, radians, read.precision.val, etc.)
   Standard_EXPORT void ResetUnits();
+
+  //! Sets step model for translations
+  Standard_EXPORT void SetModel(Handle(Interface_InterfaceModel)& theModel);
   
   //! Computes transformation defined by two axis placements (in MAPPED_ITEM
   //! or ITEM_DEFINED_TRANSFORMATION) taking into account their
@@ -130,10 +135,18 @@ private:
   
   Standard_EXPORT void computeIDEASClosings (const TopoDS_Compound& comp, TopTools_IndexedDataMapOfShapeListOfShape& shellClosingMap);
 
+  Standard_EXPORT void getSDR(const Handle(StepRepr_ProductDefinitionShape)& PDS,
+                              Handle(TColStd_HSequenceOfTransient)& listSDR,
+                              Handle(TColStd_HSequenceOfTransient)& listNAUO,
+                              Handle(TColStd_HSequenceOfTransient)& listSDRAspect,
+                              const Handle(Transfer_TransientProcess)& TP);
+
   StepToTopoDS_NMTool myNMTool;
   Standard_Real myPrecision;
   Standard_Real myMaxTol;
   Handle(StepRepr_Representation) mySRContext;
+  Handle(XSAlgo_AlgoContainer) myXSAlgoContainer;
+  Handle(Interface_InterfaceModel) myModel;
 
 
 };

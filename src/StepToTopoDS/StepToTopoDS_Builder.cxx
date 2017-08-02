@@ -30,7 +30,6 @@
 #include <Geom_Curve.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_Surface.hxx>
-#include <Interface_Static.hxx>
 #include <Message_Messenger.hxx>
 #include <Message_ProgressSentry.hxx>
 #include <Precision.hxx>
@@ -89,10 +88,12 @@
 #include <TransferBRep.hxx>
 
 #include <stdio.h>
-static void ResetPreci (const TopoDS_Shape& S, Standard_Real maxtol)
+static void ResetPreci (const TopoDS_Shape& S,
+                        Standard_Real maxtol,
+                        const Handle(Interface_InterfaceModel)& theModel)
 {
   //:S4136
-  Standard_Integer modetol = Interface_Static::IVal("read.maxprecision.mode");
+  Standard_Integer modetol = theModel->IVal("read.maxprecision.mode");
   if (modetol) {
     ShapeFix_ShapeTolerance STU;
     STU.LimitTolerance (S,Precision::Confusion(),maxtol);
@@ -228,7 +229,7 @@ void StepToTopoDS_Builder::Init
     }
 
 //:S4136    ShapeFix::SameParameter (S,Standard_False);
-    ResetPreci (S, MaxTol());
+    ResetPreci (S, MaxTol(), TP->Model());
   }
   else {
     TP->AddWarning(aShell," OuterShell from ManifoldSolidBrep not mapped to TopoDS");
@@ -336,7 +337,7 @@ void StepToTopoDS_Builder::Init
   }
 
 //:S4136  ShapeFix::SameParameter (S,Standard_False);
-  ResetPreci (S, MaxTol());
+  ResetPreci (S, MaxTol(), TP->Model());
 }
 
 // ============================================================================
@@ -543,8 +544,8 @@ void StepToTopoDS_Builder::Init
   }
 
 //:S4136  ShapeFix::SameParameter (S,Standard_False);
-  ResetPreci (S, MaxTol());
-  ResetPreci (Shl, MaxTol()); //skl
+  ResetPreci (S, MaxTol(), TP->Model());
+  ResetPreci (Shl, MaxTol(), TP->Model()); //skl
 }
 
 // ============================================================================
@@ -604,7 +605,7 @@ void StepToTopoDS_Builder::Init (const Handle(StepShape_EdgeBasedWireframeModel)
   myError  = ( myResult.IsNull() ? StepToTopoDS_BuilderDone : StepToTopoDS_BuilderOther );
   done     = ! myResult.IsNull();
 
-  ResetPreci (myResult, MaxTol());
+  ResetPreci (myResult, MaxTol(), TP->Model());
 }
 
 // ============================================================================
@@ -666,7 +667,7 @@ void StepToTopoDS_Builder::Init (const Handle(StepShape_FaceBasedSurfaceModel)& 
   myError  = ( myResult.IsNull() ? StepToTopoDS_BuilderDone : StepToTopoDS_BuilderOther );
   done     = ! myResult.IsNull();
 
-  ResetPreci (myResult, MaxTol());
+  ResetPreci (myResult, MaxTol(), TP->Model());
 }
 
 

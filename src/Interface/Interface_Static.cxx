@@ -19,6 +19,7 @@
 #include <Standard_Transient.hxx>
 #include <Standard_Type.hxx>
 #include <TCollection_HAsciiString.hxx>
+#include <Standard_Mutex.hxx>
 
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(Interface_Static,Interface_TypedValue)
@@ -129,8 +130,6 @@ Standard_Boolean  Interface_Static::UpdatedStatus () const
   return theupdate;
 }
 
-
-
 //  #######################################################################
 //  #########    DICTIONNAIRE DES STATICS (static sur Static)    ##########
 
@@ -153,7 +152,6 @@ Standard_Boolean  Interface_Static::Init
   return Standard_True;
 }
 
-
 Standard_Boolean  Interface_Static::Init
   (const Standard_CString family,  const Standard_CString name,
    const Standard_Character type, const Standard_CString init)
@@ -170,30 +168,7 @@ Standard_Boolean  Interface_Static::Init
     case '&' : {
       Handle(Interface_Static) unstat = Interface_Static::Static(name);
       if (unstat.IsNull()) return Standard_False;
-//    Editions : init donne un petit texte d edition, en 2 termes "cmd var" :
-//  imin <ival>  imax <ival>  rmin <rval>  rmax <rval>  unit <def>
-//  enum <from>  ematch <from>  eval <cval>
-      Standard_Integer i,iblc = 0;
-      for (i = 0; init[i] != '\0'; i ++) if (init[i] == ' ') iblc = i+1;
-//  Reconnaissance du sous-cas et aiguillage
-      if      (init[0] == 'i' && init[2] == 'i')
-	unstat->SetIntegerLimit (Standard_False,atoi(&init[iblc]));
-      else if (init[0] == 'i' && init[2] == 'a')
-	unstat->SetIntegerLimit (Standard_True ,atoi(&init[iblc]));
-      else if (init[0] == 'r' && init[2] == 'i')
-	unstat->SetRealLimit (Standard_False,Atof(&init[iblc]));
-      else if (init[0] == 'r' && init[2] == 'a')
-	unstat->SetRealLimit (Standard_True ,Atof(&init[iblc]));
-      else if (init[0] == 'u')
-	unstat->SetUnitDef (&init[iblc]);
-      else if (init[0] == 'e' && init[1] == 'm')
-	unstat->StartEnum (atoi(&init[iblc]),Standard_True);
-      else if (init[0] == 'e' && init[1] == 'n')
-	unstat->StartEnum (atoi(&init[iblc]),Standard_False);
-      else if (init[0] == 'e' && init[1] == 'v')
-	unstat->AddEnum (&init[iblc]);
-      else return Standard_False;
-      return Standard_True;
+      return Interface_Static::InitValues(unstat, init);
     }
     default  : return Standard_False;
   }
@@ -205,13 +180,44 @@ Standard_Boolean  Interface_Static::Init
   return Standard_True;
 }
 
+Standard_Boolean Interface_Static::InitValues(Handle(Interface_Static)& theStatic, const Standard_CString init)
+{
+  //  Editions : init donne un petit texte d edition, en 2 termes "cmd var" :
+  //  imin <ival>  imax <ival>  rmin <rval>  rmax <rval>  unit <def>
+  //  enum <from>  ematch <from>  eval <cval>
+  Standard_Integer i, iblc = 0;
+  for (i = 0; init[i] != '\0'; i++) if (init[i] == ' ') iblc = i + 1;
+  //  Reconnaissance du sous-cas et aiguillage
+  if (init[0] == 'i' && init[2] == 'i')
+    theStatic->SetIntegerLimit(Standard_False, atoi(&init[iblc]));
+  else if (init[0] == 'i' && init[2] == 'a')
+    theStatic->SetIntegerLimit(Standard_True, atoi(&init[iblc]));
+  else if (init[0] == 'r' && init[2] == 'i')
+    theStatic->SetRealLimit(Standard_False, Atof(&init[iblc]));
+  else if (init[0] == 'r' && init[2] == 'a')
+    theStatic->SetRealLimit(Standard_True, Atof(&init[iblc]));
+  else if (init[0] == 'u')
+    theStatic->SetUnitDef(&init[iblc]);
+  else if (init[0] == 'e' && init[1] == 'm')
+    theStatic->StartEnum(atoi(&init[iblc]), Standard_True);
+  else if (init[0] == 'e' && init[1] == 'n')
+    theStatic->StartEnum(atoi(&init[iblc]), Standard_False);
+  else if (init[0] == 'e' && init[1] == 'v')
+    theStatic->AddEnum(&init[iblc]);
+  else return Standard_False;
+  return Standard_True;
+}
 
 Handle(Interface_Static)  Interface_Static::Static
   (const Standard_CString name)
 {
-  Handle(Standard_Transient) result;
-  MoniTool_TypedValue::Stats().Find(name, result);
-  return Handle(Interface_Static)::DownCast(result);
+  static Standard_Mutex aPars;
+  {
+    Standard_Mutex::Sentry aLock(aPars);
+    Handle(Standard_Transient) result;
+    MoniTool_TypedValue::Stats().Find(name, result);
+    return Handle(Interface_Static)::DownCast(result);
+  }
 }
 
 

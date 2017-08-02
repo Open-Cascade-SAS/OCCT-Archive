@@ -20,6 +20,7 @@
 #include <Standard.hxx>
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
+#include <StepAP214_Protocol.hxx>
 
 class RWStepAP214_ReadWriteModule;
 class RWStepAP214_GeneralModule;
@@ -60,7 +61,7 @@ public:
 
   
   //! enforced the initialisation of the  libraries
-  Standard_EXPORT static void Init();
+  Standard_EXPORT static void Init(const Handle(StepAP214_Protocol)& theProto);
 
 
 

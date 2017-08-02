@@ -16,7 +16,6 @@
 #include <Interface_Macros.hxx>
 #include <Message_ProgressIndicator.hxx>
 #include <STEPControl_ActorWrite.hxx>
-#include <STEPControl_Controller.hxx>
 #include <STEPControl_Writer.hxx>
 #include <StepData_StepModel.hxx>
 #include <TopExp_Explorer.hxx>
@@ -31,28 +30,46 @@
 //=======================================================================
 STEPControl_Writer::STEPControl_Writer ()
 {
-  STEPControl_Controller::Init();
-  SetWS (new XSControl_WorkSession);
+  initWriter(new XSControl_WorkSession, new STEPControl_Controller);
 }
-
 
 //=======================================================================
 //function : STEPControl_Writer
-
 //purpose  : 
 //=======================================================================
-
-STEPControl_Writer::STEPControl_Writer
-  (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch)
+STEPControl_Writer::STEPControl_Writer (const Handle(XSControl_WorkSession)& theWS,
+                                        const Standard_Boolean theScratch)
 {
-  STEPControl_Controller::Init();
-  SetWS (WS,scratch);
+  initWriter(theWS, new STEPControl_Controller, theScratch);
 }
 
+//=======================================================================
+//function : STEPControl_Writer
+//purpose  : 
+//=======================================================================
+STEPControl_Writer::STEPControl_Writer(const Handle(XSControl_WorkSession)& theWS,
+                                       const Handle(XSControl_Controller)& theController,
+                                       const Standard_Boolean theScratch)
+{
+  initWriter(theWS, theController, theScratch);
+}
+
+//=======================================================================
+//function : initWriter
+//purpose  : 
+//=======================================================================
+void STEPControl_Writer::initWriter(const Handle(XSControl_WorkSession)& theWS,
+                                    const Handle(XSControl_Controller)& theController,
+                                    const Standard_Boolean scratch)
+{
+  myController = theController;
+  theWS->SetController(myController);
+  SetWS(theWS, scratch);
+  myController->Init(WS());
+}
 
 //=======================================================================
 //function : SetWS
-
 //purpose  : 
 //=======================================================================
 
@@ -62,7 +79,9 @@ void STEPControl_Writer::SetWS(const Handle(XSControl_WorkSession)& WS,
   thesession = WS;
   thesession->SelectNorm("STEP");
   thesession->InitTransferReader(0);
-  Handle(StepData_StepModel) model = Model (scratch);
+  Handle(StepData_StepModel) aModel = Model (scratch);
+  DeclareAndCast(STEPControl_ActorWrite, anActor, myController->ActorWrite());
+  if (!anActor.IsNull()) anActor->SetModel(aModel);
 }
 
 
@@ -99,8 +118,8 @@ Handle(StepData_StepModel) STEPControl_Writer::Model
 
 void STEPControl_Writer::SetTolerance (const Standard_Real Tol)
 {
-  DeclareAndCast(STEPControl_ActorWrite,act,WS()->NormAdaptor()->ActorWrite());
-  if (!act.IsNull()) act->SetTolerance (Tol);
+  DeclareAndCast(STEPControl_ActorWrite, anActor, myController->ActorWrite());
+  if (!anActor.IsNull()) anActor->SetTolerance (Tol);
 }
 
 
@@ -145,7 +164,7 @@ IFSelect_ReturnStatus STEPControl_Writer::Transfer
     progress->Show();
   }
 
-  return thesession->TransferWriteShape(sh,compgraph);
+  return thesession->TransferWriteShape(sh, compgraph);
 }
 
 

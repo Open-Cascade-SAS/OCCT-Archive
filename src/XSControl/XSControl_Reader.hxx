@@ -253,6 +253,9 @@ protected:
   //! Returns a sequence of produced shapes
   Standard_EXPORT TopTools_SequenceOfShape& Shapes();
 
+  //! Sets a Transfer Reader
+  Standard_EXPORT void initTransferReader();
+
 
   Standard_Boolean therootsta;
   TColStd_SequenceOfTransient theroots;

@@ -21,7 +21,7 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(HeaderSection_Protocol,StepData_Protocol)
 
-static Standard_CString schemaName = "header_section";
+//static Standard_CString schemaName = "header_section";
 
 HeaderSection_Protocol::HeaderSection_Protocol () { }
 
@@ -35,5 +35,5 @@ Handle(Standard_Type)& atype) const
 	else    return 0;
 }
 
-Standard_CString HeaderSection_Protocol::SchemaName() const
-	{	return schemaName; }
+Standard_CString HeaderSection_Protocol::SchemaName(Standard_Integer /*theShematype*/)
+	{	return "header_section"; }

@@ -21,6 +21,7 @@
 #include <IFSelect_ReturnStatus.hxx>
 #include <TDF_LabelSequence.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <STEPCAFControl_Controller.hxx>
 #include <STEPCAFControl_DataMapOfShapePD.hxx>
 #include <STEPCAFControl_DataMapOfPDExternFile.hxx>
 #include <XCAFDoc_DataMapOfShapeLabel.hxx>
@@ -69,12 +70,15 @@ public:
   
   //! Creates a reader tool and attaches it to an already existing Session
   //! Clears the session if it was not yet set for STEP
-  Standard_EXPORT STEPCAFControl_Reader(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
-  
-  //! Clears the internal data structures and attaches to a new session
+  Standard_EXPORT STEPCAFControl_Reader(const Handle(XSControl_WorkSession)& theWS,
+                                        const Standard_Boolean theScratch = Standard_True);
+
+  //! Creates a reader tool and attaches it to an already existing Session and controller
   //! Clears the session if it was not yet set for STEP
-  Standard_EXPORT void Init (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
-  
+  Standard_EXPORT STEPCAFControl_Reader(const Handle(XSControl_WorkSession)& theWS,
+                                        const Handle(XSControl_Controller)& theController,
+                                        const Standard_Boolean theScratch = Standard_True);
+
   //! Loads a file and returns the read status
   //! Provided for use like single-file reader
   Standard_EXPORT IFSelect_ReturnStatus ReadFile (const Standard_CString filename);
@@ -174,7 +178,12 @@ public:
 
 protected:
 
-  
+
+  //! Inits a reader with following session and controller
+  Standard_EXPORT void Init(const Handle(XSControl_WorkSession)& theWS,
+                            const Handle(XSControl_Controller)& theController,
+                            const Standard_Boolean theScratch = Standard_True);
+
   //! Translates STEP file already loaded into the reader
   //! into the document
   //! If num==0, translates all roots, else only root number num
@@ -293,6 +302,7 @@ private:
   Standard_Boolean myMatMode;
   Standard_Boolean myViewMode;
   NCollection_DataMap<Handle(Standard_Transient), TDF_Label> myGDTMap;
+  Handle(STEPCAFControl_Controller) myCAFController;
 
 };
 

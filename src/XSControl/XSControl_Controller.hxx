@@ -20,6 +20,7 @@
 #include <Standard.hxx>
 #include <Standard_Type.hxx>
 
+#include <Interface_Static.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_SequenceOfTransient.hxx>
 #include <TColStd_HSequenceOfHAsciiString.hxx>
@@ -65,7 +66,10 @@ DEFINE_STANDARD_HANDLE(XSControl_Controller, Standard_Transient)
 class XSControl_Controller : public Standard_Transient
 {
  public:
-  
+
+   //! Initialisation of additional non-static parameters taken data from session model
+   Standard_EXPORT virtual Standard_Boolean Init(const Handle(XSControl_WorkSession)& /*theWS*/);
+
   //! Changes names
   //! if a name is empty, the formerly set one remains
   //! Remark : Does not call Record or AutoRecord
@@ -203,6 +207,9 @@ class XSControl_Controller : public Standard_Transient
   //! Records the name of a Static to be traced for a given use
   Standard_EXPORT void TraceStatic (const Standard_CString theName, const Standard_Integer theUse);
 
+  //! Records the non Static parameter to be traced for a given use
+  Standard_EXPORT void TraceNotStatic(const Handle(Interface_Static)& theParam, const Standard_Integer theUse);
+
   TCollection_AsciiString myShortName;
   TCollection_AsciiString myLongName;
   Handle(IFSelect_WorkLibrary) myAdaptorLibrary;
@@ -218,6 +225,7 @@ class XSControl_Controller : public Standard_Transient
   NCollection_Vector<Handle(Standard_Transient)> myParams;
   NCollection_Vector<Standard_Integer> myParamUses;
   Handle(Interface_HArray1OfHAsciiString) myModeWriteShapeN;
+  
 };
 
 #endif // _XSControl_Controller_HeaderFile

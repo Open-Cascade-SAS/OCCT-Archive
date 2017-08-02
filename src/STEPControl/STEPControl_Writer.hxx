@@ -21,12 +21,13 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
+#include <IFSelect_ReturnStatus.hxx>
 #include <Standard_Boolean.hxx>
 #include <Standard_Real.hxx>
-#include <IFSelect_ReturnStatus.hxx>
-#include <STEPControl_StepModelType.hxx>
 #include <Standard_CString.hxx>
 #include <Standard_Integer.hxx>
+#include <STEPControl_Controller.hxx>
+#include <STEPControl_StepModelType.hxx>
 class XSControl_WorkSession;
 class StepData_StepModel;
 class TopoDS_Shape;
@@ -48,8 +49,15 @@ public:
   Standard_EXPORT STEPControl_Writer();
   
   //! Creates a Writer from an already existing Session
-  //! If <scratch> is True (D), clears already recorded data
-  Standard_EXPORT STEPControl_Writer(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
+  //! If <theScratch> is True (D), clears already recorded data
+  Standard_EXPORT STEPControl_Writer(const Handle(XSControl_WorkSession)& WS,
+                                     const Standard_Boolean theScratch = Standard_True);
+
+  //! Creates a Writer for STEP from an already existing Session
+  //! If <theScratch> is True (D), clears already recorded data
+  Standard_EXPORT STEPControl_Writer(const Handle(XSControl_WorkSession)& theWS,
+                                     const Handle(XSControl_Controller)& theController,
+                                     const Standard_Boolean theScratch = Standard_True);
   
   //! Sets a length-measure value that
   //! will be written to uncertainty-measure-with-unit
@@ -115,7 +123,10 @@ public:
 
 protected:
 
-
+  //!
+  Standard_EXPORT void initWriter(const Handle(XSControl_WorkSession)& theWS,
+                                  const Handle(XSControl_Controller)& theController,
+                                  const Standard_Boolean scratch = Standard_True);
 
 
 
@@ -124,6 +135,7 @@ private:
 
 
   Handle(XSControl_WorkSession) thesession;
+  Handle(XSControl_Controller) myController;
 
 
 };

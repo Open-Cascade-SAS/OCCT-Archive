@@ -24,6 +24,7 @@
 #include <XSControl_Reader.hxx>
 #include <Standard_Boolean.hxx>
 #include <Standard_Integer.hxx>
+#include <STEPControl_Controller.hxx>
 #include <TColStd_SequenceOfAsciiString.hxx>
 #include <TColStd_Array1OfAsciiString.hxx>
 #include <TColStd_Array1OfReal.hxx>
@@ -38,7 +39,7 @@ class StepRepr_RepresentationContext;
 //! As in XSControl_Reader, you specify the list using a selection.
 //! For the translation of iges files it is possible to use next sequence:
 //! To change translation parameters
-//! class Interface_Static should be used before beginning of
+//! class StepData_StepModel should be used before beginning of
 //! translation  (see STEP Parameters and General Parameters)
 //! Creation of reader - STEPControl_Reader reader;
 //! To load s file in a model use method reader.ReadFile("filename.stp")
@@ -76,10 +77,17 @@ public:
   
   //! Creates a reader object with an empty STEP model.
   Standard_EXPORT STEPControl_Reader();
-  
+
   //! Creates a Reader for STEP from an already existing Session
   //! Clears the session if it was not yet set for STEP
-  Standard_EXPORT STEPControl_Reader(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
+  Standard_EXPORT STEPControl_Reader(const Handle(XSControl_WorkSession)& theWS,
+                                     const Standard_Boolean scratch = Standard_True);
+
+  //! Creates a Reader for STEP from an already existing Session
+  //! Clears the session if it was not yet set for STEP
+  Standard_EXPORT STEPControl_Reader(const Handle(XSControl_WorkSession)& theWS,
+                                     const Handle(XSControl_Controller)& theController,
+                                     const Standard_Boolean scratch = Standard_True);
   
   //! Returns the model as a StepModel.
   //! It can then be consulted (header, product)
@@ -97,7 +105,9 @@ public:
   
   //! Returns sequence of all unit names for shape representations
   //! found in file
-  Standard_EXPORT void FileUnits (TColStd_SequenceOfAsciiString& theUnitLengthNames, TColStd_SequenceOfAsciiString& theUnitAngleNames, TColStd_SequenceOfAsciiString& theUnitSolidAngleNames);
+  Standard_EXPORT void FileUnits (TColStd_SequenceOfAsciiString& theUnitLengthNames,
+                                  TColStd_SequenceOfAsciiString& theUnitAngleNames,
+                                  TColStd_SequenceOfAsciiString& theUnitSolidAngleNames);
 
 
 
@@ -112,9 +122,16 @@ private:
 
   
   //! Returns  units for length , angle and solidangle for shape representations
-  Standard_EXPORT Standard_Boolean findUnits (const Handle(StepRepr_RepresentationContext)& theReprContext, TColStd_Array1OfAsciiString& theNameUnits, TColStd_Array1OfReal& theFactorUnits);
+  Standard_EXPORT Standard_Boolean findUnits (const Handle(StepRepr_RepresentationContext)& theReprContext,
+                                              TColStd_Array1OfAsciiString& theNameUnits,
+                                              TColStd_Array1OfReal& theFactorUnits);
 
+  //!
+  Standard_EXPORT void initReader(const Handle(XSControl_WorkSession)& theWS,
+                                  const Handle(XSControl_Controller)& theController,
+                                  const Standard_Boolean scratch = Standard_True);
 
+  Handle(XSControl_Controller) myController;
 
 
 };

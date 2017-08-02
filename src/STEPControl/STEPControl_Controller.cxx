@@ -18,23 +18,27 @@
 #include <APIHeaderSection_MakeHeader.hxx>
 #include <HeaderSection.hxx>
 #include <IFSelect_EditForm.hxx>
+#include <IFSelect_ParamEditor.hxx>
 #include <IFSelect_SelectModelRoots.hxx>
 #include <IFSelect_SelectSignature.hxx>
 #include <IFSelect_SignAncestor.hxx>
 #include <IFSelect_SignCounter.hxx>
+#include <IFSelect_SelectModelEntities.hxx>
 #include <Interface_InterfaceModel.hxx>
 #include <Interface_Macros.hxx>
-#include <Interface_Static.hxx>
 #include <RWHeaderSection.hxx>
 #include <RWStepAP214.hxx>
+#include <ShapeExtend.hxx>
+#include <ShapeProcess_OperLibrary.hxx>
 #include <Standard_Type.hxx>
 #include <Standard_Version.hxx>
+#include <Standard_Mutex.hxx>
+#include <StepAP214_Protocol.hxx>
 #include <STEPControl_ActorRead.hxx>
 #include <STEPControl_ActorWrite.hxx>
 #include <STEPControl_Controller.hxx>
-#include <StepData_FileProtocol.hxx>
+//#include <StepData_FileProtocol.hxx>
 #include <StepData_StepModel.hxx>
-#include <STEPEdit.hxx>
 #include <STEPEdit_EditContext.hxx>
 #include <STEPEdit_EditSDR.hxx>
 #include <StepSelect_StepType.hxx>
@@ -51,166 +55,39 @@
 #include <Transfer_FinderProcess.hxx>
 #include <XSAlgo.hxx>
 #include <XSControl_WorkSession.hxx>
+#include <XSAlgo_AlgoContainer.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(STEPControl_Controller,XSControl_Controller)
 
 //  Pour NewModel et Write : definition de produit (temporaire ...)
-STEPControl_Controller::STEPControl_Controller ()
-: XSControl_Controller ("STEP", "step")
+STEPControl_Controller::STEPControl_Controller()
+  : XSControl_Controller("STEP", "step")
 {
-  static Standard_Boolean init = Standard_False;
-  if (!init) {
-    RWHeaderSection::Init();  RWStepAP214::Init();
+  myAdaptorProtocol = new StepAP214_Protocol();
 
-    Interface_Static::Init ("step","write.step.product.name",'t',"Open CASCADE STEP translator " OCC_VERSION_STRING);
-    Interface_Static::Init ("step","write.step.assembly",'e',"");
-    Interface_Static::Init ("step","write.step.assembly",'&',"enum 0");
-    Interface_Static::Init ("step","write.step.assembly",'&',"eval Off");
-    Interface_Static::Init ("step","write.step.assembly",'&',"eval On");
-    Interface_Static::Init ("step","write.step.assembly",'&',"eval Auto");
-    Interface_Static::SetCVal("write.step.assembly","Auto"); 
+  static Standard_Mutex aPars;
+  {
+    Standard_Mutex::Sentry aLock(aPars);
+    //RWHeaderSection::Init();
+    RWStepAP214::Init(Handle(StepAP214_Protocol)::DownCast(myAdaptorProtocol));
 
-    Interface_Static::Init("step","step.angleunit.mode", 'e',"");
-    Interface_Static::Init("step","step.angleunit.mode", '&',"enum 0");
-    Interface_Static::Init("step","step.angleunit.mode", '&',"eval File");
-    Interface_Static::Init("step","step.angleunit.mode", '&',"eval Rad");
-    Interface_Static::Init("step","step.angleunit.mode", '&',"eval Deg");
-    Interface_Static::SetCVal("step.angleunit.mode","File"); 
-
-    Interface_Static::Init("step","write.step.schema", 'e',"");  
-    Interface_Static::Init("step","write.step.schema",'&',"enum 1");
-    Interface_Static::Init("step","write.step.schema",'&',"eval AP214CD");
-    Interface_Static::Init("step","write.step.schema",'&',"eval AP214DIS");
-    Interface_Static::Init("step","write.step.schema",'&',"eval AP203");
-    Interface_Static::Init("step","write.step.schema",'&',"eval AP214IS");
-    Interface_Static::Init("step","write.step.schema",'&',"eval AP242DIS");
-    Interface_Static::SetCVal("write.step.schema","AP214IS"); 
-
-    // Type of Product Definition for reading
-    // Note: the numbers should be consistent with function FindShapeReprType()
-    // in STEPControl_ActorRead.cxx
-    Interface_Static::Init("step","read.step.shape.repr",'e',"");
-    Interface_Static::Init("step","read.step.shape.repr",'&',"enum 1");
-    Interface_Static::Init("step","read.step.shape.repr",'&',"eval All");   // 1
-    Interface_Static::Init("step","read.step.shape.repr",'&',"eval ABSR");  // 2
-    Interface_Static::Init("step","read.step.shape.repr",'&',"eval MSSR");  // 3
-    Interface_Static::Init("step","read.step.shape.repr",'&',"eval GBSSR"); // 4
-    Interface_Static::Init("step","read.step.shape.repr",'&',"eval FBSR");  // 5
-    Interface_Static::Init("step","read.step.shape.repr",'&',"eval EBWSR"); // 6
-    Interface_Static::Init("step","read.step.shape.repr",'&',"eval GBWSR"); // 7
-    Interface_Static::SetCVal("read.step.shape.repr","All");
-
-    // Mode for reading shapes attached to main SDR by SRR
-    // (hybrid model representation in AP203 since 1998)
-    Interface_Static::Init("step","read.step.shape.relationship",'e',"");
-    Interface_Static::Init("step","read.step.shape.relationship",'&',"enum 0");
-    Interface_Static::Init("step","read.step.shape.relationship",'&',"eval OFF");
-    Interface_Static::Init("step","read.step.shape.relationship",'&',"eval ON");
-    Interface_Static::SetCVal("read.step.shape.relationship","ON");
-
-    // Mode for reading shapes attached to Product by ShapeAspect 
-    // (hybrid model representation in AP203 before 1998)
-    Interface_Static::Init("step","read.step.shape.aspect",'e',"");
-    Interface_Static::Init("step","read.step.shape.aspect",'&',"enum 0");
-    Interface_Static::Init("step","read.step.shape.aspect",'&',"eval OFF");
-    Interface_Static::Init("step","read.step.shape.aspect",'&',"eval ON");
-    Interface_Static::SetCVal("read.step.shape.aspect","ON");
-
-    // Mode for reading SDR and ShapeRepr if it is necessary
-    Interface_Static::Init("step","read.step.product.mode",'e',"");
-    Interface_Static::Init("step","read.step.product.mode",'&',"enum 0");
-    Interface_Static::Init("step","read.step.product.mode",'&',"eval OFF");
-    Interface_Static::Init("step","read.step.product.mode",'&',"eval ON");
-    Interface_Static::SetCVal("read.step.product.mode","ON");
-
-    // Order of reading ShapeDefinitionRepresentation in ProductDefinition
-    Interface_Static::Init("step","read.step.product.context",'e',"");
-    Interface_Static::Init("step","read.step.product.context",'&',"enum 1");
-    Interface_Static::Init("step","read.step.product.context",'&',"eval all");     // 1
-    Interface_Static::Init("step","read.step.product.context",'&',"eval design");  // 2
-    Interface_Static::Init("step","read.step.product.context",'&',"eval analysis");// 3
-    Interface_Static::SetCVal("read.step.product.context","all");
-
-    // What we try to read in ProductDefinition
-    Interface_Static::Init("step","read.step.assembly.level",'e',"");
-    Interface_Static::Init("step","read.step.assembly.level",'&',"enum 1");
-    Interface_Static::Init("step","read.step.assembly.level",'&',"eval all");      // 1
-    Interface_Static::Init("step","read.step.assembly.level",'&',"eval assembly"); // 2
-    Interface_Static::Init("step","read.step.assembly.level",'&',"eval structure");// 3
-    Interface_Static::Init("step","read.step.assembly.level",'&',"eval shape");    // 4
-    Interface_Static::SetCVal("read.step.assembly.level","all");
-
-    // unit: supposed to be cascade unit (target unit for reading)
-    Interface_Static::Init("step","write.step.unit", 'e',"");
-    Interface_Static::Init("step","write.step.unit",'&',"enum 1");
-    Interface_Static::Init("step","write.step.unit",'&',"eval INCH");  // 1
-    Interface_Static::Init("step","write.step.unit",'&',"eval MM");    // 2
-    Interface_Static::Init("step","write.step.unit",'&',"eval ??");    // 3
-    Interface_Static::Init("step","write.step.unit",'&',"eval FT");    // 4
-    Interface_Static::Init("step","write.step.unit",'&',"eval MI");    // 5
-    Interface_Static::Init("step","write.step.unit",'&',"eval M");     // 6
-    Interface_Static::Init("step","write.step.unit",'&',"eval KM");    // 7
-    Interface_Static::Init("step","write.step.unit",'&',"eval MIL");   // 8
-    Interface_Static::Init("step","write.step.unit",'&',"eval UM");    // 9
-    Interface_Static::Init("step","write.step.unit",'&',"eval CM");    //10
-    Interface_Static::Init("step","write.step.unit",'&',"eval UIN");   //11
-    Interface_Static::SetCVal ("write.step.unit","MM");
-
-    // Non-manifold topology reading: OFF by default (ssv; 26.11.2010)
-    Interface_Static::Init ("step","read.step.nonmanifold",'e',"");
-    Interface_Static::Init ("step","read.step.nonmanifold",'&',"enum 0");
-    Interface_Static::Init ("step","read.step.nonmanifold",'&',"eval Off");
-    Interface_Static::Init ("step","read.step.nonmanifold",'&',"eval On");
-    Interface_Static::SetIVal("read.step.nonmanifold",0); 
-
-    // Non-manifold topology writing: OFF by default (ssv; 26.11.2010)
-    Interface_Static::Init ("step","write.step.nonmanifold",'e',"");
-    Interface_Static::Init ("step","write.step.nonmanifold",'&',"enum 0");
-    Interface_Static::Init ("step","write.step.nonmanifold",'&',"eval Off");
-    Interface_Static::Init ("step","write.step.nonmanifold",'&',"eval On");
-    Interface_Static::SetIVal("write.step.nonmanifold",0); 
-
-    // I-Deas-like STEP processing: OFF by default (ssv; 22.11.2010)
-    Interface_Static::Init ("step","read.step.ideas",'e',"");
-    Interface_Static::Init ("step","read.step.ideas",'&',"enum 0");
-    Interface_Static::Init ("step","read.step.ideas",'&',"eval Off");
-    Interface_Static::Init ("step","read.step.ideas",'&',"eval On");
-    Interface_Static::SetIVal("read.step.ideas",0); 
-
-    //Parameter to write all free vertices in one SDR (name and style of vertex are lost) (default) 
-    //or each vertex in its own SDR (name and style of vertex are exported). (ika; 21.07.2014) 
-    Interface_Static::Init ("step","write.step.vertex.mode",'e',"");
-    Interface_Static::Init ("step","write.step.vertex.mode",'&',"enum 0");
-    Interface_Static::Init ("step","write.step.vertex.mode",'&',"eval One Compound");
-    Interface_Static::Init ("step","write.step.vertex.mode",'&',"eval Single Vertex");
-    Interface_Static::SetIVal("write.step.vertex.mode",0);
-  
-    // abv 15.11.00: ShapeProcessing
-    Interface_Static::Init ("XSTEP","write.step.resource.name",'t',"STEP");
-    Interface_Static::Init ("XSTEP","read.step.resource.name",'t',"STEP");
-    Interface_Static::Init ("XSTEP","write.step.sequence",'t',"ToSTEP");
-    Interface_Static::Init ("XSTEP","read.step.sequence",'t',"FromSTEP");
-
-    // ika 28.07.16: Paremeter to read all top level solids and shells,
-    // should be used only in case of invalid shape_representation without links to shapes.
-    Interface_Static::Init("step", "read.step.all.shapes", 'e', "");
-    Interface_Static::Init("step", "read.step.all.shapes", '&', "enum 0");
-    Interface_Static::Init("step", "read.step.all.shapes", '&', "eval Off");
-    Interface_Static::Init("step", "read.step.all.shapes", '&', "eval On");
-    Interface_Static::SetIVal("read.step.all.shapes", 0);
-
-    init = Standard_True;
+    // initialization of Standard Shape Healing
+    //ShapeExtend::Init();
+    //XSAlgo::Init();
+    // init Standard Shape Processing operators
+    ShapeProcess_OperLibrary::Init();
   }
 
   Handle(STEPControl_ActorWrite) ActWrite = new STEPControl_ActorWrite;
-  ActWrite->SetGroupMode (Interface_Static::IVal("write.step.assembly"));
   myAdaptorWrite = ActWrite;
 
   Handle(StepSelect_WorkLibrary) swl = new StepSelect_WorkLibrary;
   swl->SetDumpLabel(1);
   myAdaptorLibrary  = swl;
-  myAdaptorProtocol = STEPEdit::Protocol();
   myAdaptorRead     = new STEPControl_ActorRead;  // par ex pour Recognize
+
+  myStepType = new StepSelect_StepType;
+  myStepType->SetProtocol(myAdaptorProtocol);
 
   SetModeWrite (0,4);
   SetModeWriteHelp (0,"As Is");
@@ -218,15 +95,13 @@ STEPControl_Controller::STEPControl_Controller ()
   SetModeWriteHelp (2,"Shell Based");
   SetModeWriteHelp (3,"Manifold Solid");
   SetModeWriteHelp (4,"Wireframe");
-  TraceStatic ("read.surfacecurve.mode",5);
 
   //   ---  SELECTIONS, SIGNATURES, COMPTEURS, EDITEURS
 
   DeclareAndCast(IFSelect_Selection,xmr,SessionItem("xst-model-roots"));
   if (!xmr.IsNull()) {
-    Handle(IFSelect_Signature) sty = STEPEdit::SignType();
-    AddSessionItem (sty,"step-type");
-    Handle(IFSelect_SignCounter) tys = new IFSelect_SignCounter(sty,Standard_False,Standard_True);
+    AddSessionItem (myStepType,"step-type");
+    Handle(IFSelect_SignCounter) tys = new IFSelect_SignCounter(myStepType,Standard_False,Standard_True);
     AddSessionItem (tys,"step-types");
 
     //szv:mySignType = sty;
@@ -235,16 +110,32 @@ STEPControl_Controller::STEPControl_Controller ()
     AddSessionItem (new IFSelect_SignAncestor(),"xst-derived");
 
     Handle(STEPSelections_SelectDerived) stdvar = new STEPSelections_SelectDerived();
-    stdvar->SetProtocol(STEPEdit::Protocol());
+    stdvar->SetProtocol(myAdaptorProtocol);
     AddSessionItem (stdvar,"step-derived");
     
-    Handle(IFSelect_SelectSignature) selsdr = STEPEdit::NewSelectSDR();
+    //Creates a Selection for ShapeDefinitionRepresentation
+    Handle(IFSelect_SelectSignature) selsdr = new IFSelect_SelectSignature
+    (myStepType, "SHAPE_DEFINITION_REPRESENTATION");
     selsdr->SetInput (xmr);
     AddSessionItem (selsdr,"step-shape-def-repr");
 
-    AddSessionItem (STEPEdit::NewSelectPlacedItem(),"step-placed-items");
-    // input deja pret avec ModelAll
-    AddSessionItem (STEPEdit::NewSelectShapeRepr(),"step-shape-repr");
+    // Creates a Selection for Placed Items, i.e. MappedItem or
+    // ContextDependentShapeRepresentation, which itself refers to a
+    // RepresentationRelationship with possible subtypes (Shape...
+    // and/or ...WithTransformation)
+    Handle(IFSelect_SelectSignature) selrrs = new IFSelect_SelectSignature
+    (myStepType, "MAPPED_ITEM|CONTEXT_DEPENDENT_SHAPE_REPRESENTATION", Standard_False);
+    selrrs->SetInput(new IFSelect_SelectModelEntities);
+    AddSessionItem (selrrs,"step-placed-items");
+
+    // Creates a Selection for ShapeRepresentation and its sub - types,
+    // plus ContextDependentShapeRepresentation (which is not a
+    // sub-type of ShapeRepresentation)
+    Handle(IFSelect_SelectSignature) sel = new IFSelect_SelectSignature
+    (myStepType, "SHAPE_REPRESENTATION", Standard_False);
+    // REPRESENTATION_RELATIONSHIP passe par CONTEXT_DEPENDENT_SHAPE_REPRESENTATION
+    sel->SetInput(new IFSelect_SelectModelEntities);
+    AddSessionItem (sel,"step-shape-repr");
   }
   
   //pdn
@@ -282,7 +173,8 @@ STEPControl_Controller::STEPControl_Controller ()
 
 Handle(Interface_InterfaceModel)  STEPControl_Controller::NewModel () const
 {
-  return STEPEdit::NewModel();
+  APIHeaderSection_MakeHeader head;
+  return head.NewModel(myAdaptorProtocol);
 }
 
 //  ####    PROVISOIRE ???   ####
@@ -294,26 +186,38 @@ IFSelect_ReturnStatus  STEPControl_Controller::TransferWriteShape
    const Standard_Integer modeshape) const
 {
   if (modeshape < 0 || modeshape > 4) return IFSelect_RetError;
+  if (model.IsNull()) return IFSelect_RetError;
   Handle(STEPControl_ActorWrite) ActWrite =
     Handle(STEPControl_ActorWrite)::DownCast(myAdaptorWrite);
 //    A PRESENT ON PASSE PAR LE PROFILE
-  if (!ActWrite.IsNull()) 
-    ActWrite->SetGroupMode (Interface_Static::IVal("write.step.assembly"));
+  if (!ActWrite.IsNull())
+  {
+    ActWrite->SetGroupMode("write.step.assembly");
+  }
 
   return XSControl_Controller::TransferWriteShape (shape,FP,model,modeshape);
 }
 
-Standard_Boolean STEPControl_Controller::Init ()
+Standard_Boolean STEPControl_Controller::Init(const Handle(XSControl_WorkSession)& theWS)
 {
-  static Standard_Boolean inic = Standard_False;
-  if (!inic) {
-    Handle(STEPControl_Controller) STEPCTL = new STEPControl_Controller;
-    STEPCTL->AutoRecord();  // avec les noms donnes a la construction
-    XSAlgo::Init();                                                                                                        
-    inic = Standard_True;
-  }
+  Handle(Interface_InterfaceModel) aModel = theWS->Model();
+  if (aModel.IsNull()) return Standard_False;
+
+  TraceNotStatic(aModel->GetParam("read.surfacecurve.mode"), 5);
+  TraceNotStatic(aModel->GetParam("read.precision.mode"), 5);
+  TraceNotStatic(aModel->GetParam("read.precision.val"), 5);
+  TraceNotStatic(aModel->GetParam("write.precision.mode"), 6);
+  TraceNotStatic(aModel->GetParam("write.precision.val"), 6);
+
+  DeclareAndCast(STEPControl_ActorRead, aReadActor, myAdaptorRead);
+  if (!aReadActor.IsNull()) aReadActor->SetModel(aModel);
+
+  DeclareAndCast(STEPControl_ActorWrite, aWriteActor, myAdaptorWrite);
+  if (!aWriteActor.IsNull()) aWriteActor->SetModel(aModel);
+
   return Standard_True;
 }
+
 //=======================================================================
 //function : Customise
 //purpose  : 
@@ -337,29 +241,48 @@ void STEPControl_Controller::Customise(Handle(XSControl_WorkSession)& WS)
   WS->AddNamedItem ("xst-transferrable-roots",st1);
 
   if (!slr.IsNull()) {
-    Handle(IFSelect_Signature) sty = STEPEdit::SignType();
-    WS->AddNamedItem ("step-type",sty);
+    WS->AddNamedItem ("step-type", myStepType);
     
-    Handle(IFSelect_SignCounter) tys = new IFSelect_SignCounter(sty,Standard_False,Standard_True);
+    Handle(IFSelect_SignCounter) tys = new IFSelect_SignCounter(myStepType,Standard_False,Standard_True);
     WS->AddNamedItem ("step-types",tys);
 
 	//szv:mySignType = sty;
-    WS->SetSignType( sty );
+    WS->SetSignType(myStepType);
     
     //pdn S4133 18.02.99
     WS->AddNamedItem ("xst-derived",new IFSelect_SignAncestor());
     Handle(STEPSelections_SelectDerived) stdvar = new STEPSelections_SelectDerived();
-    stdvar->SetProtocol(STEPEdit::Protocol());
+
+    static Standard_Mutex aPars;
+    {
+      Standard_Mutex::Sentry aLock(aPars);
+      stdvar->SetProtocol(myAdaptorProtocol);
+    }
     WS->AddNamedItem ("step-derived",stdvar);
-    
-    Handle(IFSelect_SelectSignature) selsdr = STEPEdit::NewSelectSDR();
-    selsdr->SetInput (slr);
-    WS->AddNamedItem ("step-shape-def-repr",selsdr);
-    Handle(IFSelect_SelectSignature) selrrs = STEPEdit::NewSelectPlacedItem();
+
+    //Creates a Selection for ShapeDefinitionRepresentation
+    Handle(IFSelect_SelectSignature) selsdr = new IFSelect_SelectSignature
+    (myStepType, "SHAPE_DEFINITION_REPRESENTATION");
+    selsdr->SetInput(slr);
+    WS->AddNamedItem("step-shape-def-repr", selsdr);
+
+    // Creates a Selection for Placed Items, i.e. MappedItem or
+    // ContextDependentShapeRepresentation, which itself refers to a
+    // RepresentationRelationship with possible subtypes (Shape...
+    // and/or ...WithTransformation)
+    Handle(IFSelect_SelectSignature) selrrs = new IFSelect_SelectSignature
+    (myStepType, "MAPPED_ITEM|CONTEXT_DEPENDENT_SHAPE_REPRESENTATION", Standard_False);
+    selrrs->SetInput(new IFSelect_SelectModelEntities);
     WS->AddNamedItem ("step-placed-items",selrrs);
-    Handle(IFSelect_SelectSignature) selsr = STEPEdit::NewSelectShapeRepr();
-    // input deja pret avec ModelAll
-    WS->AddNamedItem ("step-shape-repr",selsr);
+
+    // Creates a Selection for ShapeRepresentation and its sub - types,
+    // plus ContextDependentShapeRepresentation (which is not a
+    // sub-type of ShapeRepresentation)
+    Handle(IFSelect_SelectSignature) sel = new IFSelect_SelectSignature
+    (myStepType, "SHAPE_REPRESENTATION", Standard_False);
+    // REPRESENTATION_RELATIONSHIP passe par CONTEXT_DEPENDENT_SHAPE_REPRESENTATION
+    sel->SetInput(new IFSelect_SelectModelEntities);
+    WS->AddNamedItem ("step-shape-repr", sel);
   }
   
   //pdn

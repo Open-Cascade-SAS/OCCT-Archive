@@ -29,8 +29,8 @@
 #include <Message_ProgressIndicator.hxx>
 #include <Resource_Manager.hxx>
 #include <ShapeAlgo.hxx>
-#include <ShapeAlgo_AlgoContainer.hxx>
-#include <ShapeAlgo_ToolContainer.hxx>
+//#include <ShapeAlgo_AlgoContainer.hxx>
+//#include <ShapeAlgo_ToolContainer.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeBuild_Edge.hxx>
 #include <ShapeBuild_ReShape.hxx>
@@ -64,6 +64,7 @@
 #include <XSAlgo_AlgoContainer.hxx>
 #include <XSAlgo_ToolContainer.hxx>
 #include <TopExp_Explorer.hxx>
+#include <Standard_Mutex.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(XSAlgo_AlgoContainer,Standard_Transient)
 
@@ -83,7 +84,7 @@ XSAlgo_AlgoContainer::XSAlgo_AlgoContainer()
 
 void XSAlgo_AlgoContainer::PrepareForTransfer() const
 {
-  UnitsMethods::SetCasCadeLengthUnit ( Interface_Static::IVal("xstep.cascade.unit") );
+  UnitsMethods::SetCasCadeLengthUnit(IVal("xstep.cascade.unit"));
 }
 
 //=======================================================================
@@ -105,7 +106,7 @@ TopoDS_Shape XSAlgo_AlgoContainer::ProcessShape (const TopoDS_Shape& shape,
   Handle(ShapeProcess_ShapeContext) context = Handle(ShapeProcess_ShapeContext)::DownCast(info);
   if ( context.IsNull() )
   {
-    Standard_CString rscfile = Interface_Static::CVal(prscfile);
+    Standard_CString rscfile = CVal(prscfile); 
     if (!rscfile)
       rscfile = prscfile;
     context = new ShapeProcess_ShapeContext(shape, rscfile);
@@ -115,8 +116,7 @@ TopoDS_Shape XSAlgo_AlgoContainer::ProcessShape (const TopoDS_Shape& shape,
   }
   context->SetNonManifold(NonManifold);
   info = context;
-  
-  Standard_CString seq = Interface_Static::CVal ( pseq );
+  Standard_CString seq = CVal(pseq);
   if ( ! seq ) seq = pseq;
   
   // if resource file is not loaded or does not define <seq>.exec.op, 
@@ -139,7 +139,7 @@ TopoDS_Shape XSAlgo_AlgoContainer::ProcessShape (const TopoDS_Shape& shape,
       try {
         OCC_CATCH_SIGNALS
 	Handle(ShapeExtend_MsgRegistrator) msg = new ShapeExtend_MsgRegistrator;
-	Handle(ShapeFix_Shape) sfs = ShapeAlgo::AlgoContainer()->ToolContainer()->FixShape();
+        Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape;// ShapeAlgo::AlgoContainer()->ToolContainer()->FixShape();
 	sfs->Init ( shape );
 	sfs->SetMsgRegistrator ( msg );
 	sfs->SetPrecision ( Prec );
@@ -360,7 +360,8 @@ Standard_Boolean XSAlgo_AlgoContainer::CheckPCurve (const TopoDS_Edge& E,
   B.Range(edge,face,w1,w2);
   B.SameRange(edge, Standard_False );
   //:S4136
-  Standard_Integer SPmode = Interface_Static::IVal("read.stdsameparameter.mode");
+  
+  Standard_Integer SPmode = IVal("read.stdsameparameter.mode");
   if ( SPmode ) 
     B.SameParameter (edge, Standard_False );
 
@@ -568,4 +569,103 @@ void XSAlgo_AlgoContainer::MergeTransferInfo(const Handle(Transfer_FinderProcess
       }
     }
   }
+}
+
+//=======================================================================
+// Method  : SetModel
+// Purpose :
+//=======================================================================
+void XSAlgo_AlgoContainer::SetModel(Handle(Interface_InterfaceModel)& theModel)
+{
+  myModel = theModel;
+  initParameters();
+}
+
+//=======================================================================
+// Method  : getParam
+// Purpose :
+//=======================================================================
+Handle(Interface_Static) XSAlgo_AlgoContainer::getParam
+(const Standard_CString theParamName) const
+{
+  Handle(Interface_Static) aParam;
+  if (!myModel.IsNull())
+    aParam = myModel->GetParam(theParamName);
+
+  if (aParam.IsNull())
+  {
+    static Standard_Mutex aPars;
+    {
+      Standard_Mutex::Sentry aLock(aPars);
+      aParam = Interface_Static::Static(theParamName);
+    }
+  }
+  return aParam;
+}
+
+
+//=======================================================================
+//function : IVal
+//purpose  : 
+//=======================================================================
+Standard_Integer XSAlgo_AlgoContainer::IVal(const Standard_CString theParamName) const
+{
+  Handle(Interface_Static) aParam = getParam(theParamName);
+  return (aParam.IsNull() ? 0 : aParam->IntegerValue());
+}
+
+//=======================================================================
+//function : RVal
+//purpose  : 
+//=======================================================================
+Standard_Real XSAlgo_AlgoContainer::RVal(const Standard_CString theParamName) const
+{
+  Handle(Interface_Static) aParam = getParam(theParamName);
+  return (aParam.IsNull() ? 0.0 : aParam->RealValue());
+}
+
+//=======================================================================
+//function : CVal
+//purpose  : 
+//=======================================================================
+Standard_CString XSAlgo_AlgoContainer::CVal(const Standard_CString theParamName) const
+{
+  Handle(Interface_Static) aParam = getParam(theParamName);
+  return (aParam.IsNull() ? "" : aParam->CStringValue());
+}
+
+void XSAlgo_AlgoContainer::initParameters()
+{
+  if (myModel.IsNull())
+    return;
+    
+  Handle(Interface_Static) anItem = new Interface_Static("XSTEP", "read.stdsameparameter.mode", Interface_ParamEnum, "");
+  Interface_Static::InitValues(anItem, "enum 0");
+  Interface_Static::InitValues(anItem, "eval Off");
+  Interface_Static::InitValues(anItem, "eval On");
+    
+  anItem->SetCStringValue("Off");
+  myModel->AddParam("read.stdsameparameter.mode", anItem);
+
+  // unit: supposed to be cascade unit (target unit for reading)
+  anItem = new Interface_Static("XSTEP", "xstep.cascade.unit", Interface_ParamEnum, "");
+  Interface_Static::Init("XSTEP", "xstep.cascade.unit", 'e', "");
+  Interface_Static::InitValues(anItem, "enum 1");
+
+
+  Interface_Static::Init("XSTEP", "xstep.cascade.unit", '&', "enum 1");
+  Interface_Static::InitValues(anItem, "eval INCH");  // 1
+  Interface_Static::InitValues(anItem,  "eval MM");    // 2
+  Interface_Static::InitValues(anItem, "eval ??");    // 3
+  Interface_Static::InitValues(anItem, "eval FT");    // 4
+  Interface_Static::InitValues(anItem, "eval MI");    // 5
+  Interface_Static::InitValues(anItem, "eval M");     // 6
+  Interface_Static::InitValues(anItem, "eval KM");    // 7
+  Interface_Static::InitValues(anItem, "eval MIL");   // 8
+  Interface_Static::InitValues(anItem, "eval UM");    // 9
+  Interface_Static::InitValues(anItem, "eval CM");    //10
+  Interface_Static::InitValues(anItem, "eval UIN");   //11
+  anItem->SetCStringValue("MM");
+  myModel->AddParam("xstep.cascade.unit", anItem);
+ 
 }

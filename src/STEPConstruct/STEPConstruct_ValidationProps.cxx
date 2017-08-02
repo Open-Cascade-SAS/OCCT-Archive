@@ -19,7 +19,6 @@
 #include <gp_Pnt.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <Interface_Macros.hxx>
-#include <Interface_Static.hxx>
 #include <Message.hxx>
 #include <Message_Messenger.hxx>
 #include <StepBasic_DerivedUnit.hxx>
@@ -343,29 +342,30 @@ Standard_Boolean STEPConstruct_ValidationProps::AddProp (const StepRepr_Characte
   Handle(TCollection_HAsciiString) PropDefDescr = new TCollection_HAsciiString ( Descr );
   Handle(StepRepr_PropertyDefinition) propdef = new StepRepr_PropertyDefinition;
   propdef->Init ( PropDefName, Standard_True, PropDefDescr, target );
-	  	  
+
   Handle(TCollection_HAsciiString) SRName = new TCollection_HAsciiString ( Descr );
   Handle(StepRepr_Representation) rep = new StepRepr_Representation;
   Handle(StepRepr_HArray1OfRepresentationItem) SRItems = new StepRepr_HArray1OfRepresentationItem ( 1, 1 );
   SRItems->SetValue ( 1, Prop );
   rep->Init ( SRName, SRItems, Context );
-	  
+
   Handle(StepRepr_PropertyDefinitionRepresentation) PrDR = new StepRepr_PropertyDefinitionRepresentation;
   StepRepr_RepresentedDefinition RD;
   RD.SetValue ( propdef );
   PrDR->Init ( RD, rep );
-	  
+
   // record SDR in order to have it written to the file
   Model()->AddWithRefs ( PrDR );
 
   // for AP203, add subschema name
-  if ( Interface_Static::IVal("write.step.schema") ==3 ) {
-    APIHeaderSection_MakeHeader mkHdr ( Handle(StepData_StepModel)::DownCast ( Model() ) );
-    Handle(TCollection_HAsciiString) subSchema = 
-      new TCollection_HAsciiString ( "GEOMETRIC_VALIDATION_PROPERTIES_MIM" );
-    mkHdr.AddSchemaIdentifier ( subSchema );
+
+  if (Model()->IVal("write.step.schema") == 3) {
+    APIHeaderSection_MakeHeader mkHdr(Handle(StepData_StepModel)::DownCast(Model()));
+    Handle(TCollection_HAsciiString) subSchema =
+      new TCollection_HAsciiString("GEOMETRIC_VALIDATION_PROPERTIES_MIM");
+    mkHdr.AddSchemaIdentifier(subSchema);
   }
-  
+
   return Standard_True;
 }
 

@@ -21,6 +21,7 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
+#include <Interface_InterfaceModel.hxx>
 #include <Standard_Boolean.hxx>
 #include <Standard_Real.hxx>
 #include <Standard_Integer.hxx>
@@ -47,7 +48,8 @@ public:
   
   //! Creates new context (units are MM and radians,
   //! uncertainty equal to Tol3d)
-  Standard_EXPORT void Init (const Standard_Real Tol3d);
+  Standard_EXPORT void Init (const Standard_Real Tol3d,
+                             Handle(Interface_InterfaceModel)& theModel);
   
   //! Returns True if Init was called successfully
   Standard_EXPORT Standard_Boolean IsDone() const;

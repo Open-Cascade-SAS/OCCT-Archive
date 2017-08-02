@@ -18,22 +18,24 @@
 #include <RWStepAP214.hxx>
 #include <RWStepAP214_GeneralModule.hxx>
 #include <RWStepAP214_ReadWriteModule.hxx>
-#include <StepAP214.hxx>
-#include <StepAP214_Protocol.hxx>
 #include <StepData_WriterLib.hxx>
+#include <Standard_Mutex.hxx>
 
 static int THE_RWStepAP214_init = 0;
 
-void RWStepAP214::Init()
+void RWStepAP214::Init(const Handle(StepAP214_Protocol)& theProto)
 {
-  if (THE_RWStepAP214_init)
+  static Standard_Mutex aPars;
   {
-    return;
+
+    if (THE_RWStepAP214_init)
+    {
+      return;
+    }
+    THE_RWStepAP214_init = 1;
+    RWHeaderSection::Init();
+    Interface_GeneralLib::SetGlobal(new RWStepAP214_GeneralModule, theProto);
+    Interface_ReaderLib::SetGlobal(new RWStepAP214_ReadWriteModule, theProto);
+    StepData_WriterLib::SetGlobal(new RWStepAP214_ReadWriteModule, theProto);
   }
-  THE_RWStepAP214_init = 1;
-  RWHeaderSection::Init();
-  Handle(StepAP214_Protocol) proto = StepAP214::Protocol();
-  Interface_GeneralLib::SetGlobal (new RWStepAP214_GeneralModule,proto);
-  Interface_ReaderLib::SetGlobal  (new RWStepAP214_ReadWriteModule,proto);
-  StepData_WriterLib::SetGlobal   (new RWStepAP214_ReadWriteModule,proto);
 }

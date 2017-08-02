@@ -58,7 +58,6 @@
 #include <OSD_ThreadPool.hxx>
 #include <STEPCAFControl_Writer.hxx>
 #include <STEPControl_StepModelType.hxx>
-#include <Interface_Static.hxx>
 #include <IFSelect_ReturnStatus.hxx>
 #include <Standard_Failure.hxx>
 #include <TColgp_HArray1OfPnt2d.hxx>
@@ -91,6 +90,7 @@
 #include <BRepFeat_SplitShape.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 #include <TColStd_PackedMapOfInteger.hxx>
+#include <StepData_StepModel.hxx>
 
 #if ! defined(_WIN32)
 extern ViewerTest_DoubleMapOfInteractiveAndName& GetMapOfAIS();
@@ -2561,10 +2561,13 @@ static Standard_Integer OCC7141 (Draw_Interpretor& di, Standard_Integer argc, co
   shapeTool = XCAFDoc_DocumentTool::ShapeTool(document->Main());
   shapeTool->AddShape(AddTestStructure(nCount), Standard_True);
   STEPControl_StepModelType mode = STEPControl_AsIs;
-  if (!Interface_Static::SetIVal("write.step.assembly",1)) { //assembly mode
+  Handle(StepData_StepModel) aModel =writer.ChangeWriter().Model();
+  Handle(Interface_Static) aParam = aModel->GetParam("write.step.assembly");
+  if (aParam.IsNull()) { //assembly mode
     di << "Failed to set assembly mode for step data\n\n";
     return 0;
   }
+  aParam->SetIntegerValue(1);
   try {
     OCC_CATCH_SIGNALS
     if( writer.Transfer(document, mode)) {

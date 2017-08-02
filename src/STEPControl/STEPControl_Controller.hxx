@@ -24,6 +24,7 @@
 #include <IFSelect_ReturnStatus.hxx>
 #include <Standard_Integer.hxx>
 #include <Standard_Boolean.hxx>
+#include <StepSelect_StepType.hxx>
 class Interface_InterfaceModel;
 class Transfer_ActorOfTransientProcess;
 class XSControl_WorkSession;
@@ -59,10 +60,8 @@ public:
   //! modeshape : 1 Facetted BRep, 2 Shell, 3 Manifold Solid
   Standard_EXPORT virtual IFSelect_ReturnStatus TransferWriteShape (const TopoDS_Shape& shape, const Handle(Transfer_FinderProcess)& FP, const Handle(Interface_InterfaceModel)& model, const Standard_Integer modetrans = 0) const Standard_OVERRIDE;
   
-  //! Standard Initialisation. It creates a Controller for STEP
-  //! and records it to various names, available to select it later
-  //! Returns True when done, False if could not be done
-  Standard_EXPORT static Standard_Boolean Init();
+  //! Initialisation of additional parameters taken data from session model
+  Standard_EXPORT virtual Standard_Boolean Init(const Handle(XSControl_WorkSession)& theWS) Standard_OVERRIDE;
 
 
 
@@ -72,12 +71,8 @@ public:
 protected:
 
 
-
-
 private:
-
-
-
+  Handle(StepSelect_StepType) myStepType;
 
 };
 

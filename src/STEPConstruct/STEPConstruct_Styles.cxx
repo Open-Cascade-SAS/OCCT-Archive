@@ -20,7 +20,6 @@
 #include <Interface_EntityIterator.hxx>
 #include <Interface_Graph.hxx>
 #include <Interface_InterfaceModel.hxx>
-#include <Interface_Static.hxx>
 #include <Quantity_Color.hxx>
 #include <StepBasic_MeasureValueMember.hxx>
 #include <STEPConstruct.hxx>
@@ -212,8 +211,9 @@ Handle(StepVisual_StyledItem) STEPConstruct_Styles::AddStyle (const TopoDS_Shape
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPConstruct_Styles::CreateMDGPR (const Handle(StepRepr_RepresentationContext) &Context,
-                                                    Handle(StepVisual_MechanicalDesignGeometricPresentationRepresentation)& Repr)
+Standard_Boolean STEPConstruct_Styles::CreateMDGPR (const Handle(StepRepr_RepresentationContext)& theContext,
+                                                    Handle(StepVisual_MechanicalDesignGeometricPresentationRepresentation)& theMDGPR,
+                                                    const Handle(Interface_InterfaceModel) theModel)
 {
   if ( myStyles.Extent() <1 ) return Standard_False;
   
@@ -223,15 +223,16 @@ Standard_Boolean STEPConstruct_Styles::CreateMDGPR (const Handle(StepRepr_Repres
   for ( Standard_Integer i=1; i <= myStyles.Extent(); i++ ) 
     elems->SetValue ( i, Handle(StepRepr_RepresentationItem)::DownCast ( myStyles.FindKey(i) ) );
   // create new MDGPR
-  Repr = new StepVisual_MechanicalDesignGeometricPresentationRepresentation;
+  theMDGPR = new StepVisual_MechanicalDesignGeometricPresentationRepresentation;
   Handle(TCollection_HAsciiString) ReprName = new TCollection_HAsciiString ( "" );
-  Repr->Init ( ReprName, elems, Context );
+  theMDGPR->Init ( ReprName, elems, theContext );
 
   // record Repr in order to have it written to the file
 //   Model()->AddWithRefs ( Repr ); add into the model upper
 
   // for AP203, add subschema name
-  if ( Interface_Static::IVal("write.step.schema") ==3 ) {
+ 
+  if ( theModel->IVal("write.step.schema") == 3 ) {
     APIHeaderSection_MakeHeader mkHdr ( Handle(StepData_StepModel)::DownCast ( Model() ) );
     Handle(TCollection_HAsciiString) subSchema = 
       new TCollection_HAsciiString ( "SHAPE_APPEARANCE_LAYER_MIM" );

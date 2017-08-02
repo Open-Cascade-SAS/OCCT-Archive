@@ -17,6 +17,7 @@
 
 #include <MoniTool_DataMapOfShapeTransient.hxx>
 #include <StdFail_NotDone.hxx>
+#include <Interface_InterfaceModel.hxx>
 #include <StepShape_GeometricCurveSet.hxx>
 #include <StepShape_GeometricSetSelect.hxx>
 #include <StepShape_HArray1OfGeometricSetSelect.hxx>
@@ -42,7 +43,9 @@ TopoDSToStep_MakeGeometricCurveSet::TopoDSToStep_MakeGeometricCurveSet(
   done = Standard_False;
   Handle(TColStd_HSequenceOfTransient)  itemList;
   MoniTool_DataMapOfShapeTransient      aMap;
-  TopoDSToStep_Tool                aTool (aMap, Standard_False);
+  TopoDSToStep_Tool aTool (aMap,
+                           Standard_False,
+                           FP->Model()->IVal("write.surfacecurve.mode"));
   TopoDSToStep_WireframeBuilder    wirefB (aShape, aTool, FP);
   TopoDSToStep::AddResult ( FP, aTool );
 

@@ -15,11 +15,9 @@
 //    svv #2    23.02.00: porting on SIL
 
 #include <Interface_Macros.hxx>
-#include <Interface_Static.hxx>
 #include <Interface_Statics.hxx>
 #include <StepData.hxx>
 #include <StepData_DefaultGeneral.hxx>
-#include <StepData_FileProtocol.hxx>
 #include <StepData_Protocol.hxx>
 
 StaticHandle(StepData_Protocol,proto);
@@ -32,7 +30,6 @@ StaticHandleA(StepData_Protocol,theheader);
 {
 //  InitHandleVoid(StepData_Protocol,proto);
 //  InitHandleVoid(StepData_DefaultGeneral,stmod);
-//:S4136  Interface_Static::Init("step","step.readaccept.void",'i',"1");
 //  if (proto.IsNull()) proto = new StepData_Protocol;
 //  if (stmod.IsNull()) stmod = new StepData_DefaultGeneral;
 }
@@ -50,13 +47,13 @@ StaticHandleA(StepData_Protocol,theheader);
   InitHandle(StepData_Protocol,theheader);
   if (theheader.IsNull()) theheader = header;
   else {
-    DeclareAndCast(StepData_FileProtocol,headmult,theheader);
-    if (headmult.IsNull()) {
-      headmult = new StepData_FileProtocol;
-      headmult->Add(theheader);
-    }
-    headmult->Add(header);
-    theheader = headmult;
+    //DeclareAndCast(StepData_FileProtocol,headmult,theheader);
+   // if (headmult.IsNull()) {
+     // headmult = new StepData_FileProtocol;
+      //headmult->Add(theheader);
+    //}
+    //headmult->Add(header);
+    //theheader = headmult;
   }
 }
 

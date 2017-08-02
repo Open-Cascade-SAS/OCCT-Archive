@@ -70,8 +70,16 @@ Standard_Integer  StepSelect_WorkLibrary::ReadFile
   long status = 1;
   DeclareAndCast(StepData_Protocol,stepro,protocol);
   if (stepro.IsNull()) return 1;
-  Handle(StepData_StepModel) stepmodel  = new StepData_StepModel;
-  model  = stepmodel;
+   //ISCAR
+   Handle(StepData_StepModel) stepmodel;
+  if(!model.IsNull())
+    stepmodel = Handle(StepData_StepModel)::DownCast(model);
+  if(stepmodel.IsNull())
+  {
+    stepmodel  = new StepData_StepModel;
+    model = stepmodel;
+  }
+ 
   StepFile_ReadTrace (0);
   char *pName=(char *)name;
   status = StepFile_Read (pName,stepmodel,stepro);

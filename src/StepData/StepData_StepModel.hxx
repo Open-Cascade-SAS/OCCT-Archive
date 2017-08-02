@@ -23,6 +23,8 @@
 #include <Interface_EntityList.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <Interface_InterfaceModel.hxx>
+#include <Interface_Protocol.hxx>
+#include <Interface_Static.hxx>
 #include <Standard_Integer.hxx>
 #include <Standard_Boolean.hxx>
 #include <Standard_Type.hxx>
@@ -49,7 +51,7 @@ public:
   
   //! Creates an empty STEP model with an empty header.
   Standard_EXPORT StepData_StepModel();
-  
+
   //! returns entity given its rank.
   //! Same as InterfaceEntity, but with a shorter name
   Standard_EXPORT Handle(Standard_Transient) Entity (const Standard_Integer num) const;
@@ -76,7 +78,7 @@ public:
   Standard_EXPORT void AddHeaderEntity (const Handle(Standard_Transient)& ent);
   
   //! Specific Check, checks Header Items with HeaderProtocol
-  Standard_EXPORT virtual void VerifyCheck (Handle(Interface_Check)& ach) const Standard_OVERRIDE;
+  //Standard_EXPORT virtual void VerifyCheck (Handle(Interface_Check)& ach) const Standard_OVERRIDE;
   
   //! Dumps the Header, with the Header Protocol of StepData.
   //! If the Header Protocol is not defined, for each Header Entity,
@@ -106,11 +108,12 @@ public:
 
 
 
-
   DEFINE_STANDARD_RTTIEXT(StepData_StepModel,Interface_InterfaceModel)
 
 protected:
 
+  //! Initialises all non-static parameters used in translations
+  Standard_EXPORT void initParameters();
 
 
 

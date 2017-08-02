@@ -22,11 +22,13 @@
 
 #include <Standard_Integer.hxx>
 #include <Standard_Real.hxx>
-#include <STEPConstruct_ContextTool.hxx>
-#include <Transfer_ActorOfFinderProcess.hxx>
 #include <Standard_Boolean.hxx>
-#include <TopTools_HSequenceOfShape.hxx>
+#include <STEPConstruct_ContextTool.hxx>
 #include <STEPControl_StepModelType.hxx>
+#include <StepData_StepModel.hxx>
+#include <TopTools_HSequenceOfShape.hxx>
+#include <Transfer_ActorOfFinderProcess.hxx>
+#include <XSAlgo_AlgoContainer.hxx>
 class Transfer_Finder;
 class Transfer_Binder;
 class Transfer_FinderProcess;
@@ -63,7 +65,7 @@ public:
   
   Standard_EXPORT STEPControl_StepModelType Mode() const;
   
-  Standard_EXPORT void SetGroupMode (const Standard_Integer mode);
+  Standard_EXPORT void SetGroupMode (const Standard_CString theParameter);
   
   Standard_EXPORT Standard_Integer GroupMode() const;
   
@@ -76,6 +78,8 @@ public:
   //! NOTE: this method can modify shape
   Standard_EXPORT virtual Standard_Boolean IsAssembly (TopoDS_Shape& S) const;
 
+  //! Sets step model for translations
+  Standard_EXPORT void SetModel(Handle(Interface_InterfaceModel)& theModel);
 
 
 
@@ -94,14 +98,23 @@ private:
   //! Use this method to get the corresponding NMSSR (or
   //! to create a new one if doesn't exist yet)
   //! (ssv; 13.11.2010)
-  Standard_EXPORT Handle(StepShape_NonManifoldSurfaceShapeRepresentation) getNMSSRForGroup (const Handle(TopTools_HSequenceOfShape)& shapeGroup, const Handle(Transfer_FinderProcess)& FP, Standard_Boolean& isNMSSRCreated) const;
+  Standard_EXPORT Handle(StepShape_NonManifoldSurfaceShapeRepresentation) getNMSSRForGroup (const Handle(TopTools_HSequenceOfShape)& shapeGroup,
+                                                                                            const Handle(Transfer_FinderProcess)& FP,
+                                                                                            Standard_Boolean& isNMSSRCreated) const;
   
   //! bind already written shared faces to STEP entity for non-manifold
-  Standard_EXPORT void mergeInfoForNM(const Handle(Transfer_FinderProcess)& theFP, const Handle(Standard_Transient) &theInfo) const;
+  Standard_EXPORT void mergeInfoForNM(const Handle(Transfer_FinderProcess)& theFP,
+                                      const Handle(Standard_Transient) &theInfo) const;
+
+  //! 
+  Standard_EXPORT Standard_Real usedTolerance(const Standard_Real mytoler,
+                                              const TopoDS_Shape& theShape);
 
   Standard_Integer mygroup;
   Standard_Real mytoler;
   STEPConstruct_ContextTool myContext;
+  Handle(XSAlgo_AlgoContainer) myXSAlgoContainer;
+  Handle(Interface_InterfaceModel) myModel;
 
 
 };

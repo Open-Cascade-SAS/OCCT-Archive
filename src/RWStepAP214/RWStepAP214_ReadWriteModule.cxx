@@ -2048,8 +2048,8 @@ static TCollection_AsciiString Reco_CameraModelD3MultiClippingIntersection("CAME
 static TCollection_AsciiString Reco_CameraModelD3MultiClippingUnion("CAMERA_MODEL_D3_MULTI_CLIPPING_UNION");
 // -- Definition of the libraries --
 
-static NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typenums;
-static NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typeshor;
+//static NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typenums;
+//static NCollection_DataMap<TCollection_AsciiString, Standard_Integer> typeshor;
 
 RWStepAP214_ReadWriteModule::RWStepAP214_ReadWriteModule ()
 {

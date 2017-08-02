@@ -308,7 +308,12 @@ static Standard_Integer WriteIges (Draw_Interpretor& di, Standard_Integer argc, 
 static Standard_Integer ReadStep (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
   DeclareAndCast(STEPControl_Controller,ctl,XSDRAW::Controller());
-  if (ctl.IsNull()) XSDRAW::SetNorm("STEP");
+  if (ctl.IsNull())
+  {
+    ctl = new STEPCAFControl_Controller;
+    XSDRAW::SetController(ctl);
+  }
+
 
   Standard_CString aDocName = NULL;
   TCollection_AsciiString aFilePath, aModeStr;
@@ -341,7 +346,7 @@ static Standard_Integer ReadStep (Draw_Interpretor& di, Standard_Integer argc, c
   else        di << " Model taken from the session : " << fnom.ToCString() << "\n";
   //  di<<" -- Names of variables BREP-DRAW prefixed by : "<<rnom<<"\n";
 
-  STEPCAFControl_Reader reader ( XSDRAW::Session(),modfic);
+  STEPCAFControl_Reader reader (XSDRAW::Session(), ctl, modfic);
   if (!aModeStr.IsEmpty())
   {
     Standard_Boolean mode = Standard_True;
@@ -426,9 +431,14 @@ static Standard_Integer WriteStep (Draw_Interpretor& di, Standard_Integer argc, 
   Standard_CString multifile = 0;
   
   Standard_Integer k = 3;
-  DeclareAndCast(STEPControl_Controller,ctl,XSDRAW::Controller());
-  if (ctl.IsNull()) XSDRAW::SetNorm("STEP");
-  STEPCAFControl_Writer writer ( XSDRAW::Session(), Standard_True );
+
+  DeclareAndCast(STEPCAFControl_Controller, ctl, XSDRAW::Controller());
+  if (ctl.IsNull())
+  {
+    ctl = new STEPCAFControl_Controller;
+    XSDRAW::SetController(ctl);
+  }
+  STEPCAFControl_Writer writer ( XSDRAW::Session(), ctl, Standard_True );
    
   STEPControl_StepModelType mode = STEPControl_AsIs;
   if ( argc > k ) {
@@ -565,7 +575,6 @@ static Standard_Integer Expand (Draw_Interpretor& di, Standard_Integer argc, con
   }
   return 0;
 }
-
 
 //=======================================================================
 //function : WriteVrml

@@ -18,6 +18,7 @@
 #include <BRepClass3d.hxx>
 #include <MoniTool_DataMapOfShapeTransient.hxx>
 #include <StdFail_NotDone.hxx>
+#include <Interface_InterfaceModel.hxx>
 #include <StepShape_ClosedShell.hxx>
 #include <StepShape_FacetedBrepAndBrepWithVoids.hxx>
 #include <StepShape_HArray1OfOrientedClosedShell.hxx>
@@ -67,7 +68,7 @@ TopoDSToStep_MakeFacetedBrepAndBrepWithVoids::
 	TopoDS_Shell CurrentShell = TopoDS::Shell(It.Value());
 	if (It.Value().Closed()) {
 
-	  aTool.Init(aMap, Standard_False);
+          aTool.Init(aMap, Standard_False, FP->Model()->IVal("write.surfacecurve.mode"));
 	  StepB.Init(CurrentShell, aTool, FP);
 	  TopoDSToStep::AddResult ( FP, aTool );
 

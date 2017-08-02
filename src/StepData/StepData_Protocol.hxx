@@ -72,7 +72,7 @@ public:
   //! To be redefined by each sub-class
   //! Here, SchemaName returns "(DEFAULT)"
   //! was C++ : return const
-  Standard_EXPORT virtual Standard_CString SchemaName() const;
+  Standard_EXPORT virtual Standard_CString SchemaName(Standard_Integer theShematype = 0);
   
   //! Creates an empty Model for Step Norm
   Standard_EXPORT Handle(Interface_InterfaceModel) NewModel() const Standard_OVERRIDE;

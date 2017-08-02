@@ -27,7 +27,6 @@
 #include <Interface_Graph.hxx>
 #include <Interface_InterfaceModel.hxx>
 #include <Interface_Macros.hxx>
-#include <Interface_Static.hxx>
 #include <Message_Messenger.hxx>
 #include <Message_ProgressSentry.hxx>
 #include <OSD_Timer.hxx>
@@ -111,7 +110,6 @@
 #include <TransferBRep_ShapeBinder.hxx>
 #include <UnitsMethods.hxx>
 #include <XSAlgo.hxx>
-#include <XSAlgo_AlgoContainer.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(STEPControl_ActorRead,Transfer_ActorOfTransientProcess)
 
@@ -200,7 +198,10 @@ namespace {
 // Purpose : Empty constructor
 // ============================================================================
 
-STEPControl_ActorRead::STEPControl_ActorRead() {}
+STEPControl_ActorRead::STEPControl_ActorRead()
+{
+  myXSAlgoContainer = new XSAlgo_AlgoContainer;
+}
 
 // ============================================================================
 // Method  : STEPControl_ActorRead::Recognize
@@ -216,7 +217,7 @@ Standard_Boolean  STEPControl_ActorRead::Recognize
 
   if (start->IsKind(STANDARD_TYPE(StepRepr_NextAssemblyUsageOccurrence))) return Standard_True;
 
-  TCollection_AsciiString aProdMode = Interface_Static::CVal("read.step.product.mode");
+  TCollection_AsciiString aProdMode = myModel->CVal("read.step.product.mode");
   if(!aProdMode.IsEqual("ON"))
     if(start->IsKind(STANDARD_TYPE(StepShape_ShapeDefinitionRepresentation))) return Standard_True;
 
@@ -275,7 +276,7 @@ Handle(Transfer_Binder)  STEPControl_ActorRead::Transfer
  const Handle(Transfer_TransientProcess)& TP)
 {  
   // [BEGIN] Get version of preprocessor (to detect I-Deas case) (ssv; 23.11.2010)
-  Handle(StepData_StepModel) aStepModel = Handle(StepData_StepModel)::DownCast ( TP->Model() );
+  Handle(StepData_StepModel) aStepModel = Handle(StepData_StepModel)::DownCast(TP->Model());
   Interface_EntityIterator anEntIt = aStepModel->Header();
   for ( anEntIt.Start(); anEntIt.More(); anEntIt.Next() ) {
     DeclareAndCast( HeaderSection_FileName, aFileNameEntity, anEntIt.Value() );
@@ -393,16 +394,16 @@ static void getListSDR(const Handle(StepRepr_ShapeAspect)& sa,
 //purpose  : Find all SDRs related to given PDS
 //=======================================================================
 
-static void getSDR(const Handle(StepRepr_ProductDefinitionShape)& PDS,
-                   Handle(TColStd_HSequenceOfTransient)& listSDR,
-                   Handle(TColStd_HSequenceOfTransient)& listNAUO,
-                   Handle(TColStd_HSequenceOfTransient)& listSDRAspect,
-                   const Handle(Transfer_TransientProcess)& TP)
+void STEPControl_ActorRead::getSDR(const Handle(StepRepr_ProductDefinitionShape)& PDS,
+                                   Handle(TColStd_HSequenceOfTransient)& listSDR,
+                                   Handle(TColStd_HSequenceOfTransient)& listNAUO,
+                                   Handle(TColStd_HSequenceOfTransient)& listSDRAspect,
+                                   const Handle(Transfer_TransientProcess)& TP)
 {
   // Flag indicating preferred shape representation type, to be chosen if 
   // several different representations are attached to the same shape
   Standard_Integer delta = 100;
-  Standard_Integer ICS = Interface_Static::IVal("read.step.shape.repr");
+  Standard_Integer ICS = myModel->IVal("read.step.shape.repr");
   Standard_Integer nbSDR0 = listSDR->Length();
   
   // Iterate by entities referring PDS
@@ -502,12 +503,12 @@ static void getSDR(const Handle(StepRepr_ProductDefinitionShape)& PDS,
   // Flag indicating whether SDRs associated with the product`s main SDR
   // by SRRs (which correspond to hybrid model representation in AP203 since 1998) 
   // should be taken into account 
-  Standard_Integer readSRR = Interface_Static::IVal("read.step.shape.relationship");
+  Standard_Integer readSRR = myModel->IVal("read.step.shape.relationship");
   
   // Flag indicating whether SDRs associated with the product`s main SDR
   // by SAs (which correspond to hybrid model representation in AP203 before 1998) 
   // should be taken into account 
-  Standard_Integer readSA = Interface_Static::IVal("read.step.shape.aspect");
+  Standard_Integer readSA = myModel->IVal("read.step.shape.aspect");
   if ( ! readSA ) 
     listSDRAspect->Clear();  
     
@@ -521,7 +522,7 @@ static void getSDR(const Handle(StepRepr_ProductDefinitionShape)& PDS,
   // possibly attached directly to intermediate assemblies (1)
   // Special mode (4) is used to translate shape attached to this product only,
   // ignoring sub-assemblies if any
-  Standard_Integer readAssembly = Interface_Static::IVal("read.step.assembly.level");
+  Standard_Integer readAssembly = myModel->IVal("read.step.assembly.level");
   if ( readAssembly ==3 || ( readAssembly ==2 && listNAUO->Length() >0 ) ) 
     listSDR->Clear();
   else if ( readAssembly == 4 )
@@ -757,7 +758,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(const Han
     return shbinder;
   isBound = Standard_False;
   Standard_Integer nb = sr->NbItems();
-  // Used in XSAlgo::AlgoContainer()->ProcessShape (ssv; 13.11.2010)
+  // Used in myXSAlgoContainer->ProcessShape (ssv; 13.11.2010)
   Standard_Integer nbTPitems = TP->NbMapped();
   Handle(Message_Messenger) sout = TP->Messenger();
   #ifdef TRANSLOG
@@ -777,7 +778,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(const Han
   Message_ProgressSentry PS ( TP->GetProgress(), "Sub-assembly", 0, nb, 1 );
 
   // [BEGIN] Proceed with non-manifold topology (ssv; 12.11.2010)
-  Standard_Boolean isNMMode = Interface_Static::IVal("read.step.nonmanifold") != 0;
+  Standard_Boolean isNMMode = myModel->IVal("read.step.nonmanifold") != 0;
   Standard_Boolean isManifold = Standard_True;
   if ( isNMMode && sr->IsKind(STANDARD_TYPE(StepShape_NonManifoldSurfaceShapeRepresentation)) ) {
     isManifold = Standard_False;
@@ -789,7 +790,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(const Han
   } 
   // Special processing for I-DEAS STP case (ssv; 15.11.2010)
   else {
-    Standard_Integer isIDeasMode = Interface_Static::IVal("read.step.ideas");
+    Standard_Integer isIDeasMode = myModel->IVal("read.step.ideas");
     if (isNMMode && myNMTool.IsIDEASCase() && isIDeasMode) {
       isManifold = Standard_False;
       NM_DETECTED = Standard_True;
@@ -829,18 +830,18 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(const Han
       nsh ++;
     }
   }
-
+  
   // [BEGIN] Proceed with non-manifold topology (ssv; 12.11.2010)
   if (!isManifold) {
 
     Handle(Standard_Transient) info;
     // IMPORTANT: any fixing on non-manifold topology must be done after the shape is transferred from STEP
     TopoDS_Shape fixedResult = 
-      XSAlgo::AlgoContainer()->ProcessShape( comp, myPrecision, myMaxTol,
-                                             "read.step.resource.name", 
-                                             "read.step.sequence", info,
+      myXSAlgoContainer->ProcessShape( comp, myPrecision, myMaxTol,
+                                       "read.step.resource.name", 
+                                       "read.step.sequence", info,
                                              TP->GetProgress(), Standard_True);
-    XSAlgo::AlgoContainer()->MergeTransferInfo(TP, info, nbTPitems);
+    myXSAlgoContainer->MergeTransferInfo(TP, info, nbTPitems);
 
     if (fixedResult.ShapeType() == TopAbs_COMPOUND)
     {
@@ -896,14 +897,14 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(const Han
     for (; exp.More(); exp.Next())
     {
         TopoDS_Shape aSubShape = exp.Current();
-        if (aSubShape.ShapeType() == TopAbs_SHELL && aSubShape.Closed()) {
-            TopoDS_Solid nextSolid;
-            brepBuilder.MakeSolid(nextSolid);
-            brepBuilder.Add(nextSolid, aSubShape);
-            brepBuilder.Add(reconstComp, nextSolid);
-        }
-        else if (aSubShape.ShapeType() == TopAbs_SHELL)
-            brepBuilder.Add(reconstComp, aSubShape);
+      if ( aSubShape.ShapeType() == TopAbs_SHELL && aSubShape.Closed() ) {
+        TopoDS_Solid nextSolid;
+        brepBuilder.MakeSolid(nextSolid);
+        brepBuilder.Add(nextSolid, aSubShape);
+        brepBuilder.Add(reconstComp, nextSolid);
+      } 
+      else if (aSubShape.ShapeType() == TopAbs_SHELL)
+        brepBuilder.Add(reconstComp, aSubShape);
     }
     comp = reconstComp;
     // [END] Reconstruct Solids from Closed Shells (ssv; 15.11.2010)
@@ -1191,7 +1192,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(const Han
       TP->AddWarning ( start, "Entity with no unit context; default units taken" );
       ResetUnits();
     }
-    else PrepareUnits ( context, TP );
+    else PrepareUnits(context, TP);
   }
   myShapeBuilder.SetPrecision(myPrecision);
   myShapeBuilder.SetMaxTol(myMaxTol);
@@ -1247,12 +1248,11 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(const Han
     // Apply ShapeFix (on manifold shapes only. Non-manifold topology is processed separately: ssv; 13.11.2010)
     if (isManifold) {
       Handle(Standard_Transient) info;
-      mappedShape = 
-        XSAlgo::AlgoContainer()->ProcessShape( mappedShape, myPrecision, myMaxTol,
-                                               "read.step.resource.name", 
-                                               "read.step.sequence", info,
-                                               TP->GetProgress() );
-      XSAlgo::AlgoContainer()->MergeTransferInfo(TP, info, nbTPitems);
+      mappedShape = myXSAlgoContainer->ProcessShape( mappedShape, myPrecision, myMaxTol,
+                                                     "read.step.resource.name", 
+                                                     "read.step.sequence", info,
+                                                     TP->GetProgress() );
+      myXSAlgoContainer->MergeTransferInfo(TP, info, nbTPitems);
     }
   }
   found = !mappedShape.IsNull();
@@ -1378,15 +1378,15 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(const Han
       TopoDS_Shape S = sb->Result();
 
       Handle(Standard_Transient) info;
-      TopoDS_Shape shape = XSAlgo::AlgoContainer()->ProcessShape(S, myPrecision, myMaxTol,
-        "read.step.resource.name",
-        "read.step.sequence", info,
-        TP->GetProgress());
-      //      TopoDS_Shape shape = XSAlgo::AlgoContainer()->PerformFixShape( S, TP, myPrecision, myMaxTol );
+      TopoDS_Shape shape = myXSAlgoContainer->ProcessShape(S, myPrecision, myMaxTol,
+                                                           "read.step.resource.name",
+                                                           "read.step.sequence", info,
+                                                           TP->GetProgress());
+      //TopoDS_Shape shape = myXSAlgoContainer->PerformFixShape( S, TP, myPrecision, myMaxTol );
       if (shape != S)
         sb->SetResult(shape);
 
-      XSAlgo::AlgoContainer()->MergeTransferInfo(TP, info, nbTPitems);
+      myXSAlgoContainer->MergeTransferInfo(TP, info, nbTPitems);
     }
 
 
@@ -1413,13 +1413,13 @@ Handle(Transfer_Binder) STEPControl_ActorRead::TransferShape(const Handle(Standa
                                                              const Standard_Boolean isManifold)
 {
   if (start.IsNull()) return NullResult();
-  XSAlgo::AlgoContainer()->PrepareForTransfer();
+  myXSAlgoContainer->PrepareForTransfer();
 
   Handle(Message_Messenger) sout = TP->Messenger();
 #ifdef TRANSLOG
 //  POUR MISE AU POINT, a supprimer ensuite
   if (TP->TraceLevel() > 1) 
-    sout<<" -- Actor : Transfer Ent.n0 "<<TP->Model()->Number(start)<<"  Type "<<start->DynamicType()->Name()<<Message_EndLine;
+    sout<<" -- Actor : Transfer Ent.n0 "<<myModel->Number(start)<<"  Type "<<start->DynamicType()->Name()<<Message_EndLine;
 #endif
   
   Handle(TransferBRep_ShapeBinder) shbinder;
@@ -1428,7 +1428,7 @@ Handle(Transfer_Binder) STEPControl_ActorRead::TransferShape(const Handle(Standa
   // Product Definition Entities
   // They should be treated with Design Manager
    // case ShapeDefinitionRepresentation if ProductMode != ON
-  TCollection_AsciiString aProdMode = Interface_Static::CVal("read.step.product.mode");
+  TCollection_AsciiString aProdMode = myModel->CVal("read.step.product.mode");
   if(!aProdMode.IsEqual("ON") && 
      start->IsKind(STANDARD_TYPE(StepShape_ShapeDefinitionRepresentation))) 
     shbinder = OldWay(start,TP);
@@ -1549,7 +1549,7 @@ void STEPControl_ActorRead::PrepareUnits(const Handle(StepRepr_Representation)& 
 
   if (!theGUAC.IsNull()) {
     stat1 = myUnit.ComputeFactors(theGUAC);
-    Standard_Integer anglemode = Interface_Static::IVal("step.angleunit.mode");
+    Standard_Integer anglemode = myModel->IVal("step.angleunit.mode");
     Standard_Real angleFactor = ( anglemode == 0 ? myUnit.PlaneAngleFactor() :
 				  anglemode == 1 ? 1. : M_PI/180. );
     UnitsMethods::InitializeFactors(myUnit.LengthFactor(),
@@ -1564,15 +1564,15 @@ void STEPControl_ActorRead::PrepareUnits(const Handle(StepRepr_Representation)& 
   }
 
 //  myPrecision = Precision::Confusion();
-  if (Interface_Static::IVal("read.precision.mode") == 1)  //:i1 gka S4136 05.04.99
-    myPrecision = Interface_Static::RVal("read.precision.val");
+  if (myModel->IVal("read.precision.mode") == 1)  //:i1 gka S4136 05.04.99
+    myPrecision = myModel->RVal("read.precision.val");
   else if (myUnit.HasUncertainty())
     myPrecision = myUnit.Uncertainty() * myUnit.LengthFactor();
   else {
     TP->AddWarning(theRepCont,"No Length Uncertainty, value of read.precision.val is taken");
-    myPrecision = Interface_Static::RVal("read.precision.val");
+    myPrecision = myModel->RVal("read.precision.val");
   }
-  myMaxTol = Max ( myPrecision, Interface_Static::RVal("read.maxprecision.val") );
+  myMaxTol = Max ( myPrecision, myModel->RVal("read.maxprecision.val") );
   // Assign uncertainty
 #ifdef TRANSLOG
   if (TP->TraceLevel() > 1) 
@@ -1585,11 +1585,11 @@ void STEPControl_ActorRead::PrepareUnits(const Handle(StepRepr_Representation)& 
 //purpose  : 
 //=======================================================================
 
-void  STEPControl_ActorRead::ResetUnits ()
+void STEPControl_ActorRead::ResetUnits ()
 {
   UnitsMethods::InitializeFactors ( 1, 1, 1 );
-  myPrecision = Interface_Static::RVal("read.precision.val");
-  myMaxTol = Max ( myPrecision, Interface_Static::RVal("read.maxprecision.val") );
+  myPrecision = myModel->RVal("read.precision.val");
+  myMaxTol = Max ( myPrecision, myModel->RVal("read.maxprecision.val"));
 }
 
 //=======================================================================
@@ -1795,4 +1795,14 @@ void STEPControl_ActorRead::computeIDEASClosings(const TopoDS_Compound& comp,
     if ( !closingShells.IsEmpty() )
       shellClosingsMap.Add(shellA, closingShells);
   }
+}
+
+//=======================================================================
+// Method  : SetModel
+// Purpose :
+//=======================================================================
+void STEPControl_ActorRead::SetModel(Handle(Interface_InterfaceModel)& theModel)
+{
+  myModel = theModel;
+  myXSAlgoContainer->SetModel(theModel);
 }

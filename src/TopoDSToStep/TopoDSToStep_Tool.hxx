@@ -50,9 +50,13 @@ public:
   
   Standard_EXPORT TopoDSToStep_Tool();
   
-  Standard_EXPORT TopoDSToStep_Tool(const MoniTool_DataMapOfShapeTransient& M, const Standard_Boolean FacetedContext);
+  Standard_EXPORT TopoDSToStep_Tool(const MoniTool_DataMapOfShapeTransient& M,
+                                    const Standard_Boolean FacetedContext,
+                                    Standard_Integer theCurveMode);
   
-  Standard_EXPORT void Init (const MoniTool_DataMapOfShapeTransient& M, const Standard_Boolean FacetedContext);
+  Standard_EXPORT void Init (const MoniTool_DataMapOfShapeTransient& M,
+                             const Standard_Boolean FacetedContext,
+                             Standard_Integer theCurveMode);
   
   Standard_EXPORT Standard_Boolean IsBound (const TopoDS_Shape& S);
   

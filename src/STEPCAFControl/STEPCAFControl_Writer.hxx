@@ -21,6 +21,7 @@
 #include <Standard_Handle.hxx>
 
 #include <STEPControl_Writer.hxx>
+#include <STEPCAFControl_Controller.hxx>
 #include <STEPCAFControl_DataMapOfLabelShape.hxx>
 #include <STEPCAFControl_DataMapOfLabelExternFile.hxx>
 #include <Standard_Boolean.hxx>
@@ -64,15 +65,18 @@ public:
   //! PropsMode to Standard_True.
   Standard_EXPORT STEPCAFControl_Writer();
   
-  //! Creates a reader tool and attaches it to an already existing Session
+  //! Creates a writer tool and attaches it to an already existing Session
   //! Clears the session if it was not yet set for STEP
   //! Clears the internal data structures
-  Standard_EXPORT STEPCAFControl_Writer(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
-  
-  //! Clears the internal data structures and attaches to a new session
+  Standard_EXPORT STEPCAFControl_Writer(const Handle(XSControl_WorkSession)& WS,
+                                        const Standard_Boolean scratch = Standard_True);
+
+  //! Creates a writer tool and attaches it to an already existing Session and controller
   //! Clears the session if it was not yet set for STEP
-  Standard_EXPORT void Init (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
-  
+  Standard_EXPORT STEPCAFControl_Writer(const Handle(XSControl_WorkSession)& theWS,
+                                        const Handle(XSControl_Controller)& theController,
+                                        const Standard_Boolean theScratch = Standard_True);
+
   //! Writes all the produced models into file
   //! In case of multimodel with extern references,
   //! filename will be a name of root file, all other files
@@ -149,18 +153,33 @@ public:
   Standard_EXPORT void SetMaterialMode (const Standard_Boolean matmode);
   
   Standard_EXPORT Standard_Boolean GetMaterialMode() const;
+  
+  //! Returns parameter for translation by its name
+  //Standard_EXPORT Handle(Interface_Static) GetParam(const Standard_CString theParamName);
 
 
 
 
 protected:
+
+  //! Inits a reader with following session and controller
+  Standard_EXPORT void Init(const Handle(XSControl_WorkSession)& theWS,
+                            const Handle(XSControl_Controller)& theController,
+                            const Standard_Boolean theScratch = Standard_True);
+
   //! Mehod to writing sequence of root assemblies or part of the file specified by use by one label 
-  Standard_EXPORT Standard_Boolean Transfer (const TDF_LabelSequence& L, const STEPControl_StepModelType mode = STEPControl_AsIs, const Standard_CString multi = 0);
+  Standard_EXPORT Standard_Boolean Transfer (const TDF_LabelSequence& L,
+                                             const STEPControl_StepModelType mode = STEPControl_AsIs,
+                                             const Standard_CString multi = 0);
   
   //! Transfers labels to a STEP model
   //! Returns True if translation is OK
   //! isExternFile setting from TransferExternFiles method
-  Standard_EXPORT Standard_Boolean Transfer (STEPControl_Writer& wr, const TDF_LabelSequence& labels, const STEPControl_StepModelType mode = STEPControl_AsIs, const Standard_CString multi = 0, const Standard_Boolean isExternFile = Standard_False) ;
+  Standard_EXPORT Standard_Boolean Transfer (STEPControl_Writer& wr,
+                                             const TDF_LabelSequence& labels,
+                                             const STEPControl_StepModelType mode = STEPControl_AsIs,
+                                             const Standard_CString multi = 0,
+                                             const Standard_Boolean isExternFile = Standard_False) ;
   
   //! Parses assembly structure of label L, writes all the simple
   //! shapes each to its own file named by name of its label plus
@@ -168,7 +187,9 @@ protected:
   //! Returns shape representing that assembly structure
   //! in the form of nested empty compounds (and a sequence of
   //! labels which are newly written nodes of this assembly)
-  Standard_EXPORT TopoDS_Shape TransferExternFiles (const TDF_Label& L, const STEPControl_StepModelType mode, TDF_LabelSequence& Lseq, const Standard_CString prefix = "");
+  Standard_EXPORT TopoDS_Shape TransferExternFiles (const TDF_Label& L,
+                                                    const STEPControl_StepModelType mode,
+                                                    TDF_LabelSequence& Lseq, const Standard_CString prefix = "");
   
   //! Write external references to STEP
   Standard_EXPORT Standard_Boolean WriteExternRefs (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels) const;
@@ -237,6 +258,7 @@ private:
   Handle(StepVisual_DraughtingModel) myGDTPresentationDM;
   Handle(StepVisual_HArray1OfPresentationStyleAssignment) myGDTPrsCurveStyle;
   Handle(StepRepr_ProductDefinitionShape) myGDTCommonPDS;
+  Handle(STEPCAFControl_Controller) myCAFController;
 
 };
 

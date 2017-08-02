@@ -1040,3 +1040,75 @@ Handle(TColStd_HSequenceOfHAsciiString) Interface_InterfaceModel::ListTemplates 
   }
   return list;
 }
+
+//=======================================================================
+//function : GetParam
+//purpose  : 
+//=======================================================================
+Handle(Interface_Static) Interface_InterfaceModel::GetParam
+(const Standard_CString theParamName) const
+{
+  Handle(Interface_Static) aParam;
+  if (myParamMap.IsBound(theParamName))
+  {
+    Handle(Standard_Transient) result;
+    myParamMap.Find(theParamName, result);
+    if (!result.IsNull())
+      aParam = Handle(Interface_Static)::DownCast(result);
+  }
+  if (aParam.IsNull())
+  {
+#ifdef OCCT_DEBUG
+    cout << "Warning: Incorrect parameter :" << name << endl;
+#endif
+  }
+  return aParam;
+}
+
+//=======================================================================
+//function : GetParam
+//purpose  : 
+//=======================================================================
+void Interface_InterfaceModel::AddParam
+(const Standard_CString theParamName, Handle(Interface_Static)& theParam)
+{
+  myParamMap.Bind(theParamName, theParam);
+}
+//=======================================================================
+//function : AllParameters
+//purpose  : 
+//=======================================================================
+const NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)>& Interface_InterfaceModel::AllParameters()
+{
+  return myParamMap;
+}
+
+//=======================================================================
+//function : IVal
+//purpose  : 
+//=======================================================================
+Standard_Integer Interface_InterfaceModel::IVal(const Standard_CString theParamName) const
+{
+  Handle(Interface_Static) aParam = GetParam(theParamName);
+  return (aParam.IsNull() ? 0 : aParam->IntegerValue());
+}
+
+//=======================================================================
+//function : RVal
+//purpose  : 
+//=======================================================================
+Standard_Real Interface_InterfaceModel::RVal(const Standard_CString theParamName) const
+{
+  Handle(Interface_Static) aParam = GetParam(theParamName);
+  return (aParam.IsNull() ? 0.0 : aParam->RealValue());
+}
+
+//=======================================================================
+//function : CVal
+//purpose  : 
+//=======================================================================
+Standard_CString Interface_InterfaceModel::CVal(const Standard_CString theParamName) const
+{
+  Handle(Interface_Static) aParam = GetParam(theParamName);
+  return (aParam.IsNull() ? "" : aParam->CStringValue());
+}

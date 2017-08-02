@@ -19,6 +19,8 @@
 #include <Standard.hxx>
 #include <Standard_Type.hxx>
 
+#include <Interface_InterfaceModel.hxx>
+#include <Interface_Static.hxx>
 #include <Standard_Transient.hxx>
 #include <Standard_Real.hxx>
 #include <Standard_CString.hxx>
@@ -82,6 +84,9 @@ public:
   //! from item startTPitem
   Standard_EXPORT virtual void MergeTransferInfo (const Handle(Transfer_FinderProcess)& FP, const Handle(Standard_Transient)& info) const;
 
+  //! Sets the model for translations
+  Standard_EXPORT void SetModel(Handle(Interface_InterfaceModel)& theModel);
+
 
 
 
@@ -89,14 +94,23 @@ public:
 
 protected:
 
+  //! Returns a parameter for translations.
+  //! First tries get it from non-static model,
+  //! if failure get it from static map
+  Standard_EXPORT Handle(Interface_Static) getParam(const Standard_CString theParamName) const;
 
+  Standard_EXPORT Standard_Integer IVal(const Standard_CString theParamName) const;
+  Standard_EXPORT Standard_Real RVal(const Standard_CString theParamName) const;
+  Standard_EXPORT Standard_CString CVal(const Standard_CString theParamName) const;
 
+  void initParameters();
 
 private:
 
 
   Handle(XSAlgo_ToolContainer) myTC;
-
+  Handle(Interface_InterfaceModel) myModel;
+ 
 
 };
 

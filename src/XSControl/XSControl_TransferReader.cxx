@@ -404,7 +404,16 @@ TopoDS_Shape XSControl_TransferReader::ShapeResult
   TopoDS_Shape sh = xu.BinderShape (mres->Binder());
 
 //   Ouh la vilaine verrue
-  Standard_Real tolang = Interface_Static::RVal("read.encoderegularity.angle");
+  Standard_Real tolang;
+  Handle(Interface_Static) aParam = myModel->GetParam("read.encoderegularity.angle");
+  if (aParam.IsNull())
+  {
+    tolang = Interface_Static::RVal("read.encoderegularity.angle");
+  }
+  else
+  {
+    tolang = aParam->RealValue();
+  }
   if (tolang <= 0 || sh.IsNull()) return sh;
   ShapeFix::EncodeRegularity (sh,tolang);
   return sh;

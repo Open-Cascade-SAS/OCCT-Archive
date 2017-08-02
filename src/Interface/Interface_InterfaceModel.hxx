@@ -27,6 +27,7 @@
 #include <Standard_Type.hxx>
 #include <Standard_CString.hxx>
 #include <Interface_DataState.hxx>
+#include <Interface_Static.hxx>
 #include <TColStd_HSequenceOfHAsciiString.hxx>
 class Interface_Check;
 class TCollection_HAsciiString;
@@ -398,17 +399,27 @@ public:
   //! Returns the complete list of names attached to template models
   Standard_EXPORT static Handle(TColStd_HSequenceOfHAsciiString) ListTemplates();
 
+  //! Returns parameter for translation by its name
+  Standard_EXPORT Handle(Interface_Static) GetParam(const Standard_CString theParamName) const;
 
+  Standard_EXPORT Standard_Integer IVal(const Standard_CString theParamName) const;
+  Standard_EXPORT Standard_Real RVal(const Standard_CString theParamName) const;
+  Standard_EXPORT Standard_CString CVal(const Standard_CString theParamName) const;
+
+  //! Adds parameters in the mopdel
+  Standard_EXPORT void AddParam(const Standard_CString theParamName, Handle(Interface_Static)& theParam);
+
+  //! Returns all available parameters for translation
+  Standard_EXPORT const NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)>& AllParameters();
 
   DEFINE_STANDARD_RTTIEXT(Interface_InterfaceModel,Standard_Transient)
 
 protected:
 
-  
   //! Defines empty InterfaceModel, ready to be filled
   Standard_EXPORT Interface_InterfaceModel();
 
-
+  NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)> myParamMap;
 
 private:
 

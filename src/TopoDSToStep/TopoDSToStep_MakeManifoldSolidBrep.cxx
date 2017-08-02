@@ -17,6 +17,7 @@
 
 #include <BRepClass3d.hxx>
 #include <StdFail_NotDone.hxx>
+#include <StepData_StepModel.hxx>
 #include <StepShape_ClosedShell.hxx>
 #include <StepShape_HArray1OfFace.hxx>
 #include <StepShape_ManifoldSolidBrep.hxx>
@@ -37,7 +38,8 @@ static Handle(StepShape_ManifoldSolidBrep) MakeManifoldSolidBrep (const TopoDS_S
   Handle(StepShape_ManifoldSolidBrep) theManifoldSolidBrep;
 
   MoniTool_DataMapOfShapeTransient aMap;
-  TopoDSToStep_Tool aTool(aMap, Standard_False);
+  Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(FP->Model());
+  TopoDSToStep_Tool aTool(aMap, Standard_False, aModel->IVal("write.surfacecurve.mode"));
   
   TopoDSToStep_Builder StepB(aShell, aTool, FP);
 

@@ -16,12 +16,12 @@
 #include <HeaderSection_Protocol.hxx>
 #include <Interface_Statics.hxx>
 
-StaticHandle(HeaderSection_Protocol, proto);
+//StaticHandle(HeaderSection_Protocol, proto);
 
 Handle(HeaderSection_Protocol) HeaderSection::Protocol()
 
-	{
-		InitHandleVoid(HeaderSection_Protocol, proto);
-		return proto;
-	}
+{
+		//InitHandleVoid(HeaderSection_Protocol, proto);
+  return new HeaderSection_Protocol;
+}
 

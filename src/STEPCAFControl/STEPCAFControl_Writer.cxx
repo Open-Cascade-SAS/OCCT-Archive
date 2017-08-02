@@ -280,9 +280,7 @@ STEPCAFControl_Writer::STEPCAFControl_Writer () :
        myGDTMode  ( Standard_True ),
        myMatMode  ( Standard_True )
 {
-  STEPCAFControl_Controller::Init();
-  Handle(XSControl_WorkSession) WS = new XSControl_WorkSession;
-  Init ( WS );
+  Init(new XSControl_WorkSession, new STEPCAFControl_Controller);
 }
 
 
@@ -291,8 +289,8 @@ STEPCAFControl_Writer::STEPCAFControl_Writer () :
 //purpose  :
 //=======================================================================
 
-STEPCAFControl_Writer::STEPCAFControl_Writer (const Handle(XSControl_WorkSession)& WS,
-                                              const Standard_Boolean scratch) :
+STEPCAFControl_Writer::STEPCAFControl_Writer(const Handle(XSControl_WorkSession)& theWS,
+  const Standard_Boolean theScratch) :
   myColorMode(Standard_True),
   myNameMode(Standard_True),
   myLayerMode(Standard_True),
@@ -301,21 +299,40 @@ STEPCAFControl_Writer::STEPCAFControl_Writer (const Handle(XSControl_WorkSession
   myGDTMode(Standard_True),
   myMatMode(Standard_True)
 {
-  STEPCAFControl_Controller::Init();
-  Init ( WS, scratch );
+  Init(theWS, new STEPCAFControl_Controller, theScratch);
 }
 
+//=======================================================================
+//function : STEPCAFControl_Reader
+//purpose  : 
+//=======================================================================
+STEPCAFControl_Writer::STEPCAFControl_Writer(const Handle(XSControl_WorkSession)& theWS,
+  const Handle(XSControl_Controller)& theController,
+  const Standard_Boolean theScratch) :
+  myColorMode(Standard_True),
+  myNameMode(Standard_True),
+  myLayerMode(Standard_True),
+  myPropsMode(Standard_True),
+  mySHUOMode(Standard_True),
+  myGDTMode(Standard_True),
+  myMatMode(Standard_True)
+{
+  Init(theWS, theController, theScratch);
+}
 
 //=======================================================================
 //function : Init
 //purpose  :
 //=======================================================================
 
-void STEPCAFControl_Writer::Init (const Handle(XSControl_WorkSession)& WS,
-				  const Standard_Boolean scratch)
+void STEPCAFControl_Writer::Init(const Handle(XSControl_WorkSession)& theWS,
+  const Handle(XSControl_Controller)& theController,
+  const Standard_Boolean theScratch)
 {
-  WS->SelectNorm ( "STEP" );
-  myWriter.SetWS (WS,scratch);
+  myCAFController = Handle(STEPCAFControl_Controller)::DownCast(theController);
+  STEPControl_Writer aWriter(theWS, theController, theScratch);
+  myWriter = aWriter;
+
   myFiles.Clear();
   myLabEF.Clear();
   myLabels.Clear();
@@ -510,7 +527,15 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
     Handle(STEPCAFControl_ActorWrite)::DownCast ( writer.WS()->NormAdaptor()->ActorWrite() );
 
   // translate free top-level shapes of the DECAF document
-  Standard_Integer ap = Interface_Static::IVal ("write.step.schema");
+
+
+  Handle(StepData_StepModel) aModel = writer.Model();
+
+  if (Actor.IsNull())
+  {
+    return Standard_False;
+  }
+  Standard_Integer ap = aModel->IVal("write.step.schema");
   TDF_LabelSequence sublabels;
   for ( Standard_Integer i=1; i <= labels.Length(); i++ ) {
     TDF_Label L = labels.Value(i);
@@ -585,7 +610,7 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
       // translate main assembly structure
 /*
       if ( ap == 3 ) { // if AP203, switch to AP214
-	Interface_Static::SetCVal ("write.step.schema", "AP214DIS");
+        myCAFController->GetParam("write.step.schema")->SetCStringValue("AP214DIS");
 	Handle(StepData_StepModel) model = 
 	  Handle(StepData_StepModel)::DownCast ( writer.WS()->Model() );
 	if ( model->HasHeaderEntity(STANDARD_TYPE(HeaderSection_FileSchema)) ) {
@@ -600,11 +625,22 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
 	}
       }
 */      
-      Standard_Integer assemblymode = Interface_Static::IVal ("write.step.assembly");
-      Interface_Static::SetCVal ("write.step.assembly", "On");
+      Handle(Interface_Static) aParameter = aModel->GetParam("write.step.assembly");
+      Standard_Integer assemblymode = 0;
+      if (!aParameter.IsNull())
+      {
+        assemblymode = aParameter->IntegerValue();
+        aParameter->SetCStringValue("On");
+      }
       writer.Transfer ( Sass, STEPControl_AsIs );
-      Interface_Static::SetIVal ("write.step.assembly", assemblymode);
-      Interface_Static::SetIVal ("write.step.schema", ap);
+      if (!aParameter.IsNull())
+        aParameter->SetIntegerValue(assemblymode);
+      Handle(Interface_Static) aParamWriteSch = aModel->GetParam("write.step.schema");
+      if (!aParamWriteSch.IsNull())
+        aParamWriteSch->SetIntegerValue(ap);
+
+
+
     }
   }
 
@@ -656,12 +692,14 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
 
   // write validation props
 //  if ( multi && ap ==3 ) {
-//      Interface_Static::SetCVal ("write.step.schema", "AP214DIS");
+//       myCAFController->GetParam("write.step.schema")->SetCStringValue("AP214DIS");
 //  }
   if ( GetPropsMode() ) 
     WriteValProps ( writer.WS(), sublabels, multi );
 
-  Interface_Static::SetIVal ("write.step.schema", ap);
+  Handle(Interface_Static) aParam = aModel->GetParam("write.step.schema");
+  if (!aParam.IsNull())
+    aParam->SetIntegerValue(ap);
 
   // refresh graph
   writer.WS()->ComputeGraph ( Standard_True );
@@ -670,7 +708,8 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
     *  Write names for the sub-shapes
     * ================================ */
 
-  if (Interface_Static::IVal("write.stepcaf.subshapes.name") != 0)
+  
+  if (aModel->IVal("write.stepcaf.subshapes.name") != 0)
   {
     const Handle(XSControl_TransferWriter) &TW = this->ChangeWriter().WS()->TransferWriter();
     const Handle(Transfer_FinderProcess) &FP = TW->FinderProcess();
@@ -759,11 +798,17 @@ TopoDS_Shape STEPCAFControl_Writer::TransferExternFiles (const TDF_Label &L,
     EF->SetWS ( newWS );
     EF->SetName ( name );
     EF->SetLabel ( L );
-    Standard_Integer assemblymode = Interface_Static::IVal ("write.step.assembly");
-    Interface_Static::SetCVal ("write.step.assembly", "Off");
+    Handle(Interface_Static) aParameter = sw.Model()->GetParam("write.step.assembly");
+    Standard_Integer assemblymode = 0;
+    if (!aParameter.IsNull())
+    {
+      assemblymode = aParameter->IntegerValue();
+      aParameter->SetCStringValue("Off");
+    }
     const Standard_CString multi = 0;
     EF->SetTransferStatus ( Transfer ( sw, Lseq, mode, multi, Standard_True ) );
-    Interface_Static::SetIVal ("write.step.assembly", assemblymode);
+    if (!aParameter.IsNull())
+      aParameter->SetIntegerValue(assemblymode);
     myLabEF.Bind ( L, EF );
     myFiles.Bind ( name->ToCString(), EF );
 
@@ -812,7 +857,7 @@ Standard_Boolean STEPCAFControl_Writer::WriteExternRefs (const Handle(XSControl_
   const Handle(XSControl_TransferWriter) &TW = WS->TransferWriter();
   const Handle(Transfer_FinderProcess) &FP = TW->FinderProcess();
   STEPConstruct_ExternRefs EFTool ( WS );
-  Standard_Integer schema = Interface_Static::IVal("write.step.schema");
+  Standard_Integer schema = WS->Model()->GetParam("write.step.schema")->IntegerValue();
   for ( Standard_Integer k=1; k <= labels.Length(); k++ ) {
     TDF_Label lab = labels(k);
     if ( XCAFDoc_ShapeTool::IsAssembly ( lab ) ) continue; // skip assemblies
@@ -1265,7 +1310,7 @@ Standard_Boolean STEPCAFControl_Writer::WriteColors (const Handle(XSControl_Work
         std::cerr << "Error: Current Top-Level shape have MDGPR already " << std::endl;
 #endif
       }
-      Styles.CreateMDGPR ( Context, aMDGPR );
+      Styles.CreateMDGPR(Context, aMDGPR, WS->Model());
       if (!aMDGPR.IsNull())
         myMapCompMDGPR.Bind( aTopSh, aMDGPR );
     }
@@ -1285,7 +1330,8 @@ Standard_Boolean STEPCAFControl_Writer::WriteColors (const Handle(XSControl_Work
         // search for MDGPR of the component top-level shape
         if ( myMapCompMDGPR.IsBound( aTopSh )) {
           aMDGPR = Handle(StepVisual_MechanicalDesignGeometricPresentationRepresentation)::DownCast( myMapCompMDGPR.Find( aTopSh ) );
-        } else {
+        }
+        else {
           aMDGPR = new StepVisual_MechanicalDesignGeometricPresentationRepresentation;
           Handle(TCollection_HAsciiString) ReprName = new TCollection_HAsciiString ( "" );
           aMDGPR->SetName( ReprName );
@@ -1911,7 +1957,7 @@ static Standard_Boolean createSHUOStyledItem (const XCAFPrs_Style& style,
     std::cout << "Warning: " << __FILE__ << ": Create new MDGPR for SHUO instance"  << std::endl;
 #endif
     Handle(StepVisual_MechanicalDesignGeometricPresentationRepresentation) aMDGPR;
-    Styles.CreateMDGPR ( Context, aMDGPR );
+    Styles.CreateMDGPR(Context, aMDGPR, WS->Model());
     if (!aMDGPR.IsNull())
       myMapCompMDGPR.Bind( aTopSh, aMDGPR );
   }
@@ -4296,3 +4342,13 @@ Standard_Boolean STEPCAFControl_Writer::GetMaterialMode() const
 {
   return myMatMode;
 }
+
+//=======================================================================
+//function : GetParam
+//purpose  : 
+//=======================================================================
+//Handle(Interface_Static) STEPCAFControl_Writer::GetParam
+//(const Standard_CString theParamName)
+//{
+//  return myWriter.Model()->GetParam(theParamName);
+//}

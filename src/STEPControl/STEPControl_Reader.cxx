@@ -14,8 +14,8 @@
 
 #include <Interface_EntityIterator.hxx>
 #include <Interface_Graph.hxx>
+#include <Interface_Macros.hxx>
 #include <Interface_ShareFlags.hxx>
-#include <Interface_Static.hxx>
 #include <StepBasic_ApplicationContext.hxx>
 #include <StepBasic_ConversionBasedUnit.hxx>
 #include <StepBasic_DocumentProductEquivalence.hxx>
@@ -38,8 +38,8 @@
 #include <StepBasic_SolidAngleMeasureWithUnit.hxx>
 #include <StepBasic_SolidAngleUnit.hxx>
 #include <STEPConstruct_UnitContext.hxx>
-#include <STEPControl_Controller.hxx>
 #include <STEPControl_Reader.hxx>
+#include <STEPControl_ActorRead.hxx>
 #include <StepData_StepModel.hxx>
 #include <StepGeom_GeometricRepresentationContextAndGlobalUnitAssignedContext.hxx>
 #include <StepGeom_GeomRepContextAndGlobUnitAssCtxAndGlobUncertaintyAssCtx.hxx>
@@ -74,8 +74,7 @@
 //=======================================================================
 STEPControl_Reader::STEPControl_Reader ()
 {
-  STEPControl_Controller::Init();
-  SetNorm ("STEP");
+  initReader(new XSControl_WorkSession, new STEPControl_Controller);
 }
 
 //=======================================================================
@@ -83,12 +82,38 @@ STEPControl_Reader::STEPControl_Reader ()
 //purpose  : 
 //=======================================================================
 
-STEPControl_Reader::STEPControl_Reader
-  (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch)
+STEPControl_Reader::STEPControl_Reader(const Handle(XSControl_WorkSession)& theWS,
+                                       const Standard_Boolean scratch)
 {
-  STEPControl_Controller::Init();
-  SetWS (WS,scratch);
-  SetNorm ("STEP");
+  initReader(theWS, new STEPControl_Controller, scratch);
+}
+
+//=======================================================================
+//function : STEPControl_Reader
+//purpose  : 
+//=======================================================================
+
+STEPControl_Reader::STEPControl_Reader (const Handle(XSControl_WorkSession)& theWS,
+                                        const Handle(XSControl_Controller)& theController,
+                                        const Standard_Boolean scratch)
+{
+  initReader(theWS, theController, scratch);
+}
+
+//=======================================================================
+//function : initReader
+//purpose  : 
+//=======================================================================
+void STEPControl_Reader::initReader(const Handle(XSControl_WorkSession)& theWS,
+                                    const Handle(XSControl_Controller)& theController,
+                                    const Standard_Boolean scratch)
+{
+  myController = theController;
+  theWS->SetController(myController);
+  SetWS(theWS, scratch);
+  myController->Init(WS());
+
+  initTransferReader();
 }
 
 //=======================================================================
@@ -122,10 +147,11 @@ Standard_Integer STEPControl_Reader::NbRootsForTransfer()
   therootsta = Standard_True;
 
   //theroots.Clear();
-  Standard_Integer nb = Model()->NbEntities();
+  Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(Model());
+  Standard_Integer nb = aModel->NbEntities();
   for (Standard_Integer i = 1; i <= nb; i ++) {
-    Handle(Standard_Transient) ent = Model()->Value(i);
-    if (Interface_Static::IVal("read.step.all.shapes") == 1) {
+    Handle(Standard_Transient) ent = aModel->Value(i);
+    if (aModel->IVal("read.step.all.shapes") == 1) {
       // Special case to read invalid shape_representation without links to shapes.
       if (ent->IsKind(STANDARD_TYPE(StepShape_ManifoldSolidBrep))) {
         Interface_EntityIterator aShareds = WS()->Graph().Sharings(ent);
@@ -185,8 +211,8 @@ Standard_Integer STEPControl_Reader::NbRootsForTransfer()
       }
       // determinate roots used ProductDefinitionContext
       if(IsRoot) {
-        const char *str1 = Interface_Static::CVal("read.step.product.context");
-        Standard_Integer ICS = Interface_Static::IVal("read.step.product.context");
+        const char *str1 = aModel->CVal("read.step.product.context");
+        Standard_Integer ICS = aModel->IVal("read.step.product.context");
         if(ICS>1) {
           subs = graph.Shareds(PD);
           for(subs.Start(); subs.More(); subs.Next()) {
@@ -219,7 +245,7 @@ Standard_Integer STEPControl_Reader::NbRootsForTransfer()
         WS()->TransferReader()->TransientProcess()->RootsForTransfer()->Append(ent);
       }
     }
-    TCollection_AsciiString aProdMode = Interface_Static::CVal("read.step.product.mode");
+    TCollection_AsciiString aProdMode = aModel->CVal("read.step.product.mode");
     if(!aProdMode.IsEqual("ON")) {
       if(ent->IsKind(STANDARD_TYPE(StepShape_ShapeDefinitionRepresentation))) {
         Standard_Boolean IsRoot = Standard_True;

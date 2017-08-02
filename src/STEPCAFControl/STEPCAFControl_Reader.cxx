@@ -22,7 +22,6 @@
 #include <Interface_InterfaceModel.hxx>
 #include <StepData_StepModel.hxx>
 #include <HeaderSection_FileSchema.hxx>
-#include <Interface_Static.hxx>
 #include <NCollection_DataMap.hxx>
 #include <OSD_Path.hxx>
 #include <Quantity_Color.hxx>
@@ -329,7 +328,7 @@ STEPCAFControl_Reader::STEPCAFControl_Reader()
   myMatMode(Standard_True),
   myViewMode(Standard_True)
 {
-  STEPCAFControl_Controller::Init();
+  Init(new XSControl_WorkSession, new STEPCAFControl_Controller);
   mySourceCodePage = (Resource_FormatType )Interface_Static::IVal ("read.stepcaf.codepage");
 }
 
@@ -339,8 +338,8 @@ STEPCAFControl_Reader::STEPCAFControl_Reader()
 //purpose  : 
 //=======================================================================
 
-STEPCAFControl_Reader::STEPCAFControl_Reader(const Handle(XSControl_WorkSession)& WS,
-  const Standard_Boolean scratch)
+STEPCAFControl_Reader::STEPCAFControl_Reader (const Handle(XSControl_WorkSession)& theWS,
+                                              const Standard_Boolean theScratch)
 : mySourceCodePage (Resource_FormatType_UTF8),
   myColorMode(Standard_True),
   myNameMode(Standard_True),
@@ -351,9 +350,27 @@ STEPCAFControl_Reader::STEPCAFControl_Reader(const Handle(XSControl_WorkSession)
   myMatMode(Standard_True),
   myViewMode(Standard_True)
 {
-  STEPCAFControl_Controller::Init();
   mySourceCodePage = (Resource_FormatType )Interface_Static::IVal ("read.stepcaf.codepage");
-  Init(WS, scratch);
+  Init(theWS, new STEPCAFControl_Controller, theScratch);
+}
+
+//=======================================================================
+//function : STEPCAFControl_Reader
+//purpose  : 
+//=======================================================================
+STEPCAFControl_Reader::STEPCAFControl_Reader(const Handle(XSControl_WorkSession)& theWS,
+                                             const Handle(XSControl_Controller)& theController,
+                                             const Standard_Boolean theScratch) :
+       myColorMode(Standard_True),
+       myNameMode(Standard_True),
+       myLayerMode(Standard_True),
+       myPropsMode(Standard_True),
+       mySHUOMode(Standard_False),
+       myGDTMode(Standard_True),
+       myMatMode(Standard_True),
+       myViewMode(Standard_True)
+{
+  Init(theWS, theController, theScratch);
 }
 
 
@@ -362,11 +379,14 @@ STEPCAFControl_Reader::STEPCAFControl_Reader(const Handle(XSControl_WorkSession)
 //purpose  : 
 //=======================================================================
 
-void STEPCAFControl_Reader::Init(const Handle(XSControl_WorkSession)& WS,
-  const Standard_Boolean scratch)
+void STEPCAFControl_Reader::Init (const Handle(XSControl_WorkSession)& theWS,
+                                  const Handle(XSControl_Controller)& theController,
+                                  const Standard_Boolean theScratch)
 {
-  // necessary only in Writer, to set good actor:  WS->SelectNorm ( "STEP" );
-  myReader.SetWS(WS, scratch);
+  myCAFController = Handle(STEPCAFControl_Controller)::DownCast(theController);
+  STEPControl_Reader aReader(theWS, theController, theScratch);
+  myReader = aReader;
+
   myFiles.Clear();
 }
 
@@ -840,8 +860,7 @@ Handle(STEPCAFControl_ExternFile) STEPCAFControl_Reader::ReadExternFile(const St
 
   // create new WorkSession and Reader
   Handle(XSControl_WorkSession) newWS = new XSControl_WorkSession;
-  newWS->SelectNorm("STEP");
-  STEPControl_Reader sr(newWS, Standard_False);
+  STEPControl_Reader sr ( newWS, myCAFController, Standard_False );
 
   // start to fill the resulting ExternFile structure
   Handle(STEPCAFControl_ExternFile) EF = new STEPCAFControl_ExternFile;
@@ -4478,7 +4497,7 @@ void STEPCAFControl_Reader::ExpandSubShapes(const Handle(XCAFDoc_ShapeTool)& Sha
   TColStd_MapOfTransient aRepItems;
 
   // Read translation control variables
-  Standard_Boolean doReadSNames = (Interface_Static::IVal("read.stepcaf.subshapes.name") > 0);
+  Standard_Boolean doReadSNames = (myReader.Model()->IVal("read.stepcaf.subshapes.name") > 0);
 
   if (!doReadSNames)
     return;
