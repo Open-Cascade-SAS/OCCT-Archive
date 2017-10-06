@@ -16,3 +16,6 @@ XDEDRAW_Views.cxx
 XDEDRAW_Views.hxx
 XDEDRAW_Notes.cxx
 XDEDRAW_Notes.hxx
+XDEDRAW_Animations.cxx
+XDEDRAW_Animations.hxx
+

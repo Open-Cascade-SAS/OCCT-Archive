@@ -29,6 +29,9 @@ class BinMXCAFDoc_LocationDriver;
 class BinMXCAFDoc_DatumDriver;
 class BinMXCAFDoc_DimTolDriver;
 class BinMXCAFDoc_MaterialDriver;
+class BinMXCAFDoc_AnimationDriver;
+class BinMXCAFDoc_AnimationToolDriver;
+
 
 
 
@@ -63,6 +66,9 @@ friend class BinMXCAFDoc_LocationDriver;
 friend class BinMXCAFDoc_DatumDriver;
 friend class BinMXCAFDoc_DimTolDriver;
 friend class BinMXCAFDoc_MaterialDriver;
+friend class BinMXCAFDoc_AnimationDriver;
+friend class BinMXCAFDoc_AnimationToolDriver;
+
 
 };
 
