@@ -75,11 +75,11 @@ void IntSurf_PntOn2S::ParametersOnSurface(const Standard_Boolean OnFirst,
   }
 }
 
-Standard_Boolean IntSurf_PntOn2S::IsSame( const IntSurf_PntOn2S& theOterPoint,
+Standard_Boolean IntSurf_PntOn2S::IsSame( const IntSurf_PntOn2S& theOtherPoint,
                                           const Standard_Real theTol3D,
                                           const Standard_Real theTol2D) const
 {
-  if(pt.SquareDistance(theOterPoint.Value()) > theTol3D*theTol3D)
+  if(pt.SquareDistance(theOtherPoint.Value()) > theTol3D*theTol3D)
     return Standard_False;
 
   if(theTol2D < 0.0)
@@ -88,7 +88,7 @@ Standard_Boolean IntSurf_PntOn2S::IsSame( const IntSurf_PntOn2S& theOterPoint,
   }
 
   Standard_Real aU1 = 0.0, aV1 = 0.0, aU2 = 0.0, aV2 = 0.0;
-  theOterPoint.Parameters(aU1, aV1, aU2, aV2);
+  theOtherPoint.Parameters(aU1, aV1, aU2, aV2);
 
   gp_Pnt2d aP1(u1, v1), aP2(aU1, aV1);
 

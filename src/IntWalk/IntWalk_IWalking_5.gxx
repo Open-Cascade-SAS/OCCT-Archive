@@ -18,6 +18,7 @@ namespace {
   static const Standard_Real CosRef2D = 0.88; // correspond to 25 d
   static const Standard_Integer MaxDivision = 60;  // max number of step division 
                                                    // because the angle is too great in 2d (U4)
+  static const Standard_Real TolDiffPnts = 4.*Precision::SquareConfusion();
 }
 
 IntWalk_StatusDeflection IntWalk_IWalking::TestDeflection
@@ -27,7 +28,12 @@ IntWalk_StatusDeflection IntWalk_IWalking::TestDeflection
    const IntWalk_StatusDeflection StatusPrecedent,
    Standard_Integer& NbDivision,
    Standard_Real& Step,
-   const Standard_Integer StepSign)
+   Standard_Real& StepInit,
+   const Standard_Integer StepSign,
+   const Standard_Integer CurNbPoints,
+   const Standard_Boolean ArretAjout,
+   const Standard_Boolean PrevStepWrong,
+   const Standard_Boolean OnPrevTangency)
 {
   // Check the step of advancement, AND recalculate this step :
   //
@@ -75,14 +81,33 @@ IntWalk_StatusDeflection IntWalk_IWalking::TestDeflection
   gp_Vec Corde(previousPoint.Value(), sp.Point());
 
   const Standard_Real Norme = Corde.SquareMagnitude();
-
-  if ((Norme <= 4.0*Precision::SquareConfusion()) && 
-      ((Duv <= Precision::SquarePConfusion()) || (StatusPrecedent != IntWalk_OK)))
-  { // the square is already taken in the constructor
-    aStatus = IntWalk_PointConfondu;
-    if (StatusPrecedent == IntWalk_PasTropGrand)
+//  if (Norme <= epsilon*epsilon) {
+//  if (Norme <= epsilon) { // the square is already taken in the constructor
+  Standard_Real TolNorm = Min(TolDiffPnts, epsilon); //epsilon;
+  if (CurNbPoints == 1 && ArretAjout && OnPrevTangency)
+    TolNorm = 1.e-10;
+  if (Norme <= TolNorm) {
+    if (CurNbPoints == 1 && !ArretAjout && !OnPrevTangency &&
+        (Step > StepInit || StepInit - Step <= Precision::Confusion()))
+      //current tolerance is too big even for first step
+      epsilon = Norme / 4.;
+    else
     {
-      return IntWalk_ArretSurPointPrecedent;
+      if (Step > StepInit ||
+          StepInit - Step <= Precision::Confusion())
+      {
+        Standard_Real RefDist = Sqrt(Norme);
+        Standard_Real tolconf = Sqrt(TolNorm);
+        Standard_Real LocalResol = 0.;
+        if (RefDist > gp::Resolution())
+          LocalResol = Step * tolconf / RefDist;
+        if (Step < 2*LocalResol)
+          Step = StepInit = pas = 2*LocalResol;
+        return IntWalk_PointConfondu;
+      }
+      aStatus = IntWalk_PointConfondu;
+      if (StatusPrecedent == IntWalk_PasTropGrand)
+        return IntWalk_ArretSurPointPrecedent;
     }
   }
   else
@@ -119,12 +144,28 @@ IntWalk_StatusDeflection IntWalk_IWalking::TestDeflection
 
   if ((Abs(Du) < aTolU) && (Abs(Dv) < aTolV))
   {
-    //Thin shapes (for which Ulast-Ufirst or/and Vlast-Vfirst is quite small)
-    //exists (see bug #25820). In this case, step is quite small too.
-    //Nevertheless, it not always means that we mark time. Therefore, Du and Dv
-    //must consider step (aMinTolU and aMinTolV parameters).
-
-    return IntWalk_ArretSurPointPrecedent; //confused point 2d
+    if (CurNbPoints == 1 && aStatus == IntWalk_OK &&
+        !ArretAjout && !OnPrevTangency &&
+        (Step > StepInit || StepInit - Step <= Precision::Confusion()))
+    {
+      //current tolerance is too big even for first step
+      tolerance(1) = Abs(Du)/2.;
+      tolerance(2) = Abs(Dv)/2.;
+      if (tolerance(1) <= gp::Resolution())
+        tolerance(1) = tolerance(2);
+      if (tolerance(2) <= gp::Resolution())
+        tolerance(2) = tolerance(1);
+      if (tolerance(1) <= gp::Resolution() &&
+          tolerance(2) <= gp::Resolution())
+      {
+        aStatus = IntWalk_PointConfondu;
+        if (StatusPrecedent == IntWalk_PasTropGrand)
+          aStatus = IntWalk_ArretSurPointPrecedent;
+        return aStatus;
+      }
+    }
+    else
+      return IntWalk_ArretSurPointPrecedent; //confused point 2d
   }
 
   Standard_Real Cosi = StepSign * (Du * previousd2d.X() + Dv * previousd2d.Y());
@@ -133,14 +174,23 @@ IntWalk_StatusDeflection IntWalk_IWalking::TestDeflection
     return IntWalk_ArretSurPointPrecedent; // leave as step back  
                                            // with confused point
 
-  if (sp.IsTangent()) 
-    return IntWalk_ArretSurPoint;       
+  if (IsTangentialIntersection)
+  {
+    if (sp.IsTangentSmooth()) 
+      return IntWalk_ArretSurPoint;       
+  }
+  else
+  {
+    if (sp.IsTangent()) 
+      return IntWalk_ArretSurPoint;
+  }
 
 //if during routing one has subdivided more than  MaxDivision for each
 //previous step, bug on the square; do nothing (experience U4)
 
-  if ((NbDivision < MaxDivision) && (aStatus != IntWalk_PointConfondu) &&
-    (StatusPrecedent!= IntWalk_PointConfondu))
+  if ((NbDivision < MaxDivision) &&
+      (aStatus != IntWalk_PointConfondu) &&
+      (StatusPrecedent!= IntWalk_PointConfondu))
   {
     Standard_Real Cosi2 = Cosi * Cosi / Duv;
     if (Cosi2 < CosRef2D || Cosi < 0  ) {
@@ -194,9 +244,10 @@ IntWalk_StatusDeflection IntWalk_IWalking::TestDeflection
       Standard_Real d2dx = Abs(previousd2d.X()); 
       Standard_Real d2dy = Abs(previousd2d.Y()); 
 
+      Standard_Real PrevStep = Step;
       if (d2dx < tolerance(1))
       {
-        Step = StepV/d2dy;
+	Step = StepV/d2dy;
       }
       else if (d2dy < tolerance(2))
       {
@@ -206,6 +257,10 @@ IntWalk_StatusDeflection IntWalk_IWalking::TestDeflection
       {
         Step = Min(StepU/d2dx,StepV/d2dy);
       }
+      if (Step <= PrevStep) //no chance for increasing of real step
+        aStatus = IntWalk_ArretSurPointPrecedent;
+      else if (PrevStepWrong)
+        return IntWalk_ArretSurPoint; //break of surface: end of C1-interval
     }
     else
     {
@@ -306,5 +361,8 @@ IntWalk_StatusDeflection IntWalk_IWalking::TestDeflection
       }
     }
   }
-  return aStatus;
+  else if (aStatus == IntWalk_PointConfondu) //finish
+    aStatus = IntWalk_ArretSurPointPrecedent;
+  
+  return aStatus;     
 }

@@ -28,6 +28,22 @@ inline void IntWalk_IWLine::AddPoint(const IntSurf_PntOn2S& P)
   line->Add(P);
 }
 
+inline void IntWalk_IWLine::InsertBefore(const Standard_Integer Index,
+                                         const IntSurf_PntOn2S& P)
+{
+  line->InsertBefore(Index, P);
+}
+
+inline void IntWalk_IWLine::EnablePurging(const Standard_Boolean theIsEnabled)
+{
+  myIsPurgerAllowed = theIsEnabled;
+}
+
+inline Standard_Boolean IntWalk_IWLine::IsPurgingAllowed() const
+{
+  return myIsPurgerAllowed;
+}
+
 inline void IntWalk_IWLine::AddStatusFirst(const Standard_Boolean Closed,
 					   const Standard_Boolean HasFirst)
 {
@@ -162,6 +178,12 @@ inline void IntWalk_IWLine::SetTangencyAtEnd
   istgtend = IsTangent;
 }
 
+inline void IntWalk_IWLine::SetTangency
+  (const Standard_Boolean IsTangency) {
+
+  istangency = IsTangency;
+}
+
 inline const gp_Vec& IntWalk_IWLine::TangentVector
   (Standard_Integer& Index) const {
 //--    if(istgtend == Standard_False && istgtbeg == Standard_False) { 
@@ -181,4 +203,8 @@ inline Standard_Boolean IntWalk_IWLine::IsTangentAtEnd () const {
   return istgtend;
 }
 
+inline Standard_Boolean IntWalk_IWLine::IsTangency () const {
+
+  return istangency;
+}
 

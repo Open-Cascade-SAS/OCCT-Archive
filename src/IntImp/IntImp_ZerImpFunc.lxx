@@ -56,6 +56,11 @@ inline const gp_Dir2d& IntImp_ZerImpFunc::Direction2d()
   return d2d;
 }
 
+inline Standard_Real IntImp_ZerImpFunc::SquareTangentError() const
+{
+  return (tgdu * tgdu + tgdv * tgdv);
+}
+
 inline const ThePSurface& IntImp_ZerImpFunc::PSurface() const 
 {
   return  (*((ThePSurface *)(surf)));

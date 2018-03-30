@@ -1499,7 +1499,8 @@ void Contap_Contour::Perform
 
     Standard_Boolean theToFillHoles = Standard_True;
     Contap_TheIWalking iwalk(Preci,Fleche,Pas,theToFillHoles);
-    iwalk.Perform(seqpdep,seqpins,mySFunc ,Surf);
+    IntSurf_SequenceOfInteriorPoint seqptang; //dummy
+    iwalk.Perform(seqpdep,seqpins,seqptang,mySFunc ,Surf);
     if(!iwalk.IsDone()) {
       return;
     }

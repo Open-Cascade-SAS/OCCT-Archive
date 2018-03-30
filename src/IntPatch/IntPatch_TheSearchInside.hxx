@@ -47,12 +47,16 @@ public:
   //! returns False.
     Standard_Integer NbPoints() const;
   
+      Standard_Integer NbTangentPoints()  const;
+  
   //! Returns the point of range Index.
   //! The exception NotDone if raised if IsDone
   //! returns False.
   //! The exception OutOfRange if raised if
   //! Index <= 0 or Index > NbPoints.
-    const IntSurf_InteriorPoint& Value (const Standard_Integer Index) const;
+     const  IntSurf_InteriorPoint& Value (const Standard_Integer Index)  const;
+  
+     const  IntSurf_InteriorPoint& TangentPoint (const Standard_Integer Index)  const;
 
 
 
@@ -69,6 +73,7 @@ private:
 
   Standard_Boolean done;
   IntSurf_SequenceOfInteriorPoint list;
+  IntSurf_SequenceOfInteriorPoint myTangentPoints;
 
 
 };

@@ -496,7 +496,7 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
 {
   Standard_Boolean reversed, procf, procl, dofirst, dolast;
   Standard_Integer indfirst = 0, indlast = 0, ind2, NbSegm;
-  Standard_Integer NbPointIns, NbPointRst, Nblines, Nbpts, NbPointDep;
+  Standard_Integer NbPointIns, NbPointsTang, NbPointRst, Nblines, Nbpts, NbPointDep;
   Standard_Real U1,V1,U2,V2,paramf,paraml,currentparam;
 
   IntPatch_TheSegmentOfTheSOnBounds thesegm;
@@ -587,7 +587,7 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
   }
   //
   Standard_Real aLocalPas = Pas;
-   GeomAbs_SurfaceType aSType = reversed ? Surf1->GetType() : Surf2->GetType();
+  GeomAbs_SurfaceType aSType = reversed ? Surf1->GetType() : Surf2->GetType();
 
   if (aSType == GeomAbs_BezierSurface || aSType == GeomAbs_BSplineSurface)
   {
@@ -642,6 +642,7 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
   //
   IntSurf_SequenceOfPathPoint seqpdep;
   IntSurf_SequenceOfInteriorPoint seqpins;
+  IntSurf_SequenceOfInteriorPoint seqptang;
   //
   NbPointRst = solrst.NbPoints();
   TColStd_Array1OfInteger Destination(1,NbPointRst+1); Destination.Init(0);
@@ -713,14 +714,21 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
     for (Standard_Integer i=1; i <= NbPointIns; i++) {
       seqpins.Append(solins.Value(i));
     }
+    NbPointsTang = solins.NbTangentPoints();
+    for (Standard_Integer i = 1; i <= NbPointsTang; i++)
+      seqptang.Append(solins.TangentPoint(i));
   }
   //
   NbPointDep=seqpdep.Length();
   //
   if (NbPointDep || NbPointIns) {
     IntPatch_TheIWalking iwalk(TolTang, Fleche, aLocalPas);
-    iwalk.Perform(seqpdep, seqpins, Func, reversed ? Surf1 : Surf2, reversed);
-
+    if (!reversed) {
+      iwalk.Perform(seqpdep,seqpins,seqptang,Func,Surf2);
+    }
+    else {
+      iwalk.Perform(seqpdep,seqpins,seqptang,Func,Surf1,Standard_True);
+    }
     if(!iwalk.IsDone()) {
       return;
     }
@@ -884,6 +892,7 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
         }
         // <-A
         wline = new IntPatch_WLine(thelin,Standard_False,trans1,trans2);
+        wline->EnablePurging(iwline->IsPurgingAllowed());
         wline->SetCreatingWayInfo(IntPatch_WLine::IntPatch_WLImpPrm);
 
 #ifdef INTPATCH_IMPPRMINTERSECTION_DEBUG
