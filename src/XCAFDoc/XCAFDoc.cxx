@@ -314,3 +314,23 @@ const Standard_GUID& XCAFDoc::LockGUID()
   static const Standard_GUID ID("efd213eb-6dfd-11d4-b9c8-0060b0ee281b");
   return ID;
 }
+//=======================================================================
+//function : ViewRefEnabledShapesGUID
+//purpose  : 
+//=======================================================================
+
+Standard_GUID XCAFDoc::ClipPlaneCappingRefGUID()
+{
+  static Standard_GUID ID("50976BC9-A2B0-497C-9A66-443FB8703DAD");
+  return ID;
+}
+//=======================================================================
+//function : LockGUID
+//purpose  : 
+//=======================================================================
+
+Standard_GUID XCAFDoc::ClipPlaneVisibleRefGUID()
+{
+  static Standard_GUID ID("279E76D5-4EFF-4F48-81D5-01CA307A5634");
+  return ID;
+}

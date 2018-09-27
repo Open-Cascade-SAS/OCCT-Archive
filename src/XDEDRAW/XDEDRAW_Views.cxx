@@ -1175,8 +1175,8 @@ static Standard_Integer dump(Draw_Interpretor& di, Standard_Integer argc, const 
 //=======================================================================
 static Standard_Integer addClippingPlane(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
-  if (argc < 5) {
-    di << "Use: XAddClippingPlane Doc plane name capping[0/1]";
+  if (argc < 6) {
+    di << "Use: XAddClippingPlane Doc plane name capping[0/1] visible[0/1]";
     return 1;
   }
   Handle(TDocStd_Document) aDoc;
@@ -1195,8 +1195,9 @@ static Standard_Integer addClippingPlane(Draw_Interpretor& di, Standard_Integer 
   aPlane = aSurf->Pln();
   Handle(TCollection_HAsciiString) aName = new TCollection_HAsciiString(argv[3]);
   Standard_Boolean aCapping = (argv[4][0] == '1');
+  Standard_Boolean aVisible = (argv[5][0] == '1');
 
-  TDF_Label aCPlaneL = aCPlaneTool->AddClippingPlane(aPlane, aName, aCapping);
+  TDF_Label aCPlaneL = aCPlaneTool->AddClippingPlane(aPlane, aName, aCapping, aVisible);
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(aCPlaneL, anEntry);
   di << anEntry << "\n";
@@ -1230,8 +1231,8 @@ static Standard_Integer getClippingPlane(Draw_Interpretor& di, Standard_Integer 
   }
   gp_Pln aPlane;
   Handle(TCollection_HAsciiString) aName;
-  Standard_Boolean aCapping;
-  aClippingPlaneTool->GetClippingPlane(aLabel, aPlane, aName, aCapping);
+  Standard_Boolean aCapping, aVisible;
+  aClippingPlaneTool->GetClippingPlane(aLabel, aPlane, aName, aCapping, aVisible);
   Handle(Geom_Plane) aCPlane = new Geom_Plane(aPlane);
   DrawTrSurf::Set(aName->ToCString(), aCPlane);
   di << aName->ToCString();
