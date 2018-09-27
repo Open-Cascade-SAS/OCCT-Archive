@@ -23,3 +23,8 @@ XmlMXCAFDoc_VisMaterialDriver.cxx
 XmlMXCAFDoc_VisMaterialDriver.hxx
 XmlMXCAFDoc_VisMaterialToolDriver.cxx
 XmlMXCAFDoc_VisMaterialToolDriver.hxx
+XmlMXCAFDoc_AnimationDriver.cxx
+XmlMXCAFDoc_AnimationDriver.hxx
+XmlMXCAFDoc_AnimationToolDriver.cxx
+XmlMXCAFDoc_AnimationToolDriver.hxx
+

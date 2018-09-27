@@ -23,3 +23,7 @@ BinMXCAFDoc_VisMaterialDriver.cxx
 BinMXCAFDoc_VisMaterialDriver.hxx
 BinMXCAFDoc_VisMaterialToolDriver.cxx
 BinMXCAFDoc_VisMaterialToolDriver.hxx
+BinMXCAFDoc_AnimationDriver.cxx
+BinMXCAFDoc_AnimationDriver.hxx
+BinMXCAFDoc_AnimationToolDriver.cxx
+BinMXCAFDoc_AnimationToolDriver.hxx
