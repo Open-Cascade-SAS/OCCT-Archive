@@ -125,6 +125,10 @@ public:
 
   //! Return GUIDs for GraphNode representing specified types of View
   Standard_EXPORT static const Standard_GUID& ViewRefNoteGUID();
+
+  //! Return GUIDs for TreeNode representing specified types of View
+  Standard_EXPORT static Standard_GUID ViewRefEnabledShapesGUID();
+
   Standard_EXPORT static const Standard_GUID& ViewRefAnnotationGUID();
 
   //! Returns GUID for UAttribute identifying lock flag
