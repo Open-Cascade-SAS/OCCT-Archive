@@ -132,6 +132,12 @@ public:
   //! Return GUIDs for TreeNode representing specified types of View
   Standard_EXPORT static Standard_GUID ViewRefEnabledShapesGUID();
 
+  //! Return GUIDs for clipping plane capping
+  Standard_EXPORT static Standard_GUID ClipPlaneCappingRefGUID();
+ 
+  //! Return GUIDs for clipping plane visibility
+  Standard_EXPORT static Standard_GUID ClipPlaneVisibleRefGUID();
+  
   Standard_EXPORT static const Standard_GUID& ViewRefAnnotationGUID();
 
   //! Returns GUID for UAttribute identifying lock flag
