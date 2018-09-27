@@ -34,6 +34,7 @@ class XCAFDoc_NotesTool;
 class XCAFDoc_ViewTool;
 class TDF_Attribute;
 class TDF_RelocationTable;
+class XCAFDoc_AnimationTool;
 
 
 class XCAFDoc_DocumentTool;
@@ -88,6 +89,9 @@ public:
 
   //! Returns sub-label of DocLabel() with tag 9.
   Standard_EXPORT static TDF_Label NotesLabel(const TDF_Label& acces);
+  
+  //! Returns sub-label of DocLabel() with tag 10.
+  Standard_EXPORT static TDF_Label AnimationsLabel(const TDF_Label& acces);
 
   //! Creates (if it does not exist) ShapeTool attribute on ShapesLabel().
   Standard_EXPORT static Handle(XCAFDoc_ShapeTool) ShapeTool (const TDF_Label& acces);
@@ -112,6 +116,9 @@ public:
 
   //! Creates (if it does not exist) NotesTool attribute on NotesLabel().
   Standard_EXPORT static Handle(XCAFDoc_NotesTool) NotesTool(const TDF_Label& acces);
+  
+  //! Creates (if it does not exist) AnimationTool attribute on NotesLabel().
+  Standard_EXPORT static  Handle(XCAFDoc_AnimationTool) AnimationTool(const TDF_Label& acces);
 
   Standard_EXPORT XCAFDoc_DocumentTool();
   

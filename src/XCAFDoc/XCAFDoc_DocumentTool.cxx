@@ -33,6 +33,7 @@
 #include <XCAFDoc_NotesTool.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_ViewTool.hxx>
+#include <XCAFDoc_AnimationTool.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(XCAFDoc_DocumentTool,TDF_Attribute)
 
@@ -87,6 +88,7 @@ Handle(XCAFDoc_DocumentTool) XCAFDoc_DocumentTool::Set(const TDF_Label& L,
     XCAFDoc_NotesTool::Set(NotesLabel(L));
     XCAFDoc_ViewTool::Set(ViewsLabel(L));
     XCAFDoc_ClippingPlaneTool::Set(ClippingPlanesLabel(L));
+    XCAFDoc_AnimationTool::Set(AnimationsLabel(L));
   }
   return A;
 }
@@ -224,7 +226,17 @@ TDF_Label XCAFDoc_DocumentTool::NotesLabel(const TDF_Label& acces)
   TDataStd_Name::Set(L, "Notes");
   return L;
 }
+//=======================================================================
+//function : AnimationsLabel
+//purpose  : 
+//=======================================================================
 
+TDF_Label XCAFDoc_DocumentTool::AnimationsLabel(const TDF_Label& acces)
+{
+  TDF_Label L = DocLabel(acces).FindChild(10, Standard_True);
+  TDataStd_Name::Set(L, "Animations");
+  return L;
+}
 //=======================================================================
 //function : ShapeTool
 //purpose  : 
@@ -308,7 +320,15 @@ Handle(XCAFDoc_NotesTool) XCAFDoc_DocumentTool::NotesTool(const TDF_Label& acces
 {
   return XCAFDoc_NotesTool::Set(NotesLabel(acces));
 }
+//=======================================================================
+//function : AnimationTool
+//purpose  : 
+//=======================================================================
 
+Handle(XCAFDoc_AnimationTool) XCAFDoc_DocumentTool::AnimationTool(const TDF_Label& acces)
+{
+  return XCAFDoc_AnimationTool::Set(AnimationsLabel(acces));
+}
 //=======================================================================
 //function : ID
 //purpose  : 

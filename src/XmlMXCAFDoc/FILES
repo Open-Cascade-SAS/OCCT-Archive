@@ -47,3 +47,8 @@ XmlMXCAFDoc_ViewToolDriver.cxx
 XmlMXCAFDoc_ViewToolDriver.hxx
 XmlMXCAFDoc_VolumeDriver.cxx
 XmlMXCAFDoc_VolumeDriver.hxx
+XmlMXCAFDoc_AnimationDriver.cxx
+XmlMXCAFDoc_AnimationDriver.hxx
+XmlMXCAFDoc_AnimationToolDriver.cxx
+XmlMXCAFDoc_AnimationToolDriver.hxx
+

@@ -91,6 +91,7 @@
 #include <XDEDRAW_GDTs.hxx>
 #include <XDEDRAW_Views.hxx>
 #include <XDEDRAW_Notes.hxx>
+#include <XDEDRAW_Animations.hxx>
 #include <XSDRAW.hxx>
 #include <XSDRAWIGES.hxx>
 #include <XSDRAWSTEP.hxx>
@@ -1496,6 +1497,7 @@ void XDEDRAW::Init(Draw_Interpretor& di)
   XDEDRAW_GDTs::InitCommands ( di );
   XDEDRAW_Views::InitCommands(di);
   XDEDRAW_Notes::InitCommands(di);
+  XDEDRAW_Animations::InitCommands( di );
   XDEDRAW_Common::InitCommands ( di );//moved from EXE
 
 }

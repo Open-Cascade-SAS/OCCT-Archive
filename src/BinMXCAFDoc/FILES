@@ -53,3 +53,7 @@ BinMXCAFDoc_ViewToolDriver.cxx
 BinMXCAFDoc_ViewToolDriver.hxx
 BinMXCAFDoc_VolumeDriver.cxx
 BinMXCAFDoc_VolumeDriver.hxx
+BinMXCAFDoc_AnimationDriver.cxx
+BinMXCAFDoc_AnimationDriver.hxx
+BinMXCAFDoc_AnimationToolDriver.cxx
+BinMXCAFDoc_AnimationToolDriver.hxx
