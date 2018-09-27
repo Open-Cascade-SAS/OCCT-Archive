@@ -48,22 +48,22 @@ public:
   //! Returns ClippingPlane defined by label lab
   //! Returns False if the label is not in ClippingPlane table
   //! or does not define a ClippingPlane
-  Standard_EXPORT Standard_Boolean GetClippingPlane(const TDF_Label& theLabel, gp_Pln& thePlane, TCollection_ExtendedString& theName, Standard_Boolean &theCapping) const;
+  Standard_EXPORT Standard_Boolean GetClippingPlane(const TDF_Label& theLabel, gp_Pln& thePlane, TCollection_ExtendedString& theName, Standard_Boolean &theCapping, Standard_Boolean &theVisible) const;
 
   //! Returns ClippingPlane defined by label lab
   //! Returns False if the label is not in ClippingPlane table
   //! or does not define a ClippingPlane
-  Standard_EXPORT Standard_Boolean GetClippingPlane(const TDF_Label& theLabel, gp_Pln& thePlane, Handle(TCollection_HAsciiString)& theName, Standard_Boolean &theCapping) const;
+  Standard_EXPORT Standard_Boolean GetClippingPlane(const TDF_Label& theLabel, gp_Pln& thePlane, Handle(TCollection_HAsciiString)& theName, Standard_Boolean &theCapping, Standard_Boolean &theVisible) const;
   
   //! Adds a clipping plane definition to a ClippingPlane table and returns
   //! its label (returns existing label if the same clipping plane
   //! is already defined)
-  Standard_EXPORT TDF_Label AddClippingPlane(const gp_Pln thePlane, const TCollection_ExtendedString theName, const Standard_Boolean theCapping) const;
+  Standard_EXPORT TDF_Label AddClippingPlane(const gp_Pln thePlane, const TCollection_ExtendedString theName, const Standard_Boolean theCapping, const Standard_Boolean theVisible) const;
 
   //! Adds a clipping plane definition to a ClippingPlane table and returns
   //! its label (returns existing label if the same clipping plane
   //! is already defined)
-  Standard_EXPORT TDF_Label AddClippingPlane(const gp_Pln thePlane, const Handle(TCollection_HAsciiString)& theName, const Standard_Boolean theCapping) const;
+  Standard_EXPORT TDF_Label AddClippingPlane(const gp_Pln thePlane, const Handle(TCollection_HAsciiString)& theName, const Standard_Boolean theCapping, const Standard_Boolean theVisible) const;
 
   //! Adds a clipping plane definition to a ClippingPlane table and returns
   //! its label (returns existing label if the same clipping plane
@@ -97,6 +97,17 @@ public:
   //! Get capping value for given clipping plane label
   //! Return true if Label is valid abd capping is exist.
   Standard_EXPORT Standard_Boolean GetCapping(const TDF_Label& theClippingPlaneL, Standard_Boolean &theCapping) const;
+ 
+  //! Set new value of visible for given clipping plane label
+  Standard_EXPORT void SetVisible(const TDF_Label& theClippingPlaneL, const Standard_Boolean theCapping);
+
+  //! Get visible value for given clipping plane label
+  //! Return capping value
+  Standard_EXPORT Standard_Boolean GetVisible(const TDF_Label& theClippingPlaneL) const;
+
+  //! Get visible value for given clipping plane label
+  //! Return true if Label is valid abd capping is exist.
+  Standard_EXPORT Standard_Boolean GetVisible(const TDF_Label& theClippingPlaneL, Standard_Boolean &theCapping) const;
   
   Standard_EXPORT const Standard_GUID& ID() const Standard_OVERRIDE;
   
