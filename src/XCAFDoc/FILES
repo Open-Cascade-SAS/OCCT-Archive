@@ -71,3 +71,8 @@ XCAFDoc_VisMaterialTool.cxx
 XCAFDoc_VisMaterialTool.hxx
 XCAFDoc_Volume.cxx
 XCAFDoc_Volume.hxx
+XCAFDoc_Animation.cxx
+XCAFDoc_Animation.hxx
+XCAFDoc_AnimationTool.cxx
+XCAFDoc_AnimationTool.hxx
+
