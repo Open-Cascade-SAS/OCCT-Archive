@@ -379,6 +379,8 @@ void XCAFDoc_GraphNode::Paste(const Handle(TDF_Attribute)& into,
     if (!func.IsNull())
     {
       intof->SetFather(func);
+      if (func->ChildIndex(this) && !func->ChildIndex(intof))
+        func->SetChild(intof);
     }
   }
 
@@ -392,6 +394,8 @@ void XCAFDoc_GraphNode::Paste(const Handle(TDF_Attribute)& into,
     if (!func.IsNull())
     {
       intof->SetChild(func);
+      if (func->FatherIndex(this) && !func->FatherIndex(intof))
+        func->SetFather(intof);
     }
   }
   intof->SetGraphID(myGraphID);
