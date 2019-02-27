@@ -432,8 +432,10 @@ static Standard_Integer intersect(Draw_Interpretor& di, Standard_Integer n, cons
   Standard_Integer aNbSegments = Intersector.NbSegments();
   for (Standard_Integer i = 1; i <= aNbSegments; i++)
   {
-    di << "Segment #" << i << " found.\n";
     Intersector.Segment(i,S1,S2);
+    di << "Segment #" << i << " found.\n";
+    di << "Curve 1 first parameter: " << S1->FirstParameter() << " last parameter: " << S1->LastParameter() <<"\n";
+    di << "Curve 2 first parameter: " << S2->FirstParameter() << " last parameter: " << S2->LastParameter() <<"\n";
     CD = new DrawTrSurf_Curve2d(S1, Draw_bleu, 30);
     dout << CD;
     CD = new DrawTrSurf_Curve2d(S2, Draw_violet, 30);

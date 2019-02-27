@@ -1,0 +1,28 @@
+puts "============"
+puts "OCC30217_3"
+puts "============"
+puts ""
+#########################################################################
+# Intersection between a circle and a line not detected (3d)
+#########################################################################
+set tol_abs 2.e-7
+
+drseg s -31.501464018476 67.029737602069 -10.0 -31.501464018476 67.029737602069 0.0
+circle c -18.339655323916 20.849340929486 0.0 48.019394466707
+set info1 [extrema c s]       
+if {[regexp "ext" ${info1}] != 1} {
+  puts "Error : No intersection detected"
+} else {
+  puts "OK: Intersection are detected"
+}
+
+# Distance check
+set infoext1 [dump ext_1]
+
+
+regexp "Parameters : 0 +(\[-0-9*\.+eE\]+)" $infoext1 full  ext1Length ext2Length 
+if { $ext1Length > $tol_abs || $ext2Length > $tol_abs } {
+  puts "Error: bad distance poins obtained"
+} else {
+  puts "OK: good distance between obtained points"
+}                                                                 

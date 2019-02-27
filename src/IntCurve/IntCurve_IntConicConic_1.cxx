@@ -392,6 +392,7 @@ void LineCircleGeometricIntersection(const gp_Lin2d& Line,
   Standard_Real dO1O2=Line.Distance(Circle.Location());
   Standard_Real R=Circle.Radius();
   Standard_Real RmTol=R-Tol;
+  Standard_Real RpTol = R + Tol;
   Standard_Real binf1,binf2=0,bsup1,bsup2=0;
     
   //---------------------------------------------------------------- 
@@ -425,7 +426,7 @@ void LineCircleGeometricIntersection(const gp_Lin2d& Line,
     if(dO1O2 > RmTol && !b2Sol) { 
     //if(dO1O2 > RmTol) { 
       Standard_Real dx=dO1O2;
-      Standard_Real dy=0.0;     //(RpTol*RpTol-dx*dx); //Patch !!!
+      Standard_Real dy = RpTol * RpTol - dx * dx;
       dy=(dy>=0.0)? Sqrt(dy) : 0.0;
       dAlpha1=ATan2(dy,dx);
       
@@ -439,7 +440,7 @@ void LineCircleGeometricIntersection(const gp_Lin2d& Line,
     else {
       //------------------- Intersection Line Circle+ --------------------------
       Standard_Real dx=dO1O2;
-      Standard_Real dy=R*R-dx*dx;    //(RpTol*RpTol-dx*dx); //Patch !!!
+      Standard_Real dy = RpTol * RpTol - dx * dx;
       dy=(dy>=0.0)? Sqrt(dy) : 0.0;
       
       dAlpha1=ATan2(dy,dx);

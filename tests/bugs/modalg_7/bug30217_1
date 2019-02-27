@@ -1,0 +1,29 @@
+puts "============"
+puts "OCC30217_1"
+puts "============"
+puts ""
+#########################################################################
+# Intersection between a circle and a line not detected (2d)
+#########################################################################
+
+2ddrseg s2 -80.461134694338 53.07587187722 -31.501464018476 67.029737602069
+circle c2 -18.339655323916 20.849340929486 48.019394466707
+# Set tolerance.
+set tol_abs 1.0e-7 
+set tol_rel 1.0e-2
+
+# Set reference data.
+set param11 1.8484218380721342
+set param12 1.8484627151687805
+set param21 50.908401295062035
+set param22 50.909328431594709
+
+set info [2dintersect c2 s2 -tol 1e-8]
+regexp {Curve 1 first parameter: +([-0-9.+eE]+) last parameter: +([-0-9.+eE]+)} ${info} full curve1p1 curve1p2
+regexp {Curve 2 first parameter: +([-0-9.+eE]+) last parameter: +([-0-9.+eE]+)} ${info} full curve2p1 curve2p2
+
+checkreal "Curve 1 param 1" ${curve1p1} ${param11} ${tol_abs} ${tol_rel}
+checkreal "Curve 1 param 2" ${curve1p2} ${param12} ${tol_abs} ${tol_rel}
+
+checkreal "Curve 2 param 1" ${curve2p1} ${param21} ${tol_abs} ${tol_rel}
+checkreal "Curve 2 param 2" ${curve2p2} ${param22} ${tol_abs} ${tol_rel}
