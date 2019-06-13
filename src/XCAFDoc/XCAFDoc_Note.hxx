@@ -37,8 +37,22 @@ public:
   //! Checks if the given label represents a note.
   Standard_EXPORT static Standard_Boolean IsMine(const TDF_Label& theLabel);
 
+  //! Returns default attribute GUID
+  Standard_EXPORT static const Standard_GUID& GetID();
+
   //! Finds a reference attribute on the given label and returns it, if it is found
   Standard_EXPORT static Handle(XCAFDoc_Note) Get(const TDF_Label& theLabel);
+
+  //! Create (if not exist) a note on the given label.
+  //! \param [in] theLabel     - note label.
+  //! \param [in] theUserName  - the name of the user, who created the note.
+  //! \param [in] theTimeStamp - creation timestamp of the note.
+  Standard_EXPORT static Handle(XCAFDoc_Note) Set(const TDF_Label&                  theLabel,
+                                                  const TCollection_ExtendedString& theUserName,
+                                                  const TCollection_ExtendedString& theTimeStamp);
+
+  //! Creates an empty note.
+  Standard_EXPORT XCAFDoc_Note();
 
   //! Sets the user name and the timestamp of the note.
   //! \param [in] theUserName  - the user associated with the note.
@@ -62,9 +76,22 @@ public:
   //! Updates auxiliary data
   Standard_EXPORT void SetObject(const Handle(XCAFNoteObjects_NoteObject)& theObject);
 
+  //! 
+  enum ChildLab
+  {
+    ChildLab_PntText = 1,
+    ChildLab_Plane,
+    ChildLab_Pnt,
+    ChildLab_Presentation,
+    ChildLab_BinDataContainer,
+    ChildLab_Custom
+  };
+
 public:
 
   // Overrides TDF_Attribute virtuals
+  Standard_EXPORT const Standard_GUID& ID() const Standard_OVERRIDE;
+  Standard_EXPORT Handle(TDF_Attribute) NewEmpty() const Standard_OVERRIDE;
   Standard_EXPORT void Restore(const Handle(TDF_Attribute)& theAttrFrom) Standard_OVERRIDE;
   Standard_EXPORT void Paste(const Handle(TDF_Attribute)&       theAttrInto,
                              const Handle(TDF_RelocationTable)& theRT) const Standard_OVERRIDE;
@@ -72,11 +99,6 @@ public:
   
   //! Dumps the content of me into the stream
   Standard_EXPORT virtual void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const Standard_OVERRIDE;
-
-protected:
-
-  //! Creates an empty note.
-  Standard_EXPORT XCAFDoc_Note();
 
 private:
 

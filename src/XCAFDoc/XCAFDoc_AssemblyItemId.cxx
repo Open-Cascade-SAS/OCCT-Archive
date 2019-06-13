@@ -13,6 +13,7 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <TDF_Tool.hxx>
 #include <XCAFDoc_AssemblyItemId.hxx>
 
 #include <Standard_Dump.hxx>
@@ -123,6 +124,18 @@ XCAFDoc_AssemblyItemId::ToString() const
   }
   aStr.Remove(1, 1);
   return aStr;
+}
+
+TDF_Label 
+XCAFDoc_AssemblyItemId::GetLabel(const Handle(TDF_Data)& aDF) const
+{
+  TDF_Label aLabel;
+  if (!myPath.IsEmpty())
+  {
+    TCollection_AsciiString anEntry = myPath.Last();
+    TDF_Tool::Label(aDF, anEntry, aLabel, Standard_False);
+  }
+  return aLabel;
 }
 
 //=======================================================================

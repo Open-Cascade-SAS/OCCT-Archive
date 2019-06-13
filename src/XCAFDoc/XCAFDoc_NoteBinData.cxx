@@ -14,20 +14,182 @@
 #include <XCAFDoc_NoteBinData.hxx>
 
 #include <OSD_File.hxx>
-#include <Standard_GUID.hxx>
+#include <TDataStd_AsciiString.hxx>
+#include <TDataStd_ByteArray.hxx>
+#include <TDataStd_Name.hxx>
+#include <TDataStd_ReferenceList.hxx>
+#include <TDF_ChildIterator.hxx>
 #include <TDF_Label.hxx>
+#include <XCAFDoc_Note.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(XCAFDoc_NoteBinData, XCAFDoc_Note)
+IMPLEMENT_STANDARD_RTTIEXT(XCAFDoc_NoteBinDataContainer, Standard_Transient)
+IMPLEMENT_STANDARD_RTTIEXT(XCAFDoc_NoteBinData, Standard_Transient)
 
 // =======================================================================
-// function : GetID
+// function : getID
 // purpose  :
 // =======================================================================
-const Standard_GUID&
-XCAFDoc_NoteBinData::GetID()
+const Standard_GUID& 
+XCAFDoc_NoteBinDataContainer::getID()
 {
-  static Standard_GUID s_ID("E9055501-F0FC-4864-BE4B-284FDA7DDEAC");
+  static Standard_GUID s_ID("91CFB5D9-737C-4ab9-933A-15E28DBBD1CF");
   return s_ID;
+}
+
+// =======================================================================
+// function : XCAFDoc_NoteBinDataContainer
+// purpose  :
+// =======================================================================
+XCAFDoc_NoteBinDataContainer::XCAFDoc_NoteBinDataContainer(const Handle(TDataStd_ReferenceList)& theList)
+  : myList(theList)
+{
+
+}
+
+// =======================================================================
+// function : Get
+// purpose  :
+// =======================================================================
+Handle(XCAFDoc_NoteBinDataContainer)
+XCAFDoc_NoteBinDataContainer::Get(const TDF_Label& theLabel)
+{
+  if (!XCAFDoc_Note::IsMine(theLabel))
+  {
+    return NULL;
+  }
+
+  TDF_Label aLabel = theLabel.FindChild(XCAFDoc_Note::ChildLab_BinDataContainer, Standard_False);
+  Handle(TDataStd_ReferenceList) aList;
+  if (!aLabel.IsNull() && aLabel.FindAttribute(getID(), aList) && !aList.IsNull())
+  {
+    return new XCAFDoc_NoteBinDataContainer(aList);
+  }
+
+  return NULL;
+}
+
+// =======================================================================
+// function : Set
+// purpose  :
+// =======================================================================
+Handle(XCAFDoc_NoteBinDataContainer)
+XCAFDoc_NoteBinDataContainer::Set(const TDF_Label& theLabel)
+{
+  if (!XCAFDoc_Note::IsMine(theLabel))
+  {
+    return NULL;
+  }
+
+  TDF_Label aLabel = theLabel.FindChild(XCAFDoc_Note::ChildLab_BinDataContainer);
+  return new XCAFDoc_NoteBinDataContainer(TDataStd_ReferenceList::Set(aLabel, getID()));
+}
+
+// =======================================================================
+// function : Size
+// purpose  :
+// =======================================================================
+Standard_Integer
+XCAFDoc_NoteBinDataContainer::Size() const
+{
+  return myList->List().Size();
+}
+
+// =======================================================================
+// function : Content
+// purpose  :
+// =======================================================================
+const TDF_LabelList&
+XCAFDoc_NoteBinDataContainer::Content() const
+{
+  return myList->List();
+}
+
+// =======================================================================
+// function : Add
+// purpose  :
+// =======================================================================
+Handle(XCAFDoc_NoteBinData)
+XCAFDoc_NoteBinDataContainer::Add(const TCollection_ExtendedString& theTitle,
+                                  const TCollection_AsciiString&    theMIMEtype,
+                                  OSD_File&                         theFile)
+{
+  TDF_Label aLabel;
+  for (TDF_ChildIterator anIt(myList->Label()); anIt.More(); anIt.Next())
+  {
+    if (!anIt.Value().HasAttribute())
+    {
+      aLabel = anIt.Value();
+      break;
+    }
+  }
+  if (aLabel.IsNull())
+  {
+    aLabel = myList->Label().NewChild();
+  }
+  myList->Append(aLabel);
+  return XCAFDoc_NoteBinData::Set(aLabel, theTitle, theMIMEtype, theFile);
+}
+
+// =======================================================================
+// function : Add
+// purpose  :
+// =======================================================================
+Handle(XCAFDoc_NoteBinData)
+XCAFDoc_NoteBinDataContainer::Add(const TCollection_ExtendedString&    theTitle,
+                                  const TCollection_AsciiString&       theMIMEtype,
+                                  const Handle(TColStd_HArray1OfByte)& theData)
+{
+  TDF_Label aLabel;
+  for (TDF_ChildIterator anIt(myList->Label()); anIt.More(); anIt.Next())
+  {
+    if (!anIt.Value().HasAttribute())
+    {
+      aLabel = anIt.Value();
+      break;
+    }
+  }
+  if (aLabel.IsNull())
+  {
+    aLabel = myList->Label().NewChild();
+  }
+  myList->Append(aLabel);
+  return XCAFDoc_NoteBinData::Set(aLabel, theTitle, theMIMEtype, theData);
+}
+
+// =======================================================================
+// function : Remove
+// purpose  :
+// =======================================================================
+Standard_Boolean
+XCAFDoc_NoteBinDataContainer::Remove(TDF_Label& theLabel)
+{
+  theLabel.ForgetAllAttributes();
+  return myList->Remove(theLabel);
+}
+
+// =======================================================================
+// function : Clear
+// purpose  :
+// =======================================================================
+void
+XCAFDoc_NoteBinDataContainer::Clear()
+{
+  const TDF_LabelList& aList = myList->List();
+  for (TDF_LabelList::Iterator anIt(aList); anIt.More(); anIt.Next())
+  {
+    anIt.ChangeValue().ForgetAllAttributes();
+  }
+  myList->Clear();
+}
+
+// =======================================================================
+// function : Label
+// purpose  :
+// =======================================================================
+TDF_Label
+XCAFDoc_NoteBinDataContainer::Label() const
+{
+  return !myList.IsNull() ? myList->Label() : TDF_Label();
 }
 
 // =======================================================================
@@ -37,9 +199,19 @@ XCAFDoc_NoteBinData::GetID()
 Handle(XCAFDoc_NoteBinData)
 XCAFDoc_NoteBinData::Get(const TDF_Label& theLabel)
 {
-  Handle(XCAFDoc_NoteBinData) aThis;
-  theLabel.FindAttribute(XCAFDoc_NoteBinData::GetID(), aThis);
-  return aThis;
+  if (theLabel.IsNull() || theLabel.Father().IsNull() || theLabel.Father().Father().IsNull() ||
+      !XCAFDoc_Note::IsMine(theLabel.Father().Father()))
+    return NULL;
+
+  Handle(TDataStd_Name) aTitle;
+  Handle(TDataStd_AsciiString) aMIMEType;
+  Handle(TDataStd_ByteArray) aData;
+  if (!theLabel.FindAttribute(TDataStd_Name::GetID(), aTitle) ||
+      !theLabel.FindAttribute(TDataStd_AsciiString::GetID(), aMIMEType) || 
+      !theLabel.FindAttribute(TDataStd_ByteArray::GetID(), aData))
+    return NULL;
+
+  return new XCAFDoc_NoteBinData(aTitle, aMIMEType, aData);
 }
 
 // =======================================================================
@@ -48,23 +220,29 @@ XCAFDoc_NoteBinData::Get(const TDF_Label& theLabel)
 // =======================================================================
 Handle(XCAFDoc_NoteBinData)
 XCAFDoc_NoteBinData::Set(const TDF_Label&                  theLabel,
-                         const TCollection_ExtendedString& theUserName,
-                         const TCollection_ExtendedString& theTimeStamp,
                          const TCollection_ExtendedString& theTitle,
                          const TCollection_AsciiString&    theMIMEtype,
                          OSD_File&                         theFile)
 {
-  Handle(XCAFDoc_NoteBinData) aNoteBinData;
-  if (!theLabel.IsNull() && !theLabel.FindAttribute(XCAFDoc_NoteBinData::GetID(), aNoteBinData))
+  if (theLabel.IsNull() || theLabel.Father().IsNull() || theLabel.Father().Father().IsNull() ||
+      !XCAFDoc_Note::IsMine(theLabel.Father().Father()))
+    return NULL;
+
+  if (!theFile.IsOpen() || !theFile.IsReadable() || theFile.Size() > (Standard_Size)IntegerLast())
+    return NULL;
+
+  Handle(TDataStd_ByteArray) aData = TDataStd_ByteArray::Set(theLabel, 1, (Standard_Integer)theFile.Size());
+  Standard_Integer nbReadBytes = 0;
+  theFile.Read((Standard_Address)&aData->InternalArray()->First(), aData->Length(), nbReadBytes);
+  if (nbReadBytes < aData->Length())
   {
-    aNoteBinData = new XCAFDoc_NoteBinData();
-    aNoteBinData->XCAFDoc_Note::Set(theUserName, theTimeStamp);
-    if (aNoteBinData->Set(theTitle, theMIMEtype, theFile))
-      theLabel.AddAttribute(aNoteBinData);
-    else
-      aNoteBinData.Nullify();
+    theLabel.ForgetAttribute(aData);
+    return NULL;
   }
-  return aNoteBinData;
+
+  return new XCAFDoc_NoteBinData(TDataStd_Name::Set(theLabel, theTitle),
+                                 TDataStd_AsciiString::Set(theLabel, theMIMEtype),
+                                 aData);
 }
 
 // =======================================================================
@@ -73,28 +251,31 @@ XCAFDoc_NoteBinData::Set(const TDF_Label&                  theLabel,
 // =======================================================================
 Handle(XCAFDoc_NoteBinData)
 XCAFDoc_NoteBinData::Set(const TDF_Label&                     theLabel,
-                         const TCollection_ExtendedString&    theUserName,
-                         const TCollection_ExtendedString&    theTimeStamp,
                          const TCollection_ExtendedString&    theTitle,
                          const TCollection_AsciiString&       theMIMEtype,
                          const Handle(TColStd_HArray1OfByte)& theData)
 {
-  Handle(XCAFDoc_NoteBinData) aNoteBinData;
-  if (!theLabel.IsNull() && !theLabel.FindAttribute(XCAFDoc_NoteBinData::GetID(), aNoteBinData))
-  {
-    aNoteBinData = new XCAFDoc_NoteBinData();
-    aNoteBinData->XCAFDoc_Note::Set(theUserName, theTimeStamp);
-    aNoteBinData->Set(theTitle, theMIMEtype, theData);
-    theLabel.AddAttribute(aNoteBinData);
-  }
-  return aNoteBinData;
+  if (theLabel.IsNull() || theLabel.Father().IsNull() || theLabel.Father().Father().IsNull() ||
+      !XCAFDoc_Note::IsMine(theLabel.Father().Father()))
+    return NULL;
+
+  Handle(TDataStd_ByteArray) aData = TDataStd_ByteArray::Set(theLabel, 1, 2);
+  aData->ChangeArray(theData);
+  return new XCAFDoc_NoteBinData(TDataStd_Name::Set(theLabel, theTitle),
+                                 TDataStd_AsciiString::Set(theLabel, theMIMEtype),
+                                 aData);
 }
 
 // =======================================================================
 // function : XCAFDoc_NoteBinData
 // purpose  :
 // =======================================================================
-XCAFDoc_NoteBinData::XCAFDoc_NoteBinData()
+XCAFDoc_NoteBinData::XCAFDoc_NoteBinData(const Handle(TDataStd_Name)& theTitle,
+                                         const Handle(TDataStd_AsciiString)& theMIMEType,
+                                         const Handle(TDataStd_ByteArray)& theData)
+  : myTitle(theTitle)
+  , myMIMEtype(theMIMEType)
+  , myData(theData)
 {
 }
 
@@ -107,22 +288,18 @@ XCAFDoc_NoteBinData::Set(const TCollection_ExtendedString& theTitle,
                          const TCollection_AsciiString&    theMIMEtype,
                          OSD_File&                         theFile)
 {
-  if (!theFile.IsOpen() || !theFile.IsReadable())
+  if (!theFile.IsOpen() || !theFile.IsReadable() || theFile.Size() > (Standard_Size)IntegerLast())
     return Standard_False;
 
-  Backup();
-
-  if (theFile.Size() > (Standard_Size)IntegerLast())
-    return Standard_False;
-
-  myData.reset(new TColStd_HArray1OfByte(1, (Standard_Integer)theFile.Size()));
+  Handle(TColStd_HArray1OfByte) aData(new TColStd_HArray1OfByte(1, (Standard_Integer)theFile.Size()));
   Standard_Integer nbReadBytes = 0;
-  theFile.Read((Standard_Address)&myData->First(), myData->Length(), nbReadBytes);
-  if (nbReadBytes < myData->Length())
+  theFile.Read((Standard_Address)&aData->First(), aData->Length(), nbReadBytes);
+  if (nbReadBytes < aData->Length())
     return Standard_False;
 
-  myTitle = theTitle;
-  myMIMEtype = theMIMEtype;
+  myData->ChangeArray(aData);
+  myTitle->Set(theTitle);
+  myMIMEtype->Set(theMIMEtype);
 
   return Standard_True;
 }
@@ -136,83 +313,57 @@ XCAFDoc_NoteBinData::Set(const TCollection_ExtendedString&    theTitle,
                          const TCollection_AsciiString&       theMIMEtype,
                          const Handle(TColStd_HArray1OfByte)& theData)
 {
-  Backup();
-
-  myData = theData;
-  myTitle = theTitle;
-  myMIMEtype = theMIMEtype;
+  myTitle->Set(theTitle);
+  myMIMEtype->Set(theMIMEtype);
+  myData->ChangeArray(theData);
 }
 
 // =======================================================================
-// function : ID
+// function : Title
 // purpose  :
 // =======================================================================
-const
-Standard_GUID& XCAFDoc_NoteBinData::ID() const
+const TCollection_ExtendedString&
+XCAFDoc_NoteBinData::Title() const
 {
-  return GetID();
+  return myTitle->Get();
 }
 
 // =======================================================================
-// function : NewEmpty
+// function : MIMEtype
 // purpose  :
 // =======================================================================
-Handle(TDF_Attribute)
-XCAFDoc_NoteBinData::NewEmpty() const
+const TCollection_AsciiString&
+XCAFDoc_NoteBinData::MIMEtype() const
 {
-  return new XCAFDoc_NoteBinData();
+  return myMIMEtype->Get();
 }
 
 // =======================================================================
-// function : Restore
+// function : Size
 // purpose  :
 // =======================================================================
-void
-XCAFDoc_NoteBinData::Restore(const Handle(TDF_Attribute)& theAttr)
+Standard_Integer
+XCAFDoc_NoteBinData::Size() const
 {
-  XCAFDoc_Note::Restore(theAttr);
-
-  Handle(XCAFDoc_NoteBinData) aMine = Handle(XCAFDoc_NoteBinData)::DownCast(theAttr);
-  if (!aMine.IsNull())
-  {
-    myTitle = aMine->myTitle;
-    myMIMEtype = aMine->myMIMEtype;
-    myData = aMine->myData;
-  }
+  return myData->Length();
 }
 
 // =======================================================================
-// function : Paste
+// function : Data
 // purpose  :
 // =======================================================================
-void
-XCAFDoc_NoteBinData::Paste(const Handle(TDF_Attribute)&       theAttrInto,
-                           const Handle(TDF_RelocationTable)& theRT) const
+const Handle(TColStd_HArray1OfByte)&
+XCAFDoc_NoteBinData::Data() const
 {
-  XCAFDoc_Note::Paste(theAttrInto, theRT);
-
-  Handle(XCAFDoc_NoteBinData) aMine = Handle(XCAFDoc_NoteBinData)::DownCast(theAttrInto);
-  if (!aMine.IsNull())
-    aMine->Set(myTitle, myMIMEtype, myData);
+  return myData->InternalArray();
 }
 
 // =======================================================================
-// function : Dump
+// function : Label
 // purpose  :
 // =======================================================================
-Standard_OStream&
-XCAFDoc_NoteBinData::Dump(Standard_OStream& theOS) const
+TDF_Label
+XCAFDoc_NoteBinData::Label() const
 {
-  XCAFDoc_Note::Dump(theOS);
-  theOS << "\n"
-    << "Title : " << (!myTitle.IsEmpty() ? myMIMEtype : "<untitled>") << "\n"
-    << "MIME type : " << (!myMIMEtype.IsEmpty() ? myMIMEtype : "<none>") << "\n"
-    << "Size : " << Size() << " bytes" << "\n"
-    ;
-  if (!myData.IsNull())
-  {
-    for (Standard_Integer i = myData->Lower(); i <= myData->Upper(); ++i)
-      theOS << myData->Value(i);
-  }
-  return theOS;
+  return !myData.IsNull() ? myData->Label() : TDF_Label();
 }
