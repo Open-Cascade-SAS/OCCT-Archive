@@ -18,6 +18,7 @@
 
 #include <Standard_GUID.hxx>
 #include <TColStd_ListOfAsciiString.hxx>
+#include <TDF_Label.hxx>
 
 //! Unique item identifier in the hierarchical product structure.
 //! A full path to an assembly component in the "part-of" graph starting from 
@@ -79,6 +80,9 @@ public:
   
   //! Dumps the content of me into the stream
   Standard_EXPORT virtual void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
+
+  //! Returns the last label in the path
+  Standard_EXPORT TDF_Label GetLabel(const Handle(TDF_Data)& aDF) const;
 
   struct Hasher
   {

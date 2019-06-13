@@ -14,15 +14,15 @@
 #ifndef _XCAFDoc_NoteBalloon_HeaderFile
 #define _XCAFDoc_NoteBalloon_HeaderFile
 
-#include <XCAFDoc_NoteComment.hxx>
+#include <XCAFDoc_Note.hxx>
 
 //! A comment note attribute.
 //! Contains a textual comment.
-class XCAFDoc_NoteBalloon : public XCAFDoc_NoteComment
+class XCAFDoc_NoteBalloon : public XCAFDoc_Note
 {
 public:
 
-  DEFINE_DERIVED_ATTRIBUTE(XCAFDoc_NoteBalloon, XCAFDoc_NoteComment)
+  DEFINE_DERIVED_ATTRIBUTE(XCAFDoc_NoteBalloon, XCAFDoc_Note)
 
   //! Returns default attribute GUID
   Standard_EXPORT static const Standard_GUID& GetID();
@@ -43,10 +43,20 @@ public:
   //! Creates an empty comment note.
   Standard_EXPORT XCAFDoc_NoteBalloon();
 
+  //! Sets the comment text.
+  Standard_EXPORT void Set(const TCollection_ExtendedString& theComment);
+
+  //! Returns the comment text.
+  const TCollection_ExtendedString& Get() const { return myComment; }
+
 public:
 
   // Overrides TDF_Attribute virtuals
   Standard_EXPORT const Standard_GUID& ID() const Standard_OVERRIDE;
+private:
+
+  TCollection_ExtendedString myComment;
+
 };
 
 DEFINE_STANDARD_HANDLE(XCAFDoc_NoteBalloon, XCAFDoc_NoteComment)

@@ -26,6 +26,24 @@ IMPLEMENT_STANDARD_RTTIEXT(BinMXCAFDoc_NoteDriver, BinMDF_ADriver)
 //function :
 //purpose  : 
 //=======================================================================
+BinMXCAFDoc_NoteDriver::BinMXCAFDoc_NoteDriver(const Handle(Message_Messenger)& theMsgDriver)
+: BinMDF_ADriver(theMsgDriver, STANDARD_TYPE(XCAFDoc_Note)->Name())
+{
+}
+
+//=======================================================================
+//function :
+//purpose  : 
+//=======================================================================
+Handle(TDF_Attribute) BinMXCAFDoc_NoteDriver::NewEmpty() const
+{
+  return new XCAFDoc_Note();
+}
+
+//=======================================================================
+//function :
+//purpose  : 
+//=======================================================================
 BinMXCAFDoc_NoteDriver::BinMXCAFDoc_NoteDriver(const Handle(Message_Messenger)& theMsgDriver,
                                                Standard_CString                 theName)
   : BinMDF_ADriver(theMsgDriver, theName)
