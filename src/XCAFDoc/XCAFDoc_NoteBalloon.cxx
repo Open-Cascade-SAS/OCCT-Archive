@@ -16,7 +16,7 @@
 #include <Standard_GUID.hxx>
 #include <TDF_Label.hxx>
 
-IMPLEMENT_DERIVED_ATTRIBUTE(XCAFDoc_NoteBalloon, XCAFDoc_NoteComment)
+IMPLEMENT_DERIVED_ATTRIBUTE(XCAFDoc_NoteBalloon, XCAFDoc_Note)
 
 // =======================================================================
 // function : GetID
@@ -56,7 +56,7 @@ XCAFDoc_NoteBalloon::Set(const TDF_Label&                  theLabel,
   {
     aNoteBalloon = new XCAFDoc_NoteBalloon();
     aNoteBalloon->XCAFDoc_Note::Set(theUserName, theTimeStamp);
-    aNoteBalloon->XCAFDoc_NoteComment::Set(theComment);
+    aNoteBalloon->Set(theComment);
     theLabel.AddAttribute(aNoteBalloon);
   }
   return aNoteBalloon;
@@ -68,6 +68,18 @@ XCAFDoc_NoteBalloon::Set(const TDF_Label&                  theLabel,
 // =======================================================================
 XCAFDoc_NoteBalloon::XCAFDoc_NoteBalloon()
 {
+}
+
+// =======================================================================
+// function : Set
+// purpose  :
+// =======================================================================
+void
+XCAFDoc_NoteBalloon::Set(const TCollection_ExtendedString& theComment)
+{
+  Backup();
+
+  myComment = theComment;
 }
 
 // =======================================================================

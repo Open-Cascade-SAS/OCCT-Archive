@@ -35,6 +35,10 @@ class BinMXCAFDoc_NoteDriver : public BinMDF_ADriver
 {
 public:
   
+  Standard_EXPORT BinMXCAFDoc_NoteDriver(const Handle(Message_Messenger)& theMsgDriver);
+
+  Standard_EXPORT Handle(TDF_Attribute) NewEmpty() const Standard_OVERRIDE;
+
   Standard_EXPORT Standard_Boolean Paste (const BinObjMgt_Persistent&  theSource, 
                                           const Handle(TDF_Attribute)& theTarget, 
                                           BinObjMgt_RRelocationTable&  theRelocTable) const Standard_OVERRIDE;

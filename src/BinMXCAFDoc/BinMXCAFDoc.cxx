@@ -26,8 +26,6 @@
 #include <BinMXCAFDoc_LocationDriver.hxx>
 #include <BinMXCAFDoc_MaterialDriver.hxx>
 #include <BinMXCAFDoc_NoteDriver.hxx>
-#include <BinMXCAFDoc_NoteBinDataDriver.hxx>
-#include <BinMXCAFDoc_NoteCommentDriver.hxx>
 #include <BinMXCAFDoc_VisMaterialDriver.hxx>
 #include <BinMXCAFDoc_VisMaterialToolDriver.hxx>
 #include <Message_Messenger.hxx>
@@ -62,7 +60,6 @@ void BinMXCAFDoc::AddDrivers(const Handle(BinMDF_ADriverTable)& theDriverTable,
   theDriverTable->AddDriver( new BinMXCAFDoc_DimTolDriver      (theMsgDrv));
   theDriverTable->AddDriver( new BinMXCAFDoc_MaterialDriver    (theMsgDrv));
   theDriverTable->AddDriver( new BinMXCAFDoc_VisMaterialDriver (theMsgDrv));
-  theDriverTable->AddDriver( new BinMXCAFDoc_NoteBinDataDriver (theMsgDrv));
-  theDriverTable->AddDriver( new BinMXCAFDoc_NoteCommentDriver (theMsgDrv));
+  theDriverTable->AddDriver( new BinMXCAFDoc_NoteDriver        (theMsgDrv)); 
   theDriverTable->AddDriver( new BinMXCAFDoc_VisMaterialToolDriver(theMsgDrv));
 }
