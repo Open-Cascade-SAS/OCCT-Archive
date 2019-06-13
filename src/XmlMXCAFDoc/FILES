@@ -19,10 +19,6 @@ XmlMXCAFDoc_MaterialDriver.cxx
 XmlMXCAFDoc_MaterialDriver.hxx
 XmlMXCAFDoc_NoteDriver.cxx
 XmlMXCAFDoc_NoteDriver.hxx
-XmlMXCAFDoc_NoteCommentDriver.cxx
-XmlMXCAFDoc_NoteCommentDriver.hxx
-XmlMXCAFDoc_NoteBinDataDriver.cxx
-XmlMXCAFDoc_NoteBinDataDriver.hxx
 XmlMXCAFDoc_VisMaterialDriver.cxx
 XmlMXCAFDoc_VisMaterialDriver.hxx
 XmlMXCAFDoc_VisMaterialToolDriver.cxx

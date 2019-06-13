@@ -28,6 +28,24 @@ IMPLEMENT_DOMSTRING(TimeStamp, "time_stamp")
 //function :
 //purpose  : 
 //=======================================================================
+XmlMXCAFDoc_NoteDriver::XmlMXCAFDoc_NoteDriver(const Handle(Message_Messenger)& theMsgDriver)
+: XmlMDF_ADriver(theMsgDriver, STANDARD_TYPE(XCAFDoc_Note)->Name())
+{
+}
+
+//=======================================================================
+//function :
+//purpose  : 
+//=======================================================================
+Handle(TDF_Attribute) XmlMXCAFDoc_NoteDriver::NewEmpty() const
+{
+  return new XCAFDoc_Note();
+}
+
+//=======================================================================
+//function :
+//purpose  : 
+//=======================================================================
 XmlMXCAFDoc_NoteDriver::XmlMXCAFDoc_NoteDriver(const Handle(Message_Messenger)& theMsgDriver,
                                                Standard_CString                 theName)
   : XmlMDF_ADriver(theMsgDriver, theName)

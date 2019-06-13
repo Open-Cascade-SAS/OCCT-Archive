@@ -16,6 +16,7 @@
 #include <DDocStd.hxx>
 #include <OSD_File.hxx>
 #include <OSD_Protection.hxx>
+#include <TColStd_HArray1OfByte.hxx>
 #include <TDocStd_Document.hxx>
 #include <TDF_Tool.hxx>
 #include <XCAFDoc_AssemblyItemRef.hxx>
@@ -417,11 +418,15 @@ noteCreateBinData(Draw_Interpretor& di, Standard_Integer argc, const char** argv
     OSD_Path aPath(aFilename);
     OSD_File aFile(aPath);
     aFile.Open(OSD_ReadOnly, OSD_Protection());
-    aNote = aNotesTool->CreateBinData(aUsername, aTimestamp, aTitle, aMIMEtype, aFile);
+    aNote = aNotesTool->CreateBinDataContainer(aUsername, aTimestamp);
+    Handle(XCAFDoc_NoteBinDataContainer) aCnt = XCAFDoc_NoteBinDataContainer::Get(aNote->Label());
+    aCnt->Add(aTitle, aMIMEtype, aFile);
   }
   else if (aFromData)
   {
-    aNote = aNotesTool->CreateBinData(aUsername, aTimestamp, aTitle, aMIMEtype, aData);
+    aNote = aNotesTool->CreateBinDataContainer(aUsername, aTimestamp);
+    Handle(XCAFDoc_NoteBinDataContainer) aCnt = XCAFDoc_NoteBinDataContainer::Get(aNote->Label());
+    aCnt->Add(aTitle, aMIMEtype, aData);
   }
   else
   {
@@ -1234,15 +1239,15 @@ noteDump(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
   di << "Username  : " << aNote->UserName() << "\n";
   di << "Timestamp : " << aNote->TimeStamp() << "\n";
   di << "Type      : " << aNote->get_type_name() << "\n";
-  if (Handle(XCAFDoc_NoteComment) aComment = Handle(XCAFDoc_NoteComment)::DownCast(aNote))
+  if (Handle(XCAFDoc_NoteComment) aComment = XCAFDoc_NoteComment::Get(aNote->Label()))
   {
-    di << "Comment   : " << aComment->Comment() << "\n";
+    di << "Comment   : " << aComment->Get() << "\n";
   }
-  else if (Handle(XCAFDoc_NoteBalloon) aBalloon = Handle(XCAFDoc_NoteBalloon)::DownCast(aNote))
+  else if (Handle(XCAFDoc_NoteBalloon) aBalloon = XCAFDoc_NoteBalloon::Get(aNote->Label()))
   {
-    di << "Comment   : " << aBalloon->Comment() << "\n";
+    di << "Comment   : " << aBalloon->Get() << "\n";
   }
-  else if (Handle(XCAFDoc_NoteBinData) aBinData = Handle(XCAFDoc_NoteBinData)::DownCast(aNote))
+  else if (Handle(XCAFDoc_NoteBinData) aBinData = XCAFDoc_NoteBinData::Get(aNote->Label()))
   {
     di << "Title     : " << aBinData->Title() << "\n";
     di << "MIME type : " << aBinData->MIMEtype() << "\n";
