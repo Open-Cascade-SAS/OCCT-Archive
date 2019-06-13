@@ -29,14 +29,6 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(XCAFDoc_Note, TDF_Attribute)
 
-enum ChildLab
-{
-  ChildLab_PntText = 1,
-  ChildLab_Plane,
-  ChildLab_Pnt,
-  ChildLab_Presentation
-};
-
 // =======================================================================
 // function : IsMine
 // purpose  :
@@ -44,7 +36,18 @@ enum ChildLab
 Standard_Boolean
 XCAFDoc_Note::IsMine(const TDF_Label& theLabel)
 {
-  return !Get(theLabel).IsNull();
+  return !theLabel.IsNull() && !Get(theLabel).IsNull();
+}
+
+// =======================================================================
+// function : GetID
+// purpose  :
+// =======================================================================
+const Standard_GUID&
+XCAFDoc_Note::GetID()
+{
+  static Standard_GUID s_ID("A379384E-8412-4e34-BC26-097D503E2622");
+  return s_ID;
 }
 
 // =======================================================================
@@ -63,11 +66,25 @@ Handle(XCAFDoc_Note)
 XCAFDoc_Note::Get(const TDF_Label& theLabel)
 {
   Handle(XCAFDoc_Note) aNote;
-  for (TDF_AttributeIterator anIt(theLabel); anIt.More(); anIt.Next())
+  theLabel.FindAttribute(XCAFDoc_Note::GetID(), aNote);
+  return aNote;
+}
+
+// =======================================================================
+// function : Set
+// purpose  :
+// =======================================================================
+Handle(XCAFDoc_Note) 
+XCAFDoc_Note::Set(const TDF_Label&                  theLabel,
+                  const TCollection_ExtendedString& theUserName,
+                  const TCollection_ExtendedString& theTimeStamp)
+{
+  Handle(XCAFDoc_Note) aNote;
+  if (!theLabel.IsNull() && !theLabel.FindAttribute(XCAFDoc_Note::GetID(), aNote))
   {
-    aNote = Handle(XCAFDoc_Note)::DownCast(anIt.Value());
-    if (!aNote.IsNull())
-      break;
+    aNote = new XCAFDoc_Note();
+    aNote->XCAFDoc_Note::Set(theUserName, theTimeStamp);
+    theLabel.AddAttribute(aNote);
   }
   return aNote;
 }
@@ -157,10 +174,11 @@ void XCAFDoc_Note::SetObject (const Handle(XCAFNoteObjects_NoteObject)& theObjec
 {
   Backup();
 
-  for (TDF_ChildIterator anIter(Label()); anIter.More(); anIter.Next())
-  {
-    anIter.Value().ForgetAllAttributes();
-  }
+  TDF_Label aChLabel;
+  aChLabel = Label().FindChild(ChildLab_PntText,      Standard_False); if (!aChLabel.IsNull()) aChLabel.ForgetAllAttributes();
+  aChLabel = Label().FindChild(ChildLab_Plane,        Standard_False); if (!aChLabel.IsNull()) aChLabel.ForgetAllAttributes();
+  aChLabel = Label().FindChild(ChildLab_Pnt,          Standard_False); if (!aChLabel.IsNull()) aChLabel.ForgetAllAttributes();
+  aChLabel = Label().FindChild(ChildLab_Presentation, Standard_False); if (!aChLabel.IsNull()) aChLabel.ForgetAllAttributes();
 
   if (theObject->HasPoint())
   {
@@ -189,6 +207,26 @@ void XCAFDoc_Note::SetObject (const Handle(XCAFNoteObjects_NoteObject)& theObjec
     TNaming_Builder aBuilder (aLPres);
     aBuilder.Generated (aPresentation);
   }
+}
+
+// =======================================================================
+// function : ID
+// purpose  :
+// =======================================================================
+const Standard_GUID&
+XCAFDoc_Note::ID() const
+{
+  return GetID();
+}
+
+// =======================================================================
+// function : NewEmpty
+// purpose  :
+// =======================================================================
+Handle(TDF_Attribute)
+XCAFDoc_Note::NewEmpty() const
+{
+  return new XCAFDoc_Note();
 }
 
 // =======================================================================

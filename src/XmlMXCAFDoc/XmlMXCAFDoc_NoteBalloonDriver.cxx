@@ -20,14 +20,15 @@
 #include <XmlMXCAFDoc_NoteBalloonDriver.hxx>
 #include <XmlObjMgt_Persistent.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(XmlMXCAFDoc_NoteBalloonDriver, XmlMXCAFDoc_NoteCommentDriver)
+IMPLEMENT_STANDARD_RTTIEXT(XmlMXCAFDoc_NoteBalloonDriver, XmlMXCAFDoc_NoteDriver)
+IMPLEMENT_DOMSTRING(Comment, "comment")
 
 //=======================================================================
 //function :
 //purpose  : 
 //=======================================================================
 XmlMXCAFDoc_NoteBalloonDriver::XmlMXCAFDoc_NoteBalloonDriver(const Handle(Message_Messenger)& theMsgDriver)
-  : XmlMXCAFDoc_NoteCommentDriver(theMsgDriver, STANDARD_TYPE(XCAFDoc_NoteBalloon)->Name())
+  : XmlMXCAFDoc_NoteDriver(theMsgDriver, STANDARD_TYPE(XCAFDoc_NoteBalloon)->Name())
 {
 }
 
@@ -44,9 +45,51 @@ Handle(TDF_Attribute) XmlMXCAFDoc_NoteBalloonDriver::NewEmpty() const
 //function :
 //purpose  : 
 //=======================================================================
+Standard_Boolean XmlMXCAFDoc_NoteBalloonDriver::Paste(const XmlObjMgt_Persistent&  theSource,
+                                                      const Handle(TDF_Attribute)& theTarget,
+                                                      XmlObjMgt_RRelocationTable&  theRelocTable) const
+{
+  XmlMXCAFDoc_NoteDriver::Paste(theSource, theTarget, theRelocTable);
+
+  const XmlObjMgt_Element& anElement = theSource;
+
+  XmlObjMgt_DOMString aComment = anElement.getAttribute(::Comment());
+  if (aComment == NULL)
+    return Standard_False;
+
+  Handle(XCAFDoc_NoteBalloon) aNote = Handle(XCAFDoc_NoteBalloon)::DownCast(theTarget);
+  if (aNote.IsNull())
+    return Standard_False;
+
+  aNote->Set(aComment.GetString());
+
+  return Standard_True;
+}
+
+//=======================================================================
+//function :
+//purpose  : 
+//=======================================================================
+void XmlMXCAFDoc_NoteBalloonDriver::Paste(const Handle(TDF_Attribute)& theSource,
+                                          XmlObjMgt_Persistent&        theTarget,
+                                          XmlObjMgt_SRelocationTable&  theRelocTable) const
+{
+  XmlMXCAFDoc_NoteDriver::Paste(theSource, theTarget, theRelocTable);
+
+  Handle(XCAFDoc_NoteBalloon) aNote = Handle(XCAFDoc_NoteBalloon)::DownCast(theSource);
+
+  XmlObjMgt_DOMString aComment(TCollection_AsciiString(aNote->TimeStamp()).ToCString());
+
+  theTarget.Element().setAttribute(::Comment(), aComment);
+}
+
+//=======================================================================
+//function :
+//purpose  : 
+//=======================================================================
 XmlMXCAFDoc_NoteBalloonDriver::XmlMXCAFDoc_NoteBalloonDriver(const Handle(Message_Messenger)& theMsgDriver,
                                                              Standard_CString                 theName)
-  : XmlMXCAFDoc_NoteCommentDriver(theMsgDriver, theName)
+  : XmlMXCAFDoc_NoteDriver(theMsgDriver, theName)
 {
 
 }

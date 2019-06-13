@@ -14,57 +14,46 @@
 #ifndef _XCAFDoc_NoteComment_HeaderFile
 #define _XCAFDoc_NoteComment_HeaderFile
 
-#include <XCAFDoc_Note.hxx>
+#include <Standard_Handle.hxx>
+#include <Standard_Transient.hxx>
+#include <TDF_Label.hxx>
 
-//! A comment note attribute.
-//! Contains a textual comment.
-class XCAFDoc_NoteComment : public XCAFDoc_Note
+class TDataStd_Comment;
+
+//! Comment note proxy.
+//! Handles a textual comment of the note.
+class XCAFDoc_NoteComment : public Standard_Transient
 {
 public:
 
-  DEFINE_STANDARD_RTTIEXT(XCAFDoc_NoteComment, XCAFDoc_Note)
+  DEFINE_STANDARD_RTTIEXT(XCAFDoc_NoteComment, Standard_Transient)
 
-  //! Returns default attribute GUID
-  Standard_EXPORT static const Standard_GUID& GetID();
-
-  //! Finds a reference attribute on the given label and returns it, if it is found
+  //! Finds a reference attribute on the given label and returns a proxy instance if it is found
   Standard_EXPORT static Handle(XCAFDoc_NoteComment) Get(const TDF_Label& theLabel);
 
-  //! Create (if not exist) a comment note on the given label.
-  //! \param [in] theLabel     - note label.
-  //! \param [in] theUserName  - the name of the user, who created the note.
-  //! \param [in] theTimeStamp - creation timestamp of the note.
-  //! \param [in] theComment   - comment text.
+  //! Create (if not exist) a comment on the given note label.
+  //! \param [in] theLabel   - note label.
+  //! \param [in] theComment - comment text.
   Standard_EXPORT static Handle(XCAFDoc_NoteComment) Set(const TDF_Label&                  theLabel,
-                                                         const TCollection_ExtendedString& theUserName,
-                                                         const TCollection_ExtendedString& theTimeStamp,
                                                          const TCollection_ExtendedString& theComment);
-
-  //! Creates an empty comment note.
-  Standard_EXPORT XCAFDoc_NoteComment();
 
   //! Sets the comment text.
   Standard_EXPORT void Set(const TCollection_ExtendedString& theComment);
 
   //! Returns the comment text.
-  const TCollection_ExtendedString& Comment() const { return myComment; }
+  Standard_EXPORT const TCollection_ExtendedString& Get() const;
 
-public:
+  //! Returns label
+  Standard_EXPORT TDF_Label Label() const;
 
-  // Overrides TDF_Attribute virtuals
-  Standard_EXPORT const Standard_GUID& ID() const Standard_OVERRIDE;
-  Standard_EXPORT Handle(TDF_Attribute) NewEmpty() const Standard_OVERRIDE;
-  Standard_EXPORT void Restore(const Handle(TDF_Attribute)& theAttrFrom) Standard_OVERRIDE;
-  Standard_EXPORT void Paste(const Handle(TDF_Attribute)&       theAttrInto,
-                             const Handle(TDF_RelocationTable)& theRT) const Standard_OVERRIDE;
-  Standard_EXPORT Standard_OStream& Dump(Standard_OStream& theOS) const Standard_OVERRIDE;
+private:
 
-protected:
+  XCAFDoc_NoteComment(const Handle(TDataStd_Comment)& theComment);
 
-  TCollection_ExtendedString myComment; ///< Comment text.
+  Handle(TDataStd_Comment) myComment; ///< Comment attribute.
 
 };
 
-DEFINE_STANDARD_HANDLE(XCAFDoc_NoteComment, XCAFDoc_Note)
+DEFINE_STANDARD_HANDLE(XCAFDoc_NoteComment, Standard_Transient)
 
 #endif // _XCAFDoc_NoteComment_HeaderFile

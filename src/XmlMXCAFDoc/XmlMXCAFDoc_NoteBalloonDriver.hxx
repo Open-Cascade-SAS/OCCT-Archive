@@ -16,13 +16,13 @@
 #ifndef _XmlMXCAFDoc_NoteBalloonDriver_HeaderFile
 #define _XmlMXCAFDoc_NoteBalloonDriver_HeaderFile
 
-#include <XmlMXCAFDoc_NoteCommentDriver.hxx>
+#include <XmlMXCAFDoc_NoteDriver.hxx>
 
 class XmlMXCAFDoc_NoteBalloonDriver;
-DEFINE_STANDARD_HANDLE(XmlMXCAFDoc_NoteBalloonDriver, XmlMXCAFDoc_NoteCommentDriver)
+DEFINE_STANDARD_HANDLE(XmlMXCAFDoc_NoteBalloonDriver, XmlMXCAFDoc_NoteDriver)
 
 //! Attribute Driver.
-class XmlMXCAFDoc_NoteBalloonDriver : public XmlMXCAFDoc_NoteCommentDriver
+class XmlMXCAFDoc_NoteBalloonDriver : public XmlMXCAFDoc_NoteDriver
 {
 public:
 
@@ -30,7 +30,15 @@ public:
 
   Standard_EXPORT Handle(TDF_Attribute) NewEmpty() const Standard_OVERRIDE;
 
-  DEFINE_STANDARD_RTTIEXT(XmlMXCAFDoc_NoteBalloonDriver, XmlMXCAFDoc_NoteCommentDriver)
+  Standard_EXPORT Standard_Boolean Paste(const XmlObjMgt_Persistent&  theSource,
+                                         const Handle(TDF_Attribute)& theTarget,
+                                         XmlObjMgt_RRelocationTable&  theRelocTable) const Standard_OVERRIDE;
+
+  Standard_EXPORT void Paste(const Handle(TDF_Attribute)& theSource,
+                             XmlObjMgt_Persistent&        theTarget,
+                             XmlObjMgt_SRelocationTable&  theRelocTable) const Standard_OVERRIDE;
+
+  DEFINE_STANDARD_RTTIEXT(XmlMXCAFDoc_NoteBalloonDriver, XmlMXCAFDoc_NoteDriver)
 
 protected:
 

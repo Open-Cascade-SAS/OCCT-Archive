@@ -102,6 +102,9 @@ public:
 
   //! Returns the assembly item ID that the reference points to.
   Standard_EXPORT const XCAFDoc_AssemblyItemId& GetItem() const;
+
+  //! Returns the last label in the item's path
+  Standard_EXPORT TDF_Label GetItemLabel() const;
   
   //! @name Set reference data functions.
   //! @{

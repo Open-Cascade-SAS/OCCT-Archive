@@ -176,6 +176,12 @@ XCAFDoc_AssemblyItemRef::GetItem() const
   return myItemId;
 }
 
+TDF_Label 
+XCAFDoc_AssemblyItemRef::GetItemLabel() const
+{
+  return !Label().IsNull() ? myItemId.GetLabel(Label().Data()) : TDF_Label();
+}
+
 Standard_GUID 
 XCAFDoc_AssemblyItemRef::GetGUID() const
 {

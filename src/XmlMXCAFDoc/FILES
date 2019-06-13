@@ -35,10 +35,6 @@ XmlMXCAFDoc_NoteDriver.cxx
 XmlMXCAFDoc_NoteDriver.hxx
 XmlMXCAFDoc_NoteBalloonDriver.cxx
 XmlMXCAFDoc_NoteBalloonDriver.hxx
-XmlMXCAFDoc_NoteCommentDriver.cxx
-XmlMXCAFDoc_NoteCommentDriver.hxx
-XmlMXCAFDoc_NoteBinDataDriver.cxx
-XmlMXCAFDoc_NoteBinDataDriver.hxx
 XmlMXCAFDoc_NotesToolDriver.cxx
 XmlMXCAFDoc_NotesToolDriver.hxx
 XmlMXCAFDoc_ShapeToolDriver.cxx
