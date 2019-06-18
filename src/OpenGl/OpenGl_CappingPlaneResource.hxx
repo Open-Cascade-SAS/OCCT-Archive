@@ -20,7 +20,7 @@
 #include <OpenGl_Resource.hxx>
 #include <OpenGl_Aspects.hxx>
 #include <OpenGl_Matrix.hxx>
-#include <Graphic3d_ClipPlane.hxx>
+#include <Graphic3d_AspectFillCapping.hxx>
 
 class OpenGl_CappingPlaneResource;
 DEFINE_STANDARD_HANDLE (OpenGl_CappingPlaneResource, OpenGl_Resource)
@@ -30,25 +30,23 @@ DEFINE_STANDARD_HANDLE (OpenGl_CappingPlaneResource, OpenGl_Resource)
 //! This resource holds data necessary for OpenGl_CappingAlgo.
 //! This object is implemented as OpenGl resource for the following reasons:
 //! - one instance should be shared between contexts.
-//! - instance associated to Graphic3d_ClipPlane data by id.
+//! - instance associated to Graphic3d_AspectFillCapping data.
 //! - should created and released within context (owns OpenGl elements and resources).
 class OpenGl_CappingPlaneResource : public OpenGl_Resource
 {
 public:
 
-  //! Constructor.
-  //! Create capping plane presentation associated to clipping plane data.
-  //! @param thePlane [in] the plane data.
-  Standard_EXPORT OpenGl_CappingPlaneResource (const Handle(Graphic3d_ClipPlane)& thePlane);
+  //! Create and assign style.
+  Standard_EXPORT OpenGl_CappingPlaneResource (const Handle(Graphic3d_AspectFillCapping)& theAspect);
 
   //! Destroy object.
   Standard_EXPORT virtual ~OpenGl_CappingPlaneResource();
 
-  //! Update resource data in the passed context.
-  //! @param theContext   [in] the context
-  //! @param theObjAspect [in] object aspect
-  Standard_EXPORT void Update (const Handle(OpenGl_Context)& theContext,
-                               const Handle(Graphic3d_Aspects)& theObjAspect);
+  //! Assign section style.
+  Standard_EXPORT void SetAspect (const Handle(Graphic3d_AspectFillCapping)& theAspect);
+
+  //! Returns section style parameters.
+  const Handle(Graphic3d_AspectFillCapping)& Aspect() const { return myAspect; }
 
   //! Release associated OpenGl resources.
   //! @param theContext [in] the resource context.
@@ -57,17 +55,23 @@ public:
   //! Returns estimated GPU memory usage - not implemented.
   virtual Standard_Size EstimatedDataSize() const Standard_OVERRIDE { return 0; }
 
-  //! Return parent clipping plane structure.
-  const Handle(Graphic3d_ClipPlane)& Plane() const { return myPlaneRoot; }
-
-  //! @return aspect face for rendering capping surface.
-  inline const OpenGl_Aspects* AspectFace() const { return myAspect; }
-
-  //! @return evaluated orientation matrix to transform infinite plane.
-  inline const OpenGl_Matrix* Orientation() const { return &myOrientation; }
-
   //! @return primitive array of vertices to render infinite plane.
-  inline const OpenGl_PrimitiveArray& Primitives() const { return myPrimitives; }
+  static OpenGl_PrimitiveArray* BuildInfinitPlaneVertices();
+
+  //! Returns true if capping should draw hatch layer.
+  Standard_Boolean ToDrawHatch() const 
+  {
+    return myAspect->ToDrawHatch() 
+       && (myAspect->IsStippleHatch()
+        || myAspect->IsTextureHatch());
+  }
+
+  //! Returns the shading aspect for drawing face of a clipping section itself.
+  //! @param theObjectAspect [in] the aspect of an object if it requires combining.
+  Standard_EXPORT  const OpenGl_Aspects* CappingFaceAspect (const OpenGl_Aspects* theObjectAspect) const;
+
+  //! Returns the shading aspect for drawing hatch layer of a section.
+  Standard_EXPORT const OpenGl_Aspects* HatchingFaceAspect() const;
 
 private:
 
@@ -79,14 +83,11 @@ private:
 
 private:
 
-  OpenGl_PrimitiveArray       myPrimitives;    //!< vertices and texture coordinates for rendering
-  OpenGl_Matrix               myOrientation;   //!< plane transformation matrix.
-  OpenGl_Aspects*             myAspect;        //!< capping face aspect.
-  Handle(Graphic3d_ClipPlane) myPlaneRoot;     //!< parent clipping plane structure.
-  Handle(Graphic3d_Aspects)   myFillAreaAspect;//!< own capping aspect
-  gp_XYZ                      myLocalOrigin;   //!< layer origin
-  unsigned int                myEquationMod;   //!< modification counter for plane equation.
-  unsigned int                myAspectMod;     //!< modification counter for aspect.
+  Handle(Graphic3d_AspectFillCapping) myAspect;         //!< Section style settings from application's level.
+  mutable OpenGl_Aspects              myCappingAspect;  //!< GL aspect for shading base layer of a capping section.
+  mutable OpenGl_Aspects              myHatchingAspect; //!< GL aspect for shading hatching layer (additional to base) of a capping section.
+  mutable Standard_Size               myHatchingState;
+  gp_XYZ                              myLocalOrigin;   //!< layer origin
 
 public:
 
