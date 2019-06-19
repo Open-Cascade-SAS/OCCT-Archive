@@ -285,7 +285,7 @@ void IntTools_EdgeEdge::FindSolutions(IntTools_SequenceOfRanges& theRanges1,
 {
   Standard_Boolean bIsClosed2;
   Standard_Real aT11, aT12, aT21, aT22;
-  Bnd_Box aB2;
+  Bnd_Box aB1, aB2;
   //
   bSplit2 = Standard_False;
   myRange1.Range(aT11, aT12);
@@ -294,7 +294,6 @@ void IntTools_EdgeEdge::FindSolutions(IntTools_SequenceOfRanges& theRanges1,
   bIsClosed2 = IsClosed(myGeom2, aT21, aT22, myTol2, myRes2);
   //
   if (bIsClosed2) {
-    Bnd_Box aB1;
     BndBuildBox(myCurve1, aT11, aT12, myTol1, aB1);
     //
     gp_Pnt aP = myGeom2->Value(aT21);
@@ -302,8 +301,9 @@ void IntTools_EdgeEdge::FindSolutions(IntTools_SequenceOfRanges& theRanges1,
   }
   //
   if (!bIsClosed2) {
+    BndBuildBox(myCurve1, aT11, aT12, myTol1, aB1);
     BndBuildBox(myCurve2, aT21, aT22, myTol2, aB2);
-    FindSolutions(myRange1, myRange2, aB2, theRanges1, theRanges2);
+    FindSolutions(myRange1, aB1, myRange2, aB2, theRanges1, theRanges2);
     return;
   }
   //
@@ -324,10 +324,11 @@ void IntTools_EdgeEdge::FindSolutions(IntTools_SequenceOfRanges& theRanges1,
   //
   for (i = 1; i <= aNb1; ++i) {
     const IntTools_Range& aR1 = aSegments1(i);
+    BndBuildBox(myCurve1, aR1.First(), aR1.Last(), myTol1, aB1);
     for (j = 1; j <= aNb2; ++j) {
       const IntTools_Range& aR2 = aSegments2(j);
       BndBuildBox(myCurve2, aR2.First(), aR2.Last(), myTol2, aB2);
-      FindSolutions(aR1, aR2, aB2, theRanges1, theRanges2);
+      FindSolutions(aR1, aB1, aR2, aB2, theRanges1, theRanges2);
     }
   }
   //
@@ -339,6 +340,7 @@ void IntTools_EdgeEdge::FindSolutions(IntTools_SequenceOfRanges& theRanges1,
 //purpose  : 
 //=======================================================================
 void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
+                                      const Bnd_Box& theBox1,
                                       const IntTools_Range& theR2,
                                       const Bnd_Box& theBox2,
                                       IntTools_SequenceOfRanges& theRanges1,
@@ -354,6 +356,7 @@ void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
   theR1.Range(aT11, aT12);
   theR2.Range(aT21, aT22);
   //
+  aB1 = theBox1;
   aB2 = theBox2;
   //
   bThin = Standard_False;
@@ -366,9 +369,7 @@ void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
     aTB21 = aT21;
     aTB22 = aT22;
     //
-    //1. Build box for first edge and find parameters 
-    //   of the second one in that box
-    BndBuildBox(myCurve1, aT11, aT12, myTol1, aB1);
+    //1. Find parameters of the second edge in the box of first one
     bOut = aB1.IsOut(aB2);
     if (bOut) {
       break;
@@ -416,7 +417,9 @@ void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
         ((aT21 - aTB21) < aSmallStep2) && ((aTB22 - aT22) < aSmallStep2)) {
       bStop = Standard_True;
     }
-    //
+    else
+      BndBuildBox (myCurve1, aT11, aT12, myTol1, aB1);
+
   } while (!bStop);
   //
   if (bOut) {
@@ -479,13 +482,20 @@ void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
   Standard_Integer i, aNb1;
   IntTools_SequenceOfRanges aSegments1;
   //
+  // Build box for first curve to compare
+  // the boxes of the splits with this one
+  BndBuildBox(myCurve1, aT11, aT12, myTol1, aB1);
+  const Standard_Real aB1SqExtent = aB1.SquareExtent();
+  //
   IntTools_Range aR2(aT21, aT22);
   BndBuildBox(myCurve2, aT21, aT22, myTol2, aB2);
   //
   aNb1 = SplitRangeOnSegments(aT11, aT12, myRes1, 3, aSegments1);
   for (i = 1; i <= aNb1; ++i) {
     const IntTools_Range& aR1 = aSegments1(i);
-    FindSolutions(aR1, aR2, aB2, theRanges1, theRanges2);
+    BndBuildBox(myCurve1, aR1.First(), aR1.Last(), myTol1, aB1);
+    if (!aB1.IsOut(aB2) && (aNb1 == 1 || aB1.SquareExtent() < aB1SqExtent))
+      FindSolutions(aR1, aB1, aR2, aB2, theRanges1, theRanges2);
   }
 }
 
