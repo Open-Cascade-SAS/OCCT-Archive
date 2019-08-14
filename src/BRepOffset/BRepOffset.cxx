@@ -309,6 +309,74 @@ Handle(Geom_Surface) BRepOffset::CollapseSingularities (const Handle(Geom_Surfac
       }
     }
 
+    if (aPoles.RowLength() > 2 && aPoles.ColLength() > 2)
+    {
+      // Check if the adjacent sides of the surfaces are collapsed, i.e. if normal is
+      // is impossible to compute in the 'corners'
+      // If such corner is found, move the pole outside a bit, to make the 'corner' more obvious
+
+      // We are dealing with four points:
+      // (UMin, VMin), (UMin, VMax), (UMax, VMin), (UMax, VMax)
+      // or (1, 1), (1, NbVPoles), (NbUPoles, 1), (NbUPoles, NbUPoles)
+
+      Handle(Geom_Surface)& aSurf = aCopy.IsNull() ? aBSpline : aCopy;
+
+      Standard_Real anU[2], aV[2];
+      aBSpline->Bounds (anU[0], anU[1], aV[0], aV[1]);
+
+      Standard_Integer aCornerPoleUIndex[2] = { aPoles.LowerRow(), aPoles.UpperRow() };
+      Standard_Integer aCornerPoleVIndex[2] = { aPoles.LowerCol(), aPoles.UpperCol() };
+
+      Standard_Integer aPoleInsideUIndex[2] = { aCornerPoleUIndex[0] + 1, aCornerPoleUIndex[1] - 1 };
+      Standard_Integer aPoleInsideVIndex[2] = { aCornerPoleVIndex[0] + 1, aCornerPoleVIndex[1] - 1 };
+
+      for (int iU = 0; iU < 2; ++iU)
+      {
+        for (int iV = 0; iV < 2; ++iV)
+        {
+          gp_Pnt aP;
+          gp_Vec aDU, aDV;
+          aSurf->D1 (anU[iU], aV[iV], aP, aDU, aDV);
+
+          gp_Vec aSNorm = aDU ^ aDV;
+          if (aSNorm.SquareMagnitude() < thePrecision * thePrecision)
+          {
+            if (aCopy.IsNull())
+            {
+              aCopy = Handle (Geom_BSplineSurface)::DownCast (theSurface->Copy());
+              aSurf = aCopy;
+            }
+
+            // Move the pole outside surface
+
+            // Get the nearest pole inside
+            gp_Pnt aPInside = aPoles.Value (aPoleInsideUIndex[iU], aPoleInsideVIndex[iV]);
+            gp_Vec aVecOutside (aPInside, aP);
+
+            aDU.Rotate (gp_Ax1 (aP, aDU ^ aVecOutside), M_PI_2);
+            aDV.Rotate (gp_Ax1 (aP, aDV ^ aVecOutside), M_PI_2);
+            
+            aVecOutside = (aDU + aDV).Normalized();
+
+            int k = 1;
+            while (aSNorm.SquareMagnitude() < thePrecision * thePrecision && k <= 1024)
+            {
+              k *= 2;
+              aP.Translate (k * Precision::Confusion() * aVecOutside);
+              aCopy->SetPole (aCornerPoleUIndex[iU], aCornerPoleVIndex[iV], aP);
+
+              aCopy->D1 (anU[iU], aV[iV], aP, aDU, aDV);
+              gp_Vec aN1 = aDU ^ aDV;
+
+              //if (aN1 * aSNorm < 0.0)
+              //  break;
+              aSNorm = aN1;
+            }
+          }
+        }
+      }
+    }
+
     if (! aCopy.IsNull())
       return aCopy;
   }
