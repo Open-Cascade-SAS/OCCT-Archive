@@ -15,6 +15,8 @@
 #include <AIS_Selection.hxx>
 
 #include <AIS_InteractiveObject.hxx>
+#include <AIS_SelectionScheme.hxx>
+#include <SelectMgr_Filter.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(AIS_Selection, Standard_Transient)
 
@@ -129,4 +131,72 @@ AIS_SelectStatus AIS_Selection::AddSelect (const Handle(SelectMgr_EntityOwner)& 
   myResultMap.Bind (theObject, aListIter);
   theObject->SetSelected (Standard_True);
   return AIS_SS_Added;
+}
+
+//=======================================================================
+//function : SelectOwners
+//purpose  : 
+//=======================================================================
+void AIS_Selection::SelectOwners (const AIS_NListOfEntityOwner& thePickedOwners,
+                                  const int theSelScheme,
+                                  const Handle(SelectMgr_Filter)& theFilter)
+{
+  int aSelScheme = theSelScheme;
+  AIS_NListOfEntityOwner aPrevSelected = Objects();
+  if (theSelScheme & AIS_SelectionScheme_Clear)
+  {
+    Clear();
+
+    if (theSelScheme & AIS_SelectionScheme_Switch &&
+        theSelScheme & AIS_SelectionScheme_PickedIfEmpty &&
+        thePickedOwners.Size() < aPrevSelected.Size())
+    {
+      // check if all picked objects are in previous selected list, if so, all objects will be deselected,
+      // but in mode AIS_SelectionScheme_PickedIfEmpty new picked objects should be selected, here, after Clear, Add
+      Standard_Boolean anOtherFound = Standard_False;
+      for (AIS_NListOfEntityOwner::Iterator aSelIter (thePickedOwners); aSelIter.More(); aSelIter.Next())
+      {
+        anOtherFound = !aPrevSelected.Contains (aSelIter.Value());
+        if (anOtherFound)
+          break;
+      }
+      if (!anOtherFound)
+        aSelScheme = AIS_SelectionScheme_Add;
+    }
+  }
+
+  for (AIS_NListOfEntityOwner::Iterator aSelIter (thePickedOwners); aSelIter.More(); aSelIter.Next())
+  {
+    selectOwner(aSelIter.Value(), aPrevSelected, aSelScheme, theFilter);
+  }
+}
+
+//=======================================================================
+//function : selectOwner
+//purpose  : 
+//=======================================================================
+AIS_SelectStatus AIS_Selection::selectOwner (const Handle(SelectMgr_EntityOwner)& theOwner,
+                                             const AIS_NListOfEntityOwner& thePreviousSelected,
+                                             const int theSelScheme,
+                                             const Handle(SelectMgr_Filter)& theFilter)
+{
+  if (theOwner.IsNull() || !theOwner->HasSelectable() || !theFilter->IsOk (theOwner))
+    return AIS_SS_NotDone;
+
+  if (theSelScheme & AIS_SelectionScheme_Add)
+  {
+    return AddSelect (theOwner);
+  }
+  else if (theSelScheme & AIS_SelectionScheme_Switch)
+  {
+    if (thePreviousSelected.Contains (theOwner)) // was selected, should not be now
+    {
+      if (theOwner->IsSelected())
+        return Select (theOwner); // deselect
+    }
+    else
+      return AddSelect (theOwner); // was not selected, should be now
+  }
+
+  return AIS_SS_NotDone;
 }

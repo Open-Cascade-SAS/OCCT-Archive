@@ -22,6 +22,8 @@
 #include <Standard.hxx>
 #include <Standard_Type.hxx>
 
+class SelectMgr_Filter;
+
 //! Class holding the list of selected owners.
 class AIS_Selection : public Standard_Transient
 {
@@ -74,6 +76,28 @@ public:
 
   //! Return selected object at iterator position.
   const Handle(SelectMgr_EntityOwner)& Value() const { return myIterator.Value(); }
+
+  //! Select or deselect owners depending on the selection scheme
+  //! \param theOwners elements to change selection state
+  //! \param theSelScheme selection scheme, defines how owner is selected
+  //! \param theFilter context filter to skip not acceptable owners
+  //! \return result of selection
+  Standard_EXPORT virtual void SelectOwners (const AIS_NListOfEntityOwner& thePickedOwners,
+                                             const int theSelScheme,
+                                             const Handle(SelectMgr_Filter)& theFilter);
+
+protected:
+  //! Select or deselect owner depending on the selection scheme
+  //! \param theOwner element to change selection state
+  //! \param thePreviousSelected previous selected objects
+  //! \param theSelScheme selection scheme, defines how owner is selected
+  //! \param theFilter context filter to skip not acceptable owners
+  //! \return result of selection
+  Standard_EXPORT virtual AIS_SelectStatus selectOwner (const Handle(SelectMgr_EntityOwner)& theOwner,
+                                                        const AIS_NListOfEntityOwner& thePreviousSelected,
+                                                        const int theSelScheme,
+                                                        const Handle(SelectMgr_Filter)& theFilter);
+
 
 private:
 
