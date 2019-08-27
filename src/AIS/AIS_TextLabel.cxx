@@ -39,10 +39,19 @@ IMPLEMENT_STANDARD_RTTIEXT(AIS_TextLabel,AIS_InteractiveObject)
 //purpose  :
 //=======================================================================
 AIS_TextLabel::AIS_TextLabel()
+<<<<<<< HEAD
 : myText              ("?"),
   myHasOrientation3D  (Standard_False),
   myHasOwnAnchorPoint (Standard_True),
   myHasFlipping       (Standard_False)
+=======
+: myText             ("?"),
+  myFont             ("Courier"),
+  myFontAspect       (Font_FA_Regular),
+  myHasOrientation3D (Standard_False),
+  myHasOwnAnchorPoint (Standard_True),
+  myHasFlipping      (Standard_False)
+>>>>>>> 05ac0c7d75 (0030922: Visualization - OpenGl_Text wrong local transformation if text has not own attach point)
 {
   myDrawer->SetTextAspect (new Prs3d_TextAspect());
   myDrawer->SetDisplayMode (0);
@@ -304,6 +313,7 @@ void AIS_TextLabel::Compute (const Handle(PrsMgr_PresentationManager)& ,
         }
         gp_Ax2 anOrientation = myOrientation3D;
         anOrientation.SetLocation (aPosition);
+<<<<<<< HEAD
         Standard_Boolean aHasOwnAnchor = HasOwnAnchorPoint();
         if (myHasFlipping)
         {
@@ -312,6 +322,14 @@ void AIS_TextLabel::Compute (const Handle(PrsMgr_PresentationManager)& ,
         Handle(Graphic3d_Text) aText = 
           Prs3d_Text::Draw (thePrs->CurrentGroup(), anAsp, myText, anOrientation, aHasOwnAnchor);
         aText->SetTextFormatter (myFormatter);
+=======
+
+        Standard_Boolean aHasOwnAnchor = HasOwnAnchorPoint();
+        if (myHasFlipping)
+          aHasOwnAnchor = Standard_False; // always not using own anchor if flipping
+
+        Prs3d_Text::Draw (Prs3d_Root::CurrentGroup (thePrs), anAsp, myText, myOrientation3D, aHasOwnAnchor);
+>>>>>>> 05ac0c7d75 (0030922: Visualization - OpenGl_Text wrong local transformation if text has not own attach point)
         if (myHasFlipping && isInit)
         {
           thePrs->CurrentGroup()->SetFlippingOptions (Standard_False, gp_Ax2());
