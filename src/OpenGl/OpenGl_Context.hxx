@@ -136,6 +136,7 @@ template<typename theBaseClass_t> struct OpenGl_TmplCore45;
 typedef OpenGl_TmplCore45<OpenGl_GlCore44Back> OpenGl_GlCore45Back;
 typedef OpenGl_TmplCore45<OpenGl_GlCore44>     OpenGl_GlCore45;
 
+class Font_TextFormatter;
 class Graphic3d_PresentationAttributes;
 class OpenGl_Aspects;
 class OpenGl_FrameBuffer;
@@ -482,6 +483,9 @@ public:
 
   //! @return tool for management of shader programs within this context.
   inline const Handle(OpenGl_ShaderManager)& ShaderManager() const { return myShaderManager; }
+
+  //! @return default formatter of text withing this context
+  inline const Handle(Font_TextFormatter)& DefaultTextFormatter() const { return myDefaultFormatter; }
 
 public:
 
@@ -985,6 +989,7 @@ private: // context info
   Standard_Boolean myHasRayTracingAdaptiveSamplingAtomic; //! indicates whether atomic adaptive screen sampling in ray tracing mode is supported
 
   Handle(OpenGl_ShaderManager) myShaderManager; //! support object for managing shader programs
+  Handle(Font_TextFormatter) myDefaultFormatter;//!< default text formatter, an alternative to text params
 
 private: //! @name fields tracking current state
 

@@ -36,6 +36,8 @@
 #include <Graphic3d_TransformUtils.hxx>
 #include <Graphic3d_RenderingParams.hxx>
 
+#include <Font_TextFormatter.hxx>
+
 #include <Message_Messenger.hxx>
 
 #include <NCollection_Vector.hxx>
@@ -249,6 +251,8 @@ OpenGl_Context::OpenGl_Context (const Handle(OpenGl_Caps)& theCaps)
 
   memset (myFuncs.operator->(), 0, sizeof(OpenGl_GlFunctions));
   myShaderManager = new OpenGl_ShaderManager (this);
+
+  myDefaultFormatter = new Font_TextFormatter();
 }
 
 // =======================================================================

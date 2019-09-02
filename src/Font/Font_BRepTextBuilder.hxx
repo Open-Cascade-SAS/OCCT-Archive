@@ -17,8 +17,9 @@
 #define Font_BRepTextBuilder_Header
 
 #include <Font_BRepFont.hxx>
-#include <Font_TextFormatter.hxx>
 #include <gp_Ax3.hxx>
+
+class Font_TextFormatter;
 
 //! Represents class for applying text formatting.
 class Font_BRepTextBuilder
@@ -30,7 +31,7 @@ public:
   //! @param theFormatter formatter which defines alignment for the text
   //! @return result shape with pen transformation applied as shape location
   Standard_EXPORT TopoDS_Shape Perform (Font_BRepFont&            theFont,
-                                        const Font_TextFormatter& theFormatter,
+                                        const Handle(Font_TextFormatter)& theFormatter,
                                         const gp_Ax3&             thePenLoc = gp_Ax3());
   //! Render text as BRep shape.
   //! @param theString text in UTF-8 encoding
