@@ -24,6 +24,7 @@
 
 #include <NCollection_Array1.hxx>
 #include <Precision.hxx>
+#include <Standard_Dump.hxx>
 #include <TColStd_Array1OfReal.hxx>
 
 //! Auxiliary class to select from the points stored in
@@ -992,3 +993,21 @@ void Bnd_OBB::Add(const Bnd_OBB& theOther)
   ReBuild(TColgp_Array1OfPnt(aList[0], 0, 15));
 }
 
+//=======================================================================
+//function : DumpJson
+//purpose  : 
+//=======================================================================
+void Bnd_OBB::DumpJson (Standard_OStream& theOStream, const Standard_Integer theDepth) const
+{
+  DUMP_CLASS_BEGIN (theOStream, Bnd_OBB);
+
+  DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, &myCenter);
+  DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, &myAxes[0]);
+  DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, &myAxes[1]);
+  DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, &myAxes[2]);
+
+  DUMP_FIELD_VALUE_NUMERICAL (theOStream, myHDims[0]);
+  DUMP_FIELD_VALUE_NUMERICAL (theOStream, myHDims[1]);
+  DUMP_FIELD_VALUE_NUMERICAL (theOStream, myHDims[2]);
+  DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIsAABox);
+}
