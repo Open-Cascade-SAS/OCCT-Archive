@@ -191,9 +191,12 @@ void SelectMgr_SelectionManager::Activate (const Handle(SelectMgr_SelectableObje
 void SelectMgr_SelectionManager::Deactivate (const Handle(SelectMgr_SelectableObject)& theObject,
                                              const Standard_Integer theMode)
 {
-  for (PrsMgr_ListOfPresentableObjectsIter anChildrenIter (theObject->Children()); anChildrenIter.More(); anChildrenIter.Next())
+  if (theObject->ToPropagateVisualState())
   {
-    Deactivate (Handle(SelectMgr_SelectableObject)::DownCast (anChildrenIter.Value()), theMode);
+    for (PrsMgr_ListOfPresentableObjectsIter anChildrenIter(theObject->Children()); anChildrenIter.More(); anChildrenIter.Next())
+    {
+      Deactivate(Handle(SelectMgr_SelectableObject)::DownCast(anChildrenIter.Value()), theMode);
+    }
   }
   if (!theObject->HasOwnPresentations())
   {
