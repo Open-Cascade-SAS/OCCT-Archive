@@ -345,6 +345,11 @@ public: //! @name object local transformation management
   Standard_EXPORT void SetTransformPersistence (const Handle(AIS_InteractiveObject)& theObject,
                                                 const Handle(Graphic3d_TransformPers)& theTrsfPers);
 
+  //! Updates displayed interactive object by checking and recomputing its flagged as "to be recomputed" presentation and selection structures.
+  //! This method does not force any recomputation on its own.
+  //! The method recomputes selections even if they are loaded without activation in particular selector.
+  Standard_EXPORT void UpdateOnTransformPersistence (const Handle(AIS_InteractiveObject)& theIObj);
+
   Standard_DEPRECATED("This method is deprecated - SetTransformPersistence() taking Graphic3d_TransformPers should be called instead")
   void SetTransformPersistence (const Handle(AIS_InteractiveObject)& theObj,
                                 const Graphic3d_TransModeFlags&      theFlag,

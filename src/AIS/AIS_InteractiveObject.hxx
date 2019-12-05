@@ -108,6 +108,11 @@ public:
   //! Returns the context pointer to the interactive context.
   Standard_EXPORT Handle(AIS_InteractiveContext) GetContext() const;
 
+  //! Sets up Transform Persistence defining a special Local Coordinate system where this object should be located.
+  //! Updates the presentation in context if it is not NULL
+  //! @sa Graphic3d_TransformPers class description
+  Standard_EXPORT virtual void SetTransformPersistence (const Handle(Graphic3d_TransformPers)& theTrsfPers);
+
   //! Returns TRUE when this object has a presentation in the current DisplayMode()
   Standard_EXPORT Standard_Boolean HasPresentation() const;
 

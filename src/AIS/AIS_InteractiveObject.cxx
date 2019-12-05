@@ -84,6 +84,17 @@ void AIS_InteractiveObject::SetContext (const Handle(AIS_InteractiveContext)& th
   }
 }
 
+//-----------------------------------------------------------------------------
+void AIS_InteractiveObject::SetTransformPersistence (const Handle(Graphic3d_TransformPers)& theTrsfPers)
+{
+  SelectMgr_SelectableObject::SetTransformPersistence (theTrsfPers);
+
+  if (!GetContext().IsNull())
+  {
+    GetContext()->UpdateOnTransformPersistence (this);
+  }
+}
+
 //=======================================================================
 //function : HasPresentation
 //purpose  :

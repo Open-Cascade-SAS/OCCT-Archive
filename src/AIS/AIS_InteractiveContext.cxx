@@ -2538,6 +2538,15 @@ void AIS_InteractiveContext::SetTransformPersistence (const Handle(AIS_Interacti
                                                       const Handle(Graphic3d_TransformPers)& theTrsfPers)
 {
   theObject->SetTransformPersistence (theTrsfPers);
+  UpdateOnTransformPersistence (theObject);
+}
+
+//=======================================================================
+//function : UpdateOnTransformPersistence
+//purpose  :
+//=======================================================================
+void AIS_InteractiveContext::UpdateOnTransformPersistence (const Handle(AIS_InteractiveObject)& theObject)
+{
   if (!myObjects.IsBound (theObject))
   {
     return;
