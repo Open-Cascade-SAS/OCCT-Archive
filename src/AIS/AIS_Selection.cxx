@@ -180,7 +180,7 @@ AIS_SelectStatus AIS_Selection::selectOwner (const Handle(SelectMgr_EntityOwner)
                                              const int theSelScheme,
                                              const Handle(SelectMgr_Filter)& theFilter)
 {
-  if (theOwner.IsNull() || !theOwner->HasSelectable() || !theFilter->IsOk (theOwner))
+  if (theOwner.IsNull() || !theOwner->HasSelectable() || !theFilter->IsOk (theOwner, SelectMgr_FilterReaction_Select))
     return AIS_SS_NotDone;
 
   if (theSelScheme & AIS_SelectionScheme_Add)

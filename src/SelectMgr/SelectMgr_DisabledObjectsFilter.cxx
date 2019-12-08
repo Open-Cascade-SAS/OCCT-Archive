@@ -1,6 +1,3 @@
-// Copyright (c) 1998-1999 Matra Datavision
-// Copyright (c) 1999-2014 OPEN CASCADE SAS
-//
 // This file is part of Open CASCADE Technology software library.
 //
 // This library is free software; you can redistribute it and/or modify it under
@@ -15,37 +12,42 @@
 
 #include <SelectMgr_EntityOwner.hxx>
 #include <SelectMgr_Filter.hxx>
-#include <SelectMgr_OrFilter.hxx>
+#include <SelectMgr_ListIteratorOfListOfFilter.hxx>
+#include <SelectMgr_DisabledObjectsFilter.hxx>
+#include <SelectMgr_SelectableObject.hxx>
 #include <Standard_Type.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(SelectMgr_OrFilter,SelectMgr_CompositionFilter)
+IMPLEMENT_STANDARD_RTTIEXT(SelectMgr_DisabledObjectsFilter, SelectMgr_Filter)
 
 //=============================================================================
-//function : SelectMgr_OrFilter
+//function : SelectMgr_DisabledObjectsFilter
 //purpose  :
 //=============================================================================
-SelectMgr_OrFilter::SelectMgr_OrFilter()
+SelectMgr_DisabledObjectsFilter::SelectMgr_DisabledObjectsFilter()
 {
+}
+
+//=============================================================================
+//function : SetDisabledObjects
+//purpose  :
+//=============================================================================
+void SelectMgr_DisabledObjectsFilter::SetDisabledObjects (const Handle(Graphic3d_NMapOfTransient)& theObjects)
+{
+  myDisabledObjects = theObjects;
 }
 
 //=============================================================================
 //function : IsOk
 //purpose  :
 //=============================================================================
-Standard_Boolean SelectMgr_OrFilter::IsOk (const Handle(SelectMgr_EntityOwner)& theObj) const
+Standard_Boolean SelectMgr_DisabledObjectsFilter::IsOk (const Handle(SelectMgr_EntityOwner)& theObj) const
 {
-  if (myFilters.IsEmpty())
+  const SelectMgr_SelectableObject* aSelectable = theObj->Selectable().operator->();
+  if (!myDisabledObjects.IsNull()
+    && myDisabledObjects->Contains (aSelectable))
   {
-    return Standard_True;
+    return Standard_False;
   }
 
-  for (SelectMgr_ListIteratorOfListOfFilter aFilterIter (myFilters); aFilterIter.More(); aFilterIter.Next())
-  {
-    if (aFilterIter.Value()->IsOk (theObj))
-    {
-      return Standard_True;
-    }
-  }
-
-  return Standard_False;
+  return Standard_True;
 }

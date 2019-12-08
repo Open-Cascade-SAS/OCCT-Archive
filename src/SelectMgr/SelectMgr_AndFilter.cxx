@@ -24,11 +24,12 @@ IMPLEMENT_STANDARD_RTTIEXT(SelectMgr_AndFilter,SelectMgr_CompositionFilter)
 SelectMgr_AndFilter::SelectMgr_AndFilter()
 {
 }
-Standard_Boolean SelectMgr_AndFilter::IsOk(const Handle(SelectMgr_EntityOwner)& anobj) const 
+Standard_Boolean SelectMgr_AndFilter::IsOk(const Handle(SelectMgr_EntityOwner)& theObj,
+                                           const SelectMgr_FilterReaction& theReaction) const
 {
   SelectMgr_ListIteratorOfListOfFilter it(myFilters);
-  for ( ; it.More();it.Next()) 
-    if(!it.Value()->IsOk(anobj)) 
+  for ( ; it.More();it.Next())
+    if(!it.Value()->IsOk(theObj, theReaction))
       return Standard_False;
   return Standard_True;
 }

@@ -20,6 +20,7 @@
 #include <Standard.hxx>
 #include <Standard_Type.hxx>
 
+#include <SelectMgr_FilterReaction.hxx>
 #include <Standard_Transient.hxx>
 #include <Standard_Boolean.hxx>
 #include <TopAbs_ShapeEnum.hxx>
@@ -60,6 +61,24 @@ public:
   //! virtual function ActsOn.
   Standard_EXPORT virtual Standard_Boolean IsOk (const Handle(SelectMgr_EntityOwner)& anObj) const = 0;
   
+  //! Indicates that the selected Interactive Object
+  //! passes the filter. The owner, anObj, can be either
+  //! direct or user. A direct owner is the corresponding
+  //! construction element, whereas a user is the
+  //! compound shape of which the entity forms a part.
+  //! When an object is detected by the mouse - in AIS,
+  //! this is done through a context selector - its owner
+  //! is passed to the filter as an argument.
+  //! If the object returns Standard_True, it is kept; if
+  //! not, it is rejected.
+  //! If you are creating a filter class inheriting this
+  //! framework, and the daughter class is to be used in
+  //! an AIS local context, you will need to implement the
+  //! virtual function ActsOn.
+  Standard_EXPORT virtual Standard_Boolean IsOk (const Handle(SelectMgr_EntityOwner)& theObj,
+                                                 const SelectMgr_FilterReaction& theReaction) const
+  { (void)theReaction; return IsOk (theObj); }
+
   //! Returns true in an AIS local context, if this filter
   //! operates on a type of subshape defined in a filter
   //! class inheriting this framework.

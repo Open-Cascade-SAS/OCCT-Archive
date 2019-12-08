@@ -39,6 +39,8 @@
 #include <Prs3d_ShadingAspect.hxx>
 #include <PrsMgr_PresentableObject.hxx>
 #include <Quantity_Color.hxx>
+#include <SelectMgr_AndFilter.hxx>
+#include <SelectMgr_DisabledObjectsFilter.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 #include <SelectMgr_Filter.hxx>
 #include <SelectMgr_OrFilter.hxx>
@@ -108,7 +110,7 @@ myMainVwr(MainViewer),
 myMainSel(new StdSelect_ViewerSelector3d()),
 myToHilightSelected(Standard_True),
 mySelection(new AIS_Selection()),
-myFilters(new SelectMgr_OrFilter()),
+myFilters(new SelectMgr_AndFilter()),
 myDefaultDrawer(new Prs3d_Drawer()),
 myCurDetected(0),
 myCurHighlighted(0),
@@ -116,6 +118,8 @@ myPickingStrategy (SelectMgr_PickingStrategy_FirstAcceptable),
 myAutoHilight(Standard_True),
 myIsAutoActivateSelMode(Standard_True)
 {
+  myFilters->Add (new SelectMgr_DisabledObjectsFilter());
+
   mgrSelector = new SelectMgr_SelectionManager (myMainSel);
 
   myStyles[Prs3d_TypeOfHighlight_None]          = myDefaultDrawer;

@@ -30,6 +30,7 @@
 #include <SelectMgr_EntityOwner.hxx>
 #include <SelectMgr_Filter.hxx>
 #include <SelectMgr_OrFilter.hxx>
+#include <SelectMgr_AndFilter.hxx>
 #include <SelectMgr_SelectionManager.hxx>
 #include <Standard_Transient.hxx>
 #include <StdSelect_ViewerSelector3d.hxx>
@@ -265,21 +266,73 @@ void AIS_InteractiveContext::SubIntensityOff (const Handle(AIS_InteractiveObject
 }
 
 //=======================================================================
+//function : SetFilter
+//purpose  : 
+//=======================================================================
+void AIS_InteractiveContext::SetFilter (const Handle(SelectMgr_Filter)& theFilter)
+{
+  Handle(SelectMgr_Filter) aDefFilter = myFilters->StoredFilters().First();
+  if (myFilters->StoredFilters().Size() < 2)
+  {
+    myFilters->Clear();
+    myFilters->Add (aDefFilter);
+  }
+
+  myFilters->Add (theFilter);
+}
+
+//=======================================================================
+//function : Filter
+//purpose  : 
+//=======================================================================
+Handle(SelectMgr_Filter) AIS_InteractiveContext::Filter (const Standard_Boolean isGlobalFilter) const
+{
+  if (isGlobalFilter)
+    return myFilters;
+
+  if (myFilters->StoredFilters().Size() < 2)
+    return NULL;
+
+  SelectMgr_ListIteratorOfListOfFilter anIterator (myFilters->StoredFilters());
+  anIterator.Next();
+  return anIterator.Value();
+}
+
+//=======================================================================
 //function : AddFilter
 //purpose  : 
 //=======================================================================
-void AIS_InteractiveContext::AddFilter(const Handle(SelectMgr_Filter)& aFilter)
+void AIS_InteractiveContext::AddFilter(const Handle(SelectMgr_Filter)& theFilter)
 {
-  myFilters->Add(aFilter);
+  Handle(SelectMgr_Filter) aFilter = Filter();
+  if (aFilter.IsNull())
+    SetFilter (new SelectMgr_OrFilter());
+
+  Handle (SelectMgr_CompositionFilter) aCompositeFilter = Handle(SelectMgr_CompositionFilter)::DownCast (aFilter);
+  if (aCompositeFilter.IsNull())
+    return;
+
+  if (aCompositeFilter->IsIn (theFilter))
+    return;
+
+  aCompositeFilter->Add (theFilter);
 }
 
 //=======================================================================
 //function : RemoveFilter
 //purpose  : 
 //=======================================================================
-void AIS_InteractiveContext::RemoveFilter(const Handle(SelectMgr_Filter)& aFilter)
+void AIS_InteractiveContext::RemoveFilter(const Handle(SelectMgr_Filter)& theFilter)
 {
-  myFilters->Remove(aFilter);
+  Handle(SelectMgr_Filter) aFilter = Filter();
+  if (aFilter.IsNull())
+    return;
+
+  Handle (SelectMgr_CompositionFilter) aCompositeFilter = Handle(SelectMgr_CompositionFilter)::DownCast (aFilter);
+  if (aCompositeFilter.IsNull())
+    return;
+
+  aCompositeFilter->Remove (theFilter);
 }
 
 //=======================================================================
@@ -289,16 +342,24 @@ void AIS_InteractiveContext::RemoveFilter(const Handle(SelectMgr_Filter)& aFilte
 
 void AIS_InteractiveContext::RemoveFilters()
 {
-  myFilters->Clear();
+  SetFilter (NULL);
 }
 
 //=======================================================================
 //function : Filters
 //purpose  : 
 //=======================================================================
-const SelectMgr_ListOfFilter& AIS_InteractiveContext::Filters() const 
+SelectMgr_ListOfFilter AIS_InteractiveContext::Filters() const 
 {
-  return myFilters->StoredFilters();
+  Handle(SelectMgr_Filter) aFilter = Filter();
+  if (aFilter.IsNull())
+    return SelectMgr_ListOfFilter();
+
+  Handle (SelectMgr_CompositionFilter) aCompositeFilter = Handle(SelectMgr_CompositionFilter)::DownCast (aFilter);
+  if (aCompositeFilter.IsNull())
+    return SelectMgr_ListOfFilter();
+
+  return aCompositeFilter->StoredFilters();
 }
 
 //=======================================================================

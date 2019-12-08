@@ -31,8 +31,11 @@
 #include <Prs3d_Presentation.hxx>
 #include <Quantity_Color.hxx>
 #include <Select3D_SensitiveEntity.hxx>
+#include <SelectMgr_AndFilter.hxx>
+#include <SelectMgr_DisabledObjectsFilter.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 #include <SelectMgr_Filter.hxx>
+#include <SelectMgr_FilterReaction.hxx>
 #include <SelectMgr_OrFilter.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <SelectMgr_SelectionManager.hxx>
@@ -336,7 +339,8 @@ AIS_StatusOfDetection AIS_InteractiveContext::MoveTo (const Standard_Integer  th
   AIS_StatusOfDetection aStatus        = AIS_SOD_Nothing;
   Standard_Boolean      toUpdateViewer = Standard_False;
 
-  myFilters->SetDisabledObjects (theView->View()->HiddenObjects());
+  Handle(SelectMgr_DisabledObjectsFilter) anObjectsFilter = Handle(SelectMgr_DisabledObjectsFilter)::DownCast (myFilters->StoredFilters().First());
+  anObjectsFilter->SetDisabledObjects (theView->View()->HiddenObjects());
   myMainSel->Pick (theXPix, theYPix, theView);
 
   // filling of myAISDetectedSeq sequence storing information about detected AIS objects
@@ -348,7 +352,7 @@ AIS_StatusOfDetection AIS_InteractiveContext::MoveTo (const Standard_Integer  th
   {
     Handle(SelectMgr_EntityOwner) anOwner = myMainSel->Picked (aDetIter);
     if (anOwner.IsNull()
-     || !myFilters->IsOk (anOwner))
+     || !myFilters->IsOk (anOwner, SelectMgr_FilterReaction_Highlight))
     {
       if (myPickingStrategy == SelectMgr_PickingStrategy_OnlyTopmost)
       {
@@ -834,7 +838,7 @@ void AIS_InteractiveContext::SetSelected (const Handle(AIS_InteractiveObject)& t
   for (AIS_NListOfEntityOwner::Iterator aSelIter (mySelection->Objects()); aSelIter.More(); aSelIter.Next())
   {
     const Handle(SelectMgr_EntityOwner)& aSelOwner = aSelIter.Value();
-    if (!myFilters->IsOk (aSelOwner))
+    if (!myFilters->IsOk (aSelOwner, SelectMgr_FilterReaction_Select))
     {
       continue;
     }
@@ -882,7 +886,7 @@ void AIS_InteractiveContext::SetSelected (const Handle(AIS_InteractiveObject)& t
 void AIS_InteractiveContext::SetSelected (const Handle(SelectMgr_EntityOwner)& theOwner,
                                           const Standard_Boolean theToUpdateViewer)
 {
-  if (theOwner.IsNull() || !theOwner->HasSelectable() || !myFilters->IsOk (theOwner))
+  if (theOwner.IsNull() || !theOwner->HasSelectable() || !myFilters->IsOk (theOwner, SelectMgr_FilterReaction_Select))
     return;
 
   const Handle(AIS_InteractiveObject) anObject = Handle(AIS_InteractiveObject)::DownCast (theOwner->Selectable());
@@ -958,7 +962,7 @@ void AIS_InteractiveContext::AddOrRemoveSelected (const Handle(SelectMgr_EntityO
   if (theOwner.IsNull() || !theOwner->HasSelectable())
     return;
 
-  if (!myFilters->IsOk(theOwner) && !theOwner->IsSelected())
+  if (!myFilters->IsOk(theOwner, SelectMgr_FilterReaction_Select) && !theOwner->IsSelected())
     return;
 
   mySelection->Select (theOwner);

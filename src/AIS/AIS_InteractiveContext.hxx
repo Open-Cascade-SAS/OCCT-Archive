@@ -47,7 +47,7 @@
 
 class SelectMgr_SelectionManager;
 class V3d_Viewer;
-class SelectMgr_OrFilter;
+class SelectMgr_AndFilter;
 class V3d_View;
 class TopLoc_Location;
 class TCollection_ExtendedString;
@@ -767,13 +767,20 @@ public: //! @name management of active Selection Modes
 
 public: //! @name Selection Filters management
 
-  //! Returns the list of filters active in a local context.
-  Standard_EXPORT const SelectMgr_ListOfFilter& Filters() const;
+  //! Allows you to set the filter.
+  Standard_EXPORT void SetFilter (const Handle(SelectMgr_Filter)& theFilter);
 
-  //! Allows you to add the filter.
+  //! Returns the filter. Use with global is in false to get the filter, that is set with SetFilter.
+  //! If global filter is true, it returns whole filter used in the context (with an internal default filter)
+  Standard_EXPORT Handle(SelectMgr_Filter) Filter (const Standard_Boolean isGlobalFilter = Standard_False) const;
+
+  //! Returns the list of filters active in a local context.
+  Standard_EXPORT SelectMgr_ListOfFilter Filters() const;
+
+  //! Allows you to add the filter. Default filter here is Or filter.
   Standard_EXPORT void AddFilter (const Handle(SelectMgr_Filter)& theFilter);
 
-  //! Removes a filter from context.
+  //! Removes a filter from context. Default filter here is Or filter
   Standard_EXPORT void RemoveFilter (const Handle(SelectMgr_Filter)& theFilter);
 
   //! Remove all filters from context.
@@ -1437,7 +1444,7 @@ protected: //! @name internal fields
   Handle(SelectMgr_EntityOwner) myLastPicked;
   Standard_Boolean myToHilightSelected;
   Handle(AIS_Selection) mySelection;
-  Handle(SelectMgr_OrFilter) myFilters;
+  Handle(SelectMgr_AndFilter) myFilters;
   Handle(Prs3d_Drawer) myDefaultDrawer;
   Handle(Prs3d_Drawer) myStyles[Prs3d_TypeOfHighlight_NB];
   TColStd_SequenceOfInteger myDetectedSeq;
