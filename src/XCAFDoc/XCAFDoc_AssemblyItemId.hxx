@@ -77,6 +77,9 @@ public:
 
   //! Returns the full pass as a formatted string.
   Standard_EXPORT TCollection_AsciiString ToString() const;
+  
+  //! Dumps the content of me into the stream
+  Standard_EXPORT virtual void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
 
   //! Returns the last label in the path
   Standard_EXPORT TDF_Label GetLabel(const Handle(TDF_Data)& aDF) const;

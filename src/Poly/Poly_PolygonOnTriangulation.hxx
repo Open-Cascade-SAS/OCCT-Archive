@@ -104,6 +104,9 @@ public:
 
 
 
+  //! Dumps the content of me into the stream
+  Standard_EXPORT virtual void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
+
   DEFINE_STANDARD_RTTIEXT(Poly_PolygonOnTriangulation,Standard_Transient)
 
 protected:

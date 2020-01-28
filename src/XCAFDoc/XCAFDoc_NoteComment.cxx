@@ -11,10 +11,11 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <XCAFDoc_NoteComment.hxx>
+
 #include <Standard_GUID.hxx>
 #include <TDataStd_Comment.hxx>
 #include <XCAFDoc_Note.hxx>
-#include <XCAFDoc_NoteComment.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(XCAFDoc_NoteComment, Standard_Transient)
 

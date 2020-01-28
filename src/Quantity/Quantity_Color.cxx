@@ -3930,8 +3930,7 @@ void call_rgbhls (float r, float g, float b, float& h, float& l, float& s)
 //function : DumpJson
 //purpose  : 
 //=======================================================================
-void Quantity_Color::DumpJson (Standard_OStream& theOStream, const Standard_Integer) const
+void Quantity_Color::DumpJson (Standard_OStream& theOStream, Standard_Integer) const
 {
-  OCCT_DUMP_CLASS_BEGIN (theOStream, Quantity_Color);
   OCCT_DUMP_FIELD_VALUES_NUMERICAL (theOStream, "RGB", 3, MyRed, MyGreen, MyBlue)
 }

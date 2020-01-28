@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <XCAFDoc_NoteBinData.hxx>
+
 #include <OSD_File.hxx>
 #include <TDataStd_AsciiString.hxx>
 #include <TDataStd_ByteArray.hxx>
@@ -19,7 +21,6 @@
 #include <TDF_ChildIterator.hxx>
 #include <TDF_Label.hxx>
 #include <XCAFDoc_Note.hxx>
-#include <XCAFDoc_NoteBinData.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(XCAFDoc_NoteBinDataContainer, Standard_Transient)
 IMPLEMENT_STANDARD_RTTIEXT(XCAFDoc_NoteBinData, Standard_Transient)

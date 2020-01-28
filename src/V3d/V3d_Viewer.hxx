@@ -480,6 +480,9 @@ public: //! @name deprecated methods
     aColor.Values (theV1, theV2, theV3, theType) ;
   }
 
+  //! Dumps the content of me into the stream
+  Standard_EXPORT void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
+
 private:
 
   //! Returns the default background colour.

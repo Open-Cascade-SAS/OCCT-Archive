@@ -244,6 +244,9 @@ public:
   //! Returns TRUE if this material is identical to specified one.
   Standard_Boolean operator== (const Graphic3d_MaterialAspect& theOther) const { return IsEqual (theOther); }
 
+  //! Dumps the content of me into the stream
+  Standard_EXPORT void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
+
 private:
 
   //! Initialize the standard material.

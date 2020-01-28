@@ -17,6 +17,7 @@
 
 #include <Poly_PolygonOnTriangulation.hxx>
 #include <Standard_NullObject.hxx>
+#include <Standard_Dump.hxx>
 #include <Standard_Type.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(Poly_PolygonOnTriangulation,Standard_Transient)
@@ -116,3 +117,16 @@ Handle(TColStd_HArray1OfReal) Poly_PolygonOnTriangulation::Parameters() const
   return myParameters;
 }
 
+//=======================================================================
+//function : DumpJson
+//purpose  : 
+//=======================================================================
+void Poly_PolygonOnTriangulation::DumpJson (Standard_OStream& theOStream, Standard_Integer) const
+{
+  OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
+
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myDeflection)
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myNodes.Size())
+  if (!myParameters.IsNull())
+    OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myParameters->Size())
+}
