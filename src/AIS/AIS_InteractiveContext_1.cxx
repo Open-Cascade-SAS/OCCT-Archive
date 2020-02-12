@@ -123,7 +123,12 @@ void AIS_InteractiveContext::highlightGlobal (const Handle(AIS_InteractiveObject
     return;
   }
 
-  const Standard_Integer aHiMode = getHilightMode (theObj, theStyle, theDispMode);
+  Handle(AIS_GlobalStatus)* aStatusPtr = myObjects.ChangeSeek (theObj);
+  if (!aStatusPtr)
+  {
+    return;
+  }
+  const Standard_Integer aHiMode = getHilightMode (theObj, theStyle, (*aStatusPtr)->DisplayMode());
   const Handle(SelectMgr_EntityOwner)& aGlobOwner = theObj->GlobalSelOwner();
 
   if (aGlobOwner.IsNull())
@@ -194,7 +199,7 @@ void AIS_InteractiveContext::unhighlightOwners (const AIS_NListOfEntityOwner& th
     {
       anObjToClear.Add (anInteractive);
     }
-    if (anOwner == anInteractive->GlobalSelOwner())
+    if (aStatusPtr && anOwner == anInteractive->GlobalSelOwner())
     {
       (*aStatusPtr)->SetHilightStatus (Standard_False);
     }
@@ -575,7 +580,16 @@ AIS_StatusOfPick AIS_InteractiveContext::Select (const AIS_SelectionScheme theSe
   }*/
 
   AIS_NListOfEntityOwner aPickedOwners;
-  aPickedOwners.Append (myLastPicked);
+  if (!myLastPicked.IsNull() &&
+      myLastPicked->HasSelectable())
+  {
+    Handle(AIS_InteractiveObject) anIO = Handle(AIS_InteractiveObject)::DownCast(myLastPicked->Selectable());
+    if (!anIO.IsNull() &&
+        myObjects.IsBound(anIO))
+    {
+      aPickedOwners.Append (myLastPicked);
+    }
+  }
 
   return Select (aPickedOwners, theSelScheme);
 }
