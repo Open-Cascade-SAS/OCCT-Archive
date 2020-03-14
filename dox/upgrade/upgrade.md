@@ -2216,3 +2216,8 @@ Files written with the new version will not be readable by applications of old v
 *Poly_Triangulation* does no more provide access to internal array structures: methods Nodes(), ChangeNode(), Triangles(), ChangeTriangle(), UVNodes(), ChangeUVNode(), Normals() have been removed.
 Methods of *Poly_Triangulation* for accessing individual nodal properties / triangles by index and implementing copy semantics should be used instead.
 The same is applicable to *Poly_PolygonOnTriangulation* interface.
+
+@subsection upgrade_760_tkv3d TKV3d/TKService toolkits changes
+
+A set of packages of *TKV3d* toolkit has been moved to a new *TKService* library (*TKV3d* depends on *TKService*).
+

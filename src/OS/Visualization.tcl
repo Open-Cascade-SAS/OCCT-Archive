@@ -15,10 +15,7 @@
 ;# Liste des toolkits WOK sous forme de full path
 ;# 
 proc Visualization:toolkits { } {
-    set aResult [list TKService \
-                     TKV3d \
-                     TKOpenGl \
-                     TKMeshVS]
+    set aResult [list TKService TKGraphic3d TKV3d TKOpenGl TKMeshVS]
 
     if { [info exists ::env(HAVE_VTK)] && "$::env(HAVE_VTK)" == "true" } {
       lappend aResult "TKIVtk"
