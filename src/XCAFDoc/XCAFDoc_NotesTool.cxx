@@ -601,16 +601,16 @@ XCAFDoc_NotesTool::RemoveFromGroup(const TDF_Label& theGroupLabel,
   if (!IsGroup(theGroupLabel))
     return Standard_False;
 
-  Handle(XCAFDoc_GraphNode) aFather;
-  if (theGroupLabel.FindAttribute(XCAFDoc::NoteRefGUID(), aFather) && !aFather.IsNull())
+  Handle(XCAFDoc_GraphNode) aChild;
+  if (theNoteLabel.FindAttribute(XCAFDoc::NoteRefGUID(), aChild) && !aChild.IsNull())
   {
-    Standard_Integer nbChildren = aFather->NbChildren();
-    for (Standard_Integer iChild = 1; iChild <= nbChildren; ++iChild)
+    Standard_Integer nbFathers = aChild->NbFathers();
+    for (Standard_Integer iFather = 1; iFather <= nbFathers; ++iFather)
     {
-      Handle(XCAFDoc_GraphNode) aChild = aFather->GetChild(iChild);
-      if (!aChild.IsNull() && theNoteLabel.IsEqual(aChild->Label()))
+      Handle(XCAFDoc_GraphNode) aFather = aChild->GetFather(iFather);
+      if (!aFather.IsNull() && theGroupLabel.IsEqual(aFather->Label()))
       {
-        aFather->UnSetChild(aChild);
+        aChild->UnSetFather(aFather);
         return Standard_True;
       }
     }
