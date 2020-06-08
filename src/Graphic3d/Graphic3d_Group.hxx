@@ -32,6 +32,7 @@
 #include <Graphic3d_IndexBuffer.hxx>
 #include <Graphic3d_Buffer.hxx>
 #include <Graphic3d_BoundBuffer.hxx>
+#include <Graphic3d_TransformPers.hxx>
 #include <gp_Ax2.hxx>
 #include <TCollection_ExtendedString.hxx>
 
@@ -139,6 +140,12 @@ public:
 
   //! sets the flipping to theIsEnabled state.
   Standard_EXPORT virtual void SetFlippingOptions (const Standard_Boolean theIsEnabled, const gp_Ax2& theRefPlane) = 0;
+
+  //! Return transformation persistence.
+  const Handle(Graphic3d_TransformPers)& TransformPersistence() const { return myTrsfPers; }
+
+  //! Set transformation persistence.
+  virtual void SetTransformPersistence (const Handle(Graphic3d_TransformPers)& theTrsfPers) { myTrsfPers = theTrsfPers; }
 
   //! Returns true if the group contains Polygons, Triangles or Quadrangles.
   bool ContainsFacet() const { return myContainsFacet; }
@@ -294,6 +301,7 @@ protected:
 
 protected:
 
+  Handle(Graphic3d_TransformPers) myTrsfPers; //!< current transform persistence
   Graphic3d_Structure* myStructure;     //!< pointer to the parent structure
   Graphic3d_BndBox4f   myBounds;        //!< bounding box
   bool                 myIsClosed;      //!< flag indicating closed volume
