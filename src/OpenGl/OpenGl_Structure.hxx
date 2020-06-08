@@ -146,6 +146,16 @@ protected:
   //! Render the bounding box.
   Standard_EXPORT void renderBoundingBox(const Handle(OpenGl_Workspace)& theWorkspace) const;
 
+
+  //! Apply transform persistence into context.
+  //! @param theWorkspace current workspace
+  //! @param theTrsfPersistence transform persistence
+  //! @param toEnable flag to switch ON/OFF persistence
+  Standard_EXPORT void applyPersistence (const Handle(OpenGl_Context)& theContext,
+                                         const Handle(Graphic3d_TransformPers)& theTrsfPersistence,
+                                         Standard_Boolean& theOldCastShadows,
+                                         const Standard_Boolean toEnable) const;
+
 protected:
 
   OpenGl_Structure*          myInstancedStructure;
