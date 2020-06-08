@@ -389,10 +389,22 @@ void OpenGl_Structure::renderGeometry (const Handle(OpenGl_Workspace)& theWorksp
     myInstancedStructure->renderGeometry (theWorkspace, theHasClosed);
   }
 
+  const Handle(OpenGl_Context)& aCtx = theWorkspace->GetGlContext();
   for (OpenGl_Structure::GroupIterator aGroupIter (myGroups); aGroupIter.More(); aGroupIter.Next())
   {
+    Handle(Graphic3d_TransformPers) aTrsfPersistence = aGroupIter.Value()->TransformPersistence();
+    if (!aTrsfPersistence.IsNull())
+    {
+      applyPersistence (aCtx, aTrsfPersistence, Standard_True);
+    }
+
     theHasClosed = theHasClosed || aGroupIter.Value()->IsClosed();
     aGroupIter.Value()->Render (theWorkspace);
+
+    if (!aTrsfPersistence.IsNull())
+    {
+      applyPersistence (aCtx, aTrsfPersistence, Standard_False);
+    }
   }
 }
 
@@ -437,23 +449,7 @@ void OpenGl_Structure::Render (const Handle(OpenGl_Workspace) &theWorkspace) con
 
   if (!myTrsfPers.IsNull())
   {
-    aCtx->WorldViewState.Push();
-    OpenGl_Mat4& aWorldView = aCtx->WorldViewState.ChangeCurrent();
-    myTrsfPers->Apply (aCtx->Camera(),
-                       aCtx->ProjectionState.Current(), aWorldView,
-                       aCtx->VirtualViewport()[2], aCtx->VirtualViewport()[3]);
-
-  #if !defined(GL_ES_VERSION_2_0)
-    if (!aCtx->IsGlNormalizeEnabled()
-      && aCtx->core11 != NULL)
-    {
-      const Standard_Real aScale = Graphic3d_TransformUtils::ScaleFactor<Standard_ShortReal> (aWorldView);
-      if (Abs (aScale - 1.0) > Precision::Confusion())
-      {
-        aCtx->SetGlNormalizeEnabled (Standard_True);
-      }
-    }
-  #endif
+    applyPersistence (aCtx, myTrsfPers, Standard_True);
   }
 
   // Take into account transform persistence
@@ -602,7 +598,7 @@ void OpenGl_Structure::Render (const Handle(OpenGl_Workspace) &theWorkspace) con
 
   if (!myTrsfPers.IsNull())
   {
-    aCtx->WorldViewState.Pop();
+    applyPersistence (aCtx, myTrsfPers, Standard_False);
   }
 
   // Restore named status
@@ -639,6 +635,40 @@ void OpenGl_Structure::ReleaseGlResources (const Handle(OpenGl_Context)& theGlCt
 Handle(Graphic3d_CStructure) OpenGl_Structure::ShadowLink (const Handle(Graphic3d_StructureManager)& theManager) const
 {
   return new OpenGl_StructureShadow (theManager, this);
+}
+
+// =======================================================================
+// function : applyPersistence
+// purpose  :
+// =======================================================================
+void OpenGl_Structure::applyPersistence (const Handle(OpenGl_Context)& theContext,
+                                         const Handle(Graphic3d_TransformPers)& theTrsfPersistence,
+                                         const Standard_Boolean toEnable) const
+{
+  if (toEnable)
+  {
+    theContext->WorldViewState.Push();
+    OpenGl_Mat4& aWorldView = theContext->WorldViewState.ChangeCurrent();
+    theTrsfPersistence->Apply (theContext->Camera(),
+                               theContext->ProjectionState.Current(), aWorldView,
+                               theContext->VirtualViewport()[2], theContext->VirtualViewport()[3]);
+
+  #if !defined(GL_ES_VERSION_2_0)
+    if (!theContext->IsGlNormalizeEnabled()
+      && theContext->core11 != NULL)
+    {
+      const Standard_Real aScale = Graphic3d_TransformUtils::ScaleFactor<Standard_ShortReal> (aWorldView);
+      if (Abs (aScale - 1.0) > Precision::Confusion())
+      {
+        theContext->SetGlNormalizeEnabled (Standard_True);
+      }
+    }
+  #endif
+  }
+  else
+  {
+    theContext->WorldViewState.Pop();
+  }
 }
 
 //=======================================================================
