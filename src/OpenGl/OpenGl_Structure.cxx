@@ -397,11 +397,23 @@ void OpenGl_Structure::renderGeometry (const Handle(OpenGl_Workspace)& theWorksp
   const Handle(OpenGl_Context)& aCtx = theWorkspace->GetGlContext();
   for (OpenGl_Structure::GroupIterator aGroupIter (myGroups); aGroupIter.More(); aGroupIter.Next())
   {
-    Handle(Graphic3d_TransformPers) aTrsfPersistence = aGroupIter.Value()->TransformPersistence();
+    const Handle(Graphic3d_TransformPers)& aTrsfPersistence = aGroupIter.Value()->TransformPersistence();
     Standard_Boolean anOldCastShadows;
+    gp_Pnt aStartPnt;
+
     if (!aTrsfPersistence.IsNull())
     {
+      if (aTrsfPersistence->IsZoomOrRotate())
+      {
+        aCtx->ModelWorldState.Push();
+        OpenGl_Mat4& aModelWorld = aCtx->ModelWorldState.ChangeCurrent();
+        aStartPnt = aTrsfPersistence->AnchorPoint();
+        Graphic3d_Vec4 anAnchorPoint = aModelWorld * Graphic3d_Vec4 (aStartPnt.X(), aStartPnt.Y(), aStartPnt.Z(), 1.0);
+        aModelWorld.InitIdentity();
+        aTrsfPersistence->SetAnchorPoint (gp_Pnt (anAnchorPoint.x(), anAnchorPoint.y(), anAnchorPoint.z()));
+      }
       applyPersistence (aCtx, aTrsfPersistence, anOldCastShadows, Standard_True);
+      aCtx->ApplyModelViewMatrix();
     }
 
     theHasClosed = theHasClosed || aGroupIter.Value()->IsClosed();
@@ -409,7 +421,13 @@ void OpenGl_Structure::renderGeometry (const Handle(OpenGl_Workspace)& theWorksp
 
     if (!aTrsfPersistence.IsNull())
     {
+      if (aTrsfPersistence->IsZoomOrRotate())
+      {
+        aTrsfPersistence->SetAnchorPoint (aStartPnt);
+        aCtx->ModelWorldState.Pop();
+      }
       applyPersistence (aCtx, aTrsfPersistence, anOldCastShadows, Standard_False);
+      aCtx->ApplyModelViewMatrix();
     }
   }
 }
@@ -696,6 +714,7 @@ void OpenGl_Structure::applyPersistence (const Handle(OpenGl_Context)& theContex
   {
     theContext->WorldViewState.Pop();
     theContext->ShaderManager()->SetCastShadows (theOldCastShadows);
+    theContext->ApplyModelViewMatrix();
   }
 }
 
