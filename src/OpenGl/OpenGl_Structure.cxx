@@ -403,7 +403,7 @@ void OpenGl_Structure::renderGeometry (const Handle(OpenGl_Workspace)& theWorksp
         OpenGl_Mat4& aModelWorld = aCtx->ModelWorldState.ChangeCurrent();
         aStartPnt = aTrsfPersistence->AnchorPoint();
         Graphic3d_Vec4 anAnchorPoint = aModelWorld * Graphic3d_Vec4 (aStartPnt.X(), aStartPnt.Y(), aStartPnt.Z(), 1.0);
-        aModelWorld.InitIdentity();
+        aModelWorld.SetColumn (3, Graphic3d_Vec4 (Graphic3d_Vec3 (0.0), 1.0));
         aTrsfPersistence->SetAnchorPoint (gp_Pnt (anAnchorPoint.x(), anAnchorPoint.y(), anAnchorPoint.z()));
       }
       applyPersistence (aCtx, aTrsfPersistence, Standard_True);
