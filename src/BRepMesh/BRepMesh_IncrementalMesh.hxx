@@ -22,10 +22,10 @@
 #include <TopTools_DataMapOfShapeReal.hxx>
 #include <BRepMesh_DiscretRoot.hxx>
 #include <BRepMesh.hxx>
-#include <Message_ProgressIndicator.hxx>
 
 #include <vector>
 
+class Message_ProgressIndicator;
 class Poly_Triangulation;
 class TopoDS_Shape;
 class TopoDS_Edge;
@@ -52,7 +52,7 @@ public: //! @name mesher API
   //! used for the faces will be the maximum deflection of their edges.
   //! @param theAngDeflection angular deflection.
   //! @param isInParallel if TRUE shape will be meshed in parallel.
-  Standard_EXPORT BRepMesh_IncrementalMesh (
+  Standard_EXPORT BRepMesh_IncrementalMesh(
     const TopoDS_Shape&    theShape,
     const Standard_Real    theLinDeflection,
     const Standard_Boolean isRelative = Standard_False,
@@ -64,24 +64,15 @@ public: //! @name mesher API
   //! Automatically calls method Perform.
   //! @param theShape shape to be meshed.
   //! @param theParameters - parameters of meshing
-   Standard_EXPORT BRepMesh_IncrementalMesh (const TopoDS_Shape& theShape,
-                                             const BRepMesh_FastDiscret::Parameters& theParameters);
-
-  //! Constructor.
-  //! Automatically calls method Perform.
-  //! @param theShape shape to be meshed.
-  //! @param theParameters - parameters of meshing
-  //! @param theProgress - progress indicator
   Standard_EXPORT BRepMesh_IncrementalMesh (const TopoDS_Shape& theShape,
-                                            const BRepMesh_FastDiscret::Parameters& theParameters,
-                                            const Handle(Message_ProgressIndicator) &theProgress);
+                                            const BRepMesh_FastDiscret::Parameters& theParameters);
 
-  // //! Performs meshing ot the shape.
+  //! Performs meshing ot the shape.
   Standard_EXPORT virtual void Perform() Standard_OVERRIDE;
 
   //! Performs meshing ot the shape.
-  Standard_EXPORT void Perform(const Handle(Message_ProgressIndicator) &theProgress);
-  
+  Standard_EXPORT void Perform(const Handle(Message_ProgressIndicator)& theProgress);
+
 public: //! @name accessing to parameters.
 
   //! Returns meshing parameters
@@ -139,7 +130,7 @@ protected:
 private:
 
   //! Builds the incremental mesh for the shape.
-  void update(const Handle(Message_ProgressIndicator) &theProgress = NULL);
+  void update(const Handle(Message_ProgressIndicator)& theProgress);
 
   //! Checks triangulation of the given face for consistency 
   //! with the chosen tolerance. If some edge of face has no
@@ -187,6 +178,9 @@ private:
   
   //! Clears internal data structures.
   void clear();
+
+private:
+  class FaceListFunctor;
 
 protected:
 

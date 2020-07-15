@@ -20,7 +20,7 @@
 
 inline void Message_ProgressSentry::Relieve ()
 {
-  if ( !myActive || myThreadId != OSD_Thread::Current()) return;
+  if ( ! myActive ) return;
   myProgress->EndScope();
   myActive = 0;
 }
@@ -32,10 +32,7 @@ inline void Message_ProgressSentry::Relieve ()
 
 inline void Message_ProgressSentry::Next (const Standard_CString name) const
 {
-  if ( myActive && myThreadId == OSD_Thread::Current()) 
-  {
-    myProgress->NextScope(name);
-  }
+  if ( myActive ) myProgress->NextScope(name);
 }
 
 //=======================================================================
@@ -46,10 +43,7 @@ inline void Message_ProgressSentry::Next (const Standard_CString name) const
 inline void Message_ProgressSentry::Next (const Standard_Real span, 
 					  const Standard_CString name) const
 {
-  if ( myActive && myThreadId == OSD_Thread::Current())
-  {
-    myProgress->NextScope(span, name);
-  }
+  if ( myActive ) myProgress->NextScope(span, name);
 }
 
 //=======================================================================
@@ -60,8 +54,7 @@ inline void Message_ProgressSentry::Next (const Standard_Real span,
 inline void Message_ProgressSentry::Next (const Standard_Real span, 
 					  const Handle(TCollection_HAsciiString)& name) const
 {
-  if ( myActive && myThreadId == OSD_Thread::Current()) 
-  {
+  if ( myActive ) {
     myProgress->EndScope();
     myProgress->NewScope(span, name);
   }
@@ -84,8 +77,5 @@ inline Standard_Boolean Message_ProgressSentry::More () const
 
 inline void Message_ProgressSentry::Show () const
 {
-  if ( !myProgress.IsNull() && myThreadId == OSD_Thread::Current()) 
-  {
-    myProgress->Show();
-  }
+  if ( ! myProgress.IsNull() ) myProgress->Show();
 }

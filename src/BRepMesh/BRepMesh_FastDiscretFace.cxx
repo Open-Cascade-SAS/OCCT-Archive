@@ -51,6 +51,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopExp.hxx>
 
+#include <Message_ProgressSentry.hxx>
 #include <NCollection_Map.hxx>
 #include <Bnd_Box2d.hxx>
 
@@ -185,11 +186,20 @@ BRepMesh_FastDiscretFace::BRepMesh_FastDiscretFace(
 //function : Perform
 //purpose  : 
 //=======================================================================
+void BRepMesh_FastDiscretFace::Perform(const Handle(BRepMesh_FaceAttribute)& theAttribute)
+{
+  Perform (theAttribute, NULL);
+}
+
+//=======================================================================
+//function : Perform
+//purpose  :
+//=======================================================================
 void BRepMesh_FastDiscretFace::Perform (const Handle(BRepMesh_FaceAttribute)& theAttribute,
-                                        Message_ProgressSentry&               theProgressEntry)
+                                        Message_ProgressSentry*               theProgressEntry)
 {
   add(theAttribute, theProgressEntry);
-  if (!theProgressEntry.More())
+  if (theProgressEntry != NULL && !theProgressEntry->More())
   {
     return;
   }
@@ -351,7 +361,7 @@ void BRepMesh_FastDiscretFace::addLinkToMesh(
 //purpose  : 
 //=======================================================================
 void BRepMesh_FastDiscretFace::add (const Handle(BRepMesh_FaceAttribute)& theAttribute,
-                                    Message_ProgressSentry& theProgressEntry)
+                                    Message_ProgressSentry* theProgressEntry)
 {
   if (!theAttribute->IsValid() || theAttribute->ChangeMeshNodes()->IsEmpty())
     return;
@@ -403,20 +413,22 @@ void BRepMesh_FastDiscretFace::add (const Handle(BRepMesh_FaceAttribute)& theAtt
      (vmax - vmin) < Precision::PConfusion());
 
   Standard_Real aDef = -1;
-  if (!theProgressEntry.More())
+  if (theProgressEntry != NULL && !theProgressEntry->More())
   {
     return;
   }
+
   if ( !isaline && myStructure->ElementsOfDomain().Extent() > 0 )
   {
     if (!rajout)
     {
       // compute maximal deflection
       aDef = control(trigu, Standard_True, theProgressEntry);
-      if (!theProgressEntry.More())
+      if (theProgressEntry != NULL && !theProgressEntry->More())
       {
         return;
       }
+
       rajout = (aDef > myAttribute->GetDefFace() || aDef < 0.);
     }
     if (thetype != GeomAbs_Plane)
@@ -430,7 +442,7 @@ void BRepMesh_FastDiscretFace::add (const Handle(BRepMesh_FaceAttribute)& theAtt
       if (rajout)
       {
         insertInternalVertices(trigu, theProgressEntry);
-        if (!theProgressEntry.More())
+        if (theProgressEntry != NULL && !theProgressEntry->More())
         {
           return;
         }
@@ -439,7 +451,7 @@ void BRepMesh_FastDiscretFace::add (const Handle(BRepMesh_FaceAttribute)& theAtt
         if (myIsControlSurfaceDeflection)
         {
           aDef = control(trigu, Standard_False, theProgressEntry);
-          if (!theProgressEntry.More())
+          if (theProgressEntry != NULL && !theProgressEntry->More())
           {
             return;
           }
@@ -472,7 +484,7 @@ void BRepMesh_FastDiscretFace::add (const Handle(BRepMesh_FaceAttribute)& theAtt
 Standard_Boolean BRepMesh_FastDiscretFace::addVerticesToMesh(
   const BRepMesh::ListOfVertex& theVertices,
   BRepMesh_Delaun&              theMeshBuilder,
-  Message_ProgressSentry&       theProgressEntry)
+  Message_ProgressSentry*       theProgressEntry)
 {
   if (theVertices.IsEmpty())
     return Standard_False;
@@ -483,7 +495,7 @@ Standard_Boolean BRepMesh_FastDiscretFace::addVerticesToMesh(
     aArrayOfNewVertices(++aVertexId) = aVertexIt.Value();
 
   theMeshBuilder.AddVertices(aArrayOfNewVertices, theProgressEntry);
-  return theProgressEntry.More();
+  return theProgressEntry == NULL || theProgressEntry->More();
 }
 
 //=======================================================================
@@ -553,7 +565,7 @@ static void filterParameters(const BRepMesh::IMapOfReal& theParams,
 //purpose  : 
 //=======================================================================
 void BRepMesh_FastDiscretFace::insertInternalVertices (BRepMesh_Delaun& theMeshBuilder,
-                                                       Message_ProgressSentry& theProgressEntry)
+                                                       Message_ProgressSentry* theProgressEntry)
 {
   Handle(NCollection_IncAllocator) anAlloc = new NCollection_IncAllocator;
   BRepMesh::ListOfVertex aNewVertices(anAlloc);
@@ -1209,7 +1221,7 @@ Standard_Boolean BRepMesh_FastDiscretFace::checkDeflectionAndInsert(
 Standard_Real BRepMesh_FastDiscretFace::control(
   BRepMesh_Delaun&         theTrigu,
   const Standard_Boolean   theIsFirst,
-  Message_ProgressSentry&  theProgressEntry)
+  Message_ProgressSentry*  theProgressEntry)
 {
   Standard_Integer aTrianglesNb = myStructure->ElementsOfDomain().Extent();
   if (aTrianglesNb < 1)
@@ -1246,10 +1258,11 @@ Standard_Real BRepMesh_FastDiscretFace::control(
     new NCollection_IncAllocator(BRepMesh::MEMORY_BLOCK_SIZE_HUGE);
   for (; aPass <= aPassesNb && aInsertedNb && !isAllDegenerated; ++aPass)
   {
-    if (!theProgressEntry.More())
+    if (theProgressEntry != NULL && !theProgressEntry->More())
     {
       return 0;
     }
+
     aTempAlloc->Reset(Standard_False);
     BRepMesh::ListOfVertex aNewVertices(aTempAlloc);
 
@@ -1267,10 +1280,11 @@ Standard_Real BRepMesh_FastDiscretFace::control(
     BRepMesh::MapOfInteger::Iterator aTriangleIt(aTriangles);
     for (; aTriangleIt.More(); aTriangleIt.Next())
     {
-      if (!theProgressEntry.More())
+      if (theProgressEntry != NULL && !theProgressEntry->More())
       {
         return 0;
       }
+
       const Standard_Integer aTriangleId = aTriangleIt.Key();
       const BRepMesh_Triangle& aCurrentTriangle = myStructure->GetElement(aTriangleId);
 
@@ -1432,11 +1446,12 @@ Standard_Real BRepMesh_FastDiscretFace::control(
       ftt << "vertex vt" << aPass << "_" << i << " "
         << aP.X() << " " << aP.Y() << " " << aP.Z() << endl;
     }
-#endif    
-    if (!theProgressEntry.More())
+#endif
+    if (theProgressEntry != NULL && !theProgressEntry->More())
     {
       return 0;
     }
+
     if (addVerticesToMesh(aNewVertices, theTrigu, theProgressEntry))
       ++aInsertedNb;
   }

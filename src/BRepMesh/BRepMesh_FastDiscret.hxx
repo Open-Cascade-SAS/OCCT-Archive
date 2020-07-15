@@ -34,9 +34,6 @@
 #include <BRepMesh_ShapeTool.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <Message_ProgressSentry.hxx>
-#include <BRepMesh_FaceSentry.hxx>
-#include <OSD_Parallel.hxx>
 
 class BRepMesh_DataStructureOfDelaun;
 class Bnd_Box;
@@ -49,6 +46,7 @@ class BRepMesh_Edge;
 class BRepMesh_Vertex;
 class gp_Pnt;
 class BRepMesh_FaceAttribute;
+class Message_ProgressSentry;
 
 //! Algorithm to mesh a shape with respect of the <br>
 //! frontier the deflection and by option the shared <br>
@@ -130,24 +128,17 @@ public:
   //! Triangulate a face previously recorded for 
   //! processing by call to Add(). Can be executed in 
   //! parallel threads.
-  Standard_EXPORT void Process(const TopoDS_Face& theFace, Message_ProgressSentry& theProgrEntry) const;
+  Standard_EXPORT void Process(const TopoDS_Face& face) const;
 
-  void operator () (const BRepMesh_FaceSentry& aFaceSentry) const
+  //! Triangulate a face previously recorded for
+  //! processing by call to Add(). Can be executed in
+  //! parallel threads.
+  Standard_EXPORT void Process (const TopoDS_Face& theFace,
+                                Message_ProgressSentry* theProgrEntry) const;
+
+  void operator () (const TopoDS_Face& face) const
   {
-    if (!aFaceSentry.GetProgressEntry()->More())
-    {
-      return;
-    }
-    Process(aFaceSentry.GetFace(), *aFaceSentry.GetProgressEntry());  
-   
-    if (aFaceSentry.IsParallel())
-    {
-      aFaceSentry.GetProgressEntry()->Next(OSD_Parallel::NbLogicalProcessors());
-    }
-    else
-    {
-      aFaceSentry.GetProgressEntry()->Next();
-    }
+    Process(face);
   }
   
   //! Returns parameters of meshing

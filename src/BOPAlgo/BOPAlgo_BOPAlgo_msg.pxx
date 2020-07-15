@@ -69,4 +69,7 @@ static const char BOPAlgo_BOPAlgo_msg[] =
   "Warning: Removal of internal boundaries among Faces has failed\n"
   "\n"
   ".BOPAlgo_AlertRemovalOfIBForEdgesFailed\n"
-  "Warning: Removal of internal boundaries among Edges has failed\n";
+  "Warning: Removal of internal boundaries among Edges has failed\n"
+  "\n"
+  ".BOPAlgo_AlertSolidBuilderUnusedFaces\n"
+  "Warning: Some of the faces passed to the Solid Builder algorithm have not been classified and not used for solids creation\n";

@@ -23,7 +23,6 @@ BRepMesh_EdgeTessellator.cxx
 BRepMesh_EdgeTessellator.hxx
 BRepMesh_FaceAttribute.cxx
 BRepMesh_FaceAttribute.hxx
-BRepMesh_FaceSentry.hxx
 BRepMesh_FactoryError.hxx
 BRepMesh_FastDiscret.cxx
 BRepMesh_FastDiscret.hxx

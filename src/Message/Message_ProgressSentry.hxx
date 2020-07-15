@@ -23,10 +23,6 @@
 #include <Standard_Boolean.hxx>
 #include <Standard_CString.hxx>
 #include <Standard_Real.hxx>
-
-#include <Standard_ThreadId.hxx>
-#include <OSD_Thread.hxx>
-
 class Message_ProgressIndicator;
 class TCollection_HAsciiString;
 
@@ -113,7 +109,6 @@ private:
 
   Handle(Message_ProgressIndicator) myProgress;
   Standard_Boolean myActive;
-  Standard_ThreadId myThreadId;
 
 
 };

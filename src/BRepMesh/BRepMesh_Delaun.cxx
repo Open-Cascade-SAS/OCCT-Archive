@@ -31,6 +31,7 @@
 #include <BRepMesh_Vertex.hxx>
 #include <BRepMesh_Triangle.hxx>
 
+#include <Message_ProgressSentry.hxx>
 #include <NCollection_Vector.hxx>
 
 #include <algorithm>
@@ -305,8 +306,7 @@ void BRepMesh_Delaun::compute(BRepMesh::Array1OfInteger& theVertexIndexes)
 void BRepMesh_Delaun::createTriangles(const Standard_Integer         theVertexIndex,  
                                       BRepMesh::MapOfIntegerInteger& thePoly)
 {
-  Message_ProgressSentry aSentry(NULL, "", 0, 100, 1);
-  createTriangles(theVertexIndex, thePoly, aSentry);
+  createTriangles (theVertexIndex, thePoly, NULL);
 }
 
 //=======================================================================
@@ -315,7 +315,7 @@ void BRepMesh_Delaun::createTriangles(const Standard_Integer         theVertexIn
 //=======================================================================
 void BRepMesh_Delaun::createTriangles(const Standard_Integer         theVertexIndex,
                                       BRepMesh::MapOfIntegerInteger& thePoly,
-                                      Message_ProgressSentry&        theProgressEntry)
+                                      Message_ProgressSentry*        theProgressEntry)
 {
   BRepMesh::ListOfInteger aLoopEdges, anExternalEdges;
   const gp_XY& aVertexCoord = myMeshData->GetNode( theVertexIndex ).Coord();
@@ -323,7 +323,7 @@ void BRepMesh_Delaun::createTriangles(const Standard_Integer         theVertexIn
   BRepMesh::MapOfIntegerInteger::Iterator anEdges( thePoly );
   for ( ; anEdges.More(); anEdges.Next() )
   {
-    if (!theProgressEntry.More())
+    if (theProgressEntry != NULL && !theProgressEntry->More())
     {
       return;
     }
@@ -424,7 +424,7 @@ void BRepMesh_Delaun::createTriangles(const Standard_Integer         theVertexIn
 
   while ( !aLoopEdges.IsEmpty() )
   {
-    if (!theProgressEntry.More())
+    if (theProgressEntry != NULL && !theProgressEntry->More())
     {
       return;
     }
@@ -446,8 +446,7 @@ void BRepMesh_Delaun::createTriangles(const Standard_Integer         theVertexIn
 void BRepMesh_Delaun::createTrianglesOnNewVertices(
   BRepMesh::Array1OfInteger& theVertexIndexes)
 {
-  Message_ProgressSentry aSentry(NULL, "", 0, 100, 1);
-  createTrianglesOnNewVertices(theVertexIndexes, aSentry);
+  createTrianglesOnNewVertices (theVertexIndexes, NULL);
 }
 
 //=======================================================================
@@ -456,7 +455,7 @@ void BRepMesh_Delaun::createTrianglesOnNewVertices(
 //=======================================================================
 void BRepMesh_Delaun::createTrianglesOnNewVertices(
   BRepMesh::Array1OfInteger& theVertexIndexes,
-  Message_ProgressSentry&    theProgressEntry)
+  Message_ProgressSentry*    theProgressEntry)
 {
   Handle(NCollection_IncAllocator) aAllocator =
     new NCollection_IncAllocator(BRepMesh::MEMORY_BLOCK_SIZE_HUGE);
@@ -472,10 +471,11 @@ void BRepMesh_Delaun::createTrianglesOnNewVertices(
   Standard_Integer anUpper = theVertexIndexes.Upper();
   for( ; anIndex <= anUpper; ++anIndex ) 
   {
-    if (!theProgressEntry.More())
+    if (theProgressEntry != NULL && !theProgressEntry->More())
     {
       return;
     }
+
     aAllocator->Reset(Standard_False);
     BRepMesh::MapOfIntegerInteger aLoopEdges(10, aAllocator);
     
@@ -519,10 +519,11 @@ void BRepMesh_Delaun::createTrianglesOnNewVertices(
       isModify = Standard_True;    
       while ( isModify && !aCirclesList.IsEmpty() )
       {
-        if (!theProgressEntry.More())
+        if (theProgressEntry != NULL && !theProgressEntry->More())
         {
           return;
         }
+
         isModify = Standard_False;
         BRepMesh::ListOfInteger::Iterator aCircleIt1( aCirclesList );
         for ( ; aCircleIt1.More(); aCircleIt1.Next() )
@@ -543,7 +544,7 @@ void BRepMesh_Delaun::createTrianglesOnNewVertices(
         }
       }
 
-      if (!theProgressEntry.More())
+      if (theProgressEntry != NULL && !theProgressEntry->More())
       {
         return;
       }
@@ -552,15 +553,17 @@ void BRepMesh_Delaun::createTrianglesOnNewVertices(
       createTriangles( aVertexIdx, aLoopEdges, theProgressEntry );
     }
   }
-  if (!theProgressEntry.More())
+  if (theProgressEntry != NULL && !theProgressEntry->More())
   {
     return;
   }
-  insertInternalEdges(theProgressEntry);
-  if (!theProgressEntry.More())
+
+  insertInternalEdges (theProgressEntry);
+  if (theProgressEntry != NULL && !theProgressEntry->More())
   {
     return;
   }
+
   // Adjustment of meshes to boundary edges
   frontierAdjust();
 }
@@ -571,15 +574,14 @@ void BRepMesh_Delaun::createTrianglesOnNewVertices(
 //=======================================================================
 void BRepMesh_Delaun::insertInternalEdges()
 {
-  Message_ProgressSentry aSentry(NULL, "", 0, 100, 1);
-  insertInternalEdges(aSentry);
+  insertInternalEdges (NULL);
 }
 
 //=======================================================================
 //function : insertInternalEdges
 //purpose  : 
 //=======================================================================
-void BRepMesh_Delaun::insertInternalEdges(Message_ProgressSentry& theProgressEntry)
+void BRepMesh_Delaun::insertInternalEdges (Message_ProgressSentry* theProgressEntry)
 {
   BRepMesh::HMapOfInteger anInternalEdges = InternalEdges();
 
@@ -590,10 +592,11 @@ void BRepMesh_Delaun::insertInternalEdges(Message_ProgressSentry& theProgressEnt
   BRepMesh::MapOfInteger::Iterator anInernalEdgesIt( *anInternalEdges );
   for ( ; anInernalEdgesIt.More(); anInernalEdgesIt.Next() )
   {
-    if (!theProgressEntry.More())
+    if (theProgressEntry != NULL && !theProgressEntry->More())
     {
       return;
     }
+
     const Standard_Integer aLinkIndex = anInernalEdgesIt.Key();
     const BRepMesh_PairOfIndex& aPair = myMeshData->ElementsConnectedTo(aLinkIndex);
 
@@ -2158,13 +2161,21 @@ void BRepMesh_Delaun::RemoveVertex( const BRepMesh_Vertex& theVertex )
   }
 }
 
+//=======================================================================
+//function : AddVertices
+//purpose  : Adds some vertices in the triangulation.
+//=======================================================================
+void BRepMesh_Delaun::AddVertices(BRepMesh::Array1OfVertexOfDelaun& theVertices)
+{
+  AddVertices (theVertices, NULL);
+}
 
 //=======================================================================
 //function : AddVertices
 //purpose  : Adds some vertices in the triangulation.
 //=======================================================================
 void BRepMesh_Delaun::AddVertices(BRepMesh::Array1OfVertexOfDelaun& theVertices,
-                                  Message_ProgressSentry&           theProgressEntry)
+                                  Message_ProgressSentry*           theProgressEntry)
 {
   std::make_heap(theVertices.begin(), theVertices.end(), ComparatorOfVertexOfDelaun());
   std::sort_heap(theVertices.begin(), theVertices.end(), ComparatorOfVertexOfDelaun());

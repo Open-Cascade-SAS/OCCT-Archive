@@ -27,8 +27,7 @@ Message_ProgressSentry::Message_ProgressSentry (const Handle(Message_ProgressInd
                                                   const Standard_Real step,
                                                   const Standard_Boolean isInf,
                                                   const Standard_Real newScopeSpan) :
-    myProgress(progress), myActive(!progress.IsNull()),
-    myThreadId(OSD_Thread::Current())
+       myProgress(progress), myActive(!progress.IsNull())
 {
   if ( ! myActive ) return;
   progress->SetName ( name );
@@ -48,8 +47,7 @@ Message_ProgressSentry::Message_ProgressSentry (const Handle(Message_ProgressInd
                                                   const Standard_Real step,
                                                   const Standard_Boolean isInf,
                                                   const Standard_Real newScopeSpan) :
-    myProgress(progress), myActive(!progress.IsNull()),
-    myThreadId(OSD_Thread::Current())
+       myProgress(progress), myActive(!progress.IsNull())
 {
   if ( ! myActive ) return;
   progress->SetName ( name );

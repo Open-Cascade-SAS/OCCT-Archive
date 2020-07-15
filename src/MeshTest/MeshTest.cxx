@@ -197,7 +197,10 @@ options:\n\
   aMeshParams.AdaptiveMin = isAdaptiveMin;
   
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(di, 1);
-  BRepMesh_IncrementalMesh aMesher(aShape, aMeshParams, aProgress);
+  BRepMesh_IncrementalMesh aMesher;
+  aMesher.SetShape (aShape);
+  aMesher.ChangeParameters() = aMeshParams;
+  aMesher.Perform (aProgress);
 
   di << "Meshing statuses: ";
   Standard_Integer statusFlags = aMesher.GetStatusFlags();

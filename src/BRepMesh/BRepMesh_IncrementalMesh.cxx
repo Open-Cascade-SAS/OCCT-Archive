@@ -55,8 +55,6 @@
 #include <GCPnts_TangentialDeflection.hxx>
 
 #include <Message_ProgressSentry.hxx>
-#include <BRepMesh_FaceSentry.hxx>
-
 
 IMPLEMENT_STANDARD_RTTIEXT(BRepMesh_IncrementalMesh,BRepMesh_DiscretRoot)
 
@@ -67,6 +65,51 @@ namespace
   static Standard_Boolean IS_IN_PARALLEL = Standard_False;
 }
 
+class BRepMesh_IncrementalMesh::FaceListFunctor
+{
+public:
+  FaceListFunctor (BRepMesh_IncrementalMesh* theAlgo,
+                   const Handle(Message_ProgressIndicator)& theProgress,
+                   Standard_Boolean theParallel)
+  : myAlgo (theAlgo),
+    mySentry (theProgress, "Mesh faces", 0, theAlgo->myFaces.Size(), 1),
+    myThreadId (OSD_Thread::Current()),
+    myIsParallel (theParallel),
+    myHasProgress (!theProgress.IsNull())
+  {
+  }
+
+  void operator() (const Standard_Integer theFaceIndex) const
+  {
+    if (!mySentry.More())
+    {
+      return;
+    }
+
+    TopoDS_Face& aFace = myAlgo->myFaces.ChangeValue (theFaceIndex);
+    myAlgo->myMesh->Process (aFace, &mySentry);
+
+    if (myIsParallel)
+    {
+      // use a trick to avoid mutex locks - increment the progress only within main thread
+      if (myHasProgress && myThreadId == OSD_Thread::Current())
+      {
+        mySentry.Next (OSD_Parallel::NbLogicalProcessors());
+      }
+    }
+    else
+    {
+      mySentry.Next();
+    }
+  }
+
+private:
+  mutable BRepMesh_IncrementalMesh* myAlgo;
+  mutable Message_ProgressSentry mySentry;
+  Standard_ThreadId myThreadId;
+  Standard_Boolean myIsParallel;
+  Standard_Boolean myHasProgress;
+};
 
 //=======================================================================
 //function : Default constructor
@@ -107,25 +150,13 @@ BRepMesh_IncrementalMesh::BRepMesh_IncrementalMesh( const TopoDS_Shape&    theSh
 //function : Constructor
 //purpose  : 
 //=======================================================================
-BRepMesh_IncrementalMesh::BRepMesh_IncrementalMesh (const TopoDS_Shape& theShape,
-  const BRepMesh_FastDiscret::Parameters& theParameters) : 
-  myParameters(theParameters) 
-{
-  myShape       = theShape;
-  Perform();
-}
-//=======================================================================
-//function : Constructor
-//purpose  : 
-//=======================================================================
-BRepMesh_IncrementalMesh::BRepMesh_IncrementalMesh (const TopoDS_Shape& theShape,
-                                                    const BRepMesh_FastDiscret::Parameters& theParameters,
-                                                    const Handle(Message_ProgressIndicator) &theProgress)
+BRepMesh_IncrementalMesh::BRepMesh_IncrementalMesh(const TopoDS_Shape& theShape,
+                                                   const BRepMesh_FastDiscret::Parameters& theParameters)
   : myParameters(theParameters)
 {
   myShape       = theShape;
   
-  Perform(theProgress);
+  Perform();
 }
 
 //=======================================================================
@@ -219,49 +250,50 @@ void BRepMesh_IncrementalMesh::collectFaces()
 //=======================================================================
 void BRepMesh_IncrementalMesh::Perform()
 {
-   Handle(Message_ProgressIndicator) aProgress;
-   Perform(aProgress);
+  Perform (Handle(Message_ProgressIndicator)());
 }
 
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
-
-void BRepMesh_IncrementalMesh::Perform(const Handle(Message_ProgressIndicator) &theProgress)
+void BRepMesh_IncrementalMesh::Perform (const Handle(Message_ProgressIndicator)& theProgress)
 {
   init();
 
   if (myMesh.IsNull())
     return;
 
-  update(theProgress);
+  update (theProgress);
 }
 
 //=======================================================================
 //function : update()
 //purpose  : 
 //=======================================================================
-void BRepMesh_IncrementalMesh::update(const Handle(Message_ProgressIndicator) &theProgress)
+void BRepMesh_IncrementalMesh::update (const Handle(Message_ProgressIndicator)& theProgress)
 {
-  Message_ProgressSentry anOuterSentry(theProgress, "Updating", 0, 100, 1);
-  
-  // Update edges data
-  TopExp_Explorer aExplorer(myShape, TopAbs_EDGE);
-  int aEdgeSize = 0;
-  for ( ; aExplorer.More(); aExplorer.Next(), aEdgeSize++)
-  {
-  }
-  anOuterSentry.Next(9);
-  aExplorer.Init(myShape, TopAbs_EDGE);
-  for (Message_ProgressSentry anEdgeSentry(theProgress, "Update edges data", 0, aEdgeSize, 1); 
-    aExplorer.More() && anEdgeSentry.More(); aExplorer.Next(), anEdgeSentry.Next())
-  {
-    const TopoDS_Edge& aEdge = TopoDS::Edge(aExplorer.Current());
-    if(!BRep_Tool::IsGeometric(aEdge))
-      continue;
+  Message_ProgressSentry anOuterSentry (theProgress, "Updating", 0, 100, 1);
 
-    update(aEdge);
+  // Update edges data
+  anOuterSentry.Next(9);
+  {
+    int aNbEdges = 0;
+    for (TopExp_Explorer aExplorer (myShape, TopAbs_EDGE); aExplorer.More(); aExplorer.Next())
+    {
+      ++aNbEdges;
+    }
+
+    Message_ProgressSentry anEdgeSentry (theProgress, "Update edges data", 0, aNbEdges, 1);
+    for (TopExp_Explorer aExplorer (myShape, TopAbs_EDGE);
+         aExplorer.More() && anEdgeSentry.More(); aExplorer.Next(), anEdgeSentry.Next())
+    {
+      const TopoDS_Edge& aEdge = TopoDS::Edge(aExplorer.Current());
+      if(!BRep_Tool::IsGeometric(aEdge))
+        continue;
+
+      update(aEdge);
+    }
   }
 
   if (!anOuterSentry.More())
@@ -270,12 +302,11 @@ void BRepMesh_IncrementalMesh::update(const Handle(Message_ProgressIndicator) &t
     return;
   }
   anOuterSentry.Next(5);
-  
-  NCollection_Vector<BRepMesh_FaceSentry> aFaces;
+
   // Update faces data
   NCollection_Vector<TopoDS_Face>::Iterator aFaceIt(myFaces);
-  for (Message_ProgressSentry aFacesSentry(theProgress, "Update faces data", 0, myFaces.Size(), 1);
-    aFaceIt.More() && aFacesSentry.More(); aFaceIt.Next(), aFacesSentry.Next())
+  for (Message_ProgressSentry aFacesSentry (theProgress, "Update faces data", 0, myFaces.Size(), 1);
+       aFaceIt.More() && aFacesSentry.More(); aFaceIt.Next(), aFacesSentry.Next())
   {
     update(aFaceIt.Value());
   }
@@ -285,23 +316,26 @@ void BRepMesh_IncrementalMesh::update(const Handle(Message_ProgressIndicator) &t
     myStatus = BRepMesh_UserBreak;
     return;
   }
+
   anOuterSentry.Next(80);
 
-  Message_ProgressSentry aProgrSentry(theProgress, "Mesh faces", 0, myFaces.Size(), 1);
-  for (NCollection_Vector<TopoDS_Face>::Iterator aFaceIter(myFaces); aFaceIter.More(); aFaceIter.Next())
   {
-    aFaces.Append(BRepMesh_FaceSentry(aFaceIter.Value(), &aProgrSentry, myParameters.InParallel));
+    // Mesh faces
+    FaceListFunctor aFacesFunctor (this, theProgress, myParameters.InParallel);
+    OSD_Parallel::For (0, myFaces.Size(), aFacesFunctor, !myParameters.InParallel);
   }
-  // Mesh faces
-  OSD_Parallel::ForEach(aFaces.begin(), aFaces.end(), *myMesh, !myParameters.InParallel);
+
   if (!anOuterSentry.More())
   {
     myStatus = BRepMesh_UserBreak;
     return;
   }
+
   anOuterSentry.Next(5);
-  Message_ProgressSentry aSentry(theProgress, "Commit", 0, myFaces.Size(), 1);
-  commit(aSentry);
+  {
+    Message_ProgressSentry aSentry (theProgress, "Commit", 0, myFaces.Size(), 1);
+    commit (aSentry);
+  }
   anOuterSentry.Next();
   clear();
 }
@@ -559,7 +593,7 @@ void BRepMesh_IncrementalMesh::update(const TopoDS_Face& theFace)
 //function : commit
 //purpose  : 
 //=======================================================================
-void BRepMesh_IncrementalMesh::commit(Message_ProgressSentry& theSentry)
+void BRepMesh_IncrementalMesh::commit (Message_ProgressSentry& theSentry)
 {
   NCollection_Vector<TopoDS_Face>::Iterator aFaceIt(myFaces);
   for (; aFaceIt.More() && theSentry.More(); aFaceIt.Next(), theSentry.Next())
