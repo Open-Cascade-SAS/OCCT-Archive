@@ -46,6 +46,7 @@ class BRepMesh_Edge;
 class BRepMesh_Vertex;
 class gp_Pnt;
 class BRepMesh_FaceAttribute;
+class Message_ProgressSentry;
 
 //! Algorithm to mesh a shape with respect of the <br>
 //! frontier the deflection and by option the shared <br>
@@ -128,6 +129,12 @@ public:
   //! processing by call to Add(). Can be executed in 
   //! parallel threads.
   Standard_EXPORT void Process(const TopoDS_Face& face) const;
+
+  //! Triangulate a face previously recorded for
+  //! processing by call to Add(). Can be executed in
+  //! parallel threads.
+  Standard_EXPORT void Process (const TopoDS_Face& theFace,
+                                Message_ProgressSentry* theProgrEntry) const;
 
   void operator () (const TopoDS_Face& face) const
   {

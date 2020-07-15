@@ -80,6 +80,7 @@
 #include <TopoDS_Wire.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
+#include <Draw_ProgressIndicator.hxx>
 
 #include <stdio.h>
 //epa Memory leaks test
@@ -195,7 +196,11 @@ options:\n\
   aMeshParams.ControlSurfaceDeflection = isControlSurDef;
   aMeshParams.AdaptiveMin = isAdaptiveMin;
   
-  BRepMesh_IncrementalMesh aMesher (aShape, aMeshParams);
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(di, 1);
+  BRepMesh_IncrementalMesh aMesher;
+  aMesher.SetShape (aShape);
+  aMesher.ChangeParameters() = aMeshParams;
+  aMesher.Perform (aProgress);
 
   di << "Meshing statuses: ";
   Standard_Integer statusFlags = aMesher.GetStatusFlags();
@@ -206,7 +211,7 @@ options:\n\
   else
   {
     Standard_Integer i;
-    for( i = 0; i < 4; i++ )
+    for( i = 0; i < 5; i++ )
     {
       if( (statusFlags >> i) & (Standard_Integer)1 )
       {
@@ -223,6 +228,9 @@ options:\n\
             break;
           case 4:
             di << "ReMesh ";
+            break;
+          case 5:
+            di << "UserBreak";
             break;
         }
       }

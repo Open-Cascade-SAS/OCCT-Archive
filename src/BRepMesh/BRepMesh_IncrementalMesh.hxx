@@ -25,6 +25,7 @@
 
 #include <vector>
 
+class Message_ProgressIndicator;
 class Poly_Triangulation;
 class TopoDS_Shape;
 class TopoDS_Edge;
@@ -68,7 +69,10 @@ public: //! @name mesher API
 
   //! Performs meshing ot the shape.
   Standard_EXPORT virtual void Perform() Standard_OVERRIDE;
-  
+
+  //! Performs meshing ot the shape.
+  Standard_EXPORT void Perform(const Handle(Message_ProgressIndicator)& theProgress);
+
 public: //! @name accessing to parameters.
 
   //! Returns meshing parameters
@@ -126,7 +130,7 @@ protected:
 private:
 
   //! Builds the incremental mesh for the shape.
-  void update();
+  void update(const Handle(Message_ProgressIndicator)& theProgress);
 
   //! Checks triangulation of the given face for consistency 
   //! with the chosen tolerance. If some edge of face has no
@@ -167,13 +171,16 @@ private:
                               const Standard_Boolean isWithCheck);
 
   //! Stores mesh to the shape.
-  void commit();
+  void commit(Message_ProgressSentry& theSentry);
 
   //! Stores mesh of internal edges to the face.
   void commitEdges(const TopoDS_Face& theFace);
   
   //! Clears internal data structures.
   void clear();
+
+private:
+  class FaceListFunctor;
 
 protected:
 

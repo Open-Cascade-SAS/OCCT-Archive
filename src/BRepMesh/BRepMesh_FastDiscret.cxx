@@ -68,6 +68,7 @@
 #include <Standard_Failure.hxx>
 #include <NCollection_IncAllocator.hxx>
 
+#include <Message_ProgressSentry.hxx>
 #include <BRep_ListIteratorOfListOfPointRepresentation.hxx>
 #include <BRep_PointRepresentation.hxx>
 
@@ -123,15 +124,25 @@ void BRepMesh_FastDiscret::Perform(const TopoDS_Shape& theShape)
   OSD_Parallel::ForEach(aFaces.begin(), aFaces.end(), *this, !myParameters.InParallel);
 }
 
-
 //=======================================================================
 //function : Process
 //purpose  : 
 //=======================================================================
 void BRepMesh_FastDiscret::Process(const TopoDS_Face& theFace) const
 {
+  Process (theFace, NULL);
+}
+
+//=======================================================================
+//function : Process
+//purpose  : 
+//=======================================================================
+void BRepMesh_FastDiscret::Process (const TopoDS_Face& theFace,
+                                    Message_ProgressSentry* theProgrEntry) const
+{
   Handle(BRepMesh_FaceAttribute) anAttribute;
-  if (GetFaceAttribute(theFace, anAttribute))
+  if (GetFaceAttribute(theFace, anAttribute)
+   && (theProgrEntry == NULL || theProgrEntry->More()))
   {
     try
     {
@@ -139,7 +150,7 @@ void BRepMesh_FastDiscret::Process(const TopoDS_Face& theFace) const
 
       BRepMesh_FastDiscretFace aTool(myParameters.Angle, myParameters.MinSize, 
         myParameters.InternalVerticesMode, myParameters.ControlSurfaceDeflection);
-      aTool.Perform(anAttribute);
+      aTool.Perform (anAttribute, theProgrEntry);
     }
     catch (Standard_Failure)
     {
