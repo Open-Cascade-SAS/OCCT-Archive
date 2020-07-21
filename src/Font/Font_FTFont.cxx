@@ -38,7 +38,7 @@ Font_FTFont::Font_FTFont (const Handle(Font_FTLibrary)& theFTLib)
   myActiveFTFace(NULL),
   myFontAspect  (Font_FontAspect_Regular),
   myWidthScaling(1.0),
-  myLoadFlags   (FT_LOAD_NO_HINTING | FT_LOAD_TARGET_NORMAL),
+  myLoadFlags   (/*FT_LOAD_NO_HINTING | */FT_LOAD_TARGET_NORMAL),
   myUChar       (0U),
   myToUseUnicodeSubsetFallback (Font_FontMgr::ToUseUnicodeSubsetFallback())
 {
