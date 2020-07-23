@@ -12016,6 +12016,21 @@ static Standard_Integer VRenderParams (Draw_Interpretor& theDI,
         return 1;
       }
     }
+    else if (aFlag == "-fonthinting"
+          || aFlag == "-fonthint")
+    {
+      if (toPrint)
+      {
+        theDI << (aParams.ToEnableFontHinting ? "on " : "off ");
+        continue;
+      }
+      aParams.ToEnableFontHinting = true;
+      if (anArgIter + 1 < theArgNb
+       && ViewerTest::ParseOnOff (theArgVec[anArgIter + 1], aParams.ToEnableFontHinting))
+      {
+        ++anArgIter;
+      }
+    }
     else if (aFlag == "-depthprepass")
     {
       if (toPrint)
@@ -15085,7 +15100,7 @@ void ViewerTest::ViewerCommands(Draw_Interpretor& theCommands)
     "\n\t\t: Common parameters:"
     "\n\t\t: vrenderparams [-raster] [-shadingModel {unlit|facet|gouraud|phong|pbr|pbr_facet}=gouraud]"
     "\n\t\t:               [-msaa 0..8=0] [-rendScale scale=1] [-resolution value=72]"
-    "\n\t\t:               [-oit {off|0.0-1.0}=off]"
+    "\n\t\t:               [-oit {off|0.0-1.0}=off] [-fontHinting {on|off}=off]"
     "\n\t\t:               [-depthPrePass {on|off}=off] [-alphaToCoverage {on|off}=on]"
     "\n\t\t:               [-frustumCulling {on|off|noupdate}=on] [-lineFeather width=1.0]"
     "\n\t\t:               [-sync {default|views}] [-reset]"
@@ -15099,6 +15114,7 @@ void ViewerTest::ViewerCommands(Draw_Interpretor& theCommands)
     "\n\t\t:   -oit             Enables/disables order-independent transparency (OIT) rendering;"
     "\n\t\t:                    weight OIT fixes transparency artifacts at the cost of blurry result,"
     "\n\t\t:                    it is managed by depth weight factor (0.0 value also enables weight OIT)."
+    "\n\t\t:   -fontHinting     Enables/disables font hinting for better readability on low-resolution screens."
     "\n\t\t:   -depthPrePass    Enables/disables depth pre-pass."
     "\n\t\t:   -frustumCulling  Enables/disables objects frustum clipping or"
     "\n\t\t:                    sets state to check structures culled previously."

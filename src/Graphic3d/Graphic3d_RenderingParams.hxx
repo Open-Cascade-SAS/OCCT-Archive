@@ -106,6 +106,7 @@ public:
     OitDepthFactor              (0.0f),
     NbMsaaSamples               (0),
     RenderResolutionScale       (1.0f),
+    ToEnableFontHinting         (Standard_False),
     ToEnableDepthPrepass        (Standard_False),
     ToEnableAlphaToCoverage     (Standard_True),
     // ray tracing parameters
@@ -199,6 +200,9 @@ public:
   Standard_Integer                  NbMsaaSamples;               //!< number of MSAA samples (should be within 0..GL_MAX_SAMPLES, power-of-two number), 0 by default
   Standard_ShortReal                RenderResolutionScale;       //!< rendering resolution scale factor, 1 by default;
                                                                  //!  incompatible with MSAA (e.g. NbMsaaSamples should be set to 0)
+  Standard_Boolean                  ToEnableFontHinting;         //!< enables/disables text hinting within textured fonts, False by default;
+                                                                 //!  hinting improves readability of thin text on low-resolution screen,
+                                                                 //!  but adds distortions to original font depending on font family and font library version
   Standard_Boolean                  ToEnableDepthPrepass;        //!< enables/disables depth pre-pass, False by default
   Standard_Boolean                  ToEnableAlphaToCoverage;     //!< enables/disables alpha to coverage, True by default
 

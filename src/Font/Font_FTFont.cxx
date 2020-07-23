@@ -88,6 +88,15 @@ bool Font_FTFont::Init (const Handle(NCollection_Buffer)& theData,
   myBuffer = theData;
   myFontPath = theFileName;
   myFontParams = theParams;
+  if (theParams.ToEnableFontHinting)
+  {
+    myLoadFlags &= ~FT_LOAD_NO_HINTING;
+  }
+  else
+  {
+    myLoadFlags |= FT_LOAD_NO_HINTING;
+  }
+
   if (!myFTLib->IsValid())
   {
     Message::SendTrace ("FreeType library is unavailable");
