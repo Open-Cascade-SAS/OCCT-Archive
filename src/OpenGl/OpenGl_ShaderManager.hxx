@@ -225,6 +225,16 @@ public:
     return myContext->BindProgram (myPBREnvBakingProgram[theIndex]);
   }
 
+  //! Bind program for grid visualisation.
+  Standard_Boolean BindGridProgram()
+  {
+    if (myGridProgram.IsNull())
+    {
+      prepareGridProgram();
+    }
+    return bindProgramWithState (myGridProgram, Graphic3d_TypeOfShadingModel_Unlit);
+  }
+
   //! Generates shader program to render environment cubemap as background.
   Standard_EXPORT const Handle(Graphic3d_ShaderProgram)& GetBgCubeMapProgram();
 
@@ -709,6 +719,9 @@ protected:
   Standard_Boolean IsPbrAllowed() const { return myShadingModel == Graphic3d_TypeOfShadingModel_Pbr
                                               || myShadingModel == Graphic3d_TypeOfShadingModel_PbrFacet; }
 
+  //! Generate standard GLSL program for grid.
+  Standard_EXPORT Standard_Boolean prepareGridProgram();
+
 protected:
 
   //! Packed properties of light source
@@ -776,6 +789,7 @@ protected:
   Handle(Graphic3d_ShaderProgram)    myBgCubeMapProgram;       //!< program for background cubemap rendering
   Handle(Graphic3d_ShaderProgram)    myBgSkydomeProgram;       //!< program for background cubemap rendering
   Handle(Graphic3d_ShaderProgram)    myColoredQuadProgram;     //!< program for correct quad rendering
+  Handle(OpenGl_ShaderProgram)       myGridProgram;            //!< program for grid rendering
 
   Handle(OpenGl_ShaderProgram)       myStereoPrograms[Graphic3d_StereoMode_NB]; //!< standard stereo programs
 

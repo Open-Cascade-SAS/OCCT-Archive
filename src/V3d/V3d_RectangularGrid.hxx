@@ -40,6 +40,8 @@ public:
   
   Standard_EXPORT virtual void Display() Standard_OVERRIDE;
   
+  Standard_EXPORT virtual void Update() Standard_OVERRIDE;
+
   Standard_EXPORT virtual void Erase() const Standard_OVERRIDE;
   
   Standard_EXPORT virtual Standard_Boolean IsDisplayed() const Standard_OVERRIDE;

@@ -38,15 +38,17 @@ public:
   Standard_EXPORT virtual ~V3d_CircularGrid();
 
   Standard_EXPORT void SetColors (const Quantity_Color& aColor, const Quantity_Color& aTenthColor) Standard_OVERRIDE;
-  
+
   Standard_EXPORT void Display() Standard_OVERRIDE;
-  
+
+  Standard_EXPORT void Update() Standard_OVERRIDE;
+
   Standard_EXPORT void Erase() const Standard_OVERRIDE;
-  
+
   Standard_EXPORT Standard_Boolean IsDisplayed() const Standard_OVERRIDE;
-  
+
   Standard_EXPORT void GraphicValues (Standard_Real& Radius, Standard_Real& OffSet) const;
-  
+
   Standard_EXPORT void SetGraphicValues (const Standard_Real Radius, const Standard_Real OffSet);
   
   //! Dumps the content of me into the stream
