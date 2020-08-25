@@ -91,7 +91,8 @@ V3d_RectangularGrid::~V3d_RectangularGrid()
 
 void V3d_RectangularGrid::SetColors (const Quantity_Color& aColor, const Quantity_Color& aTenthColor)
 {
-  if( myColor != aColor || myTenthColor != aTenthColor ) {
+  if( myColor != aColor || myTenthColor != aTenthColor )
+  {
     myColor = aColor;
     myTenthColor = aTenthColor;
     myCurAreDefined = Standard_False;
@@ -99,55 +100,69 @@ void V3d_RectangularGrid::SetColors (const Quantity_Color& aColor, const Quantit
   }
 }
 
-void V3d_RectangularGrid::Display ()
+void V3d_RectangularGrid::Display()
 {
   myStructure->SetDisplayPriority (Graphic3d_DisplayPriority_AlmostBottom);
   myStructure->Display();
   UpdateDisplay();
 }
 
-void V3d_RectangularGrid::Erase () const
+void V3d_RectangularGrid::Update()
 {
-  myStructure->Erase ();
+  SetXStep (XStep() + 1);
+  UpdateDisplay();
 }
 
-Standard_Boolean V3d_RectangularGrid::IsDisplayed () const
+void V3d_RectangularGrid::Erase() const
 {
-  return myStructure->IsDisplayed ();
+  myStructure->Erase();
 }
 
-void V3d_RectangularGrid::UpdateDisplay ()
+Standard_Boolean V3d_RectangularGrid::IsDisplayed() const
 {
-  gp_Ax3 ThePlane = myViewer->PrivilegedPlane ();
+  return myStructure->IsDisplayed();
+}
+
+void V3d_RectangularGrid::UpdateDisplay()
+{
+  gp_Ax3 ThePlane = myViewer->PrivilegedPlane();
 
   Standard_Boolean MakeTransform = Standard_False;
-  Standard_Real xl, yl, zl;
+  Standard_Real xl,  yl,  zl;
   Standard_Real xdx, xdy, xdz;
   Standard_Real ydx, ydy, ydz;
-  Standard_Real dx, dy, dz;
-  ThePlane.Location ().Coord (xl, yl, zl);
-  ThePlane.XDirection ().Coord (xdx, xdy, xdz);
-  ThePlane.YDirection ().Coord (ydx, ydy, ydz);
-  ThePlane.Direction ().Coord (dx, dy, dz);
-  if (! myCurAreDefined)
+  Standard_Real dx,  dy,  dz;
+  ThePlane.Location  ().Coord (xl,  yl,  zl);
+  ThePlane.XDirection().Coord (xdx, xdy, xdz);
+  ThePlane.YDirection().Coord (ydx, ydy, ydz);
+  ThePlane.Direction ().Coord (dx,  dy,  dz);
+  if (!myCurAreDefined)
+  {
     MakeTransform = Standard_True;
-  else {
+  }
+  else
+  {
     if (RotationAngle() != myCurAngle || XOrigin() != myCurXo || YOrigin() != myCurYo)
+    {
       MakeTransform = Standard_True;
-    if (! MakeTransform) {
-      Standard_Real curxl, curyl, curzl;
+    }
+    if (!MakeTransform)
+    {
+      Standard_Real curxl,  curyl,  curzl;
       Standard_Real curxdx, curxdy, curxdz;
       Standard_Real curydx, curydy, curydz;
-      Standard_Real curdx, curdy, curdz;
-      myCurViewPlane.Location ().Coord (curxl, curyl, curzl);
-      myCurViewPlane.XDirection ().Coord (curxdx, curxdy, curxdz);
-      myCurViewPlane.YDirection ().Coord (curydx, curydy, curydz);
-      myCurViewPlane.Direction ().Coord (curdx, curdy, curdz);
-      if (xl != curxl || yl != curyl || zl != curzl ||
+      Standard_Real curdx,  curdy,  curdz;
+      myCurViewPlane.Location  ().Coord (curxl,  curyl,  curzl);
+      myCurViewPlane.XDirection().Coord (curxdx, curxdy, curxdz);
+      myCurViewPlane.YDirection().Coord (curydx, curydy, curydz);
+      myCurViewPlane.Direction ().Coord (curdx,  curdy,  curdz);
+      if (xl  != curxl  || yl  != curyl  || zl  != curzl  ||
           xdx != curxdx || xdy != curxdy || xdz != curxdz ||
           ydx != curydx || ydy != curydy || ydz != curydz ||
-          dx != curdx || dy != curdy || dz != curdz)
+          dx  != curdx  || dy  != curdy  || dz  != curdz)
+      {
         MakeTransform = Standard_True;
+      }
     }
   }
 
@@ -167,33 +182,34 @@ void V3d_RectangularGrid::UpdateDisplay ()
     gp_Trsf aTrsf2;
     aTrsf2.SetValues ( CosAlpha, SinAlpha, 0.0, -XOrigin(),
                       -SinAlpha, CosAlpha, 0.0, -YOrigin(),
-                            0.0,      0.0, 1.0, 0.0);
+                       0.0,      0.0,      1.0,  0.0 );
     aTrsf.Multiply (aTrsf2);
     myStructure->SetTransformation (new TopLoc_Datum3D (aTrsf));
 
-    myCurAngle = RotationAngle ();
-    myCurXo = XOrigin (), myCurYo = YOrigin ();
+    myCurAngle = RotationAngle();
+    myCurXo = XOrigin();
+    myCurYo = YOrigin();
     myCurViewPlane = ThePlane;
   }
 
   switch (myDrawMode)
   {
     case Aspect_GDM_Points:
-      DefinePoints ();
+      DefinePoints();
       myCurDrawMode = Aspect_GDM_Points;
       break;
     case Aspect_GDM_Lines:
-      DefineLines ();
+      DefineLines();
       myCurDrawMode = Aspect_GDM_Lines;
       break;
     case Aspect_GDM_None:
       myCurDrawMode = Aspect_GDM_None;
       break;
-	}
-	myCurAreDefined = Standard_True;
+  }
+  myCurAreDefined = Standard_True;
 }
 
-void V3d_RectangularGrid::DefineLines ()
+void V3d_RectangularGrid::DefineLines()
 {
   const Standard_Real aXStep = XStep();
   const Standard_Real aYStep = YStep();
@@ -201,8 +217,7 @@ void V3d_RectangularGrid::DefineLines ()
                                  || myCurDrawMode != Aspect_GDM_Lines
                                  || aXStep != myCurXStep
                                  || aYStep != myCurYStep;
-  if (!toUpdate
-   && !myToComputePrs)
+  if (!toUpdate && !myToComputePrs)
   {
     return;
   }
@@ -221,27 +236,27 @@ void V3d_RectangularGrid::DefineLines ()
   TColgp_SequenceOfPnt aSeqLines, aSeqTenth;
 
   // verticals
-  aSeqTenth.Append(gp_Pnt(0., -myYSize, -zl));
-  aSeqTenth.Append(gp_Pnt(0.,  myYSize, -zl));
+  aSeqTenth.Append (gp_Pnt (0.0, -myYSize, -zl));
+  aSeqTenth.Append (gp_Pnt (0.0,  myYSize, -zl));
   for (nblines = 1, xl = aXStep; xl < myXSize; xl += aXStep, nblines++)
   {
-    TColgp_SequenceOfPnt &aSeq = (Modulus(nblines, 10) != 0)? aSeqLines : aSeqTenth;
-    aSeq.Append(gp_Pnt( xl, -myYSize, -zl));
-    aSeq.Append(gp_Pnt( xl,  myYSize, -zl));
-    aSeq.Append(gp_Pnt(-xl, -myYSize, -zl));
-    aSeq.Append(gp_Pnt(-xl,  myYSize, -zl));
+    TColgp_SequenceOfPnt &aSeq = (Modulus (nblines, 10) != 0) ? aSeqLines : aSeqTenth;
+    aSeq.Append (gp_Pnt ( xl, -myYSize, -zl));
+    aSeq.Append (gp_Pnt ( xl,  myYSize, -zl));
+    aSeq.Append (gp_Pnt (-xl, -myYSize, -zl));
+    aSeq.Append (gp_Pnt (-xl,  myYSize, -zl));
   }
 
   // horizontals
-  aSeqTenth.Append(gp_Pnt(-myXSize, 0., -zl));
-  aSeqTenth.Append(gp_Pnt( myXSize, 0., -zl));
+  aSeqTenth.Append (gp_Pnt (-myXSize, 0.0, -zl));
+  aSeqTenth.Append (gp_Pnt ( myXSize, 0.0, -zl));
   for (nblines = 1, yl = aYStep; yl < myYSize; yl += aYStep, nblines++)
   {
-    TColgp_SequenceOfPnt &aSeq = (Modulus(nblines, 10) != 0)? aSeqLines : aSeqTenth;
-    aSeq.Append(gp_Pnt(-myXSize,  yl, -zl));
-    aSeq.Append(gp_Pnt( myXSize,  yl, -zl));
-    aSeq.Append(gp_Pnt(-myXSize, -yl, -zl));
-    aSeq.Append(gp_Pnt( myXSize, -yl, -zl));
+    TColgp_SequenceOfPnt &aSeq = (Modulus (nblines, 10) != 0) ? aSeqLines : aSeqTenth;
+    aSeq.Append (gp_Pnt (-myXSize,  yl, -zl));
+    aSeq.Append (gp_Pnt ( myXSize,  yl, -zl));
+    aSeq.Append (gp_Pnt (-myXSize, -yl, -zl));
+    aSeq.Append (gp_Pnt ( myXSize, -yl, -zl));
   }
 
   if (aSeqLines.Length())
@@ -249,33 +264,36 @@ void V3d_RectangularGrid::DefineLines ()
     Handle(Graphic3d_AspectLine3d) aLineAspect = new Graphic3d_AspectLine3d (myColor, Aspect_TOL_SOLID, 1.0);
     myGroup->SetPrimitivesAspect (aLineAspect);
     const Standard_Integer nbv = aSeqLines.Length();
-    Handle(Graphic3d_ArrayOfSegments) aPrims = new Graphic3d_ArrayOfSegments(nbv);
-    Standard_Integer n = 1;
-    while (n<=nbv)
-      aPrims->AddVertex(aSeqLines(n++));
-    myGroup->AddPrimitiveArray(aPrims, Standard_False);
+    Handle(Graphic3d_ArrayOfSegments) aPrims = new Graphic3d_ArrayOfSegments (nbv);
+    for (Standard_Integer n = 1; n <= nbv; n++)
+    {
+      aPrims->AddVertex (aSeqLines (n));
+    }
+    myGroup->AddPrimitiveArray (aPrims, Standard_False);
   }
   if (aSeqTenth.Length())
   {
     Handle(Graphic3d_AspectLine3d) aLineAspect = new Graphic3d_AspectLine3d (myTenthColor, Aspect_TOL_SOLID, 1.0);
     myGroup->SetPrimitivesAspect (aLineAspect);
     const Standard_Integer nbv = aSeqTenth.Length();
-    Handle(Graphic3d_ArrayOfSegments) aPrims = new Graphic3d_ArrayOfSegments(nbv);
-    Standard_Integer n = 1;
-    while (n<=nbv)
-      aPrims->AddVertex(aSeqTenth(n++));
-    myGroup->AddPrimitiveArray(aPrims, Standard_False);
+    Handle(Graphic3d_ArrayOfSegments) aPrims = new Graphic3d_ArrayOfSegments (nbv);
+    for (Standard_Integer n = 1; n <= nbv; n++)
+    {
+      aPrims->AddVertex (aSeqTenth (n));
+    }
+    myGroup->AddPrimitiveArray (aPrims, Standard_False);
   }
 
-  myGroup->SetMinMaxValues(-myXSize, -myYSize, -myOffSet, myXSize, myYSize, -myOffSet);
-  myCurXStep = aXStep, myCurYStep = aYStep;
+  myGroup->SetMinMaxValues (-myXSize, -myYSize, -myOffSet, myXSize, myYSize, -myOffSet);
+  myCurXStep = aXStep;
+  myCurYStep = aYStep;
 
   // update bounding box
   myStructure->CalculateBoundBox();
   myViewer->StructureManager()->Update (myStructure->GetZLayer());
 }
 
-void V3d_RectangularGrid::DefinePoints ()
+void V3d_RectangularGrid::DefinePoints()
 {
   const Standard_Real aXStep = XStep();
   const Standard_Real aYStep = YStep();
@@ -300,14 +318,16 @@ void V3d_RectangularGrid::DefinePoints ()
   // horizontals
   Standard_Real xl, yl;
   TColgp_SequenceOfPnt aSeqPnts;
-  for (xl = 0.0; xl <= myXSize; xl += aXStep) {
-    aSeqPnts.Append(gp_Pnt( xl, 0.0, -myOffSet));
-    aSeqPnts.Append(gp_Pnt(-xl, 0.0, -myOffSet));
-    for (yl = aYStep; yl <= myYSize; yl += aYStep) {
-      aSeqPnts.Append(gp_Pnt( xl,  yl, -myOffSet));
-      aSeqPnts.Append(gp_Pnt( xl, -yl, -myOffSet));
-      aSeqPnts.Append(gp_Pnt(-xl,  yl, -myOffSet));
-      aSeqPnts.Append(gp_Pnt(-xl, -yl, -myOffSet));
+  for (xl = 0.0; xl <= myXSize; xl += aXStep)
+  {
+    aSeqPnts.Append (gp_Pnt ( xl, 0.0, -myOffSet));
+    aSeqPnts.Append (gp_Pnt (-xl, 0.0, -myOffSet));
+    for (yl = aYStep; yl <= myYSize; yl += aYStep)
+    {
+      aSeqPnts.Append (gp_Pnt ( xl,  yl, -myOffSet));
+      aSeqPnts.Append (gp_Pnt ( xl, -yl, -myOffSet));
+      aSeqPnts.Append (gp_Pnt (-xl,  yl, -myOffSet));
+      aSeqPnts.Append (gp_Pnt (-xl, -yl, -myOffSet));
     }
   }
   if (aSeqPnts.Length())
@@ -316,9 +336,9 @@ void V3d_RectangularGrid::DefinePoints ()
     Standard_Real X,Y,Z;
     const Standard_Integer nbv = aSeqPnts.Length();
     Handle(Graphic3d_ArrayOfPoints) Vertical = new Graphic3d_ArrayOfPoints (nbv);
-    for (i=1; i<=nbv; i++)
+    for (i = 1; i <= nbv; i++)
     {
-      aSeqPnts(i).Coord(X,Y,Z);
+      aSeqPnts (i).Coord (X,Y,Z);
       Vertical->AddVertex (X,Y,Z);
     }
 
@@ -327,8 +347,9 @@ void V3d_RectangularGrid::DefinePoints ()
     myGroup->AddPrimitiveArray (Vertical, Standard_False);
   }
 
-  myGroup->SetMinMaxValues(-myXSize, -myYSize, -myOffSet, myXSize, myYSize, -myOffSet);
-  myCurXStep = aXStep, myCurYStep = aYStep;
+  myGroup->SetMinMaxValues (-myXSize, -myYSize, -myOffSet, myXSize, myYSize, -myOffSet);
+  myCurXStep = aXStep;
+  myCurYStep = aYStep;
 
   // update bounding box
   myStructure->CalculateBoundBox();
@@ -344,24 +365,28 @@ void V3d_RectangularGrid::GraphicValues (Standard_Real& theXSize, Standard_Real&
 
 void V3d_RectangularGrid::SetGraphicValues (const Standard_Real theXSize, const Standard_Real theYSize, const Standard_Real theOffSet)
 {
-  if (! myCurAreDefined) {
+  if (! myCurAreDefined)
+  {
     myXSize = theXSize;
     myYSize = theYSize;
     myOffSet = theOffSet;
   }
-  if (myXSize != theXSize) {
+  if (myXSize != theXSize)
+  {
     myXSize = theXSize;
     myCurAreDefined = Standard_False;
   }
-  if (myYSize != theYSize) {
+  if (myYSize != theYSize)
+  {
     myYSize = theYSize;
     myCurAreDefined = Standard_False;
   }
-  if (myOffSet != theOffSet) {
+  if (myOffSet != theOffSet)
+  {
     myOffSet = theOffSet;
     myCurAreDefined = Standard_False;
   }
-  if( !myCurAreDefined ) UpdateDisplay();
+  if (!myCurAreDefined) { UpdateDisplay(); }
 }
 
 //=======================================================================

@@ -27,6 +27,8 @@
 #include <V3d_Viewer.hxx>
 #include <WNT_HIDSpaceMouse.hxx>
 
+#include <iostream>
+
 // =======================================================================
 // function : AIS_ViewController
 // purpose  :
@@ -2250,6 +2252,7 @@ void AIS_ViewController::handleCameraActions (const Handle(AIS_InteractiveContex
                                               const Handle(V3d_View)& theView,
                                               const AIS_WalkDelta& theWalk)
 {
+  std::cout << "handleCameraActions\n";
   // apply view actions
   if (myGL.Orientation.ToSetViewOrient)
   {
@@ -2264,6 +2267,12 @@ void AIS_ViewController::handleCameraActions (const Handle(AIS_InteractiveContex
     theView->FitAll (aFitMargin, false);
     theView->Invalidate();
     myGL.Orientation.ToFitAll = false;
+  }
+
+  if (theView->Viewer()->Grid()->IsActive()
+   && theView->Viewer()->GridEcho())
+  {
+    theView->Viewer()->Grid()->Update();
   }
 
   if (myGL.IsNewGesture)
@@ -3101,6 +3110,7 @@ void AIS_ViewController::handleDynamicHighlight (const Handle(AIS_InteractiveCon
 void AIS_ViewController::handleMoveTo (const Handle(AIS_InteractiveContext)& theCtx,
                                        const Handle(V3d_View)& theView)
 {
+  std::cout << "handleMoveTo\n";
   handleSelectionPick   (theCtx, theView);
   handleDynamicHighlight(theCtx, theView);
   handleSelectionPoly   (theCtx, theView);
