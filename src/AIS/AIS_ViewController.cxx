@@ -2266,6 +2266,12 @@ void AIS_ViewController::handleCameraActions (const Handle(AIS_InteractiveContex
     myGL.Orientation.ToFitAll = false;
   }
 
+  if (theView->Viewer()->Grid()->IsActive()
+   && theView->Viewer()->GridEcho())
+  {
+    theView->Viewer()->Grid()->Update();
+  }
+
   if (myGL.IsNewGesture)
   {
     if (myAnchorPointPrs1->HasInteractiveContext())

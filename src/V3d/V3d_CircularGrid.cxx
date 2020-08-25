@@ -106,6 +106,11 @@ void V3d_CircularGrid::Display ()
   UpdateDisplay();
 }
 
+void V3d_CircularGrid::Update()
+{
+  //
+}
+
 void V3d_CircularGrid::Erase () const
 {
   myStructure->Erase ();

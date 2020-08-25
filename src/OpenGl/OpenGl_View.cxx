@@ -108,6 +108,7 @@ OpenGl_View::OpenGl_View (const Handle(Graphic3d_StructureManager)& theMgr,
   myCaps           (theCaps),
   myWasRedrawnGL   (Standard_False),
   myToShowGradTrihedron  (false),
+  myToShowGrid           (false),
   myStateCounter         (theCounter),
   myCurrLightSourceState (theCounter->Increment()),
   myLightsRevision       (0),
@@ -500,6 +501,25 @@ void OpenGl_View::GraduatedTrihedronErase()
 {
   myGraduatedTrihedron.Release (myWorkspace->GetGlContext().operator->());
   myToShowGradTrihedron = false;
+}
+
+// =======================================================================
+// function : GridDisplay
+// purpose  :
+// =======================================================================
+void OpenGl_View::GridDisplay (const Aspect_GridParams& theGridParams)
+{
+  myGridParams = theGridParams;
+  myToShowGrid = true;
+}
+
+// =======================================================================
+// function : GridErase
+// purpose  :
+// =======================================================================
+void OpenGl_View::GridErase()
+{
+  myToShowGrid = false;
 }
 
 // =======================================================================
@@ -2433,8 +2453,14 @@ void OpenGl_View::render (Graphic3d_Camera::Projection theProjection,
     aContext->core11fwd->glDisable (GL_LIGHTING);
   }
 
+  // ====================================
+  //      Step 3: Redraw grid
+  // ====================================
+
+  renderGrid();
+
   // =================================
-  //      Step 3: Redraw main plane
+  //      Step 4: Redraw main plane
   // =================================
 
   // if the view is scaled normal vectors are scaled to unit
@@ -2495,7 +2521,7 @@ void OpenGl_View::render (Graphic3d_Camera::Projection theProjection,
   myWorkspace->SetEnvironmentTexture (Handle(OpenGl_TextureSet)());
 
   // ===============================
-  //      Step 4: Trihedron
+  //      Step 5: Trihedron
   // ===============================
 
   // Resetting GL parameters according to the default aspects
@@ -2523,6 +2549,82 @@ void OpenGl_View::render (Graphic3d_Camera::Projection theProjection,
   {
     aContext->ShaderManager()->PushState (Handle(OpenGl_ShaderProgram)());
   }
+}
+
+// =======================================================================
+// function : renderGrid
+// purpose  :
+// =======================================================================
+void OpenGl_View::renderGrid()
+{
+  if (!myToShowGrid)
+  {
+    return;
+  }
+
+  const Handle(OpenGl_Context)& aContext = myWorkspace->GetGlContext();
+
+  Bnd_Box aBnd = MinMaxValues (Standard_True);
+  aBnd.Add (myGridParams.Position());
+  aContext->Camera()->ZFitAll (1.0, aBnd, aBnd);
+
+  const Standard_Real aZNear = aContext->Camera()->ZNear();
+  const Standard_Real aZFar = aContext->Camera()->ZFar();
+  const Graphic3d_Camera::Projection aProjectionType = aContext->Camera()->ProjectionType();
+
+  aContext->Camera()->SetZRange (aZNear, Max (aZNear * 1.001, aZFar));
+  if (myGridParams.IsBackground())
+  {
+    aContext->Camera()->SetProjectionType (Graphic3d_Camera::Projection_Orthographic);
+  }
+
+  aContext->ProjectionState.Push();
+  aContext->ProjectionState.SetCurrent (aContext->Camera()->ProjectionMatrixF());
+  aContext->ApplyProjectionMatrix();
+
+  OpenGl_Mat4 aWorldViewState = myGridParams.IsBackground()
+                              ? OpenGl_Mat4()
+                              : aContext->WorldViewState.Current();
+  OpenGl_Mat4 aMat;
+  const gp_Pnt& aPosition = myGridParams.Position();
+  aMat.SetColumn (3, Graphic3d_Vec4 ((float)aPosition.X(), (float)aPosition.Y(), (float)aPosition.Z(), 1.0));
+
+  aContext->WorldViewState.Push();
+  aContext->WorldViewState.SetCurrent (aWorldViewState * aMat);
+  aContext->ApplyWorldViewMatrix();
+
+  aContext->core11fwd->glEnable (GL_DEPTH_TEST);
+  aContext->core11fwd->glDepthFunc (GL_LESS);
+  aContext->core11fwd->glEnable (GL_BLEND);
+  aContext->core11fwd->glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  const Standard_Real aCameraScale = aContext->Camera()->Scale();
+  Standard_Real aScale = myGridParams.IsInfinity()
+                       ? 10.0 / pow (10.0, floor (log10 (Max (aCameraScale, 1.0))) + 1.0)
+                       : myGridParams.Scale();
+
+  if (aContext->ShaderManager()->BindGridProgram())
+  {
+    const Handle(OpenGl_ShaderProgram)& aProg = aContext->ActiveProgram();
+    aProg->SetUniform (aContext, "uZNear", GLfloat (aContext->Camera()->ZNear()));
+    aProg->SetUniform (aContext, "uZFar",  GLfloat (aContext->Camera()->ZFar()));
+    aProg->SetUniform (aContext, "uScale", GLfloat (aScale));
+    aProg->SetUniform (aContext, "uThickness", GLfloat (myGridParams.LineThickness()));
+    aProg->SetUniform (aContext, "uColor", OpenGl_Vec3 (myGridParams.Color().Rgb()));
+    aProg->SetUniform (aContext, "uIsDrawAxis", GLboolean (myGridParams.IsDrawAxis()));
+    aProg->SetUniform (aContext, "uIsBackground", GLboolean (myGridParams.IsBackground()));
+
+    aContext->core11fwd->glDrawArrays (GL_TRIANGLES, 0, 6);
+    aContext->BindProgram (NULL);
+  }
+
+  aContext->Camera()->SetZRange (aZNear, aZFar);
+  aContext->Camera()->SetProjectionType (aProjectionType);
+
+  aContext->WorldViewState.Pop();
+  aContext->ProjectionState.Pop();
+  aContext->ApplyWorldViewMatrix();
+  aContext->ApplyProjectionMatrix();
 }
 
 // =======================================================================

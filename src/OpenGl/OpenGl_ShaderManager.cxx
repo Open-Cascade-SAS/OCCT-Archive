@@ -1362,6 +1362,27 @@ Standard_Boolean OpenGl_ShaderManager::preparePBREnvBakingProgram (Standard_Inte
 }
 
 // =======================================================================
+// function : prepareGridProgram
+// purpose  :
+// =======================================================================
+Standard_Boolean OpenGl_ShaderManager::prepareGridProgram()
+{
+  Handle(Graphic3d_ShaderProgram) aProgramSrc = getGridProgram();
+
+  TCollection_AsciiString aKey;
+  if (!Create (aProgramSrc, aKey, myGridProgram))
+  {
+    myGridProgram = new OpenGl_ShaderProgram(); // just mark as invalid
+    return Standard_False;
+  }
+
+  myContext->BindProgram (myGridProgram);
+  myContext->BindProgram (Handle(OpenGl_ShaderProgram)());
+
+  return Standard_True;
+}
+
+// =======================================================================
 // function : GetBgCubeMapProgram
 // purpose  :
 // =======================================================================

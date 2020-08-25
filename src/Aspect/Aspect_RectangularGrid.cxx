@@ -27,8 +27,11 @@ Aspect_RectangularGrid::Aspect_RectangularGrid(
                                const Standard_Real aFirstAngle,
                                const Standard_Real aSecondAngle,
                                const Standard_Real aRotationAngle)
-:Aspect_Grid(anXOrigin,anYOrigin,aRotationAngle),myXStep(aXStep),myYStep(aYStep),myFirstAngle(aFirstAngle),mySecondAngle(aSecondAngle)
-
+: Aspect_Grid (anXOrigin,anYOrigin,aRotationAngle),
+  myXStep (aXStep),
+  myYStep (aYStep),
+  myFirstAngle (aFirstAngle),
+  mySecondAngle (aSecondAngle)
 {
   Standard_NumericError_Raise_if(!CheckAngle (aFirstAngle,mySecondAngle),
                                  "networks are parallel");
