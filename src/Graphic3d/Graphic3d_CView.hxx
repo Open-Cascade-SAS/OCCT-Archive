@@ -14,6 +14,7 @@
 #ifndef _Graphic3d_CView_HeaderFile
 #define _Graphic3d_CView_HeaderFile
 
+#include <Aspect_GridParams.hxx>
 #include <Aspect_RenderingContext.hxx>
 #include <Aspect_SkydomeBackground.hxx>
 #include <Aspect_Window.hxx>
@@ -529,6 +530,12 @@ public: //! @name obsolete Graduated Trihedron functionality
 
   //! Erases Graduated Trihedron.
   virtual void GraduatedTrihedronErase() {}
+
+  //! Displays Grid.
+  virtual void GridDisplay (const Aspect_GridParams& theGridParams) { (void)theGridParams; }
+
+  //! Erases Grid.
+  virtual void GridErase() {}
 
   //! Sets minimum and maximum points of scene bounding box for Graduated Trihedron stored in graphic view object.
   //! @param theMin [in] the minimum point of scene.

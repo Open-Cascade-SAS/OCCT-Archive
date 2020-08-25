@@ -3779,6 +3779,24 @@ void V3d_View::GraduatedTrihedronErase()
   myView->GraduatedTrihedronErase();
 }
 
+//=============================================================================
+//function : GridDisplay
+//purpose  :
+//=============================================================================
+void V3d_View::GridDisplay (const Aspect_GridParams& theGridParams)
+{
+  myView->GridDisplay (theGridParams);
+}
+
+//=============================================================================
+//function : GridErase
+//purpose  :
+//=============================================================================
+void V3d_View::GridErase()
+{
+  myView->GridErase();
+}
+
 // =======================================================================
 // function : DumpJson
 // purpose  :

@@ -1503,6 +1503,10 @@ void AIS_ViewController::handlePanning (const Handle(V3d_View)& theView)
   AbortViewAnimation();
 
   const Handle(Graphic3d_Camera)& aCam = theView->Camera();
+  aCam->SetPanningVector(aCam->PanningVector() +
+                         gp_Vec2d(theView->Convert(myGL.Panning.Delta.x()),
+                                  theView->Convert(myGL.Panning.Delta.y())));
+
   if (aCam->IsOrthographic()
   || !hasPanningAnchorPoint())
   {
@@ -1721,6 +1725,7 @@ void AIS_ViewController::handleOrbitRotation (const Handle(V3d_View)& theView,
     myCamStartOpToEye    = gp_Vec (myRotatePnt3d, aCam->Eye()).Transformed (aTrsf);
     myCamStartOpToCenter = gp_Vec (myRotatePnt3d, aCam->Center()).Transformed (aTrsf);
 
+    aCam->SetRotationPoint (myRotatePnt3d);
     theView->Invalidate();
   }
 
@@ -1833,6 +1838,7 @@ void AIS_ViewController::handleViewRotation (const Handle(V3d_View)& theView,
     const gp_Quaternion aRot = aTrsf.GetRotation();
     double aRollDummy = 0.0;
     aRot.GetEulerAngles (gp_YawPitchRoll, myRotateStartYawPitchRoll[0], myRotateStartYawPitchRoll[1], aRollDummy);
+    aCam->SetRotationPoint (gp::Origin());
   }
   if (toRotateAnyway)
   {
@@ -2257,6 +2263,12 @@ void AIS_ViewController::handleCameraActions (const Handle(AIS_InteractiveContex
     theView->FitAll (aFitMargin, false);
     theView->Invalidate();
     myGL.Orientation.ToFitAll = false;
+  }
+
+  if (theView->Viewer()->Grid()->IsActive()
+   && theView->Viewer()->GridEcho())
+  {
+    theView->Viewer()->Grid()->Update();
   }
 
   if (myGL.IsNewGesture)

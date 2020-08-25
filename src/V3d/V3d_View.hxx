@@ -318,6 +318,12 @@ public:
   //! Erases a graduated trihedron from the view.
   Standard_EXPORT void GraduatedTrihedronErase();
 
+  //! Displays a grid.
+  Standard_EXPORT void GridDisplay (const Aspect_GridParams& theGridParams);
+
+  //! Erases a grid from the view.
+  Standard_EXPORT void GridErase();
+
   //! modify the Projection of the view perpendicularly to
   //! the privileged plane of the viewer.
   Standard_EXPORT void SetFront();

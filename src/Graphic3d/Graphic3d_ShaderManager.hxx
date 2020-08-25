@@ -148,6 +148,9 @@ protected:
   //! Generates shader program to render correctly colored quad.
   Standard_EXPORT Handle(Graphic3d_ShaderProgram) getColoredQuadProgram() const;
 
+  //! Generates shader program to render grid.
+  Standard_EXPORT Handle(Graphic3d_ShaderProgram) getGridProgram() const;
+
   //! Prepare GLSL source for IBL generation used in PBR pipeline.
   Standard_EXPORT Handle(Graphic3d_ShaderProgram) getPBREnvBakingProgram (Standard_Integer theIndex) const;
 

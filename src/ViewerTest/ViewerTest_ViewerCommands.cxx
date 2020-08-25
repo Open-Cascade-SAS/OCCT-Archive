@@ -5393,6 +5393,116 @@ static int VGrid (Draw_Interpretor& /*theDI*/,
 }
 
 //==============================================================================
+//function : VInfGrid
+//purpose  :
+//==============================================================================
+static int VInfGrid (Draw_Interpretor& /*theDI*/,
+                     Standard_Integer  theArgNb,
+                     const char**      theArgVec)
+{
+  Handle(V3d_View)   aView = ViewerTest::CurrentView();
+  Handle(V3d_Viewer) aViewer = ViewerTest::GetViewerFromContext();
+  if (aView.IsNull() || aViewer.IsNull())
+  {
+    Message::SendFail("Error: no active viewer");
+    return 1;
+  }
+
+  Aspect_GridParams aGridParams;
+  Standard_Boolean toDisplay = true;
+  ViewerTest_AutoUpdater anUpdateTool (ViewerTest::GetAISContext(), aView);
+  for (Standard_Integer anArgIter = 1; anArgIter < theArgNb; ++anArgIter)
+  {
+    TCollection_AsciiString anArg (theArgVec[anArgIter]);
+    anArg.LowerCase();
+    if (anUpdateTool.parseRedrawMode(theArgVec[anArgIter]))
+    {
+      continue;
+    }
+    else if (anArgIter < theArgNb && anArg == "-background")
+    {
+      aGridParams.SetIsBackground (Standard_True);
+    }
+    else if (anArgIter + 1 < theArgNb && anArg == "-drawaxis")
+    {
+      Standard_Integer aVal = Draw::Atoi (theArgVec[++anArgIter]);
+      if (aVal == 0)
+      {
+        aGridParams.SetIsDrawAxis (Standard_False);
+      }
+      else if (aVal == 1)
+      {
+        aGridParams.SetIsDrawAxis (Standard_True);
+      }
+      else
+      {
+        Message::SendFail() << "Syntax error at '" << anArg << " " << aVal <<"'";
+        return 1;
+      }
+    }
+    else if (anArgIter + 3 < theArgNb && (anArg == "-color"))
+    {
+      Quantity_Color aColor;
+      aColor.SetValues (Draw::Atof (theArgVec[anArgIter + 1]), Draw::Atof (theArgVec[anArgIter + 2]), Draw::Atof (theArgVec[anArgIter + 3]), Quantity_TOC_RGB);
+      aGridParams.SetColor (aColor);
+      anArgIter += 3;
+    }
+    else if (anArgIter + 3 < theArgNb && anArg == "-origin")
+    {
+      gp_Pnt aPoint;
+      aPoint.SetXYZ (gp_XYZ (Draw::Atof (theArgVec[anArgIter + 1]), Draw::Atof (theArgVec[anArgIter + 2]), Draw::Atof (theArgVec[anArgIter + 3])));
+      aGridParams.SetPosition (aPoint);
+      anArgIter += 3;
+    }
+    else if (anArgIter + 1 < theArgNb && (anArg == "-inf"))
+    {
+      Standard_Integer aVal = Draw::Atoi(theArgVec[++anArgIter]);
+      if (aVal == 0)
+      {
+        aGridParams.SetIsInfinity (Standard_False);
+      }
+      else if (aVal == 1)
+      {
+        aGridParams.SetIsInfinity (Standard_True);
+      }
+      else
+      {
+        Message::SendFail() << "Syntax error at '" << anArg << " " << aVal << "'";
+        return 1;
+      }
+    }
+    else if (anArgIter + 1 < theArgNb && (anArg == "-scale"))
+    {
+      aGridParams.SetScale (Draw::Atof(theArgVec[++anArgIter]));
+    }
+    else if (anArgIter + 1 < theArgNb && anArg == "-linethickness")
+    {
+      aGridParams.SetLineThickness (Draw::Atof (theArgVec[++anArgIter]));
+    }
+    else if (anArgIter >= theArgNb && anArg == "off")
+    {
+      toDisplay = Standard_False;
+    }
+    else
+    {
+      Message::SendFail() << "Syntax error at '" << anArg << "'";
+      return 1;
+    }
+  }
+
+  if (toDisplay)
+  {
+    ViewerTest::CurrentView()->GridDisplay (aGridParams);
+  }
+  else
+  {
+    ViewerTest::CurrentView()->GridErase();
+  }
+
+  return 0;
+}
+
+//==============================================================================
 //function : VPriviledgedPlane
 //purpose  :
 //==============================================================================
@@ -14351,6 +14461,11 @@ vgrid [off] [-type {rect|circ}] [-mode {line|point}] [-origin X Y] [-rotAngle An
       [-step X Y] [-size DX DY]
       [-step StepRadius NbDivisions] [-radius Radius]
 )" /* [vgrid] */);
+
+  addCmd("vinfgrid", VInfGrid, /* [vinfgrid] */ R"(
+vinfgrid [off] [-background] [-drawAxis {0|1}] [-color R G B] [-origin X Y Z] 
+      [-inf {0|1}] [-scale value] [-lineThickness value]
+)" /* [vinfgrid] */);
 
   addCmd ("vpriviledgedplane", VPriviledgedPlane, /* [vpriviledgedplane] */ R"(
 vpriviledgedplane [Ox Oy Oz Nx Ny Nz [Xx Xy Xz]]
