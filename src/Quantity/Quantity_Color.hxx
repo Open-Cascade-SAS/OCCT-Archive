@@ -267,6 +267,9 @@ Standard_Boolean operator == (const Quantity_Color& Other) const
   //! Dumps the content of me into the stream
   Standard_EXPORT void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
 
+  //! Inits the content of me from the stream
+  Standard_EXPORT Standard_Boolean InitFromJson (const Standard_SStream& theSStream, Standard_Integer& theStreamPos);
+
 private:
 
   //! Converts HLS components into RGB ones.
