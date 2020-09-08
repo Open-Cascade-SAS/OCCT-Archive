@@ -484,6 +484,16 @@ void SelectMgr_SelectionManager::loadMode (const Handle(SelectMgr_SelectableObje
         theObject->AddSelection (aNewSel, theMode);
         aNewSel->UpdateBVHStatus (SelectMgr_TBU_Remove);
         aNewSel->SetSelectionState (SelectMgr_SOS_Deactivated);
+
+        if (mySelector->ToPrebuildBVH())
+        {
+          NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>::Iterator anIter(aNewSel->Entities());
+          for (; anIter.More(); anIter.Next())
+          {
+            const Handle(Select3D_SensitiveEntity)& anEntity = anIter.Value()->BaseSensitive();
+            mySelector->QueueBVHBuild(anEntity);
+          }
+        }
       }
     }
     return;
@@ -495,6 +505,16 @@ void SelectMgr_SelectionManager::loadMode (const Handle(SelectMgr_SelectableObje
   {
     mySelector->AddSelectionToObject (theObject, aNewSel);
     aNewSel->UpdateBVHStatus (SelectMgr_TBU_None);
+  }
+
+  if (mySelector->ToPrebuildBVH())
+  {
+    NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>::Iterator anIter(aNewSel->Entities());
+    for (; anIter.More(); anIter.Next())
+    {
+      const Handle(Select3D_SensitiveEntity)& anEntity = anIter.Value()->BaseSensitive();
+      mySelector->QueueBVHBuild(anEntity);
+    }
   }
 }
 
