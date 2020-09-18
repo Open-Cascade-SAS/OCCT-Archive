@@ -88,6 +88,7 @@ AIS_Selection.cxx
 AIS_Selection.hxx
 AIS_SelectStatus.hxx
 AIS_SelectionModesConcurrency.hxx
+AIS_SelectionScheme.hxx
 AIS_SequenceOfInteractive.hxx
 AIS_Shape.cxx
 AIS_Shape.hxx
