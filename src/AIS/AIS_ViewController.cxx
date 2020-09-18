@@ -2067,14 +2067,7 @@ void AIS_ViewController::handleSelectionPick (const Handle(AIS_InteractiveContex
         ResetPreviousMoveTo();
       }
 
-      if (myGL.Selection.IsXOR)
-      {
-        theCtx->ShiftSelect (false);
-      }
-      else
-      {
-        theCtx->Select (false);
-      }
+       theCtx->SelectDetected (myGL.Selection.IsXOR ? AIS_SelectionScheme_XOR : AIS_SelectionScheme_Replace);
 
       // selection affects all Views
       theView->Viewer()->Invalidate();
@@ -2175,9 +2168,12 @@ void AIS_ViewController::handleSelectionPoly (const Handle(AIS_InteractiveContex
           }
           else
           {
-            theCtx->Select (Min (aPnt1.x(), aPnt2.x()), Min (aPnt1.y(), aPnt2.y()),
-                            Max (aPnt1.x(), aPnt2.x()), Max (aPnt1.y(), aPnt2.y()),
-                            theView, false);
+            theCtx->MainSelector()->AllowOverlapDetection (aPnt1.y() != Min (aPnt1.y(), aPnt2.y()));
+            theCtx->SelectRectangle (Graphic3d_Vec2i (Min (aPnt1.x(), aPnt2.x()), Min (aPnt1.y(), aPnt2.y())),
+                                     Graphic3d_Vec2i (Max (aPnt1.x(), aPnt2.x()), Max (aPnt1.y(), aPnt2.y())),
+                                      theView,
+                                      myGL.Selection.IsXOR ? AIS_SelectionScheme_XOR : AIS_SelectionScheme_Replace);
+            theCtx->MainSelector()->AllowOverlapDetection (false);
           }
           theCtx->MainSelector()->AllowOverlapDetection (false);
         }
@@ -2193,14 +2189,8 @@ void AIS_ViewController::handleSelectionPoly (const Handle(AIS_InteractiveContex
           }
 
           theCtx->MainSelector()->AllowOverlapDetection (false);
-          if (myGL.Selection.IsXOR)
-          {
-            theCtx->ShiftSelect (aPolyline, theView, false);
-          }
-          else
-          {
-            theCtx->Select (aPolyline, theView, false);
-          }
+          theCtx->SelectPolygon (aPolyline, theView,
+                                 myGL.Selection.IsXOR ? AIS_SelectionScheme_XOR : AIS_SelectionScheme_Replace);
         }
       }
 
