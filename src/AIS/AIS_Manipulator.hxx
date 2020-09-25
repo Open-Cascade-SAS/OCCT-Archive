@@ -256,6 +256,12 @@ public: //! @name Configuration of graphical transformations
   //! Returns state of zoom persistence mode, whether it turned on or off.
   Standard_Boolean ZoomPersistence() const { return myIsZoomPersistentMode; }
 
+  //! Enable or disable flat skin mode for the manipulator.
+  Standard_EXPORT void SetFlatMode (const Standard_Boolean theIsFlatMode);
+
+  //! Returns state of flat skin mode, whether it turned on or off.
+  Standard_Boolean IsFlatMode() const { return myIsFlatMode; }
+
   //! Redefines transform persistence management to setup transformation for sub-presentation of axes.
   //! @warning this interactive object does not support custom transformation persistence when
   //! using \sa ZoomPersistence mode. In this mode the transformation persistence flags for
@@ -428,6 +434,7 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
 
     void Init (const Standard_ShortReal theRadius,
                const gp_Pnt& thePosition,
+               const Standard_Boolean theIsFlatSkinMode = Standard_False,
                const Standard_Integer theSlicesNb = 20,
                const Standard_Integer theStacksNb = 20);
 
@@ -475,6 +482,7 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
     void Init(const Standard_ShortReal theRadius,
               const gp_Ax1&            thePosition,
               const gp_Dir&            theXDirection,
+              const Standard_Boolean   theIsFlatSkinMode = Standard_False,
               const Standard_Integer   theSlicesNb = 5,
               const Standard_Integer   theStacksNb = 5);
 
@@ -499,7 +507,8 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
 
     void Compute (const Handle(PrsMgr_PresentationManager)& thePrsMgr,
                   const Handle(Prs3d_Presentation)& thePrs,
-                  const Handle(Prs3d_ShadingAspect)& theAspect);
+                  const Handle(Prs3d_ShadingAspect)& theAspect,
+                  const Standard_Boolean theIsFlatSkinMode = Standard_False);
 
     const gp_Ax1& ReferenceAxis() const { return myReferenceAxis; }
 
@@ -687,8 +696,9 @@ protected:
   AIS_ManipulatorMode myCurrentMode; //!< Name of active manipulation mode.
 
   Standard_Boolean myIsActivationOnDetection; //!< Manual activation of modes (not on parts selection).
-  Standard_Boolean myIsZoomPersistentMode; //!< Zoom persistence mode activation.
-  BehaviorOnTransform myBehaviorOnTransform; //!< Behavior settings applied on manipulator when transforming an object.
+  Standard_Boolean myIsZoomPersistentMode;    //!< Zoom persistence mode activation.
+  Standard_Boolean myIsFlatMode;              //!< Flat skin mode activation.
+  BehaviorOnTransform myBehaviorOnTransform;  //!< Behavior settings applied on manipulator when transforming an object.
 
 protected: //! @name Fields for interactive transformation. Fields only for internal needs. They do not have public interface.
 
