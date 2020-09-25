@@ -389,10 +389,40 @@ void OpenGl_Structure::renderGeometry (const Handle(OpenGl_Workspace)& theWorksp
     myInstancedStructure->renderGeometry (theWorkspace, theHasClosed);
   }
 
+  const Handle(OpenGl_Context)& aCtx = theWorkspace->GetGlContext();
   for (OpenGl_Structure::GroupIterator aGroupIter (myGroups); aGroupIter.More(); aGroupIter.Next())
   {
+    const gp_Trsf& aTrsf = aGroupIter.Value()->Transformation();
+    applyTransformation (aCtx, aTrsf, Standard_True);
+
     theHasClosed = theHasClosed || aGroupIter.Value()->IsClosed();
     aGroupIter.Value()->Render (theWorkspace);
+
+    applyTransformation (aCtx, aTrsf, Standard_False);
+  }
+}
+
+// =======================================================================
+// function : applyTransformation
+// purpose  :
+// =======================================================================
+void OpenGl_Structure::applyTransformation (const Handle(OpenGl_Context)& theContext,
+                                            const gp_Trsf& theTrsf,
+                                            const Standard_Boolean toEnable) const
+{
+  if (toEnable)
+  {
+    OpenGl_Mat4 aTrsf;
+    theTrsf.GetMat4 (aTrsf);
+    theContext->ModelWorldState.Push();
+    OpenGl_Mat4& aModelWorld = theContext->ModelWorldState.ChangeCurrent();
+    aModelWorld = aModelWorld * aTrsf;
+    theContext->ApplyModelViewMatrix();
+  }
+  else
+  {
+    theContext->ModelWorldState.Pop();
+    theContext->ApplyModelViewMatrix();
   }
 }
 

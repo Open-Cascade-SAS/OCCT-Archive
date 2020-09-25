@@ -12862,6 +12862,7 @@ static int VManipulator (Draw_Interpretor& theDi,
   aCmd.AddOption ("pos",               "... x y z [nx ny nz [xx xy xz]] - set position of manipulator");
   aCmd.AddOption ("size",              "... size - set size of manipulator");
   aCmd.AddOption ("zoomable",          "... {0|1} - set zoom persistence");
+  aCmd.AddOption ("flat",              "... {0|1} - set flat skin mode");
 
   aCmd.Parse (theArgsNb, theArgVec);
 
@@ -12994,6 +12995,16 @@ static int VManipulator (Draw_Interpretor& theDi,
   if (aCmd.HasOption ("zoomable", 1, Standard_True))
   {
     aManipulator->SetZoomPersistence (!aCmd.ArgBool ("zoomable"));
+
+    if (ViewerTest::GetAISContext()->IsDisplayed (aManipulator))
+    {
+      ViewerTest::GetAISContext()->Remove  (aManipulator, Standard_False);
+      ViewerTest::GetAISContext()->Display (aManipulator, Standard_False);
+    }
+  }
+  if (aCmd.HasOption ("flat", 1, Standard_True))
+  {
+    aManipulator->SetSkinMode ((AIS_Manipulator::ManipulatorSkin) aCmd.ArgBool ("flat"));
 
     if (ViewerTest::GetAISContext()->IsDisplayed (aManipulator))
     {
@@ -14931,7 +14942,8 @@ void ViewerTest::ViewerCommands(Draw_Interpretor& theCommands)
       "\n      '-parts axis mode   {0|1}'        - set visual part"
       "\n      '-pos x y z [nx ny nz [xx xy xz]' - set position of manipulator"
       "\n      '-size value'                     - set size of manipulator"
-      "\n      '-zoomable {0|1}'                 - set zoom persistence",
+      "\n      '-zoomable {0|1}'                 - set zoom persistence"
+      "\n      '-flat {0|1}'                     - set flat skin mode",
     __FILE__, VManipulator, group);
 
   theCommands.Add("vselprops",

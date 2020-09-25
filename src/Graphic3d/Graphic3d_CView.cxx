@@ -291,6 +291,8 @@ void Graphic3d_CView::ReCompute (const Handle(Graphic3d_Structure)& theStruct)
     return;
   }
 
+  theStruct->RecomputeTransformation (myCamera);
+
   const Graphic3d_TypeOfAnswer anAnswer = acceptDisplay (theStruct->Visual());
   if (anAnswer != Graphic3d_TOA_COMPUTE)
   {
@@ -597,6 +599,11 @@ void Graphic3d_CView::Compute()
     aStructIter.Value()->SetHLRValidation (Standard_False);
   }
 
+  for (Graphic3d_MapOfStructure::Iterator aStructIter (myStructsDisplayed); aStructIter.More(); aStructIter.Next())
+  {
+    aStructIter.Value()->RecomputeTransformation (myCamera);
+  }
+
   if (!ComputedMode())
   {
     return;
@@ -696,6 +703,8 @@ void Graphic3d_CView::Display (const Handle(Graphic3d_Structure)& theStructure)
     myStructsComputed .Remove (anIndex);
     anIndex = 0;
   }
+
+  theStructure->RecomputeTransformation (myCamera);
 
   Graphic3d_TypeOfAnswer anAnswer = acceptDisplay (theStructure->Visual());
   if (anAnswer == Graphic3d_TOA_NO)
