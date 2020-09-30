@@ -225,7 +225,7 @@ AIS_Manipulator::AIS_Manipulator()
   myCurrentMode (AIS_MM_None),
   myIsActivationOnDetection (Standard_False),
   myIsZoomPersistentMode (Standard_True),
-  mySkinMode (AIS_SM_Shaded),
+  mySkinMode (ManipulatorSkin_Shaded),
   myHasStartedTransformation (Standard_False),
   myStartPosition (gp::XOY()),
   myStartPick (0.0, 0.0, 0.0),
@@ -247,7 +247,7 @@ AIS_Manipulator::AIS_Manipulator (const gp_Ax2& thePosition)
   myCurrentMode (AIS_MM_None),
   myIsActivationOnDetection (Standard_False),
   myIsZoomPersistentMode (Standard_True),
-  mySkinMode (AIS_SM_Shaded),
+  mySkinMode (ManipulatorSkin_Shaded),
   myHasStartedTransformation (Standard_False),
   myStartPosition (gp::XOY()),
   myStartPick (0.0, 0.0, 0.0),
@@ -930,7 +930,7 @@ void AIS_Manipulator::SetZoomPersistence (const Standard_Boolean theToEnable)
 //function : SetSkinMode
 //purpose  :
 //=======================================================================
-void AIS_Manipulator::SetSkinMode (const AIS_SkinMode theSkinMode)
+void AIS_Manipulator::SetSkinMode (const ManipulatorSkin theSkinMode)
 {
   if (mySkinMode != theSkinMode)
   {
@@ -1049,7 +1049,7 @@ void AIS_Manipulator::HilightSelected (const Handle(PrsMgr_PresentationManager3d
     return;
   }
 
-  if (anOwner->Mode() == AIS_MM_TranslationPlane && mySkinMode == AIS_SM_Shaded)
+  if (anOwner->Mode() == AIS_MM_TranslationPlane && mySkinMode == ManipulatorSkin_Shaded)
   {
     myDraggerHighlight->SetColor(myAxes[anOwner->Index()].Color());
     aGroup->SetGroupPrimitivesAspect(myDraggerHighlight->Aspect());
@@ -1087,7 +1087,7 @@ void AIS_Manipulator::HilightOwnerWithColor (const Handle(PrsMgr_PresentationMan
 
   aPresentation->CStructure()->ViewAffinity = thePM->StructureManager()->ObjectAffinity (Handle(Standard_Transient) (this));
 
-  if (anOwner->Mode() == AIS_MM_TranslationPlane && mySkinMode == AIS_SM_Shaded)
+  if (anOwner->Mode() == AIS_MM_TranslationPlane && mySkinMode == ManipulatorSkin_Shaded)
   {
     Handle(Prs3d_Drawer) aStyle = new Prs3d_Drawer();
     aStyle->SetColor (myAxes[anOwner->Index()].Color());
@@ -1149,7 +1149,7 @@ void AIS_Manipulator::ComputeSelection (const Handle(SelectMgr_Selection)& theSe
       const Axis& anAxis = myAxes[anIt];
       anOwner = new AIS_ManipulatorOwner (this, anIt, AIS_MM_Translation, 9);
 
-      if (mySkinMode == AIS_SM_Shaded)
+      if (mySkinMode == ManipulatorSkin_Shaded)
       {
         // define sensitivity by line
         Handle(Select3D_SensitiveSegment) aLine = new Select3D_SensitiveSegment (anOwner, gp::Origin(), anAxis.TranslatorTipPosition());
@@ -1168,7 +1168,7 @@ void AIS_Manipulator::ComputeSelection (const Handle(SelectMgr_Selection)& theSe
   {
     for (Standard_Integer anIt = 0; anIt < 3; ++anIt)
     {
-      if (!myAxes[anIt].HasRotation() || mySkinMode == AIS_SM_Flat)
+      if (!myAxes[anIt].HasRotation() || mySkinMode == ManipulatorSkin_Flat)
       {
         continue;
       }
@@ -1190,7 +1190,7 @@ void AIS_Manipulator::ComputeSelection (const Handle(SelectMgr_Selection)& theSe
   {
     for (Standard_Integer anIt = 0; anIt < 3; ++anIt)
     {
-      if (!myAxes[anIt].HasScaling() || mySkinMode == AIS_SM_Flat)
+      if (!myAxes[anIt].HasScaling() || mySkinMode == ManipulatorSkin_Flat)
       {
         continue;
       }
@@ -1222,7 +1222,7 @@ void AIS_Manipulator::ComputeSelection (const Handle(SelectMgr_Selection)& theSe
       aP2 = myAxes[((anIt + 2) % 3)].TranslatorTipPosition();
       gp_XYZ aMidP = (aP1.XYZ() + aP2.XYZ()) / 2.0;
 
-      if (mySkinMode == AIS_SM_Shaded)
+      if (mySkinMode == ManipulatorSkin_Shaded)
       {
         Handle(Select3D_SensitiveSegment) aLine1 = new Select3D_SensitiveSegment(anOwner, aP1, aP2);
         aLine1->SetSensitivityFactor(10);
@@ -1269,7 +1269,7 @@ void AIS_Manipulator::Disk::Init (const Standard_ShortReal theInnerRadius,
 //=======================================================================
 void AIS_Manipulator::Sphere::Init (const Standard_ShortReal theRadius,
                                     const gp_Pnt& thePosition,
-                                    const AIS_SkinMode theSkinMode,
+                                    const ManipulatorSkin theSkinMode,
                                     const Standard_Integer theSlicesNb,
                                     const Standard_Integer theStacksNb)
 {
@@ -1279,7 +1279,7 @@ void AIS_Manipulator::Sphere::Init (const Standard_ShortReal theRadius,
   gp_Trsf aTrsf;
   aTrsf.SetTranslation (gp_Vec(gp::Origin(), thePosition));
 
-  if (theSkinMode == AIS_SM_Flat)
+  if (theSkinMode == ManipulatorSkin_Flat)
   {
     myArray = new Graphic3d_ArrayOfTriangles (3, 3, Graphic3d_ArrayFlags_VertexNormal);
     myTriangulation = new Poly_Triangulation (3, 1, Standard_False);
@@ -1390,7 +1390,7 @@ void AIS_Manipulator::Cube::addTriangle (const Standard_Integer theIndex,
 void AIS_Manipulator::Sector::Init (const Standard_ShortReal theRadius,
                                     const gp_Ax1&            thePosition,
                                     const gp_Dir&            theXDirection,
-                                    const AIS_SkinMode       theSkinMode,
+                                    const ManipulatorSkin    theSkinMode,
                                     const Standard_Integer   theSlicesNb,
                                     const Standard_Integer   theStacksNb)
 {
@@ -1398,7 +1398,7 @@ void AIS_Manipulator::Sector::Init (const Standard_ShortReal theRadius,
   gp_Trsf aTrsf;
   aTrsf.SetTransformation (aSystem, gp_Ax3());
 
-  if (theSkinMode == AIS_SM_Flat)
+  if (theSkinMode == ManipulatorSkin_Flat)
   {
     myArray = new Graphic3d_ArrayOfTriangles (4, 6, Graphic3d_ArrayFlags_VertexNormal);
     myTriangulation = new Poly_Triangulation (4, 2, Standard_False);
@@ -1471,7 +1471,7 @@ AIS_Manipulator::Axis::Axis (const gp_Ax1& theAxis,
 void AIS_Manipulator::Axis::Compute (const Handle(PrsMgr_PresentationManager)& thePrsMgr,
                                      const Handle(Prs3d_Presentation)& thePrs,
                                      const Handle(Prs3d_ShadingAspect)& theAspect,
-                                     const AIS_SkinMode theSkinMode)
+                                     const ManipulatorSkin theSkinMode)
 {
   if (myHasTranslation)
   {
@@ -1479,7 +1479,7 @@ void AIS_Manipulator::Axis::Compute (const Handle(PrsMgr_PresentationManager)& t
     const Standard_Real aCylinderLength = myLength - anArrowLength;
     myArrowTipPos = gp_Pnt (0.0, 0.0, 0.0).Translated (myReferenceAxis.Direction().XYZ() * aCylinderLength);
 
-    if (theSkinMode == AIS_SM_Flat)
+    if (theSkinMode == ManipulatorSkin_Flat)
     {
       myTriangleArray = new Graphic3d_ArrayOfTriangles (4, 6, Graphic3d_ArrayFlags_VertexNormal);
       const Standard_Integer aSign = myReferenceAxis.Direction().X() > 0 ? -1 : 1;
@@ -1514,7 +1514,7 @@ void AIS_Manipulator::Axis::Compute (const Handle(PrsMgr_PresentationManager)& t
     }
 
     myTranslatorGroup = thePrs->NewGroup();
-    myTranslatorGroup->SetClosed (theSkinMode == AIS_SM_Shaded);
+    myTranslatorGroup->SetClosed (theSkinMode == ManipulatorSkin_Shaded);
     myTranslatorGroup->SetGroupPrimitivesAspect (theAspect->Aspect());
     myTranslatorGroup->AddPrimitiveArray (myTriangleArray);
 
@@ -1533,7 +1533,7 @@ void AIS_Manipulator::Axis::Compute (const Handle(PrsMgr_PresentationManager)& t
     }
   }
 
-  if (myHasScaling && theSkinMode == AIS_SM_Shaded)
+  if (myHasScaling && theSkinMode == ManipulatorSkin_Shaded)
   {
     myCubePos = myReferenceAxis.Direction().XYZ() * (myLength + myIndent);
     myCube.Init (gp_Ax1 (myCubePos, myReferenceAxis.Direction()), myBoxSize);
@@ -1558,7 +1558,7 @@ void AIS_Manipulator::Axis::Compute (const Handle(PrsMgr_PresentationManager)& t
     }
   }
 
-  if (myHasRotation && theSkinMode == AIS_SM_Shaded)
+  if (myHasRotation && theSkinMode == ManipulatorSkin_Shaded)
   {
     myCircleRadius = myInnerRadius + myIndent * 2 + myDiskThickness * 0.5f;
     myCircle.Init (myInnerRadius + myIndent * 2, myInnerRadius + myDiskThickness + myIndent * 2, gp_Ax1(gp::Origin(), myReferenceAxis.Direction()), myFacettesNumber * 2);
@@ -1591,12 +1591,12 @@ void AIS_Manipulator::Axis::Compute (const Handle(PrsMgr_PresentationManager)& t
     else
       aXDirection = gp::DX();
 
-    gp_Pnt aPosition = theSkinMode == AIS_SM_Flat ? gp_Pnt (myReferenceAxis.Direction().XYZ() * (-myAxisRadius)) : gp::Origin();
-    Standard_ShortReal aRadius = theSkinMode == AIS_SM_Flat ? myLength : myInnerRadius + myIndent * 2;
+    gp_Pnt aPosition = theSkinMode == ManipulatorSkin_Flat ? gp_Pnt (myReferenceAxis.Direction().XYZ() * (-myAxisRadius)) : gp::Origin();
+    Standard_ShortReal aRadius = theSkinMode == ManipulatorSkin_Flat ? myLength : myInnerRadius + myIndent * 2;
     mySector.Init (aRadius, gp_Ax1 (aPosition, myReferenceAxis.Direction()), aXDirection, theSkinMode, myFacettesNumber * 2);
     myDraggerGroup = thePrs->NewGroup();
 
-    Handle(Graphic3d_AspectFillArea3d) aFillArea = theSkinMode == AIS_SM_Flat
+    Handle(Graphic3d_AspectFillArea3d) aFillArea = theSkinMode == ManipulatorSkin_Flat
       ? theAspect->Aspect()
       : new Graphic3d_AspectFillArea3d();
 

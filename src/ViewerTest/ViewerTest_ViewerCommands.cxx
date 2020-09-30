@@ -13004,7 +13004,7 @@ static int VManipulator (Draw_Interpretor& theDi,
   }
   if (aCmd.HasOption ("flat", 1, Standard_True))
   {
-    aManipulator->SetSkinMode ((AIS_Manipulator::AIS_SkinMode) aCmd.ArgBool ("flat"));
+    aManipulator->SetSkinMode ((AIS_Manipulator::ManipulatorSkin) aCmd.ArgBool ("flat"));
 
     if (ViewerTest::GetAISContext()->IsDisplayed (aManipulator))
     {
