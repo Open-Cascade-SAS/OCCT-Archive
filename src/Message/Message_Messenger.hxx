@@ -94,11 +94,15 @@ public:
   
   //! See above
   Standard_EXPORT void Send (const TCollection_AsciiString& theString, const Message_Gravity theGravity = Message_Warning, const Standard_Boolean putEndl = Standard_True) const;
+
+  //! See above
   
   //! See above
   Standard_EXPORT void Send (const TCollection_ExtendedString& theString, const Message_Gravity theGravity = Message_Warning, const Standard_Boolean putEndl = Standard_True) const;
 
-private:
+  //! See above
+  Standard_EXPORT void Send (const Handle(Standard_Transient)& theObject, const Message_Gravity theGravity = Message_Warning) const;
+
 
   Message_SequenceOfPrinters myPrinters;
 

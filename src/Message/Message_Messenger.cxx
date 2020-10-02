@@ -17,6 +17,7 @@
 
 #include <Message_Printer.hxx>
 #include <Message_PrinterOStream.hxx>
+#include <Standard_Dump.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(Message_Messenger,Standard_Transient)
 
@@ -126,9 +127,8 @@ void Message_Messenger::Send (const Standard_CString theString,
 
 //=======================================================================
 //function : Send
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 void Message_Messenger::Send (const TCollection_AsciiString& theString,
 				     const Message_Gravity theGravity,
 				     const Standard_Boolean putEndl) const
@@ -161,3 +161,21 @@ void Message_Messenger::Send (const TCollection_ExtendedString& theString,
     }
   }
 }
+
+//=======================================================================
+//function : Send
+//purpose  :
+//=======================================================================
+void Message_Messenger::Send (const Handle(Standard_Transient)& theObject,
+                              const Message_Gravity theGravity) const
+{
+  for (Message_SequenceOfPrinters::Iterator aPrinterIter (myPrinters); aPrinterIter.More(); aPrinterIter.Next())
+  {
+    const Handle(Message_Printer)& aPrinter = aPrinterIter.Value();
+    if (!aPrinter.IsNull())
+    {
+      aPrinter->SendObject (theObject, theGravity);
+    }
+  }
+}
+
