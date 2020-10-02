@@ -177,6 +177,35 @@ namespace
     theWorkspace->SetAllowFaceCulling (wasCullAllowed);
   }
 
+  bool isGroupClipped (const Handle(Graphic3d_Group)& theGroup, const Handle(OpenGl_Context)& theContext)
+  {
+    const Graphic3d_BndBox4f& aBoxF = theGroup->BoundingBox();
+    Graphic3d_BndBox3d aBBox = Graphic3d_BndBox3d (Graphic3d_Vec3d ((Standard_Real )aBoxF.CornerMin().x(),
+                                                  (Standard_Real )aBoxF.CornerMin().y(),
+                                                  (Standard_Real )aBoxF.CornerMin().z()),
+                                 Graphic3d_Vec3d ((Standard_Real )aBoxF.CornerMax().x(),
+                                                  (Standard_Real )aBoxF.CornerMax().y(),
+                                                  (Standard_Real )aBoxF.CornerMax().z()));
+
+    Standard_Boolean isClipped = false;
+    for (OpenGl_ClippingIterator aPlaneIt (theContext->Clipping()); aPlaneIt.More(); aPlaneIt.Next())
+    {
+      const Handle(Graphic3d_ClipPlane)& aPlane = aPlaneIt.Value();
+      if (!aPlane->IsOn())
+      {
+        continue;
+      }
+
+      const Graphic3d_ClipState aBoxState = aPlane->ProbeBox (aBBox);
+      if (aBoxState == Graphic3d_ClipState_Out)
+      {
+        isClipped = true;
+        break;
+      }
+    }
+    return isClipped;
+  }
+
   //! Render capping for specific structure.
   static void renderCappingForStructure (StencilTestSentry& theStencilSentry,
                                          const Handle(OpenGl_Workspace)& theWorkspace,
@@ -203,6 +232,11 @@ namespace
     for (OpenGl_Structure::GroupIterator aGroupIter (theStructure.Groups()); aGroupIter.More(); aGroupIter.Next())
     {
       if (!aGroupIter.Value()->IsClosed())
+      {
+        continue;
+      }
+
+      if (isGroupClipped (aGroupIter.Value(), aContext))
       {
         continue;
       }
