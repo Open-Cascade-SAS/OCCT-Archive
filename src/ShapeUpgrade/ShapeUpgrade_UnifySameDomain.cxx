@@ -67,6 +67,7 @@
 #include <TColGeom_SequenceOfSurface.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_MapOfInteger.hxx>
+#include <TColStd_SequenceOfBoolean.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -1445,6 +1446,196 @@ static TopoDS_Edge GlueEdgesWithPCurves(const TopTools_SequenceOfShape& aChain,
 }
 
 //=======================================================================
+//function : UnionPCurves
+//purpose  : 
+//=======================================================================
+
+static void UnionPCurves(const TopTools_SequenceOfShape& theChain,
+                         TopoDS_Edge& theEdge)
+{
+  TColGeom_SequenceOfSurface aSurfSeq;
+  NCollection_Sequence<TopLoc_Location> aLocSeq;
+
+  for (Standard_Integer anIndex = 1;; anIndex++)
+  {
+    Handle(Geom2d_Curve) aCurve;
+    Handle(Geom_Surface) aSurface;
+    TopLoc_Location aLocation;
+    Standard_Real aFirst, aLast;
+    TopoDS_Edge anEdge = TopoDS::Edge(theChain.Value(1));
+    BRep_Tool::CurveOnSurface(anEdge, aCurve, aSurface, aLocation, aFirst, aLast, anIndex);
+    if (aCurve.IsNull())
+      break;
+
+    aSurfSeq.Append(aSurface);
+    aLocSeq.Append(aLocation);
+  }
+  
+  TColGeom2d_SequenceOfCurve ResPCurves;
+  TColStd_SequenceOfReal ResFirsts;
+  TColStd_SequenceOfReal ResLasts;
+  TopoDS_Vertex aPrevVertex;
+  TopoDS_Edge aPrevEdge;
+  for (Standard_Integer j = 1; j <= aSurfSeq.Length(); j++)
+  {
+    TColGeom2d_SequenceOfCurve aPCurveSeq;
+    TColStd_SequenceOfReal aFirstsSeq;
+    TColStd_SequenceOfReal aLastsSeq;
+    TColStd_SequenceOfBoolean aForwardsSeq;
+    GeomAbs_CurveType aCurrentType = GeomAbs_OtherCurve;
+
+    Standard_Real aFirst, aLast;
+    for (Standard_Integer i = 1; i <= theChain.Length(); i++)
+    {
+      TopoDS_Edge anEdge = TopoDS::Edge(theChain.Value(i));
+      Standard_Boolean isForward = (anEdge.Orientation() != TopAbs_REVERSED);
+
+      Handle(Geom2d_Curve) aPCurve =
+        BRep_Tool::CurveOnSurface(anEdge, aSurfSeq(j), aLocSeq(j), aFirst, aLast);
+      if (aPCurve.IsNull())
+        continue;
+
+      Geom2dAdaptor_Curve anAdaptor(aPCurve);
+      GeomAbs_CurveType aType = anAdaptor.GetType();
+
+      if (aPCurveSeq.IsEmpty()) {
+        aPCurveSeq.Append(aPCurve);
+        aFirstsSeq.Append(aFirst);
+        aLastsSeq.Append(aLast);
+        aForwardsSeq.Append(isForward);
+        aCurrentType = aType;
+        continue;
+      }
+      Standard_Boolean isSameCurve = Standard_False;
+      Standard_Real aNewF = aFirstsSeq.Last();
+      Standard_Real aNewL = aLastsSeq.Last();
+      if (aPCurve == aPCurveSeq.Last()) {
+        isSameCurve = Standard_True;
+      }
+      else if (aType == aCurrentType) {
+        Geom2dAdaptor_Curve aPrevAdaptor(aPCurveSeq.Last());
+        switch (aType) {
+        case GeomAbs_Line: {
+          gp_Lin2d aLin = anAdaptor.Line();
+          gp_Lin2d aPrevLin = aPrevAdaptor.Line();
+          if (aLin.Contains(aPrevLin.Location(), Precision::Confusion()) &&
+              aLin.Direction().IsParallel(aPrevLin.Direction(), Precision::Angular())) {
+            isSameCurve = Standard_True;
+            gp_Pnt2d p1 = anAdaptor.Value(aFirst);
+            gp_Pnt2d p2 = anAdaptor.Value(aLast);
+            aNewF = ElCLib::Parameter(aPrevLin, p1);
+            aNewL = ElCLib::Parameter(aPrevLin, p2);
+          }
+          break;
+        }
+        case GeomAbs_Circle: {
+          gp_Circ2d aCirc = anAdaptor.Circle();
+          gp_Circ2d aPrevCirc = aPrevAdaptor.Circle();
+          if (aCirc.Location().Distance(aPrevCirc.Location()) <= Precision::Confusion() &&
+              Abs(aCirc.Radius() - aPrevCirc.Radius()) <= Precision::Confusion()) {
+            isSameCurve = Standard_True;
+            gp_Pnt2d p1 = anAdaptor.Value(aFirst);
+            gp_Pnt2d p2 = anAdaptor.Value(aLast);
+            aNewF = ElCLib::Parameter(aPrevCirc, p1);
+            aNewL = ElCLib::Parameter(aPrevCirc, p2);
+          }
+          break;
+        }
+        default:
+          break;
+        }
+      }
+      if (isSameCurve) {
+        Standard_Boolean isSameDir = (isForward == aForwardsSeq.Last());
+        if (!isSameDir) {
+          Standard_Real aTmp = aNewF;
+          aNewF = aNewL;
+          aNewL = aTmp;
+        }
+        if (aForwardsSeq.Last())
+          aLastsSeq(aLastsSeq.Length()) = aNewL;
+        else
+          aFirstsSeq(aFirstsSeq.Length()) = aNewF;
+      }
+      else {
+        aPCurveSeq.Append(aPCurve);
+        aFirstsSeq.Append(aFirst);
+        aLastsSeq.Append(aLast);
+        aForwardsSeq.Append(isForward);
+        aCurrentType = aType;
+      }
+    }
+
+    Handle(Geom2d_Curve) aResPCurve;
+    Standard_Real aResFirst, aResLast;
+    if (aPCurveSeq.Length() == 1) {
+      aResPCurve = aPCurveSeq.Last();
+      aResFirst = aFirstsSeq.Last();
+      aResLast = aLastsSeq.Last();
+    }
+    else {
+      //C1 concatenation for PCurveSeq
+      TColGeom2d_Array1OfBSplineCurve tab_c2d(0, theChain.Length() - 1);
+      for (Standard_Integer i = 1; i <= theChain.Length(); i++) {
+        Handle(Geom2d_TrimmedCurve) aTrPCurve = new Geom2d_TrimmedCurve(aPCurveSeq(i), aFirstsSeq(i), aLastsSeq(i));
+        tab_c2d(i - 1) = Geom2dConvert::CurveToBSplineCurve(aTrPCurve);
+        Geom2dConvert::C0BSplineToC1BSplineCurve(tab_c2d(i - 1), Precision::Confusion());
+        if (!aForwardsSeq(i))
+          tab_c2d(i - 1)->Reverse();
+      }
+
+      TColStd_Array1OfReal tabtolvertex(0, theChain.Length() - 1);
+      Standard_Real aMaxTol = 0.0;
+      TopoDS_Edge aPrevEdge = TopoDS::Edge(theChain(1));
+      for (Standard_Integer i = 2; i <= theChain.Length(); i++) {
+        TopoDS_Edge anEdge = TopoDS::Edge(theChain(i));
+        TopoDS_Vertex aV;
+        TopExp::CommonVertex(aPrevEdge, anEdge, aV);
+        Standard_Real aTol = BRep_Tool::Tolerance(aV);
+        tabtolvertex(i - 2) = aTol;
+        if (aTol - aMaxTol > 0.0)
+          aMaxTol = aTol;
+      }
+
+      Handle(TColGeom2d_HArray1OfBSplineCurve)  concatc2d;     //array of the concatenated curves
+      Handle(TColStd_HArray1OfInteger)        ArrayOfInd2d;  //array of the remining Vertex
+      Standard_Boolean aClosedFlag = Standard_False;
+      Geom2dConvert::ConcatC1(tab_c2d,
+        tabtolvertex,
+        ArrayOfInd2d,
+        concatc2d,
+        aClosedFlag,
+        Precision::Confusion());   //C1 concatenation
+
+      if (concatc2d->Length() > 1)
+      {
+        Geom2dConvert_CompCurveToBSplineCurve Concat2d(concatc2d->Value(concatc2d->Lower()));
+
+        for (Standard_Integer i = concatc2d->Lower() + 1; i <= concatc2d->Upper(); i++)
+          Concat2d.Add(concatc2d->Value(i), aMaxTol, Standard_True);
+
+        concatc2d->SetValue(concatc2d->Lower(), Concat2d.BSplineCurve());
+      }
+      Handle(Geom2d_BSplineCurve) aBSplineCurve = concatc2d->Value(concatc2d->Lower());
+      aResPCurve = aBSplineCurve;
+      aResFirst = aBSplineCurve->FirstParameter();
+      aResLast = aBSplineCurve->LastParameter();
+    }
+    ResPCurves.Append(aResPCurve);
+    ResFirsts.Append(aResFirst);
+    ResLasts.Append(aResLast);
+  }
+
+  BRep_Builder aBuilder;
+  Standard_Real aTol = BRep_Tool::Tolerance(theEdge);
+  for (Standard_Integer j = 1; j <= ResPCurves.Length(); j++)
+  {
+    aBuilder.UpdateEdge(theEdge, ResPCurves(j), aSurfSeq(j), aLocSeq(j), aTol);
+    aBuilder.Range(theEdge, aSurfSeq(j), aLocSeq(j), ResFirsts(j), ResLasts(j));
+  }
+}
+
+//=======================================================================
 //function : MergeSubSeq
 //purpose  : Merges a sequence of edges into one edge if possible
 //=======================================================================
@@ -1521,12 +1712,12 @@ static Standard_Boolean MergeSubSeq(const TopTools_SequenceOfShape& theChain,
     if(c3d1.IsNull() || c3d2.IsNull()) 
       return Standard_False;
 
-    while(c3d1->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
+    if (c3d1->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
       Handle(Geom_TrimmedCurve) tc =
         Handle(Geom_TrimmedCurve)::DownCast(c3d1);
       c3d1 = tc->BasisCurve();
     }
-    while(c3d2->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
+    if (c3d2->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
       Handle(Geom_TrimmedCurve) tc =
         Handle(Geom_TrimmedCurve)::DownCast(c3d2);
       c3d2 = tc->BasisCurve();
@@ -1583,6 +1774,7 @@ static Standard_Boolean MergeSubSeq(const TopTools_SequenceOfShape& theChain,
     B.Add (E,V[0]);  B.Add (E,V[1]);
     B.UpdateVertex(V[0], 0., E, 0.);
     B.UpdateVertex(V[1], dist, E, 0.);
+    UnionPCurves(theChain, E);
     OutEdge = E;
     return Standard_True;
   }
@@ -1593,7 +1785,7 @@ static Standard_Boolean MergeSubSeq(const TopTools_SequenceOfShape& theChain,
     TopoDS_Edge FE = TopoDS::Edge(theChain.First());
     Handle(Geom_Curve) c3d = BRep_Tool::Curve(FE,f,l);
 
-    while(c3d->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
+    if (c3d->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
       Handle(Geom_TrimmedCurve) tc =
         Handle(Geom_TrimmedCurve)::DownCast(c3d);
       c3d = tc->BasisCurve();
@@ -1638,7 +1830,12 @@ static Standard_Boolean MergeSubSeq(const TopTools_SequenceOfShape& theChain,
         B.Add(E,V[1]);
       }
     }
-    else {
+    else //open chain
+    {
+      Standard_Real ParamFirst = BRep_Tool::Parameter(V[0], FE);
+      TopoDS_Vertex VertexLastOnFE = sae.LastVertex(FE);
+      Standard_Real ParamLast  = BRep_Tool::Parameter(VertexLastOnFE, FE);
+      
       if (isSafeInputMode) {
         for (int k = 0; k < 2; k++) {
           if (!theContext->IsRecorded(V[k])) {
@@ -1650,39 +1847,32 @@ static Standard_Boolean MergeSubSeq(const TopTools_SequenceOfShape& theChain,
             V[k] = TopoDS::Vertex(theContext->Apply(V[k]));
         }
       }
-      gp_Pnt PV1 = BRep_Tool::Pnt(V[0]);
-      gp_Pnt PV2 = BRep_Tool::Pnt(V[1]);
-      TopoDS_Vertex VM = sae.LastVertex(FE);
-      gp_Pnt PVM = BRep_Tool::Pnt(VM);
-      GC_MakeCircle MC (PV1,PVM,PV2);
-      Handle(Geom_Circle) C = MC.Value();
-      gp_Pnt P0 = C->Location();
-      gp_Dir D1(gp_Vec(P0,PV1));
-      gp_Dir D2(gp_Vec(P0,PV2));
-      Standard_Real fpar = C->XAxis().Direction().Angle(D1);
-      if(fabs(fpar)>Precision::Confusion()) {
-        // check orientation
-        gp_Dir ND =  C->XAxis().Direction().Crossed(D1);
-        if(ND.IsOpposite(C->Axis().Direction(),Precision::Confusion())) {
-          fpar = -fpar;
-        }
-      }
-      Standard_Real lpar = C->XAxis().Direction().Angle(D2);
-      if(fabs(lpar)>Precision::Confusion()) {
-        // check orientation
-        gp_Dir ND =  C->XAxis().Direction().Crossed(D2);
-        if(ND.IsOpposite(C->Axis().Direction(),Precision::Confusion())) {
-          lpar = -lpar;
-        }
-      }
-      if (lpar < fpar) lpar += 2*M_PI;
-      Handle(Geom_TrimmedCurve) tc = new Geom_TrimmedCurve(C,fpar,lpar);
+      
+      gp_Pnt PointFirst = BRep_Tool::Pnt(V[0]);
+      while (Abs(ParamLast - ParamFirst) > 7*M_PI/8)
+        ParamLast = (ParamFirst + ParamLast)/2;
+      BRepAdaptor_Curve BAcurveFE(FE);
+      gp_Pnt PointLast = BAcurveFE.Value(ParamLast);
+      gp_Pnt Origin = Cir->Circ().Location();
+      gp_Dir Dir1 = gp_Vec(Origin, PointFirst);
+      gp_Dir Dir2 = gp_Vec(Origin, PointLast);
+      gp_Dir Vdir = Dir1 ^ Dir2;
+      gp_Ax2 anAx2(Origin, Vdir, Dir1);
+      Handle(Geom_Circle) aNewCircle = new Geom_Circle(anAx2, Cir->Radius());
+      gp_Pnt PointLastInChain = BRep_Tool::Pnt(V[1]);
+      gp_Dir DirLastInChain = gp_Vec(Origin, PointLastInChain);
+      Standard_Real lpar = Dir1.AngleWithRef(DirLastInChain, Vdir);
+      if (lpar < 0.)
+        lpar += 2*M_PI;
+
+      Handle(Geom_TrimmedCurve) tc = new Geom_TrimmedCurve(aNewCircle,0.,lpar);
       B.MakeEdge (E,tc,Precision::Confusion());
       B.Add(E,V[0]);
       B.Add(E,V[1]);
-      B.UpdateVertex(V[0], fpar, E, 0.);
+      B.UpdateVertex(V[0], 0., E, 0.);
       B.UpdateVertex(V[1], lpar, E, 0.);
     }
+    UnionPCurves(theChain, E);
     OutEdge = E;
     return Standard_True;
   }
@@ -1699,7 +1889,7 @@ static Standard_Boolean MergeSubSeq(const TopTools_SequenceOfShape& theChain,
       TopLoc_Location Loc;
       Handle(Geom_Curve) c3d = BRep_Tool::Curve(edge,Loc,fp1,lp1);
       if(c3d.IsNull()) continue;
-      while(c3d->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
+      if (c3d->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
         Handle(Geom_TrimmedCurve) tc =
           Handle(Geom_TrimmedCurve)::DownCast(c3d);
         c3d = tc->BasisCurve();
