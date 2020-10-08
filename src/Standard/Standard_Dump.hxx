@@ -121,6 +121,35 @@
   } \
 }
 
+//! @def OCCT_DUMP_FIELD_VALUES_DUMPED
+//! Append into output value: "Name": { field dumped values }
+//! It computes Dump of the fields. The expected field is a pointer.
+//! Use this macro for fields of the dumped class which has own Dump implementation.
+//! The macros is recursive. Recursion is stopped when the depth value becomes equal to zero.
+//! Depth = -1 is the default value, dump here is unlimited.
+#define OCCT_DUMP_FIELD_VALUES_DUMPED_INC(theOStream, theDepth, theField, theIncName) \
+{ \
+  if (theDepth != 0 && (void*)(theField) != NULL) \
+  { \
+    Standard_SStream aFieldStream; \
+    (theField)->DumpJson (aFieldStream, theDepth - 1); \
+    TCollection_AsciiString aName = Standard_Dump::DumpFieldToName (#theField) + theIncName; \
+    Standard_Dump::DumpKeyToClass (theOStream, aName, Standard_Dump::Text (aFieldStream)); \
+  } \
+}
+
+//! @def OCCT_DUMP_FIELD_VALUES_DUMPED
+//! Append into output value: "Name": { field dumped values }
+//! It computes Dump of the fields. The expected field is a pointer.
+//! Use this macro for fields of the dumped class which has own Dump implementation.
+//! The macros is recursive. Recursion is stopped when the depth value becomes equal to zero.
+//! Depth = -1 is the default value, dump here is unlimited.
+#define OCCT_DUMP_STREAM_VALUE_DUMPED(theOStream, theField) \
+{ \
+  TCollection_AsciiString aName = Standard_Dump::DumpFieldToName (#theField); \
+  Standard_Dump::DumpKeyToClass (theOStream, aName, Standard_Dump::Text (theField)); \
+}
+
 //! @def OCCT_DUMP_FIELD_VALUES_NUMERICAL
 //! Append real values into output values in an order: [value_1, value_2, ...]
 //! It computes Dump of the parent. The expected field is a parent class name to call ClassName::Dump.
@@ -207,6 +236,7 @@ public:
   //! - for '{' append after '\n' and indent to the next value, increment current indent value
   //! - for '}' append '\n' and current indent before it, decrement indent value
   //! - for ',' append after '\n' and indent to the next value. If the current symbol is in massive container [], do nothing
+  //! Covers result with opened and closed brackets on the top level, if it has no symbols there.
   //! @param theStream source value
   //! @param theIndent count of ' ' symbols to apply hierarchical indent of the text values
   //! @return text presentation
