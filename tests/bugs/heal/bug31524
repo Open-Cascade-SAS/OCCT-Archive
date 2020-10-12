@@ -1,0 +1,9 @@
+puts "=========================================================================="
+puts "OCC31524: Unify same domain corrupts shape representing a cylindrical tube"
+puts "=========================================================================="
+puts ""
+
+pload ALL
+restore [locate_data_file bug31524.brep] sh
+unifysamedom res sh
+checkshape sh

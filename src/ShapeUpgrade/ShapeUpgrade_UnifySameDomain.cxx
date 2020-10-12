@@ -21,7 +21,11 @@
 #include <BRepLib_MakeFace.hxx>
 #include <BRepTopAdaptor_TopolTool.hxx>
 #include <GC_MakeCircle.hxx>
+#include <Geom2d_Circle.hxx>
+#include <Geom2d_Ellipse.hxx>
+#include <Geom2d_Hyperbola.hxx>
 #include <Geom2d_Line.hxx>
+#include <Geom2d_Parabola.hxx>
 #include <GCE2d_MakeLine.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
 #include <Geom2dConvert.hxx>
@@ -67,6 +71,7 @@
 #include <TColGeom_SequenceOfSurface.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_MapOfInteger.hxx>
+#include <TColStd_SequenceOfBoolean.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -1424,6 +1429,267 @@ static TopoDS_Edge GlueEdgesWithPCurves(const TopTools_SequenceOfShape& aChain,
 }
 
 //=======================================================================
+//function : Concat2dCurves
+//purpose  : Concatenates 2d curves
+//=======================================================================
+static void Concat2dCurves(
+  TopoDS_Edge& theEdge,
+  const TopTools_SequenceOfShape& theChain)
+{
+  TColGeom_SequenceOfSurface aSurfSeq;
+  NCollection_Sequence<TopLoc_Location> aLocSeq;
+  TopoDS_Edge aFirstEdge = TopoDS::Edge(theChain(1));
+  for (int aCurveIndex = 1; ; aCurveIndex++)
+  { //Searh surfaces of edge
+    Handle(Geom2d_Curve) aCurve;
+    Handle(Geom_Surface) aSurface;
+    TopLoc_Location aLocation;
+    Standard_Real aFirst, aLast;
+    BRep_Tool::CurveOnSurface(aFirstEdge, aCurve, aSurface, aLocation, aFirst, aLast, aCurveIndex);
+    if (aCurve.IsNull())
+      break;
+    aSurfSeq.Append(aSurface);
+    aLocSeq.Append(aLocation);
+  } //End of search
+
+  Standard_Integer i, j;
+  Standard_Integer aNbCurves = theChain.Length();
+  TColGeom2d_SequenceOfBoundedCurve ResPCurves;
+  TopoDS_Vertex aPrevVertex, aFirstVOfEdge, aLastVOfEdge;
+  TopExp::Vertices(theEdge, aFirstVOfEdge, aLastVOfEdge);
+  Standard_Real fpar, lpar;
+  TColStd_Array1OfReal tabtolvertex(0, aNbCurves - 1);
+  Standard_Real MaxTol = Precision::Confusion();
+
+  for (j = 1; j <= aSurfSeq.Length(); j++)
+  { //Cycle of surfaces
+    TColGeom2d_SequenceOfCurve CurveSeq;
+    TColStd_SequenceOfReal FparSeq;
+    TColStd_SequenceOfReal LparSeq;
+    TColStd_SequenceOfReal TolSeq;
+    TColStd_SequenceOfBoolean IsFwdSeq;
+    GeomAbs_CurveType CurType = GeomAbs_OtherCurve;
+    TopoDS_Vertex FirstVertex, LastVertex;
+
+    aPrevVertex = aFirstVOfEdge;
+    for (i = 1; i <= aNbCurves; i++)
+    { //Cycle of curves
+      TopoDS_Edge anEdge = TopoDS::Edge(theChain(i));
+      TopoDS_Vertex VF, VL;
+      TopExp::Vertices(anEdge, VF, VL);
+
+      Handle(Geom2d_Curve) aPCurve =
+        BRep_Tool::CurveOnSurface(anEdge, aSurfSeq(j), aLocSeq(j), fpar, lpar);
+      if (aPCurve.IsNull())
+        continue;
+
+      Geom2dAdaptor_Curve anAdaptor(aPCurve);
+      GeomAbs_CurveType aType = anAdaptor.GetType();
+      Handle(Geom2d_Curve) aBasisCurve = anAdaptor.Curve();
+      Standard_Boolean isForward = (anEdge.Orientation() != TopAbs_REVERSED);
+
+      if (aBasisCurve->IsPeriodic()) {
+        ElCLib::AdjustPeriodic
+        (aBasisCurve->FirstParameter(), aBasisCurve->LastParameter(),
+          Precision::PConfusion(), fpar, lpar);
+      }
+
+      if (CurveSeq.IsEmpty()) {
+        CurveSeq.Append(aPCurve);
+        FparSeq.Append(fpar);
+        LparSeq.Append(lpar);
+        IsFwdSeq.Append(isForward);
+        CurType = aType;
+        FirstVertex = VF;
+      }
+      else {
+        Standard_Real aNewFpar = RealFirst(), aNewLpar = RealLast();
+        Standard_Boolean isSameCurve = Standard_False;
+        Geom2dAdaptor_Curve aPrevAdaptor(CurveSeq.Last());
+
+        if (aPCurve == CurveSeq.Last()) {
+          aNewFpar = fpar;
+          aNewLpar = lpar;
+          isSameCurve = Standard_True;
+        }
+        else if (aType == CurType) {
+          switch (aType)
+          {
+          case GeomAbs_Line:
+          {
+            Geom2d_Line aLine = anAdaptor.Line();
+            Geom2d_Line aPrevLine = aPrevAdaptor.Line();
+            if (aLine.Location().IsEqual(aPrevLine.Location(), Precision::Confusion()) &&
+              aLine.Direction().IsParallel(aPrevLine.Direction(), Precision::Angular())) {
+              gp_Pnt2d P1 = ElCLib::Value(fpar, aLine.Lin2d());
+              gp_Pnt2d P2 = ElCLib::Value(lpar, aLine.Lin2d());
+
+              aNewFpar = ElCLib::Parameter(aPrevLine.Lin2d(), P1);
+              aNewLpar = ElCLib::Parameter(aPrevLine.Lin2d(), P2);
+              isSameCurve = Standard_True;
+            }
+          }
+            break;
+          case GeomAbs_Circle:
+            break;
+          case GeomAbs_Ellipse:
+            break;
+          case GeomAbs_Hyperbola:
+            break;
+          case GeomAbs_Parabola:
+            break;
+          case GeomAbs_BezierCurve:
+            break;
+          case GeomAbs_BSplineCurve:
+            break;
+          case GeomAbs_OffsetCurve:
+            break;
+          case GeomAbs_OtherCurve:
+            break;
+          default:
+            break;
+          } //end of switch
+
+          if (isSameCurve) {
+            const Standard_Boolean isSameDir = (isForward == IsFwdSeq.Last());
+
+            if (aBasisCurve->IsPeriodic()) {
+              // Treat periodic curves.
+              const Standard_Real aPeriod = aBasisCurve->Period();
+
+              if (isSameDir) {
+                // Check if first parameter is greater then the last one.
+                while (aNewFpar > aNewLpar) {
+                  aNewFpar -= aPeriod;
+                }
+              }
+              else { // !isSameDir
+                     // Check if last parameter is greater then the first one.
+                while (aNewLpar > aNewFpar) {
+                  aNewLpar -= aPeriod;
+                }
+
+                // Change parameters
+                const Standard_Real aTmpPar = aNewLpar;
+
+                aNewLpar = aNewFpar;
+                aNewFpar = aTmpPar;
+              }
+
+              // Udjust parameters on periodic curves.
+              if (IsFwdSeq.Last()) {
+                // The current curve should be after the previous one.
+                ElCLib::AdjustPeriodic(LparSeq.Last(), LparSeq.Last() + aPeriod,
+                  Precision::PConfusion(), aNewFpar, aNewLpar);
+              }
+              else {
+                // The current curve should be before the previous one.
+                ElCLib::AdjustPeriodic(FparSeq.Last() - aPeriod, FparSeq.Last(),
+                  Precision::PConfusion(), aNewFpar, aNewLpar);
+              }
+            }
+            else if (!isSameDir) {
+              // Not periodic curves. Opposite dirs.
+              const Standard_Real aTmpPar = aNewLpar;
+
+              aNewLpar = aNewFpar;
+              aNewFpar = aTmpPar;
+            }
+
+            if (IsFwdSeq.Last()) {
+              // Update last parameter 
+              LparSeq(LparSeq.Length()) = aNewLpar;
+            }
+            else {
+              // Update first parameter 
+              FparSeq(FparSeq.Length()) = aNewFpar;
+            }
+          }
+          else {
+            // Add new curve.
+            CurveSeq.Append(aPCurve);
+            FparSeq.Append(fpar);
+            LparSeq.Append(lpar);
+            IsFwdSeq.Append(isForward);
+            TolSeq.Append(BRep_Tool::Tolerance(VF));
+            CurType = aType;
+          }
+        } //end of else
+      }
+    } //end of cycle searching and forming curves
+
+    LastVertex = aLastVOfEdge;
+    TolSeq.Append(BRep_Tool::Tolerance(LastVertex));
+
+    Standard_Boolean isReverse = Standard_False;
+    if (!IsFwdSeq.IsEmpty()) {
+      isReverse = !IsFwdSeq(1);
+    }
+    if (isReverse)
+    {
+      aFirstVOfEdge = LastVertex;
+      aLastVOfEdge = FirstVertex;
+    }
+    else
+    {
+      aFirstVOfEdge = FirstVertex;
+      aLastVOfEdge = LastVertex;
+    }
+    aFirstVOfEdge.Orientation(TopAbs_FORWARD);
+    aLastVOfEdge.Orientation(TopAbs_REVERSED);
+
+    TColGeom2d_Array1OfBSplineCurve tab_c2d(0, CurveSeq.Length() - 1); //array of the pcurves
+    for (i = 1; i <= CurveSeq.Length(); i++) {
+      Handle(Geom2d_TrimmedCurve) aTrPCurve = 
+        new Geom2d_TrimmedCurve(CurveSeq(i), FparSeq(i), LparSeq(i));
+      tab_c2d(i - 1) = Geom2dConvert::CurveToBSplineCurve(aTrPCurve);
+      Geom2dConvert::C0BSplineToC1BSplineCurve(tab_c2d(i - 1), Precision::Confusion());
+      if (!IsFwdSeq(i))
+        tab_c2d(i - 1)->Reverse();
+    }
+    
+    if (tab_c2d.Length() > 1) {
+      //Prepare C1 concatenation
+      Handle(TColGeom2d_HArray1OfBSplineCurve)  concatc2d;     //array of the concatenated curves
+      Handle(TColStd_HArray1OfInteger)        ArrayOfInd2d;  //array of the remining Vertex
+      Standard_Boolean closed_flag = Standard_False;
+      Geom2dConvert::ConcatC1(tab_c2d,
+        tabtolvertex,
+        ArrayOfInd2d,
+        concatc2d,
+        closed_flag,
+        Precision::Confusion());   //C1 concatenation
+
+      if (concatc2d->Length() > 1) //concatenation
+      {
+        Geom2dConvert_CompCurveToBSplineCurve Concat2d(concatc2d->Value(concatc2d->Lower()));
+
+        for (i = concatc2d->Lower() + 1; i <= concatc2d->Upper(); i++)
+          Concat2d.Add(concatc2d->Value(i), MaxTol, Standard_True);
+
+        concatc2d->SetValue(concatc2d->Lower(), Concat2d.BSplineCurve());
+      } //end of concatenation
+      Handle(Geom2d_BSplineCurve) aResPCurve = concatc2d->Value(concatc2d->Lower());
+      ResPCurves.Append(aResPCurve);
+    }
+    else {
+      ResPCurves.Append(tab_c2d(0));
+    }
+  } //end of cycle of surfaces
+
+  //Update result edge
+  BRep_Builder aBuilder;
+  for (j = 1; j <= ResPCurves.Length(); j++)
+  {
+    aBuilder.UpdateEdge(theEdge, ResPCurves(j), aSurfSeq(j), aLocSeq(j), MaxTol);
+    aBuilder.Range(theEdge, aSurfSeq(j), aLocSeq(j), ResPCurves(j)->FirstParameter(), ResPCurves(j)->LastParameter());
+  }
+
+  BRepLib::SameParameter(theEdge, MaxTol, Standard_True);
+
+} //end of function
+
+//=======================================================================
 //function : MergeSubSeq
 //purpose  : Merges a sequence of edges into one edge if possible
 //=======================================================================
@@ -1562,6 +1828,7 @@ static Standard_Boolean MergeSubSeq(const TopTools_SequenceOfShape& theChain,
     B.Add (E,V[0]);  B.Add (E,V[1]);
     B.UpdateVertex(V[0], 0., E, 0.);
     B.UpdateVertex(V[1], dist, E, 0.);
+    Concat2dCurves(E, theChain);
     OutEdge = E;
     return Standard_True;
   }
@@ -1659,6 +1926,7 @@ static Standard_Boolean MergeSubSeq(const TopTools_SequenceOfShape& theChain,
       B.UpdateVertex(V[0], 0., E, 0.);
       B.UpdateVertex(V[1], lpar, E, 0.);
     }
+    Concat2dCurves(E, theChain);
     OutEdge = E;
     return Standard_True;
   }
