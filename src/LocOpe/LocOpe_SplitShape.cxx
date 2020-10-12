@@ -1225,12 +1225,20 @@ const TopTools_ListOfShape& LocOpe_SplitShape::DescendantShapes
     Rebuild(myShape);
     myDone = Standard_True;
   }
+  
 #ifdef OCCT_DEBUG
   if (!myDblE.IsEmpty()) {
     std::cout << "Le shape comporte des faces invalides" << std::endl;
   }
 #endif
-  return myMap(S);
+  
+  if (myMap.IsBound(S))
+    return myMap(S);
+  else
+  {
+    static TopTools_ListOfShape anEmptyList;
+    return anEmptyList;
+  }
 }
 
 

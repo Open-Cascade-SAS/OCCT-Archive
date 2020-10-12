@@ -43,3 +43,13 @@ inline Standard_Boolean LocOpe_WiresOnShape::IsFaceWithSection(const TopoDS_Shap
 {
   return (myFacesWithSection.Contains(aFace));
 }
+
+//=======================================================================
+//function : Splits
+//purpose  : 
+//=======================================================================
+
+inline const TopTools_IndexedDataMapOfShapeListOfShape& LocOpe_WiresOnShape::Splits()
+{
+  return mySplits;
+}
