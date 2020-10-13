@@ -22,6 +22,7 @@
 
 #include <TopoDS_Shape.hxx>
 #include <TopTools_IndexedDataMapOfShapeShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <Standard_Boolean.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
@@ -109,8 +110,9 @@ public:
   //! tells is the face to be split by section or not
     Standard_Boolean IsFaceWithSection (const TopoDS_Shape& aFace) const;
 
-
-
+  //! returns the map of edges embedded into the faces and their splits
+  Standard_EXPORT const TopTools_IndexedDataMapOfShapeListOfShape& Splits();
+  
 
   DEFINE_STANDARD_RTTIEXT(LocOpe_WiresOnShape,Standard_Transient)
 
@@ -125,6 +127,7 @@ private:
   TopoDS_Shape myShape;
   TopTools_IndexedDataMapOfShapeShape myMapEF;
   TopTools_MapOfShape myFacesWithSection;
+  TopTools_IndexedDataMapOfShapeListOfShape mySplits;
   Standard_Boolean myCheckInterior;
   TopTools_DataMapOfShapeShape myMap;
   Standard_Boolean myDone;

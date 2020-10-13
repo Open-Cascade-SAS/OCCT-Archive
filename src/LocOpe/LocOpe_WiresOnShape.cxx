@@ -124,6 +124,8 @@ void LocOpe_WiresOnShape::Init(const TopoDS_Shape& S)
    myDone = Standard_False;
    myMap.Clear();
    myMapEF.Clear();
+   myFacesWithSection.Clear();
+   mySplits.Clear();
 }
 
 //=======================================================================
@@ -240,7 +242,6 @@ void LocOpe_WiresOnShape::BindAll()
     myMap.Bind(ite.Key(),ite.Value());
   }
 
-  TopTools_IndexedDataMapOfShapeListOfShape Splits;
   Standard_Integer Ind;
   TopTools_MapOfShape anOverlappedEdges;
   for (Ind = 1; Ind <= myMapEF.Extent(); Ind++)
@@ -257,21 +258,21 @@ void LocOpe_WiresOnShape::BindAll()
     if (myCheckInterior)
     {
       Standard_Boolean isOverlapped = Standard_False;
-      FindInternalIntersections(edg, fac, Splits, isOverlapped);
+      FindInternalIntersections(edg, fac, mySplits, isOverlapped);
       if(isOverlapped)
         anOverlappedEdges.Add(edg);
     }
   }
 
-  for (Ind = 1; Ind <= Splits.Extent(); Ind++)
+  for (Ind = 1; Ind <= mySplits.Extent(); Ind++)
   {
-    TopoDS_Shape anEdge = Splits.FindKey(Ind);
+    TopoDS_Shape anEdge = mySplits.FindKey(Ind);
     if(anOverlappedEdges.Contains(anEdge))
       continue;
     TopoDS_Shape aFace  = myMapEF.FindFromKey(anEdge);
     //Remove "anEdge" from "myMapEF"
     myMapEF.RemoveKey(anEdge);
-    TopTools_ListIteratorOfListOfShape itl(Splits(Ind));
+    TopTools_ListIteratorOfListOfShape itl(mySplits(Ind));
     for (; itl.More(); itl.Next())
       myMapEF.Add(itl.Value(), aFace);
   }

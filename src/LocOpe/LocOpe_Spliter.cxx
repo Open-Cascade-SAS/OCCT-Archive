@@ -116,6 +116,14 @@ void LocOpe_Spliter::Perform(const Handle(LocOpe_WiresOnShape)& PW)
     }
   }
 
+  const TopTools_IndexedDataMapOfShapeListOfShape& Splits = PW->Splits();
+  for (Standard_Integer i = 1; i <= Splits.Extent(); i++)
+  {
+    const TopoDS_Shape& anEdge = Splits.FindKey(i);
+    const TopTools_ListOfShape& aListEdges = Splits(i);
+    myMap.Bind (anEdge, aListEdges);
+  }
+
   theSubs.Build(myShape);
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape itdesc(myMap);
   if (theSubs.IsCopied(myShape)) {
@@ -201,7 +209,9 @@ void LocOpe_Spliter::Perform(const Handle(LocOpe_WiresOnShape)& PW)
   for (itdesc.Reset(); itdesc.More(); itdesc.Next()) {
     const TopoDS_Shape& sori = itdesc.Key();
     const TopoDS_Shape& scib = itdesc.Value().First();
-    myMap(sori) = theCFace.DescendantShapes(scib);
+    const TopTools_ListOfShape& aShapeList = theCFace.DescendantShapes(scib);
+    if (!aShapeList.IsEmpty())
+      myMap(sori) = aShapeList;
   }
 
   const TopTools_ListOfShape& lres = myMap(myShape);
