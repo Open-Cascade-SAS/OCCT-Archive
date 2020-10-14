@@ -802,6 +802,10 @@ Graphic3d_BndBox4f Graphic3d_Structure::minMaxCoord() const
   Graphic3d_BndBox4f aBnd;
   for (Graphic3d_SequenceOfGroup::Iterator aGroupIter (myCStructure->Groups()); aGroupIter.More(); aGroupIter.Next())
   {
+    if (!aGroupIter.Value()->TransformPersistence().IsNull())
+    {
+      continue;
+    }
     aBnd.Combine (aGroupIter.Value()->BoundingBox());
   }
   return aBnd;

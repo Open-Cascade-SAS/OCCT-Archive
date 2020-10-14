@@ -25,6 +25,8 @@
 #include <SelectMgr_SensitiveEntity.hxx>
 #include <SelectMgr_Selection.hxx>
 
+class SelectMgr_AdaptorPersistent;
+
 typedef NCollection_IndexedMap<Handle(SelectMgr_SensitiveEntity)> SelectMgr_IndexedMapOfHSensitive;
 typedef NCollection_DataMap<Handle(SelectMgr_EntityOwner), Standard_Integer> SelectMgr_MapOfOwners;
 
@@ -79,6 +81,18 @@ public:
   //! Returns map of owners.
   const SelectMgr_MapOfOwners& Owners() const { return myOwnersMap; }
 
+  //! Returns map of entities.
+  Standard_EXPORT Standard_Boolean HasEntityWithPersistence() const { return myHasEntityWithPersistence; }
+
+  //! Updates outdated BVH trees and remembers the last state of the
+  //! camera view-projection matrices and viewport (window) dimensions.
+  Standard_EXPORT void UpdateBVH (const Handle(Graphic3d_Camera)& theCamera,
+                                  const Graphic3d_Mat4d& theProjectionMat,
+                                  const Graphic3d_Mat4d& theWorldViewMat,
+                                  const Graphic3d_WorldViewProjState& theViewState,
+                                  const Standard_Integer theViewportWidth,
+                                  const Standard_Integer theViewportHeight);
+  
 protected:
 
   //! Adds entity owner to the map of owners (or increases its counter if it is already there).
@@ -91,6 +105,8 @@ private:
 
   SelectMgr_IndexedMapOfHSensitive mySensitives;     //!< Map of entities and its corresponding index in BVH
   SelectMgr_MapOfOwners myOwnersMap;                 //!< Map of entity owners and its corresponding number of sensitives
+  Handle(SelectMgr_AdaptorPersistent) myAdaptorPersistent; //!< camera parameters to apply transform persistence
+  Standard_Boolean myHasEntityWithPersistence;       //!< flag if some of sensitive entity has own transform persistence
 };
 
 #endif // _SelectMgr_SensitiveEntitySet_HeaderFile
