@@ -370,6 +370,17 @@ void SelectMgr_ViewerSelector::traverseObject (const Handle(SelectMgr_Selectable
     return;
   }
 
+  if (anEntitySet->HasEntityWithPersistence())
+  {
+    Standard_Integer aWidth;
+    Standard_Integer aHeight;
+    mySelectingVolumeMgr.WindowSize (aWidth, aHeight);
+    anEntitySet->UpdateBVH (mySelectingVolumeMgr.Camera(),
+                            mySelectingVolumeMgr.ProjectionMatrix(),
+                            mySelectingVolumeMgr.WorldViewMatrix(),
+                            mySelectingVolumeMgr.WorldViewProjState(),
+                            aWidth, aHeight);
+  }
   const opencascade::handle<BVH_Tree<Standard_Real, 3> >& aSensitivesTree = anEntitySet->BVH();
   gp_GTrsf aInversedTrsf;
   if (theObject->HasTransformation() || !theObject->TransformPersistence().IsNull())
@@ -401,7 +412,8 @@ void SelectMgr_ViewerSelector::traverseObject (const Handle(SelectMgr_Selectable
   SelectMgr_SelectingVolumeManager aMgr = aInversedTrsf.Form() != gp_Identity
                                         ? theMgr.ScaleAndTransform (1, aInversedTrsf, NULL)
                                         : theMgr;
-  if (!aMgr.Overlaps (aSensitivesTree->MinPoint (0),
+  if (!anEntitySet->HasEntityWithPersistence()
+   && !aMgr.Overlaps (aSensitivesTree->MinPoint (0),
                       aSensitivesTree->MaxPoint (0)))
   {
     return;
@@ -552,9 +564,33 @@ void SelectMgr_ViewerSelector::traverseObject (const Handle(SelectMgr_Selectable
           const Handle(SelectMgr_SensitiveEntity)& aSensitive = anEntitySet->GetSensitiveById (anIdx);
           if (aSensitive->IsActiveForSelection())
           {
+            gp_GTrsf aInversedTrsf_;
+            if (aSensitive->BaseSensitive()->TransformPersistence().IsNull())
+            {
+              aInversedTrsf_ = aInversedTrsf;
+            }
+            else
+            {
+              gp_GTrsf aTPers;
+              Graphic3d_Mat4d aMat = aSensitive->BaseSensitive()->TransformPersistence()->Compute (theCamera, theProjectionMat, theWorldViewMat, theViewportWidth, theViewportHeight);
+
+              aTPers.SetValue (1, 1, aMat.GetValue (0, 0));
+              aTPers.SetValue (1, 2, aMat.GetValue (0, 1));
+              aTPers.SetValue (1, 3, aMat.GetValue (0, 2));
+              aTPers.SetValue (2, 1, aMat.GetValue (1, 0));
+              aTPers.SetValue (2, 2, aMat.GetValue (1, 1));
+              aTPers.SetValue (2, 3, aMat.GetValue (1, 2));
+              aTPers.SetValue (3, 1, aMat.GetValue (2, 0));
+              aTPers.SetValue (3, 2, aMat.GetValue (2, 1));
+              aTPers.SetValue (3, 3, aMat.GetValue (2, 2));
+              aTPers.SetTranslationPart (gp_XYZ (aMat.GetValue (0, 3), aMat.GetValue (1, 3), aMat.GetValue (2, 3)));
+
+              aInversedTrsf_ = (aTPers * gp_GTrsf (theObject->Transformation())).Inverted();
+            }
+
             const Handle(Select3D_SensitiveEntity)& anEnt = aSensitive->BaseSensitive();
-            computeFrustum (anEnt, theMgr, aMgr, aInversedTrsf, aScaledTrnsfFrustums, aTmpMgr);
-            checkOverlap (anEnt, aInversedTrsf, aTmpMgr);
+            computeFrustum (anEnt, theMgr, aMgr, aInversedTrsf_, aScaledTrnsfFrustums, aTmpMgr);
+            checkOverlap (anEnt, aInversedTrsf_, aTmpMgr);
           }
         }
       }

@@ -28,6 +28,7 @@
 #include <SelectMgr_SelectingVolumeManager.hxx>
 #include <TopLoc_Location.hxx>
 
+class Graphic3d_TransformPers;
 class SelectMgr_EntityOwner;
 
 //! Abstract framework to define 3D sensitive entities.
@@ -94,6 +95,12 @@ public:
   //! Otherwise, returns identity matrix.
   virtual gp_GTrsf InvInitLocation() const { return gp_GTrsf(); }
 
+  //! Return transformation persistence.
+  const Handle(Graphic3d_TransformPers)& TransformPersistence() const { return myTrsfPers; }
+
+  //! Set transformation persistence.
+  virtual void SetTransformPersistence (const Handle(Graphic3d_TransformPers)& theTrsfPers) { myTrsfPers = theTrsfPers; }
+
   //! Dumps the content of me into the stream
   Standard_EXPORT virtual void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
 
@@ -104,6 +111,7 @@ protected:
 protected:
 
   Handle(SelectMgr_EntityOwner) myOwnerId;
+  Handle(Graphic3d_TransformPers)  myTrsfPers;
   Standard_Integer mySFactor;
 
 };
