@@ -3183,12 +3183,23 @@ Standard_Boolean BRepOffset_Tool::EnLargeFace
   }
   else
   {
-    Standard_Real FaceDU = UF2 - UF1;
-    Standard_Real FaceDV = VF2 - VF1;
-    UU1 = UF1 - 10*FaceDU;
-    UU2 = UF2 + 10*FaceDU;
-    VV1 = VF1 - 10*FaceDV;
-    VV2 = VF2 + 10*FaceDV;
+    if (theExtensionMode == 2)
+    {
+      Standard_Real FaceDU = UF2 - UF1;
+      Standard_Real FaceDV = VF2 - VF1;
+      UU1 = UF1 - 10*FaceDU;
+      UU2 = UF2 + 10*FaceDU;
+      VV1 = VF1 - 10*FaceDV;
+      VV2 = VF2 + 10*FaceDV;
+    }
+    else
+    {
+      Standard_Real aSize = theLenBeforeUfirst;
+      UU1 = UF1 - aSize;
+      UU2 = UF2 + aSize;
+      VV1 = VF1 - aSize;
+      VV2 = VF2 + aSize;
+    }
     coeff = 1.;
   }
   
