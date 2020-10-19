@@ -3279,8 +3279,17 @@ void OpenGl_Context::SetLineStipple (const Standard_ShortReal theFactor,
 {
   if (!myActiveProgram.IsNull())
   {
-    myActiveProgram->SetUniform (this, "uPattern", (Standard_Integer )thePattern);
-    myActiveProgram->SetUniform (this, "uFactor",  theFactor);
+    const GLint aLocPattern  = myActiveProgram->GetStateLocation (OpenGl_OCCT_LINE_STIPPLE_PATTERN);
+    const GLint aLocFactor   = myActiveProgram->GetStateLocation (OpenGl_OCCT_LINE_STIPPLE_FACTOR);
+    const GLint aLocViewPort = myActiveProgram->GetStateLocation (OpenGl_OCCT_VIEWPORT);
+    if (aLocPattern != OpenGl_ShaderProgram::INVALID_LOCATION)
+    {
+      myActiveProgram->SetUniform (this, aLocViewPort,
+                                   OpenGl_Vec4 ((float )myViewport[0], (float )myViewport[1],
+                                                (float )myViewport[2], (float )myViewport[3]));
+      myActiveProgram->SetUniform (this, aLocPattern, (Standard_Integer )thePattern);
+      myActiveProgram->SetUniform (this, aLocFactor,  theFactor);
+    }
     return;
   }
 

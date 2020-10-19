@@ -1511,18 +1511,29 @@ Standard_Boolean OpenGl_ShaderManager::prepareStdProgramFlat (Handle(OpenGl_Shad
     if (hasGlslBitOps)
     {
       aSrcVertExtraOut +=
-        EOL"THE_SHADER_OUT vec2 ScreenSpaceCoord;";
+        EOL"THE_SHADER_OUT vec2 ScreenSpaceCoord;"
+        EOL"uniform vec4  occViewport;";
       aSrcFragExtraOut +=
         EOL"THE_SHADER_IN  vec2 ScreenSpaceCoord;"
-        EOL"uniform int   uPattern;"
-        EOL"uniform float uFactor;";
+        EOL"uniform int   occStipplePattern;"
+        EOL"uniform float occStippleFactor;";
       aSrcVertEndMain =
-        EOL"  ScreenSpaceCoord = gl_Position.xy / gl_Position.w;";
+        EOL"  vec2 aPosition   = gl_Position.xy / gl_Position.w;"
+        EOL"  aPosition        = aPosition * 0.5 + 0.5;"
+        EOL"  ScreenSpaceCoord = aPosition.xy * occViewport.zw + occViewport.xy;";
       aSrcFragMainGetColor =
-        EOL"  float anAngle      = atan (dFdx (ScreenSpaceCoord.x), dFdy (ScreenSpaceCoord.y));"
-        EOL"  float aRotatePoint = gl_FragCoord.x * sin (anAngle) + gl_FragCoord.y * cos (anAngle);"
-        EOL"  uint  aBit         = uint (floor (aRotatePoint / uFactor + 0.5)) & 15U;"
-        EOL"  if ((uint (uPattern) & (1U << aBit)) == 0U) discard;"
+        EOL"  vec2 anAxis = vec2 (0.0);"
+        EOL"  if (abs (dFdx (ScreenSpaceCoord.x)) - abs (dFdy (ScreenSpaceCoord.y)) > 0.001)"
+        EOL"  {"
+        EOL"    anAxis = vec2 (1.0, 0.0);"
+        EOL"  }"
+        EOL"  else"
+        EOL"  {"
+        EOL"    anAxis = vec2 (0.0, 1.0);"
+        EOL"  }"
+        EOL"  float aRotatePoint = dot (gl_FragCoord.xy, anAxis);"
+        EOL"  uint  aBit         = uint (floor (aRotatePoint / occStippleFactor + 0.5)) & 15U;"
+        EOL"  if ((uint (occStipplePattern) & (1U << aBit)) == 0U) discard;"
         EOL"  vec4 aColor = getColor();"
         EOL"  if (aColor.a <= 0.1) discard;"
         EOL"  occFragColor = aColor;";
