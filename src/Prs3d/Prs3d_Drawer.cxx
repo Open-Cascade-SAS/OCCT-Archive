@@ -86,6 +86,7 @@ Prs3d_Drawer::Prs3d_Drawer()
   myHasOwnUnFreeBoundaryAspect (Standard_False),
   myUnFreeBoundaryDraw         (Standard_True),
   myHasOwnUnFreeBoundaryDraw   (Standard_False),
+  myFaceBoundaryUpperContinuity(-1),
   myHasOwnFaceBoundaryAspect   (Standard_False),
   myFaceBoundaryDraw           (Standard_False),
   myHasOwnFaceBoundaryDraw     (Standard_False),
@@ -1086,7 +1087,7 @@ inline void setAspectProgram (const Handle(Graphic3d_ShaderProgram)& theProgram,
 }
 
 // =======================================================================
-// function : SetShaderProgram
+// function : SetOwnLineAspects
 // purpose  :
 // =======================================================================
 void Prs3d_Drawer::SetShaderProgram (const Handle(Graphic3d_ShaderProgram)& theProgram,

@@ -299,7 +299,8 @@ namespace
   }
 
   //! Compute boundary presentation for faces of the shape.
-  static Handle(Graphic3d_ArrayOfSegments) fillFaceBoundaries (const TopoDS_Shape& theShape)
+  static Handle(Graphic3d_ArrayOfSegments) fillFaceBoundaries (const TopoDS_Shape& theShape,
+                                                               GeomAbs_Shape theUpperContinuity)
   {
     // collection of all triangulation nodes on edges
     // for computing boundaries presentation
@@ -339,6 +340,13 @@ namespace
       }
 
       const TopoDS_Edge& anEdge = TopoDS::Edge (anEdgeIter.Key());
+      if (theUpperContinuity < GeomAbs_CN
+       && anEdgeIter.Value().Extent() >= 2
+       && BRep_Tool::MaxContinuity (anEdge) > theUpperContinuity)
+      {
+        continue;
+      }
+
       Handle(Poly_PolygonOnTriangulation) anEdgePoly = BRep_Tool::PolygonOnTriangulation (anEdge, aTriangulation, aTrsf);
       if (!anEdgePoly.IsNull()
         && anEdgePoly->Nodes().Length() >= 2)
@@ -382,6 +390,13 @@ namespace
       }
 
       const TopoDS_Edge& anEdge = TopoDS::Edge (anEdgeIter.Key());
+      if (theUpperContinuity < GeomAbs_CN
+       && anEdgeIter.Value().Extent() >= 2
+       && BRep_Tool::MaxContinuity (anEdge) > theUpperContinuity)
+      {
+        continue;
+      }
+
       Handle(Poly_PolygonOnTriangulation) anEdgePoly = BRep_Tool::PolygonOnTriangulation (anEdge, aTriangulation, aTrsf);
       if (anEdgePoly.IsNull()
        || anEdgePoly->Nodes().Length () < 2)
@@ -576,12 +591,10 @@ void StdPrs_ShadedShape::Add (const Handle (Prs3d_Presentation)& thePrs,
 
   if (theDrawer->FaceBoundaryDraw())
   {
-    Handle(Graphic3d_ArrayOfSegments) aBndSegments = fillFaceBoundaries (theShape);
-    if (!aBndSegments.IsNull())
+    if (Handle(Graphic3d_ArrayOfSegments) aBndSegments = fillFaceBoundaries (theShape, theDrawer->FaceBoundaryUpperContinuity()))
     {
-      Handle(Graphic3d_AspectLine3d) aBoundaryAspect = theDrawer->FaceBoundaryAspect()->Aspect();
       Handle(Graphic3d_Group) aPrsGrp = Prs3d_Root::CurrentGroup (thePrs);
-      aPrsGrp->SetGroupPrimitivesAspect (aBoundaryAspect);
+      aPrsGrp->SetGroupPrimitivesAspect (theDrawer->FaceBoundaryAspect()->Aspect());
       aPrsGrp->AddPrimitiveArray (aBndSegments);
     }
   }
@@ -604,9 +617,10 @@ Handle(Graphic3d_ArrayOfTriangles) StdPrs_ShadedShape::FillTriangles (const Topo
 // function : FillFaceBoundaries
 // purpose  :
 // =======================================================================
-Handle(Graphic3d_ArrayOfSegments) StdPrs_ShadedShape::FillFaceBoundaries (const TopoDS_Shape& theShape)
+Handle(Graphic3d_ArrayOfSegments) StdPrs_ShadedShape::FillFaceBoundaries (const TopoDS_Shape& theShape,
+                                                                          GeomAbs_Shape theUpperContinuity)
 {
-  return fillFaceBoundaries (theShape);
+  return fillFaceBoundaries (theShape, theUpperContinuity);
 }
 
 // =======================================================================

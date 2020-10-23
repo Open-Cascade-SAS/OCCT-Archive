@@ -5033,7 +5033,7 @@ static Standard_Integer VShowFaceBoundary (Draw_Interpretor& /*di*/,
     return 1;
   }
 
-  if ((argc != 3 && argc < 6) || argc > 8)
+  if ((argc != 3 && argc < 6) || argc > 9)
   {
     std::cout << "Usage :\n " << argv[0]
               << " ObjectName isOn [R G B [LineWidth [LineStyle]]]\n"
@@ -5064,6 +5064,7 @@ static Standard_Integer VShowFaceBoundary (Draw_Interpretor& /*di*/,
   Standard_Real aBlue  = 0.0;
   Standard_Real aWidth = 1.0;
   Aspect_TypeOfLine aLineType = Aspect_TOL_SOLID;
+  GeomAbs_Shape aMaxContinuity = GeomAbs_CN;
   
   // find object
   Handle(AIS_InteractiveObject) anInterObj;
@@ -5111,11 +5112,50 @@ static Standard_Integer VShowFaceBoundary (Draw_Interpretor& /*di*/,
   }
 
   // select appropriate line type
-  if (argc == 8)
+  if (argc >= 8)
   {
     if (!ViewerTest::ParseLineType (argv[7], aLineType))
     {
       std::cout << "Syntax error: unknown line type '" << argv[7] << "'\n";
+      return 1;
+    }
+  }
+
+  if (argc >= 9)
+  {
+    TCollection_AsciiString aClassArg (argv[8]);
+    aClassArg.LowerCase();
+    if (aClassArg == "c0")
+    {
+      aMaxContinuity = GeomAbs_C0;
+    }
+    else if (aClassArg == "c1")
+    {
+      aMaxContinuity = GeomAbs_C1;
+    }
+    else if (aClassArg == "g1")
+    {
+      aMaxContinuity = GeomAbs_G1;
+    }
+    else if (aClassArg == "c2")
+    {
+      aMaxContinuity = GeomAbs_C2;
+    }
+    else if (aClassArg == "g2")
+    {
+      aMaxContinuity = GeomAbs_G2;
+    }
+    else if (aClassArg == "c3")
+    {
+      aMaxContinuity = GeomAbs_C3;
+    }
+    else if (aClassArg == "cn")
+    {
+      aMaxContinuity = GeomAbs_CN;
+    }
+    else
+    {
+      std::cout << "Syntax error at '" << aClassArg << "'\n";
       return 1;
     }
   }
@@ -5126,6 +5166,7 @@ static Standard_Integer VShowFaceBoundary (Draw_Interpretor& /*di*/,
     new Prs3d_LineAspect (aColor, aLineType, aWidth);
 
   aDrawer->SetFaceBoundaryAspect (aBoundaryAspect);
+  aDrawer->SetFaceBoundaryUpperContinuity (aMaxContinuity);
 
   TheAISContext()->Redisplay (anInterObj, Standard_True);
   
@@ -6756,7 +6797,7 @@ void ViewerTest::ObjectCommands(Draw_Interpretor& theCommands)
     __FILE__, VPolygonOffset, group);
 
   theCommands.Add ("vshowfaceboundary",
-    "vshowfaceboundary : ObjectName isOn (1/0) [R G B [LineWidth [LineStyle]]]"
+    "vshowfaceboundary : ObjectName isOn (1/0) [R G B [LineWidth [LineStyle]]] [{c0|c1|c2|c3|cn}]"
     "- turns on/off drawing of face boundaries for ais object "
     "and defines boundary line style.",
     __FILE__, VShowFaceBoundary, group);

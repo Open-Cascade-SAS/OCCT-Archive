@@ -562,7 +562,7 @@ void AIS_ColoredShape::addShapesWithCustomProps (const Handle(Prs3d_Presentation
                                                  const DataMapOfDrawerCompd& theDrawerClosedFaces,
                                                  const Standard_Integer theMode)
 {
-  Handle(Graphic3d_Group) anOpenGroup, aClosedGroup;
+  Handle(Graphic3d_Group) anOpenGroup, aClosedGroup, anEdgesGroup;
   for (size_t aShType = 0; aShType <= (size_t )TopAbs_SHAPE; ++aShType)
   {
     const Standard_Boolean isClosed = aShType == TopAbs_SHAPE;
@@ -616,7 +616,7 @@ void AIS_ColoredShape::addShapesWithCustomProps (const Handle(Prs3d_Presentation
         {
           if (aShadedGroup.IsNull())
           {
-            aShadedGroup = Prs3d_Root::NewGroup (thePrs);
+            aShadedGroup = thePrs->NewGroup();
             aShadedGroup->SetClosed (isClosed);
           }
           aShadedGroup->SetPrimitivesAspect (aDrawer->ShadingAspect()->Aspect());
@@ -625,18 +625,15 @@ void AIS_ColoredShape::addShapesWithCustomProps (const Handle(Prs3d_Presentation
 
         if (aDrawer->FaceBoundaryDraw())
         {
-          Handle(Graphic3d_ArrayOfSegments) aBndSegments = StdPrs_ShadedShape::FillFaceBoundaries (aShapeDraw);
-          if (!aBndSegments.IsNull())
+          if (Handle(Graphic3d_ArrayOfSegments) aBndSegments = StdPrs_ShadedShape::FillFaceBoundaries (aShapeDraw, aDrawer->FaceBoundaryUpperContinuity()))
           {
-            if (aShadedGroup.IsNull())
+            if (anEdgesGroup.IsNull())
             {
-              aShadedGroup = Prs3d_Root::NewGroup (thePrs);
-              aShadedGroup->SetClosed (isClosed);
+              anEdgesGroup = thePrs->NewGroup();
             }
 
-            Handle(Graphic3d_AspectLine3d) aBoundaryAspect = aDrawer->FaceBoundaryAspect()->Aspect();
-            aShadedGroup->SetPrimitivesAspect (aBoundaryAspect);
-            aShadedGroup->AddPrimitiveArray (aBndSegments);
+            anEdgesGroup->SetPrimitivesAspect (aDrawer->FaceBoundaryAspect()->Aspect());
+            anEdgesGroup->AddPrimitiveArray (aBndSegments);
           }
         }
       }
