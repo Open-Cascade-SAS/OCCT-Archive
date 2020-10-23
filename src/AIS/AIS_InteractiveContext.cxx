@@ -1002,7 +1002,13 @@ void AIS_InteractiveContext::RecomputePrsOnly (const Handle(AIS_InteractiveObjec
   {
     myMainVwr->Update();
   }
+
+  if (!myMainVwr->ActiveViews().IsEmpty())
+  {
+    theIObj->RecomputeTransformation (myMainVwr->ActiveViewIterator().Value()->Camera());
+  }
 }
+
 //=======================================================================
 //function : RecomputeSelectionOnly
 //purpose  : 

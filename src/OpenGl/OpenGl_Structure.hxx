@@ -147,6 +147,14 @@ protected:
   //! Render the bounding box.
   Standard_EXPORT void renderBoundingBox(const Handle(OpenGl_Workspace)& theWorkspace) const;
 
+  //! Apply transformation into context.
+  //! @param theWorkspace current workspace
+  //! @param theTrsf transformation
+  //! @param toEnable flag to switch ON/OFF transformation
+  Standard_EXPORT void applyTransformation (const Handle(OpenGl_Context)& theContext,
+                                            const gp_Trsf& theTrsf,
+                                            const Standard_Boolean toEnable) const;
+
 protected:
 
   OpenGl_Structure*          myInstancedStructure;

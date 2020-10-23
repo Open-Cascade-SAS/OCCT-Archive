@@ -203,6 +203,15 @@ void PrsMgr_Presentation::computeHLR (const Handle(Graphic3d_Camera)& theProject
 }
 
 //=======================================================================
+//function : RecomputeTransformation
+//purpose  :
+//=======================================================================
+void PrsMgr_Presentation::RecomputeTransformation (const Handle(Graphic3d_Camera)& theProjector)
+{
+  myPresentableObject->RecomputeTransformation (theProjector);
+}
+
+//=======================================================================
 //function : ~PrsMgr_Presentation
 //purpose  :
 //=======================================================================

@@ -136,6 +136,12 @@ public:
   //! sets the flipping to theIsEnabled state.
   Standard_EXPORT virtual void SetFlippingOptions (const Standard_Boolean theIsEnabled, const gp_Ax2& theRefPlane) = 0;
 
+  //! Return transformation.
+  const gp_Trsf& Transformation() const { return myTrsf; }
+
+  //! Assign transformation.
+  virtual void SetTransformation (const gp_Trsf& theTrsf) { myTrsf = theTrsf; }
+
   //! Returns true if the group contains Polygons, Triangles or Quadrangles.
   bool ContainsFacet() const { return myContainsFacet; }
 
@@ -292,6 +298,7 @@ protected:
 
   Graphic3d_Structure* myStructure;     //!< pointer to the parent structure
   Graphic3d_BndBox4f   myBounds;        //!< bounding box
+  gp_Trsf              myTrsf;          //!< group transformation
   bool                 myIsClosed;      //!< flag indicating closed volume
   bool                 myContainsFacet; //!< flag indicating that this group contains face primitives
 
