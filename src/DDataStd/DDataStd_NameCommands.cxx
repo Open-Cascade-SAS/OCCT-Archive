@@ -64,7 +64,7 @@ static Standard_Integer DDataStd_SetName (Draw_Interpretor& di,
         return 1;
 	  }
 	  Standard_GUID guid(arg[4]);
-	  TDataStd_Name::Set(L, guid, TCollection_ExtendedString(arg[3],Standard_True)); 
+	  TDataStd_Name::Set(L, guid, arg[3]); 
      }
     return 0;
   }

@@ -208,7 +208,7 @@ static Standard_Integer DDataStd_SetComment (Draw_Interpretor& di,
     if (!DDF::GetDF(arg[1],DF)) return 1;
     TDF_Label L;
     DDF::AddLabel(DF, arg[2], L);
-    TDataStd_Comment::Set(L,TCollection_ExtendedString(arg[3],Standard_True));  
+    TDataStd_Comment::Set(L,arg[3]);
     return 0;
   }
   di << "DDataStd_SetComment : Error\n";

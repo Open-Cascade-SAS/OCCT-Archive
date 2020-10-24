@@ -63,13 +63,14 @@ public:
   //! Initializes a ExtendedString to an empty ExtendedString.
   Standard_EXPORT TCollection_ExtendedString();
   
-  //! Creation by converting a CString to an extended
-  //! string.  If <isMultiByte> is true then the string is
-  //! treated as having UTF-8 coding.  If it is not a UTF-8
-  //! then <isMultiByte> is ignored and each character is
-  //! copied to ExtCharacter.
-  Standard_EXPORT TCollection_ExtendedString(const Standard_CString astring, const Standard_Boolean isMultiByte = Standard_False);
-  
+  //! Creation by converting a plain C string to an extended string.
+  //! If @p isMultiByte is true then @p theString is treated as having UTF-8 encoding.
+  //! If @p isMultiByte is true but @p theString is not a valid UTF-8 string, 
+  //! or if @p isMultiByte is false, then each character of @p theString is
+  //! copied to ExtCharacter (as if @p theString was in ISO 8859-1 code page).
+  Standard_EXPORT TCollection_ExtendedString(const Standard_CString theString, 
+                                             const Standard_Boolean isMultiByte = Standard_True);
+
   //! Creation by converting an ExtString to an extended string.
   Standard_EXPORT TCollection_ExtendedString(const Standard_ExtString astring);
 
