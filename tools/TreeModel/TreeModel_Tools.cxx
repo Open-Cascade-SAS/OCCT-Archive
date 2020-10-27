@@ -89,6 +89,7 @@ void TreeModel_Tools::SaveState (QTreeView* theTreeView, QMap<QString, QString>&
   QStringList aColumnWidths, aHiddenColumns;
   for (int aColumnId = 0; aColumnId < theTreeView->model()->columnCount(); aColumnId++)
   {
+    int aWidth = theTreeView->columnWidth (aColumnId);
     if (theTreeView->isColumnHidden (aColumnId))
     {
       aHiddenColumns.append (QString::number (aColumnId));
@@ -121,18 +122,18 @@ bool TreeModel_Tools::RestoreState (QTreeView* theTreeView, const QString& theKe
   }
   else if (theKey == thePrefix + "columns_hidden")
   {
-    int aColumnSize = theTreeView->model()->columnCount();
-    QStringList aValues = theValue.split (",", QString::SkipEmptyParts);
-    QList<int> aColumnIds;
-    for (int aValueId = 0; aValueId < aValues.size(); aValueId++)
-    {
-      if (aValueId < aColumnSize)
-        aColumnIds.append (aValues.at (aValueId).toInt());
-    }
-    for (int aColumnId = 0; aColumnId < aColumnSize; aColumnId++)
-    {
-      theTreeView->setColumnHidden (aColumnId, aColumnIds.contains(aColumnId) == true);
-    }
+    //int aColumnSize = theTreeView->model()->columnCount();
+    //QStringList aValues = theValue.split (",", QString::SkipEmptyParts);
+    //QList<int> aColumnIds;
+    //for (int aValueId = 0; aValueId < aValues.size(); aValueId++)
+    //{
+    //  if (aValueId < aColumnSize)
+    //    aColumnIds.append (aValues.at (aValueId).toInt());
+    //}
+    //for (int aColumnId = 0; aColumnId < aColumnSize; aColumnId++)
+    //{
+    //  theTreeView->setColumnHidden (aColumnId, aColumnIds.contains(aColumnId) == true);
+    //}
   }
   else
     return false;
@@ -149,9 +150,9 @@ void TreeModel_Tools::SetDefaultHeaderSections(QTreeView* theTreeView)
 
   for (int aColumnId = 0, aNbColumns = aTreeModel->columnCount(); aColumnId < aNbColumns; aColumnId++)
   {
-    TreeModel_HeaderSection aSection = aTreeModel->GetHeaderItem (aColumnId);
-    theTreeView->setColumnWidth (aColumnId, aSection.GetWidth());
-    theTreeView->setColumnHidden (aColumnId, aSection.IsHidden());
+    TreeModel_HeaderSection* aSection = aTreeModel->ChangeHeaderItem (aColumnId);
+    theTreeView->setColumnWidth (aColumnId, aSection->GetWidth());
+    theTreeView->setColumnHidden (aColumnId, aSection->IsHidden());
   }
 }
 
@@ -170,8 +171,10 @@ void TreeModel_Tools::UseVisibilityColumn (QTreeView* theTreeView, const bool th
   aHeader->moveSection (TreeModel_ColumnType_Name, TreeModel_ColumnType_Visibility);
 
   TreeModel_ModelBase* aModel = dynamic_cast<TreeModel_ModelBase*> (theTreeView->model());
-  aModel->SetHeaderItem (TreeModel_ColumnType_Visibility,
-    TreeModel_HeaderSection ("Visibility", TreeModel_ModelBase::ColumnVisibilityWidth()));
+  TreeModel_HeaderSection* anItem = aModel->ChangeHeaderItem ((int)TreeModel_ColumnType_Visibility);
+  anItem->SetIsHidden (theActive);
+  anItem->SetWidth (TreeModel_ModelBase::ColumnVisibilityWidth());
+
   aModel->SetUseVisibilityColumn (theActive);
 }
 
