@@ -1,6 +1,6 @@
-// Created on: 2020-01-25
+// Created on: 2017-06-16
 // Created by: Natalia ERMOLAEVA
-// Copyright (c) 2020 OPEN CASCADE SAS
+// Copyright (c) 2017 OPEN CASCADE SAS
 //
 // This file is part of Open CASCADE Technology software library.
 //
@@ -42,7 +42,7 @@ class Geom_Plane;
 class Geom_Transformation;
 
 //! \class Convert_Tools
-//! \brief The tool that gives auxiliary methods for qt elements manipulation.
+//! \brief The tool that gives auxiliary methods for qt elements manipulation
 class Convert_Tools
 {
 public:
@@ -81,9 +81,7 @@ public:
   //! \param thePntMin minimum point on the bounding box
   //! \param thePntMax maximum point on the bounding box
   //! \return created shape
-  Standard_EXPORT static Standard_Boolean CreateBoxShape (const gp_Pnt& thePntMin,
-                                                          const gp_Pnt& thePntMax,
-                                                          TopoDS_Shape& theShape);
+  Standard_EXPORT static Standard_Boolean CreateBoxShape (const gp_Pnt& thePntMin, const gp_Pnt& thePntMax, TopoDS_Shape& theShape);
 
   //! Creates presentation AIS_Plane
   //! \param thePlane source plane

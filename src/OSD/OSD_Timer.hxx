@@ -79,6 +79,9 @@ public:
   //! the Timer.
   Standard_EXPORT virtual void Start() Standard_OVERRIDE;
   
+  //! Returns start time in seconds.
+  Standard_Real StartTime() const { return myTimeStart; }
+
   //! Returns elapsed time in seconds.
   Standard_EXPORT Standard_Real ElapsedTime() const;
 

@@ -18,6 +18,7 @@
 enum Message_MetricType
 {
   Message_MetricType_None,                 //!< no computation
+  Message_MetricType_WallClock,            //!< OSD_Timer elapsed time
   Message_MetricType_ThreadCPUUserTime,    //!< OSD_Chronometer::GetThreadCPU user time
   Message_MetricType_ThreadCPUSystemTime,  //!< OSD_Chronometer::GetThreadCPU system time
   Message_MetricType_ProcessCPUUserTime,   //!< OSD_Chronometer::GetProcessCPU user time

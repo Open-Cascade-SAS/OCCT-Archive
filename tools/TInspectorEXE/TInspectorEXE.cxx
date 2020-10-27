@@ -19,6 +19,8 @@
 
 #include <inspector/TInspector_Communicator.hxx>
 
+#include <Message.hxx>
+#include <Message_Report.hxx>
 #include <OSD_Environment.hxx>
 
 #include <Standard_WarningsDisable.hxx>
@@ -104,6 +106,9 @@ int main (int argc, char** argv)
 
     if (!strcmp (argv[anArgId], "vinspector"))
       aPlugins.insert ("TKVInspector");
+
+    if (!strcmp (argv[anArgId], "messageview"))
+      aPlugins.insert ("TKMessageView");
   }
   NCollection_List<Handle(Standard_Transient)> aParameters;
 
@@ -123,7 +128,14 @@ int main (int argc, char** argv)
     aPlugins.insert("TKShapeView");
     aPlugins.insert("TKVInspector");
 
-    anActivatedPluginName = "TKDFBrowser";
+    //Handle(Message_Report) aReport = Message::DefaultReport (Standard_True);
+    //aReport->SetLimit (100);//30);
+    aPlugins.insert("TKMessageView");
+
+    //anActivatedPluginName = "TKVInspector";
+    //anActivatedPluginName = "TKMessageView";
+    //anActivatedPluginName = "TKDFBrowser";
+    anActivatedPluginName = "TKShapeView";
   }
   else
     anActivatedPluginName = *aPlugins.rbegin();

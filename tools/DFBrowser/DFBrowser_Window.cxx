@@ -51,10 +51,11 @@
 #include <OSD_Directory.hxx>
 #include <OSD_Environment.hxx>
 #include <OSD_Protection.hxx>
-#include <OSD_Thread.hxx>
+
 #include <inspector/View_Displayer.hxx>
 #include <inspector/View_ToolBar.hxx>
 #include <inspector/View_Viewer.hxx>
+#include <inspector/View_Widget.hxx>
 #include <inspector/View_Window.hxx>
 
 #include <TDF_Tool.hxx>
@@ -62,7 +63,6 @@
 #include <inspector/ViewControl_Tools.hxx>
 
 #include <Standard_WarningsDisable.hxx>
-#include <Standard_ThreadId.hxx>
 #include <QAction>
 #include <QApplication>
 #include <QComboBox>
@@ -192,7 +192,7 @@ DFBrowser_Window::DFBrowser_Window()
 
   // view
   myViewWindow = new View_Window (myMainWindow);
-  myViewWindow->SetPredefinedSize (DFBROWSER_DEFAULT_VIEW_WIDTH, DFBROWSER_DEFAULT_VIEW_HEIGHT);
+  myViewWindow->ViewWidget()->SetPredefinedSize (DFBROWSER_DEFAULT_VIEW_WIDTH, DFBROWSER_DEFAULT_VIEW_HEIGHT);
 
   QDockWidget* aViewDockWidget = new QDockWidget (tr ("View"), myMainWindow);
   aViewDockWidget->setObjectName (aViewDockWidget->windowTitle());
