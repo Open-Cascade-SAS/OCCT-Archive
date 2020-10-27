@@ -3,6 +3,8 @@ ViewControl_MessageDialog.cxx
 ViewControl_MessageDialog.hxx
 ViewControl_PropertyView.cxx
 ViewControl_PropertyView.hxx
+ViewControl_PropertiesDialog.cxx
+ViewControl_PropertiesDialog.hxx
 ViewControl_Table.cxx
 ViewControl_Table.hxx
 ViewControl_TableModel.cxx

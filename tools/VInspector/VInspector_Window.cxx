@@ -17,7 +17,6 @@
 
 #include <AIS_Shape.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
-#include <V3d_Viewer.hxx>
 
 #include <inspector/Convert_Tools.hxx>
 
@@ -49,7 +48,6 @@
 #include <inspector/View_PreviewParameters.hxx>
 #include <inspector/View_Widget.hxx>
 #include <inspector/View_Window.hxx>
-#include <inspector/View_Viewer.hxx>
 
 #include <Standard_WarningsDisable.hxx>
 #include <QApplication>
@@ -114,9 +112,8 @@ VInspector_Window::VInspector_Window()
   aTreeModel->InitColumns();
   myTreeView->setModel (aTreeModel);
   // hide Visibility column
-  TreeModel_HeaderSection anItem = aTreeModel->GetHeaderItem ((int)TreeModel_ColumnType_Visibility);
-  anItem.SetIsHidden (true);
-  aTreeModel->SetHeaderItem ((int)TreeModel_ColumnType_Visibility, anItem);
+  TreeModel_HeaderSection* anItem = aTreeModel->ChangeHeaderItem ((int)TreeModel_ColumnType_Visibility);
+  anItem->SetIsHidden (true);
 
   connect (myTreeView, SIGNAL(customContextMenuRequested(const QPoint&)),
            this, SLOT (onTreeViewContextMenuRequested(const QPoint&)));
@@ -159,12 +156,11 @@ VInspector_Window::VInspector_Window()
   connect (aSelectionModel, SIGNAL (selectionChanged (const QItemSelection&, const QItemSelection&)),
     this, SLOT (onHistoryViewSelectionChanged (const QItemSelection&, const QItemSelection&)));
 
-  anItem = aHistoryModel->GetHeaderItem (0);
+  anItem = aHistoryModel->ChangeHeaderItem (0);
   // hide Visibility column
   TreeModel_Tools::UseVisibilityColumn (myHistoryView, false);
-  anItem = aHistoryModel->GetHeaderItem ((int)TreeModel_ColumnType_Visibility);
-  anItem.SetIsHidden (true);
-  aHistoryModel->SetHeaderItem ((int)TreeModel_ColumnType_Visibility, anItem);
+  anItem = aHistoryModel->ChangeHeaderItem ((int)TreeModel_ColumnType_Visibility);
+  anItem->SetIsHidden (true);
 
   QModelIndex aParentIndex = myHistoryView->model()->index (0, 0);
   myHistoryView->setExpanded (aParentIndex, true);
@@ -636,12 +632,12 @@ void VInspector_Window::onExportToShapeView()
 
   TCollection_AsciiString aPluginName ("TKShapeView");
   NCollection_List<Handle(Standard_Transient)> aParameters;
-  if (myParameters->FindParameters (aPluginName))
-    aParameters = myParameters->Parameters (aPluginName);
+  //if (myParameters->FindParameters (aPluginName))
+  //  aParameters = myParameters->Parameters (aPluginName);
 
   NCollection_List<TCollection_AsciiString> anItemNames;
-  if (myParameters->FindSelectedNames (aPluginName))
-    anItemNames = myParameters->GetSelectedNames (aPluginName);
+  //if (myParameters->FindSelectedNames (aPluginName))
+  //  anItemNames = myParameters->GetSelectedNames (aPluginName);
 
   QStringList anExportedPointers;
   if (aSelectedShapes.Extent() > 0)
@@ -661,23 +657,23 @@ void VInspector_Window::onExportToShapeView()
     }
   }
 
-  // search for objects to be exported
-  QList<TreeModel_ItemBasePtr> anItems = TreeModel_ModelBase::SelectedItems (myTreeView->selectionModel()->selectedIndexes());
-  for (QList<TreeModel_ItemBasePtr>::const_iterator anItemIt = anItems.begin(); anItemIt != anItems.end(); ++anItemIt)
-  {
-    TreeModel_ItemBasePtr anItem = *anItemIt;
-    VInspector_ItemBasePtr aVItem = itemDynamicCast<VInspector_ItemBase>(anItem);
-    if (!aVItem)
-    continue;
+  //// search for objects to be exported
+  //QList<TreeModel_ItemBasePtr> anItems = TreeModel_ModelBase::SelectedItems (myTreeView->selectionModel()->selectedIndexes());
+  //for (QList<TreeModel_ItemBasePtr>::const_iterator anItemIt = anItems.begin(); anItemIt != anItems.end(); ++anItemIt)
+  //{
+  //  TreeModel_ItemBasePtr anItem = *anItemIt;
+  //  VInspector_ItemBasePtr aVItem = itemDynamicCast<VInspector_ItemBase>(anItem);
+  //  if (!aVItem)
+  //  continue;
 
-    const Handle(Standard_Transient)& anObject = aVItem->Object();
-    if (anObject.IsNull())
-      continue;
+  //  const Handle(Standard_Transient)& anObject = aVItem->Object();
+  //  if (anObject.IsNull())
+  //    continue;
 
-    aParameters.Append (anObject);
-    anItemNames.Append (anObject->DynamicType()->Name());
-    anExportedPointers.append (Standard_Dump::GetPointerInfo (anObject, true).ToCString());
-  }
+  //  aParameters.Append (anObject);
+  //  anItemNames.Append (anObject->DynamicType()->Name());
+  //  anExportedPointers.append (Standard_Dump::GetPointerInfo (anObject, true).ToCString());
+  //}
 
   if (anExportedPointers.isEmpty())
     return;
@@ -894,7 +890,7 @@ Handle(AIS_InteractiveContext) VInspector_Window::createView()
   Handle(AIS_InteractiveContext) aContext = View_Viewer::CreateStandardViewer();
 
   myViewWindow = new View_Window (0, aContext, false /*for opening several BREP files*/, true);
-  myViewWindow->SetPredefinedSize (VINSPECTOR_DEFAULT_VIEW_WIDTH, VINSPECTOR_DEFAULT_VIEW_HEIGHT);
+  myViewWindow->ViewWidget()->SetPredefinedSize (VINSPECTOR_DEFAULT_VIEW_WIDTH, VINSPECTOR_DEFAULT_VIEW_HEIGHT);
   myViewWindow->move (VINSPECTOR_DEFAULT_VIEW_POSITION_X, VINSPECTOR_DEFAULT_VIEW_POSITION_Y);
   myViewWindow->show();
 
