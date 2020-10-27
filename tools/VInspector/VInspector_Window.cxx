@@ -112,9 +112,8 @@ VInspector_Window::VInspector_Window()
   aTreeModel->InitColumns();
   myTreeView->setModel (aTreeModel);
   // hide Visibility column
-  TreeModel_HeaderSection anItem = aTreeModel->GetHeaderItem ((int)TreeModel_ColumnType_Visibility);
-  anItem.SetIsHidden (true);
-  aTreeModel->SetHeaderItem ((int)TreeModel_ColumnType_Visibility, anItem);
+  TreeModel_HeaderSection* anItem = aTreeModel->ChangeHeaderItem ((int)TreeModel_ColumnType_Visibility);
+  anItem->SetIsHidden (true);
 
   connect (myTreeView, SIGNAL(customContextMenuRequested(const QPoint&)),
            this, SLOT (onTreeViewContextMenuRequested(const QPoint&)));
@@ -157,12 +156,11 @@ VInspector_Window::VInspector_Window()
   connect (aSelectionModel, SIGNAL (selectionChanged (const QItemSelection&, const QItemSelection&)),
     this, SLOT (onHistoryViewSelectionChanged (const QItemSelection&, const QItemSelection&)));
 
-  anItem = aHistoryModel->GetHeaderItem (0);
+  anItem = aHistoryModel->ChangeHeaderItem (0);
   // hide Visibility column
   TreeModel_Tools::UseVisibilityColumn (myHistoryView, false);
-  anItem = aHistoryModel->GetHeaderItem ((int)TreeModel_ColumnType_Visibility);
-  anItem.SetIsHidden (true);
-  aHistoryModel->SetHeaderItem ((int)TreeModel_ColumnType_Visibility, anItem);
+  anItem = aHistoryModel->ChangeHeaderItem ((int)TreeModel_ColumnType_Visibility);
+  anItem->SetIsHidden (true);
 
   QModelIndex aParentIndex = myHistoryView->model()->index (0, 0);
   myHistoryView->setExpanded (aParentIndex, true);

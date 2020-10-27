@@ -12,6 +12,7 @@
 // commercial license or contractual agreement.
 
 #include <Message_AttributeStream.hxx>
+#include <Standard_Dump.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(Message_AttributeStream, Message_Attribute)
 
@@ -39,3 +40,15 @@ void Message_AttributeStream::SetStream (const Standard_SStream& theStream)
   myStream << aStreamStr;
 }
 
+//=======================================================================
+//function : DumpJson
+//purpose  :
+//=======================================================================
+void Message_AttributeStream::DumpJson (Standard_OStream& theOStream,
+                                        Standard_Integer theDepth) const
+{
+  OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
+  OCCT_DUMP_BASE_CLASS (theOStream, theDepth, Message_Attribute)
+
+  OCCT_DUMP_STREAM_VALUE_DUMPED (theOStream, myStream)
+}

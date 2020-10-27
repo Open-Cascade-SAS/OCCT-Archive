@@ -35,14 +35,15 @@ public:
   //! Create printer for redirecting messages into report.
   Message_PrinterToReport() {}
 
-  ~Message_PrinterToReport() {}
+  //! Destructor
+  Standard_EXPORT ~Message_PrinterToReport();
 
   //! Returns the current or default report
   Standard_EXPORT const Handle(Message_Report)& Report() const;
 
   //! Sets the printer report
   //! @param theReport report for messages processing, if NULL, the default report is used
-  Standard_EXPORT void SetReport (const Handle(Message_Report)& theReport) { myReport = theReport; }
+  Standard_EXPORT void SetReport (const Handle(Message_Report)& theReport);
 
   //! Send a string message with specified trace level.
   //! Stream is converted to string value.

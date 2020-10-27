@@ -136,14 +136,17 @@ protected slots:
   //! Update tree view item, preview presentation by item value change
   void onPropertyViewDataChanged();
 
+  //! Update tree view header item width
+  void onHeaderResized (int theSectionId, int, int);
+
   //! Updates visibility states by erase all in context
   void onEraseAllPerformed();
 
   //! Export report into document
   void onExportReport();
 
-  //! Import report into document
-  void onImportReport();
+  //! Create default report into document
+  void onCreateDefaultReport();
 
   //! Unite alerts in view model
   //void onUniteAlerts();

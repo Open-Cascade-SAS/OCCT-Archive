@@ -80,7 +80,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 
-const int DEFAULT_TEXT_VIEW_WIDTH = 400;// 800;
+const int DEFAULT_TEXT_VIEW_WIDTH = 800;// 800;
 const int DEFAULT_TEXT_VIEW_HEIGHT = 700;
 const int DEFAULT_TEXT_VIEW_POSITION_X = 430;
 const int DEFAULT_TEXT_VIEW_POSITION_Y = 30;
@@ -149,6 +149,9 @@ MessageView_Window::MessageView_Window (QWidget* theParent)
   aModel->InitColumns();
   //aModel->SetReversed (Standard_True);
 
+  connect (myTreeView->header(), SIGNAL (sectionResized (int, int, int)),
+           this, SLOT(onHeaderResized (int, int, int)));
+
   myTreeView->setModel (aModel);
   MessageView_VisibilityState* aVisibilityState = new MessageView_VisibilityState (aModel);
   aModel->SetVisibilityState (aVisibilityState);
@@ -170,6 +173,9 @@ MessageView_Window::MessageView_Window (QWidget* theParent)
   connect (myTreeView, SIGNAL (customContextMenuRequested (const QPoint&)),
           this, SLOT (onTreeViewContextMenuRequested (const QPoint&)));
   //new TreeModel_ContextMenu (myTreeView);
+
+  connect (myTreeView->header(), SIGNAL (sectionResized (int, int, int)),
+           this, SLOT(onHeaderResized (int, int, int)));
 
   QModelIndex aParentIndex = myTreeView->model()->index (0, 0);
   myTreeView->setExpanded (aParentIndex, true);
@@ -251,15 +257,18 @@ void MessageView_Window::GetPreferences (TInspectorAPI_PreferencesDataMap& theIt
   theItem.Bind ("geometry",  TreeModel_Tools::ToString (myMainWindow->saveState()).toStdString().c_str());
 
   QMap<QString, QString> anItems;
-  //TreeModel_Tools::SaveState (myTreeView, anItems);
+  TreeModel_Tools::SaveState (myTreeView, anItems);
+  for (QMap<QString, QString>::const_iterator anItemsIt = anItems.begin(); anItemsIt != anItems.end(); anItemsIt++)
+  {
+    theItem.Bind (anItemsIt.key().toStdString().c_str(), anItemsIt.value().toStdString().c_str());
+  }
 
   anItems.clear();
   View_Window::SaveState(myViewWindow, anItems);
   for (QMap<QString, QString>::const_iterator anItemsIt = anItems.begin(); anItemsIt != anItems.end(); anItemsIt++)
+  {
     theItem.Bind (anItemsIt.key().toStdString().c_str(), anItemsIt.value().toStdString().c_str());
-
-  for (QMap<QString, QString>::const_iterator anItemsIt = anItems.begin(); anItemsIt != anItems.end(); anItemsIt++)
-    theItem.Bind (anItemsIt.key().toStdString().c_str(), anItemsIt.value().toStdString().c_str());
+  }
 }
 
 // =======================================================================
@@ -272,8 +281,8 @@ void MessageView_Window::SetPreferences (const TInspectorAPI_PreferencesDataMap&
   {
     if (anItemIt.Key().IsEqual ("geometry"))
       myMainWindow->restoreState (TreeModel_Tools::ToByteArray (anItemIt.Value().ToCString()));
-    //else if (TreeModel_Tools::RestoreState (myTreeView, anItemIt.Key().ToCString(), anItemIt.Value().ToCString()))
-    //  continue;
+    else if (TreeModel_Tools::RestoreState (myTreeView, anItemIt.Key().ToCString(), anItemIt.Value().ToCString()))
+      continue;
     else if (myViewWindow && View_Window::RestoreState(myViewWindow, anItemIt.Key().ToCString(), anItemIt.Value().ToCString()))
       continue;
   }
@@ -305,7 +314,7 @@ void MessageView_Window::UpdateContent()
     myParameters->SetFileNames (aName, aNames);
     isUpdated = true;
   }
-  Handle(Message_Report) aDefaultReport = Message::DefaultReport (Standard_False);
+  Handle(Message_Report) aDefaultReport = Message::DefaultReport();
   MessageModel_TreeModel* aViewModel = dynamic_cast<MessageModel_TreeModel*> (myTreeView->model());
   if (!aDefaultReport.IsNull() && !aViewModel->HasReport (aDefaultReport))
   {
@@ -315,6 +324,7 @@ void MessageView_Window::UpdateContent()
   //onReloadReport();
 
   updateTreeModel();
+  updateVisibleColumns();
 }
 
 // =======================================================================
@@ -372,7 +382,10 @@ void MessageView_Window::Init (NCollection_List<Handle(Standard_Transient)>& the
 // =======================================================================
 void MessageView_Window::openFile(const TCollection_AsciiString& theFileName)
 {
-  const Handle(Message_Report)& aReport = Message::DefaultReport();
+  if (theFileName.IsEmpty())
+    return;
+
+  const Handle(Message_Report)& aReport = Message::DefaultReport (Standard_True);
 
   //Handle(Message_Report) aReport = new Message_Report();
   if (aReport->MessageWriter().IsNull())
@@ -407,7 +420,7 @@ void MessageView_Window::addReport (const Handle(Message_Report)& theReport,
   MessageModel_TreeModel* aModel = dynamic_cast<MessageModel_TreeModel*> (myTreeView->model());
   aModel->AddReport (theReport, theReportDescription);
 
-  updateVisibleColumns();
+  //updateVisibleColumns();
 }
 
 // =======================================================================
@@ -466,7 +479,8 @@ void MessageView_Window::onTreeViewContextMenuRequested (const QPoint& thePositi
   }
   if (aRootItem)
   {
-    aMenu->addAction (ViewControl_Tools::CreateAction (tr ("Import Report"), SLOT (onImportReport()), myMainWindow, this));
+    aMenu->addAction (ViewControl_Tools::CreateAction (tr ("Create Default Report"),
+                      SLOT (onCreateDefaultReport()), myMainWindow, this));
     // unite
     //MessageModel_TreeModel* aTreeModel = dynamic_cast<MessageModel_TreeModel*> (myTreeView->model());
     //aMenu->addAction (ViewControl_Tools::CreateAction (aTreeModel->IsUniteAlerts() ? tr ("SetUniteAlerts - OFF") : tr ("SetUniteAlerts - ON"),
@@ -546,6 +560,18 @@ void MessageView_Window::onPropertyViewDataChanged()
 }
 
 // =======================================================================
+// function : onHeaderResized
+// purpose :
+// =======================================================================
+void MessageView_Window::onHeaderResized (int theSectionId, int, int)
+{
+  TreeModel_ModelBase* aViewModel = dynamic_cast<TreeModel_ModelBase*> (myTreeView->model());
+
+  TreeModel_HeaderSection* aSection = aViewModel->ChangeHeaderItem (theSectionId);
+  aSection->SetWidth (myTreeView->columnWidth (theSectionId));
+}
+
+// =======================================================================
 // function : onEraseAllPerformed
 // purpose :
 // =======================================================================
@@ -576,32 +602,36 @@ void MessageView_Window::onExportReport()
   if (!aReportItem)
     return;
 
-  QString aFilter (tr ("Document file (*.xml *)"));
+  QString aFilter (tr ("Document file (*.json *)"));
   QString aSelectedFilter;
   QString aFileName = QFileDialog::getSaveFileName (0, tr ("Export report to file"), QString(), aFilter, &aSelectedFilter);
 
   Handle(Message_Report) aReport = aReportItem->GetReport();
-  if (aReport->MessageWriter().IsNull())
-    aReport->SetMessageWriter (new XmlDrivers_MessageReportStorage());
+  Standard_SStream aStream;
+  aReport->DumpJson(aStream);
 
-  aReport->MessageWriter()->SetFileName (TCollection_AsciiString (aFileName.toStdString().c_str()));
-  aReport->MessageWriter()->ExportReport (aReport);
+  QFile aLogFile(aFileName);
+  if (!aLogFile.open(QFile::WriteOnly | QFile::Text))
+  {
+    return;
+  }
+  QTextStream anOut( &aLogFile );
+  anOut << Standard_Dump::FormatJson (aStream).ToCString();//aStream.str().c_str();
+  aLogFile.close();
 }
 
 // =======================================================================
-// function : onImportReport
+// function : onCreateDefaultReport
 // purpose :
 // =======================================================================
-void MessageView_Window::onImportReport()
+void MessageView_Window::onCreateDefaultReport()
 {
-  QString aFilter (tr ("Document file (*.cbf *)"));
-  QString aSelectedFilter;
+  if (!Message::DefaultReport().IsNull())
+  {
+    return;
+  }
 
-  QItemSelectionModel* aSelectionModel = myTreeView->selectionModel();
-  aSelectionModel->clear();
-
-  QString aFileName = QFileDialog::getOpenFileName (0, tr("Import report"), QString(), aSelectedFilter);
-  openFile (TCollection_AsciiString (aFileName.toStdString().c_str()));
+  addReport (Message::DefaultReport (Standard_True));
 }
 
 // =======================================================================
@@ -742,10 +772,13 @@ void MessageView_Window::onPreviewChildren()
 // =======================================================================
 void MessageView_Window::addActivateMetricActions (QMenu* theMenu)
 {
+  Handle(Message_Report) aReport = Message::DefaultReport();
+  if (aReport.IsNull())
+  {
+    return;
+  }
+
   QMenu* aSubMenu = new QMenu ("Activate metric");
-
-  Handle(Message_Report) aReport = Message::DefaultReport (Standard_True);
-
   for (int aMetricId = (int)Message_MetricType_None + 1; aMetricId <= (int)Message_MetricType_MemHeapUsage; aMetricId++)
   {
     Message_MetricType aMetricType = (Message_MetricType)aMetricId;
@@ -773,7 +806,7 @@ void MessageView_Window::OnActivateMetric()
   if (!Message::MetricFromString (anAction->text().toStdString().c_str(), aMetricType))
     return;
 
-  Handle(Message_Report) aReport = Message::DefaultReport (Standard_True);
+  Handle(Message_Report) aReport = Message::DefaultReport();
   const NCollection_Map<Message_MetricType>& anActiveMetrics = aReport->ActiveMetrics();
 
   aReport->SetActiveMetric (aMetricType, !anActiveMetrics.Contains (aMetricType));
@@ -901,9 +934,8 @@ void MessageView_Window::updateVisibleColumns()
     {
       int aColumnId = aMetricColumns[i];
       myTreeView->setColumnHidden (aColumnId, isColumnHidden);
-      TreeModel_HeaderSection aSection = aViewModel->GetHeaderItem (aColumnId);
-      aSection.SetIsHidden (isColumnHidden);
-      aViewModel->SetHeaderItem (aColumnId, aSection);
+      TreeModel_HeaderSection* aSection = aViewModel->ChangeHeaderItem (aColumnId);
+      aSection->SetIsHidden (isColumnHidden);
     }
   }
 }

@@ -47,9 +47,9 @@ TreeModel_ModelBase::TreeModel_ModelBase (QObject* theParent)
 // =======================================================================
 void TreeModel_ModelBase::InitColumns()
 {
-  SetHeaderItem (TreeModel_ColumnType_Name,       TreeModel_HeaderSection ("Name", COLUMN_NAME_WIDTH));
-  SetHeaderItem (TreeModel_ColumnType_Visibility, TreeModel_HeaderSection ("Visibility", TreeModel_ModelBase::ColumnVisibilityWidth()));
-  SetHeaderItem (TreeModel_ColumnType_Row,        TreeModel_HeaderSection ("Row", COLUMN_SIZE_WIDTH));
+  setHeaderItem (TreeModel_ColumnType_Name,       TreeModel_HeaderSection ("Name", COLUMN_NAME_WIDTH));
+  setHeaderItem (TreeModel_ColumnType_Visibility, TreeModel_HeaderSection ("Visibility", TreeModel_ModelBase::ColumnVisibilityWidth()));
+  setHeaderItem (TreeModel_ColumnType_Row,        TreeModel_HeaderSection ("Row", COLUMN_SIZE_WIDTH));
 }
 
 // =======================================================================
@@ -178,7 +178,7 @@ QVariant TreeModel_ModelBase::headerData (int theSection, Qt::Orientation theOri
   if (IsUseVisibilityColumn() && theSection == TreeModel_ColumnType_Visibility)
     return QVariant();
 
-  return GetHeaderItem (theSection).GetName();
+  return myHeaderValues[theSection].GetName();
 }
 
 // =======================================================================
@@ -230,23 +230,6 @@ void TreeModel_ModelBase::EmitDataChanged (const QModelIndex& theTopLeft, const 
 #else
   emit dataChanged (theTopLeft, theBottomRight, theRoles);
 #endif
-}
-
-// =======================================================================
-// function : SetHeaderItem
-// purpose :
-// =======================================================================
-void TreeModel_ModelBase::SetHeaderItem (const int theColumnId, const TreeModel_HeaderSection& theSection)
-{
-  if (theSection.IsEmpty())
-  {
-    // remove section
-    myHeaderValues.remove (theColumnId);
-    myRootItems.remove (theColumnId);
-  }
-
-  myHeaderValues[theColumnId] = theSection;
-  createRoot (theColumnId);
 }
 
 // =======================================================================
@@ -337,6 +320,23 @@ void TreeModel_ModelBase::subItemsPresentations (const TreeModel_ItemBasePtr& th
 void TreeModel_ModelBase::createRoot (const int theColumnId)
 {
   myRootItems.insert (theColumnId, createRootItem (theColumnId));
+}
+
+// =======================================================================
+// function : setHeaderItem
+// purpose :
+// =======================================================================
+void TreeModel_ModelBase::setHeaderItem (const int theColumnId, const TreeModel_HeaderSection& theSection)
+{
+  if (theSection.IsEmpty())
+  {
+    // remove section
+    myHeaderValues.remove (theColumnId);
+    myRootItems.remove (theColumnId);
+  }
+
+  myHeaderValues[theColumnId] = theSection;
+  createRoot (theColumnId);
 }
 
 // =======================================================================

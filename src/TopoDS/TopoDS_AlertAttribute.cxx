@@ -53,3 +53,16 @@ void TopoDS_AlertAttribute::Send (const Handle(Message_Messenger)& theMessenger,
     //                                 Message_Info);
   }
 }
+
+//=======================================================================
+//function : DumpJson
+//purpose  :
+//=======================================================================
+void TopoDS_AlertAttribute::DumpJson (Standard_OStream& theOStream,
+                                      Standard_Integer theDepth) const
+{
+  OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
+  OCCT_DUMP_BASE_CLASS (theOStream, theDepth, Message_Attribute)
+
+  OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, &myShape)
+}

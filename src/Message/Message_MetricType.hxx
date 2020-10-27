@@ -20,6 +20,7 @@ enum Message_MetricType
   Message_MetricType_None,              //!< no computation
   Message_MetricType_UserTimeCPU,       //!< the current CPU user time in seconds
   Message_MetricType_SystemTimeInfo,    //!< the current CPU system time in seconds
+  Message_MetricType_WallClock,         //!< OSD_Timer elapsed time
   Message_MetricType_MemPrivate,        //!< OSD_MemInfo::MemPrivate
   Message_MetricType_MemVirtual,        //!< OSD_MemInfo::MemVirtual
   Message_MetricType_MemWorkingSet,     //!< OSD_MemInfo::MemWorkingSet

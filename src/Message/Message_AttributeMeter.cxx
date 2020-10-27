@@ -16,8 +16,10 @@
 #include <Message.hxx>
 #include <Message_Report.hxx>
 #include <OSD_Chronometer.hxx>
+#include <OSD_Timer.hxx>
 
 #include <Precision.hxx>
+#include <Standard_Dump.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(Message_AttributeMeter, Message_Attribute)
 
@@ -121,6 +123,16 @@ void Message_AttributeMeter::SetAlertMetrics (const Handle(Message_AlertExtended
   const NCollection_Map<Message_MetricType>& anActiveMetrics = aReport->ActiveMetrics();
 
   // time metrics
+  if (anActiveMetrics.Contains (Message_MetricType_WallClock))
+  {
+    OSD_Timer aTimer;
+    aTimer.Start();
+    Standard_Real aTime = aTimer.StartTime();
+    if (theStartValue)
+      aMeterAttribute->SetStartValue (Message_MetricType_WallClock, aTime);
+    else
+      aMeterAttribute->SetStopValue (Message_MetricType_WallClock, aTime);
+  }
   if (anActiveMetrics.Contains (Message_MetricType_UserTimeCPU) ||
       anActiveMetrics.Contains (Message_MetricType_SystemTimeInfo))
   {
@@ -171,5 +183,23 @@ void Message_AttributeMeter::SetAlertMetrics (const Handle(Message_AlertExtended
       aMeterAttribute->SetStartValue (aMetricType, (Standard_Real)aMemInfo.ValuePreciseMiB (anIterator.Value()));
     else
       aMeterAttribute->SetStopValue (aMetricType, (Standard_Real)aMemInfo.ValuePreciseMiB (anIterator.Value()));
+  }
+}
+
+//=======================================================================
+//function : DumpJson
+//purpose  :
+//=======================================================================
+void Message_AttributeMeter::DumpJson (Standard_OStream& theOStream,
+                                       Standard_Integer theDepth) const
+{
+  OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
+  OCCT_DUMP_BASE_CLASS (theOStream, theDepth, Message_Attribute)
+
+  for (NCollection_DataMap<Message_MetricType, StartToStopValue>::Iterator anIterator (myMetrics);
+       anIterator.More(); anIterator.Next())
+  {
+    OCCT_DUMP_VECTOR_CLASS (theOStream, Message::MetricToString (anIterator.Key()),
+                            2, anIterator.Value().first, anIterator.Value().second)
   }
 }

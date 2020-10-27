@@ -34,6 +34,10 @@ public:
   //! Sets stream value
   Standard_EXPORT void SetStream (const Standard_SStream& theStream);
 
+  //! Dumps the content of me into the stream
+  virtual Standard_EXPORT void DumpJson (Standard_OStream& theOStream,
+                                         Standard_Integer theDepth = -1) const Standard_OVERRIDE;
+
   DEFINE_STANDARD_RTTIEXT(Message_AttributeStream, Message_Attribute)
 
 private:

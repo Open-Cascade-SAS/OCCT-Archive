@@ -80,6 +80,10 @@ public:
   static Standard_EXPORT void SetAlertMetrics (const Handle(Message_AlertExtended)& theAlert,
                                                const Standard_Boolean theStartValue);
 
+  //! Dumps the content of me into the stream
+  virtual Standard_EXPORT void DumpJson (Standard_OStream& theOStream,
+                                         Standard_Integer theDepth = -1) const Standard_OVERRIDE;
+
   DEFINE_STANDARD_RTTIEXT(Message_AttributeMeter, Message_Attribute)
 
 private:

@@ -27,9 +27,9 @@ static Handle(Message_Messenger) MyMessenger;
 
 namespace
 {
-  static Standard_CString Message_Table_PrintMetricTypeEnum[10] =
+  static Standard_CString Message_Table_PrintMetricTypeEnum[11] =
   {
-    "NONE", "UserTimeCPU", "SystemTimeInfo", "MemPrivate", "MemVirtual",
+    "NONE", "UserTimeCPU", "SystemTimeCPU", "WallClock", "MemPrivate", "MemVirtual",
     "MemWorkingSet", "MemWorkingSetPeak", "MemSwapUsage", "MemSwapUsagePeak", "MemHeapUsage"
   };
 }

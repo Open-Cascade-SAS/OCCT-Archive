@@ -40,6 +40,10 @@ public:
   Standard_EXPORT static void Send (const Handle(Message_Messenger)& theMessenger,
                                     const TopoDS_Shape& theShape);
 
+  //! Dumps the content of me into the stream
+  Standard_EXPORT void DumpJson (Standard_OStream& theOStream,
+                                 Standard_Integer theDepth = -1) const Standard_OVERRIDE;
+
   // OCCT RTTI
   DEFINE_STANDARD_RTTIEXT(TopoDS_AlertAttribute, Message_AttributeStream)
 

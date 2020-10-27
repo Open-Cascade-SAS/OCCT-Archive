@@ -37,7 +37,8 @@ IMPLEMENT_STANDARD_RTTIEXT(Message_Report,Standard_Transient)
 //=======================================================================
 
 Message_Report::Message_Report ()
-: myLimit (-1), myWriteFileOnEachAlert (Standard_False)
+: myLimit (-1), myWriteFileOnEachAlert (Standard_False),
+  myIsActiveInMessenger (Standard_False)
 {
 }
 
@@ -121,16 +122,9 @@ Standard_Boolean Message_Report::HasAlert (const Handle(Standard_Type)& theType,
 //purpose  :
 //=======================================================================
 
-Standard_Boolean Message_Report::IsActiveInMessenger (const Handle(Message_Messenger)& theMessenger) const
+Standard_Boolean Message_Report::IsActiveInMessenger (const Handle(Message_Messenger)&) const
 {
-  Handle(Message_Messenger) aMessenger = theMessenger.IsNull() ? Message::DefaultMessenger() : theMessenger;
-  for (Message_SequenceOfPrinters::Iterator anIterator (aMessenger->Printers()); anIterator.More(); anIterator.Next())
-  {
-    if (anIterator.Value()->IsKind(STANDARD_TYPE (Message_PrinterToReport)) &&
-        Handle(Message_PrinterToReport)::DownCast (anIterator.Value())->Report() == this)
-      return Standard_True;
-  }
-  return Standard_False;
+  return myIsActiveInMessenger;
 }
 
 //=======================================================================
@@ -139,11 +133,12 @@ Standard_Boolean Message_Report::IsActiveInMessenger (const Handle(Message_Messe
 //=======================================================================
 
 void Message_Report::ActivateInMessenger (const Standard_Boolean toActivate,
-                                          const Handle(Message_Messenger)& theMessenger) const
+                                          const Handle(Message_Messenger)& theMessenger)
 {
   if (toActivate == IsActiveInMessenger())
     return;
 
+  myIsActiveInMessenger = toActivate;
   Handle(Message_Messenger) aMessenger = theMessenger.IsNull() ? Message::DefaultMessenger() : theMessenger;
   if (toActivate)
   {
@@ -166,6 +161,25 @@ void Message_Report::ActivateInMessenger (const Standard_Boolean toActivate,
       aMessenger->RemovePrinter (anIterator.Value());
     }
   }
+}
+
+//=======================================================================
+//function : UpdateActiveInMessenger
+//purpose  :
+//=======================================================================
+void Message_Report::UpdateActiveInMessenger (const Handle(Message_Messenger)& theMessenger)
+{
+  Handle(Message_Messenger) aMessenger = theMessenger.IsNull() ? Message::DefaultMessenger() : theMessenger;
+  for (Message_SequenceOfPrinters::Iterator anIterator (aMessenger->Printers()); anIterator.More(); anIterator.Next())
+  {
+    if (anIterator.Value()->IsKind(STANDARD_TYPE (Message_PrinterToReport)) &&
+        Handle(Message_PrinterToReport)::DownCast (anIterator.Value())->Report() == this)
+    {
+      myIsActiveInMessenger = Standard_True;
+      return;
+    }
+  }
+  myIsActiveInMessenger = Standard_False;
 }
 
 //=======================================================================
@@ -446,4 +460,30 @@ void Message_Report::writeReport()
     return;
 
   myReportWriter->ExportReport (this);
+}
+
+//=======================================================================
+//function : DumpJson
+//purpose  :
+//=======================================================================
+void Message_Report::DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth) const
+{
+  OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
+
+  if (!myCompositAlerts.IsNull())
+  {
+    OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, myCompositAlerts.get())
+  }
+
+  Standard_Integer anAlertLevels = myAlertLevels.Size();
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, anAlertLevels)
+
+  for (NCollection_Map<Message_MetricType>::Iterator anIterator (myActiveMetrics); anIterator.More(); anIterator.Next())
+  {
+    Message_MetricType anActiveMetric = anIterator.Value();
+    OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, anActiveMetric)
+  }
+
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myLimit)
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIsActiveInMessenger)
 }

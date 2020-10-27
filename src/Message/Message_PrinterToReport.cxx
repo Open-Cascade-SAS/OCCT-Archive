@@ -29,6 +29,18 @@
 IMPLEMENT_STANDARD_RTTIEXT(Message_PrinterToReport, Message_Printer)
 
 //=======================================================================
+//function : Destructor
+//purpose  : 
+//=======================================================================
+Message_PrinterToReport::~Message_PrinterToReport()
+{
+  if (!myReport.IsNull())
+  {
+    myReport->UpdateActiveInMessenger();
+  }
+}
+
+//=======================================================================
 //function : Report
 //purpose  : 
 //=======================================================================
@@ -38,6 +50,16 @@ const Handle(Message_Report)& Message_PrinterToReport::Report() const
     return myReport;
 
   return Message::DefaultReport (Standard_True);
+}
+
+//=======================================================================
+//function : Send
+//purpose  :
+//=======================================================================
+void Message_PrinterToReport::SetReport (const Handle(Message_Report)& theReport)
+{
+  myReport = theReport;
+  myReport->UpdateActiveInMessenger();
 }
 
 //=======================================================================

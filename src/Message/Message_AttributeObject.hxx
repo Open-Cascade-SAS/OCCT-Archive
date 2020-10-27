@@ -15,6 +15,7 @@
 #define _Message_AttributeObject_HeaderFile
 
 #include <Message_Attribute.hxx>
+#include <Standard_Dump.hxx>
 
 class Standard_Transient;
 
@@ -34,6 +35,15 @@ public:
   //! Sets the object
   //! @param theObject an instance
   void SetObject (const Handle(Standard_Transient)& theObject) { myObject = theObject; }
+
+  //! Dumps the content of me into the stream
+  virtual void DumpJson (Standard_OStream& theOStream,
+                                         Standard_Integer theDepth = -1) const Standard_OVERRIDE
+  {
+    OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
+    OCCT_DUMP_BASE_CLASS (theOStream, theDepth, Message_Attribute)
+    OCCT_DUMP_FIELD_VALUE_POINTER (theOStream, myObject.get())
+  }
 
   DEFINE_STANDARD_RTTI_INLINE(Message_AttributeObject, Message_Attribute)
 

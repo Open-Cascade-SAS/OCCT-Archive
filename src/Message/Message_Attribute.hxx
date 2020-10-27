@@ -43,6 +43,9 @@ public:
   //! @param theName a name for the alert
   void SetName (const TCollection_AsciiString& theName) { myName = theName; }
 
+  //! Dumps the content of me into the stream
+  virtual Standard_EXPORT void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
+
   DEFINE_STANDARD_RTTIEXT(Message_Attribute, Standard_Transient)
 
 private:

@@ -170,6 +170,7 @@ void MessageModel_Actions::OnActivateReport()
 
   Message::DefaultMessenger()->AddPrinter (MyPrinterToReport);
   Message::DefaultMessenger()->SetTraceLevel (1);
+  Message::DefaultReport()->UpdateActiveInMessenger();
 
   myTreeModel->UpdateTreeModel();
 }

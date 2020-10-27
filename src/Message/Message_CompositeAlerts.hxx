@@ -66,6 +66,9 @@ public:
   //! @param theType an alert type
   Standard_EXPORT void Clear (const Handle(Standard_Type)& theType);
 
+  //! Dumps the content of me into the stream
+  Standard_EXPORT void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
+
   DEFINE_STANDARD_RTTIEXT(Message_CompositeAlerts,Standard_Transient)
 
 protected:

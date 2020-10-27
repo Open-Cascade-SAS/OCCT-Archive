@@ -119,8 +119,12 @@ QVariant MessageModel_ItemAlert::initValue (const int theRole) const
     if (anAttribute.IsNull() || !anAttribute->HasMetric (aMetricType))
       return QVariant();
 
+    if (!anAttribute->IsMetricValid (aMetricType))
+      return QVariant ("in process");
+
     if (aMetricType == Message_MetricType_UserTimeCPU ||
-        aMetricType == Message_MetricType_SystemTimeInfo)
+        aMetricType == Message_MetricType_SystemTimeInfo ||
+        aMetricType == Message_MetricType_WallClock)
     {
       Standard_Real aCumulativeMetric = anAttribute->StopValue (aMetricType) - anAttribute->StartValue (aMetricType);
       if (fabs (aCumulativeMetric) < Precision::Confusion())

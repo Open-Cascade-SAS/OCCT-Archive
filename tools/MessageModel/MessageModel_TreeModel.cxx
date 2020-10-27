@@ -22,7 +22,7 @@
 
 #include <Message.hxx>
 
-const int COLUMN_NAME_WIDTH = 460;
+const int COLUMN_NAME_WIDTH = 230;
 const int COLUMN_SIZE_WIDTH = 30;
 
 const int COLUMN_REAL_VALUE_WIDTH = 115;
@@ -44,9 +44,9 @@ MessageModel_TreeModel::MessageModel_TreeModel (QObject* theParent)
 void MessageModel_TreeModel::InitColumns()
 {
   // 0 - Name, 1 - visibility, 2 - Row
-  SetHeaderItem (TreeModel_ColumnType_Name,       TreeModel_HeaderSection ("Name", COLUMN_NAME_WIDTH));
-  SetHeaderItem (TreeModel_ColumnType_Visibility, TreeModel_HeaderSection ("Visibility", TreeModel_ModelBase::ColumnVisibilityWidth()));
-  SetHeaderItem (TreeModel_ColumnType_Row,        TreeModel_HeaderSection ("Row", COLUMN_SIZE_WIDTH, Standard_True /*hidden*/));
+  setHeaderItem (TreeModel_ColumnType_Name,       TreeModel_HeaderSection ("Name", COLUMN_NAME_WIDTH));
+  setHeaderItem (TreeModel_ColumnType_Visibility, TreeModel_HeaderSection ("Visibility", TreeModel_ModelBase::ColumnVisibilityWidth()));
+  setHeaderItem (TreeModel_ColumnType_Row,        TreeModel_HeaderSection ("Row", COLUMN_SIZE_WIDTH, Standard_True /*hidden*/));
 
   int aNextIndex = 3;
   for (int aMetricId = (int)Message_MetricType_None + 1; aMetricId <= (int)Message_MetricType_MemHeapUsage; aMetricId++)
@@ -55,10 +55,10 @@ void MessageModel_TreeModel::InitColumns()
     OSD_MemInfo::Counter aMemInfo;
     bool isMemInfo = Message::ToOSDMetric (aMetricType, aMemInfo);
 
-    SetHeaderItem (aNextIndex++,
+    setHeaderItem (aNextIndex++,
       TreeModel_HeaderSection (QString("%1 [%2]").arg (Message::MetricToString (aMetricType)).arg(isMemInfo ? "Mb" : "s"),
       COLUMN_REAL_VALUE_WIDTH));
-    SetHeaderItem (aNextIndex++, TreeModel_HeaderSection (isMemInfo ? "Delta" : "%", COLUMN_PERCENT_VALUE_WIDTH));
+    setHeaderItem (aNextIndex++, TreeModel_HeaderSection (isMemInfo ? "Delta" : "%", COLUMN_PERCENT_VALUE_WIDTH));
   }
 }
 

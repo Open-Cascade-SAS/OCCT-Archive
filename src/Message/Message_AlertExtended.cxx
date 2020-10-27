@@ -18,6 +18,7 @@
 
 #include <Precision.hxx>
 #include <Standard_Assert.hxx>
+#include <Standard_Dump.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(Message_AlertExtended,Message_Alert)
 
@@ -88,4 +89,23 @@ Handle(Message_Alert) Message_AlertExtended::AddAlert (const Handle(Message_Repo
   theReport->AddAlert (theGravity, anAlert);
 
   return anAlert;
+}
+
+//=======================================================================
+//function : DumpJson
+//purpose  :
+//=======================================================================
+void Message_AlertExtended::DumpJson (Standard_OStream& theOStream,
+                                      Standard_Integer theDepth) const
+{
+  OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
+
+  if (!myCompositAlerts.IsNull())
+  {
+    OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, myCompositAlerts.get())
+  }
+  if (!myAttribute.IsNull())
+  {
+    OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, myAttribute.get())
+  }
 }

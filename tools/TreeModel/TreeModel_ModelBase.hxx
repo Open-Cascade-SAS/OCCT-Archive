@@ -141,12 +141,7 @@ public:
   //! Returns whether the column is hidden by default
   //! \param theColumnId a column index
   //! \return header section values container
-  TreeModel_HeaderSection GetHeaderItem (const int theColumnId) const { return myHeaderValues[theColumnId]; }
-
-  //! Sets header properties item.
-  //! \param theColumnId a column index
-  //! \param theSection a section value
-  Standard_EXPORT void SetHeaderItem (const int theColumnId, const TreeModel_HeaderSection& theSection);
+  TreeModel_HeaderSection* ChangeHeaderItem (const int theColumnId) { return &myHeaderValues[theColumnId]; }
 
   //! Returns count of columns in the model
   //! \param theParent an index of the parent item
@@ -190,6 +185,11 @@ protected:
   //! Creates root item
   //! \param theColumnId index of a column
   virtual TreeModel_ItemBasePtr createRootItem (const int theColumnId) = 0;
+
+  //! Sets header properties item.
+  //! \param theColumnId a column index
+  //! \param theSection a section value
+  Standard_EXPORT void setHeaderItem (const int theColumnId, const TreeModel_HeaderSection& theSection);
 
   //! Converts the item shared pointer to void* type
   //! \param theItem

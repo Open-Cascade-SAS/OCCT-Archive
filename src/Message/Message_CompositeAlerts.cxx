@@ -14,6 +14,7 @@
 #include <Message_CompositeAlerts.hxx>
 #include <Message_AlertExtended.hxx>
 #include <Standard_Assert.hxx>
+#include <Standard_Dump.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(Message_CompositeAlerts, Standard_Transient)
 
@@ -150,6 +151,32 @@ void Message_CompositeAlerts::Clear (const Handle(Standard_Type)& theType)
       {
         anIt.More();
       }
+    }
+  }
+}
+
+//=======================================================================
+//function : DumpJson
+//purpose  :
+//=======================================================================
+void Message_CompositeAlerts::DumpJson (Standard_OStream& theOStream,
+                                        Standard_Integer theDepth) const
+{
+  OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
+
+  for (unsigned int i = 0; i < sizeof(myAlerts)/sizeof(myAlerts[0]); ++i)
+  {
+    if (myAlerts[i].IsEmpty())
+      continue;
+
+    Message_Gravity aGravity = (Message_Gravity)i;
+    OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, aGravity)
+
+    Standard_Integer anInc = 1;
+    for (Message_ListOfAlert::Iterator anIt (myAlerts[i]); anIt.More(); anIt.Next(), anInc++)
+    {
+      const Handle(Message_Alert)& anAlert = anIt.Value();
+      OCCT_DUMP_FIELD_VALUES_DUMPED_INC (theOStream, theDepth, anAlert.get(), anInc)
     }
   }
 }

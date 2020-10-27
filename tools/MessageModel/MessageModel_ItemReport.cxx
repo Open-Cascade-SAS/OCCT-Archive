@@ -67,7 +67,8 @@ QVariant MessageModel_ItemReport::initValue (const int theRole) const
   Message_MetricType aMetricType;
   int aPosition;
   if (MessageModel_TreeModel::IsMetricColumn (Column(), aMetricType, aPosition) &&
-      (aMetricType == Message_MetricType_UserTimeCPU || aMetricType == Message_MetricType_SystemTimeInfo))
+      (aMetricType == Message_MetricType_UserTimeCPU || aMetricType == Message_MetricType_SystemTimeInfo ||
+       aMetricType == Message_MetricType_WallClock))
   {
     if (aPosition == 0) return CumulativeMetric (aReport, aMetricType);
     else if (aPosition == 1) return "100";
@@ -210,8 +211,9 @@ Standard_Real MessageModel_ItemReport::CumulativeMetric (const Handle(Message_Re
       if (anAlert.IsNull())
         continue;
       Handle(Message_AttributeMeter) anAttribute = Handle(Message_AttributeMeter)::DownCast (anAlert->Attribute());
-      if (anAttribute.IsNull() || !anAttribute->HasMetric(theMetricType))
+      if (anAttribute.IsNull() || !anAttribute->HasMetric (theMetricType) || !anAttribute->IsMetricValid (theMetricType))
         continue;
+
       //if (aFirstAttribute.IsNull())
       //  aFirstAttribute = anAttribute;
       //else
