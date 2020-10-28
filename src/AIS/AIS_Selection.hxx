@@ -95,6 +95,15 @@ protected:
   Standard_EXPORT virtual AIS_SelectStatus appendOwner (const Handle(SelectMgr_EntityOwner)& theOwner,
                                                         const Handle(SelectMgr_Filter)& theFilter);
 
+  //! XOR the owner to the current selection if filter is Ok.
+  //! \param theOwner element to change selection state
+  //! \param thePreviousSelected previous selected objects
+  //! \param theFilter context filter to skip not acceptable owners
+  //! \return result of selection
+  Standard_EXPORT virtual AIS_SelectStatus XOROwner (const Handle(SelectMgr_EntityOwner)& theOwner,
+                                                     const AIS_NListOfEntityOwner& thePreviousSelected,
+                                                     const Handle(SelectMgr_Filter)& theFilter);
+
 protected:
 
   AIS_NListOfEntityOwner myresult;

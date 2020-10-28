@@ -859,6 +859,17 @@ for (myAISCtx->InitSelected(); myAISCtx->MoreSelected(); myAISCtx->NextSelected(
 }
 ~~~~~
 
+@subsubsection occt_visu_3_4_7 Selection schemes
+
+Select* methods of AIS_InteractiveContext accept some selection scheme as parameter. The table below describes available selection schemes.
+
+| Type | Reaction on click |  | Type | Reaction on click |
+| :----- | :----- | :----- | :----- | :----- |
+| AIS_SelectionScheme_Replace | @figure{visualization_selection_scheme_replace.svg, ""} |  | AIS_SelectionScheme_XOR | @figure{visualization_selection_scheme_XOR.svg, ""} |
+| AIS_SelectionScheme_Add | @figure{visualization_selection_scheme_add.svg, ""} |  | AIS_SelectionScheme_Clear | @figure{visualization_selection_scheme_clear.svg, ""} |
+| AIS_SelectionScheme_Remove | @figure{visualization_selection_scheme_remove.svg, ""} |  | AIS_SelectionScheme_ReplaceExtra | @figure{visualization_selection_scheme_replaceExtra.svg, ""} |
+
+
 @subsection occt_visu_3_5 Standard Interactive Object Classes
 
 Interactive Objects are selectable and viewable objects connecting graphic representation and the underlying reference geometry.
@@ -1430,7 +1441,7 @@ aView->Update();
 
 @subsubsection occt_visu_4_4_5 Perspective Projection
 
-**Field of view (FOVy)** -- defines the field of camera view by y axis in degrees (45° is default).
+**Field of view (FOVy)** -- defines the field of camera view by y axis in degrees (45Â° is default).
 
 @figure{camera_perspective.png,"Perspective frustum",420}
 
@@ -1452,7 +1463,7 @@ There are two types of IOD:
 * _IODType_Absolute_ : Intraocular distance is defined as an absolute value.
 * _IODType_Relative_ : Intraocular distance is defined relative to the camera focal length (as its coefficient).
 
-**Field of view (FOV)** -- defines the field of camera view by y axis in degrees (45° is default).
+**Field of view (FOV)** -- defines the field of camera view by y axis in degrees (45Â° is default).
 
 **ZFocus** -- defines the distance to the point of stereographic focus.
 
