@@ -6916,6 +6916,10 @@ static Standard_Integer VSelect (Draw_Interpretor& ,
         ++anArgIter;
       }
     }
+    else if (anArg == "-replaceextra")
+    {
+      aSelScheme = AIS_SelectionScheme_ReplaceExtra;
+    }
     else if (anArg == "-replace")
     {
       aSelScheme = AIS_SelectionScheme_Replace;
