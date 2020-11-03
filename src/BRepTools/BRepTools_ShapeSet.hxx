@@ -159,7 +159,9 @@ private:
   GeomTools_Curve2dSet myCurves2d;
   TColStd_IndexedMapOfTransient myPolygons2D;
   TColStd_IndexedMapOfTransient myPolygons3D;
-  TColStd_IndexedMapOfTransient myTriangulations;
+  NCollection_IndexedDataMap<Handle(Poly_Triangulation),
+                             Standard_Boolean> myTriangulations; //!< Contains a boolean flag with information
+                                                                 //!  to save normals for triangulation
   TColStd_IndexedMapOfTransient myNodes;
   Standard_Boolean myWithTriangles;
 

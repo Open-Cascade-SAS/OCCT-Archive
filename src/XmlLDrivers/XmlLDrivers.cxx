@@ -33,7 +33,6 @@
 static Standard_GUID XmlLStorageDriver  ("13a56820-8269-11d5-aab2-0050044b1af1");
 static Standard_GUID XmlLRetrievalDriver("13a56822-8269-11d5-aab2-0050044b1af1");
 
-static int CURRENT_DOCUMENT_VERSION(9);
 
 //=======================================================================
 //function : Factory
@@ -128,9 +127,9 @@ Handle(XmlMDF_ADriverTable) XmlLDrivers::AttributeDrivers
 //purpose  : Document storage version
 //=======================================================================
 
-int XmlLDrivers::StorageVersion()
+TCollection_AsciiString XmlLDrivers::StorageVersion()
 {
-  return CURRENT_DOCUMENT_VERSION;
+  return TCollection_AsciiString(THE_CURRENT_VERSION);
 }
 
 // Declare entry point PLUGINFACTORY

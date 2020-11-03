@@ -261,14 +261,41 @@ proc datadir {{dir ""}} {
     return $Draw_DataDir
 }
 
-help save {save variable [filename]} "DRAW Variables management"
+help save {
+  Use: save variable [filename] [options...]
+  Allowed options are:
+  -version versnumber: a number of format version to save.
+                       Awailable versions are 1, 2, 3
+					   Default version is 3
+} "DRAW Variables management"
 
-proc save {name {file ""}} {
+proc save {name {file ""} {args {}}} {
+    # set default values of arguments
+    set version 0
+
+    # check arguments
+    for {set narg 0} {$narg < [llength $args]} {incr narg} {
+        set arg [lindex $args $narg]
+
+        # set version
+        if { $arg == "-version" } {
+            incr narg
+            if { $narg < [llength $args] && ! [regexp {^-} [lindex $args $narg]] } {
+                set version [lindex $args $narg]
+            } else {
+                error "Option -version requires argument"
+            }
+            continue
+        }
+
+        # unsupported option
+        error "Error: unsupported option \"$arg\""
+    }
     if {$file == ""} {set file $name}
     upvar $name n
     if {![isdraw n]} {error "save : $name is not a Draw variable"}
     global Draw_DataDir
-    bsave n [file join $Draw_DataDir $file]
+    bsave n [file join $Draw_DataDir $file] "-version" $version
     return [file join $Draw_DataDir $file]
 }
 

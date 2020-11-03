@@ -13,7 +13,7 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-
+#include <BinLDrivers_FormatVersion.hxx>
 #include <BinMDF_ADriver.hxx>
 #include <BinMNaming.hxx>
 #include <BinMNaming_NamingDriver.hxx>
@@ -237,7 +237,7 @@ Standard_Boolean BinMNaming_NamingDriver::Paste
 	myMessageDriver->Send (aMsg, Message_Warning);
 	  }
 
-    if(theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() > 3) {
+    if(theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() >= BIN_LDRIVERS_VERSION_4) {
 	TCollection_AsciiString entry;
 	ok = theSource >> entry;
 	if(ok) {
@@ -254,8 +254,8 @@ Standard_Boolean BinMNaming_NamingDriver::Paste
 		aName.ContextLabel(tLab);
 	    }
 	}
-    if(theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() > 4 && 
-       theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() < 7) {
+    if(theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() >= BIN_LDRIVERS_VERSION_5 &&
+       theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() < BIN_LDRIVERS_VERSION_7) {
           // Orientation processing - converting from old format
       Handle(TNaming_NamedShape) aNShape;
       if(anAtt->Label().FindAttribute(TNaming_NamedShape::GetID(), aNShape)) {
@@ -274,7 +274,7 @@ Standard_Boolean BinMNaming_NamingDriver::Paste
 		}
 	  }
 	}
-    if(theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() > 6) {
+    if(theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() >= BIN_LDRIVERS_VERSION_7) {
       ok = theSource >> anIndx;
       TopAbs_Orientation OrientationToApply(TopAbs_FORWARD);
       if(ok) {

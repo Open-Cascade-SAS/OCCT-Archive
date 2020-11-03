@@ -17,6 +17,7 @@
 #define _BinLDrivers_HeaderFile
 
 #include <Standard_Handle.hxx>
+#include <BinLDrivers_FormatVersion.hxx>
 
 class Standard_Transient;
 class Standard_GUID;
@@ -43,6 +44,10 @@ public:
   
   //! returns last storage version
   Standard_EXPORT static TCollection_AsciiString StorageVersion();
+
+public:
+
+  static const Standard_Integer THE_CURRENT_VERSION = BIN_LDRIVERS_VERSION_11;
 };
 
 #endif // _BinLDrivers_HeaderFile

@@ -87,7 +87,7 @@ Standard_Boolean BinMDataStd_IntPackedMapDriver::Paste
   }
 
   Standard_Boolean aDelta(Standard_False);
-  if(RelocTable.GetHeaderData()->StorageVersion().IntegerValue() > 2) {
+  if(RelocTable.GetHeaderData()->StorageVersion().IntegerValue() >= BIN_LDRIVERS_VERSION_3) {
     Standard_Byte aDeltaValue;
     if (! (Source >> aDeltaValue))
       return Standard_False;

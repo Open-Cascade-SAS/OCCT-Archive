@@ -35,6 +35,7 @@
 #include <XmlObjMgt_DOMString.hxx>
 #include <XmlObjMgt_Persistent.hxx>
 #include <XmlLDrivers.hxx>
+#include <XmlLDrivers_FormatVersion.hxx>
 #include <TDocStd_Owner.hxx>
 #include <TDocStd_Document.hxx>
 #include <Standard_GUID.hxx>
@@ -107,7 +108,7 @@ Standard_Integer XmlMDF::WriteSubTree
       // was replaced by TDataXtd_Presentation. Therefore, for old versions
       // we write old name of the attribute (TPrsStd_AISPresentation).
       Standard_CString typeName = aDriver->TypeName().ToCString();
-      if (theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() < 8 &&
+      if (theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() < XML_LDRIVERS_VERSION_8 &&
           strcmp(typeName, "TDataXtd_Presentation") == 0)
       {
         typeName = "TPrsStd_AISPresentation";

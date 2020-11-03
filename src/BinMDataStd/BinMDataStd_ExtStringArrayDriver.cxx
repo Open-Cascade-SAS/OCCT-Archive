@@ -81,7 +81,7 @@ Standard_Boolean BinMDataStd_ExtStringArrayDriver::Paste
 
   if(ok) {
     Standard_Boolean aDelta(Standard_False);
-    if(theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() > 2) {
+    if(theRelocTable.GetHeaderData()->StorageVersion().IntegerValue() >= BIN_LDRIVERS_VERSION_3) {
       Standard_Byte aDeltaValue;
       if (! (theSource >> aDeltaValue)) {
         return Standard_False;

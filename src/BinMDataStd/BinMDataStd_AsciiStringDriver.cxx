@@ -62,7 +62,7 @@ Standard_Boolean BinMDataStd_AsciiStringDriver::Paste
   Standard_Boolean ok = Source >> aString;
   if (ok)
     aStrAtt->Set( aString );
-  if(RelocTable.GetHeaderData()->StorageVersion().IntegerValue() > 8) { // process user defined guid
+  if(RelocTable.GetHeaderData()->StorageVersion().IntegerValue() >= BIN_LDRIVERS_VERSION_9) { // process user defined guid
 	const Standard_Integer& aPos = Source.Position();
 	Standard_GUID aGuid;
 	ok = Source >> aGuid;	

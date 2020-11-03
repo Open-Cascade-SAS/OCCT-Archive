@@ -14,7 +14,7 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-
+#include <BinTools_ShapeSet.hxx>
 #include <BRep_TEdge.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepGProp.hxx>
@@ -27,6 +27,7 @@
 #include <Draw.hxx>
 #include <Draw_Appli.hxx>
 #include <Draw_ProgressIndicator.hxx>
+#include <Draw_SaveAndRestore.hxx>
 #include <Message_ProgressRange.hxx>
 #include <Draw_Segment3D.hxx>
 #include <gp_Ax2.hxx>
@@ -1379,24 +1380,66 @@ static Standard_Integer XProgress (Draw_Interpretor& di, Standard_Integer argc, 
 // binsave
 //=======================================================================
 
-static Standard_Integer binsave(Draw_Interpretor& di, Standard_Integer n, const char** a)
+static Standard_Integer binsave(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
-  if (n <= 2) return 1;
+  if (argc < 3)
+  {
+    di << "Syntax error: wrong number of arguments!\n";
+    di.PrintHelp(argv[0]);
+    return 1;
+  }
 
-  TopoDS_Shape aShape = DBRep::Get (a[1]);
+  BinTools_FormatVersion aVersion = BinTools_ShapeSet::THE_CURRENT_VERSION;
+
+  for (Standard_Integer i = 3; i < argc; ++i)
+  {
+    TCollection_AsciiString aParam(argv[i]);
+    aParam.LowerCase();
+    if (aParam == "-version")
+    {
+      ++i;
+      if (i < argc)
+      {
+        aVersion = static_cast<BinTools_FormatVersion>(Draw::Atoi(argv[i]));
+      }
+      if (aVersion == BIN_TOOLS_DEFAULT_VERSION)
+      {
+        aVersion = BinTools_ShapeSet::THE_CURRENT_VERSION;
+      }
+      if (aVersion < BIN_TOOLS_VERSION_1)
+      {
+        di << "Version must not be negative\n";
+        return 1;
+      }
+      if (aVersion > BinTools_ShapeSet::THE_CURRENT_VERSION)
+      {
+        di << "Version higher than "
+           << BinTools_ShapeSet::THE_CURRENT_VERSION
+           << " is not supported\n";
+        return 1;
+      }
+    }
+    else
+    {
+      di << "Syntax error: unknown argument '" << aParam << "'\n";
+      return 1;
+    }
+  }
+
+  TopoDS_Shape aShape = DBRep::Get (argv[1]);
   if (aShape.IsNull())
   {
-    di << a[1] << " is not a shape";
+    di << argv[1] << " is not a shape";
     return 1;
   }
 
-  if (!BinTools::Write (aShape, a[2]))
+  if (!BinTools::Write (aShape, argv[2]))
   {
-    di << "Cannot write to the file " << a[2];
+    di << "Cannot write to the file " << argv[2];
     return 1;
   }
 
-  di << a[1];
+  di << argv[1];
   return 0;
 }
 
@@ -1573,60 +1616,68 @@ Standard_Real DBRep::HLRAngle()
 { return anglHLR; }
 
 //=======================================================================
-//function : 
-//purpose  : save and restore shapes
+//class : DBRep_SaveAndRestore
 //=======================================================================
 
-static Standard_Boolean stest(const Handle(Draw_Drawable3D)& d) 
+class DBRep_SaveAndRestore : public Draw_SaveAndRestoreBase
 {
-  return d->IsInstance(STANDARD_TYPE(DBRep_DrawableShape));
-}
+public:
+    DBRep_SaveAndRestore()
+    :Draw_SaveAndRestoreBase("DBRep_DrawableShape") {}
 
-static void ssave(const Handle(Draw_Drawable3D)&d, std::ostream& OS)
-{
-  Handle(DBRep_DrawableShape) 
-    N = Handle(DBRep_DrawableShape)::DownCast(d);
-  BRep_Builder B;
-  BRepTools_ShapeSet S(B);
-  S.Add (N->Shape());
-  Handle(Draw_ProgressIndicator) aProgress = Draw::GetProgressBar();
-  S.Write(OS, Message_ProgressIndicator::Start(aProgress));
-  if (! aProgress.IsNull() && aProgress->UserBreak())
-    return;
-  S.Write(N->Shape(),OS);
-}
+  Standard_Boolean Test(const Handle(Draw_Drawable3D)& d) const Standard_OVERRIDE
+  {
+    return d->IsInstance(STANDARD_TYPE(DBRep_DrawableShape));
+  }
 
-static Handle(Draw_Drawable3D) srestore (std::istream& IS)
-{
-  BRep_Builder B;
-  BRepTools_ShapeSet S(B);
-  Handle(Draw_ProgressIndicator) aProgress = Draw::GetProgressBar();
-  S.Read(IS, Message_ProgressIndicator::Start(aProgress));
-  Handle(DBRep_DrawableShape) N;
-  if (! aProgress.IsNull() && aProgress->UserBreak())
+  void Save(const Handle(Draw_Drawable3D)&d, std::ostream& OS, TopTools_FormatVersion theVersion) const Standard_OVERRIDE
+  {
+    Handle(DBRep_DrawableShape) N = Handle(DBRep_DrawableShape)::DownCast(d);
+    BRep_Builder B;
+    BRepTools_ShapeSet S(B);
+    S.SetFormatNb(theVersion);
+    S.Add (N->Shape());
+    Handle(Draw_ProgressIndicator) aProgress = Draw::GetProgressBar();
+    S.Write(OS, Message_ProgressIndicator::Start(aProgress));
+    if (! aProgress.IsNull() && aProgress->UserBreak())
+      return;
+    S.Write(N->Shape(),OS);
+  }
+
+  Handle(Draw_Drawable3D) Restore(std::istream& IS) const Standard_OVERRIDE
+  {
+    BRep_Builder B;
+    BRepTools_ShapeSet S(B);
+    Handle(Draw_ProgressIndicator) aProgress = Draw::GetProgressBar();
+    S.Read(IS, Message_ProgressIndicator::Start(aProgress));
+    Handle(DBRep_DrawableShape) N;
+    if (! aProgress.IsNull() && aProgress->UserBreak())
+      return N;
+    TopoDS_Shape theShape;
+    S.Read(theShape,IS );
+    N = new DBRep_DrawableShape(theShape,
+			      Draw_vert,
+			      Draw_jaune,
+			      Draw_rouge,
+			      Draw_bleu,
+			      size,
+			      nbIsos,
+			      discret);
+    N->DisplayTriangulation(disptriangles);
+    N->DisplayPolygons(disppolygons);
+    N->DisplayHLR(withHLR,withRg1,withRgN,withHid,anglHLR);
+
     return N;
-  TopoDS_Shape theShape;
-  S.Read(theShape,IS );
-  N = new DBRep_DrawableShape(theShape,
-			    Draw_vert,
-			    Draw_jaune,
-			    Draw_rouge,
-			    Draw_bleu,
-			    size,
-			    nbIsos,
-			    discret);
-  N->DisplayTriangulation(disptriangles);
-  N->DisplayPolygons(disppolygons);
-  N->DisplayHLR(withHLR,withRg1,withRgN,withHid,anglHLR);
-  
-  return N;
-}
+  }
 
+};
 
-static Draw_SaveAndRestore ssr("DBRep_DrawableShape",
-			       stest,ssave,srestore);
+static DBRep_SaveAndRestore saveAndRestoreDBRep;
 
-
+//=======================================================================
+//function : dumps
+//purpose  :
+//=======================================================================
 void dumps (const TopoDS_Shape& S)
 {
  BRepTools::Dump(S,std::cout);

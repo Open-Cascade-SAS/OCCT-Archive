@@ -178,7 +178,6 @@ void BinTools::Write (const TopoDS_Shape& theShape, Standard_OStream& theStream,
                       const Message_ProgressRange& theRange)
 {
   BinTools_ShapeSet aShapeSet(Standard_True);
-  aShapeSet.SetFormatNb (3);
   aShapeSet.Add (theShape);
   aShapeSet.Write (theStream, theRange);
   aShapeSet.Write (theShape, theStream);

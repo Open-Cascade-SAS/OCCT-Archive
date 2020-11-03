@@ -199,7 +199,7 @@ void BinLDrivers_DocumentSection::ReadTOC
     theSection.myName = (Standard_CString)&aBuf[0];
 
     uint64_t aValue[3];
-    if (theDocFormatVersion <= 9)
+    if (theDocFormatVersion <= BIN_LDRIVERS_VERSION_9)
     {
       // Old documents stored file position as 4-bytes values.
       Standard_Integer aValInt[3];

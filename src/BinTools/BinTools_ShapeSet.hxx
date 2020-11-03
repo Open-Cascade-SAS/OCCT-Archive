@@ -21,6 +21,7 @@
 #include <Standard_Handle.hxx>
 
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <BinTools_FormatVersion.hxx>
 #include <BinTools_LocationSet.hxx>
 #include <Standard_Integer.hxx>
 #include <BRep_Builder.hxx>
@@ -58,13 +59,10 @@ public:
   //! Ignored (always written) if face defines only triangulation (no surface).
   void SetWithTriangles (const Standard_Boolean isWithTriangles) { myWithTriangles = isWithTriangles; }
 
+  //! Sets the BinTools_FormatVersion.
   Standard_EXPORT void SetFormatNb (const Standard_Integer theFormatNb);
-  
-  //! two formats available for the moment:
-  //! First: does not write CurveOnSurface UV Points into the file
-  //! on reading calls Check() method.
-  //! Second: stores CurveOnSurface UV Points.
-  //! On reading format is recognized from Version string.
+
+  //! Returns the BinTools_FormatVersion.
   Standard_EXPORT Standard_Integer FormatNb() const;
   
   //! Clears the content of the set.
@@ -194,6 +192,14 @@ public:
     (Standard_OStream& OS,
         const Message_ProgressRange& theRange = Message_ProgressRange()) const;
 
+public:
+
+  static Standard_CString Version_1;
+  static Standard_CString Version_2;
+  static Standard_CString Version_3;
+  static Standard_CString Version_4;
+  static const BinTools_FormatVersion THE_CURRENT_VERSION = BIN_TOOLS_VERSION_4;
+
 private:
 
   TopTools_IndexedMapOfShape myShapes;
@@ -205,7 +211,9 @@ private:
   BinTools_Curve2dSet myCurves2d;
   NCollection_IndexedMap<Handle(Poly_Polygon2D), TColStd_MapTransientHasher> myPolygons2D;
   NCollection_IndexedMap<Handle(Poly_Polygon3D), TColStd_MapTransientHasher> myPolygons3D;
-  NCollection_IndexedMap<Handle(Poly_Triangulation), TColStd_MapTransientHasher> myTriangulations;
+  NCollection_IndexedDataMap<Handle(Poly_Triangulation),
+                             Standard_Boolean> myTriangulations; //!< Contains a boolean flag with information
+                                                                 //!  to save normals for triangulation
   NCollection_IndexedMap<Handle(Poly_PolygonOnTriangulation), TColStd_MapTransientHasher> myNodes;
   Standard_Boolean myWithTriangles;
 

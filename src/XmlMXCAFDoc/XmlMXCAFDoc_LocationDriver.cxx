@@ -21,6 +21,7 @@
 #include <TopLoc_Location.hxx>
 #include <TopTools_LocationSet.hxx>
 #include <XCAFDoc_Location.hxx>
+#include <XmlLDrivers_FormatVersion.hxx>
 #include <XmlMNaming.hxx>
 #include <XmlMXCAFDoc_LocationDriver.hxx>
 #include <XmlObjMgt.hxx>
@@ -149,7 +150,7 @@ Standard_Boolean XmlMXCAFDoc_LocationDriver::Translate
     return Standard_False;
   
   Standard_Integer aFileVer = theMap.GetHeaderData()->StorageVersion().IntegerValue();
-  if( aFileVer > 5 && myLocations == 0 )
+  if( aFileVer >= XML_LDRIVERS_VERSION_6 && myLocations == 0 )
   {
     return Standard_False;
   }
@@ -157,7 +158,7 @@ Standard_Boolean XmlMXCAFDoc_LocationDriver::Translate
   Standard_Integer aPower;
   Handle(TopLoc_Datum3D) aDatum;
   
-  if( aFileVer > 5 )
+  if( aFileVer >= XML_LDRIVERS_VERSION_6 )
   {
     //  Get Location ID
     Standard_Integer anId;

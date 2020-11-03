@@ -2159,6 +2159,14 @@ Existing message files containing 8-bit characters (previously interpreted as ch
 
 @section upgrade_occt760 Upgrade to OCCT 7.6.0
 
+@subsection upgrade_760_changesInStorageOfShapes Changes in storage of shapes
+
+Information about per-vertex triangulations normals is now stored in BinOCAF and XmlOCAF document,
+BRep and Binary BRep Shape formats (only in case of triangulation-only Faces, with no analytical geometry to restore normals).
+
+Versions of formats have been changed (11 for BinOCAF, 10 for XmlOCAF, 4 for BRep Shape and 3 for Binary BRep Shape).
+Files written with the new version will not be readable by applications of old versions.
+
 @subsection upgrade_760_trimming_surface Trimming surface
 
 Geom_RectangularTrimmedSurface sequentially trimming in U and V directions already no longer loses the first trim.

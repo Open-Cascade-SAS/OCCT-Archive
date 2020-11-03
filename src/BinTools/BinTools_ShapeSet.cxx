@@ -55,9 +55,11 @@
 
 #include <string.h>
 //#define MDTV_DEB 1
-const char* Version_1  = "Open CASCADE Topology V1 (c)";
-const char* Version_2  = "Open CASCADE Topology V2 (c)";
-const char* Version_3  = "Open CASCADE Topology V3 (c)";
+Standard_CString BinTools_ShapeSet::Version_1  = "Open CASCADE Topology V1 (c)";
+Standard_CString BinTools_ShapeSet::Version_2  = "Open CASCADE Topology V2 (c)";
+Standard_CString BinTools_ShapeSet::Version_3  = "Open CASCADE Topology V3 (c)";
+Standard_CString BinTools_ShapeSet::Version_4  = "Open CASCADE Topology V4 (c)";
+
 //=======================================================================
 //function : operator << (gp_Pnt)
 //purpose  : 
@@ -76,7 +78,7 @@ static Standard_OStream& operator <<(Standard_OStream& OS, const gp_Pnt P)
 //=======================================================================
 
 BinTools_ShapeSet::BinTools_ShapeSet(const Standard_Boolean isWithTriangles)
-     :myFormatNb(3), myWithTriangles(isWithTriangles)
+     :myFormatNb(THE_CURRENT_VERSION), myWithTriangles(isWithTriangles)
 {}
 
 //=======================================================================
@@ -93,6 +95,10 @@ BinTools_ShapeSet::~BinTools_ShapeSet()
 //=======================================================================
 void BinTools_ShapeSet::SetFormatNb(const Standard_Integer theFormatNb)
 {
+  Standard_ASSERT_RETURN(theFormatNb >= BIN_TOOLS_VERSION_1 &&
+                         theFormatNb <= THE_CURRENT_VERSION,
+    "Error: unsupported BinTools version.", );
+
   myFormatNb = theFormatNb;
 }
 
@@ -255,7 +261,11 @@ void BinTools_ShapeSet::AddGeometry(const TopoDS_Shape& S)
           }
         }
         else if (CR->IsPolygonOnTriangulation()) {
-          myTriangulations.Add(CR->Triangulation());
+          // NCollection_IndexedDataMap::Add() function use is correct because
+          // Bin(Brep)Tools_ShapeSet::AddGeometry() is called from Bin(Brep)Tools_ShapeSet::Add()
+          // that processes shapes recursively from complex to elementary ones.
+          // As a result, the TopAbs_FACE's will be processed earlier than the TopAbs_EDGE's.
+          myTriangulations.Add(CR->Triangulation(), Standard_False); // edge triangulation does not need normals
           myNodes.Add(CR->PolygonOnTriangulation());
           ChangeLocations().Add(CR->Location());
           if (CR->IsPolygonOnClosedTriangulation())
@@ -276,14 +286,21 @@ void BinTools_ShapeSet::AddGeometry(const TopoDS_Shape& S)
   else if (S.ShapeType() == TopAbs_FACE) {
 
     // Add the surface geometry
+    Standard_Boolean needNormals(Standard_False);
     Handle(BRep_TFace) TF = Handle(BRep_TFace)::DownCast(S.TShape());
-    if (!TF->Surface().IsNull())  mySurfaces.Add(TF->Surface());
-
+    if (!TF->Surface().IsNull())
+    {
+      mySurfaces.Add(TF->Surface());
+    }
+    else
+    {
+      needNormals = Standard_True;
+    }
     if (myWithTriangles
      || TF->Surface().IsNull())
     {
       Handle(Poly_Triangulation) Tr = TF->Triangulation();
-      if (!Tr.IsNull()) myTriangulations.Add(Tr);
+      if (!Tr.IsNull()) myTriangulations.Add(Tr, needNormals);
     }
 
     ChangeLocations().Add(TF->Location());
@@ -327,12 +344,22 @@ void  BinTools_ShapeSet::Write (Standard_OStream& OS,
 {
 
   // write the copyright
-  if (myFormatNb == 3)
+  if (myFormatNb == BIN_TOOLS_VERSION_4)
+  {
+    OS << "\n" << Version_4 << "\n";
+  }
+  else if (myFormatNb == BIN_TOOLS_VERSION_3)
+  {
     OS << "\n" << Version_3 << "\n";
-  else if (myFormatNb == 2)
+  }
+  else if (myFormatNb == BIN_TOOLS_VERSION_2)
+  {
     OS << "\n" << Version_2 << "\n";
+  }
   else
+  {
     OS << "\n" << Version_1 << "\n";
+  }
 
   //-----------------------------------------
   // write the locations
@@ -413,15 +440,28 @@ void  BinTools_ShapeSet::Read (Standard_IStream& IS,
     }
     
   } while ( ! IS.fail() && strcmp(vers,Version_1) && strcmp(vers,Version_2) &&
-	   strcmp(vers,Version_3));
+           strcmp(vers,Version_3) && strcmp(vers,Version_4));
   if (IS.fail()) {
-    std::cout << "BinTools_ShapeSet::Read: File was not written with this version of the topology"<<std::endl;
-     return;
+    std::cout << "BinTools_ShapeSet::Read: File was not written with this version of the topology" << std::endl;
+    return;
   }
 
-  if (strcmp(vers,Version_3) == 0) SetFormatNb(3);
-  else  if (strcmp(vers,Version_2) == 0) SetFormatNb(2);    
-  else SetFormatNb(1);
+  if (strcmp(vers, Version_4) == 0)
+  {
+    SetFormatNb(BIN_TOOLS_VERSION_4);
+  }
+  else if (strcmp(vers, Version_3) == 0)
+  {
+    SetFormatNb(BIN_TOOLS_VERSION_3);
+  }
+  else if (strcmp(vers, Version_2) == 0)
+  {
+    SetFormatNb(BIN_TOOLS_VERSION_2);
+  }
+  else
+  {
+    SetFormatNb(BIN_TOOLS_VERSION_1);
+  }
 
   //-----------------------------------------
   // read the locations
@@ -481,7 +521,7 @@ void  BinTools_ShapeSet::Read (Standard_IStream& IS,
 
     S.Free(aFree);
     S.Modified(aMod);
-     if (myFormatNb >= 2)
+     if (myFormatNb >= BIN_TOOLS_VERSION_2)
        S.Checked(aChecked);
      else
        S.Checked   (Standard_False);     // force check at reading.. 
@@ -491,7 +531,7 @@ void  BinTools_ShapeSet::Read (Standard_IStream& IS,
     S.Convex    (aConv);
     // check
 
-    if (myFormatNb == 1)
+    if (myFormatNb == BIN_TOOLS_VERSION_1)
       if(T == TopAbs_FACE) {
 	const TopoDS_Face& F = TopoDS::Face(S);
 	BRepTools::Update(F);
@@ -684,7 +724,7 @@ void  BinTools_ShapeSet::WriteGeometry (const TopoDS_Shape& S,
 	  BinTools::PutReal(OS, last);
 
         // Write UV Points for higher performance
-	  if (FormatNb() >= 2)
+	  if (myFormatNb >= BIN_TOOLS_VERSION_2)
 	    {
 	      gp_Pnt2d Pf,Pl;
 	      if (CR->IsCurveOnClosedSurface()) {
@@ -828,7 +868,7 @@ void  BinTools_ShapeSet::ReadGeometry(const TopAbs_ShapeEnum T,
 
 	BRep_ListOfPointRepresentation& lpr = TV->ChangePoints();
 	TopLoc_Location L;
-	Standard_Boolean aNewF = (myFormatNb > 2);
+	Standard_Boolean aNewF = (myFormatNb >= BIN_TOOLS_VERSION_3);
 	do {
 	  if(aNewF) {
 	    val = (Standard_Integer)IS.get();//case {0|1|2|3}
@@ -992,7 +1032,7 @@ void  BinTools_ShapeSet::ReadGeometry(const TopAbs_ShapeEnum T,
 	    BinTools::GetReal(IS, last);
 
             // read UV Points // for XML Persistence higher performance
-            if (FormatNb() >= 2)
+            if (myFormatNb >= BIN_TOOLS_VERSION_2)
             {
 	      BinTools::GetReal(IS, PfX);
 	      BinTools::GetReal(IS, PfY);
@@ -1008,7 +1048,7 @@ void  BinTools_ShapeSet::ReadGeometry(const TopAbs_ShapeEnum T,
 	      break;
 	    
             if (closed) {
-              if (FormatNb() >= 2)
+              if (myFormatNb >= BIN_TOOLS_VERSION_2)
                 myBuilder.UpdateEdge(E,myCurves2d.Curve2d(pc),
                                      myCurves2d.Curve2d(pc2),
                                      mySurfaces.Surface(s),
@@ -1029,7 +1069,7 @@ void  BinTools_ShapeSet::ReadGeometry(const TopAbs_ShapeEnum T,
             }
             else
             {
-              if (FormatNb() >= 2)
+              if (myFormatNb >= BIN_TOOLS_VERSION_2)
                 myBuilder.UpdateEdge(E,myCurves2d.Curve2d(pc),
                                      mySurfaces.Surface(s),
                                      Locations().Location(l),tol,
@@ -1080,11 +1120,11 @@ void  BinTools_ShapeSet::ReadGeometry(const TopAbs_ShapeEnum T,
 	    BinTools::GetInteger(IS, l);
             if (closed)
             {
-              myBuilder.UpdateEdge (E, myNodes(pt), myNodes(pt2), myTriangulations(t), Locations().Location(l));
+              myBuilder.UpdateEdge (E, myNodes(pt), myNodes(pt2), myTriangulations.FindKey(t), Locations().Location(l));
             }
             else
             {
-              myBuilder.UpdateEdge (E, myNodes(pt), myTriangulations(t), Locations().Location(l));
+              myBuilder.UpdateEdge (E, myNodes(pt), myTriangulations.FindKey(t), Locations().Location(l));
             }
             // range            
             break;
@@ -1133,7 +1173,7 @@ void  BinTools_ShapeSet::ReadGeometry(const TopAbs_ShapeEnum T,
       // cas triangulation
 	if(aByte == 2) {
 	  BinTools::GetInteger(IS, s);
-	  myBuilder.UpdateFace(TopoDS::Face(S), myTriangulations(s));
+	  myBuilder.UpdateFace(TopoDS::Face(S), myTriangulations.FindKey(s));
 	}
       }
       break;
@@ -1446,11 +1486,16 @@ void BinTools_ShapeSet::WriteTriangulation (Standard_OStream& OS,
     for (Standard_Integer aTriangulationIter = 1; aTriangulationIter <= aNbTriangulations && aPS.More(); ++aTriangulationIter, aPS.Next())
     {
       const Handle(Poly_Triangulation)& aTriangulation = myTriangulations.FindKey (aTriangulationIter);
+      Standard_Boolean NeedToWriteNormals = myTriangulations.FindFromIndex(aTriangulationIter);
       const Standard_Integer aNbNodes     = aTriangulation->NbNodes();
       const Standard_Integer aNbTriangles = aTriangulation->NbTriangles();
       BinTools::PutInteger(OS, aNbNodes);
       BinTools::PutInteger(OS, aNbTriangles);
       BinTools::PutBool(OS, aTriangulation->HasUVNodes() ? 1 : 0);
+      if (myFormatNb >= BIN_TOOLS_VERSION_4)
+      {
+        BinTools::PutBool(OS, (aTriangulation->HasNormals() && NeedToWriteNormals) ? 1 : 0);
+      }
       BinTools::PutReal(OS, aTriangulation->Deflection());
 
       // write the 3d nodes
@@ -1481,6 +1526,20 @@ void BinTools_ShapeSet::WriteTriangulation (Standard_OStream& OS,
         BinTools::PutInteger(OS, aTri.Value (1));
         BinTools::PutInteger(OS, aTri.Value (2));
         BinTools::PutInteger(OS, aTri.Value (3));
+      }
+
+      // write the normals
+      if (myFormatNb >= BIN_TOOLS_VERSION_4)
+      {
+        if (aTriangulation->HasNormals() && NeedToWriteNormals)
+        {
+          const TShort_Array1OfShortReal& aNormals = aTriangulation->Normals();
+          for (Standard_Integer aNormalIter = 1; aNormalIter <= 3 * aNbNodes; ++aNormalIter)
+          {
+            const Standard_ShortReal& aNormal = aNormals.Value(aNormalIter);
+            BinTools::PutShortReal(OS, aNormal);
+          }
+        }
       }
     }
   }
@@ -1518,12 +1577,17 @@ void BinTools_ShapeSet::ReadTriangulation (Standard_IStream& IS,
     {
       Standard_Integer aNbNodes = 0, aNbTriangles = 0;
       Standard_Boolean hasUV = Standard_False;
+      Standard_Boolean hasNormals = Standard_False;
       Standard_Real aDefl = 0.0;
       BinTools::GetInteger(IS, aNbNodes);
       BinTools::GetInteger(IS, aNbTriangles);
       BinTools::GetBool(IS, hasUV);
+      if (myFormatNb >= BIN_TOOLS_VERSION_4)
+      {
+        BinTools::GetBool(IS, hasNormals);
+      }
       BinTools::GetReal(IS, aDefl); //deflection
-      Handle(Poly_Triangulation) aTriangulation = new Poly_Triangulation (aNbNodes, aNbTriangles, hasUV);
+      Handle(Poly_Triangulation) aTriangulation = new Poly_Triangulation (aNbNodes, aNbTriangles, hasUV, hasNormals);
       aTriangulation->Deflection (aDefl);
 
       TColgp_Array1OfPnt& aNodes = aTriangulation->ChangeNodes();
@@ -1556,7 +1620,19 @@ void BinTools_ShapeSet::ReadTriangulation (Standard_IStream& IS,
         BinTools::GetInteger(IS, aTri.ChangeValue (3));
       }
 
-      myTriangulations.Add (aTriangulation);
+      if (hasNormals)
+      {
+        TShort_Array1OfShortReal& aNormals = aTriangulation->ChangeNormals();
+        for (Standard_Integer aNormalIter = 1; aNormalIter <= aNbNodes*3; ++aNormalIter)
+        {
+          Standard_ShortReal aNormalFromFile;
+          BinTools::GetShortReal(IS, aNormalFromFile);
+          Standard_ShortReal& aNormalCoordinate = aNormals.ChangeValue(aNormalIter);
+          aNormalCoordinate = aNormalFromFile;
+        }
+      }
+
+      myTriangulations.Add (aTriangulation, hasNormals);
     }
   }
   catch (Standard_Failure const& anException)
