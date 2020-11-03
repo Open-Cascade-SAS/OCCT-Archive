@@ -425,13 +425,37 @@ void XCAFDoc_ShapeTool::MakeReference (const TDF_Label &L,
 //purpose  : private
 //=======================================================================
 
-TDF_Label XCAFDoc_ShapeTool::addShape (const TopoDS_Shape& S, const Standard_Boolean makeAssembly)
+TDF_Label XCAFDoc_ShapeTool::addShape (
+  const TopoDS_Shape& S,
+  const Standard_Boolean makeAssembly,
+  const Standard_Integer theLevel)
 {
   TDF_Label ShapeLabel;
   TDF_TagSource aTag;
 
+  if (S.IsNull()) return ShapeLabel;
+
   // search if the shape already exists (with the same location)
-  if ( S.IsNull() || FindShape ( S, ShapeLabel, Standard_True ) ) return ShapeLabel;
+  if (FindShape(S, ShapeLabel, Standard_True))
+  {
+    Standard_Boolean needUpdate = !makeAssembly && S.Location().IsIdentity() && (theLevel==0 || IsFree(ShapeLabel));
+    if (needUpdate)
+    {
+      // such shape without location is placed on the top level
+      // but also we want to use this shape as a referenced shape for other
+      // top level shape => in order to avoid of missing shape we have to
+      // prepare new shape with location in the point (0,0,0) and make reference
+      // to current shape without location
+      TopoDS_Shape newS = S.EmptyCopied();
+      gp_Trsf aTrsf;
+      TopLoc_Location loc(aTrsf);
+      newS.Location(loc);
+      TDF_Label L = aTag.NewChild(Label());
+      MakeReference(L, ShapeLabel, newS.Location());
+      myShapeLabels.Bind(newS, L);
+    }
+    return ShapeLabel;
+  }
   
   // else add a new label
   ShapeLabel = aTag.NewChild(Label());
@@ -441,7 +465,7 @@ TDF_Label XCAFDoc_ShapeTool::addShape (const TopoDS_Shape& S, const Standard_Boo
     TopoDS_Shape S0 = S;
     TopLoc_Location loc;
     S0.Location ( loc );
-    TDF_Label L = addShape ( S0, makeAssembly );
+    TDF_Label L = addShape(S0, makeAssembly, theLevel + 1);
     MakeReference ( ShapeLabel, L, S.Location() );
     return ShapeLabel;
   }
@@ -475,7 +499,7 @@ TDF_Label XCAFDoc_ShapeTool::addShape (const TopoDS_Shape& S, const Standard_Boo
       TopoDS_Shape Scomp = Iterator.Value(), S0 = Scomp;
       TopLoc_Location loc;
       S0.Location ( loc );
-      TDF_Label compL = addShape ( S0, makeAssembly );
+      TDF_Label compL = addShape(S0, makeAssembly, theLevel + 1);
       
       // add a component as reference
       TDF_Label RefLabel = aTag.NewChild(ShapeLabel);
@@ -546,14 +570,39 @@ static Standard_Boolean prepareAssembly (const TopoDS_Shape& theShape,
 
 TDF_Label XCAFDoc_ShapeTool::AddShape (const TopoDS_Shape& theShape,
                                        const Standard_Boolean makeAssembly,
-                                       const Standard_Boolean makePrepare)
+                                       const Standard_Boolean makePrepare,
+                                       const Standard_Boolean freeShape)
 {
   // PTV 17.02.2003 to avoid components without location.
   TopoDS_Shape S = theShape;
   if ( makePrepare && makeAssembly && S.ShapeType() == TopAbs_COMPOUND )
     prepareAssembly( theShape, S ); // OCC1669
-  
-  TDF_Label L = addShape(S,makeAssembly);
+
+  if (!makeAssembly && S.Location().IsIdentity() && freeShape)
+  {
+    // search if the shape already exists (with the same location)
+    TDF_Label ShapeLabel;
+    if (FindShape(S, ShapeLabel, Standard_True))
+    {
+      // such shape without location is placed on the top level
+      // but also this shape is a referenced shape for other top level shape
+      // therefore in order to avoid of missing shape we have to prepare new
+      // shape with location in the point (0,0,0) and make reference to
+      // existed shape without location
+      TopoDS_Shape newS = S.EmptyCopied();
+      gp_Trsf aTrsf;
+      TopLoc_Location loc(aTrsf);
+      newS.Location(loc);
+      TDF_TagSource aTag;
+      TDF_Label L = aTag.NewChild(Label());
+      MakeReference(L, ShapeLabel, newS.Location());
+      myShapeLabels.Bind(newS, L);
+      return L;
+    }
+  }
+
+  Standard_Integer aLevel = freeShape ? 0 : 1;
+  TDF_Label L = addShape(S,makeAssembly, aLevel);
 
   if(!myShapeLabels.IsBound(S)) {
     myShapeLabels.Bind(S,L);
@@ -904,28 +953,19 @@ Standard_Boolean XCAFDoc_ShapeTool::GetReferredShape (const TDF_Label& L,
 }
 
 //=======================================================================
-//function : AddComponent
+//function : AddLocatedShape
 //purpose  : 
 //=======================================================================
 
-TDF_Label XCAFDoc_ShapeTool::AddComponent (const TDF_Label& assembly, 
-					   const TDF_Label& compL, 
-					   const TopLoc_Location &Loc)
+TDF_Label XCAFDoc_ShapeTool::AddLocatedShape (
+  const TDF_Label& theParentL,
+  const TDF_Label& theShapeL,
+  const TopLoc_Location &theLoc)
 {
-  TDF_Label L;
-  
-  // check that shape is assembly
-  if ( ! IsAssembly(assembly) ) {
-    // if it is simple shape, make it assembly
-    if ( IsSimpleShape(assembly) ) 
-      TDataStd_UAttribute::Set ( assembly, XCAFDoc::AssemblyGUID() );
-    else return L;
-  }
-  
-  // add a component as reference
+  // add as reference
   TDF_TagSource aTag;
-  L = aTag.NewChild(assembly);
-  MakeReference ( L, compL, Loc );
+  TDF_Label L = aTag.NewChild(theParentL);
+  MakeReference ( L, theShapeL, theLoc);
 
   // map shape to label
   TopoDS_Shape aShape;
@@ -943,6 +983,28 @@ TDF_Label XCAFDoc_ShapeTool::AddComponent (const TDF_Label& assembly,
 //purpose  : 
 //=======================================================================
 
+TDF_Label XCAFDoc_ShapeTool::AddComponent(const TDF_Label& assembly,
+  const TDF_Label& compL,
+  const TopLoc_Location &Loc)
+{
+  TDF_Label L;
+
+  // check that shape is assembly
+  if (!IsAssembly(assembly)) {
+    // if it is simple shape, make it assembly
+    if (IsSimpleShape(assembly))
+      TDataStd_UAttribute::Set(assembly, XCAFDoc::AssemblyGUID());
+    else return L;
+  }
+
+  return AddLocatedShape(assembly, compL, Loc);
+}
+
+//=======================================================================
+//function : AddComponent
+//purpose  : 
+//=======================================================================
+
 TDF_Label XCAFDoc_ShapeTool::AddComponent (const TDF_Label& assembly, 
 					   const TopoDS_Shape& comp,
 					   const Standard_Boolean expand)
@@ -952,8 +1014,8 @@ TDF_Label XCAFDoc_ShapeTool::AddComponent (const TDF_Label& assembly,
   TopLoc_Location loc;
   S0.Location ( loc );
   TDF_Label compL;
-  compL = AddShape ( S0, expand );
-  
+  compL = AddShape ( S0, expand, Standard_True, Standard_False);
+
   // add component by its label
   return AddComponent ( assembly, compL, comp.Location() );
 }

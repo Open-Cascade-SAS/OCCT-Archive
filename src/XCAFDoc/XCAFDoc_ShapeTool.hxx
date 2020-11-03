@@ -213,7 +213,10 @@ public:
   //! NOTE: <makePrepare> replace components without location
   //! in assmebly by located components to avoid some problems.
   //! If AutoNaming() is True then automatically attaches names.
-  Standard_EXPORT TDF_Label AddShape (const TopoDS_Shape& S, const Standard_Boolean makeAssembly = Standard_True, const Standard_Boolean makePrepare = Standard_True);
+  Standard_EXPORT TDF_Label AddShape (const TopoDS_Shape& S,
+    const Standard_Boolean makeAssembly = Standard_True,
+    const Standard_Boolean makePrepare = Standard_True,
+    const Standard_Boolean freeShape = Standard_True);
   
   //! Removes shape (whole label and all its sublabels)
   //! If removeCompletely is true, removes complete shape
@@ -273,6 +276,13 @@ public:
   //! Returns False if label is not assembly
   Standard_EXPORT static Standard_Boolean GetComponents (const TDF_Label& L, TDF_LabelSequence& Labels, const Standard_Boolean getsubchilds = Standard_False);
   
+  //! Adds a shape (without location) given by its label (theShapeL)
+  //! to the theParentL with given location
+  Standard_EXPORT TDF_Label AddLocatedShape(
+    const TDF_Label& theParentL,
+    const TDF_Label& theShapeL,
+    const TopLoc_Location &theLoc);
+
   //! Adds a component given by its label and location to the assembly
   //! Note: assembly must be IsAssembly() or IsSimpleShape()
   Standard_EXPORT TDF_Label AddComponent (const TDF_Label& assembly, const TDF_Label& comp, const TopLoc_Location& Loc);
@@ -438,7 +448,9 @@ private:
 
   //! Adds a new top-level (creates and returns a new label)
   //! For internal use. Used by public method AddShape.
-  Standard_EXPORT TDF_Label addShape (const TopoDS_Shape& S, const Standard_Boolean makeAssembly = Standard_True);
+  Standard_EXPORT TDF_Label addShape (const TopoDS_Shape& S,
+    const Standard_Boolean makeAssembly = Standard_True,
+    const Standard_Integer theLevel = 0);
   
   //! Makes a shape on label L to be a reference to shape refL
   //! with location loc
@@ -453,7 +465,6 @@ private:
   XCAFDoc_DataMapOfShapeLabel mySubShapes;
   XCAFDoc_DataMapOfShapeLabel mySimpleShapes;
   Standard_Boolean hasSimpleShapes;
-
 
 };
 

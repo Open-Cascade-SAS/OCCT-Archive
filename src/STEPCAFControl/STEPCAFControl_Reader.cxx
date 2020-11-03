@@ -766,7 +766,8 @@ TDF_Label STEPCAFControl_Reader::AddShape(const TopoDS_Shape &S,
   const TopTools_MapOfShape &NewShapesMap,
   const STEPCAFControl_DataMapOfShapePD &ShapePDMap,
   const STEPCAFControl_DataMapOfPDExternFile &PDFileMap,
-  XCAFDoc_DataMapOfShapeLabel &ShapeLabelMap) const
+  XCAFDoc_DataMapOfShapeLabel &ShapeLabelMap,
+  const Standard_Integer theLevel) const
 {
   // if shape has already been mapped, just return corresponding label
   if (ShapeLabelMap.IsBound(S)) {
@@ -778,15 +779,15 @@ TDF_Label STEPCAFControl_Reader::AddShape(const TopoDS_Shape &S,
     TopoDS_Shape S0 = S;
     TopLoc_Location loc;
     S0.Location(loc);
-    AddShape(S0, STool, NewShapesMap, ShapePDMap, PDFileMap, ShapeLabelMap);
-    TDF_Label L = STool->AddShape(S, Standard_False); // should create reference
+    TDF_Label aS0L = AddShape(S0, STool, NewShapesMap, ShapePDMap, PDFileMap, ShapeLabelMap, theLevel + 1);
+    TDF_Label L = STool->AddLocatedShape(STool->Label(), aS0L, S.Location()); // should create reference
     ShapeLabelMap.Bind(S, L);
     return L;
   }
 
   // if shape is not compound, simple add it
   if (S.ShapeType() != TopAbs_COMPOUND) {
-    TDF_Label L = STool->AddShape(S, Standard_False);
+    TDF_Label L = STool->AddShape(S, Standard_False, Standard_True, theLevel == 0);
     ShapeLabelMap.Bind(S, L);
     return L;
   }
@@ -831,7 +832,7 @@ TDF_Label STEPCAFControl_Reader::AddShape(const TopoDS_Shape &S,
 
   // add compound either as a whole,
   if (!isAssembly) {
-    TDF_Label L = STool->AddShape(S, Standard_False);
+    TDF_Label L = STool->AddShape(S, Standard_False, Standard_True, theLevel == 0);
     if (SHAS.Length() > 0) STool->SetExternRefs(L, SHAS);
     ShapeLabelMap.Bind(S, L);
     return L;
@@ -844,7 +845,7 @@ TDF_Label STEPCAFControl_Reader::AddShape(const TopoDS_Shape &S,
     TopoDS_Shape Sub0 = it.Value();
     TopLoc_Location loc;
     Sub0.Location(loc);
-    TDF_Label subL = AddShape(Sub0, STool, NewShapesMap, ShapePDMap, PDFileMap, ShapeLabelMap);
+    TDF_Label subL = AddShape(Sub0, STool, NewShapesMap, ShapePDMap, PDFileMap, ShapeLabelMap, theLevel + 1);
     if (!subL.IsNull()) {
       TDF_Label instL = STool->AddComponent(L, subL, it.Value().Location());
       if (!ShapeLabelMap.IsBound(it.Value())) {
