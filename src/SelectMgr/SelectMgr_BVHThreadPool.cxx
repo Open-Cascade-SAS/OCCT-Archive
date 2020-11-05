@@ -13,7 +13,7 @@ SelectMgr_BVHThreadPool::SelectMgr_BVHThreadPool (Standard_Integer theNbThreads)
   myIdleEvent(Standard_True),
   myIsStarted(Standard_False)
 {
-  Standard_Integer aBVHThreadsNum = theNbThreads > 0 ? theNbThreads : OSD_Parallel::NbLogicalProcessors() > 1 ? OSD_Parallel::NbLogicalProcessors() - 1 : 1;
+  Standard_Integer aBVHThreadsNum = 1; //theNbThreads > 0 ? theNbThreads : OSD_Parallel::NbLogicalProcessors() > 1 ? OSD_Parallel::NbLogicalProcessors() - 1 : 1;
   myBVHThreads = NCollection_Array1<OSD_Thread>(1, aBVHThreadsNum);
   myBVHBuildData = NCollection_Array1<BVHBuild_Data>(1, aBVHThreadsNum);
 
