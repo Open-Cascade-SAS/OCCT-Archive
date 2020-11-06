@@ -358,6 +358,10 @@ TCollection_AsciiString Standard_Dump::FormatJson (const Standard_SStream& theSt
       else
         aText += aSymbol;
     }
+    else if (aSymbol == '\n')
+    {
+      aText += ""; // json does not support multi-lined values, skip this symbol
+    }
     else
       aText += aSymbol;
   
