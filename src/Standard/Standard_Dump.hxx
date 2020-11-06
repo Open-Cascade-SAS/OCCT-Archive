@@ -75,6 +75,15 @@
   theOStream << "\"" << aName << "\": " << theField; \
 }
 
+//! @def OCCT_DUMP_FIELD_VALUE_NUMERICAL
+//! Append into output value: "Name": Field
+#define OCCT_DUMP_FIELD_VALUE_NUMERICAL_INC(theOStream, theField, theIncName) \
+{ \
+  TCollection_AsciiString aName = Standard_Dump::DumpFieldToName (#theField) + theIncName; \
+  Standard_Dump::AddValuesSeparator (theOStream); \
+  theOStream << "\"" << aName << "\": " << theField; \
+}
+
 //! @def OCCT_DUMP_FIELD_VALUE_STRING
 //! Append into output value: "Name": "Field"
 #define OCCT_DUMP_FIELD_VALUE_STRING(theOStream, theField) \
