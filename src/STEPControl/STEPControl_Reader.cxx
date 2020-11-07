@@ -53,6 +53,7 @@
 #include <StepRepr_RepresentationMap.hxx>
 #include <StepRepr_RepresentationRelationship.hxx>
 #include <StepRepr_ShapeAspect.hxx>
+#include <StepRepr_ShapeRepresentationRelationship.hxx>
 #include <StepShape_ManifoldSolidBrep.hxx>
 #include <StepShape_ShapeDefinitionRepresentation.hxx>
 #include <StepShape_ShapeRepresentation.hxx>
@@ -178,11 +179,55 @@ Standard_Integer STEPControl_Reader::NbRootsForTransfer()
       const Interface_Graph& graph = WS()->Graph();
       // determinate roots used NextAssemblyUsageOccurrence
       Interface_EntityIterator subs = graph.Sharings(PD);
-      for(subs.Start(); subs.More(); subs.Next()) {
-        Handle(StepRepr_NextAssemblyUsageOccurrence) NAUO = 
-          Handle(StepRepr_NextAssemblyUsageOccurrence)::DownCast(subs.Value());
-        if (NAUO.IsNull()) continue;
-        if (PD==NAUO->RelatedProductDefinition()) IsRoot=Standard_False;
+      Handle(StepRepr_NextAssemblyUsageOccurrence) NAUO;
+      for (subs.Start(); subs.More() && IsRoot; subs.Next())
+      {
+        if (subs.Value()->IsKind(STANDARD_TYPE(StepRepr_NextAssemblyUsageOccurrence)))
+        {
+          NAUO = Handle(StepRepr_NextAssemblyUsageOccurrence)::DownCast(subs.Value());
+          if (PD == NAUO->RelatedProductDefinition())
+          {
+            IsRoot = Standard_False;
+            break;
+          }
+        }
+      }
+      if (NAUO.IsNull())
+      {
+        // use additional check using RepresentationRelationship entities
+        subs = graph.Sharings(PD);
+        for (subs.Start(); subs.More() && IsRoot; subs.Next())
+        {
+          Handle(StepRepr_ProductDefinitionShape) aPDS =
+            Handle(StepRepr_ProductDefinitionShape)::DownCast(subs.Value());
+          if (!aPDS.IsNull())
+          {
+            Interface_EntityIterator subs2 = graph.Sharings(aPDS);
+            Handle(StepShape_ShapeDefinitionRepresentation) aSDR;
+            for (subs2.Start(); subs2.More(); subs2.Next())
+            {
+              aSDR = Handle(StepShape_ShapeDefinitionRepresentation)::DownCast(subs2.Value());
+              if (!aSDR.IsNull()) break;
+            }
+            if (aSDR.IsNull()) continue;
+            Handle(StepShape_ShapeRepresentation) aSR =
+              Handle(StepShape_ShapeRepresentation)::DownCast(aSDR->UsedRepresentation());
+            subs2 = graph.Sharings(aSR);
+            for (subs2.Start(); subs2.More(); subs2.Next())
+            {
+              Handle(StepRepr_ShapeRepresentationRelationship) aSRR =
+                Handle(StepRepr_ShapeRepresentationRelationship)::DownCast(subs2.Value());
+              if (!aSRR.IsNull())
+              {
+                if (aSRR->Rep2() == aSR)
+                {
+                  IsRoot = Standard_False;
+                  break;
+                }
+              }
+            }
+          }
+        }
       }
       // determinate roots used ProductDefinitionContext
       if(IsRoot) {

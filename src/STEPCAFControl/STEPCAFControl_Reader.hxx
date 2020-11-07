@@ -195,8 +195,30 @@ protected:
   //! Depending on a case, this shape can be added as one, or
   //! as assembly, or (in case if it is associated with external
   //! reference) taken as that referred shape
-  Standard_EXPORT TDF_Label AddShape (const TopoDS_Shape& S, const Handle(XCAFDoc_ShapeTool)& STool, const TopTools_MapOfShape& NewShapesMap, const STEPCAFControl_DataMapOfShapePD& ShapePDMap, const STEPCAFControl_DataMapOfPDExternFile& PDFileMap, XCAFDoc_DataMapOfShapeLabel& ShapeLabelMap) const;
+  Standard_EXPORT TDF_Label AddShape(const TopoDS_Shape& S,
+    const Handle(XCAFDoc_ShapeTool)& STool,
+    const TopTools_MapOfShape& NewShapesMap,
+    const STEPCAFControl_DataMapOfShapePD& ShapePDMap,
+    const STEPCAFControl_DataMapOfPDExternFile& PDFileMap,
+    XCAFDoc_DataMapOfShapeLabel& ShapeLabelMap,
+    const Standard_Integer theLevel = 0) const;
   
+  Standard_EXPORT TDF_Label AddShape2(
+    const TopoDS_Shape& S,
+    const Handle(XCAFDoc_ShapeTool)& STool,
+    const TopTools_MapOfShape& NewShapesMap,
+    const STEPCAFControl_DataMapOfShapePD& ShapePDMap,
+    const STEPCAFControl_DataMapOfPDExternFile& PDFileMap,
+    XCAFDoc_DataMapOfShapeLabel& ShapeLabelMap,
+    const Standard_Integer theLevel = 0) const;
+
+  Standard_EXPORT void AddExternRefs(
+    const TopoDS_Shape &S,
+    const Handle(XCAFDoc_ShapeTool) &STool,
+    const TopTools_MapOfShape &NewShapesMap,
+    const STEPCAFControl_DataMapOfShapePD &ShapePDMap,
+    const STEPCAFControl_DataMapOfPDExternFile &PDFileMap) const;
+
   //! Reads (or if returns already read) extern file with
   //! given name
   Standard_EXPORT Handle(STEPCAFControl_ExternFile) ReadExternFile (const Standard_CString file,

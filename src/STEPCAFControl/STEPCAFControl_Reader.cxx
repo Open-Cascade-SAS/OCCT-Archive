@@ -707,10 +707,11 @@ Standard_Boolean STEPCAFControl_Reader::Transfer (STEPControl_Reader &reader,
   if (STool.IsNull()) return Standard_False;
   XCAFDoc_DataMapOfShapeLabel map;
   if (asOne)
-    Lseq.Append(AddShape(reader.OneShape(), STool, NewShapesMap, ShapePDMap, PDFileMap, map));
+    Lseq.Append(AddShape2(reader.OneShape(), STool, NewShapesMap, ShapePDMap, PDFileMap, map));
   else {
     for (i = 1; i <= num; i++) {
-      Lseq.Append(AddShape(reader.Shape(i), STool, NewShapesMap, ShapePDMap, PDFileMap, map));
+      //Lseq.Append(AddShape(reader.Shape(i), STool, NewShapesMap, ShapePDMap, PDFileMap, map));
+      Lseq.Append(AddShape2(reader.Shape(i), STool, NewShapesMap, ShapePDMap, PDFileMap, map));
     }
   }
 
@@ -766,7 +767,8 @@ TDF_Label STEPCAFControl_Reader::AddShape(const TopoDS_Shape &S,
   const TopTools_MapOfShape &NewShapesMap,
   const STEPCAFControl_DataMapOfShapePD &ShapePDMap,
   const STEPCAFControl_DataMapOfPDExternFile &PDFileMap,
-  XCAFDoc_DataMapOfShapeLabel &ShapeLabelMap) const
+  XCAFDoc_DataMapOfShapeLabel &ShapeLabelMap,
+  const Standard_Integer theLevel) const
 {
   // if shape has already been mapped, just return corresponding label
   if (ShapeLabelMap.IsBound(S)) {
@@ -778,15 +780,17 @@ TDF_Label STEPCAFControl_Reader::AddShape(const TopoDS_Shape &S,
     TopoDS_Shape S0 = S;
     TopLoc_Location loc;
     S0.Location(loc);
-    AddShape(S0, STool, NewShapesMap, ShapePDMap, PDFileMap, ShapeLabelMap);
-    TDF_Label L = STool->AddShape(S, Standard_False); // should create reference
+    //AddShape(S0, STool, NewShapesMap, ShapePDMap, PDFileMap, ShapeLabelMap, theLevel + 1);
+    //TDF_Label L = STool->AddShape(S, Standard_False, Standard_True, Standard_False); // should create reference
+    TDF_Label aS0L = AddShape(S0, STool, NewShapesMap, ShapePDMap, PDFileMap, ShapeLabelMap, theLevel + 1);
+    TDF_Label L = STool->AddLocatedShape(STool->Label(), aS0L, S); // should create reference
     ShapeLabelMap.Bind(S, L);
     return L;
   }
 
   // if shape is not compound, simple add it
   if (S.ShapeType() != TopAbs_COMPOUND) {
-    TDF_Label L = STool->AddShape(S, Standard_False);
+    TDF_Label L = STool->AddShape(S, Standard_False, Standard_True, theLevel == 0);
     ShapeLabelMap.Bind(S, L);
     return L;
   }
@@ -831,7 +835,7 @@ TDF_Label STEPCAFControl_Reader::AddShape(const TopoDS_Shape &S,
 
   // add compound either as a whole,
   if (!isAssembly) {
-    TDF_Label L = STool->AddShape(S, Standard_False);
+    TDF_Label L = STool->AddShape(S, Standard_False, Standard_True, theLevel == 0);
     if (SHAS.Length() > 0) STool->SetExternRefs(L, SHAS);
     ShapeLabelMap.Bind(S, L);
     return L;
@@ -844,7 +848,7 @@ TDF_Label STEPCAFControl_Reader::AddShape(const TopoDS_Shape &S,
     TopoDS_Shape Sub0 = it.Value();
     TopLoc_Location loc;
     Sub0.Location(loc);
-    TDF_Label subL = AddShape(Sub0, STool, NewShapesMap, ShapePDMap, PDFileMap, ShapeLabelMap);
+    TDF_Label subL = AddShape(Sub0, STool, NewShapesMap, ShapePDMap, PDFileMap, ShapeLabelMap, theLevel + 1);
     if (!subL.IsNull()) {
       TDF_Label instL = STool->AddComponent(L, subL, it.Value().Location());
       if (!ShapeLabelMap.IsBound(it.Value())) {
@@ -860,6 +864,134 @@ TDF_Label STEPCAFControl_Reader::AddShape(const TopoDS_Shape &S,
 }
 
 //=======================================================================
+//function : AddExternRefs
+//purpose  : 
+//=======================================================================
+
+void STEPCAFControl_Reader::AddExternRefs(
+  const TopoDS_Shape &S,
+  const Handle(XCAFDoc_ShapeTool) &STool,
+  const TopTools_MapOfShape &NewShapesMap,
+  const STEPCAFControl_DataMapOfShapePD &ShapePDMap,
+  const STEPCAFControl_DataMapOfPDExternFile &PDFileMap) const
+{
+  // for compounds, compute number of subshapes and check whether this is assembly
+  Standard_Boolean isAssembly = Standard_False;
+  Standard_Integer nbComponents = 0;
+  TopoDS_Iterator it;
+  if (S.ShapeType() == TopAbs_COMPOUND) {
+    for (it.Initialize(S); it.More() && !isAssembly; it.Next(), nbComponents++) {
+      TopoDS_Shape Sub0 = it.Value();
+      TopLoc_Location loc;
+      Sub0.Location(loc);
+      if (NewShapesMap.Contains(Sub0)) isAssembly = Standard_True;
+    }
+  }
+
+  // check whether it has associated external ref
+  TColStd_SequenceOfHAsciiString SHAS;
+  if (ShapePDMap.IsBound(S) && PDFileMap.IsBound(ShapePDMap.Find(S))) {
+    Handle(STEPCAFControl_ExternFile) EF = PDFileMap.Find(ShapePDMap.Find(S));
+    if (!EF.IsNull()) {
+      // (store information on extern refs in the document)
+      SHAS.Append(EF->GetName());
+      // if yes, just return corresponding label
+      if (!EF->GetLabel().IsNull()) {
+        // but if components >0, ignore extern ref!
+        if (nbComponents <= 0)
+        {
+          if (STool->AddExternRef(S, EF->GetLabel()))
+          {
+            STool->SetExternRefs(EF->GetLabel(), SHAS);
+          }
+          return;
+        }
+      }
+    }
+  }
+
+  if (isAssembly)
+  {
+    // or as assembly, component-by-component
+    for (it.Initialize(S); it.More(); it.Next())
+    {
+      TopoDS_Shape Sub0 = it.Value();
+      TopLoc_Location loc;
+      Sub0.Location(loc);
+      AddExternRefs(Sub0, STool, NewShapesMap, ShapePDMap, PDFileMap);
+    }
+  }
+}
+
+//=======================================================================
+//function : AddShape2
+//purpose  : 
+//=======================================================================
+
+TDF_Label STEPCAFControl_Reader::AddShape2(
+  const TopoDS_Shape &S,
+  const Handle(XCAFDoc_ShapeTool) &STool,
+  const TopTools_MapOfShape &NewShapesMap,
+  const STEPCAFControl_DataMapOfShapePD &ShapePDMap,
+  const STEPCAFControl_DataMapOfPDExternFile &PDFileMap,
+  XCAFDoc_DataMapOfShapeLabel &ShapeLabelMap,
+  const Standard_Integer theLevel) const
+{
+  // if shape has already been mapped, just return corresponding label
+  if (ShapeLabelMap.IsBound(S)) {
+    return ShapeLabelMap.Find(S);
+  }
+
+  // if shape is not compound, simple add it
+  if (S.ShapeType() != TopAbs_COMPOUND) {
+    TDF_Label L = STool->AddShape(S, Standard_False, Standard_True, theLevel == 0);
+    ShapeLabelMap.Bind(S, L);
+    return L;
+  }
+
+  AddExternRefs(S, STool, NewShapesMap, ShapePDMap, PDFileMap);
+
+  // for compounds, compute number of subshapes and check whether this is assembly
+  //Standard_Boolean isAssembly = Standard_False;
+  //Standard_Integer nbComponents = 0;
+  //TopoDS_Iterator it;
+  //for (it.Initialize(S); it.More() && !isAssembly; it.Next(), nbComponents++) {
+  //  TopoDS_Shape Sub0 = it.Value();
+  //  TopLoc_Location loc;
+  //  Sub0.Location(loc);
+  //  if (NewShapesMap.Contains(Sub0)) isAssembly = Standard_True;
+  //}
+
+  TopoDS_Iterator it;
+  Standard_Boolean ignoreExternRef = Standard_False;
+  TopTools_MapOfShape::Iterator itSh(NewShapesMap);
+  for (; itSh.More(); itSh.Next())
+  {
+    TopoDS_Shape currSh = itSh.Value();
+    for (it.Initialize(currSh); it.More(); it.Next())
+    {
+      TopoDS_Shape Sub0 = it.Value();
+      TopLoc_Location loc;
+      Sub0.Location(loc);
+      if (NewShapesMap.Contains(Sub0))
+      {
+        // it is assembly
+        STool->AddAssemblyShape(currSh);
+        if (S.IsEqual(currSh))
+        {
+          ignoreExternRef = Standard_True;
+        }
+        break;
+      }
+    }
+  }
+
+  TDF_Label L = STool->AddShape(S, Standard_False, Standard_True, Standard_True); 
+
+  return L;
+}
+
+  //=======================================================================
 //function : ReadExternFile
 //purpose  : 
 //=======================================================================
