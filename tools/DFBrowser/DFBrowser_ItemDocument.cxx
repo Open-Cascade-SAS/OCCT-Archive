@@ -62,14 +62,14 @@ const Handle(TDocStd_Document)& DFBrowser_ItemDocument::getDocument() const
 // function : initValue
 // purpose :
 // =======================================================================
-QVariant DFBrowser_ItemDocument::initValue (const int theItemRole) const
+QVariant DFBrowser_ItemDocument::initValue (const int theRole) const
 {
-  if (theItemRole == Qt::DisplayRole ||
-      theItemRole == Qt::EditRole ||
-      theItemRole == DFBrowserPane_ItemRole_DisplayExtended ||
-      theItemRole == DFBrowserPane_ItemRole_ToolTipExtended)
+  if (theRole == Qt::DisplayRole ||
+      theRole == Qt::EditRole ||
+      theRole == DFBrowserPane_ItemRole_DisplayExtended ||
+      theRole == DFBrowserPane_ItemRole_ToolTipExtended)
     return DFBrowser_Tools::GetLabelInfo (GetLabel());
-  if (theItemRole == Qt::DecorationRole)
+  if (theRole == Qt::DecorationRole)
     return DFBrowser_Tools::GetLabelIcon (GetLabel());
 
   return QVariant();

@@ -96,12 +96,11 @@ int DFBrowser_ItemBase::initRowCount() const
 // function : initValue
 // purpose :
 // =======================================================================
-QVariant DFBrowser_ItemBase::initValue (const int theItemRole) const
+QVariant DFBrowser_ItemBase::initValue (const int theRole) const
 {
-  switch (theItemRole)
+  switch (theRole)
   {
     case Qt::DisplayRole:
-    case Qt::EditRole:
     case Qt::ToolTipRole:
       return DFBrowser_Tools::GetLabelInfo (myLabel, false);
     case DFBrowserPane_ItemRole_DisplayExtended:
@@ -150,3 +149,46 @@ bool DFBrowser_ItemBase::SetUseAdditionalInfo (const bool theValue)
   return aPreviousValue;
 }
 
+// =======================================================================
+// function : InitChildLabels
+// purpose :
+// =======================================================================
+void DFBrowser_ItemBase::InitChildLabels (const int theChildId, const int theLabelId)
+{
+  TDF_Label aParentLabel = GetLabel();
+  // items can exist only by items with not empty label
+  if (aParentLabel.IsNull())
+    return;
+
+  int aChildItem = theChildId;
+  TDF_ChildIterator aLabelsIt (aParentLabel);
+  TDF_Label aLabel;
+  for (int aLabelId = 0; aLabelsIt.More(); aLabelsIt.Next(), aLabelId++, aChildItem++)
+  {
+    if (aLabelId < theLabelId)
+      continue;
+    aLabel = aLabelsIt.Value();
+
+    TreeModel_ItemBasePtr aChild = Child(aChildItem, 0, true);
+    if (!aChild)
+    {
+      continue;
+    }
+    if (aChild->IsInitialized())
+    {
+      continue;
+    }
+    DFBrowser_ItemBasePtr aChildItem = itemDynamicCast<DFBrowser_Item> (aChild);
+    aChildItem->InitWithLabel (aLabel);
+  }
+}
+
+// =======================================================================
+// function : InitWithLabel
+// purpose :
+// =======================================================================
+void DFBrowser_ItemBase::InitWithLabel (TDF_Label theLabel)
+{
+  setLabel (theLabel);
+  TreeModel_ItemBase::Init();
+}

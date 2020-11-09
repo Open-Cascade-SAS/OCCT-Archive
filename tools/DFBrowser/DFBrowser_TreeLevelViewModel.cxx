@@ -95,8 +95,8 @@ QVariant DFBrowser_TreeLevelViewModel::data (const QModelIndex& theIndex, int th
     if (!aDBrowserItem)
       return QVariant();
 
-    bool aPrevValue = aDBrowserItem->SetUseAdditionalInfo (false);
-    aValue = anItemBase->data (anIndex, theRole);
+    bool aPrevValue = aDBrowserItem->SetUseAdditionalInfo (false);  
+    aValue = anItemBase->data (anIndex, DFBrowserPane_ItemRole_DisplayShort);/*anItemBase->data (anIndex, theRole);*/
     aDBrowserItem->SetUseAdditionalInfo (aPrevValue);
   }
   else { // column = 1
