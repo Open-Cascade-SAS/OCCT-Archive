@@ -471,4 +471,7 @@ void XCAFDoc_Dimension::DumpJson (Standard_OStream& theOStream, Standard_Integer
   OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
 
   OCCT_DUMP_BASE_CLASS (theOStream, theDepth, TDF_Attribute)
+
+  Handle(XCAFDimTolObjects_DimensionObject) anObject = GetObject();
+  OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, anObject.get())
 }
