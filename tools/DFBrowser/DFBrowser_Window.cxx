@@ -31,8 +31,8 @@
 #include <inspector/DFBrowser_PropertyPanel.hxx>
 #include <inspector/DFBrowser_SearchLine.hxx>
 #include <inspector/DFBrowser_SearchView.hxx>
-#include <inspector/DFBrowser_Thread.hxx>
-#include <inspector/DFBrowser_ThreadItemSearch.hxx>
+//#include <inspector/DFBrowser_Thread.hxx>
+//#include <inspector/DFBrowser_ThreadItemSearch.hxx>
 #include <inspector/DFBrowser_Tools.hxx>
 #include <inspector/DFBrowser_TreeLevelLine.hxx>
 #include <inspector/DFBrowser_TreeLevelView.hxx>
@@ -99,7 +99,7 @@ const int DFBROWSER_DEFAULT_POSITION_Y = 60;
 const int DEFAULT_PROPERTY_PANEL_HEIGHT = 200;
 const int DEFAULT_BROWSER_HEIGHT = 800;
 
-//#define USE_DUMPJSON
+#define USE_DUMPJSON
 
 // =======================================================================
 // function : Constructor
@@ -161,7 +161,7 @@ DFBrowser_Window::DFBrowser_Window()
            this, SLOT (onLevelDoubleClicked (const QModelIndex&)));
 
   // property widget
-  QDockWidget* aPropertyPanelWidget = new QDockWidget (tr ("PropertyPanel"), myMainWindow);
+  QDockWidget* aPropertyPanelWidget = new QDockWidget (tr ("Properties additional"), myMainWindow);
   aPropertyPanelWidget->setObjectName (aPropertyPanelWidget->windowTitle());
   aPropertyPanelWidget->setTitleBarWidget (new QWidget(myMainWindow));
   aPropertyPanelWidget->setWidget (myPropertyPanel->GetControl());
@@ -169,7 +169,7 @@ DFBrowser_Window::DFBrowser_Window()
 
   // property view
 #ifdef USE_DUMPJSON
-  myPropertyPanelWidget = new QDockWidget (tr ("PropertyPanel (DumpJson)"), myMainWindow);
+  myPropertyPanelWidget = new QDockWidget (tr ("PropertyPanel"), myMainWindow);
   myPropertyView = new ViewControl_PropertyView (myMainWindow,
     QSize(DFBROWSER_DEFAULT_VIEW_WIDTH, DFBROWSER_DEFAULT_VIEW_HEIGHT));
   myPropertyPanelWidget->setObjectName (myPropertyPanelWidget->windowTitle());
@@ -207,15 +207,15 @@ DFBrowser_Window::DFBrowser_Window()
   myMainWindow->splitDockWidget (aPropertyPanelWidget, aViewDockWidget, Qt::Vertical);
 
 #ifdef USE_DUMPJSON
-  myMainWindow->tabifyDockWidget (aDumpDockWidget, myPropertyPanelWidget);
-  myMainWindow->tabifyDockWidget (myPropertyPanelWidget, aViewDockWidget);
+  myMainWindow->tabifyDockWidget (myPropertyPanelWidget, aPropertyPanelWidget);
+  myMainWindow->tabifyDockWidget (aDumpDockWidget, aViewDockWidget);
 #else
   myMainWindow->tabifyDockWidget (aDumpDockWidget, aViewDockWidget);
 #endif
 
   myTreeView->resize (DFBROWSER_DEFAULT_TREE_VIEW_WIDTH, DFBROWSER_DEFAULT_TREE_VIEW_HEIGHT);
 
-  myThread = new DFBrowser_Thread (this);
+  //myThread = new DFBrowser_Thread (this);
 }
 
 // =======================================================================
@@ -463,7 +463,7 @@ void DFBrowser_Window::Init (const NCollection_List<Handle(Standard_Transient)>&
   QModelIndex aParentIndex = aModel->index (0, 0);
   setExpandedLevels (myTreeView, aParentIndex, 3/*levels*/);
 
-  myThread->ProcessApplication();
+  //myThread->ProcessApplication();
   myModule->SetInitialTreeViewSelection();
 }
 
@@ -474,7 +474,7 @@ void DFBrowser_Window::Init (const NCollection_List<Handle(Standard_Transient)>&
 void DFBrowser_Window::OpenFile (const TCollection_AsciiString& theFileName)
 {
   QApplication::setOverrideCursor (Qt::WaitCursor);
-  myThread->TerminateThread();
+  //myThread->TerminateThread();
 
   myTreeLevelLine->ClearHistory();
   QItemSelectionModel* aSelectionModel = myModule->GetOCAFViewSelectionModel();
@@ -484,7 +484,7 @@ void DFBrowser_Window::OpenFile (const TCollection_AsciiString& theFileName)
     QModelIndex anIndex;
     aSelectionModel->select (anIndex, QItemSelectionModel::ClearAndSelect);
   }
-  ClearThreadCache();
+  //ClearThreadCache();
 
   myTreeLevelLine->ClearHistory();
 
@@ -525,7 +525,7 @@ void DFBrowser_Window::OpenFile (const TCollection_AsciiString& theFileName)
     QModelIndex aParentIndex = anOCAFViewModel->index (0, 0);
     setExpandedLevels (myTreeView, aParentIndex, 3/*levels*/);
 
-    myThread->ProcessApplication();
+    //myThread->ProcessApplication();
     myModule->SetInitialTreeViewSelection();
     QApplication::restoreOverrideCursor();
   }
@@ -580,6 +580,7 @@ void DFBrowser_Window::setOCAFModel (QAbstractItemModel* theModel)
   myTreeView->setModel (theModel);
 
   QItemSelectionModel* aSelectionModel = new QItemSelectionModel (theModel);
+  myTreeView->setSelectionMode (QAbstractItemView::ExtendedSelection);
   myTreeView->setSelectionModel (aSelectionModel);
 
   connect (aSelectionModel, SIGNAL (selectionChanged (const QItemSelection&, const QItemSelection&)),
@@ -597,18 +598,18 @@ void DFBrowser_Window::setOCAFModel (QAbstractItemModel* theModel)
 void DFBrowser_Window::onBeforeUpdateTreeModel()
 {
   myTreeLevelLine->ClearHistory();
-  ClearThreadCache();
-  myThread->ProcessApplication();
+  //ClearThreadCache();
+  //myThread->ProcessApplication();
 }
 
 // =======================================================================
 // function : ClearThreadCache
 // purpose :
 // =======================================================================
-void DFBrowser_Window::ClearThreadCache()
-{
-  DFBrowser_ThreadItemSearch::ClearValues (GetTreeLevelLine()->GetSearchLine());
-}
+//void DFBrowser_Window::ClearThreadCache()
+//{
+  //DFBrowser_ThreadItemSearch::ClearValues (GetTreeLevelLine()->GetSearchLine());
+//}
 
 // =======================================================================
 // function : TmpDirectory
@@ -736,6 +737,25 @@ void DFBrowser_Window::onTreeViewSelectionChanged (const QItemSelection& theSele
   
   aDisplayer->ErasePresentations (View_PresentationType_Additional, false);
   aDisplayer->DisplayPresentation (findPresentation (aSelectedIndex), View_PresentationType_Main);
+
+
+  // update preview
+  NCollection_List<Handle(Standard_Transient)> aSelPresentations;
+  //QModelIndexList aSelectedIndices = myTreeView->selectionModel()->selectedIndexes();
+  for (QModelIndexList::const_iterator aSelIt = aSelectedIndices.begin(); aSelIt != aSelectedIndices.end(); aSelIt++)
+  {
+    QModelIndex anIndex = *aSelIt;
+    if (anIndex.column() != 0)
+      continue;
+
+    TreeModel_ItemBasePtr anItemBase = TreeModel_ModelBase::GetItemByIndex (anIndex);
+    if (!anItemBase)
+      continue;
+
+    anItemBase->Presentations (aSelPresentations);
+  }
+  aDisplayer->UpdatePreview (View_DisplayActionType_DisplayId, aSelPresentations);
+
 }
 
 // =======================================================================

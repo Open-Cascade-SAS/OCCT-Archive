@@ -31,7 +31,7 @@
 #include <QObject>
 #include <Standard_WarningsRestore.hxx>
 
-//#define USE_DUMPJSON
+#define USE_DUMPJSON
 
 // =======================================================================
 // function : hasAttribute
@@ -77,24 +77,18 @@ void DFBrowser_Item::Init()
     int anAttributeId = 0;
     for (TDF_AttributeIterator anAttrIt (aParentLabel); anAttrIt.More(); anAttrIt.Next(), anAttributeId++)
     {
-      if (anAttributeId == aRowId)
-        anAttribute = anAttrIt.Value();
+      if (anAttributeId != aRowId)
+      {
+        continue;
+      }
+      anAttribute = anAttrIt.Value();
+      break;
     }
     SetAttribute (anAttribute);
   }
   else {
     int aCurrentId = aRowId - aNbAttributes;
-    TDF_ChildIterator aLabelsIt (aParentLabel);
-    TDF_Label aLabel;
-    for (int aLabelId = 0; aLabelsIt.More(); aLabelsIt.Next(), aLabelId++)
-    {
-      if (aLabelId < aCurrentId)
-        continue;
-      aLabel = aLabelsIt.Value();
-      break;
-    }
-    if (!aLabel.IsNull())
-      setLabel (aLabel);
+    aParentItem->InitChildLabels (aRowId, aCurrentId);
   }
   TreeModel_ItemBase::Init();
 }
@@ -123,30 +117,53 @@ int DFBrowser_Item::initRowCount() const
 // function : initValue
 // purpose :
 // =======================================================================
-QVariant DFBrowser_Item::initValue (const int theItemRole) const
+QVariant DFBrowser_Item::initValue (const int theRole) const
 {
   if (!HasAttribute())
-    return DFBrowser_ItemBase::initValue (theItemRole);
-
-  if (theItemRole == DFBrowserPane_ItemRole_DisplayExtended || theItemRole == DFBrowserPane_ItemRole_ToolTipExtended)
   {
-    int aRole = theItemRole == DFBrowserPane_ItemRole_DisplayExtended ? Qt::DisplayRole : Qt::ToolTipRole;
-    QVariant aValue = DFBrowser_Module::GetAttributeInfo (GetAttribute(), GetModule(), aRole, Column());
-    QString anAdditionalInfo = DFBrowser_Module::GetAttributeInfo (GetAttribute(), GetModule(),
-                                                                    DFBrowser_ItemRole_AdditionalInfo, Column()).toString();
-    if (!anAdditionalInfo.isEmpty())
-    {
-      if (theItemRole == DFBrowserPane_ItemRole_DisplayExtended)
-        anAdditionalInfo = TreeModel_Tools::CutString (anAdditionalInfo);
-      if (!anAdditionalInfo.isEmpty())
-        aValue = QVariant (aValue.toString() + QString (" [%1]").arg (anAdditionalInfo));
-      //if (aRole == Qt::ToolTipRole)
-      //  aValue = wrapTextByWords(aValue.toString().toStdString(), INFO_LENGHT).c_str();
-    }
-    return aValue;
+    // label item
+    return DFBrowser_ItemBase::initValue (theRole);
   }
-
-  return DFBrowser_Module::GetAttributeInfo (GetAttribute(), GetModule(), theItemRole, Column());
+  else
+  {
+    // attribute item
+    switch (theRole)
+    {
+      case Qt::DisplayRole:
+      case Qt::ToolTipRole:
+      case Qt::DecorationRole:
+      case Qt::ForegroundRole:
+      case DFBrowserPane_ItemRole_DisplayShort:
+      case DFBrowser_ItemRole_AdditionalInfo:
+      {
+        if (Column() == 0)
+          return DFBrowser_Module::GetAttributeInfo (GetAttribute(), GetModule(), theRole, Column());
+        else
+          return QVariant();
+      }
+      case DFBrowserPane_ItemRole_DisplayExtended:
+      case DFBrowserPane_ItemRole_ToolTipExtended:
+      {
+        int aRole = theRole == DFBrowserPane_ItemRole_DisplayExtended ? Qt::DisplayRole : Qt::ToolTipRole;
+        QVariant aValue = DFBrowser_Module::GetAttributeInfo (GetAttribute(), GetModule(), aRole, Column());
+        QString anAdditionalInfo = DFBrowser_Module::GetAttributeInfo (GetAttribute(), GetModule(),
+                                                                        DFBrowser_ItemRole_AdditionalInfo, Column()).toString();
+        if (!anAdditionalInfo.isEmpty())
+        {
+          if (theRole == DFBrowserPane_ItemRole_DisplayExtended)
+            anAdditionalInfo = TreeModel_Tools::CutString (anAdditionalInfo);
+          if (!anAdditionalInfo.isEmpty())
+            aValue = QVariant (aValue.toString() + QString (" [%1]").arg (anAdditionalInfo));
+          //if (aRole == Qt::ToolTipRole)
+          //  aValue = wrapTextByWords(aValue.toString().toStdString(), INFO_LENGHT).c_str();
+        }
+        return aValue;
+      }
+      default:
+        break;
+    }
+  }
+  return QVariant();
 }
 
 // =======================================================================
@@ -161,7 +178,9 @@ void DFBrowser_Item::initStream (Standard_OStream& theOStream) const
 #ifdef USE_DUMPJSON
   Handle(TDF_Attribute) anAttribute = GetAttribute();
   if (!anAttribute.IsNull())
+  {
     anAttribute->DumpJson (theOStream);
+  }
 #else
   (void)theOStream;
 #endif

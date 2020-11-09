@@ -57,8 +57,9 @@ public:
   //! Returns dimension object data taken from the parent's label and its sub-labels.
   Standard_EXPORT Handle(XCAFDimTolObjects_DimensionObject) GetObject() const;
   
+  Standard_EXPORT virtual void DumpJson(Standard_OStream& theOStream, Standard_Integer theDepth) const Standard_OVERRIDE;
 
-  DEFINE_DERIVED_ATTRIBUTE(XCAFDoc_Dimension,TDataStd_GenericEmpty)
+  DEFINE_DERIVED_ATTRIBUTE(XCAFDoc_Dimension, TDataStd_GenericEmpty)
 
 };
 

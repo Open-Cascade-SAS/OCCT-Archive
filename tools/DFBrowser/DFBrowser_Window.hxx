@@ -35,7 +35,7 @@
 class DFBrowser_DumpView;
 class DFBrowser_Module;
 class DFBrowser_PropertyPanel;
-class DFBrowser_Thread;
+//class DFBrowser_Thread;
 class DFBrowser_TreeLevelLine;
 
 class ViewControl_MessageDialog;
@@ -109,7 +109,7 @@ public:
   DFBrowser_Module* GetModule() const { return myModule; }
 
   //! Clears thread cache
-  Standard_EXPORT void ClearThreadCache();
+  //Standard_EXPORT void ClearThreadCache();
 
   //! Returns tree level line control
   DFBrowser_TreeLevelLine* GetTreeLevelLine() const { return myTreeLevelLine; }
@@ -220,7 +220,7 @@ private:
   ViewControl_PropertyView* myPropertyView; //!< property control to display model item values if exist
   View_Window* myViewWindow; //!< V3d view to visualize presentations/references if it can be build for a selected item
   DFBrowser_DumpView* myDumpView; //!< Text editor where "Dump" method output is shown
-  DFBrowser_Thread* myThread; //!< Threads manipulator, starting thread items, listens finalizing
+  //DFBrowser_Thread* myThread; //!< Threads manipulator, starting thread items, listens finalizing
   ViewControl_MessageDialog* myExportToShapeViewDialog; //!< dialog about exporting TopoDS_Shape to ShapeView plugin
   Handle(TInspectorAPI_PluginParameters) myParameters; //!< contains application, context, files that should be opened
   QString myOpenedFileName; //!< cached name of opened file between parent is set, apply it by parent setting and nullify

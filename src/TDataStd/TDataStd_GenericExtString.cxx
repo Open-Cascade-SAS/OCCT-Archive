@@ -87,5 +87,4 @@ void TDataStd_GenericExtString::DumpJson (Standard_OStream& theOStream, Standard
   OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
   OCCT_DUMP_BASE_CLASS (theOStream, theDepth, TDF_Attribute)
   OCCT_DUMP_FIELD_VALUE_STRING (theOStream, Get())
-  OCCT_DUMP_FIELD_VALUE_GUID (theOStream, myID)
 }

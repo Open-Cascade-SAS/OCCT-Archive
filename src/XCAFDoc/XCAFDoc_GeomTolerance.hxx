@@ -58,8 +58,9 @@ public:
   
   Standard_EXPORT const Standard_GUID& ID() const Standard_OVERRIDE;
   
+  Standard_EXPORT void DumpJson(Standard_OStream& theOStream, Standard_Integer theDepth) const Standard_OVERRIDE;
 
-  DEFINE_DERIVED_ATTRIBUTE(XCAFDoc_GeomTolerance,TDataStd_GenericEmpty)
+  DEFINE_DERIVED_ATTRIBUTE(XCAFDoc_GeomTolerance, TDataStd_GenericEmpty)
 };
 
 #endif

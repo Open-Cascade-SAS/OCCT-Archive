@@ -81,8 +81,9 @@ public:
   //! Sets default GUID for the attribute.
   Standard_EXPORT void SetID() Standard_OVERRIDE;
 
-  Standard_EXPORT virtual Standard_OStream& Dump (Standard_OStream& anOS) const Standard_OVERRIDE;
+  Standard_EXPORT Standard_OStream& Dump (Standard_OStream& anOS) const Standard_OVERRIDE;
   
+  Standard_EXPORT void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth) const Standard_OVERRIDE;
 
   DEFINE_DERIVED_ATTRIBUTE(TDataStd_Name, TDataStd_GenericExtString)
 

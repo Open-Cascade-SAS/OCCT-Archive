@@ -14,6 +14,7 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <Standard_Dump.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDF_Label.hxx>
 
@@ -128,4 +129,15 @@ Standard_OStream& TDataStd_Name::Dump (Standard_OStream& anOS) const
   myID.ToCString(sguid);
   anOS << sguid << std::endl;
   return anOS;
+}
+
+//=======================================================================
+//function : DumpJson
+//purpose  : 
+//=======================================================================
+void TDataStd_Name::DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth) const
+{
+  OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
+
+  OCCT_DUMP_BASE_CLASS (theOStream, theDepth, TDataStd_GenericExtString)
 }

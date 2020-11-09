@@ -56,13 +56,13 @@ int DFBrowser_ItemApplication::initRowCount() const
 // function : initValue
 // purpose :
 // =======================================================================
-QVariant DFBrowser_ItemApplication::initValue (const int theItemRole) const
+QVariant DFBrowser_ItemApplication::initValue (const int theRole) const
 {
-  if (theItemRole == Qt::DisplayRole ||
-      theItemRole == Qt::EditRole ||
-      theItemRole == Qt::ToolTipRole ||
-      theItemRole == DFBrowserPane_ItemRole_DisplayExtended ||
-      theItemRole == DFBrowserPane_ItemRole_ToolTipExtended)
+  if (theRole == Qt::DisplayRole ||
+      theRole == Qt::EditRole ||
+      theRole == Qt::ToolTipRole ||
+      theRole == DFBrowserPane_ItemRole_DisplayExtended ||
+      theRole == DFBrowserPane_ItemRole_ToolTipExtended)
   {
     return "TDocStd_Application";
   }

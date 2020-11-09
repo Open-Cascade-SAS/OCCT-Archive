@@ -59,6 +59,15 @@ public:
   //! \param theRole the item model role
   Standard_EXPORT virtual QVariant data (const QModelIndex& theIndex, int theRole) const Standard_OVERRIDE;
 
+  //! Iterates through the label and initialize all children in and after the given position
+  //! \param theChildId an index of this label child
+  //! \param theLabelId an index of the label
+  void InitChildLabels (const int theChildId, const int theLabelId);
+
+  //! Inits the item by the label
+  //! \theLabel label for this item
+  Standard_EXPORT void InitWithLabel (TDF_Label theLabel);
+
 protected:
 
   //! Sets the item label
