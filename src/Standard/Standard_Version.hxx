@@ -35,7 +35,7 @@
 // Primary definitions
 #define OCC_VERSION_MAJOR         7
 #define OCC_VERSION_MINOR         6
-#define OCC_VERSION_MAINTENANCE   0
+#define OCC_VERSION_MAINTENANCE   1
 
 //! This macro must be commented in official release, and set to non-empty 
 //! string in other situations, to identify specifics of the version, e.g.:
