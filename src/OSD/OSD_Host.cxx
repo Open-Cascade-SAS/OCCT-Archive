@@ -21,9 +21,10 @@
 #include <Standard_NullObject.hxx>
 #include <TCollection_AsciiString.hxx>
 
-const OSD_WhoAmI Iam = OSD_WHost;
-
 #include <errno.h>
+
+#include <arpa/inet.h>
+#include <ifaddrs.h>
 
 #include <sys/utsname.h> // For 'uname'
 #include <netdb.h>       // This is for 'gethostbyname'
@@ -89,7 +90,7 @@ char value[65];
 int status;
 
 status = gethostname(value, 64);
-if (status == -1) myError.SetValue(errno, Iam, "Host Name");
+if (status == -1) myError.SetValue(errno, OSD_WHost, "Host Name");
 
  result = value;
  return(result);
@@ -116,25 +117,52 @@ Standard_Integer OSD_Host::AvailableMemory(){
 
 // =========================================================================
 
-TCollection_AsciiString OSD_Host::InternetAddress(){
- struct hostent internet_address;
- int a,b,c,d;
- char buffer[16];
- TCollection_AsciiString result,host;
+TCollection_AsciiString OSD_Host::InternetAddress()
+{
+  TCollection_AsciiString aResult;
+  struct ifaddrs* anAddrFullInfo = NULL;
+  getifaddrs (&anAddrFullInfo);
+  for (struct ifaddrs* anAddrIter = anAddrFullInfo; anAddrIter != NULL; anAddrIter = anAddrIter->ifa_next)
+  {
+    if (!anAddrIter->ifa_addr)
+    {
+      continue;
+    }
 
- host = HostName();
- memcpy(&internet_address,
-        gethostbyname(host.ToCString()),
-        sizeof(struct hostent));
-
- // Gets each bytes into integers
- a = (unsigned char)internet_address.h_addr_list[0][0];
- b = (unsigned char)internet_address.h_addr_list[0][1];
- c = (unsigned char)internet_address.h_addr_list[0][2];
- d = (unsigned char)internet_address.h_addr_list[0][3];
- sprintf(buffer,"%d.%d.%d.%d",a,b,c,d);
- result = buffer;
- return(result);
+    if (anAddrIter->ifa_addr->sa_family == AF_INET)
+    {
+      // IP4 Address
+      char aBuffer[INET_ADDRSTRLEN];
+      void* aTmpAddrPtr = &((struct sockaddr_in* )anAddrIter->ifa_addr)->sin_addr;
+      inet_ntop (AF_INET, aTmpAddrPtr, aBuffer, sizeof(aBuffer));
+      if (strcmp (aBuffer, "127.0.0.1") != 0) // skip localhost address
+      {
+        aResult = aBuffer;
+        break;
+      }
+    }
+    else if (anAddrIter->ifa_addr->sa_family == AF_INET6)
+    {
+      // IP6 Address
+      char aBuffer[INET6_ADDRSTRLEN];
+      void* aTmpAddrPtr = &((struct sockaddr_in6 *)anAddrIter->ifa_addr)->sin6_addr;
+      inet_ntop (AF_INET6, aTmpAddrPtr, aBuffer, sizeof(aBuffer));
+      if (strcmp (aBuffer, "::1") != 0) // skip localhost address
+      {
+        aResult = aBuffer;
+        break;
+      }
+    }
+  }
+  if (anAddrFullInfo != NULL)
+  {
+    freeifaddrs (anAddrFullInfo);
+  }
+  if (aResult.IsEmpty())
+  {
+    return "127.0.0.1";
+  }
+  return aResult;
 }
 
 // =========================================================================

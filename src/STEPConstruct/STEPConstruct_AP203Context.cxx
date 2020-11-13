@@ -164,10 +164,18 @@ Handle(StepBasic_PersonAndOrganization) STEPConstruct_AP203Context::DefaultPerso
     OSD_Host aHost;
     TCollection_AsciiString anIP = aHost.InternetAddress();
     // cut off last number
-    Standard_Integer aLastDotIndex = anIP.SearchFromEnd (".");
-    if (aLastDotIndex >0)
+    const Standard_Integer aLastDotIndex = anIP.SearchFromEnd (".");
+    if (aLastDotIndex > 0)
     {
+      // IPv4
       anIP.Trunc (aLastDotIndex - 1);
+      orgId->AssignCat (anIP.ToCString());
+    }
+    else
+    {
+      // IPv6
+      const Standard_Integer aLastColonIndex = anIP.SearchFromEnd (":");
+      anIP.Trunc (aLastColonIndex - 1);
       orgId->AssignCat (anIP.ToCString());
     }
     
