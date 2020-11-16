@@ -131,6 +131,59 @@ bool SelectMgr_RectangularFrustum::segmentPlaneIntersection (const gp_Vec& thePl
 namespace
 {
   // =======================================================================
+  // function : intersectSegmentPlane
+  // purpose  : 
+  // =======================================================================
+  Standard_Boolean intersectSegmentPlane (const gp_Pnt& theSegPnt1, const gp_Pnt& theSegPnt2, const gp_Vec& thePlane, const gp_Pnt& thePntOnPlane, gp_Pnt& theResPnt)
+  {
+    gp_XYZ anU = theSegPnt2.XYZ() - theSegPnt1.XYZ();
+    gp_XYZ aW = theSegPnt1.XYZ() - thePntOnPlane.XYZ();
+    Standard_Real aD = thePlane.Dot(anU);
+    Standard_Real aN = -thePlane.Dot(aW);
+
+    if (Abs(aD) < Precision::Confusion())
+    {
+      return Standard_False;
+    }
+
+    Standard_Real aParam = aN / aD;
+    if (aParam < 0.0 || aParam > 1.0)
+    {
+      return Standard_False;
+    }
+
+    theResPnt = theSegPnt1.XYZ() + anU * aParam;
+
+    return Standard_True;
+  }
+
+  // =======================================================================
+  // function : projectPointOnPlane
+  // purpose  : 
+  // =======================================================================
+  gp_Pnt projectPointOnPlane (const gp_Pnt& thePnt, const gp_Vec& thePlane, const gp_Pnt& thePntOnPlane)
+  {
+    return thePnt.XYZ() - thePlane.XYZ() * (thePnt.XYZ() - thePntOnPlane.XYZ()).Dot(thePlane.XYZ());
+  }
+
+  // =======================================================================
+  // function : pointLineDistanceField
+  // purpose  : 
+  // =======================================================================
+  Standard_Real pointLineDistanceField (const gp_Pnt& thePnt, const gp_Pnt& theLinePnt1, const gp_Pnt& theLinePnt2, const gp_Pnt& thePntOnNeg, gp_Pnt& theResPntOnLine)
+  {
+    gp_XYZ aLine = theLinePnt2.XYZ() - theLinePnt1.XYZ();
+    gp_XYZ aW = thePnt.XYZ() - theLinePnt1.XYZ();
+    gp_XYZ anU = thePntOnNeg.XYZ() - theLinePnt1.XYZ();
+
+    Standard_Real aCoeff = aW.Dot (aLine) / aLine.Dot (aLine);
+    aCoeff = aCoeff < 0 ? 0 : aCoeff > 1 ? 1 : aCoeff;
+
+    theResPntOnLine = theLinePnt1.XYZ() + aLine * aCoeff;
+    return Sign (thePnt.Distance (theResPntOnLine), aW.Crossed (aLine).DotCross (aLine, anU));
+  }
+
+  // =======================================================================
   // function : computeFrustum
   // purpose  : Computes base frustum data: its vertices and edge directions
   // =======================================================================
@@ -691,35 +744,83 @@ Standard_Boolean SelectMgr_RectangularFrustum::Overlaps (const gp_Pnt& thePnt1,
 
     const Standard_Boolean isInterior = (aTime >= 0.0) && (anU >= 0.0) && (aV >= 0.0) && (anU + aV <= 1.0);
     const gp_Pnt aPtOnPlane = myNearPickedPnt.XYZ() + myViewRayDir.XYZ() * aTime;
+
     if (isInterior)
     {
-      thePickResult.SetDepth (myNearPickedPnt.Distance (aPtOnPlane) * myScale);
-      thePickResult.SetPickedPoint (aPtOnPlane);
-      thePickResult.SetSurfaceNormal (aTriangleNormal);
-      return !theClipRange.IsClipped (thePickResult.Depth());
+      thePickResult.SetSurfaceNormal(aTriangleNormal);
     }
-
-    Standard_Real aMinDist = RealLast();
-    Standard_Integer aNearestEdgeIdx1 = -1;
-    for (Standard_Integer anEdgeIdx = 0; anEdgeIdx < 3; ++anEdgeIdx)
+    
+    gp_Pnt aPnts[3] = { thePnt1, thePnt2, thePnt3 };
+    
+    gp_Vec aTrgNorm = aTriangleNormal.Normalized();
+    
+    gp_Pnt aProjNearPnt = projectPointOnPlane (myNearPickedPnt, aTrgNorm, thePnt1);
+    
+    gp_Pnt aProjFrustumPnt[4];
+    Standard_Integer aLastIdx = 0;
+    gp_Pnt aResProjPnt;
+    if (intersectSegmentPlane (myVertices[0], myVertices[1], aTrgNorm, thePnt1, aResProjPnt))
     {
-      gp_XYZ aW = aPtOnPlane.XYZ() - aPnts[anEdgeIdx].XYZ();
-      Standard_Real aCoef = aTrEdges[anEdgeIdx].Dot (aW) / aTrEdges[anEdgeIdx].Dot (aTrEdges[anEdgeIdx]);
-      Standard_Real aDist = aPtOnPlane.Distance (aPnts[anEdgeIdx].XYZ() + aCoef * aTrEdges[anEdgeIdx]);
-      if (aDist < aMinDist)
+      aProjFrustumPnt[aLastIdx++] = aResProjPnt;
+    }
+    if (intersectSegmentPlane (myVertices[2], myVertices[3], aTrgNorm, thePnt1, aResProjPnt))
+    {
+      aProjFrustumPnt[aLastIdx++] = aResProjPnt;
+    }
+    if (intersectSegmentPlane (myVertices[6], myVertices[7], aTrgNorm, thePnt1, aResProjPnt))
+    {
+      aProjFrustumPnt[aLastIdx++] = aResProjPnt;
+    }
+    if (intersectSegmentPlane (myVertices[4], myVertices[5], aTrgNorm, thePnt1, aResProjPnt))
+    {
+      aProjFrustumPnt[aLastIdx++] = aResProjPnt;
+    }
+    
+    // Distance from projected myNearPickedPnt to projected fructum rectangle,
+    // inside distance is 0, outside distance is positive
+    gp_Pnt aNearPntOnFrustumRect;
+    Standard_Real aDistToFrustumRect = -RealLast();
+    for (Standard_Integer aVertIdx = 0; aVertIdx < aLastIdx && aLastIdx > 1; ++aVertIdx)
+    {
+      gp_Pnt aTmpPnt;
+      Standard_Real aDist = pointLineDistanceField (aProjNearPnt, aProjFrustumPnt[aVertIdx], aProjFrustumPnt[(aVertIdx + 1) % aLastIdx], aPtOnPlane, aTmpPnt);
+      if (aDist > aDistToFrustumRect)
       {
-        aMinDist = aDist;
-        aNearestEdgeIdx1 = anEdgeIdx;
+        aDistToFrustumRect = aDist;
+        aNearPntOnFrustumRect = aTmpPnt;
       }
     }
-    Standard_Integer aNearestEdgeIdx2 = (aNearestEdgeIdx1 + 1) % 3;
-    const gp_Vec aVec12 (aPnts[aNearestEdgeIdx1], aPnts[aNearestEdgeIdx2]);
-    if (aVec12.SquareMagnitude() > gp::Resolution()
-     && myViewRayDir.IsParallel (aVec12, Precision::Angular()))
+    if (aDistToFrustumRect < 0)
     {
-      aNearestEdgeIdx2 = aNearestEdgeIdx1 == 0 ? 2 : aNearestEdgeIdx1 - 1;
+      aNearPntOnFrustumRect = aProjNearPnt;
+      aDistToFrustumRect = 0;
     }
-    segmentSegmentDistance (aPnts[aNearestEdgeIdx1], aPnts[aNearestEdgeIdx2], thePickResult);
+    
+    // Distance from projected myNearPickedPnt to triangle,
+    // inside distance is 0, outside distance is positive
+    gp_Pnt aNearPntOnTriangle;
+    Standard_Real aDistToTriangle = -RealLast();
+    for (Standard_Integer aVertIdx = 0; aVertIdx < 3; ++aVertIdx)
+    {
+      gp_Pnt aTmpPnt;
+      Standard_Real aDist = pointLineDistanceField (aProjNearPnt, aPnts[aVertIdx], aPnts[(aVertIdx + 1) % 3], aPnts[(aVertIdx + 2) % 3], aTmpPnt);
+      if (aDist > aDistToTriangle)
+      {
+        aDistToTriangle = aDist;
+        aNearPntOnTriangle = aTmpPnt;
+      }
+    }
+    if (aDistToTriangle < 0)
+    {
+      aNearPntOnTriangle = aProjNearPnt;
+      aDistToTriangle = 0;
+    }
+    
+    // Combining distances
+    gp_Pnt aResPnt = aDistToFrustumRect > aDistToTriangle ? aNearPntOnFrustumRect : aNearPntOnTriangle;
+    
+    thePickResult.SetDepth (myNearPickedPnt.Distance(aResPnt) * myScale);
+    thePickResult.SetPickedPoint (aResPnt);
   }
 
   return !theClipRange.IsClipped (thePickResult.Depth());
