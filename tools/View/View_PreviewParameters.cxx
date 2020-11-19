@@ -28,7 +28,7 @@ View_PreviewParameters::View_PreviewParameters()
   myDrawer = new Prs3d_Drawer();
 
   Quantity_Color aColor(Quantity_NOC_TOMATO);
-  Standard_ShortReal aTransparency = 0.8f;
+  Standard_ShortReal aTransparency = 0.8;
 
   // point parameters
   myDrawer->SetPointAspect (new Prs3d_PointAspect (Aspect_TOM_O_PLUS, aColor, 3.0));

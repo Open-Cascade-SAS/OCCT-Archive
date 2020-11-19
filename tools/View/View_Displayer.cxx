@@ -310,18 +310,19 @@ void View_Displayer::DisplayedPresentations (NCollection_Shared<AIS_ListOfIntera
 // =======================================================================
 Handle(V3d_View) View_Displayer::GetView() const
 {
-  Handle(V3d_View) aView;
-  if (GetContext().IsNull())
-    return aView;
+  Handle(AIS_InteractiveContext) theContext = GetContext();
+  if (theContext.IsNull())
+    return NULL;
 
-  const Handle(V3d_Viewer)& aViewer = GetContext()->CurrentViewer();
-  if (!aViewer.IsNull())
-  {
-    aViewer->InitActiveViews();
-    if (aViewer->MoreActiveViews())
-      aView = aViewer->ActiveView();
-  }
-  return aView;
+  const Handle(V3d_Viewer)& aViewer = theContext->CurrentViewer();
+  if (aViewer.IsNull())
+    return NULL;
+
+  aViewer->InitActiveViews();
+  if (!aViewer->MoreActiveViews())
+    return NULL;
+
+  return aViewer->ActiveView();
 }
 
 // =======================================================================

@@ -18,6 +18,7 @@
 #include <inspector/ShapeView_ItemShape.hxx>
 #include <inspector/ShapeView_TreeModel.hxx>
 #include <inspector/ShapeView_VisibilityState.hxx>
+#include <inspector/ViewControl_PropertiesDialog.hxx>
 
 #include <inspector/Convert_Tools.hxx>
 
@@ -39,8 +40,15 @@
 #include <inspector/ShapeView_OpenFileDialog.hxx>
 #include <inspector/ShapeView_Tools.hxx>
 
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
+#include <IMeshTools_Parameters.hxx>
+#include <BRepMesh_IncrementalMesh.hxx>
+#include <Message_Report.hxx>
+#include <StdPrs_ShadedShape.hxx>
+#include <TopoDS.hxx>
 
 #include <Standard_WarningsDisable.hxx>
 #include <QApplication>
@@ -107,6 +115,7 @@ ShapeView_Window::ShapeView_Window (QWidget* theParent)
                     aVisibilityState, SLOT (OnClicked(const QModelIndex&)));
 
   QItemSelectionModel* aSelModel = new QItemSelectionModel (myTreeView->model(), myTreeView);
+  myTreeView->setSelectionMode (QAbstractItemView::ExtendedSelection);
   myTreeView->setSelectionModel (aSelModel);
   connect (aSelModel, SIGNAL (selectionChanged (const QItemSelection&, const QItemSelection&)),
            this, SLOT (onTreeViewSelectionChanged (const QItemSelection&, const QItemSelection&)));
@@ -360,42 +369,47 @@ void ShapeView_Window::onTreeViewContextMenuRequested (const QPoint& thePosition
 
   QModelIndex anIndex = TreeModel_ModelBase::SingleSelected (aModel->selectedIndexes(), 0);
   TreeModel_ItemBasePtr anItemBase = TreeModel_ModelBase::GetItemByIndex (anIndex);
-  if (!anItemBase)
-    return;
-
   QMenu* aMenu = new QMenu(myMainWindow);
+
   ShapeView_ItemRootPtr aRootItem = itemDynamicCast<ShapeView_ItemRoot> (anItemBase);
   if (aRootItem) {
     aMenu->addAction (ViewControl_Tools::CreateAction ("Load BREP file", SLOT (onLoadFile()), myMainWindow, this));
     aMenu->addAction (ViewControl_Tools::CreateAction ("Remove all shape items", SLOT (onClearView()), myMainWindow, this));
   }
-  else {
+  else if (anItemBase) { // single selection
     aMenu->addAction (ViewControl_Tools::CreateAction ("Export to BREP", SLOT (onExportToBREP()), myMainWindow, this));
+
     ShapeView_ItemShapePtr aShapeItem = itemDynamicCast<ShapeView_ItemShape>(anItemBase);
-    const TopoDS_Shape& aShape = aShapeItem->GetItemShape();
-    TopAbs_ShapeEnum anExplodeType = aShapeItem->ExplodeType();
-    NCollection_List<TopAbs_ShapeEnum> anExplodeTypes;
-    ShapeView_Tools::IsPossibleToExplode (aShape, anExplodeTypes);
-    if (anExplodeTypes.Size() > 0)
+    if (aShapeItem)
     {
-      QMenu* anExplodeMenu = aMenu->addMenu ("Explode");
-      for (NCollection_List<TopAbs_ShapeEnum>::Iterator anExpIterator (anExplodeTypes); anExpIterator.More();
-        anExpIterator.Next())
+      const TopoDS_Shape& aShape = aShapeItem->GetItemShape();
+      TopAbs_ShapeEnum anExplodeType = aShapeItem->ExplodeType();
+      NCollection_List<TopAbs_ShapeEnum> anExplodeTypes;
+      ShapeView_Tools::IsPossibleToExplode (aShape, anExplodeTypes);
+      if (anExplodeTypes.Size() > 0)
       {
-        TopAbs_ShapeEnum aType = anExpIterator.Value();
-        QAction* anAction = ViewControl_Tools::CreateAction (TopAbs::ShapeTypeToString (aType), SLOT (onExplode()), myMainWindow, this);
-        anExplodeMenu->addAction (anAction);
-        if (anExplodeType == aType)
+        QMenu* anExplodeMenu = aMenu->addMenu ("Explode");
+        for (NCollection_List<TopAbs_ShapeEnum>::Iterator anExpIterator (anExplodeTypes); anExpIterator.More();
+          anExpIterator.Next())
         {
-          anAction->setCheckable (true);
-          anAction->setChecked (true);
+          TopAbs_ShapeEnum aType = anExpIterator.Value();
+          QAction* anAction = ViewControl_Tools::CreateAction (TopAbs::ShapeTypeToString (aType), SLOT (onExplode()), myMainWindow, this);
+          anExplodeMenu->addAction (anAction);
+          if (anExplodeType == aType)
+          {
+            anAction->setCheckable (true);
+            anAction->setChecked (true);
+          }
         }
+        QAction* anAction = ViewControl_Tools::CreateAction ("NONE", SLOT (onExplode()), myMainWindow, this);
+        anExplodeMenu->addSeparator();
+        anExplodeMenu->addAction (anAction);
       }
-      QAction* anAction = ViewControl_Tools::CreateAction ("NONE", SLOT (onExplode()), myMainWindow, this);
-      anExplodeMenu->addSeparator();
-      anExplodeMenu->addAction (anAction);
     }
   }
+  aMenu->addAction (ViewControl_Tools::CreateAction ("Create Face", SLOT (onCreateFace()), myMainWindow, this));
+  aMenu->addAction (ViewControl_Tools::CreateAction ("Create Compound", SLOT (onCreateCompound()), myMainWindow, this));
+  aMenu->addAction (ViewControl_Tools::CreateAction ("Algo: Incremental Mesh", SLOT (onIncrementalMesh()), myMainWindow, this));
 
   QPoint aPoint = myTreeView->mapToGlobal (thePosition);
   aMenu->exec (aPoint);
@@ -520,4 +534,85 @@ void ShapeView_Window::onExportToBREP()
   BRepTools::Write (aShape, aFileNameIndiced.ToCString());
   anItem->SetFileName (aFileNameIndiced.ToCString());
   aFileName = aFileNameIndiced.ToCString();
+}
+
+// =======================================================================
+// function : onCreateFace
+// purpose :
+// =======================================================================
+void ShapeView_Window::onCreateFace()
+{
+  /*QItemSelectionModel* aModel = myTreeView->selectionModel();
+  if (!aModel)
+    return;
+  QList<TreeModel_ItemBasePtr> anItems = TreeModel_ModelBase::SelectedItems (aModel->selectedIndexes());
+
+  QList<size_t> aSelectedIds; // Remember of selected address in order to avoid duplicates
+  NCollection_List<Handle(Standard_Transient)> anItemPresentations;
+
+  BRepBuilderAPI_MakeWire aWireBuilder;
+  for (QList<TreeModel_ItemBasePtr>::const_iterator anItemIt = anItems.begin(); anItemIt != anItems.end(); ++anItemIt)
+  {
+    ShapeView_ItemShapePtr anItem = itemDynamicCast<ShapeView_ItemShape>(*anItemIt);
+    if (!anItem)
+      continue;
+
+    const TopoDS_Shape& aShape = anItem->GetItemShape();
+    if (aShape.ShapeType() != TopAbs_EDGE)
+      continue;
+
+    const TopoDS_Edge& aSourceEdge = TopoDS::Edge (aShape);
+    const TopoDS_Edge& anEdgeCopied = TopoDS::Edge (aSourceEdge.EmptyCopied());
+
+    aWireBuilder.Add (anEdgeCopied);//aSourceEdge);
+  }
+  if (!aWireBuilder.IsDone())
+    return;
+
+  BRepBuilderAPI_MakeFace aFaceBuilder;
+
+  const TopoDS_Wire& aWire = aWireBuilder.Wire();
+  const TopoDS_Wire& aWireCopied = TopoDS::Wire (aWire.EmptyCopied());
+
+  aFaceBuilder.Add (aWireCopied);
+
+  addShape (aFaceBuilder.Face());
+  */
+}
+
+// =======================================================================
+// function : onCreateCompound
+// purpose :
+// =======================================================================
+void ShapeView_Window::onCreateCompound()
+{
+  QItemSelectionModel* aModel = myTreeView->selectionModel();
+  if (!aModel)
+    return;
+  QList<TreeModel_ItemBasePtr> anItems = TreeModel_ModelBase::SelectedItems (aModel->selectedIndexes());
+
+  QList<size_t> aSelectedIds; // Remember of selected address in order to avoid duplicates
+  NCollection_List<Handle(Standard_Transient)> anItemPresentations;
+
+  BRep_Builder aBB;
+  TopoDS_Compound aC;
+  aBB.MakeCompound(aC);
+
+  for (QList<TreeModel_ItemBasePtr>::const_iterator anItemIt = anItems.begin(); anItemIt != anItems.end(); ++anItemIt)
+  {
+    ShapeView_ItemShapePtr anItem = itemDynamicCast<ShapeView_ItemShape>(*anItemIt);
+    if (!anItem)
+      return;
+
+    aBB.Add(aC, anItem->GetItemShape());
+  }
+  addShape (aC);
+}
+
+// =======================================================================
+// function : onIncrementalMesh
+// purpose :
+// =======================================================================
+void ShapeView_Window::onIncrementalMesh()
+{
 }

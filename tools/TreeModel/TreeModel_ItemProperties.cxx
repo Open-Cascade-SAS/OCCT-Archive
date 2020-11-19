@@ -39,6 +39,15 @@ void TreeModel_ItemProperties::Init ()
 
   const Standard_SStream& aStream = Item()->Stream();
 
+  InitByStream (aStream);
+}
+
+// =======================================================================
+// function : InitByStream
+// purpose :
+// =======================================================================
+void TreeModel_ItemProperties::InitByStream (const Standard_SStream& aStream)
+{
   NCollection_IndexedDataMap<TCollection_AsciiString, Standard_DumpValue> aValues;
   TCollection_AsciiString aStreamText = Standard_Dump::Text (aStream);
   Standard_Dump::SplitJson (aStreamText, aValues);
@@ -48,8 +57,15 @@ void TreeModel_ItemProperties::Init ()
   Standard_DumpValue aKeyValue;
   if (!aStreamParent)
   {
-    const Handle(Standard_Transient)& anItemObject = Item()->Object();
-    aKey = anItemObject.IsNull() ? "Dump" : anItemObject->DynamicType()->Name();
+    if (!Item() || Item()->Object().IsNull())
+    {
+      aKey = "Dump";
+    }
+    else
+    {
+      const Handle(Standard_Transient)& anItemObject = Item()->Object();
+      aKey = anItemObject.IsNull() ? "Dump" : anItemObject->DynamicType()->Name();
+    }
     aKeyValue = Standard_DumpValue (aStreamText, 1);
 
     myKey = aKey;
@@ -94,6 +110,11 @@ void TreeModel_ItemProperties::Init ()
       myRowValues.ChangeFromIndex (1).CustomValues.insert ((int)Qt::BackgroundRole, QColor((int)(aRed * aDelta),
         (int)(aGreen * aDelta), (int)(aBlue * aDelta)));
     }
+  }
+  // in case if the stream alert has empty key avalue, use as the key the first row value
+  if ((myKey.IsEmpty() || myKey.IsEqual ("Dump")) && myRowValues.Size() > 0)
+  {
+    myKey = myRowValues.FindFromIndex (1).Value.toString().toStdString().c_str();
   }
 }
 
@@ -172,10 +193,16 @@ ViewControl_EditType TreeModel_ItemProperties::EditType (const int, const int th
 // function : SetData
 // purpose :
 // =======================================================================
-bool TreeModel_ItemProperties::SetData (const int /*theRow*/, const int theColumn, const QVariant& /*theValue*/, int)
+bool TreeModel_ItemProperties::SetData (const int theRow, const int theColumn, const QVariant& theValue, int theRole)
 {
   if (theColumn == 0)
     return false;
+
+  if (theRole == Qt::DisplayRole || theRole == Qt::EditRole)
+  {
+    myRowValues.ChangeFromIndex (theRow + 1).Value = theValue;
+  }
+
   return false;
 }
 
@@ -185,6 +212,8 @@ bool TreeModel_ItemProperties::SetData (const int /*theRow*/, const int theColum
 // =======================================================================
 void TreeModel_ItemProperties::Presentations (NCollection_List<Handle(Standard_Transient)>& thePresentations)
 {
+  if (!Item())
+    return;
   const Standard_SStream& aStream = Item()->Stream();
   Convert_Tools::ConvertStreamToPresentations (aStream, 1, -1, thePresentations);
 }

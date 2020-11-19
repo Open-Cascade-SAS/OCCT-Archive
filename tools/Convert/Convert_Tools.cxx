@@ -1,6 +1,6 @@
-// Created on: 2020-01-25
+// Created on: 2017-06-16
 // Created by: Natalia ERMOLAEVA
-// Copyright (c) 2020 OPEN CASCADE SAS
+// Copyright (c) 2017 OPEN CASCADE SAS
 //
 // This file is part of Open CASCADE Technology software library.
 //
@@ -18,17 +18,17 @@
 
 #include <AIS_Plane.hxx>
 #include <AIS_Shape.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include <BRepBuilderAPI_MakeVertex.hxx>
-#include <BRepPreviewAPI_MakeBox.hxx>
-#include <BRepTools.hxx>
 #include <gp_XY.hxx>
 #include <Geom_Plane.hxx>
 #include <Prs3d_PlaneAspect.hxx>
-#include <Standard_Dump.hxx>
 #include <TColgp_Array1OfPnt.hxx>
+#include <Standard_Dump.hxx>
+#include <BRepTools.hxx>
+#include <BRep_Builder.hxx>
 #include <TopoDS_Compound.hxx>
+#include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 
 // =======================================================================
 // function : ReadShape
@@ -44,7 +44,7 @@ TopoDS_Shape Convert_Tools::ReadShape (const TCollection_AsciiString& theFileNam
 }
 
 //=======================================================================
-//function : ConvertStreamToPresentations
+//function : CreateShape
 //purpose  :
 //=======================================================================
 void Convert_Tools::ConvertStreamToPresentations (const Standard_SStream& theSStream,
@@ -202,11 +202,61 @@ Standard_Boolean Convert_Tools::CreateShape (const Bnd_OBB& theBoundingBox, Topo
 //=======================================================================
 Standard_Boolean Convert_Tools::CreateBoxShape (const gp_Pnt& thePntMin, const gp_Pnt& thePntMax, TopoDS_Shape& theShape)
 {
-  BRepPreviewAPI_MakeBox aMakeBox;
-  aMakeBox.Init (thePntMin, thePntMax);
-  theShape = aMakeBox.Shape();
+  Standard_Boolean aThinOnX = fabs (thePntMin.X() - thePntMax.X()) < Precision::Confusion();
+  Standard_Boolean aThinOnY = fabs (thePntMin.Y() - thePntMax.Y()) < Precision::Confusion();
+  Standard_Boolean aThinOnZ = fabs (thePntMin.Z() - thePntMax.Z()) < Precision::Confusion();
 
-  return Standard_True;
+  if (((int)aThinOnX + (int)aThinOnY + (int)aThinOnZ) > 1) // thin box in several directions is a point
+  {
+    BRep_Builder aBuilder;
+    TopoDS_Compound aCompound;
+    aBuilder.MakeCompound (aCompound);
+    aBuilder.Add (aCompound, BRepBuilderAPI_MakeVertex (thePntMin));
+    theShape = aCompound;
+    return Standard_True;
+  }
+
+  if (aThinOnX || aThinOnY || aThinOnZ)
+  {
+    gp_Pnt aPnt1, aPnt2, aPnt3, aPnt4 ;
+    if (aThinOnX)
+    {
+      aPnt1 = gp_Pnt(thePntMin.X(), thePntMin.Y(), thePntMin.Z());
+      aPnt2 = gp_Pnt(thePntMin.X(), thePntMax.Y(), thePntMin.Z());
+      aPnt3 = gp_Pnt(thePntMin.X(), thePntMax.Y(), thePntMax.Z());
+      aPnt4 = gp_Pnt(thePntMin.X(), thePntMin.Y(), thePntMax.Z());
+    }
+    else if (aThinOnY)
+    {
+      aPnt1 = gp_Pnt(thePntMin.X(), thePntMin.Y(), thePntMin.Z());
+      aPnt2 = gp_Pnt(thePntMax.X(), thePntMin.Y(), thePntMin.Z());
+      aPnt3 = gp_Pnt(thePntMax.X(), thePntMin.Y(), thePntMax.Z());
+      aPnt4 = gp_Pnt(thePntMin.X(), thePntMin.Y(), thePntMax.Z());
+    }
+    else if (aThinOnZ)
+    {
+      aPnt1 = gp_Pnt(thePntMin.X(), thePntMin.Y(), thePntMin.Z());
+      aPnt2 = gp_Pnt(thePntMax.X(), thePntMin.Y(), thePntMin.Z());
+      aPnt3 = gp_Pnt(thePntMax.X(), thePntMax.Y(), thePntMin.Z());
+      aPnt4 = gp_Pnt(thePntMin.X(), thePntMax.Y(), thePntMin.Z());
+    }
+    BRep_Builder aBuilder;
+    TopoDS_Compound aCompound;
+    aBuilder.MakeCompound (aCompound);
+    aBuilder.Add (aCompound, BRepBuilderAPI_MakeEdge (aPnt1, aPnt2));
+    aBuilder.Add (aCompound, BRepBuilderAPI_MakeEdge (aPnt2, aPnt3));
+    aBuilder.Add (aCompound, BRepBuilderAPI_MakeEdge (aPnt3, aPnt4));
+    aBuilder.Add (aCompound, BRepBuilderAPI_MakeEdge (aPnt4, aPnt1));
+
+    theShape = aCompound;
+    return Standard_True;
+  }
+  else
+  {
+    BRepPrimAPI_MakeBox aBoxBuilder (thePntMin, thePntMax);
+    theShape = aBoxBuilder.Shape();
+    return Standard_True;
+  }
 }
 
 //=======================================================================
@@ -218,6 +268,7 @@ void Convert_Tools::CreatePresentation (const Handle(Geom_Plane)& thePlane,
 {
   Handle(AIS_Plane) aPlanePrs = new AIS_Plane (thePlane);
 
+  // TODO - default fields to be defined in another place
   aPlanePrs->Attributes()->SetPlaneAspect (new Prs3d_PlaneAspect());
   Handle (Prs3d_PlaneAspect) aPlaneAspect = aPlanePrs->Attributes()->PlaneAspect();
   aPlaneAspect->SetPlaneLength (100, 100);
@@ -248,11 +299,13 @@ void Convert_Tools::CreatePresentation (const gp_Trsf& theTrsf,
     return;
 
   Handle(AIS_Shape) aSourcePrs = new AIS_Shape (aBoxShape);
+  // TODO - default fields to be defined in another place
   aSourcePrs->SetColor (Quantity_NOC_WHITE);
   aSourcePrs->SetTransparency (0.5);
   thePresentations.Append (aSourcePrs);
 
   Handle(AIS_Shape) aTransformedPrs = new AIS_Shape (aBoxShape);
+  // TODO - default fields to be defined in another place
   aTransformedPrs->SetColor (Quantity_NOC_TOMATO);
   aTransformedPrs->SetTransparency (0.5);
   aTransformedPrs->SetLocalTransformation (theTrsf);

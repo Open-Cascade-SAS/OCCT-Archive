@@ -129,6 +129,15 @@ protected slots:
   //! Views BREP files of selected items if exist
   void onExportToBREP();
 
+  //! Create a wire of selected edges
+  void onCreateFace();
+
+  //! Create a compound of selected shapes
+  void onCreateCompound();
+
+  //! Perform BRepMesh_IncrementalMesh on the selected shape
+  void onIncrementalMesh();
+
   //! Convers file name to Ascii String and perform opeging file
   //! \param theFileName a file name to be opened
   void onOpenFile(const QString& theFileName) { OpenFile (TCollection_AsciiString (theFileName.toUtf8().data())); }
