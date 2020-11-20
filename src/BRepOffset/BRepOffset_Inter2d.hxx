@@ -21,7 +21,8 @@
 #include <TopTools_DataMapOfShapeShape.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-
+#include <TopTools_IndexedDataMapOfShapeShape.hxx>
+#include <BRepOffset_DataMapOfFaceMapEE.hxx>
 class BRepAlgo_AsDes;
 class BRepAlgo_Image;
 class BRepOffset_Analyse;
@@ -68,7 +69,9 @@ public:
                                                           TopTools_IndexedMapOfShape& FacesWithVerts,
                                                           BRepAlgo_Image& theImageVV,
                                                           TopTools_DataMapOfShapeListOfShape& theEdgeIntEdges,
-                                                          TopTools_IndexedDataMapOfShapeListOfShape& theDMVV);
+                                                          TopTools_IndexedDataMapOfShapeListOfShape& theDMVV,
+                                                          BRepOffset_DataMapOfFaceMapEE& theFaceEdgeEdge,
+                                                          TopTools_IndexedDataMapOfShapeListOfShape& theEFmap);
 
   //! Computes the intersection between the offset edges generated
   //! from vertices and stored into AsDes as descendants of the <FI>.
@@ -94,9 +97,11 @@ public:
                                                         BRepAlgo_Image&               theImageVV);
                                                         
   //! extents the edge
-  Standard_EXPORT static Standard_Boolean ExtentEdge (const TopoDS_Edge& E,
-                                                      TopoDS_Edge& NE,
-                                                      const Standard_Real theOffset);
+  Standard_EXPORT static Standard_Boolean ExtentEdge (const TopoDS_Edge&     E,
+                                                      TopoDS_Edge&           NE,
+                                                      const Standard_Real    theOffset,
+                                                      const Standard_Boolean theToProlongBefore = Standard_True,
+                                                      const Standard_Boolean theToProlongAfter = Standard_True);
 
 };
 

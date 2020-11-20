@@ -56,6 +56,7 @@
 
 #include <BRepOffset_MakeOffset.hxx>
 #include <BRepOffset_MakeSimpleOffset.hxx>
+#include <BRepOffsetAPI_MakeThickSolid.hxx>
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 #include <DBRep.hxx>
@@ -1164,6 +1165,37 @@ Standard_Integer offsetperform(Draw_Interpretor& theCommands,
   return 0;
 }
 
+Standard_Integer qqq(Draw_Interpretor& ,
+  Standard_Integer theNArg, const char** a)
+{
+  if (theNArg < 4) return 1;
+  
+  TopoDS_Shape aShape = DBRep::Get(a[2]);
+  if (aShape.IsNull()) return 1;
+  
+  Standard_Real offset = atof(a[3]);
+  Standard_Real tol = Precision::Confusion();
+
+  TopTools_IndexedMapOfShape aMap;
+
+  TopExp::MapShapes(aShape, TopAbs_FACE, aMap);
+
+  TopTools_ListOfShape aList;
+  aList.Append(aMap(5));
+  aList.Append(aMap(6));
+
+  GeomAbs_JoinType join = GeomAbs_Intersection;
+  
+  BRepOffsetAPI_MakeThickSolid hollow1;
+  hollow1.MakeThickSolidByJoin(aShape, aList, offset, tol,
+                               BRepOffset_Skin, Standard_False,
+                               Standard_False, join);
+
+  TopoDS_Shape newShape = hollow1.Shape();
+  
+  DBRep::Set(a[1], newShape);
+  return 0;
+}
 
 //=======================================================================
 //function : ROW
@@ -2525,4 +2557,8 @@ void BRepTest::FeatureCommands(Draw_Interpretor& theCommands)
   theCommands.Add("offsetshapesimple",
     "offsetshapesimple result shape offsetvalue [solid] [tolerance=1e-7]",
     __FILE__, ComputeSimpleOffset);
+
+  theCommands.Add("qqq",
+    "qqq result shape offset",
+    __FILE__, qqq);
 }

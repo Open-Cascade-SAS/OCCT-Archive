@@ -1,5 +1,8 @@
 puts "TODO OCC23068 All: ERROR. offsetperform operation not done."
 puts "TODO OCC23068 All: Error : The volume of result shape is"
+puts "TODO OCC23068 ALL: The command cannot be built"
+puts "TODO OCC31845 All: Tcl Exception: result is not a topological shape!!!"
+
 # Original bug : hkg60144
 # Date : 17Juillet98
 

@@ -88,9 +88,11 @@ public:
                                        TopTools_ListOfShape& LInt1,
                                        TopTools_ListOfShape& LInt2,
                                        const TopAbs_State    Side,
+                                       const Standard_Real   theOffset,
                                        const TopoDS_Edge&    RefEdge,
                                        const TopoDS_Face&    RefFace1,
-                                       const TopoDS_Face&    RefFace2);
+                                       const TopoDS_Face&    RefFace2,
+                                       const Standard_Boolean theIsEdgeSmooth = Standard_False);
   
   //! Find if the edges <Edges> of the face <F2> are on
   //! the face <F1>.
@@ -124,7 +126,8 @@ public:
   
   Standard_EXPORT static void CheckBounds (const TopoDS_Face& F,
                                            const BRepOffset_Analyse& Analyse,
-                                           Standard_Boolean& enlargeU,
+                                           Standard_Boolean& enlargeUfirst,
+                                           Standard_Boolean& enlargeUlast,
                                            Standard_Boolean& enlargeVfirst,
                                            Standard_Boolean& enlargeVlast);
   
@@ -148,7 +151,8 @@ public:
                                                        TopoDS_Face& NF,
                                                        const Standard_Boolean ChangeGeom,
                                                        const Standard_Boolean UpDatePCurve = Standard_False,
-                                                       const Standard_Boolean enlargeU = Standard_True,
+                                                       const Standard_Boolean enlargeUfirst = Standard_True,
+                                                       const Standard_Boolean enlargeUlast = Standard_True,
                                                        const Standard_Boolean enlargeVfirst = Standard_True,
                                                        const Standard_Boolean enlargeVlast = Standard_True,
                                                        const Standard_Integer theExtensionMode = 1,

@@ -5679,7 +5679,7 @@ void IntersectFaces(const TopoDS_Shape& theFInv,
   TopTools_ListOfShape aLInt1, aLInt2;
   TopoDS_Edge aNullEdge;
   TopoDS_Face aNullFace;
-  BRepOffset_Tool::Inter3D(TopoDS::Face(theFi), TopoDS::Face(theFj), aLInt1, aLInt2, aSide,
+  BRepOffset_Tool::Inter3D(TopoDS::Face(theFi), TopoDS::Face(theFj), aLInt1, aLInt2, aSide, 0.,
                            aNullEdge, aNullFace, aNullFace);
   //
   if (aLInt1.IsEmpty()) {

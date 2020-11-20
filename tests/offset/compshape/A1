@@ -1,5 +1,7 @@
 puts "TODO OCC23068 ALL: ERROR. offsetperform operation not done."
 puts "TODO OCC23068 ALL: Error : The volume of result shape "
+puts "TODO OCC23068 ALL: The command cannot be built"
+puts "TODO OCC31845 All: Tcl Exception: result is not a topological shape!!!"
 
 ## ======================================
 ## Grid    : CCV002

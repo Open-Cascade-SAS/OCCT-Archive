@@ -52,11 +52,20 @@ public:
   //! Add <E> as const edge, E can be in the result.
   Standard_EXPORT void AddConstEdge (const TopoDS_Edge& E);
   
+  //! Add a new edge
+  Standard_EXPORT void AddNewEdge (const TopoDS_Edge& theEdge);
+  
   //! Add <LE> as a set of const edges.
   Standard_EXPORT void AddConstEdges (const TopTools_ListOfShape& LE);
   
   //! Sets the Image Vertex - Vertex
   Standard_EXPORT void SetImageVV (const BRepAlgo_Image& theImageVV);
+  
+  //! Returns TRUE if new edges are not empty
+  Standard_EXPORT Standard_Boolean HasNewEdges ()
+  {
+    return (!myNewEdges.IsEmpty());
+  }
   
   //! Make loops.
   Standard_EXPORT void Perform();
@@ -105,6 +114,7 @@ private:
   TopoDS_Face myFace;
   TopTools_ListOfShape myConstEdges;
   TopTools_ListOfShape myEdges;
+  TopTools_ListOfShape myNewEdges;
   TopTools_DataMapOfShapeListOfShape myVerOnEdges;
   TopTools_ListOfShape myNewWires;
   TopTools_ListOfShape myNewFaces;

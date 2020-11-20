@@ -2968,7 +2968,8 @@ static Standard_Integer OCC30391(Draw_Interpretor& theDI,
 
   TopoDS_Face Result;
   BRepOffset_Tool::EnLargeFace(aFace, Result,
-                               Standard_True,Standard_True,Standard_True,Standard_True,Standard_True,1,
+                               Standard_True, Standard_True,
+                               Standard_True, Standard_True, Standard_True, Standard_True, 1,
                                aLenBeforeUfirst, aLenAfterUlast,
                                aLenBeforeVfirst, aLenAfterVlast);
 

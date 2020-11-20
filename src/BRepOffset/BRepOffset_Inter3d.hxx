@@ -45,19 +45,45 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT BRepOffset_Inter3d(const Handle(BRepAlgo_AsDes)& AsDes, const TopAbs_State Side, const Standard_Real Tol);
+  Standard_EXPORT BRepOffset_Inter3d(const Handle(BRepAlgo_AsDes)& theAsDes,
+                                     const TopAbs_State  theSide,
+                                     const Standard_Real theOffset,
+                                     const Standard_Real theTol);
   
-  Standard_EXPORT void CompletInt (const TopTools_ListOfShape& SetOfFaces, const BRepAlgo_Image& InitOffsetFace);
+  Standard_EXPORT void CompletInt (const TopTools_ListOfShape& SetOfFaces,
+                                   const BRepAlgo_Image& InitOffsetFace);
   
-  Standard_EXPORT void FaceInter (const TopoDS_Face& F1, const TopoDS_Face& F2, const BRepAlgo_Image& InitOffsetFace);
+  Standard_EXPORT void FaceInter (const TopoDS_Face& F1,
+                                  const TopoDS_Face& F2,
+                                  const BRepAlgo_Image& InitOffsetFace);
   
-  Standard_EXPORT void ConnexIntByArc (const TopTools_ListOfShape& SetOfFaces, const TopoDS_Shape& ShapeInit, const BRepOffset_Analyse& Analyse, const BRepAlgo_Image& InitOffsetFace);
+  Standard_EXPORT void ConnexIntByArc (const TopTools_ListOfShape& SetOfFaces,
+                                       const TopoDS_Shape& ShapeInit,
+                                       const BRepOffset_Analyse& Analyse,
+                                       const BRepAlgo_Image& InitOffsetFace);
   
-  Standard_EXPORT void ConnexIntByInt (const TopoDS_Shape& SI, const BRepOffset_DataMapOfShapeOffset& MapSF, const BRepOffset_Analyse& A, TopTools_DataMapOfShapeShape& MES, TopTools_DataMapOfShapeShape& Build, TopTools_ListOfShape& Failed, const Standard_Boolean bIsPlanar = Standard_False);
+  Standard_EXPORT void ConnexIntByInt (const TopoDS_Shape& SI,
+                                       const BRepOffset_DataMapOfShapeOffset& MapSF,
+                                       const BRepOffset_Analyse& A,
+                                       TopTools_DataMapOfShapeShape& MES,
+                                       TopTools_DataMapOfShapeShape& Build,
+                                       TopTools_ListOfShape& Failed,
+                                       const Standard_Boolean bIsPlanar = Standard_False);
   
-  Standard_EXPORT void ContextIntByInt (const TopTools_IndexedMapOfShape& ContextFaces, const Standard_Boolean ExtentContext, const BRepOffset_DataMapOfShapeOffset& MapSF, const BRepOffset_Analyse& A, TopTools_DataMapOfShapeShape& MES, TopTools_DataMapOfShapeShape& Build, TopTools_ListOfShape& Failed, const Standard_Boolean bIsPlanar = Standard_False);
+  Standard_EXPORT void ContextIntByInt (const TopTools_IndexedMapOfShape& ContextFaces,
+                                        const Standard_Boolean ExtentContext,
+                                        const BRepOffset_DataMapOfShapeOffset& MapSF,
+                                        const BRepOffset_Analyse& A,
+                                        TopTools_DataMapOfShapeShape& MES,
+                                        TopTools_DataMapOfShapeShape& Build,
+                                        TopTools_ListOfShape& Failed,
+                                        const Standard_Boolean bIsPlanar = Standard_False);
   
-  Standard_EXPORT void ContextIntByArc (const TopTools_IndexedMapOfShape& ContextFaces, const Standard_Boolean ExtentContext, const BRepOffset_Analyse& Analyse, const BRepAlgo_Image& InitOffsetFace, BRepAlgo_Image& InitOffsetEdge);
+  Standard_EXPORT void ContextIntByArc (const TopTools_IndexedMapOfShape& ContextFaces,
+                                        const Standard_Boolean ExtentContext,
+                                        const BRepOffset_Analyse& Analyse,
+                                        const BRepAlgo_Image& InitOffsetFace,
+                                        BRepAlgo_Image& InitOffsetEdge);
   
   Standard_EXPORT void AddCommonEdges (const TopTools_ListOfShape& SetOfFaces);
   
@@ -91,6 +117,7 @@ private:
   TopTools_DataMapOfShapeListOfShape myDone;
   TopTools_IndexedMapOfShape myNewEdges;
   TopAbs_State mySide;
+  Standard_Real myOffset;
   Standard_Real myTol;
 
 

@@ -28,6 +28,7 @@
 #include <BRepOffset_Tool.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <BRepTools.hxx>
+#include <BRepTools_WireExplorer.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
@@ -48,6 +49,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <TopTools_SequenceOfShape.hxx>
 #include <ChFi3d.hxx>
 
 static void CorrectOrientationOfTangent(gp_Vec& TangVec,
@@ -58,6 +60,24 @@ static void CorrectOrientationOfTangent(gp_Vec& TangVec,
   if (aVertex.IsSame(Vlast))
     TangVec.Reverse();
 }
+
+static Standard_Boolean IsTangentEdges(const TopoDS_Vertex& theVertex,
+                                       const TopoDS_Edge&   theEdge1,
+                                       const TopoDS_Edge&   theEdge2,
+                                       const Standard_Real  theAngle)
+{
+  Standard_Real aParOnEdge1 = BRep_Tool::Parameter(theVertex, theEdge1);
+  Standard_Real aParOnEdge2 = BRep_Tool::Parameter(theVertex, theEdge2);
+  BRepAdaptor_Curve aBAcurve1(theEdge1), aBAcurve2(theEdge2);
+  gp_Vec aVec1, aVec2;
+  aVec1 = aBAcurve1.DN(aParOnEdge1, 1);
+  CorrectOrientationOfTangent(aVec1, theVertex, theEdge1);
+  aVec2 = aBAcurve2.DN(aParOnEdge2, 1);
+  CorrectOrientationOfTangent(aVec2, theVertex, theEdge2);
+  Standard_Boolean IsOpposite = aVec2.IsOpposite(aVec1, theAngle);
+  return IsOpposite;
+}
+
 //=======================================================================
 //function : BRepOffset_Analyse
 //purpose  : 
@@ -83,12 +103,15 @@ BRepOffset_Analyse::BRepOffset_Analyse(const TopoDS_Shape& S,
 //function : EdgeAnlyse
 //purpose  : 
 //=======================================================================
-static void EdgeAnalyse(const TopoDS_Edge&         E,
-			                  const TopoDS_Face&         F1,
-			                  const TopoDS_Face&         F2,
-			                  const Standard_Real        SinTol,
-			                        BRepOffset_ListOfInterval& LI)
+Standard_Boolean BRepOffset_Analyse::EdgeAnalyse(const TopoDS_Edge&         E,
+                                                 const TopoDS_Face&         F1,
+                                                 const TopoDS_Face&         F2,
+                                                 const Standard_Real        SinTol)
 {
+  BRepOffset_ListOfInterval& LI = myMapEdgeType (E);
+  
+  Standard_Boolean IsSmooth = Standard_False;
+  
   Standard_Real   f,l;
   BRep_Tool::Range(E, F1, f, l);
   BRepOffset_Interval I;
@@ -111,16 +134,98 @@ static void EdgeAnalyse(const TopoDS_Edge&         E,
     else
       ConnectType = ChFi3d::DefineConnectType(E, F1, F2, SinTol, Standard_False);
   }
-  else
+  else if (myJoinType == GeomAbs_Arc/* || myIsOpenShell*/)
   {
     if (ChFi3d::IsTangentFaces(E, F1, F2)) //weak condition
       ConnectType = ChFiDS_Tangential;
     else
       ConnectType = ChFi3d::DefineConnectType(E, F1, F2, SinTol, Standard_False);
   }
+  else //join type in Intersection
+  {
+    ConnectType = ChFi3d::DefineConnectType(E, F1, F2, SinTol, Standard_False);
+
+    Standard_Boolean IsEdgeNearSingularity = Standard_False;
+    TopoDS_Face FF [2] = {F1, F2};
+    TopoDS_Vertex aV [2];
+    TopExp::Vertices(E, aV[0], aV[1]);
+    for (Standard_Integer ii = 0; ii < 2; ii++)
+    {
+      TopExp_Explorer anExplo (FF[ii], TopAbs_EDGE);
+      for (; anExplo.More(); anExplo.Next())
+      {
+        const TopoDS_Edge& anEdge = TopoDS::Edge(anExplo.Current());
+        if (BRep_Tool::Degenerated(anEdge))
+        {
+          TopoDS_Vertex aVdeg1, aVdeg2;
+          TopExp::Vertices(anEdge, aVdeg1, aVdeg2);
+          if (aVdeg1.IsSame(aV[0]) || aVdeg1.IsSame(aV[1]) ||
+              aVdeg2.IsSame(aV[0]) || aVdeg2.IsSame(aV[1]))
+          {
+            IsEdgeNearSingularity = Standard_True;
+            break;
+          }
+        }
+      }
+    }
+    Standard_Boolean IsChain = Standard_False;
+    TopTools_IndexedDataMapOfShapeListOfShape aVEmap;
+    TopExp::MapShapesAndUniqueAncestors(F1, TopAbs_VERTEX, TopAbs_EDGE, aVEmap);
+    for (Standard_Integer ii = 0; ii < 2; ii++)
+    {
+      const TopTools_ListOfShape& aElist = aVEmap.FindFromKey(aV[ii]);
+      TopTools_ListIteratorOfListOfShape itl(aElist);
+      for (; itl.More(); itl.Next())
+      {
+        const TopoDS_Edge& anEdge = TopoDS::Edge(itl.Value());
+        if (anEdge.IsSame(E))
+          continue;
+        if (F1.IsSame(F2))
+          IsChain = BRepTools::IsReallyClosed(anEdge, F1);
+        else
+        {
+          TopExp_Explorer anExplo(F2, TopAbs_EDGE);
+          for (; anExplo.More(); anExplo.Next())
+          {
+            const TopoDS_Shape& anEdgeOnF2 = anExplo.Current();
+            if (anEdge.IsSame(anEdgeOnF2))
+            {
+              IsChain = Standard_True;
+              break;
+            }
+          }
+        }
+      }
+      if (IsChain)
+        break;
+    }
+
+    //Temporary
+    Standard_Boolean IsTang = Standard_False;
+    if (ConnectType == ChFiDS_Tangential)
+    {
+      IsTang = Standard_True;
+#ifdef OCCT_DEBUG
+      std::cout <<"edge is tangent"<<std::endl;
+#endif	
+    }
+    ///////////
+
+    if (ConnectType != ChFiDS_Tangential &&
+        ChFi3d::IsTangentFaces(E, F1, F2)) //weak condition
+      IsSmooth = Standard_True;
+
+    if (IsSmooth && (IsEdgeNearSingularity || IsChain))
+    {
+      ConnectType = ChFiDS_Tangential;
+      IsSmooth = Standard_False;
+    }
+  }
    
   I.Type(ConnectType);
   LI.Append(I);
+
+  return IsSmooth;
 }
 
 //=======================================================================
@@ -143,6 +248,8 @@ void BRepOffset_Analyse::Perform (const TopoDS_Shape& S,
                                   const Standard_Real Angle)
 {
   myShape = S;
+  myIsOpenShell = Standard_False;
+  mySmoothEdges.Clear();
   myNewFaces .Clear();
   myGenerated.Clear();
   myReplacement.Clear();
@@ -154,7 +261,25 @@ void BRepOffset_Analyse::Perform (const TopoDS_Shape& S,
   // Build ancestors.
   BuildAncestors (S,myAncestors);
 
-  TopTools_ListOfShape aLETang;
+  //Define status of boundary
+  TopTools_IndexedDataMapOfShapeListOfShape aEFmap;
+  TopExp::MapShapesAndAncestors (S, TopAbs_EDGE, TopAbs_FACE, aEFmap);
+  for (Standard_Integer ii = 1; ii <= aEFmap.Extent(); ii++)
+  {
+    const TopTools_ListOfShape& aElist = aEFmap(ii);
+    if (aElist.Extent() == 1)
+    {
+      const TopoDS_Edge& anEdge = TopoDS::Edge(aEFmap.FindKey(ii));
+      if (!BRep_Tool::Degenerated(anEdge))
+      {
+        myIsOpenShell = Standard_True;
+        break;
+      }
+    }
+  }
+
+  //TopTools_ListOfShape aLETang;
+  TopTools_SequenceOfShape aSeqEtang;
 
   TopExp_Explorer Exp(S.Oriented(TopAbs_FORWARD),TopAbs_EDGE);
   for ( ; Exp.More(); Exp.Next()) {
@@ -170,12 +295,18 @@ void BRepOffset_Analyse::Perform (const TopoDS_Shape& S,
       if (L.Extent() == 2) {
         const TopoDS_Face& F1 = TopoDS::Face (L.First());
         const TopoDS_Face& F2 = TopoDS::Face (L.Last());
-        EdgeAnalyse (E, F1, F2, SinTol, myMapEdgeType (E));
+        Standard_Boolean IsSmooth = EdgeAnalyse (E, F1, F2, SinTol);
 
-        // For tangent faces add artificial perpendicular face
-        // to close the gap between them (if they have different offset values)
-        if (myMapEdgeType(E).Last().Type() == ChFiDS_Tangential)
-          aLETang.Append (E);
+        if (IsSmooth)
+          mySmoothEdges.Add(E);
+        else
+        {
+          // For tangent faces add artificial perpendicular face
+          // to close the gap between them (if they have different offset values)
+          if (myMapEdgeType(E).Last().Type() == ChFiDS_Tangential)
+            aSeqEtang.Append (E);
+            //aLETang.Append (E);
+        }
       }
       else if (L.Extent() == 1) {
         Standard_Real U1, U2;
@@ -196,7 +327,228 @@ void BRepOffset_Analyse::Perform (const TopoDS_Shape& S,
     }
   }
 
-  TreatTangentFaces (aLETang);
+  //Propagate tangent edges
+  Standard_Real anAngularTol = (myAngle < M_PI/4)? myAngle : 1.e-5;
+
+  TopExp_Explorer anExplo (S, TopAbs_FACE);
+  for (; anExplo.More(); anExplo.Next())
+  {
+    const TopoDS_Face& aFace = TopoDS::Face(anExplo.Current());
+    TopTools_IndexedDataMapOfShapeListOfShape aVEmap;
+    TopExp::MapShapesAndAncestors (aFace, TopAbs_VERTEX, TopAbs_EDGE, aVEmap);
+    
+    TopoDS_Iterator itw(aFace);
+    for (; itw.More(); itw.Next())
+    {
+      const TopoDS_Wire& aWire = TopoDS::Wire(itw.Value());
+      BRepTools_WireExplorer wexp(aWire, aFace);
+      for (; wexp.More(); wexp.Next())
+      {
+        const TopoDS_Edge& aCurEdge = wexp.Current();
+        if (BRep_Tool::Degenerated (aCurEdge) ||
+            BRepTools::IsReallyClosed (aCurEdge, aFace))
+          continue;
+        
+        const BRepOffset_ListOfInterval& aListInterv = Type(aCurEdge);
+        if (!aListInterv.IsEmpty() && aListInterv.First().Type() == ChFiDS_Tangential)
+        {
+          TopoDS_Vertex aVV [2];
+          TopExp::Vertices (aCurEdge, aVV[0], aVV[1]);
+          for (Standard_Integer ii = 0; ii < 2; ii++)
+          {
+            TopoDS_Edge aNeighbor;
+            const TopTools_ListOfShape& aElist = aVEmap.FindFromKey(aVV[ii]);
+            TopTools_ListIteratorOfListOfShape itl(aElist);
+            for (; itl.More(); itl.Next())
+            {
+              const TopoDS_Edge& anEdge = TopoDS::Edge(itl.Value());
+              if (!anEdge.IsSame(aCurEdge))
+              {
+                aNeighbor = anEdge;
+                break;
+              }
+            }
+            if (!aNeighbor.IsNull())
+            {
+              BRepOffset_ListOfInterval& aListIntervLocal = myMapEdgeType (aNeighbor);
+              if (!aListIntervLocal.IsEmpty() &&
+                  aListIntervLocal.First().Type() != ChFiDS_Tangential)
+              {
+                Standard_Boolean IsTangent = IsTangentEdges (aVV[ii], aCurEdge, aNeighbor,
+                                                             anAngularTol);
+                if (IsTangent)
+                {
+                  aSeqEtang.Append(aNeighbor);
+                  aListIntervLocal.First().Type(ChFiDS_Tangential);
+                  mySmoothEdges.Remove(aNeighbor);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  TopTools_IndexedMapOfShape aVmap;
+  TopExp::MapShapes(S, TopAbs_VERTEX, aVmap);
+  for (Standard_Integer ii = 1; ii <= aVmap.Extent(); ii++)
+  {
+    const TopoDS_Vertex& aVertex = TopoDS::Vertex(aVmap(ii));
+    const TopTools_ListOfShape& aElist = Ancestors(aVertex);
+    if (aElist.Extent() != 4)
+      continue;
+
+    TopoDS_Edge aEtang;
+    Standard_Integer NbTangEdges = 0;
+    Standard_Boolean isFreeBoundFound = Standard_False;
+    TopTools_ListIteratorOfListOfShape anItlEE(aElist);
+    for (; anItlEE.More(); anItlEE.Next())
+    {
+      const TopoDS_Edge& anEdge = TopoDS::Edge(anItlEE.Value());
+      const BRepOffset_ListOfInterval& aListInterv = Type(anEdge);
+      if (!aListInterv.IsEmpty())
+      {
+        if (aListInterv.First().Type() == ChFiDS_Tangential)
+        {
+          aEtang = anEdge;
+          NbTangEdges++;
+        }
+        else if (aListInterv.First().Type() == ChFiDS_FreeBound)
+          isFreeBoundFound = Standard_True;
+      }
+    }
+    if (aEtang.IsNull() || NbTangEdges == 4 || isFreeBoundFound)
+      continue;
+
+    const TopTools_ListOfShape& aFF = Ancestors(aEtang);
+    const TopoDS_Face& aF1 = TopoDS::Face (aFF.First());
+    const TopoDS_Face& aF2 = TopoDS::Face (aFF.Last());
+    
+    TopoDS_Edge aEopposite, aEadjacent1, aEadjacent2;
+    for (anItlEE.Initialize(aElist); anItlEE.More(); anItlEE.Next())
+    {
+      const TopoDS_Edge& anEdge = TopoDS::Edge(anItlEE.Value());
+      if (anEdge.IsSame(aEtang))
+        continue;
+
+      const TopTools_ListOfShape& aFlist = Ancestors(anEdge);
+      TopTools_ListIteratorOfListOfShape anItlFF(aFlist);
+      for (; anItlFF.More(); anItlFF.Next())
+      {
+        const TopoDS_Shape& aFace = anItlFF.Value();
+        if (aFace.IsSame(aF1) || aFace.IsSame(aF2))
+        {
+          if (aEadjacent1.IsNull())
+            aEadjacent1 = anEdge;
+          else
+            aEadjacent2 = anEdge;
+        }
+      }
+    }
+    for (anItlEE.Initialize(aElist); anItlEE.More(); anItlEE.Next())
+    {
+      const TopoDS_Edge& anEdge = TopoDS::Edge(anItlEE.Value());
+      if (!anEdge.IsSame(aEtang) && !anEdge.IsSame(aEadjacent1) && !anEdge.IsSame(aEadjacent2))
+      {
+        aEopposite = anEdge;
+        break;
+      }
+    }
+
+    if (aEopposite.IsNull() || aEadjacent1.IsNull() || aEadjacent2.IsNull())
+      continue;
+
+    BRepOffset_ListOfInterval& aListInterv = myMapEdgeType (aEopposite);
+    if (!aListInterv.IsEmpty() && aListInterv.First().Type() != ChFiDS_Tangential)
+    {
+      Standard_Boolean IsTangentWithOpposite =
+        IsTangentEdges(aVertex, aEtang, aEopposite, anAngularTol);
+      
+      if (IsTangentWithOpposite)
+      {
+        aListInterv.First().Type(ChFiDS_Tangential);
+        aSeqEtang.Append(aEopposite);
+        mySmoothEdges.Remove(aEopposite);
+      }
+    }
+
+    aListInterv = myMapEdgeType (aEopposite);
+    if (!aListInterv.IsEmpty() &&
+        aListInterv.First().Type() == ChFiDS_Tangential &&
+        IsTangentEdges(aVertex, aEtang, aEopposite, anAngularTol))
+    {
+      BRepOffset_ListOfInterval& aListInterv1 = myMapEdgeType (aEadjacent1);
+      BRepOffset_ListOfInterval& aListInterv2 = myMapEdgeType (aEadjacent2);
+      ChFiDS_TypeOfConcavity Type1 = aListInterv1.First().Type();
+      ChFiDS_TypeOfConcavity Type2 = aListInterv2.First().Type();
+      if (Type1 != ChFiDS_Tangential || Type2 != ChFiDS_Tangential)
+      {
+        Standard_Boolean IsTangentAdjacents = IsTangentEdges(aVertex, aEadjacent1, aEadjacent2,
+                                                             anAngularTol);
+        if (IsTangentAdjacents)
+        {
+          if (Type1 != ChFiDS_Tangential)
+            aSeqEtang.Append(aEadjacent1);
+          aListInterv1.First().Type(ChFiDS_Tangential);
+          mySmoothEdges.Remove(aEadjacent1);
+          
+          if (Type2 != ChFiDS_Tangential)
+            aSeqEtang.Append(aEadjacent2);
+          aListInterv2.First().Type(ChFiDS_Tangential);
+          mySmoothEdges.Remove(aEadjacent2);
+        }
+      }
+    }
+
+    //Check cases of 3 tangents of 4
+    NbTangEdges = 0;
+    TopoDS_Edge anEdgeNotTangent;
+    for (anItlEE.Initialize(aElist); anItlEE.More(); anItlEE.Next())
+    {
+      const TopoDS_Edge& anEdge = TopoDS::Edge(anItlEE.Value());
+      const BRepOffset_ListOfInterval& aListIntervLocal = Type(anEdge);
+      if (!aListIntervLocal.IsEmpty())
+      {
+        if (aListIntervLocal.First().Type() == ChFiDS_Tangential)
+          NbTangEdges++;
+        else
+          anEdgeNotTangent = anEdge;
+      }
+    }
+    if (NbTangEdges == 3)
+    {
+      aSeqEtang.Append(anEdgeNotTangent);
+      BRepOffset_ListOfInterval& aListIntervLocal = myMapEdgeType (anEdgeNotTangent);
+      aListIntervLocal.First().Type(ChFiDS_Tangential);
+      mySmoothEdges.Remove(anEdgeNotTangent);
+    }
+    else
+    {
+      //Check cases of 3 smooths of 4
+      Standard_Integer NbSmoothEdges = 0;
+      TopoDS_Edge anEdgeNotSmooth;
+      for (anItlEE.Initialize(aElist); anItlEE.More(); anItlEE.Next())
+      {
+        const TopoDS_Edge& anEdge = TopoDS::Edge(anItlEE.Value());
+        const BRepOffset_ListOfInterval& aListIntervLocal = Type(anEdge);
+        if (!aListIntervLocal.IsEmpty())
+        {
+          if (aListIntervLocal.First().Type() == ChFiDS_Tangential ||
+              IsEdgeSmooth(anEdge))
+            NbSmoothEdges++;
+          else
+            anEdgeNotSmooth = anEdge;
+        }
+      }
+      if (NbSmoothEdges == 3)
+      {
+        mySmoothEdges.Add(anEdgeNotSmooth);
+      }
+    }
+  }
+
+  TreatTangentFaces (aSeqEtang);
   myDone = Standard_True;
 }
 
@@ -204,9 +556,9 @@ void BRepOffset_Analyse::Perform (const TopoDS_Shape& S,
 //function : Generated
 //purpose  : 
 //=======================================================================
-void BRepOffset_Analyse::TreatTangentFaces (const TopTools_ListOfShape& theLE)
+void BRepOffset_Analyse::TreatTangentFaces (const TopTools_SequenceOfShape& theEdges)
 {
-  if (theLE.IsEmpty() || myFaceOffsetMap.IsEmpty())
+  if (theEdges.IsEmpty() || myFaceOffsetMap.IsEmpty())
   {
     // Noting to do: either there are no tangent faces in the shape or
     //               the face offset map has not been provided
@@ -221,9 +573,10 @@ void BRepOffset_Analyse::TreatTangentFaces (const TopTools_ListOfShape& theLE)
   // Bind vertices of the tangent edges with connected edges
   // of the face with smaller offset value
   TopTools_DataMapOfShapeShape aDMVEMin;
-  for (TopTools_ListOfShape::Iterator it (theLE); it.More(); it.Next())
+  
+  for (Standard_Integer ii = 1; ii <= theEdges.Length(); ii++)
   {
-    const TopoDS_Shape& aE = it.Value();
+    const TopoDS_Shape& aE = theEdges(ii);
     const TopTools_ListOfShape& aLA = Ancestors (aE);
 
     const TopoDS_Shape& aF1 = aLA.First(), aF2 = aLA.Last();
@@ -266,9 +619,9 @@ void BRepOffset_Analyse::TreatTangentFaces (const TopTools_ListOfShape& theLE)
   // Create map of Face ancestors for the vertices on tangent edges
   TopTools_DataMapOfShapeListOfShape aDMVFAnc;
 
-  for (TopTools_ListOfShape::Iterator itE (theLE); itE.More(); itE.Next())
+  for (Standard_Integer ii = 1; ii <= theEdges.Length(); ii++)
   {
-    const TopoDS_Shape& aE = itE.Value();
+    const TopoDS_Shape& aE = theEdges(ii);
     if (!anEdgeOffsetMap.IsBound (aE))
       continue;
 
@@ -427,7 +780,7 @@ void BRepOffset_Analyse::TreatTangentFaces (const TopTools_ListOfShape& theLE)
 
         myMapEdgeType (aE).Clear();
         // Analyze edge again
-        EdgeAnalyse (aE, TopoDS::Face (aFOpposite), aFNew,  aSinTol, myMapEdgeType (aE));
+        EdgeAnalyse (aE, TopoDS::Face (aFOpposite), aFNew, aSinTol);
 
         // Analyze vertices
         TopTools_MapOfShape aFNewEdgeMap;
@@ -510,8 +863,7 @@ void BRepOffset_Analyse::TreatTangentFaces (const TopTools_ListOfShape& theLE)
           myMapEdgeType.Bind (aEG, BRepOffset_ListOfInterval());
           if (aLEGA.Extent() == 2)
           {
-            EdgeAnalyse (aEG, TopoDS::Face (aLEGA.First()), TopoDS::Face (aLEGA.Last()),
-                         aSinTol, myMapEdgeType (aEG));
+            EdgeAnalyse (aEG, TopoDS::Face (aLEGA.First()), TopoDS::Face (aLEGA.Last()), aSinTol);
           }
         }
 
@@ -545,7 +897,7 @@ void BRepOffset_Analyse::TreatTangentFaces (const TopTools_ListOfShape& theLE)
         aLFOpposite.Append (aFToRemove);
         myAncestors.Add (aEOpposite, aLFOpposite);
         myMapEdgeType.Bind (aEOpposite, BRepOffset_ListOfInterval());
-        EdgeAnalyse (aEOpposite, aFNew, TopoDS::Face (aFToRemove), aSinTol, myMapEdgeType (aEOpposite));
+        EdgeAnalyse (aEOpposite, aFNew, TopoDS::Face (aFToRemove), aSinTol);
 
         TopTools_DataMapOfShapeShape* pEEMap = myReplacement.ChangeSeek (aFToRemove);
         if (!pEEMap)

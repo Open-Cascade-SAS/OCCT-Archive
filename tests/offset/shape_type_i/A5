@@ -1,3 +1,6 @@
+puts "TODO OCC31845 All: Error : The command is not valid. The volume is 0."
+puts "TODO OCC31845 All: Error : The volume of result shape is 0"
+
 pcone s 5 0 12 90
 trotate s 0 0 0 0 0 1 90
 

@@ -74,6 +74,7 @@ void BRepAlgo_Loop::Init(const TopoDS_Face& F)
 {
   myConstEdges.Clear(); 
   myEdges     .Clear();
+  myNewEdges     .Clear();
   myVerOnEdges.Clear();
   myNewWires  .Clear();
   myNewFaces  .Clear();
@@ -140,13 +141,23 @@ void BRepAlgo_Loop::AddEdge (TopoDS_Edge&                E,
 
 
 //=======================================================================
-//function : AddConstEdges
+//function : AddConstEdge
 //purpose  : 
 //=======================================================================
 
 void BRepAlgo_Loop::AddConstEdge (const TopoDS_Edge& E)
 {
   myConstEdges.Append(E);
+}
+
+//=======================================================================
+//function : AddNewEdge
+//purpose  : 
+//=======================================================================
+
+void BRepAlgo_Loop::AddNewEdge (const TopoDS_Edge& theEdge)
+{
+  myNewEdges.Append(theEdge);
 }
 
 //=======================================================================
@@ -429,64 +440,66 @@ static void StoreInMVE (const TopoDS_Face&                  F,
 			TopoDS_Edge&                  E,
 			TopTools_IndexedDataMapOfShapeListOfShape& MVE,
 			Standard_Boolean&                   YaCouture,
-			TopTools_DataMapOfShapeShape& VerticesForSubstitute )
+			TopTools_DataMapOfShapeShape& /*VerticesForSubstitute*/ )
 {      
   TopoDS_Vertex V1, V2, V;
   TopTools_ListOfShape Empty;
-  
+
+  /*
   Standard_Real Tol = 0.001; //5.e-05; //5.e-07;
 //  gp_Pnt P1, P2, P;
   gp_Pnt P1, P;
   BRep_Builder BB;
   for (Standard_Integer iV = 1; iV <= MVE.Extent(); iV++)
+  {
+    V = TopoDS::Vertex(MVE.FindKey(iV));
+    P = BRep_Tool::Pnt( V );
+    TopTools_ListOfShape VList;
+    TopoDS_Iterator VerExp( E );
+    for (; VerExp.More(); VerExp.Next())
+      VList.Append( VerExp.Value() );
+    TopTools_ListIteratorOfListOfShape itl( VList );
+    for (; itl.More(); itl.Next())
     {
-      V = TopoDS::Vertex(MVE.FindKey(iV));
-      P = BRep_Tool::Pnt( V );
-      TopTools_ListOfShape VList;
-      TopoDS_Iterator VerExp( E );
-      for (; VerExp.More(); VerExp.Next())
-	VList.Append( VerExp.Value() );
-      TopTools_ListIteratorOfListOfShape itl( VList );
-      for (; itl.More(); itl.Next())
-	{
-	  V1 = TopoDS::Vertex( itl.Value() );
-	  P1 = BRep_Tool::Pnt( V1 );
-	  if (P.IsEqual( P1, Tol ) && !V.IsSame(V1))
-	    {
-	      V.Orientation( V1.Orientation() );
-	      if (VerticesForSubstitute.IsBound( V1 ))
-		{
-		  TopoDS_Shape OldNewV = VerticesForSubstitute( V1 );
-		  if (! OldNewV.IsSame( V ))
-		    {
-		      VerticesForSubstitute.Bind( OldNewV, V );
-		      VerticesForSubstitute( V1 ) = V;
-		    }
-		}
-	      else
-		{
-		  if (VerticesForSubstitute.IsBound( V ))
-		    {
-		      TopoDS_Shape NewNewV = VerticesForSubstitute( V );
-		      if (! NewNewV.IsSame( V1 ))
-			VerticesForSubstitute.Bind( V1, NewNewV );
-		    }
-		  else
-		    {
-		      VerticesForSubstitute.Bind( V1, V );
-		      TopTools_DataMapIteratorOfDataMapOfShapeShape mapit( VerticesForSubstitute );
-		      for (; mapit.More(); mapit.Next())
-			if (mapit.Value().IsSame( V1 ))
-			  VerticesForSubstitute( mapit.Key() ) = V;
-		    }
-		}
-	      E.Free( Standard_True );
-	      BB.Remove( E, V1 );
-	      BB.Add( E, V );
-	    }
-	}
+      V1 = TopoDS::Vertex( itl.Value() );
+      P1 = BRep_Tool::Pnt( V1 );
+      if (P.IsEqual( P1, Tol ) && !V.IsSame(V1))
+      {
+        V.Orientation( V1.Orientation() );
+        if (VerticesForSubstitute.IsBound( V1 ))
+        {
+          TopoDS_Shape OldNewV = VerticesForSubstitute( V1 );
+          if (! OldNewV.IsSame( V ))
+          {
+            VerticesForSubstitute.Bind( OldNewV, V );
+            VerticesForSubstitute( V1 ) = V;
+          }
+        }
+        else
+        {
+          if (VerticesForSubstitute.IsBound( V ))
+          {
+            TopoDS_Shape NewNewV = VerticesForSubstitute( V );
+            if (! NewNewV.IsSame( V1 ))
+              VerticesForSubstitute.Bind( V1, NewNewV );
+          }
+          else
+          {
+            VerticesForSubstitute.Bind( V1, V );
+            TopTools_DataMapIteratorOfDataMapOfShapeShape mapit( VerticesForSubstitute );
+            for (; mapit.More(); mapit.Next())
+              if (mapit.Value().IsSame( V1 ))
+                VerticesForSubstitute( mapit.Key() ) = V;
+          }
+        }
+        E.Free( Standard_True );
+        BB.Remove( E, V1 );
+        BB.Add( E, V );
+      }
     }
-
+  }
+  */
+  
   TopExp::Vertices(E,V1,V2);
   if( V1.IsNull() && V2.IsNull() ){ YaCouture = Standard_False; return; }
   if (!MVE.Contains(V1)) {
@@ -494,10 +507,10 @@ static void StoreInMVE (const TopoDS_Face&                  F,
   }
   MVE.ChangeFromKey(V1).Append(E);
   if (!V1.IsSame(V2)) {
-     if (!MVE.Contains(V2)) {
-       MVE.Add(V2,Empty);
-     }
-     MVE.ChangeFromKey(V2).Append(E);
+    if (!MVE.Contains(V2)) {
+      MVE.Add(V2,Empty);
+    }
+    MVE.ChangeFromKey(V2).Append(E);
   }
   TopLoc_Location L ;
   Handle(Geom_Surface) S = BRep_Tool::Surface(F,L);
@@ -546,51 +559,67 @@ void BRepAlgo_Loop::Perform()
     }
   }
 #endif
-  //------------------------------------------------
-  // Cut edges
-  //------------------------------------------------
-  for (itl.Initialize(myEdges); itl.More(); itl.Next())
-  {
-    const TopoDS_Edge& anEdge = TopoDS::Edge(itl.Value());
-    TopTools_ListOfShape LCE;
-    const TopTools_ListOfShape* pVertices = myVerOnEdges.Seek (anEdge);
-    if (pVertices)
-    {
-      CutEdge (anEdge, *pVertices, LCE);
-      myCutEdges.Bind(anEdge, LCE);
-    }
-  }
-  //-----------------------------------
-  // Construction map vertex => edges
-  //-----------------------------------
-  TopTools_IndexedDataMapOfShapeListOfShape MVE;
 
-  // add cut edges.
-  TopTools_MapOfShape Emap;
-  for (itl.Initialize(myEdges); itl.More(); itl.Next())
+  TopTools_IndexedDataMapOfShapeListOfShape MVE;
+  
+  if (myNewEdges.IsEmpty())
   {
-    const TopTools_ListOfShape* pLCE = myCutEdges.Seek (itl.Value());
-    if (pLCE)
+    //------------------------------------------------
+    // Cut edges
+    //------------------------------------------------
+    for (itl.Initialize(myEdges); itl.More(); itl.Next())
     {
-      for (itl1.Initialize(*pLCE); itl1.More(); itl1.Next()) {
-        TopoDS_Edge& E = TopoDS::Edge(itl1.Value());
-        if (!Emap.Add(E))
-          continue;
-        StoreInMVE(myFace,E,MVE,YaCouture,myVerticesForSubstitute);
+      const TopoDS_Edge& anEdge = TopoDS::Edge(itl.Value());
+      TopTools_ListOfShape LCE;
+      const TopTools_ListOfShape* pVertices = myVerOnEdges.Seek (anEdge);
+      if (pVertices)
+      {
+        CutEdge (anEdge, *pVertices, LCE);
+        myCutEdges.Bind(anEdge, LCE);
       }
+    }
+    //-----------------------------------
+    // Construction map vertex => edges
+    //-----------------------------------
+    
+    // add cut edges.
+    TopTools_MapOfShape Emap;
+    for (itl.Initialize(myEdges); itl.More(); itl.Next())
+    {
+      const TopTools_ListOfShape* pLCE = myCutEdges.Seek (itl.Value());
+      if (pLCE)
+      {
+        for (itl1.Initialize(*pLCE); itl1.More(); itl1.Next()) {
+          TopoDS_Edge& E = TopoDS::Edge(itl1.Value());
+          if (!Emap.Add(E))
+            continue;
+          StoreInMVE(myFace,E,MVE,YaCouture,myVerticesForSubstitute);
+        }
+      }
+    }
+    
+    // add const edges
+    // Sewn edges can be doubled or not in myConstEdges
+    // => call only once StoreInMVE which should double them
+    TopTools_MapOfShape DejaVu;
+    for (itl.Initialize(myConstEdges); itl.More(); itl.Next()) {
+      TopoDS_Edge& E = TopoDS::Edge(itl.Value());
+      if (DejaVu.Add(E))
+        StoreInMVE(myFace,E,MVE,YaCouture,myVerticesForSubstitute);
+    }
+  } //if (myNewEdges.IsEmpty())
+  else
+  {
+    TopTools_MapOfShape Emap;
+    for (itl.Initialize(myNewEdges); itl.More(); itl.Next())
+    {
+      TopoDS_Edge& anEdge = TopoDS::Edge(itl.Value());
+      if (!Emap.Add(anEdge))
+        continue;
+      StoreInMVE(myFace,anEdge,MVE,YaCouture,myVerticesForSubstitute);
     }
   }
   
-  // add const edges
-  // Sewn edges can be doubled or not in myConstEdges
-  // => call only once StoreInMVE which should double them
-  TopTools_MapOfShape DejaVu;
-  for (itl.Initialize(myConstEdges); itl.More(); itl.Next()) {
-    TopoDS_Edge& E = TopoDS::Edge(itl.Value());
-    if (DejaVu.Add(E))
-      StoreInMVE(myFace,E,MVE,YaCouture,myVerticesForSubstitute);
-  }
-
 #ifdef DRAW
   if (AffichLoop) {
     std::cout <<"NewLoop"<<std::endl;
@@ -711,22 +740,22 @@ void BRepAlgo_Loop::Perform()
 #endif
   }
   
-  PurgeNewEdges(myCutEdges,UsedEdges);
+  //PurgeNewEdges(myCutEdges,UsedEdges);
 }
 
 //=======================================================================
-//function : CutEdges
+//function : CutEdge
 //purpose  : 
 //=======================================================================
 
 void BRepAlgo_Loop::CutEdge (const TopoDS_Edge&          E,
 			     const TopTools_ListOfShape& VOnE,
-			             TopTools_ListOfShape& NE   ) const 
+                             TopTools_ListOfShape& NE   ) const 
 {
   TopoDS_Shape aLocalE  = E.Oriented(TopAbs_FORWARD);
   TopoDS_Edge WE = TopoDS::Edge(aLocalE);
 
-  Standard_Real                      U1,U2;
+  //Standard_Real                      U1,U2;
   TopoDS_Vertex                      V1,V2;
   TopTools_SequenceOfShape           SV;
   TopTools_ListIteratorOfListOfShape it(VOnE);
@@ -793,6 +822,44 @@ void BRepAlgo_Loop::CutEdge (const TopoDS_Edge&          E,
     if (!VL.IsNull() && !VL.IsSame(SV.Last ())) SV.Append (VL);
   }
 
+  //Split the edge
+  TopoDS_Vertex aFirstVertex = TopoDS::Vertex(SV(1)), aLastVertex;
+  for (Standard_Integer ii = 2; ii <= SV.Length(); ii++)
+  {
+    aLastVertex = TopoDS::Vertex(SV(ii));
+    aFirstVertex.Orientation(TopAbs_FORWARD);
+    aLastVertex.Orientation(TopAbs_REVERSED);
+
+    TopoDS_Edge aNewEdge = TopoDS::Edge(WE.EmptyCopied());
+    B.Add (aNewEdge, aFirstVertex);
+    B.Add (aNewEdge, aLastVertex);
+
+    aFirstVertex.Orientation(TopAbs_INTERNAL);
+    aLastVertex.Orientation(TopAbs_INTERNAL);
+
+    Standard_Real aFirst, aLast;
+    if (aFirstVertex.IsSame(VF))
+      aFirst = f;
+    else
+      aFirst = BRep_Tool::Parameter(aFirstVertex, WE);
+    if (aLastVertex.IsSame(VL))
+      aLast = l;
+    else
+      aLast = BRep_Tool::Parameter(aLastVertex, WE);
+
+    if (aLast - aFirst > Precision::Confusion())
+    {
+      B.Range (aNewEdge, aFirst, aLast);
+      NE.Append(aNewEdge.Oriented(E.Orientation()));
+      aFirstVertex = aLastVertex;
+    }
+    else
+    {
+      std::cout <<"!!!"<<std::endl;
+    }
+  }
+  
+  /*
   while (!SV.IsEmpty()) {
     while (!SV.IsEmpty() && 
 	   SV.First().Orientation() != TopAbs_FORWARD) {
@@ -844,28 +911,31 @@ void BRepAlgo_Loop::CutEdge (const TopoDS_Edge&          E,
       NE.Append(NewEdge.Oriented(E.Orientation()));
     }
   }
+  */
 
   //Remove edges with size <= tolerance
+  /*
   Standard_Real Tol = 0.001; //5.e-05; //5.e-07;
   it.Initialize(NE);
   while (it.More())
+  {
+    // skl : I change "E" to "EE"
+    TopoDS_Edge EE = TopoDS::Edge( it.Value() );
+    Standard_Real fpar, lpar;
+    BRep_Tool::Range( EE, fpar, lpar );
+    if (lpar - fpar <= Precision::Confusion())
+      NE.Remove(it);
+    else
     {
-      // skl : I change "E" to "EE"
-      TopoDS_Edge EE = TopoDS::Edge( it.Value() );
-      Standard_Real fpar, lpar;
-      BRep_Tool::Range( EE, fpar, lpar );
-      if (lpar - fpar <= Precision::Confusion())
-	NE.Remove(it);
+      gp_Pnt2d pf, pl;
+      BRep_Tool::UVPoints( EE, myFace, pf, pl );
+      if (pf.Distance(pl) <= Tol && !BRep_Tool::IsClosed(EE))
+        NE.Remove(it);
       else
-	{
-	  gp_Pnt2d pf, pl;
-	  BRep_Tool::UVPoints( EE, myFace, pf, pl );
-	  if (pf.Distance(pl) <= Tol && !BRep_Tool::IsClosed(EE))
-	    NE.Remove(it);
-	  else
-	    it.Next();
-	}
+        it.Next();
     }
+  }
+  */
 }
 
 //=======================================================================

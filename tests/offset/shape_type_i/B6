@@ -1,4 +1,5 @@
-puts "TODO OCC23068 ALL: Error: bsection of the result and s is not equal to zero."
+puts "TODO OCC31845 All: Error : The command is not valid. The volume is 0."
+puts "TODO OCC31845 All: Error : The volume of result shape is 0"
 
 psphere s 15 270
 

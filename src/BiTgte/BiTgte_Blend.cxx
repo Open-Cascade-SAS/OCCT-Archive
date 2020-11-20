@@ -1498,7 +1498,7 @@ void BiTgte_Blend::ComputeCenters()
   // -----------------------
   TopAbs_State       Side = TopAbs_IN;
   if (myRadius < 0.) Side = TopAbs_OUT;
-  BRepOffset_Inter3d Inter(myAsDes,Side,myTol);
+  BRepOffset_Inter3d Inter(myAsDes,Side,myRadius,myTol);
 
   TopTools_DataMapOfShapeBox         MapSBox;
   TopTools_MapOfShape              Done;

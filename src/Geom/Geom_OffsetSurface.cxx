@@ -733,6 +733,18 @@ Standard_Boolean Geom_OffsetSurface::IsUClosed () const
     else if (SBasis->IsKind (STANDARD_TYPE(Geom_SurfaceOfRevolution))) { 
       UClosed = Standard_True; 
     }
+    else if (SBasis->IsKind (STANDARD_TYPE(Geom_BoundedSurface)))
+    {
+      Standard_Real aU1, aU2, aV1, aV2;
+      Bounds( aU1, aU2, aV1, aV2 );
+      Handle(Geom_Curve) aCUF = UIso( aU1 );
+      Handle(Geom_Curve) aCUL = UIso( aU2 );
+      if(aCUF.IsNull() || aCUL.IsNull())
+        return Standard_False;
+      Handle(Geom_BSplineCurve) aBsF = Handle(Geom_BSplineCurve)::DownCast(aCUF);
+      Handle(Geom_BSplineCurve) aBsL = Handle(Geom_BSplineCurve)::DownCast(aCUL);
+      return (!aBsF.IsNull() && !aBsL.IsNull() && aBsF->IsEqual( aBsL, Precision::Confusion()) ); 
+    }
     else { UClosed = Standard_False; }
   }  
   return UClosed;
@@ -761,6 +773,18 @@ Standard_Boolean Geom_OffsetSurface::IsVClosed () const
   else {
     if (SBasis->IsKind (STANDARD_TYPE(Geom_ElementarySurface))) {
       VClosed = SBasis->IsVClosed();
+    }
+    else if (SBasis->IsKind (STANDARD_TYPE(Geom_BoundedSurface)))
+    {
+      Standard_Real aU1, aU2, aV1, aV2;
+      Bounds( aU1, aU2, aV1, aV2 );
+      Handle(Geom_Curve) aCVF = VIso( aV1 );
+      Handle(Geom_Curve) aCVL = VIso( aV2 );
+      if(aCVF.IsNull() || aCVL.IsNull())
+        return Standard_False;
+      Handle(Geom_BSplineCurve) aBsF = Handle(Geom_BSplineCurve)::DownCast(aCVF);
+      Handle(Geom_BSplineCurve) aBsL = Handle(Geom_BSplineCurve)::DownCast(aCVL);
+      return (!aBsF.IsNull() && !aBsL.IsNull() && aBsF->IsEqual(aBsL, Precision::Confusion())); 
     }
     else { VClosed = Standard_False; }
   }

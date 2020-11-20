@@ -8,6 +8,8 @@ BRepOffset_DataMapIteratorOfDataMapOfShapeOffset.hxx
 BRepOffset_DataMapOfShapeListOfInterval.hxx
 BRepOffset_DataMapOfShapeMapOfShape.hxx
 BRepOffset_DataMapOfShapeOffset.hxx
+BRepOffset_DataMapOfFaceMapEE.hxx
+BRepOffset_SequenceOfIndexedMapOfShape.hxx
 BRepOffset_Error.hxx
 BRepOffset_Inter2d.cxx
 BRepOffset_Inter2d.hxx

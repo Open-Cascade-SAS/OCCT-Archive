@@ -23,6 +23,7 @@
 
 #include <Standard_Boolean.hxx>
 #include <TopoDS_Shape.hxx>
+#include <GeomAbs_JoinType.hxx>
 #include <BRepOffset_DataMapOfShapeListOfInterval.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <Standard_Real.hxx>
@@ -33,6 +34,7 @@
 #include <TopTools_DataMapOfShapeShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <TopTools_SequenceOfShape.hxx>
 class TopoDS_Shape;
 class TopoDS_Edge;
 class TopoDS_Vertex;
@@ -90,6 +92,12 @@ public: //! @name Results
                                      const TopoDS_Vertex& theVertex,
                                      TopTools_ListOfShape& theEdges) const;
 
+  //! returns TRUE if theEdge is smooth but not tangent
+  Standard_EXPORT Standard_Boolean IsEdgeSmooth (const TopoDS_Shape& theEdge) const
+  {
+    return mySmoothEdges.Contains(theEdge);
+  }
+
   //! Checks if the given shape has ancestors
   Standard_Boolean HasAncestor (const TopoDS_Shape& theS) const
   {
@@ -127,6 +135,11 @@ public: //! @name Results
                                  TopTools_MapOfShape& theMap,
                                  const ChFiDS_TypeOfConcavity theType1,
                                  const ChFiDS_TypeOfConcavity theType2) const;
+
+  void SetJoinType (const GeomAbs_JoinType theJoinType)
+  {
+    myJoinType = theJoinType;
+  }
 
   void SetOffsetValue (const Standard_Real theOffset)
   {
@@ -171,14 +184,22 @@ private: //! @name Treatment of tangential cases
 
   //! Treatment of the tangential cases.
   //! @param theEdges List of edges connecting tangent faces
-  Standard_EXPORT void TreatTangentFaces (const TopTools_ListOfShape& theEdges);
+  Standard_EXPORT void TreatTangentFaces (const TopTools_SequenceOfShape& theEdges);
+
+  //! Defines types of edge <E>
+  Standard_Boolean EdgeAnalyse(const TopoDS_Edge&         E,
+                               const TopoDS_Face&         F1,
+                               const TopoDS_Face&         F2,
+                               const Standard_Real        SinTol);
 
 private: //! @name Fields
 
   // Inputs
   TopoDS_Shape myShape;  //!< Input shape to analyze
   Standard_Real myAngle; //!< Criteria angle to check tangency
+  Standard_Boolean myIsOpenShell; //!< Flag indicating whether the shape is an open shell
 
+  GeomAbs_JoinType myJoinType;
   Standard_Real myOffset;                      //!< Offset value
   TopTools_DataMapOfShapeReal myFaceOffsetMap; //!< Map to store offset values for the faces.
                                                //!  Should be set by the calling algorithm.
@@ -196,6 +217,9 @@ private: //! @name Fields
 
   TopTools_ListOfShape myNewFaces; //!< New faces generated to close the gaps between adjacent
                                    //!  tangential faces having different offset values
+  
+  TopTools_MapOfShape mySmoothEdges; //!< Edges that are not tangential but smooth
+
   TopTools_DataMapOfShapeShape myGenerated; //!< Binding between edge and face generated from the edge
 };
 

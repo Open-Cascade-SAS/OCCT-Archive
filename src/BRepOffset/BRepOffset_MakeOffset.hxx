@@ -29,21 +29,22 @@
 #include <GeomAbs_JoinType.hxx>
 #include <TopTools_DataMapOfShapeReal.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeShape.hxx>
 #include <BRepOffset_Analyse.hxx>
 #include <BRepAlgo_Image.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <BRepOffset_Error.hxx>
 #include <BRepOffset_MakeLoops.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <TopTools_DataMapOfOrientedShapeShape.hxx>
 #include <BRepOffset_DataMapOfShapeOffset.hxx>
+#include <BRepOffset_DataMapOfFaceMapEE.hxx>
 class BRepAlgo_AsDes;
 class TopoDS_Shape;
 class TopoDS_Face;
 class BRepOffset_Analyse;
 class BRepAlgo_Image;
 class BRepOffset_Inter3d;
-
-
 
 class BRepOffset_MakeOffset 
 {
@@ -259,6 +260,8 @@ private:
   Standard_Boolean myIsPerformSewing; // Handle bad walls in thicksolid mode.
   Standard_Boolean myIsPlanar;
   TopoDS_Shape myBadShape;
+  //TopTools_IndexedDataMapOfShapeShape myFaceFaceMap;
+  BRepOffset_DataMapOfFaceMapEE myFaceEdgeEdge;
   TopTools_DataMapOfShapeShape myFacePlanfaceMap;
   TopTools_ListOfShape myGenerated;
   TopTools_MapOfShape myResMap;

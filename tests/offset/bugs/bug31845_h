@@ -1,0 +1,17 @@
+puts "TODO OCC31845 All: ERROR. offsetperform operation not done."
+puts "TODO OCC31845 All: Error : The offset cannot be built."
+puts "TODO OCC31845 All: Tcl Exception: result is not a topological shape!!!"
+#puts "TODO OCC31845 All: Error : The command is not valid. The volume is 0."
+#puts "TODO OCC31845 All: Error : The volume of result shape is 0"
+puts "TODO OCC31845 All: FAILED (no final message is found)"
+
+puts "============================================"
+puts "OCC31845: BRepOffsetAPI_MakeThickSolid fails"
+puts "============================================"
+puts ""
+
+restore [locate_data_file bug31845_h.brep] a
+
+offsetparameter 1e-7 p i
+offsetload a -0.01
+offsetperform result

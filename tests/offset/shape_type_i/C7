@@ -1,5 +1,7 @@
-puts "TODO OCC25406 ALL: Error: bsection of the result and s is not equal to zero"
 puts "TODO OCC23068 ALL:Error\\s*:\\s*.*The volume"
+puts "TODO OCC31845 All: Faulty shapes"
+puts "TODO OCC31845 All: Error : The area of face result_"
+
 ellipse w1 0 0 0 15 10
 mkedge w1 w1 0 pi/2
 trotate w1 0 0 0 1 0 0 90
