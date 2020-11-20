@@ -23,8 +23,21 @@
 
 #include <errno.h>
 
+#ifndef HAVE_IFADDRS
+  #if defined(__ANDROID__)
+    #include <android/api-level.h>
+    #if (__ANDROID_API__ >= 24)
+      #define HAVE_IFADDRS
+    #endif
+  #else
+    #define HAVE_IFADDRS
+  #endif
+#endif
+
 #include <arpa/inet.h>
-#include <ifaddrs.h>
+#ifdef HAVE_IFADDRS
+  #include <ifaddrs.h>
+#endif
 
 #include <sys/utsname.h> // For 'uname'
 #include <netdb.h>       // This is for 'gethostbyname'
@@ -120,6 +133,7 @@ Standard_Integer OSD_Host::AvailableMemory(){
 TCollection_AsciiString OSD_Host::InternetAddress()
 {
   TCollection_AsciiString aResult;
+#ifdef HAVE_IFADDRS
   struct ifaddrs* anAddrFullInfo = NULL;
   getifaddrs (&anAddrFullInfo);
   for (struct ifaddrs* anAddrIter = anAddrFullInfo; anAddrIter != NULL; anAddrIter = anAddrIter->ifa_next)
@@ -158,6 +172,20 @@ TCollection_AsciiString OSD_Host::InternetAddress()
   {
     freeifaddrs (anAddrFullInfo);
   }
+#else
+  // fallback for ancient systems
+  const TCollection_AsciiString aHost = HostName();
+  if (struct hostent* anAddr = gethostbyname (aHost.ToCString()))
+  {
+    char aBuffer[16];
+    const int a = (unsigned char)anAddr->h_addr_list[0][0];
+    const int b = (unsigned char)anAddr->h_addr_list[0][1];
+    const int c = (unsigned char)anAddr->h_addr_list[0][2];
+    const int d = (unsigned char)anAddr->h_addr_list[0][3];
+    sprintf (aBuffer, "%d.%d.%d.%d", a, b, c, d);
+    aResult = aBuffer;
+  }
+#endif
   if (aResult.IsEmpty())
   {
     return "127.0.0.1";
