@@ -1,0 +1,32 @@
+puts "==================================================="
+puts "0027722: Data Exchange - STEP error for Ellipse revol shape"
+puts "==================================================="
+puts ""
+
+vinit
+
+ellipse ge 0 0 20 10
+
+mkedge te ge 0 pi/2.0
+
+revol re te 0 0 0 0 1 0 360
+
+vdisplay te re
+
+vtrihedron vt
+
+# save to STEP in mode: As Is.
+stepwrite a re ${imagedir}/orig.stp
+
+# read STEP
+stepread ${imagedir}/orig.stp sr *
+
+ttranslate sr_1 50 0 0
+
+vdisplay sr_1
+checkshape sr_1
+
+axo
+fit
+checkview -screenshot -2d -path ${imagedir}/${test_image}.png
+

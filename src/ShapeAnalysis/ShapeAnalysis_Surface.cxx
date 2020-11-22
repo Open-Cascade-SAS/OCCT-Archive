@@ -256,6 +256,28 @@ void ShapeAnalysis_Surface::ComputeSingularities()
     myPreci[3] = Max(Corner2.Distance(Corner4), Max(myP3d[3].Distance(Corner2), myP3d[3].Distance(Corner4)));
 
     myNbDeg = 4;
+
+    // sphere is a result of revolution ( degenerate revolution )
+    if (Corner1.IsEqual(Corner2, Precision::Confusion()) && myP3d[0].IsEqual(myP3d[1], Precision::Confusion()) &&
+        Corner2.IsEqual(Corner3, Precision::Confusion()) && myP3d[1].IsEqual(myP3d[2], Precision::Confusion()) &&
+        Corner3.IsEqual(Corner4, Precision::Confusion()) && myP3d[2].IsEqual(myP3d[3], Precision::Confusion()) &&
+        mySurf->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution)))
+    {
+
+
+      myPreci[0] = myPreci[1] = 0;
+      myP3d[0] = mySurf->Value(su1, 0.25 * (sv2 + su1));
+      myFirstP2d[0].SetCoord(su1, sv2);
+      myLastP2d[0].SetCoord(su2, sv2);
+      myP3d[1] = mySurf->Value(su2, 0.75 * (sv1 + su2));
+      myFirstP2d[1].SetCoord(su2, sv1);
+      myLastP2d[1].SetCoord(su1, sv1);
+      myFirstPar[0] = myFirstPar[1] = su1;
+      myLastPar[0] = myLastPar[1] = su2;
+      myUIsoDeg[0] = myUIsoDeg[1] = Standard_False;
+
+      myNbDeg = 2;
+    }
   }
   SortSingularities();
 }
