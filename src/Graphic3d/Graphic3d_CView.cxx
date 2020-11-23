@@ -847,24 +847,23 @@ void Graphic3d_CView::Erase (const Handle(Graphic3d_Structure)& theStructure)
     return;
   }
 
-  Graphic3d_TypeOfAnswer anAnswer = acceptDisplay (theStructure->Visual());
-  if (!ComputedMode())
-  {
-    anAnswer = Graphic3d_TOA_YES;
-  }
-
+  const Graphic3d_TypeOfAnswer anAnswer = myIsInComputedMode ? acceptDisplay (theStructure->Visual()) : Graphic3d_TOA_YES;
   if (anAnswer != Graphic3d_TOA_COMPUTE)
   {
     eraseStructure (theStructure->CStructure());
   }
-  else if (anAnswer == Graphic3d_TOA_COMPUTE && myIsInComputedMode)
+
+  const Standard_Integer anIndex = !myStructsToCompute.IsEmpty() ? IsComputed (theStructure) : 0;
+  if (anIndex != 0)
   {
-    const Standard_Integer anIndex = IsComputed (theStructure);
-    if (anIndex != 0)
+    if (anAnswer == Graphic3d_TOA_COMPUTE
+     && myIsInComputedMode)
     {
       const Handle(Graphic3d_Structure)& aCompStruct = myStructsComputed.ChangeValue (anIndex);
       eraseStructure (aCompStruct->CStructure());
     }
+    myStructsComputed .Remove (anIndex);
+    myStructsToCompute.Remove (anIndex);
   }
   myStructsDisplayed.Remove (theStructure);
   Update (theStructure->GetZLayer());
