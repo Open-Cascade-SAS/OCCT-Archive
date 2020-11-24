@@ -2160,21 +2160,10 @@ void AIS_ViewController::handleSelectionPoly (const Handle(AIS_InteractiveContex
           const Graphic3d_Vec2i aPnt1 (aPoints.Value (1).x(), -aPoints.Value (1).y());
           const Graphic3d_Vec2i aPnt2 (aPoints.Value (3).x(), -aPoints.Value (3).y());
           theCtx->MainSelector()->AllowOverlapDetection (aPnt1.y() != Min (aPnt1.y(), aPnt2.y()));
-          if (myGL.Selection.IsXOR)
-          {
-            theCtx->ShiftSelect (Min (aPnt1.x(), aPnt2.x()), Min (aPnt1.y(), aPnt2.y()),
-                                 Max (aPnt1.x(), aPnt2.x()), Max (aPnt1.y(), aPnt2.y()),
-                                 theView, false);
-          }
-          else
-          {
-            theCtx->MainSelector()->AllowOverlapDetection (aPnt1.y() != Min (aPnt1.y(), aPnt2.y()));
-            theCtx->SelectRectangle (Graphic3d_Vec2i (Min (aPnt1.x(), aPnt2.x()), Min (aPnt1.y(), aPnt2.y())),
-                                     Graphic3d_Vec2i (Max (aPnt1.x(), aPnt2.x()), Max (aPnt1.y(), aPnt2.y())),
-                                      theView,
-                                      myGL.Selection.IsXOR ? AIS_SelectionScheme_XOR : AIS_SelectionScheme_Replace);
-            theCtx->MainSelector()->AllowOverlapDetection (false);
-          }
+          theCtx->SelectRectangle (Graphic3d_Vec2i (Min (aPnt1.x(), aPnt2.x()), Min (aPnt1.y(), aPnt2.y())),
+                                   Graphic3d_Vec2i (Max (aPnt1.x(), aPnt2.x()), Max (aPnt1.y(), aPnt2.y())),
+                                   theView,
+                                   myGL.Selection.IsXOR ? AIS_SelectionScheme_XOR : AIS_SelectionScheme_Replace);
           theCtx->MainSelector()->AllowOverlapDetection (false);
         }
         else if (aPoints.Length() >= 3)

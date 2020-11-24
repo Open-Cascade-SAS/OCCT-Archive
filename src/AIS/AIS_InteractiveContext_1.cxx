@@ -501,16 +501,16 @@ AIS_StatusOfPick AIS_InteractiveContext::SelectRectangle (const Graphic3d_Vec2i&
   }
 
   myLastActiveView = theView.get();
-  if (myAutoHilight)
-  {
-    UnhilightSelected (Standard_False);
-  }
   myMainSel->Pick (thePntMin.x(), thePntMin.y(), thePntMax.x(), thePntMax.y(), theView);
 
-  AIS_NListOfEntityOwner aPickedOwners;
+  AIS_NArray1OfEntityOwner aPickedOwners;
+  if (myMainSel->NbPicked() > 0)
+  {
+    aPickedOwners.Resize (1, myMainSel->NbPicked(), Standard_False);
+  }
   for (Standard_Integer aPickIter = 1; aPickIter <= myMainSel->NbPicked(); ++aPickIter)
   {
-    aPickedOwners.Append (myMainSel->Picked (aPickIter));
+    aPickedOwners.ChangeValue (aPickIter) = myMainSel->Picked (aPickIter);
   }
 
   return Select (aPickedOwners, theSelScheme);
@@ -530,16 +530,16 @@ AIS_StatusOfPick AIS_InteractiveContext::SelectPolygon (const TColgp_Array1OfPnt
   }
 
   myLastActiveView = theView.get();
-  if (myAutoHilight)
-  {
-    UnhilightSelected (Standard_False);
-  }
   myMainSel->Pick (thePolyline, theView);
 
-  AIS_NListOfEntityOwner aPickedOwners;
+  AIS_NArray1OfEntityOwner aPickedOwners;
+  if (myMainSel->NbPicked() > 0)
+  {
+    aPickedOwners.Resize (1, myMainSel->NbPicked(), Standard_False);
+  }
   for (Standard_Integer aPickIter = 1; aPickIter <= myMainSel->NbPicked(); ++aPickIter)
   {
-    aPickedOwners.Append (myMainSel->Picked (aPickIter));
+    aPickedOwners.ChangeValue (aPickIter) = myMainSel->Picked (aPickIter);
   }
 
   return Select (aPickedOwners, theSelScheme);
@@ -558,18 +558,17 @@ AIS_StatusOfPick AIS_InteractiveContext::SelectPoint (const Graphic3d_Vec2i&    
     throw Standard_ProgramError ("AIS_InteractiveContext::SelectPoint() - invalid argument");
   }
 
-  if (myAutoHilight)
-  {
-    UnhilightSelected (Standard_False);
-  }
-
   myLastActiveView = theView.get();
   myMainSel->Pick (thePnt.x(), thePnt.y(), theView);
 
-  AIS_NListOfEntityOwner aPickedOwners;
+  AIS_NArray1OfEntityOwner aPickedOwners;
+  if (myMainSel->NbPicked() > 0)
+  {
+    aPickedOwners.Resize (1, myMainSel->NbPicked(), Standard_False);
+  }
   for (Standard_Integer aPickIter = 1; aPickIter <= myMainSel->NbPicked(); ++aPickIter)
   {
-    aPickedOwners.Append (myMainSel->Picked (aPickIter));
+    aPickedOwners.ChangeValue (aPickIter) = myMainSel->Picked (aPickIter);
   }
 
   return Select (aPickedOwners, theSelScheme);
@@ -595,13 +594,8 @@ AIS_StatusOfPick AIS_InteractiveContext::SelectDetected (const AIS_SelectionSche
     }
   }
 
-  if (myAutoHilight && theSelScheme != AIS_SelectionScheme_XOR)
-  {
-    UnhilightSelected (Standard_False);
-  }
-
-  AIS_NListOfEntityOwner aPickedOwners;
-  aPickedOwners.Append (myLastPicked);
+  AIS_NArray1OfEntityOwner aPickedOwners(1, 1);
+  aPickedOwners.ChangeValue (1) = myLastPicked;
   return Select (aPickedOwners, theSelScheme);
 }
 
@@ -712,7 +706,7 @@ AIS_StatusOfPick AIS_InteractiveContext::ShiftSelect (const TColgp_Array1OfPnt2d
 //function : Select
 //purpose  :
 //=======================================================================
-AIS_StatusOfPick AIS_InteractiveContext::Select (const AIS_NListOfEntityOwner& theOwners,
+AIS_StatusOfPick AIS_InteractiveContext::Select (const AIS_NArray1OfEntityOwner& theOwners,
                                                  const AIS_SelectionScheme theSelScheme)
 {
   // all objects detected by the selector are taken, previous current objects are emptied,
@@ -720,6 +714,7 @@ AIS_StatusOfPick AIS_InteractiveContext::Select (const AIS_NListOfEntityOwner& t
   if (myAutoHilight)
   {
     clearDynamicHighlight();
+    UnhilightSelected (Standard_False);
   }
 
   mySelection->SelectOwners (theOwners, theSelScheme, myFilters);
