@@ -568,7 +568,7 @@ public: //! @name Selection management
   //! @param theOwners owners to change selection state
   //! @param theSelScheme selection scheme
   //! @return picking status
-  Standard_EXPORT AIS_StatusOfPick Select (const AIS_NListOfEntityOwner& theOwners,
+  Standard_EXPORT AIS_StatusOfPick Select (const AIS_NArray1OfEntityOwner& theOwners,
                                            const AIS_SelectionScheme theSelScheme);
 
   //! Fits the view correspondingly to the bounds of selected objects.
