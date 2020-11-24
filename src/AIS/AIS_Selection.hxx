@@ -18,6 +18,7 @@
 #define _AIS_Selection_HeaderFile
 
 #include <AIS_NListOfEntityOwner.hxx>
+#include <AIS_NArray1OfEntityOwner.hxx>
 #include <AIS_SelectionScheme.hxx>
 #include <AIS_SelectStatus.hxx>
 #include <Standard.hxx>
@@ -82,7 +83,7 @@ public:
   //! @param theOwners [in] elements to change selection state
   //! @param theSelScheme [in] selection scheme, defines how owner is selected
   //! @param theFilter [in] context filter to skip not acceptable owners
-  Standard_EXPORT virtual void SelectOwners (const AIS_NListOfEntityOwner& thePickedOwners,
+  Standard_EXPORT virtual void SelectOwners (const AIS_NArray1OfEntityOwner& thePickedOwners,
                                              const AIS_SelectionScheme theSelScheme,
                                              const Handle(SelectMgr_Filter)& theFilter);
 
