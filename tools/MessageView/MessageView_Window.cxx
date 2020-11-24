@@ -44,9 +44,9 @@
 #include <Message.hxx>
 #include <TCollection_AsciiString.hxx>
 
-#define DEBUG_ALERTS
+//#define DEBUG_ALERTS
 
-#include <XmlDrivers_MessageReportStorage.hxx>
+//#include <XmlDrivers_MessageReportStorage.hxx>
 
 #include <inspector/ViewControl_Tools.hxx>
 #include <inspector/View_Displayer.hxx>
@@ -391,6 +391,7 @@ void MessageView_Window::Init (NCollection_List<Handle(Standard_Transient)>& the
 // =======================================================================
 void MessageView_Window::openFile(const TCollection_AsciiString& theFileName)
 {
+#ifdef DEBUG_ALERTS
   if (theFileName.IsEmpty())
     return;
 
@@ -404,6 +405,7 @@ void MessageView_Window::openFile(const TCollection_AsciiString& theFileName)
   aReport->MessageWriter()->ImportReport (aReport);
 
   addReport (aReport, theFileName);
+#endif
 }
 
 // =======================================================================
@@ -510,7 +512,7 @@ void MessageView_Window::onTreeViewContextMenuRequested (const QPoint& thePositi
         aMenu->addAction (ViewControl_Tools::CreateAction (tr ("Reload"), SLOT (onReloadReport()), myMainWindow, this));
     }
     Handle(Message_Report) aReport = aReportItem->GetReport();
-    QAction* anAction = ViewControl_Tools::CreateAction (tr ("Export by alert"), SLOT (onAutoExportActivate()), myMainWindow, this);
+    /*QAction* anAction = ViewControl_Tools::CreateAction (tr ("Export by alert"), SLOT (onAutoExportActivate()), myMainWindow, this);
     anAction->setCheckable (true);
     anAction->setChecked (aReport->WriteFileOnEachAlert());
     aMenu->addAction (anAction);
@@ -519,7 +521,7 @@ void MessageView_Window::onTreeViewContextMenuRequested (const QPoint& thePositi
     anAction->setCheckable (true);
     bool isTraceOnly = aReport->MessageWriter().IsNull() ? false : aReport->MessageWriter()->Gravity() == Message_Trace;
     anAction->setChecked (isTraceOnly);
-    aMenu->addAction (anAction);
+    aMenu->addAction (anAction);*/
 
     anAction = ViewControl_Tools::CreateAction (tr ("Unit by name"), SLOT (onUnitByName()), myMainWindow, this);
     anAction->setCheckable (true);
@@ -696,13 +698,13 @@ void MessageView_Window::onReloadReport()
     return;
 
   Handle(Message_Report) aReport = aReportItem->GetReport();
-  aReport->Clear();
+  /*aReport->Clear();
   if (aReport->MessageWriter().IsNull())
     aReport->SetMessageWriter (new XmlDrivers_MessageReportStorage());
 
   aReport->MessageWriter()->SetFileName (TCollection_AsciiString (aDescription));
   if (!aReport->MessageWriter()->ImportReport (aReport))
-    return;
+    return;*/
 
   MessageModel_TreeModel* aTreeModel = dynamic_cast<MessageModel_TreeModel*> (myTreeView->model());
   aModel->clearSelection();
@@ -715,7 +717,7 @@ void MessageView_Window::onReloadReport()
 // =======================================================================
 void MessageView_Window::onAutoExportActivate()
 {
-  QItemSelectionModel* aModel = myTreeView->selectionModel();
+  /*QItemSelectionModel* aModel = myTreeView->selectionModel();
   if (!aModel)
     return;
   QModelIndex anIndex = TreeModel_ModelBase::SingleSelected (aModel->selectedIndexes(), 0);
@@ -731,7 +733,7 @@ void MessageView_Window::onAutoExportActivate()
 
   Handle(Message_Report) aReport = aReportItem->GetReport();
   QAction* anAction = (QAction*)(sender());
-  aReport->SetWriteFileOnEachAlert (anAction->isChecked());
+  aReport->SetWriteFileOnEachAlert (anAction->isChecked());*/
 }
 
 // =======================================================================
@@ -740,7 +742,7 @@ void MessageView_Window::onAutoExportActivate()
 // =======================================================================
 void MessageView_Window::onExportTraceOnly()
 {
-  QItemSelectionModel* aModel = myTreeView->selectionModel();
+  /*QItemSelectionModel* aModel = myTreeView->selectionModel();
   if (!aModel)
     return;
   QModelIndex anIndex = TreeModel_ModelBase::SingleSelected (aModel->selectedIndexes(), 0);
@@ -759,7 +761,7 @@ void MessageView_Window::onExportTraceOnly()
     return;
 
   QAction* anAction = (QAction*)(sender());
-  aReport->MessageWriter()->SetGravity (anAction->isChecked() ? Message_Trace : Message_Info);
+  aReport->MessageWriter()->SetGravity (anAction->isChecked() ? Message_Trace : Message_Info);*/
 }
 
 // =======================================================================
@@ -848,8 +850,7 @@ void MessageView_Window::OnActivateMetric()
     return;
 
   Handle(Message_Report) aReport = Message::DefaultReport();
-  const NCollection_Map<Message_MetricType>& anActiveMetrics = aReport->ActiveMetrics();
-
+  const NCollection_IndexedMap<Message_MetricType>& anActiveMetrics = aReport->ActiveMetrics();
   aReport->SetActiveMetric (aMetricType, !anActiveMetrics.Contains (aMetricType));
 
   updateVisibleColumns();
@@ -953,11 +954,11 @@ void MessageView_Window::updateVisibleColumns()
 {
   MessageModel_TreeModel* aViewModel = dynamic_cast<MessageModel_TreeModel*> (myTreeView->model());
 
-  NCollection_Map<Message_MetricType> anActiveMetrics;
+  NCollection_IndexedMap<Message_MetricType> anActiveMetrics;
   for (NCollection_List<MessageModel_ReportInformation>::Iterator anIterator (aViewModel->Reports()); anIterator.More(); anIterator.Next())
   {
     Handle(Message_Report) aReport = anIterator.Value().myReport;
-    for (NCollection_Map<Message_MetricType>::Iterator aMetricsIterator (aReport->ActiveMetrics()); aMetricsIterator.More(); aMetricsIterator.Next())
+    for (NCollection_IndexedMap<Message_MetricType>::Iterator aMetricsIterator (aReport->ActiveMetrics()); aMetricsIterator.More(); aMetricsIterator.Next())
     {
       if (anActiveMetrics.Contains (aMetricsIterator.Value()))
         continue;

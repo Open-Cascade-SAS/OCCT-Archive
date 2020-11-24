@@ -67,7 +67,7 @@ QVariant MessageModel_ItemReport::initValue (const int theRole) const
   Message_MetricType aMetricType;
   int aPosition;
   if (MessageModel_TreeModel::IsMetricColumn (Column(), aMetricType, aPosition) &&
-      (aMetricType == Message_MetricType_UserTimeCPU || aMetricType == Message_MetricType_SystemTimeInfo ||
+      (aMetricType == Message_MetricType_ProcessCPUUserTime || aMetricType == Message_MetricType_ProcessCPUSystemTime ||
        aMetricType == Message_MetricType_WallClock))
   {
     if (aPosition == 0) return CumulativeMetric (aReport, aMetricType);

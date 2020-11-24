@@ -169,7 +169,7 @@ void MessageModel_Actions::OnActivateReport()
   Message::DefaultMessenger()->ChangePrinters().Clear();
 
   Message::DefaultMessenger()->AddPrinter (MyPrinterToReport);
-  Message::DefaultMessenger()->SetTraceLevel (1);
+  //Message::DefaultMessenger()->SetTraceLevel (1);
   Message::DefaultReport()->UpdateActiveInMessenger();
 
   myTreeModel->UpdateTreeModel();
