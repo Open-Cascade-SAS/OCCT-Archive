@@ -442,7 +442,7 @@ void BOPAlgo_PaveFiller::MakeBlocks()
     // if some E-F vertex was put on a curve due to large E-F intersection range,
     // and it also was put on another curve correctly then remove this vertex from
     // the first curve. Detect such case if the distance to curve exceeds aTolR3D.
-    FilterPavesOnCurves(aVC);
+    FilterPavesOnCurves(aVC, aMVTol);
 
     for (j = 0; j<aNbC; ++j) {
       BOPDS_Curve& aNC=aVC.ChangeValue(j);
@@ -1565,13 +1565,14 @@ void BOPAlgo_PaveFiller::PutPavesOnCurve
 namespace {
   struct PaveBlockDist {
     Handle(BOPDS_PaveBlock) PB;
-    Standard_Real Dist; // square distance from vertex to the paveblock
+    Standard_Real SquareDist; // square distance from vertex to the paveblock
     Standard_Real SinAngle; // sinus of angle between projection vector 
     // and tangent at projection point
     Standard_Real Tolerance; // tolerance of the section curve
   };
 }
-void BOPAlgo_PaveFiller::FilterPavesOnCurves(const BOPDS_VectorOfCurve& theVNC)
+void BOPAlgo_PaveFiller::FilterPavesOnCurves(const BOPDS_VectorOfCurve& theVNC,
+                                             BOPCol_DataMapOfIntegerReal& theMVTol)
 {
   // For each vertex found in ExtPaves of pave blocks of section curves
   // collect list of pave blocks with distance to the curve
@@ -1625,9 +1626,9 @@ void BOPAlgo_PaveFiller::FilterPavesOnCurves(const BOPDS_VectorOfCurve& theVNC)
     for (; itL.More(); itL.Next())
     {
       const PaveBlockDist& aPBD = itL.Value();
-      if (aPBD.Dist < aMinDist)
+      if (aPBD.SquareDist < aMinDist)
       {
-        aMinDist = aPBD.Dist;
+        aMinDist = aPBD.SquareDist;
         aPBMinDist = aPBD.PB;
       }
     }
@@ -1635,13 +1636,32 @@ void BOPAlgo_PaveFiller::FilterPavesOnCurves(const BOPDS_VectorOfCurve& theVNC)
     // and there are other pave blocks for which the distance is less than the current.
     // Do not remove a vertex if it is projected on the curve with quite large angle
     // (see test bugs modalg_6 bug27761).
+
+    // Reduce tolerance for the vertex to the value of maximal distance to
+    // to section curve on which it will be kept.
+    Standard_Real aMaxDistKept = -1;
+    Standard_Boolean isRemoved = Standard_False;
     for (itL.Init(aList); itL.More(); itL.Next())
     {
       const PaveBlockDist& aPBD = itL.Value();
       Standard_Real aCheckDist = 100. * Max(aPBD.Tolerance*aPBD.Tolerance, aMinDist);
-      if (aPBD.Dist > aCheckDist && aPBD.SinAngle < aSinAngleMin)
+      if (aPBD.SquareDist > aCheckDist && aPBD.SinAngle < aSinAngleMin)
       {
         aPBD.PB->RemoveExtPave(nV);
+        isRemoved = Standard_True;
+      }
+      else if (aPBD.SquareDist > aMaxDistKept)
+        aMaxDistKept = aPBD.SquareDist;
+    }
+
+    if (isRemoved && aMaxDistKept > 0)
+    {
+      const Standard_Real* pTol = theMVTol.Seek(nV);
+      if (pTol)
+      {
+        const TopoDS_Vertex& aV = *(TopoDS_Vertex*)&myDS->Shape(nV);
+        const Standard_Real aRealTol = Max(*pTol, sqrt(aMaxDistKept) + Precision::Confusion());
+        (*(Handle(BRep_TVertex)*)&aV.TShape())->Tolerance(aRealTol);
       }
     }
   }

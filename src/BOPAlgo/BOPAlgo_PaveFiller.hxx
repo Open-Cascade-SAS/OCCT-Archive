@@ -262,7 +262,7 @@ protected:
                                 BOPCol_DataMapOfIntegerReal& theMVTol,
                                 BOPCol_DataMapOfIntegerListOfInteger& aDMVLV);
 
-  Standard_EXPORT void FilterPavesOnCurves(const BOPDS_VectorOfCurve& theVNC);
+  Standard_EXPORT void FilterPavesOnCurves(const BOPDS_VectorOfCurve& theVNC,BOPCol_DataMapOfIntegerReal& theMVTol);
 
   //! Depending on the parameter aType it checks whether
   //! the vertex nV was created in EE or EF intersections.
