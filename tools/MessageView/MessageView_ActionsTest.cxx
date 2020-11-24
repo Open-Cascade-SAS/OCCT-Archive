@@ -310,6 +310,7 @@ void MessageView_ActionsTest::OnTestPropertyPanel()
 // =======================================================================
 void createShapeOnLevel()
 {
+#ifdef DEBUG_ALERTS
   OCCT_ADD_MESSAGE_LEVEL_SENTRY ("createShapeOnLevel")
 
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
@@ -319,6 +320,7 @@ void createShapeOnLevel()
 
   MESSAGE_INFO_SHAPE (aShape, "Shape message edge ON LEVEL");
   //sout << "Shape message edge" << aShape;
+#endif
 }
 
 // =======================================================================
@@ -327,6 +329,7 @@ void createShapeOnLevel()
 // =======================================================================
 void createShape()
 {
+#ifdef DEBUG_ALERTS
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
 
   BRepBuilderAPI_MakeEdge aBuilder (gp_Pnt (0., 0., 0.), gp_Pnt (20., 10., 20.));
@@ -336,6 +339,7 @@ void createShape()
   //sout << "Shape message edge" << aShape;
 
   createShapeOnLevel();
+#endif
 }
 
 // =======================================================================
@@ -344,6 +348,7 @@ void createShape()
 // =======================================================================
 void MessageView_ActionsTest::OnTestMessenger()
 {
+#ifdef DEBUG_ALERTS
   // string messages
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   Standard_Integer aTraceLevel_prev = Message::DefaultMessenger()->TraceLevel();
@@ -393,6 +398,7 @@ void MessageView_ActionsTest::OnTestMessenger()
   }
   myTreeModel->UpdateTreeModel();
   Message::DefaultMessenger()->SetTraceLevel (aTraceLevel_prev);
+#endif
 }
 
 // =======================================================================
@@ -401,6 +407,7 @@ void MessageView_ActionsTest::OnTestMessenger()
 // =======================================================================
 void levelAlerts (const int theCurrentLevel, const int theTopLevel)
 {
+#ifdef DEBUG_ALERTS
   if (theTopLevel - theCurrentLevel <= 0)
     return;
 
@@ -414,6 +421,7 @@ void levelAlerts (const int theCurrentLevel, const int theTopLevel)
     levelAlerts (theCurrentLevel + 1, theTopLevel);
 
   sout << "Alert(" << theCurrentLevel << "): " << 4 << ", " << 5 << std::endl;
+#endif
 }
 
 // =======================================================================
@@ -422,6 +430,7 @@ void levelAlerts (const int theCurrentLevel, const int theTopLevel)
 // =======================================================================
 void levelAlert (const int theCurrentLevel, const int theTopLevel)
 {
+#ifdef DEBUG_ALERTS
   if (theTopLevel - theCurrentLevel <= 0)
     return;
 
@@ -432,6 +441,7 @@ void levelAlert (const int theCurrentLevel, const int theTopLevel)
 
   //for (int i = 0; i < 2; i++)
     levelAlerts (theCurrentLevel + 1, theTopLevel);
+#endif
 }
 
 // =======================================================================
@@ -440,6 +450,7 @@ void levelAlert (const int theCurrentLevel, const int theTopLevel)
 // =======================================================================
 void MessageView_ActionsTest::OnTestReportTree()
 {
+#ifdef DEBUG_ALERTS
   OCCT_ADD_MESSAGE_LEVEL_SENTRY ("MessageModel_Actions::OnTestReportTree()")
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
 
@@ -457,6 +468,7 @@ void MessageView_ActionsTest::OnTestReportTree()
   levelAlert (1, aTopLevel);
 
   myTreeModel->UpdateTreeModel();
+#endif
 }
 
 // =======================================================================
@@ -465,6 +477,7 @@ void MessageView_ActionsTest::OnTestReportTree()
 // =======================================================================
 void MessageView_ActionsTest::OnTestReportTree2()
 {
+#ifdef DEBUG_ALERTS
   OCCT_ADD_MESSAGE_LEVEL_SENTRY ("MessageModel_Actions::OnTestReportTree()")
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
 
@@ -482,4 +495,5 @@ void MessageView_ActionsTest::OnTestReportTree2()
   //levelAlert (1, aTopLevel);
 
   myTreeModel->UpdateTreeModel();
+#endif
 }
