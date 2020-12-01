@@ -23,6 +23,7 @@
 #include <inspector/MessageModel_ItemRoot.hxx>
 #include <inspector/MessageModel_Tools.hxx>
 #include <inspector/MessageModel_TreeModel.hxx>
+#include <inspector/MessageView_UnitByNameModel.hxx>
 
 #include <inspector/TreeModel_ContextMenu.hxx>
 #include <inspector/TreeModel_Tools.hxx>
@@ -192,6 +193,12 @@ MessageView_Window::MessageView_Window (QWidget* theParent)
   connect (myPropertyPanelWidget->toggleViewAction(), SIGNAL(toggled(bool)), this, SLOT (onPropertyPanelShown (bool)));
   connect (myPropertyView, SIGNAL (propertyViewDataChanged()), this, SLOT (onPropertyViewDataChanged()));
 
+  myCustomView = new QTableView (myMainWindow);
+  myCustomPanelWidget = new QDockWidget (tr ("Unit By Name"), myMainWindow);
+  myCustomPanelWidget->setObjectName (myCustomPanelWidget->windowTitle());
+  myCustomPanelWidget->setTitleBarWidget (new QWidget(myMainWindow));
+  myCustomPanelWidget->setWidget (myCustomView);
+  myMainWindow->addDockWidget (Qt::RightDockWidgetArea, myCustomPanelWidget);
 
   // view
   myViewWindow = new View_Window (myMainWindow, false);
@@ -204,6 +211,8 @@ MessageView_Window::MessageView_Window (QWidget* theParent)
   myViewDockWidget->setObjectName (myViewDockWidget->windowTitle());
   myViewDockWidget->setWidget (myViewWindow);
   myMainWindow->addDockWidget (Qt::RightDockWidgetArea, myViewDockWidget);
+
+  myMainWindow->tabifyDockWidget (myPropertyPanelWidget, myCustomPanelWidget);
 
   myMainWindow->resize (DEFAULT_SHAPE_VIEW_WIDTH, DEFAULT_SHAPE_VIEW_HEIGHT);
   myMainWindow->move (DEFAULT_SHAPE_VIEW_POSITION_X, DEFAULT_SHAPE_VIEW_POSITION_Y);
@@ -511,6 +520,10 @@ void MessageView_Window::onTreeViewContextMenuRequested (const QPoint& thePositi
     bool isTraceOnly = aReport->MessageWriter().IsNull() ? false : aReport->MessageWriter()->Gravity() == Message_Trace;
     anAction->setChecked (isTraceOnly);
     aMenu->addAction (anAction);
+
+    anAction = ViewControl_Tools::CreateAction (tr ("Unit by name"), SLOT (onUnitByName()), myMainWindow, this);
+    anAction->setCheckable (true);
+    aMenu->addAction (anAction);
   }
   aMenu->addSeparator();
 
@@ -764,6 +777,34 @@ void MessageView_Window::onPreviewChildren()
   TreeModel_ModelBase::SubItemsPresentations (aSelectedIndices, aPresentations);
 
   displayer()->UpdatePreview (View_DisplayActionType_DisplayId, aPresentations);
+}
+
+// =======================================================================
+// function : onUnitByName
+// purpose :
+// =======================================================================
+void MessageView_Window::onUnitByName()
+{
+  QItemSelectionModel* aModel = myTreeView->selectionModel();
+  if (!aModel)
+  {
+    return;
+  }
+
+  QModelIndex anIndex = TreeModel_ModelBase::SingleSelected (aModel->selectedIndexes(), 0);
+  TreeModel_ItemBasePtr anItemBase = TreeModel_ModelBase::GetItemByIndex (anIndex);
+  if (!anItemBase)
+  {
+    return;
+  }
+
+  MessageView_UnitByNameModel* aUnitByNameModel = new MessageView_UnitByNameModel(myCustomView);
+  if (aUnitByNameModel)
+  {
+    aUnitByNameModel->Init (anItemBase);
+  }
+
+  myCustomView->setModel (aUnitByNameModel);
 }
 
 // =======================================================================
