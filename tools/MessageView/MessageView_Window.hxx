@@ -36,6 +36,7 @@
 #include <QObject>
 #include <QPoint>
 #include <QString>
+#include <QTableView>
 #include <QTreeView>
 
 class View_Displayer;
@@ -166,6 +167,10 @@ protected slots:
   //! Iterates by children items of selected items and display its presentations if found
   void onPreviewChildren();
 
+  //! Creates the table that sums the number of calls and
+  //! the time spent on the functionality inside the value.
+  void onUnitByName();
+
   //! Switch active state in report for clicked type of metric
   void OnActivateMetric();
 
@@ -200,6 +205,9 @@ private:
   QTreeView* myTreeView; //!< tree view visualized shapes
   MessageModel_Actions* myTreeViewActions; //!< processing history view actions
   MessageView_ActionsTest* myTestViewActions; //!< check view actions
+
+  QTableView* myCustomView;         //!< table that units messages by name.
+  QDockWidget* myCustomPanelWidget; //!< panel for table that units messages by name.
 
   Handle(TInspectorAPI_PluginParameters) myParameters; //!< plugins parameters container
 
