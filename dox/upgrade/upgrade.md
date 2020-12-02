@@ -2156,3 +2156,36 @@ Message files (with extension .msg) are now expected to be in UTF-8 encoding (un
 This allows using arbitrary Unicode symbols for localization of messages.
 
 Existing message files containing 8-bit characters (previously interpreted as characters from Latin-1 code block) should be converted to UTF-8.
+
+@section upgrade_occt760 Upgrade to OCCT 7.6.0
+
+@subsection upgrade_760_extendedstring_cout Output of TCollection_ExtendedString to stream
+
+Behavior of the method TCollection_ExtendedString::Print(Standard_OStream&) and corresponding operator << has changed.
+Previously it printed all Latin-1 symbols (those in range 0x80-0xff) as '\0' (effectively loosing them); symbols above 0xff were converted to hex representation (formatted like XML Numeric Character Reference).
+Now all symbols are sent to stream as UTF-8 byte sequences.
+Existing code relying on old behavior, if any, shall be rewritten.
+
+@subsection upgrade_760_trimming_surface Trimming surface
+
+Geom_RectangularTrimmedSurface sequentially trimming in U and V directions already no longer loses the first trim.
+For example:
+~~~~~
+  Handle(Geom_RectangularTrimmedSurface) ST  = new Geom_RectangularTrimmedSurface (Sbase, u1, u2, Standard_True); // trim along U
+  Handle(Geom_RectangularTrimmedSurface) ST1 = new Geom_RectangularTrimmedSurface (ST, v1, v2, Standard_False); // trim along V
+~~~~~
+gives different result.
+In current version ST1 - surface trimmed only along V, U trim is removed;
+After modification ST1 - surface trimmed along U and V, U trim is kept.
+
+@subsection upgrade_760_storageformatversion Storage format version of OCAF document
+
+The methods *XmlLDrivers::StorageVersion()* and *BinLDrivers::StorageVersion()* were removed.
+Since now *TDocStd_Document* manupulates the storage format version of a document for both XML and binary file formats.
+For this the methods *StorageFormatVersion()* and *ChangeStorageFormatVersion()* were moved from *CDM_Document* to *TDocStd_Document*.
+The methods are used to get and set the storage format version of a document.
+A new enumeration *TDocStd_FormatVersion* lists the storage format versions of a document. By default, the document uses the latest (current) storage format version.
+In order to save a document in an older storage format version, call the method *ChangeStorageFormatVersion()* with one of the values from the enumeration.
+This value will be used by storage drivers of a corresponding OCAF file format (XML or binary) and the document will be saved
+following the rules of the specified storage format version (corresponding to an older version of Open CASCADE Technology).
+This way an application based on an old version of Open CASCADE Technology may read documents saved by new applications (based on newer version of Open CASCADE Technology).
