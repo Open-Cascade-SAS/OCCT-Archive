@@ -202,6 +202,7 @@ void AIS_InteractiveContext::unhighlightOwners (const AIS_NListOfEntityOwner& th
     {
       (*aStatusPtr)->SetHilightStatus (Standard_False);
     }
+    (*aStatusPtr)->SetHilightStyle (Handle(Prs3d_Drawer)());
   }
   for (NCollection_IndexedMap<Handle(AIS_InteractiveObject)>::Iterator anIter (anObjToClear); anIter.More(); anIter.Next())
   {
@@ -507,10 +508,10 @@ AIS_StatusOfPick AIS_InteractiveContext::SelectRectangle (const Graphic3d_Vec2i&
   if (myMainSel->NbPicked() > 0)
   {
     aPickedOwners.Resize (1, myMainSel->NbPicked(), Standard_False);
-  }
-  for (Standard_Integer aPickIter = 1; aPickIter <= myMainSel->NbPicked(); ++aPickIter)
-  {
-    aPickedOwners.ChangeValue (aPickIter) = myMainSel->Picked (aPickIter);
+    for (Standard_Integer aPickIter = 1; aPickIter <= myMainSel->NbPicked(); ++aPickIter)
+    {
+      aPickedOwners.ChangeValue (aPickIter) = myMainSel->Picked (aPickIter);
+    }
   }
 
   return Select (aPickedOwners, theSelScheme);
@@ -536,10 +537,10 @@ AIS_StatusOfPick AIS_InteractiveContext::SelectPolygon (const TColgp_Array1OfPnt
   if (myMainSel->NbPicked() > 0)
   {
     aPickedOwners.Resize (1, myMainSel->NbPicked(), Standard_False);
-  }
-  for (Standard_Integer aPickIter = 1; aPickIter <= myMainSel->NbPicked(); ++aPickIter)
-  {
-    aPickedOwners.ChangeValue (aPickIter) = myMainSel->Picked (aPickIter);
+    for (Standard_Integer aPickIter = 1; aPickIter <= myMainSel->NbPicked(); ++aPickIter)
+    {
+      aPickedOwners.ChangeValue (aPickIter) = myMainSel->Picked (aPickIter);
+    }
   }
 
   return Select (aPickedOwners, theSelScheme);
@@ -565,10 +566,10 @@ AIS_StatusOfPick AIS_InteractiveContext::SelectPoint (const Graphic3d_Vec2i&    
   if (myMainSel->NbPicked() > 0)
   {
     aPickedOwners.Resize (1, myMainSel->NbPicked(), Standard_False);
-  }
-  for (Standard_Integer aPickIter = 1; aPickIter <= myMainSel->NbPicked(); ++aPickIter)
-  {
-    aPickedOwners.ChangeValue (aPickIter) = myMainSel->Picked (aPickIter);
+    for (Standard_Integer aPickIter = 1; aPickIter <= myMainSel->NbPicked(); ++aPickIter)
+    {
+      aPickedOwners.ChangeValue (aPickIter) = myMainSel->Picked (aPickIter);
+    }
   }
 
   return Select (aPickedOwners, theSelScheme);
@@ -709,19 +710,61 @@ AIS_StatusOfPick AIS_InteractiveContext::ShiftSelect (const TColgp_Array1OfPnt2d
 AIS_StatusOfPick AIS_InteractiveContext::Select (const AIS_NArray1OfEntityOwner& theOwners,
                                                  const AIS_SelectionScheme theSelScheme)
 {
-  // all objects detected by the selector are taken, previous current objects are emptied,
-  // new objects are put...
+  NCollection_IndexedMap<Handle(SelectMgr_EntityOwner)> aSelOwnerMap (myAutoHilight ? mySelection->Objects().Size() : 0);
   if (myAutoHilight)
   {
     clearDynamicHighlight();
-    UnhilightSelected (Standard_False);
+
+    // collect currently selected owners
+    for (AIS_NListOfEntityOwner::Iterator anOwnerIter (mySelection->Objects()); anOwnerIter.More(); anOwnerIter.Next())
+    {
+      aSelOwnerMap.Add (anOwnerIter.Value());
+    }
   }
 
   mySelection->SelectOwners (theOwners, theSelScheme, myFilters);
 
   if (myAutoHilight)
   {
-    HilightSelected (Standard_False);
+    // collect lists of owners to unhighlight (unselected) and to highlight (selected)
+    AIS_NListOfEntityOwner anOwnersToUnhighlight, anOwnersToHighlight;
+    for (AIS_NListOfEntityOwner::Iterator anOwnerIter (mySelection->Objects()); anOwnerIter.More(); anOwnerIter.Next())
+    {
+      // add newly selected owners
+      const Handle(SelectMgr_EntityOwner)& anOwner = anOwnerIter.Value();
+      if (!aSelOwnerMap.RemoveKey (anOwner))
+      {
+        // newly selected owner
+        anOwnersToHighlight.Append (anOwner);
+      }
+      else
+      {
+        // already selected owner
+        if (!anOwner->IsAutoHilight()
+          && theSelScheme != AIS_SelectionScheme_XOR
+          && theSelScheme != AIS_SelectionScheme_Add)
+        {
+          // hack to perform AIS_InteractiveObject::ClearSelected() before highlighting
+          anOwnersToUnhighlight.Append (anOwner);
+          anOwnersToHighlight.Append (anOwner);
+        }
+        else if (anOwner->IsForcedHilight()
+             || !anOwner->IsAutoHilight())
+        {
+          anOwnersToHighlight.Append (anOwner);
+        }
+      }
+    }
+
+    for (NCollection_IndexedMap<Handle(SelectMgr_EntityOwner)>::Iterator anOwnerIter (aSelOwnerMap); anOwnerIter.More(); anOwnerIter.Next())
+    {
+      // owners removed from selection
+      const Handle(SelectMgr_EntityOwner)& anOwner = anOwnerIter.Value();
+      anOwnersToUnhighlight.Append (anOwner);
+    }
+
+    unhighlightOwners (anOwnersToUnhighlight);
+    highlightOwners (anOwnersToHighlight, Standard_True);
   }
 
   Standard_Integer aSelNum = NbSelected();
