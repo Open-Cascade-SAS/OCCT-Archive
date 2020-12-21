@@ -32,9 +32,12 @@
 #include <Geom2d_Line.hxx>
 #include <Geom2d_OffsetCurve.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
+#include <Geom2dAdaptor_Curve.hxx>
 #include <Geom2dConvert.hxx>
 #include <Geom2dConvert_ApproxCurve.hxx>
 #include <Geom_Curve.hxx>
+#include <Geom_ConicalSurface.hxx>
+#include <Geom_CylindricalSurface.hxx>
 #include <Geom_OffsetCurve.hxx>
 #include <Geom_Surface.hxx>
 #include <Geom_TrimmedCurve.hxx>
@@ -600,37 +603,55 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
 {
   try {
     OCC_CATCH_SIGNALS
+
+    //Modified 12.2020 in order to fix bug31840 by aavtamon
+    //Trying to create a line instead of bspline-curve created in BRepLib::BuildCurve3d(...)
+    Handle(Geom2d_Curve) anEdgeCurve;
+    Handle(Geom_Surface) anEdgeSurface;
+    TopLoc_Location aLocation;
+    Standard_Real aFirst, aLast;
+    BRep_Tool::CurveOnSurface(edge, anEdgeCurve, anEdgeSurface, aLocation, aFirst, aLast, 1);
+    if (anEdgeSurface->IsKind(STANDARD_TYPE(Geom_ConicalSurface)) ||
+      anEdgeSurface->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) {
+      if (anEdgeCurve->IsKind(STANDARD_TYPE(Geom2d_Line))) {
+        
+
+        return Standard_True;
+      }
+    }
+    //End of the new code
+
       //#48 rln 10.12.98 S4054 UKI60107-5 entity 365
       //C0 surface (but curve 3d is required as C1) and tolerance is 1e-07
       //lets use maximum of tolerance and default parameter 1.e-5
       //Another solutions: use quite big Tolerance or require C0 curve on C0 surface
-      if ( BRepLib::BuildCurve3d (edge, Max (1.e-5, BRep_Tool::Tolerance(edge) ) ) ) {
+      if (BRepLib::BuildCurve3d(edge, Max(1.e-5, BRep_Tool::Tolerance(edge)))) {
         //#50 S4054 rln 14.12.98 write cylinder in BRep mode into IGES and read back
         //with 2DUse_Forced - pcurve and removed 3D curves have different ranges
-        if (BRep_Tool::SameRange (edge)) {
+        if (BRep_Tool::SameRange(edge)) {
           Standard_Real first, last;
-          BRep_Tool::Range (edge, first, last);
-          BRep_Builder().Range (edge, first, last);//explicit setting for all reps
+          BRep_Tool::Range(edge, first, last);
+          BRep_Builder().Range(edge, first, last);//explicit setting for all reps
         }
         Handle(Geom_Curve) c3d;
-        Standard_Real f,l;
-        c3d = BRep_Tool::Curve(edge,f,l);
+        Standard_Real f, l;
+        c3d = BRep_Tool::Curve(edge, f, l);
         if (c3d.IsNull())
           return Standard_False;
         // 15.11.2002 PTV OCC966
-        if(!IsPeriodic(c3d)) {
+        if (!IsPeriodic(c3d)) {
           Standard_Boolean isLess = Standard_False;
-          if(f < c3d->FirstParameter()) {
+          if (f < c3d->FirstParameter()) {
             isLess = Standard_True;
             f = c3d->FirstParameter();
           }
-          if(l > c3d->LastParameter()) {
+          if (l > c3d->LastParameter()) {
             isLess = Standard_True;
             l = c3d->LastParameter();
           }
-          if(isLess) {
-            SetRange3d(edge,f,l);
-            BRep_Builder().SameRange(edge,Standard_False);
+          if (isLess) {
+            SetRange3d(edge, f, l);
+            BRep_Builder().SameRange(edge, Standard_False);
           }
         }
 
