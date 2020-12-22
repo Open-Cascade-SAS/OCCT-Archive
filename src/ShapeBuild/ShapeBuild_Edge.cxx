@@ -36,6 +36,7 @@
 #include <Geom2dConvert.hxx>
 #include <Geom2dConvert_ApproxCurve.hxx>
 #include <Geom_Curve.hxx>
+#include <Geom_Line.hxx>
 #include <Geom_ConicalSurface.hxx>
 #include <Geom_CylindricalSurface.hxx>
 #include <Geom_OffsetCurve.hxx>
@@ -604,19 +605,35 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
   try {
     OCC_CATCH_SIGNALS
 
-    //Modified 12.2020 in order to fix bug31840 by aavtamon
-    //Trying to create a line instead of bspline-curve created in BRepLib::BuildCurve3d(...)
+    //The next piece of code has been added in order to fix bug31840
+    //Trying to create a straight line instead of bspline-curve if it's possible
+    //Start of the new code
     Handle(Geom2d_Curve) anEdgeCurve;
     Handle(Geom_Surface) anEdgeSurface;
     TopLoc_Location aLocation;
     Standard_Real aFirst, aLast;
-    BRep_Tool::CurveOnSurface(edge, anEdgeCurve, anEdgeSurface, aLocation, aFirst, aLast, 1);
-    if (anEdgeSurface->IsKind(STANDARD_TYPE(Geom_ConicalSurface)) ||
-      anEdgeSurface->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) {
-      if (anEdgeCurve->IsKind(STANDARD_TYPE(Geom2d_Line))) {
-        
-
-        return Standard_True;
+    BRep_Tool::CurveOnSurface(edge, anEdgeCurve, anEdgeSurface, aLocation, aFirst, aLast);
+    if (anEdgeCurve.IsNull() || anEdgeSurface.IsNull())
+      return Standard_False;
+    if ((anEdgeSurface->IsKind(STANDARD_TYPE(Geom_ConicalSurface)) ||
+         anEdgeSurface->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) && 
+         anEdgeCurve->IsKind(STANDARD_TYPE(Geom2d_Line))) {
+      anEdgeCurve = Handle(Geom2d_Line)::DownCast(anEdgeCurve);
+      Standard_Real aF = anEdgeCurve->FirstParameter();
+      Standard_Real aL = anEdgeCurve->LastParameter();
+      Standard_Real U1, U2, V1, V2;
+      anEdgeSurface->Bounds(U1, U2, V1, V2);
+      if (abs(aF - V1) <= Precision::PConfusion() && abs(aL - V2) <= Precision::PConfusion()) {
+        TopoDS_Vertex vertices[2];
+        TopExp::Vertices(edge, vertices[0], vertices[1]);
+        gp_Pnt P1 = BRep_Tool::Pnt(vertices[0]);
+        gp_Pnt P2 = BRep_Tool::Pnt(vertices[1]);
+        gp_Vec aVec(P1, P2);
+        Handle(Geom_Line) aLine = new Geom_Line(gp_Ax1(P1, aVec));
+        Standard_Real aDistance = P1.Distance(P2);
+        Handle(Geom_TrimmedCurve) aCurve = new Geom_TrimmedCurve(aLine, 0.0, aDistance);
+        BRep_Builder aBuilder;
+        aBuilder.UpdateEdge(edge, aCurve, Precision::Confusion());
       }
     }
     //End of the new code
