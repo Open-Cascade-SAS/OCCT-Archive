@@ -612,6 +612,9 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
     Handle(Geom_Surface) anEdgeSurface;
     TopLoc_Location aLocation;
     Standard_Real aFirst, aLast;
+    Handle(Geom_Curve) aCurve = BRep_Tool::Curve(edge, aLocation, aFirst, aLast);
+    if (!aCurve.IsNull())
+      return Standard_True;
     BRep_Tool::CurveOnSurface(edge, anEdgeCurve, anEdgeSurface, aLocation, aFirst, aLast);
     if (anEdgeCurve.IsNull() || anEdgeSurface.IsNull())
       return Standard_False;
@@ -631,9 +634,9 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
         gp_Vec aVec(P1, P2);
         Handle(Geom_Line) aLine = new Geom_Line(gp_Ax1(P1, aVec));
         Standard_Real aDistance = P1.Distance(P2);
-        Handle(Geom_TrimmedCurve) aCurve = new Geom_TrimmedCurve(aLine, 0.0, aDistance);
+        Handle(Geom_TrimmedCurve) aNewCurve = new Geom_TrimmedCurve(aLine, 0.0, aDistance);
         BRep_Builder aBuilder;
-        aBuilder.UpdateEdge(edge, aCurve, Precision::Confusion());
+        aBuilder.UpdateEdge(edge, aNewCurve, Precision::Confusion());
       }
     }
     //End of the new code
