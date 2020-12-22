@@ -35,9 +35,13 @@
 #include <Geom2dConvert.hxx>
 #include <Geom2dConvert_ApproxCurve.hxx>
 #include <Geom_Curve.hxx>
+#include <Geom_Line.hxx>
+#include <Geom_TrimmedCurve.hxx>
+#include <Geom_ConicalSurface.hxx>
+#include <Geom_CylindricalSurface.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_OffsetCurve.hxx>
 #include <Geom_Surface.hxx>
-#include <Geom_TrimmedCurve.hxx>
 #include <GeomAPI.hxx>
 #include <gp_GTrsf2d.hxx>
 #include <gp_Lin2d.hxx>
@@ -600,6 +604,51 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
 {
   try {
     OCC_CATCH_SIGNALS
+
+    //The next piece of code has been added in order to fix bug31840
+    //Trying to create a straight line instead of bspline-curve if it's possible
+    //Start of the new code
+    Handle(Geom2d_Curve) anEdgeCurve;
+    Handle(Geom_Surface) anEdgeSurface;
+    TopLoc_Location aLocation;
+    Standard_Real aFirst, aLast;
+    Handle(Geom_Curve) aCurve = BRep_Tool::Curve(edge, aLocation, aFirst, aLast);
+    if (!aCurve.IsNull())
+      return Standard_True;
+    BRep_Tool::CurveOnSurface(edge, anEdgeCurve, anEdgeSurface, aLocation, aFirst, aLast);
+    if (anEdgeCurve.IsNull() || anEdgeSurface.IsNull())
+      return Standard_False;
+    while (anEdgeCurve->IsKind(STANDARD_TYPE(Geom2d_TrimmedCurve))) {
+      Handle(Geom2d_TrimmedCurve) aTrCurve = Handle(Geom2d_TrimmedCurve)::DownCast(anEdgeCurve);
+      anEdgeCurve = aTrCurve->BasisCurve();
+    }
+    while (anEdgeSurface->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
+      Handle(Geom_RectangularTrimmedSurface) aTrSurf = Handle(Geom_RectangularTrimmedSurface)::DownCast(anEdgeSurface);
+      anEdgeSurface = aTrSurf->BasisSurface();
+    }
+    Handle(Geom2d_Line) aL = Handle(Geom2d_Line)::DownCast(anEdgeCurve);
+    if ((anEdgeSurface->IsKind(STANDARD_TYPE(Geom_ConicalSurface)) ||
+         anEdgeSurface->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) && 
+         !aL.IsNull()) {
+      gp_Pnt2d p1 = anEdgeCurve->Value(aFirst);
+      gp_Pnt2d p2 = anEdgeCurve->Value(aLast);
+      gp_Dir2d aDir = aL->Position().Direction();
+      if (aDir.IsParallel(gp_Dir2d(0, 1), Precision::Angular())) {
+        gp_Pnt P1 = anEdgeSurface->Value(p1.X(), p1.Y());
+        gp_Pnt P2 = anEdgeSurface->Value(p2.X(), p2.Y());
+        gp_Vec aVec(P1, P2);
+        Handle(Geom_Line) aLine = new Geom_Line(gp_Ax1(P1, aVec));
+        gp_Pnt P0 = aLine->Value(-aFirst);
+        aLine->Translate(P1, P0);
+        Handle(Geom_TrimmedCurve) aNewCurve = new Geom_TrimmedCurve(aLine, aFirst, aLast);
+        BRep_Builder aBuilder;
+        Standard_Real aTol = BRep_Tool::Tolerance(edge);
+        aBuilder.UpdateEdge(edge, aNewCurve, aLocation, aTol);
+        return Standard_True;
+      }
+    }
+    //End of the new code
+
       //#48 rln 10.12.98 S4054 UKI60107-5 entity 365
       //C0 surface (but curve 3d is required as C1) and tolerance is 1e-07
       //lets use maximum of tolerance and default parameter 1.e-5
