@@ -636,7 +636,10 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
         Standard_Real aDistance = P1.Distance(P2);
         Handle(Geom_TrimmedCurve) aNewCurve = new Geom_TrimmedCurve(aLine, 0.0, aDistance);
         BRep_Builder aBuilder;
-        aBuilder.UpdateEdge(edge, aNewCurve, Precision::Confusion());
+        Standard_Real aTol = BRep_Tool::Tolerance(edge);
+        aLocation = edge.Location();
+        aBuilder.UpdateEdge(edge, aNewCurve, aLocation, aTol);
+        return Standard_True;
       }
     }
     //End of the new code
