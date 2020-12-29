@@ -639,7 +639,6 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
         Standard_Real aTol = BRep_Tool::Tolerance(edge);
         aLocation = edge.Location();
         aBuilder.UpdateEdge(edge, aNewCurve, aLocation, aTol);
-        return Standard_True;
       }
     }
     //End of the new code
