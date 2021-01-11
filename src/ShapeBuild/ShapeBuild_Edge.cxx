@@ -621,20 +621,16 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
     if ((anEdgeSurface->IsKind(STANDARD_TYPE(Geom_ConicalSurface)) ||
          anEdgeSurface->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) && 
          anEdgeCurve->IsKind(STANDARD_TYPE(Geom2d_Line))) {
-      anEdgeCurve = Handle(Geom2d_Line)::DownCast(anEdgeCurve);
-      Standard_Real aF = anEdgeCurve->FirstParameter();
-      Standard_Real aL = anEdgeCurve->LastParameter();
-      Standard_Real U1, U2, V1, V2;
-      anEdgeSurface->Bounds(U1, U2, V1, V2);
-      if (abs(aF - V1) <= Precision::PConfusion() && abs(aL - V2) <= Precision::PConfusion()) {
+      gp_Pnt2d p1 = anEdgeCurve->Value(aFirst);
+      gp_Pnt2d p2 = anEdgeCurve->Value(aLast);
+      if (abs(p1.X() - p2.X()) <= Precision::Confusion() && abs(p1.Y() - p2.Y()) > Precision::Confusion()) {
         TopoDS_Vertex vertices[2];
         TopExp::Vertices(edge, vertices[0], vertices[1]);
         gp_Pnt P1 = BRep_Tool::Pnt(vertices[0]);
         gp_Pnt P2 = BRep_Tool::Pnt(vertices[1]);
         gp_Vec aVec(P1, P2);
         Handle(Geom_Line) aLine = new Geom_Line(gp_Ax1(P1, aVec));
-        Standard_Real aDistance = P1.Distance(P2);
-        Handle(Geom_TrimmedCurve) aNewCurve = new Geom_TrimmedCurve(aLine, 0.0, aDistance);
+        Handle(Geom_TrimmedCurve) aNewCurve = new Geom_TrimmedCurve(aLine, aFirst, aLast);
         BRep_Builder aBuilder;
         Standard_Real aTol = BRep_Tool::Tolerance(edge);
         aLocation = edge.Location();
