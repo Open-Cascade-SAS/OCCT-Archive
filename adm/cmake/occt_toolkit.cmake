@@ -214,7 +214,7 @@ foreach (OCCT_MODULE ${OCC_MODULES_LIST})
   endif()
 endforeach()
 
-if (MSVC)
+if (MSVC AND "${INSTALL_DIR_LAYOUT}" STREQUAL "Windows")
   OCCT_INSERT_CODE_FOR_TARGET ()
 endif()
 
