@@ -632,7 +632,7 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
         aLine->Translate(P1, P0);
         Handle(Geom_TrimmedCurve) aNewCurve = new Geom_TrimmedCurve(aLine, aFirst, aLast);
         BRep_Builder aBuilder;
-        Standard_Real aTol = BRep_Tool::Tolerance(edge);
+        Standard_Real aTol = Max(1.e-5, BRep_Tool::Tolerance(edge));
         aBuilder.UpdateEdge(edge, aNewCurve, aLocation, aTol);
       }
     }
