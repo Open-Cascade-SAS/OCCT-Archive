@@ -707,7 +707,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::Overlaps (const gp_Pnt& thePnt1,
     const gp_XYZ aTrEdges[3] = { thePnt2.XYZ() - thePnt1.XYZ(),
                                  thePnt3.XYZ() - thePnt2.XYZ(),
                                  thePnt1.XYZ() - thePnt3.XYZ() };
-	  if (aTriangleNormal.SquareMagnitude() < gp::Resolution())
+    if (aTriangleNormal.SquareMagnitude() < gp::Resolution())
     {
       // consider degenerated triangle as point or segment
       return aTrEdges[0].SquareModulus() > gp::Resolution()
@@ -747,15 +747,12 @@ Standard_Boolean SelectMgr_RectangularFrustum::Overlaps (const gp_Pnt& thePnt1,
 
     if (isInterior)
     {
-      thePickResult.SetSurfaceNormal(aTriangleNormal);
+      thePickResult.SetSurfaceNormal (aTriangleNormal);
     }
-    
-    gp_Pnt aPnts[3] = { thePnt1, thePnt2, thePnt3 };
-    
+
     gp_Vec aTrgNorm = aTriangleNormal.Normalized();
-    
     gp_Pnt aProjNearPnt = projectPointOnPlane (myNearPickedPnt, aTrgNorm, thePnt1);
-    
+
     gp_Pnt aProjFrustumPnt[4];
     Standard_Integer aLastIdx = 0;
     gp_Pnt aResProjPnt;
@@ -775,7 +772,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::Overlaps (const gp_Pnt& thePnt1,
     {
       aProjFrustumPnt[aLastIdx++] = aResProjPnt;
     }
-    
+
     // Distance from projected myNearPickedPnt to projected fructum rectangle,
     // inside distance is 0, outside distance is positive
     gp_Pnt aNearPntOnFrustumRect;
@@ -819,7 +816,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::Overlaps (const gp_Pnt& thePnt1,
     // Combining distances
     gp_Pnt aResPnt = aDistToFrustumRect > aDistToTriangle ? aNearPntOnFrustumRect : aNearPntOnTriangle;
     
-    thePickResult.SetDepth (myNearPickedPnt.Distance(aResPnt) * myScale);
+    thePickResult.SetDepth (myNearPickedPnt.Distance (aResPnt) * myScale);
     thePickResult.SetPickedPoint (aResPnt);
   }
 
