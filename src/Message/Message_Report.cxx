@@ -227,10 +227,9 @@ void Message_Report::RemoveLevel (Message_Level* theLevel)
   for (int aLevelIndex = myAlertLevels.Size(); aLevelIndex >= 1; aLevelIndex--)
   {
     Message_Level* aLevel = myAlertLevels.Value (aLevelIndex);
-    if (myAlertLevels.Size() == 1) // the last level, the root item should be stopped
-    {
-      Message_AttributeMeter::StopAlert (aLevel->RootAlert());
-    }
+    // The last level, the root item should be stopped always
+    // as AddLevel necessarily creates the root label.
+    Message_AttributeMeter::StopAlert (aLevel->RootAlert());
 
     myAlertLevels.Remove (aLevelIndex);
     if (aLevel == theLevel)
