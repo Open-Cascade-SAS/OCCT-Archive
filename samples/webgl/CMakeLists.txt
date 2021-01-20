@@ -19,7 +19,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ALLOW_MEMORY_GROWTH=1")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --bind")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SAFE_HEAP=1")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=16MB")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=256MB")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ABORTING_MALLOC=0")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FORCE_FILESYSTEM=1")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file myFile")
@@ -29,7 +29,6 @@ endif()
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s MODULARIZE=1")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s EXPORT_NAME='createOccViewerModule'")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall','cwrap']")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --extern-post-js ${CMAKE_CURRENT_SOURCE_DIR}/occt-webgl-viewer.js")
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
 file(GLOB SOURCES
@@ -38,10 +37,12 @@ file(GLOB SOURCES
 )
 source_group ("Headers" FILES
   WasmOcctView.h
-  WasmOcctPixMap.h)
+  WasmOcctPixMap.h
+  WasmOcctObject.h)
 source_group ("Sources" FILES
   WasmOcctView.cpp
   WasmOcctPixMap.cpp
+  WasmOcctObject.cpp
   main.cpp)
 
 # FreeType
@@ -66,6 +67,9 @@ endif()
 
 set(OpenCASCADE_LIBS TKRWMesh TKBinXCAF TKBin TKBinL TKOpenGl TKXCAF TKVCAF TKCAF TKV3d TKHLR TKMesh TKService TKShHealing TKPrim TKTopAlgo TKGeomAlgo TKBRep TKGeomBase TKG3d TKG2d TKMath TKLCAF TKCDF TKernel)
 
+INCLUDE_DIRECTORIES("c:/workssd/Develop/3rdparty/android/rapidjson-1.1.0/include")
+add_definitions (-DHAVE_RAPIDJSON)
+
 add_executable(${APP_TARGET} ${SOURCES})
 target_link_libraries(
   ${APP_TARGET}
@@ -81,5 +85,10 @@ if (NOT "${SOURCE_MAP_BASE}" STREQUAL "")
   endif()
 endif()
 install(FILES occt-webgl-sample.html DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES threejs-sample.html    DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES threejs-sample.js      DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY threejs            DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY textures           DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY models             DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(FILES ${OpenCASCADE_RESOURCE_DIR}/DrawResources/OCC_logo.png DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(FILES ${OpenCASCADE_RESOURCE_DIR}/DrawResources/lamp.ico DESTINATION ${CMAKE_INSTALL_PREFIX})

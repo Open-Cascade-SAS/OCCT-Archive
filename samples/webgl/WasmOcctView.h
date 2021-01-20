@@ -41,63 +41,124 @@ public:
 
 public: //! @name methods exported by Module
 
+  //! Returns TRUE if dynamic highlighting is turned ON.
+  static bool toDynamicHighlight();
+
+  //! Set if dynamic highlighting should be enabled or not.
+  static void setDynamicHighlight (bool theToEnable);
+
+  //! Returns TRUE if shadows are turned ON.
+  static bool toCastShadows();
+
+  //! Turn shadows on/off.
+  static void setCastShadows (bool theUseShadows,
+                              bool theToUpdate);
+
+  //! Returns TRUE if anti-aliasing is turned ON.
+  static bool isAntiAliasingOn();
+
+  //! Turn antialiasing on/off.
+  static void setAntiAliasingOn (bool theToEnable, bool theToUpdate);
+
+  //! Set solid color background.
+  static void setBackgroundColor (float theR, float theG, float theB,
+                                  bool theToUpdate);
+
   //! Set cubemap background.
   //! File will be loaded asynchronously.
   //! @param theImagePath [in] image path to load
-  static void setCubemapBackground (const std::string& theImagePath);
+  static void setBackgroundCubemap (const std::string& theImagePath);
 
   //! Clear all named objects from viewer.
-  static void removeAllObjects();
+  static void removeAllObjects (bool theToUpdate);
 
   //! Fit all/selected objects into view.
   //! @param theAuto [in] fit selected objects (TRUE) or all objects (FALSE)
-  static void fitAllObjects (bool theAuto);
+  static void fitAllObjects (bool theAuto,
+                             bool theToUpdate);
 
-  //! Remove named object from viewer.
-  //! @param theName [in] object name
-  //! @return FALSE if object was not found
-  static bool removeObject (const std::string& theName);
+  //! Return the list of displayed objects.
+  static std::string displayedObjects();
 
-  //! Temporarily hide named object.
-  //! @param theName [in] object name
-  //! @return FALSE if object was not found
-  static bool eraseObject (const std::string& theName);
+  //! Return the list of selected objects.
+  static std::string selectedObjects();
+
+  //! Return the list of erased objects.
+  static std::string erasedObjects();
 
   //! Display temporarily hidden object.
-  //! @param theName [in] object name
+  //! @param theNames [in] object name list
   //! @return FALSE if object was not found
-  static bool displayObject (const std::string& theName);
+  static bool displayObjectList (const std::string& theNames,
+                                 bool theToUpdate);
+
+  //! Remove named objects from viewer.
+  //! @param theNames [in] object name found
+  //! @return FALSE if object was not found
+  static bool removeObjectList (const std::string& theNames,
+                                bool theToUpdate);
+
+  //! Temporarily hide named objects.
+  //! @param theNames [in] object name list
+  //! @return FALSE if object was not found
+  static bool eraseObjectList (const std::string& theNames,
+                               bool theToUpdate);
+
+  //! Return TRUE if ground is displayed.
+  static bool toShowGround();
 
   //! Show/hide ground.
   //! @param theToShow [in] show or hide flag
-  static void displayGround (bool theToShow);
+  static void setShowGround (bool theToShow,
+                             bool theToUpdate);
 
   //! Open object from the given URL.
   //! File will be loaded asynchronously.
   //! @param theName      [in] object name
   //! @param theModelPath [in] model path
+  //! @param theToExpand  [in] expand model or display as a single part
   static void openFromUrl (const std::string& theName,
-                           const std::string& theModelPath);
+                           const std::string& theModelPath,
+                           const bool theToExpand);
 
   //! Open object from memory.
-  //! @param theName    [in] object name
-  //! @param theBuffer  [in] pointer to data
-  //! @param theDataLen [in] data length
-  //! @param theToFree  [in] free theBuffer if set to TRUE
+  //! @param theName     [in] object name
+  //! @param theToExpand [in] expand model or display as a single part
+  //! @param theBuffer   [in] pointer to data
+  //! @param theDataLen  [in] data length
+  //! @param theToFree   [in] free theBuffer if set to TRUE
   //! @return FALSE on reading error
   static bool openFromMemory (const std::string& theName,
+                              const bool theToExpand,
                               uintptr_t theBuffer, int theDataLen,
                               bool theToFree);
 
   //! Open BRep object from memory.
-  //! @param theName    [in] object name
-  //! @param theBuffer  [in] pointer to data
-  //! @param theDataLen [in] data length
-  //! @param theToFree  [in] free theBuffer if set to TRUE
+  //! @param theName     [in] object name
+  //! @param theToExpand [in] expand model or display as a single part
+  //! @param theBuffer   [in] pointer to data
+  //! @param theDataLen  [in] data length
+  //! @param theToFree   [in] free theBuffer if set to TRUE
   //! @return FALSE on reading error
   static bool openBRepFromMemory (const std::string& theName,
+                                  const bool theToExpand,
                                   uintptr_t theBuffer, int theDataLen,
                                   bool theToFree);
+
+  //! Open glTF object from memory.
+  //! @param theName     [in] object name
+  //! @param theToExpand [in] expand model or display as a single part
+  //! @param theBuffer   [in] pointer to data
+  //! @param theDataLen  [in] data length
+  //! @param theToFree   [in] free theBuffer if set to TRUE
+  //! @return FALSE on reading error
+  static bool openGltfFromMemory (const std::string& theName,
+                                  const bool theToExpand,
+                                  uintptr_t theBuffer, int theDataLen,
+                                  bool theToFree);
+
+  //! Displayed map changed notification.
+  void onDisplayedObjectsChanged();
 
 public:
 
@@ -209,6 +270,11 @@ private:
   static EM_BOOL onKeyUpCallback (int theEventType, const EmscriptenKeyboardEvent* theEvent, void* theView)
   { return ((WasmOcctView* )theView)->onKeyUpEvent (theEventType, theEvent); }
 
+  //! Callback called by handleMoveTo() on Selection in 3D Viewer.
+  //! This method is expected to be called from rendering thread.
+  virtual void OnSelectionChanged (const Handle(AIS_InteractiveContext)& theCtx,
+                                   const Handle(V3d_View)& theView) override;
+
 private:
 
   //! Register hot-keys for specified Action.
@@ -237,6 +303,8 @@ private:
 private:
 
   NCollection_IndexedDataMap<TCollection_AsciiString, Handle(AIS_InteractiveObject)> myObjects; //!< map of named objects
+  bool myToShowGround = true;
+
 
   NCollection_DataMap<unsigned int, Aspect_VKey> myNavKeyMap; //!< map of Hot-Key (key+modifiers) to Action
 

@@ -1,0 +1,98 @@
+/**
+ * OCC Viewer global object.
+ */
+interface OccViewerModule {
+
+  /**
+   * Set cubemap background.
+   * File will be loaded asynchronously.
+   * @param {string} theImagePath [in] image path to load
+   */
+  void setCubemapBackground (DOMString theImagePath);
+
+  /**
+   * Clear all named objects from viewer.
+   */
+  void removeAllObjects();
+
+  /**
+   * Fit all/selected objects into view.
+   * @param {boolean} theAuto [in] fit selected objects (TRUE) or all objects (FALSE)
+   */
+  void fitAllObjects (boolean theAuto);
+
+  /**
+   * Remove named object from viewer.
+   * @param {string} theName [in] object name
+   * @param {boolean} theToUpdate [in] immediatly request viewer update
+   * @return {boolean} FALSE if object was not found
+   */
+  boolean removeObject (DOMString theName,
+                        boolean theToUpdate);
+
+  /**
+   * Temporarily hide named object.
+   * @param {string} theName [in] object name
+   * @return {boolean} FALSE if object was not found
+   */
+  boolean eraseObject (DOMString theName);
+
+  /**
+   * Display temporarily hidden object.
+   * @param {string} theName [in] object name
+   * @return {boolean} FALSE if object was not found
+   */
+  boolean displayObject (DOMString theName);
+
+  /**
+   * Show/hide ground.
+   * @param {boolean} theToShow [in] show or hide flag
+   */
+  void displayGround (boolean theToShow);
+
+  /**
+   * Open object from the given URL.
+   * File will be loaded asynchronously.
+   * @param {string} theName      [in] object name
+   * @param {string} theModelPath [in] model path
+   */
+  void openFromUrl (DOMString theName,
+                    DOMString theModelPath);
+
+  /**
+   * Open object from memory.
+   * @param theName    [in] object name
+   * @param theBuffer  [in] pointer to data
+   * @param theDataLen [in] data length
+   * @param theToFree  [in] free theBuffer if set to TRUE
+   * @return {boolean} FALSE on reading error
+   */
+  //boolean openFromMemory (DOMString theName,
+  //                        long theBuffer, int theDataLen,
+  //                        boolean theToFree);
+
+  /**
+   * Open BRep object from memory.
+   * @param theName    [in] object name
+   * @param theBuffer  [in] pointer to data
+   * @param theDataLen [in] data length
+   * @param theToFree  [in] free theBuffer if set to TRUE
+   * @return FALSE on reading error
+   */
+  //static boolean openBRepFromMemory (DOMString theName,
+  //                                   long theBuffer, int theDataLen,
+  //                                   boolean theToFree);
+
+  /**
+   * Open glTF object from memory.
+   * @param theName    [in] object name
+   * @param theBuffer  [in] pointer to data
+   * @param theDataLen [in] data length
+   * @param theToFree  [in] free theBuffer if set to TRUE
+   * @return FALSE on reading error
+   */
+  //static boolean openGltfFromMemory (DOMString theName,
+  //                                   long theBuffer, int theDataLen,
+  //                                   boolean theToFree);
+
+};

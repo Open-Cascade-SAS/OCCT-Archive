@@ -20,7 +20,7 @@ extern "C" void onMainLoop()
 
 EMSCRIPTEN_KEEPALIVE int main()
 {
-  Message::DefaultMessenger()->Printers().First()->SetTraceLevel (Message_Trace);
+  Message::DefaultMessenger()->Printers().First()->SetTraceLevel (Message_Info);
   Handle(Message_PrinterSystemLog) aJSConsolePrinter = new Message_PrinterSystemLog ("webgl-sample", Message_Trace);
   Message::DefaultMessenger()->AddPrinter (aJSConsolePrinter); // open JavaScript console within the Browser to see this output
   Message::DefaultMessenger()->Send (TCollection_AsciiString("NbLogicalProcessors: ") + OSD_Parallel::NbLogicalProcessors(), Message_Trace);

@@ -41,6 +41,7 @@
 #include <BRepBndLib.hxx>
 #include <BRepTools.hxx>
 #include <Standard_ArrayStreamBuffer.hxx>
+#include <TopExp_Explorer.hxx>
 
 #include <emscripten/bind.h>
 
@@ -74,15 +75,22 @@ namespace
   {
     std::string Name;
     std::string Path;
+    bool ToExpand;
+    OSD_Timer Timer;
 
-    ModelAsyncLoader (const char* theName, const char* thePath)
-    : Name (theName), Path (thePath) {}
+    ModelAsyncLoader (const char* theName, const char* thePath, const bool theToExpand)
+    : Name (theName), Path (thePath), ToExpand (theToExpand)
+    {
+      Timer.Start();
+    }
 
     //! File data read event.
     static void onDataRead (void* theOpaque, void* theBuffer, int theDataLen)
     {
-      const ModelAsyncLoader* aTask = (ModelAsyncLoader* )theOpaque;
-      WasmOcctView::openFromMemory (aTask->Name, reinterpret_cast<uintptr_t>(theBuffer), theDataLen, false);
+      ModelAsyncLoader* aTask = (ModelAsyncLoader* )theOpaque;
+      WasmOcctView::openFromMemory (aTask->Name, aTask->ToExpand, reinterpret_cast<uintptr_t>(theBuffer), theDataLen, false);
+      aTask->Timer.Stop();
+      Message::SendInfo() << aTask->Path << " loaded in " << aTask->Timer.ElapsedTime() << " s";
       delete aTask;
     }
 
@@ -106,6 +114,9 @@ namespace
       if (anImage->Init (theFilePath))
       {
         aCubemap = new Graphic3d_CubeMapPacked (anImage);
+        /// TODO WebGL 2.0 ensures sRGB conformance within glGenerateMipmap()
+        /// which leads to extremely SLOW generation (5 seconds instead of 0.035)
+        aCubemap->SetColorMap (false);
       }
       WasmOcctView::Instance().View()->SetBackgroundCubeMap (aCubemap, true, false);
       WasmOcctView::Instance().UpdateView();
@@ -117,6 +128,9 @@ namespace
       Message::DefaultMessenger()->Send (TCollection_AsciiString("Error: unable to load image ") + theFilePath, Message_Fail);
     }
   };
+
+  //! Object list separator.
+  static const char THE_LIST_SEPARATOR = '\n';
 }
 
 // ================================================================
@@ -137,6 +151,8 @@ WasmOcctView::WasmOcctView()
 : myDevicePixelRatio (1.0f),
   myUpdateRequests (0)
 {
+  SetLockOrbitZUp (true);
+
   addActionHotKeys (Aspect_VKey_NavForward,        Aspect_VKey_W, Aspect_VKey_W | Aspect_VKeyFlags_SHIFT);
   addActionHotKeys (Aspect_VKey_NavBackward ,      Aspect_VKey_S, Aspect_VKey_S | Aspect_VKeyFlags_SHIFT);
   addActionHotKeys (Aspect_VKey_NavSlideLeft,      Aspect_VKey_A, Aspect_VKey_A | Aspect_VKeyFlags_SHIFT);
@@ -316,10 +332,14 @@ bool WasmOcctView::initViewer()
     Message::DefaultMessenger()->Send (TCollection_AsciiString ("Error: font '") + aFontPath + "' is not found", Message_Fail);
   }*/
 
+  const bool toAntialias = myDevicePixelRatio <= 1.25f;
+
   Handle(Aspect_DisplayConnection) aDisp;
   Handle(OpenGl_GraphicDriver) aDriver = new OpenGl_GraphicDriver (aDisp, false);
   aDriver->ChangeOptions().buffersNoSwap = true; // swap has no effect in WebGL
   aDriver->ChangeOptions().buffersOpaqueAlpha = true; // avoid unexpected blending of canvas with page background
+  aDriver->ChangeOptions().useSystemBuffer = false; ///
+  //aDriver->ChangeOptions().useSystemBuffer = true; ///
   if (!aDriver->InitContext())
   {
     Message::DefaultMessenger()->Send (TCollection_AsciiString ("Error: EGL initialization failed"), Message_Fail);
@@ -337,6 +357,8 @@ bool WasmOcctView::initViewer()
     if (aLight->Type() == Graphic3d_TOLS_DIRECTIONAL)
     {
       aLight->SetCastShadows (true);
+      aLight->SetHeadlight (false);
+      aLight->SetDirection (gp_Dir (0.098f, -0.20f, -0.98f));
     }
   }
 
@@ -361,8 +383,11 @@ bool WasmOcctView::initViewer()
 
   myView = new V3d_View (aViewer);
   myView->Camera()->SetProjectionType (Graphic3d_Camera::Projection_Perspective);
+  myView->Camera()->SetFOV2d (360.0f);
+  myView->Camera()->SetFOVy (45.0f);
   myView->SetImmediateUpdate (false);
-  myView->ChangeRenderingParams().IsShadowEnabled = false;
+  //myView->ChangeRenderingParams().NbMsaaSamples = toAntialias ? 4 : 0;
+  myView->ChangeRenderingParams().RenderResolutionScale = toAntialias ? 2.0f : 1.0f;
   myView->ChangeRenderingParams().Resolution = (unsigned int )(96.0 * myDevicePixelRatio + 0.5);
   myView->ChangeRenderingParams().ToShowStats = true;
   myView->ChangeRenderingParams().StatsTextAspect = myTextStyle->Aspect();
@@ -370,7 +395,26 @@ bool WasmOcctView::initViewer()
   myView->SetWindow (aWindow);
   dumpGlInfo (false);
 
+  myView->SetShadingModel (aDriver->InquireLimit (Graphic3d_TypeOfLimit_HasPBR) == 1 ? Graphic3d_TOSM_PBR : Graphic3d_TOSM_FRAGMENT);
+  ///myView->ChangeRenderingParams().IsShadowEnabled = aDriver->InquireLimit (Graphic3d_TypeOfLimit_HasPBR) == 1; /// TODO
+  myView->ChangeRenderingParams().IsShadowEnabled = true; ///
+
   myContext = new AIS_InteractiveContext (aViewer);
+  {
+    {
+      const Handle(Prs3d_Drawer)& aHiStyle = myContext->HighlightStyle();
+      aHiStyle->SetTransparency (0.8f);
+
+      Handle(Graphic3d_AspectFillArea3d) anAspect = new Graphic3d_AspectFillArea3d();
+      *anAspect = *myContext->DefaultDrawer()->ShadingAspect()->Aspect();
+      Graphic3d_MaterialAspect aMat (Graphic3d_NOM_STONE);
+      aMat.SetColor (aHiStyle->Color());
+      aMat.SetTransparency (aHiStyle->Transparency());
+      anAspect->SetFrontMaterial (aMat);
+      anAspect->SetInteriorColor (aHiStyle->Color());
+      aHiStyle->SetBasicFillAreaAspect (anAspect);
+    }
+  }
   initPixelScaleRatio();
   return true;
 }
@@ -865,10 +909,95 @@ bool WasmOcctView::processKeyPress (Aspect_VKey theKey)
 }
 
 // ================================================================
-// Function : setCubemapBackground
+// Function : toDynamicHighlight
 // Purpose  :
 // ================================================================
-void WasmOcctView::setCubemapBackground (const std::string& theImagePath)
+bool WasmOcctView::toDynamicHighlight()
+{
+  return WasmOcctView::Instance().ToAllowHighlight();
+}
+
+// ================================================================
+// Function : setDynamicHighlight
+// Purpose  :
+// ================================================================
+void WasmOcctView::setDynamicHighlight (bool theToEnable)
+{
+  WasmOcctView::Instance().SetAllowHighlight (theToEnable);
+}
+
+// ================================================================
+// Function : toCastShadows
+// Purpose  :
+// ================================================================
+bool WasmOcctView::toCastShadows()
+{
+  return WasmOcctView::Instance().View()->RenderingParams().IsShadowEnabled;
+}
+
+// ================================================================
+// Function : setCastShadows
+// Purpose  :
+// ================================================================
+void WasmOcctView::setCastShadows (bool theUseShadows,
+                                   bool theToUpdate)
+{
+  if (WasmOcctView::Instance().View()->RenderingParams().IsShadowEnabled != theUseShadows)
+  {
+    WasmOcctView::Instance().View()->ChangeRenderingParams().IsShadowEnabled = theUseShadows;
+    if (theToUpdate)
+    {
+      WasmOcctView::Instance().UpdateView();
+    }
+  }
+}
+
+// ================================================================
+// Function : isAntiAliasingOn
+// Purpose  :
+// ================================================================
+bool WasmOcctView::isAntiAliasingOn()
+{
+  return WasmOcctView::Instance().View()->RenderingParams().RenderResolutionScale > 1.1f;
+}
+
+// ================================================================
+// Function : setAntiAliasingOn
+// Purpose  :
+// ================================================================
+void WasmOcctView::setAntiAliasingOn (bool theToEnable, bool theToUpdate)
+{
+  if (isAntiAliasingOn() != theToEnable)
+  {
+    WasmOcctView::Instance().View()->ChangeRenderingParams().RenderResolutionScale = theToEnable ? 2.0f : 1.0f;
+    if (theToUpdate)
+    {
+      WasmOcctView::Instance().UpdateView();
+    }
+  }
+}
+
+// ================================================================
+// Function : setBackgroundColor
+// Purpose  :
+// ================================================================
+void WasmOcctView::setBackgroundColor (float theR, float theG, float theB,
+                                       bool theToUpdate)
+{
+  Quantity_Color aColor (theR, theG, theB, Quantity_TOC_RGB);
+  WasmOcctView::Instance().View()->SetBackgroundColor (aColor);
+  WasmOcctView::Instance().View()->SetBackgroundCubeMap (Handle(Graphic3d_CubeMap)(), true);
+  if (theToUpdate)
+  {
+    WasmOcctView::Instance().UpdateView();
+  }
+}
+
+// ================================================================
+// Function : setBackgroundCubemap
+// Purpose  :
+// ================================================================
+void WasmOcctView::setBackgroundCubemap (const std::string& theImagePath)
 {
   if (!theImagePath.empty())
   {
@@ -885,7 +1014,8 @@ void WasmOcctView::setCubemapBackground (const std::string& theImagePath)
 // Function : fitAllObjects
 // Purpose  :
 // ================================================================
-void WasmOcctView::fitAllObjects (bool theAuto)
+void WasmOcctView::fitAllObjects (bool theAuto,
+                                  bool theToUpdate)
 {
   WasmOcctView& aViewer = Instance();
   if (theAuto)
@@ -896,81 +1026,219 @@ void WasmOcctView::fitAllObjects (bool theAuto)
   {
     aViewer.View()->FitAll (0.01, false);
   }
-  aViewer.UpdateView();
+  if (theToUpdate)
+  {
+    aViewer.UpdateView();
+  }
+}
+
+EM_JS(void, jsOnDisplayedObjectsChanged, (), {
+  Module.onDisplayedObjectsChanged();
+});
+EM_JS(void, jsOnSelectedObjectsChanged, (), {
+  Module.onSelectedObjectsChanged();
+});
+
+// ================================================================
+// Function : onDisplayedObjectsChanged
+// Purpose  :
+// ================================================================
+void WasmOcctView::onDisplayedObjectsChanged()
+{
+  jsOnDisplayedObjectsChanged();
+}
+
+// ================================================================
+// Function : OnSelectionChanged
+// Purpose  :
+// ================================================================
+void WasmOcctView::OnSelectionChanged (const Handle(AIS_InteractiveContext)& ,
+                                       const Handle(V3d_View)& )
+{
+  jsOnSelectedObjectsChanged();
+}
+
+// ================================================================
+// Function : displayedObjects
+// Purpose  :
+// ================================================================
+std::string WasmOcctView::displayedObjects()
+{
+  WasmOcctView& aViewer = Instance();
+  std::string aList;
+  for (NCollection_IndexedDataMap<TCollection_AsciiString, Handle(AIS_InteractiveObject)>::Iterator anObjIter (aViewer.myObjects);
+       anObjIter.More(); anObjIter.Next())
+  {
+    if (!aList.empty()) { aList += THE_LIST_SEPARATOR; }
+    aList += anObjIter.Key().ToCString();
+  }
+  return aList;
+}
+
+// ================================================================
+// Function : selectedObjects
+// Purpose  :
+// ================================================================
+std::string WasmOcctView::selectedObjects()
+{
+  WasmOcctView& aViewer = Instance();
+  std::string aList;
+  for (NCollection_IndexedDataMap<TCollection_AsciiString, Handle(AIS_InteractiveObject)>::Iterator anObjIter (aViewer.myObjects);
+       anObjIter.More(); anObjIter.Next())
+  {
+    if (aViewer.Context()->IsSelected (anObjIter.Value()))
+    {
+      if (!aList.empty()) { aList += THE_LIST_SEPARATOR; }
+      aList += anObjIter.Key().ToCString();
+    }
+  }
+  return aList;
+}
+
+// ================================================================
+// Function : erasedObjects
+// Purpose  :
+// ================================================================
+std::string WasmOcctView::erasedObjects()
+{
+  WasmOcctView& aViewer = Instance();
+  std::string aList;
+  for (NCollection_IndexedDataMap<TCollection_AsciiString, Handle(AIS_InteractiveObject)>::Iterator anObjIter (aViewer.myObjects);
+       anObjIter.More(); anObjIter.Next())
+  {
+    if (!aViewer.Context()->IsDisplayed (anObjIter.Value()))
+    {
+      if (!aList.empty()) { aList += THE_LIST_SEPARATOR; }
+      aList += anObjIter.Key().ToCString();
+    }
+  }
+  return aList;
+}
+
+// ================================================================
+// Function : displayObjectList
+// Purpose  :
+// ================================================================
+bool WasmOcctView::displayObjectList (const std::string& theNames,
+                                      bool theToUpdate)
+{
+  WasmOcctView& aViewer = Instance();
+
+  std::stringstream aListStream (theNames);
+  std::string aName;
+  bool hasChanged = false;
+  while (std::getline (aListStream, aName, THE_LIST_SEPARATOR))
+  {
+    Handle(AIS_InteractiveObject) anObj;
+    if (!aViewer.myObjects.FindFromKey (aName.c_str(), anObj))
+    {
+      Message::SendFail() << "Error: unknown object '" << aName << "'";
+      return false;
+    }
+
+    hasChanged = true;
+    aViewer.Context()->Display (anObj, false);
+  }
+  if (theToUpdate
+   && hasChanged)
+  {
+    aViewer.UpdateView();
+  }
+  return true;
+}
+
+// ================================================================
+// Function : removeObjectList
+// Purpose  :
+// ================================================================
+bool WasmOcctView::removeObjectList (const std::string& theNames,
+                                     bool theToUpdate)
+{
+  WasmOcctView& aViewer = Instance();
+
+  std::stringstream aListStream (theNames);
+  std::string aName;
+  bool hasChanged = false;
+  while (std::getline (aListStream, aName, THE_LIST_SEPARATOR))
+  {
+    /// TODO filtering should be done for all keys starting with aName
+    Handle(AIS_InteractiveObject) anObj;
+    if (!aViewer.myObjects.FindFromKey (aName.c_str(), anObj))
+    {
+      //Message::SendFail() << "Error: unknown object '" << aName << "'";
+      return false;
+    }
+
+    hasChanged = true;
+    aViewer.Context()->Remove (anObj, false);
+    aViewer.myObjects.RemoveKey (aName.c_str());
+  }
+
+  if (hasChanged)
+  {
+    if (theToUpdate) { aViewer.UpdateView(); }
+    aViewer.onDisplayedObjectsChanged();
+  }
+  return true;
+}
+
+// ================================================================
+// Function : eraseObjectList
+// Purpose  :
+// ================================================================
+bool WasmOcctView::eraseObjectList (const std::string& theNames,
+                                    bool theToUpdate)
+{
+  WasmOcctView& aViewer = Instance();
+
+  std::stringstream aListStream (theNames);
+  std::string aName;
+  bool hasChanged = false;
+  while (std::getline (aListStream, aName, THE_LIST_SEPARATOR))
+  {
+    /// TODO filtering should be done for all keys starting with aName
+    Handle(AIS_InteractiveObject) anObj;
+    if (!aViewer.myObjects.FindFromKey (aName.c_str(), anObj))
+    {
+      Message::SendFail() << "Error: unknown object '" << aName << "'";
+      return false;
+    }
+
+    hasChanged = true;
+    aViewer.Context()->Erase (anObj, false);
+  }
+
+  if (hasChanged
+   && theToUpdate)
+  {
+    aViewer.UpdateView();
+  }
+  return true;
 }
 
 // ================================================================
 // Function : removeAllObjects
 // Purpose  :
 // ================================================================
-void WasmOcctView::removeAllObjects()
+void WasmOcctView::removeAllObjects (bool theToUpdate)
 {
   WasmOcctView& aViewer = Instance();
+  if (aViewer.myObjects.IsEmpty())
+  {
+    return;
+  }
+
   for (NCollection_IndexedDataMap<TCollection_AsciiString, Handle(AIS_InteractiveObject)>::Iterator anObjIter (aViewer.myObjects);
        anObjIter.More(); anObjIter.Next())
   {
     aViewer.Context()->Remove (anObjIter.Value(), false);
   }
   aViewer.myObjects.Clear();
-  aViewer.UpdateView();
-}
-
-// ================================================================
-// Function : removeObject
-// Purpose  :
-// ================================================================
-bool WasmOcctView::removeObject (const std::string& theName)
-{
-  WasmOcctView& aViewer = Instance();
-  Handle(AIS_InteractiveObject) anObj;
-  if (!theName.empty()
-   && !aViewer.myObjects.FindFromKey (theName.c_str(), anObj))
+  if (theToUpdate)
   {
-    return false;
+    aViewer.UpdateView();
   }
-
-  aViewer.Context()->Remove (anObj, false);
-  aViewer.myObjects.RemoveKey (theName.c_str());
-  aViewer.UpdateView();
-  return true;
-}
-
-// ================================================================
-// Function : eraseObject
-// Purpose  :
-// ================================================================
-bool WasmOcctView::eraseObject (const std::string& theName)
-{
-  WasmOcctView& aViewer = Instance();
-  Handle(AIS_InteractiveObject) anObj;
-  if (!theName.empty()
-   && !aViewer.myObjects.FindFromKey (theName.c_str(), anObj))
-  {
-    return false;
-  }
-
-  aViewer.Context()->Erase (anObj, false);
-  aViewer.UpdateView();
-  return true;
-}
-
-// ================================================================
-// Function : displayObject
-// Purpose  :
-// ================================================================
-bool WasmOcctView::displayObject (const std::string& theName)
-{
-  WasmOcctView& aViewer = Instance();
-  Handle(AIS_InteractiveObject) anObj;
-  if (!theName.empty()
-   && !aViewer.myObjects.FindFromKey (theName.c_str(), anObj))
-  {
-    return false;
-  }
-
-  aViewer.Context()->Display (anObj, false);
-  aViewer.UpdateView();
-  return true;
+  aViewer.onDisplayedObjectsChanged();
 }
 
 // ================================================================
@@ -978,9 +1246,10 @@ bool WasmOcctView::displayObject (const std::string& theName)
 // Purpose  :
 // ================================================================
 void WasmOcctView::openFromUrl (const std::string& theName,
-                                const std::string& theModelPath)
+                                const std::string& theModelPath,
+                                const bool theToExpand)
 {
-  ModelAsyncLoader* aTask = new ModelAsyncLoader (theName.c_str(), theModelPath.c_str());
+  ModelAsyncLoader* aTask = new ModelAsyncLoader (theName.c_str(), theModelPath.c_str(), theToExpand);
   emscripten_async_wget_data (theModelPath.c_str(), (void* )aTask, ModelAsyncLoader::onDataRead, ModelAsyncLoader::onReadFailed);
 }
 
@@ -989,10 +1258,11 @@ void WasmOcctView::openFromUrl (const std::string& theName,
 // Purpose  :
 // ================================================================
 bool WasmOcctView::openFromMemory (const std::string& theName,
+                                   const bool theToExpand,
                                    uintptr_t theBuffer, int theDataLen,
                                    bool theToFree)
 {
-  removeObject (theName);
+  removeObjectList (theName, false);
   char* aBytes = reinterpret_cast<char*>(theBuffer);
   if (aBytes == nullptr
    || theDataLen <= 0)
@@ -1005,11 +1275,11 @@ bool WasmOcctView::openFromMemory (const std::string& theName,
 
   if (dataStartsWithHeader(aBytes, "DBRep_DrawableShape"))
   {
-    return openBRepFromMemory (theName, theBuffer, theDataLen, theToFree);
+    return openBRepFromMemory (theName, theToExpand, theBuffer, theDataLen, theToFree);
   }
   else if (dataStartsWithHeader(aBytes, "glTF"))
   {
-    //return openGltfFromMemory (theName, theBuffer, theDataLen, theToFree);
+    return openGltfFromMemory (theName, theToExpand, theBuffer, theDataLen, theToFree);
   }
   if (theToFree)
   {
@@ -1025,12 +1295,13 @@ bool WasmOcctView::openFromMemory (const std::string& theName,
 // Purpose  :
 // ================================================================
 bool WasmOcctView::openBRepFromMemory (const std::string& theName,
+                                       const bool theToExpand,
                                        uintptr_t theBuffer, int theDataLen,
                                        bool theToFree)
 {
-  removeObject (theName);
+  removeObjectList (theName, false);
 
-  WasmOcctView& aViewer = Instance();
+  /*WasmOcctView& aViewer = Instance();
   TopoDS_Shape aShape;
   BRep_Builder aBuilder;
   bool isLoaded = false;
@@ -1062,18 +1333,322 @@ bool WasmOcctView::openBRepFromMemory (const std::string& theName,
 
   Message::DefaultMessenger()->Send (TCollection_AsciiString("Loaded file ") + theName.c_str(), Message_Info);
   Message::DefaultMessenger()->Send (OSD_MemInfo::PrintInfo(), Message_Trace);
+  return true;*/
+  return false;
+}
+
+#include <OSD_OpenFile.hxx>
+#include <RWGltf_GltfJsonParser.hxx>
+#include <RWGltf_TriangulationReader.hxx>
+#include "WasmOcctObject.h"
+
+class WasmTriangulationReader : public RWGltf_TriangulationReader
+{
+public:
+
+  WasmTriangulationReader (std::istream& theStream,
+                           const TCollection_AsciiString& theFile)
+  : myRootStream (&theStream), myRootPath (theFile)
+  {
+    //
+  }
+
+  virtual bool load (const Handle(RWGltf_GltfLatePrimitiveArray)& theMesh) override
+  {
+    reset();
+    if (theMesh.IsNull()
+     || theMesh->PrimitiveMode() == RWGltf_GltfPrimitiveMode_UNKNOWN)
+    {
+      return false;
+    }
+
+    for (NCollection_Sequence<RWGltf_GltfPrimArrayData>::Iterator aDataIter (theMesh->Data()); aDataIter.More(); aDataIter.Next())
+    {
+      const RWGltf_GltfPrimArrayData& aData = aDataIter.Value();
+      if (!aData.StreamData.IsNull())
+      {
+        Standard_ArrayStreamBuffer aStreamBuffer ((const char* )aData.StreamData->Data(), aData.StreamData->Size());
+        std::istream aStream (&aStreamBuffer);
+        aStream.seekg ((std::streamoff )aData.StreamOffset, std::ios_base::beg);
+        if (!readBuffer (aStream, theMesh->Id(), aData.Accessor, aData.Type, theMesh->PrimitiveMode()))
+        {
+          return false;
+        }
+        continue;
+      }
+      else if (aData.StreamUri.IsEmpty())
+      {
+        reportError (TCollection_AsciiString ("Buffer '") + theMesh->Id() + "' does not define uri.");
+        return false;
+      }
+
+      std::istream* aStream = &mySharedStream.Stream;
+      if (aData.StreamUri == myRootPath
+       && myRootStream != NULL)
+      {
+        aStream = myRootStream;
+      }
+      else if (mySharedStream.Path != aData.StreamUri)
+      {
+        mySharedStream.Stream.close();
+        mySharedStream.Path = aData.StreamUri;
+      }
+      if (aStream == &mySharedStream.Stream
+      && !mySharedStream.Stream.is_open())
+      {
+        OSD_OpenStream (mySharedStream.Stream, aData.StreamUri.ToCString(), std::ios::in | std::ios::binary);
+        if (!mySharedStream.Stream.is_open())
+        {
+          mySharedStream.Stream.close();
+          reportError (TCollection_AsciiString ("Buffer '") + theMesh->Id() + "refers to non-existing file '" + aData.StreamUri + "'.");
+          return false;
+        }
+      }
+
+      aStream->seekg ((std::streamoff )aData.StreamOffset, std::ios_base::beg);
+      if (!aStream->good())
+      {
+        mySharedStream.Stream.close();
+        reportError (TCollection_AsciiString ("Buffer '") + theMesh->Id() + "refers to invalid location.");
+        return false;
+      }
+
+      if (!readBuffer (*aStream, theMesh->Id(), aData.Accessor, aData.Type, theMesh->PrimitiveMode()))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
+private:
+
+  std::istream* myRootStream;
+  TCollection_AsciiString myRootPath;
+
+};
+
+//! Parse glTF data.
+static bool parseGltfFromMemory (RWGltf_GltfJsonParser& theParser,
+                                 std::istream& theStream,
+                                 const TCollection_AsciiString& theFile)
+{
+  bool isBinaryFile = false;
+  char aGlbHeader[12] = {};
+  theStream.read (aGlbHeader, sizeof(aGlbHeader));
+  int64_t aBinBodyOffset = 0, aBinBodyLen = 0, aJsonBodyOffset = 0, aJsonBodyLen = 0;
+  if (::strncmp (aGlbHeader, "glTF", 4) == 0)
+  {
+    isBinaryFile = true;
+    const uint32_t* aVer = (const uint32_t* )(aGlbHeader + 4);
+    const uint32_t* aLen = (const uint32_t* )(aGlbHeader + 8);
+    if (*aVer != 2)
+    {
+      Message::SendFail (TCollection_AsciiString ("File '") + theFile + "' is written using unknown version " + int(*aVer));
+      return false;
+    }
+
+    for (int aChunkIter = 0; !theStream.eof() && aChunkIter < 2; ++aChunkIter)
+    {
+      char aChunkHeader2[8] = {};
+      if (int64_t(theStream.tellg()) + int64_t(sizeof(aChunkHeader2)) > int64_t(*aLen))
+      {
+        break;
+      }
+
+      theStream.read (aChunkHeader2, sizeof(aChunkHeader2));
+      if (!theStream.good())
+      {
+        Message::SendFail (TCollection_AsciiString ("File '") + theFile + "' is written using unsupported format");
+        return false;
+      }
+
+      const uint32_t* aChunkLen  = (const uint32_t* )(aChunkHeader2 + 0);
+      const uint32_t* aChunkType = (const uint32_t* )(aChunkHeader2 + 4);
+      if (*aChunkType == 0x4E4F534A)
+      {
+        aJsonBodyOffset = int64_t(theStream.tellg());
+        aJsonBodyLen    = int64_t(*aChunkLen);
+      }
+      else if (*aChunkType == 0x004E4942)
+      {
+        aBinBodyOffset = int64_t(theStream.tellg());
+        aBinBodyLen    = int64_t(*aChunkLen);
+      }
+      if (*aChunkLen != 0)
+      {
+        theStream.seekg (*aChunkLen, std::ios_base::cur);
+      }
+    }
+
+    theStream.seekg ((std::streamoff )aJsonBodyOffset, std::ios_base::beg);
+  }
+  else
+  {
+    theStream.seekg (0, std::ios_base::beg);
+  }
+  if (isBinaryFile)
+  {
+    theParser.SetBinaryFormat (aBinBodyOffset, aBinBodyLen);
+  }
+
+  rapidjson::ParseResult aRes;
+  rapidjson::IStreamWrapper aFileStream (theStream);
+  if (isBinaryFile)
+  {
+    aRes = theParser.ParseStream<rapidjson::kParseStopWhenDoneFlag, rapidjson::UTF8<>, rapidjson::IStreamWrapper> (aFileStream);
+  }
+  else
+  {
+    aRes = theParser.ParseStream (aFileStream);
+  }
+  if (aRes.IsError())
+  {
+    if (aRes.Code() == rapidjson::kParseErrorDocumentEmpty)
+    {
+      Message::SendFail (TCollection_AsciiString ("File '") + theFile + "' is empty");
+      return false;
+    }
+    TCollection_AsciiString anErrDesc (RWGltf_GltfJsonParser::FormatParseError (aRes.Code()));
+    Message::SendFail (TCollection_AsciiString ("File '") + theFile + "' defines invalid JSON document!\n"
+                     + anErrDesc + " [at offset " + (int )aRes.Offset() + "].");
+    return false;
+  }
+
+  if (!theParser.Parse (Message_ProgressRange()))
+  {
+    return false;
+  }
+
   return true;
 }
 
 // ================================================================
-// Function : displayGround
+// Function : openGltfFromMemory
 // Purpose  :
 // ================================================================
-void WasmOcctView::displayGround (bool theToShow)
+bool WasmOcctView::openGltfFromMemory (const std::string& theName,
+                                       const bool theToExpand,
+                                       uintptr_t theBuffer, int theDataLen,
+                                       bool theToFree)
 {
-  static Handle(AIS_Shape) aGroundPrs = new AIS_Shape (TopoDS_Shape());
+  removeObjectList (theName, false);
 
   WasmOcctView& aViewer = Instance();
+
+  char* aRawData = reinterpret_cast<char*>(theBuffer);
+  Standard_ArrayStreamBuffer aStreamBuffer (aRawData, theDataLen);
+  std::istream aStream (&aStreamBuffer);
+
+  Handle(WasmOcctObject) aShapePrs = new WasmOcctObject();
+
+  RWMesh_CoordinateSystemConverter aTrsf;
+  aTrsf.SetInputLengthUnit (1.0); // meters
+  aTrsf.SetInputCoordinateSystem (RWMesh_CoordinateSystem_glTF);
+  aTrsf.SetOutputLengthUnit (1.0); // meters
+  aTrsf.SetOutputCoordinateSystem(RWMesh_CoordinateSystem_Zup);
+
+  RWGltf_GltfJsonParser aParser (aShapePrs->ChangeShapes());
+  aParser.SetFilePath (theName.c_str());
+  aParser.SetErrorPrefix (TCollection_AsciiString ("File '") + theName.c_str() + "' defines invalid glTF!\n");
+  aParser.SetAttributeMap (aShapePrs->ChangeAttributes());
+  aParser.SetCoordinateSystemConverter (aTrsf);
+  //aParser.SetSkipEmptyNodes (myToSkipEmptyNodes);
+  //aParser.SetMeshNameAsFallback (myUseMeshNameAsFallback);
+  bool isParsed = parseGltfFromMemory (aParser, aStream, theName.c_str());
+  if (isParsed)
+  {
+    Handle(RWGltf_PrimitiveArrayReader) aReader = new WasmTriangulationReader (aStream, theName.c_str());
+    aReader->SetCoordinateSystemConverter (aTrsf);
+    for (NCollection_Vector<TopoDS_Face>::Iterator aFaceIter (aParser.FaceList()); aFaceIter.More(); aFaceIter.Next())
+    {
+      TopoDS_Face& aFace = aFaceIter.ChangeValue();
+      TopLoc_Location aDummyLoc;
+      Handle(RWGltf_GltfLatePrimitiveArray) aLateData = Handle(RWGltf_GltfLatePrimitiveArray)::DownCast (BRep_Tool::Triangulation (aFace, aDummyLoc));
+      Handle(Poly_Triangulation) aPolyData = aReader->Load (aLateData);
+      BRep_Builder aBuilder;
+      aBuilder.UpdateFace (aFace, aPolyData);
+    }
+  }
+  if (theToFree)
+  {
+    free (aRawData);
+  }
+
+  if (!isParsed)
+  {
+    return false;
+  }
+
+  if (theToExpand)
+  {
+    /// TODO this is just a dummy logic for testing - expanding should be done by assembly tree, not faces!
+    Standard_Integer aSubIndex = 0;
+    for (TopTools_SequenceOfShape::Iterator aShapeIter (aShapePrs->ChangeShapes()); aShapeIter.More(); aShapeIter.Next())
+    {
+      for (TopExp_Explorer aFaceIter (aShapeIter.Value(), TopAbs_FACE); aFaceIter.More(); aFaceIter.Next())
+      {
+        const TopoDS_Shape& aSubShape = aFaceIter.Current();
+        Handle(WasmOcctObject) aSubShapePrs = new WasmOcctObject();
+        aSubShapePrs->SetShape (aSubShape);
+        if (const RWMesh_NodeAttributes* anAttribs = aShapePrs->ChangeAttributes().Seek (aSubShape.Located (TopLoc_Location())))
+        {
+          aSubShapePrs->ChangeAttributes().Bind (aSubShape.Located (TopLoc_Location()), *anAttribs);
+        }
+        if (!theName.empty())
+        {
+          ++aSubIndex;
+          TCollection_AsciiString aName = TCollection_AsciiString (theName.c_str()) + "/" + aSubIndex;
+          aViewer.myObjects.Add (aName, aSubShapePrs);
+        }
+        aViewer.Context()->Display (aSubShapePrs, 0, 0, false);
+      }
+    }
+  }
+  else
+  {
+    if (!theName.empty())
+    {
+      aViewer.myObjects.Add (theName.c_str(), aShapePrs);
+    }
+    aViewer.Context()->Display (aShapePrs, 0, 0, false);
+  }
+
+  aViewer.View()->FitAll (0.01, false);
+  aViewer.View()->Invalidate();
+  aViewer.updateView();
+
+  setShowGround (aViewer.myToShowGround, false);
+
+  Message::DefaultMessenger()->Send (TCollection_AsciiString("Loaded file ") + theName.c_str(), Message_Info);
+  Message::DefaultMessenger()->Send (OSD_MemInfo::PrintInfo(), Message_Trace);
+  if (!theName.empty())
+  {
+    aViewer.onDisplayedObjectsChanged();
+  }
+  return true;
+}
+
+// ================================================================
+// Function : toShowGround
+// Purpose  :
+// ================================================================
+bool WasmOcctView::toShowGround()
+{
+  return Instance().myToShowGround;
+}
+
+// ================================================================
+// Function : setShowGround
+// Purpose  :
+// ================================================================
+void WasmOcctView::setShowGround (bool theToShow,
+                                  bool theToUpdate)
+{
+  static Handle(WasmOcctObject) aGroundPrs = new WasmOcctObject();
+
+  WasmOcctView& aViewer = Instance();
+  aViewer.myToShowGround = theToShow;
   Bnd_Box aBox;
   if (theToShow)
   {
@@ -1087,7 +1662,10 @@ void WasmOcctView::displayGround (bool theToShow)
       && aGroundPrs->HasInteractiveContext())
     {
       aViewer.Context()->Remove (aGroundPrs, false);
-      aViewer.UpdateView();
+      if (theToUpdate)
+      {
+        aViewer.UpdateView();
+      }
     }
     return;
   }
@@ -1120,21 +1698,37 @@ void WasmOcctView::displayGround (bool theToShow)
   aGroundPrs->SetToUpdate();
   aGroundPrs->SetMaterial (Graphic3d_NameOfMaterial_Stone);
   aGroundPrs->SetInfiniteState (false);
-  aViewer.Context()->Display (aGroundPrs, AIS_Shaded, -1, false);
+  aViewer.Context()->Display (aGroundPrs, 0, -1, false);
   aGroundPrs->SetInfiniteState (true);
-  aViewer.UpdateView();
+  if (theToUpdate)
+  {
+    aViewer.UpdateView();
+  }
 }
 
 // Module exports
 EMSCRIPTEN_BINDINGS(OccViewerModule) {
-  emscripten::function("setCubemapBackground", &WasmOcctView::setCubemapBackground);
-  emscripten::function("fitAllObjects",    &WasmOcctView::fitAllObjects);
-  emscripten::function("removeAllObjects", &WasmOcctView::removeAllObjects);
-  emscripten::function("removeObject",     &WasmOcctView::removeObject);
-  emscripten::function("eraseObject",      &WasmOcctView::eraseObject);
-  emscripten::function("displayObject",    &WasmOcctView::displayObject);
-  emscripten::function("displayGround",    &WasmOcctView::displayGround);
-  emscripten::function("openFromUrl",      &WasmOcctView::openFromUrl);
-  emscripten::function("openFromMemory",   &WasmOcctView::openFromMemory, emscripten::allow_raw_pointers());
-  emscripten::function("openBRepFromMemory", &WasmOcctView::openBRepFromMemory, emscripten::allow_raw_pointers());
+  emscripten::function("toDynamicHighlight",   &WasmOcctView::toDynamicHighlight);
+  emscripten::function("setDynamicHighlight",  &WasmOcctView::setDynamicHighlight);
+  emscripten::function("toCastShadows",        &WasmOcctView::toCastShadows);
+  emscripten::function("setCastShadows",       &WasmOcctView::setCastShadows);
+  //emscripten::property("toCastShadows", &WasmOcctView::toCastShadows, &WasmOcctView::setCastShadows); // this could be only in class
+  emscripten::function("isAntiAliasingOn",     &WasmOcctView::isAntiAliasingOn);
+  emscripten::function("setAntiAliasingOn",    &WasmOcctView::setAntiAliasingOn);
+  emscripten::function("setBackgroundColor",   &WasmOcctView::setBackgroundColor);
+  emscripten::function("setBackgroundCubemap", &WasmOcctView::setBackgroundCubemap);
+  emscripten::function("fitAllObjects",        &WasmOcctView::fitAllObjects);
+  emscripten::function("removeAllObjects",     &WasmOcctView::removeAllObjects);
+  emscripten::function("removeObjectList",     &WasmOcctView::removeObjectList);
+  emscripten::function("eraseObjectList",      &WasmOcctView::eraseObjectList);
+  emscripten::function("displayedObjects",     &WasmOcctView::displayedObjects);
+  emscripten::function("selectedObjects",      &WasmOcctView::selectedObjects);
+  emscripten::function("erasedObjects",        &WasmOcctView::erasedObjects);
+  emscripten::function("displayObjectList",    &WasmOcctView::displayObjectList);
+  emscripten::function("toShowGround",         &WasmOcctView::toShowGround);
+  emscripten::function("setShowGround",        &WasmOcctView::setShowGround);
+  emscripten::function("openFromUrl",          &WasmOcctView::openFromUrl);
+  emscripten::function("openFromMemory",       &WasmOcctView::openFromMemory, emscripten::allow_raw_pointers());
+  emscripten::function("openBRepFromMemory",   &WasmOcctView::openBRepFromMemory, emscripten::allow_raw_pointers());
+  emscripten::function("openGltfFromMemory",   &WasmOcctView::openGltfFromMemory, emscripten::allow_raw_pointers());
 }

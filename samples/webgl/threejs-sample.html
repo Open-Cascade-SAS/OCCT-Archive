@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang=en-us>
+<head>
+<meta charset=utf-8><meta content="text/html; charset=utf-8" http-equiv=Content-Type>
+<link rel="shortcut icon" href="lamp.ico" type="image/x-icon" />
+<title>Three.js Viewer Sample</title>
+</head>
+<body>
+
+<h2>Three.js Viewer Sample</h2>
+<div>
+  <canvas id=occViewerCanvas oncontextmenu=event.preventDefault() tabindex=-1 style="border:0 none;background-color:#000" width="409" height="409"></canvas>
+</div>
+
+<div>
+  <input type="checkbox" id="inputCheckShadows"><label for="inputCheckShadows">Shadows</label>
+  <input type="checkbox" id="inputAntiAliasing"><label for="inputAntiAliasing">Antialiasing</label>
+  <input type="checkbox" id="inputCheckGround" ><label for="inputCheckGround">Ground</label>
+  <input type="checkbox" id="inputCheckSkyBox" ><label for="inputCheckSkyBox">SkyBox</label>
+  <input type="checkbox" id="inputCheckHighlight"><label for="inputCheckHighlight">Dynamic highlight</label>
+  <br>
+  <input type="button" value="Clear All"   onclick="OccViewerModule.removeAllObjects(true)">
+  <input type="file" id="inputUploadModel" accept=".gltf, .glb">
+  <input type="button" value="Upload File" onclick="doInputUploadModel()">
+  <input type="button" value="Fit All"     onclick="OccViewerModule.fitAllObjects(true, true)">
+  <input type="button" value="Hide selected" onclick="doEraseSelected()">
+  <input type="button" value="Show hidden" onclick="doShowErased()">
+  <br>
+  <input type="checkbox" id="inputCheckExpand" ><label for="inputCheckExpand">Expand model</label>
+</div>
+<h4>Console output:</h4>
+<p id="output"></p>
+
+<script src="threejs/three.min.js"></script>
+<script src="threejs/OrbitControls.js"></script>
+<script src="threejs/GLTFLoader.js"></script>
+<script src="threejs/BufferGeometryUtils.js"></script>
+<script src="threejs/stats.min.js"></script>
+<script src="threejs-sample.js"></script>
+<script>
+//! Resize canvas to fit into window.
+function updateCanvasSize()
+{
+  // size of canvas in logical (density-independent) units
+  var aSizeX = Math.min (window.innerWidth,  window.screen.availWidth);
+  var aSizeY = Math.min (window.innerHeight, window.screen.availHeight);
+  aSizeX = Math.max (300, aSizeX - 30);
+  aSizeY = Math.max (300, aSizeY / 2);
+  occViewerCanvas.style.width  = aSizeX + "px";
+  occViewerCanvas.style.height = aSizeY + "px";
+
+  // drawing buffer size (aka backing store)
+  var aDevicePixelRatio = window.devicePixelRatio || 1;
+  occViewerCanvas.width  = aSizeX * aDevicePixelRatio;
+  occViewerCanvas.height = aSizeY * aDevicePixelRatio;
+}
+window.onresize = updateCanvasSize;
+updateCanvasSize();
+
+var aSkyBox = "textures/landing_pad/";
+var aDefModel = "models/yellow_up.glb";
+var aDefName  = "yellow";
+var aDevicePixelRatio = window.devicePixelRatio || 1;
+inputAntiAliasing.checked = aDevicePixelRatio <= 1.25;
+var OccViewerModule = createOccThreejsViewer (document.getElementById ('occViewerCanvas'), aSkyBox, inputAntiAliasing.checked);
+OccViewerModule.openFromUrl (aDefName, aDefModel, false);
+//OccViewerModule.openFromUrl ("stork", "models/Stork.glb");
+//OccViewerModule.openFromUrl ("spheres", "models/spheres.glb");
+
+inputCheckShadows.checked  = OccViewerModule.toCastShadows();
+inputCheckShadows.onchange = function() { OccViewerModule.setCastShadows (inputCheckShadows.checked, true); }
+inputAntiAliasing.onchange = function() {}
+inputCheckGround .checked  = OccViewerModule.toShowGround();
+inputCheckGround .onchange = function() { OccViewerModule.setShowGround (inputCheckGround.checked, true); }
+inputCheckHighlight.checked  = OccViewerModule.toDynamicHighlight();
+inputCheckHighlight.onchange = function() { OccViewerModule.setDynamicHighlight (inputCheckHighlight.checked); }
+inputCheckSkyBox .checked  = true;
+inputCheckSkyBox .onchange = function() {
+  if (inputCheckSkyBox.checked) { OccViewerModule.setBackgroundCubemap (aSkyBox, true); }
+  else { OccViewerModule.setBackgroundColor (0.0, 0.0, 0.0, true); }
+}
+inputCheckExpand.checked  = false;
+inputCheckExpand.onchange = function() {
+  OccViewerModule.removeAllObjects (true);
+  OccViewerModule.openFromUrl (aDefName, aDefModel, inputCheckExpand.checked);
+}
+
+//! Handle file uploading.
+inputUploadModel.onchange = function()
+{
+  if (inputUploadModel.files.length == 0) { return; }
+  // Warning! Entire file is pre-loaded into memory.
+  var aFile = inputUploadModel.files[0];
+  /*var aReader = new FileReader();
+  aReader.onload = function()
+  {
+    var aDataArray = new Uint8Array (aReader.result);
+    const aDataBuffer = OccViewerModule._malloc (aDataArray.length);
+    OccViewerModule.HEAPU8.set (aDataArray, aDataBuffer);
+    //OccViewerModule.openBRepFromMemory (aFile.name, aDataBuffer, aDataArray.length, true);
+    OccViewerModule.openGltfFromMemory (aFile.name, aDataBuffer, aDataArray.length, true);
+    //OccViewerModule._free (aDataBuffer); will be freed by called method
+    OccViewerModule.displayGround (true);
+  };
+  aReader.readAsArrayBuffer(aFile);*/
+  //OccViewerModule.openFromUrl ("object", aFile.name);
+};
+</script>
+</body>
+</html>
