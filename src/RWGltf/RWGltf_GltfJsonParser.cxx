@@ -1616,8 +1616,16 @@ bool RWGltf_GltfJsonParser::gltfParseAccessor (const Handle(RWGltf_GltfLatePrimi
             isValidMinMax = false;
             break;
           }
-          aMinPnt.SetCoord (anIter + 1, aMinVal.GetDouble());
-          aMinPnt.SetCoord (anIter + 1, aMaxVal.GetDouble());
+          double aMinDVal = aMinVal.GetDouble();
+          double aMaxDVal = aMaxVal.GetDouble();
+          if (aMinDVal > aMaxDVal)
+          {
+            reportGltfWarning ("Accessor '" + theName + "' defines invalid min/max value.");
+            isValidMinMax = false;
+            break;
+          }
+          aMinPnt.SetCoord (anIter + 1, aMinDVal);
+          aMaxPnt.SetCoord (anIter + 1, aMaxDVal);
         }
         if (isValidMinMax)
         {
@@ -1628,7 +1636,7 @@ bool RWGltf_GltfJsonParser::gltfParseAccessor (const Handle(RWGltf_GltfLatePrimi
           aBox.Add (aMinPnt);
           aBox.Add (aMaxPnt);
 
-          theMeshData->SetBoundingBox (aBox);
+          theMeshData->SetCachedMinMax (aBox);
         }
       }
     }
