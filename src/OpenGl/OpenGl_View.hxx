@@ -348,6 +348,12 @@ public: //! @name obsolete Graduated Trihedron functionality
   //! @param theMax [in] the maximum point of scene.
   Standard_EXPORT virtual void GraduatedTrihedronMinMaxValues (const Graphic3d_Vec3 theMin, const Graphic3d_Vec3 theMax) Standard_OVERRIDE;
 
+  //! Returns necessity to flip OY in projection matrix
+  virtual Standard_Boolean IsToFlipOutput() const Standard_OVERRIDE { return myToFlipOutput; }
+
+  //! Sets state of flip OY necessity in projection matrix
+  virtual void SetToFlipOutput (const Standard_Boolean theFlip) Standard_OVERRIDE { myToFlipOutput = theFlip; }
+
 protected: //! @name Internal methods for managing GL resources
 
   //! Initializes OpenGl resource for environment texture.
