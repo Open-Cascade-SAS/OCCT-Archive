@@ -442,6 +442,14 @@ Bnd_Box Graphic3d_CView::MinMaxValues (const Standard_Boolean theToIncludeAuxili
                                         theToIncludeAuxiliary);
     aResult.Add (aBox);
   }
+
+  // force HLRValidation to False on all structures calculated in the view
+  for (Graphic3d_SequenceOfStructure::Iterator aStructIter (myStructsComputed); aStructIter.More(); aStructIter.Next())
+  {
+    Bnd_Box aBox = aStructIter.Value()->MinMaxValues();
+    aResult.Add (aBox);
+  }
+
   return aResult;
 }
 
