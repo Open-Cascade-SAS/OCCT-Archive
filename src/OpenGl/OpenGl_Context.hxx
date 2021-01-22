@@ -214,6 +214,12 @@ class OpenGl_Context : public Standard_Transient
   friend class OpenGl_Window;
 public:
 
+  Standard_EXPORT static GLuint NO_FRAMEBUFFER();
+  Standard_EXPORT static GLuint NO_RENDERBUFFER();
+
+  Standard_EXPORT static void SET_NO_FRAMEBUFFER(GLuint val);
+  Standard_EXPORT static void SET_NO_RENDERBUFFER(GLuint val);
+
   typedef NCollection_Shared< NCollection_DataMap<TCollection_AsciiString, Handle(OpenGl_Resource)> > OpenGl_ResourcesMap;
 
   //! Function for getting power of to number larger or equal to input number.

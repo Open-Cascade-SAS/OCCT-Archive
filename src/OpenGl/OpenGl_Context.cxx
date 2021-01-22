@@ -111,6 +111,29 @@ namespace
   }
 }
 
+static GLuint NoFrameBuffer = 0;
+static GLuint NoRenderBuffer = 0;
+
+GLuint OpenGl_Context::NO_FRAMEBUFFER()
+{
+  return NoFrameBuffer;
+}
+
+GLuint OpenGl_Context::NO_RENDERBUFFER()
+{
+  return NoRenderBuffer;
+}
+
+void OpenGl_Context::SET_NO_FRAMEBUFFER(GLuint val)
+{
+  NoFrameBuffer = val;
+}
+
+void OpenGl_Context::SET_NO_RENDERBUFFER(GLuint val)
+{
+  NoRenderBuffer = val;
+}
+
 // =======================================================================
 // function : OpenGl_Context
 // purpose  :
@@ -453,7 +476,7 @@ void OpenGl_Context::SetReadBuffer (const Standard_Integer theReadBuffer)
   if (myReadBuffer < GL_COLOR_ATTACHMENT0
    && arbFBO != NULL)
   {
-    arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_FrameBuffer::NO_FRAMEBUFFER);
+    arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*OpenGl_FrameBuffer::NO_FRAMEBUFFER*/);
   }
   ::glReadBuffer (myReadBuffer);
 #else
@@ -472,7 +495,7 @@ void OpenGl_Context::SetDrawBuffer (const Standard_Integer theDrawBuffer)
   if (aDrawBuffer < GL_COLOR_ATTACHMENT0
    && arbFBO != NULL)
   {
-    arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_FrameBuffer::NO_FRAMEBUFFER);
+    arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*OpenGl_FrameBuffer::NO_FRAMEBUFFER*/);
   }
   ::glDrawBuffer (aDrawBuffer);
 
@@ -512,7 +535,7 @@ void OpenGl_Context::SetDrawBuffers (const Standard_Integer theNb, const Standar
   }
   if (arbFBO != NULL && useDefaultFbo)
   {
-    arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_FrameBuffer::NO_FRAMEBUFFER);
+    arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*OpenGl_FrameBuffer::NO_FRAMEBUFFER*/);
   }
 
   myFuncs->glDrawBuffers (theNb, (const GLenum*)theDrawBuffers);

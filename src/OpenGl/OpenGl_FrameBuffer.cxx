@@ -71,9 +71,9 @@ OpenGl_FrameBuffer::OpenGl_FrameBuffer()
   myVPSizeY (0),
   myNbSamples (0),
   myDepthFormat (GL_DEPTH24_STENCIL8),
-  myGlFBufferId (NO_FRAMEBUFFER),
-  myGlColorRBufferId (NO_RENDERBUFFER),
-  myGlDepthRBufferId (NO_RENDERBUFFER),
+  myGlFBufferId (OpenGl_Context::NO_FRAMEBUFFER()/*NO_FRAMEBUFFER*/),
+  myGlColorRBufferId (OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/),
+  myGlDepthRBufferId (OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/),
   myIsOwnBuffer  (false),
   myIsOwnDepth  (false),
   myDepthStencilTexture (new OpenGl_Texture())
@@ -339,7 +339,7 @@ Standard_Boolean OpenGl_FrameBuffer::Init (const Handle(OpenGl_Context)& theGlCo
       theGlContext->arbFBO->glGenRenderbuffers (1, &myGlDepthRBufferId);
       theGlContext->arbFBO->glBindRenderbuffer (GL_RENDERBUFFER, myGlDepthRBufferId);
       theGlContext->arbFBO->glRenderbufferStorage (GL_RENDERBUFFER, aDepthStencilFormat, aSizeX, aSizeY);
-      theGlContext->arbFBO->glBindRenderbuffer (GL_RENDERBUFFER, NO_RENDERBUFFER);
+      theGlContext->arbFBO->glBindRenderbuffer (GL_RENDERBUFFER, OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/);
     }
   }
 
@@ -371,7 +371,7 @@ Standard_Boolean OpenGl_FrameBuffer::Init (const Handle(OpenGl_Context)& theGlCo
                                                     myDepthStencilTexture->GetTarget(), myDepthStencilTexture->TextureId(), 0);
     }
   }
-  else if (myGlDepthRBufferId != NO_RENDERBUFFER)
+  else if (myGlDepthRBufferId != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/)
   {
     if (hasDepthStencilAttach (theGlContext) && hasStencilRB)
     {
@@ -486,7 +486,7 @@ Standard_Boolean OpenGl_FrameBuffer::InitWithRB (const Handle(OpenGl_Context)& t
   const Standard_Integer aSizeY = theSizeY > 0 ? theSizeY : 2;
 
   // Create the render-buffers
-  if (theColorRBufferFromWindow != NO_RENDERBUFFER)
+  if (theColorRBufferFromWindow != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/)
   {
     myGlColorRBufferId = theColorRBufferFromWindow;
   }
@@ -506,7 +506,7 @@ Standard_Boolean OpenGl_FrameBuffer::InitWithRB (const Handle(OpenGl_Context)& t
     theGlCtx->arbFBO->glGenRenderbuffers (1, &myGlDepthRBufferId);
     theGlCtx->arbFBO->glBindRenderbuffer (GL_RENDERBUFFER, myGlDepthRBufferId);
     theGlCtx->arbFBO->glRenderbufferStorage (GL_RENDERBUFFER, myDepthFormat, aSizeX, aSizeY);
-    theGlCtx->arbFBO->glBindRenderbuffer (GL_RENDERBUFFER, NO_RENDERBUFFER);
+    theGlCtx->arbFBO->glBindRenderbuffer (GL_RENDERBUFFER, OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/);
   }
 
   // create FBO
@@ -514,7 +514,7 @@ Standard_Boolean OpenGl_FrameBuffer::InitWithRB (const Handle(OpenGl_Context)& t
   theGlCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, myGlFBufferId);
   theGlCtx->arbFBO->glFramebufferRenderbuffer (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                                                GL_RENDERBUFFER, myGlColorRBufferId);
-  if (myGlDepthRBufferId != NO_RENDERBUFFER)
+  if (myGlDepthRBufferId != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/)
   {
     if (hasDepthStencilAttach (theGlCtx) && hasStencilRB)
     {
@@ -558,9 +558,9 @@ Standard_Boolean OpenGl_FrameBuffer::InitWrapper (const Handle(OpenGl_Context)& 
   // clean up previous state
   Release (theGlCtx.operator->());
 
-  GLint anFbo = GLint(NO_FRAMEBUFFER);
+  GLint anFbo = GLint(OpenGl_Context::NO_FRAMEBUFFER()/*NO_FRAMEBUFFER*/);
   ::glGetIntegerv (GL_FRAMEBUFFER_BINDING, &anFbo);
-  if (anFbo == GLint(NO_FRAMEBUFFER))
+  if (anFbo == GLint(OpenGl_Context::NO_FRAMEBUFFER()/*NO_FRAMEBUFFER*/))
   {
     return Standard_False;
   }
@@ -606,16 +606,16 @@ Standard_Boolean OpenGl_FrameBuffer::InitWrapper (const Handle(OpenGl_Context)& 
   }
 
   // retrieve dimensions
-  GLuint aRBuffer = myGlColorRBufferId != NO_RENDERBUFFER ? myGlColorRBufferId : myGlDepthRBufferId;
-  if (aRBuffer != NO_RENDERBUFFER)
+  GLuint aRBuffer = myGlColorRBufferId != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/ ? myGlColorRBufferId : myGlDepthRBufferId;
+  if (aRBuffer != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/)
   {
     theGlCtx->arbFBO->glBindRenderbuffer (GL_RENDERBUFFER, aRBuffer);
     theGlCtx->arbFBO->glGetRenderbufferParameteriv (GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH,  &myVPSizeX);
     theGlCtx->arbFBO->glGetRenderbufferParameteriv (GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &myVPSizeY);
-    theGlCtx->arbFBO->glBindRenderbuffer (GL_RENDERBUFFER, NO_RENDERBUFFER);
+    theGlCtx->arbFBO->glBindRenderbuffer (GL_RENDERBUFFER, OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/);
   }
 
-  return aRBuffer != NO_RENDERBUFFER;
+  return aRBuffer != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/;
 }
 
 // =======================================================================
@@ -633,18 +633,18 @@ void OpenGl_FrameBuffer::Release (OpenGl_Context* theGlCtx)
      && myIsOwnBuffer)
     {
       theGlCtx->arbFBO->glDeleteFramebuffers (1, &myGlFBufferId);
-      if (myGlColorRBufferId != NO_RENDERBUFFER)
+      if (myGlColorRBufferId != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/)
       {
         theGlCtx->arbFBO->glDeleteRenderbuffers (1, &myGlColorRBufferId);
       }
-      if (myGlDepthRBufferId != NO_RENDERBUFFER)
+      if (myGlDepthRBufferId != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/)
       {
         theGlCtx->arbFBO->glDeleteRenderbuffers (1, &myGlDepthRBufferId);
       }
     }
-    myGlFBufferId      = NO_FRAMEBUFFER;
-    myGlColorRBufferId = NO_RENDERBUFFER;
-    myGlDepthRBufferId = NO_RENDERBUFFER;
+    myGlFBufferId      = OpenGl_Context::NO_FRAMEBUFFER()/*NO_FRAMEBUFFER*/;
+    myGlColorRBufferId = OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/;
+    myGlDepthRBufferId = OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/;
     myIsOwnBuffer      = false;
   }
 
@@ -726,7 +726,7 @@ void OpenGl_FrameBuffer::UnbindBuffer (const Handle(OpenGl_Context)& theGlCtx)
   }
   else
   {
-    theGlCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, NO_FRAMEBUFFER);
+    theGlCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*NO_FRAMEBUFFER*/);
     theGlCtx->SetFrameBufferSRGB (false);
   }
 }
@@ -993,12 +993,12 @@ Standard_Size OpenGl_FrameBuffer::EstimatedDataSize() const
   {
     aSize += myDepthStencilTexture->EstimatedDataSize();
   }
-  if (myGlColorRBufferId != NO_RENDERBUFFER
+  if (myGlColorRBufferId != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/
   && !myColorFormats.IsEmpty())
   {
     aSize += OpenGl_Texture::PixelSizeOfPixelFormat (myColorFormats.First()) * myInitVPSizeX * myInitVPSizeY;
   }
-  if (myGlDepthRBufferId != NO_RENDERBUFFER)
+  if (myGlDepthRBufferId != OpenGl_Context::NO_RENDERBUFFER()/*NO_RENDERBUFFER*/)
   {
     aSize += OpenGl_Texture::PixelSizeOfPixelFormat (myDepthFormat) * myInitVPSizeX * myInitVPSizeY;
   }

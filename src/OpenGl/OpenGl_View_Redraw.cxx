@@ -806,7 +806,7 @@ void OpenGl_View::RedrawImmediate()
 
     if (aCtx->arbFBO != NULL)
     {
-      aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_FrameBuffer::NO_FRAMEBUFFER);
+      aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*OpenGl_FrameBuffer::NO_FRAMEBUFFER*/);
     }
   #if !defined(GL_ES_VERSION_2_0)
     if (anImmFbos[0] == NULL)
@@ -831,7 +831,7 @@ void OpenGl_View::RedrawImmediate()
 
     if (aCtx->arbFBO != NULL)
     {
-      aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_FrameBuffer::NO_FRAMEBUFFER);
+      aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*OpenGl_FrameBuffer::NO_FRAMEBUFFER*/);
     }
   #if !defined(GL_ES_VERSION_2_0)
     if (anImmFbos[1] == NULL)
@@ -1275,7 +1275,7 @@ void OpenGl_View::renderStructs (Graphic3d_Camera::Projection theProjection,
           }
           else
           {
-            aCtx->arbFBO->glBindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
+            aCtx->arbFBO->glBindFramebuffer (GL_DRAW_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER());
             aCtx->SetFrameBufferSRGB (false);
           }
 
@@ -1291,7 +1291,7 @@ void OpenGl_View::renderStructs (Graphic3d_Camera::Projection theProjection,
       }
       else
       {
-        aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, 0);
+        aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER());
         aCtx->SetFrameBufferSRGB (false);
       }
 
@@ -1411,7 +1411,7 @@ void OpenGl_View::bindDefaultFbo (OpenGl_FrameBuffer* theCustomFbo)
   #else
     if (aCtx->arbFBO != NULL)
     {
-      aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_FrameBuffer::NO_FRAMEBUFFER);
+      aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*OpenGl_FrameBuffer::NO_FRAMEBUFFER*/);
     }
   #endif
     const Standard_Integer aViewport[4] = { 0, 0, myWindow->Width(), myWindow->Height() };
@@ -1489,7 +1489,7 @@ bool OpenGl_View::blitBuffers (OpenGl_FrameBuffer*    theReadFbo,
   }
   else
   {
-    aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_FrameBuffer::NO_FRAMEBUFFER);
+    aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*OpenGl_FrameBuffer::NO_FRAMEBUFFER*/);
     aCtx->SetFrameBufferSRGB (false);
   }
   const Standard_Integer aViewport[4] = { 0, 0, aDrawSizeX, aDrawSizeY };
@@ -1534,7 +1534,7 @@ bool OpenGl_View::blitBuffers (OpenGl_FrameBuffer*    theReadFbo,
       {
         aCopyMask |= GL_DEPTH_BUFFER_BIT;
       }
-      aCtx->arbFBO->glBindFramebuffer (GL_DRAW_FRAMEBUFFER, OpenGl_FrameBuffer::NO_FRAMEBUFFER);
+      aCtx->arbFBO->glBindFramebuffer (GL_DRAW_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*OpenGl_FrameBuffer::NO_FRAMEBUFFER*/);
       aCtx->SetFrameBufferSRGB (false);
     }
 
@@ -1575,7 +1575,7 @@ bool OpenGl_View::blitBuffers (OpenGl_FrameBuffer*    theReadFbo,
     }
     else
     {
-      aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_FrameBuffer::NO_FRAMEBUFFER);
+      aCtx->arbFBO->glBindFramebuffer (GL_FRAMEBUFFER, OpenGl_Context::NO_FRAMEBUFFER()/*OpenGl_FrameBuffer::NO_FRAMEBUFFER*/);
       aCtx->SetFrameBufferSRGB (false);
     }
   }
