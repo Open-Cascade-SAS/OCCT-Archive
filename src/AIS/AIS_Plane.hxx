@@ -67,6 +67,16 @@ public:
   Standard_Boolean HasOwnSize() const { return myHasOwnSize; }
 
   Standard_EXPORT virtual Standard_Integer Signature() const Standard_OVERRIDE;
+
+  //! Sets transform persistence for zoom with value of minimum size
+  Standard_EXPORT void SetMinimumSize (const Standard_Real theValue);
+
+  //! Unsets transform persistence zoom
+  Standard_EXPORT void UnsetMinimumSize();
+
+  //! Returns true if transform persistence for zoom is set
+  Standard_EXPORT Standard_Boolean HasMinimumSize() const;
+
   
   Standard_EXPORT virtual AIS_KindOfInteractive Type() const Standard_OVERRIDE;
   
