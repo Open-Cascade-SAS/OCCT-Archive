@@ -223,6 +223,19 @@ public:
   }
 
 public:
+  virtual Standard_Real persistentScale (const Handle(Graphic3d_Camera)& theCamera,
+                                         const Standard_Integer /*theViewportWidth*/,
+                                         const Standard_Integer theViewportHeight) const
+  {
+    // use total size when tiling is active
+    const Standard_Integer aVPSizeY = theCamera->Tile().IsValid() ? theCamera->Tile().TotalSize.y() : theViewportHeight;
+
+    gp_Vec aVecToEye (theCamera->Direction());
+    gp_Vec aVecToObj (theCamera->Eye(), gp_Pnt (myParams.Params3d.PntX, myParams.Params3d.PntY, myParams.Params3d.PntZ));
+    const Standard_Real aFocus = aVecToObj.Dot (aVecToEye);
+    const gp_XYZ aViewDim = theCamera->ViewDimensions (aFocus);
+    return Abs(aViewDim.Y()) / Standard_Real(aVPSizeY);
+  }
 
   //! Apply transformation to bounding box of presentation.
   //! @param theCamera [in] camera definition
@@ -452,11 +465,7 @@ void Graphic3d_TransformPers::Apply (const Handle(Graphic3d_Camera)& theCamera,
     if ((myMode & Graphic3d_TMF_ZoomPers) != 0)
     {
       // lock zooming
-      gp_Vec aVecToEye (theCamera->Direction());
-      gp_Vec aVecToObj (theCamera->Eye(), gp_Pnt (myParams.Params3d.PntX, myParams.Params3d.PntY, myParams.Params3d.PntZ));
-      const Standard_Real aFocus = aVecToObj.Dot (aVecToEye);
-      const gp_XYZ aViewDim = theCamera->ViewDimensions (aFocus);
-      const Standard_Real aScale = Abs(aViewDim.Y()) / Standard_Real(aVPSizeY);
+      Standard_Real aScale = persistentScale (theCamera, theViewportWidth, theViewportHeight);
       Graphic3d_TransformUtils::Scale (aWorldView, aScale, aScale, aScale);
     }
     theWorldView.ConvertFrom (aWorldView);
