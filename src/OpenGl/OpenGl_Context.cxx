@@ -1557,8 +1557,10 @@ void OpenGl_Context::init (const Standard_Boolean theIsCoreProfile)
 
   hasTexRGBA8 = IsGlGreaterEqual (3, 0)
              || CheckExtension ("GL_OES_rgb8_rgba8");
-  hasTexSRGB  = IsGlGreaterEqual (3, 0);
-  hasFboSRGB  = IsGlGreaterEqual (3, 0);
+  hasTexSRGB  = IsGlGreaterEqual (3, 0)
+             || CheckExtension ("GL_EXT_sRGB");
+  hasFboSRGB  = IsGlGreaterEqual (3, 0)
+             || CheckExtension ("GL_EXT_sRGB");
   hasFboRenderMipmap = IsGlGreaterEqual (3, 0)
                     || CheckExtension ("GL_OES_fbo_render_mipmap");
   hasSRGBControl = CheckExtension ("GL_EXT_sRGB_write_control");
@@ -3355,8 +3357,15 @@ void OpenGl_Context::init (const Standard_Boolean theIsCoreProfile)
       GL_BACK;
     #endif
     GLint aWinColorEncoding = 0; // GL_LINEAR
-    arbFBO->glGetFramebufferAttachmentParameteriv (GL_FRAMEBUFFER, aDefWinBuffer, GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &aWinColorEncoding);
-    ResetErrors (true);
+    bool toSkipCheck = false;
+  #ifdef __EMSCRIPTEN__
+    toSkipCheck = !IsGlGreaterEqual (3, 0);
+  #endif
+    if (!toSkipCheck)
+    {
+      arbFBO->glGetFramebufferAttachmentParameteriv (GL_FRAMEBUFFER, aDefWinBuffer, GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &aWinColorEncoding);
+      ResetErrors (true);
+    }
     myIsSRgbWindow = aWinColorEncoding == GL_SRGB;
 
     // On desktop OpenGL, pixel formats are almost always sRGB-ready, even when not requested;
