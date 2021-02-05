@@ -2210,3 +2210,12 @@ BRep and Binary BRep Shape formats (only in case of triangulation-only Faces, wi
 
 Versions of formats have been changed (11 for BinOCAF, 10 for XmlOCAF, 4 for BRep Shape and 3 for Binary BRep Shape).
 Files written with the new version will not be readable by applications of old versions.
+
+@subsection upgrade_occt760_poly Changes in *Poly* package and *Poly_Triangulation* class:
+
+* Poly_Triangulation: Replaced all arrays with NCollection_Vector.
+* Poly_Triangulation: Old fashion of data access via getting collection reference is not more allowed for safety reasons.
+  Instead of old API, data access is organized via getters of single element by index.
+* New class Poly_Element that allows to store triangles or quads (quad consists of two triangles).
+* New class Poly_Mesh is extension of Poly_Triangulation that allows to store mesh with quad polygons as table of Poly_Element.
+* New OCAF attribute TDataXtd_SurfacicMesh that allows to store Poly_Mesh in OCAF documents.

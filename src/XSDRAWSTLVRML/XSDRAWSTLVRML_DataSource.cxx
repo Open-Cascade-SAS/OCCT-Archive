@@ -33,8 +33,7 @@ XSDRAWSTLVRML_DataSource::XSDRAWSTLVRML_DataSource (const Handle(Poly_Triangulat
 
   if( !myMesh.IsNull() )
   {
-    const TColgp_Array1OfPnt& aCoords = myMesh->Nodes();
-    Standard_Integer len = aCoords.Length(), i, j;
+    Standard_Integer len = myMesh->NbNodes(), i, j;
     myNodeCoords = new TColStd_HArray2OfReal(1, len, 1, 3);
     std::cout << "Nodes : " << len << std::endl;
 
@@ -43,15 +42,14 @@ XSDRAWSTLVRML_DataSource::XSDRAWSTLVRML_DataSource (const Handle(Poly_Triangulat
     for( i = 1; i <= len; i++ )
     {
       myNodes.Add( i );
-      xyz = aCoords(i).XYZ();
+      xyz = myMesh->Node (i).XYZ();
 
       myNodeCoords->SetValue(i, 1, xyz.X());
       myNodeCoords->SetValue(i, 2, xyz.Y());
       myNodeCoords->SetValue(i, 3, xyz.Z());
     }
 
-    const Poly_Array1OfTriangle& aSeq = myMesh->Triangles();
-    len = aSeq.Length();
+    len = myMesh->NbTriangles();
     myElemNormals = new TColStd_HArray2OfReal(1, len, 1, 3);
     myElemNodes = new TColStd_HArray2OfInteger(1, len, 1, 3);
 
@@ -61,14 +59,14 @@ XSDRAWSTLVRML_DataSource::XSDRAWSTLVRML_DataSource (const Handle(Poly_Triangulat
     {
       myElements.Add( i );
 
-      const Poly_Triangle& aTri = aSeq(i);
+      const Poly_Triangle& aTri = myMesh->Triangle (i);
 
       Standard_Integer V[3];
       aTri.Get (V[0], V[1], V[2]);
 
-      const gp_Pnt aP1 = aCoords (V[0]);
-      const gp_Pnt aP2 = aCoords (V[1]);
-      const gp_Pnt aP3 = aCoords (V[2]);
+      const gp_Pnt& aP1 = myMesh->Node (V[0]);
+      const gp_Pnt& aP2 = myMesh->Node (V[1]);
+      const gp_Pnt& aP3 = myMesh->Node (V[2]);
 
       gp_Vec aV1(aP1, aP2);
       gp_Vec aV2(aP2, aP3);

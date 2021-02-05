@@ -84,8 +84,13 @@ public:
   //! triangulation of a shape.
   const TColStd_Array1OfInteger& Nodes() const { return myNodes; }
 
-  //! Returns the table of nodes for this polygon for modification.
-  TColStd_Array1OfInteger& ChangeNodes() { return myNodes; }
+  //! Return node at the given index.
+  //! Raises exception if theIndex is less than NodesLowerIndex or bigger than NodesUpperIndex.
+  Standard_EXPORT Standard_Integer Node(const Standard_Integer theIndex) const;
+
+  //! Sets node at the given index.
+  //! Raises exception if theIndex is less than NodesLowerIndex or bigger than NodesUpperIndex.
+  Standard_EXPORT void SetNode(const Standard_Integer theIndex, const Standard_Integer theNode);
 
   //! Returns true if parameters are associated with the nodes in this polygon.
   Standard_Boolean HasParameters() const { return !myParameters.IsNull(); }
@@ -96,9 +101,16 @@ public:
   //! are associated with the nodes in this polygon.
   const Handle(TColStd_HArray1OfReal)& Parameters() const { return myParameters; }
 
-  //! Returns the table of the parameters associated with each node in this polygon.
-  //! Warning! HasParameters() should be called beforehand to check if parameters array is allocated.
-  TColStd_Array1OfReal& ChangeParameters() { return myParameters->ChangeArray1(); }
+  //! Return parameter at the given index.
+  //! Raises Standard_NullObject exception if parameters has not been initialized.
+  //! Raises Standard_OutOfRange exception if theIndex is less than ParametersLowerIndex or bigger than ParametersUpperIndex.
+  Standard_EXPORT Standard_Real Parameter(const Standard_Integer theIndex) const;
+
+  //! Sets parameter at the given index.
+  //! Raises Standard_NullObject exception if parameters has not been initialized.
+  //! Raises Standard_OutOfRange exception if theIndex is less than ParametersLowerIndex or bigger than ParametersUpperIndex. 
+  Standard_EXPORT void SetParameter(const Standard_Integer theIndex, const Standard_Real theValue);
+
 
   //! Sets the table of the parameters associated with each node in this polygon.
   //! Raises exception if array size doesn't much number of polygon nodes.

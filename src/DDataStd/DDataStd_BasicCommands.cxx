@@ -54,6 +54,7 @@
 
 // LES ATTRIBUTES
 #include <TDataStd.hxx>
+#include <TDataXtd_SurfacicMesh.hxx>
 #include <TDataXtd_Triangulation.hxx>
 #include <TDataStd_Comment.hxx>
 #include <TDataStd_Name.hxx>
@@ -4357,9 +4358,9 @@ static Standard_Integer DDataStd_SetTriangulation (Draw_Interpretor& di,
 //purpose  : DumpTriangulation (DF, entry)
 //=======================================================================
 
-static Standard_Integer DDataStd_DumpMesh (Draw_Interpretor& di,
-                                           Standard_Integer nb,
-                                           const char** arg)
+static Standard_Integer DDataStd_DumpTriangulation (Draw_Interpretor& di,
+                                                    Standard_Integer nb,
+                                                    const char** arg)
 {
   if (nb == 3)
   {
@@ -4392,6 +4393,98 @@ static Standard_Integer DDataStd_DumpMesh (Draw_Interpretor& di,
     return 0;
   }
   di << "DDataStd_DumpTriangulation : Error\n";
+  return 1;
+}
+
+//=======================================================================
+//function : DDataStd_SetMesh
+//purpose  : SetMesh (DF, entry, face)
+//=======================================================================
+
+static Standard_Integer DDataStd_SetMesh (Draw_Interpretor& di,
+                                          Standard_Integer nb, 
+                                          const char** arg) 
+{     
+  if (nb == 4)
+  {    
+    Handle(TDF_Data) aDF;
+    if (!DDF::GetDF (arg[1], aDF))
+      return 1;
+
+    TDF_Label aLabel;
+    if (!DDF::AddLabel (aDF, arg[2], aLabel))
+      return 1;
+
+    // Get face.
+    TopoDS_Shape aFace = DBRep::Get (arg[3]);
+    if (aFace.IsNull() ||
+        aFace.ShapeType() != TopAbs_FACE)
+    {
+      di << "The face is null or not a face.\n";
+      return 1;
+    }
+
+    // Get triangulation of the face.
+    TopLoc_Location aLoc;
+    Handle(Poly_Triangulation) aTris = BRep_Tool::Triangulation (TopoDS::Face (aFace), aLoc);
+    if (aTris.IsNull())
+    {
+      di << "No triangulation in the face.\n";
+      return 1;
+    }
+
+    // Make a mesh.
+    Handle(Poly_Mesh) aMesh = new Poly_Mesh (aTris);
+
+    // Set the attribute.
+    TDataXtd_SurfacicMesh::Set (aLabel, aMesh);
+    return 0;
+  }
+  di << "DDataStd_SetMesh : Error\n";
+  return 1;
+}
+
+//=======================================================================
+//function : DDataStd_DumpMesh
+//purpose  : DumpMesh (DF, entry)
+//=======================================================================
+
+static Standard_Integer DDataStd_DumpMesh (Draw_Interpretor& di,
+                                           Standard_Integer nb, 
+                                           const char** arg) 
+{     
+  if (nb == 3)
+  {
+    Handle(TDF_Data) aDF;
+    if (!DDF::GetDF (arg[1], aDF))
+      return 1;
+
+    Handle(TDataXtd_SurfacicMesh) aMesh;
+    if (!DDF::Find (aDF, arg[2], TDataXtd_SurfacicMesh::GetID(), aMesh))
+    {
+      di << "The attribute mesh doesn't exist at the label.\n";
+      return 1;
+    }
+
+    // Dump of the mesh.
+    if (aMesh->Get().IsNull())
+    {
+      di << "No mesh in the attribute.\n";
+      return 1;
+    }
+
+    di << "Deflection            " << aMesh->Deflection() <<"\n";
+    di << "Number of nodes       " << aMesh->NbNodes() << "\n";
+    di << "Number of triangles   " << aMesh->NbTriangles() << "\n";
+    di << "Number of quadrangles " << aMesh->NbQuads() << "\n";
+    if (aMesh->HasUVNodes())
+      di << "It has 2d-nodes\n";
+    if (aMesh->HasNormals())
+      di << "It has normals\n";
+
+    return 0;
+  }
+  di << "DDataStd_DumpMesh : Error\n";
   return 1;
 }
 
@@ -4516,6 +4609,11 @@ void DDataStd::BasicCommands (Draw_Interpretor& theCommands)
                    "SetTriangulation (DF, entry, face) - adds label with passed entry to \
                     DF and put an attribute with the triangulation from passed face",
                    __FILE__, DDataStd_SetTriangulation, g);
+  
+   theCommands.Add ("SetMesh", 
+                   "SetMesh (DF, entry, face) - adds label with passed entry to \
+                    DF and put an attribute with the triangulation from passed face",
+                   __FILE__, DDataStd_SetMesh, g);
 
    theCommands.Add ("InsertBeforeExtStringList", 
                    "InsertBeforeExtStringList (DF, entry, index, value )",
@@ -4826,6 +4924,11 @@ void DDataStd::BasicCommands (Draw_Interpretor& theCommands)
    theCommands.Add ("DumpTriangulation", 
                    "DumpTriangulations (DF, entry) - dumps info about triangulation that \
                     stored in DF in triangulation attribute of a label with the passed entry",
+                    __FILE__, DDataStd_DumpTriangulation, g);
+
+   theCommands.Add ("DumpMesh", 
+                   "DumpMesh (DF, entry) - dumps info about mesh that stored \
+                    in DF in mesh attribute of a label with the passed entry",
                     __FILE__, DDataStd_DumpMesh, g);
 
 //======================================================================

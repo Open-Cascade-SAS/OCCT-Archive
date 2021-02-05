@@ -29,3 +29,5 @@ TDataXtd_Shape.cxx
 TDataXtd_Shape.hxx
 TDataXtd_Triangulation.cxx
 TDataXtd_Triangulation.hxx
+TDataXtd_SurfacicMesh.cxx
+TDataXtd_SurfacicMesh.hxx

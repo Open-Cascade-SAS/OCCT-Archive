@@ -1,0 +1,47 @@
+#INTERFACE CAF
+# Basic attributes
+#
+# Testing attribute: TDataStd_Mesh
+#
+# Testing command:   SetMesh
+# Testing command:   DumpMesh
+#
+puts "caf001-Z1"
+set QA_DUP 0
+
+# Make a sphere and produce triangulation
+box s 100 200 300
+explode s f
+incmesh s_1 0.1
+
+# Set mesh from the spherical face
+NewCommand D
+SetMesh D 0:1 s_1
+NewCommand D
+
+# Test Undo/Redo.
+Undo D
+Redo D
+
+# Print the mesh data
+set dump1 [DumpMesh D 0:1]
+
+# Save document on disk.
+set filename ${imagedir}/${casename}.cbf
+SaveAs D ${filename}
+
+# Close and open the document again.
+Close D
+Open ${filename} DD
+
+# Print mesh data
+set dump2 [DumpMesh DD 0:1]
+
+Close DD
+
+# Check data
+if { ${dump1}!=${dump2} } {
+	puts "TDataStd_Mesh(XML) attribute: Error"
+	return
+}
+puts "TDataStd_Mesh(XML) attribute: OK"

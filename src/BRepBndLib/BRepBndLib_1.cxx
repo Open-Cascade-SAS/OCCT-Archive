@@ -191,13 +191,12 @@ static Standard_Integer PointsForOBB(const TopoDS_Shape& theS,
       return 0;
 
     const Standard_Integer aCNode = aTrng->NbNodes();
-    const TColgp_Array1OfPnt& aNodesArr = aTrng->Nodes();
     for (Standard_Integer i = 1; i <= aCNode; i++)
     {
       if (thePts)
       {
-        const gp_Pnt aP = aLoc.IsIdentity() ? aNodesArr[i] :
-          aNodesArr[i].Transformed(aLoc);
+        const gp_Pnt aP = aLoc.IsIdentity() ? aTrng->Node (i) :
+            aTrng->Node (i).Transformed(aLoc);
         (*thePts)(aRetVal) = aP;
       }
 

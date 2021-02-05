@@ -54,6 +54,7 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <Poly_Mesh.hxx>
 
 #ifdef MacOS
 #define strcasecmp(p,q) strcmp(p,q)
@@ -1421,7 +1422,7 @@ void BRepTools_ShapeSet::WriteTriangulation(Standard_OStream&      OS,
                                             const Standard_Boolean Compact,
                                             const Message_ProgressRange& theProgress)const
 {
-  Standard_Integer i, j, nbNodes, nbtri = myTriangulations.Extent();
+  Standard_Integer i, j, k, nbNodes, nbtri = myTriangulations.Extent();
   Standard_Integer nbTriangles = 0, n1, n2, n3;
 
   Message_ProgressScope aPS(theProgress, "Triangulations", nbtri);
@@ -1467,28 +1468,26 @@ void BRepTools_ShapeSet::WriteTriangulation(Standard_OStream&      OS,
     if (!Compact) OS << "\n3D Nodes :\n";
     
     nbNodes = T->NbNodes();
-    const TColgp_Array1OfPnt& Nodes = T->Nodes();
     for (j = 1; j <= nbNodes; j++) {
       if (!Compact) OS << std::setw(10) << j << " : ";
       if (!Compact) OS << std::setw(17);
-      OS << Nodes(j).X() << " ";
+      OS << T->Node (j).X() << " ";
       if (!Compact) OS << std::setw(17);
-      OS << Nodes(j).Y() << " ";
+      OS << T->Node (j).Y() << " ";
       if (!Compact) OS << std::setw(17);
-      OS << Nodes(j).Z();
+      OS << T->Node (j).Z();
       if (!Compact) OS << "\n";
       else OS << " ";
     }
     
     if (T->HasUVNodes()) {
       if (!Compact) OS << "\nUV Nodes :\n";
-      const TColgp_Array1OfPnt2d& UVNodes = T->UVNodes();
       for (j = 1; j <= nbNodes; j++) {
         if (!Compact) OS << std::setw(10) << j << " : ";
         if (!Compact) OS << std::setw(17);
-        OS << UVNodes(j).X() << " ";
+        OS << T->UVNode (j).X() << " ";
         if (!Compact) OS << std::setw(17);
-        OS << UVNodes(j).Y();
+        OS << T->UVNode (j).Y();
         if (!Compact) OS << "\n";
         else OS << " ";
       }
@@ -1496,10 +1495,9 @@ void BRepTools_ShapeSet::WriteTriangulation(Standard_OStream&      OS,
     
     if (!Compact) OS << "\nTriangles :\n";
     nbTriangles = T->NbTriangles();
-    const Poly_Array1OfTriangle& Triangles = T->Triangles();
     for (j = 1; j <= nbTriangles; j++) {
       if (!Compact) OS << std::setw(10) << j << " : ";
-      Triangles(j).Get(n1, n2, n3);
+      T->Triangle (j).Get (n1, n2, n3);
       if (!Compact) OS << std::setw(10);
       OS << n1 << " ";
       if (!Compact) OS << std::setw(10);
@@ -1515,22 +1513,24 @@ void BRepTools_ShapeSet::WriteTriangulation(Standard_OStream&      OS,
       if (T->HasNormals() && toWriteNormals)
       {
         if (!Compact) OS << "\nNormals :\n";
-        const TShort_Array1OfShortReal& Normals = T->Normals();
-        for (j = 1; j <= nbNodes * 3; j++)
+        for (j = 1; j <= nbNodes; j++)
         {
           if (!Compact)
           {
             OS << std::setw(10) << j << " : ";
             OS << std::setw(17);
           }
-          OS << Normals(j) << " ";
-          if (!Compact)
+          for (k = 1; k <= 3; k++)
           {
-            OS << "\n";
-          }
-          else
-          {
-            OS << " ";
+            OS << T->Normal (j).Coord (k) << " ";
+            if (!Compact)
+            {
+              OS << "\n";
+            }
+            else
+            {
+              OS << " ";
+            }
           }
         }
       }
@@ -1631,5 +1631,178 @@ void BRepTools_ShapeSet::ReadTriangulation(Standard_IStream& IS, const Message_P
       T->SetNormals(Normals);
     }
     myTriangulations.Add(T, hasNormals);
+  }
+}
+
+// Writes meshes (Poly_Mesh).
+void BRepTools_ShapeSet::WriteMeshes (Standard_OStream& theOS,
+                                      const TColStd_IndexedMapOfTransient& theMeshes,
+                                      const Standard_Boolean theCompact)
+{
+  const Standard_Integer nbMeshes = theMeshes.Extent();
+
+  if (theCompact)
+    theOS << "Meshes " << nbMeshes << "\n";
+  else {
+    theOS << " -------\n";
+    theOS <<"Dump of " << nbMeshes << " meshes\n";
+    theOS << " -------\n";
+  }
+
+  Standard_Integer i = 1;
+  for (; i <= nbMeshes; i++)
+  {
+    const Handle(Poly_Mesh) aMesh = Handle(Poly_Mesh)::DownCast (theMeshes (i));
+    const Standard_Integer nbNodes = aMesh->NbNodes();
+    const Standard_Integer nbElements = aMesh->NbElements();
+    const Standard_Boolean hasUVNodes = aMesh->HasUVNodes();
+
+    if (theCompact)
+    {
+      theOS << nbNodes << " " << nbElements << " ";
+      theOS << (hasUVNodes ? "1" : "0") << " ";
+    }
+    else
+    {
+      theOS << "  "<< i << " : Mesh with " << nbNodes << " Nodes, " << nbElements <<" Triangles and Quadrangles\n";
+      theOS << "      "<<(hasUVNodes ? "with" : "without") << " UV nodes\n";
+    }
+    
+    // write the deflection
+    if (!theCompact) 
+      theOS << "  Deflection : ";
+    theOS << aMesh->Deflection() << "\n";
+    
+    // write the 3d nodes
+    if (!theCompact)
+      theOS << "\n3D Nodes :\n";
+    
+    Standard_Integer j;
+    for (j = 1; j <= nbNodes; j++)
+    {
+      if (!theCompact) theOS << std::setw (10) << j << " : ";
+      if (!theCompact) theOS << std::setw (17);
+      theOS << aMesh->Node (j).X() << " ";
+      if (!theCompact) theOS << std::setw (17);
+      theOS << aMesh->Node (j).Y() << " ";
+      if (!theCompact) theOS << std::setw (17);
+      theOS << aMesh->Node (j).Z();
+      if (!theCompact) theOS << "\n";
+      else theOS << " ";
+    }
+    
+    // write 2d nodes
+    if (hasUVNodes)
+    {
+      if (!theCompact) theOS << "\nUV Nodes :\n";
+      for (j = 1; j <= nbNodes; j++)
+      {
+        if (!theCompact) theOS << std::setw (10) << j << " : ";
+        if (!theCompact) theOS << std::setw (17);
+        theOS << aMesh->UVNode (j).X() << " ";
+        if (!theCompact) theOS << std::setw (17);
+        theOS << aMesh->UVNode (j).Y();
+        if (!theCompact) theOS << "\n";
+        else theOS << " ";
+      }
+    }
+    
+    // write triangles and quadrangles
+    if (!theCompact) theOS << "\nElements :\n";
+    Standard_Integer n, n1, n2, n3, n4;
+    for (j = 1; j <= nbElements; j++)
+    {
+      if (!theCompact) theOS << std::setw (10) << j << " : ";
+      aMesh->Element (j, n1, n2, n3, n4);
+      n = (n4 > 0) ? 4 : 3;
+      if (!theCompact) theOS << std::setw (10);
+      theOS << n << " ";
+      if (!theCompact) theOS << std::setw (10);
+      theOS << n1 << " ";
+      if (!theCompact) theOS << std::setw (10);
+      theOS << n2 << " ";
+      if (!theCompact) theOS << std::setw (10);
+      theOS << n3;
+      if (n4 > 0)
+      {
+        theOS << " ";
+        if (!theCompact) theOS << std::setw (10);
+        theOS << n4;
+      }
+      if (!theCompact) theOS << "\n";
+      else theOS << " ";
+    }
+    theOS << "\n";
+  }
+}
+
+// Reads meshes (Poly_Mesh).
+void BRepTools_ShapeSet::ReadMeshes (Standard_IStream& theIS,
+                                     TColStd_IndexedMapOfTransient& theMeshes)
+{
+  char buffer[255];
+  Standard_Integer i, j;
+  Standard_Integer n, n1(0), n2(0), n3(0), n4(0);
+  Standard_Real deflection, x, y, z;
+  Standard_Integer nbMeshes(0), nbNodes(0), nbElements(0);
+  Standard_Boolean hasUV(Standard_False);
+  gp_Pnt p;
+
+  // Read the "Meshes" head-line.
+  theIS >> buffer;
+  if (strstr (buffer, "Meshes") == NULL)
+    return;
+
+  // Read number of meshes.
+  theIS >> nbMeshes;
+
+  for (i = 1; i <= nbMeshes; i++)
+  {
+    theIS >> nbNodes >> nbElements >> hasUV;
+    GeomTools::GetReal (theIS, deflection);
+
+    // Allocate the mesh.
+    Handle(Poly_Mesh) aMesh = new Poly_Mesh (hasUV);
+    aMesh->Deflection (deflection);
+
+    // Read nodes.
+    for (j = 1; j <= nbNodes; j++)
+    {
+      GeomTools::GetReal (theIS, x);
+      GeomTools::GetReal (theIS, y);
+      GeomTools::GetReal (theIS, z);
+      p.SetCoord (x, y, z);
+      aMesh->AddNode (p);
+    }
+
+    // Reads 2d-nodes.
+    if (hasUV)
+    {
+      for (j = 1; j <= nbNodes; j++)
+      {
+        GeomTools::GetReal (theIS, x);
+        GeomTools::GetReal (theIS, y);
+        aMesh->ChangeUVNode (j).SetCoord (x, y);
+      }
+    }
+
+    // Reads the triangles and quadrangles.
+    for (j = 1; j <= nbElements; j++)
+    {
+      // Read the element.
+      theIS >> n;
+      if (n == 3)
+        theIS >> n1 >> n2 >> n3;
+      else if (n == 4)
+        theIS >> n1 >> n2 >> n3 >> n4;
+
+      // Set the element to the mesh.
+      if (n == 3)
+        aMesh->AddElement (n1, n2, n3);
+      else if (n == 4)
+        aMesh->AddElement (n1, n2, n3, n4);
+    }
+
+    theMeshes.Add (aMesh);
   }
 }

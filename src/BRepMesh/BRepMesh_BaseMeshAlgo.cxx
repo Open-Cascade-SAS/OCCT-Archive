@@ -284,7 +284,9 @@ Handle(Poly_Triangulation) BRepMesh_BaseMeshAlgo::collectTriangles()
   Handle(Poly_Triangulation) aTriangulation = new Poly_Triangulation(
     myUsedNodes->Extent(), aTriangles.Extent(), Standard_True);
 
-  aTriangulation->ChangeTriangles() = aPolyTrianges;
+  for (Standard_Integer iTri = 1; iTri <= aPolyTrianges.Upper(); iTri++)
+    aTriangulation->ChangeTriangle (iTri) = aPolyTrianges (iTri);
+
   return aTriangulation;
 }
 
@@ -295,10 +297,6 @@ Handle(Poly_Triangulation) BRepMesh_BaseMeshAlgo::collectTriangles()
 void BRepMesh_BaseMeshAlgo::collectNodes(
   const Handle(Poly_Triangulation)& theTriangulation)
 {
-  // Store mesh nodes
-  TColgp_Array1OfPnt&   aNodes   = theTriangulation->ChangeNodes();
-  TColgp_Array1OfPnt2d& aNodes2d = theTriangulation->ChangeUVNodes();
-
   for (Standard_Integer i = 1; i <= myNodesMap->Size(); ++i)
   {
     if (myUsedNodes->IsBound(i))
@@ -306,8 +304,8 @@ void BRepMesh_BaseMeshAlgo::collectNodes(
       const BRepMesh_Vertex& aVertex = myStructure->GetNode(i);
 
       const Standard_Integer aNodeIndex = myUsedNodes->Find(i);
-      aNodes(aNodeIndex) = myNodesMap->Value(aVertex.Location3d());
-      aNodes2d(aNodeIndex) = getNodePoint2d(aVertex);
+      theTriangulation->ChangeNode (aNodeIndex) = myNodesMap->Value(aVertex.Location3d());
+      theTriangulation->ChangeUVNode (aNodeIndex) = getNodePoint2d(aVertex);
     }
   }
 }
