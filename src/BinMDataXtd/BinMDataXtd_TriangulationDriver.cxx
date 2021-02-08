@@ -135,9 +135,9 @@ void BinMDataXtd_TriangulationDriver::Paste(const Handle(TDF_Attribute)& theSour
     Standard_Integer i;
     for (i = 1; i <= nbNodes; i++)
     {
-      theTarget << PT->Node(i).X();
-      theTarget << PT->Node(i).Y();
-      theTarget << PT->Node(i).Z();
+      theTarget << PT->Node (i).X();
+      theTarget << PT->Node (i).Y();
+      theTarget << PT->Node (i).Z();
     }
 
     // write 2d nodes
@@ -145,16 +145,15 @@ void BinMDataXtd_TriangulationDriver::Paste(const Handle(TDF_Attribute)& theSour
     {
       for (i = 1; i <= nbNodes; i++)
       {
-        theTarget << PT->UVNode(i).X();
-        theTarget << PT->UVNode(i).Y();
+        theTarget << PT->UVNode (i).X();
+        theTarget << PT->UVNode (i).Y();
       }
     }
 
     // Write triangles
-    const Poly_Array1OfTriangle& Triangles = PT->Triangles();
     for (i = 1; i <= nbTriangles; i++)
     {
-      Triangles(i).Get(n1, n2, n3);
+      PT->Triangle (i).Get (n1, n2, n3);
       theTarget << n1;
       theTarget << n2;
       theTarget << n3;

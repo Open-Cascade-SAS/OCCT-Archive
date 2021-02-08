@@ -14,6 +14,7 @@
 // commercial license or contractual agreement.
 
 #include <BRepMesh_EdgeTessellationExtractor.hxx>
+#include <Poly_Triangulation.hxx>
 #include <BRepMesh_ShapeTool.hxx>
 #include <gp_Pnt.hxx>
 #include <BRep_Tool.hxx>
@@ -36,7 +37,7 @@ BRepMesh_EdgeTessellationExtractor::BRepMesh_EdgeTessellationExtractor (
   Handle (Poly_PolygonOnTriangulation) aPolygon =
     BRep_Tool::PolygonOnTriangulation (theEdge->GetEdge(), aTriangulation, myLoc);
 
-  myNodes   = &aTriangulation->Nodes ();
+  myTriangulation = aTriangulation;
   myIndices = &aPolygon->Nodes ();
   myProvider.Init (theEdge, TopAbs_FORWARD, theFace, aPolygon->Parameters ());
 }
@@ -67,7 +68,7 @@ Standard_Boolean BRepMesh_EdgeTessellationExtractor::Value (
   gp_Pnt&                thePoint,
   Standard_Real&         theParameter) const
 {
-  const gp_Pnt& theRefPnt = (*myNodes) ((*myIndices) (theIndex));
+  const gp_Pnt& theRefPnt = myTriangulation->Node ((*myIndices)(theIndex));
   thePoint = BRepMesh_ShapeTool::UseLocation (theRefPnt, myLoc);
 
   theParameter = myProvider.Parameter (theIndex, thePoint);

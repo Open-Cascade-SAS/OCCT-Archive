@@ -51,44 +51,37 @@ Poly_CoherentTriangulation::Poly_CoherentTriangulation
              : theAlloc)
 {
   if (theTriangulation.IsNull() == Standard_False) {
-    const TColgp_Array1OfPnt&    arrNodes    = theTriangulation->Nodes();
-    const Poly_Array1OfTriangle& arrTriangle = theTriangulation->Triangles();
     const Standard_Integer nNodes = theTriangulation->NbNodes();
-    const Standard_Integer nTri   = theTriangulation->NbTriangles();
     Standard_Integer i;
 
     // Copy the nodes
     for (i = 0; i < nNodes; i++) {
-      const Standard_Integer anOldInd = i + arrNodes.Lower();
-      const Standard_Integer aNewInd = SetNode(arrNodes(anOldInd).XYZ(), i);
+      const Standard_Integer anOldInd = i + 1;
+      const Standard_Integer aNewInd = SetNode (theTriangulation->Node (anOldInd).XYZ(), i);
       Poly_CoherentNode& aCopiedNode = myNodes(aNewInd);
       aCopiedNode.SetIndex(anOldInd);
     }
 
     // Copy the triangles
-    for (i = 0; i < nTri; i++) {
+    for (i = 1; i <= theTriangulation->NbTriangles(); i++) {
       Standard_Integer iNode[3];
-      arrTriangle(i + arrTriangle.Lower()).Get(iNode[0], iNode[1], iNode[2]);
+      theTriangulation->Triangle (i).Get (iNode[0], iNode[1], iNode[2]);
       if (iNode[0] != iNode[1] && iNode[1] != iNode[2] && iNode[2] != iNode[0])
         AddTriangle (iNode[0]-1, iNode[1]-1, iNode[2]-1);
     }
 
     // Copy UV coordinates of nodes
     if (theTriangulation->HasUVNodes()) {
-      const TColgp_Array1OfPnt2d& arrNodes2d = theTriangulation->UVNodes();
       for (i = 0; i < nNodes; i++) {
-        const gp_Pnt2d& anUV = arrNodes2d(i + arrNodes2d.Lower());
+        const gp_Pnt2d& anUV = theTriangulation->UVNode (i + 1);
         myNodes(i).SetUV(anUV.X(), anUV.Y());
       }
     }
 
     // Copy the normals at nodes
     if (theTriangulation->HasNormals()) {
-      const TShort_Array1OfShortReal& arrNorm = theTriangulation->Normals();
       for (i = 0; i < nNodes; i++) {
-        const gp_XYZ aNormal (arrNorm(3 * i + 0 + arrNorm.Lower()),
-                              arrNorm(3 * i + 1 + arrNorm.Lower()),
-                              arrNorm(3 * i + 2 + arrNorm.Lower()));
+        const gp_XYZ aNormal = theTriangulation->Normal (i + 1).XYZ();
         myNodes(i).SetNormal(aNormal);
       }
     }
@@ -125,9 +118,6 @@ Handle(Poly_Triangulation) Poly_CoherentTriangulation::GetTriangulation() const
       new TShort_HArray1OfShortReal(1, 3 * nNodes);
     Standard_ShortReal * arrNormal = &harrNormal->ChangeValue(1);
 
-    TColgp_Array1OfPnt&    arrNodes    = aResult->ChangeNodes();
-    TColgp_Array1OfPnt2d&  arrNodesUV  = aResult->ChangeUVNodes();
-    Poly_Array1OfTriangle& arrTriangle = aResult->ChangeTriangles();
     NCollection_Vector<Standard_Integer> vecNodeId;
     Standard_Integer i, aCount(0);
     Standard_Boolean hasUV (Standard_False);
@@ -145,9 +135,9 @@ Handle(Poly_Triangulation) Poly_CoherentTriangulation::GetTriangulation() const
         arrNormal[3 * aCount + 2] = static_cast<Standard_ShortReal>(aNormal.Z());
 
         vecNodeId.SetValue(i, ++aCount);
-        arrNodes.SetValue(aCount, aNode);
+        aResult->ChangeNode (aCount) = aNode;
 
-        arrNodesUV.SetValue(aCount, gp_Pnt2d(aNode.GetU(), aNode.GetV()));
+        aResult->ChangeUVNode (aCount) = gp_Pnt2d (aNode.GetU(), aNode.GetV());
         if (aNode.GetU()*aNode.GetU() + aNode.GetV()*aNode.GetV() >
             Precision::Confusion())
           hasUV = Standard_True;
@@ -164,10 +154,9 @@ Handle(Poly_Triangulation) Poly_CoherentTriangulation::GetTriangulation() const
     for (; anIterT.More(); anIterT.Next()) {
       const Poly_CoherentTriangle& aTri = anIterT.Value();
       if (aTri.IsEmpty() == Standard_False) {
-        const Poly_Triangle aPolyTriangle (vecNodeId(aTri.Node(0)),
-                                           vecNodeId(aTri.Node(1)),
-                                           vecNodeId(aTri.Node(2)));
-        arrTriangle.SetValue(++aCount, aPolyTriangle);
+        aResult->ChangeTriangle (++aCount) = Poly_Triangle (vecNodeId (aTri.Node (0)),
+                                                            vecNodeId (aTri.Node (1)),
+                                                            vecNodeId (aTri.Node (2)));;
       }
     }
     if (hasNormals)

@@ -2826,14 +2826,12 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
   }
 
   Handle( Poly_Triangulation ) polyTriangulation = new Poly_Triangulation(number_pointArray, number_triangle, false);
-  TColgp_Array1OfPnt& PointsOfArray = polyTriangulation->ChangeNodes();
-  Poly_Array1OfTriangle& pArrayTriangle = polyTriangulation->ChangeTriangles();
 
   if (  mStartPhi <= 0.0 ){
       x[0] =  mCenter[0];
       x[1] =  mCenter[1];
       x[2] =  mCenter[2] +  mRadius;
-      PointsOfArray.SetValue(1,gp_Pnt(x[0],x[1],x[2]));
+      polyTriangulation->ChangeNode (1) = gp_Pnt (x[0],x[1],x[2]);
   }
 
   // Create south pole if needed
@@ -2841,7 +2839,7 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
       x[0] =  mCenter[0];
       x[1] =  mCenter[1];
       x[2] =  mCenter[2] -  mRadius;
-      PointsOfArray.SetValue(2,gp_Pnt(x[0],x[1],x[2]));
+      polyTriangulation->ChangeNode (2) = gp_Pnt (x[0],x[1],x[2]);
   }
 
   number_point = 3;
@@ -2856,7 +2854,7 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
         x[0] = n[0] +  mCenter[0];
         x[1] = n[1] +  mCenter[1];
         x[2] = n[2] +  mCenter[2];
-        PointsOfArray.SetValue(number_point,gp_Pnt(x[0],x[1],x[2]));
+        polyTriangulation->ChangeNode (number_point) = gp_Pnt (x[0],x[1],x[2]);
         number_point++;
       }
     }
@@ -2868,7 +2866,7 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
         pts[0] = phiResolution*i + numPoles;
         pts[1] = (phiResolution*(i+1) % base) + numPoles;
         pts[2] = 1;
-        pArrayTriangle.SetValue(number_triangle,Poly_Triangle(pts[0],pts[1],pts[2]));
+        polyTriangulation->ChangeTriangle (number_triangle) = Poly_Triangle (pts[0],pts[1],pts[2]);
         number_triangle++;
       }
     }
@@ -2879,7 +2877,7 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
         pts[0] = phiResolution*i + numOffset;
         pts[2] = ((phiResolution*(i+1)) % base) + numOffset;
         pts[1] = numPoles - 1;
-        pArrayTriangle.SetValue(number_triangle,Poly_Triangle(pts[0],pts[1],pts[2]));
+        polyTriangulation->ChangeTriangle (number_triangle) = Poly_Triangle (pts[0],pts[1],pts[2]);
         number_triangle++;
       }
     }
@@ -2891,11 +2889,11 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
         pts[0] = phiResolution*i + j + numPoles;
         pts[1] = pts[0] + 1;
         pts[2] = ((phiResolution*(i+1)+j) % base) + numPoles + 1;
-        pArrayTriangle.SetValue(number_triangle,Poly_Triangle(pts[0],pts[1],pts[2]));
+        polyTriangulation->ChangeTriangle (number_triangle) = Poly_Triangle (pts[0],pts[1],pts[2]);
         number_triangle++;
         pts[1] = pts[2];
         pts[2] = pts[1] - 1;
-        pArrayTriangle.SetValue(number_triangle,Poly_Triangle(pts[0],pts[1],pts[2]));
+        polyTriangulation->ChangeTriangle (number_triangle) = Poly_Triangle (pts[0],pts[1],pts[2]);
         number_triangle++;
       }
     }
@@ -2908,12 +2906,12 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
   Standard_Real Tol = Precision::Confusion();
 
   gp_Dir Nor;
-  for (i = PointsOfArray.Lower(); i <= PointsOfArray.Upper(); i++) {
+  for (i = 1; i <= polyTriangulation->NbNodes(); i++) {
       gp_XYZ eqPlan(0, 0, 0);
       for ( pc->Initialize(i); pc->More(); pc->Next()) {
-        pArrayTriangle(pc->Value()).Get(index[0], index[1], index[2]);
-        gp_XYZ v1(PointsOfArray(index[1]).Coord()-PointsOfArray(index[0]).Coord());
-        gp_XYZ v2(PointsOfArray(index[2]).Coord()-PointsOfArray(index[1]).Coord());
+        polyTriangulation->Triangle (pc->Value()).Get (index[0], index[1], index[2]);
+        gp_XYZ v1 (polyTriangulation->Node (index[1]).Coord() - polyTriangulation->Node (index[0]).Coord());
+        gp_XYZ v2 (polyTriangulation->Node (index[2]).Coord() - polyTriangulation->Node (index[1]).Coord());
         gp_XYZ vv = v1^v2;
         Standard_Real mod = vv.Modulus();
         if(mod < Tol) continue;
@@ -2926,11 +2924,11 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
         Nor = gp_Dir(eqPlan);
       else
         Nor = gp_Dir(0., 0., 1.);
-      
-      Standard_Integer k = (i - PointsOfArray.Lower()) * 3;
-      Normals->SetValue(k + 1, (Standard_ShortReal)Nor.X());
-      Normals->SetValue(k + 2, (Standard_ShortReal)Nor.Y());
-      Normals->SetValue(k + 3, (Standard_ShortReal)Nor.Z());
+
+      Standard_Integer j = (i - 1) * 3;
+      Normals->SetValue(j + 1, (Standard_ShortReal)Nor.X());
+      Normals->SetValue(j + 2, (Standard_ShortReal)Nor.Y());
+      Normals->SetValue(j + 3, (Standard_ShortReal)Nor.Z());
   }
 
   delete pc;
@@ -2979,8 +2977,8 @@ static int VDrawSphere (Draw_Interpretor& /*di*/, Standard_Integer argc, const c
     = new AIS_Triangulation (CalculationOfSphere (aCenterX, aCenterY, aCenterZ,
                                                   aResolution,
                                                   aRadius));
-  Standard_Integer aNumberPoints    = aShape->GetTriangulation()->Nodes().Length();
-  Standard_Integer aNumberTriangles = aShape->GetTriangulation()->Triangles().Length();
+  Standard_Integer aNumberPoints    = aShape->GetTriangulation()->NbNodes();
+  Standard_Integer aNumberTriangles = aShape->GetTriangulation()->NbTriangles();
 
   // stupid initialization of Green color in RGBA space as integer
   // probably wrong for big-endian CPUs
@@ -6410,20 +6408,19 @@ static Standard_Integer VPointCloud (Draw_Interpretor& theDI,
         continue;
       }
 
-      const TColgp_Array1OfPnt& aNodes = aTriangulation->Nodes();
       const gp_Trsf&            aTrsf  = aLocation.Transformation();
 
       // extract normals from nodes
-      TColgp_Array1OfDir aNormals (aNodes.Lower(), hasNormals ? aNodes.Upper() : aNodes.Lower());
+      TColgp_Array1OfDir aNormals (1, hasNormals ? aTriangulation->NbNodes() : 1);
       if (hasNormals)
       {
         Poly_Connect aPolyConnect (aTriangulation);
         StdPrs_ToolTriangulatedShape::Normal (aFace, aPolyConnect, aNormals);
       }
 
-      for (Standard_Integer aNodeIter = aNodes.Lower(); aNodeIter <= aNodes.Upper(); ++aNodeIter)
+      for (Standard_Integer aNodeIter = 1; aNodeIter <= aTriangulation->NbNodes(); ++aNodeIter)
       {
-        gp_Pnt aPoint = aNodes (aNodeIter);
+        gp_Pnt aPoint = aTriangulation->Node (aNodeIter);
         if (!aLocation.IsIdentity())
         {
           aPoint.Transform (aTrsf);

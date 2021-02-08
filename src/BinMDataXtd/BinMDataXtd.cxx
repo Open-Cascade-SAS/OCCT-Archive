@@ -24,7 +24,8 @@
 #include <BinMDataXtd_PresentationDriver.hxx>
 #include <BinMDataXtd_PositionDriver.hxx>
 #include <BinMDataXtd_TriangulationDriver.hxx>
-
+#include <BinMDataXtd_SurfacicMeshDriver.hxx>
+	
 static Standard_Integer myDocumentVersion = -1;
 //=======================================================================
 //function : AddDrivers
@@ -38,6 +39,7 @@ void BinMDataXtd::AddDrivers (const Handle(BinMDF_ADriverTable)& theDriverTable,
   theDriverTable->AddDriver (new BinMDataXtd_GeometryDriver     (theMsgDriver) );
   theDriverTable->AddDriver (new BinMDataXtd_PatternStdDriver   (theMsgDriver) );
   theDriverTable->AddDriver (new BinMDataXtd_TriangulationDriver(theMsgDriver) );
+  theDriverTable->AddDriver (new BinMDataXtd_SurfacicMeshDriver (theMsgDriver) );
 
   theDriverTable->AddDriver (new BinMDataXtd_PresentationDriver (theMsgDriver) );
   theDriverTable->AddDriver (new BinMDataXtd_PositionDriver     (theMsgDriver) );

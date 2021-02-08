@@ -12,3 +12,5 @@ XmlMDataXtd_PresentationDriver.hxx
 XmlMDataXtd_PresentationDriver.cxx
 XmlMDataXtd_TriangulationDriver.cxx
 XmlMDataXtd_TriangulationDriver.hxx
+XmlMDataXtd_SurfacicMeshDriver.cxx
+XmlMDataXtd_SurfacicMeshDriver.hxx

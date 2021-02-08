@@ -48,19 +48,7 @@ RWGltf_TriangulationReader::RWGltf_TriangulationReader()
 // =======================================================================
 void RWGltf_TriangulationReader::reset()
 {
-  myTriangulation = new Poly_Triangulation (1, 1, true);
-  {
-    TColgp_Array1OfPnt anEmpty;
-    myTriangulation->ChangeNodes().Move (anEmpty);
-  }
-  {
-    TColgp_Array1OfPnt2d anEmpty;
-    myTriangulation->ChangeUVNodes().Move (anEmpty);
-  }
-  {
-    Poly_Array1OfTriangle anEmpty;
-    myTriangulation->ChangeTriangles().Move (anEmpty);
-  }
+  myTriangulation = new Poly_Triangulation (0, 0, true);
 }
 
 // =======================================================================
@@ -73,11 +61,6 @@ Handle(Poly_Triangulation) RWGltf_TriangulationReader::result()
   {
     return Handle(Poly_Triangulation)();
   }
-  if (myTriangulation->UVNodes().Size() != myTriangulation->NbNodes())
-  {
-    myTriangulation->RemoveUVNodes();
-  }
-
   if (myTriangulation->NbTriangles() < 1)
   {
     // reconstruct indexes

@@ -57,23 +57,19 @@ Handle(Poly_Triangulation) Poly::Catenate (const Poly_ListOfTriangulation& lstTr
     Standard_Integer i, iNode[3];
     nNodes = 0;
     nTrian = 0;
-    TColgp_Array1OfPnt&    arrNode  = aResult->ChangeNodes();
-    Poly_Array1OfTriangle& arrTrian = aResult->ChangeTriangles();
     for (anIter.Init(lstTri); anIter.More(); anIter.Next()) {
       const Handle(Poly_Triangulation)& aTri = anIter.Value();
       if (aTri.IsNull() == Standard_False) {
-        const TColgp_Array1OfPnt&    srcNode  = aTri->Nodes();
-        const Poly_Array1OfTriangle& srcTrian = aTri->Triangles();
         const Standard_Integer nbNodes = aTri->NbNodes(); 
         const Standard_Integer nbTrian = aTri->NbTriangles(); 
         for (i = 1; i <= nbNodes; i++) {
-          arrNode.SetValue(i + nNodes, srcNode(i));
+          aResult->ChangeNode (i + nNodes) = aTri->Node (i);
         }
         for (i = 1; i <= nbTrian; i++) {
-          srcTrian(i).Get(iNode[0], iNode[1], iNode[2]);
-          arrTrian.SetValue(i + nTrian, Poly_Triangle(iNode[0] + nNodes,
-                                                      iNode[1] + nNodes,
-                                                      iNode[2] + nNodes));
+          aTri->Triangle (i).Get (iNode[0], iNode[1], iNode[2]);
+          aResult->ChangeTriangle (i + nTrian) = Poly_Triangle (iNode[0] + nNodes,
+                                                                iNode[1] + nNodes,
+                                                                iNode[2] + nNodes);
         }
         nNodes += nbNodes;
         nTrian += nbTrian;
@@ -113,36 +109,33 @@ void Poly::Write(const Handle(Poly_Triangulation)& T,
   if (!Compact) OS << "\n3D Nodes :\n";
 
   Standard_Integer i, nbNodes = T->NbNodes();
-  const TColgp_Array1OfPnt& Nodes = T->Nodes();
   for (i = 1; i <= nbNodes; i++) {
     if (!Compact) OS << std::setw(10) << i << " : ";
     if (!Compact) OS << std::setw(17);
-    OS << Nodes(i).X() << " ";
+    OS << T->Node (i).X() << " ";
     if (!Compact) OS << std::setw(17);
-    OS << Nodes(i).Y() << " ";
+    OS << T->Node (i).Y() << " ";
     if (!Compact) OS << std::setw(17);
-    OS << Nodes(i).Z() << "\n";
+    OS << T->Node (i).Z() << "\n";
   }
 
   if (T->HasUVNodes()) {
     if (!Compact) OS << "\nUV Nodes :\n";
-    const TColgp_Array1OfPnt2d& UVNodes = T->UVNodes();
     for (i = 1; i <= nbNodes; i++) {
       if (!Compact) OS << std::setw(10) << i << " : ";
     if (!Compact) OS << std::setw(17);
-      OS << UVNodes(i).X() << " ";
+      OS << T->UVNode (i).X() << " ";
     if (!Compact) OS << std::setw(17);
-      OS << UVNodes(i).Y() << "\n";
+      OS << T->UVNode (i).Y() << "\n";
     }
   }
 
   if (!Compact) OS << "\nTriangles :\n";
   Standard_Integer nbTriangles = T->NbTriangles();
   Standard_Integer n1, n2, n3;
-  const Poly_Array1OfTriangle& Triangles = T->Triangles();
   for (i = 1; i <= nbTriangles; i++) {
     if (!Compact) OS << std::setw(10) << i << " : ";
-    Triangles(i).Get(n1, n2, n3);
+    T->Triangle (i).Get (n1, n2, n3);
     if (!Compact) OS << std::setw(10);
     OS << n1 << " ";
     if (!Compact) OS << std::setw(10);
@@ -447,21 +440,19 @@ Handle(Poly_Polygon2D) Poly::ReadPolygon2D(Standard_IStream& IS)
 //=======================================================================
 void Poly::ComputeNormals (const Handle(Poly_Triangulation)& theTri)
 {
-  const TColgp_Array1OfPnt& aNodes   = theTri->Nodes();
-  const Standard_Integer    aNbNodes = aNodes.Size();
-
+  const Standard_Integer    aNbNodes = theTri->NbNodes();
   const Handle(TShort_HArray1OfShortReal) aNormals = new TShort_HArray1OfShortReal (1, aNbNodes * 3);
   aNormals->Init (0.0f);
   Standard_ShortReal* aNormArr = &aNormals->ChangeFirst();
 
   Standard_Integer anElem[3] = {0, 0, 0};
   const Standard_Real anEps2 = gp::Resolution();
-  for (Poly_Array1OfTriangle::Iterator aTriIter (theTri->Triangles()); aTriIter.More(); aTriIter.Next())
+  for (Standard_Integer iTri = 1; iTri <= theTri->NbTriangles(); iTri++)
   {
-    aTriIter.Value().Get (anElem[0], anElem[1], anElem[2]);
-    const gp_Pnt& aNode0 = aNodes.Value (anElem[0]);
-    const gp_Pnt& aNode1 = aNodes.Value (anElem[1]);
-    const gp_Pnt& aNode2 = aNodes.Value (anElem[2]);
+    theTri->Triangle (iTri).Get (anElem[0], anElem[1], anElem[2]);
+    const gp_Pnt& aNode0 = theTri->Node (anElem[0]);
+    const gp_Pnt& aNode1 = theTri->Node (anElem[1]);
+    const gp_Pnt& aNode2 = theTri->Node (anElem[2]);
 
     const gp_XYZ aVec01 = aNode1.XYZ() - aNode0.XYZ();
     const gp_XYZ aVec02 = aNode2.XYZ() - aNode0.XYZ();

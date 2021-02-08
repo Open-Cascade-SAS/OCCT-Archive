@@ -208,17 +208,15 @@ const Handle(TopoDS_TShape)& VrmlData_IndexedFaceSet::TShape ()
   Handle(Poly_Triangulation) aTriangulation =
     new Poly_Triangulation(aNodes.Length(), aTriangles.Extent(), Standard_False);
   // Copy the triangulation vertices
-  TColgp_Array1OfPnt& aTNodes = aTriangulation->ChangeNodes();
   for (i = 0; i < aNodes.Length(); i++)
   {
-    aTNodes.SetValue(i + 1, gp_Pnt(aNodes(i)));
+    aTriangulation->ChangeNode (i + 1) = gp_Pnt (aNodes (i));
   }
   // Copy the triangles.
-  Poly_Array1OfTriangle& aTTriangles = aTriangulation->ChangeTriangles();
   NCollection_List<Poly_Triangle>::Iterator itT(aTriangles);
   for (i = 1; itT.More(); itT.Next(), i++)
   {
-    aTTriangles.SetValue(i, itT.Value());
+    aTriangulation->ChangeTriangle (i) = itT.Value();
   }
 
   Handle(BRep_TFace) aFace = new BRep_TFace();

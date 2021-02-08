@@ -75,12 +75,11 @@ Standard_Boolean BRepExtrema_Poly::Distance (const TopoDS_Shape& S1, const TopoD
     Tr = BRep_Tool::Triangulation(F,L);
     if (!Tr.IsNull())
     {
-      const TColgp_Array1OfPnt& Nod = Tr->Nodes();
       n = Tr->NbNodes();
       for (i = 1; i <= n; i++)
       {
         nbn1++; 
-        TP1.SetValue(nbn1,Nod(i).Transformed(L));
+        TP1.SetValue(nbn1,Tr->Node (i).Transformed(L));
       }
     }
   }
@@ -96,12 +95,11 @@ Standard_Boolean BRepExtrema_Poly::Distance (const TopoDS_Shape& S1, const TopoD
     Tr = BRep_Tool::Triangulation(F,L);
     if (!Tr.IsNull())
     {
-      const TColgp_Array1OfPnt& Nod = Tr->Nodes();
       n = Tr->NbNodes();
       for (i = 1; i <= n; i++)
       {
         nbn2++; 
-        TP2.SetValue(nbn2,Nod(i).Transformed(L));
+        TP2.SetValue(nbn2,Tr->Node (i).Transformed(L));
       }
     }
   }

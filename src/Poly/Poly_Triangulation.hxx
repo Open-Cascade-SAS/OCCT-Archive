@@ -30,38 +30,23 @@
 #include <Standard_Boolean.hxx>
 #include <TColgp_Array1OfPnt2d.hxx>
 #include <TShort_Array1OfShortReal.hxx>
+#include <NCollection_Vector.hxx>
 class Standard_DomainError;
 class Standard_NullObject;
 
-
-class Poly_Triangulation;
-DEFINE_STANDARD_HANDLE(Poly_Triangulation, Standard_Transient)
-
-//! Provides a triangulation for a surface, a set of surfaces, or
-//! more generally a shape.
-//! A triangulation consists of an approximate representation
-//! of the actual shape, using a collection of points and
-//! triangles. The points are located on the surface. The
-//! edges of the triangles connect adjacent points with a
+//! Provides a triangulation for a surface, a set of surfaces, or more generally a shape.
+//! A triangulation consists of an approximate representation of the actual shape, using a collection of points and triangles.
+//! The points are located on the surface. The edges of the triangles connect adjacent points with a
 //! straight line that approximates the true curve on the surface.
 //! A triangulation comprises:
 //! -   A table of 3D nodes (3D points on the surface).
-//! -   A table of triangles. Each triangle (Poly_Triangle
-//! object) comprises a triplet of indices in the table of 3D
-//! nodes specific to the triangulation.
-//! -   A table of 2D nodes (2D points), parallel to the table of
-//! 3D nodes. This table is optional. If it exists, the
-//! coordinates of a 2D point are the (u, v) parameters
-//! of the corresponding 3D point on the surface
-//! approximated by the triangulation.
-//! -   A deflection (optional), which maximizes the distance
-//! from a point on the surface to the corresponding point
-//! on its approximate triangulation.
-//! In many cases, algorithms do not need to work with the
-//! exact representation of a surface. A triangular
-//! representation induces simpler and more robust adjusting,
-//! faster performances, and the results are as good.
-//! This is a Transient class.
+//! -   A table of triangles. Each triangle (Poly_Triangle object) comprises a triplet of indices in the table of 3D
+//!     nodes specific to the triangulation.
+//! -   A table of 2D nodes (2D points), parallel to the table of 3D nodes. This table is optional.
+//!     If it exists, the coordinates of a 2D point are the (u, v) parameters of the corresponding 3D point on the surface approximated by the triangulation.
+//! -   A deflection (optional), which maximizes the distance from a point on the surface to the corresponding point on its approximate triangulation.
+//! In many cases, algorithms do not need to work with the exact representation of a surface.
+//! A triangular representation induces simpler and more robust adjusting, faster performances, and the results are as good.
 class Poly_Triangulation : public Standard_Transient
 {
 
@@ -127,26 +112,21 @@ public:
   //! Returns TRUE if triangulation has some geometry.
   virtual Standard_Boolean HasGeometry() const { return !myNodes.IsEmpty() && !myTriangles.IsEmpty(); }
 
-  //! Returns the number of nodes for this triangulation.
-  Standard_Integer NbNodes() const { return myNodes.Length(); }
+  //! @return the number of nodes for this triangulation.
+  Standard_Integer NbNodes() const { return myNodes.Size(); }
 
-  //! Returns the number of triangles for this triangulation.
-  Standard_Integer NbTriangles() const { return myTriangles.Length(); }
+  //! @return the number of triangles for this triangulation.
+  Standard_Integer NbTriangles() const { return myTriangles.Size(); }
 
-  //! Returns Standard_True if 2D nodes are associated with 3D nodes for this triangulation.
-  Standard_Boolean HasUVNodes() const { return !myUVNodes.IsNull(); }
+  //! @return Standard_True if 2D nodes are associated with 3D nodes for this triangulation.
+  Standard_Boolean HasUVNodes() const { return myHasUVNodes; }
 
-  //! Returns the table of 3D nodes (3D points) for this triangulation.
-  const TColgp_Array1OfPnt& Nodes() const { return myNodes; }
+  //! Adds Node to the triangulation. If triangulation has UVNodes or Normals
+  //! they will be expanded and set to zero values to match the new number of nodes.
+  //! @return index of the added Node.
+  Standard_EXPORT Standard_Integer AddNode (const gp_Pnt& theNode);
 
-  //! Returns the table of 3D nodes (3D points) for this triangulation.
-  //! The returned array is
-  //! shared. Therefore if the table is selected by reference, you
-  //! can, by simply modifying it, directly modify the data
-  //! structure of this triangulation.
-  TColgp_Array1OfPnt& ChangeNodes() { return myNodes; }
-
-  //! Returns node at the given index.
+  //! @return node at the given index.
   //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbNodes.
   Standard_EXPORT const gp_Pnt& Node (const Standard_Integer theIndex) const;
 
@@ -154,22 +134,7 @@ public:
   //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbNodes.
   Standard_EXPORT gp_Pnt& ChangeNode (const Standard_Integer theIndex);
 
-  //! Returns the table of 2D nodes (2D points) associated with
-  //! each 3D node of this triangulation.
-  //! The function HasUVNodes  checks if 2D nodes
-  //! are associated with the 3D nodes of this triangulation.
-  //! Const reference on the 2d nodes values.
-  const TColgp_Array1OfPnt2d& UVNodes() const { return myUVNodes->Array1(); }
-
-  //! Returns the table of 2D nodes (2D points) associated with
-  //! each 3D node of this triangulation.
-  //! Function ChangeUVNodes shares  the returned array.
-  //! Therefore if the table is selected by reference,
-  //! you can, by simply modifying it, directly modify the data
-  //! structure of this triangulation.
-  TColgp_Array1OfPnt2d& ChangeUVNodes() { return myUVNodes->ChangeArray1(); }
-
-  //! Returns UVNode at the given index.
+  //! @return UVNode at the given index.
   //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbNodes.
   Standard_EXPORT const gp_Pnt2d& UVNode (const Standard_Integer theIndex) const;
 
@@ -177,17 +142,11 @@ public:
   //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbNodes.
   Standard_EXPORT gp_Pnt2d& ChangeUVNode (const Standard_Integer theIndex);
 
-  //! Returns the table of triangles for this triangulation.
-  const Poly_Array1OfTriangle& Triangles() const { return myTriangles; }
+  //! Adds triangle to the triangulation.
+  //! @return index of the added triangle.
+  Standard_EXPORT virtual Standard_Integer AddTriangle (const Poly_Triangle& theTriangle);
 
-  //! Returns the table of triangles for this triangulation.
-  //! Function ChangeUVNodes shares  the returned array.
-  //! Therefore if the table is selected by reference,
-  //! you can, by simply modifying it, directly modify the data
-  //! structure of this triangulation.
-  Poly_Array1OfTriangle& ChangeTriangles() { return myTriangles; }
-
-  //! Returns triangle at the given index.
+  //! @return triangle at the given index.
   //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbTriangles.
   Standard_EXPORT const Poly_Triangle& Triangle (const Standard_Integer theIndex) const;
 
@@ -196,26 +155,23 @@ public:
   Standard_EXPORT Poly_Triangle& ChangeTriangle (const Standard_Integer theIndex);
 
   //! Sets the table of node normals.
-  //! raises exception if length of theNormals != 3*NbNodes
+  //! Raises exception if length of theNormals != 3 * NbNodes
+  Standard_DEPRECATED("Deprecated method SetNormals() should be replaced \
+ by method with array as object instead of handle. \
+ Array of floats should be replaced by vector of normals")
   Standard_EXPORT void SetNormals (const Handle(TShort_HArray1OfShortReal)& theNormals);
 
-  //! Returns the table of node normals.
-  Standard_EXPORT const TShort_Array1OfShortReal& Normals() const;
-
-  //! Gives access to the table of node normals.
-  Standard_EXPORT TShort_Array1OfShortReal& ChangeNormals();
+  //! Changes normal at the given index.
+  //! Raises Standard_OutOfRange exception.
+  Standard_EXPORT void SetNormal (const Standard_Integer theIndex,
+                                  const gp_Dir&          theNormal);
 
   //! Returns Standard_True if nodal normals are defined.
   Standard_EXPORT Standard_Boolean HasNormals() const;
 
   //! @return normal at the given index.
   //! Raises Standard_OutOfRange exception.
-  Standard_EXPORT gp_Dir Normal (const Standard_Integer theIndex) const;
-
-  //! Changes normal at the given index.
-  //! Raises Standard_OutOfRange exception.
-  Standard_EXPORT void SetNormal (const Standard_Integer theIndex,
-                                  const gp_Dir&          theNormal);
+  Standard_EXPORT const gp_Dir Normal (const Standard_Integer theIndex) const;
 
   //! Returns cached min - max range of triangulation data,
   //! which is VOID by default (e.g, no cached information).
@@ -264,12 +220,13 @@ protected:
 
 protected:
 
-  Bnd_Box*                           myCachedMinMax;
-  Standard_Real                      myDeflection;
-  TColgp_Array1OfPnt                 myNodes;
-  Handle(TColgp_HArray1OfPnt2d)      myUVNodes;
-  Poly_Array1OfTriangle              myTriangles;
-  Handle(TShort_HArray1OfShortReal)  myNormals;
+  Bnd_Box*                          myCachedMinMax;
+  Standard_Real                     myDeflection;
+  Standard_Boolean                  myHasUVNodes;
+  NCollection_Vector<gp_Pnt>        myNodes;
+  NCollection_Vector<gp_Pnt2d>      myUVNodes;
+  NCollection_Vector<Poly_Triangle> myTriangles;
+  NCollection_Vector<gp_Dir>        myNormals;
 
 };
 

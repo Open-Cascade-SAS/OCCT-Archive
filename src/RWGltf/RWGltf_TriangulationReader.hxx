@@ -56,7 +56,9 @@ protected: //! @name interface for filling triangulation data
     {
       return false;
     }
-    myTriangulation->ChangeNodes().Resize (1, theNbNodes, false);
+    Standard_Integer i = myTriangulation->NbNodes();
+    while (++i <= theNbNodes)
+      myTriangulation->AddNode (gp::Origin());
     return true;
   }
 
@@ -77,7 +79,8 @@ protected: //! @name interface for filling triangulation data
     {
       return false;
     }
-    myTriangulation->ChangeUVNodes().Resize (1, theNbNodes, false);
+
+    // Resizing of the array of nodes extends the array of UV-nodes too.
     return true;
   }
 
@@ -116,7 +119,10 @@ protected: //! @name interface for filling triangulation data
   {
     if (theNbTris >= 1)
     {
-      myTriangulation->ChangeTriangles().Resize (1, theNbTris, false);
+      Poly_Triangle emptyTri (0, 0, 0);
+      Standard_Integer i = myTriangulation->NbTriangles();
+      while (++i <= theNbTris)
+        myTriangulation->AddTriangle (emptyTri);
       return true;
     }
     return false;
@@ -129,9 +135,9 @@ protected: //! @name interface for filling triangulation data
   virtual bool setTriangle (Standard_Integer theIndex,
                             const Poly_Triangle& theTriangle)
   {
-    if (theTriangle.Value (1) < myTriangulation->Nodes().Lower() || theTriangle.Value (1) > myTriangulation->Nodes().Upper()
-     || theTriangle.Value (2) < myTriangulation->Nodes().Lower() || theTriangle.Value (2) > myTriangulation->Nodes().Upper()
-     || theTriangle.Value (3) < myTriangulation->Nodes().Lower() || theTriangle.Value (3) > myTriangulation->Nodes().Upper())
+    if (theTriangle.Value (1) < 1 || theTriangle.Value (1) > myTriangulation->NbNodes()
+     || theTriangle.Value (2) < 1 || theTriangle.Value (2) > myTriangulation->NbNodes()
+     || theTriangle.Value (3) < 1 || theTriangle.Value (3) > myTriangulation->NbNodes())
     {
       return false;
     }
