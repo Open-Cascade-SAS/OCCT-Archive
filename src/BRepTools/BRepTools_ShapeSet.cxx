@@ -1522,7 +1522,7 @@ void BRepTools_ShapeSet::WriteTriangulation(Standard_OStream&      OS,
           }
           for (k = 1; k <= 3; k++)
           {
-            OS << T->Normal (j).Coord (k) << " ";
+            OS << T->Normal (j).GetData() [k - 1] << " ";
             if (!Compact)
             {
               OS << "\n";
@@ -1558,10 +1558,9 @@ void BRepTools_ShapeSet::DumpTriangulation(Standard_OStream& OS)const
 void BRepTools_ShapeSet::ReadTriangulation(Standard_IStream& IS, const Message_ProgressRange& theProgress)
 {
   char buffer[255];
-  //  Standard_Integer i, j, val, nbtri;
   Standard_Integer i, j, nbtri =0;
   Standard_Real d, x, y, z;
-  Standard_Real normal;
+  Standard_Real normalX, normalY, normalZ;
   Standard_Integer nbNodes =0, nbTriangles=0;
   Standard_Boolean hasUV= Standard_False;
   Standard_Boolean hasNormals= Standard_False;
@@ -1583,53 +1582,44 @@ void BRepTools_ShapeSet::ReadTriangulation(Standard_IStream& IS, const Message_P
     }
     GeomTools::GetReal(IS, d);
 
-    TColgp_Array1OfPnt Nodes(1, nbNodes);
-    TColgp_Array1OfPnt2d UVNodes(1, nbNodes);
-    Handle(TShort_HArray1OfShortReal) Normals;
-    if (hasNormals)
-    {
-      Normals = new TShort_HArray1OfShortReal(1, nbNodes * 3);
-    }
+    T = new Poly_Triangulation (nbNodes, nbTriangles, hasUV, hasNormals);
+
     for (j = 1; j <= nbNodes; j++) {
       GeomTools::GetReal(IS, x);
       GeomTools::GetReal(IS, y);
       GeomTools::GetReal(IS, z);
-      Nodes(j).SetCoord(x,y,z);
+      T->ChangeNode (j).SetCoord (x,y,z);
     }
 
     if (hasUV) {
       for (j = 1; j <= nbNodes; j++) {
         GeomTools::GetReal(IS, x);
         GeomTools::GetReal(IS, y);
-        UVNodes(j).SetCoord(x,y);
+        T->ChangeUVNode (j).SetCoord (x,y);
       }
     }
       
     // read the triangles
     Standard_Integer n1,n2,n3;
-    Poly_Array1OfTriangle Triangles(1, nbTriangles);
     for (j = 1; j <= nbTriangles; j++) {
       IS >> n1 >> n2 >> n3;
-      Triangles(j).Set(n1,n2,n3);
+      T->ChangeTriangle (j).Set (n1,n2,n3);
     }
 
     if (hasNormals)
     {
-      for (j = 1; j <= nbNodes * 3; j++)
+      for (j = 1; j <= nbNodes; j++)
       {
-        GeomTools::GetReal(IS, normal);
-        Normals->SetValue(j, static_cast<Standard_ShortReal>(normal));
+        GeomTools::GetReal (IS, normalX);
+        GeomTools::GetReal (IS, normalY);
+        GeomTools::GetReal (IS, normalZ);
+        T->SetNormal (j, static_cast<Standard_ShortReal>(normalX),
+                         static_cast<Standard_ShortReal>(normalY),
+                         static_cast<Standard_ShortReal>(normalZ));
       }
     }
-
-    if (hasUV) T =  new Poly_Triangulation(Nodes,UVNodes,Triangles);
-    else T = new Poly_Triangulation(Nodes,Triangles);
       
     T->Deflection(d);
-    if (hasNormals)
-    {
-      T->SetNormals(Normals);
-    }
     myTriangulations.Add(T, hasNormals);
   }
 }
@@ -1654,17 +1644,18 @@ void BRepTools_ShapeSet::WriteMeshes (Standard_OStream& theOS,
   {
     const Handle(Poly_Mesh) aMesh = Handle(Poly_Mesh)::DownCast (theMeshes (i));
     const Standard_Integer nbNodes = aMesh->NbNodes();
-    const Standard_Integer nbElements = aMesh->NbElements();
+    const Standard_Integer nbTriangles = aMesh->NbTriangles();
+    const Standard_Integer nbQuads = aMesh->NbQuads();
     const Standard_Boolean hasUVNodes = aMesh->HasUVNodes();
 
     if (theCompact)
     {
-      theOS << nbNodes << " " << nbElements << " ";
+      theOS << nbNodes << " " << nbTriangles << " " << nbQuads << " ";
       theOS << (hasUVNodes ? "1" : "0") << " ";
     }
     else
     {
-      theOS << "  "<< i << " : Mesh with " << nbNodes << " Nodes, " << nbElements <<" Triangles and Quadrangles\n";
+      theOS << "  "<< i << " : Mesh with " << nbNodes << " Nodes, " << nbTriangles << " Triangles, " << nbQuads << " Quadrangles\n";
       theOS << "      "<<(hasUVNodes ? "with" : "without") << " UV nodes\n";
     }
     
@@ -1707,30 +1698,40 @@ void BRepTools_ShapeSet::WriteMeshes (Standard_OStream& theOS,
       }
     }
     
-    // write triangles and quadrangles
-    if (!theCompact) theOS << "\nElements :\n";
-    Standard_Integer n, n1, n2, n3, n4;
-    for (j = 1; j <= nbElements; j++)
+    // write triangles
+    if (!theCompact) theOS << "\nTriangles :\n";
+    Standard_Integer n1, n2, n3;
+    for (j = 1; j <= nbTriangles; j++)
     {
       if (!theCompact) theOS << std::setw (10) << j << " : ";
-      aMesh->Element (j, n1, n2, n3, n4);
-      n = (n4 > 0) ? 4 : 3;
-      if (!theCompact) theOS << std::setw (10);
-      theOS << n << " ";
+      aMesh->Triangle (j).Get (n1, n2, n3);
       if (!theCompact) theOS << std::setw (10);
       theOS << n1 << " ";
       if (!theCompact) theOS << std::setw (10);
       theOS << n2 << " ";
       if (!theCompact) theOS << std::setw (10);
       theOS << n3;
-      if (n4 > 0)
-      {
-        theOS << " ";
-        if (!theCompact) theOS << std::setw (10);
-        theOS << n4;
-      }
       if (!theCompact) theOS << "\n";
       else theOS << " ";
+    }
+
+    // write quadrangles
+    if (!theCompact) theOS << "\nQuadrangles :\n";
+    Standard_Integer n4;
+    for (j = 1; j <= nbQuads; j++)
+    {
+        if (!theCompact) theOS << std::setw(10) << j << " : ";
+        aMesh->Quad (j).Get (n1, n2, n3, n4);
+        if (!theCompact) theOS << std::setw(10);
+        theOS << n1 << " ";
+        if (!theCompact) theOS << std::setw(10);
+        theOS << n2 << " ";
+        if (!theCompact) theOS << std::setw(10);
+        theOS << n3 << " ";
+        if (!theCompact) theOS << std::setw(10);
+        theOS << n4;
+        if (!theCompact) theOS << "\n";
+        else theOS << " ";
     }
     theOS << "\n";
   }
@@ -1742,10 +1743,10 @@ void BRepTools_ShapeSet::ReadMeshes (Standard_IStream& theIS,
 {
   char buffer[255];
   Standard_Integer i, j;
-  Standard_Integer n, n1(0), n2(0), n3(0), n4(0);
+  Standard_Integer n1 (0), n2 (0), n3 (0), n4 (0);
   Standard_Real deflection, x, y, z;
-  Standard_Integer nbMeshes(0), nbNodes(0), nbElements(0);
-  Standard_Boolean hasUV(Standard_False);
+  Standard_Integer nbMeshes (0), nbNodes (0), nbTriangles (0), nbQuads (0);
+  Standard_Boolean hasUV (Standard_False);
   gp_Pnt p;
 
   // Read the "Meshes" head-line.
@@ -1758,11 +1759,11 @@ void BRepTools_ShapeSet::ReadMeshes (Standard_IStream& theIS,
 
   for (i = 1; i <= nbMeshes; i++)
   {
-    theIS >> nbNodes >> nbElements >> hasUV;
+    theIS >> nbNodes >> nbTriangles >> nbQuads >> hasUV;
     GeomTools::GetReal (theIS, deflection);
 
     // Allocate the mesh.
-    Handle(Poly_Mesh) aMesh = new Poly_Mesh (hasUV);
+    Handle(Poly_Mesh) aMesh = new Poly_Mesh (nbNodes, nbTriangles, nbQuads, hasUV);
     aMesh->Deflection (deflection);
 
     // Read nodes.
@@ -1772,7 +1773,7 @@ void BRepTools_ShapeSet::ReadMeshes (Standard_IStream& theIS,
       GeomTools::GetReal (theIS, y);
       GeomTools::GetReal (theIS, z);
       p.SetCoord (x, y, z);
-      aMesh->AddNode (p);
+      aMesh->ChangeNode (j) = p;
     }
 
     // Reads 2d-nodes.
@@ -1786,21 +1787,24 @@ void BRepTools_ShapeSet::ReadMeshes (Standard_IStream& theIS,
       }
     }
 
-    // Reads the triangles and quadrangles.
-    for (j = 1; j <= nbElements; j++)
+    // Reads the triangles.
+    for (j = 1; j <= nbTriangles; j++)
     {
-      // Read the element.
-      theIS >> n;
-      if (n == 3)
+        // Read the indices.
         theIS >> n1 >> n2 >> n3;
-      else if (n == 4)
+
+        // Set the triangle to the mesh.
+        aMesh->ChangeTriangle (j) = Poly_Triangle (n1, n2, n3);
+    }
+
+    // Reads the quadrangles.
+    for (j = 1; j <= nbQuads; j++)
+    {
+        // Read the indices.
         theIS >> n1 >> n2 >> n3 >> n4;
 
-      // Set the element to the mesh.
-      if (n == 3)
-        aMesh->AddElement (n1, n2, n3);
-      else if (n == 4)
-        aMesh->AddElement (n1, n2, n3, n4);
+        // Set the quadrangle to the mesh.
+        aMesh->ChangeQuad (j) = Poly_Quad (n1, n2, n3, n4);
     }
 
     theMeshes.Add (aMesh);

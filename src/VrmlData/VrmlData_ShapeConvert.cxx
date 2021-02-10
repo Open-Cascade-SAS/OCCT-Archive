@@ -400,7 +400,8 @@ Handle(VrmlData_Geometry) VrmlData_ShapeConvert::triToIndexedFaceSet
     Standard_Integer j;
     for  (i = 0, j = 1; i < nNodes; i++, j += 3)
     {
-      gp_XYZ aNormal = theTri->Normal (i + 1).XYZ();
+      const Vec3f& aVec = theTri->Normal (i + 1);
+      gp_XYZ aNormal (aVec.x(), aVec.y(), aVec.z());
       if (isReverse)
       {
         aNormal.Reverse();
@@ -466,16 +467,10 @@ Handle(VrmlData_Geometry) VrmlData_ShapeConvert::triToIndexedFaceSet
           aNormal.SetY(0.);
         if (aNormal.Z()*aNormal.Z() < aConf2)
           aNormal.SetZ(0.);
+
         arrVec[i] = aNormal.XYZ();
-
-        Standard_Integer j = i * 3;
-        Normals->SetValue(j + 1, (Standard_ShortReal)aNormal.X());
-        Normals->SetValue(j + 2, (Standard_ShortReal)aNormal.Y());
-        Normals->SetValue(j + 3, (Standard_ShortReal)aNormal.Z());
-
+        theTri->SetNormal (i + 1, aNormal.XYZ());
       }
-
-      theTri->SetNormals(Normals);  
   
       const Handle(VrmlData_Normal) aNormalNode =
         new VrmlData_Normal (myScene, 0L, nNodes, arrVec);

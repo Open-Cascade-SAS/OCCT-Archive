@@ -157,7 +157,6 @@ void StdPrs_ToolTriangulatedShape::ComputeNormals (const TopoDS_Face& theFace,
   }
 
   const Standard_Real aTol = Precision::Confusion();
-  Handle(TShort_HArray1OfShortReal) aNormals = new TShort_HArray1OfShortReal (1, theTris->NbNodes() * 3);
   Standard_Integer aTri[3];
   gp_Dir aNorm;
   for (Standard_Integer aNodeIter = 1; aNodeIter <= theTris->NbNodes(); ++aNodeIter)
@@ -187,13 +186,10 @@ void StdPrs_ToolTriangulatedShape::ComputeNormals (const TopoDS_Face& theFace,
       const Standard_Real aModMax = eqPlan.Modulus();
       aNorm = (aModMax > aTol) ? gp_Dir (eqPlan) : gp::DZ();
     }
-
-    const Standard_Integer anId = (aNodeIter - 1) * 3;
-    aNormals->SetValue (anId + 1, (Standard_ShortReal )aNorm.X());
-    aNormals->SetValue (anId + 2, (Standard_ShortReal )aNorm.Y());
-    aNormals->SetValue (anId + 3, (Standard_ShortReal )aNorm.Z());
+    theTris->SetNormal (aNodeIter, static_cast<Standard_ShortReal>(aNorm.X()),
+                                   static_cast<Standard_ShortReal>(aNorm.Y()),
+                                   static_cast<Standard_ShortReal>(aNorm.Z()));
   }
-  theTris->SetNormals (aNormals);
 }
 
 //=======================================================================
@@ -212,7 +208,8 @@ void StdPrs_ToolTriangulatedShape::Normal (const TopoDS_Face&  theFace,
 
   for (Standard_Integer aNodeIter = 1; aNodeIter <= aPolyTri->NbNodes(); ++aNodeIter)
   {
-    theNormals.ChangeValue (aNodeIter) = aPolyTri->Normal (aNodeIter);
+    const Vec3f& aNormal = aPolyTri->Normal (aNodeIter);
+    theNormals.ChangeValue (aNodeIter).SetCoord (aNormal.x(), aNormal.y(), aNormal.z());
   }
 
   if (theFace.Orientation() == TopAbs_REVERSED)

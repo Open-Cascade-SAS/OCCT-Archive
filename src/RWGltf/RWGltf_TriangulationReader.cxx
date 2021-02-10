@@ -333,11 +333,11 @@ bool RWGltf_TriangulationReader::readBuffer (std::istream& theStream,
           if (aVec3->SquareModulus() >= THE_NORMAL_PREC2)
           {
             myCoordSysConverter.TransformNormal (*aVec3);
-            setNodeNormal (THE_LOWER_NODE_INDEX + aVertIter, gp_Dir (aVec3->x(), aVec3->y(), aVec3->z()));
+            setNodeNormal (THE_LOWER_NODE_INDEX + aVertIter, gp_XYZ (aVec3->x(), aVec3->y(), aVec3->z()));
           }
           else
           {
-            setNodeNormal (THE_LOWER_NODE_INDEX + aVertIter, gp_Dir (0.0, 0.0, 1.0));
+            setNodeNormal (THE_LOWER_NODE_INDEX + aVertIter, gp::DZ().XYZ());
           }
         }
       }
@@ -353,11 +353,11 @@ bool RWGltf_TriangulationReader::readBuffer (std::istream& theStream,
           }
           if (aVec3->SquareModulus() >= THE_NORMAL_PREC2)
           {
-            setNodeNormal (THE_LOWER_NODE_INDEX + aVertIter, gp_Dir (aVec3->x(), aVec3->y(), aVec3->z()));
+            setNodeNormal (THE_LOWER_NODE_INDEX + aVertIter, gp_XYZ (aVec3->x(), aVec3->y(), aVec3->z()));
           }
           else
           {
-            setNodeNormal (THE_LOWER_NODE_INDEX + aVertIter, gp_Dir (0.0, 0.0, 1.0));
+            setNodeNormal (THE_LOWER_NODE_INDEX + aVertIter, gp::DZ().XYZ());
           }
         }
       }

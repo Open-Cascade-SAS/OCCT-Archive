@@ -123,10 +123,6 @@ public:
   //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbTriangles.
   Standard_EXPORT void SetTriangle (const Standard_Integer theIndex, const Poly_Triangle& theTriangle);
 
-  //! Sets the table of node normals.
-  //! Raises exception if length of theNormals != 3 * NbNodes
-  Standard_EXPORT void SetNormals (const Handle(TShort_HArray1OfShortReal)& theNormals);
-
   //! Changes normal at the given index.
   //! Raises Standard_OutOfRange exception.
   Standard_EXPORT void SetNormal (const Standard_Integer theIndex,

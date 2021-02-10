@@ -35,7 +35,7 @@ const Standard_GUID& TDataXtd_SurfacicMesh::GetID()
 //purpose  : 
 //=======================================================================
 static Handle(TDataXtd_SurfacicMesh) SetAttr (const TDF_Label& theLabel, 
-                                      const Standard_GUID& theID)
+                                              const Standard_GUID& theID)
 {
   Handle(TDataXtd_SurfacicMesh) hMesh;
   if (!theLabel.FindAttribute (theID, hMesh)) {
@@ -60,7 +60,7 @@ Handle(TDataXtd_SurfacicMesh) TDataXtd_SurfacicMesh::Set (const TDF_Label& theLa
 //purpose  : 
 //=======================================================================
 Handle(TDataXtd_SurfacicMesh) TDataXtd_SurfacicMesh::Set (const TDF_Label& theLabel,
-                                          const Standard_GUID& theID)
+                                                          const Standard_GUID& theID)
 {
   return SetAttr (theLabel, theID);
 }
@@ -70,7 +70,7 @@ Handle(TDataXtd_SurfacicMesh) TDataXtd_SurfacicMesh::Set (const TDF_Label& theLa
 //purpose  : 
 //=======================================================================
 Handle(TDataXtd_SurfacicMesh) TDataXtd_SurfacicMesh::Set (const TDF_Label& theLabel,
-                                          const Handle(Poly_Mesh)& theMesh)
+                                                          const Handle(Poly_Mesh)& theMesh)
 {
   Handle(TDataXtd_SurfacicMesh) hMesh = Set (theLabel);
   hMesh->Set (theMesh);
@@ -82,8 +82,8 @@ Handle(TDataXtd_SurfacicMesh) TDataXtd_SurfacicMesh::Set (const TDF_Label& theLa
 //purpose  : 
 //=======================================================================
 Handle(TDataXtd_SurfacicMesh) TDataXtd_SurfacicMesh::Set (const TDF_Label& theLabel,
-                                          const Standard_GUID& theID,
-                                          const Handle(Poly_Mesh)& theMesh)
+                                                          const Standard_GUID& theID,
+                                                          const Handle(Poly_Mesh)& theMesh)
 {
   Handle(TDataXtd_SurfacicMesh) hMesh = Set (theLabel, theID);
   hMesh->Set (theMesh);
@@ -168,6 +168,15 @@ Standard_Integer TDataXtd_SurfacicMesh::NbTriangles() const
 }
 
 //=======================================================================
+//function : NbQuads
+//purpose  : 
+//=======================================================================
+Standard_Integer TDataXtd_SurfacicMesh::NbQuads() const
+{
+  return myMesh->NbQuads();
+}
+
+//=======================================================================
 //function : HasUVNodes
 //purpose  : 
 //=======================================================================
@@ -177,13 +186,13 @@ Standard_Boolean TDataXtd_SurfacicMesh::HasUVNodes() const
 }
 
 //=======================================================================
-//function : AddNode
+//function : SetNode
 //purpose  : 
 //=======================================================================
-Standard_Integer TDataXtd_SurfacicMesh::AddNode (const gp_Pnt& theNode)
+void TDataXtd_SurfacicMesh::SetNode (const Standard_Integer& theIndex, const gp_Pnt& theNode)
 {
   Backup();
-  return myMesh->AddNode (theNode);
+  myMesh->ChangeNode (theIndex) = theNode;
 }
 
 //=======================================================================
@@ -196,13 +205,13 @@ const gp_Pnt& TDataXtd_SurfacicMesh::Node (const Standard_Integer theIndex) cons
 }
 
 //=======================================================================
-//function : SetNode
+//function : SetUVNode
 //purpose  : 
 //=======================================================================
-void TDataXtd_SurfacicMesh::SetNode (const Standard_Integer theIndex, const gp_Pnt& theNode)
+void TDataXtd_SurfacicMesh::SetUVNode(const Standard_Integer theIndex, const gp_Pnt2d& theUVNode)
 {
-  Backup();
-  myMesh->ChangeNode (theIndex) = theNode;
+    Backup();
+    myMesh->ChangeUVNode (theIndex) = theUVNode;
 }
 
 //=======================================================================
@@ -212,35 +221,6 @@ void TDataXtd_SurfacicMesh::SetNode (const Standard_Integer theIndex, const gp_P
 const gp_Pnt2d& TDataXtd_SurfacicMesh::UVNode (const Standard_Integer theIndex) const
 {
   return myMesh->UVNode (theIndex);
-}
-
-//=======================================================================
-//function : SetUVNode
-//purpose  : 
-//=======================================================================
-void TDataXtd_SurfacicMesh::SetUVNode (const Standard_Integer theIndex, const gp_Pnt2d& theUVNode)
-{
-  Backup();
-  myMesh->ChangeUVNode (theIndex) = theUVNode;
-}
-
-//=======================================================================
-//function : AddTriangle
-//purpose  : 
-//=======================================================================
-Standard_Integer TDataXtd_SurfacicMesh::AddTriangle (const Poly_Triangle& theTriangle)
-{
-  Backup();
-  return myMesh->AddTriangle (theTriangle);
-}
-
-//=======================================================================
-//function : Triangle
-//purpose  : 
-//=======================================================================
-const Poly_Triangle& TDataXtd_SurfacicMesh::Triangle (const Standard_Integer theIndex) const
-{
-  return myMesh->Triangle (theIndex);
 }
 
 //=======================================================================
@@ -254,14 +234,31 @@ void TDataXtd_SurfacicMesh::SetTriangle (const Standard_Integer theIndex, const 
 }
 
 //=======================================================================
-//function : SetNormal
+//function : Triangle
 //purpose  : 
 //=======================================================================
-void TDataXtd_SurfacicMesh::SetNormal (const Standard_Integer theIndex,
-                               const gp_Dir&          theNormal)
+const Poly_Triangle& TDataXtd_SurfacicMesh::Triangle(const Standard_Integer theIndex) const
+{
+  return myMesh->Triangle (theIndex);
+}
+
+//=======================================================================
+//function : SetQuad
+//purpose  : 
+//=======================================================================
+void TDataXtd_SurfacicMesh::SetQuad (const Standard_Integer theIndex, const Poly_Quad& theQuad)
 {
   Backup();
-  myMesh->SetNormal (theIndex, theNormal);
+  myMesh->ChangeQuad (theIndex) = theQuad;
+}
+
+//=======================================================================
+//function : Quad
+//purpose  : 
+//=======================================================================
+const Poly_Quad& TDataXtd_SurfacicMesh::Quad (const Standard_Integer theIndex) const
+{
+  return myMesh->Quad (theIndex);
 }
 
 //=======================================================================
@@ -274,87 +271,36 @@ Standard_Boolean TDataXtd_SurfacicMesh::HasNormals() const
 }
 
 //=======================================================================
+//function : SetNormal
+//purpose  : 
+//=======================================================================
+void TDataXtd_SurfacicMesh::SetNormal (const Standard_Integer theIndex,
+                                       const gp_XYZ&          theNormal)
+{
+  Backup();
+  myMesh->SetNormal (theIndex, theNormal);
+}
+
+//=======================================================================
+//function : SetNormal
+//purpose  : 
+//=======================================================================
+void TDataXtd_SurfacicMesh::SetNormal (const Standard_Integer   theIndex,
+                                       const Standard_ShortReal theNormalX,
+                                       const Standard_ShortReal theNormalY, 
+                                       const Standard_ShortReal theNormalZ)
+{
+  Backup();
+  myMesh->SetNormal (theIndex, theNormalX, theNormalY, theNormalZ);
+}
+
+//=======================================================================
 //function : Normal
 //purpose  : 
 //=======================================================================
-const gp_Dir TDataXtd_SurfacicMesh::Normal (const Standard_Integer theIndex) const
+const Vec3f& TDataXtd_SurfacicMesh::Normal (const Standard_Integer theIndex) const
 {
   return myMesh->Normal (theIndex);
-}
-
-//=======================================================================
-//function : AddElement
-//purpose  :
-//=======================================================================
-Standard_Integer TDataXtd_SurfacicMesh::AddElement (const Standard_Integer theN1,
-                                            const Standard_Integer theN2,
-                                            const Standard_Integer theN3)
-{
-  Backup();
-  return myMesh->AddElement (theN1, theN2, theN3);
-}
-
-//=======================================================================
-//function : AddElement
-//purpose  :
-//=======================================================================
-Standard_Integer TDataXtd_SurfacicMesh::AddElement (const Standard_Integer theN1,
-                                            const Standard_Integer theN2,
-                                            const Standard_Integer theN3,
-                                            const Standard_Integer theN4)
-{
-  Backup();
-  return myMesh->AddElement (theN1, theN2, theN3, theN4);
-}
-
-//=======================================================================
-//function : NbElements
-//purpose  : 
-//=======================================================================
-Standard_Integer TDataXtd_SurfacicMesh::NbElements() const
-{
-  return myMesh->NbElements();
-}
-
-//=======================================================================
-//function : NbQuads
-//purpose  : 
-//=======================================================================
-Standard_Integer TDataXtd_SurfacicMesh::NbQuads() const
-{
-  return myMesh->NbQuads();
-}
-
-//=======================================================================
-//function : Element
-//purpose  : 
-//=======================================================================
-const Poly_Element& TDataXtd_SurfacicMesh::Element (const Standard_Integer theIndex) const
-{
-  return myMesh->Element (theIndex);
-}
-
-//=======================================================================
-//function : Element
-//purpose  : 
-//=======================================================================
-void TDataXtd_SurfacicMesh::Element (const Standard_Integer theIndex,
-                             Standard_Integer& theN1,
-                             Standard_Integer& theN2,
-                             Standard_Integer& theN3,
-                             Standard_Integer& theN4) const
-{
-  myMesh->Element (theIndex, theN1, theN2, theN3, theN4);
-}
-
-//=======================================================================
-//function : SetElement
-//purpose  : 
-//=======================================================================
-void TDataXtd_SurfacicMesh::SetElement (const Standard_Integer theIndex, const Poly_Element& theElement)
-{
-  Backup();
-  myMesh->SetElement (theIndex, theElement);
 }
 
 //=======================================================================
@@ -417,7 +363,7 @@ void TDataXtd_SurfacicMesh::Restore (const Handle(TDF_Attribute)& theWithMesh)
 //purpose  : 
 //=======================================================================
 void TDataXtd_SurfacicMesh::Paste (const Handle(TDF_Attribute)& theIntoMesh,
-                           const Handle(TDF_RelocationTable)& ) const
+                                   const Handle(TDF_RelocationTable)& ) const
 {
   Handle(TDataXtd_SurfacicMesh) intoMesh = Handle(TDataXtd_SurfacicMesh)::DownCast (theIntoMesh);
   intoMesh->myMesh.Nullify();
@@ -444,6 +390,7 @@ Standard_OStream& TDataXtd_SurfacicMesh::Dump (Standard_OStream& theOS) const
     theOS << "\n\tDeflection: " << myMesh->Deflection();
     theOS << "\n\tNodes: " << myMesh->NbNodes();
     theOS << "\n\tTriangles: " << myMesh->NbTriangles();
+    theOS << "\n\tQuadrangles: " << myMesh->NbQuads();
     if (myMesh->HasUVNodes())
       theOS << "\n\tHas UV-Nodes";
     else

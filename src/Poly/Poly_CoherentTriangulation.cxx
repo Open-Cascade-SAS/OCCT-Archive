@@ -81,8 +81,9 @@ Poly_CoherentTriangulation::Poly_CoherentTriangulation
     // Copy the normals at nodes
     if (theTriangulation->HasNormals()) {
       for (i = 0; i < nNodes; i++) {
-        const gp_XYZ aNormal = theTriangulation->Normal (i + 1).XYZ();
-        myNodes(i).SetNormal(aNormal);
+        const Vec3f& anXYZ = theTriangulation->Normal (i + 1);
+        gp_XYZ aNormal (anXYZ.x(), anXYZ.y(), anXYZ.z());
+        myNodes (i).SetNormal (aNormal);
       }
     }
     myDeflection = theTriangulation->Deflection();
@@ -114,14 +115,10 @@ Handle(Poly_Triangulation) Poly_CoherentTriangulation::GetTriangulation() const
   const Standard_Integer nTriangles = NTriangles();
   if (nNodes > 0 && nTriangles > 0) {
     aResult = new Poly_Triangulation(nNodes, nTriangles, Standard_True);
-    const Handle(TShort_HArray1OfShortReal) harrNormal =
-      new TShort_HArray1OfShortReal(1, 3 * nNodes);
-    Standard_ShortReal * arrNormal = &harrNormal->ChangeValue(1);
 
     NCollection_Vector<Standard_Integer> vecNodeId;
     Standard_Integer i, aCount(0);
     Standard_Boolean hasUV (Standard_False);
-    Standard_Boolean hasNormals (Standard_False);
 
     // Copy the nodes (3D and 2D coordinates)
     for (i = 0; i < myNodes.Length(); i++) {
@@ -130,9 +127,11 @@ Handle(Poly_Triangulation) Poly_CoherentTriangulation::GetTriangulation() const
         vecNodeId.SetValue(i, 0);
       else {
         const gp_XYZ aNormal = aNode.GetNormal();
-        arrNormal[3 * aCount + 0] = static_cast<Standard_ShortReal>(aNormal.X());
-        arrNormal[3 * aCount + 1] = static_cast<Standard_ShortReal>(aNormal.Y());
-        arrNormal[3 * aCount + 2] = static_cast<Standard_ShortReal>(aNormal.Z());
+        if (aNormal.SquareModulus() > Precision::Confusion()) {
+          aResult->SetNormal (aCount, static_cast<Standard_ShortReal>(aNormal.X()),
+                                      static_cast<Standard_ShortReal>(aNormal.Y()),
+                                      static_cast<Standard_ShortReal>(aNormal.Z()));
+        }
 
         vecNodeId.SetValue(i, ++aCount);
         aResult->ChangeNode (aCount) = aNode;
@@ -141,8 +140,6 @@ Handle(Poly_Triangulation) Poly_CoherentTriangulation::GetTriangulation() const
         if (aNode.GetU()*aNode.GetU() + aNode.GetV()*aNode.GetV() >
             Precision::Confusion())
           hasUV = Standard_True;
-        if (aNormal.SquareModulus() >  Precision::Confusion())
-          hasNormals = Standard_True;
       }
     }
     if (hasUV == Standard_False)
@@ -159,8 +156,6 @@ Handle(Poly_Triangulation) Poly_CoherentTriangulation::GetTriangulation() const
                                                             vecNodeId (aTri.Node (2)));;
       }
     }
-    if (hasNormals)
-      aResult->SetNormals (harrNormal);
 
     aResult->Deflection(myDeflection);
   }

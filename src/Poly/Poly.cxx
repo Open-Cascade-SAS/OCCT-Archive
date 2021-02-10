@@ -480,28 +480,21 @@ void Poly::ComputeNormals (const Handle(Poly_Triangulation)& theTri)
   }
 
   // Normalize all vectors
+  gp_Dir aNormal;
   gp_XYZ aNormXYZ;
   for (Standard_Integer aNodeIter = 0; aNodeIter < aNbNodes; ++aNodeIter)
   {
     const Standard_Size anIndex = aNodeIter * 3;
     aNormXYZ.SetCoord (aNormArr[anIndex + 0], aNormArr[anIndex + 1], aNormArr[anIndex + 2]);
     const Standard_Real aMod2 = aNormXYZ.SquareModulus();
-    if (aMod2 < anEps2)
-    {
-      aNormArr[anIndex + 0] = 0.0f;
-      aNormArr[anIndex + 1] = 0.0f;
-      aNormArr[anIndex + 2] = 1.0f;
-    }
+    if (aMod2 > anEps2)
+      aNormal = aNormXYZ;
     else
-    {
-      aNormXYZ /= Sqrt (aMod2);
-      aNormArr[anIndex + 0] = Standard_ShortReal(aNormXYZ.X());
-      aNormArr[anIndex + 1] = Standard_ShortReal(aNormXYZ.Y());
-      aNormArr[anIndex + 2] = Standard_ShortReal(aNormXYZ.Z());
-    }
-  }
+      aNormal = gp::DZ();
 
-  theTri->SetNormals (aNormals);
+    // Set normal.
+    theTri->SetNormal (aNodeIter + 1, aNormXYZ);
+  }
 }
 
 //=======================================================================

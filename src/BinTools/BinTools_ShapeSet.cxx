@@ -1532,10 +1532,10 @@ void BinTools_ShapeSet::WriteTriangulation (Standard_OStream& OS,
         {
           for (Standard_Integer aNormalIter = 1; aNormalIter <= aNbNodes; ++aNormalIter)
           {
-            const gp_Dir aNormal = aTriangulation->Normal (aNormalIter);
-            BinTools::PutShortReal (OS, (Standard_ShortReal) aNormal.X());
-            BinTools::PutShortReal (OS, (Standard_ShortReal) aNormal.Y());
-            BinTools::PutShortReal (OS, (Standard_ShortReal) aNormal.Z());
+            const Vec3f& aNormal = aTriangulation->Normal (aNormalIter);
+            BinTools::PutShortReal (OS, aNormal.x());
+            BinTools::PutShortReal (OS, aNormal.y());
+            BinTools::PutShortReal (OS, aNormal.z());
           }
         }
       }
@@ -1620,8 +1620,7 @@ void BinTools_ShapeSet::ReadTriangulation (Standard_IStream& IS,
           BinTools::GetShortReal(IS, aNormalX);
           BinTools::GetShortReal(IS, aNormalY);
           BinTools::GetShortReal(IS, aNormalZ);
-          gp_Dir aNormal(aNormalX, aNormalY, aNormalZ);
-          aTriangulation->SetNormal (aNormalIter, aNormal);
+          aTriangulation->SetNormal (aNormalIter, aNormalX, aNormalY, aNormalZ);
         }
       }
 

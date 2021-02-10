@@ -14,23 +14,31 @@
 #ifndef _Poly_Mesh_HeaderFile
 #define _Poly_Mesh_HeaderFile
 
-#include <Poly_Element.hxx>
+#include <Poly_Quad.hxx>
 #include <Poly_Triangulation.hxx>
 
 //! This class is extension for Poly_Triangulation.
-//! It allows to store mesh with quad polygons as table of Poly_Element.
-//! Keep in mind that when you add a triangle, it is also added to the table of elements
-//! as Poly_Element. And it will have first index set to triangle index from Poly_Triangulation
-//! and second index will be set to 0.
+//! It allows to store mesh with quad polygons.
 class Poly_Mesh : public Poly_Triangulation
 {
 
 public:
 
   //! Constructs an empty mesh.
+  Standard_EXPORT Poly_Mesh();
+
+  //! Constructs a mesh.
+  //! @param theNbNodes defines the number of nodes.
+  //! @param theNbTriangles defines the number of triangles.
+  //! @param theNbQuads defines the number of quadrangles.
   //! @param theHasUVNodes indicates whether 2D nodes will be associated with
   //!        3D ones, (i.e. to enable a 2D representation).
-  Standard_EXPORT Poly_Mesh (const Standard_Boolean theHasUVNodes = Standard_False);
+  //! @param theHasNormals defines allocation of normals for the nodes.
+  Standard_EXPORT Poly_Mesh(const Standard_Integer theNbNodes,
+                            const Standard_Integer theNbTriangles,
+                            const Standard_Integer theNbQuads,
+                            const Standard_Boolean theHasUVNodes = Standard_False,
+                            const Standard_Boolean theHasNormals = Standard_False);
 
   //! Constructs a mesh from existing triangulation.
   //! @param theTriangulation source triangulation.
@@ -39,59 +47,39 @@ public:
   //! Creates full copy of current mesh
   Standard_EXPORT virtual Handle(Poly_Triangulation) Copy() const;
 
-  //! Adds element to the mesh.
-  //! @param theN1 index of the first node.
-  //! @param theN2 index of the second node.
-  //! @param theN3 index of the third node.
-  //! @return index of the added element.
-  Standard_EXPORT Standard_Integer AddElement (const Standard_Integer theN1,
-                                               const Standard_Integer theN2,
-                                               const Standard_Integer theN3);
-
-  //! Adds element to the mesh.
+  //! Sets a quadrangle to the mesh.
+  //! @param theIndex is an index of the quadrangle.
   //! @param theN1 index of the first node.
   //! @param theN2 index of the second node.
   //! @param theN3 index of the third node.
   //! @param theN4 index of the fourth node.
-  //! @return index of the added element.
-  Standard_EXPORT Standard_Integer AddElement (const Standard_Integer theN1,
-                                               const Standard_Integer theN2,
-                                               const Standard_Integer theN3,
-                                               const Standard_Integer theN4);
+  void SetQuad (const Standard_Integer theIndex,
+                const Standard_Integer theN1,
+                const Standard_Integer theN2,
+                const Standard_Integer theN3,
+                const Standard_Integer theN4)
+  {
+    myQuads.SetValue (theIndex, Poly_Quad (theN1, theN2, theN3, theN4));
+  }
 
-  //! @return the number of elements for this mesh.
-  Standard_Integer NbElements() const { return myElements.Size(); }
+  //! @return the number of quadrangles in the mesh.
+  Standard_Integer NbQuads() const {
+    return myQuads.Size();
+  }
 
-  //! @return the number of quads for this mesh.
-  Standard_Integer NbQuads() const { return myNbQuads; }
+  //! @return a quadrangle at the given index.
+  const Poly_Quad& Quad (const Standard_Integer theIndex) const {
+    return myQuads.Value (theIndex);
+  }
 
-  //! @return element at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbElements.
-  Standard_EXPORT const Poly_Element& Element (const Standard_Integer theIndex) const;
-
-  //! @return nodes of the element at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbElements.
-  Standard_EXPORT void Element (const Standard_Integer theIndex,
-                                Standard_Integer& theN1,
-                                Standard_Integer& theN2,
-                                Standard_Integer& theN3,
-                                Standard_Integer& theN4) const;
-
-  //! Sets the element at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbElements.
-  Standard_EXPORT void SetElement (const Standard_Integer theIndex, const Poly_Element& theElement);
+  //! @return a reference to a quadrangle at the given index.
+  Poly_Quad& ChangeQuad (const Standard_Integer theIndex) {
+    return myQuads.ChangeValue (theIndex);
+  }
 
 protected:
 
-  //! Adds element to the mesh.
-  //! @param theElement element to add.
-  //! @return index of the added element.
-  Standard_EXPORT Standard_Integer addElement (const Poly_Element& theElement);
-
-private:
-
-  NCollection_Vector<Poly_Element> myElements;
-  Standard_Integer                 myNbQuads;
+  NCollection_Array1<Poly_Quad> myQuads;
 
 public:
 

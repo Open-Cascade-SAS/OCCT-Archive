@@ -33,10 +33,7 @@ class TDataXtd_SurfacicMesh;
 DEFINE_STANDARD_HANDLE(TDataXtd_SurfacicMesh, TDF_Attribute)
 
 //! An Ocaf attribute containing a mesh (Poly_Mesh).
-//! It duplicates all methods from Poly_Mesh (and Poly_Triangulation).
-//! It is highly recommended to modify the mesh through the methods of this attribute,
-//! but not directly via the underlying Poly_Mesh object.
-//! In this case Undo/Redo will work fine and robust.
+//! It includes all methods of Poly_Mesh (and Poly_Triangulation).
 class TDataXtd_SurfacicMesh : public TDF_Attribute
 {
 public:
@@ -53,20 +50,20 @@ public:
   //! Finds or creates a mesh attribute with specified ID.
   //! It allows setting several mesh-attributes at the same label.
   Standard_EXPORT static Handle(TDataXtd_SurfacicMesh) Set (const TDF_Label& theLabel,
-                                                    const Standard_GUID& theID);
+                                                            const Standard_GUID& theID);
 
   //! Finds or creates a mesh attribute.
   //! Initializes the attribute by a mesh (Poly_Mesh) object.
   //! If the mesh consists of only triangles,
   //! you may put Poly_Triangulation object as a 2nd parameter of this method.
   Standard_EXPORT static Handle(TDataXtd_SurfacicMesh) Set (const TDF_Label& theLabel,
-                                                    const Handle(Poly_Mesh)& theMesh);
+                                                            const Handle(Poly_Mesh)& theMesh);
 
   //! Finds or creates a mesh attribute (the same method as above).
   //! Additionally, it allows setting several mesh-attributes at the same label.
   Standard_EXPORT static Handle(TDataXtd_SurfacicMesh) Set (const TDF_Label& theLabel,
-                                                    const Standard_GUID& theID,
-                                                    const Handle(Poly_Mesh)& theMesh);
+                                                            const Standard_GUID& theID,
+                                                            const Handle(Poly_Mesh)& theMesh);
 
   //! Object methods
   //  ==============
@@ -96,117 +93,70 @@ public:
   //  =================
 
   //! The methods are "covered" by this attribute to prevent direct modification of the mesh.
-  //! There is no performance problem to call Poly_Mesh method through this attribute.
-  //! The most of the methods are considered as "inline" by the compiler in release mode.
 
   //! Returns the deflection of this triangulation.
   Standard_EXPORT Standard_Real Deflection() const;
 
-  //! Sets the deflection of this triangulation to theDeflection.
-  //! See more on deflection in Polygon2D
+  //! Sets the deflection of this mesh to theDeflection.
   Standard_EXPORT void Deflection (const Standard_Real theDeflection);
 
   //! Deallocates the UV nodes.
   Standard_EXPORT void RemoveUVNodes();
 
-  //! @return the number of nodes for this triangulation.
+  //! @return the number of nodes for this mesh.
   Standard_EXPORT Standard_Integer NbNodes() const;
 
-  //! @return the number of triangles for this triangulation.
+  //! @return the number of triangles for this mesh.
   Standard_EXPORT Standard_Integer NbTriangles() const;
 
-  //! @return Standard_True if 2D nodes are associated with 3D nodes for this triangulation.
+  //! @return the number of quadrangles for this mesh.
+  Standard_EXPORT Standard_Integer NbQuads() const;
+
+  //! @return Standard_True if 2D nodes are associated with 3D nodes for this mesh.
   Standard_EXPORT Standard_Boolean HasUVNodes() const;
 
-  //! Adds Node to the triangulation. If triangulation has UVNodes or Normals
-  //! they will be expanded and set to zero values to match the new number of nodes.
-  //! @return index of the added Node.
-  Standard_EXPORT Standard_Integer AddNode (const gp_Pnt& theNode);
+  //! Sets a node by index.
+  Standard_EXPORT void SetNode (const Standard_Integer& theIndex, const gp_Pnt& theNode);
 
-  //! @return node at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbNodes.
+  //! Returns a node by index.
   Standard_EXPORT const gp_Pnt& Node (const Standard_Integer theIndex) const;
 
-  //! The method differs from Poly_Mesh!
-  //! Sets a node at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbNodes.
-  Standard_EXPORT void SetNode (const Standard_Integer theIndex, const gp_Pnt& theNode);
-
-  //! @return UVNode at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbNodes.
-  Standard_EXPORT const gp_Pnt2d& UVNode (const Standard_Integer theIndex) const;
-
-  //! The method differs from Poly_Mesh!
-  //! Sets a UVNode at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbNodes.
+  //! Sets a UV-node by index.
   Standard_EXPORT void SetUVNode (const Standard_Integer theIndex, const gp_Pnt2d& theUVNode);
 
-  //! Adds triangle to the triangulation.
-  //! @return index of the added triangle.
-  Standard_EXPORT Standard_Integer AddTriangle (const Poly_Triangle& theTriangle);
+  //! Returns an UV-node by index.
+  Standard_EXPORT const gp_Pnt2d& UVNode (const Standard_Integer theIndex) const;
 
-  //! @return triangle at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbTriangles.
-  Standard_EXPORT const Poly_Triangle& Triangle (const Standard_Integer theIndex) const;
-
-  //! The method differs from Poly_Mesh!
-  //! Sets a triangle at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbTriangles.
+  //! Sets a triangle by index.
   Standard_EXPORT void SetTriangle (const Standard_Integer theIndex, const Poly_Triangle& theTriangle);
 
-  //! Changes normal at the given index.
-  //! Raises Standard_OutOfRange exception.
-  Standard_EXPORT void SetNormal (const Standard_Integer theIndex,
-                                  const gp_Dir&          theNormal);
+  //! Returns a triangle by index.
+  Standard_EXPORT const Poly_Triangle& Triangle (const Standard_Integer theIndex) const;
+
+  //! Sets a quadrangle by index.
+  Standard_EXPORT void SetQuad (const Standard_Integer theIndex, const Poly_Quad& theQuad);
+
+  //! Returns a quadrangle by index.
+  Standard_EXPORT const Poly_Quad& Quad (const Standard_Integer theIndex) const;
 
   //! Returns Standard_True if nodal normals are defined.
   Standard_EXPORT Standard_Boolean HasNormals() const;
 
-  //! @return normal at the given index.
-  //! Raises Standard_OutOfRange exception.
-  Standard_EXPORT const gp_Dir Normal (const Standard_Integer theIndex) const;
+  //! Sets normal by index.
+  Standard_EXPORT void SetNormal (const Standard_Integer theIndex,
+                                  const gp_XYZ&          theNormal);
 
-  //! Adds element to the mesh.
-  //! @param theN1 index of the first node.
-  //! @param theN2 index of the second node.
-  //! @param theN3 index of the third node.
-  //! @return index of the added element.
-  Standard_EXPORT Standard_Integer AddElement (const Standard_Integer theN1,
-                                               const Standard_Integer theN2,
-                                               const Standard_Integer theN3);
+  //! Sets normal by index.
+  Standard_EXPORT void SetNormal (const Standard_Integer theIndex,
+                                  const Standard_ShortReal theNormalX,
+                                  const Standard_ShortReal theNormalY, 
+                                  const Standard_ShortReal theNormalZ);
 
-  //! Adds element to the mesh.
-  //! @param theN1 index of the first node.
-  //! @param theN2 index of the second node.
-  //! @param theN3 index of the third node.
-  //! @param theN4 index of the fourth node.
-  //! @return index of the added element.
-  Standard_EXPORT Standard_Integer AddElement (const Standard_Integer theN1,
-                                               const Standard_Integer theN2,
-                                               const Standard_Integer theN3,
-                                               const Standard_Integer theN4);
+  //! Returns normal by index.
+  Standard_EXPORT const Vec3f& Normal(const Standard_Integer theIndex) const;
 
-  //! @return the number of elements for this mesh.
-  Standard_EXPORT Standard_Integer NbElements() const;
-
-  //! @return the number of quads for this mesh.
-  Standard_EXPORT Standard_Integer NbQuads() const;
-
-  //! @return element at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbElements.
-  Standard_EXPORT const Poly_Element& Element (const Standard_Integer theIndex) const;
-
-  //! @return nodes of the element at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbElements.
-  Standard_EXPORT void Element (const Standard_Integer theIndex,
-                                Standard_Integer& theN1,
-                                Standard_Integer& theN2,
-                                Standard_Integer& theN3,
-                                Standard_Integer& theN4) const;
-
-  //! Sets an element at the given index.
-  //! Raises Standard_OutOfRange exception if theIndex is less than 1 or greater than NbElements.
-  Standard_EXPORT void SetElement (const Standard_Integer theIndex, const Poly_Element& theElement);
+  //! Returns normal by index.
+  Standard_EXPORT void Normal(const Standard_Integer theIndex, gp_XYZ& theNormal) const;
 
   //! Dumps the content of me into the stream
   Standard_EXPORT virtual void DumpJson(Standard_OStream& theOStream, Standard_Integer theDepth = -1) const Standard_OVERRIDE;

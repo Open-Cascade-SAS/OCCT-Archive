@@ -141,8 +141,9 @@ void AIS_Triangulation::Compute(const Handle(PrsMgr_PresentationManager3d)& /*aP
           const TColStd_Array1OfInteger& colors = myColor->Array1();
           for ( i = 1; i <= myTriangulation->NbNodes(); i++ )
           {
-            anArray->AddVertex(myTriangulation->Node (i), attenuateColor(colors(i), ambient));
-            anArray->SetVertexNormal(i, myTriangulation->Normal (i));
+            anArray->AddVertex (myTriangulation->Node (i), attenuateColor (colors (i), ambient));
+            const Vec3f& aNormal = myTriangulation->Normal (i);
+            anArray->SetVertexNormal (i, aNormal.x(), aNormal.y(), aNormal.z());
           }
         }
         else // !hasVColors
@@ -150,7 +151,8 @@ void AIS_Triangulation::Compute(const Handle(PrsMgr_PresentationManager3d)& /*aP
           for ( i = 1; i <= myTriangulation->NbNodes(); i++ )
           {
             anArray->AddVertex(myTriangulation->Node (i));
-            anArray->SetVertexNormal(i, myTriangulation->Normal (i));
+            const Vec3f& aNormal = myTriangulation->Normal(i);
+            anArray->SetVertexNormal(i, aNormal.x(), aNormal.y(), aNormal.z());
           }
         }
       }

@@ -52,14 +52,8 @@ protected: //! @name interface for filling triangulation data
   //! Resize array of position nodes to specified size.
   virtual bool setNbPositionNodes (Standard_Integer theNbNodes)
   {
-    if (theNbNodes <= 0)
-    {
-      return false;
-    }
-    Standard_Integer i = myTriangulation->NbNodes();
-    while (++i <= theNbNodes)
-      myTriangulation->AddNode (gp::Origin());
-    return true;
+    myTriangulation->ResizeNodes (theNbNodes);
+    return theNbNodes > 0;
   }
 
   //! Set node position.
@@ -72,15 +66,9 @@ protected: //! @name interface for filling triangulation data
   }
 
   //! Resize array of UV nodes to specified size.
-  virtual bool setNbUVNodes (Standard_Integer theNbNodes)
+  virtual bool setNbUVNodes (Standard_Integer /*theNbNodes*/)
   {
-    if (theNbNodes <= 0
-     || myTriangulation->NbNodes() != theNbNodes)
-    {
-      return false;
-    }
-
-    // Resizing of the array of nodes extends the array of UV-nodes too.
+    // Resizing of the array of nodes extends an array of UV-nodes too.
     return true;
   }
 
@@ -94,14 +82,9 @@ protected: //! @name interface for filling triangulation data
   }
 
   //! Resize array of nodes normals to specified size.
-  virtual bool setNbNormalNodes (Standard_Integer theNbNodes)
+  virtual bool setNbNormalNodes (Standard_Integer /*theNbNodes*/)
   {
-    if (theNbNodes <= 0
-     || myTriangulation->NbNodes() != theNbNodes)
-    {
-      return false;
-    }
-    myTriangulation->SetNormals (new TShort_HArray1OfShortReal (1, theNbNodes * 3));
+    // Resizing of the array of nodes extends an array of normals too.
     return true;
   }
 
@@ -109,7 +92,7 @@ protected: //! @name interface for filling triangulation data
   //! @param theIndex  node index starting from 1
   //! @param theNormal node normal
   virtual void setNodeNormal (Standard_Integer theIndex,
-                              const gp_Dir& theNormal)
+                              const gp_XYZ& theNormal)
   {
     myTriangulation->SetNormal (theIndex, theNormal);
   }
@@ -117,15 +100,8 @@ protected: //! @name interface for filling triangulation data
   //! Resize array of triangles to specified size.
   virtual bool setNbTriangles (Standard_Integer theNbTris)
   {
-    if (theNbTris >= 1)
-    {
-      Poly_Triangle emptyTri (0, 0, 0);
-      Standard_Integer i = myTriangulation->NbTriangles();
-      while (++i <= theNbTris)
-        myTriangulation->AddTriangle (emptyTri);
-      return true;
-    }
-    return false;
+    myTriangulation->ResizeTriangles (theNbTris);
+    return theNbTris > 0;
   }
 
   //! Add triangle element.

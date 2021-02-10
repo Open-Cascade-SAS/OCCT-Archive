@@ -1148,7 +1148,9 @@ Standard_Boolean DBRep_DrawableShape::addMeshNormals (NCollection_Vector<std::pa
     gp_Vec aNormal;
     if (hasNormals)
     {
-      aNormal = aTriangulation->Normal (aNodeIter);
+      gp_XYZ anXYZ;
+      aTriangulation->Normal (aNodeIter, anXYZ);
+      aNormal.SetXYZ (anXYZ);
     }
     else
     {

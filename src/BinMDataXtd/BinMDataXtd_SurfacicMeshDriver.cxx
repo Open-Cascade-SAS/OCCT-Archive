@@ -45,25 +45,26 @@ Handle(TDF_Attribute) BinMDataXtd_SurfacicMeshDriver::NewEmpty() const
 //purpose  : persistent -> transient (retrieve)
 //=======================================================================
 Standard_Boolean BinMDataXtd_SurfacicMeshDriver::Paste (const BinObjMgt_Persistent&  theSource,
-                                                const Handle(TDF_Attribute)& theTarget,
-                                                BinObjMgt_RRelocationTable&  ) const
+                                                        const Handle(TDF_Attribute)& theTarget,
+                                                        BinObjMgt_RRelocationTable&  ) const
 {
   Handle(TDataXtd_SurfacicMesh) attrMesh = Handle(TDataXtd_SurfacicMesh)::DownCast (theTarget);
 
   Standard_Integer i;
   Standard_Real deflection, x, y, z;
-  Standard_Integer n, n1, n2, n3, n4;
-  Standard_Integer nbNodes(0), nbElements(0);
-  Standard_Boolean hasUV(Standard_False);
+  Standard_Integer n1, n2, n3, n4;
+  Standard_Integer nbNodes (0), nbTriangles (0), nbQuads (0);
+  Standard_Boolean hasUV (Standard_False);
   gp_Pnt p;
 
   theSource >> nbNodes;
-  theSource >> nbElements;
+  theSource >> nbTriangles;
+  theSource >> nbQuads;
   theSource >> hasUV;
   theSource >> deflection;
 
   // allocate the mesh
-  Handle(Poly_Mesh) aMesh = new Poly_Mesh (hasUV);
+  Handle(Poly_Mesh) aMesh = new Poly_Mesh (nbNodes, nbTriangles, nbQuads, hasUV);
 
   // deflection
   aMesh->Deflection (deflection);
@@ -75,7 +76,7 @@ Standard_Boolean BinMDataXtd_SurfacicMeshDriver::Paste (const BinObjMgt_Persiste
     theSource >> y;
     theSource >> z;
     p.SetCoord (x, y, z);
-    aMesh->AddNode (p);
+    aMesh->ChangeNode (i) = p;
   }
       
   // read 2d nodes
@@ -88,21 +89,24 @@ Standard_Boolean BinMDataXtd_SurfacicMeshDriver::Paste (const BinObjMgt_Persiste
       aMesh->ChangeUVNode (i).SetCoord (x,y);
     }
   }
-      
-  // read triangles and quadrangles
-  for (i = 1; i <= nbElements; i++)
+
+  // read triangles
+  for (i = 1; i <= nbTriangles; i++)
   {
-    theSource >> n;
-    theSource >> n1;
-    theSource >> n2;
-    theSource >> n3;
-    if (n == 3)
-      aMesh->AddElement (n1, n2, n3);
-    else if (n == 4)
-    {
+      theSource >> n1;
+      theSource >> n2;
+      theSource >> n3;
+      aMesh->ChangeTriangle (i).Set (n1, n2, n3);
+  }
+
+  // read quadrangles
+  for (i = 1; i <= nbQuads; i++)
+  {
+      theSource >> n1;
+      theSource >> n2;
+      theSource >> n3;
       theSource >> n4;
-      aMesh->AddElement (n1, n2, n3, n4);
-    }
+      aMesh->ChangeQuad (i).Set (n1, n2, n3, n4);
   }
 
   // Set mesh to Ocaf attribute
@@ -115,19 +119,21 @@ Standard_Boolean BinMDataXtd_SurfacicMeshDriver::Paste (const BinObjMgt_Persiste
 //purpose  : transient -> persistent (store)
 //=======================================================================
 void BinMDataXtd_SurfacicMeshDriver::Paste (const Handle(TDF_Attribute)& theSource,
-                                    BinObjMgt_Persistent&        theTarget,
-                                    BinObjMgt_SRelocationTable&  ) const
+                                            BinObjMgt_Persistent&        theTarget,
+                                            BinObjMgt_SRelocationTable&  ) const
 {
   const Handle(TDataXtd_SurfacicMesh) attrMesh = Handle(TDataXtd_SurfacicMesh)::DownCast (theSource);
   const Handle(Poly_Mesh)& aMesh = attrMesh->Get();
   if (!aMesh.IsNull())
   {
     Standard_Integer nbNodes = aMesh->NbNodes();
-    Standard_Integer nbElements = aMesh->NbElements();
+    Standard_Integer nbTriangles = aMesh->NbTriangles();
+    Standard_Integer nbQuads = aMesh->NbQuads();
 
     // write number of elements
     theTarget << nbNodes;
-    theTarget << nbElements;
+    theTarget << nbTriangles;
+    theTarget << nbQuads;
     theTarget << (aMesh->HasUVNodes() ? 1 : 0);
     // write the deflection
     theTarget << aMesh->Deflection();
@@ -136,7 +142,7 @@ void BinMDataXtd_SurfacicMeshDriver::Paste (const Handle(TDF_Attribute)& theSour
     Standard_Integer i;
     for (i = 1; i <= nbNodes; i++)
     {
-      const gp_Pnt& aNode = aMesh->Node(i);
+      const gp_Pnt& aNode = aMesh->Node (i);
       theTarget << aNode.X();
       theTarget << aNode.Y();
       theTarget << aNode.Z();
@@ -147,24 +153,31 @@ void BinMDataXtd_SurfacicMeshDriver::Paste (const Handle(TDF_Attribute)& theSour
     {
       for (i = 1; i <= nbNodes; i++)
       {
-        const gp_Pnt2d& aUVNode = aMesh->UVNode(i);
+        const gp_Pnt2d& aUVNode = aMesh->UVNode (i);
         theTarget << aUVNode.X();
         theTarget << aUVNode.Y();
       }
     }
 
-    // write triangles and quadrangles
-    Standard_Integer n, n1, n2, n3, n4;
-    for (i = 1; i <= nbElements; i++)
+    // write triangles
+    Standard_Integer n1, n2, n3;
+    for (i = 1; i <= nbTriangles; i++)
     {
-      aMesh->Element (i, n1, n2, n3, n4);
-      n = (n4 > 0) ? 4 : 3;
-      theTarget << n;
+      aMesh->Triangle (i).Get (n1, n2, n3);
       theTarget << n1;
       theTarget << n2;
       theTarget << n3;
-      if (n4 > 0)
-        theTarget << n4;
+    }
+
+    // write quadrangles
+    Standard_Integer n4;
+    for (i = 1; i <= nbQuads; i++)
+    {
+      aMesh->Quad (i).Get (n1, n2, n3, n4);
+      theTarget << n1;
+      theTarget << n2;
+      theTarget << n3;
+      theTarget << n4;
     }
   }
 }

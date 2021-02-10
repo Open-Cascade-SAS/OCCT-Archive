@@ -2900,8 +2900,6 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
 
   Poly_Connect* pc = new Poly_Connect(polyTriangulation);
 
-  Handle(TShort_HArray1OfShortReal) Normals = new TShort_HArray1OfShortReal(1, polyTriangulation->NbNodes() * 3);
-
   Standard_Integer index[3];
   Standard_Real Tol = Precision::Confusion();
 
@@ -2925,15 +2923,10 @@ Handle( Poly_Triangulation ) CalculationOfSphere( double X , double Y , double Z
       else
         Nor = gp_Dir(0., 0., 1.);
 
-      Standard_Integer j = (i - 1) * 3;
-      Normals->SetValue(j + 1, (Standard_ShortReal)Nor.X());
-      Normals->SetValue(j + 2, (Standard_ShortReal)Nor.Y());
-      Normals->SetValue(j + 3, (Standard_ShortReal)Nor.Z());
+      polyTriangulation->SetNormal (i, Nor.XYZ());
   }
 
   delete pc;
-  polyTriangulation->SetNormals(Normals);
-
   return polyTriangulation;
 }
 

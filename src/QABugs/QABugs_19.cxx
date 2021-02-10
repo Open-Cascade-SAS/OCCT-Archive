@@ -4038,7 +4038,8 @@ static Standard_Integer OCC26485 (Draw_Interpretor& theDI, Standard_Integer theA
     for( int i=0; i < aVertexNb; i++ )
     {
       gp_Pnt aPoint = aT->Node ( i+1 );
-      gp_Dir aNormal = aT->Normal ( i+1 );
+      const Vec3f& aVec = aT->Normal ( i+1 );
+      gp_Dir aNormal (aVec.x(), aVec.y(), aVec.z());
 
       if (aNormal.X() == 0 && aNormal.Y() == 0 && aNormal.Z() == 1)
       {

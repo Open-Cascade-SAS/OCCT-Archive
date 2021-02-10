@@ -53,8 +53,8 @@ Handle(TDF_Attribute) XmlMDataXtd_SurfacicMeshDriver::NewEmpty() const
 //purpose  : persistent -> transient (retrieve)
 //=======================================================================
 Standard_Boolean XmlMDataXtd_SurfacicMeshDriver::Paste (const XmlObjMgt_Persistent&  theSource,
-                                                const Handle(TDF_Attribute)& theTarget,
-                                                XmlObjMgt_RRelocationTable&  ) const
+                                                        const Handle(TDF_Attribute)& theTarget,
+                                                        XmlObjMgt_RRelocationTable&  ) const
 {
   const XmlObjMgt_Element& anElement = theSource;
   Handle(TDataXtd_SurfacicMesh) attrMesh = Handle(TDataXtd_SurfacicMesh)::DownCast (theTarget);
@@ -94,8 +94,8 @@ Standard_Boolean XmlMDataXtd_SurfacicMeshDriver::Paste (const XmlObjMgt_Persiste
 //purpose  : transient -> persistent (store)
 //=======================================================================
 void XmlMDataXtd_SurfacicMeshDriver::Paste (const Handle(TDF_Attribute)& theSource,
-                                    XmlObjMgt_Persistent&        theTarget,
-                                    XmlObjMgt_SRelocationTable&  ) const
+                                            XmlObjMgt_Persistent&        theTarget,
+                                            XmlObjMgt_SRelocationTable&  ) const
 {
   const Handle(TDataXtd_SurfacicMesh) meshAttr = Handle(TDataXtd_SurfacicMesh)::DownCast (theSource);
   if (meshAttr->Get().IsNull())
@@ -110,7 +110,8 @@ void XmlMDataXtd_SurfacicMeshDriver::Paste (const Handle(TDF_Attribute)& theSour
     Standard_Integer aSize = aMesh->NbNodes();
     aSize *= 3; // 3 coordinates for a node
     aSize *= 8; // 8 characters are used to represent a coordinate (double) in XML
-    aSize += 4 * 5 * aMesh->NbElements(); // space for elements (triangles and quadrangles)
+    aSize += 3 * 5 * aMesh->NbTriangles(); // space for triangles   (3 integers of 5 symbols)
+    aSize += 4 * 5 * aMesh->NbQuads();     // space for quadrangles (4 integers of 5 symbols)
     aSize *= 2; // just in case :-)
     if (!aSize)
       aSize = 1;

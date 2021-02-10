@@ -132,7 +132,8 @@ gp_Dir RWMesh_FaceIterator::normal (Standard_Integer theNode)
   gp_Dir aNormal (gp::DZ());
   if (myPolyTriang->HasNormals())
   {
-    aNormal = myPolyTriang->Normal (theNode);
+    const Vec3f& aVec = myPolyTriang->Normal (theNode);
+    aNormal.SetCoord (aVec.x(), aVec.y(), aVec.z());
     if (aNormal.XYZ().Modulus() < Precision::Confusion())
       aNormal = gp::DZ();
   }    

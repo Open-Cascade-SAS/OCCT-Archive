@@ -2343,9 +2343,6 @@ Standard_Boolean BRepLib::
     }
 
     GeomLProp_SLProps aSLP(aSurf, 2, Precision::Confusion());
-    const Standard_Integer anArrDim = 3*aPT->NbNodes();
-    Handle(TShort_HArray1OfShortReal) aNormArr = new TShort_HArray1OfShortReal(1, anArrDim);
-    Standard_Integer anNormInd = aNormArr->Lower();
     for(Standard_Integer i = 1; i <= aPT->NbNodes(); i++)
     {
       const gp_Pnt2d &aP2d = aPT->UVNode (i);
@@ -2364,14 +2361,13 @@ Standard_Boolean BRepLib::
         if (aFace.Orientation() == TopAbs_REVERSED)
           aNorm.Reverse();
       }
-      aNormArr->ChangeValue(anNormInd++) = static_cast<Standard_ShortReal>(aNorm.X());
-      aNormArr->ChangeValue(anNormInd++) = static_cast<Standard_ShortReal>(aNorm.Y());
-      aNormArr->ChangeValue(anNormInd++) = static_cast<Standard_ShortReal>(aNorm.Z());
+      aPT->SetNormal (i, static_cast<Standard_ShortReal>(aNorm.X()),
+                         static_cast<Standard_ShortReal>(aNorm.Y()),
+                         static_cast<Standard_ShortReal>(aNorm.Z()));
     }
 
     aRetVal = Standard_True;
     isNormalsFound = Standard_True;
-    aPT->SetNormals(aNormArr);
   }
 
   if(!isNormalsFound)
@@ -2418,8 +2414,9 @@ Standard_Boolean BRepLib::
       const Standard_Integer aFNodF1 = aPTEF1->Nodes().Value(anEdgNode);
       const Standard_Integer aFNodF2 = aPTEF2->Nodes().Value(anEdgNode);
 
-      gp_XYZ aNorm1 (aPT1->Normal (aFNodF1).XYZ());
-      gp_XYZ aNorm2 (aPT2->Normal (aFNodF2).XYZ());
+      gp_XYZ aNorm1, aNorm2;
+      aPT1->Normal (aFNodF1, aNorm1);
+      aPT1->Normal (aFNodF2, aNorm2);
       const Standard_Real aDot = aNorm1 * aNorm2;
 
       if(aDot > aThresDot)
