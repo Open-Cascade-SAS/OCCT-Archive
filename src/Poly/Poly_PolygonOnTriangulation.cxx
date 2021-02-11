@@ -80,6 +80,18 @@ Handle(Poly_PolygonOnTriangulation) Poly_PolygonOnTriangulation::Copy() const
 }
 
 //=======================================================================
+//function : Node
+//purpose  : 
+//=======================================================================
+
+Standard_Integer Poly_PolygonOnTriangulation::Node (const Standard_Integer theIndex) const
+{
+  Standard_OutOfRange_Raise_if ((theIndex < 1 || theIndex > myNodes.Length()),
+                                "Poly_PolygonOnTriangulation::Node : index out of range");
+  return myNodes.Value (theIndex);
+}
+
+//=======================================================================
 //function : SetNode
 //purpose  : 
 //=======================================================================

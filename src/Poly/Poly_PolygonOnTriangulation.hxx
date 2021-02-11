@@ -86,11 +86,11 @@ public:
 
   //! Return node at the given index.
   //! Raises exception if theIndex is less than NodesLowerIndex or bigger than NodesUpperIndex.
-  Standard_EXPORT Standard_Integer Node(const Standard_Integer theIndex) const;
+  Standard_EXPORT Standard_Integer Node (const Standard_Integer theIndex) const;
 
   //! Sets node at the given index.
   //! Raises exception if theIndex is less than NodesLowerIndex or bigger than NodesUpperIndex.
-  Standard_EXPORT void SetNode(const Standard_Integer theIndex, const Standard_Integer theNode);
+  Standard_EXPORT void SetNode (const Standard_Integer theIndex, const Standard_Integer theNode);
 
   //! Returns true if parameters are associated with the nodes in this polygon.
   Standard_Boolean HasParameters() const { return !myParameters.IsNull(); }
@@ -104,12 +104,12 @@ public:
   //! Return parameter at the given index.
   //! Raises Standard_NullObject exception if parameters has not been initialized.
   //! Raises Standard_OutOfRange exception if theIndex is less than ParametersLowerIndex or bigger than ParametersUpperIndex.
-  Standard_EXPORT Standard_Real Parameter(const Standard_Integer theIndex) const;
+  Standard_EXPORT Standard_Real Parameter (const Standard_Integer theIndex) const;
 
   //! Sets parameter at the given index.
   //! Raises Standard_NullObject exception if parameters has not been initialized.
   //! Raises Standard_OutOfRange exception if theIndex is less than ParametersLowerIndex or bigger than ParametersUpperIndex. 
-  Standard_EXPORT void SetParameter(const Standard_Integer theIndex, const Standard_Real theValue);
+  Standard_EXPORT void SetParameter (const Standard_Integer theIndex, const Standard_Real theValue);
 
 
   //! Sets the table of the parameters associated with each node in this polygon.
