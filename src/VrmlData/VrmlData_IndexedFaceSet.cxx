@@ -229,17 +229,12 @@ const Handle(TopoDS_TShape)& VrmlData_IndexedFaceSet::TShape ()
   }
   else {
     // Copy the normals. Currently only normals-per-vertex are supported.
-    Handle(TShort_HArray1OfShortReal) Normals =
-      new TShort_HArray1OfShortReal(1, 3 * nbNodes);
     if (myNormalPerVertex) {
       if (myArrNormalInd == 0L) {
         for (i = 0; i < nbNodes; i++)
         {
-          Standard_Integer anIdx = i * 3 + 1;
-          const gp_XYZ& aNormal = myNormals->Normal(i);
-          Normals->SetValue(anIdx + 0, Standard_ShortReal(aNormal.X()));
-          Normals->SetValue(anIdx + 1, Standard_ShortReal(aNormal.Y()));
-          Normals->SetValue(anIdx + 2, Standard_ShortReal(aNormal.Z()));
+          const gp_XYZ& aNormal = myNormals->Normal (i);
+          aTriangulation->SetNormal (i + 1, aNormal);
         }
       }
       else
@@ -254,10 +249,7 @@ const Handle(TopoDS_TShape)& VrmlData_IndexedFaceSet::TShape ()
             int nbn = IndiceNormals(i, arrIndice);
             for (Standard_Integer j = 0; j < nbn; j++) {
               const gp_XYZ& aNormal = myNormals->Normal(arrIndice[j]);
-              Standard_Integer anInd = mapIdId(anArrNodes[j]) * 3 + 1;
-              Normals->SetValue(anInd + 0, Standard_ShortReal(aNormal.X()));
-              Normals->SetValue(anInd + 1, Standard_ShortReal(aNormal.Y()));
-              Normals->SetValue(anInd + 2, Standard_ShortReal(aNormal.Z()));
+              aTriangulation->SetNormal (mapIdId (anArrNodes[j]) + 1, aNormal);
             }
           }
         }
@@ -266,7 +258,6 @@ const Handle(TopoDS_TShape)& VrmlData_IndexedFaceSet::TShape ()
     else {
       //TODO ..
     }
-    aTriangulation->SetNormals(Normals);
   }
 
   myIsModified = Standard_False;
