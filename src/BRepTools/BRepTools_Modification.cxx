@@ -16,17 +16,8 @@
 
 
 #include <BRepTools_Modification.hxx>
-#include <Geom2d_Curve.hxx>
-#include <Geom_Curve.hxx>
-#include <Geom_Surface.hxx>
-#include <gp_Pnt.hxx>
-#include <Standard_Type.hxx>
-#include <TopLoc_Location.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Face.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <Poly_PolygonOnTriangulation.hxx>
 #include <Poly_Triangulation.hxx>
+#include <TopoDS_Face.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(BRepTools_Modification,Standard_Transient)
 

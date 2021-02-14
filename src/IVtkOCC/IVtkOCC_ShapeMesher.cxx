@@ -386,7 +386,12 @@ void IVtkOCC_ShapeMesher::addEdge (const TopoDS_Edge&  theEdge,
   {
     Standard_Integer aNbNodes = aPolyOnTriangulation->NbNodes();
     const TColStd_Array1OfInteger& aPointIds = aPolyOnTriangulation->Nodes();
-    const TColgp_Array1OfPnt& aPoints = aTriangulation->Nodes();
+
+    TColgp_Array1OfPnt aPoints(1, aTriangulation->NbNodes());
+    for (Standard_Integer anI = 1; anI <= aTriangulation->NbNodes(); anI++)
+    {
+      aPoints.SetValue (anI, aTriangulation->Node (anI));
+    }
 
     processPolyline (aNbNodes,
                      aPoints,
@@ -493,7 +498,6 @@ void IVtkOCC_ShapeMesher::addShadedFace (const TopoDS_Face& theFace,
   }
 
   // Get triangulation points.
-  const TColgp_Array1OfPnt& aPoints = anOcctTriangulation->Nodes();
   Standard_Integer aNbPoints = anOcctTriangulation->NbNodes();
 
   // Keep inserted points id's of triangulation in an array.
@@ -503,7 +507,7 @@ void IVtkOCC_ShapeMesher::addShadedFace (const TopoDS_Face& theFace,
   Standard_Integer anI;
   for (anI = 1; anI <= aNbPoints; anI++)
   {
-    gp_Pnt aPoint = aPoints (anI);
+    gp_Pnt aPoint = anOcctTriangulation->Node (anI);
 
     if (!noTransform)
     {
@@ -516,12 +520,11 @@ void IVtkOCC_ShapeMesher::addShadedFace (const TopoDS_Face& theFace,
   }
 
   // Create triangles on the created triangulation points.
-  const Poly_Array1OfTriangle& aTriangles = anOcctTriangulation->Triangles();
   Standard_Integer aNbTriangles = anOcctTriangulation->NbTriangles();
   Standard_Integer aN1, aN2, aN3;
   for (anI = 1; anI <= aNbTriangles; anI++)
   {
-    aTriangles(anI).Get (aN1, aN2, aN3); // get indexes of triangle's points
+    anOcctTriangulation->Triangle (anI).Get (aN1, aN2, aN3); // get indexes of triangle's points
     // Insert new triangle on these points into output shape data.
     myShapeData->InsertTriangle (
       theShapeId, aPointIds(aN1), aPointIds(aN2), aPointIds(aN3), MT_ShadedFace);

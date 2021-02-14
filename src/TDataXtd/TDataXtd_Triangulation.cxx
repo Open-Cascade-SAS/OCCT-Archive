@@ -218,26 +218,15 @@ void TDataXtd_Triangulation::SetTriangle (const Standard_Integer theIndex, const
 }
 
 //=======================================================================
-//function : SetNormals
-//purpose  : Sets the table of node normals.
-//           Raises exception if length of theNormals = 3 * NbNodes
-//=======================================================================
-void TDataXtd_Triangulation::SetNormals (const Handle(TShort_HArray1OfShortReal)& theNormals)
-{
-  Backup();
-  myTriangulation->SetNormals(theNormals);
-}
-
-//=======================================================================
 //function : SetNormal
 //purpose  : Changes normal at the given index.
 //           Raises Standard_OutOfRange exception.
 //=======================================================================
 void TDataXtd_Triangulation::SetNormal (const Standard_Integer theIndex,
-                               const gp_Dir&          theNormal)
+                                        const gp_Dir&          theNormal)
 {
   Backup();
-  myTriangulation->SetNormal(theIndex, theNormal);
+  myTriangulation->SetNormal (theIndex, theNormal.XYZ());
 }
 
 //=======================================================================
@@ -256,7 +245,9 @@ Standard_Boolean TDataXtd_Triangulation::HasNormals() const
 //=======================================================================
 const gp_Dir TDataXtd_Triangulation::Normal (const Standard_Integer theIndex) const
 {
-  return myTriangulation->Normal(theIndex);
+  const Vec3f& aVec = myTriangulation->Normal (theIndex);
+  gp_Dir aDir (aVec.x(), aVec.y(), aVec.z());
+  return aDir;
 }
 
 //=======================================================================

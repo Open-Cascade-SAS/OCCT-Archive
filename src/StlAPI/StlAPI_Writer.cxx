@@ -83,23 +83,20 @@ Standard_Boolean StlAPI_Writer::Write (const TopoDS_Shape&    theShape,
       continue;
     }
 
-    const TColgp_Array1OfPnt& aNodes = aTriangulation->Nodes();
-    const Poly_Array1OfTriangle& aTriangles = aTriangulation->Triangles();
-
     // copy nodes
     gp_Trsf aTrsf = aLoc.Transformation();
-    for (Standard_Integer aNodeIter = aNodes.Lower(); aNodeIter <= aNodes.Upper(); ++aNodeIter)
+    for (Standard_Integer aNodeIter = 1; aNodeIter <= aTriangulation->NbNodes(); ++aNodeIter)
     {
-      gp_Pnt aPnt = aNodes (aNodeIter);
+      gp_Pnt aPnt = aTriangulation->Node (aNodeIter);
       aPnt.Transform (aTrsf);
       aMesh->ChangeNode (aNodeIter + aNodeOffset) = aPnt;
     }
 
     // copy triangles
     const TopAbs_Orientation anOrientation = anExpSF.Current().Orientation();
-    for (Standard_Integer aTriIter = aTriangles.Lower(); aTriIter <= aTriangles.Upper(); ++aTriIter)
+    for (Standard_Integer aTriIter = 1; aTriIter <= aTriangulation->NbTriangles(); ++aTriIter)
     {
-      Poly_Triangle aTri = aTriangles (aTriIter);
+      Poly_Triangle aTri = aTriangulation->Triangle (aTriIter);
 
       Standard_Integer anId[3];
       aTri.Get (anId[0], anId[1], anId[2]);
@@ -120,8 +117,8 @@ Standard_Boolean StlAPI_Writer::Write (const TopoDS_Shape&    theShape,
       aMesh->ChangeTriangle (aTriIter + aTriangleOffet) =  aTri;
     }
 
-    aNodeOffset += aNodes.Size();
-    aTriangleOffet += aTriangles.Size();
+    aNodeOffset += aTriangulation->NbNodes();
+    aTriangleOffet += aTriangulation->NbTriangles();
   }
 
   OSD_Path aPath (theFileName);

@@ -2343,12 +2343,9 @@ Standard_Boolean BRepLib::
     }
 
     GeomLProp_SLProps aSLP(aSurf, 2, Precision::Confusion());
-    const Standard_Integer anArrDim = 3*aPT->NbNodes();
-    Handle(TShort_HArray1OfShortReal) aNormArr = new TShort_HArray1OfShortReal(1, anArrDim);
-    Standard_Integer anNormInd = aNormArr->Lower();
-    for(Standard_Integer i = aPT->UVNodes().Lower(); i <= aPT->UVNodes().Upper(); i++)
+    for(Standard_Integer i = 1; i <= aPT->NbNodes(); i++)
     {
-      const gp_Pnt2d &aP2d = aPT->UVNodes().Value(i);
+      const gp_Pnt2d &aP2d = aPT->UVNode (i);
       aSLP.SetParameters(aP2d.X(), aP2d.Y());
 
       gp_XYZ aNorm(0.,0.,0.);
@@ -2364,14 +2361,13 @@ Standard_Boolean BRepLib::
         if (aFace.Orientation() == TopAbs_REVERSED)
           aNorm.Reverse();
       }
-      aNormArr->ChangeValue(anNormInd++) = static_cast<Standard_ShortReal>(aNorm.X());
-      aNormArr->ChangeValue(anNormInd++) = static_cast<Standard_ShortReal>(aNorm.Y());
-      aNormArr->ChangeValue(anNormInd++) = static_cast<Standard_ShortReal>(aNorm.Z());
+      aPT->SetNormal (i, static_cast<Standard_ShortReal>(aNorm.X()),
+                         static_cast<Standard_ShortReal>(aNorm.Y()),
+                         static_cast<Standard_ShortReal>(aNorm.Z()));
     }
 
     aRetVal = Standard_True;
     isNormalsFound = Standard_True;
-    aPT->SetNormals(aNormArr);
   }
 
   if(!isNormalsFound)
@@ -2407,9 +2403,6 @@ Standard_Boolean BRepLib::
     const Handle(Poly_PolygonOnTriangulation)& aPTEF2 = 
                                 BRep_Tool::PolygonOnTriangulation(anEdg, aPT2, aLoc2);
 
-    TShort_Array1OfShortReal& aNormArr1 = aPT1->ChangeNormals();
-    TShort_Array1OfShortReal& aNormArr2 = aPT2->ChangeNormals();
-
     if (aPTEF1->Nodes().Lower() != aPTEF2->Nodes().Lower() || 
         aPTEF1->Nodes().Upper() != aPTEF2->Nodes().Upper()) 
       continue; 
@@ -2421,31 +2414,16 @@ Standard_Boolean BRepLib::
       const Standard_Integer aFNodF1 = aPTEF1->Nodes().Value(anEdgNode);
       const Standard_Integer aFNodF2 = aPTEF2->Nodes().Value(anEdgNode);
 
-      const Standard_Integer aFNorm1FirstIndex = aNormArr1.Lower() + 3*
-                                                    (aFNodF1 - aPT1->Nodes().Lower());
-      const Standard_Integer aFNorm2FirstIndex = aNormArr2.Lower() + 3*
-                                                    (aFNodF2 - aPT2->Nodes().Lower());
-
-      gp_XYZ aNorm1(aNormArr1.Value(aFNorm1FirstIndex),
-                    aNormArr1.Value(aFNorm1FirstIndex+1),
-                    aNormArr1.Value(aFNorm1FirstIndex+2));
-      gp_XYZ aNorm2(aNormArr2.Value(aFNorm2FirstIndex),
-                    aNormArr2.Value(aFNorm2FirstIndex+1),
-                    aNormArr2.Value(aFNorm2FirstIndex+2));
+      gp_XYZ aNorm1, aNorm2;
+      aPT1->Normal (aFNodF1, aNorm1);
+      aPT1->Normal (aFNodF2, aNorm2);
       const Standard_Real aDot = aNorm1 * aNorm2;
 
       if(aDot > aThresDot)
       {
         gp_XYZ aNewNorm = (aNorm1 + aNorm2).Normalized();
-        aNormArr1.ChangeValue(aFNorm1FirstIndex) =
-          aNormArr2.ChangeValue(aFNorm2FirstIndex) =
-          static_cast<Standard_ShortReal>(aNewNorm.X());
-        aNormArr1.ChangeValue(aFNorm1FirstIndex+1) =
-          aNormArr2.ChangeValue(aFNorm2FirstIndex+1) =
-          static_cast<Standard_ShortReal>(aNewNorm.Y());
-        aNormArr1.ChangeValue(aFNorm1FirstIndex+2) =
-          aNormArr2.ChangeValue(aFNorm2FirstIndex+2) =
-          static_cast<Standard_ShortReal>(aNewNorm.Z());
+        aPT1->SetNormal (aFNodF1, aNewNorm);
+        aPT2->SetNormal (aFNodF2, aNewNorm);
         aRetVal = Standard_True;
       }
     }

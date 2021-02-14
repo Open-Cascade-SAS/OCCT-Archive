@@ -24,6 +24,7 @@
 #include <TDataXtd_Point.hxx>
 #include <TDataXtd_Position.hxx>
 #include <TDataXtd_Shape.hxx>
+#include <TDataXtd_SurfacicMesh.hxx>
 #include <TDF_IDList.hxx>
 
 //=======================================================================
@@ -32,16 +33,16 @@
 //=======================================================================
 void TDataXtd::IDList(TDF_IDList& anIDList)
 {  
-  anIDList.Append(TDataXtd_Axis::GetID());
-  anIDList.Append(TDataXtd_Constraint::GetID());
-  anIDList.Append(TDataXtd_Geometry::GetID());
-  anIDList.Append(TDataXtd_PatternStd::GetID());
-  anIDList.Append(TDataXtd_Placement::GetID());
-  anIDList.Append(TDataXtd_Point::GetID());
-  anIDList.Append(TDataXtd_Plane::GetID());
-  anIDList.Append(TDataXtd_Position::GetID());
-  anIDList.Append(TDataXtd_Shape::GetID());
-  
+  anIDList.Append (TDataXtd_Axis::GetID());
+  anIDList.Append (TDataXtd_Constraint::GetID());
+  anIDList.Append (TDataXtd_Geometry::GetID());
+  anIDList.Append (TDataXtd_PatternStd::GetID());
+  anIDList.Append (TDataXtd_Placement::GetID());
+  anIDList.Append (TDataXtd_Point::GetID());
+  anIDList.Append (TDataXtd_Plane::GetID());
+  anIDList.Append (TDataXtd_Position::GetID());
+  anIDList.Append (TDataXtd_Shape::GetID());
+  anIDList.Append (TDataXtd_SurfacicMesh::GetID());
 }
 
 //=======================================================================

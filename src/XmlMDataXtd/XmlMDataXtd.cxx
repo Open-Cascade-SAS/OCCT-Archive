@@ -21,6 +21,7 @@
 #include <XmlMDataXtd_GeometryDriver.hxx>
 #include <XmlMDataXtd_PatternStdDriver.hxx>
 #include <XmlMDataXtd_TriangulationDriver.hxx>
+#include <XmlMDataXtd_SurfacicMeshDriver.hxx>
 #include <XmlMDF_ADriverTable.hxx>
 
 #include <XmlMDataXtd_PresentationDriver.hxx>
@@ -34,13 +35,14 @@ static Standard_Integer myDocumentVersion = -1;
 void XmlMDataXtd::AddDrivers (const Handle(XmlMDF_ADriverTable)& aDriverTable,
                               const Handle(Message_Messenger)&   anMsgDrv)
 {
-  aDriverTable->AddDriver(new XmlMDataXtd_GeometryDriver      (anMsgDrv));
-  aDriverTable->AddDriver(new XmlMDataXtd_ConstraintDriver    (anMsgDrv));
-  aDriverTable->AddDriver(new XmlMDataXtd_PatternStdDriver    (anMsgDrv));
-  aDriverTable->AddDriver(new XmlMDataXtd_TriangulationDriver (anMsgDrv));
+  aDriverTable->AddDriver (new XmlMDataXtd_GeometryDriver      (anMsgDrv));
+  aDriverTable->AddDriver (new XmlMDataXtd_ConstraintDriver    (anMsgDrv));
+  aDriverTable->AddDriver (new XmlMDataXtd_PatternStdDriver    (anMsgDrv));
+  aDriverTable->AddDriver (new XmlMDataXtd_TriangulationDriver (anMsgDrv));
+  aDriverTable->AddDriver (new XmlMDataXtd_SurfacicMeshDriver  (anMsgDrv));
 
-  aDriverTable->AddDriver(new XmlMDataXtd_PresentationDriver  (anMsgDrv));
-  aDriverTable->AddDriver(new XmlMDataXtd_PositionDriver      (anMsgDrv));
+  aDriverTable->AddDriver (new XmlMDataXtd_PresentationDriver  (anMsgDrv));
+  aDriverTable->AddDriver (new XmlMDataXtd_PositionDriver      (anMsgDrv));
 }
 
 //=======================================================================

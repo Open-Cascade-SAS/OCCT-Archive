@@ -17,12 +17,15 @@ Poly_HArray1OfTriangle.hxx
 Poly_ListOfTriangulation.hxx
 Poly_MakeLoops.cxx
 Poly_MakeLoops.hxx
+Poly_Mesh.cxx
+Poly_Mesh.hxx
 Poly_Polygon2D.cxx
 Poly_Polygon2D.hxx
 Poly_Polygon3D.cxx
 Poly_Polygon3D.hxx
 Poly_PolygonOnTriangulation.cxx
 Poly_PolygonOnTriangulation.hxx
+Poly_Quad.hxx
 Poly_Triangle.hxx
 Poly_Triangulation.cxx
 Poly_Triangulation.hxx

@@ -12,3 +12,5 @@ BinMDataXtd_PositionDriver.hxx
 BinMDataXtd_PositionDriver.cxx
 BinMDataXtd_TriangulationDriver.cxx
 BinMDataXtd_TriangulationDriver.hxx
+BinMDataXtd_SurfacicMeshDriver.cxx
+BinMDataXtd_SurfacicMeshDriver.hxx
