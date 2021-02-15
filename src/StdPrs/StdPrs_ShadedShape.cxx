@@ -188,10 +188,8 @@ namespace
       // Determinant of transform matrix less then 0 means that mirror transform applied.
       Standard_Boolean isMirrored = aTrsf.VectorialPart().Determinant() < 0;
 
-      Poly_Connect aPolyConnect (aT);
       // Extracts vertices & normals from nodes
-      TColgp_Array1OfDir aNormals (1, aT->NbNodes());
-      StdPrs_ToolTriangulatedShape::Normal (aFace, aPolyConnect, aNormals);
+      StdPrs_ToolTriangulatedShape::ComputeNormals (aFace, aT);
 
       if (theHasTexels)
       {
@@ -200,11 +198,17 @@ namespace
         dVmax = (aVmax - aVmin);
       }
 
+      gp_Dir aNorm;
       const Standard_Integer aDecal = anArray->VertexNumber();
       for (Standard_Integer aNodeIter = 1; aNodeIter <= aT->NbNodes(); ++aNodeIter)
       {
         aPoint = aT->Node (aNodeIter);
-        gp_Dir aNorm = aNormals (aNodeIter);
+        const Vec3f& aVec = aT->Normal (aNodeIter);
+        aNorm.SetCoord (aVec.x(), aVec.y(), aVec.z());
+        if ((aFace.Orientation() == TopAbs_REVERSED) ^ isMirrored)
+        {
+          aNorm.Reverse();
+        }
         if (!aLoc.IsIdentity())
         {
           aPoint.Transform (aTrsf);
