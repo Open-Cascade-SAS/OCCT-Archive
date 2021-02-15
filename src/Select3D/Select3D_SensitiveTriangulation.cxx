@@ -111,9 +111,8 @@ Select3D_SensitiveTriangulation::Select3D_SensitiveTriangulation (const Handle(S
   myBndBox.Clear();
   for (Standard_Integer aNodeIdx = 1; aNodeIdx <= myTriangul->NbNodes(); ++aNodeIdx)
   {
-    myBndBox.Add (SelectMgr_Vec3 (myTriangul->Node (aNodeIdx).X(),
-                                  myTriangul->Node (aNodeIdx).Y(),
-                                  myTriangul->Node (aNodeIdx).Z()));
+    const gp_Pnt& aNode = myTriangul->Node (aNodeIdx);
+    myBndBox.Add (SelectMgr_Vec3 (aNode.X(), aNode.Y(), aNode.Z()));
   }
 
   if (theIsInterior)

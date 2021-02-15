@@ -179,7 +179,6 @@ Handle(Poly_Triangulation) RWObj_TriangulationReader::GetTriangulation()
       {
         aPoly->SetNormal (aNodeIter + 1, 0.0f, 0.0f, 1.0f);
       }
-      aPoly->SetNormal (aNodeIter + 1, aNorm.x(), aNorm.y(), aNorm.z());
     }
   }
 

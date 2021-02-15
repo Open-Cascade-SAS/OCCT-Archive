@@ -126,6 +126,8 @@ Handle(Poly_Triangulation) Poly_CoherentTriangulation::GetTriangulation() const
       if (aNode.IsFreeNode())
         vecNodeId.SetValue(i, 0);
       else {
+        vecNodeId.SetValue(i, ++aCount);
+
         const gp_XYZ aNormal = aNode.GetNormal();
         if (aNormal.SquareModulus() > Precision::Confusion()) {
           aResult->SetNormal (aCount, static_cast<Standard_ShortReal>(aNormal.X()),
@@ -133,9 +135,7 @@ Handle(Poly_Triangulation) Poly_CoherentTriangulation::GetTriangulation() const
                                       static_cast<Standard_ShortReal>(aNormal.Z()));
         }
 
-        vecNodeId.SetValue(i, ++aCount);
         aResult->ChangeNode (aCount) = aNode;
-
         aResult->ChangeUVNode (aCount) = gp_Pnt2d (aNode.GetU(), aNode.GetV());
         if (aNode.GetU()*aNode.GetU() + aNode.GetV()*aNode.GetV() >
             Precision::Confusion())

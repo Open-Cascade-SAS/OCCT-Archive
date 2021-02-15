@@ -188,7 +188,7 @@ public:
                   const Vec3f&           theNormal)
   {
     // If an array for normals is not allocated yet, do it now.
-    if (myNormals.IsEmpty())
+    if (myNormals.IsEmpty() || myNormals.Size() != myNodes.Size())
       myNormals.Resize (1, myNodes.Size(), Standard_False);
 
     // Set a normal.

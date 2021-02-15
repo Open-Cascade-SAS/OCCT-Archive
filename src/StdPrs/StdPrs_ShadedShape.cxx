@@ -205,10 +205,6 @@ namespace
       {
         aPoint = aT->Node (aNodeIter);
         gp_Dir aNorm = aNormals (aNodeIter);
-        if ((aFace.Orientation() == TopAbs_REVERSED) ^ isMirrored)
-        {
-          aNorm.Reverse();
-        }
         if (!aLoc.IsIdentity())
         {
           aPoint.Transform (aTrsf);
@@ -242,9 +238,9 @@ namespace
           aT->Triangle (aTriIter).Get (anIndex[0], anIndex[1], anIndex[2]);
         }
 
-        gp_Pnt aP1 = aT->Node (anIndex[0]);
-        gp_Pnt aP2 = aT->Node (anIndex[1]);
-        gp_Pnt aP3 = aT->Node (anIndex[2]);
+        const gp_Pnt& aP1 = aT->Node (anIndex[0]);
+        const gp_Pnt& aP2 = aT->Node (anIndex[1]);
+        const gp_Pnt& aP3 = aT->Node (anIndex[2]);
 
         gp_Vec aV1 (aP1, aP2);
         if (aV1.SquareMagnitude() <= aPreci)
