@@ -141,7 +141,7 @@ Standard_Boolean IntWalk_IWalking::Cadrage
     }
     BornSup(1) = BornInf(1);                     // limit the parameter
     UVap(1) = BornInf(1);
-    UVap(2) += Step*Duvy*StepSign;;
+    UVap(2) += Step*Duvy*StepSign;
     return Standard_True;
   }
   else if (supu) { // jag 940616
@@ -392,8 +392,13 @@ Standard_Boolean IntWalk_IWalking::TestArretPassage
 
   //Normalizing factor. If it is less than 1.0 then the range will be expanded. 
   //This is no good for computation. Therefore, it is limited.
-  const Standard_Real deltau = mySRangeU.IsVoid() ? UM - Um : Max(mySRangeU.Delta(), 1.0);
-  const Standard_Real deltav = mySRangeV.IsVoid() ? VM - Vm : Max(mySRangeV.Delta(), 1.0);
+  //Do not limit these factor in case of highly anisotropic parametrization
+  //(parametric space is considerably larger in one direction than another).
+  Standard_Boolean isHighlyAnisotropic = Max(tolu, tolv) > 1000. * Min(tolu, tolv);
+  Standard_Real deltau = mySRangeU.IsVoid() ? UM - Um
+                                            : (isHighlyAnisotropic ? mySRangeU.Delta() : Max(mySRangeU.Delta(), 1.0));
+  Standard_Real deltav = mySRangeV.IsVoid() ? VM - Vm
+                                            : (isHighlyAnisotropic ? mySRangeV.Delta() : Max(mySRangeV.Delta(), 1.0));
 
   Up/=deltau; UV1/=deltau; 
   Vp/=deltav; UV2/=deltav;
@@ -833,7 +838,7 @@ void IntWalk_IWalking::TestArretCadre
 	    }
 #ifdef OCCT_DEBUG
 	    else { 
-	      cout<<" IntWalk_IWalking_2.gxx : bizarrerie 30 10 97 "<<endl;
+	      std::cout<<" IntWalk_IWalking_2.gxx : bizarrerie 30 10 97 "<<std::endl;
 	    }
 #endif
 	  }
