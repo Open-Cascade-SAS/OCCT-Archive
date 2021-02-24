@@ -247,8 +247,10 @@ void AIS_InteractiveContext::turnOnSubintensity (const Handle(AIS_InteractiveObj
     for (AIS_DataMapIteratorOfDataMapOfIOStatus anObjsIter (myObjects); anObjsIter.More(); anObjsIter.Next())
     {
       const Handle(AIS_GlobalStatus)& aStatus = anObjsIter.Value();
-      if (aStatus->GraphicStatus() != AIS_DS_Displayed && theIsDisplayedOnly)
+      if (theObject->DisplayStatus() != PrsMgr_DisplayStatus_Displayed && theIsDisplayedOnly)
+      {
         continue;
+      }
 
       aStatus->SubIntensityOn();
       myMainPM->Color (anObjsIter.Key(), aSubStyle, theDispMode != -1 ? theDispMode : aStatus->DisplayMode());
@@ -258,10 +260,14 @@ void AIS_InteractiveContext::turnOnSubintensity (const Handle(AIS_InteractiveObj
   {
     Handle(AIS_GlobalStatus) aStatus;
     if (!myObjects.Find (theObject, aStatus))
+    {
       return;
+    }
 
-    if (aStatus->GraphicStatus() != AIS_DS_Displayed && theIsDisplayedOnly)
+    if (theObject->DisplayStatus() != PrsMgr_DisplayStatus_Displayed && theIsDisplayedOnly)
+    {
       return;
+    }
 
     aStatus->SubIntensityOn();
     myMainPM->Color (theObject, aSubStyle, theDispMode != -1 ? theDispMode : aStatus->DisplayMode());
