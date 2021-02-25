@@ -2440,7 +2440,7 @@ void AIS_InteractiveContext::setObjectStatus (const Handle(AIS_InteractiveObject
 {
   if (theStatus != AIS_DS_None)
   {
-    Handle(AIS_GlobalStatus) aStatus = new AIS_GlobalStatus (AIS_DS_Displayed, theDispMode, theSelectionMode);
+    Handle(AIS_GlobalStatus) aStatus = new AIS_GlobalStatus (theStatus, theDispMode, theSelectionMode);
     myObjects.Bind (theIObj, aStatus);
   }
   else
