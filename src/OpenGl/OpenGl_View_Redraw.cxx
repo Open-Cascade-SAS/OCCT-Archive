@@ -1492,7 +1492,7 @@ bool OpenGl_View::blitBuffers (OpenGl_FrameBuffer*    theReadFbo,
 #else
   aCtx->core20fwd->glClearDepthf (1.0f);
 #endif
-  aCtx->core20fwd->glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  aCtx->core20fwd->glClear (GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   const bool toApplyGamma = aCtx->ToRenderSRGB() != aCtx->IsFrameBufferSRGB();
   if (aCtx->arbFBOBlit != NULL
