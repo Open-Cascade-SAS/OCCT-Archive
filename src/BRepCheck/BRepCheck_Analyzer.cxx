@@ -164,6 +164,24 @@ void BRepCheck_Analyzer::Perform(const TopoDS_Shape& S)
           if (MapS.Add(aVertex))
             myMap(aVertex)->InContext(S);
         }
+        catch (Standard_Failure)
+        {
+#ifdef DEB
+          cout << "BRepCheck_Analyzer : ";
+          Standard_Failure::Caught()->Print(cout);
+          cout << endl;
+#endif
+          if (!myMap(S).IsNull())
+            myMap(S)->SetFailStatus(S);
+
+          Handle(BRepCheck_Result) aVertexRes = myMap(aVertex);
+
+          if (!aVertexRes.IsNull())
+          {
+            aVertexRes->SetFailStatus(aVertex);
+            aVertexRes->SetFailStatus(S);
+          }
+        } 
       }
       try
       {
@@ -182,21 +200,18 @@ void BRepCheck_Analyzer::Perform(const TopoDS_Shape& S)
         std::cout<<std::endl;
 #endif
         (void)anException;
-        if ( ! myMap(S).IsNull() )
+        if (!myMap(S).IsNull())
         {
           myMap(S)->SetFailStatus(S);
+        }
 
-          Handle(BRepCheck_Result) aRes = myMap(aVertex);
-
-          if ( ! aRes.IsNull() ) 
-          {
-            aRes->SetFailStatus(aVertex);
-            aRes->SetFailStatus(S);
-          }
-
+        if ( ! aRes.IsNull() ) 
+        {
+          aRes->SetFailStatus(S);
+        }
     }
 
-      TopTools_MapOfShape MapS;
+      TopTools_MapOfShape avertexMap;
       
       for (exp.Init(S,TopAbs_VERTEX);exp.More(); exp.Next())
       {
@@ -204,7 +219,7 @@ void BRepCheck_Analyzer::Perform(const TopoDS_Shape& S)
         try
         {
           OCC_CATCH_SIGNALS
-          if (MapS.Add(aVertex))
+          if (avertexMap.Add(aVertex))
             myMap(aVertex)->InContext(S);
         }
         catch(Standard_Failure const& anException) {

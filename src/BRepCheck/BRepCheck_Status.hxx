@@ -56,6 +56,7 @@ BRepCheck_BadOrientationOfSubshape,
 BRepCheck_InvalidPolygonOnTriangulation,
 BRepCheck_InvalidToleranceValue,
 BRepCheck_EnclosedRegion,
+BRepCheck_CollapsedEdge,
 BRepCheck_CheckFail
 };
 

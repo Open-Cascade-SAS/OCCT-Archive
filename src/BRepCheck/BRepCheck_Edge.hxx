@@ -48,6 +48,8 @@ public:
   Standard_EXPORT void GeometricControls (const Standard_Boolean B);
   
   Standard_EXPORT Standard_Real Tolerance();
+
+  Standard_EXPORT BRepCheck_Status CheckTolerance(const TopoDS_Edge& theEdge);
   
   //! Sets status of Edge;
   Standard_EXPORT void SetStatus (const BRepCheck_Status theStatus);

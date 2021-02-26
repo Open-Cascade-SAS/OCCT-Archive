@@ -516,32 +516,6 @@ void ContextualDump(Draw_Interpretor& theCommands,
 static void FillProblems(const BRepCheck_Status stat,
                          Handle(TColStd_HArray1OfInteger)& NbProblems)
 {
-  case BRepCheck_CollapsedEdge:
-    NbProblems->SetValue(13,NbProblems->Value(13)+1); break;
-    NbProblems->SetValue(14,NbProblems->Value(14)+1); break;
-    NbProblems->SetValue(15,NbProblems->Value(15)+1); break;
-    NbProblems->SetValue(16,NbProblems->Value(16)+1); break;
-    NbProblems->SetValue(17,NbProblems->Value(17)+1); break;
-    NbProblems->SetValue(18,NbProblems->Value(18)+1); break;
-    NbProblems->SetValue(19,NbProblems->Value(19)+1); break;
-    NbProblems->SetValue(20,NbProblems->Value(20)+1); break;
-    NbProblems->SetValue(21,NbProblems->Value(21)+1); break;
-    NbProblems->SetValue(22,NbProblems->Value(22)+1); break;
-    NbProblems->SetValue(23,NbProblems->Value(23)+1); break;
-    NbProblems->SetValue(24,NbProblems->Value(24)+1); break;
-    NbProblems->SetValue(25,NbProblems->Value(25)+1); break;
-    NbProblems->SetValue(26,NbProblems->Value(26)+1); break;
-    NbProblems->SetValue(27,NbProblems->Value(27)+1); break;
-    NbProblems->SetValue(28,NbProblems->Value(28)+1); break;
-    NbProblems->SetValue(29,NbProblems->Value(29)+1); break;
-    NbProblems->SetValue(30,NbProblems->Value(30)+1); break;
-    NbProblems->SetValue(31,NbProblems->Value(31)+1); break;
-    NbProblems->SetValue(32,NbProblems->Value(32)+1); break;
-  case BRepCheck_InvalidToleranceValue:
-    NbProblems->SetValue(33,NbProblems->Value(33)+1); break;
-  case BRepCheck_CheckFail:
-    NbProblems->SetValue(34,NbProblems->Value(34)+1); break;
-
   const Standard_Integer anID = static_cast<Standard_Integer> (stat);
 
   if((NbProblems->Upper() < anID) || (NbProblems->Lower() > anID))
@@ -549,7 +523,7 @@ static void FillProblems(const BRepCheck_Status stat,
 
   NbProblems->SetValue(anID, NbProblems->Value(anID)+1);
 
-  }
+}
 
 
 //=======================================================================
