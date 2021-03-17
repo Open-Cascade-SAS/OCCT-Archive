@@ -205,7 +205,7 @@ void AIS_Selection::SelectOwners (const AIS_NArray1OfEntityOwner& thePickedOwner
         const Handle(SelectMgr_EntityOwner)& anOwner = aSelIter.Value();
         if (anOwner.IsNull()
         || !anOwner->HasSelectable()
-        || !theFilter->IsOk (anOwner, SelectMgr_FilterReaction_Select))
+        || !theFilter->IsOk (anOwner))
         {
           continue;
         }
@@ -231,7 +231,7 @@ AIS_SelectStatus AIS_Selection::appendOwner (const Handle(SelectMgr_EntityOwner)
 {
   if (theOwner.IsNull()
   || !theOwner->HasSelectable()
-  || !theFilter->IsOk (theOwner, SelectMgr_FilterReaction_Select))
+  || !theFilter->IsOk (theOwner))
   {
     return AIS_SS_NotDone;
   }
@@ -247,7 +247,7 @@ AIS_SelectStatus AIS_Selection::XOROwner (const Handle(SelectMgr_EntityOwner)& t
                                           const AIS_NListOfEntityOwner& thePreviousSelected,
                                           const Handle(SelectMgr_Filter)& theFilter)
 {
-  if (theOwner.IsNull() || !theOwner->HasSelectable() || !theFilter->IsOk (theOwner, SelectMgr_FilterReaction_Select))
+  if (theOwner.IsNull() || !theOwner->HasSelectable() || !theFilter->IsOk (theOwner))
     return AIS_SS_NotDone;
 
   if (thePreviousSelected.Contains (theOwner)) // was selected, should not be now
