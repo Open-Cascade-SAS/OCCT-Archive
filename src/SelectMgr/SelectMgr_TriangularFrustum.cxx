@@ -302,6 +302,33 @@ Standard_Boolean SelectMgr_TriangularFrustum::OverlapsTriangle (const gp_Pnt& th
   return Standard_True;
 }
 
+//=======================================================================
+// function : OverlapsSphere
+// purpose  :
+//=======================================================================
+Standard_Boolean SelectMgr_TriangularFrustum::OverlapsSphere (const gp_Pnt& theCenter,
+                                                              const Standard_Real theRadius,
+                                                              Standard_Boolean* theInside) const
+{
+  (void )theInside;
+  return hasBoxOverlap (SelectMgr_Vec3 (theCenter.X() - theRadius, theCenter.Y() - theRadius, theCenter.Z() - theRadius),
+                        SelectMgr_Vec3 (theCenter.X() + theRadius, theCenter.Y() + theRadius, theCenter.Z() + theRadius), NULL);
+}
+
+//=======================================================================
+// function : OverlapsSphere
+// purpose  :
+//=======================================================================
+Standard_Boolean SelectMgr_TriangularFrustum::OverlapsSphere (const gp_Pnt& theCenter,
+                                                              const Standard_Real theRadius,
+                                                              const SelectMgr_ViewClipRange& theClipRange,
+                                                              SelectBasics_PickResult& thePickResult) const
+{
+  (void )theClipRange;
+  (void )thePickResult;
+  return hasSphereOverlap (theCenter, theRadius);
+}
+
 // =======================================================================
 // function : Clear
 // purpose  : Nullifies the handle for corresponding builder instance to prevent
