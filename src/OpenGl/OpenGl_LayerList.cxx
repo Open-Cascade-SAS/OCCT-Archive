@@ -602,7 +602,8 @@ void OpenGl_LayerList::renderLayer (const Handle(OpenGl_Workspace)& theWorkspace
   if (hasOwnLights)
   {
     aLayerSettings.Lights()->UpdateRevision();
-    aManager->UpdateLightSourceStateTo (aLayerSettings.Lights(), theWorkspace->View()->SpecIBLMapLevels(), Handle(OpenGl_ShadowMapArray)());
+    //aManager->UpdateLightSourceStateTo (aLayerSettings.Lights(), theWorkspace->View()->SpecIBLMapLevels(), Handle(OpenGl_ShadowMapArray)());
+    aManager->UpdateLightSourceStateTo (aLayerSettings.Lights(), theWorkspace->View()->SpecIBLMapLevels(), aShadowMaps);
   }
 
   const Handle(Graphic3d_Camera)& aWorldCamera = aCtx->Camera();
