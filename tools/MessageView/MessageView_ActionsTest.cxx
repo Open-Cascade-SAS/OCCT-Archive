@@ -49,7 +49,7 @@
 #include <QWidget>
 #include <Standard_WarningsRestore.hxx>
 
-#define DEBUG_ALERTS
+//#define DEBUG_ALERTS
 
 #ifdef DEBUG_ALERTS
 #include <Message_Level.hxx>

@@ -523,7 +523,7 @@ void MessageView_Window::onTreeViewContextMenuRequested (const QPoint& thePositi
     anAction->setChecked (isTraceOnly);
     aMenu->addAction (anAction);*/
 
-    anAction = ViewControl_Tools::CreateAction (tr ("Unit by name"), SLOT (onUnitByName()), myMainWindow, this);
+    QAction* anAction = anAction = ViewControl_Tools::CreateAction (tr ("Unit by name"), SLOT (onUnitByName()), myMainWindow, this);
     anAction->setCheckable (true);
     aMenu->addAction (anAction);
   }
