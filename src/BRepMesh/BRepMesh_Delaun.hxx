@@ -298,7 +298,8 @@ private:
   
   //! Creates the triangles on new nodes.
   void createTrianglesOnNewVertices (IMeshData::VectorOfInteger&  theVertexIndices,
-                                     const Message_ProgressRange& theRange);
+                                     const Message_ProgressRange& theRange,
+                                     Standard_Boolean doFrontierAdjust = Standard_False);
 
   //! Cleanup mesh from the free triangles.
   void cleanupMesh();
