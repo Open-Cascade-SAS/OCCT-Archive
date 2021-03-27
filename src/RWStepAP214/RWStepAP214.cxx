@@ -22,18 +22,43 @@
 #include <StepAP214_Protocol.hxx>
 #include <StepData_WriterLib.hxx>
 
-static int THE_RWStepAP214_init = 0;
+DEFINE_STANDARD_HANDLE(RWStepAP214_Mgr, Standard_Transient)
+
+class RWStepAP214_Mgr : public Standard_Transient
+{
+public:
+  RWStepAP214_Mgr()
+  {
+    myProtocol = StepAP214::Protocol();
+    myGeneralModule = new RWStepAP214_GeneralModule;
+    myRWModule = new RWStepAP214_ReadWriteModule;
+    Interface_GeneralLib::SetGlobal(myGeneralModule, myProtocol);
+    Interface_ReaderLib::SetGlobal(myRWModule, myProtocol);
+    StepData_WriterLib::SetGlobal(myRWModule, myProtocol);
+  }
+
+  virtual ~RWStepAP214_Mgr()
+  {
+    Interface_GeneralLib::ReleaseGlobal(myGeneralModule);
+    Interface_ReaderLib::ReleaseGlobal(myRWModule);
+    StepData_WriterLib::ReleaseGlobal(myRWModule);
+  }
+
+  DEFINE_STANDARD_RTTI_INLINE(RWStepAP214_Mgr, Standard_Transient)
+
+private:
+  Handle(StepAP214_Protocol) myProtocol;
+  Handle(RWStepAP214_ReadWriteModule) myRWModule;
+  Handle(RWStepAP214_GeneralModule) myGeneralModule;
+};
+
+static Handle(RWStepAP214_Mgr) THE_MGR;
 
 void RWStepAP214::Init()
 {
-  if (THE_RWStepAP214_init)
+  if (THE_MGR.IsNull())
   {
-    return;
+    RWHeaderSection::Init();
+    THE_MGR = new RWStepAP214_Mgr;
   }
-  THE_RWStepAP214_init = 1;
-  RWHeaderSection::Init();
-  Handle(StepAP214_Protocol) proto = StepAP214::Protocol();
-  Interface_GeneralLib::SetGlobal (new RWStepAP214_GeneralModule,proto);
-  Interface_ReaderLib::SetGlobal  (new RWStepAP214_ReadWriteModule,proto);
-  StepData_WriterLib::SetGlobal   (new RWStepAP214_ReadWriteModule,proto);
 }

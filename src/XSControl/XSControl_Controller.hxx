@@ -78,11 +78,22 @@ class XSControl_Controller : public Standard_Transient
     Record (Name(Standard_True));
     Record (Name(Standard_False));
   }
+
+  //! Removes <me> from the general dictionary under Short and Long
+  //! Names (see method Name)
+  void AutoRelease() const
+  {
+    Release (Name(Standard_True));
+    Release (Name(Standard_False));
+  }
   
   //! Records <me> in a general dictionary under a name
   //! Error if <name> already used for another one
   Standard_EXPORT void Record (const Standard_CString name) const;
   
+  //! Removes <me> from the general dictionary under a name
+  Standard_EXPORT void Release(const Standard_CString name) const;
+
   //! Returns the Controller attached to a given name
   //! Returns a Null Handle if <name> is unknown
   Standard_EXPORT static Handle(XSControl_Controller) Recorded (const Standard_CString name);

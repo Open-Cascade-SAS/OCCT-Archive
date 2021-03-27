@@ -46,7 +46,10 @@ public:
   //! match) and Same State (that is, IsEqual is not required)
   //! Once added, stores its attached Protocol in correspondance
   Standard_EXPORT void Add (const Handle(Interface_ReaderModule)& amodule, const Handle(Interface_Protocol)& aprotocol);
-  
+
+  //! Removes a Module from the list
+  Standard_EXPORT void Remove(const Handle(Interface_ReaderModule)& amodule);
+
   //! Returns the Module stored in a given GlobalNode
   Standard_EXPORT const Handle(Interface_ReaderModule)& Module() const;
   

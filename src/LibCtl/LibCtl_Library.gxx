@@ -36,6 +36,12 @@ static Handle(LibCtl_Node) thelast;
   theglobal->Add(amodule,aprotocol);
 }
 
+void LibCtl_Library::ReleaseGlobal(const Handle(TheModule)& amodule)
+{
+  if (!theglobal.IsNull())
+    theglobal->Remove(amodule);
+}
+
 // Constructeur d apres Protocole
     LibCtl_Library::LibCtl_Library (const Handle(TheProtocol)& aprotocol)
 {

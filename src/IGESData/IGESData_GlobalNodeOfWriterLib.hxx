@@ -46,7 +46,10 @@ public:
   //! match) and Same State (that is, IsEqual is not required)
   //! Once added, stores its attached Protocol in correspondance
   Standard_EXPORT void Add (const Handle(IGESData_ReadWriteModule)& amodule, const Handle(IGESData_Protocol)& aprotocol);
-  
+
+  //! Removes a Module from the list
+  Standard_EXPORT void Remove(const Handle(IGESData_ReadWriteModule)& amodule);
+
   //! Returns the Module stored in a given GlobalNode
   Standard_EXPORT const Handle(IGESData_ReadWriteModule)& Module() const;
   

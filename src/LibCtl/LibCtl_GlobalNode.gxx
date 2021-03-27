@@ -38,6 +38,26 @@ LibCtl_GlobalNode::LibCtl_GlobalNode ()    {  }
   else thenext->Add (amodule,aprotocol);
 }
 
+void LibCtl_GlobalNode::Remove(const Handle(TheModule)& amodule)
+{
+  if (themod == amodule)
+  {
+    if (thenext.IsNull())
+    {
+      themod = Handle(TheModule)();
+      theprot = Handle(TheProtocol)();
+    }
+    else
+    {
+      themod = thenext->themod;
+      theprot = thenext->theprot;
+      thenext = thenext->thenext;
+    }
+  }
+  else if (!thenext.IsNull())
+    thenext->Remove(amodule);
+}
+
     const Handle(TheModule)& LibCtl_GlobalNode::Module () const
       {  return themod;  }
 

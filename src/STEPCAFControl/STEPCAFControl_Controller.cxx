@@ -22,6 +22,33 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(STEPCAFControl_Controller,STEPControl_Controller)
 
+
+DEFINE_STANDARD_HANDLE(STEPCAF_Mgr, Standard_Transient)
+
+class STEPCAF_Mgr : public Standard_Transient
+{
+public:
+  STEPCAF_Mgr()
+  {
+    myCtl = new STEPCAFControl_Controller;
+    // do something to avoid warnings...
+    myCtl->AutoRecord();
+  }
+
+  virtual ~STEPCAF_Mgr()
+  {
+    myCtl->AutoRelease();
+  }
+
+  DEFINE_STANDARD_RTTI_INLINE(STEPCAF_Mgr, Standard_Transient)
+
+private:
+  Handle(STEPCAFControl_Controller) myCtl;
+};
+
+static Handle(STEPCAF_Mgr) THE_MGR;
+
+
 //=======================================================================
 //function : STEPCAFControl_Controller
 //purpose  : 
@@ -42,12 +69,9 @@ Standard_Boolean STEPCAFControl_Controller::Init ()
   static Standard_Boolean inic = Standard_False;
   if (inic) return Standard_True;
   inic = Standard_True;
-  // self-registering
-  Handle(STEPCAFControl_Controller) STEPCTL = new STEPCAFControl_Controller;
   // do XSAlgo::Init, cause it does not called before.
   XSAlgo::Init();
-  // do something to avoid warnings...
-  STEPCTL->AutoRecord();
+  THE_MGR = new STEPCAF_Mgr;
 
   //-----------------------------------------------------------
   // Few variables for advanced control of translation process

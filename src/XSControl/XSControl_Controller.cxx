@@ -131,6 +131,13 @@ void XSControl_Controller::Record (const Standard_CString theName) const
   listad.Bind(theName, this);
 }
 
+void XSControl_Controller::Release(const Standard_CString theName) const
+{
+  if (listad.IsBound(theName)) {
+    listad.UnBind(theName);
+  }
+}
+
 //=======================================================================
 //function : Recorded
 //purpose  : 

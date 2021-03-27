@@ -42,7 +42,10 @@ public:
   //! Adds a couple (Module-Protocol) into the global definition set
   //! for this class of Library.
   Standard_EXPORT static void SetGlobal (const Handle(StepData_ReadWriteModule)& amodule, const Handle(StepData_Protocol)& aprotocol);
-  
+
+  //! Releases a module from the global definition set.
+  Standard_EXPORT static void ReleaseGlobal(const Handle(StepData_ReadWriteModule)& amodule);
+
   //! Creates a Library which complies with a Protocol, that is :
   //! Same class (criterium IsInstance)
   //! This creation gets the Modules from the global set, those

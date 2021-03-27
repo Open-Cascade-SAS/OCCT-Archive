@@ -43,7 +43,10 @@ public:
   //! Adds a couple (Module-Protocol) into the global definition set
   //! for this class of Library.
   Standard_EXPORT static void SetGlobal (const Handle(IGESData_SpecificModule)& amodule, const Handle(IGESData_Protocol)& aprotocol);
-  
+
+  //! Releases a module from the global definition set.
+  Standard_EXPORT static void ReleaseGlobal(const Handle(IGESData_SpecificModule)& amodule);
+
   //! Creates a Library which complies with a Protocol, that is :
   //! Same class (criterium IsInstance)
   //! This creation gets the Modules from the global set, those
