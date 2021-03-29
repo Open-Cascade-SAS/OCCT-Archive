@@ -74,6 +74,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkTIFFWriter.h>
 #include <vtkWindowToImageFilter.h>
+#include <vtkXMLPolyDataWriter.h>
 #ifndef _WIN32
   #include <X11/X.h>
   #include <X11/Shell.h>
@@ -90,6 +91,8 @@
 #if (VTK_MAJOR_VERSION > 8) || (VTK_MAJOR_VERSION == 8 && VTK_MINOR_VERSION >= 1)
   #define HAVE_VTK_SRGB
 #endif
+
+#pragma comment(lib, "vtkIOXML-8.2.lib") ///
 
 //================================================================
 // TYPE DEFINITIONS
@@ -1257,6 +1260,78 @@ static Standard_Integer VtkSetTransparency (Draw_Interpretor& ,
 }
 
 //================================================================
+// Function  : VtkWriteVtp
+// Purpose   :
+//================================================================
+static Standard_Integer VtkWriteVtp (Draw_Interpretor& theDI,
+                                     Standard_Integer theArgNb,
+                                     const char** theArgVec)
+{
+  if (!GetInteractor()
+   || !GetInteractor()->IsEnabled())
+  {
+    Message::SendFail() << "Error: call ivtkinit before\n";
+    return 1;
+  }
+
+  vtkSmartPointer<vtkActor> anActor;
+  TCollection_AsciiString aFileName;
+  vtkSmartPointer<vtkXMLPolyDataWriter> aWriter = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  for (Standard_Integer anArgIter = 1; anArgIter < theArgNb; ++anArgIter)
+  {
+    TCollection_AsciiString anArg (theArgVec[anArgIter]);
+    TCollection_AsciiString anArgCase (anArg);
+    anArgCase.LowerCase();
+    if (anArgCase == "-binary")
+    {
+      const bool isBinary = Draw::ParseOnOffIterator (theArgNb, theArgVec, anArgIter);
+      if (isBinary)
+      {
+        aWriter->SetDataModeToBinary();
+      }
+      else
+      {
+        aWriter->SetDataModeToAscii();
+      }
+    }
+    else if (anActor.GetPointer() == NULL
+          && GetMapOfActors().Find2 (anArg, anActor))
+    {
+      vtkSmartPointer<IVtkTools_ShapeDataSource> aSrc = IVtkTools_ShapeObject::GetShapeSource (anActor);
+      if (aSrc.GetPointer() == NULL
+       || aSrc->GetShape().IsNull())
+      {
+        theDI << "Syntax error: invalid actor '" << anArg << "'";
+        return 1;
+      }
+
+      aWriter->SetInputConnection (aSrc->GetOutputPort());
+    }
+    else if (aFileName.IsEmpty())
+    {
+      aFileName = anArg;
+      aWriter->SetFileName (aFileName.ToCString());
+    }
+    else
+    {
+      theDI << "Syntax error: unknown argument '" << anArg << "'";
+      return 1;
+    }
+  }
+  if (aFileName.IsEmpty() || anActor.GetPointer() == NULL)
+  {
+    Message::SendFail() << "Syntax error: wrong number of arguments";
+    return 1;
+  }
+
+  if (aWriter->Write() == 0)
+  {
+    theDI << "Error: unable to write file '" << aFileName << "'";
+  }
+  return 0;
+}
+
+//================================================================
 // Function  : VtkMoveTo
 // Purpose   : 
 // Draw args : ivtkmoveto x y
@@ -1733,6 +1808,11 @@ void IVtkDraw::Commands (Draw_Interpretor& theCommands)
               "ivtksettransparency name 0..1"
       "\n\t\t: Sets transparency to the object with name 'name'.",
     __FILE__, VtkSetTransparency, group);
+
+  theCommands.Add("ivtkwritevtp",
+              "ivtkwritevtp name1 fileName"
+      "\n\t\t: Export IVtk actor into VTP format.",
+    __FILE__, VtkWriteVtp, group);
 }
 
 //================================================================
