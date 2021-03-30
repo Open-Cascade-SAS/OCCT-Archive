@@ -12,6 +12,7 @@
 //
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
+#ifndef OCC_MINIMAL_BUILD
 
 #include <StdPrs_BRepTextBuilder.hxx>
 
@@ -75,3 +76,5 @@ TopoDS_Shape StdPrs_BRepTextBuilder::Perform (StdPrs_BRepFont&                  
 
   return Perform (theFont, aFormatter, thePenLoc);
 }
+
+#endif

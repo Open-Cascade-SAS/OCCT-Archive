@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#ifndef OCC_MINIMAL_BUILD
+
 #include <Font_FontMgr.hxx>
 
 #include <Font_NameOfFont.hxx>
@@ -1158,3 +1160,5 @@ Handle(NCollection_Buffer) Font_FontMgr::EmbedFallbackFont()
                                  Font_DejavuSans_Latin_woff_size,
                                  const_cast<Standard_Byte*>(Font_DejavuSans_Latin_woff));
 }
+
+#endif

@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#ifndef OCC_MINIMAL_BUILD
+
 #include <Font_TextFormatter.hxx>
 
 #include <Font_FTFont.hxx>
@@ -424,3 +426,5 @@ Standard_ShortReal Font_TextFormatter::LineWidth (const Standard_Integer theInde
 
   return 0;
 }
+
+#endif

@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#ifndef OCC_MINIMAL_BUILD
+
 #include <StdPrs_BRepFont.hxx>
 
 #include <BRep_Tool.hxx>
@@ -670,3 +672,5 @@ Standard_Boolean StdPrs_BRepFont::renderGlyph (const Standard_Utf32Char theChar,
   myCache.Bind (theChar, theShape);
   return !theShape.IsNull();
 }
+
+#endif

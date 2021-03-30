@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#ifndef OCC_MINIMAL_BUILD
+
 #include <Font_FTLibrary.hxx>
 
 #include <ft2build.h>
@@ -44,3 +46,5 @@ Font_FTLibrary::~Font_FTLibrary()
     FT_Done_FreeType (myFTLib);
   }
 }
+
+#endif

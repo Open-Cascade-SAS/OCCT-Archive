@@ -15,9 +15,11 @@
 #include <AIS_TextLabel.hxx>
 
 #include <AIS_InteractiveContext.hxx>
+#ifndef OCC_MINIMAL_BUILD
 #include <Font_FTFont.hxx>
 #include <Font_FontMgr.hxx>
 #include <Font_Rect.hxx>
+#endif
 #include <Graphic3d_AspectText3d.hxx>
 #include <Graphic3d_RenderingParams.hxx>
 #include <Graphic3d_Text.hxx>
@@ -404,6 +406,8 @@ Standard_Boolean AIS_TextLabel::calculateLabelParams (const gp_Pnt& thePosition,
 {
   // Get width and height of text
   Handle(Prs3d_TextAspect) anAsp = myDrawer->TextAspect();
+
+#ifndef OCC_MINIMAL_BUILD  
   Font_FTFontParams aFontParams;
   aFontParams.PointSize = (unsigned int) anAsp->Height();
   aFontParams.Resolution = GetContext()->CurrentViewer()->DefaultRenderingParams().Resolution;
@@ -440,6 +444,9 @@ Standard_Boolean AIS_TextLabel::calculateLabelParams (const gp_Pnt& thePosition,
   }
 
   return Standard_True;
+#else
+  return Standard_False;
+#endif
 }
 
 //=======================================================================

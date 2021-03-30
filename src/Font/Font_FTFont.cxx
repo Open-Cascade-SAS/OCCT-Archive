@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#ifndef OCC_MINIMAL_BUILD
+
 #include <Font_FTFont.hxx>
 
 #include <Font_FTLibrary.hxx>
@@ -621,3 +623,5 @@ const FT_Outline* Font_FTFont::renderGlyphOutline (const Standard_Utf32Char theC
   }
   return &myActiveFTFace->glyph->outline;
 }
+
+#endif

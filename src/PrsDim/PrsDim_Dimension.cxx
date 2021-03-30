@@ -23,8 +23,12 @@
 #include <BRepBndLib.hxx>
 #include <Bnd_Box.hxx>
 #include <ElCLib.hxx>
+
+#ifndef OCC_MINIMAL_BUILD
 #include <Font_BRepFont.hxx>
 #include <Font_BRepTextBuilder.hxx>
+#endif
+
 #include <GC_MakeCircle.hxx>
 #include <Geom_Line.hxx>
 #include <GeomAdaptor_Curve.hxx>
@@ -311,6 +315,7 @@ TCollection_ExtendedString PrsDim_Dimension::GetValueString (Standard_Real& theW
 
   theWidth = 0.0;
 
+#ifndef OCC_MINIMAL_BUILD
   if (myDrawer->DimensionAspect()->IsText3d())
   {
     // text width produced by BRepFont
@@ -341,6 +346,7 @@ TCollection_ExtendedString PrsDim_Dimension::GetValueString (Standard_Real& theW
       }
     }
   }
+#endif
 
   return aValueStr;
 }
@@ -412,6 +418,9 @@ void PrsDim_Dimension::drawText (const Handle(Prs3d_Presentation)& thePresentati
                                  const Standard_Integer theLabelPosition)
 {
   Handle(Graphic3d_Group) aGroup = thePresentation->NewGroup();
+
+
+#ifndef OCC_MINIMAL_BUILD
   if (myDrawer->DimensionAspect()->IsText3d())
   {
     // getting font parameters
@@ -545,6 +554,9 @@ void PrsDim_Dimension::drawText (const Handle(Prs3d_Presentation)& thePresentati
 
     return;
   }
+#else
+  (void)theLabelPosition;
+#endif
 
   // generate primitives for 2D text
   myDrawer->DimensionAspect()->TextAspect()->Aspect()->SetDisplayType (Aspect_TODT_DIMENSION);

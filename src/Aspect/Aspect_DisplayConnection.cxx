@@ -24,7 +24,7 @@ IMPLEMENT_STANDARD_RTTIEXT(Aspect_DisplayConnection,Standard_Transient)
 // =======================================================================
 Aspect_DisplayConnection::Aspect_DisplayConnection()
 {
-#if !defined(_WIN32) && (!defined(__APPLE__) || defined(MACOSX_USE_GLX)) && !defined(__ANDROID__) && !defined(__QNX__) && !defined(__EMSCRIPTEN__)
+#if !defined(_WIN32) && (!defined(__APPLE__) || defined(MACOSX_USE_GLX)) && !defined(__ANDROID__) && !defined(__QNX__) && !defined(__EMSCRIPTEN__) && !defined (OCC_MINIMAL_BUILD)
   myDisplay = NULL;
   myDefVisualInfo = NULL;
   myDefFBConfig = NULL;
@@ -41,7 +41,7 @@ Aspect_DisplayConnection::Aspect_DisplayConnection()
 // =======================================================================
 Aspect_DisplayConnection::~Aspect_DisplayConnection()
 {
-#if !defined(_WIN32) && (!defined(__APPLE__) || defined(MACOSX_USE_GLX)) && !defined(__ANDROID__) && !defined(__QNX__) && !defined(__EMSCRIPTEN__)
+#if !defined(_WIN32) && (!defined(__APPLE__) || defined(MACOSX_USE_GLX)) && !defined(__ANDROID__) && !defined(__QNX__) && !defined(__EMSCRIPTEN__) && !defined (OCC_MINIMAL_BUILD)
   if (myDefVisualInfo != NULL)
   {
     XFree (myDefVisualInfo);
@@ -54,7 +54,7 @@ Aspect_DisplayConnection::~Aspect_DisplayConnection()
 #endif
 }
 
-#if !defined(_WIN32) && (!defined(__APPLE__) || defined(MACOSX_USE_GLX)) && !defined(__ANDROID__) && !defined(__QNX__) && !defined(__EMSCRIPTEN__)
+#if !defined(_WIN32) && (!defined(__APPLE__) || defined(MACOSX_USE_GLX)) && !defined(__ANDROID__) && !defined(__QNX__) && !defined(__EMSCRIPTEN__) && !defined (OCC_MINIMAL_BUILD)
 // =======================================================================
 // function : Aspect_DisplayConnection
 // purpose  :
