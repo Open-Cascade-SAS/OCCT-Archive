@@ -1,6 +1,6 @@
 # environment configuration template for occ_build_wasm.sh (to be renamed as wasm_custom_env.sh)
 export aFreeType="$aSrcRoot/../3rdparty/freetype-2.7.1-wasm"
-export EMSDK_ROOT="$aSrcRoot/../occ-web3d/fips/fips-sdks/emsdk"
+export EMSDK_ROOT="$aSrcRoot/../asrv-web3d/fips/fips-sdks/emsdk"
 
 # Uncomment to customize building steps
 #export aBuildRoot=work

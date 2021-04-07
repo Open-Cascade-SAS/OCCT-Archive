@@ -1,5 +1,5 @@
 rem Environment configuration template for wasm_build.bat (to be renamed as wasm_custom.bat)
-set "EMSDK_ROOT=%aCasSrc%\..\occ-web3d\fips\fips-sdks\emsdk"
+set "EMSDK_ROOT=%aCasSrc%\..\asrv-web3d\fips\fips-sdks\emsdk"
 set "aFreeType=%aCasSrc%\..\3rdparty\freetype-2.7.1-wasm"
 rem set "aRapidJson=%aCasSrc%\..\3rdparty\rapidjson-1.1.0"
 rem set "aDraco=%aCasSrc%\..\3rdparty\draco-1.4.1-wasm32"
