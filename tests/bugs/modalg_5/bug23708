@@ -7,6 +7,7 @@ puts ""
 ############################################################################
 
 restore [locate_data_file bug23708_invalidface.brep] result
+fixshape result result
 checkshape result
 
 checkview -display result -2d -path ${imagedir}/${test_image}.png

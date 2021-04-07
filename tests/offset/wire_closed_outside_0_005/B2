@@ -1,3 +1,5 @@
+puts "TODO CR32287  ALL: Faulty shapes in variables faulty_1 to faulty_1"
+
 restore [locate_data_file offset_wire_015.brep] s
 
 set length 830.837

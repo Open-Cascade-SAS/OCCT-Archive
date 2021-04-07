@@ -1,3 +1,4 @@
 puts "TODO OCC24156 MacOS: Faulty shapes in variables faulty_1 to faulty_"
 
-restore [locate_data_file CTO900_pro5363c.rle] a
+restore [locate_data_file CTO900_pro5363c.rle] r
+fixshape a r

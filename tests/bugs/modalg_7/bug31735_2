@@ -2,6 +2,7 @@ puts "======================================================================"
 puts "OCC31735: BRepOffset_MakeOffset works slowly and produces wrong result"
 puts "======================================================================"
 puts ""
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 restore [locate_data_file bug31735_2.brep] a
 explode a

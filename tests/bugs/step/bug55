@@ -6,6 +6,7 @@ puts "========================"
 ########################################
 ## After reading from STEP file invalid shape was obtained.
 ########################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_90"
  
 cpulimit 2000
 

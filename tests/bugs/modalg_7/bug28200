@@ -6,6 +6,7 @@ puts ""
 #############################################
 # Invalid topology of the general fuse result
 #############################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file bug28200_sh.brep] sh
 sewing sh sh 1.0

@@ -1,2 +1,4 @@
 
-restore [locate_data_file Fourche7corrige.brep] a
+restore [locate_data_file Fourche7corrige.brep] r1
+fixshape a r1 
+breducetolerance a

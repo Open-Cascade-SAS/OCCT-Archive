@@ -75,7 +75,7 @@
 //Number of BRepCheck_Statuses in BRepCheck_Status.hxx file
 //(BRepCheck_NoError is not considered, i.e. general status 
 //is smaller by one specified in file)
-static const Standard_Integer NumberOfStatus = 36;
+static const Standard_Integer NumberOfStatus = 37;
 
 static char* checkfaultyname = NULL;
 Standard_EXPORT void BRepTest_CheckCommands_SetFaultyName(const char* name)

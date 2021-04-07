@@ -5,6 +5,7 @@ puts ""
 #######################################################################################
 # Regression in visualization for b-spline surface
 ######################################################################################
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_63"
 
 set BugNumber OCC22631
 

@@ -5,6 +5,8 @@ puts ""
 #################################################
 # Avoid inheritance of the BRepAlgoAPI_Check from BRepBuilderAPI_MakeShape
 #################################################
+puts "TODO CR32255  ALL: Check on small edges is still enabled"
+puts "TODO CR32255  ALL: The check on types is invalid"
 
 puts "check simple box"
 

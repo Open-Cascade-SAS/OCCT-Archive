@@ -4,6 +4,7 @@ puts "========"
 puts "0030522: Modeling Algorithms - BRepBuilderAPI_MakeWire produces different wires depending on the order of parameters"
 puts "========"
 puts ""
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file bug30522_w_line12.brep] w1
 restore [locate_data_file bug30522_w_line21.brep] w2

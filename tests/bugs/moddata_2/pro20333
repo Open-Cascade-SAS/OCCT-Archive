@@ -7,6 +7,7 @@ puts ""
 puts "=================================="
 puts "It takes visual check for this BUG"
 puts "=================================="
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file pro20333a.brep] result
 checkshape result

@@ -5,6 +5,7 @@ puts ""
 #######################################################################################
 # Improve command sewing in DRAW
 ######################################################################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 set BugNumber OCC22770
 

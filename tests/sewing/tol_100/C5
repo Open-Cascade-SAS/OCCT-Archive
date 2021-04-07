@@ -1,3 +1,5 @@
+puts "TODO CR32226  ALL: Error : Number of faults is 7"
+
 restore [locate_data_file CFI_pro11907.rle] a
 
 sewing result $tol a

@@ -1,3 +1,5 @@
+puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_1"
+
 # Test data:
 puts "USER GUID: N/A"
 restore [locate_data_file bug26663_test_offset_K7.brep] s

@@ -1,1 +1,5 @@
-restore [locate_data_file aaa.rle] a
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_4"
+
+restore [locate_data_file aaa.rle] r
+fixshape a r
+breducetolerance a

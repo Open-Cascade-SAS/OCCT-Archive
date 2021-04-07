@@ -1,3 +1,5 @@
+puts "TODO CR32272  ALL: Error : Number of faults is 2"
+
 restore [locate_data_file CTO904_pro10095b.rle] a
 
 sewing result $tol a

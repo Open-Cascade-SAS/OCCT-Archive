@@ -7,6 +7,7 @@ puts ""
 ###############################
 ## BRepFilletAPI_MakeFillet fails on prism
 ###############################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 if { [ catch { set info_result [OCC828 a1] } ] } {
     puts "Faulty : an exception was caught"

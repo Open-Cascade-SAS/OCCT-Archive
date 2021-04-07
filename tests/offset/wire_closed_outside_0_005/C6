@@ -1,4 +1,6 @@
-puts "TODO OCC23068 ALL: Faulty shapes in variables faulty_1 to faulty_2"
+#puts "TODO OCC23068 ALL: Faulty shapes in variables faulty_1 to faulty_2"
+puts "TODO CR32287  ALL: Faulty shapes in variables faulty_1 to faulty_1"
+puts "TODO CR32287  ALL: Faulty shapes in variables faulty_1 to faulty_3"
 
 restore [locate_data_file offset_wire_037.brep] s
 

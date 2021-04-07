@@ -5,6 +5,7 @@ puts ""
 #######################################################
 ## Wire explorer raises exception
 #######################################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 restore [locate_data_file bug23982_Cowl_965.brep] result
 

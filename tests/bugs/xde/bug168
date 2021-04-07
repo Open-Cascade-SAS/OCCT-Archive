@@ -4,6 +4,7 @@ puts "OCC279"
 puts "========"
 puts "Fix missing seam don't add seam "
 puts ""
+puts "TODO CR32229  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file OCC168.brep] a
 

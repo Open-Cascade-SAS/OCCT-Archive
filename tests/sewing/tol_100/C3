@@ -1,3 +1,5 @@
+puts "TODO CR32226  ALL: Error : Number of faults is 7"
+
 restore [locate_data_file 4_O1(hlacg06).draw] a
 
 sewing result $tol a

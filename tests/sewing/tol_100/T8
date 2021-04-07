@@ -1,3 +1,5 @@
+puts "TODO CR32272  ALL: Error : Number of faults is 6"
+
 restore [locate_data_file ma-test3.rle] a
 
 sewing result $tol a

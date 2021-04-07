@@ -39,7 +39,8 @@ if { [catch { mkoffset result a_1 1 5 } status] } {
         }
     }
     checkprops result -l 8577.24 
-checkshape result 
-checksection result
-    checkview -display result -2d -path ${imagedir}/${test_image}.png
+fixshape r1 result     
+checkshape r1 
+checksection r1
+    checkview -display r1 -2d -path ${imagedir}/${test_image}.png
 }

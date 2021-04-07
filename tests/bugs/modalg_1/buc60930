@@ -6,6 +6,8 @@ puts ""
 ######################################
 ## Exception ConstructionError in LocOpe_SplitShape. 
 ######################################
+puts "TODO CR32210 ALL: Faulty shapes in variables faulty_1 to faulty_1"
+puts "TODO CR32210 ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 restore [locate_data_file BUC60930_splitshape.brep] c 
 explode c

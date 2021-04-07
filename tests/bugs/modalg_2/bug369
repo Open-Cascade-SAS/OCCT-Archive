@@ -8,6 +8,7 @@ puts ""
 #################################################################
 ## BndLib_Add3dCurve raised an exception on edges which range is out of the domain of the curve.
 #################################################################
+puts "TODO CR32209 ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 restore [locate_data_file OCC369.brep] result 
 OCC369 result

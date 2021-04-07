@@ -7,7 +7,7 @@ puts ""
 #########################################################################
 # BRepBuilderAPI_Sewing produces too small edge covered by its vertices
 #########################################################################
-
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 restore [locate_data_file 22770-tramp.brep] a
 restore [locate_data_file 22770-trans.brep] b
 

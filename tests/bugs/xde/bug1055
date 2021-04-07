@@ -5,6 +5,7 @@ puts ""
 ######################################################
 # Exception is raised during mesh preparation for shading mode representation
 ######################################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_3"
 
 restore [locate_data_file OCC1055.brep] a
 checkshape a

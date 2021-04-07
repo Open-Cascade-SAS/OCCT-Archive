@@ -2,6 +2,7 @@ puts "# ==============================================================="
 puts "# 0028131: BRepOffset_MakeOffset can't create offset with a face which created by filling 3 bsplinecurve"
 puts "# ==============================================================="
 puts ""
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_3"
 
 puts "# Create face to be offset, by dedicated command"
 pload QAcommands

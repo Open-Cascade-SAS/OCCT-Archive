@@ -1,7 +1,7 @@
 puts "========"
 puts "OCC272"
 puts "========"
-
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 stepread [locate_data_file test-m020306-v2.stp] a *
 

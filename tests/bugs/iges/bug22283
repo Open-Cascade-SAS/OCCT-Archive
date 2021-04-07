@@ -5,10 +5,12 @@ puts ""
 ##########################################################################
 # Problem with reading of attached IGES file
 ##########################################################################
+# because file has too small bad edges with too much tolerances 
+puts "TODO CR32209 ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 igesbrep [locate_data_file bug22283_Mtwz_Training_Part.iges] a *
 tpcompound result
-
+breducetolerance result
 checkprops result -s 46235.4
 checkshape result
 

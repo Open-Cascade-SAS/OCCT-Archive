@@ -5,6 +5,7 @@ puts ""
 #######################################################################################
 # One face is not displayed in shading mode 
 ######################################################################################
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_155"
 
 set BugNumber OCC8370
 

@@ -5,6 +5,7 @@ puts ""
 #############################################################################
 # Possible regression is tessellation algorithm of OCCT 6.5.2 
 #############################################################################
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_75"
 
 set BugNumber OCC22893
 

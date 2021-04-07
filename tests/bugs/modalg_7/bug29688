@@ -5,6 +5,7 @@ puts ""
 #################################################
 # Regression vs 7.2.0: Wrong result of CUT operation
 #################################################
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 brestore [locate_data_file bug29688_shape.brep] s1
 brestore [locate_data_file bug29688_tool.brep] s2

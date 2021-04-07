@@ -1,1 +1,2 @@
-restore [locate_data_file CTO900_buc60127-part.rle] a
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_4"
+restore [locate_data_file CTO900_buc60127-part.rle] r

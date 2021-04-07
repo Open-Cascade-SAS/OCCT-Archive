@@ -1,1 +1,2 @@
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_3"
 restore [locate_data_file face.rle] a

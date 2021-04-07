@@ -1,5 +1,8 @@
 #if { [string compare $command "ShapeConvertRev"] == 0 } {
    #puts "TODO OCC23127 ALL: Error : The area of the resulting shape is"
 #}
+if {[string compare $command "SplitAngle"] == 0 } {
+    puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_3"
+}
 restore [locate_data_file CTO901_cts20172_base.rle] a
 

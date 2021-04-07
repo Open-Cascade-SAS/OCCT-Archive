@@ -1,12 +1,15 @@
 puts "==========="
 puts "GER61337"
 puts "=================================="
+# because file has too small bad edges with too much tolerances 
+puts "TODO CR32210 ALL: Faulty shapes in variables faulty_1 to faulty_4"
 
 cpulimit 3000
 
 igesbrep [locate_data_file ger61337a.igs] a *
 
 tpcompound result
+breducetolerance result
 checkshape result
 checkshape result r
 

@@ -2,8 +2,11 @@ puts "================"
 puts "OCC254"
 puts "================"
 puts ""
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_6"
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 restore [locate_data_file OCC254-1.brep] shape1 
+breducetolerance shape1
 checkshape shape1
  
 restore [locate_data_file OCC254-3.brep] shape3

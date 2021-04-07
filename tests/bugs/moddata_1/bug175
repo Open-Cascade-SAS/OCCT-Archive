@@ -6,6 +6,7 @@ puts ""
 ###########################################
 ## ABug of a symmetry on this specific attached BREP shape.
 ###########################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file OCC175.brep] result 
 checkshape result

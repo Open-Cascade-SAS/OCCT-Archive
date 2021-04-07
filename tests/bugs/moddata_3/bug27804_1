@@ -5,6 +5,7 @@ puts ""
 ################################################################
 ## Two breps cause intersections to loop for too long/infinitely
 ################################################################
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 # The main idea of the test is performance meter. 
 

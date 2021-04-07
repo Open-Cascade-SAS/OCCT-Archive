@@ -1,3 +1,5 @@
+puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_2"
+
 # Test data:
 puts "USER GUID: 1F354708-BED2-49BE-9EFC-CFB80F35B632"
 restore [locate_data_file bug27954_E15.brep] s

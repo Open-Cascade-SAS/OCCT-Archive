@@ -1,2 +1,5 @@
-restore [locate_data_file twingo.brep] a
-
+if {[string compare $command "SplitAngle"] == 0 } {
+    puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_30"
+}
+restore [locate_data_file twingo.brep]  r1
+fixshape a r1 

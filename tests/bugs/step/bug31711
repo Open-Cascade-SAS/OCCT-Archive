@@ -2,6 +2,7 @@ puts "=========="
 puts "0031711: Data Exchange - STEPCAFControl_Reader hangs on attached file in an infinite loop"
 puts "=========="
 puts ""
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_31"
 
 # to prevent loops limit to 2 minute
 cpulimit 120

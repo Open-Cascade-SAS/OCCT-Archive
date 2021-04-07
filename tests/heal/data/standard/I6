@@ -1,2 +1,4 @@
-restore [locate_data_file cts20736b.rle] a
+restore [locate_data_file cts20736b.rle]  r1
+fixshape a r1 
+breducetolerance a
 

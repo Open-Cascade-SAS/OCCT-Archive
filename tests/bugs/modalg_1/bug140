@@ -5,6 +5,7 @@ puts ""
 #########################################################
 ## Fillet is created incorrectly on attached shape.
 #########################################################
+puts "TODO CR32185 ALL: Faulty shapes in variables faulty_1 to faulty_13"
 
 restore [locate_data_file shading_137.brep] s 
 checkshape s

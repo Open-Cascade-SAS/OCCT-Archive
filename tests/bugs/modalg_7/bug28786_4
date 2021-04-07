@@ -5,6 +5,7 @@ puts ""
 ########################################
 # Refactoring of the Warning/Error reporting system of Boolean Operations Algorithm
 ########################################
+puts "TODO CR32226  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 vertex v 0 0 0
 vertex v1 1.e-5 0 0

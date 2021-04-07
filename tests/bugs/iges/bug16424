@@ -5,8 +5,11 @@ puts ""
 ##############################################
 # Exception in reading of attached IGES file
 ##############################################
+# because file has too small bad edges with too much tolerances 
+puts "TODO CR32210 ALL: Faulty shapes in variables faulty_1 to faulty_8"
 
 igesread [locate_data_file bug16424_s554_tassello_per_punzone_pos09.igs] a *
+breducetolerance a
 checkshape a
 
 smallview

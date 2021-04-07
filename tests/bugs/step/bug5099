@@ -5,6 +5,7 @@ puts ""
 ######################################################
 # After translation attached file obtained shape is invalid.
 ######################################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 stepread [locate_data_file OCC5099.stp] a *
 tpcompound result

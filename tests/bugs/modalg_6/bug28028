@@ -5,6 +5,7 @@ puts ""
 #################################################
 # Solid becomes invalid after scaling
 #################################################
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_46"
 
 pload XDE
 

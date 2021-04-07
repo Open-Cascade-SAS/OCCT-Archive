@@ -1,3 +1,4 @@
-puts "TODO OCC23127 ALL: Faulty shapes in variables faulty_1 to faulty_1"
+#puts "TODO OCC23127 ALL: Faulty shapes in variables faulty_1 to faulty_1"
+puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_4"
 
 restore [locate_data_file cc.rle] a

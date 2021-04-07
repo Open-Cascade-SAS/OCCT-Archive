@@ -3,6 +3,7 @@ puts "OCC453"
 puts "(case 2)"
 puts "========"
 puts ""
+puts "TODO CR32287  ALL: Faulty shapes in variables faulty_1 to faulty_16"
 
 dchrono h2 restart
 

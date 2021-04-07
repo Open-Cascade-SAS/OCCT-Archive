@@ -412,6 +412,7 @@ static Standard_Integer fixshape (Draw_Interpretor& di, Standard_Integer argc, c
   Standard_Integer par = 0, mess=0;
   for ( Standard_Integer i=1; i < argc; i++ )
   {
+    const char* ai = argv[i];
     if (strlen(argv[i]) == 2 &&
       (argv[i][0] == '-' || argv[i][0] == '+' || argv[i][0] == '*'))
     {

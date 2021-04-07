@@ -1,10 +1,14 @@
 puts "========================"                                               
 puts "BUC60823"
-puts "========================"                                                
+puts "========================"  
+
+# because buc60823.igs has one too small edge with too much tolerance 
+puts "TODO CR32210 ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 igesbrep [locate_data_file buc60823.igs] a *
 
 tpcompound result
+breducetolerance result
 checkshape result
 checkshape result r
 

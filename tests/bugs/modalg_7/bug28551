@@ -5,6 +5,7 @@ puts ""
 #######################################################################
 # Bad result of general fuse
 #######################################################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file bug28551_ts_orig.brep] ts0
 restore [locate_data_file bug28551_pc_orig.brep] pc

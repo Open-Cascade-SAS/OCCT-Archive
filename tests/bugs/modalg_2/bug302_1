@@ -7,6 +7,7 @@ puts ""
 ## After performing command "checkbrep" to attached face I receive "Bad Orientation of Subshape"
 ##  but I believe that orientation of this face is correct.
 #################################################################
+puts "TODO CR32210 ALL: checkbrep works wrongly"
 
 restore [locate_data_file OCC302a.brep] result
 

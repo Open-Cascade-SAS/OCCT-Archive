@@ -7,6 +7,7 @@ puts ""
 ## After performing command "checkshape" to attached face I receive "Bad Orientation of Subshape"
 ##  but I believe that orientation of this face is correct.
 #################################################################
+puts "TODO CR32229 ALL: checkshape works wrongly"
 
 restore [locate_data_file OCC302c.brep] result
 

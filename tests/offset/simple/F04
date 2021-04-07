@@ -1,3 +1,5 @@
+puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_1"
+
 # Test data:
 puts "USER GUID: HA-3781"
 

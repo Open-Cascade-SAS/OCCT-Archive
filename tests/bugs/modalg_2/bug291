@@ -4,6 +4,7 @@ puts "================= OCC291 ==================="
 #################################################################
 ## Some triangles of shading mesh are outside of shape boundaries. (See attached shape). 
 #################################################################
+puts "TODO CR32229 ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file shading_171.brep] result
 checkshape result

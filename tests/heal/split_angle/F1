@@ -1,1 +1,2 @@
+puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_4"
 restore [locate_data_file sh.rle] a

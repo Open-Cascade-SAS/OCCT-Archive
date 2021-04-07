@@ -2,7 +2,9 @@
 #   puts "TODO OCC23127 ALL: Error : The area of the resulting shape is"
 #}
 if {[string compare $command "SplitAngle"] == 0 } {
-    puts "TODO OCC23127 ALL: Faulty shapes in variables faulty_1 to faulty_3 "
+#    puts "TODO OCC23127 ALL: Faulty shapes in variables faulty_1 to faulty_3 "
+    puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_91"
 }
-restore [locate_data_file ACAR.brep] a
+restore [locate_data_file ACAR.brep] r1
+fixshape a r1 
 

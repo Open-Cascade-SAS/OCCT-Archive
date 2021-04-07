@@ -1,10 +1,13 @@
 puts "========"
 puts "OCC272"
 puts "========"
+# because OCC58a.igs has 2 too small bad edges with too much tolerances 
+puts "TODO CR32210 ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 igesbrep [locate_data_file 919-001-T02-04-FT-VL.igs] a * 
 
 tpcompound result
+breducetolerance result
 checkshape result
 checkshape result r
 

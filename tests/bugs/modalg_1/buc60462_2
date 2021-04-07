@@ -1,5 +1,5 @@
 puts "TODO OCC27024 ALL: Error : operation bfuse is WRONG because number of SOLID entities in shape"
-
+puts "TODO CR32209 ALL: Faulty shapes in variables faulty_1 to faulty_6"
 puts "=========="
 puts "BUC60462"
 puts "=========="

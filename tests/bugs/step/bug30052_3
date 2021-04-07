@@ -1,6 +1,7 @@
 puts "========================"
 puts "0030052: Data Exchange "
 puts "========================"
+puts "TODO CR32226  ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 stepread [locate_data_file TM711MF160X150R2DHA.STP] a *
 renamevar a_1 result

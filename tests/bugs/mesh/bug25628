@@ -3,6 +3,8 @@ puts "CR25628: BRepMesh fails to mesh face with open wire, considered as correct
 puts "========="
 puts ""
 
+puts "TODO CR32223 ALL: Faulty shapes in variables faulty_1 to faulty_1"
+
 pload XDE
 
 stepread [locate_data_file bug25628_twr_hull.stp] a *

@@ -7,6 +7,7 @@ puts ""
 #################################################
 # Sewing returns result with too high tolerance
 #################################################
+puts "TODO CR32226  ALL: Faulty shapes in variables faulty_1 to faulty_3"
 
 set sew_Tol 0.2
 

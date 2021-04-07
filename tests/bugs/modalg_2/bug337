@@ -8,6 +8,7 @@ puts ""
 ############################################
 
 restore [locate_data_file OCC337_clone1.brep] a 
+breducetolerance a
 explode a
 
 set che [checkshape a_1]

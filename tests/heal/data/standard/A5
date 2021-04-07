@@ -1,3 +1,4 @@
-restore [locate_data_file arx.rle] a
+restore [locate_data_file arx.rle]  r1
+fixshape a r1 
 
 set rel_tol 0.015

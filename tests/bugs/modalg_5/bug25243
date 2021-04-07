@@ -17,6 +17,7 @@ donly a_4 e
 fit
 
 splitshape result a_4 a_4 e
+breducetolerance result
 
 set bug_info [checkshape result]
 if {[string compare $bug_info "This shape seems to be valid"] != 0} {

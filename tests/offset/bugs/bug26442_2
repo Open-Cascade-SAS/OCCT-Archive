@@ -5,6 +5,7 @@ puts ""
 ###############################################
 # Access violation in BRepOffset_MakeOffset
 ###############################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_6"
 
 restore [locate_data_file OCC26464-extracted_Plate5520contour.brep] sh
 

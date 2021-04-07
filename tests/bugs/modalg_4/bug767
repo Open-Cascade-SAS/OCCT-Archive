@@ -6,6 +6,7 @@ puts ""
 ############################################
 ## Command sameparameter in DRAW hangs  on attached edge.
 ############################################
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file OCC767.brep] result
 

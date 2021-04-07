@@ -6,6 +6,7 @@ restore [locate_data_file pro14260d.rle] d
 
 bfuse result c d
 
+breducetolerance result
 checkprops result -s 46305.1
 checknbshapes result -solid 1 -shell 1 -face 35
 checkview -display result -2d -otherwise { c d } -s -path ${imagedir}/${test_image}.png

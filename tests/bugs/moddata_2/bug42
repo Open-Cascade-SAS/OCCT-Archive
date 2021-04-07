@@ -5,6 +5,7 @@ puts ""
 ###############################################
 ## BRepAlgo_Sewing does not sew attached shape with any tolerance.
 ###############################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_3"
 
 pload XDE
 

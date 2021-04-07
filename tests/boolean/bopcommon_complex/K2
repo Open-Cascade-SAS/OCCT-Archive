@@ -1,3 +1,5 @@
+# because b201 has a bad topology vertex 
+puts "TODO CR32210 ALL: Faulty shapes in variables faulty_1 to faulty_1"
 restore [locate_data_file a201] a
 restore [locate_data_file b201] b
 

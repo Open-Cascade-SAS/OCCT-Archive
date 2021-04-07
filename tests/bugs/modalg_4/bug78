@@ -5,6 +5,7 @@ puts ""
 #####################################################
 # BUC60875. Pipe is created incorrectly on two wires.
 #####################################################
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_3"
 
 restore [locate_data_file BUC60875_wire.brep] wire
 restore [locate_data_file BUC60875_profile.brep] profile

@@ -2,8 +2,11 @@ if {[string compare $command "ShapeConvertRev"] == 0 } {
     puts "TODO OCC23127 ALL: Error : The area of the resulting shape is "
 }
 if {[string compare $command "SplitAngle"] == 0 } {
-    puts "TODO OCC23127 ALL: Faulty shapes in variables faulty_1 to faulty_40 "
+#    puts "TODO OCC23127 ALL: Faulty shapes in variables faulty_1 to faulty_40 "
+    puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_69"
 }
-restore [locate_data_file pb.brep] a
+restore [locate_data_file pb.brep]  r1
+fixshape a r1 
+breducetolerance a
 
 

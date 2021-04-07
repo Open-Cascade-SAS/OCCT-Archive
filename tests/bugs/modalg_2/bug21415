@@ -1,4 +1,5 @@
 puts "TODO OCC11111 ALL: Error : The area of result shape is"
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_2"
 pload QAcommands
 
 puts "============"

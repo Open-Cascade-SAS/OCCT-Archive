@@ -6,6 +6,7 @@ puts ""
 ## After analyze given face (file ff97.brep) using BRepCheck we receive problem - "Bad Orientation of Subshape".
 ## But we believe that this shape must be OK or we have to receive more detail another reply from BRepCheck.
 ###########################################################################
+puts "TODO CR32229 ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file OCC174.brep] result
 

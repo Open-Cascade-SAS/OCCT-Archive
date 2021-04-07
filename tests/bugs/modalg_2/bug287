@@ -1,6 +1,7 @@
 puts "TODO OCC12345 ALL: Error : The area of result shape is"
 #puts "TODO OCC12345 ALL: Error: Number of triangles"
 #puts "TODO OCC12345 ALL: Error: Number of nodes"
+puts "TODO CR32226 ALL: Faulty shapes in variables faulty_1 to faulty_12"
 
 puts "========================"
 puts " OCC287 "

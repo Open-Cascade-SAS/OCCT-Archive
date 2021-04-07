@@ -4,7 +4,8 @@ puts " OCC258 "
 puts "(case 2)"
 puts "========================"
 
-restore [locate_data_file shading_144.brep] result
+restore [locate_data_file shading_144.brep] r1
+fixshape result r1
 checkshape result
 
 tclean result
@@ -15,5 +16,5 @@ vsetdispmode result 1
 vfit
 triangles result
 
-checktrinfo result -tri 78 -nod 80
+checktrinfo result -tri 74 -nod 76
 checkview -screenshot -3d -path ${imagedir}/${test_image}.png

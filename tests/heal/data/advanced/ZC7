@@ -1,5 +1,7 @@
 if {[string compare $command "SplitAngle"] == 0 } {
     puts "TODO OCC23127 ALL: Faulty shapes in variables faulty_1 to faulty_6 "
+    puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_87"
 }
-restore [locate_data_file CONSOLE-SERIE.brep] a
+restore [locate_data_file CONSOLE-SERIE.brep] r1
+fixshape a r1 
 

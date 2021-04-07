@@ -10,7 +10,8 @@ restore [locate_data_file bug25856_threeWires.brep] t
 
 explode t
 
-thrusections -N r 0 0 t_1 t_2 t_3
+thrusections -N r_1 0 0 t_1 t_2 t_3
+fixshape r r_1
 checkshape r
 
 fixshape rr r

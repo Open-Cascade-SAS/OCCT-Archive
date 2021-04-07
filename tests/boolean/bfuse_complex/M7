@@ -1,6 +1,9 @@
 # Original bug : cts20176
 # Date : 16July98
 
+# because CTO904_cts20176a.rle has a bad topology vertex 
+puts "TODO CR32210 ALL: Faulty shapes in variables faulty_1 to faulty_1"
+
 restore [locate_data_file CTO904_cts20176a.rle] a 
 restore [locate_data_file cts20176b.rle] b
 
@@ -8,6 +11,6 @@ restore [locate_data_file cts20176b.rle] b
 tclean a
 
 bfuse result a b
-
+breducetolerance result
 checkprops result -s 70265.2
 checkview -display result -2d -otherwise { a b } -s -path ${imagedir}/${test_image}.png

@@ -5,6 +5,7 @@ puts ""
 ######################################################
 # New functionality building reflect lines on a shape
 ######################################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_4"
 
 smallview
 

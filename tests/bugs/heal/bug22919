@@ -6,6 +6,8 @@ puts ""
 # Shape Healing fails to correct a face with missing seam
 #############################################
 
+puts "TODO CR32272 ALL: Faulty shapes in variables faulty_1 to faulty_1"
+
 restore [locate_data_file bug22919_ss.brep] ss
 explode ss
 

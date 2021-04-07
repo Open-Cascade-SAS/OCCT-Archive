@@ -3,8 +3,10 @@ puts "========================"
 puts " OCC258 "
 puts "(case 1)"
 puts "========================"
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
-restore [locate_data_file shading_143.brep] result
+restore [locate_data_file shading_143.brep] r1
+fixshape result r1
 checkshape result
 
 tclean result
@@ -15,5 +17,5 @@ vsetdispmode result 1
 vfit
 triangles result
 
-checktrinfo result -tri 78 -nod 82
+checktrinfo result -tri 77 -nod 81
 checkview -screenshot -3d -path ${imagedir}/${test_image}.png

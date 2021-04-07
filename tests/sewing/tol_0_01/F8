@@ -1,4 +1,6 @@
 #puts "TODO OCC24592 ALL: Error : Number of free edges is"
+puts "TODO CR32272  ALL: Error : Number of faults is 20"
+
 restore [locate_data_file CCH_indusheq.rle] a
 
 sewing result $tol a

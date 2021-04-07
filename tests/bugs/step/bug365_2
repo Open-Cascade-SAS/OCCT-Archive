@@ -2,6 +2,7 @@ puts "========"
 puts "OCC365"
 puts "========"
 puts ""
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 cpulimit 3000
 

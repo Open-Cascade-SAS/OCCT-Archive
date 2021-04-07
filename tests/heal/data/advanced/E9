@@ -1,2 +1,6 @@
-restore [locate_data_file ma-test8.rle] a
-
+if {[string compare $command "SplitAngle"] == 0 } {
+    puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_1"
+}
+restore [locate_data_file ma-test8.rle] r1
+fixshape a r1 
+breducetolerance a

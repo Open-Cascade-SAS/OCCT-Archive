@@ -2,6 +2,7 @@ puts "============"
 puts "OCC22886: Bug in boolean"
 puts "============"
 puts ""
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_3"
 
 restore [locate_data_file bug22886_solid1.brep] solid1
 restore [locate_data_file bug22886_solid2.brep] solid2

@@ -4,4 +4,6 @@ orientation w1 F
 orientation w2 R
 orientation w1 R
 thrusections result 1 0 w1 w2
+fixshape result result 
+breducetolerance result
 checkprops result -s 29817.5

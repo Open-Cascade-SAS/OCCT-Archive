@@ -1,5 +1,6 @@
 if {[string compare $command "SplitAngle"] == 0 } {
-    puts "TODO OCC23127 ALL: Faulty shapes in variables faulty_1 to faulty_8 "
+#    puts "TODO OCC23127 ALL: Faulty shapes in variables faulty_1 to faulty_8 "
+    puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_119"
 }
 restore [locate_data_file MATRICE-SERIE.brep] a
 

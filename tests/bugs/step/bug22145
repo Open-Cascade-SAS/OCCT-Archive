@@ -7,6 +7,7 @@ puts ""
 #######################################################################
 # Incorrect cutting BRepMesh_FastDiscretFace
 #######################################################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_63"
 
 stepread [locate_data_file OCC22145.stp] a *
 

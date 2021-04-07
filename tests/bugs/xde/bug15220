@@ -7,7 +7,7 @@ set BugNumber OCC15220
 ######################################################
 # Problems with IGES file locations
 ######################################################
-
+puts "TODO CR32226  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 igesbrep [locate_data_file OCC15220.igs] result *
 

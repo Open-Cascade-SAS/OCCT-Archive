@@ -814,7 +814,9 @@ BRepCheck_Status BRepCheck_Edge::
 
   return BRepCheck_NoError;
 }
-
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRep_TVertex.hxx>
+#include <DBRep.hxx>
 //=======================================================================
 //function : CheckTolerance
 //purpose  : Cheks, if theEdge lies entirely into sphere, center of which
@@ -890,6 +892,45 @@ BRepCheck_Status BRepCheck_Edge::CheckTolerance(const TopoDS_Edge& theEdge)
       return aStatus;
     }
   }
+
+  gp_Pnt aPFirst = BACurve.Value(aFirst);
+  gp_Pnt aPLast = BACurve.Value(aLast);
+  double aFirstLastDist = aPFirst.Distance(aPLast);
+  double aV1V2Dist = aPnt1.Distance(aPnt2);
+  TopoDS_Vertex aVFirst = BRepBuilderAPI_MakeVertex(aPFirst);
+  TopoDS_Vertex aVLast = BRepBuilderAPI_MakeVertex(aPLast);
+
+  const Handle(BRep_TEdge)& theTEdge = Handle(BRep_TEdge)::DownCast(theEdge.TShape());
+
+  Standard_Boolean sp1 = theTEdge->SameParameter();
+  Standard_Boolean sr1 = theTEdge->SameRange();
+  Standard_Boolean dg1 = theTEdge->Degenerated();
+  Standard_Boolean ch1 = theTEdge->Checked();
+  Standard_Boolean or1 = theTEdge->Orientable();
+  Standard_Boolean cl1 = theTEdge->Closed();
+  Standard_Boolean in1 = theTEdge->Infinite();
+  Standard_Boolean cv1 = theTEdge->Convex();
+
+  //std::cout << std::endl;
+  //std::cout << (aV1.IsEqual(aV2) ? "Vertexes are equal" : "Vertexes are different") << std::endl;
+  //std::cout << "aPnt1: " << aPnt1.X() << " " << aPnt1.Y() << " " << aPnt1.Z() << std::endl;
+  //std::cout << "aPnt2: " << aPnt2.X() << " " << aPnt2.Y() << " " << aPnt2.Z() << std::endl;
+  //std::cout << (aPnt1.IsEqual(aPFirst, 1E-6) ? "aPnt1 & aPFirst are equal" : "aPnt1 & aPFirst are different") << std::endl;
+  //std::cout << (aPnt2.IsEqual(aPLast, 1E-6)  ? "aPnt2 & aPLast are equal"  : "aPnt2 & aPLast are different")  << std::endl;
+  //std::cout << "aPFirst: " << aPFirst.X() << " " << aPFirst.Y() << " " << aPFirst.Z() << std::endl;
+  //std::cout << "aPLast: "  << aPLast.X()  << " " << aPLast.Y()  << " " << aPLast.Z()  << std::endl;
+
+  //std::cout << "aTol1: " << aTol1 << " aTol2: " << aTol2 << std::endl;
+  //std::cout << "aFirstLastDist: " << aFirstLastDist << std::endl;
+  //std::cout << "aV1V2Dist: " << aV1V2Dist << std::endl;
+  //std::cout << "Degenerated: " << theTEdge->Degenerated() << std::endl;
+  //std::cout << "Closed: " << theTEdge->Closed() << std::endl;
+
+  static int num(0);
+  num++;
+  std::cout << "vertex vf" << num << " " << aPnt1.X() << " " << aPnt1.Y() << " " << aPnt1.Z() << std::endl;
+  std::cout << "vertex vl" << num << " " << aPnt2.X() << " " << aPnt2.Y() << " " << aPnt2.Z() << std::endl;
+  
 
   aStatus = BRepCheck_CollapsedEdge;
   return aStatus;

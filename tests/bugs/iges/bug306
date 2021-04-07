@@ -5,6 +5,8 @@ puts ""
 #############################################################################
 ##After applying sewing on the model from the file TibTray_Size3.igs (see the attachment) one surface is not shaded.
 #############################################################################
+# because TibTray_Size3.igs has 3 too small bad edges with too much tolerances 
+puts "TODO CR32210 ALL: Faulty shapes in variables faulty_1 to faulty_3"
 
 igesbrep [locate_data_file TibTray_Size3.igs] a *
 
@@ -13,6 +15,7 @@ tclean a
 
 sewing result a
 
+breducetolerance result
 checkshape result
 
 vinit
@@ -22,7 +25,7 @@ vfit
 
 checktrinfo result -tri 5812 -nod 5809
 
-checkmaxtol result -ref 0.92213088179312575
+checkmaxtol result -ref 0.37347422132393693
 checknbshapes result -shell 1
 checkfreebounds result 239
 checkview -display result -3d -path ${imagedir}/${test_image}.png

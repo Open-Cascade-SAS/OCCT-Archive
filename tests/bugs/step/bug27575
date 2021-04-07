@@ -5,6 +5,7 @@ puts ""
 ###########################################
 # Reading STEP file gives an empty result
 ###########################################
+puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_10"
 
 stepread [locate_data_file bug27575_Outer_Shell.stp] a *
 renamevar a_1 result

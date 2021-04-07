@@ -688,7 +688,8 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSmall (const Standard_Integer num,
   Standard_Real dist = p1.Distance(p2);
   Standard_Real prec = precsmall;//Min ( myPrecision, precsmall );
   //Standard_Real prec = Min(BRep_Tool::Tolerance(V1),BRep_Tool::Tolerance(V2)); //skl
-  if (dist > prec) return Standard_False;  // pas nulle
+  if (dist > prec) 
+    return Standard_False;  // pas nulle
   
   // La courbe 3D a present : est-elle FERMEE ou DE LONGUEUR NULLE ... ???
   // Pour cela on prend le point milieu (y a-t-il mieux)
@@ -697,7 +698,8 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSmall (const Standard_Integer num,
   gp_Pnt Pm;
   Standard_Real cf,cl;
   Handle(Geom_Curve) c3d;    
-  if ( sae.Curve3d (E,c3d,cf,cl,Standard_False) ) Pm = c3d->Value ( (cf+cl)/2. );
+  if ( sae.Curve3d (E,c3d,cf,cl,Standard_False) )
+    Pm = c3d->Value ( (cf+cl)/2. );
   else {
     Handle(Geom2d_Curve) c2d;
     if ( ! myFace.IsNull() && sae.PCurve (E,myFace,c2d,cf,cl,Standard_False)) {
@@ -710,7 +712,8 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSmall (const Standard_Integer num,
 //:n2      return Standard_False;
     }
   }
-  if ( Pm.Distance(p1) > prec || Pm.Distance(p2) > prec ) return Standard_False;
+  if ( Pm.Distance(p1) > prec || Pm.Distance(p2) > prec )
+    return Standard_False;
 
   myStatus |= ShapeExtend::EncodeStatus ( V1.IsSame(V2) ? ShapeExtend_DONE1 : ShapeExtend_DONE2 );
   return Standard_True;

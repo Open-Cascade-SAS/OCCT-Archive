@@ -6,6 +6,7 @@ puts ""
 ##########################################################
 ## The command "section" in Draw gives exception "attempt to access to null object " 
 ##########################################################
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 restore [locate_data_file BUC60877_lh.brep] sh 
 checkshape sh
