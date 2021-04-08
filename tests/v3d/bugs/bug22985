@@ -2,6 +2,7 @@ puts "============"
 puts "OCC22985: Regression: no shading on good face"
 puts "============"
 puts ""
+puts "TODO CR32210  ALL: Faulty shapes in variables faulty_1 to faulty_3"
 
 pload MODELING VISUALIZATION
 restore [locate_data_file OCC22985-gt602-f72-noshading.brep] result

@@ -5,6 +5,7 @@ puts ""
 #######################################################################
 # New option of BRepOffsetAPI_MakeOffset algorithm: processing of sharp corners in mode GeomAbs_Intersection
 #######################################################################
+puts "TODO CR32256  ALL: Faulty shapes in variables faulty_1 to faulty_2"
 
 polyline pp 0 0 0 10 0 0 10 10 0 6 10 0 6 15 0 4 15 0 4 10 0 0 10 0 0 0 0
 

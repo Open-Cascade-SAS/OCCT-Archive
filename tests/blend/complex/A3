@@ -4,8 +4,6 @@
 ## Comment : from original bug PRO4497
 ## ====================================
 
-puts "TODO CR32187 ALL: Faulty shapes in variables faulty_1 to faulty_7"
-
 restore [locate_data_file CCH_indushep.rle] s
 tscale s 0 0 0 1000
 explode s e

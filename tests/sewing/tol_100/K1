@@ -8,5 +8,5 @@ sewing result $tol a
 
 checkmaxtol result -ref  19.731382910922985
 checknbshapes result -shell 1
-checkfreebounds result 15
+checkfreebounds result 16
 checkfaults result a 1

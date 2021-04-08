@@ -5,6 +5,8 @@ puts ""
 
 pload MODELING VISUALIZATION
 restore [locate_data_file OCC19.brep] result
+fixshape result result 
+breducetolerance result
 checkshape result
 
 tclean result

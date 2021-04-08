@@ -6,6 +6,7 @@ puts "============"
 puts "OCC21578: Attached shape is not visualized in the shaded mode"
 puts "============"
 puts ""
+puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 pload MODELING VISUALIZATION
 restore [locate_data_file OCC21578.brep] result

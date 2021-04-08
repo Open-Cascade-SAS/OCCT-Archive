@@ -6,4 +6,9 @@ set chamf_equal_dist [list "0.06    " "0.08    " "0.08    "]
 if { [string compare $command chamf_sequence] == 0 && [string compare $group dist_dist] == 0 } {
   puts "TODO OCC22909 All: compute of chamfer failed"
 }
-puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_1"
+if { [string compare $command "chamf_sequence"] == 0 && [string compare $group dist_angle] == 0 } {
+    puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_1"
+}
+if { [string compare $command "chamf_sequence"] == 0 && [string compare $group equal_dist] == 0 } {
+    puts "TODO CR32209  ALL: Faulty shapes in variables faulty_1 to faulty_1"
+}

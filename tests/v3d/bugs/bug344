@@ -3,6 +3,7 @@ puts "BUC61047: An e x c e p t i o n - <access v i o l a t i o n> is raised duri
 puts "OCC344"
 puts "================"
 puts ""
+puts "TODO CR32272  ALL: Faulty shapes in variables faulty_1 to faulty_1"
 
 pload MODELING VISUALIZATION
 restore [locate_data_file OCC344.brep] result 
