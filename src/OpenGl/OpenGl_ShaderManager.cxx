@@ -978,7 +978,7 @@ void OpenGl_ShaderManager::pushProjectionState (const Handle(OpenGl_ShaderProgra
     if (myContext->core11 != NULL)
     {
       myContext->core11->glMatrixMode (GL_PROJECTION);
-      myContext->core11->glLoadMatrixf (myProjectionState.ProjectionMatrix());
+      myContext->core11->glLoadMatrixf (myProjectionState.ProjectionMatrix().GetData());
     }
   #endif
     return;

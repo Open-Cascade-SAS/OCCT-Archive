@@ -30,7 +30,6 @@
 
 #include <OpenGl_Context.hxx>
 #include <OpenGl_FrameStats.hxx>
-#include <OpenGl_Matrix.hxx>
 #include <OpenGl_Workspace.hxx>
 #include <OpenGl_View.hxx>
 #include <OpenGl_GraduatedTrihedron.hxx>
