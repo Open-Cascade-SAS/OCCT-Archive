@@ -11745,6 +11745,107 @@ static Standard_Integer VRenderParams (Draw_Interpretor& theDI,
         return 1;
       }
     }
+    else if (aFlag == "-fonthinting"
+          || aFlag == "-fonthint")
+    {
+      if (toPrint)
+      {
+        if ((aParams.FontHinting & Font_Hinting_Normal) != 0)
+        {
+          theDI << "normal" << " ";
+        }
+        else if ((aParams.FontHinting & Font_Hinting_Normal) != 0)
+        {
+          theDI << "light" << " ";
+        }
+        else
+        {
+          theDI << "off" << " ";
+        }
+        continue;
+      }
+      else if (anArgIter + 1 >= theArgNb)
+      {
+        theDI << "Syntax error at '" << theArgVec[anArgIter] << "'";
+        return 1;
+      }
+
+      TCollection_AsciiString aHintStyle (theArgVec[++anArgIter]);
+      aHintStyle.LowerCase();
+      if (aHintStyle == "normal"
+       || aHintStyle == "on"
+       || aHintStyle == "1")
+      {
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting & ~Font_Hinting_Light);
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting | Font_Hinting_Normal);
+      }
+      else if (aHintStyle == "light")
+      {
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting & ~Font_Hinting_Normal);
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting | Font_Hinting_Light);
+      }
+      else if (aHintStyle == "no"
+            || aHintStyle == "off"
+            || aHintStyle == "0")
+      {
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting & ~Font_Hinting_Normal);
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting & ~Font_Hinting_Light);
+      }
+      else
+      {
+        theDI << "Syntax error at '" << theArgVec[anArgIter] << "'";
+        return 1;
+      }
+    }
+    else if (aFlag == "-fontautohinting"
+          || aFlag == "-fontautohint")
+    {
+      if (toPrint)
+      {
+        if ((aParams.FontHinting & Font_Hinting_ForceAutohint) != 0)
+        {
+          theDI << "force" << " ";
+        }
+        else if ((aParams.FontHinting & Font_Hinting_NoAutohint) != 0)
+        {
+          theDI << "disallow" << " ";
+        }
+        else
+        {
+          theDI << "auto" << " ";
+        }
+        continue;
+      }
+      else if (anArgIter + 1 >= theArgNb)
+      {
+        theDI << "Syntax error at '" << theArgVec[anArgIter] << "'";
+        return 1;
+      }
+
+      TCollection_AsciiString aHintStyle (theArgVec[++anArgIter]);
+      aHintStyle.LowerCase();
+      if (aHintStyle == "force")
+      {
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting & ~Font_Hinting_NoAutohint);
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting | Font_Hinting_ForceAutohint);
+      }
+      else if (aHintStyle == "disallow"
+            || aHintStyle == "no")
+      {
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting & ~Font_Hinting_ForceAutohint);
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting | Font_Hinting_NoAutohint);
+      }
+      else if (aHintStyle == "auto")
+      {
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting & ~Font_Hinting_ForceAutohint);
+        aParams.FontHinting = Font_Hinting(aParams.FontHinting & ~Font_Hinting_NoAutohint);
+      }
+      else
+      {
+        theDI << "Syntax error at '" << theArgVec[anArgIter] << "'";
+        return 1;
+      }
+    }
     else if (aFlag == "-depthprepass")
     {
       if (toPrint)
