@@ -187,7 +187,8 @@ void TopoDSToStep_MakeStepEdge::Init(const TopoDS_Edge& aEdge,
   Handle(Geom_Curve) C = CA.Curve().Curve();
   if (!C.IsNull()) {
     C = Handle(Geom_Curve)::DownCast(C->Copy());
-   
+    gp_Trsf Tr1 = CA.Trsf();
+    C->Transform(Tr1);
     if (C->IsPeriodic())
     {
       Standard_Real dpar = CA.LastParameter() - CA.FirstParameter();
@@ -236,8 +237,6 @@ void TopoDSToStep_MakeStepEdge::Init(const TopoDS_Edge& aEdge,
         }
       }
     }
-    gp_Trsf Tr1 = CA.Trsf();
-    C->Transform(Tr1);
     GeomToStep_MakeCurve MkCurve(C);
     Gpms = MkCurve.Value();
   }

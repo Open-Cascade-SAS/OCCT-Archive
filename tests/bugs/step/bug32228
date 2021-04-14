@@ -1,0 +1,17 @@
+puts "# ====================================================================="
+puts "# 0032228: Data Exchange - Shape becomes invalid after STEP export then import"
+puts "# ====================================================================="
+puts ""
+
+# Reading file
+brestore [locate_data_file bug32228.brep] s
+set aTmpFile "$imagedir/${casename}.brep"
+testwritestep "$aTmpFile" s
+testreadstep  "$aTmpFile" s1
+file delete   "$aTmpFile"
+
+# Checking
+checknbshapes s1 -vertex 47 -edge 72 -wire 35 -face 28
+checkshape s1 f
+checkmaxtol s1 -ref 1.e-7
+checkprops s1 -v 586991 -deps 0.01
