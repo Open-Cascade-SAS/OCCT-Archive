@@ -7,7 +7,6 @@ restore [locate_data_file bug31850.brep] s
 explode s
 
 bfuzzyvalue 1.e-6
-bnondestructive 1
 brunparallel 1
 setfillhistory 0
 

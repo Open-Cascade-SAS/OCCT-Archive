@@ -28,7 +28,7 @@
 BRepAlgoAPI_BuilderAlgo::BRepAlgoAPI_BuilderAlgo()
 :
   BRepAlgoAPI_Algo(),
-  myNonDestructive(Standard_False),
+  myNonDestructive(Standard_True),
   myGlue(BOPAlgo_GlueOff),
   myCheckInverted(Standard_True),
   myFillHistory(Standard_True),
@@ -43,7 +43,7 @@ BRepAlgoAPI_BuilderAlgo::BRepAlgoAPI_BuilderAlgo()
 BRepAlgoAPI_BuilderAlgo::BRepAlgoAPI_BuilderAlgo(const BOPAlgo_PaveFiller& aPF)
 :
   BRepAlgoAPI_Algo(),
-  myNonDestructive(Standard_False),
+  myNonDestructive(Standard_True),
   myGlue(BOPAlgo_GlueOff),
   myCheckInverted(Standard_True),
   myFillHistory(Standard_True),

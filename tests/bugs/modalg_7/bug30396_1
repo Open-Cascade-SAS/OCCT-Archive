@@ -17,7 +17,6 @@ set area {25.9962 58.8635 53.1541 empty}
 set nameop {common fuse cut cut21}
 
 bfuzzyvalue 1e-2
-bnondestructive 1
 
 for {set i 1} { $i <= 2} {incr i} {
 

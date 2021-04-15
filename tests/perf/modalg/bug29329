@@ -8,8 +8,6 @@ puts "TODO CR29596 ALL: Warning: Intersection of pair of shapes has failed"
 restore [locate_data_file bug29329_objects.brep] a
 restore [locate_data_file bug29329_tools.brep] b
 
-bnondestructive 1
-
 dchrono timer restart
 
 bfuse result a b

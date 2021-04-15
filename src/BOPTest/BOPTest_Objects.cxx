@@ -102,7 +102,7 @@ class BOPTest_Session {
   void SetDefaultOptions()
   {
     myRunParallel = Standard_False;
-    myNonDestructive = Standard_False;
+    myNonDestructive = Standard_True;
     myFuzzyValue = Precision::Confusion();
     myGlue = BOPAlgo_GlueOff;
     myDrawWarnShapes = Standard_False;

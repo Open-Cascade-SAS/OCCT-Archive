@@ -11,8 +11,6 @@ restore [locate_data_file bug24302_SolidBefore.brep] b
 
 regexp {Tolerance +MAX=([-0-9.+eE]+)} [tolerance b] full MaxTol_b_1
 
-bnondestructive 1
-
 bop p b
 regexp {Tolerance +MAX=([-0-9.+eE]+)} [tolerance b] full MaxTol_b_2
 

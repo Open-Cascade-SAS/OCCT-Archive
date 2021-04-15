@@ -34,7 +34,7 @@
 //! Additionally to the options defined in the base class, the algorithm has
 //! the following options:<br>
 //! - *Safe processing mode* - allows to avoid modification of the input
-//!                            shapes during the operation (by default it is off);
+//!                            shapes during the operation (enabled by default);
 //! - *Gluing options* - allows to speed up the calculation of the intersections
 //!                      on the special cases, in which some sub-shapes are coinciding.
 //! - *Disabling the check for inverted solids* - Disables/Enables the check of the input solids
@@ -94,6 +94,7 @@ public: //! @name Setting options
   //! Sets the flag that defines the mode of treatment.
   //! In non-destructive mode the argument shapes are not modified. Instead
   //! a copy of a sub-shape is created in the result if it is needed to be updated.
+  //! Enabled by default.
   void SetNonDestructive(const Standard_Boolean theFlag)
   {
     myNonDestructive = theFlag;

@@ -53,7 +53,7 @@ BOPAlgo_Builder::BOPAlgo_Builder()
   myShapesSD(100, myAllocator),
   myOrigins(100, myAllocator),
   myInParts(100, myAllocator),
-  myNonDestructive(Standard_False),
+  myNonDestructive(Standard_True),
   myGlue(BOPAlgo_GlueOff),
   myCheckInverted(Standard_True)
 {
@@ -75,7 +75,7 @@ BOPAlgo_Builder::BOPAlgo_Builder
   myShapesSD(100, myAllocator),
   myOrigins(100, myAllocator),
   myInParts(100, myAllocator),
-  myNonDestructive(Standard_False),
+  myNonDestructive(Standard_True),
   myGlue(BOPAlgo_GlueOff),
   myCheckInverted(Standard_True)
 {

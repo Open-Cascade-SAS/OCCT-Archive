@@ -15,7 +15,6 @@ regexp {Tolerance +MAX=([-0-9.+eE]+)} [tolerance f0] full ExpectedMaxTol_f0
 #turn on non-destructive mode of BOP and fuzzy value;
 #with this combination the test is fail before the fix 26738,
 #as tolerance of input shape is changed
-bnondestructive 1
 bfuzzyvalue 0.1
 
 bclearobjects

@@ -10,7 +10,6 @@ ttranslate t 100 0 300
 
 bfuzzyvalue 1.e-6
 brunparallel 1
-bnondestructive 1
 setfillhistory 0
 
 explode s

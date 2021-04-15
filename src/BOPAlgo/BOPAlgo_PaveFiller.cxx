@@ -42,7 +42,7 @@ BOPAlgo_PaveFiller::BOPAlgo_PaveFiller()
 {
   myDS = NULL;
   myIterator = NULL;
-  myNonDestructive = Standard_False;
+  myNonDestructive = Standard_True;
   myIsPrimary = Standard_True;
   myAvoidBuildPCurve = Standard_False;
   myGlue = BOPAlgo_GlueOff;
@@ -62,7 +62,7 @@ BOPAlgo_PaveFiller::BOPAlgo_PaveFiller
 {
   myDS = NULL;
   myIterator = NULL;
-  myNonDestructive = Standard_False;
+  myNonDestructive = Standard_True;
   myIsPrimary = Standard_True;
   myAvoidBuildPCurve = Standard_False;
   myGlue = BOPAlgo_GlueOff;

@@ -12,8 +12,6 @@ restore [locate_data_file bug28211_MHX_VKT_WS_Pos3_tool.brep] t
 explode s f
 explode t f
 
-bnondestructive 1
-
 # Before the fix, exception in bsection algo was thrown.
 bsection r s_91 t_4
 

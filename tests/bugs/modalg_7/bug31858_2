@@ -8,7 +8,6 @@ plane p -2.31895142368858e-15 -4.49296838339662e-15 200 0 0 1
 ptorus t p 449.367136080235 50.6328639197654
 
 bfuzzyvalue 1.e-6
-bnondestructive 1
 brunparallel 1
 setfillhistory 0
 

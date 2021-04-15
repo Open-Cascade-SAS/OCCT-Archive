@@ -6,6 +6,8 @@ puts ""
 restore [locate_data_file bug31850.brep] s
 explode s
 
+bnondestructive 0
+
 bclearobjects
 bcleartools
 baddobjects s_1

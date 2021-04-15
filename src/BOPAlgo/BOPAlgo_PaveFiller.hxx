@@ -83,7 +83,7 @@ class TopoDS_Face;
 //! - *Section attributes* - allows to customize the intersection of the faces
 //!                          (avoid approximation or building 2d curves);<br>
 //! - *Safe processing mode* - allows to avoid modification of the input
-//!                            shapes during the operation (by default it is off);<br>
+//!                            shapes during the operation (enabled by default);<br>
 //! - *Gluing options* - allows to speed up the calculation on the special
 //!                      cases, in which some sub-shapes are coincide.<br>
 //!
@@ -151,6 +151,7 @@ public:
   //! Sets the flag that defines the mode of treatment.
   //! In non-destructive mode the argument shapes are not modified. Instead
   //! a copy of a sub-shape is created in the result if it is needed to be updated.
+  //! Enabled by default.
   Standard_EXPORT void SetNonDestructive(const Standard_Boolean theFlag);
   
   //! Returns the flag that defines the mode of treatment.

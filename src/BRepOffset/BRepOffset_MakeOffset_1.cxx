@@ -46,7 +46,6 @@
 
 #include <BOPDS_DS.hxx>
 
-#include <BOPAlgo_PaveFiller.hxx>
 #include <BOPAlgo_Builder.hxx>
 #include <BOPAlgo_Section.hxx>
 #include <BOPAlgo_MakerVolume.hxx>
@@ -1304,6 +1303,7 @@ void IntersectTrimmedEdges(const TopTools_ListOfShape& theLF,
   // perform intersection of the edges
   BOPAlgo_Builder aGFE;
   aGFE.SetArguments(aLS);
+  aGFE.SetNonDestructive(Standard_False);
   aGFE.Perform();
   if (aGFE.HasErrors()) {
     return;
@@ -1496,9 +1496,9 @@ void BuildSplitsOfTrimmedFace(const TopoDS_Face& theFace,
                               TopTools_ListOfShape& theLFImages)
 {
   BOPAlgo_Builder aGF;
-  //
   aGF.AddArgument(theFace);
   aGF.AddArgument(theEdges);
+  aGF.SetNonDestructive(Standard_False);
   aGF.Perform();
   if (aGF.HasErrors()) {
     return;
@@ -3502,6 +3502,7 @@ void RemoveInsideFaces(TopTools_IndexedDataMapOfShapeListOfShape& theFImages,
   BOPAlgo_MakerVolume aMV;
   aMV.SetArguments(aLS);
   aMV.SetIntersect(Standard_True);
+  aMV.SetNonDestructive(Standard_False);
   aMV.Perform();
   if (aMV.HasErrors())
     return;
@@ -5882,6 +5883,7 @@ void IntersectAndTrimEdges(const TopTools_IndexedDataMapOfShapeListOfShape& theF
   // Intersect Edges
   BOPAlgo_Builder aGF;
   aGF.SetArguments(aLArgs);
+  aGF.SetNonDestructive(Standard_False);
   aGF.Perform();
   if (aGF.HasErrors()) {
     return;
@@ -5950,6 +5952,7 @@ void IntersectAndTrimEdges(const TopTools_IndexedDataMapOfShapeListOfShape& theF
   BOPAlgo_Builder aGFCE;
   aGFCE.SetArguments(aLCE);
   aGFCE.AddArgument(aCEIm);
+  aGFCE.SetNonDestructive(Standard_False);
   aGFCE.Perform();
   //
   if (aGFCE.HasErrors()) {
@@ -6398,6 +6401,7 @@ void UpdateValidEdges(const TopTools_IndexedDataMapOfShapeListOfShape& theFImage
   BOPAlgo_Builder aGF;
   aGF.AddArgument(aBounds);
   aGF.AddArgument(aSplits);
+  aGF.SetNonDestructive(Standard_False);
   aGF.Perform();
   //
   // update splits
@@ -6545,6 +6549,7 @@ void TrimNewIntersectionEdges(const TopTools_ListOfShape& theLE,
       aMV.Add(aV1);
       aMV.Add(aV2);
       //
+      aGFE.SetNonDestructive(Standard_False);
       aGFE.Perform();
       if (!aGFE.HasErrors()) {
         // get images of bounding vertices to remove splits containing them
@@ -6634,6 +6639,7 @@ void IntersectEdges(const TopTools_ListOfShape& theLA,
 {
   BOPAlgo_Builder aGFA;
   aGFA.SetArguments(theLA);
+  aGFA.SetNonDestructive(Standard_False);
   aGFA.Perform();
   if (aGFA.HasErrors()) {
     // just copy input to the result
@@ -6874,6 +6880,7 @@ void GetInvalidEdgesByBounds(const TopoDS_Shape& theSplits,
   BOPAlgo_Section aSec;
   aSec.AddArgument(theSplits);
   aSec.AddArgument(theBounds);
+  aSec.SetNonDestructive(Standard_False);
   //
   aSec.Perform();
   //

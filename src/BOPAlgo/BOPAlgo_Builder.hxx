@@ -52,7 +52,7 @@ class TopoDS_Solid;
 //! Additionally to the options of the base classes, the algorithm has
 //! the following options:<br>
 //! - *Safe processing mode* - allows to avoid modification of the input
-//!                            shapes during the operation (by default it is off);<br>
+//!                            shapes during the operation (enabled by default);<br>
 //! - *Gluing options* - allows to speed up the calculation of the intersections
 //!                      on the special cases, in which some sub-shapes are coinciding.<br>
 //! - *Disabling the check for inverted solids* - Disables/Enables the check of the input solids
@@ -126,6 +126,7 @@ public: //! @name Options
   //! This flag is taken into account if internal PaveFiller is used only.
   //! In the case of calling PerformWithFiller the corresponding flag of that PaveFiller
   //! is in force.
+  //! Enabled by default.
   void SetNonDestructive(const Standard_Boolean theFlag)
   {
     myNonDestructive = theFlag;

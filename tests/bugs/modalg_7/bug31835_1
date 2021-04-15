@@ -10,6 +10,8 @@ pcylinder c2 p2 100 400
 plane p3 0 200 12.6935294289015 0 -1 1.11022302462516e-16
 pcylinder c3 p3 100 400
 
+bnondestructive 0
+
 bcommon r c1 c2
 checkshape r
 if {![regexp "OK" [bopcheck r]]} {

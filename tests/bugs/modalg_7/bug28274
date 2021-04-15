@@ -8,8 +8,6 @@ puts ""
 
 restore [locate_data_file bug28274_tmp.brep] a
 
-bnondestructive 1
-
 set Log [eval mkvolume result [explode a f] ]
 
 checkshape result

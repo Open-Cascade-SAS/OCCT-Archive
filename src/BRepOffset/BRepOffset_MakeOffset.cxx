@@ -4302,6 +4302,7 @@ Standard_Boolean BuildShellsCompleteInter(const TopTools_ListOfShape& theLF,
   // we need to intersect the faces to process the tangential faces
   aMV1.SetIntersect(Standard_True);
   aMV1.SetAvoidInternalShapes(Standard_True);
+  aMV1.SetNonDestructive(Standard_False);
   aMV1.Perform();
   //
   Standard_Boolean bDone = ! aMV1.HasErrors();
@@ -4382,6 +4383,7 @@ Standard_Boolean BuildShellsCompleteInter(const TopTools_ListOfShape& theLF,
   // no need to intersect this time
   aMV2.SetIntersect(Standard_False);
   aMV2.SetAvoidInternalShapes(Standard_True);
+  aMV2.SetNonDestructive(Standard_False);
   aMV2.Perform();
   bDone = ! aMV2.HasErrors();
   if (!bDone) {
@@ -4433,6 +4435,7 @@ Standard_Boolean BuildShellsCompleteInter(const TopTools_ListOfShape& theLF,
   aMV3.SetArguments(aLF);
   aMV3.SetIntersect(Standard_False);
   aMV3.SetAvoidInternalShapes(Standard_True);
+  aMV3.SetNonDestructive(Standard_False);
   aMV3.Perform();
   bDone = ! aMV3.HasErrors();
   if (!bDone) {

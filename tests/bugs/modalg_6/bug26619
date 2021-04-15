@@ -13,11 +13,6 @@ regexp {Tolerance +MAX=([-0-9.+eE]+)} [tolerance h0] full MaxTolerance1
 
 tolerance f0
 
-#turn on non-destructive mode of BOP
-#setflags h0 locked
-#setflags f0 locked
-bnondestructive 1
-
 bop h0 f0
 bopsection result
 checkprops result -l 150.232
