@@ -92,6 +92,7 @@
 #include <BRepTools_ReShape.hxx>
 #include <TopTools_DataMapOfShapeReal.hxx>
 #include <TopoDS_LockedShape.hxx>
+#include <GeomLib_CheckCurveOnSurface.hxx>
 
 #include <algorithm>
 
@@ -1058,126 +1059,22 @@ static Standard_Boolean EvalTol(const Handle(Geom2d_Curve)& pc,
 //function : ComputeTol
 //purpose  : 
 //=======================================================================
-static Standard_Real ComputeTol(const Handle(Adaptor3d_Curve)& c3d,
-  const Handle(Adaptor2d_Curve2d)& c2d,
-  const Handle(Adaptor3d_Surface)& surf,
-  const Standard_Integer        nbp)
-
+static Standard_Real ComputeTol(const Handle(Geom_Curve)& theC3d,
+  const Handle(Geom2d_Curve)& theC2d,
+  const Handle(Geom_Surface)& theSurf,
+  const Standard_Real theFPar,
+  const Standard_Real theLPar)
 {
+  GeomLib_CheckCurveOnSurface aCOS(theC3d, theSurf, theFPar, theLPar);
+  aCOS.Perform(theC2d);
 
-  TColStd_Array1OfReal dist(1,nbp+10);
-  dist.Init(-1.);
-
-  //Adaptor3d_CurveOnSurface  cons(c2d,surf);
-  Standard_Real uf = surf->FirstUParameter(), ul = surf->LastUParameter(),
-                vf = surf->FirstVParameter(), vl = surf->LastVParameter();
-  Standard_Real du = 0.01 * (ul - uf), dv = 0.01 * (vl - vf);
-  Standard_Boolean isUPeriodic = surf->IsUPeriodic(), isVPeriodic = surf->IsVPeriodic();
-  Standard_Real DSdu = 1./surf->UResolution(1.), DSdv = 1./surf->VResolution(1.);
-  Standard_Real d2 = 0.;
-  Standard_Real first = c3d->FirstParameter();
-  Standard_Real last  = c3d->LastParameter();
-  Standard_Real dapp = -1.;
-  for (Standard_Integer i = 0; i <= nbp; ++i)
+  if (!aCOS.IsDone())
   {
-    const Standard_Real t = IntToReal(i)/IntToReal(nbp);
-    const Standard_Real u = first*(1.-t) + last*t;
-    gp_Pnt Pc3d = c3d->Value(u);
-    gp_Pnt2d Puv = c2d->Value(u);
-    if(!isUPeriodic)
-    {
-      if(Puv.X() < uf - du)
-      {
-        dapp = Max(dapp, DSdu * (uf - Puv.X()));
-        continue;
+    return RealLast();
       }
-      else if(Puv.X() > ul + du)
-      {
-        dapp = Max(dapp, DSdu * (Puv.X() - ul));
-        continue;
-      }
-    }
-    if(!isVPeriodic)
-    {
-      if(Puv.Y() < vf - dv)
-      {
-        dapp = Max(dapp, DSdv * (vf - Puv.Y()));
-        continue;
-      }
-      else if(Puv.Y() > vl + dv)
-      {
-        dapp = Max(dapp, DSdv * (Puv.Y() - vl));
-        continue;
-      }
-    }
-    gp_Pnt Pcons = surf->Value(Puv.X(), Puv.Y());
-    if (Precision::IsInfinite(Pcons.X()) ||
-        Precision::IsInfinite(Pcons.Y()) ||
-        Precision::IsInfinite(Pcons.Z()))
-    {
-      d2 = Precision::Infinite();
-      break;
-    }
-    Standard_Real temp = Pc3d.SquareDistance(Pcons);
 
-    dist(i+1) = temp;
-
-    d2 = Max (d2, temp);
+  return aCOS.MaxDistance();
   }
-
-  if(Precision::IsInfinite(d2))
-  {
-    return d2;
-  }
-
-  d2 = Sqrt(d2);
-  if(dapp > d2)
-  {
-    return dapp;
-  }
-
-  Standard_Boolean ana = Standard_False;
-  Standard_Real D2 = 0;
-  Standard_Integer N1 = 0;
-  Standard_Integer N2 = 0;
-  Standard_Integer N3 = 0;
-
-  for (Standard_Integer i = 1; i<= nbp+10; ++i)
-  {
-    if (dist(i) > 0)
-    {
-      if (dist(i) < 1.0)
-      {
-        ++N1;
-      }
-      else
-      {
-        ++N2;
-      }
-    }
-  }
-
-  if (N1 > N2 && N2 != 0)
-  {
-    N3 = 100*N2/(N1+N2);
-  }
-  if (N3 < 10 && N3 != 0)
-  {
-    ana = Standard_True;
-    for (Standard_Integer i = 1; i <= nbp+10; ++i)
-    {
-      if (dist(i) > 0 && dist(i) < 1.0)
-      {
-        D2 = Max (D2, dist(i));
-      }
-    }
-  }
-
-  //d2 = 1.5*sqrt(d2);
-  d2 = (!ana) ? 1.5 * d2 : 1.5*sqrt(D2);
-  d2 = Max (d2, 1.e-7);
-  return d2;
-}
 
 //=======================================================================
 //function : GetCurve3d
@@ -1270,8 +1167,6 @@ TopoDS_Edge BRepLib::SameParameter(const TopoDS_Edge& theEdge,
 
   BRep_ListIteratorOfListOfCurveRepresentation It(CList);
 
-  const Standard_Integer NCONTROL = 22;
-
   Handle(GeomAdaptor_Curve) HC = new GeomAdaptor_Curve();
   Handle(Geom2dAdaptor_Curve) HC2d = new Geom2dAdaptor_Curve();
   Handle(GeomAdaptor_Surface) HS = new GeomAdaptor_Surface();
@@ -1359,7 +1254,7 @@ TopoDS_Edge BRepLib::SameParameter(const TopoDS_Edge& theEdge,
         Standard_Boolean goodpc = 1;
         GAC2d.Load(curPC,f3d,l3d);
 
-        Standard_Real error = ComputeTol(HC, HC2d, HS, NCONTROL);
+        Standard_Real error = ComputeTol(C3d, curPC, S, f3d, l3d);
 
         if(error > BigError)
         {
@@ -1470,7 +1365,7 @@ TopoDS_Edge BRepLib::SameParameter(const TopoDS_Edge& theEdge,
                 Standard_Boolean updatepcsov = updatepc;
                 updatepc = Standard_True;
 
-                Standard_Real error1 = ComputeTol(HC, HC2d, HS, NCONTROL);
+                Standard_Real error1 = ComputeTol(C3d, curPC, S, f3d, l3d);
                 if(error1 > error) {
                   bs2d = bs2dsov;
                   GAC2d.Load(bs2d,f3d,l3d);
