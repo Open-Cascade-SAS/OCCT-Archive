@@ -167,19 +167,19 @@ void XCAFDoc_ViewTool::SetView(const TDF_LabelSequence& theShapes,
   }
   if (theViewL.FindAttribute(XCAFDoc::ViewRefNoteGUID(), aChGNode)) {
     while (aChGNode->NbFathers() > 0) {
-      aPlaneGNode = aChGNode->GetFather(1);
-      aPlaneGNode->UnSetChild(aChGNode);
-      if (aPlaneGNode->NbChildren() == 0)
-        aPlaneGNode->ForgetAttribute(XCAFDoc::ViewRefNoteGUID());
+      aNoteGNode = aChGNode->GetFather(1);
+      aNoteGNode->UnSetChild(aChGNode);
+      if (aNoteGNode->NbChildren() == 0)
+        aNoteGNode->ForgetAttribute(XCAFDoc::ViewRefNoteGUID());
     }
     theViewL.ForgetAttribute(XCAFDoc::ViewRefNoteGUID());
   }
   if (theViewL.FindAttribute(XCAFDoc::ViewRefAnnotationGUID(), aChGNode)) {
     while (aChGNode->NbFathers() > 0) {
-      aPlaneGNode = aChGNode->GetFather(1);
-      aPlaneGNode->UnSetChild(aChGNode);
-      if (aPlaneGNode->NbChildren() == 0)
-        aPlaneGNode->ForgetAttribute(XCAFDoc::ViewRefAnnotationGUID());
+      aAnnotGNode = aChGNode->GetFather(1);
+      aAnnotGNode->UnSetChild(aChGNode);
+      if (aAnnotGNode->NbChildren() == 0)
+        aAnnotGNode->ForgetAttribute(XCAFDoc::ViewRefAnnotationGUID());
     }
     theViewL.ForgetAttribute(XCAFDoc::ViewRefAnnotationGUID());
   }
@@ -235,7 +235,7 @@ void XCAFDoc_ViewTool::SetView(const TDF_LabelSequence& theShapes,
   if (!theViewL.FindAttribute(XCAFDoc::ViewRefNoteGUID(), aChGNode) && theNotes.Length() > 0) {
     aChGNode = new XCAFDoc_GraphNode;
     aChGNode = XCAFDoc_GraphNode::Set(theViewL);
-    aChGNode->SetGraphID(XCAFDoc::ViewRefPlaneGUID());
+    aChGNode->SetGraphID(XCAFDoc::ViewRefNoteGUID());
   }
   for (Standard_Integer i = theNotes.Lower(); i <= theNotes.Upper(); i++)
   {
@@ -255,9 +255,9 @@ void XCAFDoc_ViewTool::SetView(const TDF_LabelSequence& theShapes,
   }
   for (Standard_Integer i = theAnnotations.Lower(); i <= theAnnotations.Upper(); i++)
   {
-    if (!theAnnotations.Value(i).FindAttribute(XCAFDoc::ViewRefAnnotationGUID(), aNoteGNode)) {
+    if (!theAnnotations.Value(i).FindAttribute(XCAFDoc::ViewRefAnnotationGUID(), aAnnotGNode)) {
       aAnnotGNode = new XCAFDoc_GraphNode;
-      aAnnotGNode = XCAFDoc_GraphNode::Set(theNotes.Value(i));
+      aAnnotGNode = XCAFDoc_GraphNode::Set(theAnnotations.Value(i));
     }
     aAnnotGNode->SetGraphID(XCAFDoc::ViewRefAnnotationGUID());
     aAnnotGNode->SetChild(aChGNode);
