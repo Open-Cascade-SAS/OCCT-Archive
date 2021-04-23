@@ -355,6 +355,22 @@ void OpenGl_ShaderManager::UpdateWorldViewStateTo (const OpenGl_Mat4& theWorldVi
 }
 
 // =======================================================================
+// function : convertTo2DPersPosition
+// purpose  :
+// =======================================================================
+gp_Pnt OpenGl_ShaderManager::convertTo2DPersPosition (const gp_Pnt& thePosition) const
+{
+  OpenGl_Mat4 aProjMat = myContext->ProjectionState.Current();
+  OpenGl_Mat4 aModelMat = myContext->ModelWorldState.Current() * myContext->WorldViewState.Current();
+
+  Standard_ShortReal aX, anY, aZ;
+  Graphic3d_TransformUtils::UnProject<Standard_ShortReal> (thePosition.X(), thePosition.Y(), 0,
+                                                           aModelMat, aProjMat, myContext->Viewport(),
+                                                           aX, anY, aZ);
+  return gp_Pnt(aX, anY, aZ);
+}
+
+// =======================================================================
 // function : pushLightSourceState
 // purpose  :
 // =======================================================================
@@ -519,6 +535,15 @@ void OpenGl_ShaderManager::pushLightSourceState (const Handle(OpenGl_ShaderProgr
           aLightParams.Position.z() = static_cast<float>(aLight.Position().Z());
           const Graphic3d_Mat4& anOrientInv = myWorldViewState.WorldViewMatrixInverse();
           aLightParams.Position = anOrientInv * Graphic3d_Vec4 (aLightParams.Position.xyz(), 1.0f);
+        }
+        else if (aLight.Is2DPers())
+        {
+          gp_Pnt aPosition = convertTo2DPersPosition (aLight.Position());
+
+          aLightParams.Position.x() = static_cast<float>(aPosition.X());
+          aLightParams.Position.y() = static_cast<float>(aPosition.Y());
+          aLightParams.Position.z() = static_cast<float>(aPosition.Z());
+          aLightParams.Position.w() = 0.0f;
         }
         else
         {

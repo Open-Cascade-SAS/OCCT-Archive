@@ -273,6 +273,9 @@ public:
   //! Invalidate state of OCCT light sources.
   Standard_EXPORT void UpdateLightSourceState();
 
+  //! Converts position to 3D point in 2D pesistence.
+  gp_Pnt convertTo2DPersPosition (const gp_Pnt& thePosition) const;
+
   //! Pushes current state of OCCT light sources to specified program (only on state change).
   //! Note that light sources definition depends also on WorldViewState.
   void PushLightSourceState (const Handle(OpenGl_ShaderProgram)& theProgram) const

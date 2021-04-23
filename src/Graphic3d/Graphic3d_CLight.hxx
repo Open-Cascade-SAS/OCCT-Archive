@@ -75,6 +75,13 @@ public:
   //! Setup headlight flag.
   Standard_EXPORT void SetHeadlight (Standard_Boolean theValue);
 
+  //! Returns true if the light is positioned in 2D persistence; FALSE by default.
+  //! Headlight flag means that light position/direction are defined not in a World coordinate system, but relative to the camera orientation.
+  Standard_Boolean Is2DPers() const { return myIs2DPers; }
+
+  //! Setup 2D persistence for positioning light.
+  Standard_EXPORT void SetIs2DPers (Standard_Boolean theValue);
+
 //! @name positional/spot light properties
 public:
 
@@ -275,6 +282,7 @@ protected:
   const Graphic3d_TypeOfLightSource myType;        //!< Graphic3d_TypeOfLightSource enumeration
   Standard_Size                     myRevision;    //!< modification counter
   Standard_Boolean                  myIsHeadlight; //!< flag to mark head light
+  Standard_Boolean                  myIs2DPers;    //!< flag to mark head light position in 2D persistence
   Standard_Boolean                  myIsEnabled;   //!< enabled state
   Standard_Boolean                  myToCastShadows;//!< casting shadows is requested
 

@@ -248,6 +248,11 @@ void AIS_LightSource::updateLightTransformPersistence()
       else
       {
         aTrsfPers.Nullify();
+        if (myLightSource->Is2DPers() && myLightSource->Type() == Graphic3d_TOLS_POSITIONAL)
+        {
+          aTrsfPers = new Graphic3d_TransformPers (Graphic3d_TMF_2d, Aspect_TOTP_LEFT_LOWER,
+            Graphic3d_Vec2i(myLightSource->Position().X(), myLightSource->Position().Y()));
+        }
       }
       break;
     }
@@ -291,7 +296,10 @@ void AIS_LightSource::updateLightLocalTransformation()
       if (myIsZoomable)
       {
         gp_Trsf aTrsf;
-        aTrsf.SetTranslation (gp::Origin(), myLightSource->Position());
+        if (!myLightSource->Is2DPers())
+        {
+          aTrsf.SetTranslation (gp::Origin(), myLightSource->Position());
+        }
         myLocalTransformation = new TopLoc_Datum3D (aTrsf);
       }
       break;

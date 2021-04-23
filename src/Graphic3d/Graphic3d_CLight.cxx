@@ -57,6 +57,7 @@ Graphic3d_CLight::Graphic3d_CLight (Graphic3d_TypeOfLightSource theType)
   myType       (theType),
   myRevision   (0),
   myIsHeadlight(false),
+  myIs2DPers(false),
   myIsEnabled  (true),
   myToCastShadows (false)
 {
@@ -136,6 +137,19 @@ void Graphic3d_CLight::SetHeadlight (Standard_Boolean theValue)
   }
   updateRevisionIf (myIsHeadlight != theValue);
   myIsHeadlight = theValue;
+}
+
+// =======================================================================
+// function : SetIs2DPers
+// purpose  :
+// =======================================================================
+void Graphic3d_CLight::SetIs2DPers (Standard_Boolean theValue)
+{
+  if (myType == Graphic3d_TOLS_AMBIENT)
+  {
+    throw Standard_ProgramError ("Graphic3d_CLight::SetIs2DPers() is not applicable to ambient light");
+  }
+  myIs2DPers = theValue;
 }
 
 // =======================================================================
@@ -322,5 +336,6 @@ void Graphic3d_CLight::DumpJson (Standard_OStream& theOStream, Standard_Integer 
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myType)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myRevision)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIsHeadlight)
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIs2DPers)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIsEnabled)
 }

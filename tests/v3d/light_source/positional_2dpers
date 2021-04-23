@@ -1,0 +1,32 @@
+puts "================================="
+puts "0032325: Visualization - Possibility to use fixed positioned light source"
+puts "================================="
+
+pload MODELING VISUALIZATION
+vclear
+vinit View1
+vlight -clear
+
+vbackground -color GRAY
+vrenderparams -shadingModel PHONG
+vlight -add ambient -COLOR WHITE -intensity 0.1
+
+box b 10 10 10 30 30 30
+vdisplay b -dispMode 1
+vaspects b -material Brass
+vfit
+
+puts "=== Check headlight option with positional light ==="
+vlight -add positional -2dpers 1 -color WHITE -display Light1 -pos 30 20 0
+
+vlight -add positional -2dpers 1 -color WHITE -display Light2 -pos 380 370 0
+
+vlight -add positional -2dpers 1 -color WHITE -display Light3 -pos 30 380 0
+
+vdump $imagedir/${casename}_1.png
+
+vrotate 10 0 0
+vdump $imagedir/${casename}_2.png
+
+vpan -60 0
+vdump $imagedir/${casename}_3.png

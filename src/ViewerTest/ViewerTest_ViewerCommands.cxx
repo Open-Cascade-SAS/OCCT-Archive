@@ -11044,6 +11044,24 @@ static int VLight (Draw_Interpretor& theDi,
       }
       aLightCurr->SetHeadlight (isHeadLight);
     }
+    else if (anArgCase.IsEqual ("2DPERS") ||
+             anArgCase.IsEqual ("-2DPERS"))
+    {
+      if (aLightCurr.IsNull()
+       || aLightCurr->Type() == Graphic3d_TOLS_AMBIENT)
+      {
+        Message::SendFail() << "Syntax error at argument '" << anArg << "'";
+        return 1;
+      }
+
+      Standard_Boolean is2DPers = Standard_False;
+      if (anArgIt + 1 < theArgsNb
+       && Draw::ParseOnOff (theArgVec[anArgIt + 1], is2DPers))
+      {
+        ++anArgIt;
+      }
+      aLightCurr->SetIs2DPers (is2DPers);
+    }
     else if (anArgCase.IsEqual ("NAME")
           || anArgCase.IsEqual ("-NAME"))
     {
@@ -15091,6 +15109,7 @@ void ViewerTest::ViewerCommands(Draw_Interpretor& theCommands)
     "\n        -{dir}ection X Y Z (for directional light or for spotlight)"
     "\n        -color colorName"
     "\n        -{head}light 0|1"
+    "\n        -2dpers 0|1"
     "\n        -castShadows 0|1"
     "\n        -{sm}oothness value"
     "\n        -{int}ensity value"
