@@ -277,7 +277,6 @@ animationDump(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
   TDF_Tool::Label(aDoc->GetData(), anEntry, aLabel);
   if (aLabel.IsNull())
   {
-    TCollection_AsciiString anEntry;
     TDF_Tool::Entry(aLabel, anEntry);
     di << anEntry << ": invalid animation entry.\n";
     return 1;

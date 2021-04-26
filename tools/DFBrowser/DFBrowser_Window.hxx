@@ -118,6 +118,12 @@ public:
   //! \return string value
   Standard_EXPORT static TCollection_AsciiString TmpDirectory();
 
+  //! Sets whether DumpJson is used when the tree view is generated
+  Standard_EXPORT static void SetUseDumpJson(const Standard_Boolean theValue);
+
+  //! Returns whether DumpJson is used when the tree view is generated
+  Standard_EXPORT static Standard_Boolean IsUseDumpJson();
+
 private slots:
 
   //! Cleans history in tree level line, clears cache of thread processing, starts threads for application
@@ -136,7 +142,9 @@ private slots:
   //! Collapses all levels for all selected items
   void onCollapseAll();
 
-  //! Udpates all controls by changed selection in OCAF tree view
+  //! Setting flag whether DumpJSon should be applied to build tree model items structure 
+  void onUseDumpJson();
+
   //! \param theSelected list of selected tree view items
   //! \param theDeselected list of deselected tree view items
   void onTreeViewSelectionChanged (const QItemSelection& theSelected, const QItemSelection& theDeselected);
@@ -208,6 +216,9 @@ protected:
   //! \return container of presentations or NULL
   void findPresentations (const QModelIndexList& theIndices, AIS_ListOfInteractive& thePresentations);
 
+  //! Updates content of Property Panel dock widget. It contains button to activate DumpJson or view with content of it.
+  void updatePropertyPanelWidget();
+
 private:
 
   DFBrowser_Module* myModule; //!< current module
@@ -216,6 +227,7 @@ private:
   DFBrowser_TreeLevelLine* myTreeLevelLine; //!< navigate line of tree levels to the selected item
   QTreeView* myTreeView; //!< OCAF tree view
   QDockWidget* myPropertyPanelWidget; //!< property pane dockable widget
+  QWidget* myUseDumpJson; //!< button to activate/deactivate using of DumpJson
   DFBrowser_PropertyPanel* myPropertyPanel; //!< property panel shows full information about attribute or search view
   ViewControl_PropertyView* myPropertyView; //!< property control to display model item values if exist
   View_Window* myViewWindow; //!< V3d view to visualize presentations/references if it can be build for a selected item
