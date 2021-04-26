@@ -51,6 +51,7 @@
 #include <TDF_Data.hxx>
 #include <TDF_LabelSequence.hxx>
 #include <TDF_Reference.hxx>
+#include <TDF_TagSource.hxx>
 #include <TDF_Tool.hxx>
 #include <TDocStd_Application.hxx>
 #include <TDocStd_Document.hxx>
@@ -78,6 +79,7 @@
 #include <XCAFDoc_GraphNode.hxx>
 #include <XCAFDoc_LayerTool.hxx>
 #include <XCAFDoc_Material.hxx>
+#include <XCAFDoc_ShapeMapTool.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_Volume.hxx>
 #include <XCAFPrs.hxx>
@@ -943,6 +945,23 @@ static Standard_Integer XAttributeValue (Draw_Interpretor& di, Standard_Integer 
   if ( ! itr.More() ) { std::cout << "Syntax error: Attribute #" << num << " not found\n"; return 1; }
 
   const Handle(TDF_Attribute)& att = itr.Value();
+
+  TCollection_AsciiString anInfo = XDEDRAW::AttributeInfo (att);
+  if (!anInfo.IsEmpty())
+  {
+    di << anInfo.ToCString();
+  }
+  return 0;
+}
+
+//=======================================================================
+//function : AttributeInfo
+//purpose  :
+//=======================================================================
+TCollection_AsciiString XDEDRAW::AttributeInfo (Handle(TDF_Attribute) att)
+{
+  TCollection_AsciiString anInfo;
+
   if ( att->IsKind(STANDARD_TYPE(TDataStd_TreeNode)) ) {
     Standard_CString type = "";
     if ( att->ID() == XCAFDoc::ShapeRefGUID() ) type = "Shape Instance Link";
@@ -956,102 +975,110 @@ static Standard_Integer XAttributeValue (Draw_Interpretor& di, Standard_Integer 
     TCollection_AsciiString ref;
     if ( TN->HasFather() ) {
       TDF_Tool::Entry ( TN->Father()->Label(), ref );
-      di << type << " ==> " << ref.ToCString();
+      anInfo = type;
+      anInfo += TCollection_AsciiString (" ==> ") + ref.ToCString();
     }
     else {
-      di << type << " <== (" << ref.ToCString();
+      anInfo = type;
+      anInfo += TCollection_AsciiString (" <== (") + ref.ToCString();
       Handle(TDataStd_TreeNode) child = TN->First();
       while ( ! child.IsNull() ) {
         TDF_Tool::Entry ( child->Label(), ref );
-        if ( child != TN->First() ) di << ", ";
-        di << ref.ToCString();
+        if ( child != TN->First() ) anInfo +=  ", " ;
+        anInfo += ref.ToCString();
         child = child->Next();
       }
-      di << ")";
+      anInfo += ")";
     }
   }
   else if ( att->IsKind(STANDARD_TYPE(TDF_Reference)) ) {
     Handle(TDF_Reference) val = Handle(TDF_Reference)::DownCast ( att );
     TCollection_AsciiString ref;
     TDF_Tool::Entry ( val->Get(), ref );
-    di << "==> " << ref.ToCString();
+    anInfo += TCollection_AsciiString ("==> ") + ref.ToCString();
+  }
+  else if ( att->IsKind(STANDARD_TYPE(TDF_TagSource)) ) {
+    Handle(TDF_TagSource) val = Handle(TDF_TagSource)::DownCast ( att );
+    anInfo += TCollection_AsciiString ( val->Get() );
   }
   else if ( att->IsKind(STANDARD_TYPE(TDataStd_Integer)) ) {
     Handle(TDataStd_Integer) val = Handle(TDataStd_Integer)::DownCast ( att );
-    TCollection_AsciiString str ( val->Get() );
-    di << str.ToCString();
+    anInfo = TCollection_AsciiString ( val->Get() );
   }
   else if ( att->IsKind(STANDARD_TYPE(TDataStd_Real)) ) {
     Handle(TDataStd_Real) val = Handle(TDataStd_Real)::DownCast ( att );
-    TCollection_AsciiString str ( val->Get() );
-    di << str.ToCString();
+    anInfo = TCollection_AsciiString ( val->Get() );
   }
   else if ( att->IsKind(STANDARD_TYPE(TDataStd_Name)) ) {
     Handle(TDataStd_Name) val = Handle(TDataStd_Name)::DownCast ( att );
-    di << val->Get();
+    anInfo = TCollection_AsciiString ( val->Get(), '?' );
   }
   else if ( att->IsKind(STANDARD_TYPE(TDataStd_Comment)) ) {
     Handle(TDataStd_Comment) val = Handle(TDataStd_Comment)::DownCast ( att );
-    di << val->Get();
+    anInfo = TCollection_AsciiString ( val->Get(), '?' );
   }
   else if ( att->IsKind(STANDARD_TYPE(TDataStd_AsciiString)) ) {
     Handle(TDataStd_AsciiString) val = Handle(TDataStd_AsciiString)::DownCast ( att );
-    di << val->Get();
+    anInfo = TCollection_AsciiString ( val->Get(), '?' );
   }
   else if ( att->IsKind(STANDARD_TYPE(TDataStd_IntegerArray)) ) {
     Handle(TDataStd_IntegerArray) val = Handle(TDataStd_IntegerArray)::DownCast ( att );
     for ( Standard_Integer j=val->Lower(); j <= val->Upper(); j++ ) {
-      if ( j > val->Lower() ) di << ", ";
-      TCollection_AsciiString str ( val->Value(j) );
-      di << str.ToCString();
+      if ( j > val->Lower() ) anInfo += TCollection_AsciiString ( ", " );
+      anInfo += TCollection_AsciiString ( val->Value(j) );
     }
   }
   else if ( att->IsKind(STANDARD_TYPE(TDataStd_RealArray)) ) {
     Handle(TDataStd_RealArray) val = Handle(TDataStd_RealArray)::DownCast ( att );
     for ( Standard_Integer j=val->Lower(); j <= val->Upper(); j++ ) {
-      if ( j > val->Lower() ) di << ", ";
-      TCollection_AsciiString str ( val->Value(j) );
-      di << str.ToCString();
+      if ( j > val->Lower() ) anInfo += TCollection_AsciiString ( ", " );
+      anInfo += TCollection_AsciiString ( val->Value(j) );
     }
   }
   else if ( att->IsKind(STANDARD_TYPE(TDataStd_ByteArray)) ) {
     Handle(TDataStd_ByteArray) val = Handle(TDataStd_ByteArray)::DownCast ( att );
     for ( Standard_Integer j=val->Lower(); j <= val->Upper(); j++ ) {
-      if ( j > val->Lower() ) di << ", ";
-      TCollection_AsciiString str ( val->Value(j) );
-      di << str.ToCString();
+      if ( j > val->Lower() ) anInfo += TCollection_AsciiString ( ", " );
+      anInfo += TCollection_AsciiString ( val->Value(j) );
     }
   }
   else if ( att->IsKind(STANDARD_TYPE(TNaming_NamedShape)) ) {
     Handle(TNaming_NamedShape) val = Handle(TNaming_NamedShape)::DownCast ( att );
     TopoDS_Shape S = val->Get();
-    di << S.TShape()->DynamicType()->Name();
-    if ( ! S.Location().IsIdentity() ) di << "(located)";
+    if (!S.IsNull())
+      anInfo = S.TShape()->DynamicType()->Name();
+    else
+      anInfo = "Empty Shape";
+    if ( ! S.Location().IsIdentity() ) anInfo += TCollection_AsciiString ( "(located)" );
+  }
+  else if ( att->IsKind(STANDARD_TYPE(XCAFDoc_ShapeMapTool)) ) {
+
+    Handle(XCAFDoc_ShapeMapTool) anAttr = Handle(XCAFDoc_ShapeMapTool)::DownCast ( att );
+    anInfo += TCollection_AsciiString (anAttr->GetMap().Extent());
   }
   else if ( att->IsKind(STANDARD_TYPE(XCAFDoc_Volume)) ) {
     Handle(XCAFDoc_Volume) val = Handle(XCAFDoc_Volume)::DownCast ( att );
-    TCollection_AsciiString str ( val->Get() );
-    di << str.ToCString();
+    anInfo += TCollection_AsciiString ( val->Get() );
   }
   else if ( att->IsKind(STANDARD_TYPE(XCAFDoc_Area)) ) {
     Handle(XCAFDoc_Area) val = Handle(XCAFDoc_Area)::DownCast ( att );
     TCollection_AsciiString str ( val->Get() );
-    di << str.ToCString();
+    anInfo = str.ToCString();
   }
   else if ( att->IsKind(STANDARD_TYPE(XCAFDoc_Centroid)) ) {
     Handle(XCAFDoc_Centroid) val = Handle(XCAFDoc_Centroid)::DownCast ( att );
     gp_Pnt myCentroid = val->Get();
-    di << "(" ;
-    di << myCentroid.X();
-    di <<" , ";
-    di << myCentroid.Y();
-    di <<" , ";
-    di << myCentroid.Z();
-    di << ")";
+    anInfo = "(" ;
+    anInfo += TCollection_AsciiString ( myCentroid.X() ).ToCString();
+    anInfo += TCollection_AsciiString ( " , " );
+    anInfo += TCollection_AsciiString ( TCollection_AsciiString ( myCentroid.Y() ).ToCString() );
+    anInfo += TCollection_AsciiString ( " , " );
+    anInfo += TCollection_AsciiString ( myCentroid.Z() ).ToCString();
+    anInfo += TCollection_AsciiString ( ")" );
   }
   else if ( att->IsKind(STANDARD_TYPE(TDataStd_UAttribute)) ) {
-    if ( att->ID() == XCAFDoc::AssemblyGUID() ) di << "is assembly";
-    if ( att->ID() == XCAFDoc::InvisibleGUID() ) di << "invisible";
+    if ( att->ID() == XCAFDoc::AssemblyGUID() ) anInfo += TCollection_AsciiString ( "is assembly" );
+    if ( att->ID() == XCAFDoc::InvisibleGUID() ) anInfo += TCollection_AsciiString ( "invisible" );
   }
   else if ( att->IsKind(STANDARD_TYPE(XCAFDoc_Color)) ) {
     Handle(XCAFDoc_Color) val = Handle(XCAFDoc_Color)::DownCast ( att );
@@ -1059,38 +1086,47 @@ static Standard_Integer XAttributeValue (Draw_Interpretor& di, Standard_Integer 
     char string[260];
     Sprintf ( string, "%s (%g, %g, %g, %g)", C.GetRGB().StringName ( C.GetRGB().Name() ),
       C.GetRGB().Red(), C.GetRGB().Green(), C.GetRGB().Blue(), C.Alpha());
-    di << string;
+    anInfo = string;
   }
   else if ( att->IsKind(STANDARD_TYPE(XCAFDoc_DimTol)) ) {
     Handle(XCAFDoc_DimTol) val = Handle(XCAFDoc_DimTol)::DownCast ( att );
     Standard_Integer kind = val->GetKind();
     Handle(TColStd_HArray1OfReal) HAR = val->GetVal();
     if(kind<20) { //dimension
-      di<<"Diameter (ValueRange["<<HAR->Value(1)<<","<<HAR->Value(2)<<"])";
+      anInfo = "Diameter (ValueRange[";
+      anInfo += TCollection_AsciiString ( HAR->Value(1) );
+      anInfo += TCollection_AsciiString ( "," );
+      anInfo += TCollection_AsciiString ( HAR->Value(2) );
+      anInfo += TCollection_AsciiString ( "])" );
     }
     else {
-      switch(kind) {
-      case 21: di << "GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol_1 (Value="<<HAR->Value(1)<<")"; break;
-      case 22: di << "GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol_2 (Value="<<HAR->Value(1)<<")"; break;
-      case 23: di << "GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol_3 (Value="<<HAR->Value(1)<<")"; break;
-      case 24: di << "AngularityTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 25: di << "CircularRunoutTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 26: di << "CoaxialityTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 27: di << "ConcentricityTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 28: di << "ParallelismTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 29: di << "PerpendicularityTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 30: di << "SymmetryTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 31: di << "TotalRunoutTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 35: di << "ModifiedGeometricTolerance_1 (Value="<<HAR->Value(1)<<")"; break;
-      case 36: di << "ModifiedGeometricTolerance_2 (Value="<<HAR->Value(1)<<")"; break;
-      case 37: di << "ModifiedGeometricTolerance_3 (Value="<<HAR->Value(1)<<")"; break;
-      case 38: di << "CylindricityTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 39: di << "FlatnessTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 40: di << "LineProfileTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 41: di << "PositionTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 42: di << "RoundnessTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 43: di << "StraightnessTolerance (Value="<<HAR->Value(1)<<")"; break;
-      case 44: di << "SurfaceProfileTolerance (Value="<<HAR->Value(1)<<")"; break;
+      switch (kind) {
+      case 21: anInfo = "GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol_1"; break;
+      case 22: anInfo = "GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol_2"; break;
+      case 23: anInfo = "GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol_3"; break;
+      case 24: anInfo = "AngularityTolerance"; break;
+      case 25: anInfo = "CircularRunoutTolerance"; break;
+      case 26: anInfo = "CoaxialityTolerance"; break;
+      case 27: anInfo = "ConcentricityTolerance"; break;
+      case 28: anInfo = "ParallelismTolerance"; break;
+      case 29: anInfo = "PerpendicularityTolerance"; break;
+      case 30: anInfo = "SymmetryTolerance"; break;
+      case 31: anInfo = "TotalRunoutTolerance"; break;
+      case 35: anInfo = "ModifiedGeometricTolerance_1"; break;
+      case 36: anInfo = "ModifiedGeometricTolerance_2"; break;
+      case 37: anInfo = "ModifiedGeometricTolerance_3"; break;
+      case 38: anInfo = "CylindricityTolerance"; break;
+      case 39: anInfo = "FlatnessTolerance"; break;
+      case 40: anInfo = "LineProfileTolerance"; break;
+      case 41: anInfo = "PositionTolerance"; break;
+      case 42: anInfo = "RoundnessTolerance"; break;
+      case 43: anInfo = "StraightnessTolerance"; break;
+      case 44: anInfo = "SurfaceProfileTolerance"; break;
+      }
+      if (anInfo.Length() > 0) {
+        anInfo += " (Value=";
+        anInfo += TCollection_AsciiString (HAR->Value (1));
+        anInfo += ")";
       }
     }
   }
@@ -1099,9 +1135,14 @@ static Standard_Integer XAttributeValue (Draw_Interpretor& di, Standard_Integer 
     Standard_Real dens = val->GetDensity();
     Standard_CString dimdens = "g/cu sm";
     if(dens==0) 
-      di<<val->GetName()->ToCString();
-    else
-      di<<val->GetName()->ToCString()<<"(density="<<dens<<dimdens<<")";
+      anInfo = val->GetName()->ToCString();
+    else {
+      anInfo = val->GetName()->ToCString();
+      anInfo += "(density=";
+      anInfo += TCollection_AsciiString ( dens );
+      anInfo += dimdens;
+      anInfo += ")";
+    }
   }
   else if ( att->IsKind(STANDARD_TYPE(XCAFDoc_GraphNode)) ) {
     Standard_CString type;
@@ -1135,7 +1176,8 @@ static Standard_Integer XAttributeValue (Draw_Interpretor& di, Standard_Integer 
     else if (att->ID() == XCAFDoc::ViewRefPlaneGUID()) {
       type = "View Clipping Plane Link";
     }
-    else return 0;
+    else
+      return TCollection_AsciiString();
 
     Handle(XCAFDoc_GraphNode) DETGN = Handle(XCAFDoc_GraphNode)::DownCast(att);
     TCollection_AsciiString ref;
@@ -1143,25 +1185,31 @@ static Standard_Integer XAttributeValue (Draw_Interpretor& di, Standard_Integer 
     if (DETGN->NbFathers()!=0) {
 
       TDF_Tool::Entry ( DETGN->GetFather(ii)->Label(), ref );
-      di << type<< " ==> (" << ref.ToCString();
+      anInfo = type;
+      anInfo += " ==> (";
+      anInfo += ref;
       for (ii = 2; ii <= DETGN->NbFathers(); ii++) {
-	TDF_Tool::Entry ( DETGN->GetFather(ii)->Label(), ref );
-	  di << ", " << ref.ToCString();
-	}
-      di << ") ";
+        TDF_Tool::Entry ( DETGN->GetFather(ii)->Label(), ref );
+        anInfo += ", ";
+        anInfo += ref.ToCString();
+      }
+      anInfo += ") ";
     }
     ii = 1;
     if (DETGN->NbChildren()!=0) {
       TDF_Tool::Entry ( DETGN->GetChild(ii)->Label(), ref );
-      di << type<< " <== (" << ref.ToCString();
-      for (ii = 2; ii <= DETGN->NbChildren(); ii++) {
-	TDF_Tool::Entry ( DETGN->GetChild(ii)->Label(), ref );
-	  di << ", " << ref.ToCString();
-	}
-      di << ")";
+      anInfo += type;
+      anInfo += " <== (";
+      anInfo += ref;
+      for (ii = 2; ii <= DETGN->NbChildren (); ii++) {
+        TDF_Tool::Entry ( DETGN->GetChild(ii)->Label(), ref );
+        anInfo += ", ";
+        anInfo += ref;
+      }
+      anInfo += ") ";
     }
   }
-  return 0;
+  return anInfo;
 }
 
 

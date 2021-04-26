@@ -45,6 +45,11 @@ public:
   //! Loads all Draw commands of  TKXDEDRAW. Used for plugin.
   Standard_EXPORT static void Factory (Draw_Interpretor& theDI);
 
+  //! Prints attribute information into a string.
+  //! @param att an XDE attribute
+  //! @return the generated info value
+  Standard_EXPORT static TCollection_AsciiString AttributeInfo (Handle(TDF_Attribute) att);
+
 
 
 

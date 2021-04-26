@@ -38,6 +38,7 @@
 #include <QVariant>
 #include <Standard_WarningsRestore.hxx>
 
+class Geom_Line;
 class Geom_Plane;
 class Geom_Transformation;
 
@@ -84,6 +85,12 @@ public:
   Standard_EXPORT static Standard_Boolean CreateBoxShape (const gp_Pnt& thePntMin,
                                                           const gp_Pnt& thePntMax,
                                                           TopoDS_Shape& theShape);
+
+  //! Creates presentation AIS_Line
+  //! \param theLine source line
+  //! \param thePresentations container to collect new presentation/s
+  Standard_EXPORT static void CreatePresentation (const Handle(Geom_Line)& theLine,
+    NCollection_List<Handle(Standard_Transient)>& thePresentations);
 
   //! Creates presentation AIS_Plane
   //! \param thePlane source plane
