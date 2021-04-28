@@ -335,7 +335,7 @@ Pave block *PV* of curve *C* is bounded by vertices *V1* and *V2* with tolerance
 The theoretical parametric range of the pave block is <i>[t1C, t2C]</i>.
 
 The positions of the vertices *V1* and *V2* of the pave block can be different. The positions are determined by the following conditions:
-~~~~
+~~~~{.cpp}
 Distance (P1, P1c) is equal or less than Tol(V1) + Tol(C)
 Distance (P2, P2c) is equal or less than Tol(V2) + Tol(C)
 ~~~~
@@ -811,7 +811,7 @@ The following example illustrates how to use the GF algorithm:
 
 #### Usage of the GF algorithm on C++ level
 
-~~~~
+~~~~{.cpp}
 BOPAlgo_Builder aBuilder;
 // Setting arguments
 TopTools_ListOfShape aLSObjects = …; // Objects
@@ -865,7 +865,7 @@ const TopoDS_Shape& aResult = aBuilder.Shape();
 
 #### Usage of the GF algorithm on Tcl level
 
-~~~~
+~~~~{.cpp}
 # prepare the arguments
 box b1 10 10 10 
 box b2 3 4 5 10 10 10 
@@ -1199,7 +1199,7 @@ It is based on the General Fuse  algorithm, thus all options of the General Fuse
 @subsubsection specification__boolean_8_3_1 API
 
 On the low level the Splitter algorithm is implemented in class *BOPAlgo_Splitter*. The usage of this algorithm looks as follows:
-~~~~~
+~~~~{.cpp}
 BOPAlgo_Splitter aSplitter;
 // Setting arguments and tools
 TopTools_ListOfShape aLSObjects = …; // Objects
@@ -1218,12 +1218,12 @@ if (aSplitter.HasErrors()) { //check error status
 }
 //
 const TopoDS_Shape& aResult = aSplitter.Shape(); // result of the operation
-~~~~~
+~~~~
 
 @subsubsection specification__boolean_8_3_2 DRAW
 
 The command *bsplit* implements the Splitter algorithm in DRAW. Similarly to the *bbuild* command for the General Fuse algorithm, the *bsplit* command should be used after the Pave Filler is filled.
-~~~~~
+~~~~{.cpp}
 # s1 s2 s3 - objects
 # t1 t2 t3 - tools
 bclearobjects
@@ -1232,7 +1232,7 @@ baddobjects s1 s2 s3
 baddtools t1 t2 t3
 bfillds
 bsplit result
-~~~~~
+~~~~
 
 @subsection specification__boolean_8_4 Examples
 
@@ -1240,7 +1240,7 @@ bsplit result
 
 Splitting a face by the set of edges:
 
-~~~~
+~~~~{.cpp}
 # draw script for reproducing
 bclearobjects
 bcleartools
@@ -1286,7 +1286,7 @@ bsplit result
 
 Splitting a plate by the set of cylinders:
 
-~~~~
+~~~~{.cpp}
 # draw script for reproducing:
 bclearobjects
 bcleartools
@@ -2182,7 +2182,7 @@ This option is useful e.g. for building a solid from the faces of one shell or f
 
 #### C++ Level
 The usage of the algorithm on the API level:
-~~~~
+~~~~{.cpp}
 BOPAlgo_MakerVolume aMV;
 // Set the arguments
 TopTools_ListOfShape aLS = …; // arguments
@@ -2206,7 +2206,7 @@ const TopoDS_Shape& aResult = aMV.Shape(); // result of the operation
 
 #### Tcl Level
 To use the algorithm in Draw the command mkvolume has been implemented. The usage of this command is following:
-~~~~
+~~~~{.cpp}
 Usage: mkvolume r b1 b2 ... [-c] [-ni] [-ai]
 Options:
 -c - use this option to have input compounds considered as set of separate arguments (allows passing multiple arguments as one compound);
@@ -2272,7 +2272,7 @@ It is possible to create typed Containers from the parts added into result by us
 
 #### API usage
 Here is the example of the algorithm use on the API level:
-~~~~
+~~~~{.cpp}
 BOPAlgo_CellsBuilder aCBuilder;
 // Set the arguments
 TopTools_ListOfShape aLS = …; // arguments
@@ -2309,7 +2309,7 @@ aResult = aCBuilder.Shape(); // the result
 #### DRAW usage
 
 The following set of new commands has been implemented to run the algorithm in DRAW Test Harness:
-~~~~
+~~~~{.cpp}
 bcbuild          : Initialization of the Cells Builder. Use: *bcbuild r*
 bcadd            : Add parts to result. Use: *bcadd r s1 (0,1) s2 (0,1) ... [-m material [-u]]*
 bcaddall         : Add all parts to result. Use: *bcaddall r [-m material [-u]]*
@@ -2320,7 +2320,7 @@ bcmakecontainers : Make containers from the parts added to result. Use: *bcmakec
 ~~~~
 
 Here is the example of the algorithm use on the DRAW level:
-~~~~
+~~~~{.cpp}
 psphere s1 15
 psphere s2 15
 psphere s3 15
@@ -2343,7 +2343,7 @@ bcremoveint res
 @subsection specification__boolean_10c_Cells_2 Examples
 
 The following simple example illustrates the possibilities of the algorithm working on a cylinder and a sphere intersected by a plane:
-~~~~
+~~~~{.cpp}
 pcylinder c 10 30 
 psphere s 15
 ttranslate s 0 0 30
@@ -2353,7 +2353,7 @@ mkface f p -25 30 -17 17
 
 @figure{/specification/boolean_operations/images/cells_algorithm_001.png,"Arguments",160} 
 
-~~~~
+~~~~{.cpp}
 bclearobjects
 bcleartools
 baddobjects c s f
@@ -2363,7 +2363,7 @@ bcbuild r
 
 #### 1. Common for all arguments
 
-~~~~
+~~~~{.cpp}
 bcremoveall
 bcadd res c 1 s 1 f 1
 ~~~~
@@ -2372,7 +2372,7 @@ bcadd res c 1 s 1 f 1
 
 #### 2. Common between cylinder and face
 
-~~~~
+~~~~{.cpp}
 bcremoveall
 bcadd res f 1 c 1
 ~~~~
@@ -2381,7 +2381,7 @@ bcadd res f 1 c 1
 
 #### 3. Common between cylinder and sphere
 
-~~~~
+~~~~{.cpp}
 bcremoveall
 bcadd res c 1 s 1
 ~~~~
@@ -2390,7 +2390,7 @@ bcadd res c 1 s 1
 
 #### 4. Fuse of cylinder and sphere
 
-~~~~
+~~~~{.cpp}
 bcremoveall
 bcadd res c 1 -m 1
 bcadd res s 1 -m 1
@@ -2401,7 +2401,7 @@ bcremoveint res
 
 #### 5. Parts of the face inside solids - FUSE(COMMON(f, c), COMMON(f, s))
 
-~~~~
+~~~~{.cpp}
 bcremoveall
 bcadd res f 1 s 1 -m 1
 bcadd res f 1 c 1 -m 1
@@ -2409,7 +2409,7 @@ bcadd res f 1 c 1 -m 1
 
 @figure{/specification/boolean_operations/images/cells_algorithm_006_1.png,"Parts of the face inside solids",160} 
 
-~~~~
+~~~~{.cpp}
 bcremoveint res
 ~~~~
 
@@ -2417,7 +2417,7 @@ bcremoveint res
 
 #### 6. Part of the face outside solids
 
-~~~~
+~~~~{.cpp}
 bcremoveall
 bcadd res f 1 c 0 s 0
 ~~~~
@@ -2426,7 +2426,7 @@ bcadd res f 1 c 0 s 0
 
 #### 7. Fuse operation (impossible using standard Boolean Fuse operation)
 
-~~~~
+~~~~{.cpp}
 bcremoveall
 bcadd res c 1 -m 1
 bcadd res s 1 -m 1
@@ -2772,7 +2772,7 @@ The Gluing option is an enumeration implemented in BOPAlgo_GlueEnum.hxx:
 
 #### API level
 For setting the Gluing options for the algorithm it is just necessary to call the SetGlue(const BOPAlgo_Glue) method with appropriate value:
-~~~~
+~~~~{.cpp}
 BOPAlgo_Builder aGF;
 //
 ....
@@ -2788,7 +2788,7 @@ For setting the Gluing options in DRAW it is necessary to call the <i>bglue</i> 
 * 1 - for partial coincidence;
 * 2 - for full coincidence
 
-~~~~
+~~~~{.cpp}
 bglue 1
 ~~~~
 
@@ -2821,7 +2821,7 @@ The option is also available in the Intersection algorithm - *BOPAlgo_PaveFiller
 #### API level
 
 To enable/disable the safe processing mode for the algorithm, it is necessary to call *SetNonDestructive()* method with the  appropriate value:
-~~~~
+~~~~{.cpp}
 BOPAlgo_Builder aGF;
 //
 ....
@@ -2836,7 +2836,7 @@ To enable the safe processing mode for the operation in DRAW, it is necessary to
 * 0 - default value, the safe mode is switched off;
 * 1 - the safe mode will be switched on.
 
-~~~~
+~~~~{.cpp}
 bnondestructive 1
 ~~~~
 
@@ -2852,7 +2852,7 @@ The classification should be disabled only if the user is sure that there are no
 #### API level
 
 To enable/disable the classification of the input solids it is necessary to call *SetCheckInverted()* method with the appropriate value:
-~~~~
+~~~~{.cpp}
 BOPAlgo_Builder aGF;
 //
 ....
@@ -2867,7 +2867,7 @@ To enable/disable the classification of the solids in DRAW, it is necessary to c
 * 0 - disabling the classification;
 * 1 - default value, enabling the classification.
 
-~~~~
+~~~~{.cpp}
 bcheckinverted 0
 ~~~~
 
@@ -2879,7 +2879,7 @@ Since Oriented Bounding Boxes are usually much tighter than Axes Aligned Boundin
 
 #### API level
 To enable/disable the usage of OBB in the operation it is necessary to call the *SetUseOBB()* method with the appropriate value:
-~~~~
+~~~~{.cpp}
 BOPAlgo_Builder aGF;
 //
 ....
@@ -2893,7 +2893,7 @@ aGF.SetUseOBB(Standard_True);
 To enable/disable the usage of OBB in the operation in DRAW it is necessary to call the *buseobb* command with the appropriate value:
 * 0 - disabling the usage of OBB;
 * 1 - enabling the usage of OBB.
-~~~~
+~~~~{.cpp}
 buseobb 1
 ~~~~
 
@@ -2919,7 +2919,7 @@ Note that messages corresponding to errors and warnings are defined in resource 
 These messages can be localized; for that put translated version to separate file and load it in the application by call to *Message_MsgFile::Load()* .
 
 Here is the example of how to use this system:
-~~~~~
+~~~~{.cpp}
 BOPAlgo_PaveFiller aPF;
 aPF.SetArguments(...);
 aPF.Perform();
@@ -2934,17 +2934,17 @@ if (aPF.HasErrors()) {
   }
   ...
 }
-~~~~~
+~~~~
 
 DRAW commands executing Boolean operations output errors and warnings generated by these operations in textual form.
 Additional option allows saving shapes for which warnings have been generated, as DRAW variables. 
 To activate this option, run command *bdrawwarnshapes* with argument 1 (or with 0 to deactivate):
-~~~~
+~~~~{.cpp}
 bdrawwarnshapes 1
 ~~~~
 
 After setting this option and running an algorithm the result will look as follows:
-~~~~
+~~~~{.cpp}
 Warning: The interfering vertices of the same argument: ws_1_1 ws_1_2
 Warning: The positioning of the shapes leads to creation of small edges without valid range: ws_2_1
 ~~~~
@@ -2978,7 +2978,7 @@ But if the faces are fully coinciding, the result must be empty, and both faces 
 
 Example of the overlapping faces:
 
-~~~~
+~~~~{.cpp}
 plane p 0 0 0 0 0 1
 mkface f1 p -10 10 -10 10
 mkface f2 p 0 20 -10 10
@@ -3005,7 +3005,7 @@ Thus, each of the input edges will be Modified into its two splits.
 But in the CUT operation on the same edges, the tool edge will be Deleted from the result and, thus, will not have any Modified shapes.
 
 Example of the intersecting edges:
-~~~~
+~~~~{.cpp}
 line l1 0 0 0 1 0 0
 mkedge e1 l1 -10 10
 
@@ -3051,7 +3051,7 @@ Two intersecting edges will both have the intersection vertices Generated from t
 
 As for the operation with intersecting faces, consider the following example:
 
-~~~~
+~~~~{.cpp}
 plane p1 0 0 0 0 0 1
 mkface f1 p1 -10 10 -10 10
 
@@ -3115,7 +3115,7 @@ For controlling this possibility in DRAW the command **bsimplify** has been impl
 
 Here is the simple example of simplification of the result of Fuse operation of two boxes:
 
-~~~~
+~~~~{.cpp}
 bsimplify -f 1
 
 box b1 10 10 15
@@ -3173,7 +3173,7 @@ The following example illustrates how to use General Fuse operator:
 
 #### C++ Level
 
-~~~~
+~~~~{.cpp}
 #include <TopoDS_Shape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <BRepAlgoAPI_BuilderAlgo.hxx>
@@ -3205,7 +3205,7 @@ The following example illustrates how to use General Fuse operator:
 
 #### Tcl Level
 
-~~~~
+~~~~{.cpp}
 # prepare the arguments
 box b1 10 10 10 
 box b2 3 4 5 10 10 10 
@@ -3231,7 +3231,7 @@ The following example illustrates how to use the Splitter operator:
 
 #### C++ Level
 
-~~~~
+~~~~{.cpp}
 #include <TopoDS_Shape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <BRepAlgoAPI_Splitter.hxx>
@@ -3265,7 +3265,7 @@ const TopoDS_Shape& aResult = aSplitter.Shape();
 
 #### Tcl Level
 
-~~~~
+~~~~{.cpp}
 # prepare the arguments
 # objects
 box b1 10 10 10 
@@ -3297,7 +3297,7 @@ The following example illustrates how to use Common operation:
 
 #### C++ Level
 
-~~~~
+~~~~{.cpp}
 #include <TopoDS_Shape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include < BRepAlgoAPI_Common.hxx>
@@ -3336,7 +3336,7 @@ The following example illustrates how to use Common operation:
 
 #### Tcl Level
 
-~~~~
+~~~~{.cpp}
 # prepare the arguments
 box b1 10 10 10 
 box b2 7 0 4 10 10 10 
@@ -3364,7 +3364,7 @@ The following example illustrates how to use Fuse operation:
 
 #### C++ Level
 
-~~~~
+~~~~{.cpp}
 #include <TopoDS_Shape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include < BRepAlgoAPI_Fuse.hxx>
@@ -3403,7 +3403,7 @@ The following example illustrates how to use Fuse operation:
 
 #### Tcl Level
 
-~~~~
+~~~~{.cpp}
 # prepare the arguments
 box b1 10 10 10 
 box b2 7 0 4 10 10 10 
@@ -3431,7 +3431,7 @@ The following example illustrates how to use Cut operation:
 
 #### C++ Level
 
-~~~~
+~~~~{.cpp}
 #include <TopoDS_Shape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include < BRepAlgoAPI_Cut.hxx>
@@ -3470,7 +3470,7 @@ The following example illustrates how to use Cut operation:
 
 #### Tcl Level
 
-~~~~
+~~~~{.cpp}
 # prepare the arguments
 box b1 10 10 10 
 box b2 7 0 4 10 10 10 
@@ -3499,7 +3499,7 @@ The following example illustrates how to use Section operation:
 
 #### C++ Level
 
-~~~~
+~~~~{.cpp}
 #include <TopoDS_Shape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include < BRepAlgoAPI_Section.hxx>
@@ -3538,7 +3538,7 @@ The following example illustrates how to use Section operation:
 
 #### Tcl Level
 
-~~~~
+~~~~{.cpp}
 # prepare the arguments
 box b1 10 10 10 
 box b2 3 4 5 10 10 10 

@@ -42,7 +42,7 @@ In the <i> Formats </i> method, add the format of the documents, which need to b
 
 For example:
 
-~~~~
+~~~~{.cpp}
     void myApplication::Formats(TColStd_SequenceOfExtendedString& Formats)
     {
       Formats.Append(TCollection_ExtendedString ("OCAF-myApplication"));
@@ -53,7 +53,7 @@ In the <i> ResourcesName</i> method, you only define the name of the resource fi
 file contains several definitions for the saving and opening mechanisms associated
 with each format and calling of the plug-in file.
 
-~~~~
+~~~~{.cpp}
     Standard_CString myApplication::ResourcesName()
     {
       return Standard_CString ("Resources");
@@ -62,7 +62,7 @@ with each format and calling of the plug-in file.
 
 To obtain the saving and opening mechanisms, it is necessary to set two environment variables: <i> CSF_PluginDefaults</i>, which defines the path of the plug-in file, and <i> CSF_ResourcesDefault</i>, which defines the resource file:
 
-~~~~
+~~~~{.cpp}
     SetEnvironmentVariable ( "CSF_ResourcesDefaults",myDirectory);
     SetEnvironmentVariable ( "CSF_PluginDefaults",myDirectory);
 ~~~~
@@ -91,7 +91,7 @@ These drivers are provided as plug-ins and are located in the <i> PappStdPlugin<
 
 For example, this is a resource file, which declares a new model document OCAF-MyApplication:
 
-~~~~
+~~~~{.cpp}
 formatlist:OCAF-MyApplication
 OCAF-MyApplication.Description: MyApplication Document Version 1.0
 OCAF-MyApplication.FileExtension: sta
@@ -116,7 +116,7 @@ The syntax of each item is <i> Identification.Location Library_Name, </i> where:
 
 For example, this is a Plugin file:
 
-~~~~
+~~~~{.cpp}
 a148e300-5740-11d1-a904-080036aaa103.Location: FWOSPlugin
 ! base document drivers plugin
 ad696000-5b34-11d1-b5ba-00a0c9064368.Location: PAppStdPlugin
@@ -128,7 +128,7 @@ ad696002-5b34-11d1-b5ba-00a0c9064368.Location: PAppStdPlugin
  
 ## Implementation of Attribute Transformation in a HXX file
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+~~~~{.cpp}
 \#include <TDF_Attribute.hxx>
 
 \#include <gp_Ax3.hxx>
@@ -223,11 +223,11 @@ private:
   gp_Pnt myFirstPoint;
   gp_Pnt mySecondPoint;
 }; 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ## Implementation of Attribute Transformation in a CPP file
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+~~~~{.cpp}
 \#include <MyPackage_Transformation.hxx> 
 
 //======================================================================= 
@@ -526,7 +526,7 @@ Standard_OStream& MyPackage_Transformation::Dump(Standard_OStream& anOS) const
 MyPackage_Transformation::MyPackage_Transformation():myType(gp_Identity){ 
 
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ##  Implementation of typical actions with standard OCAF attributes.
 
