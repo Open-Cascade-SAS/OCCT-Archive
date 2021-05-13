@@ -803,6 +803,9 @@ public: //! @name Selection Filters management
   //! Returns the list of filters active in a local context.
   Standard_EXPORT const SelectMgr_ListOfFilter& Filters() const;
 
+  //! @return the context selection global context filter.
+  const Handle(SelectMgr_AndOrFilter)& GlobalFilter() const { return myFilters; }
+
   //! Allows you to add the filter.
   Standard_EXPORT void AddFilter (const Handle(SelectMgr_Filter)& theFilter);
 
