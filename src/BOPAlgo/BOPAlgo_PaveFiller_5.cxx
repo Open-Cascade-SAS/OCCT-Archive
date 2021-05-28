@@ -431,6 +431,7 @@ void BOPAlgo_PaveFiller::PerformEF()
 
             // Real intersection is present.
             // Update the existing vertex to cover the intersection point.
+            Standard_Boolean bIsInSphereOfOldVertex = Standard_False;
             for (j = 0; j < 2; ++j)
             {
               if (bIsOnPave[j])
@@ -444,14 +445,19 @@ void BOPAlgo_PaveFiller::PerformEF()
                 {
                   aMaxDist = Min(aMaxDist, 0.1);
                 }
+                //jgv
+                aMaxDist = 1.e-5;
+                /////
                 if (aDistPP < aMaxDist)
                 {
                   UpdateVertex(nV[j], aDistPP);
                   myVertsToAvoidExtension.Add(nV[j]);
+                  bIsInSphereOfOldVertex = Standard_True;
                 }
               }
             }
-            continue;
+            if (bIsInSphereOfOldVertex)
+              continue;
           }
 
           if (CheckFacePaves(aVnew, aMIFOn)) {
