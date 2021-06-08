@@ -43,7 +43,7 @@ vcaps -opaqueAlpha 0
 
 # VTK viewer, just for comparison
 set hasVtk 0
-if { [vdriver -default] == "TKOpenGl" } {
+if { [vdriver -default] == "TKOpenGl" && $::tcl_platform(os) != "Darwin" } {
   set hasVtk 1
   if { [catch { pload VIS }] } { set hasVtk 0 }
 }
