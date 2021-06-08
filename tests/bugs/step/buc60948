@@ -1,6 +1,3 @@
-puts "TODO OCC24156 MacOS: \\*\\*\\* Abort"
-puts "TODO OCC24156 MacOS: ... The exception is"
-
 puts "========================"
 puts "BUC60948"
 puts "========================"

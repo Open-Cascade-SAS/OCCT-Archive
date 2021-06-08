@@ -1,5 +1,3 @@
-puts "TODO OCC26174 ALL: ERROR: OCC26174 is reproduced."
-
 puts "========"
 puts "OCC26174"
 puts "========"
