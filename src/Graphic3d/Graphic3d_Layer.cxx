@@ -172,6 +172,38 @@ inline bool isInfiniteBndBox (const Graphic3d_BndBox3d& theBndBox)
 }
 
 // =======================================================================
+// function : updateBoundingBox
+// purpose  :
+// =======================================================================
+void updateBoundingBox(const Handle(Graphic3d_Camera)& theCamera,
+  const Graphic3d_Mat4d& aProjectionMat,
+  const Graphic3d_Mat4d& aWorldViewMat,
+  Standard_Integer theWindowWidth,
+  Standard_Integer theWindowHeight,
+  const Handle(Graphic3d_TransformPers)& aTrsfPers,
+  Graphic3d_BndBox3d& aBox,
+  Bnd_Box& aResBox)
+{
+  if (aTrsfPers.IsNull())
+  {
+    return;
+  }
+
+  if (!aBox.IsValid())
+  {
+    return;
+  }
+
+  aTrsfPers->Apply(theCamera, aProjectionMat, aWorldViewMat, theWindowWidth, theWindowHeight, aBox);
+  if (aBox.IsValid()
+    && !isInfiniteBndBox(aBox))
+  {
+    aResBox.Add(gp_Pnt(aBox.CornerMin().x(), aBox.CornerMin().y(), aBox.CornerMin().z()));
+    aResBox.Add(gp_Pnt(aBox.CornerMax().x(), aBox.CornerMax().y(), aBox.CornerMax().z()));
+  }
+}
+
+// =======================================================================
 // function : BoundingBox
 // purpose  :
 // =======================================================================
@@ -268,26 +300,34 @@ Bnd_Box Graphic3d_Layer::BoundingBox (Standard_Integer theViewId,
     {
       continue;
     }
-    else if (aStructure->TransformPersistence().IsNull()
-         || !aStructure->TransformPersistence()->IsTrihedronOr2d())
+    for (Graphic3d_SequenceOfGroup::Iterator aGroupIter(aStructure->Groups()); aGroupIter.More(); aGroupIter.Next())
+    {
+      const Handle(Graphic3d_Group)& aGroup = aGroupIter.Value();
+      if (aGroup->TransformPersistence().IsNull())
+      {
+        continue;
+      }
+
+      const Graphic3d_BndBox4f& aBoxF = aGroup->BoundingBox();
+      Graphic3d_BndBox3d aBox = Graphic3d_BndBox3d (Graphic3d_Vec3d ((Standard_Real)aBoxF.CornerMin().x(),
+                                                                     (Standard_Real)aBoxF.CornerMin().y(),
+                                                                     (Standard_Real)aBoxF.CornerMin().z()),
+                                                    Graphic3d_Vec3d ((Standard_Real)aBoxF.CornerMax().x(),
+                                                                     (Standard_Real)aBoxF.CornerMax().y(),
+                                                                     (Standard_Real)aBoxF.CornerMax().z()));
+      updateBoundingBox(theCamera, aProjectionMat, aWorldViewMat, theWindowWidth, theWindowHeight,
+        aGroup->TransformPersistence(), aBox, aResBox);
+    }
+
+    if (aStructure->TransformPersistence().IsNull()
+     || !aStructure->TransformPersistence()->IsTrihedronOr2d())
     {
       continue;
     }
 
     Graphic3d_BndBox3d aBox = aStructure->BoundingBox();
-    if (!aBox.IsValid())
-    {
-      continue;
-    }
-
-    aStructure->TransformPersistence()->Apply (theCamera, aProjectionMat, aWorldViewMat, theWindowWidth, theWindowHeight, aBox);
-    if (aBox.IsValid()
-    && !isInfiniteBndBox (aBox))
-    {
-      aResBox.Add (gp_Pnt (aBox.CornerMin().x(), aBox.CornerMin().y(), aBox.CornerMin().z()));
-      aResBox.Add (gp_Pnt (aBox.CornerMax().x(), aBox.CornerMax().y(), aBox.CornerMax().z()));
-    }
-  }
+    updateBoundingBox (theCamera, aProjectionMat, aWorldViewMat, theWindowWidth, theWindowHeight,
+      aStructure->TransformPersistence(), aBox, aResBox);
 
   return aResBox;
 }
