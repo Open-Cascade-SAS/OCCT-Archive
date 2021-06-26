@@ -125,15 +125,40 @@ namespace
 
         Bnd_Box aBoundingBox;
         anObject->BoundingBox (aBoundingBox);
-        if (aBoundingBox.IsVoid()
-         || anObject->TransformPersistence().IsNull())
+        if (!aBoundingBox.IsVoid()
+         && !anObject->TransformPersistence().IsNull())
+        {
+          anObject->TransformPersistence()->Apply (theCamera, theProjectionMat, theWorldViewMat, theWidth, theHeight, aBoundingBox);
+        }
+        // processing presentations with own transform persistence
+        PrsMgr_Presentations& aPresentations = anObject->Presentations();
+        for (PrsMgr_Presentations::Iterator aPrsIter (aPresentations); aPrsIter.More(); aPrsIter.Next())
+        {
+          const Handle(PrsMgr_Presentation)& aPrs3d = aPrsIter.ChangeValue();
+          for (Graphic3d_SequenceOfGroup::Iterator aGroupIter (aPrs3d->Groups()); aGroupIter.More(); aGroupIter.Next())
+          {
+            if (!aGroupIter.Value()->TransformPersistence().IsNull())
+            {
+              const Graphic3d_BndBox4f& aBndBox = aGroupIter.Value()->BoundingBox();
+              if (!aBndBox.IsValid())
+              {
+                continue;
+              }
+              Bnd_Box aGroupBoundingBox;
+              aGroupBoundingBox.Update (aBndBox.CornerMin().x(), aBndBox.CornerMin().y(), aBndBox.CornerMin().z(),
+                                        aBndBox.CornerMax().x(), aBndBox.CornerMax().y(), aBndBox.CornerMax().z());
+              aGroupIter.Value()->TransformPersistence()->Apply (theCamera, theProjectionMat, theWorldViewMat, theWidth, theHeight, aGroupBoundingBox);
+              aBoundingBox.Add (aGroupBoundingBox);
+            }
+          }
+        }
+
+        if (aBoundingBox.IsVoid())
         {
           myBoundings.Add (new Select3D_HBndBox3d());
         }
         else
         {
-          anObject->TransformPersistence()->Apply (theCamera, theProjectionMat, theWorldViewMat, theWidth, theHeight, aBoundingBox);
-
           const gp_Pnt aMin = aBoundingBox.CornerMin();
           const gp_Pnt aMax = aBoundingBox.CornerMax();
           myBoundings.Add (new Select3D_HBndBox3d (Select3D_Vec3 (aMin.X(), aMin.Y(), aMin.Z()),

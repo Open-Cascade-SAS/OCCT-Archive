@@ -377,6 +377,16 @@ static int ParseDimensionParams (Standard_Integer  theArgNum,
       if (aLocalParam == "internal") { theAspect->SetArrowOrientation (Prs3d_DAO_Internal); }
       if (aLocalParam == "fit")      { theAspect->SetArrowOrientation (Prs3d_DAO_Fit); }
     }
+    else if (aParam.IsEqual ("-zoomablearrow"))
+    {
+      TCollection_AsciiString aValue (theArgVec[++anIt]);
+      if (!aValue.IsIntegerValue())
+      {
+        Message::SendFail() << "Error: zoomable arrow value should be 0 or 1.";
+        return 1;
+      }
+      theAspect->ArrowAspect()->SetZoomable (Draw::Atoi (aValue.ToCString()) != 0);
+    }
     else if (aParam.IsEqual ("-arrowlength") || aParam.IsEqual ("-arlen"))
     {
       TCollection_AsciiString aValue (theArgVec[++anIt]);
@@ -1936,6 +1946,7 @@ void ViewerTest::RelationCommands(Draw_Interpretor& theCommands)
       "[-font FontName]\n"
       "[-label left|right|hcenter|hfit top|bottom|vcenter|vfit]\n"
       "[-arrow external|internal|fit]\n"
+      "[-zoomablearrow 0|1]\n"
       "[{-arrowlength|-arlen} RealArrowLength]\n"
       "[{-arrowangle|-arangle} ArrowAngle(degrees)]\n"
       "[-plane xoy|yoz|zox]\n"
@@ -1971,6 +1982,7 @@ void ViewerTest::RelationCommands(Draw_Interpretor& theCommands)
     "[-font FontName]\n"
     "[-label left|right|hcenter|hfit top|bottom|vcenter|vfit]\n"
     "[-arrow external|internal|fit]\n"
+    "[-zoomablearrow 0|1]\n"
     "[{-arrowlength|-arlen} RealArrowLength]\n"
     "[{-arrowangle|-arangle} ArrowAngle(degrees)]\n"
     "[-plane xoy|yoz|zox]\n"

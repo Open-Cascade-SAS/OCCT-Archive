@@ -394,10 +394,42 @@ void OpenGl_Structure::renderGeometry (const Handle(OpenGl_Workspace)& theWorksp
     myInstancedStructure->renderGeometry (theWorkspace, theHasClosed);
   }
 
+  const Handle(OpenGl_Context)& aCtx = theWorkspace->GetGlContext();
   for (OpenGl_Structure::GroupIterator aGroupIter (myGroups); aGroupIter.More(); aGroupIter.Next())
   {
+    const Handle(Graphic3d_TransformPers)& aTrsfPersistence = aGroupIter.Value()->TransformPersistence();
+    Standard_Boolean anOldCastShadows;
+    gp_Pnt aStartPnt;
+
+    if (!aTrsfPersistence.IsNull())
+    {
+      if (aTrsfPersistence->IsZoomOrRotate())
+      {
+        aCtx->ModelWorldState.Push();
+        OpenGl_Mat4& aModelWorld = aCtx->ModelWorldState.ChangeCurrent();
+        aStartPnt = aTrsfPersistence->AnchorPoint();
+        Graphic3d_Vec4 anAnchorPoint = aModelWorld * Graphic3d_Vec4 ((Standard_ShortReal)aStartPnt.X(),
+          (Standard_ShortReal)aStartPnt.Y(), (Standard_ShortReal)aStartPnt.Z(), 1.0f);
+        aModelWorld.SetColumn (3, Graphic3d_Vec4 (Graphic3d_Vec3 (0.0), 1.0));
+        aTrsfPersistence->SetAnchorPoint (gp_Pnt (anAnchorPoint.x(), anAnchorPoint.y(), anAnchorPoint.z()));
+      }
+      applyPersistence (aCtx, aTrsfPersistence, anOldCastShadows, Standard_True);
+      aCtx->ApplyModelViewMatrix();
+    }
+
     theHasClosed = theHasClosed || aGroupIter.Value()->IsClosed();
     aGroupIter.Value()->Render (theWorkspace);
+
+    if (!aTrsfPersistence.IsNull())
+    {
+      if (aTrsfPersistence->IsZoomOrRotate())
+      {
+        aTrsfPersistence->SetAnchorPoint (aStartPnt);
+        aCtx->ModelWorldState.Pop();
+      }
+      applyPersistence (aCtx, aTrsfPersistence, anOldCastShadows, Standard_False);
+      aCtx->ApplyModelViewMatrix();
+    }
   }
 }
 
@@ -446,26 +478,7 @@ void OpenGl_Structure::Render (const Handle(OpenGl_Workspace) &theWorkspace) con
 #endif
   if (!myTrsfPers.IsNull())
   {
-    // temporarily disable shadows on non-3d objects
-    anOldCastShadows = aCtx->ShaderManager()->SetCastShadows (false);
-
-    aCtx->WorldViewState.Push();
-    OpenGl_Mat4& aWorldView = aCtx->WorldViewState.ChangeCurrent();
-    myTrsfPers->Apply (aCtx->Camera(),
-                       aCtx->ProjectionState.Current(), aWorldView,
-                       aCtx->VirtualViewport()[2], aCtx->VirtualViewport()[3]);
-
-  #if !defined(GL_ES_VERSION_2_0)
-    if (!aCtx->IsGlNormalizeEnabled()
-      && aCtx->core11ffp != NULL)
-    {
-      const Standard_Real aScale = Graphic3d_TransformUtils::ScaleFactor<Standard_ShortReal> (aWorldView);
-      if (Abs (aScale - 1.0) > Precision::Confusion())
-      {
-        aCtx->SetGlNormalizeEnabled (Standard_True);
-      }
-    }
-  #endif
+    applyPersistence (aCtx, myTrsfPers, anOldCastShadows, Standard_True);
 
   #ifdef GL_DEPTH_CLAMP
     if (myTrsfPers->Mode() == Graphic3d_TMF_CameraPers
@@ -623,7 +636,7 @@ void OpenGl_Structure::Render (const Handle(OpenGl_Workspace) &theWorkspace) con
 
   if (!myTrsfPers.IsNull())
   {
-    aCtx->WorldViewState.Pop();
+    applyPersistence (aCtx, myTrsfPers, anOldCastShadows, Standard_False);
     aCtx->ShaderManager()->SetCastShadows (anOldCastShadows);
   #ifdef GL_DEPTH_CLAMP
     if (toRestoreDepthClamp) { aCtx->core11fwd->glDisable (GL_DEPTH_CLAMP); }
@@ -664,6 +677,46 @@ void OpenGl_Structure::ReleaseGlResources (const Handle(OpenGl_Context)& theGlCt
 Handle(Graphic3d_CStructure) OpenGl_Structure::ShadowLink (const Handle(Graphic3d_StructureManager)& theManager) const
 {
   return new OpenGl_StructureShadow (theManager, this);
+}
+
+// =======================================================================
+// function : applyPersistence
+// purpose  :
+// =======================================================================
+void OpenGl_Structure::applyPersistence (const Handle(OpenGl_Context)& theContext,
+                                         const Handle(Graphic3d_TransformPers)& theTrsfPersistence,
+                                         Standard_Boolean& theOldCastShadows,
+                                         const Standard_Boolean toEnable) const
+{
+  if (toEnable)
+  {
+    // temporarily disable shadows on non-3d objects
+    theOldCastShadows = theContext->ShaderManager()->SetCastShadows (false);
+
+    theContext->WorldViewState.Push();
+    OpenGl_Mat4& aWorldView = theContext->WorldViewState.ChangeCurrent();
+    theTrsfPersistence->Apply (theContext->Camera(),
+                               theContext->ProjectionState.Current(), aWorldView,
+                               theContext->VirtualViewport()[2], theContext->VirtualViewport()[3]);
+
+  #if !defined(GL_ES_VERSION_2_0)
+    if (!theContext->IsGlNormalizeEnabled()
+      && theContext->core11ffp != NULL)
+    {
+      const Standard_Real aScale = Graphic3d_TransformUtils::ScaleFactor<Standard_ShortReal> (aWorldView);
+      if (Abs (aScale - 1.0) > Precision::Confusion())
+      {
+        theContext->SetGlNormalizeEnabled (Standard_True);
+      }
+    }
+  #endif
+  }
+  else
+  {
+    theContext->WorldViewState.Pop();
+    theContext->ShaderManager()->SetCastShadows (theOldCastShadows);
+    theContext->ApplyModelViewMatrix();
+  }
 }
 
 //=======================================================================

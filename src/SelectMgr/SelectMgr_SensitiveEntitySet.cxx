@@ -15,10 +15,44 @@
 
 #include <SelectMgr_SensitiveEntitySet.hxx>
 
+#include <Graphic3d_TransformPers.hxx>
 #include <Select3D_SensitiveEntity.hxx>
 #include <SelectMgr_SensitiveEntity.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(SelectMgr_SensitiveEntitySet, BVH_PrimitiveSet3d)
+
+class SelectMgr_AdaptorPersistent : public Standard_Transient
+{
+  DEFINE_STANDARD_RTTIEXT(SelectMgr_AdaptorPersistent, Standard_Transient)
+public:
+  SelectMgr_AdaptorPersistent (const Handle(Graphic3d_Camera)& theCamera,
+                               const Graphic3d_Mat4d& theProjectionMat,
+                               const Graphic3d_Mat4d& theWorldViewMat,
+                               const Graphic3d_WorldViewProjState& theViewState,
+                               const Standard_Integer theViewportWidth,
+                               const Standard_Integer theViewportHeight)
+    : myCamera (theCamera), myProjectionMat (theProjectionMat),
+      myWorldViewMat (theWorldViewMat), myViewState (theViewState),
+      myViewportWidth (theViewportWidth), myViewportHeight (theViewportHeight) {}
+
+  const Handle(Graphic3d_Camera)& Camera() const { return myCamera; }
+  const Graphic3d_Mat4d& ProjectionMat() const { return myProjectionMat; }
+  const Graphic3d_Mat4d& WorldViewMat() const { return myWorldViewMat; }
+  const Graphic3d_WorldViewProjState& ViewState() const { return myViewState; }
+  Standard_Integer ViewportWidth() const { return myViewportWidth; }
+  Standard_Integer ViewportHeight() const { return myViewportHeight; }
+
+private:
+  Handle(Graphic3d_Camera) myCamera;
+  Graphic3d_Mat4d myProjectionMat;
+  Graphic3d_Mat4d myWorldViewMat;
+  Graphic3d_WorldViewProjState myViewState;
+  Standard_Integer myViewportWidth;
+  Standard_Integer myViewportHeight;
+};
+
+DEFINE_STANDARD_HANDLE(SelectMgr_AdaptorPersistent, Standard_Transient)
+IMPLEMENT_STANDARD_RTTIEXT(SelectMgr_AdaptorPersistent, Standard_Transient)
 
 //=======================================================================
 // function : SelectMgr_SensitiveEntitySet
@@ -47,6 +81,11 @@ void SelectMgr_SensitiveEntitySet::Append (const Handle(SelectMgr_SensitiveEntit
   {
     addOwner (theEntity->BaseSensitive()->OwnerId());
   }
+  mySensitives.Add (theEntity);
+  if (!theEntity->BaseSensitive()->TransformPersistence().IsNull())
+  {
+    myHasEntityWithPersistence = Standard_True;
+  }
   MarkDirty();
 }
 
@@ -69,6 +108,11 @@ void SelectMgr_SensitiveEntitySet::Append (const Handle(SelectMgr_Selection)& th
     if (mySensitives.Add (aSelEntIter.Value()) > anExtent)
     {
       addOwner (aSelEntIter.Value()->BaseSensitive()->OwnerId());
+    }
+    mySensitives.Add (aSelEntIter.Value());
+    if (!aSelEntIter.Value()->BaseSensitive()->TransformPersistence().IsNull())
+    {
+      myHasEntityWithPersistence = Standard_True;
     }
   }
   MarkDirty();
@@ -96,6 +140,7 @@ void SelectMgr_SensitiveEntitySet::Remove (const Handle(SelectMgr_Selection)& th
 
     mySensitives.RemoveLast();
     removeOwner (aSelEntIter.Value()->BaseSensitive()->OwnerId());
+    // TODO: update myHasEntityWithPersistence state, clear myAdaptorPersistent if false
   }
 
   MarkDirty();
@@ -107,7 +152,31 @@ void SelectMgr_SensitiveEntitySet::Remove (const Handle(SelectMgr_Selection)& th
 //=======================================================================
 Select3D_BndBox3d SelectMgr_SensitiveEntitySet::Box (const Standard_Integer theIndex) const
 {
-  return GetSensitiveById (theIndex)->BaseSensitive()->BoundingBox();
+  const Handle(Select3D_SensitiveEntity)& aSensitive = GetSensitiveById (theIndex)->BaseSensitive();
+  if (aSensitive->TransformPersistence().IsNull() || myAdaptorPersistent.IsNull())
+  {
+    return GetSensitiveById (theIndex)->BaseSensitive()->BoundingBox();
+  }
+
+  Select3D_BndBox3d aSensitiveBndBox = GetSensitiveById (theIndex)->BaseSensitive()->BoundingBox();
+  Select3D_BndBox3d aBndBoxInPersistence;
+
+  Bnd_Box aBndBox (
+    gp_Pnt (aSensitiveBndBox.CornerMin().x(), aSensitiveBndBox.CornerMin().y(), aSensitiveBndBox.CornerMin().z()),
+    gp_Pnt (aSensitiveBndBox.CornerMax().x(), aSensitiveBndBox.CornerMin().y(), aSensitiveBndBox.CornerMin().z()));
+
+  aSensitive->TransformPersistence()->Apply (
+    myAdaptorPersistent->Camera(),
+    myAdaptorPersistent->ProjectionMat(),
+    myAdaptorPersistent->WorldViewMat(),
+    myAdaptorPersistent->ViewportWidth(),
+    myAdaptorPersistent->ViewportHeight(),
+    aBndBox);
+
+  gp_Pnt aBndBoxMin = aBndBox.CornerMin();
+  gp_Pnt aBndBoxMax = aBndBox.CornerMax();
+  return Select3D_BndBox3d (SelectMgr_Vec3 (aBndBoxMin.X(), aBndBoxMin.Y(), aBndBoxMin.Z()),
+                            SelectMgr_Vec3 (aBndBoxMax.X(), aBndBoxMax.Y(), aBndBoxMax.Z()));
 }
 
 //=======================================================================
@@ -188,4 +257,30 @@ void SelectMgr_SensitiveEntitySet::removeOwner (const Handle(SelectMgr_EntityOwn
       myOwnersMap.UnBind (theOwner);
     }
   }
+}
+
+//=======================================================================
+// function : UpdateBVH
+// purpose  :
+//=======================================================================
+void SelectMgr_SensitiveEntitySet::UpdateBVH (const Handle(Graphic3d_Camera)& theCamera,
+                                              const Graphic3d_Mat4d& theProjectionMat,
+                                              const Graphic3d_Mat4d& theWorldViewMat,
+                                              const Graphic3d_WorldViewProjState& theViewState,
+                                              const Standard_Integer theViewportWidth,
+                                              const Standard_Integer theViewportHeight)
+{
+  if (!myHasEntityWithPersistence)
+  {
+    return;
+  }
+  myAdaptorPersistent = new SelectMgr_AdaptorPersistent(theCamera, theProjectionMat,
+                                                        theWorldViewMat,
+                                                        theViewState,
+                                                        theViewportWidth,
+                                                        theViewportHeight);
+
+  MarkDirty();
+  BVH();
+  myAdaptorPersistent.Nullify();
 }

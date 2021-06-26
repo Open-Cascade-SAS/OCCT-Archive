@@ -190,6 +190,18 @@ private:
   {
     if (theObject->TransformPersistence().IsNull())
     {
+      PrsMgr_Presentations& aPresentations = theObject->Presentations();
+      for (PrsMgr_Presentations::Iterator aPrsIter (aPresentations); aPrsIter.More(); aPrsIter.Next())
+      {
+        const Handle(PrsMgr_Presentation)& aPrs3d = aPrsIter.ChangeValue();
+        for (Graphic3d_SequenceOfGroup::Iterator aGroupIter (aPrs3d->Groups()); aGroupIter.More(); aGroupIter.Next())
+        {
+          if (!aGroupIter.Value()->TransformPersistence().IsNull())
+          {
+            return SelectMgr_SelectableObjectSet::BVHSubset_3dPersistent;
+          }
+        }
+      }
       return SelectMgr_SelectableObjectSet::BVHSubset_3d;
     }
     else if (theObject->TransformPersistence()->Mode() == Graphic3d_TMF_2d)
