@@ -780,16 +780,16 @@ void OpenGl_Text::render (const Handle(OpenGl_Context)& theCtx,
   }
 #if !defined(GL_ES_VERSION_2_0)
   // activate texture unit
-  GLint aTexEnvParam = GL_REPLACE;
+  ////GLint aTexEnvParam = GL_REPLACE;
   if (theCtx->core11ffp != NULL)
   {
     theCtx->core11fwd->glDisable (GL_TEXTURE_1D);
     theCtx->core11fwd->glEnable  (GL_TEXTURE_2D);
-    theCtx->core11ffp->glGetTexEnviv (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, &aTexEnvParam);
-    if (aTexEnvParam != GL_REPLACE)
-    {
-      theCtx->core11ffp->glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    }
+    ////theCtx->core11ffp->glGetTexEnviv (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, &aTexEnvParam);
+    ////if (aTexEnvParam != GL_REPLACE)
+    ////{
+    ////  theCtx->core11ffp->glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    ////}
   }
 #endif
 
@@ -860,12 +860,12 @@ void OpenGl_Text::render (const Handle(OpenGl_Context)& theCtx,
     theCtx->ApplyProjectionMatrix();
   }
 
-#if !defined(GL_ES_VERSION_2_0)
-  if (theCtx->core11ffp != NULL)
-  {
-    theCtx->core11ffp->glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, aTexEnvParam);
-  }
-#endif
+//#if !defined(GL_ES_VERSION_2_0)
+  //if (theCtx->core11ffp != NULL)
+  //{
+  //  theCtx->core11ffp->glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, aTexEnvParam);
+  //}
+//#endif
 
   if (theTextAspect.Aspect()->TextDisplayType() == Aspect_TODT_DIMENSION)
   {
