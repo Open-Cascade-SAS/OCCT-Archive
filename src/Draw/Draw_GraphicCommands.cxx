@@ -57,6 +57,107 @@ static char Draw_fontsize[FONTLENGTH]="150";
 static char Draw_fontnamedefault[FONTLENGTH]="Helvetica";
 static char Draw_fontsizedefault[FONTLENGTH]="150";
 
+
+//=======================================================================
+//function : Draw_PointColor
+//purpose  : Sets new color for rendering of points. Returns the
+//           previous one to keep possibility to restore the initial
+//           state
+//=======================================================================
+Standard_EXPORT Draw_Color Draw_PointColor(const Draw_Color theColor)
+{
+  Draw_PntParams& aParams = Draw::PntParameters();
+  Draw_Color aLastColor = aParams.PntColor;
+  aParams.PntColor = theColor;
+  return aLastColor;
+}
+
+//=======================================================================
+//function : Draw_PointMarker
+//purpose  : Sets new marker for rendering of points. Returns the
+//           previous one to keep possibility to restore the initial
+//           state
+//=======================================================================
+Standard_EXPORT Draw_MarkerShape Draw_PointMarker(const Draw_MarkerShape theMarker)
+{
+  Draw_PntParams& aParams = Draw::PntParameters();
+  Draw_MarkerShape aLastMarker = aParams.PntMarker;
+  aParams.PntMarker = theMarker;
+  return aLastMarker;
+}
+
+//=======================================================================
+//function : printColor
+//purpose  : 
+//=======================================================================
+
+static void printColor(Draw_Interpretor& di, const Draw_Color& theColor)
+{
+  switch ( theColor.ID() )
+  {
+    case Draw_blanc:   di << "white "            << "\n"; break;
+    case Draw_rouge:   di << "red "              << "\n"; break;
+    case Draw_vert:    di << "green "            << "\n"; break;
+    case Draw_bleu:    di << "blue "             << "\n"; break;
+    case Draw_cyan:    di << "cyan "             << "\n"; break;
+    case Draw_or:      di << "golden "           << "\n"; break;
+    case Draw_magenta: di << "magenta "          << "\n"; break;
+    case Draw_marron:  di << "brown "            << "\n"; break;
+    case Draw_orange:  di << "orange "           << "\n"; break;
+    case Draw_rose:    di << "pink "             << "\n"; break;
+    case Draw_saumon:  di << "salmon "           << "\n"; break;
+    case Draw_violet:  di << "violet "           << "\n"; break;
+    case Draw_jaune:   di << "yellow "           << "\n"; break;
+    case Draw_kaki:    di << "dark-olive green \n"; break;
+    case Draw_corail:  di << "coral "            << "\n"; break;
+  }
+}
+
+//=======================================================================
+//function : recognizeColor
+//purpose  : 
+//=======================================================================
+
+static Draw_Color recognizeColor(const char* theColorStr,
+                                 const Draw_Color& theDefaultColor)
+{
+  Draw_Color aResult = theDefaultColor;
+
+  if ( !strcasecmp(theColorStr,"white") )
+    aResult = Draw_blanc;
+  if ( !strcasecmp(theColorStr, "red") )
+    aResult = Draw_rouge;
+  if ( !strcasecmp(theColorStr, "green") )
+    aResult = Draw_vert;
+  if ( !strcasecmp(theColorStr, "blue") )
+    aResult = Draw_bleu;
+  if ( !strcasecmp(theColorStr, "cyan") )
+    aResult = Draw_cyan;
+  if ( !strcasecmp(theColorStr, "golden") )
+    aResult = Draw_or;
+  if ( !strcasecmp(theColorStr, "magenta") )
+    aResult = Draw_magenta;
+  if ( !strcasecmp(theColorStr, "brown") )
+    aResult = Draw_marron;
+  if ( !strcasecmp(theColorStr, "orange") )
+    aResult = Draw_orange;
+  if ( !strcasecmp(theColorStr, "pink") )
+    aResult = Draw_rose;
+  if ( !strcasecmp(theColorStr, "salmon") )
+    aResult = Draw_saumon;
+  if ( !strcasecmp(theColorStr, "violet") )
+    aResult = Draw_violet;
+  if ( !strcasecmp(theColorStr, "yellow") )
+    aResult = Draw_jaune;
+  if ( !strcasecmp(theColorStr, "darkgreen") )
+    aResult = Draw_kaki;
+  if ( !strcasecmp(theColorStr, "coral") )
+    aResult = Draw_corail;
+
+  return aResult;
+}
+
+
 // *******************************************************************
 // Graphic commands
 // *******************************************************************
@@ -948,6 +1049,58 @@ static Standard_Integer dtext(Draw_Interpretor& di, Standard_Integer n, const ch
   return 0;
 }
 
+//=======================================================================
+//function : drsetpointcolor
+//purpose  : 
+//=======================================================================
+
+static Standard_Integer drsetpointcolor(Draw_Interpretor& di,
+                                        Standard_Integer n, const char** a)
+{
+  Draw_Color col, savecol;
+
+  savecol = Draw_PointColor(Draw_Color(Draw_jaune));
+  Draw_PointColor(savecol);
+
+  if (n < 2)
+  {
+    printColor(di, savecol);
+  }
+  else {
+    col = recognizeColor(a[1], savecol);
+    Draw_PointColor(col);
+  }
+  return 0;
+}
+
+//=======================================================================
+//function : drchangepointcolor
+//purpose  : 
+//=======================================================================
+
+static Standard_Integer drchangepointcolor(Draw_Interpretor&,
+                                           Standard_Integer n, const char** a)
+{
+  Draw_Color col, savecol;
+
+  savecol = Draw_PointColor(Draw_Color(Draw_jaune));
+  Draw_PointColor(savecol);
+
+  if ( n < 3 )
+    return 1;
+
+  col = recognizeColor(a[1], savecol);
+    
+  Handle(Draw_Point) D = Handle(Draw_Point)::DownCast( Draw::Get(a[2]) );
+  if ( !D.IsNull() )
+  {
+    D->Color(col);
+    Draw::Repaint();
+  }
+
+  return 0;
+}
+
 void Draw::GraphicCommands(Draw_Interpretor& theCommands)
 {
   static Standard_Boolean Done = Standard_False;
@@ -1021,5 +1174,12 @@ void Draw::GraphicCommands(Draw_Interpretor& theCommands)
   		  __FILE__,dtext,g);
   theCommands.Add("dfont","dfont [name size] : set name and size of Draw font, or reset to default",
   		  __FILE__,dfont,g);
+  theCommands.Add("drsetpointcolor",
+                  "drsetpointcolor [color] : set point color",
+  		  __FILE__,drsetpointcolor,g);
+
+  theCommands.Add("drchangepointcolor",
+                  "drchangepointcolor color point: change color of the point",
+  		  __FILE__,drchangepointcolor,g);
 }
 

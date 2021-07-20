@@ -977,3 +977,67 @@ Standard_Boolean Draw::ParseOnOffNoIterator (Standard_Integer  theArgsNb,
   Standard_Boolean isOn = Draw::ParseOnOffIterator (theArgsNb, theArgVec, theArgIter);
   return toReverse ? !isOn : isOn;
 }
+
+/*
+//=======================================================================
+//function : Draw_PointColor
+//purpose  : Sets new color for rendering of points. Returns the
+//           previous one to keep possibility to restore the initial
+//           state
+//=======================================================================
+Standard_EXPORT Draw_Color Draw_PointColor(const Draw_Color theColor)
+{
+  Draw_PntParams& aParams = Draw::PntParameters();
+  Draw_Color aLastColor = aParams.PntColor;
+  aParams.PntColor = theColor;
+  return aLastColor;
+}
+
+//=======================================================================
+//function : Draw_PointMarker
+//purpose  : Sets new marker for rendering of points. Returns the
+//           previous one to keep possibility to restore the initial
+//           state
+//=======================================================================
+Standard_EXPORT Draw_MarkerShape Draw_PointMarker(const Draw_MarkerShape theMarker)
+{
+  Draw_PntParams& aParams = Draw::PntParameters();
+  Draw_MarkerShape aLastMarker = aParams.PntMarker;
+  aParams.PntMarker = theMarker;
+  return aLastMarker;
+}
+*/
+
+//=======================================================================
+//function : Set
+//purpose  : point
+//=======================================================================
+void Draw::Set (const Standard_CString theName,
+                const gp_Pnt& thePoint)
+{
+  Draw_PntParams& aParams = PntParameters();
+  Handle(Draw_Point) aDrawPoint = new Draw_Point (thePoint, aParams.PntMarker, aParams.PntColor);
+  Draw::Set (theName, aDrawPoint);
+}
+
+//=======================================================================
+//function : Set
+//purpose  : point
+//=======================================================================
+void Draw::Set (const Standard_CString theName,
+                const gp_Pnt2d& thePoint)
+{
+  Draw_PntParams& aParams = PntParameters();
+  Handle(Draw_Point) aDrawPoint = new Draw_Point (thePoint, aParams.PntMarker, aParams.PntColor);
+  Draw::Set (theName, aDrawPoint);
+}
+
+//=======================================================================
+//function : PntParameters
+//purpose  :
+//=======================================================================
+Draw_PntParams& Draw::PntParameters()
+{
+  static Draw_PntParams aParams;
+  return aParams;
+}

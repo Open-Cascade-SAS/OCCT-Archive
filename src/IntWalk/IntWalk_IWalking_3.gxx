@@ -15,6 +15,9 @@
 #include <NCollection_IncAllocator.hxx>
 #include <NCollection_LocalArray.hxx>
 
+//#ifdef DRAW
+#include <Draw.hxx>
+//#endif
 
 // modified by NIZHNY-MKK  Thu Nov  2 15:07:26 2000.BEGIN
 static Standard_Boolean TestPassedSolutionWithNegativeState(const IntWalk_VectorOfWalkingData& wd,
@@ -63,6 +66,10 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
 //    end of conditions.
 
 {
+  //#ifdef DRAW
+  char* name = new char[100];
+  //#endif
+  
   Standard_Integer I = 0, N = 0, SaveN = 0;
   Standard_Real aBornInf[2] = {}, aBornSup[2] = {}, aUVap[2] = {};
   math_Vector BornInf(aBornInf,1,2), BornSup(aBornSup,1,2), UVap(aUVap,1,2);
@@ -125,6 +132,17 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
       previousd3d = Func.Direction3d();
       previousd2d = Func.Direction2d();
       CurrentLine->AddPoint(previousPoint);
+      
+      //#ifdef DRAW
+      Standard_Integer aNbPoints = CurrentLine->NbPoints();
+      gp_Pnt aPnt = previousPoint.Value();
+      sprintf(name, "op%d_%d", I, aNbPoints);
+      Draw::Set(name, aPnt);
+      gp_Pnt2d aPnt2d = previousPoint.ValueOnSurface(false);
+      sprintf(name, "opp%d_%d", I, aNbPoints);
+      Draw::Set(name, aPnt2d);
+      //#endif
+      
       // modified by NIZHNY-MKK  Fri Oct 27 12:34:32 2000.BEGIN
       if(movementdirectioninfo[I] !=0) {
         if(movementdirectioninfo[I] < 0) {
@@ -266,6 +284,17 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               CurrentLine->AddStatusLast(Standard_False);
               //if (aStatus != IntWalk_ArretSurPointPrecedent)
               CurrentLine->AddPoint(Psol);                      
+      
+              //#ifdef DRAW
+              aNbPoints = CurrentLine->NbPoints();
+              aPnt = Psol.Value();
+              sprintf(name, "op%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt);
+              aPnt2d = Psol.ValueOnSurface(false);
+              sprintf(name, "opp%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt2d);
+              //#endif
+      
               //Remove <SaveN> from <seqAlone>
               for (Standard_Integer iseq = 1; iseq <= seqAlone.Length(); iseq++)
                 if (seqAlone(iseq) == SaveN)
@@ -348,6 +377,17 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               Tgtend = Standard_True;
               MakeWalkingPoint(1, UVap(1), UVap(2), Func, Psol);
               CurrentLine->AddPoint(Psol);
+      
+              //#ifdef DRAW
+              aNbPoints = CurrentLine->NbPoints();
+              aPnt = Psol.Value();
+              sprintf(name, "op%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt);
+              aPnt2d = Psol.ValueOnSurface(false);
+              sprintf(name, "opp%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt2d);
+              //#endif
+      
               Rajout = Standard_True;
               seqAlone.Append(lines.Length() + 1);
               seqAjout.Append(lines.Length() + 1);
@@ -357,6 +397,16 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               previousd3d = Func.Direction3d();
               previousd2d = Func.Direction2d();
               CurrentLine->AddPoint(previousPoint);
+      
+              //#ifdef DRAW
+              aNbPoints = CurrentLine->NbPoints();
+              aPnt = previousPoint.Value();
+              sprintf(name, "op%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt);
+              aPnt2d = previousPoint.ValueOnSurface(false);
+              sprintf(name, "opp%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt2d);
+              //#endif
             }     
             else if (aStatus == IntWalk_PointConfondu)
             {

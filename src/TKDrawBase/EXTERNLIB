@@ -1,16 +1,8 @@
 TKernel
-TKDrawBase
 TKG2d
-TKGeomBase
 TKG3d
 TKMath
-TKBRep
-TKGeomAlgo
-TKTopAlgo
-TKShHealing
-TKMesh
 TKService
-TKHLR
 CSF_TclLibs
 CSF_TclTkLibs
 CSF_XwLibs

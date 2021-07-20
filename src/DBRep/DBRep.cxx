@@ -50,7 +50,7 @@
 #include <stdio.h>
 // memory management
 #ifdef _WIN32
-extern Draw_Viewer dout;
+Standard_IMPORT Draw_Viewer dout;
 #endif
 
 #define Characters(IArg) (strspn (Arg[IArg], "0123456789.+-eE") != strlen (Arg[IArg]))

@@ -14,6 +14,10 @@
 
 #include <NCollection_IncAllocator.hxx>
 
+//#ifdef DRAW
+#include <Draw.hxx>
+//#endif
+
 void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
 					const TColStd_SequenceOfReal& Vmult,
 					const ThePOPIterator& Pnts1,
@@ -41,6 +45,10 @@ void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
 //
 // ******************************************************************** 
 {
+  //#ifdef DRAW
+  char* name = new char[100];
+  //#endif
+  
   Standard_Integer I = 0, N = 0,SaveN = 0;
   Standard_Real aBornInf[2] = {}, aBornSup[2] = {}, aUVap[2] = {};
   math_Vector BornInf(aBornInf,1,2), BornSup(aBornSup,1,2);
@@ -138,6 +146,17 @@ void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
 
       CurrentLine = new IntWalk_TheIWLine (new NCollection_IncAllocator());
       CurrentLine->AddPoint(previousPoint);
+      
+      //#ifdef DRAW
+      Standard_Integer aNbPoints = CurrentLine->NbPoints();
+      gp_Pnt aPnt = previousPoint.Value();
+      sprintf(name, "cp%d_%d", I, aNbPoints);
+      Draw::Set(name, aPnt);
+      gp_Pnt2d aPnt2d = previousPoint.ValueOnSurface(false);
+      sprintf(name, "cpp%d_%d", I, aNbPoints);
+      Draw::Set(name, aPnt2d);
+      //#endif
+      
       CurrentLine->SetTangentVector(previousd3d,1);
       Tgtbeg = Standard_False;
       Tgtend = Standard_False;
@@ -341,6 +360,16 @@ void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
                 //if (aStatus != IntWalk_ArretSurPointPrecedent)
                 CurrentLine->AddPoint(Psol);
 
+                //#ifdef DRAW
+                aNbPoints = CurrentLine->NbPoints();
+                aPnt = Psol.Value();
+                sprintf(name, "cp%d_%d", I, aNbPoints);
+                Draw::Set(name, aPnt);
+                aPnt2d = Psol.ValueOnSurface(false);
+                sprintf(name, "cpp%d_%d", I, aNbPoints);
+                Draw::Set(name, aPnt2d);
+                //#endif
+      
                 //Remove <SaveN> from <seqAlone> and, if it is first found point,
                 //from <seqAjout> too
                 if (IsValidEndPoint(I, SaveN))
@@ -391,6 +420,17 @@ void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
                 {
                   if (aStatus == IntWalk_ArretSurPointPrecedent) {
                     CurrentLine->AddPoint(Psol);
+
+                    //#ifdef DRAW
+                    aNbPoints = CurrentLine->NbPoints();
+                    aPnt = Psol.Value();
+                    sprintf(name, "cp%d_%d", I, aNbPoints);
+                    Draw::Set(name, aPnt);
+                    aPnt2d = Psol.ValueOnSurface(false);
+                    sprintf(name, "cpp%d_%d", I, aNbPoints);
+                    Draw::Set(name, aPnt2d);
+                    //#endif
+      
                     OpenLine(0,Psol,Pnts1,Func,CurrentLine);
                   }
                   else {
@@ -495,6 +535,17 @@ void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
                   IntSurf_PntOn2S newP;
                   newP.SetValue(Func.Point(),reversed,Uvap(1),Uvap(2));
                   CurrentLine->AddPoint(newP);
+
+                  //#ifdef DRAW
+                  aNbPoints = CurrentLine->NbPoints();
+                  aPnt = newP.Value();
+                  sprintf(name, "cp%d_%d", I, aNbPoints);
+                  Draw::Set(name, aPnt);
+                  aPnt2d = newP.ValueOnSurface(false);
+                  sprintf(name, "cpp%d_%d", I, aNbPoints);
+                  Draw::Set(name, aPnt2d);
+                  //#endif
+      
                   Rajout = Standard_True;
                   seqAlone.Append(lines.Length()+1);
                   seqAjout.Append(lines.Length()+1);
@@ -507,6 +558,16 @@ void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
               previousd3d = Func.Direction3d();
               previousd2d = Func.Direction2d();
               CurrentLine->AddPoint(previousPoint);
+      
+              //#ifdef DRAW
+              aNbPoints = CurrentLine->NbPoints();
+              aPnt = previousPoint.Value();
+              sprintf(name, "cp%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt);
+              aPnt2d = previousPoint.ValueOnSurface(false);
+              sprintf(name, "cpp%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt2d);
+              //#endif
             }
             else if (aStatus == IntWalk_PointConfondu)
             {

@@ -13,7 +13,7 @@
 
 ;# Return list of toolkits
 proc Draw:toolkits { } {
-  set aResult [list TKDraw TKTopTest TKViewerTest TKXSDRAW TKDCAF TKXDEDRAW TKTObjDRAW TKQADraw]
+  set aResult [list TKDrawBase TKDraw TKTopTest TKViewerTest TKXSDRAW TKDCAF TKXDEDRAW TKTObjDRAW TKQADraw]
 
   lappend aResult "TKOpenGlTest"
   if { [info exists ::env(HAVE_GLES2)] && "$::env(HAVE_GLES2)" == "true" } {

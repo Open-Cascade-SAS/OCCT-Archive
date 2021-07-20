@@ -18,6 +18,8 @@
 #define _Draw_HeaderFile
 
 #include <Draw_Interpretor.hxx>
+#include <Draw_PntParams.hxx>
+#include <Draw_Point.hxx>
 #include <NCollection_Map.hxx>
 #include <Quantity_ColorRGBA.hxx>
 #include <Standard_Handle.hxx>
@@ -58,6 +60,17 @@ public: //! @name Tcl variables management tools
   //! Sets a numeric variable.
   Standard_EXPORT static void Set (const Standard_CString Name, const Standard_Real val);
 
+  //! Sets <G> in the variable <Name>.  Overwrite the
+  //! variable if already set.
+  Standard_EXPORT static void Set (const Standard_CString Name, const gp_Pnt& G);
+  
+  //! Sets <G> in the variable <Name>.  Overwrite the
+  //! variable if already set.
+  Standard_EXPORT static void Set (const Standard_CString Name, const gp_Pnt2d& G);
+
+  //! Return global parameters for points.
+  Standard_EXPORT static Draw_PntParams& PntParameters();
+  
   //! Returns main DRAW interpretor.
   Standard_EXPORT static Draw_Interpretor& GetInterpretor();
 

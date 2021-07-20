@@ -35,7 +35,7 @@
 IMPLEMENT_STANDARD_RTTIEXT(DrawTrSurf_Curve2d, DrawTrSurf_Drawable)
 
 static Standard_Real DrawTrSurf_CurveLimit = 400;
-extern Standard_Boolean Draw_Bounds;
+Standard_IMPORT Standard_Boolean Draw_Bounds;
 
 //=======================================================================
 //function : DrawTrSurf_Curve2d

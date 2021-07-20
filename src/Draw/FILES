@@ -46,6 +46,9 @@ Draw_Number.hxx
 Draw_PInterp.hxx
 Draw_PloadCommands.cxx
 Draw_PluginMacro.hxx
+Draw_PntParams.hxx
+Draw_Point.cxx
+Draw_Point.hxx
 Draw_Printer.cxx
 Draw_Printer.hxx
 Draw_ProgressIndicator.cxx
