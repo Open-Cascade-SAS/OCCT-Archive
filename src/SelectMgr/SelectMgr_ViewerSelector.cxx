@@ -165,6 +165,7 @@ SelectMgr_ViewerSelector::SelectMgr_ViewerSelector()
   myToUpdateTolerance (Standard_True),
   myCameraScale (1.0),
   myToPrebuildBVH (Standard_False),
+  myIsSorted (Standard_False),
   myIsLeftChildQueuedFirst (Standard_False)
 {
   myEntitySetBuilder = new BVH_BinnedBuilder<Standard_Real, 3, 4> (BVH_Constants_LeafNodeSizeSingle, BVH_Constants_MaxTreeDepth, Standard_True);
@@ -230,15 +231,6 @@ void SelectMgr_ViewerSelector::Deactivate (const Handle(SelectMgr_Selection)& th
     myTolerances.Decrement (theSelection->Sensitivity());
     myToUpdateTolerance = Standard_True;
   }
-}
-
-//==================================================
-// Function: Clear
-// Purpose :
-//==================================================
-void SelectMgr_ViewerSelector::Clear()
-{
-  mystored.Clear();
 }
 
 //=======================================================================
@@ -598,6 +590,7 @@ void SelectMgr_ViewerSelector::TraverseSensitives()
   SelectMgr_BVHThreadPool::Sentry aSentry (myBVHThreadPool);
 
   mystored.Clear();
+  myIsSorted = false;
 
   Standard_Integer aWidth;
   Standard_Integer aHeight;
@@ -743,6 +736,38 @@ void SelectMgr_ViewerSelector::TraverseSensitives()
 void SelectMgr_ViewerSelector::ClearPicked()
 {
   mystored.Clear();
+  myIsSorted = true;
+}
+
+//==================================================
+// Function: RemovePicked
+// Purpose :
+//==================================================
+bool SelectMgr_ViewerSelector::RemovePicked (const Handle(SelectMgr_SelectableObject)& theObject)
+{
+  if (mystored.IsEmpty()
+  || !mySelectableObjects.Contains (theObject))
+  {
+    return false;
+  }
+
+  bool isRemoved = false;
+  for (Standard_Integer aPickIter = 1; aPickIter <= mystored.Extent(); ++aPickIter)
+  {
+    const Handle(SelectMgr_EntityOwner)& aStoredOwner = mystored.FindKey (aPickIter);
+    if (!aStoredOwner.IsNull()
+      && aStoredOwner->IsSameSelectable (theObject))
+    {
+      mystored.RemoveFromIndex (aPickIter);
+      --aPickIter;
+      isRemoved = true;
+    }
+  }
+  if (isRemoved)
+  {
+    myIsSorted = false;
+  }
+  return isRemoved;
 }
 
 //=======================================================================
@@ -756,7 +781,12 @@ Handle(SelectMgr_EntityOwner) SelectMgr_ViewerSelector::Picked (const Standard_I
     return Handle(SelectMgr_EntityOwner)();
   }
 
-  const Standard_Integer anOwnerIdx = myIndexes->Value (theRank);
+  if (!myIsSorted)
+  {
+    SortResult();
+  }
+
+  const Standard_Integer anOwnerIdx = myIndexes.Value (theRank);
   const Handle(SelectMgr_EntityOwner)& aStoredOwner = mystored.FindKey (anOwnerIdx);
   return aStoredOwner;
 }
@@ -768,7 +798,12 @@ Handle(SelectMgr_EntityOwner) SelectMgr_ViewerSelector::Picked (const Standard_I
 const SelectMgr_SortCriterion& SelectMgr_ViewerSelector::PickedData(const Standard_Integer theRank) const
 {
   Standard_OutOfRange_Raise_if (theRank < 1 || theRank > NbPicked(), "SelectMgr_ViewerSelector::PickedData() out of range index");
-  const Standard_Integer anOwnerIdx = myIndexes->Value (theRank);
+  if (!myIsSorted)
+  {
+    SortResult();
+  }
+
+  const Standard_Integer anOwnerIdx = myIndexes.Value (theRank);
   return mystored.FindFromIndex (anOwnerIdx);
 }
 
@@ -894,25 +929,26 @@ TCollection_AsciiString SelectMgr_ViewerSelector::Status (const Handle(SelectMgr
 //function : SortResult
 //purpose  :
 //=======================================================================
-void SelectMgr_ViewerSelector::SortResult()
+void SelectMgr_ViewerSelector::SortResult() const
 {
   if (mystored.IsEmpty())
   {
+    myIsSorted = true;
     return;
   }
 
   const Standard_Integer anExtent = mystored.Extent();
-  if (myIndexes.IsNull() || anExtent != myIndexes->Length())
+  if (anExtent != myIndexes.Length())
   {
-    myIndexes = new TColStd_HArray1OfInteger (1, anExtent);
+    myIndexes.Resize (1, anExtent, false);
   }
 
-  TColStd_Array1OfInteger& anIndexArray = myIndexes->ChangeArray1();
   for (Standard_Integer anIndexIter = 1; anIndexIter <= anExtent; ++anIndexIter)
   {
-    anIndexArray.SetValue (anIndexIter, anIndexIter);
+    myIndexes.SetValue (anIndexIter, anIndexIter);
   }
-  std::sort (anIndexArray.begin(), anIndexArray.end(), CompareResults (mystored, myToPreferClosest));
+  std::sort (myIndexes.begin(), myIndexes.end(), CompareResults (mystored, myToPreferClosest));
+  myIsSorted = true;
 }
 
 //=======================================================================
@@ -966,6 +1002,7 @@ void SelectMgr_ViewerSelector::RemoveSelectableObject (const Handle(SelectMgr_Se
   Handle(SelectMgr_SelectableObject) anObj = theObject;
   if (myMapOfObjectSensitives.UnBind (theObject))
   {
+    RemovePicked (theObject);
     mySelectableObjects.Remove (theObject);
   }
 }
@@ -1110,8 +1147,7 @@ void SelectMgr_ViewerSelector::DumpJson (Standard_OStream& theOStream, Standard_
   OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, &myCameraDir)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myCameraScale)
 
-  if (!myIndexes.IsNull())
-    OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIndexes->Size())
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIndexes.Size())
 
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIsLeftChildQueuedFirst)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myMapOfObjectSensitives.Extent())
