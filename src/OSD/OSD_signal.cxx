@@ -17,6 +17,17 @@
 #include <Standard_DivideByZero.hxx>
 #include <Standard_Overflow.hxx>
 
+static Standard_THREADLOCAL Standard_Boolean fFltExceptions = Standard_False;
+
+//=======================================================================
+//function : ToCatchFloatingSignals
+//purpose  :
+//=======================================================================
+Standard_Boolean OSD::ToCatchFloatingSignals()
+{
+  return fFltExceptions;
+}
+
 #ifdef _WIN32
 //---------------------------- Windows NT System --------------------------------
 
@@ -67,7 +78,6 @@
 static Standard_Boolean fCtrlBrk;
 #if !defined(__CYGWIN32__) && !defined(__MINGW32__)
 static Standard_Boolean fMsgBox;
-static Standard_Boolean fFltExceptions;
 static Standard_Boolean fDbgLoaded;
 
 // used to forbid simultaneous execution of setting / executing handlers
@@ -616,7 +626,6 @@ LONG _osd_debug ( void ) {
 #ifdef __linux__
 #include  <cfenv>
 //#include  <fenv.h>
-static Standard_Boolean fFltExceptions = Standard_False;
 #endif
 
 // variable signalling that Control-C has been pressed (SIGINT signal)

@@ -17,6 +17,7 @@
 #include <BRepMesh_IncrementalMesh.hxx>
 
 #include <OSD_Parallel.hxx>
+#include <OSD_Thread.hxx>
 #include <Precision.hxx>
 #include <Standard_ErrorHandler.hxx>
 
