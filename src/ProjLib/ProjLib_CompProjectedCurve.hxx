@@ -20,8 +20,15 @@
 #include <Adaptor2d_Curve2d.hxx>
 #include <Adaptor3d_Surface.hxx>
 #include <ProjLib_HSequenceOfHSequenceOfPnt.hxx>
+#include <ProjLib_Projector.hxx>
+#include <TColGeom_HArray1OfCurve.hxx>
+#include <TColGeom2d_HArray1OfCurve.hxx>
+#include <TColgp_HArray1OfPnt.hxx>
+#include <TColgp_HArray1OfPnt2d.hxx>
 #include <TColStd_HArray1OfBoolean.hxx>
 #include <TColStd_HArray1OfReal.hxx>
+#include <Geom_Curve.hxx>
+#include <Geom2d_Curve.hxx>
 #include <GeomAbs_Shape.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <GeomAbs_CurveType.hxx>
@@ -44,6 +51,13 @@ public:
   //! equal then MaxDist.
   //! if MaxDist < 0 then algorithm works as above.
   Standard_EXPORT ProjLib_CompProjectedCurve(const Handle(Adaptor3d_Surface)& S, const Handle(Adaptor3d_Curve)& C, const Standard_Real TolU, const Standard_Real TolV, const Standard_Real MaxDist);
+
+  //! this constructor tries to optimize the search using the
+  //! assumption that maximum distance between surface and curve less or
+  //! equal then MaxDist.
+  //! if MaxDist < 0 then algorithm try to find all solutions
+  //! Tolerances of parameters are calculated automatically.
+  Standard_EXPORT ProjLib_CompProjectedCurve(const Standard_Real Tol3d, const Handle(Adaptor3d_Surface)& S, const Handle(Adaptor3d_Curve)& C, const Standard_Real MaxDist = -1.0);
   
   //! Shallow copy of adaptor
   Standard_EXPORT virtual Handle(Adaptor2d_Curve2d) ShallowCopy() const Standard_OVERRIDE;
@@ -54,6 +68,35 @@ public:
   //! included  in this set of points.
   Standard_EXPORT void Init();
   
+  //! Performs projecting for given curve.
+  //! If projecting uses approximation, 
+  //! approximation parameters can be set before by corresponding methods 
+  //! SetTol3d(...), SeContinuity(...), SetMaxDegree(...), SetMaxSeg(...)
+  Standard_EXPORT void Perform();
+
+  //! Set the parameter, which defines 3d tolerance of approximation.
+  Standard_EXPORT void SetTol3d(const Standard_Real Tol3d);
+
+  //! Set the parameter, which defines curve continuity.
+  //! Default value is GeomAbs_C2;
+  Standard_EXPORT void SetContinuity(const GeomAbs_Shape Continuity);
+
+  //! Set max possible degree of result BSpline curve2d, which is got by approximation.
+  //! If MaxDegree < 0, algorithm uses values that are chosen depending of types curve 3d
+  //! and surface.
+  Standard_EXPORT void SetMaxDegree(const Standard_Integer MaxDegree);
+
+  //! Set the parameter, which defines maximal value of parametric intervals the projected
+  //! curve can be cut for approximation. If MaxSeg < 0, algorithm uses default 
+  //! value = 16.
+  Standard_EXPORT void SetMaxSeg(const Standard_Integer MaxSeg);
+
+  //! Set the parameter, which defines necessity of 2d results.
+  Standard_EXPORT void SetProj2d(const Standard_Boolean& Only3d);
+
+  //! Set the parameter, which defines necessity of 3d results.
+  Standard_EXPORT void SetProj3d(const Standard_Boolean& Only2d);
+
   //! Changes the surface.
   Standard_EXPORT void Load (const Handle(Adaptor3d_Surface)& S);
   
@@ -143,6 +186,44 @@ public:
   //! Parabola, BezierCurve, BSplineCurve, OtherCurve.
   Standard_EXPORT GeomAbs_CurveType GetType() const Standard_OVERRIDE;
 
+  //! Returns true if result of projecting of the curve interval
+  //! with number Index is point.
+  Standard_EXPORT Standard_Boolean ResultIsPoint(const Standard_Integer Index) const;
+
+  //! Returns the error of approximation of U parameter 2d-curve as a result
+  //! projecting of the curve interval with number Index.
+  Standard_EXPORT Standard_Real GetResult2dUApproxError(const Standard_Integer Index) const;
+
+  //! Returns the error of approximation of V parameter 2d-curve as a result
+  //! projecting of the curve interval with number Index.
+  Standard_EXPORT Standard_Real GetResult2dVApproxError(const Standard_Integer Index) const;
+
+  //! Returns the error of approximation of 3d-curve as a result
+  //! projecting of the curve interval with number Index.
+  Standard_EXPORT Standard_Real GetResult3dApproxError(const Standard_Integer Index) const;
+
+  //! Returns the resulting 2d-curve of projecting
+  //! of the curve interval with number Index.
+  Standard_EXPORT Handle(Geom2d_Curve) GetResult2dC(const Standard_Integer Index) const;
+
+  //! Returns the resulting 3d-curve of projecting
+  //! of the curve interval with number Index.
+  Standard_EXPORT Handle(Geom_Curve) GetResult3dC(const Standard_Integer Index) const;
+
+  //! Returns the resulting 2d-point of projecting
+  //! of the curve interval with number Index.
+  Standard_EXPORT gp_Pnt2d GetResult2dP(const Standard_Integer Index) const;
+
+  //! Returns the resulting 3d-point of projecting
+  //! of the curve interval with number Index.
+  Standard_EXPORT gp_Pnt GetResult3dP(const Standard_Integer Index) const;
+
+  //! Returns the parameter, which defines necessity of only 2d results.
+  Standard_EXPORT Standard_Boolean GetProj2d() const;
+
+  //! Returns the parameter, which defines necessity of only 3d results.
+  Standard_EXPORT Standard_Boolean GetProj3d() const;
+
 private:
 
   //! This method performs check possibility of optimization traps and tries to go out from them.
@@ -165,6 +246,21 @@ private:
   Handle(TColStd_HArray1OfBoolean) mySnglPnts;
   Handle(TColStd_HArray1OfReal) myMaxDistance;
   Handle(TColStd_HArray1OfReal) myTabInt;
+  Standard_Real    myTol3d;
+  GeomAbs_Shape    myContinuity;
+  Standard_Integer myMaxDegree;
+  Standard_Integer myMaxSeg;
+  Standard_Integer myProj2d;
+  Standard_Boolean myProj3d;
+
+  Handle(TColStd_HArray1OfBoolean)  myResultIsPoint;
+  Handle(TColStd_HArray1OfReal)     myResult2dUApproxError;
+  Handle(TColStd_HArray1OfReal)     myResult2dVApproxError;
+  Handle(TColStd_HArray1OfReal)     myResult3dApproxError;
+  Handle(TColgp_HArray1OfPnt)       myResult3dPoint;
+  Handle(TColgp_HArray1OfPnt2d)     myResult2dPoint;
+  Handle(TColGeom_HArray1OfCurve)   myResult3dCurve;
+  Handle(TColGeom2d_HArray1OfCurve) myResult2dCurve;
 };
 
 DEFINE_STANDARD_HANDLE(ProjLib_CompProjectedCurve, Adaptor2d_Curve2d)
