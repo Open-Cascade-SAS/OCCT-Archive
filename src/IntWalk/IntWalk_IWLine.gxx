@@ -20,7 +20,9 @@ IntWalk_IWLine::IntWalk_IWLine (const IntSurf_Allocator& theAllocator) :
   hasFirst (Standard_False), hasLast (Standard_False),
   firstIndex (-1), lastIndex (-1),
   indextg (-1),
-  istgtbeg (Standard_False), istgtend (Standard_False)
+  istgtbeg (Standard_False), istgtend (Standard_False),
+  istangency (Standard_False),
+  myIsPurgerAllowed(Standard_True)
 {
 }
 

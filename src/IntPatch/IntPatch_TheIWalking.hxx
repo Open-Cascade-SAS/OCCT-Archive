@@ -32,6 +32,7 @@
 #include <Standard_Integer.hxx>
 #include <TColStd_SequenceOfReal.hxx>
 #include <IntWalk_StatusDeflection.hxx>
+#include <IntSurf_Quadric.hxx>
 #include <Bnd_Range.hxx>
 
 class IntSurf_PathPoint;
@@ -60,7 +61,9 @@ public:
   //! theToFillHoles is the flag defining whether possible holes
   //! between resulting curves are filled or not
   //! in case of IntPatch walking theToFillHoles is False
-  Standard_EXPORT IntPatch_TheIWalking(const Standard_Real Epsilon, const Standard_Real Deflection, const Standard_Real Step,
+  Standard_EXPORT IntPatch_TheIWalking(const Standard_Real Epsilon,
+                                       const Standard_Real Deflection,
+                                       const Standard_Real Step,
                                        const Standard_Boolean theToFillHoles = Standard_False);
   
   //! Deflection is the maximum deflection admitted between two
@@ -74,11 +77,19 @@ public:
   //! Searches a set of polylines starting on a point of Pnts1
   //! or Pnts2.
   //! Each point on a resulting polyline verifies F(u,v)=0
-  Standard_EXPORT void Perform (const IntSurf_SequenceOfPathPoint& Pnts1, const IntSurf_SequenceOfInteriorPoint& Pnts2, IntPatch_TheSurfFunction& Func, const Handle(Adaptor3d_Surface)& S, const Standard_Boolean Reversed = Standard_False);
+  Standard_EXPORT   void Perform (const IntSurf_SequenceOfPathPoint& Pnts1,
+                                  const IntSurf_SequenceOfInteriorPoint& Pnts2,
+                                  const IntSurf_SequenceOfInteriorPoint& Pnts3,
+                                  IntPatch_TheSurfFunction& Func,
+                                  const Handle(Adaptor3d_Surface)& S,
+                                  const Standard_Boolean Reversed = Standard_False) ;
   
   //! Searches a set of polylines starting on a point of Pnts1.
   //! Each point on a resulting polyline verifies F(u,v)=0
-  Standard_EXPORT void Perform (const IntSurf_SequenceOfPathPoint& Pnts1, IntPatch_TheSurfFunction& Func, const Handle(Adaptor3d_Surface)& S, const Standard_Boolean Reversed = Standard_False);
+  Standard_EXPORT void Perform (const IntSurf_SequenceOfPathPoint& Pnts1,
+                                IntPatch_TheSurfFunction& Func,
+                                const Handle(Adaptor3d_Surface)& S,
+                                const Standard_Boolean Reversed = Standard_False);
   
   //! Returns true if the calculus was successful.
     Standard_Boolean IsDone() const;
@@ -109,25 +120,71 @@ public:
 protected:
 
   
-  Standard_EXPORT Standard_Boolean Cadrage (math_Vector& BornInf, math_Vector& BornSup, math_Vector& UVap, Standard_Real& Step, const Standard_Integer StepSign) const;
+  Standard_EXPORT Standard_Boolean Cadrage (math_Vector& BornInf,
+                                            math_Vector& BornSup,
+                                            math_Vector& UVap,
+                                            Standard_Real& Step,
+                                            const Standard_Integer StepSign) const;
   
-  Standard_EXPORT Standard_Boolean TestArretPassage (const TColStd_SequenceOfReal& Umult, const TColStd_SequenceOfReal& Vmult, IntPatch_TheSurfFunction& Section, math_Vector& UV, Standard_Integer& Irang);
+  Standard_EXPORT Standard_Boolean TestArretPassage (const TColStd_SequenceOfReal& Umult,
+                                                     const TColStd_SequenceOfReal& Vmult,
+                                                     IntPatch_TheSurfFunction& Section,
+                                                     math_Vector& UV,
+                                                     Standard_Integer& Irang);
   
-  Standard_EXPORT Standard_Boolean TestArretPassage (const TColStd_SequenceOfReal& Umult, const TColStd_SequenceOfReal& Vmult, const math_Vector& UV, const Standard_Integer Index, Standard_Integer& Irang);
+  Standard_EXPORT Standard_Boolean TestArretPassage (const TColStd_SequenceOfReal& Umult,
+                                                     const TColStd_SequenceOfReal& Vmult,
+                                                     const math_Vector& UV,
+                                                     const Standard_Integer Index,
+                                                     Standard_Integer& Irang);
   
-  Standard_EXPORT Standard_Boolean TestArretAjout (IntPatch_TheSurfFunction& Section, math_Vector& UV, Standard_Integer& Irang, IntSurf_PntOn2S& PSol);
+  Standard_EXPORT   Standard_Boolean TestArretPassageTang (const TColStd_SequenceOfReal& Umult,
+                                                           const TColStd_SequenceOfReal& Vmult,
+                                                           const math_Vector& UV,
+                                                           const Standard_Integer Index,
+                                                           Standard_Integer& Irang) ;
+  
+  Standard_EXPORT Standard_Boolean TestArretAjout (IntPatch_TheSurfFunction& Section,
+                                                   math_Vector& UV,
+                                                   Standard_Integer& Irang,
+                                                   IntSurf_PntOn2S& PSol,
+                                                   Standard_Boolean& OnPrevTangency);
   
   Standard_EXPORT void FillPntsInHoles (IntPatch_TheSurfFunction& Section,
                                         TColStd_SequenceOfInteger& CopySeqAlone,
                                         IntSurf_SequenceOfInteriorPoint& PntsInHoles);
   
-  Standard_EXPORT void TestArretCadre (const TColStd_SequenceOfReal& Umult, const TColStd_SequenceOfReal& Vmult, const Handle(IntPatch_TheIWLineOfTheIWalking)& Line, IntPatch_TheSurfFunction& Section, math_Vector& UV, Standard_Integer& Irang);
+  Standard_EXPORT void TestArretCadre (const TColStd_SequenceOfReal& Umult,
+                                       const TColStd_SequenceOfReal& Vmult,
+                                       const Handle(IntPatch_TheIWLineOfTheIWalking)& Line,
+                                       IntPatch_TheSurfFunction& Section,
+                                       math_Vector& UV,
+                                       Standard_Integer& Irang);
   
-  Standard_EXPORT IntWalk_StatusDeflection TestDeflection (IntPatch_TheSurfFunction& Section, const Standard_Boolean Finished, const math_Vector& UV, const IntWalk_StatusDeflection StatusPrecedent, Standard_Integer& NbDivision, Standard_Real& Step, const Standard_Integer StepSign);
+  Standard_EXPORT   IntWalk_StatusDeflection TestDeflection (IntPatch_TheSurfFunction& Section,
+                                                             const Standard_Boolean Finished,
+                                                             const math_Vector& UV,
+                                                             const IntWalk_StatusDeflection StatusPrecedent,
+                                                             Standard_Integer& NbDivision,
+                                                             Standard_Real& Step,
+                                                             Standard_Real& StepInit,
+                                                             const Standard_Integer StepSign,
+                                                             const Standard_Integer CurNbPoints,
+                                                             const Standard_Boolean ArretAjout,
+                                                             const Standard_Boolean PrevStepWrong,
+                                                             const Standard_Boolean OnPrevTangency) ;
   
-  Standard_EXPORT void ComputeOpenLine (const TColStd_SequenceOfReal& Umult, const TColStd_SequenceOfReal& Vmult, const IntSurf_SequenceOfPathPoint& Pnts1, IntPatch_TheSurfFunction& Section, Standard_Boolean& Rajout);
+  Standard_EXPORT void ComputeOpenLine (const TColStd_SequenceOfReal& Umult,
+                                        const TColStd_SequenceOfReal& Vmult,
+                                        const IntSurf_SequenceOfPathPoint& Pnts1,
+                                        IntPatch_TheSurfFunction& Section,
+                                        Standard_Boolean& Rajout);
   
-  Standard_EXPORT void OpenLine (const Standard_Integer N, const IntSurf_PntOn2S& Psol, const IntSurf_SequenceOfPathPoint& Pnts1, IntPatch_TheSurfFunction& Section, const Handle(IntPatch_TheIWLineOfTheIWalking)& Line);
+  Standard_EXPORT void OpenLine (const Standard_Integer N,
+                                 const IntSurf_PntOn2S& Psol,
+                                 const IntSurf_SequenceOfPathPoint& Pnts1,
+                                 IntPatch_TheSurfFunction& Section,
+                                 const Handle(IntPatch_TheIWLineOfTheIWalking)& Line);
   
   Standard_EXPORT Standard_Boolean IsValidEndPoint (const Standard_Integer IndOfPoint, const Standard_Integer IndOfLine);
   
@@ -135,11 +192,60 @@ protected:
   
   Standard_EXPORT Standard_Boolean IsPointOnLine (const gp_Pnt2d& theP2d, const Standard_Integer Irang);
   
-  Standard_EXPORT void ComputeCloseLine (const TColStd_SequenceOfReal& Umult, const TColStd_SequenceOfReal& Vmult, const IntSurf_SequenceOfPathPoint& Pnts1, const IntSurf_SequenceOfInteriorPoint& Pnts2, IntPatch_TheSurfFunction& Section, Standard_Boolean& Rajout);
+  Standard_EXPORT void ComputeCloseLine (const TColStd_SequenceOfReal& Umult,
+                                         const TColStd_SequenceOfReal& Vmult,
+                                         const IntSurf_SequenceOfPathPoint& Pnts1,
+                                         const IntSurf_SequenceOfInteriorPoint& Pnts2,
+                                         const IntSurf_SequenceOfInteriorPoint& Pnts3,
+                                         IntPatch_TheSurfFunction& Section,
+                                         Standard_Boolean& Rajout);
+
+  Standard_EXPORT void RecadreParam (Standard_Real& U,
+                                     const Standard_Real PrevU,
+                                     const IntSurf_Quadric& theQuad) const;
   
-  Standard_EXPORT void AddPointInCurrentLine (const Standard_Integer N, const IntSurf_PathPoint& PathPnt, const Handle(IntPatch_TheIWLineOfTheIWalking)& CurrentLine) const;
+  Standard_EXPORT void AddPointInCurrentLine (const Standard_Integer N,
+                                              const IntSurf_PathPoint& PathPnt,
+                                              const IntSurf_Quadric& theQuad,
+                                              const Handle(IntPatch_TheIWLineOfTheIWalking)& CurrentLine) const;
   
-  Standard_EXPORT void MakeWalkingPoint (const Standard_Integer Case, const Standard_Real U, const Standard_Real V, IntPatch_TheSurfFunction& Section, IntSurf_PntOn2S& Psol);
+  Standard_EXPORT void DefineParams (const Standard_Integer indline,
+                                     TColStd_SequenceOfReal& Distances,
+                                     TColStd_SequenceOfReal& Params) const;
+  
+  Standard_EXPORT void DefineCurvatures (const Standard_Integer indline,
+                                         const TColStd_SequenceOfReal& Params,
+                                         TColStd_SequenceOfReal& Curvatures);
+  
+  Standard_EXPORT Standard_Integer InsertMiddlePoint (const Standard_Integer indline,
+                                                      const Standard_Integer Index,
+                                                      IntPatch_TheSurfFunction& Func,
+                                                      TColStd_SequenceOfReal& Distances,
+                                                      TColStd_SequenceOfReal& Params,
+                                                      TColStd_SequenceOfReal& Curvatures);
+  
+  Standard_EXPORT void MakeWalkingPoint (const Standard_Integer Case,
+                                         const Standard_Real U,
+                                         const Standard_Real V,
+                                         IntPatch_TheSurfFunction& Section,
+                                         IntSurf_PntOn2S& Psol);
+  
+  Standard_EXPORT   void FindExactCuspPoint (IntPatch_TheSurfFunction& Section,
+                                             IntSurf_PntOn2S& Psol,
+                                             const Standard_Integer
+                                             PrevSignOfBcoeff,
+                                             const Standard_Integer SignOfBcoeff) ;
+  
+  Standard_EXPORT   void FindExactTangentPoint (const Standard_Real TolTang,
+                                                IntPatch_TheSurfFunction& Section,
+                                                IntSurf_PntOn2S& Psol) ;
+  
+  Standard_EXPORT   Standard_Boolean ComputeDirOfTangentialIntersection (IntPatch_TheSurfFunction& Section,
+                                                                         Standard_Integer& StepSign,
+                                                                         Standard_Boolean& IsDiscriminantNull,
+                                                                         Standard_Integer& SignOfBcoeff,
+                                                                         gp_Vec& NewD3d,
+                                                                         gp_Dir2d& NewD2d) ;
   
   //! Clears up internal containers
   Standard_EXPORT void Clear();
@@ -166,6 +272,7 @@ private:
   Standard_Boolean reversed;
   IntWalk_VectorOfWalkingData wd1;
   IntWalk_VectorOfWalkingData wd2;
+  IntWalk_VectorOfWalkingData wd3;
   IntWalk_VectorOfInteger nbMultiplicities;
   Bnd_Range mySRangeU; // Estimated U-range for section curve
   Bnd_Range mySRangeV; // Estimated V-range for section curve
@@ -176,6 +283,7 @@ private:
   IntSurf_PntOn2S previousPoint;
   gp_Vec previousd3d;
   gp_Dir2d previousd2d;
+  Standard_Boolean IsTangentialIntersection;
   TColStd_SequenceOfInteger seqAjout;
   TColStd_SequenceOfInteger seqAlone;
   TColStd_DataMapOfIntegerListOfInteger PointLineLine;

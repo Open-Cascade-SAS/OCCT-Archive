@@ -15,6 +15,13 @@
 #include <NCollection_IncAllocator.hxx>
 #include <NCollection_LocalArray.hxx>
 
+#include <IntSurf_PntOn2S.hxx>
+#include <IntSurf_Quadric.hxx>
+
+#ifdef DRAW
+#include <Draw.hxx>
+#endif
+
 
 // modified by NIZHNY-MKK  Thu Nov  2 15:07:26 2000.BEGIN
 static Standard_Boolean TestPassedSolutionWithNegativeState(const IntWalk_VectorOfWalkingData& wd,
@@ -63,13 +70,19 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
 //    end of conditions.
 
 {
+#ifdef DRAW
+  char* name = new char[100];
+#endif
+  
   Standard_Integer I = 0, N = 0, SaveN = 0;
   Standard_Real aBornInf[2] = {}, aBornSup[2] = {}, aUVap[2] = {};
   math_Vector BornInf(aBornInf,1,2), BornSup(aBornSup,1,2), UVap(aUVap,1,2);
-  Standard_Real PasC = 0.0, PasCu = 0.0, PasCv = 0.0;
+  Standard_Real PasC = 0.0, PasCu = 0.0, PasCv = 0.0, PasInit = 0.0; //PasSav;
   Standard_Boolean Arrive = false; // shows if the line ends
   Standard_Boolean Cadre = false;  // shows if one is on border of the domain
   Standard_Boolean ArretAjout = false;  //shows if one is on added point
+  Standard_Boolean PrevStepWrong = false; //shows was Rsnld successful or not
+  Standard_Boolean OnPrevTangency = false; //shows if one is on added point of tangent line
   IntSurf_PntOn2S Psol;
   Handle(IntWalk_TheIWLine)  CurrentLine;    // line under construction
   Standard_Boolean Tgtend = false;
@@ -80,6 +93,9 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
   // number of divisions of step for each section
 
   Standard_Integer StepSign = 0;
+  Standard_Integer StepSignTangent = 0;
+  Standard_Integer SignOfBcoeff = 0;
+  Standard_Integer PrevSignOfBcoeff = SignOfBcoeff;
   
   ThePointOfPath PathPnt;
 
@@ -100,6 +116,9 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
   // modified by NIZHNY-MKK  Fri Oct 27 12:32:38 2000.END
 
   TheIWFunction aFuncForDuplicate = Func;
+
+  //jgv
+  IntSurf_Quadric theQuad = (IntSurf_Quadric)(Func.ISurface());
 
   for (I = 1; I <= nbPath; I++) {
     //start point of the progression
@@ -122,9 +141,30 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
       CurrentLine->SetTangencyAtBegining(Standard_False);
       Tgtend = Standard_False;
       CurrentLine->AddStatusFirst(Standard_False, Standard_True, I, PathPnt);
+      IsTangentialIntersection = Standard_False;
+      SignOfBcoeff = PrevSignOfBcoeff = 0;
+      MakeWalkingPoint(11, UVap(1), UVap(2), Func, previousPoint);
       previousd3d = Func.Direction3d();
       previousd2d = Func.Direction2d();
+      //jgv
+      /*
+      Standard_Real u_i, v_i;
+      theQuad.Parameters(previousPoint.Value(), u_i, v_i);
+      previousPoint.SetValue(!reversed, u_i, v_i);
+      */
+      /////
+      
       CurrentLine->AddPoint(previousPoint);
+#ifdef DRAW
+      Standard_Integer aNbPoints = CurrentLine->NbPoints();
+      gp_Pnt aPnt = previousPoint.Value();
+      sprintf(name, "op%d_%d", I, aNbPoints);
+      Draw::Set(name, aPnt);
+      gp_Pnt2d aPnt2d = previousPoint.ValueOnSurface(false);
+      sprintf(name, "opp%d_%d", I, aNbPoints);
+      Draw::Set(name, aPnt2d);
+#endif
+      
       // modified by NIZHNY-MKK  Fri Oct 27 12:34:32 2000.BEGIN
       if(movementdirectioninfo[I] !=0) {
         if(movementdirectioninfo[I] < 0) {
@@ -164,13 +204,19 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
         PasC = pas * Min((UM-Um)/d2dx,(VM-Vm)/d2dy);
       }
 
+      PasInit = PasC;
+      //PasSav = PasC;
+
       Arrive = Standard_False;
       ArretAjout = Standard_False;
+      PrevStepWrong = Standard_False;
+      OnPrevTangency = Standard_False;
       NbDivision = 0;
       StatusPrecedent = IntWalk_OK;
       // modified by NIZHNY-MKK  Fri Oct 27 12:39:37 2000
       Standard_Integer IndexOfPathPointDoNotCheck=0;
-      Standard_Integer aNbIter = 10;
+      //Standard_Integer aNbIter = 10;
+      
       while (!Arrive) { //    as one of stop tests is not checked
         Cadre = Cadrage(BornInf,BornSup,UVap,PasC,StepSign);
         //  Border?
@@ -185,19 +231,20 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
         Chronrsnld.Stop();
 #endif
 
-        if (Cadre) {
-          BornInf(1) = Um; BornSup(1) = UM; BornInf(2) = Vm; BornSup(2) = VM;
-        }
-        if (Rsnld.IsDone()) {
-          if (Abs(Func.Root()) > Func.Tolerance()) {
-            PasC = PasC / 2.0;
-            PasCu = Abs(PasC*previousd2d.X());
-            PasCv = Abs(PasC*previousd2d.Y());
-            if (PasCu <= tolerance(1) && PasCv <= tolerance(2)) {
-              if (CurrentLine->NbPoints() == 1) break;
-              Arrive = Standard_True;
-              CurrentLine->AddStatusLast(Standard_False);
-              Tgtend = Standard_True; // check
+	if (Cadre) {
+	  BornInf(1) = Um; BornSup(1) = UM; BornInf(2) = Vm; BornSup(2) = VM;
+	}
+	if (Rsnld.IsDone()) {
+	  if (Abs(Func.Root()) > Func.Tolerance()) {
+            PrevStepWrong = Standard_True;
+	    PasC = PasC / 2.0;
+	    PasCu = Abs(PasC*previousd2d.X());
+	    PasCv = Abs(PasC*previousd2d.Y());
+	    if (PasCu <= tolerance(1) && PasCv <= tolerance(2)) {
+	      if (CurrentLine->NbPoints() == 1) break;
+	      Arrive = Standard_True;
+	      CurrentLine->AddStatusLast(Standard_False);
+	      Tgtend = Standard_True; // check
               Rajout = Standard_True;
               seqAlone.Append(lines.Length() + 1);
               seqAjout.Append(lines.Length() + 1);
@@ -212,7 +259,7 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
             }
             else {
               if (Rajout) {
-                ArretAjout =TestArretAjout(Func, UVap, N, Psol);
+                ArretAjout =TestArretAjout(Func, UVap, N, Psol, OnPrevTangency);
                 SaveN = N;
                 if (ArretAjout) {
                   // jag 940615
@@ -230,7 +277,7 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
                   previousPoint.ParametersOnS1(prevUp, prevVp);
                 }
                 Arrive = TestPassedSolutionWithNegativeState(wd1, Umult, Vmult, prevUp, prevVp,
-                  nbMultiplicities, tolerance, Func, UVap, N);		
+                                                             nbMultiplicities, tolerance, Func, UVap, N);
                 if(Arrive) {
                   Cadre = Standard_False;
                 }
@@ -239,7 +286,6 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               if (!ArretAjout && Cadre) {
                 if (CurrentLine->NbPoints() == 1) break; // cancel the line
                 TestArretCadre(Umult, Vmult, CurrentLine, Func, UVap, N);
-                //		if (N == 0) {
                 if (N <= 0) { // jag 941017
                   MakeWalkingPoint(2, UVap(1), UVap(2), Func, Psol);
                   Tgtend = Func.IsTangent();
@@ -248,8 +294,65 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               }
             }
             aStatus = TestDeflection(Func, Arrive, UVap, StatusPrecedent,
-              NbDivision,PasC,StepSign);
+                                     NbDivision,PasC,PasInit,StepSign,
+                                     CurrentLine->NbPoints(),ArretAjout,PrevStepWrong,OnPrevTangency);
             StatusPrecedent = aStatus;
+
+            if (aStatus == IntWalk_ArretSurPoint && Func.IsTangent())
+            {
+              PrevSignOfBcoeff = SignOfBcoeff;
+              gp_Vec   newd3d;
+              gp_Dir2d newd2d;
+              Standard_Boolean IsDiscriminantNull;
+              if (ComputeDirOfTangentialIntersection(Func, StepSignTangent,
+                                                     IsDiscriminantNull, SignOfBcoeff,
+                                                     newd3d, newd2d) &&
+                  IsDiscriminantNull)
+              {
+                if (SignOfBcoeff == 0) //point of branching
+                  aStatus = IntWalk_ArretSurPoint;
+                else
+                {
+                  if (PrevSignOfBcoeff == 0 ||
+                      SignOfBcoeff == PrevSignOfBcoeff)
+                  {
+                    aStatus = IntWalk_OKtangent;
+                    MakeWalkingPoint(2, UVap(1), UVap(2), Func, previousPoint);
+                    previousd3d = newd3d;
+                    previousd2d = newd2d;
+                    //jgv
+                    /*
+                    Standard_Real u_i, v_i, prev_ui, prev_vi;
+                    theQuad.Parameters(previousPoint.Value(), u_i, v_i);
+                    IntSurf_PntOn2S LastPnt = CurrentLine->Value(CurrentLine->NbPoints());
+                    LastPnt.ParametersOnSurface(!reversed, prev_ui, prev_vi);
+                    RecadreParam(u_i, prev_ui, theQuad);
+                    previousPoint.SetValue(!reversed, u_i, v_i);
+                    */
+                    /////
+                    CurrentLine->AddPoint(previousPoint);
+#ifdef DRAW
+                    aNbPoints = CurrentLine->NbPoints();
+                    aPnt = previousPoint.Value();
+                    sprintf(name, "op%d_%d", I, aNbPoints);
+                    Draw::Set(name, aPnt);
+                    aPnt2d = previousPoint.ValueOnSurface(false);
+                    sprintf(name, "opp%d_%d", I, aNbPoints);
+                    Draw::Set(name, aPnt2d);
+#endif
+                  }
+                  else //change of sign of Bcoeff
+                  {
+                    MakeWalkingPoint(1, UVap(1), UVap(2), Func, Psol);
+                    FindExactCuspPoint(Func, Psol,
+                                       PrevSignOfBcoeff, SignOfBcoeff);
+                    Psol.ParametersOnSurface(reversed, UVap(1), UVap(2));
+                    aStatus = IntWalk_ArretSurPoint;
+                  }
+                }
+              }
+            }
+            
             if (aStatus == IntWalk_PasTropGrand) {
               Arrive = Standard_False;
               ArretAjout = Standard_False;
@@ -266,6 +369,15 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               CurrentLine->AddStatusLast(Standard_False);
               //if (aStatus != IntWalk_ArretSurPointPrecedent)
               CurrentLine->AddPoint(Psol);                      
+#ifdef DRAW
+              aNbPoints = CurrentLine->NbPoints();
+              aPnt = Psol.Value();
+              sprintf(name, "op%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt);
+              aPnt2d = Psol.ValueOnSurface(false);
+              sprintf(name, "opp%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt2d);
+#endif
               //Remove <SaveN> from <seqAlone>
               for (Standard_Integer iseq = 1; iseq <= seqAlone.Length(); iseq++)
                 if (seqAlone(iseq) == SaveN)
@@ -325,7 +437,7 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
                 }
                 CurrentLine->AddStatusLast(Standard_True, N, PathPnt);
               }
-              AddPointInCurrentLine(N,PathPnt,CurrentLine);
+              AddPointInCurrentLine(N,PathPnt,theQuad,CurrentLine);
               if ((etat1N != 1 && etat1N != 11)) {
                 // modified by NIZHNY-MKK  Fri Oct 27 12:43:05 2000.BEGIN
                 // 		wd1[N].etat= - wd1[N].etat;
@@ -348,6 +460,15 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               Tgtend = Standard_True;
               MakeWalkingPoint(1, UVap(1), UVap(2), Func, Psol);
               CurrentLine->AddPoint(Psol);
+#ifdef DRAW
+              aNbPoints = CurrentLine->NbPoints();
+              aPnt = Psol.Value();
+              sprintf(name, "op%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt);
+              aPnt2d = Psol.ValueOnSurface(false);
+              sprintf(name, "opp%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt2d);
+#endif
               Rajout = Standard_True;
               seqAlone.Append(lines.Length() + 1);
               seqAjout.Append(lines.Length() + 1);
@@ -357,14 +478,21 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               previousd3d = Func.Direction3d();
               previousd2d = Func.Direction2d();
               CurrentLine->AddPoint(previousPoint);
+#ifdef DRAW
+              aNbPoints = CurrentLine->NbPoints();
+              aPnt = previousPoint.Value();
+              sprintf(name, "op%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt);
+              aPnt2d = previousPoint.ValueOnSurface(false);
+              sprintf(name, "opp%d_%d", I, aNbPoints);
+              Draw::Set(name, aPnt2d);
+#endif
             }     
-            else if (aStatus == IntWalk_PointConfondu)
-            {
-              aNbIter --;
-            }
+            PrevStepWrong = Standard_False;
           }
         }
         else { // no numerical solution
+          PrevStepWrong = Standard_True;
           PasC = PasC / 2.;
           PasCu = Abs(PasC*previousd2d.X());
           PasCv = Abs(PasC*previousd2d.Y());
@@ -378,13 +506,11 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
             seqAjout.Append(lines.Length() + 1);
           }  
         }
-
-        if(aNbIter < 0)
-          break;
       } // end of started line
       
       if (Arrive) {
         CurrentLine->SetTangencyAtEnd(Tgtend);
+        CurrentLine->SetTangency(IsTangentialIntersection);
         lines.Append(CurrentLine);
         // modified by NIZHNY-MKK  Fri Oct 27 12:59:29 2000.BEGIN
         movementdirectioninfo[I]=0;

@@ -1,0 +1,25 @@
+puts "========"
+puts "OCC24694"
+puts "========"
+puts ""
+############################################################################
+#  Wrong processing of two surfaces (implicit and parametric) having tangential intersection: it is not found by intersector
+############################################################################
+
+restore [locate_data_file bug23046_s20] s1
+restore [locate_data_file bug23046_s23] s2
+
+smallview
+donly s2
+fit
+display s1
+
+set CurveNumb [intersect i s1 s2]
+
+if { [llength ${CurveNumb}] != 1 } {
+    puts "Error : Bad Result obtained by processing of two surfaces having tangential intersection"
+} else {
+    puts "OK : Good Result obtained by processing of two surfaces having tangential intersection"
+}
+
+set only_screen_axo 1

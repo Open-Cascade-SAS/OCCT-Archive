@@ -116,7 +116,7 @@ Standard_Boolean IntImp_ZerImpFunc::Values(const math_Vector& X,
   v = X(2);
   ThePSurfaceTool::D1(SURF, u, v, pntsol, d1u, d1v);
   TheISurfaceTool::ValueAndGradient(FUNC, pntsol.X(), pntsol.Y(), pntsol.Z(), 
-                                    valf, gradient);
+                                    valf, gradient, d1u_isurf, d1v_isurf);
   F(1) = valf;
   D(1,1) = d1u.Dot(gradient);
   D(1,2) = d1v.Dot(gradient);
@@ -142,15 +142,131 @@ Standard_Boolean IntImp_ZerImpFunc::IsTangent()
     Standard_Real N2d1v  = d1v.SquareMagnitude();
     tangent =(tgdu * tgdu <= N2grad_EpsAng2 * N2d1v) && 
              (tgdv * tgdv <= N2grad_EpsAng2 * N2d1u);
+
+#ifdef DRAW
+    if (tangent)
+    {
+      Standard_Real SumSquare = tgdu * tgdu + tgdv * tgdv;
+      gp_Vec NormSURF = d1u ^ d1v;
+      cout<<"Tangent !!!"<<endl;
+      cout<<"SumSquare = "<<SumSquare<<endl;
+      cout<<"u = "<<u<<", v = "<<v<<endl;
+      cout<<"pnt = "<<pntsol.X()<<" "<<pntsol.Y()<<" "<<pntsol.Z()<<endl;
+    }
+#endif
+    
     if(!tangent) {
       d3d.SetLinearForm(tgdu,d1u,tgdv,d1v);
       d2d = gp_Dir2d(tgdu, tgdv);
       if (d3d.Magnitude() <= Tolpetit) {    // jag
         tangent = Standard_True;
       }
-    }    
+      
+#ifdef DRAW
+      gp_Vec NormSURF = d1u ^ d1v;
+      cout<<"u = "<<u<<", v = "<<v<<endl;
+      cout<<"pnt = "<<pntsol.X()<<" "<<pntsol.Y()<<" "<<pntsol.Z()<<endl;
+      cout<<"d3d = "<<d3d.X()<<" "<<d3d.Y()<<" "<<d3d.Z()<<endl;
+#endif
+    }
   }
   return tangent;
+}
+
+Standard_Boolean IntImp_ZerImpFunc::IsTangentSmooth()
+{
+  const Standard_Real TolCrossProd = 1.e-15;
+  
+  if (!computed) {
+    computed = Standard_True;
+    if(!derived) {
+      ThePSurfaceTool::D1(SURF, u, v, pntsol, d1u, d1v);
+      derived = Standard_True;
+    }
+
+    tgdu =  gradient.Dot(d1v);
+    tgdv = -gradient.Dot(d1u);
+    
+    gp_Vec NormPSurf = d1u ^ d1v;
+    gp_Vec NormISurf = d1u_isurf ^ d1v_isurf;
+    NormPSurf.Normalize();
+    NormISurf.Normalize();
+#ifdef DRAW
+    Standard_Real theAngle = NormPSurf.Angle(NormISurf);
+#endif
+    gp_Vec CrossProd = NormPSurf ^ NormISurf;
+    Standard_Real CrossProdSqMagn = CrossProd.SquareMagnitude();
+    
+#ifdef DRAW
+    cout<<"Angle = "<<theAngle<<endl;
+    cout<<"CrossProdSqMagn = "<<CrossProdSqMagn<<endl;
+#endif
+
+    tangent = (CrossProdSqMagn <= TolCrossProd);
+    
+#ifdef DRAW
+    if (tangent)
+    {
+      Standard_Real SumSquare = tgdu * tgdu + tgdv * tgdv;
+      gp_Vec NormSURF = d1u ^ d1v;
+      cout<<"Tangent !!!"<<endl;
+      cout<<"SumSquare = "<<SumSquare<<endl;
+      cout<<"u = "<<u<<", v = "<<v<<endl;
+      cout<<"pnt = "<<pntsol.X()<<" "<<pntsol.Y()<<" "<<pntsol.Z()<<endl;
+    }
+#endif
+    
+    if(!tangent) {
+      d3d.SetLinearForm(tgdu,d1u,tgdv,d1v);
+      d2d = gp_Dir2d(tgdu, tgdv);
+      if (d3d.Magnitude() <= Tolpetit) {    // jag
+	tangent = Standard_True;
+      }
+#ifdef DRAW
+      gp_Vec NormSURF = d1u ^ d1v;
+      cout<<"u = "<<u<<", v = "<<v<<endl;
+      cout<<"pnt = "<<pntsol.X()<<" "<<pntsol.Y()<<" "<<pntsol.Z()<<endl;
+      cout<<"d3d = "<<d3d.X()<<" "<<d3d.Y()<<" "<<d3d.Z()<<endl;
+#endif
+    }
+  }
+  return tangent;
+}
+
+Standard_Boolean IntImp_ZerImpFunc::DerivativesAndNormalOnPSurf(gp_Vec& D1U,
+                                                    gp_Vec& D1V,
+                                                    gp_Vec& Normal,
+                                                    gp_Vec& D2U,
+                                                    gp_Vec& D2V,
+                                                    gp_Vec& D2UV)
+{
+  ThePSurfaceTool::D2(SURF, u, v, pntsol, D1U, D1V, D2U, D2V, D2UV);
+  Normal = D1U ^ D1V;
+  Standard_Real theMagnitude = Normal.Magnitude();
+  if (theMagnitude <= gp::Resolution())
+    return Standard_False;
+  else
+    Normal /= theMagnitude;
+
+  return Standard_True;
+}
+
+Standard_Boolean IntImp_ZerImpFunc::DerivativesAndNormalOnISurf(gp_Vec& D1U,
+                                                    gp_Vec& D1V,
+                                                    gp_Vec& Normal,
+                                                    gp_Vec& D2U,
+                                                    gp_Vec& D2V,
+                                                    gp_Vec& D2UV) const
+{
+  TheISurfaceTool::D2(FUNC, pntsol, D1U, D1V, D2U, D2V, D2UV);
+  Normal = D1U ^ D1V;
+  Standard_Real theMagnitude = Normal.Magnitude();
+  if (theMagnitude <= gp::Resolution())
+    return Standard_False;
+  else
+    Normal /= theMagnitude;
+
+  return Standard_True;
 }
 
 #undef EpsAng

@@ -25,6 +25,11 @@
 
 #include <TopAbs_State.hxx>
 
+#ifdef DRAW
+#include <DrawTrSurf.hxx>
+#endif
+
+
 IntStart_SearchInside::IntStart_SearchInside (): done(Standard_False)
 {}
 
@@ -49,6 +54,7 @@ void IntStart_SearchInside::Perform (TheFunction& Func,
 
   done = Standard_False;
   list.Clear();
+  myTangentPoints.Clear();
   Standard_Real aBinf[2], aBsup[2], aUVap[2], atoler[2];
   math_Vector Binf(aBinf,1,2), Bsup(aBsup,1,2), UVap(aUVap,1,2), toler(atoler,1,2);
   gp_Pnt psol;
@@ -117,6 +123,12 @@ void IntStart_SearchInside::Perform (TheFunction& Func,
   //--                 P  I I I I I I I I
   //--
 
+#ifdef DRAW
+  char* name = new char[100];
+#endif
+
+  gp_Vec NullDir(0.,0.,0.);
+  gp_Vec2d NullDir2d(0.,0.);
   
   for (i=1; i <= Nbsample+12; i++) {
     gp_Pnt2d s2d;
@@ -176,9 +188,9 @@ void IntStart_SearchInside::Perform (TheFunction& Func,
       Rsnld.Perform(Func,UVap,Binf,Bsup);
       if (Rsnld.IsDone()) {
 	if (Abs(Func.Root()) <= Tol) {
+          psol = Func.Point();
+          Rsnld.Root(UVap);
 	  if (!Func.IsTangent()) {
-	    psol = Func.Point();
-	    Rsnld.Root(UVap);
 	    // On regarde si le point trouve est bien un nouveau point.	  
 	    j = 1;
 	    nbpt = list.Length();
@@ -207,9 +219,54 @@ void IntStart_SearchInside::Perform (TheFunction& Func,
 		list.Append(IntSurf_InteriorPoint(psol,UVap(1),UVap(2),
 						  Func.Direction3d(),
 						  Func.Direction2d()));
+#ifdef DRAW
+                gp_Pnt2d p2dsol(UVap(1),UVap(2));
+                sprintf(name, "pp%d", list.Length());
+                DrawTrSurf::Set(name, p2dsol);
+                sprintf(name, "p%d", list.Length());
+                DrawTrSurf::Set(name, psol);
+#endif
 	      }
 	    }
-	  }
+	  }//if (!Func.IsTangent())
+          else //tangent point
+          {
+            Standard_Boolean IsNewTangentPoint = Standard_True;
+            for (j = 1; j <= myTangentPoints.Length(); j++)
+            {
+	      const IntSurf_InteriorPoint&  IPj = myTangentPoints(j);
+	      const gp_Pnt& Pj = IPj.Value();
+	      if (   (Abs(Pj.X()-psol.X()) <= Epsilon)
+		  && (Abs(Pj.Y()-psol.Y()) <= Epsilon)
+		  && (Abs(Pj.Z()-psol.Z()) <= Epsilon)
+		  && (Abs(UVap(1)-IPj.UParameter()) <= toler1)
+		  && (Abs(UVap(2)-IPj.VParameter()) <= toler2) )
+              {
+		IsNewTangentPoint = Standard_False;
+                break;
+	      }
+            }
+            
+            if (IsNewTangentPoint)
+            {
+	      situ = T->Classify(gp_Pnt2d(UVap(1),UVap(2)),
+				 Maxtoler1toler2,Standard_False);   //-- ,Standard_False pour ne pas recadrer on Periodic
+	      if (situ == TopAbs_IN) {
+                myTangentPoints.Append(IntSurf_InteriorPoint(psol,UVap(1),UVap(2),
+                                                             NullDir, NullDir2d));
+#ifdef DRAW
+                gp_Pnt2d p2dsol(UVap(1),UVap(2));
+                sprintf(name, "tpp%d", myTangentPoints.Length());
+                DrawTrSurf::Set(name, p2dsol);
+                sprintf(name, "tp%d", myTangentPoints.Length());
+                DrawTrSurf::Set(name, psol);
+                cout<<myTangentPoints.Length()<<" tangent point :"<<endl;
+                cout<<"U = "<<UVap(1)<<", V = "<<UVap(2)<<endl;
+                //cout<<"Dist = "<<aRootVal<<endl<<endl;
+#endif
+              }
+            }
+          }
 	}
       }
     }
@@ -231,6 +288,7 @@ void IntStart_SearchInside::Perform (TheFunction& Func,
 {
   done = Standard_False;
   list.Clear();
+  myTangentPoints.Clear();
   math_Vector Binf(1,2), Bsup(1,2), toler(1,2);
 
   Binf(1) = ThePSurfaceTool::FirstUParameter(PS);

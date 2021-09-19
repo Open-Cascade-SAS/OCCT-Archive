@@ -1,0 +1,28 @@
+puts "========"
+puts "OCC24694"
+puts "========"
+puts ""
+############################################################################
+#  Wrong processing of two surfaces (implicit and parametric) having tangential intersection: it is not found by intersector
+############################################################################
+
+cylinder cc 10
+trimv tcc cc -20 20
+sphere ss 10
+convert s2 ss
+clpoles s2
+nbiso s2 10 10
+
+smallview
+donly tcc s2
+fit
+
+set CurveNumb [intersect i tcc s2]
+
+if { [llength ${CurveNumb}] != 3 } {
+    puts "Error : Bad Result obtained by processing of two surfaces having tangential intersection"
+} else {
+    puts "OK : Good Result obtained by processing of two surfaces having tangential intersection"
+}
+
+set only_screen_axo 1

@@ -20,6 +20,7 @@ OSD_Chronometer Chronrsnld;
 
 #include <NCollection_IncAllocator.hxx>
 #include <Precision.hxx>
+#include <TColStd_Array1OfBoolean.hxx>
 
 //==================================================================================
 // function : IsTangentExtCheck
@@ -80,11 +81,13 @@ IntWalk_IWalking::IntWalk_IWalking (const Standard_Real Epsilon,
       reversed(Standard_False),
       wd1 (IntWalk_VectorOfWalkingData::allocator_type (new NCollection_IncAllocator)),
       wd2 (wd1.get_allocator()),
+      wd3 (wd2.get_allocator()),
       nbMultiplicities (wd1.get_allocator()),
       Um(0.0),
       UM(0.0),
       Vm(0.0),
       VM(0.0),
+      IsTangentialIntersection(Standard_False),
       ToFillHoles(theToFillHoles)
 {
 }
@@ -102,11 +105,13 @@ void IntWalk_IWalking::Clear()
 {
   wd1.clear();
   wd2.clear();
+  wd3.clear();
   IntWalk_WalkingData aDummy;
   aDummy.etat = -10;
   aDummy.ustart = aDummy.vstart = 0.;
   wd1.push_back (aDummy);
   wd2.push_back (aDummy);
+  wd3.push_back (aDummy);
   nbMultiplicities.clear();
   nbMultiplicities.push_back (-1);
   
@@ -134,6 +139,7 @@ void IntWalk_IWalking::Clear()
 //
 void IntWalk_IWalking::Perform(const ThePOPIterator& Pnts1,
 			       const ThePOLIterator& Pnts2,
+                               const ThePOLIterator& Pnts3,
 			       TheIWFunction& Func,
 			       const ThePSurface& Caro,
 			       const Standard_Boolean Reversed)
@@ -143,6 +149,7 @@ void IntWalk_IWalking::Perform(const ThePOPIterator& Pnts1,
   Standard_Boolean Rajout = Standard_False;
   Standard_Integer nbPnts1 = Pnts1.Length();
   Standard_Integer nbPnts2 = Pnts2.Length();
+  Standard_Integer nbPnts3 = Pnts3.Length();
   Standard_Real U,V;
 
   Clear();
@@ -217,6 +224,14 @@ void IntWalk_IWalking::Perform(const ThePOPIterator& Pnts1,
     wd2.push_back (aWD2);
   }
 
+  wd3.reserve (nbPnts3);
+  for (I = 1; I <= nbPnts3; I++) {
+    IntWalk_WalkingData aWD3;
+    aWD3.etat = 13;
+    ThePointOfLoopTool::Value2d(Pnts3.Value(I), aWD3.ustart, aWD3.vstart);
+    wd3.push_back (aWD3);
+  }
+
   tolerance(1) = ThePSurfaceTool::UResolution(Caro,Precision::Confusion());
   tolerance(2) = ThePSurfaceTool::VResolution(Caro,Precision::Confusion());
 
@@ -247,8 +262,8 @@ void IntWalk_IWalking::Perform(const ThePOPIterator& Pnts1,
     ComputeOpenLine(Umult,Vmult,Pnts1,Func,Rajout); 
 
   // calculation of all closed lines 
-  if (nbPnts2 != 0)
-    ComputeCloseLine(Umult,Vmult,Pnts1,Pnts2,Func,Rajout);
+  if (nbPnts2 != 0 || nbPnts3 != 0)
+    ComputeCloseLine(Umult,Vmult,Pnts1,Pnts2,Pnts3,Func,Rajout); 
 
   if (ToFillHoles)
   {
@@ -256,7 +271,7 @@ void IntWalk_IWalking::Perform(const ThePOPIterator& Pnts1,
     while (seqAlone.Length() > 1 && nb_iter < MaxNbIter)
     {
       nb_iter++;
-      IntSurf_SequenceOfInteriorPoint PntsInHoles;
+      IntSurf_SequenceOfInteriorPoint PntsInHoles, PntsDummy;
       TColStd_SequenceOfInteger CopySeqAlone = seqAlone;
       FillPntsInHoles(Func, CopySeqAlone, PntsInHoles);
       wd2.clear();
@@ -274,13 +289,137 @@ void IntWalk_IWalking::Perform(const ThePOPIterator& Pnts1,
         ThePointOfLoopTool::Value2d(anIP, aWD2.ustart, aWD2.vstart);
         wd2.push_back (aWD2);
       }
-      ComputeCloseLine(Umult,Vmult,Pnts1,PntsInHoles,Func,Rajout);
+      ComputeCloseLine(Umult,Vmult,Pnts1,PntsInHoles,PntsDummy,Func,Rajout);
     }
   }
   
   for (I = 1; I <= nbPnts1; I++) { 
     if (wd1[I].etat >0) seqSingle.Append(Pnts1(I));
   }
+
+  //Split non-tangency lines by extremities of tangency lines
+  IntSurf_SequenceOfPntOn2S EndsOfTangencies;
+  Standard_Integer i, j, k;
+  const Standard_Real TolSq = Precision::Confusion() * Precision::Confusion();
+  for (i = 1; i <= lines.Length(); i++)
+    if (lines(i)->IsTangency())
+    {
+      const IntSurf_PntOn2S& aFirstPointOn2S = lines(i)->Value(1);
+      const gp_Pnt& aFirstPnt = aFirstPointOn2S.Value();
+      Standard_Boolean exists = Standard_False;
+      for (j = 1; j <= EndsOfTangencies.Length(); j++)
+      {
+        const gp_Pnt& anEndOfTang = EndsOfTangencies(j).Value();
+        if (anEndOfTang.SquareDistance(aFirstPnt) <= TolSq)
+        {
+          exists = Standard_True;
+          break;
+        }
+      }
+      if (!exists)
+        EndsOfTangencies.Append(aFirstPointOn2S);
+      if (!lines(i)->IsClosed())
+      {
+        const IntSurf_PntOn2S& aLastPointOn2S = lines(i)->Value(lines(i)->NbPoints());
+        const gp_Pnt& aLastPnt = aLastPointOn2S.Value();
+        exists = Standard_False;
+        for (j = 1; j <= EndsOfTangencies.Length(); j++)
+        {
+          const gp_Pnt& anEndOfTang = EndsOfTangencies(j).Value();
+          if (anEndOfTang.SquareDistance(aLastPnt) <= TolSq)
+          {
+            exists = Standard_True;
+            break;
+          }
+        }
+        if (!exists)
+          EndsOfTangencies.Append(aLastPointOn2S);
+      }
+    }
+
+  if (!EndsOfTangencies.IsEmpty())
+  {
+    TColStd_Array1OfBoolean SplitFlags(1, EndsOfTangencies.Length());
+    SplitFlags.Init(Standard_False);
+    
+    for (;;)
+    {
+      for (i = 1; i <= lines.Length(); i++)
+        if (!lines(i)->IsTangency())
+        {
+          Standard_Boolean IsSplit = Standard_False;
+          for (j = 1; j <= EndsOfTangencies.Length(); j++)
+          {
+            if (SplitFlags(j))
+              continue;
+            //gp_Pnt2d endoftang = EndsOfTangencies(j).ValueOnSurface(reversed);
+            gp_Pnt endoftang = EndsOfTangencies(j).Value();
+            for (k = 2; k < lines(i)->NbPoints()-1; k++)
+            {
+              const IntSurf_PntOn2S& P1 = lines(i)->Value(k);
+              const IntSurf_PntOn2S& P2 = lines(i)->Value(k+1);
+              //gp_Pnt2d pt1 = P1.ValueOnSurface(reversed);
+              //gp_Pnt2d pt2 = P2.ValueOnSurface(reversed);
+              const gp_Pnt& pt1 = P1.Value();
+              const gp_Pnt& pt2 = P2.Value();
+              //gp_Vec2d V1(endoftang, pt1);
+              //gp_Vec2d V2(endoftang, pt2);
+              gp_Vec V1(endoftang, pt1);
+              gp_Vec V2(endoftang, pt2);
+              Standard_Real ScalProd = V1 * V2;
+              if (ScalProd < 0.)
+              {
+                SplitFlags(j) = Standard_True;
+                Standard_Boolean ToRemoveFirstPnt = Standard_False, ToRemoveSecondPnt = Standard_False;
+                /*
+                Standard_Real Dist = pt1.Distance(pt2);
+                Standard_Real DistToFirst   = endoftang.Distance(pt1);
+                Standard_Real DistToSecond  = endoftang.Distance(pt2);
+                if (DistToFirst < Max(2.*Precision::Confusion(), 0.5*Dist))
+                  ToRemoveFirstPnt = Standard_True;
+                if (DistToSecond < Max(2.*Precision::Confusion(), 0.5*Dist))
+                  ToRemoveSecondPnt = Standard_True;
+                */
+                Standard_Real SqDist = pt1.SquareDistance(pt2);
+                Standard_Real SqDistToFirst   = endoftang.SquareDistance(pt1);
+                Standard_Real SqDistToSecond  = endoftang.SquareDistance(pt2);
+                if (SqDistToFirst < Max(4.*TolSq, 0.25*SqDist))
+                  ToRemoveFirstPnt = Standard_True;
+                if (SqDistToSecond < Max(4.*TolSq, 0.25*SqDist))
+                  ToRemoveSecondPnt = Standard_True;
+                Handle(IntWalk_TheIWLine) aNewLine = new IntWalk_TheIWLine (new NCollection_IncAllocator());
+                aNewLine->SetTangencyAtBegining(Standard_True);
+                aNewLine->AddStatusFirst(Standard_False, Standard_False);
+                aNewLine->AddPoint(EndsOfTangencies(j));
+                for (Standard_Integer kk = (ToRemoveSecondPnt)? k+2 : k+1;
+                     kk <= lines(i)->NbPoints(); kk++)
+                  aNewLine->AddPoint(lines(i)->Value(kk));
+                if (lines(i)->HasLastPoint())
+                  aNewLine->AddStatusLast(Standard_True, lines(i)->LastPointIndex(), lines(i)->LastPoint());
+                else
+                  aNewLine->AddStatusLast(Standard_False);
+                aNewLine->SetTangencyAtEnd(lines(i)->IsTangentAtEnd());
+                lines.Append(aNewLine);
+                lines(i)->Cut((ToRemoveFirstPnt)? k : k+1);
+                lines(i)->AddPoint(EndsOfTangencies(j));
+                lines(i)->AddStatusLast(Standard_False);
+                lines(i)->SetTangencyAtEnd(Standard_True);
+                IsSplit = Standard_True;
+                break;
+              }
+            }
+            if (IsSplit)
+              break;
+          }
+          if (IsSplit)
+            break;
+        }
+      if (i > lines.Length())
+        break;
+    }
+  }
+  ///////////////////////////////////////////////////////////
+  
   done = Standard_True;
 }
 

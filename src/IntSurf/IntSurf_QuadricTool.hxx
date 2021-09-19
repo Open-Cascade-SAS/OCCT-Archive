@@ -24,6 +24,7 @@
 #include <Standard_Real.hxx>
 class IntSurf_Quadric;
 class gp_Vec;
+class gp_Pnt;
 
 
 //! This class provides a tool on a quadric that can be
@@ -38,13 +39,36 @@ public:
 
   
   //! Returns the value of the function.
-    static Standard_Real Value (const IntSurf_Quadric& Quad, const Standard_Real X, const Standard_Real Y, const Standard_Real Z);
+    static Standard_Real Value (const IntSurf_Quadric& Quad,
+                                const Standard_Real X,
+                                const Standard_Real Y,
+                                const Standard_Real Z);
   
   //! Returns the gradient of the function.
-    static void Gradient (const IntSurf_Quadric& Quad, const Standard_Real X, const Standard_Real Y, const Standard_Real Z, gp_Vec& V);
+    static void Gradient (const IntSurf_Quadric& Quad,
+                          const Standard_Real X,
+                          const Standard_Real Y,
+                          const Standard_Real Z,
+                          gp_Vec& V);
   
   //! Returns the value and the gradient.
-    static void ValueAndGradient (const IntSurf_Quadric& Quad, const Standard_Real X, const Standard_Real Y, const Standard_Real Z, Standard_Real& Val, gp_Vec& Grad);
+  Standard_EXPORT static   void ValueAndGradient (const IntSurf_Quadric& Quad,
+                                                  const Standard_Real X,
+                                                  const Standard_Real Y,
+                                                  const Standard_Real Z,
+                                                  Standard_Real& Val,
+                                                  gp_Vec& Grad,
+                                                  gp_Vec& D1U_ISurf,
+                                                  gp_Vec& D1V_ISurf) ;
+  
+  //! Returns all first and second derivatives.
+  Standard_EXPORT static   void D2 (const IntSurf_Quadric& Quad,
+                                    const gp_Pnt& Point,
+                                    gp_Vec& D1U,
+                                    gp_Vec& D1V,
+                                    gp_Vec& D2U,
+                                    gp_Vec& D2V,
+                                    gp_Vec& D2UV) ;
   
   //! returns the tolerance of the zero of the implicit function
   Standard_EXPORT static Standard_Real Tolerance (const IntSurf_Quadric& Quad);

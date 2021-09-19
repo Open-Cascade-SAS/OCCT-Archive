@@ -56,6 +56,15 @@ public:
   //! Add a point in the line.
     void AddPoint (const IntSurf_PntOn2S& P);
   
+  //! Insert a point in the line.
+    void InsertBefore (const Standard_Integer Index, const IntSurf_PntOn2S& P) ;
+
+  //! Allows or forbides purging of this WLine
+  void EnablePurging(const Standard_Boolean theIsEnabled);
+
+  //! Returns TRUE if purging is allowed or forbiden for existing WLine
+  Standard_Boolean IsPurgingAllowed() const;
+  
     void AddStatusFirst (const Standard_Boolean Closed, const Standard_Boolean HasFirst);
   
     void AddStatusFirst (const Standard_Boolean Closed, const Standard_Boolean HasLast, const Standard_Integer Index, const IntSurf_PathPoint& P);
@@ -75,6 +84,8 @@ public:
     void SetTangencyAtBegining (const Standard_Boolean IsTangent);
   
     void SetTangencyAtEnd (const Standard_Boolean IsTangent);
+  
+    void SetTangency (const Standard_Boolean IsTangency) ;
   
   //! Returns the number of points of the line (including first
   //! point and end point : see HasLastPoint and HasFirstPoint).
@@ -139,6 +150,8 @@ public:
     Standard_Boolean IsTangentAtBegining() const;
   
     Standard_Boolean IsTangentAtEnd() const;
+  
+    Standard_Boolean IsTangency()  const;
 
 
 
@@ -166,6 +179,8 @@ private:
   gp_Vec vcttg;
   Standard_Boolean istgtbeg;
   Standard_Boolean istgtend;
+  Standard_Boolean istangency;
+  Standard_Boolean myIsPurgerAllowed;
 
 
 };

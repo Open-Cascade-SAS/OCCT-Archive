@@ -12,24 +12,431 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <Geom2d_Line.hxx>
+#include <GCE2d_MakeLine.hxx>
+
+#include <IntSurf_PntOn2S.hxx>
+
+//Temporary
+//#include <DrawTrSurf.hxx>
+
+
 #ifndef OCCT_DEBUG
 #define No_Standard_RangeError
 #define No_Standard_OutOfRange
 #endif
 
+const Standard_Real TolDiscr = 1.e-8;
+const Standard_Real TolB = 1.e-5;
+
+static Standard_Integer RealSign(const Standard_Real aValue)
+{
+  if (aValue >= 0.)
+    return 1;
+  else return -1;
+}
+
+static Standard_Boolean ComputeB11orB22(TheIWFunction& sp,
+                                        Standard_Boolean& IsDiscriminantNull,
+                                        Standard_Integer& SignOfBcoeff,
+                                        gp_Vec& Pu,
+                                        gp_Vec& Pv,
+                                        Standard_Real& B11,
+                                        Standard_Real& B22,
+                                        Standard_Real& B12)
+{
+  gp_Vec Puu, Puv, Pvv;
+  gp_Vec Iu, Iv, Iuu, Iuv, Ivv;
+  gp_Vec NormalP, NormalI;
+
+  if (!sp.DerivativesAndNormalOnPSurf(Pu, Pv, NormalP, Puu, Pvv, Puv))
+    return Standard_False;
+  if (!sp.DerivativesAndNormalOnISurf(Iu, Iv, NormalI, Iuu, Ivv, Iuv))
+    return Standard_False;
+
+  Standard_Real Lp, Mp, Np, Li, Mi, Ni; //second fundamental form coefficients
+  Lp = Puu * NormalP;
+  Mp = Puv * NormalP;
+  Np = Pvv * NormalP;
+  Li = Iuu * NormalI;
+  Mi = Iuv * NormalI;
+  Ni = Ivv * NormalI;
+
+  gp_Vec Normal;
+  if (NormalP * NormalI < 0.)
+    NormalI.Reverse();
+  Normal.SetXYZ(0.5*(NormalP.XYZ() + NormalI.XYZ()));
+  Normal.Normalize();
+
+  Standard_Real A11, A12, A21, A22;
+  Standard_Real NormIdotNorm = (Iu ^ Iv) * Normal;
+  A11 = ((Pu ^ Iv) * Normal) / NormIdotNorm;
+  A12 = ((Pv ^ Iv) * Normal) / NormIdotNorm;
+  A21 = ((Iu ^ Pu) * Normal) / NormIdotNorm;
+  A22 = ((Iu ^ Pv) * Normal) / NormIdotNorm;
+
+  //Standard_Real B11, B12, B22;
+  B11 = A11*A11*Li + 2*A11*A21*Mi + A21*A21*Ni - Lp;
+  B12 = A11*A12*Li + (A11*A22 + A21*A12)*Mi + A21*A22*Ni - Mp;
+  B22 = A12*A12*Li + 2*A12*A22*Mi + A22*A22*Ni - Np;
+
+  Standard_Real Discriminant = B12*B12 - B11*B22;
+
+  if (Abs(Discriminant) < TolDiscr)
+  {
+    IsDiscriminantNull = Standard_True;
+    if (Abs(B11) <= TolB && Abs(B22) <= TolB)
+    {
+#ifdef DRAW
+      cout<<"Possible branching"<<endl<<endl;
+#endif
+      SignOfBcoeff = 0;
+    }
+    else
+    {
+      gp_Vec NewPreviousD3d;
+      gp_Dir2d NewPreviousD2d;
+      if (Abs(B11) > TolB)
+      {
+#ifdef DRAW
+        cout<<"B11 = "<<B11<<endl;
+#endif
+        SignOfBcoeff = RealSign(B11);
+      }
+      else
+      {
+#ifdef DRAW
+        cout<<"B22 = "<<B22<<endl;
+#endif
+        SignOfBcoeff = RealSign(B22);
+      }
+    }
+  }
+  else
+  {
+    IsDiscriminantNull = Standard_False;
+#ifdef DRAW
+    cout<<"Discriminant = "<<Discriminant<<endl;
+#endif
+  }
+  return Standard_True;
+}
+
+//=======================================================================
+//function : EvalCurv
+//purpose  : Evaluate curvature in dim-dimension point.
+//=======================================================================
+static Standard_Real EvalCurv(const Standard_Real dim, 
+                              const Standard_Real* V1,
+                              const Standard_Real* V2)
+{
+  // Really V1 and V2 are arrays of size dim;
+  // V1 is first derivative, V2 is second derivative
+  // of n-dimension curve
+  // Curvature is curv = |V1^V2|/|V1|^3
+  // V1^V2 is outer product of two vectors:
+  // P(i,j) = V1(i)*V2(j) - V1(j)*V2(i);
+  Standard_Real mp = 0.;
+  Standard_Integer i, j;
+  Standard_Real p;
+  for(i = 1; i < dim; ++i)
+  {
+    for(j = 0; j < i; ++j)
+    {
+      p = V1[i]*V2[j] - V1[j]*V2[i];
+      mp += p*p;
+    }
+  }
+  //mp *= 2.; //P(j,i) = -P(i,j);
+  mp = Sqrt(mp);
+  //
+  Standard_Real q = 0.;
+  for(i = 0; i < dim; ++i)
+  {
+    q += V1[i]*V1[i];
+  }
+  q = Sqrt(q);
+  //
+  Standard_Real curv = mp / (q*q*q);
+
+  return curv;
+}
+
+void IntWalk_IWalking::RecadreParam(Standard_Real& U,
+                                    const Standard_Real PrevU,
+                                    const IntSurf_Quadric& theQuad) const
+{
+  if (theQuad.TypeQuadric() == GeomAbs_Cylinder ||
+      theQuad.TypeQuadric() == GeomAbs_Cone ||
+      theQuad.TypeQuadric() == GeomAbs_Sphere)
+  {
+    Standard_Real Period = 2.*M_PI, HalfPeriod = M_PI;
+    if (Abs(U - PrevU) >= HalfPeriod)
+    {
+      Standard_Real theSign = (U - PrevU > 0.)?
+        -1. : 1.;
+      while (Abs(U - PrevU) >= HalfPeriod)
+      {
+        U += theSign * Period;
+      }
+    }
+  }
+}
 
 void IntWalk_IWalking::AddPointInCurrentLine
          (const Standard_Integer N,
 	  const ThePointOfPath& PathPnt,
+          const IntSurf_Quadric& /*theQuad*/,
 	  const Handle(IntWalk_TheIWLine)& CurrentLine) const {
 
 
   IntSurf_PntOn2S Psol;
   Psol.SetValue(ThePointOfPathTool::Value3d(PathPnt),
 		reversed,wd1[N].ustart,wd1[N].vstart);
+  //jgv
+  /*
+  Standard_Real u_i, v_i, prev_ui, prev_vi;
+  theQuad.Parameters(Psol.Value(), u_i, v_i);
+  IntSurf_PntOn2S LastPnt = CurrentLine->Value(CurrentLine->NbPoints());
+  LastPnt.ParametersOnSurface(!reversed, prev_ui, prev_vi);
+  RecadreParam(u_i, prev_ui, theQuad);
+  Psol.SetValue(!reversed, u_i, v_i);
+  */
+  /////
   CurrentLine->AddPoint(Psol);
 }
 
+void IntWalk_IWalking::DefineParams(const Standard_Integer indline,
+                                    TColStd_SequenceOfReal& Distances,
+                                    TColStd_SequenceOfReal& Params) const
+{
+  Distances.Append(0.);
+  Params.Append(0.);
+
+  gp_Pnt   PrevPnt = lines(indline)->Value(1).Value();
+  gp_Pnt2d PrevP2d = lines(indline)->Value(1).ValueOnSurface(reversed);
+  gp_Pnt2d PrevP2dOnQuad = lines(indline)->Value(1).ValueOnSurface(!reversed);
+  
+  for (Standard_Integer i = 2; i <= lines(indline)->NbPoints(); i++)
+  {
+    gp_Pnt   CurPnt = lines(indline)->Value(i).Value();
+    gp_Pnt2d CurP2d = lines(indline)->Value(i).ValueOnSurface(reversed);
+    gp_Pnt2d CurP2dOnQuad = lines(indline)->Value(i).ValueOnSurface(!reversed);
+    Standard_Real dist3d = PrevPnt.Distance(CurPnt);
+    Standard_Real dist2d = PrevP2d.Distance(CurP2d);
+    Standard_Real dist2dOnQuad = PrevP2dOnQuad.Distance(CurP2dOnQuad);
+    Standard_Real CurDist = Distances(Distances.Length()) + dist3d + dist2d + dist2dOnQuad;
+    Distances.Append(CurDist);
+    PrevPnt = CurPnt;
+    PrevP2d = CurP2d;
+    PrevP2dOnQuad = CurP2dOnQuad;
+  }
+
+  for (Standard_Integer i = 2; i < Distances.Length(); i++)
+    Params.Append(Distances(i) / Distances(Distances.Length()));
+  Params.Append(1.);
+}
+
+void IntWalk_IWalking::DefineCurvatures(const Standard_Integer indline,
+                                        const TColStd_SequenceOfReal& Params,
+                                        TColStd_SequenceOfReal& Curvatures)
+{
+  Curvatures.Clear();
+  
+  //Temporary
+  //Standard_Boolean ToCout = Standard_False;
+  ///////////
+  
+  Standard_Integer NbPoints = lines(indline)->NbPoints();
+  if (NbPoints < 3)
+    return;
+  
+  Standard_Integer dim = 7;
+  Standard_Real Val[21], Par[3], Res[21];
+  const Standard_Real aFactor = 10.;
+  Standard_Real aMinCurvature = RealLast();
+  Standard_Real aMaxCurvature = 0.;
+
+  for (Standard_Integer Index = 1; Index <= NbPoints; Index++)
+  {
+    Standard_Integer StartIndex;
+    if (Index > 1 && Index < lines(indline)->NbPoints())
+      StartIndex = Index - 1;
+    else if (Index == 1)
+      StartIndex = Index;
+    else
+      StartIndex = Index - 2;
+  
+    for (Standard_Integer i = 0; i < 3; i++)
+    {
+      const IntSurf_PntOn2S& aPoint = lines(indline)->Value(StartIndex + i);
+      Standard_Integer ip = i*dim;
+      Val[ip]   = aPoint.Value().X();
+      Val[ip+1] = aPoint.Value().Y();
+      Val[ip+2] = aPoint.Value().Z();
+      Val[ip+3] = aPoint.ValueOnSurface(reversed).X();
+      Val[ip+4] = aPoint.ValueOnSurface(reversed).Y();
+      Val[ip+5] = aPoint.ValueOnSurface(!reversed).X();
+      Val[ip+6] = aPoint.ValueOnSurface(!reversed).Y();
+    }
+
+    //Standard_Real dist1 = CurrentLine->Value(StartIndex).Value().Distance(CurrentLine->Value(StartIndex+1).Value());
+    //Standard_Real dist2 = CurrentLine->Value(StartIndex+1).Value().Distance(CurrentLine->Value(StartIndex+2).Value());
+    Par[0] = Params(StartIndex);   //0.;
+    Par[1] = Params(StartIndex+1); //dist1 / (dist1+dist2);
+    Par[2] = Params(StartIndex+2); //1.;
+
+    Standard_Integer IndPar = Index - StartIndex; // 0 or 1 or 2
+    PLib::EvalLagrange(Par[IndPar], 2, 2, dim, *Val, *Par, *Res);
+    
+    Standard_Real aCurvature = EvalCurv(dim, &Res[dim], &Res[2*dim]);
+    if (aCurvature < aMinCurvature)
+      aMinCurvature = aCurvature;
+    if (aCurvature > aMaxCurvature)
+      aMaxCurvature = aCurvature;
+    
+    Curvatures.Append(aCurvature);
+    //#ifdef DRAW
+    /*
+    if (ToCout)
+    {
+      std::cout<<"Curvature("<<indline<<","<<Index<<") = "<<aCurvature<<std::endl;
+      char* name = new char[100];
+      gp_Pnt curPnt = lines(indline)->Value(Index).Value();
+      sprintf(name, "p%d_%d", indline, Index);
+      DrawTrSurf::Set(name, curPnt);
+      gp_Pnt2d curPnt2d = lines(indline)->Value(Index).ValueOnSurface(!reversed);
+      sprintf(name, "pp%d_%d", indline, Index);
+      DrawTrSurf::Set(name, curPnt2d);
+    }
+    */
+    //#endif
+  }
+
+  //if (aMaxCurvature / aMinCurvature >= aFactor)
+  if (aMaxCurvature >= aFactor * aMinCurvature)
+    lines(indline)->EnablePurging(Standard_False);
+}
+
+Standard_Integer IntWalk_IWalking::InsertMiddlePoint(const Standard_Integer indline,
+                                                     const Standard_Integer Index,
+                                                     TheIWFunction& Func,
+                                                     TColStd_SequenceOfReal& Distances,
+                                                     TColStd_SequenceOfReal& Params,
+                                                     TColStd_SequenceOfReal& Curvatures)
+{
+  const Standard_Real SqTol3d = Precision::Confusion()*Precision::Confusion();
+  
+  IntSurf_Quadric theQuad = (IntSurf_Quadric)(Func.ISurface());
+
+  gp_Pnt2d PrevP2d = lines(indline)->Value(Index-1).ValueOnSurface(reversed);
+  gp_Pnt2d CurP2d  = lines(indline)->Value(Index).ValueOnSurface(reversed);
+  gp_Pnt2d MidP2d((PrevP2d.XY() + CurP2d.XY())/2.);
+
+  if (Abs(CurP2d.X() - MidP2d.X()) < tolerance(1) &&
+      Abs(CurP2d.Y() - MidP2d.Y()) < tolerance(2))
+    return 0;
+
+  math_Vector BornInf(1, 2), BornSup(1, 2), UVap(1, 2);
+  BornInf(1) = Um;
+  BornSup(1) = UM;
+  BornInf(2) = Vm;
+  BornSup(2) = VM;
+  UVap(1) = MidP2d.X();
+  UVap(2) = MidP2d.Y();
+
+  IntSurf_PntOn2S PointOnPSurf;
+  MakeWalkingPoint(11, UVap(1), UVap(2), Func, PointOnPSurf);
+  gp_Pnt MidPnt = PointOnPSurf.Value();
+  gp_Pnt PrevPnt = lines(indline)->Value(Index-1).Value();
+  gp_Pnt CurPnt  = lines(indline)->Value(Index).Value();
+  /*
+  Standard_Real SqDistMidPrev = MidPnt.SquareDistance(PrevPnt);
+  Standard_Real SqDistMidCur  = MidPnt.SquareDistance(CurPnt);
+  */
+  Standard_Real DistMidPrev = MidPnt.Distance(PrevPnt);
+  Standard_Real DistMidCur  = MidPnt.Distance(CurPnt);
+
+  math_FunctionSetRoot Rsnld(Func, tolerance);
+  Rsnld.Perform(Func,UVap,BornInf,BornSup);
+  if (Rsnld.IsDone() && Abs(Func.Root()) <= Func.Tolerance())
+    Rsnld.Root(UVap);
+
+  IntSurf_PntOn2S NewPoint;
+  MakeWalkingPoint(2, UVap(1), UVap(2), Func, NewPoint);
+
+  gp_Pnt NewPnt = NewPoint.Value();
+  Standard_Real SqDistNewPrev = NewPnt.SquareDistance(PrevPnt);
+  Standard_Real SqDistNewCur  = NewPnt.SquareDistance(CurPnt);
+  if (SqDistNewPrev < SqTol3d ||
+      SqDistNewCur  < SqTol3d)
+    return 0;
+
+  //Check for result point to lie near middle point
+  /*
+  Standard_Real SqDistMidRes = MidPnt.SquareDistance(NewPoint.Value());
+  if (SqDistMidRes > SqDistMidPrev &&
+      SqDistMidRes > SqDistMidCur)
+    cout<<endl<<"Bad new point: "<<SqDistMidRes<<" "<<SqDistMidPrev<<" "<<SqDistMidCur<<endl;
+  */
+  Standard_Real DistMidRes = MidPnt.Distance(NewPnt);
+  if (DistMidRes > DistMidPrev &&
+      DistMidRes > DistMidCur)
+  {
+    std::cout<<std::endl<<"Bad new point: "<<DistMidRes<<" "<<DistMidPrev<<" "<<DistMidCur<<std::endl;
+    return 2;
+  }
+  
+  Standard_Real u_i, v_i, prev_ui, prev_vi;
+  theQuad.Parameters(NewPoint.Value(), u_i, v_i);
+  IntSurf_PntOn2S LastPnt = lines(indline)->Value(Index-1);
+  LastPnt.ParametersOnSurface(!reversed, prev_ui, prev_vi);
+  RecadreParam(u_i, prev_ui, theQuad);
+  NewPoint.SetValue(!reversed, u_i, v_i);
+
+  lines(indline)->InsertBefore(Index, NewPoint);
+
+  //Recompute <Distances>, <Params> and <Curvatures>
+  Distances.Remove(Index, Distances.Length());
+  
+  //gp_Pnt   PrevPnt = lines(indline)->Value(Index-1).Value();
+  //gp_Pnt2d PrevP2d = lines(indline)->Value(Index-1).ValueOnSurface(reversed);
+  gp_Pnt2d PrevP2dOnQuad = lines(indline)->Value(Index-1).ValueOnSurface(!reversed);
+  
+  for (Standard_Integer i = Index; i <= lines(indline)->NbPoints(); i++)
+  {
+    gp_Pnt   aCurPnt = lines(indline)->Value(i).Value();
+    gp_Pnt2d aCurP2d = lines(indline)->Value(i).ValueOnSurface(reversed);
+    gp_Pnt2d CurP2dOnQuad = lines(indline)->Value(i).ValueOnSurface(!reversed);
+    Standard_Real dist3d = PrevPnt.Distance(aCurPnt);
+    Standard_Real dist2d = PrevP2d.Distance(aCurP2d);
+    Standard_Real dist2dOnQuad = PrevP2dOnQuad.Distance(CurP2dOnQuad);
+
+    /*
+    if (dist3d < Precision::Confusion() ||
+        (Abs(aCurP2d.X() - PrevP2d.X()) < tolerance(1) &&
+         Abs(aCurP2d.Y() - PrevP2d.Y()) < tolerance(2)))
+      return Standard_False;
+    */
+    
+    Standard_Real CurDist = Distances(Distances.Length()) + dist3d + dist2d + dist2dOnQuad;
+    Distances.Append(CurDist);
+    PrevPnt = aCurPnt;
+    PrevP2d = aCurP2d;
+    PrevP2dOnQuad = CurP2dOnQuad;
+  }
+
+  Params.Clear();
+  for (Standard_Integer i = 1; i < Distances.Length(); i++)
+    Params.Append(Distances(i) / Distances(Distances.Length()));
+  Params.Append(1.);
+
+  DefineCurvatures(indline, Params, Curvatures);
+
+  lines(indline)->EnablePurging(Standard_False);
+  
+  return 1;
+}
 
 void IntWalk_IWalking::MakeWalkingPoint
          (const Standard_Integer Case, 
@@ -68,6 +475,110 @@ void IntWalk_IWalking::MakeWalkingPoint
   }
 }
 
+Standard_Boolean
+ IntWalk_IWalking::ComputeDirOfTangentialIntersection(TheIWFunction& sp,
+                                                      Standard_Integer& StepSignTangent,
+                                                      Standard_Boolean& IsDiscriminantNull,
+                                                      Standard_Integer& SignOfBcoeff,
+                                                      gp_Vec&   newd3d,
+                                                      gp_Dir2d& newd2d)
+{
+  gp_Vec Pu, Pv;
+  Standard_Real B11, B22, B12;
+  if (!ComputeB11orB22(sp, IsDiscriminantNull, SignOfBcoeff,
+                       Pu, Pv, B11, B22, B12))
+    return Standard_False;
+  
+  if (IsDiscriminantNull)
+  {
+    if (SignOfBcoeff != 0)
+    {
+      gp_Vec NewPreviousD3d;
+      gp_Dir2d NewPreviousD2d;
+      if (Abs(B11) > TolB)
+      {
+#ifdef DRAW
+        cout<<"B11 = "<<B11<<endl;
+#endif
+        Standard_Real CoefPu = -B12/B11;
+        NewPreviousD3d = CoefPu*Pu + Pv;
+        NewPreviousD3d.Normalize();
+        NewPreviousD2d = gp_Dir2d(CoefPu, 1.);
+      }
+      else
+      {
+#ifdef DRAW
+        cout<<"B22 = "<<B22<<endl;
+#endif
+        Standard_Real CoefPv = -B12/B22;
+        NewPreviousD3d = Pu + CoefPv*Pv;
+        NewPreviousD3d.Normalize();
+        NewPreviousD2d = gp_Dir2d(1., CoefPv);
+      }
+      
+      if (!IsTangentialIntersection)
+      {
+        IsTangentialIntersection = Standard_True;
+        if (NewPreviousD3d * previousd3d < 0)
+          StepSignTangent = -1;
+        else
+          StepSignTangent = 1;
+      }
+      newd3d = StepSignTangent * NewPreviousD3d;
+      newd2d = StepSignTangent * NewPreviousD2d;
+    }
+  }
+  return Standard_True;
+}
+
+void IntWalk_IWalking::FindExactCuspPoint(TheIWFunction& sp,
+                                          IntSurf_PntOn2S& Psol,
+                                          const Standard_Integer SignFirst,
+                                          const Standard_Integer /*SignLast*/)
+{
+  IntSurf_PntOn2S EndPoint = Psol;
+
+  IntSurf_PntOn2S Pfirst, Plast;
+
+  Standard_Real newU, newV;
+  IntSurf_PntOn2S newPoint;
+
+  Pfirst = previousPoint;
+  Plast =  EndPoint;
+
+  Standard_Integer newSign = 0;
+
+  for (;;)
+  {
+    Standard_Real Ufirst, Vfirst, Ulast, Vlast;
+    Pfirst.ParametersOnSurface(reversed, Ufirst, Vfirst);
+    Plast.ParametersOnSurface(reversed, Ulast, Vlast);
+    
+    newU = 0.5*(Ufirst + Ulast);
+    newV = 0.5*(Vfirst + Vlast);
+
+    if (Abs(newU - Ufirst) < tolerance(1) &&
+        Abs(newV - Vfirst) < tolerance(2))
+      break;
+    
+    MakeWalkingPoint(11, newU, newV, sp, newPoint);
+    Standard_Boolean IsDiscriminantNull;
+    gp_Vec Pu, Pv;
+    Standard_Real B11, B22, B12;
+    ComputeB11orB22(sp, IsDiscriminantNull, newSign,
+                    Pu, Pv, B11, B22, B12);
+    
+    if (newSign == 0)
+      break;
+
+    if (newSign == SignFirst)
+      Pfirst = newPoint;
+    else //newSign == SignLast
+      Plast = newPoint;
+  }
+
+  Psol = newPoint;
+}
 
 
 void IntWalk_IWalking::OpenLine(const Standard_Integer N,
@@ -79,6 +590,9 @@ void IntWalk_IWalking::OpenLine(const Standard_Integer N,
 
 {
   ThePointOfPath PathPnt;
+
+  //jgv
+  IntSurf_Quadric theQuad = (IntSurf_Quadric)(sp.ISurface());
 
   Standard_Real aUV[2], aFF[1], aDD[1][2];
   math_Vector UV(aUV,1, 2);
@@ -93,8 +607,28 @@ void IntWalk_IWalking::OpenLine(const Standard_Integer N,
     previousPoint.ParametersOnS1(UV(1),UV(2));
   }
   sp.Values(UV, FF, DD);
-  previousd3d = sp.Direction3d();
-  previousd2d = sp.Direction2d();
+  if (sp.IsTangent())
+  {
+    IsTangentialIntersection = Standard_True;
+    Standard_Integer theSign = 1;
+    Standard_Integer theSignOfBcoeff = 0;
+    gp_Vec   newd3d;
+    gp_Dir2d newd2d;
+    Standard_Boolean IsDiscriminantNull;
+    if (!ComputeDirOfTangentialIntersection(sp, theSign,
+                                            IsDiscriminantNull, theSignOfBcoeff,
+                                            newd3d, newd2d) ||
+        !IsDiscriminantNull)
+      StdFail_UndefinedDerivative::Raise();
+    previousd3d = newd3d;
+    previousd2d = newd2d;
+  }
+  else
+  {
+    IsTangentialIntersection = Standard_False;
+    previousd3d = sp.Direction3d();
+    previousd2d = sp.Direction2d();
+  }
 
   if (N>0) { //departure point given at input
     PathPnt = Pnts1.Value(N);
@@ -102,11 +636,24 @@ void IntWalk_IWalking::OpenLine(const Standard_Integer N,
     Line->AddStatusFirst(Standard_False,Standard_True,N,PathPnt); 
 
 
-    AddPointInCurrentLine(N,PathPnt,Line);
+    AddPointInCurrentLine(N,PathPnt,theQuad,Line);
 
   }
   else  {
-    if (N <0) Line->AddPoint(Psol);                      
+    if (N <0)
+    {
+      //jgv
+      /*
+      Standard_Real u_i, v_i, prev_ui, prev_vi;
+      theQuad.Parameters(Psol.Value(), u_i, v_i);
+      IntSurf_PntOn2S LastPnt = Line->Value(Line->NbPoints());
+      LastPnt.ParametersOnSurface(!reversed, prev_ui, prev_vi);
+      RecadreParam(u_i, prev_ui, theQuad);
+      Psol.SetValue(!reversed, u_i, v_i);
+      */
+      /////
+      Line->AddPoint(Psol);
+    }
     Line->AddStatusFirst(Standard_False,Standard_False);
        //mark the line as open without given stop point 
   }

@@ -1,0 +1,38 @@
+puts "========"
+puts "OCC24694"
+puts "========"
+puts ""
+############################################################################
+#  Wrong processing of two surfaces (implicit and parametric) having tangential intersection: it is not found by intersector
+############################################################################
+
+cylinder cc 300 -200 0 0 1 0 1 0 0 100
+torus tt 0 0 0 0 0 1 -1 0 0 300 100
+trimv tcc cc -200 600
+
+convert s2 tt
+
+mkface f1 tcc
+mkface f2 s2
+
+bop f1 f2
+bopfuse result
+ 
+checkarea result 1.68947e+06 0.01 0.01
+
+set nbshapes_expected "
+Number of shapes in shape
+ VERTEX    : 8
+ EDGE      : 16
+ WIRE      : 10
+ FACE      : 10
+ SHELL     : 0
+ SOLID     : 0
+ COMPSOLID : 0
+ COMPOUND  : 1
+ SHAPE     : 45
+"
+
+checknbshapes result -ref ${nbshapes_expected} -t -m "Result obtained by processing of two surfaces having tangential intersection"
+
+set 3dviewer 1
