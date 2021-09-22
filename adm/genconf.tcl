@@ -238,6 +238,15 @@ proc wokdep:gui:UpdateList {} {
     set aDummy {}
     wokdep:SearchStandardLibrary  anIncErrs anLib32Errs anLib64Errs aDummy aDummy "draco" "draco/compression/decode.h" "draco" {"draco"}
   }
+  if { "$::HAVE_BULLET" == "true" } {
+    set aDummy {}
+    wokdep:SearchStandardLibrary  anIncErrs anLib32Errs anLib64Errs aDummy aDummy "bullet" "bullet/btBulletDynamicsCommon.h" "BulletDynamics" {"bullet"}
+    set aHeaderPath1 [wokdep:SearchHeader "btBulletDynamicsCommon.h"]
+    set aHeaderPath2 [wokdep:SearchHeader "bullet/btBulletDynamicsCommon.h"]
+    if { "$aHeaderPath1" == "" && "$aHeaderPath2" != "" } {
+      lappend ::CSF_OPT_INC [file dirname "$aHeaderPath2"]
+    }
+  }
 
   if {"$::BUILD_Inspector" == "true" } {
     set ::CHECK_QT "true"
@@ -465,6 +474,8 @@ checkbutton   .myFrame.myChecks.myXLibCheck     -offvalue "false" -onvalue "true
 ttk::label    .myFrame.myChecks.myXLibLbl       -text "Use X11 for windows drawing"
 ttk::label    .myFrame.myChecks.myVtkLbl        -text "Use VTK"
 checkbutton   .myFrame.myChecks.myVtkCheck      -offvalue "false" -onvalue "true" -variable HAVE_VTK       -command wokdep:gui:UpdateList
+ttk::label    .myFrame.myChecks.myBulletLbl     -text "Use Bullet"
+checkbutton   .myFrame.myChecks.myBulletCheck   -offvalue "false" -onvalue "true" -variable HAVE_BULLET    -command wokdep:gui:UpdateList
 
 checkbutton   .myFrame.myChecks.myZLibCheck     -offvalue "false" -onvalue "true" -variable HAVE_ZLIB      -command wokdep:gui:UpdateList
 ttk::label    .myFrame.myChecks.myZLibLbl       -text "Use zlib"
@@ -655,8 +666,8 @@ grid .myFrame.myChecks.myJDKLbl        -row $aCheckRowIter -column 13 -sticky w
 incr aCheckRowIter
 grid .myFrame.myChecks.myFFmpegCheck   -row $aCheckRowIter -column 0 -sticky e
 grid .myFrame.myChecks.myFFmpegLbl     -row $aCheckRowIter -column 1 -sticky w
-grid .myFrame.myChecks.myVtkCheck      -row $aCheckRowIter -column 2 -sticky e
-grid .myFrame.myChecks.myVtkLbl        -row $aCheckRowIter -column 3 -sticky w
+grid .myFrame.myChecks.myBulletCheck   -row $aCheckRowIter -column 2 -sticky e
+grid .myFrame.myChecks.myBulletLbl     -row $aCheckRowIter -column 3 -sticky w
 grid .myFrame.myChecks.myOpenVrCheck   -row $aCheckRowIter -column 4 -sticky e
 grid .myFrame.myChecks.myOpenVrLbl     -row $aCheckRowIter -column 5 -sticky w
 grid .myFrame.myChecks.myE57Check      -row $aCheckRowIter -column 6 -sticky e
@@ -669,6 +680,8 @@ if { "$::tcl_platform(platform)" == "windows" } {
 
 incr aCheckRowIter
 
+grid .myFrame.myChecks.myVtkCheck      -row $aCheckRowIter -column 2  -sticky e
+grid .myFrame.myChecks.myVtkLbl        -row $aCheckRowIter -column 3  -sticky w
 grid .myFrame.myChecks.myTbbCheck      -row $aCheckRowIter -column 12 -sticky e
 grid .myFrame.myChecks.myTbbLbl        -row $aCheckRowIter -column 13 -sticky w
 

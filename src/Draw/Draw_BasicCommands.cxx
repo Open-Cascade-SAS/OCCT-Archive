@@ -394,6 +394,11 @@ static Standard_Integer dversion(Draw_Interpretor& di, Standard_Integer, const c
 #else
   di << "Draco disabled\n";
 #endif
+#ifdef HAVE_BULLET
+  di << "Bullet Physics enabled (HAVE_BULLET)\n";
+#else
+  di << "Bullet Physics disabled\n";
+#endif
 #ifdef HAVE_VTK
   di << "VTK enabled (HAVE_VTK)\n";
 #else

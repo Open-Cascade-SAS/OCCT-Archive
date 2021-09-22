@@ -22,6 +22,7 @@ export HAVE_LIBLZMA="false";
 export HAVE_RAPIDJSON="false";
 export HAVE_DRACO="false";
 export HAVE_OPENVR="false";
+export HAVE_BULLET="false";
 export HAVE_E57="false";
 export HAVE_XLIB="true";
 if [ "$aSystem" == "Darwin" ]; then
@@ -104,7 +105,7 @@ fi
 
 export CSF_OPT_CMPL=""
 
-# Optiona 3rd-parties should be enabled by HAVE macros
+# Optional 3rd-parties should be enabled by HAVE macros
 if [ "$HAVE_TBB"       == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -DHAVE_TBB"; fi
 if [ "$HAVE_OPENCL"    == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -DHAVE_OPENCL"; fi
 if [ "$HAVE_TK"        == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -DHAVE_TK"; fi
@@ -118,6 +119,7 @@ if [ "$HAVE_LIBLZMA"   == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -D
 if [ "$HAVE_RAPIDJSON" == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -DHAVE_RAPIDJSON"; fi
 if [ "$HAVE_DRACO"     == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -DHAVE_DRACO"; fi
 if [ "$HAVE_OPENVR"    == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -DHAVE_OPENVR"; fi
+if [ "$HAVE_BULLET"    == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -DHAVE_BULLET"; fi
 if [ "$HAVE_E57"       == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -DHAVE_E57"; fi
 if [ "$HAVE_XLIB"      == "true" ]; then export CSF_OPT_CMPL="${CSF_OPT_CMPL} -DHAVE_XLIB"; fi
 

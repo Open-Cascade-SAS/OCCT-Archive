@@ -1415,6 +1415,9 @@ proc osutils:csfList { theOS theCsfLibsMap theCsfFrmsMap theRelease} {
   if { "$::HAVE_FREETYPE" == "true" } {
     set aLibsMap(CSF_FREETYPE) "freetype"
   }
+  if { "$::HAVE_BULLET" == "true" && "$theOS" != "wnt" } {
+    set aLibsMap(CSF_BULLET) "BulletDynamics BulletCollision LinearMath"
+  }
   set aLibsMap(CSF_TclLibs)   "tcl8.6"
   if { "$::HAVE_TK" == "true" } {
     set aLibsMap(CSF_TclTkLibs) "tk8.6"
