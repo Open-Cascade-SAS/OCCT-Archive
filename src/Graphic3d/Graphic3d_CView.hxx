@@ -35,6 +35,7 @@
 #include <Graphic3d_TextureEnv.hxx>
 #include <Graphic3d_TypeOfAnswer.hxx>
 #include <Graphic3d_TypeOfBackfacingModel.hxx>
+#include <Graphic3d_TypeOfBackground.hxx>
 #include <Graphic3d_TypeOfShadingModel.hxx>
 #include <Graphic3d_TypeOfVisualization.hxx>
 #include <Graphic3d_Vec3.hxx>
@@ -372,7 +373,7 @@ public:
   virtual void SetGradientBackground (const Aspect_GradientBackground& theBackground) = 0;
 
   //! Returns background image texture map.
-  virtual Handle(Graphic3d_TextureMap) BackgroundImage() = 0;
+  const Handle(Graphic3d_TextureMap)& BackgroundImage() { return myBackgroundImage; }
 
   //! Sets image texture or environment cubemap as background.
   //! @param theTextureMap [in] source to set a background;
@@ -389,7 +390,7 @@ public:
   virtual void SetBackgroundImageStyle (const Aspect_FillMethod theFillStyle) = 0;
 
   //! Returns cubemap being set last time on background.
-  virtual Handle(Graphic3d_CubeMap) BackgroundCubeMap() const = 0;
+  const Handle(Graphic3d_CubeMap)& BackgroundCubeMap() const { return myCubeMapBackground; }
 
   //! Generates PBR specular probe and irradiance map
   //! in order to provide environment indirect illumination in PBR shading model (Image Based Lighting).
@@ -405,7 +406,7 @@ public:
   virtual void ClearPBREnvironment() = 0;
 
   //! Returns environment texture set for the view.
-  virtual Handle(Graphic3d_TextureEnv) TextureEnv() const = 0; 
+  const Handle(Graphic3d_TextureEnv)& TextureEnv() const { return myTextureEnvData; }
 
   //! Sets environment texture for the view.
   virtual void SetTextureEnv (const Handle(Graphic3d_TextureEnv)& theTextureEnv) = 0;
@@ -568,7 +569,14 @@ protected:
 
   Standard_Integer myId;
   Graphic3d_RenderingParams myRenderParams;
-  Quantity_ColorRGBA        myBgColor;
+
+  Quantity_ColorRGBA           myBgColor;
+  Handle(Graphic3d_TextureMap) myBackgroundImage;
+  Handle(Graphic3d_CubeMap)    myCubeMapBackground;  //!< Cubemap displayed at background
+  Handle(Graphic3d_CubeMap)    myCubeMapEnvironment; //!< Cubemap used for environment lighting
+  Handle(Graphic3d_TextureEnv) myTextureEnvData;
+  Graphic3d_TypeOfBackground   myBackgroundType;     //!< Current type of background
+
   Handle(Graphic3d_StructureManager) myStructureManager;
   Handle(Graphic3d_Camera)  myCamera;
   Graphic3d_SequenceOfStructure myStructsToCompute;
