@@ -100,8 +100,8 @@ ProjLib_PrjResolve::ProjLib_PrjResolve(const Adaptor3d_Curve& C,const Adaptor3d_
 
   Standard_Real ExtraU , ExtraV;
 //  if(!StrictInside) {
-    ExtraU = 2. * Tol2d.X();
-    ExtraV = 2. * Tol2d.Y();
+    ExtraU = 10. * Tol2d.X();
+    ExtraV = 10. * Tol2d.Y();
 //  }
   if (mySolution.X() > Inf.X() - Tol2d.X() && mySolution.X() < Inf.X()) mySolution.SetX(Inf.X());
   if (mySolution.X() > Sup.X() && mySolution.X() < Sup.X() + Tol2d.X()) mySolution.SetX(Sup.X()); 
