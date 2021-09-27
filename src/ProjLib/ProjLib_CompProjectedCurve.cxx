@@ -1333,15 +1333,17 @@ void ProjLib_CompProjectedCurve::Perform()
         V1 = mySurface->FirstVParameter();
         V2 = mySurface->LastVParameter();
 
-        Standard_Real dU = 10 * myTolU;
-        Standard_Real dV = 10 * myTolV;
+        Standard_Real dU = 10. * myTolU;
+        Standard_Real dV = 10. * myTolV;
 
         U1 -= dU; U2 += dU; V1 -= dV; V2 += dV;
 
         Handle(GeomAdaptor_Surface) S = Handle(GeomAdaptor_Surface)::DownCast(mySurface);
         GeomAdaptor_Surface AS(S->Surface(), U1, U2, V1, V2);
         HS = new GeomAdaptor_Surface(AS);
-        HPCur = new ProjLib_HCompProjectedCurve(myTol3d, HS, myCurve, myMaxDist);
+        Handle(ProjLib_CompProjectedCurve) P = new ProjLib_HCompProjectedCurve(myTol3d, HS, myCurve, myMaxDist);
+        HPCur = P;
+        P->Bounds(k, Udeb, Ufin);
       }
 
       if (approx2d || approx3d)
