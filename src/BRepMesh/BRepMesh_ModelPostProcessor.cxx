@@ -191,7 +191,7 @@ namespace
       
       if (!aTriangulation.IsNull())
       {
-        aTriangulation->Parameters (myParams);
+        aTriangulation->Deflection(myParams->Deflection());
       }
     }
 
