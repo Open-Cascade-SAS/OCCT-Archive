@@ -1,0 +1,17 @@
+puts "============================================================================"
+puts "	0026302: Data Exchange - new functionality XCAFDoc_Editor::Compact() converting the assembly to compound"
+puts "============================================================================"
+puts ""
+
+pload DCAF
+
+Close D -silent
+
+ReadStep D [locate_data_file trj6_as1-ec-214.stp]
+XGetOneShape origin D
+XCompact D
+XGetOneShape comp D
+
+checkprops origin -equal comp
+
+Close D -silent

@@ -55,6 +55,13 @@ public:
                                                   const TDF_Label& theDstLabel,
                                                   const Standard_Boolean theIsNoVisMat = Standard_False);
 
+  //! Converts assembly shape to compound
+  Standard_EXPORT static Standard_Boolean Compact(const TDF_Label& theDoc,
+                                                  const TDF_Label& theShapeL);
+
+  //! Converts all assembly in theDoc to compounds
+  Standard_EXPORT static Standard_Boolean Compact(const TDF_Label& theDoc);
+
   //! Copies shapes label with saving of shape structure (recursively)
   //! theMap is a relating map of the original shapes label and labels created from them
   Standard_EXPORT static TDF_Label CloneShapeLabel(const TDF_Label& theSrcLabel,

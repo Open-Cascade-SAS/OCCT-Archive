@@ -694,6 +694,66 @@ static Standard_Integer Extract(Draw_Interpretor& di,
 }
 
 //=======================================================================
+//function : Compact
+//purpose  :
+//=======================================================================
+static Standard_Integer Compact(Draw_Interpretor& di,
+                                Standard_Integer argc,
+                                const char** argv)
+{
+  if (argc < 2)
+  {
+    di << "Use: " << argv[0] << " Doc or Doc label1 label2 ... or Doc shape1 shape2 ..." << "\n";
+    return 1;
+  }
+  Handle(TDocStd_Document) Doc;
+  DDocStd::GetDocument(argv[1], Doc);
+  if (Doc.IsNull())
+  {
+    di << argv[1] << " is not a document" << "\n";
+    return 1;
+  }
+
+  Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(Doc->Main());
+
+  if (argc == 2)
+  {
+    if (!XCAFDoc_Editor::Compact(Doc->Main()))
+    {
+      di << "The shape is  not assembly" << "\n";
+      return 1;
+    }
+  }
+  else
+  {
+    for (Standard_Integer i = 2; i < argc; i++)
+    {
+      TDF_Label aLabel;
+      TDF_Tool::Label(Doc->GetData(), argv[i], aLabel);
+      if (aLabel.IsNull())
+      {
+        TopoDS_Shape aShape;
+        aShape = DBRep::Get(argv[i]);
+        aLabel = aShapeTool->FindShape(aShape);
+      }
+      if (!aLabel.IsNull())
+      {
+        if (!XCAFDoc_Editor::Compact(Doc->Main(), aLabel))
+        {
+          di << "The shape is not assembly" << "\n";
+          return 1;
+        }
+      }
+      else
+      {
+        di << argv[i] << " is not a shape" << "\n"; return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+//=======================================================================
 //function : WriteVrml
 //purpose  : Write DECAF document to Vrml
 //=======================================================================
@@ -764,6 +824,9 @@ void XDEDRAW_Common::InitCommands(Draw_Interpretor& di)
   di.Add("XExtract", "XExtract dstDoc [dstAssmblSh] srcDoc srcLabel1 srcLabel2 ...\t"
     "Extracts given srcLabel1 srcLabel2 ... from srcDoc into given Doc or assembly shape",
     __FILE__, Extract, g);
+  di.Add("XCompact", "XCompact Doc [{shLabel1 shLabel2 ...}|{shape1 shape2 ...}]\t"
+    "Converts assembly shapes to compound shapes on the all document or selected labels or shapes"
+    __FILE__, Compact, g);
 
   di.Add("WriteVrml", "Doc filename [version VRML#1.0/VRML#2.0 (1/2): 2 by default] [representation shaded/wireframe/both (0/1/2): 0 by default]", __FILE__, WriteVrml, g);
 
