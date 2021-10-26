@@ -694,6 +694,80 @@ static Standard_Integer Extract(Draw_Interpretor& di,
 }
 
 //=======================================================================
+//function : Compact
+//purpose  :
+//=======================================================================
+static Standard_Integer Compact(Draw_Interpretor& di,
+                                Standard_Integer argc,
+                                const char** argv)
+{
+  if (argc < 2)
+  {
+    di << "Syntax error: wrong number of arguments" << "\n";
+    return 1;
+  }
+  Standard_Boolean toPrintInfo = Standard_False;
+  Handle(TDocStd_Document) aDoc;
+  Handle(XCAFDoc_ShapeTool) aShapeTool;
+  TDF_LabelSequence aShLabels;
+  for (Standard_Integer anInd = 1; anInd < argc; anInd++)
+  {
+    if (TCollection_AsciiString::IsSameString(argv[anInd], "-info", false))
+    {
+      toPrintInfo = Standard_True;
+    }
+    else if (aDoc.IsNull())
+    {
+      DDocStd::GetDocument(argv[anInd], aDoc);
+      if (aDoc.IsNull())
+      {
+        di << "Syntax error: " << argv[anInd] << " is not a document" << "\n";
+        return 1;
+      }
+      aShapeTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
+    }
+    else
+    {
+      TDF_Label aLabel;
+      TDF_Tool::Label(aDoc->GetData(), argv[anInd], aLabel);
+      if (aLabel.IsNull())
+      {
+        TopoDS_Shape aShape;
+        aShape = DBRep::Get(argv[anInd]);
+        aLabel = aShapeTool->FindShape(aShape);
+      }
+      if (!aLabel.IsNull())
+      {
+        aShLabels.Append(aLabel);
+      }
+      else
+      {
+        di << "Syntax error: " << argv[anInd] << " is not a shape" << "\n";
+        return 1;
+      }
+    }
+  }
+  if (aShLabels.IsEmpty())
+  {
+    if (!XCAFDoc_Editor::Compact(aDoc->Main()) && toPrintInfo)
+    {
+      di << "The document does not contain any assembly shapes" << "\n";
+    }
+  }
+  for (TDF_LabelSequence::Iterator anIter(aShLabels); anIter.More(); anIter.Next())
+  {
+    const TDF_Label& aLabel = anIter.Value();
+    if (!XCAFDoc_Editor::Compact(aDoc->Main(), aLabel) && toPrintInfo)
+    {
+      TCollection_AsciiString anEntry;
+      TDF_Tool::Entry(aLabel, anEntry);
+      di << anEntry << " is not assembly" << "\n";
+    }
+  }
+  return 0;
+}
+
+//=======================================================================
 //function : WriteVrml
 //purpose  : Write DECAF document to Vrml
 //=======================================================================
@@ -764,6 +838,10 @@ void XDEDRAW_Common::InitCommands(Draw_Interpretor& di)
   di.Add("XExtract", "XExtract dstDoc [dstAssmblSh] srcDoc srcLabel1 srcLabel2 ...\t"
     "Extracts given srcLabel1 srcLabel2 ... from srcDoc into given Doc or assembly shape",
     __FILE__, Extract, g);
+  di.Add("XCompact", "XCompact [-info] Doc [{shLabel1 shLabel2 ...}|{shape1 shape2 ...}]\t"
+    "Converts assembly shapes to compound shapes on the all document or selected labels or shapes\t"
+    "  -info print information about skipped simple shapes"
+    __FILE__, Compact, g);
 
   di.Add("WriteVrml", "Doc filename [version VRML#1.0/VRML#2.0 (1/2): 2 by default] [representation shaded/wireframe/both (0/1/2): 0 by default]", __FILE__, WriteVrml, g);
 

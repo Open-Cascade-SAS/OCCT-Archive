@@ -50,6 +50,22 @@ public:
   Standard_EXPORT static Standard_Boolean Expand(const TDF_Label& theDoc,
                                                  const Standard_Boolean theRecursively = Standard_True);
 
+  //! Replaces assembly's childs to referred parts with location, making simple compound.
+  //! All parts without users are removed.
+  //! This action has an opposite effect to Expand() operation
+  //! @param[in] theDoc input document
+  //! @param[in] theAssemblyL input assembly shape's label
+  //! @return True if assembly label was successful compressed
+  Standard_EXPORT static Standard_Boolean Compact(const TDF_Label& theDoc,
+                                                  const TDF_Label& theAssemblyL);
+
+  //! Converts all assembly shapes in the document to simple compounds.
+  //! All parts without users are removed.
+  //! This action has an opposite effect to Expand() operation
+  //! @param[in] theDoc input document
+  //! @return True if one or more assembly labels were successful compressed
+  Standard_EXPORT static Standard_Boolean Compact(const TDF_Label& theDoc);
+
   //! Clones all labels to a new position, keeping the structure with all the attributes
   //! @param[in] theSrcLabels original labels to copy from
   //! @param[in] theDstLabel label to set result as a component of or a main document's label to simply set new shape
