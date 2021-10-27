@@ -703,50 +703,60 @@ static Standard_Integer Compact(Draw_Interpretor& di,
 {
   if (argc < 2)
   {
-    di << "Use: " << argv[0] << " Doc or Doc label1 label2 ... or Doc shape1 shape2 ..." << "\n";
+    di << "Use: " << argv[0] << " [-info] Doc [{shLabel1 shLabel2 ...}|{shape1 shape2 ...}]" << "\n";
     return 1;
   }
-  Handle(TDocStd_Document) Doc;
-  DDocStd::GetDocument(argv[1], Doc);
-  if (Doc.IsNull())
+  Standard_Integer anArgcInd = 1;
+  Standard_Boolean toPrintInfo = Standard_False;
+  if (argc > 2)
   {
-    di << argv[1] << " is not a document" << "\n";
+    TCollection_AsciiString aFirstArg(argv[anArgcInd]);
+    aFirstArg.LowerCase();
+    if (aFirstArg.IsEqual("-info"))
+    {
+      toPrintInfo = Standard_True;
+      anArgcInd++;
+    }
+  }
+  Handle(TDocStd_Document) aDoc;
+  DDocStd::GetDocument(argv[anArgcInd], aDoc);
+  if (aDoc.IsNull())
+  {
+    di << "Syntax error: " << argv[anArgcInd] << " is not a document" << "\n";
     return 1;
   }
-
-  Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(Doc->Main());
-
   if (argc == 2)
   {
-    if (!XCAFDoc_Editor::Compact(Doc->Main()))
+    if (!XCAFDoc_Editor::Compact(aDoc->Main()) && toPrintInfo)
     {
-      di << "The shape is  not assembly" << "\n";
-      return 1;
+      di << "The document does not contain any assembly shapes" << "\n";
     }
   }
   else
   {
-    for (Standard_Integer i = 2; i < argc; i++)
+    Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
+    for (; anArgcInd < argc; anArgcInd++)
     {
       TDF_Label aLabel;
-      TDF_Tool::Label(Doc->GetData(), argv[i], aLabel);
+      TDF_Tool::Label(aDoc->GetData(), argv[anArgcInd], aLabel);
       if (aLabel.IsNull())
       {
         TopoDS_Shape aShape;
-        aShape = DBRep::Get(argv[i]);
+        aShape = DBRep::Get(argv[anArgcInd]);
         aLabel = aShapeTool->FindShape(aShape);
       }
       if (!aLabel.IsNull())
       {
-        if (!XCAFDoc_Editor::Compact(Doc->Main(), aLabel))
+        if (!XCAFDoc_Editor::Compact(aDoc->Main(), aLabel) && toPrintInfo)
         {
-          di << "The shape is not assembly" << "\n";
-          return 1;
+          di << argv[anArgcInd] << " is not assembly" << "\n";
+          // continue iteration
         }
       }
       else
       {
-        di << argv[i] << " is not a shape" << "\n"; return 1;
+        di << "Syntax error: " << argv[anArgcInd] << " is not a shape" << "\n";
+        return 1;
       }
     }
   }
@@ -824,8 +834,9 @@ void XDEDRAW_Common::InitCommands(Draw_Interpretor& di)
   di.Add("XExtract", "XExtract dstDoc [dstAssmblSh] srcDoc srcLabel1 srcLabel2 ...\t"
     "Extracts given srcLabel1 srcLabel2 ... from srcDoc into given Doc or assembly shape",
     __FILE__, Extract, g);
-  di.Add("XCompact", "XCompact Doc [{shLabel1 shLabel2 ...}|{shape1 shape2 ...}]\t"
-    "Converts assembly shapes to compound shapes on the all document or selected labels or shapes"
+  di.Add("XCompact", "XCompact [-info] Doc [{shLabel1 shLabel2 ...}|{shape1 shape2 ...}]\t"
+    "Converts assembly shapes to compound shapes on the all document or selected labels or shapes\t"
+    "  -info print information about skipped simple shapes"
     __FILE__, Compact, g);
 
   di.Add("WriteVrml", "Doc filename [version VRML#1.0/VRML#2.0 (1/2): 2 by default] [representation shaded/wireframe/both (0/1/2): 0 by default]", __FILE__, WriteVrml, g);
