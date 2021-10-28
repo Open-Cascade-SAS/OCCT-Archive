@@ -703,39 +703,30 @@ static Standard_Integer Compact(Draw_Interpretor& di,
 {
   if (argc < 2)
   {
-    di << "Use: " << argv[0] << " [-info] Doc [{shLabel1 shLabel2 ...}|{shape1 shape2 ...}]" << "\n";
+    di << "Syntax error: wrong number of arguments" << "\n";
     return 1;
   }
-  Standard_Integer anArgcInd = 1;
   Standard_Boolean toPrintInfo = Standard_False;
-  if (argc > 2)
+  Handle(TDocStd_Document) aDoc;
+  Handle(XCAFDoc_ShapeTool) aShapeTool;
+  TDF_LabelSequence aShLabels;
+  for (Standard_Integer anInd = 1; anInd < argc; anInd++)
   {
-    TCollection_AsciiString aFirstArg(argv[anArgcInd]);
-    aFirstArg.LowerCase();
-    if (aFirstArg.IsEqual("-info"))
+    if (TCollection_AsciiString::IsSameString(argv[anInd], "-info", false))
     {
       toPrintInfo = Standard_True;
-      anArgcInd++;
     }
-  }
-  Handle(TDocStd_Document) aDoc;
-  DDocStd::GetDocument(argv[anArgcInd], aDoc);
-  if (aDoc.IsNull())
-  {
-    di << "Syntax error: " << argv[anArgcInd] << " is not a document" << "\n";
-    return 1;
-  }
-  if (argc == 2)
-  {
-    if (!XCAFDoc_Editor::Compact(aDoc->Main()) && toPrintInfo)
+    else if (aDoc.IsNull())
     {
-      di << "The document does not contain any assembly shapes" << "\n";
+      DDocStd::GetDocument(argv[anInd], aDoc);
+      if (aDoc.IsNull())
+      {
+        di << "Syntax error: " << argv[anInd] << " is not a document" << "\n";
+        return 1;
+      }
+      aShapeTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
     }
-  }
-  else
-  {
-    Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
-    for (Standard_Integer anInd = anArgcInd + 1; anInd < argc; anInd++)
+    else
     {
       TDF_Label aLabel;
       TDF_Tool::Label(aDoc->GetData(), argv[anInd], aLabel);
@@ -747,17 +738,30 @@ static Standard_Integer Compact(Draw_Interpretor& di,
       }
       if (!aLabel.IsNull())
       {
-        if (!XCAFDoc_Editor::Compact(aDoc->Main(), aLabel) && toPrintInfo)
-        {
-          di << argv[anInd] << " is not assembly" << "\n";
-          // continue iteration
-        }
+        aShLabels.Append(aLabel);
       }
       else
       {
         di << "Syntax error: " << argv[anInd] << " is not a shape" << "\n";
         return 1;
       }
+    }
+  }
+  if (aShLabels.IsEmpty())
+  {
+    if (!XCAFDoc_Editor::Compact(aDoc->Main()) && toPrintInfo)
+    {
+      di << "The document does not contain any assembly shapes" << "\n";
+    }
+  }
+  for (TDF_LabelSequence::Iterator anIter(aShLabels); anIter.More(); anIter.Next())
+  {
+    const TDF_Label& aLabel = anIter.Value();
+    if (!XCAFDoc_Editor::Compact(aDoc->Main(), aLabel) && toPrintInfo)
+    {
+      TCollection_AsciiString anEntry;
+      TDF_Tool::Entry(aLabel, anEntry);
+      di << anEntry << " is not assembly" << "\n";
     }
   }
   return 0;

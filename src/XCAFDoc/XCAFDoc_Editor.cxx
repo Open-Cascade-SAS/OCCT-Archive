@@ -182,57 +182,59 @@ Standard_Boolean XCAFDoc_Editor::Compact(const TDF_Label& theDoc,
     TDF_Label aChild = anIter.Value();
     TDF_Label aPart;
     TopoDS_Shape aChildShape = aShapeTool->GetShape(aChild); // gets with own*ref location
-    if (aShapeTool->GetReferredShape(aChild, aPart))
+    if (!aShapeTool->GetReferredShape(aChild, aPart))
     {
-      if (aChildShape.ShapeType() == TopAbs_COMPOUND && aShapeTool->IsAssembly(aPart))
-      {
-        // iterate next level if it needed
-        Compact(theDoc, aPart);
-      }
-      // get location
-      Handle(XCAFDoc_Location) aLocationAttribute;
-      aChild.FindAttribute(XCAFDoc_Location::GetID(), aLocationAttribute);
+      continue;
+    }
+    if (aChildShape.ShapeType() == TopAbs_COMPOUND && aShapeTool->IsAssembly(aPart))
+    {
+      // iterate next level if it needed
+      Compact(theDoc, aPart);
+    }
+    // get location
+    Handle(XCAFDoc_Location) aLocationAttribute;
+    aChild.FindAttribute(XCAFDoc_Location::GetID(), aLocationAttribute);
 
-      TopLoc_Location aLoc;
-      if (!aLocationAttribute.IsNull())
+    TopLoc_Location aLoc;
+    if (!aLocationAttribute.IsNull())
+    {
+      aLoc = aLocationAttribute->Get();
+    }
+    aChild.ForgetAllAttributes(Standard_False);
+    if (aChildShape.ShapeType() != TopAbs_COMPOUND)
+    {
+      //move shape
+      aShapeTool->SetShape(aChild, aChildShape);
+      aChildShape.Free(Standard_True);
+      aBuilder.Add(aCompound, aChildShape);
+      CloneMetaData(aPart, aChild, NULL);
+    }
+    // move subshapes
+    TDF_LabelSequence aSub;
+    aShapeTool->GetSubShapes(aPart, aSub);
+    for (TDF_LabelSequence::Iterator aSubIter(aSub); aSubIter.More(); aSubIter.Next())
+    {
+      TopoDS_Shape aShapeSub = aShapeTool->GetShape(aSubIter.Value()).Moved(aLoc); // gets with own*ref*father location
+      TDF_TagSource aTag;
+      TDF_Label aSubC = aTag.NewChild(theAssemblyL);
+      // set shape
+      aShapeTool->SetShape(aSubC, aShapeSub);
+      aSubC.ForgetAttribute(XCAFDoc_ShapeMapTool::GetID());
+      if (aChildShape.ShapeType() == TopAbs_COMPOUND)
       {
-        aLoc = aLocationAttribute->Get();
+        aShapeSub.Free(Standard_True);
+        aBuilder.Add(aCompound, aShapeSub);
       }
-      aChild.ForgetAllAttributes(Standard_False);
-      if (aChildShape.ShapeType() != TopAbs_COMPOUND)
-      {
-        //move shape
-        aShapeTool->SetShape(aChild, aChildShape);
-        aChildShape.Free(Standard_True);
-        aBuilder.Add(aCompound, aChildShape);
-        CloneMetaData(aPart, aChild, NULL);
-      }
-      // move subshapes
-      TDF_LabelSequence aSub;
-      aShapeTool->GetSubShapes(aPart, aSub);
-      for (TDF_LabelSequence::Iterator aSubIter(aSub); aSubIter.More(); aSubIter.Next())
-      {
-        TopoDS_Shape aShapeSub = aShapeTool->GetShape(aSubIter.Value()).Moved(aLoc); // gets with own*ref*father location
-        TDF_TagSource aTag;
-        TDF_Label aSubC = aTag.NewChild(theAssemblyL);
-        // set shape
-        aShapeTool->SetShape(aSubC, aShapeSub);
-        aSubC.ForgetAttribute(XCAFDoc_ShapeMapTool::GetID());
-        if (aChildShape.ShapeType() == TopAbs_COMPOUND)
-        {
-          aShapeSub.Free(Standard_True);
-          aBuilder.Add(aCompound, aShapeSub);
-        }
-        CloneMetaData(aSubIter.Value(), aSubC, NULL);
-      }
-      // if all references removed - delete all data
-      if (aShapeTool->IsFree(aPart))
-      {
-        aPart.ForgetAllAttributes();
-      }
+      CloneMetaData(aSubIter.Value(), aSubC, NULL);
+    }
+    // if all references removed - delete all data
+    if (aShapeTool->IsFree(aPart))
+    {
+      aPart.ForgetAllAttributes();
     }
   }
   aShapeTool->SetShape(theAssemblyL, aCompound);
+  aShapeTool->UpdateAssemblies();
   return Standard_True;
 }
 
