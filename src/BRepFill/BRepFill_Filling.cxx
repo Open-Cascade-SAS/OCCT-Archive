@@ -31,6 +31,7 @@
 #include <BRepFill_FaceAndOrder.hxx>
 #include <BRepFill_Filling.hxx>
 #include <BRepLib.hxx>
+#include <BRepLib_MakeVertex.hxx>
 #include <BRepLib_MakeEdge.hxx>
 #include <BRepLib_MakeEdge2d.hxx>
 #include <BRepLib_MakeFace.hxx>
@@ -73,49 +74,68 @@ static gp_Vec MakeFinVec( const TopoDS_Wire aWire, const TopoDS_Vertex aVertex )
   TopoDS_Vertex Vfirst, Vlast, Origin;
   BRepTools_WireExplorer Explo( aWire );
   for (; Explo.More(); Explo.Next())
+  {
+    TopExp::Vertices(Explo.Current(), Vfirst, Vlast);
+    if (Vfirst.IsSame(aVertex))
     {
-      TopExp::Vertices( Explo.Current(), Vfirst, Vlast );
-      if (Vfirst.IsSame( aVertex ))
-	{
-	  Origin = Vlast;
-	  break;
-	}
-      if (Vlast.IsSame( aVertex ))
-	{
-	  Origin = Vfirst;
-	  break;
-	}
+      Origin = Vlast;
+      break;
     }
+    if (Vlast.IsSame(aVertex))
+    {
+      Origin = Vfirst;
+      break;
+    }
+  }
   return gp_Vec( BRep_Tool::Pnt( Origin ), BRep_Tool::Pnt( aVertex ) );
 }
 
 static TopoDS_Wire WireFromList(TopTools_ListOfShape& Edges)
 {
-  BRepLib_MakeWire MW;
+  BRep_Builder BB;
+  TopoDS_Wire aWire;
+  BB.MakeWire(aWire);
   TopoDS_Edge anEdge = TopoDS::Edge(Edges.First());
-  MW.Add(anEdge);
+  BB.Add(aWire, anEdge);
   Edges.RemoveFirst();
+
+  TopoDS_Vertex V1, V2;
+  TopExp::Vertices(anEdge, V1, V2, Standard_True); //with orientation
 
   while (!Edges.IsEmpty())
   {
-    TopoDS_Wire CurWire = MW.Wire();
-    TopoDS_Vertex V1, V2;
-    TopExp::Vertices(CurWire, V1, V2);
     TopTools_ListIteratorOfListOfShape itl(Edges);
     for (; itl.More(); itl.Next())
     {
       anEdge = TopoDS::Edge(itl.Value());
       TopoDS_Vertex V3, V4;
-      TopExp::Vertices(anEdge, V3, V4);
+      TopExp::Vertices(anEdge, V3, V4, Standard_True); //with orientation
       if (V1.IsSame(V3) || V1.IsSame(V4) ||
-          V2.IsSame(V3) || V2.IsSame(V4))
+        V2.IsSame(V3) || V2.IsSame(V4))
+      {
+        if (V1.IsSame(V3))
+        {
+          anEdge.Reverse();
+          V1 = V4;
+        }
+        else if (V1.IsSame(V4))
+          V1 = V3;
+        else if (V2.IsSame(V3))
+          V2 = V4;
+        else
+        {
+          anEdge.Reverse();
+          V2 = V3;
+        }
         break;
+      }
     }
-    MW.Add(anEdge);
+    BB.Add(aWire, anEdge);
     Edges.Remove(itl);
   }
 
-  return (MW.Wire());
+  aWire.Closed(Standard_True);
+  return aWire;
 }
 
 //=======================================================================
@@ -215,8 +235,6 @@ Standard_Integer BRepFill_Filling::Add( const TopoDS_Edge& anEdge,
   if (IsBound)
     {
       myBoundary.Append( EdgeFaceAndOrder );
-      TopTools_ListOfShape EmptyList;
-      myOldNewMap.Bind(anEdge, EmptyList);
       return myBoundary.Length();
     }
   else
@@ -239,8 +257,6 @@ Standard_Integer BRepFill_Filling::Add( const TopoDS_Edge& anEdge,
   if (IsBound)
     {
       myBoundary.Append( EdgeFaceAndOrder );
-      TopTools_ListOfShape EmptyList;
-      myOldNewMap.Bind(anEdge, EmptyList);
       return myBoundary.Length();
     }
   else
@@ -441,8 +457,10 @@ void BRepFill_Filling::BuildWires( TopTools_ListOfShape& EdgeList, TopTools_List
                     aDist < BRep_Tool::Tolerance(V_edge[j]))
                 {
                   MW.Add(CurEdge);
-                  myOldNewMap(CurEdge).Append(MW.Edge());
-                  EdgeList.Remove(Itl);
+                  TopoDS_Edge NewEdge = MW.Edge();
+                  TopTools_ListOfShape anLOS;
+                  anLOS.Append(NewEdge.Oriented(TopAbs_FORWARD));
+                  myOldNewMap.Bind(CurEdge.Oriented(TopAbs_FORWARD), anLOS);                  EdgeList.Remove(Itl);
                   found = Standard_True;
                   break;
                 }
@@ -685,25 +703,71 @@ void BRepFill_Filling::Build()
   {
     const TopoDS_Edge& InitEdge = myBoundary(i).myEdge;
     TopoDS_Edge anEdge = InitEdge;
-    if (!myOldNewMap(anEdge).IsEmpty())
-      anEdge = TopoDS::Edge( myOldNewMap(anEdge).First() );
+    anEdge.Orientation(TopAbs_FORWARD);
+    if (myOldNewMap.IsBound(anEdge))
+    {
+      const TopTools_ListOfShape& anLOS = myOldNewMap(anEdge);
+      anEdge = TopoDS::Edge(anLOS.First());
+    }
+
     Handle(Geom2d_Curve) aCurveOnPlate = CurvesOnPlate->Value(i);
 
     TopoDS_Edge NewEdge = TopoDS::Edge(anEdge.EmptyCopied());
 
-    TopoDS_Vertex V1, V2;
-    TopExp::Vertices(anEdge, V1, V2, Standard_True); //with orientation
-    BB.UpdateVertex(V1, dmax);
-    BB.UpdateVertex(V2, dmax);
-    BB.Add(NewEdge, V1);
-    BB.Add(NewEdge, V2);
+    TopoDS_Vertex V1, V2, NewV1, NewV2;
+    TopExp::Vertices(anEdge, V1, V2);
+
+    if (myOldNewMap.IsBound(V1))
+    {
+      const TopTools_ListOfShape& anLOS = myOldNewMap(V1);
+      NewV1 = TopoDS::Vertex(anLOS.First());
+    }
+    else
+    {
+      gp_Pnt aPnt = BRep_Tool::Pnt(V1);
+      NewV1 = BRepLib_MakeVertex(aPnt);
+      BB.UpdateVertex(NewV1, dmax);
+      TopTools_ListOfShape anLOS;
+      anLOS.Append(NewV1);
+      myOldNewMap.Bind(V1.Oriented(TopAbs_FORWARD), anLOS);
+    }
+
+    if (myOldNewMap.IsBound(V2))
+    {
+      const TopTools_ListOfShape& anLOS = myOldNewMap(V2);
+      NewV2 = TopoDS::Vertex(anLOS.First());
+    }
+    else
+    {
+      gp_Pnt aPnt = BRep_Tool::Pnt(V2);
+      NewV2 = BRepLib_MakeVertex(aPnt);
+      BB.UpdateVertex(NewV2, dmax);
+      TopTools_ListOfShape anLOS;
+      anLOS.Append(NewV2);
+      myOldNewMap.Bind(V2.Oriented(TopAbs_FORWARD), anLOS);
+    }
+
+    NewV1.Orientation(TopAbs_FORWARD);
+    BB.Add(NewEdge, NewV1);
+    NewV2.Orientation(TopAbs_REVERSED);
+    BB.Add(NewEdge, NewV2);
     TopLoc_Location Loc;
     BB.UpdateEdge(NewEdge, aCurveOnPlate, Surface, Loc, dmax);
     //BRepLib::SameRange(NewEdge);
     BRepLib::SameParameter(NewEdge, dmax, Standard_True);
     FinalEdges.Append(NewEdge);
-    myOldNewMap(InitEdge).Clear();
-    myOldNewMap(InitEdge).Append(NewEdge);
+    TopTools_ListOfShape anLOS1;
+    anLOS1.Append(NewEdge.Oriented(TopAbs_FORWARD));
+    myOldNewMap.Bind(InitEdge.Oriented(TopAbs_FORWARD), anLOS1);
+    TopTools_ListOfShape anLOS2;
+    anLOS2.Append(NewV1.Oriented(TopAbs_FORWARD));
+    myOldNewMap.Bind(V1.Oriented(TopAbs_FORWARD), anLOS2);
+    if (!V1.IsSame(V2))
+    {
+      TopTools_ListOfShape anLOS;
+      anLOS.Append(NewV2.Oriented(TopAbs_FORWARD));
+      myOldNewMap.Bind(V2.Oriented(TopAbs_FORWARD), anLOS);
+    }
   }
   
   TopoDS_Wire FinalWire = WireFromList(FinalEdges);
