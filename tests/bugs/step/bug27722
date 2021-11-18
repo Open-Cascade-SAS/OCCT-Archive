@@ -1,0 +1,28 @@
+puts "==================================================="
+puts "0027722: Data Exchange - STEP er-ror for Ellipse revol shape"
+puts "==================================================="
+puts ""
+
+pload MODELING XDE VISUALIZATION
+
+ellipse ge 0 0 20 10
+mkedge te ge 0 pi/2.0
+revol re te 0 0 0 0 1 0 360
+
+# save to STEP in mode: As Is.
+stepwrite a re ${imagedir}/${casename}.stp
+
+# read STEP
+stepread ${imagedir}/${casename}.stp sr *
+ttranslate sr_1 50 0 0
+checkshape sr_1
+checkprops sr_1 -equal re
+
+vinit view1
+vclear
+vdisplay -dispmode 1 -3d sr_1 re
+vtrihedron vt
+vfit
+checkview -screenshot -3d -path ${imagedir}/${test_image}.png
+
+file delete ${imagedir}/orig.stp

@@ -1793,8 +1793,7 @@ void ShapeUpgrade_UnifySameDomain::UnionPCurves(const TopTools_SequenceOfShape& 
     for (Standard_Integer ii = 1; ii <= ResPCurves.Length(); ii++)
     {
       const TopoDS_Face& aFace = TopoDS::Face (aFaceSeq(ii));
-      Handle(Geom_Surface) aSurf = BRep_Tool::Surface (aFace);
-      Handle(ShapeAnalysis_Surface) aSAS = new ShapeAnalysis_Surface (aSurf);
+      Handle(ShapeAnalysis_Surface) aSAS = new ShapeAnalysis_Surface (aFace);
       ShapeConstruct_ProjectCurveOnSurface aToolProj;
       aToolProj.Init (aSAS, Precision::Confusion());
       Handle(Geom2d_Curve) aNewPCurve;

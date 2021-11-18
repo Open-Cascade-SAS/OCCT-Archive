@@ -159,7 +159,7 @@ Standard_Boolean ShapeUpgrade_ClosedFaceDivide::SplitSurface()
   
   if(!doSplit) {
     //pdn try to define geometric closure.
-    Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface( surf );
+    Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface( face );
     Standard_Boolean uclosed = sas->IsUClosed(Precision());
     Standard_Boolean vclosed = sas->IsVClosed(Precision());
     Standard_Real U1, U2, V1, V2;

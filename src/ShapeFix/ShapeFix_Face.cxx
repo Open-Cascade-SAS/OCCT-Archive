@@ -254,7 +254,7 @@ void ShapeFix_Face::Init (const Handle(ShapeAnalysis_Surface)& surf,
 void ShapeFix_Face::Init (const TopoDS_Face& face) 
 {
   myStatus = 0;
-  mySurf = new ShapeAnalysis_Surface ( BRep_Tool::Surface (face) );
+  mySurf = new ShapeAnalysis_Surface ( face );
   myFwd = ( face.Orientation() != TopAbs_REVERSED );
   myFace = face;
   myShape = myFace;

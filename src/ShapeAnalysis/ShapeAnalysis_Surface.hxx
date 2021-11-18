@@ -14,6 +14,7 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+
 #ifndef _ShapeAnalysis_Surface_HeaderFile
 #define _ShapeAnalysis_Surface_HeaderFile
 
@@ -24,6 +25,7 @@
 #include <Bnd_Box.hxx>
 #include <TColgp_SequenceOfPnt.hxx>
 #include <TColgp_SequenceOfPnt2d.hxx>
+#include <TopoDS_Face.hxx>
 
 class Geom_Surface;
 class Geom_Curve;
@@ -63,6 +65,9 @@ public:
   
   //! Creates an analyzer object on the basis of existing surface
   Standard_EXPORT ShapeAnalysis_Surface(const Handle(Geom_Surface)& S);
+
+  //! Creates an analyzer object on the basis of existing face
+  Standard_EXPORT ShapeAnalysis_Surface(const TopoDS_Face& theFace);
   
   //! Loads existing surface
   Standard_EXPORT void Init (const Handle(Geom_Surface)& S);
@@ -309,7 +314,7 @@ public:
 
 protected:
 
-
+  TopoDS_Face myFace;
   Handle(Geom_Surface) mySurf;
   Handle(GeomAdaptor_Surface) myAdSur;
   Extrema_ExtPS myExtPS;

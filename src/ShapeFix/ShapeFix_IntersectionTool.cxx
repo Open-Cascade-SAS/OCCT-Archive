@@ -800,7 +800,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FindVertAndSplitEdge
 {
   // find needed vertex from edge2 and split edge1 using it
   ShapeAnalysis_Edge sae;
-  Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface(BRep_Tool::Surface(face));
+  Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface(face);
   gp_Pnt pi1 = GetPointOnEdge(edge1,sas,Crv1,param1);
   BRep_Builder B;
   TopoDS_Vertex V;
@@ -869,7 +869,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
   // step 2 : intersection of non-adjacent edges
   ShapeFix_DataMapOfShapeBox2d boxes;
   (void)CreateBoxes2d(sewd,face,boxes);
-  Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface(BRep_Tool::Surface(face));
+  Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface(face);
 
   NbSplit=0;
   NbCut=0;
@@ -1488,7 +1488,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixIntersectingWires
   }
   Standard_Boolean isDone = Standard_False; //gka 06.09.04
   ShapeAnalysis_Edge sae;
-  Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface (BRep_Tool::Surface (face));
+  Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface (face);
 
   // precompute edge boxes for all wires
   NCollection_Sequence<ShapeFix_DataMapOfShapeBox2d> aSeqWirEdgeBoxes;

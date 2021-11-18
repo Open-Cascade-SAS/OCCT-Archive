@@ -178,7 +178,7 @@ void ShapeAnalysis_Wire::SetFace(const TopoDS_Face& face)
 {
   myFace = face;
   if(!face.IsNull())
-    mySurf = new ShapeAnalysis_Surface ( BRep_Tool::Surface ( myFace ) );
+    mySurf = new ShapeAnalysis_Surface (myFace);
 }
 
 //=======================================================================

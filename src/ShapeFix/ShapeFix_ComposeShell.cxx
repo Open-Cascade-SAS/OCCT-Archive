@@ -817,7 +817,7 @@ ShapeFix_WireSegment ShapeFix_ComposeShell::SplitWire (ShapeFix_WireSegment &wir
   BRep_Builder B;
   ShapeFix_WireSegment result;
   Handle(ShapeAnalysis_Surface) aSurfTool = 
-    new ShapeAnalysis_Surface ( BRep_Tool::Surface (myFace) );
+    new ShapeAnalysis_Surface ( myFace );
   Standard_Integer nbSplits = indexes.Length();
   ShapeAnalysis_Edge sae;
   Standard_Integer start = 1;
@@ -1210,7 +1210,7 @@ Standard_Boolean ShapeFix_ComposeShell::SplitByLine (ShapeFix_WireSegment &wire,
   Standard_Boolean isnonmanifold = (wire.Orientation() == TopAbs_INTERNAL);
   //gka correction for non-manifold vertices SAMTECH
   if(wire.IsVertex()) {
-    Handle(ShapeAnalysis_Surface) aSurfTool = new ShapeAnalysis_Surface ( BRep_Tool::Surface (myFace) );
+    Handle(ShapeAnalysis_Surface) aSurfTool = new ShapeAnalysis_Surface ( myFace );
     TopoDS_Vertex aVert = wire.GetVertex();
     gp_Pnt aP3d = BRep_Tool::Pnt(aVert);
     gp_Pnt2d aP2d =  aSurfTool->ValueOfUV(aP3d,Precision::Confusion());
@@ -2339,8 +2339,7 @@ static gp_Pnt2d GetMiddlePoint (const ShapeFix_WireSegment wire,
   if(wire.IsVertex()) {
     TopoDS_Vertex aV = wire.GetVertex();
     gp_Pnt aP3D = BRep_Tool::Pnt(aV );
-    Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
-    Handle(ShapeAnalysis_Surface) aSurfTool = new ShapeAnalysis_Surface(surf);
+    Handle(ShapeAnalysis_Surface) aSurfTool = new ShapeAnalysis_Surface(face);
     return aSurfTool->ValueOfUV(aP3D,Precision::Confusion());
   }
   Bnd_Box2d box;
@@ -2402,9 +2401,8 @@ void ShapeFix_ComposeShell::MakeFacesOnPatch (TopTools_SequenceOfShape &faces,
   // make pseudo-face,
   TopoDS_Face pf;
   B.MakeFace ( pf, surf, myLoc, ::Precision::Confusion() );
-  Handle(Geom_Surface) atSurf = BRep_Tool::Surface(pf);
 
-  Handle(ShapeAnalysis_Surface) aSurfTool = new ShapeAnalysis_Surface(atSurf);
+  Handle(ShapeAnalysis_Surface) aSurfTool = new ShapeAnalysis_Surface(pf);
   TopTools_SequenceOfShape roots;
   Standard_Integer i; // svv #1
   for ( i = 1; i <= loops.Length(); i++ ) {

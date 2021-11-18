@@ -682,8 +682,7 @@ TopoDS_Vertex ShapeAnalysis_TransferParametersProj::CopyNMVertex (const TopoDS_V
   }
   Standard_Real aTol = BRep_Tool::Tolerance(anewV);
   if(!hasRepr || (fromSurf != toSurf || fromLoc != toLoc)) {
-    Handle(Geom_Surface) aS = BRep_Tool::Surface(toFace);
-    Handle(ShapeAnalysis_Surface) aSurfTool = new ShapeAnalysis_Surface(aS);
+    Handle(ShapeAnalysis_Surface) aSurfTool = new ShapeAnalysis_Surface(toFace);
     gp_Pnt2d aP2d = aSurfTool->ValueOfUV(apv,Precision::Confusion());
     apar1 = aP2d.X();
     apar2 = aP2d.Y();

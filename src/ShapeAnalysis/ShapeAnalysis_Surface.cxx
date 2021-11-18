@@ -30,7 +30,10 @@
 #include <Adaptor3d_Curve.hxx>
 #include <Adaptor3d_IsoCurve.hxx>
 #include <Bnd_Box.hxx>
+#include <Bnd_Box2d.hxx>
 #include <BndLib_Add3dCurve.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 #include <ElSLib.hxx>
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BoundedSurface.hxx>
@@ -108,6 +111,19 @@ ShapeAnalysis_Surface::ShapeAnalysis_Surface(const Handle(Geom_Surface)& S) :
   myAdSur = new GeomAdaptor_Surface(mySurf);
 }
 
+ShapeAnalysis_Surface::ShapeAnalysis_Surface(const TopoDS_Face& theFace) :
+  myFace(theFace),
+  mySurf(BRep_Tool::Surface(theFace)),
+  myExtOK(Standard_False), //:30
+  myNbDeg(-1),
+  myIsos(Standard_False),
+  myIsoBoxes(Standard_False),
+  myGap(0.), myUDelt(0.01), myVDelt(0.01), myUCloseVal(-1), myVCloseVal(-1)
+{
+  mySurf->Bounds(myUF, myUL, myVF, myVL);
+  myAdSur = new GeomAdaptor_Surface(mySurf);
+}
+
 //=======================================================================
 //function : Init
 //purpose  :
@@ -166,12 +182,12 @@ void ShapeAnalysis_Surface::ComputeSingularities()
   if (mySurf.IsNull())  return;
 
   Standard_Real   su1, sv1, su2, sv2;
-  //  mySurf->Bounds(su1, su2, sv1, sv2);
-  Bounds(su1, su2, sv1, sv2);//modified by rln on 12/11/97 mySurf-> is deleted
 
   myNbDeg = 0; //:r3
 
-  if (mySurf->IsKind(STANDARD_TYPE(Geom_ConicalSurface))) {
+  if (mySurf->IsKind(STANDARD_TYPE(Geom_ConicalSurface)))
+  {
+    Bounds(su1, su2, sv1, sv2);
     Handle(Geom_ConicalSurface) conicS =
       Handle(Geom_ConicalSurface)::DownCast(mySurf);
     Standard_Real vApex = -conicS->RefRadius() / Sin(conicS->SemiAngle());
@@ -184,7 +200,9 @@ void ShapeAnalysis_Surface::ComputeSingularities()
     myUIsoDeg[0] = Standard_False;
     myNbDeg = 1;
   }
-  else if (mySurf->IsKind(STANDARD_TYPE(Geom_ToroidalSurface))) {
+  else if (mySurf->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)))
+  {
+    Bounds(su1, su2, sv1, sv2);
     Handle(Geom_ToroidalSurface) toroidS =
       Handle(Geom_ToroidalSurface)::DownCast(mySurf);
     Standard_Real minorR = toroidS->MinorRadius();
@@ -203,7 +221,9 @@ void ShapeAnalysis_Surface::ComputeSingularities()
     myUIsoDeg[0] = myUIsoDeg[1] = Standard_False;
     myNbDeg = (majorR > minorR ? 1 : 2);
   }
-  else if (mySurf->IsKind(STANDARD_TYPE(Geom_SphericalSurface))) {
+  else if (mySurf->IsKind(STANDARD_TYPE(Geom_SphericalSurface)))
+  {
+    Bounds(su1, su2, sv1, sv2);
     myPreci[0] = myPreci[1] = 0;
     myP3d[0] = mySurf->Value(su1, sv2); // Northern pole is first
     myP3d[1] = mySurf->Value(su1, sv1);
@@ -217,10 +237,20 @@ void ShapeAnalysis_Surface::ComputeSingularities()
     myNbDeg = 2;
   }
   else if ((mySurf->IsKind(STANDARD_TYPE(Geom_BoundedSurface))) ||
-    (mySurf->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution))) || //:b2 abv 18 Feb 98
+    (mySurf->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution))) ||
     (mySurf->IsKind(STANDARD_TYPE(Geom_OffsetSurface)))) { //rln S4135
 
-                                                           //rln S4135 //:r3
+    Bounds(su1, su2, sv1, sv2);
+    if (mySurf->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution)) && !myFace.IsNull())
+    {
+      Standard_Real aTmpU1 = 0, aTmpU2 = 0;
+      Bnd_Box2d B;
+      BRepTools::AddUVBounds(myFace, B);
+      if (!B.IsVoid())
+      {
+        B.Get(aTmpU1, myVF, aTmpU2, myVL);
+      }
+    }
     myP3d[0] = myAdSur->Value(su1, 0.5 * (sv1 + sv2));
     myFirstP2d[0].SetCoord(su1, sv2);
     myLastP2d[0].SetCoord(su1, sv1);

@@ -255,7 +255,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
   //:S4136  Standard_Real preci = BRepAPI::Precision();
   //pdn to manage degenerated case
   if (V1.IsSame(V2)) {
-    Handle(ShapeAnalysis_Surface) stsu = new ShapeAnalysis_Surface (theSurface);
+    Handle(ShapeAnalysis_Surface) stsu = new ShapeAnalysis_Surface (myFace);
     gp_Pnt2d aPt1,aPt2;
     Standard_Real firstpar,lastpar;
     if (stsu->DegeneratedValues(Pt1,preci,aPt1,aPt2,firstpar,lastpar)){
