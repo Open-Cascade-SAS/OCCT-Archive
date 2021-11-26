@@ -118,7 +118,7 @@ namespace
     void operator()(const Standard_Integer theFaceIndex) const
     {
       const IMeshData::IFaceHandle& aDFace = myModel->GetFace(theFaceIndex);
-      if (aDFace->GetSurface()->GetType() != GeomAbs_Cone)
+      if (aDFace->GetSurface()->GetType() != GeomAbs_Cone || aDFace->WiresNb() == 0)
       {
         return;
       }
@@ -127,7 +127,7 @@ namespace
       for (Standard_Integer aEdgeIdx = 0; aEdgeIdx < aDWire->EdgesNb() - 1; ++aEdgeIdx)
       {
         const IMeshData::IEdgePtr& aDEdge = aDWire->GetEdge (aEdgeIdx);
-        
+
         if (aDEdge->GetPCurve(aDFace.get(), TopAbs_FORWARD) != aDEdge->GetPCurve(aDFace.get(), TopAbs_REVERSED))
         {
           if (aDEdge->GetCurve()->ParametersNb() == 2)
@@ -145,7 +145,7 @@ namespace
             }
           }
           return;
-        } 
+        }
       }
     }
 
