@@ -116,11 +116,13 @@ void V3d_Viewer::SetViewOn (const Handle(V3d_View)& theView)
     theView->SetGrid (myPrivilegedPlane, aGrid);
     theView->SetGridActivity (aGrid->IsActive());
   }
+Standard_DISABLE_DEPRECATION_WARNINGS
   if (theView->SetImmediateUpdate (Standard_False))
   {
     theView->Redraw();
     theView->SetImmediateUpdate (Standard_True);
   }
+Standard_ENABLE_DEPRECATION_WARNINGS
 }
 
 // ========================================================================

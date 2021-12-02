@@ -925,7 +925,9 @@ static Standard_Integer VListColors (Draw_Interpretor& theDI,
   {
     ViewerTest::ViewerInit (0, 0, anImgParams.Width, anImgParams.Height, "TmpDriver/TmpViewer/TmpView");
     aView = ViewerTest::CurrentView();
+  Standard_DISABLE_DEPRECATION_WARNINGS
     aView->SetImmediateUpdate (false);
+  Standard_ENABLE_DEPRECATION_WARNINGS
     aView->SetBgGradientStyle (Aspect_GradientFillMethod_None, false);
   }
 
@@ -964,7 +966,9 @@ static Standard_Integer VListColors (Draw_Interpretor& theDI,
       const TCollection_AsciiString anImgPath = aFileNameBase + "_" + aColName + ".png";
       if (!aView.IsNull())
       {
+      Standard_DISABLE_DEPRECATION_WARNINGS
         aView->SetImmediateUpdate (false);
+      Standard_ENABLE_DEPRECATION_WARNINGS
         aView->SetBackgroundColor (aCol);
         if (!aView->ToPixMap (anImg, anImgParams)
          || !anImg.Save (aFolder + anImgPath))

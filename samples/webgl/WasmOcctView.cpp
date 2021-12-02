@@ -342,7 +342,6 @@ bool WasmOcctView::initViewer()
 
   myView = new V3d_View (aViewer);
   myView->Camera()->SetProjectionType (Graphic3d_Camera::Projection_Perspective);
-  myView->SetImmediateUpdate (false);
   myView->ChangeRenderingParams().IsShadowEnabled = false;
   myView->ChangeRenderingParams().Resolution = (unsigned int )(96.0 * myDevicePixelRatio + 0.5);
   myView->ChangeRenderingParams().ToShowStats = true;

@@ -348,7 +348,6 @@ bool AndroidQt::initViewer (Aspect_Drawable theWin)
 #endif
 
   myView = myViewer->CreateView();
-  myView->SetImmediateUpdate (Standard_False);
 
 #ifdef __ANDROID__
   myView->SetWindow (aWindow, (Aspect_RenderingContext )anEglContext);

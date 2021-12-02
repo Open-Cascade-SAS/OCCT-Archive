@@ -892,11 +892,17 @@ void AIS_ViewCube::StartAnimation (const Handle(AIS_ViewCubeOwner)& theOwner)
   {
     {
       Handle(Graphic3d_Camera) aBackupCamera = aView->Camera();
+    Standard_DISABLE_DEPRECATION_WARNINGS
       const bool wasImmediateUpdate = aView->SetImmediateUpdate (false);
+    Standard_ENABLE_DEPRECATION_WARNINGS
+
       aView->SetCamera (myEndState);
       aView->SetProj (theOwner->MainOrientation(), myIsYup);
       aView->SetCamera (aBackupCamera);
+
+    Standard_DISABLE_DEPRECATION_WARNINGS
       aView->SetImmediateUpdate (wasImmediateUpdate);
+    Standard_ENABLE_DEPRECATION_WARNINGS
     }
 
     const gp_Dir aNewDir = myEndState->Direction();

@@ -2318,3 +2318,10 @@ aValidateEdge.Process();
 `Prs3d_Drawer` getters no more implicitly create "default" aspects.
 If specific property has not been set before to this drawer instance nor to linked drawer instance, then NULL property will be returned.
 Make sure to set property beforehand or to call `SetOwn*` / `SetupOwn*` methods to derive from defaults.
+
+@subsection upgrade_occt770_view_immupdate V3d_View implicit updates
+
+`V3d_View::SetImmediateUpdate()` flag has been deprecated and is now disabled by default.
+So that methods like `V3d_View::Rotation()` or `V3d_View::Panning()` will no more automatically redraw View contents.
+Application relying on previous behavior still may use `V3d_View::SetImmediateUpdate()` to turn back implicit updates,
+but encouraged to update their code and put explicit `V3d_View::Redraw()` where necessary, as this functionality will be removed in future.

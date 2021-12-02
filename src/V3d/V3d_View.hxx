@@ -265,9 +265,6 @@ public:
   //! Returns TRUE when the light is active in this view.
   Standard_EXPORT Standard_Boolean IsActiveLight (const Handle(V3d_Light)& theLight) const;
 
-  //! sets the immediate update mode and returns the previous one.
-  Standard_EXPORT Standard_Boolean SetImmediateUpdate (const Standard_Boolean theImmediateUpdate);
-
   //! Returns trihedron object.
   const Handle(V3d_Trihedron)& Trihedron (bool theToCreate = true)
   {
@@ -947,6 +944,10 @@ public:
   DEFINE_STANDARD_RTTIEXT(V3d_View,Standard_Transient)
 
 public: //! @name deprecated methods
+
+  //! sets the immediate update mode and returns the previous one.
+  Standard_DEPRECATED ("Deprecated method - ImmediateUpdate will be removed")
+  Standard_EXPORT Standard_Boolean SetImmediateUpdate (const Standard_Boolean theImmediateUpdate);
 
   //! Returns True if One light more can be
   //! activated in this View.

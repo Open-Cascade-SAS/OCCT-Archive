@@ -259,7 +259,6 @@ bool OcctJni_Viewer::init()
   Handle(Aspect_NeutralWindow) aWindow = new Aspect_NeutralWindow();
   aWindow->SetSize (aWidth, aHeight);
   myView = myViewer->CreateView();
-  myView->SetImmediateUpdate (false);
   myView->ChangeRenderingParams().Resolution = (unsigned int )(96.0 * myDevicePixelRatio + 0.5);
   myView->ChangeRenderingParams().ToShowStats = true;
   myView->ChangeRenderingParams().CollectedStats = (Graphic3d_RenderingParams::PerfCounters ) (Graphic3d_RenderingParams::PerfCounters_FrameRate | Graphic3d_RenderingParams::PerfCounters_Triangles);

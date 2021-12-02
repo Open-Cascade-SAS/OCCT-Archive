@@ -28,7 +28,9 @@ ViewerTest_AutoUpdater::ViewerTest_AutoUpdater (const Handle(AIS_InteractiveCont
 {
   if (!theView.IsNull())
   {
+  Standard_DISABLE_DEPRECATION_WARNINGS
     myWasAutoUpdate = theView->SetImmediateUpdate (Standard_False);
+  Standard_ENABLE_DEPRECATION_WARNINGS
   }
 }
 
@@ -74,7 +76,9 @@ void ViewerTest_AutoUpdater::Invalidate()
   if (myWasAutoUpdate
   && !myView.IsNull())
   {
+  Standard_DISABLE_DEPRECATION_WARNINGS
     myView->SetImmediateUpdate (myWasAutoUpdate);
+  Standard_ENABLE_DEPRECATION_WARNINGS
   }
 }
 
@@ -86,7 +90,9 @@ void ViewerTest_AutoUpdater::Update()
 {
   if (!myView.IsNull())
   {
+  Standard_DISABLE_DEPRECATION_WARNINGS
     myView->SetImmediateUpdate (myWasAutoUpdate);
+  Standard_ENABLE_DEPRECATION_WARNINGS
   }
 
   switch (myToUpdate)
@@ -96,13 +102,6 @@ void ViewerTest_AutoUpdater::Update()
       return;
     }
     case ViewerTest_AutoUpdater::RedrawMode_Auto:
-    {
-      if (!myWasAutoUpdate)
-      {
-        return;
-      }
-    }
-    Standard_FALLTHROUGH
     case ViewerTest_AutoUpdater::RedrawMode_Forced:
     {
       if (!myContext.IsNull())

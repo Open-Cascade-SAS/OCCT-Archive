@@ -7645,7 +7645,9 @@ static Standard_Integer VAnimation (Draw_Interpretor& theDI,
   }
 
   // Perform video recording
+Standard_DISABLE_DEPRECATION_WARNINGS
   const Standard_Boolean wasImmediateUpdate = aView->SetImmediateUpdate (Standard_False);
+Standard_ENABLE_DEPRECATION_WARNINGS
   const Standard_Real anUpperPts = aPlayStartTime + aPlayDuration;
   anAnimation->StartTimer (aPlayStartTime, aPlaySpeed, Standard_True, aPlayDuration <= 0.0);
 
@@ -7736,7 +7738,9 @@ static Standard_Integer VAnimation (Draw_Interpretor& theDI,
         << "Nb. Frames: "  << Standard_Real(aNbFrames);
 
   aView->Redraw();
+Standard_DISABLE_DEPRECATION_WARNINGS
   aView->SetImmediateUpdate (wasImmediateUpdate);
+Standard_ENABLE_DEPRECATION_WARNINGS
   return 0;
 }
 
@@ -13159,7 +13163,9 @@ static int VDumpSelectionImage (Draw_Interpretor& /*theDi*/,
     return 1;
   }
 
+Standard_DISABLE_DEPRECATION_WARNINGS
   const bool wasImmUpdate = aView->SetImmediateUpdate (false);
+Standard_ENABLE_DEPRECATION_WARNINGS
   Handle(Graphic3d_Camera) aCamBack = aView->Camera();
   if (!aCustomCam.IsNull())
   {
@@ -13174,8 +13180,9 @@ static int VDumpSelectionImage (Draw_Interpretor& /*theDi*/,
   {
     aView->SetCamera (aCamBack);
   }
+Standard_DISABLE_DEPRECATION_WARNINGS
   aView->SetImmediateUpdate (wasImmUpdate);
-
+Standard_ENABLE_DEPRECATION_WARNINGS
   if (!aPixMap.Save (aFile))
   {
     Message::SendFail ("Error: can't save selection image");

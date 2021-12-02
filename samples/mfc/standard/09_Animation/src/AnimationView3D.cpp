@@ -171,7 +171,6 @@ void CAnimationView3D::OnInitialUpdate()
   aViewer->SetDefaultTypeOfView (V3d_PERSPECTIVE);
 
   myView = aViewer->CreateView();
-  myView->SetImmediateUpdate (false);
 
   // store for restore state after rotation (witch is in Degenerated mode)
   myHlrModeIsOn = myView->ComputedMode();

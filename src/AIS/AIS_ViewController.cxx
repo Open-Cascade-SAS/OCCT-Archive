@@ -3239,7 +3239,9 @@ void AIS_ViewController::handleXRPresentations (const Handle(AIS_InteractiveCont
 void AIS_ViewController::HandleViewEvents (const Handle(AIS_InteractiveContext)& theCtx,
                                            const Handle(V3d_View)& theView)
 {
+Standard_DISABLE_DEPRECATION_WARNINGS
   const bool wasImmediateUpdate = theView->SetImmediateUpdate (false);
+Standard_ENABLE_DEPRECATION_WARNINGS
 
   handleViewOrientationKeys (theCtx, theView);
   const AIS_WalkDelta aWalk = handleNavigationKeys (theCtx, theView);
@@ -3256,7 +3258,9 @@ void AIS_ViewController::HandleViewEvents (const Handle(AIS_InteractiveContext)&
   handleViewRedraw (theCtx, theView);
   theView->View()->UnsetXRPosedCamera();
 
+Standard_DISABLE_DEPRECATION_WARNINGS
   theView->SetImmediateUpdate (wasImmediateUpdate);
+Standard_ENABLE_DEPRECATION_WARNINGS
 
   // make sure to not process the same events twice
   myGL.Reset();

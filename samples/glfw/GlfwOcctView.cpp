@@ -175,7 +175,6 @@ void GlfwOcctView::initViewer()
   aViewer->SetDefaultTypeOfView (V3d_PERSPECTIVE);
   aViewer->ActivateGrid (Aspect_GT_Rectangular, Aspect_GDM_Lines);
   myView = aViewer->CreateView();
-  myView->SetImmediateUpdate (false);
   myView->SetWindow (myOcctWindow, myOcctWindow->NativeGlContext());
   myView->ChangeRenderingParams().ToShowStats = true;
   myContext = new AIS_InteractiveContext (aViewer);

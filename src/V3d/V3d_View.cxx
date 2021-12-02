@@ -66,7 +66,8 @@ namespace
 //purpose  :
 //=============================================================================
 V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const V3d_TypeOfView theType)
-: myIsInvalidatedImmediate (Standard_True),
+: myImmediateUpdate (Standard_False),
+  myIsInvalidatedImmediate (Standard_True),
   MyViewer (theViewer.operator->()),
   SwitchSetFront (Standard_False),
   myZRotation (Standard_False),
@@ -90,7 +91,6 @@ V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const V3d_TypeOfView th
 
   myDefaultCamera = new Graphic3d_Camera();
 
-  myImmediateUpdate = Standard_False;
   SetAutoZFitMode (Standard_True, 1.0);
   SetBackFacingModel (V3d_TOBM_AUTOMATIC);
   SetCamera (aCamera);
@@ -107,7 +107,6 @@ V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const V3d_TypeOfView th
   SetViewOrientationDefault();
   theViewer->AddView (this);
   Init();
-  myImmediateUpdate = Standard_True;
 }
 
 //=============================================================================
@@ -115,7 +114,8 @@ V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const V3d_TypeOfView th
 //purpose  :
 //=============================================================================
 V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const Handle(V3d_View)& theView)
-: myIsInvalidatedImmediate (Standard_True),
+: myImmediateUpdate (Standard_False),
+  myIsInvalidatedImmediate (Standard_True),
   MyViewer (theViewer.operator->()),
   SwitchSetFront(Standard_False),
   myZRotation (Standard_False),
@@ -129,11 +129,9 @@ V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const Handle(V3d_View)&
 
   myDefaultCamera = new Graphic3d_Camera (theView->DefaultCamera());
 
-  myImmediateUpdate = Standard_False;
   SetAutoZFitMode (theView->AutoZFitMode(), theView->AutoZFitScaleFactor());
   theViewer->AddView (this);
   Init();
-  myImmediateUpdate = Standard_True;
 }
 
 //=============================================================================
@@ -990,7 +988,8 @@ void V3d_View::SetEye(const Standard_Real X,const Standard_Real Y,const Standard
 {
   Standard_Real aTwistBefore = Twist();
 
-  Standard_Boolean wasUpdateEnabled = SetImmediateUpdate (Standard_False);
+  const Standard_Boolean wasUpdateEnabled = myImmediateUpdate;
+  myImmediateUpdate = Standard_False;
 
   Handle(Graphic3d_Camera) aCamera = Camera();
 
@@ -998,7 +997,7 @@ void V3d_View::SetEye(const Standard_Real X,const Standard_Real Y,const Standard
 
   SetTwist (aTwistBefore);
 
-  SetImmediateUpdate (wasUpdateEnabled);
+  myImmediateUpdate = wasUpdateEnabled;
 
   ImmediateUpdate();
 }
@@ -1042,13 +1041,14 @@ void V3d_View::SetProj( const Standard_Real Vx,const Standard_Real Vy, const Sta
 
   Standard_Real aTwistBefore = Twist();
 
-  Standard_Boolean wasUpdateEnabled = SetImmediateUpdate (Standard_False);
+  const Standard_Boolean wasUpdateEnabled = myImmediateUpdate;
+  myImmediateUpdate = Standard_False;
 
   Camera()->SetDirection (gp_Dir (Vx, Vy, Vz).Reversed());
 
   SetTwist(aTwistBefore);
 
-  SetImmediateUpdate (wasUpdateEnabled);
+  myImmediateUpdate = wasUpdateEnabled;
 
   ImmediateUpdate();
 }
@@ -1107,13 +1107,14 @@ void V3d_View::SetAt(const Standard_Real X,const Standard_Real Y,const Standard_
 {
   Standard_Real aTwistBefore = Twist();
 
-  Standard_Boolean wasUpdateEnabled = SetImmediateUpdate (Standard_False);
+  const Standard_Boolean wasUpdateEnabled = myImmediateUpdate;
+  myImmediateUpdate = Standard_False;
 
   Camera()->SetCenter (gp_Pnt (X, Y, Z));
 
   SetTwist (aTwistBefore);
 
-  SetImmediateUpdate (wasUpdateEnabled);
+  myImmediateUpdate = wasUpdateEnabled;
 
   ImmediateUpdate();
 }
@@ -1513,7 +1514,8 @@ void V3d_View::WindowFit (const Standard_Integer theMinXp,
                           const Standard_Integer theMaxXp,
                           const Standard_Integer theMaxYp)
 {
-  Standard_Boolean wasUpdateEnabled = SetImmediateUpdate (Standard_False);
+  const Standard_Boolean wasUpdateEnabled = myImmediateUpdate;
+  myImmediateUpdate = Standard_False;
 
   Handle(Graphic3d_Camera) aCamera = Camera();
 
@@ -1559,7 +1561,7 @@ void V3d_View::WindowFit (const Standard_Integer theMinXp,
     FitAll (aX1, aY1, aX2, aY2);
   }
 
-  SetImmediateUpdate (wasUpdateEnabled);
+  myImmediateUpdate = wasUpdateEnabled;
 
   ImmediateUpdate();
 }
@@ -2363,7 +2365,8 @@ void V3d_View::Panning (const Standard_Real theDXv,
     myCamStartOpCenter = aCamera->Center();
   }
 
-  Standard_Boolean wasUpdateEnabled = SetImmediateUpdate (Standard_False);
+  const Standard_Boolean wasUpdateEnabled = myImmediateUpdate;
+  myImmediateUpdate = Standard_False;
 
   gp_Pnt aViewDims = aCamera->ViewDimensions();
 
@@ -2372,7 +2375,7 @@ void V3d_View::Panning (const Standard_Real theDXv,
   Translate (aCamera, -theDXv, -theDYv);
   Scale (aCamera, aViewDims.X() / theZoomFactor, aViewDims.Y() / theZoomFactor);
 
-  SetImmediateUpdate (wasUpdateEnabled);
+  myImmediateUpdate = wasUpdateEnabled;
 
   ImmediateUpdate();
 }
@@ -2416,7 +2419,8 @@ void V3d_View::ZoomAtPoint (const Standard_Integer theMouseStartX,
                             const Standard_Integer theMouseEndX,
                             const Standard_Integer theMouseEndY)
 {
-  Standard_Boolean wasUpdateEnabled = SetImmediateUpdate (Standard_False);
+  const Standard_Boolean wasUpdateEnabled = myImmediateUpdate;
+  myImmediateUpdate = Standard_False;
 
   // zoom
   Standard_Real aDxy = Standard_Real ((theMouseEndX + theMouseEndY) - (theMouseStartX + theMouseStartY));
@@ -2459,7 +2463,7 @@ void V3d_View::ZoomAtPoint (const Standard_Integer theMouseStartX,
   aCamera->SetScale (aCamera->Scale() / aCoef);
   Translate (aCamera, aZoomAtPointXv - aDxv, aZoomAtPointYv - aDyv);
 
-  SetImmediateUpdate (wasUpdateEnabled);
+  myImmediateUpdate = wasUpdateEnabled;
 
   ImmediateUpdate();
 }

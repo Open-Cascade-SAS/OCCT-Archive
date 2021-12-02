@@ -1199,7 +1199,9 @@ static Standard_Integer VDump (Draw_Interpretor& theDI,
     case Graphic3d_BT_Red:                 aFormat = Image_Format_Gray;  break;
   }
 
+Standard_DISABLE_DEPRECATION_WARNINGS
   const bool wasImmUpdate = aView->SetImmediateUpdate (false);
+Standard_ENABLE_DEPRECATION_WARNINGS
   Handle(Graphic3d_Camera) aCamBack = aView->Camera();
   if (!aCustomCam.IsNull())
   {
@@ -1277,7 +1279,9 @@ static Standard_Integer VDump (Draw_Interpretor& theDI,
   {
     aView->SetCamera (aCamBack);
   }
+Standard_DISABLE_DEPRECATION_WARNINGS
   aView->SetImmediateUpdate (wasImmUpdate);
+Standard_ENABLE_DEPRECATION_WARNINGS
 
   if (!aPixMap.Save (aFilePath))
   {

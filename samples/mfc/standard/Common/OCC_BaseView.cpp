@@ -87,7 +87,6 @@ void OCC_BaseView::OnInitialUpdate()
   }
 
   myView = GetAISContext()->CurrentViewer()->CreateView();
-  myView->SetImmediateUpdate (false);
   myView->SetComputedMode (Standard_False);
 
   Handle(OpenGl_GraphicDriver) aDriver = Handle(OpenGl_GraphicDriver)::DownCast (myView->Viewer()->Driver());

@@ -50,8 +50,14 @@ void AIS_AnimationCamera::update (const AIS_AnimationProgress& theProgress)
   Graphic3d_CameraLerp aCamLerp (myCamStart, myCamEnd);
   aCamLerp.Interpolate (HasOwnDuration() ? theProgress.LocalNormalized : 1.0, aCamera);
 
+Standard_DISABLE_DEPRECATION_WARNINGS
   const Standard_Boolean aPrevImmUpdate = myView->SetImmediateUpdate (Standard_False);
+Standard_ENABLE_DEPRECATION_WARNINGS
+
   myView->SetCamera (aCamera);
-  myView->SetImmediateUpdate (aPrevImmUpdate);
   myView->Invalidate();
+
+Standard_DISABLE_DEPRECATION_WARNINGS
+  myView->SetImmediateUpdate (aPrevImmUpdate);
+Standard_ENABLE_DEPRECATION_WARNINGS
 }
