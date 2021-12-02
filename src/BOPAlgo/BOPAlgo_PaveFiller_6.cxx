@@ -284,6 +284,35 @@ void BOPAlgo_PaveFiller::PerformFF(const Message_ProgressRange& theRange)
   // Post-processing options
   Standard_Boolean bSplitCurve = Standard_False;
   //
+  // Collect all pairs of Edge/Edge interferences to check if
+  // some faces have to be moved to obtain more precise intersection
+  NCollection_DataMap<BOPDS_Pair, TColStd_ListOfInteger, BOPDS_PairMapHasher> aEEMap;
+  const BOPDS_VectorOfInterfEE& aVEEs = myDS->InterfEE();
+  for (Standard_Integer iEE = 0; iEE < aVEEs.Size(); ++iEE)
+  {
+    const BOPDS_Interf& aEE = aVEEs(iEE);
+    if (!aEE.HasIndexNew())
+    {
+      continue;
+    }
+    Standard_Integer nE1, nE2;
+    aEE.Indices(nE1, nE2);
+
+    const Standard_Integer nVN = aEE.IndexNew();
+
+    BOPDS_Pair aPair(nE1, nE2);
+    TColStd_ListOfInteger* pPoints = aEEMap.ChangeSeek(aPair);
+    if (pPoints)
+    {
+      pPoints->Append(nVN);
+    }
+    else
+    {
+      pPoints = aEEMap.Bound(BOPDS_Pair(nE1, nE2), TColStd_ListOfInteger());
+      pPoints->Append(nVN);
+    }
+  }
+
   // Prepare the pairs of faces for intersection
   BOPAlgo_VectorOfFaceFace aVFaceFace;
   myIterator->Initialize(TopAbs_FACE, TopAbs_FACE);
@@ -312,12 +341,68 @@ void BOPAlgo_PaveFiller::PerformFF(const Message_ProgressRange& theRange)
           continue;
         }
       }
+
+      TopoDS_Face aFShifted1 = aF1, aFShifted2 = aF2;
+      Standard_Boolean isFound = Standard_False;
+      for (TopExp_Explorer aExp1(aF1, TopAbs_EDGE); !isFound && aExp1.More(); aExp1.Next())
+      {
+        const TopoDS_Edge& aE1 = TopoDS::Edge(aExp1.Current());
+        const Standard_Integer nE1 = myDS->Index(aE1);
+
+        for (TopExp_Explorer aExp2(aF2, TopAbs_EDGE); !isFound && aExp2.More(); aExp2.Next())
+        {
+          const TopoDS_Edge& aE2 = TopoDS::Edge(aExp2.Current());
+          const Standard_Integer nE2 = myDS->Index(aE2);
+
+          Standard_Boolean bIsClosed1 = !BRep_Tool::IsClosed(aE1, aF1);
+          Standard_Boolean bIsClosed2 = !BRep_Tool::IsClosed(aE2, aF2);
+          if (!bIsClosed1 && !bIsClosed2)
+          {
+            continue;
+          }
+
+          const TColStd_ListOfInteger* pPoints = aEEMap.Seek(BOPDS_Pair(nE1, nE2));
+          if (!pPoints)
+          {
+            continue;
+          }
+
+          for (TColStd_ListOfInteger::Iterator itEEP(*pPoints); itEEP.More(); itEEP.Next())
+          {
+            const Standard_Integer& nVN = itEEP.Value();
+            const TopoDS_Vertex& aVN = TopoDS::Vertex(myDS->Shape(nVN));
+            const gp_Pnt& aPnt = BRep_Tool::Pnt(aVN);
+
+            // Compute points exactly on the edges 
+            GeomAPI_ProjectPointOnCurve& aProjPC1 = myContext->ProjPC(aE1);
+            GeomAPI_ProjectPointOnCurve& aProjPC2 = myContext->ProjPC(aE2);
+            aProjPC1.Perform(aPnt);
+            aProjPC2.Perform(aPnt);
+            if (!aProjPC1.NbPoints() && !aProjPC2.NbPoints())
+            {
+              continue;
+            }
+            gp_Pnt aP1 = aProjPC1.NbPoints() > 0 ? aProjPC1.NearestPoint() : aPnt;
+            gp_Pnt aP2 = aProjPC2.NbPoints() > 0 ? aProjPC2.NearestPoint() : aPnt;
+
+            if (Abs(aP1.Distance(aP2)) > BRep_Tool::Tolerance(aVN))
+            {
+              // Move one of the faces to the point of exact intersection of edges
+              gp_Trsf aTrsf;
+              aTrsf.SetTranslation(aP1, aP2);
+              TopLoc_Location aLoc(aTrsf);
+              aFShifted1.Move(aLoc);
+              isFound = Standard_True;
+            }
+          }
+        }
+      }
       //
       BOPAlgo_FaceFace& aFaceFace=aVFaceFace.Appended();
       //
       aFaceFace.SetRunParallel (myRunParallel);
       aFaceFace.SetIndices(nF1, nF2);
-      aFaceFace.SetFaces(aF1, aF2);
+      aFaceFace.SetFaces(aFShifted1, aFShifted2);
       aFaceFace.SetBoxes (myDS->ShapeInfo (nF1).Box(), myDS->ShapeInfo (nF2).Box());
       // compute minimal tolerance for the curves
       Standard_Real aTolFF = ToleranceFF(aBAS1, aBAS2);
