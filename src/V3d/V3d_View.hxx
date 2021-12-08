@@ -108,13 +108,14 @@ public:
   Standard_EXPORT void Remove();
 
   //! Deprecated, Redraw() should be used instead.
-  Standard_EXPORT void Update() const;
+  void Update() const
+  {
+    Redraw (true);
+  }
 
-  //! Redisplays the view even if there has not
-  //! been any modification.
-  //! Must be called if the view is shown.
-  //! (Ex: DeIconification ) .
-  Standard_EXPORT virtual void Redraw() const;
+  //! Redisplays the view even if there has not been any modification.
+  //! Must be called if the view is shown Ex: DeIconification).
+  Standard_EXPORT virtual void Redraw (bool theToCompute = false) const;
 
   //! Updates layer of immediate presentations.
   Standard_EXPORT virtual void RedrawImmediate() const;

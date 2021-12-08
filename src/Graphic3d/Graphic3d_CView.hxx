@@ -54,6 +54,28 @@ class Graphic3d_StructureManager;
 
 DEFINE_STANDARD_HANDLE (Graphic3d_CView, Graphic3d_DataStructureManager)
 
+/*struct Graphic3d_ViewStructure
+{
+  Handle(Graphic3d_Structure) Presentation;
+  Handle(Graphic3d_Structure) ViewPresentation;
+public:
+  //! Returns hash code for presentation.
+  static Standard_Integer HashCode (const Graphic3d_ViewStructure& thePrs,
+                                    const Standard_Integer theUpperBound)
+  {
+    return ::HashCode (thePrs.Presentation, theUpperBound);
+  }
+
+  //! Returns true if two objects are equal.
+  static Standard_Boolean IsEqual (const Graphic3d_ViewStructure& thePrs1,
+                                   const Graphic3d_ViewStructure& thePrs2)
+  {
+    return thePrs1.Presentation == thePrs2.Presentation;
+  }
+};*/
+
+typedef NCollection_IndexedDataMap<Handle(Graphic3d_Structure), Handle(Graphic3d_Structure)> Graphic3d_ViewStructureMap;
+
 //! Base class of a graphical view that carries out rendering process for a concrete
 //! implementation of graphical driver. Provides virtual interfaces for redrawing its
 //! contents, management of displayed structures and render settings. The source code 
@@ -580,7 +602,8 @@ protected:
   Handle(Graphic3d_Camera)  myCamera;
   Graphic3d_SequenceOfStructure myStructsToCompute;
   Graphic3d_SequenceOfStructure myStructsComputed;
-  Graphic3d_MapOfStructure myStructsDisplayed;
+  //Graphic3d_MapOfStructure myStructsDisplayed;
+  Graphic3d_ViewStructureMap myStructsDisplayed;
   Handle(Graphic3d_NMapOfTransient) myHiddenObjects;
   Standard_Boolean myIsInComputedMode;
   Standard_Boolean myIsActive;

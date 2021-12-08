@@ -219,29 +219,10 @@ void V3d_View::Remove()
 }
 
 //=============================================================================
-//function : Update
-//purpose  :
-//=============================================================================
-void V3d_View::Update() const
-{
-  if (!myView->IsDefined()
-   || !myView->IsActive())
-  {
-    return;
-  }
-
-  myIsInvalidatedImmediate = Standard_False;
-  myView->Update();
-  myView->Compute();
-  AutoZFit();
-  myView->Redraw();
-}
-
-//=============================================================================
 //function : Redraw
 //purpose  :
 //=============================================================================
-void V3d_View::Redraw() const
+void V3d_View::Redraw (bool theToCompute) const
 {
   if (!myView->IsDefined()
    || !myView->IsActive())
@@ -250,7 +231,14 @@ void V3d_View::Redraw() const
   }
 
   myIsInvalidatedImmediate = Standard_False;
-  Handle(Graphic3d_StructureManager) aStructureMgr  = MyViewer->StructureManager();
+  Handle(Graphic3d_StructureManager) aStructureMgr = MyViewer->StructureManager();
+
+  if (theToCompute)
+  {
+    //myView->Update();
+    myView->Compute();
+  }
+
   for (Standard_Integer aRetryIter = 0; aRetryIter < 2; ++aRetryIter)
   {
     if (aStructureMgr->IsDeviceLost())

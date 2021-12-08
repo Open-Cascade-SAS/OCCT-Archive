@@ -140,11 +140,10 @@ void Graphic3d_CView::Remove()
     return;
   }
 
-  Graphic3d_MapOfStructure aDisplayedStructs (myStructsDisplayed);
-
-  for (Graphic3d_MapIteratorOfMapOfStructure aStructIter (aDisplayedStructs); aStructIter.More(); aStructIter.Next())
+  Graphic3d_ViewStructureMap aDisplayedStructs (myStructsDisplayed);
+  for (Graphic3d_ViewStructureMap::Iterator aStructIter (aDisplayedStructs); aStructIter.More(); aStructIter.Next())
   {
-    Erase (aStructIter.Value());
+    Erase (aStructIter.Key());
   }
 
   myStructsToCompute.Clear();
@@ -175,7 +174,7 @@ void Graphic3d_CView::SetComputedMode (const Standard_Boolean theMode)
   myIsInComputedMode = theMode;
   if (!myIsInComputedMode)
   {
-    for (Graphic3d_MapOfStructure::Iterator aStructIter (myStructsDisplayed); aStructIter.More(); aStructIter.Next())
+    for (Graphic3d_ViewStructureMap::Iterator aStructIter (myStructsDisplayed); aStructIter.More(); aStructIter.Next())
     {
       const Handle(Graphic3d_Structure)& aStruct  = aStructIter.Key();
       const Graphic3d_TypeOfAnswer        anAnswer = acceptDisplay (aStruct->Visual());
@@ -196,7 +195,7 @@ void Graphic3d_CView::SetComputedMode (const Standard_Boolean theMode)
     return;
   }
 
-  for (Graphic3d_MapOfStructure::Iterator aDispStructIter (myStructsDisplayed); aDispStructIter.More(); aDispStructIter.Next())
+  for (Graphic3d_ViewStructureMap::Iterator aDispStructIter (myStructsDisplayed); aDispStructIter.More(); aDispStructIter.Next())
   {
     Handle(Graphic3d_Structure) aStruct  = aDispStructIter.Key();
     const Graphic3d_TypeOfAnswer anAnswer = acceptDisplay (aStruct->Visual());
@@ -390,7 +389,7 @@ void Graphic3d_CView::InvalidateZLayerBoundingBox (const Graphic3d_ZLayerId theL
 // =======================================================================
 void Graphic3d_CView::DisplayedStructures (Graphic3d_MapOfStructure& theStructures) const
 {
-  for (Graphic3d_MapOfStructure::Iterator aStructIter (myStructsDisplayed); aStructIter.More(); aStructIter.Next())
+  for (Graphic3d_ViewStructureMap::Iterator aStructIter (myStructsDisplayed); aStructIter.More(); aStructIter.Next())
   {
     theStructures.Add (aStructIter.Key());
   }
@@ -575,7 +574,7 @@ void Graphic3d_CView::Compute()
   // Remove structures that were calculated for the previous orientation.
   // Recalculation of new structures.
   NCollection_Sequence<Handle(Graphic3d_Structure)> aStructsSeq;
-  for (Graphic3d_MapOfStructure::Iterator aStructIter (myStructsDisplayed); aStructIter.More(); aStructIter.Next())
+  for (Graphic3d_ViewStructureMap::Iterator aStructIter (myStructsDisplayed); aStructIter.More(); aStructIter.Next())
   {
     const Graphic3d_TypeOfAnswer anAnswer = acceptDisplay (aStructIter.Key()->Visual());
     if (anAnswer == Graphic3d_TOA_COMPUTE)
@@ -677,9 +676,11 @@ void Graphic3d_CView::Display (const Handle(Graphic3d_Structure)& theStructure)
     anAnswer = Graphic3d_TOA_YES;
   }
 
+  const Standard_Integer anOldExtent = myStructsDisplayed.Extent();
   if (anAnswer == Graphic3d_TOA_YES)
   {
-    if (!myStructsDisplayed.Add (theStructure))
+    const Standard_Integer aPrsIndex = myStructsDisplayed.Add (theStructure, Handle(Graphic3d_Structure)());
+    if (aPrsIndex <= anOldExtent)
     {
       return;
     }
@@ -701,7 +702,8 @@ void Graphic3d_CView::Display (const Handle(Graphic3d_Structure)& theStructure)
     if (anOldStruct->HLRValidation())
     {
       // Case COMPUTED valid, to be displayed
-      if (!myStructsDisplayed.Add (theStructure))
+      const Standard_Integer aPrsIndex = myStructsDisplayed.Add (theStructure, Handle(Graphic3d_Structure)());
+      if (aPrsIndex <= anOldExtent)
       {
         return;
       }
@@ -722,7 +724,8 @@ void Graphic3d_CView::Display (const Handle(Graphic3d_Structure)& theStructure)
       if (aNewIndex != 0)
       {
         // Case of COMPUTED invalid, WITH a valid of replacement; to be displayed
-        if (!myStructsDisplayed.Add (theStructure))
+        const Standard_Integer aPrsIndex = myStructsDisplayed.Add (theStructure, Handle(Graphic3d_Structure)());
+        if (aPrsIndex <= anOldExtent)
         {
           return;
         }
@@ -797,7 +800,7 @@ void Graphic3d_CView::Display (const Handle(Graphic3d_Structure)& theStructure)
     return;
   }
 
-  myStructsDisplayed.Add (theStructure);
+  const Standard_Integer aPrsIndex = myStructsDisplayed.Add (theStructure, Handle(Graphic3d_Structure)());
   displayStructure (aStruct->CStructure(), theStructure->DisplayPriority());
 
   Update (aStruct->GetZLayer());
@@ -833,7 +836,7 @@ void Graphic3d_CView::Erase (const Handle(Graphic3d_Structure)& theStructure)
     myStructsToCompute.Remove (anIndex);
   }
 
-  myStructsDisplayed.Remove (theStructure);
+  myStructsDisplayed.RemoveKey (theStructure);
   Update (theStructure->GetZLayer());
 }
 
