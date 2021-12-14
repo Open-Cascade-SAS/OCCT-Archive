@@ -160,11 +160,6 @@ public:
   //! Returns map of objects hidden within this specific view (not viewer-wise).
   Handle(Graphic3d_NMapOfTransient)& ChangeHiddenObjects() { return myHiddenObjects; }
 
-  //! Returns Standard_True in case if the structure with the given <theStructId> is
-  //! in list of structures to be computed and stores computed struct to <theComputedStruct>.
-  Standard_EXPORT Standard_Boolean IsComputed (const Standard_Integer theStructId,
-                                               Handle(Graphic3d_Structure)& theComputedStruct) const;
-
   //! Returns the bounding box of all structures displayed in the view.
   //! If theToIncludeAuxiliary is TRUE, then the boundary box also includes minimum and maximum limits
   //! of graphical elements forming parts of infinite and other auxiliary structures.
@@ -213,11 +208,6 @@ private:
   //! in the view <me>.
   Standard_EXPORT void UnHighlight (const Handle(Graphic3d_Structure)& theStructure);
 
-  //! Returns an index != 0 if the structure have another structure computed for the view <me>.
-  Standard_EXPORT Standard_Integer IsComputed (const Graphic3d_Structure* theStructure) const;
-
-  Standard_Integer IsComputed (const Handle(Graphic3d_Structure)& theStructure) const { return IsComputed (theStructure.get()); }
-
   //! Returns true if the structure is displayed in the view.
   Standard_EXPORT Standard_Boolean IsDisplayed (const Handle(Graphic3d_Structure)& theStructure) const;
 
@@ -232,7 +222,7 @@ private:
 
   //! Returns an index != 0 if the structure have the same owner than another structure
   //! in the sequence of the computed structures.
-  Standard_EXPORT Standard_Integer HaveTheSameOwner (const Handle(Graphic3d_Structure)& theStructure) const;
+  ///Standard_EXPORT Standard_Integer HaveTheSameOwner (const Handle(Graphic3d_Structure)& theStructure) const;
 
 public:
 
@@ -589,9 +579,7 @@ protected:
 
   Handle(Graphic3d_StructureManager) myStructureManager;
   Handle(Graphic3d_Camera)  myCamera;
-  Graphic3d_SequenceOfStructure myStructsToCompute;
-  Graphic3d_SequenceOfStructure myStructsComputed;
-  //Graphic3d_MapOfStructure myStructsDisplayed;
+  //Graphic3d_MapOfStructure myStructsDisplayed; /// TODO
   Graphic3d_ViewStructureMap myStructsDisplayed;
   Handle(Graphic3d_NMapOfTransient) myHiddenObjects;
   Standard_Boolean myIsInComputedMode;

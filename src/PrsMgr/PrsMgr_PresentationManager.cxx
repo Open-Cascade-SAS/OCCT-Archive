@@ -371,7 +371,7 @@ void PrsMgr_PresentationManager::displayImmediate (const Handle(V3d_Viewer)& the
 
       Handle(Graphic3d_Structure) aViewDepPrs;
       Handle(Prs3d_PresentationShadow) aShadowPrs = Handle(Prs3d_PresentationShadow)::DownCast (aPrs);
-      if (!aShadowPrs.IsNull() && aView->IsComputed (aShadowPrs->ParentId(), aViewDepPrs))
+      /*if (!aShadowPrs.IsNull() && aView->IsComputed (aShadowPrs->ParentId(), aViewDepPrs))
       {
         const Graphic3d_ZLayerId aZLayer = aShadowPrs->GetZLayer();
         aShadowPrs.Nullify();
@@ -386,7 +386,7 @@ void PrsMgr_PresentationManager::displayImmediate (const Handle(V3d_Viewer)& the
       // handles custom highlight presentations which were defined in overridden
       // HilightOwnerWithColor method of a custom AIS objects and maintain its
       // visibility in different views on their own
-      else if (aShadowPrs.IsNull())
+      else */if (aShadowPrs.IsNull())
       {
         aPrs->Display();
         continue;
@@ -706,12 +706,12 @@ void PrsMgr_PresentationManager::UpdateHighlightTrsf (const Handle(V3d_Viewer)& 
     {
       const Handle(Graphic3d_CView)& aView = anActiveViewIter.Value()->View();
       Handle(Graphic3d_Structure) aViewDepParentPrs;
-      if (aView->IsComputed (aParentId, aViewDepParentPrs))
+      /**if (aView->IsComputed (aParentId, aViewDepParentPrs))
       {
         updatePrsTransformation (myViewDependentImmediateList,
                                  aViewDepParentPrs->CStructure()->Identification(),
                                  aTrsf);
-      }
+      }*/
     }
   }
 }
