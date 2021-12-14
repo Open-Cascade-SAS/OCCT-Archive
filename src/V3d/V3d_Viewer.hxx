@@ -36,7 +36,6 @@
 #include <V3d_ListOfView.hxx>
 #include <V3d_TypeOfOrientation.hxx>
 #include <V3d_TypeOfView.hxx>
-#include <V3d_TypeOfVisualization.hxx>
 #include <Quantity_Color.hxx>
 
 class Aspect_Grid;
@@ -144,12 +143,6 @@ public:
 
   //! Sets the default projection for creating views in the viewer.
   void SetDefaultViewProj (const V3d_TypeOfOrientation theOrientation) { myViewProj = theOrientation; }
-
-  //! Returns the default type of Visualization.
-  V3d_TypeOfVisualization DefaultVisualization() const { return myVisualization; }
-
-  //! Gives the default visualization mode.
-  void SetDefaultVisualization (const V3d_TypeOfVisualization theType) { myVisualization = theType; }
 
   //! Returns the default type of Shading; Graphic3d_TypeOfShadingModel_Phong by default.
   Graphic3d_TypeOfShadingModel DefaultShadingModel() const { return myDefaultRenderingParams.ShadingModel; }
@@ -500,7 +493,6 @@ private:
   Aspect_GradientBackground myGradientBackground;
   Standard_Real myViewSize;
   V3d_TypeOfOrientation myViewProj;
-  V3d_TypeOfVisualization myVisualization;
   V3d_TypeOfView myDefaultTypeOfView;
   Graphic3d_RenderingParams myDefaultRenderingParams;
 

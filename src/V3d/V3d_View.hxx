@@ -248,9 +248,6 @@ public:
 
 public:
 
-  //! Defines the visualization type in the view.
-  Standard_EXPORT void SetVisualization (const V3d_TypeOfVisualization theType);
-
   //! Activates theLight in the view.
   Standard_EXPORT void SetLightOn (const Handle(V3d_Light)& theLight);
 
@@ -704,9 +701,6 @@ public:
   Standard_EXPORT void SetShadingModel (const Graphic3d_TypeOfShadingModel theShadingModel);
 
   Standard_EXPORT Handle(Graphic3d_TextureEnv) TextureEnv() const;
-
-  //! Returns the current visualisation mode.
-  Standard_EXPORT V3d_TypeOfVisualization Visualization() const;
 
   //! Returns a list of active lights.
   const V3d_ListOfLight& ActiveLights() const { return myActiveLights; }

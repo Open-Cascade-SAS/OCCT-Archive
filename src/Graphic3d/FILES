@@ -177,7 +177,6 @@ Graphic3d_TransformPersScaledAbove.hxx
 Graphic3d_TransformPersScaledAbove.cxx
 Graphic3d_TransformUtils.hxx
 Graphic3d_TransModeFlags.hxx
-Graphic3d_TypeOfAnswer.hxx
 Graphic3d_TypeOfBackfacingModel.hxx
 Graphic3d_TypeOfBackground.hxx
 Graphic3d_TypeOfConnection.hxx
@@ -192,7 +191,6 @@ Graphic3d_TypeOfStructure.hxx
 Graphic3d_TypeOfTexture.hxx
 Graphic3d_TypeOfTextureFilter.hxx
 Graphic3d_TypeOfTextureMode.hxx
-Graphic3d_TypeOfVisualization.hxx
 Graphic3d_Vec.hxx
 Graphic3d_Vec2.hxx
 Graphic3d_Vec3.hxx

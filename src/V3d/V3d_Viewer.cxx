@@ -46,7 +46,6 @@ V3d_Viewer::V3d_Viewer (const Handle(Graphic3d_GraphicDriver)& theDriver)
   myBackground (Quantity_NOC_GRAY30),
   myViewSize (1000.0),
   myViewProj (V3d_XposYnegZpos),
-  myVisualization (V3d_ZBUFFER),
   myDefaultTypeOfView (V3d_ORTHOGRAPHIC),
   myComputedMode (Standard_True),
   myDefaultComputedMode (Standard_False),
@@ -902,7 +901,6 @@ void V3d_Viewer::DumpJson (Standard_OStream& theOStream, Standard_Integer theDep
 
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myViewSize)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myViewProj)
-  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myVisualization)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myDefaultTypeOfView)
   
   OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, &myDefaultRenderingParams)

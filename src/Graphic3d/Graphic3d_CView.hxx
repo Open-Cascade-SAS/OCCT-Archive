@@ -33,11 +33,9 @@
 #include <Graphic3d_Structure.hxx>
 #include <Graphic3d_Texture2Dmanual.hxx>
 #include <Graphic3d_TextureEnv.hxx>
-#include <Graphic3d_TypeOfAnswer.hxx>
 #include <Graphic3d_TypeOfBackfacingModel.hxx>
 #include <Graphic3d_TypeOfBackground.hxx>
 #include <Graphic3d_TypeOfShadingModel.hxx>
-#include <Graphic3d_TypeOfVisualization.hxx>
 #include <Graphic3d_Vec3.hxx>
 #include <Graphic3d_ZLayerId.hxx>
 #include <Graphic3d_ZLayerSettings.hxx>
@@ -135,12 +133,6 @@ public:
   //! Sets backfacing model for the view.
   void SetBackfacingModel (const Graphic3d_TypeOfBackfacingModel theModel) { myBackfacing = theModel; }
 
-  //! Returns visualization type of the view.
-  Graphic3d_TypeOfVisualization VisualizationType() const { return myVisualization; }
-
-  //! Sets visualization type of the view.
-  void SetVisualizationType (const Graphic3d_TypeOfVisualization theType) { myVisualization = theType; }
-
   //! Switches computed HLR mode in the view
   Standard_EXPORT void SetComputedMode (const Standard_Boolean theMode);
 
@@ -191,9 +183,6 @@ public:
   const Handle(Graphic3d_StructureManager)& StructureManager() const { return myStructureManager; }
 
 private:
-
-  //! Is it possible to display the structure in the view?
-  Standard_EXPORT Graphic3d_TypeOfAnswer acceptDisplay (const Graphic3d_TypeOfStructure theStructType) const;
 
   //! Clears the structure in this view.
   Standard_EXPORT void Clear (Graphic3d_Structure* theStructure,
@@ -609,7 +598,6 @@ protected:
   Standard_Boolean myIsActive;
   Standard_Boolean myIsRemoved;
   Graphic3d_TypeOfBackfacingModel myBackfacing;
-  Graphic3d_TypeOfVisualization myVisualization;
 
   Handle(Aspect_XRSession) myXRSession;
   Handle(Graphic3d_Camera) myBackXRCamera;       //!< camera projection parameters to restore after closing XR session (FOV, aspect and similar)

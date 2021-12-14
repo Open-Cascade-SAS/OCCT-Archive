@@ -383,8 +383,6 @@ public:
         && myCStructure->IsMutable;
   }
 
-  Graphic3d_TypeOfStructure ComputeVisual() const { return myComputeVisual; }
-
   //! Clears the structure <me>.
   Standard_EXPORT void GraphicClear (const Standard_Boolean WithDestruction);
 
@@ -414,16 +412,6 @@ public:
   //! Suppress the structure in the list of descendants or in the list of ancestors.
   Standard_EXPORT void Remove (Graphic3d_Structure* thePtr,
                                const Graphic3d_TypeOfConnection theType);
-  
-  void SetComputeVisual (const Graphic3d_TypeOfStructure theVisual)
-  {
-    // The ComputeVisual is saved only if the structure is declared TOS_ALL, TOS_WIREFRAME or TOS_SHADING.
-    // This declaration permits to calculate proper representation of the structure calculated by Compute instead of passage to TOS_COMPUTED.
-    if (theVisual != Graphic3d_TOS_COMPUTED)
-    {
-      myComputeVisual = theVisual;
-    }
-  }
   
   //! Transforms theX, theY, theZ with the transformation theTrsf.
   Standard_EXPORT static void Transforms (const gp_Trsf& theTrsf,
@@ -491,7 +479,6 @@ protected:
   NCollection_IndexedMap<Graphic3d_Structure*> myDescendants;
   Standard_Address              myOwner;
   Graphic3d_TypeOfStructure     myVisual;
-  Graphic3d_TypeOfStructure     myComputeVisual;
 
 };
 

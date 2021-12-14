@@ -41,8 +41,7 @@ Graphic3d_Structure::Graphic3d_Structure (const Handle(Graphic3d_StructureManage
                                           const Handle(Graphic3d_Structure)&        theLinkPrs)
 : myStructureManager(theManager.get()),
   myOwner           (NULL),
-  myVisual          (Graphic3d_TOS_ALL),
-  myComputeVisual   (Graphic3d_TOS_ALL)
+  myVisual          (Graphic3d_TOS_ALL)
 {
   if (!theLinkPrs.IsNull())
   {
@@ -51,7 +50,6 @@ Graphic3d_Structure::Graphic3d_Structure (const Handle(Graphic3d_StructureManage
     {
       myVisual = theLinkPrs->myVisual;
     }
-    myComputeVisual = theLinkPrs->myComputeVisual;
     myCStructure = theLinkPrs->myCStructure->ShadowLink (theManager);
   }
   else
@@ -385,13 +383,11 @@ void Graphic3d_Structure::SetVisual (const Graphic3d_TypeOfStructure theVisual)
   if (!myCStructure->stick)
   {
     myVisual = theVisual;
-    SetComputeVisual (theVisual);
   }
   else
   {
     erase();
     myVisual = theVisual;
-    SetComputeVisual (theVisual);
     Display();
   }
 }
@@ -1018,5 +1014,4 @@ void Graphic3d_Structure::DumpJson (Standard_OStream& theOStream, Standard_Integ
 
   OCCT_DUMP_FIELD_VALUE_POINTER (theOStream, myOwner)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myVisual)
-  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myComputeVisual)
 }

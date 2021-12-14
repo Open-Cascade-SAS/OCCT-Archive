@@ -95,7 +95,6 @@ V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const V3d_TypeOfView th
   SetBackFacingModel (V3d_TOBM_AUTOMATIC);
   SetCamera (aCamera);
   SetAxis (0.,0.,0.,1.,1.,1.);
-  SetVisualization (theViewer->DefaultVisualization());
   SetTwist (0.);
   SetAt (0.,0.,0.);
   SetProj (theViewer->DefaultViewProj());
@@ -567,20 +566,6 @@ void V3d_View::SetShadingModel (const Graphic3d_TypeOfShadingModel theShadingMod
 void V3d_View::SetTextureEnv (const Handle(Graphic3d_TextureEnv)& theTexture)
 {
   myView->SetTextureEnv (theTexture);
-
-  if (myImmediateUpdate)
-  {
-    Redraw();
-  }
-}
-
-//=============================================================================
-//function : SetVisualization
-//purpose  :
-//=============================================================================
-void V3d_View::SetVisualization (const V3d_TypeOfVisualization theType)
-{
-  myView->SetVisualizationType (static_cast <Graphic3d_TypeOfVisualization> (theType));
 
   if (myImmediateUpdate)
   {
@@ -2204,15 +2189,6 @@ Graphic3d_TypeOfShadingModel V3d_View::ShadingModel() const
 Handle(Graphic3d_TextureEnv) V3d_View::TextureEnv() const
 {
   return myView->TextureEnv();
-}
-
-//=============================================================================
-//function : Visualization
-//purpose  :
-//=============================================================================
-V3d_TypeOfVisualization V3d_View::Visualization() const
-{
-  return static_cast<V3d_TypeOfVisualization> (myView->VisualizationType());
 }
 
 //=============================================================================
