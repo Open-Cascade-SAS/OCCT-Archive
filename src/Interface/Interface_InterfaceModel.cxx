@@ -1059,7 +1059,7 @@ Handle(Interface_Static) Interface_InterfaceModel::GetParam
   if (aParam.IsNull())
   {
 #ifdef OCCT_DEBUG
-    cout << "Warning: Incorrect parameter :" << name << endl;
+    std::cout << "Warning: Incorrect parameter :" << theParamName << std::endl;
 #endif
   }
   return aParam;
