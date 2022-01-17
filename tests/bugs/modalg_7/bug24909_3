@@ -1,0 +1,17 @@
+puts "========"
+puts "0024909: Modeling Algorithms - SIGSEGV in buildsweep"
+puts "========"
+puts ""
+
+pload MODELING
+restore [locate_data_file bug24909_spine.brep]
+renamevar bug24909_spine Sweep-0-spine
+mksweep Sweep-0-spine
+setsweep -CF
+restore [locate_data_file bug24909_Sketch.brep]
+renamevar bug24909_Sketch Sweep-0-section-00-Sketch
+addsweep Sweep-0-section-00-Sketch 
+restore [locate_data_file bug24909_Sketch001.brep]
+renamevar bug24909_Sketch001 Sweep-0-section-01-Sketch001
+addsweep Sweep-0-section-01-Sketch001 
+buildsweep Sweep

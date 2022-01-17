@@ -389,13 +389,13 @@ static void TrimEdge (const TopoDS_Edge&              CurrentEdge,
 
 
 static Standard_Boolean SearchRoot (const TopoDS_Vertex& V,
-				    const TopTools_DataMapOfShapeListOfShape& Map,
-				    TopoDS_Vertex& VRoot)
+                                    const TopTools_IndexedDataMapOfShapeListOfShape Map,
+                                    TopoDS_Vertex& VRoot)
 {
   Standard_Boolean trouve = Standard_False;
   VRoot.Nullify();
-  TopTools_DataMapIteratorOfDataMapOfShapeListOfShape it;
-  for (it.Initialize(Map); it.More(); it.Next()) {
+  TopTools_IndexedDataMapIteratorOfDataMapOfShapeListOfShape it(Map);
+  for (; it.More(); it.Next()) {
     const TopTools_ListOfShape & List = it.Value();
     TopTools_ListIteratorOfListOfShape itL;
     Standard_Boolean ilyest = Standard_False;
@@ -445,12 +445,12 @@ static Standard_Boolean SearchVertex (const TopTools_ListOfShape& List,
 
 
 static Standard_Boolean EdgeIntersectOnWire (const gp_Pnt& P1,
-					     const gp_Pnt& P2,
-					     Standard_Real percent,
-					     const TopTools_DataMapOfShapeListOfShape& Map,
-					     const TopoDS_Wire&   W,
-					     TopoDS_Vertex& Vsol,
-					     TopoDS_Wire&   newW,
+                                             const gp_Pnt& P2,
+                                             Standard_Real percent,
+                                             const TopTools_IndexedDataMapOfShapeListOfShape& Map,
+                                             const TopoDS_Wire&   W,
+                                             TopoDS_Vertex& Vsol,
+                                             TopoDS_Wire&   newW,
                                              TopTools_DataMapOfShapeSequenceOfShape& theEdgeNewEdges)
 {
 
@@ -976,7 +976,7 @@ void BRepFill_CompatibleWires::
   }
   
   // construction of RMap, map of reports of wire i to wire i-1
-  TopTools_DataMapOfShapeListOfShape RMap;
+  TopTools_IndexedDataMapOfShapeListOfShape RMap;
   RMap.Clear();
   
   // loop on i
@@ -997,7 +997,10 @@ void BRepFill_CompatibleWires::
       // init of RMap for Vi
       TopTools_ListOfShape Init;
       Init.Clear();
-      RMap.Bind(Vi,Init);
+      TopTools_ListOfShape* aShapeList = RMap.ChangeSeek(Vi);
+      if (!aShapeList)
+        aShapeList = &RMap(RMap.Add(Vi, Init));
+      aShapeList->Append(Init);
       
       // it is required to find intersection Vi - wire2
       gp_Pnt Pi = BRep_Tool::Pnt(Vi);
@@ -1019,14 +1022,14 @@ void BRepFill_CompatibleWires::
                                         RMap,TopoDS::Wire(myWork(i-1)),
                                         Vsol,newwire,EdgeNewEdges);
 	if (NewVertex) myWork(i-1) = newwire;
-	RMap(Vi).Append(Vsol);
+	RMap.ChangeFromKey(Vi).Append(Vsol);
       }
       
     } // loop on  ii
   }   // loop on  i
   
   // initialisation of MapVLV, map of correspondences vertex - list of vertices
-  TopTools_DataMapOfShapeListOfShape MapVLV;
+  TopTools_IndexedDataMapOfShapeListOfShape MapVLV;
   SeqOfVertices(TopoDS::Wire(myWork(ideb)),SeqV);
   Standard_Integer SizeMap = SeqV.Length();
   MapVLV.Clear();
@@ -1035,13 +1038,16 @@ void BRepFill_CompatibleWires::
     TopTools_ListOfShape Init;
     Init.Clear();
     Init.Append(Vi);
-    MapVLV.Bind(Vi,Init);
+    TopTools_ListOfShape* aShapeList = MapVLV.ChangeSeek(Vi);
+    if (!aShapeList)
+      aShapeList = &MapVLV(MapVLV.Add(Vi, Init));
+    aShapeList->Append(Init);
     Standard_Integer NbV = 1;
     TopoDS_Vertex V0,V1;
     V0 = Vi;
     Standard_Boolean tantque = SearchRoot(V0,RMap,V1);
     while (tantque) {
-      MapVLV(Vi).Append(V1);
+      MapVLV.ChangeFromKey(Vi).Append(V1);
       NbV++;
       // test on NbV required for looping sections 
       if (V1.IsSame(Vi) || NbV >= myWork.Length()) {
@@ -1076,7 +1082,7 @@ void BRepFill_CompatibleWires::
       VRoot.Nullify();
       Standard_Boolean intersect = Standard_True;
       if (SearchRoot(Vi,MapVLV,VRoot)) {
-	const TopTools_ListOfShape& LVi = MapVLV(VRoot);
+	const TopTools_ListOfShape& LVi = MapVLV.FindFromKey(VRoot);
 	TopoDS_Vertex VonW;
 	VonW.Nullify();
 	intersect = (!SearchVertex(LVi,wire2,VonW));
@@ -1102,7 +1108,7 @@ void BRepFill_CompatibleWires::
 	  NewVertex = EdgeIntersectOnWire(Pos->Value(i+1),Pnew,percent,
                                           MapVLV,TopoDS::Wire(myWork(i+1)),
                                           Vsol,newwire,EdgeNewEdges);
-	  MapVLV(VRoot).Append(Vsol);
+	  MapVLV.ChangeFromKey(VRoot).Append(Vsol);
 	  if (NewVertex) myWork(i+1) = newwire;
 	}
 	
@@ -1129,7 +1135,7 @@ void BRepFill_CompatibleWires::
     Standard_Real U2 = BRep_Tool::Parameter(VL,ECur);
     BRepAdaptor_Curve Curve(ECur);
     gp_Pnt PPs = Curve.Value(0.1*(U1+9*U2));
-    TopTools_ListIteratorOfListOfShape itF(MapVLV(VF)),itL(MapVLV(VL));
+    TopTools_ListIteratorOfListOfShape itF(MapVLV.FindFromKey(VF)),itL(MapVLV.FindFromKey(VL));
     Standard_Integer rang = ideb;
     while (rang < i) {
       itF.Next();

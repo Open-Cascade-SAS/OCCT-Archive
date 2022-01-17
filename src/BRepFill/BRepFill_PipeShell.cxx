@@ -1024,11 +1024,13 @@ void BRepFill_PipeShell::Generated(const TopoDS_Shape&   theShape,
         // place the initial section at the final position 
         Param.Append(V2);
         WSeq.Append(WSeq(ideb));
+        IndSec.Append(WSeq.Length());
       }
       else if (ifin>0) {
         // place the final section at the initial position
         Param.Append(V1);
         WSeq.Append(WSeq(ifin));
+        IndSec.Append(WSeq.Length());
       }
       else {
         // it is necessary to find a medium section to impose by V1 and by V2
