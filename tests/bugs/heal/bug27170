@@ -1,0 +1,10 @@
+puts "============"
+puts "0027170: Reading STEP files produces invalid shapes"
+puts "============"
+
+restore [locate_data_file bug27170_f.brep] f
+
+fixshape result f
+
+ttranslate result 9.68119149294e-13 217.938944319 299.700009766
+checkshape result

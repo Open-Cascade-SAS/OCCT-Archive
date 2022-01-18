@@ -45,6 +45,11 @@ public:
   
   Standard_EXPORT Standard_Boolean GeometricControls() const;
   
+  //! Creates a 3d curve or surface on a curve by subtracting the location of the face
+  //! @param[in] theShape input shape to get the location from it
+  //! @return a 3d curve or curve on a surface
+  Standard_EXPORT Handle(Adaptor3d_Curve) GetEdgeCurve(const TopoDS_Shape& theShape);
+  
   Standard_EXPORT void GeometricControls (const Standard_Boolean B);
   
   Standard_EXPORT Standard_Real Tolerance();
@@ -81,6 +86,7 @@ private:
   Handle(Adaptor3d_Curve) myHCurve;
   Standard_Boolean myGctrl;
   Standard_Boolean myIsExactMethod;
+  Standard_Boolean IsCurve3D;
 };
 
 #endif // _BRepCheck_Edge_HeaderFile

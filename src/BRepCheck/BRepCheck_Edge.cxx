@@ -148,14 +148,15 @@ void BRepCheck_Edge::Minimum()
         BRepCheck::Add(lst,BRepCheck_InvalidRange);
       }
       else {
-        if (myCref->IsCurve3D()) {
+        IsCurve3D = myCref->IsCurve3D();
+        if (IsCurve3D) {
           // eap 6 Jun 2002 occ332
           // better transform C3d instead of transforming Surf upto C3d initial location,
           // on transformed BSpline surface 'same parameter' may seem wrong
           TopLoc_Location L = myShape.Location() * myCref->Location();
           Handle(Geom_Curve) C3d = Handle(Geom_Curve)::DownCast
-            (myCref->Curve3D()->Transformed
-            (/*myCref->Location()*/L.Transformation()));
+              (myCref->Curve3D()->Transformed
+              (/*myCref->Location()*/L.Transformation()));
           Standard_Boolean IsPeriodic = C3d->IsPeriodic();
           Standard_Real aPeriod = RealLast();
           if(IsPeriodic)
@@ -186,9 +187,8 @@ void BRepCheck_Edge::Minimum()
           }
           else
           {
-            GeomAdaptor_Curve GAC3d(C3d, C3d->TransformedParameter(First, L.Transformation()),
-                                       C3d->TransformedParameter(Last, L.Transformation()));
-            myHCurve = new GeomAdaptor_Curve(GAC3d);
+            TopoDS_Shape aShape;
+            myHCurve = GetEdgeCurve(aShape);
           }
         }
         else { // curve on surface
@@ -226,11 +226,8 @@ void BRepCheck_Edge::Minimum()
           }
           else
           {
-            Handle(GeomAdaptor_Surface) GAHSref = new GeomAdaptor_Surface(Sref);
-            Handle(Geom2dAdaptor_Curve) GHPCref = 
-              new Geom2dAdaptor_Curve(PCref,First,Last);
-            Adaptor3d_CurveOnSurface ACSref(GHPCref,GAHSref);
-            myHCurve = new Adaptor3d_CurveOnSurface(ACSref);
+            TopoDS_Shape aShape;
+            myHCurve = GetEdgeCurve(aShape);
           }
         }
       }
@@ -301,6 +298,7 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
         return;
       }
       //  Modified by skv - Tue Apr 27 11:48:14 2004 End
+      myHCurve = GetEdgeCurve(S);
       Standard_Real First = myHCurve->FirstParameter();
       Standard_Real Last  = myHCurve->LastParameter();
 
@@ -372,7 +370,7 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
             Handle(Geom_Surface) Sb = cr->Surface();
             Sb = Handle(Geom_Surface)::DownCast
               //	      (Su->Transformed(L.Transformation()));
-              (Su->Transformed(/*L*/(Floc * TFloc).Transformation()));
+              (Su->Transformed(/*L*/TFloc.Transformation()));
             Handle(Geom2d_Curve) PC = cr->PCurve();
             Handle(GeomAdaptor_Surface) GAHS = new GeomAdaptor_Surface(Sb);
             Handle(Geom2dAdaptor_Curve) GHPC = new Geom2dAdaptor_Curve(PC,f,l);
@@ -440,7 +438,7 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
           // plan en position
           if (myGctrl) {
             P = Handle(Geom_Plane)::
-              DownCast(P->Transformed(/*L*/(Floc * TFloc).Transformation()));// eap occ332
+              DownCast(P->Transformed(/*L*/TFloc.Transformation()));// eap occ332
             //on projette Cref sur ce plan
             Handle(GeomAdaptor_Surface) GAHS = new GeomAdaptor_Surface(P);
 
@@ -547,6 +545,64 @@ Standard_Boolean BRepCheck_Edge::GeometricControls() const
 {
   return myGctrl;
 }
+
+
+//=======================================================================
+//function : GetEdgeCurve
+//purpose  : 
+//=======================================================================
+
+Handle(Adaptor3d_Curve) BRepCheck_Edge::GetEdgeCurve(const TopoDS_Shape& theShape)
+{
+  Handle(Adaptor3d_Curve) aLocalCurve;
+  Handle(BRep_GCurve) GCref(Handle(BRep_GCurve)::DownCast(myCref));
+  Standard_Real First, Last;
+  GCref->Range(First, Last);
+  if (IsCurve3D)
+  {
+
+    TopLoc_Location L = myShape.Location() * myCref->Location();
+    Handle(Geom_Curve) C3d;
+    if (!theShape.IsNull())
+    {
+      C3d = Handle(Geom_Curve)::DownCast
+        (myCref->Curve3D()->Transformed
+        (/*myCref->Location()*/L.Predivided(theShape.Location()).Transformation()));
+    }
+    else
+    {
+      C3d = Handle(Geom_Curve)::DownCast
+        (myCref->Curve3D()->Transformed
+        (/*myCref->Location()*/L.Transformation()));
+    }
+    GeomAdaptor_Curve GAC3d(C3d, C3d->TransformedParameter(First, L.Transformation()),
+                               C3d->TransformedParameter(Last, L.Transformation()));
+    aLocalCurve = new GeomAdaptor_Curve(GAC3d);
+  }
+  else
+  {
+    Handle(Geom_Surface) Sref = myCref->Surface();
+    if (!theShape.IsNull())
+    {
+      Sref = Handle(Geom_Surface)::DownCast
+        (Sref->Transformed(myCref->Location().Predivided(theShape.Location()).Transformation()));
+    }
+    else
+    {
+      Sref = Handle(Geom_Surface)::DownCast
+        (Sref->Transformed(myCref->Location().Transformation()));
+    }
+    const Handle(Geom2d_Curve)& PCref = myCref->PCurve();
+    Handle(GeomAdaptor_Surface) GAHSref = new GeomAdaptor_Surface(Sref);
+    Handle(Geom2dAdaptor_Curve) GHPCref =
+      new Geom2dAdaptor_Curve(PCref, First, Last);
+    Adaptor3d_CurveOnSurface ACSref(GHPCref, GAHSref);
+    aLocalCurve = new Adaptor3d_CurveOnSurface(ACSref);
+  }
+
+  return aLocalCurve;
+}
+
 
 //=======================================================================
 //function :   SetStatus
