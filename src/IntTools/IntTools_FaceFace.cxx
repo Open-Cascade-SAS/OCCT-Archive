@@ -504,6 +504,7 @@ void IntTools_FaceFace::Perform (const TopoDS_Face& aF1,
 
   {
     const Standard_Real UVMaxStep = IntPatch_Intersection::DefineUVMaxStep(myHS1, dom1, myHS2, dom2);
+	// TODO: bug32811 Deflection change to 0.01 can work
     const Standard_Real Deflection = 0.1;
     myIntersector.SetTolerances(TolArc, TolTang, UVMaxStep, Deflection); 
   }

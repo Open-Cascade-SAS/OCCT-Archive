@@ -1,0 +1,16 @@
+puts "TODO ? Surface Surface Intersect Lost One Intersect Curve"
+puts "0032811: Bad result of sweep operation due to Surface Surface Intersect Bug"
+puts "========"
+puts ""
+
+restore [locate_data_file CR32811_path.brep] p
+restore [locate_data_file CR32811_profile.brep] pr
+
+mksweep p
+setsweep -CF
+addsweep pr
+
+buildsweep result -C -S
+
+checkshape result
+checknbshapes result -vertex 184 -edge 368 -wire 184 -face 184 -shell 1
