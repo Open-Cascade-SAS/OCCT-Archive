@@ -526,6 +526,8 @@
 #include <RWStepVisual_RWPresentationStyleByContext.hxx>
 #include <RWStepVisual_RWPresentationView.hxx>
 #include <RWStepVisual_RWPresentedItemRepresentation.hxx>
+#include <RWStepVisual_RWRepositionedTessellatedGeometricSet.hxx>
+#include <RWStepVisual_RWRepositionedTessellatedItem.hxx>
 #include <RWStepVisual_RWStyledItem.hxx>
 #include <RWStepVisual_RWSurfaceSideStyle.hxx>
 #include <RWStepVisual_RWSurfaceStyleBoundary.hxx>
@@ -1082,6 +1084,8 @@
 #include <StepVisual_PresentationStyleByContext.hxx>
 #include <StepVisual_PresentationView.hxx>
 #include <StepVisual_PresentedItemRepresentation.hxx>
+#include <StepVisual_RepositionedTessellatedGeometricSet.hxx>
+#include <StepVisual_RepositionedTessellatedItem.hxx>
 #include <StepVisual_StyledItem.hxx>
 #include <StepVisual_SurfaceSideStyle.hxx>
 #include <StepVisual_SurfaceStyleBoundary.hxx>
@@ -5193,6 +5197,13 @@ void RWStepAP214_GeneralModule::FillSharedCase(const Standard_Integer CN,
     tool.Share(anent, iter);
   }
   break;
+  case 802:
+  {
+    DeclareAndCast(StepVisual_RepositionedTessellatedGeometricSet, anEnt, ent);
+    RWStepVisual_RWRepositionedTessellatedGeometricSet aTool;
+    aTool.Share(anEnt, iter);
+    break;
+  }
     default : break;
     }
 }
@@ -7217,6 +7228,12 @@ Standard_Boolean RWStepAP214_GeneralModule::NewVoid
    case 723:
      ent = new StepVisual_SurfaceStyleRenderingWithProperties;
    break;
+   case 802:
+     ent = new StepVisual_RepositionedTessellatedGeometricSet;
+     break;
+   case 803:
+     ent = new StepVisual_RepositionedTessellatedItem;
+     break;
   default: 
     return Standard_False;
   }
@@ -7819,7 +7836,8 @@ Standard_Integer  RWStepAP214_GeneralModule::CategoryNumber
   case 721:
   case 722:
   case 723: return catdr;
-
+  case 802: return cataux;
+  case 803: return cataux;
   default : break;
   }
   return 0;
