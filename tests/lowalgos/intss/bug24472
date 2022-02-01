@@ -6,8 +6,9 @@ puts ""
 ## Wrong section curves
 ###############################
 
-puts "TODO OCC29501 ALL: Error in ii12_22"
-puts "TODO OCC29501 All: Error: The curve ii12_22 is possible"
+pload QAcommands
+##puts "TODO OCC29501 ALL: Error in ii12_22"
+##puts "TODO OCC29501 All: Error: The curve ii12_22 is possible"
 set MaxToler 1.5e-4
 
 restore [locate_data_file bug24472_Pipe_1.brep] b1
@@ -26,6 +27,9 @@ puts "First test"
 intersect ii12 s1 s2
 
 foreach c [directory ii12*] {
+
+  puts "Curve $c" 
+
   bounds $c U1 U2
   
   if {[dval U2-U1] < 1.0e-9} {
@@ -33,7 +37,7 @@ foreach c [directory ii12*] {
   }
   
   # cos(~75.5deg)
-  CheckLoops $c 0.25
+  OCC24472 $c 0.25
   
   xdistcs $c s1 U1 U2 10 $MaxToler
   xdistcs $c s2 U1 U2 10 $MaxToler
@@ -55,6 +59,9 @@ puts "Third test"
 intersect ii13 s1 s3
 
 foreach c [directory ii13*] {
+
+  puts "Curve $c" 
+
   bounds $c U1 U2
   
   if {[dval U2-U1] < 1.0e-9} {
@@ -62,7 +69,7 @@ foreach c [directory ii13*] {
   }
   
   # cos(~75.5deg)
-  CheckLoops $c 0.25
+  OCC24472 $c 0.25
 
   xdistcs $c s1 U1 U2 10 $MaxToler
   xdistcs $c s2 U1 U2 10 $MaxToler

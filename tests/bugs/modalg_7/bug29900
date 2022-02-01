@@ -1,4 +1,4 @@
-puts "TODO CR29596 All: Intersection of pair of shapes has failed"
+##puts "TODO CR29596 All: Intersection of pair of shapes has failed"
 
 puts "========"
 puts "OCC29900: Invalid result of FUSE operation"
