@@ -14,15 +14,21 @@
 // commercial license or contractual agreement.
 
 #include <VrmlData_ShapeConvert.hxx>
-#include <VrmlData_Scene.hxx>
-#include <VrmlData_Group.hxx>
+
+#include <VrmlData_Appearance.hxx>
 #include <VrmlData_Coordinate.hxx>
+#include <VrmlData_Group.hxx>
 #include <VrmlData_IndexedFaceSet.hxx>
 #include <VrmlData_IndexedLineSet.hxx>
+#include <VrmlData_Scene.hxx>
 #include <VrmlData_ShapeNode.hxx>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepAdaptor_Curve.hxx>
 #include <Geom_Surface.hxx>
+#include <GeomLib.hxx>
+#include <GCPnts_TangentialDeflection.hxx>
 #include <NCollection_DataMap.hxx>
 #include <Poly_Triangulation.hxx>
 #include <Poly_Connect.hxx>
@@ -33,7 +39,6 @@
 #include <TColgp_Array1OfPnt2d.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDF_Label.hxx>
-//#include <TDF_LabelSequence.hxx>
 #include <TDocStd_Document.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -41,14 +46,11 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
-#include <GCPnts_TangentialDeflection.hxx>
-#include <BRepAdaptor_Curve.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_HArray1OfReal.hxx>
 #include <TShort_Array1OfShortReal.hxx>
-#include <GeomLib.hxx>
 #include <TShort_HArray1OfShortReal.hxx>
-#include <VrmlData_Appearance.hxx>
+#include <RWMesh_FaceIterator.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
@@ -575,7 +577,6 @@ Handle(VrmlData_Appearance) VrmlData_ShapeConvert::defaultMaterialEdge () const
   return anAppearance;
 }
 
-
 //=======================================================================
 //function : addShape
 //purpose  : Adds the shape from the document
@@ -584,33 +585,18 @@ void VrmlData_ShapeConvert::addShape (const Handle(VrmlData_Group)& theParent,
                                       const TDF_Label& theLabel,
                                       const Handle(TDocStd_Document)& theDoc)
 {
-  Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(theDoc->Main());
+  const TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(theLabel);
   Handle(XCAFDoc_ColorTool) aColorTool = XCAFDoc_DocumentTool::ColorTool(theDoc->Main());
-  Handle(XCAFDoc_VisMaterialTool) aMatTool = XCAFDoc_DocumentTool::VisMaterialTool(theDoc->Main());
-
-  NCollection_DataMap<TopoDS_Shape, TDF_Label> aChildShapeToLabels;
-  TDF_LabelSequence aChildLabels;
-  aShapeTool->GetSubShapes(theLabel, aChildLabels);
-  for (TDF_LabelSequence::Iterator aChildIter(aChildLabels); aChildIter.More(); aChildIter.Next())
+  Handle(VrmlData_Group) aGroup;
+  Standard_Integer aNbFaces = 0;
+  for (RWMesh_FaceIterator aFaceIter (theLabel, TopLoc_Location(), true); aFaceIter.More(); aFaceIter.Next())
   {
-    const TDF_Label& aChildLabel = aChildIter.Value();
-    TopoDS_Shape aChildShape;
-    if (aShapeTool->GetShape(aChildLabel, aChildShape))
-    {
-      aChildShapeToLabels.Bind(aChildShape, aChildLabel);
-    }
+    ++aNbFaces;
   }
 
-  const TopoDS_Shape aShape = aShapeTool->GetShape(theLabel);
-  Handle(VrmlData_Group) aGroup = 0L;
-  TopExp_Explorer anExp(aShape, TopAbs_FACE);
-  Standard_Integer nbFaces = 0;
-  for (; anExp.More(); anExp.Next()) {
-    nbFaces++;
-  }
   Handle(TDataStd_Name) aNameAttribute;
   theLabel.FindAttribute(TDataStd_Name::GetID(), aNameAttribute);
-  if (nbFaces > 1)
+  if (aNbFaces > 1)
   {
     if (!aNameAttribute.IsNull())
     {
@@ -630,111 +616,87 @@ void VrmlData_ShapeConvert::addShape (const Handle(VrmlData_Group)& theParent,
     }
   }
 
-  anExp.Init(aShape, TopAbs_FACE);
-  for (; anExp.More(); anExp.Next()) {
+  for (RWMesh_FaceIterator aFaceIter (theLabel, TopLoc_Location(), true); aFaceIter.More(); aFaceIter.Next())
+  {
     TopLoc_Location aLoc;
-    Handle(VrmlData_Geometry) aTShapeNode =
-      makeTShapeNode(anExp.Current(), TopAbs_FACE, aLoc);
-    if (!aTShapeNode.IsNull())
+    const TopoDS_Face& aFace = aFaceIter.Face();
+    Handle(VrmlData_Geometry) aTShapeNode = makeTShapeNode (aFace, TopAbs_FACE, aLoc);
+    if (aTShapeNode.IsNull())
     {
-      Handle(VrmlData_ShapeNode) aShapeNode = 0L;
-      if (aGroup.IsNull() && !aNameAttribute.IsNull())
-      {
-        TCollection_AsciiString aName = aNameAttribute->Get();
-        aName.ChangeAll(' ', '_');
-        aName.ChangeAll('#', '_');
-        aShapeNode = new VrmlData_ShapeNode(myScene, aName.ToCString());
-      }
-      else
-      {
-        aShapeNode = new VrmlData_ShapeNode(myScene, 0L);
-      }
+      continue;
+    }
 
-      // set color
-      XCAFPrs_Style aStyle;
-      Quantity_ColorRGBA aColor;
-      TDF_Label aLabel, anAttribLab;
-      if (aChildShapeToLabels.Find (anExp.Current(), aLabel))
-      {
-        Handle(XCAFDoc_VisMaterial) aVisMat = aMatTool->GetShapeMaterial (aLabel);
-        if (!aVisMat.IsNull()
-         && !aVisMat->IsEmpty())
-        {
-          anAttribLab = aVisMat->Label();
-          aStyle.SetMaterial (aVisMat);
-        }
-        else if (aColorTool->GetColor (aLabel, XCAFDoc_ColorSurf, anAttribLab)
-              || aColorTool->GetColor (aLabel, XCAFDoc_ColorGen,  anAttribLab))
-        {
-          aColorTool->GetColor (anAttribLab, aColor);
-          aStyle.SetColorSurf (aColor);
-        }
-      }
-      if (!aStyle.IsSetColorSurf()
-        && aStyle.Material().IsNull())
-      {
-        Handle(XCAFDoc_VisMaterial) aVisMat = aMatTool->GetShapeMaterial (theLabel);
-        if (!aVisMat.IsNull()
-         && !aVisMat->IsEmpty())
-        {
-          anAttribLab = aVisMat->Label();
-          aStyle.SetMaterial (aVisMat);
-        }
-        if (aColorTool->GetColor (theLabel, XCAFDoc_ColorSurf, anAttribLab)
-         || aColorTool->GetColor (theLabel, XCAFDoc_ColorGen,  anAttribLab))
-        {
-          aColorTool->GetColor (anAttribLab, aColor);
-          aStyle.SetColorSurf (aColor);
-        }
-      }
-      if (!aStyle.IsSetColorSurf()
-        && aStyle.Material().IsNull())
-      {
-        aShapeNode->SetAppearance(defaultMaterialFace());
-      }
-      else
-      {
-        aShapeNode->SetAppearance (makeMaterialFromStyle (aStyle, anAttribLab));
-      }
+    Handle(VrmlData_ShapeNode) aShapeNode = 0L;
+    if (aGroup.IsNull() && !aNameAttribute.IsNull())
+    {
+      TCollection_AsciiString aName = aNameAttribute->Get();
+      aName.ChangeAll(' ', '_');
+      aName.ChangeAll('#', '_');
+      aShapeNode = new VrmlData_ShapeNode(myScene, aName.ToCString());
+    }
+    else
+    {
+      aShapeNode = new VrmlData_ShapeNode(myScene, 0L);
+    }
 
-      myScene.AddNode(aShapeNode, theParent.IsNull() && aGroup.IsNull());
-      aShapeNode->SetGeometry(aTShapeNode);
-      if (aLoc.IsIdentity())
+    // set color
+    const XCAFPrs_Style& aStyle = aFaceIter.FaceStyle();
+    TDF_Label anAttribLab;
+    if (!aStyle.Material().IsNull()
+     && !aStyle.Material()->IsEmpty())
+    {
+      anAttribLab = aStyle.Material()->Label();
+    }
+    else if (aStyle.IsSetColorSurf())
+    {
+      aColorTool->FindColor (aStyle.GetColorSurfRGBA(), anAttribLab);
+    }
+    if (!aStyle.IsSetColorSurf()
+      && aStyle.Material().IsNull())
+    {
+      aShapeNode->SetAppearance (defaultMaterialFace());
+    }
+    else
+    {
+      aShapeNode->SetAppearance (makeMaterialFromStyle (aStyle, anAttribLab));
+    }
+
+    myScene.AddNode(aShapeNode, theParent.IsNull() && aGroup.IsNull());
+    aShapeNode->SetGeometry(aTShapeNode);
+    if (aLoc.IsIdentity())
+    {
+      // Store the shape node directly into the main Group.
+      if (!aGroup.IsNull())
       {
-        // Store the shape node directly into the main Group.
-        if (!aGroup.IsNull())
-        {
-          aGroup->AddNode(aShapeNode);
-        }
-        else if (!theParent.IsNull())
-        {
-          theParent->AddNode(aShapeNode);
-        }
+        aGroup->AddNode(aShapeNode);
       }
-      else
+      else if (!theParent.IsNull())
       {
-        // Create a Transform grouping node
-        Handle(VrmlData_Group) aTrans = new VrmlData_Group(myScene, 0L,
-          Standard_True);
-        gp_Trsf aTrsf(aLoc);
-        if (fabs(myScale - 1.) > Precision::Confusion())
-        {
-            const gp_XYZ aTransl = aTrsf.TranslationPart() * myScale;
-            aTrsf.SetTranslationPart(aTransl);
-        }
-        aTrans->SetTransform(aTrsf);
-        myScene.AddNode(aTrans, theParent.IsNull() && aGroup.IsNull());
-        if (!aGroup.IsNull())
-        {
-          aGroup->AddNode(aTrans);
-        }
-        else if (!theParent.IsNull())
-        {
-          theParent->AddNode(aTrans);
-        }
-        // Store the shape node under the transform.
-        aTrans->AddNode(aShapeNode);
+        theParent->AddNode(aShapeNode);
       }
+    }
+    else
+    {
+      // Create a Transform grouping node
+      Handle(VrmlData_Group) aTrans = new VrmlData_Group (myScene, 0L, Standard_True);
+      gp_Trsf aTrsf(aLoc);
+      if (fabs(myScale - 1.) > Precision::Confusion())
+      {
+        const gp_XYZ aTransl = aTrsf.TranslationPart() * myScale;
+        aTrsf.SetTranslationPart(aTransl);
+      }
+      aTrans->SetTransform(aTrsf);
+      myScene.AddNode(aTrans, theParent.IsNull() && aGroup.IsNull());
+      if (!aGroup.IsNull())
+      {
+        aGroup->AddNode(aTrans);
+      }
+      else if (!theParent.IsNull())
+      {
+        theParent->AddNode(aTrans);
+      }
+      // Store the shape node under the transform.
+      aTrans->AddNode(aShapeNode);
     }
   }
 }
