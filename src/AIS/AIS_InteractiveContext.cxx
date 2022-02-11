@@ -996,6 +996,7 @@ void AIS_InteractiveContext::RecomputePrsOnly (const Handle(AIS_InteractiveObjec
     myMainVwr->Update();
   }
 }
+
 //=======================================================================
 //function : RecomputeSelectionOnly
 //purpose  : 
@@ -1007,9 +1008,20 @@ void AIS_InteractiveContext::RecomputeSelectionOnly (const Handle(AIS_Interactiv
     return;
   }
 
-  mgrSelector->RecomputeSelection (theIO);
-
   const Handle(AIS_GlobalStatus)* aStatus = myObjects.Seek (theIO);
+  if (aStatus != NULL)
+  {
+    if (!myLastPicked.IsNull()
+      && myLastPicked->IsSameSelectable (theIO))
+    {
+      clearDynamicHighlight();
+      myLastPicked.Nullify();
+    }
+
+    unselectOwners (theIO);
+  }
+
+  mgrSelector->RecomputeSelection (theIO);
   if (aStatus == NULL
    || theIO->DisplayStatus() != PrsMgr_DisplayStatus_Displayed)
   {

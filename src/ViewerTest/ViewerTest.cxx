@@ -5238,6 +5238,8 @@ static int VDisplay2 (Draw_Interpretor& theDI,
     }
   }
 
+  // invalidate picking cache
+  ViewerTest::CurrentEventManager()->ResetPreviousMoveTo();
   return 0;
 }
 
