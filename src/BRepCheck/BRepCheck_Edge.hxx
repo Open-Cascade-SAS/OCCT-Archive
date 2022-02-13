@@ -23,6 +23,7 @@
 
 class BRep_CurveRepresentation;
 class TopoDS_Edge;
+class TopoDS_Face;
 class TopoDS_Shape;
 
 class BRepCheck_Edge;
@@ -48,6 +49,11 @@ public:
   Standard_EXPORT void GeometricControls (const Standard_Boolean B);
   
   Standard_EXPORT Standard_Real Tolerance();
+  
+  //! Creates a 3d curve or curve on surface by subtracting the location of the face
+  //! @param[in] theFace input face to get the location from it
+  //! @return a 3d curve or curve on surface
+  Standard_EXPORT Handle(Adaptor3d_Curve) GetEdgeCurve (const TopoDS_Face& theFace);
   
   //! Sets status of Edge;
   Standard_EXPORT void SetStatus (const BRepCheck_Status theStatus);

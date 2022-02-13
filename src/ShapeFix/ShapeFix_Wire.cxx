@@ -2535,7 +2535,6 @@ Standard_Boolean ShapeFix_Wire::FixIntersectingEdges (const Standard_Integer num
           myLastFixStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE6 );
           locMayEdit = Standard_False;
         }
-        newtol = 1.000001 * maxte;
       }
     }
     

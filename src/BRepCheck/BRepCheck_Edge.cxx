@@ -316,6 +316,7 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
       BRep_ListIteratorOfListOfCurveRepresentation itcr(TE->Curves());
       Standard_Real eps = Precision::PConfusion();
       Standard_Boolean toRunParallel = !myMutex.IsNull();
+      const Handle(Adaptor3d_Curve)& aLocalHCurve = GetEdgeCurve(TopoDS::Face(S));
       while (itcr.More()) {
         const Handle(BRep_CurveRepresentation)& cr = itcr.Value();
         if (cr != myCref && cr->IsCurveOnSurface(Su,L)) {
@@ -372,13 +373,13 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
             Handle(Geom_Surface) Sb = cr->Surface();
             Sb = Handle(Geom_Surface)::DownCast
               //	      (Su->Transformed(L.Transformation()));
-              (Su->Transformed(/*L*/(Floc * TFloc).Transformation()));
+              (Su->Transformed(/*L*/TFloc.Transformation()));
             Handle(Geom2d_Curve) PC = cr->PCurve();
             Handle(GeomAdaptor_Surface) GAHS = new GeomAdaptor_Surface(Sb);
             Handle(Geom2dAdaptor_Curve) GHPC = new Geom2dAdaptor_Curve(PC,f,l);
             Handle(Adaptor3d_CurveOnSurface) ACS = new Adaptor3d_CurveOnSurface(GHPC,GAHS);
 
-            BRepLib_ValidateEdge aValidateEdge(myHCurve, ACS, SameParameter);
+            BRepLib_ValidateEdge aValidateEdge(aLocalHCurve, ACS, SameParameter);
             aValidateEdge.SetExitIfToleranceExceeded(Tol);
             aValidateEdge.SetExactMethod(myIsExactMethod);
             aValidateEdge.SetParallel(toRunParallel);
@@ -402,7 +403,7 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
               GHPC->Load(cr->PCurve2(),f,l); // same bounds
               ACS->Load(GHPC, GAHS); // sans doute inutile
 
-              BRepLib_ValidateEdge aValidateEdgeOnClosedSurf(myHCurve, ACS, SameParameter);
+              BRepLib_ValidateEdge aValidateEdgeOnClosedSurf(aLocalHCurve, ACS, SameParameter);
               aValidateEdgeOnClosedSurf.SetExitIfToleranceExceeded(Tol);
               aValidateEdgeOnClosedSurf.SetExactMethod(myIsExactMethod);
               aValidateEdgeOnClosedSurf.SetParallel(toRunParallel);
@@ -440,12 +441,12 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
           // plan en position
           if (myGctrl) {
             P = Handle(Geom_Plane)::
-              DownCast(P->Transformed(/*L*/(Floc * TFloc).Transformation()));// eap occ332
+              DownCast(P->Transformed(/*L*/TFloc.Transformation()));// eap occ332
             //on projette Cref sur ce plan
             Handle(GeomAdaptor_Surface) GAHS = new GeomAdaptor_Surface(P);
 
-            // Dub - Normalement myHCurve est une GeomAdaptor_Curve
-            Handle(GeomAdaptor_Curve) Gac = Handle(GeomAdaptor_Curve)::DownCast(myHCurve);
+            // Dub - Normalement aLocalHCurve est une GeomAdaptor_Curve
+            Handle(GeomAdaptor_Curve) Gac = Handle(GeomAdaptor_Curve)::DownCast(aLocalHCurve);
             Handle(Geom_Curve) C3d = Gac->Curve();
             Handle(Geom_Curve) ProjOnPlane = 
               GeomProjLib::ProjectOnPlane(new Geom_TrimmedCurve(C3d,First,Last),
@@ -458,12 +459,12 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
             Handle(Geom2d_Curve) PC = Geom2dAdaptor::MakeCurve(proj);
             Handle(Geom2dAdaptor_Curve) GHPC = 
               new Geom2dAdaptor_Curve(PC,
-              myHCurve->FirstParameter(),
-              myHCurve->LastParameter());
+              aLocalHCurve->FirstParameter(),
+              aLocalHCurve->LastParameter());
 
             Handle(Adaptor3d_CurveOnSurface) ACS = new Adaptor3d_CurveOnSurface(GHPC,GAHS);
 
-            BRepLib_ValidateEdge aValidateEdgeProj(myHCurve, ACS, SameParameter);
+            BRepLib_ValidateEdge aValidateEdgeProj(aLocalHCurve, ACS, SameParameter);
             aValidateEdgeProj.SetExitIfToleranceExceeded(Tol);
             aValidateEdgeProj.SetExactMethod(myIsExactMethod);
             aValidateEdgeProj.SetParallel(toRunParallel);
@@ -663,6 +664,50 @@ Standard_Real BRepCheck_Edge::Tolerance()
   // On prend 5% de marge car au dessus on crontrole severement
   return sqrt(tolCal)*1.05;
 }
+
+
+//=======================================================================
+//function : GetEdgeCurve
+//purpose  : 
+//=======================================================================
+
+Handle(Adaptor3d_Curve) BRepCheck_Edge::GetEdgeCurve(const TopoDS_Face& theFace)
+{
+  Handle(Adaptor3d_Curve) aLocalCurve;
+  Handle(BRep_GCurve) GCref(Handle(BRep_GCurve)::DownCast(myCref));
+  Standard_Real First, Last;
+  GCref->Range(First, Last);
+  if (myCref->IsCurve3D())
+  {
+    TopLoc_Location aLoc = !theFace.IsNull()
+                         ? (myShape.Location() * myCref->Location()).Predivided(theFace.Location())
+                         : myShape.Location() * myCref->Location();
+    Handle(Geom_Curve) C3d = Handle(Geom_Curve)::DownCast
+      (myCref->Curve3D()->Transformed
+      (aLoc.Transformation()));
+
+    GeomAdaptor_Curve GAC3d(C3d, C3d->TransformedParameter(First, aLoc.Transformation()),
+                               C3d->TransformedParameter(Last, aLoc.Transformation()));
+    aLocalCurve = new GeomAdaptor_Curve(GAC3d);
+  }
+  else // curve on surface
+  {
+    TopLoc_Location aFaceLoc = theFace.Location();
+    Handle(Geom_Surface) Sref = myCref->Surface();
+    Sref = !theFace.IsNull()
+           ? Handle(Geom_Surface)::DownCast(Sref->Transformed(myCref->Location().Predivided(aFaceLoc).Transformation()))
+           : Handle(Geom_Surface)::DownCast(Sref->Transformed(myCref->Location().Transformation()));
+
+    const Handle(Geom2d_Curve)& PCref = myCref->PCurve();
+    Handle(GeomAdaptor_Surface) GAHSref = new GeomAdaptor_Surface(Sref);
+    Handle(Geom2dAdaptor_Curve) GHPCref =
+      new Geom2dAdaptor_Curve(PCref, First, Last);
+    Adaptor3d_CurveOnSurface ACSref(GHPCref, GAHSref);
+    aLocalCurve = new Adaptor3d_CurveOnSurface(ACSref);
+  }
+  
+    return aLocalCurve;
+  }
 
 
 //=======================================================================
