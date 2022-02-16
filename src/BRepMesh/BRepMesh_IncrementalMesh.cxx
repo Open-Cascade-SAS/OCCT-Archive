@@ -48,7 +48,8 @@ BRepMesh_IncrementalMesh::BRepMesh_IncrementalMesh( const TopoDS_Shape&    theSh
                                                     const Standard_Real    theLinDeflection,
                                                     const Standard_Boolean isRelative,
                                                     const Standard_Real    theAngDeflection,
-                                                    const Standard_Boolean isInParallel)
+                                                    const Standard_Boolean isInParallel, 
+                                                    const Message_ProgressRange& theRange)
 : myModified(Standard_False),
   myStatus(IMeshData_NoError)
 {
@@ -58,7 +59,7 @@ BRepMesh_IncrementalMesh::BRepMesh_IncrementalMesh( const TopoDS_Shape&    theSh
   myParameters.InParallel = isInParallel;
 
   myShape = theShape;
-  Perform();
+  Perform(theRange);
 }
 
 //=======================================================================

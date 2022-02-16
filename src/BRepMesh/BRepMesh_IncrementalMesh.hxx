@@ -43,7 +43,8 @@ public: //! @name mesher API
                                            const Standard_Real    theLinDeflection,
                                            const Standard_Boolean isRelative = Standard_False,
                                            const Standard_Real    theAngDeflection = 0.5,
-                                           const Standard_Boolean isInParallel = Standard_False);
+                                           const Standard_Boolean isInParallel = Standard_False,
+                                           const Message_ProgressRange& theRange = Message_ProgressRange());
 
   //! Constructor.
   //! Automatically calls method Perform.
