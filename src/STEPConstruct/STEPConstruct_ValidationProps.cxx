@@ -73,6 +73,7 @@
 //=======================================================================
 STEPConstruct_ValidationProps::STEPConstruct_ValidationProps () 
 {
+  mySchemaIVal = Interface_Static::IVal("write.step.schema");
 }
      
 //=======================================================================
@@ -83,6 +84,7 @@ STEPConstruct_ValidationProps::STEPConstruct_ValidationProps ()
 STEPConstruct_ValidationProps::STEPConstruct_ValidationProps (const Handle(XSControl_WorkSession) &WS)
      : STEPConstruct_Tool(WS)
 {
+  mySchemaIVal = Interface_Static::IVal("write.step.schema");
 }
 
 //=======================================================================
@@ -92,6 +94,7 @@ STEPConstruct_ValidationProps::STEPConstruct_ValidationProps (const Handle(XSCon
 
 Standard_Boolean STEPConstruct_ValidationProps::Init (const Handle(XSControl_WorkSession) &WS)
 {
+  mySchemaIVal = Interface_Static::IVal("write.step.schema");
   return SetWS ( WS );
 }
 
@@ -359,7 +362,8 @@ Standard_Boolean STEPConstruct_ValidationProps::AddProp (const StepRepr_Characte
   Model()->AddWithRefs ( PrDR );
 
   // for AP203, add subschema name
-  if ( Interface_Static::IVal("write.step.schema") ==3 ) {
+  if ( mySchemaIVal == 3 ) 
+  {
     APIHeaderSection_MakeHeader mkHdr ( Handle(StepData_StepModel)::DownCast ( Model() ) );
     Handle(TCollection_HAsciiString) subSchema = 
       new TCollection_HAsciiString ( "GEOMETRIC_VALIDATION_PROPERTIES_MIM" );
@@ -745,4 +749,15 @@ void STEPConstruct_ValidationProps::SetAssemblyShape (const TopoDS_Shape& shape)
 {
   Handle(TransferBRep_ShapeMapper) mapper = TransferBRep::ShapeMapper(FinderProcess(),shape);
   FinderProcess()->FindTypedTransient(mapper,STANDARD_TYPE(StepBasic_ProductDefinition),myAssemblyPD);
+}
+
+void STEPConstruct_ValidationProps::SetSchemaIVal(const Standard_Integer theVal) 
+{
+  Interface_Static::SetIVal("write.step.schema", theVal);
+  mySchemaIVal = theVal;
+}
+
+Standard_Integer STEPConstruct_ValidationProps::GetSchemaIVal() const
+{
+  return mySchemaIVal;
 }

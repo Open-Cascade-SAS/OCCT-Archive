@@ -89,7 +89,7 @@ public:
   //! (initialized by parameter write.surfacecurve.mode)
   Standard_EXPORT Standard_Integer PCurveMode() const;
 
-
+  Standard_EXPORT void SetPCurveMode(const Standard_Integer theVal);
 
 
 protected:

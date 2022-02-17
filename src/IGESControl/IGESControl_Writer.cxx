@@ -54,20 +54,29 @@ IGESControl_Writer::IGESControl_Writer ()
        myIsComputed (Standard_False)
 {
 //  faudrait aussi (?) prendre les parametres par defaut ... ?
+  myUnitCVal = Interface_Static::CVal("write.iges.unit");
+  myBRepModeIVal = Interface_Static::IVal("write.iges.brep.mode");
+  myPrecRVal = Interface_Static::RVal("write.precision.val");
+  myMaxPrecRVal = Interface_Static::RVal("read.maxprecision.val");
+  myPrecModeIVal = Interface_Static::IVal("write.precision.mode");
   IGESControl_Controller::Init();
   myEditor.Init(IGESSelect_WorkLibrary::DefineProtocol());
-  myEditor.SetUnitName(Interface_Static::CVal ("write.iges.unit"));
+  myEditor.SetUnitName(myUnitCVal);
   myEditor.ApplyUnit(); 
-  myWriteMode = Interface_Static::IVal ("write.iges.brep.mode");
   myModel = myEditor.Model();
 }
 
 IGESControl_Writer::IGESControl_Writer
   (const Standard_CString unit, const Standard_Integer modecr)
     :  myTP (new Transfer_FinderProcess(10000)) ,
-       myWriteMode (modecr) , myIsComputed (Standard_False)
+       myBRepModeIVal (modecr) , myIsComputed (Standard_False)
 {
 //  faudrait aussi (?) prendre les parametres par defaut ... ?
+  myUnitCVal = Interface_Static::CVal("write.iges.unit");
+  myBRepModeIVal = Interface_Static::IVal("write.iges.brep.mode");
+  myPrecRVal = Interface_Static::RVal("write.precision.val");
+  myMaxPrecRVal = Interface_Static::RVal("read.maxprecision.val");
+  myPrecModeIVal = Interface_Static::IVal("write.precision.mode");
   IGESControl_Controller::Init();
   myEditor.Init(IGESSelect_WorkLibrary::DefineProtocol());
   myEditor.SetUnitName(unit);
@@ -80,7 +89,14 @@ IGESControl_Writer::IGESControl_Writer
     :  myTP (new Transfer_FinderProcess(10000)) ,
        myModel (model) , 
        myEditor (model,IGESSelect_WorkLibrary::DefineProtocol()) ,
-       myWriteMode (modecr) , myIsComputed (Standard_False)     {  }
+       myBRepModeIVal (modecr) , myIsComputed (Standard_False)     
+{  
+  myUnitCVal = Interface_Static::CVal("write.iges.unit");
+  myBRepModeIVal = Interface_Static::IVal("write.iges.brep.mode");
+  myPrecRVal = Interface_Static::RVal("write.precision.val");
+  myMaxPrecRVal = Interface_Static::RVal("read.maxprecision.val");
+  myPrecModeIVal = Interface_Static::IVal("write.precision.mode");
+}
 
 Standard_Boolean IGESControl_Writer::AddShape (const TopoDS_Shape& theShape,
                                                const Message_ProgressRange& theProgress)
@@ -92,8 +108,8 @@ Standard_Boolean IGESControl_Writer::AddShape (const TopoDS_Shape& theShape,
   Message_ProgressScope aPS(theProgress, NULL, 2);
   //  modified by NIZHNY-EAP Tue Aug 29 11:16:54 2000 ___BEGIN___
   Handle(Standard_Transient) info;
-  Standard_Real Tol = Interface_Static::RVal("write.precision.val");
-  Standard_Real maxTol = Interface_Static::RVal("read.maxprecision.val");
+  Standard_Real Tol = myPrecRVal;
+  Standard_Real maxTol = myMaxPrecRVal;
   TopoDS_Shape Shape = XSAlgo::AlgoContainer()->ProcessShape( theShape, Tol, maxTol, 
                                                               "write.iges.resource.name", 
                                                               "write.iges.sequence", info,
@@ -104,7 +120,7 @@ Standard_Boolean IGESControl_Writer::AddShape (const TopoDS_Shape& theShape,
   //  modified by NIZHNY-EAP Tue Aug 29 11:17:01 2000 ___END___
   BRepToIGES_BREntity   B0;  B0.SetTransferProcess(myTP); B0.SetModel(myModel);
   BRepToIGESBRep_Entity B1;  B1.SetTransferProcess(myTP); B1.SetModel(myModel);
-  Handle(IGESData_IGESEntity) ent = myWriteMode?
+  Handle(IGESData_IGESEntity) ent = myBRepModeIVal?
     B1.TransferShape (Shape, aPS.Next()) : B0.TransferShape(Shape, aPS.Next());
   if (!aPS.More())
     return Standard_False;
@@ -123,9 +139,9 @@ Standard_Boolean IGESControl_Writer::AddShape (const TopoDS_Shape& theShape,
 
   Standard_Real oldtol = myModel->GlobalSection().Resolution(), newtol;
   
-  Standard_Integer tolmod = Interface_Static::IVal("write.precision.mode");
+  Standard_Integer tolmod = myPrecModeIVal;
   if (tolmod == 2)
-    newtol = Interface_Static::RVal("write.precision.val");
+    newtol = myPrecRVal;
   else {
     ShapeAnalysis_ShapeTolerance stu; 
     Standard_Real Tolv = stu.Tolerance (Shape, tolmod, TopAbs_VERTEX);
@@ -270,4 +286,58 @@ Standard_Boolean IGESControl_Writer::Write
   aStream.reset();
 
   return res;
+}
+
+void IGESControl_Writer::SetUnitCVal(const Standard_CString& theVal)
+{
+  Interface_Static::SetCVal("write.iges.unit", theVal);
+  myUnitCVal = theVal;
+}
+
+void IGESControl_Writer::SetBRepModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.iges.brep.mode", theVal);
+  myBRepModeIVal = theVal;
+}
+
+void IGESControl_Writer::SetPrecRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("write.precision.val", theVal);
+  myPrecRVal = theVal;
+}
+
+void IGESControl_Writer::SetMaxPrecRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("read.maxprecision.val", theVal);
+  myMaxPrecRVal = theVal;
+}
+
+void IGESControl_Writer::SetPrecModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.precision.mode", theVal);
+  myPrecModeIVal = theVal;
+}
+
+Standard_CString IGESControl_Writer::GetUnitCVal() const
+{
+  return myUnitCVal;
+}
+
+Standard_Integer IGESControl_Writer::GetBRepModeIVal() const
+{
+  return myBRepModeIVal;
+}
+
+Standard_Real IGESControl_Writer::GetPrecRVal() const
+{
+  return myPrecRVal;
+}
+
+Standard_Real IGESControl_Writer::GetMaxPrecRVal() const
+{
+  return myMaxPrecRVal;
+}
+Standard_Integer IGESControl_Writer::GetPrecModeIVal() const
+{
+  return myPrecModeIVal;
 }

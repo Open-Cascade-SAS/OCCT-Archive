@@ -494,7 +494,7 @@ Handle(IGESSolid_Face) BRepToIGESBRep_Entity ::TransferFace(const TopoDS_Face& s
     GeomToIGES_GeomSurface GS;
     //S4181 pdn 17.04.99 Boolean flags in order to define write of elementary surfaces added.
     GS.SetBRepMode(Standard_True);
-    GS.SetAnalyticMode ( Interface_Static::IVal("write.convertsurface.mode") ==0 );
+    GS.SetAnalyticMode (myConvSurface == 0 );
     GS.SetModel(GetModel());
 
     Handle(Geom_Surface) st;

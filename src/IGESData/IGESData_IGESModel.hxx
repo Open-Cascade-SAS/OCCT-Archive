@@ -152,7 +152,17 @@ public:
   //! i.e. a string "Dnn" with nn = directory entry number (2*N-1)
   Standard_EXPORT Handle(TCollection_HAsciiString) StringLabel (const Handle(Standard_Transient)& ent) const Standard_OVERRIDE;
 
+  Standard_EXPORT void SetHeaderReciever(const Standard_CString& theVal);
 
+  Standard_EXPORT void SetHeaderAuthor(const Standard_CString& theVal);
+
+  Standard_EXPORT void SetHeaderCompany(const Standard_CString& theVal);
+
+  Standard_EXPORT Standard_CString GetHeaderReciever() const;
+
+  Standard_EXPORT Standard_CString GetHeaderAuthor() const;
+
+  Standard_EXPORT Standard_CString GetHeaderCompany() const;
 
 
   DEFINE_STANDARD_RTTIEXT(IGESData_IGESModel,Interface_InterfaceModel)
@@ -167,6 +177,10 @@ private:
 
   Handle(TColStd_HSequenceOfHAsciiString) thestart;
   IGESData_GlobalSection theheader;
+  Standard_CString myHeadRecCVal;
+  Standard_CString myHeadAuthorCVal;
+  Standard_CString myHeadCompCVal;
+
 
 
 };

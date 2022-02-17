@@ -226,7 +226,7 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
     done     = Standard_True;
     return;
   }
-  Standard_Integer modepcurve = Interface_Static::IVal("read.surfacecurve.mode");
+  mySurCurModeIVal = Interface_Static::IVal("read.surfacecurve.mode");
   //  0,1 : suivre le code,  2 : ne prendre que pcurve,  3 : ne prendre que C3D
 
   BRep_Builder B;
@@ -498,7 +498,7 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
       //   If modepcurve = 3, PCurve are ignored here
       // -----------------------------------------
 
-      else if (modepcurve == 3) {
+      else if (mySurCurModeIVal == 3) {
         aTool.ComputePCurve(Standard_True);
         hasPcurve = Standard_False;
       }
@@ -745,3 +745,13 @@ StepToTopoDS_TranslateEdgeLoopError StepToTopoDS_TranslateEdgeLoop::Error() cons
   return myError;
 }
 
+void StepToTopoDS_TranslateEdgeLoop::SetSurCurModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.surfacecurve.mode", theVal);
+  mySurCurModeIVal = theVal;
+}
+
+Standard_Integer StepToTopoDS_TranslateEdgeLoop::GetSurCurModeIVal() const
+{
+  return mySurCurModeIVal;
+}

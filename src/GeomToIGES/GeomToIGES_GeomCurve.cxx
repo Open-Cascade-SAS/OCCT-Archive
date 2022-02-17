@@ -87,6 +87,7 @@
 GeomToIGES_GeomCurve::GeomToIGES_GeomCurve()
 :GeomToIGES_GeomEntity()
 {
+  myOffsetModeIVal = Interface_Static::IVal("write.iges.offset.mode");
 }
 
 
@@ -98,6 +99,7 @@ GeomToIGES_GeomCurve::GeomToIGES_GeomCurve
 (const GeomToIGES_GeomEntity& GE)
 :GeomToIGES_GeomEntity(GE)
 {
+  myOffsetModeIVal = Interface_Static::IVal("write.iges.offset.mode");
 }
 
 
@@ -815,7 +817,7 @@ Handle(IGESData_IGESEntity) GeomToIGES_GeomCurve::TransferCurve
   if (Precision::IsNegativeInfinite(Udeb)) U1 = -Precision::Infinite();
   if (Precision::IsPositiveInfinite(Ufin)) U2 = Precision::Infinite();
 
-  if (Interface_Static::IVal("write.iges.offset.mode") == 0)
+  if (myOffsetModeIVal == 0)
   {
     res = TransferCurve(GeomConvert::CurveToBSplineCurve(start),U1,U2);
     return res;
@@ -852,4 +854,15 @@ Handle(IGESData_IGESEntity) GeomToIGES_GeomCurve::TransferCurve
   
   res = OffsetC;  
   return res;
+}
+
+void GeomToIGES_GeomCurve::SetOffsetModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.iges.offset.mode", theVal);
+  myOffsetModeIVal = theVal;
+}
+
+Standard_Integer GeomToIGES_GeomCurve::GetOffsetModeIVal() const
+{
+  return myOffsetModeIVal;
 }

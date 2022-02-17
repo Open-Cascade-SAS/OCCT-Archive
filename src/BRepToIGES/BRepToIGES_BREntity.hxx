@@ -109,15 +109,24 @@ public:
   //! Returns mode for writing pcurves
   //! (value of parameter write.surfacecurve.mode)
   Standard_EXPORT Standard_Boolean GetPCurveMode() const;
+
+  Standard_EXPORT void SetConvertSurfaceMode(const Standard_Boolean theVal);
+
+  Standard_EXPORT void SetPCurveMode(const Standard_Boolean theVal);
   
   Standard_EXPORT virtual ~BRepToIGES_BREntity();
 
-private:
-  Handle(IGESData_IGESModel) TheModel;
-  Standard_Real TheUnitFactor;
+protected:
+
   Standard_Boolean myConvSurface;
   Standard_Boolean myPCurveMode;
+
+private:
+
+  Handle(IGESData_IGESModel) TheModel;
+  Standard_Real TheUnitFactor;
   Handle(Transfer_FinderProcess) TheMap;
+
 };
 
 #endif // _BRepToIGES_BREntity_HeaderFile

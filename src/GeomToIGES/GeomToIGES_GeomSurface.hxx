@@ -129,7 +129,9 @@ public:
   //! Setst flag for writing elementary surfaces
   Standard_EXPORT void SetAnalyticMode (const Standard_Boolean flag);
 
+  Standard_EXPORT void SetPlaneModeIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetPlaneModeIVal() const;
 
 
 protected:
@@ -145,6 +147,7 @@ private:
   Standard_Real TheLength;
   Standard_Boolean myBRepMode;
   Standard_Boolean myAnalytic;
+  Standard_Integer myPlaneModeIVal;
 
 
 };

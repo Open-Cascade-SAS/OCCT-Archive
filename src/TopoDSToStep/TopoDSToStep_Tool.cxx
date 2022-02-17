@@ -338,3 +338,9 @@ Standard_Integer TopoDSToStep_Tool::PCurveMode () const
 {
   return myPCurveMode;
 }
+
+void TopoDSToStep_Tool::SetPCurveMode(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.surfacecurve.mode", theVal);
+  myPCurveMode = theVal;
+}

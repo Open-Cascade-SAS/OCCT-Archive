@@ -115,12 +115,36 @@ public:
   //! if the processor could not create the file).
   Standard_EXPORT Standard_Boolean Write (const Standard_CString file, const Standard_Boolean fnes = Standard_False);
 
+  Standard_EXPORT void SetUnitCVal(const Standard_CString& theVal);
+
+  Standard_EXPORT void SetBRepModeIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetPrecRVal(const Standard_Real theVal);
+
+  Standard_EXPORT void SetMaxPrecRVal(const Standard_Real theVal);
+
+  Standard_EXPORT void SetPrecModeIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT Standard_CString GetUnitCVal() const;
+
+  Standard_EXPORT Standard_Integer GetBRepModeIVal() const;
+
+  Standard_EXPORT Standard_Real GetPrecRVal() const;
+
+  Standard_EXPORT Standard_Real GetMaxPrecRVal() const;
+
+  Standard_EXPORT Standard_Integer GetPrecModeIVal() const;
+
  private:
 
   Handle(Transfer_FinderProcess) myTP;
   Handle(IGESData_IGESModel) myModel;
   IGESData_BasicEditor myEditor;
-  Standard_Integer myWriteMode;
+  Standard_CString myUnitCVal;
+  Standard_Integer myBRepModeIVal;
+  Standard_Real myPrecRVal;
+  Standard_Real myMaxPrecRVal;
+  Standard_Integer myPrecModeIVal;
   Standard_Boolean myIsComputed;
 };
 

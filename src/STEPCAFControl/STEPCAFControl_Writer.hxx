@@ -218,6 +218,22 @@ protected:
   Standard_EXPORT void prepareUnit(const TDF_Label& theLabel,
                                    const Handle(StepData_StepModel)& theModel);
 
+  Standard_EXPORT void SetAssemblyCVal(const Standard_CString& theVal);
+
+  Standard_EXPORT void SetAssemblyIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetSchemaIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetSubshapesIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT Standard_CString GetAssemblyCVal() const;
+
+  Standard_EXPORT Standard_Integer GetAssemblyIVal() const;
+
+  Standard_EXPORT Standard_Integer GetSchemaIVal() const;
+
+  Standard_EXPORT Standard_Integer GetSubshapesIVal() const;
+
 private:
 
   Standard_EXPORT Handle(StepRepr_ShapeAspect) WriteShapeAspect(const Handle(XSControl_WorkSession) &WS,
@@ -240,7 +256,6 @@ private:
 
 private:
 
-
   STEPControl_Writer myWriter;
   NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> myFiles;
   STEPCAFControl_DataMapOfLabelShape myLabels;
@@ -257,6 +272,10 @@ private:
   Handle(StepVisual_DraughtingModel) myGDTPresentationDM;
   Handle(StepVisual_HArray1OfPresentationStyleAssignment) myGDTPrsCurveStyle;
   Handle(StepRepr_ProductDefinitionShape) myGDTCommonPDS;
+  Standard_Integer myAssemblyModeIVal;
+  Standard_CString myAssemblyModeCVal;
+  Standard_Integer mySchemaIVal;
+  Standard_Integer mySubshapesIVal;
 
 };
 

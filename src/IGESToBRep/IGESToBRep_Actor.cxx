@@ -44,7 +44,10 @@ IMPLEMENT_STANDARD_RTTIEXT(IGESToBRep_Actor,Transfer_ActorOfTransientProcess)
 //purpose  : 
 //=======================================================================
 IGESToBRep_Actor::IGESToBRep_Actor ()
-{  thecontinuity = 0;  theeps = 0.0001;  }
+{  
+  thecontinuity = 0;
+  theeps = 0.0001;
+}
 
 
 //=======================================================================
@@ -55,6 +58,11 @@ void IGESToBRep_Actor::SetModel (const Handle(Interface_InterfaceModel)& model)
 {
   themodel = model;
   theeps = Handle(IGESData_IGESModel)::DownCast(themodel)->GlobalSection().Resolution();
+  myApproxd1IVal = Interface_Static::IVal("read.iges.bspline.approxd1.mode");
+  myFaultyEntIVal = Interface_Static::IVal("read.iges.faulty.entities");
+  myPrecModeIVal = Interface_Static::IVal("read.precision.mode");
+  myPrecRVal = Interface_Static::RVal("read.precision.val");;
+  mySurfaceCurIVal = Interface_Static::IVal("read.surfacecurve.mode");
 }
 
 
@@ -149,7 +157,7 @@ Handle(Transfer_Binder) IGESToBRep_Actor::Transfer
   if (mymodel.IsNull() || ent.IsNull()) return NullResult();
   Standard_Integer anum = mymodel->Number(start);
   
-  if (Interface_Static::IVal("read.iges.faulty.entities") == 0 && mymodel->IsErrorEntity(anum)) 
+  if (myFaultyEntIVal == 0 && mymodel->IsErrorEntity(anum)) 
     return NullResult();
   TopoDS_Shape shape;
 
@@ -170,15 +178,15 @@ Handle(Transfer_Binder) IGESToBRep_Actor::Transfer
     CAS.SetModel(mymodel);
     CAS.SetContinuity(thecontinuity);
     CAS.SetTransferProcess(TP);
-    Standard_Integer Ival = Interface_Static::IVal("read.precision.mode");
+    Standard_Integer Ival = myPrecModeIVal;
     if ( Ival == 0)
       eps = mymodel->GlobalSection().Resolution();
     else
-      eps = Interface_Static::RVal("read.precision.val"); //:10 ABV 11 Nov 97
+      eps = myPrecRVal; //:10 ABV 11 Nov 97
 //:10      eps = BRepAPI::Precision(); 
-    Ival = Interface_Static::IVal("read.iges.bspline.approxd1.mode");
+    Ival = myApproxd1IVal;
     CAS.SetModeApprox ( (Ival > 0) );
-    Ival = Interface_Static::IVal("read.surfacecurve.mode");
+    Ival = mySurfaceCurIVal;
     CAS.SetSurfaceCurve (Ival);
 
     if (eps > 1.E-08) {
@@ -221,5 +229,62 @@ Handle(Transfer_Binder) IGESToBRep_Actor::Transfer
 }
 
 
-    Standard_Real  IGESToBRep_Actor::UsedTolerance () const
-      {  return theeps;  }
+Standard_Real IGESToBRep_Actor::UsedTolerance () const
+{  
+  return theeps;  
+}
+
+void IGESToBRep_Actor::SetApproxd1IVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.iges.bspline.approxd1.mode", theVal);
+  myApproxd1IVal = theVal;
+}
+
+void IGESToBRep_Actor::SetFaultyEntIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.iges.faulty.entities", theVal);
+  myFaultyEntIVal = myFaultyEntIVal;
+}
+
+void IGESToBRep_Actor::SetPrecModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.precision.mode", theVal);
+  myPrecModeIVal = theVal;
+}
+
+void IGESToBRep_Actor::SetPrecRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("read.precision.val", theVal);
+  myPrecRVal = theVal;
+}
+
+void IGESToBRep_Actor::SetSurfaceCurIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.surfacecurve.mode", theVal);
+  mySurfaceCurIVal = theVal;
+}
+
+Standard_Integer IGESToBRep_Actor::GetApproxd1IVal() const
+{
+  return myApproxd1IVal;
+}
+
+Standard_Integer IGESToBRep_Actor::GetFaultyEntIVal() const
+{
+  return myFaultyEntIVal;
+}
+
+Standard_Integer IGESToBRep_Actor::GetPrecModeIVal() const
+{
+  return myPrecModeIVal;
+}
+
+Standard_Real IGESToBRep_Actor::GetPrecRVal() const
+{
+  return myPrecRVal;
+}
+
+Standard_Integer IGESToBRep_Actor::GetSurfaceCurIVal() const
+{
+  return mySurfaceCurIVal;
+}

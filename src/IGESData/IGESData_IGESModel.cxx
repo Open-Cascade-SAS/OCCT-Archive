@@ -256,21 +256,20 @@ Standard_Boolean  IGESData_IGESModel::ApplyStatic
     return Standard_True;
   }
 
-  Standard_CString val;
   if (param[0] == 'r') {
-    val = Interface_Static::CVal("write.iges.header.receiver");
-    if (!val || val[0] == '\0') return Standard_False;
-    theheader.SetReceiveName (new TCollection_HAsciiString(val));
+    myHeadRecCVal = Interface_Static::CVal("write.iges.header.receiver");
+    if (!myHeadRecCVal || myHeadRecCVal[0] == '\0') return Standard_False;
+    theheader.SetReceiveName (new TCollection_HAsciiString(myHeadRecCVal));
   }
   if (param[0] == 'a') {
-    val = Interface_Static::CVal("write.iges.header.author");
-    if (!val || val[0] == '\0') return Standard_False;
-    theheader.SetAuthorName (new TCollection_HAsciiString(val));
+    myHeadAuthorCVal = Interface_Static::CVal("write.iges.header.author");
+    if (!myHeadAuthorCVal || myHeadAuthorCVal[0] == '\0') return Standard_False;
+    theheader.SetAuthorName (new TCollection_HAsciiString(myHeadAuthorCVal));
   }
   if (param[0] == 'c') {
-    val = Interface_Static::CVal("write.iges.header.company");
-    if (!val || val[0] == '\0') return Standard_False;
-    theheader.SetCompanyName (new TCollection_HAsciiString(val));
+    myHeadCompCVal = Interface_Static::CVal("write.iges.header.company");
+    if (!myHeadCompCVal || myHeadCompCVal[0] == '\0') return Standard_False;
+    theheader.SetCompanyName (new TCollection_HAsciiString(myHeadCompCVal));
   }
   return Standard_True;
 }
@@ -623,4 +622,37 @@ Handle(TCollection_HAsciiString) IGESData_IGESModel::StringLabel(const Handle(St
     label = new TCollection_HAsciiString(text);
   }
   return label;
+}
+
+void IGESData_IGESModel::SetHeaderReciever(const Standard_CString& theVal)
+{
+  Interface_Static::SetCVal("write.iges.header.receiver", theVal);
+  myHeadRecCVal = theVal;
+}
+
+void IGESData_IGESModel::SetHeaderAuthor(const Standard_CString& theVal)
+{
+  Interface_Static::SetCVal("write.iges.header.author", theVal);
+  myHeadRecCVal = theVal;
+}
+
+void IGESData_IGESModel::SetHeaderCompany(const Standard_CString& theVal)
+{
+  Interface_Static::SetCVal("write.iges.header.company", theVal);
+  myHeadRecCVal = theVal;
+}
+
+Standard_CString IGESData_IGESModel::GetHeaderReciever() const
+{
+  return myHeadRecCVal;
+}
+
+Standard_CString IGESData_IGESModel::GetHeaderAuthor() const
+{
+  return myHeadAuthorCVal;
+}
+
+Standard_CString IGESData_IGESModel::GetHeaderCompany() const
+{
+  return myHeadCompCVal;
 }

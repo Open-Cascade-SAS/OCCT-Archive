@@ -120,6 +120,10 @@ public:
   //! False - the unit value was not initialized, the default value is used
   Standard_Boolean IsInitializedUnit() const { return myReadUnitIsInitialized; }
 
+  Standard_EXPORT void SetWriteUnitIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT Standard_Integer GetWriteUnitIVal() const;
+
   DEFINE_STANDARD_RTTIEXT(StepData_StepModel,Interface_InterfaceModel)
 
 protected:
@@ -135,6 +139,7 @@ private:
   Resource_FormatType mySourceCodePage;
   Standard_Boolean myReadUnitIsInitialized;
   Standard_Real myWriteUnit;
+  Standard_Integer myWriteUnitIVal;
 
 
 };

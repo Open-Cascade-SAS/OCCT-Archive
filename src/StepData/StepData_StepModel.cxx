@@ -38,7 +38,8 @@ IMPLEMENT_STANDARD_RTTIEXT(StepData_StepModel,Interface_InterfaceModel)
 StepData_StepModel::StepData_StepModel () :mySourceCodePage((Resource_FormatType)Interface_Static::IVal("read.step.codepage")),
   myReadUnitIsInitialized(Standard_False), myWriteUnit (1.)
 {
-  switch (Interface_Static::IVal("write.step.unit"))
+  myWriteUnitIVal = Interface_Static::IVal("write.step.unit");
+  switch (myWriteUnitIVal)
   {
     case  1: myWriteUnit = 25.4; break;
     case  2: myWriteUnit = 1.; break;
@@ -247,4 +248,15 @@ void StepData_StepModel::SetWriteLengthUnit(const Standard_Real theUnit)
 Standard_Real StepData_StepModel::WriteLengthUnit() const
 {
   return myWriteUnit;
+}
+
+void StepData_StepModel::SetWriteUnitIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.unit", theVal);
+  myWriteUnitIVal = theVal;
+}
+
+Standard_Integer StepData_StepModel::GetWriteUnitIVal() const
+{
+  return myWriteUnitIVal;
 }

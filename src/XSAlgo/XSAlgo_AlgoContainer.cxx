@@ -72,6 +72,8 @@ IMPLEMENT_STANDARD_RTTIEXT(XSAlgo_AlgoContainer,Standard_Transient)
 //=======================================================================
 XSAlgo_AlgoContainer::XSAlgo_AlgoContainer()
 {
+  myParModeIVal = Interface_Static::IVal("read.stdsameparameter.mode");
+  myUnitIVal = Interface_Static::IVal("xstep.cascade.unit");
   myTC = new XSAlgo_ToolContainer;
 }
 
@@ -82,7 +84,7 @@ XSAlgo_AlgoContainer::XSAlgo_AlgoContainer()
 
 void XSAlgo_AlgoContainer::PrepareForTransfer() const
 {
-  UnitsMethods::SetCasCadeLengthUnit(Interface_Static::IVal("xstep.cascade.unit"));
+  UnitsMethods::SetCasCadeLengthUnit(myUnitIVal);
 }
 
 //=======================================================================
@@ -357,7 +359,7 @@ Standard_Boolean XSAlgo_AlgoContainer::CheckPCurve (const TopoDS_Edge& E,
   B.Range(edge,face,w1,w2);
   B.SameRange(edge, Standard_False );
   //:S4136
-  Standard_Integer SPmode = Interface_Static::IVal("read.stdsameparameter.mode");
+  Standard_Integer SPmode = myParModeIVal;
   if ( SPmode ) 
     B.SameParameter (edge, Standard_False );
 
@@ -565,4 +567,26 @@ void XSAlgo_AlgoContainer::MergeTransferInfo(const Handle(Transfer_FinderProcess
       }
     }
   }
+}
+
+void XSAlgo_AlgoContainer::SetParModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.stdsameparameter.mode", theVal);
+  myParModeIVal = theVal;
+}
+
+void XSAlgo_AlgoContainer::SetUnitIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("xstep.cascade.unit", theVal);
+  myUnitIVal = theVal;
+}
+
+Standard_Integer XSAlgo_AlgoContainer::GetParModeIVal() const
+{
+  return myParModeIVal;
+}
+
+Standard_EXPORT Standard_Integer XSAlgo_AlgoContainer::GetUnitIVal() const
+{
+  return myUnitIVal;
 }

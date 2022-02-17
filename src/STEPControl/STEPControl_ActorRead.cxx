@@ -208,6 +208,19 @@ STEPControl_ActorRead::STEPControl_ActorRead()
 : myPrecision(0.0),
   myMaxTol(0.0)
 {
+  myAngleUnitIVal = Interface_Static::IVal("step.angleunit.mode");
+  myStepShapeReprIVal = Interface_Static::IVal("read.step.shape.repr");
+  myRelationshipIVal = Interface_Static::IVal("read.step.shape.relationship");
+  myShapeAspectIVal = Interface_Static::IVal("read.step.shape.aspect");
+  myProductCVal = Interface_Static::CVal("read.step.product.mode");
+  myReadAssemblyIVal = Interface_Static::IVal("read.step.assembly.level");
+  myNonmanifoldIVal = Interface_Static::IVal("read.step.nonmanifold");
+  myIdeasModeIVal = Interface_Static::IVal("read.step.ideas");
+  myConstructiveGeomIVal = Interface_Static::IVal("read.step.constructivegeom.relationship");
+  myRootTransformationIVal = Interface_Static::IVal("read.step.root.transformation");
+  myPrecisionModeIVal = Interface_Static::IVal("read.precision.mode");
+  myPrecisionRVal = Interface_Static::RVal("read.precision.val");
+  myMaxPrecisionRVal = Interface_Static::RVal("read.maxprecision.val");
 }
 // ============================================================================
 // Method  : STEPControl_ActorRead::Recognize
@@ -223,7 +236,7 @@ Standard_Boolean  STEPControl_ActorRead::Recognize
 
   if (start->IsKind(STANDARD_TYPE(StepRepr_NextAssemblyUsageOccurrence))) return Standard_True;
 
-  TCollection_AsciiString aProdMode = Interface_Static::CVal("read.step.product.mode");
+  TCollection_AsciiString aProdMode = myProductCVal;
   if(!aProdMode.IsEqual("ON"))
     if(start->IsKind(STANDARD_TYPE(StepShape_ShapeDefinitionRepresentation))) return Standard_True;
 
@@ -309,7 +322,7 @@ Handle(Transfer_Binder)  STEPControl_ActorRead::Transfer
     }
   }
   // [END] Get version of preprocessor (to detect I-Deas case) (ssv; 23.11.2010)
-  Standard_Boolean aTrsfUse = (Interface_Static::IVal("read.step.root.transformation") == 1);
+  Standard_Boolean aTrsfUse = (myRootTransformationIVal == 1);
   return TransferShape(start, TP, Standard_True, aTrsfUse, theProgress);
 }
 
@@ -519,14 +532,14 @@ static void getSDR(const Handle(StepRepr_ProductDefinitionShape)& PDS,
   // Flag indicating whether SDRs associated with the product`s main SDR
   // by SRRs (which correspond to hybrid model representation in AP203 since 1998) 
   // should be taken into account 
-  Standard_Integer readSRR = Interface_Static::IVal("read.step.shape.relationship");
+  Standard_Integer readSRR = myRelationshipIVal;
   
-  Standard_Integer readConstructiveGeomRR = Interface_Static::IVal("read.step.constructivegeom.relationship");
+  Standard_Integer aReadConstructiveGeomRR = myConstructiveGeomIVal;
   // Flag indicating whether SDRs associated with the product`s main SDR
   // by SAs (which correspond to hybrid model representation in AP203 before 1998) 
   // should be taken into account 
-  Standard_Integer readSA = Interface_Static::IVal("read.step.shape.aspect");
-  if ( ! readSA ) 
+  Standard_Integer aReadSA = myShapeAspectIVal;
+  if ( ! aReadSA ) 
     listSDRAspect->Clear();  
     
   // remember number of normal SDRs (not those found via ShapeAspect)
@@ -539,10 +552,10 @@ static void getSDR(const Handle(StepRepr_ProductDefinitionShape)& PDS,
   // possibly attached directly to intermediate assemblies (1)
   // Special mode (4) is used to translate shape attached to this product only,
   // ignoring sub-assemblies if any
-  Standard_Integer readAssembly = Interface_Static::IVal("read.step.assembly.level");
-  if ( readAssembly ==3 || ( readAssembly ==2 && listNAUO->Length() >0 ) ) 
+  Standard_Integer aReadAssembly = myReadAssemblyIVal;
+  if ( aReadAssembly ==3 || ( aReadAssembly ==2 && listNAUO->Length() >0 ) ) 
     listSDR->Clear();
-  else if ( readAssembly == 4 )
+  else if ( aReadAssembly == 4 )
     listNAUO->Clear();
   
   Standard_Integer nbEnt = listSDR->Length() + listNAUO->Length();
@@ -663,7 +676,7 @@ static void getSDR(const Handle(StepRepr_ProductDefinitionShape)& PDS,
             nbShapes++;
           }
         }
-        else if(readConstructiveGeomRR && anitem->IsKind(STANDARD_TYPE(StepRepr_ConstructiveGeometryRepresentationRelationship)))
+        else if(aReadConstructiveGeomRR && anitem->IsKind(STANDARD_TYPE(StepRepr_ConstructiveGeometryRepresentationRelationship)))
         {
           Handle(StepRepr_ConstructiveGeometryRepresentationRelationship) aCSRR =
             Handle(StepRepr_ConstructiveGeometryRepresentationRelationship)::DownCast(anitem);
@@ -826,7 +839,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(
   Standard_Integer nsh = 0;
 
   // [BEGIN] Proceed with non-manifold topology (ssv; 12.11.2010)
-  Standard_Boolean isNMMode = Interface_Static::IVal("read.step.nonmanifold") != 0;
+  Standard_Boolean isNMMode = myNonmanifoldIVal != 0;
   Standard_Boolean isManifold = Standard_True;
   if ( isNMMode && sr->IsKind(STANDARD_TYPE(StepShape_NonManifoldSurfaceShapeRepresentation)) ) {
     isManifold = Standard_False;
@@ -838,8 +851,8 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(
   } 
   // Special processing for I-DEAS STP case (ssv; 15.11.2010)
   else {
-    Standard_Integer isIDeasMode = Interface_Static::IVal("read.step.ideas");
-    if (isNMMode && myNMTool.IsIDEASCase() && isIDeasMode) {
+    Standard_Integer anIsIdeasMode = myIdeasModeIVal;
+    if (isNMMode && myNMTool.IsIDEASCase() && anIsIdeasMode) {
       isManifold = Standard_False;
       NM_DETECTED = Standard_True;
       #ifdef OCCT_DEBUG
@@ -1355,6 +1368,149 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::OldWay
   return shbinder;
 }
 
+void STEPControl_ActorRead::SetAngleUnitIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("step.angleunit.mode", theVal);
+  myAngleUnitIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetStepShapeReprIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.shape.repr", theVal);
+  myStepShapeReprIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetRelationshipIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.shape.relationship", theVal);
+  myRelationshipIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetShapeAspectIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.shape.aspect", theVal);
+  myShapeAspectIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetProductCVal(const Standard_CString& theVal)
+{
+  Interface_Static::SetCVal("read.step.product.mode", theVal);
+  myProductCVal = theVal;
+}
+
+void STEPControl_ActorRead::SetReadAssemblyIValconst(Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.assembly.level", theVal);
+  myReadAssemblyIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetNonmanifoldIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.nonmanifold", theVal);
+  myNonmanifoldIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetIdeasModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.ideas", theVal);
+  myIdeasModeIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetConstructiveGeomIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.constructivegeom.relationship", theVal);
+  myStepShapeReprIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetRootTransformationIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.root.transformation", theVal);
+  myRootTransformationIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetPrecisionModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.precision.mode", theVal);
+  myPrecisionModeIVal = theVal;
+}
+
+void STEPControl_ActorRead::SetPrecisionRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("read.precision.val", theVal);
+  myPrecisionRVal = theVal;
+}
+
+void STEPControl_ActorRead::SetMaxPrecisionRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("read.maxprecision.val", theVal);
+  myMaxPrecisionRVal = theVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetAngleUnitIVal() const
+{
+  return myAngleUnitIVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetStepShapeReprIVal() const
+{
+  return myStepShapeReprIVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetRelationshipIVal() const
+{
+  return myRelationshipIVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetShapeAspectIVal() const
+{
+  return myShapeAspectIVal;
+}
+
+Standard_CString STEPControl_ActorRead::GetProductCVal() const
+{
+  return myProductCVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetReadAssemblyIVal() const
+{
+  return myReadAssemblyIVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetNonmanifoldIVal() const
+{
+  return myNonmanifoldIVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetIdeasModeIVal() const
+{
+  return myIdeasModeIVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetConstructiveGeomIVal() const
+{
+  return myConstructiveGeomIVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetRootTransformationIVal() const
+{
+  return myRootTransformationIVal;
+}
+
+Standard_Integer STEPControl_ActorRead::GetPrecisionModeIVal() const
+{
+  return myPrecisionModeIVal;
+}
+
+Standard_Real STEPControl_ActorRead::GetPrecisionRVal() const
+{
+  return myPrecisionRVal;
+}
+
+Standard_Real STEPControl_ActorRead::GetMaxPrecisionRVal() const
+{
+  return myMaxPrecisionRVal;
+}
+
 //=======================================================================
 //function : TransferEntity
 //purpose  : 
@@ -1633,7 +1789,7 @@ Handle(Transfer_Binder) STEPControl_ActorRead::TransferShape(
   // Product Definition Entities
   // They should be treated with Design Manager
    // case ShapeDefinitionRepresentation if ProductMode != ON
-  TCollection_AsciiString aProdMode = Interface_Static::CVal("read.step.product.mode");
+  TCollection_AsciiString aProdMode = myProductCVal;
   if(!aProdMode.IsEqual("ON") && 
      start->IsKind(STANDARD_TYPE(StepShape_ShapeDefinitionRepresentation))) 
     shbinder = OldWay(start,TP, theProgress);
@@ -1754,7 +1910,7 @@ void STEPControl_ActorRead::PrepareUnits(const Handle(StepRepr_Representation)& 
 
   if (!theGUAC.IsNull()) {
     stat1 = myUnit.ComputeFactors(theGUAC);
-    Standard_Integer anglemode = Interface_Static::IVal("step.angleunit.mode");
+    Standard_Integer anglemode = myAngleUnitIVal;
     Standard_Real angleFactor = ( anglemode == 0 ? myUnit.PlaneAngleFactor() :
 				  anglemode == 1 ? 1. : M_PI/180. );
     StepData_GlobalFactors::Intance().InitializeFactors(myUnit.LengthFactor(),
@@ -1769,15 +1925,15 @@ void STEPControl_ActorRead::PrepareUnits(const Handle(StepRepr_Representation)& 
   }
 
 //  myPrecision = Precision::Confusion();
-  if (Interface_Static::IVal("read.precision.mode") == 1)  //:i1 gka S4136 05.04.99
-    myPrecision = Interface_Static::RVal("read.precision.val");
+  if (myPrecisionModeIVal == 1)  //:i1 gka S4136 05.04.99
+    myPrecision = myPrecisionRVal;
   else if (myUnit.HasUncertainty())
     myPrecision = myUnit.Uncertainty() * myUnit.LengthFactor();
   else {
     TP->AddWarning(theRepCont,"No Length Uncertainty, value of read.precision.val is taken");
-    myPrecision = Interface_Static::RVal("read.precision.val");
+    myPrecision = myPrecisionRVal;
   }
-  myMaxTol = Max ( myPrecision, Interface_Static::RVal("read.maxprecision.val") );
+  myMaxTol = Max ( myPrecision, myMaxPrecisionRVal );
   // Assign uncertainty
 #ifdef TRANSLOG
   if (TP->TraceLevel() > 1) 
@@ -1793,8 +1949,8 @@ void STEPControl_ActorRead::PrepareUnits(const Handle(StepRepr_Representation)& 
 void  STEPControl_ActorRead::ResetUnits ()
 {
   StepData_GlobalFactors::Intance().InitializeFactors ( 1, 1, 1 );
-  myPrecision = Interface_Static::RVal("read.precision.val");
-  myMaxTol = Max ( myPrecision, Interface_Static::RVal("read.maxprecision.val") );
+  myPrecision = myPrecisionRVal;
+  myMaxTol = Max (myPrecision, myMaxPrecisionRVal);
 }
 
 //=======================================================================

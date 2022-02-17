@@ -210,6 +210,12 @@ Standard_Integer IGESToBRep_Reader::LoadFile (const Standard_CString filename)
   theModel = model;
   theDone  = Standard_False;
   theShapes.Clear();
+  myApproxd1IVal = Interface_Static::IVal("read.iges.bspline.approxd1.mode");
+  myBSContinuityIVal = Interface_Static::IVal("read.iges.bspline.continuity");
+  myOnlyVisIVal = Interface_Static::IVal("read.iges.onlyvisible");
+  myPrecModeIVal = Interface_Static::IVal("read.precision.mode");
+  myPrecRVal = Interface_Static::RVal("read.precision.val");
+  mySurfaceCurIVal = Interface_Static::IVal("read.surfacecurve.mode");
   if ( theProc.IsNull() )
     theProc = new Transfer_TransientProcess (theModel->NbEntities());
   else 
@@ -368,7 +374,7 @@ static void TrimTolerances (const TopoDS_Shape& shape,
 //function : TransferRoots
 //purpose  : Transfers all Roots Entities
 //=======================================================================
-void  IGESToBRep_Reader::TransferRoots (const Standard_Boolean onlyvisible,
+void  IGESToBRep_Reader::TransferRoots (const Standard_Boolean theOnlyVisible,
                                         const Message_ProgressRange& theProgress)
 {
   if (theModel.IsNull() || theProc.IsNull()) return;
@@ -387,7 +393,7 @@ void  IGESToBRep_Reader::TransferRoots (const Standard_Boolean onlyvisible,
   theProc->SetRootManagement(Standard_True);
 //  PrepareTransfer();  -> protocol, actor
   theActor->SetModel(theModel);
-  Standard_Integer continuity = Interface_Static::IVal("read.iges.bspline.continuity");
+  Standard_Integer continuity = myBSContinuityIVal;
   theActor->SetContinuity (continuity);
   theProc->SetModel (theModel);
   theProc->SetActor (theActor);
@@ -399,24 +405,24 @@ void  IGESToBRep_Reader::TransferRoots (const Standard_Boolean onlyvisible,
   ShapeExtend_Explorer SBE;
 
   
-  Standard_Integer precisionMode = Interface_Static::IVal("read.precision.mode");
+  Standard_Integer precisionMode = myPrecModeIVal;
   Message_Msg msg2035("IGES_2035");
   msg2035.Arg(precisionMode);
   TF->Send (msg2035, Message_Info);
   if (precisionMode==1) {
     Message_Msg msg2040("IGES_2040");
-    msg2040.Arg(Interface_Static::RVal("read.precision.val"));//#70 rln 03.03.99
+    msg2040.Arg(myPrecRVal);//#70 rln 03.03.99
     TF->Send (msg2040, Message_Info);
   }
   Message_Msg msg2045("IGES_2045");
   msg2045.Arg(continuity);
   TF->Send (msg2045, Message_Info);
   Message_Msg msg2050("IGES_2050");
-  msg2050.Arg(Interface_Static::IVal("read.surfacecurve.mode"));
+  msg2050.Arg(mySurfaceCurIVal);
   TF->Send (msg2050, Message_Info);
 
   // sln 11.06.2002 OCC448
-  Interface_Static::SetIVal("read.iges.onlyvisible",onlyvisible);
+  SetOnlyVisIVal(theOnlyVisible);
   
   Message_ProgressScope PS (theProgress, "Root", nb);
   for (Standard_Integer i = 1; i <= nb && PS.More(); i++)
@@ -431,7 +437,7 @@ void  IGESToBRep_Reader::TransferRoots (const Standard_Boolean onlyvisible,
       TF->Send (msg2070, Message_Info);
     }
     // on ajoute un traitement pour ne prendre que les entites visibles
-    if ( ! onlyvisible || ent->BlankStatus() == 0 ) {
+    if ( ! theOnlyVisible || ent->BlankStatus() == 0 ) {
       TopoDS_Shape shape;
       theDone = Standard_True;
       try {
@@ -511,7 +517,7 @@ Standard_Boolean  IGESToBRep_Reader::Transfer(const Standard_Integer num,
   IGESToBRep_CurveAndSurface CAS;
   CAS.SetModel(theModel);
   Standard_Real eps;
-  Standard_Integer Ival = Interface_Static::IVal("read.precision.mode");
+  Standard_Integer Ival = myPrecModeIVal;
   Message_Msg msg2035("IGES_2035");
   msg2035.Arg(Ival);
   TF->Send (msg2035, Message_Info);
@@ -519,21 +525,21 @@ Standard_Boolean  IGESToBRep_Reader::Transfer(const Standard_Integer num,
     eps = theModel->GlobalSection().Resolution();
   else {
     //mjm : modif du 19/12/97 pour prise en compte effective du parametre
-    eps = Interface_Static::RVal("read.precision.val");
+    eps = myPrecRVal;
     Message_Msg msg2040("IGES_2040");
     msg2040.Arg(eps);//#70 rln 03.03.99
     TF->Send (msg2040, Message_Info);
     
   }
-  Ival = Interface_Static::IVal("read.iges.bspline.approxd1.mode");
+  Ival = myApproxd1IVal;
   CAS.SetModeApprox ( (Ival > 0) );
   Message_Msg msg2045("IGES_2045");
-  Ival = Interface_Static::IVal("read.iges.bspline.continuity");
+  Ival = myBSContinuityIVal;
   msg2045.Arg(Ival);
   TF->Send (msg2045, Message_Info);
   CAS.SetContinuity(Ival);
   Message_Msg msg2050("IGES_2050");
-  Ival = Interface_Static::IVal("read.surfacecurve.mode");
+  Ival = mySurfaceCurIVal;
   msg2050.Arg(Ival);
   TF->Send (msg2050, Message_Info);
   CAS.SetSurfaceCurve (Ival);
@@ -647,4 +653,70 @@ Standard_Boolean  IGESToBRep_Reader::Transfer(const Standard_Integer num,
     for (Standard_Integer i = 1; i <= nb; i ++)  B.Add (C,theShapes.Value(i));
     return C;
   }
+}
+
+void IGESToBRep_Reader::SetBSContinuityIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.iges.bspline.continuity", theVal);
+  myBSContinuityIVal = theVal;
+}
+
+void IGESToBRep_Reader::SetPrecModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.precision.mode", theVal);
+  myPrecModeIVal = theVal;
+}
+
+void IGESToBRep_Reader::SetPrecRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("read.precision.val", theVal);
+  myPrecRVal = theVal;
+}
+
+void IGESToBRep_Reader::SetSurfaceCurIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.surfacecurve.mode", theVal);
+  mySurfaceCurIVal = theVal;
+}
+
+void IGESToBRep_Reader::SetOnlyVisIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.iges.onlyvisible", theVal);
+  myOnlyVisIVal = theVal;
+}
+
+void IGESToBRep_Reader::SetApproxd1IVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.iges.bspline.approxd1.mode", theVal);
+  myApproxd1IVal = theVal;
+}
+
+Standard_Integer IGESToBRep_Reader::GetBSContinuityIVal() const
+{
+  return myBSContinuityIVal;
+}
+
+Standard_Integer IGESToBRep_Reader::GetPrecModeIVal() const
+{
+  return myPrecModeIVal;
+}
+
+Standard_Real IGESToBRep_Reader::GetPrecRVal() const
+{
+  return myPrecRVal;
+}
+
+Standard_Integer IGESToBRep_Reader::GetSurfaceCurIVal() const
+{
+  return mySurfaceCurIVal;
+}
+
+Standard_Integer IGESToBRep_Reader::GetOnlyVisIVal() const
+{
+  return myOnlyVisIVal;
+}
+
+Standard_Integer IGESToBRep_Reader::GetApproxd1IVal() const
+{
+  return myApproxd1IVal;
 }

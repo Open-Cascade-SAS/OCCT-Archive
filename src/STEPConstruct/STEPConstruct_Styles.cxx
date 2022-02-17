@@ -87,6 +87,7 @@
 //=======================================================================
 STEPConstruct_Styles::STEPConstruct_Styles () 
 {
+  mySchemaIVal = Interface_Static::IVal("write.step.schema")
 }
      
 
@@ -98,6 +99,7 @@ STEPConstruct_Styles::STEPConstruct_Styles ()
 STEPConstruct_Styles::STEPConstruct_Styles (const Handle(XSControl_WorkSession) &WS)
      : STEPConstruct_Tool ( WS )
 {
+  mySchemaIVal = Interface_Static::IVal("write.step.schema")
 }
 
 
@@ -111,6 +113,7 @@ Standard_Boolean STEPConstruct_Styles::Init (const Handle(XSControl_WorkSession)
   myMapOfStyles.Clear();
   myStyles.Clear();
   myPSA.Clear();
+  mySchemaIVal = Interface_Static::IVal("write.step.schema")
   return SetWS ( WS );
 }
 
@@ -235,7 +238,8 @@ Standard_Boolean STEPConstruct_Styles::CreateMDGPR (const Handle(StepRepr_Repres
 //   Model()->AddWithRefs ( Repr ); add into the model upper
 
   // for AP203, add subschema name
-  if ( Interface_Static::IVal("write.step.schema") ==3 ) {
+  if (mySchemaIVal == 3) 
+  {
     APIHeaderSection_MakeHeader mkHdr ( Handle(StepData_StepModel)::DownCast ( Model() ) );
     Handle(TCollection_HAsciiString) subSchema = 
       new TCollection_HAsciiString ( "SHAPE_APPEARANCE_LAYER_MIM" );
@@ -788,3 +792,13 @@ Standard_Boolean STEPConstruct_Styles::DecodeColor (const Handle(StepVisual_Colo
   return Standard_False;
 }
 
+void STEPConstruct_Styles::SetSchemaIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.schema", theVal);
+  mySchemaIVal = theVal;
+}
+
+Standard_Integer STEPConstruct_Styles::GetSchemaIVal() const
+{
+  return mySchemaIVal;
+}

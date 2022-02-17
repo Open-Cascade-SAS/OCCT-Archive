@@ -120,6 +120,7 @@ void TopoDSToStep_MakeStepFace::Init(const TopoDS_Face& aFace,
   // --------------------------------------------------------------
 
   //szv#4:S4163:12Mar99 SGI warns
+  myNonmanifoldIVal = Interface_Static::IVal("write.step.nonmanifold");
   TopoDS_Shape sh = aFace.Oriented(TopAbs_FORWARD);
   const TopoDS_Face ForwardFace = TopoDS::Face(sh);
   aTool.SetCurrentFace(ForwardFace);
@@ -127,7 +128,7 @@ void TopoDSToStep_MakeStepFace::Init(const TopoDS_Face& aFace,
     new TransferBRep_ShapeMapper(aFace);  // on ne sait jamais
 
   // [BEGIN] Processing non-manifold topology (another approach) (ssv; 10.11.2010)
-  Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
+  Standard_Boolean isNMMode = myNonmanifoldIVal != 0;
   if (isNMMode) {
     Handle(StepShape_AdvancedFace) anAF;
     Handle(TransferBRep_ShapeMapper) aSTEPMapper = TransferBRep::ShapeMapper(FP, aFace);
@@ -523,4 +524,15 @@ const Handle(StepShape_TopologicalRepresentationItem)& TopoDSToStep_MakeStepFace
 TopoDSToStep_MakeFaceError TopoDSToStep_MakeStepFace::Error() const 
 {
   return myError;
+}
+
+void TopoDSToStep_MakeStepFace::SetNonmanifoldIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.nonmanifold", theVal);
+  myNonmanifoldIVal = theVal;
+}
+
+Standard_Integer TopoDSToStep_MakeStepFace::GetNonmanifoldIVal() const
+{
+  return myNonmanifoldIVal;
 }

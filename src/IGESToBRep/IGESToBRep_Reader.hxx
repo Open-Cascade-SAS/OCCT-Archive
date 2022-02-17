@@ -110,7 +110,29 @@ public:
   //! - a compound containing the resulting shapes if there are several.
   Standard_EXPORT TopoDS_Shape OneShape() const;
 
+  Standard_EXPORT void SetBSContinuityIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT void SetPrecModeIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetPrecRVal(const Standard_Real theVal);
+
+  Standard_EXPORT void SetSurfaceCurIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetOnlyVisIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetApproxd1IVal(const Standard_Integer theVal);
+
+  Standard_EXPORT Standard_Integer GetBSContinuityIVal() const;
+
+  Standard_EXPORT Standard_Integer GetPrecModeIVal() const;
+
+  Standard_EXPORT Standard_Real GetPrecRVal() const;
+
+  Standard_EXPORT Standard_Integer GetSurfaceCurIVal() const;
+
+  Standard_EXPORT Standard_Integer GetOnlyVisIVal() const;
+
+  Standard_EXPORT Standard_Integer GetApproxd1IVal() const;
 
 
 protected:
@@ -128,6 +150,12 @@ private:
   TopTools_SequenceOfShape theShapes;
   Handle(IGESToBRep_Actor) theActor;
   Handle(Transfer_TransientProcess) theProc;
+  Standard_Integer myBSContinuityIVal;
+  Standard_Integer myPrecModeIVal;
+  Standard_Real myPrecRVal;
+  Standard_Integer mySurfaceCurIVal;
+  Standard_Integer myOnlyVisIVal; // setter
+  Standard_Integer myApproxd1IVal;
 
 
 };

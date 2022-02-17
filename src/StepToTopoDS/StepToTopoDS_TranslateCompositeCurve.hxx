@@ -63,9 +63,11 @@ public:
   Standard_EXPORT const TopoDS_Wire& Value() const;
   
   //! Returns True if composite_curve contains a segment with infinite parameters.
-    Standard_Boolean IsInfiniteSegment() const;
+  Standard_Boolean IsInfiniteSegment() const;
 
+  Standard_EXPORT void SetSurCurModeIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetSurCurModeIVal() const;
 
 
 protected:
@@ -80,6 +82,7 @@ private:
 
   TopoDS_Wire myWire;
   Standard_Boolean myInfiniteSegment;
+  Standard_Integer mySurCurModeIVal
 
 
 };

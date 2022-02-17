@@ -59,11 +59,11 @@ void TopoDSToStep_MakeStepVertex::Init(const TopoDS_Vertex& aVertex,
                                        TopoDSToStep_Tool& aTool,
                                        const Handle(Transfer_FinderProcess)& FP)
 {
-
+  myNonmanifoldIVal = Interface_Static::IVal("write.step.nonmanifold");
   aTool.SetCurrentVertex(aVertex);
 
   // [BEGIN] Processing non-manifold topology (ssv; 11.11.2010)
-  Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
+  Standard_Boolean isNMMode = myNonmanifoldIVal != 0;
   if (isNMMode) {
     Handle(StepShape_VertexPoint) aVP;
     Handle(TransferBRep_ShapeMapper) aSTEPMapper = TransferBRep::ShapeMapper(FP, aVertex);
@@ -124,3 +124,13 @@ TopoDSToStep_MakeVertexError TopoDSToStep_MakeStepVertex::Error() const
   return myError;
 }
 
+void TopoDSToStep_MakeStepVertex::SetNonmanifoldIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.nonmanifold", theVal);
+  myNonmanifoldIVal = theVal;
+}
+
+Standard_Integer TopoDSToStep_MakeStepVertex::GetNonmanifoldIVal() const
+{
+  return myNonmanifoldIVal;
+}

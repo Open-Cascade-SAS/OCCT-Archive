@@ -147,7 +147,9 @@ public:
   //! Returns True if OK or False if color is not recognized
   Standard_EXPORT static Standard_Boolean DecodeColor (const Handle(StepVisual_Colour)& Colour, Quantity_Color& Col);
 
+  Standard_EXPORT void SetSchemaIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetSchemaIVal() const;
 
 
 protected:
@@ -163,6 +165,7 @@ private:
   TColStd_IndexedDataMapOfTransientTransient myMapOfStyles;
   TColStd_IndexedMapOfTransient myStyles;
   TColStd_SequenceOfTransient myPSA;
+  Standard_Integer mySchemaIVal;
 
 
 };

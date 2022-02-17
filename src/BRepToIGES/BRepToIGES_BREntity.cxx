@@ -370,6 +370,18 @@ Standard_Boolean BRepToIGES_BREntity::GetPCurveMode () const
 {
   return myPCurveMode;
 }
+
+void BRepToIGES_BREntity::SetConvertSurfaceMode(const Standard_Boolean theVal)
+{
+  Interface_Static::SetIVal("write.convertsurface.mode", theVal);
+  myConvSurface = theVal;
+}
+
+Standard_EXPORT void BRepToIGES_BREntity::SetPCurveMode(const Standard_Boolean theVal)
+{
+  Interface_Static::SetIVal("write.surfacecurve.mode", theVal);
+  myPCurveMode = theVal;
+}
 	    
 //=======================================================================
 //function : ~BRepToIGES_BREntity

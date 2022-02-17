@@ -107,10 +107,11 @@ Standard_Boolean StepToTopoDS_TranslateCompositeCurve::Init (const Handle(StepGe
 
   Standard_Boolean SurfMode = ( ! S.IsNull() && ! Surf.IsNull() );
   Standard_Boolean isClosed = Standard_False;
+  mySurCurModeIVal = Interface_Static::IVal("read.surfacecurve.mode");
 
-  if ( SurfMode ) {
-    Standard_Integer modepcurve = Interface_Static::IVal("read.surfacecurve.mode");
-    if ( modepcurve ==-3 ) SurfMode = Standard_False;
+  if (SurfMode && mySurCurModeIVal == -3)
+  {
+    SurfMode = Standard_False;
   }
   
   Handle(ShapeExtend_WireData) sbwd = new ShapeExtend_WireData;
@@ -285,4 +286,15 @@ Standard_Boolean StepToTopoDS_TranslateCompositeCurve::Init (const Handle(StepGe
 const TopoDS_Wire& StepToTopoDS_TranslateCompositeCurve::Value () const
 {
   return myWire;
+}
+
+void StepToTopoDS_TranslateCompositeCurve::SetSurCurModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.surfacecurve.mode", theVal);
+  mySurCurModeIVal = theVal;
+}
+
+Standard_Integer StepToTopoDS_TranslateCompositeCurve::GetSurCurModeIVal() const
+{
+  return mySurCurModeIVal;
 }

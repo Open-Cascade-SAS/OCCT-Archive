@@ -121,7 +121,9 @@ public:
   //! Sets current assembly shape SDR (for FindCDSR calls)
   Standard_EXPORT void SetAssemblyShape (const TopoDS_Shape& shape);
 
+  Standard_EXPORT void SetSchemaIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetSchemaIVal() const;
 
 
 protected:
@@ -137,6 +139,7 @@ private:
   StepBasic_Unit areaUnit;
   StepBasic_Unit volUnit;
   Handle(StepBasic_ProductDefinition) myAssemblyPD;
+  Standard_Integer mySchemaIVal;
 
 
 };

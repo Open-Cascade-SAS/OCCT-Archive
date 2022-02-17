@@ -263,6 +263,10 @@ protected:
   //! Convert name into UNICODE text.
   Standard_EXPORT virtual TCollection_ExtendedString convertName (const TCollection_AsciiString& theName) const;
 
+  Standard_EXPORT void SetSubshapesIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT Standard_Integer GetSubshapesIVal() const;
+
 private:
 
   //! Internal method. Import all Datum attributes and set them to XCAF object. Set connection of Datum to GeomTolerance (theGDTL).
@@ -290,6 +294,7 @@ private:
   void prepareUnits(const Handle(StepData_StepModel)& theModel,
                     const Handle(TDocStd_Document)& theDoc) const;
 
+
 private:
 
   STEPControl_Reader myReader;
@@ -304,6 +309,7 @@ private:
   Standard_Boolean myMatMode;
   Standard_Boolean myViewMode;
   NCollection_DataMap<Handle(Standard_Transient), TDF_Label> myGDTMap;
+  Standard_Integer mySubshapesIVal;
 
 };
 

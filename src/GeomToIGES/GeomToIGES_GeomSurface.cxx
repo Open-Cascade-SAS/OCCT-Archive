@@ -100,6 +100,7 @@ GeomToIGES_GeomSurface::GeomToIGES_GeomSurface()
 {
   myBRepMode = Standard_False;
   myAnalytic = Standard_False;
+  myPlaneModeIVal = Interface_Static::IVal("write.iges.plane.mode");
 }
 
 
@@ -112,6 +113,7 @@ GeomToIGES_GeomSurface::GeomToIGES_GeomSurface(const GeomToIGES_GeomEntity& GE)
 {
   myBRepMode = Standard_False;
   myAnalytic = Standard_False;
+  myPlaneModeIVal = Interface_Static::IVal("write.iges.plane.mode");
 }
 
 
@@ -537,7 +539,7 @@ Handle(IGESData_IGESEntity) GeomToIGES_GeomSurface::TransferSurface(const Handle
   if (start.IsNull()) {
     return res;
   }
-  if (Interface_Static::IVal("write.iges.plane.mode") == 0){
+  if (myPlaneModeIVal == 0){
     Handle(IGESGeom_Plane) aPlane = new IGESGeom_Plane;
     Standard_Real A,B,C,D;
     start->Coefficients(A,B,C,D);
@@ -1347,3 +1349,13 @@ void GeomToIGES_GeomSurface::SetAnalyticMode(const Standard_Boolean flag)
   myAnalytic = flag;
 }
 
+void GeomToIGES_GeomSurface::SetPlaneModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.iges.plane.mode", theVal);
+  myPlaneModeIVal = theVal;
+}
+
+Standard_Integer GeomToIGES_GeomSurface::GetPlaneModeIVal() const
+{
+  return myPlaneModeIVal;
+}

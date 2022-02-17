@@ -52,6 +52,7 @@ IMPLEMENT_STANDARD_RTTIEXT(IGESControl_IGESBoundary,IGESToBRep_IGESBoundary)
 //=======================================================================
 IGESControl_IGESBoundary::IGESControl_IGESBoundary() : IGESToBRep_IGESBoundary()
 {
+  myParModeIVal = Interface_Static::IVal("read.stdsameparameter.mode");
 }
 
 //=======================================================================
@@ -62,6 +63,7 @@ IGESControl_IGESBoundary::IGESControl_IGESBoundary() : IGESToBRep_IGESBoundary()
 IGESControl_IGESBoundary::IGESControl_IGESBoundary(const IGESToBRep_CurveAndSurface& CS) :
        IGESToBRep_IGESBoundary (CS)
 {
+  myParModeIVal = Interface_Static::IVal("read.stdsameparameter.mode");
 }
 
 //=======================================================================
@@ -302,7 +304,7 @@ static Standard_Boolean Connect (const Handle(ShapeAnalysis_Wire)& theSAW,
 #endif
 	  }
 	  //#74 rln 10.03.99 S4135: handling use of BRepLib::SameParameter by new static parameter
-	  if (Interface_Static::IVal ("read.stdsameparameter.mode")) {
+	  if (myParModeIVal) {
 	    Standard_Real first, last;
 	    BRep_Tool::Range(edge3d,first,last);
 	    // pdn 08.04.99 S4135 optimizing in computation of SPTol
@@ -405,3 +407,13 @@ static Standard_Boolean Connect (const Handle(ShapeAnalysis_Wire)& theSAW,
   return okCurve;
 }
 
+void IGESControl_IGESBoundary::SetParModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.stdsameparameter.mode", theVal);
+  myParModeIVal = theVal;
+}
+
+Standard_Integer IGESControl_IGESBoundary::GetParModeIVal() const
+{
+  return myParModeIVal;
+}

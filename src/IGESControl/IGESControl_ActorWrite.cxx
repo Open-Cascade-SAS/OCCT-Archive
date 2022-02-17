@@ -35,7 +35,12 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(IGESControl_ActorWrite,Transfer_ActorOfFinderProcess)
 
-IGESControl_ActorWrite::IGESControl_ActorWrite ()  {  ModeTrans() = 0;  }
+IGESControl_ActorWrite::IGESControl_ActorWrite ()  
+{  
+  ModeTrans() = 0;  
+  myPrecRVal = Interface_Static::RVal("write.precision.val");
+  myMaxPrecRVal = Interface_Static::RVal("read.maxprecision.val");
+}
 
 Standard_Boolean  IGESControl_ActorWrite::Recognize
   (const Handle(Transfer_Finder)& start)
@@ -70,8 +75,8 @@ Handle(Transfer_Binder)  IGESControl_ActorWrite::Transfer
     if (shape.IsNull()) return NullResult();
 //  modified by NIZHNY-EAP Tue Aug 29 11:16:54 2000 ___BEGIN___
     Handle(Standard_Transient) info;
-    Standard_Real Tol = Interface_Static::RVal("write.precision.val");
-    Standard_Real maxTol = Interface_Static::RVal("read.maxprecision.val");
+    Standard_Real Tol = myPrecRVal;
+    Standard_Real maxTol = myMaxPrecRVal;
     shape = XSAlgo::AlgoContainer()->ProcessShape( shape, Tol, maxTol, 
                                                    "write.iges.resource.name", 
                                                    "write.iges.sequence", info,
@@ -112,4 +117,26 @@ Handle(Transfer_Binder)  IGESControl_ActorWrite::Transfer
   }
 
   return NullResult();
+}
+
+void IGESControl_ActorWrite::SetPrecRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("write.precision.val", theVal);
+  myPrecRVal = theVal;
+}
+
+void IGESControl_ActorWrite::SetMaxPrecRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("read.maxprecision.val", theVal);
+  myMaxPrecRVal = theVal;
+}
+
+Standard_Real IGESControl_ActorWrite::GetPrecRVal() const
+{
+  return myPrecRVal;
+}
+
+Standard_Real IGESControl_ActorWrite::GetMaxPrecRVal() const
+{
+  return myMaxPrecRVal;
 }

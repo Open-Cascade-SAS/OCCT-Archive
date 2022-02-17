@@ -22,6 +22,7 @@
 
 #include <Standard_Transient.hxx>
 #include <IFSelect_ReturnStatus.hxx>
+#include <Interface_Static.hxx>
 #include <Transfer_FinderProcess.hxx>
 class XSControl_Controller;
 class Interface_InterfaceModel;
@@ -65,6 +66,7 @@ class XSControl_TransferWriter : public Standard_Transient
   void SetController (const Handle(XSControl_Controller)& theCtl)
   {
     myController = theCtl;
+    myNonmanifoldIVal = Interface_Static::IVal("write.step.nonmanifold");
     Clear(-1);
   }
   
@@ -127,6 +129,10 @@ class XSControl_TransferWriter : public Standard_Transient
   //! instead of keeping the original Mapper, whenever known
   Standard_EXPORT Interface_CheckIterator ResultCheckList (const Handle(Interface_InterfaceModel)& theModel) const;
 
+  Standard_EXPORT void SetNonmanifoldIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT Standard_Integer GetNonmanifoldIVal() const;
+
   DEFINE_STANDARD_RTTIEXT(XSControl_TransferWriter,Standard_Transient)
 
  private:
@@ -134,6 +140,7 @@ class XSControl_TransferWriter : public Standard_Transient
   Handle(XSControl_Controller) myController;
   Handle(Transfer_FinderProcess) myTransferWriter;
   Standard_Integer myTransferMode;
+  Standard_Integer myNonmanifoldIVal;
 };
 
 #endif // _XSControl_TransferWriter_HeaderFile

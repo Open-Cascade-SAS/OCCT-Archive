@@ -63,6 +63,8 @@ STEPControl_Controller::STEPControl_Controller ()
     RWHeaderSection::Init();  RWStepAP214::Init();
 
     Interface_Static::Init ("step","write.step.product.name",'t',"Open CASCADE STEP translator " OCC_VERSION_STRING);
+    Interface_Static::SetCVal("write.step.product.name", "");
+
     Interface_Static::Init ("step","write.step.assembly",'e',"");
     Interface_Static::Init ("step","write.step.assembly",'&',"enum 0");
     Interface_Static::Init ("step","write.step.assembly",'&',"eval Off");

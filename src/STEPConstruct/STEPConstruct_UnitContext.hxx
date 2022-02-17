@@ -112,7 +112,9 @@ public:
   //! real factor (e.g. 1e6 for mega)
   Standard_EXPORT static Standard_Real ConvertSiPrefix (const StepBasic_SiPrefix aPrefix);
 
+  Standard_EXPORT void SetWriteUnitIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetWriteUnitIVal() const;
 
 
 protected:
@@ -143,7 +145,7 @@ private:
   Standard_Boolean planeAngleDone;
   Standard_Boolean solidAngleDone;
   Standard_Boolean hasUncertainty;
-
+  Standard_Integer myWriteUnitIVal;
 
 };
 

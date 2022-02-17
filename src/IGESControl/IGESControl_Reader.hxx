@@ -97,7 +97,9 @@ public:
   //! Prints Statistics and check list for Transfer
   Standard_EXPORT void PrintTransferInfo (const IFSelect_PrintFail failwarn, const IFSelect_PrintCount mode) const;
 
+  Standard_EXPORT void SetOnlyVisibleIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetOnlyVisibleIVal() const;
 
 
 protected:
@@ -110,7 +112,7 @@ private:
 
 
 
-  Standard_Boolean theReadOnlyVisible;
+  Standard_Boolean myOnlyVisIVal;
 
 
 };

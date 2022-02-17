@@ -140,7 +140,6 @@ private:
   Handle(IGESSolid_EdgeList) myEdgeList;
   Handle(IGESSolid_VertexList) myVertexList;
 
-
 };
 
 

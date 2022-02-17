@@ -326,6 +326,10 @@ void STEPCAFControl_Writer::Init (const Handle(XSControl_WorkSession)& WS,
   myLabels.Clear();
   myGDTPresentationDM = new StepVisual_DraughtingModel();
   myGDTPrsCurveStyle = new StepVisual_HArray1OfPresentationStyleAssignment(1, 1);
+  myAssemblyModeCVal = Interface_Static::CVal("write.step.assembly");
+  myAssemblyModeIVal = Interface_Static::IVal("write.step.assembly");
+  mySchemaIVal = Interface_Static::IVal("write.step.schema");
+  mySubshapesIVal = Interface_Static::IVal("write.stepcaf.subshapes.name");
 }
 
 
@@ -542,7 +546,7 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
   const Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(writer.WS()->Model());
   prepareUnit(labels.First(), aModel); // set local length unit to the model
   // translate free top-level shapes of the DECAF document
-  Standard_Integer ap = Interface_Static::IVal ("write.step.schema");
+  Standard_Integer anAp = mySchemaIVal;
   TDF_LabelSequence sublabels;
   Message_ProgressScope aPS(theProgress, "Labels", labels.Length());
   for ( Standard_Integer i=1; i <= labels.Length() && aPS.More(); i++)
@@ -638,11 +642,11 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
 	}
       }
 */      
-      Standard_Integer assemblymode = Interface_Static::IVal ("write.step.assembly");
-      Interface_Static::SetCVal ("write.step.assembly", "On");
+      Standard_Integer anAssemblyMode = myAssemblyMode;
+      SetAssemblyCVal("On");
       writer.Transfer ( Sass, STEPControl_AsIs, Standard_True, aPS1.Next());
-      Interface_Static::SetIVal ("write.step.assembly", assemblymode);
-      Interface_Static::SetIVal ("write.step.schema", ap);
+      SetAssemblyIVal(anAssemblyMode);
+      SetSchemaIVal(anAp);
     }
   }
   if (aPS.UserBreak())
@@ -671,7 +675,7 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
     
     // write G&DTs
     if(GetDimTolMode()) {
-      if (ap == 5) {
+      if (anAp == 5) {
         WriteDGTsAP242(writer.WS(), sublabels);
       }
       else {
@@ -700,7 +704,7 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
   if ( GetPropsMode() ) 
     WriteValProps ( writer.WS(), sublabels, multi );
 
-  Interface_Static::SetIVal ("write.step.schema", ap);
+  SetSchemaIVal(anAp);
 
   // refresh graph
   writer.WS()->ComputeGraph ( Standard_True );
@@ -709,7 +713,7 @@ Standard_Boolean STEPCAFControl_Writer::Transfer (STEPControl_Writer &writer,
     *  Write names for the sub-shapes
     * ================================ */
 
-  if (Interface_Static::IVal("write.stepcaf.subshapes.name") != 0)
+  if (mySubshapesIVal != 0)
   {
     const Handle(XSControl_TransferWriter) &TW = this->ChangeWriter().WS()->TransferWriter();
     const Handle(Transfer_FinderProcess) &FP = TW->FinderProcess();
@@ -799,11 +803,11 @@ TopoDS_Shape STEPCAFControl_Writer::TransferExternFiles (const TDF_Label &L,
     EF->SetWS ( newWS );
     EF->SetName ( name );
     EF->SetLabel ( L );
-    Standard_Integer assemblymode = Interface_Static::IVal ("write.step.assembly");
-    Interface_Static::SetCVal ("write.step.assembly", "Off");
+    Standard_Integer anAssemblyMode = myAssemblyMode;
+    SetAssemblyCVal("Off");
     const Standard_CString multi = 0;
     EF->SetTransferStatus ( Transfer ( sw, Lseq, mode, multi, Standard_True, theProgress) );
-    Interface_Static::SetIVal ("write.step.assembly", assemblymode);
+    SetAssemblyIVal(anAssemblyMode);
     myLabEF.Bind ( L, EF );
     myFiles.Bind ( name->ToCString(), EF );
 
@@ -853,7 +857,7 @@ Standard_Boolean STEPCAFControl_Writer::WriteExternRefs (const Handle(XSControl_
   const Handle(XSControl_TransferWriter) &TW = WS->TransferWriter();
   const Handle(Transfer_FinderProcess) &FP = TW->FinderProcess();
   STEPConstruct_ExternRefs EFTool ( WS );
-  Standard_Integer schema = Interface_Static::IVal("write.step.schema");
+  Standard_Integer aSchema = mySchemaIVal;
   for ( Standard_Integer k=1; k <= labels.Length(); k++ ) {
     TDF_Label lab = labels(k);
     if ( XCAFDoc_ShapeTool::IsAssembly ( lab ) ) continue; // skip assemblies
@@ -876,7 +880,7 @@ Standard_Boolean STEPCAFControl_Writer::WriteExternRefs (const Handle(XSControl_
     }
 
     // add extern ref
-    const char* format = (schema == 3 ? "STEP AP203" : "STEP AP214");
+    const char* format = (aSchema == 3 ? "STEP AP203" : "STEP AP214");
     // try to get PD from SDR
     StepRepr_RepresentedDefinition RD = SDR->Definition();
     Handle(StepRepr_PropertyDefinition) aPropDef = RD.PropertyDefinition();
@@ -896,7 +900,7 @@ Standard_Boolean STEPCAFControl_Writer::WriteExternRefs (const Handle(XSControl_
     }
     EFTool.AddExternRef ( EF->GetName()->ToCString(), PD, format );
   }
-  EFTool.WriteExternRefs(schema);
+  EFTool.WriteExternRefs(aSchema);
   return Standard_True;
 }
 
@@ -4366,4 +4370,48 @@ void STEPCAFControl_Writer::SetMaterialMode(const Standard_Boolean matmode)
 Standard_Boolean STEPCAFControl_Writer::GetMaterialMode() const
 {
   return myMatMode;
+}
+
+void STEPCAFControl_Writer::SetAssemblyCVal(const Standard_CString& theVal)
+{
+  Interface_Static::SetCVal("write.step.assembly", theVal);
+  myAssemblyModeCVal = theVal;
+}
+
+void STEPCAFControl_Writer::SetAssemblyIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.assembly", theVal);
+  myAssemblyModeIVal = theVal;
+}
+
+void STEPCAFControl_Writer::SetSchemaIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.schema", theVal);
+  mySchemaIVal = theVal;
+}
+
+void STEPCAFControl_Writer::SetSubshapesIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.stepcaf.subshapes.name", theVal);
+  mySubshapesIVal = theVal;
+}
+
+Standard_CString STEPCAFControl_Writer::GetAssemblyCVal() const
+{
+  return myAssemblyModeCVal;
+}
+
+Standard_Integer STEPCAFControl_Writer::GetAssemblyIVal() const
+{
+  return myAssemblyModeIVal;
+}
+
+Standard_Integer STEPCAFControl_Writer::GetSchemaIVal() const
+{
+  return mySchemaIVal;
+}
+
+Standard_Integer STEPCAFControl_Writer::GetSubshapesIVal() const
+{
+  return mySubshapesIVal;
 }

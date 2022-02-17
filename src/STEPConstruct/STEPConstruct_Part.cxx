@@ -52,6 +52,7 @@
 STEPConstruct_Part::STEPConstruct_Part() 
 {
   myDone = Standard_False;
+  mySchemaIVal = Interface_Static::IVal("write.step.schema");
 }
 
 //=======================================================================
@@ -64,11 +65,11 @@ void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& SR
 				 const Handle(StepBasic_ApplicationContext)& AC)
 {
   // get current schema
-  Standard_Integer schema = Interface_Static::IVal("write.step.schema");
+  mySchemaIVal = Interface_Static::IVal("write.step.schema");
   
   // create PC
   Handle(StepBasic_ProductContext) PC;
-  switch (schema) {
+  switch (mySchemaIVal) {
   default :
   case 1: PC = new StepBasic_MechanicalContext;
           break;
@@ -93,7 +94,7 @@ void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& SR
 
   // create PDF
   Handle(StepBasic_ProductDefinitionFormation) PDF;
-  switch (schema) {
+  switch (mySchemaIVal) {
   default:
   case 1: 
   case 2: 
@@ -111,7 +112,7 @@ void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& SR
   // create PDC, depending on current schema
   Handle(StepBasic_ProductDefinitionContext) PDC;
   Handle(TCollection_HAsciiString) PDCname;
-  switch (schema) {
+  switch (mySchemaIVal) {
   default:
   case 1: 
   case 2: 
@@ -147,7 +148,7 @@ void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& SR
 
   // and an associated PRPC
   Handle(TCollection_HAsciiString) PRPCName;
-  switch (Interface_Static::IVal("write.step.schema")) {
+  switch (mySchemaIVal) {
   default:
   case 1: 
     myPRPC = new StepBasic_ProductType; 
@@ -168,6 +169,7 @@ void STEPConstruct_Part::MakeSDR(const Handle(StepShape_ShapeRepresentation)& SR
   PRPCproducts->SetValue(1,P);
   myPRPC->Init ( PRPCName, Standard_False, 0, PRPCproducts );
   
+
   myDone = Standard_True;
 }
 
@@ -698,3 +700,13 @@ void STEPConstruct_Part::SetPRPCdescription (const Handle(TCollection_HAsciiStri
   myPRPC->SetDescription ( text );
 }
 	 
+void STEPConstruct_Part::SetSchemaIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.schema", theVal);
+  mySchemaIVal = theVal;
+}
+
+Standard_Integer STEPConstruct_Part::GetSchemaIVal() const
+{
+  return mySchemaIVal;
+}

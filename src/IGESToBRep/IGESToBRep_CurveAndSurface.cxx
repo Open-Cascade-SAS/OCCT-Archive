@@ -74,6 +74,8 @@ IGESToBRep_CurveAndSurface::IGESToBRep_CurveAndSurface()
   myIsResolCom  (Standard_False),
   myTP          (new Transfer_TransientProcess())
 {
+  myOnlyVisibleIVal = Interface_Static::IVal("read.iges.onlyvisible");
+  myMaxPrecRVal = Interface_Static::RVal("read.maxprecision.val");
   UpdateMinMaxTol();
 }
 
@@ -104,6 +106,8 @@ IGESToBRep_CurveAndSurface::IGESToBRep_CurveAndSurface
   myIsResolCom  (Standard_False),
   myTP          (new Transfer_TransientProcess())
 {
+  myOnlyVisibleIVal = Interface_Static::IVal("read.iges.onlyvisible");
+  myMaxPrecRVal = Interface_Static::RVal("read.maxprecision.val");
   UpdateMinMaxTol();
 }
 
@@ -128,6 +132,8 @@ void IGESToBRep_CurveAndSurface::Init()
   mySurface.Nullify();
   myIsResolCom = Standard_False;
   myUVResolution = 0.;
+  myOnlyVisibleIVal = Interface_Static::IVal("read.iges.onlyvisible");
+  myMaxPrecRVal = Interface_Static::RVal("read.maxprecision.val");
   UpdateMinMaxTol();
 }
 
@@ -151,8 +157,9 @@ void IGESToBRep_CurveAndSurface::UpdateMinMaxTol()
 {
   //#74 rln 11.03.99 S4135: Setting maximum tolerances according to
   //static parameter
-  myMaxTol = Max (Interface_Static::RVal ("read.maxprecision.val"), myEpsGeom * myUnitFactor);
+  myMaxTol = Max (myMaxPrecRVal, myEpsGeom * myUnitFactor);
   myMinTol = Precision::Confusion();
+
 }
 
 //=======================================================================
@@ -258,7 +265,7 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
   
   // sln 13.06.2002 OCC448: Avoid transferring invisible sub entities which
   // logically depend on the one
-  Standard_Integer onlyvisible = Interface_Static::IVal("read.iges.onlyvisible");
+  Standard_Integer onlyvisible = myOnlyVisibleIVal;
   
   if (IGESToBRep::IsCurveAndSurface(start)) {
     if(onlyvisible && start->BlankStatus() == 1)
@@ -653,7 +660,27 @@ Standard_Real IGESToBRep_CurveAndSurface::GetUVResolution()
   return myUVResolution;
 }
 
+void IGESToBRep_CurveAndSurface::SetOnlyVisibleIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.iges.onlyvisible", theVal);
+  myOnlyVisibleIVal = theVal;
+}
 
+void IGESToBRep_CurveAndSurface::SetMaxPrecRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("read.maxprecision.val", theVal);
+  myMaxPrecRVal = theVal;
+}
+
+Standard_Integer IGESToBRep_CurveAndSurface::GetOnlyVisibleIVal() const
+{
+  return myOnlyVisibleIVal;
+}
+
+Standard_Real IGESToBRep_CurveAndSurface::GetMaxPrecRVal() const
+{
+  return myMaxPrecRVal;
+}
 
 
 

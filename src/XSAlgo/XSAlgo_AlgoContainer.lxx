@@ -22,6 +22,8 @@
 
 inline  void XSAlgo_AlgoContainer::SetToolContainer(const Handle(XSAlgo_ToolContainer)& TC) 
 {
+  myParModeIVal = Interface_Static::IVal("read.stdsameparameter.mode");
+  myUnitIVal = Interface_Static::IVal("xstep.cascade.unit");
   myTC = TC;
 }
 

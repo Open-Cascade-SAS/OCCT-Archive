@@ -172,6 +172,57 @@ protected:
                     const Handle(Transfer_TransientProcess)& TP,
                     const Message_ProgressRange& theProgress);
 
+  Standard_EXPORT void SetAngleUnitIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetStepShapeReprIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetRelationshipIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetShapeAspectIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetProductCVal(const Standard_CString& theVal);
+
+  Standard_EXPORT void SetReadAssemblyIValconst(Standard_Integer theVal);
+
+  Standard_EXPORT void SetNonmanifoldIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetIdeasModeIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetConstructiveGeomIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetRootTransformationIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetPrecisionModeIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetPrecisionRVal(const Standard_Real theVal);
+
+  Standard_EXPORT void SetMaxPrecisionRVal(const Standard_Real theVal);
+
+  Standard_EXPORT Standard_Integer GetAngleUnitIVal() const;
+
+  Standard_EXPORT Standard_Integer GetStepShapeReprIVal() const;
+
+  Standard_EXPORT Standard_Integer GetRelationshipIVal() const;
+
+  Standard_EXPORT Standard_Integer GetShapeAspectIVal() const;
+
+  Standard_EXPORT Standard_CString GetProductCVal() const;
+
+  Standard_EXPORT Standard_Integer GetReadAssemblyIVal() const;
+
+  Standard_EXPORT Standard_Integer GetNonmanifoldIVal() const;
+
+  Standard_EXPORT Standard_Integer GetIdeasModeIVal() const;
+
+  Standard_EXPORT Standard_Integer GetConstructiveGeomIVal() const;
+
+  Standard_EXPORT Standard_Integer GetRootTransformationIVal() const;
+
+  Standard_EXPORT Standard_Integer GetPrecisionModeIVal() const;
+
+  Standard_EXPORT Standard_Real GetPrecisionRVal() const;
+
+  Standard_EXPORT Standard_Real GetMaxPrecisionRVal() const;
 
 
 private:
@@ -185,7 +236,19 @@ private:
   Standard_Real myPrecision;
   Standard_Real myMaxTol;
   Handle(StepRepr_Representation) mySRContext;
-
+  Standard_Integer myAngleUnitIVal;
+  Standard_Integer myStepShapeReprIVal;
+  Standard_Integer myRelationshipIVal;
+  Standard_Integer myShapeAspectIVal;
+  Standard_CString myProductCVal;
+  Standard_Integer myReadAssemblyIVal;
+  Standard_Integer myNonmanifoldIVal;
+  Standard_Boolean myIdeasModeIVal;
+  Standard_Integer myConstructiveGeomIVal;
+  Standard_Integer myRootTransformationIVal;
+  Standard_Integer myPrecisionModeIVal;
+  Standard_Real myPrecisionRVal;
+  Standard_Real myMaxPrecisionRVal;
 
 };
 

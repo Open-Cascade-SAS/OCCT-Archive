@@ -51,8 +51,13 @@ public:
                     const Handle(Transfer_FinderProcess)& FP,
                     const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
+  Standard_EXPORT void SetPrecRVal(const Standard_Real theVal);
 
+  Standard_EXPORT void SetMaxPrecRVal(const Standard_Real theVal);
 
+  Standard_EXPORT Standard_Real GetPrecRVal() const;
+
+  Standard_EXPORT Standard_Real GetMaxPrecRVal() const;
 
   DEFINE_STANDARD_RTTIEXT(IGESControl_ActorWrite,Transfer_ActorOfFinderProcess)
 
@@ -63,7 +68,8 @@ protected:
 
 private:
 
-
+  Standard_Real myPrecRVal;
+  Standard_Real myMaxPrecRVal;
 
 
 };

@@ -75,6 +75,10 @@
 STEPControl_Reader::STEPControl_Reader ()
 {
   STEPControl_Controller::Init();
+  myAllShapeIVal = Interface_Static::IVal("read.step.all.shapes");
+  myProductContextCVal = Interface_Static::CVal("read.step.product.context");
+  myProductContextIVal = Interface_Static::IVal("read.step.product.context");
+  myProductModeCVal = Interface_Static::CVal("read.step.product.mode");
   SetNorm ("STEP");
 }
 
@@ -88,6 +92,10 @@ STEPControl_Reader::STEPControl_Reader
 {
   STEPControl_Controller::Init();
   SetWS (WS,scratch);
+  myAllShapeIVal = Interface_Static::IVal("read.step.all.shapes");
+  myProductContextCVal = Interface_Static::CVal("read.step.product.context");
+  myProductContextIVal = Interface_Static::IVal("read.step.product.context");
+  myProductModeCVal = Interface_Static::CVal("read.step.product.mode");
   SetNorm ("STEP");
 }
 
@@ -126,7 +134,7 @@ Standard_Integer STEPControl_Reader::NbRootsForTransfer()
   Standard_Integer nb = Model()->NbEntities();
   for (Standard_Integer i = 1; i <= nb; i ++) {
     Handle(Standard_Transient) ent = Model()->Value(i);
-    if (Interface_Static::IVal("read.step.all.shapes") == 1) {
+    if (myAllShapeIVal == 1) {
       // Special case to read invalid shape_representation without links to shapes.
       if (ent->IsKind(STANDARD_TYPE(StepShape_ManifoldSolidBrep))) {
         Interface_EntityIterator aShareds = WS()->Graph().Sharings(ent);
@@ -186,9 +194,9 @@ Standard_Integer STEPControl_Reader::NbRootsForTransfer()
       }
       // determinate roots used ProductDefinitionContext
       if(IsRoot) {
-        const char *str1 = Interface_Static::CVal("read.step.product.context");
-        Standard_Integer ICS = Interface_Static::IVal("read.step.product.context");
-        if(ICS>1) {
+        const char *aStr1 = myProductContextCVal;
+        Standard_Integer anICS = myProductContextIVal;
+        if(anICS>1) {
           subs = graph.Shareds(PD);
           for(subs.Start(); subs.More(); subs.Next()) {
             Handle(StepBasic_ProductDefinitionContext) PDC = 
@@ -196,7 +204,7 @@ Standard_Integer STEPControl_Reader::NbRootsForTransfer()
             if (PDC.IsNull()) continue;
             const char *str2 = PDC->LifeCycleStage()->String().ToCString();
             const char *str3 = PDC->Name()->String().ToCString();
-            if( !( strcasecmp(str1,str2)==0 || strcasecmp(str1,str3)==0 ) )
+            if( !( strcasecmp(aStr1,str2)==0 || strcasecmp(aStr1,str3)==0 ) )
               IsRoot=Standard_False;
           }
         }
@@ -220,7 +228,7 @@ Standard_Integer STEPControl_Reader::NbRootsForTransfer()
         WS()->TransferReader()->TransientProcess()->RootsForTransfer()->Append(ent);
       }
     }
-    TCollection_AsciiString aProdMode = Interface_Static::CVal("read.step.product.mode");
+    TCollection_AsciiString aProdMode = myProductModeCVal;
     if(!aProdMode.IsEqual("ON")) {
       if(ent->IsKind(STANDARD_TYPE(StepShape_ShapeDefinitionRepresentation))) {
         Standard_Boolean IsRoot = Standard_True;
@@ -587,4 +595,48 @@ Standard_Boolean STEPControl_Reader::findUnits(
    }
 
   return nbFind != 0;
+}
+
+void STEPControl_Reader::SetAllShapeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.all.shapes", theVal);
+  myAllShapeIVal = theVal;
+}
+
+void STEPControl_Reader::SetProductContextCVal(const Standard_CString theVal)
+{
+  Interface_Static::SetCVal("read.step.product.context", theVal);
+  myProductContextCVal = theVal;
+}
+
+void STEPControl_Reader::SetProductContextIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.step.product.context", theVal);
+  myProductContextIVal = theVal;
+}
+
+void STEPControl_Reader::SetProductModeCVal(const Standard_CString theVal)
+{
+  Interface_Static::SetCVal("read.step.product.mode", theVal);
+  myProductModeCVal = theVal;
+}
+
+Standard_Integer STEPControl_Reader::GetAllShapeIVal() const
+{
+  return myAllShapeIVal;
+}
+
+Standard_CString STEPControl_Reader::GetProductContextCVal() const
+{
+  return myProductContextCVal;
+}
+
+Standard_Integer STEPControl_Reader::GetProductContextIVal() const
+{
+  return myProductContextIVal;
+}
+
+Standard_CString STEPControl_Reader::GetProductModeCVal() const
+{
+  return myProductModeCVal;
 }

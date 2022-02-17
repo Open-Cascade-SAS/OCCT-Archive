@@ -191,7 +191,13 @@ public:
   
   Standard_EXPORT Standard_Real GetUVResolution();
 
+  Standard_EXPORT void SetOnlyVisibleIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT void SetMaxPrecRVal(const Standard_Real theVal);
+
+  Standard_EXPORT Standard_Integer GetOnlyVisibleIVal() const;
+
+  Standard_EXPORT Standard_Real GetMaxPrecRVal() const;
 
 
 protected:
@@ -220,6 +226,8 @@ private:
   Standard_Boolean myIsResolCom;
   Handle(IGESData_IGESModel) myModel;
   Handle(Transfer_TransientProcess) myTP;
+  Standard_Integer myOnlyVisibleIVal;
+  Standard_Real myMaxPrecRVal;
 
 
 };

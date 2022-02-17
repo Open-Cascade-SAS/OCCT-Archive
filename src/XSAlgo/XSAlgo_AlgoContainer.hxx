@@ -82,7 +82,13 @@ public:
   //! from item startTPitem
   Standard_EXPORT virtual void MergeTransferInfo (const Handle(Transfer_FinderProcess)& FP, const Handle(Standard_Transient)& info) const;
 
+  Standard_EXPORT void SetParModeIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT void SetUnitIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT Standard_Integer GetParModeIVal() const;
+
+  Standard_EXPORT Standard_Integer GetUnitIVal() const;
 
 
   DEFINE_STANDARD_RTTIEXT(XSAlgo_AlgoContainer,Standard_Transient)
@@ -96,6 +102,8 @@ private:
 
 
   Handle(XSAlgo_ToolContainer) myTC;
+  Standard_Integer myParModeIVal;
+  Standard_Integer myUnitIVal;
 
 
 };

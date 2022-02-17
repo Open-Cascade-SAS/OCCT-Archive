@@ -89,6 +89,8 @@ void STEPConstruct_ContextTool::SetModel (const Handle(StepData_StepModel)& aSte
     //  if (thePRPC.IsNull()) thePRPC = GetCasted(StepBasic_ProductRelatedProductCategory, ent);
     //}
   }
+  myProductNameCVal = Interface_Static::CVal("write.step.product.name");
+  mySchemaIVal = Interface_Static::IVal("write.step.schema");
 }
 
 //=======================================================================
@@ -111,7 +113,7 @@ void STEPConstruct_ContextTool::AddAPD (const Standard_Boolean enforce)
   Standard_Boolean noapd = theAPD.IsNull();
   if (noapd || enforce) theAPD  = new StepBasic_ApplicationProtocolDefinition;
 
-  switch (Interface_Static::IVal("write.step.schema")) { //j4
+  switch (mySchemaIVal) { //j4
   default:
   case 1:
     theAPD->SetApplicationProtocolYear (1997);
@@ -147,7 +149,7 @@ void STEPConstruct_ContextTool::AddAPD (const Standard_Boolean enforce)
   if (theAPD->Application().IsNull())
     theAPD->SetApplication (new StepBasic_ApplicationContext);
   Handle(TCollection_HAsciiString) appl;
-  switch (Interface_Static::IVal("write.step.schema")) { //j4
+  switch (mySchemaIVal) { //j4
   default:
   case 1:
   case 2: appl = new TCollection_HAsciiString ( "core data for automotive mechanical design processes" );
@@ -356,7 +358,7 @@ void STEPConstruct_ContextTool::AddPRPC (const Standard_Boolean enforce)
   Standard_Boolean noprpc = thePRPC.IsNull();
   if (noprpc || enforce) {
     //:i3 abv 1 Sep 98: ProSTEP TR9: generate PRODUCT_TYPE (derived) instead of PRPC
-    switch (Interface_Static::IVal("write.step.schema")) { //j4
+    switch (mySchemaIVal) { //j4
     default:
     case 1:
       thePRPC = new StepBasic_ProductType;
@@ -566,19 +568,24 @@ void STEPConstruct_ContextTool::SetIndex (const Standard_Integer ind)
 
 Handle(TCollection_HAsciiString) STEPConstruct_ContextTool::GetProductName () const
 {
-  Handle(TCollection_HAsciiString) PdtName;
-  if (Interface_Static::IsSet("write.step.product.name"))
-    PdtName = new TCollection_HAsciiString(Interface_Static::CVal("write.step.product.name"));
-  else PdtName = new TCollection_HAsciiString("Product");
-
-  for ( Standard_Integer i=1; i <= myLevel.Length(); i++ ) {
-    PdtName->AssignCat ((char*)( i >1 ? "." : " " ));
+  Handle(TCollection_HAsciiString) aPdtName;
+  if (!myProductNameCVal.IsEmpty())
+  {
+    aPdtName = new TCollection_HAsciiString(myProductNameCVal);
+  }
+  else
+  {
+    aPdtName = new TCollection_HAsciiString("Product");
+  }
+  for ( Standard_Integer i=1; i <= myLevel.Length(); i++ ) 
+  {
+    aPdtName->AssignCat ((char*)( i >1 ? "." : " " ));
     char buf[100];
     sprintf ( buf, "%d", myLevel.Value(i) );
-    PdtName->AssignCat ( buf );
+    aPdtName->AssignCat ( buf );
   }
 
-  return PdtName;
+  return aPdtName;
 }
 
 //=======================================================================
@@ -596,7 +603,8 @@ Handle(TColStd_HSequenceOfTransient) STEPConstruct_ContextTool::GetRootsForPart 
   if ( ! SDRTool.PRPC().IsNull() ) seq->Append ( SDRTool.PRPC() );
 
   // for AP203, add required product management data
-  if ( Interface_Static::IVal("write.step.schema") == 3 ) {
+  if (mySchemaIVal == 3 ) 
+  {
     theAP203.Init ( SDRTool );
     seq->Append (theAP203.GetProductCategoryRelationship());
     seq->Append (theAP203.GetCreator());
@@ -626,7 +634,8 @@ Handle(TColStd_HSequenceOfTransient) STEPConstruct_ContextTool::GetRootsForAssem
   seq->Append ( assembly.ItemValue() );
   
   // for AP203, write required product management data
-  if ( Interface_Static::IVal("write.step.schema") == 3 ) {
+  if (mySchemaIVal == 3 ) 
+  {
     theAP203.Init ( assembly.GetNAUO() );
     seq->Append (theAP203.GetSecurity());
     seq->Append (theAP203.GetClassificationOfficer());
@@ -639,7 +648,24 @@ Handle(TColStd_HSequenceOfTransient) STEPConstruct_ContextTool::GetRootsForAssem
   return seq;
 }
 
+void STEPConstruct_ContextTool::SetProductNameCVal(const Standard_CString& theVal)
+{
+  Interface_Static::SetCVal("write.step.product.name", theVal);
+  myProductNameCVal = theVal;
+}
 
+void STEPConstruct_ContextTool::SetSchemaIVal(Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.schema", theVal);
+  mySchemaIVal = theVal;
+}
 
+Standard_CString STEPConstruct_ContextTool::GetProductNameCVal() const
+{
+  return myProductNameCVal;
+}
 
-
+Standard_Integer STEPConstruct_ContextTool::GetSchemaIVal() const
+{
+  return mySchemaIVal;
+}

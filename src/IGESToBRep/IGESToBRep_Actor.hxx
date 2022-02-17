@@ -68,7 +68,25 @@ public:
   //! the file or from statics
   Standard_EXPORT Standard_Real UsedTolerance() const;
 
+  Standard_EXPORT void SetApproxd1IVal(const Standard_Integer theVal);
 
+  Standard_EXPORT void SetFaultyEntIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetPrecModeIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetPrecRVal(const Standard_Real theVal);
+
+  Standard_EXPORT void SetSurfaceCurIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT Standard_Integer GetApproxd1IVal() const;
+
+  Standard_EXPORT Standard_Integer GetFaultyEntIVal() const;
+
+  Standard_EXPORT Standard_Integer GetPrecModeIVal() const;
+
+  Standard_EXPORT Standard_Real GetPrecRVal() const;
+
+  Standard_EXPORT Standard_Integer GetSurfaceCurIVal() const;
 
 
   DEFINE_STANDARD_RTTIEXT(IGESToBRep_Actor,Transfer_ActorOfTransientProcess)
@@ -84,6 +102,11 @@ private:
   Handle(Interface_InterfaceModel) themodel;
   Standard_Integer thecontinuity;
   Standard_Real theeps;
+  Standard_Integer myApproxd1IVal;
+  Standard_Integer myFaultyEntIVal;
+  Standard_Integer myPrecModeIVal;
+  Standard_Real myPrecRVal;
+  Standard_Integer mySurfaceCurIVal;
 
 
 };

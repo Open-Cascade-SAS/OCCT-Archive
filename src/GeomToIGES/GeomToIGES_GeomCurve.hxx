@@ -92,7 +92,9 @@ public:
   
   Standard_EXPORT Handle(IGESData_IGESEntity) TransferCurve (const Handle(Geom_OffsetCurve)& start, const Standard_Real Udeb, const Standard_Real Ufin);
 
+  Standard_EXPORT void SetOffsetModeIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetOffsetModeIVal() const;
 
 
 protected:
@@ -104,7 +106,7 @@ protected:
 private:
 
 
-
+  Standard_Integer myOffsetModeIVal;
 
 
 };

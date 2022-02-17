@@ -145,7 +145,7 @@ IFSelect_ReturnStatus XSControl_TransferWriter::TransferWriteShape
   if (theModel.IsNull()) return IFSelect_RetVoid;
 
   TopoDS_Shape aShape = theShape;
-  Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
+  Standard_Boolean isNMMode = myNonmanifoldIVal != 0;
   if (isNMMode)
   {
     ShapeUpgrade_RemoveLocations aRemLoc;
@@ -221,4 +221,15 @@ Interface_CheckIterator XSControl_TransferWriter::ResultCheckList
     else  chl.Add(ach,0);
   }
   return chl;
+}
+
+void XSControl_TransferWriter::SetNonmanifoldIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.nonmanifold", theVal);
+  myNonmanifoldIVal = theVal;
+}
+
+Standard_Integer XSControl_TransferWriter::GetNonmanifoldIVal() const
+{
+  return myNonmanifoldIVal;
 }

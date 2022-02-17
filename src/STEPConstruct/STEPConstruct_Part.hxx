@@ -136,7 +136,9 @@ public:
   
   Standard_EXPORT void SetPRPCdescription (const Handle(TCollection_HAsciiString)& text);
 
+  Standard_EXPORT void SetSchemaIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetSchemaIVal() const;
 
 
 protected:
@@ -152,6 +154,7 @@ private:
   Standard_Boolean myDone;
   Handle(StepShape_ShapeDefinitionRepresentation) mySDR;
   Handle(StepBasic_ProductRelatedProductCategory) myPRPC;
+  Standard_Integer mySchemaIVal;
 
 
 };

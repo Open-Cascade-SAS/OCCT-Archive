@@ -106,6 +106,22 @@ public:
   //! Returns system length unit used by transfer process
   Standard_EXPORT Standard_Real SystemLengthUnit() const;
 
+  Standard_EXPORT void SetAllShapeIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetProductContextCVal(const Standard_CString theVal);
+
+  Standard_EXPORT void SetProductContextIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetProductModeCVal(const Standard_CString theVal);
+
+  Standard_EXPORT Standard_Integer GetAllShapeIVal() const;
+
+  Standard_EXPORT Standard_CString GetProductContextCVal() const;
+
+  Standard_EXPORT Standard_Integer GetProductContextIVal() const;
+
+  Standard_EXPORT Standard_CString GetProductModeCVal() const;
+
 
 protected:
 
@@ -118,8 +134,10 @@ private:
   
   //! Returns  units for length , angle and solidangle for shape representations
   Standard_EXPORT Standard_Boolean findUnits (const Handle(StepRepr_RepresentationContext)& theReprContext, TColStd_Array1OfAsciiString& theNameUnits, TColStd_Array1OfReal& theFactorUnits);
-
-
+  Standard_Integer myAllShapeIVal;
+  Standard_CString myProductContextCVal;
+  Standard_Integer myProductContextIVal;
+  Standard_CString myProductModeCVal;
 
 
 };

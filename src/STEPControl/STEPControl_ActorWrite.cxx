@@ -232,6 +232,13 @@ static Standard_Boolean IsManifoldShape(const TopoDS_Shape& theShape) {
 STEPControl_ActorWrite::STEPControl_ActorWrite ()
 : mygroup (0) , mytoler (-1.)
 {  
+  myAngleUnitIVal = Interface_Static::IVal("step.angleunit.mode");
+  mySchemaIVal = Interface_Static::IVal("write.step.schema");
+  myPrecisionModeIVal = Interface_Static::IVal("write.precision.mode");
+  myVertexModeIVal = Interface_Static::IVal("write.step.vertex.mode");
+  myNonmanifoldIVal = Interface_Static::IVal("write.step.nonmanifold");
+  myPrecisionRVal = Interface_Static::RVal("write.precision.val");
+  myMaxPrecisionRVal = Interface_Static::RVal("read.maxprecision.val");
   SetMode(STEPControl_ShellBasedSurfaceModel);
 }
 
@@ -468,7 +475,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::Transfer (const Handle(Transfer_
   }
   Standard_Real aLFactor = model->WriteLengthUnit();
   aLFactor /= model->LocalLengthUnit();
-  Standard_Integer anglemode = Interface_Static::IVal("step.angleunit.mode");
+  Standard_Integer anglemode = myAngleUnitIVal;
   StepData_GlobalFactors::Intance().InitializeFactors (aLFactor, ( anglemode <= 1 ? 1. : M_PI/180. ), 1. );
 
   // create SDR
@@ -532,7 +539,7 @@ Standard_Boolean STEPControl_ActorWrite::IsAssembly (TopoDS_Shape &S) const
 {
   if ( ! GroupMode() || S.ShapeType() != TopAbs_COMPOUND ) return Standard_False;
   // PTV 16.09.2002  OCC725 for storing compound of vertices
-  if (Interface_Static::IVal("write.step.vertex.mode") == 0) {//bug 23950
+  if (myVertexModeIVal == 0) {//bug 23950
     if (S.ShapeType() == TopAbs_COMPOUND ) {
       Standard_Boolean IsOnlyVertices = Standard_True;
       TopoDS_Iterator anItr( S );
@@ -554,6 +561,83 @@ Standard_Boolean STEPControl_ActorWrite::IsAssembly (TopoDS_Shape &S) const
   if ( it.More() ) return Standard_True;
   S = shape;
   return IsAssembly ( S );
+}
+
+void STEPControl_ActorWrite::SetGetAngleUnitIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("step.angleunit.mode", theVal);
+  myAngleUnitIVal = theVal;
+}
+
+void STEPControl_ActorWrite::SetSchemaIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.schema", theVal);
+  mySchemaIVal = theVal;
+}
+
+void STEPControl_ActorWrite::SetPrecisionModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.precision.mode", theVal);
+  myPrecisionModeIVal = theVal;
+}
+
+void STEPControl_ActorWrite::SetVertexModeIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.vertex.mode", theVal);
+  myVertexModeIVal = theVal;
+}
+
+void STEPControl_ActorWrite::SetNonmanifoldIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.nonmanifold", theVal);
+  myNonmanifoldIVal = theVal;
+}
+
+void STEPControl_ActorWrite::SetPrecisionRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("write.precision.val", theVal);
+  myPrecisionRVal = theVal;
+}
+
+void STEPControl_ActorWrite::SetMaxPrecisionRVal(const Standard_Real theVal)
+{
+  Interface_Static::SetRVal("read.maxprecision.val", theVal);
+  myMaxPrecisionRVal = theVal;
+}
+
+Standard_Integer STEPControl_ActorWrite::GetAngleUnitIVal() const
+{
+  return myAngleUnitIVal;
+}
+
+Standard_Integer STEPControl_ActorWrite::GetSchemaIVal() const
+{
+  return mySchemaIVal;
+}
+
+Standard_Integer STEPControl_ActorWrite::GetPrecisionModeIVal() const
+{
+  return myPrecisionModeIVal;
+}
+
+Standard_Integer STEPControl_ActorWrite::GetVertexModeIVal() const
+{
+  return myVertexModeIVal;
+}
+
+Standard_Integer STEPControl_ActorWrite::GetNonmanifoldIVal() const
+{
+  return myNonmanifoldIVal;
+}
+
+Standard_Real STEPControl_ActorWrite::GetPrecisionRVal() const
+{
+  return myPrecisionRVal;
+}
+
+Standard_Real STEPControl_ActorWrite::GetMaxPrecisionRVal() const
+{
+  return myMaxPrecisionRVal;
 }
 
 //=======================================================================
@@ -651,7 +735,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferShape
   Message_ProgressScope aPSRoot(theProgress, NULL, 2);
 
   // [BEGIN] Separate manifold topology from non-manifold in group mode 0 (ssv; 18.11.2010)
-  Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
+  Standard_Boolean isNMMode = myNonmanifoldIVal != 0;
   Handle(Transfer_Binder) aNMBinder;
   if (isNMMode && !GroupMode() && theShape.ShapeType() == TopAbs_COMPOUND) {
     TopoDS_Compound aNMCompound;
@@ -774,8 +858,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferShape
   // create a list of items to translate
   Handle(TopTools_HSequenceOfShape) RepItemSeq = new TopTools_HSequenceOfShape();
   
-  Standard_Boolean isSeparateVertices = 
-    Interface_Static::IVal("write.step.vertex.mode") == 0;//bug 23950
+  Standard_Boolean isSeparateVertices = myVertexModeIVal;//bug 23950
   // PTV 16.09.2002 OCC725 separate shape from solo vertices.
   Standard_Boolean isOnlyVertices = Standard_False;
   if (theShape.ShapeType() == TopAbs_COMPOUND) {
@@ -907,7 +990,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferShape
 //    if ( DMT.IsDone() ) aShape = DMT.ModifiedShape ( aShape );
 ////    aShape = TopoDSToStep::DirectFaces(xShape);
     Handle(Standard_Transient) info;
-    Standard_Real maxTol = Interface_Static::RVal("read.maxprecision.val");
+    Standard_Real maxTol = myMaxPrecisionRVal;
 
     Message_ProgressScope aPS1 (aPS.Next(), NULL, 2);
 
@@ -1191,7 +1274,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferShape
       GetCasted(StepRepr_RepresentationItem, ItemSeq->Value(rep));
     items->SetValue(rep,repit);
   }
-  Standard_Integer ap = Interface_Static::IVal("write.step.schema");
+  Standard_Integer ap = mySchemaIVal;
   Transfer_SequenceOfBinder aSeqBindRelation;
   if(ap == 3 && nbs > 1) {
     Standard_Integer j = 1;
@@ -1298,7 +1381,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferCompound
   TopoDS_Shape theShape = mapper->Value();
 
   // Inspect non-manifold topology case (ssv; 10.11.2010)
-  Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
+  Standard_Boolean isNMMode = myNonmanifoldIVal != 0;
   Standard_Boolean isManifold;
   if (isNMMode)
     isManifold = IsManifoldShape(theShape);
@@ -1309,8 +1392,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferCompound
   Handle(TopTools_HSequenceOfShape) RepItemSeq = new TopTools_HSequenceOfShape();
   // Prepare a collection for non-manifold group of shapes
   Handle(TopTools_HSequenceOfShape) NonManifoldGroup = new TopTools_HSequenceOfShape();
-  Standard_Boolean isSeparateVertices = 
-    (Interface_Static::IVal("write.step.vertex.mode") == 0);//bug 23950
+  Standard_Boolean isSeparateVertices = myVertexModeIVal == 0;//bug 23950
   // PTV OCC725 17.09.2002 -- begin --
   Standard_Integer nbFreeVrtx = 0;
   TopoDS_Compound aCompOfVrtx;

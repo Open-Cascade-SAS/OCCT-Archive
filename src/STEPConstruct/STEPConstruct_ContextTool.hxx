@@ -123,7 +123,15 @@ public:
   //! for assembly link identified by assembly (including NAUO and CDSR)
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetRootsForAssemblyLink (const STEPConstruct_Assembly& assembly);
 
+  Standard_EXPORT TCollection_HAsciiString GetWriteStepProductName() const;
 
+  Standard_EXPORT void SetProductNameCVal(const Standard_CString& theVal);
+
+  Standard_EXPORT void SetSchemaIVal(Standard_Integer theVal);
+
+  Standard_EXPORT Standard_Integer GetSchemaIVal() const;
+
+  Standard_EXPORT Standard_CString GetProductNameCVal() const;
 
 
 protected:
@@ -140,7 +148,8 @@ private:
   Handle(StepBasic_ApplicationProtocolDefinition) theAPD;
   STEPConstruct_AP203Context theAP203;
   Handle(StepGeom_Axis2Placement3d) myAxis;
-
+  Standard_CString myProductNameCVal;
+  Standard_Integer mySchemaIVal;
 
 };
 

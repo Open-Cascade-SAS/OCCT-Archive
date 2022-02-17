@@ -1630,6 +1630,7 @@ StepAP214_Protocol::StepAP214_Protocol ()
   types.Bind(STANDARD_TYPE(StepKinematics_MechanismStateRepresentation), 801);
   types.Bind(STANDARD_TYPE(StepVisual_RepositionedTessellatedGeometricSet), 802);
   types.Bind(STANDARD_TYPE(StepVisual_RepositionedTessellatedItem), 803);
+  mySchemaIVal = Interface_Static::IVal("write.step.schema");
 }
 
 
@@ -1654,7 +1655,7 @@ Handle(Standard_Type)& atype) const
 
 Standard_CString StepAP214_Protocol::SchemaName() const
 {	
-  switch (Interface_Static::IVal("write.step.schema")) { //:j4
+  switch (mySchemaIVal) { //:j4
   default:
   case 1 : return schemaAP214CD;  break; 
   case 2 : return schemaAP214DIS; break; 
@@ -1687,3 +1688,13 @@ Handle(Interface_Protocol) StepAP214_Protocol::Resource
   return HeaderSection::Protocol();
 }
 
+void StepAP214_Protocol::SetSchemaIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.schema", theVal);
+  mySchemaIVal = theVal;
+}
+
+Standard_Integer StepAP214_Protocol::GetSchemaIVal() const
+{
+  return mySchemaIVal;
+}

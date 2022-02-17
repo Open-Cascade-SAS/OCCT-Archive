@@ -51,7 +51,9 @@ public:
   
   Standard_EXPORT StepToTopoDS_TranslateEdgeLoopError Error() const;
 
+  Standard_EXPORT void SetSurCurModeIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetSurCurModeIVal() const;
 
 
 protected:
@@ -66,6 +68,7 @@ private:
 
   StepToTopoDS_TranslateEdgeLoopError myError;
   TopoDS_Shape myResult;
+  Standard_Integer mySurCurModeIVal;
 
 
 };

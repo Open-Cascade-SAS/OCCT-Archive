@@ -51,7 +51,9 @@ public:
   //! Returns a Resource, given its rank (between 1 and NbResources)
   Standard_EXPORT virtual Handle(Interface_Protocol) Resource (const Standard_Integer num) const Standard_OVERRIDE;
 
+  Standard_EXPORT void SetSchemaIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetSchemaIVal() const;
 
 
   DEFINE_STANDARD_RTTIEXT(StepAP214_Protocol,StepData_Protocol)
@@ -63,7 +65,7 @@ protected:
 
 private:
 
-
+  Standard_Integer mySchemaIVal;
 
 
 };

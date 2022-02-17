@@ -96,8 +96,33 @@ public:
   //! NOTE: this method can modify shape
   Standard_EXPORT virtual Standard_Boolean IsAssembly (TopoDS_Shape& S) const;
 
+  Standard_EXPORT void SetGetAngleUnitIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT void SetSchemaIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT void SetPrecisionModeIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetVertexModeIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetNonmanifoldIVal(const Standard_Integer theVal);
+
+  Standard_EXPORT void SetPrecisionRVal(const Standard_Real theVal);
+
+  Standard_EXPORT void SetMaxPrecisionRVal(const Standard_Real theVal);
+
+  Standard_EXPORT Standard_Integer GetAngleUnitIVal() const;
+
+  Standard_EXPORT Standard_Integer GetSchemaIVal() const;
+
+  Standard_EXPORT Standard_Integer GetPrecisionModeIVal() const;
+
+  Standard_EXPORT Standard_Integer GetVertexModeIVal() const;
+
+  Standard_EXPORT Standard_Integer GetNonmanifoldIVal() const;
+
+  Standard_EXPORT Standard_Real GetPrecisionRVal() const;
+
+  Standard_EXPORT Standard_Real GetMaxPrecisionRVal() const;
 
   DEFINE_STANDARD_RTTIEXT(STEPControl_ActorWrite,Transfer_ActorOfFinderProcess)
 
@@ -122,7 +147,13 @@ private:
   Standard_Integer mygroup;
   Standard_Real mytoler;
   STEPConstruct_ContextTool myContext;
-
+  Standard_Integer myAngleUnitIVal;
+  Standard_Integer mySchemaIVal;
+  Standard_Integer myPrecisionModeIVal;
+  Standard_Integer myVertexModeIVal;
+  Standard_Integer myNonmanifoldIVal;
+  Standard_Real myPrecisionRVal;
+  Standard_Real myMaxPrecisionRVal;
 
 };
 

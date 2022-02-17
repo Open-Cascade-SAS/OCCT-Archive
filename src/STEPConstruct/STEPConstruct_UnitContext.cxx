@@ -67,6 +67,7 @@ STEPConstruct_UnitContext::STEPConstruct_UnitContext()
     areaDone = volumeDone = Standard_False;
   //pdn file r_47-sd.stp initialize field.
   theUncertainty = RealLast();
+  myWriteUnitIVal = Interface_Static::IVal("write.step.unit");
 }
 
 //=======================================================================
@@ -92,7 +93,8 @@ void STEPConstruct_UnitContext::Init(const Standard_Real Tol3d)
   Standard_Boolean hasPref = Standard_True;
   StepBasic_SiPrefix siPref = StepBasic_spMilli;
   Standard_Real aScale = 1.;
-  switch (Interface_Static::IVal("write.step.unit"))
+  myWriteUnitIVal = Interface_Static::IVal("write.step.unit");
+  switch (myWriteUnitIVal)
   {
     case  1: uName = "INCH"; aScale = 25.4; break;
     default:
@@ -603,3 +605,15 @@ Standard_Boolean STEPConstruct_UnitContext::VolumeDone() const
 {
   return volumeDone;
 }
+
+void STEPConstruct_UnitContext::SetWriteUnitIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("write.step.unit", theVal);
+  myWriteUnitIVal = theVal;
+}
+
+Standard_Integer STEPConstruct_UnitContext::GetWriteUnitIVal() const
+{
+  return myWriteUnitIVal;
+}
+

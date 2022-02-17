@@ -49,7 +49,9 @@ public:
   
   Standard_EXPORT TopoDSToStep_MakeFaceError Error() const;
 
+  Standard_EXPORT void SetNonmanifoldIVal(const Standard_Integer theVal);
 
+  Standard_EXPORT Standard_Integer GetNonmanifoldIVal() const;
 
 
 protected:
@@ -64,6 +66,7 @@ private:
 
   Handle(StepShape_TopologicalRepresentationItem) myResult;
   TopoDSToStep_MakeFaceError myError;
+  Standard_Integer myNonmanifoldIVal;
 
 
 };

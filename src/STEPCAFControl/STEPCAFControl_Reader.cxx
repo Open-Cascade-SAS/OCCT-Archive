@@ -331,6 +331,7 @@ STEPCAFControl_Reader::STEPCAFControl_Reader()
   myMatMode(Standard_True),
   myViewMode(Standard_True)
 {
+  mySubshapesIVal = Interface_Static::IVal("read.stepcaf.subshapes.name");
   STEPCAFControl_Controller::Init();
 }
 
@@ -376,6 +377,7 @@ void STEPCAFControl_Reader::Init(const Handle(XSControl_WorkSession)& WS,
   myReader.SetWS(WS, scratch);
   myFiles.Clear();
   myMap.Clear();
+  mySubshapesIVal = Interface_Static::IVal("read.stepcaf.subshapes.name");
 }
 
 //=======================================================================
@@ -4582,7 +4584,7 @@ void STEPCAFControl_Reader::ExpandSubShapes(const Handle(XCAFDoc_ShapeTool)& Sha
   TColStd_MapOfTransient aRepItems;
 
   // Read translation control variables
-  Standard_Boolean doReadSNames = (Interface_Static::IVal("read.stepcaf.subshapes.name") > 0);
+  Standard_Boolean doReadSNames = (mySubshapesIVal > 0);
 
   if (!doReadSNames)
     return;
@@ -4941,4 +4943,15 @@ void STEPCAFControl_Reader::SetViewMode(const Standard_Boolean viewmode)
 Standard_Boolean STEPCAFControl_Reader::GetViewMode() const
 {
   return myViewMode;
+}
+
+void STEPCAFControl_Reader::SetSubshapesIVal(const Standard_Integer theVal)
+{
+  Interface_Static::SetIVal("read.stepcaf.subshapes.name", theVal);
+  mySubshapesIVal = theVal;
+}
+
+Standard_Integer STEPCAFControl_Reader::GetSubshapesIVal() const
+{
+  return mySubshapesIVal;
 }
