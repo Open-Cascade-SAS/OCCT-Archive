@@ -2043,12 +2043,7 @@ void readAnnotation(const Handle(XSControl_TransferReader)& theTR,
   {
     Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
     aBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-    if (isHasPlane && !aBox.IsOut(aPlaneAxes.Location())) {
-      aPtext = aPlaneAxes.Location();
-    }
-    else {
-      aPtext = gp_Pnt((aXmin + aXmax) * 0.5, (aYmin + aYmax) * 0.5, (aZmin + aZmax) * 0.5);
-    }
+    aPtext = gp_Pnt((aXmin + aXmax) * 0.5, (aYmin + aYmax) * 0.5, (aZmin + aZmax) * 0.5);
   }
   else {
     aPtext = aPlaneAxes.Location();
