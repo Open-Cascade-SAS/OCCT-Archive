@@ -425,6 +425,16 @@ Standard_Boolean IsDistanceIn2DTolerance (const BRepAdaptor_Surface& aFaceSurfac
                                           const Standard_Boolean = Standard_True)
 #endif
 {
+  gp_Pnt aP;
+  gp_Vec aDU, aDV;
+  Standard_Real um = (thePnt.X() + thePntRef.X()) / 2.;
+  Standard_Real vm = (thePnt.Y() + thePntRef.Y()) / 2.;
+  aFaceSurface.D1(um, vm, aP, aDU, aDV);
+  Standard_Real aMDU = aDU.Magnitude();
+  Standard_Real aMDV = aDV.Magnitude();
+  if (aMDU > Precision::Confusion() && aMDV > Precision::Confusion())
+    return Standard_True; //we are not in singularity
+  
   Standard_Real dumax = 0.01 * (aFaceSurface.LastUParameter() - aFaceSurface.FirstUParameter());
   Standard_Real dvmax = 0.01 * (aFaceSurface.LastVParameter() -	aFaceSurface.FirstVParameter());
   Standard_Real dumin = Abs(thePnt.X() - thePntRef.X());
@@ -453,17 +463,17 @@ Standard_Boolean IsDistanceIn2DTolerance (const BRepAdaptor_Surface& aFaceSurfac
 #endif
   dumax = aFaceSurface.UResolution(aTol3d);
   dvmax = aFaceSurface.VResolution(aTol3d);
-  gp_Pnt aP;
-  gp_Vec aDU, aDV;
-  Standard_Real um = (thePnt.X() + thePntRef.X()) / 2.;
-  Standard_Real vm = (thePnt.Y() + thePntRef.Y()) / 2.;
-  aFaceSurface.D1(um, vm, aP, aDU, aDV);
-  Standard_Real aMDU = aDU.Magnitude();
+  //gp_Pnt aP;
+  //gp_Vec aDU, aDV;
+  //Standard_Real um = (thePnt.X() + thePntRef.X()) / 2.;
+  //Standard_Real vm = (thePnt.Y() + thePntRef.Y()) / 2.;
+  //aFaceSurface.D1(um, vm, aP, aDU, aDV);
+  //Standard_Real aMDU = aDU.Magnitude();
   if (aMDU > Precision::Confusion())
   {
     dumax = Max((aTol3d / aMDU), dumax);
   }
-  Standard_Real aMDV = aDV.Magnitude();
+  //Standard_Real aMDV = aDV.Magnitude();
   if (aMDV > Precision::Confusion())
   {
     dvmax = Max((aTol3d / aMDV), dvmax);

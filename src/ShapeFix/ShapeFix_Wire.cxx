@@ -57,6 +57,7 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepTools.hxx>
+#include <BRepLib.hxx>
 #include <Geom2d_BSplineCurve.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom2d_Line.hxx>
@@ -1715,7 +1716,8 @@ Standard_Boolean ShapeFix_Wire::FixDegenerated (const Standard_Integer num)
 
   // analysis
   gp_Pnt2d p2d1, p2d2;
-  myAnalyzer->CheckDegenerated ( num, p2d1, p2d2 );
+  Standard_Real aTol;
+  myAnalyzer->CheckDegenerated (num, p2d1, p2d2, aTol);
   if ( myAnalyzer->LastCheckStatus ( ShapeExtend_FAIL1 ) ) {
     myLastFixStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_FAIL1 );
   }
@@ -1734,12 +1736,39 @@ Standard_Boolean ShapeFix_Wire::FixDegenerated (const Standard_Integer num)
   gp_Dir2d dir2d ( vect2d );
   Handle(Geom2d_Line) line2d = new Geom2d_Line ( p2d1, dir2d );
 
+  //Temporary
+  TopoDS_Face aFace = Face();
+  ///////////
+  gp_Pnt2d aP2dMid (0.5*(p2d1.XY() + p2d2.XY()));
+  gp_Pnt aPntMid;
+  gp_Vec aDU, aDV;
+  myAnalyzer->Surface()->TrueAdaptor3d()->D1 (aP2dMid.X(), aP2dMid.Y(), aPntMid, aDU, aDV);
+  Standard_Real aTolMagnitude = Precision::Confusion();
+  Standard_Boolean anIsOnSingularity = (aDU.Magnitude() <= aTolMagnitude ||
+                                        aDV.Magnitude() <= aTolMagnitude);
+  /*
+  TopoDS_Edge anEdge = WireData()->Edge ((num > 0)? num : NbEdges());
+  Standard_Real aTolEdge = BRep_Tool::Tolerance (anEdge);
+  */
+  //Standard_Boolean anIsNearSingularity =
+  //myAnalyzer->Surface()->IsDegenerated (aPntMid, Precision::Confusion());
+  Standard_Real aTolDeg = Max (aTol, Precision::Confusion());
+  Standard_Boolean anIsNearSingularity =
+    myAnalyzer->Surface()->IsDegenerated (aPntMid, aTolDeg);
+  anIsOnSingularity |= anIsNearSingularity;
+      
   TopoDS_Edge degEdge;
   BRep_Builder B;
   B.MakeEdge ( degEdge );
-  B.Degenerated ( degEdge, Standard_True );
   B.UpdateEdge ( degEdge, line2d, Face(), ::Precision::Confusion() );
   B.Range ( degEdge, Face(), 0., vect2d.Magnitude() );
+  /*
+  if (anIsOnSingularity)
+    B.Degenerated (degEdge, Standard_True);
+  else
+    BRepLib::BuildCurve3d (degEdge);
+  */
+  B.Degenerated (degEdge, Standard_True);
 
   Handle(ShapeExtend_WireData) sbwd = WireData();
   Standard_Integer n2 = ( num >0 ? num  : sbwd->NbEdges() );
@@ -3058,13 +3087,91 @@ Standard_Boolean ShapeFix_Wire::FixLacking (const Standard_Integer num,
     // else try to add either degenerated or closed edge
     if ( ! doAddLong ) {
       gp_Pnt pV = 0.5 * ( BRep_Tool::Pnt(V1).XYZ() + BRep_Tool::Pnt(V2).XYZ() );
-      gp_Pnt pm = myAnalyzer->Surface()->Value ( 0.5 * ( p2d1.XY() + p2d2.XY() ) );
 
-      Standard_Real dist = pV.Distance ( pm );
-      if ( dist <= tol ) doAddDegen = Standard_True;
-      else if ( myTopoMode ) doAddClosed = Standard_True;
+      //Temporary
+      TopoDS_Face aFace = Face();
+      ///////////
+      gp_Pnt2d aP2dMid (0.5*(p2d1.XY() + p2d2.XY()));
+      gp_Pnt aPntMid;
+      gp_Vec aDU, aDV;
+      myAnalyzer->Surface()->TrueAdaptor3d()->D1 (aP2dMid.X(), aP2dMid.Y(), aPntMid, aDU, aDV);
+      Standard_Real aTolMagnitude = Precision::Confusion();
+      Standard_Boolean anIsOnSingularity = (aDU.Magnitude() <= aTolMagnitude ||
+                                            aDV.Magnitude() <= aTolMagnitude);
+
+      ////////////////////////////////////
+      Standard_Real aCoeff = 0.9;
+      Standard_Real aUmin = myAnalyzer->Surface()->TrueAdaptor3d()->FirstUParameter();
+      Standard_Real aUmax = myAnalyzer->Surface()->TrueAdaptor3d()->LastUParameter();
+      Standard_Real aVmin = myAnalyzer->Surface()->TrueAdaptor3d()->FirstVParameter();
+      Standard_Real aVmax = myAnalyzer->Surface()->TrueAdaptor3d()->LastVParameter();
+      Standard_Real aDeltaU = Abs (p2d1.X() - p2d2.X());
+      Standard_Real aDeltaV = Abs (p2d1.Y() - p2d2.Y());
+      if (!anIsOnSingularity)
+      {
+        if (aDeltaU > aDeltaV)
+        {
+          anIsOnSingularity = (aDeltaU / (aUmax - aUmin) > aCoeff);
+        }
+        else
+        {
+          anIsOnSingularity = (aDeltaV / (aVmax - aVmin) > aCoeff);
+        }
+      }
+      ////////////////////////////////////
+
+      if (!anIsOnSingularity)
+      {
+        Standard_Real aTolDeg = Precision::Confusion();
+        if (V1.IsSame(V2))
+          aTolDeg = BRep_Tool::Tolerance(V1);
+        
+        ////////////////////////////////////
+        gp_Pnt2d aPP1 = p2d1, aPP2 = p2d2;
+        if (aPP1.X() < aUmin)
+          aPP1.SetX (aUmin);
+        if (aPP1.X() > aUmax)
+          aPP1.SetX (aUmax);
+        if (aPP1.Y() < aVmin)
+          aPP1.SetY (aVmin);
+        if (aPP1.Y() > aVmax)
+          aPP1.SetY (aVmax);
+        
+        if (aPP2.X() < aUmin)
+          aPP2.SetX (aUmin);
+        if (aPP2.X() > aUmax)
+          aPP2.SetX (aUmax);
+        if (aPP2.Y() < aVmin)
+          aPP2.SetY (aVmin);
+        if (aPP2.Y() > aVmax)
+          aPP2.SetY (aVmax);
+        
+        gp_Pnt2d aPPmid((aPP1.XY() + aPP2.XY())/2);
+        gp_Pnt aP1 = myAnalyzer->Surface()->Value (aPP1);
+        gp_Pnt aP2 = myAnalyzer->Surface()->Value (aPP2);
+        gp_Pnt aPmid = myAnalyzer->Surface()->Value (aPPmid);
+        Standard_Real aDist = Max (aP1.Distance(aP2), Max (aP1.Distance(aPmid), aP2.Distance(aPmid)));
+        aDist *= 1.001;
+        if (aDist > aTolDeg)
+          aTolDeg = aDist;
+        ////////////////////////////////////
+        
+        anIsOnSingularity = myAnalyzer->Surface()->IsDegenerated (aPntMid, aTolDeg);
+      }
+
+      Standard_Real dist = pV.Distance ( aPntMid );
+      //Standard_Boolean anIsDistLessTol = Standard_False;
+      if (dist <= tol)
+      {
+        //anIsDistLessTol = Standard_True;
+        if (anIsOnSingularity)
+          doAddDegen = Standard_True;
+      }
+      else if (myTopoMode)
+        doAddClosed = Standard_True;
       else if ( dist <= MaxTolerance() ) { //:r7 abv 12 Apr 99: t3d_opt.stp #14245 after S4136
-	doAddDegen = Standard_True;
+        if (anIsOnSingularity)
+          doAddDegen = Standard_True;
 	doIncrease = Standard_True;
 	inctol = dist; 
       }

@@ -54,6 +54,29 @@ static Standard_Real GetNextParamOnPC(const Handle(Geom2d_Curve)& aPC,
 				      const Standard_Real& tolV,
 				      const Standard_Boolean& reverse);
 
+static Standard_Real LocalUresol (const TopoDS_Vertex& theVertex,
+                                  const TopoDS_Face&   theFace,
+                                  const gp_Pnt2d&      theP2d1,
+                                  const gp_Pnt2d&      theP2d2)
+{
+  Standard_Real aResol = -1;
+
+  BRepAdaptor_Surface aBAsurf (theFace, Standard_False);
+  if (aBAsurf.GetType() == GeomAbs_Sphere)
+  {
+    Standard_Real aRadius = aBAsurf.Sphere().Radius();
+    Standard_Real aVmid = (theP2d1.Y() + theP2d2.Y())/2.;
+    Standard_Real aLocalRad = aRadius * Cos(aVmid);
+    if (aLocalRad > Precision::Confusion())
+    {
+      Standard_Real aTolVertex = BRep_Tool::Tolerance (theVertex);
+      aResol = aTolVertex / aLocalRad;
+    }
+  }
+
+  return aResol;
+}
+
 //=======================================================================
 //function : BRepTools_WireExplorer
 //purpose  : 
@@ -536,56 +559,56 @@ void  BRepTools_WireExplorer::Next()
         it.Initialize(l);
         while( it.More() )
         {
-	        const TopoDS_Edge& E = TopoDS::Edge(it.Value());
-	        if( E.IsSame(myEdge) )
-	        {
-	          it.Next();
-	          k++;
-	          continue;
-	        }
-  		
-	        TopoDS_Vertex aVert1, aVert2;
-	        TopExp::Vertices (E, aVert1, aVert2, Standard_True);
-	        if( aVert1.IsNull() || aVert2.IsNull() )
+          const TopoDS_Edge& E = TopoDS::Edge(it.Value());
+          if( E.IsSame(myEdge) )
           {
             it.Next();
             k++;
             continue;
           }
-  		
-	        aPCurve = BRep_Tool::CurveOnSurface (E, myFace, dfFPar, dfLPar);
-	        if( aPCurve.IsNull() )
+          
+          TopoDS_Vertex aVert1, aVert2;
+          TopExp::Vertices (E, aVert1, aVert2, Standard_True);
+          if( aVert1.IsNull() || aVert2.IsNull() )
           {
             it.Next();
             k++;
             continue;
           }
-    		
-	        gp_Pnt2d aPEb, aPEe;
-	        if( aVert1.IsSame(aVert2) == isDegenerated )
-	        {
-	          if( E.Orientation() == TopAbs_REVERSED )
-	            aPCurve->D0(dfLPar, aPEb);
-	          else	
-	            aPCurve->D0(dfFPar, aPEb);
-
-	          if( Abs(dfLPar-dfFPar) > Precision::PConfusion() )
-	          {
-		          isrevese = ( E.Orientation() == TopAbs_REVERSED );
-		          isrevese = !isrevese;
-		          Standard_Real aEPm = GetNextParamOnPC(aPCurve,aPEb,dfFPar,dfLPar,myTolU,myTolV,isrevese);
-        			
-		          aPCurve->D0 (aEPm, aPEe);
+          
+          aPCurve = BRep_Tool::CurveOnSurface (E, myFace, dfFPar, dfLPar);
+          if( aPCurve.IsNull() )
+          {
+            it.Next();
+            k++;
+            continue;
+          }
+          
+          gp_Pnt2d aPEb, aPEe;
+          if( aVert1.IsSame(aVert2) == isDegenerated )
+          {
+            if( E.Orientation() == TopAbs_REVERSED )
+              aPCurve->D0(dfLPar, aPEb);
+            else	
+              aPCurve->D0(dfFPar, aPEb);
+            
+            if( Abs(dfLPar-dfFPar) > Precision::PConfusion() )
+            {
+              isrevese = ( E.Orientation() == TopAbs_REVERSED );
+              isrevese = !isrevese;
+              Standard_Real aEPm = GetNextParamOnPC(aPCurve,aPEb,dfFPar,dfLPar,myTolU,myTolV,isrevese);
+              
+              aPCurve->D0 (aEPm, aPEe);
               if(aPEb.SquareDistance(aPEe) <= gp::Resolution())
               {
                 //seems to be very short curve
                 gp_Vec2d aD;
                 aPCurve->D1(aEPm, aPEe, aD);
-	              if( E.Orientation() == TopAbs_REVERSED )
+                if( E.Orientation() == TopAbs_REVERSED )
                   aPEe.SetXY(aPEb.XY()-aD.XY());
-	              else	
+                else	
                   aPEe.SetXY(aPEb.XY()+aD.XY());
-
+                
                 if(aPEb.SquareDistance(aPEe) <= gp::Resolution())
                 {
                   it.Next();
@@ -593,35 +616,39 @@ void  BRepTools_WireExplorer::Next()
                   continue;
                 }
               }
-		          gp_Vec2d anEDir(aPEb, aPEe);
-		          dfCurAngle = Abs( anEDir.Angle(anERefDir) );
-	          }
-
-	          if( dfCurAngle <= dfMinAngle )
-	          {
-		          Standard_Real d = PRef.SquareDistance(aPEb);
-		          if( d <= Precision::PConfusion() )
-		            d = 0.;
-		          if( Abs(aPEb.X()-PRef.X()) < myTolU  &&  Abs(aPEb.Y()-PRef.Y()) < myTolV )
-		          {
-		            if( d <= dmin )
-		            {
-			            dfMinAngle = dfCurAngle;
-			            kMin = k;
-			            dmin = d;
-		            }
-		          }
-	          }
-	        }
-	        it.Next();
-	        k++;
+              gp_Vec2d anEDir(aPEb, aPEe);
+              dfCurAngle = Abs( anEDir.Angle(anERefDir) );
+            }
+            
+            if( dfCurAngle <= dfMinAngle )
+            {
+              Standard_Real d = PRef.SquareDistance(aPEb);
+              if( d <= Precision::PConfusion() )
+                d = 0.;
+              //jgv
+              Standard_Real aLocalUresol = LocalUresol (myVertex, myFace, PRef, aPEb);
+              aLocalUresol = Max (aLocalUresol, myTolU);
+              /////
+              if( Abs(aPEb.X()-PRef.X()) < aLocalUresol  &&  Abs(aPEb.Y()-PRef.Y()) < myTolV )
+              {
+                if( d <= dmin )
+                {
+                  dfMinAngle = dfCurAngle;
+                  kMin = k;
+                  dmin = d;
+                }
+              }
+            }
+          }
+          it.Next();
+          k++;
         }// while it
 
         if( kMin == 0 )
         {
-	        isDegenerated = Standard_False;
-	        k = 1;
-	        dmin = RealLast();
+          isDegenerated = Standard_False;
+          k = 1;
+          dmin = RealLast();
         }
         else
           break;

@@ -300,7 +300,9 @@ public:
   //! no pcurve
   //! FAIL2: Edge marked as degenerated and has no pcurve
   //! but singularity is not detected
-  Standard_EXPORT Standard_Boolean CheckDegenerated (const Standard_Integer num, gp_Pnt2d& dgnr1, gp_Pnt2d& dgnr2);
+  Standard_EXPORT Standard_Boolean CheckDegenerated (const Standard_Integer num,
+                                                     gp_Pnt2d& dgnr1, gp_Pnt2d& dgnr2,
+                                                     Standard_Real& theTolerance);
   
   //! Checks for degenerated edge between two adjacent ones.
   //! Remark : Calls previous function

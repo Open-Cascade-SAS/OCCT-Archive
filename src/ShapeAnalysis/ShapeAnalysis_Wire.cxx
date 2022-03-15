@@ -768,10 +768,14 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSmall (const Standard_Integer num,
 //=======================================================================
 
 Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer num,
-						       gp_Pnt2d& p2d1, gp_Pnt2d& p2d2) 
+						       gp_Pnt2d& p2d1, gp_Pnt2d& p2d2,
+                                                       Standard_Real& theTolerance)
 {
   myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
   if ( ! IsReady() || NbEdges() < 1 ) return Standard_False;
+
+  theTolerance = -1;
+  Standard_Real aTol1 = -1, aTol2 = -1;
 
   Standard_Integer n2 = (num > 0)? num : NbEdges();
   Standard_Integer n1 = (n2 > 1)? n2-1 : NbEdges();
@@ -838,11 +842,19 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
   Standard_Boolean forward = ( E2.Orientation() == TopAbs_FORWARD );
   //  FIX FEV 1998 : recompute singularity according precision
 
+  //jgv
+  TopoDS_Vertex BeginVertex, EndVertex;
+  gp_Pnt p3d1, p3d2;
+  /////
+
   if (p1.Distance(p2) <= precFirst) { // edge DGNR
     dgnr = mySurf->DegeneratedValues ( p1, precVtx, p2d1, p2d2, par1, par2, forward ); //smh#9
     if ( dgnr ) { // abv 24 Feb 00: trj3_as1-ac-214.stp #6065: avoid making closed edge degenerated
       Standard_Real a, b;
       Handle(Geom_Curve) C3d = BRep_Tool::Curve ( E2, a, b );
+      //jgv
+      theTolerance = BRep_Tool::Tolerance (E2);
+      /////
       if ( ! C3d.IsNull() ) {
 	gp_Pnt p = C3d->Value ( 0.5 * ( a + b ) );
 	if ( p.SquareDistance ( p1 ) > precVtx * precVtx ) dgnr = Standard_False;
@@ -908,6 +920,12 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
     Handle(Geom2d_Curve) c2d;
     if ( sae.PCurve ( E1, myFace, c2d, a, b, Standard_True ) ) {
       p2d1 = c2d->Value ( b );
+      //jgv
+      p3d1 = mySurf->Value (p2d1);
+      BeginVertex = sae.LastVertex(E1);
+      aTol1 = BRep_Tool::Tolerance (BeginVertex);
+      /////
+      
       //#84 rln gp_Pnt2d p2d = c2d->Value ( b );
       //#84 rln par1 = ( p2d.XY() - aP2d.XY() ) * theDir2d.XY();
     }
@@ -915,6 +933,12 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
     //pdn pcurves (fixing regression in f0 in degenerated case) 
     if ( sae.PCurve ( ( dgnr ? E3 : E2 ), myFace, c2d, a, b, Standard_True ) ) {
       p2d2 = c2d->Value ( a );
+      //jgv
+      p3d2 = mySurf->Value (p2d2);
+      EndVertex = sae.FirstVertex (dgnr ? E3 : E2);
+      aTol2 = BRep_Tool::Tolerance (EndVertex);
+      /////
+      
       //#84 rln gp_Pnt2d p2d = c2d->Value ( a );
       //#84 rln par2 = ( p2d.XY() - aP2d.XY() ) * theDir2d.XY();
     }
@@ -927,6 +951,23 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
     theDir2d.Reverse();
   }
 */
+
+  //jgv
+  if (theTolerance == -1)
+  {
+    theTolerance = Max (aTol1, aTol2);
+    if (BeginVertex.IsSame(EndVertex))
+    {
+      if (precVtx > theTolerance)
+        theTolerance = precVtx;
+      /*
+      Standard_Real aDist = p3d1.Distance (p3d2);
+      if (aDist > theTolerance)
+        theTolerance = aDist;
+      */
+    }
+  }
+  /////
   
   //#84 rln 18.03.99 if pcurve is not degenerate anymore, the fix is postponned
   //to ShapeFix_Wire::FixLacking
@@ -959,7 +1000,8 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
 Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer num)
 {
   gp_Pnt2d p2d1, p2d2;
-  return CheckDegenerated ( num, p2d1, p2d2 );
+  Standard_Real aTol;
+  return CheckDegenerated (num, p2d1, p2d2, aTol);
 }
 
 //=======================================================================
