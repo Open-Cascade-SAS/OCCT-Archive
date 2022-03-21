@@ -1188,7 +1188,7 @@ void IntTools_FaceFace::MakeCurve(const Standard_Integer Index,
                              bAvoidLineConstructor, 
                              myTol,
                              aSeqOfL, 
-                             aReachedTol,
+                             aReachedTol, // obsolete parameter
                              myContext);
       //
       aNbSeqOfL=aSeqOfL.Length();
@@ -1196,7 +1196,7 @@ void IntTools_FaceFace::MakeCurve(const Standard_Integer Index,
       Standard_Real aTolC = 0.;
       if (bIsDecomposited) {
         nbiter=aNbSeqOfL;
-        aTolC = aReachedTol;
+        aTolC = Precision::Confusion();
       }
       else {
         nbiter=1;
