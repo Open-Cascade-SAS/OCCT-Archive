@@ -144,6 +144,7 @@ elseif ("${BUILD_CPP_STANDARD}" STREQUAL "C++23")
 else ()
   message (FATAL_ERROR, "misprint in c++ standard name")
 endif()
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if ("x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xClang")
   if (APPLE)
