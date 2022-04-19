@@ -881,7 +881,9 @@ void Adaptor3d_TopolTool::SamplePnts(const Standard_Real theDefl,
 //   case GeomAbs_BSplineSurface: {
   if(typS == GeomAbs_BSplineSurface) {
     // Processing BSpline surface 
-    BSplSamplePnts(theDefl, theNUmin, theNVmin);
+    Standard_Integer aNUmin = (Standard_Integer)(1.2 * theNUmin);
+    Standard_Integer aNVmin = (Standard_Integer)(1.2 * theNVmin);
+    BSplSamplePnts(theDefl, aNUmin, aNVmin);
     return;
   }
   else {
