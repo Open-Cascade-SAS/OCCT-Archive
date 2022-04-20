@@ -19,7 +19,6 @@
 #include <BRepTools_TrsfModification.hxx>
 #include <gp.hxx>
 #include <gp_Trsf.hxx>
-#include <Standard_NoSuchObject.hxx>
 #include <TopoDS_Shape.hxx>
 
 //=======================================================================
@@ -38,13 +37,14 @@ BRepBuilderAPI_Transform::BRepBuilderAPI_Transform (const gp_Trsf& T) :
 //purpose  : 
 //=======================================================================
 
-BRepBuilderAPI_Transform::BRepBuilderAPI_Transform (const TopoDS_Shape& S,
-				      const gp_Trsf& T,
-				      const Standard_Boolean Copy) :
-  myTrsf(T)
+BRepBuilderAPI_Transform::BRepBuilderAPI_Transform (const TopoDS_Shape&    theShape,
+                                                    const gp_Trsf&         theTrsf,
+                                                    const Standard_Boolean theCopyGeom,
+                                                    const Standard_Boolean theCopyMesh)
+  : myTrsf(theTrsf)
 {
-  myModification = new BRepTools_TrsfModification(T);
-  Perform(S,Copy);
+  myModification = new BRepTools_TrsfModification(theTrsf);
+  Perform(theShape, theCopyGeom, theCopyMesh);
 }
 
 
@@ -54,22 +54,21 @@ BRepBuilderAPI_Transform::BRepBuilderAPI_Transform (const TopoDS_Shape& S,
 //purpose  : 
 //=======================================================================
 
-void BRepBuilderAPI_Transform::Perform(const TopoDS_Shape& S,
-				const Standard_Boolean Copy)
+void BRepBuilderAPI_Transform::Perform(const TopoDS_Shape&    theShape,
+                                       const Standard_Boolean theCopyGeom,
+                                       const Standard_Boolean theCopyMesh)
 {
-//  myUseModif = Copy || myTrsf.IsNegative(); bug gp_Trsf.
-  myUseModif = Copy || 
-    myTrsf.ScaleFactor()*myTrsf.HVectorialPart().Determinant() < 0. ||
-      Abs(Abs(myTrsf.ScaleFactor()) - 1) > gp::Resolution();
+  myUseModif = theCopyGeom || myTrsf.IsNegative() || (Abs(Abs(myTrsf.ScaleFactor()) - 1.) > gp::Resolution());
   if (myUseModif) {
     Handle(BRepTools_TrsfModification) theModif = 
       Handle(BRepTools_TrsfModification)::DownCast(myModification);
     theModif->Trsf() = myTrsf;
-    DoModif(S,myModification);
+    theModif->IsCopyMesh() = theCopyMesh;
+    DoModif(theShape, myModification);
   }
   else {
     myLocation = myTrsf;
-    myShape = S.Moved(myLocation);
+    myShape = theShape.Moved(myLocation);
     Done();
   }
 
