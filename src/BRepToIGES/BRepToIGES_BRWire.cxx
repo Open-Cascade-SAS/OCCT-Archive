@@ -308,8 +308,8 @@ Handle(IGESData_IGESEntity) BRepToIGES_BRWire ::TransferEdge (const TopoDS_Edge&
 							      const Standard_Boolean theIsBRepMode)
 {
   Handle(IGESData_IGESEntity) res;
-  if (theEdge.IsNull() || GetPCurveMode() ==0 ||
-       ( ! theIsBRepMode && BRep_Tool::Degenerated (theEdge) ) ) return res;
+  if (theEdge.IsNull() || ( ! theIsBRepMode && BRep_Tool::Degenerated (theEdge) ) )
+    return res;
 
   //S4181 pdn 23.04.99 adjusting length factor according to analytic mode.
   Standard_Real myLen = theLength;
