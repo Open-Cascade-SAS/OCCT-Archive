@@ -17,7 +17,7 @@ On Linux and macOS we recommend to use libraries maintained by distributive deve
 @section build_occt_win_cmake Building with CMake tool
 
 This chapter describes the [CMake](https://cmake.org/download/)-based build process, which is now suggested as a standard way to produce the binaries of Open CASCADE Technology from sources.
-OCCT requires CMake version 2.8.12 or later.
+OCCT requires CMake version 3.1 or later.
 
 CMake is a tool that generates the actual project files for the selected target build system (e.g. Unix makefiles) or IDE (e.g. Visual Studio 2010).
 Here we describe the build procedure on the example of Windows platform with Visual Studio 2010.
