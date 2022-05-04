@@ -130,14 +130,25 @@ elseif (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMP
   endif()
 endif()
 
+# Set desired C++ standard
+if     ("${BUILD_CPP_STANDARD}" STREQUAL "C++11")
+  set (CMAKE_CXX_STANDARD 11)
+elseif ("${BUILD_CPP_STANDARD}" STREQUAL "C++14")
+  set (CMAKE_CXX_STANDARD 14)
+elseif ("${BUILD_CPP_STANDARD}" STREQUAL "C++17")
+  set (CMAKE_CXX_STANDARD 17)
+elseif ("${BUILD_CPP_STANDARD}" STREQUAL "C++20")
+  set (CMAKE_CXX_STANDARD 20)
+elseif ("${BUILD_CPP_STANDARD}" STREQUAL "C++23")
+  set (CMAKE_CXX_STANDARD 23)
+else ()
+  message (FATAL_ERROR, "misprint in c++ standard name")
+endif()
+
 if ("x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xClang")
   if (APPLE)
     # CLang can be used with both libstdc++ and libc++, however on OS X libstdc++ is outdated.
-    set (CMAKE_CXX_FLAGS "-std=c++0x -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
-  elseif(NOT WIN32)
-    # CLang for Windows (at least CLang 8.0 distributed with VS 2019)
-    # does not support option "-std=c++0x"
-    set (CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+    set (CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
   endif()
   # Optimize size of binaries
   set (CMAKE_SHARED_LINKER_FLAGS "-Wl,-s ${CMAKE_SHARED_LINKER_FLAGS}")
@@ -148,14 +159,10 @@ elseif(MINGW)
   # workaround bugs in mingw with vtable export
   set (CMAKE_SHARED_LINKER_FLAGS "-Wl,--export-all-symbols")
 
-  # Require C++11
-  set (CMAKE_CXX_FLAGS "-std=gnu++0x ${CMAKE_CXX_FLAGS}")
   # Optimize size of binaries
   set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
   set (CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
 elseif (DEFINED CMAKE_COMPILER_IS_GNUCXX)
-  # Require C++11
-  set (CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
   # Optimize size of binaries
   set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
   set (CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
