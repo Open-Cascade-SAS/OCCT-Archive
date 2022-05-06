@@ -27,8 +27,8 @@ FromSTEP.FixShape.FixFaceOrientationMode	: -1
 
 FromIGES.FixShape.FixFaceMode			: -1
 FromIGES.FixShape.FixWireMode			: -1
-FromIGES.FixShape.FixOrientationMode		: -1
-FromIGES.FixShape.FixAddNaturalBoundMode	: -1
+FromIGES.FixShape.FixOrientationMode		: 0
+FromIGES.FixShape.FixAddNaturalBoundMode	: 1
 FromIGES.FixShape.FixMissingSeamMode		: -1
 FromIGES.FixShape.FixSmallAreaWireMode		: -1
 FromIGES.FixShape.RemoveSmallAreaFaceMode	: -1

@@ -27,8 +27,8 @@ FromSTEP.FixShape.FixFaceOrientationMode	: -1
 
 FromSTEP.FixShape.FixFaceMode			: -1
 FromSTEP.FixShape.FixWireMode			: -1
-FromSTEP.FixShape.FixOrientationMode		: -1
-FromSTEP.FixShape.FixAddNaturalBoundMode	: -1
+FromSTEP.FixShape.FixOrientationMode		: 0
+FromSTEP.FixShape.FixAddNaturalBoundMode	: 1
 FromSTEP.FixShape.FixMissingSeamMode		: -1
 FromSTEP.FixShape.FixSmallAreaWireMode		: -1
 FromSTEP.FixShape.RemoveSmallAreaFaceMode	: -1
