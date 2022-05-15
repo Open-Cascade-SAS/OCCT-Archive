@@ -18,3 +18,8 @@ GeomConvert_CompBezierSurfacesToBSplineSurface.hxx
 GeomConvert_CompBezierSurfacesToBSplineSurface.lxx
 GeomConvert_CompCurveToBSplineCurve.cxx
 GeomConvert_CompCurveToBSplineCurve.hxx
+GeomConvert_CurveToAnaCurve.cxx
+GeomConvert_CurveToAnaCurve.hxx
+GeomConvert_SurfToAnaSurf.cxx
+GeomConvert_SurfToAnaSurf.hxx
+GeomConvert_ConvType.hxx
