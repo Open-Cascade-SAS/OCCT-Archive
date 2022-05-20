@@ -31,11 +31,13 @@
 #include <BRepCheck_ListOfStatus.hxx>
 #include <BRepCheck_Wire.hxx>
 #include <BRepTools_WireExplorer.hxx>
+#include <BRepTools.hxx>
 #include <ElCLib.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom2dAdaptor_Curve.hxx>
 #include <Geom2dInt_GInter.hxx>
 #include <Geom_Curve.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
 #include <gp_Lin.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
@@ -114,6 +116,11 @@ static Standard_Boolean GetPnt2d(const TopoDS_Vertex    &theVertex,
 				 const TopoDS_Edge      &theEdge,
 				 const TopoDS_Face      &theFace,
 				       gp_Pnt2d         &aPnt);
+
+static void DefinePeriods(const TopoDS_Face& theFace,
+                          Standard_Real&     theUperiod,
+                          Standard_Real&     theVperiod);
+
 //  Modified by Sergey KHROMOV - Wed May 22 10:44:08 2002 End
 
 //=======================================================================
@@ -419,6 +426,7 @@ Standard_Boolean IsDistanceIn2DTolerance (const BRepAdaptor_Surface& aFaceSurfac
                                           const gp_Pnt2d& thePnt,
                                           const gp_Pnt2d& thePntRef,
                                           const Standard_Real aTol3d,
+                                          const Standard_Boolean theIsOnSingularity,
 #ifdef OCCT_DEBUG
                                           const Standard_Boolean PrintWarnings = Standard_True)
 #else
@@ -432,7 +440,8 @@ Standard_Boolean IsDistanceIn2DTolerance (const BRepAdaptor_Surface& aFaceSurfac
   aFaceSurface.D1(um, vm, aP, aDU, aDV);
   Standard_Real aMDU = aDU.Magnitude();
   Standard_Real aMDV = aDV.Magnitude();
-  if (aMDU > Precision::Confusion() && aMDV > Precision::Confusion())
+  if (!theIsOnSingularity ||
+      (aMDU > Precision::Confusion() && aMDV > Precision::Confusion()))
     return Standard_True; //we are not in singularity
   
   Standard_Real dumax = 0.01 * (aFaceSurface.LastUParameter() - aFaceSurface.FirstUParameter());
@@ -686,7 +695,14 @@ BRepCheck_Status BRepCheck_Wire::Closed2d(const TopoDS_Face& theFace,
   gp_Pnt aPntRef = BRep_Tool::Pnt(aFirstVertex);
   gp_Pnt aPnt		 = BRep_Tool::Pnt(aWireExp.CurrentVertex());
 
-  if (!(IsDistanceIn2DTolerance(aFaceSurface, aP_first, aP_last, aTol3d)))
+  Standard_Real aUperiod = 0., aVperiod = 0.;
+  DefinePeriods (theFace, aUperiod, aVperiod);
+
+  if ((aUperiod != 0. && Abs(aP_first.X() - aP_last.X()) > aUperiod/2) ||
+      (aVperiod != 0. && Abs(aP_first.Y() - aP_last.Y()) > aVperiod/2))
+    aClosedStat = BRepCheck_NotClosed;
+
+  if (!(IsDistanceIn2DTolerance(aFaceSurface, aP_first, aP_last, aTol3d, Standard_True)))
     aClosedStat = BRepCheck_NotClosed;
 
   if(!IsDistanceIn3DTolerance(aPntRef, aPnt, aTol3d))
@@ -1720,10 +1736,24 @@ void ChoixUV(const TopoDS_Vertex& theVertex,
   if (aVOrientation != anEdgOrientation)
     aDerRef.Reverse();
 
+  //Check if there is a seam edge in the list
+  Standard_Real aUperiod = 0., aVperiod = 0.;
+  DefinePeriods (theFace, aUperiod, aVperiod);
+  Standard_Boolean anIsOnSingularity = Standard_False;
+  for (It.Initialize(theLOfShape); It.More(); It.Next())
+  {
+    TopoDS_Edge anEdge = TopoDS::Edge (It.Value());
+    if (BRep_Tool::Degenerated (anEdge))
+    {
+      anIsOnSingularity = Standard_True;
+      break;
+    }
+  }
+
   It.Initialize(theLOfShape);
 
   for (; It.More(); It.Next())
-    {
+  {
     anIndex++;
     const TopoDS_Edge& anE=TopoDS::Edge(It.Value());
     C2d = BRep_Tool::CurveOnSurface(anE, theFace, aFirstParam, aLastParam);
@@ -1734,7 +1764,11 @@ void ChoixUV(const TopoDS_Vertex& theVertex,
     aParam =(aVOrientation != anE.Orientation()) ? aFirstParam : aLastParam;
     aPnt = aCA.Value(aParam);
 
-    if(!IsDistanceIn2DTolerance(aFaceSurface, aPnt, aPntRef, aTol3d, Standard_False))
+    if ((aUperiod != 0. && Abs(aPnt.X() - aPntRef.X()) > aUperiod/2) ||
+        (aVperiod != 0. && Abs(aPnt.Y() - aPntRef.Y()) > aVperiod/2))
+      continue;
+
+    if(!IsDistanceIn2DTolerance(aFaceSurface, aPnt, aPntRef, aTol3d, anIsOnSingularity, Standard_False))
       continue;
 
     CurveDirForParameter(aCA, aParam, aPnt, aDer);
@@ -1753,22 +1787,22 @@ void ChoixUV(const TopoDS_Vertex& theVertex,
       anAngle += 2.*M_PI;
 
     if ( theFace.Orientation() == TopAbs_FORWARD )
-      {
+    {
       if ( anAngle < aMinAngle )
-        {
+      {
         anIndMin = anIndex;
         aMinAngle = anAngle;
-        }
       }
+    }
     else //theFace.Orientation() != TopAbs_FORWARD
-      {
+    {
       if ( anAngle > aMaxAngle )
-        {
+      {
         anIndMin = anIndex;
         aMaxAngle = anAngle;
-        }
       }
-    }//end of for
+    }
+  }//end of for
 
 // Update edge
   if (anIndMin == 0)
@@ -1780,7 +1814,7 @@ void ChoixUV(const TopoDS_Vertex& theVertex,
       if(anEFound.IsNull() || BRep_Tool::Degenerated(theEdge) ||
                                   BRep_Tool::Degenerated(anEFound))
         IsFound = Standard_False; //bad
-      else if (!IsDistanceIn2DTolerance(aFaceSurface, aPnt, aPntRef, aTol3d))
+      else if (!IsDistanceIn2DTolerance(aFaceSurface, aPnt, aPntRef, aTol3d, Standard_True))
         IsFound = Standard_False; //bad
       else 
         // clousureness in 3D
@@ -1969,3 +2003,20 @@ static Standard_Boolean IsClosed2dForPeriodicFace
   return Standard_True;
 }
 //  Modified by Sergey KHROMOV - Thu Jun 20 10:58:05 2002 End
+
+void DefinePeriods(const TopoDS_Face& theFace,
+                   Standard_Real&     theUperiod,
+                   Standard_Real&     theVperiod)
+{
+  theUperiod = theVperiod = 0.;
+  
+  Handle(Geom_Surface) aSurf = BRep_Tool::Surface (theFace);
+  if (aSurf->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface)))
+    aSurf = (Handle(Geom_RectangularTrimmedSurface)::DownCast(aSurf))->BasisSurface();
+  Standard_Real aUmin, aUmax, aVmin, aVmax;
+  aSurf->Bounds (aUmin, aUmax, aVmin, aVmax);
+  if (aSurf->IsUClosed())
+    theUperiod = aUmax - aUmin;
+  if (aSurf->IsVClosed())
+    theVperiod = aVmax - aVmin;
+}
