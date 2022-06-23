@@ -411,7 +411,7 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
   if (((aType1 != GeomAbs_Line) && (aType1 != GeomAbs_Circle)) ||
       ((aType2 != GeomAbs_Line) && (aType2 != GeomAbs_Circle)))
   {
-    mySqDist.Append(theSqDist);
+    //mySqDist.Append(theSqDist);
     myDone = Standard_True;
     myIsParallel = Standard_True;
     return;
@@ -432,11 +432,7 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
                                   !isReversed ? theUt21 : theUt11,
                                   !isReversed ? theUt22 : theUt12);
 
-    if (ExtPLin.IsDone())
-    {
-      mySqDist.Append(theSqDist);
-    }
-    else
+    if (!ExtPLin.IsDone())
     {
       myIsParallel = Standard_False;
     }
@@ -837,7 +833,9 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ExtElC&  AlgExt,
     if (myIsParallel) {
       PrepareParallelResult(Ut11, Ut12, Ut21, Ut22, AlgExt.SquareDistance());
     }
-    else {
+
+    if(mypoints.IsEmpty())
+    {
       NbExt = AlgExt.NbExt();
       for (i = 1; i <= NbExt; i++) {
 	// Verification de la validite des parametres
@@ -911,7 +909,7 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ECC&   AlgExt,
     {
       PrepareParallelResult(Ut11, Ut12, Ut21, Ut22, AlgExt.SquareDistance());
     }
-    else
+    if(mypoints.IsEmpty())
     {
       NbExt = AlgExt.NbExt();
       for (i = 1; i <= NbExt; i++)

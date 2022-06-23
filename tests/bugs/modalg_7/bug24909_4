@@ -1,0 +1,15 @@
+puts "========"
+puts "0024909: Modeling Algorithms - SIGSEGV in buildsweep"
+puts "========"
+puts ""
+
+pload ALL
+circle c1 0 0 0 40
+mkedge e1 c1
+wire w1 e1
+line l1 0 0 0 0 0 20
+mkedge e2 l1 0 10
+wire w2 e2
+mksweep w1
+addsweep w2
+buildsweep sw1
