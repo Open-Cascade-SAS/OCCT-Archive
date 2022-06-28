@@ -543,7 +543,11 @@ static Standard_Integer tobezier(Draw_Interpretor& di,
     if ( C3d.IsNull()) {
       Handle(Geom_BSplineSurface) S = 
 	DrawTrSurf::GetBSplineSurface(a[2]);
-      if ( S.IsNull()) return 1;
+      if (S.IsNull())
+      {
+        delete[] name;
+        return 1;
+      }
       if (n == 7) {
 	Standard_Real U1, U2, V1, V2;
 	U1 = Draw::Atof(a[3]);
@@ -630,6 +634,8 @@ static Standard_Integer tobezier(Draw_Interpretor& di,
       }
     }
   }
+
+  delete[] name;
 
   return 0;
 }
