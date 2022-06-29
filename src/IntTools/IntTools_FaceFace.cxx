@@ -2335,7 +2335,7 @@ Standard_Boolean ClassifyLin2d(const Handle(GeomAdaptor_Surface)& theS,
 
 {
   Standard_Real xmin, xmax, ymin, ymax, d1, d2, A, B, C;
-  Standard_Real par[2];
+  Standard_Real par[2] = { 0.0, 0.0 };
   Standard_Integer nbi = 0;
 
   xmin = theS->FirstUParameter();

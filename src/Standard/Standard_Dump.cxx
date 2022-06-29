@@ -230,10 +230,12 @@ TCollection_AsciiString Standard_Dump::GetPointerInfo (const void* thePointer, c
 
   std::ostringstream aPtrStr;
   aPtrStr << thePointer;
-  if (!isShortInfo)
-    return aPtrStr.str().c_str();
 
-  TCollection_AsciiString anInfoPtr (aPtrStr.str().c_str());
+  TCollection_AsciiString anInfoPtr(aPtrStr.str().c_str());
+
+  if (!isShortInfo)
+    return anInfoPtr;
+
   for (int aSymbolId = 1; aSymbolId < anInfoPtr.Length(); aSymbolId++)
   {
     if (anInfoPtr.Value(aSymbolId) != '0')
@@ -243,7 +245,7 @@ TCollection_AsciiString Standard_Dump::GetPointerInfo (const void* thePointer, c
       return anInfoPtr;
     }
   }
-  return aPtrStr.str().c_str();
+  return TCollection_AsciiString(aPtrStr.str().c_str());
 }
 
 // =======================================================================

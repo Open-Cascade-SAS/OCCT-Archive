@@ -3915,7 +3915,7 @@ void ChFi3d_Builder::IntersectMoreCorner(const Standard_Integer Index)
     }
     TopoDS_Face FFv;
     Standard_Real tol;
-    Standard_Integer prol;
+    Standard_Integer prol = 0;
     BRep_Builder BRE;
     Handle(Geom_Surface ) Sface;
     Sface=BRep_Tool::Surface(Fv);

@@ -56,7 +56,7 @@ Standard_Boolean BinMDataXtd_PresentationDriver::Paste
   Handle(TDataXtd_Presentation) anAttribute = Handle(TDataXtd_Presentation)::DownCast(theTarget);
 
   // Display status
-  Standard_Integer aValue;
+  const Standard_Integer aValue = -1;
   ok = theSource >> aValue;
   if (!ok) return ok;
   anAttribute->SetDisplayed (aValue != 0);
@@ -92,7 +92,7 @@ Standard_Boolean BinMDataXtd_PresentationDriver::Paste
     anAttribute->UnsetMaterial();
 
   // Transparency
-  Standard_Real aRValue;
+  Standard_Real aRValue = -1.0;
   ok = theSource >> aRValue;
   if ( !ok ) return ok;
   if ( aRValue != -1. )

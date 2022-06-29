@@ -108,7 +108,7 @@ void MeshVS_MeshPrsBuilder::BuildNodes ( const Handle(Prs3d_Presentation)& Prs,
   Standard_Boolean HasSelectFlag = ( ( DisplayMode & MeshVS_DMF_SelectionPrs ) != 0 );
   Standard_Boolean HasHilightFlag = ( ( DisplayMode & MeshVS_DMF_HilightPrs ) != 0 );
 
-  Standard_Real aCoordsBuf[ 3 ];
+  const Standard_Real aCoordsBuf[3] = { 0.0, 0.0, 0.0 };
   TColStd_Array1OfReal aCoords( *aCoordsBuf, 1, 3 );
   Standard_Integer NbNodes;
   MeshVS_EntityType aType;

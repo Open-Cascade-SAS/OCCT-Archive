@@ -54,7 +54,7 @@ Standard_Boolean BinMDataXtd_GeometryDriver::Paste
   Handle(TDataXtd_Geometry) aT = 
     Handle(TDataXtd_Geometry)::DownCast (theTarget);
 
-  Standard_Integer aType;
+  const Standard_Integer aType = -1;
   Standard_Boolean ok = theSource >> aType;
   if (ok)
     aT->SetType ((TDataXtd_GeometryEnum) aType);

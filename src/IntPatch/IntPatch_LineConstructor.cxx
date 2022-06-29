@@ -999,7 +999,8 @@ static void TestWLineToRLine(const IntPatch_SequenceOfLine& slinref,
       }
 
       // resolve arcs for vertices not having a link to an arc
-      Standard_Real utst,vtst;
+      Standard_Real utst = 0.0;
+	  Standard_Real vtst = 0.0;
       TColStd_Array1OfReal paramsResolved(1,nbvtx);
       TColStd_Array1OfTransient arcsResolved(1,nbvtx);
       arcsResolved.Init(Handle(Adaptor2d_Curve2d)());

@@ -62,7 +62,7 @@ Standard_Boolean BinMFunction_FunctionDriver::Paste
   Standard_Boolean ok = theSource >> aGUID;
   if (ok) {
     anAtt->SetDriverGUID(aGUID);  
-    Standard_Integer aValue;
+    const Standard_Integer aValue = -1;
     ok = theSource >> aValue;
     if(ok)
       anAtt->SetFailure(aValue); 

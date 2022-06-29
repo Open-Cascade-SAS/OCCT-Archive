@@ -1948,7 +1948,7 @@ int mcrcomm_(integer *kop,
   /* Local variables */
   intptr_t ideb;
   doublereal dtab[32000];
-  intptr_t itab[160]	/* was [4][40] */;
+  intptr_t itab[160] = {0}	/* was [4][40] */;
   intptr_t ipre;
   integer i__, j, k;
   
@@ -2522,7 +2522,7 @@ int AdvApp2Var_SysBase::mcrlist_(integer *ier) const
   
   /* Local variables */
   char cfmt[1];
-  doublereal dfmt;
+  doublereal dfmt = 0.0; // unused
   integer ifmt, i__, nufmt, ntotal;
   char subrou[7];
   
@@ -2667,7 +2667,7 @@ int AdvApp2Var_SysBase::mcrrqst_(integer *iunit,
   integer i__1, i__2;
 
   /* Local variables */
-  doublereal dfmt;
+  doublereal dfmt = 0.0; // unused
   integer ifmt, iver;
   char subr[7];
   integer ksys , ibyte, irest, ier;

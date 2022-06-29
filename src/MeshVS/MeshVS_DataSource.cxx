@@ -318,7 +318,7 @@ Bnd_Box MeshVS_DataSource::GetBoundingBox() const
   const TColStd_PackedMapOfInteger& aNodes = GetAllNodes();
   if( aNodes.Extent() )
   {
-    Standard_Real aCoordsBuf[ 3 ];
+    const Standard_Real aCoordsBuf[3] = { 0.0, 0.0, 0.0 };
     TColStd_Array1OfReal aCoords (*aCoordsBuf, 1, 3);
     Standard_Integer nbNodes;
     MeshVS_EntityType aType;

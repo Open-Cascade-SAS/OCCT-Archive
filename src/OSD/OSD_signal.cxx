@@ -294,7 +294,7 @@ static LONG CallHandler (DWORD theExceptionCode,
    && theExceptionCode != EXCEPTION_NONCONTINUABLE_EXCEPTION)
   {
     MessageBeep (MB_ICONHAND);
-    char aMsgBoxBuffer[2048];
+    char aMsgBoxBuffer[2048] = { '\0' };
     strcat_s (aMsgBoxBuffer, sizeof(aMsgBoxBuffer), aBuffer);
     if (aStackBuffer != NULL)
     {

@@ -420,7 +420,8 @@ HLRAlgo_PolyInternalData::UpdateLinks (const Standard_Integer ip1,
     aSegIndices2->Conex2 = cnx2;
     aNodIndices3.NdSg   = find;
 
-    Standard_Integer iOld,iNew,iTr,skip,ip4,itpk[2];
+    Standard_Integer iOld,iNew,iTr,skip,ip4;
+	Standard_Integer itpk[2] = { -1, -1 };
     Standard_Integer n1,n2,n3,nOld[3],nNew[3],New[4];
     New[0] = cnx1;
     New[2] = myNbTData + 1;

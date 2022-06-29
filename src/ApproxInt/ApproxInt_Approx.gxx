@@ -77,7 +77,8 @@ static void ComputeTrsf2d(const Handle(TheWLine)& theline,
   for(Standard_Integer i=1; i<=aNbPnts; i++)
   {
     const IntSurf_PntOn2S POn2S = theline->Point(i);
-    Standard_Real  U,V;
+    Standard_Real U = 0.0;
+    Standard_Real V = 0.0;
     (POn2S.*pfunc)(U,V);
     aUmin = Min(U, aUmin);
     aVmin = Min(V, aVmin);

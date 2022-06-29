@@ -198,7 +198,7 @@ public:
   Standard_Real LowerValue() 
   {
     Standard_Integer a, aResultIndex = 0;
-    Standard_Real aValue;
+    Standard_Real aValue = 0.0;
     for(a = myV.Length(); a > 0; a--) 
     {
       if (aResultIndex == 0 || Abs(aValue) > Abs(myV.Value(a))) 
