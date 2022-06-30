@@ -64,7 +64,9 @@
 #include <XSAlgo_ToolContainer.hxx>
 #include <TopExp_Explorer.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(XSAlgo_AlgoContainer,Standard_Transient)
+IMPLEMENT_STANDARD_RTTIEXT(XSAlgo_AlgoContainer, Standard_Transient)
+
+static Standard_Mutex THE_RESOURCE_MUTEX;
 
 //=======================================================================
 //function : XSAlgo_AlgoContainer
@@ -167,9 +169,11 @@ TopoDS_Shape XSAlgo_AlgoContainer::ProcessShape (const TopoDS_Shape& shape,
   }
   
   // Define runtime tolerances and do Shape Processing 
-  rsc->SetResource ( "Runtime.Tolerance", Prec );
-  rsc->SetResource ( "Runtime.MaxTolerance", maxTol );
-
+  {
+    Standard_Mutex::Sentry aLock(&THE_RESOURCE_MUTEX);
+    rsc->SetResource("Runtime.Tolerance", Prec);
+    rsc->SetResource("Runtime.MaxTolerance", maxTol);
+  }
   if ( !ShapeProcess::Perform(context, seq, theProgress) )
     return shape; // return original shape
 

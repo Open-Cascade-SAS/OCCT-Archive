@@ -20,12 +20,15 @@
 #include <ShapeProcess_Context.hxx>
 #include <Standard_ErrorHandler.hxx>
 #include <Standard_Failure.hxx>
+#include <Standard_Mutex.hxx>
 #include <Standard_Type.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_HAsciiString.hxx>
 
 #include <sys/stat.h>
-IMPLEMENT_STANDARD_RTTIEXT(ShapeProcess_Context,Standard_Transient)
+IMPLEMENT_STANDARD_RTTIEXT(ShapeProcess_Context, Standard_Transient)
+
+static Standard_Mutex THE_SHAPE_PROCESS_MUTEX;
 
 //=======================================================================
 //function : ShapeProcess_Context
@@ -73,6 +76,7 @@ Standard_Boolean ShapeProcess_Context::Init (const Standard_CString file,
 
 Handle(Resource_Manager) ShapeProcess_Context::LoadResourceManager (const Standard_CString name)
 {
+  Standard_Mutex::Sentry aLock(&THE_SHAPE_PROCESS_MUTEX);
   // Optimisation of loading resource file: file is load only once
   // and reloaded only if file date has changed
   static Handle(Resource_Manager) sRC;
@@ -127,7 +131,7 @@ Handle(Resource_Manager) ShapeProcess_Context::LoadResourceManager (const Standa
       sUMtime = aUMtime;
     }
   }
-  return sRC;
+  return new Resource_Manager(*sRC);
 }
 
 //=======================================================================
