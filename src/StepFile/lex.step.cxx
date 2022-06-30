@@ -1774,6 +1774,9 @@ void yyFlexLexer::yyrestart( std::istream* input_file )
     void yyFlexLexer::yy_init_buffer( YY_BUFFER_STATE b, std::istream& file )
 
 {
+	if ( ! b )
+	  return;
+
 	int oerrno = errno;
     
 	yy_flush_buffer( b );

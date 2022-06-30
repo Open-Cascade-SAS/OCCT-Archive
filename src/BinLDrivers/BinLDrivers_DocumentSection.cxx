@@ -223,14 +223,14 @@ Standard_Boolean BinLDrivers_DocumentSection::ReadTOC (
   char aBuf[THE_BUF_SIZE];
   Standard_Integer aNameBufferSize;
   theStream.read ((char *)&aNameBufferSize, sizeof(Standard_Integer));
-  if (theStream.eof() || aNameBufferSize > THE_BUF_SIZE)
+  if (theStream.eof() || aNameBufferSize > THE_BUF_SIZE - 1)
     return Standard_False;
 #ifdef DO_INVERSE
   aNameBufferSize = InverseSize(aNameBufferSize);
 #endif
   if (aNameBufferSize > 0) {
     theStream.read ((char *)&aBuf[0], (Standard_Size)aNameBufferSize);
-    aBuf[aNameBufferSize] = '\0';
+    aBuf[aNameBufferSize-1] = '\0';
     theSection.myName = (Standard_CString)&aBuf[0];
 
     uint64_t aValue[3];

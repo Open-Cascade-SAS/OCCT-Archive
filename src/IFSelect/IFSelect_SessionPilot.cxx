@@ -113,11 +113,11 @@ IFSelect_SessionPilot::IFSelect_SessionPilot (const Standard_CString prompt)
       continue;
     }
     if (nc == 0) thewordeb.SetValue (thenbwords,i);
-    if (nc > MAXCARS) {  std::cout<<"Arg."<<thenbwords<<" > "<<MAXCARS<<" car.s, tronque"<<std::endl; continue;  }
+    if (nc >= MAXCARS - 1) {  std::cout<<"Arg."<<thenbwords<<" > "<<MAXCARS<<" car.s, tronque"<<std::endl; continue;  }
     unarg[nc] = val;  nc ++;
   }
   if (nc > 0) {
-    unarg[nc] = '\0'; thewords(thenbwords).Clear();
+    unarg[nc + 1] = '\0'; thewords(thenbwords).Clear();
     thewords(thenbwords).AssignCat(unarg);
 #ifdef DEBUG_TRACE
     std::cout<<"thewords("<<thenbwords<<")="<<unarg<<std::endl<<" .. Fin avec thenbwords="<<thenbwords+1<<std::endl;

@@ -141,7 +141,7 @@ Returns  :      iMeter if OK, -1 if no such meter
 ======================================================================*/
 int perf_start_imeter (const int iMeter)
 {
-  if (iMeter >= 0 && iMeter < nb_meters) {
+  if (iMeter >= 0 && iMeter < nb_meters && iMeter < MAX_METERS) {
     PICK_TIME (MeterTable[iMeter].start_time)
     return iMeter;
   }

@@ -1731,8 +1731,10 @@ static void yy_load_buffer_state  (void)
     void yy_delete_buffer (YY_BUFFER_STATE  b )
 {
     
-	if ( ! b )
-		return;
+	if ( ! b ) {
+	  YY_FATAL_ERROR("out of dynamic memory in yy_delete_buffer()");
+	  return;
+	}
 
 	if ( b == YY_CURRENT_BUFFER ) /* Not sure if we should pop here. */
 		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
@@ -1750,6 +1752,11 @@ static void yy_load_buffer_state  (void)
     static void yy_init_buffer  (YY_BUFFER_STATE  b, FILE * file )
 
 {
+	if ( ! b ) {
+	  YY_FATAL_ERROR("out of dynamic memory in yy_init_buffer()");
+	  return;
+	}
+
 	int oerrno = errno;
     
 	yy_flush_buffer( b );
@@ -1777,8 +1784,10 @@ static void yy_load_buffer_state  (void)
  */
     void yy_flush_buffer (YY_BUFFER_STATE  b )
 {
-    	if ( ! b )
-		return;
+    if ( ! b ) {
+	  YY_FATAL_ERROR("out of dynamic memory in yy_flush_buffer()");
+	  return;
+	}
 
 	b->yy_n_chars = 0;
 
