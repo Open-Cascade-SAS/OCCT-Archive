@@ -12,7 +12,7 @@ trim surf4 surf 3 6 -1.5 0
 convert surf4 surf4
 mkface f4 surf4
 sewing sh f1 f2 f3 f4
-getanasurf asurf sh  3  1.e-7
+getanasurf asurf sh sph 1.e-7
 if {[isdraw asurf]} {
   set log [dump asurf]
   if { [regexp {SphericalSurface} $log ] != 1 } {

@@ -30,9 +30,10 @@
 #include <Geom_Plane.hxx>
 #include <Geom_SphericalSurface.hxx>
 #include <Geom_Surface.hxx>
+#include <Geom_SurfaceOfRevolution.hxx>
 #include <Geom_ToroidalSurface.hxx>
 #include <Geom_TrimmedCurve.hxx>
-#include <GeomAdaptor_HSurface.hxx>
+#include <GeomAdaptor_Surface.hxx>
 #include <GeomAdaptor_Surface.hxx>
 #include <GeomLib_IsPlanarSurface.hxx>
 #include <gp_Ax3.hxx>
@@ -45,7 +46,56 @@
 #include <GeomConvert_SurfToAnaSurf.hxx>
 #include <TColgp_Array1OfPnt.hxx>
 #include <TColStd_Array1OfReal.hxx>
+#include <Extrema_ExtElC.hxx>
 
+//static method for checking surface of revolution
+//To avoid two-parts cone-like surface
+static void CheckVTrimForRevSurf(const Handle(Geom_SurfaceOfRevolution)& aRevSurf,
+  Standard_Real& V1, Standard_Real& V2)
+{
+  const Handle(Geom_Curve)& aBC = aRevSurf->BasisCurve();
+  Handle(Geom_Line) aLine = Handle(Geom_Line)::DownCast(aBC);
+  if (aLine.IsNull())
+    return;
+  const gp_Ax1& anAxis = aRevSurf->Axis();
+
+  gp_Lin anALin(anAxis);
+  Extrema_ExtElC anExtLL(aLine->Lin(), anALin, Precision::Angular());
+  if (!anExtLL.IsDone() || anExtLL.IsParallel())
+    return;
+  Standard_Integer aNbExt = anExtLL.NbExt();
+  if (aNbExt == 0)
+    return;
+
+  Standard_Integer i;
+  Standard_Integer imin = 0;
+  for (i = 1; i <= aNbExt; ++i)
+  {
+    if (anExtLL.SquareDistance(i) < Precision::SquareConfusion())
+    {
+      imin = i;
+      break;
+    }
+  }
+  if (imin == 0)
+    return;
+
+  Extrema_POnCurv aP1, aP2;
+  anExtLL.Points(imin, aP1, aP2);
+  Standard_Real aVExt = aP1.Parameter();
+  if (aVExt <= V1 || aVExt >= V2)
+    return;
+
+  if (aVExt - V1 > V2 - aVExt)
+  {
+    V2 = aVExt;
+  }
+  else
+  {
+    V1 = aVExt;
+  }
+
+}
 
 // static method to try create toroidal surface.
 // In case <isTryUMajor> = Standard_True try to use V isoline radius as minor radaius.
@@ -71,12 +121,12 @@ static Handle(Geom_Surface) TryTorusSphere(const Handle(Geom_Surface)& theSurf,
   if (isTryUMajor)
   {
     IsoCrv1 = theSurf->VIso(Param1 + ((Param2 - Param1) / 3.));
-    IsoCrv2 = theSurf->VIso(Param1 + ((Param2 - Param1)*2. / 3));
+    IsoCrv2 = theSurf->VIso(Param1 + ((Param2 - Param1) * 2. / 3));
   }
   else
   {
     IsoCrv1 = theSurf->UIso(Param1 + ((Param2 - Param1) / 3.));
-    IsoCrv2 = theSurf->UIso(Param1 + ((Param2 - Param1)*2. / 3));
+    IsoCrv2 = theSurf->UIso(Param1 + ((Param2 - Param1) * 2. / 3));
   }
 
   Handle(Geom_Curve) Crv1 = GeomConvert_CurveToAnaCurve::ComputeCurve(IsoCrv1, toler, aParam1ToCrv, aParam2ToCrv, cf, cl,
@@ -103,7 +153,7 @@ static Handle(Geom_Surface) TryTorusSphere(const Handle(Geom_Surface)& theSurf,
   aPnt2 = aCircle1->Circ().Location();
   aPnt3 = aCircle2->Circ().Location();
 
-  Standard_Real eps = 1.e-09;  // angular resolution
+  //Standard_Real eps = 1.e-09;  // angular resolution
   Standard_Real d0 = aPnt1.Distance(aPnt2);  Standard_Real d1 = aPnt1.Distance(aPnt3);
   gp_Circ circ;
 
@@ -120,7 +170,7 @@ static Handle(Geom_Surface) TryTorusSphere(const Handle(Geom_Surface)& theSurf,
     return newSurface;
   }
 
-  if (!GeomConvert_CurveToAnaCurve::GetCircle(circ, aPnt1, aPnt2, aPnt3, d0, d1, eps))
+  if (!GeomConvert_CurveToAnaCurve::GetCircle(circ, aPnt1, aPnt2, aPnt3) /*, d0, d1, eps)*/)
     return newSurface;
 
   Standard_Real aMajorR = circ.Radius();
@@ -131,7 +181,7 @@ static Handle(Geom_Surface) TryTorusSphere(const Handle(Geom_Surface)& theSurf,
   return newSurface;
 }
 
-static Standard_Real ComputeGap(const Handle(Geom_Surface)& theSurf, 
+static Standard_Real ComputeGap(const Handle(Geom_Surface)& theSurf,
   const Standard_Real theU1, const Standard_Real theU2, const Standard_Real theV1, const Standard_Real theV2,
   const Handle(Geom_Surface) theNewSurf, const Standard_Real theTol = RealLast())
 {
@@ -142,26 +192,26 @@ static Standard_Real ComputeGap(const Handle(Geom_Surface)& theSurf,
   gp_Cone aCon;
   gp_Sphere aSphere;
   gp_Torus aTor;
-  switch (aSType) 
+  switch (aSType)
   {
-    case GeomAbs_Plane:
-      aPln = aGAS.Plane();
-      break;
-    case GeomAbs_Cylinder:
-      aCyl = aGAS.Cylinder();
-      break;
-    case GeomAbs_Cone:
-      aCon = aGAS.Cone();
-      break;
-    case GeomAbs_Sphere:
-      aSphere = aGAS.Sphere();
-      break;
-    case GeomAbs_Torus:
-      aTor = aGAS.Torus();
-      break;
-    default:
-      return Precision::Infinite();
-      break;
+  case GeomAbs_Plane:
+    aPln = aGAS.Plane();
+    break;
+  case GeomAbs_Cylinder:
+    aCyl = aGAS.Cylinder();
+    break;
+  case GeomAbs_Cone:
+    aCon = aGAS.Cone();
+    break;
+  case GeomAbs_Sphere:
+    aSphere = aGAS.Sphere();
+    break;
+  case GeomAbs_Torus:
+    aTor = aGAS.Torus();
+    break;
+  default:
+    return Precision::Infinite();
+    break;
   }
 
   Standard_Real aGap = 0.;
@@ -177,9 +227,9 @@ static Standard_Real ComputeGap(const Handle(Geom_Surface)& theSurf,
   DV = (theV2 - theV1) / (NP - 1);
   Standard_Real DU2 = DU / 2., DV2 = DV / 2.;
   for (j = 1; (j < NP) && onSurface; j++) {
-    Standard_Real V = theV1 + DV*(j - 1) + DV2;
+    Standard_Real V = theV1 + DV * (j - 1) + DV2;
     for (i = 1; i <= NP; i++) {
-      Standard_Real U = theU1 + DU*(i - 1) + DU2;
+      Standard_Real U = theU1 + DU * (i - 1) + DU2;
       theSurf->D0(U, V, P3d);
 
       switch (aSType) {
@@ -236,9 +286,9 @@ static Standard_Real ComputeGap(const Handle(Geom_Surface)& theSurf,
 //purpose  : 
 //=======================================================================
 GeomConvert_SurfToAnaSurf::GeomConvert_SurfToAnaSurf() :
-       myGap (-1.), 
-       myConvType (GeomConvert_Simplest),
-       myTarget (GeomAbs_Plane)
+  myGap(-1.),
+  myConvType(GeomConvert_Simplest),
+  myTarget(GeomAbs_Plane)
 {
 }
 
@@ -247,12 +297,12 @@ GeomConvert_SurfToAnaSurf::GeomConvert_SurfToAnaSurf() :
 //purpose  : 
 //=======================================================================
 
-GeomConvert_SurfToAnaSurf::GeomConvert_SurfToAnaSurf (const Handle(Geom_Surface)& S) :
+GeomConvert_SurfToAnaSurf::GeomConvert_SurfToAnaSurf(const Handle(Geom_Surface)& S) :
   myGap(-1.),
   myConvType(GeomConvert_Simplest),
   myTarget(GeomAbs_Plane)
 {
-  Init ( S );
+  Init(S);
 }
 
 //=======================================================================
@@ -260,7 +310,7 @@ GeomConvert_SurfToAnaSurf::GeomConvert_SurfToAnaSurf (const Handle(Geom_Surface)
 //purpose  : 
 //=======================================================================
 
-void GeomConvert_SurfToAnaSurf::Init (const Handle(Geom_Surface)& S) 
+void GeomConvert_SurfToAnaSurf::Init(const Handle(Geom_Surface)& S)
 {
   mySurf = S;
 }
@@ -270,19 +320,24 @@ void GeomConvert_SurfToAnaSurf::Init (const Handle(Geom_Surface)& S)
 //purpose  : 
 //=======================================================================
 
-Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical (const Standard_Real InitialToler) 
+Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(const Standard_Real InitialToler)
 {
   Standard_Real U1, U2, V1, V2;
   mySurf->Bounds(U1, U2, V1, V2);
-  if(Precision::IsInfinite(U1) && Precision::IsInfinite(U2) ) {
+  if (Precision::IsInfinite(U1) && Precision::IsInfinite(U2)) {
     U1 = -1.;
     U2 = 1.;
   }
-  if(Precision::IsInfinite(V1) && Precision::IsInfinite(V2) ) {
+  if (Precision::IsInfinite(V1) && Precision::IsInfinite(V2)) {
     V1 = -1.;
     V2 = 1.;
+    Handle(Geom_SurfaceOfRevolution) aRevSurf = Handle(Geom_SurfaceOfRevolution)::DownCast(mySurf);
+    if (!aRevSurf.IsNull())
+    {
+      CheckVTrimForRevSurf(aRevSurf, V1, V2);
+    }
   }
-  return ConvertToAnalytical(InitialToler, U1, U2, V1, V2); 
+  return ConvertToAnalytical(InitialToler, U1, U2, V1, V2);
 }
 
 //=======================================================================
@@ -298,33 +353,33 @@ Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(const Standa
   GeomAbs_SurfaceType aSType = aGAS.GetType();
   switch (aSType)
   {
-    case GeomAbs_Plane:
-    {
-      myGap = 0.;
-      return new Geom_Plane(aGAS.Plane());
-    }
-    case GeomAbs_Cylinder:
-    {
-      myGap = 0.;
-      return new Geom_CylindricalSurface(aGAS.Cylinder());
-    }
-    case GeomAbs_Cone:
-    {
-      myGap = 0.;
-      return new Geom_ConicalSurface(aGAS.Cone());
-    }
-    case GeomAbs_Sphere:
-    {
-      myGap = 0.;
-      return new Geom_SphericalSurface(aGAS.Sphere());
-    }
-    case GeomAbs_Torus:
-    {
-      myGap = 0.;
-      return new Geom_ToroidalSurface(aGAS.Torus());
-    }
-    default:
-      break;
+  case GeomAbs_Plane:
+  {
+    myGap = 0.;
+    return new Geom_Plane(aGAS.Plane());
+  }
+  case GeomAbs_Cylinder:
+  {
+    myGap = 0.;
+    return new Geom_CylindricalSurface(aGAS.Cylinder());
+  }
+  case GeomAbs_Cone:
+  {
+    myGap = 0.;
+    return new Geom_ConicalSurface(aGAS.Cone());
+  }
+  case GeomAbs_Sphere:
+  {
+    myGap = 0.;
+    return new Geom_SphericalSurface(aGAS.Sphere());
+  }
+  case GeomAbs_Torus:
+  {
+    myGap = 0.;
+    return new Geom_ToroidalSurface(aGAS.Torus());
+  }
+  default:
+    break;
   }
   //
   Standard_Real toler = InitialToler;
@@ -341,7 +396,7 @@ Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(const Standa
   {
     return newSurf[isurf];
   }
-  else 
+  else
   {
     if (Umin - U1 > aTolBnd)
     {
@@ -363,7 +418,7 @@ Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(const Standa
       V2 = Vmax;
       aDoSegment = Standard_True;
     }
-     
+
   }
 
   Standard_Boolean IsBz = aSType == GeomAbs_BezierSurface;
@@ -399,8 +454,8 @@ Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(const Standa
     gp_Pln newPln = GeomIsPlanar.Plan();
     newSurf[isurf] = new Geom_Plane(newPln);
     dd[isurf] = ComputeGap(aTempS, U1, U2, V1, V2, newSurf[isurf]);
-    if ( myConvType == GeomConvert_Simplest || 
-        (myConvType == GeomConvert_Target && myTarget == GeomAbs_Plane))
+    if (myConvType == GeomConvert_Simplest ||
+      (myConvType == GeomConvert_Target && myTarget == GeomAbs_Plane))
     {
       myGap = dd[isurf];
       return newSurf[isurf];
@@ -424,10 +479,10 @@ Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(const Standa
   Standard_Boolean aToroidSphere = Standard_False;
 
   //convert middle uiso and viso to canonical representation
-  Standard_Real VMid = 0.5*(V1 + V2);
-  Standard_Real UMid = 0.5*(U1 + U2);
+  Standard_Real VMid = 0.5 * (V1 + V2);
+  Standard_Real UMid = 0.5 * (U1 + U2);
   Handle(Geom_Surface) TrSurf = aTempS;
-  if(!aDoSegment)
+  if (!aDoSegment)
     TrSurf = new Geom_RectangularTrimmedSurface(aTempS, U1, U2, V1, V2);
 
   Handle(Geom_Curve) UIso = TrSurf->UIso(UMid);
@@ -566,7 +621,7 @@ Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(const Standa
         gp_Ax3 Axes;
         Standard_Real semiangle =
           gp_Vec(isoline).Angle(gp_Vec(P3, P1));
-        if (semiangle>M_PI / 2)  semiangle = M_PI - semiangle;
+        if (semiangle > M_PI / 2)  semiangle = M_PI - semiangle;
         if (R1 > R3) {
           radius = R3;
           Axes = gp_Ax3(P3, gp_Dir(gp_Vec(P3, P1)));
@@ -626,7 +681,7 @@ Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(const Standa
     myGap = dd[imin];
     return newSurf[imin];
   }
-  
+
   return newSurf[0];
 }
 
@@ -636,19 +691,19 @@ Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(const Standa
 //=======================================================================
 
 Standard_Boolean GeomConvert_SurfToAnaSurf::IsSame(const Handle(Geom_Surface)& S1,
-                                             const Handle(Geom_Surface)& S2,
-                                             const Standard_Real tol)
+  const Handle(Geom_Surface)& S2,
+  const Standard_Real tol)
 {
   // only elementary surfaces are processed
-  if(!S1->IsKind(STANDARD_TYPE(Geom_ElementarySurface)) ||
-     !S2->IsKind(STANDARD_TYPE(Geom_ElementarySurface)))
+  if (!S1->IsKind(STANDARD_TYPE(Geom_ElementarySurface)) ||
+    !S2->IsKind(STANDARD_TYPE(Geom_ElementarySurface)))
     return Standard_False;
-  
-  Handle(GeomAdaptor_HSurface) anAdaptor1 = new GeomAdaptor_HSurface(S1);
-  Handle(GeomAdaptor_HSurface) anAdaptor2 = new GeomAdaptor_HSurface(S2);
 
-  GeomAbs_SurfaceType aST1 = anAdaptor1->GetType();
-  GeomAbs_SurfaceType aST2 = anAdaptor2->GetType();
+  GeomAdaptor_Surface anAdaptor1(S1);
+  GeomAdaptor_Surface anAdaptor2(S2);
+
+  GeomAbs_SurfaceType aST1 = anAdaptor1.GetType();
+  GeomAbs_SurfaceType aST2 = anAdaptor2.GetType();
 
   if (aST1 != aST2)
   {
@@ -658,28 +713,28 @@ Standard_Boolean GeomConvert_SurfToAnaSurf::IsSame(const Handle(Geom_Surface)& S
   IntAna_QuadQuadGeo interii;
   if (aST1 == GeomAbs_Plane)
   {
-    interii.Perform(anAdaptor1->Plane(), anAdaptor2->Plane(), tol, tol);
+    interii.Perform(anAdaptor1.Plane(), anAdaptor2.Plane(), tol, tol);
   }
   else if (aST1 == GeomAbs_Cylinder)
   {
-    interii.Perform(anAdaptor1->Cylinder(), anAdaptor2->Cylinder(), tol);
+    interii.Perform(anAdaptor1.Cylinder(), anAdaptor2.Cylinder(), tol);
   }
   else if (aST1 == GeomAbs_Cone)
   {
-    interii.Perform(anAdaptor1->Cone(), anAdaptor2->Cone(), tol);
+    interii.Perform(anAdaptor1.Cone(), anAdaptor2.Cone(), tol);
   }
   else if (aST1 == GeomAbs_Sphere)
   {
-    interii.Perform(anAdaptor1->Sphere(), anAdaptor2->Sphere(), tol);
+    interii.Perform(anAdaptor1.Sphere(), anAdaptor2.Sphere(), tol);
   }
   else if (aST1 == GeomAbs_Torus)
   {
-    interii.Perform(anAdaptor1->Torus(), anAdaptor2->Torus(), tol);
+    interii.Perform(anAdaptor1.Torus(), anAdaptor2.Torus(), tol);
   }
 
   if (!interii.IsDone())
     return Standard_False;
-  
+
   IntAna_ResultType aTypeRes = interii.TypeInter();
 
   return aTypeRes == IntAna_Same;
@@ -694,16 +749,16 @@ Standard_Boolean GeomConvert_SurfToAnaSurf::IsSame(const Handle(Geom_Surface)& S
 
 Standard_Boolean GeomConvert_SurfToAnaSurf::IsCanonical(const Handle(Geom_Surface)& S)
 {
-  if(S.IsNull())
+  if (S.IsNull())
     return Standard_False;
-  
-  if (   S->IsKind(STANDARD_TYPE(Geom_Plane))
-      || S->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))
-      || S->IsKind(STANDARD_TYPE(Geom_ConicalSurface))
-      || S->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) 
-      || S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)))
+
+  if (S->IsKind(STANDARD_TYPE(Geom_Plane))
+    || S->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))
+    || S->IsKind(STANDARD_TYPE(Geom_ConicalSurface))
+    || S->IsKind(STANDARD_TYPE(Geom_SphericalSurface))
+    || S->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)))
     return Standard_True;
-  
+
   return Standard_False;
 }
 

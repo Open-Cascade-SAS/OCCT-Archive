@@ -150,6 +150,11 @@ private:
     const GeomConvert_ConvType theType, const GeomAbs_CurveType theTarget,
     Standard_Real& theGap, Standard_Integer& theStatus);
 
+  static Standard_Boolean GetSurfaceByLS(const TopoDS_Wire& theWire, const Standard_Real theTol,
+    const GeomAbs_SurfaceType theTarget,
+    gp_Ax3& thePos, TColStd_Array1OfReal& theParams,
+    Standard_Real& theGap, Standard_Integer& theStatus);
+
   void Init(const TopoDS_Shape& theShape);
 
 private:

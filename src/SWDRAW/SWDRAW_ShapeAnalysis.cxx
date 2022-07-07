@@ -994,7 +994,15 @@ static Standard_Integer getanasurf(Draw_Interpretor& di,
   Standard_Integer n, const char** a)
 
 {
-  if (n < 3) return 1;
+  if (n < 3) {
+    di << "Usage: \n";
+    di << "getanasurf res shape [target [tol [sample]]] \n";
+    di << "target is reqired type of surface and can be: pln, cyl, con sph \n";
+    di << "sample is surface of required type, which parameters are used as starting \n";
+    di << "point for seaching parametrs of surface by Least Square method when input shape \n";
+    di << "is edge or wire \n";
+      return 1;
+  }
   TopoDS_Shape sh = DBRep::Get(a[2]);
   if (sh.IsNull()) return 1;
   TopAbs_ShapeEnum aShType = sh.ShapeType();
@@ -1007,8 +1015,17 @@ static Standard_Integer getanasurf(Draw_Interpretor& di,
   GeomAbs_SurfaceType aTargets[] = { GeomAbs_Plane, GeomAbs_Cylinder, GeomAbs_Cone, GeomAbs_Sphere };
   Standard_Integer isurf = 0;
   if (n > 3)
-    isurf = Draw::Atoi(a[3]);
-  isurf = Min(isurf, 3);
+  {
+    if (strcmp(a[3], "pln") == 0)
+      isurf = 0;
+    else if (strcmp(a[3], "cyl") == 0)
+      isurf = 1;
+    else if (strcmp(a[3], "con") == 0)
+      isurf = 2;
+    else if (strcmp(a[3], "sph") == 0)
+      isurf = 3;
+  }
+
   Standard_Real tol = 1.e-7;
   if (n > 4)
     tol = Draw::Atof(a[4]);
@@ -1079,6 +1096,7 @@ static Standard_Integer getanasurf(Draw_Interpretor& di,
   if (!aRes.IsNull())
   {
     DrawTrSurf::Set(a[1], aRes);
+    di << "Gap = " << aCanonRec.GetGap() << "\n";
   }
   else
   {
@@ -1094,6 +1112,12 @@ static Standard_Integer getanasurf(Draw_Interpretor& di,
 Standard_Integer getanacurve(Draw_Interpretor& di,
   Standard_Integer n, const char** a)
 {
+  if (n < 3) {
+    di << "Usage: \n";
+    di << "getanacurve res shape [target [tol]] \n";
+    di << "target is reqired type of curve and can be: lin, cir, ell  \n";
+    return 1;
+  }
   TopoDS_Shape sh = DBRep::Get(a[2]);
   if (sh.IsNull()) return 1;
   TopAbs_ShapeEnum aShType = sh.ShapeType();
@@ -1106,11 +1130,18 @@ Standard_Integer getanacurve(Draw_Interpretor& di,
   GeomAbs_CurveType aTargets[] = { GeomAbs_Line, GeomAbs_Circle, GeomAbs_Ellipse };
   Standard_Integer icurv = 0;
   if (n > 3)
-    icurv = Draw::Atoi(a[3]);
-  icurv = Min(icurv, 2);
-  Standard_Real tol = 1.e-7;
+  {
+    if (strcmp(a[3],"lin") == 0)
+      icurv = 0;
+    else if (strcmp(a[3], "cir") == 0)
+      icurv = 1;
+    else if (strcmp(a[3], "ell") == 0)
+      icurv = 2;
+  }
+
+  Standard_Real tol = Precision::Confusion();
   if (n > 4)
-    tol = Draw::Atof(a[4]);
+      tol = Draw::Atof(a[4]);
 
   ShapeAnalysis_CanonicalRecognition aCanonRec(sh);
   Handle(Geom_Curve) aRes;
@@ -1144,6 +1175,7 @@ Standard_Integer getanacurve(Draw_Interpretor& di,
   if (!aRes.IsNull())
   {
     DrawTrSurf::Set(a[1], aRes);
+    di << "Gap = " << aCanonRec.GetGap() << "\n";
   }
   else
   {
@@ -1194,7 +1226,7 @@ Standard_Integer getanacurve(Draw_Interpretor& di,
   theCommands.Add("getareacontour","wire ",__FILE__, getareacontour, groupold);
   theCommands.Add ("checkselfintersection","wire [face]", __FILE__,checkselfintersection,g);
   theCommands.Add ("checkedge","edge [face]", __FILE__,checkedge,g);
-  theCommands.Add("getanasurf", "getanasurf res shape [target [tol [sample]]]", __FILE__, getanasurf, g);
+  theCommands.Add("getanasurf", "getanasurf res shape [target [tol [sample]]] ", __FILE__, getanasurf, g);
   theCommands.Add("getanacurve", "getanacurve res shape [target [tol]]", __FILE__, getanacurve, g);
 
 

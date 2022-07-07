@@ -62,14 +62,8 @@ public:
   
   //! Tries to convert the Surface to an Analytic form
   //! Returns the result
-  //! Works only if the Surface is BSpline or Bezier.
-  //! Else, or in case of failure, returns a Null Handle
+  //! In case of failure, returns a Null Handle
   //!
-  //! If <substitute> is True, the new surface replaces the actual
-  //! one in <me>
-  //!
-  //! It works by analysing the case which can apply, creating the
-  //! corresponding analytic surface, then checking coincidence
   Standard_EXPORT Handle(Geom_Surface) ConvertToAnalytical (const Standard_Real InitialToler);
   Standard_EXPORT Handle(Geom_Surface) ConvertToAnalytical (const Standard_Real InitialToler,
                                                             const Standard_Real Umin, const Standard_Real Umax,

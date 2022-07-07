@@ -24,7 +24,7 @@ add ss_2 w
 add ss_3 w
 add ss_4 w
 add ss_5 w
-getanasurf asurf w 1  1.e-7 cyl
+getanasurf asurf w cyl 1.e-7 cyl
 if {[isdraw asurf]} {
   set log [dump asurf]
   if { [regexp {CylindricalSurface} $log ] != 1 } {

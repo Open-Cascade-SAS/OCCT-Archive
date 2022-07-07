@@ -37,34 +37,10 @@
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_Array2OfReal.hxx>
 #include <GeomAbs_CurveType.hxx>
+#include <math_Vector.hxx>
+#include <math_Matrix.hxx>
+#include <math_Gauss.hxx>
 
-//=======================================================================
-//function : AdjustByPeriod
-//purpose  : 
-//=======================================================================
-static Standard_Real AdjustByPeriod(const Standard_Real Val,
-  const Standard_Real ToVal,
-  const Standard_Real Period)
-{
-  Standard_Real diff = Val - ToVal;
-  Standard_Real D = Abs(diff);
-  Standard_Real P = Abs(Period);
-  if (D <= 0.5 * P) return 0.;
-  if (P < 1e-100) return diff;
-  return (diff >0 ? -P : P) * floor(D / P + 0.5);
-}
-
-//=======================================================================
-//function : AdjustToPeriod
-//purpose  : 
-//=======================================================================
-
-static Standard_Real AdjustToPeriod(const Standard_Real Val,
-  const Standard_Real ValMin,
-  const Standard_Real ValMax)
-{
-  return AdjustByPeriod(Val, 0.5 * (ValMin + ValMax), ValMax - ValMin);
-}
 
 GeomConvert_CurveToAnaCurve::GeomConvert_CurveToAnaCurve():
   myGap(Precision::Infinite()),
@@ -141,8 +117,7 @@ Standard_Boolean GeomConvert_CurveToAnaCurve::IsLinear(const TColgp_Array1OfPnt&
       }
     }
   
-  Standard_Real dPreci = Precision::Confusion()*Precision::Confusion();
-  if(dMax < dPreci)
+  if (dMax < Precision::SquareConfusion())
     return Standard_False;
   
   Standard_Real tol2 = tolerance*tolerance;
@@ -197,8 +172,7 @@ Handle(Geom_Line) GeomConvert_CurveToAnaCurve::ComputeLine (const Handle(Geom_Cu
 
   gp_Pnt P1 = curve->Value (c1);
   gp_Pnt P2 = curve->Value (c2);
-  Standard_Real dPreci = Precision::Confusion()*Precision::Confusion();
-  if(P1.SquareDistance(P2) < dPreci)
+  if(P1.SquareDistance(P2) < Precision::SquareConfusion())
     return line;
   cf = c1;  cl = c2;
   
@@ -244,11 +218,9 @@ Handle(Geom_Line) GeomConvert_CurveToAnaCurve::ComputeLine (const Handle(Geom_Cu
 //=======================================================================
 
 Standard_Boolean GeomConvert_CurveToAnaCurve::GetCircle (gp_Circ& crc,   
-                                                const gp_Pnt& P0,const gp_Pnt& P1, const gp_Pnt& P2,
-                                                const Standard_Real d0, const Standard_Real d1, const Standard_Real epsang)
+                                                const gp_Pnt& P0,const gp_Pnt& P1, const gp_Pnt& P2) 
 {
-//  Control if points are not aligned (should be done by MakeCirc ?)
-//  d0 and d1 are distances (p0 p1) and (p0 p2)
+//  Control if points are not aligned (should be done by MakeCirc 
   Standard_Real aMaxCoord = Sqrt(Precision::Infinite());
   if (Abs(P0.X()) > aMaxCoord || Abs(P0.Y()) > aMaxCoord || Abs(P0.Z()) > aMaxCoord)
     return Standard_False;
@@ -256,15 +228,12 @@ Standard_Boolean GeomConvert_CurveToAnaCurve::GetCircle (gp_Circ& crc,
     return Standard_False;
   if (Abs(P2.X()) > aMaxCoord || Abs(P2.Y()) > aMaxCoord || Abs(P2.Z()) > aMaxCoord)
     return Standard_False;
-  gp_Vec p0p1 (P0,P1);
-  gp_Vec p0p2 (P0,P2);
-  Standard_Real ang = p0p1.CrossSquareMagnitude (p0p2);
-  if (ang < d0*d1*epsang) return Standard_False;
 
 //  Building the circle
   gce_MakeCirc mkc (P0,P1,P2);
   if (!mkc.IsDone()) return Standard_False;
   crc = mkc.Value();
+  if (crc.Radius() < gp::Resolution()) return Standard_False;
   //  Recalage sur P0
   gp_Pnt PC = crc.Location();
   gp_Ax2 axe = crc.Position();
@@ -299,22 +268,9 @@ Handle(Geom_Curve) GeomConvert_CurveToAnaCurve::ComputeCircle (const Handle(Geom
   P0 = c3d->Value(c1);
   P1 = c3d->Value(ca);
   P2 = c3d->Value(cb);
-
-//  For Control if points are not aligned (should be done by MakeCirc ?),
-//  d0 and d1 are distances (p0 p1) and (p0 p2)
-//  return result here means : void result (no circle)
-  Standard_Real eps = Precision::Angular();  // angular resolution
-  Standard_Real d0 = P0.Distance(P1);  Standard_Real d1 = P0.Distance(P2);
-  if (d0 < Precision::Confusion() || d1 < Precision::Confusion()) return circ;
   
   gp_Circ crc;
-  if (!GetCircle (crc,P0,P1,P2,d0,d1,eps)) return circ;
-  
-  cf = 0;
-//   Standard_Real cm = ElCLib::Parameter (crc,c3d->Value ((c1+c2)/2) );
-//   cl = ElCLib::Parameter (crc,c3d->Value (c2));
-//   if (cl > 2 * M_PI) cl = 2 * M_PI;
-//   if (cl < cm && cm > 0.99 * M_PI) cl = 2 * M_PI;
+  if (!GetCircle (crc,P0,P1,P2)) return circ;
   
   //  Reste a controler que c est bien un cercle : prendre 20 points
   Standard_Real du = (c2-c1)/20;
@@ -334,17 +290,19 @@ Handle(Geom_Curve) GeomConvert_CurveToAnaCurve::ComputeCircle (const Handle(Geom
   Standard_Real PI2 = 2 * M_PI;
   
   cf = ElCLib::Parameter (crc,c3d->Value (c1));
-  cf+= AdjustToPeriod(cf,0.,PI2);
+  cf = ElCLib::InPeriod(cf, 0., PI2);
+
   //first parameter should be closed to zero
   
   if(Abs(cf) < Precision::PConfusion() || Abs(PI2-cf) < Precision::PConfusion())
     cf = 0.;
-    
+
   Standard_Real cm = ElCLib::Parameter (crc,c3d->Value ((c1+c2)/2.));
-  cm+= AdjustToPeriod(cm,cf,cf+PI2);
+  cm = ElCLib::InPeriod(cm, cf, cf + PI2);
+
   cl = ElCLib::Parameter (crc,c3d->Value (c2));
-  cl+= AdjustToPeriod(cl,cm,cm+PI2);
-  
+  cl = ElCLib::InPeriod(cl, cm, cm + PI2);
+
   circ = new Geom_Circle (crc);
   return circ;
 }
@@ -403,117 +361,6 @@ static Standard_Boolean IsArrayPntPlanar(const Handle(TColgp_HArray1OfPnt)& HAP,
   Norm = NV;
   return Standard_True;
 }
-
-
-//=======================================================================
-//function : Determ3
-//purpose  : 
-//=======================================================================
-
-static Standard_Real Determ3(const TColStd_Array2OfReal& A)
-{
-  Standard_Real det = A.Value(1,1)*A.Value(2,2)*A.Value(3,3) +
-                      A.Value(1,2)*A.Value(2,3)*A.Value(3,1) +
-                      A.Value(1,3)*A.Value(2,1)*A.Value(3,2) -
-                      A.Value(1,3)*A.Value(2,2)*A.Value(3,1) -
-                      A.Value(1,1)*A.Value(2,3)*A.Value(3,2) -
-                      A.Value(1,2)*A.Value(2,1)*A.Value(3,3);
-  return det;
-}
-
-//=======================================================================
-//function : Determ4
-//purpose  : 
-//=======================================================================
-
-static Standard_Real Determ4(const TColStd_Array2OfReal& A)
-{
-  Standard_Real det=0;
-  Standard_Integer i,j,k;
-  TColStd_Array2OfReal C(1,3,1,3);
-
-  for(j=1; j<=4; j++) {
-    for(i=2; i<=4; i++) {
-      for(k=1; k<=4; k++) {
-        if(k<j)
-          C.SetValue(i-1,k,A.Value(i,k));
-        if(k>j)
-          C.SetValue(i-1,k-1,A.Value(i,k));
-      }
-    }
-    if(j==1 || j==3)
-      det = det + A.Value(1,j)*Determ3(C);
-    else
-      det = det - A.Value(1,j)*Determ3(C);
-  }
-  return det;
-}
-
-//=======================================================================
-//function : Determ5
-//purpose  : 
-//=======================================================================
-
-static Standard_Real Determ5(const TColStd_Array2OfReal& A)
-{
-  Standard_Real det=0;
-  Standard_Integer i,j,k;
-  TColStd_Array2OfReal C(1,4,1,4);
-
-  for(j=1; j<=5; j++) {
-    for(i=2; i<=5; i++) {
-      for(k=1; k<=5; k++) {
-        if(k<j)
-          C.SetValue(i-1,k,A.Value(i,k));
-        if(k>j)
-          C.SetValue(i-1,k-1,A.Value(i,k));
-      }
-    }
-    if(j==1 || j==3 || j==5)
-      det = det + A.Value(1,j)*Determ4(C);
-    else
-      det = det - A.Value(1,j)*Determ4(C);
-  }
-  return det;
-}
-
-//=======================================================================
-//function : SolveLinSys5
-//purpose  : 
-//=======================================================================
-
-static Standard_Boolean SolveLinSys5(const TColStd_Array2OfReal& A,
-                                     const TColStd_Array1OfReal& B,
-                                           TColStd_Array1OfReal& X )
-{
-  Standard_Integer i,j;
-  Standard_Real D0,DN;
-  TColStd_Array2OfReal A1(1,5,1,5);
-  TColStd_Array1OfReal Tmp(1,5);
-  for(j=1; j<=5; j++) {
-    for(i=1; i<=5; i++) {
-      A1.SetValue(i,j,A.Value(i,j));
-    }
-  }
-
-  D0 = Determ5(A1);
-  if(D0==0)
-    return Standard_False;
-
-  for(j=1; j<=5; j++) {
-    for(i=1; i<=5; i++) {
-      Tmp.SetValue(i,A1.Value(i,j));
-      A1.SetValue(i,j,B.Value(i));
-    }
-    DN = Determ5(A1);
-    X.SetValue(j,DN/D0);
-    for(i=1; i<=5; i++) {
-      A1.SetValue(i,j,Tmp.Value(i));
-    }
-  }
-  return Standard_True;
-}
-
 
 //=======================================================================
 //function : ConicdDefinition
@@ -675,30 +522,33 @@ Handle(Geom_Curve) GeomConvert_CurveToAnaCurve::ComputeEllipse(const Handle(Geom
   Tr.SetTransformation(AX);
   gp_Trsf Tr2 = Tr.Inverted();
   
-  TColStd_Array2OfReal Dt(1,5,1,5);
-  TColStd_Array1OfReal F(1,5), Sl(1,5);
+  math_Matrix Dt(1, 5, 1, 5);
+  math_Vector F(1, 5), Sl(1, 5);
 
   Standard_Real XN,YN,ZN = 0.;
   gp_Pnt PT,PP;
   for(i=1; i<=5; i++) {
     PT = AP->Value(i).Transformed(Tr);
     PT.Coord(XN,YN,ZN);
-    Dt.SetValue(i, 1, XN*XN);
-    Dt.SetValue(i,2,XN*YN);
-    Dt.SetValue(i,3,YN*YN);
-    Dt.SetValue(i,4,XN);
-    Dt.SetValue(i,5,YN);
-    F.SetValue(i,-1);
+    Dt(i, 1) = XN*XN;
+    Dt(i, 2) = XN*YN;
+    Dt(i, 3) = YN*YN;
+    Dt(i, 4) = XN;
+    Dt(i, 5) = YN;
+    F(i) = -1.;
   }
-  //
-  if(!SolveLinSys5(Dt,F,Sl))
+
+  math_Gauss aSolver(Dt);
+  if (!aSolver.IsDone())
     return res;
+
+  aSolver.Solve(F, Sl);
   
-  AF=Sl.Value(1);
-  BF=Sl.Value(2);
-  CF=Sl.Value(3);
-  DF=Sl.Value(4);
-  EF=Sl.Value(5);
+  AF=Sl(1);
+  BF=Sl(2);
+  CF=Sl(3);
+  DF=Sl(4);
+  EF=Sl(5);
 
   Q1=AF*CF+BF*EF*DF/4-CF*DF*DF/4-BF*BF/4-AF*EF*EF/4;
   Q2=AF*CF-BF*BF/4;
@@ -752,21 +602,23 @@ if (Q2 > 0 && Q1*Q3 < 0) {
 
     Standard_Real PI2 = 2 * M_PI;
     cf = ElCLib::Parameter(anEllipse, c3d->Value(c1));
-    cf += AdjustToPeriod(cf, 0., PI2);
+    cf = ElCLib::InPeriod(cf, 0., PI2);
+
     //first parameter should be closed to zero
 
     if (Abs(cf) < Precision::PConfusion() || Abs(PI2 - cf) < Precision::PConfusion())
       cf = 0.;
 
     Standard_Real cm = ElCLib::Parameter(anEllipse, c3d->Value((c1 + c2) / 2.));
-    cm += AdjustToPeriod(cm, cf, cf + PI2);
+    cm = ElCLib::InPeriod(cm, cf, cf + PI2);
+
     cl = ElCLib::Parameter(anEllipse, c3d->Value(c2));
-    cl += AdjustToPeriod(cl, cm, cm + PI2);
+    cl = ElCLib::InPeriod(cl, cm, cm + PI2);
 
     res = gell;
   }
 }
-
+/*
 if (Q2 < 0 && Q1 != 0) {
   // hyberbola
 }
@@ -774,7 +626,7 @@ if (Q2 < 0 && Q1 != 0) {
 if (Q2 == 0 && Q1 != 0) {
   // parabola
 }
-
+*/
 return res;
 }
 

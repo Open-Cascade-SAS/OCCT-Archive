@@ -79,7 +79,7 @@ public:
   Standard_EXPORT static gp_Lin GetLine(const gp_Pnt& P1, const gp_Pnt& P2, Standard_Real& cf, Standard_Real& cl);
 
   //! Creates circle on points. Returns true if OK.
-  Standard_EXPORT static Standard_Boolean GetCircle (gp_Circ& Circ, const gp_Pnt& P0, const gp_Pnt& P1, const gp_Pnt& P2, const Standard_Real d0, const Standard_Real d1, const Standard_Real eps);
+  Standard_EXPORT static Standard_Boolean GetCircle(gp_Circ& Circ, const gp_Pnt& P0, const gp_Pnt& P1, const gp_Pnt& P2); 
 
   //! Returns maximal deviation of converted surface from the original
   //! one computed by last call to ConvertToAnalytical

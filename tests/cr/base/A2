@@ -1,6 +1,6 @@
 beziercurve bz 3 0 0 0 .5 .5e-3 0 1 0 0
 mkedge e bz
-getanacurve c e 1 1.e-3
+getanacurve c e cir 1.e-3
 if {[isdraw c]} {
   set log [dump c]
   if { [regexp {Circle} $log ] != 1 } {

@@ -14,27 +14,27 @@
 // commercial license or contractual agreement.
 
 #if !defined(HAVE_FREEIMAGE) && defined(_WIN32)
-  #define HAVE_WINCODEC
+#define HAVE_WINCODEC
 #endif
 
 #ifdef HAVE_FREEIMAGE
-  #include <FreeImage.h>
+#include <FreeImage.h>
 
-  #ifdef _MSC_VER
-    #pragma comment( lib, "FreeImage.lib" )
-  #endif
+#ifdef _MSC_VER
+//  #pragma comment( lib, "FreeImage.lib" )
+#endif
 #elif defined(HAVE_WINCODEC)
-  #include <wincodec.h>
-  // prevent warnings on MSVC10
-  #include <Standard_WarningsDisable.hxx>
-  #include <Standard_TypeDef.hxx>
-  #include <Standard_WarningsRestore.hxx>
-  #undef min
-  #undef max
+#include <wincodec.h>
+// prevent warnings on MSVC10
+#include <Standard_WarningsDisable.hxx>
+#include <Standard_TypeDef.hxx>
+#include <Standard_WarningsRestore.hxx>
+#undef min
+#undef max
 
-  #ifdef _MSC_VER
-    #pragma comment(lib, "Ole32.lib")
-  #endif
+#ifdef _MSC_VER
+#pragma comment(lib, "Ole32.lib")
+#endif
 #endif
 
 #include <Image_AlienPixMap.hxx>
@@ -50,74 +50,74 @@
 #include <fstream>
 #include <algorithm>
 
-IMPLEMENT_STANDARD_RTTIEXT(Image_AlienPixMap,Image_PixMap)
+IMPLEMENT_STANDARD_RTTIEXT(Image_AlienPixMap, Image_PixMap)
 
 namespace
 {
 #ifdef HAVE_FREEIMAGE
-  static Image_Format convertFromFreeFormat (FREE_IMAGE_TYPE       theFormatFI,
-                                             FREE_IMAGE_COLOR_TYPE theColorTypeFI,
-                                             unsigned              theBitsPerPixel)
+  static Image_Format convertFromFreeFormat(FREE_IMAGE_TYPE       theFormatFI,
+    FREE_IMAGE_COLOR_TYPE theColorTypeFI,
+    unsigned              theBitsPerPixel)
   {
     switch (theFormatFI)
     {
-      case FIT_RGBF:   return Image_Format_RGBF;
-      case FIT_RGBAF:  return Image_Format_RGBAF;
-      case FIT_FLOAT:  return Image_Format_GrayF;
-      case FIT_BITMAP:
+    case FIT_RGBF:   return Image_Format_RGBF;
+    case FIT_RGBAF:  return Image_Format_RGBAF;
+    case FIT_FLOAT:  return Image_Format_GrayF;
+    case FIT_BITMAP:
+    {
+      switch (theColorTypeFI)
       {
-        switch (theColorTypeFI)
+      case FIC_MINISBLACK:
+      {
+        return Image_Format_Gray;
+      }
+      case FIC_RGB:
+      {
+        if (Image_PixMap::IsBigEndianHost())
         {
-          case FIC_MINISBLACK:
-          {
-            return Image_Format_Gray;
-          }
-          case FIC_RGB:
-          {
-            if (Image_PixMap::IsBigEndianHost())
-            {
-              return (theBitsPerPixel == 32) ? Image_Format_RGB32 : Image_Format_RGB;
-            }
-            else
-            {
-              return (theBitsPerPixel == 32) ? Image_Format_BGR32 : Image_Format_BGR;
-            }
-          }
-          case FIC_RGBALPHA:
-          {
-            return Image_PixMap::IsBigEndianHost() ? Image_Format_RGBA : Image_Format_BGRA;
-          }
-          default:
-            return Image_Format_UNKNOWN;
+          return (theBitsPerPixel == 32) ? Image_Format_RGB32 : Image_Format_RGB;
         }
+        else
+        {
+          return (theBitsPerPixel == 32) ? Image_Format_BGR32 : Image_Format_BGR;
+        }
+      }
+      case FIC_RGBALPHA:
+      {
+        return Image_PixMap::IsBigEndianHost() ? Image_Format_RGBA : Image_Format_BGRA;
       }
       default:
         return Image_Format_UNKNOWN;
+      }
+    }
+    default:
+      return Image_Format_UNKNOWN;
     }
   }
 
-  static FREE_IMAGE_TYPE convertToFreeFormat (Image_Format theFormat)
+  static FREE_IMAGE_TYPE convertToFreeFormat(Image_Format theFormat)
   {
     switch (theFormat)
     {
-      case Image_Format_GrayF:
-      case Image_Format_AlphaF:
-        return FIT_FLOAT;
-      case Image_Format_RGBAF:
-        return FIT_RGBAF;
-      case Image_Format_RGBF:
-        return FIT_RGBF;
-      case Image_Format_RGBA:
-      case Image_Format_BGRA:
-      case Image_Format_RGB32:
-      case Image_Format_BGR32:
-      case Image_Format_RGB:
-      case Image_Format_BGR:
-      case Image_Format_Gray:
-      case Image_Format_Alpha:
-        return FIT_BITMAP;
-      default:
-        return FIT_UNKNOWN;
+    case Image_Format_GrayF:
+    case Image_Format_AlphaF:
+      return FIT_FLOAT;
+    case Image_Format_RGBAF:
+      return FIT_RGBAF;
+    case Image_Format_RGBF:
+      return FIT_RGBF;
+    case Image_Format_RGBA:
+    case Image_Format_BGRA:
+    case Image_Format_RGB32:
+    case Image_Format_BGR32:
+    case Image_Format_RGB:
+    case Image_Format_BGR:
+    case Image_Format_Gray:
+    case Image_Format_Alpha:
+      return FIT_BITMAP;
+    default:
+      return FIT_UNKNOWN;
     }
   }
 
@@ -126,14 +126,14 @@ namespace
   {
   public:
     //! Construct wrapper over input stream.
-    Image_FreeImageStream (std::istream& theStream)
-    : myIStream (&theStream), myOStream (NULL), myInitPos (theStream.tellg()) {}
+    Image_FreeImageStream(std::istream& theStream)
+      : myIStream(&theStream), myOStream(NULL), myInitPos(theStream.tellg()) {}
 
     //! Get io object.
     FreeImageIO GetFiIO() const
     {
       FreeImageIO anIo;
-      memset (&anIo, 0, sizeof(anIo));
+      memset(&anIo, 0, sizeof(anIo));
       if (myIStream != NULL)
       {
         anIo.read_proc = readProc;
@@ -148,28 +148,28 @@ namespace
     }
   public:
     //! Simulate fread().
-    static unsigned int DLL_CALLCONV readProc (void* theBuffer, unsigned int theSize, unsigned int theCount, fi_handle theHandle)
+    static unsigned int DLL_CALLCONV readProc(void* theBuffer, unsigned int theSize, unsigned int theCount, fi_handle theHandle)
     {
-      Image_FreeImageStream* aThis = (Image_FreeImageStream* )theHandle;
+      Image_FreeImageStream* aThis = (Image_FreeImageStream*)theHandle;
       if (aThis->myIStream == NULL)
       {
         return 0;
       }
 
-      if (!aThis->myIStream->read ((char* )theBuffer, std::streamsize(theSize) * std::streamsize(theCount)))
+      if (!aThis->myIStream->read((char*)theBuffer, std::streamsize(theSize) * std::streamsize(theCount)))
       {
         //aThis->myIStream->clear();
       }
       const std::streamsize aNbRead = aThis->myIStream->gcount();
-      return (unsigned int )(aNbRead / theSize);
+      return (unsigned int)(aNbRead / theSize);
     }
 
     //! Simulate fwrite().
-    static unsigned int DLL_CALLCONV writeProc (void* theBuffer, unsigned int theSize, unsigned int theCount, fi_handle theHandle)
+    static unsigned int DLL_CALLCONV writeProc(void* theBuffer, unsigned int theSize, unsigned int theCount, fi_handle theHandle)
     {
-      Image_FreeImageStream* aThis = (Image_FreeImageStream* )theHandle;
+      Image_FreeImageStream* aThis = (Image_FreeImageStream*)theHandle;
       if (aThis->myOStream != NULL
-       && aThis->myOStream->write ((const char* )theBuffer, std::streamsize(theSize) * std::streamsize(theCount)))
+        && aThis->myOStream->write((const char*)theBuffer, std::streamsize(theSize) * std::streamsize(theCount)))
       {
         return theCount;
       }
@@ -177,9 +177,9 @@ namespace
     }
 
     //! Simulate fseek().
-    static int DLL_CALLCONV seekProc (fi_handle theHandle, long theOffset, int theOrigin)
+    static int DLL_CALLCONV seekProc(fi_handle theHandle, long theOffset, int theOrigin)
     {
-      Image_FreeImageStream* aThis = (Image_FreeImageStream* )theHandle;
+      Image_FreeImageStream* aThis = (Image_FreeImageStream*)theHandle;
       if (aThis->myIStream == NULL)
       {
         return -1;
@@ -188,38 +188,38 @@ namespace
       bool isSeekDone = false;
       switch (theOrigin)
       {
-        case SEEK_SET:
-          if (aThis->myIStream->seekg ((std::streamoff )aThis->myInitPos + theOffset, std::ios::beg))
-          {
-            isSeekDone = true;
-          }
-          break;
-        case SEEK_CUR:
-          if (aThis->myIStream->seekg (theOffset, std::ios::cur))
-          {
-            isSeekDone = true;
-          }
-          break;
-        case SEEK_END:
-          if (aThis->myIStream->seekg (theOffset, std::ios::end))
-          {
-            isSeekDone = true;
-          }
-          break;
+      case SEEK_SET:
+        if (aThis->myIStream->seekg((std::streamoff)aThis->myInitPos + theOffset, std::ios::beg))
+        {
+          isSeekDone = true;
+        }
+        break;
+      case SEEK_CUR:
+        if (aThis->myIStream->seekg(theOffset, std::ios::cur))
+        {
+          isSeekDone = true;
+        }
+        break;
+      case SEEK_END:
+        if (aThis->myIStream->seekg(theOffset, std::ios::end))
+        {
+          isSeekDone = true;
+        }
+        break;
       }
       return isSeekDone ? 0 : -1;
     }
 
     //! Simulate ftell().
-    static long DLL_CALLCONV tellProc (fi_handle theHandle)
+    static long DLL_CALLCONV tellProc(fi_handle theHandle)
     {
-      Image_FreeImageStream* aThis = (Image_FreeImageStream* )theHandle;
-      const long aPos = aThis->myIStream != NULL ? (long )(aThis->myIStream->tellg() - aThis->myInitPos) : 0;
+      Image_FreeImageStream* aThis = (Image_FreeImageStream*)theHandle;
+      const long aPos = aThis->myIStream != NULL ? (long)(aThis->myIStream->tellg() - aThis->myInitPos) : 0;
       return aPos;
     }
   private:
-    std::istream*  myIStream;
-    std::ostream*  myOStream;
+    std::istream* myIStream;
+    std::ostream* myOStream;
     std::streampos myInitPos;
   };
 
@@ -238,7 +238,7 @@ namespace
   public:
     //! Empty constructor.
     Image_ComPtr()
-    : myPtr (NULL) {}
+      : myPtr(NULL) {}
 
     //! Destructor.
     ~Image_ComPtr()
@@ -262,7 +262,7 @@ namespace
     //! Return pointer for initialization.
     T*& ChangePtr()
     {
-      Standard_ASSERT_RAISE (myPtr == NULL, "Pointer cannot be initialized twice!");
+      Standard_ASSERT_RAISE(myPtr == NULL, "Pointer cannot be initialized twice!");
       return myPtr;
     }
 
@@ -280,7 +280,7 @@ namespace
   };
 
   //! Convert WIC GUID to Image_Format.
-  static Image_Format convertFromWicFormat (const WICPixelFormatGUID& theFormat)
+  static Image_Format convertFromWicFormat(const WICPixelFormatGUID& theFormat)
   {
     if (theFormat == GUID_WICPixelFormat32bppBGRA)
     {
@@ -306,24 +306,24 @@ namespace
   }
 
   //! Convert Image_Format to WIC GUID.
-  static WICPixelFormatGUID convertToWicFormat (Image_Format theFormat)
+  static WICPixelFormatGUID convertToWicFormat(Image_Format theFormat)
   {
     switch (theFormat)
     {
-      case Image_Format_BGRA:   return GUID_WICPixelFormat32bppBGRA;
-      case Image_Format_BGR32:  return GUID_WICPixelFormat32bppBGR;
-      case Image_Format_RGB:    return GUID_WICPixelFormat24bppRGB;
-      case Image_Format_BGR:    return GUID_WICPixelFormat24bppBGR;
-      case Image_Format_Gray:   return GUID_WICPixelFormat8bppGray;
-      case Image_Format_Alpha:  return GUID_WICPixelFormat8bppGray; // GUID_WICPixelFormat8bppAlpha
-      case Image_Format_GrayF:  // GUID_WICPixelFormat32bppGrayFloat
-      case Image_Format_AlphaF:
-      case Image_Format_RGBAF:  // GUID_WICPixelFormat128bppRGBAFloat
-      case Image_Format_RGBF:   // GUID_WICPixelFormat96bppRGBFloat
-      case Image_Format_RGBA:   // GUID_WICPixelFormat32bppRGBA
-      case Image_Format_RGB32:  // GUID_WICPixelFormat32bppRGB
-      default:
-        return getNullGuid();
+    case Image_Format_BGRA:   return GUID_WICPixelFormat32bppBGRA;
+    case Image_Format_BGR32:  return GUID_WICPixelFormat32bppBGR;
+    case Image_Format_RGB:    return GUID_WICPixelFormat24bppRGB;
+    case Image_Format_BGR:    return GUID_WICPixelFormat24bppBGR;
+    case Image_Format_Gray:   return GUID_WICPixelFormat8bppGray;
+    case Image_Format_Alpha:  return GUID_WICPixelFormat8bppGray; // GUID_WICPixelFormat8bppAlpha
+    case Image_Format_GrayF:  // GUID_WICPixelFormat32bppGrayFloat
+    case Image_Format_AlphaF:
+    case Image_Format_RGBAF:  // GUID_WICPixelFormat128bppRGBAFloat
+    case Image_Format_RGBF:   // GUID_WICPixelFormat96bppRGBFloat
+    case Image_Format_RGBA:   // GUID_WICPixelFormat32bppRGBA
+    case Image_Format_RGB32:  // GUID_WICPixelFormat32bppRGB
+    default:
+      return getNullGuid();
     }
   }
 
@@ -335,9 +335,9 @@ namespace
 // purpose  :
 // =======================================================================
 Image_AlienPixMap::Image_AlienPixMap()
-: myLibImage (NULL)
+  : myLibImage(NULL)
 {
-  SetTopDown (false);
+  SetTopDown(false);
 }
 
 // =======================================================================
@@ -353,11 +353,11 @@ Image_AlienPixMap::~Image_AlienPixMap()
 // function : InitWrapper
 // purpose  :
 // =======================================================================
-bool Image_AlienPixMap::InitWrapper (Image_Format,
-                                     Standard_Byte*,
-                                     const Standard_Size,
-                                     const Standard_Size,
-                                     const Standard_Size)
+bool Image_AlienPixMap::InitWrapper(Image_Format,
+  Standard_Byte*,
+  const Standard_Size,
+  const Standard_Size,
+  const Standard_Size)
 {
   Clear();
   return false;
@@ -368,76 +368,76 @@ bool Image_AlienPixMap::InitWrapper (Image_Format,
 // purpose  :
 // =======================================================================
 #ifdef HAVE_FREEIMAGE
-bool Image_AlienPixMap::InitTrash (Image_Format        thePixelFormat,
-                                   const Standard_Size theSizeX,
-                                   const Standard_Size theSizeY,
-                                   const Standard_Size /*theSizeRowBytes*/)
+bool Image_AlienPixMap::InitTrash(Image_Format        thePixelFormat,
+  const Standard_Size theSizeX,
+  const Standard_Size theSizeY,
+  const Standard_Size /*theSizeRowBytes*/)
 {
   Clear();
-  FREE_IMAGE_TYPE aFormatFI = convertToFreeFormat (thePixelFormat);
-  int aBitsPerPixel = (int )Image_PixMap::SizePixelBytes (thePixelFormat) * 8;
+  FREE_IMAGE_TYPE aFormatFI = convertToFreeFormat(thePixelFormat);
+  int aBitsPerPixel = (int)Image_PixMap::SizePixelBytes(thePixelFormat) * 8;
   if (aFormatFI == FIT_UNKNOWN)
   {
-    aFormatFI     = FIT_BITMAP;
+    aFormatFI = FIT_BITMAP;
     aBitsPerPixel = 24;
   }
 
-  FIBITMAP* anImage = FreeImage_AllocateT (aFormatFI, (int )theSizeX, (int )theSizeY, aBitsPerPixel);
-  Image_Format aFormat = convertFromFreeFormat (FreeImage_GetImageType(anImage),
-                                                FreeImage_GetColorType(anImage),
-                                                FreeImage_GetBPP      (anImage));
+  FIBITMAP* anImage = FreeImage_AllocateT(aFormatFI, (int)theSizeX, (int)theSizeY, aBitsPerPixel);
+  Image_Format aFormat = convertFromFreeFormat(FreeImage_GetImageType(anImage),
+    FreeImage_GetColorType(anImage),
+    FreeImage_GetBPP(anImage));
   if (thePixelFormat == Image_Format_BGR32
-   || thePixelFormat == Image_Format_RGB32)
+    || thePixelFormat == Image_Format_RGB32)
   {
     //FreeImage_SetTransparent (anImage, FALSE);
     aFormat = (aFormat == Image_Format_BGRA) ? Image_Format_BGR32 : Image_Format_RGB32;
   }
 
-  Image_PixMap::InitWrapper (aFormat, FreeImage_GetBits (anImage),
-                             FreeImage_GetWidth (anImage), FreeImage_GetHeight (anImage), FreeImage_GetPitch (anImage));
-  SetTopDown (false);
+  Image_PixMap::InitWrapper(aFormat, FreeImage_GetBits(anImage),
+    FreeImage_GetWidth(anImage), FreeImage_GetHeight(anImage), FreeImage_GetPitch(anImage));
+  SetTopDown(false);
 
   // assign image after wrapper initialization (virtual Clear() called inside)
   myLibImage = anImage;
   return true;
 }
 #elif defined(HAVE_WINCODEC)
-bool Image_AlienPixMap::InitTrash (Image_Format        thePixelFormat,
-                                   const Standard_Size theSizeX,
-                                   const Standard_Size theSizeY,
-                                   const Standard_Size theSizeRowBytes)
+bool Image_AlienPixMap::InitTrash(Image_Format        thePixelFormat,
+  const Standard_Size theSizeX,
+  const Standard_Size theSizeY,
+  const Standard_Size theSizeRowBytes)
 {
   Clear();
   Image_Format aFormat = thePixelFormat;
   switch (aFormat)
   {
-    case Image_Format_RGB:
-      aFormat = Image_Format_BGR;
-      break;
-    case Image_Format_RGB32:
-      aFormat = Image_Format_BGR32;
-      break;
-    case Image_Format_RGBA:
-      aFormat = Image_Format_BGRA;
-      break;
-    default:
-      break;
+  case Image_Format_RGB:
+    aFormat = Image_Format_BGR;
+    break;
+  case Image_Format_RGB32:
+    aFormat = Image_Format_BGR32;
+    break;
+  case Image_Format_RGBA:
+    aFormat = Image_Format_BGRA;
+    break;
+  default:
+    break;
   }
 
-  if (!Image_PixMap::InitTrash (aFormat, theSizeX, theSizeY, theSizeRowBytes))
+  if (!Image_PixMap::InitTrash(aFormat, theSizeX, theSizeY, theSizeRowBytes))
   {
     return false;
   }
-  SetTopDown (true);
+  SetTopDown(true);
   return true;
 }
 #else
-bool Image_AlienPixMap::InitTrash (Image_Format        thePixelFormat,
-                                   const Standard_Size theSizeX,
-                                   const Standard_Size theSizeY,
-                                   const Standard_Size theSizeRowBytes)
+bool Image_AlienPixMap::InitTrash(Image_Format        thePixelFormat,
+  const Standard_Size theSizeX,
+  const Standard_Size theSizeY,
+  const Standard_Size theSizeRowBytes)
 {
-  return Image_PixMap::InitTrash (thePixelFormat, theSizeX, theSizeY, theSizeRowBytes);
+  return Image_PixMap::InitTrash(thePixelFormat, theSizeX, theSizeY, theSizeRowBytes);
 }
 #endif
 
@@ -445,14 +445,14 @@ bool Image_AlienPixMap::InitTrash (Image_Format        thePixelFormat,
 // function : InitCopy
 // purpose  :
 // =======================================================================
-bool Image_AlienPixMap::InitCopy (const Image_PixMap& theCopy)
+bool Image_AlienPixMap::InitCopy(const Image_PixMap& theCopy)
 {
   if (&theCopy == this)
   {
     // self-copying disallowed
     return false;
   }
-  if (!InitTrash (theCopy.Format(), theCopy.SizeX(), theCopy.SizeY(), theCopy.SizeRowBytes()))
+  if (!InitTrash(theCopy.Format(), theCopy.SizeX(), theCopy.SizeY(), theCopy.SizeRowBytes()))
   {
     return false;
   }
@@ -460,18 +460,18 @@ bool Image_AlienPixMap::InitCopy (const Image_PixMap& theCopy)
   if (myImgFormat == theCopy.Format())
   {
     if (SizeRowBytes() == theCopy.SizeRowBytes()
-     && TopDownInc()   == theCopy.TopDownInc())
+      && TopDownInc() == theCopy.TopDownInc())
     {
       // copy with one call
-      memcpy (ChangeData(), theCopy.Data(), std::min (SizeBytes(), theCopy.SizeBytes()));
+      memcpy(ChangeData(), theCopy.Data(), std::min(SizeBytes(), theCopy.SizeBytes()));
       return true;
     }
 
     // copy row-by-row
-    const Standard_Size aRowSizeBytes = std::min (SizeRowBytes(), theCopy.SizeRowBytes());
+    const Standard_Size aRowSizeBytes = std::min(SizeRowBytes(), theCopy.SizeRowBytes());
     for (Standard_Size aRow = 0; aRow < myData.SizeY; ++aRow)
     {
-      memcpy (ChangeRow (aRow), theCopy.Row (aRow), aRowSizeBytes);
+      memcpy(ChangeRow(aRow), theCopy.Row(aRow), aRowSizeBytes);
     }
     return true;
   }
@@ -491,7 +491,7 @@ void Image_AlienPixMap::Clear()
 #ifdef HAVE_FREEIMAGE
   if (myLibImage != NULL)
   {
-    FreeImage_Unload (myLibImage);
+    FreeImage_Unload(myLibImage);
     myLibImage = NULL;
   }
 #endif
@@ -517,41 +517,41 @@ bool Image_AlienPixMap::IsTopDownDefault()
 // purpose  :
 // =======================================================================
 #ifdef HAVE_FREEIMAGE
-bool Image_AlienPixMap::Load (const Standard_Byte* theData,
-                              Standard_Size theLength,
-                              const TCollection_AsciiString& theImagePath)
+bool Image_AlienPixMap::Load(const Standard_Byte* theData,
+  Standard_Size theLength,
+  const TCollection_AsciiString& theImagePath)
 {
   Clear();
 
 #ifdef _WIN32
-  const TCollection_ExtendedString aFileNameW (theImagePath);
+  const TCollection_ExtendedString aFileNameW(theImagePath);
 #endif
   FREE_IMAGE_FORMAT aFIF = FIF_UNKNOWN;
   FIMEMORY* aFiMem = NULL;
   if (theData != NULL)
   {
-    aFiMem = FreeImage_OpenMemory ((BYTE* )theData, (DWORD )theLength);
-    aFIF = FreeImage_GetFileTypeFromMemory (aFiMem, 0);
+    aFiMem = FreeImage_OpenMemory((BYTE*)theData, (DWORD)theLength);
+    aFIF = FreeImage_GetFileTypeFromMemory(aFiMem, 0);
   }
   else
   {
-  #ifdef _WIN32
-    aFIF = FreeImage_GetFileTypeU (aFileNameW.ToWideString(), 0);
-  #else
-    aFIF = FreeImage_GetFileType (theImagePath.ToCString(), 0);
-  #endif
+#ifdef _WIN32
+    aFIF = FreeImage_GetFileTypeU(aFileNameW.ToWideString(), 0);
+#else
+    aFIF = FreeImage_GetFileType(theImagePath.ToCString(), 0);
+#endif
   }
   if (aFIF == FIF_UNKNOWN)
   {
     // no signature? try to guess the file format from the file extension
-    aFIF = FreeImage_GetFIFFromFilename (theImagePath.ToCString());
+    aFIF = FreeImage_GetFIFFromFilename(theImagePath.ToCString());
   }
-  if ((aFIF == FIF_UNKNOWN) || !FreeImage_FIFSupportsReading (aFIF))
+  if ((aFIF == FIF_UNKNOWN) || !FreeImage_FIFSupportsReading(aFIF))
   {
-    ::Message::SendFail (TCollection_AsciiString ("Error: image '") + theImagePath + "' has unsupported file format");
+    ::Message::SendFail(TCollection_AsciiString("Error: image '") + theImagePath + "' has unsupported file format");
     if (aFiMem != NULL)
     {
-      FreeImage_CloseMemory (aFiMem);
+      FreeImage_CloseMemory(aFiMem);
     }
     return false;
   }
@@ -571,81 +571,81 @@ bool Image_AlienPixMap::Load (const Standard_Byte* theData,
   FIBITMAP* anImage = NULL;
   if (theData != NULL)
   {
-    anImage = FreeImage_LoadFromMemory (aFIF, aFiMem, aLoadFlags);
-    FreeImage_CloseMemory (aFiMem);
+    anImage = FreeImage_LoadFromMemory(aFIF, aFiMem, aLoadFlags);
+    FreeImage_CloseMemory(aFiMem);
     aFiMem = NULL;
   }
   else
   {
-  #ifdef _WIN32
-    anImage = FreeImage_LoadU (aFIF, aFileNameW.ToWideString(), aLoadFlags);
-  #else
-    anImage = FreeImage_Load  (aFIF, theImagePath.ToCString(), aLoadFlags);
-  #endif
+#ifdef _WIN32
+    anImage = FreeImage_LoadU(aFIF, aFileNameW.ToWideString(), aLoadFlags);
+#else
+    anImage = FreeImage_Load(aFIF, theImagePath.ToCString(), aLoadFlags);
+#endif
   }
   if (anImage == NULL)
   {
-    ::Message::SendFail (TCollection_AsciiString ("Error: image file '") + theImagePath  + "' is missing or invalid");
+    ::Message::SendFail(TCollection_AsciiString("Error: image file '") + theImagePath + "' is missing or invalid");
     return false;
   }
 
   Image_Format aFormat = Image_Format_UNKNOWN;
-  if (FreeImage_GetBPP (anImage) == 1)
+  if (FreeImage_GetBPP(anImage) == 1)
   {
-    FIBITMAP* aTmpImage = FreeImage_ConvertTo8Bits (anImage);
-    FreeImage_Unload (anImage);
+    FIBITMAP* aTmpImage = FreeImage_ConvertTo8Bits(anImage);
+    FreeImage_Unload(anImage);
     anImage = aTmpImage;
   }
   if (anImage != NULL)
   {
-    aFormat = convertFromFreeFormat (FreeImage_GetImageType(anImage),
-                                     FreeImage_GetColorType(anImage),
-                                     FreeImage_GetBPP      (anImage));
+    aFormat = convertFromFreeFormat(FreeImage_GetImageType(anImage),
+      FreeImage_GetColorType(anImage),
+      FreeImage_GetBPP(anImage));
     if (aFormat == Image_Format_UNKNOWN)
     {
-      FIBITMAP* aTmpImage = FreeImage_ConvertTo24Bits (anImage);
-      FreeImage_Unload (anImage);
+      FIBITMAP* aTmpImage = FreeImage_ConvertTo24Bits(anImage);
+      FreeImage_Unload(anImage);
       anImage = aTmpImage;
       if (anImage != NULL)
       {
-        aFormat = convertFromFreeFormat (FreeImage_GetImageType(anImage),
-                                         FreeImage_GetColorType(anImage),
-                                         FreeImage_GetBPP      (anImage));
+        aFormat = convertFromFreeFormat(FreeImage_GetImageType(anImage),
+          FreeImage_GetColorType(anImage),
+          FreeImage_GetBPP(anImage));
       }
     }
   }
   if (aFormat == Image_Format_UNKNOWN)
   {
-    ::Message::SendFail (TCollection_AsciiString ("Error: image '") + theImagePath + "' has unsupported pixel format");
+    ::Message::SendFail(TCollection_AsciiString("Error: image '") + theImagePath + "' has unsupported pixel format");
     return false;
   }
 
-  Image_PixMap::InitWrapper (aFormat, FreeImage_GetBits (anImage),
-                             FreeImage_GetWidth (anImage), FreeImage_GetHeight (anImage), FreeImage_GetPitch (anImage));
-  SetTopDown (false);
+  Image_PixMap::InitWrapper(aFormat, FreeImage_GetBits(anImage),
+    FreeImage_GetWidth(anImage), FreeImage_GetHeight(anImage), FreeImage_GetPitch(anImage));
+  SetTopDown(false);
 
   // assign image after wrapper initialization (virtual Clear() called inside)
   myLibImage = anImage;
   return true;
 }
 
-bool Image_AlienPixMap::Load (std::istream& theStream,
-                              const TCollection_AsciiString& theFileName)
+bool Image_AlienPixMap::Load(std::istream& theStream,
+  const TCollection_AsciiString& theFileName)
 {
   Clear();
 
-  Image_FreeImageStream aStream (theStream);
+  Image_FreeImageStream aStream(theStream);
   FreeImageIO aFiIO = aStream.GetFiIO();
 
-  FREE_IMAGE_FORMAT aFIF = FreeImage_GetFileTypeFromHandle (&aFiIO, &aStream, 0);
+  FREE_IMAGE_FORMAT aFIF = FreeImage_GetFileTypeFromHandle(&aFiIO, &aStream, 0);
   if (aFIF == FIF_UNKNOWN)
   {
     // no signature? try to guess the file format from the file extension
-    aFIF = FreeImage_GetFIFFromFilename (theFileName.ToCString());
+    aFIF = FreeImage_GetFIFFromFilename(theFileName.ToCString());
   }
-  if ((aFIF == FIF_UNKNOWN) || !FreeImage_FIFSupportsReading (aFIF))
+  if ((aFIF == FIF_UNKNOWN) || !FreeImage_FIFSupportsReading(aFIF))
   {
-    ::Message::SendFail (TCollection_AsciiString ("Error: image stream '") + theFileName + "' has unsupported file format");
+    ::Message::SendFail(TCollection_AsciiString("Error: image stream '") + theFileName + "' has unsupported file format");
     return false;
   }
 
@@ -661,25 +661,25 @@ bool Image_AlienPixMap::Load (std::istream& theStream,
     aLoadFlags = ICO_MAKEALPHA;
   }
 
-  FIBITMAP* anImage = FreeImage_LoadFromHandle (aFIF, &aFiIO, &aStream, aLoadFlags);
+  FIBITMAP* anImage = FreeImage_LoadFromHandle(aFIF, &aFiIO, &aStream, aLoadFlags);
   if (anImage == NULL)
   {
-    ::Message::SendFail (TCollection_AsciiString ("Error: image stream '") + theFileName + "' is missing or invalid");
+    ::Message::SendFail(TCollection_AsciiString("Error: image stream '") + theFileName + "' is missing or invalid");
     return false;
   }
 
-  Image_Format aFormat = convertFromFreeFormat (FreeImage_GetImageType(anImage),
-                                                FreeImage_GetColorType(anImage),
-                                                FreeImage_GetBPP      (anImage));
+  Image_Format aFormat = convertFromFreeFormat(FreeImage_GetImageType(anImage),
+    FreeImage_GetColorType(anImage),
+    FreeImage_GetBPP(anImage));
   if (aFormat == Image_Format_UNKNOWN)
   {
-    ::Message::SendFail (TCollection_AsciiString ("Error: image stream '") + theFileName + "' has unsupported pixel format");
+    ::Message::SendFail(TCollection_AsciiString("Error: image stream '") + theFileName + "' has unsupported pixel format");
     return false;
   }
 
-  Image_PixMap::InitWrapper (aFormat, FreeImage_GetBits (anImage),
-                             FreeImage_GetWidth (anImage), FreeImage_GetHeight (anImage), FreeImage_GetPitch (anImage));
-  SetTopDown (false);
+  Image_PixMap::InitWrapper(aFormat, FreeImage_GetBits(anImage),
+    FreeImage_GetWidth(anImage), FreeImage_GetHeight(anImage), FreeImage_GetPitch(anImage));
+  SetTopDown(false);
 
   // assign image after wrapper initialization (virtual Clear() called inside)
   myLibImage = anImage;
@@ -687,17 +687,17 @@ bool Image_AlienPixMap::Load (std::istream& theStream,
 }
 
 #elif defined(HAVE_WINCODEC)
-bool Image_AlienPixMap::Load (const Standard_Byte* theData,
-                              Standard_Size theLength,
-                              const TCollection_AsciiString& theFileName)
+bool Image_AlienPixMap::Load(const Standard_Byte* theData,
+  Standard_Size theLength,
+  const TCollection_AsciiString& theFileName)
 {
   Clear();
 
   Image_ComPtr<IWICImagingFactory> aWicImgFactory;
-  CoInitializeEx (NULL, COINIT_MULTITHREADED);
-  if (CoCreateInstance (CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&aWicImgFactory.ChangePtr())) != S_OK)
+  CoInitializeEx(NULL, COINIT_MULTITHREADED);
+  if (CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&aWicImgFactory.ChangePtr())) != S_OK)
   {
-    Message::SendFail ("Error: cannot initialize WIC Imaging Factory");
+    Message::SendFail("Error: cannot initialize WIC Imaging Factory");
     return false;
   }
 
@@ -705,24 +705,24 @@ bool Image_AlienPixMap::Load (const Standard_Byte* theData,
   Image_ComPtr<IWICStream> aWicStream;
   if (theData != NULL)
   {
-    if (aWicImgFactory->CreateStream (&aWicStream.ChangePtr()) != S_OK
-     || aWicStream->InitializeFromMemory ((BYTE* )theData, (DWORD )theLength) != S_OK)
+    if (aWicImgFactory->CreateStream(&aWicStream.ChangePtr()) != S_OK
+      || aWicStream->InitializeFromMemory((BYTE*)theData, (DWORD)theLength) != S_OK)
     {
-      Message::SendFail ("Error: cannot initialize WIC Stream");
+      Message::SendFail("Error: cannot initialize WIC Stream");
       return false;
     }
-    if (aWicImgFactory->CreateDecoderFromStream (aWicStream.get(), NULL, WICDecodeMetadataCacheOnDemand, &aWicDecoder.ChangePtr()) != S_OK)
+    if (aWicImgFactory->CreateDecoderFromStream(aWicStream.get(), NULL, WICDecodeMetadataCacheOnDemand, &aWicDecoder.ChangePtr()) != S_OK)
     {
-      Message::SendFail ("Error: cannot create WIC Image Decoder");
+      Message::SendFail("Error: cannot create WIC Image Decoder");
       return false;
     }
   }
   else
   {
-    const TCollection_ExtendedString aFileNameW (theFileName);
-    if (aWicImgFactory->CreateDecoderFromFilename (aFileNameW.ToWideString(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &aWicDecoder.ChangePtr()) != S_OK)
+    const TCollection_ExtendedString aFileNameW(theFileName);
+    if (aWicImgFactory->CreateDecoderFromFilename(aFileNameW.ToWideString(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &aWicDecoder.ChangePtr()) != S_OK)
     {
-      Message::SendFail ("Error: cannot create WIC Image Decoder");
+      Message::SendFail("Error: cannot create WIC Image Decoder");
       return false;
     }
   }
@@ -730,88 +730,88 @@ bool Image_AlienPixMap::Load (const Standard_Byte* theData,
   UINT aFrameCount = 0, aFrameSizeX = 0, aFrameSizeY = 0;
   WICPixelFormatGUID aWicPixelFormat = getNullGuid();
   Image_ComPtr<IWICBitmapFrameDecode> aWicFrameDecode;
-  if (aWicDecoder->GetFrameCount (&aFrameCount) != S_OK
-   || aFrameCount < 1
-   || aWicDecoder->GetFrame (0, &aWicFrameDecode.ChangePtr()) != S_OK
-   || aWicFrameDecode->GetSize (&aFrameSizeX, &aFrameSizeY) != S_OK
-   || aWicFrameDecode->GetPixelFormat (&aWicPixelFormat))
+  if (aWicDecoder->GetFrameCount(&aFrameCount) != S_OK
+    || aFrameCount < 1
+    || aWicDecoder->GetFrame(0, &aWicFrameDecode.ChangePtr()) != S_OK
+    || aWicFrameDecode->GetSize(&aFrameSizeX, &aFrameSizeY) != S_OK
+    || aWicFrameDecode->GetPixelFormat(&aWicPixelFormat))
   {
-    Message::SendFail ("Error: cannot get WIC Image Frame");
+    Message::SendFail("Error: cannot get WIC Image Frame");
     return false;
   }
 
   Image_ComPtr<IWICFormatConverter> aWicConvertedFrame;
-  Image_Format aPixelFormat = convertFromWicFormat (aWicPixelFormat);
+  Image_Format aPixelFormat = convertFromWicFormat(aWicPixelFormat);
   if (aPixelFormat == Image_Format_UNKNOWN)
   {
     aPixelFormat = Image_Format_RGB;
-    if (aWicImgFactory->CreateFormatConverter (&aWicConvertedFrame.ChangePtr()) != S_OK
-     || aWicConvertedFrame->Initialize (aWicFrameDecode.get(), convertToWicFormat (aPixelFormat), WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom) != S_OK)
+    if (aWicImgFactory->CreateFormatConverter(&aWicConvertedFrame.ChangePtr()) != S_OK
+      || aWicConvertedFrame->Initialize(aWicFrameDecode.get(), convertToWicFormat(aPixelFormat), WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom) != S_OK)
     {
-      Message::SendFail ("Error: cannot convert WIC Image Frame to RGB format");
+      Message::SendFail("Error: cannot convert WIC Image Frame to RGB format");
       return false;
     }
     aWicFrameDecode.Nullify();
   }
 
-  if (!Image_PixMap::InitTrash (aPixelFormat, aFrameSizeX, aFrameSizeY))
+  if (!Image_PixMap::InitTrash(aPixelFormat, aFrameSizeX, aFrameSizeY))
   {
-    Message::SendFail ("Error: cannot initialize memory for image");
+    Message::SendFail("Error: cannot initialize memory for image");
     return false;
   }
 
   IWICBitmapSource* aWicSrc = aWicFrameDecode.get();
-  if(!aWicConvertedFrame.IsNull())
+  if (!aWicConvertedFrame.IsNull())
   {
     aWicSrc = aWicConvertedFrame.get();
   }
-  if (aWicSrc->CopyPixels (NULL, (UINT )SizeRowBytes(), (UINT )SizeBytes(), ChangeData()) != S_OK)
+  if (aWicSrc->CopyPixels(NULL, (UINT)SizeRowBytes(), (UINT)SizeBytes(), ChangeData()) != S_OK)
   {
-    Message::SendFail ("Error: cannot copy pixels from WIC Image");
+    Message::SendFail("Error: cannot copy pixels from WIC Image");
     return false;
   }
-  SetTopDown (true);
+  SetTopDown(true);
   return true;
 }
-bool Image_AlienPixMap::Load (std::istream& theStream,
-                              const TCollection_AsciiString& theFilePath)
+bool Image_AlienPixMap::Load(std::istream& theStream,
+  const TCollection_AsciiString& theFilePath)
 {
   Clear();
 
   // fallback copying stream data into transient buffer
   const std::streamoff aStart = theStream.tellg();
-  theStream.seekg (0, std::ios::end);
+  theStream.seekg(0, std::ios::end);
   const Standard_Integer aLen = Standard_Integer(theStream.tellg() - aStart);
-  theStream.seekg (aStart);
+  theStream.seekg(aStart);
   if (aLen <= 0)
   {
-    Message::SendFail ("Error: empty stream");
+    Message::SendFail("Error: empty stream");
     return false;
   }
 
-  NCollection_Array1<Standard_Byte> aBuff (1, aLen);
-  if (!theStream.read ((char* )&aBuff.ChangeFirst(), aBuff.Size()))
+  NCollection_Array1<Standard_Byte> aBuff(1, aLen);
+  if (!theStream.read((char*)&aBuff.ChangeFirst(), aBuff.Size()))
   {
-    Message::SendFail ("Error: unable to read stream");
+    Message::SendFail("Error: unable to read stream");
     return false;
   }
 
-  return Load (&aBuff.ChangeFirst(), aBuff.Size(), theFilePath);
+  return Load(&aBuff.ChangeFirst(), aBuff.Size(), theFilePath);
 }
 #else
-bool Image_AlienPixMap::Load (std::istream& ,
-                              const TCollection_AsciiString& )
+bool Image_AlienPixMap::Load(std::istream&,
+  const TCollection_AsciiString&)
 {
   Clear();
-  Message::SendFail ("Error: no image library available");
+  Message::SendFail("Error: no image library available");
   return false;
 }
-bool Image_AlienPixMap::Load (const Standard_Byte* ,
-                              Standard_Size ,
-                              const TCollection_AsciiString& )
+bool Image_AlienPixMap::Load(const Standard_Byte*,
+  Standard_Size,
+  const TCollection_AsciiString&)
 {
   Clear();
-  Message::SendFail ("Error: no image library available");
+  Message::SendFail("Error: no image library available");
   return false;
 }
 #endif
@@ -820,7 +820,7 @@ bool Image_AlienPixMap::Load (const Standard_Byte* ,
 // function : savePPM
 // purpose  :
 // =======================================================================
-bool Image_AlienPixMap::savePPM (const TCollection_AsciiString& theFileName) const
+bool Image_AlienPixMap::savePPM(const TCollection_AsciiString& theFileName) const
 {
   if (IsEmpty())
   {
@@ -828,15 +828,15 @@ bool Image_AlienPixMap::savePPM (const TCollection_AsciiString& theFileName) con
   }
 
   // Open file
-  FILE* aFile = OSD_OpenFile (theFileName.ToCString(), "wb");
+  FILE* aFile = OSD_OpenFile(theFileName.ToCString(), "wb");
   if (aFile == NULL)
   {
     return false;
   }
 
   // Write header
-  fprintf (aFile, "P6\n%d %d\n255\n", (int )SizeX(), (int )SizeY());
-  fprintf (aFile, "# Image stored by OpenCASCADE framework in linear RGB colorspace\n");
+  fprintf(aFile, "P6\n%d %d\n255\n", (int)SizeX(), (int)SizeY());
+  fprintf(aFile, "# Image stored by OpenCASCADE framework in linear RGB colorspace\n");
 
   // Write pixel data
   Standard_Byte aByte;
@@ -845,15 +845,15 @@ bool Image_AlienPixMap::savePPM (const TCollection_AsciiString& theFileName) con
     for (Standard_Size aCol = 0; aCol < SizeX(); ++aCol)
     {
       // extremely SLOW but universal (implemented for all supported pixel formats)
-      const Quantity_ColorRGBA aColor = PixelColor ((Standard_Integer )aCol, (Standard_Integer )aRow);
-      aByte = Standard_Byte(aColor.GetRGB().Red()   * 255.0); fwrite (&aByte, 1, 1, aFile);
-      aByte = Standard_Byte(aColor.GetRGB().Green() * 255.0); fwrite (&aByte, 1, 1, aFile);
-      aByte = Standard_Byte(aColor.GetRGB().Blue()  * 255.0); fwrite (&aByte, 1, 1, aFile);
+      const Quantity_ColorRGBA aColor = PixelColor((Standard_Integer)aCol, (Standard_Integer)aRow);
+      aByte = Standard_Byte(aColor.GetRGB().Red() * 255.0); fwrite(&aByte, 1, 1, aFile);
+      aByte = Standard_Byte(aColor.GetRGB().Green() * 255.0); fwrite(&aByte, 1, 1, aFile);
+      aByte = Standard_Byte(aColor.GetRGB().Blue() * 255.0); fwrite(&aByte, 1, 1, aFile);
     }
   }
 
   // Close file
-  fclose (aFile);
+  fclose(aFile);
   return true;
 }
 
@@ -861,7 +861,7 @@ bool Image_AlienPixMap::savePPM (const TCollection_AsciiString& theFileName) con
 // function : Save
 // purpose  :
 // =======================================================================
-bool Image_AlienPixMap::Save (const TCollection_AsciiString& theFileName)
+bool Image_AlienPixMap::Save(const TCollection_AsciiString& theFileName)
 {
 #ifdef HAVE_FREEIMAGE
   if (myLibImage == NULL)
@@ -870,10 +870,10 @@ bool Image_AlienPixMap::Save (const TCollection_AsciiString& theFileName)
   }
 
 #ifdef _WIN32
-  const TCollection_ExtendedString aFileNameW (theFileName.ToCString(), Standard_True);
-  FREE_IMAGE_FORMAT anImageFormat = FreeImage_GetFIFFromFilenameU (aFileNameW.ToWideString());
+  const TCollection_ExtendedString aFileNameW(theFileName.ToCString(), Standard_True);
+  FREE_IMAGE_FORMAT anImageFormat = FreeImage_GetFIFFromFilenameU(aFileNameW.ToWideString());
 #else
-  FREE_IMAGE_FORMAT anImageFormat = FreeImage_GetFIFFromFilename (theFileName.ToCString());
+  FREE_IMAGE_FORMAT anImageFormat = FreeImage_GetFIFFromFilename(theFileName.ToCString());
 #endif
   if (anImageFormat == FIF_UNKNOWN)
   {
@@ -885,8 +885,8 @@ bool Image_AlienPixMap::Save (const TCollection_AsciiString& theFileName)
 
   if (IsTopDown())
   {
-    FreeImage_FlipVertical (myLibImage);
-    SetTopDown (false);
+    FreeImage_FlipVertical(myLibImage);
+    SetTopDown(false);
   }
 
   // FreeImage doesn't provide flexible format conversion API
@@ -894,112 +894,112 @@ bool Image_AlienPixMap::Save (const TCollection_AsciiString& theFileName)
   FIBITMAP* anImageToDump = myLibImage;
   switch (anImageFormat)
   {
-    case FIF_PNG:
-    case FIF_BMP:
+  case FIF_PNG:
+  case FIF_BMP:
+  {
+    if (Format() == Image_Format_BGR32
+      || Format() == Image_Format_RGB32)
     {
-      if (Format() == Image_Format_BGR32
-       || Format() == Image_Format_RGB32)
+      // stupid FreeImage treats reserved byte as alpha if some bytes not set to 0xFF
+      for (Standard_Size aRow = 0; aRow < SizeY(); ++aRow)
       {
-        // stupid FreeImage treats reserved byte as alpha if some bytes not set to 0xFF
-        for (Standard_Size aRow = 0; aRow < SizeY(); ++aRow)
+        for (Standard_Size aCol = 0; aCol < SizeX(); ++aCol)
         {
-          for (Standard_Size aCol = 0; aCol < SizeX(); ++aCol)
-          {
-            myData.ChangeValue (aRow, aCol)[3] = 0xFF;
-          }
+          myData.ChangeValue(aRow, aCol)[3] = 0xFF;
         }
       }
-      else if (FreeImage_GetImageType (myLibImage) != FIT_BITMAP)
-      {
-        anImageToDump = FreeImage_ConvertToType (myLibImage, FIT_BITMAP);
-      }
-      break;
     }
-    case FIF_GIF:
+    else if (FreeImage_GetImageType(myLibImage) != FIT_BITMAP)
     {
-      FIBITMAP* aTmpBitmap = myLibImage;
-      if (FreeImage_GetImageType (myLibImage) != FIT_BITMAP)
+      anImageToDump = FreeImage_ConvertToType(myLibImage, FIT_BITMAP);
+    }
+    break;
+  }
+  case FIF_GIF:
+  {
+    FIBITMAP* aTmpBitmap = myLibImage;
+    if (FreeImage_GetImageType(myLibImage) != FIT_BITMAP)
+    {
+      aTmpBitmap = FreeImage_ConvertToType(myLibImage, FIT_BITMAP);
+      if (aTmpBitmap == NULL)
       {
-        aTmpBitmap = FreeImage_ConvertToType (myLibImage, FIT_BITMAP);
-        if (aTmpBitmap == NULL)
-        {
-          return false;
-        }
+        return false;
       }
+    }
 
-      if (FreeImage_GetBPP (aTmpBitmap) != 24)
-      {
-        FIBITMAP* aTmpBitmap24 = FreeImage_ConvertTo24Bits (aTmpBitmap);
-        if (aTmpBitmap != myLibImage)
-        {
-          FreeImage_Unload (aTmpBitmap);
-        }
-        if (aTmpBitmap24 == NULL)
-        {
-          return false;
-        }
-        aTmpBitmap = aTmpBitmap24;
-      }
-
-      // need conversion to image with palette (requires 24bit bitmap)
-      anImageToDump = FreeImage_ColorQuantize (aTmpBitmap, FIQ_NNQUANT);
+    if (FreeImage_GetBPP(aTmpBitmap) != 24)
+    {
+      FIBITMAP* aTmpBitmap24 = FreeImage_ConvertTo24Bits(aTmpBitmap);
       if (aTmpBitmap != myLibImage)
       {
-        FreeImage_Unload (aTmpBitmap);
+        FreeImage_Unload(aTmpBitmap);
       }
-      break;
+      if (aTmpBitmap24 == NULL)
+      {
+        return false;
+      }
+      aTmpBitmap = aTmpBitmap24;
     }
-    case FIF_HDR:
-    case FIF_EXR:
-    {
-      if (Format() == Image_Format_Gray
-       || Format() == Image_Format_Alpha)
-      {
-        anImageToDump = FreeImage_ConvertToType (myLibImage, FIT_FLOAT);
-      }
-      else if (Format() == Image_Format_RGBA
-            || Format() == Image_Format_BGRA)
-      {
-        anImageToDump = FreeImage_ConvertToType (myLibImage, FIT_RGBAF);
-      }
-      else
-      {
-        FREE_IMAGE_TYPE aImgTypeFI = FreeImage_GetImageType (myLibImage);
-        if (aImgTypeFI != FIT_RGBF
-         && aImgTypeFI != FIT_RGBAF
-         && aImgTypeFI != FIT_FLOAT)
-        {
-          anImageToDump = FreeImage_ConvertToType (myLibImage, FIT_RGBF);
-        }
-      }
-      break;
-    }
-    default:
-    {
-      if (FreeImage_GetImageType (myLibImage) != FIT_BITMAP)
-      {
-        anImageToDump = FreeImage_ConvertToType (myLibImage, FIT_BITMAP);
-        if (anImageToDump == NULL)
-        {
-          return false;
-        }
-      }
 
-      if (FreeImage_GetBPP (anImageToDump) != 24)
-      {
-        FIBITMAP* aTmpBitmap24 = FreeImage_ConvertTo24Bits (anImageToDump);
-        if (anImageToDump != myLibImage)
-        {
-          FreeImage_Unload (anImageToDump);
-        }
-        if (aTmpBitmap24 == NULL)
-        {
-          return false;
-        }
-        anImageToDump = aTmpBitmap24;
-      }
-      break;
+    // need conversion to image with palette (requires 24bit bitmap)
+    anImageToDump = FreeImage_ColorQuantize(aTmpBitmap, FIQ_NNQUANT);
+    if (aTmpBitmap != myLibImage)
+    {
+      FreeImage_Unload(aTmpBitmap);
     }
+    break;
+  }
+  case FIF_HDR:
+  case FIF_EXR:
+  {
+    if (Format() == Image_Format_Gray
+      || Format() == Image_Format_Alpha)
+    {
+      anImageToDump = FreeImage_ConvertToType(myLibImage, FIT_FLOAT);
+    }
+    else if (Format() == Image_Format_RGBA
+      || Format() == Image_Format_BGRA)
+    {
+      anImageToDump = FreeImage_ConvertToType(myLibImage, FIT_RGBAF);
+    }
+    else
+    {
+      FREE_IMAGE_TYPE aImgTypeFI = FreeImage_GetImageType(myLibImage);
+      if (aImgTypeFI != FIT_RGBF
+        && aImgTypeFI != FIT_RGBAF
+        && aImgTypeFI != FIT_FLOAT)
+      {
+        anImageToDump = FreeImage_ConvertToType(myLibImage, FIT_RGBF);
+      }
+    }
+    break;
+  }
+  default:
+  {
+    if (FreeImage_GetImageType(myLibImage) != FIT_BITMAP)
+    {
+      anImageToDump = FreeImage_ConvertToType(myLibImage, FIT_BITMAP);
+      if (anImageToDump == NULL)
+      {
+        return false;
+      }
+    }
+
+    if (FreeImage_GetBPP(anImageToDump) != 24)
+    {
+      FIBITMAP* aTmpBitmap24 = FreeImage_ConvertTo24Bits(anImageToDump);
+      if (anImageToDump != myLibImage)
+      {
+        FreeImage_Unload(anImageToDump);
+      }
+      if (aTmpBitmap24 == NULL)
+      {
+        return false;
+      }
+      anImageToDump = aTmpBitmap24;
+    }
+    break;
+  }
   }
 
   if (anImageToDump == NULL)
@@ -1008,13 +1008,13 @@ bool Image_AlienPixMap::Save (const TCollection_AsciiString& theFileName)
   }
 
 #ifdef _WIN32
-  bool isSaved = (FreeImage_SaveU (anImageFormat, anImageToDump, aFileNameW.ToWideString()) != FALSE);
+  bool isSaved = (FreeImage_SaveU(anImageFormat, anImageToDump, aFileNameW.ToWideString()) != FALSE);
 #else
-  bool isSaved = (FreeImage_Save  (anImageFormat, anImageToDump, theFileName.ToCString()) != FALSE);
+  bool isSaved = (FreeImage_Save(anImageFormat, anImageToDump, theFileName.ToCString()) != FALSE);
 #endif
   if (anImageToDump != myLibImage)
   {
-    FreeImage_Unload (anImageToDump);
+    FreeImage_Unload(anImageToDump);
   }
   return isSaved;
 
@@ -1023,91 +1023,91 @@ bool Image_AlienPixMap::Save (const TCollection_AsciiString& theFileName)
   TCollection_AsciiString aFileNameLower = theFileName;
   aFileNameLower.LowerCase();
   GUID aFileFormat = getNullGuid();
-  if (aFileNameLower.EndsWith (".ppm"))
+  if (aFileNameLower.EndsWith(".ppm"))
   {
-    return savePPM (theFileName);
+    return savePPM(theFileName);
   }
-  else if (aFileNameLower.EndsWith (".bmp"))
+  else if (aFileNameLower.EndsWith(".bmp"))
   {
     aFileFormat = GUID_ContainerFormatBmp;
   }
-  else if (aFileNameLower.EndsWith (".png"))
+  else if (aFileNameLower.EndsWith(".png"))
   {
     aFileFormat = GUID_ContainerFormatPng;
   }
-  else if (aFileNameLower.EndsWith (".jpg")
-        || aFileNameLower.EndsWith (".jpeg"))
+  else if (aFileNameLower.EndsWith(".jpg")
+    || aFileNameLower.EndsWith(".jpeg"))
   {
     aFileFormat = GUID_ContainerFormatJpeg;
   }
-  else if (aFileNameLower.EndsWith (".tiff"))
+  else if (aFileNameLower.EndsWith(".tiff"))
   {
     aFileFormat = GUID_ContainerFormatTiff;
   }
-  else if (aFileNameLower.EndsWith (".gif"))
+  else if (aFileNameLower.EndsWith(".gif"))
   {
     aFileFormat = GUID_ContainerFormatGif;
   }
 
   if (aFileFormat == getNullGuid())
   {
-    Message::SendFail ("Error: unsupported image format");
+    Message::SendFail("Error: unsupported image format");
     return false;
   }
 
   Image_ComPtr<IWICImagingFactory> aWicImgFactory;
-  CoInitializeEx (NULL, COINIT_MULTITHREADED);
-  if (CoCreateInstance (CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&aWicImgFactory.ChangePtr())) != S_OK)
+  CoInitializeEx(NULL, COINIT_MULTITHREADED);
+  if (CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&aWicImgFactory.ChangePtr())) != S_OK)
   {
-    Message::SendFail ("Error: cannot initialize WIC Imaging Factory");
+    Message::SendFail("Error: cannot initialize WIC Imaging Factory");
     return false;
   }
 
   Image_ComPtr<IWICStream> aWicFileStream;
   Image_ComPtr<IWICBitmapEncoder> aWicEncoder;
-  const TCollection_ExtendedString aFileNameW (theFileName);
-  if (aWicImgFactory->CreateStream (&aWicFileStream.ChangePtr()) != S_OK
-   || aWicFileStream->InitializeFromFilename (aFileNameW.ToWideString(), GENERIC_WRITE) != S_OK)
+  const TCollection_ExtendedString aFileNameW(theFileName);
+  if (aWicImgFactory->CreateStream(&aWicFileStream.ChangePtr()) != S_OK
+    || aWicFileStream->InitializeFromFilename(aFileNameW.ToWideString(), GENERIC_WRITE) != S_OK)
   {
-    Message::SendFail ("Error: cannot create WIC File Stream");
+    Message::SendFail("Error: cannot create WIC File Stream");
     return false;
   }
-  if (aWicImgFactory->CreateEncoder (aFileFormat, NULL, &aWicEncoder.ChangePtr()) != S_OK
-   || aWicEncoder->Initialize (aWicFileStream.get(), WICBitmapEncoderNoCache) != S_OK)
+  if (aWicImgFactory->CreateEncoder(aFileFormat, NULL, &aWicEncoder.ChangePtr()) != S_OK
+    || aWicEncoder->Initialize(aWicFileStream.get(), WICBitmapEncoderNoCache) != S_OK)
   {
-    Message::SendFail ("Error: cannot create WIC Encoder");
+    Message::SendFail("Error: cannot create WIC Encoder");
     return false;
   }
 
-  const WICPixelFormatGUID aWicPixelFormat = convertToWicFormat (myImgFormat);
+  const WICPixelFormatGUID aWicPixelFormat = convertToWicFormat(myImgFormat);
   if (aWicPixelFormat == getNullGuid())
   {
-    Message::SendFail ("Error: unsupported pixel format");
+    Message::SendFail("Error: unsupported pixel format");
     return false;
   }
 
   WICPixelFormatGUID aWicPixelFormatRes = aWicPixelFormat;
   Image_ComPtr<IWICBitmapFrameEncode> aWicFrameEncode;
-  if (aWicEncoder->CreateNewFrame (&aWicFrameEncode.ChangePtr(), NULL) != S_OK
-   || aWicFrameEncode->Initialize (NULL) != S_OK
-   || aWicFrameEncode->SetSize ((UINT )SizeX(), (UINT )SizeY()) != S_OK
-   || aWicFrameEncode->SetPixelFormat (&aWicPixelFormatRes) != S_OK)
+  if (aWicEncoder->CreateNewFrame(&aWicFrameEncode.ChangePtr(), NULL) != S_OK
+    || aWicFrameEncode->Initialize(NULL) != S_OK
+    || aWicFrameEncode->SetSize((UINT)SizeX(), (UINT)SizeY()) != S_OK
+    || aWicFrameEncode->SetPixelFormat(&aWicPixelFormatRes) != S_OK)
   {
-    Message::SendFail ("Error: cannot create WIC Frame");
+    Message::SendFail("Error: cannot create WIC Frame");
     return false;
   }
 
   if (aWicPixelFormatRes != aWicPixelFormat)
   {
-    Message::SendFail ("Error: pixel format is unsupported by image format");
+    Message::SendFail("Error: pixel format is unsupported by image format");
     return false;
   }
 
   if (IsTopDown())
   {
-    if (aWicFrameEncode->WritePixels ((UINT )SizeY(), (UINT )SizeRowBytes(), (UINT )SizeBytes(), (BYTE* )Data()) != S_OK)
+    if (aWicFrameEncode->WritePixels((UINT)SizeY(), (UINT)SizeRowBytes(), (UINT)SizeBytes(), (BYTE*)Data()) != S_OK)
     {
-      Message::SendFail ("Error: cannot write pixels to WIC Frame");
+      Message::SendFail("Error: cannot write pixels to WIC Frame");
       return false;
     }
   }
@@ -1115,21 +1115,21 @@ bool Image_AlienPixMap::Save (const TCollection_AsciiString& theFileName)
   {
     for (Standard_Size aRow = 0; aRow < SizeY(); ++aRow)
     {
-      if (aWicFrameEncode->WritePixels (1, (UINT )SizeRowBytes(), (UINT )SizeRowBytes(), (BYTE* )Row (aRow)) != S_OK)
+      if (aWicFrameEncode->WritePixels(1, (UINT)SizeRowBytes(), (UINT)SizeRowBytes(), (BYTE*)Row(aRow)) != S_OK)
       {
-        Message::SendFail ("Error: cannot write pixels to WIC Frame");
+        Message::SendFail("Error: cannot write pixels to WIC Frame");
         return false;
       }
     }
   }
 
   if (aWicFrameEncode->Commit() != S_OK
-   || aWicEncoder->Commit() != S_OK)
+    || aWicEncoder->Commit() != S_OK)
   {
-    Message::SendFail ("Error: cannot commit data to WIC Frame");
+    Message::SendFail("Error: cannot commit data to WIC Frame");
     return false;
   }
-  if (aWicFileStream->Commit (STGC_DEFAULT) != S_OK)
+  if (aWicFileStream->Commit(STGC_DEFAULT) != S_OK)
   {
     //Message::Send ("Error: cannot commit data to WIC File Stream", Message_Fail);
     //return false;
@@ -1137,13 +1137,13 @@ bool Image_AlienPixMap::Save (const TCollection_AsciiString& theFileName)
   return true;
 #else
   const Standard_Integer aLen = theFileName.Length();
-  if ((aLen >= 4) && (theFileName.Value (aLen - 3) == '.')
-      && strcasecmp( theFileName.ToCString() + aLen - 3, "ppm") == 0 )
+  if ((aLen >= 4) && (theFileName.Value(aLen - 3) == '.')
+    && strcasecmp(theFileName.ToCString() + aLen - 3, "ppm") == 0)
   {
-    return savePPM (theFileName);
+    return savePPM(theFileName);
   }
-  Message::SendTrace ("Image_PixMap, no image library available! Image saved in PPM format");
-  return savePPM (theFileName);
+  Message::SendTrace("Image_PixMap, no image library available! Image saved in PPM format");
+  return savePPM(theFileName);
 #endif
 }
 
@@ -1151,12 +1151,12 @@ bool Image_AlienPixMap::Save (const TCollection_AsciiString& theFileName)
 // function : AdjustGamma
 // purpose  :
 // =======================================================================
-bool Image_AlienPixMap::AdjustGamma (const Standard_Real theGammaCorr)
+bool Image_AlienPixMap::AdjustGamma(const Standard_Real theGammaCorr)
 {
 #ifdef HAVE_FREEIMAGE
-  return FreeImage_AdjustGamma (myLibImage, theGammaCorr) != FALSE;
+  return FreeImage_AdjustGamma(myLibImage, theGammaCorr) != FALSE;
 #else
-  (void )theGammaCorr;
+  (void)theGammaCorr;
   return false;
 #endif
 }
