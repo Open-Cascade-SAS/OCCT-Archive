@@ -2930,7 +2930,8 @@ Standard_Boolean ShapeFix_Wire::FixLacking (const Standard_Integer num,
   //=============
   // First phase: analysis whether the problem (gap) exists
   gp_Pnt2d p2d1, p2d2;
-  myAnalyzer->CheckLacking ( num, ( force ? Precision() : 0. ), p2d1, p2d2 );
+  gp_Vec2d aTangent1, aTangent2;
+  myAnalyzer->CheckLacking (num, ( force ? Precision() : 0. ), p2d1, p2d2, aTangent1, aTangent2);
   if ( myAnalyzer->LastCheckStatus ( ShapeExtend_FAIL ) ) {
     myLastFixStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_FAIL1 );
   }
@@ -3052,8 +3053,28 @@ Standard_Boolean ShapeFix_Wire::FixLacking (const Standard_Integer num,
       gp_Pnt pV = 0.5 * ( BRep_Tool::Pnt(V1).XYZ() + BRep_Tool::Pnt(V2).XYZ() );
       gp_Pnt pm = myAnalyzer->Surface()->Value ( 0.5 * ( p2d1.XY() + p2d2.XY() ) );
 
+      //Additional check
+      //const Standard_Real anAngularTol = 1.e-5;
+      const Standard_Real aMaxAngle = 7*M_PI/8;
+      Standard_Boolean anIsGoodConnection = Standard_True;
+      gp_Vec2d aVecP1P2 (p2d1, p2d2);
+      if (aVecP1P2.SquareMagnitude() > Precision::SquareConfusion() &&
+          aTangent1.SquareMagnitude() > Precision::SquareConfusion() &&
+          aTangent2.SquareMagnitude() > Precision::SquareConfusion())
+      {
+        Standard_Real anAngle1 = aTangent1.Angle (aVecP1P2);
+        Standard_Real anAngle2 = aVecP1P2.Angle (aTangent2);
+        if (Abs(anAngle1) > aMaxAngle ||
+            Abs(anAngle2) > aMaxAngle)
+          anIsGoodConnection = Standard_False;
+      }
+
       Standard_Real dist = pV.Distance ( pm );
-      if ( dist <= tol ) doAddDegen = Standard_True;
+      if ( dist <= tol )
+      {
+        if (anIsGoodConnection)
+          doAddDegen = Standard_True;
+      }
       else if ( myTopoMode ) doAddClosed = Standard_True;
       else if ( dist <= MaxTolerance() ) { //:r7 abv 12 Apr 99: t3d_opt.stp #14245 after S4136
 	doAddDegen = Standard_True;

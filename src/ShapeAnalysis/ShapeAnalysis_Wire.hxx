@@ -403,7 +403,10 @@ public:
   //! DONE2: is set (together with DONE1) if gap is detected and the
   //! vector (p2d2 - p2d1) goes in direction opposite to the pcurves
   //! of the edges (if angle is more than 0.9*PI).
-  Standard_EXPORT Standard_Boolean CheckLacking (const Standard_Integer num, const Standard_Real Tolerance, gp_Pnt2d& p2d1, gp_Pnt2d& p2d2);
+  Standard_EXPORT Standard_Boolean CheckLacking (const Standard_Integer num,
+                                                 const Standard_Real Tolerance,
+                                                 gp_Pnt2d& p2d1, gp_Pnt2d& p2d2,
+                                                 gp_Vec2d& theTangent1, gp_Vec2d& theTangent2);
   
   //! Checks if there is a gap in 2D between edges and not comprised by vertex tolerance
   //! The value of SBWD.thepreci is used.

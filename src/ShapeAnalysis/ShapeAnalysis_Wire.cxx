@@ -1504,7 +1504,8 @@ Standard_Boolean ShapeAnalysis_Wire::CheckIntersectingEdges (const Standard_Inte
 
 Standard_Boolean ShapeAnalysis_Wire::CheckLacking (const Standard_Integer num,
 						   const Standard_Real Tolerance,
-						   gp_Pnt2d &p2d1, gp_Pnt2d &p2d2) 
+						   gp_Pnt2d &p2d1, gp_Pnt2d &p2d2,
+                                                   gp_Vec2d& theTangent1, gp_Vec2d& theTangent2)
 {
   myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
   if ( ! IsReady() ) return Standard_False;
@@ -1529,22 +1530,24 @@ Standard_Boolean ShapeAnalysis_Wire::CheckLacking (const Standard_Integer num,
   }
 
   Standard_Real a, b;
-  gp_Vec2d v1, v2, v12;
+  gp_Vec2d /*v1, v2,*/ v12;
   Handle(Geom2d_Curve) c2d;
   if ( ! sae.PCurve ( E1, myFace, c2d, a, b, Standard_True ) ) {
     myStatus |= ShapeExtend::EncodeStatus (ShapeExtend_FAIL3);
     return Standard_False;
   }
   Geom2dAdaptor_Curve anAdapt(c2d);
-  anAdapt.D1(b, p2d1, v1);
-  if ( E1.Orientation() == TopAbs_REVERSED ) v1.Reverse();
+  anAdapt.D1(b, p2d1, theTangent1);
+  if ( E1.Orientation() == TopAbs_REVERSED )
+    theTangent1.Reverse();
   if ( ! sae.PCurve ( E2, myFace, c2d, a, b, Standard_True ) ) {
     myStatus |= ShapeExtend::EncodeStatus (ShapeExtend_FAIL3);
     return Standard_False;
   }
   anAdapt.Load(c2d);
-  anAdapt.D1(a, p2d2, v2);
-  if ( E2.Orientation() == TopAbs_REVERSED ) v2.Reverse();
+  anAdapt.D1(a, p2d2, theTangent2);
+  if ( E2.Orientation() == TopAbs_REVERSED )
+    theTangent2.Reverse();
   v12 = p2d2.XY() - p2d1.XY();
   myMax2d = v12.SquareMagnitude();
 
@@ -1561,8 +1564,8 @@ Standard_Boolean ShapeAnalysis_Wire::CheckLacking (const Standard_Integer num,
   myStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE1 );
 
   if ( myMax2d < Precision::PConfusion() || //:abv 03.06.02 CTS21866.stp
-       ( v1.SquareMagnitude() > gp::Resolution() && Abs ( v12.Angle ( v1 ) ) > 0.9 * M_PI ) ||
-       ( v2.SquareMagnitude() > gp::Resolution() && Abs ( v12.Angle ( v2 ) ) > 0.9 * M_PI ) ) 
+       ( theTangent1.SquareMagnitude() > gp::Resolution() && Abs ( v12.Angle ( theTangent1 ) ) > 0.9 * M_PI ) ||
+       ( theTangent2.SquareMagnitude() > gp::Resolution() && Abs ( v12.Angle ( theTangent2 ) ) > 0.9 * M_PI ) ) 
        myStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE2 );
   return Standard_True;
 }
@@ -1577,7 +1580,8 @@ Standard_Boolean ShapeAnalysis_Wire::CheckLacking (const Standard_Integer num,
 						   const Standard_Real Tolerance)
 {
   gp_Pnt2d p1, p2;
-  return CheckLacking (num, Tolerance, p1, p2);
+  gp_Vec2d aTangent1, aTangent2;
+  return CheckLacking (num, Tolerance, p1, p2, aTangent1, aTangent2);
 }
 
 //=======================================================================
