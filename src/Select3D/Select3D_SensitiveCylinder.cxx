@@ -81,17 +81,14 @@ Handle(Select3D_SensitiveEntity) Select3D_SensitiveCylinder::GetConnected()
 Select3D_BndBox3d Select3D_SensitiveCylinder::BoundingBox()
 {
   Standard_Real aMaxRad = Max (myBottomRadius, myTopRadius);
-  gp_Pnt aCenterBottom (-aMaxRad, -aMaxRad, 0);
-  gp_Pnt aCenterTop (aMaxRad, aMaxRad, myHeight);
-  aCenterBottom.Transform (myTrsf);
-  aCenterTop.Transform (myTrsf);
-  const SelectMgr_Vec3 aMinPnt (Min (aCenterBottom.X(), aCenterTop.X()),
-                                Min (aCenterBottom.Y(), aCenterTop.Y()),
-                                Min (aCenterBottom.Z(), aCenterTop.Z()));
-  const SelectMgr_Vec3 aMaxPnt (Max (aCenterBottom.X(), aCenterTop.X()),
-                                Max (aCenterBottom.Y(), aCenterTop.Y()),
-                                Max (aCenterBottom.Z(), aCenterTop.Z()));
-  return Select3D_BndBox3d (aMinPnt, aMaxPnt);
+  Graphic3d_Mat4d aTrsf;
+  myTrsf.GetMat4 (aTrsf);
+
+  Select3D_BndBox3d aBox (SelectMgr_Vec3 (-aMaxRad, -aMaxRad, 0),
+                          SelectMgr_Vec3 (aMaxRad, aMaxRad, myHeight));
+  aBox.Transform (aTrsf);
+
+  return aBox;
 }
 
 //==================================================
