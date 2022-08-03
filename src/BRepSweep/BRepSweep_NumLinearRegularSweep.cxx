@@ -37,7 +37,7 @@ BRepSweep_NumLinearRegularSweep::BRepSweep_NumLinearRegularSweep
   const TopoDS_Shape& aGenShape,
   const Sweep_NumShape& aDirShape):
 
-myBuilder(aBuilder),
+  myBuilder(aBuilder),
   myGenShape(aGenShape),
   myDirWire(aDirShape),
 
