@@ -1155,7 +1155,24 @@ void BRepFill_CompatibleWires::
 	
 	// parse candidate edges
 	Standard_Real scal1,scal2;
-	if ( (V1.IsSame(VVF)&&V2.IsSame(VVL)) || (V2.IsSame(VVF)&&V1.IsSame(VVL)) ) {
+
+  Standard_Boolean isEqual = (V1.IsSame(VVF) && V2.IsSame(VVL)) || (V2.IsSame(VVF) && V1.IsSame(VVL));
+
+  if (!isEqual)
+  {
+    itF = (MapVLV.FindFromKey(VF));
+    itL = (MapVLV.FindFromKey(VL));
+    rang = ideb - 1;
+    while (rang < i) {
+      itF.Next();
+      itL.Next();
+      rang++;
+    }
+    V1 = TopoDS::Vertex(itF.Value()), V2 = TopoDS::Vertex(itL.Value());
+    isEqual = (V1.IsSame(VVF) && V2.IsSame(VVL)) || (V2.IsSame(VVF) && V1.IsSame(VVL));
+  }
+
+  if (isEqual) {
 	  Standard_Real U1param = BRep_Tool::Parameter(VVF,E);
 	  Standard_Real U2param = BRep_Tool::Parameter(VVL,E);
 	  BRepAdaptor_Curve CurveE(E);
