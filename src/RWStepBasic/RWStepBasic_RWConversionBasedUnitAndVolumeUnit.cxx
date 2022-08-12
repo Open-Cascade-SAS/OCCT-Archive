@@ -19,7 +19,6 @@
 #include <RWStepBasic_RWConversionBasedUnitAndVolumeUnit.hxx>
 #include <StepBasic_ConversionBasedUnitAndVolumeUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
 
@@ -28,9 +27,9 @@ RWStepBasic_RWConversionBasedUnitAndVolumeUnit::RWStepBasic_RWConversionBasedUni
 }
 
 void RWStepBasic_RWConversionBasedUnitAndVolumeUnit::ReadStep(const Handle(StepData_StepReaderData)& data,
-							      const Standard_Integer num0,
-							      Handle(Interface_Check)& ach,
-							      const Handle(StepBasic_ConversionBasedUnitAndVolumeUnit)& ent) const
+                                                              const Standard_Integer num0,
+                                                              Handle(Interface_Check)& ach,
+                                                              const Handle(StepBasic_ConversionBasedUnitAndVolumeUnit)& ent) const
 {
   Standard_Integer num = num0;
   // --- Instance of plex component ConversionBasedUnit ---
@@ -39,8 +38,8 @@ void RWStepBasic_RWConversionBasedUnitAndVolumeUnit::ReadStep(const Handle(StepD
   data->ReadString (num,1,"name",ach,aName);
   
   // --- field : conversionFactor ---
-  Handle(StepBasic_MeasureWithUnit) aConversionFactor;
-  data->ReadEntity(num, 2,"conversion_factor", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aConversionFactor);
+  Handle(Standard_Transient) aConversionFactor;
+  data->ReadEntity (num, 2, "conversion_factor", ach, STANDARD_TYPE(Standard_Transient), aConversionFactor);
   
   num = data->NextForComplex(num);
   if (!data->CheckNbParams(num,1,ach,"named_unit")) return;
@@ -50,11 +49,11 @@ void RWStepBasic_RWConversionBasedUnitAndVolumeUnit::ReadStep(const Handle(StepD
   data->NamedForComplex("VOLUME_UNIT","VLMUNT",num0,num,ach);
   if (!data->CheckNbParams(num,0,ach,"volume_unit")) return;
   
-  ent->Init(aDimensions,aName,aConversionFactor);
+  ent->Init(aDimensions,aName, aConversionFactor);
 }
 
 void RWStepBasic_RWConversionBasedUnitAndVolumeUnit::WriteStep(StepData_StepWriter& SW,
-							     const Handle(StepBasic_ConversionBasedUnitAndVolumeUnit)& ent) const
+                   const Handle(StepBasic_ConversionBasedUnitAndVolumeUnit)& ent) const
 {
   SW.StartEntity("CONVERSION_BASED_UNIT");
   SW.Send(ent->Name());
@@ -65,7 +64,7 @@ void RWStepBasic_RWConversionBasedUnitAndVolumeUnit::WriteStep(StepData_StepWrit
 }
   
 void RWStepBasic_RWConversionBasedUnitAndVolumeUnit::Share(const Handle(StepBasic_ConversionBasedUnitAndVolumeUnit)& ent, 
-							   Interface_EntityIterator& iter) const
+                                                           Interface_EntityIterator& iter) const
 {
   iter.GetOneItem(ent->Dimensions());
   iter.GetOneItem(ent->ConversionFactor());

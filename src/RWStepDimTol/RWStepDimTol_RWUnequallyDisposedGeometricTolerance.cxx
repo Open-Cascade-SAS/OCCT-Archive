@@ -51,8 +51,8 @@ void RWStepDimTol_RWUnequallyDisposedGeometricTolerance::
   Handle(TCollection_HAsciiString) aDescription;
   data->ReadString (num, 2, "geometric_tolerance.description", ach, aDescription);
 
-  Handle(StepBasic_MeasureWithUnit) aMagnitude;
-  data->ReadEntity (num, 3, "geometric_tolerance.magnitude", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aMagnitude);
+  Handle(Standard_Transient) aMagnitude;
+  data->ReadEntity (num, 3, "magnitude", ach, STANDARD_TYPE(Standard_Transient), aMagnitude);
 
   StepDimTol_GeometricToleranceTarget aTolerancedShapeAspect;
   data->ReadEntity (num, 4, "geometric_tolerance.toleranced_shape_aspect", ach, aTolerancedShapeAspect);

@@ -15,7 +15,6 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepDimTol_GeometricTolerance.hxx>
 #include <StepDimTol_GeometricToleranceTarget.hxx>
 #include <StepRepr_ShapeAspect.hxx>
@@ -38,7 +37,7 @@ StepDimTol_GeometricTolerance::StepDimTol_GeometricTolerance ()
 
 void StepDimTol_GeometricTolerance::Init (const Handle(TCollection_HAsciiString) &theName,
                                           const Handle(TCollection_HAsciiString) &theDescription,
-                                          const Handle(StepBasic_MeasureWithUnit) &theMagnitude,
+                                          const Handle(Standard_Transient)& theMagnitude,
                                           const StepDimTol_GeometricToleranceTarget &theTolerancedShapeAspect)
 {
 
@@ -58,7 +57,7 @@ void StepDimTol_GeometricTolerance::Init (const Handle(TCollection_HAsciiString)
 
 void StepDimTol_GeometricTolerance::Init (const Handle(TCollection_HAsciiString) &theName,
                                           const Handle(TCollection_HAsciiString) &theDescription,
-                                          const Handle(StepBasic_MeasureWithUnit) &theMagnitude,
+                                          const Handle(Standard_Transient)& theMagnitude,
                                           const Handle(StepRepr_ShapeAspect) &theTolerancedShapeAspect)
 {
 
@@ -116,7 +115,7 @@ void StepDimTol_GeometricTolerance::SetDescription (const Handle(TCollection_HAs
 //purpose  : 
 //=======================================================================
 
-Handle(StepBasic_MeasureWithUnit) StepDimTol_GeometricTolerance::Magnitude () const
+Handle(Standard_Transient) StepDimTol_GeometricTolerance::Magnitude() const
 {
   return myMagnitude;
 }
@@ -126,7 +125,7 @@ Handle(StepBasic_MeasureWithUnit) StepDimTol_GeometricTolerance::Magnitude () co
 //purpose  : 
 //=======================================================================
 
-void StepDimTol_GeometricTolerance::SetMagnitude (const Handle(StepBasic_MeasureWithUnit) &theMagnitude)
+void StepDimTol_GeometricTolerance::SetMagnitude (const Handle(Standard_Transient)& theMagnitude)
 {
   myMagnitude = theMagnitude;
 }

@@ -24,7 +24,6 @@ class StepDimTol_GeometricToleranceTarget;
 class StepDimTol_GeometricToleranceWithDatumReference;
 class StepDimTol_UnequallyDisposedGeometricTolerance;
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 class StepRepr_ShapeAspect;
 
 
@@ -41,17 +40,17 @@ public:
   
   Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& theName, 
                              const Handle(TCollection_HAsciiString)& theDescription, 
-                             const Handle(StepBasic_MeasureWithUnit)& theMagnitude, 
+                             const Handle(Standard_Transient)& theMagnitude,
                              const Handle(StepRepr_ShapeAspect)& theTolerancedShapeAspect, 
                              const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR, 
                              const StepDimTol_GeometricToleranceType theType,
                              const Handle(StepDimTol_UnequallyDisposedGeometricTolerance)& theUDGT);
 
-  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& aName, 
-                             const Handle(TCollection_HAsciiString)& aDescription, 
-                             const Handle(StepBasic_MeasureWithUnit)& aMagnitude, 
-                             const StepDimTol_GeometricToleranceTarget& aTolerancedShapeAspect, 
-                             const Handle(StepDimTol_GeometricToleranceWithDatumReference)& aGTWDR, 
+  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& theName,
+                             const Handle(TCollection_HAsciiString)& theDescription,
+                             const Handle(Standard_Transient)& theMagnitude,
+                             const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect,
+                             const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR,
                              const StepDimTol_GeometricToleranceType theType,
                              const Handle(StepDimTol_UnequallyDisposedGeometricTolerance)& theUDGT);
 

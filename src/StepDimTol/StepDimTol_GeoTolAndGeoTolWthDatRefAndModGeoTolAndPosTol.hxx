@@ -25,7 +25,6 @@ class StepDimTol_GeometricToleranceWithDatumReference;
 class StepDimTol_ModifiedGeometricTolerance;
 class StepDimTol_PositionTolerance;
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 class StepRepr_ShapeAspect;
 
 
@@ -41,19 +40,29 @@ public:
   
   Standard_EXPORT StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol();
   
-  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& aName, const Handle(TCollection_HAsciiString)& aDescription, const Handle(StepBasic_MeasureWithUnit)& aMagnitude, const Handle(StepRepr_ShapeAspect)& aTolerancedShapeAspect, const Handle(StepDimTol_GeometricToleranceWithDatumReference)& aGTWDR, const Handle(StepDimTol_ModifiedGeometricTolerance)& aMGT);
+  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& theName,
+                             const Handle(TCollection_HAsciiString)& theDescription,
+                             const Handle(Standard_Transient)& theMagnitude,
+                             const Handle(StepRepr_ShapeAspect)& theTolerancedShapeAspect,
+                             const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR,
+                             const Handle(StepDimTol_ModifiedGeometricTolerance)& theMGT);
 
-  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& aName, const Handle(TCollection_HAsciiString)& aDescription, const Handle(StepBasic_MeasureWithUnit)& aMagnitude, const StepDimTol_GeometricToleranceTarget& aTolerancedShapeAspect, const Handle(StepDimTol_GeometricToleranceWithDatumReference)& aGTWDR, const Handle(StepDimTol_ModifiedGeometricTolerance)& aMGT);
+  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& theName,
+                             const Handle(TCollection_HAsciiString)& theDescription,
+                             const Handle(Standard_Transient)& theMagnitude,
+                             const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect,
+                             const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR,
+                             const Handle(StepDimTol_ModifiedGeometricTolerance)& theMGT);
 
-  Standard_EXPORT void SetGeometricToleranceWithDatumReference (const Handle(StepDimTol_GeometricToleranceWithDatumReference)& aGTWDR);
+  Standard_EXPORT void SetGeometricToleranceWithDatumReference (const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR);
   
   Standard_EXPORT Handle(StepDimTol_GeometricToleranceWithDatumReference) GetGeometricToleranceWithDatumReference() const;
   
-  Standard_EXPORT void SetModifiedGeometricTolerance (const Handle(StepDimTol_ModifiedGeometricTolerance)& aMGT);
+  Standard_EXPORT void SetModifiedGeometricTolerance (const Handle(StepDimTol_ModifiedGeometricTolerance)& theMGT);
   
   Standard_EXPORT Handle(StepDimTol_ModifiedGeometricTolerance) GetModifiedGeometricTolerance() const;
   
-  Standard_EXPORT void SetPositionTolerance (const Handle(StepDimTol_PositionTolerance)& aPT);
+  Standard_EXPORT void SetPositionTolerance (const Handle(StepDimTol_PositionTolerance)& thePT);
   
   Standard_EXPORT Handle(StepDimTol_PositionTolerance) GetPositionTolerance() const;
 

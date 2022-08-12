@@ -24,7 +24,6 @@
 class StepBasic_SolidAngleUnit;
 class StepBasic_DimensionalExponents;
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 
 
 class StepBasic_ConversionBasedUnitAndSolidAngleUnit;
@@ -40,9 +39,11 @@ public:
   //! Returns a ConversionBasedUnitAndSolidAngleUnit
   Standard_EXPORT StepBasic_ConversionBasedUnitAndSolidAngleUnit();
   
-  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions, const Handle(TCollection_HAsciiString)& aName, const Handle(StepBasic_MeasureWithUnit)& aConversionFactor);
+  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                             const Handle(TCollection_HAsciiString)& theName,
+                             const Handle(Standard_Transient)& theConversionFactor);
   
-  Standard_EXPORT void SetSolidAngleUnit (const Handle(StepBasic_SolidAngleUnit)& aSolidAngleUnit);
+  Standard_EXPORT void SetSolidAngleUnit (const Handle(StepBasic_SolidAngleUnit)& theSolidAngleUnit);
   
   Standard_EXPORT Handle(StepBasic_SolidAngleUnit) SolidAngleUnit() const;
 
@@ -59,7 +60,7 @@ protected:
 private:
 
 
-  Handle(StepBasic_SolidAngleUnit) solidAngleUnit;
+  Handle(StepBasic_SolidAngleUnit) mySolidAngleUnit;
 
 
 };

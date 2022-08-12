@@ -22,7 +22,6 @@
 #include <Standard_Integer.hxx>
 #include <StepRepr_ProductDefinitionUsage.hxx>
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 class StepBasic_ProductDefinition;
 
 
@@ -40,28 +39,44 @@ public:
   Standard_EXPORT StepRepr_MakeFromUsageOption();
   
   //! Initialize all fields (own and inherited)
-  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Id, const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Name, const Standard_Boolean hasProductDefinitionRelationship_Description, const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Description, const Handle(StepBasic_ProductDefinition)& aProductDefinitionRelationship_RelatingProductDefinition, const Handle(StepBasic_ProductDefinition)& aProductDefinitionRelationship_RelatedProductDefinition, const Standard_Integer aRanking, const Handle(TCollection_HAsciiString)& aRankingRationale, const Handle(StepBasic_MeasureWithUnit)& aQuantity);
+  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Id,
+                             const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Name,
+                             const Standard_Boolean hasProductDefinitionRelationship_Description,
+                             const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Description,
+                             const Handle(StepBasic_ProductDefinition)& theProductDefinitionRelationship_RelatingProductDefinition,
+                             const Handle(StepBasic_ProductDefinition)& theProductDefinitionRelationship_RelatedProductDefinition,
+                             const Standard_Integer theRanking,
+                             const Handle(TCollection_HAsciiString)& theRankingRationale,
+                             const Handle(Standard_Transient)& theQuantity);
 
   //! Initialize all fields (own and inherited)
-  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Id, const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Name, const Standard_Boolean hasProductDefinitionRelationship_Description, const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Description, const StepBasic_ProductDefinitionOrReference& aProductDefinitionRelationship_RelatingProductDefinition, const StepBasic_ProductDefinitionOrReference& aProductDefinitionRelationship_RelatedProductDefinition, const Standard_Integer aRanking, const Handle(TCollection_HAsciiString)& aRankingRationale, const Handle(StepBasic_MeasureWithUnit)& aQuantity);
+  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Id,
+                             const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Name,
+                             const Standard_Boolean hasProductDefinitionRelationship_Description,
+                             const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Description,
+                             const StepBasic_ProductDefinitionOrReference& theProductDefinitionRelationship_RelatingProductDefinition,
+                             const StepBasic_ProductDefinitionOrReference& theProductDefinitionRelationship_RelatedProductDefinition,
+                             const Standard_Integer theRanking,
+                             const Handle(TCollection_HAsciiString)& theRankingRationale,
+                             const Handle(Standard_Transient)& theQuantity);
   
   //! Returns field Ranking
   Standard_EXPORT Standard_Integer Ranking() const;
   
   //! Set field Ranking
-  Standard_EXPORT void SetRanking (const Standard_Integer Ranking);
+  Standard_EXPORT void SetRanking (const Standard_Integer theRanking);
   
   //! Returns field RankingRationale
   Standard_EXPORT Handle(TCollection_HAsciiString) RankingRationale() const;
   
   //! Set field RankingRationale
-  Standard_EXPORT void SetRankingRationale (const Handle(TCollection_HAsciiString)& RankingRationale);
+  Standard_EXPORT void SetRankingRationale (const Handle(TCollection_HAsciiString)& theRankingRationale);
   
   //! Returns field Quantity
-  Standard_EXPORT Handle(StepBasic_MeasureWithUnit) Quantity() const;
+  Standard_EXPORT Handle(Standard_Transient) Quantity() const;
   
   //! Set field Quantity
-  Standard_EXPORT void SetQuantity (const Handle(StepBasic_MeasureWithUnit)& Quantity);
+  Standard_EXPORT void SetQuantity (const Handle(Standard_Transient)& theQuantity);
 
 
 
@@ -76,9 +91,9 @@ protected:
 private:
 
 
-  Standard_Integer theRanking;
-  Handle(TCollection_HAsciiString) theRankingRationale;
-  Handle(StepBasic_MeasureWithUnit) theQuantity;
+  Standard_Integer myRanking;
+  Handle(TCollection_HAsciiString) myRankingRationale;
+  Handle(Standard_Transient) myQuantity;
 
 
 };

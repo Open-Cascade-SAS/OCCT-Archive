@@ -15,7 +15,6 @@
 #include <Standard_Type.hxx>
 #include <StepBasic_ConversionBasedUnitAndPlaneAngleUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepBasic_PlaneAngleUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 
@@ -25,26 +24,26 @@ StepBasic_ConversionBasedUnitAndPlaneAngleUnit::StepBasic_ConversionBasedUnitAnd
 {
 }
 
-void StepBasic_ConversionBasedUnitAndPlaneAngleUnit::Init(const Handle(StepBasic_DimensionalExponents)& aDimensions,
-							  const Handle(TCollection_HAsciiString)& aName,
-							  const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+void StepBasic_ConversionBasedUnitAndPlaneAngleUnit::Init(const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                                                          const Handle(TCollection_HAsciiString)& theName,
+                                                          const Handle(Standard_Transient)& theConversionFactor)
 {
   // --- ANDOR component fields ---
-  StepBasic_ConversionBasedUnit::Init(aDimensions, aName, aConversionFactor);
+  StepBasic_ConversionBasedUnit::Init(theDimensions, theName, theConversionFactor);
 	
   // --- ANDOR component fields ---
-  planeAngleUnit = new StepBasic_PlaneAngleUnit();
-  planeAngleUnit->Init(aDimensions);
+  myPlaneAngleUnit = new StepBasic_PlaneAngleUnit();
+  myPlaneAngleUnit->Init(theDimensions);
 }
 
 
-void StepBasic_ConversionBasedUnitAndPlaneAngleUnit::SetPlaneAngleUnit(const Handle(StepBasic_PlaneAngleUnit)& aPlaneAngleUnit)
+void StepBasic_ConversionBasedUnitAndPlaneAngleUnit::SetPlaneAngleUnit(const Handle(StepBasic_PlaneAngleUnit)& thePlaneAngleUnit)
 {
-  planeAngleUnit = aPlaneAngleUnit;
+  myPlaneAngleUnit = thePlaneAngleUnit;
 }
 
 Handle(StepBasic_PlaneAngleUnit) StepBasic_ConversionBasedUnitAndPlaneAngleUnit::PlaneAngleUnit() const
 {
-  return planeAngleUnit;
+  return myPlaneAngleUnit;
 }
 

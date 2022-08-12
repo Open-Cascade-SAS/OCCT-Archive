@@ -48,6 +48,7 @@
 #include <StepRepr_RepresentationContext.hxx>
 #include <StepRepr_RepresentationMap.hxx>
 #include <StepRepr_RepresentationRelationship.hxx>
+#include <StepRepr_ReprItemAndMeasureWithUnit.hxx>
 #include <StepRepr_ShapeAspect.hxx>
 #include <StepShape_ManifoldSolidBrep.hxx>
 #include <StepShape_ShapeDefinitionRepresentation.hxx>
@@ -681,21 +682,32 @@ Standard_Boolean STEPControl_Reader::findUnits(
   Handle(StepBasic_HArray1OfNamedUnit) anUnits = aContext->Units();
   Standard_Integer nbU = aContext->NbUnits();
   Standard_Integer nbFind = 0;
-  for (Standard_Integer i = 1; i <= nbU; i++) {
+  for (Standard_Integer i = 1; i <= nbU; i++)
+  {
     Handle(StepBasic_NamedUnit) aNamedUnit = aContext->UnitsValue(i);
     Handle(StepBasic_ConversionBasedUnit) aConvUnit =
       Handle(StepBasic_ConversionBasedUnit)::DownCast(aNamedUnit);
     Standard_Integer anInd = 0;
     TCollection_AsciiString aName;
     Standard_Real anUnitFact = 0;
-    if( !aConvUnit.IsNull() )
+    if(!aConvUnit.IsNull())
     {
-      Handle(StepBasic_MeasureWithUnit) aMeasWithUnit = 
-        aConvUnit->ConversionFactor();
-      
+      Handle(StepBasic_MeasureWithUnit) aMeasWithUnit;
+      Handle(Standard_Transient) aConvFactor = aConvUnit->ConversionFactor();
+      if (aConvFactor->IsKind(STANDARD_TYPE(StepBasic_MeasureWithUnit)))
+      {
+        aMeasWithUnit = Handle(StepBasic_MeasureWithUnit)::DownCast(aConvFactor);
+      }
+      else if (aConvFactor->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndMeasureWithUnit)))
+      {
+        Handle(StepRepr_ReprItemAndMeasureWithUnit) aReprMeasureItem =
+          Handle(StepRepr_ReprItemAndMeasureWithUnit)::DownCast(aConvFactor);
+        aMeasWithUnit = aReprMeasureItem->GetMeasureWithUnit();
+      }
+
        if(aMeasWithUnit.IsNull())
          continue;
-       
+
        if( aMeasWithUnit->IsKind(STANDARD_TYPE(StepBasic_LengthMeasureWithUnit)) )
          anInd = 1;
        else if( aMeasWithUnit->IsKind(STANDARD_TYPE(StepBasic_PlaneAngleMeasureWithUnit)) )
