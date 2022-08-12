@@ -16,7 +16,6 @@
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
 #include <Standard_Type.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepDimTol_GeometricToleranceWithDatumReference.hxx>
 #include <StepRepr_ShapeAspect.hxx>
 #include <TCollection_HAsciiString.hxx>
@@ -38,7 +37,7 @@ StepDimTol_GeometricToleranceWithDatumReference::StepDimTol_GeometricToleranceWi
 
 void StepDimTol_GeometricToleranceWithDatumReference::Init (const Handle(TCollection_HAsciiString) &theGeometricTolerance_Name,
                                                             const Handle(TCollection_HAsciiString) &theGeometricTolerance_Description,
-                                                            const Handle(StepBasic_MeasureWithUnit) &theGeometricTolerance_Magnitude,
+                                                            const Handle(Standard_Transient) &theGeometricTolerance_Magnitude,
                                                             const Handle(StepRepr_ShapeAspect) &theGeometricTolerance_TolerancedShapeAspect,
                                                             const Handle(StepDimTol_HArray1OfDatumReference) &theDatumSystem)
 {
@@ -62,7 +61,7 @@ void StepDimTol_GeometricToleranceWithDatumReference::Init (const Handle(TCollec
 
 void StepDimTol_GeometricToleranceWithDatumReference::Init (const Handle(TCollection_HAsciiString) &theGeometricTolerance_Name,
                                                             const Handle(TCollection_HAsciiString) &theGeometricTolerance_Description,
-                                                            const Handle(StepBasic_MeasureWithUnit) &theGeometricTolerance_Magnitude,
+                                                            const Handle(Standard_Transient) &theGeometricTolerance_Magnitude,
                                                             const StepDimTol_GeometricToleranceTarget &theGeometricTolerance_TolerancedShapeAspect,
                                                             const Handle(StepDimTol_HArray1OfDatumSystemOrReference) &theDatumSystem)
 {

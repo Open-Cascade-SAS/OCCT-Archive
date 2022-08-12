@@ -13,8 +13,6 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepDimTol_GeometricToleranceWithDatumReference.hxx>
 #include <StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMod.hxx>
 #include <StepDimTol_GeometricToleranceWithModifiers.hxx>
@@ -40,7 +38,7 @@ StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMod::StepDimTol_GeoTolAndGeoTolWt
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMod::Init
   (const Handle(TCollection_HAsciiString)& theName,
    const Handle(TCollection_HAsciiString)& theDescription,
-   const Handle(StepBasic_MeasureWithUnit)& theMagnitude,
+   const Handle(Standard_Transient)& theMagnitude,
    const Handle(StepRepr_ShapeAspect)& theTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR,
    const Handle(StepDimTol_GeometricToleranceWithModifiers)& theGTWM,
@@ -63,7 +61,7 @@ void StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMod::Init
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMod::Init
   (const Handle(TCollection_HAsciiString)& theName,
    const Handle(TCollection_HAsciiString)& theDescription,
-   const Handle(StepBasic_MeasureWithUnit)& theMagnitude,
+   const Handle(Standard_Transient)& theMagnitude,
    const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR,
    const Handle(StepDimTol_GeometricToleranceWithModifiers)& theGTWM,

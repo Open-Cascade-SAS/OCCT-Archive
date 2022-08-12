@@ -14,7 +14,6 @@
 // commercial license or contractual agreement.
 
 
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepDimTol_GeoTolAndGeoTolWthMod.hxx>
 #include <StepDimTol_GeometricToleranceWithModifiers.hxx>
 #include <StepRepr_ShapeAspect.hxx>
@@ -39,7 +38,7 @@ StepDimTol_GeoTolAndGeoTolWthMod::StepDimTol_GeoTolAndGeoTolWthMod()
 void StepDimTol_GeoTolAndGeoTolWthMod::Init
   (const Handle(TCollection_HAsciiString)& theName,
    const Handle(TCollection_HAsciiString)& theDescription,
-   const Handle(StepBasic_MeasureWithUnit)& theMagnitude,
+   const Handle(Standard_Transient)& theMagnitude,
    const Handle(StepRepr_ShapeAspect)& theTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithModifiers)& theGTWM,
    const StepDimTol_GeometricToleranceType theType)
@@ -60,7 +59,7 @@ void StepDimTol_GeoTolAndGeoTolWthMod::Init
 void StepDimTol_GeoTolAndGeoTolWthMod::Init
   (const Handle(TCollection_HAsciiString)& theName,
    const Handle(TCollection_HAsciiString)& theDescription,
-   const Handle(StepBasic_MeasureWithUnit)& theMagnitude,
+   const Handle(Standard_Transient)& theMagnitude,
    const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithModifiers)& theGTWM,
    const StepDimTol_GeometricToleranceType theType)

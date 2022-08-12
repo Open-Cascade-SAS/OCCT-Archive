@@ -13,9 +13,7 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-
 #include <StepBasic_LengthMeasureWithUnit.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepDimTol_GeoTolAndGeoTolWthMaxTol.hxx>
 #include <StepDimTol_GeometricToleranceWithModifiers.hxx>
 #include <StepRepr_ShapeAspect.hxx>
@@ -40,7 +38,7 @@ StepDimTol_GeoTolAndGeoTolWthMaxTol::StepDimTol_GeoTolAndGeoTolWthMaxTol()
 void StepDimTol_GeoTolAndGeoTolWthMaxTol::Init
   (const Handle(TCollection_HAsciiString)& theName,
    const Handle(TCollection_HAsciiString)& theDescription,
-   const Handle(StepBasic_MeasureWithUnit)& theMagnitude,
+   const Handle(Standard_Transient)& theMagnitude,
    const Handle(StepRepr_ShapeAspect)& theTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithModifiers)& theGTWM,
    const Handle(StepBasic_LengthMeasureWithUnit)& theMaxTol,
@@ -58,7 +56,7 @@ void StepDimTol_GeoTolAndGeoTolWthMaxTol::Init
 void StepDimTol_GeoTolAndGeoTolWthMaxTol::Init
   (const Handle(TCollection_HAsciiString)& theName,
    const Handle(TCollection_HAsciiString)& theDescription,
-   const Handle(StepBasic_MeasureWithUnit)& theMagnitude,
+   const Handle(Standard_Transient)& theMagnitude,
    const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithModifiers)& theGTWM,
    const Handle(StepBasic_LengthMeasureWithUnit)& theMaxTol,

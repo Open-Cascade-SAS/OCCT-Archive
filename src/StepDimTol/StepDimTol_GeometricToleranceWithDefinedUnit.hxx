@@ -22,7 +22,6 @@
 
 class StepBasic_LengthMeasureWithUnit;
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 class StepDimTol_GeometricToleranceTarget;
 class StepRepr_ShapeAspect;
 
@@ -38,10 +37,10 @@ public:
   Standard_EXPORT StepDimTol_GeometricToleranceWithDefinedUnit();
   
   //! Initialize all fields (own and inherited) AP214
-  Standard_EXPORT   void Init (const Handle(TCollection_HAsciiString)& theName, const Handle(TCollection_HAsciiString)& theDescription, const Handle(StepBasic_MeasureWithUnit)& theMagnitude, const Handle(StepRepr_ShapeAspect)& theTolerancedShapeAspect, const Handle(StepBasic_LengthMeasureWithUnit)& theUnitSize) ;
+  Standard_EXPORT   void Init (const Handle(TCollection_HAsciiString)& theName, const Handle(TCollection_HAsciiString)& theDescription, const Handle(Standard_Transient)& theMagnitude, const Handle(StepRepr_ShapeAspect)& theTolerancedShapeAspect, const Handle(StepBasic_LengthMeasureWithUnit)& theUnitSize) ;
   
   //! Initialize all fields (own and inherited) AP242
-  Standard_EXPORT   void Init (const Handle(TCollection_HAsciiString)& theName, const Handle(TCollection_HAsciiString)& theDescription, const Handle(StepBasic_MeasureWithUnit)& theMagnitude, const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect, const Handle(StepBasic_LengthMeasureWithUnit)& theUnitSize) ;
+  Standard_EXPORT   void Init (const Handle(TCollection_HAsciiString)& theName, const Handle(TCollection_HAsciiString)& theDescription, const Handle(Standard_Transient)& theMagnitude, const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect, const Handle(StepBasic_LengthMeasureWithUnit)& theUnitSize) ;
 
   //! Returns field UnitSize
   inline Handle(StepBasic_LengthMeasureWithUnit) UnitSize () const

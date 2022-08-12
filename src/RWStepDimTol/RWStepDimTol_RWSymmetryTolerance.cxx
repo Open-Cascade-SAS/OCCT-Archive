@@ -22,6 +22,8 @@
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
 #include <StepDimTol_SymmetryTolerance.hxx>
+#include <StepRepr_MeasureRepresentationItem.hxx>
+#include <StepRepr_ReprItemAndMeasureWithUnit.hxx>
 
 //=======================================================================
 //function : RWStepDimTol_RWSymmetryTolerance
@@ -52,8 +54,21 @@ void RWStepDimTol_RWSymmetryTolerance::ReadStep (const Handle(StepData_StepReade
   Handle(TCollection_HAsciiString) aGeometricTolerance_Description;
   data->ReadString (num, 2, "geometric_tolerance.description", ach, aGeometricTolerance_Description);
 
-  Handle(StepBasic_MeasureWithUnit) aGeometricTolerance_Magnitude;
-  data->ReadEntity (num, 3, "geometric_tolerance.magnitude", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aGeometricTolerance_Magnitude);
+  Handle(Standard_Transient) aMagnitude;
+  if (!data->ReadEntity(num, 3, "magnitude", ach,
+      STANDARD_TYPE(StepBasic_MeasureWithUnit), aMagnitude))
+  {
+    Handle(StepRepr_MeasureRepresentationItem) aMSR1;
+    Handle(StepRepr_ReprItemAndMeasureWithUnit) aRIMU1;
+    if (data->ReadEntity(num, 3, "magnitude", ach, STANDARD_TYPE(StepRepr_MeasureRepresentationItem), aMSR1) ||
+        data->ReadEntity(num, 3, "magnitude", ach, STANDARD_TYPE(StepRepr_ReprItemAndMeasureWithUnit), aRIMU1))
+    {
+      if (!aMSR1.IsNull())
+        aMagnitude = aMSR1;
+      else if (!aRIMU1.IsNull())
+        aMagnitude = aRIMU1;
+    }
+  }
 
   StepDimTol_GeometricToleranceTarget aGeometricTolerance_TolerancedShapeAspect;
   data->ReadEntity (num, 4, "geometric_tolerance.toleranced_shape_aspect", ach, aGeometricTolerance_TolerancedShapeAspect);
@@ -76,7 +91,7 @@ void RWStepDimTol_RWSymmetryTolerance::ReadStep (const Handle(StepData_StepReade
   // Initialize entity
   ent->Init(aGeometricTolerance_Name,
             aGeometricTolerance_Description,
-            aGeometricTolerance_Magnitude,
+            aMagnitude,
             aGeometricTolerance_TolerancedShapeAspect,
             aGeometricToleranceWithDatumReference_DatumSystem);
 }

@@ -39,7 +39,7 @@ StepDimTol_GeoTolAndGeoTolWthDatRefAndUneqDisGeoTol::StepDimTol_GeoTolAndGeoTolW
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndUneqDisGeoTol::Init
   (const Handle(TCollection_HAsciiString)& theName,
    const Handle(TCollection_HAsciiString)& theDescription,
-   const Handle(StepBasic_MeasureWithUnit)& theMagnitude,
+   const Handle(Standard_Transient)& theMagnitude,
    const Handle(StepRepr_ShapeAspect)& theTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR,
    const StepDimTol_GeometricToleranceType theType,
@@ -58,7 +58,7 @@ void StepDimTol_GeoTolAndGeoTolWthDatRefAndUneqDisGeoTol::Init
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndUneqDisGeoTol::Init
   (const Handle(TCollection_HAsciiString)& theName,
    const Handle(TCollection_HAsciiString)& theDescription,
-   const Handle(StepBasic_MeasureWithUnit)& theMagnitude,
+   const Handle(Standard_Transient)& theMagnitude,
    const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR,
    const StepDimTol_GeometricToleranceType theType,

@@ -21,6 +21,8 @@
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
 #include <StepDimTol_GeometricToleranceWithDefinedUnit.hxx>
+#include <StepRepr_MeasureRepresentationItem.hxx>
+#include <StepRepr_ReprItemAndMeasureWithUnit.hxx>
 
 //=======================================================================
 //function : RWStepDimTol_RWGeometricToleranceWithDefinedUnit
@@ -52,8 +54,21 @@ void RWStepDimTol_RWGeometricToleranceWithDefinedUnit::ReadStep (const Handle(St
   Handle(TCollection_HAsciiString) aDescription;
   data->ReadString (num, 2, "geometric_tolerance.description", ach, aDescription);
 
-  Handle(StepBasic_MeasureWithUnit) aMagnitude;
-  data->ReadEntity (num, 3, "geometric_tolerance.magnitude", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aMagnitude);
+  Handle(Standard_Transient) aMagnitude;
+  if (!data->ReadEntity(num, 3, "magnitude", ach,
+      STANDARD_TYPE(StepBasic_MeasureWithUnit), aMagnitude))
+  {
+    Handle(StepRepr_MeasureRepresentationItem) aMSR1;
+    Handle(StepRepr_ReprItemAndMeasureWithUnit) aRIMU1;
+    if (data->ReadEntity(num, 3, "magnitude", ach, STANDARD_TYPE(StepRepr_MeasureRepresentationItem), aMSR1) ||
+        data->ReadEntity(num, 3, "magnitude", ach, STANDARD_TYPE(StepRepr_ReprItemAndMeasureWithUnit), aRIMU1))
+    {
+      if (!aMSR1.IsNull())
+        aMagnitude = aMSR1;
+      else if (!aRIMU1.IsNull())
+        aMagnitude = aRIMU1;
+    }
+  }
 
   StepDimTol_GeometricToleranceTarget aTolerancedShapeAspect;
   data->ReadEntity (num, 4, "geometric_tolerance.toleranced_shape_aspect", ach, aTolerancedShapeAspect);
