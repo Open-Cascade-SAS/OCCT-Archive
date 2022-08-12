@@ -534,7 +534,7 @@ Standard_Boolean STEPControl_Reader::findUnits(
     if( !aConvUnit.IsNull() )
     {
       Handle(StepBasic_MeasureWithUnit) aMeasWithUnit = 
-        aConvUnit->ConversionFactor();
+        Handle(StepBasic_MeasureWithUnit)::DownCast(aConvUnit->ConversionFactor().Value());
       
        if(aMeasWithUnit.IsNull())
          continue;

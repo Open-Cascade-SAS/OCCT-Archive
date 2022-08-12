@@ -17,9 +17,9 @@
 
 #include <Interface_EntityIterator.hxx>
 #include <RWStepDimTol_RWModifiedGeometricTolerance.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 #include <StepDimTol_ModifiedGeometricTolerance.hxx>
 
 //=======================================================================
@@ -51,8 +51,8 @@ void RWStepDimTol_RWModifiedGeometricTolerance::ReadStep (const Handle(StepData_
   Handle(TCollection_HAsciiString) aGeometricTolerance_Description;
   data->ReadString (num, 2, "geometric_tolerance.description", ach, aGeometricTolerance_Description);
 
-  Handle(StepBasic_MeasureWithUnit) aGeometricTolerance_Magnitude;
-  data->ReadEntity (num, 3, "geometric_tolerance.magnitude", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aGeometricTolerance_Magnitude);
+  StepRepr_MeasureWithUnit aMagnitude;
+  data->ReadEntity(num, 3, "magnitude", ach, aMagnitude);
 
   StepDimTol_GeometricToleranceTarget aGeometricTolerance_TolerancedShapeAspect;
   data->ReadEntity (num, 4, "geometric_tolerance.toleranced_shape_aspect", ach, aGeometricTolerance_TolerancedShapeAspect);
@@ -72,7 +72,7 @@ void RWStepDimTol_RWModifiedGeometricTolerance::ReadStep (const Handle(StepData_
   // Initialize entity
   ent->Init(aGeometricTolerance_Name,
             aGeometricTolerance_Description,
-            aGeometricTolerance_Magnitude,
+            aMagnitude,
             aGeometricTolerance_TolerancedShapeAspect,
             aModifier);
 }
@@ -92,7 +92,7 @@ void RWStepDimTol_RWModifiedGeometricTolerance::WriteStep (StepData_StepWriter& 
 
   SW.Send (ent->StepDimTol_GeometricTolerance::Description());
 
-  SW.Send (ent->StepDimTol_GeometricTolerance::Magnitude());
+  SW.Send (ent->StepDimTol_GeometricTolerance::Magnitude().Value());
 
   SW.Send (ent->StepDimTol_GeometricTolerance::TolerancedShapeAspect().Value());
 
@@ -116,7 +116,7 @@ void RWStepDimTol_RWModifiedGeometricTolerance::Share (const Handle(StepDimTol_M
 
   // Inherited fields of GeometricTolerance
 
-  iter.AddItem (ent->StepDimTol_GeometricTolerance::Magnitude());
+  iter.AddItem (ent->StepDimTol_GeometricTolerance::Magnitude().Value());
 
   iter.AddItem (ent->StepDimTol_GeometricTolerance::TolerancedShapeAspect().Value());
 

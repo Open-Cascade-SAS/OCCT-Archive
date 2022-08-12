@@ -18,12 +18,12 @@
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <RWStepDimTol_RWCircularRunoutTolerance.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
 #include <StepDimTol_CircularRunoutTolerance.hxx>
 #include <StepDimTol_GeometricToleranceTarget.hxx>
 #include <StepDimTol_HArray1OfDatumSystemOrReference.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 
 //=======================================================================
 //function : RWStepDimTol_RWCircularRunoutTolerance
@@ -54,8 +54,8 @@ void RWStepDimTol_RWCircularRunoutTolerance::ReadStep (const Handle(StepData_Ste
   Handle(TCollection_HAsciiString) aGeometricTolerance_Description;
   data->ReadString (num, 2, "geometric_tolerance.description", ach, aGeometricTolerance_Description);
 
-  Handle(StepBasic_MeasureWithUnit) aGeometricTolerance_Magnitude;
-  data->ReadEntity (num, 3, "geometric_tolerance.magnitude", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aGeometricTolerance_Magnitude);
+  StepRepr_MeasureWithUnit aMagnitude;
+  data->ReadEntity(num, 3, "magnitude", ach, aMagnitude);
 
   StepDimTol_GeometricToleranceTarget aGeometricTolerance_TolerancedShapeAspect;
   data->ReadEntity (num, 4, "geometric_tolerance.toleranced_shape_aspect", ach, aGeometricTolerance_TolerancedShapeAspect);
@@ -78,7 +78,7 @@ void RWStepDimTol_RWCircularRunoutTolerance::ReadStep (const Handle(StepData_Ste
   // Initialize entity
   ent->Init(aGeometricTolerance_Name,
             aGeometricTolerance_Description,
-            aGeometricTolerance_Magnitude,
+            aMagnitude,
             aGeometricTolerance_TolerancedShapeAspect,
             aGeometricToleranceWithDatumReference_DatumSystem);
 }
@@ -98,7 +98,7 @@ void RWStepDimTol_RWCircularRunoutTolerance::WriteStep (StepData_StepWriter& SW,
 
   SW.Send (ent->StepDimTol_GeometricTolerance::Description());
 
-  SW.Send (ent->StepDimTol_GeometricTolerance::Magnitude());
+  SW.Send (ent->StepDimTol_GeometricTolerance::Magnitude().Value());
 
   SW.Send (ent->StepDimTol_GeometricTolerance::TolerancedShapeAspect().Value());
 
@@ -123,7 +123,7 @@ void RWStepDimTol_RWCircularRunoutTolerance::Share (const Handle(StepDimTol_Circ
 
   // Inherited fields of GeometricTolerance
 
-  iter.AddItem (ent->StepDimTol_GeometricTolerance::Magnitude());
+  iter.AddItem (ent->StepDimTol_GeometricTolerance::Magnitude().Value());
 
   iter.AddItem (ent->StepDimTol_GeometricTolerance::TolerancedShapeAspect().Value());
 

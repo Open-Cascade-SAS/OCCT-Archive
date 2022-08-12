@@ -86,6 +86,8 @@ StepRepr_MaterialPropertyRepresentation.cxx
 StepRepr_MaterialPropertyRepresentation.hxx
 StepRepr_MeasureRepresentationItem.cxx
 StepRepr_MeasureRepresentationItem.hxx
+StepRepr_MeasureWithUnit.cxx
+StepRepr_MeasureWithUnit.hxx
 StepRepr_NextAssemblyUsageOccurrence.cxx
 StepRepr_NextAssemblyUsageOccurrence.hxx
 StepRepr_ParallelOffset.cxx

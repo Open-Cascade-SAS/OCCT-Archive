@@ -21,8 +21,8 @@
 #include <Standard_Type.hxx>
 
 #include <StepBasic_NamedUnit.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 class StepBasic_DimensionalExponents;
 
 
@@ -39,15 +39,17 @@ public:
   //! Returns a ConversionBasedUnit
   Standard_EXPORT StepBasic_ConversionBasedUnit();
   
-  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions, const Handle(TCollection_HAsciiString)& aName, const Handle(StepBasic_MeasureWithUnit)& aConversionFactor);
+  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions,
+                             const Handle(TCollection_HAsciiString)& aName,
+                             const StepRepr_MeasureWithUnit& aConversionFactor);
   
   Standard_EXPORT void SetName (const Handle(TCollection_HAsciiString)& aName);
   
   Standard_EXPORT Handle(TCollection_HAsciiString) Name() const;
   
-  Standard_EXPORT void SetConversionFactor (const Handle(StepBasic_MeasureWithUnit)& aConversionFactor);
+  Standard_EXPORT void SetConversionFactor (const StepRepr_MeasureWithUnit& aConversionFactor);
   
-  Standard_EXPORT Handle(StepBasic_MeasureWithUnit) ConversionFactor() const;
+  Standard_EXPORT const StepRepr_MeasureWithUnit& ConversionFactor() const;
 
 
 
@@ -63,7 +65,7 @@ private:
 
 
   Handle(TCollection_HAsciiString) name;
-  Handle(StepBasic_MeasureWithUnit) conversionFactor;
+  StepRepr_MeasureWithUnit conversionFactor;
 
 
 };

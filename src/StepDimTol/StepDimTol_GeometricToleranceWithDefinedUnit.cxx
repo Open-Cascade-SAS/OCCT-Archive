@@ -16,6 +16,7 @@
 #include <StepDimTol_GeometricToleranceWithDefinedUnit.hxx>
 
 #include <StepDimTol_GeometricToleranceTarget.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 #include <StepRepr_ShapeAspect.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(StepDimTol_GeometricToleranceWithDefinedUnit,StepDimTol_GeometricTolerance)
@@ -36,7 +37,7 @@ StepDimTol_GeometricToleranceWithDefinedUnit::StepDimTol_GeometricToleranceWithD
 
 void StepDimTol_GeometricToleranceWithDefinedUnit::Init (const Handle(TCollection_HAsciiString) &theName,
                                                          const Handle(TCollection_HAsciiString) &theDescription,
-                                                         const Handle(StepBasic_MeasureWithUnit) &theMagnitude,
+                                                         const StepRepr_MeasureWithUnit& theMagnitude,
                                                          const Handle(StepRepr_ShapeAspect) &theTolerancedShapeAspect,
                                                          const Handle(StepBasic_LengthMeasureWithUnit) &theUnitSize)
 {
@@ -51,7 +52,7 @@ void StepDimTol_GeometricToleranceWithDefinedUnit::Init (const Handle(TCollectio
 
 void StepDimTol_GeometricToleranceWithDefinedUnit::Init (const Handle(TCollection_HAsciiString) &theName,
                                                          const Handle(TCollection_HAsciiString) &theDescription,
-                                                         const Handle(StepBasic_MeasureWithUnit) &theMagnitude,
+                                                         const StepRepr_MeasureWithUnit& theMagnitude,
                                                          const StepDimTol_GeometricToleranceTarget &theTolerancedShapeAspect,
                                                          const Handle(StepBasic_LengthMeasureWithUnit) &theUnitSize)
 {

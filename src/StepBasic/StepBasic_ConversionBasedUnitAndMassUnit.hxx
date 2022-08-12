@@ -23,7 +23,6 @@
 class StepBasic_MassUnit;
 class StepBasic_DimensionalExponents;
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 
 
 class StepBasic_ConversionBasedUnitAndMassUnit;
@@ -39,7 +38,9 @@ public:
   //! Returns a ConversionBasedUnitAndLengthUnit
   Standard_EXPORT StepBasic_ConversionBasedUnitAndMassUnit();
   
-  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions, const Handle(TCollection_HAsciiString)& aName, const Handle(StepBasic_MeasureWithUnit)& aConversionFactor);
+  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions,
+                             const Handle(TCollection_HAsciiString)& aName,
+                             const StepRepr_MeasureWithUnit& aConversionFactor);
   
   Standard_EXPORT void SetMassUnit (const Handle(StepBasic_MassUnit)& aMassUnit);
   

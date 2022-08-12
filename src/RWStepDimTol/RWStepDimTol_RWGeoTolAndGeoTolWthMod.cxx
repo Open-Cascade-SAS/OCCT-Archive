@@ -17,11 +17,11 @@
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <RWStepDimTol_RWGeoTolAndGeoTolWthMod.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
 #include <StepDimTol_GeoTolAndGeoTolWthMod.hxx>
 #include <StepDimTol_GeometricToleranceWithModifiers.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 
 //=======================================================================
 //function : RWStepDimTol_RWGeoTolAndGeoTolWthMod
@@ -50,8 +50,10 @@ void RWStepDimTol_RWGeoTolAndGeoTolWthMod::ReadStep
   data->ReadString (num, 1, "name", ach, aName);
   Handle(TCollection_HAsciiString) aDescription;
   data->ReadString (num, 2, "description", ach, aDescription);
-  Handle(StepBasic_MeasureWithUnit) aMagnitude;
-  data->ReadEntity (num, 3, "magnitude", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aMagnitude);
+
+  StepRepr_MeasureWithUnit aMagnitude;
+  data->ReadEntity(num, 3, "magnitude", ach, aMagnitude);
+
   StepDimTol_GeometricToleranceTarget aTolerancedShapeAspect;
   data->ReadEntity (num, 4, "toleranced_shape_aspect", ach, aTolerancedShapeAspect);
 
@@ -146,7 +148,7 @@ void RWStepDimTol_RWGeoTolAndGeoTolWthMod::WriteStep
   SW.StartEntity("GEOMETRIC_TOLERANCE");
   SW.Send(ent->Name());
   SW.Send(ent->Description());
-  SW.Send(ent->Magnitude());
+  SW.Send(ent->Magnitude().Value());
   SW.Send(ent->TolerancedShapeAspect().Value());
   SW.StartEntity("GEOMETRIC_TOLERANCE_WITH_MODIFIERS");
   SW.OpenSub();
@@ -202,6 +204,6 @@ void RWStepDimTol_RWGeoTolAndGeoTolWthMod::Share
    Interface_EntityIterator& iter) const
 {
   // Own fields of GeometricTolerance
-  iter.AddItem (ent->Magnitude());
+  iter.AddItem (ent->Magnitude().Value());
   iter.AddItem (ent->TolerancedShapeAspect().Value());
 }

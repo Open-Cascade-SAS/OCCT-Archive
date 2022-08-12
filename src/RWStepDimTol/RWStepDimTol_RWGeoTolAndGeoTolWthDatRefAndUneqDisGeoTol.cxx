@@ -23,6 +23,7 @@
 #include <StepDimTol_GeoTolAndGeoTolWthDatRefAndUneqDisGeoTol.hxx>
 #include <StepDimTol_HArray1OfDatumSystemOrReference.hxx>
 #include <StepDimTol_UnequallyDisposedGeometricTolerance.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 
 //=======================================================================
 //function : RWStepDimTol_RWGeoTolAndGeoTolWthDatRefAndUneqDisGeoTol
@@ -51,8 +52,10 @@ void RWStepDimTol_RWGeoTolAndGeoTolWthDatRefAndUneqDisGeoTol::ReadStep
   data->ReadString (num, 1, "name", ach, aName);
   Handle(TCollection_HAsciiString) aDescription;
   data->ReadString (num, 2, "description", ach, aDescription);
-  Handle(StepBasic_MeasureWithUnit) aMagnitude;
-  data->ReadEntity (num, 3, "magnitude", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aMagnitude);
+
+  StepRepr_MeasureWithUnit aMagnitude;
+  data->ReadEntity(num, 3, "magnitude", ach, aMagnitude);
+
   StepDimTol_GeometricToleranceTarget aTolerancedShapeAspect;
   data->ReadEntity (num, 4, "toleranced_shape_aspect", ach, aTolerancedShapeAspect);
 
@@ -137,7 +140,7 @@ void RWStepDimTol_RWGeoTolAndGeoTolWthDatRefAndUneqDisGeoTol::WriteStep
   SW.StartEntity("GEOMETRIC_TOLERANCE");
   SW.Send(ent->Name());
   SW.Send(ent->Description());
-  SW.Send(ent->Magnitude());
+  SW.Send(ent->Magnitude().Value());
   SW.Send(ent->TolerancedShapeAspect().Value());
   SW.StartEntity("GEOMETRIC_TOLERANCE_WITH_DATUM_REFERENCE");
   SW.OpenSub();
@@ -182,7 +185,7 @@ void RWStepDimTol_RWGeoTolAndGeoTolWthDatRefAndUneqDisGeoTol::Share
    Interface_EntityIterator& iter) const
 {
   // Own fields of GeometricTolerance
-  iter.AddItem (ent->Magnitude());
+  iter.AddItem (ent->Magnitude().Value());
   iter.AddItem (ent->TolerancedShapeAspect().Value());
   // Own fields of GeometricToleranceWithDatumReference
   for (Standard_Integer i3=1; i3<=ent->GetGeometricToleranceWithDatumReference()->DatumSystemAP242()->Length(); i3++ ) {

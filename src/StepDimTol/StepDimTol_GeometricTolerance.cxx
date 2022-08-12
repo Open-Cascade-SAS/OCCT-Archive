@@ -38,7 +38,7 @@ StepDimTol_GeometricTolerance::StepDimTol_GeometricTolerance ()
 
 void StepDimTol_GeometricTolerance::Init (const Handle(TCollection_HAsciiString) &theName,
                                           const Handle(TCollection_HAsciiString) &theDescription,
-                                          const Handle(StepBasic_MeasureWithUnit) &theMagnitude,
+                                          const StepRepr_MeasureWithUnit& theMagnitude,
                                           const StepDimTol_GeometricToleranceTarget &theTolerancedShapeAspect)
 {
 
@@ -58,7 +58,7 @@ void StepDimTol_GeometricTolerance::Init (const Handle(TCollection_HAsciiString)
 
 void StepDimTol_GeometricTolerance::Init (const Handle(TCollection_HAsciiString) &theName,
                                           const Handle(TCollection_HAsciiString) &theDescription,
-                                          const Handle(StepBasic_MeasureWithUnit) &theMagnitude,
+                                          const StepRepr_MeasureWithUnit& theMagnitude,
                                           const Handle(StepRepr_ShapeAspect) &theTolerancedShapeAspect)
 {
 
@@ -116,7 +116,7 @@ void StepDimTol_GeometricTolerance::SetDescription (const Handle(TCollection_HAs
 //purpose  : 
 //=======================================================================
 
-Handle(StepBasic_MeasureWithUnit) StepDimTol_GeometricTolerance::Magnitude () const
+const StepRepr_MeasureWithUnit& StepDimTol_GeometricTolerance::Magnitude() const
 {
   return myMagnitude;
 }
@@ -126,7 +126,7 @@ Handle(StepBasic_MeasureWithUnit) StepDimTol_GeometricTolerance::Magnitude () co
 //purpose  : 
 //=======================================================================
 
-void StepDimTol_GeometricTolerance::SetMagnitude (const Handle(StepBasic_MeasureWithUnit) &theMagnitude)
+void StepDimTol_GeometricTolerance::SetMagnitude (const StepRepr_MeasureWithUnit& theMagnitude)
 {
   myMagnitude = theMagnitude;
 }

@@ -26,6 +26,7 @@ class StepBasic_LengthMeasureWithUnit;
 class TCollection_HAsciiString;
 class StepBasic_MeasureWithUnit;
 class StepDimTol_GeometricToleranceTarget;
+class StepRepr_MeasureWithUnit;
 
 class StepDimTol_GeometricToleranceWithDefinedAreaUnit;
 DEFINE_STANDARD_HANDLE(StepDimTol_GeometricToleranceWithDefinedAreaUnit, StepDimTol_GeometricToleranceWithDefinedUnit)
@@ -42,7 +43,7 @@ public:
   //! Initialize all fields (own and inherited)
   Standard_EXPORT   void Init(const Handle(TCollection_HAsciiString)& theName, 
                               const Handle(TCollection_HAsciiString)& theDescription, 
-                              const Handle(StepBasic_MeasureWithUnit)& theMagnitude, 
+                              const StepRepr_MeasureWithUnit& theMagnitude,
                               const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect, 
                               const Handle(StepBasic_LengthMeasureWithUnit)& theUnitSize, 
                               const StepDimTol_AreaUnitType theAreaType, const Standard_Boolean theHasSecondUnitSize, 

@@ -17,9 +17,9 @@
 #include <StepBasic_ConversionBasedUnitAndMassUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
 #include <StepBasic_MassUnit.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 
 //=======================================================================
 //function : RWStepBasic_RWConversionBasedUnitAndMassUnit
@@ -36,10 +36,10 @@ RWStepBasic_RWConversionBasedUnitAndMassUnit::RWStepBasic_RWConversionBasedUnitA
 //=======================================================================
 
 void RWStepBasic_RWConversionBasedUnitAndMassUnit::ReadStep
-	(const Handle(StepData_StepReaderData)& data,
-	 const Standard_Integer num0,
-	 Handle(Interface_Check)& ach,
-	 const Handle(StepBasic_ConversionBasedUnitAndMassUnit)& ent) const
+    (const Handle(StepData_StepReaderData)& data,
+     const Standard_Integer num0,
+     Handle(Interface_Check)& ach,
+     const Handle(StepBasic_ConversionBasedUnitAndMassUnit)& ent) const
 {
 
   Standard_Integer num = num0;
@@ -51,9 +51,9 @@ void RWStepBasic_RWConversionBasedUnitAndMassUnit::ReadStep
   //szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
   data->ReadString (num,1,"name",ach,aName);
   // --- field : conversionFactor ---
-  Handle(StepBasic_MeasureWithUnit) aConversionFactor;
   //szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
-  data->ReadEntity(num, 2,"conversion_factor", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aConversionFactor);
+  StepRepr_MeasureWithUnit aConversionFactor;
+  data->ReadEntity(num, 2, "conversion_factor", ach, aConversionFactor);
 
   num = data->NextForComplex(num);
 
@@ -70,7 +70,7 @@ void RWStepBasic_RWConversionBasedUnitAndMassUnit::ReadStep
   data->ReadEntity(num, 1,"dimensions", ach, STANDARD_TYPE(StepBasic_DimensionalExponents), aDimensions);
 
   //--- Initialisation of the red entity ---
-  ent->Init(aDimensions,aName,aConversionFactor);
+  ent->Init(aDimensions,aName, aConversionFactor);
 }
 
 
@@ -88,7 +88,7 @@ void RWStepBasic_RWConversionBasedUnitAndMassUnit::WriteStep
   // --- field : name ---
   SW.Send(ent->Name());
   // --- field : conversionFactor ---
-  SW.Send(ent->ConversionFactor());
+  SW.Send(ent->ConversionFactor().Value());
   // --- Instance of plex component MassUnit ---
   SW.StartEntity("Mass_UNIT");
   // --- Instance of common supertype NamedUnit ---
@@ -108,6 +108,6 @@ void RWStepBasic_RWConversionBasedUnitAndMassUnit::Share
    Interface_EntityIterator& iter) const
 {
   iter.GetOneItem(ent->Dimensions());
-  iter.GetOneItem(ent->ConversionFactor());
+  iter.GetOneItem(ent->ConversionFactor().Value());
 }
 

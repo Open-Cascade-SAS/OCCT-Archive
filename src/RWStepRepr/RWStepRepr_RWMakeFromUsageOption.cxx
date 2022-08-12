@@ -17,9 +17,9 @@
 
 #include <Interface_EntityIterator.hxx>
 #include <RWStepRepr_RWMakeFromUsageOption.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 #include <StepRepr_MakeFromUsageOption.hxx>
 
 //=======================================================================
@@ -74,8 +74,8 @@ void RWStepRepr_RWMakeFromUsageOption::ReadStep (const Handle(StepData_StepReade
   Handle(TCollection_HAsciiString) aRankingRationale;
   data->ReadString (num, 7, "ranking_rationale", ach, aRankingRationale);
 
-  Handle(StepBasic_MeasureWithUnit) aQuantity;
-  data->ReadEntity (num, 8, "quantity", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aQuantity);
+  StepRepr_MeasureWithUnit aQuantity;
+  data->ReadEntity(num, 8, "quantity", ach, aQuantity);
 
   // Initialize entity
   ent->Init(aProductDefinitionRelationship_Id,
@@ -119,7 +119,7 @@ void RWStepRepr_RWMakeFromUsageOption::WriteStep (StepData_StepWriter& SW,
 
   SW.Send (ent->RankingRationale());
 
-  SW.Send (ent->Quantity());
+  SW.Send (ent->Quantity().Value());
 }
 
 //=======================================================================
@@ -139,5 +139,5 @@ void RWStepRepr_RWMakeFromUsageOption::Share (const Handle(StepRepr_MakeFromUsag
 
   // Own fields of MakeFromUsageOption
 
-  iter.AddItem (ent->Quantity());
+  iter.AddItem (ent->Quantity().Value());
 }

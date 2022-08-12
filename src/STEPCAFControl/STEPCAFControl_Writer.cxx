@@ -3474,7 +3474,9 @@ void STEPCAFControl_Writer::writeGeomTolerance(const Handle(XSControl_WorkSessio
         // Geometric_Tolerance_With_Maximum_Tolerance & Geometric_Tolerance_With_Modifiers
         Handle(StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMaxTol) aResult =
           new StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMaxTol();
-        aResult->Init(aName, aDescription, aLMWU, aGTTarget, aGTWDR, aGTWM, aMaxLMWU, aType);
+        StepRepr_MeasureWithUnit aMeasure;
+        aMeasure.SetValue(aLMWU);
+        aResult->Init(aName, aDescription, aMeasure, aGTTarget, aGTWDR, aGTWM, aMaxLMWU, aType);
         aGeomTol = aResult;
       }
       else
@@ -3482,7 +3484,9 @@ void STEPCAFControl_Writer::writeGeomTolerance(const Handle(XSControl_WorkSessio
         // Geometric_Tolerance & Geometric_Tolerance_With_Maximum_Tolerance & Geometric_Tolerance_With_Modifiers
         Handle(StepDimTol_GeoTolAndGeoTolWthMaxTol) aResult =
           new StepDimTol_GeoTolAndGeoTolWthMaxTol();
-        aResult->Init(aName, aDescription, aLMWU, aGTTarget, aGTWM, aMaxLMWU, aType);
+        StepRepr_MeasureWithUnit aMeasure;
+        aMeasure.SetValue(aLMWU);
+        aResult->Init(aName, aDescription, aMeasure, aGTTarget, aGTWM, aMaxLMWU, aType);
         aGeomTol = aResult;
       }
     }
@@ -3493,7 +3497,9 @@ void STEPCAFControl_Writer::writeGeomTolerance(const Handle(XSControl_WorkSessio
         // Geometric_Tolerance & Geometric_Tolerance_With_Datum_Reference & Geometric_Tolerance_With_Modifiers
         Handle(StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMod) aResult =
           new StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMod();
-        aResult->Init(aName, aDescription, aLMWU, aGTTarget, aGTWDR, aGTWM, aType);
+        StepRepr_MeasureWithUnit aMeasure;
+        aMeasure.SetValue(aLMWU);
+        aResult->Init(aName, aDescription, aMeasure, aGTTarget, aGTWDR, aGTWM, aType);
         aGeomTol = aResult;
       }
       else
@@ -3501,7 +3507,9 @@ void STEPCAFControl_Writer::writeGeomTolerance(const Handle(XSControl_WorkSessio
         // Geometric_Tolerance & Geometric_Tolerance_With_Modifiers
         Handle(StepDimTol_GeoTolAndGeoTolWthMod) aResult =
           new StepDimTol_GeoTolAndGeoTolWthMod();
-        aResult->Init(aName, aDescription, aLMWU, aGTTarget, aGTWM, aType);
+        StepRepr_MeasureWithUnit aMeasure;
+        aMeasure.SetValue(aLMWU);
+        aResult->Init(aName, aDescription, aMeasure, aGTTarget, aGTWM, aType);
         aGeomTol = aResult;
       }
     }
@@ -3513,7 +3521,9 @@ void STEPCAFControl_Writer::writeGeomTolerance(const Handle(XSControl_WorkSessio
       // Geometric_Tolerance & Geometric_Tolerance_With_Datum_Reference
       Handle(StepDimTol_GeoTolAndGeoTolWthDatRef) aResult =
         new StepDimTol_GeoTolAndGeoTolWthDatRef();
-      aResult->Init(aName, aDescription, aLMWU, aGTTarget, aGTWDR, aType);
+      StepRepr_MeasureWithUnit aMeasure;
+      aMeasure.SetValue(aLMWU);
+      aResult->Init(aName, aDescription, aMeasure, aGTTarget, aGTWDR, aType);
       aGeomTol = aResult;
     }
     else
@@ -3523,7 +3533,9 @@ void STEPCAFControl_Writer::writeGeomTolerance(const Handle(XSControl_WorkSessio
         STEPCAFControl_GDTProperty::GetGeomTolerance(anObject->GetType());
       if (!aResult.IsNull())
       {
-        aResult->Init(aName, aDescription, aLMWU, aGTTarget);
+        StepRepr_MeasureWithUnit aMeasure;
+        aMeasure.SetValue(aLMWU);
+        aResult->Init(aName, aDescription, aMeasure, aGTTarget);
         aGeomTol = aResult;
       }
     }
@@ -3843,63 +3855,81 @@ Standard_Boolean STEPCAFControl_Writer::writeDGTs(const Handle(XSControl_WorkSes
             aMGT->SetModifier(StepDimTol_RegardlessOfFeatureSize);
           Handle(StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol) aGTComplex =
             new StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol;
-          aGTComplex->Init(aName, aDescription, aLMWU, aSA, aGTWDR, aMGT);
+          StepRepr_MeasureWithUnit aMeasure;
+          aMeasure.SetValue(aLMWU);
+          aGTComplex->Init(aName, aDescription, aMeasure, aSA, aGTWDR, aMGT);
           aModel->AddWithRefs(aGTComplex);
         }
         else if (aKind == 24)
         {
           Handle(StepDimTol_AngularityTolerance) aToler =
             new StepDimTol_AngularityTolerance;
-          aToler->Init(aName, aDescription, aLMWU, aSA, aHADR);
+          StepRepr_MeasureWithUnit aMeasure;
+          aMeasure.SetValue(aLMWU);
+          aToler->Init(aName, aDescription, aMeasure, aSA, aHADR);
           aModel->AddWithRefs(aToler);
         }
         else if (aKind == 25)
         {
           Handle(StepDimTol_CircularRunoutTolerance) aToler =
             new StepDimTol_CircularRunoutTolerance;
-          aToler->Init(aName, aDescription, aLMWU, aSA, aHADR);
+          StepRepr_MeasureWithUnit aMeasure;
+          aMeasure.SetValue(aLMWU);
+          aToler->Init(aName, aDescription, aMeasure, aSA, aHADR);
           aModel->AddWithRefs(aToler);
         }
         else if (aKind == 26)
         {
           Handle(StepDimTol_CoaxialityTolerance) aToler =
             new StepDimTol_CoaxialityTolerance;
-          aToler->Init(aName, aDescription, aLMWU, aSA, aHADR);
+          StepRepr_MeasureWithUnit aMeasure;
+          aMeasure.SetValue(aLMWU);
+          aToler->Init(aName, aDescription, aMeasure, aSA, aHADR);
           aModel->AddWithRefs(aToler);
         }
         else if (aKind == 27)
         {
           Handle(StepDimTol_ConcentricityTolerance) aToler =
             new StepDimTol_ConcentricityTolerance;
-          aToler->Init(aName, aDescription, aLMWU, aSA, aHADR);
+          StepRepr_MeasureWithUnit aMeasure;
+          aMeasure.SetValue(aLMWU);
+          aToler->Init(aName, aDescription, aMeasure, aSA, aHADR);
           aModel->AddWithRefs(aToler);
         }
         else if (aKind == 28)
         {
           Handle(StepDimTol_ParallelismTolerance) aToler =
             new StepDimTol_ParallelismTolerance;
-          aToler->Init(aName, aDescription, aLMWU, aSA, aHADR);
+          StepRepr_MeasureWithUnit aMeasure;
+          aMeasure.SetValue(aLMWU);
+          aToler->Init(aName, aDescription, aMeasure, aSA, aHADR);
           aModel->AddWithRefs(aToler);
         }
         else if (aKind == 29)
         {
           Handle(StepDimTol_PerpendicularityTolerance) aToler =
             new StepDimTol_PerpendicularityTolerance;
-          aToler->Init(aName, aDescription, aLMWU, aSA, aHADR);
+          StepRepr_MeasureWithUnit aMeasure;
+          aMeasure.SetValue(aLMWU);
+          aToler->Init(aName, aDescription, aMeasure, aSA, aHADR);
           aModel->AddWithRefs(aToler);
         }
         else if (aKind == 30)
         {
           Handle(StepDimTol_SymmetryTolerance) aToler =
             new StepDimTol_SymmetryTolerance;
-          aToler->Init(aName, aDescription, aLMWU, aSA, aHADR);
+          StepRepr_MeasureWithUnit aMeasure;
+          aMeasure.SetValue(aLMWU);
+          aToler->Init(aName, aDescription, aMeasure, aSA, aHADR);
           aModel->AddWithRefs(aToler);
         }
         else if (aKind == 31)
         {
           Handle(StepDimTol_TotalRunoutTolerance) aToler =
             new StepDimTol_TotalRunoutTolerance;
-          aToler->Init(aName, aDescription, aLMWU, aSA, aHADR);
+          StepRepr_MeasureWithUnit aMeasure;
+          aMeasure.SetValue(aLMWU);
+          aToler->Init(aName, aDescription, aMeasure, aSA, aHADR);
           aModel->AddWithRefs(aToler);
         }
       }

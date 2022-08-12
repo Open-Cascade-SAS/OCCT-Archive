@@ -15,7 +15,6 @@
 #include <Standard_Type.hxx>
 #include <StepBasic_ConversionBasedUnitAndPlaneAngleUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepBasic_PlaneAngleUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 
@@ -26,8 +25,8 @@ StepBasic_ConversionBasedUnitAndPlaneAngleUnit::StepBasic_ConversionBasedUnitAnd
 }
 
 void StepBasic_ConversionBasedUnitAndPlaneAngleUnit::Init(const Handle(StepBasic_DimensionalExponents)& aDimensions,
-							  const Handle(TCollection_HAsciiString)& aName,
-							  const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+                                                          const Handle(TCollection_HAsciiString)& aName,
+                                                          const StepRepr_MeasureWithUnit& aConversionFactor)
 {
   // --- ANDOR component fields ---
   StepBasic_ConversionBasedUnit::Init(aDimensions, aName, aConversionFactor);

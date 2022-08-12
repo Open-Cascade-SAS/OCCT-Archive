@@ -17,9 +17,9 @@
 
 #include <Interface_EntityIterator.hxx>
 #include <RWStepRepr_RWQuantifiedAssemblyComponentUsage.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 #include <StepRepr_QuantifiedAssemblyComponentUsage.hxx>
 
 //=======================================================================
@@ -79,8 +79,8 @@ void RWStepRepr_RWQuantifiedAssemblyComponentUsage::ReadStep (const Handle(StepD
 
   // Own fields of QuantifiedAssemblyComponentUsage
 
-  Handle(StepBasic_MeasureWithUnit) aQuantity;
-  data->ReadEntity (num, 7, "quantity", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aQuantity);
+  StepRepr_MeasureWithUnit aQuantity;
+  data->ReadEntity(num, 7, "quantity", ach, aQuantity);
 
   // Initialize entity
   ent->Init(aProductDefinitionRelationship_Id,
@@ -127,7 +127,7 @@ void RWStepRepr_RWQuantifiedAssemblyComponentUsage::WriteStep (StepData_StepWrit
 
   // Own fields of QuantifiedAssemblyComponentUsage
 
-  SW.Send (ent->Quantity());
+  SW.Send (ent->Quantity().Value());
 }
 
 //=======================================================================
@@ -149,5 +149,5 @@ void RWStepRepr_RWQuantifiedAssemblyComponentUsage::Share (const Handle(StepRepr
 
   // Own fields of QuantifiedAssemblyComponentUsage
 
-  iter.AddItem (ent->Quantity());
+  iter.AddItem (ent->Quantity().Value());
 }

@@ -24,7 +24,6 @@
 class StepBasic_TimeUnit;
 class StepBasic_DimensionalExponents;
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 
 
 class StepBasic_ConversionBasedUnitAndTimeUnit;
@@ -40,7 +39,9 @@ public:
   //! Returns a ConversionBasedUnitAndTimeUnit
   Standard_EXPORT StepBasic_ConversionBasedUnitAndTimeUnit();
   
-  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions, const Handle(TCollection_HAsciiString)& aName, const Handle(StepBasic_MeasureWithUnit)& aConversionFactor);
+  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions,
+                             const Handle(TCollection_HAsciiString)& aName,
+                             const StepRepr_MeasureWithUnit& aConversionFactor);
   
   Standard_EXPORT void SetTimeUnit (const Handle(StepBasic_TimeUnit)& aTimeUnit);
   

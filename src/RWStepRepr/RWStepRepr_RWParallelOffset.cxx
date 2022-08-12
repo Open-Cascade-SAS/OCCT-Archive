@@ -16,9 +16,9 @@
 #include <RWStepRepr_RWParallelOffset.hxx>
 
 #include <Interface_EntityIterator.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 #include <StepRepr_ParallelOffset.hxx>
 #include <StepRepr_ProductDefinitionShape.hxx>
 
@@ -62,8 +62,8 @@ void RWStepRepr_RWParallelOffset::ReadStep (const Handle(StepData_StepReaderData
   
   // Own fields of ParallelOffset
   
-  Handle(StepBasic_MeasureWithUnit) anOffset;
-  data->ReadEntity (num, 5, "offset", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), anOffset);
+  StepRepr_MeasureWithUnit anOffset;
+  data->ReadEntity(num, 5, "offset", ach, anOffset);
 
   // Initialize entity
   ent->Init(aShapeAspect_Name,
@@ -92,7 +92,7 @@ void RWStepRepr_RWParallelOffset::WriteStep (StepData_StepWriter& SW,
 
   SW.SendLogical (ent->ProductDefinitional());
   
-  SW.Send(ent->Offset());
+  SW.Send(ent->Offset().Value());
 }
 
 //=======================================================================

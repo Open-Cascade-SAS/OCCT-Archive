@@ -12,7 +12,6 @@
 // commercial license or contractual agreement.
 
 
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepDimTol_GeometricToleranceWithDatumReference.hxx>
 #include <StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol.hxx>
 #include <StepDimTol_ModifiedGeometricTolerance.hxx>
@@ -39,7 +38,7 @@ StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::StepDimTol_GeoTolAndGe
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::Init
   (const Handle(TCollection_HAsciiString)& aName,
    const Handle(TCollection_HAsciiString)& aDescription,
-   const Handle(StepBasic_MeasureWithUnit)& aMagnitude,
+   const StepRepr_MeasureWithUnit& aMagnitude,
    const Handle(StepRepr_ShapeAspect)& aTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithDatumReference)& aGTWDR,
    const Handle(StepDimTol_ModifiedGeometricTolerance)& aMGT)
@@ -60,7 +59,7 @@ void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::Init
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::Init
   (const Handle(TCollection_HAsciiString)& aName,
    const Handle(TCollection_HAsciiString)& aDescription,
-   const Handle(StepBasic_MeasureWithUnit)& aMagnitude,
+   const StepRepr_MeasureWithUnit& aMagnitude,
    const StepDimTol_GeometricToleranceTarget& aTolerancedShapeAspect,
    const Handle(StepDimTol_GeometricToleranceWithDatumReference)& aGTWDR,
    const Handle(StepDimTol_ModifiedGeometricTolerance)& aMGT)

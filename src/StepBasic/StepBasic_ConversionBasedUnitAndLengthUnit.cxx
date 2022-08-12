@@ -16,7 +16,6 @@
 #include <StepBasic_ConversionBasedUnitAndLengthUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
 #include <StepBasic_LengthUnit.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(StepBasic_ConversionBasedUnitAndLengthUnit,StepBasic_ConversionBasedUnit)
@@ -24,8 +23,8 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_ConversionBasedUnitAndLengthUnit,StepBasic_
 StepBasic_ConversionBasedUnitAndLengthUnit::StepBasic_ConversionBasedUnitAndLengthUnit ()  {}
 
 void StepBasic_ConversionBasedUnitAndLengthUnit::Init(const Handle(StepBasic_DimensionalExponents)& aDimensions,
-						      const Handle(TCollection_HAsciiString)& aName,
-						      const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+                                                      const Handle(TCollection_HAsciiString)& aName,
+                                                      const StepRepr_MeasureWithUnit& aConversionFactor)
 {
   // --- ANDOR component fields ---
   StepBasic_ConversionBasedUnit::Init(aDimensions, aName, aConversionFactor);

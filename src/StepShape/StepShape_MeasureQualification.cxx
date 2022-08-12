@@ -13,6 +13,7 @@
 
 
 #include <StepBasic_MeasureWithUnit.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 #include <StepShape_MeasureQualification.hxx>
 #include <StepShape_ValueQualifier.hxx>
 #include <TCollection_HAsciiString.hxx>
@@ -24,7 +25,7 @@ StepShape_MeasureQualification::StepShape_MeasureQualification  ()    {  }
 void  StepShape_MeasureQualification::Init
   (const Handle(TCollection_HAsciiString)& name,
    const Handle(TCollection_HAsciiString)& description,
-   const Handle(StepBasic_MeasureWithUnit)& qualified_measure,
+   const StepRepr_MeasureWithUnit qualified_measure,
    const Handle(StepShape_HArray1OfValueQualifier)& qualifiers)
 {
   theName = name;
@@ -47,11 +48,11 @@ void  StepShape_MeasureQualification::SetDescription
   (const Handle(TCollection_HAsciiString)& description)
 {  theDescription = description;  }
 
-Handle(StepBasic_MeasureWithUnit)  StepShape_MeasureQualification::QualifiedMeasure () const
+const StepRepr_MeasureWithUnit&  StepShape_MeasureQualification::QualifiedMeasure () const
 {  return theQualifiedMeasure;  }
 
 void  StepShape_MeasureQualification::SetQualifiedMeasure
-  (const Handle(StepBasic_MeasureWithUnit)& qualified_measure)
+  (const StepRepr_MeasureWithUnit& qualified_measure)
 {  theQualifiedMeasure = qualified_measure;  }
 
 Handle(StepShape_HArray1OfValueQualifier)  StepShape_MeasureQualification::Qualifiers () const

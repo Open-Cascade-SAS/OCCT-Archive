@@ -116,7 +116,9 @@ void STEPConstruct_UnitContext::Init(const Standard_Real Tol3d)
     Handle(TCollection_HAsciiString) convName = new TCollection_HAsciiString ( uName );
     Handle(StepBasic_ConversionBasedUnitAndLengthUnit) convUnit =
       new StepBasic_ConversionBasedUnitAndLengthUnit;
-    convUnit->Init ( theDimExp, convName, measure );
+    StepRepr_MeasureWithUnit aMeasure;
+    aMeasure.SetValue(measure);
+    convUnit->Init ( theDimExp, convName, aMeasure );
     
     lengthUnit = convUnit;
   }
@@ -297,7 +299,7 @@ Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepBasi
 //    Handle(StepBasic_DimensionalExponents) theDimExp = theCBU->Dimensions();
     Handle(StepBasic_MeasureWithUnit) theMWU;
     if(!theCBU.IsNull()) {
-       theMWU = theCBU->ConversionFactor();
+       theMWU = Handle(StepBasic_MeasureWithUnit)::DownCast(theCBU->ConversionFactor().Value());
        // sln 8.10.2001: the case of unrecognized entity
        if(theMWU.IsNull())
          return -1;

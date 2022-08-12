@@ -15,8 +15,8 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.1
 
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepBasic_ProductDefinition.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 #include <StepRepr_QuantifiedAssemblyComponentUsage.hxx>
 #include <TCollection_HAsciiString.hxx>
 
@@ -43,7 +43,7 @@ void StepRepr_QuantifiedAssemblyComponentUsage::Init (const Handle(TCollection_H
                                                       const Handle(StepBasic_ProductDefinition) &aProductDefinitionRelationship_RelatedProductDefinition,
                                                       const Standard_Boolean hasAssemblyComponentUsage_ReferenceDesignator,
                                                       const Handle(TCollection_HAsciiString) &aAssemblyComponentUsage_ReferenceDesignator,
-                                                      const Handle(StepBasic_MeasureWithUnit) &aQuantity)
+                                                      const StepRepr_MeasureWithUnit aQuantity)
 {
   StepRepr_AssemblyComponentUsage::Init(aProductDefinitionRelationship_Id,
                                         aProductDefinitionRelationship_Name,
@@ -70,7 +70,7 @@ void StepRepr_QuantifiedAssemblyComponentUsage::Init (const Handle(TCollection_H
                                                       const StepBasic_ProductDefinitionOrReference &aProductDefinitionRelationship_RelatedProductDefinition,
                                                       const Standard_Boolean hasAssemblyComponentUsage_ReferenceDesignator,
                                                       const Handle(TCollection_HAsciiString) &aAssemblyComponentUsage_ReferenceDesignator,
-                                                      const Handle(StepBasic_MeasureWithUnit) &aQuantity)
+                                                      const StepRepr_MeasureWithUnit aQuantity)
 {
   StepRepr_AssemblyComponentUsage::Init(aProductDefinitionRelationship_Id,
                                         aProductDefinitionRelationship_Name,
@@ -89,7 +89,7 @@ void StepRepr_QuantifiedAssemblyComponentUsage::Init (const Handle(TCollection_H
 //purpose  : 
 //=======================================================================
 
-Handle(StepBasic_MeasureWithUnit) StepRepr_QuantifiedAssemblyComponentUsage::Quantity () const
+const StepRepr_MeasureWithUnit& StepRepr_QuantifiedAssemblyComponentUsage::Quantity () const
 {
   return theQuantity;
 }
@@ -99,7 +99,7 @@ Handle(StepBasic_MeasureWithUnit) StepRepr_QuantifiedAssemblyComponentUsage::Qua
 //purpose  : 
 //=======================================================================
 
-void StepRepr_QuantifiedAssemblyComponentUsage::SetQuantity (const Handle(StepBasic_MeasureWithUnit) &aQuantity)
+void StepRepr_QuantifiedAssemblyComponentUsage::SetQuantity (const StepRepr_MeasureWithUnit& aQuantity)
 {
   theQuantity = aQuantity;
 }

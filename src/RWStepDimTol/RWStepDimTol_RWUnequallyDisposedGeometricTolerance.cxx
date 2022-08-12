@@ -19,6 +19,7 @@
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
 #include <StepDimTol_UnequallyDisposedGeometricTolerance.hxx>
+#include <StepRepr_MeasureWithUnit.hxx>
 
 //=======================================================================
 //function : RWStepDimTol_RWUnequallyDisposedGeometricTolerance
@@ -51,8 +52,8 @@ void RWStepDimTol_RWUnequallyDisposedGeometricTolerance::
   Handle(TCollection_HAsciiString) aDescription;
   data->ReadString (num, 2, "geometric_tolerance.description", ach, aDescription);
 
-  Handle(StepBasic_MeasureWithUnit) aMagnitude;
-  data->ReadEntity (num, 3, "geometric_tolerance.magnitude", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aMagnitude);
+  StepRepr_MeasureWithUnit aMagnitude;
+  data->ReadEntity(num, 3, "magnitude", ach, aMagnitude);
 
   StepDimTol_GeometricToleranceTarget aTolerancedShapeAspect;
   data->ReadEntity (num, 4, "geometric_tolerance.toleranced_shape_aspect", ach, aTolerancedShapeAspect);
@@ -86,7 +87,7 @@ void RWStepDimTol_RWUnequallyDisposedGeometricTolerance::
 
   SW.Send (ent->Description());
 
-  SW.Send (ent->Magnitude());
+  SW.Send (ent->Magnitude().Value());
 
   SW.Send (ent->TolerancedShapeAspect().Value());
 
@@ -105,7 +106,7 @@ void RWStepDimTol_RWUnequallyDisposedGeometricTolerance::
 
   // Own fields of GeometricTolerance
 
-  iter.AddItem (ent->Magnitude());
+  iter.AddItem (ent->Magnitude().Value());
 
   iter.AddItem (ent->TolerancedShapeAspect().Value());
 }
