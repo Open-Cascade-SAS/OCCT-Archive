@@ -103,7 +103,7 @@ static Standard_Integer mkvolume   (Draw_Interpretor&, Standard_Integer, const c
                                "-na - disables the approximation of the section curves.\n",
                                                       __FILE__, bsection, g);
   //
-  theCommands.Add("bopcurves", "use bopcurves F1 F2 [-2d/-2d1/-2d2] "
+  theCommands.Add("bopcurves", "use bopcurves F1 F2 [-2d/-2d1/-2d2] [-noapprox] "
                                "[-p u1 v1 u2 v2 (to add start points] [-v (for extended output)]",
                                                       __FILE__, bopcurves, g);
   theCommands.Add("mkvolume", "make solids from set of shapes.\nmkvolume r b1 b2 ... [-c] [-ni] [-ai]",
@@ -544,7 +544,7 @@ Standard_Integer bopcurves (Draw_Interpretor& di,
                             const char** a)
 {
   if (n<3) {
-    di << "Usage: bopcurves F1 F2 [-2d/-2d1/-2d2] "
+    di << "Usage: bopcurves F1 F2 [-2d/-2d1/-2d2] [-noapprox] "
           "[-p u1 v1 u2 v2 (to add start points] [-v (for extended output)]\n";
     return 1;
   }
@@ -596,6 +596,9 @@ Standard_Integer bopcurves (Draw_Interpretor& di,
     }
     else if (!strcasecmp(a[i],"-2d2")) {
       aToApproxC2dOnS2 = Standard_True;
+    }
+    else if (!strcasecmp(a[i],"-noapprox")) {
+      aToApproxC3d     = Standard_False;
     }
     else if (!strcasecmp(a[i],"-p")) {
       IntSurf_PntOn2S aPt;

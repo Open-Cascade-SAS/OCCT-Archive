@@ -1,0 +1,39 @@
+puts "================================================="
+puts "0023860: Bad memory access intersecting two nearly coincident cylindrical faces"
+puts "================================================="
+puts ""
+
+cylinder c1 1031.3339148728076 -113.25868616662650 56.152387686082520 \
+            -0.86602540378443815 0.50000000000000089 0.00000000000000000 \
+            -0.50000000000000089 -0.86602540378443815 0.00000000000000000 \
+            76.499999999999986
+cylinder c2 1017.0706583606553 -103.24955863669388 56.152387686082548 \
+            0.86602540378443915 -0.49999999999999933 0.00000000000000000 \
+            0.49999999999999933 0.86602540378443915 0.00000000000000000 \
+            76.499999999999986
+mkface f1 c1 
+mkface f2 c2
+
+set curves_found [lindex [split [bopcurves f1 f2 -2d -noapprox] "\n"] 1]
+if { $curves_found != "2 curve(s) found." } {
+  puts "Error wrong curves number"
+}
+
+smallview
+donly c_1 c_2
+fit
+xwd ${imagedir}/${casename}_1.png
+
+set lines [split [dump c_1] "\n"]
+
+if { [lindex $lines 4] != "  Origin :1031.71804748645, -112.593348962955, -20.34375449469 " ||
+     [lindex $lines 5] != "  Axis   :-0.866025403784438, 0.500000000000001, 0 " } {
+  puts "Error: wrong first curve"
+}
+
+set lines [split [dump c_2] "\n"]
+
+if { [lindex $lines 4] != "  Origin :1031.71804748645, -112.593348962957, 132.648529866855 " ||
+     [lindex $lines 5] != "  Axis   :-0.866025403784438, 0.500000000000001, 0 "} {
+  puts "Error: wrong second curve"
+}
