@@ -12,7 +12,6 @@
 // commercial license or contractual agreement.
 
 
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepDimTol_GeometricToleranceWithDatumReference.hxx>
 #include <StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol.hxx>
 #include <StepDimTol_ModifiedGeometricTolerance.hxx>
@@ -37,19 +36,19 @@ StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::StepDimTol_GeoTolAndGe
 //=======================================================================
 
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::Init
-  (const Handle(TCollection_HAsciiString)& aName,
-   const Handle(TCollection_HAsciiString)& aDescription,
-   const Handle(StepBasic_MeasureWithUnit)& aMagnitude,
-   const Handle(StepRepr_ShapeAspect)& aTolerancedShapeAspect,
-   const Handle(StepDimTol_GeometricToleranceWithDatumReference)& aGTWDR,
-   const Handle(StepDimTol_ModifiedGeometricTolerance)& aMGT)
+  (const Handle(TCollection_HAsciiString)& theName,
+   const Handle(TCollection_HAsciiString)& theDescription,
+   const Handle(Standard_Transient)& theMagnitude,
+   const Handle(StepRepr_ShapeAspect)& theTolerancedShapeAspect,
+   const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR,
+   const Handle(StepDimTol_ModifiedGeometricTolerance)& theMGT)
 {
-  SetName(aName);
-  SetDescription(aDescription);
-  SetMagnitude(aMagnitude);
-  SetTolerancedShapeAspect(aTolerancedShapeAspect);
-  myGeometricToleranceWithDatumReference = aGTWDR;
-  myModifiedGeometricTolerance = aMGT;
+  SetName(theName);
+  SetDescription(theDescription);
+  SetMagnitude(theMagnitude);
+  SetTolerancedShapeAspect(theTolerancedShapeAspect);
+  myGeometricToleranceWithDatumReference = theGTWDR;
+  myModifiedGeometricTolerance = theMGT;
 }
 
 //=======================================================================
@@ -58,19 +57,19 @@ void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::Init
 //=======================================================================
 
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::Init
-  (const Handle(TCollection_HAsciiString)& aName,
-   const Handle(TCollection_HAsciiString)& aDescription,
-   const Handle(StepBasic_MeasureWithUnit)& aMagnitude,
-   const StepDimTol_GeometricToleranceTarget& aTolerancedShapeAspect,
-   const Handle(StepDimTol_GeometricToleranceWithDatumReference)& aGTWDR,
-   const Handle(StepDimTol_ModifiedGeometricTolerance)& aMGT)
+  (const Handle(TCollection_HAsciiString)& theName,
+   const Handle(TCollection_HAsciiString)& theDescription,
+   const Handle(Standard_Transient)& theMagnitude,
+   const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect,
+   const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR,
+   const Handle(StepDimTol_ModifiedGeometricTolerance)& theMGT)
 {
-  SetName(aName);
-  SetDescription(aDescription);
-  SetMagnitude(aMagnitude);
-  SetTolerancedShapeAspect(aTolerancedShapeAspect);
-  myGeometricToleranceWithDatumReference = aGTWDR;
-  myModifiedGeometricTolerance = aMGT;
+  SetName(theName);
+  SetDescription(theDescription);
+  SetMagnitude(theMagnitude);
+  SetTolerancedShapeAspect(theTolerancedShapeAspect);
+  myGeometricToleranceWithDatumReference = theGTWDR;
+  myModifiedGeometricTolerance = theMGT;
 }
 
 
@@ -80,9 +79,9 @@ void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::Init
 //=======================================================================
 
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::SetGeometricToleranceWithDatumReference
-  (const Handle(StepDimTol_GeometricToleranceWithDatumReference)& aGTWDR) 
+  (const Handle(StepDimTol_GeometricToleranceWithDatumReference)& theGTWDR)
 {
-  myGeometricToleranceWithDatumReference = aGTWDR;
+  myGeometricToleranceWithDatumReference = theGTWDR;
 }
 
 
@@ -103,9 +102,9 @@ Handle(StepDimTol_GeometricToleranceWithDatumReference) StepDimTol_GeoTolAndGeoT
 //=======================================================================
 
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::SetModifiedGeometricTolerance
-  (const Handle(StepDimTol_ModifiedGeometricTolerance)& aMGT) 
+  (const Handle(StepDimTol_ModifiedGeometricTolerance)& theMGT)
 {
-  myModifiedGeometricTolerance = aMGT;
+  myModifiedGeometricTolerance = theMGT;
 }
 
 
@@ -126,9 +125,9 @@ Handle(StepDimTol_ModifiedGeometricTolerance) StepDimTol_GeoTolAndGeoTolWthDatRe
 //=======================================================================
 
 void StepDimTol_GeoTolAndGeoTolWthDatRefAndModGeoTolAndPosTol::SetPositionTolerance
-  (const Handle(StepDimTol_PositionTolerance)& aPT) 
+  (const Handle(StepDimTol_PositionTolerance)& thePT)
 {
-  myPositionTolerance = aPT;
+  myPositionTolerance = thePT;
 }
 
 

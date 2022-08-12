@@ -21,53 +21,68 @@ IMPLEMENT_STANDARD_RTTIEXT(StepShape_MeasureQualification,Standard_Transient)
 
 StepShape_MeasureQualification::StepShape_MeasureQualification  ()    {  }
 
-void  StepShape_MeasureQualification::Init
-  (const Handle(TCollection_HAsciiString)& name,
-   const Handle(TCollection_HAsciiString)& description,
-   const Handle(StepBasic_MeasureWithUnit)& qualified_measure,
-   const Handle(StepShape_HArray1OfValueQualifier)& qualifiers)
+void  StepShape_MeasureQualification::Init(const Handle(TCollection_HAsciiString)& theName,
+                                           const Handle(TCollection_HAsciiString)& theDescription,
+                                           const Handle(Standard_Transient)& theQualifiedMeasure,
+                                           const Handle(StepShape_HArray1OfValueQualifier)& theQualifiers)
 {
-  theName = name;
-  theDescription = description;
-  theQualifiedMeasure = qualified_measure;
-  theQualifiers = qualifiers;
+  myName = theName;
+  myDescription = theDescription;
+  myQualifiedMeasure = theQualifiedMeasure;
+  myQualifiers = theQualifiers;
 }
 
 Handle(TCollection_HAsciiString)  StepShape_MeasureQualification::Name () const
-{  return theName;  }
+{
+  return myName;
+}
 
-void  StepShape_MeasureQualification::SetName
-  (const Handle(TCollection_HAsciiString)& name)
-{  theName = name;  }
+void  StepShape_MeasureQualification::SetName(const Handle(TCollection_HAsciiString)& theName)
+{
+  myName = theName;
+}
 
 Handle(TCollection_HAsciiString)  StepShape_MeasureQualification::Description () const
-{  return theDescription;  }
+{
+  return myDescription;
+}
 
-void  StepShape_MeasureQualification::SetDescription
-  (const Handle(TCollection_HAsciiString)& description)
-{  theDescription = description;  }
+void  StepShape_MeasureQualification::SetDescription(const Handle(TCollection_HAsciiString)& theDescription)
+{
+  myDescription = theDescription;
+}
 
-Handle(StepBasic_MeasureWithUnit)  StepShape_MeasureQualification::QualifiedMeasure () const
-{  return theQualifiedMeasure;  }
+Handle(Standard_Transient) StepShape_MeasureQualification::QualifiedMeasure () const
+{
+  return myQualifiedMeasure;
+}
 
-void  StepShape_MeasureQualification::SetQualifiedMeasure
-  (const Handle(StepBasic_MeasureWithUnit)& qualified_measure)
-{  theQualifiedMeasure = qualified_measure;  }
+void  StepShape_MeasureQualification::SetQualifiedMeasure(const Handle(Standard_Transient)& theQualifiedMeasure)
+{
+  myQualifiedMeasure = theQualifiedMeasure;
+}
 
 Handle(StepShape_HArray1OfValueQualifier)  StepShape_MeasureQualification::Qualifiers () const
-{  return theQualifiers;  }
+{
+  return myQualifiers;
+}
 
 Standard_Integer  StepShape_MeasureQualification::NbQualifiers () const
-{  return theQualifiers->Length();  }
+{
+  return myQualifiers->Length();
+}
 
-void  StepShape_MeasureQualification::SetQualifiers
-  (const Handle(StepShape_HArray1OfValueQualifier)& qualifiers)
-{  theQualifiers = qualifiers;  }
+void  StepShape_MeasureQualification::SetQualifiers(const Handle(StepShape_HArray1OfValueQualifier)& theQualifiers)
+{
+  myQualifiers = theQualifiers;
+}
 
-StepShape_ValueQualifier  StepShape_MeasureQualification::QualifiersValue
-  (const Standard_Integer num) const
-{  return theQualifiers->Value(num);  }
+StepShape_ValueQualifier StepShape_MeasureQualification::QualifiersValue(const Standard_Integer theNum) const
+{
+  return myQualifiers->Value(theNum);
+}
 
-void  StepShape_MeasureQualification::SetQualifiersValue
-  (const Standard_Integer num, const StepShape_ValueQualifier& aqualifier)
-{  theQualifiers->SetValue (num,aqualifier);  }
+void  StepShape_MeasureQualification::SetQualifiersValue(const Standard_Integer theNum, const StepShape_ValueQualifier& theQualifier)
+{
+  myQualifiers->SetValue(theNum, theQualifier);
+}

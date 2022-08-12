@@ -23,7 +23,6 @@
 #include <Standard_Transient.hxx>
 #include <Standard_Integer.hxx>
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 class StepShape_ValueQualifier;
 
 
@@ -39,29 +38,32 @@ public:
   
   Standard_EXPORT StepShape_MeasureQualification();
   
-  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& name, const Handle(TCollection_HAsciiString)& description, const Handle(StepBasic_MeasureWithUnit)& qualified_measure, const Handle(StepShape_HArray1OfValueQualifier)& qualifiers);
+  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& theName,
+                             const Handle(TCollection_HAsciiString)& theDescription,
+                             const Handle(Standard_Transient)& theQualifiedMeasure,
+                             const Handle(StepShape_HArray1OfValueQualifier)& theQualifiers);
   
   Standard_EXPORT Handle(TCollection_HAsciiString) Name() const;
   
-  Standard_EXPORT void SetName (const Handle(TCollection_HAsciiString)& name);
+  Standard_EXPORT void SetName (const Handle(TCollection_HAsciiString)& theName);
   
   Standard_EXPORT Handle(TCollection_HAsciiString) Description() const;
   
-  Standard_EXPORT void SetDescription (const Handle(TCollection_HAsciiString)& description);
+  Standard_EXPORT void SetDescription (const Handle(TCollection_HAsciiString)& theDescription);
   
-  Standard_EXPORT Handle(StepBasic_MeasureWithUnit) QualifiedMeasure() const;
+  Standard_EXPORT Handle(Standard_Transient) QualifiedMeasure() const;
   
-  Standard_EXPORT void SetQualifiedMeasure (const Handle(StepBasic_MeasureWithUnit)& qualified_measure);
+  Standard_EXPORT void SetQualifiedMeasure (const Handle(Standard_Transient)& theQualifiedMeasure);
   
   Standard_EXPORT Handle(StepShape_HArray1OfValueQualifier) Qualifiers() const;
   
   Standard_EXPORT Standard_Integer NbQualifiers() const;
   
-  Standard_EXPORT void SetQualifiers (const Handle(StepShape_HArray1OfValueQualifier)& qualifiers);
+  Standard_EXPORT void SetQualifiers (const Handle(StepShape_HArray1OfValueQualifier)& theQualifiers);
   
-  Standard_EXPORT StepShape_ValueQualifier QualifiersValue (const Standard_Integer num) const;
+  Standard_EXPORT StepShape_ValueQualifier QualifiersValue (const Standard_Integer theNum) const;
   
-  Standard_EXPORT void SetQualifiersValue (const Standard_Integer num, const StepShape_ValueQualifier& aqualifier);
+  Standard_EXPORT void SetQualifiersValue (const Standard_Integer theNum, const StepShape_ValueQualifier& theQualifier);
 
 
 
@@ -76,10 +78,10 @@ protected:
 private:
 
 
-  Handle(TCollection_HAsciiString) theName;
-  Handle(TCollection_HAsciiString) theDescription;
-  Handle(StepBasic_MeasureWithUnit) theQualifiedMeasure;
-  Handle(StepShape_HArray1OfValueQualifier) theQualifiers;
+  Handle(TCollection_HAsciiString) myName;
+  Handle(TCollection_HAsciiString) myDescription;
+  Handle(Standard_Transient) myQualifiedMeasure;
+  Handle(StepShape_HArray1OfValueQualifier) myQualifiers;
 
 
 };

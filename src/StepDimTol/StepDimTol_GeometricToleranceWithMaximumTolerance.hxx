@@ -22,7 +22,6 @@
 #include <StepDimTol_GeometricToleranceWithModifiers.hxx>
 
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 class StepDimTol_GeometricToleranceTarget;
 class StepDimTol_HArray1OfGeometricToleranceModifier;
 
@@ -38,7 +37,12 @@ public:
   Standard_EXPORT StepDimTol_GeometricToleranceWithMaximumTolerance();
   
   //! Initialize all fields (own and inherited)
-  Standard_EXPORT   void Init (const Handle(TCollection_HAsciiString)& theName, const Handle(TCollection_HAsciiString)& theDescription, const Handle(StepBasic_MeasureWithUnit)& theMagnitude, const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect, const Handle(StepDimTol_HArray1OfGeometricToleranceModifier)& theModifiers, const Handle(StepBasic_LengthMeasureWithUnit)& theUnitSize) ;
+  Standard_EXPORT   void Init (const Handle(TCollection_HAsciiString)& theName,
+                               const Handle(TCollection_HAsciiString)& theDescription,
+                               const Handle(Standard_Transient)& theMagnitude,
+                               const StepDimTol_GeometricToleranceTarget& theTolerancedShapeAspect,
+                               const Handle(StepDimTol_HArray1OfGeometricToleranceModifier)& theModifiers,
+                               const Handle(StepBasic_LengthMeasureWithUnit)& theUnitSize) ;
   
   //! Returns field MaximumUpperTolerance
   inline Handle(StepBasic_LengthMeasureWithUnit) MaximumUpperTolerance () const

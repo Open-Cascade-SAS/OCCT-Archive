@@ -19,7 +19,6 @@
 #include <RWStepBasic_RWConversionBasedUnitAndAreaUnit.hxx>
 #include <StepBasic_ConversionBasedUnitAndAreaUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
 
@@ -28,9 +27,9 @@ RWStepBasic_RWConversionBasedUnitAndAreaUnit::RWStepBasic_RWConversionBasedUnitA
 }
 
 void RWStepBasic_RWConversionBasedUnitAndAreaUnit::ReadStep(const Handle(StepData_StepReaderData)& data,
-							    const Standard_Integer num0,
-							    Handle(Interface_Check)& ach,
-							    const Handle(StepBasic_ConversionBasedUnitAndAreaUnit)& ent) const
+                                                   const Standard_Integer num0,
+                                                   Handle(Interface_Check)& ach,
+                                                   const Handle(StepBasic_ConversionBasedUnitAndAreaUnit)& ent) const
 {
   Standard_Integer num = num0;
   //data->NamedForComplex("AREA_UNIT",num0,num,ach);
@@ -43,15 +42,15 @@ void RWStepBasic_RWConversionBasedUnitAndAreaUnit::ReadStep(const Handle(StepDat
   data->ReadString (num,1,"name",ach,aName);
   
   // --- field : conversionFactor ---
-  Handle(StepBasic_MeasureWithUnit) aConversionFactor;
-  data->ReadEntity(num, 2,"conversion_factor", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aConversionFactor);
+  Handle(Standard_Transient) aConversionFactor;
+  data->ReadEntity (num, 2, "conversion_factor", ach, STANDARD_TYPE(Standard_Transient), aConversionFactor);
   num = data->NextForComplex(num);
   
   if (!data->CheckNbParams(num,1,ach,"named_unit")) return;
   Handle(StepBasic_DimensionalExponents) aDimensions;
   data->ReadEntity(num, 1,"dimensions", ach, STANDARD_TYPE(StepBasic_DimensionalExponents), aDimensions);
   
-  ent->Init(aDimensions,aName,aConversionFactor);
+  ent->Init(aDimensions,aName, aConversionFactor);
 }
 
 void RWStepBasic_RWConversionBasedUnitAndAreaUnit::WriteStep(StepData_StepWriter& SW,

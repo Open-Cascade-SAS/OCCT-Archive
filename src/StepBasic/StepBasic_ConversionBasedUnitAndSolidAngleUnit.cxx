@@ -15,7 +15,6 @@
 #include <Standard_Type.hxx>
 #include <StepBasic_ConversionBasedUnitAndSolidAngleUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepBasic_SolidAngleUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 
@@ -25,26 +24,26 @@ StepBasic_ConversionBasedUnitAndSolidAngleUnit::StepBasic_ConversionBasedUnitAnd
 {
 }
 
-void StepBasic_ConversionBasedUnitAndSolidAngleUnit::Init(const Handle(StepBasic_DimensionalExponents)& aDimensions,
-							  const Handle(TCollection_HAsciiString)& aName,
-							  const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+void StepBasic_ConversionBasedUnitAndSolidAngleUnit::Init(const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                                                          const Handle(TCollection_HAsciiString)& theName,
+                                                          const Handle(Standard_Transient)& theConversionFactor)
 {
   // --- ANDOR component fields ---
-  StepBasic_ConversionBasedUnit::Init(aDimensions, aName, aConversionFactor);
+  StepBasic_ConversionBasedUnit::Init(theDimensions, theName, theConversionFactor);
 
   // --- ANDOR component fields ---
-  solidAngleUnit = new StepBasic_SolidAngleUnit();
-  solidAngleUnit->Init(aDimensions);
+  mySolidAngleUnit = new StepBasic_SolidAngleUnit();
+  mySolidAngleUnit->Init(theDimensions);
 }
 
 
-void StepBasic_ConversionBasedUnitAndSolidAngleUnit::SetSolidAngleUnit(const Handle(StepBasic_SolidAngleUnit)& aSolidAngleUnit)
+void StepBasic_ConversionBasedUnitAndSolidAngleUnit::SetSolidAngleUnit(const Handle(StepBasic_SolidAngleUnit)& theSolidAngleUnit)
 {
-  solidAngleUnit = aSolidAngleUnit;
+  mySolidAngleUnit = theSolidAngleUnit;
 }
 
 Handle(StepBasic_SolidAngleUnit) StepBasic_ConversionBasedUnitAndSolidAngleUnit::SolidAngleUnit() const
 {
-  return solidAngleUnit;
+  return mySolidAngleUnit;
 }
 

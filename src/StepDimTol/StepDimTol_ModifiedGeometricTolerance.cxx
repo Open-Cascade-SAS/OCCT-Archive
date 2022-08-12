@@ -15,7 +15,6 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepDimTol_ModifiedGeometricTolerance.hxx>
 #include <StepDimTol_GeometricToleranceTarget.hxx>
 #include <StepRepr_ShapeAspect.hxx>
@@ -38,7 +37,7 @@ StepDimTol_ModifiedGeometricTolerance::StepDimTol_ModifiedGeometricTolerance ()
 
 void StepDimTol_ModifiedGeometricTolerance::Init (const Handle(TCollection_HAsciiString) &theGeometricTolerance_Name,
                                                   const Handle(TCollection_HAsciiString) &theGeometricTolerance_Description,
-                                                  const Handle(StepBasic_MeasureWithUnit) &theGeometricTolerance_Magnitude,
+                                                  const Handle(Standard_Transient)& theGeometricTolerance_Magnitude,
                                                   const Handle(StepRepr_ShapeAspect) &theGeometricTolerance_TolerancedShapeAspect,
                                                   const StepDimTol_LimitCondition theModifier)
 {
@@ -57,7 +56,7 @@ void StepDimTol_ModifiedGeometricTolerance::Init (const Handle(TCollection_HAsci
 
 void StepDimTol_ModifiedGeometricTolerance::Init (const Handle(TCollection_HAsciiString) &theGeometricTolerance_Name,
                                                   const Handle(TCollection_HAsciiString) &theGeometricTolerance_Description,
-                                                  const Handle(StepBasic_MeasureWithUnit) &theGeometricTolerance_Magnitude,
+                                                  const Handle(Standard_Transient)& theGeometricTolerance_Magnitude,
                                                   const StepDimTol_GeometricToleranceTarget &theGeometricTolerance_TolerancedShapeAspect,
                                                   const StepDimTol_LimitCondition theModifier)
 {

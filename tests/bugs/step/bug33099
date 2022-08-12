@@ -1,0 +1,58 @@
+puts "===================================="
+puts "0033099: Data Exchange, Step Import - Wrong PMI values in GDT"
+puts "===================================="
+
+pload OCAF
+
+Close D -silent
+
+ReadStep D [locate_data_file bug33099.stp]
+
+set tolType0 [XGetTypeOfTolerance D 0:1:4:1]
+set tolVal0 [XGetToleranceValue D 0:1:4:1]
+if {[string first "ProfileOfSurface" $tolType0] == -1
+    || [expr {double(round(100 * $tolVal0))/100}] != 0.1} {
+  puts "Error: Tolerance data is not correct"
+}
+
+set tolType1 [XGetTypeOfTolerance D 0:1:4:5]
+set tolVal1 [XGetToleranceValue D 0:1:4:5]
+if {[string first "Position" $tolType1] == -1
+    || $tolVal1 != 0} {
+  puts "Error: Tolerance data is not correct"
+}
+
+set tolType2 [XGetTypeOfTolerance D 0:1:4:6]
+set tolVal2 [XGetToleranceValue D 0:1:4:6]
+if {[string first "Position" $tolType2] == -1
+    || $tolVal2 != 0} { 
+  puts "Error: Tolerance data is not correct"
+}
+
+set tolType3 [XGetTypeOfTolerance D 0:1:4:7]
+set tolVal3 [XGetToleranceValue D 0:1:4:7]
+if {[string first "Position" $tolType3] == -1
+    || $tolVal3 != 0} { 
+  puts "Error: Tolerance data is not correct"
+}
+
+set dimType0 [XGetDimensionType D 0:1:4:8]
+set dimVal0  [XGetDimensionValue D 0:1:4:8]
+if {[string first "Location_LinearDistance" $dimType0] == -1
+    || [expr {double(round(100 * $dimVal0))/100}] != 21.0} {
+  puts "Error: Dimension data is not correct"
+}
+
+set dimType1 [XGetDimensionType D 0:1:4:9]
+set dimVal1  [XGetDimensionValue D 0:1:4:9]
+if {[string first "Location_LinearDistance" $dimType1] == -1
+    || [expr {double(round(100 * $dimVal1))/100}] != 5.0} {
+  puts "Error: Dimension data is not correct"
+}
+
+set dimType2 [XGetDimensionType D 0:1:4:10]
+set dimVal2  [XGetDimensionValue D 0:1:4:10]
+if {[string first "Location_LinearDistance" $dimType2] == -1
+    || [expr {double(round(100 * $dimVal2))/100}] != 2.5} {
+  puts "Error: Dimension data is not correct"
+}

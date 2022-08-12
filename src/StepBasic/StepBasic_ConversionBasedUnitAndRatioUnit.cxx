@@ -15,7 +15,6 @@
 #include <Standard_Type.hxx>
 #include <StepBasic_ConversionBasedUnitAndRatioUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepBasic_RatioUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 
@@ -25,25 +24,25 @@ StepBasic_ConversionBasedUnitAndRatioUnit::StepBasic_ConversionBasedUnitAndRatio
 {
 }
 
-void StepBasic_ConversionBasedUnitAndRatioUnit::Init(const Handle(StepBasic_DimensionalExponents)& aDimensions,
-						     const Handle(TCollection_HAsciiString)& aName,
-						     const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+void StepBasic_ConversionBasedUnitAndRatioUnit::Init(const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                                                     const Handle(TCollection_HAsciiString)& theName,
+                                                     const Handle(Standard_Transient)& theConversionFactor)
 {
   // --- ANDOR component fields ---
-  StepBasic_ConversionBasedUnit::Init(aDimensions, aName, aConversionFactor);
+  StepBasic_ConversionBasedUnit::Init(theDimensions, theName, theConversionFactor);
 	
   // --- ANDOR component fields ---
-  ratioUnit = new StepBasic_RatioUnit();
-  ratioUnit->Init(aDimensions);
+  myRatioUnit = new StepBasic_RatioUnit();
+  myRatioUnit->Init(theDimensions);
 }
 
 
-void StepBasic_ConversionBasedUnitAndRatioUnit::SetRatioUnit(const Handle(StepBasic_RatioUnit)& aRatioUnit)
+void StepBasic_ConversionBasedUnitAndRatioUnit::SetRatioUnit(const Handle(StepBasic_RatioUnit)& theRatioUnit)
 {
-  ratioUnit = aRatioUnit;
+  myRatioUnit = theRatioUnit;
 }
 
 Handle(StepBasic_RatioUnit) StepBasic_ConversionBasedUnitAndRatioUnit::RatioUnit() const
 {
-  return ratioUnit;
+  return myRatioUnit;
 }

@@ -24,7 +24,6 @@
 class StepBasic_RatioUnit;
 class StepBasic_DimensionalExponents;
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 
 
 class StepBasic_ConversionBasedUnitAndRatioUnit;
@@ -40,9 +39,11 @@ public:
   //! Returns a ConversionBasedUnitAndRatioUnit
   Standard_EXPORT StepBasic_ConversionBasedUnitAndRatioUnit();
   
-  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions, const Handle(TCollection_HAsciiString)& aName, const Handle(StepBasic_MeasureWithUnit)& aConversionFactor);
+  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                             const Handle(TCollection_HAsciiString)& theName,
+                             const Handle(Standard_Transient)& theConversionFactor);
   
-  Standard_EXPORT void SetRatioUnit (const Handle(StepBasic_RatioUnit)& aRatioUnit);
+  Standard_EXPORT void SetRatioUnit (const Handle(StepBasic_RatioUnit)& theRatioUnit);
   
   Standard_EXPORT Handle(StepBasic_RatioUnit) RatioUnit() const;
 
@@ -59,7 +60,7 @@ protected:
 private:
 
 
-  Handle(StepBasic_RatioUnit) ratioUnit;
+  Handle(StepBasic_RatioUnit) myRatioUnit;
 
 
 };
