@@ -1,0 +1,30 @@
+puts "=================================="
+puts "OCC32670: BOP fuse unstable result"
+puts "=================================="
+puts ""
+
+restore [locate_data_file bug32670.brep] Curve_parabolic
+ellipse ell 0 0 0 0 0 1 1.6285714285714286 1.6285714285714286
+mkedge ee ell
+wire ww ee
+pipe Pipe_1 ww Curve_parabolic
+ssolid Pipe_1 a
+pcylinder b 7 10
+explode a f
+explode b f
+donly a_7 b_1
+
+bop a_7 b_1
+bopsection result
+
+checknbshapes result -t -vertex 10 -edge 7
+
+set tolres [checkmaxtol result]
+
+if { ${tolres} > 0.0016} {
+   puts "Error: bad tolerance of result"
+}
+
+checkprops result -l 26.7184
+
+checkview -display result -2d -path ${imagedir}/${test_image}.png
