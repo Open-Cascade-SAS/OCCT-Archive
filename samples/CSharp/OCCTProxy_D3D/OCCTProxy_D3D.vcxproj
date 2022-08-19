@@ -92,6 +92,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ConformanceMode>false</ConformanceMode>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OCCTProxy_D3D.dll</OutputFile>
@@ -123,6 +124,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ConformanceMode>false</ConformanceMode>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OCCTProxy_D3D.dll</OutputFile>
@@ -147,6 +149,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ConformanceMode>false</ConformanceMode>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OCCTProxy_D3D.dll</OutputFile>
@@ -174,6 +177,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ConformanceMode>false</ConformanceMode>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OCCTProxy_D3D.dll</OutputFile>
