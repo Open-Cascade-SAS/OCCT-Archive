@@ -25,7 +25,7 @@
 //purpose  : 
 //=======================================================================
 Handle(TColStd_HArray1OfReal) 
-  Extrema_Curve2dTool::DeflCurvIntervals(const Adaptor2d_Curve2d& C)
+  Extrema_Curve2dTool::DeflCurvIntervals(const Handle(Adaptor2d_Curve2d)& C)
 {
   const Standard_Real epsd = 1.e-3;
   const Standard_Real maxdefl = 1.e3;
@@ -33,12 +33,12 @@ Handle(TColStd_HArray1OfReal)
   Handle(TColStd_HArray1OfReal) Intervals;
   Standard_Integer nbpnts = 23, i;
   Standard_Real L = 0.;
-  Standard_Real tf = C.FirstParameter(), tl = C.LastParameter();
-  gp_Pnt2d aP = C.Value(tf);
+  Standard_Real tf = C->FirstParameter(), tl = C->LastParameter();
+  gp_Pnt2d aP = C->Value(tf);
   for (i = 2; i <= nbpnts; ++i)
   {
     Standard_Real t = (tf * (nbpnts - i) + (i - 1) * tl) / (nbpnts - 1);
-    gp_Pnt2d aP1 = C.Value(t);
+    gp_Pnt2d aP1 = C->Value(t);
     L += aP.Distance(aP1);
   }
   //

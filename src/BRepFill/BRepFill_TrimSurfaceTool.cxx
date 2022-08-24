@@ -209,8 +209,8 @@ static void EvalParameters(const TopoDS_Edge&          Edge,
     // projection of 3d curves in the plane xOy
     Handle(Geom2d_Curve) C2d = GeomProjLib::Curve2d(CT,Plane);
 
-    Geom2dAdaptor_Curve AC(C2d);
-    Geom2dAdaptor_Curve ABis(Bis);
+    Handle(Geom2dAdaptor_Curve) AC = new Geom2dAdaptor_Curve(C2d);
+    Handle(Geom2dAdaptor_Curve) ABis = new Geom2dAdaptor_Curve(Bis);
 
     Intersector = Geom2dInt_GInter(ABis, AC, TolC, Tol);
 
@@ -226,7 +226,7 @@ static void EvalParameters(const TopoDS_Edge&          Edge,
       // don't do it rightaway from the beginning in order not to get
       // extra solutions those would cause *Exception*: incoherent intersection
 
-      GeomAbs_CurveType CType = AC.GetType(), BisType = ABis.GetType();
+      GeomAbs_CurveType CType = AC->GetType(), BisType = ABis->GetType();
       Standard_Boolean  canElongateC = !(CType == GeomAbs_BezierCurve  ||
                                          CType == GeomAbs_BSplineCurve ||
                                          CType == GeomAbs_OffsetCurve  ||
@@ -241,11 +241,11 @@ static void EvalParameters(const TopoDS_Edge&          Edge,
 
       if (canElongateC) {
         TC2d->SetTrim(TC2d->FirstParameter() - Tol, TC2d->LastParameter() + Tol);
-        AC.Load(TC2d);
+        AC->Load(TC2d);
       }
       if (canElongateBis) {
         TBis->SetTrim(TBis->FirstParameter() - Tol, TBis->LastParameter() + Tol);
-        ABis.Load(TBis);
+        ABis->Load(TBis);
       }
       Intersector = Geom2dInt_GInter(ABis, AC, TolC, Tol*10);
 

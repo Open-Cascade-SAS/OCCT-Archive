@@ -35,16 +35,16 @@
 //purpose  : 
 //=======================================================================
 void StdPrs_PoleCurve::Add (const Handle (Prs3d_Presentation)& aPresentation,
-			    const Adaptor3d_Curve&               aCurve,
+			    const Handle(Adaptor3d_Curve)&               aCurve,
 			    const Handle (Prs3d_Drawer)&       aDrawer) 
 {
   aPresentation->CurrentGroup()->SetPrimitivesAspect(aDrawer->LineAspect()->Aspect());
 
-  GeomAbs_CurveType CType = aCurve.GetType();
+  GeomAbs_CurveType CType = aCurve->GetType();
   if (CType == GeomAbs_BezierCurve || CType == GeomAbs_BSplineCurve) {
     Standard_Integer i, Nb;
     if (CType == GeomAbs_BezierCurve) {
-      Handle(Geom_BezierCurve) Bz = aCurve.Bezier();
+      Handle(Geom_BezierCurve) Bz = aCurve->Bezier();
       Nb = Bz->NbPoles();
       Handle(Graphic3d_ArrayOfPolylines) aPrims = new Graphic3d_ArrayOfPolylines(Nb);
       for (i = 1; i <= Nb; i++)
@@ -52,7 +52,7 @@ void StdPrs_PoleCurve::Add (const Handle (Prs3d_Presentation)& aPresentation,
       aPresentation->CurrentGroup()->AddPrimitiveArray(aPrims);
     }
     else if (CType == GeomAbs_BSplineCurve) {
-      Handle(Geom_BSplineCurve) Bs = aCurve.BSpline();
+      Handle(Geom_BSplineCurve) Bs = aCurve->BSpline();
       Nb = Bs->NbPoles();
       Handle(Graphic3d_ArrayOfPolylines) aPrims = new Graphic3d_ArrayOfPolylines(Nb);
       for (i = 1; i <= Nb; i++)
@@ -64,7 +64,7 @@ void StdPrs_PoleCurve::Add (const Handle (Prs3d_Presentation)& aPresentation,
   if (aDrawer->LineArrowDraw()) {
     gp_Pnt Location;
     gp_Vec Direction;
-    aCurve.D1(aCurve.LastParameter(),Location,Direction);
+    aCurve->D1(aCurve->LastParameter(),Location,Direction);
     Prs3d_Arrow::Draw (aPresentation->CurrentGroup(),
 		       Location,
 		       gp_Dir(Direction),
@@ -83,14 +83,14 @@ Standard_Boolean StdPrs_PoleCurve::Match(const Standard_Real        X,
 					 const Standard_Real        Y,
 					 const Standard_Real        Z,
 					 const Standard_Real        aDistance,
-					 const Adaptor3d_Curve&         aCurve,
+					 const Handle(Adaptor3d_Curve)&         aCurve,
 					 const Handle (Prs3d_Drawer)& /*aDrawer*/) 
 {
-  GeomAbs_CurveType CType = aCurve.GetType();
+  GeomAbs_CurveType CType = aCurve->GetType();
   Standard_Integer i, Nb = 0;
   Standard_Real x,y,z;
   if (CType == GeomAbs_BezierCurve) {
-    Handle(Geom_BezierCurve) Bz = aCurve.Bezier();
+    Handle(Geom_BezierCurve) Bz = aCurve->Bezier();
     Nb = Bz->NbPoles();
     for (i = 1; i <= Nb; i++) { 
       Bz->Pole(i).Coord(x,y,z);
@@ -99,7 +99,7 @@ Standard_Boolean StdPrs_PoleCurve::Match(const Standard_Real        X,
     return Standard_False;
   }
   else if (CType == GeomAbs_BSplineCurve) {
-    Handle(Geom_BSplineCurve) Bs = aCurve.BSpline();
+    Handle(Geom_BSplineCurve) Bs = aCurve->BSpline();
     Nb = Bs->NbPoles();
     for (i = 1; i <= Nb; i++) { 
       Bs->Pole(i).Coord(x,y,z);
@@ -120,16 +120,16 @@ Standard_Integer StdPrs_PoleCurve::Pick
 	      const Standard_Real       Y,
 	      const Standard_Real       Z,
 	      const Standard_Real       aDistance,
-	      const Adaptor3d_Curve&        aCurve,
+	      const Handle(Adaptor3d_Curve)&        aCurve,
 	      const Handle(Prs3d_Drawer)& /*aDrawer*/) 
 {
   Standard_Real x, y, z, DistMin = RealLast();
   Standard_Integer num = 0, i, Nb = 0;
   Standard_Real dist;
-  GeomAbs_CurveType CType = aCurve.GetType();
+  GeomAbs_CurveType CType = aCurve->GetType();
 
   if (CType == GeomAbs_BezierCurve) {
-    Handle(Geom_BezierCurve) Bz = aCurve.Bezier();
+    Handle(Geom_BezierCurve) Bz = aCurve->Bezier();
     Nb = Bz->NbPoles();
     for (i = 1; i <= Nb; i++) { 
       Bz->Pole(i).Coord(x,y,z);
@@ -143,7 +143,7 @@ Standard_Integer StdPrs_PoleCurve::Pick
     }
   }
   else if (CType == GeomAbs_BSplineCurve) {
-    Handle(Geom_BSplineCurve) Bs = aCurve.BSpline();
+    Handle(Geom_BSplineCurve) Bs = aCurve->BSpline();
     Nb = Bs->NbPoles();
     for (i = 1; i <= Nb; i++) { 
       Bs->Pole(i).Coord(x,y,z);

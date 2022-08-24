@@ -186,7 +186,7 @@ static Standard_Boolean IsOriginalPnt (const gp_Pnt& P,
 //=======================================================================
 
 static Standard_Boolean IsExtremum (const Standard_Real U, const Standard_Real V,
-				    const gp_Pnt& P, const Adaptor3d_Surface* S,
+				    const gp_Pnt& P, const Handle(Adaptor3d_Surface) S,
 				    gp_Pnt& E,        Standard_Real& Dist2,
 				    const Standard_Boolean IsVSup,
 				    const Standard_Boolean IsMin)
@@ -304,7 +304,7 @@ void Extrema_ExtPRevS::Initialize (const Handle(GeomAdaptor_SurfaceOfRevolution)
       aNbv = 100;
     }
 
-    myExtPS.Initialize (*theS,
+    myExtPS.Initialize (theS,
                         aNbu,
                         aNbv,
                         theUmin,

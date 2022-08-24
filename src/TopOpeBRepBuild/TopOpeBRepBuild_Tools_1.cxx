@@ -49,8 +49,8 @@ static
 			     const TopoDS_Face& S,
 			     const Standard_Real aMaxTol);
 static 
-  Standard_Boolean Validate(const Adaptor3d_Curve& CRef,
-			 const Adaptor3d_Curve& Other,
+  Standard_Boolean Validate(const Handle(Adaptor3d_Curve)& CRef,
+			 const Handle(Adaptor3d_Curve)& Other,
 			 const Standard_Real Tol,
 			 const Standard_Boolean SameParameter,
 			 Standard_Real& aNewTolerance);
@@ -235,8 +235,8 @@ void CorrectEdgeTolerance (const TopoDS_Edge& myShape,
         Handle(Geom2d_Curve) PC = cr->PCurve();
         Handle(GeomAdaptor_Surface) GAHS = new GeomAdaptor_Surface(Sb);
         Handle(Geom2dAdaptor_Curve) GHPC = new Geom2dAdaptor_Curve(PC,f,l);
-        Adaptor3d_CurveOnSurface ACS(GHPC,GAHS);
-        ok = Validate (*myHCurve, ACS, Tol, SameParameter, aNewTol);
+        Handle(Adaptor3d_CurveOnSurface) ACS = new Adaptor3d_CurveOnSurface(GHPC,GAHS);
+        ok = Validate (myHCurve, ACS, Tol, SameParameter, aNewTol);
         if (ok) {
           // printf("(Edge,1) Tolerance=%15.10lg\n", aNewTol);
           if (aNewTol<aMaxTol)
@@ -245,8 +245,8 @@ void CorrectEdgeTolerance (const TopoDS_Edge& myShape,
         if (cr->IsCurveOnClosedSurface()) {
           // checkclosed = Standard_True;
           GHPC->Load(cr->PCurve2(),f,l); // same bounds
-          ACS.Load(GHPC, GAHS); // sans doute inutile
-          ok = Validate (*myHCurve, ACS, Tol, SameParameter, aNewTol);
+          ACS->Load(GHPC, GAHS); // sans doute inutile
+          ok = Validate (myHCurve, ACS, Tol, SameParameter, aNewTol);
           if (ok) {
             if (aNewTol<aMaxTol)
               TE->UpdateTolerance(aNewTol); 
@@ -283,14 +283,14 @@ void CorrectEdgeTolerance (const TopoDS_Edge& myShape,
 
         Handle(GeomAdaptor_Curve) aHCurve = new GeomAdaptor_Curve(ProjOnPlane);
         
-        ProjLib_ProjectedCurve proj(GAHS,aHCurve);
+        Handle(ProjLib_ProjectedCurve) proj = new ProjLib_ProjectedCurve(GAHS,aHCurve);
         Handle(Geom2d_Curve) PC = Geom2dAdaptor::MakeCurve(proj);
         Handle(Geom2dAdaptor_Curve) GHPC = 
           new Geom2dAdaptor_Curve(PC, myHCurve->FirstParameter(), myHCurve->LastParameter());
         
-        Adaptor3d_CurveOnSurface ACS(GHPC,GAHS);
+        Handle(Adaptor3d_CurveOnSurface) ACS = new Adaptor3d_CurveOnSurface(GHPC,GAHS);
         
-        ok = Validate (*myHCurve, ACS,
+        ok = Validate (myHCurve, ACS,
                             Tol,Standard_True, aNewTol); // voir dub...
         if (ok) 
         {
@@ -308,31 +308,31 @@ void CorrectEdgeTolerance (const TopoDS_Edge& myShape,
 //function : Validate
 //purpose  : 
 //=======================================================================
-Standard_Boolean Validate(const Adaptor3d_Curve& CRef,
-		       const Adaptor3d_Curve& Other,
+Standard_Boolean Validate(const Handle(Adaptor3d_Curve)& CRef,
+		       const Handle(Adaptor3d_Curve)& Other,
 		       const Standard_Real Tol,
 		       const Standard_Boolean SameParameter,
 		       Standard_Real& aNewTolerance)
 {
   Standard_Real First, Last, MaxDistance, aD;
 
-  First = CRef.FirstParameter();
-  Last  = CRef.LastParameter();
+  First = CRef->FirstParameter();
+  Last  = CRef->LastParameter();
   MaxDistance = Tol*Tol;
 
   Standard_Integer i, aNC1=NCONTROL-1;
 
   Standard_Boolean aFlag=Standard_False;
   Standard_Boolean proj = (!SameParameter || 
-			   First != Other.FirstParameter() ||
-			   Last  != Other.LastParameter());
+			   First != Other->FirstParameter() ||
+			   Last  != Other->LastParameter());
   //
   // 1. 
   if (!proj) {
     for (i = 0; i < NCONTROL; i++) {
       Standard_Real prm = ((aNC1-i)*First + i*Last)/aNC1;
-      gp_Pnt pref   = CRef.Value(prm);
-      gp_Pnt pother = Other.Value(prm);
+      gp_Pnt pref   = CRef->Value(prm);
+      gp_Pnt pother = Other->Value(prm);
       
       aD=pref.SquareDistance(pother);
 
@@ -348,11 +348,11 @@ Standard_Boolean Validate(const Adaptor3d_Curve& CRef,
   else {
     Extrema_LocateExtPC refd,otherd;
     Standard_Real OFirst, OLast;
-    OFirst = Other.FirstParameter();
-    OLast  = Other.LastParameter();
+    OFirst = Other->FirstParameter();
+    OLast  = Other->LastParameter();
     
-    gp_Pnt pd  = CRef.Value(First);
-    gp_Pnt pdo = Other.Value(OFirst);
+    gp_Pnt pd  = CRef->Value(First);
+    gp_Pnt pdo = Other->Value(OFirst);
     
     aD = pd.SquareDistance(pdo);
     if (aD > MaxDistance) {
@@ -360,23 +360,23 @@ Standard_Boolean Validate(const Adaptor3d_Curve& CRef,
       aFlag=Standard_True;
     }
 
-    pd  = CRef.Value(Last);
-    pdo = Other.Value(OLast);
+    pd  = CRef->Value(Last);
+    pdo = Other->Value(OLast);
     aD = pd.SquareDistance(pdo);
     if (aD > MaxDistance) {
       MaxDistance=aD;
       aFlag=Standard_True;
     }
 
-    refd.Initialize(CRef, First, Last, CRef.Resolution(Tol));
-    otherd.Initialize(Other, OFirst, OLast, Other.Resolution(Tol));
+    refd.Initialize(CRef, First, Last, CRef->Resolution(Tol));
+    otherd.Initialize(Other, OFirst, OLast, Other->Resolution(Tol));
     
     for (i = 2; i< aNC1; i++) {
       Standard_Real rprm = ((aNC1-i)*First + i*Last)/aNC1;
-      gp_Pnt pref = CRef.Value(rprm);
+      gp_Pnt pref = CRef->Value(rprm);
 
       Standard_Real oprm = ((aNC1-i)*OFirst + i*OLast)/aNC1;
-      gp_Pnt pother = Other.Value(oprm);
+      gp_Pnt pother = Other->Value(oprm);
 
       refd.Perform(pother,rprm);
       if (!refd.IsDone() || refd.SquareDistance() > Tol * Tol) {

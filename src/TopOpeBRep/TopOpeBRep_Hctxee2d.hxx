@@ -41,11 +41,11 @@ public:
   
   Standard_EXPORT TopOpeBRep_Hctxee2d();
   
-  Standard_EXPORT void SetEdges (const TopoDS_Edge& E1, const TopoDS_Edge& E2, const BRepAdaptor_Surface& BAS1, const BRepAdaptor_Surface& BAS2);
+  Standard_EXPORT void SetEdges (const TopoDS_Edge& E1, const TopoDS_Edge& E2, const Handle(BRepAdaptor_Surface)& BAS1, const Handle(BRepAdaptor_Surface)& BAS2);
   
   Standard_EXPORT const TopoDS_Shape& Edge (const Standard_Integer I) const;
   
-  Standard_EXPORT const Geom2dAdaptor_Curve& Curve (const Standard_Integer I) const;
+  Standard_EXPORT const Handle(Geom2dAdaptor_Curve)& Curve (const Standard_Integer I) const;
   
   Standard_EXPORT const IntRes2d_Domain& Domain (const Standard_Integer I) const;
 
@@ -63,10 +63,10 @@ private:
 
 
   TopoDS_Edge myEdge1;
-  Geom2dAdaptor_Curve myCurve1;
+  Handle(Geom2dAdaptor_Curve) myCurve1;
   IntRes2d_Domain myDomain1;
   TopoDS_Edge myEdge2;
-  Geom2dAdaptor_Curve myCurve2;
+  Handle(Geom2dAdaptor_Curve) myCurve2;
   IntRes2d_Domain myDomain2;
 
 

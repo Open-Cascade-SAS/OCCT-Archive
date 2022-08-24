@@ -46,7 +46,7 @@ Standard_Boolean StdPrs_HLRToolShape::MoreVisible() const {
 void StdPrs_HLRToolShape::NextVisible()  {
   myEdgeIterator.NextVisible();
 }
-void StdPrs_HLRToolShape::Visible(BRepAdaptor_Curve& TheEdge,
+void StdPrs_HLRToolShape::Visible(Handle(BRepAdaptor_Curve)& TheEdge,
 				  Standard_Real& U1,
 				  Standard_Real& U2) {
 
@@ -68,7 +68,7 @@ Standard_Boolean StdPrs_HLRToolShape::MoreHidden() const {
 void StdPrs_HLRToolShape::NextHidden()  {
    myEdgeIterator.NextHidden();
 }
-void StdPrs_HLRToolShape::Hidden (BRepAdaptor_Curve& TheEdge,
+void StdPrs_HLRToolShape::Hidden (Handle(BRepAdaptor_Curve)& TheEdge,
 				  Standard_Real& U1,
 				  Standard_Real& U2) {
 

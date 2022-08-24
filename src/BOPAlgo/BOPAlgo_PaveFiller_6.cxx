@@ -76,8 +76,8 @@
 #include <TopTools_ListOfShape.hxx>
 
 //
-static Standard_Real ToleranceFF(const BRepAdaptor_Surface& aBAS1,
-                                 const BRepAdaptor_Surface& aBAS2);
+static Standard_Real ToleranceFF(const Handle(BRepAdaptor_Surface)& aBAS1,
+                                 const Handle(BRepAdaptor_Surface)& aBAS2);
 
 /////////////////////////////////////////////////////////////////////////
 //=======================================================================
@@ -322,10 +322,10 @@ void BOPAlgo_PaveFiller::PerformFF(const Message_ProgressRange& theRange)
       const TopoDS_Face& aF1 = (*(TopoDS_Face *)(&myDS->Shape(nF1)));
       const TopoDS_Face& aF2 = (*(TopoDS_Face *)(&myDS->Shape(nF2)));
       //
-      const BRepAdaptor_Surface& aBAS1 = myContext->SurfaceAdaptor(aF1);
-      const BRepAdaptor_Surface& aBAS2 = myContext->SurfaceAdaptor(aF2);
-      if (aBAS1.GetType() == GeomAbs_Plane &&
-          aBAS2.GetType() == GeomAbs_Plane) {
+      const Handle(BRepAdaptor_Surface)& aBAS1 = myContext->SurfaceAdaptor(aF1);
+      const Handle(BRepAdaptor_Surface)& aBAS2 = myContext->SurfaceAdaptor(aF2);
+      if (aBAS1->GetType() == GeomAbs_Plane &&
+          aBAS2->GetType() == GeomAbs_Plane) {
         // Check if the planes are really interfering
         Standard_Boolean bToIntersect = CheckPlanes(nF1, nF2);
         if (!bToIntersect) {
@@ -347,8 +347,8 @@ void BOPAlgo_PaveFiller::PerformFF(const Message_ProgressRange& theRange)
       // Keep shift value to use it as the tolerance for intersection curves
       Standard_Real aShiftValue = 0.;
 
-      if (aBAS1.GetType() != GeomAbs_Plane ||
-        aBAS2.GetType() != GeomAbs_Plane) {
+      if (aBAS1->GetType() != GeomAbs_Plane ||
+        aBAS2->GetType() != GeomAbs_Plane) {
 
         Standard_Boolean isFound = Standard_False;
         for (TopExp_Explorer aExp1(aF1, TopAbs_EDGE); !isFound && aExp1.More(); aExp1.Next())
@@ -785,7 +785,7 @@ void BOPAlgo_PaveFiller::MakeBlocks(const Message_ProgressRange& theRange)
         //
         // check if the pave block has a valid range
         Standard_Real aFirst, aLast;
-        if (!BRepLib::FindValidRange(GeomAdaptor_Curve(aIC.Curve()), aTolR3D,
+        if (!BRepLib::FindValidRange(new GeomAdaptor_Curve(aIC.Curve()), aTolR3D,
                                      aT1, BRep_Tool::Pnt(aV1), Max (aTolR3D, BRep_Tool::Tolerance(aV1)),
                                      aT2, BRep_Tool::Pnt(aV2), Max (aTolR3D, BRep_Tool::Tolerance(aV2)),
                                      aFirst, aLast))
@@ -3176,7 +3176,7 @@ void BOPAlgo_PaveFiller::PutClosingPaveOnCurve(BOPDS_Curve& aNC)
   // Check if there will be valid range on the curve
   Standard_Real aFirst, aLast;
   Standard_Real aNewTolV = Max(aTolV, aDistVP + BOPTools_AlgoTools::DTolerance());
-  if (!BRepLib::FindValidRange(GeomAdaptor_Curve(aIC.Curve()), aIC.Tolerance(),
+  if (!BRepLib::FindValidRange(new GeomAdaptor_Curve(aIC.Curve()), aIC.Tolerance(),
                                aT[0], aP[0], aNewTolV,
                                aT[1], aP[1], aNewTolV,
                                aFirst, aLast))
@@ -3479,25 +3479,25 @@ void BOPAlgo_PaveFiller::RemovePaveBlocks(const TColStd_MapOfInteger& theEdges)
 //purpose  : Computes the TolFF according to the tolerance value and 
 //           types of the faces.
 //=======================================================================
-Standard_Real ToleranceFF(const BRepAdaptor_Surface& aBAS1,
-                          const BRepAdaptor_Surface& aBAS2)
+Standard_Real ToleranceFF(const Handle(BRepAdaptor_Surface)& aBAS1,
+                          const Handle(BRepAdaptor_Surface)& aBAS2)
 {
-  Standard_Real aTol1 = aBAS1.Tolerance();
-  Standard_Real aTol2 = aBAS2.Tolerance();
+  Standard_Real aTol1 = aBAS1->Tolerance();
+  Standard_Real aTol2 = aBAS2->Tolerance();
   Standard_Real aTolFF = Max(aTol1, aTol2);
   //
   Standard_Boolean isAna1, isAna2;
-  isAna1 = (aBAS1.GetType() == GeomAbs_Plane ||
-            aBAS1.GetType() == GeomAbs_Cylinder ||
-            aBAS1.GetType() == GeomAbs_Cone ||
-            aBAS1.GetType() == GeomAbs_Sphere ||
-            aBAS1.GetType() == GeomAbs_Torus);
+  isAna1 = (aBAS1->GetType() == GeomAbs_Plane ||
+            aBAS1->GetType() == GeomAbs_Cylinder ||
+            aBAS1->GetType() == GeomAbs_Cone ||
+            aBAS1->GetType() == GeomAbs_Sphere ||
+            aBAS1->GetType() == GeomAbs_Torus);
   //
-  isAna2 = (aBAS2.GetType() == GeomAbs_Plane ||
-            aBAS2.GetType() == GeomAbs_Cylinder ||
-            aBAS2.GetType() == GeomAbs_Cone ||
-            aBAS2.GetType() == GeomAbs_Sphere ||
-            aBAS2.GetType() == GeomAbs_Torus);
+  isAna2 = (aBAS2->GetType() == GeomAbs_Plane ||
+            aBAS2->GetType() == GeomAbs_Cylinder ||
+            aBAS2->GetType() == GeomAbs_Cone ||
+            aBAS2->GetType() == GeomAbs_Sphere ||
+            aBAS2->GetType() == GeomAbs_Torus);
   //
   if (!isAna1 || !isAna2) {
     aTolFF =  Max(aTolFF, 5.e-6);

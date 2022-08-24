@@ -1132,7 +1132,7 @@ gp_Pnt2d ShapeAnalysis_Surface::NextValueOfUV(const gp_Pnt2d &p2dPrev,
 
 gp_Pnt2d ShapeAnalysis_Surface::ValueOfUV(const gp_Pnt& P3D, const Standard_Real preci)
 {
-  GeomAdaptor_Surface& SurfAdapt = *Adaptor3d();
+  Handle(GeomAdaptor_Surface) SurfAdapt = Adaptor3d();
   Standard_Real S = 0., T = 0.;
   myGap = -1.;    // devra etre calcule
   Standard_Boolean computed = Standard_True;  // a priori
@@ -1143,39 +1143,39 @@ gp_Pnt2d ShapeAnalysis_Surface::ValueOfUV(const gp_Pnt& P3D, const Standard_Real
   { //:c9 abv 3 Mar 98: UKI60107-1 #350: to prevent 'catch' from catching exception raising below it
     try {   // ajout CKY 30-DEC-1997 (cf ProStep TR6 r_89-ug)
       OCC_CATCH_SIGNALS
-        GeomAbs_SurfaceType surftype = SurfAdapt.GetType();
+        GeomAbs_SurfaceType surftype = SurfAdapt->GetType();
       switch (surftype) {
 
       case GeomAbs_Plane:
       {
-        gp_Pln Plane = SurfAdapt.Plane();
+        gp_Pln Plane = SurfAdapt->Plane();
         ElSLib::Parameters(Plane, P3D, S, T);
         break;
       }
       case GeomAbs_Cylinder:
       {
-        gp_Cylinder Cylinder = SurfAdapt.Cylinder();
+        gp_Cylinder Cylinder = SurfAdapt->Cylinder();
         ElSLib::Parameters(Cylinder, P3D, S, T);
         S += ShapeAnalysis::AdjustByPeriod(S, 0.5*(uf + ul), 2 * M_PI);
         break;
       }
       case GeomAbs_Cone:
       {
-        gp_Cone Cone = SurfAdapt.Cone();
+        gp_Cone Cone = SurfAdapt->Cone();
         ElSLib::Parameters(Cone, P3D, S, T);
         S += ShapeAnalysis::AdjustByPeriod(S, 0.5*(uf + ul), 2 * M_PI);
         break;
       }
       case GeomAbs_Sphere:
       {
-        gp_Sphere Sphere = SurfAdapt.Sphere();
+        gp_Sphere Sphere = SurfAdapt->Sphere();
         ElSLib::Parameters(Sphere, P3D, S, T);
         S += ShapeAnalysis::AdjustByPeriod(S, 0.5*(uf + ul), 2 * M_PI);
         break;
       }
       case GeomAbs_Torus:
       {
-        gp_Torus Torus = SurfAdapt.Torus();
+        gp_Torus Torus = SurfAdapt->Torus();
         ElSLib::Parameters(Torus, P3D, S, T);
         S += ShapeAnalysis::AdjustByPeriod(S, 0.5*(uf + ul), 2 * M_PI);
         T += ShapeAnalysis::AdjustByPeriod(T, 0.5*(vf + vl), 2 * M_PI);
@@ -1222,8 +1222,8 @@ gp_Pnt2d ShapeAnalysis_Surface::ValueOfUV(const gp_Pnt& P3D, const Standard_Real
           //can throw exception (e.g. Geom_UndefinedValue) when computing value - see id23943
           if (!mySurf->IsKind(STANDARD_TYPE(Geom_OffsetSurface))) {
             //modified by rln during fixing CSR # BUC60035 entity #D231
-            du = Min(myUDelt, SurfAdapt.UResolution(preci));
-            dv = Min(myVDelt, SurfAdapt.VResolution(preci));
+            du = Min(myUDelt, SurfAdapt->UResolution(preci));
+            dv = Min(myVDelt, SurfAdapt->VResolution(preci));
           }
           Standard_Real Tol = Precision::PConfusion();
           myExtPS.SetFlag(Extrema_ExtFlag_MIN);
@@ -1248,7 +1248,7 @@ gp_Pnt2d ShapeAnalysis_Surface::ValueOfUV(const gp_Pnt& P3D, const Standard_Real
           // file CEA_cuve-V5.igs Entityes 244, 259, 847, 925
           // if project point3D on SurfaceOfRevolution Extreme recompute 2d point, but
           // returns an old distance from 3d to solution :-(
-          gp_Pnt aCheckPnt = SurfAdapt.Value(S, T);
+          gp_Pnt aCheckPnt = SurfAdapt->Value(S, T);
           dist2Min = P3D.SquareDistance(aCheckPnt);
           // end of WORKAROUND
           Standard_Real disSurf = sqrt(dist2Min);//, disCurv =1.e10;
@@ -1276,7 +1276,7 @@ gp_Pnt2d ShapeAnalysis_Surface::ValueOfUV(const gp_Pnt& P3D, const Standard_Real
                 Standard_Real Tol = Precision::Confusion();
                 gp_Vec D1U, D1V;
                 gp_Pnt pnt;
-                SurfAdapt.D1(UU, VV, pnt, D1U, D1V);
+                SurfAdapt->D1(UU, VV, pnt, D1U, D1V);
                 gp_Vec b = D1U.Crossed(D1V);
                 gp_Vec a(pnt, P3D);
                 Standard_Real ab = a.Dot(b);
@@ -1361,7 +1361,7 @@ gp_Pnt2d ShapeAnalysis_Surface::ValueOfUV(const gp_Pnt& P3D, const Standard_Real
   } //:c9
     //szv#4:S4163:12Mar99 waste raise
     //if (!computed) throw Standard_NoSuchObject("PCurveLib_ProjectPointOnSurf::ValueOfUV untreated surface type");
-  if (computed) { if (myGap <= 0) myGap = P3D.Distance(SurfAdapt.Value(S, T)); }
+  if (computed) { if (myGap <= 0) myGap = P3D.Distance(SurfAdapt->Value(S, T)); }
   else { myGap = -1.; S = 0.; T = 0.; }
   return gp_Pnt2d(S, T);
 }
@@ -1405,7 +1405,7 @@ Standard_Real ShapeAnalysis_Surface::UVFromIso(const gp_Pnt& P3d, const Standard
     Standard_Boolean UV = Standard_True;
     Standard_Real par = 0., other = 0., dist = 0.;
     Handle(Geom_Curve) iso;
-    Adaptor3d_IsoCurve anIsoCurve(Adaptor3d());
+    Handle(Adaptor3d_IsoCurve) anIsoCurve = new Adaptor3d_IsoCurve(Adaptor3d());
     for (Standard_Integer num = 0; num < 6; num++) {
 
       UV = (num < 3);  // 0-1-2 : iso-U  3-4-5 : iso-V
@@ -1441,22 +1441,22 @@ Standard_Real ShapeAnalysis_Surface::UVFromIso(const gp_Pnt& P3d, const Standard
       }
 
       else {
-        Adaptor3d_Curve *anAdaptor = NULL;
-        GeomAdaptor_Curve aGeomCurve;
+        Handle(Adaptor3d_Curve) anAdaptor;
+        Handle(GeomAdaptor_Curve) aGeomCurve = new GeomAdaptor_Curve();
 
         const Bnd_Box *anIsoBox = 0;
         switch (num) {
-        case 0: par = myUF; aGeomCurve.Load(myIsoUF); anAdaptor = &aGeomCurve; anIsoBox = &myBndUF; break;
-        case 1: par = myUL; aGeomCurve.Load(myIsoUL); anAdaptor = &aGeomCurve; anIsoBox = &myBndUL; break;
-        case 2: par = U;    anIsoCurve.Load(GeomAbs_IsoU, U); anAdaptor = &anIsoCurve; break;
-        case 3: par = myVF; aGeomCurve.Load(myIsoVF); anAdaptor = &aGeomCurve; anIsoBox = &myBndVF; break;
-        case 4: par = myVL; aGeomCurve.Load(myIsoVL); anAdaptor = &aGeomCurve; anIsoBox = &myBndVL; break;
-        case 5: par = V;    anIsoCurve.Load(GeomAbs_IsoV, V); anAdaptor = &anIsoCurve; break;
+        case 0: par = myUF; aGeomCurve->Load(myIsoUF); anAdaptor = aGeomCurve; anIsoBox = &myBndUF; break;
+        case 1: par = myUL; aGeomCurve->Load(myIsoUL); anAdaptor = aGeomCurve; anIsoBox = &myBndUL; break;
+        case 2: par = U;    anIsoCurve->Load(GeomAbs_IsoU, U); anAdaptor = anIsoCurve; break;
+        case 3: par = myVF; aGeomCurve->Load(myIsoVF); anAdaptor = aGeomCurve; anIsoBox = &myBndVF; break;
+        case 4: par = myVL; aGeomCurve->Load(myIsoVL); anAdaptor = aGeomCurve; anIsoBox = &myBndVL; break;
+        case 5: par = V;    anIsoCurve->Load(GeomAbs_IsoV, V); anAdaptor = anIsoCurve; break;
         default: break;
         }
         if (anIsoBox && anIsoBox->Distance(aPBox) > theMin)
           continue;
-        dist = ShapeAnalysis_Curve().Project(*anAdaptor, P3d, preci, pntres, other);
+        dist = ShapeAnalysis_Curve().Project(anAdaptor, P3d, preci, pntres, other);
         if (dist < theMin) {
           theMin = dist;
           UU = (UV ? par : other);  VV = (UV ? other : par); //:q6: uncommented
@@ -1505,14 +1505,14 @@ Standard_Real ShapeAnalysis_Surface::UVFromIso(const gp_Pnt& P3d, const Standard
         PrevU = UU; PrevV = VV;
         if (UV) {
           par = UU;
-          anIsoCurve.Load(GeomAbs_IsoU, UU);
+          anIsoCurve->Load(GeomAbs_IsoU, UU);
         }
         else {
           par = VV;
-          anIsoCurve.Load(GeomAbs_IsoV, VV);
+          anIsoCurve->Load(GeomAbs_IsoV, VV);
         }
-        Cf = anIsoCurve.FirstParameter();
-        Cl = anIsoCurve.LastParameter();
+        Cf = anIsoCurve->FirstParameter();
+        Cl = anIsoCurve->LastParameter();
         RestrictBounds (Cf, Cl);
         dist = ShapeAnalysis_Curve().Project(anIsoCurve, P3d, preci, pntres, other);
         if (dist < theMin) {
@@ -1522,14 +1522,14 @@ Standard_Real ShapeAnalysis_Surface::UVFromIso(const gp_Pnt& P3d, const Standard
         UV = !UV;
         if (UV) {
           par = UU;
-          anIsoCurve.Load(GeomAbs_IsoU, UU);
+          anIsoCurve->Load(GeomAbs_IsoU, UU);
         }
         else {
           par = VV;
-          anIsoCurve.Load(GeomAbs_IsoV, VV);
+          anIsoCurve->Load(GeomAbs_IsoV, VV);
         }
-        Cf = anIsoCurve.FirstParameter();
-        Cl = anIsoCurve.LastParameter();
+        Cf = anIsoCurve->FirstParameter();
+        Cl = anIsoCurve->LastParameter();
         RestrictBounds (Cf, Cl);
         dist = ShapeAnalysis_Curve().ProjectAct(anIsoCurve, P3d, preci, pntres, other);
         if (dist < theMin) {
@@ -1609,13 +1609,13 @@ void ShapeAnalysis_Surface::ComputeBoxes()
   myIsoBoxes = Standard_True;
   ComputeBoundIsos();
   if (!myIsoUF.IsNull())
-    BndLib_Add3dCurve::Add(GeomAdaptor_Curve(myIsoUF), Precision::Confusion(), myBndUF);
+    BndLib_Add3dCurve::Add(new GeomAdaptor_Curve(myIsoUF), Precision::Confusion(), myBndUF);
   if (!myIsoUL.IsNull())
-    BndLib_Add3dCurve::Add(GeomAdaptor_Curve(myIsoUL), Precision::Confusion(), myBndUL);
+    BndLib_Add3dCurve::Add(new GeomAdaptor_Curve(myIsoUL), Precision::Confusion(), myBndUL);
   if (!myIsoVF.IsNull())
-    BndLib_Add3dCurve::Add(GeomAdaptor_Curve(myIsoVF), Precision::Confusion(), myBndVF);
+    BndLib_Add3dCurve::Add(new GeomAdaptor_Curve(myIsoVF), Precision::Confusion(), myBndVF);
   if (!myIsoVL.IsNull())
-    BndLib_Add3dCurve::Add(GeomAdaptor_Curve(myIsoVL), Precision::Confusion(), myBndVL);
+    BndLib_Add3dCurve::Add(new GeomAdaptor_Curve(myIsoVL), Precision::Confusion(), myBndVL);
 }
 
 const Bnd_Box& ShapeAnalysis_Surface::GetBoxUF()

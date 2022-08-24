@@ -35,6 +35,7 @@ Geom2dHatch_Hatching::Geom2dHatch_Hatching ()
   myIsDone(Standard_False),
   myStatus(HatchGen_NoProblem)
 {
+  myCurve = new Geom2dAdaptor_Curve();
 }
 
 //=======================================================================
@@ -42,7 +43,7 @@ Geom2dHatch_Hatching::Geom2dHatch_Hatching ()
 // Purpose  : Constructor.
 //=======================================================================
 
-Geom2dHatch_Hatching::Geom2dHatch_Hatching (const Geom2dAdaptor_Curve& Curve) :
+Geom2dHatch_Hatching::Geom2dHatch_Hatching (const Handle(Geom2dAdaptor_Curve)& Curve) :
        myCurve      (Curve),
        myTrimDone   (Standard_False),
        myTrimFailed (Standard_False),
@@ -56,21 +57,11 @@ Geom2dHatch_Hatching::Geom2dHatch_Hatching (const Geom2dAdaptor_Curve& Curve) :
 // Purpose  : Returns the curve associated to the hatching.
 //=======================================================================
 
-const Geom2dAdaptor_Curve& Geom2dHatch_Hatching::Curve () const
+const Handle(Geom2dAdaptor_Curve)& Geom2dHatch_Hatching::Curve () const
 {
   return myCurve ;
 }
-     
-//=======================================================================
-// Function : ChangeCurve
-// Purpose  : Returns the curve associated to the hatching.
-//=======================================================================
 
-Geom2dAdaptor_Curve& Geom2dHatch_Hatching::ChangeCurve ()
-{
-  return myCurve ;
-}
-     
 //=======================================================================
 // Function : TrimDone
 // Purpose  : Sets the flag about the trimmings computation to the given
@@ -324,8 +315,8 @@ void Geom2dHatch_Hatching::ClrDomains ()
 //=======================================================================
 gp_Pnt2d Geom2dHatch_Hatching::ClassificationPoint () const { 
   Standard_Real t,a,b;
-  a = myCurve.FirstParameter();
-  b = myCurve.LastParameter();
+  a = myCurve->FirstParameter();
+  b = myCurve->LastParameter();
   if(b >= Precision::Infinite()) { 
     if(a <= -Precision::Infinite()) { 
       t=0;
@@ -337,6 +328,6 @@ gp_Pnt2d Geom2dHatch_Hatching::ClassificationPoint () const {
   else { 
     t = b; 
   }
-  return(myCurve.Value(t));
+  return(myCurve->Value(t));
 }
     

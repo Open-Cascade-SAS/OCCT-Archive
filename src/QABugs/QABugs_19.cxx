@@ -1320,7 +1320,7 @@ static Standard_Integer OCC24945 (Draw_Interpretor& di, Standard_Integer argc, c
   gp_Pnt aP3D( -1725.97, 843.257, -4.22741e-013 );
   gp_Ax2 aAxis( gp_Pnt( 0, 843.257, 0 ), gp_Dir( 0, -1, 0 ), gp::DX() );
   Handle(Geom_Circle) aCircle = new Geom_Circle( aAxis, 1725.9708621929999 );
-  GeomAdaptor_Curve aC3D( aCircle );
+  Handle(GeomAdaptor_Curve) aC3D = new GeomAdaptor_Curve( aCircle );
 
   Extrema_ExtPC aExtPC( aP3D, aC3D );
   //Standard_Real aParam = (aExtPC.Point(1)).Parameter();
@@ -1370,7 +1370,7 @@ static Standard_Integer OCC24137 (Draw_Interpretor& theDI, Standard_Integer theN
     }
   const TopoDS_Face   aFace = TopoDS::Face   (aShapeF);
   const TopoDS_Vertex aVert = TopoDS::Vertex (aShapeV);
-  GeomAdaptor_Surface aSurf (BRep_Tool::Surface (aFace));
+  Handle(GeomAdaptor_Surface) aSurf = new GeomAdaptor_Surface(BRep_Tool::Surface (aFace));
 
   gp_Pnt aPnt = BRep_Tool::Pnt (aVert), aRes;
 
@@ -1395,7 +1395,7 @@ static Standard_Integer OCC24137 (Draw_Interpretor& theDI, Standard_Integer theN
 
   theDI << aRoot.Root()(1) << " " << aRoot.Root()(2) << "\n";
   
-  aSurf.D0 (aRoot.Root()(1), aRoot.Root()(2), aRes);
+  aSurf->D0 (aRoot.Root()(1), aRoot.Root()(2), aRes);
   DBRep::Set ("result", BRepBuilderAPI_MakeVertex (aRes));
   return 0;
 }
@@ -3127,7 +3127,7 @@ static Standard_Integer OCC25547(
   Handle(Geom_Circle) aCircle = new Geom_Circle(gp_Ax2(gp::Origin(), gp::DZ()), 10);
   Handle(Geom_TrimmedCurve) aHalf = new Geom_TrimmedCurve(aCircle, aFirstP, aLastP);
   TopoDS_Edge aEdge = BRepBuilderAPI_MakeEdge(aHalf);
-  BRepAdaptor_Curve aAdaptor(aEdge);
+  Handle(BRepAdaptor_Curve) aAdaptor = new BRepAdaptor_Curve(aEdge);
   BRepMesh_GeomTool aGeomTool(aAdaptor, aFirstP, aLastP, 0.1, 0.5);
 
   if (aGeomTool.NbPoints() == 0)

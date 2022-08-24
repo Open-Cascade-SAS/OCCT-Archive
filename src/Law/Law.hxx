@@ -68,7 +68,7 @@ public:
   //! Computes a 1 d curve to  reparametrize a curve. Its an
   //! interpolation of NbPoints  points calculated  at quasi
   //! constant abscissa.
-  Standard_EXPORT static Handle(Law_BSpline) Reparametrize (const Adaptor3d_Curve& Curve, const Standard_Real First, const Standard_Real Last, const Standard_Boolean HasDF, const Standard_Boolean HasDL, const Standard_Real DFirst, const Standard_Real DLast, const Standard_Boolean Rev, const Standard_Integer NbPoints);
+  Standard_EXPORT static Handle(Law_BSpline) Reparametrize (const Handle(Adaptor3d_Curve)& Curve, const Standard_Real First, const Standard_Real Last, const Standard_Boolean HasDF, const Standard_Boolean HasDL, const Standard_Real DFirst, const Standard_Real DLast, const Standard_Boolean Rev, const Standard_Integer NbPoints);
   
   //! Computes a 1  d curve to  scale  a field of  tangency.
   //! Value is 1. for t = (First+Last)/2 .

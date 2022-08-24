@@ -53,12 +53,12 @@ public:
   //! only the tangent, N should be equal to 1.
   //! <Resolution> is the linear tolerance (it is used to test
   //! if a vector is null).
-  Standard_EXPORT BRepLProp_CLProps(const BRepAdaptor_Curve& C, const Standard_Integer N, const Standard_Real Resolution);
+  Standard_EXPORT BRepLProp_CLProps(const Handle(BRepAdaptor_Curve)& C, const Standard_Integer N, const Standard_Real Resolution);
   
   //! Same as previous constructor but here the parameter is
   //! set to the value <U>.
   //! All the computations done will be related to <C> and <U>.
-  Standard_EXPORT BRepLProp_CLProps(const BRepAdaptor_Curve& C, const Standard_Real U, const Standard_Integer N, const Standard_Real Resolution);
+  Standard_EXPORT BRepLProp_CLProps(const Handle(BRepAdaptor_Curve)& C, const Standard_Real U, const Standard_Integer N, const Standard_Real Resolution);
   
   //! Same as previous constructor but here the parameter is
   //! set to the value <U> and the curve is set
@@ -74,7 +74,7 @@ public:
   
   //! Initializes the local properties of the curve
   //! for the new curve.
-  Standard_EXPORT void SetCurve (const BRepAdaptor_Curve& C);
+  Standard_EXPORT void SetCurve (const Handle(BRepAdaptor_Curve)& C);
   
   //! Returns the Point.
   Standard_EXPORT const gp_Pnt& Value() const;
@@ -121,7 +121,7 @@ private:
 
 
 
-  BRepAdaptor_Curve myCurve;
+  Handle(BRepAdaptor_Curve) myCurve;
   Standard_Real myU;
   Standard_Integer myDerOrder;
   Standard_Real myCN;

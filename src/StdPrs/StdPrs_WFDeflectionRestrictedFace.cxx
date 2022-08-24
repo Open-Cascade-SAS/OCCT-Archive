@@ -43,13 +43,13 @@ extern OSD_Chronometer FFaceTimer1,FFaceTimer2,FFaceTimer3,FFaceTimer4;
 // function: FindLimits
 // purpose:
 //==================================================================
-static void FindLimits(const Adaptor3d_Curve& aCurve,
+static void FindLimits(const Handle(Adaptor3d_Curve)& aCurve,
 		       const Standard_Real  aLimit,
 		       Standard_Real&       First,
 		       Standard_Real&       Last)
 {
-  First = Max(aCurve.FirstParameter(), First);
-  Last  = Min(aCurve.LastParameter(), Last);
+  First = Max(aCurve->FirstParameter(), First);
+  Last  = Min(aCurve->LastParameter(), Last);
   Standard_Boolean firstInf = Precision::IsNegativeInfinite(First);
   Standard_Boolean lastInf  = Precision::IsPositiveInfinite(Last);
 
@@ -61,24 +61,24 @@ static void FindLimits(const Adaptor3d_Curve& aCurve,
 	delta *= 2;
 	First = - delta;
 	Last  =   delta;
-	aCurve.D0(First,P1);
-	aCurve.D0(Last,P2);
+	aCurve->D0(First,P1);
+	aCurve->D0(Last,P2);
       } while (P1.Distance(P2) < aLimit);
     }
     else if (firstInf) {
-      aCurve.D0(Last,P2);
+      aCurve->D0(Last,P2);
       do {
 	delta *= 2;
 	First = Last - delta;
-	aCurve.D0(First,P1);
+	aCurve->D0(First,P1);
       } while (P1.Distance(P2) < aLimit);
     }
     else if (lastInf) {
-      aCurve.D0(First,P1);
+      aCurve->D0(First,P1);
       do {
 	delta *= 2;
 	Last = First + delta;
-	aCurve.D0(Last,P2);
+	aCurve->D0(Last,P2);
       } while (P1.Distance(P2) < aLimit);
     }
   }
@@ -135,10 +135,10 @@ void StdPrs_WFDeflectionRestrictedFace::Add
   for (ToolRst.Init(); ToolRst.More(); ToolRst.Next())
   {
     const TopAbs_Orientation anOrient = ToolRst.Orientation();
-    const Adaptor2d_Curve2d* TheRCurve = &ToolRst.Value();
+    const Handle(Adaptor2d_Curve2d) TheRCurve = ToolRst.Value();
     if (TheRCurve->GetType() != GeomAbs_Line)
     {
-      GCPnts_QuasiUniformDeflection UDP (*TheRCurve, ddefle);
+      GCPnts_QuasiUniformDeflection UDP (TheRCurve, ddefle);
       if (UDP.IsDone())
       {
         const Standard_Integer aNumberOfPoints = UDP.NbPoints();
@@ -305,20 +305,18 @@ void StdPrs_WFDeflectionRestrictedFace::Add
 
   // draw the isos
 
-  Adaptor3d_IsoCurve anIso;
-  anIso.Load(aFace);
+  Handle(Adaptor3d_IsoCurve) anIso = new Adaptor3d_IsoCurve(aFace);
   Handle(Geom_Curve) BC;
-  const BRepAdaptor_Surface& BS = *aFace;
   GeomAbs_SurfaceType thetype = aFace->GetType();
 
   Handle(Geom_Surface) GB;
   if (thetype == GeomAbs_BezierSurface)
   {
-    GB = BS.Bezier();
+    GB = aFace->Bezier();
   }
   else if (thetype == GeomAbs_BSplineSurface)
   {
-    GB = BS.BSpline();
+    GB = aFace->BSpline();
   }
 
   const Standard_Real anAngle = aDrawer->DeviationAngle();
@@ -341,7 +339,7 @@ void StdPrs_WFDeflectionRestrictedFace::Add
           BC = GB->VIso (Coord);
         }
 
-        GeomAdaptor_Curve GC (BC);
+        Handle(GeomAdaptor_Curve) GC = new GeomAdaptor_Curve(BC);
         FindLimits (GC, aLimit,b1, b2);
         if (b2 - b1 > Precision::Confusion())
         {
@@ -355,11 +353,11 @@ void StdPrs_WFDeflectionRestrictedFace::Add
       {
         if (isobuild.IsXLine (i))
         {
-          anIso.Load (GeomAbs_IsoU,Coord,b1,b2);
+          anIso->Load (GeomAbs_IsoU,Coord,b1,b2);
         }
         else
         {
-          anIso.Load (GeomAbs_IsoV,Coord,b1,b2);
+          anIso->Load (GeomAbs_IsoV,Coord,b1,b2);
         }
 
         FindLimits (anIso, aLimit, b1, b2);
@@ -408,7 +406,7 @@ Standard_Boolean StdPrs_WFDeflectionRestrictedFace::Match
   UMax = VMax = RealFirst();
   
   for (ToolRst.Init(); ToolRst.More(); ToolRst.Next()) {
-    const Adaptor2d_Curve2d* TheRCurve = &ToolRst.Value();
+    const Handle(Adaptor2d_Curve2d) TheRCurve = ToolRst.Value();
     u = TheRCurve->FirstParameter();
     v = TheRCurve->LastParameter();
     step = ( v - u) / nbPoints;
@@ -461,7 +459,7 @@ Standard_Boolean StdPrs_WFDeflectionRestrictedFace::Match
   gp_Pnt dummypnt;
   for (ToolRst.Init(); ToolRst.More(); ToolRst.Next()) {
     TopAbs_Orientation Orient = ToolRst.Orientation();
-      const Adaptor2d_Curve2d* TheRCurve = &ToolRst.Value();
+      const Handle(Adaptor2d_Curve2d)* TheRCurve = &ToolRst.Value();
       GCPnts_QuasiUniformDeflection UDP(*TheRCurve, Deflection);
       if (UDP.IsDone()) {
 	Standard_Integer NumberOfPoints = UDP.NbPoints();
@@ -488,8 +486,7 @@ Standard_Boolean StdPrs_WFDeflectionRestrictedFace::Match
   
   // draw the isos
 
-  Adaptor3d_IsoCurve anIso;
-  anIso.Load(aFace);
+  Handle(Adaptor3d_IsoCurve) anIso = new Adaptor3d_IsoCurve(aFace);
   Standard_Integer NumberOfLines = isobuild.NbLines();
   Standard_Real anAngle = aDrawer->DeviationAngle();
 
@@ -503,9 +500,9 @@ Standard_Boolean StdPrs_WFDeflectionRestrictedFace::Match
       b2 = b2 == RealLast()  ?   aLimit : b2;
 
       if (isobuild.IsXLine(i))
-	anIso.Load(GeomAbs_IsoU,Coord,b1,b2);
+	anIso->Load(GeomAbs_IsoU,Coord,b1,b2);
       else
-	anIso.Load(GeomAbs_IsoV,Coord,b1,b2);
+	anIso->Load(GeomAbs_IsoV,Coord,b1,b2);
     
       if (StdPrs_DeflectionCurve::Match(X,Y,Z,aDistance,anIso, b1, b2, Deflection, anAngle))
 	  return Standard_True;

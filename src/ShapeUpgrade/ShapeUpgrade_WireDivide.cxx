@@ -415,7 +415,7 @@ void ShapeUpgrade_WireDivide::Perform ()
      
       Standard_Real af = 0.,al = 0.;
       Handle(Geom_Curve) c3d;
-      Adaptor3d_CurveOnSurface AdCS;
+      Handle(Adaptor3d_CurveOnSurface) AdCS = new Adaptor3d_CurveOnSurface();
       if(myEdgeDivide->HasCurve3d()) 
 	sae.Curve3d(E,c3d,af,al,Standard_False);
       else if(myEdgeDivide->HasCurve2d() && !Surf.IsNull()) {
@@ -423,8 +423,8 @@ void ShapeUpgrade_WireDivide::Perform ()
 	sae.PCurve ( E, myFace, c2d, af, al, Standard_False); 
 	Handle(Adaptor3d_Surface) AdS = new GeomAdaptor_Surface(Surf);
 	Handle(Adaptor2d_Curve2d) AC2d  = new Geom2dAdaptor_Curve(c2d,af,al);
-	AdCS.Load(AC2d);
-	AdCS.Load(AdS);
+	AdCS->Load(AC2d);
+	AdCS->Load(AdS);
       }
       TopTools_SequenceOfShape aSeqNMVertices;
       TColStd_SequenceOfReal aSeqParNM;

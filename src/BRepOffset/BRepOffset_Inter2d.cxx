@@ -383,7 +383,7 @@ static void  Store (const TopoDS_Edge& theE1,
 //=======================================================================
 
 static void EdgeInter(const TopoDS_Face&              F,
-                      const BRepAdaptor_Surface&      BAsurf,
+                      const Handle(BRepAdaptor_Surface)&      BAsurf,
                       const TopoDS_Edge&              E1,
                       const TopoDS_Edge&              E2,
                       const Handle(BRepAlgo_AsDes)&   AsDes,
@@ -451,8 +451,8 @@ static void EdgeInter(const TopoDS_Face&              F,
         //
       Handle(Geom2d_Curve) pcurve1 = BRep_Tool::CurveOnSurface(E1, F, f[1], l[1]);
       Handle(Geom2d_Curve) pcurve2 = BRep_Tool::CurveOnSurface(E2, F, f[2], l[2]);
-      Geom2dAdaptor_Curve GAC1(pcurve1, f[1], l[1]);
-      Geom2dAdaptor_Curve GAC2(pcurve2, f[2], l[2]);
+      Handle(Geom2dAdaptor_Curve) GAC1 = new Geom2dAdaptor_Curve(pcurve1, f[1], l[1]);
+      Handle(Geom2dAdaptor_Curve) GAC2 = new Geom2dAdaptor_Curve(pcurve2, f[2], l[2]);
       Geom2dInt_GInter Inter2d( GAC1, GAC2, TolDub, TolDub );
       for (i = 1; i <= Inter2d.NbPoints(); i++)
         {
@@ -462,7 +462,7 @@ static void EdgeInter(const TopoDS_Face&              F,
           else
             {
               gp_Pnt2d P2d = Inter2d.Point(i).Value();
-              P3d = BAsurf.Value( P2d.X(), P2d.Y() );
+              P3d = BAsurf->Value( P2d.X(), P2d.Y() );
             }
           ResPoints.Append( P3d );
           ResParamsOnE1.Append( Inter2d.Point(i).ParamOnFirst() );
@@ -643,7 +643,7 @@ static void EdgeInter(const TopoDS_Face&              F,
 //=======================================================================
 
 static void RefEdgeInter(const TopoDS_Face&              F,
-                         const BRepAdaptor_Surface&      BAsurf,
+                         const Handle(BRepAdaptor_Surface)&      BAsurf,
                          const TopoDS_Edge&              E1,
                          const TopoDS_Edge&              E2,
                          const TopAbs_Orientation        theOr1,
@@ -712,13 +712,13 @@ static void RefEdgeInter(const TopoDS_Face&              F,
   //
   Handle(Geom2d_Curve) pcurve1 = BRep_Tool::CurveOnSurface(E1, F, f[1], l[1]);
   Handle(Geom2d_Curve) pcurve2 = BRep_Tool::CurveOnSurface(E2, F, f[2], l[2]);
-  Geom2dAdaptor_Curve GAC1(pcurve1, f[1], l[1]);
-  Geom2dAdaptor_Curve GAC2(pcurve2, f[2], l[2]);
-  if ((GAC1.GetType() == GeomAbs_Line) &&
-      (GAC2.GetType() == GeomAbs_Line))
+  Handle(Geom2dAdaptor_Curve) GAC1 = new Geom2dAdaptor_Curve(pcurve1, f[1], l[1]);
+  Handle(Geom2dAdaptor_Curve) GAC2 = new Geom2dAdaptor_Curve(pcurve2, f[2], l[2]);
+  if ((GAC1->GetType() == GeomAbs_Line) &&
+      (GAC2->GetType() == GeomAbs_Line))
   {
     // Just quickly check if lines coincide
-    Standard_Real anAngle = Abs(GAC1.Line().Direction().Angle(GAC2.Line().Direction()));
+    Standard_Real anAngle = Abs(GAC1->Line().Direction().Angle(GAC2->Line().Direction()));
     if (anAngle <= 1.e-8 || M_PI - anAngle <= 1.e-8)
     {
       theCoincide = Standard_True;
@@ -737,8 +737,8 @@ static void RefEdgeInter(const TopoDS_Face&              F,
   //
   if (!Inter2d.IsDone() || !Inter2d.NbPoints()) {
     theCoincide = (Inter2d.NbSegments() &&
-                   (GAC1.GetType() == GeomAbs_Line) &&
-                   (GAC2.GetType() == GeomAbs_Line));
+                   (GAC1->GetType() == GeomAbs_Line) &&
+                   (GAC2->GetType() == GeomAbs_Line));
     return;
   }
   //
@@ -750,7 +750,7 @@ static void RefEdgeInter(const TopoDS_Face&              F,
     else
     {
       gp_Pnt2d P2d = Inter2d.Point(i).Value();
-      P3d = BAsurf.Value( P2d.X(), P2d.Y() );
+      P3d = BAsurf->Value( P2d.X(), P2d.Y() );
     }
     ResPoints.Append( P3d );
     ResParamsOnE1.Append( Inter2d.Point(i).ParamOnFirst() );
@@ -964,10 +964,10 @@ static void RefEdgeInter(const TopoDS_Face&              F,
 //purpose  : return MaxSegment to pass in approximation
 //======================================================================
 
-static Standard_Integer evaluateMaxSegment(const Adaptor3d_CurveOnSurface& aCurveOnSurface)
+static Standard_Integer evaluateMaxSegment(const Handle(Adaptor3d_CurveOnSurface)& aCurveOnSurface)
 {
-  Handle(Adaptor3d_Surface) aSurf   = aCurveOnSurface.GetSurface();
-  Handle(Adaptor2d_Curve2d) aCurv2d = aCurveOnSurface.GetCurve();
+  Handle(Adaptor3d_Surface) aSurf   = aCurveOnSurface->GetSurface();
+  Handle(Adaptor2d_Curve2d) aCurv2d = aCurveOnSurface->GetCurve();
 
   Standard_Real aNbSKnots = 0, aNbC2dKnots = 0;
   
@@ -1176,10 +1176,10 @@ Standard_Boolean BRepOffset_Inter2d::ExtentEdge(const TopoDS_Edge& E,TopoDS_Edge
 
           TColStd_SequenceOfReal params;
           Geom2dInt_GInter IntCC;
-          Geom2dAdaptor_Curve GAcurve(theCurve);
+          Handle(Geom2dAdaptor_Curve) GAcurve = new Geom2dAdaptor_Curve(theCurve);
           for (i = 1; i <= BoundLines.Length(); i++)
             {
-              Geom2dAdaptor_Curve GAline( BoundLines(i) );
+              Handle(Geom2dAdaptor_Curve) GAline = new Geom2dAdaptor_Curve( BoundLines(i) );
               IntCC.Perform( GAcurve, GAline, Precision::PConfusion(), Precision::PConfusion());
               if (IntCC.IsDone())
                 {
@@ -1360,7 +1360,7 @@ Standard_Boolean BRepOffset_Inter2d::ExtentEdge(const TopoDS_Edge& E,TopoDS_Edge
               GeomAdaptor_Surface GAsurf( MinSurf );
               Handle(Geom2dAdaptor_Curve) HC2d  = new Geom2dAdaptor_Curve( AC2d );
               Handle(GeomAdaptor_Surface) HSurf = new GeomAdaptor_Surface( GAsurf );
-              Adaptor3d_CurveOnSurface ConS( HC2d, HSurf );
+              Handle(Adaptor3d_CurveOnSurface) ConS = new Adaptor3d_CurveOnSurface( HC2d, HSurf );
               Standard_Real /*max_deviation,*/ average_deviation;
               GeomAbs_Shape Continuity = GeomAbs_C1;
               Standard_Integer MaxDegree = 14;
@@ -1590,7 +1590,7 @@ void BRepOffset_Inter2d::Compute (const Handle(BRepAlgo_AsDes)&     AsDes,
   const TopTools_ListOfShape&        LE = AsDes->Descendant(F);
   TopoDS_Vertex                      V1,V2;
   Standard_Integer                   j, i = 1;
-  BRepAdaptor_Surface BAsurf(F);
+  Handle(BRepAdaptor_Surface) BAsurf = new BRepAdaptor_Surface(F);
   //
   Message_ProgressScope aPS(theRange, "Intersecting edges on faces", LE.Size());
   for ( it1LE.Initialize(LE) ; it1LE.More(); it1LE.Next(), aPS.Next()) {
@@ -1713,7 +1713,7 @@ Standard_Boolean BRepOffset_Inter2d::ConnexIntByInt
   TopoDS_Face           FIO = TopoDS::Face(OFI.Face());
   if (MES.IsBound(FIO)) FIO = TopoDS::Face(MES(FIO));
   //
-  BRepAdaptor_Surface BAsurf(FIO);
+  Handle(BRepAdaptor_Surface) BAsurf = new BRepAdaptor_Surface(FIO);
 
   TopExp_Explorer exp(FI.Oriented(TopAbs_FORWARD),TopAbs_WIRE);
   for (; exp.More(); exp.Next(), aPS.Next()) {
@@ -1891,7 +1891,7 @@ void BRepOffset_Inter2d::ConnexIntByIntInVert
     aME.Add(aE);
   }
   //
-  BRepAdaptor_Surface BAsurf(FIO);
+  Handle(BRepAdaptor_Surface) BAsurf = new BRepAdaptor_Surface(FIO);
   //
   Message_ProgressScope aPS(theRange, "Intersecting edges created from vertices", 1, Standard_True);
   TopExp_Explorer exp(FI.Oriented(TopAbs_FORWARD),TopAbs_WIRE);

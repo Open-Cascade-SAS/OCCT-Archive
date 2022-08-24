@@ -57,7 +57,7 @@ public:
   //! @param theAngDeflection angular deflection.
   //! @param theMinPointsNb minimum number of points to be produced.
   Standard_EXPORT BRepMesh_GeomTool(
-    const BRepAdaptor_Curve& theCurve,
+    const Handle(BRepAdaptor_Curve)& theCurve,
     const Standard_Real      theFirstParam,
     const Standard_Real      theLastParam,
     const Standard_Real      theLinDeflection,

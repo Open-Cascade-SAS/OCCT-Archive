@@ -158,7 +158,7 @@ void Geom2dHatch_Hatcher::KeepSegments (const Standard_Boolean Keep)
 // Purpose  : Adds an element to the Hatcher and returns its index.
 //=======================================================================
 
-Standard_Integer Geom2dHatch_Hatcher::AddElement (const Geom2dAdaptor_Curve& Curve,
+Standard_Integer Geom2dHatch_Hatcher::AddElement (const Handle(Geom2dAdaptor_Curve)& Curve,
 					       const TopAbs_Orientation Orientation)
 {
   Standard_Integer IndE ;
@@ -242,7 +242,7 @@ void Geom2dHatch_Hatcher::ClrElements ()
 // Purpose  : Adds a hatching to the hatcher and returns its index.
 //=======================================================================
 
-Standard_Integer Geom2dHatch_Hatcher::AddHatching (const Geom2dAdaptor_Curve& Curve)
+Standard_Integer Geom2dHatch_Hatcher::AddHatching (const Handle(Geom2dAdaptor_Curve)& Curve)
 {
   Standard_Integer IndH ;
   for (IndH = 1 ; IndH <= myNbHatchings && myHatchings.IsBound(IndH) ; IndH++) ;
@@ -317,7 +317,7 @@ void Geom2dHatch_Hatcher::Trim ()
 //            already given and returns its index.
 //=======================================================================
 
-Standard_Integer Geom2dHatch_Hatcher::Trim (const Geom2dAdaptor_Curve& Curve)
+Standard_Integer Geom2dHatch_Hatcher::Trim (const Handle(Geom2dAdaptor_Curve)& Curve)
 {
   Standard_Integer IndH = AddHatching (Curve) ;
   Trim (IndH) ;
@@ -449,8 +449,8 @@ Standard_Boolean Geom2dHatch_Hatcher::Trim (const Standard_Integer IndH,
   Geom2dHatch_Hatching& Hatching = myHatchings.ChangeFind (IndH) ;
   Geom2dHatch_Element& Element   = myElements.ChangeFind  (IndE) ;
 
-  Geom2dAdaptor_Curve hatching = Hatching.ChangeCurve() ;
-  Geom2dAdaptor_Curve element  = Element.ChangeCurve() ;
+  Handle(Geom2dAdaptor_Curve) hatching = Hatching.Curve();
+  Handle(Geom2dAdaptor_Curve) element = Element.Curve();
 
   myIntersector.Intersect (hatching, element) ;
   
@@ -746,9 +746,9 @@ Standard_Boolean Geom2dHatch_Hatcher::GlobalTransition (HatchGen_PointOnHatching
   gp_Dir   Tangente,   Normale ;
   Standard_Real Courbure ;
 
-  const Geom2dAdaptor_Curve& CurveH = HatchingCurve (Point.Index()) ;
+  const Handle(Geom2dAdaptor_Curve)& CurveH = HatchingCurve (Point.Index()) ;
 
-  myIntersector.LocalGeometry(CurveH.Curve(), Point.Parameter(), Tangente2d, Normale2d, Courbure);
+  myIntersector.LocalGeometry(new Geom2dAdaptor_Curve(CurveH->Curve()), Point.Parameter(), Tangente2d, Normale2d, Courbure);
 
   Tangente.SetCoord (Tangente2d.X(), Tangente2d.Y(), 0.0) ;
   if (Courbure < Precision::Confusion()) {
@@ -773,7 +773,7 @@ Standard_Boolean Geom2dHatch_Hatcher::GlobalTransition (HatchGen_PointOnHatching
     SegmentEnd   = SegmentEnd   || PntE.SegmentEnd() ;
     
     const Geom2dHatch_Element& Element = myElements.Find (PntE.Index()) ;
-    const Geom2dAdaptor_Curve& CurveE = Element.Curve() ;
+    const Handle(Geom2dAdaptor_Curve)& CurveE = Element.Curve() ;
     
     TopAbs_Orientation ElementOrientation = Element.Orientation() ;
     Standard_Boolean ToReverse = (ElementOrientation == TopAbs_REVERSED);
@@ -781,7 +781,7 @@ Standard_Boolean Geom2dHatch_Hatcher::GlobalTransition (HatchGen_PointOnHatching
     switch (PntE.Position()) 
     {
       case TopAbs_FORWARD  : 
-        Param = ToReverse ? CurveE.LastParameter() : CurveE.FirstParameter() ;
+        Param = ToReverse ? CurveE->LastParameter() : CurveE->FirstParameter() ;
         break ;
 
       case TopAbs_INTERNAL : 
@@ -789,7 +789,7 @@ Standard_Boolean Geom2dHatch_Hatcher::GlobalTransition (HatchGen_PointOnHatching
         break ;
 
       case TopAbs_REVERSED : 
-        Param = ToReverse ? CurveE.FirstParameter() : CurveE.LastParameter() ;
+        Param = ToReverse ? CurveE->FirstParameter() : CurveE->LastParameter() ;
         break ;
 
       default:
@@ -802,7 +802,7 @@ Standard_Boolean Geom2dHatch_Hatcher::GlobalTransition (HatchGen_PointOnHatching
 #endif
     Param = PntE.Parameter();
 
-    myIntersector.LocalGeometry(CurveE.Curve(), Param, Tangente2d, Normale2d, Courbure);
+    myIntersector.LocalGeometry(new Geom2dAdaptor_Curve(CurveE->Curve()), Param, Tangente2d, Normale2d, Courbure);
 
 //-----------------------------------------------------------------------
 // Calcul de la transition locale. On suppose les relations suivantes :

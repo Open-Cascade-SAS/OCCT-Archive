@@ -103,7 +103,7 @@ private:
   //! a lot of memory is used in intermediate computations.
   struct Approx_SameParameter_Data
   {
-    Adaptor3d_CurveOnSurface myCOnS; // Curve on surface.
+    Handle(Adaptor3d_CurveOnSurface) myCOnS; // Curve on surface.
     Standard_Integer myNbPnt; // Number of points.
     Standard_Real *myPC3d; // Parameters on 3d curve.
     Standard_Real *myPC2d; // Parameters on 2d curve.
@@ -155,7 +155,7 @@ private:
 
   //! Computes tangents on boundary points.
   //@return true if tangents are not null and false otherwise.
-  Standard_Boolean ComputeTangents(const Adaptor3d_CurveOnSurface & theCOnS,
+  Standard_Boolean ComputeTangents(const Handle(Adaptor3d_CurveOnSurface) & theCOnS,
                                    Standard_Real &theFirstTangent,
                                    Standard_Real &theLastTangent) const;
 

@@ -26,7 +26,7 @@
 
 #define TheFaceExplorer Geom2dHatch_Elements
 #define TheFaceExplorer_hxx <Geom2dHatch_Elements.hxx>
-#define TheEdge Geom2dAdaptor_Curve
+#define TheEdge Handle(Geom2dAdaptor_Curve)
 #define TheEdge_hxx <Geom2dAdaptor_Curve.hxx>
 #define TheIntersection2d Geom2dHatch_Intersector
 #define TheIntersection2d_hxx <Geom2dHatch_Intersector.hxx>

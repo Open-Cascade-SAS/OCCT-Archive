@@ -183,7 +183,7 @@ Standard_Boolean ShapeFix_EdgeProjAux::IsIso (const Handle(Geom2d_Curve)& /*theC
 // ----------------------------------------------------------------------------
 
 static Standard_Boolean FindParameterWithExt (const gp_Pnt& Pt1, 
-					      const Adaptor3d_CurveOnSurface& COnS,
+					      const Handle(Adaptor3d_CurveOnSurface)& COnS,
 					      const Standard_Real Uinf,
 					      const Standard_Real Usup, 
 					      const Standard_Real preci,
@@ -384,13 +384,13 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
   Geom2dAdaptor_Curve          CA     = Geom2dAdaptor_Curve(theCurve2d,cf,cl);
   Handle(Geom2dAdaptor_Curve) myHCur = new Geom2dAdaptor_Curve(CA);
 
-  Adaptor3d_CurveOnSurface COnS = Adaptor3d_CurveOnSurface(myHCur, myHSur);
+  Handle(Adaptor3d_CurveOnSurface) COnS = new Adaptor3d_CurveOnSurface(myHCur, myHSur);
 
   // ----------------------------------------------
   // --- topological limit == geometric limit ? ---
   // ----------------------------------------------
-  Standard_Real Uinf = COnS.FirstParameter();
-  Standard_Real Usup = COnS.LastParameter();
+  Standard_Real Uinf = COnS->FirstParameter();
+  Standard_Real Usup = COnS->LastParameter();
  
   Standard_Real w1 = 0., w2 = 0.;
   ShapeAnalysis_Curve sac;
@@ -428,7 +428,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
     return;
   }
   //:abv 29.08.01: SAT: fix for closed case
-  if ( COnS.Value(Uinf).Distance ( COnS.Value(Usup) ) < Precision::Confusion() ) {
+  if ( COnS->Value(Uinf).Distance ( COnS->Value(Usup) ) < Precision::Confusion() ) {
     // 18.11.2002 SKL OCC630 compare values with tolerance Precision::PConfusion() instead of "=="
     if ( Abs(myFirstParam-Uinf) < ::Precision::PConfusion() &&
       Abs(myLastParam-Uinf) < ::Precision::PConfusion() )
@@ -512,7 +512,7 @@ void ShapeFix_EdgeProjAux::Init3d (const Standard_Real preci)
   Geom2dAdaptor_Curve          CA     = Geom2dAdaptor_Curve(theCurve2d);
   Handle(Geom2dAdaptor_Curve) myHCur = new Geom2dAdaptor_Curve(CA);
 
-  Adaptor3d_CurveOnSurface COnS = Adaptor3d_CurveOnSurface(myHCur, myHSur);
+  Handle(Adaptor3d_CurveOnSurface) COnS = new Adaptor3d_CurveOnSurface(myHCur, myHSur);
   
 //:S4136  Standard_Real preci = BRepAPI::Precision();
   Standard_Real Uinf = theCurve2d->FirstParameter();
@@ -524,8 +524,8 @@ void ShapeFix_EdgeProjAux::Init3d (const Standard_Real preci)
   
   if (theCurve2d->IsKind(STANDARD_TYPE(Geom2d_BoundedCurve))) {
     
-    gp_Pnt Pdeb = COnS.Value(Uinf);
-    gp_Pnt Pfin = COnS.Value(Usup);
+    gp_Pnt Pdeb = COnS->Value(Uinf);
+    gp_Pnt Pfin = COnS->Value(Usup);
     
     //szv#4:S4163:12Mar99 optimized
     if ( Pdeb.IsEqual(Pt1, preci) && Pfin.IsEqual(Pt2, preci) ) {
@@ -541,8 +541,8 @@ void ShapeFix_EdgeProjAux::Init3d (const Standard_Real preci)
   // ---          Try with Extrema          ---
   // ------------------------------------------
 
-  Standard_Real w1 = COnS.FirstParameter();
-  Standard_Real w2 = COnS.LastParameter();
+  Standard_Real w1 = COnS->FirstParameter();
+  Standard_Real w2 = COnS->LastParameter();
 
   if ((!Precision::IsInfinite(w1) &&
        !Precision::IsInfinite(w2) &&

@@ -666,7 +666,7 @@ Standard_Integer TopOpeBRepTool_CORRISO::EdgeOUTofBoundsUV(const TopoDS_Edge& E,
   else { // 2drep(E, myFref) is NOT an iso
          // ------------------------------
     Bnd_Box2d Bn2d;
-    Geom2dAdaptor_Curve GC2d(PC,f,l);
+    Handle(Geom2dAdaptor_Curve) GC2d = new Geom2dAdaptor_Curve(PC,f,l);
     Standard_Real tolE = BRep_Tool::Tolerance(E);
     Standard_Real toladd = Max(tolE,tol);
     BndLib_Add2dCurve::Add(GC2d,toladd,Bn2d);

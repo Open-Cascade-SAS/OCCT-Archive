@@ -799,10 +799,10 @@ static Standard_Integer movelaw (Draw_Interpretor& di, Standard_Integer n, const
 #include <math_MultipleVarFunction.hxx>
 #include <math_BrentMinimum.hxx>
 
-static Standard_Real CompLocalDev(const Adaptor3d_Curve& theCurve,
+static Standard_Real CompLocalDev(const Handle(Adaptor3d_Curve)& theCurve,
                                   const Standard_Real u1, const Standard_Real u2);
 
-static void ComputeDeviation(const Adaptor3d_Curve& theCurve,
+static void ComputeDeviation(const Handle(Adaptor3d_Curve)& theCurve,
                              const Handle(Geom_BSplineCurve)& thePnts,
                              Standard_Real& theDmax,
                              Standard_Real& theUfMax,
@@ -834,7 +834,7 @@ static void ComputeDeviation(const Adaptor3d_Curve& theCurve,
   }
 }
 
-Standard_Real CompLocalDev(const Adaptor3d_Curve& theCurve,
+Standard_Real CompLocalDev(const Handle(Adaptor3d_Curve)& theCurve,
                            const Standard_Real u1, const Standard_Real u2)
 {
   math_Vector aLowBorder(1,1);
@@ -919,7 +919,7 @@ static Standard_Integer crvpoints (Draw_Interpretor& di, Standard_Integer /*n*/,
 
   defl = Draw::Atof(a[3]);
 
-  GCPnts_QuasiUniformDeflection PntGen (*aHCurve, defl);
+  GCPnts_QuasiUniformDeflection PntGen (aHCurve, defl);
     
   if(!PntGen.IsDone()) {
     di << "Points generation failed\n";
@@ -956,7 +956,7 @@ static Standard_Integer crvpoints (Draw_Interpretor& di, Standard_Integer /*n*/,
   Standard_Integer imax = 0;
 
   //check deviation
-  ComputeDeviation (*aHCurve, aPnts, dmax, ufmax, ulmax, imax);
+  ComputeDeviation (aHCurve, aPnts, dmax, ufmax, ulmax, imax);
   di << "Max defl: " << dmax << " " << ufmax << " " << ulmax << " " << imax << "\n"; 
 
   return 0;
@@ -998,7 +998,7 @@ static Standard_Integer crvtpoints (Draw_Interpretor& di, Standard_Integer n, co
   if(n > 5)
     aMinPntsNb = Draw::Atoi (a[5]);
 
-  GCPnts_TangentialDeflection PntGen (*aHCurve, angle, defl, aMinPntsNb);
+  GCPnts_TangentialDeflection PntGen (aHCurve, angle, defl, aMinPntsNb);
   
   nbp = PntGen.NbPoints();
   di << "Nb points : " << nbp << "\n";
@@ -1030,7 +1030,7 @@ static Standard_Integer crvtpoints (Draw_Interpretor& di, Standard_Integer n, co
   Standard_Integer imax = 0;
 
   //check deviation
-  ComputeDeviation (*aHCurve, aPnts, dmax, ufmax, ulmax, imax);
+  ComputeDeviation (aHCurve, aPnts, dmax, ufmax, ulmax, imax);
   //
   di << "Max defl: " << dmax << " " << ufmax << " " << ulmax << " " << imax << "\n"; 
 
@@ -1074,12 +1074,12 @@ static Standard_Integer uniformAbscissa (Draw_Interpretor& di, Standard_Integer 
     GeomLProp_CLProps Prop(ellip,2,Precision::Intersection());
     Prop.SetCurve(ellip);
 
-    GeomAdaptor_Curve GAC(ellip);
-    di<<"Type Of curve: "<<GAC.GetType()<<"\n";
+    Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(ellip);
+    di<<"Type Of curve: "<<GAC->GetType()<<"\n";
     Standard_Real Tol = Precision::Confusion();
     Standard_Real L;
 
-    L = GCPnts_AbscissaPoint::Length(GAC, GAC.FirstParameter(), GAC.LastParameter(), Tol);
+    L = GCPnts_AbscissaPoint::Length(GAC, GAC->FirstParameter(), GAC->LastParameter(), Tol);
     di<<"Ellipse length = "<<L<<"\n";
     Standard_Real Abscissa = L/(nocp-1);
     di << " CUR : Abscissa " << Abscissa << "\n";
@@ -1151,12 +1151,12 @@ static Standard_Integer EllipsUniformAbscissa (Draw_Interpretor& di, Standard_In
     GeomLProp_CLProps Prop(ellip,2,Precision::Intersection());
     Prop.SetCurve(ellip);
 
-    GeomAdaptor_Curve GAC(ellip);
-    di<<"Type Of curve: "<<GAC.GetType()<<"\n";
+    Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(ellip);
+    di<<"Type Of curve: "<<GAC->GetType()<<"\n";
     Standard_Real Tol = Precision::Confusion();
     Standard_Real L;
 
-    L = GCPnts_AbscissaPoint::Length(GAC, GAC.FirstParameter(), GAC.LastParameter(), Tol);
+    L = GCPnts_AbscissaPoint::Length(GAC, GAC->FirstParameter(), GAC->LastParameter(), Tol);
     di<<"Ellipse length = "<<L<<"\n";
     Standard_Real Abscissa = L/(nocp-1);
     di << " CUR : Abscissa " << Abscissa << "\n";
@@ -1242,7 +1242,7 @@ static Standard_Integer discrCurve(Draw_Interpretor& di, Standard_Integer theArg
     return 1;
   }
 
-  GeomAdaptor_Curve aCurveAdaptor(aCurve);
+  Handle(GeomAdaptor_Curve) aCurveAdaptor = new GeomAdaptor_Curve(aCurve);
   GCPnts_UniformAbscissa aSplitter(aCurveAdaptor, aSrcNbPnts, Precision::Confusion());
   if (!aSplitter.IsDone())
   {
@@ -1264,7 +1264,7 @@ static Standard_Integer discrCurve(Draw_Interpretor& di, Standard_Integer theArg
 
   for (Standard_Integer aPntIter = 1; aPntIter <= aDstNbPnts; ++aPntIter)
   {
-    aPoles.ChangeValue(aPntIter) = aCurveAdaptor.Value(aSplitter.Parameter(aPntIter));
+    aPoles.ChangeValue(aPntIter) = aCurveAdaptor->Value(aSplitter.Parameter(aPntIter));
     aKnots.ChangeValue(aPntIter) = (aPntIter - 1) / (aDstNbPnts - 1.0);
     aMultiplicities.ChangeValue(aPntIter) = 1;
   }
@@ -1398,7 +1398,7 @@ static Standard_Integer mypoints (Draw_Interpretor& di, Standard_Integer /*n*/, 
   Standard_Real dmax = 0., ufmax = 0., ulmax = 0.;
   Standard_Integer imax = 0;
 
-  ComputeDeviation(GeomAdaptor_Curve(C),aPnts,dmax,ufmax,ulmax,imax);
+  ComputeDeviation(new GeomAdaptor_Curve(C),aPnts,dmax,ufmax,ulmax,imax);
   di << "Max defl: " << dmax << " " << ufmax << " " << ulmax << " " << imax << "\n"; 
 
   return 0;

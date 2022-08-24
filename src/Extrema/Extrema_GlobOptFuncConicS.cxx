@@ -93,7 +93,7 @@ Standard_Boolean Extrema_GlobOptFuncConicS::checkInputData(const math_Vector   &
 //function : Extrema_GlobOptFuncConicS
 //purpose  : Constructor
 //=======================================================================
-Extrema_GlobOptFuncConicS::Extrema_GlobOptFuncConicS(const Adaptor3d_Surface *S,
+Extrema_GlobOptFuncConicS::Extrema_GlobOptFuncConicS(const Handle(Adaptor3d_Surface) S,
   const Standard_Real theUf, const Standard_Real theUl,
   const Standard_Real theVf, const Standard_Real theVl)
 :  myS(S), myUf(theUf), myUl(theUl),
@@ -106,7 +106,7 @@ Extrema_GlobOptFuncConicS::Extrema_GlobOptFuncConicS(const Adaptor3d_Surface *S,
 //function : Extrema_GlobOptFuncConicS
 //purpose  : Constructor
 //=======================================================================
-Extrema_GlobOptFuncConicS::Extrema_GlobOptFuncConicS(const Adaptor3d_Surface *S)
+Extrema_GlobOptFuncConicS::Extrema_GlobOptFuncConicS(const Handle(Adaptor3d_Surface) S)
   : myS(S), myUf(S->FirstUParameter()), myUl(S->LastUParameter()),
   myVf(S->FirstVParameter()), myVl(S->LastVParameter())
 {
@@ -116,8 +116,8 @@ Extrema_GlobOptFuncConicS::Extrema_GlobOptFuncConicS(const Adaptor3d_Surface *S)
 //function : Extrema_GlobOptFuncConicS
 //purpose  : Constructor
 //=======================================================================
-Extrema_GlobOptFuncConicS::Extrema_GlobOptFuncConicS(const Adaptor3d_Curve   *C,
-  const Adaptor3d_Surface *S)
+Extrema_GlobOptFuncConicS::Extrema_GlobOptFuncConicS(const Handle(Adaptor3d_Curve) C,
+  const Handle(Adaptor3d_Surface) S)
   : myS(S), myUf(S->FirstUParameter()), myUl(S->LastUParameter()),
   myVf(S->FirstVParameter()), myVl(S->LastVParameter())
 {
@@ -130,7 +130,7 @@ Extrema_GlobOptFuncConicS::Extrema_GlobOptFuncConicS(const Adaptor3d_Curve   *C,
 //function : LoadConic
 //purpose  :
 //=======================================================================
-void Extrema_GlobOptFuncConicS::LoadConic(const Adaptor3d_Curve   *C,
+void Extrema_GlobOptFuncConicS::LoadConic(const Handle(Adaptor3d_Curve) C,
   const Standard_Real theTf, const Standard_Real theTl)
 {
   myC = C;

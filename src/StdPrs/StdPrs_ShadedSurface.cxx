@@ -31,7 +31,7 @@
 //purpose  :
 //=======================================================================
 void StdPrs_ShadedSurface::Add (const Handle(Prs3d_Presentation)& thePrs,
-                                const Adaptor3d_Surface&          theSurface,
+                                const Handle(Adaptor3d_Surface)&          theSurface,
                                 const Handle(Prs3d_Drawer)&       theDrawer)
 {
   Standard_Integer N1 = theDrawer->UIsoAspect()->Number();
@@ -42,15 +42,15 @@ void StdPrs_ShadedSurface::Add (const Handle(Prs3d_Presentation)& thePrs,
   // If the surface is closed, the faces from back-side are not traced:
   Handle(Graphic3d_Group) aGroup = thePrs->CurrentGroup();
   aGroup->SetGroupPrimitivesAspect (theDrawer->ShadingAspect()->Aspect());
-  aGroup->SetClosed (theSurface.IsUClosed() && theSurface.IsVClosed());
+  aGroup->SetClosed (theSurface->IsUClosed() && theSurface->IsVClosed());
 
-  Standard_Integer aNBUintv = theSurface.NbUIntervals (GeomAbs_C1);
-  Standard_Integer aNBVintv = theSurface.NbVIntervals (GeomAbs_C1);
+  Standard_Integer aNBUintv = theSurface->NbUIntervals (GeomAbs_C1);
+  Standard_Integer aNBVintv = theSurface->NbVIntervals (GeomAbs_C1);
   TColStd_Array1OfReal anInterU (1, aNBUintv + 1);
   TColStd_Array1OfReal anInterV (1, aNBVintv + 1);
 
-  theSurface.UIntervals (anInterU, GeomAbs_C1);
-  theSurface.VIntervals (anInterV, GeomAbs_C1);
+  theSurface->UIntervals (anInterU, GeomAbs_C1);
+  theSurface->VIntervals (anInterV, GeomAbs_C1);
 
   Standard_Real U1, U2, V1, V2, DU, DV;
 
@@ -81,10 +81,10 @@ void StdPrs_ShadedSurface::Add (const Handle(Prs3d_Presentation)& thePrs,
         aPArray->AddBound (N2 + 1);
         for (Standard_Integer j = 1; j <= N2 + 1; ++j)
         {
-          theSurface.D1 (U1 + DU * (i - 1), V1 + DV * (j - 1), P2, D1U, D1V);
+          theSurface->D1 (U1 + DU * (i - 1), V1 + DV * (j - 1), P2, D1U, D1V);
           D1 = D1U ^ D1V;
           D1.Normalize();
-          theSurface.D1 (U1 + DU * i, V1 + DV * (j - 1), P2, D1U, D1V);
+          theSurface->D1 (U1 + DU * i, V1 + DV * (j - 1), P2, D1U, D1V);
           D2 = D1U ^ D1V;
           D2.Normalize();
           aPArray->AddVertex (P1, D1);

@@ -129,7 +129,7 @@ namespace
                                        const Standard_Real theTol,
                                        Standard_Real& theParam)
   {
-    GeomAdaptor_Curve anAdaptor(theCurve);
+    Handle(GeomAdaptor_Curve) anAdaptor = new GeomAdaptor_Curve(theCurve);
     Extrema_LocateExtPC proj(thePoint, anAdaptor, theParam, theFirst, theLast, Precision::PConfusion());
     if (proj.IsDone())
     {
@@ -150,7 +150,7 @@ namespace
                                        const Standard_Real theTol,
                                        Standard_Real& theParam)
   {
-    Geom2dAdaptor_Curve anAdaptor(theCurve2d);
+    Handle(Geom2dAdaptor_Curve) anAdaptor = new Geom2dAdaptor_Curve(theCurve2d);
     Extrema_LocateExtPC2d aProj(theUV, anAdaptor, theParam, Precision::PConfusion());
     if (aProj.IsDone())
     {
@@ -192,7 +192,7 @@ namespace
                                 const Standard_Real theTol,
                                 gp_Pnt2d& theUV)
   {
-    GeomAdaptor_Surface anAdaptor(theSurf);
+    Handle(GeomAdaptor_Surface) anAdaptor = new GeomAdaptor_Surface(theSurf);
     Extrema_GenLocateExtPS aProj(anAdaptor);
     aProj.Perform(thePoint, theUV.X(), theUV.Y());
     if (aProj.IsDone())

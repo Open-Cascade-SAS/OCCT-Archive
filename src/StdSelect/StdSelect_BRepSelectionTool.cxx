@@ -381,13 +381,13 @@ static Handle(TColgp_HArray1OfPnt) GetPointsFromPolygon (const TopoDS_Edge& theE
 // Function: FindLimits
 // Purpose :
 //==================================================
-static Standard_Boolean FindLimits (const Adaptor3d_Curve& theCurve,
+static Standard_Boolean FindLimits (const Handle(Adaptor3d_Curve)& theCurve,
                                     const Standard_Real    theLimit,
                                           Standard_Real&   theFirst,
                                           Standard_Real&   theLast)
 {
-  theFirst = theCurve.FirstParameter();
-  theLast  = theCurve.LastParameter();
+  theFirst = theCurve->FirstParameter();
+  theLast  = theCurve->LastParameter();
   Standard_Boolean isFirstInf = Precision::IsNegativeInfinite (theFirst);
   Standard_Boolean isLastInf  = Precision::IsPositiveInfinite (theLast);
   if (isFirstInf || isLastInf)
@@ -402,28 +402,28 @@ static Standard_Boolean FindLimits (const Adaptor3d_Curve& theCurve,
         aDelta *= 2.0;
         theFirst = - aDelta;
         theLast  =   aDelta;
-        theCurve.D0 (theFirst, aPnt1);
-        theCurve.D0 (theLast,  aPnt2);
+        theCurve->D0 (theFirst, aPnt1);
+        theCurve->D0 (theLast,  aPnt2);
       } while (aPnt1.Distance (aPnt2) < theLimit);
     }
     else if (isFirstInf)
     {
-      theCurve.D0 (theLast, aPnt2);
+      theCurve->D0 (theLast, aPnt2);
       do {
         if (anIterCount++ >= 100000) return Standard_False;
         aDelta *= 2.0;
         theFirst = theLast - aDelta;
-        theCurve.D0 (theFirst, aPnt1);
+        theCurve->D0 (theFirst, aPnt1);
       } while (aPnt1.Distance (aPnt2) < theLimit);
     }
     else if (isLastInf)
     {
-      theCurve.D0 (theFirst, aPnt1);
+      theCurve->D0 (theFirst, aPnt1);
       do {
         if (anIterCount++ >= 100000) return Standard_False;
         aDelta *= 2.0;
         theLast = theFirst + aDelta;
-        theCurve.D0 (theLast, aPnt2);
+        theCurve->D0 (theLast, aPnt2);
       } while (aPnt1.Distance (aPnt2) < theLimit);
     }
   }
@@ -461,29 +461,29 @@ void StdSelect_BRepSelectionTool::GetEdgeSensitive (const TopoDS_Shape& theShape
     return;
   }
 
-  BRepAdaptor_Curve cu3d;
+  Handle(BRepAdaptor_Curve) cu3d = new BRepAdaptor_Curve();
   try {
     OCC_CATCH_SIGNALS
-    cu3d.Initialize (anEdge);
+    cu3d->Initialize (anEdge);
   } catch (Standard_NullObject const&) {
     return;
   }
 
-  Standard_Real aParamFirst = cu3d.FirstParameter();
-  Standard_Real aParamLast  = cu3d.LastParameter();
-  switch (cu3d.GetType())
+  Standard_Real aParamFirst = cu3d->FirstParameter();
+  Standard_Real aParamLast  = cu3d->LastParameter();
+  switch (cu3d->GetType())
   {
     case GeomAbs_Line:
     {
       BRep_Tool::Range (anEdge, aParamFirst, aParamLast);
       theSensitive = new Select3D_SensitiveSegment (theOwner,
-                                                    cu3d.Value (aParamFirst),
-                                                    cu3d.Value (aParamLast));
+                                                    cu3d->Value (aParamFirst),
+                                                    cu3d->Value (aParamLast));
       break;
     }
     case GeomAbs_Circle:
     {
-      const gp_Circ aCircle = cu3d.Circle();
+      const gp_Circ aCircle = cu3d->Circle();
       if (aCircle.Radius() <= Precision::Confusion())
       {
         theSelection->Add (new Select3D_SensitivePoint (theOwner, aCircle.Location()));
@@ -500,9 +500,9 @@ void StdSelect_BRepSelectionTool::GetEdgeSensitive (const TopoDS_Shape& theShape
       // TODO: remove copy-paste from StdPrs_Curve and some others...
       if (FindLimits (cu3d, theMaxParam, aParamFirst, aParamLast))
       {
-        Standard_Integer aNbIntervals = cu3d.NbIntervals (GeomAbs_C1);
+        Standard_Integer aNbIntervals = cu3d->NbIntervals (GeomAbs_C1);
         TColStd_Array1OfReal anIntervals (1, aNbIntervals + 1);
-        cu3d.Intervals (anIntervals, GeomAbs_C1);
+        cu3d->Intervals (anIntervals, GeomAbs_C1);
         Standard_Real aV1, aV2;
         Standard_Integer aNumberOfPoints;
         TColgp_SequenceOfPnt aPointsSeq;
@@ -540,9 +540,9 @@ void StdSelect_BRepSelectionTool::GetEdgeSensitive (const TopoDS_Shape& theShape
 
       // simple subdivisions
       Standard_Integer nbintervals = 1;
-      if (cu3d.GetType() == GeomAbs_BSplineCurve)
+      if (cu3d->GetType() == GeomAbs_BSplineCurve)
       {
-        nbintervals = cu3d.NbKnots() - 1;
+        nbintervals = cu3d->NbKnots() - 1;
         nbintervals = Max (1, nbintervals / 3);
       }
 
@@ -553,7 +553,7 @@ void StdSelect_BRepSelectionTool::GetEdgeSensitive (const TopoDS_Shape& theShape
       for (Standard_Integer aPntId = 1; aPntId <= aPntNb; ++aPntId)
       {
         aParam = aParamFirst + aParamDelta * (aPntId - 1);
-        aPointArray->SetValue (aPntId, cu3d.Value (aParam));
+        aPointArray->SetValue (aPntId, cu3d->Value (aParam));
       }
       theSensitive = new Select3D_SensitiveCurve (theOwner, aPointArray);
     }

@@ -47,17 +47,17 @@ void Extrema_GExtPC::Perform(const ThePoint& P)
   Standard_Real t3d = Precision::Confusion();
   if (Precision::IsInfinite(myuinf)) mydist1 = RealLast();
   else {
-    Pf = TheCurveTool::Value(*((TheCurve*)myC), myuinf);
+    Pf = TheCurveTool::Value((TheCurve::element_type*)(myC), myuinf);
     mydist1 = P.SquareDistance(Pf);
   }
   
   if (Precision::IsInfinite(myusup)) mydist2 = RealLast();
   else {
-    Pl = TheCurveTool::Value(*((TheCurve*)myC), myusup);
+    Pl = TheCurveTool::Value((TheCurve::element_type*)(myC), myusup);
     mydist2 = P.SquareDistance(Pl);
   }
 
-  TheCurve & aCurve = *((TheCurve*)myC);
+  TheCurve aCurve = (TheCurve::element_type*)(myC);
 
   switch(type) {
   case GeomAbs_Circle: 
@@ -494,11 +494,11 @@ void Extrema_GExtPC::Initialize(const TheCurve&     C,
 				const Standard_Real Usup,
 				const Standard_Real TolF) 
 {
-  myC = (Standard_Address)&C;
+  myC = (Standard_Address)(C.get());
   myintuinf = myuinf = Uinf;
   myintusup = myusup = Usup;
   mytolf = TolF;
-  mytolu = TheCurveTool::Resolution(*((TheCurve*)myC), Precision::Confusion());
+  mytolu = TheCurveTool::Resolution((TheCurve::element_type*)(myC), Precision::Confusion());
   type = TheCurveTool::GetType(C);
   mydone = Standard_False;
   mydist1 = RealLast();
@@ -527,9 +527,9 @@ void Extrema_GExtPC::IntervalPerform(const ThePoint& P)
       // Verification de la validite des parametres pour le cas trimme:
       ThePOnC PC = myExtPC.Point(i);
       U = PC.Parameter();
-      if (TheCurveTool::IsPeriodic(*((TheCurve*)myC)))
+      if (TheCurveTool::IsPeriodic((TheCurve::element_type*)(myC)))
       {
-        U = ElCLib::InPeriod(U, myuinf, myuinf+TheCurveTool::Period(*((TheCurve*)myC)));
+        U = ElCLib::InPeriod(U, myuinf, myuinf+TheCurveTool::Period((TheCurve::element_type*)(myC)));
       }
       if ((U >= myuinf - mytolu) && (U <= myusup + mytolu))
       {

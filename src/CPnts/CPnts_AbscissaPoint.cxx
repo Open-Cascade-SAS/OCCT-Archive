@@ -54,9 +54,9 @@ static Standard_Real f2d(const Standard_Real X, const Standard_Address C)
   return V.Magnitude();
 }
 
-static Standard_Integer order(const Adaptor3d_Curve& C)
+static Standard_Integer order(const Handle(Adaptor3d_Curve)& C)
 {
-  switch (C.GetType()) {
+  switch (C->GetType()) {
     
   case GeomAbs_Line :
     return 2;
@@ -65,19 +65,19 @@ static Standard_Integer order(const Adaptor3d_Curve& C)
     return 5;
 
   case GeomAbs_BezierCurve :
-    return Min(24, 2*C.Degree());
+    return Min(24, 2*C->Degree());
 
   case GeomAbs_BSplineCurve :
-    return Min(24, 2*C.NbPoles()-1);
+    return Min(24, 2*C->NbPoles()-1);
     
     default :
       return 10;
   }
 }
 
-static Standard_Integer order(const Adaptor2d_Curve2d& C)
+static Standard_Integer order(const Handle(Adaptor2d_Curve2d)& C)
 {
-  switch (C.GetType()) {
+  switch (C->GetType()) {
     
   case GeomAbs_Line :
     return 2;
@@ -86,10 +86,10 @@ static Standard_Integer order(const Adaptor2d_Curve2d& C)
     return 5;
 
   case GeomAbs_BezierCurve :
-    return Min(24, 2*C.Bezier()->Degree());
+    return Min(24, 2*C->Bezier()->Degree());
 
   case GeomAbs_BSplineCurve :
-    return Min(24, 2*C.BSpline()->NbPoles()-1);
+    return Min(24, 2*C->BSpline()->NbPoles()-1);
     
     default :
       return 10;
@@ -102,10 +102,10 @@ static Standard_Integer order(const Adaptor2d_Curve2d& C)
 //purpose  : 3d
 //=======================================================================
 
-Standard_Real CPnts_AbscissaPoint::Length(const Adaptor3d_Curve& C) 
+Standard_Real CPnts_AbscissaPoint::Length(const Handle(Adaptor3d_Curve)& C) 
 {
-  return CPnts_AbscissaPoint::Length(C, C.FirstParameter(), 
-				        C.LastParameter());
+  return CPnts_AbscissaPoint::Length(C, C->FirstParameter(), 
+				        C->LastParameter());
 }
 
 //=======================================================================
@@ -113,10 +113,10 @@ Standard_Real CPnts_AbscissaPoint::Length(const Adaptor3d_Curve& C)
 //purpose  : 2d
 //=======================================================================
 
-Standard_Real CPnts_AbscissaPoint::Length(const Adaptor2d_Curve2d& C) 
+Standard_Real CPnts_AbscissaPoint::Length(const Handle(Adaptor2d_Curve2d)& C) 
 {
-  return CPnts_AbscissaPoint::Length(C, C.FirstParameter(), 
-				        C.LastParameter());
+  return CPnts_AbscissaPoint::Length(C, C->FirstParameter(), 
+				        C->LastParameter());
 }
 
 //=======================================================================
@@ -124,10 +124,10 @@ Standard_Real CPnts_AbscissaPoint::Length(const Adaptor2d_Curve2d& C)
 //purpose  : 3d with tolerance
 //=======================================================================
 
-Standard_Real CPnts_AbscissaPoint::Length(const Adaptor3d_Curve& C, const Standard_Real Tol) 
+Standard_Real CPnts_AbscissaPoint::Length(const Handle(Adaptor3d_Curve)& C, const Standard_Real Tol) 
 {
-  return CPnts_AbscissaPoint::Length(C, C.FirstParameter(), 
-				        C.LastParameter(), Tol);
+  return CPnts_AbscissaPoint::Length(C, C->FirstParameter(), 
+				        C->LastParameter(), Tol);
 }
 
 //=======================================================================
@@ -135,10 +135,10 @@ Standard_Real CPnts_AbscissaPoint::Length(const Adaptor3d_Curve& C, const Standa
 //purpose  : 2d with tolerance
 //=======================================================================
 
-Standard_Real CPnts_AbscissaPoint::Length(const Adaptor2d_Curve2d& C, const Standard_Real Tol) 
+Standard_Real CPnts_AbscissaPoint::Length(const Handle(Adaptor2d_Curve2d)& C, const Standard_Real Tol) 
 {
-  return CPnts_AbscissaPoint::Length(C, C.FirstParameter(), 
-				        C.LastParameter(), Tol);
+  return CPnts_AbscissaPoint::Length(C, C->FirstParameter(), 
+				        C->LastParameter(), Tol);
 }
 
 
@@ -147,14 +147,14 @@ Standard_Real CPnts_AbscissaPoint::Length(const Adaptor2d_Curve2d& C, const Stan
 //purpose  : 3d with parameters
 //=======================================================================
 
-Standard_Real CPnts_AbscissaPoint::Length(const Adaptor3d_Curve& C,
+Standard_Real CPnts_AbscissaPoint::Length(const Handle(Adaptor3d_Curve)& C,
 					  const Standard_Real U1,
 					  const Standard_Real U2) 
 {
   CPnts_MyGaussFunction FG;
 //POP pout WNT
   CPnts_RealFunction rf = f3d;
-  FG.Init(rf,(Standard_Address)&C);
+  FG.Init(rf, C.operator->());
 //  FG.Init(f3d,(Standard_Address)&C);
   math_GaussSingleIntegration TheLength(FG, U1, U2, order(C));
   if (!TheLength.IsDone()) {
@@ -168,14 +168,14 @@ Standard_Real CPnts_AbscissaPoint::Length(const Adaptor3d_Curve& C,
 //purpose  : 2d with parameters
 //=======================================================================
 
-Standard_Real CPnts_AbscissaPoint::Length(const Adaptor2d_Curve2d& C,
+Standard_Real CPnts_AbscissaPoint::Length(const Handle(Adaptor2d_Curve2d)& C,
 					  const Standard_Real U1,
 					  const Standard_Real U2) 
 {
   CPnts_MyGaussFunction FG;
 //POP pout WNT
   CPnts_RealFunction rf = f2d;
-  FG.Init(rf,(Standard_Address)&C);
+  FG.Init(rf, C.operator->());
 //  FG.Init(f2d,(Standard_Address)&C);
   math_GaussSingleIntegration TheLength(FG, U1, U2, order(C));
   if (!TheLength.IsDone()) {
@@ -189,7 +189,7 @@ Standard_Real CPnts_AbscissaPoint::Length(const Adaptor2d_Curve2d& C,
 //purpose  : 3d with parameters and tolerance
 //=======================================================================
 
-Standard_Real CPnts_AbscissaPoint::Length(const Adaptor3d_Curve& C,
+Standard_Real CPnts_AbscissaPoint::Length(const Handle(Adaptor3d_Curve)& C,
 					  const Standard_Real U1,
 					  const Standard_Real U2,
 					  const Standard_Real Tol) 
@@ -197,7 +197,7 @@ Standard_Real CPnts_AbscissaPoint::Length(const Adaptor3d_Curve& C,
   CPnts_MyGaussFunction FG;
 //POP pout WNT
   CPnts_RealFunction rf = f3d;
-  FG.Init(rf,(Standard_Address)&C);
+  FG.Init(rf, C.operator->());
 //  FG.Init(f3d,(Standard_Address)&C);
   math_GaussSingleIntegration TheLength(FG, U1, U2, order(C), Tol);
   if (!TheLength.IsDone()) {
@@ -211,7 +211,7 @@ Standard_Real CPnts_AbscissaPoint::Length(const Adaptor3d_Curve& C,
 //purpose  : 2d with parameters and tolerance
 //=======================================================================
 
-Standard_Real CPnts_AbscissaPoint::Length(const Adaptor2d_Curve2d& C,
+Standard_Real CPnts_AbscissaPoint::Length(const Handle(Adaptor2d_Curve2d)& C,
 					  const Standard_Real U1,
 					  const Standard_Real U2,
 					  const Standard_Real Tol) 
@@ -219,7 +219,7 @@ Standard_Real CPnts_AbscissaPoint::Length(const Adaptor2d_Curve2d& C,
   CPnts_MyGaussFunction FG;
 //POP pout WNT
   CPnts_RealFunction rf = f2d;
-  FG.Init(rf,(Standard_Address)&C);
+  FG.Init(rf, C.operator->());
 //  FG.Init(f2d,(Standard_Address)&C);
   math_GaussSingleIntegration TheLength(FG, U1, U2, order(C), Tol);
   if (!TheLength.IsDone()) {
@@ -247,7 +247,7 @@ CPnts_AbscissaPoint::CPnts_AbscissaPoint()
 //purpose  : 
 //=======================================================================
 
-CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Adaptor3d_Curve& C,
+CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Handle(Adaptor3d_Curve)& C,
 					 const Standard_Real   Abscissa,
 					 const Standard_Real   U0,
 					 const Standard_Real   Resolution)
@@ -263,7 +263,7 @@ CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Adaptor2d_Curve2d& C,
+CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Handle(Adaptor2d_Curve2d)& C,
 					 const Standard_Real   Abscissa,
 					 const Standard_Real   U0,
 					 const Standard_Real   Resolution)
@@ -278,7 +278,7 @@ CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Adaptor2d_Curve2d& C,
 //purpose  : 
 //=======================================================================
 
-CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Adaptor3d_Curve& C,
+CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Handle(Adaptor3d_Curve)& C,
 					 const Standard_Real   Abscissa,
 					 const Standard_Real   U0,
 					 const Standard_Real   Ui,
@@ -293,7 +293,7 @@ CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Adaptor2d_Curve2d& C,
+CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Handle(Adaptor2d_Curve2d)& C,
 					 const Standard_Real   Abscissa,
 					 const Standard_Real   U0,
 					 const Standard_Real   Ui,
@@ -309,9 +309,9 @@ CPnts_AbscissaPoint::CPnts_AbscissaPoint(const Adaptor2d_Curve2d& C,
 //purpose  : 
 //=======================================================================
 
-void CPnts_AbscissaPoint::Init(const Adaptor3d_Curve& C)
+void CPnts_AbscissaPoint::Init(const Handle(Adaptor3d_Curve)& C)
 {
-  Init(C,C.FirstParameter(),C.LastParameter());
+  Init(C, C->FirstParameter(), C->LastParameter());
 }
 
 //=======================================================================
@@ -319,9 +319,9 @@ void CPnts_AbscissaPoint::Init(const Adaptor3d_Curve& C)
 //purpose  : 
 //=======================================================================
 
-void CPnts_AbscissaPoint::Init(const Adaptor2d_Curve2d& C)
+void CPnts_AbscissaPoint::Init(const Handle(Adaptor2d_Curve2d)& C)
 {
-  Init(C,C.FirstParameter(),C.LastParameter());
+  Init(C, C->FirstParameter(), C->LastParameter());
 }
 
 //=======================================================================
@@ -329,9 +329,9 @@ void CPnts_AbscissaPoint::Init(const Adaptor2d_Curve2d& C)
 //purpose  : introduced by rbv for curvilinear parametrization
 //=======================================================================
 
-void CPnts_AbscissaPoint::Init(const Adaptor3d_Curve& C, const Standard_Real Tol)
+void CPnts_AbscissaPoint::Init(const Handle(Adaptor3d_Curve)& C, const Standard_Real Tol)
 {
-  Init(C,C.FirstParameter(),C.LastParameter(), Tol);
+  Init(C, C->FirstParameter(), C->LastParameter(), Tol);
 }
 
 //=======================================================================
@@ -339,9 +339,9 @@ void CPnts_AbscissaPoint::Init(const Adaptor3d_Curve& C, const Standard_Real Tol
 //purpose  : 
 //=======================================================================
 
-void CPnts_AbscissaPoint::Init(const Adaptor2d_Curve2d& C, const Standard_Real Tol)
+void CPnts_AbscissaPoint::Init(const Handle(Adaptor2d_Curve2d)& C, const Standard_Real Tol)
 {
-  Init(C,C.FirstParameter(),C.LastParameter(), Tol);
+  Init(C, C->FirstParameter(), C->LastParameter(), Tol);
 }
 
 //=======================================================================
@@ -349,13 +349,13 @@ void CPnts_AbscissaPoint::Init(const Adaptor2d_Curve2d& C, const Standard_Real T
 //purpose  : 
 //=======================================================================
 
-void CPnts_AbscissaPoint::Init(const Adaptor3d_Curve& C,
+void CPnts_AbscissaPoint::Init(const Handle(Adaptor3d_Curve)& C,
 			       const Standard_Real  U1,
 			       const Standard_Real  U2)
 {
 //POP pout WNT
   CPnts_RealFunction rf = f3d;
-  myF.Init(rf,(Standard_Address)&C,order(C));
+  myF.Init(rf, C.operator->(), order(C));
 //  myF.Init(f3d,(Standard_Address)&C,order(C));
   myL = CPnts_AbscissaPoint::Length(C, U1, U2);
   myUMin = Min(U1, U2);
@@ -370,13 +370,13 @@ void CPnts_AbscissaPoint::Init(const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-void CPnts_AbscissaPoint::Init(const Adaptor2d_Curve2d& C,
+void CPnts_AbscissaPoint::Init(const Handle(Adaptor2d_Curve2d)& C,
 			       const Standard_Real    U1,
 			       const Standard_Real    U2)
 {
 //POP pout WNT
   CPnts_RealFunction rf = f2d;
-  myF.Init(rf,(Standard_Address)&C,order(C));
+  myF.Init(rf, C.operator->(), order(C));
 //  myF.Init(f2d,(Standard_Address)&C,order(C));
   myL = CPnts_AbscissaPoint::Length(C, U1, U2);
   myUMin = Min(U1, U2);
@@ -392,14 +392,14 @@ void CPnts_AbscissaPoint::Init(const Adaptor2d_Curve2d& C,
 //purpose  : introduced by rbv for curvilinear parametrization
 //=======================================================================
 
-void CPnts_AbscissaPoint::Init(const Adaptor3d_Curve& C,
+void CPnts_AbscissaPoint::Init(const Handle(Adaptor3d_Curve)& C,
 			       const Standard_Real  U1,
 			       const Standard_Real  U2,
 			       const Standard_Real  Tol)
 {
 //POP pout WNT
   CPnts_RealFunction rf = f3d;
-  myF.Init(rf,(Standard_Address)&C,order(C));
+  myF.Init(rf, C.operator->(), order(C));
 //  myF.Init(f3d,(Standard_Address)&C,order(C));
   myL = CPnts_AbscissaPoint::Length(C, U1, U2, Tol);
   myUMin = Min(U1, U2);
@@ -414,14 +414,14 @@ void CPnts_AbscissaPoint::Init(const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-void CPnts_AbscissaPoint::Init(const Adaptor2d_Curve2d& C,
+void CPnts_AbscissaPoint::Init(const Handle(Adaptor2d_Curve2d)& C,
 			       const Standard_Real    U1,
 			       const Standard_Real    U2,
 			       const Standard_Real    Tol)
 {
 //POP pout WNT
   CPnts_RealFunction rf = f2d;
-  myF.Init(rf,(Standard_Address)&C,order(C));
+  myF.Init(rf, C.operator->(), order(C));
 //  myF.Init(f2d,(Standard_Address)&C,order(C));
   myL = CPnts_AbscissaPoint::Length(C, U1, U2, Tol);
   myUMin = Min(U1, U2);

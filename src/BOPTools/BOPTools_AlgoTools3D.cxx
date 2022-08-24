@@ -961,7 +961,7 @@ Standard_Integer BOPTools_AlgoTools3D::PointInFace
   //
   Geom2dHatch_Hatcher& aHatcher = theContext->Hatcher(theF);
   //
-  Geom2dAdaptor_Curve aHCur(theL2D);
+  Handle(Geom2dAdaptor_Curve) aHCur = new Geom2dAdaptor_Curve(theL2D);
   //
   aHatcher.ClrHatchings();
   aIH = aHatcher.AddHatching(aHCur);

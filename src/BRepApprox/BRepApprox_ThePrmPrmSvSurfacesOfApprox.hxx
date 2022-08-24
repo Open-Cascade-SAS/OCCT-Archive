@@ -46,7 +46,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT BRepApprox_ThePrmPrmSvSurfacesOfApprox(const BRepAdaptor_Surface& Surf1, const BRepAdaptor_Surface& Surf2);
+  Standard_EXPORT BRepApprox_ThePrmPrmSvSurfacesOfApprox(const Handle(BRepAdaptor_Surface)& Surf1, const Handle(BRepAdaptor_Surface)& Surf2);
   
   //! returns True if Tg,Tguv1 Tguv2 can be computed.
   Standard_EXPORT Standard_Boolean Compute (Standard_Real& u1, Standard_Real& v1, Standard_Real& u2, Standard_Real& v2,

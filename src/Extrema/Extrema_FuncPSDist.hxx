@@ -48,7 +48,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   //! Constructor.
-  Standard_EXPORT Extrema_FuncPSDist(const Adaptor3d_Surface& theS,
+  Standard_EXPORT Extrema_FuncPSDist(const Handle(Adaptor3d_Surface)& theS,
                                      const gp_Pnt& theP);
 
   //! Number of variables.
@@ -73,7 +73,7 @@ private:
   const Extrema_FuncPSDist& operator=(const Extrema_FuncPSDist&);
   Extrema_FuncPSDist(const Extrema_FuncPSDist&);
 
-  const Adaptor3d_Surface &mySurf;
+  const Handle(Adaptor3d_Surface) &mySurf;
   const gp_Pnt &myP;
 };
 #endif // _Extrema_FuncPSDsit_HeaderFile

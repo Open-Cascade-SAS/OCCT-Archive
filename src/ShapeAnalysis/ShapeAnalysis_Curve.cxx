@@ -59,7 +59,7 @@
 //function : ProjectOnSegments
 //purpose  : 
 //=======================================================================
-static void ProjectOnSegments (const Adaptor3d_Curve& AC, const gp_Pnt& P3D,
+static void ProjectOnSegments (const Handle(Adaptor3d_Curve)& AC, const gp_Pnt& P3D,
 			       const Standard_Integer nbseg,
 			       Standard_Real& uMin, Standard_Real& uMax,
 			       Standard_Real& distmin, gp_Pnt& proj, Standard_Real& param)
@@ -72,7 +72,7 @@ static void ProjectOnSegments (const Adaptor3d_Curve& AC, const gp_Pnt& P3D,
   Standard_Boolean aHasChanged = Standard_False;
   for (Standard_Integer i = 0; i <= nbseg; i ++) {
     u = uMin + (delta * i);
-    gp_Pnt PU = AC.Value (u);
+    gp_Pnt PU = AC->Value (u);
     dist2 = PU.SquareDistance (P3D);
     if (dist2 < distmin2)  {  distmin2 = dist2;  proj = PU;  param = u; aHasChanged = Standard_True;  }
   }
@@ -123,11 +123,11 @@ Standard_Real ShapeAnalysis_Curve::Project(const Handle(Geom_Curve)& C3D,
   Standard_Real uMin = (cf < cl ? cf : cl);
   Standard_Real uMax = (cf < cl ? cl : cf);
   
-  GeomAdaptor_Curve GAC(C3D, uMin, uMax);
+  Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(C3D, uMin, uMax);
   if (C3D->IsKind(STANDARD_TYPE(Geom_BoundedCurve))) {
     Standard_Real prec = ( AdjustToEnds ? preci : Precision::Confusion() ); //:j8 abv 10 Dec 98: tr10_r0501_db.stp #9423: protection against densing of points near one end
-    gp_Pnt LowBound = GAC.Value(uMin);
-    gp_Pnt HigBound = GAC.Value(uMax);
+    gp_Pnt LowBound = GAC->Value(uMin);
+    gp_Pnt HigBound = GAC->Value(uMax);
     distmin = LowBound.Distance(P3D);
     if (distmin <= prec) {
       param = uMin;
@@ -151,10 +151,10 @@ Standard_Real ShapeAnalysis_Curve::Project(const Handle(Geom_Curve)& C3D,
     //uMin = uMin - 0.1;
     //uMax = uMax + 0.1;
     // modified by pdn on 01.07.98 after BUC60195 entity 1952 (Min() added)
-    Standard_Real delta = Min (GAC.Resolution (preci), (uMax - uMin) * 0.1);
+    Standard_Real delta = Min (GAC->Resolution (preci), (uMax - uMin) * 0.1);
     uMin -= delta;
     uMax += delta;
-    GAC.Load(C3D, uMin, uMax);
+    GAC->Load(C3D, uMin, uMax);
   }
 
   return ProjectAct(GAC, P3D, preci, proj, param);
@@ -165,7 +165,7 @@ Standard_Real ShapeAnalysis_Curve::Project(const Handle(Geom_Curve)& C3D,
 //purpose  : 
 //=======================================================================
 
-Standard_Real ShapeAnalysis_Curve::Project(const Adaptor3d_Curve& C3D,
+Standard_Real ShapeAnalysis_Curve::Project(const Handle(Adaptor3d_Curve)& C3D,
 					   const gp_Pnt& P3D,
 					   const Standard_Real preci,
 					   gp_Pnt& proj,
@@ -174,16 +174,16 @@ Standard_Real ShapeAnalysis_Curve::Project(const Adaptor3d_Curve& C3D,
 
 {
 
-  Standard_Real uMin = C3D.FirstParameter();
-  Standard_Real uMax = C3D.LastParameter();
+  Standard_Real uMin = C3D->FirstParameter();
+  Standard_Real uMax = C3D->LastParameter();
   
   if (Precision::IsInfinite(uMin) && Precision::IsInfinite(uMax))
     return ProjectAct(C3D, P3D, preci, proj, param);
 
   Standard_Real distmin_L = Precision::Infinite(), distmin_H = Precision::Infinite();
   Standard_Real prec = ( AdjustToEnds ? preci : Precision::Confusion() ); //:j8 abv 10 Dec 98: tr10_r0501_db.stp #9423: protection against densing of points near one end
-  gp_Pnt LowBound = C3D.Value(uMin);
-  gp_Pnt HigBound = C3D.Value(uMax);
+  gp_Pnt LowBound = C3D->Value(uMin);
+  gp_Pnt HigBound = C3D->Value(uMax);
   distmin_L = LowBound.Distance(P3D);
   distmin_H = HigBound.Distance(P3D);
 
@@ -220,7 +220,7 @@ Standard_Real ShapeAnalysis_Curve::Project(const Adaptor3d_Curve& C3D,
 //purpose  : 
 //=======================================================================
 
-Standard_Real ShapeAnalysis_Curve::ProjectAct(const Adaptor3d_Curve& C3D,
+Standard_Real ShapeAnalysis_Curve::ProjectAct(const Handle(Adaptor3d_Curve)& C3D,
 					      const gp_Pnt& P3D,
 					      const Standard_Real preci,
 					      gp_Pnt& proj,
@@ -267,7 +267,7 @@ Standard_Real ShapeAnalysis_Curve::ProjectAct(const Adaptor3d_Curve& C3D,
   }
   
   //szv#4:S4163:12Mar99 moved
-  Standard_Real uMin = C3D.FirstParameter(), uMax = C3D.LastParameter();
+  Standard_Real uMin = C3D->FirstParameter(), uMax = C3D->LastParameter();
   Standard_Boolean closed = Standard_False;  // si on franchit les bornes ...
   Standard_Real distmin = Precision::Infinite(), valclosed = 0.;
   Standard_Real aModParam = param;
@@ -286,7 +286,7 @@ Standard_Real ShapeAnalysis_Curve::ProjectAct(const Adaptor3d_Curve& C3D,
     if (distmin > preci) OK = Standard_False;
     // Cas TrimmedCurve a cheval. Voir la courbe de base.
     // Si fermee, passer une periode
-    if (C3D.IsClosed()) {
+    if (C3D->IsClosed()) {
       closed = Standard_True;
       valclosed = uMax - uMin; //szv#4:S4163:12Mar99 optimized
     }
@@ -300,14 +300,14 @@ Standard_Real ShapeAnalysis_Curve::ProjectAct(const Adaptor3d_Curve& C3D,
     //  MEME PAS BIEN BON. L appelant pourra decider alors quoi faire
     param = 0.;
 
-    switch(C3D.GetType()) {
+    switch(C3D->GetType()) {
     case GeomAbs_Circle:
       {
-        const gp_Circ& aCirc = C3D.Circle();
+        const gp_Circ& aCirc = C3D->Circle();
         proj = aCirc.Position().Location();
         if(aCirc.Radius() <= gp::Resolution() ||
            P3D.SquareDistance(proj) <= gp::Resolution() ) {
-          param = C3D.FirstParameter();
+          param = C3D->FirstParameter();
           proj = proj.XYZ() + aCirc.XAxis().Direction().XYZ() * aCirc.Radius();
         }
         else {
@@ -320,26 +320,26 @@ Standard_Real ShapeAnalysis_Curve::ProjectAct(const Adaptor3d_Curve& C3D,
       break;
     case GeomAbs_Hyperbola:
       {
-	param = ElCLib::Parameter(C3D.Hyperbola(), P3D);
-	proj  = ElCLib::Value(param, C3D.Hyperbola());
+	param = ElCLib::Parameter(C3D->Hyperbola(), P3D);
+	proj  = ElCLib::Value(param, C3D->Hyperbola());
       }
       break;
     case GeomAbs_Parabola:
       {
-	param = ElCLib::Parameter(C3D.Parabola(), P3D);
-	proj  = ElCLib::Value(param, C3D.Parabola());
+	param = ElCLib::Parameter(C3D->Parabola(), P3D);
+	proj  = ElCLib::Value(param, C3D->Parabola());
       }
       break;
     case GeomAbs_Line:
       {
-	param = ElCLib::Parameter(C3D.Line(), P3D);
-	proj  = ElCLib::Value(param, C3D.Line());
+	param = ElCLib::Parameter(C3D->Line(), P3D);
+	proj  = ElCLib::Value(param, C3D->Line());
       }
       break;
     case GeomAbs_Ellipse:
       {
-	param = ElCLib::Parameter(C3D.Ellipse(), P3D);
-	proj  = ElCLib::Value(param, C3D.Ellipse());
+	param = ElCLib::Parameter(C3D->Ellipse(), P3D);
+	proj  = ElCLib::Value(param, C3D->Ellipse());
 	closed = Standard_True;
 	valclosed = 2.*M_PI;
 
@@ -418,11 +418,11 @@ Standard_Real ShapeAnalysis_Curve::NextProject(const Standard_Real paramPrev,
   Standard_Real uMin = (cf < cl ? cf : cl);
   Standard_Real uMax = (cf < cl ? cl : cf);
   Standard_Real distmin = Precision::Infinite();
-  GeomAdaptor_Curve GAC(C3D, uMin, uMax);
+  Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(C3D, uMin, uMax);
   if (C3D->IsKind(STANDARD_TYPE(Geom_BoundedCurve))) {
     Standard_Real prec = ( AdjustToEnds ? preci : Precision::Confusion() ); //:j8 abv 10 Dec 98: tr10_r0501_db.stp #9423: protection against densing of points near one end
-    gp_Pnt LowBound = GAC.Value(uMin);
-    gp_Pnt HigBound = GAC.Value(uMax);
+    gp_Pnt LowBound = GAC->Value(uMin);
+    gp_Pnt HigBound = GAC->Value(uMax);
     distmin = LowBound.Distance(P3D);
     if (distmin <= prec) {
       param = uMin;
@@ -446,10 +446,10 @@ Standard_Real ShapeAnalysis_Curve::NextProject(const Standard_Real paramPrev,
     //uMin = uMin - 0.1;
     //uMax = uMax + 0.1;
     // modified by pdn on 01.07.98 after BUC60195 entity 1952 (Min() added)
-    Standard_Real delta = Min (GAC.Resolution (preci), (uMax - uMin) * 0.1);
+    Standard_Real delta = Min (GAC->Resolution (preci), (uMax - uMin) * 0.1);
     uMin -= delta;
     uMax += delta;
-    GAC.Load(C3D, uMin, uMax);
+    GAC->Load(C3D, uMin, uMax);
   }
   return NextProject ( paramPrev, GAC, P3D, preci, proj, param );
 }
@@ -460,14 +460,14 @@ Standard_Real ShapeAnalysis_Curve::NextProject(const Standard_Real paramPrev,
 //=======================================================================
 
 Standard_Real ShapeAnalysis_Curve::NextProject(const Standard_Real paramPrev,
-					       const Adaptor3d_Curve& C3D,
+					       const Handle(Adaptor3d_Curve)& C3D,
 					       const gp_Pnt& P3D,
 					       const Standard_Real preci,
 					       gp_Pnt& proj,
 					       Standard_Real& param) const
 {
-  Standard_Real uMin = C3D.FirstParameter();
-  Standard_Real uMax = C3D.LastParameter();
+  Standard_Real uMin = C3D->FirstParameter();
+  Standard_Real uMax = C3D->LastParameter();
   
   Extrema_LocateExtPC aProjector (P3D, C3D, paramPrev/*U0*/, uMin, uMax, preci/*TolU*/);
   if (aProjector.IsDone()){
@@ -1087,14 +1087,14 @@ Standard_Boolean ShapeAnalysis_Curve::GetSamplePoints (const Handle(Geom2d_Curve
 {
   //:abv 05.06.02: TUBE.stp 
   // Use the same distribution of points as BRepTopAdaptor_FClass2d for consistency
-  Geom2dAdaptor_Curve C ( curve, first, last );
+  Handle(Geom2dAdaptor_Curve) C = new Geom2dAdaptor_Curve( curve, first, last );
   Standard_Integer nbs = Geom2dInt_Geom2dCurveTool::NbSamples(C);
   //-- Attention aux bsplines rationnelles de degree 3. (bouts de cercles entre autres)
   if (nbs > 2) nbs*=4;
   Standard_Real step = ( last - first ) / (Standard_Real)( nbs - 1 );
   for (Standard_Integer i = 0; i < nbs - 1; ++i)
-    seq.Append(C.Value(first + step * i));
-  seq.Append(C.Value(last));
+    seq.Append(C->Value(first + step * i));
+  seq.Append(C->Value(last));
   return Standard_True;
 /*
   Standard_Integer i;

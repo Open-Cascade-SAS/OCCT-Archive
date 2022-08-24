@@ -117,7 +117,7 @@ void DrawTrSurf_Curve::DrawOn (Draw_Display& dis) const
   }    
   
   dis.SetColor (look);
-  GeomAdaptor_Curve C(curv,First,Last);
+  Handle(GeomAdaptor_Curve) C = new GeomAdaptor_Curve(curv,First,Last);
   DrawCurveOn(C,dis);
 
   // mark the orientation
@@ -125,7 +125,7 @@ void DrawTrSurf_Curve::DrawOn (Draw_Display& dis) const
     Draw_Bounds = Standard_False;
     gp_Pnt P;
     gp_Vec V;
-    C.D1(Last,P,V);
+    C->D1(Last,P,V);
     gp_Pnt2d p1,p2;
     dis.Project(P,p1);
     P.Translate(V);
@@ -144,11 +144,11 @@ void DrawTrSurf_Curve::DrawOn (Draw_Display& dis) const
     Draw_Bounds = Standard_True;
   }
 // Draw the curvature Radius      
-  if (dispcurvradius && (C.GetType() != GeomAbs_Line)) {
+  if (dispcurvradius && (C->GetType() != GeomAbs_Line)) {
     Standard_Integer ii;
-    Standard_Integer intrv, nbintv = C.NbIntervals(GeomAbs_CN);
+    Standard_Integer intrv, nbintv = C->NbIntervals(GeomAbs_CN);
     TColStd_Array1OfReal TI(1,nbintv+1);
-    C.Intervals(TI,GeomAbs_CN);
+    C->Intervals(TI,GeomAbs_CN);
     Standard_Real Resolution = 1.0e-9, Curvature;
     GeomLProp_CLProps LProp(curv, 2, Resolution);
     gp_Pnt P1, P2;    

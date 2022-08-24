@@ -373,9 +373,9 @@ void BOPAlgo_PaveFiller::PerformEF(const Message_ProgressRange& theRange)
     //
     Standard_Boolean bLinePlane = Standard_False;
     if (aNbCPrts) {
-      BRepAdaptor_Curve aBAC(aE);
-      bLinePlane = (aBAC.GetType() == GeomAbs_Line &&
-                    myContext->SurfaceAdaptor(aF).GetType() == GeomAbs_Plane);
+      Handle(BRepAdaptor_Curve) aBAC = new BRepAdaptor_Curve(aE);
+      bLinePlane = (aBAC->GetType() == GeomAbs_Line &&
+                    myContext->SurfaceAdaptor(aF)->GetType() == GeomAbs_Plane);
     }
     //
     for (i=1; i<=aNbCPrts; ++i) {
@@ -916,7 +916,7 @@ void BOPAlgo_PaveFiller::ForceInterfEF(const BOPDS_IndexedMapOfPaveBlock& theMPB
 
     // Projection tool
     GeomAPI_ProjectPointOnSurf& aProjPS = myContext->ProjPS(aF);
-    BRepAdaptor_Surface& aSurfAdaptor = myContext->SurfaceAdaptor (aF);
+    const Handle(BRepAdaptor_Surface)& aSurfAdaptor = myContext->SurfaceAdaptor (aF);
 
     // Iterate on pave blocks and combine pairs containing
     // the same vertices
@@ -996,7 +996,7 @@ void BOPAlgo_PaveFiller::ForceInterfEF(const BOPDS_IndexedMapOfPaveBlock& theMPB
       if (!myContext->IsPointInFace(aF, gp_Pnt2d(U, V)))
         continue;
 
-      if (aSurfAdaptor.GetType() != GeomAbs_Plane ||
+      if (aSurfAdaptor->GetType() != GeomAbs_Plane ||
           aBAC.GetType() != GeomAbs_Line)
       {
         gp_Pnt aPOnS = aProjPS.NearestPoint();

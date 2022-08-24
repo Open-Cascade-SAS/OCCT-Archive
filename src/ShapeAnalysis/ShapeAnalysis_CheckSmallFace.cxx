@@ -308,7 +308,7 @@ static Standard_Boolean MinMaxSmall
       gp_Pnt p2, p1 = C1T->Value (u);
       Standard_Real para;
       //pdn Adaptor curve is used to avoid of enhancing of domain.
-      GeomAdaptor_Curve GAC(C2T);
+      Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(C2T);
       Standard_Real dist = SAC.Project (GAC,p1,toler,p2,para);
       //pdn check if parameter of projection is in the domain of the edge.
       if (para < f || para > l) return Standard_False;
@@ -897,7 +897,7 @@ Standard_Boolean  ShapeAnalysis_CheckSmallFace::CheckTwisted (const TopoDS_Face&
       //else proj = C2->Value(paramc2 -d2); 
     }
   Standard_Real param;
-  GeomAdaptor_Curve GAC(C3);
+  Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(C3);
   Standard_Real f = C3->FirstParameter();
   Standard_Real l = C3->LastParameter();
   gp_Pnt result;

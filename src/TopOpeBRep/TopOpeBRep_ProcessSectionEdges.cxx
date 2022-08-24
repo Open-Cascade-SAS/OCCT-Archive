@@ -224,11 +224,11 @@ Standard_EXPORT Standard_Boolean FUN_brep_sdmRE(const TopoDS_Edge& E1, const Top
 { // prequesitory : E1, E2 are restriction edges of opposite rank
   //                found in the same FacesFiller
   Standard_Boolean ok = Standard_False;
-  BRepAdaptor_Curve BAC;
+  Handle(BRepAdaptor_Curve) BAC = new BRepAdaptor_Curve();
   TopoDS_Vertex v1,v2;TopExp::Vertices(E1,v1,v2);
   TopoDS_Vertex v3,v4;TopExp::Vertices(E2,v3,v4);
   if (!ok) {
-    BAC.Initialize(E1);
+    BAC->Initialize(E1);
     Standard_Real tol1 = BRep_Tool::Tolerance(E1);
     Standard_Real tol2 = BRep_Tool::Tolerance(v3);
     Standard_Real tol3 = BRep_Tool::Tolerance(v4);
@@ -243,7 +243,7 @@ Standard_EXPORT Standard_Boolean FUN_brep_sdmRE(const TopoDS_Edge& E1, const Top
     }
   }
   if (!ok) {
-    BAC.Initialize(E2);
+    BAC->Initialize(E2);
     Standard_Real tol1 = BRep_Tool::Tolerance(E2);
     Standard_Real tol2 = BRep_Tool::Tolerance(v1);
     Standard_Real tol3 = BRep_Tool::Tolerance(v2);

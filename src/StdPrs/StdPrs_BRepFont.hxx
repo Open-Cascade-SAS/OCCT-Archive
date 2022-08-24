@@ -240,7 +240,7 @@ protected: //! @name Protected fields
 
 protected: //! @name Shared temporary variables for glyph construction
 
-  Adaptor3d_CurveOnSurface myCurvOnSurf;
+  Handle(Adaptor3d_CurveOnSurface) myCurvOnSurf;
   Handle(Geom2dAdaptor_Curve) myCurve2dAdaptor;
   Geom2dConvert_CompCurveToBSplineCurve myConcatMaker;
   TColgp_Array1OfPnt2d     my3Poles;

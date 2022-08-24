@@ -89,7 +89,7 @@ public:
   
   Standard_EXPORT static void stuvF (const gp_Pnt2d& uv, const TopoDS_Face& F, Standard_Integer& onU, Standard_Integer& onV);
   
-  Standard_EXPORT static Standard_Boolean TggeomE (const Standard_Real par, const BRepAdaptor_Curve& BC, gp_Vec& Tg);
+  Standard_EXPORT static Standard_Boolean TggeomE (const Standard_Real par, const Handle(BRepAdaptor_Curve)& BC, gp_Vec& Tg);
   
   Standard_EXPORT static Standard_Boolean TggeomE (const Standard_Real par, const TopoDS_Edge& E, gp_Vec& Tg);
   

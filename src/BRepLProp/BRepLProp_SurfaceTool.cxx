@@ -24,12 +24,13 @@
 //function : Value
 //purpose  : 
 //=======================================================================
-void BRepLProp_SurfaceTool::Value(const BRepAdaptor_Surface& S, 
+void BRepLProp_SurfaceTool::Value(const Handle(BRepAdaptor_Surface)& S, 
 				  const Standard_Real U, 
 				  const Standard_Real V, 
 				  gp_Pnt& P)
 {
-  P = S.Value(U, V);
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
+  P = S->Value(U, V);
 }
 
 
@@ -38,14 +39,15 @@ void BRepLProp_SurfaceTool::Value(const BRepAdaptor_Surface& S,
 //purpose  : 
 //=======================================================================
 
-void BRepLProp_SurfaceTool::D1(const BRepAdaptor_Surface& S, 
+void BRepLProp_SurfaceTool::D1(const Handle(BRepAdaptor_Surface)& S, 
 			       const Standard_Real U, 
 			       const Standard_Real V, 
 			       gp_Pnt& P, 
 			       gp_Vec& D1U, 
 			       gp_Vec& D1V)
 {
-  S.D1(U, V, P, D1U, D1V);
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
+  S->D1(U, V, P, D1U, D1V);
 }
 
 
@@ -54,7 +56,7 @@ void BRepLProp_SurfaceTool::D1(const BRepAdaptor_Surface& S,
 //purpose  : 
 //=======================================================================
 
-void BRepLProp_SurfaceTool::D2(const BRepAdaptor_Surface& S, 
+void BRepLProp_SurfaceTool::D2(const Handle(BRepAdaptor_Surface)& S, 
 			       const Standard_Real U, 
 			       const Standard_Real V, 
 			       gp_Pnt& P, 
@@ -64,20 +66,22 @@ void BRepLProp_SurfaceTool::D2(const BRepAdaptor_Surface& S,
 			       gp_Vec& D2V, 
 			       gp_Vec& DUV)
 {
-  S.D2(U, V, P, D1U, D1V, D2U, D2V, DUV);
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
+  S->D2(U, V, P, D1U, D1V, D2U, D2V, DUV);
 }
 
 //=======================================================================
 //function : DN
 //purpose  : 
 //=======================================================================
-gp_Vec BRepLProp_SurfaceTool::DN(const BRepAdaptor_Surface& S, 
+gp_Vec BRepLProp_SurfaceTool::DN(const Handle(BRepAdaptor_Surface)& S, 
 				 const Standard_Real U, 
 				 const Standard_Real V,
 				 const Standard_Integer IU,
 				 const Standard_Integer IV)
 {
-  return S.DN(U, V, IU, IV);
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
+  return S->DN(U, V, IU, IV);
 }
 
 
@@ -87,9 +91,10 @@ gp_Vec BRepLProp_SurfaceTool::DN(const BRepAdaptor_Surface& S,
 //=======================================================================
 
 Standard_Integer BRepLProp_SurfaceTool::Continuity
-  (const BRepAdaptor_Surface& S)
+  (const Handle(BRepAdaptor_Surface)& S)
 {
-  GeomAbs_Shape s = (GeomAbs_Shape) Min(S.UContinuity(),S.VContinuity());
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
+  GeomAbs_Shape s = (GeomAbs_Shape) Min(S->UContinuity(),S->VContinuity());
   switch (s) {
   case GeomAbs_C0:
     return 0;
@@ -115,16 +120,17 @@ Standard_Integer BRepLProp_SurfaceTool::Continuity
 //purpose  : 
 //=======================================================================
 
-void BRepLProp_SurfaceTool::Bounds(const BRepAdaptor_Surface& S, 
+void BRepLProp_SurfaceTool::Bounds(const Handle(BRepAdaptor_Surface)& S, 
 				   Standard_Real& U1, 
 				   Standard_Real& V1, 
 				   Standard_Real& U2, 
 				   Standard_Real& V2)
 {
-  U1 = S.FirstUParameter();
-  V1 = S.FirstVParameter();
-  U2 = S.LastUParameter();
-  V2 = S.LastVParameter();
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
+  U1 = S->FirstUParameter();
+  V1 = S->FirstVParameter();
+  U2 = S->LastUParameter();
+  V2 = S->LastVParameter();
 }
 
 

@@ -2262,12 +2262,12 @@ static Standard_Real ComputeAveragePlaneAndMaxDeviation(const TopoDS_Shape& aWir
   for (TopoDS_Iterator iter (aWire); iter.More(); iter.Next())
     {
       const TopoDS_Edge& anEdge = TopoDS::Edge( iter.Value() );
-      BRepAdaptor_Curve aCurve(anEdge);
+      Handle(BRepAdaptor_Curve) aCurve = new BRepAdaptor_Curve(anEdge);
       GCPnts_UniformAbscissa Distribution( aCurve, N+1 );
       for (i = 1; i <= N; i++)
         {
           Standard_Real par = Distribution.Parameter(i);
-          Pnts( ind++ ) = aCurve.Value(par);
+          Pnts( ind++ ) = aCurve->Value(par);
         }
     }
 

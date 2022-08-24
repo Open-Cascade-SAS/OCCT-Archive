@@ -1611,7 +1611,7 @@ static Standard_Integer OCC27466(Draw_Interpretor& theDI,
   gp_Pnt2d aUV;
   if (!DrawTrSurf::GetPoint2d(theArgVal[3], aUV))
     return 1;
-  BRepAdaptor_Surface aSurf(aFace);
+  Handle(BRepAdaptor_Surface) aSurf = new BRepAdaptor_Surface(aFace);
 
   Standard_Real aTolU = Precision::PConfusion();
   Standard_Real aTolV = Precision::PConfusion();
@@ -1933,8 +1933,8 @@ static Standard_Integer OCC27357(Draw_Interpretor& theDI,
     aCurve1->D1(u,aP1,aTangent);
     gp_Vec2d aNormal(-aTangent.Y(),aTangent.X());
     Handle(Geom2d_Line) normalLine=new Geom2d_Line(aP1, gp_Dir2d(aNormal));
-    Geom2dGcc_QualifiedCurve qualifiedC1(Geom2dAdaptor_Curve(aCurve1),GccEnt_unqualified);
-    Geom2dGcc_QualifiedCurve qualifiedC2(Geom2dAdaptor_Curve(aCurve2),GccEnt_unqualified);
+    Geom2dGcc_QualifiedCurve qualifiedC1(new Geom2dAdaptor_Curve(aCurve1),GccEnt_unqualified);
+    Geom2dGcc_QualifiedCurve qualifiedC2(new Geom2dAdaptor_Curve(aCurve2),GccEnt_unqualified);
 
     try
     {
@@ -1943,7 +1943,7 @@ static Standard_Integer OCC27357(Draw_Interpretor& theDI,
       Geom2dAPI_ProjectPointOnCurve projPc3(aP1, normalLine);
       double g3 = projPc3.LowerDistanceParameter();
       Geom2dGcc_Circ2d2TanOn aCircleBuilder(qualifiedC1,qualifiedC2,
-        Geom2dAdaptor_Curve(normalLine),1e-9,g1,g1,g3);
+        new Geom2dAdaptor_Curve(normalLine),1e-9,g1,g1,g3);
       aDuumyList.Append(aCircleBuilder.NbSolutions());
     }
     catch(Standard_Failure const&)
@@ -4238,7 +4238,7 @@ static Standard_Integer OCC32744(Draw_Interpretor& theDi, Standard_Integer theNb
   {
     Standard_Real firstParam = 0., lastParam = 0.;
     Handle(Geom_Curve) pCurve = BRep_Tool::Curve(anEdge, firstParam, lastParam);
-    GeomAdaptor_Curve curveAdaptor(pCurve, firstParam, lastParam);
+    Handle(GeomAdaptor_Curve) curveAdaptor = new GeomAdaptor_Curve(pCurve, firstParam, lastParam);
     GCPnts_UniformDeflection uniformAbs(curveAdaptor, 0.001, firstParam, lastParam); 
   }
 

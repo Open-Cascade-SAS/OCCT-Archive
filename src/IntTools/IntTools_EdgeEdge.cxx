@@ -34,7 +34,7 @@
 #include <BRepExtrema_DistShapeShape.hxx>
 
 static 
-  void BndBuildBox(const BRepAdaptor_Curve& theBAC,
+  void BndBuildBox(const Handle(BRepAdaptor_Curve)& theBAC,
                    const Standard_Real aT1,
                    const Standard_Real aT2,
                    const Standard_Real theTol,
@@ -79,7 +79,7 @@ static
                               Standard_Real& aT2max,
                               const Standard_Boolean bMaxDist = Standard_True);
 static
-  Standard_Real ResolutionCoeff(const BRepAdaptor_Curve& theBAC,
+  Standard_Real ResolutionCoeff(const Handle(BRepAdaptor_Curve)& theBAC,
                                 const IntTools_Range& theRange);
 static
   Standard_Real Resolution(const Handle(Geom_Curve)& theCurve,
@@ -87,7 +87,7 @@ static
                            const Standard_Real theResCoeff,
                            const Standard_Real theR3D);
 static
-  Standard_Real CurveDeflection(const BRepAdaptor_Curve& theBAC,
+  Standard_Real CurveDeflection(const Handle(BRepAdaptor_Curve)& theBAC,
                                 const IntTools_Range& theRange);
 static 
   Standard_Boolean IsClosed(const Handle(Geom_Curve)& theCurve,
@@ -107,21 +107,21 @@ void IntTools_EdgeEdge::Prepare()
   GeomAbs_CurveType aCT1, aCT2;
   Standard_Integer iCT1, iCT2;
   //
-  myCurve1.Initialize(myEdge1);
-  myCurve2.Initialize(myEdge2);
+  myCurve1->Initialize(myEdge1);
+  myCurve2->Initialize(myEdge2);
   //
   if (myRange1.First() == 0. && myRange1.Last() == 0.) {
-    myRange1.SetFirst(myCurve1.FirstParameter());
-    myRange1.SetLast (myCurve1.LastParameter());
+    myRange1.SetFirst(myCurve1->FirstParameter());
+    myRange1.SetLast (myCurve1->LastParameter());
   }
   //
   if (myRange2.First() == 0. && myRange2.Last() == 0.) {
-    myRange2.SetFirst(myCurve2.FirstParameter());
-    myRange2.SetLast (myCurve2.LastParameter());
+    myRange2.SetFirst(myCurve2->FirstParameter());
+    myRange2.SetLast (myCurve2->LastParameter());
   }
   //
-  aCT1 = myCurve1.GetType();
-  aCT2 = myCurve2.GetType();
+  aCT1 = myCurve1->GetType();
+  aCT2 = myCurve2->GetType();
   //
   iCT1 = TypeToInteger(aCT1);
   iCT2 = TypeToInteger(aCT2);
@@ -146,7 +146,7 @@ void IntTools_EdgeEdge::Prepare()
     myEdge1 = myEdge2;
     myEdge2 = tmpE;
     //
-    BRepAdaptor_Curve tmpC = myCurve1;
+    Handle(BRepAdaptor_Curve) tmpC = myCurve1;
     myCurve1 = myCurve2;
     myCurve2 = tmpC;
     //
@@ -158,8 +158,8 @@ void IntTools_EdgeEdge::Prepare()
   }
   //
   Standard_Real aTolAdd = myFuzzyValue / 2.;
-  myTol1 = myCurve1.Tolerance() + aTolAdd;
-  myTol2 = myCurve2.Tolerance() + aTolAdd;
+  myTol1 = myCurve1->Tolerance() + aTolAdd;
+  myTol2 = myCurve2->Tolerance() + aTolAdd;
   myTol = myTol1 + myTol2;
   //
   if (iCT1 != 0 || iCT2 != 0) {
@@ -171,8 +171,8 @@ void IntTools_EdgeEdge::Prepare()
     myResCoeff1 = ResolutionCoeff(myCurve1, myRange1);
     myResCoeff2 = ResolutionCoeff(myCurve2, myRange2);
     //
-    myRes1 = Resolution(myCurve1.Curve().Curve(), myCurve1.GetType(), myResCoeff1, myTol1);
-    myRes2 = Resolution(myCurve2.Curve().Curve(), myCurve2.GetType(), myResCoeff2, myTol2);
+    myRes1 = Resolution(myCurve1->Curve()->Curve(), myCurve1->GetType(), myResCoeff1, myTol1);
+    myRes2 = Resolution(myCurve2->Curve()->Curve(), myCurve2->GetType(), myResCoeff2, myTol2);
     //
     myPTol1 = 5.e-13;
     aTM = Max(fabs(myRange1.First()), fabs(myRange1.Last()));
@@ -204,8 +204,8 @@ void IntTools_EdgeEdge::Perform()
   Prepare();
   //
   //3.1. Check Line/Line case
-  if (myCurve1.GetType() == GeomAbs_Line &&
-      myCurve2.GetType() == GeomAbs_Line) {
+  if (myCurve1->GetType() == GeomAbs_Line &&
+      myCurve2->GetType() == GeomAbs_Line) {
     ComputeLineLine();
     return;
   }
@@ -221,8 +221,8 @@ void IntTools_EdgeEdge::Perform()
     }
   }
   //
-  if ((myCurve1.GetType() <= GeomAbs_Parabola && myCurve2.GetType() <= GeomAbs_Parabola) &&
-      (myCurve1.GetType() == GeomAbs_Line || myCurve2.GetType() == GeomAbs_Line))
+  if ((myCurve1->GetType() <= GeomAbs_Parabola && myCurve2->GetType() <= GeomAbs_Parabola) &&
+      (myCurve1->GetType() == GeomAbs_Line || myCurve2->GetType() == GeomAbs_Line))
   {
     //Improvement of performance for cases of searching common parts between line  
     //and analytical curve. This code allows to define that edges have no
@@ -518,7 +518,7 @@ void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
 //function : FindParameters
 //purpose  : 
 //=======================================================================
-Standard_Boolean IntTools_EdgeEdge::FindParameters(const BRepAdaptor_Curve& theBAC,
+Standard_Boolean IntTools_EdgeEdge::FindParameters(const Handle(BRepAdaptor_Curve)& theBAC,
                                                    const Standard_Real aT1, 
                                                    const Standard_Real aT2,
                                                    const Standard_Real theTol,
@@ -541,8 +541,8 @@ Standard_Boolean IntTools_EdgeEdge::FindParameters(const BRepAdaptor_Curve& theB
   aCBx = theCBox;
   aCBx.SetGap(aCBx.GetGap() + theTol);
   //
-  const Handle(Geom_Curve)& aCurve = theBAC.Curve().Curve();
-  const GeomAbs_CurveType aCurveType = theBAC.GetType();
+  const Handle(Geom_Curve)& aCurve = theBAC->Curve()->Curve();
+  const GeomAbs_CurveType aCurveType = theBAC->GetType();
   Standard_Real aMaxDt = (aT2 - aT1) * 0.01;
   //
   for (i = 0; i < 2; ++i) {
@@ -555,7 +555,7 @@ Standard_Boolean IntTools_EdgeEdge::FindParameters(const BRepAdaptor_Curve& theB
     Standard_Real k = 1;
     //looking for the point on the edge which is in the box;
     while (aC*(aT-aTB) >= 0) {
-      theBAC.D0(aTB, aP);
+      theBAC->D0(aTB, aP);
       aDist = PointBoxDistance(theCBox, aP);
       if (aDist > theTol) {
         if (aDistP > 0.) {
@@ -600,7 +600,7 @@ Standard_Boolean IntTools_EdgeEdge::FindParameters(const BRepAdaptor_Curve& theB
       aDiff = aTIn - aTOut;
       while (fabs(aDiff) > thePTol) {
         aTB = aTOut + aDiff*aCf;
-        theBAC.D0(aTB, aP);
+        theBAC->D0(aTB, aP);
         if (aCBx.IsOut(aP)) {
           aTOut = aTB;
         } else {
@@ -641,10 +641,10 @@ void IntTools_EdgeEdge::MergeSolutions(const IntTools_SequenceOfRanges& theRange
   Standard_Real aRes1, aRes2, dTR1, dTR2;
   TColStd_MapOfInteger aMI;
   //
-  aRes1 = Resolution(myCurve1.Curve().Curve(), 
-                     myCurve1.GetType(), myResCoeff1, myTol);
-  aRes2 = Resolution(myCurve2.Curve().Curve(), 
-                     myCurve2.GetType(), myResCoeff2, myTol);
+  aRes1 = Resolution(myCurve1->Curve()->Curve(), 
+                     myCurve1->GetType(), myResCoeff1, myTol);
+  aRes2 = Resolution(myCurve2->Curve()->Curve(), 
+                     myCurve2->GetType(), myResCoeff2, myTol);
   //
   myRange1.Range(aT11, aT12);
   myRange2.Range(aT21, aT22);
@@ -782,8 +782,8 @@ void IntTools_EdgeEdge::FindBestSolution(const Standard_Real aT11,
   Standard_Boolean bTouch = Standard_False;
   Standard_Boolean bTouchConfirm = Standard_False;
   //
-  aRes1 = Resolution(myCurve1.Curve().Curve(), 
-                     myCurve1.GetType(), myResCoeff1, myTol);
+  aRes1 = Resolution(myCurve1->Curve()->Curve(), 
+                     myCurve1->GetType(), myResCoeff1, myTol);
   aNbS = 10;
   aNbS = SplitRangeOnSegments(aT11, aT12, 3*aRes1, aNbS, aRanges);
   //
@@ -839,8 +839,8 @@ void IntTools_EdgeEdge::ComputeLineLine()
 {
   Standard_Real aTol = myTol * myTol;
 
-  gp_Lin aL1 = myCurve1.Line();
-  gp_Lin aL2 = myCurve2.Line();
+  gp_Lin aL1 = myCurve1->Line();
+  gp_Lin aL2 = myCurve2->Line();
 
   gp_Dir aD1 = aL1.Direction();
   gp_Dir aD2 = aL2.Direction();
@@ -1314,7 +1314,7 @@ Standard_Integer SplitRangeOnSegments(const Standard_Real aT1,
 //function : BndBuildBox
 //purpose  : 
 //=======================================================================
-void BndBuildBox(const BRepAdaptor_Curve& theBAC,
+void BndBuildBox(const Handle(BRepAdaptor_Curve)& theBAC,
                  const Standard_Real aT1,
                  const Standard_Real aT2,
                  const Standard_Real theTol,
@@ -1394,13 +1394,13 @@ Standard_Integer TypeToInteger(const GeomAbs_CurveType theCType)
 //function : ResolutionCoeff
 //purpose  : 
 //=======================================================================
-Standard_Real ResolutionCoeff(const BRepAdaptor_Curve& theBAC,
+Standard_Real ResolutionCoeff(const Handle(BRepAdaptor_Curve)& theBAC,
                               const IntTools_Range& theRange)
 {
   Standard_Real aResCoeff = 0.;
   //
-  const Handle(Geom_Curve)& aCurve = theBAC.Curve().Curve();
-  const GeomAbs_CurveType aCurveType = theBAC.GetType();
+  const Handle(Geom_Curve)& aCurve = theBAC->Curve()->Curve();
+  const GeomAbs_CurveType aCurveType = theBAC->GetType();
   //
   switch (aCurveType) {
   case GeomAbs_Circle :
@@ -1440,10 +1440,10 @@ Standard_Real ResolutionCoeff(const BRepAdaptor_Curve& theBAC,
     aT = aT1;
     kMin = 10.;
     //
-    theBAC.D0(aT1, aP1);
+    theBAC->D0(aT1, aP1);
     for (i = 1; i <= aNbP; ++i) {
       aT += aDt;
-      theBAC.D0(aT, aP2);
+      theBAC->D0(aT, aP2);
       aDist = aP1.Distance(aP2);
       k = aDt / aDist;
       if (k < kMin) {
@@ -1515,7 +1515,7 @@ Standard_Real Resolution(const Handle(Geom_Curve)& theCurve,
 //function : CurveDeflection
 //purpose  : 
 //=======================================================================
-Standard_Real CurveDeflection(const BRepAdaptor_Curve& theBAC,
+Standard_Real CurveDeflection(const Handle(BRepAdaptor_Curve)& theBAC,
                               const IntTools_Range& theRange)
 {
   Standard_Real aDt, aT, aT1, aT2, aDefl;
@@ -1529,10 +1529,10 @@ Standard_Real CurveDeflection(const BRepAdaptor_Curve& theBAC,
   aDt = (aT2 - aT1) / aNbP;
   aT = aT1;
   //
-  theBAC.D1(aT1, aP, aV1);
+  theBAC->D1(aT1, aP, aV1);
   for (i = 1; i <= aNbP; ++i) {
     aT += aDt;
-    theBAC.D1(aT, aP, aV2);
+    theBAC->D1(aT, aP, aV2);
     if (aV1.Magnitude() > gp::Resolution() &&
         aV2.Magnitude() > gp::Resolution()) {
       gp_Dir aD1(aV1), aD2(aV2);

@@ -216,7 +216,7 @@ static Standard_Integer BUC60792(Draw_Interpretor& di, Standard_Integer /*argc*/
 //  local_get_2Dpointfrom3Dpoint(pt3d, pln->Pln(), thepoint); 
   thepoint = ProjLib::Project(pln->Pln(),pt3d);
   Handle(Geom2d_CartesianPoint) ThePoint = new Geom2d_CartesianPoint(thepoint); 
-  Geom2dAdaptor_Curve acur1(gcir1) ; 
+  Handle(Geom2dAdaptor_Curve) acur1 = new Geom2dAdaptor_Curve(gcir1) ;
   Geom2dGcc_QualifiedCurve qcur1(acur1, GccEnt_outside) ; 
   Geom2dGcc_Circ2d2TanRad cirtanrad(qcur1, ThePoint, 200.0, 0.0001); 
   printf("\n No. of solutions = %d\n", cirtanrad.NbSolutions()); 

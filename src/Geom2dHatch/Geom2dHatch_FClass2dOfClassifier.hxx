@@ -52,7 +52,7 @@ public:
   
   //! Updates  the classification process with  the edge
   //! <E> from the boundary.
-  Standard_EXPORT void Compare (const Geom2dAdaptor_Curve& E, const TopAbs_Orientation Or);
+  Standard_EXPORT void Compare (const Handle(Geom2dAdaptor_Curve)& E, const TopAbs_Orientation Or);
   
   //! Returns the current value of the parameter.
     Standard_Real Parameter() const;

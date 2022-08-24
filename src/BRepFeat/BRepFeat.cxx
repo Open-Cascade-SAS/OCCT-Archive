@@ -126,7 +126,7 @@ Standard_Real BRepFeat::ParametricBarycenter(const TopoDS_Shape& S,
   Handle(Geom_Curve) C;
   Standard_Real f,l,prm;
   Standard_Integer i, nbp= 0;
-  GeomAdaptor_Curve TheCurve(CC);
+  Handle(GeomAdaptor_Curve) TheCurve = new GeomAdaptor_Curve(CC);
   Extrema_ExtPC extpc;
   extpc.Initialize(TheCurve,CC->FirstParameter(),CC->LastParameter());
   Standard_Real parbar = 0;
@@ -236,9 +236,9 @@ void BRepFeat::ParametricMinMax(const TopoDS_Shape& S,
   Standard_Real f,l,prm;
 //  Standard_Integer i, nbp= 0;
   Standard_Integer i;
-  GeomAdaptor_Curve TheCurve(CC);
+  Handle(GeomAdaptor_Curve) TheCurve = new GeomAdaptor_Curve(CC);
   Extrema_ExtPC extpc;
-  extpc.Initialize(TheCurve,CC->FirstParameter(),CC->LastParameter());
+  extpc.Initialize(TheCurve, CC->FirstParameter(),CC->LastParameter());
   prbmin = RealLast();
   prbmax = RealFirst();
   for (; exp.More(); exp.Next()) {
@@ -312,13 +312,13 @@ void BRepFeat::ParametricMinMax(const TopoDS_Shape& S,
 //=======================================================================
 
 static Standard_Boolean IsIn (BRepTopAdaptor_FClass2d& FC,
-                              Geom2dAdaptor_Curve      AC)
+                              const Handle(Geom2dAdaptor_Curve)&  AC)
 {
  Standard_Real Def = 100*Precision::Confusion();
  GCPnts_QuasiUniformDeflection QU(AC,Def);
 
  for (Standard_Integer i = 1; i <= QU.NbPoints(); i++) {
-   gp_Pnt2d P = AC.Value(QU.Parameter(i));
+   gp_Pnt2d P = AC->Value(QU.Parameter(i));
    if (FC.Perform(P, Standard_False) == TopAbs_OUT) {
      return Standard_False;
    } 
@@ -462,8 +462,8 @@ Standard_Boolean BRepFeat::IsInside(const TopoDS_Face& F1,
       if(flagu == 1) PutInBoundsU(umin, umax, eps, uperiod, f1, l1, C); 
       if(flagv == 1) PutInBoundsV(vmin, vmax, eps, vperiod, f1, l1, C); 
     }
-    Geom2dAdaptor_Curve  AC(C,f1,l1);
-    if (!IsIn(FC,AC)) {
+    Handle(Geom2dAdaptor_Curve) AC = new Geom2dAdaptor_Curve(C,f1,l1);
+    if (!IsIn(FC, AC)) {
       return Standard_False;
     }
   }

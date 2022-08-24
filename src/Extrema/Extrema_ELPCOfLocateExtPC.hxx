@@ -60,7 +60,7 @@ public:
   //! iterations according to the following condition:
   //! if n is the number of iterations,
   //! the algorithm stops when abs(F(Un)-F(Un-1)) < Tol.
-  Standard_EXPORT Extrema_ELPCOfLocateExtPC(const gp_Pnt& P, const Adaptor3d_Curve& C, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real TolF = 1.0e-10);
+  Standard_EXPORT Extrema_ELPCOfLocateExtPC(const gp_Pnt& P, const Handle(Adaptor3d_Curve)& C, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real TolF = 1.0e-10);
   
   //! It calculates all the distances.
   //! The function F(u)=distance(P,C(u)) has an extremum
@@ -70,10 +70,10 @@ public:
   //! iterations according to the following condition:
   //! if n is the number of iterations,
   //! the algorithm stops when abs(F(Un)-F(Un-1)) < Tol.
-  Standard_EXPORT Extrema_ELPCOfLocateExtPC(const gp_Pnt& P, const Adaptor3d_Curve& C, const Standard_Real TolF = 1.0e-10);
+  Standard_EXPORT Extrema_ELPCOfLocateExtPC(const gp_Pnt& P, const Handle(Adaptor3d_Curve)& C, const Standard_Real TolF = 1.0e-10);
   
   //! initializes the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& C, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real TolF = 1.0e-10);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& C, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real TolF = 1.0e-10);
   
   //! An exception is raised if the fields have not been
   //! initialized.

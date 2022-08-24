@@ -63,9 +63,9 @@ public:
   
     gp_Dir2d DirectionOnS2() const;
   
-    const Handle(Adaptor3d_Surface)& AuxillarSurface1() const;
+    const Handle(Adaptor3d_Surface) AuxillarSurface1() const;
   
-    const Handle(Adaptor3d_Surface)& AuxillarSurface2() const;
+    const Handle(Adaptor3d_Surface) AuxillarSurface2() const;
 
 
 

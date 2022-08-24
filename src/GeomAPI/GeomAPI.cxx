@@ -43,10 +43,10 @@ Handle(Geom2d_Curve) GeomAPI::To2d(const Handle(Geom_Curve)& C,
   Handle(Geom_Plane) Plane = new Geom_Plane(P);
   Handle(GeomAdaptor_Surface) HS = new GeomAdaptor_Surface(Plane);
 
-  ProjLib_ProjectedCurve Proj(HS,HC);
+  Handle(ProjLib_ProjectedCurve) Proj = new ProjLib_ProjectedCurve(HS,HC);
 
-  if (Proj.GetType() != GeomAbs_OffsetCurve && 
-      Proj.GetType() != GeomAbs_OtherCurve) {
+  if (Proj->GetType() != GeomAbs_OffsetCurve && 
+      Proj->GetType() != GeomAbs_OtherCurve) {
     result = Geom2dAdaptor::MakeCurve(Proj);
   }
   
@@ -68,6 +68,6 @@ Handle(Geom_Curve) GeomAPI::To3d(const Handle(Geom2d_Curve)& C,
   Handle(Geom_Plane) ThePlane = new Geom_Plane(P);
   Handle(GeomAdaptor_Surface) AHS = new GeomAdaptor_Surface(ThePlane);
 
-  Adaptor3d_CurveOnSurface COS(AHC,AHS);
-  return GeomAdaptor::MakeCurve(COS);
+  Handle(Adaptor3d_CurveOnSurface) aCOS = new Adaptor3d_CurveOnSurface(AHC,AHS);
+  return GeomAdaptor::MakeCurve(aCOS);
 }

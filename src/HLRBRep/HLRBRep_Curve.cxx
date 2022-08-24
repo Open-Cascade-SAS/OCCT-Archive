@@ -40,7 +40,9 @@
 //purpose  : 
 //=======================================================================
 HLRBRep_Curve::HLRBRep_Curve ()
-{}
+{
+  myCurve = new BRepAdaptor_Curve();
+}
 
 //=======================================================================
 //function : Curve
@@ -48,7 +50,7 @@ HLRBRep_Curve::HLRBRep_Curve ()
 //=======================================================================
 
 void HLRBRep_Curve::Curve (const TopoDS_Edge& E)
-{ myCurve.Initialize(E); }
+{ myCurve->Initialize(E); }
 
 //=======================================================================
 //function : Parameter2d

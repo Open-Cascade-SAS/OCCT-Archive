@@ -18,7 +18,7 @@ void ISession_Curve::Compute (const Handle(PrsMgr_PresentationManager)& ,
                               const Handle(Prs3d_Presentation)& thePrs,
                               const Standard_Integer theMode)
 {
-  GeomAdaptor_Curve anAdaptorCurve (myCurve);
+  Handle(GeomAdaptor_Curve) anAdaptorCurve = new GeomAdaptor_Curve(myCurve);
   switch (theMode)
   {
     case 1:

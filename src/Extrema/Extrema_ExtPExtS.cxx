@@ -252,7 +252,7 @@ void Extrema_ExtPExtS::Initialize (const Handle(GeomAdaptor_SurfaceOfLinearExtru
 
   Handle(Adaptor3d_Curve) anACurve = theS->BasisCurve();
 
-  myF.Initialize (*theS);
+  myF.Initialize (theS);
   myC = anACurve;
   myS = theS;
   myPosition = GetPosition(myC);
@@ -262,7 +262,7 @@ void Extrema_ExtPExtS::Initialize (const Handle(GeomAdaptor_SurfaceOfLinearExtru
   
   if (!myIsAnalyticallyComputable)
   {
-    myExtPS.Initialize (*theS,
+    myExtPS.Initialize (theS,
                         32,
                         32,
                         theUinf,

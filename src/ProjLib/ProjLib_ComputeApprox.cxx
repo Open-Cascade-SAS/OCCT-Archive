@@ -207,7 +207,7 @@ static Standard_Real Function_ComputeStep(
   Standard_Real W1, W2;
   W1 = myCurve->FirstParameter();
   W2 = myCurve->LastParameter();
-  Standard_Real L = GCPnts_AbscissaPoint::Length (*myCurve);
+  Standard_Real L = GCPnts_AbscissaPoint::Length (myCurve);
   Standard_Integer nbp = RealToInt(L / (R*M_PI_4)) + 1;
   nbp = Max(nbp, 3);
   Standard_Real Step = (W2 - W1) / (nbp - 1);

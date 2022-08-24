@@ -242,7 +242,7 @@ static Standard_Boolean IsObst(const ChFiDS_CommonPoint& CP,
 //           
 //=======================================================================
 
-static void CompParam(Geom2dAdaptor_Curve  Carc,
+static void CompParam(const Handle(Geom2dAdaptor_Curve)& Carc,
 		      Handle(Geom2d_Curve) Ctg,
 		      Standard_Real&       parc,
 		      Standard_Real&       ptg,
@@ -252,7 +252,7 @@ static void CompParam(Geom2dAdaptor_Curve  Carc,
   Standard_Boolean found = 0;
   //(1) It is checked if the provided parameters are good 
   //    if pcurves have the same parameters as the spine.
-  gp_Pnt2d point = Carc.Value(prefarc);
+  gp_Pnt2d point = Carc->Value(prefarc);
   Standard_Real distini = point.Distance(Ctg->Value(preftg));
   if (distini <= Precision::PConfusion()) {
     parc =  prefarc;
@@ -267,7 +267,7 @@ static void CompParam(Geom2dAdaptor_Curve  Carc,
     IntRes2d_IntersectionPoint int2d;
     Geom2dInt_GInter Intersection;
     Standard_Integer nbpt,nbseg;
-    Intersection.Perform(Geom2dAdaptor_Curve(Ctg),Carc,
+    Intersection.Perform(new Geom2dAdaptor_Curve(Ctg), Carc,
 			 Precision::PIntersection(),
 			 Precision::PIntersection());
 
@@ -728,8 +728,8 @@ Standard_Boolean ChFi3d_Builder::StoreData(Handle(ChFiDS_SurfData)& Data,
 #endif
   Standard_Real UFirst,ULast,VFirst,VLast,pppdeb,pppfin;
   Surf->Bounds(UFirst,ULast,VFirst,VLast);
-  BRepAdaptor_Curve2d brc;
-  BRepAdaptor_Curve CArc;
+  Handle(BRepAdaptor_Curve2d) brc = new BRepAdaptor_Curve2d();
+  Handle(BRepAdaptor_Curve) CArc = new BRepAdaptor_Curve();
   Handle(BRepAdaptor_Surface) 
     BS1 = Handle(BRepAdaptor_Surface)::DownCast(S1);
   Handle(BRepAdaptor_Surface) 
@@ -768,11 +768,11 @@ Standard_Boolean ChFi3d_Builder::StoreData(Handle(ChFiDS_SurfData)& Data,
   if(Gd1){
     TopoDS_Face forwfac = BS1->Face();
     forwfac.Orientation(TopAbs_FORWARD);
-    brc.Initialize(Data->VertexFirstOnS1().Arc(),forwfac);
+    brc->Initialize(Data->VertexFirstOnS1().Arc(),forwfac);
     ChFiDS_CommonPoint& V = Data->ChangeVertexFirstOnS1();
-    CArc.Initialize(V.Arc());
+    CArc->Initialize(V.Arc());
     CompParam(brc,PCurveOnFace,uarc,utg, V.ParameterOnArc(), V.Parameter());
-    tolcheck = CArc.Value(uarc).Distance(V.Point());
+    tolcheck = CArc->Value(uarc).Distance(V.Point());
     V.SetArc(tolC1+tolcheck,V.Arc(),uarc,V.TransitionOnArc());
     pppdeb = utg;
   }
@@ -781,10 +781,10 @@ Standard_Boolean ChFi3d_Builder::StoreData(Handle(ChFiDS_SurfData)& Data,
     TopoDS_Face forwfac = BS1->Face();
     forwfac.Orientation(TopAbs_FORWARD);
     ChFiDS_CommonPoint& V = Data->ChangeVertexLastOnS1();
-    brc.Initialize(V.Arc(),forwfac);
-    CArc.Initialize(V.Arc());
+    brc->Initialize(V.Arc(),forwfac);
+    CArc->Initialize(V.Arc());
     CompParam(brc,PCurveOnFace,uarc,utg, V.ParameterOnArc(), V.Parameter());
-    tolcheck = CArc.Value(uarc).Distance(V.Point());
+    tolcheck = CArc->Value(uarc).Distance(V.Point());
     V.SetArc(tolC1+tolcheck,V.Arc(),uarc,V.TransitionOnArc());
     pppfin = utg;
   }
@@ -820,11 +820,11 @@ Standard_Boolean ChFi3d_Builder::StoreData(Handle(ChFiDS_SurfData)& Data,
   if(Gd2){
     TopoDS_Face forwfac = BS2->Face();
     forwfac.Orientation(TopAbs_FORWARD);
-    brc.Initialize(Data->VertexFirstOnS2().Arc(),forwfac);
+    brc->Initialize(Data->VertexFirstOnS2().Arc(),forwfac);
     ChFiDS_CommonPoint& V = Data->ChangeVertexFirstOnS2();
-    CArc.Initialize(V.Arc());
+    CArc->Initialize(V.Arc());
     CompParam(brc,PCurveOnFace,uarc,utg, V.ParameterOnArc(), V.Parameter());
-    tolcheck = CArc.Value(uarc).Distance(V.Point());
+    tolcheck = CArc->Value(uarc).Distance(V.Point());
     V.SetArc(tolC2+tolcheck,V.Arc(),uarc,V.TransitionOnArc());
     pppdeb = utg;
   }
@@ -832,11 +832,11 @@ Standard_Boolean ChFi3d_Builder::StoreData(Handle(ChFiDS_SurfData)& Data,
   if(Gf2){
     TopoDS_Face forwfac = BS2->Face();
     forwfac.Orientation(TopAbs_FORWARD);
-    brc.Initialize(Data->VertexLastOnS2().Arc(),forwfac);
+    brc->Initialize(Data->VertexLastOnS2().Arc(),forwfac);
     ChFiDS_CommonPoint& V = Data->ChangeVertexLastOnS2();
-    CArc.Initialize(V.Arc());
+    CArc->Initialize(V.Arc());
     CompParam(brc,PCurveOnFace,uarc,utg, V.ParameterOnArc(), V.Parameter());
-    tolcheck = CArc.Value(uarc).Distance(V.Point());
+    tolcheck = CArc->Value(uarc).Distance(V.Point());
     V.SetArc(tolC2+tolcheck,V.Arc(),uarc,V.TransitionOnArc());
     pppfin = utg;
   }

@@ -54,7 +54,7 @@ Geom2dGcc_Lin2d2TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                            qualifier2 = GccEnt_noqualifier;
                            if (Qualified1.IsEnclosed()) { throw GccEnt_BadQualifier(); }
                            gp_Circ2d C1 = Qualified1.Qualified();
-                           Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                           Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                            Standard_Real U1 = Geom2dGcc_CurveTool::FirstParameter(Cu2);
                            Standard_Real U2 = Geom2dGcc_CurveTool::LastParameter(Cu2);
                            Geom2dGcc_FunctionTanCirCu func(C1,Cu2);
@@ -136,8 +136,8 @@ Geom2dGcc_Lin2d2TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                                throw GccEnt_BadQualifier();
                                return;
                            }
-                           Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
-                           Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                           Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
+                           Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                            Geom2dGcc_FunctionTanCuCu Func(Cu1,Cu2);
                            math_Vector Umin(1,2);
                            math_Vector Umax(1,2);
@@ -212,7 +212,7 @@ Geom2dGcc_Lin2d2TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                                throw GccEnt_BadQualifier();
                                return;
                            }
-                           Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+                           Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
                            Standard_Real U1 = Geom2dGcc_CurveTool::FirstParameter(Cu1);
                            Standard_Real U2 = Geom2dGcc_CurveTool::LastParameter(Cu1);
                            Geom2dGcc_FunctionTanCuPnt func(Cu1,ThePoint);

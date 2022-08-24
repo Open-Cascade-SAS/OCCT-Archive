@@ -75,7 +75,7 @@ public:
   //! curve that has the required range
   Standard_EXPORT static void SameRange (const Standard_Real Tolerance, const Handle(Geom2d_Curve)& Curve2dPtr, const Standard_Real First, const Standard_Real Last, const Standard_Real RequestedFirst, const Standard_Real RequestedLast, Handle(Geom2d_Curve)& NewCurve2dPtr);
   
-  Standard_EXPORT static void BuildCurve3d (const Standard_Real Tolerance, Adaptor3d_CurveOnSurface& CurvePtr, const Standard_Real FirstParameter, const Standard_Real LastParameter, Handle(Geom_Curve)& NewCurvePtr, Standard_Real& MaxDeviation, Standard_Real& AverageDeviation, const GeomAbs_Shape Continuity = GeomAbs_C1, const Standard_Integer MaxDegree = 14, const Standard_Integer MaxSegment = 30);
+  Standard_EXPORT static void BuildCurve3d (const Standard_Real Tolerance, Handle(Adaptor3d_CurveOnSurface)& CurvePtr, const Standard_Real FirstParameter, const Standard_Real LastParameter, Handle(Geom_Curve)& NewCurvePtr, Standard_Real& MaxDeviation, Standard_Real& AverageDeviation, const GeomAbs_Shape Continuity = GeomAbs_C1, const Standard_Integer MaxDegree = 14, const Standard_Integer MaxSegment = 30);
   
   Standard_EXPORT static void AdjustExtremity (Handle(Geom_BoundedCurve)& Curve, const gp_Pnt& P1, const gp_Pnt& P2, const gp_Vec& T1, const gp_Vec& T2);
   
@@ -172,13 +172,13 @@ public:
   //! parameters  given    in   the Parameters  array    by
   //! evaluating each parameter  the two curves  and taking
   //! the maximum of the evaluated distance
-  Standard_EXPORT static void EvalMaxParametricDistance (const Adaptor3d_Curve& Curve, const Adaptor3d_Curve& AReferenceCurve, const Standard_Real Tolerance, const TColStd_Array1OfReal& Parameters, Standard_Real& MaxDistance);
+  Standard_EXPORT static void EvalMaxParametricDistance (const Handle(Adaptor3d_Curve)& Curve, const Handle(Adaptor3d_Curve)& AReferenceCurve, const Standard_Real Tolerance, const TColStd_Array1OfReal& Parameters, Standard_Real& MaxDistance);
   
   //! this will compute the maximum distance at the parameters
   //! given in the Parameters array by projecting from the Curve
   //! to the reference curve and taking the minimum distance
   //! Than the maximum will be taken on those minimas.
-  Standard_EXPORT static void EvalMaxDistanceAlongParameter (const Adaptor3d_Curve& Curve, const Adaptor3d_Curve& AReferenceCurve, const Standard_Real Tolerance, const TColStd_Array1OfReal& Parameters, Standard_Real& MaxDistance);
+  Standard_EXPORT static void EvalMaxDistanceAlongParameter (const Handle(Adaptor3d_Curve)& Curve, const Handle(Adaptor3d_Curve)& AReferenceCurve, const Standard_Real Tolerance, const TColStd_Array1OfReal& Parameters, Standard_Real& MaxDistance);
   
   //! Cancel,on the boundaries,the denominator  first derivative
   //! in  the directions wished by the user and set its value to 1.

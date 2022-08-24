@@ -75,7 +75,7 @@ void  BRepGProp::LinearProperties(const TopoDS_Shape& S, GProp_GProps& SProps, c
   P.Transform(S.Location());
   SProps = GProp_GProps(P);
 
-  BRepAdaptor_Curve   BAC;
+  Handle(BRepAdaptor_Curve) BAC = new BRepAdaptor_Curve();
   TopTools_MapOfShape anEMap;
   TopExp_Explorer ex;
   for (ex.Init(S,TopAbs_EDGE); ex.More(); ex.Next()) {
@@ -102,7 +102,7 @@ void  BRepGProp::LinearProperties(const TopoDS_Shape& S, GProp_GProps& SProps, c
     {
       if (IsGeom)
       {
-        BAC.Initialize(aE);
+        BAC->Initialize(aE);
         BRepGProp_Cinert CG(BAC, P);
         SProps.Add(CG);
       }

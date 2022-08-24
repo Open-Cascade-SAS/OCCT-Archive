@@ -146,8 +146,8 @@ IntTools_BeanFaceIntersector::IntTools_BeanFaceIntersector(const TopoDS_Edge& th
 // function: IntTools_BeanFaceIntersector
 // purpose: 
 // ==================================================================================
-IntTools_BeanFaceIntersector::IntTools_BeanFaceIntersector(const BRepAdaptor_Curve&   theCurve,
-                                                           const BRepAdaptor_Surface& theSurface,
+IntTools_BeanFaceIntersector::IntTools_BeanFaceIntersector(const Handle(BRepAdaptor_Curve)&   theCurve,
+                                                           const Handle(BRepAdaptor_Surface)& theSurface,
                                                            const Standard_Real        theBeanTolerance,
                                                            const Standard_Real        theFaceTolerance) :
        myFirstParameter(0.),
@@ -166,8 +166,8 @@ IntTools_BeanFaceIntersector::IntTools_BeanFaceIntersector(const BRepAdaptor_Cur
 // function: IntTools_BeanFaceIntersector
 // purpose: 
 // ==================================================================================
-IntTools_BeanFaceIntersector::IntTools_BeanFaceIntersector(const BRepAdaptor_Curve&   theCurve,
-                                                           const BRepAdaptor_Surface& theSurface,
+IntTools_BeanFaceIntersector::IntTools_BeanFaceIntersector(const Handle(BRepAdaptor_Curve)&   theCurve,
+                                                           const Handle(BRepAdaptor_Surface)& theSurface,
                                                            const Standard_Real        theFirstParOnCurve,
                                                            const Standard_Real        theLastParOnCurve,
                                                            const Standard_Real        theUMinParameter,
@@ -190,10 +190,10 @@ IntTools_BeanFaceIntersector::IntTools_BeanFaceIntersector(const BRepAdaptor_Cur
   myCurve = theCurve;
   
   myCriteria = myBeanTolerance + myFaceTolerance;
-  myCurveResolution = myCurve.Resolution(myCriteria);
+  myCurveResolution = myCurve->Resolution(myCriteria);
 
   mySurface = theSurface;
-  myTrsfSurface = Handle(Geom_Surface)::DownCast(mySurface.Surface().Surface()->Transformed(mySurface.Trsf()));
+  myTrsfSurface = Handle(Geom_Surface)::DownCast(mySurface->Surface()->Surface()->Transformed(mySurface->Trsf()));
 }
 
 // ==================================================================================
@@ -206,18 +206,25 @@ void IntTools_BeanFaceIntersector::Init(const TopoDS_Edge& theEdge,
   if (myContext.IsNull()) {
     myContext = new IntTools_Context;
   }
+  if (myCurve.IsNull()) {
+    myCurve = new BRepAdaptor_Curve;
+  }
+  if (mySurface.IsNull()) {
+    mySurface = new BRepAdaptor_Surface;
+  }
+
   //
-  myCurve.Initialize(theEdge);
+  myCurve->Initialize(theEdge);
   mySurface = myContext->SurfaceAdaptor(theFace);
-  myTrsfSurface = Handle(Geom_Surface)::DownCast(mySurface.Surface().Surface()->Transformed(mySurface.Trsf()));
+  myTrsfSurface = Handle(Geom_Surface)::DownCast(mySurface->Surface()->Surface()->Transformed(mySurface->Trsf()));
   myBeanTolerance = BRep_Tool::Tolerance(theEdge);
   myFaceTolerance = BRep_Tool::Tolerance(theFace);
   
   myCriteria = myBeanTolerance + myFaceTolerance + Precision::Confusion();
-  myCurveResolution = myCurve.Resolution(myCriteria);
+  myCurveResolution = myCurve->Resolution(myCriteria);
 
-  SetSurfaceParameters(mySurface.FirstUParameter(), mySurface.LastUParameter(), 
-                       mySurface.FirstVParameter(), mySurface.LastVParameter());
+  SetSurfaceParameters(mySurface->FirstUParameter(), mySurface->LastUParameter(), 
+                       mySurface->FirstVParameter(), mySurface->LastVParameter());
   myResults.Clear();
 }
 
@@ -225,22 +232,22 @@ void IntTools_BeanFaceIntersector::Init(const TopoDS_Edge& theEdge,
 // function: Init
 // purpose: 
 // ==================================================================================
-void IntTools_BeanFaceIntersector::Init(const BRepAdaptor_Curve&   theCurve,
-                                        const BRepAdaptor_Surface& theSurface,
+void IntTools_BeanFaceIntersector::Init(const Handle(BRepAdaptor_Curve)&   theCurve,
+                                        const Handle(BRepAdaptor_Surface)& theSurface,
                                         const Standard_Real        theBeanTolerance,
                                         const Standard_Real        theFaceTolerance) 
 {
   myCurve = theCurve;
   mySurface = theSurface;
-  myTrsfSurface = Handle(Geom_Surface)::DownCast(mySurface.Surface().Surface()->Transformed(mySurface.Trsf()));
+  myTrsfSurface = Handle(Geom_Surface)::DownCast(mySurface->Surface()->Surface()->Transformed(mySurface->Trsf()));
   myBeanTolerance = theBeanTolerance;
   myFaceTolerance = theFaceTolerance;
   
   myCriteria = myBeanTolerance + myFaceTolerance;
-  myCurveResolution = myCurve.Resolution(myCriteria);
+  myCurveResolution = myCurve->Resolution(myCriteria);
   
-  SetSurfaceParameters(mySurface.FirstUParameter(), mySurface.LastUParameter(), 
-                       mySurface.FirstVParameter(), mySurface.LastVParameter());
+  SetSurfaceParameters(mySurface->FirstUParameter(), mySurface->LastUParameter(), 
+                       mySurface->FirstVParameter(), mySurface->LastVParameter());
   myResults.Clear();
 }
 
@@ -248,8 +255,8 @@ void IntTools_BeanFaceIntersector::Init(const BRepAdaptor_Curve&   theCurve,
 // function: Init
 // purpose: 
 // ==================================================================================
-void IntTools_BeanFaceIntersector::Init(const BRepAdaptor_Curve&   theCurve,
-                                        const BRepAdaptor_Surface& theSurface,
+void IntTools_BeanFaceIntersector::Init(const Handle(BRepAdaptor_Curve)&   theCurve,
+                                        const Handle(BRepAdaptor_Surface)& theSurface,
                                         const Standard_Real        theFirstParOnCurve,
                                         const Standard_Real        theLastParOnCurve,
                                         const Standard_Real        theUMinParameter,
@@ -322,8 +329,8 @@ void IntTools_BeanFaceIntersector::Perform()
   }
 
   // Fast computation of Line/Plane case
-  if (myCurve.GetType() == GeomAbs_Line &&
-      mySurface.GetType() == GeomAbs_Plane)
+  if (myCurve->GetType() == GeomAbs_Line &&
+      mySurface->GetType() == GeomAbs_Plane)
   {
     ComputeLinePlane();
     return;
@@ -356,11 +363,11 @@ void IntTools_BeanFaceIntersector::Perform()
                                 !Precision::IsInfinite(myUMaxParameter) &&
                                 !Precision::IsInfinite(myVMinParameter) &&
                                 !Precision::IsInfinite(myVMaxParameter));
-  bLocalize = bLocalize && (mySurface.GetType() == GeomAbs_BezierSurface ||
-                            mySurface.GetType() == GeomAbs_OtherSurface ||
-                            (mySurface.GetType() == GeomAbs_BSplineSurface &&
-                            (mySurface.UDegree() > 2 || mySurface.VDegree() > 2) &&
-                            (mySurface.NbUKnots() > 2 && mySurface.NbVKnots() > 2)));
+  bLocalize = bLocalize && (mySurface->GetType() == GeomAbs_BezierSurface ||
+                            mySurface->GetType() == GeomAbs_OtherSurface ||
+                            (mySurface->GetType() == GeomAbs_BSplineSurface &&
+                            (mySurface->UDegree() > 2 || mySurface->VDegree() > 2) &&
+                            (mySurface->NbUKnots() > 2 && mySurface->NbVKnots() > 2)));
 
   Standard_Boolean isLocalized = bLocalize && ComputeLocalized();
 
@@ -425,9 +432,9 @@ void IntTools_BeanFaceIntersector::Result(IntTools_SequenceOfRanges& theResults)
 // ==================================================================================
 Standard_Real IntTools_BeanFaceIntersector::Distance(const Standard_Real theArg)
 {
-  gp_Pnt aPoint = myCurve.Value(theArg);
+  gp_Pnt aPoint = myCurve->Value(theArg);
 
-  GeomAPI_ProjectPointOnSurf& aProjector = myContext->ProjPS(mySurface.Face());
+  GeomAPI_ProjectPointOnSurf& aProjector = myContext->ProjPS(mySurface->Face());
   aProjector.Perform(aPoint);
   
   if(aProjector.IsDone() && aProjector.NbPoints() > 0) {
@@ -441,9 +448,9 @@ Standard_Real IntTools_BeanFaceIntersector::Distance(const Standard_Real theArg)
     Standard_Real aMinParameter  = (i < 2) ? myVMinParameter : myUMinParameter;
     Standard_Real aMaxParameter  = (i < 2) ? myVMaxParameter : myUMaxParameter;
     Standard_Real aMidParameter = (aMinParameter + aMaxParameter) * 0.5;
-    gp_Pnt aPointMin = (i < 2) ? mySurface.Value(anIsoParameter, aMinParameter) : mySurface.Value(aMinParameter, anIsoParameter);
-    gp_Pnt aPointMax = (i < 2) ? mySurface.Value(anIsoParameter, aMaxParameter) : mySurface.Value(aMaxParameter, anIsoParameter);
-    gp_Pnt aPointMid = (i < 2) ? mySurface.Value(anIsoParameter, aMidParameter) : mySurface.Value(aMidParameter, anIsoParameter);
+    gp_Pnt aPointMin = (i < 2) ? mySurface->Value(anIsoParameter, aMinParameter) : mySurface->Value(aMinParameter, anIsoParameter);
+    gp_Pnt aPointMax = (i < 2) ? mySurface->Value(anIsoParameter, aMaxParameter) : mySurface->Value(aMaxParameter, anIsoParameter);
+    gp_Pnt aPointMid = (i < 2) ? mySurface->Value(anIsoParameter, aMidParameter) : mySurface->Value(aMidParameter, anIsoParameter);
 
     Standard_Boolean useMinMaxPoints = Standard_True;
     Standard_Boolean computeisoline = Standard_True;
@@ -485,7 +492,7 @@ Standard_Real IntTools_BeanFaceIntersector::Distance(const Standard_Real theArg,
                                                      Standard_Real&      theUParameter,
                                                      Standard_Real&      theVParameter)  
 {
-  gp_Pnt aPoint = myCurve.Value(theArg);
+  gp_Pnt aPoint = myCurve->Value(theArg);
   
   theUParameter = myUMinParameter;
   theVParameter = myVMinParameter;
@@ -493,7 +500,7 @@ Standard_Real IntTools_BeanFaceIntersector::Distance(const Standard_Real theArg,
   Standard_Real aDistance = RealLast();
   Standard_Boolean projectionfound = Standard_False;
 
-  GeomAPI_ProjectPointOnSurf& aProjector = myContext->ProjPS(mySurface.Face());
+  GeomAPI_ProjectPointOnSurf& aProjector = myContext->ProjPS(mySurface->Face());
   aProjector.Perform(aPoint);
   
   if(aProjector.IsDone() && aProjector.NbPoints() > 0) {
@@ -509,9 +516,9 @@ Standard_Real IntTools_BeanFaceIntersector::Distance(const Standard_Real theArg,
       Standard_Real aMinParameter = (i < 2) ? myVMinParameter : myUMinParameter;
       Standard_Real aMaxParameter = (i < 2) ? myVMaxParameter : myUMaxParameter;
       Standard_Real aMidParameter = (aMinParameter + aMaxParameter) * 0.5;
-      gp_Pnt aPointMin = (i < 2) ? mySurface.Value(anIsoParameter, aMinParameter) : mySurface.Value(aMinParameter, anIsoParameter);
-      gp_Pnt aPointMax = (i < 2) ? mySurface.Value(anIsoParameter, aMaxParameter) : mySurface.Value(aMaxParameter, anIsoParameter);
-      gp_Pnt aPointMid = (i < 2) ? mySurface.Value(anIsoParameter, aMidParameter) : mySurface.Value(aMidParameter, anIsoParameter);
+      gp_Pnt aPointMin = (i < 2) ? mySurface->Value(anIsoParameter, aMinParameter) : mySurface->Value(aMinParameter, anIsoParameter);
+      gp_Pnt aPointMax = (i < 2) ? mySurface->Value(anIsoParameter, aMaxParameter) : mySurface->Value(aMaxParameter, anIsoParameter);
+      gp_Pnt aPointMid = (i < 2) ? mySurface->Value(anIsoParameter, aMidParameter) : mySurface->Value(aMidParameter, anIsoParameter);
       
       Standard_Boolean useMinMaxPoints = Standard_True;
       Standard_Boolean computeisoline = Standard_True;
@@ -571,10 +578,7 @@ void IntTools_BeanFaceIntersector::ComputeAroundExactIntersection()
 {
   IntCurveSurface_HInter anExactIntersector;
   
-  Handle(BRepAdaptor_Curve) aCurve     = new BRepAdaptor_Curve(myCurve);
-  Handle(BRepAdaptor_Surface) aSurface = new BRepAdaptor_Surface(mySurface);
-  
-  anExactIntersector.Perform(aCurve, aSurface);
+  anExactIntersector.Perform(myCurve, mySurface);
 
   if (anExactIntersector.IsDone()) {
     Standard_Integer i = 0;
@@ -585,7 +589,7 @@ void IntTools_BeanFaceIntersector::ComputeAroundExactIntersection()
       // range, perform exact range search considering the lowest possible tolerance
       // for edge and face.
       myCriteria = 3 * Precision::Confusion();
-      myCurveResolution = myCurve.Resolution (myCriteria);
+      myCurveResolution = myCurve->Resolution (myCriteria);
     }
 
     for(i = 1; i <= anExactIntersector.NbPoints(); i++) {
@@ -605,10 +609,10 @@ void IntTools_BeanFaceIntersector::ComputeAroundExactIntersection()
             bUCorrected = Standard_False;
             solutionIsValid = Standard_False;
             //
-            if(mySurface.IsUPeriodic()) {
+            if(mySurface->IsUPeriodic()) {
               Standard_Real aNewU, aUPeriod, aEps, du;
               //
-              aUPeriod = mySurface.UPeriod();
+              aUPeriod = mySurface->UPeriod();
               aEps = Epsilon(aUPeriod);
               //
               GeomInt::AdjustPeriodic(U, myUMinParameter, myUMaxParameter, 
@@ -622,10 +626,10 @@ void IntTools_BeanFaceIntersector::ComputeAroundExactIntersection()
           if(bUCorrected && VIsNotValid) {
             solutionIsValid = Standard_False;
             //
-            if(mySurface.IsVPeriodic()) {
+            if(mySurface->IsVPeriodic()) {
               Standard_Real aNewV, aVPeriod, aEps, dv;
               //
-              aVPeriod = mySurface.VPeriod();
+              aVPeriod = mySurface->VPeriod();
               aEps = Epsilon(aVPeriod);
               //
               GeomInt::AdjustPeriodic(V, myVMinParameter, myVMaxParameter, 
@@ -678,7 +682,7 @@ void IntTools_BeanFaceIntersector::ComputeAroundExactIntersection()
 // ==================================================================================
 Standard_Boolean IntTools_BeanFaceIntersector::FastComputeAnalytic()
 {
-  GeomAbs_CurveType aCT = myCurve.GetType();
+  GeomAbs_CurveType aCT = myCurve->GetType();
   if (aCT == GeomAbs_BezierCurve  ||
       aCT == GeomAbs_BSplineCurve ||
       aCT == GeomAbs_OffsetCurve  ||
@@ -691,38 +695,38 @@ Standard_Boolean IntTools_BeanFaceIntersector::FastComputeAnalytic()
   Standard_Boolean isCoincide = Standard_False;
   Standard_Boolean hasIntersection = Standard_True;
 
-  GeomAbs_SurfaceType aST = mySurface.GetType();
+  GeomAbs_SurfaceType aST = mySurface->GetType();
 
   // Plane - Circle/Ellipse/Hyperbola/Parabola
   if (aST == GeomAbs_Plane)
   {
-    gp_Pln surfPlane = mySurface.Plane();
+    gp_Pln surfPlane = mySurface->Plane();
 
     gp_Dir aDir;
     gp_Pnt aPLoc;
     switch (aCT) {
       case GeomAbs_Circle:
       {
-        aDir = myCurve.Circle().Axis().Direction();
-        aPLoc = myCurve.Circle().Location();
+        aDir = myCurve->Circle().Axis().Direction();
+        aPLoc = myCurve->Circle().Location();
         break;
       }
       case GeomAbs_Ellipse:
       {
-        aDir = myCurve.Ellipse().Axis().Direction();
-        aPLoc = myCurve.Ellipse().Location();
+        aDir = myCurve->Ellipse().Axis().Direction();
+        aPLoc = myCurve->Ellipse().Location();
         break;
       }
       case GeomAbs_Hyperbola:
       {
-        aDir = myCurve.Hyperbola().Axis().Direction();
-        aPLoc = myCurve.Hyperbola().Location();
+        aDir = myCurve->Hyperbola().Axis().Direction();
+        aPLoc = myCurve->Hyperbola().Location();
         break;
       }
       case GeomAbs_Parabola:
       {
-        aDir = myCurve.Parabola().Axis().Direction();
-        aPLoc = myCurve.Parabola().Location();
+        aDir = myCurve->Parabola().Axis().Direction();
+        aPLoc = myCurve->Parabola().Location();
         break;
       }
       default:
@@ -742,14 +746,14 @@ Standard_Boolean IntTools_BeanFaceIntersector::FastComputeAnalytic()
   // Cylinder - Line/Circle
   else if (aST == GeomAbs_Cylinder)
   {
-    gp_Cylinder aCylinder = mySurface.Cylinder();
+    gp_Cylinder aCylinder = mySurface->Cylinder();
     const gp_Ax1& aCylAxis = aCylinder.Axis();
     const gp_Dir& aCylDir = aCylAxis.Direction();
     Standard_Real aCylRadius = aCylinder.Radius();
 
     if (aCT == GeomAbs_Line)
     {
-      gp_Lin aLin = myCurve.Line();
+      gp_Lin aLin = myCurve->Line();
       if (!aLin.Direction().IsParallel(aCylDir, Precision::Angular()))
         return Standard_False;
 
@@ -761,7 +765,7 @@ Standard_Boolean IntTools_BeanFaceIntersector::FastComputeAnalytic()
 
     else if (aCT == GeomAbs_Circle)
     {
-      gp_Circ aCircle = myCurve.Circle();
+      gp_Circ aCircle = myCurve->Circle();
 
       Standard_Real anAngle = aCylDir.Angle(aCircle.Axis().Direction());
       if (anAngle > Precision::Angular())
@@ -780,11 +784,11 @@ Standard_Boolean IntTools_BeanFaceIntersector::FastComputeAnalytic()
   // Sphere - Line
   else if (aST == GeomAbs_Sphere)
   {
-    gp_Sphere aSph = mySurface.Sphere();
+    gp_Sphere aSph = mySurface->Sphere();
     gp_Pnt aSphLoc = aSph.Location();
     if (aCT == GeomAbs_Line)
     {
-      gp_Lin aLin = myCurve.Line();
+      gp_Lin aLin = myCurve->Line();
       Standard_Real aDist = aLin.Distance(aSphLoc) - aSph.Radius();
       hasIntersection = aDist < myCriteria;
     }
@@ -806,8 +810,8 @@ Standard_Boolean IntTools_BeanFaceIntersector::FastComputeAnalytic()
 void IntTools_BeanFaceIntersector::ComputeLinePlane() 
 {
   Standard_Real Tolang = 1.e-9;
-  gp_Pln P = mySurface.Plane();
-  gp_Lin L = myCurve.Line();
+  gp_Pln P = mySurface->Plane();
+  gp_Lin L = myCurve->Line();
 
   myIsDone = Standard_True;
 
@@ -895,12 +899,12 @@ void IntTools_BeanFaceIntersector::ComputeUsingExtremum()
 {
   Standard_Real Tol, af, al;
   Tol = Precision::PConfusion();
-  Handle(Geom_Curve) aCurve = BRep_Tool::Curve  (myCurve.Edge(), af, al);
-  GeomAdaptor_Surface aGASurface (myTrsfSurface, 
-                                  myUMinParameter, 
-                                  myUMaxParameter, 
-                                  myVMinParameter, 
-                                  myVMaxParameter);
+  Handle(Geom_Curve) aCurve = BRep_Tool::Curve  (myCurve->Edge(), af, al);
+  Handle(GeomAdaptor_Surface) aGASurface = new GeomAdaptor_Surface (myTrsfSurface,
+                                                                    myUMinParameter, 
+                                                                    myUMaxParameter, 
+                                                                    myVMinParameter, 
+                                                                    myVMaxParameter);
 
   for(Standard_Integer i = 1; i <= myRangeManager.Length(); i++) {
 
@@ -920,7 +924,7 @@ void IntTools_BeanFaceIntersector::ComputeUsingExtremum()
       }
     }
 
-    GeomAdaptor_Curve aGACurve(aCurve, anarg1, anarg2);
+    Handle(GeomAdaptor_Curve) aGACurve = new GeomAdaptor_Curve(aCurve, anarg1, anarg2);
     Extrema_ExtCS anExtCS;
     anExtCS.Initialize(aGASurface, myUMinParameter, myUMaxParameter,
                                    myVMinParameter, myVMaxParameter,  Tol, Tol);
@@ -1159,7 +1163,7 @@ void IntTools_BeanFaceIntersector::ComputeRangeFromStartPoint(const Standard_Boo
     Standard_Boolean pointfound = Standard_False;
 
     // 
-    gp_Pnt aPoint = myCurve.Value(aCurPar);
+    gp_Pnt aPoint = myCurve->Value(aCurPar);
     Extrema_GenLocateExtPS anExtrema(mySurface, 1.e-10, 1.e-10);
     anExtrema.Perform(aPoint, U, V);
 
@@ -1298,8 +1302,8 @@ static Standard_Boolean SetEmptyResultRange(const Standard_Real      theParamete
 //   return close;
 // }
 
-// Standard_Boolean TestCoinside(const BRepAdaptor_Curve&   theCurve,
-//                               const BRepAdaptor_Surface& theSurface)
+// Standard_Boolean TestCoinside(const Handle(BRepAdaptor_Curve)&   theCurve,
+//                               const Handle(BRepAdaptor_Surface)& theSurface)
 // {
 //   Standard_Real cfp = theCurve.FirstParameter(), clp = theCurve.LastParameter();
 //   Standard_Real cdp = fabs(clp - cfp) / 23.;
@@ -1486,7 +1490,7 @@ Standard_Boolean IntTools_BeanFaceIntersector::LocalizeSolutions(const IntTools_
       
       if(!theSurfaceData.FindBox(aNewRangeS, aBoxS)) {
         
-        if(mySurface.GetType() == GeomAbs_BSplineSurface) {
+        if(mySurface->GetType() == GeomAbs_BSplineSurface) {
           // 	if(Standard_False ) {
           Handle(Geom_BSplineSurface) aSurfBspl = Handle(Geom_BSplineSurface)::DownCast(myTrsfSurface);
           aBoxS = GetSurfaceBox(aSurfBspl, aPrevParU, aCurParU, aPrevParV, aCurParV, myCriteria, theSurfaceData);
@@ -1727,14 +1731,14 @@ Standard_Boolean IntTools_BeanFaceIntersector::ComputeLocalized() {
   Standard_Real dMinU = 10. * Precision::PConfusion();
   Standard_Real dMinV = dMinU;
   IntTools_SurfaceRangeLocalizeData aSurfaceDataInit(3, 3, dMinU, dMinV);
-  IntTools_SurfaceRangeLocalizeData& aSurfaceData = myContext->SurfaceData(mySurface.Face());
+  IntTools_SurfaceRangeLocalizeData& aSurfaceData = myContext->SurfaceData(mySurface->Face());
   aSurfaceData.RemoveRangeOutAll();
   aSurfaceData.ClearGrid();
   
   Bnd_Box FBox;
   Standard_Boolean bFBoxFound = aSurfaceData.FindBox(aSurfaceRange, FBox);
   
-  if(mySurface.GetType() == GeomAbs_BSplineSurface) {
+  if(mySurface->GetType() == GeomAbs_BSplineSurface) {
     Handle(Geom_BSplineSurface) aSurfBspl = Handle(Geom_BSplineSurface)::DownCast(myTrsfSurface);
     
     ComputeGridPoints(aSurfBspl, myUMinParameter, myUMaxParameter,
@@ -1756,7 +1760,7 @@ Standard_Boolean IntTools_BeanFaceIntersector::ComputeLocalized() {
   
   Bnd_Box EBox;
   
-  BndLib_Add3dCurve::Add (*myCurve.Trim(myFirstParameter, myLastParameter, Precision::PConfusion()), myBeanTolerance, EBox);
+  BndLib_Add3dCurve::Add (myCurve->Trim(myFirstParameter, myLastParameter, Precision::PConfusion()), myBeanTolerance, EBox);
   
   if(EBox.IsOut(FBox)) {
     for(Standard_Integer i = 1; i <= myRangeManager.Length(); i++) {
@@ -1900,12 +1904,12 @@ Standard_Boolean IntTools_BeanFaceIntersector::ComputeLocalized() {
             T = p1.Parameter();
             p2.Parameter(U, V);
             
-            if (myCurve.IsPeriodic())
-              T = ElCLib::InPeriod(T, anarg1, anarg1 + myCurve.Period());
-            if (mySurface.IsUPeriodic())
-              U = ElCLib::InPeriod(U, parUF, parUF + mySurface.UPeriod());
-            if (mySurface.IsVPeriodic())
-              V = ElCLib::InPeriod(V, parVF, parVF + mySurface.VPeriod());
+            if (myCurve->IsPeriodic())
+              T = ElCLib::InPeriod(T, anarg1, anarg1 + myCurve->Period());
+            if (mySurface->IsUPeriodic())
+              U = ElCLib::InPeriod(U, parUF, parUF + mySurface->UPeriod());
+            if (mySurface->IsVPeriodic())
+              V = ElCLib::InPeriod(V, parVF, parVF + mySurface->VPeriod());
             
             //To avoid occasional going out of boundaries because of numerical
             //problem

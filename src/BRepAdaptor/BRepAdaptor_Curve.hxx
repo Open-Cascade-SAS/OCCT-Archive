@@ -103,10 +103,10 @@ public:
   Standard_EXPORT Standard_Boolean IsCurveOnSurface() const;
   
   //! Returns the Curve of  the  edge.
-  Standard_EXPORT const GeomAdaptor_Curve& Curve() const;
+  Standard_EXPORT const Handle(GeomAdaptor_Curve)& Curve() const;
   
   //! Returns the CurveOnSurface of the edge.
-  Standard_EXPORT const Adaptor3d_CurveOnSurface& CurveOnSurface() const;
+  Standard_EXPORT const Handle(Adaptor3d_CurveOnSurface)& CurveOnSurface() const;
   
   //! Returns the edge.
   Standard_EXPORT const TopoDS_Edge& Edge() const;
@@ -217,7 +217,7 @@ public:
 private:
 
   gp_Trsf myTrsf;
-  GeomAdaptor_Curve myCurve;
+  Handle(GeomAdaptor_Curve) myCurve;
   Handle(Adaptor3d_CurveOnSurface) myConSurf;
   TopoDS_Edge myEdge;
 

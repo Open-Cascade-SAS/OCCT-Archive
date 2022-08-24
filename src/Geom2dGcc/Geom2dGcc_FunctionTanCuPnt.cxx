@@ -36,7 +36,7 @@
 //               N.N            N*N*N*CP1*CP1*CP1                         +
 //=========================================================================
 Geom2dGcc_FunctionTanCuPnt::
-Geom2dGcc_FunctionTanCuPnt(const Geom2dAdaptor_Curve& C      ,
+Geom2dGcc_FunctionTanCuPnt(const Handle(Geom2dAdaptor_Curve)& C      ,
                            const gp_Pnt2d& Point  ) {
                              TheCurv = C;
                              ThePoint = Point;

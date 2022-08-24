@@ -415,6 +415,6 @@ gp_Pnt TopOpeBRep_EdgesIntersector::Value1() const
     p.SetCoord (inf, inf, inf);
   }
   else
-    mySurface1->Surface().D0(p2.X(),p2.Y(), p);
+    mySurface1->Surface()->D0(p2.X(),p2.Y(), p);
   return   p;
 }

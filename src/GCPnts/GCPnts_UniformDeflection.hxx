@@ -47,7 +47,7 @@ public:
   //! @param theC [in] input 3D curve
   //! @param theDeflection [in] target deflection
   //! @param theWithControl [in] when TRUE, the algorithm controls the estimate deflection
-  Standard_EXPORT GCPnts_UniformDeflection (const Adaptor3d_Curve& theC,
+  Standard_EXPORT GCPnts_UniformDeflection (const Handle(Adaptor3d_Curve)& theC,
                                             const Standard_Real theDeflection,
                                             const Standard_Boolean theWithControl = Standard_True);
 
@@ -55,7 +55,7 @@ public:
   //! @param theC [in] input 2D curve
   //! @param theDeflection [in] target deflection
   //! @param theWithControl [in] when TRUE, the algorithm controls the estimate deflection
-  Standard_EXPORT GCPnts_UniformDeflection (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT GCPnts_UniformDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                             const Standard_Real theDeflection,
                                             const Standard_Boolean theWithControl = Standard_True);
 
@@ -65,7 +65,7 @@ public:
   //! @param theU1 [in] first parameter on curve
   //! @param theU2 [in] last  parameter on curve
   //! @param theWithControl [in] when TRUE, the algorithm controls the estimate deflection
-  Standard_EXPORT GCPnts_UniformDeflection (const Adaptor3d_Curve& theC,
+  Standard_EXPORT GCPnts_UniformDeflection (const Handle(Adaptor3d_Curve)& theC,
                                             const Standard_Real theDeflection,
                                             const Standard_Real theU1, const Standard_Real theU2,
                                             const Standard_Boolean theWithControl = Standard_True);
@@ -76,23 +76,23 @@ public:
   //! @param theU1 [in] first parameter on curve
   //! @param theU2 [in] last  parameter on curve
   //! @param theWithControl [in] when TRUE, the algorithm controls the estimate deflection
-  Standard_EXPORT GCPnts_UniformDeflection (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT GCPnts_UniformDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                             const Standard_Real theDeflection,
                                             const Standard_Real theU1, const Standard_Real theU2,
                                             const Standard_Boolean theWithControl = Standard_True);
 
   //! Initialize the algorithms with 3D curve and deflection.
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& theC,
                                    const Standard_Real theDeflection,
                                    const Standard_Boolean theWithControl = Standard_True);
 
   //! Initialize the algorithms with 2D curve and deflection.
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                    const Standard_Real theDeflection,
                                    const Standard_Boolean theWithControl = Standard_True);
 
   //! Initialize the algorithms with 3D curve, deflection, parameter range.
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& theC,
                                    const Standard_Real theDeflection,
                                    const Standard_Real theU1, const Standard_Real theU2,
                                    const Standard_Boolean theWithControl = Standard_True);
@@ -135,7 +135,7 @@ public:
   //!     the package Geom2d (in the case of an Adaptor2d_Curve2d curve)
   //!     or a 3D curve from the package Geom (in the case of an Adaptor3d_Curve curve),
   //! -   and those required on the curve by the computation algorithm.
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                    const Standard_Real theDeflection,
                                    const Standard_Real theU1, const Standard_Real theU2,
                                    const Standard_Boolean theWithControl = Standard_True);

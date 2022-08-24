@@ -90,7 +90,7 @@ Geom2dHatch_Element& operator() (const Standard_Integer K)
   
   Standard_EXPORT Standard_Boolean RejectEdge (const gp_Lin2d& L, const Standard_Real Par) const;
   
-  Standard_EXPORT void CurrentEdge (Geom2dAdaptor_Curve& E, TopAbs_Orientation& Or) const;
+  Standard_EXPORT void CurrentEdge (Handle(Geom2dAdaptor_Curve)& E, TopAbs_Orientation& Or) const;
 
 
 

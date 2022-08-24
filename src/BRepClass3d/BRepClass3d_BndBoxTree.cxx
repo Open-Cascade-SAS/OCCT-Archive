@@ -38,7 +38,7 @@ Standard_Boolean BRepClass3d_BndBoxTreeSelectorPoint::Accept (const Standard_Int
     Standard_Real EdgeTSq  = BRep_Tool::Tolerance(E);
     EdgeTSq *= EdgeTSq;
     Standard_Real f, l;
-    BRepAdaptor_Curve C(E);
+    Handle(BRepAdaptor_Curve) C = new BRepAdaptor_Curve(E);
     BRep_Tool::Range(E,f,l);
 
     // Edge-Point interference.
@@ -86,11 +86,11 @@ Standard_Boolean BRepClass3d_BndBoxTreeSelectorLine::Accept (const Standard_Inte
     Standard_Real EdgeTSq = BRep_Tool::Tolerance(E);
     EdgeTSq *= EdgeTSq;
     Standard_Real f, l;
-    BRepAdaptor_Curve C(E);
+    Handle(BRepAdaptor_Curve) C = new BRepAdaptor_Curve(E);
     BRep_Tool::Range(E, f, l);
 
     // Edge-Line interference.
-    Extrema_ExtCC ExtCC(C, myLC, f, l, myLC.FirstParameter(), myLC.LastParameter());
+    Extrema_ExtCC ExtCC(C, myLC, f, l, myLC->FirstParameter(), myLC->LastParameter());
     if (ExtCC.IsDone())
     {
       if (ExtCC.IsParallel())

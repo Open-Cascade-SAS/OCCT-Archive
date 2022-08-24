@@ -221,7 +221,7 @@ void RWMesh_FaceIterator::initFace()
     TopLoc_Location aLoc;
     if (!BRep_Tool::Surface (aFaceFwd, aLoc).IsNull())
     {
-      myFaceAdaptor.Initialize (aFaceFwd, false);
+      myFaceAdaptor = new BRepAdaptor_Surface(aFaceFwd, false);
       mySLTool.SetSurface (myFaceAdaptor);
       myHasNormals = true;
     }

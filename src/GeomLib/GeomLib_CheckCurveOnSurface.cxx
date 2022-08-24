@@ -57,8 +57,8 @@ class GeomLib_CheckCurveOnSurface_TargetFunc :
   public math_MultipleVarFunctionWithHessian
 {
  public:
-  GeomLib_CheckCurveOnSurface_TargetFunc( const Adaptor3d_Curve& theC3D,
-                                          const Adaptor3d_Curve& theCurveOnSurface,
+  GeomLib_CheckCurveOnSurface_TargetFunc( const Handle(Adaptor3d_Curve)& theC3D,
+                                          const Handle(Adaptor3d_Curve)& theCurveOnSurface,
                                           const Standard_Real theFirst,
                                           const Standard_Real theLast):
   myCurve1(theC3D),
@@ -92,8 +92,8 @@ class GeomLib_CheckCurveOnSurface_TargetFunc :
       if (!CheckParameter(theX))
         return Standard_False;
 
-      const gp_Pnt  aP1(myCurve1.Value(theX)),
-                    aP2(myCurve2.Value(theX));
+      const gp_Pnt  aP1(myCurve1->Value(theX)),
+                    aP2(myCurve2->Value(theX));
       
       theFVal = -1.0*aP1.SquareDistance(aP2);
     }
@@ -135,13 +135,13 @@ class GeomLib_CheckCurveOnSurface_TargetFunc :
       //
       if (!theDeriv2)
       {
-        myCurve1.D1(theX, aP1, aDC1);
-        myCurve2.D1(theX, aP2, aDC2);
+        myCurve1->D1(theX, aP1, aDC1);
+        myCurve2->D1(theX, aP2, aDC2);
       }
       else
       {
-        myCurve1.D2(theX, aP1, aDC1, aDCC1);
-        myCurve2.D2(theX, aP2, aDC2, aDCC2);
+        myCurve1->D2(theX, aP1, aDC1, aDCC1);
+        myCurve2->D2(theX, aP2, aDC2, aDCC2);
       }
 
       const gp_Vec aVec1(aP1, aP2), aVec2(aDC2-aDC1);
@@ -219,8 +219,8 @@ class GeomLib_CheckCurveOnSurface_TargetFunc :
      return ((myFirst <= theParam) && (theParam <= myLast));
    }
 
-   const Adaptor3d_Curve& myCurve1;
-   const Adaptor3d_Curve& myCurve2;
+   const Handle(Adaptor3d_Curve) myCurve1;
+   const Handle(Adaptor3d_Curve) myCurve2;
    const Standard_Real myFirst;
    const Standard_Real myLast;
 };
@@ -255,8 +255,8 @@ public:
     //This optimal value will be put in corresponding (depending on theIndex - the
     //identificator of the current interval in mySubIntervals array) cell of 
     //myArrOfDist and myArrOfParam arrays.
-    GeomLib_CheckCurveOnSurface_TargetFunc aFunc(*(myCurveArray.Value(theThreadIndex).get()),
-                                                 *(myCurveOnSurfaceArray.Value(theThreadIndex).get()),
+    GeomLib_CheckCurveOnSurface_TargetFunc aFunc(myCurveArray.Value(theThreadIndex).get(),
+                                                 myCurveOnSurfaceArray.Value(theThreadIndex).get(),
                                                  mySubIntervals.Value(theElemIndex),
                                                  mySubIntervals.Value(theElemIndex + 1));
 

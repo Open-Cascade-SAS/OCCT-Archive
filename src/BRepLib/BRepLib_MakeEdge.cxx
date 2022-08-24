@@ -62,21 +62,21 @@ static Standard_Boolean Project(const Handle(Geom_Curve)& C,
   Eps2 *= Eps2;
   
   gp_Pnt P = BRep_Tool::Pnt(V);
-  GeomAdaptor_Curve GAC(C);
+  Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(C);
   
   // Afin de faire les extremas, on verifie les distances en bout
   Standard_Real D1,D2;
   gp_Pnt P1,P2;
-  P1 = GAC.Value(GAC.FirstParameter());
-  P2 = GAC.Value(GAC.LastParameter());
+  P1 = GAC->Value(GAC->FirstParameter());
+  P2 = GAC->Value(GAC->LastParameter());
   D1 = P1.SquareDistance(P);
   D2 = P2.SquareDistance(P);
   if ( (D1 < D2) && (D1 <= Eps2) ) {
-    p = GAC.FirstParameter();
+    p = GAC->FirstParameter();
     return Standard_True;
   }
   else if ( (D2 < D1) && (D2 <= Eps2) ) {
-    p = GAC.LastParameter();
+    p = GAC->LastParameter();
     return Standard_True;
   }
 
@@ -122,20 +122,20 @@ static Standard_Boolean Project(const Handle(Geom2d_Curve)& C,
   
   Handle(Geom2dAdaptor_Curve) HG2AHC = new Geom2dAdaptor_Curve (C);
   Handle(GeomAdaptor_Surface) HGAHS = new GeomAdaptor_Surface (S);
-  Adaptor3d_CurveOnSurface ACOS(HG2AHC,HGAHS);
+  Handle(Adaptor3d_CurveOnSurface) ACOS = new Adaptor3d_CurveOnSurface(HG2AHC,HGAHS);
 
   Standard_Real D1,D2;
   gp_Pnt P1,P2;
-  P1 = ACOS.Value(ACOS.FirstParameter());
-  P2 = ACOS.Value(ACOS.LastParameter());
+  P1 = ACOS->Value(ACOS->FirstParameter());
+  P2 = ACOS->Value(ACOS->LastParameter());
   D1 = P1.SquareDistance(P);
   D2 = P2.SquareDistance(P);
   if ( (D1 < D2) && (D1 <= Eps2) ) {
-    p = ACOS.FirstParameter();
+    p = ACOS->FirstParameter();
     return Standard_True;
   }
   else if ( (D2 < D1) && (D2 <= Eps2) ) {
-    p = ACOS.LastParameter();
+    p = ACOS->LastParameter();
     return Standard_True;
   }
   

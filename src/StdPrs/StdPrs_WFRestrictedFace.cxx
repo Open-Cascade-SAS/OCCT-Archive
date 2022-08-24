@@ -53,17 +53,17 @@ void StdPrs_WFRestrictedFace::Add
 
   for (aToolRst.Init(); aToolRst.More(); aToolRst.Next())
   {
-    const Adaptor2d_Curve2d& aRCurve = aToolRst.Value();
+    const Handle(Adaptor2d_Curve2d)& aRCurve = aToolRst.Value();
     BndLib_Add2dCurve::Add(aRCurve, Precision::PConfusion(), aBndBox);
   }
   if (!aBndBox.IsVoid())
     aBndBox.Get(aUMin, aVMin, aUMax, aVMax);
   else
   { // No pcurves -- take natural bounds
-    aUMin = theFace->Surface().FirstUParameter();
-    aVMin = theFace->Surface().FirstVParameter();
-    aUMax = theFace->Surface().LastUParameter();
-    aVMax = theFace->Surface().LastVParameter();
+    aUMin = theFace->Surface()->FirstUParameter();
+    aVMin = theFace->Surface()->FirstVParameter();
+    aUMax = theFace->Surface()->LastUParameter();
+    aVMax = theFace->Surface()->LastVParameter();
   }
 
   // Load the isos
@@ -114,7 +114,7 @@ void StdPrs_WFRestrictedFace::Add
   for (aToolRst.Init(); aToolRst.More(); aToolRst.Next())
   {
     TopAbs_Orientation anOrientation = aToolRst.Orientation();
-    const Adaptor2d_Curve2d* aRCurve = &aToolRst.Value();
+    const Handle(Adaptor2d_Curve2d) aRCurve = aToolRst.Value();
     anU1 = aRCurve->FirstParameter();
     anU2 = aRCurve->LastParameter();
     if (aRCurve->GetType() != GeomAbs_Line)
@@ -143,21 +143,19 @@ void StdPrs_WFRestrictedFace::Add
   }
 
   // Draw the isos
-  Adaptor3d_IsoCurve anIsoCurve;
-  anIsoCurve.Load(theFace);
+  Handle(Adaptor3d_IsoCurve) anIsoCurve = new Adaptor3d_IsoCurve(theFace);
   Handle(Geom_Curve) aBCurve;
-  const BRepAdaptor_Surface& aBSurface = *theFace;
   GeomAbs_SurfaceType aFaceType = theFace->GetType();
 
   Standard_Integer aNbLines = anIsoBuild.NbLines();
   Handle(Geom_Surface) aGeomBSurface;
   if (aFaceType == GeomAbs_BezierSurface)
   {
-    aGeomBSurface = aBSurface.Bezier();
+    aGeomBSurface = theFace->Bezier();
   }
   else if (aFaceType == GeomAbs_BSplineSurface)
   {
-    aGeomBSurface = aBSurface.BSpline();
+    aGeomBSurface = theFace->BSpline();
   }
 
   for (anI = 1; anI <= aNbLines; ++anI)
@@ -185,18 +183,18 @@ void StdPrs_WFRestrictedFace::Add
 
         //Note that the isos are the part of the shape, it will be displayed after a computation the whole shape
         //NbPoints = 30 - default parameter for computation of such curves
-        StdPrs_Curve::Add (thePresentation, GeomAdaptor_Curve (aBCurve), b1, b2, aPoints->ChangeSequence(), 30, Standard_False);
+        StdPrs_Curve::Add (thePresentation, new GeomAdaptor_Curve (aBCurve), b1, b2, aPoints->ChangeSequence(), 30, Standard_False);
         theCurves.Append (aPoints);
       }
       else
       {
         if (anIsoBuild.IsXLine (anI))
         {
-          anIsoCurve.Load (GeomAbs_IsoU, anIsoCoord, b1, b2);
+          anIsoCurve->Load (GeomAbs_IsoU, anIsoCoord, b1, b2);
         }
         else
         {
-          anIsoCurve.Load(GeomAbs_IsoV, anIsoCoord, b1, b2);
+          anIsoCurve->Load(GeomAbs_IsoV, anIsoCoord, b1, b2);
         }
         StdPrs_Curve::Add (thePresentation, anIsoCurve, theDrawer, aPoints->ChangeSequence(), Standard_False);
         theCurves.Append (aPoints);
@@ -238,7 +236,7 @@ Standard_Boolean StdPrs_WFRestrictedFace::Match
 
   for (aToolRst.Init(); aToolRst.More(); aToolRst.Next())
   {
-    const Adaptor2d_Curve2d* aRCurve = &aToolRst.Value();
+    const Handle(Adaptor2d_Curve2d) aRCurve = aToolRst.Value();
     anU = aRCurve->FirstParameter();
     aV = aRCurve->LastParameter();
     if (aRCurve->GetType() != GeomAbs_Line)
@@ -314,7 +312,7 @@ Standard_Boolean StdPrs_WFRestrictedFace::Match
   for (aToolRst.Init(); aToolRst.More(); aToolRst.Next())
   {
     TopAbs_Orientation Orient = aToolRst.Orientation();
-    const Adaptor2d_Curve2d* aRCurve = &aToolRst.Value();
+    const Handle(Adaptor2d_Curve2d) aRCurve = aToolRst.Value();
     anU1 = aRCurve->FirstParameter();
     anU2 = aRCurve->LastParameter();
     if (aRCurve->GetType() != GeomAbs_Line) {
@@ -342,8 +340,7 @@ Standard_Boolean StdPrs_WFRestrictedFace::Match
 
   // Draw the isos
 
-  Adaptor3d_IsoCurve anIso;
-  anIso.Load(theFace);
+  Handle(Adaptor3d_IsoCurve) anIso = new Adaptor3d_IsoCurve(theFace);
   Standard_Integer aNbLines = anIsoBuild.NbLines();
 
   for (anI = 1; anI <= aNbLines; anI++)
@@ -359,9 +356,9 @@ Standard_Boolean StdPrs_WFRestrictedFace::Match
 
 
       if (anIsoBuild.IsXLine(anI))
-        anIso.Load(GeomAbs_IsoU,aCoord,anIsoStart,anIsoEnd);
+        anIso->Load(GeomAbs_IsoU,aCoord,anIsoStart,anIsoEnd);
       else
-        anIso.Load(GeomAbs_IsoV,aCoord,anIsoStart,anIsoEnd);
+        anIso->Load(GeomAbs_IsoV,aCoord,anIsoStart,anIsoEnd);
 
       if (StdPrs_Curve::Match(theX,theY,theZ,theDistance,anIso, 
         theDeflection, aLimit, aNbPoints))

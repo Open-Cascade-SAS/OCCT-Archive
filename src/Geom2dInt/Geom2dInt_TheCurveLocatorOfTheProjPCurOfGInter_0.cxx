@@ -22,11 +22,11 @@
 #include <gp_Pnt2d.hxx>
  
 
-#define Curve1 Adaptor2d_Curve2d
+#define Curve1 Handle(Adaptor2d_Curve2d)
 #define Curve1_hxx <Adaptor2d_Curve2d.hxx>
 #define Tool1 Geom2dInt_Geom2dCurveTool
 #define Tool1_hxx <Geom2dInt_Geom2dCurveTool.hxx>
-#define Curve2 Adaptor2d_Curve2d
+#define Curve2 Handle(Adaptor2d_Curve2d)
 #define Curve2_hxx <Adaptor2d_Curve2d.hxx>
 #define Tool2 Geom2dInt_Geom2dCurveTool
 #define Tool2_hxx <Geom2dInt_Geom2dCurveTool.hxx>

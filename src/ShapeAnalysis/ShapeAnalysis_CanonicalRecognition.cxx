@@ -1223,7 +1223,7 @@ Standard_Boolean GetSamplePoints(const TopoDS_Wire& theWire,
                                  Handle(TColgp_HArray1OfXYZ)& thePoints)
 {
   NCollection_Vector<Standard_Real> aLengths;
-  NCollection_Vector<BRepAdaptor_Curve> aCurves;
+  NCollection_Vector<Handle(BRepAdaptor_Curve)> aCurves;
   NCollection_Vector<gp_XYZ> aPoints;
   Standard_Real aTol = Max(1.e-3, theTol/10.);
   Standard_Real aTotalLength = 0.;
@@ -1233,7 +1233,7 @@ Standard_Boolean GetSamplePoints(const TopoDS_Wire& theWire,
     const TopoDS_Edge& anE = TopoDS::Edge(anEIter.Value());
     if (BRep_Tool::Degenerated(anE))
       continue;
-    BRepAdaptor_Curve aBAC(anE);
+    Handle(BRepAdaptor_Curve) aBAC = new BRepAdaptor_Curve(anE);
     Standard_Real aClength = GCPnts_AbscissaPoint::Length(aBAC, aTol);
     aTotalLength += aClength;
     aCurves.Append(aBAC);
@@ -1246,7 +1246,7 @@ Standard_Boolean GetSamplePoints(const TopoDS_Wire& theWire,
   Standard_Integer i, aNb = aLengths.Length();
   for (i = 0; i < aNb; ++i)
   {
-    const BRepAdaptor_Curve& aC = aCurves(i);
+    const Handle(BRepAdaptor_Curve)& aC = aCurves(i);
     Standard_Real aClength = GCPnts_AbscissaPoint::Length(aC, aTol);
     Standard_Integer aNbPoints = RealToInt(aClength / aTotalLength * theMaxNbInt + 1);
     aNbPoints = Max(2, aNbPoints);
@@ -1258,7 +1258,7 @@ Standard_Boolean GetSamplePoints(const TopoDS_Wire& theWire,
     for (j = 1; j <= aNbPoints; ++j)
     {
       Standard_Real t = aPointGen.Parameter(j);
-      gp_Pnt aP = aC.Value(t);
+      gp_Pnt aP = aC->Value(t);
       aPoints.Append(aP.XYZ());
     }
   }

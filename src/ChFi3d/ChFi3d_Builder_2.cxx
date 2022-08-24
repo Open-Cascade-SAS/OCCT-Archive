@@ -132,7 +132,7 @@ static void ChFi3d_CoupeParPlan (const ChFiDS_CommonPoint & compoint1,
       Handle(GeomAdaptor_Surface) HPlan=new GeomAdaptor_Surface(Plan);
       Handle(Geom2d_Curve) C2dint2;
       TColStd_Array1OfReal Pdeb(1,4),Pfin(1,4);
-      GeomAdaptor_Surface AS(Plan);
+      Handle(GeomAdaptor_Surface) AS = new GeomAdaptor_Surface(Plan);
       Extrema_ExtPS ext(P1,AS,1.e-3,1.e-3);
       Extrema_ExtPS ext1 (P2,AS,1.e-3,1.e-3);
       Standard_Real u1,v1;
@@ -275,12 +275,12 @@ static Standard_Boolean BonVoisin(const gp_Pnt& Point,
 
 static Standard_Boolean Projection(Extrema_ExtPC&       PExt, 
 				   const gp_Pnt&        P,
-				   const Adaptor3d_Curve& C,
+				   const Handle(Adaptor3d_Curve)& C,
 				   Standard_Real&       W,
 				   Standard_Real        Tol)
 {
   Standard_Real Dist2, daux2;
-  Dist2 =  C.Value(W).SquareDistance(P);
+  Dist2 =  C->Value(W).SquareDistance(P);
 
   // It is checked if it is not already a solution
   if (Dist2 < Tol * Tol) 
@@ -291,7 +291,7 @@ static Standard_Boolean Projection(Extrema_ExtPC&       PExt,
   // On essai une resolution initialise
   Extrema_LocateExtPC ext(P,C,W,Tol/10);
   if(ext.IsDone()) {
-    daux2 = C.Value(ext.Point().Parameter()).SquareDistance(P);
+    daux2 = C->Value(ext.Point().Parameter()).SquareDistance(P);
     if (daux2 <Dist2 ) {
       W = ext.Point().Parameter();
       Dist2 = daux2;
@@ -328,11 +328,11 @@ static void TgtKP(const Handle(ChFiDS_SurfData)& CD,
 		  gp_Vec&                        ded) 
 {
   Standard_Real wtg = CD->InterferenceOnS1().Parameter(isfirst);
-  const BRepAdaptor_Curve& bc = Spine->CurrentElementarySpine(iedge);
+  const Handle(BRepAdaptor_Curve)& bc = Spine->CurrentElementarySpine(iedge);
   if(Spine->Edges(iedge).Orientation() == TopAbs_FORWARD)
-    bc.D1(wtg+bc.FirstParameter(),ped,ded);
+    bc->D1(wtg+bc->FirstParameter(),ped,ded);
   else{
-    bc.D1(-wtg+bc.LastParameter(),ped,ded);
+    bc->D1(-wtg+bc->LastParameter(),ped,ded);
     ded.Reverse();
   }
   ded.Normalize();
@@ -690,7 +690,8 @@ Standard_Boolean ChFi3d_Builder::StripeOrientations
  Standard_Integer&           ChoixConge) const 
 {
   //TopTools_ListIteratorOfListOfShape It;
-  BRepAdaptor_Surface Sb1,Sb2;
+  Handle(BRepAdaptor_Surface) Sb1 = new BRepAdaptor_Surface();
+  Handle(BRepAdaptor_Surface) Sb2 = new BRepAdaptor_Surface();
   TopAbs_Orientation Of1,Of2;
   TopoDS_Face ff1,ff2;
   TopoDS_Edge anEdge = Spine->Edges(1);
@@ -700,10 +701,10 @@ Standard_Boolean ChFi3d_Builder::StripeOrientations
   { TopoDS_Face TmpFace = ff1; ff1 = ff2; ff2 = TmpFace; }
   Of1 = ff1.Orientation();
   ff1.Orientation(TopAbs_FORWARD);
-  Sb1.Initialize(ff1);
+  Sb1->Initialize(ff1);
   Of2 = ff2.Orientation();
   ff2.Orientation(TopAbs_FORWARD);
-  Sb2.Initialize(ff2);
+  Sb2->Initialize(ff2);
 
   ChoixConge = ChFi3d::ConcaveSide(Sb1,Sb2,Spine->Edges(1),
 				   Or1,Or2);
@@ -760,7 +761,6 @@ void ChFi3d_Builder::StartSol(const Handle(ChFiDS_Stripe)&      Stripe,
 			      Standard_Real&                    First) const 
 {
   Handle(ChFiDS_Spine)& Spine = Stripe->ChangeSpine();
-  ChFiDS_ElSpine& els = *HGuide;
   Standard_Integer nbed = Spine->NbEdges();
   Standard_Integer nbessaimax = 3*nbed;
   if (nbessaimax < 10) nbessaimax = 10;
@@ -785,7 +785,7 @@ void ChFi3d_Builder::StartSol(const Handle(ChFiDS_Stripe)&      Stripe,
   math_Vector SolDep(1,4);
   Handle(Geom2d_Curve) PC;
   Extrema_ExtPC PExt;
-  PExt.Initialize(els, 
+  PExt.Initialize(HGuide,
 		  Spine->FirstParameter(1),
 		  Spine->LastParameter(nbed),
 		  Precision::Confusion());
@@ -845,10 +845,10 @@ void ChFi3d_Builder::StartSol(const Handle(ChFiDS_Stripe)&      Stripe,
 
     SolDep(1) = P1.X(); SolDep(2) = P1.Y();
     SolDep(3) = P2.X(); SolDep(4) = P2.Y();
-    const BRepAdaptor_Curve& Ced = Spine->CurrentElementarySpine(iedge);
-    gp_Pnt pnt = Ced.Value(woned);
+    const Handle(BRepAdaptor_Curve)& Ced = Spine->CurrentElementarySpine(iedge);
+    gp_Pnt pnt = Ced->Value(woned);
   
-    if (Projection(PExt, pnt, els, w, tolesp) &&
+    if (Projection(PExt, pnt, HGuide, w, tolesp) &&
 	PerformFirstSection(Spine,HGuide,Choix,HS1,HS2,
 			    I1,I2,w,SolDep,Pos1,Pos2)) {
       P1.SetCoord(SolDep(1),SolDep(2));
@@ -889,12 +889,12 @@ void ChFi3d_Builder::StartSol(const Handle(ChFiDS_Stripe)&      Stripe,
     I2->Initialize(HSon2);
     SolDep(1) = P1.X(); SolDep(2) = P1.Y();
     SolDep(3) = P2.X(); SolDep(4) = P2.Y();
-    const BRepAdaptor_Curve& Ced = Spine->CurrentElementarySpine(iedge);
-    gp_Pnt pnt = Ced.Value(woned);
+    const Handle(BRepAdaptor_Curve)& Ced = Spine->CurrentElementarySpine(iedge);
+    gp_Pnt pnt = Ced->Value(woned);
 //    Extrema_LocateExtPC ext(pnt,els,w,1.e-8);
 //    if(ext.IsDone()){
 //      w = ext.Point().Parameter(); 
-    if (Projection(PExt, pnt, els, w, tolesp)) {
+    if (Projection(PExt, pnt, HGuide, w, tolesp)) {
       PerformFirstSection(Spine,HGuide,Choix,HS1,HS2,
 			  I1,I2,w,SolDep,Pos1,Pos2);
       gp_Pnt P;
@@ -966,7 +966,7 @@ static void  ChFi3d_BuildPlane (TopOpeBRepDS_DataStructure&    DStr,
     Hc = BRep_Tool::CurveOnSurface
       (SD->Vertex(isfirst,ons).Arc(),F,u,v);
     Hc->Value(SD->Vertex(isfirst,ons).ParameterOnArc()).Coord(u,v);
-    BRepLProp_SLProps theProp (*HS, u, v, 1, 1.e-12);
+    BRepLProp_SLProps theProp (HS, u, v, 1, 1.e-12);
     if  (theProp.IsNormalDefined()) {
       P =  theProp.Value();
       Handle(Geom_Plane) Pln  = new Geom_Plane(P, theProp.Normal());
@@ -2374,7 +2374,7 @@ void ChFi3d_Builder::PerformSetOfKPart(Handle(ChFiDS_Stripe)& Stripe,
     
     ConexFaces(Spine,iedge,HS1,HS2);
     
-    if (ChFi3d_KParticular (Spine, iedge, *HS1, *HS2)) {
+    if (ChFi3d_KParticular (Spine, iedge, HS1, HS2)) {
       intf = ((iedge == 1) && !Spine->IsPeriodic());
       intl = ((iedge == Spine->NbEdges()) && !Spine->IsPeriodic());
       Or1   = HS1->Face().Orientation();
@@ -2972,7 +2972,7 @@ void ChFi3d_Builder::PerformSetOfKGen(Handle(ChFiDS_Stripe)& Stripe,
 	  Standard_Real distinit = pv.Distance(pelsapp);
 	  std::cout<<"distance psp/papp : "<<distinit<<std::endl;
 #endif
-	  Extrema_LocateExtPC ext(pv,*curhels,wi,1.e-8);
+	  Extrema_LocateExtPC ext(pv,curhels,wi,1.e-8);
 	  wv(i) = wi;
 	  if(ext.IsDone()){
 	    wv(i) = ext.Point().Parameter(); 

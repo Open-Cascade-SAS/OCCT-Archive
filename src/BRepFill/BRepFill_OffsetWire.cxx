@@ -104,7 +104,7 @@ static Standard_Integer NbBISSEC    = 0;
 
 //  Modified by Sergey KHROMOV - Thu Nov 16 17:24:39 2000 Begin
 
-static void QuasiFleche(const Adaptor3d_Curve& C,
+static void QuasiFleche(const Handle(Adaptor3d_Curve)& C,
   const Standard_Real Deflection2, 
   const Standard_Real Udeb,
   const gp_Pnt& Pdeb,
@@ -119,7 +119,7 @@ static void QuasiFleche(const Adaptor3d_Curve& C,
 
 static Standard_Boolean PerformCurve (TColStd_SequenceOfReal& Parameters,
   TColgp_SequenceOfPnt&   Points,
-  const Adaptor3d_Curve& C, 
+  const Handle(Adaptor3d_Curve)& C, 
   const Standard_Real Deflection,
   const Standard_Real U1,
   const Standard_Real U2,
@@ -517,7 +517,7 @@ void BRepFill_OffsetWire::Perform (const Standard_Real Offset,
 
         Standard_Real f, l;
         Handle(Geom_Curve) G3d = BRep_Tool::Curve(TopoDS::Edge(anE),f,l);
-        GeomAdaptor_Curve  AC(G3d,f,l);
+        Handle(GeomAdaptor_Curve) AC = new GeomAdaptor_Curve(G3d,f,l);
 
         PerformCurve(Parameters, Points, AC, aDefl, f, 
           l, Precision::Confusion(), 2);
@@ -2600,7 +2600,7 @@ static void CheckBadEdges(const TopoDS_Face& Spine, const Standard_Real Offset,
 static Standard_Boolean PerformCurve (TColStd_SequenceOfReal& Parameters,
 
   TColgp_SequenceOfPnt&   Points,
-  const Adaptor3d_Curve& C, 
+  const Handle(Adaptor3d_Curve)& C, 
   const Standard_Real Deflection,
   const Standard_Real U1,
   const Standard_Real U2,
@@ -2612,11 +2612,11 @@ static Standard_Boolean PerformCurve (TColStd_SequenceOfReal& Parameters,
 
   gp_Pnt Pdeb, Pfin;
   gp_Vec Ddeb,Dfin;
-  C.D1(UU1,Pdeb,Ddeb);
+  C->D1(UU1,Pdeb,Ddeb);
   Parameters.Append(UU1);
   Points.Append(Pdeb);
 
-  C.D1(UU2,Pfin,Dfin);
+  C->D1(UU2,Pfin,Dfin);
 
   const Standard_Real aDelta = UU2 - UU1;
   const Standard_Real aDist = Pdeb.Distance(Pfin);
@@ -2641,7 +2641,7 @@ static Standard_Boolean PerformCurve (TColStd_SequenceOfReal& Parameters,
 //purpose  : 
 //=======================================================================
 
-static void QuasiFleche(const Adaptor3d_Curve& C,
+static void QuasiFleche(const Handle(Adaptor3d_Curve)& C,
 
   const Standard_Real Deflection2, 
   const Standard_Real Udeb,
@@ -2661,7 +2661,7 @@ static void QuasiFleche(const Adaptor3d_Curve& C,
   gp_Vec Vdelta;
   if (Nbmin > 2) {
     Udelta /=(Nbmin-1);
-    C.D1(Udeb+Udelta,Pdelta,Vdelta);
+    C->D1(Udeb+Udelta,Pdelta,Vdelta);
   }
   else {
     Pdelta = Pfin;
@@ -2689,7 +2689,7 @@ static void QuasiFleche(const Adaptor3d_Curve& C,
   }
   if (!flecheok) {
     gp_Pnt Pmid((Pdeb.XYZ()+Pdelta.XYZ())/2.);
-    gp_Pnt Pverif(C.Value(Udeb+Udelta/2.));
+    gp_Pnt Pverif(C->Value(Udeb+Udelta/2.));
     theFleche = Pmid.SquareDistance(Pverif);
   }
 

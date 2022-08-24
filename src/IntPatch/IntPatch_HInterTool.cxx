@@ -237,7 +237,7 @@ Standard_Boolean IntPatch_HInterTool::Project (const Handle(Adaptor2d_Curve2d)& 
   Standard_Real Tol = 1.e-5;
   Standard_Real Dist2;
 
-  Extrema_EPCOfExtPC2d extrema(P,*C,Nbu,epsX,Tol);
+  Extrema_EPCOfExtPC2d extrema(P,C,Nbu,epsX,Tol);
   if (!extrema.IsDone()) {
     return Standard_False;
   }

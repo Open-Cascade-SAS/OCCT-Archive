@@ -33,33 +33,33 @@ namespace
 {
   static const Standard_Real Us3 = 0.3333333333333333333333333333;
 
-  inline static void D0 (const Adaptor3d_Curve& C, const Standard_Real U, gp_Pnt& P)
+  inline static void D0 (const Handle(Adaptor3d_Curve)& C, const Standard_Real U, gp_Pnt& P)
   {
-    C.D0 (U, P);
+    C->D0 (U, P);
   }
 
-  inline static void D2 (const Adaptor3d_Curve& C, const Standard_Real U,
+  inline static void D2 (const Handle(Adaptor3d_Curve)& C, const Standard_Real U,
                          gp_Pnt& P, gp_Vec& V1, gp_Vec& V2)
   {
-    C.D2 (U, P, V1, V2);
+    C->D2 (U, P, V1, V2);
   }
 
-  static void D0 (const Adaptor2d_Curve2d& C, const Standard_Real U, gp_Pnt& PP)
+  static void D0 (const Handle(Adaptor2d_Curve2d)& C, const Standard_Real U, gp_Pnt& PP)
   {
     Standard_Real X, Y;
     gp_Pnt2d P;
-    C.D0 (U, P);
+    C->D0 (U, P);
     P.Coord (X, Y);
     PP.SetCoord (X, Y, 0.0);
   }
 
-  static void D2 (const Adaptor2d_Curve2d& C, const Standard_Real U,
+  static void D2 (const Handle(Adaptor2d_Curve2d)& C, const Standard_Real U,
                   gp_Pnt& PP, gp_Vec& VV1, gp_Vec& VV2)
   {
     Standard_Real X, Y;
     gp_Pnt2d P;
     gp_Vec2d V1,V2;
-    C.D2 (U, P, V1, V2);
+    C->D2 (U, P, V1, V2);
     P.Coord (X, Y);
     PP.SetCoord  (X, Y, 0.0);
     V1.Coord (X, Y);
@@ -120,7 +120,7 @@ GCPnts_TangentialDeflection::GCPnts_TangentialDeflection()
 //function : GCPnts_TangentialDeflection
 //purpose  :
 //=======================================================================
-GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Adaptor3d_Curve& theC,
+GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Handle(Adaptor3d_Curve)& theC,
                                                           const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                                           const Standard_Integer theMinimumOfPoints,
                                                           const Standard_Real theUTol,
@@ -140,7 +140,7 @@ GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Adaptor3d_Curve&
 //function : GCPnts_TangentialDeflection
 //purpose  :
 //=======================================================================
-GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Adaptor3d_Curve& theC,
+GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Handle(Adaptor3d_Curve)& theC,
                                                           const Standard_Real theFirstParameter, const Standard_Real theLastParameter,
                                                           const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                                           const Standard_Integer theMinimumOfPoints,
@@ -164,7 +164,7 @@ GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Adaptor3d_Curve&
 //function : GCPnts_TangentialDeflection
 //purpose  :
 //=======================================================================
-GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Adaptor2d_Curve2d& theC,
+GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                                           const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                                           const Standard_Integer theMinimumOfPoints,
                                                           const Standard_Real theUTol,
@@ -184,7 +184,7 @@ GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Adaptor2d_Curve2
 //function : GCPnts_TangentialDeflection
 //purpose  :
 //=======================================================================
-GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Adaptor2d_Curve2d& theC,
+GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                                           const Standard_Real theFirstParameter, const Standard_Real theLastParameter,
                                                           const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                                           const Standard_Integer theMinimumOfPoints,
@@ -208,13 +208,13 @@ GCPnts_TangentialDeflection::GCPnts_TangentialDeflection (const Adaptor2d_Curve2
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_TangentialDeflection::Initialize (const Adaptor3d_Curve& theC,
+void GCPnts_TangentialDeflection::Initialize (const Handle(Adaptor3d_Curve)& theC,
                                               const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                               const Standard_Integer theMinimumOfPoints,
                                               const Standard_Real theUTol,
                                               const Standard_Real theMinLen)
 {
-  Initialize (theC, theC.FirstParameter(), theC.LastParameter(),
+  Initialize (theC, theC->FirstParameter(), theC->LastParameter(),
               theAngularDeflection, theCurvatureDeflection,
               theMinimumOfPoints,
               theUTol, theMinLen);
@@ -224,13 +224,13 @@ void GCPnts_TangentialDeflection::Initialize (const Adaptor3d_Curve& theC,
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_TangentialDeflection::Initialize (const Adaptor2d_Curve2d& theC,
+void GCPnts_TangentialDeflection::Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                               const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                               const Standard_Integer theMinimumOfPoints,
                                               const Standard_Real theUTol,
                                               const Standard_Real theMinLen)
 {
-  Initialize (theC, theC.FirstParameter(), theC.LastParameter(),
+  Initialize (theC, theC->FirstParameter(), theC->LastParameter(),
               theAngularDeflection, theCurvatureDeflection,
               theMinimumOfPoints,
               theUTol, theMinLen);
@@ -240,7 +240,7 @@ void GCPnts_TangentialDeflection::Initialize (const Adaptor2d_Curve2d& theC,
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_TangentialDeflection::Initialize (const Adaptor3d_Curve& theC,
+void GCPnts_TangentialDeflection::Initialize (const Handle(Adaptor3d_Curve)& theC,
                                               const Standard_Real theFirstParameter, const Standard_Real theLastParameter,
                                               const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                               const Standard_Integer theMinimumOfPoints,
@@ -258,7 +258,7 @@ void GCPnts_TangentialDeflection::Initialize (const Adaptor3d_Curve& theC,
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_TangentialDeflection::Initialize (const Adaptor2d_Curve2d& theC,
+void GCPnts_TangentialDeflection::Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                               const Standard_Real theFirstParameter, const Standard_Real theLastParameter,
                                               const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                               const Standard_Integer theMinimumOfPoints,
@@ -335,7 +335,7 @@ template<class TheCurve>
 void GCPnts_TangentialDeflection::PerformCircular (const TheCurve& theC)
 {
   // akm 8/01/02 : check the radius before divide by it
-  Standard_Real dfR = theC.Circle().Radius();
+  Standard_Real dfR = theC->Circle().Radius();
   Standard_Real Du = GCPnts_TangentialDeflection::ArcAngularStep (dfR, myCurvatureDeflection, myAngularDeflection, myMinLen);
 
   const Standard_Real aDiff = myLastU - myFirstu;
@@ -391,7 +391,7 @@ void GCPnts_TangentialDeflection::initialize (const TheCurve& theC,
   myMinNbPnts         = Max (theMinimumOfPoints, 2);
   myMinLen            = Max (theMinLen, Precision::Confusion());
 
-  switch (theC.GetType())
+  switch (theC->GetType())
   {
     case GeomAbs_Line:
     {
@@ -405,14 +405,14 @@ void GCPnts_TangentialDeflection::initialize (const TheCurve& theC,
     }
     case GeomAbs_BSplineCurve:
     {
-      Handle(typename GCPnts_TCurveTypes<TheCurve>::BSplineCurve) aBS = theC.BSpline();
+      Handle(typename GCPnts_TCurveTypes<TheCurve>::BSplineCurve) aBS = theC->BSpline();
       if (aBS->NbPoles() == 2) PerformLinear (theC);
       else                     PerformCurve  (theC);
       break;
     }
     case GeomAbs_BezierCurve:
     {
-      Handle(typename GCPnts_TCurveTypes<TheCurve>::BezierCurve) aBZ = theC.Bezier();
+      Handle(typename GCPnts_TCurveTypes<TheCurve>::BezierCurve) aBZ = theC->Bezier();
       if (aBZ->NbPoles() == 2) PerformLinear (theC);
       else                     PerformCurve  (theC);
       break;
@@ -529,9 +529,9 @@ void GCPnts_TangentialDeflection::PerformCurve (const TheCurve& theC)
   myPoints    .Append (CurrentPoint);
 
   // Used to detect "isLine" current bspline and in Du computation in general handling.
-  const Standard_Integer NbInterv = theC.NbIntervals (GeomAbs_CN);
+  const Standard_Integer NbInterv = theC->NbIntervals (GeomAbs_CN);
   TColStd_Array1OfReal Intervs (1, NbInterv + 1);
-  theC.Intervals (Intervs, GeomAbs_CN);
+  theC->Intervals (Intervs, GeomAbs_CN);
 
   if (NotDone || Du > 5. * Dusave)
   {
@@ -543,17 +543,17 @@ void GCPnts_TangentialDeflection::PerformCurve (const TheCurve& theC)
       // Si c'est une droite on verifie en calculant minNbPoints :
       Standard_Boolean IsLine   = Standard_True;
       Standard_Integer NbPoints = (myMinNbPnts > 3) ? myMinNbPnts : 3;
-      switch (theC.GetType())
+      switch (theC->GetType())
       {
         case GeomAbs_BSplineCurve:
         {
-          Handle(typename GCPnts_TCurveTypes<TheCurve>::BSplineCurve) BS = theC.BSpline();
+          Handle(typename GCPnts_TCurveTypes<TheCurve>::BSplineCurve) BS = theC->BSpline();
           NbPoints = Max(BS->Degree() + 1, NbPoints);
           break;
         }
         case GeomAbs_BezierCurve:
         {
-          Handle(typename GCPnts_TCurveTypes<TheCurve>::BezierCurve) BZ = theC.Bezier();
+          Handle(typename GCPnts_TCurveTypes<TheCurve>::BezierCurve) BZ = theC->Bezier();
           NbPoints = Max(BZ->Degree() + 1, NbPoints);
           break;
         }

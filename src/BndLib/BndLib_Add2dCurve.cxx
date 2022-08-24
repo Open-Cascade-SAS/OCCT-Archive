@@ -1169,13 +1169,13 @@ Standard_Real BndLib_Box2dCurve::AdjustToPeriod(const Standard_Real aT,
 //function : Add
 //purpose  : 
 //=======================================================================
-void BndLib_Add2dCurve::Add(const Adaptor2d_Curve2d& aC,
+void BndLib_Add2dCurve::Add(const Handle(Adaptor2d_Curve2d)& aC,
 			     const Standard_Real aTol,
 			     Bnd_Box2d& aBox2D) 
 {
   BndLib_Add2dCurve::Add(aC,
-			  aC.FirstParameter(),
-			  aC.LastParameter (),
+			  aC->FirstParameter(),
+			  aC->LastParameter (),
 			  aTol,
 			  aBox2D);
 }
@@ -1183,15 +1183,14 @@ void BndLib_Add2dCurve::Add(const Adaptor2d_Curve2d& aC,
 //function : Add
 //purpose  : 
 //=======================================================================
-void BndLib_Add2dCurve::Add(const Adaptor2d_Curve2d& aC,
+void BndLib_Add2dCurve::Add(const Handle(Adaptor2d_Curve2d)& aC,
 			     const Standard_Real aU1,
 			     const Standard_Real aU2,
 			     const Standard_Real aTol,
 			     Bnd_Box2d& aBox2D)
 {
-  Adaptor2d_Curve2d *pC=(Adaptor2d_Curve2d *)&aC;
-  Geom2dAdaptor_Curve *pA=dynamic_cast<Geom2dAdaptor_Curve*>(pC);
-  if (!pA) {
+  Handle(Geom2dAdaptor_Curve) pA = Handle(Geom2dAdaptor_Curve)::DownCast(aC);
+  if (pA.IsNull()) {
     Standard_Real U, DU;
     Standard_Integer N, j;
     gp_Pnt2d P;
@@ -1199,11 +1198,11 @@ void BndLib_Add2dCurve::Add(const Adaptor2d_Curve2d& aC,
     U  = aU1;
     DU = (aU2-aU1)/(N-1);
     for (j=1; j<N; j++) {
-      aC.D0(U,P);
+      aC->D0(U,P);
       U+=DU;
       aBox2D.Add(P);
     }
-    aC.D0(aU2,P);
+    aC->D0(aU2,P);
     aBox2D.Add(P);
     aBox2D.Enlarge(aTol);
     return;

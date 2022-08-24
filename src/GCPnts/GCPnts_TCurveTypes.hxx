@@ -27,7 +27,7 @@
 template<class TheCurve> struct GCPnts_TCurveTypes {};
 
 //! Auxiliary tool to resolve 3D curve classes.
-template<> struct GCPnts_TCurveTypes<Adaptor3d_Curve>
+template<> struct GCPnts_TCurveTypes<Handle(Adaptor3d_Curve)>
 {
   typedef gp_Pnt                Point;
   typedef Geom_BezierCurve      BezierCurve;
@@ -37,7 +37,7 @@ template<> struct GCPnts_TCurveTypes<Adaptor3d_Curve>
 };
 
 //! Auxiliary tool to resolve 2D curve classes.
-template<> struct GCPnts_TCurveTypes<Adaptor2d_Curve2d>
+template<> struct GCPnts_TCurveTypes<Handle(Adaptor2d_Curve2d)>
 {
   typedef gp_Pnt2d                Point;
   typedef Geom2d_BezierCurve      BezierCurve;

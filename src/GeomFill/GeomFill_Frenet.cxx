@@ -151,7 +151,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
  void GeomFill_Frenet::Init()
 {
   Standard_Integer i, j;
-  GeomFill_SnglrFunc Func(myCurve);
+  Handle(GeomFill_SnglrFunc) Func = new GeomFill_SnglrFunc(myCurve);
   Standard_Real TolF = 1.0e-10, Tol = 10*TolF, Tol2 = Tol * Tol,
                 PTol = Precision::PConfusion();
 
@@ -173,7 +173,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
     IsLin->ChangeValue(i) = Standard_True;
     IsConst->ChangeValue(i) = Standard_True;
     for(j = 1; j <= NbControl; j++) {
-      Func.D0(myC2Disc->Value(i) + (j-1)*Step, C);
+      Func->D0(myC2Disc->Value(i) + (j-1)*Step, C);
       if(j == 1) C1 = C;
       modulus = C.XYZ().Modulus();
       if(modulus > Tol) {
@@ -204,7 +204,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
   for(i = 1; i <= NbIntC2; i++) {
     if (!IsLin->Value(i) && !IsConst->Value(i))
       {
-	Func.SetRatio(1./AveFunc(i)); // Normalization
+	Func->SetRatio(1./AveFunc(i)); // Normalization
 	Ext.Initialize(Func, myC2Disc->Value(i), myC2Disc->Value(i+1), TolF);
 	Ext.Perform(Origin);
 	if(Ext.IsDone() && Ext.NbExt() != 0)
@@ -241,7 +241,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
       {
 	SeqArray[i].Prepend( myC2Disc->Value(i+1) );
 	SeqArray[i].Append( myC2Disc->Value(i+2) );
-	Func.SetRatio(1./AveFunc(i+1)); // Normalization
+	Func->SetRatio(1./AveFunc(i+1)); // Normalization
 	for (j = 1; j < SeqArray[i].Length(); j++)
 	  if (SeqArray[i](j+1) - SeqArray[i](j) > PTol)
 	    {
@@ -299,7 +299,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
     gp_Vec SnglDer, SnglDer2;
     Standard_Real norm;
     for(i = 1; i <= mySngl->Length(); i++) {
-      Func.D2(mySngl->Value(i), C, SnglDer, SnglDer2);
+      Func->D2(mySngl->Value(i), C, SnglDer, SnglDer2);
       if ((norm = SnglDer.Magnitude()) > gp::Resolution())
         mySnglLen->ChangeValue(i) = Min(NullTol/norm, MaxSingular);
       else if ((norm = SnglDer2.Magnitude()) > gp::Resolution())

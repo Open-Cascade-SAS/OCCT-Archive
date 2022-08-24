@@ -77,7 +77,7 @@ public:
   //! @param theLine - the linear segment joining the point of theCurve having parameters
   //!                  theFPar and theLPar.
   Standard_EXPORT static
-    Standard_Real ComputeDeviation(const Geom2dAdaptor_Curve& theCurve,
+    Standard_Real ComputeDeviation(const Handle(Geom2dAdaptor_Curve)& theCurve,
                                   const Standard_Real theFPar,
                                   const Standard_Real theLPar,
                                   const Standard_Real theStartParameter,
@@ -106,7 +106,7 @@ public:
   //! setting big value of theNbIters). But it can give some start point for
   //! the overloaded method.
   Standard_EXPORT static
-    Standard_Real ComputeDeviation(const Geom2dAdaptor_Curve& theCurve,
+    Standard_Real ComputeDeviation(const Handle(Geom2dAdaptor_Curve)& theCurve,
                                    const Standard_Real theFPar,
                                    const Standard_Real theLPar,
                                    const Standard_Integer theNbSubIntervals,

@@ -43,15 +43,15 @@ public:
   Standard_EXPORT Extrema_ExtCC2d();
   
   //! It calculates all the distances.
-  Standard_EXPORT Extrema_ExtCC2d(const Adaptor2d_Curve2d& C1, const Adaptor2d_Curve2d& C2, const Standard_Real TolC1 = 1.0e-10, const Standard_Real TolC2 = 1.0e-10);
+  Standard_EXPORT Extrema_ExtCC2d(const Handle(Adaptor2d_Curve2d)& C1, const Handle(Adaptor2d_Curve2d)& C2, const Standard_Real TolC1 = 1.0e-10, const Standard_Real TolC2 = 1.0e-10);
   
   //! It calculates all the distances.
-  Standard_EXPORT Extrema_ExtCC2d(const Adaptor2d_Curve2d& C1, const Adaptor2d_Curve2d& C2, const Standard_Real U1, const Standard_Real U2, const Standard_Real V1, const Standard_Real V2, const Standard_Real TolC1 = 1.0e-10, const Standard_Real TolC2 = 1.0e-10);
+  Standard_EXPORT Extrema_ExtCC2d(const Handle(Adaptor2d_Curve2d)& C1, const Handle(Adaptor2d_Curve2d)& C2, const Standard_Real U1, const Standard_Real U2, const Standard_Real V1, const Standard_Real V2, const Standard_Real TolC1 = 1.0e-10, const Standard_Real TolC2 = 1.0e-10);
   
   //! initializes the fields.
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& C2, const Standard_Real V1, const Standard_Real V2, const Standard_Real TolC1 = 1.0e-10, const Standard_Real TolC2 = 1.0e-10);
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& C2, const Standard_Real V1, const Standard_Real V2, const Standard_Real TolC1 = 1.0e-10, const Standard_Real TolC2 = 1.0e-10);
   
-  Standard_EXPORT void Perform (const Adaptor2d_Curve2d& C1, const Standard_Real U1, const Standard_Real U2);
+  Standard_EXPORT void Perform (const Handle(Adaptor2d_Curve2d)& C1, const Standard_Real U1, const Standard_Real U2);
   
   //! Returns True if the distances are found.
   Standard_EXPORT Standard_Boolean IsDone() const;
@@ -102,7 +102,7 @@ private:
   TColStd_SequenceOfReal mySqDist;
   Standard_Integer mynbext;
   Standard_Boolean inverse;
-  const Adaptor2d_Curve2d* myC;
+  Handle(Adaptor2d_Curve2d) myC;
   Standard_Real myv1;
   Standard_Real myv2;
   Standard_Real mytolc1;

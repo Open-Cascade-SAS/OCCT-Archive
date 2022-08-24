@@ -47,7 +47,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   //! compute the solution point with the close point
-  Standard_EXPORT BRepApprox_TheInt2SOfThePrmPrmSvSurfacesOfApprox(const TColStd_Array1OfReal& Param, const BRepAdaptor_Surface& S1, const BRepAdaptor_Surface& S2, const Standard_Real TolTangency);
+  Standard_EXPORT BRepApprox_TheInt2SOfThePrmPrmSvSurfacesOfApprox(const TColStd_Array1OfReal& Param, const Handle(BRepAdaptor_Surface)& S1, const Handle(BRepAdaptor_Surface)& S2, const Standard_Real TolTangency);
   
   //! initialize the parameters to compute the solution point
   //! it 's possible to write to optimize:
@@ -59,7 +59,7 @@ public:
   //! param(3)=...
   //! inter.Perform(Param,rsnld);
   //! }
-  Standard_EXPORT BRepApprox_TheInt2SOfThePrmPrmSvSurfacesOfApprox(const BRepAdaptor_Surface& S1, const BRepAdaptor_Surface& S2, const Standard_Real TolTangency);
+  Standard_EXPORT BRepApprox_TheInt2SOfThePrmPrmSvSurfacesOfApprox(const Handle(BRepAdaptor_Surface)& S1, const Handle(BRepAdaptor_Surface)& S2, const Standard_Real TolTangency);
   
   //! returns the best constant isoparametric to find
   //! the next intersection's point +stores the solution

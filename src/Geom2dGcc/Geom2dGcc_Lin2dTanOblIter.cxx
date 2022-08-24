@@ -53,7 +53,7 @@ Geom2dGcc_Lin2dTanOblIter (const Geom2dGcc_QCurve&  Qualified1 ,
       return;
   }
   Paral2 = Standard_False;
-  Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
   Standard_Real U1 = Geom2dGcc_CurveTool::FirstParameter(Cu1);
   Standard_Real U2 = Geom2dGcc_CurveTool::LastParameter(Cu1);
   gp_Dir2d Dir(TheLin.Direction());

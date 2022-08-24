@@ -67,7 +67,7 @@ GeomFill_GuideTrihedronAC::GeomFill_GuideTrihedronAC(const Handle(Adaptor3d_Curv
 { 
   Standard_Real s = myCurveAC->GetSParameter(Param); // abscisse curviligne <=> Param
   Standard_Real OrigG = Orig1 + s*(Orig2-Orig1); // abscisse curv sur le guide (cas multi-edges)
-  Standard_Real tG = myGuideAC->GetUParameter (*myGuide, OrigG, 1); // param <=> s sur theGuide
+  Standard_Real tG = myGuideAC->GetUParameter (myGuide, OrigG, 1); // param <=> s sur theGuide
 
   gp_Pnt P, PG;
   gp_Vec To, B;
@@ -105,7 +105,7 @@ GeomFill_GuideTrihedronAC::GeomFill_GuideTrihedronAC(const Handle(Adaptor3d_Curv
   // parametre <=> s sur theGuide
   OrigG = Orig1 + s*(Orig2-Orig1); 
   // parametre <=> s sur  theGuide
-  tG = myGuideAC->GetUParameter (*myGuide, OrigG, 1); 
+  tG = myGuideAC->GetUParameter (myGuide, OrigG, 1); 
 
   gp_Pnt P, PG;
   gp_Vec To, DTo, TG, B, BPrim;
@@ -173,7 +173,7 @@ GeomFill_GuideTrihedronAC::GeomFill_GuideTrihedronAC(const Handle(Adaptor3d_Curv
   Standard_Real s = myCurveAC->GetSParameter(Param); 
   // parametre <=> s sur theGuide
   Standard_Real OrigG = Orig1 + s*(Orig2-Orig1); 
-  Standard_Real tG = myGuideAC->GetUParameter (*myGuide, OrigG, 1); 
+  Standard_Real tG = myGuideAC->GetUParameter (myGuide, OrigG, 1); 
 
   gp_Pnt P,PG;
   gp_Vec TG,DTG;
@@ -342,7 +342,7 @@ GeomFill_GuideTrihedronAC::GeomFill_GuideTrihedronAC(const Handle(Adaptor3d_Curv
   Nb = Seq.Length();
 
   for (ii=1; ii<=Nb; ii++) {
-    TT(ii) =  myCurveAC->GetUParameter (*myCurve, Seq(ii), 1);
+    TT(ii) =  myCurveAC->GetUParameter (myCurve, Seq(ii), 1);
   }
 
 }
@@ -363,9 +363,9 @@ void GeomFill_GuideTrihedronAC::SetInterval(const Standard_Real First,
 //  myCurveAC->Trim(Sf, Sl, UTol);
 
   U = Orig1 + Sf*(Orig2-Orig1);
-  Sf = myGuideAC->GetUParameter(*myGuide, U, 1);
+  Sf = myGuideAC->GetUParameter(myGuide, U, 1);
   U = Orig1 + Sl*(Orig2-Orig1);
-  Sl = myGuideAC->GetUParameter(*myGuide, U, 1);
+  Sl = myGuideAC->GetUParameter(myGuide, U, 1);
   myTrimG = myGuide->Trim(Sf, Sl, UTol); 
 }
 

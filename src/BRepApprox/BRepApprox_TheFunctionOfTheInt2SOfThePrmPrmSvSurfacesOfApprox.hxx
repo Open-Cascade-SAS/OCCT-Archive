@@ -42,7 +42,7 @@ public:
 
   DEFINE_STANDARD_ALLOC
 
-  Standard_EXPORT BRepApprox_TheFunctionOfTheInt2SOfThePrmPrmSvSurfacesOfApprox(const BRepAdaptor_Surface& S1, const BRepAdaptor_Surface& S2);
+  Standard_EXPORT BRepApprox_TheFunctionOfTheInt2SOfThePrmPrmSvSurfacesOfApprox(const Handle(BRepAdaptor_Surface)& S1, const Handle(BRepAdaptor_Surface)& S2);
   
   Standard_EXPORT Standard_Integer NbVariables() const;
   
@@ -69,9 +69,9 @@ public:
   
     gp_Dir2d DirectionOnS2() const;
   
-    const BRepAdaptor_Surface& AuxillarSurface1() const;
+    const Handle(BRepAdaptor_Surface) AuxillarSurface1() const;
   
-    const BRepAdaptor_Surface& AuxillarSurface2() const;
+    const Handle(BRepAdaptor_Surface) AuxillarSurface2() const;
 
 
 
@@ -113,7 +113,7 @@ private:
 
 };
 
-#define ThePSurface BRepAdaptor_Surface
+#define ThePSurface Handle(BRepAdaptor_Surface)
 #define ThePSurface_hxx <BRepAdaptor_Surface.hxx>
 #define ThePSurfaceTool BRepApprox_SurfaceTool
 #define ThePSurfaceTool_hxx <BRepApprox_SurfaceTool.hxx>

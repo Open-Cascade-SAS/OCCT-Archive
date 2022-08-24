@@ -171,6 +171,7 @@ private:
   {
     myPolyTriang.Nullify();
     myFace.Nullify();
+    myFaceAdaptor.Nullify();
     myHasNormals = false;
     myHasFaceColor = false;
     myFaceColor = Quantity_ColorRGBA();
@@ -192,7 +193,7 @@ private:
   Handle(Poly_Triangulation)      myPolyTriang;   //!< triangulation of current face
   TopLoc_Location                 myFaceLocation; //!< current face location
   mutable BRepLProp_SLProps       mySLTool;       //!< auxiliary tool for fetching normals from surface
-  BRepAdaptor_Surface             myFaceAdaptor;  //!< surface adaptor for fetching normals from surface
+  Handle(BRepAdaptor_Surface)     myFaceAdaptor;  //!< surface adaptor for fetching normals from surface
   Standard_Boolean                myHasNormals;   //!< flag indicating that current face has normals
   gp_Trsf                         myTrsf;         //!< current face transformation
   Standard_Boolean                myIsMirrored;   //!< flag indicating that face triangles should be mirrored

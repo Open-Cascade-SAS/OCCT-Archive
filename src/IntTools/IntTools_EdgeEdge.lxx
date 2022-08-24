@@ -21,6 +21,8 @@
 //=======================================================================
 inline IntTools_EdgeEdge::IntTools_EdgeEdge()
 : 
+  myCurve1(new BRepAdaptor_Curve()),
+  myCurve2(new BRepAdaptor_Curve()),
   myTol1(0.),
   myTol2(0.),
   myTol(0.),
@@ -47,6 +49,8 @@ inline IntTools_EdgeEdge::IntTools_EdgeEdge(const TopoDS_Edge&  theEdge1,
 : 
   myEdge1(theEdge1), 
   myEdge2(theEdge2),
+  myCurve1(new BRepAdaptor_Curve()),
+  myCurve2(new BRepAdaptor_Curve()),
   myTol1(0.),
   myTol2(0.),
   myTol(0.),
@@ -77,6 +81,8 @@ inline IntTools_EdgeEdge::IntTools_EdgeEdge(const TopoDS_Edge&  theEdge1,
 : 
   myEdge1(theEdge1), 
   myEdge2(theEdge2),
+  myCurve1(new BRepAdaptor_Curve()),
+  myCurve2(new BRepAdaptor_Curve()),
   myTol1(0.),
   myTol2(0.),
   myTol(0.),

@@ -22,7 +22,7 @@
 #include <gp_Lin2d.hxx>
  
 
-#define TheEdge Geom2dAdaptor_Curve
+#define TheEdge Handle(Geom2dAdaptor_Curve)
 #define TheEdge_hxx <Geom2dAdaptor_Curve.hxx>
 #define TheIntersector Geom2dHatch_Intersector
 #define TheIntersector_hxx <Geom2dHatch_Intersector.hxx>

@@ -285,7 +285,7 @@ CPnts_UniformDeflection::CPnts_UniformDeflection ()
 //=======================================================================
 
 CPnts_UniformDeflection::CPnts_UniformDeflection 
-                                       (const Adaptor3d_Curve& C, 
+                                       (const Handle(Adaptor3d_Curve)& C, 
 					const Standard_Real Deflection,
 					const Standard_Real Resolution,
 					const Standard_Boolean WithControl)
@@ -299,7 +299,7 @@ CPnts_UniformDeflection::CPnts_UniformDeflection
 //=======================================================================
 
 CPnts_UniformDeflection::CPnts_UniformDeflection 
-                                       (const Adaptor2d_Curve2d& C, 
+                                       (const Handle(Adaptor2d_Curve2d)& C, 
 					const Standard_Real Deflection,
 					const Standard_Real Resolution,
 					const Standard_Boolean WithControl)
@@ -312,12 +312,12 @@ CPnts_UniformDeflection::CPnts_UniformDeflection
 //purpose  : 
 //=======================================================================
 
-void CPnts_UniformDeflection::Initialize(const Adaptor3d_Curve& C, 
+void CPnts_UniformDeflection::Initialize(const Handle(Adaptor3d_Curve)& C, 
 					 const Standard_Real Deflection,
 					 const Standard_Real Resolution,
 					 const Standard_Boolean WithControl)
 {
-  Initialize(C,Deflection,C.FirstParameter(),C.LastParameter(),
+  Initialize(C,Deflection,C->FirstParameter(),C->LastParameter(),
 	     Resolution,WithControl);
 }
 
@@ -326,12 +326,12 @@ void CPnts_UniformDeflection::Initialize(const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-void CPnts_UniformDeflection::Initialize(const Adaptor2d_Curve2d& C, 
+void CPnts_UniformDeflection::Initialize(const Handle(Adaptor2d_Curve2d)& C, 
 					 const Standard_Real Deflection,
 					 const Standard_Real Resolution,
 					 const Standard_Boolean WithControl)
 {
-  Initialize(C,Deflection,C.FirstParameter(),C.LastParameter(),
+  Initialize(C,Deflection,C->FirstParameter(),C->LastParameter(),
 	     Resolution,WithControl);
 }
 
@@ -341,7 +341,7 @@ void CPnts_UniformDeflection::Initialize(const Adaptor2d_Curve2d& C,
 //=======================================================================
 
 CPnts_UniformDeflection ::CPnts_UniformDeflection
-                                      (const Adaptor3d_Curve& C,
+                                      (const Handle(Adaptor3d_Curve)& C,
 				       const Standard_Real Deflection, 
 				       const Standard_Real U1,
 				       const Standard_Real U2,
@@ -357,7 +357,7 @@ CPnts_UniformDeflection ::CPnts_UniformDeflection
 //=======================================================================
 
 CPnts_UniformDeflection ::CPnts_UniformDeflection
-                                      (const Adaptor2d_Curve2d& C,
+                                      (const Handle(Adaptor2d_Curve2d)& C,
 				       const Standard_Real Deflection, 
 				       const Standard_Real U1,
 				       const Standard_Real U2,
@@ -372,7 +372,7 @@ CPnts_UniformDeflection ::CPnts_UniformDeflection
 //purpose  : 
 //=======================================================================
 
-void CPnts_UniformDeflection::Initialize (const Adaptor3d_Curve& C,
+void CPnts_UniformDeflection::Initialize (const Handle(Adaptor3d_Curve)& C,
 					  const Standard_Real Deflection, 
 					  const Standard_Real U1,
 					  const Standard_Real U2,
@@ -391,7 +391,7 @@ void CPnts_UniformDeflection::Initialize (const Adaptor3d_Curve& C,
   myDwmax      = myLastParam-myFirstParam;
   myDu         = myDwmax/2. ;
   myDone       = Standard_True;
-  myCurve      = (Standard_Address) &C;
+  myCurve      = (Standard_Address) (C.get());
   myFinish     = Standard_False;
   myTolCur     = Resolution;
   myDeflection = Deflection;
@@ -404,7 +404,7 @@ void CPnts_UniformDeflection::Initialize (const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-void CPnts_UniformDeflection::Initialize (const Adaptor2d_Curve2d& C,
+void CPnts_UniformDeflection::Initialize (const Handle(Adaptor2d_Curve2d)& C,
 					  const Standard_Real Deflection, 
 					  const Standard_Real U1,
 					  const Standard_Real U2,
@@ -423,7 +423,7 @@ void CPnts_UniformDeflection::Initialize (const Adaptor2d_Curve2d& C,
   myDwmax      = myLastParam-myFirstParam;
   myDu         = myDwmax/2. ;
   myDone       = Standard_True;
-  myCurve      = (Standard_Address) &C;
+  myCurve      = (Standard_Address) (C.get());
   myFinish     = Standard_False;
   myTolCur     = Resolution;
   myDeflection = Deflection;

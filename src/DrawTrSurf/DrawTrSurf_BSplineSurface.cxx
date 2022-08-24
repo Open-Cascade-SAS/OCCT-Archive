@@ -125,7 +125,7 @@ void DrawTrSurf_BSplineSurface::DrawOn (Draw_Display& dis) const
     Handle(GeomAdaptor_Surface) HS = new GeomAdaptor_Surface();
     HS->Load(surf);
     
-    Adaptor3d_IsoCurve C(HS);
+    Handle(Adaptor3d_IsoCurve) C = new Adaptor3d_IsoCurve(HS);
 
     dis.SetColor(isosLook);
     first = S->FirstUKnotIndex() + 1;

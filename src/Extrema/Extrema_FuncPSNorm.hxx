@@ -62,10 +62,10 @@ public:
   
   Standard_EXPORT Extrema_FuncPSNorm();
   
-  Standard_EXPORT Extrema_FuncPSNorm(const gp_Pnt& P, const Adaptor3d_Surface& S);
+  Standard_EXPORT Extrema_FuncPSNorm(const gp_Pnt& P, const Handle(Adaptor3d_Surface)& S);
   
   //! sets the field mysurf of the function.
-  Standard_EXPORT void Initialize (const Adaptor3d_Surface& S);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Surface)& S);
   
   //! sets the field mysurf of the function.
   Standard_EXPORT void SetPoint (const gp_Pnt& P);
@@ -98,7 +98,7 @@ public:
 private:
 
   gp_Pnt myP;
-  const Adaptor3d_Surface* myS;
+  Handle(Adaptor3d_Surface) myS;
   Standard_Real myU;
   Standard_Real myV;
   gp_Pnt myPs;

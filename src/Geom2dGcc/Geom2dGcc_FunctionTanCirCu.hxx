@@ -35,7 +35,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCirCu(const gp_Circ2d& Circ, const Geom2dAdaptor_Curve& Curv);
+  Standard_EXPORT Geom2dGcc_FunctionTanCirCu(const gp_Circ2d& Circ, const Handle(Geom2dAdaptor_Curve)& Curv);
   
   //! Computes the value of the function F for the variable X.
   //! It returns True if the computation is successfully done,
@@ -67,7 +67,7 @@ private:
 
 
   gp_Circ2d TheCirc;
-  Geom2dAdaptor_Curve Curve;
+  Handle(Geom2dAdaptor_Curve) Curve;
   Standard_Real myWeight;
 
 

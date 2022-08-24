@@ -569,21 +569,21 @@ void LocOpe_SplitDrafts::Perform(const TopoDS_Face& F,
 	  }
 	
 	  Standard_Real pmin=0, Dist2, Dist2Min, Glob2Min = RealLast();
-	  GeomAdaptor_Curve TheCurve;
+	  Handle(GeomAdaptor_Curve) TheCurve = new GeomAdaptor_Curve();
 
 	  Standard_Integer i,imin,k;
 	  gp_Pnt pv = BRep_Tool::Pnt(vtx);
 	  imin = 0;
 	  for (i=1; i<= i2s.NbLines(); i++) {
-	    TheCurve.Load(i2s.Line(i));
+	    TheCurve->Load(i2s.Line(i));
 	    Extrema_ExtPC myExtPC(pv,TheCurve);
 
 	    if (myExtPC.IsDone()) {
 	      gp_Pnt p1b,p2b;
-	      Standard_Real thepmin = TheCurve.FirstParameter();
+	      Standard_Real thepmin = TheCurve->FirstParameter();
 	      myExtPC.TrimmedSquareDistances(Dist2Min,Dist2,p1b,p2b);
 	      if (Dist2 < Dist2Min) {
-		thepmin = TheCurve.LastParameter();
+		thepmin = TheCurve->LastParameter();
 	      }
 	      for (k=1; k<=myExtPC.NbExt(); k++) {
 		Dist2 = myExtPC.SquareDistance(k);
@@ -1588,22 +1588,22 @@ static TopoDS_Edge  NewEdge(const TopoDS_Edge& edg,
 //  Standard_Real pmin, Dist, DistMin;
   Standard_Real Dist2, Dist2Min;
   Standard_Real prmf=0,prml=0;
-  GeomAdaptor_Curve TheCurve;
+  Handle(GeomAdaptor_Curve) TheCurve = new GeomAdaptor_Curve();
 	
   Standard_Integer i,k;
   gp_Pnt pvf = BRep_Tool::Pnt(V1);
   gp_Pnt pvl = BRep_Tool::Pnt(V2);
   for (i=1; i<= i2s.NbLines(); i++) {
-    TheCurve.Load(i2s.Line(i));
+    TheCurve->Load(i2s.Line(i));
     Extrema_ExtPC myExtPC(pvf,TheCurve);
     
     if (myExtPC.IsDone()) {
       gp_Pnt p1b,p2b;
-      Standard_Real thepmin = TheCurve.FirstParameter();
+      Standard_Real thepmin = TheCurve->FirstParameter();
       myExtPC.TrimmedSquareDistances(Dist2Min,Dist2,p1b,p2b);
-      if (Dist2 < Dist2Min && !TheCurve.IsPeriodic()) {
+      if (Dist2 < Dist2Min && !TheCurve->IsPeriodic()) {
 	Dist2Min = Dist2;
-	thepmin = TheCurve.LastParameter();
+	thepmin = TheCurve->LastParameter();
       }
       for (k=1; k<=myExtPC.NbExt(); k++) {
 	Dist2 = myExtPC.SquareDistance(k);
@@ -1617,11 +1617,11 @@ static TopoDS_Edge  NewEdge(const TopoDS_Edge& edg,
 	prmf = thepmin;
 	myExtPC.Perform(pvl);
 	if (myExtPC.IsDone()) {
-	  thepmin = TheCurve.LastParameter();
+	  thepmin = TheCurve->LastParameter();
 	  myExtPC.TrimmedSquareDistances(Dist2,Dist2Min,p1b,p2b);
-	  if (Dist2 < Dist2Min && !TheCurve.IsClosed()) {
+	  if (Dist2 < Dist2Min && !TheCurve->IsClosed()) {
 	    Dist2Min = Dist2;
-	    thepmin = TheCurve.FirstParameter();
+	    thepmin = TheCurve->FirstParameter();
 	  }
 	  for (k=1; k<=myExtPC.NbExt(); k++) {
 	    Dist2 = myExtPC.SquareDistance(k);

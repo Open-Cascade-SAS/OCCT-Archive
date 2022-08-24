@@ -252,7 +252,7 @@ void GeomFill_SweepSectionGenerator::Init
   myRadius = Radius;
   myType   = 0;
 
-  Handle(Geom_Curve) CC = GeomAdaptor::MakeCurve(*Path);
+  Handle(Geom_Curve) CC = GeomAdaptor::MakeCurve(Path);
   myPath         = GeomConvert::CurveToBSplineCurve(CC);
   myAdpPath      = Path;
   myAdpFirstSect = Curve1;
@@ -281,10 +281,10 @@ void GeomFill_SweepSectionGenerator::Perform(const Standard_Boolean Polynomial)
   
   GCPnts_QuasiUniformDeflection Samp;
   // Calcul de la longueur approximative de la courbe
-  GeomAdaptor_Curve AdpPath(myPath);
-  gp_Pnt P1 = AdpPath.Value(U1);
-  gp_Pnt P2 = AdpPath.Value((U1+U2)/2.);
-  gp_Pnt P3 = AdpPath.Value(U2);
+  Handle(GeomAdaptor_Curve) AdpPath = new GeomAdaptor_Curve(myPath);
+  gp_Pnt P1 = AdpPath->Value(U1);
+  gp_Pnt P2 = AdpPath->Value((U1+U2)/2.);
+  gp_Pnt P3 = AdpPath->Value(U2);
   Standard_Real Length = 
     P1.Distance(P2) + P2.Distance(P3);
   Standard_Real Fleche = 1.e-5 * Length;

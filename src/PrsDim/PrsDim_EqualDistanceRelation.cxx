@@ -245,7 +245,7 @@ void PrsDim_EqualDistanceRelation::ComputeSelection (const Handle( SelectMgr_Sel
     }
     else if (aCurve.GetType() == GeomAbs_Circle)
     {
-      Handle(Geom_Circle) aCircle = Handle(Geom_Circle)::DownCast(aCurve.Curve().Curve());
+      Handle(Geom_Circle) aCircle = Handle(Geom_Circle)::DownCast(aCurve.Curve()->Curve());
       Standard_Real FirstPar = ElCLib::Parameter(aCircle->Circ(), myAttachPoint1),
                     LastPar  = ElCLib::Parameter(aCircle->Circ(), myPoint1);
       if (LastPar < FirstPar ) LastPar += M_PI * 2;
@@ -270,7 +270,7 @@ void PrsDim_EqualDistanceRelation::ComputeSelection (const Handle( SelectMgr_Sel
     }
     else if (aCurve.GetType() == GeomAbs_Circle)
     {
-      Handle(Geom_Circle) aCircle = Handle(Geom_Circle)::DownCast(aCurve.Curve().Curve());
+      Handle(Geom_Circle) aCircle = Handle(Geom_Circle)::DownCast(aCurve.Curve()->Curve());
       Standard_Real FirstPar = ElCLib::Parameter(aCircle->Circ(), myAttachPoint2),
       LastPar  = ElCLib::Parameter(aCircle->Circ(), myPoint2);
       if (LastPar < FirstPar) LastPar += M_PI * 2;
@@ -295,7 +295,7 @@ void PrsDim_EqualDistanceRelation::ComputeSelection (const Handle( SelectMgr_Sel
     }
     else if (aCurve.GetType() == GeomAbs_Circle)
     {
-      Handle(Geom_Circle) aCircle = Handle(Geom_Circle)::DownCast(aCurve.Curve().Curve());
+      Handle(Geom_Circle) aCircle = Handle(Geom_Circle)::DownCast(aCurve.Curve()->Curve());
       Standard_Real FirstPar = ElCLib::Parameter(aCircle->Circ(), myAttachPoint3),
       LastPar  = ElCLib::Parameter(aCircle->Circ(), myPoint3);
       if (LastPar < FirstPar) LastPar += M_PI * 2;
@@ -325,7 +325,7 @@ void PrsDim_EqualDistanceRelation::ComputeSelection (const Handle( SelectMgr_Sel
     }
     else if (aCurve.GetType() == GeomAbs_Circle)
     {
-      Handle(Geom_Circle) aCircle = Handle(Geom_Circle)::DownCast(aCurve.Curve().Curve());
+      Handle(Geom_Circle) aCircle = Handle(Geom_Circle)::DownCast(aCurve.Curve()->Curve());
       Standard_Real FirstPar = ElCLib::Parameter(aCircle->Circ(), myAttachPoint4),
       LastPar  = ElCLib::Parameter(aCircle->Circ(), myPoint4);
       if (LastPar < FirstPar) LastPar += M_PI * 2;

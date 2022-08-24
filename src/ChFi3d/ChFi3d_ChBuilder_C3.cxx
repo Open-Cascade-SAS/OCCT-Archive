@@ -330,9 +330,6 @@ void ChFi3d_ChBuilder::PerformThreeCorner(const Standard_Integer Jndex)
   // ----------------------------------------------------------
 
   Handle(BRepAdaptor_Surface) Fac = new BRepAdaptor_Surface(face[pivot]);
-  Handle(GeomAdaptor_Surface) 
-    bidsurf = new GeomAdaptor_Surface(Fac->Surface());
-  Handle(Adaptor3d_TopolTool)  IFac = new Adaptor3d_TopolTool(bidsurf);
 
   Handle(GeomAdaptor_Surface) Surf = ChFi3d_BoundSurf (DStr,fdpiv,jf[pivot][deb],jf[pivot][fin]);
   Handle(Adaptor3d_TopolTool) ISurf = new Adaptor3d_TopolTool(Surf);
@@ -523,7 +520,7 @@ void ChFi3d_ChBuilder::PerformThreeCorner(const Standard_Integer Jndex)
       GeomInt_IntSS inter;
       BRepAdaptor_Surface facebid(face[pivot]);
       Handle(Geom_Surface) 
-      surfbid = Handle(Geom_Surface)::DownCast(facebid.Surface().Surface()->Transformed(facebid.Trsf()));
+      surfbid = Handle(Geom_Surface)::DownCast(facebid.Surface()->Surface()->Transformed(facebid.Trsf()));
       inter.Perform(gpl,surfbid,Precision::Intersection());
       if (inter.IsDone()) {
 	Standard_Integer nbl = inter.NbLines();

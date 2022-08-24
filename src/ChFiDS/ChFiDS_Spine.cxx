@@ -39,6 +39,8 @@ IMPLEMENT_STANDARD_RTTIEXT(ChFiDS_Spine,Standard_Transient)
 ChFiDS_Spine::ChFiDS_Spine()
 : splitdone (Standard_False),
   myMode (ChFiDS_ClassicChamfer),
+  myCurve(new BRepAdaptor_Curve()),
+  myOffsetCurve(new BRepAdaptor_Curve()),
   indexofcurve (0),
   myTypeOfConcavity (ChFiDS_Other),
   firstState (ChFiDS_OnSame),
@@ -67,6 +69,8 @@ ChFiDS_Spine::ChFiDS_Spine()
 ChFiDS_Spine::ChFiDS_Spine(const Standard_Real Tol)
 : splitdone (Standard_False),
   myMode (ChFiDS_ClassicChamfer),
+  myCurve(new BRepAdaptor_Curve()),
+  myOffsetCurve(new BRepAdaptor_Curve()),
   indexofcurve (0),
   myTypeOfConcavity (ChFiDS_Other),
   firstState (ChFiDS_OnSame),
@@ -552,12 +556,12 @@ void  ChFiDS_Spine::Load()
   abscissa = new TColStd_HArray1OfReal(1,len);
   Standard_Real a1 = 0.;
   for (Standard_Integer i = 1; i <= len; i++){
-    myCurve.Initialize(TopoDS::Edge(spine.Value(i)));
+    myCurve->Initialize(TopoDS::Edge(spine.Value(i)));
     a1 += GCPnts_AbscissaPoint::Length(myCurve);
     abscissa->SetValue(i,a1);
   }
   indexofcurve =1;
-  myCurve.Initialize(TopoDS::Edge(spine.Value(1)));
+  myCurve->Initialize(TopoDS::Edge(spine.Value(1)));
 }
 
 
@@ -584,14 +588,14 @@ Standard_Real ChFiDS_Spine::Absc(const Standard_Real U,
   if(indexofcurve != I){
     void* p = (void*)this;
     ((ChFiDS_Spine*)p)->indexofcurve = I;
-    ((ChFiDS_Spine*)p)->myCurve.Initialize(TopoDS::Edge(spine.Value(I)));
+    ((ChFiDS_Spine*)p)->myCurve->Initialize(TopoDS::Edge(spine.Value(I)));
   }
   Standard_Real L = FirstParameter(I);
   if (spine.Value(I).Orientation() == TopAbs_REVERSED) {
-    L += GCPnts_AbscissaPoint::Length(myCurve,U,myCurve.LastParameter());
+    L += GCPnts_AbscissaPoint::Length(myCurve,U,myCurve->LastParameter());
   }
   else{
-    L += GCPnts_AbscissaPoint::Length(myCurve,myCurve.FirstParameter(),U);
+    L += GCPnts_AbscissaPoint::Length(myCurve,myCurve->FirstParameter(),U);
   }
   return L;
 }
@@ -627,7 +631,7 @@ void ChFiDS_Spine::Parameter(const Standard_Integer Index,
   if (Index != indexofcurve) {
     void* p = (void*)this;
     ((ChFiDS_Spine*)p)->indexofcurve = Index;
-    ((ChFiDS_Spine*)p)->myCurve.Initialize(TopoDS::Edge(spine.Value(Index)));
+    ((ChFiDS_Spine*)p)->myCurve->Initialize(TopoDS::Edge(spine.Value(Index)));
   }
   Standard_Real L;
   TopAbs_Orientation Or = spine.Value(Index).Orientation();
@@ -641,13 +645,13 @@ void ChFiDS_Spine::Parameter(const Standard_Integer Index,
     L = AbsC - abscissa->Value(indexofcurve-1); 
   }
   Standard_Real t = L/Length(Index);
-  Standard_Real uapp = (1. - t) * myCurve.FirstParameter() + t * myCurve.LastParameter();
+  Standard_Real uapp = (1. - t) * myCurve->FirstParameter() + t * myCurve->LastParameter();
 //  GCPnts_AbscissaPoint GCP;
-//  GCP.Perform(myCurve,L,myCurve.FirstParameter(),uapp,BRep_Tool::Tolerance(myCurve.Edge()));
-  GCPnts_AbscissaPoint GCP(myCurve,L,myCurve.FirstParameter(),uapp);
+//  GCP.Perform(myCurve,L,myCurve->FirstParameter(),uapp,BRep_Tool::Tolerance(myCurve->Edge()));
+  GCPnts_AbscissaPoint GCP(myCurve,L,myCurve->FirstParameter(),uapp);
   U = GCP.Parameter();
   if (Or == TopAbs_REVERSED && Oriented) {
-    U = (myCurve.LastParameter()+myCurve.FirstParameter()) - U;
+    U = (myCurve->LastParameter()+myCurve->FirstParameter()) - U;
   }
 }
 
@@ -733,14 +737,14 @@ gp_Pnt  ChFiDS_Spine::Value(const Standard_Real AbsC)
   if (Index != indexofcurve) {
     void* p = (void*)this;
     ((ChFiDS_Spine*)p)->indexofcurve = Index;
-    ((ChFiDS_Spine*)p)->myCurve.Initialize(TopoDS::Edge(spine.Value(Index)));
+    ((ChFiDS_Spine*)p)->myCurve->Initialize(TopoDS::Edge(spine.Value(Index)));
   }
   Standard_Real t = L/Length(Index);
-  Standard_Real uapp = (1. - t) * myCurve.FirstParameter() + t * myCurve.LastParameter();
+  Standard_Real uapp = (1. - t) * myCurve->FirstParameter() + t * myCurve->LastParameter();
 //  GCPnts_AbscissaPoint GCP;
-//  GCP.Perform(myCurve,L,myCurve.FirstParameter(),uapp,BRep_Tool::Tolerance(myCurve.Edge()));
-  GCPnts_AbscissaPoint GCP(myCurve,L,myCurve.FirstParameter(),uapp);
-  return myCurve.Value(GCP.Parameter());
+//  GCP.Perform(myCurve,L,myCurve->FirstParameter(),uapp,BRep_Tool::Tolerance(myCurve->Edge()));
+  GCPnts_AbscissaPoint GCP(myCurve,L,myCurve->FirstParameter(),uapp);
+  return myCurve->Value(GCP.Parameter());
 }
 
 //=======================================================================
@@ -785,14 +789,14 @@ void  ChFiDS_Spine::D1(const Standard_Real AbsC,
     if (Index != indexofcurve) {
       void* p = (void*)this;
       ((ChFiDS_Spine*)p)->indexofcurve = Index;
-      ((ChFiDS_Spine*)p)->myCurve.Initialize(TopoDS::Edge(spine.Value(Index)));
+      ((ChFiDS_Spine*)p)->myCurve->Initialize(TopoDS::Edge(spine.Value(Index)));
     }
     Standard_Real t = L/Length(Index);
-    Standard_Real uapp = (1. - t) * myCurve.FirstParameter() + t * myCurve.LastParameter();
+    Standard_Real uapp = (1. - t) * myCurve->FirstParameter() + t * myCurve->LastParameter();
 //    GCPnts_AbscissaPoint GCP;
-//    GCP.Perform(myCurve,L,myCurve.FirstParameter(),uapp,BRep_Tool::Tolerance(myCurve.Edge()));
-    GCPnts_AbscissaPoint GCP(myCurve,L,myCurve.FirstParameter(),uapp);
-    myCurve.D1(GCP.Parameter(),P,V1);
+//    GCP.Perform(myCurve,L,myCurve->FirstParameter(),uapp,BRep_Tool::Tolerance(myCurve->Edge()));
+    GCPnts_AbscissaPoint GCP(myCurve,L,myCurve->FirstParameter(),uapp);
+    myCurve->D1(GCP.Parameter(),P,V1);
     Standard_Real D1 = 1./V1.Magnitude();
     if (spine.Value(Index).Orientation() == TopAbs_REVERSED) D1 = -D1;
     V1.Multiply(D1);
@@ -836,14 +840,14 @@ void  ChFiDS_Spine::D2(const Standard_Real AbsC,
     if (Index != indexofcurve) {
       void* p = (void*)this;
       ((ChFiDS_Spine*)p)->indexofcurve = Index;
-      ((ChFiDS_Spine*)p)->myCurve.Initialize(TopoDS::Edge(spine.Value(Index)));
+      ((ChFiDS_Spine*)p)->myCurve->Initialize(TopoDS::Edge(spine.Value(Index)));
     }
     Standard_Real t = L/Length(Index);
-    Standard_Real uapp = (1. - t) * myCurve.FirstParameter() + t * myCurve.LastParameter();
+    Standard_Real uapp = (1. - t) * myCurve->FirstParameter() + t * myCurve->LastParameter();
 //    GCPnts_AbscissaPoint GCP;
-//    GCP.Perform(myCurve,L,myCurve.FirstParameter(),uapp,BRep_Tool::Tolerance(myCurve.Edge()));
-    GCPnts_AbscissaPoint GCP(myCurve,L,myCurve.FirstParameter(),uapp);
-    myCurve.D2(GCP.Parameter(),P,V1,V2);
+//    GCP.Perform(myCurve,L,myCurve->FirstParameter(),uapp,BRep_Tool::Tolerance(myCurve->Edge()));
+    GCPnts_AbscissaPoint GCP(myCurve,L,myCurve->FirstParameter(),uapp);
+    myCurve->D2(GCP.Parameter(),P,V1,V2);
     Standard_Real N1 = V1.SquareMagnitude();
     Standard_Real D2 = -(V1.Dot(V2))*(1./N1)*(1./N1);
     V2.Multiply(1./N1);
@@ -865,7 +869,7 @@ void ChFiDS_Spine::SetCurrent(const Standard_Integer Index)
 {  
   if (Index != indexofcurve)  {
     indexofcurve = Index;
-    myCurve.Initialize(TopoDS::Edge(spine.Value(indexofcurve)));
+    myCurve->Initialize(TopoDS::Edge(spine.Value(indexofcurve)));
   }
 } 
 
@@ -874,12 +878,12 @@ void ChFiDS_Spine::SetCurrent(const Standard_Integer Index)
 //purpose  : 
 //=======================================================================
 
-const BRepAdaptor_Curve&  ChFiDS_Spine::CurrentElementarySpine
+const Handle(BRepAdaptor_Curve)&  ChFiDS_Spine::CurrentElementarySpine
 (const Standard_Integer Index) 
 {
   if (Index != indexofcurve)  {
     indexofcurve = Index;
-    myCurve.Initialize(TopoDS::Edge(spine.Value(indexofcurve)));
+    myCurve->Initialize(TopoDS::Edge(spine.Value(indexofcurve)));
   }
   return myCurve;
 }
@@ -891,7 +895,7 @@ const BRepAdaptor_Curve&  ChFiDS_Spine::CurrentElementarySpine
 
 GeomAbs_CurveType ChFiDS_Spine::GetType() const
 {
-  return myCurve.GetType();
+  return myCurve->GetType();
 }
 
 //=======================================================================
@@ -901,13 +905,13 @@ GeomAbs_CurveType ChFiDS_Spine::GetType() const
 
 gp_Lin ChFiDS_Spine::Line() const
 {
-  gp_Lin LL(myCurve.Line());
+  gp_Lin LL(myCurve->Line());
   if (spine.Value(indexofcurve).Orientation() == TopAbs_REVERSED) {
     LL.Reverse();
-    LL.SetLocation(myCurve.Value(myCurve.LastParameter()));
+    LL.SetLocation(myCurve->Value(myCurve->LastParameter()));
   }
   else {
-    LL.SetLocation(myCurve.Value(myCurve.FirstParameter()));
+    LL.SetLocation(myCurve->Value(myCurve->FirstParameter()));
   }
   return LL;
 }
@@ -920,16 +924,16 @@ gp_Lin ChFiDS_Spine::Line() const
 
 gp_Circ ChFiDS_Spine::Circle() const
 {
-  gp_Ax2 Ac = myCurve.Circle().Position();
-  gp_Dir Dc(gp_Vec(Ac.Location(),myCurve.Value(myCurve.FirstParameter())));
+  gp_Ax2 Ac = myCurve->Circle().Position();
+  gp_Dir Dc(gp_Vec(Ac.Location(),myCurve->Value(myCurve->FirstParameter())));
   gp_Dir ZZ(Ac.Direction());
   
   if (spine.Value(indexofcurve).Orientation() == TopAbs_REVERSED) {
-    Dc = gp_Dir(gp_Vec(Ac.Location(),myCurve.Value(myCurve.LastParameter())));
+    Dc = gp_Dir(gp_Vec(Ac.Location(),myCurve->Value(myCurve->LastParameter())));
     ZZ.Reverse();
   }
   gp_Ax2 A(Ac.Location(),ZZ,Dc);
-  return gp_Circ(A,myCurve.Circle().Radius());
+  return gp_Circ(A,myCurve->Circle().Radius());
 }
 //=======================================================================
 //function : SetErrorStatus

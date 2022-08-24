@@ -77,8 +77,8 @@ void Geom2dAPI_InterCurveCurve::Init
   myCurve1 = Handle(Geom2d_Curve)::DownCast(C1->Copy());
   myCurve2 = Handle(Geom2d_Curve)::DownCast(C2->Copy());
 
-  Geom2dAdaptor_Curve AC1(C1);
-  Geom2dAdaptor_Curve AC2(C2);
+  Handle(Geom2dAdaptor_Curve) AC1 = new Geom2dAdaptor_Curve(C1);
+  Handle(Geom2dAdaptor_Curve) AC2 = new Geom2dAdaptor_Curve(C2);
   myIntersector = Geom2dInt_GInter( AC1, AC2, Tol, Tol);
   myIsDone = myIntersector.IsDone();
 
@@ -97,7 +97,7 @@ void Geom2dAPI_InterCurveCurve::Init
   myCurve1 = Handle(Geom2d_Curve)::DownCast(C1->Copy());
   myCurve2.Nullify();
 
-  Geom2dAdaptor_Curve AC1(C1);
+  Handle(Geom2dAdaptor_Curve) AC1 = new Geom2dAdaptor_Curve(C1);
   myIntersector = Geom2dInt_GInter( AC1, Tol, Tol);
   myIsDone = myIntersector.IsDone();
 

@@ -65,7 +65,7 @@ public:
   //! Returns   the    Edge  used   to    determine  the
   //! classification. When the State is ON  this  is the
   //! Edge containing the point.
-  Standard_EXPORT const Geom2dAdaptor_Curve& Edge() const;
+  Standard_EXPORT const Handle(Geom2dAdaptor_Curve)& Edge() const;
   
   //! Returns the parameter on Edge() used to determine  the
   //! classification.
@@ -83,7 +83,7 @@ protected:
 
 
   Geom2dHatch_FClass2dOfClassifier myClassifier;
-  Geom2dAdaptor_Curve myEdge;
+  Handle(Geom2dAdaptor_Curve) myEdge;
   Standard_Real myEdgeParameter;
   IntRes2d_Position myPosition;
   Standard_Boolean rejected;

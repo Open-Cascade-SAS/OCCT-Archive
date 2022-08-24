@@ -151,10 +151,10 @@ static Standard_Boolean Update(const Handle(Adaptor3d_Surface)& fb,
 			       Standard_Real&            wop,
 			       const Standard_Real       tol)
 {
-  Adaptor3d_CurveOnSurface c1(pcfb,fb);
+  Handle(Adaptor3d_CurveOnSurface) c1 = new Adaptor3d_CurveOnSurface(pcfb,fb);
   Handle(Geom2d_Curve) pc = fi.PCurveOnSurf();
   Handle(Geom2dAdaptor_Curve) hpc = new Geom2dAdaptor_Curve(pc);
-  Adaptor3d_CurveOnSurface c2(hpc,surf);
+  Handle(Adaptor3d_CurveOnSurface) c2 = new Adaptor3d_CurveOnSurface(hpc,surf);
   Extrema_LocateExtCC ext(c1,c2,pared,wop);
   if (ext.IsDone()) {
     Standard_Real dist2 = ext.SquareDistance();
@@ -319,7 +319,7 @@ static Standard_Boolean Update(const Handle(Adaptor3d_Surface)& face,
 			       const Standard_Boolean    isfirst)
 {
   if (!cp.IsOnArc()) return 0;
-  Adaptor3d_CurveOnSurface c1(edonface,face);
+  Handle(Adaptor3d_CurveOnSurface) c1 = new Adaptor3d_CurveOnSurface(edonface,face);
   Standard_Real pared = cp.ParameterOnArc();
   Standard_Real parltg = fi.Parameter(isfirst);
   Handle(Geom2d_Curve) pc = fi.PCurveOnSurf();
@@ -329,7 +329,7 @@ static Standard_Boolean Update(const Handle(Adaptor3d_Surface)& face,
   f = Max(f-delta,pc->FirstParameter());
   l = Min(l+delta,pc->LastParameter());
   Handle(Geom2dAdaptor_Curve) hpc = new Geom2dAdaptor_Curve(pc,f,l);
-  Adaptor3d_CurveOnSurface c2(hpc,surf);
+  Handle(Adaptor3d_CurveOnSurface) c2 = new Adaptor3d_CurveOnSurface(hpc,surf);
 
   Extrema_LocateExtCC ext(c1,c2,pared,parltg);
   if (ext.IsDone()) {
@@ -437,12 +437,12 @@ static void  ComputeCurve2d (const Handle(Geom_Curve )& Ct,
 //purpose  :
 //=======================================================================
 
-static void ChFi3d_Recale(BRepAdaptor_Surface&   Bs,
+static void ChFi3d_Recale(const Handle(BRepAdaptor_Surface)&   HBs,
 			  gp_Pnt2d&              p1,
 			  gp_Pnt2d&              p2,
 			  const Standard_Boolean refon1)
 {
-  Handle(Geom_Surface) surf = Bs.ChangeSurface().Surface();
+  Handle(Geom_Surface) surf = HBs->Surface()->Surface();
   Handle(Geom_RectangularTrimmedSurface)
     ts = Handle(Geom_RectangularTrimmedSurface)::DownCast(surf);
   if (!ts.IsNull()) surf = ts->BasisSurface();
@@ -577,9 +577,6 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
   Handle(BRepAdaptor_Surface) HBs  = new BRepAdaptor_Surface();
   Handle(BRepAdaptor_Surface) HBad = new BRepAdaptor_Surface();
   Handle(BRepAdaptor_Surface) HBop = new BRepAdaptor_Surface();
-  BRepAdaptor_Surface& Bs  = *HBs;
-  BRepAdaptor_Surface& Bad = *HBad;
-  BRepAdaptor_Surface& Bop = *HBop;
   Handle(Geom_Curve) Cc;
   Handle(Geom2d_Curve) Pc,Ps;
   Standard_Real Ubid,Vbid;//,mu,Mu,mv,Mv;
@@ -697,12 +694,12 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
     tol=BRep_Tool::Tolerance(Fv);
     BRE.MakeFace(FFv,Sface,tol);
     if (prol) {
-      Bs.Initialize(FFv,Standard_False);
+      HBs->Initialize(FFv,Standard_False);
       DStr.SetNewSurface(Fv,Sface);
     }
-    else Bs.Initialize(Fv,Standard_False);
-    Bad.Initialize(Fad);
-    Bop.Initialize(Fop);
+    else HBs->Initialize(Fv,Standard_False);
+    HBad->Initialize(Fad);
+    HBop->Initialize(Fop);
   }
   //in case of OnSame it is necessary to modify the CommonPoint
   //in the empty and its parameter in the FaceInterference.
@@ -747,7 +744,7 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
       PerformIntersectionAtEnd(Index);
       return;
     }
-    Bs.Initialize(Fv);
+    HBs->Initialize(Fv);
     Handle(BRepAdaptor_Curve2d) pced = new BRepAdaptor_Curve2d();
     pced->Initialize(CV1.Arc(),Fv);
     Update(HBs,pced,HGs,Fd->ChangeInterferenceOnS1(),CV1,isfirst);
@@ -804,7 +801,7 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
     else {
       pfil2 = Fi2.PCurveOnSurf()->Value(Fi2.Parameter(!isfirst));
     }
-    if (onsame) ChFi3d_Recale(Bs,pfac1,pfac2,(IFadArc == 1));
+    if (onsame) ChFi3d_Recale(HBs,pfac1,pfac2,(IFadArc == 1));
 
     Pardeb(1)= pfil1.X(); Pardeb(2) = pfil1.Y();
     Pardeb(3)= pfac1.X(); Pardeb(4) = pfac1.Y();
@@ -813,7 +810,7 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
 
     Standard_Real uu1,uu2,vv1,vv2;
     ChFi3d_Boite(pfac1,pfac2,uu1,uu2,vv1,vv2);
-    ChFi3d_BoundFac(Bs,uu1,uu2,vv1,vv2);
+    ChFi3d_BoundFac(HBs,uu1,uu2,vv1,vv2);
 
     if (!ChFi3d_ComputeCurves(HGs,HBs,Pardeb,Parfin,Cc,
 			      Ps,
@@ -832,8 +829,8 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
       //Standard_Real Ubid,Vbid;
       Handle (Geom_Curve) C=BRep_Tool::Curve(edgecouture,Ubid,Vbid);
       Handle(Geom_TrimmedCurve) Ctrim=new Geom_TrimmedCurve (C,Ubid,Vbid);
-      GeomAdaptor_Curve cur1(Ctrim->BasisCurve());
-      GeomAdaptor_Curve cur2(Cc);
+      Handle(GeomAdaptor_Curve) cur1 = new GeomAdaptor_Curve(Ctrim->BasisCurve());
+      Handle(GeomAdaptor_Curve) cur2 = new GeomAdaptor_Curve(Cc);
       Extrema_ExtCC extCC (cur1,cur2);
       if (extCC.IsDone()&&extCC.NbExt()!=0)
       {
@@ -923,7 +920,7 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
     // 31/01/02 akm vvv : (OCC119) Prevent the builder from creating
     //                    intersecting fillets - they are bad.
     Geom2dInt_GInter anIntersector;
-    Geom2dAdaptor_Curve aCorkPCurve (Pc, Udeb, Ufin);
+    Handle(Geom2dAdaptor_Curve) aCorkPCurve = new Geom2dAdaptor_Curve(Pc, Udeb, Ufin);
 
     // Take all the interferences with faces from all the stripes
     // and look if their pcurves intersect our cork pcurve.
@@ -938,14 +935,14 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
       for (iPart=1; iPart<=aSeqData->Length(); iPart++)
       {
 	Handle(ChFiDS_SurfData) aData = aSeqData->Value(iPart);
-	Geom2dAdaptor_Curve anOtherPCurve;
+	Handle(Geom2dAdaptor_Curve) anOtherPCurve = new Geom2dAdaptor_Curve();
 	if (IShape == aData->IndexOfS1())
 	{
     const Handle(Geom2d_Curve)& aPCurve = aData->InterferenceOnS1().PCurveOnFace();
     if(aPCurve.IsNull())
       continue;
 
-	  anOtherPCurve.Load (aPCurve,
+	  anOtherPCurve->Load (aPCurve,
 			      aData->InterferenceOnS1().FirstParameter(),
 			      aData->InterferenceOnS1().LastParameter());
 	}
@@ -955,7 +952,7 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
     if(aPCurve.IsNull())
       continue;
 
-	  anOtherPCurve.Load (aPCurve,
+	  anOtherPCurve->Load (aPCurve,
 			      aData->InterferenceOnS2().FirstParameter(),
 			      aData->InterferenceOnS2().LastParameter());
 	}
@@ -964,7 +961,7 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
 	  // Normal case - no common surface
 	  continue;
 	}
-	if (IsEqual(anOtherPCurve.LastParameter(),anOtherPCurve.FirstParameter()))
+	if (IsEqual(anOtherPCurve->LastParameter(),anOtherPCurve->FirstParameter()))
 	  // Degenerates
 	  continue;
 	anIntersector.Perform (aCorkPCurve, anOtherPCurve,
@@ -989,7 +986,7 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
 	Handle(Geom_TrimmedCurve)::DownCast(DStr.Curve (anOtherIntrf->Geometry()).Curve());
       if (anOtherCur.IsNull())
 	continue;
-      Geom2dAdaptor_Curve anOtherPCurve (anOtherIntrf->PCurve(),
+      Handle(Geom2dAdaptor_Curve) anOtherPCurve = new Geom2dAdaptor_Curve(anOtherIntrf->PCurve(),
 					 anOtherCur->FirstParameter(),
 					 anOtherCur->LastParameter());
       anIntersector.Perform (aCorkPCurve, anOtherPCurve,
@@ -1222,7 +1219,7 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
       throw Standard_ConstructionError ("Failed to get p-curve of edge");
     pv1 = Hc->Value(parVtx);
     pv2 = p2dbout;
-    ChFi3d_Recale(Bs,pv1,pv2,1);
+    ChFi3d_Recale(HBs,pv1,pv2,1);
     TColStd_Array1OfReal Pardeb(1,4),Parfin(1,4);
     Pardeb(1) = pop1.X(); Pardeb(2) = pop1.Y();
     Pardeb(3) = pv1.X();  Pardeb(4) = pv1.Y();
@@ -1230,9 +1227,9 @@ void ChFi3d_Builder::PerformOneCorner(const Standard_Integer Index,
     Parfin(3) = pv2.X();  Parfin(4) = pv2.Y();
     Standard_Real uu1,uu2,vv1,vv2;
     ChFi3d_Boite(pv1,pv2,uu1,uu2,vv1,vv2);
-    ChFi3d_BoundFac(Bs,uu1,uu2,vv1,vv2);
+    ChFi3d_BoundFac(HBs,uu1,uu2,vv1,vv2);
     ChFi3d_Boite(pop1,pop2,uu1,uu2,vv1,vv2);
-    ChFi3d_BoundFac(Bop,uu1,uu2,vv1,vv2);
+    ChFi3d_BoundFac(HBop,uu1,uu2,vv1,vv2);
 
     Handle(Geom_Curve) zob3d;
     Handle(Geom2d_Curve) zob2dop, zob2dv;
@@ -1502,17 +1499,17 @@ static Standard_Boolean  containE(const TopoDS_Face & F1,
 //           <tol> from <Param>, check points between <Pf> and <Pl>
 //=======================================================================
 
-static Standard_Boolean IsShrink(const Geom2dAdaptor_Curve& PC,
+static Standard_Boolean IsShrink(const Handle(Geom2dAdaptor_Curve)& PC,
                                  const Standard_Real        Pf,
                                  const Standard_Real        Pl,
                                  const Standard_Real        Param,
                                  const Standard_Boolean     isU,
                                  const Standard_Real        tol)
 {
-  switch (PC.GetType()) {
+  switch (PC->GetType()) {
   case GeomAbs_Line: {
-    gp_Pnt2d P1 = PC.Value(Pf);
-    gp_Pnt2d P2 = PC.Value(Pl);
+    gp_Pnt2d P1 = PC->Value(Pf);
+    gp_Pnt2d P2 = PC->Value(Pl);
     if (Abs(P1.Coord(isU ? 1 : 2) - Param) <= tol &&
 	Abs(P2.Coord(isU ? 1 : 2) - Param) <= tol )
       return Standard_True;
@@ -1524,7 +1521,7 @@ static Standard_Boolean IsShrink(const Geom2dAdaptor_Curve& PC,
     math_FunctionSample aSample (Pf,Pl,10);
     Standard_Integer i;
     for (i=1; i<=aSample.NbPoints(); i++) {
-      gp_Pnt2d P = PC.Value(aSample.GetParameter(i));
+      gp_Pnt2d P = PC->Value(aSample.GetParameter(i));
       if (Abs(P.Coord(isU ? 1 : 2) - Param) > tol )
 	return Standard_False;
     }
@@ -1683,7 +1680,6 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
   ChFiDS_FaceInterference Fi2 = Fd->InterferenceOnS2();
   GeomAdaptor_Surface& Gs = *HGs;
   Handle(BRepAdaptor_Surface) HBs  = new BRepAdaptor_Surface();
-  BRepAdaptor_Surface& Bs  = *HBs;
   Handle(Geom_Curve) Cc;
   Handle(Geom2d_Curve) Pc,Ps;
   Standard_Real Ubid,Vbid;
@@ -2138,8 +2134,8 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
       Hc1 = BRep_Tool::CurveOnSurface(Edge[0],Face[0],Ubid,Ubid);
       if (isOnSame1) {
         // update interference param on Fi1 and point of CV1
-        if (prolface[0]) Bs.Initialize(faceprol[0], Standard_False);
-        else             Bs.Initialize(Face[0], Standard_False);
+        if (prolface[0]) HBs->Initialize(faceprol[0], Standard_False);
+        else             HBs->Initialize(Face[0], Standard_False);
         const Handle(Geom_Curve)& c3df = DStr.Curve(Fi1.LineIndex()).Curve();
         Standard_Real Ufi= Fi2.Parameter(isfirst);
         ChFiDS_FaceInterference& Fi = Fd->ChangeInterferenceOnS1();
@@ -2175,8 +2171,7 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
             Standard_Real tol=BRep_Tool::Tolerance(F);
             BRE.MakeFace(faceprol[0],Sfacemoins1,F.Location(),tol);
             if (!isOnSame1) {
-              GeomAdaptor_Surface Asurf;
-              Asurf.Load(Sfacemoins1);
+              Handle(GeomAdaptor_Surface) Asurf = new GeomAdaptor_Surface(Sfacemoins1);
               Extrema_ExtPS ext (CV1.Point(),Asurf, tol,tol);
               Standard_Real  uc1,vc1;
               if (ext.IsDone()) {
@@ -2360,8 +2355,7 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
           extend=Standard_True;
           Standard_Real tol=BRep_Tool::Tolerance(F);
           BRE.MakeFace(faceprol[nb-1],Sfacemoins1,F.Location(),tol);
-          GeomAdaptor_Surface Asurf;
-          Asurf.Load(Sfacemoins1);
+          Handle(GeomAdaptor_Surface) Asurf = new GeomAdaptor_Surface(Sfacemoins1);
           Extrema_ExtPS ext (CV2.Point(),Asurf,tol,tol);
           Standard_Real  uc2,vc2;
           if (ext.IsDone()) {
@@ -2384,8 +2378,8 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
 
     if (nb==nbface && isOnSame2) {
       // update interference param on Fi2 and point of CV2
-      if (prolface[nb-1]) Bs.Initialize(faceprol[nb-1]);
-      else                Bs.Initialize(Face[nb-1]);
+      if (prolface[nb-1]) HBs->Initialize(faceprol[nb-1]);
+      else                HBs->Initialize(Face[nb-1]);
       const Handle(Geom_Curve)& c3df = DStr.Curve(Fi2.LineIndex()).Curve();
       Standard_Real Ufi= Fi1.Parameter(isfirst);
       ChFiDS_FaceInterference& Fi = Fd->ChangeInterferenceOnS2();
@@ -2414,8 +2408,8 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
     }
 
 
-    if (prolface[nb-1]) Bs.Initialize(faceprol[nb-1]);
-    else                Bs.Initialize(Face[nb-1]);
+    if (prolface[nb-1]) HBs->Initialize(faceprol[nb-1]);
+    else                HBs->Initialize(Face[nb-1]);
 
     // offset of parameters if they are not in the same period
 
@@ -2475,7 +2469,7 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
 
     Standard_Real uu1,uu2,vv1,vv2;
     ChFi3d_Boite(pfac1,pfac2,uu1,uu2,vv1,vv2);
-    ChFi3d_BoundFac(Bs,uu1,uu2,vv1,vv2);
+    ChFi3d_BoundFac(HBs,uu1,uu2,vv1,vv2);
 
 
     //////////////////////////////////////////////////////////////////////
@@ -2622,10 +2616,10 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
         gp_Pnt pext;
         Standard_Real ubid,vbid;
         pext=BRep_Tool::Pnt(Vtx);
-        GeomAdaptor_Curve cad;
+        Handle(GeomAdaptor_Curve) cad = new GeomAdaptor_Curve();
         Handle(Geom_Curve) csau;
         if ( ! (oneintersection1 || oneintersection2)) {
-          cad.Load(cint);
+          cad->Load(cint);
           csau=cint;
         }
         else {
@@ -2652,7 +2646,7 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
               csau=C1;
             }
           }
-          cad.Load(csau);
+          cad->Load(csau);
         }
         Extrema_ExtPC ext(pext,cad,tolpt);
         Standard_Real par1, par2, par, ParVtx;
@@ -2716,7 +2710,7 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
           DStr.SetNewSurface(Face[nb-1],Sfacemoins1);
         }
 	//// for periodic 3d curves ////
-	if (cad.IsPeriodic())
+	if (cad->IsPeriodic())
 	{
 	  gp_Pnt2d P2d = BRep_Tool::Parameters( Vtx, Face[0] );
 	  Geom2dAPI_ProjectPointOnCurve Projector( P2d, C2dint1 );
@@ -2783,7 +2777,7 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
     }
 
     if (checkShrink &&
-	IsShrink(Ps,p1,p2,checkShrParam,isUShrink,Precision::Parametric(tolreached)))
+	IsShrink(new Geom2dAdaptor_Curve(Ps),p1,p2,checkShrParam,isUShrink,Precision::Parametric(tolreached)))
     {
       shrink [nb-1] = 1;
       // store section face-chamf curve for previous SurfData
@@ -2928,7 +2922,8 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
     const gp_Pnt& Pvert = Pds.Point();
     Standard_Real tol = Pds.Tolerance();
 
-    Geom2dAdaptor_Curve PC1(Ps), PC2(PCend);
+    Handle(Geom2dAdaptor_Curve) PC1 = new Geom2dAdaptor_Curve(Ps);
+    Handle(Geom2dAdaptor_Curve) PC2 = new Geom2dAdaptor_Curve(PCend);
     Geom2dInt_GInter Intersector(PC1,PC2,Precision::PConfusion(),Precision::PConfusion());
     if (!Intersector.IsDone()) return;
     for (nb=1; nb <= Intersector.NbPoints(); nb++) {
@@ -3192,7 +3187,7 @@ void ChFi3d_Builder::PerformMoreSurfdata(const Standard_Integer Index)
   Standard_Real     aPar=0.;
 
   if (isPextFound) {
-    GeomAdaptor_Curve aCad(aCracc);
+    Handle(GeomAdaptor_Curve) aCad = new GeomAdaptor_Curve(aCracc);
     Extrema_ExtPC     anExt(aPext, aCad, aTol3d);
 
     if (!anExt.IsDone())
@@ -3806,9 +3801,6 @@ void ChFi3d_Builder::IntersectMoreCorner(const Standard_Integer Index)
   Handle(BRepAdaptor_Surface) HBs  = new BRepAdaptor_Surface();
   Handle(BRepAdaptor_Surface) HBad = new BRepAdaptor_Surface();
   Handle(BRepAdaptor_Surface) HBop = new BRepAdaptor_Surface();
-  BRepAdaptor_Surface& Bs  = *HBs;
-  BRepAdaptor_Surface& Bad = *HBad;
-  BRepAdaptor_Surface& Bop = *HBop;
   Handle(Geom_Curve) Cc;
   Handle(Geom2d_Curve) Pc,Ps;
   Standard_Real Ubid,Vbid;//,mu,Mu,mv,Mv;
@@ -3923,12 +3915,12 @@ void ChFi3d_Builder::IntersectMoreCorner(const Standard_Integer Index)
     tol=BRep_Tool::Tolerance(Fv);
     BRE.MakeFace(FFv,Sface,tol);
     if (prol) {
-      Bs.Initialize(FFv,Standard_False);
+      HBs->Initialize(FFv,Standard_False);
       DStr.SetNewSurface(Fv,Sface);
     }
-    else Bs.Initialize(Fv,Standard_False);
-    Bad.Initialize(Fad);
-    Bop.Initialize(Fop);
+    else HBs->Initialize(Fv,Standard_False);
+    HBad->Initialize(Fad);
+    HBop->Initialize(Fop);
   }
   // it is necessary to modify the CommonPoint
   // in the space and its parameter in FaceInterference.
@@ -4028,14 +4020,14 @@ void ChFi3d_Builder::IntersectMoreCorner(const Standard_Integer Index)
     else{
       pfil2 = Fi2.PCurveOnSurf()->Value(Fi2.Parameter(!isfirst));
     }
-    ChFi3d_Recale(Bs,pfac1,pfac2,(IFadArc == 1));
+    ChFi3d_Recale(HBs,pfac1,pfac2,(IFadArc == 1));
     Pardeb(1)= pfil1.X();Pardeb(2) = pfil1.Y();
     Pardeb(3)= pfac1.X();Pardeb(4) = pfac1.Y();
     Parfin(1)= pfil2.X();Parfin(2) = pfil2.Y();
     Parfin(3)= pfac2.X();Parfin(4) = pfac2.Y();
     Standard_Real uu1,uu2,vv1,vv2;
     ChFi3d_Boite(pfac1,pfac2,uu1,uu2,vv1,vv2);
-    ChFi3d_BoundFac(Bs,uu1,uu2,vv1,vv2);
+    ChFi3d_BoundFac(HBs,uu1,uu2,vv1,vv2);
 
     if (!ChFi3d_ComputeCurves(HGs,HBs,Pardeb,Parfin,Cc,
 			      Ps,
@@ -4054,8 +4046,8 @@ void ChFi3d_Builder::IntersectMoreCorner(const Standard_Integer Index)
       //Standard_Real Ubid,Vbid;
       Handle (Geom_Curve) C=BRep_Tool::Curve(edgecouture,Ubid,Vbid);
       Handle(Geom_TrimmedCurve) Ctrim=new Geom_TrimmedCurve (C,Ubid,Vbid);
-      GeomAdaptor_Curve cur1(Ctrim->BasisCurve());
-      GeomAdaptor_Curve cur2(Cc);
+      Handle(GeomAdaptor_Curve) cur1 = new GeomAdaptor_Curve(Ctrim->BasisCurve());
+      Handle(GeomAdaptor_Curve) cur2 = new GeomAdaptor_Curve(Cc);
       Extrema_ExtCC extCC (cur1,cur2);
       if (extCC.IsDone()&&extCC.NbExt()!=0)
 	{
@@ -4295,7 +4287,7 @@ void ChFi3d_Builder::IntersectMoreCorner(const Standard_Integer Index)
     //fin modif
     pv1 = Hc->Value(parVtx);
     pv2 = p2dbout;
-    ChFi3d_Recale(Bs,pv1,pv2,1);
+    ChFi3d_Recale(HBs,pv1,pv2,1);
     TColStd_Array1OfReal Pardeb(1,4),Parfin(1,4);
     Pardeb(1) = pop1.X(); Pardeb(2) = pop1.Y();
     Pardeb(3) = pv1.X();  Pardeb(4) = pv1.Y();
@@ -4303,9 +4295,9 @@ void ChFi3d_Builder::IntersectMoreCorner(const Standard_Integer Index)
     Parfin(3) = pv2.X();  Parfin(4) = pv2.Y();
     Standard_Real uu1,uu2,vv1,vv2;
     ChFi3d_Boite(pv1,pv2,uu1,uu2,vv1,vv2);
-    ChFi3d_BoundFac(Bs,uu1,uu2,vv1,vv2);
+    ChFi3d_BoundFac(HBs,uu1,uu2,vv1,vv2);
     ChFi3d_Boite(pop1,pop2,uu1,uu2,vv1,vv2);
-    ChFi3d_BoundFac(Bop,uu1,uu2,vv1,vv2);
+    ChFi3d_BoundFac(HBop,uu1,uu2,vv1,vv2);
 
     Handle(Geom_Curve) zob3d;
     Handle(Geom2d_Curve) zob2dop, zob2dv;

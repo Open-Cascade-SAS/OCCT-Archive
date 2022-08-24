@@ -162,7 +162,7 @@ void DrawTrSurf_Surface::DrawOn (Draw_Display& dis, const Standard_Boolean Iso) 
   Handle(GeomAdaptor_Surface) HS = new GeomAdaptor_Surface();
   HS->Load(surf,UFirst,ULast,VFirst,VLast);
 
-  Adaptor3d_IsoCurve C(HS);
+  Handle(Adaptor3d_IsoCurve) C = new Adaptor3d_IsoCurve(HS);
   
   if (Iso) {
     dis.SetColor(isosLook);

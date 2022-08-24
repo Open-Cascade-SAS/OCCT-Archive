@@ -149,7 +149,7 @@ protected:
 private:
 
   
-  Standard_EXPORT Standard_Boolean Add (const Standard_Integer theIndex, const Geom2dGcc_Lin2d2TanIter& theLin, const Standard_Real theTol, const Geom2dAdaptor_Curve& theC1, const Geom2dAdaptor_Curve& theC2);
+  Standard_EXPORT Standard_Boolean Add (const Standard_Integer theIndex, const Geom2dGcc_Lin2d2TanIter& theLin, const Standard_Real theTol, const Handle(Geom2dAdaptor_Curve)& theC1, const Handle(Geom2dAdaptor_Curve)& theC2);
 
 
   Standard_Boolean WellDone;

@@ -925,7 +925,7 @@ void BRepFill::ComputeACR(const TopoDS_Wire& wire,
     TopoDS_Edge Ecur = TopoDS::Edge(anExp.Current());
     ACR(nbEdges) = ACR(nbEdges-1);
     if (!BRep_Tool::Degenerated(Ecur)) {
-      BRepAdaptor_Curve anEcur(Ecur);
+      Handle(BRepAdaptor_Curve) anEcur = new BRepAdaptor_Curve(Ecur);
       ACR(nbEdges) += GCPnts_AbscissaPoint::Length(anEcur);
     }
   }

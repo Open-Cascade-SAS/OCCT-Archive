@@ -454,7 +454,7 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
             Handle(GeomAdaptor_Curve) aHCurve =
               new GeomAdaptor_Curve(ProjOnPlane);
 
-            ProjLib_ProjectedCurve proj(GAHS,aHCurve);
+            Handle(ProjLib_ProjectedCurve) proj = new ProjLib_ProjectedCurve(GAHS,aHCurve);
             Handle(Geom2d_Curve) PC = Geom2dAdaptor::MakeCurve(proj);
             Handle(Geom2dAdaptor_Curve) GHPC = 
               new Geom2dAdaptor_Curve(PC,

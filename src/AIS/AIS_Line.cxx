@@ -211,7 +211,7 @@ void AIS_Line::UnsetWidth()
 //=======================================================================
 void AIS_Line::ComputeInfiniteLine( const Handle(Prs3d_Presentation)& aPresentation)
 {
-  GeomAdaptor_Curve curv(myComponent);
+  Handle(GeomAdaptor_Curve) curv = new GeomAdaptor_Curve(myComponent);
   StdPrs_Curve::Add(aPresentation,curv,myDrawer);
 
   //pas de prise en compte lors du FITALL
@@ -230,7 +230,7 @@ void AIS_Line::ComputeSegmentLine( const Handle(Prs3d_Presentation)& aPresentati
   myComponent = new Geom_Line(P1,gp_Dir(P2.XYZ()-P1.XYZ()));
 
   Standard_Real dist = P1.Distance(P2);
-  GeomAdaptor_Curve curv(myComponent,0.,dist);
+  Handle(GeomAdaptor_Curve) curv = new GeomAdaptor_Curve(myComponent,0.,dist);
   StdPrs_Curve::Add(aPresentation,curv,myDrawer);
 }
 

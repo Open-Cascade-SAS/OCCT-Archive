@@ -82,7 +82,7 @@ Standard_Real Extrema_FuncExtCC::SearchOfTolerance(const Standard_Address C)
 
     Pnt Ptemp;  //empty point (is not used below)
     Vec VDer;   // 1st derivative vector
-    Tool1::D1(*((Curve1*)C), u, Ptemp, VDer);
+    Tool1::D1((Curve1::element_type*)(C), u, Ptemp, VDer);
     Standard_Real vm = VDer.Magnitude();
     if(vm > aMax)
       aMax = vm;
@@ -111,24 +111,24 @@ Extrema_FuncExtCC::Extrema_FuncExtCC(const Standard_Real thetol) : myC1 (0), myC
 Extrema_FuncExtCC::Extrema_FuncExtCC (const Curve1& C1,
                                       const Curve2& C2,
                                       const Standard_Real thetol) :
-myC1 ((Standard_Address)&C1), myC2 ((Standard_Address)&C2),
+myC1 (C1.get()), myC2 (C2.get()),
 myTol (thetol)
 {
   math_Vector V1(1,2), V2(1,2);
-  V1(1) = Tool1::FirstParameter(*((Curve1*)myC1));
-  V2(1) = Tool1::LastParameter(*((Curve1*)myC1));
-  V1(2) = Tool2::FirstParameter(*((Curve2*)myC2));
-  V2(2) = Tool2::LastParameter(*((Curve2*)myC2));
+  V1(1) = Tool1::FirstParameter((Curve1::element_type*)(myC1));
+  V2(1) = Tool1::LastParameter((Curve1::element_type*)(myC1));
+  V1(2) = Tool2::FirstParameter((Curve2::element_type*)(myC2));
+  V2(2) = Tool2::LastParameter((Curve2::element_type*)(myC2));
   SubIntervalInitialize(V1, V2);
 
-  switch(Tool1::GetType(*((Curve1*)myC1)))
+  switch(Tool1::GetType((Curve1::element_type*)(myC1)))
   {
   case GeomAbs_BezierCurve:
   case GeomAbs_BSplineCurve:
   case GeomAbs_OffsetCurve:
   case GeomAbs_OtherCurve:
     myMaxDerivOrderC1 = MaxOrder;
-    myTolC1 = SearchOfTolerance((Standard_Address)&C1);
+    myTolC1 = SearchOfTolerance(C1.get());
     break;
   default:
     myMaxDerivOrderC1 = 0;
@@ -136,14 +136,14 @@ myTol (thetol)
     break;
   }
 
-  switch(Tool2::GetType(*((Curve2*)myC2)))
+  switch(Tool2::GetType((Curve2::element_type*)(myC2)))
   {
   case GeomAbs_BezierCurve:
   case GeomAbs_BSplineCurve:
   case GeomAbs_OffsetCurve:
   case GeomAbs_OtherCurve:
     myMaxDerivOrderC2 = MaxOrder;
-    myTolC2 = SearchOfTolerance((Standard_Address)&C2);
+    myTolC2 = SearchOfTolerance(C2.get());
     break;
   default:
     myMaxDerivOrderC2 = 0;
@@ -159,15 +159,15 @@ void Extrema_FuncExtCC::SetCurve (const Standard_Integer theRank, const Curve1& 
 
     if (theRank == 1)
     {
-      myC1 = (Standard_Address)&C;
-      switch(/*Tool1::GetType(*((Curve1*)myC1))*/ C.GetType())
+      myC1 = C.get();
+      switch(/*Tool1::GetType((Curve1::element_type*)(myC1))*/ C->GetType())
       {
       case GeomAbs_BezierCurve:
       case GeomAbs_BSplineCurve:
       case GeomAbs_OffsetCurve:
       case GeomAbs_OtherCurve:
         myMaxDerivOrderC1 = MaxOrder;
-        myTolC1 = SearchOfTolerance((Standard_Address)&C);
+        myTolC1 = SearchOfTolerance(C.get());
         break;
       default:
         myMaxDerivOrderC1 = 0;
@@ -177,15 +177,15 @@ void Extrema_FuncExtCC::SetCurve (const Standard_Integer theRank, const Curve1& 
     }
     else if (theRank == 2)
     {
-      myC2 = (Standard_Address)&C;
-      switch(/*Tool2::GetType(*((Curve2*)myC2))*/C.GetType())
+      myC2 = C.get();
+      switch(/*Tool2::GetType((Curve2::element_type*)(myC2))*/C->GetType())
       {
       case GeomAbs_BezierCurve:
       case GeomAbs_BSplineCurve:
       case GeomAbs_OffsetCurve:
       case GeomAbs_OtherCurve:
         myMaxDerivOrderC2 = MaxOrder;
-        myTolC2 = SearchOfTolerance((Standard_Address)&C);
+        myTolC2 = SearchOfTolerance(C.get());
         break;
       default:
         myMaxDerivOrderC2 = 0;
@@ -200,8 +200,8 @@ Standard_Boolean Extrema_FuncExtCC::Value (const math_Vector& UV, math_Vector& F
 {
   myU = UV(1);
   myV = UV(2);
-  Tool1::D1(*((Curve1*)myC1), myU,myP1,myDu);
-  Tool2::D1(*((Curve2*)myC2), myV,myP2,myDv);
+  Tool1::D1((Curve1::element_type*)(myC1), myU,myP1,myDu);
+  Tool2::D1((Curve2::element_type*)(myC2), myV,myP2,myDv);
 
   Vec P1P2 (myP1,myP2);
 
@@ -228,7 +228,7 @@ Standard_Boolean Extrema_FuncExtCC::Value (const math_Vector& UV, math_Vector& F
 
       do
       {
-        V = Tool1::DN(*((Curve1*)myC1),myU,++n);
+        V = Tool1::DN((Curve1::element_type*)(myC1),myU,++n);
         Ndu = V.Magnitude();
         IsDeriveFound = (Ndu > myTolC1);
       }
@@ -244,8 +244,8 @@ Standard_Boolean Extrema_FuncExtCC::Value (const math_Vector& UV, math_Vector& F
           u = myU-aDelta;
 
         Pnt P1, P2;
-        Tool1::D0(*((Curve1*)myC1),Min(myU, u),P1);
-        Tool1::D0(*((Curve1*)myC1),Max(myU, u),P2);
+        Tool1::D0((Curve1::element_type*)(myC1),Min(myU, u),P1);
+        Tool1::D0((Curve1::element_type*)(myC1),Max(myU, u),P2);
 
         Vec V1(P1,P2);
         Standard_Real aDirFactor = V.Dot(V1);
@@ -265,16 +265,16 @@ Standard_Boolean Extrema_FuncExtCC::Value (const math_Vector& UV, math_Vector& F
 
         if(myU-myUinfium < 2*aDelta)
         {
-          Tool1::D0(*((Curve1*)myC1),myU,P1);
-          Tool1::D0(*((Curve1*)myC1),myU+aDelta,P2);
-          Tool1::D0(*((Curve1*)myC1),myU+2*aDelta,P3);
+          Tool1::D0((Curve1::element_type*)(myC1), myU, P1);
+          Tool1::D0((Curve1::element_type*)(myC1), myU + aDelta, P2);
+          Tool1::D0((Curve1::element_type*)(myC1), myU + 2*aDelta, P3);
           IsParameterGrown = Standard_True;
         }
         else
         {
-          Tool1::D0(*((Curve1*)myC1),myU-2*aDelta,P1);
-          Tool1::D0(*((Curve1*)myC1),myU-aDelta,P2);
-          Tool1::D0(*((Curve1*)myC1),myU,P3);
+          Tool1::D0((Curve1::element_type*)(myC1), myU - 2*aDelta, P1);
+          Tool1::D0((Curve1::element_type*)(myC1), myU - aDelta, P2);
+          Tool1::D0((Curve1::element_type*)(myC1), myU, P3);
           IsParameterGrown = Standard_False;
         }
 
@@ -318,7 +318,7 @@ Standard_Boolean Extrema_FuncExtCC::Value (const math_Vector& UV, math_Vector& F
 
       do
       {
-        V = Tool2::DN(*((Curve2*)myC2),myV,++n);
+        V = Tool2::DN((Curve2::element_type*)(myC2),myV,++n);
         Ndv = V.Magnitude();
         IsDeriveFound = (Ndv > myTolC2);
       }
@@ -334,8 +334,8 @@ Standard_Boolean Extrema_FuncExtCC::Value (const math_Vector& UV, math_Vector& F
           v = myV-aDelta;
 
         Pnt P1, P2;
-        Tool2::D0(*((Curve2*)myC2),Min(myV, v),P1);
-        Tool2::D0(*((Curve2*)myC2),Max(myV, v),P2);
+        Tool2::D0((Curve2::element_type*)(myC2),Min(myV, v),P1);
+        Tool2::D0((Curve2::element_type*)(myC2),Max(myV, v),P2);
 
         Vec V1(P1,P2);
         Standard_Real aDirFactor = V.Dot(V1);
@@ -355,16 +355,16 @@ Standard_Boolean Extrema_FuncExtCC::Value (const math_Vector& UV, math_Vector& F
 
         if(myV-myVinfium < 2*aDelta)
         {
-          Tool2::D0(*((Curve2*)myC2),myV,P1);
-          Tool2::D0(*((Curve2*)myC2),myV+aDelta,P2);
-          Tool2::D0(*((Curve2*)myC2),myV+2*aDelta,P3);
+          Tool2::D0((Curve2::element_type*)(myC2),myV,P1);
+          Tool2::D0((Curve2::element_type*)(myC2),myV+aDelta,P2);
+          Tool2::D0((Curve2::element_type*)(myC2),myV+2*aDelta,P3);
           IsParameterGrown = Standard_True;
         }
         else
         {
-          Tool2::D0(*((Curve2*)myC2),myV-2*aDelta,P1);
-          Tool2::D0(*((Curve2*)myC2),myV-aDelta,P2);
-          Tool2::D0(*((Curve2*)myC2),myV,P3);
+          Tool2::D0((Curve2::element_type*)(myC2),myV-2*aDelta,P1);
+          Tool2::D0((Curve2::element_type*)(myC2),myV-aDelta,P2);
+          Tool2::D0((Curve2::element_type*)(myC2),myV,P3);
           IsParameterGrown = Standard_False;
         }
 
@@ -414,8 +414,8 @@ Standard_Boolean Extrema_FuncExtCC::Values (const math_Vector& UV,
   }//if(Value(UV, F) == Standard_False)
 
   Vec Du, Dv, Duu, Dvv;
-  Tool1::D2(*((Curve1*)myC1), myU,myP1,Du,Duu);
-  Tool2::D2(*((Curve2*)myC2), myV,myP2,Dv,Dvv);
+  Tool1::D2((Curve1::element_type*)(myC1), myU,myP1,Du,Duu);
+  Tool2::D2((Curve2::element_type*)(myC2), myV,myP2,Dv,Dvv);
 
   //Calling of "Value(...)" function change class member values. 
   //After running it is necessary to return to previous values.  

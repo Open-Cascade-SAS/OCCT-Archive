@@ -32,13 +32,13 @@
 // function: FindLimits
 // purpose:
 //==================================================================
-static void FindLimits(const Adaptor3d_Curve& aCurve,
+static void FindLimits(const Handle(Adaptor3d_Curve)& aCurve,
 		       const Standard_Real  aLimit,
 		       Standard_Real&       First,
 		       Standard_Real&       Last)
 {
-  First = aCurve.FirstParameter();
-  Last  = aCurve.LastParameter();
+  First = aCurve->FirstParameter();
+  Last  = aCurve->LastParameter();
   Standard_Boolean firstInf = Precision::IsNegativeInfinite(First);
   Standard_Boolean lastInf  = Precision::IsPositiveInfinite(Last);
 
@@ -50,24 +50,24 @@ static void FindLimits(const Adaptor3d_Curve& aCurve,
 	delta *= 2;
 	First = - delta;
 	Last  =   delta;
-	aCurve.D0(First,P1);
-	aCurve.D0(Last,P2);
+	aCurve->D0(First,P1);
+	aCurve->D0(Last,P2);
       } while (P1.Distance(P2) < aLimit);
     }
     else if (firstInf) {
-      aCurve.D0(Last,P2);
+      aCurve->D0(Last,P2);
       do {
 	delta *= 2;
 	First = Last - delta;
-	aCurve.D0(First,P1);
+	aCurve->D0(First,P1);
       } while (P1.Distance(P2) < aLimit);
     }
     else if (lastInf) {
-      aCurve.D0(First,P1);
+      aCurve->D0(First,P1);
       do {
 	delta *= 2;
 	Last = First + delta;
-	aCurve.D0(Last,P2);
+	aCurve->D0(Last,P2);
       } while (P1.Distance(P2) < aLimit);
     }
   }    
@@ -113,7 +113,7 @@ static void PrintPoints (Handle(TColgp_HArray1OfVec)& aHAV1,
 // function: DrawCurve
 // purpose:
 //==================================================================
-static void DrawCurve (Adaptor3d_Curve&          aCurve,
+static void DrawCurve (const Handle(Adaptor3d_Curve)&          aCurve,
 		       const Standard_Real           TheDeflection,
                        const Standard_Real           U1,
                        const Standard_Real           U2,
@@ -125,7 +125,7 @@ static void DrawCurve (Adaptor3d_Curve&          aCurve,
   Handle(TColgp_HArray1OfVec) HAV1;
   Handle(TColStd_HArray1OfInteger) HAI1;
 
-  switch (aCurve.GetType()) {
+  switch (aCurve->GetType()) {
   case GeomAbs_Line:
     {
      gp_Vec V;
@@ -134,11 +134,11 @@ static void DrawCurve (Adaptor3d_Curve&          aCurve,
      HAI1 = new TColStd_HArray1OfInteger(1,3);
 
 // array of coordinates of line 
-     gp_Pnt p = aCurve.Value(U1);
+     gp_Pnt p = aCurve->Value(U1);
      V.SetX(p.X()); V.SetY(p.Y()); V.SetZ(p.Z());
      HAV1->SetValue(1,V);
 
-     p = aCurve.Value(U2);
+     p = aCurve->Value(U2);
      V.SetX(p.X()); V.SetY(p.Y()); V.SetZ(p.Z());
      HAV1->SetValue(2,V);
 
@@ -151,7 +151,7 @@ static void DrawCurve (Adaptor3d_Curve&          aCurve,
     break;
   case GeomAbs_Circle:
     {
-      Standard_Real Radius = aCurve.Circle().Radius();
+      Standard_Real Radius = aCurve->Circle().Radius();
      if (!Precision::IsInfinite(Radius)) {
        Standard_Real DU = Sqrt(8.0 * TheDeflection / Radius);
        Standard_Integer N = Standard_Integer(Abs( U2 - U1) / DU);
@@ -169,7 +169,7 @@ static void DrawCurve (Adaptor3d_Curve&          aCurve,
 
 	 for (Standard_Integer Index = 1; Index <= N+1; Index++) {
 	   U = U1 + (Index - 1) * DU;
-	   p = aCurve.Value(U);
+	   p = aCurve->Value(U);
 
 	   V.SetX(p.X()); V.SetY(p.Y()); V.SetZ(p.Z());
 	   HAV1->SetValue(Index,V);
@@ -238,7 +238,7 @@ static void DrawCurve (Adaptor3d_Curve&          aCurve,
 // function: GetDeflection
 // purpose:
 //==================================================================
-static Standard_Real GetDeflection(const Adaptor3d_Curve&        aCurve,
+static Standard_Real GetDeflection(const Handle(Adaptor3d_Curve)&        aCurve,
 				   const Standard_Real         U1, 
 				   const Standard_Real         U2, 
 				   const Handle(VrmlConverter_Drawer)& aDrawer) {
@@ -278,7 +278,7 @@ static Standard_Real GetDeflection(const Adaptor3d_Curve&        aCurve,
 // purpose: 1
 //==================================================================
 void VrmlConverter_DeflectionCurve::Add(Standard_OStream&                   anOStream, 
-					 Adaptor3d_Curve&                aCurve, 
+					const Handle(Adaptor3d_Curve)&                aCurve, 
 					const Handle(VrmlConverter_Drawer)& aDrawer)
 {
 
@@ -298,7 +298,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream&                   anOS
 // purpose: 2
 //==================================================================
 void VrmlConverter_DeflectionCurve::Add(Standard_OStream&                   anOStream,
-					Adaptor3d_Curve&                aCurve, 
+					const Handle(Adaptor3d_Curve)&                aCurve, 
 					const Standard_Real                 U1, 
 					const Standard_Real                 U2, 
 					const Handle(VrmlConverter_Drawer)& aDrawer)
@@ -321,7 +321,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream&                   anOS
 //==================================================================
 
 void VrmlConverter_DeflectionCurve::Add(Standard_OStream&    anOStream, 
-					Adaptor3d_Curve& aCurve, 
+					const Handle(Adaptor3d_Curve)& aCurve, 
 					const Standard_Real  aDeflection, 
 					const Standard_Real  aLimit)
 {
@@ -342,7 +342,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream&    anOStream,
 //==================================================================
 
 void VrmlConverter_DeflectionCurve::Add(Standard_OStream&                   anOStream, 
-					Adaptor3d_Curve&                aCurve, 
+					const Handle(Adaptor3d_Curve)&                aCurve, 
 					const Standard_Real                 aDeflection, 
 					const Handle(VrmlConverter_Drawer)& aDrawer)
 {
@@ -360,7 +360,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream&                   anOS
 //==================================================================
 
 void VrmlConverter_DeflectionCurve::Add(Standard_OStream&    anOStream, 
-					Adaptor3d_Curve& aCurve, 
+					const Handle(Adaptor3d_Curve)& aCurve, 
 					const Standard_Real  U1, 
 					const Standard_Real  U2, 
 					const Standard_Real  aDeflection)
@@ -380,7 +380,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream&    anOStream,
 //==================================================================
 
 void VrmlConverter_DeflectionCurve::Add(Standard_OStream& anOStream,
-                                        const Adaptor3d_Curve& aCurve,
+                                        const Handle(Adaptor3d_Curve)& aCurve,
                                         const Handle(TColStd_HArray1OfReal)& aParams,
                                         const Standard_Integer aNbNodes,
                                         const Handle(VrmlConverter_Drawer)& aDrawer)
@@ -394,7 +394,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream& anOStream,
   for (i = 1; i<=aNbNodes; i++)
   {
     Standard_Real aParam = aParams->Value(aParams->Lower() + i - 1);
-    aPoint = aCurve.Value(aParam);
+    aPoint = aCurve->Value(aParam);
     aVec.SetX(aPoint.X());
     aVec.SetY(aPoint.Y());
     aVec.SetZ(aPoint.Z());

@@ -91,6 +91,8 @@ TopOpeBRep_EdgesIntersector::TopOpeBRep_EdgesIntersector()
   mySurface2 = new BRepAdaptor_Surface();
   mySurfacesSameOriented = Standard_False;
   myFacesSameOriented = Standard_False;
+  myCurve1 = new Geom2dAdaptor_Curve();
+  myCurve2 = new Geom2dAdaptor_Curve();
   myTol1 = 0.; // Precision::PConfusion();
   myTol2 = 0.; // Precision::PIntersection();
   myDimension = 2;
@@ -138,12 +140,12 @@ void TopOpeBRep_EdgesIntersector::SetFaces(const TopoDS_Shape& F1,const TopoDS_S
   myFacesSameOriented = Standard_True;
   
   myFace1 = TopoDS::Face(F1);
-  BRepAdaptor_Surface& S1 = *mySurface1; S1.Initialize(myFace1,computerestriction);
-  mySurfaceType1 = S1.GetType();
+  mySurface1->Initialize(myFace1,computerestriction);
+  mySurfaceType1 = mySurface1->GetType();
   
   myFace2 = TopoDS::Face(F2);
-  BRepAdaptor_Surface& S2 = *mySurface2; S2.Initialize(myFace2,computerestriction);
-  mySurfaceType2 = S2.GetType();
+  mySurface2->Initialize(myFace2,computerestriction);
+  mySurfaceType2 = mySurface2->GetType();
   
   TopoDS_Face face1forward = myFace1;
   face1forward.Orientation(TopAbs_FORWARD);
@@ -154,11 +156,11 @@ void TopOpeBRep_EdgesIntersector::SetFaces(const TopoDS_Shape& F1,const TopoDS_S
   so21 = TopOpeBRepTool_ShapeTool::FacesSameOriented(face1forward,myFace2);
   myf2surf1F_sameoriented = so21;
   
-  mySurfacesSameOriented = TopOpeBRepTool_ShapeTool::SurfacesSameOriented(S1,S2);
+  mySurfacesSameOriented = TopOpeBRepTool_ShapeTool::SurfacesSameOriented(mySurface1, mySurface2);
   myFacesSameOriented = TopOpeBRepTool_ShapeTool::FacesSameOriented(myFace1,myFace2);
 
   if ( !myTolForced ) {
-    FTOL_FaceTolerances2d(B1,B2,myFace1,myFace2,S1,S2,myTol1,myTol2);
+    FTOL_FaceTolerances2d(B1,B2,myFace1,myFace2, mySurface1, mySurface2,myTol1,myTol2);
     myTol1 = (myTol1 > 1.e-4)? 1.e-4: myTol1;
     myTol2 = (myTol2 > 1.e-4)? 1.e-4: myTol2;
   }
@@ -217,8 +219,8 @@ static Standard_Boolean TransitionEqualAndExtremity( const IntRes2d_Transition& 
 //  Modified by Sergey KHROMOV - Fri Jan 11 14:49:48 2002 Begin
 static Standard_Boolean IsTangentSegment(const IntRes2d_IntersectionPoint &P1,
 					 const IntRes2d_IntersectionPoint &P2,
-					 const Geom2dAdaptor_Curve        &aC1,
-					 const Geom2dAdaptor_Curve        &aC2,
+					 const Handle(Geom2dAdaptor_Curve)        &aC1,
+					 const Handle(Geom2dAdaptor_Curve)        &aC2,
 					 const Standard_Real               aTolConf) {
   const gp_Pnt2d            &aP2d1   = P1.Value();
   const gp_Pnt2d            &aP2d2   = P2.Value();
@@ -232,8 +234,8 @@ static Standard_Boolean IsTangentSegment(const IntRes2d_IntersectionPoint &P1,
     if (aSqrDistPP <= aTolConf) {
       Standard_Real aParDist1 = Abs(P1.ParamOnFirst() - P2.ParamOnFirst());
       Standard_Real aParDist2 = Abs(P1.ParamOnSecond() - P2.ParamOnSecond());
-      Standard_Real aResol1   = aC1.Resolution(aTolConf);
-      Standard_Real aResol2   = aC2.Resolution(aTolConf);
+      Standard_Real aResol1   = aC1->Resolution(aTolConf);
+      Standard_Real aResol2   = aC2->Resolution(aTolConf);
 
       if (aParDist1*aParDist1 <= aResol1 &&
 	  aParDist2*aParDist2 <= aResol2)
@@ -323,7 +325,7 @@ Standard_Boolean EdgesIntersector_checkT1D(const TopoDS_Edge& E1,const TopoDS_Ed
   if (PC1.IsNull()) 
     throw Standard_Failure("EdgesIntersector::Perform : no 2d curve");
   
-  myCurve1.Load(PC1);
+  myCurve1->Load(PC1);
   BRep_Tool::UVPoints(myEdge1,myFace1,pfirst,plast);
   tole = BRep_Tool::Tolerance(myEdge1);
   myDomain1.SetValues(pfirst,first,tole,plast,last,tole);
@@ -344,7 +346,7 @@ Standard_Boolean EdgesIntersector_checkT1D(const TopoDS_Edge& E1,const TopoDS_Ed
   
   if ( mySurfaceType1 == GeomAbs_Plane || memesfaces || memesupport) {    
     Handle(Geom2d_Curve) PC2 = FC2D_CurveOnSurface(myEdge2,myFace1,first,last,tolpc);
-    myCurve2.Load(PC2);
+    myCurve2->Load(PC2);
     BRep_Tool::UVPoints(myEdge2,myFace1,pfirst,plast);
     tole = BRep_Tool::Tolerance(myEdge2);
     myDomain2.SetValues(pfirst,first,tole,plast,last,tole);
@@ -411,7 +413,7 @@ Standard_Boolean EdgesIntersector_checkT1D(const TopoDS_Edge& E1,const TopoDS_Ed
     }
     
     if (!PC2on1.IsNull()) {
-      myCurve2.Load(PC2on1);
+      myCurve2->Load(PC2on1);
       tole = BRep_Tool::Tolerance(myEdge2);
       PC2on1->D0(first,pfirst);
       PC2on1->D0(last,plast);
@@ -612,10 +614,10 @@ Standard_Integer TopOpeBRep_EdgesIntersector::Dimension() const
 //=======================================================================
 Standard_Boolean TopOpeBRep_EdgesIntersector::ComputeSameDomain()
 {
-  const Geom2dAdaptor_Curve& C1 = Curve(1);
-  const Geom2dAdaptor_Curve& C2 = Curve(2);
-  GeomAbs_CurveType t1 = C1.GetType();
-  GeomAbs_CurveType t2 = C2.GetType();
+  const Handle(Geom2dAdaptor_Curve)& C1 = Curve(1);
+  const Handle(Geom2dAdaptor_Curve)& C2 = Curve(2);
+  GeomAbs_CurveType t1 = C1->GetType();
+  GeomAbs_CurveType t2 = C2->GetType();
 
   if (!myHasSegment) 
     return SetSameDomain(Standard_False);
@@ -635,8 +637,8 @@ Standard_Boolean TopOpeBRep_EdgesIntersector::ComputeSameDomain()
     return SetSameDomain(Standard_False);
   }
 
-  gp_Circ2d c1 = C1.Circle();
-  gp_Circ2d c2 = C2.Circle();
+  gp_Circ2d c1 = C1->Circle();
+  gp_Circ2d c2 = C2->Circle();
   Standard_Real r1 = c1.Radius();
   Standard_Real r2 = c2.Radius();
 //  Standard_Boolean rr = (r1 == r2);
@@ -646,9 +648,9 @@ Standard_Boolean TopOpeBRep_EdgesIntersector::ComputeSameDomain()
   const gp_Pnt2d& p1 = c1.Location();
   const gp_Pnt2d& p2 = c2.Location();
 
-  const BRepAdaptor_Surface& BAS1 = Surface(1);
-  Standard_Real u1,v1; p1.Coord(u1,v1); gp_Pnt P1 = BAS1.Value(u1,v1);
-  Standard_Real u2,v2; p2.Coord(u2,v2); gp_Pnt P2 = BAS1.Value(u2,v2);// recall myCurve2=C2d(myEdge2,myFace1);
+  const Handle(BRepAdaptor_Surface)& BAS1 = Surface(1);
+  Standard_Real u1,v1; p1.Coord(u1,v1); gp_Pnt P1 = BAS1->Value(u1,v1);
+  Standard_Real u2,v2; p2.Coord(u2,v2); gp_Pnt P2 = BAS1->Value(u2,v2);// recall myCurve2=C2d(myEdge2,myFace1);
   Standard_Real dpp = P1.Distance(P2);
   Standard_Real tol1 = BRep_Tool::Tolerance(TopoDS::Edge(Edge(1)));
   Standard_Real tol2 = BRep_Tool::Tolerance(TopoDS::Edge(Edge(2)));
@@ -855,7 +857,7 @@ const TopoDS_Shape& TopOpeBRep_EdgesIntersector::Edge(const Standard_Integer Ind
 //function : Curve
 //purpose  : 
 //=======================================================================
-const Geom2dAdaptor_Curve& TopOpeBRep_EdgesIntersector::Curve(const Standard_Integer Index) const 
+const Handle(Geom2dAdaptor_Curve)& TopOpeBRep_EdgesIntersector::Curve(const Standard_Integer Index) const 
 {
   if      ( Index == 1 ) return myCurve1;
   else if ( Index == 2 ) return myCurve2;
@@ -877,10 +879,10 @@ const TopoDS_Shape& TopOpeBRep_EdgesIntersector::Face(const Standard_Integer Ind
 //function : Surface
 //purpose  : 
 //=======================================================================
-const BRepAdaptor_Surface& TopOpeBRep_EdgesIntersector::Surface(const Standard_Integer Index) const 
+const Handle(BRepAdaptor_Surface)& TopOpeBRep_EdgesIntersector::Surface(const Standard_Integer Index) const 
 {
-  if      ( Index == 1 ) return *mySurface1;
-  else if ( Index == 2 ) return *mySurface2;
+  if      ( Index == 1 ) return mySurface1;
+  else if ( Index == 2 ) return mySurface2;
   else throw Standard_Failure("TopOpeBRep_EdgesIntersector::Surface");
 }
 

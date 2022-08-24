@@ -88,7 +88,7 @@ static Standard_Real ComputeTolV(const Handle(Adaptor3d_Surface)& theSurf,
 //purpose  : 
 //=======================================================================
 
-static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
+static Standard_Boolean IsoIsDeg  (const Handle(Adaptor3d_Surface)& S,
 				   const Standard_Real      Param,
 				   const GeomAbs_IsoType    IT,
 				   const Standard_Real      TolMin,
@@ -96,10 +96,10 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
 {
     Standard_Real U1=0.,U2=0.,V1=0.,V2=0.,T;
     Standard_Boolean Along = Standard_True;
-    U1 = S.FirstUParameter();
-    U2 = S.LastUParameter();
-    V1 = S.FirstVParameter();
-    V2 = S.LastVParameter();
+    U1 = S->FirstUParameter();
+    U2 = S->LastUParameter();
+    V1 = S->FirstVParameter();
+    V2 = S->LastVParameter();
     gp_Vec D1U,D1V;
     gp_Pnt P;
     Standard_Real Step,D1NormMax;
@@ -109,7 +109,7 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
       D1NormMax=0.;
       for (T=U1;T<=U2;T=T+Step) 
       {
-        S.D1(T,Param,P,D1U,D1V);
+        S->D1(T,Param,P,D1U,D1V);
         D1NormMax=Max(D1NormMax,D1U.Magnitude());
       }
 
@@ -122,7 +122,7 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
       D1NormMax=0.;
       for (T=V1;T<=V2;T=T+Step) 
       {
-	S.D1(Param,T,P,D1U,D1V);
+        S->D1(Param,T,P,D1U,D1V);
         D1NormMax=Max(D1NormMax,D1V.Magnitude());
       }
 
@@ -512,34 +512,33 @@ void ProjLib_ProjectedCurve::Perform(const Handle(Adaptor3d_Curve)& C)
         l = myCurve->LastParameter();
         dt = (l - f) * eps;
 
-        const Adaptor3d_Surface& S = *mySurface;
-        U1 = S.FirstUParameter();
-        U2 = S.LastUParameter();
-        V1 = S.FirstVParameter();
-        V2 = S.LastVParameter();
+        U1 = mySurface->FirstUParameter();
+        U2 = mySurface->LastUParameter();
+        V1 = mySurface->FirstVParameter();
+        V2 = mySurface->LastVParameter();
 
-        if(IsoIsDeg(S, U1, GeomAbs_IsoU, 0., myTolerance))
+        if(IsoIsDeg(mySurface, U1, GeomAbs_IsoU, 0., myTolerance))
         {
           //Surface has pole at U = Umin
           gp_Pnt Pole = mySurface->Value(U1, V1);
           TrimC3d(myCurve, IsTrimmed, dt, Pole, SingularCase, 1, TolConf);
         }
 
-        if(IsoIsDeg(S, U2, GeomAbs_IsoU, 0., myTolerance))
+        if(IsoIsDeg(mySurface, U2, GeomAbs_IsoU, 0., myTolerance))
         {
           //Surface has pole at U = Umax
           gp_Pnt Pole = mySurface->Value(U2, V1);
           TrimC3d(myCurve, IsTrimmed, dt, Pole, SingularCase, 2, TolConf);
         }
 
-        if(IsoIsDeg(S, V1, GeomAbs_IsoV, 0., myTolerance))
+        if(IsoIsDeg(mySurface, V1, GeomAbs_IsoV, 0., myTolerance))
         {
           //Surface has pole at V = Vmin
           gp_Pnt Pole = mySurface->Value(U1, V1);
           TrimC3d(myCurve, IsTrimmed, dt, Pole, SingularCase, 3, TolConf);
         }
 
-        if(IsoIsDeg(S, V2, GeomAbs_IsoV, 0., myTolerance))
+        if(IsoIsDeg(mySurface, V2, GeomAbs_IsoV, 0., myTolerance))
         {
           //Surface has pole at V = Vmax
           gp_Pnt Pole = mySurface->Value(U1, V2);
@@ -613,7 +612,7 @@ void ProjLib_ProjectedCurve::Perform(const Handle(Adaptor3d_Curve)& C)
             f = f + dt;
             myCurve = myCurve->Trim(f, l, Precision::Confusion());
             // Searching the parameter on the basis curve for surface of revolution
-            Extrema_ExtPC anExtr(P, *mySurface->BasisCurve(), myTolerance);
+            Extrema_ExtPC anExtr(P, mySurface->BasisCurve(), myTolerance);
             if (anExtr.IsDone())
             {
               Standard_Real aMinDist = RealLast();
@@ -639,7 +638,7 @@ void ProjLib_ProjectedCurve::Perform(const Handle(Adaptor3d_Curve)& C)
             l = l - dt;
             myCurve = myCurve->Trim(f, l, Precision::Confusion());
             // Searching the parameter on the basis curve for surface of revolution
-            Extrema_ExtPC anExtr(P, *mySurface->BasisCurve(), myTolerance);
+            Extrema_ExtPC anExtr(P, mySurface->BasisCurve(), myTolerance);
             if (anExtr.IsDone())
             {
               Standard_Real aMinDist = RealLast();

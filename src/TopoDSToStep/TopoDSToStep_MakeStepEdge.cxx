@@ -181,7 +181,7 @@ void TopoDSToStep_MakeStepEdge::Init(const TopoDS_Edge& aEdge,
   // ---------------------------------------
   
   Handle(StepGeom_Curve) Gpms;
-  Handle(Geom_Curve) C = CA.Curve().Curve();
+  Handle(Geom_Curve) C = CA.Curve()->Curve();
  
   if (!C.IsNull()) {
     C = Handle(Geom_Curve)::DownCast(C->Copy());

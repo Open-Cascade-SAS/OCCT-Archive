@@ -61,7 +61,7 @@ HLRBRep_CurveTool::NbSamples (const Standard_Address C,
   else if(typC == GeomAbs_BezierCurve) 
     nbs = 3 + ((HLRBRep_Curve *)C)->NbPoles();
   else if(typC == GeomAbs_BSplineCurve) { 
-    Handle(Geom_Curve) aCurve = ((HLRBRep_Curve *)C)->Curve().Curve().Curve();
+    Handle(Geom_Curve) aCurve = ((HLRBRep_Curve *)C)->Curve()->Curve()->Curve();
     GeomAdaptor_Curve GAcurve(aCurve, u1, u2);
     nbs = GAcurve.NbIntervals(GeomAbs_CN) + 1;
     nbs*= ((HLRBRep_Curve *)C)->Degree();

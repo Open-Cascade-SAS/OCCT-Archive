@@ -181,9 +181,9 @@ void HLRTopoBRep_OutLiner::ProcessFace(const TopoDS_Face& F,
 	  TopExp::Vertices(aE, aV1, aV2);
 
 	  if((V1.IsSame(aV1) && V2.IsSame(aV2)) || (V1.IsSame(aV2) && V2.IsSame(aV1))) {
-	    BRepAdaptor_Curve aC(aE);
+	    Handle(BRepAdaptor_Curve) aC = new BRepAdaptor_Curve(aE);
 	    if((C.GetType() == GeomAbs_Line) &&
-	       (aC.GetType() == GeomAbs_Line)) {
+	       (aC->GetType() == GeomAbs_Line)) {
 	      SameEdge = Standard_True;
 	      break;
 	    }

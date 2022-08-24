@@ -148,14 +148,14 @@ namespace
 //purpose  :
 //=======================================================================
 BRepMesh_GeomTool::BRepMesh_GeomTool(
-  const BRepAdaptor_Curve& theCurve,
+  const Handle(BRepAdaptor_Curve)& theCurve,
   const Standard_Real      theFirstParam,
   const Standard_Real      theLastParam,
   const Standard_Real      theLinDeflection,
   const Standard_Real      theAngDeflection,
   const Standard_Integer   theMinPointsNb,
   const Standard_Real      theMinSize)
-  : myEdge(&theCurve.Edge()),
+  : myEdge(&theCurve->Edge()),
     myIsoType(GeomAbs_NoneIso)
 {
   myDiscretTool.Initialize(theCurve, theFirstParam, theLastParam,
@@ -180,7 +180,7 @@ BRepMesh_GeomTool::BRepMesh_GeomTool(
   : myEdge(NULL),
     myIsoType(theIsoType)
 {
-  Adaptor3d_IsoCurve aIso(theSurface, theIsoType, theParamIso,
+  Handle(Adaptor3d_IsoCurve) aIso = new Adaptor3d_IsoCurve(theSurface, theIsoType, theParamIso,
     theFirstParam, theLastParam);
 
   myDiscretTool.Initialize(aIso, theFirstParam, theLastParam,

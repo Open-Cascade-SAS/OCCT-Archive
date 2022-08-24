@@ -53,17 +53,17 @@
 // Function :
 // Purpose :
 //===============================================================
-static void Tangente(const Adaptor3d_Curve& Path,
+static void Tangente(const Handle(Adaptor3d_Curve)& Path,
 		     const Standard_Real Param,
 		     gp_Pnt& P,
 		     gp_Vec& Tang)
 {
-  Path.D1(Param, P, Tang);
+  Path->D1(Param, P, Tang);
   Standard_Real Norm = Tang.Magnitude();
 
   for (Standard_Integer ii=2; (ii<12) && (Norm < Precision::Confusion()); 
        ii++) {
-    Tang =  Path.DN(Param, ii);
+    Tang =  Path->DN(Param, ii);
     Norm = Tang.Magnitude();
   }
 
@@ -107,7 +107,7 @@ static Standard_Real EvalAngle(const gp_Vec& V1,
 // Purpose : Examine un extrema pour updater <Dist> & <Param>
 //===============================================================
 static void DistMini(const Extrema_ExtPC& Ext,
-		     const Adaptor3d_Curve& C,
+		     const Handle(Adaptor3d_Curve)& C,
 		     Standard_Real& Dist,
 		     Standard_Real& Param)
 {
@@ -120,11 +120,11 @@ static void DistMini(const Extrema_ExtPC& Ext,
   if ( (dist1<Dist2) || (dist2<Dist2) ) {
     if (dist1 < dist2) {
       Dist2 = dist1;
-      Param  = C.FirstParameter();
+      Param  = C->FirstParameter();
     }
     else {
       Dist2 = dist2;
-      Param  = C.LastParameter();
+      Param  = C->LastParameter();
     }
   }
 
@@ -166,7 +166,7 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
   else
     {
       Handle(Geom_Curve) CurveSection = Handle(Geom_Curve)::DownCast(Section);
-      myAdpSection.Load(CurveSection);
+      myAdpSection = new GeomAdaptor_Curve(CurveSection);
       mySection = CurveSection;
     }
 
@@ -195,36 +195,36 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
       gp_Pnt P;
       gp_Vec V;
       Tangente(myAdpSection, 
-	       (myAdpSection.FirstParameter()+myAdpSection.LastParameter())/2,
+	       (myAdpSection->FirstParameter()+myAdpSection->LastParameter())/2,
 	       P, V);
       TheAxe.SetLocation(P);
       TheAxe.SetDirection(V);
  
       // y a t'il un Plan moyen ?
-      GeomAbs_CurveType TheType = myAdpSection.GetType();
+      GeomAbs_CurveType TheType = myAdpSection->GetType();
       switch  (TheType) {
       case GeomAbs_Circle:
 	{
 	  isplan = Standard_True;
-	  TheAxe =  myAdpSection.Circle().Axis();
+	  TheAxe =  myAdpSection->Circle().Axis();
 	  break;
 	}
       case GeomAbs_Ellipse:
 	{
 	  isplan = Standard_True;
-	  TheAxe =  myAdpSection.Ellipse().Axis();
+	  TheAxe =  myAdpSection->Ellipse().Axis();
 	  break;
 	}
       case GeomAbs_Hyperbola:
 	{
 	  isplan = Standard_True;
-	  TheAxe =  myAdpSection.Hyperbola().Axis();
+	  TheAxe =  myAdpSection->Hyperbola().Axis();
 	  break;
 	}
       case GeomAbs_Parabola:
 	{
 	  isplan = Standard_True;
-	  TheAxe =  myAdpSection.Parabola().Axis();
+	  TheAxe =  myAdpSection->Parabola().Axis();
 	  break;
 	}
       case GeomAbs_Line:
@@ -235,7 +235,7 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
       case GeomAbs_BezierCurve:
       case GeomAbs_BSplineCurve:
 	{
-	  NbPoles = myAdpSection.NbPoles();
+	  NbPoles = myAdpSection->NbPoles();
 	  break;
 	}
       default:
@@ -247,12 +247,12 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
 	{
 	  // Calcul d'un plan moyen.
 	  Handle(TColgp_HArray1OfPnt) Pnts;
-	  Standard_Real first = myAdpSection.FirstParameter();
-	  Standard_Real last =  myAdpSection.LastParameter();
-          if (myAdpSection.IsPeriodic())
+	  Standard_Real first = myAdpSection->FirstParameter();
+	  Standard_Real last =  myAdpSection->LastParameter();
+          if (myAdpSection->IsPeriodic())
           {
             //Correct boundaries to avoid mistake of LocateU
-            Handle(Geom_Curve) aCurve = myAdpSection.Curve();
+            Handle(Geom_Curve) aCurve = myAdpSection->Curve();
             if (aCurve->IsInstance(STANDARD_TYPE(Geom_TrimmedCurve)))
               aCurve = (Handle(Geom_TrimmedCurve)::DownCast(aCurve))->BasisCurve();
             Standard_Real Ufirst = aCurve->FirstParameter();
@@ -265,10 +265,10 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
               last = U2;
           }
 	  Standard_Real t, delta;
-	  if (myAdpSection.GetType() == GeomAbs_BSplineCurve)
+	  if (myAdpSection->GetType() == GeomAbs_BSplineCurve)
 	    {
 	      Handle(Geom_BSplineCurve) BC =
-		Handle(Geom_BSplineCurve)::DownCast(myAdpSection.Curve());
+		Handle(Geom_BSplineCurve)::DownCast(myAdpSection->Curve());
 	      Standard_Integer I1, I2, I3, I4;
 	      BC->LocateU( first, Precision::Confusion(), I1, I2 );
 	      BC->LocateU( last,  Precision::Confusion(), I3, I4 );
@@ -280,7 +280,7 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
 		NbPnts += NbLocalPnts;
 	      if (I3 != I4 && first < BC->Knot(I3))
 		NbPnts += NbLocalPnts;
-	      if (!myAdpSection.IsClosed())
+	      if (!myAdpSection->IsClosed())
 		NbPnts++;
 	      Pnts = new TColgp_HArray1OfPnt(1, NbPnts);
 	      Standard_Integer nb = 1;
@@ -291,7 +291,7 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
 		  for (j = 0; j < NbLocalPnts; j++)
 		    {
 		      t = first + j*delta;
-		      Pnts->SetValue( nb++, myAdpSection.Value(t) );
+		      Pnts->SetValue( nb++, myAdpSection->Value(t) );
 		    }
 		}
 	      for (i = I2; i < I3; i++)
@@ -300,7 +300,7 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
 		  delta = (BC->Knot(i+1) - t) / NbLocalPnts;
 		  for (j = 0; j < NbLocalPnts; j++)
 		    {
-		      Pnts->SetValue( nb++, myAdpSection.Value(t) );
+		      Pnts->SetValue( nb++, myAdpSection->Value(t) );
 		      t += delta;
 		    }
 		}
@@ -310,27 +310,27 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
 		  delta = (last - t) / NbLocalPnts;
 		  for (j = 0; j < NbLocalPnts; j++)
 		    {
-		      Pnts->SetValue( nb++, myAdpSection.Value(t) );
+		      Pnts->SetValue( nb++, myAdpSection->Value(t) );
 		      t += delta;
 		    }
 		}
-	      if (!myAdpSection.IsClosed())
-		Pnts->SetValue( nb, myAdpSection.Value(last) );
+	      if (!myAdpSection->IsClosed())
+		Pnts->SetValue( nb, myAdpSection->Value(last) );
 	    }
 	  else // other type
 	    {
 	      Standard_Integer NbPnts = NbPoles-1;
-	      if (!myAdpSection.IsClosed())
+	      if (!myAdpSection->IsClosed())
 		NbPnts++;
 	      Pnts = new TColgp_HArray1OfPnt(1, NbPnts);
 	      delta = (last - first) / (NbPoles-1);
 	      for (i = 0; i < NbPoles-1; i++)
 		{
 		  t = first + i*delta;
-		  Pnts->SetValue( i+1, myAdpSection.Value(t) );
+		  Pnts->SetValue( i+1, myAdpSection->Value(t) );
 		}
-	      if (!myAdpSection.IsClosed())
-		Pnts->SetValue( NbPnts, myAdpSection.Value(last) );
+	      if (!myAdpSection->IsClosed())
+		Pnts->SetValue( NbPnts, myAdpSection->Value(last) );
 	    }
 	  
 	  Standard_Boolean issing;
@@ -345,8 +345,8 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
       
       
       myExt.Initialize(myAdpSection, 
-		       myAdpSection.FirstParameter(), 
-		       myAdpSection.LastParameter(), 
+		       myAdpSection->FirstParameter(), 
+		       myAdpSection->LastParameter(), 
 		       Precision::Confusion());
     }
 }
@@ -384,28 +384,28 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
 
   if (myIsPoint)
     {
-      Extrema_ExtPC Projector(myPoint, *Path, Precision::Confusion());
-      DistMini( Projector, *Path, Dist, PathParam );
+      Extrema_ExtPC Projector(myPoint, Path, Precision::Confusion());
+      DistMini( Projector, Path, Dist, PathParam );
       AngleMax = M_PI/2;
     }
   else
     {
       PathParam = Path->FirstParameter();
-      SecParam =  myAdpSection.FirstParameter();
+      SecParam =  myAdpSection->FirstParameter();
       
       Standard_Real distaux, taux = 0.0, alpha;
       gp_Pnt PonPath, PonSec, P;
       gp_Vec VRef, dp1;
       VRef.SetXYZ(TheAxe.Direction().XYZ());
       
-      Tangente (*Path, PathParam, PonPath, dp1);
-      PonSec = myAdpSection.Value(SecParam);
+      Tangente (Path, PathParam, PonPath, dp1);
+      PonSec = myAdpSection->Value(SecParam);
       Dist =  PonPath.Distance(PonSec);
       if (Dist > Tol) { // On Cherche un meilleur point sur la section
 	myExt.Perform(PonPath);  
 	if ( myExt.IsDone() ) { 
 	  DistMini(myExt, myAdpSection, Dist, SecParam);
-	  PonSec = myAdpSection.Value(SecParam);
+	  PonSec = myAdpSection->Value(SecParam);
 	}
       }
       AngleMax = EvalAngle(VRef, dp1);
@@ -477,14 +477,14 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
     else 
     {
 		PathParam = Path->LastParameter();
-		Tangente (*Path, PathParam, PonPath, dp1);
-		PonSec = myAdpSection.Value(SecParam);
+		Tangente (Path, PathParam, PonPath, dp1);
+		PonSec = myAdpSection->Value(SecParam);
 		Dist =  PonPath.Distance(PonSec);
 		if (Dist > Tol) { // On Cherche un meilleur point sur la section
 		  myExt.Perform(PonPath);  
 		  if ( myExt.IsDone() ) { 
 		    DistMini(myExt, myAdpSection, Dist, SecParam);
-		    PonSec = myAdpSection.Value(SecParam);
+		    PonSec = myAdpSection->Value(SecParam);
 		  }
 		}
 		AngleMax = EvalAngle(VRef, dp1);
@@ -546,7 +546,7 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
 	   AngleMax = alpha;
 	   PonPath = P;
 	   PathParam = w;
-	   PonSec = myAdpSection.Value(SecParam);
+	   PonSec = myAdpSection->Value(SecParam);
 	   }
 	   }
 	   else {
@@ -581,7 +581,7 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
 	}
 	Trouve = (Dist <= Tol);
 	if (!Trouve) {
-	  Tangente (*Path, Path->LastParameter(), P, dp1);
+	  Tangente (Path, Path->LastParameter(), P, dp1);
 	  alpha = EvalAngle(VRef, dp1);
 	  myExt.Perform(P);     
 	  if ( myExt.IsDone() ) {
@@ -601,18 +601,18 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
 	
 	// (2.2) Distance courbe-courbe
 	if (!Trouve) {
-	  Extrema_ExtCC Ext(*Path, myAdpSection, 
+	  Extrema_ExtCC Ext(Path, myAdpSection, 
 			    Path->FirstParameter(), Path->LastParameter(),
-			    myAdpSection.FirstParameter(), 
-			    myAdpSection.LastParameter(),
+			    myAdpSection->FirstParameter(), 
+			    myAdpSection->LastParameter(),
 			    Path->Resolution(Tol/100), 
-			    myAdpSection.Resolution(Tol/100));
+			    myAdpSection->Resolution(Tol/100));
 	  if (Ext.IsDone()) {
 	    Extrema_POnCurv P1, P2;
 	    for (ii=1; ii<=Ext.NbExt(); ii++) {
 	      distaux = sqrt (Ext.SquareDistance(ii));
 	      Ext.Points(ii, P1, P2);
-	      Tangente (*Path, P1.Parameter(), P, dp1);
+	      Tangente (Path, P1.Parameter(), P, dp1);
 	      alpha =  EvalAngle(VRef, dp1);
 	      if (Choix(distaux, alpha)) {
 		Trouve = Standard_True;
@@ -629,7 +629,7 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
 	    // Si l'on a toujours rien, on essai une distance point/path
 	    // c'est la derniere chance.
 	    Extrema_ExtPC PExt;
-	    PExt.Initialize (*Path,
+	    PExt.Initialize (Path,
 			    Path->FirstParameter(),  
 			    Path->LastParameter(),
 			    Precision::Confusion());
@@ -637,9 +637,9 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
 	    if ( PExt.IsDone() ) {
 	      // modified for OCC13595  Tue Oct 17 15:00:08 2006.BEGIN
 	      // 	      DistMini(PExt, myAdpSection, distaux, taux);
-	      DistMini(PExt, *Path, distaux, taux);
+	      DistMini(PExt, Path, distaux, taux);
 	      // modified for OCC13595  Tue Oct 17 15:00:11 2006.END
-	      Tangente (*Path, taux, P, dp1);
+	      Tangente (Path, taux, P, dp1);
 	      alpha = EvalAngle(VRef, dp1);
 	      if (Choix(distaux, alpha)) {
 		Dist = distaux;
@@ -677,7 +677,7 @@ void GeomFill_SectionPlacement::Perform(const Standard_Real Param,
     }
   else
     {
-      SecParam =  myAdpSection.FirstParameter();
+      SecParam =  myAdpSection->FirstParameter();
       
       //  Standard_Real distaux, taux, alpha;
       //  gp_Pnt PonPath, PonSec, P;
@@ -685,14 +685,14 @@ void GeomFill_SectionPlacement::Perform(const Standard_Real Param,
       gp_Vec VRef, dp1;
       VRef.SetXYZ(TheAxe.Direction().XYZ()); 
       
-      Tangente (*Path, PathParam, PonPath, dp1);
-      PonSec = myAdpSection.Value(SecParam);
+      Tangente (Path, PathParam, PonPath, dp1);
+      PonSec = myAdpSection->Value(SecParam);
       Dist =  PonPath.Distance(PonSec);
       if (Dist > Tol) { // On Cherche un meilleur point sur la section
 	myExt.Perform(PonPath);  
 	if ( myExt.IsDone() ) { 
 	  DistMini(myExt, myAdpSection, Dist, SecParam);
-	  PonSec = myAdpSection.Value(SecParam);
+	  PonSec = myAdpSection->Value(SecParam);
 	}
       }
       AngleMax = EvalAngle(VRef, dp1);

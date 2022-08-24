@@ -85,15 +85,15 @@ public:
     void Clear();
   
   //! Returns the curve associated to the IndE-th element.
-    const Geom2dAdaptor_Curve& ElementCurve (const Standard_Integer IndE) const;
+    const Handle(Geom2dAdaptor_Curve)& ElementCurve (const Standard_Integer IndE) const;
   
   //! Adds an element to the hatcher and returns its index.
-  Standard_EXPORT Standard_Integer AddElement (const Geom2dAdaptor_Curve& Curve, const TopAbs_Orientation Orientation = TopAbs_FORWARD);
+  Standard_EXPORT Standard_Integer AddElement (const Handle(Geom2dAdaptor_Curve)& Curve, const TopAbs_Orientation Orientation = TopAbs_FORWARD);
   
   //! Adds an element to the hatcher and returns its index.
   Standard_Integer AddElement (const Handle(Geom2d_Curve)& Curve, const TopAbs_Orientation Orientation = TopAbs_FORWARD)
   {
-    Geom2dAdaptor_Curve aGAC (Curve);
+    Handle(Geom2dAdaptor_Curve) aGAC = new Geom2dAdaptor_Curve(Curve);
     return AddElement (aGAC, Orientation);
   }
 
@@ -104,10 +104,10 @@ public:
   Standard_EXPORT void ClrElements();
   
   //! Returns the curve associated to the IndH-th hatching.
-    const Geom2dAdaptor_Curve& HatchingCurve (const Standard_Integer IndH) const;
+    const Handle(Geom2dAdaptor_Curve)& HatchingCurve (const Standard_Integer IndH) const;
   
   //! Adds a hatching to the hatcher and returns its index.
-  Standard_EXPORT Standard_Integer AddHatching (const Geom2dAdaptor_Curve& Curve);
+  Standard_EXPORT Standard_Integer AddHatching (const Handle(Geom2dAdaptor_Curve)& Curve);
   
   //! Removes the IndH-th hatching from the hatcher.
   Standard_EXPORT void RemHatching (const Standard_Integer IndH);
@@ -129,7 +129,7 @@ public:
   
   //! Adds a hatching to the hatcher and trims it by
   //! the elements already given and returns its index.
-  Standard_EXPORT Standard_Integer Trim (const Geom2dAdaptor_Curve& Curve);
+  Standard_EXPORT Standard_Integer Trim (const Handle(Geom2dAdaptor_Curve)& Curve);
   
   //! Trims the IndH-th hatching by the elements
   //! already given.

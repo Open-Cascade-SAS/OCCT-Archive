@@ -86,7 +86,7 @@ class BRepExtrema_ExtPF
   Extrema_ExtPS myExtPS;
   TColStd_SequenceOfReal mySqDist;
   Extrema_SequenceOfPOnSurf myPoints;
-  BRepAdaptor_Surface mySurf;
+  Handle(BRepAdaptor_Surface) mySurf;
 };
 
 #endif

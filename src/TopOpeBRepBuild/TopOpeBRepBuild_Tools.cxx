@@ -517,7 +517,7 @@ Standard_Boolean TopOpeBRepBuild_Tools::GetTangentToEdgeEdge (const TopoDS_Face&
   gp_Pnt aPOri;
   gp_Vec aTgOri;
   /////
-  Handle (Geom_Curve) GCOri=aCAOri.Curve().Curve();
+  Handle (Geom_Curve) GCOri=aCAOri.Curve()->Curve();
   Handle (Geom_Curve) aCopyCurve = Handle(Geom_Curve)::DownCast(GCOri -> Copy());
 
   const TopLoc_Location& aLoc = aEOri.Location();

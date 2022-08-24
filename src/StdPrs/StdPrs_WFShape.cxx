@@ -368,7 +368,7 @@ void StdPrs_WFShape::addEdges (const TopTools_ListOfShape&  theEdges,
     else if (BRep_Tool::IsGeometric (anEdge))
     {
       // Default presentation for edges without triangulation.
-      BRepAdaptor_Curve aCurve (anEdge);
+      Handle(BRepAdaptor_Curve) aCurve = new BRepAdaptor_Curve(anEdge);
       StdPrs_DeflectionCurve::Add (Handle(Prs3d_Presentation)(),
                                    aCurve,
                                    theShapeDeflection,

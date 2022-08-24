@@ -287,7 +287,7 @@ GeomFill_UniformSection::GeomFill_UniformSection(const Handle(Geom_Curve)& C,
 
  Standard_Real GeomFill_UniformSection::MaximalSection() const
 {
-  GeomAdaptor_Curve AC (mySection);
+  Handle(GeomAdaptor_Curve) AC = new GeomAdaptor_Curve(mySection);
   return GCPnts_AbscissaPoint::Length(AC);
 }
 

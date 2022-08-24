@@ -56,7 +56,7 @@ public:
   //! TolU et TolV are used to determine the conditions
   //! to stop the iterations; at the iteration number n:
   //! (Un - Un-1) < TolU and (Vn - Vn-1) < TolV .
-  Standard_EXPORT Extrema_ExtPS(const gp_Pnt& P, const Adaptor3d_Surface& S, const Standard_Real TolU, const Standard_Real TolV, const Extrema_ExtFlag F = Extrema_ExtFlag_MINMAX, const Extrema_ExtAlgo A = Extrema_ExtAlgo_Grad);
+  Standard_EXPORT Extrema_ExtPS(const gp_Pnt& P, const Handle(Adaptor3d_Surface)& S, const Standard_Real TolU, const Standard_Real TolV, const Extrema_ExtFlag F = Extrema_ExtFlag_MINMAX, const Extrema_ExtAlgo A = Extrema_ExtAlgo_Grad);
   
   //! It calculates all the distances.
   //! NbU and NbV are used to locate the close points
@@ -66,10 +66,10 @@ public:
   //! TolU et TolV are used to determine the conditions
   //! to stop the iterations; at the iteration number n:
   //! (Un - Un-1) < TolU and (Vn - Vn-1) < TolV .
-  Standard_EXPORT Extrema_ExtPS(const gp_Pnt& P, const Adaptor3d_Surface& S, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup, const Standard_Real TolU, const Standard_Real TolV, const Extrema_ExtFlag F = Extrema_ExtFlag_MINMAX, const Extrema_ExtAlgo A = Extrema_ExtAlgo_Grad);
+  Standard_EXPORT Extrema_ExtPS(const gp_Pnt& P, const Handle(Adaptor3d_Surface)& S, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup, const Standard_Real TolU, const Standard_Real TolV, const Extrema_ExtFlag F = Extrema_ExtFlag_MINMAX, const Extrema_ExtAlgo A = Extrema_ExtAlgo_Grad);
   
   //! Initializes the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor3d_Surface& S, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup, const Standard_Real TolU, const Standard_Real TolV);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Surface)& S, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup, const Standard_Real TolU, const Standard_Real TolV);
   
   //! Computes the distances.
   //! An exception is raised if the fieds have not been
@@ -109,7 +109,7 @@ private:
 
 private:
 
-  const Adaptor3d_Surface* myS;
+  Handle(Adaptor3d_Surface) myS;
   Standard_Boolean myDone;
   Extrema_ExtPElS myExtPElS;
   Extrema_GenExtPS myExtPS;

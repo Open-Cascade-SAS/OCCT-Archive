@@ -90,7 +90,8 @@ static Standard_Integer BUC60842 (Draw_Interpretor& di, Standard_Integer /*argc*
     aContext->Display (aisp, Standard_False);
   }
 
-  Geom2dAdaptor_Curve acur (curve2d), afromcur (fromcurve2d);
+  Handle(Geom2dAdaptor_Curve) acur = new Geom2dAdaptor_Curve(curve2d);
+  Handle(Geom2dAdaptor_Curve) afromcur = new Geom2dAdaptor_Curve(fromcurve2d);
   Geom2dGcc_QualifiedCurve qcur (acur, GccEnt_outside);
   Geom2dGcc_QualifiedCurve qfromcur (afromcur, GccEnt_outside);
   Geom2dGcc_Lin2d2Tan lintan (qcur, qfromcur, 0.1, 0.0, 0.0);
@@ -138,7 +139,7 @@ static Standard_Integer BUC60843 (Draw_Interpretor& di, Standard_Integer argc,co
     if (argc == 6) tol = Draw::Atof(argv[5]);
   }
   if(c1IsCircle) {
-    Geom2dAdaptor_Curve acur(aCur2d2);
+    Handle(Geom2dAdaptor_Curve) acur = new Geom2dAdaptor_Curve(aCur2d2);
     Geom2dGcc_QCurve qcur(acur, GccEnt_unqualified);
     GccEnt_QualifiedCirc qfromcur(aCir2d->Circ2d(), GccEnt_unqualified);
     Geom2dGcc_Lin2d2TanIter lintan(qfromcur, qcur , par1, tol); 
@@ -151,8 +152,8 @@ static Standard_Integer BUC60843 (Draw_Interpretor& di, Standard_Integer argc,co
     }
   }
   else {
-    Geom2dAdaptor_Curve acur1(aCur2d1);
-    Geom2dAdaptor_Curve acur2(aCur2d2);
+    Handle(Geom2dAdaptor_Curve) acur1 = new Geom2dAdaptor_Curve(aCur2d1);
+    Handle(Geom2dAdaptor_Curve) acur2 = new Geom2dAdaptor_Curve(aCur2d2);
     Geom2dGcc_QCurve qcur1(acur1, GccEnt_unqualified);
     Geom2dGcc_QCurve qcur2(acur2, GccEnt_unqualified);
     Geom2dGcc_Lin2d2TanIter lintan(qcur1, qcur2 , par1, par2, tol); 
@@ -365,7 +366,7 @@ static int geom_get_2Dpt_from_3Dpt(const gp_Pnt& pnt3d, const gp_Pln& pln, gp_Pn
 { 
   int ret = 0; 
   Handle(Geom_Plane) gpln = new Geom_Plane(pln); 
-  GeomAdaptor_Surface adsur(gpln); 
+  Handle(GeomAdaptor_Surface) adsur = new GeomAdaptor_Surface(gpln);
   Extrema_ExtPS extps(pnt3d, adsur, 0.001, 0.001); 
   if( extps.IsDone() ) 
   { 
@@ -394,8 +395,8 @@ static Standard_Integer OCC353 (Draw_Interpretor& di, Standard_Integer , const c
   Handle(Geom2d_Curve) cir2d1 = GeomAPI::To2d(h_cir1, refpln);
   Handle(Geom2d_Curve) cir2d2 = GeomAPI::To2d(h_cir2, refpln);
 
-  Geom2dAdaptor_Curve adop1(cir2d1);
-  Geom2dAdaptor_Curve adop2(cir2d2);
+  Handle(Geom2dAdaptor_Curve) adop1 = new Geom2dAdaptor_Curve(cir2d1);
+  Handle(Geom2dAdaptor_Curve) adop2 = new Geom2dAdaptor_Curve(cir2d2);
 
   Geom2dGcc_QualifiedCurve qcur1(adop1, GccEnt_enclosing);
   Geom2dGcc_QualifiedCurve qcur2(adop2, GccEnt_enclosing);
@@ -771,7 +772,7 @@ static Standard_Integer OCC813 (Draw_Interpretor& di, Standard_Integer argc,cons
   str = "OCC813_pnt"; DrawTrSurf::Set(str,pt2d);
 
   Handle(Geom2d_Curve) curve2d = GeomAPI::To2d(ell,pln);
-  Geom2dAdaptor_Curve acur(curve2d);
+  Handle(Geom2dAdaptor_Curve) acur = new Geom2dAdaptor_Curve(curve2d);
   Geom2dGcc_QualifiedCurve qcur(acur, GccEnt_outside);
 
   str = "OCC813_ell"; DrawTrSurf::Set(str,curve2d);
@@ -853,7 +854,8 @@ static Standard_Integer OCC814 (Draw_Interpretor& di, Standard_Integer argc,cons
     aContext->Display (aisp, Standard_False);
   }
 
-  Geom2dAdaptor_Curve acur(curve2d), afromcur(fromcurve2d);
+  Handle(Geom2dAdaptor_Curve) acur = new Geom2dAdaptor_Curve(curve2d);
+  Handle(Geom2dAdaptor_Curve) afromcur = new Geom2dAdaptor_Curve(fromcurve2d);
 
   Geom2dGcc_QualifiedCurve qcur(acur, GccEnt_outside) ;
   Geom2dGcc_QualifiedCurve qfromcur(afromcur, GccEnt_outside) ;

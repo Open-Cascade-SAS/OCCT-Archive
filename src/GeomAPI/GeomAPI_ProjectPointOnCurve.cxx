@@ -27,7 +27,8 @@
 //=======================================================================
 GeomAPI_ProjectPointOnCurve::GeomAPI_ProjectPointOnCurve()
 : myIsDone(Standard_False),
-  myIndex(0)
+  myIndex(0),
+  myC(new GeomAdaptor_Curve())
 {
 }
 //=======================================================================
@@ -60,12 +61,12 @@ GeomAPI_ProjectPointOnCurve::GeomAPI_ProjectPointOnCurve()
   (const gp_Pnt&             P,
    const Handle(Geom_Curve)& Curve)
 {
-  myC.Load(Curve);
+  myC = new GeomAdaptor_Curve(Curve);
 /*
   Extrema_ExtPC theExtPC(P, myC);
   myExtPC = theExtPC;
 */
-  myExtPC.Initialize(myC, myC.FirstParameter(), myC.LastParameter());
+  myExtPC.Initialize(myC, myC->FirstParameter(), myC->LastParameter());
   myExtPC.Perform(P);
   
   myIsDone = myExtPC.IsDone() && ( myExtPC.NbExt() > 0);
@@ -95,12 +96,12 @@ GeomAPI_ProjectPointOnCurve::GeomAPI_ProjectPointOnCurve()
 					 const Standard_Real       Umin,
 					 const Standard_Real       Usup )
 {
-  myC.Load(Curve,Umin,Usup);
+  myC = new GeomAdaptor_Curve(Curve,Umin,Usup);
 /*
   Extrema_ExtPC theExtPC(P, myC);
   myExtPC = theExtPC;
 */
-  myExtPC.Initialize(myC, myC.FirstParameter(), myC.LastParameter());
+  myExtPC.Initialize(myC, myC->FirstParameter(), myC->LastParameter());
   myExtPC.Perform(P);
   
   myIsDone = myExtPC.IsDone() && ( myExtPC.NbExt() > 0);
@@ -130,7 +131,7 @@ GeomAPI_ProjectPointOnCurve::GeomAPI_ProjectPointOnCurve()
 					   const Standard_Real       Umin,
 					   const Standard_Real       Usup )
 {
-  myC.Load(Curve,Umin,Usup);
+  myC = new GeomAdaptor_Curve(Curve,Umin,Usup);
   //myExtPC = Extrema_ExtPC(P, myC);
   myExtPC.Initialize(myC, Umin, Usup);
   myIsDone = Standard_False;

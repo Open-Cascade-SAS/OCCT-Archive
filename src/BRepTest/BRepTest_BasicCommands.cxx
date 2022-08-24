@@ -883,7 +883,7 @@ static Standard_Integer gbounding(Draw_Interpretor& di,Standard_Integer n,const 
     if (!S.IsNull())
     {
       //add surf
-      GeomAdaptor_Surface aGAS(S);
+      Handle(GeomAdaptor_Surface) aGAS = new GeomAdaptor_Surface(S);
       if (IsOptimal)
         BndLib_AddSurface::AddOptimal(aGAS, Precision::Confusion(), B);
       else
@@ -895,7 +895,7 @@ static Standard_Integer gbounding(Draw_Interpretor& di,Standard_Integer n,const 
       if (!C.IsNull())
       {
         // add cur
-        GeomAdaptor_Curve aGAC(C);
+        Handle(GeomAdaptor_Curve) aGAC = new GeomAdaptor_Curve(C);
         if (IsOptimal)
           BndLib_Add3dCurve::AddOptimal(aGAC, Precision::Confusion(), B);
         else

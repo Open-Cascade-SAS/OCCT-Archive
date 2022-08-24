@@ -268,12 +268,12 @@ static Standard_Boolean IsIntersect(const Handle(Adaptor3d_Curve)& theC,
     }
   }
   const Handle(Geom_Line) aL = new Geom_Line(anAxis);
-  const GeomAdaptor_Curve aLin(aL);
+  const Handle(GeomAdaptor_Curve) aLin = new GeomAdaptor_Curve(aL);
   const Standard_Real aParTol = theC->Resolution(Precision::Confusion());
   const Standard_Real aParF = theC->FirstParameter() + aParTol,
                       aParL = theC->LastParameter() - aParTol;
 
-  Extrema_ExtCC anExtr (*theC, aLin);
+  Extrema_ExtCC anExtr (theC, aLin);
   anExtr.Perform();
   if (anExtr.IsDone() && anExtr.NbExt() > 0)
   {

@@ -713,8 +713,8 @@ gp_Pnt2d Bisector_BisecCC::ValueAndDist (const Standard_Real  U,
       = new Bisector_BisecPC(curve2, P1, sign2, VMin, VMax);
     Handle(Geom2d_Line)      NorLi = new Geom2d_Line (P1,N1);
 
-    Geom2dAdaptor_Curve ABisPC(BisPC);
-    Geom2dAdaptor_Curve ANorLi(NorLi);    
+    Handle(Geom2dAdaptor_Curve) ABisPC = new Geom2dAdaptor_Curve(BisPC);
+    Handle(Geom2dAdaptor_Curve) ANorLi = new Geom2dAdaptor_Curve(NorLi);
     //-------------------------------------------------------------------------
     Geom2dInt_GInter  Intersect(ABisPC,ANorLi,
       Precision::Confusion(),Precision::Confusion());
@@ -1292,8 +1292,8 @@ static Standard_Boolean PointByInt(const Handle(Geom2d_Curve)& CA,
 
   Handle(Geom2d_Line)      NorLi = new Geom2d_Line (P1,N1);
 
-  Geom2dAdaptor_Curve ABisPC(BisPC);
-  Geom2dAdaptor_Curve ANorLi(NorLi);    
+  Handle(Geom2dAdaptor_Curve) ABisPC = new Geom2dAdaptor_Curve(BisPC);
+  Handle(Geom2dAdaptor_Curve) ANorLi = new Geom2dAdaptor_Curve(NorLi);
   //-------------------------------------------------------------------------
   Geom2dInt_GInter  Intersect(ABisPC,ANorLi,
     Precision::Confusion(),Precision::Confusion());

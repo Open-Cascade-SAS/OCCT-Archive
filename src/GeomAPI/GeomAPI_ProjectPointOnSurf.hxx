@@ -158,7 +158,7 @@ private:
   Standard_Boolean myIsDone;
   Standard_Integer myIndex;
   Extrema_ExtPS myExtPS;
-  GeomAdaptor_Surface myGeomAdaptor;
+  Handle(GeomAdaptor_Surface) myGeomAdaptor;
 
 
 };

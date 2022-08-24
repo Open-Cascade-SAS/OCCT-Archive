@@ -55,15 +55,15 @@ Geom2dGcc_Circ2d3Tan::
   pararg2(1,16)  ,
   pararg3(1,16)  
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Geom2dAdaptor_Curve C2 = Qualified2.Qualified();
-  Geom2dAdaptor_Curve C3 = Qualified3.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  Handle(Geom2d_Curve) CC2 = C2.Curve();
-  Handle(Geom2d_Curve) CC3 = C3.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
-  GeomAbs_CurveType Type2 = C2.GetType();
-  GeomAbs_CurveType Type3 = C3.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) C2 = Qualified2.Qualified();
+  Handle(Geom2dAdaptor_Curve) C3 = Qualified3.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  Handle(Geom2d_Curve) CC2 = C2->Curve();
+  Handle(Geom2d_Curve) CC3 = C3->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
+  GeomAbs_CurveType Type2 = C2->GetType();
+  GeomAbs_CurveType Type3 = C3->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
@@ -264,12 +264,12 @@ Geom2dGcc_Circ2d3Tan::
   pararg2(1,20)  ,
   pararg3(1,20)  
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Geom2dAdaptor_Curve C2 = Qualified2.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  Handle(Geom2d_Curve) CC2 = C2.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
-  GeomAbs_CurveType Type2 = C2.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) C2 = Qualified2.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  Handle(Geom2d_Curve) CC2 = C2->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
+  GeomAbs_CurveType Type2 = C2->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
@@ -382,9 +382,9 @@ Geom2dGcc_Circ2d3Tan::
   pararg2(1,16)  ,
   pararg3(1,16)  
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +

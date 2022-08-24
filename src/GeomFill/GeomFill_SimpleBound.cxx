@@ -79,7 +79,7 @@ void GeomFill_SimpleBound::Reparametrize(const Standard_Real First,
 					 const Standard_Real DL,
 					 const Standard_Boolean Rev)
 {
-  Handle(Law_BSpline) curve = Law::Reparametrize(*myC3d,
+  Handle(Law_BSpline) curve = Law::Reparametrize(myC3d,
 						 First,Last,
 						 HasDF,HasDL,DF,DL,
 						 Rev,30);

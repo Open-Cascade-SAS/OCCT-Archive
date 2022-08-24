@@ -52,12 +52,12 @@ TopOpeBRep_Hctxee2d::TopOpeBRep_Hctxee2d()
 //purpose  : 
 //=======================================================================
 void TopOpeBRep_Hctxee2d::SetEdges(const TopoDS_Edge& E1,const TopoDS_Edge& E2,
-                                   const BRepAdaptor_Surface& BAS1,
-                                   const BRepAdaptor_Surface& BAS2)
+                                   const Handle(BRepAdaptor_Surface)& BAS1,
+                                   const Handle(BRepAdaptor_Surface)& BAS2)
 {
-  const TopoDS_Face& F1 = BAS1.Face();
-  GeomAbs_SurfaceType ST1 = BAS1.GetType();
-  const TopoDS_Face& F2 = BAS2.Face();
+  const TopoDS_Face& F1 = BAS1->Face();
+  GeomAbs_SurfaceType ST1 = BAS1->GetType();
+  const TopoDS_Face& F2 = BAS2->Face();
   
   myEdge1 = TopoDS::Edge(E1);
   myEdge2 = TopoDS::Edge(E2);
@@ -68,7 +68,7 @@ void TopOpeBRep_Hctxee2d::SetEdges(const TopoDS_Edge& E1,const TopoDS_Edge& E2,
   Handle(Geom2d_Curve) PC1;
   PC1 = FC2D_CurveOnSurface(myEdge1,F1,first,last,tolpc);
   if (PC1.IsNull()) throw Standard_Failure("TopOpeBRep_Hctxee2d::SetEdges : no 2d curve");
-  myCurve1.Load(PC1);
+  myCurve1 = new Geom2dAdaptor_Curve(PC1);
   BRep_Tool::UVPoints(myEdge1,F1,pfirst,plast);
   tole = BRep_Tool::Tolerance(myEdge1);
   myDomain1.SetValues(pfirst,first,tole,plast,last,tole);
@@ -89,7 +89,7 @@ void TopOpeBRep_Hctxee2d::SetEdges(const TopoDS_Edge& E1,const TopoDS_Edge& E2,
   
   if ( ST1 == GeomAbs_Plane || memesfaces || memesupport) {    
     Handle(Geom2d_Curve) PC2 = FC2D_CurveOnSurface(myEdge2,F1,first,last,tolpc);
-    myCurve2.Load(PC2);
+    myCurve2 = new Geom2dAdaptor_Curve(PC2);
     BRep_Tool::UVPoints(myEdge2,F1,pfirst,plast);
     tole = BRep_Tool::Tolerance(myEdge2);
     myDomain2.SetValues(pfirst,first,tole,plast,last,tole);
@@ -141,7 +141,7 @@ void TopOpeBRep_Hctxee2d::SetEdges(const TopoDS_Edge& E1,const TopoDS_Edge& E2,
     }
     
     if (!PC2on1.IsNull()) {
-      myCurve2.Load(PC2on1);
+      myCurve2 = new Geom2dAdaptor_Curve(PC2on1);
       tole = BRep_Tool::Tolerance(myEdge2);
       PC2on1->D0(first,pfirst);
       PC2on1->D0(last,plast);
@@ -176,7 +176,7 @@ const TopoDS_Shape& TopOpeBRep_Hctxee2d::Edge(const Standard_Integer Index) cons
 //function : Curve
 //purpose  : 
 //=======================================================================
-const Geom2dAdaptor_Curve& TopOpeBRep_Hctxee2d::Curve(const Standard_Integer Index) const 
+const Handle(Geom2dAdaptor_Curve)& TopOpeBRep_Hctxee2d::Curve(const Standard_Integer Index) const 
 {
   if      ( Index == 1 ) return myCurve1;
   else if ( Index == 2 ) return myCurve2;

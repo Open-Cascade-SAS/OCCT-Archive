@@ -18,12 +18,12 @@
 //function : MaxCurvLinDist
 //purpose  : 
 //=======================================================================
-GCPnts_DistFunction::GCPnts_DistFunction(const Adaptor3d_Curve& theCurve,
+GCPnts_DistFunction::GCPnts_DistFunction(const Handle(Adaptor3d_Curve)& theCurve,
                           const Standard_Real U1, const Standard_Real U2)
 : myCurve(theCurve),
   myU1(U1), myU2(U2)
 {
-  gp_Pnt P1 = theCurve.Value(U1), P2 = theCurve.Value(U2);
+  gp_Pnt P1 = theCurve->Value(U1), P2 = theCurve->Value(U2);
   if (P1.SquareDistance(P2) > gp::Resolution())
   {
     myLin = gp_Lin(P1, P2.XYZ() - P1.XYZ());
@@ -31,7 +31,7 @@ GCPnts_DistFunction::GCPnts_DistFunction(const Adaptor3d_Curve& theCurve,
   else
   {
     //For #28812
-    theCurve.D0(U1 + .01*(U2-U1), P2);
+    theCurve->D0(U1 + .01*(U2-U1), P2);
     myLin = gp_Lin(P1, P2.XYZ() - P1.XYZ());
   }
 }
@@ -46,7 +46,7 @@ Standard_Boolean GCPnts_DistFunction::Value (const Standard_Real X,
   if (X < myU1 || X > myU2)
     return Standard_False;
   //
-  F = -myLin.SquareDistance(myCurve.Value(X));
+  F = -myLin.SquareDistance(myCurve->Value(X));
   return Standard_True;
 }
 

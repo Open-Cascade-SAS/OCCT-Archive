@@ -59,7 +59,7 @@ public:
   //! iterations according to the following condition:
   //! if n is the number of iterations,
   //! the algorithm stops when abs(F(Un)-F(Un-1)) < Tol.
-  Standard_EXPORT Extrema_ExtPC2d(const gp_Pnt2d& P, const Adaptor2d_Curve2d& C, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real TolF = 1.0e-10);
+  Standard_EXPORT Extrema_ExtPC2d(const gp_Pnt2d& P, const Handle(Adaptor2d_Curve2d)& C, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real TolF = 1.0e-10);
   
   //! It calculates all the distances.
   //! The function F(u)=distance(P,C(u)) has an extremum
@@ -69,10 +69,10 @@ public:
   //! iterations according to the following condition:
   //! if n is the number of iterations,
   //! the algorithm stops when abs(F(Un)-F(Un-1)) < Tol.
-  Standard_EXPORT Extrema_ExtPC2d(const gp_Pnt2d& P, const Adaptor2d_Curve2d& C, const Standard_Real TolF = 1.0e-10);
+  Standard_EXPORT Extrema_ExtPC2d(const gp_Pnt2d& P, const Handle(Adaptor2d_Curve2d)& C, const Standard_Real TolF = 1.0e-10);
   
   //! initializes the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& C, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real TolF = 1.0e-10);
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& C, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real TolF = 1.0e-10);
   
   //! An exception is raised if the fields have not been
   //! initialized.

@@ -171,9 +171,9 @@ void IntPatch_Intersection::Perform(const Handle(Adaptor3d_Surface)&  S1,
       ProjLib_ProjectedCurve aProjectedCurve(aGAHsurf, aProjCurve);
       Handle(Geom2d_Curve) aPCurve;
       ProjLib::MakePCurveOfType(aProjectedCurve, aPCurve);
-      Geom2dAdaptor_Curve AC(aPCurve,
-                             aProjectedCurve.FirstParameter(),
-                             aProjectedCurve.LastParameter());
+      Handle(Geom2dAdaptor_Curve) AC = new Geom2dAdaptor_Curve(aPCurve,
+                                                               aProjectedCurve.FirstParameter(),
+                                                               aProjectedCurve.LastParameter());
       Geom2dInt_GInter Intersector(AC,
                                    Precision::Confusion(),
                                    Precision::Confusion());
@@ -256,8 +256,8 @@ static void FUN_TrimInfSurf(const gp_Pnt& Pmin,
                             Handle(Adaptor3d_Surface)& TrimS)
 {
   Standard_Real TP = AlternativeTrimPrm;
-  Extrema_ExtPS ext1(Pmin, *InfSurf, 1.e-7, 1.e-7);
-  Extrema_ExtPS ext2(Pmax, *InfSurf, 1.e-7, 1.e-7);
+  Extrema_ExtPS ext1(Pmin, InfSurf, 1.e-7, 1.e-7);
+  Extrema_ExtPS ext2(Pmax, InfSurf, 1.e-7, 1.e-7);
   if(ext1.IsDone() || ext2.IsDone())
   {
     Standard_Real Umax = -1.e+100, Umin = 1.e+100, Vmax = -1.e+100, Vmin = 1.e+100, cU, cV;
@@ -1848,7 +1848,7 @@ Standard_Boolean IntPatch_Intersection::CheckSingularPoints(
       aPmid /= aNb;
       aPP1.SetXYZ(aPmid);
       Standard_Real aTolU = Precision::PConfusion(), aTolV = Precision::PConfusion();
-      Extrema_ExtPS aProj(aPP1, *theS2.get(), aTolU, aTolV, Extrema_ExtFlag_MIN);
+      Extrema_ExtPS aProj(aPP1, theS2, aTolU, aTolV, Extrema_ExtFlag_MIN);
 
       if (aProj.IsDone())
       {

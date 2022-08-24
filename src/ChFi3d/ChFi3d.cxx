@@ -259,8 +259,8 @@ Standard_Boolean ChFi3d::IsTangentFaces(const TopoDS_Edge&  theEdge,
 //purpose  : calculate the concave face at the neighborhood of the border of
 //           2 faces.
 //=======================================================================
-Standard_Integer ChFi3d::ConcaveSide(const BRepAdaptor_Surface& S1, 
-				     const BRepAdaptor_Surface& S2, 
+Standard_Integer ChFi3d::ConcaveSide(const Handle(BRepAdaptor_Surface)& S1, 
+				     const Handle(BRepAdaptor_Surface)& S2, 
 				     const TopoDS_Edge& E, 
 				     TopAbs_Orientation& Or1, 
 				     TopAbs_Orientation& Or2)
@@ -274,8 +274,8 @@ Standard_Integer ChFi3d::ConcaveSide(const BRepAdaptor_Surface& S1,
   Standard_Real par = 0.691254*first + 0.308746*last;
 
   gp_Pnt pt, pt1, pt2; gp_Vec tgE, tgE1, tgE2, ns1, ns2, dint1, dint2;
-  TopoDS_Face F1 = S1.Face();
-  TopoDS_Face F2 = S2.Face();
+  TopoDS_Face F1 = S1->Face();
+  TopoDS_Face F2 = S2->Face();
   //F1.Orientation(TopAbs_FORWARD);
   //F2.Orientation(TopAbs_FORWARD);
   
@@ -321,12 +321,12 @@ Standard_Integer ChFi3d::ConcaveSide(const BRepAdaptor_Surface& S1,
   gp_Vec DU1,DV1,DU2,DV2;
   p2d1 = pc1.Value(par);
   p2d2 = pc2.Value(par);
-  S1.D1(p2d1.X(),p2d1.Y(),pt1,DU1,DV1);
+  S1->D1(p2d1.X(),p2d1.Y(),pt1,DU1,DV1);
   ns1 = DU1.Crossed(DV1);
   ns1.Normalize();
   if (F1.Orientation() == TopAbs_REVERSED)
     ns1.Reverse();
-  S2.D1(p2d2.X(),p2d2.Y(),pt2,DU2,DV2);
+  S2->D1(p2d2.X(),p2d2.Y(),pt2,DU2,DV2);
   ns2 = DU2.Crossed(DV2);
   ns2.Normalize();
   if (F2.Orientation() == TopAbs_REVERSED)
@@ -352,14 +352,14 @@ Standard_Integer ChFi3d::ConcaveSide(const BRepAdaptor_Surface& S1,
     if(dint1.Dot(dint2) < 0.){
       //This is a forgotten regularity
       gp_Vec DDU, DDV, DDUV;
-      S1.D2(p2d1.X(),p2d1.Y(),pt1,DU1,DV1,DDU,DDV,DDUV);
+      S1->D2(p2d1.X(),p2d1.Y(),pt1,DU1,DV1,DDU,DDV,DDUV);
       DU1 += ( DU1 * dint1 < 0) ? -DDU : DDU;
       DV1 += ( DV1 * dint1 < 0) ? -DDV : DDV;
       ns1 = DU1.Crossed(DV1);
       ns1.Normalize();
       if (F1.Orientation() == TopAbs_REVERSED)
         ns1.Reverse();
-      S2.D2(p2d2.X(),p2d2.Y(),pt2,DU2,DV2,DDU,DDV,DDUV);
+      S2->D2(p2d2.X(),p2d2.Y(),pt2,DU2,DV2,DDU,DDV,DDUV);
       DU2 += ( DU2 * dint2 < 0) ? -DDU : DDU;
       DV2 += ( DV2 * dint2 < 0) ? -DDV : DDV;
       ns2 = DU2.Crossed(DV2);
@@ -401,11 +401,11 @@ Standard_Integer ChFi3d::ConcaveSide(const BRepAdaptor_Surface& S1,
       p2d1.SetX(p2d1.X() + u); p2d1.SetY(p2d1.Y() + v);
       ChFi3d_Coefficient(dint1,DU2,DV2,u,v);
       p2d2.SetX(p2d2.X() + u); p2d2.SetY(p2d2.Y() + v);
-      S1.D1(p2d1.X(),p2d1.Y(),pt1,DU1,DV1);
+      S1->D1(p2d1.X(),p2d1.Y(),pt1,DU1,DV1);
       ns1 = DU1.Crossed(DV1);
       if (F1.Orientation() == TopAbs_REVERSED)
         ns1.Reverse();
-      S2.D1(p2d2.X(),p2d2.Y(),pt2,DU2,DV2);
+      S2->D1(p2d2.X(),p2d2.Y(),pt2,DU2,DV2);
       ns2 = DU2.Crossed(DV2);
       if (F2.Orientation() == TopAbs_REVERSED)
         ns2.Reverse();

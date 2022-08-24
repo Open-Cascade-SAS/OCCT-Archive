@@ -40,8 +40,8 @@ Extrema_GenLocateExtCS::Extrema_GenLocateExtCS()
 //purpose  : 
 //=======================================================================
 
- Extrema_GenLocateExtCS::Extrema_GenLocateExtCS(const Adaptor3d_Curve& C, 
-						const Adaptor3d_Surface& S, 
+ Extrema_GenLocateExtCS::Extrema_GenLocateExtCS(const Handle(Adaptor3d_Curve)& C, 
+						const Handle(Adaptor3d_Surface)& S, 
 						const Standard_Real T, 
 						const Standard_Real U, 
 						const Standard_Real V, 
@@ -56,8 +56,8 @@ Extrema_GenLocateExtCS::Extrema_GenLocateExtCS()
 //purpose  : 
 //=======================================================================
 
-void Extrema_GenLocateExtCS::Perform(const Adaptor3d_Curve& C, 
-				     const Adaptor3d_Surface& S, 
+void Extrema_GenLocateExtCS::Perform(const Handle(Adaptor3d_Curve)& C, 
+				     const Handle(Adaptor3d_Surface)& S, 
 				     const Standard_Real T, 
 				     const Standard_Real U, 
 				     const Standard_Real V, 
@@ -67,14 +67,14 @@ void Extrema_GenLocateExtCS::Perform(const Adaptor3d_Curve& C,
   myDone = Standard_False;
 
   Standard_Real Tinf, Tsup;
-  Tinf = C.FirstParameter();
-  Tsup = C.LastParameter();
+  Tinf = C->FirstParameter();
+  Tsup = C->LastParameter();
 
   Standard_Real Uinf, Usup, Vinf, Vsup;
-  Uinf = S.FirstUParameter();
-  Usup = S.LastUParameter();
-  Vinf = S.FirstVParameter();
-  Vsup = S.LastVParameter();
+  Uinf = S->FirstUParameter();
+  Usup = S->LastUParameter();
+  Vinf = S->FirstVParameter();
+  Vsup = S->LastVParameter();
 
   Extrema_FuncExtCS F (C,S);
   math_Vector Tol(1, 3), Start(1, 3), BInf(1, 3), BSup(1, 3);

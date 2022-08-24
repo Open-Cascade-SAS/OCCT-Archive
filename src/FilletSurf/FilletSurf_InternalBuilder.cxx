@@ -136,7 +136,7 @@ static Standard_Boolean ComputeEdgeParameter(const Handle(ChFiDS_Spine)&    Spin
   gp_Pnt P; gp_Vec V;
   Guide->D1(pelsp,P,V);
   gp_Pln pln(P,V);
-  Handle(BRepAdaptor_Curve) ed = new BRepAdaptor_Curve (Spine->CurrentElementarySpine(ind));
+  Handle(BRepAdaptor_Curve) ed = Handle(BRepAdaptor_Curve)::DownCast(Spine->CurrentElementarySpine(ind)->ShallowCopy());
   return IntPlanEdge(ed,pln,ped,tol3d);
 }
 					     

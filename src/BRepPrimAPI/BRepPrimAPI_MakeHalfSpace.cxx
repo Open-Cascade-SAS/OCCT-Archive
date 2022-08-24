@@ -42,7 +42,7 @@ static gp_Dir getNormalOnFace(const TopoDS_Face& theFace,
                               const Standard_Real theV)
 {
   Standard_Real aPrec = gp::Resolution();
-  BRepLProp_SLProps aProps(BRepAdaptor_Surface(theFace), theU, theV, 2, aPrec);
+  BRepLProp_SLProps aProps(new BRepAdaptor_Surface(theFace), theU, theV, 2, aPrec);
   gp_Dir aNormal = aProps.Normal();
   if (theFace.Orientation() == TopAbs_REVERSED)
     aNormal.Reverse();

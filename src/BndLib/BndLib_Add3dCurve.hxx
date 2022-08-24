@@ -19,6 +19,7 @@
 
 #include <Standard.hxx>
 #include <Standard_DefineAlloc.hxx>
+#include <Standard_Handle.hxx>
 
 //
 class Adaptor3d_Curve;
@@ -61,7 +62,7 @@ public:
   //! -   a Geom_Hyperbola,
   //! and P1 and P2 are either two negative infinite real
   //! numbers, or two positive infinite real numbers.
-  Standard_EXPORT static void Add (const Adaptor3d_Curve& C, const Standard_Real Tol, Bnd_Box& B);
+  Standard_EXPORT static void Add (const Handle(Adaptor3d_Curve)& C, const Standard_Real Tol, Bnd_Box& B);
   
   //! Adds to the bounding box B the curve C
   //! the arc of the curve C limited by the two parameter values P1 and P2.
@@ -89,20 +90,20 @@ public:
   //! -   a Geom_Hyperbola,
   //! and P1 and P2 are either two negative infinite real
   //! numbers, or two positive infinite real numbers.
-  Standard_EXPORT static void Add (const Adaptor3d_Curve& C, const Standard_Real U1, const Standard_Real U2, const Standard_Real Tol, Bnd_Box& B);
+  Standard_EXPORT static void Add (const Handle(Adaptor3d_Curve)& C, const Standard_Real U1, const Standard_Real U2, const Standard_Real Tol, Bnd_Box& B);
 
   //! Adds to the bounding box B the curve C
   //! These methods use more precise algorithms for building bnd box
   //! then methods Add(...)
-  Standard_EXPORT static void AddOptimal (const Adaptor3d_Curve& C, const Standard_Real Tol, Bnd_Box& B);
-  Standard_EXPORT static void AddOptimal (const Adaptor3d_Curve& C, 
+  Standard_EXPORT static void AddOptimal (const Handle(Adaptor3d_Curve)& C, const Standard_Real Tol, Bnd_Box& B);
+  Standard_EXPORT static void AddOptimal (const Handle(Adaptor3d_Curve)& C, 
                                           const Standard_Real U1, const Standard_Real U2, 
                                           const Standard_Real Tol, Bnd_Box& B);
   //! Adds to the bounding box B the curve C
   //! using numerical minimization algorithms
   //! This method is used in AddOptimal for not analytical curves.
   //! if Tol < Precision::Confusion(), Precision:;Confusion is used as computation tolerance
-  Standard_EXPORT static void AddGenCurv(const Adaptor3d_Curve& C, 
+  Standard_EXPORT static void AddGenCurv(const Handle(Adaptor3d_Curve)& C, 
                                          const Standard_Real UMin,
                                          const Standard_Real UMax,
                                          const Standard_Real Tol,

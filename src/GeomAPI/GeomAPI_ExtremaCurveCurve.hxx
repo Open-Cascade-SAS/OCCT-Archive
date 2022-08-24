@@ -170,8 +170,8 @@ private:
   Standard_Boolean myIsDone;
   Standard_Integer myIndex;
   Extrema_ExtCC myExtCC;
-  GeomAdaptor_Curve myC1;
-  GeomAdaptor_Curve myC2;
+  Handle(GeomAdaptor_Curve) myC1;
+  Handle(GeomAdaptor_Curve) myC2;
   Standard_Boolean myTotalExt;
   Standard_Boolean myIsInfinite;
   Standard_Real myTotalDist;

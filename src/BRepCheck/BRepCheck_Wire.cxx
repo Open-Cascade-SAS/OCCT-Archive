@@ -98,7 +98,7 @@ inline Standard_Boolean IsOriented(const TopoDS_Shape& S)
 }
 
 static
-  void CurveDirForParameter(const Geom2dAdaptor_Curve& aC2d,
+  void CurveDirForParameter(const Handle(Geom2dAdaptor_Curve)& aC2d,
 			    const Standard_Real aPrm,
 			    gp_Pnt2d& Pnt,
 			    gp_Vec2d& aVec2d);
@@ -415,7 +415,7 @@ Standard_Boolean IsDistanceIn3DTolerance (const gp_Pnt& thePnt_f,
 //purpose  : 
 //=======================================================================
 static 
-Standard_Boolean IsDistanceIn2DTolerance (const BRepAdaptor_Surface& aFaceSurface,
+Standard_Boolean IsDistanceIn2DTolerance (const Handle(BRepAdaptor_Surface)& aFaceSurface,
                                           const gp_Pnt2d& thePnt,
                                           const gp_Pnt2d& thePntRef,
                                           const Standard_Real aTol3d,
@@ -425,8 +425,8 @@ Standard_Boolean IsDistanceIn2DTolerance (const BRepAdaptor_Surface& aFaceSurfac
                                           const Standard_Boolean = Standard_True)
 #endif
 {
-  Standard_Real dumax = 0.01 * (aFaceSurface.LastUParameter() - aFaceSurface.FirstUParameter());
-  Standard_Real dvmax = 0.01 * (aFaceSurface.LastVParameter() -	aFaceSurface.FirstVParameter());
+  Standard_Real dumax = 0.01 * (aFaceSurface->LastUParameter() - aFaceSurface->FirstUParameter());
+  Standard_Real dvmax = 0.01 * (aFaceSurface->LastVParameter() -	aFaceSurface->FirstVParameter());
   Standard_Real dumin = Abs(thePnt.X() - thePntRef.X());
   Standard_Real dvmin = Abs(thePnt.Y() - thePntRef.Y());
   
@@ -451,13 +451,13 @@ Standard_Boolean IsDistanceIn2DTolerance (const BRepAdaptor_Surface& aFaceSurfac
     std::cout << "; VLast = " << aFaceSurface.LastVParameter()														<< std::endl;
     }
 #endif
-  dumax = aFaceSurface.UResolution(aTol3d);
-  dvmax = aFaceSurface.VResolution(aTol3d);
+  dumax = aFaceSurface->UResolution(aTol3d);
+  dvmax = aFaceSurface->VResolution(aTol3d);
   gp_Pnt aP;
   gp_Vec aDU, aDV;
   Standard_Real um = (thePnt.X() + thePntRef.X()) / 2.;
   Standard_Real vm = (thePnt.Y() + thePntRef.Y()) / 2.;
-  aFaceSurface.D1(um, vm, aP, aDU, aDV);
+  aFaceSurface->D1(um, vm, aP, aDU, aDV);
   Standard_Real aMDU = aDU.Magnitude();
   if (aMDU > Precision::Confusion())
   {
@@ -539,7 +539,7 @@ BRepCheck_Status BRepCheck_Wire::Closed2d(const TopoDS_Face& theFace,
 // 20/03/02 akm vvv : (OCC234) Hence this method will be used to check
 //                    both periodic and non-periodic faces
 //   // this check is for periodic faces 
-  BRepAdaptor_Surface aFaceSurface (theFace, Standard_False);
+  Handle(BRepAdaptor_Surface) aFaceSurface = new BRepAdaptor_Surface(theFace, Standard_False);
 // if (!aFaceSurface.IsUPeriodic() && !aFaceSurface.IsVPeriodic())
 // {
 //   if (Update) 
@@ -1004,7 +1004,8 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
   gp_Pnt2d pfirst1,plast1,pfirst2,plast2;
   gp_Pnt P3d, P3d2;
   Handle(BRepAdaptor_Surface) HS;
-  Geom2dAdaptor_Curve C1, C2;
+  Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve();
+  Handle(Geom2dAdaptor_Curve) C2 = new Geom2dAdaptor_Curve();
   Geom2dInt_GInter      Inter;
   IntRes2d_Domain myDomain1;
   TopTools_IndexedMapOfOrientedShape EMap;
@@ -1051,14 +1052,14 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
         return(BRepCheck_SelfIntersectingWire);
       }
       //
-      C1.Load(pcu);
+      C1->Load(pcu);
       // To avoid exception in Segment if C1 is BSpline - IFV
-      if(!C1.IsPeriodic()) {
-	if(C1.FirstParameter() > first1) {
-	  first1 = C1.FirstParameter();
+      if(!C1->IsPeriodic()) {
+	if(C1->FirstParameter() > first1) {
+	  first1 = C1->FirstParameter();
 	}
-	if(C1.LastParameter()  < last1 ){
-	  last1  = C1.LastParameter();
+	if(C1->LastParameter()  < last1 ){
+	  last1  = C1->LastParameter();
 	}
       }
       //
@@ -1068,7 +1069,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
       BndLib_Add2dCurve::Add(C1, first1, last1, Precision::PConfusion(), boxes(i));
     }//if (i == 1) {
     else {
-      C1.Load(tabCur(i));
+      C1->Load(tabCur(i));
       myDomain1 = tabDom[i-1];
     }
     //
@@ -1099,7 +1100,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
             //  Modified by Sergey KHROMOV - Mon Apr 15 12:34:22 2002 Begin
           }
           else {
-            gp_Pnt2d aP2d  = C1.Value(IP.ParamOnFirst());
+            gp_Pnt2d aP2d  = C1->Value(IP.ParamOnFirst());
             P3d = HS->Value(aP2d.X(), aP2d.Y());
           }
           //  Modified by Sergey KHROMOV - Mon Apr 15 12:34:22 2002 End
@@ -1141,14 +1142,14 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
       if (i == 1) {
 	tabCur(j) = BRep_Tool::CurveOnSurface(E2,F,first2,last2);
 	if (!tabCur(j).IsNull() && last2 > first2) {
-	  C2.Load(tabCur(j));
+	  C2->Load(tabCur(j));
 	  // To avoid exception in Segment if C2 is BSpline - IFV
-	  if(!C2.IsPeriodic()) {
-	    if(C2.FirstParameter() > first2) {
-	      first2 = C2.FirstParameter();
+	  if(!C2->IsPeriodic()) {
+	    if(C2->FirstParameter() > first2) {
+	      first2 = C2->FirstParameter();
 	    }
-	    if(C2.LastParameter()  < last2 ) {
-	      last2  = C2.LastParameter();
+	    if(C2->LastParameter()  < last2 ) {
+	      last2  = C2->LastParameter();
 	    }
 	  }
 	  //
@@ -1169,7 +1170,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	}
       }// if (i == 1) {
       else {
-	C2.Load(tabCur(j));
+	C2->Load(tabCur(j));
       }
       //
       if (boxes(i).IsOut( boxes(j))) {
@@ -1243,7 +1244,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	      P3d.Transform(L.Transformation());
 	    } 
 	    else {
-	      gp_Pnt2d aP2d  = C1.Value(IP_ParamOnFirst);
+	      gp_Pnt2d aP2d  = C1->Value(IP_ParamOnFirst);
 	      P3d = HS->Value(aP2d.X(), aP2d.Y());
 	    }
 	    //
@@ -1252,7 +1253,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	      P3d2.Transform(L2.Transformation());
 	    } 
 	    else {
-	      gp_Pnt2d aP2d  = C2.Value(IP_ParamOnSecond);
+	      gp_Pnt2d aP2d  = C2->Value(IP_ParamOnSecond);
 	      P3d2 = HS->Value(aP2d.X(), aP2d.Y());
 	    }
 	    //  Modified by Sergey KHROMOV - Mon Apr 15 12:34:22 2002 End
@@ -1346,7 +1347,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 		    P1.Transform(L.Transformation());
 		  } 
 		  else {
-		    gp_Pnt2d aP2d  = C1.Value(u);
+		    gp_Pnt2d aP2d  = C1->Value(u);
 		    P1 = HS->Value(aP2d.X(), aP2d.Y());
 		  }
 		  //  Modified by Sergey KHROMOV - Mon Apr 15 12:34:22 2002 End
@@ -1374,7 +1375,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 		    P2.Transform(L2.Transformation());
 		  }
 		  else {
-		    gp_Pnt2d aP2d  = C2.Value(u);
+		    gp_Pnt2d aP2d  = C2->Value(u);
 		    P2 = HS->Value(aP2d.X(), aP2d.Y());
 		  }
 		  //  Modified by Sergey KHROMOV - Mon Apr 15 12:34:22 2002 End
@@ -1448,8 +1449,8 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	      if(aPCR1!=IntRes2d_Middle && aPCR2!=IntRes2d_Middle)  {
 		GeomAbs_CurveType aCT1, aCT2;
 		//ZZ
-		aCT1=C1.GetType();
-		aCT2=C2.GetType();
+		aCT1=C1->GetType();
+		aCT2=C2->GetType();
 		if (aCT1==GeomAbs_Line && aCT2==GeomAbs_Line) {
 		  // check for the two lines coincidence
 		  Standard_Real aPAR_T, aT11, aT12, aT21, aT22, aT1m, aT2m;
@@ -1464,8 +1465,8 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 		  aTol2=aTolE1+aTolE2;
 		  aTol2=aTol2*aTol2;
 		  //
-		  aL1=C1.Line();
-		  aL2=C2.Line();
+		  aL1=C1->Line();
+		  aL2=C2->Line();
 		  //
 		  aT11=PSeg[0].ParamOnFirst();
 		  aT12=PSeg[1].ParamOnFirst();
@@ -1473,7 +1474,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 		  aT22=PSeg[1].ParamOnSecond();
 		  //
 		  aT1m=(1.-aPAR_T)*aT11 + aPAR_T*aT12;
-		  aP1m=C1.Value(aT1m);
+		  aP1m=C1->Value(aT1m);
 		  //
 		  aD2=aL2.SquareDistance(aP1m);
 		  if (aD2<aTol2) {
@@ -1503,14 +1504,14 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 		P3d = ConS->Value(IP_ParamOnFirst); 
 		P3d.Transform(L.Transformation());
 	      } else {
-		gp_Pnt2d aP2d  = C1.Value(IP_ParamOnFirst);
+		gp_Pnt2d aP2d  = C1->Value(IP_ParamOnFirst);
 		P3d = HS->Value(aP2d.X(), aP2d.Y());
 	      }
 	      if (!ConS2.IsNull()) {
 		P3d2 = ConS2->Value(IP_ParamOnSecond); 
 		P3d2.Transform(L2.Transformation());
 	      } else {
-		gp_Pnt2d aP2d  = C2.Value(IP_ParamOnSecond);
+		gp_Pnt2d aP2d  = C2->Value(IP_ParamOnSecond);
 		P3d2 = HS->Value(aP2d.X(), aP2d.Y());
 	      }
 	      //  Modified by Sergey KHROMOV - Mon Apr 15 12:34:22 2002 End
@@ -1692,7 +1693,7 @@ void ChoixUV(const TopoDS_Vertex& theVertex,
   Standard_Real a_gpResolution=gp::Resolution();
   TopAbs_Orientation aVOrientation, anEdgOrientation;
   Standard_Real aParam = 0.0, aFirstParam = 0.0, aLastParam = 0.0, aParPiv = 0.0;
-  BRepAdaptor_Surface aFaceSurface(theFace,Standard_False); // no restriction
+  Handle(BRepAdaptor_Surface) aFaceSurface = new BRepAdaptor_Surface(theFace, Standard_False); // no restriction
   
   Handle(Geom2d_Curve) C2d = BRep_Tool::CurveOnSurface(theEdge, theFace, aFirstParam, aLastParam);
   if (C2d.IsNull())// JAG 10.12.96
@@ -1705,7 +1706,7 @@ void ChoixUV(const TopoDS_Vertex& theVertex,
   aMinAngle = RealLast();
   aMaxAngle = RealFirst();
 
-  CurveDirForParameter(C2d, aParPiv, aPntRef, aDerRef);
+  CurveDirForParameter(new Geom2dAdaptor_Curve(C2d), aParPiv, aPntRef, aDerRef);
   
   if (aVOrientation != anEdgOrientation)
     aDerRef.Reverse();
@@ -1727,7 +1728,7 @@ void ChoixUV(const TopoDS_Vertex& theVertex,
     if(!IsDistanceIn2DTolerance(aFaceSurface, aPnt, aPntRef, aTol3d, Standard_False))
       continue;
 
-    CurveDirForParameter(aCA, aParam, aPnt, aDer);
+    CurveDirForParameter(new Geom2dAdaptor_Curve(aCA), aParam, aPnt, aDer);
 
     if (aVOrientation == anE.Orientation())
       aDer.Reverse();
@@ -1820,7 +1821,7 @@ void ChoixUV(const TopoDS_Vertex& theVertex,
 //function : CurveDirForParameter
 //purpose  : 
 //=======================================================================
-void CurveDirForParameter(const Geom2dAdaptor_Curve& aC2d,
+void CurveDirForParameter(const Handle(Geom2dAdaptor_Curve)& aC2d,
                           const Standard_Real aPrm,
                           gp_Pnt2d& Pnt,
                           gp_Vec2d& aVec2d)
@@ -1828,11 +1829,11 @@ void CurveDirForParameter(const Geom2dAdaptor_Curve& aC2d,
   Standard_Real aTol=gp::Resolution();
   Standard_Integer i;
 
-  aC2d.D1(aPrm, Pnt, aVec2d);
+  aC2d->D1(aPrm, Pnt, aVec2d);
   //
   if (aVec2d.Magnitude() <= aTol) {
     for (i = 2; i <= 100; i++){
-      aVec2d = aC2d.DN(aPrm, i);
+      aVec2d = aC2d->DN(aPrm, i);
       if (aVec2d.Magnitude() > aTol) {
         break;
       }

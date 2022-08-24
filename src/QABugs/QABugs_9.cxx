@@ -98,8 +98,8 @@ static Standard_Integer OCC24303(Draw_Interpretor& di, Standard_Integer n, const
 
   //Calculate the tangent with Geom2dGcc_Circ2dTanRan
 
-  const Geom2dAdaptor_Curve  AdaptedCurve1 ( curve1 );
-  const Geom2dAdaptor_Curve  AdaptedCurve2 ( curve2 );
+  const Handle(Geom2dAdaptor_Curve) AdaptedCurve1 = new Geom2dAdaptor_Curve( curve1 );
+  const Handle(Geom2dAdaptor_Curve) AdaptedCurve2 = new Geom2dAdaptor_Curve( curve2 );
 
   GccEnt_Position  curveQualif1 = GccEnt_unqualified;
   GccEnt_Position  curveQualif2 = GccEnt_unqualified;

@@ -112,7 +112,7 @@ public:
   //! Param2 is the initial guess on the curve QualifiedCurv.
   //! ParamOn is the initial guess on the center curve OnCurv.
   //! Tolerance is used for the limit cases.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnIter(const GccEnt_QualifiedCirc& Qualified1, const Geom2dGcc_QCurve& Qualified2, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Param1, const Standard_Real Param2, const Standard_Real ParamOn, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnIter(const GccEnt_QualifiedCirc& Qualified1, const Geom2dGcc_QCurve& Qualified2, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Param1, const Standard_Real Param2, const Standard_Real ParamOn, const Standard_Real Tolerance);
   
   //! This method implements the algorithms used to
   //! create 2d circles TANgent to a 2d line and a curve and
@@ -120,7 +120,7 @@ public:
   //! Param2 is the initial guess on the curve QualifiedCurv.
   //! ParamOn is the initial guess on the center curve OnCurv.
   //! Tolerance is used for the limit cases.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnIter(const GccEnt_QualifiedLin& Qualified1, const Geom2dGcc_QCurve& Qualified2, const Geom2dAdaptor_Curve& OnCurve, const Standard_Real Param1, const Standard_Real Param2, const Standard_Real ParamOn, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnIter(const GccEnt_QualifiedLin& Qualified1, const Geom2dGcc_QCurve& Qualified2, const Handle(Geom2dAdaptor_Curve)& OnCurve, const Standard_Real Param1, const Standard_Real Param2, const Standard_Real ParamOn, const Standard_Real Tolerance);
   
   //! This method implements the algorithms used to
   //! create 2d circles TANgent to a 2d Point and a curve and
@@ -128,7 +128,7 @@ public:
   //! Param1 is the initial guess on the curve QualifiedCurv.
   //! ParamOn is the initial guess on the center curve OnCurv.
   //! Tolerance is used for the limit cases.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnIter(const Geom2dGcc_QCurve& Qualified1, const gp_Pnt2d& Point2, const Geom2dAdaptor_Curve& OnCurve, const Standard_Real Param1, const Standard_Real ParamOn, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnIter(const Geom2dGcc_QCurve& Qualified1, const gp_Pnt2d& Point2, const Handle(Geom2dAdaptor_Curve)& OnCurve, const Standard_Real Param1, const Standard_Real ParamOn, const Standard_Real Tolerance);
   
   //! This method implements the algorithms used to
   //! create 2d circles TANgent to two curves and
@@ -137,7 +137,7 @@ public:
   //! Param1 is the initial guess on the second curve QualifiedCurv.
   //! ParamOn is the initial guess on the center curve OnCurv.
   //! Tolerance is used for the limit cases.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnIter(const Geom2dGcc_QCurve& Qualified1, const Geom2dGcc_QCurve& Qualified2, const Geom2dAdaptor_Curve& OnCurve, const Standard_Real Param1, const Standard_Real Param2, const Standard_Real ParamOn, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnIter(const Geom2dGcc_QCurve& Qualified1, const Geom2dGcc_QCurve& Qualified2, const Handle(Geom2dAdaptor_Curve)& OnCurve, const Standard_Real Param1, const Standard_Real Param2, const Standard_Real ParamOn, const Standard_Real Tolerance);
   
   //! This method returns True if the construction
   //! algorithm succeeded.

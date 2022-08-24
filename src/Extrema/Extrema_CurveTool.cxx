@@ -26,14 +26,14 @@
 //function : IsPeriodic
 //purpose  : 
 //=======================================================================
-Standard_Boolean Extrema_CurveTool::IsPeriodic(const Adaptor3d_Curve& C)
+Standard_Boolean Extrema_CurveTool::IsPeriodic(const Handle(Adaptor3d_Curve)& C)
 {
   GeomAbs_CurveType aType = GetType(C);
   if (aType == GeomAbs_Circle ||
       aType == GeomAbs_Ellipse)
     return Standard_True;
   else
-    return C.IsPeriodic();
+    return C->IsPeriodic();
 }
 
 //=======================================================================
@@ -41,7 +41,7 @@ Standard_Boolean Extrema_CurveTool::IsPeriodic(const Adaptor3d_Curve& C)
 //purpose  : 
 //=======================================================================
 Handle(TColStd_HArray1OfReal) 
-Extrema_CurveTool::DeflCurvIntervals(const Adaptor3d_Curve& C)
+Extrema_CurveTool::DeflCurvIntervals(const Handle(Adaptor3d_Curve)& C)
 {
   const Standard_Real epsd = 1.e-3;
   const Standard_Real maxdefl = 1.e3;
@@ -49,12 +49,12 @@ Extrema_CurveTool::DeflCurvIntervals(const Adaptor3d_Curve& C)
   Handle(TColStd_HArray1OfReal) Intervals;
   Standard_Integer nbpnts = 23, i;
   Standard_Real L = 0.;
-  Standard_Real tf = C.FirstParameter(), tl = C.LastParameter();
-  gp_Pnt aP = C.Value(tf);
+  Standard_Real tf = C->FirstParameter(), tl = C->LastParameter();
+  gp_Pnt aP = C->Value(tf);
   for (i = 2; i <= nbpnts; ++i)
   {
     Standard_Real t = (tf * (nbpnts - i) + (i - 1) * tl) / (nbpnts - 1);
-    gp_Pnt aP1 = C.Value(t);
+    gp_Pnt aP1 = C->Value(t);
     L += aP.Distance(aP1);
   }
   //

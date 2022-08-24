@@ -72,12 +72,12 @@ Standard_Boolean HLRBRep_EdgeFaceTool::UVPoint(const Standard_Real Par,
 {
   Standard_Real pfbid,plbid;
   if (BRep_Tool::CurveOnSurface
-      (((HLRBRep_Curve  *)E)->Curve().Edge(),
-       ((HLRBRep_Surface*)F)->Surface().Face(),pfbid,plbid).IsNull())
+      (((HLRBRep_Curve  *)E)->Curve()->Edge(),
+       ((HLRBRep_Surface*)F)->Surface()->Face(),pfbid,plbid).IsNull())
   {
     BRepExtrema_ExtPF proj
       (BRepLib_MakeVertex(((HLRBRep_Curve*)E)->Value3D(Par)),
-       ((HLRBRep_Surface*)F)->Surface().Face());
+       ((HLRBRep_Surface*)F)->Surface()->Face());
     Standard_Integer i, index = 0;
     Standard_Real dist2 = RealLast();
     const Standard_Integer n = proj.NbExt();
@@ -95,8 +95,8 @@ Standard_Boolean HLRBRep_EdgeFaceTool::UVPoint(const Standard_Real Par,
   }
   else {
     BRepAdaptor_Curve2d PC
-      (((HLRBRep_Curve  *)E)->Curve().Edge(),
-       ((HLRBRep_Surface*)F)->Surface().Face());
+      (((HLRBRep_Curve  *)E)->Curve()->Edge(),
+       ((HLRBRep_Surface*)F)->Surface()->Face());
     gp_Pnt2d P2d;
     PC.D0(Par,P2d);
     U = P2d.X();

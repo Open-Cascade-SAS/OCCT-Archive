@@ -128,11 +128,11 @@ Standard_Boolean Geom2dHatch_Elements::OtherSegment (const gp_Pnt2d& P,
 
     void *ptrmyMap = (void *)(&myMap);
     Geom2dHatch_Element& Item = ((Geom2dHatch_MapOfElements*)ptrmyMap)->ChangeFind (Itertemp.Key());
-    Geom2dAdaptor_Curve& E = Item.ChangeCurve();
+    Handle(Geom2dAdaptor_Curve) E = Item.Curve();
     TopAbs_Orientation Or = Item.Orientation();
     if (Or == TopAbs_FORWARD || Or == TopAbs_REVERSED)
     {
-      Standard_Real aFPar = E.FirstParameter(), aLPar = E.LastParameter();
+      Standard_Real aFPar = E->FirstParameter(), aLPar = E->LastParameter();
       if (Precision::IsNegativeInfinite (aFPar))
       {
         if (Precision::IsPositiveInfinite (aLPar))
@@ -151,7 +151,7 @@ Standard_Boolean Geom2dHatch_Elements::OtherSegment (const gp_Pnt2d& P,
         Standard_Real aParam = myCurEdgePar * aFPar + (1. - myCurEdgePar) * aLPar;
         gp_Vec2d aTanVec;
         gp_Pnt2d aPOnC;
-        E.D1 (aParam, aPOnC, aTanVec);
+        E->D1 (aParam, aPOnC, aTanVec);
         gp_Vec2d aLinVec (P, aPOnC);
         Par = aLinVec.SquareMagnitude();
         if (Par > Precision::SquarePConfusion())
@@ -173,10 +173,10 @@ Standard_Boolean Geom2dHatch_Elements::OtherSegment (const gp_Pnt2d& P,
 
           L = gp_Lin2d (P, aLinDir);
 
-          aPOnC = E.Value (aFPar);
+          aPOnC = E->Value (aFPar);
           if (L.SquareDistance (aPOnC) > Precision::SquarePConfusion())
           {
-            aPOnC = E.Value (aLPar);
+            aPOnC = E->Value (aLPar);
             if (L.SquareDistance (aPOnC) > Precision::SquarePConfusion())
             {
               myCurEdgePar += Probing_Step;
@@ -249,18 +249,18 @@ Standard_Boolean Geom2dHatch_Elements::RejectEdge(const gp_Lin2d& ,
 //purpose  : 
 //=======================================================================
 
-void  Geom2dHatch_Elements::CurrentEdge(Geom2dAdaptor_Curve& E, 
+void  Geom2dHatch_Elements::CurrentEdge(Handle(Geom2dAdaptor_Curve)& E, 
 					TopAbs_Orientation& Or) const 
 {
   void *ptrmyMap = (void *)(&myMap);
   Geom2dHatch_Element& Item=((Geom2dHatch_MapOfElements*)ptrmyMap)->ChangeFind(Iter.Key());
 
-  E = Item.ChangeCurve();
+  E = Item.Curve();
   Or= Item.Orientation();
 #if 0 
-  E.Edge() = TopoDS::Edge(myEExplorer.Current());
-  E.Face() = myFace;
-  Or = E.Edge().Orientation();
+  E->Edge() = TopoDS::Edge(myEExplorer.Current());
+  E->Face() = myFace;
+  Or = E->Edge().Orientation();
 #endif
 }
 

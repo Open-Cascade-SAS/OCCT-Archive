@@ -44,13 +44,10 @@ public:
   Standard_EXPORT Geom2dHatch_Hatching();
   
   //! Creates a hatching.
-  Standard_EXPORT Geom2dHatch_Hatching(const Geom2dAdaptor_Curve& Curve);
+  Standard_EXPORT Geom2dHatch_Hatching(const Handle(Geom2dAdaptor_Curve)& Curve);
   
   //! Returns the curve associated to the hatching.
-  Standard_EXPORT const Geom2dAdaptor_Curve& Curve() const;
-  
-  //! Returns the curve associated to the hatching.
-  Standard_EXPORT Geom2dAdaptor_Curve& ChangeCurve();
+  Standard_EXPORT const Handle(Geom2dAdaptor_Curve)& Curve() const;
   
   //! Sets the flag about the trimming computations to the
   //! given value.
@@ -143,7 +140,7 @@ private:
 
 
 
-  Geom2dAdaptor_Curve myCurve;
+  Handle(Geom2dAdaptor_Curve) myCurve;
   Standard_Boolean myTrimDone;
   Standard_Boolean myTrimFailed;
   HatchGen_PointsOnHatching myPoints;

@@ -167,7 +167,7 @@ static void MakeClosedCurve(Handle(Geom_Curve)& C, const gp_Pnt& PF,
   }
   if(porig > l) {
     //try to project
-    GeomAdaptor_Curve aGAC(aBC);
+    Handle(GeomAdaptor_Curve) aGAC = new GeomAdaptor_Curve(aBC);
     Extrema_LocateExtPC aPrj(PF, aGAC, pmin, Precision::PConfusion());
     if(aPrj.IsDone()) {
       porig = aPrj.Point().Parameter();

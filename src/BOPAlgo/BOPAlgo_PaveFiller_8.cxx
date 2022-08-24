@@ -254,15 +254,15 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
   const TopoDS_Face& aDF = (*(TopoDS_Face *)(&myDS->Shape(nFD)));
   //
   Standard_Real aTolV = BRep_Tool::Tolerance(aDV);
-  const BRepAdaptor_Surface& aBAS = myContext->SurfaceAdaptor(aDF);
+  const Handle(BRepAdaptor_Surface)& aBAS = myContext->SurfaceAdaptor(aDF);
   //
   // 2D intersection tolerance should be computed as a resolution
   // from the tolerance of vertex to resolve the touching cases
   Standard_Real aTolInt = Precision::PConfusion();
   // UResolution from the tolerance of the vertex
-  Standard_Real aURes = aBAS.UResolution(aTolV);
+  Standard_Real aURes = aBAS->UResolution(aTolV);
   // VResolution from the tolerance of the vertex
-  Standard_Real aVRes = aBAS.VResolution(aTolV);
+  Standard_Real aVRes = aBAS->VResolution(aTolV);
   //
   aTolInt = Max(aTolInt, Max(aURes, aVRes));
   //
@@ -279,8 +279,7 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
   aTolCmp = Max(aTolCmp, (bUDir ? aURes : aVRes));
   //
   // Prepare adaptor for the degenerated edge for intersection
-  Geom2dAdaptor_Curve aGAC1;
-  aGAC1.Load(aC2DDE, aTD1, aTD2);
+  Handle(Geom2dAdaptor_Curve) aGAC1 = new Geom2dAdaptor_Curve(aC2DDE, aTD1, aTD2);
   //
   BOPDS_ListIteratorOfListOfPaveBlock aItLPB(aLPBOut);
   for (; aItLPB.More(); aItLPB.Next()) {
@@ -297,14 +296,14 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
     }
     //
     // Prepare adaptor for the passing edge for intersection
-    Geom2dAdaptor_Curve aGAC2;
+    Handle(Geom2dAdaptor_Curve) aGAC2 = new Geom2dAdaptor_Curve();
     //
     Handle(Geom2d_Line) aL2D = Handle(Geom2d_Line)::DownCast(aC2D);
     if (!aL2D.IsNull()) {
-      aGAC2.Load(aC2D);
+      aGAC2->Load(aC2D);
     }
     else {
-      aGAC2.Load(aC2D, aT1, aT2);
+      aGAC2->Load(aC2D, aT1, aT2);
     }
     // Intersection
     Geom2dInt_GInter aGInter(aGAC1, aGAC2, aTolInt, aTolInt);

@@ -76,12 +76,12 @@ static Standard_Boolean Project(const Handle(Geom2d_Curve)& C,
 				Standard_Real& p)
 {
   gp_Pnt2d P = Project(V);
-  Geom2dAdaptor_Curve AC(C);
-  if (AC.GetType() == GeomAbs_Line) {
-    p = ElCLib::LineParameter(AC.Line().Position(),P);
+  Handle(Geom2dAdaptor_Curve) AC = new Geom2dAdaptor_Curve(C);
+  if (AC->GetType() == GeomAbs_Line) {
+    p = ElCLib::LineParameter(AC->Line().Position(),P);
   }
-  else if (AC.GetType() == GeomAbs_Circle) {
-    p = ElCLib::CircleParameter(AC.Circle().Position(),P);
+  else if (AC->GetType() == GeomAbs_Circle) {
+    p = ElCLib::CircleParameter(AC->Circle().Position(),P);
   }
   else {
     Extrema_ExtPC2d extrema(P,AC);

@@ -197,16 +197,15 @@ static Standard_Integer OCC367 (Draw_Interpretor& di, Standard_Integer argc, con
           vlast = ve1;
 	}
       
-      GeomAdaptor_Curve   curve;
+      Handle(GeomAdaptor_Curve) curve = new GeomAdaptor_Curve(acurve);
       GCPnts_UniformAbscissa  algo;
-      curve.Load(acurve);
       algo.Initialize( curve, l, newufirst, newulast );
       if (!algo.IsDone())
         di << "Not Done!!!"   << "\n";
       Standard_Integer maxIndex =algo.NbPoints();
       for (Standard_Integer Index = 1; Index<=maxIndex;Index++) {
         Standard_Real t = algo.Parameter(Index);
-        gp_Pnt      pt3 = curve.Value(t);
+        gp_Pnt      pt3 = curve->Value(t);
         di << "Parameter t = " << t   << "\n";
         di << "Value Pnt = " << pt3.X()<<" " <<pt3.Y()<<" " << pt3.Z()  << "\n";
 	if (EdgeIndex == 1 && Index == maxIndex) {

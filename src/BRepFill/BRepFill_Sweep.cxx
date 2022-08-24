@@ -1454,7 +1454,7 @@ static TopoDS_Edge BuildEdge(const Handle(Geom_Surface)& S,
     Iso->D0((Iso->FirstParameter()+Iso->LastParameter())/2, P);
 //    if (P.Distance(BT.Pnt(V)) < tol) {
     if (P.Distance(BRep_Tool::Pnt(V)) < tol) {
-      GeomAdaptor_Curve AC(Iso);
+      Handle(GeomAdaptor_Curve) AC = new GeomAdaptor_Curve(Iso);
       sing = GCPnts_AbscissaPoint::Length(AC, tol/4) < tol;
     }
   }
@@ -1616,7 +1616,7 @@ static void UpdateEdge(TopoDS_Edge& E,
     Standard_Real tol = BRep_Tool::Tolerance(Vf);
     Iso->D0((Iso->FirstParameter()+Iso->LastParameter())/2, Pmid);
     if (Pmid.Distance(BRep_Tool::Pnt(Vf)) < tol) {
-      GeomAdaptor_Curve AC(Iso);
+      Handle(GeomAdaptor_Curve) AC = new GeomAdaptor_Curve(Iso);
       sing = GCPnts_AbscissaPoint::Length(AC, tol/4) < tol;
     }
   }
@@ -1759,7 +1759,7 @@ static Standard_Boolean IsDegen(const Handle(Geom_Surface)& S,
   for (ii=1, dt = (Umax-Umin)/(Nb+1); B && (ii<=Nb); ii++) {
     t =  Umin + ii*dt;
     Iso = S->UIso(t);
-    GeomAdaptor_Curve AC(Iso);
+    Handle(GeomAdaptor_Curve) AC = new GeomAdaptor_Curve(Iso);
     l = GC.Length(AC, Tol/4);
     B = (l <= Tol);
   }
@@ -1777,7 +1777,7 @@ static Standard_Boolean IsDegen(const Handle(Geom_Surface)& S,
   for (ii=1, dt = (Vmax-Vmin)/(Nb+1); B && (ii<=Nb); ii++) {
     t =  Vmin + ii*dt;
     Iso = S->VIso(t);
-    GeomAdaptor_Curve AC(Iso);
+    Handle(GeomAdaptor_Curve) AC = new GeomAdaptor_Curve(Iso);
     l = GC.Length(AC, Tol/4);
     B = (l <= Tol);
   }  

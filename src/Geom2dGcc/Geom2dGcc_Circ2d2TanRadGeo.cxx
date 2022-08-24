@@ -103,7 +103,7 @@ pararg2(1,aNbSolMAX)
   Standard_Real lyloc = (L1.Location()).Y();
   gp_Pnt2d origin1(lxloc,lyloc);
   gp_Dir2d normL1(-y1dir,x1dir);
-  Geom2dAdaptor_Curve Cu2= Qualified2.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
   if (Radius < 0.0) { throw Standard_NegativeValue(); }
   else {
     if (Qualified1.IsEnclosed() && Qualified2.IsEnclosed()) {
@@ -181,13 +181,12 @@ pararg2(1,aNbSolMAX)
       gp_Lin2d Line(Point,L1.Direction()); // ligne avec deport.
       IntRes2d_Domain D1;
       for (Standard_Integer jcote2 = 1; jcote2 <= nbrcote2 && NbrSol < aNbSolMAX; jcote2++) {
-        Handle(Geom2dAdaptor_Curve) HCu2 = new Geom2dAdaptor_Curve(Cu2);
         //Adaptor2d_OffsetCurve C2(HCu2,cote2(jcote2));
-        Adaptor2d_OffsetCurve C2(HCu2, -cote2(jcote2));
-        firstparam = Max(C2.FirstParameter(),thefirst);
-        lastparam  = Min(C2.LastParameter(),thelast);
-        IntRes2d_Domain D2(C2.Value(firstparam), firstparam, Tol,
-                           C2.Value(lastparam), lastparam, Tol);
+        Handle(Adaptor2d_OffsetCurve) C2 = new Adaptor2d_OffsetCurve(Cu2, -cote2(jcote2));
+        firstparam = Max(C2->FirstParameter(),thefirst);
+        lastparam  = Min(C2->LastParameter(),thelast);
+        IntRes2d_Domain D2(C2->Value(firstparam), firstparam, Tol,
+                           C2->Value(lastparam), lastparam, Tol);
         Geom2dInt_TheIntConicCurveOfGInter Intp(Line,D1,C2,D2,Tol,Tol);
         if (Intp.IsDone()) {
           if (!Intp.IsEmpty()) {
@@ -286,7 +285,7 @@ pararg2(1,aNbSolMAX)
   }
   gp_Circ2d C1 = Qualified1.Qualified();
   gp_Pnt2d center1(C1.Location());
-  Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
   if (Radius < 0.0) { throw Standard_NegativeValue(); }
   else {
     if (Qualified1.IsEnclosed() && Qualified2.IsEnclosed()) {
@@ -366,13 +365,12 @@ pararg2(1,aNbSolMAX)
         ElCLib::Value(2.*M_PI,Circ),2.*M_PI,Tol);
       D1.SetEquivalentParameters(0.,2.*M_PI);
       for (Standard_Integer jcote2 = 1 ; jcote2 <= nbrcote2 ; jcote2++) {
-        Handle(Geom2dAdaptor_Curve) HCu2 = new Geom2dAdaptor_Curve(Cu2);
         //Adaptor2d_OffsetCurve C2(HCu2,cote2(jcote2));
-        Adaptor2d_OffsetCurve C2(HCu2, -cote2(jcote2));
-        firstparam = Max(C2.FirstParameter(),thefirst);
-        lastparam  = Min(C2.LastParameter(),thelast);
-        IntRes2d_Domain D2(C2.Value(firstparam), firstparam, Tol,
-                           C2.Value(lastparam), lastparam, Tol);
+        Handle(Adaptor2d_OffsetCurve) C2 = new Adaptor2d_OffsetCurve(Cu2, -cote2(jcote2));
+        firstparam = Max(C2->FirstParameter(),thefirst);
+        lastparam  = Min(C2->LastParameter(),thelast);
+        IntRes2d_Domain D2(C2->Value(firstparam), firstparam, Tol,
+                           C2->Value(lastparam), lastparam, Tol);
         Intp.Perform(Circ,D1,C2,D2,Tol,Tol);
         if (Intp.IsDone()) {
           if (!Intp.IsEmpty()) {
@@ -474,7 +472,7 @@ pararg2(1,aNbSolMAX)
       throw GccEnt_BadQualifier();
       return;
   }
-  Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
   if (Radius < 0.0) { throw Standard_NegativeValue(); }
   else {
     if (Qualified1.IsEnclosed()) {
@@ -499,13 +497,12 @@ pararg2(1,aNbSolMAX)
     D1.SetEquivalentParameters(0.,M_PI+M_PI);
     Geom2dInt_TheIntConicCurveOfGInter Intp;
     for (Standard_Integer jcote1 = 1; jcote1 <= nbrcote1 && NbrSol < aNbSolMAX; jcote1++) {
-      Handle(Geom2dAdaptor_Curve) HCu1 = new Geom2dAdaptor_Curve(Cu1);
       //Adaptor2d_OffsetCurve Cu2(HCu1,cote1(jcote1));
-      Adaptor2d_OffsetCurve Cu2(HCu1,-cote1(jcote1));
-      firstparam = Max(Cu2.FirstParameter(),thefirst);
-      lastparam  = Min(Cu2.LastParameter(),thelast);
-      IntRes2d_Domain D2(Cu2.Value(firstparam), firstparam, Tol,
-                         Cu2.Value(lastparam), lastparam, Tol);
+      Handle(Adaptor2d_OffsetCurve) Cu2 = new Adaptor2d_OffsetCurve(Cu1,-cote1(jcote1));
+      firstparam = Max(Cu2->FirstParameter(),thefirst);
+      lastparam  = Min(Cu2->LastParameter(),thelast);
+      IntRes2d_Domain D2(Cu2->Value(firstparam), firstparam, Tol,
+                         Cu2->Value(lastparam), lastparam, Tol);
       Intp.Perform(Circ,D1,Cu2,D2,Tol,Tol);
       if (Intp.IsDone()) {
         if (!Intp.IsEmpty()) {
@@ -542,8 +539,8 @@ pararg2(1,aNbSolMAX)
 //            tangent vector and vector between points in two curves must
 //            be equal to zero).
 //=======================================================================
-static void PrecRoot(const Adaptor2d_OffsetCurve& theC1,
-                     const Adaptor2d_OffsetCurve& theC2,
+static void PrecRoot(const Handle(Adaptor2d_OffsetCurve)& theC1,
+                     const Handle(Adaptor2d_OffsetCurve)& theC2,
                      const Standard_Real theU0,
                      const Standard_Real theV0,
                      Standard_Real& theUfinal,
@@ -598,8 +595,8 @@ where u_{0} and v_{0} are initial values or values computed on previous iteratio
 
   Standard_Real aSQDistPrev = RealFirst();
 
-  theC1.D2(aU, aPu, aD1u, aD2u);
-  theC2.D2(aV, aPv, aD1v, aD2v);
+  theC1->D2(aU, aPu, aD1u, aD2u);
+  theC2->D2(aV, aPv, aD1v, aD2v);
 
   const Standard_Real aCrProd = Abs(aD1u.Crossed(aD1v));
   if(aCrProd*aCrProd > 1.0e-6*
@@ -691,8 +688,8 @@ where u_{0} and v_{0} are initial values or values computed on previous iteratio
       aV += aStepV;
     }
 
-    theC1.D2(aU, aPu, aD1u, aD2u);
-    theC2.D2(aV, aPv, aD1v, aD2v);
+    theC1->D2(aU, aPu, aD1u, aD2u);
+    theC2->D2(aV, aPv, aD1v, aD2v);
   }
   while(aNbIter <= aNbIterMax);
 }
@@ -758,8 +755,8 @@ pararg2(1,aNbSolMAX)
       throw GccEnt_BadQualifier();
       return;
   }
-  Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
-  Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
   if (Radius < 0.0) { throw Standard_NegativeValue(); }
   else {
     if (Qualified1.IsEnclosed() && Qualified2.IsEnclosed()) {
@@ -833,9 +830,8 @@ pararg2(1,aNbSolMAX)
     }
     Geom2dInt_GInter Intp;
     for (Standard_Integer jcote1 = 1 ; jcote1 <= nbrcote1 ; jcote1++) {
-      Handle(Geom2dAdaptor_Curve) HCu1 = new Geom2dAdaptor_Curve(Cu1); 
       //Adaptor2d_OffsetCurve C1(HCu1,cote1(jcote1));
-      Adaptor2d_OffsetCurve C1(HCu1, -cote1(jcote1));
+      Handle(Adaptor2d_OffsetCurve) C1 = new Adaptor2d_OffsetCurve(Cu1, -cote1(jcote1));
 #ifdef OCCT_DEBUG
       Standard_Real firstparam = Max(C1.FirstParameter(), thefirst);
       Standard_Real lastparam = Min(C1.LastParameter(), thelast);
@@ -843,9 +839,8 @@ pararg2(1,aNbSolMAX)
         C1.Value(lastparam),lastparam,Tol);
 #endif
       for (Standard_Integer jcote2 = 1; jcote2 <= nbrcote2 && NbrSol < aNbSolMAX; jcote2++) {
-        Handle(Geom2dAdaptor_Curve) HCu2 = new Geom2dAdaptor_Curve(Cu2);
         //Adaptor2d_OffsetCurve C2(HCu2,cote2(jcote2));
-        Adaptor2d_OffsetCurve C2(HCu2, -cote2(jcote2));
+        Handle(Adaptor2d_OffsetCurve) C2 = new Adaptor2d_OffsetCurve(Cu2, -cote2(jcote2));
 #ifdef OCCT_DEBUG
         firstparam = Max(C2.FirstParameter(), thefirst);
         lastparam  = Min(C2.LastParameter(),thelast);
@@ -868,10 +863,10 @@ pararg2(1,aNbSolMAX)
               Standard_Real aU2 = aU0+Precision::PApproximation();
               Standard_Real aV2 = aV0+Precision::PApproximation();
 
-              gp_Pnt2d P11 = C1.Value(aU1);
-              gp_Pnt2d P12 = C2.Value(aV1);
-              gp_Pnt2d P21 = C1.Value(aU2);
-              gp_Pnt2d P22 = C2.Value(aV2);
+              gp_Pnt2d P11 = C1->Value(aU1);
+              gp_Pnt2d P12 = C2->Value(aV1);
+              gp_Pnt2d P21 = C1->Value(aU2);
+              gp_Pnt2d P22 = C2->Value(aV2);
 
               Standard_Real aDist1112 = P11.SquareDistance(P12);
               Standard_Real aDist1122 = P11.SquareDistance(P22);
@@ -886,7 +881,7 @@ pararg2(1,aNbSolMAX)
               }
 
               NbrSol++;
-              gp_Pnt2d Center(C1.Value(aU0));
+              gp_Pnt2d Center(C1->Value(aU0));
               cirsol(NbrSol) = gp_Circ2d(gp_Ax2d(Center,dirx),Radius);
               //             =======================================================
               qualifier1(NbrSol) = Qualified1.Qualifier();

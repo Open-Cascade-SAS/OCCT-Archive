@@ -39,9 +39,9 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCu(const Geom2dAdaptor_Curve& Curv1, const Geom2dAdaptor_Curve& Curv2);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCu(const Handle(Geom2dAdaptor_Curve)& Curv1, const Handle(Geom2dAdaptor_Curve)& Curv2);
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCu(const gp_Circ2d& Circ1, const Geom2dAdaptor_Curve& Curv2);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCu(const gp_Circ2d& Circ1, const Handle(Geom2dAdaptor_Curve)& Curv2);
   
   Standard_EXPORT void InitDerivative (const math_Vector& X, gp_Pnt2d& Point1, gp_Pnt2d& Point2, gp_Vec2d& Tan1, gp_Vec2d& Tan2, gp_Vec2d& D21, gp_Vec2d& D22);
   
@@ -80,8 +80,8 @@ private:
 
 
 
-  Geom2dAdaptor_Curve TheCurve1;
-  Geom2dAdaptor_Curve TheCurve2;
+  Handle(Geom2dAdaptor_Curve) TheCurve1;
+  Handle(Geom2dAdaptor_Curve) TheCurve2;
   gp_Circ2d TheCirc1;
   Geom2dGcc_Type3 TheType;
 

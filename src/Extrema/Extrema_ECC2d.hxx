@@ -46,15 +46,15 @@ public:
   //! The function F(u,v)=distance(C1(u),C2(v)) has an
   //! extremum when gradient(f)=0. The algorithm uses
   //! Evtushenko's global optimization solver.
-  Standard_EXPORT Extrema_ECC2d(const Adaptor2d_Curve2d& C1, const Adaptor2d_Curve2d& C2);
+  Standard_EXPORT Extrema_ECC2d(const Handle(Adaptor2d_Curve2d)& C1, const Handle(Adaptor2d_Curve2d)& C2);
   
   //! Calculates all the distances as above
   //! between Uinf and Usup for C1 and  between Vinf and Vsup
   //! for C2.
-  Standard_EXPORT Extrema_ECC2d(const Adaptor2d_Curve2d& C1, const Adaptor2d_Curve2d& C2, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup);
+  Standard_EXPORT Extrema_ECC2d(const Handle(Adaptor2d_Curve2d)& C1, const Handle(Adaptor2d_Curve2d)& C2, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup);
   
   //! Set params in case of empty constructor is usage.
-  Standard_EXPORT void SetParams (const Adaptor2d_Curve2d& C1, const Adaptor2d_Curve2d& C2, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup);
+  Standard_EXPORT void SetParams (const Handle(Adaptor2d_Curve2d)& C1, const Handle(Adaptor2d_Curve2d)& C2, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup);
   
   Standard_EXPORT void SetTolerance (const Standard_Real Tol);
 

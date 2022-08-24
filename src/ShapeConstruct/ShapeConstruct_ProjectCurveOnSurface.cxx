@@ -516,7 +516,7 @@ Standard_Boolean ShapeConstruct_ProjectCurveOnSurface::PerformByProjLib(Handle(G
       GeomProjLib::ProjectOnPlane (c3d, Plane, 
 				   Plane->Position().Direction(), Standard_True);
     Handle(GeomAdaptor_Curve) HC = new GeomAdaptor_Curve ( ProjOnPlane );
-    ProjLib_ProjectedCurve Proj ( mySurf->Adaptor3d(), HC );
+    Handle(ProjLib_ProjectedCurve) Proj = new ProjLib_ProjectedCurve( mySurf->Adaptor3d(), HC );
 
     result = Geom2dAdaptor::MakeCurve(Proj);
     if ( result.IsNull() ) return result;

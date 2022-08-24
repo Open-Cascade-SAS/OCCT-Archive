@@ -839,10 +839,9 @@ static Standard_Boolean TestWLineIsARLine(const IntPatch_SequenceOfLine& slinref
             u = (u+u1)*0.5;
             v = (v+v1)*0.5;
           }
-          const Adaptor2d_Curve2d& C2d = *arc;
           gp_Pnt2d PObt,P2d(u,v);
-          Standard_Real par= Geom2dInt_TheProjPCurOfGInter::FindParameter(C2d,P2d,1e-7);
-          PObt=C2d.Value(par);
+          Standard_Real par= Geom2dInt_TheProjPCurOfGInter::FindParameter(arc,P2d,1e-7);
+          PObt=arc->Value(par);
           if(PObt.Distance(P2d) < tol2d) {
             return Standard_True;
           }
@@ -923,10 +922,9 @@ static Standard_Boolean ProjectOnArc(const Standard_Real u,
   gp_Vec ad1u, ad1v;
   surf->D1(u,v,aPbid,ad1u,ad1v);
   Standard_Real tol2d = ComputeParametricTolerance(TolArc,ad1u,ad1v);
-  const Adaptor2d_Curve2d& C2d = *arc;
   gp_Pnt2d aP(u,v),aPprj;
-  par=Geom2dInt_TheProjPCurOfGInter::FindParameter(C2d,aP,1e-7);
-  aPprj=C2d.Value(par);
+  par=Geom2dInt_TheProjPCurOfGInter::FindParameter(arc,aP,1e-7);
+  aPprj=arc->Value(par);
   dist = aPprj.Distance(aP);
   return dist <= tol2d;
 }

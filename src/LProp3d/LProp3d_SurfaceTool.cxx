@@ -28,6 +28,7 @@ void LProp3d_SurfaceTool::Value(const Handle(Adaptor3d_Surface)& S,
                                 const Standard_Real V, 
                                 gp_Pnt& P)
 {
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
   P = S->Value(U, V);
 }
 
@@ -44,6 +45,7 @@ void LProp3d_SurfaceTool::D1(const Handle(Adaptor3d_Surface)& S,
                              gp_Vec& D1U, 
                              gp_Vec& D1V)
 {
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
   S->D1(U, V, P, D1U, D1V);
 }
 
@@ -63,6 +65,7 @@ void LProp3d_SurfaceTool::D2(const Handle(Adaptor3d_Surface)& S,
                              gp_Vec& D2V, 
                              gp_Vec& DUV)
 {
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
   S->D2(U, V, P, D1U, D1V, D2U, D2V, DUV);
 }
 
@@ -76,6 +79,7 @@ gp_Vec LProp3d_SurfaceTool::DN(const Handle(Adaptor3d_Surface)& S,
                                const Standard_Integer IU,
                                const Standard_Integer IV)
 {
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
   return S->DN(U, V, IU, IV);
 }
 
@@ -88,6 +92,7 @@ gp_Vec LProp3d_SurfaceTool::DN(const Handle(Adaptor3d_Surface)& S,
 Standard_Integer LProp3d_SurfaceTool::Continuity
   (const Handle(Adaptor3d_Surface)& S)
 {
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
   GeomAbs_Shape s = (GeomAbs_Shape) Min(S->UContinuity(),S->VContinuity());
   switch (s) {
   case GeomAbs_C0:
@@ -120,6 +125,7 @@ void LProp3d_SurfaceTool::Bounds(const Handle(Adaptor3d_Surface)& S,
                                  Standard_Real& U2, 
                                  Standard_Real& V2)
 {
+  Standard_ASSERT_RAISE(!S.IsNull(), "Surface Adaptor is not initialized");
   U1 = S->FirstUParameter();
   V1 = S->FirstVParameter();
   U2 = S->LastUParameter();

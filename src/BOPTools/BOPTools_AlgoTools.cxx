@@ -1472,7 +1472,7 @@ Standard_Boolean BOPTools_AlgoTools::IsHole(const TopoDS_Shape& aW,
       break; //xx
     }
     //
-    BRepAdaptor_Curve2d aBAC2D(aE, aFF);
+    Handle(BRepAdaptor_Curve2d) aBAC2D = new BRepAdaptor_Curve2d(aE, aFF);
     aNbS=Geom2dInt_Geom2dCurveTool::NbSamples(aBAC2D);
     if (aNbS>2) {
       aNbS*=4;
@@ -1487,10 +1487,10 @@ Standard_Boolean BOPTools_AlgoTools::IsHole(const TopoDS_Shape& aW,
       dU=-dU;
     }
     //
-    aBAC2D.D0(aU, aP2D0);
+    aBAC2D->D0(aU, aP2D0);
     for(i=2; i<=aNbS; i++) {
       aU=aU1+(i-1)*dU;
-      aBAC2D.D0(aU, aP2D1);
+      aBAC2D->D0(aU, aP2D1);
       aP2D0.Coord(aX0, aY0);
       aP2D1.Coord(aX1, aY1);
       //
@@ -2152,26 +2152,26 @@ Standard_Real MinStep3D(const TopoDS_Edge& theE1,
     }
     //
     // try to compute the minimal 3D step
-    const BRepAdaptor_Surface& aBAS = theContext->SurfaceAdaptor(aF);
+    const Handle(BRepAdaptor_Surface)& aBAS = theContext->SurfaceAdaptor(aF);
     Standard_Real aR = 0.;
-    GeomAbs_SurfaceType aSType = aBAS.GetType();
+    GeomAbs_SurfaceType aSType = aBAS->GetType();
     switch (aSType) {
     case GeomAbs_Cylinder: {
-      aR = aBAS.Cylinder().Radius();
+      aR = aBAS->Cylinder().Radius();
       break;
     }
     case GeomAbs_Cone: {
-      gp_Lin aL(aBAS.Cone().Axis());
+      gp_Lin aL(aBAS->Cone().Axis());
       aR = aL.Distance(aP);
       break;
     }
     case GeomAbs_Sphere: {
       aDtMin = Max(aDtMin, 5.e-4);
-      aR = aBAS.Sphere().Radius();
+      aR = aBAS->Sphere().Radius();
       break;
     }
     case GeomAbs_Torus: {
-      aR = aBAS.Torus().MajorRadius();
+      aR = aBAS->Torus().MajorRadius();
       break;
     }
     default:
@@ -2195,14 +2195,14 @@ Standard_Real MinStep3D(const TopoDS_Edge& theE1,
     const BOPTools_CoupleOfShape& aCS = aIt.Value();
     const TopoDS_Face& aF = (*(TopoDS_Face*)(&aCS.Shape2()));
     //
-    const BRepAdaptor_Surface& aBAS = theContext->SurfaceAdaptor(aF);
+    const Handle(BRepAdaptor_Surface)& aBAS = theContext->SurfaceAdaptor(aF);
     //
     Standard_Real aUMin, aUMax, aVMin, aVMax;
     theContext->UVBounds(aF, aUMin, aUMax, aVMin, aVMax);
     //
     Standard_Real aDU = aUMax - aUMin;
     if (aDU > 0.) {
-      Standard_Real aURes = aBAS.UResolution(aDtMax);
+      Standard_Real aURes = aBAS->UResolution(aDtMax);
       if (2*aURes > aDU) {
         break;
       }
@@ -2210,7 +2210,7 @@ Standard_Real MinStep3D(const TopoDS_Edge& theE1,
     //
     Standard_Real aDV = aVMax - aVMin;
     if (aDV > 0.) {
-      Standard_Real aVRes = aBAS.VResolution(aDtMax);
+      Standard_Real aVRes = aBAS->VResolution(aDtMax);
       if (2*aVRes > aDV) {
         break;
       }

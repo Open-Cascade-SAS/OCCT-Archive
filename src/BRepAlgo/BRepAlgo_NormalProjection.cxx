@@ -244,7 +244,7 @@ void BRepAlgo_NormalProjection::SetDefaultParams()
   for(i = 1; i <= NbEdges; i++){
     DescenList.Clear();
     Handle(BRepAdaptor_Curve) hcur = new BRepAdaptor_Curve (TopoDS::Edge(Edges->Value(i)));
-    Elementary = IsElementary(*hcur);
+    Elementary = IsElementary(hcur);
     for(j = 1; j <= NbFaces; j++){
       Handle(BRepAdaptor_Surface) hsur = new BRepAdaptor_Surface (TopoDS::Face(Faces->Value(j)));
       
@@ -627,10 +627,10 @@ void BRepAlgo_NormalProjection::SetDefaultParams()
 //purpose  : 
 //=======================================================================
 
- Standard_Boolean BRepAlgo_NormalProjection::IsElementary(const Adaptor3d_Curve& C) const
+ Standard_Boolean BRepAlgo_NormalProjection::IsElementary(const Handle(Adaptor3d_Curve)& C) const
 {
   GeomAbs_CurveType type;
-  type = C.GetType();
+  type = C->GetType();
   switch(type) {
   case GeomAbs_Line:
   case GeomAbs_Circle:

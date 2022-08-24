@@ -993,7 +993,7 @@ static Standard_Boolean Project(const Handle(Geom_Curve)& C,
 {
   gp_Pnt P = BRep_Tool::Pnt(V);
   Standard_Real tol = BRep_Tool::Tolerance(V);
-  GeomAdaptor_Curve GAC(C);
+  Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(C);
   Extrema_ExtPC extrema(P,GAC);
   if (extrema.IsDone()) {
     Standard_Integer i,n = extrema.NbExt();

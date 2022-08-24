@@ -39,8 +39,8 @@ Extrema_GenLocateExtSS::Extrema_GenLocateExtSS()
 //purpose  : 
 //=======================================================================
 
- Extrema_GenLocateExtSS::Extrema_GenLocateExtSS(const Adaptor3d_Surface& S1, 
-						const Adaptor3d_Surface& S2, 
+ Extrema_GenLocateExtSS::Extrema_GenLocateExtSS(const Handle(Adaptor3d_Surface)& S1, 
+						const Handle(Adaptor3d_Surface)& S2, 
 						const Standard_Real U1, 
 						const Standard_Real V1, 
 						const Standard_Real U2, 
@@ -56,8 +56,8 @@ Extrema_GenLocateExtSS::Extrema_GenLocateExtSS()
 //purpose  : 
 //=======================================================================
 
-void Extrema_GenLocateExtSS::Perform(const Adaptor3d_Surface& S1, 
-				     const Adaptor3d_Surface& S2, 
+void Extrema_GenLocateExtSS::Perform(const Handle(Adaptor3d_Surface)& S1, 
+				     const Handle(Adaptor3d_Surface)& S2, 
 				     const Standard_Real U1, 
 				     const Standard_Real V1, 
 				     const Standard_Real U2, 
@@ -68,16 +68,16 @@ void Extrema_GenLocateExtSS::Perform(const Adaptor3d_Surface& S1,
   myDone = Standard_False;
 
   Standard_Real Uinf1, Usup1, Vinf1, Vsup1;
-  Uinf1 = S1.FirstUParameter();
-  Usup1 = S1.LastUParameter();
-  Vinf1 = S1.FirstVParameter();
-  Vsup1 = S1.LastVParameter();
+  Uinf1 = S1->FirstUParameter();
+  Usup1 = S1->LastUParameter();
+  Vinf1 = S1->FirstVParameter();
+  Vsup1 = S1->LastVParameter();
 
   Standard_Real Uinf2, Usup2, Vinf2, Vsup2;
-  Uinf2 = S2.FirstUParameter();
-  Usup2 = S2.LastUParameter();
-  Vinf2 = S2.FirstVParameter();
-  Vsup2 = S2.LastVParameter();
+  Uinf2 = S2->FirstUParameter();
+  Usup2 = S2->LastUParameter();
+  Vinf2 = S2->FirstVParameter();
+  Vsup2 = S2->LastVParameter();
 
   Extrema_FuncExtSS F (S1,S2);
   math_Vector Tol(1, 4), Start(1, 4), BInf(1, 4), BSup(1, 4);

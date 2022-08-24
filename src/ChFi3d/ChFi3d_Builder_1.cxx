@@ -146,18 +146,18 @@ static void ConcatCurves(TColGeom_SequenceOfCurve& theCurves,
 
 static TopoDS_Edge MakeOffsetEdge(const TopoDS_Edge&         theEdge,
                                   const Standard_Real        Distance,
-                                  const BRepAdaptor_Surface& S1,
-                                  const BRepAdaptor_Surface& S2)
+                                  const Handle(BRepAdaptor_Surface)& S1,
+                                  const Handle(BRepAdaptor_Surface)& S2)
 {
   TopoDS_Edge OffsetEdge;
   
-  TopoDS_Face F1 = S1.Face();
-  TopoDS_Face F2 = S2.Face();
+  TopoDS_Face F1 = S1->Face();
+  TopoDS_Face F2 = S2->Face();
   Handle(Geom_Surface) GS1 = BRep_Tool::Surface(F1);
   Handle(Geom_Surface) TrGS1 =
     new Geom_RectangularTrimmedSurface(GS1,
-                                       S1.FirstUParameter(), S1.LastUParameter(),
-                                       S1.FirstVParameter(), S1.LastVParameter());
+                                       S1->FirstUParameter(), S1->LastUParameter(),
+                                       S1->FirstVParameter(), S1->LastVParameter());
   Standard_Real Offset = -Distance;
   if (F1.Orientation() == TopAbs_REVERSED)
     Offset = Distance;
@@ -168,8 +168,8 @@ static TopoDS_Edge MakeOffsetEdge(const TopoDS_Edge&         theEdge,
   Handle(Geom_Surface) GS2 = BRep_Tool::Surface(F2);
   Handle(Geom_Surface) TrGS2 =
     new Geom_RectangularTrimmedSurface(GS2,
-                                       S2.FirstUParameter(), S2.LastUParameter(),
-                                       S2.FirstVParameter(), S2.LastVParameter());
+                                       S2->FirstUParameter(), S2->LastUParameter(),
+                                       S2->FirstVParameter(), S2->LastVParameter());
   GeomInt_IntSS Intersector(OffsetTrGS1, TrGS2, Precision::Confusion());
   if (!Intersector.IsDone() || Intersector.NbLines() == 0)
   {
@@ -194,7 +194,7 @@ static TopoDS_Edge MakeOffsetEdge(const TopoDS_Edge&         theEdge,
     Standard_Integer imin = 1;
     for (Standard_Integer i = 1; i <= NewCurves.Length(); i++)
     {
-      GeomAdaptor_Curve GAcurve(NewCurves(i));
+      Handle(GeomAdaptor_Curve) GAcurve = new GeomAdaptor_Curve(NewCurves(i));
       Extrema_ExtPC Projector(Ends[0], GAcurve);
       if (!Projector.IsDone() || Projector.NbExt() == 0)
         continue;
@@ -215,7 +215,7 @@ static TopoDS_Edge MakeOffsetEdge(const TopoDS_Edge&         theEdge,
     return OffsetEdge;
   }
   //Projection of extremities onto <IntCurve>
-  GeomAdaptor_Curve GAcurve(IntCurve);
+  Handle(GeomAdaptor_Curve) GAcurve = new GeomAdaptor_Curve(IntCurve);
   Standard_Real Params [2];
   for (Standard_Integer ind_end = 0; ind_end < 2; ind_end++)
   {
@@ -224,8 +224,8 @@ static TopoDS_Edge MakeOffsetEdge(const TopoDS_Edge&         theEdge,
     Extrema_ExtPC Projector(Ends[ind_end], GAcurve);
     Standard_Real param[4], dist[4];
     gp_Pnt Pnt[4];
-    param[1] = GAcurve.FirstParameter();
-    param[2] = GAcurve.LastParameter();
+    param[1] = GAcurve->FirstParameter();
+    param[2] = GAcurve->LastParameter();
     Projector.TrimmedSquareDistances(dist[1], dist[2], Pnt[1], Pnt[2]);
     dist[3] = RealLast();
     if (Projector.IsDone() && Projector.NbExt() > 0)
@@ -247,7 +247,7 @@ static TopoDS_Edge MakeOffsetEdge(const TopoDS_Edge&         theEdge,
     Params[ind_end] = param[imin]; //Projector.Point(imin).Parameter();
   }
   if (aBAcurve.IsClosed()/*HGuide->IsPeriodic()*//*HGuide->IsClosed()*/)
-    Params[1] = GAcurve.LastParameter(); //temporary
+    Params[1] = GAcurve->LastParameter(); //temporary
   if (Params[0] > Params[1])
   {
     Standard_Boolean IsClosed = Standard_False;
@@ -630,7 +630,7 @@ static Standard_Boolean TangentExtremity(const TopoDS_Vertex&                V,
   gp_Vec n1, n2;//   gp_Pnt pt1,pt2;
   Handle(Geom2d_Curve) pc1 = BRep_Tool::CurveOnSurface(e1,f1,f,l);
   pc1->Value(p1).Coord(u,v);
-  BRepLProp_SLProps theProp1 (*hs1, u, v, 1, Eps);
+  BRepLProp_SLProps theProp1 (hs1, u, v, 1, Eps);
   if  (theProp1.IsNormalDefined()) {
     n1.SetXYZ(theProp1.Normal().XYZ());
     if (O1 == TopAbs_REVERSED) n1.Reverse();
@@ -640,7 +640,7 @@ static Standard_Boolean TangentExtremity(const TopoDS_Vertex&                V,
  
   Handle(Geom2d_Curve) pc2 = BRep_Tool::CurveOnSurface(e2,f2,f,l);
   pc2->Value(p2).Coord(u,v);
-  BRepLProp_SLProps theProp2 (*hs2, u, v, 1, Eps);
+  BRepLProp_SLProps theProp2 (hs2, u, v, 1, Eps);
   if  (theProp2.IsNormalDefined()) {
     n2.SetXYZ(theProp2.Normal().XYZ());
     if(O2 == TopAbs_REVERSED) n2.Reverse();
@@ -851,8 +851,8 @@ Standard_Boolean ChFi3d_Builder::PerformElement(const Handle(ChFiDS_Spine)& Spin
   Spine->SetTypeOfConcavity(TypeOfConcavity);
   
   Standard_Boolean ToRestrict = (Offset > 0)? Standard_True : Standard_False;
-  BRepAdaptor_Surface Sb1(ff1, ToRestrict);
-  BRepAdaptor_Surface Sb2(ff2, ToRestrict);
+  Handle(BRepAdaptor_Surface) Sb1 = new BRepAdaptor_Surface(ff1, ToRestrict);
+  Handle(BRepAdaptor_Surface) Sb2 = new BRepAdaptor_Surface(ff2, ToRestrict);
   if (Offset > 0)
   {
     TopoDS_Edge OffsetEdge = MakeOffsetEdge(Ec, Offset, Sb1, Sb2);
@@ -947,7 +947,8 @@ Standard_Boolean ChFi3d_Builder::PerformElement(const Handle(ChFiDS_Spine)& Spin
             myEdgeFirstFace.Bind(Ec, CurF1);
             if (Offset > 0)
             {
-              BRepAdaptor_Surface CurSb1(CurF1), CurSb2(CurF2);
+              Handle(BRepAdaptor_Surface) CurSb1 = new BRepAdaptor_Surface(CurF1);
+              Handle(BRepAdaptor_Surface) CurSb2 = new BRepAdaptor_Surface(CurF2);
               TopoDS_Edge anOffsetEdge = MakeOffsetEdge(Ec, Offset, CurSb1, CurSb2);
               anOffsetEdge.Orientation(Or1);
               Spine->SetOffsetEdges(anOffsetEdge);
@@ -1033,7 +1034,8 @@ Standard_Boolean ChFi3d_Builder::PerformElement(const Handle(ChFiDS_Spine)& Spin
               myEdgeFirstFace.Bind(Ec, CurF1);
               if (Offset > 0)
               {
-                BRepAdaptor_Surface CurSb1(CurF1), CurSb2(CurF2);
+                Handle(BRepAdaptor_Surface) CurSb1 = new BRepAdaptor_Surface(CurF1);
+                Handle(BRepAdaptor_Surface) CurSb2 = new BRepAdaptor_Surface(CurF2);
                 TopoDS_Edge anOffsetEdge = MakeOffsetEdge(Ec, Offset, CurSb1, CurSb2);
                 anOffsetEdge.Orientation(Or1);
                 Spine->PutInFirstOffset(anOffsetEdge);

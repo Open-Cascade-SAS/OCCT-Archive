@@ -34,7 +34,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT Geom2dGcc_FunctionTanObl(const Geom2dAdaptor_Curve& Curve, const gp_Dir2d& Dir);
+  Standard_EXPORT Geom2dGcc_FunctionTanObl(const Handle(Geom2dAdaptor_Curve)& Curve, const gp_Dir2d& Dir);
   
   //! Computes the value of the function F for the variable X.
   //! It returns True if the computation is successfully done,
@@ -65,7 +65,7 @@ private:
 
 
 
-  Geom2dAdaptor_Curve TheCurv;
+  Handle(Geom2dAdaptor_Curve) TheCurv;
   gp_Dir2d TheDirection;
 
 

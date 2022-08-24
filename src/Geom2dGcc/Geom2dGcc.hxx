@@ -61,7 +61,7 @@ public:
   //! The qualified curve is then constructed with this object:
   //! Geom2dGcc_QualifiedCurve
   //! myQCurve = Geom2dGcc::Unqualified(Obj);
-  Standard_EXPORT static Geom2dGcc_QualifiedCurve Unqualified (const Geom2dAdaptor_Curve& Obj);
+  Standard_EXPORT static Geom2dGcc_QualifiedCurve Unqualified (const Handle(Geom2dAdaptor_Curve)& Obj);
   
   //! Constructs such a qualified curve that the solution
   //! computed by a construction algorithm using the qualified
@@ -78,7 +78,7 @@ public:
   //! The qualified curve is then constructed with this object:
   //! Geom2dGcc_QualifiedCurve
   //! myQCurve = Geom2dGcc::Enclosing(Obj);
-  Standard_EXPORT static Geom2dGcc_QualifiedCurve Enclosing (const Geom2dAdaptor_Curve& Obj);
+  Standard_EXPORT static Geom2dGcc_QualifiedCurve Enclosing (const Handle(Geom2dAdaptor_Curve)& Obj);
   
   //! Constructs such a qualified curve that the solution
   //! computed by a construction algorithm using the qualified
@@ -95,7 +95,7 @@ public:
   //! The qualified curve is then constructed with this object:
   //! Geom2dGcc_QualifiedCurve
   //! myQCurve = Geom2dGcc::Enclosed(Obj);
-  Standard_EXPORT static Geom2dGcc_QualifiedCurve Enclosed (const Geom2dAdaptor_Curve& Obj);
+  Standard_EXPORT static Geom2dGcc_QualifiedCurve Enclosed (const Handle(Geom2dAdaptor_Curve)& Obj);
   
   //! Constructs such a qualified curve that the solution
   //! computed by a construction algorithm using the qualified
@@ -112,7 +112,7 @@ public:
   //! The qualified curve is then constructed with this object:
   //! Geom2dGcc_QualifiedCurve
   //! myQCurve = Geom2dGcc::Outside(Obj);
-  Standard_EXPORT static Geom2dGcc_QualifiedCurve Outside (const Geom2dAdaptor_Curve& Obj);
+  Standard_EXPORT static Geom2dGcc_QualifiedCurve Outside (const Handle(Geom2dAdaptor_Curve)& Obj);
 
 };
 

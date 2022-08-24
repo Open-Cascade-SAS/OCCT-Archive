@@ -23,7 +23,7 @@
 
 #define ImpTool IntCurve_IConicTool
 #define ImpTool_hxx <IntCurve_IConicTool.hxx>
-#define ParCurve Adaptor2d_Curve2d
+#define ParCurve Handle(Adaptor2d_Curve2d)
 #define ParCurve_hxx <Adaptor2d_Curve2d.hxx>
 #define ParTool Geom2dInt_Geom2dCurveTool
 #define ParTool_hxx <Geom2dInt_Geom2dCurveTool.hxx>

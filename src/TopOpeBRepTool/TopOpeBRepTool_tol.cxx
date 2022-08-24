@@ -27,7 +27,7 @@
 Standard_EXPORT void FTOL_FaceTolerances
 (const Bnd_Box& B1, const Bnd_Box& B2,
  const TopoDS_Face& myFace1, const TopoDS_Face& myFace2,
- const BRepAdaptor_Surface& mySurface1, const BRepAdaptor_Surface& mySurface2,
+ const Handle(BRepAdaptor_Surface)& mySurface1, const Handle(BRepAdaptor_Surface)& mySurface2,
  Standard_Real& myTol1, Standard_Real& myTol2,
  Standard_Real& Deflection, Standard_Real& MaxUV)
 {
@@ -114,18 +114,18 @@ Standard_EXPORT void FTOL_FaceTolerances
   Standard_Real MMAXUV=0.01;
 
   Standard_Real MU0,MU1,MV0,MV1,DP1,DP2,DP;
-  MU0=mySurface1.FirstUParameter();
-  MU1=mySurface1.LastUParameter();
-  MV0=mySurface1.FirstVParameter();
-  MV1=mySurface1.LastVParameter();
+  MU0=mySurface1->FirstUParameter();
+  MU1=mySurface1->LastUParameter();
+  MV0=mySurface1->FirstVParameter();
+  MV1=mySurface1->LastVParameter();
   DP1 = MU1-MU0;
   DP2 = MV1-MV0;
   if(DP2<DP1) DP=DP2; else DP=DP1;  //-- DP + petit
 
-  MU0=mySurface2.FirstUParameter();
-  MU1=mySurface2.LastUParameter();
-  MV0=mySurface2.FirstVParameter();
-  MV1=mySurface2.LastVParameter();
+  MU0=mySurface2->FirstUParameter();
+  MU1=mySurface2->LastUParameter();
+  MV0=mySurface2->FirstVParameter();
+  MV1=mySurface2->LastVParameter();
   DP1 = MU1-MU0;
   DP2 = MV1-MV0;
   if(DP2>DP1) DP1=DP2;    //-- DP1 + petit
@@ -173,10 +173,8 @@ Standard_EXPORT void FTOL_FaceTolerances
   else {
     B2.Update(0., 0., 0., 1., 1., 1.);
   }
-  BRepAdaptor_Surface mySurface1;
-  BRepAdaptor_Surface mySurface2;
-  mySurface1.Initialize(myFace1);
-  mySurface2.Initialize(myFace2);
+  Handle(BRepAdaptor_Surface) mySurface1 = new BRepAdaptor_Surface(myFace1);
+  Handle(BRepAdaptor_Surface) mySurface2 = new BRepAdaptor_Surface(myFace2);
   Standard_Real Deflection=0.01,MaxUV=0.01;
   Standard_Real myTol1,myTol2;
   FTOL_FaceTolerances(B1,B2,
@@ -191,7 +189,7 @@ Standard_EXPORT void FTOL_FaceTolerances
 Standard_EXPORT void FTOL_FaceTolerances3d
 (const Bnd_Box& B1, const Bnd_Box& B2,
  const TopoDS_Face& myFace1, const TopoDS_Face& myFace2,
- const BRepAdaptor_Surface& mySurface1, const BRepAdaptor_Surface& mySurface2,
+ const Handle(BRepAdaptor_Surface)& mySurface1, const Handle(BRepAdaptor_Surface)& mySurface2,
  Standard_Real& myTol1, Standard_Real& myTol2,
  Standard_Real& Deflection, Standard_Real& MaxUV)
 {
@@ -207,8 +205,8 @@ Standard_EXPORT void FTOL_FaceTolerances2d
  const Bnd_Box& B2,
  const TopoDS_Face& myFace1, 
  const TopoDS_Face& myFace2,
- const BRepAdaptor_Surface& mySurface1,
- const BRepAdaptor_Surface& mySurface2,
+ const Handle(BRepAdaptor_Surface)& mySurface1,
+ const Handle(BRepAdaptor_Surface)& mySurface2,
  Standard_Real& myTol1, Standard_Real& myTol2)
 {
   Standard_Real BIDDeflection,BIDMaxUV;

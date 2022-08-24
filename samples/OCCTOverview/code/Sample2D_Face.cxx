@@ -102,7 +102,7 @@ void Sample2D_Face::FillData(Standard_Boolean isSizesRecompute)
     for (TopExp_Explorer anEdgeIter (myshape, TopAbs_EDGE); anEdgeIter.More(); anEdgeIter.Next())
     {
       const TopoDS_Edge& anEdge = TopoDS::Edge (anEdgeIter.Current());
-      BRepAdaptor_Curve2d aCurveOnEdge (anEdge, aFace);
+      Handle(BRepAdaptor_Curve2d) aCurveOnEdge = new BRepAdaptor_Curve2d(anEdge, aFace);
       GCPnts_QuasiUniformDeflection anEdgeDistrib(aCurveOnEdge, 1.e-2);
       if (!anEdgeDistrib.IsDone())
       {
@@ -153,7 +153,7 @@ void Sample2D_Face::FillData(Standard_Boolean isSizesRecompute)
     if (!aTrimmedCurve.IsNull())
     {
       Handle(Geom_Curve) aCurve3d = GeomLib::To3d(gp_Ax2(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1)), aTrimmedCurve);
-      BRepAdaptor_Curve2d aCurveOnEdge (anEdge, aFace);
+      Handle(BRepAdaptor_Curve2d) aCurveOnEdge = new BRepAdaptor_Curve2d(anEdge, aFace);
       GCPnts_QuasiUniformDeflection anEdgeDistrib (aCurveOnEdge, 1.e-2);
       if (!anEdgeDistrib.IsDone())
       {
@@ -253,7 +253,7 @@ void Sample2D_Face::Compute (const Handle(PrsMgr_PresentationManager)& ,
     // make a 3D curve from 2D trimmed curve to display it
     Handle(Geom_Curve) aCurve3d = GeomLib::To3d(gp_Ax2(gp_Pnt(0, 0, 0), gp_Dir(0, 0, 1)), aTrimmedCurve);
     // make distribution of points
-    BRepAdaptor_Curve2d aCurveOnEdge (anEdge, aFace);
+    Handle(BRepAdaptor_Curve2d) aCurveOnEdge = new BRepAdaptor_Curve2d(anEdge, aFace);
     GCPnts_QuasiUniformDeflection anEdgeDistrib(aCurveOnEdge, 1.e-2);
     if (anEdgeDistrib.IsDone())
     {

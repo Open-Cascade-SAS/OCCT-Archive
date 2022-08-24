@@ -856,10 +856,10 @@ void HLRBRep_Data::InitEdge (const Standard_Integer FI,
 
 
   HLRBRep_Surface  *p1 = (HLRBRep_Surface*)iFaceGeom;
-  const BRepAdaptor_Surface& bras=p1->Surface();
+  const Handle(BRepAdaptor_Surface)& bras=p1->Surface();
   
 
-  const TopoDS_Face& topodsface=bras.Face();
+  const TopoDS_Face& topodsface=bras->Face();
   
 
   

@@ -889,7 +889,7 @@ Standard_Boolean BOPAlgo_PaveFiller::GetPBBox(const TopoDS_Edge& theE,
   }
   else {
     // build bounding box
-    BRepAdaptor_Curve aBAC(theE);
+    Handle(BRepAdaptor_Curve) aBAC = new BRepAdaptor_Curve(theE);
     Standard_Real aTol = BRep_Tool::Tolerance(theE) + Precision::Confusion();
     BndLib_Add3dCurve::Add(aBAC, theSFirst, theSLast, aTol, theBox);
     thePBBox.Bind(thePB, theBox);

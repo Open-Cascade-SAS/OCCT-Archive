@@ -44,9 +44,9 @@ Geom2dGcc_Lin2dTanObl::
   pararg1(1,2)   ,
   pararg2(1,2)
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
@@ -110,9 +110,9 @@ Geom2dGcc_Lin2dTanObl::
   pararg1(1,2)   ,
   pararg2(1,2)
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
@@ -203,7 +203,7 @@ Standard_Boolean Geom2dGcc_Lin2dTanObl::Add
                            (const Standard_Integer       theIndex,
 			    const Geom2dGcc_Lin2dTanOblIter &theLin,
 			    const Standard_Real          theTol,
-			    const Geom2dAdaptor_Curve   &theC1)
+			    const Handle(Geom2dAdaptor_Curve)   &theC1)
 {
   Standard_Integer i;
   Standard_Real    aPar1sol;

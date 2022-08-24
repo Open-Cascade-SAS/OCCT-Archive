@@ -183,12 +183,12 @@ Standard_Boolean IGESControl_Writer::AddGeom (const Handle(Standard_Transient)& 
 
   if (!Curve.IsNull()) {
     ent = GC.TransferCurve(Curve,Curve->FirstParameter(),Curve->LastParameter());
-    BndLib_Add3dCurve::Add (GeomAdaptor_Curve (Curve), 0, box); }
+    BndLib_Add3dCurve::Add (new GeomAdaptor_Curve (Curve), 0, box); }
   else if (!Surf.IsNull()) {
     Standard_Real U1,U2,V1,V2;
     Surf->Bounds(U1,U2,V1,V2);
     ent = GS.TransferSurface(Surf,U1,U2,V1,V2);
-    BndLib_AddSurface::Add (GeomAdaptor_Surface (Surf), 0, box);
+    BndLib_AddSurface::Add (new GeomAdaptor_Surface (Surf), 0, box);
   }
 
   Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;

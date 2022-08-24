@@ -681,7 +681,7 @@ gp_Pnt ComputePoint(const TopoDS_Vertex& V,const TopoDS_Edge& E,
       p = BRep_Tool::Pnt(v2);
     }     
 
-    GeomAdaptor_Curve cc = c.Curve();
+    Handle(GeomAdaptor_Curve) cc = c.Curve();
     if (p.Distance(c.Value(first)) <= Precision::Confusion()) {
       GCPnts_AbscissaPoint computePoint(cc, D, first);
       Param = computePoint.Parameter();
@@ -690,7 +690,7 @@ gp_Pnt ComputePoint(const TopoDS_Vertex& V,const TopoDS_Edge& E,
       GCPnts_AbscissaPoint computePoint(cc, D, last);
       Param = computePoint.Parameter();
     }
-    thePoint = cc.Value(Param);
+    thePoint = cc->Value(Param);
     return thePoint;
   } // else ...
 } // ComputePoint
@@ -713,8 +713,8 @@ gp_Pnt ComputePoint(const TopoDS_Face& F,
   Handle(Geom2d_Curve) c2d;
   Standard_Real first, last;
   c2d = BRep_Tool::CurveOnSurface(E, F, first, last);
-  Geom2dAdaptor_Curve adaptorL(lin2d);
-  Geom2dAdaptor_Curve adaptorC(c2d);
+  Handle(Geom2dAdaptor_Curve) adaptorL = new Geom2dAdaptor_Curve(lin2d);
+  Handle(Geom2dAdaptor_Curve) adaptorC = new Geom2dAdaptor_Curve(c2d);
   Geom2dInt_GInter Intersection(adaptorL, adaptorC,
 				Precision::PIntersection(),
 				Precision::PIntersection());

@@ -383,9 +383,9 @@ static TopAbs_Orientation GetOrientation(const TopoDS_Face& Fn,
 	}
 	
 	// Projection sur Sb
-	GeomAdaptor_Surface GAS(Sb);
-	Standard_Real TolU = GAS.UResolution(Precision::Confusion());
-	Standard_Real TolV = GAS.VResolution(Precision::Confusion());
+	Handle(GeomAdaptor_Surface) GAS = new GeomAdaptor_Surface(Sb);
+	Standard_Real TolU = GAS->UResolution(Precision::Confusion());
+	Standard_Real TolV = GAS->VResolution(Precision::Confusion());
 	Extrema_ExtPS dist(pvt,GAS,TolU,TolV);
 	if (dist.IsDone()) {
 	  Standard_Real dist2min = RealLast();

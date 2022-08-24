@@ -44,12 +44,12 @@ Geom2dGcc_Lin2d2Tan::
   pararg1(1,4)   ,
   pararg2(1,4)   
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Geom2dAdaptor_Curve C2 = Qualified2.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  Handle(Geom2d_Curve) CC2 = C2.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
-  GeomAbs_CurveType Type2 = C2.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) C2 = Qualified2.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  Handle(Geom2d_Curve) CC2 = C2->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
+  GeomAbs_CurveType Type2 = C2->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
@@ -126,9 +126,9 @@ Geom2dGcc_Lin2d2Tan::
   pararg1(1,2)   ,
   pararg2(1,2)   
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
@@ -165,7 +165,7 @@ Geom2dGcc_Lin2d2Tan::
       Geom2dGcc_Lin2d2TanIter Lin(Qc1,ThePoint,Param1,Tolang);
 
       if (Lin.IsDone()) {
-	if (Add(NbrSol + 1, Lin, Tolang, C1, Geom2dAdaptor_Curve()))
+	if (Add(NbrSol + 1, Lin, Tolang, C1, new Geom2dAdaptor_Curve()))
 	  NbrSol++;
       }
 
@@ -194,12 +194,12 @@ Geom2dGcc_Lin2d2Tan::
   pararg1(1,4)   ,
   pararg2(1,4)   
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Geom2dAdaptor_Curve C2 = Qualified2.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  Handle(Geom2d_Curve) CC2 = C2.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
-  GeomAbs_CurveType Type2 = C2.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) C2 = Qualified2.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  Handle(Geom2d_Curve) CC2 = C2->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
+  GeomAbs_CurveType Type2 = C2->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
@@ -259,9 +259,9 @@ Geom2dGcc_Lin2d2Tan::
   pararg1(1,2)   ,
   pararg2(1,2)   
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
@@ -361,8 +361,8 @@ void Geom2dGcc_Lin2d2Tan::
 Standard_Boolean Geom2dGcc_Lin2d2Tan::Add(const Standard_Integer     theIndex,
 					  const Geom2dGcc_Lin2d2TanIter &theLin,
 					  const Standard_Real        theTol,
-					  const Geom2dAdaptor_Curve &theC1,
-					  const Geom2dAdaptor_Curve &theC2)
+					  const Handle(Geom2dAdaptor_Curve) &theC1,
+					  const Handle(Geom2dAdaptor_Curve) &theC2)
 {
   Standard_Integer i;
   Standard_Real    aPar1sol;
@@ -391,7 +391,7 @@ Standard_Boolean Geom2dGcc_Lin2d2Tan::Add(const Standard_Integer     theIndex,
   if (Abs(aLinDir.Crossed(gp_Dir2d(aVTan))) > theTol)
     return Standard_False;
 
-  if (!theC2.Curve().IsNull()) {
+  if (!theC2->Curve().IsNull()) {
     Geom2dGcc_CurveTool::D1(theC2, aPar2arg, aPoint, aVTan);
 
     if (Abs(aLinDir.Crossed(gp_Dir2d(aVTan))) > theTol)

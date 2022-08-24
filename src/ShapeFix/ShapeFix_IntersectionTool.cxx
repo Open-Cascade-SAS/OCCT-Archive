@@ -69,7 +69,7 @@ ShapeFix_IntersectionTool::ShapeFix_IntersectionTool(const Handle(ShapeBuild_ReS
 //=======================================================================
 static gp_Pnt GetPointOnEdge(const TopoDS_Edge &edge, 
                              const Handle(ShapeAnalysis_Surface) &surf,
-                             const Geom2dAdaptor_Curve &Crv2d, 
+                             const Handle(Geom2dAdaptor_Curve) &Crv2d, 
                              const Standard_Real param )
 {
   if( BRep_Tool::SameParameter(edge) ) {
@@ -79,7 +79,7 @@ static gp_Pnt GetPointOnEdge(const TopoDS_Edge &edge,
     if( !ConS.IsNull() )
       return ConS->Value(param).Transformed(L.Transformation());
   }
-  gp_Pnt2d aP2d = Crv2d.Value(param);
+  gp_Pnt2d aP2d = Crv2d->Value(param);
   return surf->Adaptor3d()->Value(aP2d.X(), aP2d.Y());
 }
 
@@ -280,31 +280,31 @@ Standard_Boolean ShapeFix_IntersectionTool::SplitEdge1(const Handle(ShapeExtend_
   ShapeAnalysis_Edge sae;
   if(sae.PCurve(newE1,S,L,c2d,cf,cl,Standard_False)) {
     Bnd_Box2d box;
-    Geom2dAdaptor_Curve gac;
+    Handle(Geom2dAdaptor_Curve) gac;
     Standard_Real aFirst = c2d->FirstParameter();
     Standard_Real aLast = c2d->LastParameter();
     if(c2d->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) 
        && (cf < aFirst || cl > aLast)) {
       //pdn avoiding problems with segment in Bnd_Box
-      gac.Load(c2d);
+      gac = new Geom2dAdaptor_Curve(c2d);
     }
     else
-      gac.Load(c2d,cf,cl);
+      gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
     BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
     boxes.Bind(newE1,box);
   }
   if(sae.PCurve(newE2,S,L,c2d,cf,cl,Standard_False)) {
     Bnd_Box2d box;
-    Geom2dAdaptor_Curve gac;
+    Handle(Geom2dAdaptor_Curve) gac;
     Standard_Real aFirst = c2d->FirstParameter();
     Standard_Real aLast = c2d->LastParameter();
     if(c2d->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) 
        && (cf < aFirst || cl > aLast)) {
       //pdn avoiding problems with segment in Bnd_Box
-      gac.Load(c2d);
+      gac = new Geom2dAdaptor_Curve(c2d);
     }
     else
-      gac.Load(c2d,cf,cl);
+      gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
     BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
     boxes.Bind(newE2,box);
   }
@@ -388,31 +388,31 @@ Standard_Boolean ShapeFix_IntersectionTool::SplitEdge2(const Handle(ShapeExtend_
   Standard_Real cf,cl;
   if(sae.PCurve(newE1,S,L,c2d,cf,cl,Standard_False)) {
     Bnd_Box2d box;
-    Geom2dAdaptor_Curve gac;
+    Handle(Geom2dAdaptor_Curve) gac;
     Standard_Real aFirst = c2d->FirstParameter();
     Standard_Real aLast = c2d->LastParameter();
     if(c2d->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) 
        && (cf < aFirst || cl > aLast)) {
       //pdn avoiding problems with segment in Bnd_Box
-      gac.Load(c2d);
+      gac = new Geom2dAdaptor_Curve(c2d);
     }
     else
-      gac.Load(c2d,cf,cl);
+      gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
     BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
     boxes.Bind(newE1,box);
   }
   if(sae.PCurve(newE2,S,L,c2d,cf,cl,Standard_False)) {
     Bnd_Box2d box;
-    Geom2dAdaptor_Curve gac;
+    Handle(Geom2dAdaptor_Curve) gac;
     Standard_Real aFirst = c2d->FirstParameter();
     Standard_Real aLast = c2d->LastParameter();
     if(c2d->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) 
        && (cf < aFirst || cl > aLast)) {
       //pdn avoiding problems with segment in Bnd_Box
-      gac.Load(c2d);
+      gac = new Geom2dAdaptor_Curve(c2d);
     }
     else
-      gac.Load(c2d,cf,cl);
+      gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
     BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
     boxes.Bind(newE2,box);
   }
@@ -728,16 +728,16 @@ static Bnd_Box2d CreateBoxes2d(const Handle(ShapeExtend_WireData)& sewd,
     TopoDS_Edge E = sewd->Edge(i);
     if(sae.PCurve(E,S,L,c2d,cf,cl,Standard_False)) {
       Bnd_Box2d box;
-      Geom2dAdaptor_Curve gac;
+      Handle(Geom2dAdaptor_Curve) gac;
       Standard_Real aFirst = c2d->FirstParameter();
       Standard_Real aLast = c2d->LastParameter();
       if(c2d->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) 
          && (cf < aFirst || cl > aLast)) {
         //pdn avoiding problems with segment in Bnd_Box
-        gac.Load(c2d);
+        gac = new Geom2dAdaptor_Curve(c2d);
       }
       else
-        gac.Load(c2d,cf,cl);
+        gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
       BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
       boxes.Bind(E,box);
       aTotalBox.Add (box);
@@ -796,7 +796,8 @@ Standard_Boolean ShapeFix_IntersectionTool::FindVertAndSplitEdge
   // find needed vertex from edge2 and split edge1 using it
   ShapeAnalysis_Edge sae;
   Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface(BRep_Tool::Surface(face));
-  gp_Pnt pi1 = GetPointOnEdge(edge1,sas,Crv1,param1);
+  Handle(Geom2dAdaptor_Curve) gac = new Geom2dAdaptor_Curve(Crv1);
+  gp_Pnt pi1 = GetPointOnEdge(edge1,sas,gac,param1);
   BRep_Builder B;
   TopoDS_Vertex V;
   Standard_Real tolV;
@@ -889,9 +890,10 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
         if( !sae.PCurve(edge1, face, Crv1, a1, b1, Standard_False) ) return Standard_False;
         if( !sae.PCurve(edge2, face, Crv2, a2, b2, Standard_False) ) return Standard_False;
         Standard_Real tolint = 1.0e-10; 
-        Geom2dAdaptor_Curve C1(Crv1), C2(Crv2);
-        IntRes2d_Domain d1(C1.Value(a1),a1,tolint,C1.Value(b1),b1,tolint);
-        IntRes2d_Domain d2(C2.Value(a2),a2,tolint,C2.Value(b2),b2,tolint);
+        Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve(Crv1);
+        Handle(Geom2dAdaptor_Curve) C2 = new Geom2dAdaptor_Curve(Crv2);
+        IntRes2d_Domain d1(C1->Value(a1),a1,tolint,C1->Value(b1),b1,tolint);
+        IntRes2d_Domain d2(C2->Value(a2),a2,tolint,C2->Value(b2),b2,tolint);
         Geom2dInt_GInter Inter;
         Inter.Perform( C1, d1, C2, d2, tolint, tolint );
         if(!Inter.IsDone()) continue;
@@ -1537,9 +1539,10 @@ Standard_Boolean ShapeFix_IntersectionTool::FixIntersectingWires
             if( !sae.PCurve(edge2, face, Crv2, a2, b2, Standard_False) ) 
               continue; //return Standard_False;gka 06.09.04
             Standard_Real tolint = 1.0e-10; 
-            Geom2dAdaptor_Curve C1(Crv1), C2(Crv2);
-            IntRes2d_Domain d1(C1.Value(a1),a1,tolint,C1.Value(b1),b1,tolint);
-            IntRes2d_Domain d2(C2.Value(a2),a2,tolint,C2.Value(b2),b2,tolint);
+            Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve(Crv1);
+            Handle(Geom2dAdaptor_Curve) C2 = new Geom2dAdaptor_Curve(Crv2);
+            IntRes2d_Domain d1(C1->Value(a1),a1,tolint,C1->Value(b1),b1,tolint);
+            IntRes2d_Domain d2(C2->Value(a2),a2,tolint,C2->Value(b2),b2,tolint);
             Geom2dInt_GInter Inter;
             Inter.Perform( C1, d1, C2, d2, tolint, tolint );
             if(!Inter.IsDone()) continue;

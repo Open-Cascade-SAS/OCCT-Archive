@@ -19,6 +19,7 @@
 
 #include <Standard.hxx>
 #include <Standard_DefineAlloc.hxx>
+#include <Standard_Handle.hxx>
 
 class Adaptor2d_Curve2d;
 class Geom2dInt_Geom2dCurveTool;
@@ -47,7 +48,7 @@ public:
   //! In that case, no bounds are given. The research of
   //! the right parameter has to be made on the natural
   //! parametric domain of the curve.
-  Standard_EXPORT static Standard_Real FindParameter (const Adaptor2d_Curve2d& C, const gp_Pnt2d& Pnt, const Standard_Real Tol);
+  Standard_EXPORT static Standard_Real FindParameter (const Handle(Adaptor2d_Curve2d)& C, const gp_Pnt2d& Pnt, const Standard_Real Tol);
   
   //! Returns the parameter V of the point on the
   //! parametric curve corresponding to the Point Pnt.
@@ -63,7 +64,7 @@ public:
   //! implement a more efficient algorithm. So, it is not
   //! necessary to check that the returned value verifies
   //! LowParameter <= Value <= HighParameter.
-  Standard_EXPORT static Standard_Real FindParameter (const Adaptor2d_Curve2d& C, const gp_Pnt2d& Pnt, const Standard_Real LowParameter, const Standard_Real HighParameter, const Standard_Real Tol);
+  Standard_EXPORT static Standard_Real FindParameter (const Handle(Adaptor2d_Curve2d)& C, const gp_Pnt2d& Pnt, const Standard_Real LowParameter, const Standard_Real HighParameter, const Standard_Real Tol);
 
 
 

@@ -56,7 +56,7 @@ static
   Standard_Real Angle2D (const TopoDS_Vertex& aV,
                          const TopoDS_Edge& anEdge,
                          const TopoDS_Face& myFace,
-                         const GeomAdaptor_Surface& aGAS,
+                         const Handle(GeomAdaptor_Surface)& aGAS,
                          const Standard_Boolean aFlag,
                          const Handle(IntTools_Context)& theContext);
 
@@ -86,7 +86,7 @@ static
                                const Standard_Real aAngleOut);
 
 static 
-  void Path (const GeomAdaptor_Surface& aGAS,
+  void Path (const Handle(GeomAdaptor_Surface)& aGAS,
              const TopoDS_Face& myFace,
              const MyDataMapOfShapeBoolean& aVertMap,
              const TopoDS_Vertex& aVa,
@@ -103,16 +103,16 @@ static
 
 static
   Standard_Real Tolerance2D (const TopoDS_Vertex& aV,
-                             const GeomAdaptor_Surface& aGAS);
+                             const Handle(GeomAdaptor_Surface)& aGAS);
 
 
 
 static
   Standard_Real UTolerance2D (const TopoDS_Vertex& aV,
-                              const GeomAdaptor_Surface& aGAS);
+                              const Handle(GeomAdaptor_Surface)& aGAS);
 static
   Standard_Real VTolerance2D (const TopoDS_Vertex& aV,
-                              const GeomAdaptor_Surface& aGAS);
+                              const Handle(GeomAdaptor_Surface)& aGAS);
 
 static
   void RefineAngles(const TopoDS_Face& myFace,
@@ -293,8 +293,8 @@ void BOPAlgo_WireSplitter::SplitBlock(const TopoDS_Face& myFace,
   }
   //
   // 3. Angles in mySmartMap
-  const BRepAdaptor_Surface& aBAS = theContext->SurfaceAdaptor(myFace);
-  const GeomAdaptor_Surface& aGAS=aBAS.Surface();
+  const Handle(BRepAdaptor_Surface)& aBAS = theContext->SurfaceAdaptor(myFace);
+  const Handle(GeomAdaptor_Surface)& aGAS = aBAS->Surface();
   //
   for (i=1; i<=aNb; i++) {
     const TopoDS_Vertex& aV = (*(TopoDS_Vertex *)(&mySmartMap.FindKey(i))); 
@@ -351,7 +351,7 @@ void BOPAlgo_WireSplitter::SplitBlock(const TopoDS_Face& myFace,
 // function: Path
 // purpose: 
 //=======================================================================
-void Path (const GeomAdaptor_Surface& aGAS,
+void Path (const Handle(GeomAdaptor_Surface)& aGAS,
            const TopoDS_Face& myFace,
            const MyDataMapOfShapeBoolean& aVertMap,
            const TopoDS_Vertex& aVFirst,
@@ -740,7 +740,7 @@ Standard_Integer NbWaysOut(const BOPAlgo_ListOfEdgeInfo& aLEInfo)
   Standard_Real Angle2D (const TopoDS_Vertex& aV,
                          const TopoDS_Edge& anEdge,
                          const TopoDS_Face& myFace,
-                         const GeomAdaptor_Surface& aGAS,
+                         const Handle(GeomAdaptor_Surface)& aGAS,
                          const Standard_Boolean bIsIN,
                          const Handle(IntTools_Context)& theContext)
 {
@@ -825,16 +825,16 @@ Standard_Real Angle (const gp_Dir2d& aDir2D)
 // purpose:
 //=======================================================================
  Standard_Real Tolerance2D (const TopoDS_Vertex& aV,
-                            const GeomAdaptor_Surface& aGAS)	     
+                            const Handle(GeomAdaptor_Surface)& aGAS)
 {
   Standard_Real aTol2D, anUr, aVr, aTolV3D;
   GeomAbs_SurfaceType aType;
   //
-  aType=aGAS.GetType();
+  aType=aGAS->GetType();
   aTolV3D=BRep_Tool::Tolerance(aV);
 
-  anUr=aGAS.UResolution(aTolV3D);
-  aVr =aGAS.VResolution(aTolV3D);
+  anUr=aGAS->UResolution(aTolV3D);
+  aVr =aGAS->VResolution(aTolV3D);
   aTol2D=(aVr>anUr) ? aVr : anUr;
   //
   if (aTol2D < aTolV3D) {
@@ -852,10 +852,10 @@ Standard_Real Angle (const gp_Dir2d& aDir2D)
 //purpose  : 
 //=======================================================================
 Standard_Real UTolerance2D (const TopoDS_Vertex& aV,
-                            const GeomAdaptor_Surface& aGAS)
+                            const Handle(GeomAdaptor_Surface)& aGAS)
 {
   const Standard_Real aTolV3D = BRep_Tool::Tolerance(aV);
-  const Standard_Real anUr = aGAS.UResolution(aTolV3D);
+  const Standard_Real anUr = aGAS->UResolution(aTolV3D);
   //
   return anUr;
 }
@@ -865,10 +865,10 @@ Standard_Real UTolerance2D (const TopoDS_Vertex& aV,
 //purpose  : 
 //=======================================================================
 Standard_Real VTolerance2D (const TopoDS_Vertex& aV,
-                            const GeomAdaptor_Surface& aGAS)
+                            const Handle(GeomAdaptor_Surface)& aGAS)
 {
   const Standard_Real aTolV3D = BRep_Tool::Tolerance(aV);
-  const Standard_Real anVr = aGAS.VResolution(aTolV3D);
+  const Standard_Real anVr = aGAS->VResolution(aTolV3D);
   //
   return anVr;
 }
@@ -1011,7 +1011,8 @@ Standard_Boolean RefineAngle2D(const TopoDS_Vertex& aV,
   gp_Pnt2d aPV, aP, aP1, aP2;
   Handle(Geom2d_Curve) aC2D;
   Handle(Geom2d_Line) aLi;
-  Geom2dAdaptor_Curve aGAC1, aGAC2;
+  Handle(Geom2dAdaptor_Curve) aGAC1 = new Geom2dAdaptor_Curve();
+  Handle(Geom2dAdaptor_Curve) aGAC2 = new Geom2dAdaptor_Curve();
   Geom2dInt_GInter aGInter;
   IntRes2d_Domain aDomain1, aDomain2;
   //
@@ -1020,16 +1021,16 @@ Standard_Boolean RefineAngle2D(const TopoDS_Vertex& aV,
   aTolInt=1.e-10;  
   //
   BOPTools_AlgoTools2D::CurveOnSurface(aE, myFace, aC2D, aT1, aT2, aTol, theContext);
-  aGAC1.Load(aC2D, aT1, aT2);
+  aGAC1->Load(aC2D, aT1, aT2);
   //
   aTV=BRep_Tool::Parameter (aV, aE, myFace);
-  aGAC1.D0(aTV, aPV);
+  aGAC1->D0(aTV, aPV);
   //
   aTOp = (fabs(aTV-aT1) < fabs(aTV-aT2)) ? aT2 : aT1;
   //
   const Standard_Real MaxDT = 0.3 * (aT2 - aT1);
-  aGAC1.D0(aT1, aP1);
-  aGAC1.D0(aT2, aP2);
+  aGAC1->D0(aT1, aP1);
+  aGAC1->D0(aT2, aP2);
   aDomain1.SetValues(aP1, aT1, aTolInt, aP2, aT2, aTolInt);
   //
   for (i=0; i<2; ++i) {
@@ -1039,7 +1040,7 @@ Standard_Boolean RefineAngle2D(const TopoDS_Vertex& aV,
     gp_Dir2d aDiri(aXi, aYi);
     aLi=new Geom2d_Line(aPV, aDiri);
     //
-    aGAC2.Load(aLi);
+    aGAC2->Load(aLi);
     //
     aGInter.Perform(aGAC1, aDomain1, aGAC2, aDomain2, aTolInt, aTolInt);
     if (!aGInter.IsDone()) {
@@ -1067,7 +1068,7 @@ Standard_Boolean RefineAngle2D(const TopoDS_Vertex& aV,
       }
       //
       aT = aT1max + aCf*dT;
-      aGAC1.D0(aT, aP);
+      aGAC1->D0(aT, aP);
       gp_Vec2d aV2D(aPV, aP);
       gp_Dir2d aDir2D(aV2D);
       //

@@ -400,7 +400,7 @@ void ShapeAnalysis_Wire::SetSurface (const Handle(Geom_Surface)& surface,
     TopoDS_Edge E = sbwd->Edge (i);
     if(sae.PCurve (E,S,L,c2d,cf,cl,Standard_False)) {
       Bnd_Box2d box;
-      Geom2dAdaptor_Curve gac(c2d,cf,cl);
+      Handle(Geom2dAdaptor_Curve) gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
       BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
       boxes(i) = box;
     }
@@ -1108,7 +1108,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
 // from 3d curve (but only if edge is SameParameter)
 static gp_Pnt GetPointOnEdge ( const TopoDS_Edge &edge, 
 			       const Handle(ShapeAnalysis_Surface) &surf,
-			       const Geom2dAdaptor_Curve &Crv2d, 
+			       const Handle(Geom2dAdaptor_Curve) &Crv2d, 
 			       const Standard_Real param )
 {
   if ( BRep_Tool::SameParameter ( edge ) ) {
@@ -1118,7 +1118,7 @@ static gp_Pnt GetPointOnEdge ( const TopoDS_Edge &edge,
     if ( ! ConS.IsNull() )
       return ConS->Value ( param ).Transformed ( L.Transformation() );
   }
-  gp_Pnt2d aP2d = Crv2d.Value(param);
+  gp_Pnt2d aP2d = Crv2d->Value(param);
   return surf->Adaptor3d()->Value(aP2d.X(), aP2d.Y());
 }
 
@@ -1150,7 +1150,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSelfIntersectingEdge (const Standard_I
   Standard_Real tolint = 1.0e-10; 
   //szv#4:S4163:12Mar99 warning
   IntRes2d_Domain domain ( Crv->Value ( a ), a, tolint, Crv->Value ( b ), b, tolint );
-  Geom2dAdaptor_Curve AC ( Crv );
+  Handle(Geom2dAdaptor_Curve) AC = new Geom2dAdaptor_Curve( Crv );
   Geom2dInt_GInter Inter ( AC, domain, tolint, tolint );
 
   if ( ! Inter.IsDone() ) return Standard_False;
@@ -1263,11 +1263,12 @@ Standard_Boolean ShapeAnalysis_Wire::CheckIntersectingEdges (const Standard_Inte
   Standard_Real tolint = 1.0e-10; 
 
   //szv#4:S4163:12Mar99 warning
-  Geom2dAdaptor_Curve C1 ( Crv1 ), C2 ( Crv2 );
-  IntRes2d_Domain d1 ( C1.Value ( a1 ), a1, tolint, 
-		       C1.Value ( b1 ), b1, tolint );
-  IntRes2d_Domain d2 ( C2.Value ( a2 ), a2, tolint, 
-		       C2.Value ( b2 ), b2, tolint );
+  Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve(Crv1);
+  Handle(Geom2dAdaptor_Curve) C2 = new Geom2dAdaptor_Curve(Crv2);
+  IntRes2d_Domain d1 ( C1->Value ( a1 ), a1, tolint, 
+		       C1->Value ( b1 ), b1, tolint );
+  IntRes2d_Domain d2 ( C2->Value ( a2 ), a2, tolint, 
+		       C2->Value ( b2 ), b2, tolint );
 
   //:64 abv 25 Dec 97: Attention!
   // Since Intersection algorithm is not symmetrical, for consistency with BRepCheck 
@@ -1425,7 +1426,8 @@ Standard_Boolean ShapeAnalysis_Wire::CheckIntersectingEdges(const Standard_Integ
 		       Crv1->Value ( b1 ), b1, tolint );
   IntRes2d_Domain d2 ( Crv2->Value ( a2 ), a2, tolint, 
 		       Crv2->Value ( b2 ), b2, tolint );
-  Geom2dAdaptor_Curve C1 ( Crv1 ), C2 ( Crv2 );
+  Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve(Crv1);
+  Handle(Geom2dAdaptor_Curve) C2 = new Geom2dAdaptor_Curve(Crv2);
   
   Geom2dInt_GInter Inter;
   Inter.Perform ( C1, d1, C2, d2, tolint, tolint );
@@ -1608,7 +1610,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckLacking (const Standard_Integer num,
 //purpose  : 
 //=======================================================================
 
-static Standard_Real ProjectInside(const Adaptor3d_CurveOnSurface& AD,
+static Standard_Real ProjectInside(const Handle(Adaptor3d_CurveOnSurface)& AD,
                                    const gp_Pnt&                   pnt,
                                    const Standard_Real             preci,
                                    gp_Pnt&                         proj,
@@ -1617,17 +1619,17 @@ static Standard_Real ProjectInside(const Adaptor3d_CurveOnSurface& AD,
 {
   ShapeAnalysis_Curve sac;
   Standard_Real dist = sac.Project(AD,pnt,preci,proj,param,adjustToEnds);
-  Standard_Real uFirst = AD.FirstParameter();
-  Standard_Real uLast = AD.LastParameter();
+  Standard_Real uFirst = AD->FirstParameter();
+  Standard_Real uLast = AD->LastParameter();
   if(param<uFirst) {
     param = uFirst;
-    proj = AD.Value(uFirst);
+    proj = AD->Value(uFirst);
     return proj.Distance(pnt);
   }
   
   if(param>uLast) {
     param = uLast;
-    proj = AD.Value(uLast);
+    proj = AD->Value(uLast);
     return proj.Distance(pnt);
   }
   return dist;
@@ -1697,13 +1699,13 @@ Standard_Boolean ShapeAnalysis_Wire::CheckNotchedEdges(const Standard_Integer nu
   
   Handle(Geom2dAdaptor_Curve) AC2d1  = new Geom2dAdaptor_Curve(c2d1,a1,b1);
   Handle(GeomAdaptor_Surface) AdS1 = new GeomAdaptor_Surface(new Geom_Plane(gp_Pln()));
-  Adaptor3d_CurveOnSurface Ad1(AC2d1,AdS1);
+  Handle(Adaptor3d_CurveOnSurface) Ad1 = new Adaptor3d_CurveOnSurface(AC2d1,AdS1);
   
   Handle(Geom2dAdaptor_Curve) AC2d2  = new Geom2dAdaptor_Curve(c2d2,a2,b2);
   Handle(GeomAdaptor_Surface) AdS2 = new GeomAdaptor_Surface(new Geom_Plane(gp_Pln()));
-  Adaptor3d_CurveOnSurface Ad2(AC2d2,AdS2);
+  Handle(Adaptor3d_CurveOnSurface) Ad2 = new Adaptor3d_CurveOnSurface(AC2d2,AdS2);
   
-  Adaptor3d_CurveOnSurface longAD, shortAD;
+  Handle(Adaptor3d_CurveOnSurface) longAD, shortAD;
   Standard_Real lenP, firstP;
   
   ShapeAnalysis_Curve sac;
@@ -1738,7 +1740,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckNotchedEdges(const Standard_Integer nu
   
   Standard_Real step = lenP/23;
   for (Standard_Integer i = 1; i < 23; i++,firstP+=step) {
-    Standard_Real d1 = sac.Project(longAD,shortAD.Value(firstP),Tolerance,Proj1,param1);
+    Standard_Real d1 = sac.Project(longAD,shortAD->Value(firstP),Tolerance,Proj1,param1);
     if (d1 > Tolerance) {
       return Standard_False;
     }
@@ -2091,7 +2093,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckTail(
     Standard_Integer aReverse = 0;
     for (Standard_Integer aEI = 0; aEI < 2; ++aEI)
     {
-      GeomAdaptor_Curve aCA(aCs[aEI]);
+      Handle(GeomAdaptor_Curve) aCA = new GeomAdaptor_Curve(aCs[aEI]);
       if (GCPnts_AbscissaPoint::Length(aCA, aLs[aEI][0], aLs[aEI][1],
         0.25 * Precision::Confusion()) < 0.5 * Precision::Confusion())
       {

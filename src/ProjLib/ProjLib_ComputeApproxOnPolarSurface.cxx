@@ -104,7 +104,7 @@ static void computePeriodicity(const Handle(Adaptor3d_Surface)& theSurf,
   // Param space may be reduced in case of rectangular trimmed surface,
   // in this case really trimmed bounds should be set as unperiodic.
   Standard_Real aTrimF, aTrimL, aBaseF, aBaseL, aDummyF, aDummyL;
-  Handle(Geom_Surface) aS = GeomAdaptor::MakeSurface (*theSurf, Standard_False); // Not trim.
+  Handle(Geom_Surface) aS = GeomAdaptor::MakeSurface (theSurf, Standard_False); // Not trim.
   // U param space.
   if (theSurf->IsUPeriodic())
   {
@@ -341,21 +341,21 @@ static gp_Pnt2d Function_Value(const Standard_Real theU,
   if((Usup - U0) > uLittle) uSupLi = U0 + uLittle; else uSupLi = Usup;
   if((Vsup - V0) > vLittle) vSupLi = V0 + vLittle; else vSupLi = Vsup;
 
-  GeomAdaptor_Surface SurfLittle;
+  Handle(GeomAdaptor_Surface) SurfLittle = new GeomAdaptor_Surface;
   if (Type == GeomAbs_BSplineSurface)
   {
     Handle(Geom_Surface) GBSS(theData.mySurf->BSpline());
-    SurfLittle.Load(GBSS, uInfLi, uSupLi, vInfLi, vSupLi);
+    SurfLittle->Load(GBSS, uInfLi, uSupLi, vInfLi, vSupLi);
   }
   else if (Type == GeomAbs_BezierSurface)
   {
     Handle(Geom_Surface) GS(theData.mySurf->Bezier());
-    SurfLittle.Load(GS, uInfLi, uSupLi, vInfLi, vSupLi);
+    SurfLittle->Load(GS, uInfLi, uSupLi, vInfLi, vSupLi);
   }
   else if (Type == GeomAbs_OffsetSurface)
   {
-    Handle(Geom_Surface) GS = GeomAdaptor::MakeSurface (*theData.mySurf);
-    SurfLittle.Load(GS, uInfLi, uSupLi, vInfLi, vSupLi);
+    Handle(Geom_Surface) GS = GeomAdaptor::MakeSurface (theData.mySurf);
+    SurfLittle->Load(GS, uInfLi, uSupLi, vInfLi, vSupLi);
   }
   else
   {
@@ -924,7 +924,7 @@ Handle(Adaptor2d_Curve2d)
   //Standard_Real Tol3d = 100*myTolerance; // At random Balthazar.
 
   Standard_Integer NbOfPnts = 61; 
-  GCPnts_QuasiUniformAbscissa QUA (*Curve,NbOfPnts);
+  GCPnts_QuasiUniformAbscissa QUA (Curve, NbOfPnts);
   NbOfPnts = QUA.NbPoints();
   TColgp_Array1OfPnt Pts(1,NbOfPnts);
   TColStd_Array1OfReal Param(1,NbOfPnts);
@@ -1085,7 +1085,7 @@ Handle(Adaptor2d_Curve2d)
     Standard_Boolean areManyZeros = Standard_False;
     
     pntproj = Pts(1);
-    Extrema_ExtPS  aExtPS(pntproj, *Surf, TolU, TolV) ;
+    Extrema_ExtPS  aExtPS(pntproj, Surf, TolU, TolV) ;
     Standard_Real aMinSqDist = RealLast();
     if (aExtPS.IsDone())
     {
@@ -1100,7 +1100,7 @@ Handle(Adaptor2d_Curve2d)
     {
       TolU = Min(TolU, Precision::PConfusion());
       TolV = Min(TolV, Precision::PConfusion());
-      aExtPS.Initialize(*Surf,
+      aExtPS.Initialize(Surf,
                         Surf->FirstUParameter(), Surf->LastUParameter(), 
                         Surf->FirstVParameter(), Surf->LastVParameter(),
                         TolU, TolV);
@@ -1160,7 +1160,7 @@ Handle(Adaptor2d_Curve2d)
 	      Standard_Integer indExt = 0;
 	      Standard_Integer iT = 1 + (NbOfPnts - 1)/5*i;
               pntproj = Pts(iT);
-	      Extrema_ExtPS aTPS( pntproj, *Surf, TolU, TolV );
+	      Extrema_ExtPS aTPS( pntproj, Surf, TolU, TolV );
 	      Dist2Min = 1.e+200;
 	      if( aTPS.IsDone() && aTPS.NbExt() >= 1 ) {
 		for( j = 1 ; j <= aTPS.NbExt() ; j++ ) {
@@ -1187,7 +1187,7 @@ Handle(Adaptor2d_Curve2d)
               for (j = tPp + 1; j <= NbOfPnts; ++j)
               {
                 pntproj = Pts(j);
-		Extrema_ExtPS aTPS( pntproj, *Surf, TolU, TolV );
+		Extrema_ExtPS aTPS( pntproj, Surf, TolU, TolV );
 		Dist2Min = RealLast();
 		if( aTPS.IsDone() && aTPS.NbExt() >= 1 ) {
 		  Standard_Integer indExt = 0;
@@ -1261,7 +1261,7 @@ Handle(Adaptor2d_Curve2d)
 	  myProjIsDone = Standard_False;
 	  Dist2Min = RealLast();
           pntproj = Pts(i);
-          Extrema_GenLocateExtPS  aLocateExtPS (*Surf, TolU, TolV);
+          Extrema_GenLocateExtPS  aLocateExtPS (Surf, TolU, TolV);
           aLocateExtPS.Perform(pntproj, U0, V0);
 
 	  if (aLocateExtPS.IsDone())
@@ -1281,7 +1281,7 @@ Handle(Adaptor2d_Curve2d)
 	    }
             else
             {
-              Extrema_ExtPS aGlobalExtr(pntproj, *Surf, TolU, TolV);
+              Extrema_ExtPS aGlobalExtr(pntproj, Surf, TolU, TolV);
               if (aGlobalExtr.IsDone())
               {
                 Standard_Real LocalMinSqDist = RealLast();
@@ -1367,7 +1367,7 @@ Handle(Adaptor2d_Curve2d)
 	    else 
 	      Uaux = 2*aUsup - U0 - uperiod;
 
-            Extrema_GenLocateExtPS  locext (*Surf, TolU, TolV);
+            Extrema_GenLocateExtPS  locext (Surf, TolU, TolV);
             locext.Perform(pntproj, Uaux, V0);
 
 	    if (locext.IsDone())
@@ -1398,7 +1398,7 @@ Handle(Adaptor2d_Curve2d)
 	    else 
 	      Vaux = 2*aVsup - V0 - vperiod;
 
-            Extrema_GenLocateExtPS  locext (*Surf, TolU, TolV);
+            Extrema_GenLocateExtPS  locext (Surf, TolU, TolV);
             locext.Perform(pntproj, U0, Vaux);
 
 	    if (locext.IsDone())
@@ -1431,7 +1431,7 @@ Handle(Adaptor2d_Curve2d)
 	    else 
 	      Vaux = 2*Vsup - V0 - vperiod;
 
-            Extrema_GenLocateExtPS  locext (*Surf, TolU, TolV);
+            Extrema_GenLocateExtPS  locext (Surf, TolU, TolV);
             locext.Perform(pntproj, Uaux, Vaux);
 
 	    if (locext.IsDone())
@@ -1458,7 +1458,7 @@ Handle(Adaptor2d_Curve2d)
 	      }
 	  }
 	  if(!myProjIsDone) {
-	    Extrema_ExtPS ext(pntproj, *Surf, TolU, TolV) ;
+	    Extrema_ExtPS ext(pntproj, Surf, TolU, TolV) ;
 	    if (ext.IsDone()) {
 	      Dist2Min = ext.SquareDistance(1);
 	      Standard_Integer aGoodValue = 1;
@@ -1650,7 +1650,7 @@ Handle(Geom2d_BSplineCurve)
 	    myProjIsDone = Standard_False;
 	    Dist2Min = IntegerLast();
 
-            Extrema_GenLocateExtPS  extrloc (*Surf, TolU, TolV);
+            Extrema_GenLocateExtPS  extrloc (Surf, TolU, TolV);
             extrloc.Perform(BSC->Pole(i), (p11.X()+p22.X())/2, (p11.Y()+p22.Y())/2);
 
 	    if (extrloc.IsDone()) {
@@ -1690,7 +1690,7 @@ Handle(Geom2d_BSplineCurve)
 	  for(i = 1;i <= Curve->NbPoles();i++) {
 	    Dist2Min = IntegerLast();
 
-            Extrema_GenLocateExtPS  extrloc (*Surf, TolU, TolV);
+            Extrema_GenLocateExtPS  extrloc (Surf, TolU, TolV);
             extrloc.Perform(BC->Pole(i), 0.5, 0.5);
 
 	    if (extrloc.IsDone()) {
@@ -1750,7 +1750,7 @@ Handle(Geom2d_BSplineCurve)
 	    myProjIsDone = Standard_False;
 	    Dist2Min = IntegerLast();
 
-            Extrema_GenLocateExtPS  extrloc (*Surf, TolU, TolV);
+            Extrema_GenLocateExtPS  extrloc (Surf, TolU, TolV);
             extrloc.Perform(BSC->Pole(i), (p11.X()+p22.X())/2, (p11.Y()+p22.Y())/2);
 
 	    if (extrloc.IsDone()) {
@@ -1790,7 +1790,7 @@ Handle(Geom2d_BSplineCurve)
 	  for(i = 1;i <= Curve->NbPoles();i++) {
 	    Dist2Min = IntegerLast();
 
-            Extrema_GenLocateExtPS  extrloc (*Surf, TolU, TolV);
+            Extrema_GenLocateExtPS  extrloc (Surf, TolU, TolV);
             extrloc.Perform(BC->Pole(i), 0.5, 0.5);
 
 	    if (extrloc.IsDone()) {

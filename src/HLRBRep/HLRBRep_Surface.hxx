@@ -55,7 +55,7 @@ public:
   }
   
   //! Returns the 3D Surface.
-    BRepAdaptor_Surface& Surface();
+  const Handle(BRepAdaptor_Surface)& Surface();
   
   //! Sets the 3D Surface to be projected.
   Standard_EXPORT void Surface (const TopoDS_Face& F);
@@ -181,7 +181,7 @@ private:
   Standard_EXPORT Standard_Boolean SideRowsOfPoles (const Standard_Real tol, const Standard_Integer nbuPoles, const Standard_Integer nbvPoles, TColgp_Array2OfPnt& Pnt) const;
 
 
-  BRepAdaptor_Surface mySurf;
+  Handle(BRepAdaptor_Surface) mySurf;
   GeomAbs_SurfaceType myType;
   const HLRAlgo_Projector* myProj;
 

@@ -22,20 +22,19 @@
 #include <Precision.hxx>
 #include <StdFail_NotDone.hxx>
 
-Extrema_LocateExtCC::Extrema_LocateExtCC (const Adaptor3d_Curve& C1,
-                                          const Adaptor3d_Curve& C2,
+Extrema_LocateExtCC::Extrema_LocateExtCC (const Handle(Adaptor3d_Curve)& C1,
+                                          const Handle(Adaptor3d_Curve)& C2,
                                           const Standard_Real U0,
                                           const Standard_Real V0)
 : mySqDist(RealLast())
 {
-  Standard_Real TolU = C1.Resolution(Precision::Confusion());
-  Standard_Real TolV = C2.Resolution(Precision::Confusion());
+  Standard_Real TolU = C1->Resolution(Precision::Confusion());
+  Standard_Real TolV = C2->Resolution(Precision::Confusion());
   Extrema_POnCurv P1, P2;
 
   // Non implemente pour l instant: l appel a Extrema_ELCC.
 
-  Extrema_LocECC Xtrem(C1, C2,
-    U0, V0, TolU, TolV);	
+  Extrema_LocECC Xtrem(C1, C2, U0, V0, TolU, TolV);	
   // Exploitation
 
   myDone = Xtrem.IsDone();

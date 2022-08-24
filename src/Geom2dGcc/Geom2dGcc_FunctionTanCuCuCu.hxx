@@ -40,23 +40,23 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const Geom2dAdaptor_Curve& C1, const Geom2dAdaptor_Curve& C2, const Geom2dAdaptor_Curve& C3);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const Handle(Geom2dAdaptor_Curve)& C1, const Handle(Geom2dAdaptor_Curve)& C2, const Handle(Geom2dAdaptor_Curve)& C3);
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Circ2d& C1, const Geom2dAdaptor_Curve& C2, const Geom2dAdaptor_Curve& C3);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Circ2d& C1, const Handle(Geom2dAdaptor_Curve)& C2, const Handle(Geom2dAdaptor_Curve)& C3);
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Circ2d& C1, const gp_Circ2d& C2, const Geom2dAdaptor_Curve& C3);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Circ2d& C1, const gp_Circ2d& C2, const Handle(Geom2dAdaptor_Curve)& C3);
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Circ2d& C1, const gp_Lin2d& L2, const Geom2dAdaptor_Curve& C3);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Circ2d& C1, const gp_Lin2d& L2, const Handle(Geom2dAdaptor_Curve)& C3);
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Lin2d& L1, const gp_Lin2d& L2, const Geom2dAdaptor_Curve& C3);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Lin2d& L1, const gp_Lin2d& L2, const Handle(Geom2dAdaptor_Curve)& C3);
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Lin2d& L1, const Geom2dAdaptor_Curve& C2, const Geom2dAdaptor_Curve& C3);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Lin2d& L1, const Handle(Geom2dAdaptor_Curve)& C2, const Handle(Geom2dAdaptor_Curve)& C3);
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Circ2d& C1, const Geom2dAdaptor_Curve& C2, const gp_Pnt2d& P3);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Circ2d& C1, const Handle(Geom2dAdaptor_Curve)& C2, const gp_Pnt2d& P3);
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Lin2d& L1, const Geom2dAdaptor_Curve& C2, const gp_Pnt2d& P3);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const gp_Lin2d& L1, const Handle(Geom2dAdaptor_Curve)& C2, const gp_Pnt2d& P3);
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const Geom2dAdaptor_Curve& C1, const gp_Pnt2d& P2, const gp_Pnt2d& P3);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuCuCu(const Handle(Geom2dAdaptor_Curve)& C1, const gp_Pnt2d& P2, const gp_Pnt2d& P3);
   
   Standard_EXPORT void InitDerivative (const math_Vector& X, gp_Pnt2d& Point1, gp_Pnt2d& Point2, gp_Pnt2d& Point3, gp_Vec2d& Tan1, gp_Vec2d& Tan2, gp_Vec2d& Tan3, gp_Vec2d& D21, gp_Vec2d& D22, gp_Vec2d& D23);
   
@@ -89,9 +89,9 @@ private:
 
 
 
-  Geom2dAdaptor_Curve Curv1;
-  Geom2dAdaptor_Curve Curv2;
-  Geom2dAdaptor_Curve Curv3;
+  Handle(Geom2dAdaptor_Curve) Curv1;
+  Handle(Geom2dAdaptor_Curve) Curv2;
+  Handle(Geom2dAdaptor_Curve) Curv3;
   gp_Circ2d Circ1;
   gp_Circ2d Circ2;
   gp_Lin2d Lin1;

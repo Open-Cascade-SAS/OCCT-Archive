@@ -42,7 +42,7 @@ public:
   //! The function F(u,v)=distance(C1(u),C2(v)) has an
   //! extremun when gradient(f)=0. The algorithm searches
   //! the zero near the close point.
-  Standard_EXPORT Extrema_LocateExtCC2d(const Adaptor2d_Curve2d& C1, const Adaptor2d_Curve2d& C2, const Standard_Real U0, const Standard_Real V0);
+  Standard_EXPORT Extrema_LocateExtCC2d(const Handle(Adaptor2d_Curve2d)& C1, const Handle(Adaptor2d_Curve2d)& C2, const Standard_Real U0, const Standard_Real V0);
   
   //! Returns True if the distance is found.
   Standard_EXPORT Standard_Boolean IsDone() const;

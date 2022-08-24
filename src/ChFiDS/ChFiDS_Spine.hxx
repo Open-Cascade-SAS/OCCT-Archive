@@ -176,7 +176,7 @@ public:
   Standard_EXPORT void SetCurrent (const Standard_Integer Index);
   
   //! sets the current curve and returns it
-  Standard_EXPORT const BRepAdaptor_Curve& CurrentElementarySpine (const Standard_Integer Index);
+  Standard_EXPORT const Handle(BRepAdaptor_Curve)& CurrentElementarySpine (const Standard_Integer Index);
   
     Standard_Integer CurrentIndexOfElementarySpine() const;
   
@@ -262,8 +262,8 @@ private:
   
   Standard_EXPORT void Prepare (Standard_Real& L, Standard_Integer& Index) const;
 
-  BRepAdaptor_Curve myCurve;
-  BRepAdaptor_Curve myOffsetCurve;
+  Handle(BRepAdaptor_Curve) myCurve;
+  Handle(BRepAdaptor_Curve) myOffsetCurve;
   Standard_Integer indexofcurve;
   ChFiDS_TypeOfConcavity myTypeOfConcavity;
   ChFiDS_State firstState;

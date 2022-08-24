@@ -191,9 +191,9 @@ Handle(VrmlData_Geometry) VrmlData_ShapeConvert::makeTShapeNode(const TopoDS_Sha
 
         // If polygon was not found -> generate it
         if (aPol.IsNull()) {
-          BRepAdaptor_Curve aCurve(aEdge);
-          const Standard_Real aFirst = aCurve.FirstParameter();
-          const Standard_Real aLast = aCurve.LastParameter();
+          Handle(BRepAdaptor_Curve) aCurve = new BRepAdaptor_Curve(aEdge);
+          const Standard_Real aFirst = aCurve->FirstParameter();
+          const Standard_Real aLast = aCurve->LastParameter();
 
           GCPnts_TangentialDeflection TD(aCurve, aFirst, aLast,
             myDeflAngle, myDeflection, 2);

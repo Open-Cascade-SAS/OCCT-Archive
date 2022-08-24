@@ -42,18 +42,18 @@ public:
   Standard_EXPORT Extrema_ExtSS();
   
   //! It calculates all the distances between S1 and S2.
-  Standard_EXPORT Extrema_ExtSS(const Adaptor3d_Surface& S1, const Adaptor3d_Surface& S2, const Standard_Real TolS1, const Standard_Real TolS2);
+  Standard_EXPORT Extrema_ExtSS(const Handle(Adaptor3d_Surface)& S1, const Handle(Adaptor3d_Surface)& S2, const Standard_Real TolS1, const Standard_Real TolS2);
   
   //! It calculates all the distances between S1 and S2.
-  Standard_EXPORT Extrema_ExtSS(const Adaptor3d_Surface& S1, const Adaptor3d_Surface& S2, const Standard_Real Uinf1, const Standard_Real Usup1, const Standard_Real Vinf1, const Standard_Real Vsup1, const Standard_Real Uinf2, const Standard_Real Usup2, const Standard_Real Vinf2, const Standard_Real Vsup2, const Standard_Real TolS1, const Standard_Real TolS2);
+  Standard_EXPORT Extrema_ExtSS(const Handle(Adaptor3d_Surface)& S1, const Handle(Adaptor3d_Surface)& S2, const Standard_Real Uinf1, const Standard_Real Usup1, const Standard_Real Vinf1, const Standard_Real Vsup1, const Standard_Real Uinf2, const Standard_Real Usup2, const Standard_Real Vinf2, const Standard_Real Vsup2, const Standard_Real TolS1, const Standard_Real TolS2);
   
   //! Initializes the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor3d_Surface& S2, const Standard_Real Uinf2, const Standard_Real Usup2, const Standard_Real Vinf2, const Standard_Real Vsup2, const Standard_Real TolS1);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Surface)& S2, const Standard_Real Uinf2, const Standard_Real Usup2, const Standard_Real Vinf2, const Standard_Real Vsup2, const Standard_Real TolS1);
   
   //! Computes the distances.
   //! An exception is raised if the fieds have not been
   //! initialized.
-  Standard_EXPORT void Perform (const Adaptor3d_Surface& S1, const Standard_Real Uinf1, const Standard_Real Usup1, const Standard_Real Vinf1, const Standard_Real Vsup1, const Standard_Real TolS1);
+  Standard_EXPORT void Perform (const Handle(Adaptor3d_Surface)& S1, const Standard_Real Uinf1, const Standard_Real Usup1, const Standard_Real Vinf1, const Standard_Real Vsup1, const Standard_Real TolS1);
   
   //! Returns True if the distances are found.
   Standard_EXPORT Standard_Boolean IsDone() const;
@@ -72,7 +72,7 @@ public:
 
 private:
 
-  const Adaptor3d_Surface* myS2;
+  Handle(Adaptor3d_Surface) myS2;
   Standard_Boolean myDone;
   Standard_Boolean myIsPar;
   Extrema_ExtElSS myExtElSS;

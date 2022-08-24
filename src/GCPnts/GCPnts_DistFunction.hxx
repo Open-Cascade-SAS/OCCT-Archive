@@ -26,7 +26,7 @@
 class GCPnts_DistFunction : public math_Function
 {
 public:
-  Standard_EXPORT GCPnts_DistFunction(const Adaptor3d_Curve& theCurve,
+  Standard_EXPORT GCPnts_DistFunction(const Handle(Adaptor3d_Curve)& theCurve,
                                       const Standard_Real U1, const Standard_Real U2);
   //
   Standard_EXPORT GCPnts_DistFunction(const GCPnts_DistFunction& theOther);
@@ -36,7 +36,7 @@ public:
 private:
   GCPnts_DistFunction & operator = (const GCPnts_DistFunction & theOther);
 
-  const Adaptor3d_Curve& myCurve;
+  const Handle(Adaptor3d_Curve)& myCurve;
   gp_Lin myLin;
   Standard_Real myU1;
   Standard_Real myU2;

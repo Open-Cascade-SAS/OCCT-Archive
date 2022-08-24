@@ -127,9 +127,9 @@ void BRepMesh_DefaultRangeSplitter::computeTolerance(
   // Slightly increase exact resolution so to cover links with approximate 
   // length equal to resolution itself on sub-resolution differences.
   const Standard_Real      aTolerance = BRep_Tool::Tolerance (myDFace->GetFace());
-  const Adaptor3d_Surface& aSurface   = GetSurface()->Surface();
-  const Standard_Real      aResU      = aSurface.UResolution (aTolerance) * 1.1;
-  const Standard_Real      aResV      = aSurface.VResolution (aTolerance) * 1.1;
+  const Handle(Adaptor3d_Surface)& aSurface   = GetSurface()->Surface();
+  const Standard_Real      aResU      = aSurface->UResolution (aTolerance) * 1.1;
+  const Standard_Real      aResV      = aSurface->VResolution (aTolerance) * 1.1;
 
   const Standard_Real aDeflectionUV = 1.e-05;
   myTolerance.first  = Max(Min(aDeflectionUV, aResU), 1e-7 * aDiffU);

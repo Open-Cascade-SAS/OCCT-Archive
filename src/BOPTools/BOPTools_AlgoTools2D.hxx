@@ -129,7 +129,7 @@ public:
 
   //! Adjust P-Curve <aC2D> (3D-curve <C3D>) on surface <aF> .
   //! [aT1,  aT2] - range to adjust
-  Standard_EXPORT static void AdjustPCurveOnSurf(const BRepAdaptor_Surface& aF,
+  Standard_EXPORT static void AdjustPCurveOnSurf(const Handle(BRepAdaptor_Surface)& aF,
                                                  const Standard_Real aT1,
                                                  const Standard_Real aT2,
                                                  const Handle(Geom2d_Curve)& aC2D,

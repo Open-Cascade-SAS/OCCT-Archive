@@ -366,9 +366,9 @@ ChFiDS_State ChFi3d_EdgeState(TopoDS_Edge* E,
     i=ChFi3d::ConcaveSide(F[0],F[2],E[1],o11,o12);
     j=ChFi3d::ConcaveSide(F[1],F[2],E[2],o21,o22);
     */
-    i=ChFi3d::ConcaveSide(F1, F2, E[0], o01, o02);
-    i=ChFi3d::ConcaveSide(F3, F4, E[1], o11, o12);
-    j=ChFi3d::ConcaveSide(F5, F6, E[2], o21, o22);
+    i=ChFi3d::ConcaveSide(new BRepAdaptor_Surface(F1), new BRepAdaptor_Surface(F2), E[0], o01, o02);
+    i=ChFi3d::ConcaveSide(new BRepAdaptor_Surface(F3), new BRepAdaptor_Surface(F4), E[1], o11, o12);
+    j=ChFi3d::ConcaveSide(new BRepAdaptor_Surface(F5), new BRepAdaptor_Surface(F6), E[2], o21, o22);
     
     if(o01==o11 && o02==o21 && o12==o22) sst = ChFiDS_AllSame;
     else if(o12==o22 || i ==10 || j ==10) sst = ChFiDS_OnDiff;
@@ -403,8 +403,8 @@ GeomAbs_Shape ChFi3d_evalconti(const TopoDS_Edge& /*E*/,
 //=======================================================================
 Standard_Boolean ChFi3d_KParticular (const Handle(ChFiDS_Spine)& Spine,
   const Standard_Integer      IE,
-  const BRepAdaptor_Surface&  S1,
-  const BRepAdaptor_Surface&  S2)
+  const Handle(BRepAdaptor_Surface)&  S1,
+  const Handle(BRepAdaptor_Surface)&  S2)
 {
   Standard_Boolean bRet;
   //
@@ -420,25 +420,25 @@ Standard_Boolean ChFi3d_KParticular (const Handle(ChFiDS_Spine)& Spine,
   GeomAbs_CurveType aCT;
   GeomAbs_SurfaceType aST1, aST2;
   //
-  aST1=S1.GetType();
-  aST2=S2.GetType();
+  aST1=S1->GetType();
+  aST2=S2->GetType();
   bIsPlane1=(aST1==GeomAbs_Plane);
   bIsPlane2=(aST2==GeomAbs_Plane);
   if (!(bIsPlane1 || bIsPlane2)) {
     return !bRet;
   }
   //
-  const BRepAdaptor_Surface& aS1=(bIsPlane1)? S1 : S2;
-  const BRepAdaptor_Surface& aS2=(bIsPlane1)? S2 : S1;
-  aST1=aS1.GetType();
-  aST2=aS2.GetType();
+  const Handle(BRepAdaptor_Surface)& aS1=(bIsPlane1)? S1 : S2;
+  const Handle(BRepAdaptor_Surface)& aS2=(bIsPlane1)? S2 : S1;
+  aST1=aS1->GetType();
+  aST2=aS2->GetType();
   //
   if (!(aST2==GeomAbs_Plane || aST2==GeomAbs_Cylinder || aST2==GeomAbs_Cone)) {
     return !bRet;
   } 
   //
-  const BRepAdaptor_Curve& bc = Spine->CurrentElementarySpine(IE);
-  aCT = bc.GetType();
+  const Handle(BRepAdaptor_Curve)& bc = Spine->CurrentElementarySpine(IE);
+  aCT = bc->GetType();
   if (!(aCT==GeomAbs_Line || aCT==GeomAbs_Circle)) {
     return !bRet;
   }
@@ -451,8 +451,8 @@ Standard_Boolean ChFi3d_KParticular (const Handle(ChFiDS_Spine)& Spine,
     }
   }
   else if (aST2==GeomAbs_Cylinder) {
-    const gp_Dir aD1=aS1.Plane().Axis().Direction();
-    const gp_Dir aD2=aS2.Cylinder().Axis().Direction();
+    const gp_Dir aD1=aS1->Plane().Axis().Direction();
+    const gp_Dir aD2=aS2->Cylinder().Axis().Direction();
     //
     if (aCT==GeomAbs_Line && aD1.IsNormal(aD2, aPA)) {
       return bRet;
@@ -462,8 +462,8 @@ Standard_Boolean ChFi3d_KParticular (const Handle(ChFiDS_Spine)& Spine,
     }
   }
   else if(aST2==GeomAbs_Cone) {
-    const gp_Dir aD1=aS1.Plane().Axis().Direction();
-    const gp_Dir aD2=aS2.Cone().Axis().Direction();
+    const gp_Dir aD1=aS1->Plane().Axis().Direction();
+    const gp_Dir aD2=aS2->Cone().Axis().Direction();
     if (aCT == GeomAbs_Circle && aD1.IsParallel(aD2, aPA)) {
       return bRet;
     }
@@ -476,21 +476,21 @@ Standard_Boolean ChFi3d_KParticular (const Handle(ChFiDS_Spine)& Spine,
 //purpose  : Resize the limits of surface adjacent to the given box 
 //           Useful for intersections with known extremities. 
 //=======================================================================
-void ChFi3d_BoundFac(BRepAdaptor_Surface& S,
+void ChFi3d_BoundFac(const Handle(BRepAdaptor_Surface)& S,
   const Standard_Real uumin,
   const Standard_Real uumax,
   const Standard_Real vvmin,
   const Standard_Real vvmax,
   const Standard_Boolean checknaturalbounds)
 {
-  ChFi3d_BoundSrf(S.ChangeSurface(), uumin,uumax,vvmin,vvmax,checknaturalbounds);
+  ChFi3d_BoundSrf(S->Surface(), uumin,uumax,vvmin,vvmax,checknaturalbounds);
 }
 //=======================================================================
 //function : ChFi3d_BoundSrf
 //purpose  : Resize the limits of surface adjacent to the given box 
 //           Useful for intersections with known extremities.
 //=======================================================================
-void ChFi3d_BoundSrf(GeomAdaptor_Surface& S,
+void ChFi3d_BoundSrf(const Handle(GeomAdaptor_Surface)& S,
   const Standard_Real uumin,
   const Standard_Real uumax,
   const Standard_Real vvmin,
@@ -498,7 +498,7 @@ void ChFi3d_BoundSrf(GeomAdaptor_Surface& S,
   const Standard_Boolean checknaturalbounds)
 {
   Standard_Real umin = uumin, umax = uumax, vmin = vvmin, vmax = vvmax; 
-  Handle(Geom_Surface) surface = S.Surface();
+  Handle(Geom_Surface) surface = S->Surface();
   Handle(Geom_RectangularTrimmedSurface) 
     trs = Handle(Geom_RectangularTrimmedSurface)::DownCast(surface);
   if(!trs.IsNull()) surface = trs->BasisSurface();
@@ -516,8 +516,8 @@ void ChFi3d_BoundSrf(GeomAdaptor_Surface& S,
 
   //It is supposed that box uv is not null in at least 
   //one direction.
-  Standard_Real scalu = S.UResolution(1.);
-  Standard_Real scalv = S.VResolution(1.);
+  Standard_Real scalu = S->UResolution(1.);
+  Standard_Real scalv = S->VResolution(1.);
 
   Standard_Real step3du = Stepu/scalu; 
   Standard_Real step3dv = Stepv/scalv;
@@ -533,10 +533,10 @@ void ChFi3d_BoundSrf(GeomAdaptor_Surface& S,
   Standard_Real vv1 = vmin - Stepv;
   Standard_Real vv2 = vmax + Stepv;
   if(checknaturalbounds) {
-    if(!S.IsUPeriodic()) {uu1 = Max(uu1,u1);  uu2 = Min(uu2,u2);}
-    if(!S.IsVPeriodic()) {vv1 = Max(vv1,v1);  vv2 = Min(vv2,v2);}
+    if(!S->IsUPeriodic()) {uu1 = Max(uu1,u1);  uu2 = Min(uu2,u2);}
+    if(!S->IsVPeriodic()) {vv1 = Max(vv1,v1);  vv2 = Min(vv2,v2);}
   }
-  S.Load(surface,uu1,uu2,vv1,vv2);
+  S->Load(surface,uu1,uu2,vv1,vv2);
 }
 //=======================================================================
 //function : ChFi3d_InterPlaneEdge
@@ -894,8 +894,8 @@ Standard_Boolean ChFi3d_IntTraces(const Handle(ChFiDS_SurfData)& fd1,
   const Standard_Boolean         Check2dDistance,
   const Standard_Boolean         enlarge)
 {
-  Geom2dAdaptor_Curve C1;
-  Geom2dAdaptor_Curve C2;
+  Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve();
+  Handle(Geom2dAdaptor_Curve) C2 = new Geom2dAdaptor_Curve();
   // pcurves are enlarged to be sure that there is intersection
   // additionally all periodic curves are taken and points on 
   // them are filtered using a specific criterion.
@@ -912,9 +912,9 @@ Standard_Boolean ChFi3d_IntTraces(const Handle(ChFiDS_SurfData)& fd1,
   if(isper1) {
     Handle(Geom2d_TrimmedCurve) tr1 = Handle(Geom2d_TrimmedCurve)::DownCast(pcf1);
     if(!tr1.IsNull()) pcf1 = tr1->BasisCurve();
-    C1.Load(pcf1);
+    C1->Load(pcf1);
   }
-  else C1.Load(pcf1,first-delta,last+delta);
+  else C1->Load(pcf1,first-delta,last+delta);
   Standard_Real first1 = pcf1->FirstParameter(), last1 = pcf1->LastParameter();
 
   first = fd2->Interference(jf2).FirstParameter();
@@ -928,9 +928,9 @@ Standard_Boolean ChFi3d_IntTraces(const Handle(ChFiDS_SurfData)& fd1,
   if(isper2) {
     Handle(Geom2d_TrimmedCurve) tr2 = Handle(Geom2d_TrimmedCurve)::DownCast(pcf2);
     if(!tr2.IsNull()) pcf2 = tr2->BasisCurve();
-    C2.Load(pcf2);
+    C2->Load(pcf2);
   }
-  else C2.Load(fd2->Interference(jf2).PCurveOnFace(),first-delta,last+delta);
+  else C2->Load(fd2->Interference(jf2).PCurveOnFace(),first-delta,last+delta);
   Standard_Real first2 = pcf2->FirstParameter(), last2 = pcf2->LastParameter();
 
   IntRes2d_IntersectionPoint int2d;
@@ -1400,10 +1400,9 @@ Handle(GeomFill_Boundary) ChFi3d_mkbound(const Handle(Adaptor3d_Surface)& HS,
   const Standard_Boolean isfreeboundary)
 {
   Handle(Geom2dAdaptor_Curve) HC = new Geom2dAdaptor_Curve(curv);
-  Adaptor3d_CurveOnSurface COnS(HC,HS);
+  Handle(Adaptor3d_CurveOnSurface) COnS = new Adaptor3d_CurveOnSurface(HC,HS);
   if (isfreeboundary) {
-    Handle(Adaptor3d_CurveOnSurface) HCOnS = new Adaptor3d_CurveOnSurface(COnS);
-    return new GeomFill_SimpleBound(HCOnS,t3d,ta); 
+    return new GeomFill_SimpleBound(COnS,t3d,ta); 
   }
   return new GeomFill_BoundWithSurf(COnS,t3d,ta);
 }
@@ -1656,9 +1655,9 @@ void  ChFi3d_ComputeArete(const ChFiDS_CommonPoint&   P1,
     GeomAdaptor_Surface AS(Surf);
     Handle(GeomAdaptor_Surface) AHS = 
       new GeomAdaptor_Surface(AS);
-    Adaptor3d_CurveOnSurface Cs(AHC,AHS);
-    Pardeb = Cs.FirstParameter();
-    Parfin = Cs.LastParameter();
+    Handle(Adaptor3d_CurveOnSurface) Cs = new Adaptor3d_CurveOnSurface(AHC,AHS);
+    Pardeb = Cs->FirstParameter();
+    Parfin = Cs->LastParameter();
     Standard_Real avtol;
     GeomLib::BuildCurve3d(tol3d,Cs,Pardeb,Parfin,C3d,tolreached,avtol);
   }
@@ -2750,10 +2749,10 @@ void ChFi3d_StripeEdgeInter (const Handle(ChFiDS_Stripe)& theStripe1,
         // Do not waste time on degenerates
         continue;
       // Examine for intersections
-      Geom2dAdaptor_Curve aPCurve1 (aFI1.PCurveOnFace(),
+      Handle(Geom2dAdaptor_Curve) aPCurve1 = new Geom2dAdaptor_Curve(aFI1.PCurveOnFace(),
         aFI1.FirstParameter(),
         aFI1.LastParameter());
-      Geom2dAdaptor_Curve aPCurve2 (aFI2.PCurveOnFace(),
+      Handle(Geom2dAdaptor_Curve) aPCurve2 = new Geom2dAdaptor_Curve(aFI2.PCurveOnFace(),
         aFI2.FirstParameter(),
         aFI2.LastParameter());
       anIntersector.Perform (aPCurve1,
@@ -2885,7 +2884,7 @@ Handle(Geom_Surface) trsfsurf(const Handle(Adaptor3d_Surface)& HS,
   Handle(BRepAdaptor_Surface) hbs = Handle(BRepAdaptor_Surface)::DownCast(HS);
   Handle(GeomAdaptor_Surface) hgs = Handle(GeomAdaptor_Surface)::DownCast(HS);
   if(!hbs.IsNull()) {
-    res = hbs->Surface().Surface();
+    res = hbs->Surface()->Surface();
     gp_Trsf trsf = hbs->Trsf();
     res = Handle(Geom_Surface)::DownCast(res->Transformed(trsf));
   }
@@ -3537,12 +3536,12 @@ void ChFi3d_ComputesIntPC (const ChFiDS_FaceInterference&      Fi1,
     Min(0.1,0.05*(Fi1.LastParameter() - Fi1.FirstParameter()));
   Handle(Geom2dAdaptor_Curve) hc2d1 = 
     new Geom2dAdaptor_Curve(Fi1.PCurveOnSurf(),UInt1-delt1,UInt1+delt1);
-  Adaptor3d_CurveOnSurface cons1(hc2d1,HS1);
+  Handle(Adaptor3d_CurveOnSurface) cons1 = new Adaptor3d_CurveOnSurface(hc2d1,HS1);
   Standard_Real delt2 = 
     Min(0.1,0.05*(Fi2.LastParameter() - Fi2.FirstParameter()));
   Handle(Geom2dAdaptor_Curve) hc2d2 = 
     new Geom2dAdaptor_Curve(Fi2.PCurveOnSurf(),UInt2-delt2,UInt2+delt2);
-  Adaptor3d_CurveOnSurface cons2(hc2d2,HS2);
+  Handle(Adaptor3d_CurveOnSurface) cons2 = new Adaptor3d_CurveOnSurface(hc2d2,HS2);
   Extrema_LocateExtCC ext(cons1,cons2,UInt1,UInt2);
   if(ext.IsDone()) {
     Standard_Real dist2 = ext.SquareDistance();
@@ -3900,8 +3899,8 @@ void ChFi3d_PerformElSpine(Handle(ChFiDS_ElSpine)& HES,
   cepadur = 0;
   E = (IsOffset)? Spine->OffsetEdges(IF) : Spine->Edges(IF);
   Bof = BRepLib::BuildCurve3d(E);
-  const BRepAdaptor_Curve& edc = Spine->CurrentElementarySpine(IF);
-  tolpared = edc.Resolution(tol);
+  const Handle(BRepAdaptor_Curve)& edc = Spine->CurrentElementarySpine(IF);
+  tolpared = edc->Resolution(tol);
   Cv = BRep_Tool::Curve(E, First, Last);
   //Add vertex with tangent
   if (ES.IsPeriodic())
@@ -4112,7 +4111,7 @@ void ChFi3d_PerformElSpine(Handle(ChFiDS_ElSpine)& HES,
   // Traitement des Extremites
   Standard_Integer caredeb, carefin;
   Standard_Real LocalWL, LocalWF, Angle;
-  GeomAdaptor_Curve gacurve;
+  Handle(GeomAdaptor_Curve) gacurve = new GeomAdaptor_Curve();
   Handle(Geom_BSplineCurve) newc;
   //
   caredeb = 0;
@@ -4135,7 +4134,7 @@ void ChFi3d_PerformElSpine(Handle(ChFiDS_ElSpine)& HES,
       Handle(Geom_BoundedCurve) anExtCurve = BSpline;
       GeomLib::ExtendCurveToPoint (anExtCurve, Bout, icont, Standard_False);
       newc = Handle(Geom_BSplineCurve)::DownCast (anExtCurve);
-      gacurve.Load(newc);
+      gacurve->Load(newc);
       GCPnts_AbscissaPoint GCP(gacurve,-rabdist,Wrefdeb,WF);
       if(GCP.IsDone()) {
         WF = GCP.Parameter();
@@ -4161,7 +4160,7 @@ void ChFi3d_PerformElSpine(Handle(ChFiDS_ElSpine)& HES,
       Handle(Geom_BoundedCurve) anExtCurve = BSpline;
       GeomLib::ExtendCurveToPoint (anExtCurve, Bout, icont, Standard_True);
       newc = Handle(Geom_BSplineCurve)::DownCast (anExtCurve);
-      gacurve.Load(newc);
+      gacurve->Load(newc);
       GCPnts_AbscissaPoint GCP(gacurve,rabdist,Wreffin,WL);
       if(GCP.IsDone()) {
         WL = GCP.Parameter();

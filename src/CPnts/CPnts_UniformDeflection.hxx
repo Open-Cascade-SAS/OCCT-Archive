@@ -74,36 +74,36 @@ public:
   //! P(u + Max(CurrentStep,Abs(LastParameter-FirstParameter)))
   //! if the singularity is at the first point ,the next point
   //! calculated is the P(LastParameter)
-  Standard_EXPORT CPnts_UniformDeflection(const Adaptor3d_Curve& C, const Standard_Real Deflection, const Standard_Real Resolution, const Standard_Boolean WithControl);
+  Standard_EXPORT CPnts_UniformDeflection(const Handle(Adaptor3d_Curve)& C, const Standard_Real Deflection, const Standard_Real Resolution, const Standard_Boolean WithControl);
   
   //! As above with 2d curve
-  Standard_EXPORT CPnts_UniformDeflection(const Adaptor2d_Curve2d& C, const Standard_Real Deflection, const Standard_Real Resolution, const Standard_Boolean WithControl);
+  Standard_EXPORT CPnts_UniformDeflection(const Handle(Adaptor2d_Curve2d)& C, const Standard_Real Deflection, const Standard_Real Resolution, const Standard_Boolean WithControl);
   
 
   //! Computes an uniform deflection distribution of points on a part of
   //! the curve <C>. Deflection defines the step between the points.
   //! <U1> and <U2> define the distribution span.
   //! <U1> and <U2> must be in the parametric range of the curve.
-  Standard_EXPORT CPnts_UniformDeflection(const Adaptor3d_Curve& C, const Standard_Real Deflection, const Standard_Real U1, const Standard_Real U2, const Standard_Real Resolution, const Standard_Boolean WithControl);
+  Standard_EXPORT CPnts_UniformDeflection(const Handle(Adaptor3d_Curve)& C, const Standard_Real Deflection, const Standard_Real U1, const Standard_Real U2, const Standard_Real Resolution, const Standard_Boolean WithControl);
   
   //! As above with 2d curve
-  Standard_EXPORT CPnts_UniformDeflection(const Adaptor2d_Curve2d& C, const Standard_Real Deflection, const Standard_Real U1, const Standard_Real U2, const Standard_Real Resolution, const Standard_Boolean WithControl);
+  Standard_EXPORT CPnts_UniformDeflection(const Handle(Adaptor2d_Curve2d)& C, const Standard_Real Deflection, const Standard_Real U1, const Standard_Real U2, const Standard_Real Resolution, const Standard_Boolean WithControl);
   
   //! Initialize the algorithms with <C>, <Deflection>, <UStep>,
   //! <Resolution> and <WithControl>
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& C, const Standard_Real Deflection, const Standard_Real Resolution, const Standard_Boolean WithControl);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& C, const Standard_Real Deflection, const Standard_Real Resolution, const Standard_Boolean WithControl);
   
   //! Initialize the algorithms with <C>, <Deflection>, <UStep>,
   //! <Resolution> and <WithControl>
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& C, const Standard_Real Deflection, const Standard_Real Resolution, const Standard_Boolean WithControl);
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& C, const Standard_Real Deflection, const Standard_Real Resolution, const Standard_Boolean WithControl);
   
   //! Initialize the algorithms with <C>, <Deflection>, <UStep>,
   //! <U1>, <U2> and <WithControl>
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& C, const Standard_Real Deflection, const Standard_Real U1, const Standard_Real U2, const Standard_Real Resolution, const Standard_Boolean WithControl);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& C, const Standard_Real Deflection, const Standard_Real U1, const Standard_Real U2, const Standard_Real Resolution, const Standard_Boolean WithControl);
   
   //! Initialize the algorithms with <C>, <Deflection>, <UStep>,
   //! <U1>, <U2> and <WithControl>
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& C, const Standard_Real Deflection, const Standard_Real U1, const Standard_Real U2, const Standard_Real Resolution, const Standard_Boolean WithControl);
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& C, const Standard_Real Deflection, const Standard_Real U1, const Standard_Real U2, const Standard_Real Resolution, const Standard_Boolean WithControl);
   
   //! To know if all the calculus were done successfully
   //! (ie all the points have been computed). The calculus can fail if

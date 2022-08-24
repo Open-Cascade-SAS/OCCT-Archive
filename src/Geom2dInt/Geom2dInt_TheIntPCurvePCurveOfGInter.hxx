@@ -41,9 +41,9 @@ public:
 
   Standard_EXPORT Geom2dInt_TheIntPCurvePCurveOfGInter();
 
-  Standard_EXPORT void Perform (const Adaptor2d_Curve2d& Curve1, const IntRes2d_Domain& Domain1, const Adaptor2d_Curve2d& Curve2, const IntRes2d_Domain& Domain2, const Standard_Real TolConf, const Standard_Real Tol);
+  Standard_EXPORT void Perform (const Handle(Adaptor2d_Curve2d)& Curve1, const IntRes2d_Domain& Domain1, const Handle(Adaptor2d_Curve2d)& Curve2, const IntRes2d_Domain& Domain2, const Standard_Real TolConf, const Standard_Real Tol);
   
-  Standard_EXPORT void Perform (const Adaptor2d_Curve2d& Curve1, const IntRes2d_Domain& Domain1, const Standard_Real TolConf, const Standard_Real Tol);
+  Standard_EXPORT void Perform (const Handle(Adaptor2d_Curve2d)& Curve1, const IntRes2d_Domain& Domain1, const Standard_Real TolConf, const Standard_Real Tol);
 
   //! Set / get minimum number of points in polygon for intersection.
   Standard_EXPORT void SetMinNbSamples (const Standard_Integer theMinNbSamples);
@@ -53,9 +53,9 @@ public:
 protected:
 
   
-  Standard_EXPORT void Perform (const Adaptor2d_Curve2d& Curve1, const IntRes2d_Domain& Domain1, const Adaptor2d_Curve2d& Curve2, const IntRes2d_Domain& Domain2, const Standard_Real TolConf, const Standard_Real Tol, const Standard_Integer NbIter, const Standard_Real DeltaU, const Standard_Real DeltaV);
+  Standard_EXPORT void Perform (const Handle(Adaptor2d_Curve2d)& Curve1, const IntRes2d_Domain& Domain1, const Handle(Adaptor2d_Curve2d)& Curve2, const IntRes2d_Domain& Domain2, const Standard_Real TolConf, const Standard_Real Tol, const Standard_Integer NbIter, const Standard_Real DeltaU, const Standard_Real DeltaV);
   
-  Standard_EXPORT void Perform (const Adaptor2d_Curve2d& Curve1, const IntRes2d_Domain& Domain1, const Standard_Real TolConf, const Standard_Real Tol, const Standard_Integer NbIter, const Standard_Real DeltaU, const Standard_Real DeltaV);
+  Standard_EXPORT void Perform (const Handle(Adaptor2d_Curve2d)& Curve1, const IntRes2d_Domain& Domain1, const Standard_Real TolConf, const Standard_Real Tol, const Standard_Integer NbIter, const Standard_Real DeltaU, const Standard_Real DeltaV);
 
 private:
 
@@ -65,7 +65,7 @@ private:
   //! : were replaced on line and exact point of intersection was not found
   //! : for case when point of intersection was found
   //! : during prelimanary search for line (case of bad paramerization of Bspline for example).
-  Standard_EXPORT Standard_Boolean findIntersect (const Adaptor2d_Curve2d& Curve1, const IntRes2d_Domain& Domain1, const Adaptor2d_Curve2d& Curve2, const IntRes2d_Domain& Domain2, const Standard_Real TolConf, const Standard_Real Tol, const Standard_Integer NbIter, const Standard_Real DeltaU, const Standard_Real DeltaV, const Geom2dInt_ThePolygon2dOfTheIntPCurvePCurveOfGInter& thePoly1, const Geom2dInt_ThePolygon2dOfTheIntPCurvePCurveOfGInter& thePoly2, const Standard_Boolean isFullRepresentation);
+  Standard_EXPORT Standard_Boolean findIntersect (const Handle(Adaptor2d_Curve2d)& Curve1, const IntRes2d_Domain& Domain1, const Handle(Adaptor2d_Curve2d)& Curve2, const IntRes2d_Domain& Domain2, const Standard_Real TolConf, const Standard_Real Tol, const Standard_Integer NbIter, const Standard_Real DeltaU, const Standard_Real DeltaV, const Geom2dInt_ThePolygon2dOfTheIntPCurvePCurveOfGInter& thePoly1, const Geom2dInt_ThePolygon2dOfTheIntPCurvePCurveOfGInter& thePoly2, const Standard_Boolean isFullRepresentation);
 
   IntRes2d_Domain DomainOnCurve1;
   IntRes2d_Domain DomainOnCurve2;

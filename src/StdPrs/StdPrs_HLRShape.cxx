@@ -45,7 +45,7 @@ void StdPrs_HLRShape::ComputeHLR (const Handle(Prs3d_Presentation)& thePresentat
   Standard_Integer aNbEdges = aTool.NbEdges();
   Standard_Integer anI;
   Standard_Real anU1, anU2;
-  BRepAdaptor_Curve aCurve;
+  Handle(BRepAdaptor_Curve) aCurve = new BRepAdaptor_Curve();
   Standard_Real aDeviation = theDrawer->MaximalChordialDeviation();
   Handle(Graphic3d_Group) aGroup = thePresentation->CurrentGroup();
 

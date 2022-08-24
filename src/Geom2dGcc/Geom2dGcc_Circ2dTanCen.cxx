@@ -41,9 +41,9 @@ Geom2dGcc_Circ2dTanCen::
   par1sol(1,2)  ,
   pararg1(1,2)  
 {
-  Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  GeomAbs_CurveType Type1 = C1.GetType();
+  Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+  Handle(Geom2d_Curve) CC1 = C1->Curve();
+  GeomAbs_CurveType Type1 = C1->GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +

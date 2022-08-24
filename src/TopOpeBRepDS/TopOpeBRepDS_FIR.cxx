@@ -56,7 +56,7 @@ Standard_Boolean FUN_isPonF(const TopOpeBRepDS_ListOfInterference& LIF,const gp_
 Standard_Boolean FUN_findPonF(const TopoDS_Edge& E,const TopOpeBRepDS_DataStructure& BDS, const TopOpeBRepDS_ListOfInterference& LIF,gp_Pnt& P,Standard_Real& par)
 {
   Standard_Boolean Pok = Standard_False;
-  BRepAdaptor_Curve BAC(E);
+  Handle(BRepAdaptor_Curve) BAC = new BRepAdaptor_Curve(E);
   const TopOpeBRepDS_ListOfInterference& LIE = BDS.ShapeInterferences(E);
   TopOpeBRepDS_ListIteratorOfListOfInterference itI; itI.Initialize(LIE);
 
@@ -99,7 +99,7 @@ Standard_Boolean FUN_findPonF(const TopoDS_Edge& E,const TopOpeBRepDS_DataStruct
       continue;
     }
 
-    BAC.D0(par,P);
+    BAC->D0(par,P);
     Pok = FUN_isPonF(LIF,P,BDS,E);
     // P est OK pour toutes les faces de LIF : on arrete de chercher
     if (Pok) {

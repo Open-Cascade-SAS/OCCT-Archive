@@ -1736,7 +1736,7 @@ static Standard_Boolean IsRLineGood(const IntSurf_Quadric& Quad1,
     return Standard_False;
 
   Extrema_ExtPC anExtr;
-  GeomAdaptor_Curve anAC;
+  Handle(GeomAdaptor_Curve) anAC = new GeomAdaptor_Curve();
   Handle(Geom_Curve) aCurv;
 
   if(aGType == IntPatch_Ellipse)
@@ -1750,7 +1750,7 @@ static Standard_Boolean IsRLineGood(const IntSurf_Quadric& Quad1,
   {
     const Standard_Real anUinf = aCurv->FirstParameter(),
                         anUsup = aCurv->LastParameter();
-    anAC.Load(aCurv, anUinf, anUsup);
+    anAC->Load(aCurv, anUinf, anUsup);
     anExtr.Initialize(anAC, anUinf, anUsup);
   }
 

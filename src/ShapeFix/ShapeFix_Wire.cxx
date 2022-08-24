@@ -573,7 +573,7 @@ Standard_Boolean ShapeFix_Wire::FixEdgeCurves()
 	  Handle(Geom_Curve) C = BRep_Tool::Curve ( E, a, b );
 	  Handle(ShapeAnalysis_Surface) S = myAnalyzer->Surface();
 	  Standard_Integer nbs = S->NbSingularities(MinTolerance());
-	  GeomAdaptor_Curve GAC ( C, a, b );
+	  Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve( C, a, b );
 	  TColStd_SequenceOfReal seq;
 	  for (Standard_Integer j=1; j <= nbs; j++) {
 	    Standard_Real Preci;

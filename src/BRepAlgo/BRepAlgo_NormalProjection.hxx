@@ -92,7 +92,7 @@ public:
   //! shape <S>.
   Standard_EXPORT const TopTools_ListOfShape& Generated (const TopoDS_Shape& S);
   
-  Standard_EXPORT Standard_Boolean IsElementary (const Adaptor3d_Curve& C) const;
+  Standard_EXPORT Standard_Boolean IsElementary (const Handle(Adaptor3d_Curve)& C) const;
   
   //! build the result as a list of wire if possible in --
   //! a first returns a wire only if there is only a wire.

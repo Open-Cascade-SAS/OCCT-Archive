@@ -424,8 +424,8 @@ void BRepFill_ShapeLaw::Init(const Standard_Boolean Build)
 
  Standard_Real U1 = BRep_Tool::Parameter(V1,Edge1);
  Standard_Real U2 = BRep_Tool::Parameter(V2,Edge2);
- BRepAdaptor_Curve Curve1(Edge1);
- BRepAdaptor_Curve Curve2(Edge2);
+ Handle(BRepAdaptor_Curve) Curve1 = new BRepAdaptor_Curve(Edge1);
+ Handle(BRepAdaptor_Curve) Curve2 = new BRepAdaptor_Curve(Edge2);
  Standard_Real Eps = BRep_Tool::Tolerance(V2) +
                      BRep_Tool::Tolerance(V1);
  GeomAbs_Shape cont;

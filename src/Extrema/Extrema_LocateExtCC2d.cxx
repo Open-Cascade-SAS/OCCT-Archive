@@ -28,8 +28,8 @@
 //purpose  : 
 //=======================================================================
 
-Extrema_LocateExtCC2d::Extrema_LocateExtCC2d (const Adaptor2d_Curve2d&       C1,
-                                              const Adaptor2d_Curve2d&       C2,
+Extrema_LocateExtCC2d::Extrema_LocateExtCC2d (const Handle(Adaptor2d_Curve2d)&       C1,
+                                              const Handle(Adaptor2d_Curve2d)&       C2,
                                               const Standard_Real U0,
                                               const Standard_Real V0)
 : mySqDist(RealLast())

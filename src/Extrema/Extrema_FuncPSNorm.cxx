@@ -35,20 +35,20 @@ Extrema_FuncPSNorm::Extrema_FuncPSNorm ()
 
 //=============================================================================
 Extrema_FuncPSNorm::Extrema_FuncPSNorm (const gp_Pnt& P,
-                                      const Adaptor3d_Surface& S)
+                                      const Handle(Adaptor3d_Surface)& S)
 : myU(0.0),
   myV(0.0)
 {
   myP = P;
-  myS = &S;
+  myS = S;
   myPinit = Standard_True;
   mySinit = Standard_True;
 }
 
 //=============================================================================
-void Extrema_FuncPSNorm::Initialize(const Adaptor3d_Surface& S)
+void Extrema_FuncPSNorm::Initialize(const Handle(Adaptor3d_Surface)& S)
 {
-  myS = &S;
+  myS = S;
   mySinit = Standard_True;
   myPoint.Clear();
   mySqDist.Clear();

@@ -181,7 +181,7 @@ static Standard_Boolean IsPointOnSurface(const Handle(Adaptor3d_Surface)& theSur
   case GeomAbs_SurfaceOfExtrusion:
   case GeomAbs_SurfaceOfRevolution:
     {
-      Extrema_ExtPS anExtr(thePt, *theSurf, theSurf->UResolution(theTol),
+      Extrema_ExtPS anExtr(thePt, theSurf, theSurf->UResolution(theTol),
                               theSurf->VResolution(theTol), Extrema_ExtFlag_MIN);
       if(!anExtr.IsDone() || (anExtr.NbExt() < 1))
       {
@@ -216,7 +216,7 @@ static Standard_Boolean IsPointOnSurface(const Handle(Adaptor3d_Surface)& theSur
     break;
   default:
     {
-      Extrema_GenLocateExtPS anExtr (*theSurf);
+      Extrema_GenLocateExtPS anExtr (theSurf);
       anExtr.Perform(thePt, theUpar, theVpar);
       if(!anExtr.IsDone() || (anExtr.SquareDistance() > theTol*theTol))
       {
@@ -266,7 +266,7 @@ Standard_Boolean IntPatch_SpecialPoints::
 
   theQSurf->D0(aUquad, aVquad, aPQuad);
 
-  Extrema_GenLocateExtPS anExtr (*thePSurf);
+  Extrema_GenLocateExtPS anExtr (thePSurf);
   anExtr.Perform(aPQuad, aU0, aV0);
 
   if(!anExtr.IsDone())

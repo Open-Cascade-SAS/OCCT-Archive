@@ -1085,7 +1085,7 @@ void BRepFill_AdvancedEvolved::RemoveExcessSolids(const TopTools_ListOfShape& th
 class NormalFunc : public math_MultipleVarFunctionWithGradient
 {
 public:
-  NormalFunc(const Adaptor3d_CurveOnSurface& theCOS) :myCOnS(theCOS)
+  NormalFunc(const Handle(Adaptor3d_CurveOnSurface)& theCOS) :myCOnS(theCOS)
   {
   }
 
@@ -1144,7 +1144,7 @@ protected:
   NormalFunc& operator=(NormalFunc&);
 
 private:
-  const Adaptor3d_CurveOnSurface& myCOnS;
+  const Handle(Adaptor3d_CurveOnSurface)& myCOnS;
 };
 
 //=======================================================================

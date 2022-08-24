@@ -373,8 +373,8 @@ void BRepOffsetAPI_DraftAngle::CorrectWires()
     //
     // Prepare 2D adaptors for intersection.
     // The seam edge has two 2D curve, thus we have to create 2 adaptors
-    BRepAdaptor_Curve2d aBAC2D1(TopoDS::Edge(CurEdge), aFace);
-    BRepAdaptor_Curve2d aBAC2D1R(TopoDS::Edge(CurEdge.Reversed()), aFace);
+    Handle(BRepAdaptor_Curve2d) aBAC2D1 = new BRepAdaptor_Curve2d(TopoDS::Edge(CurEdge), aFace);
+    Handle(BRepAdaptor_Curve2d) aBAC2D1R = new BRepAdaptor_Curve2d(TopoDS::Edge(CurEdge.Reversed()), aFace);
     // Get surface of the face to get 3D intersection point
     TopLoc_Location aLoc;
     const Handle(Geom_Surface)& aSurf = BRep_Tool::Surface(aFace, aLoc);
@@ -395,7 +395,7 @@ void BRepOffsetAPI_DraftAngle::CorrectWires()
           const TopoDS_Edge& anEdge = TopoDS::Edge(eit.Value());
           //
           // Prepare 2D adaptor for intersection
-          BRepAdaptor_Curve2d aBAC2D2(anEdge, aFace);
+          Handle(BRepAdaptor_Curve2d) aBAC2D2 = new BRepAdaptor_Curve2d(anEdge, aFace);
           // Perform intersection
           Geom2dInt_GInter aGInter;
           aGInter.Perform(aBAC2D1, aBAC2D2, TolInter, TolInter);

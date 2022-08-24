@@ -99,7 +99,7 @@ private:
   gp_Ax1 TheAxe;
   Standard_Real Gabarit;
   Handle(GeomFill_LocationLaw) myLaw;
-  GeomAdaptor_Curve myAdpSection;
+  Handle(GeomAdaptor_Curve) myAdpSection;
   Handle(Geom_Curve) mySection;
   Standard_Real SecParam;
   Standard_Real PathParam;

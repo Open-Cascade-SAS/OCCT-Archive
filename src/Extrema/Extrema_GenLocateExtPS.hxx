@@ -36,7 +36,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   //! Constructor.
-  Standard_EXPORT Extrema_GenLocateExtPS(const Adaptor3d_Surface& theS,
+  Standard_EXPORT Extrema_GenLocateExtPS(const Handle(Adaptor3d_Surface)& theS,
                                          const Standard_Real theTolU = Precision::PConfusion(),
                                          const Standard_Real theTolV = Precision::PConfusion());
   
@@ -61,7 +61,7 @@ public:
 
   //! Returns True if UV point theU0, theV0 is point of local minimum of square distance between
   //! point theP and points theS(U, V), U, V are in small area around theU0, theV0
-  Standard_EXPORT static Standard_Boolean IsMinDist(const gp_Pnt& theP, const Adaptor3d_Surface& theS,
+  Standard_EXPORT static Standard_Boolean IsMinDist(const gp_Pnt& theP, const Handle(Adaptor3d_Surface)& theS,
     const Standard_Real theU0, const Standard_Real theV0);
 
 private:
@@ -70,7 +70,7 @@ private:
   Extrema_GenLocateExtPS(const Extrema_GenLocateExtPS&);
 
   // Input.
-  const Adaptor3d_Surface& mySurf;
+  const Handle(Adaptor3d_Surface)& mySurf;
   Standard_Real myTolU, myTolV;
 
   // State.

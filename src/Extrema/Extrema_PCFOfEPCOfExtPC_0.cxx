@@ -25,7 +25,7 @@
 #include <gp_Vec.hxx>
 #include <Extrema_SequenceOfPOnCurv.hxx> 
 
-#define Curve Adaptor3d_Curve
+#define Curve Handle(Adaptor3d_Curve)
 #define Curve_hxx <Adaptor3d_Curve.hxx>
 #define Tool Extrema_CurveTool
 #define Tool_hxx <Extrema_CurveTool.hxx>

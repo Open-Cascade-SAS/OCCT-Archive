@@ -179,14 +179,14 @@ static Standard_Boolean AdjustParam(const HatchGen_Domain& Dom,
 //purpose  : 
 //=======================================================================
 
-static Standard_Real ComputeAbscissa(const BRepAdaptor_Curve& C,
+static Standard_Real ComputeAbscissa(const Handle(BRepAdaptor_Curve)& C,
 				     const Standard_Real U) 
 {
-  switch (C.GetType()) {
+  switch (C->GetType()) {
   case GeomAbs_Line:
     return U;
   case GeomAbs_Circle:
-    return C.Circle().Radius()*U;
+    return C->Circle().Radius()*U;
   default:
     return 0;
   }    
@@ -334,9 +334,9 @@ void ChFi3d_Builder::Trunc(const Handle(ChFiDS_SurfData)&    SD,
   TopoDS_Vertex bout1,bout2,boutemp;
 
   
-  const BRepAdaptor_Curve& bc = Spine->CurrentElementarySpine(iedge);
+  const Handle(BRepAdaptor_Curve)& bc = Spine->CurrentElementarySpine(iedge);
 //Modif against Vertex isolated on spine
-  TopoDS_Edge support = bc.Edge();
+  TopoDS_Edge support = bc->Edge();
   TopExp::Vertices(support,bout1,bout2);
   if (support.Orientation() == TopAbs_REVERSED) {
     boutemp = bout2;
@@ -347,13 +347,13 @@ void ChFi3d_Builder::Trunc(const Handle(ChFiDS_SurfData)&    SD,
     bout1 = bout2;
   }
 //finmodif
-  Standard_Real edf = bc.FirstParameter(), edl = bc.LastParameter();
+  Standard_Real edf = bc->FirstParameter(), edl = bc->LastParameter();
   Standard_Real edglen = edl - edf;
   if(Spine->Edges(iedge).Orientation() == TopAbs_FORWARD) {
-    bc.D1(wtg+edf,ped,ded);
+    bc->D1(wtg+edf,ped,ded);
   }
   else{ 
-    bc.D1(-wtg+edl,ped,ded);
+    bc->D1(-wtg+edl,ped,ded);
     ded.Reverse();
   }
   Spine->D1(wsp,psp,dsp);
@@ -382,7 +382,7 @@ void ChFi3d_Builder::Trunc(const Handle(ChFiDS_SurfData)&    SD,
       const ChFiDS_CommonPoint& cp2 = SD->Vertex(isfirst,2);
       if(!((cp1.IsOnArc() && SearchFace(Spine,cp1,F1,FBID)) ||
            (cp2.IsOnArc() && SearchFace(Spine,cp2,F2,FBID)))) { 
-        tron = ChFi3d_KParticular (Spine, ivois, *BS1, *BS2);
+        tron = ChFi3d_KParticular (Spine, ivois, BS1, BS2);
       }
     }
   }
@@ -434,8 +434,8 @@ static Standard_Real ResetProl(const TopOpeBRepDS_DataStructure& DStr,
 			       const Standard_Integer            iedge,
 			       const Standard_Boolean            isfirst)
 {
-  const BRepAdaptor_Curve& bc = Spine->CurrentElementarySpine(iedge);
-  Standard_Real edglen = bc.LastParameter() - bc.FirstParameter();
+  const Handle(BRepAdaptor_Curve)& bc = Spine->CurrentElementarySpine(iedge);
+  Standard_Real edglen = bc->LastParameter() - bc->FirstParameter();
   const Handle(Geom_Surface)& surf = DStr.Surface(CD->Surf()).Surface();
   Standard_Real par = 0., x, y;
   if(!isfirst) par = edglen;
@@ -513,7 +513,7 @@ static Standard_Boolean Tri(const Geom2dHatch_Hatcher& H,
     HatchGen_Domain* Dom = ((HatchGen_Domain*) (void*) &H.Domain(iH,Ind(iSansFirst)));    
     HatchGen_PointOnHatching* PH = 
       ((HatchGen_PointOnHatching*) (void*) &H.Domain(iH,Ind(iSansLast)).FirstPoint());
-    Standard_Real NewPar = H.HatchingCurve(iH).FirstParameter() - period +
+    Standard_Real NewPar = H.HatchingCurve(iH)->FirstParameter() - period +
       H.Domain(iH,Ind(iSansLast)).FirstPoint().Parameter();
     PH->SetParameter(NewPar);
     Dom->SetFirstPoint(*PH);
@@ -657,16 +657,16 @@ Standard_Boolean ChFi3d_Builder::SplitKPart
   Geom2dHatch_Hatcher H1(Inter,tol2d,tolesp), H2(Inter,tol2d,tolesp);
   Standard_Integer ie;
   Handle(Geom2d_Curve) C1 = Data->InterferenceOnS1().PCurveOnFace(); 
-  Geom2dAdaptor_Curve  ll1;
+  Handle(Geom2dAdaptor_Curve) ll1 = new Geom2dAdaptor_Curve();
   if (!C1.IsNull()) {
-    ll1.Load(C1);
+    ll1->Load(C1);
     for(I1->Init(); I1->More(); I1->Next()) {
       Handle(BRepAdaptor_Curve2d) 
 	Bc = Handle(BRepAdaptor_Curve2d)::DownCast(I1->Value());
       Handle(Geom2dAdaptor_Curve) 
 	Gc = Handle(Geom2dAdaptor_Curve)::DownCast(I1->Value());
-      if(Bc.IsNull()) ie = H1.AddElement (*Gc, TopAbs_FORWARD);
-      else ie = H1.AddElement (*Bc, Bc->Edge().Orientation());
+      if(Bc.IsNull()) ie = H1.AddElement (Gc, TopAbs_FORWARD);
+      else ie = H1.AddElement (Bc, Bc->Edge().Orientation());
       M1.Bind(ie,I1->Value());
     }
     iH1 = H1.Trim(ll1);
@@ -682,16 +682,16 @@ Standard_Boolean ChFi3d_Builder::SplitKPart
   }
   
   Handle(Geom2d_Curve) C2 = Data->InterferenceOnS2().PCurveOnFace(); 
-  Geom2dAdaptor_Curve  ll2;
+  Handle(Geom2dAdaptor_Curve) ll2 = new Geom2dAdaptor_Curve();
   if (!C2.IsNull()) {
-    ll2.Load(C2);
+    ll2->Load(C2);
     for(I2->Init(); I2->More(); I2->Next()) {
       Handle(BRepAdaptor_Curve2d) 
 	Bc = Handle(BRepAdaptor_Curve2d)::DownCast(I2->Value());
       Handle(Geom2dAdaptor_Curve) 
 	Gc = Handle(Geom2dAdaptor_Curve)::DownCast(I2->Value());
-      if(Bc.IsNull()) ie = H2.AddElement (*Gc, TopAbs_FORWARD);
-      else ie = H2.AddElement (*Bc, Bc->Edge().Orientation());
+      if(Bc.IsNull()) ie = H2.AddElement (Gc, TopAbs_FORWARD);
+      else ie = H2.AddElement (Bc, Bc->Edge().Orientation());
       M2.Bind(ie,I2->Value());
     }
     iH2 = H2.Trim(ll2);
@@ -708,8 +708,8 @@ Standard_Boolean ChFi3d_Builder::SplitKPart
 
   //Return start and end vertexes of the Spine
   TopoDS_Vertex bout1,bout2,boutemp;
-  const BRepAdaptor_Curve& bc = Spine->CurrentElementarySpine(Iedge);
-  TopoDS_Edge support = bc.Edge();
+  const Handle(BRepAdaptor_Curve)& bc = Spine->CurrentElementarySpine(Iedge);
+  TopoDS_Edge support = bc->Edge();
   TopExp::Vertices(support,bout1,bout2);
   if(support.Orientation() == TopAbs_REVERSED) {
     boutemp = bout2;
@@ -821,14 +821,14 @@ Standard_Boolean ChFi3d_Builder::SplitKPart
     // Parsing of domains by increasing parameters,
     // if there is a 2d circle on a plane, one goes on 2D line of opposite face.
     Standard_Real period1 = 0., period2 = 0.;
-    if(ll1.IsPeriodic()) {
+    if(ll1->IsPeriodic()) {
       if(!Tri(H2,iH2,Ind2,wref,0.,pitol,Nb2)) return 0;
-      period1 = ll1.Period();
+      period1 = ll1->Period();
       if(!Tri(H1,iH1,Ind1,wref,period1,pitol,Nb1)) return 0;
     }
     else{
       if(!Tri(H1,iH1,Ind1,wref,0.,pitol,Nb1)) return 0;
-      if(ll2.IsPeriodic()) { period2 = ll2.Period(); }
+      if(ll2->IsPeriodic()) { period2 = ll2->Period(); }
       if(!Tri(H2,iH2,Ind2,wref,period2,pitol,Nb2)) return 0;
     }
     
@@ -883,7 +883,7 @@ Standard_Boolean ChFi3d_Builder::SplitKPart
       //-------------------------
       Standard_Integer ifirst = 0;
       Standard_Real dist = RealLast(), ptg, dsp; 
-      const BRepAdaptor_Curve& ed = Spine->CurrentElementarySpine(Iedge);
+      const Handle(BRepAdaptor_Curve)& ed = Spine->CurrentElementarySpine(Iedge);
       for (Standard_Integer i1 = 1; i1 <= SetData.Length(); i1++) {
 	Handle(ChFiDS_SurfData)& CD1 = SetData.ChangeValue(i1);
 	ChFiDS_CommonPoint& CP1 = CD1->ChangeVertexFirstOnS1();
@@ -977,7 +977,7 @@ Standard_Boolean ChFi3d_Builder::SplitKPart
       Standard_Real dist = RealLast(), ptg, dsp; 
       Standard_Real f = Spine->FirstParameter(Iedge);
       Standard_Real l = Spine->LastParameter(Iedge);
-      const BRepAdaptor_Curve& ed = Spine->CurrentElementarySpine(Iedge);
+      const Handle(BRepAdaptor_Curve)& ed = Spine->CurrentElementarySpine(Iedge);
       for (Standard_Integer i2 = 1; i2<= SetData.Length(); i2++) {
 	Handle(ChFiDS_SurfData)& CD3 = SetData.ChangeValue(i2);
 	ChFiDS_CommonPoint& CP1 = CD3->ChangeVertexLastOnS1();

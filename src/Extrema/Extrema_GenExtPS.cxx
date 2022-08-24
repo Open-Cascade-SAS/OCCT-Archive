@@ -238,7 +238,7 @@ Extrema_GenExtPS::~Extrema_GenExtPS()
 // purpose  :
 // =======================================================================
 Extrema_GenExtPS::Extrema_GenExtPS (const gp_Pnt&          P,
-                                    const Adaptor3d_Surface& S,
+                                    const Handle(Adaptor3d_Surface)& S,
                                     const Standard_Integer NbU, 
                                     const Standard_Integer NbV,
                                     const Standard_Real    TolU, 
@@ -254,7 +254,7 @@ Extrema_GenExtPS::Extrema_GenExtPS (const gp_Pnt&          P,
 }
 
 Extrema_GenExtPS::Extrema_GenExtPS (const gp_Pnt&          P,
-                                    const Adaptor3d_Surface& S,
+                                    const Handle(Adaptor3d_Surface)& S,
                                     const Standard_Integer NbU, 
                                     const Standard_Integer NbV,
                                     const Standard_Real    Umin,
@@ -274,21 +274,21 @@ Extrema_GenExtPS::Extrema_GenExtPS (const gp_Pnt&          P,
 }
 
 
-void Extrema_GenExtPS::Initialize(const Adaptor3d_Surface& S,
+void Extrema_GenExtPS::Initialize(const Handle(Adaptor3d_Surface)& S,
                                   const Standard_Integer NbU, 
                                   const Standard_Integer NbV,
                                   const Standard_Real    TolU, 
                                   const Standard_Real    TolV)
 {
-  myumin = S.FirstUParameter();
-  myusup = S.LastUParameter();
-  myvmin = S.FirstVParameter();
-  myvsup = S.LastVParameter();
+  myumin = S->FirstUParameter();
+  myusup = S->LastUParameter();
+  myvmin = S->FirstVParameter();
+  myvsup = S->LastVParameter();
   Initialize(S,NbU,NbV,myumin,myusup,myvmin,myvsup,TolU,TolV);
 }
 
 
-void Extrema_GenExtPS::Initialize(const Adaptor3d_Surface& S,
+void Extrema_GenExtPS::Initialize(const Handle(Adaptor3d_Surface)& S,
                                   const Standard_Integer NbU, 
                                   const Standard_Integer NbV,
                                   const Standard_Real    Umin,
@@ -298,7 +298,7 @@ void Extrema_GenExtPS::Initialize(const Adaptor3d_Surface& S,
                                   const Standard_Real    TolU, 
                                   const Standard_Real    TolV)
 {
-  myS = &S;
+  myS = S;
   myusample = NbU;
   myvsample = NbV;
   mytolu = TolU;
@@ -361,18 +361,18 @@ inline static void fillParams(const TColStd_Array1OfReal& theKnots,
     theParams->SetValue(i+1,aParams(i));
 }
 
-void Extrema_GenExtPS::GetGridPoints( const Adaptor3d_Surface& theSurf)
+void Extrema_GenExtPS::GetGridPoints( const Handle(Adaptor3d_Surface)& theSurf)
 {
   //creation parametric points for BSpline and Bezier surfaces
   //with taking into account of Degree and NbKnots of BSpline or Bezier geometry
-  if (theSurf.GetType() == GeomAbs_OffsetSurface)
+  if (theSurf->GetType() == GeomAbs_OffsetSurface)
   {
-    GetGridPoints (*theSurf.BasisSurface());
+    GetGridPoints (theSurf->BasisSurface());
   }
   //parametric points for BSpline surfaces
-  else if( theSurf.GetType() == GeomAbs_BSplineSurface) 
+  else if( theSurf->GetType() == GeomAbs_BSplineSurface) 
   {
-    Handle(Geom_BSplineSurface) aBspl = theSurf.BSpline();
+    Handle(Geom_BSplineSurface) aBspl = theSurf->BSpline();
     if(!aBspl.IsNull())
     {
       TColStd_Array1OfReal aUKnots(1, aBspl->NbUKnots());
@@ -384,9 +384,9 @@ void Extrema_GenExtPS::GetGridPoints( const Adaptor3d_Surface& theSurf)
     }
   }
   //calculation parametric points for Bezier surfaces
-  else if(theSurf.GetType() == GeomAbs_BezierSurface)
+  else if(theSurf->GetType() == GeomAbs_BezierSurface)
   {
-    Handle(Geom_BezierSurface) aBezier = theSurf.Bezier();
+    Handle(Geom_BezierSurface) aBezier = theSurf->Bezier();
     if(aBezier.IsNull())
       return;
 
@@ -398,14 +398,14 @@ void Extrema_GenExtPS::GetGridPoints( const Adaptor3d_Surface& theSurf)
 
   }
   //creation points for surfaces based on BSpline or Bezier curves
-  else if(theSurf.GetType() == GeomAbs_SurfaceOfRevolution || 
-    theSurf.GetType() == GeomAbs_SurfaceOfExtrusion)
+  else if(theSurf->GetType() == GeomAbs_SurfaceOfRevolution || 
+    theSurf->GetType() == GeomAbs_SurfaceOfExtrusion)
   {
     Handle(TColStd_HArray1OfReal) anArrKnots;
     Standard_Integer aDegree = 0;
-    if(theSurf.BasisCurve()->GetType() == GeomAbs_BSplineCurve)
+    if(theSurf->BasisCurve()->GetType() == GeomAbs_BSplineCurve)
     {
-      Handle(Geom_BSplineCurve) aBspl = theSurf.BasisCurve()->BSpline();
+      Handle(Geom_BSplineCurve) aBspl = theSurf->BasisCurve()->BSpline();
       if(!aBspl.IsNull())
       {
         anArrKnots = new TColStd_HArray1OfReal(1,aBspl->NbKnots());
@@ -415,9 +415,9 @@ void Extrema_GenExtPS::GetGridPoints( const Adaptor3d_Surface& theSurf)
       }
 
     }
-    if(theSurf.BasisCurve()->GetType() == GeomAbs_BezierCurve)
+    if(theSurf->BasisCurve()->GetType() == GeomAbs_BezierCurve)
     {
-      Handle(Geom_BezierCurve) aBez = theSurf.BasisCurve()->Bezier();
+      Handle(Geom_BezierCurve) aBez = theSurf->BasisCurve()->Bezier();
       if(!aBez.IsNull())
       {
         anArrKnots = new TColStd_HArray1OfReal(1,2);
@@ -429,7 +429,7 @@ void Extrema_GenExtPS::GetGridPoints( const Adaptor3d_Surface& theSurf)
     }
     if(anArrKnots.IsNull())
       return;
-    if( theSurf.GetType() == GeomAbs_SurfaceOfRevolution )
+    if( theSurf->GetType() == GeomAbs_SurfaceOfRevolution )
       fillParams( anArrKnots->Array1(), aDegree, myvmin, myvsup, myVParams, myvsample);
     else
       fillParams( anArrKnots->Array1(), aDegree, myumin, myusup, myUParams, myusample);
@@ -523,7 +523,7 @@ void Extrema_GenExtPS::BuildGrid(const gp_Pnt &thePoint)
   //if grid was already built skip its creation
   if (!myInit) {
     //build parametric grid in case of a complex surface geometry (BSpline and Bezier surfaces)
-    GetGridPoints(*myS);
+    GetGridPoints(myS);
     
     //build grid in other cases 
     if( myUParams.IsNull() )
@@ -715,7 +715,7 @@ void Extrema_GenExtPS::BuildGrid(const gp_Pnt &thePoint)
   }
 }
 
-static Standard_Real LengthOfIso(const Adaptor3d_Surface& theS, const GeomAbs_IsoType theIso,
+static Standard_Real LengthOfIso(const Handle(Adaptor3d_Surface)& theS, const GeomAbs_IsoType theIso,
   const Standard_Real thePar1, const Standard_Real thePar2,
   const Standard_Integer theNbPnts,  const Standard_Real thePar)
 {
@@ -726,22 +726,22 @@ static Standard_Real LengthOfIso(const Adaptor3d_Surface& theS, const GeomAbs_Is
   Standard_Real aPar = thePar1 + dPar;
   if(theIso == GeomAbs_IsoU)
   {
-    aP1 = theS.Value(thePar, thePar1);
+    aP1 = theS->Value(thePar, thePar1);
   }
   else
   {
-    aP1 = theS.Value(thePar1, thePar);
+    aP1 = theS->Value(thePar1, thePar);
   }
 
   for (i = 2; i <= theNbPnts; ++i)
   {
     if (theIso == GeomAbs_IsoU)
     {
-      aP2 = theS.Value(thePar, aPar);
+      aP2 = theS->Value(thePar, aPar);
     }
     else
     {
-      aP2 = theS.Value(aPar, thePar);
+      aP2 = theS->Value(aPar, thePar);
     }
     aLen += aP1.Distance(aP2);
     aP1 = aP2;
@@ -749,7 +749,7 @@ static Standard_Real LengthOfIso(const Adaptor3d_Surface& theS, const GeomAbs_Is
   }
   return aLen;
 }
-static void CorrectNbSamples(const Adaptor3d_Surface& theS, 
+static void CorrectNbSamples(const Handle(Adaptor3d_Surface)& theS, 
   const Standard_Real theU1, const Standard_Real theU2, Standard_Integer& theNbU, 
   const Standard_Real theV1, const Standard_Real theV2, Standard_Integer& theNbV)
 {
@@ -821,7 +821,7 @@ void Extrema_GenExtPS::BuildTree()
       myvsample = Min(aVValue, 300);
   }
   //
-  CorrectNbSamples(*myS, myumin, myusup, myusample, myvmin, myvsup, myvsample);
+  CorrectNbSamples(myS, myumin, myusup, myusample, myvmin, myvsup, myvsample);
   //
   Standard_Real PasU = myusup - myumin;
   Standard_Real PasV = myvsup - myvmin;

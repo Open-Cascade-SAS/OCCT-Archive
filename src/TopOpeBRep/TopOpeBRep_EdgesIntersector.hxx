@@ -74,11 +74,11 @@ public:
   
   Standard_EXPORT const TopoDS_Shape& Edge (const Standard_Integer Index) const;
   
-  Standard_EXPORT const Geom2dAdaptor_Curve& Curve (const Standard_Integer Index) const;
+  Standard_EXPORT const Handle(Geom2dAdaptor_Curve)& Curve (const Standard_Integer Index) const;
   
   Standard_EXPORT const TopoDS_Shape& Face (const Standard_Integer Index) const;
   
-  Standard_EXPORT const BRepAdaptor_Surface& Surface (const Standard_Integer Index) const;
+  Standard_EXPORT const Handle(BRepAdaptor_Surface)& Surface (const Standard_Integer Index) const;
   
   Standard_EXPORT Standard_Boolean SurfacesSameOriented() const;
   
@@ -179,8 +179,8 @@ private:
   IntRes2d_Domain myDomain2;
   TopoDS_Edge myEdge1;
   TopoDS_Edge myEdge2;
-  Geom2dAdaptor_Curve myCurve1;
-  Geom2dAdaptor_Curve myCurve2;
+  Handle(Geom2dAdaptor_Curve) myCurve1;
+  Handle(Geom2dAdaptor_Curve) myCurve2;
   Standard_Real myTol1;
   Standard_Real myTol2;
   Standard_Boolean myTolForced;

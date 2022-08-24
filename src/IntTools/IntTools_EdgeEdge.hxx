@@ -151,7 +151,7 @@ protected:
   
 
   //! Looking for the range of the edge which is in the box
-  Standard_EXPORT static Standard_Boolean FindParameters(const BRepAdaptor_Curve& theBAC,
+  Standard_EXPORT static Standard_Boolean FindParameters(const Handle(BRepAdaptor_Curve)& theBAC,
     const Standard_Real aT1, const Standard_Real aT2, const Standard_Real theTol,
     const Standard_Real theRes, const Standard_Real thePTol,
     const Standard_Real theResCoeff, const Bnd_Box& theCBox,
@@ -187,8 +187,8 @@ protected:
   TopoDS_Edge myEdge2;
   Handle(Geom_Curve) myGeom1;
   Handle(Geom_Curve) myGeom2;
-  BRepAdaptor_Curve myCurve1;
-  BRepAdaptor_Curve myCurve2;
+  Handle(BRepAdaptor_Curve) myCurve1;
+  Handle(BRepAdaptor_Curve) myCurve2;
   Standard_Real myTol1;
   Standard_Real myTol2;
   Standard_Real myTol;

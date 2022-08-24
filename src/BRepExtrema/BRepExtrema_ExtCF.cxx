@@ -59,7 +59,7 @@ void BRepExtrema_ExtCF::Initialize(const TopoDS_Edge& E, const TopoDS_Face& F)
   //
   Standard_Real U1, U2, V1, V2;
   BRepTools::UVBounds(F, U1, U2, V1, V2);
-  myExtCS.Initialize (*myHS, U1, U2, V1, V2, aTolC, aTolS);
+  myExtCS.Initialize (myHS, U1, U2, V1, V2, aTolC, aTolS);
 }
 
 //=======================================================================
@@ -81,7 +81,7 @@ void BRepExtrema_ExtCF::Perform(const TopoDS_Edge& E, const TopoDS_Face& F2)
 
   BRepAdaptor_Curve Curv(E);
   Handle(BRepAdaptor_Curve) HC = new BRepAdaptor_Curve(Curv);
-  myExtCS.Perform(*HC, U1, U2);
+  myExtCS.Perform(HC, U1, U2);
 
   if(!myExtCS.IsDone())
     return;

@@ -90,8 +90,8 @@ Handle(Adaptor3d_Curve) BRepAdaptor_CompCurve::ShallowCopy() const
   aCopy->myCurves = new (BRepAdaptor_HArray1OfCurve) (1, myCurves->Size());
   for (Standard_Integer anI = 1; anI <= myCurves->Size(); ++anI)
   {
-    const Handle(Adaptor3d_Curve) aCurve = myCurves->Value(anI).ShallowCopy();
-    const BRepAdaptor_Curve& aBrepCurve = *(Handle(BRepAdaptor_Curve)::DownCast(aCurve));
+    const Handle(Adaptor3d_Curve) aCurve = myCurves->Value(anI)->ShallowCopy();
+    const Handle(BRepAdaptor_Curve) aBrepCurve = Handle(BRepAdaptor_Curve)::DownCast(aCurve);
     aCopy->myCurves->SetValue(anI, aBrepCurve);
   }
   aCopy->myKnots  = myKnots;
@@ -129,7 +129,7 @@ Handle(Adaptor3d_Curve) BRepAdaptor_CompCurve::ShallowCopy() const
     E = wexp.Current();
     if (! BRep_Tool::Degenerated(E)) {
       ii++;
-      myCurves->ChangeValue(ii).Initialize(E);
+      myCurves->ChangeValue(ii) = new BRepAdaptor_Curve(E);
       if (AC) {
 	myKnots->SetValue(ii+1,  myKnots->Value(ii));
 	myKnots->ChangeValue(ii+1) +=
@@ -141,12 +141,12 @@ Handle(Adaptor3d_Curve) BRepAdaptor_CompCurve::ShallowCopy() const
 
   Forward = Standard_True; // Default ; The Reverse Edges are parsed.
   if((NbEdge > 2) || ((NbEdge==2) && (!myWire.Closed())) ) {
-    TopAbs_Orientation Or = myCurves->Value(1).Edge().Orientation();
+    TopAbs_Orientation Or = myCurves->Value(1)->Edge().Orientation();
     TopoDS_Vertex VI, VL;
-    TopExp::CommonVertex(myCurves->Value(1).Edge(),
-			     myCurves->Value(2).Edge(),
+    TopExp::CommonVertex(myCurves->Value(1)->Edge(),
+			     myCurves->Value(2)->Edge(),
 			     VI);
-    VL = TopExp::LastVertex(myCurves->Value(1).Edge());
+    VL = TopExp::LastVertex(myCurves->Value(1)->Edge());
     if (VI.IsSame(VL)) { // The direction of parsing is always preserved
       if (Or == TopAbs_REVERSED)
 	 Forward = Standard_False;
@@ -182,29 +182,29 @@ Handle(Adaptor3d_Curve) BRepAdaptor_CompCurve::ShallowCopy() const
   CurIndex = (i1+i2)/2; // Small optimization
   if (i1==i2) {
     if (l > f)
-      HC = Handle(BRepAdaptor_Curve)::DownCast(myCurves->Value(i1).Trim(f, l, PTol));
+      HC = Handle(BRepAdaptor_Curve)::DownCast(myCurves->Value(i1)->Trim(f, l, PTol));
     else
-      HC = Handle(BRepAdaptor_Curve)::DownCast(myCurves->Value(i1).Trim(l, f, PTol));
-    myCurves->SetValue(i1, *HC);
+      HC = Handle(BRepAdaptor_Curve)::DownCast(myCurves->Value(i1)->Trim(l, f, PTol));
+    myCurves->SetValue(i1, HC);
   }
   else {
-    const BRepAdaptor_Curve& c1 = myCurves->Value(i1);
-    const BRepAdaptor_Curve& c2 = myCurves->Value(i2);
+    const Handle(BRepAdaptor_Curve)& c1 = myCurves->Value(i1);
+    const Handle(BRepAdaptor_Curve)& c2 = myCurves->Value(i2);
     Standard_Real k;
 
-    k = c1.LastParameter();
+    k = c1->LastParameter();
     if (k>f)
-      HC = Handle(BRepAdaptor_Curve)::DownCast(c1.Trim(f, k, PTol));
+      HC = Handle(BRepAdaptor_Curve)::DownCast(c1->Trim(f, k, PTol));
     else
-      HC = Handle(BRepAdaptor_Curve)::DownCast(c1.Trim(k, f, PTol));
-    myCurves->SetValue(i1, *HC);
+      HC = Handle(BRepAdaptor_Curve)::DownCast(c1->Trim(k, f, PTol));
+    myCurves->SetValue(i1, HC);
 
-    k = c2.FirstParameter();
+    k = c2->FirstParameter();
     if (k<=l)
-      HC = Handle(BRepAdaptor_Curve)::DownCast(c2.Trim(k, l, PTol));
+      HC = Handle(BRepAdaptor_Curve)::DownCast(c2->Trim(k, l, PTol));
     else
-      HC = Handle(BRepAdaptor_Curve)::DownCast(c2.Trim(l, k, PTol));
-    myCurves->SetValue(i2, *HC);
+      HC = Handle(BRepAdaptor_Curve)::DownCast(c2->Trim(l, k, PTol));
+    myCurves->SetValue(i2, HC);
   }
 }
 
@@ -221,7 +221,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   Standard_Integer index = CurIndex;
   UonE = U;
   Prepare(UonE, d, index);
-  E = myCurves->Value(index).Edge();
+  E = myCurves->Value(index)->Edge();
 }
 
  Standard_Real BRepAdaptor_CompCurve::FirstParameter() const
@@ -237,14 +237,14 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
  GeomAbs_Shape BRepAdaptor_CompCurve::Continuity() const
 {
   if ( myCurves->Length() > 1) return GeomAbs_C0;
-  return myCurves->Value(1).Continuity();
+  return myCurves->Value(1)->Continuity();
 }
 
  Standard_Integer BRepAdaptor_CompCurve::NbIntervals(const GeomAbs_Shape S) const
 {
   Standard_Integer NbInt, ii;
   for (ii=1, NbInt=0; ii<=myCurves->Length(); ii++)
-    NbInt += myCurves->ChangeValue(ii).NbIntervals(S);
+    NbInt += myCurves->ChangeValue(ii)->NbIntervals(S);
 
   return NbInt;
 }
@@ -256,9 +256,9 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   Standard_Real f, F, delta;
 
   // First curve (direction of parsing of the edge)
-  n = myCurves->ChangeValue(1).NbIntervals(S);
+  n = myCurves->ChangeValue(1)->NbIntervals(S);
   Handle(TColStd_HArray1OfReal) Ti = new (TColStd_HArray1OfReal) (1, n+1);
-  myCurves->ChangeValue(1).Intervals(Ti->ChangeArray1(), S);
+  myCurves->ChangeValue(1)->Intervals(Ti->ChangeArray1(), S);
   InvPrepare(1, f, delta);
   F = myKnots->Value(1);
   if (delta < 0) {
@@ -273,9 +273,9 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 
   // and the next
   for (ii=2; ii<=myCurves->Length(); ii++) {
-    n = myCurves->ChangeValue(ii).NbIntervals(S);
+    n = myCurves->ChangeValue(ii)->NbIntervals(S);
     if (n != Ti->Length()-1) Ti = new (TColStd_HArray1OfReal) (1, n+1);
-    myCurves->ChangeValue(ii).Intervals(Ti->ChangeArray1(), S);
+    myCurves->ChangeValue(ii)->Intervals(Ti->ChangeArray1(), S);
     InvPrepare(ii, f, delta);
     F = myKnots->Value(ii);
     if (delta < 0) {
@@ -321,7 +321,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   Standard_Real u = U, d;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
-  return myCurves->Value(index).Value(u);
+  return myCurves->Value(index)->Value(u);
 }
 
  void BRepAdaptor_CompCurve::D0(const Standard_Real U,
@@ -330,7 +330,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   Standard_Real u = U, d;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
-  myCurves->Value(index).D0(u, P);
+  myCurves->Value(index)->D0(u, P);
 }
 
  void BRepAdaptor_CompCurve::D1(const Standard_Real U,
@@ -340,7 +340,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   Standard_Real u = U, d;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
-  myCurves->Value(index).D1(u, P, V);
+  myCurves->Value(index)->D1(u, P, V);
   V*=d;
 }
 
@@ -352,7 +352,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   Standard_Real u = U, d;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
-  myCurves->Value(index).D2(u, P, V1, V2);
+  myCurves->Value(index)->D2(u, P, V1, V2);
   V1*=d;
   V2 *= d*d;
 }
@@ -365,7 +365,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   Standard_Real u = U, d;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
-  myCurves->Value(index).D3(u, P, V1, V2, V3);
+  myCurves->Value(index)->D3(u, P, V1, V2, V3);
   V1*=d;
   V2 *= d*d;
   V3 *= d*d*d;
@@ -378,7 +378,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
 
-  return (myCurves->Value(index).DN(u, N) * Pow(d, N));
+  return (myCurves->Value(index)->DN(u, N) * Pow(d, N));
 }
 
  Standard_Real BRepAdaptor_CompCurve::Resolution(const Standard_Real R3d) const
@@ -386,7 +386,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   Standard_Real Res = 1.e200, r;
   Standard_Integer ii, L = myCurves->Length();
   for (ii=1; ii<=L; ii++) {
-    r = myCurves->Value(ii).Resolution(R3d);
+    r = myCurves->Value(ii)->Resolution(R3d);
     if (r < Res) Res = r;
   }
   return Res;
@@ -401,57 +401,57 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 
  gp_Lin BRepAdaptor_CompCurve::Line() const
 {
-  return myCurves->Value(1).Line();
+  return myCurves->Value(1)->Line();
 }
 
  gp_Circ BRepAdaptor_CompCurve::Circle() const
 {
-  return myCurves->Value(1).Circle();
+  return myCurves->Value(1)->Circle();
 }
 
  gp_Elips BRepAdaptor_CompCurve::Ellipse() const
 {
-  return myCurves->Value(1).Ellipse();
+  return myCurves->Value(1)->Ellipse();
 }
 
  gp_Hypr BRepAdaptor_CompCurve::Hyperbola() const
 {
-  return myCurves->Value(1).Hyperbola();
+  return myCurves->Value(1)->Hyperbola();
 }
 
  gp_Parab BRepAdaptor_CompCurve::Parabola() const
 {
-  return myCurves->Value(1).Parabola();
+  return myCurves->Value(1)->Parabola();
 }
 
  Standard_Integer BRepAdaptor_CompCurve::Degree() const
 {
-  return myCurves->Value(1).Degree();
+  return myCurves->Value(1)->Degree();
 }
 
  Standard_Boolean BRepAdaptor_CompCurve::IsRational() const
 {
-  return myCurves->Value(1).IsRational();
+  return myCurves->Value(1)->IsRational();
 }
 
  Standard_Integer BRepAdaptor_CompCurve::NbPoles() const
 {
-  return myCurves->Value(1).NbPoles();
+  return myCurves->Value(1)->NbPoles();
 }
 
  Standard_Integer BRepAdaptor_CompCurve::NbKnots() const
 {
-  return myCurves->Value(1).NbKnots();
+  return myCurves->Value(1)->NbKnots();
 }
 
  Handle(Geom_BezierCurve) BRepAdaptor_CompCurve::Bezier() const
 {
-  return myCurves->Value(1).Bezier();
+  return myCurves->Value(1)->Bezier();
 }
 
  Handle(Geom_BSplineCurve) BRepAdaptor_CompCurve::BSpline() const
 {
-  return myCurves->Value(1).BSpline();
+  return myCurves->Value(1)->BSpline();
 }
 
 //=======================================================================
@@ -496,7 +496,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   }
 
   // Invert ?
-  const TopoDS_Edge& E = myCurves->Value(theCurIndex).Edge();
+  const TopoDS_Edge& E = myCurves->Value(theCurIndex)->Edge();
   TopAbs_Orientation Or = E.Orientation();
   Standard_Boolean Reverse;
   Reverse = (Forward && (Or == TopAbs_REVERSED)) ||
@@ -521,7 +521,7 @@ void  BRepAdaptor_CompCurve::InvPrepare(const Standard_Integer index,
 					Standard_Real& Delta) const
 {
   // Invert?
-  const TopoDS_Edge& E = myCurves->Value(index).Edge();
+  const TopoDS_Edge& E = myCurves->Value(index)->Edge();
   TopAbs_Orientation Or = E.Orientation();
   Standard_Boolean Reverse;
   Reverse = (Forward && (Or == TopAbs_REVERSED)) ||

@@ -37,15 +37,15 @@
 #include <ElSLib.hxx>
 
 // Compute the flag: CW || CCW
-static Standard_Boolean isCW(const BRepAdaptor_Curve& AC)
+static Standard_Boolean isCW(const Handle(BRepAdaptor_Curve)& AC)
 {
-  const Standard_Real f = AC.FirstParameter();
-  const Standard_Real l = AC.LastParameter();
-  Handle(Geom_Circle) circle = Handle(Geom_Circle)::DownCast(AC.Curve().Curve());
-  gp_Pnt start = AC.Value(f);
-  gp_Pnt end = AC.Value(l);
-  gp_Pnt center = AC.Circle().Location();
-  gp_Ax3 plane = AC.Circle().Position();
+  const Standard_Real f = AC->FirstParameter();
+  const Standard_Real l = AC->LastParameter();
+  Handle(Geom_Circle) circle = Handle(Geom_Circle)::DownCast(AC->Curve()->Curve());
+  gp_Pnt start = AC->Value(f);
+  gp_Pnt end = AC->Value(l);
+  gp_Pnt center = AC->Circle().Location();
+  gp_Ax3 plane = AC->Circle().Position();
 
   // Get point on circle at half angle
   gp_Pnt m;
@@ -174,8 +174,8 @@ void ChFi2d_AnaFilletAlgo::Init(const TopoDS_Wire& theWire, const gp_Pln& thePla
     throw Standard_TypeMismatch("The algorithm expects a wire consisting of two linear or circular edges.");
 
   // Left neighbour.
-  BRepAdaptor_Curve AC1(e1);
-  if (AC1.GetType() != GeomAbs_Line && AC1.GetType() != GeomAbs_Circle)
+  Handle(BRepAdaptor_Curve) AC1 = new BRepAdaptor_Curve(e1);
+  if (AC1->GetType() != GeomAbs_Line && AC1->GetType() != GeomAbs_Circle)
     throw Standard_TypeMismatch("A segment or an arc of circle is expected.");
 
   TopoDS_Vertex v1, v2;
@@ -191,10 +191,10 @@ void ChFi2d_AnaFilletAlgo::Init(const TopoDS_Wire& theWire, const gp_Pln& thePla
   p2.Coord(x12, y12);
 
   segment1 = true;
-  if (AC1.GetType() == GeomAbs_Circle)
+  if (AC1->GetType() == GeomAbs_Circle)
   {
     segment1 = false;
-    gp_Circ c = AC1.Circle();
+    gp_Circ c = AC1->Circle();
 
     gp_Pnt2d loc = ProjLib::Project(thePlane, c.Location());
     loc.Coord(xc1, yc1);
@@ -204,8 +204,8 @@ void ChFi2d_AnaFilletAlgo::Init(const TopoDS_Wire& theWire, const gp_Pln& thePla
   }
 
   // Right neighbour.
-  BRepAdaptor_Curve AC2(e2);
-  if (AC2.GetType() != GeomAbs_Line && AC2.GetType() != GeomAbs_Circle)
+  Handle(BRepAdaptor_Curve) AC2 = new BRepAdaptor_Curve(e2);
+  if (AC2->GetType() != GeomAbs_Line && AC2->GetType() != GeomAbs_Circle)
     throw Standard_TypeMismatch("A segment or an arc of circle is expected.");
 
   TopExp::Vertices(e2, v1, v2, Standard_True);
@@ -220,10 +220,10 @@ void ChFi2d_AnaFilletAlgo::Init(const TopoDS_Wire& theWire, const gp_Pln& thePla
   p2.Coord(x22, y22);
 
   segment2 = true;
-  if (AC2.GetType() == GeomAbs_Circle)
+  if (AC2->GetType() == GeomAbs_Circle)
   {
     segment2 = false;
-    gp_Circ c = AC2.Circle();
+    gp_Circ c = AC2->Circle();
 
     gp_Pnt2d loc = ProjLib::Project(thePlane, c.Location());
     loc.Coord(xc2, yc2);
@@ -465,14 +465,14 @@ Standard_Boolean ChFi2d_AnaFilletAlgo::Perform(const Standard_Real radius)
       if (segment1)
       {
         BRepBuilderAPI_MakeEdge mkSegment1;
-        mkSegment1.Init(AC1.Curve().Curve(), p1, p2);
+        mkSegment1.Init(AC1.Curve()->Curve(), p1, p2);
         if (mkSegment1.IsDone())
           shrinke1 = mkSegment1.Edge();
       }
       else
       {
         BRepBuilderAPI_MakeEdge mkCirc1;
-        mkCirc1.Init(AC1.Curve().Curve(), p1, p2);
+        mkCirc1.Init(AC1.Curve()->Curve(), p1, p2);
         if (mkCirc1.IsDone())
           shrinke1 = mkCirc1.Edge();
       }
@@ -492,14 +492,14 @@ Standard_Boolean ChFi2d_AnaFilletAlgo::Perform(const Standard_Real radius)
       if (segment2)
       {
         BRepBuilderAPI_MakeEdge mkSegment2;
-        mkSegment2.Init(AC2.Curve().Curve(), p1, p2);
+        mkSegment2.Init(AC2.Curve()->Curve(), p1, p2);
         if (mkSegment2.IsDone())
           shrinke2 = mkSegment2.Edge();
       }
       else
       {
         BRepBuilderAPI_MakeEdge mkCirc2;
-        mkCirc2.Init(AC2.Curve().Curve(), p1, p2);
+        mkCirc2.Init(AC2.Curve()->Curve(), p1, p2);
         if (mkCirc2.IsDone())
           shrinke2 = mkCirc2.Edge();
       }

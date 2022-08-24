@@ -227,7 +227,7 @@ Standard_Boolean PrsDim::ComputeGeometry (const TopoDS_Edge& theEdge,
                                           Standard_Boolean& theIsInfinite)
 {
   BRepAdaptor_Curve anAdaptor (theEdge);
-  theCurve = Handle(Geom_Curve)::DownCast (anAdaptor.Curve().Curve()->Transformed (anAdaptor.Trsf()));
+  theCurve = Handle(Geom_Curve)::DownCast (anAdaptor.Curve()->Curve()->Transformed (anAdaptor.Trsf()));
   if (theCurve.IsNull())
   {
     return Standard_False;
@@ -276,7 +276,7 @@ Standard_Boolean PrsDim::ComputeGeometry (const TopoDS_Edge& theEdge,
   }
 
   BRepAdaptor_Curve aCurveAdaptor (theEdge);
-  theCurve = Handle(Geom_Curve)::DownCast (aCurveAdaptor.Curve().Curve()->Transformed (aCurveAdaptor.Trsf()));
+  theCurve = Handle(Geom_Curve)::DownCast (aCurveAdaptor.Curve()->Curve()->Transformed (aCurveAdaptor.Trsf()));
   if (theCurve.IsNull())
   {
     return Standard_False;
@@ -549,9 +549,9 @@ Standard_Boolean PrsDim::ComputeGeometry (const TopoDS_Edge& theFirstEdge,
   BRepAdaptor_Curve aSecondAdaptor (theSecondEdge);
 
   theFirstCurve = Handle(Geom_Curve)::DownCast
-                  (aFirstAdaptor.Curve().Curve()->Transformed (aFirstAdaptor.Trsf()));
+                  (aFirstAdaptor.Curve()->Curve()->Transformed (aFirstAdaptor.Trsf()));
   theSecondCurve = Handle(Geom_Curve)::DownCast
-                  (aSecondAdaptor.Curve().Curve()->Transformed (aSecondAdaptor.Trsf()));
+                  (aSecondAdaptor.Curve()->Curve()->Transformed (aSecondAdaptor.Trsf()));
 
   if (theFirstCurve->IsInstance (STANDARD_TYPE (Geom_TrimmedCurve)))
   {
@@ -752,7 +752,7 @@ Standard_Boolean PrsDim::GetPlaneFromFace (const TopoDS_Face& aFace,
   else
     surf2 = new BRepAdaptor_Surface( surf1 );
 
-  aSurf = surf1.Surface().Surface();
+  aSurf = surf1.Surface()->Surface();
   //  aSurf->Transform(surf1.Trsf()) ;
   aSurf = Handle( Geom_Surface )::DownCast( aSurf->Transformed( surf1.Trsf() ) );
 

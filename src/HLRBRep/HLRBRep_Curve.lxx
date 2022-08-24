@@ -25,19 +25,11 @@
 #include <HLRBRep_BCurveTool.hxx>
 
 //=======================================================================
-//function : Curve
-//purpose  : 
-//=======================================================================
-
-inline BRepAdaptor_Curve& HLRBRep_Curve::Curve()
-{ return myCurve; }
-
-//=======================================================================
 //function : GetCurve
 //purpose  : 
 //=======================================================================
 
-inline const BRepAdaptor_Curve& HLRBRep_Curve::GetCurve() const
+inline const Handle(BRepAdaptor_Curve)& HLRBRep_Curve::Curve() const
 { return myCurve; }
 
 //=======================================================================

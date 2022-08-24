@@ -174,7 +174,7 @@ static Standard_Boolean IsClosedShape(const TopoDS_Shape& theshape,
     Standard_Real first,last;
     Handle(Geom_Curve) c3d = BRep_Tool::Curve(TopoDS::Edge(aedge), first, last);
     if (!c3d.IsNull()) {
-      GeomAdaptor_Curve cAdapt(c3d);
+      Handle(GeomAdaptor_Curve) cAdapt = new GeomAdaptor_Curve(c3d);
       Standard_Real length = GCPnts_AbscissaPoint::Length(cAdapt, first, last);
       TotLength += length;
       if (ve2.IsSame(v1) || ve2.IsSame(v2)) break;
@@ -444,10 +444,10 @@ static Standard_Boolean findNMVertices(const TopoDS_Edge& theEdge,
     return Standard_False;
   Standard_Real first, last;
   Handle(Geom_Curve) c3d = BRep_Tool::Curve(theEdge,first, last);
-  GeomAdaptor_Curve GAC(c3d);
+  Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(c3d);
   Extrema_ExtPC locProj;
   locProj.Initialize(GAC, first, last);
-  gp_Pnt pfirst = GAC.Value(first), plast = GAC.Value(last);
+  gp_Pnt pfirst = GAC->Value(first), plast = GAC->Value(last);
 
   
   for (Standard_Integer i = 1; i <= nbV; i++) {
@@ -574,10 +574,10 @@ TopoDS_Edge BRepBuilderAPI_Sewing::SameParameterEdge(const TopoDS_Edge& edgeFirs
     // Take the longest edge as first
     Standard_Real f, l;
     Handle(Geom_Curve) c3d1 = BRep_Tool::Curve(TopoDS::Edge(edgeFirst), f, l);
-    GeomAdaptor_Curve cAdapt1(c3d1);
+    Handle(GeomAdaptor_Curve) cAdapt1 = new GeomAdaptor_Curve(c3d1);
     Standard_Real len1 = GCPnts_AbscissaPoint::Length(cAdapt1, f, l);
     Handle(Geom_Curve) c3d2 = BRep_Tool::Curve(TopoDS::Edge(edgeLast), f, l);
-    GeomAdaptor_Curve cAdapt2(c3d2);
+    Handle(GeomAdaptor_Curve) cAdapt2 = new GeomAdaptor_Curve(c3d2);
     Standard_Real len2 = GCPnts_AbscissaPoint::Length(cAdapt2, f, l);
     if (len1 < len2) {
       edge1 = edgeLast;
@@ -1017,7 +1017,7 @@ void BRepBuilderAPI_Sewing::EvaluateAngulars(TopTools_SequenceOfShape& sequenceS
       c3d->Transform(loc.Transformation());
     }
 
-    GeomAdaptor_Curve adapt(c3d);
+    Handle(GeomAdaptor_Curve) adapt = new GeomAdaptor_Curve(c3d);
     GCPnts_UniformAbscissa uniAbs(adapt, npt, first, last);
 
     Standard_Real cumulateAngular = 0.0;
@@ -1283,7 +1283,8 @@ Standard_Boolean BRepBuilderAPI_Sewing::IsMergedClosed(const TopoDS_Edge& Edge1,
   Standard_Real C2Umin, C2Vmin, C2Umax, C2Vmax;
   { //szv: Use brackets to destroy local variables
     Bnd_Box2d B1, B2;
-    Geom2dAdaptor_Curve aC2d1(C2d1), aC2d2(C2d2);
+    Handle(Geom2dAdaptor_Curve) aC2d1 = new Geom2dAdaptor_Curve(C2d1);
+    Handle(Geom2dAdaptor_Curve) aC2d2 = new Geom2dAdaptor_Curve(C2d2);
     BndLib_Add2dCurve::Add(aC2d1,first2d1,last2d1,Precision::PConfusion(),B1);
     BndLib_Add2dCurve::Add(aC2d2,first2d2,last2d2,Precision::PConfusion(),B2);
     B1.Get(C1Umin,C1Vmin,C1Umax,C1Vmax);
@@ -3559,7 +3560,7 @@ Standard_Boolean BRepBuilderAPI_Sewing::MergedNearestEdges(const TopoDS_Shape& e
       for (i = 1; i <= nbSection; i++) {
         Standard_Real f, l;
         Handle(Geom_Curve) c3d = BRep_Tool::Curve(TopoDS::Edge(seqEdges(i)), f, l);
-        GeomAdaptor_Curve cAdapt(c3d);
+        Handle(GeomAdaptor_Curve) cAdapt = new GeomAdaptor_Curve(c3d);
         Standard_Real len = GCPnts_AbscissaPoint::Length(cAdapt, f, l);
         if (len > lenRef) { indRef = i; lenRef = len; }
       }
@@ -3646,7 +3647,7 @@ void BRepBuilderAPI_Sewing::Cutting(const Message_ProgressRange& theProgress)
       { //szv: Use brackets to destroy local variables
         // Create bounding box around curve
         Bnd_Box aGlobalBox;
-        GeomAdaptor_Curve adptC(c3d,first,last);
+        Handle(GeomAdaptor_Curve) adptC = new GeomAdaptor_Curve(c3d,first,last);
         BndLib_Add3dCurve::Add(adptC,myTolerance,aGlobalBox);
         // Sort vertices to find candidates
         aSelector.SetCurrent (aGlobalBox);
@@ -3848,7 +3849,7 @@ static Standard_Boolean IsDegeneratedWire(const TopoDS_Shape& wire)
         length = pfirst.Distance(plast);
       }
       else {
-        GeomAdaptor_Curve cAdapt(c3d);
+        Handle(GeomAdaptor_Curve) cAdapt = new GeomAdaptor_Curve(c3d);
         length = GCPnts_AbscissaPoint::Length(cAdapt, first, last);
       }
       Standard_Real tole = BRep_Tool::Tolerance(Ve1)+BRep_Tool::Tolerance(Ve2);
@@ -4288,10 +4289,10 @@ void BRepBuilderAPI_Sewing::ProjectPointsOnCurve(const TColgp_Array1OfPnt& arrPn
 {
   arrDist.Init(-1.0);
 
-  GeomAdaptor_Curve GAC(c3d);
+  Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(c3d);
   Extrema_ExtPC locProj;
   locProj.Initialize(GAC, first, last);
-  gp_Pnt pfirst = GAC.Value(first), plast = GAC.Value(last);
+  gp_Pnt pfirst = GAC->Value(first), plast = GAC->Value(last);
   Standard_Integer find = 1;//(isConsiderEnds ? 1 : 2);
   Standard_Integer lind = arrPnt.Length();//(isConsiderEnds ? arrPnt.Length() : arrPnt.Length() -1);
   
@@ -4316,7 +4317,7 @@ void BRepBuilderAPI_Sewing::ProjectPointsOnCurve(const TColgp_Array1OfPnt& arrPn
           isProjected = Standard_True;
           Extrema_POnCurv pOnC = locProj.Point(indMin);
           Standard_Real paramProj = pOnC.Parameter();
-          gp_Pnt ptProj = GAC.Value(paramProj);
+          gp_Pnt ptProj = GAC->Value(paramProj);
           Standard_Real distProj2 = ptProj.SquareDistance(pt);
           if (!locProj.IsMin(indMin)) {
             if (Min(distF2,distL2) < dist2Min) {

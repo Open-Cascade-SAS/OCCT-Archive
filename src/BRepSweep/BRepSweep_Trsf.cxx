@@ -97,14 +97,14 @@ void BRepSweep_Trsf::SetContinuity(const TopoDS_Shape& aGenS,
   if(aGenS.ShapeType() == TopAbs_EDGE){
     if (HasShape(aGenS,aDirS)){
       TopoDS_Edge E = TopoDS::Edge(aGenS);
-      BRepAdaptor_Curve e;
+      Handle(BRepAdaptor_Curve) e = new BRepAdaptor_Curve();
       Standard_Real ud,uf;
       TopoDS_Vertex d,f;
       TopExp::Vertices(E,d,f);
       if(d.IsSame(f)){
 //	tol3d = Max(tl,BRep_Tool::Tolerance(d));
 	tol3d = Max(tl,2.*BRep_Tool::Tolerance(d));//IFV 24.05.00 buc60684
-	e.Initialize(E);
+	e->Initialize(E);
 	ud = BRep_Tool::Parameter(d,TopoDS::Edge(aGenS));
 	uf = BRep_Tool::Parameter(f,TopoDS::Edge(aGenS));
 	cont = BRepLProp::Continuity(e,e,ud,uf,tol3d,ta);
@@ -137,7 +137,8 @@ void BRepSweep_Trsf::SetContinuity(const TopoDS_Shape& aGenS,
   }
   else if(aGenS.ShapeType() == TopAbs_WIRE){
     TopoDS_Edge E1,E2;
-    BRepAdaptor_Curve e1,e2;
+	Handle(BRepAdaptor_Curve) e1 = new BRepAdaptor_Curve();
+	Handle(BRepAdaptor_Curve) e2 = new BRepAdaptor_Curve();
     Standard_Real u1,u2;
     TopTools_IndexedDataMapOfShapeListOfShape M;
     TopExp::MapShapesAndAncestors(aGenS,TopAbs_VERTEX,TopAbs_EDGE,M);
@@ -156,8 +157,8 @@ void BRepSweep_Trsf::SetContinuity(const TopoDS_Shape& aGenS,
 	    u2 = BRep_Tool::Parameter(V,E2);
 //	    tol3d = Max(tl,BRep_Tool::Tolerance(V));
 	    tol3d = Max(tl,2.*BRep_Tool::Tolerance(V)); //IFV 24.05.00 buc60684
-	    e1.Initialize(E1);
-	    e2.Initialize(E2);
+	    e1->Initialize(E1);
+	    e2->Initialize(E2);
 	    cont = BRepLProp::Continuity(e1,e2,u1,u2,tol3d,ta);
 	    if(cont >= 1){
 	      TopoDS_Shape s_wnt = Shape(V,aDirS);

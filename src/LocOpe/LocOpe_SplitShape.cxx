@@ -77,13 +77,13 @@ static TopoDS_Shape ChooseDirection(const TopoDS_Shape&,
                                     const TopTools_ListOfShape&);
 
 inline Standard_Boolean SameUV(const gp_Pnt2d& P1, const gp_Pnt2d& P2, 
-                               const BRepAdaptor_Surface& theBAS)//const Standard_Real tol)
+                               const Handle(BRepAdaptor_Surface)& theBAS)//const Standard_Real tol)
 {
   Standard_Boolean isSame = Standard_True;
-  if(theBAS.IsUPeriodic())
-    isSame = (fabs(P1.X() - P2.X()) < theBAS.UPeriod() *0.5);
-  if(theBAS.IsVPeriodic())
-    isSame = (isSame && (fabs(P1.Y() - P2.Y()) < theBAS.VPeriod() *0.5));
+  if(theBAS->IsUPeriodic())
+    isSame = (fabs(P1.X() - P2.X()) < theBAS->UPeriod() *0.5);
+  if(theBAS->IsVPeriodic())
+    isSame = (isSame && (fabs(P1.Y() - P2.Y()) < theBAS->VPeriod() *0.5));
   return isSame;
   //return P1.SquareDistance(P2) < tol * tol; //IFV
 }
@@ -786,11 +786,11 @@ Standard_Boolean LocOpe_SplitShape::AddOpenWire(const TopoDS_Wire& W,
   lf.Remove(itl);
   BRep_Builder B;
 
-  BRepAdaptor_Surface BAS(FaceRef, Standard_False);
+  Handle(BRepAdaptor_Surface) BAS = new BRepAdaptor_Surface(FaceRef, Standard_False);
 
-  Standard_Boolean IsPeriodic = BAS.IsUPeriodic() || BAS.IsVPeriodic();
+  Standard_Boolean IsPeriodic = BAS->IsUPeriodic() || BAS->IsVPeriodic();
 
-  tol1 = Max(BAS.UResolution(tol1), BAS.VResolution(tol1));
+  tol1 = Max(BAS->UResolution(tol1), BAS->VResolution(tol1));
 
   if (wfirst.IsSame(wlast)) {
     // on cree 2 faces en remplacement de itl.Value()
@@ -956,7 +956,7 @@ Standard_Boolean LocOpe_SplitShape::AddOpenWire(const TopoDS_Wire& W,
       }
       //fin MODIF.
       
-      tol1 = Max(BAS.UResolution(tol1), BAS.VResolution(tol1));
+      tol1 = Max(BAS->UResolution(tol1), BAS->VResolution(tol1));
       
     }
    
@@ -1499,8 +1499,8 @@ Standard_Boolean ChoixUV(const TopoDS_Edge& Last,
   gp_Vec2d v2d;
   gp_Pnt aPCur, aPlst;
 
-  BRepAdaptor_Surface surf(F,Standard_False); // no restriction
-  surf.D0 (plst.X(), plst.Y(), aPlst);
+  Handle(BRepAdaptor_Surface) surf = new BRepAdaptor_Surface(F,Standard_False); // no restriction
+  surf->D0 (plst.X(), plst.Y(), aPlst);
  
   gp_Dir2d ref2d(dlst);
 
@@ -1517,7 +1517,7 @@ Standard_Boolean ChoixUV(const TopoDS_Edge& Last,
     if(!SameUV(plst,p2d,surf))
       continue;
 
-    surf.D0 (p2d.X(), p2d.Y(), aPCur);
+    surf->D0 (p2d.X(), p2d.Y(), aPCur);
 
     if (!Last.IsSame(anEdge)) {
       ang = ref2d.Angle(gp_Dir2d(v2d));

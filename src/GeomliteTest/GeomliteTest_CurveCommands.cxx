@@ -1945,11 +1945,11 @@ static Standard_Integer length(Draw_Interpretor& di,
   if (n==3) Tol = Draw::Atof(a[2]);
 
   if (!GC.IsNull()) {
-    GeomAdaptor_Curve AC(GC);
+    Handle(GeomAdaptor_Curve) AC = new GeomAdaptor_Curve(GC);
     L = GCPnts_AbscissaPoint::Length(AC, Tol);
   }  
   else if (!GC2d.IsNull()) {
-    Geom2dAdaptor_Curve AC(GC2d);
+    Handle(Geom2dAdaptor_Curve) AC = new Geom2dAdaptor_Curve(GC2d);
     L = GCPnts_AbscissaPoint::Length(AC, Tol);
   }
   else {

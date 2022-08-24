@@ -221,7 +221,7 @@ static Standard_Integer OCC486(Draw_Interpretor& di, Standard_Integer argc, cons
       Standard_Real uf, ul, vf, vl;
       GS->Bounds(uf, ul, vf, vl);
 
-      GeomAdaptor_Surface aSurf(GS);
+      Handle(GeomAdaptor_Surface) aSurf = new GeomAdaptor_Surface(GS);
       myExtPS.Initialize (aSurf, uf-du, ul+du, vf-dv, vl+dv, Tol, Tol );
       myExtPS.Perform ( P3D );
       Standard_Integer nPSurf = ( myExtPS.IsDone() ? myExtPS.NbExt() : 0 );
@@ -244,7 +244,7 @@ static Standard_Integer OCC486(Draw_Interpretor& di, Standard_Integer argc, cons
         distMin = sqrt(distMin);
         Standard_Real S, T;
         myExtPS.Point(indMin).Parameter ( S, T );
-        gp_Pnt aCheckPnt = aSurf.Value( S, T );
+        gp_Pnt aCheckPnt = aSurf->Value( S, T );
         Standard_Real aCheckDist = P3D.Distance(aCheckPnt);
         di << "Solution is : U = "<< S << "\t V = "<< T << "\n";
         di << "Solution is : X = "<< aCheckPnt.X() << "\t Y = "<< aCheckPnt.Y() << "\t Z = "<< aCheckPnt.Z() << "\n";

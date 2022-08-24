@@ -1026,7 +1026,8 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
       Geom2dInt_GInter Inter;
       Standard_Real tolint = ::Precision::PConfusion();
 
-      Geom2dAdaptor_Curve AC1(pc1), AC2(pc2);
+      Handle(Geom2dAdaptor_Curve) AC1 = new Geom2dAdaptor_Curve(pc1);
+      Handle(Geom2dAdaptor_Curve) AC2 = new Geom2dAdaptor_Curve(pc2);
 
       // Try to find intersection points
       IntRes2d_Domain dom1(pc1->Value(domfirst1),domfirst1,tolint,
@@ -1346,7 +1347,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
               {
 		// Intersect pcurve with bounding line
 		Handle(Geom2d_Line) lin = new Geom2d_Line(P1,gp_Dir2d(gp_Vec2d(P1,P2)));
-		Geom2dAdaptor_Curve ACL(lin);
+		Handle(Geom2dAdaptor_Curve) ACL = new Geom2dAdaptor_Curve(lin);
 		IntRes2d_Domain dlin(P1,0.,tolint,P2,P1.Distance(P2),tolint);
 
 		Handle(Geom2d_Curve) pc;
@@ -1375,7 +1376,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
                   }
 		  pc = pc2;
 		}
-		Geom2dAdaptor_Curve ACC(pc);
+		Handle(Geom2dAdaptor_Curve) ACC = new Geom2dAdaptor_Curve(pc);
 		IntRes2d_Domain domc(pc->Value(fpar),fpar,tolint,
 				     pc->Value(lpar),lpar,tolint);
 

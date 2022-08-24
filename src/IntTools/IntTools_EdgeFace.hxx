@@ -179,7 +179,7 @@ public: //! @name Obtaining results
 
 protected: //! @name Protected methods performing the intersection
 
-  Standard_EXPORT static Standard_Boolean IsEqDistance (const gp_Pnt& aP, const BRepAdaptor_Surface& aS, const Standard_Real aT, Standard_Real& aD);
+  Standard_EXPORT static Standard_Boolean IsEqDistance (const gp_Pnt& aP, const Handle(BRepAdaptor_Surface)& aS, const Standard_Real aT, Standard_Real& aD);
   Standard_EXPORT void CheckData();
   
   Standard_EXPORT Standard_Boolean IsProjectable (const Standard_Real t) const;
@@ -200,8 +200,8 @@ protected:
   TopoDS_Edge myEdge;
   TopoDS_Face myFace;
   Standard_Real myFuzzyValue;
-  BRepAdaptor_Curve myC;
-  BRepAdaptor_Surface myS;
+  Handle(BRepAdaptor_Curve) myC;
+  Handle(BRepAdaptor_Surface) myS;
   Standard_Real myCriteria;
   Standard_Boolean myIsDone;
   Standard_Integer myErrorStatus;

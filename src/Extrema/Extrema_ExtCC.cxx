@@ -62,8 +62,8 @@ Extrema_ExtCC::Extrema_ExtCC (const Standard_Real TolC1,
 //purpose  : 
 //=======================================================================
 
-Extrema_ExtCC::Extrema_ExtCC(const Adaptor3d_Curve& C1,
-                             const Adaptor3d_Curve& C2,
+Extrema_ExtCC::Extrema_ExtCC(const Handle(Adaptor3d_Curve)& C1,
+                             const Handle(Adaptor3d_Curve)& C2,
                              const Standard_Real      U1,
                              const Standard_Real      U2,
                              const Standard_Real      V1,
@@ -88,16 +88,16 @@ Extrema_ExtCC::Extrema_ExtCC(const Adaptor3d_Curve& C1,
 //purpose  : 
 //=======================================================================
 
-Extrema_ExtCC::Extrema_ExtCC(const Adaptor3d_Curve& C1, 
-                             const Adaptor3d_Curve& C2,
+Extrema_ExtCC::Extrema_ExtCC(const Handle(Adaptor3d_Curve)& C1, 
+                             const Handle(Adaptor3d_Curve)& C2,
                              const Standard_Real      TolC1,
                              const Standard_Real      TolC2)
 : myIsFindSingleSolution(Standard_False),
   myECC(C1, C2),
   myDone (Standard_False)
 {
-  SetCurve (1, C1, C1.FirstParameter(), C1.LastParameter());
-  SetCurve (2, C2, C2.FirstParameter(), C2.LastParameter());
+  SetCurve (1, C1, C1->FirstParameter(), C1->LastParameter());
+  SetCurve (2, C2, C2->FirstParameter(), C2->LastParameter());
   SetTolerance (1, TolC1);
   SetTolerance (2, TolC2);
   mydist11 = mydist12 = mydist21 = mydist22 = RealFirst();
@@ -108,15 +108,15 @@ Extrema_ExtCC::Extrema_ExtCC(const Adaptor3d_Curve& C1,
 //function : Initialize
 //purpose  :
 //=======================================================================
-void Extrema_ExtCC::Initialize (const Adaptor3d_Curve& C1,
-                                const Adaptor3d_Curve& C2,
+void Extrema_ExtCC::Initialize (const Handle(Adaptor3d_Curve)& C1,
+                                const Handle(Adaptor3d_Curve)& C2,
                                 const Standard_Real TolC1,
                                 const Standard_Real TolC2)
 {
   // myECC will be re-initialized by Perform()
   myDone = Standard_False;
-  SetCurve (1, C1, C1.FirstParameter(), C1.LastParameter());
-  SetCurve (2, C2, C2.FirstParameter(), C2.LastParameter());
+  SetCurve (1, C1, C1->FirstParameter(), C1->LastParameter());
+  SetCurve (2, C2, C2->FirstParameter(), C2->LastParameter());
   SetTolerance (1, TolC1);
   SetTolerance (2, TolC2);
   mydist11 = mydist12 = mydist21 = mydist22 = RealFirst();
@@ -126,8 +126,8 @@ void Extrema_ExtCC::Initialize (const Adaptor3d_Curve& C1,
 //function : Initialize
 //purpose  :
 //=======================================================================
-void Extrema_ExtCC::Initialize (const Adaptor3d_Curve& C1,
-                                const Adaptor3d_Curve& C2,
+void Extrema_ExtCC::Initialize (const Handle(Adaptor3d_Curve)& C1,
+                                const Handle(Adaptor3d_Curve)& C2,
                                 const Standard_Real U1,
                                 const Standard_Real U2,
                                 const Standard_Real V1,
@@ -149,11 +149,11 @@ void Extrema_ExtCC::Initialize (const Adaptor3d_Curve& C1,
 //purpose  :
 //=======================================================================
 
-void Extrema_ExtCC::SetCurve (const Standard_Integer theRank, const Adaptor3d_Curve& C)
+void Extrema_ExtCC::SetCurve (const Standard_Integer theRank, const Handle(Adaptor3d_Curve)& C)
 {
   Standard_OutOfRange_Raise_if (theRank < 1 || theRank > 2, "Extrema_ExtCC::SetCurve()")
   Standard_Integer anInd = theRank - 1;
-  myC[anInd] = &C;
+  myC[anInd] = C;
 }
 
 //=======================================================================
@@ -161,7 +161,7 @@ void Extrema_ExtCC::SetCurve (const Standard_Integer theRank, const Adaptor3d_Cu
 //purpose  : 
 //=======================================================================
 
-void Extrema_ExtCC::SetCurve (const Standard_Integer theRank, const Adaptor3d_Curve& C,
+void Extrema_ExtCC::SetCurve (const Standard_Integer theRank, const Handle(Adaptor3d_Curve)& C,
                                const Standard_Real Uinf, const Standard_Real Usup)
 {
   SetCurve (theRank, C);
@@ -203,7 +203,7 @@ void Extrema_ExtCC::SetTolerance (const Standard_Integer theRank, const Standard
 void Extrema_ExtCC::Perform()
 {  
   Standard_NullObject_Raise_if (!myC[0] || !myC[1], "Extrema_ExtCC::Perform()")
-  myECC.SetParams(*myC[0], *myC[1], myInf[0], mySup[0], myInf[1], mySup[1]);
+  myECC.SetParams(myC[0], myC[1], myInf[0], mySup[0], myInf[1], mySup[1]);
   myECC.SetTolerance(Min(myTol[0], myTol[1]));
   myECC.SetSingleSolutionFlag(GetSingleSolutionFlag());
   myDone = Standard_False;
@@ -220,10 +220,10 @@ void Extrema_ExtCC::Perform()
   U21 = myInf[1];
   U22 = mySup[1];
 
-  if (!Precision::IsInfinite(U11)) myP1f = Extrema_CurveTool::Value(*myC[0], U11);
-  if (!Precision::IsInfinite(U12)) myP1l = Extrema_CurveTool::Value(*myC[0], U12);
-  if (!Precision::IsInfinite(U21)) myP2f = Extrema_CurveTool::Value(*myC[1], U21);
-  if (!Precision::IsInfinite(U22)) myP2l = Extrema_CurveTool::Value(*myC[1], U22);
+  if (!Precision::IsInfinite(U11)) myP1f = Extrema_CurveTool::Value(myC[0], U11);
+  if (!Precision::IsInfinite(U12)) myP1l = Extrema_CurveTool::Value(myC[0], U12);
+  if (!Precision::IsInfinite(U21)) myP2f = Extrema_CurveTool::Value(myC[1], U21);
+  if (!Precision::IsInfinite(U22)) myP2l = Extrema_CurveTool::Value(myC[1], U22);
   
 
   if (Precision::IsInfinite(U11) || Precision::IsInfinite(U21)) mydist11 = RealLast();
@@ -406,8 +406,8 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
   if (!myIsParallel)
     return;
 
-  const GeomAbs_CurveType aType1 = Extrema_CurveTool::GetType (*myC[0]);
-  const GeomAbs_CurveType aType2 = Extrema_CurveTool::GetType (*myC[1]);
+  const GeomAbs_CurveType aType1 = Extrema_CurveTool::GetType (myC[0]);
+  const GeomAbs_CurveType aType2 = Extrema_CurveTool::GetType (myC[1]);
   if (((aType1 != GeomAbs_Line) && (aType1 != GeomAbs_Circle)) ||
       ((aType2 != GeomAbs_Line) && (aType2 != GeomAbs_Circle)))
   {
@@ -424,8 +424,8 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
     //The projection of the circle's location to the trimmed line must exist.
     const Standard_Boolean isReversed = (aType1 != GeomAbs_Circle);
     const gp_Pnt aPonC = !isReversed ?
-                      Extrema_CurveTool::Value (*myC[0], theUt11) :
-                      Extrema_CurveTool::Value (*myC[1], theUt21);
+                      Extrema_CurveTool::Value (myC[0], theUt11) :
+                      Extrema_CurveTool::Value (myC[1], theUt21);
 
     const gp_Lin aL = myC[!isReversed ? 1 : 0]->Line();
     const Extrema_ExtPElC ExtPLin(aPonC, aL, Precision::Confusion(),
@@ -596,8 +596,8 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
     const Standard_Real aPeriod = M_PI + M_PI;
     gp_Vec aVTg1;
     gp_Pnt aP11;
-    const gp_Pnt aP12 = Extrema_CurveTool::Value (*myC[0], theUt12);
-    Extrema_CurveTool::D1 (*myC[0], theUt11, aP11, aVTg1);
+    const gp_Pnt aP12 = Extrema_CurveTool::Value (myC[0], theUt12);
+    Extrema_CurveTool::D1 (myC[0], theUt11, aP11, aVTg1);
 
     const Bnd_Range aRange(theUt21, theUt22);
     Bnd_Range aProjRng1;
@@ -610,7 +610,7 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
 
     Standard_Real aPar1 = ElCLib::InPeriod(ElCLib::Parameter(aWorkCirc, aP11),
                                            theUt21, theUt21 + aPeriod);
-    const gp_Vec aVTg2 = Extrema_CurveTool::DN (*myC[1], aPar1, 1);
+    const gp_Vec aVTg2 = Extrema_CurveTool::DN (myC[1], aPar1, 1);
     
     // Check if circles have same/opposite directions
     const Standard_Boolean isOpposite(aVTg1.Dot(aVTg2) < 0.0);
@@ -672,7 +672,7 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
         aRng.GetIntermediatePoint(0.5, aPar);
         const gp_Pnt aPCirc2 = ElCLib::Value(aPar, aWorkCirc);
         Extrema_ExtPElC ExtPCir(aPCirc2,
-                                Extrema_CurveTool::Circle (*myC[0]),
+                                Extrema_CurveTool::Circle (myC[0]),
                                 Precision::Confusion(), theUt11, theUt12);
 
         Standard_Real aMinSqD = ExtPCir.SquareDistance(1);
@@ -723,7 +723,7 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
         const Extrema_POnCurv aP2(aPar, aPCirc2);
 
         Extrema_ExtPElC ExtPCir(aPCirc2,
-                                Extrema_CurveTool::Circle (*myC[0]),
+                                Extrema_CurveTool::Circle (myC[0]),
                                 Precision::Confusion(), theUt11, theUt12);
 
         Standard_Boolean isFound = !myIsParallel;
@@ -852,13 +852,13 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ExtElC&  AlgExt,
 	  U = P2.Parameter();
 	}
 
-	if (Extrema_CurveTool::IsPeriodic (*myC[0]))
+	if (Extrema_CurveTool::IsPeriodic (myC[0]))
 	{
-	  U = ElCLib::InPeriod(U, Ut11, Ut11+Extrema_CurveTool::Period (*myC[0]));
+	  U = ElCLib::InPeriod(U, Ut11, Ut11+Extrema_CurveTool::Period (myC[0]));
 	}
-	if (Extrema_CurveTool::IsPeriodic (*myC[1]))
+	if (Extrema_CurveTool::IsPeriodic (myC[1]))
 	{
-	  U2 = ElCLib::InPeriod(U2, Ut21, Ut21+Extrema_CurveTool::Period (*myC[1]));
+	  U2 = ElCLib::InPeriod(U2, Ut21, Ut21+Extrema_CurveTool::Period (myC[1]));
 	}
 
 	if ((U  >= Ut11 - RealEpsilon())  && 
@@ -921,13 +921,13 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ECC&   AlgExt,
         U2 = P2.Parameter();
 
         // Check points to be into param space.
-        if (Extrema_CurveTool::IsPeriodic (*myC[0]))
+        if (Extrema_CurveTool::IsPeriodic (myC[0]))
         {
-          U = ElCLib::InPeriod(U, Ut11, Ut11 + Extrema_CurveTool::Period (*myC[0]));
+          U = ElCLib::InPeriod(U, Ut11, Ut11 + Extrema_CurveTool::Period (myC[0]));
         }
-        if (Extrema_CurveTool::IsPeriodic (*myC[1]))
+        if (Extrema_CurveTool::IsPeriodic (myC[1]))
         {
-          U2 = ElCLib::InPeriod(U2, Ut21, Ut21 + Extrema_CurveTool::Period (*myC[1]));
+          U2 = ElCLib::InPeriod(U2, Ut21, Ut21 + Extrema_CurveTool::Period (myC[1]));
         }
 
         if ((U >= Ut11 - RealEpsilon()) &&

@@ -24,7 +24,7 @@
 //function : Extrema_FuncPSDist
 //purpose  : 
 //=======================================================================
-Extrema_FuncPSDist::Extrema_FuncPSDist(const Adaptor3d_Surface& theS,
+Extrema_FuncPSDist::Extrema_FuncPSDist(const Handle(Adaptor3d_Surface)& theS,
                                        const gp_Pnt& theP)
 : mySurf(theS),
   myP(theP)
@@ -49,7 +49,7 @@ Standard_Boolean Extrema_FuncPSDist::Value(const math_Vector& X,Standard_Real& F
   if (!IsInside(X))
     return Standard_False;
 
-  F = mySurf.Value(X(1), X(2)).SquareDistance(myP);
+  F = mySurf->Value(X(1), X(2)).SquareDistance(myP);
 
   return Standard_True;
 }
@@ -66,7 +66,7 @@ Standard_Boolean Extrema_FuncPSDist::Gradient(const math_Vector& X,math_Vector& 
 
   gp_Pnt aP;
   gp_Vec Du1s, Dv1s;
-  mySurf.D1(X(1),X(2),aP,Du1s,Dv1s);
+  mySurf->D1(X(1),X(2),aP,Du1s,Dv1s);
 
   gp_Vec P1P2 (aP, myP);
 
@@ -87,14 +87,14 @@ Standard_Boolean Extrema_FuncPSDist::Values(const math_Vector& X,Standard_Real& 
 
   gp_Pnt aP;
   gp_Vec Du1s, Dv1s;
-  mySurf.D1(X(1),X(2),aP,Du1s,Dv1s);
+  mySurf->D1(X(1),X(2),aP,Du1s,Dv1s);
 
   gp_Vec P1P2 (aP, myP);
 
   G(1) = P1P2.Dot(Du1s);
   G(2) = P1P2.Dot(Dv1s);
 
-  F = mySurf.Value(X(1), X(2)).SquareDistance(myP);
+  F = mySurf->Value(X(1), X(2)).SquareDistance(myP);
 
   return true;
 }
@@ -105,10 +105,10 @@ Standard_Boolean Extrema_FuncPSDist::Values(const math_Vector& X,Standard_Real& 
 //=======================================================================
 Standard_Boolean Extrema_FuncPSDist::IsInside(const math_Vector& X)
 {
-    if (X(1) < mySurf.FirstUParameter() ||
-        X(1) > mySurf.LastUParameter() ||
-        X(2) < mySurf.FirstVParameter() ||
-        X(2) > mySurf.LastVParameter() )
+    if (X(1) < mySurf->FirstUParameter() ||
+        X(1) > mySurf->LastUParameter() ||
+        X(2) < mySurf->FirstVParameter() ||
+        X(2) > mySurf->LastVParameter() )
     {
       // Point out of borders.
       return Standard_False;

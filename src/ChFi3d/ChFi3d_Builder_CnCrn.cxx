@@ -423,9 +423,9 @@ static void CurveHermite (const TopOpeBRepDS_DataStructure& DStr,
       }
   }
   for (nb=1;nb<=nbface-1;nb++) {
-    BRepAdaptor_Curve C(TopoDS::Edge(Ecom.Value(nb)));
-    C.D0(param.Value(nb),p02);
-    GeomAdaptor_Curve L (Bezier);
+    Handle(BRepAdaptor_Curve) C = new BRepAdaptor_Curve(TopoDS::Edge(Ecom.Value(nb)));
+    C->D0(param.Value(nb),p02);
+    Handle(GeomAdaptor_Curve) L = new GeomAdaptor_Curve(Bezier);
     Extrema_ExtCC ext (C,L);
     if (ext.IsDone()){ 
       if (!ext.IsParallel() && ext.NbExt()!=0){ 
@@ -548,7 +548,7 @@ static void CalculBatten (const Handle (GeomAdaptor_Surface) ASurf,
        Standard_Real umin,vmin,umax,vmax;
        BRepTools::UVBounds(Face,umin,umax,vmin,vmax);
        Bnd_Box2d bf,bc;
-       Geom2dAdaptor_Curve acur(pcurve);
+       Handle(Geom2dAdaptor_Curve) acur = new Geom2dAdaptor_Curve(pcurve);
        BndLib_Add2dCurve::Add(acur,0,bc);
        bf.Update(umin,vmin,umax,vmax);
        Standard_Real uminc,vminc,umaxc,vmaxc;
@@ -2075,24 +2075,22 @@ void  ChFi3d_Builder::PerformMoreThreeCorner(const Standard_Integer Jndex,
       Handle(Geom2d_Line) l= new Geom2d_Line (p2d1 ,dir);
       Handle (Geom2d_Curve) pcurve = new  Geom2d_TrimmedCurve(l,0,l0); 
       Handle (Geom2dAdaptor_Curve) Acurv = new Geom2dAdaptor_Curve(pcurve);
-      Adaptor3d_CurveOnSurface  CurvOnS (Acurv,Asurf);
-      Handle(Adaptor3d_CurveOnSurface) HCons =
-	new Adaptor3d_CurveOnSurface(CurvOnS);
+      Handle(Adaptor3d_CurveOnSurface) CurvOnS = new Adaptor3d_CurveOnSurface(Acurv,Asurf);
       //Order.SetValue(ic,1);
       Order.SetValue(ic, constr);
       Handle(GeomPlate_CurveConstraint) Cont =
-	new GeomPlate_CurveConstraint(HCons,Order.Value(ic), nbcurvpnt,tolesp,angular,0.1);
+	new GeomPlate_CurveConstraint(CurvOnS, Order.Value(ic), nbcurvpnt,tolesp,angular,0.1);
       PSurf.Add(Cont);
       
       // calculate indexes of points and of the curve for the DS         
       isfirst=(sens.Value(ic)==1);
-      GeomLib::BuildCurve3d(tolapp,CurvOnS,CurvOnS.FirstParameter(),
-			    CurvOnS.LastParameter(),Curv3d,maxapp,avedev);
+      GeomLib::BuildCurve3d(tolapp,CurvOnS,CurvOnS->FirstParameter(),
+			    CurvOnS->LastParameter(),Curv3d,maxapp,avedev);
       TopOpeBRepDS_Curve tcurv3d( Curv3d,maxapp);
       indcurve3d.SetValue(n3d,DStr.AddCurve(tcurv3d));
       gp_Pnt point1,point2; 
-      point1=  CurvOnS.Value(CurvOnS.FirstParameter());
-      point2 =CurvOnS.Value(CurvOnS.LastParameter());
+      point1=  CurvOnS->Value(CurvOnS->FirstParameter());
+      point2 =CurvOnS->Value(CurvOnS->LastParameter());
       
       TopOpeBRepDS_Point tpoint1 (point1,maxapp);
       TopOpeBRepDS_Point tpoint2 (point2,maxapp);
@@ -2359,9 +2357,7 @@ void  ChFi3d_Builder::PerformMoreThreeCorner(const Standard_Integer Jndex,
 
          // construction of borders for Plate 
          Handle (Geom2dAdaptor_Curve)  Acurv=new Geom2dAdaptor_Curve(pcurve);
-         Adaptor3d_CurveOnSurface  CurvOnS (Acurv,Asurf);
-         Handle(Adaptor3d_CurveOnSurface) HCons =
-           new Adaptor3d_CurveOnSurface(CurvOnS);
+         Handle(Adaptor3d_CurveOnSurface) CurvOnS = new Adaptor3d_CurveOnSurface(Acurv,Asurf);
 
          // constraints G1 are set if edges ic and icplus are not both alive 
 
@@ -2378,15 +2374,15 @@ void  ChFi3d_Builder::PerformMoreThreeCorner(const Standard_Integer Jndex,
          if (isG1.Value(ic)) 
            Order.SetValue(n3d,1);
          Handle(GeomPlate_CurveConstraint) Cont =
-           new GeomPlate_CurveConstraint(HCons,Order.Value(n3d),10,tolesp,angular,0.1);
+           new GeomPlate_CurveConstraint(CurvOnS, Order.Value(n3d),10,tolesp,angular,0.1);
          PSurf.Add(Cont);
 
          //calculation of curve 3d if it is not a projection 
          if (curveint.IsNull()) {
-           GeomLib::BuildCurve3d(tolapp,CurvOnS,CurvOnS.FirstParameter(),
-                                 CurvOnS.LastParameter(),Curv3d,maxapp1,avedev);
-           pardeb=CurvOnS.FirstParameter();
-           parfin= CurvOnS.LastParameter();
+           GeomLib::BuildCurve3d(tolapp,CurvOnS,CurvOnS->FirstParameter(),
+                                 CurvOnS->LastParameter(),Curv3d,maxapp1,avedev);
+           pardeb=CurvOnS->FirstParameter();
+           parfin= CurvOnS->LastParameter();
            curveint= new Geom_TrimmedCurve(Curv3d,pardeb,parfin);
          }
 

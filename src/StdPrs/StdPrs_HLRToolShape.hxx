@@ -47,7 +47,7 @@ public:
   
   Standard_EXPORT void NextVisible();
   
-  Standard_EXPORT void Visible (BRepAdaptor_Curve& TheEdge, Standard_Real& U1, Standard_Real& U2);
+  Standard_EXPORT void Visible (Handle(BRepAdaptor_Curve)& TheEdge, Standard_Real& U1, Standard_Real& U2);
   
   Standard_EXPORT void InitHidden (const Standard_Integer EdgeNumber);
   
@@ -55,7 +55,7 @@ public:
   
   Standard_EXPORT void NextHidden();
   
-  Standard_EXPORT void Hidden (BRepAdaptor_Curve& TheEdge, Standard_Real& U1, Standard_Real& U2);
+  Standard_EXPORT void Hidden (Handle(BRepAdaptor_Curve)& TheEdge, Standard_Real& U1, Standard_Real& U2);
 
 
 

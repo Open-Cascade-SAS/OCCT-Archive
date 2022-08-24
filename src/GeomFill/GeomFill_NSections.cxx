@@ -833,7 +833,7 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
   Standard_Real L, Lmax=0.;
   Standard_Integer ii;
   for (ii=1; ii <=mySections.Length(); ii++) {
-    GeomAdaptor_Curve AC (mySections(ii));
+    Handle(GeomAdaptor_Curve) AC = new GeomAdaptor_Curve(mySections(ii));
     L = GCPnts_AbscissaPoint::Length(AC);
     if (L>Lmax) Lmax = L;
   }

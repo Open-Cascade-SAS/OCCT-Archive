@@ -50,7 +50,7 @@
 //=========================================================================
 Geom2dGcc_FunctionTanCirCu::
 Geom2dGcc_FunctionTanCirCu(const gp_Circ2d& Circ   ,
-                           const Geom2dAdaptor_Curve&  Curv   ) {
+                           const Handle(Geom2dAdaptor_Curve)&  Curv   ) {
                              Curve = Curv;
                              TheCirc = Circ;
 

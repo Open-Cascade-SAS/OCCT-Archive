@@ -590,10 +590,10 @@ Standard_Boolean MAT2d_Tool2d::Projection (const Standard_Integer IEdge   ,
     //---------------------------------------------------------------------
     // Constuction de la courbe pour les extremas et ajustement des bornes.
     //---------------------------------------------------------------------
-    Geom2dAdaptor_Curve C1(Curve);
-    GeomAbs_CurveType TypeC1 = C1.GetType();
+    Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve(Curve);
+    GeomAbs_CurveType TypeC1 = C1->GetType();
     if (TypeC1 == GeomAbs_Circle) {
-      Standard_Real R       = C1.Circle().Radius();
+      Standard_Real R       = C1->Circle().Radius();
       Standard_Real EpsCirc = 100.*Eps;
       if ( R < 1.)  EpsCirc = Eps/R;
       if (((ParamMax - ParamMin + 2*EpsCirc) < 2*M_PI)) {
@@ -622,7 +622,7 @@ Standard_Boolean MAT2d_Tool2d::Projection (const Standard_Integer IEdge   ,
     }
     else {
       if (TypeC1 == GeomAbs_Circle) {
-        Distance = C1.Circle().Radius();
+        Distance = C1->Circle().Radius();
       }
     }
   }
@@ -1247,8 +1247,8 @@ static void SetTrim(Bisector_Bisec& Bis, const Handle(Geom2d_Curve)& Line1)
   gp_Pnt2d         FirstPointBisector = Bisector->Value(UB1);
   Standard_Real    UTrim              = Precision::Infinite();
 
-  Geom2dAdaptor_Curve AdapBisector(Bisector);
-  Geom2dAdaptor_Curve AdapLine1   (Line1);
+  Handle(Geom2dAdaptor_Curve) AdapBisector = new Geom2dAdaptor_Curve(Bisector);
+  Handle(Geom2dAdaptor_Curve) AdapLine1 = new Geom2dAdaptor_Curve(Line1);
   Intersect.Perform(AdapBisector, Domain1, 
     AdapLine1, Tolerance, Tolerance);
 

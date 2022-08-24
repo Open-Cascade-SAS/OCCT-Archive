@@ -195,12 +195,12 @@ Extrema_GenExtCC::Extrema_GenExtCC(const Curve1& C1,
   myUppBorder(1,2),
   myDone(Standard_False)
 {
-  myC[0] = (Standard_Address)&C1;
-  myC[1] = (Standard_Address)&C2;
-  myLowBorder(1) = C1.FirstParameter();
-  myLowBorder(2) = C2.FirstParameter();
-  myUppBorder(1) = C1.LastParameter();
-  myUppBorder(2) = C2.LastParameter();
+  myC[0] = (Standard_Address)(C1.get());
+  myC[1] = (Standard_Address)(C2.get());
+  myLowBorder(1) = C1->FirstParameter();
+  myLowBorder(2) = C2->FirstParameter();
+  myUppBorder(1) = C1->LastParameter();
+  myUppBorder(2) = C2->LastParameter();
 }
 
 //=======================================================================
@@ -220,8 +220,8 @@ Extrema_GenExtCC::Extrema_GenExtCC(const Curve1& C1,
   myUppBorder(1,2),
   myDone(Standard_False)
 {
-  myC[0] = (Standard_Address)&C1;
-  myC[1] = (Standard_Address)&C2;
+  myC[0] = (Standard_Address)(C1.get());
+  myC[1] = (Standard_Address)(C2.get());
   myLowBorder(1) = Uinf;
   myLowBorder(2) = Vinf;
   myUppBorder(1) = Usup;
@@ -239,8 +239,8 @@ void Extrema_GenExtCC::SetParams(const Curve1& C1,
                                  const Standard_Real Vinf,
                                  const Standard_Real Vsup)
 {
-  myC[0] = (Standard_Address)&C1;
-  myC[1] = (Standard_Address)&C2;
+  myC[0] = (Standard_Address)(C1.get());
+  myC[1] = (Standard_Address)(C2.get());
   myLowBorder(1) = Uinf;
   myLowBorder(2) = Vinf;
   myUppBorder(1) = Usup;
@@ -265,26 +265,26 @@ void Extrema_GenExtCC::Perform()
   myDone = Standard_False;
   myParallel = Standard_False;
 
-  Curve1 &C1 = *(Curve1*)myC[0];
-  Curve2 &C2 = *(Curve2*)myC[1];
+  Curve1 C1 = (Curve1::element_type*)(myC[0]);
+  Curve2 C2 = (Curve2::element_type*)(myC[1]);
 
   Standard_Integer aNbInter[2];
   GeomAbs_Shape aContinuity = GeomAbs_C2;
-  aNbInter[0] = C1.NbIntervals(aContinuity);
-  aNbInter[1] = C2.NbIntervals(aContinuity);
+  aNbInter[0] = C1->NbIntervals(aContinuity);
+  aNbInter[1] = C2->NbIntervals(aContinuity);
 
   if (aNbInter[0] * aNbInter[1] > 100)
   {
     aContinuity = GeomAbs_C1;
-    aNbInter[0] = C1.NbIntervals(aContinuity);
-    aNbInter[1] = C2.NbIntervals(aContinuity);
+    aNbInter[0] = C1->NbIntervals(aContinuity);
+    aNbInter[1] = C2->NbIntervals(aContinuity);
   }
 
   Standard_Real anL[2];
   Standard_Integer indmax = -1, indmin = -1;
   const Standard_Real mult = 20.;
-  if (!(Precision::IsInfinite(C1.FirstParameter()) || Precision::IsInfinite(C1.LastParameter()) ||
-        Precision::IsInfinite(C2.FirstParameter()) || Precision::IsInfinite(C2.LastParameter())))
+  if (!(Precision::IsInfinite(C1->FirstParameter()) || Precision::IsInfinite(C1->LastParameter()) ||
+        Precision::IsInfinite(C2->FirstParameter()) || Precision::IsInfinite(C2->LastParameter())))
   {
     anL[0] = GCPnts_AbscissaPoint::Length(C1);
     anL[1] = GCPnts_AbscissaPoint::Length(C2);
@@ -322,8 +322,8 @@ void Extrema_GenExtCC::Perform()
 
   Handle(TColStd_HArray1OfReal) anIntervals1 = new TColStd_HArray1OfReal(1, aNbInter[0] + 1);
   Handle(TColStd_HArray1OfReal) anIntervals2 = new TColStd_HArray1OfReal(1, aNbInter[1] + 1);
-  C1.Intervals(anIntervals1->ChangeArray1(), aContinuity);
-  C2.Intervals(anIntervals2->ChangeArray1(), aContinuity);
+  C1->Intervals(anIntervals1->ChangeArray1(), aContinuity);
+  C2->Intervals(anIntervals2->ChangeArray1(), aContinuity);
   if (indmax >= 0)
   {
     if (indmax == 0)
@@ -339,12 +339,12 @@ void Extrema_GenExtCC::Perform()
       aNbInter[1] = anIntervals2->Length() - 1;
     }
   }
-  if (C1.IsClosed() && aNbInter[0] == 1)
+  if (C1->IsClosed() && aNbInter[0] == 1)
   {
     ChangeIntervals(anIntervals1, 3);
     aNbInter[0] = anIntervals1->Length() - 1;
   }
-  if (C2.IsClosed() && aNbInter[1] == 1)
+  if (C2->IsClosed() && aNbInter[1] == 1)
   {
     ChangeIntervals(anIntervals2, 3);
     aNbInter[1] = anIntervals2->Length() - 1;
@@ -353,8 +353,8 @@ void Extrema_GenExtCC::Perform()
   // Lipchitz constant computation.
   const Standard_Real aMaxLC = 10000.;
   Standard_Real aLC = 100.0; // Default value.
-  const Standard_Real aMaxDer1 = 1.0 / C1.Resolution(1.0);
-  const Standard_Real aMaxDer2 = 1.0 / C2.Resolution(1.0);
+  const Standard_Real aMaxDer1 = 1.0 / C1->Resolution(1.0);
+  const Standard_Real aMaxDer2 = 1.0 / C2->Resolution(1.0);
   Standard_Real aMaxDer = Max(aMaxDer1, aMaxDer2) * Sqrt(2.0);
   if (aLC > aMaxDer)
     aLC = aMaxDer;
@@ -372,18 +372,18 @@ void Extrema_GenExtCC::Perform()
     aLC = aMaxLC;
     isConstLockedFlag = Standard_True;
   }
-  if (C1.GetType() == GeomAbs_Line)
+  if (C1->GetType() == GeomAbs_Line)
   {
-    aMaxDer = 1.0 / C2.Resolution(1.0);
+    aMaxDer = 1.0 / C2->Resolution(1.0);
     if (aLC > aMaxDer)
     {
       isConstLockedFlag = Standard_True;
       aLC = aMaxDer;
     }
   }
-  if (C2.GetType() == GeomAbs_Line)
+  if (C2->GetType() == GeomAbs_Line)
   {
-    aMaxDer = 1.0 / C1.Resolution(1.0);
+    aMaxDer = 1.0 / C1->Resolution(1.0);
     if (aLC > aMaxDer)
     {
       isConstLockedFlag = Standard_True;
@@ -400,12 +400,12 @@ void Extrema_GenExtCC::Perform()
     Standard_Real aF, aMaxG = 0.;
     Standard_Real t1, t2, dt1, dt2;
     Standard_Integer n1 = 21, n2 = 21, i1, i2;
-    dt1 = (C1.LastParameter() - C1.FirstParameter()) / (n1 - 1);
-    dt2 = (C2.LastParameter() - C2.FirstParameter()) / (n2 - 1);
-    for (i1 = 1, t1 = C1.FirstParameter(); i1 <= n1; ++i1, t1 += dt1)
+    dt1 = (C1->LastParameter() - C1->FirstParameter()) / (n1 - 1);
+    dt2 = (C2->LastParameter() - C2->FirstParameter()) / (n2 - 1);
+    for (i1 = 1, t1 = C1->FirstParameter(); i1 <= n1; ++i1, t1 += dt1)
     {
       aT(1) = t1;
-      for (i2 = 1, t2 = C2.FirstParameter(); i2 <= n2; ++i2, t2 += dt2)
+      for (i2 = 1, t2 = C2->FirstParameter(); i2 <= n2; ++i2, t2 += dt2)
       {
         aT(2) = t2;
         aFunc.Values(aT, aF, aG);
@@ -625,8 +625,8 @@ void Extrema_GenExtCC::Perform()
 
     for (Standard_Integer iT = 0; isParallel && (iT < 2); ++iT)
     {
-      Standard_Real aDist1 = ProjPOnC(C1.Value(aT1[iT]), anExtPC2);
-      Standard_Real aDist2 = ProjPOnC(C2.Value(aT2[iT]), anExtPC1);
+      Standard_Real aDist1 = ProjPOnC(C1->Value(aT1[iT]), anExtPC2);
+      Standard_Real aDist2 = ProjPOnC(C2->Value(aT2[iT]), anExtPC1);
       isParallel = (Abs(Min(aDist1, aDist2) - aF) < Precision::Confusion());
     }
   }
@@ -692,7 +692,7 @@ Standard_Real Extrema_GenExtCC::SquareDistance(const Standard_Integer N) const
     throw Standard_OutOfRange();
   }
 
-  return Tool1::Value(*((Curve1*)myC[0]), myPoints1(N)).SquareDistance(Tool2::Value(*((Curve2*)myC[1]), myPoints2(N)));
+  return Tool1::Value((Curve1::element_type*)(myC[0]), myPoints1(N)).SquareDistance(Tool2::Value((Curve2::element_type*)(myC[1]), myPoints2(N)));
 }
 
 //=======================================================================
@@ -708,8 +708,8 @@ void Extrema_GenExtCC::Points(const Standard_Integer N,
     throw Standard_OutOfRange();
   }
 
-  P1.SetValues(myPoints1(N), Tool1::Value(*((Curve1*)myC[0]), myPoints1(N)));
-  P2.SetValues(myPoints2(N), Tool2::Value(*((Curve2*)myC[1]), myPoints2(N)));
+  P1.SetValues(myPoints1(N), Tool1::Value((Curve1::element_type*)(myC[0]), myPoints1(N)));
+  P2.SetValues(myPoints2(N), Tool2::Value((Curve2::element_type*)(myC[1]), myPoints2(N)));
 }
 
 //=======================================================================

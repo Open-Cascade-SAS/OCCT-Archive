@@ -69,7 +69,7 @@ static
                  TopTools_MapOfShape& theMEdgesNoUniquePlane);
 
 static
-  Standard_Boolean FindPlane(const BRepAdaptor_Curve& theCurve,
+  Standard_Boolean FindPlane(const Handle(BRepAdaptor_Curve)& theCurve,
                              gp_Pln& thePlane);
 
 static
@@ -84,7 +84,7 @@ static
                                    gp_Dir& theTgt);
 
 static
-  Standard_Boolean FindEdgeTangent(const BRepAdaptor_Curve& theCurve,
+  Standard_Boolean FindEdgeTangent(const Handle(BRepAdaptor_Curve)& theCurve,
                                    gp_Vec& theTangent);
 
 //=======================================================================
@@ -410,7 +410,7 @@ Standard_Integer BOPAlgo_Tools::EdgesToWires(const TopoDS_Shape& theEdges,
   aExp.Init(aSEdges, TopAbs_EDGE);
   for (; aExp.More(); aExp.Next()) {
     const TopoDS_Edge& aE = TopoDS::Edge(aExp.Current());
-    BRepAdaptor_Curve aBAC(aE);
+    Handle(BRepAdaptor_Curve) aBAC = new BRepAdaptor_Curve(aE);
     //
     gp_Pln aPln;
     if (FindPlane(aBAC, aPln)) {
@@ -773,7 +773,7 @@ Standard_Boolean FindEdgeTangent(const TopoDS_Edge& theEdge,
   gp_Dir *pDTE = theDMEdgeTgt.ChangeSeek(theEdge);
   if (!pDTE) {
     gp_Vec aVTE;
-    BRepAdaptor_Curve aBAC(theEdge);
+    Handle(BRepAdaptor_Curve) aBAC = new BRepAdaptor_Curve(theEdge);
     if (!FindEdgeTangent(aBAC, aVTE)) {
       return Standard_False;
     }
@@ -787,26 +787,26 @@ Standard_Boolean FindEdgeTangent(const TopoDS_Edge& theEdge,
 //function : FindEdgeTangent
 //purpose  : Finds the tangent for the edge
 //=======================================================================
-Standard_Boolean FindEdgeTangent(const BRepAdaptor_Curve& theCurve,
+Standard_Boolean FindEdgeTangent(const Handle(BRepAdaptor_Curve)& theCurve,
                                  gp_Vec& theTangent)
 {
-  if (!theCurve.Is3DCurve()) {
+  if (!theCurve->Is3DCurve()) {
     return Standard_False;
   }
   // for the line the tangent is defined by the direction
-  if (theCurve.GetType() == GeomAbs_Line) {
-    theTangent = theCurve.Line().Position().Direction();
+  if (theCurve->GetType() == GeomAbs_Line) {
+    theTangent = theCurve->Line().Position().Direction();
     return Standard_True;
   }
   //
   // for other curves take D1 and check for its length
-  Standard_Real aT, aT1(theCurve.FirstParameter()), aT2(theCurve.LastParameter());
+  Standard_Real aT, aT1(theCurve->FirstParameter()), aT2(theCurve->LastParameter());
   const Standard_Integer aNbP = 11;
   const Standard_Real aDt = (aT2 - aT1) / aNbP;
   //
   for (aT = aT1 + aDt; aT <= aT2; aT += aDt) {
     gp_Pnt aP;
-    theCurve.D1(aT, aP, theTangent);
+    theCurve->D1(aT, aP, theTangent);
     if (theTangent.Magnitude() > Precision::Confusion()) {
       return Standard_True;
     }
@@ -819,47 +819,47 @@ Standard_Boolean FindEdgeTangent(const BRepAdaptor_Curve& theCurve,
 //function : FindPlane
 //purpose  : Finds the plane in which the edge is located
 //=======================================================================
-Standard_Boolean FindPlane(const BRepAdaptor_Curve& theCurve,
+Standard_Boolean FindPlane(const Handle(BRepAdaptor_Curve)& theCurve,
                            gp_Pln& thePlane)
 {
-  if (!theCurve.Is3DCurve()) {
+  if (!theCurve->Is3DCurve()) {
     return Standard_False;
   }
   //
   Standard_Boolean bFound = Standard_True;
   gp_Vec aVN;
-  switch (theCurve.GetType()) {
+  switch (theCurve->GetType()) {
     case GeomAbs_Line:
       return Standard_False;
     case GeomAbs_Circle:
-      aVN = theCurve.Circle().Position().Direction();
+      aVN = theCurve->Circle().Position().Direction();
       break;
     case GeomAbs_Ellipse:
-      aVN = theCurve.Ellipse().Position().Direction();
+      aVN = theCurve->Ellipse().Position().Direction();
       break;
     case GeomAbs_Hyperbola:
-      aVN = theCurve.Hyperbola().Position().Direction();
+      aVN = theCurve->Hyperbola().Position().Direction();
       break;
     case GeomAbs_Parabola:
-      aVN = theCurve.Parabola().Position().Direction();
+      aVN = theCurve->Parabola().Position().Direction();
       break;
     default: {
       // for all other types of curve compute two tangent vectors
       // on the curve and cross them
       bFound = Standard_False;
-      Standard_Real aT, aT1(theCurve.FirstParameter()), aT2(theCurve.LastParameter());
+      Standard_Real aT, aT1(theCurve->FirstParameter()), aT2(theCurve->LastParameter());
       const Standard_Integer aNbP = 11;
       const Standard_Real aDt = (aT2 - aT1) / aNbP;
       //
       aT = aT1;
       gp_Pnt aP1;
       gp_Vec aV1;
-      theCurve.D1(aT, aP1, aV1);
+      theCurve->D1(aT, aP1, aV1);
       //
       for (aT = aT1 + aDt; aT <= aT2; aT += aDt) {
         gp_Pnt aP2;
         gp_Vec aV2;
-        theCurve.D1(aT, aP2, aV2);
+        theCurve->D1(aT, aP2, aV2);
         //
         aVN = aV1^aV2;
         if (aVN.Magnitude() > Precision::Confusion()) {
@@ -872,7 +872,7 @@ Standard_Boolean FindPlane(const BRepAdaptor_Curve& theCurve,
   }
   //
   if (bFound) {
-    thePlane = gp_Pln(theCurve.Value(theCurve.FirstParameter()), gp_Dir(aVN));
+    thePlane = gp_Pln(theCurve->Value(theCurve->FirstParameter()), gp_Dir(aVN));
   }
   return bFound;
 }
@@ -935,7 +935,7 @@ Standard_Boolean FindPlane(const TopoDS_Shape& theWire,
     if (theMEdgesNoUniquePlane.Contains(aE)) {
       continue;
     }
-    BRepAdaptor_Curve aBAC(aE);
+    Handle(BRepAdaptor_Curve) aBAC = new BRepAdaptor_Curve(aE);
     if (FindPlane(aBAC, thePlane)) {
       return Standard_True;
     }

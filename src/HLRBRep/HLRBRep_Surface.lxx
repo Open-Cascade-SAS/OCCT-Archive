@@ -22,7 +22,7 @@
 //purpose  : 
 //=======================================================================
 
-inline BRepAdaptor_Surface & HLRBRep_Surface::Surface()
+inline const Handle(BRepAdaptor_Surface)& HLRBRep_Surface::Surface()
 { return mySurf; }
 
 //=======================================================================

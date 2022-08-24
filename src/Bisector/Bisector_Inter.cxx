@@ -248,16 +248,16 @@ void Bisector_Inter::SinglePerform(const Handle(Geom2d_Curve)&    CBis1,
 		D2,C2Bis1,D1,TolConf,Standard_True);
     }
     Geom2dInt_GInter Intersect;
-    Geom2dAdaptor_Curve AC2Bis1(C2Bis1);
-    Geom2dAdaptor_Curve AC2Bis2(C2Bis2);
+    Handle(Geom2dAdaptor_Curve) AC2Bis1 = new Geom2dAdaptor_Curve(C2Bis1);
+    Handle(Geom2dAdaptor_Curve) AC2Bis2 = new Geom2dAdaptor_Curve(C2Bis2);
     Intersect.Perform(AC2Bis1,D1,AC2Bis2,D2,TolConf,Tol);
     Append (Intersect,D1.FirstParameter(),D1.LastParameter(),
 	              D2.FirstParameter(),D2.LastParameter());
   }
   else if (Type1 == STANDARD_TYPE(Bisector_BisecPC) || Type2 == STANDARD_TYPE(Bisector_BisecPC)) {
     Geom2dInt_GInter Intersect;
-    Geom2dAdaptor_Curve ABis1(Bis1);
-    Geom2dAdaptor_Curve ABis2(Bis2);
+    Handle(Geom2dAdaptor_Curve) ABis1 = new Geom2dAdaptor_Curve(Bis1);
+    Handle(Geom2dAdaptor_Curve) ABis2 = new Geom2dAdaptor_Curve(Bis2);
     Intersect.Perform(ABis1,D1,ABis2,D2,TolConf,Tol);
     Append (Intersect,D1.FirstParameter(),D1.LastParameter(),
 	              D2.FirstParameter(),D2.LastParameter());
@@ -281,8 +281,8 @@ void Bisector_Inter::SinglePerform(const Handle(Geom2d_Curve)&    CBis1,
 		                   D2,Bis1,D1,TolConf,Standard_True);
     }
     Geom2dInt_GInter Intersect;
-    Geom2dAdaptor_Curve ABis1(Bis1);
-    Geom2dAdaptor_Curve ABis2(Bis2);
+    Handle(Geom2dAdaptor_Curve) ABis1 = new Geom2dAdaptor_Curve(Bis1);
+    Handle(Geom2dAdaptor_Curve) ABis2 = new Geom2dAdaptor_Curve(Bis2);
     Intersect.Perform(ABis1,D1,ABis2,D2,TolConf,Tol);
     Append (Intersect,D1.FirstParameter(),D1.LastParameter(),
 	              D2.FirstParameter(),D2.LastParameter());

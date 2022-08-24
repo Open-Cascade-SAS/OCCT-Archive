@@ -55,7 +55,7 @@ public:
   
     TopOpeBRep_LineInter();
   
-  Standard_EXPORT void SetLine (const Handle(IntPatch_Line)& L, const BRepAdaptor_Surface& S1, const BRepAdaptor_Surface& S2);
+  Standard_EXPORT void SetLine (const Handle(IntPatch_Line)& L, const Handle(BRepAdaptor_Surface)& S1, const Handle(BRepAdaptor_Surface)& S2);
   
     void SetFaces (const TopoDS_Face& F1, const TopoDS_Face& F2);
   

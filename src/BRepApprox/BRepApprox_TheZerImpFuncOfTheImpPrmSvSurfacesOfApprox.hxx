@@ -46,11 +46,11 @@ public:
   
   Standard_EXPORT BRepApprox_TheZerImpFuncOfTheImpPrmSvSurfacesOfApprox();
   
-  Standard_EXPORT BRepApprox_TheZerImpFuncOfTheImpPrmSvSurfacesOfApprox(const BRepAdaptor_Surface& PS, const IntSurf_Quadric& IS);
+  Standard_EXPORT BRepApprox_TheZerImpFuncOfTheImpPrmSvSurfacesOfApprox(const Handle(BRepAdaptor_Surface)& PS, const IntSurf_Quadric& IS);
   
   Standard_EXPORT BRepApprox_TheZerImpFuncOfTheImpPrmSvSurfacesOfApprox(const IntSurf_Quadric& IS);
   
-    void Set (const BRepAdaptor_Surface& PS);
+    void Set (const Handle(BRepAdaptor_Surface)& PS);
   
     void SetImplicitSurface (const IntSurf_Quadric& IS);
   
@@ -80,7 +80,7 @@ public:
   
     const gp_Dir2d& Direction2d();
   
-    const BRepAdaptor_Surface& PSurface() const;
+    const Handle(BRepAdaptor_Surface) PSurface() const;
   
     const IntSurf_Quadric& ISurface() const;
 
@@ -118,7 +118,7 @@ private:
 
 };
 
-#define ThePSurface BRepAdaptor_Surface
+#define ThePSurface Handle(BRepAdaptor_Surface)
 #define ThePSurface_hxx <BRepAdaptor_Surface.hxx>
 #define ThePSurfaceTool BRepApprox_SurfaceTool
 #define ThePSurfaceTool_hxx <BRepApprox_SurfaceTool.hxx>

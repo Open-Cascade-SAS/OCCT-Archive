@@ -292,7 +292,7 @@ static void PlotIso (Draw_Display& dis,
 
 static void PlotEdge (Draw_Display& dis,
 		      Handle(DBRep_Edge)& E, 
-		      const Adaptor3d_Curve& C, 
+		      const Handle(Adaptor3d_Curve)& C, 
 		      Standard_Real& f, 
 		      Standard_Real step, 
 		      Standard_Boolean& halt)
@@ -302,9 +302,9 @@ static void PlotEdge (Draw_Display& dis,
 
   gp_Pnt Pl, Pr, Pm;
 
-  C.D0(f, Pl);
-  C.D0(f + step/2., Pm);
-  C.D0(f + step, Pr);
+  C->D0(f, Pl);
+  C->D0(f + step/2., Pm);
+  C->D0(f + step, Pr);
 
   if (PlotCount > MaxPlotCount) {
     dis.DrawTo(Pr);
@@ -698,7 +698,7 @@ void  DBRep_DrawableShape::DrawOn(Draw_Display& dis) const
 	  for (j = 1; j <= myDiscret/2; j++) {
 	    Handle(DBRep_Edge) aLocaLEdge(E);
 	    PlotCount = 0;
-	    PlotEdge (dis, aLocaLEdge, *HC, t, step*2., halt);
+	    PlotEdge (dis, aLocaLEdge, HC, t, step*2., halt);
 	    t += step*2.;
 	  }
 	  break;

@@ -31,16 +31,16 @@ class Extrema_GlobOptFuncCQuadric : public math_MultipleVarFunction
 public:
 
   //! Curve and surface should exist during all the lifetime of Extrema_GlobOptFuncCQuadric.
-  Standard_EXPORT  Extrema_GlobOptFuncCQuadric(const Adaptor3d_Curve *C);
+  Standard_EXPORT  Extrema_GlobOptFuncCQuadric(const Handle(Adaptor3d_Curve) C);
 
-  Standard_EXPORT  Extrema_GlobOptFuncCQuadric(const Adaptor3d_Curve *C, 
+  Standard_EXPORT  Extrema_GlobOptFuncCQuadric(const Handle(Adaptor3d_Curve) C, 
                                                const Standard_Real   theTf, 
                                                const Standard_Real   theTl);
 
-  Standard_EXPORT  Extrema_GlobOptFuncCQuadric(const Adaptor3d_Curve   *C,
-                                               const Adaptor3d_Surface *S);
+  Standard_EXPORT  Extrema_GlobOptFuncCQuadric(const Handle(Adaptor3d_Curve) C,
+                                               const Handle(Adaptor3d_Surface) S);
 
-  Standard_EXPORT void LoadQuad(const Adaptor3d_Surface *S, 
+  Standard_EXPORT void LoadQuad(const Handle(Adaptor3d_Surface) S, 
                                 const Standard_Real     theUf, 
                                 const Standard_Real     theUl,
                                 const Standard_Real     theVf, 
@@ -63,8 +63,8 @@ private:
              Standard_Real &F);
 
 
-  const Adaptor3d_Curve   *myC;
-  const Adaptor3d_Surface *myS;
+  Handle(Adaptor3d_Curve) myC;
+  Handle(Adaptor3d_Surface) myS;
   GeomAbs_SurfaceType mySType;
   gp_Pln myPln;
   gp_Cone myCone;

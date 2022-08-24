@@ -60,7 +60,7 @@ Geom2dGcc_Circ2dTanCenGeo (const Geom2dGcc_QCurve&  Qualified1,
   Standard_Integer nbsol = 0;
   gp_Dir2d dirx(1.0,0.0);
   Standard_Real thePar;
-  Geom2dAdaptor_Curve curve = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) curve = Qualified1.Qualified();
   Extrema_ExtPC2d distmin(Pcenter, curve, Geom2dGcc_CurveTool::FirstParameter(curve),
                           Geom2dGcc_CurveTool::LastParameter(curve), Tol);
   if (!distmin.IsDone() ) { throw Standard_Failure(); }

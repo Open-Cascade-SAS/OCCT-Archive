@@ -163,7 +163,7 @@ void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
         return;
       }
       //
-      BRepAdaptor_Curve2d C(edge,Face);
+      Handle(BRepAdaptor_Curve2d) C = new BRepAdaptor_Curve2d(edge,Face);
       BRepAdaptor_Curve C3d;
       //------------------------------------------
       degenerated=Standard_False;
@@ -272,7 +272,7 @@ void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
         gp_Pnt P3d;
         //
         u=aPrms(iX);
-        P2d = C.Value(u);
+        P2d = C->Value(u);
         if(P2d.X()<Umin) Umin = P2d.X();
         if(P2d.X()>Umax) Umax = P2d.X();
         if(P2d.Y()<Vmin) Vmin = P2d.Y();
@@ -342,7 +342,7 @@ void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
       gp_Pnt2d      aP;
       gp_Vec2d      aV;
 
-      C.D1(aU, aP, aV);
+      C->D1(aU, aP, aV);
 
       if(Or == TopAbs_REVERSED)
         aV.Reverse();
@@ -351,7 +351,7 @@ void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
 
       // Append the derivative of the last parameter.
       aU = aPrms(aNbs1);
-      C.D1(aU, aP, aV);
+      C->D1(aU, aP, aV);
 
       if(Or == TopAbs_REVERSED)
         aV.Reverse();
@@ -428,7 +428,7 @@ void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
             {
               BRep_Tool::Range(edge, Face, pfbid, plbid);
               if (Abs(plbid - pfbid) < 1.e-9) continue;
-              BRepAdaptor_Curve2d C(edge, Face);
+              Handle(BRepAdaptor_Curve2d) C = new BRepAdaptor_Curve2d(edge, Face);
               GCPnts_QuasiUniformDeflection aDiscr(C, aDiscrDefl);
               if (!aDiscr.IsDone())
                 break;
@@ -444,7 +444,7 @@ void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
                 i += iStep;
               for (; i != iEnd; i += iStep)
               {
-                gp_Pnt2d aP2d = C.Value(aDiscr.Parameter(i));
+                gp_Pnt2d aP2d = C->Value(aDiscr.Parameter(i));
                 SeqPnt2d.Append(aP2d);
               }
               if (nbp > 2)

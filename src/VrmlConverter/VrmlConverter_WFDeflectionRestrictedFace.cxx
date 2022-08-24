@@ -142,9 +142,9 @@ void VrmlConverter_WFDeflectionRestrictedFace::Add
   gp_Pnt dummypnt;
   for (ToolRst.Init(); ToolRst.More(); ToolRst.Next()) {
     TopAbs_Orientation Orient = ToolRst.Orientation();
-      const Adaptor2d_Curve2d* TheRCurve = &ToolRst.Value();
+      const Handle(Adaptor2d_Curve2d) TheRCurve = ToolRst.Value();
       if (TheRCurve->GetType() != GeomAbs_Line) {
-        GCPnts_QuasiUniformDeflection UDP(*TheRCurve, Deflection);
+        GCPnts_QuasiUniformDeflection UDP(TheRCurve, Deflection);
 	if (UDP.IsDone()) {
 	  Standard_Integer NumberOfPoints = UDP.NbPoints();
 	  if ( NumberOfPoints >= 2 ) {
@@ -179,8 +179,7 @@ void VrmlConverter_WFDeflectionRestrictedFace::Add
 
   // draw the isos
 
-  Adaptor3d_IsoCurve anIso;
-  anIso.Load(aFace);
+  Handle(Adaptor3d_IsoCurve) anIso = new Adaptor3d_IsoCurve(aFace);
   Standard_Integer NumberOfLines = isobuild.NbLines();
 
   Handle(VrmlConverter_LineAspect) latmp = new VrmlConverter_LineAspect; 
@@ -239,7 +238,7 @@ void VrmlConverter_WFDeflectionRestrictedFace::Add
 	      b1 = b1 == RealFirst() ? - aLimit : b1;
 	      b2 = b2 == RealLast()  ?   aLimit : b2;
 	      
-	      anIso.Load(GeomAbs_IsoU,Coord,b1,b2);
+	      anIso->Load(GeomAbs_IsoU,Coord,b1,b2);
 	      
 	      VrmlConverter_DeflectionCurve::Add(anOStream, anIso, Deflection, aDrawer);
 	    }
@@ -281,7 +280,7 @@ void VrmlConverter_WFDeflectionRestrictedFace::Add
 	      b1 = b1 == RealFirst() ? - aLimit : b1;
 	      b2 = b2 == RealLast()  ?   aLimit : b2;
 	      
-	      anIso.Load(GeomAbs_IsoV,Coord,b1,b2);
+	      anIso->Load(GeomAbs_IsoV,Coord,b1,b2);
 	      
 	      VrmlConverter_DeflectionCurve::Add(anOStream, anIso, Deflection, aDrawer);
 	    }

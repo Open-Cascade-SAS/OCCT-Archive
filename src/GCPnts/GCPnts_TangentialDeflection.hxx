@@ -76,7 +76,7 @@ public:
   //! @param theMinimumOfPoints [in] minimum number of points
   //! @param theUTol   [in] tolerance in curve parametric scope
   //! @param theMinLen [in] minimal length
-  Standard_EXPORT GCPnts_TangentialDeflection (const Adaptor3d_Curve& theC,
+  Standard_EXPORT GCPnts_TangentialDeflection (const Handle(Adaptor3d_Curve)& theC,
                                                const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                                const Standard_Integer theMinimumOfPoints = 2,
                                                const Standard_Real theUTol = 1.0e-9,
@@ -91,7 +91,7 @@ public:
   //! @param theMinimumOfPoints [in] minimum number of points
   //! @param theUTo  l [in] tolerance in curve parametric scope
   //! @param theMinLen [in] minimal length
-  Standard_EXPORT GCPnts_TangentialDeflection (const Adaptor3d_Curve& theC,
+  Standard_EXPORT GCPnts_TangentialDeflection (const Handle(Adaptor3d_Curve)& theC,
                                                const Standard_Real theFirstParameter, const Standard_Real theLastParameter,
                                                const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                                const Standard_Integer theMinimumOfPoints = 2,
@@ -105,7 +105,7 @@ public:
   //! @param theMinimumOfPoints [in] minimum number of points
   //! @param theUTol   [in] tolerance in curve parametric scope
   //! @param theMinLen [in] minimal length
-  Standard_EXPORT GCPnts_TangentialDeflection (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT GCPnts_TangentialDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                                const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                                const Standard_Integer theMinimumOfPoints = 2,
                                                const Standard_Real theUTol = 1.0e-9,
@@ -120,7 +120,7 @@ public:
   //! @param theMinimumOfPoints [in] minimum number of points
   //! @param theUTol   [in] tolerance in curve parametric scope
   //! @param theMinLen [in] minimal length
-  Standard_EXPORT GCPnts_TangentialDeflection (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT GCPnts_TangentialDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                                const Standard_Real theFirstParameter, const Standard_Real theLastParameter,
                                                const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                                const Standard_Integer theMinimumOfPoints = 2,
@@ -134,7 +134,7 @@ public:
   //! @param theMinimumOfPoints [in] minimum number of points
   //! @param theUTol   [in] tolerance in curve parametric scope
   //! @param theMinLen [in] minimal length
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& theC,
                                    const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                    const Standard_Integer theMinimumOfPoints = 2,
                                    const Standard_Real theUTol = 1.0e-9,
@@ -149,7 +149,7 @@ public:
   //! @param theMinimumOfPoints [in] minimum number of points
   //! @param theUTol   [in] tolerance in curve parametric scope
   //! @param theMinLen [in] minimal length
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& theC,
                                    const Standard_Real theFirstParameter, const Standard_Real theLastParameter,
                                    const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                    const Standard_Integer theMinimumOfPoints = 2,
@@ -163,7 +163,7 @@ public:
   //! @param theMinimumOfPoints [in] minimum number of points
   //! @param theUTol   [in] tolerance in curve parametric scope
   //! @param theMinLen [in] minimal length
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                    const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                    const Standard_Integer theMinimumOfPoints = 2,
                                    const Standard_Real theUTol = 1.0e-9,
@@ -178,7 +178,7 @@ public:
   //! @param theMinimumOfPoints [in] minimum number of points
   //! @param theUTol   [in] tolerance in curve parametric scope
   //! @param theMinLen [in] minimal length
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                    const Standard_Real theFirstParameter, const Standard_Real theLastParameter,
                                    const Standard_Real theAngularDeflection, const Standard_Real theCurvatureDeflection,
                                    const Standard_Integer theMinimumOfPoints = 2,

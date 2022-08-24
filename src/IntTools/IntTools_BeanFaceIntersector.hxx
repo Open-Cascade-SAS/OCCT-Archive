@@ -69,13 +69,13 @@ public:
   
 
   //! Initializes the algorithm
-  Standard_EXPORT IntTools_BeanFaceIntersector(const BRepAdaptor_Curve& theCurve, const BRepAdaptor_Surface& theSurface, const Standard_Real theBeanTolerance, const Standard_Real theFaceTolerance);
+  Standard_EXPORT IntTools_BeanFaceIntersector(const Handle(BRepAdaptor_Curve)& theCurve, const Handle(BRepAdaptor_Surface)& theSurface, const Standard_Real theBeanTolerance, const Standard_Real theFaceTolerance);
   
 
   //! Initializes the algorithm
   //! theUMinParameter, ... are used for
   //! optimization purposes
-  Standard_EXPORT IntTools_BeanFaceIntersector(const BRepAdaptor_Curve& theCurve, const BRepAdaptor_Surface& theSurface, const Standard_Real theFirstParOnCurve, const Standard_Real theLastParOnCurve, const Standard_Real theUMinParameter, const Standard_Real theUMaxParameter, const Standard_Real theVMinParameter, const Standard_Real theVMaxParameter, const Standard_Real theBeanTolerance, const Standard_Real theFaceTolerance);
+  Standard_EXPORT IntTools_BeanFaceIntersector(const Handle(BRepAdaptor_Curve)& theCurve, const Handle(BRepAdaptor_Surface)& theSurface, const Standard_Real theFirstParOnCurve, const Standard_Real theLastParOnCurve, const Standard_Real theUMinParameter, const Standard_Real theUMaxParameter, const Standard_Real theVMinParameter, const Standard_Real theVMaxParameter, const Standard_Real theBeanTolerance, const Standard_Real theFaceTolerance);
   
 
   //! Initializes the algorithm
@@ -89,13 +89,13 @@ public:
   
 
   //! Initializes the algorithm
-  Standard_EXPORT void Init (const BRepAdaptor_Curve& theCurve, const BRepAdaptor_Surface& theSurface, const Standard_Real theBeanTolerance, const Standard_Real theFaceTolerance);
+  Standard_EXPORT void Init (const Handle(BRepAdaptor_Curve)& theCurve, const Handle(BRepAdaptor_Surface)& theSurface, const Standard_Real theBeanTolerance, const Standard_Real theFaceTolerance);
   
 
   //! Initializes the algorithm
   //! theUMinParameter, ... are used for
   //! optimization purposes
-  Standard_EXPORT void Init (const BRepAdaptor_Curve& theCurve, const BRepAdaptor_Surface& theSurface, const Standard_Real theFirstParOnCurve, const Standard_Real theLastParOnCurve, const Standard_Real theUMinParameter, const Standard_Real theUMaxParameter, const Standard_Real theVMinParameter, const Standard_Real theVMaxParameter, const Standard_Real theBeanTolerance, const Standard_Real theFaceTolerance);
+  Standard_EXPORT void Init (const Handle(BRepAdaptor_Curve)& theCurve, const Handle(BRepAdaptor_Surface)& theSurface, const Standard_Real theFirstParOnCurve, const Standard_Real theLastParOnCurve, const Standard_Real theUMinParameter, const Standard_Real theUMaxParameter, const Standard_Real theVMinParameter, const Standard_Real theVMaxParameter, const Standard_Real theBeanTolerance, const Standard_Real theFaceTolerance);
   
 
   //! Sets the intersection context
@@ -166,8 +166,8 @@ private:
   Standard_EXPORT Standard_Boolean TestComputeCoinside();
 
 
-  BRepAdaptor_Curve myCurve;
-  BRepAdaptor_Surface mySurface;
+  Handle(BRepAdaptor_Curve) myCurve;
+  Handle(BRepAdaptor_Surface) mySurface;
   Handle(Geom_Surface) myTrsfSurface;
   Standard_Real myFirstParameter;
   Standard_Real myLastParameter;

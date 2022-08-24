@@ -72,7 +72,7 @@ private:
   Handle(Geom2d_Curve) myC2;
   Standard_Real myOffset;
   Bisector_Bisec myBisec;
-  Geom2dAdaptor_Curve myBis;
+  Handle(Geom2dAdaptor_Curve) myBis;
 
 
 };

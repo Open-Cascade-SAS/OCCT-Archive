@@ -396,7 +396,7 @@ void PrsDim_AngleDimension::DrawArc (const Handle(Prs3d_Presentation)& thePresen
   // generate points with specified deflection
   const Handle(Geom_TrimmedCurve)& anArcCurve = aConstructArc.Value();
   
-  GeomAdaptor_Curve anArcAdaptor (anArcCurve, anArcCurve->FirstParameter(), anArcCurve->LastParameter());
+  Handle(GeomAdaptor_Curve) anArcAdaptor = new GeomAdaptor_Curve(anArcCurve, anArcCurve->FirstParameter(), anArcCurve->LastParameter());
 
   // compute number of discretization elements in old-fanshioned way
   gp_Vec aCenterToFirstVec  (theCenter, theFirstAttach);
@@ -421,7 +421,7 @@ void PrsDim_AngleDimension::DrawArc (const Handle(Prs3d_Presentation)& thePresen
   // load data into arrays
   for (Standard_Integer aPntIt = 1; aPntIt <= aMakePnts.NbPoints(); ++aPntIt)
   {
-    gp_Pnt aPnt = anArcAdaptor.Value (aMakePnts.Parameter (aPntIt));
+    gp_Pnt aPnt = anArcAdaptor->Value (aMakePnts.Parameter (aPntIt));
 
     aPrimSegments->AddVertex (aPnt);
 

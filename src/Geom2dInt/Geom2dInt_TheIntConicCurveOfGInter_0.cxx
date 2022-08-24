@@ -32,7 +32,7 @@
 
 #define TheImpTool IntCurve_IConicTool
 #define TheImpTool_hxx <IntCurve_IConicTool.hxx>
-#define ThePCurve Adaptor2d_Curve2d
+#define ThePCurve Handle(Adaptor2d_Curve2d)
 #define ThePCurve_hxx <Adaptor2d_Curve2d.hxx>
 #define ThePCurveTool Geom2dInt_Geom2dCurveTool
 #define ThePCurveTool_hxx <Geom2dInt_Geom2dCurveTool.hxx>

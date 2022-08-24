@@ -39,7 +39,7 @@ public:
   //! @param theAbscissa [in] abscissa (distance between two consecutive points)
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT GCPnts_UniformAbscissa (const Adaptor3d_Curve& theC,
+  Standard_EXPORT GCPnts_UniformAbscissa (const Handle(Adaptor3d_Curve)& theC,
                                           const Standard_Real theAbscissa,
                                           const Standard_Real theToler = -1);
 
@@ -50,7 +50,7 @@ public:
   //! @param theU2 [in] last  parameter on curve
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT GCPnts_UniformAbscissa (const Adaptor3d_Curve& theC,
+  Standard_EXPORT GCPnts_UniformAbscissa (const Handle(Adaptor3d_Curve)& theC,
                                           const Standard_Real theAbscissa,
                                           const Standard_Real theU1, const Standard_Real theU2,
                                           const Standard_Real theToler = -1);
@@ -60,7 +60,7 @@ public:
   //! @param theNbPoints [in] defines the number of desired points
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT GCPnts_UniformAbscissa (const Adaptor3d_Curve& theC,
+  Standard_EXPORT GCPnts_UniformAbscissa (const Handle(Adaptor3d_Curve)& theC,
                                           const Standard_Integer theNbPoints,
                                           const Standard_Real theToler = -1);
 
@@ -71,7 +71,7 @@ public:
   //! @param theU2 [in] last  parameter on curve
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT GCPnts_UniformAbscissa (const Adaptor3d_Curve& theC,
+  Standard_EXPORT GCPnts_UniformAbscissa (const Handle(Adaptor3d_Curve)& theC,
                                           const Standard_Integer theNbPoints,
                                           const Standard_Real theU1, const Standard_Real theU2,
                                           const Standard_Real theToler = -1);
@@ -81,7 +81,7 @@ public:
   //! @param theAbscissa [in] abscissa (distance between two consecutive points)
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& theC,
                                    const Standard_Real theAbscissa,
                                    const Standard_Real theToler = -1);
 
@@ -92,7 +92,7 @@ public:
   //! @param theU2 [in] last  parameter on curve
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& theC,
                                    const Standard_Real theAbscissa,
                                    const Standard_Real theU1, const Standard_Real theU2,
                                    const Standard_Real theToler = -1);
@@ -102,7 +102,7 @@ public:
   //! @param theNbPoints [in] defines the number of desired points
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& theC,
                                    const Standard_Integer theNbPoints,
                                    const Standard_Real theToler = -1);
 
@@ -113,7 +113,7 @@ public:
   //! @param theU2 [in] last  parameter on curve
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& theC,
                                    const Standard_Integer theNbPoints,
                                    const Standard_Real theU1, const Standard_Real theU2,
                                    const Standard_Real theToler = -1);
@@ -125,7 +125,7 @@ public:
   //! @param theAbscissa [in] abscissa (distance between two consecutive points)
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT GCPnts_UniformAbscissa (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT GCPnts_UniformAbscissa (const Handle(Adaptor2d_Curve2d)& theC,
                                           const Standard_Real theAbscissa,
                                           const Standard_Real theToler = -1);
 
@@ -136,7 +136,7 @@ public:
   //! @param theU2 [in] last  parameter on curve
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT GCPnts_UniformAbscissa (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT GCPnts_UniformAbscissa (const Handle(Adaptor2d_Curve2d)& theC,
                                           const Standard_Real theAbscissa,
                                           const Standard_Real theU1, const Standard_Real theU2,
                                           const Standard_Real theToler = -1);
@@ -146,7 +146,7 @@ public:
   //! @param theNbPoints [in] defines the number of desired points
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT GCPnts_UniformAbscissa (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT GCPnts_UniformAbscissa (const Handle(Adaptor2d_Curve2d)& theC,
                                           const Standard_Integer theNbPoints,
                                           const Standard_Real theToler = -1);
 
@@ -157,7 +157,7 @@ public:
   //! @param theU2 [in] last  parameter on curve
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT GCPnts_UniformAbscissa (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT GCPnts_UniformAbscissa (const Handle(Adaptor2d_Curve2d)& theC,
                                           const Standard_Integer theNbPoints,
                                           const Standard_Real theU1, const Standard_Real theU2,
                                           const Standard_Real theToler = -1);
@@ -167,7 +167,7 @@ public:
   //! @param theAbscissa [in] abscissa (distance between two consecutive points)
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                    const Standard_Real theAbscissa,
                                    const Standard_Real theToler = -1);
 
@@ -178,7 +178,7 @@ public:
   //! @param theU2 [in] last  parameter on curve
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                    const Standard_Real theAbscissa,
                                    const Standard_Real theU1, const Standard_Real theU2,
                                    const Standard_Real theToler = -1);
@@ -188,7 +188,7 @@ public:
   //! @param theNbPoints [in] defines the number of desired points
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                    const Standard_Integer theNbPoints,
                                    const Standard_Real theToler = -1);
 
@@ -199,7 +199,7 @@ public:
   //! @param theU2 [in] last  parameter on curve
   //! @param theToler [in] used for more precise calculation of curve length
   //!                      (Precision::Confusion() by default)
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& theC,
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                    const Standard_Integer theNbPoints,
                                    const Standard_Real theU1, const Standard_Real theU2,
                                    const Standard_Real theToler = -1);

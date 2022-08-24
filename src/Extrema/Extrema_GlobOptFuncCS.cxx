@@ -150,8 +150,8 @@ Standard_Boolean Extrema_GlobOptFuncCS::checkInputData(const math_Vector   &X,
 //function : Extrema_GlobOptFuncCS
 //purpose  : Constructor
 //=======================================================================
-Extrema_GlobOptFuncCS::Extrema_GlobOptFuncCS(const Adaptor3d_Curve   *C,
-                                             const Adaptor3d_Surface *S)
+Extrema_GlobOptFuncCS::Extrema_GlobOptFuncCS(const Handle(Adaptor3d_Curve)   C,
+                                             const Handle(Adaptor3d_Surface) S)
 : myC(C),
   myS(S)
 {

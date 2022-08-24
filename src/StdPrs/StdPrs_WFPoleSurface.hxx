@@ -39,7 +39,7 @@ public:
   //! The surface aSurface is a surface object from
   //! Adaptor3d, and provides data from a Geom surface.
   //! This makes it possible to use the surface in a geometric algorithm.
-  Standard_EXPORT static void Add (const Handle(Prs3d_Presentation)& aPresentation, const Adaptor3d_Surface& aSurface, const Handle(Prs3d_Drawer)& aDrawer);
+  Standard_EXPORT static void Add (const Handle(Prs3d_Presentation)& aPresentation, const Handle(Adaptor3d_Surface)& aSurface, const Handle(Prs3d_Drawer)& aDrawer);
 
 
 

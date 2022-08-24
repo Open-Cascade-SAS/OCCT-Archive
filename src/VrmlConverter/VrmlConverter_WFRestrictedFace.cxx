@@ -50,7 +50,7 @@ void VrmlConverter_WFRestrictedFace::Add
   Bnd_Box2d B;
   
   for (ToolRst.Init(); ToolRst.More(); ToolRst.Next()) {
-    const Adaptor2d_Curve2d& TheRCurve = ToolRst.Value();
+    const Handle(Adaptor2d_Curve2d)& TheRCurve = ToolRst.Value();
     BndLib_Add2dCurve::Add(TheRCurve, Precision::PConfusion(), B);
   }
 
@@ -95,7 +95,7 @@ void VrmlConverter_WFRestrictedFace::Add
 
   for (ToolRst.Init(); ToolRst.More(); ToolRst.Next()) {
     TopAbs_Orientation Orient = ToolRst.Orientation();
-      const Adaptor2d_Curve2d* TheRCurve = &ToolRst.Value();
+      const Handle(Adaptor2d_Curve2d) TheRCurve = ToolRst.Value();
       U1 = TheRCurve->FirstParameter();
       U2 = TheRCurve->LastParameter();
       if (TheRCurve->GetType() != GeomAbs_Line) {
@@ -125,8 +125,7 @@ void VrmlConverter_WFRestrictedFace::Add
   // draw the isos
 
 
-  Adaptor3d_IsoCurve anIso;
-  anIso.Load(aFace);
+  Handle(Adaptor3d_IsoCurve) anIso = new Adaptor3d_IsoCurve(aFace);
   Standard_Integer NumberOfLines = isobuild.NbLines();
 
   Handle(VrmlConverter_LineAspect) latmp = new VrmlConverter_LineAspect; 
@@ -201,7 +200,7 @@ void VrmlConverter_WFRestrictedFace::Add
 	      b1 = b1 == RealFirst() ? - aLimit : b1;
 	      b2 = b2 == RealLast()  ?   aLimit : b2;
 	      
-	      anIso.Load(GeomAbs_IsoU,Coord,b1,b2);
+	      anIso->Load(GeomAbs_IsoU,Coord,b1,b2);
 	      
 	      VrmlConverter_Curve::Add(anIso, aDrawer, anOStream);
 	    }
@@ -244,7 +243,7 @@ void VrmlConverter_WFRestrictedFace::Add
 	      b1 = b1 == RealFirst() ? - aLimit : b1;
 	      b2 = b2 == RealLast()  ?   aLimit : b2;
 	      
-	      anIso.Load(GeomAbs_IsoV,Coord,b1,b2);
+	      anIso->Load(GeomAbs_IsoV,Coord,b1,b2);
 	      
 	      VrmlConverter_Curve::Add(anIso, aDrawer, anOStream); 
 	    }

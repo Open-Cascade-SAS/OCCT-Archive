@@ -26,6 +26,7 @@
 #include <HLRBRep_EdgeData.hxx>
 #include <HLRBRep_Intersector.hxx>
 #include <HLRBRep_SurfaceTool.hxx>
+#include <HLRBRep_Surface.hxx>
 #include <HLRBRep_ThePolygonOfInterCSurf.hxx>
 #include <HLRBRep_ThePolyhedronOfInterCSurf.hxx>
 #include <IntCurveSurface_IntersectionPoint.hxx>
@@ -446,28 +447,30 @@ void  HLRBRep_Intersector::Perform (const gp_Lin& L,
 				    const Standard_Real P)
 {
   myTypePerform = 2;
-  GeomAbs_SurfaceType typ = HLRBRep_SurfaceTool::GetType(mySurface);
+  HLRBRep_Surface* aHLRSur = (HLRBRep_Surface*)mySurface;
+  Standard_Address anAdaptorAddress = aHLRSur->Surface().get();
+  GeomAbs_SurfaceType typ = HLRBRep_SurfaceTool::GetType(anAdaptorAddress);
   switch (typ) {
   case GeomAbs_Plane :
   case GeomAbs_Cylinder :
   case GeomAbs_Cone :
   case GeomAbs_Sphere :
   case GeomAbs_Torus :
-    myCSIntersector.Perform(L,mySurface);
+    myCSIntersector.Perform(L, anAdaptorAddress);
     break;
     default :
     {
       if (myPolyhedron == NULL) {
 	Standard_Integer nbsu,nbsv;
 	Standard_Real u1,v1,u2,v2;
-	u1   = HLRBRep_SurfaceTool::FirstUParameter(mySurface);
-	v1   = HLRBRep_SurfaceTool::FirstVParameter(mySurface);
-	u2   = HLRBRep_SurfaceTool::LastUParameter(mySurface);
-	v2   = HLRBRep_SurfaceTool::LastVParameter(mySurface);   
-	nbsu = HLRBRep_SurfaceTool::NbSamplesU(mySurface,u1,u2);
-	nbsv = HLRBRep_SurfaceTool::NbSamplesV(mySurface,v1,v2);
+	u1   = HLRBRep_SurfaceTool::FirstUParameter(anAdaptorAddress);
+	v1   = HLRBRep_SurfaceTool::FirstVParameter(anAdaptorAddress);
+	u2   = HLRBRep_SurfaceTool::LastUParameter(anAdaptorAddress);
+	v2   = HLRBRep_SurfaceTool::LastVParameter(anAdaptorAddress);
+	nbsu = HLRBRep_SurfaceTool::NbSamplesU(anAdaptorAddress,u1,u2);
+	nbsv = HLRBRep_SurfaceTool::NbSamplesV(anAdaptorAddress,v1,v2);
 	myPolyhedron =
-    new HLRBRep_ThePolyhedronOfInterCSurf(mySurface,nbsu,nbsv,u1,v1,u2,v2);
+    new HLRBRep_ThePolyhedronOfInterCSurf(anAdaptorAddress,nbsu,nbsv,u1,v1,u2,v2);
       }
       Standard_Real x0,y0,z0,x1,y1,z1,pmin,pmax;//,pp;
       myPolyhedron->Bounding().Get(x0,y0,z0,x1,y1,z1);
@@ -506,7 +509,7 @@ void  HLRBRep_Intersector::Perform (const gp_Lin& L,
 	if(pmax>P) pmax=P+0.0000001;
       }
       HLRBRep_ThePolygonOfInterCSurf Polygon(L,pmin,pmax,3);
-      myCSIntersector.Perform(L,Polygon,mySurface,
+      myCSIntersector.Perform(L,Polygon, anAdaptorAddress,
 			      *((HLRBRep_ThePolyhedronOfInterCSurf*)
 				myPolyhedron));
       

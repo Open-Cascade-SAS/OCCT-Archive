@@ -28,7 +28,8 @@
 //=======================================================================
 GeomAPI_ProjectPointOnSurf::GeomAPI_ProjectPointOnSurf() 
 : myIsDone (Standard_False),
-  myIndex(0) 
+  myIndex(0),
+  myGeomAdaptor(new GeomAdaptor_Surface())
 {
 }
 
@@ -135,7 +136,7 @@ GeomAPI_ProjectPointOnSurf::GeomAPI_ProjectPointOnSurf()
   //modified by NIZNHY-PKV Mon Apr  8 11:13:37 2002 f XXX
   Standard_Real Umin, Usup, Vmin, Vsup;
   Surface->Bounds(Umin, Usup, Vmin, Vsup);
-  myGeomAdaptor.Load(Surface, Umin, Usup, Vmin, Vsup);
+  myGeomAdaptor = new GeomAdaptor_Surface(Surface, Umin, Usup, Vmin, Vsup);
   //
   //myExtPS = Extrema_ExtPS();
   myExtPS.SetAlgo(theProjAlgo);
@@ -165,7 +166,7 @@ GeomAPI_ProjectPointOnSurf::GeomAPI_ProjectPointOnSurf()
   //modified by NIZNHY-PKV Thu Apr  4 10:38:23 2002 f
   //GeomAdaptor_Surface TheSurface (Surface,Umin,Usup,Vmin,Vsup);
   //myExtPS = Extrema_ExtPS (P, TheSurface, Tol, Tol);
-  myGeomAdaptor.Load(Surface, Umin,Usup,Vmin,Vsup);
+  myGeomAdaptor = new GeomAdaptor_Surface(Surface, Umin,Usup,Vmin,Vsup);
   //myExtPS = Extrema_ExtPS();
   myExtPS.SetAlgo(theProjAlgo);
   myExtPS.Initialize(myGeomAdaptor, Umin, Usup, Vmin, Vsup, Tolerance, Tolerance);
@@ -191,7 +192,7 @@ GeomAPI_ProjectPointOnSurf::GeomAPI_ProjectPointOnSurf()
   //modified by NIZNHY-PKV Thu Apr  4 10:39:10 2002 f
   //GeomAdaptor_Surface TheSurface (Surface,Umin,Usup,Vmin,Vsup);
   //myExtPS = Extrema_ExtPS (P, TheSurface, Tolerance, Tolerance);
-  myGeomAdaptor.Load(Surface, Umin,Usup,Vmin,Vsup);
+  myGeomAdaptor = new GeomAdaptor_Surface(Surface, Umin,Usup,Vmin,Vsup);
   //myExtPS = Extrema_ExtPS();
   myExtPS.SetAlgo(theProjAlgo);
   myExtPS.Initialize(myGeomAdaptor, Umin, Usup, Vmin, Vsup, Tolerance, Tolerance);
@@ -214,7 +215,7 @@ GeomAPI_ProjectPointOnSurf::GeomAPI_ProjectPointOnSurf()
   Standard_Real Tolerance = Precision::PConfusion();
   //modified by NIZNHY-PKV Thu Apr  4 10:41:50 2002 f
   //GeomAdaptor_Surface TheSurface (Surface,Umin,Usup,Vmin,Vsup);
-  myGeomAdaptor.Load(Surface, Umin,Usup,Vmin,Vsup);
+  myGeomAdaptor = new GeomAdaptor_Surface(Surface, Umin,Usup,Vmin,Vsup);
   //modified by NIZNHY-PKV Thu Apr  4 10:42:29 2002 t
   //myExtPS = Extrema_ExtPS();
   //modified by NIZNHY-PKV Thu Apr  4 10:42:32 2002 f
@@ -238,7 +239,7 @@ GeomAPI_ProjectPointOnSurf::GeomAPI_ProjectPointOnSurf()
 {
   //modified by NIZNHY-PKV Thu Apr  4 10:43:00 2002 f
   //GeomAdaptor_Surface TheSurface (Surface,Umin,Usup,Vmin,Vsup);
-  myGeomAdaptor.Load(Surface, Umin,Usup,Vmin,Vsup);
+  myGeomAdaptor = new GeomAdaptor_Surface(Surface, Umin,Usup,Vmin,Vsup);
   //modified by NIZNHY-PKV Thu Apr  4 10:43:16 2002 t
   //myExtPS = Extrema_ExtPS();
   //modified by NIZNHY-PKV Thu Apr  4 10:43:18 2002 f

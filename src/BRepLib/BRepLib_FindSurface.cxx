@@ -205,7 +205,7 @@ static void fillParams (const TColStd_Array1OfReal& theKnots,
   theParams.Append (theParMax);
 }
 
-static void fillPoints (const BRepAdaptor_Curve&                 theCurve,
+static void fillPoints (BRepAdaptor_Curve&                       theCurve,
                         const NCollection_Vector<Standard_Real>& theParams,
                         TColgp_SequenceOfPnt&                    thePoints,
                         TColStd_SequenceOfReal&                  theWeights)

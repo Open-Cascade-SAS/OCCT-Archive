@@ -211,7 +211,7 @@ void AIS_Circle::UnsetWidth()
 void AIS_Circle::ComputeCircle (const Handle(Prs3d_Presentation)& thePresentation)
 {
 
-  GeomAdaptor_Curve curv(myComponent);
+  Handle(GeomAdaptor_Curve) curv = new GeomAdaptor_Curve(myComponent);
   Standard_Real prevdev = myDrawer->DeviationCoefficient();
   myDrawer->SetDeviationCoefficient (1.e-5);
   StdPrs_DeflectionCurve::Add (thePresentation, curv, myDrawer);
@@ -226,7 +226,7 @@ void AIS_Circle::ComputeCircle (const Handle(Prs3d_Presentation)& thePresentatio
 //=======================================================================
 void AIS_Circle::ComputeArc (const Handle(Prs3d_Presentation)& thePresentation)
 {
-  GeomAdaptor_Curve curv(myComponent, myUStart, myUEnd);
+  Handle(GeomAdaptor_Curve) curv = new GeomAdaptor_Curve(myComponent, myUStart, myUEnd);
   Standard_Real prevdev = myDrawer->DeviationCoefficient();
   myDrawer->SetDeviationCoefficient (1.e-5);
   StdPrs_DeflectionCurve::Add (thePresentation, curv, myDrawer);

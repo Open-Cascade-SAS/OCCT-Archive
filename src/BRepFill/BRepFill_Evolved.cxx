@@ -2427,8 +2427,8 @@ void  BRepFill_Evolved::ContinuityOnOffsetEdge (const TopTools_ListOfShape&)
       // the regularities are already coded on the edges of elementary volevos
       Standard_Real     U1 = BRep_Tool::Parameter(V,CurE);
       Standard_Real     U2 = BRep_Tool::Parameter(V,PrecE);
-      BRepAdaptor_Curve Curve1(CurE);
-      BRepAdaptor_Curve Curve2(PrecE);
+      Handle(BRepAdaptor_Curve) Curve1 = new BRepAdaptor_Curve(CurE);
+      Handle(BRepAdaptor_Curve) Curve2 = new BRepAdaptor_Curve(PrecE);
       GeomAbs_Shape     Continuity = BRepLProp::Continuity(Curve1,Curve2,U1,U2);
 
       if (Continuity >=1) {
@@ -2459,8 +2459,8 @@ void  BRepFill_Evolved::ContinuityOnOffsetEdge (const TopTools_ListOfShape&)
     //Closed profile.
     Standard_Real     U1 = BRep_Tool::Parameter(VF,CurE);
     Standard_Real     U2 = BRep_Tool::Parameter(VF,FirstE);
-    BRepAdaptor_Curve Curve1(CurE);
-    BRepAdaptor_Curve Curve2(FirstE);
+    Handle(BRepAdaptor_Curve) Curve1 = new BRepAdaptor_Curve(CurE);
+    Handle(BRepAdaptor_Curve) Curve2 = new BRepAdaptor_Curve(FirstE);
     GeomAbs_Shape     Continuity = BRepLProp::Continuity(Curve1,Curve2,U1,U2);
 
     if (Continuity >=1) {
@@ -3053,7 +3053,7 @@ void CutEdgeProf (const TopoDS_Edge&                  E,
   l= C2d->LastParameter();
 
   Bnd_Box2d B;
-  Geom2dAdaptor_Curve AC2d(C2d);
+  Handle(Geom2dAdaptor_Curve) AC2d = new Geom2dAdaptor_Curve(C2d);
   BndLib_Add2dCurve::Add(AC2d,BRepFill_Confusion(),B);
   Standard_Real xmin,xmax;
   B.Get(xmin,U1,xmax,U2);
@@ -3072,7 +3072,7 @@ void CutEdgeProf (const TopoDS_Edge&                  E,
   //  modified by NIZHNY-EAP Wed Feb  2 16:33:05 2000 ___END___
 
   // On calcule les intersection avec Oy.
-  Geom2dAdaptor_Curve ALine(Line);
+  Handle(Geom2dAdaptor_Curve) ALine = new Geom2dAdaptor_Curve(Line);
   Standard_Real Tol = Precision::Intersection();
   Standard_Real TolC = 0.;
 

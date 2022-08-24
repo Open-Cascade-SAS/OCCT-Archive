@@ -467,8 +467,8 @@ void GeomLib::FuseIntervals(const  TColStd_Array1OfReal& I1,
 //purpose  : 
 //=======================================================================
 
-void GeomLib::EvalMaxParametricDistance(const Adaptor3d_Curve& ACurve,
-			       const Adaptor3d_Curve& AReferenceCurve,
+void GeomLib::EvalMaxParametricDistance(const Handle(Adaptor3d_Curve)& ACurve,
+			       const Handle(Adaptor3d_Curve)& AReferenceCurve,
 //			       const Standard_Real  Tolerance,
 			       const Standard_Real  ,
 			       const TColStd_Array1OfReal& Parameters,
@@ -484,9 +484,9 @@ void GeomLib::EvalMaxParametricDistance(const Adaptor3d_Curve& ACurve,
   gp_Pnt Point1 ;
   gp_Pnt Point2 ;
   for (ii = Parameters.Lower() ; ii <= Parameters.Upper() ; ii++) {
-    ACurve.D0(Parameters(ii),
+    ACurve->D0(Parameters(ii),
 	      Point1) ;
-    AReferenceCurve.D0(Parameters(ii),
+    AReferenceCurve->D0(Parameters(ii),
 		       Point2) ;
     local_distance_squared =
       Point1.SquareDistance (Point2) ;
@@ -505,8 +505,8 @@ void GeomLib::EvalMaxParametricDistance(const Adaptor3d_Curve& ACurve,
 //purpose  : 
 //=======================================================================
 
-void GeomLib::EvalMaxDistanceAlongParameter(const Adaptor3d_Curve& ACurve,
-			       const Adaptor3d_Curve& AReferenceCurve,
+void GeomLib::EvalMaxDistanceAlongParameter(const Handle(Adaptor3d_Curve)& ACurve,
+			       const Handle(Adaptor3d_Curve)& AReferenceCurve,
 			       const Standard_Real  Tolerance,
 			       const TColStd_Array1OfReal& Parameters,
 			       Standard_Real& MaxDistance) 
@@ -523,18 +523,18 @@ void GeomLib::EvalMaxDistanceAlongParameter(const Adaptor3d_Curve& ACurve,
 
 
   para_tolerance = 
-    AReferenceCurve.Resolution(Tolerance) ;
+    AReferenceCurve->Resolution(Tolerance) ;
   other_parameter = Parameters(Parameters.Lower()) ;
-  ACurve.D0(other_parameter,
+  ACurve->D0(other_parameter,
 	    Point1) ;
   Extrema_LocateExtPC a_projector(Point1,
 				  AReferenceCurve,
 				  other_parameter,
 				  para_tolerance) ;
   for (ii = Parameters.Lower() ; ii <= Parameters.Upper() ; ii++) {
-    ACurve.D0(Parameters(ii),
+    ACurve->D0(Parameters(ii),
 	      Point1) ;
-    AReferenceCurve.D0(Parameters(ii),
+    AReferenceCurve->D0(Parameters(ii),
 		       Point2) ;
     local_distance_squared =
       Point1.SquareDistance (Point2) ;
@@ -551,7 +551,7 @@ void GeomLib::EvalMaxDistanceAlongParameter(const Adaptor3d_Curve& ACurve,
       if (a_projector.IsDone()) {
 	other_parameter =
 	  a_projector.Point().Parameter() ;
-	AReferenceCurve.D0(other_parameter,
+	AReferenceCurve->D0(other_parameter,
 			   Point2) ;
 	local_distance_squared =
 	  Point1.SquareDistance (Point2) ;
@@ -1013,7 +1013,7 @@ void GeomLib::SameRange(const Standard_Real         Tolerance,
 class GeomLib_CurveOnSurfaceEvaluator : public AdvApprox_EvaluatorFunction
 {
  public:
-  GeomLib_CurveOnSurfaceEvaluator (Adaptor3d_CurveOnSurface& theCurveOnSurface,
+  GeomLib_CurveOnSurfaceEvaluator (Handle(Adaptor3d_CurveOnSurface)& theCurveOnSurface,
                                    Standard_Real theFirst, Standard_Real theLast)
     : CurveOnSurface(theCurveOnSurface), FirstParam(theFirst), LastParam(theLast) {}
   
@@ -1025,7 +1025,7 @@ class GeomLib_CurveOnSurfaceEvaluator : public AdvApprox_EvaluatorFunction
                          Standard_Integer *ErrorCode);
   
  private:
-  Adaptor3d_CurveOnSurface& CurveOnSurface;
+  Handle(Adaptor3d_CurveOnSurface)& CurveOnSurface;
   Standard_Real FirstParam;
   Standard_Real LastParam; 
 
@@ -1044,7 +1044,7 @@ void GeomLib_CurveOnSurfaceEvaluator::Evaluate (Standard_Integer *,/*Dimension*/
   //Gestion des positionnements gauche / droite
   if ((DebutFin[0] != FirstParam) || (DebutFin[1] != LastParam)) 
     { 
-      TrimCurve = CurveOnSurface.Trim(DebutFin[0], DebutFin[1], Precision::PConfusion());
+      TrimCurve = CurveOnSurface->Trim(DebutFin[0], DebutFin[1], Precision::PConfusion());
       FirstParam = DebutFin[0];
       LastParam  = DebutFin[1];
     }
@@ -1080,7 +1080,7 @@ void GeomLib_CurveOnSurfaceEvaluator::Evaluate (Standard_Integer *,/*Dimension*/
 //=======================================================================
 
 void GeomLib::BuildCurve3d(const Standard_Real           Tolerance,
-			   Adaptor3d_CurveOnSurface&       Curve, 
+			   Handle(Adaptor3d_CurveOnSurface)&       Curve, 
 			   const Standard_Real           FirstParameter,
 			   const Standard_Real           LastParameter,
 			   Handle(Geom_Curve)&            NewCurvePtr, 
@@ -1095,8 +1095,8 @@ void GeomLib::BuildCurve3d(const Standard_Real           Tolerance,
 
   MaxDeviation     = 0.0e0 ;
   AverageDeviation = 0.0e0 ;
-  Handle(GeomAdaptor_Surface) geom_adaptor_surface_ptr (Handle(GeomAdaptor_Surface)::DownCast(Curve.GetSurface()) );
-  Handle(Geom2dAdaptor_Curve) geom_adaptor_curve_ptr (Handle(Geom2dAdaptor_Curve)::DownCast(Curve.GetCurve()) );
+  Handle(GeomAdaptor_Surface) geom_adaptor_surface_ptr (Handle(GeomAdaptor_Surface)::DownCast(Curve->GetSurface()) );
+  Handle(Geom2dAdaptor_Curve) geom_adaptor_curve_ptr (Handle(Geom2dAdaptor_Curve)::DownCast(Curve->GetCurve()) );
    
   if (! geom_adaptor_curve_ptr.IsNull() &&
       ! geom_adaptor_surface_ptr.IsNull()) {
@@ -1115,10 +1115,7 @@ void GeomLib::BuildCurve3d(const Standard_Real           Tolerance,
     if (! P.IsNull()) {
       // compute the 3d curve
       gp_Ax2 axes = P->Position().Ax2();
-      const Geom2dAdaptor_Curve& geom2d_curve = *geom_adaptor_curve_ptr;
-      NewCurvePtr = 
-	GeomLib::To3d(axes,
-		      geom2d_curve.Curve());
+      NewCurvePtr = GeomLib::To3d(axes, geom_adaptor_curve_ptr->Curve());
       return;
       
     }
@@ -1146,13 +1143,13 @@ void GeomLib::BuildCurve3d(const Standard_Real           Tolerance,
     Tolerance3DPtr->SetValue(1,Tolerance);
 
      // Recherche des discontinuitees
-     Standard_Integer NbIntervalC2 = Curve.NbIntervals(GeomAbs_C2);
+     Standard_Integer NbIntervalC2 = Curve->NbIntervals(GeomAbs_C2);
      TColStd_Array1OfReal Param_de_decoupeC2 (1, NbIntervalC2+1);
-     Curve.Intervals(Param_de_decoupeC2, GeomAbs_C2);
+     Curve->Intervals(Param_de_decoupeC2, GeomAbs_C2);
      
-     Standard_Integer NbIntervalC3 = Curve.NbIntervals(GeomAbs_C3);
+     Standard_Integer NbIntervalC3 = Curve->NbIntervals(GeomAbs_C3);
      TColStd_Array1OfReal Param_de_decoupeC3 (1, NbIntervalC3+1);
-     Curve.Intervals(Param_de_decoupeC3, GeomAbs_C3);
+     Curve->Intervals(Param_de_decoupeC3, GeomAbs_C3);
 
      // Note extension of the parameteric range  
      // Pour forcer le Trim au premier appel de l'evaluateur

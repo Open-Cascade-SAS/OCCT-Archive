@@ -188,7 +188,7 @@ void AIS_Axis::Compute (const Handle(PrsMgr_PresentationManager)& ,
   thePrs->SetInfiniteState (myInfiniteState);
   if (!myIsXYZAxis)
   {
-    GeomAdaptor_Curve curv (myComponent);
+    Handle(GeomAdaptor_Curve) curv = new GeomAdaptor_Curve(myComponent);
     StdPrs_Curve::Add (thePrs, curv, myDrawer);
   }
   else

@@ -588,7 +588,7 @@ Standard_Boolean IntTools_Tools::CheckCurve(const IntTools_Curve& theCurve,
   }
   //
   // Build bounding box for the curve
-  BndLib_Add3dCurve::Add(GeomAdaptor_Curve(aC3D),
+  BndLib_Add3dCurve::Add(new GeomAdaptor_Curve(aC3D),
                          Max(theCurve.Tolerance(), theCurve.TangentialTolerance()),
                          theBox);
   //

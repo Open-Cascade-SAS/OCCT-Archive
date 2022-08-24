@@ -37,7 +37,7 @@ namespace
       const Handle(IMeshData::MapOfReal)&       theParamsForbiddenToRemove,
       const Handle(IMeshData::MapOfReal)&       theControlParamsForbiddenToRemove)
       : myDFace(theDFace),
-        mySurface(myDFace->GetSurface()->Surface().Surface()),
+        mySurface(myDFace->GetSurface()->Surface()->Surface()),
         myIsoU(theIsoType == GeomAbs_IsoU),
         myParams(theParams),
         myControlParams(theControlParams),
@@ -334,7 +334,7 @@ Handle(IMeshData::ListOfPnt2d) BRepMesh_NURBSRangeSplitter::GenerateSurfaceNodes
 
   const Standard_Real                 aDefFace = GetDFace()->GetDeflection();
   const Handle(BRepAdaptor_Surface)& gFace    = GetSurface();
-  Handle(Geom_Surface)                aSurface = gFace->Surface().Surface();
+  Handle(Geom_Surface)                aSurface = gFace->Surface()->Surface();
 
   const Handle(NCollection_IncAllocator) aTmpAlloc =
     new NCollection_IncAllocator(IMeshData::MEMORY_BLOCK_SIZE_HUGE);
@@ -414,7 +414,7 @@ Standard_Boolean BRepMesh_NURBSRangeSplitter::initParameters() const
   aSurface->UIntervals(aIntervals[0], aContinuity);
   aSurface->VIntervals(aIntervals[1], aContinuity);
 
-  const Standard_Boolean isSplitIntervals = toSplitIntervals (aSurface->Surface().Surface(), aIntervals);
+  const Standard_Boolean isSplitIntervals = toSplitIntervals (aSurface->Surface()->Surface(), aIntervals);
 
   if (!initParamsFromIntervals(aIntervals[0], GetRangeU(), isSplitIntervals,
                                const_cast<IMeshData::IMapOfReal&>(GetParametersU())))

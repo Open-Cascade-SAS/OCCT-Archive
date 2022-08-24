@@ -24,6 +24,8 @@ inline BRepGProp_Face::BRepGProp_Face(const Standard_Boolean IsUseSpan)
      : mySReverse (Standard_False),
        myIsUseSpan(IsUseSpan)
 {
+  mySurface = new BRepAdaptor_Surface();
+  myCurve = new Geom2dAdaptor_Curve();
 }
 
 //=======================================================================
@@ -36,6 +38,8 @@ inline BRepGProp_Face::BRepGProp_Face(const TopoDS_Face      &F,
 				      const Standard_Boolean  IsUseSpan)
      : myIsUseSpan(IsUseSpan)
 {
+  mySurface = new BRepAdaptor_Surface();
+  myCurve = new Geom2dAdaptor_Curve();
   Load(F);
 }
 
@@ -46,7 +50,7 @@ inline BRepGProp_Face::BRepGProp_Face(const TopoDS_Face      &F,
 
 inline Standard_Boolean BRepGProp_Face::NaturalRestriction() const
 {
-  return BRep_Tool::NaturalRestriction(mySurface.Face());
+  return BRep_Tool::NaturalRestriction(mySurface->Face());
 }
 //
 //=======================================================================
@@ -56,7 +60,7 @@ inline Standard_Boolean BRepGProp_Face::NaturalRestriction() const
 
 inline const TopoDS_Face& BRepGProp_Face::GetFace() const
 {
-  return mySurface.Face();
+  return mySurface->Face();
 }
 
 //=======================================================================
@@ -66,7 +70,7 @@ inline const TopoDS_Face& BRepGProp_Face::GetFace() const
 
 inline gp_Pnt2d BRepGProp_Face::Value2d(const Standard_Real U) const
 {
-  return myCurve.Value(U);
+  return myCurve->Value(U);
 }
 
 //=======================================================================
@@ -79,7 +83,7 @@ inline void BRepGProp_Face::D12d(const Standard_Real  U,
 				       gp_Pnt2d      &P,
 				       gp_Vec2d      &V1) const
 {
-  myCurve.D1(U,P,V1);
+  myCurve->D1(U,P,V1);
 }
 
 //=======================================================================
@@ -90,7 +94,7 @@ inline void BRepGProp_Face::D12d(const Standard_Real  U,
 
 inline Standard_Real BRepGProp_Face::FirstParameter() const
 {
-  return myCurve.FirstParameter();
+  return myCurve->FirstParameter();
 }
 
 //=======================================================================
@@ -101,5 +105,5 @@ inline Standard_Real BRepGProp_Face::FirstParameter() const
 
 inline Standard_Real BRepGProp_Face::LastParameter() const
 {
-  return myCurve.LastParameter();
+  return myCurve->LastParameter();
 }

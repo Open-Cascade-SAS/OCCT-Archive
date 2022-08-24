@@ -261,7 +261,7 @@ public:
   //! Returns false if there is no such range. Otherwise, sets theFirst and 
   //! theLast as its bounds.
   Standard_EXPORT static Standard_Boolean FindValidRange
-    (const Adaptor3d_Curve& theCurve, const Standard_Real theTolE,
+    (const Handle(Adaptor3d_Curve)& theCurve, const Standard_Real theTolE,
      const Standard_Real theParV1, const gp_Pnt& thePntV1, const Standard_Real theTolV1,
      const Standard_Real theParV2, const gp_Pnt& thePntV2, const Standard_Real theTolV2,
      Standard_Real& theFirst, Standard_Real& theLast);

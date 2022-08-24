@@ -28,11 +28,11 @@
 #include <math_PSO.hxx>
 #include <math_BrentMinimum.hxx>
 //
-static Standard_Integer NbSamples(const Adaptor3d_Curve& C, 
+static Standard_Integer NbSamples(const Handle(Adaptor3d_Curve)& C, 
                                    const Standard_Real Umin,
                                    const Standard_Real Umax);
 
-static Standard_Real  AdjustExtr(const Adaptor3d_Curve& C, 
+static Standard_Real  AdjustExtr(const Handle(Adaptor3d_Curve)& C, 
                                  const Standard_Real UMin,
 			                           const Standard_Real UMax,
                                  const Standard_Real Extr0,
@@ -46,7 +46,7 @@ static Standard_Real  AdjustExtr(const Adaptor3d_Curve& C,
 //purpose  : This method intended to reduce box in case of 
 //           bezier and bspline curve.
 //=======================================================================
-static void reduceSplineBox(const Adaptor3d_Curve& theCurve,
+static void reduceSplineBox(const Handle(Adaptor3d_Curve)& theCurve,
                             const Bnd_Box& theOrigBox,
                             Bnd_Box & theReducedBox)
 {
@@ -55,9 +55,9 @@ static void reduceSplineBox(const Adaptor3d_Curve& theCurve,
   Standard_Real aPolesXMin, aPolesYMin, aPolesZMin,
                 aPolesXMax, aPolesYMax, aPolesZMax;
 
-  if (theCurve.GetType() == GeomAbs_BSplineCurve)
+  if (theCurve->GetType() == GeomAbs_BSplineCurve)
   {
-    Handle(Geom_BSplineCurve) aC = theCurve.BSpline();
+    Handle(Geom_BSplineCurve) aC = theCurve->BSpline();
     const TColgp_Array1OfPnt& aPoles     = aC->Poles();
 
     for(Standard_Integer anIdx  = aPoles.Lower();
@@ -67,9 +67,9 @@ static void reduceSplineBox(const Adaptor3d_Curve& theCurve,
       aPolesBox.Add(aPoles.Value(anIdx));
     }
   }
-  if (theCurve.GetType() == GeomAbs_BezierCurve)
+  if (theCurve->GetType() == GeomAbs_BezierCurve)
   {
-    Handle(Geom_BezierCurve) aC = theCurve.Bezier();
+    Handle(Geom_BezierCurve) aC = theCurve->Bezier();
     const TColgp_Array1OfPnt& aPoles     = aC->Poles();
 
     for(Standard_Integer anIdx  = aPoles.Lower();
@@ -109,37 +109,37 @@ static void reduceSplineBox(const Adaptor3d_Curve& theCurve,
 //function : Add
 //purpose  : 
 //=======================================================================
-void BndLib_Add3dCurve::Add( const Adaptor3d_Curve& C,
+void BndLib_Add3dCurve::Add( const Handle(Adaptor3d_Curve)& C,
 			   const Standard_Real Tol,
 			         Bnd_Box&      B )
 {
   BndLib_Add3dCurve::Add(C,
-			 C.FirstParameter(),
-			 C.LastParameter (),
+			 C->FirstParameter(),
+			 C->LastParameter (),
 			 Tol,B);
 }
 
 //OCC566(apo)->
-static Standard_Real FillBox(Bnd_Box& B, const Adaptor3d_Curve& C, 
+static Standard_Real FillBox(Bnd_Box& B, const Handle(Adaptor3d_Curve)& C, 
 			     const Standard_Real first, const Standard_Real last, 
 			     const Standard_Integer N)
 {
   gp_Pnt P1, P2, P3;
-  C.D0(first,P1);  B.Add(P1);
+  C->D0(first,P1);  B.Add(P1);
   Standard_Real p = first, dp = last-first, tol= 0.;
   if(Abs(dp) > Precision::PConfusion()){
     Standard_Integer i;
     dp /= 2*N; 
     for(i = 1; i <= N; i++){
-      p += dp;  C.D0(p,P2);  B.Add(P2);
-      p += dp;  C.D0(p,P3);  B.Add(P3);
+      p += dp;  C->D0(p,P2);  B.Add(P2);
+      p += dp;  C->D0(p,P3);  B.Add(P3);
       gp_Pnt Pc((P1.XYZ()+P3.XYZ())/2.0);
       tol = Max(tol,Pc.Distance(P2));
       P1 = P3;
     }
   }else{
-    C.D0(first,P1);  B.Add(P1);
-    C.D0(last,P3);  B.Add(P3);
+    C->D0(first,P1);  B.Add(P1);
+    C->D0(last,P3);  B.Add(P3);
     tol = 0.;
   }
   return tol;
@@ -150,7 +150,7 @@ static Standard_Real FillBox(Bnd_Box& B, const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-void BndLib_Add3dCurve::Add( const Adaptor3d_Curve& C,
+void BndLib_Add3dCurve::Add( const Handle(Adaptor3d_Curve)& C,
 			   const Standard_Real U1,
 			   const Standard_Real U2,
 			   const Standard_Real Tol,
@@ -158,38 +158,38 @@ void BndLib_Add3dCurve::Add( const Adaptor3d_Curve& C,
 {
   static Standard_Real weakness = 1.5;  //OCC566(apo)
   Standard_Real tol = 0.0;
-  switch (C.GetType()) {
+  switch (C->GetType()) {
 
   case GeomAbs_Line: 
     {
-      BndLib::Add(C.Line(),U1,U2,Tol,B);
+      BndLib::Add(C->Line(),U1,U2,Tol,B);
       break;
     }
   case GeomAbs_Circle: 
     {
-      BndLib::Add(C.Circle(),U1,U2,Tol,B);
+      BndLib::Add(C->Circle(),U1,U2,Tol,B);
       break;
     }
   case GeomAbs_Ellipse: 
     {
-      BndLib::Add(C.Ellipse(),U1,U2,Tol,B);
+      BndLib::Add(C->Ellipse(),U1,U2,Tol,B);
       break;
     }
   case GeomAbs_Hyperbola: 
     {
-      BndLib::Add(C.Hyperbola(),U1,U2,Tol,B);
+      BndLib::Add(C->Hyperbola(),U1,U2,Tol,B);
       break;
     }
   case GeomAbs_Parabola: 
     {
-      BndLib::Add(C.Parabola(),U1,U2,Tol,B);
+      BndLib::Add(C->Parabola(),U1,U2,Tol,B);
       break;
     }
   case GeomAbs_BezierCurve: 
     {
-      Handle(Geom_BezierCurve) Bz = C.Bezier();
+      Handle(Geom_BezierCurve) Bz = C->Bezier();
       Standard_Integer N = Bz->Degree();
-      GeomAdaptor_Curve GACurve(Bz);
+      Handle(GeomAdaptor_Curve) GACurve = new GeomAdaptor_Curve(Bz);
       Bnd_Box B1;
       tol = FillBox(B1,GACurve,U1,U2,N);
       B1.Enlarge(weakness*tol);
@@ -199,7 +199,7 @@ void BndLib_Add3dCurve::Add( const Adaptor3d_Curve& C,
     }
   case GeomAbs_BSplineCurve: 
     {
-      Handle(Geom_BSplineCurve) Bs = C.BSpline();
+      Handle(Geom_BSplineCurve) Bs = C->BSpline();
       if(Abs(Bs->FirstParameter() - U1) > Precision::Parametric(Tol)||
 	 Abs(Bs->LastParameter()  - U2) > Precision::Parametric(Tol)) {
 
@@ -229,7 +229,7 @@ void BndLib_Add3dCurve::Add( const Adaptor3d_Curve& C,
                        N = Bs->Degree(), NbKnots = Bs->NbKnots();
       TColStd_Array1OfReal Knots(1,NbKnots);
       Bs->Knots(Knots);
-      GeomAdaptor_Curve GACurve(Bs);
+      Handle(GeomAdaptor_Curve) GACurve = new GeomAdaptor_Curve(Bs);
       Standard_Real first = Knots(k1), last;
       for(k = k1 + 1; k <= k2; k++){
 	last = Knots(k); 
@@ -264,13 +264,13 @@ void BndLib_Add3dCurve::Add( const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-void BndLib_Add3dCurve::AddOptimal( const Adaptor3d_Curve& C,
+void BndLib_Add3dCurve::AddOptimal( const Handle(Adaptor3d_Curve)& C,
 			                              const Standard_Real Tol,
 			                              Bnd_Box&      B )
 {
   BndLib_Add3dCurve::AddOptimal(C,
-			                          C.FirstParameter(),
-			                          C.LastParameter (),
+			                          C->FirstParameter(),
+			                          C->LastParameter (),
 			                          Tol,B);
 }
 
@@ -279,37 +279,37 @@ void BndLib_Add3dCurve::AddOptimal( const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-void BndLib_Add3dCurve::AddOptimal( const Adaptor3d_Curve& C,
+void BndLib_Add3dCurve::AddOptimal( const Handle(Adaptor3d_Curve)& C,
 			                              const Standard_Real U1,
 			                              const Standard_Real U2,
 			                              const Standard_Real Tol,
 			                              Bnd_Box&            B)
 {
-  switch (C.GetType()) {
+  switch (C->GetType()) {
 
     case GeomAbs_Line: 
     {
-      BndLib::Add(C.Line(),U1,U2,Tol,B);
+      BndLib::Add(C->Line(),U1,U2,Tol,B);
       break;
     }
     case GeomAbs_Circle: 
     {
-      BndLib::Add(C.Circle(),U1,U2,Tol,B);
+      BndLib::Add(C->Circle(),U1,U2,Tol,B);
       break;
     }
     case GeomAbs_Ellipse: 
     {
-      BndLib::Add(C.Ellipse(),U1,U2,Tol,B);
+      BndLib::Add(C->Ellipse(),U1,U2,Tol,B);
       break;
     }
     case GeomAbs_Hyperbola: 
     {
-      BndLib::Add(C.Hyperbola(),U1,U2,Tol,B);
+      BndLib::Add(C->Hyperbola(),U1,U2,Tol,B);
       break;
     }
     case GeomAbs_Parabola: 
     {
-      BndLib::Add(C.Parabola(),U1,U2,Tol,B);
+      BndLib::Add(C->Parabola(),U1,U2,Tol,B);
       break;
     }
     default:
@@ -323,7 +323,7 @@ void BndLib_Add3dCurve::AddOptimal( const Adaptor3d_Curve& C,
 //function : AddGenCurv
 //purpose  : 
 //=======================================================================
-void BndLib_Add3dCurve::AddGenCurv(const Adaptor3d_Curve& C, 
+void BndLib_Add3dCurve::AddGenCurv(const Handle(Adaptor3d_Curve)& C, 
                                    const Standard_Real UMin,
                                    const Standard_Real UMax,
                                    const Standard_Real Tol,
@@ -342,7 +342,7 @@ void BndLib_Add3dCurve::AddGenCurv(const Adaptor3d_Curve& C,
   Standard_Real u;
   for (i = 1, u = UMin; i <= Nu; i++, u += du)
   {
-    C.D0(u,P);
+    C->D0(u,P);
     aPnts(i) = P.XYZ();
     //
     for(k = 0; k < 3; ++k)
@@ -360,7 +360,7 @@ void BndLib_Add3dCurve::AddGenCurv(const Adaptor3d_Curve& C,
     if(i > 1)
     {
       gp_XYZ aPm = 0.5 * (aPnts(i-1) + aPnts(i));
-      C.D0(u - du2, P);
+      C->D0(u - du2, P);
       gp_XYZ aD = (P.XYZ() - aPm);
       for(k = 0; k < 3; ++k)
       {
@@ -431,7 +431,7 @@ void BndLib_Add3dCurve::AddGenCurv(const Adaptor3d_Curve& C,
 class CurvMaxMinCoordMVar : public math_MultipleVarFunction
 {
 public:
-  CurvMaxMinCoordMVar(const Adaptor3d_Curve& theCurve, 
+  CurvMaxMinCoordMVar(const Handle(Adaptor3d_Curve)& theCurve, 
                       const Standard_Real UMin,
                       const Standard_Real UMax,
                       const Standard_Integer CoordIndx,                                 
@@ -451,7 +451,7 @@ public:
     {
       return Standard_False;
     }
-    gp_Pnt aP = myCurve.Value(X(1));
+    gp_Pnt aP = myCurve->Value(X(1));
 
     F = mySign * aP.Coord(myCoordIndx);
 
@@ -476,7 +476,7 @@ private:
     return Standard_True;
   }
 
-  const Adaptor3d_Curve& myCurve;
+  const Handle(Adaptor3d_Curve)& myCurve;
   Standard_Real myUMin;
   Standard_Real myUMax;
   Standard_Integer myCoordIndx;
@@ -486,7 +486,7 @@ private:
 class CurvMaxMinCoord : public math_Function
 {
 public:
-  CurvMaxMinCoord(const Adaptor3d_Curve& theCurve, 
+  CurvMaxMinCoord(const Handle(Adaptor3d_Curve)& theCurve, 
                   const Standard_Real UMin,
                   const Standard_Real UMax,
                   const Standard_Integer CoordIndx,                                 
@@ -506,7 +506,7 @@ public:
     {
       return Standard_False;
     }
-    gp_Pnt aP = myCurve.Value(X);
+    gp_Pnt aP = myCurve->Value(X);
 
     F = mySign * aP.Coord(myCoordIndx);
 
@@ -524,7 +524,7 @@ private:
     return Standard_True;
   }
 
-  const Adaptor3d_Curve& myCurve;
+  const Handle(Adaptor3d_Curve)& myCurve;
   Standard_Real myUMin;
   Standard_Real myUMax;
   Standard_Integer myCoordIndx;
@@ -536,7 +536,7 @@ private:
 //purpose  : 
 //=======================================================================
 
-Standard_Real AdjustExtr(const Adaptor3d_Curve& C, 
+Standard_Real AdjustExtr(const Handle(Adaptor3d_Curve)& C, 
                          const Standard_Real UMin,
                          const Standard_Real UMax,
                          const Standard_Real Extr0,
@@ -547,8 +547,8 @@ Standard_Real AdjustExtr(const Adaptor3d_Curve& C,
   Standard_Real aSign = IsMin ? 1.:-1.;
   Standard_Real extr = aSign * Extr0;
   //
-  Standard_Real uTol = Max(C.Resolution(Tol), Precision::PConfusion());
-  Standard_Real Du = (C.LastParameter() - C.FirstParameter());
+  Standard_Real uTol = Max(C->Resolution(Tol), Precision::PConfusion());
+  Standard_Real Du = (C->LastParameter() - C->FirstParameter());
   //
   Standard_Real reltol = uTol / Max(Abs(UMin), Abs(UMax));
   if(UMax - UMin < 0.01 * Du)
@@ -596,16 +596,16 @@ Standard_Real AdjustExtr(const Adaptor3d_Curve& C,
 //purpose  : 
 //=======================================================================
 
-Standard_Integer NbSamples(const Adaptor3d_Curve& C, 
+Standard_Integer NbSamples(const Handle(Adaptor3d_Curve)& C, 
                            const Standard_Real Umin,
                            const Standard_Real Umax) 
 {
   Standard_Integer N;
-  GeomAbs_CurveType Type = C.GetType();
+  GeomAbs_CurveType Type = C->GetType();
   switch (Type) {
   case GeomAbs_BezierCurve: 
     {
-      N = 2 * C.NbPoles();
+      N = 2 * C->NbPoles();
       //By default parametric range of Bezier curv is [0, 1]
       Standard_Real du = Umax - Umin;
       if(du < .9)
@@ -617,7 +617,7 @@ Standard_Integer NbSamples(const Adaptor3d_Curve& C,
     }
   case GeomAbs_BSplineCurve: 
     {
-      const Handle(Geom_BSplineCurve)& BC = C.BSpline();
+      const Handle(Geom_BSplineCurve)& BC = C->BSpline();
       N = 2 * (BC->Degree() + 1)*(BC->NbKnots() -1);
       Standard_Real umin = BC->FirstParameter(), 
                     umax = BC->LastParameter();

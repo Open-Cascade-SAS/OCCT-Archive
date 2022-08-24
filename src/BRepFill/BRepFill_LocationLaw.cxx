@@ -437,7 +437,7 @@ void BRepFill_LocationLaw::CurvilinearBounds(const Standard_Integer Index,
 
     for (ii=1, Length=0.; ii<=NbE; ii++) {
       myLaws->Value(ii)->GetDomain(f, l);
-      Length += AbsC.Length(*myLaws->Value(ii)->GetCurve(), myTol);
+      Length += AbsC.Length(myLaws->Value(ii)->GetCurve(), myTol);
       myLength->SetValue(ii+1, Length);
     }
 
@@ -582,7 +582,7 @@ void BRepFill_LocationLaw::CurvilinearBounds(const Standard_Integer Index,
     else {
       GCPnts_AbscissaPoint 
 	AbsC(myTol, 
-	     *myLaws->Value(iedge)->GetCurve(),
+	     myLaws->Value(iedge)->GetCurve(),
 	     Abcissa-myLength->Value(iedge), f);
       U =  AbsC.Parameter();
     }
@@ -642,7 +642,7 @@ void BRepFill_LocationLaw::CurvilinearBounds(const Standard_Integer Index,
     CurvilinearBounds(Index, bid, Length);
   }
  
-  Length += AbsC.Length(*myLaws->Value(Index)->GetCurve(),
+  Length += AbsC.Length(myLaws->Value(Index)->GetCurve(),
 			myLaws->Value(Index)->GetCurve()->FirstParameter(),
 			Param, myTol);
   return Length;

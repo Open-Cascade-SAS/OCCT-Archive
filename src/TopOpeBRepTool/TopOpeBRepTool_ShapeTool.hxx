@@ -74,18 +74,18 @@ public:
   
   Standard_EXPORT static Standard_Boolean ShapesSameOriented (const TopoDS_Shape& S1, const TopoDS_Shape& S2);
   
-  Standard_EXPORT static Standard_Boolean SurfacesSameOriented (const BRepAdaptor_Surface& S1, const BRepAdaptor_Surface& S2);
+  Standard_EXPORT static Standard_Boolean SurfacesSameOriented (const Handle(BRepAdaptor_Surface)& S1, const Handle(BRepAdaptor_Surface)& S2);
   
   Standard_EXPORT static Standard_Boolean FacesSameOriented (const TopoDS_Shape& F1, const TopoDS_Shape& F2);
   
-  Standard_EXPORT static Standard_Boolean CurvesSameOriented (const BRepAdaptor_Curve& C1, const BRepAdaptor_Curve& C2);
+  Standard_EXPORT static Standard_Boolean CurvesSameOriented (const Handle(BRepAdaptor_Curve)& C1, const Handle(BRepAdaptor_Curve)& C2);
   
   Standard_EXPORT static Standard_Boolean EdgesSameOriented (const TopoDS_Shape& E1, const TopoDS_Shape& E2);
   
 
   //! Compute tangent T, normal N, curvature C at point of parameter
   //! P on curve BRAC. Returns the tolerance indicating if T,N are null.
-  Standard_EXPORT static Standard_Real EdgeData (const BRepAdaptor_Curve& BRAC, const Standard_Real P, gp_Dir& T, gp_Dir& N, Standard_Real& C);
+  Standard_EXPORT static Standard_Real EdgeData (const Handle(BRepAdaptor_Curve)& BRAC, const Standard_Real P, gp_Dir& T, gp_Dir& N, Standard_Real& C);
   
   //! Same as previous on edge E.
   Standard_EXPORT static Standard_Real EdgeData (const TopoDS_Shape& E, const Standard_Real P, gp_Dir& T, gp_Dir& N, Standard_Real& C);

@@ -97,7 +97,7 @@ static void ComputeTrsf(const TopoDS_Wire& W,
   // Calculate the Transformation  
   gp_Ax3 N(Bary, D);
   Tf.SetTransformation(N);
-  BRepAdaptor_Curve AC;
+  Handle(BRepAdaptor_Curve) AC = new BRepAdaptor_Curve();
 //  BndLib_Add3dCurve BC;  
 
   // transformation to the wire
@@ -109,7 +109,7 @@ static void ComputeTrsf(const TopoDS_Wire& W,
   // Calculate the box
   Box.SetVoid();
   for (Exp.Init(TheW); Exp.More(); Exp.Next()) {
-    AC.Initialize(Exp.Current());
+    AC->Initialize(Exp.Current());
 //    BC.Add(AC, 0.1, Box);
     BndLib_Add3dCurve::Add(AC, 0.1, Box);
   }
@@ -348,7 +348,7 @@ static Standard_Boolean GoodOrientation(const Bnd_Box& B,
   // box with bounds of the stop surface  
   Handle(Geom_Surface) Surf;
   Surf =   Handle(Geom_Surface)::DownCast(Surface->Transformed(Trsf));
-  GeomAdaptor_Surface S1 (Surf);   
+  Handle(GeomAdaptor_Surface) S1 = new GeomAdaptor_Surface(Surf);
 //  BndLib_AddSurface AS; 
 //  AS.Add(S1, 0.1, SBox);
   BndLib_AddSurface::Add(S1, 0.1, SBox);
@@ -395,7 +395,7 @@ static Standard_Boolean GoodOrientation(const Bnd_Box& B,
     Surf = Handle(Geom_Surface)::DownCast(
 //     BT.Surface(TopoDS::Face(Ex.Current()))->Transformed(Trsf) ); 
      BRep_Tool::Surface(TopoDS::Face(Ex.Current()))->Transformed(Trsf) ); 
-    GeomAdaptor_Surface S1 (Surf);
+    Handle(GeomAdaptor_Surface) S1 = new GeomAdaptor_Surface(Surf);
 // bounding box of the current face
 //    AS.Add(S1, Umin, Umax, Vmin, Vmax, 0.1, BSurf); 
     BndLib_AddSurface::Add(S1, Umin, Umax, Vmin, Vmax, 0.1, BSurf);

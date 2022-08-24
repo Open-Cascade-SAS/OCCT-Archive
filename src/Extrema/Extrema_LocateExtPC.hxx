@@ -57,7 +57,7 @@ public:
   //! TolF is used to decide to stop the iterations.
   //! At the nth iteration, the criteria is:
   //! abs(Un - Un-1) < TolF.
-  Standard_EXPORT Extrema_LocateExtPC(const gp_Pnt& P, const Adaptor3d_Curve& C, const Standard_Real U0, const Standard_Real TolF);
+  Standard_EXPORT Extrema_LocateExtPC(const gp_Pnt& P, const Handle(Adaptor3d_Curve)& C, const Standard_Real U0, const Standard_Real TolF);
   
   //! Calculates the distance with a close point.
   //! The close point is defined by the parameter value
@@ -69,10 +69,10 @@ public:
   //! TolF is used to decide to stop the iterations.
   //! At the nth iteration, the criteria is:
   //! abs(Un - Un-1) < TolF.
-  Standard_EXPORT Extrema_LocateExtPC(const gp_Pnt& P, const Adaptor3d_Curve& C, const Standard_Real U0, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolF);
+  Standard_EXPORT Extrema_LocateExtPC(const gp_Pnt& P, const Handle(Adaptor3d_Curve)& C, const Standard_Real U0, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolF);
   
   //! sets the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& C, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolF);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& C, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolF);
   
   Standard_EXPORT void Perform (const gp_Pnt& P, const Standard_Real U0);
   

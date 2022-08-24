@@ -27,7 +27,7 @@
 #include <BRepLProp_CurveTool.hxx>
  
 
-#define Curve BRepAdaptor_Curve
+#define Curve Handle(BRepAdaptor_Curve)
 #define Curve_hxx <BRepAdaptor_Curve.hxx>
 #define Vec gp_Vec
 #define Vec_hxx <gp_Vec.hxx>

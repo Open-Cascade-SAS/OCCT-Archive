@@ -35,7 +35,7 @@ GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa()
 //function : GCPnts_QuasiUniformAbscissa
 //purpose  :
 //=======================================================================
-GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Adaptor3d_Curve& theC,
+GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Handle(Adaptor3d_Curve)& theC,
                                                           const Standard_Integer theNbPoints)
 : myDone (Standard_False),
   myNbPoints (0)
@@ -47,7 +47,7 @@ GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Adaptor3d_Curve&
 //function : GCPnts_QuasiUniformAbscissa
 //purpose  :
 //=======================================================================
-GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Adaptor3d_Curve& theC,
+GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Handle(Adaptor3d_Curve)& theC,
                                                           const Standard_Integer theNbPoints,
                                                           const Standard_Real theU1,
                                                           const Standard_Real theU2)
@@ -61,7 +61,7 @@ GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Adaptor3d_Curve&
 //function : GCPnts_QuasiUniformAbscissa
 //purpose  :
 //=======================================================================
-GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Adaptor2d_Curve2d& theC,
+GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Handle(Adaptor2d_Curve2d)& theC,
                                                           const Standard_Integer theNbPoints)
 : myDone (Standard_False),
   myNbPoints (0)
@@ -73,7 +73,7 @@ GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Adaptor2d_Curve2
 //function : GCPnts_QuasiUniformAbscissa
 //purpose  :
 //=======================================================================
-GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Adaptor2d_Curve2d& theC,
+GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Handle(Adaptor2d_Curve2d)& theC,
                                                           const Standard_Integer theNbPoints,
                                                           const Standard_Real theU1,
                                                           const Standard_Real theU2)
@@ -87,27 +87,27 @@ GCPnts_QuasiUniformAbscissa::GCPnts_QuasiUniformAbscissa (const Adaptor2d_Curve2
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_QuasiUniformAbscissa::Initialize (const Adaptor3d_Curve& theC,
+void GCPnts_QuasiUniformAbscissa::Initialize (const Handle(Adaptor3d_Curve)& theC,
                                               const Standard_Integer theNbPoints)
 {
-  Initialize (theC, theNbPoints, theC.FirstParameter(), theC.LastParameter());
+  Initialize (theC, theNbPoints, theC->FirstParameter(), theC->LastParameter());
 }
 
 //=======================================================================
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_QuasiUniformAbscissa::Initialize (const Adaptor2d_Curve2d& theC,
+void GCPnts_QuasiUniformAbscissa::Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                               const Standard_Integer theNbPoints)
 {
-  Initialize (theC, theNbPoints, theC.FirstParameter(), theC.LastParameter());
+  Initialize (theC, theNbPoints, theC->FirstParameter(), theC->LastParameter());
 }
 
 //=======================================================================
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_QuasiUniformAbscissa::Initialize (const Adaptor3d_Curve& theC,
+void GCPnts_QuasiUniformAbscissa::Initialize (const Handle(Adaptor3d_Curve)& theC,
                                               const Standard_Integer theNbPoints,
                                               const Standard_Real theU1,
                                               const Standard_Real theU2)
@@ -119,7 +119,7 @@ void GCPnts_QuasiUniformAbscissa::Initialize (const Adaptor3d_Curve& theC,
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_QuasiUniformAbscissa::Initialize (const Adaptor2d_Curve2d& theC,
+void GCPnts_QuasiUniformAbscissa::Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                               const Standard_Integer theNbPoints,
                                               const Standard_Real theU1,
                                               const Standard_Real theU2)
@@ -137,8 +137,8 @@ void GCPnts_QuasiUniformAbscissa::initialize (const TheCurve& theC,
                                               const Standard_Real theU1,
                                               const Standard_Real theU2)
 {
-  if (theC.GetType() != GeomAbs_BezierCurve
-   && theC.GetType() != GeomAbs_BSplineCurve)
+  if (theC->GetType() != GeomAbs_BezierCurve
+   && theC->GetType() != GeomAbs_BSplineCurve)
   {
     GCPnts_UniformAbscissa aUA (theC, theNbPoints, theU1, theU2);
     myDone = aUA.IsDone();
@@ -160,12 +160,12 @@ void GCPnts_QuasiUniformAbscissa::initialize (const TheCurve& theC,
 
   TColgp_Array1OfPnt2d aLP (1, 2 * theNbPoints); // table Length <-> Param
   typename GCPnts_TCurveTypes<TheCurve>::Point aP1, aP2;
-  aP1 = theC.Value (theU1);
+  aP1 = theC->Value (theU1);
 
   // On additionne toutes les distances
   for (Standard_Integer i = 0; i < 2 * theNbPoints; ++i)
   {
-    aP2      = theC.Value (theU1 + i * dU);
+    aP2      = theC->Value (theU1 + i * dU);
     const Standard_Real aDist = aP1.Distance (aP2);
     aLength += aDist;
     aLP(i+1) = gp_Pnt2d (aLength, theU1 + (i * dU));

@@ -20,7 +20,7 @@
 #include <BRepAdaptor_Curve.hxx>
 #include <NCollection_Array1.hxx>
 
-typedef NCollection_Array1<BRepAdaptor_Curve> BRepAdaptor_Array1OfCurve;
+typedef NCollection_Array1<Handle(BRepAdaptor_Curve)> BRepAdaptor_Array1OfCurve;
 
 
 #endif

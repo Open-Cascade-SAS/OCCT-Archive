@@ -1840,7 +1840,7 @@ void GeometrySamples::BoundingBoxOfSurface3dSample()
 
   // Compute BSpline surface bounding box.
   Bnd_Box aBndBox;
-  BndLib_AddSurface::AddOptimal(GeomAdaptor_Surface(aBSplineSurf), Precision::Confusion(), aBndBox);
+  BndLib_AddSurface::AddOptimal(new GeomAdaptor_Surface(aBSplineSurf), Precision::Confusion(), aBndBox);
   myResult << "Bounding box:" << std::endl;
   myResult << "  Min corner = [ "
            << aBndBox.CornerMin().X() << ", "
@@ -1881,7 +1881,7 @@ void GeometrySamples::BoundingBoxOfCurves3dSample()
 
   // Compute BSpline curve bounding box.
   Bnd_Box aBndBox;
-  BndLib_Add3dCurve::AddOptimal(GeomAdaptor_Curve(aBSplineCurve), Precision::Confusion(), aBndBox);
+  BndLib_Add3dCurve::AddOptimal(new GeomAdaptor_Curve(aBSplineCurve), Precision::Confusion(), aBndBox);
   myResult << "Bounding box:" << std::endl;
   myResult << "  Min corner = [ "
            << aBndBox.CornerMin().X() << ", "

@@ -35,12 +35,12 @@
 // Function : IsLinear
 // purpose : Returns TRUE if theC is line-like.
 //=======================================================================
-static Standard_Boolean IsLinear(const Adaptor3d_Curve& theC)
+static Standard_Boolean IsLinear(const Handle(Adaptor3d_Curve)& theC)
 {
-  const GeomAbs_CurveType aCT = theC.GetType();
+  const GeomAbs_CurveType aCT = theC->GetType();
   if(aCT == GeomAbs_OffsetCurve)
   {
-    return IsLinear(GeomAdaptor_Curve(theC.OffsetCurve()->BasisCurve()));
+    return IsLinear(new GeomAdaptor_Curve(theC->OffsetCurve()->BasisCurve()));
   }
 
   if((aCT == GeomAbs_BSplineCurve) || (aCT == GeomAbs_BezierCurve))
@@ -49,8 +49,8 @@ static Standard_Boolean IsLinear(const Adaptor3d_Curve& theC)
     // represented with set of points. It will be possible made
     // in the future.
 
-    return ((theC.Degree() == 1) &&
-            (theC.Continuity() != GeomAbs_C0));
+    return ((theC->Degree() == 1) &&
+            (theC->Continuity() != GeomAbs_C0));
   }
 
   if(aCT == GeomAbs_Line)
@@ -65,29 +65,29 @@ static Standard_Boolean IsLinear(const Adaptor3d_Curve& theC)
 // Function : IsPlanar
 // purpose : Returns TRUE if theS is plane-like.
 //=======================================================================
-static Standard_Boolean IsPlanar(const Adaptor3d_Surface& theS)
+static Standard_Boolean IsPlanar(const Handle(Adaptor3d_Surface)& theS)
 {
-  const GeomAbs_SurfaceType aST = theS.GetType();
+  const GeomAbs_SurfaceType aST = theS->GetType();
   if(aST == GeomAbs_OffsetSurface)
   {
-    return IsPlanar (*theS.BasisSurface());
+    return IsPlanar (theS->BasisSurface());
   }
 
   if(aST == GeomAbs_SurfaceOfExtrusion)
   {
-    return IsLinear (*theS.BasisCurve());
+    return IsLinear (theS->BasisCurve());
   }
 
   if((aST == GeomAbs_BSplineSurface) || (aST == GeomAbs_BezierSurface))
   {
-    if((theS.UDegree() != 1) || (theS.VDegree() != 1))
+    if((theS->UDegree() != 1) || (theS->VDegree() != 1))
       return Standard_False;
 
     // Indeed, surfaces with C0-continuity and degree==1, may be 
     // represented with set of points. It will be possible made
     // in the future.
 
-    return ((theS.UContinuity() != GeomAbs_C0) && (theS.VContinuity() != GeomAbs_C0));
+    return ((theS->UContinuity() != GeomAbs_C0) && (theS->VContinuity() != GeomAbs_C0));
   }
 
   if(aST == GeomAbs_Plane)
@@ -157,7 +157,7 @@ static Standard_Integer PointsForOBB(const TopoDS_Shape& theS,
         const TopoDS_Edge &anE = TopoDS::Edge(anExpE.Current());
         if (BRep_Tool::IsGeometric (anE))
         {
-          const BRepAdaptor_Curve anAC(anE);
+          Handle(BRepAdaptor_Curve) anAC = new BRepAdaptor_Curve(anE);
           if (!IsLinear(anAC))
           {
             if (!theIsTriangulationUsed)
@@ -210,7 +210,7 @@ static Standard_Integer PointsForOBB(const TopoDS_Shape& theS,
     const TopoDS_Edge &anE = TopoDS::Edge(anExpE.Current());
     if (BRep_Tool::IsGeometric (anE))
     {
-      const BRepAdaptor_Curve anAC(anE);
+      Handle(BRepAdaptor_Curve) anAC = new BRepAdaptor_Curve(anE);
       if (IsLinear(anAC))
       {
         // skip linear edge as its vertices have already been added

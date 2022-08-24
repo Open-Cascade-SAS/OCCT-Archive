@@ -76,8 +76,8 @@ static void FUN_ALINETOWLINE (const Handle(IntPatch_ALine)& AL,
 //=======================================================================
 
 void TopOpeBRep_LineInter::SetLine(const Handle(IntPatch_Line)& L,
-                                   const BRepAdaptor_Surface& S1,
-                                   const BRepAdaptor_Surface& S2)
+                                   const Handle(BRepAdaptor_Surface)& S1,
+                                   const Handle(BRepAdaptor_Surface)& S2)
 {
   // load line according to its type
   myIL = L;
@@ -111,8 +111,7 @@ void TopOpeBRep_LineInter::SetLine(const Handle(IntPatch_Line)& L,
   // transform an analytic line to a walking line
   if (myTypeLineCurve == TopOpeBRep_ANALYTIC) {
     IntPatch_SequenceOfLine aSLin;
-    FUN_ALINETOWLINE(myILA,new BRepAdaptor_Surface(S1),
-                        new BRepAdaptor_Surface(S2), aSLin);
+    FUN_ALINETOWLINE(myILA, S1, S2, aSLin);
 
     if(aSLin.Length() > 0)
       myILW = Handle(IntPatch_WLine)::DownCast(aSLin.Value(1));

@@ -133,7 +133,7 @@ void VrmlConverter_WFShape::Add(Standard_OStream&                    anOStream,
 	  for(Tool.InitCurve();Tool.MoreCurve();Tool.NextCurve()){
 	    if (Tool.Neighbours() == 0) {
 	      if (Tool.HasCurve()) {
-		BRepAdaptor_Curve C(Tool.GetCurve());
+		Handle(BRepAdaptor_Curve) C = new BRepAdaptor_Curve(Tool.GetCurve());
 		VrmlConverter_Curve::Add(C, aDrawer, anOStream);
 	      }
 	    }
@@ -156,7 +156,7 @@ void VrmlConverter_WFShape::Add(Standard_OStream&                    anOStream,
 	  for(Tool.InitCurve();Tool.MoreCurve();Tool.NextCurve()){
 	    if (Tool.Neighbours() == 1) {
 	      if (Tool.HasCurve()) {
-		BRepAdaptor_Curve C(Tool.GetCurve());
+		Handle(BRepAdaptor_Curve) C = new BRepAdaptor_Curve(Tool.GetCurve());
 		VrmlConverter_Curve::Add(C, aDrawer, anOStream);
 	      }
 	    }
@@ -179,7 +179,7 @@ void VrmlConverter_WFShape::Add(Standard_OStream&                    anOStream,
 	for(Tool.InitCurve();Tool.MoreCurve();Tool.NextCurve()){
 	  if (Tool.Neighbours() >= 2) {
 	    if (Tool.HasCurve()) {
-	      BRepAdaptor_Curve C(Tool.GetCurve());
+	      Handle(BRepAdaptor_Curve) C = new BRepAdaptor_Curve(Tool.GetCurve());
 	      VrmlConverter_Curve::Add(C, aDrawer, anOStream);
 	    }
 	  }

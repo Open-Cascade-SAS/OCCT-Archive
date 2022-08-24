@@ -51,7 +51,7 @@ class ProjectPointOnSurf
   Standard_Boolean myIsDone;
   Standard_Integer myIndex;
   Extrema_ExtPS myExtPS;
-  GeomAdaptor_Surface myGeomAdaptor;
+  Handle(GeomAdaptor_Surface) myGeomAdaptor;
 };
 
 //=======================================================================
@@ -66,7 +66,7 @@ void ProjectPointOnSurf::Init ( const Handle(Geom_Surface)& Surface,
 {
   const Standard_Real Tolerance = Precision::PConfusion();
   //
-  myGeomAdaptor.Load(Surface, Umin,Usup,Vmin,Vsup);
+  myGeomAdaptor = new GeomAdaptor_Surface(Surface, Umin,Usup,Vmin,Vsup);
   myExtPS.Initialize(myGeomAdaptor, Umin, Usup, Vmin, Vsup, Tolerance, Tolerance);
   myIsDone = Standard_False;
 }

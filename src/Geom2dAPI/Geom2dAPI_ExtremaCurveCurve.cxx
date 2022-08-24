@@ -41,8 +41,8 @@ Geom2dAPI_ExtremaCurveCurve::Geom2dAPI_ExtremaCurveCurve
    const Standard_Real         U2min,
    const Standard_Real         U2max)
 {
-  myC1.Load(C1, U1min, U1max);
-  myC2.Load(C2, U2min, U2max);
+  myC1 = new Geom2dAdaptor_Curve(C1, U1min, U1max);
+  myC2 = new Geom2dAdaptor_Curve(C2, U2min, U2max);
   Extrema_ExtCC2d theExtCC( myC1, myC2 );
 
   myExtCC = theExtCC;

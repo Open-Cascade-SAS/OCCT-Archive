@@ -303,7 +303,7 @@ static void PutInBounds (const TopoDS_Face&          F,
 
 Standard_Real BRepOffset_Tool::Gabarit(const Handle(Geom_Curve)& aCurve)
 {
-  GeomAdaptor_Curve GC( aCurve );
+  Handle(GeomAdaptor_Curve) GC = new GeomAdaptor_Curve( aCurve );
   Bnd_Box aBox;
   BndLib_Add3dCurve::Add( GC, Precision::Confusion(), aBox );
   Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax, dist;
@@ -348,7 +348,7 @@ static void BuildPCurves (const TopoDS_Edge&  E,
       for (; Explo.More(); Explo.Next())
 	{
 	  TopoDS_Edge anEdge = TopoDS::Edge( Explo.Current() );
-	  BRepAdaptor_Curve aCurve( anEdge );
+	  Handle(BRepAdaptor_Curve) aCurve = new BRepAdaptor_Curve( anEdge );
 	  Extrema_ExtPC fextr( fpoint, aCurve );
 	  if (!fextr.IsDone() || fextr.NbExt() < 1)
 	    continue;
@@ -480,7 +480,7 @@ void BRepOffset_Tool::OrientSection (const TopoDS_Edge&  E,
   Handle (Geom2d_Curve) C2 = BRep_Tool::CurveOnSurface(E,F2,f,l); 
   Handle (Geom_Curve)   C  = BRep_Tool::Curve(E,L,f,l);
 
-  BRepAdaptor_Curve BAcurve( E );
+  Handle(BRepAdaptor_Curve) BAcurve = new BRepAdaptor_Curve( E );
   
   GCPnts_AbscissaPoint AP(BAcurve,GCPnts_AbscissaPoint::Length(BAcurve)/2.0,f);
   Standard_Real ParOnC;
@@ -1571,8 +1571,8 @@ void BRepOffset_Tool::Inter3D(const TopoDS_Face& F1,
         {
           const TopoDS_Edge& anEdge = TopoDS::Edge (itl.Value());
           
-          BRepAdaptor_Curve aBAcurve (anEdge);
-          gp_Pnt aMidPntOnEdge = aBAcurve.Value ((aBAcurve.FirstParameter() + aBAcurve.LastParameter())/2);
+          Handle(BRepAdaptor_Curve) aBAcurve = new BRepAdaptor_Curve(anEdge);
+          gp_Pnt aMidPntOnEdge = aBAcurve->Value ((aBAcurve->FirstParameter() + aBAcurve->LastParameter())/2);
           gp_Vec RefToMid (aRefPnt, aMidPntOnEdge);
           
           Extrema_ExtPC aProjector (aRefPnt, aBAcurve);
@@ -2094,12 +2094,12 @@ static Standard_Boolean  ProjectVertexOnEdge(TopoDS_Vertex&     V,
   Standard_Boolean found = Standard_False;
 
   gp_Pnt            P = BRep_Tool::Pnt  (V);  
-  BRepAdaptor_Curve C = BRepAdaptor_Curve(E);
-  f = C.FirstParameter(); l = C.LastParameter();
+  Handle(BRepAdaptor_Curve) C = new BRepAdaptor_Curve(E);
+  f = C->FirstParameter(); l = C->LastParameter();
 
   if (V.Orientation() == TopAbs_FORWARD) {
     if (Abs(f) < Precision::Infinite()) { 
-      gp_Pnt PF = C.Value (f);
+      gp_Pnt PF = C->Value (f);
       if (PF.IsEqual(P,TolConf)) {
 	U = f;
 	found = Standard_True;
@@ -2108,7 +2108,7 @@ static Standard_Boolean  ProjectVertexOnEdge(TopoDS_Vertex&     V,
   }
   if (V.Orientation() == TopAbs_REVERSED) {
     if (!found && Abs(l) < Precision::Infinite()) {
-      gp_Pnt PL = C.Value (l);
+      gp_Pnt PL = C->Value (l);
       if (PL.IsEqual(P,TolConf)) {
 	U = l;
 	found = Standard_True;
@@ -2251,8 +2251,8 @@ void BRepOffset_Tool::Inter2d (const TopoDS_Face&    F,
 	  fl1[0] = C1->FirstParameter(); fl1[1] = C1->LastParameter();
 	  fl2[0] = C2->FirstParameter(); fl2[1] = C2->LastParameter();
 	}
-	Geom2dAdaptor_Curve   AC1(C1,fl1[0],fl1[1]);
-	Geom2dAdaptor_Curve   AC2(C2,fl2[0],fl2[1]);
+	Handle(Geom2dAdaptor_Curve) AC1 = new Geom2dAdaptor_Curve(C1,fl1[0],fl1[1]);
+	Handle(Geom2dAdaptor_Curve) AC2 = new Geom2dAdaptor_Curve(C2,fl2[0],fl2[1]);
 
 	if (itry == 0) {
 	  gp_Pnt2d P1[2],P2[2];
@@ -2786,7 +2786,7 @@ static Standard_Boolean EnlargeGeometry(Handle(Geom_Surface)&  S,
     else
     {
       viso = S->VIso( vf1 );
-      GeomAdaptor_Curve gac( viso );
+      Handle(GeomAdaptor_Curve) gac = new GeomAdaptor_Curve( viso );
       Standard_Real du_default = GCPnts_AbscissaPoint::Length( gac ) * coeff;
       du_first = (theLenBeforeUfirst == -1)? du_default : theLenBeforeUfirst;
       du_last  = (theLenAfterUlast == -1)? du_default : theLenAfterUlast;
@@ -2809,7 +2809,7 @@ static Standard_Boolean EnlargeGeometry(Handle(Geom_Surface)&  S,
     else
     {
       uiso = S->UIso( uf1 );
-      GeomAdaptor_Curve gac( uiso );
+      Handle(GeomAdaptor_Curve) gac = new GeomAdaptor_Curve( uiso );
       Standard_Real dv_default = GCPnts_AbscissaPoint::Length( gac ) * coeff;
       dv_first = (theLenBeforeVfirst == -1)? dv_default : theLenBeforeVfirst;
       dv_last  = (theLenAfterVlast == -1)? dv_default : theLenAfterVlast;
@@ -2880,10 +2880,10 @@ static Standard_Boolean EnlargeGeometry(Handle(Geom_Surface)&  S,
         gabarit_uiso2 <= TolApex)
       enlargeV = Standard_False;
     
-    GeomAdaptor_Curve gac;
+    Handle(GeomAdaptor_Curve) gac = new GeomAdaptor_Curve();
     if (enlargeU)
     {
-      gac.Load( viso1 );
+      gac->Load( viso1 );
       Standard_Real du_default = GCPnts_AbscissaPoint::Length( gac ) * coeff;
       du_first = (theLenBeforeUfirst == -1)? du_default : theLenBeforeUfirst;
       du_last  = (theLenAfterUlast == -1)? du_default : theLenAfterUlast;
@@ -2894,7 +2894,7 @@ static Standard_Boolean EnlargeGeometry(Handle(Geom_Surface)&  S,
     }
     if (enlargeV)
     {
-      gac.Load( uiso1 );
+      gac->Load( uiso1 );
       Standard_Real dv_default = GCPnts_AbscissaPoint::Length( gac ) * coeff;
       dv_first = (theLenBeforeVfirst == -1)? dv_default : theLenBeforeVfirst;
       dv_last  = (theLenAfterVlast == -1)? dv_default : theLenAfterVlast;
@@ -3963,14 +3963,14 @@ TopoDS_Shape BRepOffset_Tool::Deboucle3D(const TopoDS_Shape& S,
 //=======================================================================
 
 static Standard_Boolean IsInOut (BRepTopAdaptor_FClass2d& FC,
-				 Geom2dAdaptor_Curve      AC,
+				 const Handle(Geom2dAdaptor_Curve)&       AC,
 				 const TopAbs_State&      S )
 {
  Standard_Real Def = 100*Precision::Confusion();
  GCPnts_QuasiUniformDeflection QU(AC,Def);
  
  for (Standard_Integer i = 1; i <= QU.NbPoints(); i++) {
-   gp_Pnt2d P = AC.Value(QU.Parameter(i));
+   gp_Pnt2d P = AC->Value(QU.Parameter(i));
    if (FC.Perform(P) != S) {
      return Standard_False;
    } 
@@ -4020,7 +4020,7 @@ void BRepOffset_Tool::CorrectOrientation(const TopoDS_Shape&        SI,
 	  if (NewEdges.Contains(OE)) {
 	    Handle(Geom2d_Curve) CO2d = 
 	      BRep_Tool::CurveOnSurface(TopoDS::Edge(OE),OF,f,l);
-	    Geom2dAdaptor_Curve  AC(CO2d,f,l);
+	    Handle(Geom2dAdaptor_Curve) AC = new Geom2dAdaptor_Curve(CO2d,f,l);
 	    
 	    if (Offset > 0) {
 	      if (IsInOut(FC,AC,TopAbs_OUT)) OE.Reverse();

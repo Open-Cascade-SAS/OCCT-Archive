@@ -515,7 +515,7 @@ Standard_Integer BRepClass3d_SolidExplorer::OtherSegment(const gp_Pnt& P,
       _u = (U1 + U2) * 0.5;
       _v = (V1 + V2) * 0.5;
 
-      GeomAdaptor_Surface GA(BRep_Tool::Surface(face));
+      Handle(GeomAdaptor_Surface) GA = new GeomAdaptor_Surface(BRep_Tool::Surface(face));
       Extrema_ExtPS Ext(P, GA, TolU, TolV);
       //
       if (Ext.IsDone() && Ext.NbExt() > 0) {

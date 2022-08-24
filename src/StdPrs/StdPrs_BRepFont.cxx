@@ -126,6 +126,7 @@ StdPrs_BRepFont::StdPrs_BRepFont ()
   my4Poles     (1, 4)
 {
   myFTFont = new Font_FTFont();
+  myCurvOnSurf = new Adaptor3d_CurveOnSurface();
   init();
 }
 
@@ -138,7 +139,7 @@ void StdPrs_BRepFont::init()
   mySurface        = new Geom_Plane (gp_Pln (gp::XOY()));
   myCurve2dAdaptor = new Geom2dAdaptor_Curve();
   Handle(Adaptor3d_Surface) aSurfAdaptor = new GeomAdaptor_Surface (mySurface);
-  myCurvOnSurf.Load (aSurfAdaptor);
+  myCurvOnSurf->Load (aSurfAdaptor);
 }
 
 // =======================================================================
@@ -154,6 +155,7 @@ StdPrs_BRepFont::StdPrs_BRepFont (const NCollection_String& theFontPath,
   my3Poles     (1, 3),
   my4Poles     (1, 4)
 {
+  myCurvOnSurf = new Adaptor3d_CurveOnSurface();
   init();
   if (theSize <= myPrecision * 100.0)
   {
@@ -179,6 +181,7 @@ StdPrs_BRepFont::StdPrs_BRepFont (const NCollection_String& theFontName,
   my3Poles     (1, 3),
   my4Poles     (1, 4)
 {
+  myCurvOnSurf = new Adaptor3d_CurveOnSurface();
   init();
   if (theSize <= myPrecision * 100.0)
   {
@@ -291,7 +294,7 @@ bool StdPrs_BRepFont::to3d (const Handle(Geom2d_Curve)& theCurve2d,
   Standard_Real anAverDeviation = 0.0;
   myCurve2dAdaptor->Load (theCurve2d);
   const Handle(Adaptor2d_Curve2d)& aCurve = myCurve2dAdaptor; // to avoid ambiguity
-  myCurvOnSurf.Load (aCurve);
+  myCurvOnSurf->Load (aCurve);
   GeomLib::BuildCurve3d (myPrecision, myCurvOnSurf,
                          myCurve2dAdaptor->FirstParameter(), myCurve2dAdaptor->LastParameter(),
                          theCurve3d, aMaxDeviation, anAverDeviation, theContinuity);

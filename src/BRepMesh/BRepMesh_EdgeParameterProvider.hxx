@@ -49,6 +49,7 @@ public:
     myCurParam(0.0),
     myFoundParam(0.0)
   {
+    myCurveAdaptor = new BRepAdaptor_Curve();
   }
 
   //! Constructor.
@@ -61,6 +62,7 @@ public:
     const IMeshData::IFaceHandle& theFace,
     const ParametersCollection&   theParameters)
   {
+    myCurveAdaptor = new BRepAdaptor_Curve();
     Init(theEdge, theOrientation, theFace, theParameters);
   }
 
@@ -78,14 +80,14 @@ public:
     // Extract actual parametric values
     const TopoDS_Edge aEdge = TopoDS::Edge(theEdge->GetEdge().Oriented(theOrientation));
 
-    myCurveAdaptor.Initialize(aEdge, theFace->GetFace());
+    myCurveAdaptor->Initialize(aEdge, theFace->GetFace());
     if (myIsSameParam)
     {
       return;
     }
 
-    myFirstParam = myCurveAdaptor.FirstParameter();
-    const Standard_Real aLastParam = myCurveAdaptor.LastParameter();
+    myFirstParam = myCurveAdaptor->FirstParameter();
+    const Standard_Real aLastParam = myCurveAdaptor->LastParameter();
 
     myFoundParam = myCurParam = myFirstParam;
 
@@ -100,8 +102,8 @@ public:
       myScale = (aLastParam - myFirstParam) / (aOldLastParam - myOldFirstParam);
     }
 
-    myProjector.Initialize(myCurveAdaptor, myCurveAdaptor.FirstParameter(), 
-                           myCurveAdaptor.LastParameter(),Precision::PConfusion());
+    myProjector.Initialize(myCurveAdaptor, myCurveAdaptor->FirstParameter(), 
+                           myCurveAdaptor->LastParameter(),Precision::PConfusion());
   }
 
   //! Returns parameter according to SameParameter flag of the edge.
@@ -145,7 +147,7 @@ public:
   //! Returns pcurve used to compute parameters.
   const Handle(Adaptor2d_Curve2d)& GetPCurve() const
   {
-    return myCurveAdaptor.CurveOnSurface().GetCurve();
+    return myCurveAdaptor->CurveOnSurface()->GetCurve();
   }
 
 private:
@@ -161,7 +163,7 @@ private:
   mutable Standard_Real         myCurParam;
   mutable Standard_Real         myFoundParam;
 
-  BRepAdaptor_Curve             myCurveAdaptor;
+  Handle(BRepAdaptor_Curve)     myCurveAdaptor;
 
   mutable Extrema_LocateExtPC   myProjector;
 };

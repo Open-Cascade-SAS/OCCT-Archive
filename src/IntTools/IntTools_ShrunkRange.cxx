@@ -113,7 +113,7 @@ void IntTools_ShrunkRange::SetShrunkRange(const Standard_Real aT1,
   myTS1=aT1;
   myTS2=aT2;
   //
-  BRepAdaptor_Curve aBAC(myEdge);
+  Handle(BRepAdaptor_Curve) aBAC = new BRepAdaptor_Curve(myEdge);
   BndLib_Add3dCurve::Add(aBAC, aT1, aT2, 0., myBndBox);
 }
 
@@ -157,7 +157,7 @@ void IntTools_ShrunkRange::Perform()
 
   // compute the shrunk range - part of the edge not covered
   // by the tolerance spheres of its vertices
-  BRepAdaptor_Curve aBAC(myEdge);
+  Handle(BRepAdaptor_Curve) aBAC = new BRepAdaptor_Curve(myEdge);
   if (!BRepLib::FindValidRange(aBAC, aTolE, myT1, aP1, aTolV1,
                                myT2, aP2, aTolV2, myTS1, myTS2)) {
     // no valid range
@@ -172,7 +172,7 @@ void IntTools_ShrunkRange::Perform()
   //
   // parametric tolerance for the edge
   // to be used in AbscissaPoint computations
-  Standard_Real aPTolE = aBAC.Resolution(aTolE);
+  Standard_Real aPTolE = aBAC->Resolution(aTolE);
   // for the edges with big tolerance use 
   // min parametric tolerance - 1% of its range
   Standard_Real aPTolEMin = (myT2 - myT1) / 100.;

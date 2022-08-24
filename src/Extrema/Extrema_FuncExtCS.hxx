@@ -44,10 +44,10 @@ public:
   
   Standard_EXPORT Extrema_FuncExtCS();
   
-  Standard_EXPORT Extrema_FuncExtCS(const Adaptor3d_Curve& C, const Adaptor3d_Surface& S);
+  Standard_EXPORT Extrema_FuncExtCS(const Handle(Adaptor3d_Curve)& C, const Handle(Adaptor3d_Surface)& S);
   
   //! sets the field mysurf of the function.
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& C, const Adaptor3d_Surface& S);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& C, const Handle(Adaptor3d_Surface)& S);
   
   Standard_EXPORT Standard_Integer NbVariables() const Standard_OVERRIDE;
   
@@ -95,8 +95,8 @@ public:
 
 private:
 
-  const Adaptor3d_Curve* myC;
-  const Adaptor3d_Surface* myS;
+  Handle(Adaptor3d_Curve) myC;
+  Handle(Adaptor3d_Surface) myS;
   gp_Pnt myP1;
   gp_Pnt myP2;
   Standard_Real myt;

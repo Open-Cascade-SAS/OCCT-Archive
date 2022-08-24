@@ -59,7 +59,7 @@ public:
   //! if  not, it  returns the  number of  choice of  the fillet
   //! or chamfer corresponding to  the orientations  calculated
   //! and  to  the tangent to  the  guide line read in  E.
-  Standard_EXPORT static Standard_Integer ConcaveSide (const BRepAdaptor_Surface& S1, const BRepAdaptor_Surface& S2, const TopoDS_Edge& E, TopAbs_Orientation& Or1, TopAbs_Orientation& Or2);
+  Standard_EXPORT static Standard_Integer ConcaveSide (const Handle(BRepAdaptor_Surface)& S1, const Handle(BRepAdaptor_Surface)& S2, const TopoDS_Edge& E, TopAbs_Orientation& Or1, TopAbs_Orientation& Or2);
   
   //! Same  as ConcaveSide, but the orientations are
   //! logically  deduced from  the result of  the call of

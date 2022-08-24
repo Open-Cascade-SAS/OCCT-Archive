@@ -72,7 +72,7 @@ public:
   
     const gp_Dir2d& Direction2d();
   
-    const Handle(Adaptor3d_Surface)& PSurface() const;
+    const Handle(Adaptor3d_Surface) PSurface() const;
   
     const IntSurf_Quadric& ISurface() const;
 

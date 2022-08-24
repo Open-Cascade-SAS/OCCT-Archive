@@ -102,7 +102,7 @@ struct SplitDS
   Standard_Real myPerMaxParam;
   Standard_Integer myPeriodicDir;
 
-  Adaptor3d_CurveOnSurface* myExtCCCurve1;
+  Handle(Adaptor3d_CurveOnSurface) myExtCCCurve1;
   Standard_Real  myExtCCLast2DParam;
 
   Extrema_ExtPS *myExtPS;
@@ -452,7 +452,7 @@ static Standard_Boolean ExactBound(gp_Pnt& Sol,
     gp_Pnt P;
     P = Seq.Last ();
     Seq.Remove (Seq.Length ());
-    ProjLib_PrjResolve aPrjPS (*Curve, *Surface, Standard_Integer (P.Z ()));
+    ProjLib_PrjResolve aPrjPS (Curve, Surface, Standard_Integer (P.Z ()));
     if (Standard_Integer (P.Z ()) == 2)
     {
       aPrjPS.Perform (t, P.X (), V0, gp_Pnt2d (Tol, TolV),
@@ -501,7 +501,7 @@ static void DichExactBound(gp_Pnt& Sol,
   gp_Pnt2d POnS;
   U0 = Sol.Y();
   V0 = Sol.Z();
-  ProjLib_PrjResolve aPrjPS (*Curve, *Surface, 1);
+  ProjLib_PrjResolve aPrjPS (Curve, Surface, 1);
 
   Standard_Real aNotSol = NotSol;
   while (fabs(Sol.X() - aNotSol) > Tol) 
@@ -543,10 +543,10 @@ static Standard_Boolean InitialPoint(const gp_Pnt& Point,
   Standard_Real theMaxDist)
 {
 
-  ProjLib_PrjResolve aPrjPS (*C, *S, 1);
+  ProjLib_PrjResolve aPrjPS (C, S, 1);
   Standard_Real ParU,ParV;
   Extrema_ExtPS aExtPS;
-  aExtPS.Initialize (*S, S->FirstUParameter(), 
+  aExtPS.Initialize (S, S->FirstUParameter(), 
     S->LastUParameter(), S->FirstVParameter(), 
     S->LastVParameter(), TolU, TolV);
 
@@ -730,7 +730,7 @@ void ProjLib_CompProjectedCurve::Init()
                    isSplitsComputed = Standard_False;
 
   const Standard_Real aTolExt = Precision::PConfusion();
-  Extrema_ExtCS CExt (*myCurve, *mySurface, aTolExt, aTolExt);
+  Extrema_ExtCS CExt (myCurve, mySurface, aTolExt, aTolExt);
   if (CExt.IsDone() && CExt.NbExt())
   {
     // Search for the minimum solution.
@@ -768,7 +768,7 @@ void ProjLib_CompProjectedCurve::Init()
   gp_Pnt2d aLowBorder(mySurface->FirstUParameter(),mySurface->FirstVParameter());
   gp_Pnt2d aUppBorder(mySurface->LastUParameter(), mySurface->LastVParameter());
   gp_Pnt2d aTol(myTolU, myTolV);
-  ProjLib_PrjResolve aPrjPS (*myCurve, *mySurface, 1);
+  ProjLib_PrjResolve aPrjPS (myCurve, mySurface, 1);
 
   t = FirstU;
   Standard_Boolean new_part; 
@@ -1661,7 +1661,7 @@ void ProjLib_CompProjectedCurve::D0(const Standard_Real U,gp_Pnt2d& P) const
   }
   //End of cubic interpolation
 
-  ProjLib_PrjResolve aPrjPS (*myCurve, *mySurface, 1);
+  ProjLib_PrjResolve aPrjPS (myCurve, mySurface, 1);
   aPrjPS.Perform(U, U0, V0, gp_Pnt2d(myTolU, myTolV), 
     gp_Pnt2d(mySurface->FirstUParameter(), mySurface->FirstVParameter()), 
     gp_Pnt2d(mySurface->LastUParameter(), mySurface->LastVParameter()), FuncTol);
@@ -1670,7 +1670,7 @@ void ProjLib_CompProjectedCurve::D0(const Standard_Real U,gp_Pnt2d& P) const
   else
   {
     gp_Pnt thePoint = myCurve->Value(U);
-    Extrema_ExtPS aExtPS(thePoint, *mySurface, myTolU, myTolV);
+    Extrema_ExtPS aExtPS(thePoint, mySurface, myTolU, myTolV);
     if (aExtPS.IsDone() && aExtPS.NbExt()) 
     {
       Standard_Integer k, Nend, imin = 1;
@@ -1911,7 +1911,7 @@ void ProjLib_CompProjectedCurve::BuildIntervals(const GeomAbs_Shape S) const
           Standard_Real V;
           V = (mySequence->Value(i)->Value(j).Z() 
             + mySequence->Value(i)->Value(j +1).Z())/2;
-          ProjLib_PrjResolve Solver (*myCurve, *mySurface, 2);
+          ProjLib_PrjResolve Solver (myCurve, mySurface, 2);
 
           gp_Vec2d D;
           gp_Pnt Triple;
@@ -1977,7 +1977,7 @@ void ProjLib_CompProjectedCurve::BuildIntervals(const GeomAbs_Shape S) const
           Standard_Real U;
           U = (mySequence->Value(i)->Value(j).Y() 
             + mySequence->Value(i)->Value(j +1).Y())/2;
-          ProjLib_PrjResolve Solver (*myCurve, *mySurface, 3);
+          ProjLib_PrjResolve Solver (myCurve, mySurface, 3);
 
           gp_Vec2d D;
           gp_Pnt Triple;
@@ -2253,7 +2253,7 @@ void BuildCurveSplits(const Handle(Adaptor3d_Curve)   &theCurve,
   SplitDS aDS(theCurve, theSurface, theSplits);
 
   Extrema_ExtPS anExtPS;
-  anExtPS.Initialize(*theSurface,
+  anExtPS.Initialize(theSurface,
                      theSurface->FirstUParameter(), theSurface->LastUParameter(),
                      theSurface->FirstVParameter(), theSurface->LastVParameter(),
                      theTolU, theTolV);
@@ -2300,8 +2300,8 @@ void SplitOnDirection(SplitDS & theSplitDS)
   // Create line which is represent periodic border.
   Handle(Geom2d_Curve) aC2GC = new Geom2d_Line(aStartPnt, aDir);
   Handle(Geom2dAdaptor_Curve) aC = new Geom2dAdaptor_Curve(aC2GC, 0, aLast2DParam);
-  Adaptor3d_CurveOnSurface  aCOnS(aC, theSplitDS.mySurface);
-  theSplitDS.myExtCCCurve1 = &aCOnS;
+  Handle(Adaptor3d_CurveOnSurface) aCOnS = new Adaptor3d_CurveOnSurface(aC, theSplitDS.mySurface);
+  theSplitDS.myExtCCCurve1 = aCOnS;
   theSplitDS.myExtCCLast2DParam = aLast2DParam;
 
   FindSplitPoint(theSplitDS,
@@ -2320,8 +2320,8 @@ void FindSplitPoint(SplitDS &theSplitDS,
 {
   // Make extrema copy to avoid dependencies between different levels of the recursion.
   Extrema_ExtCC anExtCC;
-  anExtCC.SetCurve(1, *theSplitDS.myExtCCCurve1);
-  anExtCC.SetCurve(2, *theSplitDS.myCurve);
+  anExtCC.SetCurve(1, theSplitDS.myExtCCCurve1);
+  anExtCC.SetCurve(2, theSplitDS.myCurve);
   anExtCC.SetSingleSolutionFlag (Standard_True); // Search only one solution since multiple invocations are needed.
   anExtCC.SetRange(1, 0, theSplitDS.myExtCCLast2DParam);
   anExtCC.SetRange(2, theMinParam, theMaxParam);

@@ -29,7 +29,7 @@
 #include <Extrema_PCFOfEPCOfExtPC2d.hxx>
  
 
-#define TheCurve Adaptor2d_Curve2d
+#define TheCurve Handle(Adaptor2d_Curve2d)
 #define TheCurve_hxx <Adaptor2d_Curve2d.hxx>
 #define TheCurveTool Extrema_Curve2dTool
 #define TheCurveTool_hxx <Extrema_Curve2dTool.hxx>

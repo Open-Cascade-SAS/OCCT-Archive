@@ -80,13 +80,13 @@ namespace
   //! @param theLimit [in] the parameter limit value.
   //! @param theFirst [in/out] the first parameter value.
   //! @param theLast  [in/out] the last parameter value.
-  static void findLimits (const Adaptor3d_Curve& theCurve,
+  static void findLimits (const Handle(Adaptor3d_Curve)& theCurve,
                           const Standard_Real    theLimit,
                           Standard_Real&         theFirst,
                           Standard_Real&         theLast)
   {
-    theFirst = Max (theCurve.FirstParameter(), theFirst);
-    theLast  = Min (theCurve.LastParameter(), theLast);
+    theFirst = Max (theCurve->FirstParameter(), theFirst);
+    theLast  = Min (theCurve->LastParameter(), theLast);
 
     Standard_Boolean isFirstInf = Precision::IsNegativeInfinite (theFirst);
     Standard_Boolean isLastInf  = Precision::IsPositiveInfinite (theLast);
@@ -105,30 +105,30 @@ namespace
         aDelta *= 2.0;
         theFirst = -aDelta;
         theLast  =  aDelta;
-        theCurve.D0 (theFirst, aP1);
-        theCurve.D0 (theLast,  aP2);
+        theCurve->D0 (theFirst, aP1);
+        theCurve->D0 (theLast,  aP2);
       }
       while (aP1.Distance (aP2) < theLimit);
     }
     else if (isFirstInf)
     {
-      theCurve.D0 (theLast, aP2);
+      theCurve->D0 (theLast, aP2);
       do
       {
         aDelta *= 2.0;
         theFirst = theLast - aDelta;
-        theCurve.D0 (theFirst, aP1);
+        theCurve->D0 (theFirst, aP1);
       }
       while (aP1.Distance (aP2) < theLimit);
     }
     else if (isLastInf)
     {
-      theCurve.D0 (theFirst, aP1);
+      theCurve->D0 (theFirst, aP1);
       do
       {
         aDelta *= 2.0;
         theLast = theFirst + aDelta;
-        theCurve.D0 (theLast, aP2);
+        theCurve->D0 (theLast, aP2);
       }
       while (aP1.Distance (aP2) < theLimit);
     }
@@ -402,10 +402,10 @@ void StdPrs_Isolines::addOnSurface (const Handle(BRepAdaptor_Surface)& theSurfac
     for (anEdgeTool.Init(); anEdgeTool.More(); anEdgeTool.Next())
     {
       TopAbs_Orientation anOrientation = anEdgeTool.Orientation();
-      const Adaptor2d_Curve2d* anEdgeCurve = &anEdgeTool.Value();
+      const Handle(Adaptor2d_Curve2d) anEdgeCurve = anEdgeTool.Value();
       if (anEdgeCurve->GetType() != GeomAbs_Line)
       {
-        GCPnts_QuasiUniformDeflection aSampler (*anEdgeCurve, aSamplerDeflection);
+        GCPnts_QuasiUniformDeflection aSampler (anEdgeCurve, aSamplerDeflection);
         if (!aSampler.IsDone())
         {
 #ifdef OCCT_DEBUG
@@ -526,8 +526,8 @@ void StdPrs_Isolines::addOnSurface (const Handle(BRepAdaptor_Surface)& theSurfac
     // Use isoline adapter for other types of surfaces.
     GeomAbs_SurfaceType  aSurfType = theSurface->GetType();
     Handle(Geom_Surface) aBSurface;
-    GeomAdaptor_Curve    aBSurfaceCurve;
-    Adaptor3d_IsoCurve   aCanonicalCurve;
+    Handle(GeomAdaptor_Curve) aBSurfaceCurve = new GeomAdaptor_Curve();
+    Handle(Adaptor3d_IsoCurve) aCanonicalCurve = new Adaptor3d_IsoCurve();
     if (aSurfType == GeomAbs_BezierSurface)
     {
       aBSurface = theSurface->Bezier();
@@ -538,7 +538,7 @@ void StdPrs_Isolines::addOnSurface (const Handle(BRepAdaptor_Surface)& theSurfac
     }
     else
     {
-      aCanonicalCurve.Load (theSurface);
+      aCanonicalCurve->Load (theSurface);
     }
 
     // For each isoline: compute its segments.
@@ -555,7 +555,7 @@ void StdPrs_Isolines::addOnSurface (const Handle(BRepAdaptor_Surface)& theSurfac
 
         if (!aBSurface.IsNull())
         {
-          aBSurfaceCurve.Load (isIsoU ? aBSurface->UIso (anIsoParam) : aBSurface->VIso (anIsoParam));
+          aBSurfaceCurve->Load (isIsoU ? aBSurface->UIso (anIsoParam) : aBSurface->VIso (anIsoParam));
 
           findLimits (aBSurfaceCurve, aUVLimit, aSegmentP1, aSegmentP2);
 
@@ -566,7 +566,7 @@ void StdPrs_Isolines::addOnSurface (const Handle(BRepAdaptor_Surface)& theSurfac
         }
         else
         {
-          aCanonicalCurve.Load (isIsoU ? GeomAbs_IsoU : GeomAbs_IsoV, anIsoParam, aSegmentP1, aSegmentP2);
+          aCanonicalCurve->Load (isIsoU ? GeomAbs_IsoU : GeomAbs_IsoV, anIsoParam, aSegmentP1, aSegmentP2);
 
           findLimits (aCanonicalCurve, aUVLimit, aSegmentP1, aSegmentP2);
 
@@ -575,12 +575,16 @@ void StdPrs_Isolines::addOnSurface (const Handle(BRepAdaptor_Surface)& theSurfac
             continue;
           }
         }
-        Adaptor3d_Curve* aCurve = aBSurface.IsNull() ? (Adaptor3d_Curve*) &aCanonicalCurve
-          : (Adaptor3d_Curve*) &aBSurfaceCurve;
+
+        Handle(Adaptor3d_Curve) aCurve;
+        if (aBSurface.IsNull())
+          aCurve = aCanonicalCurve;
+        else
+          aCurve = aBSurfaceCurve;
 
         Handle(TColgp_HSequenceOfPnt) aPoints = new TColgp_HSequenceOfPnt();
         StdPrs_DeflectionCurve::Add (Handle(Prs3d_Presentation)(),
-                                     *aCurve,
+                                     aCurve,
                                      aSegmentP1,
                                      aSegmentP2,
                                      theDeflection,
@@ -789,8 +793,8 @@ Standard_Boolean StdPrs_Isolines::findSegmentOnTriangulation (const Handle(Geom_
         anIso2 = theSurface->UIso (aNodeUV2.X());
       }
 
-      GeomAdaptor_Curve aCurveAdaptor1 (anIso1);
-      GeomAdaptor_Curve aCurveAdaptor2 (anIso2);
+      Handle(GeomAdaptor_Curve) aCurveAdaptor1 = new GeomAdaptor_Curve(anIso1);
+      Handle(GeomAdaptor_Curve) aCurveAdaptor2 = new GeomAdaptor_Curve(anIso2);
       Standard_Real aLength1 = GCPnts_AbscissaPoint::Length (aCurveAdaptor1, aPntOnNode1Iso, aPntOnNode3Iso, 1e-2);
       Standard_Real aLength2 = GCPnts_AbscissaPoint::Length (aCurveAdaptor2, aPntOnNode2Iso, aPntOnNode3Iso, 1e-2);
       if (Abs (aLength1) < Precision::Confusion() || Abs (aLength2) < Precision::Confusion())

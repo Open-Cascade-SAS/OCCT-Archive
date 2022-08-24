@@ -55,11 +55,11 @@ public:
   //! only the tangent, N should be equal to 1.
   //! <Resolution> is the linear tolerance (it is used to test
   //! if a vector is null).
-  Standard_EXPORT BRepLProp_SLProps(const BRepAdaptor_Surface& S, const Standard_Real U, const Standard_Real V, const Standard_Integer N, const Standard_Real Resolution);
+  Standard_EXPORT BRepLProp_SLProps(const Handle(BRepAdaptor_Surface)& S, const Standard_Real U, const Standard_Real V, const Standard_Integer N, const Standard_Real Resolution);
   
   //! idem as previous constructor but without setting the value
   //! of parameters <U> and <V>.
-  Standard_EXPORT BRepLProp_SLProps(const BRepAdaptor_Surface& S, const Standard_Integer N, const Standard_Real Resolution);
+  Standard_EXPORT BRepLProp_SLProps(const Handle(BRepAdaptor_Surface)& S, const Standard_Integer N, const Standard_Real Resolution);
   
   //! idem as previous constructor but without setting the value
   //! of parameters <U> and <V> and the surface.
@@ -68,7 +68,7 @@ public:
   
   //! Initializes the local properties of the surface S
   //! for the new surface.
-  Standard_EXPORT void SetSurface (const BRepAdaptor_Surface& S);
+  Standard_EXPORT void SetSurface (const Handle(BRepAdaptor_Surface)& S);
   
   //! Initializes the local properties of the surface S
   //! for the new parameter values (<U>, <V>).
@@ -155,7 +155,7 @@ private:
 
 
 
-  BRepAdaptor_Surface mySurf;
+  Handle(BRepAdaptor_Surface) mySurf;
   Standard_Real myU;
   Standard_Real myV;
   Standard_Integer myDerOrder;

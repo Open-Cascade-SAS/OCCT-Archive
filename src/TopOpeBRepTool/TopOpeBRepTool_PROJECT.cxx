@@ -71,7 +71,7 @@ Standard_EXPORT Standard_Integer FUN_tool_getindex(const Extrema_ExtPC2d& ponc)
 
 // ----------------------------------------------------------------------
 Standard_EXPORT Standard_Boolean FUN_tool_projPonC(const gp_Pnt& P,
-				      const Standard_Real tole,const BRepAdaptor_Curve& BAC,
+				      const Standard_Real tole,const Handle(BRepAdaptor_Curve)& BAC,
 				      const Standard_Real pmin,const Standard_Real pmax,
 				      Standard_Real& param,Standard_Real& dist)
 {
@@ -83,7 +83,7 @@ Standard_EXPORT Standard_Boolean FUN_tool_projPonC(const gp_Pnt& P,
   if (!ok) {
     for (Standard_Integer i = 1; i <= 2; i++) {
       Standard_Real par = (i == 1) ? pmin : pmax;
-      gp_Pnt pt = BAC.Value(par);
+      gp_Pnt pt = BAC->Value(par);
       Standard_Real d2 = pt.SquareDistance(P);
       Standard_Boolean onpt = (d2 < tole * tole);
       if (onpt) {
@@ -101,32 +101,32 @@ Standard_EXPORT Standard_Boolean FUN_tool_projPonC(const gp_Pnt& P,
 
 // ----------------------------------------------------------------------
 Standard_EXPORT Standard_Boolean FUN_tool_projPonC(const gp_Pnt& P,
-				      const BRepAdaptor_Curve& BAC,
+				      const Handle(BRepAdaptor_Curve)& BAC,
 				      const Standard_Real pmin,const Standard_Real pmax,
 				      Standard_Real& param,Standard_Real& dist)
 {
   // <True> if projection succeeds,and sets <param> to parameter of <P> on <C>.
-  Standard_Real tole = BAC.Tolerance();
+  Standard_Real tole = BAC->Tolerance();
   Standard_Boolean ok = FUN_tool_projPonC(P,tole,BAC,pmin,pmax,param,dist);
   return ok;
 }
 
 // ----------------------------------------------------------------------
 Standard_EXPORT Standard_Boolean FUN_tool_projPonC(const gp_Pnt& P,
-				      const BRepAdaptor_Curve& BAC,
+				      const Handle(BRepAdaptor_Curve)& BAC,
 				      Standard_Real& param,Standard_Real& dist)
 {
   // <True> if projection succeeds,and sets <param> to parameter of <P> on <C>.
-  Standard_Real tole = BAC.Tolerance();
-  Standard_Real pmin = BAC.FirstParameter();
-  Standard_Real pmax = BAC.LastParameter();
+  Standard_Real tole = BAC->Tolerance();
+  Standard_Real pmin = BAC->FirstParameter();
+  Standard_Real pmax = BAC->LastParameter();
   Standard_Boolean ok = FUN_tool_projPonC(P,tole,BAC,pmin,pmax,param,dist);
   return ok;
 }
 
 // ----------------------------------------------------------------------
 Standard_EXPORT Standard_Boolean FUN_tool_projPonC2D(const gp_Pnt& P,
-					const Standard_Real tole,const BRepAdaptor_Curve2d& BAC2D,
+					const Standard_Real tole,const Handle(BRepAdaptor_Curve2d)& BAC2D,
 					const Standard_Real pmin,const Standard_Real pmax,
 					Standard_Real& param,Standard_Real& dist)
 {
@@ -134,7 +134,7 @@ Standard_EXPORT Standard_Boolean FUN_tool_projPonC2D(const gp_Pnt& P,
   Standard_Boolean ok = Standard_False;
 
   gp_Pnt2d P2D;
-  const TopoDS_Face& F = BAC2D.Face();
+  const TopoDS_Face& F = BAC2D->Face();
   ok = FUN_tool_projPonF(P,F,P2D,dist);
   if (!ok) return Standard_False;
 
@@ -145,7 +145,7 @@ Standard_EXPORT Standard_Boolean FUN_tool_projPonC2D(const gp_Pnt& P,
   if (!ok) {
     for (Standard_Integer i = 1; i <= 2; i++) {
       Standard_Real par = (i == 1) ? pmin : pmax;
-      gp_Pnt2d pt2d = BAC2D.Value(par);
+      gp_Pnt2d pt2d = BAC2D->Value(par);
       Standard_Real d2 = pt2d.SquareDistance(P2D);
       Standard_Boolean onpt = (d2 < tole * tole);
       if (onpt) {
@@ -164,25 +164,25 @@ Standard_EXPORT Standard_Boolean FUN_tool_projPonC2D(const gp_Pnt& P,
 
 // ----------------------------------------------------------------------
 Standard_EXPORT Standard_Boolean FUN_tool_projPonC2D(const gp_Pnt& P,
-					const BRepAdaptor_Curve2d& BAC2D,
+					const Handle(BRepAdaptor_Curve2d)& BAC2D,
 					const Standard_Real pmin,const Standard_Real pmax,
 					Standard_Real& param,Standard_Real& dist)
 {
   // <True> if projection succeeds,and sets <param> to parameter of <P> on <C>.
-  Standard_Real tole = BRep_Tool::Tolerance(BAC2D.Edge());
+  Standard_Real tole = BRep_Tool::Tolerance(BAC2D->Edge());
   Standard_Boolean ok = FUN_tool_projPonC2D(P,tole,BAC2D,pmin,pmax,param,dist);
   return ok;
 }
 
 // ----------------------------------------------------------------------
 Standard_EXPORT Standard_Boolean FUN_tool_projPonC2D(const gp_Pnt& P,
-					const BRepAdaptor_Curve2d& BAC2D,
+					const Handle(BRepAdaptor_Curve2d)& BAC2D,
 					Standard_Real& param,Standard_Real& dist)
 {
   // <True> if projection succeeds,and sets <param> to parameter of <P> on <C>.
-  Standard_Real tole = BRep_Tool::Tolerance(BAC2D.Edge());
-  Standard_Real pmin = BAC2D.FirstParameter();
-  Standard_Real pmax = BAC2D.LastParameter();
+  Standard_Real tole = BRep_Tool::Tolerance(BAC2D->Edge());
+  Standard_Real pmin = BAC2D->FirstParameter();
+  Standard_Real pmax = BAC2D->LastParameter();
   Standard_Boolean ok = FUN_tool_projPonC2D(P,tole,BAC2D,pmin,pmax,param,dist);
   return ok;
 }
@@ -220,9 +220,9 @@ Standard_EXPORT Standard_Boolean FUN_tool_projPonE(const gp_Pnt& P,const Standar
 				      Standard_Real& param,Standard_Real& dist)
 {
   dist = 1.;
-  BRepAdaptor_Curve BAC(E);
-  Standard_Real first = BAC.FirstParameter();
-  Standard_Real last = BAC.LastParameter();
+  Handle(BRepAdaptor_Curve) BAC = new BRepAdaptor_Curve(E);
+  Standard_Real first = BAC->FirstParameter();
+  Standard_Real last = BAC->LastParameter();
   Standard_Boolean ok = FUN_tool_projPonC(P,tole,BAC,first,last,param,dist);
   if (!ok) return Standard_False;
 

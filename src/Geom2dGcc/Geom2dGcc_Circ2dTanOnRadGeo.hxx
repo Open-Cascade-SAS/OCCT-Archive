@@ -84,28 +84,28 @@ public:
   //! with a given radius.
   //! Tolerance is used to find solution in every limit cases.
   //! raises NegativeValue in case of NegativeRadius.
-  Standard_EXPORT Geom2dGcc_Circ2dTanOnRadGeo(const GccEnt_QualifiedCirc& Qualified1, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2dTanOnRadGeo(const GccEnt_QualifiedCirc& Qualified1, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
   
   //! This methods implements the algorithms used to create
   //! 2d Circles tangent to a 2d Line and centered on a 2d curve
   //! with a given radius.
   //! Tolerance is used to find solution in every limit cases.
   //! raises NegativeValue in case of NegativeRadius.
-  Standard_EXPORT Geom2dGcc_Circ2dTanOnRadGeo(const GccEnt_QualifiedLin& Qualified1, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2dTanOnRadGeo(const GccEnt_QualifiedLin& Qualified1, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
   
   //! This methods implements the algorithms used to create
   //! 2d Circles tangent to a 2d curve and centered on a 2d curve
   //! with a given radius.
   //! Tolerance is used to find solution in every limit cases.
   //! raises NegativeValue in case of NegativeRadius.
-  Standard_EXPORT Geom2dGcc_Circ2dTanOnRadGeo(const Geom2dGcc_QCurve& Qualified1, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2dTanOnRadGeo(const Geom2dGcc_QCurve& Qualified1, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
   
   //! This methods implements the algorithms used to create
   //! 2d Circles passing through a 2d point and centered on a
   //! 2d curve with a given radius.
   //! Tolerance is used to find solution in every limit cases.
   //! raises NegativeValue in case of NegativeRadius.
-  Standard_EXPORT Geom2dGcc_Circ2dTanOnRadGeo(const gp_Pnt2d& Point1, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2dTanOnRadGeo(const gp_Pnt2d& Point1, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
   
   //! This method returns True if the construction
   //! algorithm succeeded.

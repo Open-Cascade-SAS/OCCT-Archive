@@ -29,13 +29,13 @@
 #include <StdPrs_Plane.hxx>
 
 void StdPrs_Plane::Add (const Handle (Prs3d_Presentation)& aPresentation,
-                        const Adaptor3d_Surface&           aPlane,
+                        const Handle(Adaptor3d_Surface)&           aPlane,
                         const Handle (Prs3d_Drawer)&       aDrawer)
 {
 //  aPresentation->NewGroup();
   Handle(Graphic3d_Group) TheGroup = aPresentation->CurrentGroup();
-  if (aPlane.GetType() != GeomAbs_Plane) return;
-  Handle(Geom_Plane) thegeom = new Geom_Plane(aPlane.Plane());
+  if (aPlane->GetType() != GeomAbs_Plane) return;
+  Handle(Geom_Plane) thegeom = new Geom_Plane(aPlane->Plane());
 
   Handle(Prs3d_PlaneAspect) theaspect = aDrawer->PlaneAspect();
 
@@ -129,11 +129,11 @@ Standard_Boolean StdPrs_Plane::Match
    const Standard_Real Y,
    const Standard_Real Z,
    const Standard_Real aDistance,
-   const Adaptor3d_Surface& aPlane,
+   const Handle(Adaptor3d_Surface)& aPlane,
    const Handle (Prs3d_Drawer)&)
 {
-  if (aPlane.GetType() == GeomAbs_Plane) {  
-    gp_Pln theplane = aPlane.Plane();
+  if (aPlane->GetType() == GeomAbs_Plane) {  
+    gp_Pln theplane = aPlane->Plane();
     gp_Pnt thepoint (X,Y,Z);
     
     return (Abs(theplane.Distance(thepoint)) <= aDistance);

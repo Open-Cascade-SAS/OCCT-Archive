@@ -133,11 +133,11 @@ static Standard_Integer GetArc(IntPatch_SequenceOfLine&           theSlin,
 			       Standard_Real&                     theLast);
 //------------------------------------------------------------------------------------------------
 static Standard_Boolean IsPointOK(const gp_Pnt&            theTestPnt,
-				  const Adaptor3d_Surface& theTestSurface,
+				  const Handle(Adaptor3d_Surface)& theTestSurface,
 				  const Standard_Real&     theTol);
 //-------------------------------------------------------------------------------------------------
 static Standard_Boolean GetPointOn2S(const gp_Pnt&            theTestPnt,
-				     const Adaptor3d_Surface& theTestSurface,
+				     const Handle(Adaptor3d_Surface)& theTestSurface,
 				     const Standard_Real&     theTol,
 				     Extrema_POnSurf&         theResultPoint);
 //-------------------------------------------------------------------------------------------------------------------------
@@ -178,10 +178,10 @@ void TopOpeBRep_FacesIntersector::Perform(const TopoDS_Shape& F1,const TopoDS_Sh
   
   myFace1 = TopoDS::Face(F1); myFace1.Orientation(TopAbs_FORWARD);
   myFace2 = TopoDS::Face(F2); myFace2.Orientation(TopAbs_FORWARD);
-  BRepAdaptor_Surface& S1 = *mySurface1; S1.Initialize(myFace1);
-  BRepAdaptor_Surface& S2 = *mySurface2; S2.Initialize(myFace2);
-  mySurfaceType1 = S1.GetType();
-  mySurfaceType2 = S2.GetType();
+  mySurface1->Initialize(myFace1);
+  mySurface2->Initialize(myFace2);
+  mySurfaceType1 = mySurface1->GetType();
+  mySurfaceType2 = mySurface2->GetType();
   const Handle(Adaptor3d_Surface)& aSurf1 = mySurface1; // to avoid ambiguity
   myDomain1->Initialize(aSurf1);
   const Handle(Adaptor3d_Surface)& aSurf2 = mySurface2; // to avoid ambiguity
@@ -193,7 +193,7 @@ void TopOpeBRep_FacesIntersector::Perform(const TopoDS_Shape& F1,const TopoDS_Sh
 
   Standard_Real Deflection=0.01,MaxUV=0.01;
   if (!myForceTolerances) {
-    FTOL_FaceTolerances3d(B1,B2,myFace1,myFace2,S1,S2,
+    FTOL_FaceTolerances3d(B1,B2,myFace1,myFace2, mySurface1, mySurface2,
 				myTol1,myTol2,Deflection,MaxUV);  
     myTol1 = (myTol1 > 1.e-4)? 1.e-4: myTol1;
     myTol2 = (myTol2 > 1.e-4)? 1.e-4: myTol2;
@@ -229,7 +229,7 @@ void TopOpeBRep_FacesIntersector::Perform(const TopoDS_Shape& F1,const TopoDS_Sh
 
   // mySurfacesSameOriented : a mettre dans IntPatch NYI
   if ( SameDomain() ) {
-    mySurfacesSameOriented = TopOpeBRepTool_ShapeTool::SurfacesSameOriented(S1,S2);
+    mySurfacesSameOriented = TopOpeBRepTool_ShapeTool::SurfacesSameOriented(mySurface1, mySurface2);
   }
 
   // build the map of edges found as RESTRICTION
@@ -370,8 +370,6 @@ void  TopOpeBRep_FacesIntersector::PrepareLines()
   myLineNb = 0;
   Standard_Integer n = myIntersector.NbLines();
   myHAL = new TopOpeBRep_HArray1OfLineInter(0,n); 
-  BRepAdaptor_Surface& S1 = *mySurface1;
-  BRepAdaptor_Surface& S2 = *mySurface2;
 
   // modified by NIZHNY-MKK  Mon Apr  2 12:14:58 2001.BEGIN
   if(n==0)
@@ -436,7 +434,7 @@ void  TopOpeBRep_FacesIntersector::PrepareLines()
       for(Standard_Integer index = 1; index <= myLineNb; index++) {
 	TopOpeBRep_LineInter& LI = myHAL->ChangeValue(index);
 	const Handle(IntPatch_Line)& L = aSeqOfResultLines.Value(index);
-	LI.SetLine(L,S1,S2);
+	LI.SetLine(L, mySurface1, mySurface2);
 	LI.Index(index);
       }
     }
@@ -723,7 +721,7 @@ Handle(IntPatch_RLine) BuildRLineBasedOnWLine(const Handle(IntPatch_WLine)& theW
   }
   
   aPOnLine = gp_Pnt2d(u, v);
-  Standard_Real par1 = Geom2dInt_TheProjPCurOfGInter::FindParameter (*theArc, aPOnLine, 1.e-7);
+  Standard_Real par1 = Geom2dInt_TheProjPCurOfGInter::FindParameter (theArc, aPOnLine, 1.e-7);
   
   if(theRank == 1) {
     Vtx2.ParametersOnS1(u, v);
@@ -732,7 +730,7 @@ Handle(IntPatch_RLine) BuildRLineBasedOnWLine(const Handle(IntPatch_WLine)& theW
     Vtx2.ParametersOnS2(u, v);
   }
   aPOnLine = gp_Pnt2d(u, v);
-  Standard_Real par2 = Geom2dInt_TheProjPCurOfGInter::FindParameter (*theArc, aPOnLine, 1.e-7);
+  Standard_Real par2 = Geom2dInt_TheProjPCurOfGInter::FindParameter (theArc, aPOnLine, 1.e-7);
 
   Standard_Real tol = (Vtx1.Tolerance() > Vtx2.Tolerance()) ? Vtx1.Tolerance() : Vtx2.Tolerance();
 
@@ -780,7 +778,7 @@ Handle(IntPatch_RLine) BuildRLineBasedOnWLine(const Handle(IntPatch_WLine)& theW
 	Vtx.ParametersOnS2(u, v);
       }
       gp_Pnt2d atmpPoint(u, v);
-      Standard_Real apar = Geom2dInt_TheProjPCurOfGInter::FindParameter (*theArc, atmpPoint, 1.e-7);
+      Standard_Real apar = Geom2dInt_TheProjPCurOfGInter::FindParameter (theArc, atmpPoint, 1.e-7);
       Vtx.SetParameter(apar);
       anRLine->AddVertex(Vtx);
     }
@@ -823,7 +821,7 @@ Handle(IntPatch_RLine) BuildRLineBasedOnWLine(const Handle(IntPatch_WLine)& theW
 	Vtx.ParametersOnS2(u, v);
       }
       gp_Pnt2d atmpPoint(u, v);
-      Standard_Real apar = Geom2dInt_TheProjPCurOfGInter::FindParameter (*theArc, atmpPoint, 1.e-7);
+      Standard_Real apar = Geom2dInt_TheProjPCurOfGInter::FindParameter (theArc, atmpPoint, 1.e-7);
       Vtx.SetParameter(apar);
       anRLine->AddVertex(Vtx);
     }
@@ -899,7 +897,7 @@ Handle(IntPatch_RLine) BuildRLine(const IntPatch_SequenceOfLine&     theSeqOfWLi
 	    POn2S.ParametersOnS2(u, v);
 	  }
 	  gp_Pnt2d aPOnArc, aPOnLine(u, v);
-	  Standard_Real par = Geom2dInt_TheProjPCurOfGInter::FindParameter (*theDomain->Value(), aPOnLine, 1e-7);
+	  Standard_Real par = Geom2dInt_TheProjPCurOfGInter::FindParameter (theDomain->Value(), aPOnLine, 1e-7);
 	  aPOnArc = theDomain->Value()->Value(par);
 	  gp_Pnt ap;
 	  gp_Vec ad1u, ad1v;
@@ -1229,8 +1227,7 @@ static Standard_Integer GetArc(IntPatch_SequenceOfLine&           theSlin,
       Handle(Geom_Curve) aCEdge=BRep_Tool::Curve(*anE, firstES1, lastES1);
       if ( aCEdge.IsNull() ) // e.g. degenerated edge, see OCC21770
         continue;
-      GeomAdaptor_Curve CE;
-      CE.Load(aCEdge);
+      Handle(GeomAdaptor_Curve) CE = new GeomAdaptor_Curve(aCEdge);
       Extrema_ExtPC epc(theTestPoint, CE, 1.e-7);
 
       if( epc.IsDone() )
@@ -1293,8 +1290,8 @@ static Standard_Integer GetArc(IntPatch_SequenceOfLine&           theSlin,
 	  gp_Pnt2d aPOnLine_F(Upf, Vpf);
 	  gp_Pnt2d aPOnLine_L(Upl, Vpl);
 
-	  Standard_Real par_F = Geom2dInt_TheProjPCurOfGInter::FindParameter (*arc, aPOnLine_F, tol);
-	  Standard_Real par_L = Geom2dInt_TheProjPCurOfGInter::FindParameter (*arc, aPOnLine_L, tol);
+	  Standard_Real par_F = Geom2dInt_TheProjPCurOfGInter::FindParameter (arc, aPOnLine_F, tol);
+	  Standard_Real par_L = Geom2dInt_TheProjPCurOfGInter::FindParameter (arc, aPOnLine_L, tol);
 
 	  WLVertexParameters.Append(par_F);
 	  WLVertexParameters.Append(par_L);
@@ -1332,7 +1329,7 @@ static Standard_Integer GetArc(IntPatch_SequenceOfLine&           theSlin,
 	  Standard_Real param = (firstES1 + WLVertexParameters.Value(1)) / 2.;
 	  gp_Pnt point;
 	  aCEdge->D0(param, point);
-	  if( !IsPointOK(point, *theSurfaceTool, CheckTol) )
+	  if( !IsPointOK(point, theSurfaceTool, CheckTol) )
 	    {
 	      classifyOK = Standard_False;
 	      break;
@@ -1344,7 +1341,7 @@ static Standard_Integer GetArc(IntPatch_SequenceOfLine&           theSlin,
 	  Standard_Real param = (lastES1 + WLVertexParameters.Value(WLVertexParameters.Length())) / 2.;
 	  gp_Pnt point;
 	  aCEdge->D0(param, point);
-	  if( !IsPointOK(point, *theSurfaceTool, CheckTol) )
+	  if( !IsPointOK(point, theSurfaceTool, CheckTol) )
 	    {
 	      classifyOK = Standard_False;
 	      break;
@@ -1359,7 +1356,7 @@ static Standard_Integer GetArc(IntPatch_SequenceOfLine&           theSlin,
 	      Standard_Real param = (WLVertexParameters.Value(i*2) + WLVertexParameters.Value(i*2+1)) / 2.;
 	      gp_Pnt point;
 	      aCEdge->D0(param, point);
-	      if( !IsPointOK(point, *theSurfaceTool, CheckTol) )
+	      if( !IsPointOK(point, theSurfaceTool, CheckTol) )
 		{
 		  classifyOK = Standard_False;
 		  break;
@@ -1399,8 +1396,8 @@ static Standard_Integer GetArc(IntPatch_SequenceOfLine&           theSlin,
       Extrema_POnSurf pOnS1;
       Extrema_POnSurf pOnS2;
       gp_Pnt arcpoint = PointsFromArc.Value( i );
-      Standard_Boolean isOnS1 = GetPointOn2S( arcpoint, *theSurfaceObj, CheckTol, pOnS1 );
-      Standard_Boolean isOnS2 = GetPointOn2S( arcpoint, *theSurfaceTool, CheckTol, pOnS2 );
+      Standard_Boolean isOnS1 = GetPointOn2S( arcpoint, theSurfaceObj, CheckTol, pOnS1 );
+      Standard_Boolean isOnS2 = GetPointOn2S( arcpoint, theSurfaceTool, CheckTol, pOnS2 );
       if( isOnS1 && isOnS2 )
 	{
 	  Standard_Real u1 = 0., v1 = 0., u2 = 0., v2 = 0.;
@@ -1421,7 +1418,7 @@ static Standard_Integer GetArc(IntPatch_SequenceOfLine&           theSlin,
 //  purpose: returns the state of testPoint on OTHER face.
 //========================================================================================
 static Standard_Boolean IsPointOK(const gp_Pnt&            theTestPnt,
-				  const Adaptor3d_Surface& theTestSurface,
+				  const Handle(Adaptor3d_Surface)& theTestSurface,
 				  const Standard_Real&     theTol)
 {
   Standard_Boolean result = Standard_False;
@@ -1450,7 +1447,7 @@ static Standard_Boolean IsPointOK(const gp_Pnt&            theTestPnt,
 //  purpose: check state of testPoint and returns result point if state is OK.
 //========================================================================================
 static Standard_Boolean GetPointOn2S(const gp_Pnt&            theTestPnt,
-				     const Adaptor3d_Surface& theTestSurface,
+				     const Handle(Adaptor3d_Surface)& theTestSurface,
 				     const Standard_Real&     theTol,
 				     Extrema_POnSurf&         theResultPoint)
 {

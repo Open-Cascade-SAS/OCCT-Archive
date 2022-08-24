@@ -1016,11 +1016,8 @@ Standard_Integer TreatLC (const TheArc& A,
   U2f = aCEdge->FirstParameter();
   U2l = aCEdge->LastParameter();
   
-
-  GeomAdaptor_Curve C1, C2;
-  
-  C1.Load(aCAxis);
-  C2.Load(aCEdge);
+  Handle(GeomAdaptor_Curve) C1 = new GeomAdaptor_Curve(aCAxis);
+  Handle(GeomAdaptor_Curve) C2 = new GeomAdaptor_Curve(aCEdge);
   
   Tol = Precision::PConfusion();
 

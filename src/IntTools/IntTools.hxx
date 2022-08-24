@@ -46,9 +46,9 @@ public:
 
   Standard_EXPORT static Standard_Integer Parameter (const gp_Pnt& P, const Handle(Geom_Curve)& Curve, Standard_Real& aParm);
 
-  Standard_EXPORT static Standard_Integer GetRadius (const BRepAdaptor_Curve& C, const Standard_Real t1, const Standard_Real t3, Standard_Real& R);
+  Standard_EXPORT static Standard_Integer GetRadius (const Handle(BRepAdaptor_Curve)& C, const Standard_Real t1, const Standard_Real t3, Standard_Real& R);
 
-  Standard_EXPORT static Standard_Integer PrepareArgs (BRepAdaptor_Curve& C,
+  Standard_EXPORT static Standard_Integer PrepareArgs (const Handle(BRepAdaptor_Curve)& C,
                                                        const Standard_Real tMax, const Standard_Real tMin,
                                                        const Standard_Integer Discret, const Standard_Real Deflect,
                                                        TColStd_Array1OfReal& anArgs);

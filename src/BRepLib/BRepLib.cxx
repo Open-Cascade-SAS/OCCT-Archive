@@ -284,12 +284,12 @@ void BRepLib::SameRange(const TopoDS_Edge& AnEdge,
 //=======================================================================
 
 static Standard_Integer evaluateMaxSegment(const Standard_Integer aMaxSegment,
-  const Adaptor3d_CurveOnSurface& aCurveOnSurface)
+  const Handle(Adaptor3d_CurveOnSurface)& aCurveOnSurface)
 {
   if (aMaxSegment != 0) return aMaxSegment;
 
-  Handle(Adaptor3d_Surface) aSurf   = aCurveOnSurface.GetSurface();
-  Handle(Adaptor2d_Curve2d) aCurv2d = aCurveOnSurface.GetCurve();
+  Handle(Adaptor3d_Surface) aSurf   = aCurveOnSurface->GetSurface();
+  Handle(Adaptor2d_Curve2d) aCurv2d = aCurveOnSurface->GetCurve();
 
   Standard_Real aNbSKnots = 0, aNbC2dKnots = 0;
 
@@ -419,8 +419,8 @@ Standard_Boolean  BRepLib::BuildCurve3d(const TopoDS_Edge& AnEdge,
         new Geom2dAdaptor_Curve(AnAdaptor3dCurve2d) ;
       Handle(GeomAdaptor_Surface) AnAdaptor3dSurfacePtr =
         new GeomAdaptor_Surface (AnAdaptor3dSurface) ;
-      Adaptor3d_CurveOnSurface  CurveOnSurface( AnAdaptor3dCurve2dPtr,
-        AnAdaptor3dSurfacePtr) ;
+      Handle(Adaptor3d_CurveOnSurface) CurveOnSurface =
+        new Adaptor3d_CurveOnSurface (AnAdaptor3dCurve2dPtr, AnAdaptor3dSurfacePtr);
 
       Handle(Geom_Curve) NewCurvePtr ;
 
@@ -545,8 +545,8 @@ Standard_Boolean  BRepLib::UpdateEdgeTol(const TopoDS_Edge& AnEdge,
   Handle(Geom_Surface) surface_ptr ;
   TopLoc_Location local_location ;
   GCPnts_QuasiUniformDeflection  a_sampler ;
-  GeomAdaptor_Curve  geom_reference_curve ;
-  Adaptor3d_CurveOnSurface  curve_on_surface_reference ; 
+  Handle(GeomAdaptor_Curve) geom_reference_curve = new GeomAdaptor_Curve();
+  Handle(Adaptor3d_CurveOnSurface) curve_on_surface_reference = new Adaptor3d_CurveOnSurface();
   Handle(Geom_Curve) C = BRep_Tool::Curve(AnEdge,
     local_location,
     current_first,
@@ -557,7 +557,7 @@ Standard_Boolean  BRepLib::UpdateEdgeTol(const TopoDS_Edge& AnEdge,
       C = Handle(Geom_Curve)::
         DownCast(C-> Transformed(local_location.Transformation()) ) ;
     }
-    geom_reference_curve.Load(C) ;
+    geom_reference_curve->Load(C) ;
     geom_reference_curve_flag = 1 ;
     a_sampler.Initialize(geom_reference_curve,
       MinToleranceRequested * factor,
@@ -599,7 +599,7 @@ Standard_Boolean  BRepLib::UpdateEdgeTol(const TopoDS_Edge& AnEdge,
       new Geom2dAdaptor_Curve(AnAdaptor3dCurve2d) ;
     Handle(GeomAdaptor_Surface) AnAdaptor3dSurfacePtr =
       new GeomAdaptor_Surface (AnAdaptor3dSurface) ;
-    curve_on_surface_reference.Load (AnAdaptor3dCurve2dPtr, AnAdaptor3dSurfacePtr);
+    curve_on_surface_reference->Load (AnAdaptor3dCurve2dPtr, AnAdaptor3dSurfacePtr);
     a_sampler.Initialize(curve_on_surface_reference,
       MinToleranceRequested * factor,
       current_first,
@@ -668,8 +668,8 @@ Standard_Boolean  BRepLib::UpdateEdgeTol(const TopoDS_Edge& AnEdge,
               new Geom2dAdaptor_Curve(an_adaptor_curve2d) ;
             Handle(GeomAdaptor_Surface) an_adaptor_surface_ptr =
               new GeomAdaptor_Surface (an_adaptor_surface) ;
-            Adaptor3d_CurveOnSurface a_curve_on_surface(an_adaptor_curve2d_ptr,
-              an_adaptor_surface_ptr) ;
+            Handle(Adaptor3d_CurveOnSurface) a_curve_on_surface =
+              new Adaptor3d_CurveOnSurface (an_adaptor_curve2d_ptr, an_adaptor_surface_ptr);
 
             if (BRep_Tool::SameParameter(AnEdge)) {
 
@@ -780,7 +780,7 @@ static void GetEdgeTol(const TopoDS_Edge& theEdge,
   GeomAdaptor_Surface& GAS = *HS;
   GAS.Load(GP);
 
-  ProjLib_ProjectedCurve Proj(HS,HC);
+  Handle(ProjLib_ProjectedCurve) Proj = new ProjLib_ProjectedCurve(HS,HC);
   Handle(Geom2d_Curve) pc = Geom2dAdaptor::MakeCurve(Proj);
 
   gp_Pln pln = GAS.Plane();
@@ -1009,13 +1009,13 @@ void BRepLib::SameParameter(const TopoDS_Shape& S, BRepTools_ReShape& theReshape
 //=======================================================================
 static Standard_Boolean EvalTol(const Handle(Geom2d_Curve)& pc,
   const Handle(Geom_Surface)& s,
-  const GeomAdaptor_Curve&    gac,
+  const Handle(GeomAdaptor_Curve)&    gac,
   const Standard_Real         tol,
   Standard_Real&              tolbail)
 {
   Standard_Integer ok = 0;
-  Standard_Real f = gac.FirstParameter();
-  Standard_Real l = gac.LastParameter();
+  Standard_Real f = gac->FirstParameter();
+  Standard_Real l = gac->LastParameter();
   Extrema_LocateExtPC Projector;
   Projector.Initialize(gac,f,l,tol);
   Standard_Real u,v;
@@ -1257,7 +1257,6 @@ TopoDS_Edge BRepLib::SameParameter(const TopoDS_Edge& theEdge,
   Handle(GeomAdaptor_Curve) HC = new GeomAdaptor_Curve();
   Handle(Geom2dAdaptor_Curve) HC2d = new Geom2dAdaptor_Curve();
   Handle(GeomAdaptor_Surface) HS = new GeomAdaptor_Surface();
-  GeomAdaptor_Curve& GAC = *HC;
   Geom2dAdaptor_Curve& GAC2d = *HC2d;
   GeomAdaptor_Surface& GAS = *HS;
 
@@ -1288,9 +1287,9 @@ TopoDS_Edge BRepLib::SameParameter(const TopoDS_Edge& theEdge,
   if(!L3d.IsIdentity()){
     C3d = Handle(Geom_Curve)::DownCast(C3d->Transformed(L3d.Transformation()));
   }
-  GAC.Load(C3d,f3d,l3d);
+  HC->Load(C3d,f3d,l3d);
 
-  Standard_Real Prec_C3d = BRepCheck::PrecCurve(GAC);
+  Standard_Real Prec_C3d = BRepCheck::PrecCurve(HC);
 
   Standard_Boolean IsSameP = 1;
   Standard_Real maxdist = 0.;
@@ -1325,7 +1324,7 @@ TopoDS_Edge BRepLib::SameParameter(const TopoDS_Edge& theEdge,
       }
 
       // Eval tol2d to compute SameRange
-      Standard_Real TolSameRange = Max(GAC.Resolution(theTolerance), Precision::PConfusion());
+      Standard_Real TolSameRange = Max(HC->Resolution(theTolerance), Precision::PConfusion());
       for(Standard_Integer i = 0; i < 2; i++){
         Handle(Geom2d_Curve) curPC = PC[i];
         Standard_Boolean updatepc = 0;
@@ -1386,7 +1385,7 @@ TopoDS_Edge BRepLib::SameParameter(const TopoDS_Edge& theEdge,
 
             if(bs2d->Continuity() == GeomAbs_C0) {
               Standard_Real tolbail;
-              if(EvalTol(curPC,S,GAC,theTolerance,tolbail)){
+              if(EvalTol(curPC,S,HC,theTolerance,tolbail)){
                 bs2d = bs2dsov;
                 Standard_Real UResbail = GAS.UResolution(tolbail);
                 Standard_Real VResbail = GAS.VResolution(tolbail);
@@ -2139,7 +2138,7 @@ GeomAbs_Shape BRepLib::ContinuityOfFaces(const TopoDS_Edge&  theEdge,
       {
         // adaptor for pcurve on the second surface
         aHC2 = new BRepAdaptor_Curve (anEdgeInFace2, theFace2);
-        ext.Initialize(*aHC2, f, l, Precision::PConfusion());
+        ext.Initialize(aHC2, f, l, Precision::PConfusion());
       }
       ext.Perform(aSP1.Value(), u);
       if (ext.IsDone() && ext.IsMin())
@@ -2893,7 +2892,7 @@ void BRepLib::ExtendFace(const TopoDS_Face& theF,
   {
     // Get basis transformed basis surface
     Handle(Geom_Surface) aSurf = Handle(Geom_Surface)::
-      DownCast(aBAS.Surface().Surface()->Transformed(aBAS.Trsf()));
+      DownCast(aBAS.Surface()->Surface()->Transformed(aBAS.Trsf()));
 
     // Get bounds of the basis surface
     Standard_Real aSUMin, aSUMax, aSVMin, aSVMax;

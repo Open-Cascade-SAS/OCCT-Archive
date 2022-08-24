@@ -71,9 +71,9 @@
   GeomAbs_CurveType   ctyp;
 
   if (!Spine.IsNull())
-    ctyp = Spine->CurrentElementarySpine(Iedge).GetType();
+    ctyp = Spine->CurrentElementarySpine(Iedge)->GetType();
   else 
-    ctyp = CSpine->CurrentElementarySpine(Iedge).GetType();
+    ctyp = CSpine->CurrentElementarySpine(Iedge)->GetType();
 
   // Return orientations.
   TopAbs_Orientation OrFace1 = TopAbs_FORWARD, OrFace2 = TopAbs_FORWARD;

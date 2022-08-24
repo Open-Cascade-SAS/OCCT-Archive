@@ -46,23 +46,23 @@ public:
   Standard_EXPORT Extrema_ExtCS();
   
   //! It calculates all the distances between C and S.
-  Standard_EXPORT Extrema_ExtCS(const Adaptor3d_Curve& C, const Adaptor3d_Surface& S, const Standard_Real TolC, const Standard_Real TolS);
+  Standard_EXPORT Extrema_ExtCS(const Handle(Adaptor3d_Curve)& C, const Handle(Adaptor3d_Surface)& S, const Standard_Real TolC, const Standard_Real TolS);
   
   //! It calculates all the distances between C and S.
   //! UCinf and UCmax are the start and end parameters
   //! of the curve.
-  Standard_EXPORT Extrema_ExtCS(const Adaptor3d_Curve& C, const Adaptor3d_Surface& S, const Standard_Real UCinf, const Standard_Real UCsup, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup, const Standard_Real TolC, const Standard_Real TolS);
+  Standard_EXPORT Extrema_ExtCS(const Handle(Adaptor3d_Curve)& C, const Handle(Adaptor3d_Surface)& S, const Standard_Real UCinf, const Standard_Real UCsup, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup, const Standard_Real TolC, const Standard_Real TolS);
 
   //! Initializes the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor3d_Surface& S, const Standard_Real TolC, const Standard_Real TolS);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Surface)& S, const Standard_Real TolC, const Standard_Real TolS);
 
   //! Initializes the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor3d_Surface& S, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup, const Standard_Real TolC, const Standard_Real TolS);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Surface)& S, const Standard_Real Uinf, const Standard_Real Usup, const Standard_Real Vinf, const Standard_Real Vsup, const Standard_Real TolC, const Standard_Real TolS);
   
   //! Computes the distances.
   //! An exception is raised if the fieds have not been
   //! initialized.
-  Standard_EXPORT void Perform (const Adaptor3d_Curve& C, const Standard_Real Uinf, const Standard_Real Usup);
+  Standard_EXPORT void Perform (const Handle(Adaptor3d_Curve)& C, const Standard_Real Uinf, const Standard_Real Usup);
   
   //! Returns True if the distances are found.
   Standard_EXPORT Standard_Boolean IsDone() const;
@@ -81,7 +81,7 @@ public:
 
 private:
 
-  Standard_EXPORT Standard_Boolean AddSolution (const Adaptor3d_Curve& Curve, const Standard_Real T, const Standard_Real U, const Standard_Real V, const gp_Pnt& PointOnCurve, const gp_Pnt& PointOnSurf, const Standard_Real SquareDist);
+  Standard_EXPORT Standard_Boolean AddSolution (const Handle(Adaptor3d_Curve)& Curve, const Standard_Real T, const Standard_Real U, const Standard_Real V, const gp_Pnt& PointOnCurve, const gp_Pnt& PointOnSurf, const Standard_Real SquareDist);
 
 private:
 
@@ -91,7 +91,7 @@ private:
 
 private:
 
-  const Adaptor3d_Surface* myS;
+  Handle(Adaptor3d_Surface) myS;
   Standard_Boolean myDone;
   Standard_Boolean myIsPar;
   Extrema_ExtElCS myExtElCS;

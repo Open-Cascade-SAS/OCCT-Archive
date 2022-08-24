@@ -36,7 +36,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT Geom2dGcc_FunctionTanCuPnt(const Geom2dAdaptor_Curve& C, const gp_Pnt2d& Point);
+  Standard_EXPORT Geom2dGcc_FunctionTanCuPnt(const Handle(Geom2dAdaptor_Curve)& C, const gp_Pnt2d& Point);
   
   //! Computes the value of the function F for the variable X.
   //! It returns True if the computation is successfully done,
@@ -67,7 +67,7 @@ private:
 
 
 
-  Geom2dAdaptor_Curve TheCurv;
+  Handle(Geom2dAdaptor_Curve) TheCurv;
   gp_Pnt2d ThePoint;
 
 

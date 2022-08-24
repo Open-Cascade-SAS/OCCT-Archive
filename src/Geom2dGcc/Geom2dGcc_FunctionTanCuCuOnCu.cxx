@@ -142,9 +142,9 @@ void Geom2dGcc_FunctionTanCuCuOnCu::
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
-  Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve&     C1  ,
-			     const Geom2dAdaptor_Curve&     C2  ,
-			     const Geom2dAdaptor_Curve&     C3  ,
+  Geom2dGcc_FunctionTanCuCuOnCu(const Handle(Geom2dAdaptor_Curve)&     C1  ,
+			     const Handle(Geom2dAdaptor_Curve)&     C2  ,
+			     const Handle(Geom2dAdaptor_Curve)&     C3  ,
 			     const Standard_Real Rad ) {
   Curv1  = C1;
   Curv2  = C2;
@@ -155,10 +155,11 @@ Geom2dGcc_FunctionTanCuCuOnCu::
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Circ2d&    C1  ,
-			     const Geom2dAdaptor_Curve&     C2  ,
-			     const Geom2dAdaptor_Curve&     C3  ,
+			     const Handle(Geom2dAdaptor_Curve)&     C2  ,
+			     const Handle(Geom2dAdaptor_Curve)&     C3  ,
 			     const Standard_Real Rad ) {
   Circ1  = C1;
+  Curv1 = new Geom2dAdaptor_Curve();
   Curv2  = C2;
   Curvon = C3;
   FirstRad = Rad;
@@ -167,10 +168,11 @@ Geom2dGcc_FunctionTanCuCuOnCu::
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Lin2d&     L1  ,
-			     const Geom2dAdaptor_Curve&     C2  ,
-			     const Geom2dAdaptor_Curve&     C3  ,
+			     const Handle(Geom2dAdaptor_Curve)&     C2  ,
+			     const Handle(Geom2dAdaptor_Curve)&     C3  ,
 			     const Standard_Real Rad ) {
   Lin1  = L1;
+  Curv1 = new Geom2dAdaptor_Curve();
   Curv2  = C2;
   Curvon = C3;
   FirstRad = Rad;
@@ -178,11 +180,12 @@ Geom2dGcc_FunctionTanCuCuOnCu::
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
-  Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1  ,
+  Geom2dGcc_FunctionTanCuCuOnCu(const Handle(Geom2dAdaptor_Curve)& C1  ,
 			     const gp_Pnt2d&  P2  ,
-			     const Geom2dAdaptor_Curve&  C3  ,
+			     const Handle(Geom2dAdaptor_Curve)&  C3  ,
 			     const Standard_Real       Rad ) {
   Curv1  = C1;
+  Curv2 = new Geom2dAdaptor_Curve();
   Pnt2  = P2;
   Curvon = C3;
   FirstRad = Rad;
@@ -190,12 +193,13 @@ Geom2dGcc_FunctionTanCuCuOnCu::
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
-  Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1   ,
-			     const Geom2dAdaptor_Curve&  C2   ,
+  Geom2dGcc_FunctionTanCuCuOnCu(const Handle(Geom2dAdaptor_Curve)& C1   ,
+			     const Handle(Geom2dAdaptor_Curve)&  C2   ,
 			     const gp_Lin2d&  OnLi ,
 			     const Standard_Real       Rad  ) {
   Curv1  = C1;
   Curv2  = C2;
+  Curvon = new Geom2dAdaptor_Curve();
   Linon = OnLi;
   FirstRad = Rad;
   TheType = Geom2dGcc_CuCuOnLi;
@@ -203,11 +207,13 @@ Geom2dGcc_FunctionTanCuCuOnCu::
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Circ2d&           C1   ,
-			       const Geom2dAdaptor_Curve& C2   ,
+			       const Handle(Geom2dAdaptor_Curve)& C2   ,
 			       const gp_Lin2d&            OnLi ,
 			       const Standard_Real                 Rad  ) {
   Circ1  = C1;
+  Curv1 = new Geom2dAdaptor_Curve();
   Curv2  = C2;
+  Curvon = new Geom2dAdaptor_Curve();
   Linon = OnLi;
   FirstRad = Rad;
   TheType = Geom2dGcc_CiCuOnLi;
@@ -215,22 +221,26 @@ Geom2dGcc_FunctionTanCuCuOnCu::
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Lin2d& L1  ,
-			       const Geom2dAdaptor_Curve&  C2  ,
+			       const Handle(Geom2dAdaptor_Curve)&  C2  ,
 			       const gp_Lin2d&  OnLi ,
 			       const Standard_Real       Rad ) {
   Lin1  = L1;
+  Curv1 = new Geom2dAdaptor_Curve();
   Curv2  = C2;
+  Curvon = new Geom2dAdaptor_Curve();
   Linon = OnLi;
   FirstRad = Rad;
   TheType = Geom2dGcc_LiCuOnLi;
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
-  Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1  ,
+  Geom2dGcc_FunctionTanCuCuOnCu(const Handle(Geom2dAdaptor_Curve)& C1  ,
 			       const gp_Pnt2d&            P2  ,
 			       const gp_Lin2d&            OnLi ,
 			       const Standard_Real                 Rad ) {
   Curv1  = C1;
+  Curv2 = new Geom2dAdaptor_Curve();
+  Curvon = new Geom2dAdaptor_Curve();
   Pnt2  = P2;
   Linon = OnLi;
   FirstRad = Rad;
@@ -238,12 +248,13 @@ Geom2dGcc_FunctionTanCuCuOnCu::
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
-  Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1   ,
-			       const Geom2dAdaptor_Curve& C2   ,
+  Geom2dGcc_FunctionTanCuCuOnCu(const Handle(Geom2dAdaptor_Curve)& C1   ,
+			       const Handle(Geom2dAdaptor_Curve)& C2   ,
 			       const gp_Circ2d&           OnCi ,
 			       const Standard_Real                 Rad  ) {
   Curv1  = C1;
   Curv2  = C2;
+  Curvon = new Geom2dAdaptor_Curve();
   Circon = OnCi;
   FirstRad = Rad;
   TheType = Geom2dGcc_CuCuOnCi;
@@ -251,11 +262,13 @@ Geom2dGcc_FunctionTanCuCuOnCu::
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Circ2d&           C1  ,
-			       const Geom2dAdaptor_Curve& C2  ,
+			       const Handle(Geom2dAdaptor_Curve)& C2  ,
 			       const gp_Circ2d&           OnCi ,
 			       const Standard_Real                 Rad ) {
   Circ1  = C1;
+  Curv1 = new Geom2dAdaptor_Curve();
   Curv2  = C2;
+  Curvon = new Geom2dAdaptor_Curve();
   Circon = OnCi;
   FirstRad = Rad;
   TheType = Geom2dGcc_CuCuOnCi;
@@ -263,22 +276,26 @@ Geom2dGcc_FunctionTanCuCuOnCu::
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Lin2d& L1  ,
-			       const Geom2dAdaptor_Curve&  C2  ,
+			       const Handle(Geom2dAdaptor_Curve)&  C2  ,
 			       const gp_Circ2d& OnCi ,
 			       const Standard_Real       Rad ) {
   Lin1  = L1;
+  Curv1 = new Geom2dAdaptor_Curve();
   Curv2  = C2;
+  Curvon = new Geom2dAdaptor_Curve();
   Circon = OnCi;
   FirstRad = Rad;
   TheType = Geom2dGcc_LiCuOnCi;
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
-  Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1  ,
+  Geom2dGcc_FunctionTanCuCuOnCu(const Handle(Geom2dAdaptor_Curve)& C1  ,
 			       const gp_Pnt2d&            P2  ,
 			       const gp_Circ2d&           OnCi ,
 			       const Standard_Real                 Rad ) {
   Curv1  = C1;
+  Curv2 = new Geom2dAdaptor_Curve();
+  Curvon = new Geom2dAdaptor_Curve();
   Pnt2  = P2;
   Circon = OnCi;
   FirstRad = Rad;

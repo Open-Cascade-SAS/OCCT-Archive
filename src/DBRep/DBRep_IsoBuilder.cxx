@@ -206,7 +206,7 @@ Geom2dHatch_Hatcher (Geom2dHatch_Intersector (IntersectorConfusion,
   Standard_Integer aNbE = anEdgePCurveMap.Extent();
   for (Standard_Integer iE = 1; iE <= aNbE; ++iE)
   {
-    AddElement(Geom2dAdaptor_Curve(anEdgePCurveMap(iE)),
+    AddElement(new Geom2dAdaptor_Curve(anEdgePCurveMap(iE)),
                anEdgePCurveMap.FindKey(iE).Orientation());
   }
   //-----------------------------------------------------------------------
@@ -226,7 +226,7 @@ Geom2dHatch_Hatcher (Geom2dHatch_Intersector (IntersectorConfusion,
     for (IIso = 1 ; IIso <= NbIsos ; IIso++) {
       myUPrm(IIso) = UPrm ;
       gp_Pnt2d Ori (UPrm, 0.) ;
-      Geom2dAdaptor_Curve HCur (new Geom2d_Line (Ori, Dir)) ;
+      Handle(Geom2dAdaptor_Curve) HCur = new Geom2dAdaptor_Curve(new Geom2d_Line (Ori, Dir)) ;
       myUInd(IIso) = AddHatching (HCur) ;
       UPrm += StepU ;
     }
@@ -239,7 +239,7 @@ Geom2dHatch_Hatcher (Geom2dHatch_Intersector (IntersectorConfusion,
     for (IIso = 1 ; IIso <= NbIsos ; IIso++) {
       myVPrm(IIso) = VPrm ;
       gp_Pnt2d Ori (0., VPrm) ;
-      Geom2dAdaptor_Curve HCur (new Geom2d_Line (Ori, Dir)) ;
+      Handle(Geom2dAdaptor_Curve) HCur = new Geom2dAdaptor_Curve(new Geom2d_Line (Ori, Dir)) ;
       myVInd(IIso) = AddHatching (HCur) ;
       VPrm += StepV ;
     }
@@ -501,7 +501,8 @@ void DBRep_IsoBuilder::FillGaps(const TopoDS_Face& theFace,
       // And, if they do interfere, avoid creation of the segment.
       if (bAddSegment && !aPrevEdge.IsEqual(aCurrEdge))
       {
-        Geom2dAdaptor_Curve aPrevGC(aPrevC2d, fp, lp), aCurrGC(aCurrC2d, fc, lc);
+          Handle(Geom2dAdaptor_Curve) aPrevGC = new Geom2dAdaptor_Curve(aPrevC2d, fp, lp);
+          Handle(Geom2dAdaptor_Curve) aCurrGC = new Geom2dAdaptor_Curve(aCurrC2d, fc, lc);
         Geom2dInt_GInter anInter(aPrevGC, aCurrGC, Precision::PConfusion(), Precision::PConfusion());
         if (anInter.IsDone() && !anInter.IsEmpty())
         {
@@ -630,7 +631,7 @@ void DBRep_IsoBuilder::FillGaps(const TopoDS_Face& theFace,
         // Add segment to the hatcher to trim the iso-lines
         Handle(Geom2d_Line) aLine = new Geom2d_Line(aPrevP2d, aV2d);
         Handle(Geom2d_TrimmedCurve) aLineSegm = new Geom2d_TrimmedCurve(aLine, 0.0, aSegmLen);
-        AddElement(Geom2dAdaptor_Curve(aLineSegm), TopAbs_FORWARD);
+        AddElement(new Geom2dAdaptor_Curve(aLineSegm), TopAbs_FORWARD);
       }
     }
   }

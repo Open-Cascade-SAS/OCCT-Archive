@@ -47,9 +47,9 @@ public:
   
   Standard_EXPORT Extrema_CCLocFOfLocECC2d(const Standard_Real thetol = 1.0e-10);
   
-  Standard_EXPORT Extrema_CCLocFOfLocECC2d(const Adaptor2d_Curve2d& C1, const Adaptor2d_Curve2d& C2, const Standard_Real thetol = 1.0e-10);
+  Standard_EXPORT Extrema_CCLocFOfLocECC2d(const Handle(Adaptor2d_Curve2d)& C1, const Handle(Adaptor2d_Curve2d)& C2, const Standard_Real thetol = 1.0e-10);
   
-  Standard_EXPORT void SetCurve (const Standard_Integer theRank, const Adaptor2d_Curve2d& C1);
+  Standard_EXPORT void SetCurve (const Standard_Integer theRank, const Handle(Adaptor2d_Curve2d)& C1);
   
     void SetTolerance (const Standard_Real theTol);
   
@@ -129,11 +129,11 @@ private:
 
 };
 
-#define Curve1 Adaptor2d_Curve2d
+#define Curve1 Handle(Adaptor2d_Curve2d)
 #define Curve1_hxx <Adaptor2d_Curve2d.hxx>
 #define Tool1 Extrema_Curve2dTool
 #define Tool1_hxx <Extrema_Curve2dTool.hxx>
-#define Curve2 Adaptor2d_Curve2d
+#define Curve2 Handle(Adaptor2d_Curve2d)
 #define Curve2_hxx <Adaptor2d_Curve2d.hxx>
 #define Tool2 Extrema_Curve2dTool
 #define Tool2_hxx <Extrema_Curve2dTool.hxx>

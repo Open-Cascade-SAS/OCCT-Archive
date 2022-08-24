@@ -52,7 +52,7 @@ public:
   //! iterations according to the following condition:
   //! if n is the number of iterations,
   //! abs(Un-Un-1) < TolU and abs(F(Un)-F(Un-1)) < Tol.
-  Standard_EXPORT Extrema_EPCOfELPCOfLocateExtPC2d(const gp_Pnt2d& P, const Adaptor2d_Curve2d& C, const Standard_Integer NbU, const Standard_Real TolU, const Standard_Real TolF);
+  Standard_EXPORT Extrema_EPCOfELPCOfLocateExtPC2d(const gp_Pnt2d& P, const Handle(Adaptor2d_Curve2d)& C, const Standard_Integer NbU, const Standard_Real TolU, const Standard_Real TolF);
   
   //! It calculates all the distances.
   //! The function F(u)=distance(P,C(u)) has an extremum
@@ -65,16 +65,16 @@ public:
   //! iterations according to the following condition:
   //! if n is the number of iterations,
   //! abs(Un-Un-1) < TolU and abs(F(Un)-F(Un-1)) < Tol.
-  Standard_EXPORT Extrema_EPCOfELPCOfLocateExtPC2d(const gp_Pnt2d& P, const Adaptor2d_Curve2d& C, const Standard_Integer NbU, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolU, const Standard_Real TolF);
+  Standard_EXPORT Extrema_EPCOfELPCOfLocateExtPC2d(const gp_Pnt2d& P, const Handle(Adaptor2d_Curve2d)& C, const Standard_Integer NbU, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolU, const Standard_Real TolF);
   
   //! sets the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& C, const Standard_Integer NbU, const Standard_Real TolU, const Standard_Real TolF);
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& C, const Standard_Integer NbU, const Standard_Real TolU, const Standard_Real TolF);
   
   //! sets the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& C, const Standard_Integer NbU, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolU, const Standard_Real TolF);
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& C, const Standard_Integer NbU, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolU, const Standard_Real TolF);
   
   //! sets the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor2d_Curve2d& C);
+  Standard_EXPORT void Initialize (const Handle(Adaptor2d_Curve2d)& C);
   
   //! sets the fields of the algorithm.
   Standard_EXPORT void Initialize (const Standard_Integer NbU, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolU, const Standard_Real TolF);

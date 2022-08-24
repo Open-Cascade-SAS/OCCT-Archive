@@ -92,8 +92,8 @@ Standard_Boolean TopOpeBRepTool_CLASSI::Add2d(const TopoDS_Shape& S)
 
     Standard_Boolean haspc = FC2D_HasCurveOnSurface(E,myFref);
     if (!haspc) return Standard_False;
-    BRepAdaptor_Curve2d BC2d(E,myFref);
-    Standard_Real tol2d = BC2d.Resolution(tolE);
+    Handle(BRepAdaptor_Curve2d) BC2d = new BRepAdaptor_Curve2d(E,myFref);
+    Standard_Real tol2d = BC2d->Resolution(tolE);
     BndLib_Add2dCurve::Add(BC2d,tol2d,B2d);
   }
   mymapsbox2d.Add(S,B2d);

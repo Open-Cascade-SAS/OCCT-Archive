@@ -1295,15 +1295,15 @@ void FindInternalIntersections(const TopoDS_Edge& theEdge,
                            // algorithms, for example, Boolean Operations.
   Standard_Real aTolVExt[2] = { ext * aTolV[0] * aTolV[0], ext * aTolV[1] * aTolV[1] };
 
-  BRepAdaptor_Curve2d thePCurve(theEdge, theFace);
+  Handle(BRepAdaptor_Curve2d) thePCurve = new BRepAdaptor_Curve2d(theEdge, theFace);
   Bnd_Box2d theBox;
   BndLib_Add2dCurve::Add(thePCurve, BRep_Tool::Tolerance(theEdge), theBox);
 
   Standard_Real thePar [2];
   Standard_Real  aFpar, aLpar;
   const Handle(Geom_Curve)& theCurve = BRep_Tool::Curve(theEdge, thePar[0], thePar[1]);
-  GeomAdaptor_Curve theGAcurve(theCurve, thePar[0], thePar[1]);
-  Standard_Real aTolV2d[2] = { theGAcurve.Resolution(aTolV[0]), theGAcurve.Resolution(aTolV[1]) };
+  Handle(GeomAdaptor_Curve) theGAcurve = new GeomAdaptor_Curve(theCurve, thePar[0], thePar[1]);
+  Standard_Real aTolV2d[2] = { theGAcurve->Resolution(aTolV[0]), theGAcurve->Resolution(aTolV[1]) };
   aTolV2d[0] = Max(aTolV2d[0], Precision::PConfusion());
   aTolV2d[1] = Max(aTolV2d[1], Precision::PConfusion());
   Standard_Real aDistMax = Precision::Confusion() * Precision::Confusion();
@@ -1311,14 +1311,14 @@ void FindInternalIntersections(const TopoDS_Edge& theEdge,
   for (; Explo.More(); Explo.Next())
   {
     const TopoDS_Edge& anEdge = TopoDS::Edge(Explo.Current());
-    BRepAdaptor_Curve2d aPCurve(anEdge, theFace);
+    Handle(BRepAdaptor_Curve2d) aPCurve = new BRepAdaptor_Curve2d(anEdge, theFace);
     Bnd_Box2d aBox;
     BndLib_Add2dCurve::Add(aPCurve, BRep_Tool::Tolerance(anEdge), aBox);
     if (theBox.IsOut(aBox))
       continue;
 
     const Handle(Geom_Curve)& aCurve   = BRep_Tool::Curve(anEdge, aFpar, aLpar);
-    GeomAdaptor_Curve aGAcurve(aCurve, aFpar, aLpar);
+    Handle(GeomAdaptor_Curve) aGAcurve = new GeomAdaptor_Curve(aCurve, aFpar, aLpar);
     Extrema_ExtCC anExtrema(theGAcurve, aGAcurve, TolExt, TolExt);
 
     if (!anExtrema.IsDone() || !anExtrema.NbExt())
@@ -1498,7 +1498,7 @@ Standard_Boolean LocOpe_WiresOnShape::Add(const TopTools_SequenceOfShape& theEdg
     BRepBndLib::Add(aCurF, aBoxF);
     if (aBoxF.IsVoid())
       continue;
-    BRepAdaptor_Surface anAdF(aCurF, Standard_False);
+    Handle(BRepAdaptor_Surface) anAdF = new BRepAdaptor_Surface(aCurF, Standard_False);
     NCollection_Handle<BRepTopAdaptor_FClass2d> aCheckStateTool;
 
     i = 1;

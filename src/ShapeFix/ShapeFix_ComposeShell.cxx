@@ -890,7 +890,7 @@ ShapeFix_WireSegment ShapeFix_ComposeShell::SplitWire (ShapeFix_WireSegment &wir
     Standard_Integer nbNMVert = aNMVertices.Length();
     TColStd_SequenceOfReal aNMVertParams;
     if( nbNMVert) {
-      Geom2dAdaptor_Curve adc(C2d);
+      Handle(Geom2dAdaptor_Curve) adc = new Geom2dAdaptor_Curve(C2d);
       Standard_Integer n =1;
       for( ; n<= nbNMVert; n++) {
         gp_Pnt apV = BRep_Tool::Pnt(TopoDS::Vertex(aNMVertices.Value(n)));
@@ -1196,7 +1196,7 @@ Standard_Boolean ShapeFix_ComposeShell::SplitByLine (ShapeFix_WireSegment &wire,
   ShapeAnalysis_Edge sae;
   // prepare data on cutting line
   Handle(Geom2d_Line) jC2d = new Geom2d_Line ( line );
-  Geom2dAdaptor_Curve jGAC(jC2d);
+  Handle(Geom2dAdaptor_Curve) jGAC = new Geom2dAdaptor_Curve(jC2d);
 
   TColStd_SequenceOfInteger IntEdgeInd;   // index of intersecting edge
   TColStd_SequenceOfReal IntEdgePar;      // parameter of intersection point on edge
@@ -1333,7 +1333,7 @@ Standard_Boolean ShapeFix_ComposeShell::SplitByLine (ShapeFix_WireSegment &wire,
     for ( Standard_Integer iter=1; iter <= nbIter; iter++ ) {
       // data for intersection
       IntRes2d_Domain iDom ( pppf, f, TOLINT, pppl, l, TOLINT );
-      Geom2dAdaptor_Curve iGAC(c2d);
+      Handle(Geom2dAdaptor_Curve) iGAC = new Geom2dAdaptor_Curve(c2d);
 
       // intersection
       Geom2dInt_GInter Inter;

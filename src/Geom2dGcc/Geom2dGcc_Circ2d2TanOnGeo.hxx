@@ -55,32 +55,32 @@ public:
   //! This method implements the algorithms used to
   //! create 2d circles TANgent to two 2d circles and
   //! having the center ON a curve.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedCirc& Qualified1, const GccEnt_QualifiedCirc& Qualified2, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedCirc& Qualified1, const GccEnt_QualifiedCirc& Qualified2, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Tolerance);
   
   //! This method implements the algorithms used to
   //! create 2d circles TANgent to a 2d circle and a 2d line
   //! having the center ON a curve.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedCirc& Qualified1, const GccEnt_QualifiedLin& Qualified2, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedCirc& Qualified1, const GccEnt_QualifiedLin& Qualified2, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Tolerance);
   
   //! This method implements the algorithms used to
   //! create 2d circles TANgent to a 2d circle and a point
   //! having the center ON a curve.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedCirc& Qualified1, const gp_Pnt2d& Point2, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedCirc& Qualified1, const gp_Pnt2d& Point2, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Tolerance);
   
   //! This method implements the algorithms used to
   //! create 2d circles TANgent to two 2d lines
   //! having the center ON a curve.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedLin& Qualified1, const GccEnt_QualifiedLin& Qualified2, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedLin& Qualified1, const GccEnt_QualifiedLin& Qualified2, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Tolerance);
   
   //! This method implements the algorithms used to
   //! create 2d circles TANgent to a 2d line and a point
   //! having the center ON a 2d line.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedLin& Qualified1, const gp_Pnt2d& Qualified2, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const GccEnt_QualifiedLin& Qualified1, const gp_Pnt2d& Qualified2, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Tolerance);
   
   //! This method implements the algorithms used to
   //! create 2d circles TANgent to two points
   //! having the center ON a 2d line.
-  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const gp_Pnt2d& Point1, const gp_Pnt2d& Point2, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2d2TanOnGeo(const gp_Pnt2d& Point1, const gp_Pnt2d& Point2, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Tolerance);
   
   //! This method returns True if the construction
   //! algorithm succeeded.

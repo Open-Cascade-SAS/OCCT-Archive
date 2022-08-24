@@ -33,7 +33,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT ProjLib_PrjResolve(const Adaptor3d_Curve& C, const Adaptor3d_Surface& S, const Standard_Integer Fix);
+  Standard_EXPORT ProjLib_PrjResolve(const Handle(Adaptor3d_Curve)& C, const Handle(Adaptor3d_Surface)& S, const Standard_Integer Fix);
   
   //! Calculates the ort from  C(t)  to  S  with a close point.
   //! The close point is defined by the parameter values U0 and V0.
@@ -49,8 +49,8 @@ public:
 
 private:
 
-  const Adaptor3d_Curve* myCurve;
-  const Adaptor3d_Surface* mySurface;
+  const Handle(Adaptor3d_Curve) myCurve;
+  const Handle(Adaptor3d_Surface) mySurface;
   Standard_Boolean myDone;
   gp_Pnt2d mySolution;
   Standard_Integer myFix;

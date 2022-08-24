@@ -184,9 +184,9 @@ Standard_Real ShapeAnalysis_TransferParametersProj::PreformSegment(const Standar
     gp_Pnt p1 = myCurve->Value(Param).Transformed(myLocation.Inverted());
     Handle(Adaptor3d_Surface) AdS = myAC3d.GetSurface();
     Handle(Geom2dAdaptor_Curve) AC2d  = new Geom2dAdaptor_Curve(myCurve2d,First,Last);
-    Adaptor3d_CurveOnSurface Ad1(AC2d,AdS);
+    Handle(Adaptor3d_CurveOnSurface) Ad1 = new Adaptor3d_CurveOnSurface(AC2d,AdS);
     projDev = sac.Project(Ad1,p1,myPrecision,pproj,ppar);//pdn
-    linDev = p1.Distance(Ad1.Value(linPar));
+    linDev = p1.Distance(Ad1->Value(linPar));
   }
   else {
     gp_Pnt p1 = myAC3d.Value(Param).Transformed(myLocation);
@@ -354,7 +354,7 @@ void ShapeAnalysis_TransferParametersProj::TransferRange(TopoDS_Edge& newEdge,
 	Standard_Real len = last -first;
 	gp_Pnt ploc1 = p1.Transformed(loc);
 	gp_Pnt ploc2 = p2.Transformed(loc); 
-	GeomAdaptor_Curve GAC(C3d,first,last);
+	Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(C3d,first,last);
 	// CATIA bplseitli.model FAC1155 - Copy: protection for degenerated edges(3d case for symmetry)
 	Standard_Real linFirst = first+alpha*len;
 	Standard_Real linLast  = first+beta*len;
@@ -401,7 +401,7 @@ void ShapeAnalysis_TransferParametersProj::TransferRange(TopoDS_Edge& newEdge,
       Standard_Real len = last -first;
       Handle(Geom2dAdaptor_Curve) AC2d  = new Geom2dAdaptor_Curve(toGC->PCurve(),first,last);
       Handle(GeomAdaptor_Surface) AdS = new GeomAdaptor_Surface( toGC->Surface());
-      Adaptor3d_CurveOnSurface Ad1(AC2d,AdS);
+      Handle(Adaptor3d_CurveOnSurface) Ad1 = new Adaptor3d_CurveOnSurface(AC2d,AdS);
       ShapeAnalysis_Curve sac1;
       
       //gp_Pnt p1 = Ad1.Value(prevPar);
@@ -422,8 +422,8 @@ void ShapeAnalysis_TransferParametersProj::TransferRange(TopoDS_Edge& newEdge,
       if(isLastOnEnd && ! localLinearLast)
 	localLinearLast  = Standard_True;
 
-      gp_Pnt pos1 = Ad1.Value ( linFirst );
-      gp_Pnt pos2 = Ad1.Value ( linLast );
+      gp_Pnt pos1 = Ad1->Value ( linFirst );
+      gp_Pnt pos2 = Ad1->Value ( linLast );
       Standard_Real d01 = pos1.Distance ( ploc1 );
       Standard_Real d02 = pos2.Distance ( ploc2 );
       if ( localLinearFirst || useLinear || d01 <= dist1 || ( d01 < myPrecision && d01 <= 2 * dist1 ) ) 

@@ -488,7 +488,7 @@ static Standard_Real MapEdgeLength(const TopoDS_Edge& theEdge,
     Standard_Real aLen = 0.;
     if (!BRep_Tool::Degenerated(theEdge))
     {
-      BRepAdaptor_Curve aCurve(theEdge);
+      Handle(BRepAdaptor_Curve) aCurve = new BRepAdaptor_Curve(theEdge);
       aLen = GCPnts_AbscissaPoint::Length(aCurve);
     }
     pLen = theMapEdgeLen.Bound(theEdge, aLen);
@@ -505,7 +505,7 @@ namespace {
     const TopoDS_Edge* Edge; // Edge
     Standard_Real VParameter; // Parameter of the vertex on the edge
     Standard_Boolean IsClosed; // Closed flag of the edge
-    Geom2dAdaptor_Curve GAdaptor; // 2D adaptor for PCurve of the edge on the face
+    Handle(Geom2dAdaptor_Curve) GAdaptor; // 2D adaptor for PCurve of the edge on the face
     Standard_Real First; // First parameter in the range
     Standard_Real Last; // Last parameter in the rage
   };
@@ -532,10 +532,10 @@ static
   Standard_Real aMaxDist = 0.;
   Standard_Real aTol2d = 1.e-10;
   //
-  IntRes2d_Domain aDom1(theEData1.GAdaptor.Value(aT11), aT11, aTol2d,
-                        theEData1.GAdaptor.Value(aT12), aT12, aTol2d);
-  IntRes2d_Domain aDom2(theEData2.GAdaptor.Value(aT21), aT21, aTol2d,
-                        theEData2.GAdaptor.Value(aT22), aT22, aTol2d);
+  IntRes2d_Domain aDom1(theEData1.GAdaptor->Value(aT11), aT11, aTol2d,
+                        theEData1.GAdaptor->Value(aT12), aT12, aTol2d);
+  IntRes2d_Domain aDom2(theEData2.GAdaptor->Value(aT21), aT21, aTol2d,
+                        theEData2.GAdaptor->Value(aT22), aT22, aTol2d);
   //
   anInter.Perform(theEData1.GAdaptor, aDom1, theEData2.GAdaptor, aDom2, aTol2d, aTol2d);
   if (!anInter.IsDone() || (!anInter.NbSegments() && !anInter.NbPoints())) {
@@ -658,7 +658,7 @@ void CorrectWires(const TopoDS_Face& aFx,
       if (aD2>aD2max) {
         aD2max=aD2;
       }
-      EdgeData anEData = {&aE, aT, isClosed, Geom2dAdaptor_Curve(aC2D), aT1, aT2};
+      EdgeData anEData = {&aE, aT, isClosed, new Geom2dAdaptor_Curve(aC2D), aT1, aT2};
       aLEPars.Append(anEData);
     }
     //
@@ -894,7 +894,7 @@ void CorrectEdgeTolerance (const TopoDS_Edge& myShape,
         Handle(GeomAdaptor_Curve) aHCurve = 
           new GeomAdaptor_Curve(ProjOnPlane);
         
-        ProjLib_ProjectedCurve proj(GAHS,aHCurve);
+        Handle(ProjLib_ProjectedCurve) proj = new ProjLib_ProjectedCurve(GAHS,aHCurve);
         Handle(Geom2d_Curve) PC = Geom2dAdaptor::MakeCurve(proj);
         Handle(Geom2dAdaptor_Curve) GHPC = 
           new Geom2dAdaptor_Curve(PC, 

@@ -142,7 +142,7 @@ void StdPrs_WFDeflectionSurface::Add (
     if (TOD == Aspect_TOD_RELATIVE) {
 // On calcule la fleche en fonction des min max globaux de la piece:
        Bnd_Box Total;
-       BndLib_AddSurface::Add (*aSurface, U1, U2, V1, V2, 0., Total);
+       BndLib_AddSurface::Add (aSurface, U1, U2, V1, V2, 0., Total);
        Standard_Real m = aDrawer->MaximalChordialDeviation()/
 	 aDrawer->DeviationCoefficient();
        Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
@@ -159,8 +159,7 @@ void StdPrs_WFDeflectionSurface::Add (
     else
       TheDeflection = aDrawer->MaximalChordialDeviation();  
 
-    Adaptor3d_IsoCurve anIso;
-    anIso.Load(aSurface);
+    Handle(Adaptor3d_IsoCurve) anIso = new Adaptor3d_IsoCurve(aSurface);
 
     // Trace des frontieres.
     // *********************
@@ -169,16 +168,16 @@ void StdPrs_WFDeflectionSurface::Add (
       aPresentation->CurrentGroup()->SetPrimitivesAspect (aDrawer->FreeBoundaryAspect()->Aspect());
       if ( !UClosed ) 
 	{ 
-	  anIso.Load(GeomAbs_IsoU,U1,V1,V2);
+	  anIso->Load(GeomAbs_IsoU,U1,V1,V2);
 	  StdPrs_DeflectionCurve::Add(aPresentation,anIso,TheDeflection, MaxP);
-	  anIso.Load(GeomAbs_IsoU,U2,V1,V2);
+	  anIso->Load(GeomAbs_IsoU,U2,V1,V2);
 	  StdPrs_DeflectionCurve::Add(aPresentation,anIso,TheDeflection, MaxP);
 	}
       if ( !VClosed )
 	{
-	  anIso.Load(GeomAbs_IsoV,V1,U1,U2);
+	  anIso->Load(GeomAbs_IsoV,V1,U1,U2);
 	  StdPrs_DeflectionCurve::Add(aPresentation,anIso,TheDeflection, MaxP);
-	  anIso.Load(GeomAbs_IsoV,V2,U1,U2);
+	  anIso->Load(GeomAbs_IsoV,V2,U1,U2);
 	  StdPrs_DeflectionCurve::Add(aPresentation,anIso,TheDeflection, MaxP);
 	}
     }
@@ -192,7 +191,7 @@ void StdPrs_WFDeflectionSurface::Add (
       
       Standard_Real du= UClosed ? (U2-U1)/fin : (U2-U1)/(1+fin);
       for (Standard_Integer i=1; i<=fin;i++){
-	anIso.Load(GeomAbs_IsoU,U1+du*i,V1,V2);
+	anIso->Load(GeomAbs_IsoU,U1+du*i,V1,V2);
 	StdPrs_DeflectionCurve::Add(aPresentation,anIso,TheDeflection, MaxP);
       }
     }
@@ -202,7 +201,7 @@ void StdPrs_WFDeflectionSurface::Add (
       
       Standard_Real dv= VClosed ?(V2-V1)/fin : (V2-V1)/(1+fin);
       for (Standard_Integer i=1; i<=fin;i++){
-	anIso.Load(GeomAbs_IsoV,V1+dv*i,U1,U2);
+	anIso->Load(GeomAbs_IsoV,V1+dv*i,U1,U2);
 	StdPrs_DeflectionCurve::Add(aPresentation,anIso,TheDeflection, MaxP);
       }
     }

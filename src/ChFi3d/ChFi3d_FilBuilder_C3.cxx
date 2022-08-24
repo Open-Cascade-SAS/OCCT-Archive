@@ -406,7 +406,7 @@ void ChFi3d_FilBuilder::PerformThreeCorner(const Standard_Integer Jndex)
   // Try to not classify on the face for cases of reentering fillets which naturally depass 
   // the border.  
   Handle(GeomAdaptor_Surface) 
-    bidsurf = new GeomAdaptor_Surface(Fac->ChangeSurface().Surface());
+    bidsurf = new GeomAdaptor_Surface(Fac->Surface()->Surface());
   Handle(Adaptor3d_TopolTool) 
     IFac = new Adaptor3d_TopolTool(bidsurf);
   // end of the attempt.

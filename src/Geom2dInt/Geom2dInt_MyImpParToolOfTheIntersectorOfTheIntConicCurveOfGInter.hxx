@@ -38,7 +38,7 @@ public:
 
   
   //! Constructor of the class.
-  Standard_EXPORT Geom2dInt_MyImpParToolOfTheIntersectorOfTheIntConicCurveOfGInter(const IntCurve_IConicTool& IT, const Adaptor2d_Curve2d& PC);
+  Standard_EXPORT Geom2dInt_MyImpParToolOfTheIntersectorOfTheIntConicCurveOfGInter(const IntCurve_IConicTool& IT, const Handle(Adaptor2d_Curve2d)& PC);
   
   //! Computes the value of the signed distance between
   //! the implicit curve and the point at parameter Param

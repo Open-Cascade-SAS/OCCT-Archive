@@ -88,9 +88,9 @@ extern void ChFi3d_ResultChron(OSD_Chronometer & ch,Standard_Real& time);
 //           two others are required.
 //=======================================================================
 
-static Standard_Boolean ToricRotule(const BRepAdaptor_Surface& fac,
-				    const BRepAdaptor_Surface& s1,
-				    const BRepAdaptor_Surface& s2,
+static Standard_Boolean ToricRotule(const Handle(BRepAdaptor_Surface)& fac,
+				    const Handle(BRepAdaptor_Surface)& s1,
+				    const Handle(BRepAdaptor_Surface)& s2,
 				    const Handle(ChFiDS_Stripe)& c1,
 				    const Handle(ChFiDS_Stripe)& c2)
 
@@ -102,12 +102,12 @@ static Standard_Boolean ToricRotule(const BRepAdaptor_Surface& fac,
   if(sp1.IsNull() || sp2.IsNull()) return Standard_False;
   if (!sp1->IsConstant() || !sp2->IsConstant()) 
     return Standard_False;
-  if ((fac.GetType() != GeomAbs_Plane) ||
-      (s1.GetType() != GeomAbs_Plane) ||
-      (s2.GetType() != GeomAbs_Plane)) return Standard_False;
-  gp_Dir df = fac.Plane().Position().Direction();
-  gp_Dir ds1 = s1.Plane().Position().Direction();
-  gp_Dir ds2 = s2.Plane().Position().Direction();
+  if ((fac->GetType() != GeomAbs_Plane) ||
+      (s1->GetType() != GeomAbs_Plane) ||
+      (s2->GetType() != GeomAbs_Plane)) return Standard_False;
+  gp_Dir df = fac->Plane().Position().Direction();
+  gp_Dir ds1 = s1->Plane().Position().Direction();
+  gp_Dir ds2 = s2->Plane().Position().Direction();
   if ( Abs(df.Dot(ds1)) >= tolesp || Abs(df.Dot(ds2)) >= tolesp ) 
     return Standard_False;
   Standard_Real r1 = sp1->Radius();
@@ -190,8 +190,8 @@ void ChFi3d_FilBuilder::PerformTwoCorner(const Standard_Integer Index)
   if (Sens2==1)  E2= st2->Spine()->Edges(1);
   else E2= st2->Spine()->Edges( st2->Spine()->NbEdges());
   
-  BRepAdaptor_Curve BCurv1(E1);
-  BRepAdaptor_Curve BCurv2(E2);
+  Handle(BRepAdaptor_Curve) BCurv1 = new BRepAdaptor_Curve(E1);
+  Handle(BRepAdaptor_Curve) BCurv2 = new BRepAdaptor_Curve(E2);
   parE1=BRep_Tool::Parameter(Vtx,E1);
   parE2=BRep_Tool::Parameter(Vtx,E2);
   BRepLProp_CLProps CL1(BCurv1,parE1 , 1, 1.e-4);
@@ -328,10 +328,7 @@ void ChFi3d_FilBuilder::PerformTwoCorner(const Standard_Integer Index)
   Handle(BRepAdaptor_Surface) HBRS1 = new BRepAdaptor_Surface();
   Handle(BRepAdaptor_Surface) HBRS2 = new BRepAdaptor_Surface();
   
-  BRepAdaptor_Surface& BRS1 = *HBRS1;
-  BRepAdaptor_Surface& BRS2 = *HBRS2;
-  BRepAdaptor_Surface& BRFaCo = *HFaCo;
-  BRFaCo.Initialize(FaCo);
+  HFaCo->Initialize(FaCo);
   
   TopoDS_Face FF1,FF2,F,FaPiv;
   TopAbs_Orientation pctrans = TopAbs_FORWARD ;
@@ -343,8 +340,8 @@ void ChFi3d_FilBuilder::PerformTwoCorner(const Standard_Integer Index)
    done=1;
    return;
   }
-  BRS1.Initialize(FF1);
-  BRS2.Initialize(FF2);
+  HBRS1->Initialize(FF1);
+  HBRS2->Initialize(FF2);
   
   if(yapiv ) {
     TopTools_ListIteratorOfListOfShape Kt;
@@ -433,7 +430,7 @@ void ChFi3d_FilBuilder::PerformTwoCorner(const Standard_Integer Index)
     cornerset->Append(coin);
     
     if (SameSide) {
-      if(ToricRotule(BRFaCo,BRS1,BRS2,st1,st2)){
+      if(ToricRotule(HFaCo,HBRS1,HBRS2,st1,st2)){
 	// Direct construction.
 	// ---------------------
 	
@@ -445,7 +442,7 @@ void ChFi3d_FilBuilder::PerformTwoCorner(const Standard_Integer Index)
 	bid = 1;
 	bid = ChFi3d::NextSide(ori,OFF1,oriS,oriSFF1,bid);
 	TopAbs_Orientation op1 = TopAbs_FORWARD,op2 = TopAbs_FORWARD;
-	if(yapiv) bid = ChFi3d::ConcaveSide(BRS1,BRS2,pivot,op1,op2);
+	if(yapiv) bid = ChFi3d::ConcaveSide(HBRS1,HBRS2,pivot,op1,op2);
 	op1 = TopAbs::Reverse(op1);
 	op2 = TopAbs::Reverse(op2);
 #ifdef OCCT_DEBUG

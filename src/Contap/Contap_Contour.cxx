@@ -1416,7 +1416,7 @@ void Contap_Contour::Perform
     Box1OK = Standard_False;
   }
   else { 
-    BndLib_AddSurface::Add (*Surf, 1e-8, B1);
+    BndLib_AddSurface::Add (Surf, 1e-8, B1);
   }
   Standard_Real x0,y0,z0,x1,y1,z1,dx,dy,dz;
   if(Box1OK) { 

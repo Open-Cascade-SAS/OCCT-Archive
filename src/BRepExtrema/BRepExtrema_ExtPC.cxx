@@ -45,7 +45,7 @@ void BRepExtrema_ExtPC::Initialize(const TopoDS_Edge& E)
   Standard_Real Tol = Min(BRep_Tool::Tolerance(E), Precision::Confusion());
   Tol = Max(myHC->Resolution(Tol), Precision::PConfusion());
   BRep_Tool::Range(E,U1,U2);
-  myExtPC.Initialize (*myHC, U1, U2, Tol);
+  myExtPC.Initialize (myHC, U1, U2, Tol);
 }
 
 //=======================================================================

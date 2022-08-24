@@ -43,10 +43,10 @@ public:
   
   Standard_EXPORT Extrema_PCFOfEPCOfExtPC();
   
-  Standard_EXPORT Extrema_PCFOfEPCOfExtPC(const gp_Pnt& P, const Adaptor3d_Curve& C);
+  Standard_EXPORT Extrema_PCFOfEPCOfExtPC(const gp_Pnt& P, const Handle(Adaptor3d_Curve)& C);
   
   //! sets the field mycurve of the function.
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& C);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& C);
   
   //! sets the field P of the function.
   Standard_EXPORT void SetPoint (const gp_Pnt& P);

@@ -23,7 +23,7 @@
 #include <math_Matrix.hxx>
  
 
-#define ThePSurface BRepAdaptor_Surface
+#define ThePSurface Handle(BRepAdaptor_Surface)
 #define ThePSurface_hxx <BRepAdaptor_Surface.hxx>
 #define ThePSurfaceTool BRepApprox_SurfaceTool
 #define ThePSurfaceTool_hxx <BRepApprox_SurfaceTool.hxx>

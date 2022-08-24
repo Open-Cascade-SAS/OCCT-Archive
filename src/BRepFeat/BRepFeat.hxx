@@ -97,7 +97,7 @@ public:
   
   Standard_EXPORT static Standard_Boolean IsInside (const TopoDS_Face& F1, const TopoDS_Face& F2);
   
-  Standard_EXPORT static Standard_Boolean IsInOut (const BRepTopAdaptor_FClass2d& FC, const Geom2dAdaptor_Curve& AC);
+  Standard_EXPORT static Standard_Boolean IsInOut (const BRepTopAdaptor_FClass2d& FC, const Handle(Geom2dAdaptor_Curve)& AC);
   
   Standard_EXPORT static void FaceUntil (const TopoDS_Shape& S, TopoDS_Face& F);
   

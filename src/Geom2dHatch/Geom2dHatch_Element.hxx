@@ -36,13 +36,10 @@ public:
   Standard_EXPORT Geom2dHatch_Element();
 
   //! Creates an element.
-  Standard_EXPORT Geom2dHatch_Element(const Geom2dAdaptor_Curve& Curve, const TopAbs_Orientation Orientation = TopAbs_FORWARD);
+  Standard_EXPORT Geom2dHatch_Element(const Handle(Geom2dAdaptor_Curve)& Curve, const TopAbs_Orientation Orientation = TopAbs_FORWARD);
   
   //! Returns the curve associated to the element.
-  Standard_EXPORT const Geom2dAdaptor_Curve& Curve() const;
-  
-  //! Returns the curve associated to the element.
-  Standard_EXPORT Geom2dAdaptor_Curve& ChangeCurve();
+  Standard_EXPORT const Handle(Geom2dAdaptor_Curve)& Curve() const;
   
   //! Sets the orientation of the element.
   Standard_EXPORT void Orientation (const TopAbs_Orientation Orientation);
@@ -63,7 +60,7 @@ private:
 
 
 
-  Geom2dAdaptor_Curve myCurve;
+  Handle(Geom2dAdaptor_Curve) myCurve;
   TopAbs_Orientation myOrientation;
 
 

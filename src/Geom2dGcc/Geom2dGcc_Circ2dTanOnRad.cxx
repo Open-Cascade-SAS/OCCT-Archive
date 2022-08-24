@@ -34,7 +34,7 @@
 
 Geom2dGcc_Circ2dTanOnRad::
    Geom2dGcc_Circ2dTanOnRad (const Geom2dGcc_QualifiedCurve& Qualified1 ,
-			     const Geom2dAdaptor_Curve&      OnCurve    ,
+			     const Handle(Geom2dAdaptor_Curve)&      OnCurve    ,
 			     const Standard_Real             Radius     ,
 			     const Standard_Real             Tolerance  ):
   cirsol(1,8)   ,
@@ -50,11 +50,11 @@ Geom2dGcc_Circ2dTanOnRad::
     throw Standard_NegativeValue();
   }
   else {
-    Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-    GeomAbs_CurveType Type1 = C1.GetType();
-    GeomAbs_CurveType Type2 = OnCurve.GetType();
-    Handle(Geom2d_Curve) CC1 = C1.Curve();
-    Handle(Geom2d_Curve) Con = OnCurve.Curve();
+    Handle(Geom2dAdaptor_Curve) C1 = Qualified1.Qualified();
+    GeomAbs_CurveType Type1 = C1->GetType();
+    GeomAbs_CurveType Type2 = OnCurve->GetType();
+    Handle(Geom2d_Curve) CC1 = C1->Curve();
+    Handle(Geom2d_Curve) Con = OnCurve->Curve();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
@@ -145,7 +145,7 @@ Geom2dGcc_Circ2dTanOnRad::
 
 Geom2dGcc_Circ2dTanOnRad::
    Geom2dGcc_Circ2dTanOnRad (const Handle(Geom2d_Point)&     Point1     ,
-			     const Geom2dAdaptor_Curve&     OnCurve    ,
+			     const Handle(Geom2dAdaptor_Curve)&     OnCurve    ,
 			     const Standard_Real             Radius     ,
 			     const Standard_Real             Tolerance  ):
   cirsol(1,8)   ,
@@ -162,8 +162,8 @@ Geom2dGcc_Circ2dTanOnRad::
   }
   else {
     gp_Pnt2d point1(Point1->Pnt2d());
-    GeomAbs_CurveType Type2 = OnCurve.GetType();
-    Handle(Geom2d_Curve) Con = OnCurve.Curve();
+    GeomAbs_CurveType Type2 = OnCurve->GetType();
+    Handle(Geom2d_Curve) Con = OnCurve->Curve();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +

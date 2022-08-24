@@ -60,14 +60,11 @@ public:
     void Projector (const HLRAlgo_Projector* Proj)
     {myProj = Proj;}
   
-  //! Returns the 3D curve.
-    BRepAdaptor_Curve& Curve();
-  
   //! Sets the 3D curve to be projected.
   Standard_EXPORT void Curve (const TopoDS_Edge& E);
   
   //! Returns the 3D curve.
-    const BRepAdaptor_Curve& GetCurve() const;
+    const Handle(BRepAdaptor_Curve)& Curve() const;
   
   //! Returns the parameter   on the 2d  curve  from the
   //! parameter on the 3d curve.
@@ -212,7 +209,7 @@ private:
 
 
 
-  BRepAdaptor_Curve myCurve;
+  Handle(BRepAdaptor_Curve) myCurve;
   GeomAbs_CurveType myType;
   const HLRAlgo_Projector* myProj;
   Standard_Real myOX;

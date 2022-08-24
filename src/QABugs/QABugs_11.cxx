@@ -215,7 +215,7 @@ static int BUC60610(Draw_Interpretor& di, Standard_Integer argc, const char ** a
   Standard_Integer i=0;
   for( ; ex.More(); ex.Next()){
     const TopoDS_Edge &E = TopoDS::Edge(ex.Current());
-    BRepAdaptor_Curve aCurve(E);
+    Handle(BRepAdaptor_Curve) aCurve = new BRepAdaptor_Curve(E);
     GCPnts_UniformDeflection plin(aCurve, 0.1);
     di << "Num points = " << plin.NbPoints() << "\n";
     if(argc > 2) {
@@ -302,15 +302,14 @@ static int OCC105(Draw_Interpretor& di, Standard_Integer argc, const char ** arg
           vlast = ve1;
 	}
 
-      GeomAdaptor_Curve   curve;
+      Handle(GeomAdaptor_Curve) curve = new GeomAdaptor_Curve(acurve);
       GCPnts_UniformAbscissa  algo;
-      curve.Load(acurve);
       algo.Initialize( curve, l, newufirst, newulast );
       if (!algo.IsDone())
         di << "Not Done!!!"   << "\n";
       for (Standard_Integer Index = 1; Index<=algo.NbPoints();Index++) {
         Standard_Real t = algo.Parameter(Index);
-        gp_Pnt      pt3 = curve.Value(t);
+        gp_Pnt      pt3 = curve->Value(t);
         di << "Parameter t = " << t   << "\n";
         di << "Value Pnt = " << pt3.X()<<" " <<pt3.Y()<<" " << pt3.Z()  << "\n";
       }
@@ -1973,7 +1972,7 @@ static Standard_Integer OCC5739_UniAbs (Draw_Interpretor& di, Standard_Integer a
     return 1;
   }
   const char *name = argv[1];
-  Adaptor3d_Curve *adapCurve=NULL;
+  Handle(Adaptor3d_Curve) adapCurve;
   Handle(Geom_Curve) curve = DrawTrSurf::GetCurve(argv[2]);
   if (!curve.IsNull())
     adapCurve = new GeomAdaptor_Curve(curve);
@@ -1988,7 +1987,7 @@ static Standard_Integer OCC5739_UniAbs (Draw_Interpretor& di, Standard_Integer a
     adapCurve = new BRepAdaptor_CompCurve(TopoDS::Wire(wire));
   }
   double step = Draw::Atof(argv[3]);
-  GCPnts_UniformAbscissa aUni(*adapCurve, step);
+  GCPnts_UniformAbscissa aUni(adapCurve, step);
   int res;
   if (!aUni.IsDone())
   {
@@ -2009,7 +2008,6 @@ static Standard_Integer OCC5739_UniAbs (Draw_Interpretor& di, Standard_Integer a
     }
     res = 0;
   }
-  delete adapCurve;
   return res;
 }
 
@@ -2071,11 +2069,11 @@ static Standard_Integer OCC5698 (Draw_Interpretor& di, Standard_Integer argc, co
   gp_Pnt pnt;
   curve.D0(need_length,pnt);
   // create check_curve parameterised in a general way
-  BRepAdaptor_CompCurve check_curve(wire);
+  Handle(BRepAdaptor_CompCurve) check_curve = new BRepAdaptor_CompCurve(wire);
   Standard_Real check_par =
     GCPnts_AbscissaPoint(check_curve, need_length, 0).Parameter();
   gp_Pnt check_pnt;
-  check_curve.D0(check_par,check_pnt);
+  check_curve->D0(check_par,check_pnt);
   // check that points are coinciding
   Standard_Real error_dist = pnt.Distance(check_pnt);
   if (error_dist > Precision::Confusion()) {
@@ -2968,7 +2966,7 @@ static Standard_Integer OCC8797 (Draw_Interpretor& di, Standard_Integer argc, co
 
   //length!! 1.
   Standard_Real l_abcissa,l_gprop;
-  GeomAdaptor_Curve adaptor_spline(spline);
+  Handle(GeomAdaptor_Curve) adaptor_spline = new GeomAdaptor_Curve(spline);
   GCPnts_AbscissaPoint temp;
   l_abcissa=temp.Length(adaptor_spline);
   std::cout<<"Length Spline(abcissa_Pnt): "<<l_abcissa<<std::endl;

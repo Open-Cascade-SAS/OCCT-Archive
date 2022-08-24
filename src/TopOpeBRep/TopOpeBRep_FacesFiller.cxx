@@ -48,13 +48,13 @@ Standard_EXPORT Standard_Boolean FUN_projPonL(const gp_Pnt& P,const TopOpeBRep_L
   Standard_Boolean hasC3D = FC2D_HasC3D(E);
   Standard_Real dist;
   if (hasC3D) {
-    BRepAdaptor_Curve BAC(E);
+    Handle(BRepAdaptor_Curve) BAC = new BRepAdaptor_Curve(E);
     paramLdef = FUN_tool_projPonC(P,BAC,paramL,dist);
   }
   else {
-    BRepAdaptor_Curve2d BAC2D;
-    if      (Esi == 1)  BAC2D.Initialize(E,FF.Face(1));
-    else if (Esi == 2)  BAC2D.Initialize(E,FF.Face(2));
+    Handle(BRepAdaptor_Curve2d) BAC2D = new BRepAdaptor_Curve2d();
+    if      (Esi == 1)  BAC2D->Initialize(E,FF.Face(1));
+    else if (Esi == 2)  BAC2D->Initialize(E,FF.Face(2));
     paramLdef = FUN_tool_projPonC2D(P,BAC2D,paramL,dist);
   }
   return paramLdef;

@@ -80,8 +80,8 @@ inline void Geom2dHatch_Intersector::SetTangencyTolerance
 #include <Geom2dAdaptor_Curve.hxx>
 
 inline void Geom2dHatch_Intersector::Intersect
-  (const Geom2dAdaptor_Curve& C1,
-   const Geom2dAdaptor_Curve& C2)
+  (const Handle(Geom2dAdaptor_Curve)& C1,
+   const Handle(Geom2dAdaptor_Curve)& C2)
 {
      Geom2dInt_GInter::Perform(C1, 
 			    C2, 

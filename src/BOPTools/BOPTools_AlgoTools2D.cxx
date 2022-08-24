@@ -251,24 +251,24 @@ void BOPTools_AlgoTools2D::AdjustPCurveOnFace
    Handle(Geom2d_Curve)& theC2DA,
    const Handle(IntTools_Context)& theContext)
 {
-  BRepAdaptor_Surface aBASTmp;
-  const BRepAdaptor_Surface* pBAS;
+  Handle(BRepAdaptor_Surface) aBASTmp = new BRepAdaptor_Surface();
+  Handle(BRepAdaptor_Surface) pBAS;
   if (!theContext.IsNull()) {
-    pBAS = &theContext->SurfaceAdaptor(theF);
+    pBAS = theContext->SurfaceAdaptor(theF);
   }
   else {
-    aBASTmp.Initialize(theF, Standard_True);
-    pBAS = &aBASTmp;
+    aBASTmp->Initialize(theF, Standard_True);
+    pBAS = aBASTmp;
   }
   //
-  BOPTools_AlgoTools2D::AdjustPCurveOnSurf(*pBAS, theFirst, theLast, theC2D, theC2DA);
+  BOPTools_AlgoTools2D::AdjustPCurveOnSurf(pBAS, theFirst, theLast, theC2D, theC2DA);
 }
 //=======================================================================
 //function : AdjustPCurveOnFace
 //purpose  : 
 //=======================================================================
 void BOPTools_AlgoTools2D::AdjustPCurveOnSurf
-  (const BRepAdaptor_Surface& aBAS,
+  (const Handle(BRepAdaptor_Surface)& aBAS,
    const Standard_Real aFirst,
    const Standard_Real aLast,
    const Handle(Geom2d_Curve)& aC2D,
@@ -278,11 +278,11 @@ void BOPTools_AlgoTools2D::AdjustPCurveOnSurf
   Standard_Real UMin, UMax, VMin, VMax, aT, u2, v2, du, dv, aDelta;
   Standard_Real aUPeriod;
   //
-  const TopoDS_Face& aF=aBAS.Face();
-  UMin=aBAS.FirstUParameter();
-  UMax=aBAS.LastUParameter();
-  VMin=aBAS.FirstVParameter();
-  VMax=aBAS.LastVParameter();
+  const TopoDS_Face& aF=aBAS->Face();
+  UMin=aBAS->FirstUParameter();
+  UMax=aBAS->LastUParameter();
+  VMin=aBAS->FirstVParameter();
+  VMax=aBAS->LastVParameter();
   //
   aDelta=Precision::PConfusion(); 
   
@@ -296,8 +296,8 @@ void BOPTools_AlgoTools2D::AdjustPCurveOnSurf
   //
   // du
   du = 0.;
-  if (aBAS.IsUPeriodic()) {
-    aUPeriod = aBAS.UPeriod(); 
+  if (aBAS->IsUPeriodic()) {
+    aUPeriod = aBAS->UPeriod(); 
     
     //
     // a. try to clarify u2 using the precision (aDelta)
@@ -311,10 +311,10 @@ void BOPTools_AlgoTools2D::AdjustPCurveOnSurf
     GeomInt::AdjustPeriodic(u2, UMin, UMax, aUPeriod, u2, du, 0.);
     //
     if (du==0.) {
-      if (aBAS.GetType()==GeomAbs_Cylinder) {
+      if (aBAS->GetType()==GeomAbs_Cylinder) {
         Standard_Real aR, dFi, aTol;
         //
-        gp_Cylinder aCylinder=aBAS.Cylinder();
+        gp_Cylinder aCylinder=aBAS->Cylinder();
         aR=aCylinder.Radius();
         aTol=MaxToleranceEdge(aF);
         dFi=aTol/aR;
@@ -333,10 +333,10 @@ void BOPTools_AlgoTools2D::AdjustPCurveOnSurf
   
   // dv
   dv = 0.;
-  if (aBAS.IsVPeriodic()) {
+  if (aBAS->IsVPeriodic()) {
     Standard_Real aVPeriod, aVm, aVr, aVmid, dVm, dVr;
     //
-    aVPeriod = aBAS.VPeriod();
+    aVPeriod = aBAS->VPeriod();
     mincond = (VMin - v2 > aDelta);
     maxcond = (v2 - VMax > aDelta);
     //
@@ -361,8 +361,8 @@ void BOPTools_AlgoTools2D::AdjustPCurveOnSurf
     Standard_Real u,v;
     u = u2 + du;
     v = v2 + dv;
-    if (aBAS.IsUPeriodic()) {
-      aUPeriod = aBAS.UPeriod(); 
+    if (aBAS->IsUPeriodic()) {
+      aUPeriod = aBAS->UPeriod(); 
       if ((UMax - UMin - 2*aDelta) > aUPeriod) {
         if ((u > (UMin + aDelta + aUPeriod)) ||
             (u < (UMax - aDelta - aUPeriod))) {
@@ -377,8 +377,8 @@ void BOPTools_AlgoTools2D::AdjustPCurveOnSurf
     }
     //
     u = u2 + du;
-    if (aBAS.IsVPeriodic()) {
-      Standard_Real aVPeriod = aBAS.VPeriod(); 
+    if (aBAS->IsVPeriodic()) {
+      Standard_Real aVPeriod = aBAS->VPeriod(); 
       if ((VMax - VMin - 2*aDelta) > aVPeriod) {
         if ((v > (VMin + aDelta + aVPeriod)) ||
             (v < (VMax - aDelta - aVPeriod))) {
@@ -521,14 +521,14 @@ void BOPTools_AlgoTools2D::MakePCurveOnFace
    Standard_Real& TolReached2d,
    const Handle(IntTools_Context)& theContext)
 {
-  BRepAdaptor_Surface aBASTmp;
-  const BRepAdaptor_Surface* pBAS;
+  Handle(BRepAdaptor_Surface) aBASTmp = new BRepAdaptor_Surface();
+  Handle(BRepAdaptor_Surface) pBAS;
   if (!theContext.IsNull()) {
-    pBAS = &theContext->SurfaceAdaptor(aF);
+    pBAS = theContext->SurfaceAdaptor(aF);
   }
   else {
-    aBASTmp.Initialize(aF, Standard_True);
-    pBAS = &aBASTmp;
+    aBASTmp->Initialize(aF, Standard_True);
+    pBAS = aBASTmp;
   }
   //
   Handle(BRepAdaptor_Surface) aBAHS = new BRepAdaptor_Surface(*pBAS);
@@ -622,7 +622,7 @@ void BOPTools_AlgoTools2D::MakePCurveOnFace
 
   // Adjust curve for periodic surface
   Handle(Geom2d_Curve) aC2DA;
-  BOPTools_AlgoTools2D::AdjustPCurveOnSurf (*pBAS, aT1, aT2, aC2D, aC2DA);
+  BOPTools_AlgoTools2D::AdjustPCurveOnSurf (pBAS, aT1, aT2, aC2D, aC2DA);
   aC2D = aC2DA;
 
   // Make sure that the range of the 2D curve is sufficient for representation of the 3D curve.
@@ -639,7 +639,7 @@ void BOPTools_AlgoTools2D::MakePCurveOnFace
   }
 
   // compute the appropriate tolerance for the edge
-  Handle(Geom_Surface) aS = pBAS->Surface().Surface();
+  Handle(Geom_Surface) aS = pBAS->Surface()->Surface();
   aS = Handle(Geom_Surface)::DownCast(aS->Transformed(pBAS->Trsf()));
   //
   Standard_Real aT;

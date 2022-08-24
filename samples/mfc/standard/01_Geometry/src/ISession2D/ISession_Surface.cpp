@@ -22,8 +22,7 @@ void ISession_Surface::Compute (const Handle(PrsMgr_PresentationManager)& ,
                                 const Handle(Prs3d_Presentation)& thePrs,
                                 const Standard_Integer theMode)
 {
-  GeomAdaptor_Surface anAdaptorSurface (mySurface);
-  Handle(GeomAdaptor_Surface) anAdaptorHSurface = new GeomAdaptor_Surface (mySurface);
+  Handle(GeomAdaptor_Surface) anAdaptorSurface = new GeomAdaptor_Surface (mySurface);
 
   Handle(Prs3d_Drawer) aPoleDrawer = new Prs3d_Drawer();
   aPoleDrawer->SetOwnLineAspects();
@@ -41,7 +40,7 @@ void ISession_Surface::Compute (const Handle(PrsMgr_PresentationManager)& ,
     }
     case 0:
     {
-      StdPrs_WFSurface::Add (thePrs, anAdaptorHSurface, myDrawer);
+      StdPrs_WFSurface::Add (thePrs, anAdaptorSurface, myDrawer);
       break;
     }
   }

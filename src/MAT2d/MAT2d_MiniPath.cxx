@@ -337,7 +337,7 @@ Handle(MAT2d_Connexion) MAT2d_MiniPath::MinimumL1L2
 	}
       }
       else if (Type1 == STANDARD_TYPE(Geom2d_CartesianPoint)) {
-	Geom2dAdaptor_Curve C2(Item2);
+	Handle(Geom2dAdaptor_Curve) C2 = new Geom2dAdaptor_Curve(Item2);
 	Extrema_ExtPC2d Extremas(P1,C2);
 	if (Extremas.IsDone()){
 	  for (i = 1; i <= Extremas.NbExt(); i++) {
@@ -355,7 +355,7 @@ Handle(MAT2d_Connexion) MAT2d_MiniPath::MinimumL1L2
 	}
       }
       else if (Type2 == STANDARD_TYPE(Geom2d_CartesianPoint)) {
-	Geom2dAdaptor_Curve C1(Item1);
+	Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve(Item1);
 	Extrema_ExtPC2d Extremas(P2,C1);
 	if (Extremas.IsDone()){
 	  for (i=1;i<=Extremas.NbExt();i++) {
@@ -373,8 +373,8 @@ Handle(MAT2d_Connexion) MAT2d_MiniPath::MinimumL1L2
 	}
       }
       else {
-	Geom2dAdaptor_Curve C1(Item1);
-	Geom2dAdaptor_Curve C2(Item2);
+	Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve(Item1);
+	Handle(Geom2dAdaptor_Curve) C2 = new Geom2dAdaptor_Curve(Item2);
 	Extrema_ExtCC2d Extremas(C1,C2);
 	if (!Extremas.IsParallel() && Extremas.IsDone()){
 	  for ( i=1; i <= Extremas.NbExt(); i++) {

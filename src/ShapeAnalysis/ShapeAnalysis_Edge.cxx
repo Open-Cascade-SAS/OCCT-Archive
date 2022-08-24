@@ -859,7 +859,7 @@ static Standard_Boolean IsOverlapPartEdges(const TopoDS_Edge& theFirstEdge,
                                            const Standard_Real& theEndLength)
 {
   TColStd_SequenceOfInteger aSeqIntervals;
-  BRepAdaptor_Curve aAdCurve1(theFirstEdge);
+  Handle(BRepAdaptor_Curve) aAdCurve1 = new BRepAdaptor_Curve(theFirstEdge);
 
   BRepExtrema_DistShapeShape aMinDist;
   aMinDist.LoadS1(theSecEdge);
@@ -872,9 +872,9 @@ static Standard_Boolean IsOverlapPartEdges(const TopoDS_Edge& theFirstEdge,
       aPoint = BRep_Tool::Pnt(V1);
     }
     else {
-      GCPnts_AbscissaPoint aAbsPoint(Precision::Confusion(),aAdCurve1,aS,aAdCurve1.FirstParameter());
+      GCPnts_AbscissaPoint aAbsPoint(Precision::Confusion(),aAdCurve1,aS,aAdCurve1->FirstParameter());
       if(aAbsPoint.IsDone()) 
-        aAdCurve1.D0(aAbsPoint.Parameter(),aPoint);
+        aAdCurve1->D0(aAbsPoint.Parameter(),aPoint);
       else continue;
     }
     BRep_Builder aB;
@@ -900,9 +900,9 @@ Standard_Boolean ShapeAnalysis_Edge::CheckOverlapping(const TopoDS_Edge& theEdge
                                                       const Standard_Real theDomainDist) 
 {
   Standard_Boolean isOverlap = Standard_False;
-  BRepAdaptor_Curve aAdCurve1(theEdge1);
+  Handle(BRepAdaptor_Curve) aAdCurve1 = new BRepAdaptor_Curve(theEdge1);
   Standard_Real aLength1 = GCPnts_AbscissaPoint::Length (aAdCurve1);
-  BRepAdaptor_Curve aAdCurve2(theEdge2);
+  Handle(BRepAdaptor_Curve) aAdCurve2 = new BRepAdaptor_Curve(theEdge2);
   Standard_Real aLength2 = GCPnts_AbscissaPoint::Length (aAdCurve2);
   TopoDS_Edge aFirstEdge = (aLength1 >= aLength2 ? theEdge2: theEdge1);
   TopoDS_Edge aSecEdge = (aLength1 >= aLength2 ? theEdge1: theEdge2);
@@ -944,7 +944,7 @@ Standard_Boolean ShapeAnalysis_Edge::CheckOverlapping(const TopoDS_Edge& theEdge
         Standard_Real aParam1, aFirst, aLast;
         aMinDist.ParOnEdgeS1 ( i, aParam1 );
         BRep_Tool::Range(aFirstEdge,aFirst,aLast);
-        BRepAdaptor_Curve anAdaptor(aFirstEdge);
+        Handle(BRepAdaptor_Curve) anAdaptor = new BRepAdaptor_Curve(aFirstEdge);
         aLengthP = GCPnts_AbscissaPoint::Length(anAdaptor,aFirst,aParam1);
       }
       else continue;

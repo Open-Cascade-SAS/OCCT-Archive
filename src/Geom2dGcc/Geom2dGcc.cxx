@@ -17,22 +17,22 @@
 #include <Geom2dGcc_QualifiedCurve.hxx>
 
 Geom2dGcc_QualifiedCurve
-  Geom2dGcc::Unqualified(const Geom2dAdaptor_Curve& Curve) {
+  Geom2dGcc::Unqualified(const Handle(Geom2dAdaptor_Curve)& Curve) {
     return Geom2dGcc_QualifiedCurve(Curve,GccEnt_unqualified);
   }
 
 Geom2dGcc_QualifiedCurve
-  Geom2dGcc::Enclosing(const Geom2dAdaptor_Curve& Curve) {
+  Geom2dGcc::Enclosing(const Handle(Geom2dAdaptor_Curve)& Curve) {
     return Geom2dGcc_QualifiedCurve(Curve,GccEnt_enclosing);
   }
 
 Geom2dGcc_QualifiedCurve
-  Geom2dGcc::Enclosed(const Geom2dAdaptor_Curve& Curve) {
+  Geom2dGcc::Enclosed(const Handle(Geom2dAdaptor_Curve)& Curve) {
     return Geom2dGcc_QualifiedCurve(Curve,GccEnt_enclosed);
   }
 
 Geom2dGcc_QualifiedCurve
-  Geom2dGcc::Outside(const Geom2dAdaptor_Curve& Curve) {
+  Geom2dGcc::Outside(const Handle(Geom2dAdaptor_Curve)& Curve) {
     return Geom2dGcc_QualifiedCurve(Curve,GccEnt_outside);
   }
 

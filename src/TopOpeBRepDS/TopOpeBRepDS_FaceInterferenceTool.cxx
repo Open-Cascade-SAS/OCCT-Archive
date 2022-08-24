@@ -42,11 +42,11 @@ static void FUN_RaiseError(){throw Standard_ProgramError("TopOpeBRepDS_FaceInter
 Standard_EXPORT Standard_Boolean FUN_Parameters
 (const gp_Pnt& Pnt,const TopoDS_Shape& F,Standard_Real& u,Standard_Real& v)
 {
-  BRepAdaptor_Surface Surf(TopoDS::Face(F));
+  Handle(BRepAdaptor_Surface) Surf = new BRepAdaptor_Surface(TopoDS::Face(F));
   // Get 2d coord of the projection of <Pnt> on surface of <F>.
-  Standard_Real uvtol = Surf.Tolerance();
-  Standard_Real fu=Surf.FirstUParameter(),lu=Surf.LastUParameter();
-  Standard_Real fv=Surf.FirstVParameter(),lv=Surf.LastVParameter();
+  Standard_Real uvtol = Surf->Tolerance();
+  Standard_Real fu=Surf->FirstUParameter(),lu=Surf->LastUParameter();
+  Standard_Real fv=Surf->FirstVParameter(),lv=Surf->LastVParameter();
   Extrema_ExtPS extps(Pnt,Surf,fu,lu,fv,lv,uvtol,uvtol);
   if (!extps.IsDone()) {
     return Standard_False;
@@ -84,7 +84,7 @@ Standard_EXPORT void FUN_ComputeGeomData
 (const TopoDS_Shape& F,const gp_Pnt2d& uv,
  gp_Dir& Norm,gp_Dir& D1,gp_Dir& D2,Standard_Real& Cur1,Standard_Real& Cur2)
 {    
-  BRepAdaptor_Surface surf(TopoDS::Face(F));
+  Handle(BRepAdaptor_Surface) surf = new BRepAdaptor_Surface(TopoDS::Face(F));
   Standard_Real uu = uv.X(),vv = uv.Y();
   
   Standard_Boolean sphere = FUN_sphere(F);
@@ -106,8 +106,8 @@ Standard_EXPORT void FUN_ComputeGeomData
     if      (plane) 
       Norm = FUN_tool_nggeomF(uv, TopoDS::Face(F));
     else if (sphere) {
-      gp_Pnt center = surf.Sphere().Location();
-      gp_Pnt value  = surf.Value(uu,vv);  
+      gp_Pnt center = surf->Sphere().Location();
+      gp_Pnt value  = surf->Value(uu,vv);  
       Norm = gp_Dir(gp_Vec(center,value)); // recall : input data for TopTrans_SurfaceTransition
                                            //          describes "direct" geometry 
     }

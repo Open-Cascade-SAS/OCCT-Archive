@@ -198,13 +198,13 @@ static void IntersectCurveAndBoundary(const Handle(Geom2d_Curve)& theC2d,
   if(theC2d.IsNull())
     return;
 
-  Geom2dAdaptor_Curve anAC1(theC2d);
+  Handle(Geom2dAdaptor_Curve) anAC1 = new Geom2dAdaptor_Curve(theC2d);
   for(Standard_Integer aCurID = 0; aCurID < theNumberOfCurves; aCurID++)
   {
     if(theArrBounds[aCurID].IsNull())
       continue;
 
-    Geom2dAdaptor_Curve anAC2(theArrBounds[aCurID]);
+    Handle(Geom2dAdaptor_Curve) anAC2 = new Geom2dAdaptor_Curve(theArrBounds[aCurID]);
     Geom2dInt_GInter anIntCC2d(anAC1, anAC2, theTol, theTol);
 
     if(!anIntCC2d.IsDone() || anIntCC2d.IsEmpty())
@@ -1017,7 +1017,7 @@ void GeomInt_IntSS::TreatRLine(const Handle(IntPatch_RLine)& theRL,
     aGAHS = theHS1;
     anAHC2d = theRL->ArcOnS1();
     theRL->ParamOnS1(tf, tl);
-    theC2d1 = Geom2dAdaptor::MakeCurve (*anAHC2d);
+    theC2d1 = Geom2dAdaptor::MakeCurve (anAHC2d);
     tf = Max(tf, theC2d1->FirstParameter());
     tl = Min(tl, theC2d1->LastParameter());
     theC2d1 = new Geom2d_TrimmedCurve(theC2d1, tf, tl);
@@ -1027,7 +1027,7 @@ void GeomInt_IntSS::TreatRLine(const Handle(IntPatch_RLine)& theRL,
     aGAHS = theHS2;
     anAHC2d = theRL->ArcOnS2();
     theRL->ParamOnS2(tf, tl);
-    theC2d2 = Geom2dAdaptor::MakeCurve (*anAHC2d);
+    theC2d2 = Geom2dAdaptor::MakeCurve (anAHC2d);
     tf = Max(tf, theC2d2->FirstParameter());
     tl = Min(tl, theC2d2->LastParameter());
     theC2d2 = new Geom2d_TrimmedCurve(theC2d2, tf, tl);
@@ -1057,13 +1057,13 @@ void GeomInt_IntSS::TreatRLine(const Handle(IntPatch_RLine)& theRL,
   Standard_Real aTol = Precision::Confusion();
   if(theRL->IsArcOnS1())
   {
-    Handle(Geom_Surface) aS = GeomAdaptor::MakeSurface (*theHS2);
+    Handle(Geom_Surface) aS = GeomAdaptor::MakeSurface (theHS2);
     BuildPCurves (tf, tl, aTol, 
                   aS, theC3d, theC2d2);
   }
   if(theRL->IsArcOnS2())
   {
-    Handle(Geom_Surface) aS = GeomAdaptor::MakeSurface (*theHS1);
+    Handle(Geom_Surface) aS = GeomAdaptor::MakeSurface (theHS1);
     BuildPCurves (tf, tl, aTol, 
                   aS, theC3d, theC2d1);
   }
@@ -1122,8 +1122,7 @@ void GeomInt_IntSS::BuildPCurves (Standard_Real f,
       //of line.
 
       Standard_Real aU=0., aV=0.;
-      GeomAdaptor_Surface anAS;
-      anAS.Load(S);
+      Handle(GeomAdaptor_Surface) anAS = new GeomAdaptor_Surface(S);
       Extrema_ExtPS anExtr;
       const gp_Pnt aP3d1 = C->Value(f);
       const gp_Pnt aP3d2 = C->Value(l);
@@ -1159,7 +1158,7 @@ void GeomInt_IntSS::BuildPCurves (Standard_Real f,
             //Check same parameter in middle point .begin
             const gp_Pnt PMid(C->Value(0.5*(f+l)));
             const gp_Pnt2d pmidcurve2d(0.5*(aP2d1.XY() + aP2d2.XY()));
-            const gp_Pnt aPC(anAS.Value(pmidcurve2d.X(), pmidcurve2d.Y()));
+            const gp_Pnt aPC(anAS->Value(pmidcurve2d.X(), pmidcurve2d.Y()));
             const Standard_Real aDist = PMid.Distance(aPC);
             Tol = Max(aDist, Tol);
             //Check same parameter in middle point .end

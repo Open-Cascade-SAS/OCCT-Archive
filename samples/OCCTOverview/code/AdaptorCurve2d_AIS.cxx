@@ -55,7 +55,7 @@ void AdaptorCurve2d_AIS::Compute (const Handle(PrsMgr_PresentationManager)&,
     return;
   }
 
-  Geom2dAdaptor_Curve anAdaptor(myGeom2dCurve);
+  Handle(Geom2dAdaptor_Curve) anAdaptor = new Geom2dAdaptor_Curve(myGeom2dCurve);
   GCPnts_QuasiUniformDeflection anEdgeDistrib(anAdaptor, 1.e-2);
   if (anEdgeDistrib.IsDone())
   {
@@ -72,9 +72,9 @@ void AdaptorCurve2d_AIS::Compute (const Handle(PrsMgr_PresentationManager)&,
 
   if (myDisplayPole)
   {
-    if (anAdaptor.GetType() == GeomAbs_BezierCurve)
+    if (anAdaptor->GetType() == GeomAbs_BezierCurve)
     {
-      Handle(Geom2d_BezierCurve) aBezier = anAdaptor.Bezier();
+      Handle(Geom2d_BezierCurve) aBezier = anAdaptor->Bezier();
       Handle(Graphic3d_ArrayOfPolylines) anArrayOfVertex = new Graphic3d_ArrayOfPolylines(aBezier->NbPoles());
       for (int i = 1; i <= aBezier->NbPoles(); i++)
       {
@@ -87,9 +87,9 @@ void AdaptorCurve2d_AIS::Compute (const Handle(PrsMgr_PresentationManager)&,
       aPrsGroup->AddPrimitiveArray(anArrayOfVertex);
     }
 
-    if (anAdaptor.GetType() == GeomAbs_BSplineCurve)
+    if (anAdaptor->GetType() == GeomAbs_BSplineCurve)
     {
-      Handle(Geom2d_BSplineCurve) aBSpline = anAdaptor.BSpline();
+      Handle(Geom2d_BSplineCurve) aBSpline = anAdaptor->BSpline();
       Handle(Graphic3d_ArrayOfPolylines) anArrayOfVertex = new Graphic3d_ArrayOfPolylines(aBSpline->NbPoles());
       for (int i = 1; i <= aBSpline->NbPoles(); i++)
       {
@@ -103,11 +103,11 @@ void AdaptorCurve2d_AIS::Compute (const Handle(PrsMgr_PresentationManager)&,
     }
   }
 
-  if (myDisplayCurbure && (anAdaptor.GetType() != GeomAbs_Line))
+  if (myDisplayCurbure && (anAdaptor->GetType() != GeomAbs_Line))
   {
-    const Standard_Integer nbintv = anAdaptor.NbIntervals(GeomAbs_CN);
+    const Standard_Integer nbintv = anAdaptor->NbIntervals(GeomAbs_CN);
     TColStd_Array1OfReal TI(1, nbintv + 1);
-    anAdaptor.Intervals(TI, GeomAbs_CN);
+    anAdaptor->Intervals(TI, GeomAbs_CN);
     Standard_Real Resolution = 1.0e-9, Curvature;
     Geom2dLProp_CLProps2d LProp(myGeom2dCurve, 2, Resolution);
     gp_Pnt2d P1, P2;

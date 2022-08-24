@@ -485,7 +485,7 @@ Standard_Boolean GeomFill_CorrectedFrenet::SetCurve(const Handle(Adaptor3d_Curve
   gp_Vec D1;
 
   frenet->SetInterval(First, Last); //To have right evaluation at bounds
-  GeomFill_SnglrFunc CS(myCurve);
+  Handle(GeomFill_SnglrFunc) CS = new GeomFill_SnglrFunc(myCurve);
   BndLib_Add3dCurve::Add(CS, First, Last, 1.e-2, Boite);
   LengthMin = Boite.GetGap()*1.e-4;
     
@@ -543,7 +543,7 @@ Standard_Boolean GeomFill_CorrectedFrenet::SetCurve(const Handle(Adaptor3d_Curve
       i++;
 
       //Evaluate the Next step
-      CS.D1(Param, PonC, D1);
+      CS->D1(Param, PonC, D1);
       L = Max(PonC.XYZ().Modulus()/2, LengthMin);
       norm = D1.Magnitude(); 
       if (norm < Precision::Confusion()) {

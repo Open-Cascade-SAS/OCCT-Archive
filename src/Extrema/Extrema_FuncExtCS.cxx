@@ -64,8 +64,8 @@ les algorithmes math_FunctionRoot et math_FunctionRoots.
 //purpose  : 
 //=======================================================================
 
- Extrema_FuncExtCS::Extrema_FuncExtCS(const Adaptor3d_Curve& C, 
-				      const Adaptor3d_Surface& S)
+ Extrema_FuncExtCS::Extrema_FuncExtCS(const Handle(Adaptor3d_Curve)& C, 
+				      const Handle(Adaptor3d_Surface)& S)
 {
   Initialize(C, S);
 }
@@ -75,11 +75,11 @@ les algorithmes math_FunctionRoot et math_FunctionRoots.
 //purpose  : 
 //=======================================================================
 
-void Extrema_FuncExtCS::Initialize(const Adaptor3d_Curve& C, 
-				   const Adaptor3d_Surface& S)
+void Extrema_FuncExtCS::Initialize(const Handle(Adaptor3d_Curve)& C, 
+				   const Handle(Adaptor3d_Surface)& S)
 {
-  myC = &C;
-  myS = &S;
+  myC = C;
+  myS = S;
   myCinit = Standard_True;
   mySinit = Standard_True;
   myPoint1.Clear();

@@ -315,7 +315,7 @@ GeomFill_EvolvedSection::GeomFill_EvolvedSection(const Handle(Geom_Curve)& C,
 {
   Standard_Real L, val, max, U, Delta;
   Standard_Integer ii;
-  GeomAdaptor_Curve AC (mySection);
+  Handle(GeomAdaptor_Curve) AC = new GeomAdaptor_Curve(mySection);
   L = GCPnts_AbscissaPoint::Length(AC);
 
   Delta = ( Last - First) / 20;

@@ -553,7 +553,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep)
 //            (theU0, theV0) is initial point for extrema
 //=======================================================================
 static Standard_Real SQDistPointSurface(const gp_Pnt &thePnt,
-                                        const Adaptor3d_Surface& theSurf,
+                                        const Handle(Adaptor3d_Surface)& theSurf,
                                         const Standard_Real theU0,
                                         const Standard_Real theV0)
 {
@@ -621,7 +621,7 @@ static Standard_Boolean IsTangentExtCheck(const Handle(Adaptor3d_Surface)& theSu
   for(Standard_Integer i = 0; i < aNbItems; i++)
   {
     gp_Pnt aP(theSurf1->Value(aParUS1[i], aParVS1[i]));
-    const Standard_Real aSqDist = SQDistPointSurface(aP, *theSurf2, theU20, theV20);
+    const Standard_Real aSqDist = SQDistPointSurface(aP, theSurf2, theU20, theV20);
     if(aSqDist > aSQToler)
       return Standard_False;
   }
@@ -629,7 +629,7 @@ static Standard_Boolean IsTangentExtCheck(const Handle(Adaptor3d_Surface)& theSu
   for(Standard_Integer i = 0; i < aNbItems; i++)
   {
     gp_Pnt aP(theSurf2->Value(aParUS2[i], aParVS2[i]));
-    const Standard_Real aSqDist = SQDistPointSurface(aP, *theSurf1, theU10, theV10);
+    const Standard_Real aSqDist = SQDistPointSurface(aP, theSurf1, theU10, theV10);
     if(aSqDist > aSQToler)
       return Standard_False;
   }

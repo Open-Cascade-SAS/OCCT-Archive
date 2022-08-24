@@ -53,8 +53,8 @@ InitDerivative(const math_Vector& X,
 }
 
 Geom2dGcc_FunctionTanCuCu::
-Geom2dGcc_FunctionTanCuCu(const Geom2dAdaptor_Curve& C1  ,
-                          const Geom2dAdaptor_Curve& C2  ) {
+Geom2dGcc_FunctionTanCuCu(const Handle(Geom2dAdaptor_Curve)& C1  ,
+                          const Handle(Geom2dAdaptor_Curve)& C2  ) {
                             TheCurve1 = C1;
                             TheCurve2 = C2;
                             TheType = Geom2dGcc_CuCu;
@@ -62,8 +62,9 @@ Geom2dGcc_FunctionTanCuCu(const Geom2dAdaptor_Curve& C1  ,
 
 Geom2dGcc_FunctionTanCuCu::
 Geom2dGcc_FunctionTanCuCu(const gp_Circ2d& C1  ,
-                          const Geom2dAdaptor_Curve&  C2  ) {
+                          const Handle(Geom2dAdaptor_Curve)&  C2  ) {
                             TheCirc1 = C1;
+                            TheCurve1 = new Geom2dAdaptor_Curve();
                             TheCurve2 = C2;
                             TheType = Geom2dGcc_CiCu;
 }

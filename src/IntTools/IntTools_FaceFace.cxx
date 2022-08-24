@@ -281,25 +281,25 @@ void IntTools_FaceFace::SetList(IntSurf_ListOfPntOn2S& aListOfPnts)
 }
 
 
-static Standard_Boolean isTreatAnalityc(const BRepAdaptor_Surface& theBAS1,
-                                        const BRepAdaptor_Surface& theBAS2,
+static Standard_Boolean isTreatAnalityc(const Handle(BRepAdaptor_Surface)& theBAS1,
+                                        const Handle(BRepAdaptor_Surface)& theBAS2,
                                         const Standard_Real theTol)
 {
   const Standard_Real Tolang = 1.e-8;
   Standard_Real aHigh = 0.0;
 
-  const GeomAbs_SurfaceType aType1=theBAS1.GetType();
-  const GeomAbs_SurfaceType aType2=theBAS2.GetType();
+  const GeomAbs_SurfaceType aType1=theBAS1->GetType();
+  const GeomAbs_SurfaceType aType2=theBAS2->GetType();
   
   gp_Pln aS1;
   gp_Cylinder aS2;
   if(aType1 == GeomAbs_Plane)
   {
-    aS1=theBAS1.Plane();
+    aS1=theBAS1->Plane();
   }
   else if(aType2 == GeomAbs_Plane)
   {
-    aS1=theBAS2.Plane();
+    aS1=theBAS2->Plane();
   }
   else
   {
@@ -308,9 +308,9 @@ static Standard_Boolean isTreatAnalityc(const BRepAdaptor_Surface& theBAS1,
 
   if(aType1 == GeomAbs_Cylinder)
   {
-    aS2=theBAS1.Cylinder();
-    const Standard_Real VMin = theBAS1.FirstVParameter();
-    const Standard_Real VMax = theBAS1.LastVParameter();
+    aS2=theBAS1->Cylinder();
+    const Standard_Real VMin = theBAS1->FirstVParameter();
+    const Standard_Real VMax = theBAS1->LastVParameter();
 
     if( Precision::IsNegativeInfinite(VMin) ||
         Precision::IsPositiveInfinite(VMax))
@@ -320,10 +320,10 @@ static Standard_Boolean isTreatAnalityc(const BRepAdaptor_Surface& theBAS1,
   }
   else if(aType2 == GeomAbs_Cylinder)
   {
-    aS2=theBAS2.Cylinder();
+    aS2=theBAS2->Cylinder();
 
-    const Standard_Real VMin = theBAS2.FirstVParameter();
-    const Standard_Real VMax = theBAS2.LastVParameter();
+    const Standard_Real VMin = theBAS2->FirstVParameter();
+    const Standard_Real VMax = theBAS2->LastVParameter();
 
     if( Precision::IsNegativeInfinite(VMin) ||
         Precision::IsPositiveInfinite(VMax))
@@ -370,18 +370,18 @@ void IntTools_FaceFace::Perform (const TopoDS_Face& aF1,
   myFace1=aF1;
   myFace2=aF2;
 
-  const BRepAdaptor_Surface& aBAS1 = myContext->SurfaceAdaptor(myFace1);
-  const BRepAdaptor_Surface& aBAS2 = myContext->SurfaceAdaptor(myFace2);
-  GeomAbs_SurfaceType aType1=aBAS1.GetType();
-  GeomAbs_SurfaceType aType2=aBAS2.GetType();
+  const Handle(BRepAdaptor_Surface)& aBAS1 = myContext->SurfaceAdaptor(myFace1);
+  const Handle(BRepAdaptor_Surface)& aBAS2 = myContext->SurfaceAdaptor(myFace2);
+  GeomAbs_SurfaceType aType1=aBAS1->GetType();
+  GeomAbs_SurfaceType aType2=aBAS2->GetType();
 
   const Standard_Boolean bReverse=SortTypes(aType1, aType2);
   if (bReverse)
   {
     myFace1=aF2;
     myFace2=aF1;
-    aType1=aBAS2.GetType();
-    aType2=aBAS1.GetType();
+    aType1=aBAS2->GetType();
+    aType2=aBAS1->GetType();
 
     if (myListOfPnts.Extent())
     {
@@ -2104,7 +2104,7 @@ Standard_Boolean IsCurveValid (const Handle(Geom2d_Curve)& thePCurve)
     return Standard_False;
 
   Standard_Real tolint = 1.e-10;
-  Geom2dAdaptor_Curve PCA;
+  Handle(Geom2dAdaptor_Curve) PCA = new Geom2dAdaptor_Curve();
   IntRes2d_Domain PCD;
   Geom2dInt_GInter PCI;
 
@@ -2116,10 +2116,10 @@ Standard_Boolean IsCurveValid (const Handle(Geom2d_Curve)& thePCurve)
     pl = thePCurve->LastParameter();
     pntf = thePCurve->Value(pf);
     pntl = thePCurve->Value(pl);
-    PCA.Load(thePCurve);
-    if(!PCA.IsPeriodic()) {
-      if(PCA.FirstParameter() > pf) pf = PCA.FirstParameter();
-      if(PCA.LastParameter()  < pl) pl = PCA.LastParameter();
+    PCA->Load(thePCurve);
+    if(!PCA->IsPeriodic()) {
+      if(PCA->FirstParameter() > pf) pf = PCA->FirstParameter();
+      if(PCA->LastParameter()  < pl) pl = PCA->LastParameter();
     }
     PCD.SetValues(pntf,pf,tolint,pntl,pl,tolint);
     PCI.Perform(PCA,PCD,tolint,tolint);

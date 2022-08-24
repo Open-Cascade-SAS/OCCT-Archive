@@ -35,18 +35,18 @@
 //function : IntTools::GetRadius
 //purpose  : 
 //=======================================================================
-  Standard_Integer IntTools::GetRadius(const BRepAdaptor_Curve& C,
+  Standard_Integer IntTools::GetRadius(const Handle(BRepAdaptor_Curve)& C,
 				       const Standard_Real t1,
 				       const Standard_Real t3,
 				       Standard_Real& aR)
 {
-  GeomAbs_CurveType aType=C.GetType();
+  GeomAbs_CurveType aType=C->GetType();
   if (aType==GeomAbs_Line) {
     return 1;
   }
 
   if (aType==GeomAbs_Circle) {
-    gp_Circ aCrc=C.Circle();
+    gp_Circ aCrc=C->Circle();
     aR=aCrc.Radius();
     return 0;
   }
@@ -56,9 +56,9 @@
 
   t2=0.5*(t1+t3);
   
-  P1=C.Value(t1);
-  P2=C.Value(t2);
-  P3=C.Value(t3);
+  P1=C->Value(t1);
+  P2=C->Value(t2);
+  P3=C->Value(t3);
   //
   //
   gce_MakeCirc aMakeCirc(P1, P2, P3);
@@ -87,7 +87,7 @@
 //function : PrepareArgs
 //purpose  : 
 //=======================================================================
-Standard_Integer IntTools::PrepareArgs (BRepAdaptor_Curve& C,
+Standard_Integer IntTools::PrepareArgs (const Handle(BRepAdaptor_Curve)& C,
                                         const Standard_Real Tmax,
                                         const Standard_Real Tmin,
                                         const Standard_Integer Discret,
@@ -101,7 +101,7 @@ Standard_Integer IntTools::PrepareArgs (BRepAdaptor_Curve& C,
   Standard_Boolean aRFlag; 
   
   GeomAbs_CurveType aCurveType;
-  aCurveType=C.GetType();
+  aCurveType=C->GetType();
   
   dt=(Tmax-Tmin)/Discret;
   aRFlag=(dt > 1.e-5); 

@@ -98,7 +98,7 @@ parcen3(1,aNbSolMAX)
   }
   Standard_Integer nbrcote1 = 0;
   TColStd_Array1OfReal Coef(1,2);
-  Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
 
   if (Radius < 0.0) { throw Standard_NegativeValue(); }
   else {
@@ -121,13 +121,12 @@ parcen3(1,aNbSolMAX)
     IntRes2d_Domain D1;
     Geom2dInt_TheIntConicCurveOfGInter Intp;
     for (Standard_Integer jcote1 = 1 ; jcote1 <= nbrcote1 ; jcote1++) {
-      Handle(Geom2dAdaptor_Curve) HCu1 = new Geom2dAdaptor_Curve(Cu1);
       //Adaptor2d_OffsetCurve C2(HCu1,Coef(jcote1));
-      Adaptor2d_OffsetCurve C2(HCu1, -Coef(jcote1));
-      firstparam = Max(C2.FirstParameter(),thefirst);
-      lastparam  = Min(C2.LastParameter(),thelast);
-      IntRes2d_Domain D2(C2.Value(firstparam), firstparam, Tol,
-                         C2.Value(lastparam), lastparam, Tol);
+      Handle(Adaptor2d_OffsetCurve) C2 = new Adaptor2d_OffsetCurve(Cu1, -Coef(jcote1));
+      firstparam = Max(C2->FirstParameter(),thefirst);
+      lastparam  = Min(C2->LastParameter(),thelast);
+      IntRes2d_Domain D2(C2->Value(firstparam), firstparam, Tol,
+                         C2->Value(lastparam), lastparam, Tol);
       Intp.Perform(OnLine,D1,C2,D2,Tol,Tol);
       if (Intp.IsDone()) {
         if (!Intp.IsEmpty()) {
@@ -208,7 +207,7 @@ parcen3(1,aNbSolMAX)
       return;
   }
   TColStd_Array1OfReal cote1(1,2);
-  Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
 
   if (Radius < 0.0) {
     throw Standard_NegativeValue();
@@ -235,13 +234,12 @@ parcen3(1,aNbSolMAX)
     D1.SetEquivalentParameters(0.,2.*M_PI);
     Geom2dInt_TheIntConicCurveOfGInter Intp;
     for (Standard_Integer jcote1 = 1 ; jcote1 <= nbrcote1 ; jcote1++) {
-      Handle(Geom2dAdaptor_Curve) HCu1 = new Geom2dAdaptor_Curve(Cu1);
-      //Adaptor2d_OffsetCurve C2(HCu1,cote1(jcote1));
-      Adaptor2d_OffsetCurve C2(HCu1, -cote1(jcote1));
-      firstparam = Max(C2.FirstParameter(),thefirst);
-      lastparam  = Min(C2.LastParameter(),thelast);
-      IntRes2d_Domain D2(C2.Value(firstparam),firstparam,Tol,
-                         C2.Value(lastparam),lastparam,Tol);
+      //Adaptor2d_OffsetCurve C2(Cu1,cote1(jcote1));
+      Handle(Adaptor2d_OffsetCurve) C2 = new Adaptor2d_OffsetCurve(Cu1, -cote1(jcote1));
+      firstparam = Max(C2->FirstParameter(),thefirst);
+      lastparam  = Min(C2->LastParameter(),thelast);
+      IntRes2d_Domain D2(C2->Value(firstparam),firstparam,Tol,
+                         C2->Value(lastparam),lastparam,Tol);
       Intp.Perform(OnCirc,D1,C2,D2,Tol,Tol);
       if (Intp.IsDone()) {
         if (!Intp.IsEmpty()) {
@@ -285,7 +283,7 @@ parcen3(1,aNbSolMAX)
 
 Geom2dGcc_Circ2dTanOnRadGeo::
 Geom2dGcc_Circ2dTanOnRadGeo (const GccEnt_QualifiedCirc& Qualified1,
-                             const Geom2dAdaptor_Curve&             OnCurv    ,
+                             const Handle(Geom2dAdaptor_Curve)&             OnCurv    ,
                              const Standard_Real         Radius    ,
                              const Standard_Real         Tolerance ):
 
@@ -409,7 +407,7 @@ parcen3(1,aNbSolMAX)
 
 Geom2dGcc_Circ2dTanOnRadGeo::
 Geom2dGcc_Circ2dTanOnRadGeo (const GccEnt_QualifiedLin& Qualified1,
-                             const Geom2dAdaptor_Curve&            OnCurv    ,
+                             const Handle(Geom2dAdaptor_Curve)&            OnCurv    ,
                              const Standard_Real        Radius    ,
                              const Standard_Real        Tolerance ):
 
@@ -530,7 +528,7 @@ parcen3(1,aNbSolMAX)
 
 Geom2dGcc_Circ2dTanOnRadGeo::
 Geom2dGcc_Circ2dTanOnRadGeo (const Geom2dGcc_QCurve& Qualified1,
-                             const Geom2dAdaptor_Curve&     OnCurv    ,
+                             const Handle(Geom2dAdaptor_Curve)&     OnCurv    ,
                              const Standard_Real Radius    ,
                              const Standard_Real Tolerance ):
 
@@ -567,7 +565,7 @@ parcen3(1,aNbSolMAX)
       return;
   }
   TColStd_Array1OfReal cote1(1,2);
-  Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
 
   if (Radius < 0.0) {
     throw Standard_NegativeValue();
@@ -591,19 +589,17 @@ parcen3(1,aNbSolMAX)
     }
     Geom2dInt_GInter Intp;
     for (Standard_Integer jcote1 = 1 ; jcote1 <= nbrcote1 ; jcote1++) {
-      Handle(Geom2dAdaptor_Curve) HCu1 = new Geom2dAdaptor_Curve(Cu1);
-      //Adaptor2d_OffsetCurve C1(HCu1,cote1(jcote1));
-      Adaptor2d_OffsetCurve C1(HCu1, -cote1(jcote1));
-      firstparam = Max(C1.FirstParameter(),thefirst);
-      lastparam  = Min(C1.LastParameter(),thelast);
-      IntRes2d_Domain D1(C1.Value(firstparam), firstparam, Tol,
-                         C1.Value(lastparam), lastparam, Tol);
-      Handle(Geom2dAdaptor_Curve) HOnCurv = new Geom2dAdaptor_Curve(OnCurv);
-      Adaptor2d_OffsetCurve C2(HOnCurv);
-      firstparam = Max(C2.FirstParameter(),thefirst);
-      lastparam  = Min(C2.LastParameter(),thelast);
-      IntRes2d_Domain D2(C2.Value(firstparam), firstparam, Tol,
-                         C2.Value(lastparam), lastparam, Tol);
+      //Adaptor2d_OffsetCurve C1(Cu1,cote1(jcote1));
+      Handle(Adaptor2d_OffsetCurve) C1 = new Adaptor2d_OffsetCurve(Cu1, -cote1(jcote1));
+      firstparam = Max(C1->FirstParameter(),thefirst);
+      lastparam  = Min(C1->LastParameter(),thelast);
+      IntRes2d_Domain D1(C1->Value(firstparam), firstparam, Tol,
+                         C1->Value(lastparam), lastparam, Tol);
+      Handle(Adaptor2d_OffsetCurve) C2 = new Adaptor2d_OffsetCurve(OnCurv);
+      firstparam = Max(C2->FirstParameter(),thefirst);
+      lastparam  = Min(C2->LastParameter(),thelast);
+      IntRes2d_Domain D2(C2->Value(firstparam), firstparam, Tol,
+                         C2->Value(lastparam), lastparam, Tol);
       Intp.Perform(C1,D1,C2,D2,Tol,Tol);
       if (Intp.IsDone()) {
         if (!Intp.IsEmpty()) {
@@ -647,7 +643,7 @@ parcen3(1,aNbSolMAX)
 
 Geom2dGcc_Circ2dTanOnRadGeo::
 Geom2dGcc_Circ2dTanOnRadGeo (const gp_Pnt2d&     Point1    ,
-                             const Geom2dAdaptor_Curve&     OnCurv    ,
+                             const Handle(Geom2dAdaptor_Curve)&     OnCurv    ,
                              const Standard_Real Radius    ,
                              const Standard_Real Tolerance ):
 

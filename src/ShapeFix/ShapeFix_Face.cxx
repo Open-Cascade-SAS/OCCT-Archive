@@ -1145,15 +1145,15 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
         {
           continue;
         }
-        Geom2dAdaptor_Curve gac;
+        Handle(Geom2dAdaptor_Curve) gac;
         Standard_Real aFirst = cw->FirstParameter();
         Standard_Real aLast = cw->LastParameter();
         if(cw->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) && (cf < aFirst || cl > aLast)) {
           //avoiding problems with segment in Bnd_Box
-          gac.Load(cw);
+          gac = new Geom2dAdaptor_Curve(cw);
         }
-       else
-         gac.Load(cw,cf,cl);
+        else
+          gac = new Geom2dAdaptor_Curve(cw,cf,cl);
        BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),aBox);
       }
 
@@ -2237,31 +2237,31 @@ Standard_Boolean ShapeFix_Face::SplitEdge(const Handle(ShapeExtend_WireData)& se
     ShapeAnalysis_Edge sae;
     if(sae.PCurve(newE1,S,L,c2d,cf,cl,Standard_False)) {
       Bnd_Box2d box;
-      Geom2dAdaptor_Curve gac;
+      Handle(Geom2dAdaptor_Curve) gac;
       Standard_Real aFirst = c2d->FirstParameter();
       Standard_Real aLast = c2d->LastParameter();
       if(c2d->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) 
          && (cf < aFirst || cl > aLast)) {
         //pdn avoiding problems with segment in Bnd_Box
-        gac.Load(c2d);
+        gac = new Geom2dAdaptor_Curve(c2d);
       }
       else
-        gac.Load(c2d,cf,cl);
+        gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
       BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
       boxes.Bind(newE1,box);
     }
     if(sae.PCurve(newE2,S,L,c2d,cf,cl,Standard_False)) {
       Bnd_Box2d box;
-      Geom2dAdaptor_Curve gac;
+      Handle(Geom2dAdaptor_Curve) gac;
       Standard_Real aFirst = c2d->FirstParameter();
       Standard_Real aLast = c2d->LastParameter();
       if(c2d->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) 
          && (cf < aFirst || cl > aLast)) {
         //pdn avoiding problems with segment in Bnd_Box
-        gac.Load(c2d);
+        gac = new Geom2dAdaptor_Curve(c2d);
       }
       else
-        gac.Load(c2d,cf,cl);
+        gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
       BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
       boxes.Bind(newE2,box);
     }
@@ -2313,31 +2313,31 @@ Standard_Boolean ShapeFix_Face::SplitEdge(const Handle(ShapeExtend_WireData)& se
     ShapeAnalysis_Edge sae;
     if(sae.PCurve(newE1,S,L,c2d,cf,cl,Standard_False)) {
       Bnd_Box2d box;
-      Geom2dAdaptor_Curve gac;
+      Handle(Geom2dAdaptor_Curve) gac;
       Standard_Real aFirst = c2d->FirstParameter();
       Standard_Real aLast = c2d->LastParameter();
       if(c2d->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) 
          && (cf < aFirst || cl > aLast)) {
         //pdn avoiding problems with segment in Bnd_Box
-        gac.Load(c2d);
+        gac = new Geom2dAdaptor_Curve(c2d);
       }
       else
-        gac.Load(c2d,cf,cl);
+        gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
       BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
       boxes.Bind(newE1,box);
     }
     if(sae.PCurve(newE2,S,L,c2d,cf,cl,Standard_False)) {
       Bnd_Box2d box;
-      Geom2dAdaptor_Curve gac;
+      Handle(Geom2dAdaptor_Curve) gac;
       Standard_Real aFirst = c2d->FirstParameter();
       Standard_Real aLast = c2d->LastParameter();
       if(c2d->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)) 
          && (cf < aFirst || cl > aLast)) {
         //pdn avoiding problems with segment in Bnd_Box
-        gac.Load(c2d);
+        gac = new Geom2dAdaptor_Curve(c2d);
       }
       else
-        gac.Load(c2d,cf,cl);
+        gac = new Geom2dAdaptor_Curve(c2d,cf,cl);
       BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),box);
       boxes.Bind(newE2,box);
     }

@@ -87,8 +87,8 @@ static Standard_Boolean Choose(const Draft_IndexedDataMapOfFaceFaceInfo&,
   Draft_IndexedDataMapOfEdgeEdgeInfo&,
   const TopoDS_Vertex&,
   Draft_VertexInfo&,
-  GeomAdaptor_Curve&,
-  GeomAdaptor_Surface&);
+  const Handle(GeomAdaptor_Curve)&,
+  const Handle(GeomAdaptor_Surface)&);
 
 static Standard_Real Parameter(const Handle(Geom_Curve)&,
   const gp_Pnt&,
@@ -908,7 +908,7 @@ void Draft_Modification::Perform ()
             }
 
             Standard_Real Glob2Min = RealLast();
-            GeomAdaptor_Curve TheCurve;
+            Handle(GeomAdaptor_Curve) TheCurve = new GeomAdaptor_Curve();
 
             Standard_Integer i,j; //,jmin;
 
@@ -917,7 +917,7 @@ void Draft_Modification::Perform ()
               Standard_Real Dist2Min = RealLast();
               imin = 0;
               for (i=1; i<= i2s.NbLines(); i++) {
-                TheCurve.Load(i2s.Line(i));
+                TheCurve->Load(i2s.Line(i));
                 Extrema_ExtPC myExtPC(pfv,TheCurve);
 
                 Standard_Real locpmin = 0.;
@@ -1016,11 +1016,11 @@ void Draft_Modification::Perform ()
                     myExtPC.TrimmedSquareDistances(dist1_2,dist2_2,p1b,p2b);
                     if (dist1_2 < dist2_2) {
                       Dist2Min = dist1_2;
-                      locpmin = TheCurve.FirstParameter();
+                      locpmin = TheCurve->FirstParameter();
                     }
                     else {
                       Dist2Min = dist2_2;
-                      locpmin = TheCurve.LastParameter();
+                      locpmin = TheCurve->LastParameter();
                     }
                   }
 
@@ -1170,7 +1170,7 @@ void Draft_Modification::Perform ()
 
               newC = Concat.BSplineCurve();
 
-              TheCurve.Load( newC );
+              TheCurve->Load( newC );
               Extrema_ExtPC myExtPC( pfv, TheCurve );
               Standard_Real Dist2Min = RealLast();
               for (i = 1; i <= myExtPC.NbExt(); i++)
@@ -1315,17 +1315,14 @@ void Draft_Modification::Perform ()
 
     // Calculate new vertices.
 
-    Handle(GeomAdaptor_Curve)   HAC = new GeomAdaptor_Curve;
-    Handle(GeomAdaptor_Surface) HAS = new GeomAdaptor_Surface;
+    Handle(GeomAdaptor_Curve)   HAC = new GeomAdaptor_Curve();
+    Handle(GeomAdaptor_Surface) HAS = new GeomAdaptor_Surface();
 
     for (Standard_Integer ii = 1; ii <= myVMap.Extent(); ii++)
     {
-      GeomAdaptor_Curve&   AC = *HAC;
-      GeomAdaptor_Surface& AS = *HAS;
-
       const TopoDS_Vertex& TVV = myVMap.FindKey(ii);
       Draft_VertexInfo& Vinf = myVMap.ChangeFromIndex(ii);
-      if (!Choose(myFMap,myEMap,TVV,Vinf,AC,AS)) {
+      if (!Choose(myFMap,myEMap,TVV,Vinf,HAC,HAS)) {
 
         // no concerted edge => alignment of two consecutive edges.
         gp_Pnt pvt;
@@ -1417,7 +1414,7 @@ void Draft_Modification::Perform ()
       Standard_Integer nbsol = myintcs.NbPoints();
       if (nbsol <= 0)
       {
-        Extrema_ExtCS extr( AC, AS, Precision::PConfusion(), Precision::PConfusion() );
+        Extrema_ExtCS extr( HAC, HAS, Precision::PConfusion(), Precision::PConfusion() );
 
         if(!extr.IsDone() || extr.NbExt() == 0) {
           errStat = Draft_VertexRecomputation;
@@ -1870,8 +1867,8 @@ static Standard_Boolean Choose(const Draft_IndexedDataMapOfFaceFaceInfo& theFMap
   Draft_IndexedDataMapOfEdgeEdgeInfo& theEMap,
   const TopoDS_Vertex& Vtx,
   Draft_VertexInfo& Vinf,
-  GeomAdaptor_Curve& AC,
-  GeomAdaptor_Surface& AS)
+  const Handle(GeomAdaptor_Curve)& AC,
+  const Handle(GeomAdaptor_Surface)& AS)
 {
   gp_Vec tgref; 
   Vinf.InitEdgeIterator();
@@ -1900,7 +1897,7 @@ static Standard_Boolean Choose(const Draft_IndexedDataMapOfFaceFaceInfo& theFMap
   //const Draft_EdgeInfo& Einf = theEMap(Eref);
   Draft_EdgeInfo& Einf = theEMap.ChangeFromKey(Eref);
 
-  AC.Load(Einf.Geometry());
+  AC->Load(Einf.Geometry());
 
   Standard_Real f,l,prm;
   TopLoc_Location Loc;
@@ -1962,18 +1959,18 @@ static Standard_Boolean Choose(const Draft_IndexedDataMapOfFaceFaceInfo& theFMap
 
     if (Einf2.FirstFace().IsSame(Einf.FirstFace()) ||
         Einf2.FirstFace().IsSame(Einf.SecondFace())) {
-      AS.Load(theFMap.FindFromKey(Einf2.SecondFace()).Geometry());
+      AS->Load(theFMap.FindFromKey(Einf2.SecondFace()).Geometry());
     }
     else {
-      AS.Load(theFMap.FindFromKey(Einf2.FirstFace()).Geometry());
+      AS->Load(theFMap.FindFromKey(Einf2.FirstFace()).Geometry());
     }
   }
   else {
     if (Einf2.FirstFace().IsSame(Einf.FirstFace())) {
-      AS.Load(theFMap.FindFromKey(Einf2.SecondFace()).Geometry());
+      AS->Load(theFMap.FindFromKey(Einf2.SecondFace()).Geometry());
     }
     else {
-      AS.Load(theFMap.FindFromKey(Einf2.FirstFace()).Geometry());
+      AS->Load(theFMap.FindFromKey(Einf2.FirstFace()).Geometry());
     }
   }
   return Standard_True;
@@ -2019,7 +2016,7 @@ static Standard_Real Parameter(const Handle(Geom_Curve)& C,
     param = ElCLib::Parameter(Handle(Geom_Hyperbola)::DownCast(cbase)->Hypr(),P);
   }
   else {
-    GeomAdaptor_Curve TheCurve(C);
+    Handle(GeomAdaptor_Curve) TheCurve = new GeomAdaptor_Curve(C);
     Extrema_ExtPC myExtPC(P,TheCurve);
     if (!myExtPC.IsDone()) {
       throw Standard_Failure("Draft_Modification_1::Parameter: ExtremaPC not done.");
@@ -2042,11 +2039,11 @@ static Standard_Real Parameter(const Handle(Geom_Curve)& C,
       myExtPC.TrimmedSquareDistances(dist1_2,dist2_2,p1b,p2b);
       if (dist1_2 < dist2_2) {
         done = -1;
-        param = TheCurve.FirstParameter();
+        param = TheCurve->FirstParameter();
       }
       else {
         done = 1;
-        param = TheCurve.LastParameter();
+        param = TheCurve->LastParameter();
       }
     }
 

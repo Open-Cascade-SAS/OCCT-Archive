@@ -63,7 +63,7 @@ public:
   //! -   a Geom_Hyperbola,
   //! and P1 and P2 are either two negative infinite real
   //! numbers, or two positive infinite real numbers.
-  Standard_EXPORT static void Add (const Adaptor2d_Curve2d& C, const Standard_Real Tol, Bnd_Box2d& B);
+  Standard_EXPORT static void Add (const Handle(Adaptor2d_Curve2d)& C, const Standard_Real Tol, Bnd_Box2d& B);
   
   //! Adds to the bounding box Bthe arc of the curve C limited by the two parameter
   //! values P1 and P2.
@@ -93,7 +93,7 @@ public:
   //! -   a Geom_Hyperbola,
   //! and P1 and P2 are either two negative infinite real
   //! numbers, or two positive infinite real numbers.
-  Standard_EXPORT static void Add (const Adaptor2d_Curve2d& C, const Standard_Real U1, const Standard_Real U2, const Standard_Real Tol, Bnd_Box2d& B);
+  Standard_EXPORT static void Add (const Handle(Adaptor2d_Curve2d)& C, const Standard_Real U1, const Standard_Real U2, const Standard_Real Tol, Bnd_Box2d& B);
   
   //! Adds to the bounding box B the curve C
   //! B is then enlarged by the tolerance value Tol.

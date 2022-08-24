@@ -49,7 +49,7 @@ Standard_Boolean GeomLib_Tool::Parameter(const Handle(Geom_Curve)& Curve,
   U = 0.;
   Standard_Real aTol = MaxDist * MaxDist;
   //
-  GeomAdaptor_Curve aGAC(Curve);
+  Handle(GeomAdaptor_Curve) aGAC = new GeomAdaptor_Curve(Curve);
   Extrema_ExtPC extrema(Point,aGAC);
   //
   if( !extrema.IsDone() ) return Standard_False;
@@ -99,7 +99,7 @@ Standard_Boolean GeomLib_Tool::Parameters(const Handle(Geom_Surface)& Surface,
   V = 0.;
   Standard_Real aTol = MaxDist * MaxDist;
   //
-  GeomAdaptor_Surface aGAS(Surface);
+  Handle(GeomAdaptor_Surface) aGAS = new GeomAdaptor_Surface(Surface);
   Standard_Real aTolU = PARTOLERANCE, aTolV = PARTOLERANCE;
   //
   Extrema_ExtPS extrema(Point,aGAS,aTolU,aTolV);
@@ -149,7 +149,7 @@ Standard_Boolean GeomLib_Tool::Parameter(const Handle(Geom2d_Curve)& Curve,
   U = 0.;
   Standard_Real aTol = MaxDist * MaxDist;
   //
-  Geom2dAdaptor_Curve aGAC(Curve);
+  Handle(Geom2dAdaptor_Curve) aGAC = new Geom2dAdaptor_Curve(Curve);
   Extrema_ExtPC2d extrema(Point,aGAC);
   if( !extrema.IsDone() ) return Standard_False;
   Standard_Integer n = extrema.NbExt();
@@ -188,7 +188,7 @@ public:
 
   //! Constructor. Initializes the curve and the line
   //! going through two given points.
-  FuncSolveDeviation(const Geom2dAdaptor_Curve& theCurve,
+  FuncSolveDeviation(const Handle(Geom2dAdaptor_Curve)& theCurve,
                      const gp_XY& thePf,
                      const gp_XY& thePl):
     myCurve(theCurve),
@@ -203,7 +203,7 @@ public:
   //! of *this
   void UpdateFields(const Standard_Real theParam)
   {
-    myCurve.D0(theParam, myPointOnCurve);
+    myCurve->D0(theParam, myPointOnCurve);
     const gp_XY aVt = myPointOnCurve.XY() - myPRef;
     myVecCurvLine = aVt.Dot(myDirRef) * myDirRef / mySqMod - aVt;
   }
@@ -214,7 +214,7 @@ public:
   {
     gp_Vec2d aD1;
     gp_Vec2d aD2;
-    myCurve.D2(theParam, myPointOnCurve, aD1, aD2);
+    myCurve->D2(theParam, myPointOnCurve, aD1, aD2);
 
     const gp_XY aVt = myPointOnCurve.XY() - myPRef;
     theVal = aVt.Crossed(myDirRef);
@@ -284,7 +284,7 @@ public:
 private:
 
   //! The curve
-  Geom2dAdaptor_Curve myCurve;
+  Handle(Geom2dAdaptor_Curve) myCurve;
 
   //! Square modulus of myDirRef (it is constant)
   Standard_Real mySqMod;
@@ -316,7 +316,7 @@ private:
 //            where D1 and D2 are 1st and 2nd derivative of the function, computed in
 //            the point U(n). U(0) = theStartParameter.
 //=======================================================================
-Standard_Real GeomLib_Tool::ComputeDeviation(const Geom2dAdaptor_Curve& theCurve,
+Standard_Real GeomLib_Tool::ComputeDeviation(const Handle(Geom2dAdaptor_Curve)& theCurve,
                                              const Standard_Real theFPar,
                                              const Standard_Real theLPar,
                                              const Standard_Real theStartParameter,
@@ -332,8 +332,8 @@ Standard_Real GeomLib_Tool::ComputeDeviation(const Geom2dAdaptor_Curve& theCurve
     return -1.0;
   }
 
-  const gp_Pnt2d aPf(theCurve.Value(theFPar));
-  const gp_Pnt2d aPl(theCurve.Value(theLPar));
+  const gp_Pnt2d aPf(theCurve->Value(theFPar));
+  const gp_Pnt2d aPl(theCurve->Value(theLPar));
 
   FuncSolveDeviation aFunc(theCurve, aPf.XY(), aPl.XY());
 
@@ -417,7 +417,7 @@ Standard_Real GeomLib_Tool::ComputeDeviation(const Geom2dAdaptor_Curve& theCurve
 //           (fast but not precisely).
 //           math_PSO Algorithm is used.
 //=======================================================================
-Standard_Real GeomLib_Tool::ComputeDeviation(const Geom2dAdaptor_Curve& theCurve,
+Standard_Real GeomLib_Tool::ComputeDeviation(const Handle(Geom2dAdaptor_Curve)& theCurve,
                                              const Standard_Real theFPar,
                                              const Standard_Real theLPar,
                                              const Standard_Integer theNbSubIntervals,
@@ -425,8 +425,8 @@ Standard_Real GeomLib_Tool::ComputeDeviation(const Geom2dAdaptor_Curve& theCurve
                                              Standard_Real* const thePrmOnCurve)
 {
   // Computed maximal deflection
-  const gp_Pnt2d aPf(theCurve.Value(theFPar));
-  const gp_Pnt2d aPl(theCurve.Value(theLPar));
+  const gp_Pnt2d aPf(theCurve->Value(theFPar));
+  const gp_Pnt2d aPl(theCurve->Value(theLPar));
 
   FuncSolveDeviation aFunc(theCurve, aPf.XY(), aPl.XY());
 

@@ -141,7 +141,7 @@ BRepTopAdaptor_FClass2d::BRepTopAdaptor_FClass2d(const TopoDS_Face& aFace,const 
 	    {
 	      Standard_Real pfbid,plbid;
 	      if(BRep_Tool::CurveOnSurface(edge,Face,pfbid,plbid).IsNull()) return;
-	      BRepAdaptor_Curve2d C(edge,Face);
+	      Handle(BRepAdaptor_Curve2d) C = new BRepAdaptor_Curve2d(edge,Face);
 	
 	      //-- ----------------------------------------
 	      Standard_Boolean degenerated=Standard_False;
@@ -215,7 +215,7 @@ BRepTopAdaptor_FClass2d::BRepTopAdaptor_FClass2d(const TopoDS_Face& aFace,const 
 	      Standard_Integer Avant = nbpnts;
 	      for(Standard_Integer e = firstpoint; e<=nbs; e++)
 		{
-		  gp_Pnt2d P2d = C.Value(u);
+		  gp_Pnt2d P2d = C->Value(u);
 		  if(P2d.X()<Umin) Umin = P2d.X();
 		  if(P2d.X()>Umax) Umax = P2d.X();
 		  if(P2d.Y()<Vmin) Vmin = P2d.Y();
@@ -347,7 +347,7 @@ BRepTopAdaptor_FClass2d::BRepTopAdaptor_FClass2d(const TopoDS_Face& aFace,const 
                     Standard_Real pfbid, plbid;
                     BRep_Tool::Range(edge, Face, pfbid, plbid);
                     if (Abs(plbid - pfbid) < 1.e-9) continue;
-                    BRepAdaptor_Curve2d C(edge, Face);
+                    Handle(BRepAdaptor_Curve2d) C = new BRepAdaptor_Curve2d(edge, Face);
                     GCPnts_QuasiUniformDeflection aDiscr(C, aDiscrDefl);
                     if (!aDiscr.IsDone())
                       break;
@@ -363,7 +363,7 @@ BRepTopAdaptor_FClass2d::BRepTopAdaptor_FClass2d(const TopoDS_Face& aFace,const 
                       i += iStep;
                     for (; i != iEnd; i += iStep)
                     {
-                      gp_Pnt2d aP2d = C.Value(aDiscr.Parameter(i));
+                      gp_Pnt2d aP2d = C->Value(aDiscr.Parameter(i));
                       SeqPnt2d.Append(aP2d);
                     }
                     if (nbp > 2)

@@ -67,15 +67,15 @@ Standard_Boolean BRepCheck::SelfIntersection(const TopoDS_Wire& W,
 //function : PrecCurve
 //purpose  : 
 //=======================================================================
-Standard_Real BRepCheck::PrecCurve(const Adaptor3d_Curve& aAC3D)
+Standard_Real BRepCheck::PrecCurve(const Handle(Adaptor3d_Curve)& aAC3D)
 {
   Standard_Real aXEmax = RealEpsilon(); 
   //
-  GeomAbs_CurveType aCT = aAC3D.GetType();
+  GeomAbs_CurveType aCT = aAC3D->GetType();
   if (aCT==GeomAbs_Ellipse) {
     Standard_Real aX[5];
     //
-    gp_Elips aEL3D=aAC3D.Ellipse();
+    gp_Elips aEL3D=aAC3D->Ellipse();
     aEL3D.Location().Coord(aX[0], aX[1], aX[2]);
     aX[3]=aEL3D.MajorRadius();
     aX[4]=aEL3D.MinorRadius();

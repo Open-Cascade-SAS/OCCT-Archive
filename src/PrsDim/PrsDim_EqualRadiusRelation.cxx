@@ -65,8 +65,8 @@ void PrsDim_EqualRadiusRelation::Compute (const Handle(PrsMgr_PresentationManage
   Standard_Real FirstPar1 = FirstCurve.FirstParameter(), LastPar1 = FirstCurve.LastParameter(),
                 FirstPar2 = SecondCurve.FirstParameter(), LastPar2 = SecondCurve.LastParameter();
 
-  Handle( Geom_Curve ) FirstProjCurve = FirstCurve.Curve().Curve(),
-                       SecondProjCurve = SecondCurve.Curve().Curve();
+  Handle( Geom_Curve ) FirstProjCurve = FirstCurve.Curve()->Curve(),
+                       SecondProjCurve = SecondCurve.Curve()->Curve();
   gp_Pnt FirstPoint1, LastPoint1, FirstPoint2, LastPoint2;
   Standard_Boolean isFirstOnPlane, isSecondOnPlane;
 

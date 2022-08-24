@@ -27,7 +27,7 @@
 #include <gp_Dir.hxx>
  
 
-#define Surface BRepAdaptor_Surface
+#define Surface Handle(BRepAdaptor_Surface)
 #define Surface_hxx <BRepAdaptor_Surface.hxx>
 #define Tool BRepLProp_SurfaceTool
 #define Tool_hxx <BRepLProp_SurfaceTool.hxx>

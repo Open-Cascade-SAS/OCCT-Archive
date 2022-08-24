@@ -23,7 +23,8 @@
 //purpose  :
 //=======================================================================
 StdPrs_ToolRFace::StdPrs_ToolRFace()
-: myHasNullCurves (Standard_False)
+: myCurve(new Geom2dAdaptor_Curve()),
+  myHasNullCurves (Standard_False)
 {
 }
 
@@ -33,6 +34,7 @@ StdPrs_ToolRFace::StdPrs_ToolRFace()
 //=======================================================================
 StdPrs_ToolRFace::StdPrs_ToolRFace (const Handle(BRepAdaptor_Surface)& theSurface)
 : myFace (theSurface->Face()),
+  myCurve(new Geom2dAdaptor_Curve()),
   myHasNullCurves (Standard_False)
 {
   myFace.Orientation(TopAbs_FORWARD);
@@ -65,7 +67,7 @@ void StdPrs_ToolRFace::next()
 
     if (Handle(Geom2d_Curve) aCurve = BRep_Tool::CurveOnSurface (TopoDS::Edge (myExplorer.Current()), myFace, aParamU1, aParamU2))
     {
-      myCurve.Load (aCurve, aParamU1, aParamU2);
+      myCurve->Load (aCurve, aParamU1, aParamU2);
       return;
     }
     else
@@ -74,5 +76,5 @@ void StdPrs_ToolRFace::next()
     }
   }
 
-  myCurve.Reset();
+  myCurve->Reset();
 }

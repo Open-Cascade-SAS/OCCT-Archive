@@ -114,17 +114,17 @@ ChFiDS_State ChFi3d_EdgeState(TopoDS_Edge* E,
 Standard_Boolean ChFi3d_KParticular
 (const Handle(ChFiDS_Spine)& Spine,
  const Standard_Integer      IE,
- const BRepAdaptor_Surface&  S1,
- const BRepAdaptor_Surface&  S2);
+ const Handle(BRepAdaptor_Surface)&  S1,
+ const Handle(BRepAdaptor_Surface)&  S2);
  
-void ChFi3d_BoundFac(BRepAdaptor_Surface& S,
+void ChFi3d_BoundFac(const Handle(BRepAdaptor_Surface)& S,
 		     const Standard_Real  umin,
 		     const Standard_Real  umax,
 		     const Standard_Real  vmin,
 		     const Standard_Real  vmax,
 		     const Standard_Boolean checknaturalbounds = Standard_True);
 		      
-void ChFi3d_BoundSrf(GeomAdaptor_Surface& S,
+void ChFi3d_BoundSrf(const Handle(GeomAdaptor_Surface)& S,
 		     const Standard_Real  umin,
 		     const Standard_Real  umax,
 		     const Standard_Real  vmin,

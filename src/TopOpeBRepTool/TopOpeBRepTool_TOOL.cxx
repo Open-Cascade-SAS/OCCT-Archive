@@ -503,7 +503,7 @@ Standard_Boolean TopOpeBRepTool_TOOL::TgINSIDE(const TopoDS_Vertex& v, const Top
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean TopOpeBRepTool_TOOL::TggeomE(const Standard_Real par, const BRepAdaptor_Curve& BC, 
+Standard_Boolean TopOpeBRepTool_TOOL::TggeomE(const Standard_Real par, const Handle(BRepAdaptor_Curve)& BC, 
 				 gp_Vec& Tg)
 {
 //#ifdef OCCT_DEBUG
@@ -514,8 +514,8 @@ Standard_Boolean TopOpeBRepTool_TOOL::TggeomE(const Standard_Real par, const BRe
 //  Standard_Boolean apoles = (ct == GeomAbs_BezierCurve)||(ct == GeomAbs_BSplineCurve);
 //#endif
   
-  Standard_Real f = BC.FirstParameter(), l = BC.LastParameter();
-  Standard_Real tolE = BC.Tolerance(); Standard_Real tolp = BC.Resolution(tolE);
+  Standard_Real f = BC->FirstParameter(), l = BC->LastParameter();
+  Standard_Real tolE = BC->Tolerance(); Standard_Real tolp = BC->Resolution(tolE);
   
   Standard_Boolean onf = Abs(f-par)<tolp; Standard_Boolean onl = Abs(l-par)<tolp; 
   Standard_Boolean inbounds = (f<par)&&(par<l);
@@ -523,7 +523,7 @@ Standard_Boolean TopOpeBRepTool_TOOL::TggeomE(const Standard_Real par, const BRe
   if ((!inbounds) && (!onf) && (!onl)) return Standard_False;
   Standard_Real thepar = par;
 
-  gp_Pnt thepnt; BC.D1(thepar, thepnt, Tg);
+  gp_Pnt thepnt; BC->D1(thepar, thepnt, Tg);
   Tg.Normalize(); 
   return Standard_True;
   
@@ -539,7 +539,7 @@ Standard_Boolean TopOpeBRepTool_TOOL::TggeomE(const Standard_Real par, const Top
   Standard_Boolean isdgE = BRep_Tool::Degenerated(E); 
   if (isdgE) return Standard_False;
   
-  BRepAdaptor_Curve BC(E);
+  Handle(BRepAdaptor_Curve) BC = new BRepAdaptor_Curve(E);
   //modified by NIZNHY-PKV Fri Aug  4 09:49:31 2000 f
   if (!CheckEdgeLength(E)) {
     return Standard_False;
@@ -759,12 +759,12 @@ Standard_Boolean TopOpeBRepTool_TOOL::CurvE(const TopoDS_Edge& E,const Standard_
 			       Standard_Real& curv)
 {
   curv = 0.;
-  BRepAdaptor_Curve BAC(E);
-  GeomAbs_CurveType CT = BAC.GetType();
+  Handle(BRepAdaptor_Curve) BAC = new BRepAdaptor_Curve(E);
+  GeomAbs_CurveType CT = BAC->GetType();
   Standard_Boolean line = (CT == GeomAbs_Line);
   Standard_Real tola = Precision::Angular()*1.e3;//NYITOLXPU
   if (line) {
-    gp_Dir dir = BAC.Line().Direction();
+    gp_Dir dir = BAC->Line().Direction();
     Standard_Real dot = dir.Dot(tg0);
     if (Abs(1-dot) < tola) return Standard_False;
     return Standard_True;

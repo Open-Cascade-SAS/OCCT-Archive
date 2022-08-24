@@ -71,7 +71,7 @@ Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedLin&  Qualified1 ,
                               }
                               gp_Dir2d dirx(1.,0.);
                               gp_Lin2d L1 = Qualified1.Qualified();
-                              Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                               math_Vector Umin(1,4);
                               math_Vector Umax(1,4);
                               math_Vector Ufirst(1,4);
@@ -174,8 +174,8 @@ Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve& Qualified1 ,
                               }
                               Standard_Real Tol = Abs(Tolerance);
                               gp_Dir2d dirx(1.,0.);
-                              Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
-                              Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                               math_Vector Umin(1,4);
                               math_Vector Umax(1,4);
                               math_Vector Ufirst(1,4);
@@ -283,7 +283,7 @@ Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve& Qualified1 ,
                               }
                               Standard_Real Tol = Abs(Tolerance);
                               gp_Dir2d dirx(1.,0.);
-                              Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
                               math_Vector Umin(1,3);
                               math_Vector Umax(1,3);
                               math_Vector Ufirst(1,3);
@@ -374,7 +374,7 @@ Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedCirc& Qualified1 ,
                               gp_Dir2d dirx(1.,0.);
                               gp_Circ2d C1 = Qualified1.Qualified();
                               Standard_Real R1 = C1.Radius();
-                              Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                               math_Vector Umin(1,4);
                               math_Vector Umax(1,4);
                               math_Vector Ufirst(1,4);
@@ -484,7 +484,7 @@ Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedCirc& Qualified1 ,
                               gp_Dir2d dirx(1.,0.);
                               gp_Circ2d C1 = Qualified1.Qualified();
                               Standard_Real R1 = C1.Radius();
-                              Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                               math_Vector Umin(1,4);
                               math_Vector Umax(1,4);
                               math_Vector Ufirst(1,4);
@@ -591,7 +591,7 @@ Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedLin&  Qualified1 ,
                               Standard_Real Tol = Abs(Tolerance);
                               gp_Dir2d dirx(1.,0.);
                               gp_Lin2d L1 = Qualified1.Qualified();
-                              Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                               math_Vector Umin(1,4);
                               math_Vector Umax(1,4);
                               math_Vector Ufirst(1,4);
@@ -696,8 +696,8 @@ Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve& Qualified1 ,
                               }
                               Standard_Real Tol = Abs(Tolerance);
                               gp_Dir2d dirx(1.,0.);
-                              Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
-                              Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                               math_Vector Umin(1,4);
                               math_Vector Umax(1,4);
                               math_Vector Ufirst(1,4);
@@ -806,7 +806,7 @@ Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve&  Qualified1 ,
                               }
                               Standard_Real Tol = Abs(Tolerance);
                               gp_Dir2d dirx(1.,0.);
-                              Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
                               math_Vector Umin(1,3);
                               math_Vector Umax(1,3);
                               math_Vector Ufirst(1,3);
@@ -870,7 +870,7 @@ Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve&  Qualified1 ,
 Geom2dGcc_Circ2d2TanOnIter::
 Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve& Qualified1 , 
                             const Geom2dGcc_QCurve& Qualified2 , 
-                            const Geom2dAdaptor_Curve&          OnCurv     ,
+                            const Handle(Geom2dAdaptor_Curve)&          OnCurv     ,
                             const Standard_Real               Param1     ,
                             const Standard_Real               Param2     ,
                             const Standard_Real               Param3     ,
@@ -895,8 +895,8 @@ Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve& Qualified1 ,
                                   return;
                               }
                               gp_Dir2d dirx(1.,0.);
-                              Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
-                              Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                               math_Vector Umin(1,4);
                               math_Vector Umax(1,4);
                               math_Vector Ufirst(1,4);
@@ -977,7 +977,7 @@ Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve& Qualified1 ,
 Geom2dGcc_Circ2d2TanOnIter::
 Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedCirc& Qualified1 , 
                             const Geom2dGcc_QCurve&       Qualified2 , 
-                            const Geom2dAdaptor_Curve&                OnCurv     ,
+                            const Handle(Geom2dAdaptor_Curve)&                OnCurv     ,
                             const Standard_Real                     Param1     ,
                             const Standard_Real                     Param2     ,
                             const Standard_Real                     ParamOn    ,
@@ -1004,7 +1004,7 @@ Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedCirc& Qualified1 ,
                               Standard_Real Tol = Abs(Tolerance);
                               gp_Circ2d C1 = Qualified1.Qualified();
                               Standard_Real R1 = C1.Radius();
-                              Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                               math_Vector Umin(1,4);
                               math_Vector Umax(1,4);
                               math_Vector Ufirst(1,4);
@@ -1082,7 +1082,7 @@ Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedCirc& Qualified1 ,
 Geom2dGcc_Circ2d2TanOnIter::
 Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedLin&  Qualified1 , 
                             const Geom2dGcc_QCurve&     Qualified2 , 
-                            const Geom2dAdaptor_Curve&                OnCurv     ,
+                            const Handle(Geom2dAdaptor_Curve)&                OnCurv     ,
                             const Standard_Real                     Param1     ,
                             const Standard_Real                     Param2     ,
                             const Standard_Real                     ParamOn    ,
@@ -1108,7 +1108,7 @@ Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedLin&  Qualified1 ,
                               Standard_Real Tol = Abs(Tolerance);
                               gp_Dir2d dirx(1.,0.);
                               gp_Lin2d L1 = Qualified1.Qualified();
-                              Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                              Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                               math_Vector Umin(1,4);
                               math_Vector Umax(1,4);
                               math_Vector Ufirst(1,4);
@@ -1184,7 +1184,7 @@ Geom2dGcc_Circ2d2TanOnIter (const GccEnt_QualifiedLin&  Qualified1 ,
 Geom2dGcc_Circ2d2TanOnIter::
 Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve&    Qualified1 ,
                             const gp_Pnt2d&             Point2     ,
-                            const Geom2dAdaptor_Curve&             OnCurv     ,
+                            const Handle(Geom2dAdaptor_Curve)&             OnCurv     ,
                             const Standard_Real                  Param1     ,
                             const Standard_Real                  ParamOn    ,
                             const Standard_Real                  Tolerance  ) 
@@ -1207,7 +1207,7 @@ Geom2dGcc_Circ2d2TanOnIter (const Geom2dGcc_QCurve&    Qualified1 ,
   }
   Standard_Real Tol = Abs(Tolerance);
   gp_Dir2d dirx(1.,0.);
-  Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+  Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
   math_Vector Umin(1,3);
   math_Vector Umax(1,3);
   math_Vector Ufirst(1,3);

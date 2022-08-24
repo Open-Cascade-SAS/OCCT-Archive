@@ -26,7 +26,8 @@
 //purpose  : 
 //=======================================================================
 Geom2dAPI_ProjectPointOnCurve::Geom2dAPI_ProjectPointOnCurve()
-: myIndex(-1)
+: myIndex(-1),
+  myC(new Geom2dAdaptor_Curve())
 {
   myIsDone = Standard_False;
 }
@@ -84,7 +85,7 @@ void Geom2dAPI_ProjectPointOnCurve::Init
    const Standard_Real         Umin,
    const Standard_Real         Usup )
 {
-  myC.Load(Curve,Umin,Usup);
+  myC = new Geom2dAdaptor_Curve(Curve,Umin,Usup);
 
   Extrema_ExtPC2d theExtPC2d(P, myC);
 

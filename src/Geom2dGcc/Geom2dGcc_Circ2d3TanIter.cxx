@@ -74,9 +74,9 @@ Geom2dGcc_Circ2d3TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                                 throw GccEnt_BadQualifier();
                                 return;
                             }
-                            Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
-                            Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
-                            Geom2dAdaptor_Curve Cu3 = Qualified3.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu3 = Qualified3.Qualified();
                             Geom2dGcc_FunctionTanCuCuCu Func(Cu1,Cu2,Cu3);
                             math_Vector Umin(1,3);
                             math_Vector Umax(1,3);
@@ -202,8 +202,8 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                                 return;
                             }
                             gp_Circ2d C1 = Qualified1.Qualified();
-                            Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
-                            Geom2dAdaptor_Curve Cu3 = Qualified3.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu3 = Qualified3.Qualified();
                             Geom2dGcc_FunctionTanCuCuCu Func(C1,Cu2,Cu3);
                             math_Vector Umin(1,3);
                             math_Vector Umax(1,3);
@@ -335,7 +335,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                             }
                             gp_Circ2d C1 = Qualified1.Qualified();
                             gp_Circ2d C2 = Qualified2.Qualified();
-                            Geom2dAdaptor_Curve Cu3 = Qualified3.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu3 = Qualified3.Qualified();
                             Geom2dGcc_FunctionTanCuCuCu Func(C1,C2,Cu3);
                             math_Vector Umin(1,3);
                             math_Vector Umax(1,3);
@@ -469,8 +469,8 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedLin& Qualified1 ,
                                 return;
                             }
                             gp_Lin2d L1 = Qualified1.Qualified();
-                            Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
-                            Geom2dAdaptor_Curve Cu3 = Qualified3.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu3 = Qualified3.Qualified();
                             Geom2dGcc_FunctionTanCuCuCu Func(L1,Cu2,Cu3);
                             math_Vector Umin(1,3);
                             math_Vector Umax(1,3);
@@ -605,7 +605,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedLin&  Qualified1 ,
                             }
                             gp_Lin2d L1 = Qualified1.Qualified();
                             gp_Lin2d L2 = Qualified2.Qualified();
-                            Geom2dAdaptor_Curve Cu3 = Qualified3.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu3 = Qualified3.Qualified();
                             Geom2dGcc_FunctionTanCuCuCu Func(L1,L2,Cu3);
                             math_Vector Umin(1,3);
                             math_Vector Umax(1,3);
@@ -730,8 +730,8 @@ Geom2dGcc_Circ2d3TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                                 return;
                             }
                             gp_Circ2d C1(gp_Ax2d(Point3,gp_Dir2d(1.,0.)),0.);
-                            Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
-                            Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                             Geom2dGcc_FunctionTanCuCuCu Func(C1,Cu1,Cu2);
                             math_Vector Umin(1,3);
                             math_Vector Umax(1,3);
@@ -848,7 +848,7 @@ Geom2dGcc_Circ2d3TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                             gp_Dir2d dirx(1.,0.);
                             gp_Circ2d C1(gp_Ax2d(Point2,dirx),0.);
                             gp_Circ2d C2(gp_Ax2d(Point3,dirx),0.);
-                            Geom2dAdaptor_Curve Cu1 = Qualified1.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu1 = Qualified1.Qualified();
                             Geom2dGcc_FunctionTanCuCuCu Func(C1,C2,Cu1);
                             math_Vector Umin(1,3);
                             math_Vector Umax(1,3);
@@ -961,7 +961,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedLin&  Qualified1 ,
                             }
                             gp_Dir2d dirx(1.,0.);
                             gp_Lin2d L1 = Qualified1.Qualified();
-                            Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                             gp_Circ2d C3(gp_Ax2d(Point3,dirx),0.);
                             Geom2dGcc_FunctionTanCuCuCu Func(C3,L1,Cu2);
                             math_Vector Umin(1,3);
@@ -1085,7 +1085,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                             }
                             gp_Circ2d C1 = Qualified1.Qualified();
                             gp_Lin2d L2 = Qualified2.Qualified();
-                            Geom2dAdaptor_Curve Cu3 = Qualified3.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu3 = Qualified3.Qualified();
                             Geom2dGcc_FunctionTanCuCuCu Func(C1,L2,Cu3);
                             math_Vector Umin(1,3);
                             math_Vector Umax(1,3);
@@ -1214,7 +1214,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                                 return;
                             }
                             gp_Circ2d C1 = Qualified1.Qualified();
-                            Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
+                            Handle(Geom2dAdaptor_Curve) Cu2 = Qualified2.Qualified();
                             gp_Dir2d dirx(1.,0.);
                             gp_Circ2d C3(gp_Ax2d(Point3,dirx),0.);
                             Geom2dGcc_FunctionTanCuCuCu Func(C1,C3,Cu2);

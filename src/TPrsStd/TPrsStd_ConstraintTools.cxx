@@ -1578,14 +1578,14 @@ void TPrsStd_ConstraintTools::ComputeEqualRadius(const Handle(TDataXtd_Constrain
   if (!IsPlanar || aplane.IsNull()) {
     // check are the planes of edge1 and edge2 coincident
     BRepAdaptor_Curve aCurve( edge1 );
-    Handle( Geom_Curve ) aProjCurve = aCurve.Curve().Curve();
+    Handle( Geom_Curve ) aProjCurve = aCurve.Curve()->Curve();
     gp_Circ aCircle = (Handle( Geom_Circle )::DownCast( aProjCurve ))->Circ();
     gp_Ax3 anAx31(aCircle.Position()); //get the circle axis
     // get the circle plane 
     Handle(Geom_Plane) aPlane1 = new Geom_Plane (anAx31);
 
     aCurve.Initialize(edge2);
-    aProjCurve = aCurve.Curve().Curve();
+    aProjCurve = aCurve.Curve()->Curve();
     aCircle = (Handle( Geom_Circle )::DownCast( aProjCurve ))->Circ();
     gp_Ax3 anAx32(aCircle.Position()); //get the circle axis
     // get the circle plane 
@@ -1841,11 +1841,11 @@ void TPrsStd_ConstraintTools::ComputeOffset (const Handle(TDataXtd_Constraint)& 
       BRepAdaptor_Curve CURVE(OE);
       if (CURVE.GetType() == GeomAbs_Line)  {
 	// Works only with line !!
-        Handle(Geom_Geometry) aGeomGeometry = CURVE.Curve().Curve()->Transformed(CURVE.Trsf()) ;
+        Handle(Geom_Geometry) aGeomGeometry = CURVE.Curve()->Curve()->Transformed(CURVE.Trsf()) ;
         gp_Lin OLin = Handle(Geom_Line)::DownCast (aGeomGeometry)->Lin();
 	TopoDS_Edge NE = TopoDS::Edge(S2);
 	CURVE.Initialize (NE);
-        aGeomGeometry = CURVE.Curve().Curve()->Transformed(CURVE.Trsf()) ;
+        aGeomGeometry = CURVE.Curve()->Curve()->Transformed(CURVE.Trsf()) ;
         gp_Lin NLin = Handle(Geom_Line)::DownCast (aGeomGeometry)->Lin();
 	gp_Dir TDir (NLin.Location().XYZ() - OLin.Location().XYZ());
 	aplane = new Geom_Plane (NLin.Location(),NLin.Direction()^TDir);
@@ -1864,7 +1864,7 @@ void TPrsStd_ConstraintTools::ComputeOffset (const Handle(TDataXtd_Constraint)& 
       }
       else
       if (CURVE.GetType() == GeomAbs_Circle)  {
-        Handle(Geom_Geometry) aGeomGeometry = CURVE.Curve().Curve()->Transformed(CURVE.Trsf()) ;
+        Handle(Geom_Geometry) aGeomGeometry = CURVE.Curve()->Curve()->Transformed(CURVE.Trsf()) ;
         gp_Ax1 ax = Handle(Geom_Circle)::DownCast (aGeomGeometry)->Circ().Axis();
 	aplane = new Geom_Plane (ax.Location(),ax.Direction());
 	is_planar = Standard_True;

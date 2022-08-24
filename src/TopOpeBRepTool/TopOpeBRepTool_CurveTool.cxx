@@ -590,8 +590,8 @@ Standard_Boolean  TopOpeBRepTool_CurveTool::MakeCurves
   Standard_Boolean withtangency = Standard_True;
   
   Standard_Boolean compminmaxUV = Standard_True;
-  BRepAdaptor_Surface BAS1(TopoDS::Face(S1),compminmaxUV);
-  BRepAdaptor_Surface BAS2(TopoDS::Face(S2),compminmaxUV);
+  Handle(BRepAdaptor_Surface) BAS1 = new BRepAdaptor_Surface(TopoDS::Face(S1), compminmaxUV);
+  Handle(BRepAdaptor_Surface) BAS2 = new BRepAdaptor_Surface(TopoDS::Face(S2), compminmaxUV);
 
 
   Handle(BRepApprox_ApproxLine) AL;
@@ -600,12 +600,12 @@ Standard_Boolean  TopOpeBRepTool_CurveTool::MakeCurves
     Approx.SetParameters(tol3d,tol2d,degmin,degmax,nitmax,NbPntMax,withtangency,
 			 parametrization);
 
-    if     (CompC3D && CompPC1 && BAS1.GetType() == GeomAbs_Plane) { 
+    if     (CompC3D && CompPC1 && BAS1->GetType() == GeomAbs_Plane) { 
       //-- The curve X,Y,Z and U2,V2 is approximated
       Approx.Perform(BAS1,BAS2,AL,CompC3D,Standard_False,CompPC2,iparmin,iparmax);
     }
     
-    else if(CompC3D && CompPC2 && BAS2.GetType() == GeomAbs_Plane) {
+    else if(CompC3D && CompPC2 && BAS2->GetType() == GeomAbs_Plane) {
       //-- The curve X,Y,Z and U1,V1 is approximated
       Approx.Perform(BAS1,BAS2,AL,CompC3D,CompPC1,Standard_False,iparmin,iparmax);
     }
@@ -621,15 +621,15 @@ Standard_Boolean  TopOpeBRepTool_CurveTool::MakeCurves
   done = done && CheckApproxResults(Approx);
 
   if (done) {
-    if     (CompC3D && CompPC1 && BAS1.GetType() == GeomAbs_Plane) { 
+    if     (CompC3D && CompPC1 && BAS1->GetType() == GeomAbs_Plane) { 
       C3Dnew = ::MakeCurve3DfromWLineApprox(Approx,1);
-      PC1new = ::MakeCurve2DfromWLineApproxAndPlane(Approx,BAS1.Plane());
+      PC1new = ::MakeCurve2DfromWLineApproxAndPlane(Approx,BAS1->Plane());
       if (CompPC2) PC2new = ::MakeCurve2DfromWLineApprox(Approx,2);
     }
-    else if(CompC3D && CompPC2 && BAS2.GetType() == GeomAbs_Plane) {
+    else if(CompC3D && CompPC2 && BAS2->GetType() == GeomAbs_Plane) {
       C3Dnew = ::MakeCurve3DfromWLineApprox(Approx,1);
       if (CompPC1) PC1new = ::MakeCurve2DfromWLineApprox(Approx,2);
-      PC2new = ::MakeCurve2DfromWLineApproxAndPlane(Approx,BAS2.Plane());
+      PC2new = ::MakeCurve2DfromWLineApproxAndPlane(Approx,BAS2->Plane());
     }
     else { 
       if (CompC3D) C3Dnew = ::MakeCurve3DfromWLineApprox(Approx,1);

@@ -23,16 +23,16 @@
 #include <StdFail_NotDone.hxx>
 
 // mask the return of a Adaptor2d_Curve2d as a gp_Pnt 
-static gp_Pnt Value (const Adaptor3d_Curve& theC,
+static gp_Pnt Value (const Handle(Adaptor3d_Curve)& theC,
                      const Standard_Real theParameter)
 {
-  return theC.Value (theParameter);
+  return theC->Value (theParameter);
 }
 
-static gp_Pnt Value (const Adaptor2d_Curve2d& theC,
+static gp_Pnt Value (const Handle(Adaptor2d_Curve2d)& theC,
                      const Standard_Real theParameter)
 {
-  const gp_Pnt2d a2dPoint = theC.Value (theParameter);
+  const gp_Pnt2d a2dPoint = theC->Value (theParameter);
   return gp_Pnt (a2dPoint.X(), a2dPoint.Y(), 0.0);
 }
 
@@ -51,7 +51,7 @@ GCPnts_UniformDeflection::GCPnts_UniformDeflection()
 //function : GCPnts_UniformDeflection
 //purpose  :
 //=======================================================================
-GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Adaptor3d_Curve& theC,
+GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Handle(Adaptor3d_Curve)& theC,
                                                     const Standard_Real theDeflection,
                                                     const Standard_Real theU1,
                                                     const Standard_Real theU2,
@@ -66,7 +66,7 @@ GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Adaptor3d_Curve& theC,
 //function : GCPnts_UniformDeflection
 //purpose  :
 //=======================================================================
-GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Adaptor3d_Curve& theC,
+GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Handle(Adaptor3d_Curve)& theC,
                                                     const Standard_Real theDeflection,
                                                     const Standard_Boolean theWithControl)
 : myDone (Standard_False),
@@ -79,7 +79,7 @@ GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Adaptor3d_Curve& theC,
 //function : GCPnts_UniformDeflection
 //purpose  :
 //=======================================================================
-GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Adaptor2d_Curve2d& theC,
+GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                                     const Standard_Real theDeflection,
                                                     const Standard_Real theU1,
                                                     const Standard_Real theU2,
@@ -94,7 +94,7 @@ GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Adaptor2d_Curve2d& the
 //function : GCPnts_UniformDeflection
 //purpose  :
 //=======================================================================
-GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Adaptor2d_Curve2d& theC,
+GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                                     const Standard_Real theDeflection,
                                                     const Standard_Boolean theWithControl)
 : myDone (Standard_False),
@@ -107,29 +107,29 @@ GCPnts_UniformDeflection::GCPnts_UniformDeflection (const Adaptor2d_Curve2d& the
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_UniformDeflection::Initialize (const Adaptor3d_Curve& theC,
+void GCPnts_UniformDeflection::Initialize (const Handle(Adaptor3d_Curve)& theC,
                                            const Standard_Real theDeflection,
                                            const Standard_Boolean theWithControl)
 {
-  Initialize (theC, theDeflection, theC.FirstParameter(), theC.LastParameter(), theWithControl);
+  Initialize (theC, theDeflection, theC->FirstParameter(), theC->LastParameter(), theWithControl);
 }
 
 //=======================================================================
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_UniformDeflection::Initialize (const Adaptor2d_Curve2d& theC,
+void GCPnts_UniformDeflection::Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                            const Standard_Real theDeflection,
                                            const Standard_Boolean theWithControl)
 {
-  Initialize (theC, theDeflection, theC.FirstParameter(), theC.LastParameter(), theWithControl);
+  Initialize (theC, theDeflection, theC->FirstParameter(), theC->LastParameter(), theWithControl);
 }
 
 //=======================================================================
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_UniformDeflection::Initialize (const Adaptor3d_Curve& theC,
+void GCPnts_UniformDeflection::Initialize (const Handle(Adaptor3d_Curve)& theC,
                                            const Standard_Real theDeflection,
                                            const Standard_Real theU1,
                                            const Standard_Real theU2,
@@ -142,7 +142,7 @@ void GCPnts_UniformDeflection::Initialize (const Adaptor3d_Curve& theC,
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_UniformDeflection::Initialize (const Adaptor2d_Curve2d& theC,
+void GCPnts_UniformDeflection::Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                            const Standard_Real theDeflection,
                                            const Standard_Real theU1,
                                            const Standard_Real theU2,
@@ -216,7 +216,7 @@ static Standard_Boolean PerformCircular (const TheCurve& theC,
                                          const Standard_Real theU2)
 {
   gp_Pnt aPoint;
-  Standard_Real anAngle = Max (1.0 - (theDeflection / theC.Circle().Radius()), 0.0);
+  Standard_Real anAngle = Max (1.0 - (theDeflection / theC->Circle().Radius()), 0.0);
   anAngle = 2.0e0 * ACos (anAngle);
   Standard_Integer aNbPoints = (Standard_Integer )((theU2 - theU1) / anAngle);
   aNbPoints += 2;
@@ -239,23 +239,23 @@ static Standard_Boolean PerformCircular (const TheCurve& theC,
 template<class TheCurve>
 static GCPnts_DeflectionType GetDefType (const TheCurve& theC)
 {
-  if (theC.NbIntervals (GeomAbs_C2) > 1)
+  if (theC->NbIntervals (GeomAbs_C2) > 1)
   {
     return GCPnts_DefComposite;
   }
 
-  switch (theC.GetType())
+  switch (theC->GetType())
   {
     case GeomAbs_Line:   return GCPnts_Linear;
     case GeomAbs_Circle: return GCPnts_Circular;
     case GeomAbs_BSplineCurve:
     {
-      Handle(typename GCPnts_TCurveTypes<TheCurve>::BSplineCurve) aBSpline = theC.BSpline();
+      Handle(typename GCPnts_TCurveTypes<TheCurve>::BSplineCurve) aBSpline = theC->BSpline();
       return (aBSpline->NbPoles() == 2) ? GCPnts_Linear : GCPnts_Curved;
     }
     case GeomAbs_BezierCurve:
     {
-      Handle(typename GCPnts_TCurveTypes<TheCurve>::BezierCurve) aBezier = theC.Bezier();
+      Handle(typename GCPnts_TCurveTypes<TheCurve>::BezierCurve) aBezier = theC->Bezier();
       return (aBezier->NbPoles() == 2) ? GCPnts_Linear : GCPnts_Curved;
     }
     default:
@@ -303,11 +303,11 @@ static Standard_Boolean PerformComposite (TColStd_SequenceOfReal& theParameters,
                                           const Standard_Real theEPSILON,
                                           const Standard_Boolean theWithControl)
 {
-  const Standard_Integer aNbIntervals = theC.NbIntervals (GeomAbs_C2);
+  const Standard_Integer aNbIntervals = theC->NbIntervals (GeomAbs_C2);
   Standard_Integer aPIndex = 0;
 
   TColStd_Array1OfReal aTI (1, aNbIntervals + 1);
-  theC.Intervals (aTI, GeomAbs_C2);
+  theC->Intervals (aTI, GeomAbs_C2);
   BSplCLib::Hunt (aTI, theU1, aPIndex);
 
   // iterate by continuous segments
@@ -347,7 +347,7 @@ void GCPnts_UniformDeflection::initialize (const TheCurve& theC,
                                            const Standard_Real theU2,
                                            const Standard_Boolean theWithControl)
 {
-  const Standard_Real anEPSILON = theC.Resolution (Precision::Confusion());
+  const Standard_Real anEPSILON = theC->Resolution (Precision::Confusion());
   myDeflection = theDeflection;
   myDone = Standard_False;
   myParams.Clear();

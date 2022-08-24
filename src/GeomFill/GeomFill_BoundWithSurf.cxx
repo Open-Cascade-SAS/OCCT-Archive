@@ -35,7 +35,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GeomFill_BoundWithSurf,GeomFill_Boundary)
 //purpose  : 
 //=======================================================================
 GeomFill_BoundWithSurf::GeomFill_BoundWithSurf
-(const Adaptor3d_CurveOnSurface& CurveOnSurf,
+(const Handle(Adaptor3d_CurveOnSurface)& CurveOnSurf,
  const Standard_Real           Tol3d,
  const Standard_Real           Tolang) :
  GeomFill_Boundary(Tol3d,Tolang), myConS(CurveOnSurf)
@@ -52,7 +52,7 @@ gp_Pnt GeomFill_BoundWithSurf::Value(const Standard_Real U) const
 {
   Standard_Real x = U;
   if(!myPar.IsNull()) x = myPar->Value(U);
-  return myConS.Value(x);
+  return myConS->Value(x);
 }
 
 
@@ -67,7 +67,7 @@ void GeomFill_BoundWithSurf::D1(const Standard_Real U,
 {
   Standard_Real x = U, dx = 1.;
   if(!myPar.IsNull()) myPar->D1(U,x,dx);
-  myConS.D1(x, P, V);
+  myConS->D1(x, P, V);
   V.Multiply(dx);
 }
 
@@ -94,15 +94,15 @@ gp_Vec GeomFill_BoundWithSurf::Norm(const Standard_Real U) const
   if (!HasNormals()) 
     throw Standard_Failure("BoundWithSurf Norm : pas de contrainte");
 
-//  Handle(Adaptor3d_Surface)& S = myConS.GetSurface();
-//  Handle(Adaptor2d_Curve2d)& C2d = myConS.GetCurve();
+//  Handle(Adaptor3d_Surface)& S = myConS->GetSurface();
+//  Handle(Adaptor2d_Curve2d)& C2d = myConS->GetCurve();
   Standard_Real x,y;
   Standard_Real w = U;
   if(!myPar.IsNull()) w = myPar->Value(U);
-  myConS.GetCurve()->Value(w).Coord(x,y);
+  myConS->GetCurve()->Value(w).Coord(x,y);
   gp_Pnt P;
   gp_Vec Su, Sv;
-  myConS.GetSurface()->D1(x,y,P,Su,Sv);
+  myConS->GetSurface()->D1(x,y,P,Su,Sv);
   Su.Cross(Sv);
   Su.Normalize();
   return Su;
@@ -120,20 +120,20 @@ void GeomFill_BoundWithSurf::D1Norm(const Standard_Real U,
 {
   if (!HasNormals()) 
     throw Standard_Failure("BoundWithSurf Norm : pas de contrainte");
-//  Handle(Adaptor3d_Surface)& S = myConS.GetSurface();
-//  Handle(Adaptor2d_Curve2d)& C2d = myConS.GetCurve();
+//  Handle(Adaptor3d_Surface)& S = myConS->GetSurface();
+//  Handle(Adaptor2d_Curve2d)& C2d = myConS->GetCurve();
   gp_Pnt2d P2d;
   gp_Vec2d V2d;
   Standard_Real x,y,dx,dy;
   Standard_Real w = U, dw = 1.;
   if(!myPar.IsNull()) myPar->D1(U,w,dw);
-  myConS.GetCurve()->D1(w,P2d,V2d);
+  myConS->GetCurve()->D1(w,P2d,V2d);
   P2d.Coord(x,y);
   V2d.Multiply(dw);
   V2d.Coord(dx,dy);
   gp_Pnt P;
   gp_Vec Su, Sv, Suu, Suv, Svv;
-  myConS.GetSurface()->D2(x,y,P,Su,Sv, Suu, Svv, Suv);
+  myConS->GetSurface()->D2(x,y,P,Su,Sv, Suu, Svv, Suv);
   N = Su.Crossed(Sv);
   N.Normalize();
   Standard_Real nsuu = N.Dot(Suu), nsuv = N.Dot(Suv), nsvv = N.Dot(Svv);
@@ -196,8 +196,8 @@ void GeomFill_BoundWithSurf::Bounds(Standard_Real& First,
 {
   if(!myPar.IsNull()) myPar->Bounds(First,Last);
   else{
-    First = myConS.FirstParameter();
-    Last  = myConS.LastParameter();
+    First = myConS->FirstParameter();
+    Last  = myConS->LastParameter();
   }
 }
 

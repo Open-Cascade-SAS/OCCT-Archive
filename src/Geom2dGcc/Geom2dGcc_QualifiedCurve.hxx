@@ -62,7 +62,7 @@ public:
   //! GccEnt_Position myQualif = GccEnt_outside ;
   //! Geom2dGcc_QualifiedCurve myQCurve ( Curve, myQualif );
   //! is private;
-  Standard_EXPORT Geom2dGcc_QualifiedCurve(const Geom2dAdaptor_Curve& Curve, const GccEnt_Position Qualifier);
+  Standard_EXPORT Geom2dGcc_QualifiedCurve(const Handle(Geom2dAdaptor_Curve)& Curve, const GccEnt_Position Qualifier);
   
   //! Returns a 2D curve to which the qualifier is assigned.
   //! Warning
@@ -73,9 +73,9 @@ public:
   //! The Geom2d curve on which the adapted curve is
   //! based can be obtained in the following way:
   //! myQualifiedCurve = ... ;
-  //! Geom2dAdaptor_Curve myAdaptedCurve = myQualifiedCurve.Qualified();
-  //! Handle(Geom2d_Curve) = myAdaptedCurve.Curve();
-  Standard_EXPORT Geom2dAdaptor_Curve Qualified() const;
+  //! Handle(Geom2dAdaptor_Curve) myAdaptedCurve = myQualifiedCurve->Qualified();
+  //! Handle(Geom2d_Curve) = myAdaptedCurve->Curve();
+  Standard_EXPORT const Handle(Geom2dAdaptor_Curve)& Qualified() const;
   
   //! Returns
   //! - the qualifier of this qualified curve if it is enclosing,
@@ -112,7 +112,7 @@ private:
 
 
   GccEnt_Position TheQualifier;
-  Geom2dAdaptor_Curve TheQualified;
+  Handle(Geom2dAdaptor_Curve) TheQualified;
 
 
 };

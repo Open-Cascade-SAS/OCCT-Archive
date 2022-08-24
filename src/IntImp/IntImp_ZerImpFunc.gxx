@@ -21,7 +21,7 @@
 #define No_Standard_OutOfRange
 #endif
 
-#define SURF     (*((ThePSurface *)(surf)))
+#define SURF     ((ThePSurface::element_type*)(surf))
 #define FUNC     (*((TheISurface *)(func)))
 
 
@@ -52,7 +52,7 @@ IntImp_ZerImpFunc::IntImp_ZerImpFunc(const ThePSurface& PS ,
        tgdv(0.0),
        derived(Standard_False)
 { 
-  surf = (Standard_Address)(&PS);
+  surf = (Standard_Address)(PS.get());
   func = (Standard_Address)(&IS);
 }
 

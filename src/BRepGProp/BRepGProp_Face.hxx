@@ -161,8 +161,8 @@ private:
 
 
 
-  BRepAdaptor_Surface mySurface;
-  Geom2dAdaptor_Curve myCurve;
+  Handle(BRepAdaptor_Surface) mySurface;
+  Handle(Geom2dAdaptor_Curve) myCurve;
   Standard_Boolean mySReverse;
   Standard_Boolean myIsUseSpan;
 

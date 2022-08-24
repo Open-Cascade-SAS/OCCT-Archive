@@ -56,7 +56,7 @@ Standard_Boolean BRepBlend_BlendTool::Project(const gp_Pnt2d& P,
   const Standard_Real epsX = 1.e-8;
   const Standard_Integer Nbu = 20;
   const Standard_Real Tol = 1.e-5;
-  Extrema_EPCOfExtPC2d extrema(P, *C, Nbu, epsX, Tol);
+  Extrema_EPCOfExtPC2d extrema(P, C, Nbu, epsX, Tol);
   if (!extrema.IsDone())
     return Standard_True;
 
@@ -91,9 +91,9 @@ Standard_Boolean BRepBlend_BlendTool::Inters(const gp_Pnt2d& P1,
 
   gp_Dir2d d(v);
   Handle(Geom2d_Line) bid = new Geom2d_Line(P1,d);
-  Geom2dAdaptor_Curve seg(bid,-0.01*mag,1.01*mag);
+  Handle(Geom2dAdaptor_Curve) seg = new Geom2dAdaptor_Curve(bid,-0.01*mag,1.01*mag);
 
-  Geom2dInt_GInter inter (seg, *C, Tol, Tol);
+  Geom2dInt_GInter inter (seg, C, Tol, Tol);
   if (!inter.IsDone())
     return Standard_False;
 

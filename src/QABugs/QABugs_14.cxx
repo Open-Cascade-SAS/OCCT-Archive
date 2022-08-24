@@ -77,8 +77,8 @@ static Standard_Integer BUC60897 (Draw_Interpretor& di, Standard_Integer /*argc*
   Sprintf(abuf,"curve");
   DrawTrSurf::Set (st, aCurve);
 
-  Geom2dAdaptor_Curve aCLine(aLine);
-  Geom2dAdaptor_Curve aCCurve(aCurve);
+  Handle(Geom2dAdaptor_Curve) aCLine = new Geom2dAdaptor_Curve(aLine);
+  Handle(Geom2dAdaptor_Curve) aCCurve = new Geom2dAdaptor_Curve(aCurve);
   Geom2dGcc_QualifiedCurve aQualifCurve1(aCLine, GccEnt_outside);
   Geom2dGcc_QualifiedCurve aQualifCurve2(aCCurve, GccEnt_outside);
   Geom2dGcc_Circ2d2TanRad aGccCirc2d(aQualifCurve1, aQualifCurve2, 10, 1e-7);

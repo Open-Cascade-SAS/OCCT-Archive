@@ -24,6 +24,7 @@
 //=======================================================================
 
 Geom2dHatch_Element::Geom2dHatch_Element () { 
+  myCurve = new Geom2dAdaptor_Curve();
 }
   
 //=======================================================================
@@ -31,7 +32,7 @@ Geom2dHatch_Element::Geom2dHatch_Element () {
 // Purpose  : Constructor.
 //=======================================================================
 
-Geom2dHatch_Element::Geom2dHatch_Element (const Geom2dAdaptor_Curve& Curve,
+Geom2dHatch_Element::Geom2dHatch_Element (const Handle(Geom2dAdaptor_Curve)& Curve,
 					  const TopAbs_Orientation Orientation) :
        myCurve       (Curve),
        myOrientation (Orientation)
@@ -43,19 +44,9 @@ Geom2dHatch_Element::Geom2dHatch_Element (const Geom2dAdaptor_Curve& Curve,
 // Purpose  : Returns the curve associated to the hatching.
 //=======================================================================
 
-const Geom2dAdaptor_Curve& Geom2dHatch_Element::Curve () const
+const Handle(Geom2dAdaptor_Curve)& Geom2dHatch_Element::Curve () const
 {
-  return myCurve ;
-}
-
-//=======================================================================
-// Function : ChangeCurve
-// Purpose  : Returns the curve associated to the hatching.
-//=======================================================================
-
-Geom2dAdaptor_Curve& Geom2dHatch_Element::ChangeCurve ()
-{
-  return myCurve ;
+  return myCurve;
 }
 
 //=======================================================================

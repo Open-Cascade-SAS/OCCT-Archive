@@ -37,14 +37,14 @@ class DrawTrSurf_Drawable : public Draw_Drawable3D
 public:
 
   //! Draw a polygon of the curve on the Display
-  Standard_EXPORT void DrawCurve2dOn (Adaptor2d_Curve2d& C, Draw_Display& D) const;
+  Standard_EXPORT void DrawCurve2dOn (const Handle(Adaptor2d_Curve2d)& C, Draw_Display& D) const;
   
   //! Draw a polygon of the curve on the Display
-  Standard_EXPORT void DrawCurveOn (Adaptor3d_Curve& C, Draw_Display& D) const;
+  Standard_EXPORT void DrawCurveOn (const Handle(Adaptor3d_Curve)& C, Draw_Display& D) const;
   
   //! Load C  with the specified iso  and Draw a polygon
   //! of the curve on the Display
-  Standard_EXPORT void DrawIsoCurveOn (Adaptor3d_IsoCurve& C, const GeomAbs_IsoType T, const Standard_Real P, const Standard_Real F, const Standard_Real L, Draw_Display& D) const;
+  Standard_EXPORT void DrawIsoCurveOn (const Handle(Adaptor3d_IsoCurve)& C, const GeomAbs_IsoType T, const Standard_Real P, const Standard_Real F, const Standard_Real L, Draw_Display& D) const;
   
   //! this is defined only to tell C++ not to complain
   //! about inheriting a pure virtual method.

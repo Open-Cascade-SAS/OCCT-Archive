@@ -79,7 +79,7 @@ public:
   
   Standard_EXPORT BRepApprox_Approx();
   
-  Standard_EXPORT void Perform (const BRepAdaptor_Surface& Surf1, const BRepAdaptor_Surface& Surf2, const Handle(BRepApprox_ApproxLine)& aLine, const Standard_Boolean ApproxXYZ = Standard_True, const Standard_Boolean ApproxU1V1 = Standard_True, const Standard_Boolean ApproxU2V2 = Standard_True, const Standard_Integer indicemin = 0, const Standard_Integer indicemax = 0);
+  Standard_EXPORT void Perform (const Handle(BRepAdaptor_Surface)& Surf1, const Handle(BRepAdaptor_Surface)& Surf2, const Handle(BRepApprox_ApproxLine)& aLine, const Standard_Boolean ApproxXYZ = Standard_True, const Standard_Boolean ApproxU1V1 = Standard_True, const Standard_Boolean ApproxU2V2 = Standard_True, const Standard_Integer indicemin = 0, const Standard_Integer indicemax = 0);
   
   Standard_EXPORT void Perform (const Handle(BRepApprox_ApproxLine)& aLine, const Standard_Boolean ApproxXYZ = Standard_True, const Standard_Boolean ApproxU1V1 = Standard_True, const Standard_Boolean ApproxU2V2 = Standard_True, const Standard_Integer indicemin = 0, const Standard_Integer indicemax = 0);
   
@@ -120,7 +120,7 @@ protected:
 
 
 private:
-  Standard_EXPORT void Perform (const IntSurf_Quadric& Surf1, const BRepAdaptor_Surface& Surf2, const Handle(BRepApprox_ApproxLine)& aLine, const Standard_Boolean ApproxXYZ, const Standard_Boolean ApproxU1V1, const Standard_Boolean ApproxU2V2, const Standard_Integer indicemin, const Standard_Integer indicemax, const Standard_Boolean isTheQuadFirst);
+  Standard_EXPORT void Perform (const IntSurf_Quadric& Surf1, const Handle(BRepAdaptor_Surface)& Surf2, const Handle(BRepApprox_ApproxLine)& aLine, const Standard_Boolean ApproxXYZ, const Standard_Boolean ApproxU1V1, const Standard_Boolean ApproxU2V2, const Standard_Integer indicemin, const Standard_Integer indicemax, const Standard_Boolean isTheQuadFirst);
   
   Standard_EXPORT void UpdateTolReached();
 

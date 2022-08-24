@@ -502,9 +502,9 @@ void GeomPlate_BuildPlateSurface::Perform(const Message_ProgressRange& theProgre
 
   Standard_Real u1,v1,u2,v2;
   mySurfInit->Bounds(u1,v1,u2,v2);
-  GeomAdaptor_Surface aSurfInit(mySurfInit);
-  myTolU = aSurfInit.UResolution(myTol3d);
-  myTolV = aSurfInit.VResolution(myTol3d);
+  Handle(GeomAdaptor_Surface) aSurfInit = new GeomAdaptor_Surface(mySurfInit);
+  myTolU = aSurfInit->UResolution(myTol3d);
+  myTolV = aSurfInit->VResolution(myTol3d);
   myProj.Initialize(aSurfInit,u1,v1,u2,v2,
 		    myTolU,myTolV);
 
@@ -533,9 +533,9 @@ void GeomPlate_BuildPlateSurface::Perform(const Message_ProgressRange& theProgre
       mySurfInit =  App.Surface();
 
       mySurfInit->Bounds(u1,v1,u2,v2);
-      GeomAdaptor_Surface Surf(mySurfInit);
-      myTolU = Surf.UResolution(myTol3d);
-      myTolV = Surf.VResolution(myTol3d);
+      Handle(GeomAdaptor_Surface) Surf = new GeomAdaptor_Surface(mySurfInit);
+      myTolU = Surf->UResolution(myTol3d);
+      myTolV = Surf->VResolution(myTol3d);
       myProj.Initialize(Surf,u1,v1,u2,v2,
 			myTolU,myTolV);
 
@@ -555,9 +555,9 @@ void GeomPlate_BuildPlateSurface::Perform(const Message_ProgressRange& theProgre
 	  mySurfInit = myPlanarSurfInit;
 
 	  mySurfInit->Bounds(u1,v1,u2,v2);
-	  GeomAdaptor_Surface SurfNew(mySurfInit);
-	  myTolU = SurfNew.UResolution(myTol3d);
-	  myTolV = SurfNew.VResolution(myTol3d);
+	  Handle(GeomAdaptor_Surface) SurfNew = new GeomAdaptor_Surface(mySurfInit);
+	  myTolU = SurfNew->UResolution(myTol3d);
+	  myTolV = SurfNew->VResolution(myTol3d);
 	  myProj.Initialize(SurfNew,u1,v1,u2,v2,
 			    myTolU,myTolV);
 
@@ -840,7 +840,7 @@ void GeomPlate_BuildPlateSurface::
   Standard_Integer i ;
 
   mySurfInit->Bounds(u1,v1,u2,v2);
-  GeomAdaptor_Surface Surf(mySurfInit);
+  Handle(GeomAdaptor_Surface) Surf = new GeomAdaptor_Surface(mySurfInit);
   myProj.Initialize(Surf,u1,v1,u2,v2,
 		    myTolU,myTolV);
 
@@ -971,10 +971,10 @@ Disc3dContour (const Standard_Integer /*nbp*/,
   //  sampling in "cosine" + 3 points on each interval
   Standard_Real u1,v1,u2,v2;
   mySurfInit->Bounds(u1,v1,u2,v2);
-  GeomAdaptor_Surface Surf(mySurfInit);
+  Handle(GeomAdaptor_Surface) Surf = new GeomAdaptor_Surface(mySurfInit);
   myProj.Initialize(Surf,u1,v1,u2,v2,
-		    Surf.UResolution(myTol3d),
-		    Surf.VResolution(myTol3d));
+		    Surf->UResolution(myTol3d),
+		    Surf->VResolution(myTol3d));
   Standard_Integer NTCurve = myLinCont->Length();
   Standard_Integer NTPntCont = myPntCont->Length();
 //  gp_Pnt2d P2d;
@@ -1659,9 +1659,9 @@ void GeomPlate_BuildPlateSurface::ComputeSurfInit(const Message_ProgressRange& t
 #endif
       Standard_Real u1,v1,u2,v2;
       mySurfInit->Bounds(u1,v1,u2,v2);
-      GeomAdaptor_Surface Surf(mySurfInit);
-      myTolU = Surf.UResolution(myTol3d);
-      myTolV = Surf.VResolution(myTol3d);
+      Handle(GeomAdaptor_Surface) Surf = new GeomAdaptor_Surface(mySurfInit);
+      myTolU = Surf->UResolution(myTol3d);
+      myTolV = Surf->VResolution(myTol3d);
       myProj.Initialize(Surf,u1,v1,u2,v2,
 			myTolU,myTolV);
 
@@ -1770,7 +1770,8 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 {
   Standard_Integer NTLinCont = myLinCont->Length();
   Geom2dInt_GInter Intersection;
-  Geom2dAdaptor_Curve Ci, Cj;
+  Handle(Geom2dAdaptor_Curve) Ci = new Geom2dAdaptor_Curve();
+  Handle(Geom2dAdaptor_Curve) Cj = new Geom2dAdaptor_Curve();
   IntRes2d_IntersectionPoint int2d;
   gp_Pnt P1,P2;
   gp_Pnt2d P2d;
@@ -1780,10 +1781,10 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
     {
       //Standard_Real NbPnt_i=myLinCont->Value(i)->NbPoints();
       // Find the intersection with each curve including the curve itself
-      Ci.Load(myLinCont->Value(i)->Curve2dOnSurf());
+      Ci->Load(myLinCont->Value(i)->Curve2dOnSurf());
       for(Standard_Integer j=i; j<=NTLinCont; j++)
 	{
-	  Cj.Load(myLinCont->Value(j)->Curve2dOnSurf());
+	  Cj->Load(myLinCont->Value(j)->Curve2dOnSurf());
 	  if (i==j)
 	    Intersection.Perform(Ci, myTol2d*10, myTol2d*10); 
 	  else
@@ -1813,8 +1814,8 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 		      // the point on curve j is preserved;
 		      // the length of interval is a length 2d 
 		      // corresponding in 3d to myTol3d
-		      Standard_Real tolint = Ci.Resolution(myTol3d);
-		      Ci.D1(int2d.ParamOnFirst(),P2d, V2d);
+		      Standard_Real tolint = Ci->Resolution(myTol3d);
+		      Ci->D1(int2d.ParamOnFirst(),P2d, V2d);
 		      Standard_Real aux = V2d.Magnitude();
 		      if (aux > 1.e-7)
 			{
@@ -1856,13 +1857,13 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 				<<" "<<Abs(Abs(A1)-M_PI)<<std::endl;
 #endif
 			      
-			      coin = Ci.Resolution(Tol);
+			      coin = Ci->Resolution(Tol);
 			      Standard_Real Par1=int2d.ParamOnFirst()-coin,
 			      Par2=int2d.ParamOnFirst()+coin;
 			      // Storage of the interval for curve i
 			      PntG1G1->ChangeValue(i).Append(Par1);
 			      PntG1G1->ChangeValue(i).Append(Par2);
-			      coin = Cj.Resolution(Tol);
+			      coin = Cj->Resolution(Tol);
 			      Par1=int2d.ParamOnSecond()-coin;
 			      Par2=int2d.ParamOnSecond()+coin;
 			      // Storage of the interval for curve j
@@ -1911,7 +1912,7 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 #endif
 			      if (myLinCont->Value(i)->Order() == 1)
 				{
-				  coin = Ci.Resolution(Tol);
+				  coin = Ci->Resolution(Tol);
 				  coin *=  Angle / myTolAng * 10.;
 #ifdef OCCT_DEBUG
 				  std::cout<<std::endl<<"coin = "<<coin<<std::endl;
@@ -1924,7 +1925,7 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 				}
 			      else
 				{
-				  coin = Cj.Resolution(Tol);
+				  coin = Cj->Resolution(Tol);
 				  coin *= Angle / myTolAng * 10.;
 #ifdef OCCT_DEBUG
 				  std::cout<<std::endl<<"coin = "<<coin<<std::endl;
@@ -1948,12 +1949,12 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 		    // corresponding to the distance of points in 3D to myTol3d  
 		    Standard_Real tolint, Dist;
 		    Dist = P1.Distance(P2);
-		    tolint = Ci.Resolution(Dist);
+		    tolint = Ci->Resolution(Dist);
 		    PntInter->ChangeValue(i).Append( int2d.ParamOnFirst() - tolint);
 		    PntInter->ChangeValue(i).Append( int2d.ParamOnFirst() + tolint);
 		    if (j!=i)
 		      {
-			tolint = Cj.Resolution(Dist);
+			tolint = Cj->Resolution(Dist);
 			PntInter->ChangeValue(j).
 			  Append( int2d.ParamOnSecond() - tolint);
 			PntInter->ChangeValue(j).
@@ -1997,7 +1998,7 @@ Discretise(const Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
   Standard_Integer NTLinCont = myLinCont->Length();
   Standard_Boolean ACR;
   Handle(Geom2d_Curve) C2d; 
-  Geom2dAdaptor_Curve AC2d;
+  Handle(Geom2dAdaptor_Curve) AC2d = new Geom2dAdaptor_Curve();
 //  Handle(Adaptor_HCurve2d) HC2d;
   Handle(Law_Interpol) acrlaw = new (Law_Interpol) ();
   myPlateCont = new GeomPlate_HArray1OfSequenceOfReal(1,NTLinCont);
@@ -2023,7 +2024,7 @@ Discretise(const Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
     ACR =  (!C2d.IsNull());
     if (ACR) {
       // Construct a law close to curvilinear abscissa
-      if(!C2d.IsNull()) AC2d.Load(C2d);
+      if(!C2d.IsNull()) AC2d->Load(C2d);
 //      AC2d.Load(LinCont->Curve2dOnSurf());
       Standard_Integer ii, Nbint = 20;
       Standard_Real U;
@@ -2108,7 +2109,7 @@ Discretise(const Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
                     gp_Pnt P3d,PP,Pdif;
                     gp_Pnt2d P2d;
                         
-                    AC2d.D0(Inter, P2d);
+                    AC2d->D0(Inter, P2d);
                     LinCont->D0(Inter,P3d);
                     mySurfInit->D0(P2d.Coord(1),P2d.Coord(2),PP);
                     Pdif.SetCoord(-PP.Coord(1)+P3d.Coord(1),
@@ -2150,7 +2151,7 @@ Discretise(const Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
               gp_Pnt P3d,PP,Pdif;
               gp_Pnt2d P2d;
               
-              AC2d.D0(Inter, P2d);
+              AC2d->D0(Inter, P2d);
               LinCont->D0(Inter,P3d);
               mySurfInit->D0(P2d.Coord(1),P2d.Coord(2),PP);
               Pdif.SetCoord(-PP.Coord(1)+P3d.Coord(1),

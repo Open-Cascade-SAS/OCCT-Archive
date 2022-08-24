@@ -23,37 +23,37 @@
 static const Standard_Integer MyMaxQuasiFleshe = 2000;
 
 // mask the return of a Adaptor2d_Curve2d as a gp_Pnt 
-static gp_Pnt Value (const Adaptor3d_Curve& theC,
+static gp_Pnt Value (const Handle(Adaptor3d_Curve)& theC,
                      const Standard_Real theParameter)
 {
-  return theC.Value (theParameter);
+  return theC->Value (theParameter);
 }
 
-static gp_Pnt Value (const Adaptor2d_Curve2d& theC,
+static gp_Pnt Value (const Handle(Adaptor2d_Curve2d)& theC,
                      const Standard_Real theParameter)
 {
   gp_Pnt aPoint;
-  gp_Pnt2d a2dPoint (theC.Value (theParameter));
+  gp_Pnt2d a2dPoint (theC->Value (theParameter));
   aPoint.SetCoord (a2dPoint.X(), a2dPoint.Y(), 0.0);
   return aPoint;
 }
 
-static void D1 (const Adaptor3d_Curve& theC,
+static void D1 (const Handle(Adaptor3d_Curve)& theC,
                 const Standard_Real theParameter,
                 gp_Pnt& theP,
                 gp_Vec& theV)
 {
-  theC.D1 (theParameter, theP, theV);
+  theC->D1 (theParameter, theP, theV);
 }
 
-static void D1 (const Adaptor2d_Curve2d& theC,
+static void D1 (const Handle(Adaptor2d_Curve2d)& theC,
                 const Standard_Real theParameter,
                 gp_Pnt& theP,
                 gp_Vec& theV)
 {
   gp_Pnt2d a2dPoint;
   gp_Vec2d a2dVec;
-  theC.D1 (theParameter, a2dPoint, a2dVec);
+  theC->D1 (theParameter, a2dPoint, a2dVec);
   theP.SetCoord (a2dPoint.X(), a2dPoint.Y(), 0.0);
   theV.SetCoord (a2dVec.X(), a2dVec.Y(), 0.0);
 }
@@ -261,7 +261,7 @@ static Standard_Boolean PerformCircular (const TheCurve& theC,
                                          const Standard_Real theU1,
                                          const Standard_Real theU2)
 {
-  Standard_Real anAngle = Max (1.0 - (theDeflection / theC.Circle().Radius()), 0.0);
+  Standard_Real anAngle = Max (1.0 - (theDeflection / theC->Circle().Radius()), 0.0);
   anAngle = 2.0 * ACos (anAngle);
   Standard_Integer aNbPoints = (Standard_Integer )((theU2 - theU1) / anAngle);
   aNbPoints += 2;
@@ -284,25 +284,25 @@ static Standard_Boolean PerformCircular (const TheCurve& theC,
 template<class TheCurve>
 static GCPnts_DeflectionType GetDefType (const TheCurve& theC)
 {
-  if (theC.NbIntervals (GeomAbs_C1) > 1)
+  if (theC->NbIntervals (GeomAbs_C1) > 1)
   {
     return GCPnts_DefComposite;
   }
 
   // pour forcer les decoupages aux cassures.
   // G1 devrait marcher, mais donne des exceptions...
-  switch (theC.GetType())
+  switch (theC->GetType())
   {
     case GeomAbs_Line:   return GCPnts_Linear;
     case GeomAbs_Circle: return GCPnts_Circular;
     case GeomAbs_BSplineCurve:
     {
-      Handle(typename GCPnts_TCurveTypes<TheCurve>::BSplineCurve) aBS = theC.BSpline();
+      Handle(typename GCPnts_TCurveTypes<TheCurve>::BSplineCurve) aBS = theC->BSpline();
       return (aBS->NbPoles() == 2) ? GCPnts_Linear : GCPnts_Curved;
     }
     case GeomAbs_BezierCurve:
     {
-      Handle(typename GCPnts_TCurveTypes<TheCurve>::BezierCurve) aBZ = theC.Bezier();
+      Handle(typename GCPnts_TCurveTypes<TheCurve>::BezierCurve) aBZ = theC->Bezier();
       return (aBZ->NbPoles() == 2) ? GCPnts_Linear : GCPnts_Curved;
     }
     default: return GCPnts_Curved;
@@ -380,10 +380,10 @@ static Standard_Boolean PerformComposite (TColStd_SequenceOfReal& theParameters,
   //
   //  coherence avec Intervals
   //
-  const Standard_Integer aNbIntervals = theC.NbIntervals (GeomAbs_C2);
+  const Standard_Integer aNbIntervals = theC->NbIntervals (GeomAbs_C2);
   Standard_Integer aPIndex = 0;
   TColStd_Array1OfReal aTI (1, aNbIntervals + 1);
-  theC.Intervals (aTI, GeomAbs_C2);
+  theC->Intervals (aTI, GeomAbs_C2);
   BSplCLib::Hunt (aTI, theU1, aPIndex);
 
   // iterate by continuous segments
@@ -439,7 +439,7 @@ GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection()
 //function : GCPnts_QuasiUniformDeflection
 //purpose  :
 //=======================================================================
-GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Adaptor3d_Curve& theC,
+GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Handle(Adaptor3d_Curve)& theC,
                                                               const Standard_Real theDeflection,
                                                               const Standard_Real theU1, const Standard_Real theU2,
                                                               const GeomAbs_Shape theContinuity)
@@ -454,7 +454,7 @@ GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Adaptor3d_Cu
 //function : GCPnts_QuasiUniformDeflection
 //purpose  :
 //=======================================================================
-GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Adaptor2d_Curve2d& theC,
+GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                                               const Standard_Real theDeflection,
                                                               const Standard_Real theU1, const Standard_Real theU2,
                                                               const GeomAbs_Shape theContinuity)
@@ -469,7 +469,7 @@ GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Adaptor2d_Cu
 //function : GCPnts_QuasiUniformDeflection
 //purpose  :
 //=======================================================================
-GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Adaptor3d_Curve& theC,
+GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Handle(Adaptor3d_Curve)& theC,
                                                               const Standard_Real theDeflection,
                                                               const GeomAbs_Shape theContinuity)
 : myDone (Standard_False),
@@ -483,7 +483,7 @@ GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Adaptor3d_Cu
 //function : GCPnts_QuasiUniformDeflection
 //purpose  :
 //=======================================================================
-GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Adaptor2d_Curve2d& theC,
+GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Handle(Adaptor2d_Curve2d)& theC,
                                                               const Standard_Real theDeflection,
                                                               const GeomAbs_Shape theContinuity)
 : myDone (Standard_False),
@@ -497,29 +497,29 @@ GCPnts_QuasiUniformDeflection::GCPnts_QuasiUniformDeflection (const Adaptor2d_Cu
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_QuasiUniformDeflection::Initialize (const Adaptor3d_Curve& theC,
+void GCPnts_QuasiUniformDeflection::Initialize (const Handle(Adaptor3d_Curve)& theC,
                                                 const Standard_Real theDeflection,
                                                 const GeomAbs_Shape theContinuity)
 {
-  Initialize (theC, theDeflection, theC.FirstParameter(), theC.LastParameter(), theContinuity);
+  Initialize (theC, theDeflection, theC->FirstParameter(), theC->LastParameter(), theContinuity);
 }
 
 //=======================================================================
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_QuasiUniformDeflection::Initialize (const Adaptor2d_Curve2d& theC,
+void GCPnts_QuasiUniformDeflection::Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                                 const Standard_Real theDeflection,
                                                 const GeomAbs_Shape theContinuity)
 {
-  Initialize (theC, theDeflection, theC.FirstParameter(), theC.LastParameter(), theContinuity);
+  Initialize (theC, theDeflection, theC->FirstParameter(), theC->LastParameter(), theContinuity);
 }
 
 //=======================================================================
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_QuasiUniformDeflection::Initialize (const Adaptor3d_Curve& theC,
+void GCPnts_QuasiUniformDeflection::Initialize (const Handle(Adaptor3d_Curve)& theC,
                                                 const Standard_Real theDeflection,
                                                 const Standard_Real theU1, const Standard_Real theU2,
                                                 const GeomAbs_Shape theContinuity)
@@ -531,7 +531,7 @@ void GCPnts_QuasiUniformDeflection::Initialize (const Adaptor3d_Curve& theC,
 //function : Initialize
 //purpose  :
 //=======================================================================
-void GCPnts_QuasiUniformDeflection::Initialize (const Adaptor2d_Curve2d& theC,
+void GCPnts_QuasiUniformDeflection::Initialize (const Handle(Adaptor2d_Curve2d)& theC,
                                                 const Standard_Real theDeflection,
                                                 const Standard_Real theU1, const Standard_Real theU2,
                                                 const GeomAbs_Shape theContinuity)
@@ -555,17 +555,17 @@ void GCPnts_QuasiUniformDeflection::initialize (const TheCurve& theC,
   myParams.Clear();
   myPoints.Clear();
 
-  const Standard_Real anEPSILON = Min (theC.Resolution (Precision::Confusion()), 1.e50);
+  const Standard_Real anEPSILON = Min (theC->Resolution (Precision::Confusion()), 1.e50);
   const GCPnts_DeflectionType aType = GetDefType (theC);
   const Standard_Real aU1 = Min (theU1, theU2);
   const Standard_Real aU2 = Max (theU1, theU2);
   if (aType == GCPnts_Curved
    || aType == GCPnts_DefComposite)
   {
-    if (theC.GetType() == GeomAbs_BSplineCurve
-     || theC.GetType() == GeomAbs_BezierCurve)
+    if (theC->GetType() == GeomAbs_BSplineCurve
+     || theC->GetType() == GeomAbs_BezierCurve)
     {
-      const Standard_Real aMaxPar = Max (Abs (theC.FirstParameter()), Abs (theC.LastParameter()));
+      const Standard_Real aMaxPar = Max (Abs (theC->FirstParameter()), Abs (theC->LastParameter()));
       if (anEPSILON < Epsilon (aMaxPar))
       {
         return;

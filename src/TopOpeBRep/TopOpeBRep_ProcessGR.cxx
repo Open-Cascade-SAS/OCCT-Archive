@@ -243,8 +243,8 @@ Standard_Boolean TopOpeBRep_FacesFiller::LSameDomainERL(const TopOpeBRep_LineInt
     const TopoDS_Edge& E = TopoDS::Edge(it.Value());
     Standard_Real tolE = BRep_Tool::Tolerance(E);
     Standard_Real maxtol = Max(tolE,GLOBAL_tolFF);
-    BRepAdaptor_Curve BAC(E);
-    f = BAC.FirstParameter(); l = BAC.LastParameter();
+    Handle(BRepAdaptor_Curve) BAC = new BRepAdaptor_Curve(E);
+    f = BAC->FirstParameter(); l = BAC->LastParameter();
     Standard_Boolean pinc = FUN_tool_PinC(Pm,BAC,f,l,maxtol);
     if (pinc) {isone = Standard_True; break;}
   }

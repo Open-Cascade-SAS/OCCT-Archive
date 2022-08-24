@@ -95,7 +95,7 @@ void DrawDim_Radius::DrawOn(Draw_Display& dis) const
   Standard_Real vMoy = (vFirst + vLast)/2;
   gp_Pnt curpos ;
   surfAlgo.D0(uMoy, vMoy, curpos);
-  const Handle(Geom_Surface)& surf = surfAlgo.Surface().Surface();
+  const Handle(Geom_Surface)& surf = surfAlgo.Surface()->Surface();
   Handle(Geom_Curve) aCurve;
   if (surf->DynamicType() == STANDARD_TYPE(Geom_ToroidalSurface)) {
     aCurve = surf->UIso(uMoy);

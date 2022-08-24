@@ -3241,7 +3241,7 @@ void BRepOffset_MakeOffset::MakeMissingWalls (const Message_ProgressRange& theRa
           GeomAdaptor_Surface GAsurf( theSurf );
           Handle(Geom2dAdaptor_Curve) HC2d  = new Geom2dAdaptor_Curve( AC2d );
           Handle(GeomAdaptor_Surface) HSurf = new GeomAdaptor_Surface( GAsurf );
-          Adaptor3d_CurveOnSurface ConS( HC2d, HSurf );
+          Handle(Adaptor3d_CurveOnSurface) ConS = new Adaptor3d_CurveOnSurface( HC2d, HSurf );
           Standard_Real max_deviation = 0., average_deviation;
           GeomLib::BuildCurve3d(Precision::Confusion(),
             ConS, FirstPar, LastPar,
@@ -3262,7 +3262,7 @@ void BRepOffset_MakeOffset::MakeMissingWalls (const Message_ProgressRange& theRa
           GeomAdaptor_Surface GAsurf( theSurf );
           Handle(Geom2dAdaptor_Curve) HC2d  = new Geom2dAdaptor_Curve( AC2d );
           Handle(GeomAdaptor_Surface) HSurf = new GeomAdaptor_Surface( GAsurf );
-          Adaptor3d_CurveOnSurface ConS( HC2d, HSurf );
+          Handle(Adaptor3d_CurveOnSurface) ConS = new Adaptor3d_CurveOnSurface( HC2d, HSurf );
           Standard_Real max_deviation = 0., average_deviation;
           GeomLib::BuildCurve3d(Precision::Confusion(),
             ConS, FirstPar, LastPar,

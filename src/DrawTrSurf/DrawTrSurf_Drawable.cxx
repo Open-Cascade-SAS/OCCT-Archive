@@ -51,7 +51,7 @@ const Standard_Integer DrawMode ) :
 //purpose  : draw a 2D curve
 //=======================================================================
 
-void DrawTrSurf_Drawable::DrawCurve2dOn (Adaptor2d_Curve2d&   C, 
+void DrawTrSurf_Drawable::DrawCurve2dOn (const Handle(Adaptor2d_Curve2d)&   C, 
 					 Draw_Display& aDisplay) const
 {
   gp_Pnt P;
@@ -73,22 +73,22 @@ void DrawTrSurf_Drawable::DrawCurve2dOn (Adaptor2d_Curve2d&   C,
     }  
   }
   else {
-    Standard_Integer intrv, nbintv = C.NbIntervals(GeomAbs_CN);
+    Standard_Integer intrv, nbintv = C->NbIntervals(GeomAbs_CN);
     TColStd_Array1OfReal TI(1,nbintv+1);
-    C.Intervals(TI,GeomAbs_CN);
-    C.D0(C.FirstParameter(),aPoint2d);
+    C->Intervals(TI,GeomAbs_CN);
+    C->D0(C->FirstParameter(),aPoint2d);
     aDisplay.MoveTo(aPoint2d);
     for (intrv = 1; intrv <= nbintv; intrv++) {
-      if (C.GetType() != GeomAbs_Line) {
+      if (C->GetType() != GeomAbs_Line) {
 	Standard_Real t = TI(intrv);
 	Standard_Real step = (TI(intrv+1) - t) / myDiscret;
 	for (Standard_Integer i = 1; i < myDiscret; i++) {
 	  t += step;
-	  C.D0(t,aPoint2d);
+	  C->D0(t,aPoint2d);
 	  aDisplay.DrawTo(aPoint2d);
 	}
       }
-      C.D0(TI(intrv+1),aPoint2d);
+      C->D0(TI(intrv+1),aPoint2d);
       aDisplay.DrawTo(aPoint2d);
     }
   }
@@ -99,7 +99,7 @@ void DrawTrSurf_Drawable::DrawCurve2dOn (Adaptor2d_Curve2d&   C,
 //purpose  : draw a 3D curve
 //=======================================================================
 static void PlotCurve (Draw_Display& aDisplay,
-		       const Adaptor3d_Curve& C, 
+		       const Handle(Adaptor3d_Curve)& C, 
 		       Standard_Real& theFirstParam, 
 		       Standard_Real  theHalfStep,
 		       const gp_Pnt&  theFirstPnt,
@@ -108,7 +108,7 @@ static void PlotCurve (Draw_Display& aDisplay,
   Standard_Real IsoRatio = 1.001;
   gp_Pnt Pm;
 
-  C.D0 (theFirstParam + theHalfStep, Pm);
+  C->D0 (theFirstParam + theHalfStep, Pm);
   
   Standard_Real dfLength = theFirstPnt.Distance(theLastPnt);
   if (dfLength < Precision::Confusion() || 
@@ -125,7 +125,7 @@ static void PlotCurve (Draw_Display& aDisplay,
 //purpose  : draw a 3D curve
 //=======================================================================
 
-void DrawTrSurf_Drawable::DrawCurveOn (Adaptor3d_Curve&   C, 
+void DrawTrSurf_Drawable::DrawCurveOn (const Handle(Adaptor3d_Curve)&   C, 
                                        Draw_Display& aDisplay) const
 {
   gp_Pnt P;
@@ -145,12 +145,12 @@ void DrawTrSurf_Drawable::DrawCurveOn (Adaptor3d_Curve&   C,
   else
   {
     Standard_Integer j;
-    Standard_Integer intrv, nbintv = C.NbIntervals(GeomAbs_CN);
+    Standard_Integer intrv, nbintv = C->NbIntervals(GeomAbs_CN);
     TColStd_Array1OfReal TI(1,nbintv+1);
-    C.Intervals(TI,GeomAbs_CN);
-    C.D0(C.FirstParameter(),P);
+    C->Intervals(TI,GeomAbs_CN);
+    C->D0(C->FirstParameter(),P);
     aDisplay.MoveTo(P);
-    GeomAbs_CurveType CurvType = C.GetType();
+    GeomAbs_CurveType CurvType = C->GetType();
     gp_Pnt aPPnt=P, aNPnt;
 
     for (intrv = 1; intrv <= nbintv; intrv++)
@@ -167,7 +167,7 @@ void DrawTrSurf_Drawable::DrawCurveOn (Adaptor3d_Curve&   C,
         for (j = 1; j < myDiscret; j++)
         {
           t += step;
-          C.D0(t,P);
+          C->D0(t,P);
           aDisplay.DrawTo(P);
         }
         break;
@@ -181,7 +181,7 @@ void DrawTrSurf_Drawable::DrawCurveOn (Adaptor3d_Curve&   C,
         for (j = 1; j < nIter; j++)
         {
           const Standard_Real t1 = t+step*2.;
-          C.D0 (t1, aNPnt);
+          C->D0 (t1, aNPnt);
           PlotCurve (aDisplay, C, t, step, aPPnt, aNPnt);
           aPPnt = aNPnt;
           t = t1;
@@ -190,7 +190,7 @@ void DrawTrSurf_Drawable::DrawCurveOn (Adaptor3d_Curve&   C,
         break;
       }
 
-      C.D0(TI(intrv+1),P);
+      C->D0(TI(intrv+1),P);
       PlotCurve (aDisplay, C, t, step, aPPnt, P);
       aDisplay.DrawTo(P);
     }
@@ -203,21 +203,21 @@ void DrawTrSurf_Drawable::DrawCurveOn (Adaptor3d_Curve&   C,
 //purpose  : 
 //=======================================================================
 
-void DrawTrSurf_Drawable::DrawIsoCurveOn(Adaptor3d_IsoCurve& C,
+void DrawTrSurf_Drawable::DrawIsoCurveOn(const Handle(Adaptor3d_IsoCurve)& C,
 					 const GeomAbs_IsoType T,
 					 const Standard_Real P,
 					 const Standard_Real F,
 					 const Standard_Real L,
 					 Draw_Display& dis) const 
 {
-  C.Load(T,P,F,L);
-  if ((C.GetType() == GeomAbs_BezierCurve) || 
-      (C.GetType() == GeomAbs_BSplineCurve)) {
-    GeomAdaptor_Curve GC;
-    if (C.GetType() == GeomAbs_BezierCurve) 
-      GC.Load(C.Bezier(),F,L);
+  C->Load(T,P,F,L);
+  if ((C->GetType() == GeomAbs_BezierCurve) || 
+      (C->GetType() == GeomAbs_BSplineCurve)) {
+    Handle(GeomAdaptor_Curve) GC = new GeomAdaptor_Curve();
+    if (C->GetType() == GeomAbs_BezierCurve) 
+      GC->Load(C->Bezier(),F,L);
     else
-      GC.Load(C.BSpline(),F,L);
+      GC->Load(C->BSpline(),F,L);
     
     DrawCurveOn(GC,dis);
   }

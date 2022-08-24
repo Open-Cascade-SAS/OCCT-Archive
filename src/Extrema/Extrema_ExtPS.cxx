@@ -31,7 +31,7 @@
 //function : IsoIsDeg
 //purpose  : 
 //=======================================================================
-static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
+static Standard_Boolean IsoIsDeg  (const Handle(Adaptor3d_Surface)& S,
 				   const Standard_Real      Param,
 				   const GeomAbs_IsoType    IT,
 				   const Standard_Real      TolMin,
@@ -39,10 +39,10 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
 {
     Standard_Real U1=0.,U2=0.,V1=0.,V2=0.,T;
     Standard_Boolean Along = Standard_True;
-    U1 = S.FirstUParameter();
-    U2 = S.LastUParameter();
-    V1 = S.FirstVParameter();
-    V2 = S.LastVParameter();
+    U1 = S->FirstUParameter();
+    U2 = S->LastUParameter();
+    V1 = S->FirstVParameter();
+    V2 = S->LastVParameter();
     gp_Vec D1U,D1V;
     gp_Pnt P;
     Standard_Real Step,D1NormMax;
@@ -58,7 +58,7 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
 
         for (T=U1;T<=U2;T=T+Step) 
         {
-          S.D1(T,Param,P,D1U,D1V);
+          S->D1(T,Param,P,D1U,D1V);
           D1NormMax=Max(D1NormMax,D1U.Magnitude());
         }
 
@@ -77,7 +77,7 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
         D1NormMax=0.;
         for (T=V1;T<=V2;T=T+Step) 
         {
-          S.D1(Param,T,P,D1U,D1V);
+          S->D1(Param,T,P,D1U,D1V);
           D1NormMax=Max(D1NormMax,D1V.Magnitude());
         }
 
@@ -156,7 +156,7 @@ Extrema_ExtPS::Extrema_ExtPS()
 //=======================================================================
 
 Extrema_ExtPS::Extrema_ExtPS (const gp_Pnt&            theP,
-                              const Adaptor3d_Surface& theS,
+                              const Handle(Adaptor3d_Surface)& theS,
                               const Standard_Real      theTolU,
                               const Standard_Real      theTolV,
                               const Extrema_ExtFlag    theF,
@@ -166,10 +166,10 @@ Extrema_ExtPS::Extrema_ExtPS (const gp_Pnt&            theP,
   myExtPS.SetAlgo (theA);
 
   Initialize (theS,
-              theS.FirstUParameter(),
-              theS.LastUParameter(),
-              theS.FirstVParameter(),
-              theS.LastVParameter(),
+              theS->FirstUParameter(),
+              theS->LastUParameter(),
+              theS->FirstVParameter(),
+              theS->LastVParameter(),
               theTolU,
               theTolV);
 
@@ -182,7 +182,7 @@ Extrema_ExtPS::Extrema_ExtPS (const gp_Pnt&            theP,
 //=======================================================================
 
 Extrema_ExtPS::Extrema_ExtPS (const gp_Pnt&            theP,
-                              const Adaptor3d_Surface& theS,
+                              const Handle(Adaptor3d_Surface)& theS,
                               const Standard_Real      theUinf,
                               const Standard_Real      theUsup,
                               const Standard_Real      theVinf,
@@ -212,7 +212,7 @@ Extrema_ExtPS::Extrema_ExtPS (const gp_Pnt&            theP,
 //purpose  : 
 //=======================================================================
 
-void Extrema_ExtPS::Initialize (const Adaptor3d_Surface& theS,
+void Extrema_ExtPS::Initialize (const Handle(Adaptor3d_Surface)& theS,
                                 const Standard_Real      theUinf,
                                 const Standard_Real      theUsup,
                                 const Standard_Real      theVinf,
@@ -220,7 +220,7 @@ void Extrema_ExtPS::Initialize (const Adaptor3d_Surface& theS,
                                 const Standard_Real      theTolU,
                                 const Standard_Real      theTolV)
 {
-  myS = &theS;
+  myS = theS;
   myuinf = theUinf;
   myusup = theUsup;
   myvinf = theVinf;
@@ -253,7 +253,7 @@ void Extrema_ExtPS::Initialize (const Adaptor3d_Surface& theS,
   if(bUIsoIsDeg) nbU = 300;
   if(bVIsoIsDeg) nbV = 300;
 
-  myExtPS.Initialize(*myS, nbU, nbV, myuinf, myusup, myvinf, myvsup, mytolu, mytolv);
+  myExtPS.Initialize(myS, nbU, nbV, myuinf, myusup, myvinf, myvsup, mytolu, mytolv);
 
   myExtPExtS.Nullify();
   myExtPRevS.Nullify();

@@ -28,13 +28,13 @@
 // function: FindLimits
 // purpose:
 //==================================================================
-static void FindLimits(const Adaptor3d_Curve& aCurve,
+static void FindLimits(const Handle(Adaptor3d_Curve)& aCurve,
 		       const Standard_Real  aLimit,
 		       Standard_Real&       First,
 		       Standard_Real&       Last)
 {
-  First = aCurve.FirstParameter();
-  Last  = aCurve.LastParameter();
+  First = aCurve->FirstParameter();
+  Last  = aCurve->LastParameter();
   Standard_Boolean firstInf = Precision::IsNegativeInfinite(First);
   Standard_Boolean lastInf  = Precision::IsPositiveInfinite(Last);
 
@@ -46,24 +46,24 @@ static void FindLimits(const Adaptor3d_Curve& aCurve,
 	delta *= 2;
 	First = - delta;
 	Last  =   delta;
-	aCurve.D0(First,P1);
-	aCurve.D0(Last,P2);
+	aCurve->D0(First,P1);
+	aCurve->D0(Last,P2);
       } while (P1.Distance(P2) < aLimit);
     }
     else if (firstInf) {
-      aCurve.D0(Last,P2);
+      aCurve->D0(Last,P2);
       do {
 	delta *= 2;
 	First = Last - delta;
-	aCurve.D0(First,P1);
+	aCurve->D0(First,P1);
       } while (P1.Distance(P2) < aLimit);
     }
     else if (lastInf) {
-      aCurve.D0(First,P1);
+      aCurve->D0(First,P1);
       do {
 	delta *= 2;
 	Last = First + delta;
-	aCurve.D0(Last,P2);
+	aCurve->D0(Last,P2);
       } while (P1.Distance(P2) < aLimit);
     }
   }    
@@ -74,7 +74,7 @@ static void FindLimits(const Adaptor3d_Curve& aCurve,
 // function: DrawCurve
 // purpose:
 //==================================================================
-static void DrawCurve (const Adaptor3d_Curve&          aCurve,
+static void DrawCurve (const Handle(Adaptor3d_Curve)&          aCurve,
 		       const Standard_Integer        NbP,
                        const Standard_Real           U1,
                        const Standard_Real           U2,
@@ -85,24 +85,24 @@ static void DrawCurve (const Adaptor3d_Curve&          aCurve,
   Handle(TColgp_HArray1OfVec) HAV1;
   Handle(TColStd_HArray1OfInteger) HAI1;
   
-  if (aCurve.GetType() == GeomAbs_BSplineCurve) {
-    nbintervals = aCurve.NbKnots() - 1;
-//     std::cout << "NbKnots "<<aCurve.NbKnots() << std::endl;
+  if (aCurve->GetType() == GeomAbs_BSplineCurve) {
+    nbintervals = aCurve->NbKnots() - 1;
+//     std::cout << "NbKnots "<<aCurve->NbKnots() << std::endl;
     nbintervals = Max(1, nbintervals/3);
   }
 
 
-  switch (aCurve.GetType()) {
+  switch (aCurve->GetType()) {
   case GeomAbs_Line:
     {
      gp_Vec V;
      HAV1 = new TColgp_HArray1OfVec(1, 2);
 // array of coordinates of line 
-     gp_Pnt p = aCurve.Value(U1);
+     gp_Pnt p = aCurve->Value(U1);
      V.SetX(p.X()); V.SetY(p.Y()); V.SetZ(p.Z());
      HAV1->SetValue(1,V);
 
-     p = aCurve.Value(U2);
+     p = aCurve->Value(U2);
      V.SetX(p.X()); V.SetY(p.Y()); V.SetZ(p.Z());
      HAV1->SetValue(2,V);
 
@@ -132,7 +132,7 @@ static void DrawCurve (const Adaptor3d_Curve&          aCurve,
 
       for (i = 1; i <= N;i++) { 
 	U = U1 + (i-1)*DU;
- 	p = aCurve.Value(U);
+ 	p = aCurve->Value(U);
 
  	V.SetX(p.X()); V.SetY(p.Y()); V.SetZ(p.Z());
  	HAV1->SetValue(i,V);
@@ -201,7 +201,7 @@ static void DrawCurve (const Adaptor3d_Curve&          aCurve,
 // function: Add 1
 // purpose:
 //==================================================================
-void VrmlConverter_Curve::Add(const Adaptor3d_Curve&                aCurve, 
+void VrmlConverter_Curve::Add(const Handle(Adaptor3d_Curve)&                aCurve, 
 			      const Handle(VrmlConverter_Drawer)& aDrawer,
 			      Standard_OStream&                   anOStream) 
 {
@@ -227,7 +227,7 @@ void VrmlConverter_Curve::Add(const Adaptor3d_Curve&                aCurve,
 // function: Add 2
 // purpose:
 //==================================================================
-void VrmlConverter_Curve::Add(const Adaptor3d_Curve&                aCurve, 
+void VrmlConverter_Curve::Add(const Handle(Adaptor3d_Curve)&                aCurve, 
  			      const Standard_Real                 U1, 
  			      const Standard_Real                 U2, 
  			      const Handle(VrmlConverter_Drawer)& aDrawer,
@@ -255,7 +255,7 @@ void VrmlConverter_Curve::Add(const Adaptor3d_Curve&                aCurve,
 // function: Add 3
 // purpose:
 //==================================================================
-void VrmlConverter_Curve::Add(const Adaptor3d_Curve&   aCurve, 
+void VrmlConverter_Curve::Add(const Handle(Adaptor3d_Curve)&   aCurve, 
 			      const Standard_Real    U1, 
 			      const Standard_Real    U2, 
 			      Standard_OStream&      anOStream, 

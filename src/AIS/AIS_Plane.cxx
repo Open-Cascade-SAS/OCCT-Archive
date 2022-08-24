@@ -222,7 +222,7 @@ void AIS_Plane::Compute (const Handle(PrsMgr_PresentationManager)& ,
         ComputeFrame();
         const Handle(Geom_Plane)& pl = myComponent;
         Handle(Geom_Plane) thegoodpl (Handle(Geom_Plane)::DownCast(pl->Translated(pl->Location(),myCenter)));
-        GeomAdaptor_Surface surf(thegoodpl);
+        Handle(GeomAdaptor_Surface) surf = new GeomAdaptor_Surface(thegoodpl);
         StdPrs_Plane::Add (thePrs, surf, myDrawer);
       }
       else

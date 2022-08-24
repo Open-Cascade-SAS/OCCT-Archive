@@ -897,8 +897,8 @@ TopoDS_Edge ChFi2d_Builder::BuildFilletEdge(const TopoDS_Vertex& V,
   } // else ...
 
   Standard_Real Tol = Precision::Confusion();
-  Geom2dGcc_Circ2d2TanRad Fillet(Geom2dGcc_QualifiedCurve(basisC1,Qual1),
-				 Geom2dGcc_QualifiedCurve(basisC2,Qual2),
+  Geom2dGcc_Circ2d2TanRad Fillet(Geom2dGcc_QualifiedCurve(new Geom2dAdaptor_Curve(basisC1),Qual1),
+				 Geom2dGcc_QualifiedCurve(new Geom2dAdaptor_Curve(basisC2),Qual2),
 				 Radius, Tol);
   if (!Fillet.IsDone() || Fillet.NbSolutions()==0) {
     status = ChFi2d_ComputationError;

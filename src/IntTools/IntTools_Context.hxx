@@ -94,7 +94,7 @@ Standard_EXPORT virtual  ~IntTools_Context();
   Standard_EXPORT Geom2dHatch_Hatcher& Hatcher (const TopoDS_Face& aF);
   
   //! Returns a reference to surface adaptor for given face
-  Standard_EXPORT BRepAdaptor_Surface& SurfaceAdaptor (const TopoDS_Face& theFace);
+  Standard_EXPORT Handle(BRepAdaptor_Surface) SurfaceAdaptor (const TopoDS_Face& theFace);
 
   //! Builds and stores an Oriented Bounding Box for the shape.
   //! Returns a reference to OBB.
@@ -251,7 +251,7 @@ protected:
   NCollection_DataMap<TopoDS_Shape, Geom2dHatch_Hatcher*, TopTools_ShapeMapHasher> myHatcherMap;
   NCollection_DataMap<TopoDS_Shape, IntTools_SurfaceRangeLocalizeData*, TopTools_ShapeMapHasher> myProjSDataMap;
   NCollection_DataMap<TopoDS_Shape, Bnd_Box*, TopTools_ShapeMapHasher> myBndBoxDataMap;
-  NCollection_DataMap<TopoDS_Shape, BRepAdaptor_Surface*, TopTools_ShapeMapHasher> mySurfAdaptorMap;
+  NCollection_DataMap<TopoDS_Shape, Handle(BRepAdaptor_Surface), TopTools_ShapeMapHasher> mySurfAdaptorMap;
   NCollection_DataMap<TopoDS_Shape, Bnd_OBB*, TopTools_ShapeMapHasher> myOBBMap; // Map of oriented bounding boxes
   Standard_Integer myCreateFlag;
   Standard_Real myPOnSTolerance;

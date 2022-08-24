@@ -137,8 +137,8 @@ private:
   Standard_Boolean myIsDone;
   Standard_Integer myIndex;
   Extrema_ExtCC2d myExtCC;
-  Geom2dAdaptor_Curve myC1;
-  Geom2dAdaptor_Curve myC2;
+  Handle(Geom2dAdaptor_Curve) myC1;
+  Handle(Geom2dAdaptor_Curve) myC2;
 
 
 };

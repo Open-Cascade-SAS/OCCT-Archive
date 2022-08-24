@@ -143,7 +143,7 @@ Handle(TColStd_HArray1OfReal) Law::MixTgt
   return res;
 }
 
-Handle(Law_BSpline) Law::Reparametrize(const Adaptor3d_Curve&   Curve,
+Handle(Law_BSpline) Law::Reparametrize(const Handle(Adaptor3d_Curve)&   Curve,
 				       const Standard_Real    First,
 				       const Standard_Real    Last,
 				       const Standard_Boolean HasDF,
@@ -162,21 +162,21 @@ Handle(Law_BSpline) Law::Reparametrize(const Adaptor3d_Curve&   Curve,
   TColStd_Array1OfReal cumdist(1,2*NbPoints);
   TColStd_Array1OfReal ucourbe(1,2*NbPoints);
   gp_Pnt P1,P2;
-  Standard_Real U1 = Curve.FirstParameter();
-  Standard_Real U2 = Curve.LastParameter();
+  Standard_Real U1 = Curve->FirstParameter();
+  Standard_Real U2 = Curve->LastParameter();
   Standard_Real U, DU, Length = 0.;
   if(!Rev){
-    P1 = Curve.Value(U1);
+    P1 = Curve->Value(U1);
     U = U1;
     DU = (U2 - U1) / ( 2*NbPoints - 1);
   }
   else{
-    P1 = Curve.Value(U2);
+    P1 = Curve->Value(U2);
     U = U2;
     DU = (U1 - U2) / ( 2*NbPoints - 1);
   }
   for ( i = 1; i <= 2*NbPoints ; i ++) {
-    P2 = Curve.Value(U);
+    P2 = Curve->Value(U);
     Length += P2.Distance(P1);
     cumdist(i) = Length;
     ucourbe(i) = U;

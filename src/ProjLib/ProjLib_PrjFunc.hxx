@@ -33,7 +33,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT ProjLib_PrjFunc(const Adaptor3d_Curve* C, const Standard_Real FixVal, const Adaptor3d_Surface* S, const Standard_Integer Fix);
+  Standard_EXPORT ProjLib_PrjFunc(const Handle(Adaptor3d_Curve) C, const Standard_Real FixVal, const Handle(Adaptor3d_Surface) S, const Standard_Integer Fix);
   
   //! returns the number of variables of the function.
   Standard_EXPORT Standard_Integer NbVariables() const;
@@ -64,8 +64,8 @@ public:
 
 private:
 
-  const Adaptor3d_Curve* myCurve;
-  const Adaptor3d_Surface* mySurface;
+  const Handle(Adaptor3d_Curve) myCurve;
+  const Handle(Adaptor3d_Surface) mySurface;
   Standard_Real myt;
   Standard_Real myU;
   Standard_Real myV;

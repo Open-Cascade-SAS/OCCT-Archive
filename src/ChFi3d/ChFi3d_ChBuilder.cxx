@@ -370,7 +370,8 @@ void  ChFi3d_ChBuilder::SetDists(const Standard_Real    Dis1,
     TopoDS_Face F1,F2,FirstF1,FirstF2;
     TopAbs_Orientation Or1,Or2;
     Standard_Integer Choix, ChoixConge;
-    BRepAdaptor_Surface Sb1,Sb2;
+    Handle(BRepAdaptor_Surface) Sb1 = new BRepAdaptor_Surface();
+    Handle(BRepAdaptor_Surface) Sb2 = new BRepAdaptor_Surface();
     Standard_Integer i = 1;
     Standard_Boolean Found = Standard_False;
     while ( (i <= csp->NbEdges()) && (!Found) ) {
@@ -388,13 +389,13 @@ void  ChFi3d_ChBuilder::SetDists(const Standard_Real    Dis1,
 	F2 = F1;
 	F1 = F;
       }
-      Sb1.Initialize(F1);
-      Sb2.Initialize(F2);
+      Sb1->Initialize(F1);
+      Sb2->Initialize(F2);
       Choix = ChFi3d::ConcaveSide(Sb1,Sb2,
 				  csp->Edges(i-1),
 				  Or1,Or2);
-      Sb1.Initialize(FirstF1);
-      Sb2.Initialize(FirstF2);
+      Sb1->Initialize(FirstF1);
+      Sb2->Initialize(FirstF2);
       ChoixConge = ChFi3d::ConcaveSide(Sb1,Sb2,
 				       csp->Edges(1),
 				       Or1,Or2);
@@ -1231,9 +1232,9 @@ Standard_Boolean ChFi3d_ChBuilder::PerformFirstSection
     
     Standard_Real tol = tolesp*1.e2;
 //    Standard_Real u,v;
-    Extrema_GenLocateExtPS proj1(*S1, tol, tol);
+    Extrema_GenLocateExtPS proj1(S1, tol, tol);
     proj1.Perform(pt1, SolDep(1), SolDep(2));
-    Extrema_GenLocateExtPS proj2(*S2, tol, tol);
+    Extrema_GenLocateExtPS proj2(S2, tol, tol);
     proj2.Perform(pt2, SolDep(3), SolDep(4));
 
     if( proj1.IsDone() ){
@@ -1334,9 +1335,9 @@ Standard_Boolean ChFi3d_ChBuilder::PerformFirstSection
     Standard_Real tol = tolesp*1.e2;
 //    Standard_Real u,v;
 
-    Extrema_GenLocateExtPS proj1(*S1, tol, tol);
+    Extrema_GenLocateExtPS proj1(S1, tol, tol);
     proj1.Perform(pt1, SolDep(1), SolDep(2));
-    Extrema_GenLocateExtPS proj2(*S2, tol, tol);
+    Extrema_GenLocateExtPS proj2(S2, tol, tol);
     proj2.Perform(pt2, SolDep(3), SolDep(4));
 
     if( proj1.IsDone() ){
@@ -1403,9 +1404,9 @@ Standard_Boolean ChFi3d_ChBuilder::PerformFirstSection
     
     Standard_Real tol = tolesp*1.e2;
     //      Standard_Real u,v;
-    Extrema_GenLocateExtPS proj1(*S1, tol, tol);
+    Extrema_GenLocateExtPS proj1(S1, tol, tol);
     proj1.Perform(pt1, SolDep(1), SolDep(2));
-    Extrema_GenLocateExtPS proj2(*S2, tol, tol);
+    Extrema_GenLocateExtPS proj2(S2, tol, tol);
     proj2.Perform(pt2, SolDep(3), SolDep(4));
     if( proj1.IsDone() ){
       (proj1.Point()).Parameter(SolDep(1),SolDep(2)); 
@@ -2049,7 +2050,8 @@ void ChFi3d_ChBuilder::ConexFaces (const Handle(ChFiDS_Spine)&  Spine,
 				   TopoDS_Face&                 F1,
 				   TopoDS_Face&                 F2) const
 {
-  BRepAdaptor_Surface Sb1,Sb2;
+  Handle(BRepAdaptor_Surface) Sb1 = new BRepAdaptor_Surface();
+  Handle(BRepAdaptor_Surface) Sb2 = new BRepAdaptor_Surface();
   TopAbs_Orientation tmp1,tmp2;
   Standard_Integer RC,Choix;
   TopoDS_Face f1,f2,ff1,ff2;
@@ -2058,15 +2060,15 @@ void ChFi3d_ChBuilder::ConexFaces (const Handle(ChFiDS_Spine)&  Spine,
   // ChFi3d_Builder::StripeOrientations is private
   SearchCommonFaces(myEFMap,Spine->Edges(1),ff1,ff2);
   ff1.Orientation(TopAbs_FORWARD);
-  Sb1.Initialize(ff1);
+  Sb1->Initialize(ff1);
   ff2.Orientation(TopAbs_FORWARD);
-  Sb2.Initialize(ff2);
+  Sb2->Initialize(ff2);
   RC = ChFi3d::ConcaveSide(Sb1,Sb2,Spine->Edges(1),tmp1,tmp2);
 				  
   //calculate the connected faces
   SearchCommonFaces(myEFMap,Spine->Edges(IEdge),f1,f2);
-  Sb1.Initialize(f1);
-  Sb2.Initialize(f2);
+  Sb1->Initialize(f1);
+  Sb2->Initialize(f2);
   Choix = ChFi3d::ConcaveSide(Sb1,Sb2,Spine->Edges(IEdge),tmp1,tmp2);
 
   if (RC%2 != Choix%2) {

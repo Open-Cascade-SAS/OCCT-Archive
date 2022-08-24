@@ -26,11 +26,11 @@
 #include <math_Matrix.hxx>
  
 
-#define Curve1 Adaptor3d_Curve
+#define Curve1 Handle(Adaptor3d_Curve)
 #define Curve1_hxx <Adaptor3d_Curve.hxx>
 #define Tool1 Extrema_CurveTool
 #define Tool1_hxx <Extrema_CurveTool.hxx>
-#define Curve2 Adaptor3d_Curve
+#define Curve2 Handle(Adaptor3d_Curve)
 #define Curve2_hxx <Adaptor3d_Curve.hxx>
 #define Tool2 Extrema_CurveTool
 #define Tool2_hxx <Extrema_CurveTool.hxx>

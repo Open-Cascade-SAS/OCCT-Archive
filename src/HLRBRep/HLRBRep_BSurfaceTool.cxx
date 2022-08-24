@@ -22,10 +22,10 @@
 //purpose  : 
 //=======================================================================
 Standard_Integer
-HLRBRep_BSurfaceTool::NbSamplesU(const BRepAdaptor_Surface& S)
+HLRBRep_BSurfaceTool::NbSamplesU(const Handle(BRepAdaptor_Surface)& S)
 { 
   Standard_Integer nbs;
-  GeomAbs_SurfaceType typS = S.GetType();
+  GeomAbs_SurfaceType typS = S->GetType();
   switch(typS) { 
   case GeomAbs_Plane:
     {
@@ -34,13 +34,13 @@ HLRBRep_BSurfaceTool::NbSamplesU(const BRepAdaptor_Surface& S)
     break;
   case GeomAbs_BezierSurface: 
     {
-      nbs =  3 + S.NbUPoles();
+      nbs =  3 + S->NbUPoles();
     }
     break;
   case GeomAbs_BSplineSurface: 
     {
-      nbs = S.NbUKnots();
-      nbs*= S.UDegree();
+      nbs = S->NbUKnots();
+      nbs*= S->UDegree();
       if(nbs < 2) nbs=2;
       
     }
@@ -75,10 +75,10 @@ HLRBRep_BSurfaceTool::NbSamplesU(const BRepAdaptor_Surface& S)
 //=======================================================================
 
 Standard_Integer
-HLRBRep_BSurfaceTool::NbSamplesV(const BRepAdaptor_Surface& S)
+HLRBRep_BSurfaceTool::NbSamplesV(const Handle(BRepAdaptor_Surface)& S)
 { 
   Standard_Integer nbs;
-  GeomAbs_SurfaceType typS = S.GetType();
+  GeomAbs_SurfaceType typS = S->GetType();
   switch(typS) { 
   case GeomAbs_Plane:
     {
@@ -87,13 +87,13 @@ HLRBRep_BSurfaceTool::NbSamplesV(const BRepAdaptor_Surface& S)
     break;
   case GeomAbs_BezierSurface: 
     {
-      nbs =  3 + S.NbVPoles();
+      nbs =  3 + S->NbVPoles();
     }
     break;
   case GeomAbs_BSplineSurface: 
     {
-      nbs = S.NbVKnots();
-      nbs*= S.VDegree();
+      nbs = S->NbVKnots();
+      nbs*= S->VDegree();
       if(nbs < 2) nbs=2;
       
     }
@@ -124,7 +124,7 @@ HLRBRep_BSurfaceTool::NbSamplesV(const BRepAdaptor_Surface& S)
 //=======================================================================
 
 Standard_Integer
-HLRBRep_BSurfaceTool::NbSamplesU(const BRepAdaptor_Surface& S,
+HLRBRep_BSurfaceTool::NbSamplesU(const Handle(BRepAdaptor_Surface)& S,
 				 const Standard_Real u1,
 				 const Standard_Real u2)
 { 
@@ -146,7 +146,7 @@ HLRBRep_BSurfaceTool::NbSamplesU(const BRepAdaptor_Surface& S,
 //=======================================================================
 
 Standard_Integer
-HLRBRep_BSurfaceTool::NbSamplesV(const BRepAdaptor_Surface& S,
+HLRBRep_BSurfaceTool::NbSamplesV(const Handle(BRepAdaptor_Surface)& S,
 				 const Standard_Real v1,
 				 const Standard_Real v2)
 { 

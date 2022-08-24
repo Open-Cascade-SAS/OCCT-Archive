@@ -64,14 +64,14 @@ public:
   Standard_EXPORT void Length();
   
   //! Computes length of the curve segment.
-  Standard_EXPORT Standard_Real Length (Adaptor3d_Curve& C, const Standard_Real FirstU, const Standard_Real LasrU) const;
+  Standard_EXPORT Standard_Real Length (const Handle(Adaptor3d_Curve)& C, const Standard_Real FirstU, const Standard_Real LasrU) const;
   
   Standard_EXPORT Standard_Real GetLength() const;
   
   //! returns  original parameter corresponding S.  if
   //! Case == 1 computation is performed on myC2D1 and mySurf1,
   //! otherwise it is done on myC2D2 and mySurf2.
-  Standard_EXPORT Standard_Real GetUParameter (Adaptor3d_Curve& C, const Standard_Real S, const Standard_Integer NumberOfCurve) const;
+  Standard_EXPORT Standard_Real GetUParameter (const Handle(Adaptor3d_Curve)& C, const Standard_Real S, const Standard_Integer NumberOfCurve) const;
   
   //! returns original parameter corresponding S.
   Standard_EXPORT Standard_Real GetSParameter (const Standard_Real U) const;
@@ -100,10 +100,10 @@ private:
   
   Standard_EXPORT void Init();
   
-  Standard_EXPORT void Init (Adaptor3d_Curve& C, Handle(TColStd_HArray1OfReal)& Si, Handle(TColStd_HArray1OfReal)& Ui) const;
+  Standard_EXPORT void Init (const Handle(Adaptor3d_Curve)& C, Handle(TColStd_HArray1OfReal)& Si, Handle(TColStd_HArray1OfReal)& Ui) const;
   
   //! returns curvilinear parameter corresponding U.
-  Standard_EXPORT Standard_Real GetSParameter (Adaptor3d_Curve& C, const Standard_Real U, const Standard_Real Length) const;
+  Standard_EXPORT Standard_Real GetSParameter (const Handle(Adaptor3d_Curve)& C, const Standard_Real U, const Standard_Real Length) const;
   
   Standard_EXPORT Standard_Boolean EvalCurOnSur (const Standard_Real S, const Standard_Integer Order, TColStd_Array1OfReal& Result, const Standard_Integer NumberOfCurve) const;
 

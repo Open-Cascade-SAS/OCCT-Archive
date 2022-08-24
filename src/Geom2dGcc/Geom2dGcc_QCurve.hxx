@@ -34,9 +34,9 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT Geom2dGcc_QCurve(const Geom2dAdaptor_Curve& Curve, const GccEnt_Position Qualifier);
+  Standard_EXPORT Geom2dGcc_QCurve(const Handle(Geom2dAdaptor_Curve)& Curve, const GccEnt_Position Qualifier);
   
-  Standard_EXPORT Geom2dAdaptor_Curve Qualified() const;
+  Standard_EXPORT Handle(Geom2dAdaptor_Curve) Qualified() const;
   
   Standard_EXPORT GccEnt_Position Qualifier() const;
   
@@ -70,7 +70,7 @@ private:
 
 
   GccEnt_Position TheQualifier;
-  Geom2dAdaptor_Curve TheQualified;
+  Handle(Geom2dAdaptor_Curve) TheQualified;
 
 
 };

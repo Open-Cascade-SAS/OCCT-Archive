@@ -38,8 +38,8 @@ Standard_EXPORT Standard_Boolean FUN_tool_outbounds(const TopoDS_Shape& Sh,Stand
 // ----------------------------------------------------------------------
 //  project point <P> on geometries (curve <C>,surface <S>)
 // ----------------------------------------------------------------------
-Standard_EXPORT Standard_Boolean FUN_tool_PinC(const gp_Pnt& P,const BRepAdaptor_Curve& BAC,const Standard_Real pmin,const Standard_Real pmax,const Standard_Real tol);
-Standard_EXPORT Standard_Boolean FUN_tool_PinC(const gp_Pnt& P,const BRepAdaptor_Curve& BAC,const Standard_Real tol);
+Standard_EXPORT Standard_Boolean FUN_tool_PinC(const gp_Pnt& P,const Handle(BRepAdaptor_Curve)& BAC,const Standard_Real pmin,const Standard_Real pmax,const Standard_Real tol);
+Standard_EXPORT Standard_Boolean FUN_tool_PinC(const gp_Pnt& P,const Handle(BRepAdaptor_Curve)& BAC,const Standard_Real tol);
 
 // ----------------------------------------------------------------------
 Standard_EXPORT Standard_Boolean FUN_tool_value(const Standard_Real par,const TopoDS_Edge& E,gp_Pnt& P);
@@ -110,14 +110,14 @@ Standard_EXPORT Standard_Boolean FUN_tool_paronEF(const TopoDS_Edge& E,const Sta
 Standard_EXPORT Standard_Boolean FUN_tool_paronEF(const TopoDS_Edge& E,const Standard_Real& par,const TopoDS_Face& F,gp_Pnt2d& UV);
 Standard_EXPORT Standard_Boolean FUN_tool_parF(const TopoDS_Edge& E,const Standard_Real& par,const TopoDS_Face& F,gp_Pnt2d& UV,const Standard_Real tol);
 Standard_EXPORT Standard_Boolean FUN_tool_parF(const TopoDS_Edge& E,const Standard_Real& par,const TopoDS_Face& F,gp_Pnt2d& UV);
-Standard_EXPORT gp_Dir FUN_tool_dirC(const Standard_Real par,const BRepAdaptor_Curve& BAC);
+Standard_EXPORT gp_Dir FUN_tool_dirC(const Standard_Real par,const Handle(BRepAdaptor_Curve)& BAC);
 Standard_EXPORT gp_Vec FUN_tool_tggeomE(const Standard_Real paronE,const TopoDS_Edge& E);
-Standard_EXPORT Standard_Boolean FUN_tool_line(const BRepAdaptor_Curve& BAC);
+Standard_EXPORT Standard_Boolean FUN_tool_line(const Handle(BRepAdaptor_Curve)& BAC);
 Standard_EXPORT Standard_Boolean FUN_tool_quad(const TopoDS_Edge& E);
-Standard_EXPORT Standard_Boolean FUN_tool_quad(const BRepAdaptor_Curve& BAC);
+Standard_EXPORT Standard_Boolean FUN_tool_quad(const Handle(BRepAdaptor_Curve)& BAC);
 Standard_EXPORT Standard_Boolean FUN_tool_quad(const TopoDS_Face& F);
-Standard_EXPORT Standard_Boolean FUN_tool_findPinBAC(const BRepAdaptor_Curve& BAC,gp_Pnt& P,Standard_Real& par);
-Standard_EXPORT Standard_Boolean FUN_tool_findparinBAC(const BRepAdaptor_Curve& BAC,Standard_Real& par);
+Standard_EXPORT Standard_Boolean FUN_tool_findPinBAC(const Handle(BRepAdaptor_Curve)& BAC,gp_Pnt& P,Standard_Real& par);
+Standard_EXPORT Standard_Boolean FUN_tool_findparinBAC(const Handle(BRepAdaptor_Curve)& BAC,Standard_Real& par);
 Standard_EXPORT Standard_Boolean FUN_tool_findparinE(const TopoDS_Shape& E,Standard_Real& par);
 Standard_EXPORT Standard_Boolean FUN_tool_findPinE(const TopoDS_Shape& E,gp_Pnt& P,Standard_Real& par);
 Standard_EXPORT Standard_Boolean FUN_tool_maxtol(const TopoDS_Shape& S,const TopAbs_ShapeEnum& typ,Standard_Real& tol);

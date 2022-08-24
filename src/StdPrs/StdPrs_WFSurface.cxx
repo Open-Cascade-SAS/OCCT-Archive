@@ -141,8 +141,7 @@ void StdPrs_WFSurface::Add (const Handle(Prs3d_Presentation)& aPresentation,
     Standard_Boolean UClosed = aSurface->IsUClosed();
     Standard_Boolean VClosed = aSurface->IsVClosed();
 
-    Adaptor3d_IsoCurve anIso;
-    anIso.Load(aSurface);
+    Handle(Adaptor3d_IsoCurve) anIso = new Adaptor3d_IsoCurve(aSurface);
 
     // Trace des frontieres.
     // *********************
@@ -152,24 +151,24 @@ void StdPrs_WFSurface::Add (const Handle(Prs3d_Presentation)& aPresentation,
       aPresentation->CurrentGroup()->SetPrimitivesAspect (aDrawer->FreeBoundaryAspect()->Aspect());
       if (!UClosed)
       {
-        anIso.Load (GeomAbs_IsoU, U1, V1, V2);
+        anIso->Load (GeomAbs_IsoU, U1, V1, V2);
         Handle(TColgp_HSequenceOfPnt) aPntsU1 = new TColgp_HSequenceOfPnt;
         StdPrs_Curve::Add (aPresentation, anIso, aDrawer, aPntsU1->ChangeSequence(), Standard_False);
         freeCurves.Append (aPntsU1);
 
-        anIso.Load (GeomAbs_IsoU,U2,V1,V2);
+        anIso->Load (GeomAbs_IsoU,U2,V1,V2);
         Handle(TColgp_HSequenceOfPnt) aPntsU2 = new TColgp_HSequenceOfPnt;
         StdPrs_Curve::Add (aPresentation, anIso, aDrawer, aPntsU2->ChangeSequence(), Standard_False);
         freeCurves.Append(aPntsU2);
       }
       if (!VClosed)
       {
-        anIso.Load (GeomAbs_IsoV, V1, U1, U2);
+        anIso->Load (GeomAbs_IsoV, V1, U1, U2);
         Handle(TColgp_HSequenceOfPnt) aPntsV1 = new TColgp_HSequenceOfPnt;
         StdPrs_Curve::Add (aPresentation, anIso, aDrawer, aPntsV1->ChangeSequence(), Standard_False);
         freeCurves.Append (aPntsV1);
 
-        anIso.Load (GeomAbs_IsoV, V2, U1, U2);
+        anIso->Load (GeomAbs_IsoV, V2, U1, U2);
         Handle(TColgp_HSequenceOfPnt) aPntsV2 = new TColgp_HSequenceOfPnt;
         StdPrs_Curve::Add (aPresentation, anIso, aDrawer, aPntsV2->ChangeSequence(), Standard_False);
         freeCurves.Append(aPntsV2);
@@ -187,7 +186,7 @@ void StdPrs_WFSurface::Add (const Handle(Prs3d_Presentation)& aPresentation,
       Standard_Real du= UClosed ? (U2-U1) / fin : (U2-U1) / (1 + fin);
       for (Standard_Integer i = 1; i <= fin; i++)
       {
-        anIso.Load (GeomAbs_IsoU, U1 + du * i, V1, V2);
+        anIso->Load (GeomAbs_IsoU, U1 + du * i, V1, V2);
         Handle(TColgp_HSequenceOfPnt) Pnts = new TColgp_HSequenceOfPnt;
         StdPrs_Curve::Add (aPresentation, anIso, aDrawer, Pnts->ChangeSequence(), Standard_False);
         UIsoCurves.Append (Pnts);
@@ -201,7 +200,7 @@ void StdPrs_WFSurface::Add (const Handle(Prs3d_Presentation)& aPresentation,
       Standard_Real dv = VClosed ? (V2 - V1) / fin : (V2 - V1) / (1 + fin);
       for (Standard_Integer i = 1; i <= fin; i++)
       {
-        anIso.Load (GeomAbs_IsoV, V1 + dv * i, U1, U2);
+        anIso->Load (GeomAbs_IsoV, V1 + dv * i, U1, U2);
         Handle(TColgp_HSequenceOfPnt) Pnts = new TColgp_HSequenceOfPnt;
         StdPrs_Curve::Add (aPresentation, anIso, aDrawer, Pnts->ChangeSequence(), Standard_False);
         VIsoCurves.Append (Pnts);

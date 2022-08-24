@@ -216,7 +216,7 @@ BRepCheck_Status BRepCheck_Face::IntersectWires(const Standard_Boolean Update)
     exp1.Next();
   }
 
-  Geom2dAdaptor_Curve aC;
+  Handle(Geom2dAdaptor_Curve) aC = new Geom2dAdaptor_Curve();
   Standard_Real aFirst, aLast;
   DataMapOfShapeBox2d aMapShapeBox2d;
   for (exp1.Init (myShape, TopAbs_WIRE); exp1.More(); exp1.Next()) 
@@ -227,15 +227,15 @@ BRepCheck_Status BRepCheck_Face::IntersectWires(const Standard_Boolean Update)
     for (exp2.Init (aWire, TopAbs_EDGE); exp2.More(); exp2.Next())
     {
       const TopoDS_Edge& anEdge = TopoDS::Edge (exp2.Current());
-      aC.Load (BRep_Tool::CurveOnSurface (anEdge, TopoDS::Face (myShape), aFirst, aLast));
+      aC->Load (BRep_Tool::CurveOnSurface (anEdge, TopoDS::Face (myShape), aFirst, aLast));
       // To avoid exception in Segment if C1 is BSpline
-      if (aC.FirstParameter() > aFirst)
+      if (aC->FirstParameter() > aFirst)
       {
-        aFirst = aC.FirstParameter();
+        aFirst = aC->FirstParameter();
       }
-      if (aC.LastParameter() < aLast)
+      if (aC->LastParameter() < aLast)
       {
-        aLast = aC.LastParameter();
+        aLast = aC->LastParameter();
       }
       Bnd_Box2d aBoxE;
       BndLib_Add2dCurve::Add (aC, aFirst, aLast, 0., aBoxE);
@@ -644,7 +644,8 @@ static Standard_Boolean Intersect(const TopoDS_Wire& wir1,
       PntSeq.Append( P );
     }
 
-  Geom2dAdaptor_Curve   C1,C2;
+  Handle(Geom2dAdaptor_Curve) C1 = new Geom2dAdaptor_Curve();
+  Handle(Geom2dAdaptor_Curve) C2 = new Geom2dAdaptor_Curve();
   gp_Pnt2d              pfirst1,plast1,pfirst2,plast2;
   Standard_Real         first1,last1,first2,last2;
   Geom2dInt_GInter      Inter;
@@ -655,10 +656,10 @@ static Standard_Boolean Intersect(const TopoDS_Wire& wir1,
     {
       const TopoDS_Edge& edg1 = TopoDS::Edge(exp1.Current());
       //    cur1.Initialize(edg1,F);
-      C1.Load( BRep_Tool::CurveOnSurface(edg1,F,first1,last1) );
+      C1->Load( BRep_Tool::CurveOnSurface(edg1,F,first1,last1) );
       // To avoid exception in Segment if C1 is BSpline - IFV
-      if(C1.FirstParameter() > first1) first1 = C1.FirstParameter();
-      if(C1.LastParameter()  < last1 ) last1  = C1.LastParameter();
+      if(C1->FirstParameter() > first1) first1 = C1->FirstParameter();
+      if(C1->LastParameter()  < last1 ) last1  = C1->LastParameter();
 
       Box1.SetVoid();
       if (theMapEdgeBox.IsBound (edg1))
@@ -675,10 +676,10 @@ static Standard_Boolean Intersect(const TopoDS_Wire& wir1,
 	  if (!edg1.IsSame(edg2))
 	    {
 	      //cur2.Initialize(edg2,F);
-	      C2.Load( BRep_Tool::CurveOnSurface(edg2,F,first2,last2) );
+	      C2->Load( BRep_Tool::CurveOnSurface(edg2,F,first2,last2) );
 	      // To avoid exception in Segment if C2 is BSpline - IFV
-	      if(C2.FirstParameter() > first2) first2 = C2.FirstParameter();
-	      if(C2.LastParameter()  < last2 ) last2  = C2.LastParameter();
+	      if(C2->FirstParameter() > first2) first2 = C2->FirstParameter();
+	      if(C2->LastParameter()  < last2 ) last2  = C2->LastParameter();
 
 	      Box2.SetVoid();
 	      if (theMapEdgeBox.IsBound (edg2))

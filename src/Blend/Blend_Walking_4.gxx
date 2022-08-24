@@ -767,8 +767,7 @@ Standard_Boolean Blend_Walking::CorrectExtremityOnOneRst(const Standard_Integer 
 {
   const Standard_Real TolAng = 0.001; //bug OCC25701
   
-  ChFiDS_ElSpine& theElSpine = *hguide;
-  if (theElSpine.NbVertices() == 0)
+  if (hguide->NbVertices() == 0)
     return Standard_False;
   
   Handle(TheTopolTool) DomainOfRst = (IndexOfRst == 1)? recdomain1 : recdomain2;
@@ -787,7 +786,7 @@ Standard_Boolean Blend_Walking::CorrectExtremityOnOneRst(const Standard_Integer 
   {
     gp_Pnt2d P2dOnEnd = TheArcTool::Value(DomainOfRst->Value(), Ends[k]);
     gp_Pnt PntOnEnd = TheSurfaceTool::Value(SurfOfRst, P2dOnEnd.X(), P2dOnEnd.Y());
-    Extrema_ExtPC projoncurv(PntOnEnd, theElSpine);
+    Extrema_ExtPC projoncurv(PntOnEnd, hguide);
     if (!projoncurv.IsDone())
       continue;
     Standard_Real MinSqDist = Precision::Infinite();
@@ -820,9 +819,9 @@ Standard_Boolean Blend_Walking::CorrectExtremityOnOneRst(const Standard_Integer 
   //Second we find right point and tangent on guide
   GlobalMinSqDist = Precision::Infinite();
   gp_Ax1 theAx1;
-  for (Standard_Integer ind = 1; ind <= theElSpine.NbVertices(); ind++)
+  for (Standard_Integer ind = 1; ind <= hguide->NbVertices(); ind++)
   {
-    const gp_Ax1& anAx1 = theElSpine.VertexWithTangent(ind);
+    const gp_Ax1& anAx1 = hguide->VertexWithTangent(ind);
     gp_Pnt aPnt = anAx1.Location();
     Standard_Real aSqDist = PointOnGuide.SquareDistance(aPnt);
     if (aSqDist < GlobalMinSqDist)
@@ -866,7 +865,7 @@ Standard_Boolean Blend_Walking::CorrectExtremityOnOneRst(const Standard_Integer 
   ////////////////////////////////////////////////////////////////////////
   
   //Project the point <PntOnPlane> on the surface 2
-  Extrema_ExtPS projonsurf(PntOnPlane, *AnotherSurf,
+  Extrema_ExtPS projonsurf(PntOnPlane, AnotherSurf,
                            Precision::PConfusion(), Precision::PConfusion(),
                            Extrema_ExtFlag_MIN);
   if (projonsurf.IsDone())

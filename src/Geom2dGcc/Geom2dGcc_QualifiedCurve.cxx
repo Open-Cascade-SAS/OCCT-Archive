@@ -16,13 +16,13 @@
 #include <Geom2dGcc_QualifiedCurve.hxx>
 
 Geom2dGcc_QualifiedCurve::
-   Geom2dGcc_QualifiedCurve (const Geom2dAdaptor_Curve& Curve    ,
+   Geom2dGcc_QualifiedCurve (const Handle(Geom2dAdaptor_Curve)& Curve    ,
 			     const GccEnt_Position      Qualifier) {
    TheQualified = Curve;
    TheQualifier = Qualifier;
  }
 
-Geom2dAdaptor_Curve Geom2dGcc_QualifiedCurve::
+const Handle(Geom2dAdaptor_Curve)& Geom2dGcc_QualifiedCurve::
    Qualified () const { return TheQualified; }
 
 GccEnt_Position Geom2dGcc_QualifiedCurve::

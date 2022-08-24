@@ -43,14 +43,14 @@ public:
 
   
   //! Compute a polygon on the domain of the curve.
-  Standard_EXPORT Geom2dInt_ThePolygon2dOfTheIntPCurvePCurveOfGInter(const Adaptor2d_Curve2d& Curve, const Standard_Integer NbPnt, const IntRes2d_Domain& Domain, const Standard_Real Tol);
+  Standard_EXPORT Geom2dInt_ThePolygon2dOfTheIntPCurvePCurveOfGInter(const Handle(Adaptor2d_Curve2d)& Curve, const Standard_Integer NbPnt, const IntRes2d_Domain& Domain, const Standard_Real Tol);
   
   //! The current polygon is modified if most
   //! of the  points of the  polygon  are
   //! outside  the  box  <OtherBox>.  In this
   //! situation, bounds are computed to build
   //! a polygon inside or near the OtherBox.
-  Standard_EXPORT void ComputeWithBox (const Adaptor2d_Curve2d& Curve, const Bnd_Box2d& OtherBox);
+  Standard_EXPORT void ComputeWithBox (const Handle(Adaptor2d_Curve2d)& Curve, const Bnd_Box2d& OtherBox);
   
     virtual Standard_Real DeflectionOverEstimation() const Standard_OVERRIDE;
   
@@ -111,7 +111,7 @@ private:
 
 };
 
-#define TheCurve Adaptor2d_Curve2d
+#define TheCurve Handle(Adaptor2d_Curve2d)
 #define TheCurve_hxx <Adaptor2d_Curve2d.hxx>
 #define TheCurveTool Geom2dInt_Geom2dCurveTool
 #define TheCurveTool_hxx <Geom2dInt_Geom2dCurveTool.hxx>

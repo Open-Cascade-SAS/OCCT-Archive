@@ -333,8 +333,8 @@ static void InGoodPeriod(const Standard_Real Prec,
     // Surface de revolution
     Revol = new(Geom_SurfaceOfRevolution) (S, Ax); 
     
-    GeomAdaptor_Surface GArevol(Revol);
-    Extrema_ExtCS DistMini(*myGuide, GArevol,
+    Handle(GeomAdaptor_Surface) GArevol = new GeomAdaptor_Surface(Revol);
+    Extrema_ExtCS DistMini(myGuide, GArevol,
                            Precision::Confusion(), Precision::Confusion());
     Extrema_POnCurv Pc;
     Extrema_POnSurf Ps;

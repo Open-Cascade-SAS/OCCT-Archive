@@ -25,7 +25,7 @@
 #include <gp_Vec2d.hxx>
 #include <Extrema_SequenceOfPOnCurv2d.hxx>
 
-#define Curve Adaptor2d_Curve2d
+#define Curve Handle(Adaptor2d_Curve2d)
 #define Curve_hxx <Adaptor2d_Curve2d.hxx>
 #define Tool Geom2dInt_Geom2dCurveTool
 #define Tool_hxx <Geom2dInt_Geom2dCurveTool.hxx>

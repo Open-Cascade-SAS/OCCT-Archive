@@ -49,7 +49,7 @@ public:
   //! TolU is used to decide to stop the iterations.
   //! At the nth iteration, the criteria is:
   //! abs(Un - Un-1) < TolU.
-  Standard_EXPORT Extrema_LocEPCOfLocateExtPC(const gp_Pnt& P, const Adaptor3d_Curve& C, const Standard_Real U0, const Standard_Real TolU);
+  Standard_EXPORT Extrema_LocEPCOfLocateExtPC(const gp_Pnt& P, const Handle(Adaptor3d_Curve)& C, const Standard_Real U0, const Standard_Real TolU);
   
   //! Calculates the distance with a close point.
   //! The close point is defined by the parameter value
@@ -61,10 +61,10 @@ public:
   //! TolU is used to decide to stop the iterations.
   //! At the nth iteration, the criteria is:
   //! abs(Un - Un-1) < TolU.
-  Standard_EXPORT Extrema_LocEPCOfLocateExtPC(const gp_Pnt& P, const Adaptor3d_Curve& C, const Standard_Real U0, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolU);
+  Standard_EXPORT Extrema_LocEPCOfLocateExtPC(const gp_Pnt& P, const Handle(Adaptor3d_Curve)& C, const Standard_Real U0, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolU);
   
   //! sets the fields of the algorithm.
-  Standard_EXPORT void Initialize (const Adaptor3d_Curve& C, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolU);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Curve)& C, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real TolU);
   
   //! the algorithm is done with the point P.
   //! An exception is raised if the fields have not

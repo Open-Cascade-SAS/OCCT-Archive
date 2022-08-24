@@ -55,7 +55,7 @@ public:
   //! TolU et TolV are used to determine the conditions
   //! to stop the iterations; at the iteration number n:
   //! (Un - Un-1) < TolU and (Vn - Vn-1) < TolV .
-  Standard_EXPORT Extrema_GenExtPS(const gp_Pnt& P, const Adaptor3d_Surface& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real TolU, const Standard_Real TolV, const Extrema_ExtFlag F = Extrema_ExtFlag_MINMAX, const Extrema_ExtAlgo A = Extrema_ExtAlgo_Grad);
+  Standard_EXPORT Extrema_GenExtPS(const gp_Pnt& P, const Handle(Adaptor3d_Surface)& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real TolU, const Standard_Real TolV, const Extrema_ExtFlag F = Extrema_ExtFlag_MINMAX, const Extrema_ExtAlgo A = Extrema_ExtAlgo_Grad);
   
   //! It calculates all the distances.
   //! The function F(u,v)=distance(P,S(u,v)) has an
@@ -69,11 +69,11 @@ public:
   //! TolU et TolV are used to determine the conditions
   //! to stop the iterations; at the iteration number n:
   //! (Un - Un-1) < TolU and (Vn - Vn-1) < TolV .
-  Standard_EXPORT Extrema_GenExtPS(const gp_Pnt& P, const Adaptor3d_Surface& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real Vmin, const Standard_Real Vsup, const Standard_Real TolU, const Standard_Real TolV, const Extrema_ExtFlag F = Extrema_ExtFlag_MINMAX, const Extrema_ExtAlgo A = Extrema_ExtAlgo_Grad);
+  Standard_EXPORT Extrema_GenExtPS(const gp_Pnt& P, const Handle(Adaptor3d_Surface)& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real Vmin, const Standard_Real Vsup, const Standard_Real TolU, const Standard_Real TolV, const Extrema_ExtFlag F = Extrema_ExtFlag_MINMAX, const Extrema_ExtAlgo A = Extrema_ExtAlgo_Grad);
   
-  Standard_EXPORT void Initialize (const Adaptor3d_Surface& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real TolU, const Standard_Real TolV);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Surface)& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real TolU, const Standard_Real TolV);
   
-  Standard_EXPORT void Initialize (const Adaptor3d_Surface& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real Vmin, const Standard_Real Vsup, const Standard_Real TolU, const Standard_Real TolV);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Surface)& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real Vmin, const Standard_Real Vsup, const Standard_Real TolU, const Standard_Real TolV);
   
   //! the algorithm is done with the point P.
   //! An exception is raised if the fields have not
@@ -103,7 +103,7 @@ private:
   Standard_EXPORT void FindSolution (const gp_Pnt& P, const Extrema_POnSurfParams& theParams);
   
   //! Selection of points to build grid, depending on the type of surface
-  Standard_EXPORT void GetGridPoints (const Adaptor3d_Surface& theSurf);
+  Standard_EXPORT void GetGridPoints (const Handle(Adaptor3d_Surface)& theSurf);
   
   //! Creation of grid of parametric points
   Standard_EXPORT void BuildGrid (const gp_Pnt& thePoint);
@@ -134,7 +134,7 @@ private:
   Extrema_HUBTreeOfSphere mySphereUBTree;
   Handle(Bnd_HArray1OfSphere) mySphereArray;
   Extrema_FuncPSNorm myF;
-  const Adaptor3d_Surface* myS;
+  Handle(Adaptor3d_Surface) myS;
   Extrema_ExtFlag myFlag;
   Extrema_ExtAlgo myAlgo;
   Handle(TColStd_HArray1OfReal) myUParams;

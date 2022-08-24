@@ -50,8 +50,8 @@ void HLRBRep_EdgeData::Set (const Standard_Boolean Rg1L,
   CutAtSta(Cut1);
   CutAtEnd(Cut2);
   Status().Initialize
-    (Start,(Standard_ShortReal)(ChangeGeometry().Curve().Resolution
+    (Start,(Standard_ShortReal)(ChangeGeometry().Curve()->Resolution
 				((Standard_Real)TolStart)),
-     End  ,(Standard_ShortReal)(ChangeGeometry().Curve().Resolution
+     End  ,(Standard_ShortReal)(ChangeGeometry().Curve()->Resolution
 				((Standard_Real)TolEnd  )));
 }

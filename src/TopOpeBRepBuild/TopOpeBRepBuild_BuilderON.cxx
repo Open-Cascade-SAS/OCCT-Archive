@@ -371,7 +371,7 @@ static Standard_Boolean ComputeFaceCrvtInSec(const TopoDS_Face& aFace,
                                              const gp_Dir& aSecDir,
                                              Standard_Real& aCrvt)
 {
-  BRepAdaptor_Surface aSurf(aFace);
+  Handle(BRepAdaptor_Surface) aSurf = new BRepAdaptor_Surface(aFace);
   Standard_Integer cn = BRepLProp_SurfaceTool::Continuity(aSurf);
   if (cn < 2) return Standard_False;
   BRepLProp_SLProps aProp(aSurf, aP2d.X(), aP2d.Y(), 2, Precision::Confusion());

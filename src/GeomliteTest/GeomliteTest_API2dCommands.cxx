@@ -608,7 +608,7 @@ static Standard_Integer deviation(Draw_Interpretor& theDI, Standard_Integer theN
     return 1;
   }
 
-  Geom2dAdaptor_Curve anAC(aC);
+  Handle(Geom2dAdaptor_Curve) anAC = new Geom2dAdaptor_Curve(aC);
 
   Standard_Integer aNbInterv = 2;
   Standard_Real aU0 = RealLast();
@@ -649,8 +649,8 @@ static Standard_Integer deviation(Draw_Interpretor& theDI, Standard_Integer theN
     }
   }
 
-  const Standard_Real aU1 = anAC.FirstParameter();
-  const Standard_Real aU2 = anAC.LastParameter();
+  const Standard_Real aU1 = anAC->FirstParameter();
+  const Standard_Real aU2 = anAC->LastParameter();
   
   Standard_Real aRetCurvParam = aU0;
   gp_Pnt2d aPtOnCurv;

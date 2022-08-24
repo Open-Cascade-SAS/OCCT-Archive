@@ -76,7 +76,7 @@ void BRepLib_ValidateEdge::UpdateTolerance(Standard_Real& theToleranceToUpdate)
 Standard_Real BRepLib_ValidateEdge::correctTolerance(Standard_Real theTolerance)
 {
   const Handle(Adaptor3d_Surface)& aSurface = myOtherCurve->GetSurface();
-  Standard_Real aCurvePrecision = BRepCheck::PrecCurve(*myReferenceCurve);
+  Standard_Real aCurvePrecision = BRepCheck::PrecCurve(myReferenceCurve);
   Standard_Real aSurfacePrecision = BRepCheck::PrecSurface(aSurface);
   Standard_Real aToleranceDelta = (aCurvePrecision > aSurfacePrecision) ? aCurvePrecision : aSurfacePrecision;
   Standard_Real aCorrectedTolerance = theTolerance + aToleranceDelta;
@@ -178,8 +178,8 @@ void BRepLib_ValidateEdge::processApprox()
     }
 
     Extrema_LocateExtPC aReferenceExtrema, anOtherExtrema;
-    aReferenceExtrema.Initialize(*myReferenceCurve, aReferenceFirstParam, aReferenceLastParam, myReferenceCurve->Resolution(Precision::Confusion()));
-    anOtherExtrema.Initialize(*myOtherCurve, anOtherFirstParam, anOtherLastParam, myOtherCurve->Resolution(Precision::Confusion()));
+    aReferenceExtrema.Initialize(myReferenceCurve, aReferenceFirstParam, aReferenceLastParam, myReferenceCurve->Resolution(Precision::Confusion()));
+    anOtherExtrema.Initialize(myOtherCurve, anOtherFirstParam, anOtherLastParam, myOtherCurve->Resolution(Precision::Confusion()));
     for (Standard_Integer i = 1; i < aControlPointsNumber; i++)
     {
       Standard_Real aReferenceParam = ((aControlPointsNumber - i) * aReferenceFirstParam + i * aReferenceLastParam) / aControlPointsNumber;

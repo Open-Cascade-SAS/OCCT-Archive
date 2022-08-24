@@ -37,7 +37,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT Geom2dInt_TheDistBetweenPCurvesOfTheIntPCurvePCurveOfGInter(const Adaptor2d_Curve2d& curve1, const Adaptor2d_Curve2d& curve2);
+  Standard_EXPORT Geom2dInt_TheDistBetweenPCurvesOfTheIntPCurvePCurveOfGInter(const Handle(Adaptor2d_Curve2d)& curve1, const Handle(Adaptor2d_Curve2d)& curve2);
   
   //! returns 2.
   Standard_EXPORT Standard_Integer NbVariables() const;

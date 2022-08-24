@@ -85,13 +85,11 @@ void TopOpeBRep_Hctxff2d::SetHSurfaces(const Handle(BRepAdaptor_Surface)& HS1,
 //=======================================================================
 void TopOpeBRep_Hctxff2d::SetHSurfacesPrivate()
 {
-  BRepAdaptor_Surface& S1 = *mySurface1;
-  myFace1 = S1.Face();
-  mySurfaceType1 = S1.GetType();
+  myFace1 = mySurface1->Face();
+  mySurfaceType1 = mySurface1->GetType();
 
-  BRepAdaptor_Surface& S2 = *mySurface2; 
-  myFace2 = S2.Face(); 
-  mySurfaceType2 = S2.GetType();
+  myFace2 = mySurface2->Face();
+  mySurfaceType2 = mySurface2->GetType();
   
   mySurfacesSameOriented = Standard_True;
   myFacesSameOriented = Standard_True;  
@@ -104,7 +102,7 @@ void TopOpeBRep_Hctxff2d::SetHSurfacesPrivate()
   so21 = TopOpeBRepTool_ShapeTool::FacesSameOriented(face1forward,myFace2);
   myf2surf1F_sameoriented = so21;
   
-  mySurfacesSameOriented = TopOpeBRepTool_ShapeTool::SurfacesSameOriented(S1,S2);
+  mySurfacesSameOriented = TopOpeBRepTool_ShapeTool::SurfacesSameOriented(mySurface1, mySurface2);
   myFacesSameOriented = TopOpeBRepTool_ShapeTool::FacesSameOriented(myFace1,myFace2);
   
 #ifdef OCCT_DEBUG

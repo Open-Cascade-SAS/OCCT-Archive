@@ -399,24 +399,23 @@ Standard_Boolean TopOpeBRepTool_ShapeTool::ShapesSameOriented
 //=======================================================================
 
 Standard_Boolean TopOpeBRepTool_ShapeTool::SurfacesSameOriented
-(const BRepAdaptor_Surface& S1,const BRepAdaptor_Surface& Sref)
+(const Handle(BRepAdaptor_Surface)& S1,const Handle(BRepAdaptor_Surface)& S2)
 {
-  const BRepAdaptor_Surface& S2 = Sref;
-  GeomAbs_SurfaceType ST1 = S1.GetType();
-  GeomAbs_SurfaceType ST2 = S2.GetType();
+  GeomAbs_SurfaceType ST1 = S1->GetType();
+  GeomAbs_SurfaceType ST2 = S2->GetType();
 
   Standard_Boolean so = Standard_True;
 
   if (ST1 == GeomAbs_Plane && ST2 == GeomAbs_Plane) { 
 
-    Standard_Real u1 = S1.FirstUParameter();
-    Standard_Real v1 = S1.FirstVParameter();
-    gp_Pnt p1; gp_Vec d1u,d1v; S1.D1(u1,v1,p1,d1u,d1v); 
+    Standard_Real u1 = S1->FirstUParameter();
+    Standard_Real v1 = S1->FirstVParameter();
+    gp_Pnt p1; gp_Vec d1u,d1v; S1->D1(u1,v1,p1,d1u,d1v); 
     gp_Vec n1 = d1u.Crossed(d1v);
     
-    Standard_Real u2 = S2.FirstUParameter();
-    Standard_Real v2 = S2.FirstVParameter();
-    gp_Pnt p2; gp_Vec d2u,d2v; S2.D1(u2,v2,p2,d2u,d2v); 
+    Standard_Real u2 = S2->FirstUParameter();
+    Standard_Real v2 = S2->FirstVParameter();
+    gp_Pnt p2; gp_Vec d2u,d2v; S2->D1(u2,v2,p2,d2u,d2v); 
     gp_Vec n2 = d2u.Crossed(d2v);
     
     Standard_Real d = n1.Dot(n2);
@@ -428,18 +427,18 @@ Standard_Boolean TopOpeBRepTool_ShapeTool::SurfacesSameOriented
     // prenons donc l'origine
     Standard_Real u1 = 0.;
     Standard_Real v1 = 0.;
-    gp_Pnt p1; gp_Vec d1u,d1v; S1.D1(u1,v1,p1,d1u,d1v); 
+    gp_Pnt p1; gp_Vec d1u,d1v; S1->D1(u1,v1,p1,d1u,d1v); 
     gp_Vec n1 = d1u.Crossed(d1v);
 
-    Handle(Geom_Surface) HS2 = S2.Surface().Surface();
-    HS2 = Handle(Geom_Surface)::DownCast(HS2->Transformed(S2.Trsf()));
+    Handle(Geom_Surface) HS2 = S2->Surface()->Surface();
+    HS2 = Handle(Geom_Surface)::DownCast(HS2->Transformed(S2->Trsf()));
     gp_Pnt2d p22d; Standard_Real dp2;
     Standard_Boolean ok = FUN_tool_projPonS(p1,HS2,p22d,dp2);
     if ( !ok ) return so; // NYI : raise
     
     Standard_Real u2 = p22d.X();
     Standard_Real v2 = p22d.Y();
-    gp_Pnt p2; gp_Vec d2u,d2v; S2.D1(u2,v2,p2,d2u,d2v); 
+    gp_Pnt p2; gp_Vec d2u,d2v; S2->D1(u2,v2,p2,d2u,d2v); 
     gp_Vec n2 = d2u.Crossed(d2v);
     
     Standard_Real d = n1.Dot(n2);
@@ -479,8 +478,8 @@ Standard_Boolean TopOpeBRepTool_ShapeTool::FacesSameOriented
   }
 
   Standard_Boolean computerestriction = Standard_False;
-  BRepAdaptor_Surface BAS1(F1,computerestriction);
-  BRepAdaptor_Surface BAS2(F2,computerestriction);
+  Handle(BRepAdaptor_Surface) BAS1 = new BRepAdaptor_Surface(F1,computerestriction);
+  Handle(BRepAdaptor_Surface) BAS2 = new BRepAdaptor_Surface(F2,computerestriction);
   Standard_Boolean so = F1.IsSame(F2) || SurfacesSameOriented(BAS1,BAS2);
   Standard_Boolean b = so;
   if ( o1 != o2 ) b = !so; 
@@ -494,17 +493,16 @@ Standard_Boolean TopOpeBRepTool_ShapeTool::FacesSameOriented
 //=======================================================================
 
 Standard_Boolean TopOpeBRepTool_ShapeTool::CurvesSameOriented
-(const BRepAdaptor_Curve& C1, const BRepAdaptor_Curve& Cref)
+(const Handle(BRepAdaptor_Curve)& C1, const Handle(BRepAdaptor_Curve)& C2)
 {
-  const BRepAdaptor_Curve& C2 = Cref;
-  GeomAbs_CurveType CT1 = C1.GetType();
-  GeomAbs_CurveType CT2 = C2.GetType();
+  GeomAbs_CurveType CT1 = C1->GetType();
+  GeomAbs_CurveType CT2 = C2->GetType();
   Standard_Boolean so = Standard_True;
 
   if (CT1 == GeomAbs_Line && CT2 == GeomAbs_Line) { 
-    Standard_Real p1 = C1.FirstParameter();
+    Standard_Real p1 = C1->FirstParameter();
     gp_Dir t1,n1; Standard_Real c1; EdgeData(C1,p1,t1,n1,c1);
-    Standard_Real p2 = C2.FirstParameter();
+    Standard_Real p2 = C2->FirstParameter();
     gp_Dir t2,n2; Standard_Real c2; EdgeData(C2,p2,t2,n2,c2);
     Standard_Real d = t1.Dot(t2);
     so = (d > 0.);
@@ -540,8 +538,8 @@ Standard_Boolean TopOpeBRepTool_ShapeTool::EdgesSameOriented
        o2 == TopAbs_EXTERNAL || o2 == TopAbs_INTERNAL ) {
     return Standard_True;
   }
-  BRepAdaptor_Curve BAC1(E1);
-  BRepAdaptor_Curve BAC2(E2);
+  Handle(BRepAdaptor_Curve) BAC1 = new BRepAdaptor_Curve(E1);
+  Handle(BRepAdaptor_Curve) BAC2 = new BRepAdaptor_Curve(E2);
   Standard_Boolean so = CurvesSameOriented(BAC1,BAC2);
   Standard_Boolean b = so;
   if ( o1 != o2 ) b = !so;
@@ -555,7 +553,7 @@ Standard_Boolean TopOpeBRepTool_ShapeTool::EdgesSameOriented
 //=======================================================================
 
 Standard_Real TopOpeBRepTool_ShapeTool::EdgeData
-(const BRepAdaptor_Curve& BAC, const Standard_Real P, 
+(const Handle(BRepAdaptor_Curve)& BAC, const Standard_Real P, 
  gp_Dir& T, gp_Dir& N, Standard_Real& C)
      
 {
@@ -583,7 +581,7 @@ Standard_Real TopOpeBRepTool_ShapeTool::EdgeData
 (const TopoDS_Shape& E, const Standard_Real P, 
  gp_Dir& T, gp_Dir& N, Standard_Real& C)
 {
-  BRepAdaptor_Curve BAC(TopoDS::Edge(E));
+  Handle(BRepAdaptor_Curve) BAC = new BRepAdaptor_Curve(TopoDS::Edge(E));
   Standard_Real d = EdgeData(BAC,P,T,N,C);
   return d;
 }

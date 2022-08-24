@@ -1027,7 +1027,7 @@ void TopOpeBRep_FacesFiller::AddShapesLine()
   //Patch: avoid making too small edges. Made for the bug buc60926 by jgv, 14.06.01.
   Standard_Real fpar, lpar;
   DSC.Range(fpar, lpar);
-  GeomAdaptor_Curve theCurve( DSC.Curve(), fpar, lpar );
+  Handle(GeomAdaptor_Curve) theCurve = new GeomAdaptor_Curve( DSC.Curve(), fpar, lpar );
   Bnd_Box theBox;
   BndLib_Add3dCurve::Add( theCurve, 0., theBox );
   Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax, MaxSide;

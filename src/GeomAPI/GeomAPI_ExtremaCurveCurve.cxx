@@ -31,6 +31,8 @@
 GeomAPI_ExtremaCurveCurve::GeomAPI_ExtremaCurveCurve()
 : myIsDone(Standard_False),
   myIndex(0),
+  myC1(new GeomAdaptor_Curve()),
+  myC2(new GeomAdaptor_Curve()),
   myTotalExt(Standard_False),
   myIsInfinite(Standard_False),
   myTotalDist(0.0)
@@ -82,8 +84,8 @@ void GeomAPI_ExtremaCurveCurve::Init
   myTotalExt = Standard_False;
   
   Standard_Real Tol = Precision::PConfusion();
-  myC1.Load(C1);
-  myC2.Load(C2);
+  myC1 = new GeomAdaptor_Curve(C1);
+  myC2 = new GeomAdaptor_Curve(C2);
 
   myExtCC.Initialize (myC1, myC2, Tol,Tol);
   myExtCC.Perform();
@@ -124,8 +126,8 @@ void GeomAPI_ExtremaCurveCurve::Init
   myTotalExt = Standard_False;
 
   Standard_Real Tol = Precision::PConfusion();
-  myC1.Load(C1);
-  myC2.Load(C2);
+  myC1 = new GeomAdaptor_Curve(C1);
+  myC2 = new GeomAdaptor_Curve(C2);
 
   myExtCC.Initialize (myC1,myC2,U1min,U1max,U2min,U2max,Tol,Tol);
   myExtCC.Perform();
@@ -345,10 +347,10 @@ void GeomAPI_ExtremaCurveCurve::TotalPerform()
 //  StdFail_NotDone_Raise_if
 //    (!myExtCC.IsDone(), "GeomAPI_ExtremaCurveCurve::TotalPerform");
 
-  Standard_Real u11 = myC1.FirstParameter();
-  Standard_Real u12 = myC1.LastParameter();
-  Standard_Real u21 = myC2.FirstParameter();
-  Standard_Real u22 = myC2.LastParameter();
+  Standard_Real u11 = myC1->FirstParameter();
+  Standard_Real u12 = myC1->LastParameter();
+  Standard_Real u21 = myC2->FirstParameter();
+  Standard_Real u22 = myC2->LastParameter();
   
   Standard_Boolean infinite = Precision::IsInfinite(u11) &&
                               Precision::IsInfinite(u12) &&
@@ -363,8 +365,8 @@ void GeomAPI_ExtremaCurveCurve::TotalPerform()
 
     //calculate distance between any suitable point on C1 and C2
     
-    gp_Pnt PonC1 = myC1.Value(0.);
-    GeomAPI_ProjectPointOnCurve proj(PonC1, myC2.Curve());
+    gp_Pnt PonC1 = myC1->Value(0.);
+    GeomAPI_ProjectPointOnCurve proj(PonC1, myC2->Curve());
     myTotalDist = proj.LowerDistance();
 
     return;
@@ -435,7 +437,7 @@ void GeomAPI_ExtremaCurveCurve::TotalPerform()
   // calculate distances between extremities one curve and other curve
 
   if(!Precision::IsInfinite(u11)) {
-    GeomAPI_ProjectPointOnCurve proj(P11, myC2.Curve(), u21, u22);  
+    GeomAPI_ProjectPointOnCurve proj(P11, myC2->Curve(), u21, u22);  
 
     if(proj.NbPoints() > 0) {
 
@@ -454,7 +456,7 @@ void GeomAPI_ExtremaCurveCurve::TotalPerform()
   }
 
   if(!Precision::IsInfinite(u12)) {
-    GeomAPI_ProjectPointOnCurve proj(P12, myC2.Curve(), u21, u22);  
+    GeomAPI_ProjectPointOnCurve proj(P12, myC2->Curve(), u21, u22);  
 
     if(proj.NbPoints() > 0) {
 
@@ -473,7 +475,7 @@ void GeomAPI_ExtremaCurveCurve::TotalPerform()
   }
 
   if(!Precision::IsInfinite(u21)) {
-    GeomAPI_ProjectPointOnCurve proj(P21, myC1.Curve(), u11, u12);  
+    GeomAPI_ProjectPointOnCurve proj(P21, myC1->Curve(), u11, u12);  
 
     if(proj.NbPoints() > 0) {
 
@@ -492,7 +494,7 @@ void GeomAPI_ExtremaCurveCurve::TotalPerform()
   }
 
   if(!Precision::IsInfinite(u22)) {
-    GeomAPI_ProjectPointOnCurve proj(P22, myC1.Curve(), u11, u12);  
+    GeomAPI_ProjectPointOnCurve proj(P22, myC1->Curve(), u11, u12);  
 
     if(proj.NbPoints() > 0) {
 

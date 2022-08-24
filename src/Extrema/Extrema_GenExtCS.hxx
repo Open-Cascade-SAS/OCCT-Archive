@@ -48,7 +48,7 @@ public:
   //! surfaces.
   //! NbU and NbV are used to locate the close points on the
   //! surface and NbT on the curve to find the zeros.
-  Standard_EXPORT Extrema_GenExtCS(const Adaptor3d_Curve& C, const Adaptor3d_Surface& S, const Standard_Integer NbT, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Tol1, const Standard_Real Tol2);
+  Standard_EXPORT Extrema_GenExtCS(const Handle(Adaptor3d_Curve)& C, const Handle(Adaptor3d_Surface)& S, const Standard_Integer NbT, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Tol1, const Standard_Real Tol2);
   
   //! It calculates all the distances.
   //! The function F(u,v)=distance(P,S(u,v)) has an
@@ -57,21 +57,21 @@ public:
   //! surface.
   //! NbT,NbU and NbV are used to locate the close points
   //! to find the zeros.
-  Standard_EXPORT Extrema_GenExtCS(const Adaptor3d_Curve& C, const Adaptor3d_Surface& S, const Standard_Integer NbT, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real tmin, const Standard_Real tsup, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real Vmin, const Standard_Real Vsup, const Standard_Real Tol1, const Standard_Real Tol2);
+  Standard_EXPORT Extrema_GenExtCS(const Handle(Adaptor3d_Curve)& C, const Handle(Adaptor3d_Surface)& S, const Standard_Integer NbT, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real tmin, const Standard_Real tsup, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real Vmin, const Standard_Real Vsup, const Standard_Real Tol1, const Standard_Real Tol2);
   
-  Standard_EXPORT void Initialize (const Adaptor3d_Surface& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Tol2);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Surface)& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Tol2);
   
-  Standard_EXPORT void Initialize (const Adaptor3d_Surface& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real Vmin, const Standard_Real Vsup, const Standard_Real Tol2);
+  Standard_EXPORT void Initialize (const Handle(Adaptor3d_Surface)& S, const Standard_Integer NbU, const Standard_Integer NbV, const Standard_Real Umin, const Standard_Real Usup, const Standard_Real Vmin, const Standard_Real Vsup, const Standard_Real Tol2);
   
   //! the algorithm is done with S
   //! An exception is raised if the fields have not
   //! been initialized.
-  Standard_EXPORT void Perform (const Adaptor3d_Curve& C, const Standard_Integer NbT, const Standard_Real Tol1);
+  Standard_EXPORT void Perform (const Handle(Adaptor3d_Curve)& C, const Standard_Integer NbT, const Standard_Real Tol1);
   
   //! the algorithm is done with C
   //! An exception is raised if the fields have not
   //! been initialized.
-  Standard_EXPORT void Perform (const Adaptor3d_Curve& C, const Standard_Integer NbT, const Standard_Real tmin, const Standard_Real tsup, const Standard_Real Tol1);
+  Standard_EXPORT void Perform (const Handle(Adaptor3d_Curve)& C, const Standard_Integer NbT, const Standard_Real tmin, const Standard_Real tsup, const Standard_Real Tol1);
   
   //! Returns True if the distances are found.
   Standard_EXPORT Standard_Boolean IsDone() const;
@@ -90,19 +90,19 @@ public:
 
 private:
 
-  Standard_EXPORT void GlobMinGenCS(const Adaptor3d_Curve& theC,
+  Standard_EXPORT void GlobMinGenCS(const Handle(Adaptor3d_Curve)& theC,
     const Standard_Integer theNbParticles,
     const math_Vector& theTUVinf,
     const math_Vector& theTUVsup,
     math_Vector& theTUV);
 
-  Standard_EXPORT void GlobMinConicS(const Adaptor3d_Curve& theC,
+  Standard_EXPORT void GlobMinConicS(const Handle(Adaptor3d_Curve)& theC,
     const Standard_Integer theNbParticles,
     const math_Vector& theTUVinf,
     const math_Vector& theTUVsup,
     math_Vector& theTUV);
 
-  Standard_EXPORT void GlobMinCQuadric(const Adaptor3d_Curve& theC,
+  Standard_EXPORT void GlobMinCQuadric(const Handle(Adaptor3d_Curve)& theC,
     const Standard_Integer theNbParticles,
     const math_Vector& theTUVinf,
     const math_Vector& theTUVsup,
@@ -129,7 +129,7 @@ private:
   Standard_Real mytol1;
   Standard_Real mytol2;
   Extrema_FuncExtCS myF;
-  const Adaptor3d_Surface* myS;
+  Handle(Adaptor3d_Surface) myS;
   Handle(TColgp_HArray2OfPnt) mySurfPnts;
 
 };

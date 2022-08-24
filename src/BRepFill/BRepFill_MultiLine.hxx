@@ -98,13 +98,13 @@ public:
 private:
   TopoDS_Face myFace1;
   TopoDS_Face myFace2;
-  Geom2dAdaptor_Curve myU1;
-  Geom2dAdaptor_Curve myV1;
-  Geom2dAdaptor_Curve myU2;
-  Geom2dAdaptor_Curve myV2;
+  Handle(Geom2dAdaptor_Curve) myU1;
+  Handle(Geom2dAdaptor_Curve) myV1;
+  Handle(Geom2dAdaptor_Curve) myU2;
+  Handle(Geom2dAdaptor_Curve) myV2;
   Standard_Boolean myIsoU1;
   Standard_Boolean myIsoU2;
-  Geom2dAdaptor_Curve myBis;
+  Handle(Geom2dAdaptor_Curve) myBis;
   Standard_Integer myKPart;
   GeomAbs_Shape myCont;
 };

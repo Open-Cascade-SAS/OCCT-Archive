@@ -64,22 +64,22 @@ static void CorrectTol(const Standard_Real theU0, const Standard_Real theV0,
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean Extrema_GenLocateExtPS::IsMinDist(const gp_Pnt& theP, const Adaptor3d_Surface& theS,
+Standard_Boolean Extrema_GenLocateExtPS::IsMinDist(const gp_Pnt& theP, const Handle(Adaptor3d_Surface)& theS,
   const Standard_Real theU0, const Standard_Real theV0)
 {
-  Standard_Real du = Max(theS.UResolution(10.*Precision::Confusion()), 10.*Precision::PConfusion());
-  Standard_Real dv = Max(theS.VResolution(10.*Precision::Confusion()), 10.*Precision::PConfusion());
+  Standard_Real du = Max(theS->UResolution(10.*Precision::Confusion()), 10.*Precision::PConfusion());
+  Standard_Real dv = Max(theS->VResolution(10.*Precision::Confusion()), 10.*Precision::PConfusion());
   Standard_Real u, v;
-  gp_Pnt aP0 = theS.Value(theU0, theV0);
+  gp_Pnt aP0 = theS->Value(theU0, theV0);
   Standard_Real d0 = theP.SquareDistance(aP0);
   Standard_Integer iu, iv;
   for (iu = -1; iu <= 1; ++iu)
   {
     u = theU0 + iu * du;
-    if (!theS.IsUPeriodic())
+    if (!theS->IsUPeriodic())
     {
-      u = Max(u, theS.FirstUParameter());
-      u = Min(u, theS.LastUParameter());
+      u = Max(u, theS->FirstUParameter());
+      u = Min(u, theS->LastUParameter());
     }
     for (iv = -1; iv <= 1; ++iv)
     {
@@ -87,12 +87,12 @@ Standard_Boolean Extrema_GenLocateExtPS::IsMinDist(const gp_Pnt& theP, const Ada
         continue;
 
       v = theV0 + iv * dv;
-      if (!theS.IsVPeriodic())
+      if (!theS->IsVPeriodic())
       {
-        v = Max(v, theS.FirstVParameter());
-        v = Min(v, theS.LastVParameter());
+        v = Max(v, theS->FirstVParameter());
+        v = Min(v, theS->LastVParameter());
       }
-      Standard_Real d = theP.SquareDistance(theS.Value(u, v));
+      Standard_Real d = theP.SquareDistance(theS->Value(u, v));
       if (d < d0)
         return Standard_False;
     }
@@ -103,7 +103,7 @@ Standard_Boolean Extrema_GenLocateExtPS::IsMinDist(const gp_Pnt& theP, const Ada
 //function : Extrema_GenLocateExtPS
 //purpose  : 
 //=======================================================================
-Extrema_GenLocateExtPS::Extrema_GenLocateExtPS(const Adaptor3d_Surface& theS,
+Extrema_GenLocateExtPS::Extrema_GenLocateExtPS(const Handle(Adaptor3d_Surface)& theS,
                                                const Standard_Real theTolU,
                                                const Standard_Real theTolV)
 : mySurf(theS),
@@ -136,10 +136,10 @@ void Extrema_GenLocateExtPS::Perform(const gp_Pnt& theP,
   aStart(2) = theV0;
 
   // Borders.
-  aBoundInf(1) = mySurf.FirstUParameter();
-  aBoundInf(2) = mySurf.FirstVParameter();
-  aBoundSup(1) = mySurf.LastUParameter();
-  aBoundSup(2) = mySurf.LastVParameter();
+  aBoundInf(1) = mySurf->FirstUParameter();
+  aBoundInf(2) = mySurf->FirstVParameter();
+  aBoundSup(1) = mySurf->LastUParameter();
+  aBoundSup(2) = mySurf->LastVParameter();
 
   if (isDistanceCriteria)
   {
@@ -168,7 +168,7 @@ void Extrema_GenLocateExtPS::Perform(const gp_Pnt& theP,
       mySqDist = aSolver.Minimum();
     }
 
-    myPoint.SetParameters(aResPnt(1), aResPnt(2), mySurf.Value(aResPnt(1), aResPnt(2)));
+    myPoint.SetParameters(aResPnt(1), aResPnt(2), mySurf->Value(aResPnt(1), aResPnt(2)));
     myDone = Standard_True;
   }
   else
@@ -176,7 +176,7 @@ void Extrema_GenLocateExtPS::Perform(const gp_Pnt& theP,
     // Normal projection criteria.
     Extrema_FuncPSNorm F(theP, mySurf);
 
-    if (mySurf.GetType() == GeomAbs_BSplineSurface)
+    if (mySurf->GetType() == GeomAbs_BSplineSurface)
     {
       aTol(1) = myTolU;
       aTol(2) = myTolV;

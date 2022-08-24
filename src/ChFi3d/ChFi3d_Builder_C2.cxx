@@ -222,8 +222,7 @@ Standard_Boolean ChFi3d_Builder::PerformTwoCornerbyInter(const Standard_Integer 
     Handle(Geom_BoundedCurve) C1= Handle(Geom_BoundedCurve)::DownCast(csau);
     if (! C1.IsNull()) {
       GeomLib::ExtendCurveToPoint(C1,CP2.Point(),1,Standard_False);
-      GeomAdaptor_Curve cad;
-      cad.Load(C1);
+      Handle(GeomAdaptor_Curve) cad = new GeomAdaptor_Curve(C1);
       Extrema_ExtPC ext(CP2.Point(),cad,1.e-4);   
       parCP2 = ext.Point(1).Parameter();
     }
@@ -570,7 +569,7 @@ Standard_Boolean ChFi3d_Builder::PerformTwoCornerbyInter(const Standard_Integer 
     // for the case when two chamfers are on two edges OnSame,
     // it is necessary to extend the surface carrying F, or at least
     // not to limit it.
-    ChFi3d_BoundFac (*HF, uu1, uu2, vv1, vv2, Standard_True);
+    ChFi3d_BoundFac (HF, uu1, uu2, vv1, vv2, Standard_True);
 
     if (!ChFi3d_ComputeCurves(HF,BigHS,Pardeb,Parfin,Gc,
 			      PGc1,PGc2,tolesp,tol2d,tolreached)) {

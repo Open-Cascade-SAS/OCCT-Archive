@@ -71,10 +71,7 @@ public:
   Standard_EXPORT void Initialize (const TopoDS_Face& F, const Standard_Boolean Restriction = Standard_True);
   
   //! Returns the surface.
-  Standard_EXPORT const GeomAdaptor_Surface& Surface() const;
-  
-  //! Returns the surface.
-  Standard_EXPORT GeomAdaptor_Surface& ChangeSurface();
+  Standard_EXPORT const Handle(GeomAdaptor_Surface)& Surface() const;
   
   //! Returns the surface coordinate system.
   Standard_EXPORT const gp_Trsf& Trsf() const;
@@ -85,27 +82,27 @@ public:
   //! Returns the face tolerance.
   Standard_EXPORT Standard_Real Tolerance() const;
 
-  virtual Standard_Real FirstUParameter() const Standard_OVERRIDE { return mySurf.FirstUParameter(); }
+  virtual Standard_Real FirstUParameter() const Standard_OVERRIDE { return mySurf->FirstUParameter(); }
 
-  virtual Standard_Real LastUParameter() const Standard_OVERRIDE { return mySurf.LastUParameter(); }
+  virtual Standard_Real LastUParameter() const Standard_OVERRIDE { return mySurf->LastUParameter(); }
 
-  virtual Standard_Real FirstVParameter() const Standard_OVERRIDE { return mySurf.FirstVParameter(); }
+  virtual Standard_Real FirstVParameter() const Standard_OVERRIDE { return mySurf->FirstVParameter(); }
 
-  virtual Standard_Real LastVParameter() const Standard_OVERRIDE { return mySurf.LastVParameter(); }
+  virtual Standard_Real LastVParameter() const Standard_OVERRIDE { return mySurf->LastVParameter(); }
 
-  virtual GeomAbs_Shape UContinuity() const Standard_OVERRIDE { return mySurf.UContinuity(); }
+  virtual GeomAbs_Shape UContinuity() const Standard_OVERRIDE { return mySurf->UContinuity(); }
 
-  virtual GeomAbs_Shape VContinuity() const Standard_OVERRIDE { return mySurf.VContinuity(); }
+  virtual GeomAbs_Shape VContinuity() const Standard_OVERRIDE { return mySurf->VContinuity(); }
   
   //! If necessary, breaks the surface in U intervals of
   //! continuity    <S>.  And   returns  the  number  of
   //! intervals.
-  virtual Standard_Integer NbUIntervals (const GeomAbs_Shape theSh) const Standard_OVERRIDE { return mySurf.NbUIntervals (theSh); }
+  virtual Standard_Integer NbUIntervals (const GeomAbs_Shape theSh) const Standard_OVERRIDE { return mySurf->NbUIntervals (theSh); }
 
   //! If necessary, breaks the surface in V intervals of
   //! continuity    <S>.  And   returns  the  number  of
   //! intervals.
-  virtual Standard_Integer NbVIntervals (const GeomAbs_Shape theSh) const Standard_OVERRIDE { return mySurf.NbVIntervals (theSh); }
+  virtual Standard_Integer NbVIntervals (const GeomAbs_Shape theSh) const Standard_OVERRIDE { return mySurf->NbVIntervals (theSh); }
   
   //! Returns the  intervals with the requested continuity
   //! in the U direction.
@@ -128,17 +125,17 @@ public:
   //! If <First> >= <Last>
   Standard_EXPORT Handle(Adaptor3d_Surface) VTrim (const Standard_Real First, const Standard_Real Last, const Standard_Real Tol) const Standard_OVERRIDE;
 
-  virtual Standard_Boolean IsUClosed() const Standard_OVERRIDE { return mySurf.IsUClosed(); }
+  virtual Standard_Boolean IsUClosed() const Standard_OVERRIDE { return mySurf->IsUClosed(); }
 
-  virtual Standard_Boolean IsVClosed() const Standard_OVERRIDE { return mySurf.IsVClosed(); }
+  virtual Standard_Boolean IsVClosed() const Standard_OVERRIDE { return mySurf->IsVClosed(); }
 
-  virtual Standard_Boolean IsUPeriodic() const Standard_OVERRIDE { return mySurf.IsUPeriodic(); }
+  virtual Standard_Boolean IsUPeriodic() const Standard_OVERRIDE { return mySurf->IsUPeriodic(); }
 
-  virtual Standard_Real UPeriod() const Standard_OVERRIDE { return mySurf.UPeriod(); }
+  virtual Standard_Real UPeriod() const Standard_OVERRIDE { return mySurf->UPeriod(); }
 
-  virtual Standard_Boolean IsVPeriodic() const Standard_OVERRIDE { return mySurf.IsVPeriodic(); }
+  virtual Standard_Boolean IsVPeriodic() const Standard_OVERRIDE { return mySurf->IsVPeriodic(); }
 
-  virtual Standard_Real VPeriod() const Standard_OVERRIDE { return mySurf.VPeriod(); }
+  virtual Standard_Real VPeriod() const Standard_OVERRIDE { return mySurf->VPeriod(); }
 
   //! Computes the point of parameters U,V on the surface.
   //! Tip: use GeomLib::NormEstim() to calculate surface normal at specified (U, V) point.
@@ -174,17 +171,17 @@ public:
   
   //! Returns the parametric U  resolution corresponding
   //! to the real space resolution <R3d>.
-  virtual Standard_Real UResolution (const Standard_Real theR3d) const Standard_OVERRIDE { return mySurf.UResolution (theR3d); }
+  virtual Standard_Real UResolution (const Standard_Real theR3d) const Standard_OVERRIDE { return mySurf->UResolution (theR3d); }
   
   //! Returns the parametric V  resolution corresponding
   //! to the real space resolution <R3d>.
-  virtual Standard_Real VResolution (const Standard_Real theR3d) const Standard_OVERRIDE { return mySurf.VResolution (theR3d); }
+  virtual Standard_Real VResolution (const Standard_Real theR3d) const Standard_OVERRIDE { return mySurf->VResolution (theR3d); }
 
   //! Returns the type of the surface : Plane, Cylinder,
   //! Cone,      Sphere,        Torus,    BezierSurface,
   //! BSplineSurface,               SurfaceOfRevolution,
   //! SurfaceOfExtrusion, OtherSurface
-  virtual GeomAbs_SurfaceType GetType() const Standard_OVERRIDE { return mySurf.GetType(); }
+  virtual GeomAbs_SurfaceType GetType() const Standard_OVERRIDE { return mySurf->GetType(); }
   
   Standard_EXPORT gp_Pln Plane() const Standard_OVERRIDE;
   
@@ -196,21 +193,21 @@ public:
   
   Standard_EXPORT gp_Torus Torus() const Standard_OVERRIDE;
   
-  virtual Standard_Integer UDegree() const Standard_OVERRIDE { return mySurf.UDegree(); }
+  virtual Standard_Integer UDegree() const Standard_OVERRIDE { return mySurf->UDegree(); }
 
-  virtual Standard_Integer NbUPoles() const Standard_OVERRIDE { return mySurf.NbUPoles(); }
+  virtual Standard_Integer NbUPoles() const Standard_OVERRIDE { return mySurf->NbUPoles(); }
 
-  virtual Standard_Integer VDegree() const Standard_OVERRIDE { return mySurf.VDegree(); }
+  virtual Standard_Integer VDegree() const Standard_OVERRIDE { return mySurf->VDegree(); }
 
-  virtual Standard_Integer NbVPoles() const Standard_OVERRIDE { return mySurf.NbVPoles(); }
+  virtual Standard_Integer NbVPoles() const Standard_OVERRIDE { return mySurf->NbVPoles(); }
 
-  virtual Standard_Integer NbUKnots() const Standard_OVERRIDE { return mySurf.NbUKnots(); }
+  virtual Standard_Integer NbUKnots() const Standard_OVERRIDE { return mySurf->NbUKnots(); }
 
-  virtual Standard_Integer NbVKnots() const Standard_OVERRIDE { return mySurf.NbVKnots(); }
+  virtual Standard_Integer NbVKnots() const Standard_OVERRIDE { return mySurf->NbVKnots(); }
 
-  virtual Standard_Boolean IsURational() const Standard_OVERRIDE { return mySurf.IsURational(); }
+  virtual Standard_Boolean IsURational() const Standard_OVERRIDE { return mySurf->IsURational(); }
 
-  virtual Standard_Boolean IsVRational() const Standard_OVERRIDE { return mySurf.IsVRational(); }
+  virtual Standard_Boolean IsVRational() const Standard_OVERRIDE { return mySurf->IsVRational(); }
 
   Standard_EXPORT Handle(Geom_BezierSurface) Bezier() const Standard_OVERRIDE;
 
@@ -236,7 +233,7 @@ public:
 
 private:
 
-  GeomAdaptor_Surface mySurf;
+  Handle(GeomAdaptor_Surface) mySurf;
   gp_Trsf myTrsf;
   TopoDS_Face myFace;
 

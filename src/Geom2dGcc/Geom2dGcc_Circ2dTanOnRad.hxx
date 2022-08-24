@@ -69,7 +69,7 @@ public:
   //! Constructs one or more 2D circles of radius Radius,
   //! centered on the 2D curve OnCurv and:
   //! -   tangential to the curve Qualified1
-  Standard_EXPORT Geom2dGcc_Circ2dTanOnRad(const Geom2dGcc_QualifiedCurve& Qualified1, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2dTanOnRad(const Geom2dGcc_QualifiedCurve& Qualified1, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
   
   //! Constructs one or more 2D circles of radius Radius,
   //! centered on the 2D curve OnCurv and:
@@ -101,7 +101,7 @@ public:
   //! ...
   //! }
   //! }
-  Standard_EXPORT Geom2dGcc_Circ2dTanOnRad(const Handle(Geom2d_Point)& Point1, const Geom2dAdaptor_Curve& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
+  Standard_EXPORT Geom2dGcc_Circ2dTanOnRad(const Handle(Geom2d_Point)& Point1, const Handle(Geom2dAdaptor_Curve)& OnCurv, const Standard_Real Radius, const Standard_Real Tolerance);
   
   Standard_EXPORT void Results (const GccAna_Circ2dTanOnRad& Circ);
   

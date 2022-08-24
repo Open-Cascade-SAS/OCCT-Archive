@@ -22,7 +22,7 @@
 #include <gp_Vec2d.hxx>
 
 Geom2dGcc_FunctionTanObl::
-Geom2dGcc_FunctionTanObl(const Geom2dAdaptor_Curve& C,
+Geom2dGcc_FunctionTanObl(const Handle(Geom2dAdaptor_Curve)& C,
                          const gp_Dir2d& Dir    )
 {
   TheCurv = C;

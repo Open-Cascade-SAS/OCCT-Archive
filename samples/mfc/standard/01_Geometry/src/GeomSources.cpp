@@ -655,7 +655,7 @@ void GeomSources::gpTest9(CGeometryDoc* aDoc)
   Standard_Real radius = 5;                                    
   Handle(Geom2d_Circle) C =                                    
     new Geom2d_Circle(gp::OX2d(),radius);                    
-  Geom2dAdaptor_Curve GAC (C);                                 
+  Handle(Geom2dAdaptor_Curve) GAC = new Geom2dAdaptor_Curve(C);                                 
   Standard_Real startparam = 10*M_PI/180;                                
   Standard_Real abscissa = 45*M_PI/180;                                  
   gp_Pnt2d P1;
@@ -668,23 +668,23 @@ void GeomSources::gpTest9(CGeometryDoc* aDoc)
 
   //==============================================================
   TCollection_AsciiString Message (" \n\
-                                                             \n\
-                                                             \n\
-Standard_Real radius = 5;                                    \n\
-Handle(Geom2d_Circle) C =                                    \n\
-    new Geom2d_Circle(gp::OX2d(),radius);                    \n\
-Geom2dAdaptor_Curve GAC (C);                                 \n\
-Standard_Real startparam = 10*PI180;                            \n\
-Standard_Real abscissa = 45*PI180;                                 \n\
-gp_Pnt2d P1;                                                 \n\
-C->D0(startparam,P1);                                                \n\
-// abscissa is the distance along the curve from startparam  \n\
-GCPnts_AbscissaPoint AP (GAC, abscissa, startparam);         \n\
-gp_Pnt2d P2;                                                  \n\
-if (AP.IsDone()){C->D0(AP.Parameter(),P2);}                   \n\
-// P is now correctly set                                    \n\
-                                                             \n\
-                                                             \n");
+                                                               \n\
+                                                               \n\
+Standard_Real radius = 5;                                      \n\
+Handle(Geom2d_Circle) C =                                      \n\
+    new Geom2d_Circle(gp::OX2d(),radius);                      \n\
+Handle(Geom2dAdaptor_Curve) GAC = new Geom2dAdaptor_Curve(C);  \n\
+Standard_Real startparam = 10*PI180;                           \n\
+Standard_Real abscissa = 45*PI180;                             \n\
+gp_Pnt2d P1;                                                   \n\
+C->D0(startparam,P1);                                          \n\
+// abscissa is the distance along the curve from startparam    \n\
+GCPnts_AbscissaPoint AP (GAC, abscissa, startparam);           \n\
+gp_Pnt2d P2;                                                   \n\
+if (AP.IsDone()){C->D0(AP.Parameter(),P2);}                    \n\
+// P is now correctly set                                      \n\
+                                                               \n\
+                                                               \n");
   AddSeparator(aDoc,Message);
   //--------------------------------------------------------------
   Handle(ISession2D_Curve) aCurve = new ISession2D_Curve(C);
@@ -723,7 +723,7 @@ void GeomSources::gpTest10(CGeometryDoc* aDoc)
   Standard_Real radius = 5;
   Handle(Geom2d_Circle) C =
     new Geom2d_Circle(gp::OX2d(),radius);
-  Geom2dAdaptor_Curve GAC (C);
+  Handle(Geom2dAdaptor_Curve) GAC = new Geom2dAdaptor_Curve(C);
   Standard_Real abscissa = 3;
   GCPnts_UniformAbscissa UA (GAC,abscissa);
   TColgp_SequenceOfPnt2d aSequence;
@@ -743,29 +743,29 @@ void GeomSources::gpTest10(CGeometryDoc* aDoc)
                                                         
   //==============================================================
   TCollection_AsciiString Message (" \
-                                                        \n\
-gp_Pnt2d P;                                             \n\
-Standard_Real radius = 5;                               \n\
-Handle(Geom2d_Circle) C =                               \n\
-    new Geom2d_Circle(gp::OX2d(),radius);               \n\
-Geom2dAdaptor_Curve GAC (C);                            \n\
-Standard_Real abscissa = 3;                             \n\
-GCPnts_UniformAbscissa UA (GAC,abscissa);               \n\
-TColgp_SequenceOfPnt2d aSequence;                       \n\
-if (UA.IsDone())                                        \n\
-  {                                                     \n\
-    Standard_Real N = UA.NbPoints();                    \n\
-    Standard_Integer count = 1;                         \n\
-    for(;count<=N;count++)                              \n\
-     {                                                  \n\
-        C->D0(UA.Parameter(count),P);                   \n\
-        Standard_Real Parameter = UA.Parameter(count);  \n\
-        // append P in a Sequence                       \n\
-        aSequence.Append(P);                            \n\
-    }                                                   \n\
-}                                                       \n\
-Standard_Real Abscissa  = UA.Abscissa();                \n\
-                                                        \n");
+                                                              \n\
+gp_Pnt2d P;                                                   \n\
+Standard_Real radius = 5;                                     \n\
+Handle(Geom2d_Circle) C =                                     \n\
+    new Geom2d_Circle(gp::OX2d(),radius);                     \n\
+Handle(Geom2dAdaptor_Curve) GAC = new Geom2dAdaptor_Curve(C); \n\
+Standard_Real abscissa = 3;                                   \n\
+GCPnts_UniformAbscissa UA (GAC,abscissa);                     \n\
+TColgp_SequenceOfPnt2d aSequence;                             \n\
+if (UA.IsDone())                                              \n\
+  {                                                           \n\
+    Standard_Real N = UA.NbPoints();                          \n\
+    Standard_Integer count = 1;                               \n\
+    for(;count<=N;count++)                                    \n\
+     {                                                        \n\
+        C->D0(UA.Parameter(count),P);                         \n\
+        Standard_Real Parameter = UA.Parameter(count);        \n\
+        // append P in a Sequence                             \n\
+        aSequence.Append(P);                                  \n\
+    }                                                         \n\
+}                                                             \n\
+Standard_Real Abscissa  = UA.Abscissa();                      \n\
+                                                              \n");
   AddSeparator(aDoc,Message);
   //--------------------------------------------------------------
   Handle(ISession2D_Curve) aCurve = new ISession2D_Curve(C);
@@ -3895,21 +3895,21 @@ void GeomSources::gpTest48(CGeometryDoc* aDoc)
   Handle(Geom2d_BSplineCurve) SPL2 = anInterpolation.Curve();
 
   Bnd_Box2d aCBox;
-  Geom2dAdaptor_Curve GACC (C);
+  Handle(Geom2dAdaptor_Curve) GACC = new Geom2dAdaptor_Curve(C);
   BndLib_Add2dCurve::Add (GACC,Precision::Approximation(),aCBox);
 
   Standard_Real aCXmin, aCYmin, aCXmax, aCYmax;
   aCBox.Get( aCXmin, aCYmin, aCXmax,aCYmax);
 
   Bnd_Box2d aSPL1Box;
-  Geom2dAdaptor_Curve GAC1 (SPL1);
+  Handle(Geom2dAdaptor_Curve) GAC1 = new Geom2dAdaptor_Curve(SPL1);
   BndLib_Add2dCurve::Add (GAC1,Precision::Approximation(),aSPL1Box);
 
   Standard_Real aSPL1Xmin,aSPL1Ymin,aSPL1Xmax,aSPL1Ymax;
   aSPL1Box.Get( aSPL1Xmin, aSPL1Ymin, aSPL1Xmax,aSPL1Ymax);
 
   Bnd_Box2d aSPL2Box;
-  Geom2dAdaptor_Curve GAC2 (SPL2);
+  Handle(Geom2dAdaptor_Curve) GAC2 = new Geom2dAdaptor_Curve(SPL2);
   BndLib_Add2dCurve::Add (GAC2,Precision::Approximation(),aSPL2Box);
 
   Standard_Real aSPL2Xmin,aSPL2Ymin,aSPL2Xmax,aSPL2Ymax;
@@ -3930,14 +3930,14 @@ Handle(Geom2d_BSplineCurve) SPL1 ; // SPL1 = ...                       \n\
 Handle(Geom2d_BSplineCurve) SPL2 ; // SPL2 = ...                       \n\
                                                                        \n\
 Bnd_Box2d aCBox;                                                       \n\
-Geom2dAdaptor_Curve GACC (C);                                          \n\
+Handle(Geom2dAdaptor_Curve) GACC = new Geom2dAdaptor_Curve(C);         \n\
 BndLib_Add2dCurve::Add (GACC,Precision::Approximation(),aCBox);        \n\
                                                                        \n\
 Standard_Real aCXmin, aCYmin, aCXmax, aCYmax;                          \n\
 aCBox.Get(  aCXmin, aCYmin, aCXmax,aCYmax);                            \n\
                                                                        \n\
 Bnd_Box2d aSPL1Box;                                                    \n\
-Geom2dAdaptor_Curve GAC1 (SPL1);                                       \n\
+Handle(Geom2dAdaptor_Curve) GAC1 = new Geom2dAdaptor_Curve(SPL1);      \n\
 BndLib_Add2dCurve::Add (GAC1,Precision::Approximation(),aSPL1Box);     \n\
                                                                        \n\
 Standard_Real aSPL1Xmin,aSPL1Ymin,aSPL1Xmax,aSPL1Ymax;                 \n\
@@ -3945,7 +3945,7 @@ aSPL1Box.Get(  aSPL1Xmin, aSPL1Ymin, aSPL1Xmax,aSPL1Ymax);             \n");
 Message += "\
                                                                        \n\
 Bnd_Box2d aSPL2Box;                                                    \n\
-Geom2dAdaptor_Curve GAC2 (SPL2);                                       \n\
+Handle(Geom2dAdaptor_Curve) GAC2 = new Geom2dAdaptor_Curve(SPL2);      \n\
 BndLib_Add2dCurve::Add (GAC2,Precision::Approximation(),aSPL2Box);     \n\
                                                                        \n\
 Standard_Real aSPL2Xmin,aSPL2Ymin,aSPL2Xmax,aSPL2Ymax;                 \n\
@@ -4005,7 +4005,7 @@ void GeomSources::gpTest49(CGeometryDoc* aDoc)
 
   Handle(Geom_Circle) C =
     new Geom_Circle(anAxis,radius);
-  GeomAdaptor_Curve GAC (C);
+  Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(C);
   BndLib_Add3dCurve::Add (GAC,Precision::Approximation(),aBox);
 
   Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax ;
@@ -4021,7 +4021,7 @@ gp_Ax2 anAxis(gp_Pnt(0,0,0),gp_Dir(1,2,-5));                   \n\
                                                                \n\
 Handle(Geom_Circle) C =                                        \n\
     new Geom_Circle(anAxis,radius);                            \n\
-GeomAdaptor_Curve GAC (C);                                     \n\
+Handle(GeomAdaptor_Curve) GAC = new GeomAdaptor_Curve(C);      \n\
 BndLib_Add3dCurve::Add (GAC,Precision::Approximation(),aBox);  \n\
                                                                \n\
 Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax ;       \n\
@@ -4097,7 +4097,7 @@ void GeomSources::gpTest50(CGeometryDoc* aDoc)
   GeomFill_FillingStyle Type = GeomFill_StretchStyle;
   GeomFill_BSplineCurves aGeomFill1(SPL1,SPL2,Type);
   Handle(Geom_BSplineSurface) aSurf = aGeomFill1.Surface();
-  GeomAdaptor_Surface GAS (aSurf);
+  Handle(GeomAdaptor_Surface) GAS = new GeomAdaptor_Surface(aSurf);
   Bnd_Box aBox;
   BndLib_AddSurface::Add (GAS,Precision::Approximation(),aBox);
 
@@ -4122,19 +4122,19 @@ array2.SetValue(2,gp_Pnt (-20, 20,  0));                           \n\
 array2.SetValue(3,gp_Pnt ( 20, 30,-10));                           \n\
 array2.SetValue(4,gp_Pnt ( 30, 70,-20));                           \n\
 array2.SetValue(5,gp_Pnt ( 40, 90,-10));                           \n\
-Handle(Geom_BSplineCurve) SPL2 =                               \n\
+Handle(Geom_BSplineCurve) SPL2 =                                   \n\
 	GeomAPI_PointsToBSpline(array2).Curve();                   \n\
-                                                               \n\
-GeomFill_FillingStyle Type = GeomFill_StretchStyle;            \n\
-GeomFill_BSplineCurves aGeomFill1(SPL1,SPL2,Type);             \n\
-Handle(Geom_BSplineSurface) aSurf = aGeomFill1.Surface();      \n\
-GeomAdaptor_Surface GAS (aSurf);                               \n\
-Bnd_Box aBox;                                                  \n\
-BndLib_AddSurface::Add (GAS,Precision::Approximation(),aBox);  \n\
-                                                               \n\
-Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax ;       \n\
-aBox.Get(  aXmin, aYmin,aZmin, aXmax,aYmax,aZmax);             \n\
-                                                               \n");
+                                                                   \n\
+GeomFill_FillingStyle Type = GeomFill_StretchStyle;                \n\
+GeomFill_BSplineCurves aGeomFill1(SPL1,SPL2,Type);                 \n\
+Handle(Geom_BSplineSurface) aSurf = aGeomFill1.Surface();          \n\
+Handle(GeomAdaptor_Surface) GAS = new GeomAdaptor_Surface(aSurf);  \n\
+Bnd_Box aBox;                                                      \n\
+BndLib_AddSurface::Add (GAS,Precision::Approximation(),aBox);      \n\
+                                                                   \n\
+Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax ;           \n\
+aBox.Get(  aXmin, aYmin,aZmin, aXmax,aYmax,aZmax);                 \n\
+                                                                   \n");
   AddSeparator(aDoc,Message);
   //--------------------------------------------------------------
 

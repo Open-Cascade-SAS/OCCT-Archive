@@ -16,7 +16,7 @@
 #include <Geom2dGcc_QCurve.hxx>
 
 //#include <Geom2dAdaptor_Curve.hxx>
-Geom2dAdaptor_Curve Geom2dGcc_QCurve::
+Handle(Geom2dAdaptor_Curve) Geom2dGcc_QCurve::
    Qualified () const { return TheQualified; }
 
 GccEnt_Position Geom2dGcc_QCurve::
@@ -47,7 +47,7 @@ Standard_Boolean Geom2dGcc_QCurve::
    }
 
 Geom2dGcc_QCurve::
-   Geom2dGcc_QCurve (const Geom2dAdaptor_Curve&          Curve,
+   Geom2dGcc_QCurve (const Handle(Geom2dAdaptor_Curve)&          Curve,
 			 const GccEnt_Position Qualifier) {
    TheQualified = Curve;
    TheQualifier = Qualifier;

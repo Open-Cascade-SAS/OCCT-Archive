@@ -161,13 +161,6 @@ IntTools_Context::~IntTools_Context()
   }
   myBndBoxDataMap.Clear();
 
-  for (NCollection_DataMap<TopoDS_Shape, BRepAdaptor_Surface*, TopTools_ShapeMapHasher>::Iterator anIt (mySurfAdaptorMap);
-       anIt.More(); anIt.Next())
-  {
-    BRepAdaptor_Surface* pSurfAdaptor = anIt.Value();
-    (*pSurfAdaptor).~BRepAdaptor_Surface();
-    myAllocator->Free (pSurfAdaptor);
-  }
   mySurfAdaptorMap.Clear();
 
   for (NCollection_DataMap<TopoDS_Shape, Bnd_OBB*, TopTools_ShapeMapHasher>::Iterator anIt (myOBBMap);
@@ -330,19 +323,16 @@ BRepClass3d_SolidClassifier& IntTools_Context::SolidClassifier
 //function : SurfaceAdaptor
 //purpose  : 
 //=======================================================================
-BRepAdaptor_Surface& IntTools_Context::SurfaceAdaptor
+Handle(BRepAdaptor_Surface) IntTools_Context::SurfaceAdaptor
   (const TopoDS_Face& theFace)
 {
-  BRepAdaptor_Surface* pBAS = NULL;
+  Handle(BRepAdaptor_Surface) pBAS;
   if (!mySurfAdaptorMap.Find (theFace, pBAS))
   {
-    //
-    pBAS=(BRepAdaptor_Surface*)myAllocator->Allocate(sizeof(BRepAdaptor_Surface));
-    new (pBAS) BRepAdaptor_Surface(theFace, Standard_True);
-    //
+    pBAS = new BRepAdaptor_Surface(theFace, Standard_True);
     mySurfAdaptorMap.Bind (theFace, pBAS);
   }
-  return *pBAS;
+  return pBAS;
 }
 
 //=======================================================================
@@ -394,7 +384,7 @@ Geom2dHatch_Hatcher& IntTools_Context::Hatcher(const TopoDS_Face& aF)
       }
       //
       aCT2D=new Geom2d_TrimmedCurve(aC2D, aU1, aU2);
-      Geom2dAdaptor_Curve aGAC (aCT2D);
+      Handle(Geom2dAdaptor_Curve) aGAC = new Geom2dAdaptor_Curve(aCT2D);
       pHatcher->AddElement(aGAC, aOrE);
     }// for (; aExp.More() ; aExp.Next()) {
     //
@@ -826,8 +816,8 @@ Standard_Boolean IntTools_Context::IsVertexOnLine
   
   aTolSum=aTolV+aTolC;
   //
-  GeomAdaptor_Curve aGAC(aC3D);
-  GeomAbs_CurveType aType=aGAC.GetType();
+  Handle(GeomAdaptor_Curve) aGAC = new GeomAdaptor_Curve(aC3D);
+  GeomAbs_CurveType aType=aGAC->GetType();
   if (aType==GeomAbs_BSplineCurve ||
       aType==GeomAbs_BezierCurve) {
     aTolSum=2.*aTolSum;
@@ -1055,9 +1045,9 @@ void IntTools_Context::UVBounds(const TopoDS_Face& theFace,
                                 Standard_Real& VMin,
                                 Standard_Real& VMax)
 {
-  const BRepAdaptor_Surface& aBAS = SurfaceAdaptor(theFace);
-  UMin = aBAS.FirstUParameter();
-  UMax = aBAS.LastUParameter ();
-  VMin = aBAS.FirstVParameter();
-  VMax = aBAS.LastVParameter ();
+  const Handle(BRepAdaptor_Surface)& aBAS = SurfaceAdaptor(theFace);
+  UMin = aBAS->FirstUParameter();
+  UMax = aBAS->LastUParameter ();
+  VMin = aBAS->FirstVParameter();
+  VMax = aBAS->LastVParameter ();
 }

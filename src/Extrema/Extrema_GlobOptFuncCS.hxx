@@ -29,8 +29,8 @@ class Extrema_GlobOptFuncCS : public math_MultipleVarFunctionWithHessian
 public:
 
   //! Curve and surface should exist during all the lifetime of Extrema_GlobOptFuncCS.
-  Standard_EXPORT  Extrema_GlobOptFuncCS(const Adaptor3d_Curve   *C,
-                                         const Adaptor3d_Surface *S);
+  Standard_EXPORT  Extrema_GlobOptFuncCS(const Handle(Adaptor3d_Curve)   C,
+                                         const Handle(Adaptor3d_Surface) S);
 
   Standard_EXPORT virtual Standard_Integer NbVariables() const;
 
@@ -73,8 +73,8 @@ private:
 
   Extrema_GlobOptFuncCS & operator = (const Extrema_GlobOptFuncCS & theOther);
 
-  const Adaptor3d_Curve   *myC;
-  const Adaptor3d_Surface *myS;
+  const Handle(Adaptor3d_Curve)   myC;
+  const Handle(Adaptor3d_Surface) myS;
 };
 
 #endif

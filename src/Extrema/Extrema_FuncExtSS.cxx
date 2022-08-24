@@ -71,15 +71,15 @@ Extrema_FuncExtSS::Extrema_FuncExtSS ()
 //purpose  : 
 //=======================================================================
 
-Extrema_FuncExtSS::Extrema_FuncExtSS (const Adaptor3d_Surface& S1,
-				      const Adaptor3d_Surface& S2)
+Extrema_FuncExtSS::Extrema_FuncExtSS (const Handle(Adaptor3d_Surface)& S1,
+				      const Handle(Adaptor3d_Surface)& S2)
 : myU1(0.0),
   myV1(0.0),
   myU2(0.0),
   myV2(0.0)
 {
-  myS1 = &S1;
-  myS2 = &S2;
+  myS1 = S1;
+  myS2 = S2;
   myS1init = Standard_True;
   myS2init = Standard_True;
 }
@@ -89,11 +89,11 @@ Extrema_FuncExtSS::Extrema_FuncExtSS (const Adaptor3d_Surface& S1,
 //purpose  : 
 //=======================================================================
 
-void Extrema_FuncExtSS::Initialize(const Adaptor3d_Surface& S1,
-				   const Adaptor3d_Surface& S2)
+void Extrema_FuncExtSS::Initialize(const Handle(Adaptor3d_Surface)& S1,
+				   const Handle(Adaptor3d_Surface)& S2)
 {
-  myS1 = &S1;
-  myS2 = &S2;
+  myS1 = S1;
+  myS2 = S2;
   myS1init = Standard_True;
   myS2init = Standard_True;
   myPoint1.Clear();

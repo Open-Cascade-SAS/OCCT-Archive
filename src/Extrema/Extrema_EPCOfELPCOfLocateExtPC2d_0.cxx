@@ -28,7 +28,7 @@
 #include <Extrema_SequenceOfPOnCurv2d.hxx>
  
 
-#define Curve Adaptor2d_Curve2d
+#define Curve Handle(Adaptor2d_Curve2d)
 #define Curve_hxx <Adaptor2d_Curve2d.hxx>
 #define Tool Extrema_Curve2dTool
 #define Tool_hxx <Extrema_Curve2dTool.hxx>

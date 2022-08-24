@@ -76,7 +76,7 @@ public:
   //! Standard_Real TolAng = ... ;
   //! myBoundary =  GeomFill_BoundWithSurf (
   //! CurveOnSurf, Tol, TolAng );
-  Standard_EXPORT GeomFill_BoundWithSurf(const Adaptor3d_CurveOnSurface& CurveOnSurf, const Standard_Real Tol3d, const Standard_Real Tolang);
+  Standard_EXPORT GeomFill_BoundWithSurf(const Handle(Adaptor3d_CurveOnSurface)& CurveOnSurf, const Standard_Real Tol3d, const Standard_Real Tolang);
   
   Standard_EXPORT gp_Pnt Value (const Standard_Real U) const Standard_OVERRIDE;
   
@@ -107,7 +107,7 @@ protected:
 private:
 
 
-  Adaptor3d_CurveOnSurface myConS;
+  Handle(Adaptor3d_CurveOnSurface) myConS;
   Handle(Law_Function) myPar;
 
 

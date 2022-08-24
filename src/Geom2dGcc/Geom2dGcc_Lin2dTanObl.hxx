@@ -145,7 +145,7 @@ protected:
 private:
 
   
-  Standard_EXPORT Standard_Boolean Add (const Standard_Integer theIndex, const Geom2dGcc_Lin2dTanOblIter& theLin, const Standard_Real theTol, const Geom2dAdaptor_Curve& theC1);
+  Standard_EXPORT Standard_Boolean Add (const Standard_Integer theIndex, const Geom2dGcc_Lin2dTanOblIter& theLin, const Standard_Real theTol, const Handle(Geom2dAdaptor_Curve)& theC1);
 
 
   Standard_Boolean WellDone;

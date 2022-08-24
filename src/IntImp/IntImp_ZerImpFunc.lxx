@@ -16,7 +16,7 @@
 
 inline void IntImp_ZerImpFunc::Set (const ThePSurface& PS)
 {
-  surf =  (Standard_Address)(&PS);
+  surf =  (Standard_Address)(PS.get());
 }
 
 inline void IntImp_ZerImpFunc::SetImplicitSurface (const TheISurface& IS)
@@ -56,9 +56,9 @@ inline const gp_Dir2d& IntImp_ZerImpFunc::Direction2d()
   return d2d;
 }
 
-inline const ThePSurface& IntImp_ZerImpFunc::PSurface() const 
+inline const ThePSurface IntImp_ZerImpFunc::PSurface() const 
 {
-  return  (*((ThePSurface *)(surf)));
+  return (ThePSurface::element_type*)(surf);
 }
 
 inline const TheISurface& IntImp_ZerImpFunc::ISurface() const 

@@ -116,7 +116,7 @@ void DrawTrSurf_Curve2d::DrawOn (Draw_Display& dis) const
   
   dis.SetColor (look);
   
-  Geom2dAdaptor_Curve C2d(curv,First,Last);
+  Handle(Geom2dAdaptor_Curve) C2d = new Geom2dAdaptor_Curve(curv,First,Last);
   DrawCurve2dOn (C2d, dis);
 
 // mark the origin
@@ -124,7 +124,7 @@ void DrawTrSurf_Curve2d::DrawOn (Draw_Display& dis) const
     Draw_Bounds = Standard_False;
     gp_Pnt2d p1,p2;
     gp_Vec2d v;
-    C2d.D1(Last,p1,v);
+    C2d->D1(Last,p1,v);
     if (v.Magnitude() > gp::Resolution()) {
       Standard_Real L = 20 / dis.Zoom();
       Standard_Real H = 10 / dis.Zoom();
@@ -139,11 +139,11 @@ void DrawTrSurf_Curve2d::DrawOn (Draw_Display& dis) const
   }
 
 // Draw the curvature Radius      
-  if (dispcurvradius && (C2d.GetType() != GeomAbs_Line)) {
+  if (dispcurvradius && (C2d->GetType() != GeomAbs_Line)) {
     Standard_Integer ii;
-    Standard_Integer intrv, nbintv = C2d.NbIntervals(GeomAbs_CN);
+    Standard_Integer intrv, nbintv = C2d->NbIntervals(GeomAbs_CN);
     TColStd_Array1OfReal TI(1,nbintv+1);
-    C2d.Intervals(TI,GeomAbs_CN);
+    C2d->Intervals(TI,GeomAbs_CN);
     Standard_Real Resolution = 1.0e-9, Curvature;
     Geom2dLProp_CLProps2d LProp(curv, 2, Resolution);
     gp_Pnt2d P1, P2;    

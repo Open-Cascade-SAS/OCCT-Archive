@@ -22,8 +22,8 @@
 #include <Standard_ConstructionError.hxx>
 #include <Precision.hxx>
 
-#define SURF1 (*((ThePSurface *)(surf1)))
-#define SURF2 (*((ThePSurface *)(surf2)))
+#define SURF1 ((ThePSurface::element_type*)(surf1))
+#define SURF2 ((ThePSurface::element_type*)(surf2))
 
 
 IntImp_ZerParFunc::IntImp_ZerParFunc(const ThePSurface& S1 ,
@@ -32,8 +32,8 @@ IntImp_ZerParFunc::IntImp_ZerParFunc(const ThePSurface& S1 ,
   tangent(Standard_False),
   paramConst(0.0)
 {
-    surf1 = (Standard_Address)(&S1);
-    surf2 = (Standard_Address)(&S2);
+    surf1 = (Standard_Address)(S1.get());
+    surf2 = (Standard_Address)(S2.get());
 
     ua0 = ThePSurfaceTool::FirstUParameter(SURF1); //-- ThePSurfaceTool::UIntervalFirst(surf1);
     va0 = ThePSurfaceTool::FirstVParameter(SURF1); //-- ThePSurfaceTool::VIntervalFirst(surf1);

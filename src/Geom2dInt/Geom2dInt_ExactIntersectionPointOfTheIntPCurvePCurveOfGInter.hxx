@@ -40,7 +40,7 @@ public:
   DEFINE_STANDARD_ALLOC
 
   
-  Standard_EXPORT Geom2dInt_ExactIntersectionPointOfTheIntPCurvePCurveOfGInter(const Adaptor2d_Curve2d& C1, const Adaptor2d_Curve2d& C2, const Standard_Real Tol);
+  Standard_EXPORT Geom2dInt_ExactIntersectionPointOfTheIntPCurvePCurveOfGInter(const Handle(Adaptor2d_Curve2d)& C1, const Handle(Adaptor2d_Curve2d)& C2, const Standard_Real Tol);
   
   Standard_EXPORT void Perform (const Geom2dInt_ThePolygon2dOfTheIntPCurvePCurveOfGInter& Poly1, const Geom2dInt_ThePolygon2dOfTheIntPCurvePCurveOfGInter& Poly2, Standard_Integer& NumSegOn1, Standard_Integer& NumSegOn2, Standard_Real& ParamOnSeg1, Standard_Real& ParamOnSeg2);
   

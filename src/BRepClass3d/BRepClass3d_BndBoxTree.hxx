@@ -83,6 +83,7 @@ public:
   BRepClass3d_BndBoxTreeSelectorLine(const TopTools_IndexedMapOfShape& theMapOfShape) 
     : BRepClass3d_BndBoxTreeSelectorLine::Selector(),
       myMapOfShape(theMapOfShape),
+      myLC(new GeomAdaptor_Curve()),
       myIsValid(Standard_True)
   {}
 
@@ -98,7 +99,7 @@ public:
                        const Standard_Real theMaxParam) 
   {
     myL = theL;
-    myLC.Load(new Geom_Line(theL), -Precision::PConfusion(), theMaxParam);
+    myLC->Load(new Geom_Line(theL), -Precision::PConfusion(), theMaxParam);
   }
   
   void GetEdgeParam(const Standard_Integer i,
@@ -153,7 +154,7 @@ private:
   gp_Lin myL;
   NCollection_Sequence<EdgeParam> myEP; //output result (edge vs line)
   NCollection_Sequence<VertParam> myVP; //output result (vertex vs line)
-  GeomAdaptor_Curve myLC;
+  Handle(GeomAdaptor_Curve) myLC;
   Standard_Boolean myIsValid;
 };
 
