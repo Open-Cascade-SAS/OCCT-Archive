@@ -775,19 +775,19 @@ proc wokdep:SearchTBB {theErrInc theErrLib32 theErrLib64 theErrBin32 theErrBin64
         lappend ::CSF_OPT_LIB$anArchIter "$aPath/lib/$aSubDir/$aVcLib"
       }
       if { "$aTbbLibPath" == "" } {
-        lappend anErrLib$anArchIter "Error: '${::SYS_LIB_PREFIX}tbb.${::SYS_LIB_SUFFIX}' not found (Intel TBB)"
+        lappend anErrLib$anArchIter "Error: '${::SYS_LIB_PREFIX}tbb12.${::SYS_LIB_SUFFIX}' not found (Intel TBB)"
         if { "$::ARCH" == "$anArchIter"} { set isFound "false" }
       }
     }
     if { "$::tcl_platform(platform)" == "windows" } {
-      set aTbbDllPath [wokdep:SearchBin "tbb.dll" "$anArchIter"]
+      set aTbbDllPath [wokdep:SearchBin "tbb12.dll" "$anArchIter"]
       if { "$aTbbDllPath" == "" } {
         set aPath [wokdep:Preferred [glob -nocomplain -directory "$::PRODUCTS_PATH" -type d *{tbb}*] $aVcLib "$anArchIter" ]
-        set aTbbDllPath [wokdep:SearchBin "tbb.dll" "$anArchIter" "$aPath/bin/$aSubDir/$aVcLib"]
+        set aTbbDllPath [wokdep:SearchBin "tbb12.dll" "$anArchIter" "$aPath/bin/$aSubDir/$aVcLib"]
         if { "$aTbbDllPath" != "" } {
           lappend ::CSF_OPT_BIN$anArchIter "$aPath/bin/$aSubDir/$aVcLib"
         } else {
-          lappend anErrBin$anArchIter "Error: 'tbb.dll' not found (Intel TBB)"
+          lappend anErrBin$anArchIter "Error: 'tbb12.dll' not found (Intel TBB)"
           if { "$::ARCH" == "$anArchIter"} { set isFound "false" }
         }
       }

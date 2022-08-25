@@ -1437,7 +1437,7 @@ proc osutils:csfList { theOS theCsfLibsMap theCsfFrmsMap theRelease} {
     set aLibsMap(CSF_FFmpeg) "avcodec avformat swscale avutil"
   }
   if { "$::HAVE_TBB" == "true" } {
-    set aLibsMap(CSF_TBB) "tbb tbbmalloc"
+    set aLibsMap(CSF_TBB) "tbb12 tbbmalloc"
   }
   if { "$::HAVE_VTK" == "true" } {
     if { "$theOS" == "wnt" } {

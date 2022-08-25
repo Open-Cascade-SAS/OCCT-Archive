@@ -23,7 +23,7 @@ CSF_TclLibs   = -ltcl8.6
 CSF_TclTkLibs = -ltk8.6
 HAVE_FREEIMAGE { CSF_FreeImagePlus = -lfreeimage } else:win32 { CSF_FreeImagePlus = -lwindowscodecs -lole32 }
 HAVE_FFMPEG    { CSF_FFmpeg = -lavcodec -lavformat -lswscale -lavutil }
-HAVE_TBB       { CSF_TBB = -ltbb -ltbbmalloc }
+HAVE_TBB       { CSF_TBB = -ltbb12 -ltbbmalloc }
 HAVE_ZLIB      { CSF_ZLIB = -lzlib }
 HAVE_LIBLZMA   { CSF_LIBLZMA = -lliblzma }
 HAVE_DRACO     { CSF_Draco = -ldraco }

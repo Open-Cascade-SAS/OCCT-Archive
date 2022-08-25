@@ -69,12 +69,12 @@ else()
   set (3RDPARTY_TBB_INCLUDE_DIR "" CACHE PATH "the path to tbb.h" FORCE)
 endif()
 
-# common steps for tbb and tbbmalloc
+# common steps for tbb12 and tbbmalloc
 macro (TBB_PRODUCT_SEARCH PRODUCT_LIBRARY_NAME)
 
   string (TOUPPER ${PRODUCT_LIBRARY_NAME} upper_PRODUCT_LIBRARY_NAME)
 
-  # define required tbb/tbbmalloc variables
+  # define required tbb12/tbbmalloc variables
   if (NOT DEFINED 3RDPARTY_${upper_PRODUCT_LIBRARY_NAME}_LIBRARY OR NOT 3RDPARTY_${upper_PRODUCT_LIBRARY_NAME}_LIBRARY_DIR OR NOT EXISTS "${3RDPARTY_${upper_PRODUCT_LIBRARY_NAME}_LIBRARY_DIR}")
     set (3RDPARTY_${upper_PRODUCT_LIBRARY_NAME}_LIBRARY "" CACHE FILEPATH "${upper_PRODUCT_LIBRARY_NAME} library" FORCE)
   endif()
@@ -126,7 +126,7 @@ macro (TBB_PRODUCT_SEARCH PRODUCT_LIBRARY_NAME)
     set (${upper_PRODUCT_LIBRARY_NAME}_ARCH_NAME intel64)
   endif()
 
-  # tbb/tbbmalloc library
+  # tbb12/tbbmalloc library
   if (NOT 3RDPARTY_${upper_PRODUCT_LIBRARY_NAME}_LIBRARY OR NOT EXISTS "${3RDPARTY_${upper_PRODUCT_LIBRARY_NAME}_LIBRARY}")
     
     set (CMAKE_FIND_LIBRARY_SUFFIXES .lib .so .dylib .a)
@@ -178,7 +178,7 @@ macro (TBB_PRODUCT_SEARCH PRODUCT_LIBRARY_NAME)
     set (3RDPARTY_${upper_PRODUCT_LIBRARY_NAME}_LIBRARY "" CACHE FILEPATH "The path to ${upper_PRODUCT_LIBRARY_NAME} library" FORCE)
   endif()
 
-  # tbb/tbbmalloc shared library
+  # tbb12/tbbmalloc shared library
   if (WIN32)
     if (NOT 3RDPARTY_${upper_PRODUCT_LIBRARY_NAME}_DLL OR NOT EXISTS "${3RDPARTY_${upper_PRODUCT_LIBRARY_NAME}_DLL}")
       set (CMAKE_FIND_LIBRARY_SUFFIXES .dll)
@@ -230,7 +230,7 @@ macro (TBB_PRODUCT_SEARCH PRODUCT_LIBRARY_NAME)
     endif()
   endif()
 
-  # install tbb/tbbmalloc
+  # install tbb12/tbbmalloc
   if (INSTALL_TBB)
     OCCT_MAKE_OS_WITH_BITNESS()
     OCCT_MAKE_COMPILER_SHORT_NAME()
@@ -286,9 +286,9 @@ endmacro()
   else()
     # the library directory for using by the executable
     if (WIN32)
-      set (USED_3RDPARTY_TBB_DIR ${3RDPARTY_TBB_DLL_DIR})
+      set (USED_3RDPARTY_TBB_DIR ${3RDPARTY_TBB12_DLL_DIR})
     else()
-      set (USED_3RDPARTY_TBB_DIR ${3RDPARTY_TBB_LIBRARY_DIR})
+      set (USED_3RDPARTY_TBB_DIR ${3RDPARTY_TBB12_LIBRARY_DIR})
     endif()
   endif()
 #endif()

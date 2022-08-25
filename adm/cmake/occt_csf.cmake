@@ -12,7 +12,7 @@ endif()
 
 # TBB
 if (USE_TBB)
-  set (CSF_TBB "tbb tbbmalloc")
+  set (CSF_TBB "tbb12 tbbmalloc")
 else()
   set (CSF_TBB)
 endif()
