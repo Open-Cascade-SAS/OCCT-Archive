@@ -26,6 +26,16 @@ else ()
 endif()
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# TBB
+# There are differences between naming of main intel oneTBB library under Windows and Linux/Mac.
+# Under Windows it called `tbb12` (files tbb12.lib/tbb12.dll), but under Linux it called `tbb` (file libtbb.so).
+# Therefore, we make here global variable with kernel oneTBB library name: TBB_MAIN_LIBRARY_NAME.
+if (WIN32)
+  set(TBB_MAIN_LIBRARY_NAME "TBB12")
+else()
+  set(TBB_MAIN_LIBRARY_NAME "TBB")
+endif()
+
 # macro: include patched file if it exists
 macro (OCCT_INCLUDE_CMAKE_FILE BEING_INCLUDED_FILE)
   if (BUILD_PATCH AND EXISTS "${BUILD_PATCH}/${BEING_INCLUDED_FILE}.cmake")
@@ -733,14 +743,14 @@ if (NOT DEFINED ANDROID AND CAN_USE_TBB)
     add_definitions (-DHAVE_TBB)
     OCCT_INCLUDE_CMAKE_FILE ("adm/cmake/tbb")
   else()
-    OCCT_CHECK_AND_UNSET_GROUP ("3RDPARTY_TBB")
+    OCCT_CHECK_AND_UNSET_GROUP ("3RDPARTY_${TBB_MAIN_LIBRARY_NAME}")
     OCCT_CHECK_AND_UNSET_GROUP ("3RDPARTY_TBBMALLOC")
     OCCT_CHECK_AND_UNSET ("INSTALL_TBB")
   endif()
 else()
   OCCT_CHECK_AND_UNSET ("USE_TBB")
 
-  OCCT_CHECK_AND_UNSET_GROUP ("3RDPARTY_TBB")
+  OCCT_CHECK_AND_UNSET_GROUP ("3RDPARTY_${TBB_MAIN_LIBRARY_NAME}")
   OCCT_CHECK_AND_UNSET_GROUP ("3RDPARTY_TBBMALLOC")
   OCCT_CHECK_AND_UNSET ("INSTALL_TBB")
 endif()

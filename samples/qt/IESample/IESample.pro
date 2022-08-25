@@ -51,7 +51,11 @@ unix {
     DEFINES += OCC_CONVERT_SIGNALS QT_NO_STL
     !macx | equals(MACOSX_USE_GLX, true): LIBS += -L$$QMAKE_LIBDIR_X11 $$QMAKE_LIBS_X11 -L$$QMAKE_LIBDIR_OPENGL $$QMAKE_LIBS_OPENGL $$QMAKE_LIBS_THREAD
     LIBS += -lfreeimageplus
-    LIBS += -ltbb -ltbbmalloc
+    win32 {
+      LIBS += -ltbb12 -ltbbmalloc
+    } else {
+      LIBS += -ltbb -ltbbmalloc
+    }
     QMAKE_CXXFLAGS += -std=gnu++11
 }
 

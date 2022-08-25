@@ -12,7 +12,9 @@ endif()
 
 # TBB
 if (USE_TBB)
-  set (CSF_TBB "tbb tbbmalloc")
+  set (TBB_MAIN_LIBRARY_NAME_LOWERCASE "")
+  string (TOLOWER "${TBB_MAIN_LIBRARY_NAME}" TBB_MAIN_LIBRARY_NAME_LOWERCASE)
+  set (CSF_TBB "${TBB_MAIN_LIBRARY_NAME_LOWERCASE} tbbmalloc")
 else()
   set (CSF_TBB)
 endif()
