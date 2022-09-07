@@ -396,6 +396,9 @@ protected: //! @name Rendering of GL graphics (with prepared drawing buffer).
                                               OpenGl_FrameBuffer*    theOitAccumFbo,
                                               const Standard_Boolean theToDrawImmediate);
 
+  //! Renders grid
+  Standard_EXPORT void renderGrid();
+
   //! Renders trihedron.
   void renderTrihedron (const Handle(OpenGl_Workspace) &theWorkspace);
 
