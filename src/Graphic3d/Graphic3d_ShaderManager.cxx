@@ -2183,3 +2183,104 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getColoredQuadProgram()
 
   return aProgSrc;
 }
+
+Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
+{
+  Handle(Graphic3d_ShaderProgram) aProgSrc = new Graphic3d_ShaderProgram();
+
+  Graphic3d_ShaderObject::ShaderVariableList aUniforms, aStageInOuts;
+  aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec3 NearPoint", Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
+  aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec3 FarPoint", Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
+  aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("mat4 MVP", Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
+  aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("float uZNear", Graphic3d_TOS_FRAGMENT));
+  aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("float uZFar", Graphic3d_TOS_FRAGMENT));
+  aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("bool uIsDrawAxis", Graphic3d_TOS_FRAGMENT));
+
+  TCollection_AsciiString aSrcVert = TCollection_AsciiString()
+  + EOL"vec3 gridPlane[6] = vec3[] (vec3( 1,  1, 0), vec3(-1, -1, 0), vec3(-1,  1, 0),"
+    EOL"                            vec3(-1, -1, 0), vec3( 1,  1, 0), vec3( 1, -1, 0));"
+
+    EOL"vec3 UnprojectPoint (float aX, float anY, float aZ)"
+    EOL"{"
+    EOL"  vec4 anUnprojPnt = occModelWorldMatrixInverse * occWorldViewMatrixInverse * occProjectionMatrixInverse * vec4 (aX, anY, aZ, 1.0);"
+    EOL"  return anUnprojPnt.xyz / anUnprojPnt.w;"
+    EOL"}"
+
+    EOL"void main()"
+    EOL"{"
+    EOL"  vec3 aVertex = gridPlane[gl_VertexID];"
+    EOL"  NearPoint = UnprojectPoint (aVertex.x, aVertex.y, 0.0);"
+    EOL"  FarPoint  = UnprojectPoint (aVertex.x, aVertex.y, 1.0);"
+    EOL"  MVP = occProjectionMatrix * occWorldViewMatrix * occModelWorldMatrix;"
+    EOL"  gl_Position = vec4 (aVertex, 1.0);"
+    EOL"}";
+
+  TCollection_AsciiString aSrcFrag = TCollection_AsciiString()
+  + EOL"vec4 grid (vec3 theFragPos3D, vec3 theColor, float theScale, bool theIsDrawAxis)"
+    EOL"{"
+    EOL"  vec2 aCoord = theFragPos3D.xy * theScale;"
+    EOL"  vec2 aDerivative = fwidth (aCoord);"
+    EOL"  vec2 aGrid = abs (fract (aCoord - 0.5) - 0.5) / aDerivative;"
+    EOL"  float aLine = min (aGrid.x, aGrid.y);"
+    EOL"  float aMinY = min (aDerivative.y, 1);"
+    EOL"  float aMinX = min (aDerivative.x, 1);"
+    EOL"  vec4 aColor = vec4 (theColor, round (1.0 - min (aLine, 1.0)));"
+    EOL"  if (uIsDrawAxis && theIsDrawAxis)"
+    EOL"  {"
+    EOL"    bool isYAxis = -aMinX < aCoord.x && aCoord.x < aMinX;"
+    EOL"    bool isXAxis = -aMinY < aCoord.y && aCoord.y < aMinY;"
+    EOL"    if (isXAxis && isYAxis) { aColor.xyz = vec3 (0.0, 0.0, 1.0); }"
+    EOL"    else if (isXAxis) { aColor.xyz = vec3 (1.0, 0.0, 0.0); }"
+    EOL"    else if (isYAxis) { aColor.xyz = vec3 (0.0, 1.0, 0.0); }"
+    EOL"  }"
+    EOL"  return aColor;"
+    EOL" }"
+
+    EOL"float computeDepth (vec3 thePos)"
+    EOL"{"
+    EOL"  vec4 aClipSpacePos = MVP * vec4 (thePos, 1.0);"
+    EOL"  return (aClipSpacePos.z / aClipSpacePos.w);"
+    EOL"}"
+
+    EOL"float computeLinearDepth (vec3 thePos)"
+    EOL"{"
+    EOL"  float aClipSpaceDepth = computeDepth (thePos) * 2.0 - 1.0;"
+    EOL"  float aLinearDepth = (2.0 * uZNear * uZFar) / (uZFar + uZNear - aClipSpaceDepth * (uZFar - uZNear));"
+    EOL"  return aLinearDepth / uZFar;"
+    EOL"}"
+
+    EOL"void main()"
+    EOL"{"
+    EOL"  float aParam = -NearPoint.z / (FarPoint.z - NearPoint.z);"
+    EOL"  vec3 aFragPos3D = NearPoint + aParam * (FarPoint - NearPoint);"
+    EOL"  float aLinearDepth = computeLinearDepth (aFragPos3D);"
+    // TODO : Compute scale
+    EOL"  vec4 aBigGridColor = grid (aFragPos3D, vec3 (0.8), 0.01, true);"
+    EOL"  vec4 aColor = aBigGridColor.a == 0.0"
+    EOL"              ? grid (aFragPos3D, vec3 (0.2), 0.1, false)"
+    EOL"              : aBigGridColor;"
+    EOL"  float aDepth = computeDepth (aFragPos3D);"
+    EOL"  float aFar  = gl_DepthRange.far;"
+    EOL"  float aNear = gl_DepthRange.near;"
+    EOL"  aDepth = ((aFar - aNear) * aDepth + aNear + aFar) * 0.5;"
+    EOL"  if (aColor.a == 0.0 || (-1.0 < aLinearDepth && aLinearDepth < 0.0))"
+    EOL"  {"
+    EOL"    discard;"
+    EOL"  };"
+    // TODO : Get actual background color
+    EOL"  vec4 aBackgroundColor = vec4 (0.0, 0.0, 0.0, 1.0);"
+    EOL"  if (abs (aLinearDepth) > 1.0)"
+    EOL"  {"
+    EOL"    float anInterpVal = float (aLinearDepth > 0.0) - sign (aLinearDepth) * clamp (1.0 / (abs (aLinearDepth) - 1.0), 0.5, 1.0);"
+    EOL"    aColor = mix (aColor, aBackgroundColor, anInterpVal);"
+    EOL"  }"
+    EOL"  gl_FragDepth = aDepth;"
+    EOL"  occFragColor = aColor;"
+    EOL"}";
+
+  defaultGlslVersion (aProgSrc, "grid", 0);
+  aProgSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcVert, Graphic3d_TOS_VERTEX, aUniforms, aStageInOuts));
+  aProgSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcFrag, Graphic3d_TOS_FRAGMENT, aUniforms, aStageInOuts));
+
+  return aProgSrc;
+}

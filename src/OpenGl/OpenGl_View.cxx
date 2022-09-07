@@ -2433,6 +2433,12 @@ void OpenGl_View::render (Graphic3d_Camera::Projection theProjection,
     aContext->core11fwd->glDisable (GL_LIGHTING);
   }
 
+  // ====================================
+  //      Step 3: Redraw grid
+  // ====================================
+
+  renderGrid();
+
   // =================================
   //      Step 3: Redraw main plane
   // =================================
@@ -2522,6 +2528,35 @@ void OpenGl_View::render (Graphic3d_Camera::Projection theProjection,
   if (aContext->caps->ffpEnable)
   {
     aContext->ShaderManager()->PushState (Handle(OpenGl_ShaderProgram)());
+  }
+}
+
+// =======================================================================
+// function : renderGrid
+// purpose  :
+// =======================================================================
+void OpenGl_View::renderGrid()
+{
+  const Handle(OpenGl_Context)& aContext = myWorkspace->GetGlContext();
+
+  aContext->ShaderManager()->UpdateModelWorldStateTo (aContext->ModelWorldState.Current());
+  aContext->ShaderManager()->UpdateProjectionStateTo (aContext->ProjectionState.Current());
+  aContext->ShaderManager()->UpdateWorldViewStateTo (aContext->WorldViewState.Current());
+
+  aContext->core11fwd->glEnable (GL_BLEND);
+  aContext->core11fwd->glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  if (aContext->ShaderManager()->BindGridProgram())
+  {
+    const Handle(OpenGl_ShaderProgram)& aProg = aContext->ActiveProgram();
+    aProg->SetUniform (aContext, "uZNear", GLfloat (aContext->Camera()->ZNear()));
+    aProg->SetUniform (aContext, "uZFar", GLfloat (aContext->Camera()->ZFar()));
+    // TODO : add param to draw command
+    aProg->SetUniform (aContext, "uIsDrawAxis", GLboolean (true));
+
+    aContext->ShaderManager()->PushState (aContext->ActiveProgram());
+    aContext->core20fwd->glDrawArrays (GL_TRIANGLES, 0, 6);
+    aContext->BindProgram (NULL);
   }
 }
 
