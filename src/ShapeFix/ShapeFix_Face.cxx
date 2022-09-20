@@ -662,11 +662,10 @@ Standard_Boolean ShapeFix_Face::Perform()
 
     // fix natural bounds
     Standard_Boolean NeedSplit = Standard_True;
-    if ( NeedFix ( myFixAddNaturalBoundMode ) ) {
-      if ( FixAddNaturalBound() ) {
-        NeedSplit = Standard_False;
-	myStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE5 );
-      }
+    if (FixAddNaturalBound())
+    {
+      NeedSplit = Standard_False;
+      myStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE5 );
     }
 
     // split face
@@ -855,9 +854,11 @@ Standard_Boolean ShapeFix_Face::FixAddNaturalBound()
     return Standard_True;
   }
 
-  // check if surface is double-closed and fix is needed
-  if ( !IsSurfaceUVPeriodic (mySurf->Adaptor3d()) || ShapeAnalysis::IsOuterBound (myFace) ) 
+  // check if surface doesn't need natural bounds
+  if (!isNeedAddNaturalBound(ws))
+  {
     return Standard_False;
+  }
 
   // Collect information on free intervals in U and V
   TColgp_SequenceOfPnt2d intU, intV, centers;
@@ -1017,6 +1018,50 @@ Standard_Boolean ShapeFix_Face::FixOrientation()
   return FixOrientation(MapWires);
 }
 
+//=======================================================================
+// function : isNeedAddNaturalBound
+// purpose  :
+//=======================================================================
+Standard_Boolean ShapeFix_Face::isNeedAddNaturalBound(const TopTools_SequenceOfShape& theOrientedWires)
+{
+  // if fix is not needed
+  if (!NeedFix (myFixAddNaturalBoundMode))
+  {
+    return Standard_False;
+  }
+  // if surface is not double-closed
+  if (!IsSurfaceUVPeriodic (mySurf->Adaptor3d())) 
+  {
+    return Standard_False;
+  }
+  // if face has an OUTER bound
+  if (ShapeAnalysis::IsOuterBound (myFace))
+  {
+    return Standard_False;
+  }
+  // check that not any wire has a seam edge and not any edge is degenerated.
+  // because the presence of a seam or degenerated edge indicates that this wire should be an external one,
+  // and in case of its incorrect orientation, this will be corrected.
+  Standard_Integer aNbOriented = theOrientedWires.Length();
+  for (Standard_Integer i = 1; i <= aNbOriented; i++)
+  {
+    TopoDS_Wire aWire = TopoDS::Wire(theOrientedWires.Value(i));
+    for (TopoDS_Iterator anEdgeIt(aWire); anEdgeIt.More(); anEdgeIt.Next())
+    {
+      TopoDS_Edge anEdge = TopoDS::Edge(anEdgeIt.Value());
+      if (BRep_Tool::Degenerated(anEdge))
+      {
+        return Standard_False;
+      }
+      if (BRep_Tool::IsClosed(anEdge, myFace))
+      {
+        return Standard_False;
+      }
+    }
+  }
+
+  return Standard_True;
+}
 
 //=======================================================================
 //function : FixOrientation
@@ -1086,9 +1131,8 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
 
   // if no wires, just do nothing
   if ( nb <= 0) return Standard_False;
-  Standard_Integer nbInternal=0;
 
-  Standard_Boolean isAddNaturalBounds = (NeedFix (myFixAddNaturalBoundMode) && IsSurfaceUVPeriodic(mySurf->Adaptor3d()));
+  Standard_Boolean isAddNaturalBounds = isNeedAddNaturalBound(ws);
   TColStd_SequenceOfInteger aSeqReversed;
   // if wire is only one, check its orientation
   if ( nb == 1 ) {
@@ -1099,9 +1143,7 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
     af.Orientation ( TopAbs_FORWARD );
     B.Add (af,ws.Value(1));
     
-    if ((myFixAddNaturalBoundMode != 1 ||
-      !IsSurfaceUVPeriodic(mySurf->Adaptor3d())) &&
-      !ShapeAnalysis::IsOuterBound(af))
+    if (!isAddNaturalBounds && !ShapeAnalysis::IsOuterBound(af))
     {
       Handle(ShapeExtend_WireData) sbdw =
         new ShapeExtend_WireData(TopoDS::Wire(ws.Value(1)));
@@ -1259,7 +1301,7 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
                 if(!(stb==ste)) {
                   sta = TopAbs_UNKNOWN;
                   SI.Bind(aw,0);
-                  j=nb;
+                  j=nbAll;
                   break;
                 }
               }
@@ -1378,11 +1420,9 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
 
   }
 
-  //done = (done && (nb ==1 || (isAddNaturalBounds || (!isAddNaturalBounds && nbInternal <nb))));
   if(isAddNaturalBounds && nb == aSeqReversed.Length())
     done = Standard_False;
-  else
-    done = (done && (nb ==1 || (isAddNaturalBounds || (!isAddNaturalBounds && nbInternal <nb))));
+
   //    Faut-il reconstruire ? si myRebil est mis
   if ( done ) {
     TopoDS_Shape S = myFace.EmptyCopied();
