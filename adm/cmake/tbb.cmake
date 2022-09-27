@@ -1,10 +1,10 @@
 # tbb
 
-if (NOT DEFINED 3RDPARTY_DIR)
+if ((NOT DEFINED 3RDPARTY_DIR) AND WIN32)
   message (FATAL_ERROR "3RDPARTY_DIR is not defined.")
 endif()
 
-if ((NOT EXISTS "${3RDPARTY_DIR}") OR ("${3RDPARTY_DIR}" STREQUAL ""))
+if (WIN32 AND ((NOT EXISTS "${3RDPARTY_DIR}") OR ("${3RDPARTY_DIR}" STREQUAL "")))
   message (FATAL_ERROR "Directory ${3RDPARTY_DIR} is not set.")
 endif()
 
@@ -77,22 +77,29 @@ else()
   set (3RDPARTY_TBB_INCLUDE_DIR "" CACHE PATH "the path to tbb.h" FORCE)
 endif()
 
-# Throw execution if 3RDPARTY_TBB_DIR is equal to void string.
-if ("${3RDPARTY_TBB_DIR}" STREQUAL "")
+# On Windows throw execution if 3RDPARTY_TBB_DIR is equal to void string.
+if (("${3RDPARTY_TBB_DIR}" STREQUAL "") AND WIN32)
   message (FATAL_ERROR "Directory with one TBB have not found.")
 endif()
 
-# Searching TBBConfig.cmake and TBBTargets-release.cmake in 3RDPARTY_TBB_DIR
-# TBBConfig.cmake - is required, TBBTargets-release.cmake is optional.
-file (GLOB_RECURSE TBB_CONFIG_CMAKE_FILE "${3RDPARTY_TBB_DIR}/*TBBConfig.cmake")
-if (NOT EXISTS "${TBB_CONFIG_CMAKE_FILE}")
-  message (FATAL_ERROR "TBBConfig.cmake has not been found.")
+set (TBB_DIR_FOUND OFF)
+if ((NOT "${3RDPARTY_TBB_DIR}" STREQUAL "") AND (EXISTS "${3RDPARTY_TBB_DIR}"))
+  set (TBB_DIR_FOUND ON)
 endif()
-include ("${TBB_CONFIG_CMAKE_FILE}")
 
-file (GLOB_RECURSE TBB_TARGET_CMAKE_FILE "${3RDPARTY_TBB_DIR}/*TBBTargets-release.cmake")
-if (EXISTS "${TBB_TARGET_CMAKE_FILE}")
-  include ("${TBB_TARGET_CMAKE_FILE}")
+if (TBB_DIR_FOUND)
+  # Searching TBBConfig.cmake and TBBTargets-release.cmake in 3RDPARTY_TBB_DIR
+  # TBBConfig.cmake - is required, TBBTargets-release.cmake is optional.
+  file (GLOB_RECURSE TBB_CONFIG_CMAKE_FILE "${3RDPARTY_TBB_DIR}/*TBBConfig.cmake")
+  if (NOT EXISTS "${TBB_CONFIG_CMAKE_FILE}")
+    message (FATAL_ERROR "TBBConfig.cmake has not been found.")
+  endif()
+  include ("${TBB_CONFIG_CMAKE_FILE}")
+
+  file (GLOB_RECURSE TBB_TARGET_CMAKE_FILE "${3RDPARTY_TBB_DIR}/*TBBTargets-release.cmake")
+  if (EXISTS "${TBB_TARGET_CMAKE_FILE}")
+    include ("${TBB_TARGET_CMAKE_FILE}")
+  endif()
 endif()
 
 # We do not know, full path to file is pointed, or local.
@@ -134,7 +141,7 @@ macro (WIN_TBB_PARSE TARGET_NAME LIB_NAME PROPERTY_TO_SET)
 
   if (NOT EXISTS "${FILE_DIR}/${FILE_NAME}")
     set (3RDPARTY_${LIB_NAME}_${PROPERTY_TO_SET} "" CACHE FILEPATH "${LIB_NAME} library" FORCE)
-    set (3RDPARTY_${LIB_NAME}_${PROPERTY_TO_SET}_DIR "" CACHE PATH "The directory containing ${LIB_NAME} shared library")
+    set (3RDPARTY_${LIB_NAME}_${PROPERTY_TO_SET}_DIR "" CACHE PATH "The directory containing ${LIB_NAME} shared library" FORCE)
 
     if ("${PROPERTY_TO_SET}" STREQUAL "LIBRARY")
       list (APPEND 3RDPARTY_NO_LIBS 3RDPARTY_${LIB_NAME}_${PROPERTY_TO_SET}_DIR)
@@ -143,7 +150,7 @@ macro (WIN_TBB_PARSE TARGET_NAME LIB_NAME PROPERTY_TO_SET)
     endif()
   else()
     set (3RDPARTY_${LIB_NAME}_${PROPERTY_TO_SET} "${FILE_DIR}/${FILE_NAME}" CACHE FILEPATH "${LIB_NAME} library" FORCE)
-    set (3RDPARTY_${LIB_NAME}_${PROPERTY_TO_SET}_DIR "${FILE_DIR}" CACHE PATH "The directory containing ${LIB_NAME} shared library")
+    set (3RDPARTY_${LIB_NAME}_${PROPERTY_TO_SET}_DIR "${FILE_DIR}" CACHE PATH "The directory containing ${LIB_NAME} shared library" FORCE)
 
     if ("${PROPERTY_TO_SET}" STREQUAL "LIBRARY")
       list (APPEND 3RDPARTY_LIBRARY_DIRS "${FILE_DIR}")
@@ -155,7 +162,7 @@ endmacro()
 
 # TARGET_NAME - is target name from oneTBB cmake file
 # it is either "TBB::tbb", or "TBB::tbbmalloc"
-# LIB_NAME_UC - is library id (TBB or TBBMALLOC)
+# LIB_NAME - is library id (TBB or TBBMALLOC)
 macro (LIN_TBB_PARSE TARGET_NAME LIB_NAME)
   set (FILE_NAME "")
   set (FILE_PATH "")
@@ -171,14 +178,68 @@ macro (LIN_TBB_PARSE TARGET_NAME LIB_NAME)
 
   if (NOT EXISTS "${FILE_DIR}/${FILE_NAME}")
     set (3RDPARTY_${LIB_NAME}_LIBRARY "" CACHE FILEPATH "${LIB_NAME} library" FORCE)
-    set (3RDPARTY_${LIB_NAME}_LIBRARY_DIR "" CACHE PATH "The directory containing ${LIB_NAME} shared library")
+    set (3RDPARTY_${LIB_NAME}_LIBRARY_DIR "" CACHE PATH "The directory containing ${LIB_NAME} shared library" FORCE)
 
     list (APPEND 3RDPARTY_NO_LIBS 3RDPARTY_${LIB_NAME}_LIBRARY_DIR)
   else()
     set (3RDPARTY_${LIB_NAME}_LIBRARY "${FILE_DIR}/${FILE_NAME}" CACHE FILEPATH "${LIB_NAME} library" FORCE)
-    set (3RDPARTY_${LIB_NAME}_LIBRARY_DIR "${FILE_DIR}" CACHE PATH "The directory containing ${LIB_NAME} shared library")
+    set (3RDPARTY_${LIB_NAME}_LIBRARY_DIR "${FILE_DIR}" CACHE PATH "The directory containing ${LIB_NAME} shared library" FORCE)
 
     list (APPEND 3RDPARTY_LIBRARY_DIRS "${3RDPARTY_${LIB_NAME}_LIBRARY_DIR}")
+  endif()
+endmacro()
+
+# LIB_NAME - is library id (TBB or TBBMALLOC)
+# This script executes, when installation directory
+# has not found, but TBB has been installed as libtbb-dev package
+macro (LIN_TBB_DEV_PACKAGE_PARSE LIB_NAME)
+  string(TOLOWER "${LIB_NAME}" LIB_LOWER)
+  string(TOUPPER "${LIB_NAME}" LIB_UPPER)
+  # Taking into account Unix/Apple (MacOS);
+  # tbb, tbbmalloc different specification suffixes: 12.5 and 2.5 correspondingly
+  set (SPECIFICATION_SUFFIX "")
+  set (SPECIFICATION_PREFIX "")
+  set (SHARED_LIB_EXTENSION "")
+  if (APPLE)
+    set (SHARED_LIB_EXTENSION "dylib")
+
+    if (LIB_LOWER STREQUAL "tbb")
+      set (SPECIFICATION_PREFIX ".12.5")
+    else()
+      set (SPECIFICATION_PREFIX ".2.5")
+    endif()
+  else()
+    set (SHARED_LIB_EXTENSION "so")
+
+    if (LIB_LOWER STREQUAL "tbb")
+      set (SPECIFICATION_SUFFIX ".12.5")
+    else()
+      set (SPECIFICATION_SUFFIX ".2.5")
+    endif()
+  endif()
+  set (LIB_FILE_NAME "lib${LIB_LOWER}${SPECIFICATION_PREFIX}.${SHARED_LIB_EXTENSION}${SPECIFICATION_SUFFIX}")
+  # (!) The THE_LIB_FULL_FILE_NAMES should not be set before to run finding procedure.
+  find_library (THE_LIB_FULL_FILE_NAMES NAMES "${LIB_FILE_NAME}")
+  # Get only first founded file.
+  list (GET THE_LIB_FULL_FILE_NAMES 0 THE_LIB_FULL_FILE_NAME_BEGIN)
+
+  set (FILE_NAME "")
+  set (FILE_PATH "")
+  set (FILE_DIR "")
+
+  get_filename_component (FILE_NAME "${THE_LIB_FULL_FILE_NAME_BEGIN}" NAME)
+  get_filename_component (FILE_DIR "${THE_LIB_FULL_FILE_NAME_BEGIN}" DIRECTORY)
+
+  if (NOT EXISTS "${FILE_DIR}/${FILE_NAME}")
+    set (3RDPARTY_${LIB_UPPER}_LIBRARY "" CACHE FILEPATH "${LIB_UPPER} library" FORCE)
+    set (3RDPARTY_${LIB_UPPER}_LIBRARY_DIR "" CACHE PATH "The directory containing ${LIB_UPPER} shared library" FORCE)
+
+    list (APPEND 3RDPARTY_NO_LIBS 3RDPARTY_${LIB_UPPER}_LIBRARY_DIR)
+  else()
+    set (3RDPARTY_${LIB_UPPER}_LIBRARY "${FILE_DIR}/${FILE_NAME}" CACHE FILEPATH "${LIB_UPPER} library" FORCE)
+    set (3RDPARTY_${LIB_UPPER}_LIBRARY_DIR "${FILE_DIR}" CACHE PATH "The directory containing ${LIB_UPPER} shared library" FORCE)
+
+    list (APPEND 3RDPARTY_LIBRARY_DIRS "${3RDPARTY_${LIB_UPPER}_LIBRARY_DIR}")
   endif()
 endmacro()
 
@@ -206,7 +267,11 @@ else()
   foreach (LIB IN LISTS CSF_TBB)
     string(TOLOWER "${LIB}" LIB_LOWER)
     string(TOUPPER "${LIB}" LIB_UPPER)
-    LIN_TBB_PARSE("TBB::${LIB_LOWER}" "${LIB_UPPER}")
+    if (TBB_DIR_FOUND)
+      LIN_TBB_PARSE("TBB::${LIB_LOWER}" "${LIB_UPPER}")
+    else()
+      LIN_TBB_DEV_PACKAGE_PARSE("${LIB_UPPER}")
+    endif()
   endforeach()
 endif()
 
