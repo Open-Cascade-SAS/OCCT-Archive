@@ -2708,7 +2708,14 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
             TopoDS_Edge aLocalEdge = edgesau;
             if (edgesau.Orientation() != orient)
               aLocalEdge.Reverse();
-            C2dint1 = BRep_Tool::CurveOnSurface(aLocalEdge,Face[0],ubid,vbid);
+            C2dint1 = BRep_Tool::CurveOnSurface(aLocalEdge, Face[0], ubid, vbid);
+
+            if (C2dint1.IsNull())
+            {
+              //std::swap(Face[0], facesau);
+              C2dint1 = BRep_Tool::CurveOnSurface(aLocalEdge, facesau, ubid, vbid);
+
+            }
           }
         }
         else {
@@ -2718,7 +2725,7 @@ void ChFi3d_Builder::PerformIntersectionAtEnd(const Standard_Integer Index)
 	//// for periodic 3d curves ////
 	if (cad.IsPeriodic())
 	{
-	  gp_Pnt2d P2d = BRep_Tool::Parameters( Vtx, Face[0] );
+          gp_Pnt2d P2d = BRep_Tool::Parameters(Vtx, facesau);
 	  Geom2dAPI_ProjectPointOnCurve Projector( P2d, C2dint1 );
 	  par = Projector.LowerDistanceParameter();
 	  Standard_Real shift = par-ParVtx;

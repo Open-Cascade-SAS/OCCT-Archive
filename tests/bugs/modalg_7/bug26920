@@ -1,0 +1,13 @@
+puts "========"
+puts "0026920: BRepBuidlerAPI_MakeFillet crash 2"
+puts "========"
+
+restore C:/WORK/opencascade/bugs/CR26920/bug26920.brep b1
+explode b1 e
+fillet result b1 0.25 b1_15
+
+checkprops result -s 1653.78
+checkshape result
+
+checknbshapes result -vertex 20 -edge 31 -wire 13 -face 13 -shell 1 -solid 1 -compsolid 0 -compound 1 -shape 80
+checkview -display result -2d -path ${imagedir}/${test_image}.png
