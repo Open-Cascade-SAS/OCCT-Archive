@@ -3238,7 +3238,9 @@ Standard_Boolean ChFi3d_ComputeCurves(const Handle(Adaptor3d_Surface)&   S1,
               Pc2->Value(Uf).Coord(x,y);
               x = Pardeb(3) - x;
               y = Pardeb(4) - y;
-              if(Abs(x) > tol2d || Abs(y) > tol2d) Pc2->Translate(gp_Vec2d(x,y));
+
+              if(Abs(x) > tol2d || Abs(y) > tol2d) 
+                Pc2->Translate(gp_Vec2d(-6.2831853, 0));
               tolreached = ChFi3d_EvalTolReached(S1,Pc1,S2,Pc2,C3d);
               return Standard_True;
             }
