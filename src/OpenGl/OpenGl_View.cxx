@@ -2611,11 +2611,35 @@ void OpenGl_View::renderGrid()
   aContext->core11fwd->glEnable (GL_BLEND);
   aContext->core11fwd->glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+  aContext->core11fwd->glEnable(GL_MULTISAMPLE);
+
+  Graphic3d_Vec4 anUnprojPnt = aContext->WorldViewState.Current().Inverted() * aContext->ProjectionState.Current().Inverted() * Graphic3d_Vec4 (1.0, 1.0, 0.0, 1.0);
+  Graphic3d_Vec3 aVal = anUnprojPnt.xyz() / anUnprojPnt.w();
+  std::cout << anUnprojPnt.w() << std::endl;
+  std::cout << aVal.x() << " " << aVal.y() << " " << aVal.z() << std::endl;
+
+  //Standard_Integer aScale = TCollection_AsciiString(RealToInt(aContext->Camera()->Scale())).Length();
+
+  unsigned x = (unsigned) aContext->Camera()->Scale();
+  x = x - 1;
+  x = x | (x >> 1);
+  x = x | (x >> 2);
+  x = x | (x >> 4);
+  x = x | (x >> 8);
+  x = x | (x >> 16);
+  x = x + 1;
+
+  int k = (int)(log10 (aContext->Camera()->Scale()) / log10(2));
+
+  Standard_Integer aScale = k;
+  std::cout << "Scale: " << aScale << std::endl;
+
   if (aContext->ShaderManager()->BindGridProgram())
   {
     const Handle(OpenGl_ShaderProgram)& aProg = aContext->ActiveProgram();
     aProg->SetUniform (aContext, "uZNear", GLfloat (aContext->Camera()->ZNear()));
-    aProg->SetUniform (aContext, "uZFar", GLfloat (aContext->Camera()->ZFar()));
+    aProg->SetUniform (aContext, "uZFar",  GLfloat (aContext->Camera()->ZFar()));
+    aProg->SetUniform (aContext, "uScale", GLfloat (aScale));
     // TODO : add param to draw command
     aProg->SetUniform (aContext, "uIsDrawAxis", GLboolean (true));
 
