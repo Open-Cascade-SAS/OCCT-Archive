@@ -521,6 +521,18 @@ Standard_Boolean OpenGl_RaytraceGeometry::UpdateTextureHandles (const Handle(Ope
   return Standard_True;
 }
 
+// =======================================================================
+// function : OpenGl_RaytraceClipPlanes
+// purpose  : Creates new set of clipping planes
+// =======================================================================
+OpenGl_RaytraceClipPlanes::OpenGl_RaytraceClipPlanes()
+{
+  for (Standard_Integer aPlaneIdx = 0; aPlaneIdx < MAX_PLANE_NUMBER; ++aPlaneIdx)
+  {
+    myClipPlanes[aPlaneIdx * 2] = BVH_Vec4f(-1.f, -1.f, -1.f, -1.f);
+  }
+}
+
 namespace OpenGl_Raytrace
 {
   // =======================================================================

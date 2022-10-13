@@ -101,7 +101,7 @@ public:
   }
 
   //! Pass clip planes to the associated graphic driver structure
-  void SetClipPlanes (const Handle(Graphic3d_SequenceOfHClipPlane)& thePlanes) { myClipPlanes = thePlanes; }
+  virtual void SetClipPlanes (const Handle(Graphic3d_SequenceOfHClipPlane)& thePlanes) { myClipPlanes = thePlanes; }
 
   //! @return bounding box of this presentation
   const Graphic3d_BndBox3d& BoundingBox() const

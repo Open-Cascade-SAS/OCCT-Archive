@@ -169,6 +169,133 @@ private:
 
 };
 
+//! Set of clipping planes specific for OpenGL primitive array.
+class OpenGl_RaytraceClipPlanes
+{
+public:
+
+  //! Maximum number of clipping planes used in ray-tracing for each
+  //! OpenGL primitive array. This is not implementation restriction,
+  //! but it is reasonable to limit max number of planes in order to
+  //! simplify GLSL data representation.
+  static const Standard_Integer MAX_PLANE_NUMBER = 8;
+
+  //! State of clipping plane.
+  enum ClipPlaneState {
+
+    CLIP_PLANE_OFF = -1,  //!< plane is deactivated
+    CLIP_PLANE_VIEW = 0,  //!< plane is in view space
+    CLIP_PLANE_WORLD = 1   //!< plane is in world space
+  };
+
+  //! Wrapper for clipping plane configuration.
+  class ClipPlane
+  {
+  public:
+
+    //! Creates new clipping plane wrapper.
+    ClipPlane(BVH_Vec4f& theSettings,
+      BVH_Vec4f& theEquation) : mySettings(theSettings),
+      myEquation(theEquation) {}
+
+    //! Sets 4D equation vector for clipping plane.
+    void SetEquation(const BVH_Vec4d& theEquation, const ClipPlaneState theState = CLIP_PLANE_WORLD)
+    {
+      for (Standard_Integer anIndex = 0; anIndex < 4; ++anIndex)
+      {
+        myEquation[anIndex] = static_cast<Standard_ShortReal> (theEquation[anIndex]);
+      }
+
+      SetState(theState);
+    }
+
+    //! Returns state of clipping plane.
+    ClipPlaneState State()
+    {
+      return static_cast<ClipPlaneState> ((int)mySettings.x());
+    }
+
+    //! Sets state of clipping plane.
+    void SetState(const ClipPlaneState theState)
+    {
+      mySettings.x() = static_cast<Standard_ShortReal> (theState);
+    }
+
+  private:
+
+    //! Settings of clipping plane.
+    BVH_Vec4f& mySettings;
+
+    //! 4D equation vector of clipping plane.
+    BVH_Vec4f& myEquation;
+  };
+
+public:
+
+  //! Creates new set of clipping planes.
+  OpenGl_RaytraceClipPlanes();
+
+  //! Returns clipping plane for the given index.
+  ClipPlane operator[] (const Standard_Integer theIndex)
+  {
+    return ClipPlane(myClipPlanes[theIndex * 2 + 0],
+      myClipPlanes[theIndex * 2 + 1]);
+  }
+
+  //! Returns packed (serialized) representation of clipping planes set.
+  const Standard_ShortReal* Packed()
+  {
+    return reinterpret_cast<Standard_ShortReal*> (this);
+  }
+
+private:
+
+  //! Serialized clipping planes storage.
+  BVH_Vec4f myClipPlanes[MAX_PLANE_NUMBER * 2];
+
+};
+
+//! Stores transform properties of ray-tracing object.
+class OpenGl_RaytraceTransform : public BVH_Transform<Standard_ShortReal, 4>
+{
+public:
+
+  //! Value of invalid clipping plane set.
+  static const Standard_Integer NO_CLIPPING = -1;
+
+public:
+
+  //! Creates new identity transformation.
+  OpenGl_RaytraceTransform() : BVH_Transform<Standard_ShortReal, 4>()
+  {
+    myClipSetID = NO_CLIPPING; // no clipping by default
+  }
+
+  //! Creates new transformation with specified matrix.
+  OpenGl_RaytraceTransform(const BVH_Mat4f& theTransform) : BVH_Transform<Standard_ShortReal, 4>(theTransform)
+  {
+    myClipSetID = NO_CLIPPING; // no clipping by default
+  }
+
+  //! Returns ID of associated set of clipping planes.
+  Standard_Integer ClipSetID() const
+  {
+    return myClipSetID;
+  }
+
+  //! Sets ID of associated set of clipping planes.
+  void SetClipSetID(const Standard_Integer theClipSetID)
+  {
+    myClipSetID = theClipSetID;
+  }
+
+protected:
+
+  //! ID of associated set of clipping planes.
+  Standard_Integer myClipSetID;
+
+};
+
 //! Stores geometry of ray-tracing scene.
 class OpenGl_RaytraceGeometry : public BVH_Geometry<Standard_ShortReal, 3>
 {
@@ -192,6 +319,10 @@ public:
   //! Array of 'front' material properties.
   std::vector<OpenGl_RaytraceMaterial,
     NCollection_StdAllocator<OpenGl_RaytraceMaterial> > Materials;
+  
+  //! Array of sets of clipping plane parameters.
+  std::vector<OpenGl_RaytraceClipPlanes,
+    NCollection_StdAllocator<OpenGl_RaytraceClipPlanes> > ClipPlanes;
 
   //! Global ambient from all light sources.
   BVH_Vec4f Ambient;

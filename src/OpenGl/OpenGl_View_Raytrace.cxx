@@ -65,11 +65,12 @@ namespace
 
   static const Graphic3d_TextureUnit OpenGl_RT_RaytraceMaterialTexture = Graphic3d_TextureUnit_9;
   static const Graphic3d_TextureUnit OpenGl_RT_RaytraceLightSrcTexture = Graphic3d_TextureUnit_10;
+  static const Graphic3d_TextureUnit OpenGl_RT_RaytraceClippingTexture = Graphic3d_TextureUnit_11;
 
-  static const Graphic3d_TextureUnit OpenGl_RT_FsaaInputTexture = Graphic3d_TextureUnit_11;
-  static const Graphic3d_TextureUnit OpenGl_RT_PrevAccumTexture = Graphic3d_TextureUnit_12;
+  static const Graphic3d_TextureUnit OpenGl_RT_FsaaInputTexture = Graphic3d_TextureUnit_12;
+  static const Graphic3d_TextureUnit OpenGl_RT_PrevAccumTexture = Graphic3d_TextureUnit_13;
 
-  static const Graphic3d_TextureUnit OpenGl_RT_RaytraceDepthTexture = Graphic3d_TextureUnit_13;
+  static const Graphic3d_TextureUnit OpenGl_RT_RaytraceDepthTexture = Graphic3d_TextureUnit_14;
 }
 
 // =======================================================================
@@ -512,6 +513,47 @@ Standard_Boolean OpenGl_View::addRaytraceGroups (const OpenGl_Structure*        
                                                  const Handle(TopLoc_Datum3D)&  theTrsf,
                                                  const Handle(OpenGl_Context)&  theGlContext)
 {
+  // ID of clipping plane set
+  Standard_Integer aClipSetID = OpenGl_RaytraceTransform::NO_CLIPPING;
+  // Collect clipping planes of structure scope
+  if (!theStructure->ClipPlanes().IsNull())
+  //if (!theStructure->ClipPlanes()->IsEmpty())
+  {
+    NCollection_Handle<Graphic3d_SequenceOfHClipPlane> aUserPlanes;
+
+    for (Graphic3d_SequenceOfHClipPlane::Iterator aClipIter(theStructure->ClipPlanes()); aClipIter.More(); aClipIter.Next())
+    {
+      const Handle(Graphic3d_ClipPlane)& aClipPlane = aClipIter.Value();
+
+      if (aClipPlane->IsOn())
+      {
+        if (aUserPlanes.IsNull())
+        {
+          aUserPlanes = new Graphic3d_SequenceOfHClipPlane();
+        }
+
+        aUserPlanes->Append(aClipPlane);
+      }
+    }
+
+    if (!aUserPlanes.IsNull())
+    {
+      myRaytraceGeometry.ClipPlanes.push_back(OpenGl_RaytraceClipPlanes());
+
+      Standard_Integer aPlaneIdx = 0;
+      for (Graphic3d_SequenceOfHClipPlane::Iterator aClipIter(*aUserPlanes); aClipIter.More(); aClipIter.Next(), ++aPlaneIdx)
+      {
+        if (myRaytraceGeometry.ClipPlanes.size() >= OpenGl_RaytraceClipPlanes::MAX_PLANE_NUMBER)
+        {
+          break;
+        }
+        myRaytraceGeometry.ClipPlanes.back()[aPlaneIdx].SetEquation(aClipIter.Value()->GetEquation());
+      }
+
+      aClipSetID = static_cast<Standard_Integer> (myRaytraceGeometry.ClipPlanes.size() - 1);
+    }
+  }
+
   OpenGl_Mat4 aMat4;
   for (OpenGl_Structure::GroupIterator aGroupIter (theStructure->Groups()); aGroupIter.More(); aGroupIter.Next())
   {
@@ -551,11 +593,17 @@ Standard_Boolean OpenGl_View::addRaytraceGroups (const OpenGl_Structure*        
           if (aSetIter != myArrayToTrianglesMap.end())
           {
             OpenGl_TriangleSet* aSet = aSetIter->second;
-            opencascade::handle<BVH_Transform<Standard_ShortReal, 4> > aTransform = new BVH_Transform<Standard_ShortReal, 4>();
+            OpenGl_RaytraceTransform* aTransform = new OpenGl_RaytraceTransform;
+            
             if (!theTrsf.IsNull())
             {
               theTrsf->Trsf().GetMat4 (aMat4);
               aTransform->SetTransform (aMat4);
+            }
+
+            if (aClipSetID != OpenGl_RaytraceTransform::NO_CLIPPING)
+            {
+              aTransform->SetClipSetID(aClipSetID);
             }
 
             aSet->SetProperties (aTransform);
@@ -568,11 +616,17 @@ Standard_Boolean OpenGl_View::addRaytraceGroups (const OpenGl_Structure*        
           {
             if (Handle(OpenGl_TriangleSet) aSet = addRaytracePrimitiveArray (aPrimArray, aMatID, 0))
             {
-              opencascade::handle<BVH_Transform<Standard_ShortReal, 4> > aTransform = new BVH_Transform<Standard_ShortReal, 4>();
+              OpenGl_RaytraceTransform* aTransform = new OpenGl_RaytraceTransform;
+
               if (!theTrsf.IsNull())
               {
                 theTrsf->Trsf().GetMat4 (aMat4);
                 aTransform->SetTransform (aMat4);
+              }
+
+              if (aClipSetID != OpenGl_RaytraceTransform::NO_CLIPPING)
+              {
+                aTransform->SetClipSetID(aClipSetID);
               }
 
               aSet->SetProperties (aTransform);
@@ -1669,6 +1723,8 @@ Standard_Boolean OpenGl_View::initRaytraceResources (const Standard_Integer theS
         "uRaytraceMaterialTexture", OpenGl_RT_RaytraceMaterialTexture);
       aShaderProgram->SetSampler (theGlContext,
         "uRaytraceLightSrcTexture", OpenGl_RT_RaytraceLightSrcTexture);
+      aShaderProgram->SetSampler(theGlContext,
+        "uRaytraceClippingTexture", OpenGl_RT_RaytraceClippingTexture);
 
       if (anIndex == 1)
       {
@@ -1713,6 +1769,8 @@ Standard_Boolean OpenGl_View::initRaytraceResources (const Standard_Integer theS
         aShaderProgram->GetUniformLocation (theGlContext, "uLightCount");
       myUniformLocations[anIndex][OpenGl_RT_uLightAmbnt] =
         aShaderProgram->GetUniformLocation (theGlContext, "uGlobalAmbient");
+      myUniformLocations[anIndex][OpenGl_RT_uNbClipPlanes] =
+        aShaderProgram->GetUniformLocation(theGlContext, "uNbClipPlanes");
 
       myUniformLocations[anIndex][OpenGl_RT_uFsaaOffset] =
         aShaderProgram->GetUniformLocation (theGlContext, "uFsaaOffset");
@@ -1850,6 +1908,7 @@ void OpenGl_View::releaseRaytraceResources (const Handle(OpenGl_Context)& theGlC
 
     nullifyResource (theGlContext, myRaytraceLightSrcTexture);
     nullifyResource (theGlContext, myRaytraceMaterialTexture);
+    nullifyResource (theGlContext, myRaytraceClippingTexture);
 
     myRaytraceGeometry.ReleaseResources (theGlContext);
 
@@ -2190,7 +2249,23 @@ Standard_Boolean OpenGl_View::uploadRaytraceData (const Handle(OpenGl_Context)& 
       return Standard_False;
     }
   }
-  
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Create clip planes buffer
+
+  if (myRaytraceClippingTexture.IsNull()) // create clipping planes buffer
+  {
+    myRaytraceClippingTexture = new OpenGl_TextureBuffer;
+
+    if (!myRaytraceClippingTexture->Create(theGlContext))
+    {
+#ifdef RAY_TRACE_PRINT_INFO
+      std::cout << "Error: Failed to create buffer for clip plane data" << std::endl;
+#endif
+      return Standard_False;
+    }
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // Write transform buffer
 
@@ -2203,11 +2278,16 @@ Standard_Boolean OpenGl_View::uploadRaytraceData (const Handle(OpenGl_Context)& 
     OpenGl_TriangleSet* aTriangleSet = dynamic_cast<OpenGl_TriangleSet*> (
       myRaytraceGeometry.Objects().ChangeValue (anElemIndex).operator->());
 
-    const BVH_Transform<Standard_ShortReal, 4>* aTransform = dynamic_cast<const BVH_Transform<Standard_ShortReal, 4>* > (aTriangleSet->Properties().get());
+    const OpenGl_RaytraceTransform* aTransform = dynamic_cast<const OpenGl_RaytraceTransform*> (aTriangleSet->Properties().operator->());
+
     Standard_ASSERT_RETURN (aTransform != NULL,
       "OpenGl_TriangleSet does not contain transform", Standard_False);
 
     aNodeTransforms[anElemIndex] = aTransform->Inversed();
+
+    // Note: write clip plane ID in last matrix component, because
+    // the last matrix row is not used for transformation purposes
+    aNodeTransforms[anElemIndex].SetValue(3, 3, aTransform->ClipSetID());
   }
 
   aResult &= mySceneTransformTexture->Init (theGlContext, 4,
@@ -2368,6 +2448,23 @@ Standard_Boolean OpenGl_View::uploadRaytraceData (const Handle(OpenGl_Context)& 
     if (!aResult)
     {
       Message::SendTrace() << "Error: Failed to upload material buffer";
+      return Standard_False;
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Write clip planes buffer
+
+  if (myRaytraceGeometry.ClipPlanes.size() != 0)
+  {
+    aResult &= myRaytraceClippingTexture->Init(theGlContext, 4,
+      GLsizei(myRaytraceGeometry.ClipPlanes.size() * 16), myRaytraceGeometry.ClipPlanes.front().Packed());
+
+    if (!aResult)
+    {
+#ifdef RAY_TRACE_PRINT_INFO
+      std::cout << "Error: Failed to upload clipping planes buffer" << std::endl;
+#endif
       return Standard_False;
     }
   }
@@ -2646,6 +2743,9 @@ Standard_Boolean OpenGl_View::setUniformState (const Standard_Integer        the
   theProgram->SetUniform (theGlContext,
     myUniformLocations[theProgramId][OpenGl_RT_uLightCount], aLightSourceBufferSize);
 
+  theProgram->SetUniform (theGlContext,
+    myUniformLocations[theProgramId][OpenGl_RT_uNbClipPlanes], (int)myRaytraceGeometry.ClipPlanes.size());
+
   // Set array of 64-bit texture handles
   if (theGlContext->arbTexBindless != NULL && myRaytraceGeometry.HasTextures())
   {
@@ -2779,6 +2879,7 @@ void OpenGl_View::bindRaytraceTextures (const Handle(OpenGl_Context)& theGlConte
   mySceneTransformTexture  ->BindTexture (theGlContext, OpenGl_RT_SceneTransformTexture);
   myRaytraceMaterialTexture->BindTexture (theGlContext, OpenGl_RT_RaytraceMaterialTexture);
   myRaytraceLightSrcTexture->BindTexture (theGlContext, OpenGl_RT_RaytraceLightSrcTexture);
+  myRaytraceClippingTexture->BindTexture (theGlContext, OpenGl_RT_RaytraceClippingTexture);
 }
 
 // =======================================================================
@@ -2797,6 +2898,7 @@ void OpenGl_View::unbindRaytraceTextures (const Handle(OpenGl_Context)& theGlCon
   mySceneTransformTexture  ->UnbindTexture (theGlContext, OpenGl_RT_SceneTransformTexture);
   myRaytraceMaterialTexture->UnbindTexture (theGlContext, OpenGl_RT_RaytraceMaterialTexture);
   myRaytraceLightSrcTexture->UnbindTexture (theGlContext, OpenGl_RT_RaytraceLightSrcTexture);
+  myRaytraceClippingTexture->UnbindTexture (theGlContext, OpenGl_RT_RaytraceClippingTexture);
 
   theGlContext->core15fwd->glActiveTexture (GL_TEXTURE0);
 }

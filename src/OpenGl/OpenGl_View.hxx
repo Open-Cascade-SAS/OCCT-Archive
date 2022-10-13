@@ -574,6 +574,7 @@ protected: //! @name data types related to ray-tracing
     OpenGl_RT_uSceneEps,
     OpenGl_RT_uLightAmbnt,
     OpenGl_RT_uLightCount,
+    OpenGl_RT_uNbClipPlanes,
 
     // background params
     OpenGl_RT_uBackColorTop,
@@ -1019,6 +1020,8 @@ protected: //! @name fields related to ray-tracing
   Handle(OpenGl_TextureBuffer) myRaytraceMaterialTexture;
   //! Texture buffer of light source properties.
   Handle(OpenGl_TextureBuffer) myRaytraceLightSrcTexture;
+  //! Texture buffer of clipping planes parameters.
+  Handle(OpenGl_TextureBuffer) myRaytraceClippingTexture;
 
   //! 1st framebuffer (FBO) to perform adaptive FSAA.
   //! Used in compatibility mode (no adaptive sampling).

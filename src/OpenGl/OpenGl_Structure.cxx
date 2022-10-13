@@ -237,6 +237,20 @@ Standard_Boolean OpenGl_Structure::IsRaytracable() const
 }
 
 // =======================================================================
+// function : SetClipPlanes
+// purpose  :
+// =======================================================================
+void OpenGl_Structure::SetClipPlanes(const Handle(Graphic3d_SequenceOfHClipPlane)&thePlanes)
+{
+  Graphic3d_CStructure::SetClipPlanes(thePlanes);
+
+  if (IsRaytracable())
+  {
+    ++myModificationState;
+  }
+}
+
+// =======================================================================
 // function : UpdateRaytracableState
 // purpose  :
 // =======================================================================
