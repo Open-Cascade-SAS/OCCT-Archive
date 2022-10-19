@@ -16,6 +16,7 @@
 
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <Adaptor3d_CurveOnSurface.hxx>
+#include <Adaptor3d_TopolTool.hxx>
 #include <GeomAdaptor_SurfaceOfLinearExtrusion.hxx>
 #include <Approx_CurveOnSurface.hxx>
 #include <BRep_Builder.hxx>
@@ -898,8 +899,29 @@ void Draft_Modification::Perform ()
             // 1 - If ProjLib should make an Approx, it is stupid to approximate the 
             //     entire intersection curve.
             // 2 - Additionally, if YaRev, there is a risk to not be SameRange.
-            i2s.Perform(S1,S2,Precision::Confusion(),
-              Standard_True,Standard_False,Standard_False);
+            Handle(GeomAdaptor_Surface) HS[2] = {new GeomAdaptor_Surface(S1), new GeomAdaptor_Surface(S2)};
+            for (Standard_Integer i = 0; i < 2; ++i) 
+            {
+              Handle(Geom_Surface) S = (i == 0 ? S1 : S2);
+              if (S->DynamicType() == STANDARD_TYPE(Geom_ConicalSurface))
+              {
+                Standard_Real aVs, aVe;
+                Adaptor3d_TopolTool::GetConeApexParam(Handle(Geom_ConicalSurface)::DownCast(S)->Cone(), aVs, aVe);
+                if (aVe < 0.)
+                {
+                  aVs = aVe;
+                  aVe = Precision::Infinite();
+                }
+                else
+                {
+                  aVs = -Precision::Infinite();
+                  aVe = aVe;
+                }
+                HS[i]->Load(S, 0., 2 * M_PI, aVs, aVe, 0., 0.);
+              }
+            }
+            i2s.Perform(HS[0], HS[1], Precision::Confusion(),
+              Standard_True, Standard_False, Standard_False);
 
             if (!i2s.IsDone() || i2s.NbLines() <= 0) {
               errStat = Draft_EdgeRecomputation;
@@ -1108,8 +1130,9 @@ void Draft_Modification::Perform ()
                 for (i = 1; i <= Candidates.Length(); i++)
                 {
                   Handle( Geom_Curve ) aCurve = Candidates(i);
-                  gp_Pnt Pnt = aCurve->Value( aCurve->FirstParameter() );
-                  const Standard_Real Dist = Pnt.Distance( pfv );
+                  GeomAPI_ProjectPointOnCurve Projector(pfv, aCurve );
+                  gp_Pnt aPnt = Projector.NbPoints() ? Projector.NearestPoint() : aCurve->Value(aCurve->FirstParameter());
+                  const Standard_Real Dist = aPnt.Distance( pfv );
                   if (Dist - DistMin < -Precision::Confusion())
                   {
                     DistMin = Dist;
