@@ -934,7 +934,10 @@ void BOPAlgo_PaveFiller::MakeBlocks(const Message_ProgressRange& theRange)
   // into all faces, not participated in creation of that edge, as IN edge
 
   PutSEInOtherFaces(aPSOuter.Next());
-  //
+
+  // Filter the Common Blocks created on the Face/Face post treatment stage from duplicates
+  myDS->FilterCommonBlocks();
+
   //-----------------------------------------------------scope t
   aMVStick.Clear();
   aMPBOnIn.Clear();

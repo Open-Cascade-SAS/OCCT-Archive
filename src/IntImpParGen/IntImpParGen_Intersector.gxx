@@ -32,6 +32,8 @@
 #include <gp.hxx>
 #include <gp_Vec2d.hxx>
 
+#include <Precision.hxx>
+
 //======================================================================
 #define EPSDIST Tol
 #define EPSNUL  TolConf
@@ -164,8 +166,13 @@ void IntImpParGen_Intersector::And_Domaine_Objet1_Intersections(const ImpTool& T
         Resultat2.SetValue(NbResultats, Inter2_And_Domain2.Value(indice_2));
       }
       else {  //====== la borne2 et la borne1 sont hors domaine =====
-        if (param1<TheImpCurveDomain.FirstParameter()
-          && param2>TheImpCurveDomain.LastParameter()) {
+        const Standard_Real aParF = TheImpCurveDomain.HasFirstPoint() ?
+                                      TheImpCurveDomain.FirstParameter() :
+                                      -Precision::Infinite();
+        const Standard_Real aParL = TheImpCurveDomain.HasLastPoint() ?
+                                      TheImpCurveDomain.LastParameter() :
+                                      Precision::Infinite();
+        if (param1<aParF && param2>aParL) {
           Standard_Real t;
           NbResultats++;
           t = TheImpCurveDomain.FirstParameter();

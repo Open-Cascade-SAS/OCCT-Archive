@@ -471,6 +471,10 @@ public:
                                          Bnd_Box& theBox,
                                          const Standard_Boolean theCheckInverted = Standard_True);
 
+  //! Filter the Common Blocks on edges so that all Pave Blocks with the same Edge
+  //! have the same Common Block linked to it.
+  Standard_EXPORT void FilterCommonBlocks();
+
 protected:
 
   

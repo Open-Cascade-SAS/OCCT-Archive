@@ -1116,13 +1116,7 @@ Handle(BOPDS_CommonBlock) BOPDS_DS::CommonBlock
 void BOPDS_DS::SetCommonBlock(const Handle(BOPDS_PaveBlock)& thePB,
                               const Handle(BOPDS_CommonBlock)& theCB)
 {
-  if (IsCommonBlock(thePB)) {
-    Handle(BOPDS_CommonBlock)& aCB = myMapPBCB.ChangeFind(thePB);
-    aCB=theCB;
-  }
-  else {
-    myMapPBCB.Bind(thePB, theCB);
-  }
+  myMapPBCB.Bind(thePB, theCB);
 }
 
 //
@@ -2202,4 +2196,50 @@ Standard_Boolean BOPDS_DS::IsValidShrunkData(const Handle(BOPDS_PaveBlock)& theP
     }
   }
   return Standard_True;
+}
+
+//=======================================================================
+//function : FilterCommonBlocks
+//purpose  : 
+//=======================================================================
+void BOPDS_DS::FilterCommonBlocks()
+{
+  // Connection map from edge to common block
+  NCollection_DataMap<Standard_Integer, Handle(BOPDS_CommonBlock)> aMapEC;
+
+  // Iterate on all Pave Blocks in the Data Structure and make
+  // the Pave Blocks with the same edges be lined to the same Common Block
+  BOPDS_VectorOfListOfPaveBlock& aPBP = ChangePaveBlocksPool();
+  Standard_Integer aNbPBP = aPBP.Length();
+  for (Standard_Integer i = 0; i < aNbPBP; ++i)
+  {
+    BOPDS_ListOfPaveBlock& aLPB = aPBP(i);
+    BOPDS_ListIteratorOfListOfPaveBlock aItPB;
+    aItPB.Initialize(aLPB);
+    for (; aItPB.More(); aItPB.Next())
+    {
+      const Handle(BOPDS_PaveBlock) &aPB = aItPB.Value();
+
+      if (!IsCommonBlock(aPB))
+        // not a Common block - skip
+        continue;
+
+      // Get index of the edge
+      const Standard_Integer anEIdx = aPB->Edge();
+
+      Handle(BOPDS_CommonBlock) *aCB = aMapEC.ChangeSeek(anEIdx);
+      if (!aCB)
+      {
+        // Firstly met edge. Make all other Pave Blocks with the same edge
+        // be linked to the same Common Block.
+        aCB = aMapEC.Bound(anEIdx, CommonBlock(aPB));
+      }
+      else
+      {
+        // Update the information about Common Block
+        (*aCB)->AddPaveBlock(aPB);
+        SetCommonBlock(aPB, *aCB);
+      }
+    }
+  }
 }

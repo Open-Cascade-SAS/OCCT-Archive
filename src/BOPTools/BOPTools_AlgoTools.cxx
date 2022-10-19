@@ -1803,6 +1803,10 @@ Standard_Boolean FindFacePairs (const TopoDS_Edge& theE,
       }
     }
     //
+
+    if (aLCEFx.IsEmpty())
+      return Standard_False;
+
     // F2
     BOPTools_AlgoTools::GetFaceOff(aE1, aF1, aLCEFx, aF2, theContext);
     //

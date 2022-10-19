@@ -1188,7 +1188,11 @@ void IntTools_BeanFaceIntersector::ComputeRangeFromStartPoint(const Standard_Boo
     // if point found decide to increase aDelta using derivative of distance function
     //
     
-    aDelta = (pointfound) ? (aDelta * 2.) : (aDelta * 0.5);
+    // (aDelta*2) and (aDelta/(3/2)).
+    // Use of constants 2 and 0.5 leads to infinite loop
+    // connected with the sequence: pointfound == TRUE ==>
+    // aDelta *= 2.0 ==> pointfound == FALSE ==> aDelta *= 0.5 ...
+    aDelta *= (pointfound) ? 2.0 : 0.6667;
     aDelta = (aDelta < aDeltaRestrictor) ? aDelta : aDeltaRestrictor;
 
     aCurPar = (ToIncreaseParameter) ? (aPrevPar + aDelta) : (aPrevPar - aDelta);
