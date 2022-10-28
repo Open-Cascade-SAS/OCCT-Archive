@@ -1235,5 +1235,20 @@ void BSplCLib::MergeBSplineKnots
     }
     NumPoles = index  - degree - 1  ;
   }
+  else
+  {
+    degree = Degree1 + Degree2;
+    num_knots = 2;
+    NewKnots =
+      new TColStd_HArray1OfReal(1, num_knots);
+    NewKnots->ChangeArray1()(1) = StartValue;
+    NewKnots->ChangeArray1()(num_knots) = EndValue;
+
+    NewMults =
+      new TColStd_HArray1OfInteger(1, num_knots);
+    NewMults->ChangeArray1()(1) = degree + 1;
+    NewMults->ChangeArray1()(num_knots) = degree + 1;
+    NumPoles = BSplCLib::NbPoles(degree, Standard_False, NewMults->Array1());
+  }
 }
       
