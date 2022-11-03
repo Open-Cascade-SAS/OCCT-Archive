@@ -13,7 +13,7 @@
 //
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
-
+// branch2
 #include <Adaptor3d_Curve.hxx>
 
 #include <Geom_BezierCurve.hxx>
