@@ -1,5 +1,5 @@
 @echo off
-
+rem test1
 rem Helper script to run procedure of automatic upgrade of application code
 rem on newer version of OCCT on Windows.
 rem Running it requires that Tcl should be in the PATH
