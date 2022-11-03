@@ -17,8 +17,6 @@ echo "Getting commit whose hash matches the hash of commit with problematic file
 for hash in $list ; do    
     list_changed_files=$(git diff-tree --no-commit-id --name-only -r $hash | sed 's/\// /g' | awk '{ print $NF }')
     for changed_file in $list_changed_files; do
-        echo problem_file=$problem_file
-        echo changed_file=$changed_file
         if [ "$problem_file" == "$changed_file" ] ; then
             echo Reverting: 
             echo $(git log -1 --format=oneline $hash)
