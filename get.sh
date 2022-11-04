@@ -21,6 +21,8 @@ for hash in $list ; do
             echo Reverting: 
             echo $(git log -1 --format=oneline $hash)
             # git revert $hash
+            hash=$(echo $hash | head -c 10)
+            echo $hash
             git rebase --onto $hash^ $hash
         fi
     done
