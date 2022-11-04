@@ -1,12 +1,12 @@
 #!/bin/bash
 
-problem_file=Adaptor2d_Curve2d.cxx
+problem_file=upgrade.bat
 
 list="master integration"
 echo "Getting commit hash"
 for name in $list ; do
     echo $name
-    export shorthash_$name=$(git rev-parse $name)
+    export shorthash_$name=$(git rev-parse --short $name)
     echo shorthash_$name=$(eval echo "\$shorthash_${name}")
 done
 
