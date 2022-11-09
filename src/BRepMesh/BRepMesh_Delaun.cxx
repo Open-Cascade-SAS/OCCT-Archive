@@ -2125,15 +2125,32 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
 
   aRefEdgeDir /= aRefEdgeLen;
 
-  UBTreeOfB2d_Selector aSelector (myMeshData, theSegmentsPolyMap.PolyMap);
-
   // Find a point with minimum distance respect
   // the end of reference link
-  Standard_Integer aUsedLinkId = 0;
-  Standard_Real    aOptAngle   = 0.0;
-  Standard_Real    aMinDist    = RealLast();
   Standard_Integer aPivotNode  = aNodes[1];
   Standard_Integer aPolyLen    = thePolygon.Length();
+
+  struct Cand
+  {
+    Standard_Integer Node       = 0;
+    gp_Pnt2d         RefVertex;
+    Standard_Integer UsedLinkId = 0;
+    Standard_Real    AbsDist    = RealLast();
+    Standard_Real    Angle      = RealLast();
+
+    bool operator< (const Cand& theOther) const
+    {
+      if (AbsDist < theOther.AbsDist)
+      {
+        return (Angle > theOther.Angle && Angle <= AngDeviation90Deg);
+      }
+
+      return false;
+    }
+  };
+
+  NCollection_Vector<Cand> aCandList(thePolygon.Length());
+
   for ( Standard_Integer aLinkIt = 3; aLinkIt <= aPolyLen; ++aLinkIt )
   {
     const Standard_Integer aLinkInfo = thePolygon( aLinkIt );
@@ -2156,11 +2173,19 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
     if (anAbsDist < Precision || aDist < 0.)
       continue;
 
-    if ( ( anAbsDist >= aMinDist                             ) &&
-         ( aAngle <= aOptAngle || aAngle > AngDeviation90Deg ) )
-    {
-      continue;
-    }
+    aCandList.Append (Cand { aPivotNode, aPivotVertex, aLinkIt, anAbsDist, aAngle });
+  }
+
+  std::sort (aCandList.begin(), aCandList.end());
+
+  UBTreeOfB2d_Selector aSelector (myMeshData, theSegmentsPolyMap.PolyMap);
+
+  Standard_Integer aUsedLinkId = 0;
+
+  Standard_Integer aCandIt = aCandList.Lower();
+  for (; aCandIt <= aCandList.Upper(); ++aCandIt)
+  {
+    const Cand& aCand = aCandList.Value (aCandIt);
 
     // Check is the test link crosses the polygon boundaries
     Standard_Boolean isIntersect = Standard_False;
@@ -2170,12 +2195,12 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
       const gp_Pnt2d&         aLinkFirstVertex = aRefVertices[aRefLinkNodeIt];
 
       Bnd_B2d aBox;
-      UpdateBndBox(aLinkFirstVertex.Coord(), aPivotVertex.Coord(), aBox);
+      UpdateBndBox(aLinkFirstVertex.Coord(), aCand.RefVertex.Coord(), aBox);
 
-      BRepMesh_Edge aCheckLink( aLinkFirstNode, aPivotNode, BRepMesh_Free );
+      BRepMesh_Edge aCheckLink( aLinkFirstNode, aCand.Node, BRepMesh_Free );
 
       aSelector.SetCurrent  (aCheckLink, aBox, &thePolygon);
-      aSelector.SetSkipLink (thePolygon.First(), aLinkInfo);
+      aSelector.SetSkipLink (thePolygon.First(), thePolygon (aCand.UsedLinkId));
 
       theSegmentsPolyMap.Boxes.Select (aSelector);
       isIntersect = aSelector.IsIntersected();
@@ -2188,11 +2213,10 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
       continue;
 
 
-    aOptAngle       = aAngle;
-    aMinDist        = anAbsDist;
-    aNodes[2]       = aPivotNode;
-    aRefVertices[2] = aPivotVertex;
-    aUsedLinkId     = aLinkIt;
+    aNodes[2]       = aCand.Node;
+    aRefVertices[2] = aCand.RefVertex;
+    aUsedLinkId     = aCand.UsedLinkId;
+    break;
   }
 
   if ( aUsedLinkId == 0 )
