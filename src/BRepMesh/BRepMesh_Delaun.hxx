@@ -166,13 +166,14 @@ private:
 
   typedef NCollection_DataMap<Standard_Integer, IMeshData::MapOfInteger> DataMapOfMap;
   typedef NCollection_DataMap<Standard_Integer, void*>                   DataMapOfPVoid;
-  typedef NCollection_UBTree <Standard_Integer, Bnd_B2d>                 UBTreeOfB2d;
-  typedef NCollection_UBTreeFiller <Standard_Integer, Bnd_B2d>           UBTreeOfB2dFiller;
-  class UBTreeOfB2d_Selector;
+  typedef NCollection_EBTree <Standard_Integer, Bnd_B2d>                 EBTreeOfB2d;
+  typedef NCollection_UBTreeFiller <Standard_Integer, Bnd_B2d>           EBTreeOfB2dFiller;
+  class EBTreeOfB2d_Selector;
+  class EBTreeOfB2d_SelectorMovability;
 
   struct SegmentsBoxes
   {
-    UBTreeOfB2d    Boxes;
+    EBTreeOfB2d    Boxes;
     DataMapOfPVoid PolyMap;
 
     void Rebind (const Standard_Integer theLinkInfo,
@@ -282,11 +283,11 @@ private:
   //! and clears source container.
   //! @param thePolygon source polygon to be decomposed (first part of decomposition).
   //! @param thePolygonCut product of decomposition of source polygon (second part of decomposition).
-  //! @param theSegmentsPolyMap map of relations between semgents and their polygons.
+  //! @param theSegmentsBoxes map of relations between semgents and their polygons.
   void decomposeSimplePolygon (
     IMeshData::SequenceOfInteger& thePolygon,
     IMeshData::SequenceOfInteger& thePolygonCut,
-    SegmentsBoxes&                theSegmentsPolyMap);
+    SegmentsBoxes&                theSegmentsBoxes);
 
   //! Triangulation of closed polygon containing only three edges.
   Standard_Boolean meshElementaryPolygon (const IMeshData::SequenceOfInteger& thePolygon);
