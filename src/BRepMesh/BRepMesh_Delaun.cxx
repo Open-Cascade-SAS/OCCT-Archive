@@ -76,7 +76,127 @@ namespace {
     theBox.Add( thePnt2 );
     theBox.Enlarge(Precision);
   }
+
+  //=============================================================================
+  //function : IntSegSeg
+  //purpose  : Checks intersection between the two segments.
+  //=============================================================================
+  BRepMesh_GeomTool::IntFlag IntSegSeg(
+    const Handle(BRepMesh_DataStructureOfDelaun)& theMeshData,
+    const BRepMesh_Edge& theEdg1,
+    const BRepMesh_Edge& theEdg2,
+    const Standard_Boolean                        isConsiderEndPointTouch,
+    const Standard_Boolean                        isConsiderPointOnEdge,
+    gp_Pnt2d& theIntPnt)
+  {
+    gp_XY p1, p2, p3, p4;
+    p1 = theMeshData->GetNode(theEdg1.FirstNode()).Coord();
+    p2 = theMeshData->GetNode(theEdg1.LastNode()).Coord();
+    p3 = theMeshData->GetNode(theEdg2.FirstNode()).Coord();
+    p4 = theMeshData->GetNode(theEdg2.LastNode()).Coord();
+
+    return BRepMesh_GeomTool::IntSegSeg(p1, p2, p3, p4,
+      isConsiderEndPointTouch, isConsiderPointOnEdge, theIntPnt);
+  }
 } // anonymous namespace
+
+//! Checks polygon links for intersection with current one of the same polygon.
+class BRepMesh_Delaun::UBTreeOfB2d_Selector : public NCollection_UBTree<Standard_Integer, Bnd_B2d>::Selector
+{
+public:
+  //! Constructor.
+  UBTreeOfB2d_Selector(
+    const Handle(BRepMesh_DataStructureOfDelaun)& theMeshData,
+    const DataMapOfPVoid&                         theSegmentsPolyMap)
+    : myMeshData        (theMeshData),
+      mySegmentsPolyMap (theSegmentsPolyMap),
+      myPolygonPtr      (nullptr)
+  {
+  }
+
+  //! Implementation of rejection method
+  //! @return
+  //!   True if the bounding box does not intersect with the current 
+  Standard_Boolean Reject (const Bnd_B2d& theBox) const
+  {
+    return (myBox.IsOut (theBox));
+  }
+
+  //! Implementation of acceptance method
+  //!   This method is called when the bounding box intersect with the current.
+  //!   It stores the object - the index of box in the list of accepted objects.
+  //! @return
+  //!   True, because the object is accepted
+  Standard_Boolean Accept (const Standard_Integer& theObj)
+  {
+    if (mySkipLinks.Contains (theObj))
+    {
+      return Standard_False;
+    }
+
+    auto aPtr = mySegmentsPolyMap.Seek (theObj);
+
+    if (aPtr != nullptr && *aPtr == myPolygonPtr)
+    {
+      const BRepMesh_Edge& aPolyLink = myMeshData->GetLink (Abs (theObj));
+
+      if (!myLink.IsEqual (aPolyLink))
+      {
+        // intersection is possible...                  
+        gp_Pnt2d anIntPnt;
+        BRepMesh_GeomTool::IntFlag aIntFlag = IntSegSeg (
+          myMeshData, myLink, aPolyLink,
+          Standard_False, Standard_False, anIntPnt);
+
+        myStop = (aIntFlag != BRepMesh_GeomTool::NoIntersection);
+        return myStop;
+      }
+    }
+
+    return Standard_False;
+  }
+
+  //! Set current box to search for overlapping with him
+  void SetCurrent(const BRepMesh_Edge& theLink,
+                  const Bnd_B2d&       theBox,
+                  const void*          thePolygonPtr)
+  {
+    mySkipLinks.Clear();
+
+    myStop       = Standard_False;
+    myLink       = theLink;
+    myBox        = theBox;
+    myPolygonPtr = thePolygonPtr;
+  }
+
+  void SetSkipLink(const int theLink)
+  {
+    mySkipLinks.Add (theLink);
+  }
+
+  template<typename... T>
+  void SetSkipLink (const int theLink, const T... theLinks)
+  {
+    SetSkipLink (theLink);
+    SetSkipLink (theLinks...);
+  }
+
+  //! Returns true if the current segment intersects another one of the same polygon.
+  Standard_Boolean IsIntersected()
+  {
+    return myStop;
+  }
+
+private:
+  const Handle(BRepMesh_DataStructureOfDelaun)& myMeshData;
+  const DataMapOfPVoid&                         mySegmentsPolyMap;
+
+  BRepMesh_Edge                                 myLink;
+  Bnd_B2d                                       myBox;
+  const void*                                   myPolygonPtr;
+
+  NCollection_Map<Standard_Integer>             mySkipLinks;
+};
 
 //=======================================================================
 //function : BRepMesh_Delaun
@@ -1883,24 +2003,31 @@ void BRepMesh_Delaun::meshPolygon(IMeshData::SequenceOfInteger&   thePolygon,
     }
   }
 
-  IMeshData::SequenceOfInteger* aPolygon1   = &thePolygon;
-  IMeshData::SequenceOfBndB2d*  aPolyBoxes1 = &thePolyBoxes;
+  SegmentsBoxes     aSegmentsBoxes;
+  UBTreeOfB2dFiller aTreeFiller (aSegmentsBoxes.Boxes);
 
-  Handle(IMeshData::SequenceOfInteger) aPolygon2   = new IMeshData::SequenceOfInteger;
-  Handle(IMeshData::SequenceOfBndB2d)  aPolyBoxes2 = new IMeshData::SequenceOfBndB2d;
+  Standard_Integer aLinkIt = thePolygon.Lower();
+  for (; aLinkIt <= thePolygon.Upper(); ++aLinkIt)
+  {
+    const Standard_Integer aLinkInfo = thePolygon (aLinkIt);
+
+    aTreeFiller   .Add    (aLinkInfo, thePolyBoxes (aLinkIt));
+    aSegmentsBoxes.Rebind (aLinkInfo, &thePolygon);
+  }
+  aTreeFiller.Fill();
+
+  IMeshData::SequenceOfInteger*        aPolygon1 = &thePolygon;
+  Handle(IMeshData::SequenceOfInteger) aPolygon2 = new IMeshData::SequenceOfInteger;
 
   NCollection_Sequence<Handle(IMeshData::SequenceOfInteger)> aPolyStack;
-  NCollection_Sequence<Handle(IMeshData::SequenceOfBndB2d)>  aPolyBoxStack;
   for (;;)
   {
-    decomposeSimplePolygon(*aPolygon1, *aPolyBoxes1, *aPolygon2, *aPolyBoxes2);
+    decomposeSimplePolygon(*aPolygon1, *aPolygon2, aSegmentsBoxes);
     if (!aPolygon2->IsEmpty())
     {
       aPolyStack.Append(aPolygon2);
-      aPolyBoxStack.Append(aPolyBoxes2);
       
-      aPolygon2   = new IMeshData::SequenceOfInteger;
-      aPolyBoxes2 = new IMeshData::SequenceOfBndB2d;
+      aPolygon2 = new IMeshData::SequenceOfInteger;
     }
 
     if (aPolygon1->IsEmpty())
@@ -1908,14 +2035,12 @@ void BRepMesh_Delaun::meshPolygon(IMeshData::SequenceOfInteger&   thePolygon,
       if (!aPolyStack.IsEmpty() && aPolygon1 == &(*aPolyStack.First()))
       {
         aPolyStack.Remove(1);
-        aPolyBoxStack.Remove(1);
       }
 
       if (aPolyStack.IsEmpty())
         break;
 
-      aPolygon1   = &(*aPolyStack.ChangeFirst());
-      aPolyBoxes1 = &(*aPolyBoxStack.ChangeFirst());
+      aPolygon1 = &(*aPolyStack.ChangeFirst());
     }
   }
 }
@@ -1966,15 +2091,14 @@ Standard_Boolean BRepMesh_Delaun::meshElementaryPolygon(
 //=======================================================================
 void BRepMesh_Delaun::decomposeSimplePolygon(
   IMeshData::SequenceOfInteger& thePolygon,
-  IMeshData::SequenceOfBndB2d&  thePolyBoxes,
   IMeshData::SequenceOfInteger& thePolygonCut,
-  IMeshData::SequenceOfBndB2d&  thePolyBoxesCut)
+  SegmentsBoxes&                theSegmentsPolyMap)
 {
   // Check is the given polygon elementary
   if ( meshElementaryPolygon( thePolygon ) )
   {
+    theSegmentsPolyMap.Rebind (thePolygon, nullptr);
     thePolygon.Clear();
-    thePolyBoxes.Clear();
     return;
   }
 
@@ -1994,12 +2118,14 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
   Standard_Real aRefEdgeLen = aRefEdgeDir.Magnitude();
   if ( aRefEdgeLen < Precision )
   {
+    theSegmentsPolyMap.Rebind (thePolygon, nullptr);
     thePolygon.Clear();
-    thePolyBoxes.Clear();
     return;
   }
 
   aRefEdgeDir /= aRefEdgeLen;
+
+  UBTreeOfB2d_Selector aSelector (myMeshData, theSegmentsPolyMap.PolyMap);
 
   // Find a point with minimum distance respect
   // the end of reference link
@@ -2010,8 +2136,8 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
   Standard_Integer aPolyLen    = thePolygon.Length();
   for ( Standard_Integer aLinkIt = 3; aLinkIt <= aPolyLen; ++aLinkIt )
   {
-    Standard_Integer aLinkInfo = thePolygon( aLinkIt );
-    const BRepMesh_Edge& aNextEdge = GetEdge( Abs( aLinkInfo ) );
+    const Standard_Integer aLinkInfo = thePolygon( aLinkIt );
+    const BRepMesh_Edge&   aNextEdge = GetEdge( Abs( aLinkInfo ) );
 
     aPivotNode = aLinkInfo > 0 ? 
       aNextEdge.FirstNode() : 
@@ -2048,32 +2174,11 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
 
       BRepMesh_Edge aCheckLink( aLinkFirstNode, aPivotNode, BRepMesh_Free );
 
-      Standard_Integer aCheckLinkIt = 2;
-      for ( ; aCheckLinkIt <= aPolyLen; ++aCheckLinkIt )
-      {
-        if( aCheckLinkIt == aLinkIt )
-          continue;
-        
-        if ( !aBox.IsOut( thePolyBoxes.Value( aCheckLinkIt ) ) )
-        {
-          const BRepMesh_Edge& aPolyLink = 
-            GetEdge( Abs( thePolygon( aCheckLinkIt ) ) );
+      aSelector.SetCurrent  (aCheckLink, aBox, &thePolygon);
+      aSelector.SetSkipLink (thePolygon.First(), aLinkInfo);
 
-          if ( aCheckLink.IsEqual( aPolyLink ) )
-            continue;
-
-          // intersection is possible...                  
-          gp_Pnt2d anIntPnt;
-          BRepMesh_GeomTool::IntFlag aIntFlag = intSegSeg( aCheckLink, aPolyLink,
-            Standard_False, Standard_False, anIntPnt );
-
-          if( aIntFlag != BRepMesh_GeomTool::NoIntersection )
-          {
-            isIntersect = Standard_True;
-            break;
-          }
-        }
-      }
+      theSegmentsPolyMap.Boxes.Select (aSelector);
+      isIntersect = aSelector.IsIntersected();
 
       if ( isIntersect )
         break;
@@ -2092,8 +2197,8 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
 
   if ( aUsedLinkId == 0 )
   {
+    theSegmentsPolyMap.Rebind (thePolygon, nullptr);
     thePolygon.Clear();
-    thePolyBoxes.Clear();
     return;
   }
 
@@ -2119,14 +2224,14 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
 
   if (aUsedLinkId == 3)
   {
-    thePolygon.Remove  ( 1 );
-    thePolyBoxes.Remove( 1 );
+    theSegmentsPolyMap.Rebind (thePolygon.First(), nullptr);
+    thePolygon.Remove ( 1 );
 
     thePolygon.SetValue( 1, -aNewEdgesInfo[2] );
 
     Bnd_B2d aBox;
     UpdateBndBox(aRefVertices[0].Coord(), aRefVertices[2].Coord(), aBox);
-    thePolyBoxes.SetValue( 1, aBox );
+    theSegmentsPolyMap.Add (thePolygon.First(), aBox, &thePolygon);
   }
   else
   {
@@ -2136,24 +2241,26 @@ void BRepMesh_Delaun::decomposeSimplePolygon(
     if ( aUsedLinkId < aPolyLen )
     {
       thePolygon.Split(aUsedLinkId, thePolygonCut);
+
+      theSegmentsPolyMap.Rebind (thePolygonCut, &thePolygonCut);
+
       thePolygonCut.Prepend( -aNewEdgesInfo[2] );
-      thePolyBoxes.Split(aUsedLinkId, thePolyBoxesCut);
 
       Bnd_B2d aBox;
       UpdateBndBox(aRefVertices[0].Coord(), aRefVertices[2].Coord(), aBox);
-      thePolyBoxesCut.Prepend( aBox );
+      theSegmentsPolyMap.Add (thePolygonCut.First(), aBox, &thePolygonCut);
     }
     else
     {
+      theSegmentsPolyMap.Rebind(thePolygon.Last(), nullptr);
       thePolygon.Remove  ( aPolyLen );
-      thePolyBoxes.Remove( aPolyLen );
     }
 
-    thePolygon.SetValue( 1, -aNewEdgesInfo[1] );
+    thePolygon.SetValue (1, -aNewEdgesInfo[1]);
 
     Bnd_B2d aBox;
     UpdateBndBox(aRefVertices[1].Coord(), aRefVertices[2].Coord(), aBox);
-    thePolyBoxes.SetValue( 1, aBox );
+    theSegmentsPolyMap.Add (thePolygon.First(), aBox, &thePolygon);
   }
 }
 
@@ -2477,13 +2584,7 @@ BRepMesh_GeomTool::IntFlag BRepMesh_Delaun::intSegSeg(
   const Standard_Boolean isConsiderPointOnEdge,
   gp_Pnt2d&              theIntPnt) const
 {
-  gp_XY p1, p2, p3, p4;
-  p1 = GetVertex( theEdg1.FirstNode() ).Coord();
-  p2 = GetVertex( theEdg1.LastNode()  ).Coord();
-  p3 = GetVertex( theEdg2.FirstNode() ).Coord();
-  p4 = GetVertex( theEdg2.LastNode()  ).Coord();
-  
-  return BRepMesh_GeomTool::IntSegSeg(p1, p2, p3, p4,
+  return IntSegSeg (myMeshData, theEdg1, theEdg2,
     isConsiderEndPointTouch, isConsiderPointOnEdge, theIntPnt);
 }
 
