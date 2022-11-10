@@ -37,9 +37,7 @@ Draft_FaceInfo::Draft_FaceInfo (const Handle(Geom_Surface)& S,\
 				const Standard_Boolean HasNewGeometry):
        myNewGeom(HasNewGeometry)
 {
-  Handle(Geom_RectangularTrimmedSurface) T = Handle(Geom_RectangularTrimmedSurface)::DownCast(S);
-  if (!T.IsNull()) myGeom = T->BasisSurface();
-  else             myGeom = S;
+  myGeom = S;
 }
 
 

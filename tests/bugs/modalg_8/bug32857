@@ -1,0 +1,72 @@
+puts "================"
+puts "0032857: Problem when finding the intersection between a new face made after a draft and the inner face of body"
+puts "================"
+puts ""
+# Script reproducing the problematic draft case in FreeCAD issue #2497
+#Category: Modeling
+#Title: OCCT Tutorial pocketed ring
+
+pload MODELING VISUALIZATION
+
+# Set basic dimensions. Problems appear when inner_rad < pocket_center.
+dset height 10
+dset inner_rad 39
+dset outer_rad 50
+dset pocket_center 40
+dset pocket_rad 20
+dset pocket_depth 5
+
+# Construct base profile (the "my_ring")
+puts "Constructing my_ring..."
+
+circle c_inner 0 0 0 0 0 1 inner_rad
+circle c_outer 0 0 0 0 0 1 outer_rad
+mkedge e_inner c_inner
+mkedge e_outer c_outer
+wire w_inner e_inner
+wire w_outer e_outer
+
+plane p0
+mkface my_ring_inner_base p0 w_inner
+mkface my_ring_outer_base p0 w_outer
+
+prism my_ring_inner my_ring_inner_base 0 0 height
+prism my_ring_outer my_ring_outer_base 0 0 height
+
+bcut my_ring my_ring_outer my_ring_inner
+
+# Make the pocket
+puts "Constructing pocket..."
+
+circle pocket_base pocket_center 0 0 0 0 1 pocket_rad
+mkedge pocket_base pocket_base
+wire pocket_base pocket_base
+
+mkface pocket_base p0 pocket_base
+
+prism my_pocket pocket_base 0 0 pocket_depth
+
+# Make the cut
+puts "Making the cut"
+
+bcut slotted_ring my_ring my_pocket
+
+explode slotted_ring F
+
+# Make the draft
+puts "Drafting the face"
+
+# Found face by trial and error: slotted_ring_3
+# Perform the draft
+depouille slotted_ring_with_draft slotted_ring 0 0 -1 slotted_ring_3 44 0 1 0 0 0 1
+
+#checking result
+checkshape slotted_ring_with_draft
+checknbshapes slotted_ring_with_draft -shape 48 -vertex 12 -edge 18 -face 7 -wire 8
+checkprops slotted_ring_with_draft -s 11466.5 -v 28662.9
+
+puts "Showing result..."
+
+# Display result
+checkview -display slotted_ring_with_draft -2d -path ${imagedir}/${test_image}.png
+

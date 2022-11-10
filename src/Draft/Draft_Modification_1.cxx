@@ -1062,7 +1062,11 @@ void Draft_Modification::Perform ()
               //Find the first curve to glue
               TColGeom_SequenceOfCurve Candidates;
               if (S1->DynamicType() == STANDARD_TYPE(Geom_CylindricalSurface) ||
-                  S1->DynamicType() == STANDARD_TYPE(Geom_ConicalSurface)) 
+                  S1->DynamicType() == STANDARD_TYPE(Geom_ConicalSurface) ||
+                  S1->DynamicType() == STANDARD_TYPE(Geom_RectangularTrimmedSurface) &&
+                  Handle(Geom_RectangularTrimmedSurface)::DownCast(S1)->BasisSurface()->DynamicType() == STANDARD_TYPE(Geom_CylindricalSurface) ||
+                  S1->DynamicType() == STANDARD_TYPE(Geom_RectangularTrimmedSurface) &&
+                  Handle(Geom_RectangularTrimmedSurface)::DownCast(S1)->BasisSurface()->DynamicType() == STANDARD_TYPE(Geom_ConicalSurface))
               {
                 for (i = 1; i <= i2s.NbLines(); i++)
                 {
