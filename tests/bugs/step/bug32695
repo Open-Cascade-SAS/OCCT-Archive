@@ -1,0 +1,23 @@
+puts "============"
+puts "OCC32695"
+puts "============"
+puts ""
+#######################################################################
+# Data Exchange - Wrong cut sphere face in step export
+#######################################################################
+
+pload XDE OCAF MODELING VISUALIZATION
+psphere s 0.5
+plane p 0 0 0 1 0 0
+pcylinder c p 0.1 1.0
+bcut r s c
+vinit View1
+#vdisplay -dispMode 1 r; vsetcolor r RED
+vfit
+set aTmpFile "$imagedir/${casename}.stp"
+testwritestep "$aTmpFile" r
+testreadstep  "$aTmpFile" s
+file delete   "$aTmpFile"
+vdisplay -dispMode 1 s; vsetcolor s GREEN
+vfit
+checkview -screenshot -3d -path ${imagedir}/${test_image}.png
