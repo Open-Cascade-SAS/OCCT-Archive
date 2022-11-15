@@ -1,0 +1,14 @@
+puts "========"
+puts "0031586: BRepMesh hangs up"
+puts "========"
+puts ""
+
+puts "TODO OCC31586 All: Not connected mesh inside face"
+
+restore [locate_data_file bug31586.brep] result
+
+incmesh result 0.022627417117969499
+
+checkview -display result -3d -path ${imagedir}/${test_image}.png
+
+tricheck result

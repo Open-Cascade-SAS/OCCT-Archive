@@ -165,6 +165,42 @@ private:
   };
 
   typedef NCollection_DataMap<Standard_Integer, IMeshData::MapOfInteger> DataMapOfMap;
+  typedef NCollection_DataMap<Standard_Integer, void*>                   DataMapOfPVoid;
+  typedef NCollection_EBTree <Standard_Integer, Bnd_B2d>                 EBTreeOfB2d;
+  typedef NCollection_UBTreeFiller <Standard_Integer, Bnd_B2d>           EBTreeOfB2dFiller;
+  class EBTreeOfB2d_Selector;
+
+  struct SegmentsBoxes
+  {
+    EBTreeOfB2d    Boxes;
+    DataMapOfPVoid PolyMap;
+
+    void Rebind (const Standard_Integer theLinkInfo,
+                 void* const&           thePolygonPtr)
+    {
+      PolyMap.Bind (theLinkInfo, thePolygonPtr);
+    }
+
+    void Rebind (IMeshData::SequenceOfInteger& thePolygon,
+                 void* const&                  thePolygonPtr)
+    {
+      Standard_Integer aLinkIt = thePolygon.Lower();
+      for (; aLinkIt <= thePolygon.Upper(); ++aLinkIt)
+      {
+        const Standard_Integer aLinkInfo = thePolygon (aLinkIt);
+        Rebind (aLinkInfo, thePolygonPtr);
+      }
+    }
+
+    void Add (const Standard_Integer theLinkInfo,
+              const Bnd_B2d&         theBox,
+              void* const&           thePolygonPtr)
+    {
+      PolyMap.Bind (theLinkInfo, thePolygonPtr);
+      Boxes  .Add  (theLinkInfo, theBox);
+    }
+  };
+
 
   //! Performs initialization of circles cell filter tool.
   void initCirclesTool (const Bnd_Box2d&       theBox,
@@ -245,14 +281,12 @@ private:
   //! In case if source polygon consists of three links, creates new triangle 
   //! and clears source container.
   //! @param thePolygon source polygon to be decomposed (first part of decomposition).
-  //! @param thePolyBoxes bounding boxes corresponded to source polygon's links.
   //! @param thePolygonCut product of decomposition of source polygon (second part of decomposition).
-  //! @param thePolyBoxesCut bounding boxes corresponded to resulting polygon's links.
+  //! @param theSegmentsBoxes map of relations between semgents and their polygons.
   void decomposeSimplePolygon (
     IMeshData::SequenceOfInteger& thePolygon,
-    IMeshData::SequenceOfBndB2d&  thePolyBoxes,
     IMeshData::SequenceOfInteger& thePolygonCut,
-    IMeshData::SequenceOfBndB2d&  thePolyBoxesCut);
+    SegmentsBoxes&                theSegmentsBoxes);
 
   //! Triangulation of closed polygon containing only three edges.
   Standard_Boolean meshElementaryPolygon (const IMeshData::SequenceOfInteger& thePolygon);
