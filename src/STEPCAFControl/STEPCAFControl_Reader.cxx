@@ -16,8 +16,11 @@
 #include <STEPCAFControl_Reader.hxx>
 
 #include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <Geom_Axis2Placement.hxx>
 #include <Geom_CartesianPoint.hxx>
+#include <Geom_Line.hxx>
 #include <Geom_Plane.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <Interface_InterfaceModel.hxx>
@@ -64,6 +67,7 @@
 #include <STEPControl_Reader.hxx>
 #include <StepGeom_GeometricRepresentationItem.hxx>
 #include <StepGeom_Axis2Placement3d.hxx>
+#include <StepGeom_Curve.hxx>
 #include <StepGeom_Direction.hxx>
 #include <StepDimTol_AngularityTolerance.hxx>
 #include <StepDimTol_CircularRunoutTolerance.hxx>
@@ -753,7 +757,6 @@ Standard_Boolean STEPCAFControl_Reader::Transfer (STEPControl_Reader &reader,
 
   // Update assembly compounds
   STool->UpdateAssemblies();
-
   return Standard_True;
 }
 
@@ -2072,6 +2075,46 @@ void readAnnotation(const Handle(XSControl_TransferReader)& theTR,
 }
 
 //=======================================================================
+//function : computePMIReferensePosition
+//purpose  : compute position of shape contains in the shapeAspect
+//=======================================================================
+Standard_Boolean computePMIReferensePosition(const Handle(StepRepr_ShapeAspect)& theReference,
+                                             const Interface_Graph& theGraph,
+                                             gp_Pnt& thePosition)
+{
+  if (theReference.IsNull())
+    return Standard_False;
+  Handle(StepAP242_GeometricItemSpecificUsage) aGISU = NULL;
+  for (Interface_EntityIterator anIt = theGraph.Sharings(theReference); aGISU.IsNull() && anIt.More(); anIt.Next())
+  {
+    aGISU = Handle(StepAP242_GeometricItemSpecificUsage)::DownCast(anIt.Value());
+  }
+  if (aGISU.IsNull() || aGISU->NbIdentifiedItem() == 0)
+    return Standard_False;
+  const Handle(StepRepr_RepresentationItem)& anItem = aGISU->IdentifiedItem()->Value(1);
+  if (anItem->IsKind(STANDARD_TYPE(StepGeom_CartesianPoint)))
+  {
+    Handle(StepGeom_CartesianPoint) aPoint = Handle(StepGeom_CartesianPoint)::DownCast(anItem);
+    thePosition.SetX(aPoint->CoordinatesValue(1));
+    thePosition.SetY(aPoint->CoordinatesValue(2));
+    thePosition.SetZ(aPoint->CoordinatesValue(3));
+    return Standard_True;
+  }
+  else if (anItem->IsKind(STANDARD_TYPE(StepGeom_Axis2Placement3d)))
+  {
+    Handle(StepGeom_Axis2Placement3d) anA2P3D = Handle(StepGeom_Axis2Placement3d)::DownCast(anItem);
+    if (!anA2P3D->Location().IsNull())
+    {
+      thePosition.SetX(anA2P3D->Location()->CoordinatesValue(1));
+      thePosition.SetY(anA2P3D->Location()->CoordinatesValue(2));
+      thePosition.SetZ(anA2P3D->Location()->CoordinatesValue(3));
+      return Standard_True;
+    }
+  }
+  return Standard_False;
+}
+
+//=======================================================================
 //function : readConnectionPoints
 //purpose  : read connection points for given dimension
 //=======================================================================
@@ -2103,82 +2146,32 @@ void readConnectionPoints(const Handle(XSControl_TransferReader)& theTR,
     aFact = UnitsMethods::LengthFactor();
   }
   
-  if (theGDT->IsKind(STANDARD_TYPE(StepShape_DimensionalSize))) {
-    // retrieve derived geometry
+  if (theGDT->IsKind(STANDARD_TYPE(StepShape_DimensionalSize)))
+  {
     Handle(StepShape_DimensionalSize) aDim = Handle(StepShape_DimensionalSize)::DownCast(theGDT);
-    Handle(StepRepr_DerivedShapeAspect) aDSA = Handle(StepRepr_DerivedShapeAspect)::DownCast(aDim->AppliesTo());
-    if (aDSA.IsNull())
-      return;
-    Handle(StepAP242_GeometricItemSpecificUsage) aGISU = NULL;
-    for (Interface_EntityIterator anIt = aGraph.Sharings(aDSA); aGISU.IsNull() && anIt.More(); anIt.Next()) {
-      aGISU = Handle(StepAP242_GeometricItemSpecificUsage)::DownCast(anIt.Value());
+    gp_Pnt aPnt;
+    if (computePMIReferensePosition(aDim->AppliesTo(), aGraph, aPnt))
+    {
+      // set connection point to object
+      aPnt.SetXYZ(aPnt.XYZ() * aFact);
+      theDimObject->SetPoint(aPnt);
     }
-    if (aGISU.IsNull() || aGISU->NbIdentifiedItem() == 0)
-      return;
-    Handle(StepGeom_CartesianPoint) aPoint = Handle(StepGeom_CartesianPoint)::DownCast(aGISU->IdentifiedItem()->Value(1));
-    if (aPoint.IsNull()) {
-      // try Axis2Placement3d.location instead of CartesianPoint
-      Handle(StepGeom_Axis2Placement3d) anA2P3D =
-        Handle(StepGeom_Axis2Placement3d)::DownCast(aGISU->IdentifiedItem()->Value(1));
-      if (anA2P3D.IsNull())
-        return;
-      aPoint = anA2P3D->Location();
-    }
-
-    // set connection point to object
-    gp_Pnt aPnt(aPoint->CoordinatesValue(1) * aFact, aPoint->CoordinatesValue(2) * aFact, aPoint->CoordinatesValue(3) * aFact);
-    theDimObject->SetPoint(aPnt);
   }
-  else if (theGDT->IsKind(STANDARD_TYPE(StepShape_DimensionalLocation))) {
-    // retrieve derived geometry
+  else if (theGDT->IsKind(STANDARD_TYPE(StepShape_DimensionalLocation)))
+  {
     Handle(StepShape_DimensionalLocation) aDim = Handle(StepShape_DimensionalLocation)::DownCast(theGDT);
-    Handle(StepRepr_DerivedShapeAspect) aDSA1 = Handle(StepRepr_DerivedShapeAspect)::DownCast(aDim->RelatingShapeAspect());
-    Handle(StepRepr_DerivedShapeAspect) aDSA2 = Handle(StepRepr_DerivedShapeAspect)::DownCast(aDim->RelatedShapeAspect());
-    if (aDSA1.IsNull() && aDSA2.IsNull())
-      return;
-    Handle(StepAP242_GeometricItemSpecificUsage) aGISU1 = NULL;
-    Handle(StepAP242_GeometricItemSpecificUsage) aGISU2 = NULL;
-    if (!aDSA1.IsNull()) {
-      for (Interface_EntityIterator anIt = aGraph.Sharings(aDSA1); aGISU1.IsNull() && anIt.More(); anIt.Next()) {
-        aGISU1 = Handle(StepAP242_GeometricItemSpecificUsage)::DownCast(anIt.Value());
-      }
+    gp_Pnt aPnt;
+    if (computePMIReferensePosition(aDim->RelatingShapeAspect(), aGraph, aPnt))
+    {
+      // set connection point to object
+      aPnt.SetXYZ(aPnt.XYZ() * aFact);
+      theDimObject->SetPoint(aPnt);
     }
-    if (!aDSA2.IsNull()) {
-      for (Interface_EntityIterator anIt = aGraph.Sharings(aDSA2); aGISU2.IsNull() && anIt.More(); anIt.Next()) {
-        aGISU2 = Handle(StepAP242_GeometricItemSpecificUsage)::DownCast(anIt.Value());
-      }
-    }
-    // first point
-    if (!aGISU1.IsNull() && aGISU1->NbIdentifiedItem() > 0) {
-      Handle(StepGeom_CartesianPoint) aPoint = Handle(StepGeom_CartesianPoint)::DownCast(aGISU1->IdentifiedItem()->Value(1));
-      if (aPoint.IsNull()) {
-        // try Axis2Placement3d.location instead of CartesianPoint
-        Handle(StepGeom_Axis2Placement3d) anA2P3D =
-          Handle(StepGeom_Axis2Placement3d)::DownCast(aGISU1->IdentifiedItem()->Value(1));
-        if (!anA2P3D.IsNull())
-          aPoint = anA2P3D->Location();
-      }
-      if (!aPoint.IsNull()) {
-        // set connection point to object
-        gp_Pnt aPnt(aPoint->CoordinatesValue(1) * aFact, aPoint->CoordinatesValue(2) * aFact, aPoint->CoordinatesValue(3) * aFact);
-        theDimObject->SetPoint(aPnt);
-      }
-    }
-    // second point
-    if (!aGISU2.IsNull() && aGISU2->NbIdentifiedItem() > 0) {
-      Handle(StepGeom_CartesianPoint) aPoint = Handle(StepGeom_CartesianPoint)::DownCast(aGISU2->IdentifiedItem()->Value(1));
-      if (aPoint.IsNull()) {
-        // try Axis2Placement3d.location instead of CartesianPoint
-        Handle(StepGeom_Axis2Placement3d) anA2P3D =
-          Handle(StepGeom_Axis2Placement3d)::DownCast(aGISU2->IdentifiedItem()->Value(1));
-        if (!anA2P3D.IsNull())
-          aPoint = anA2P3D->Location();
-      }
-      if (!aPoint.IsNull()) {
-        // set connection point to object
-        gp_Pnt aPnt(aPoint->CoordinatesValue(1) * aFact, aPoint->CoordinatesValue(2) * aFact, aPoint->CoordinatesValue(3) * aFact);
-        theDimObject->SetPoint2(aPnt);
-      }
+    if (computePMIReferensePosition(aDim->RelatedShapeAspect(), aGraph, aPnt))
+    {
+      // set connection point to object
+      aPnt.SetXYZ(aPnt.XYZ() * aFact);
+      theDimObject->SetPoint2(aPnt);
     }
   }
 }
@@ -2792,8 +2785,9 @@ TDF_Label STEPCAFControl_Reader::createGDTObjectInXCAF(const Handle(Standard_Tra
   NCollection_Sequence<Handle(Standard_Transient)> aSeqRI1, aSeqRI2;
 
   // Collect all Shape_Aspect entities
-  Interface_EntityIterator anIter = aGraph.Shareds(theEnt);
-  for (anIter.Start(); anIter.More(); anIter.Next()) {
+  for (Interface_EntityIterator anIter = aGraph.Shareds(theEnt);
+       anIter.More(); anIter.Next())
+  {
     Handle(Standard_Transient) anAtr = anIter.Value();
     NCollection_Sequence<Handle(StepRepr_ShapeAspect)> aSAs;
     if (anAtr->IsKind(STANDARD_TYPE(StepRepr_ProductDefinitionShape)))
@@ -3082,65 +3076,15 @@ TDF_Label STEPCAFControl_Reader::createGDTObjectInXCAF(const Handle(Standard_Tra
   TDF_LabelSequence aShLS1, aShLS2;
 
   // Collect shapes
-  for (Standard_Integer i = aSeqRI1.Lower(); i <= aSeqRI1.Upper();i++)
+  for (NCollection_Sequence<Handle(Standard_Transient)>::Iterator anIter(aSeqRI1);
+       anIter.More(); anIter.Next())
   {
-    Standard_Integer anIndex = FindShapeIndexForDGT(aSeqRI1.Value(i), theWS);
-    TopoDS_Shape aSh;
-    if (anIndex > 0) {
-      Handle(Transfer_Binder) aBinder = aTP->MapItem(anIndex);
-      aSh = TransferBRep::ShapeResult(aBinder);
-    }
-    if (!aSh.IsNull())
-    {
-      TDF_Label aShL;
-      aSTool->Search(aSh, aShL, Standard_True, Standard_True, Standard_True);
-      if (aShL.IsNull() && aSh.ShapeType() == TopAbs_WIRE)
-      {
-        TopExp_Explorer ex(aSh, TopAbs_EDGE, TopAbs_SHAPE);
-        while (ex.More())
-        {
-          TDF_Label edgeL;
-          aSTool->Search(ex.Current(), edgeL, Standard_True, Standard_True, Standard_True);
-          if (!edgeL.IsNull())
-            aShLS1.Append(edgeL);
-          ex.Next();
-        }
-      }
-      if (!aShL.IsNull())
-        aShLS1.Append(aShL);
-    }
+    findReferenceGeometry(anIter.Value(), aSTool, aShLS1);
   }
-  if (!aSeqRI2.IsEmpty())
+  for (NCollection_Sequence<Handle(Standard_Transient)>::Iterator anIter(aSeqRI2);
+       anIter.More(); anIter.Next())
   {
-    //for dimensional location
-    for (Standard_Integer i = aSeqRI2.Lower(); i <= aSeqRI2.Upper();i++)
-    {
-      Standard_Integer anIndex = FindShapeIndexForDGT(aSeqRI2.Value(i), theWS);
-      TopoDS_Shape aSh;
-      if (anIndex > 0) {
-        Handle(Transfer_Binder) aBinder = aTP->MapItem(anIndex);
-        aSh = TransferBRep::ShapeResult(aBinder);
-      }
-      if (!aSh.IsNull())
-      {
-        TDF_Label aShL;
-        aSTool->Search(aSh, aShL, Standard_True, Standard_True, Standard_True);
-        if (aShL.IsNull() && aSh.ShapeType() == TopAbs_WIRE)
-        {
-          TopExp_Explorer ex(aSh, TopAbs_EDGE, TopAbs_SHAPE);
-          while (ex.More())
-          {
-            TDF_Label edgeL;
-            aSTool->Search(ex.Current(), edgeL, Standard_True, Standard_True, Standard_True);
-            if (!edgeL.IsNull())
-              aShLS2.Append(edgeL);
-            ex.Next();
-          }
-        }
-        if (!aShL.IsNull())
-          aShLS2.Append(aShL);
-      }
-    }
+    findReferenceGeometry(anIter.Value(), aSTool, aShLS2);
   }
 
   if (!aShLS1.IsEmpty())
@@ -3199,6 +3143,183 @@ TDF_Label STEPCAFControl_Reader::createGDTObjectInXCAF(const Handle(Standard_Tra
     readDatumsAP242(theEnt, aGDTL, theDoc, theWS);
   }
   return aGDTL;
+}
+
+//=======================================================================
+//function : findReferenceGeometry
+//purpose  :
+//=======================================================================
+Standard_Boolean STEPCAFControl_Reader::findReferenceGeometry(const Handle(Standard_Transient)& theShapeStart,
+                                                              const Handle(XCAFDoc_ShapeTool)& theShTool,
+                                                              TDF_LabelSequence& theShLabelSeq)
+{
+  const Handle(XSControl_TransferReader)& aTR = myReader.WS()->TransferReader();
+  const Handle(Transfer_TransientProcess)& aTP = aTR->TransientProcess();
+  TopoDS_Shape aSh = TransferBRep::ShapeResult(aTP, theShapeStart);
+  if (!aSh.IsNull())
+  {
+    TDF_Label aShL;
+    theShTool->Search(aSh, aShL, Standard_True, Standard_True, Standard_True);
+    if (aShL.IsNull() && aSh.ShapeType() == TopAbs_WIRE)
+    {
+      for (TopExp_Explorer anExp(aSh, TopAbs_EDGE, TopAbs_SHAPE);
+           anExp.More(); anExp.Next())
+      {
+        TDF_Label anEdgeL;
+        theShTool->Search(anExp.Current(), anEdgeL, Standard_True, Standard_True, Standard_True);
+        if (!anEdgeL.IsNull())
+        {
+          theShLabelSeq.Append(anEdgeL);
+        }
+      }
+    }
+    if (!aShL.IsNull())
+    {
+      theShLabelSeq.Append(aShL);
+      return Standard_True;
+    }
+  }
+  TDF_Label aFindResultL;
+  if (myGDTMap.Find(theShapeStart, aFindResultL))
+  {
+    theShLabelSeq.Append(aFindResultL);
+    return Standard_True;
+  }
+  const Handle(StepGeom_GeometricRepresentationItem)& aGeomItem =
+    Handle(StepGeom_GeometricRepresentationItem)::DownCast(theShapeStart);
+  if (aGeomItem.IsNull())
+  {
+    return Standard_False;
+  }
+  if (theShapeStart->IsKind(STANDARD_TYPE(StepGeom_Curve)))
+  {
+    const Handle(StepGeom_Curve)& aStepCurve = Handle(StepGeom_Curve)::DownCast(theShapeStart);
+    Handle(Geom_Curve) aCurve = StepToGeom::MakeCurve(aStepCurve);
+    if (aCurve.IsNull())
+    {
+      return Standard_False;
+    }
+    BRepBuilderAPI_MakeEdge aMaker;
+    if (aCurve->IsKind(STANDARD_TYPE(Geom_Line)))
+    {
+      const Standard_Real aScale = UnitsMethods::LengthFactor();
+      aMaker.Init(aCurve, 0, 1. * aScale);
+    }
+    else
+    {
+      aMaker.Init(aCurve);
+    }
+    if (aMaker.IsDone())
+    {
+      aSh = aMaker.Shape();
+    }
+  }
+  else if (theShapeStart->IsKind(STANDARD_TYPE(StepGeom_Surface)))
+  {
+    const Handle(StepGeom_Surface)& aStepSurface = Handle(StepGeom_Surface)::DownCast(theShapeStart);
+    Handle(Geom_Surface) aSurface = StepToGeom::MakeSurface(aStepSurface);
+    if (aSurface.IsNull())
+    {
+      return Standard_False;
+    }
+    BRepBuilderAPI_MakeFace aMaker;
+    if (aSurface->IsKind(STANDARD_TYPE(Geom_Plane)))
+    {
+      const Standard_Real aScale = UnitsMethods::LengthFactor();
+      aMaker.Init(aSurface, 0., 1. * aScale, 0., 1. * aScale, Precision::Confusion());
+    }
+    else
+    {
+      aMaker.Init(aSurface, Standard_True, Precision::Confusion());
+    }
+    if (aMaker.IsDone())
+    {
+      aSh = aMaker.Shape();
+    }
+  }
+  if (aSh.IsNull())
+  {
+    return Standard_False;
+  }
+  if (mySupplementalLabel.IsNull())
+  {
+    mySupplementalLabel = theShTool->NewShape();
+    TDataStd_Name::Set(mySupplementalLabel, "Supplemental Geometry");
+    TDataStd_UAttribute::Set(mySupplementalLabel, XCAFDoc::SupplementalContainerGUID());
+    TDataStd_UAttribute::Set(mySupplementalLabel, XCAFDoc::InvisibleGUID());
+  }
+  TDF_Label aSupGeomLabel = theShTool->AddComponent(mySupplementalLabel, aSh);
+  if (aSupGeomLabel.IsNull())
+  {
+    return Standard_False;
+  }
+  TDataStd_UAttribute::Set(aSupGeomLabel, XCAFDoc::SupplementalGeometryGUID());
+
+  if (!aGeomItem->Name().IsNull())
+  {
+    TDataStd_Name::Set(aSupGeomLabel, aGeomItem->Name()->String());
+    TDF_Label aReferredShapeL;
+    theShTool->GetReferredShape(aSupGeomLabel, aReferredShapeL);
+    TDataStd_Name::Set(aReferredShapeL, aGeomItem->Name()->String());
+    TDataStd_UAttribute::Set(aReferredShapeL, XCAFDoc::SupplementalGeometryGUID());
+  }
+  TDF_Label aRefL;
+  const Interface_Graph& aGraph = aTP->Graph();
+  for (Interface_EntityIterator anIter(aGraph.Sharings(theShapeStart));
+       anIter.More() && aRefL.IsNull(); anIter.Next())
+  {
+    Handle(StepAP242_GeometricItemSpecificUsage) aPGISU =
+      Handle(StepAP242_GeometricItemSpecificUsage)::DownCast(anIter.Value());
+    if (aPGISU.IsNull())
+    {
+      continue;
+    }
+    Handle(StepRepr_ShapeAspect) aShAspect = aPGISU->Definition().ShapeAspect();
+    if (aShAspect.IsNull())
+    {
+      continue;
+    }
+    Handle(StepRepr_ProductDefinitionShape) aRefPDS =  aShAspect->OfShape();
+    if (aRefPDS.IsNull())
+    {
+      continue;
+    }
+    TopoDS_Shape aRefSh = TransferBRep::ShapeResult(aTP, aRefPDS->Definition().Value());
+    theShTool->Search(aRefSh, aRefL, Standard_True, Standard_True, Standard_False);
+  }
+
+  if (aRefL.IsNull())
+  {
+    TDF_LabelSequence aFreeShapes;
+    theShTool->GetFreeShapes(aFreeShapes);
+    for(TDF_LabelSequence::Iterator anIter(aFreeShapes); anIter.More() && aRefL.IsNull(); anIter.Next())
+    {
+      const TDF_Label aLabel = anIter.Value();
+      Handle(TDataStd_UAttribute) aSupGeomAttr;
+      if (aLabel.FindAttribute(XCAFDoc::SupplementalContainerGUID(), aSupGeomAttr))
+      {
+        continue;
+      }
+      TopoDS_Shape aTmpShape = theShTool->GetShape(aLabel);
+      if (!aTmpShape.IsNull())
+      {
+        aRefL = aLabel;
+      }
+    }
+  }
+  if (aRefL.IsNull())
+  {
+    return Standard_False;
+  }
+
+  // set reference
+  Handle(TDataStd_TreeNode) aMainNode = TDataStd_TreeNode::Set(aRefL, XCAFDoc::SupplementalRefGUID());
+  Handle(TDataStd_TreeNode) aRefNode = TDataStd_TreeNode::Set(aSupGeomLabel, XCAFDoc::SupplementalRefGUID());
+  aRefNode->Remove(); // abv: fix against bug in TreeNode::Append()
+  aMainNode->Append(aRefNode);
+  myGDTMap.Bind(theShapeStart, aSupGeomLabel);
+  theShLabelSeq.Append(aSupGeomLabel);
+  return Standard_True;
 }
 
 //=======================================================================

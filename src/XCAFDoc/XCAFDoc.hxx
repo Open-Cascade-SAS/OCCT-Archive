@@ -72,6 +72,15 @@ public:
   
   //! Returns GUID for TreeNode representing assembly link
   Standard_EXPORT static const Standard_GUID& ShapeRefGUID();
+
+  //! Returns GUID for TreeNode representing compound of supplemental geometry
+  Standard_EXPORT static const Standard_GUID& SupplementalContainerGUID();
+
+  //! Returns GUID for TreeNode representing reference for supplemental geometry
+  Standard_EXPORT static const Standard_GUID& SupplementalRefGUID();
+
+  //! Returns GUID for TreeNode representing supplemental geometry
+  Standard_EXPORT static const Standard_GUID& SupplementalGeometryGUID();
   
   //! Return GUIDs for TreeNode representing specified types of colors
   Standard_EXPORT static const Standard_GUID& ColorRefGUID (const XCAFDoc_ColorType type);

@@ -291,9 +291,18 @@ private:
     const Handle(TDocStd_Document)& theDoc,
     const Handle(XSControl_WorkSession)& theWS);
 
+  //! Finds reference geometry or create supplemental geometry label
+  //! @param[in] theShapeStart step entity to get reference
+  //! @param[in] theShTool tool to work with shape labels
+  //! @param[out] theShLabelSeq container to put reference label
+  //! @return TRUE if a reference is found or supplemental geometry is added
+  Standard_Boolean findReferenceGeometry(const Handle(Standard_Transient)& theShapeStart,
+                                         const Handle(XCAFDoc_ShapeTool)& theShTool,
+                                         TDF_LabelSequence& theShLabelSeq);
 
   STEPControl_Reader myReader;
   NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> myFiles;
+  TDF_Label mySupplementalLabel;
   Standard_Boolean myColorMode;
   Standard_Boolean myNameMode;
   Standard_Boolean myLayerMode;
