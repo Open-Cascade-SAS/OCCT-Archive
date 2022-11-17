@@ -481,7 +481,7 @@ Standard_Boolean Draft_Modification::Propagate ()
           Handle(Geom_Surface)::DownCast(S->Transformed(L.Transformation()));
 
         const Handle(Standard_Type)& typs = S->DynamicType();
-        if (typs == STANDARD_TYPE(Geom_CylindricalSurface) ||
+        if (/*typs == STANDARD_TYPE(Geom_CylindricalSurface) ||*/
             typs == STANDARD_TYPE(Geom_ConicalSurface)) {
           Standard_Real umin,umax,vmin,vmax;
           BRepTools::UVBounds(F,umin,umax,vmin,vmax);

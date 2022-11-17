@@ -245,6 +245,18 @@ endif (USE_QT)
 if (EXECUTABLE_PROJECT)
   add_executable (${PROJECT_NAME} ${USED_SRCFILES} ${USED_INCFILES} ${USED_RCFILE} ${RESOURCE_FILES} ${${PROJECT_NAME}_MOC_FILES})
 
+  if (DEFINED ${PROJECT_NAME}_DISABLE_COTIRE AND ${PROJECT_NAME}_DISABLE_COTIRE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
+  else()
+    # To avoid excluding of PROJECT_NAME from cotire tool, we may use cotire
+    # COTIRE_PREFIX_HEADER_IGNORE_PATH instead. But, practically it causes many 'undefined symbols' error.
+    # So, we just exclude PROJECT_NAME from cotire list.
+    # if (DEFINED ${PROJECT_NAME}_COTIRE_IGNORE_PATH)
+    #   set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_PREFIX_HEADER_IGNORE_PATH "${${PROJECT_NAME}_COTIRE_IGNORE_PATH}")
+    # endif()
+  endif()
+
   install (TARGETS ${PROJECT_NAME}
            DESTINATION "${INSTALL_DIR_BIN}\${OCCT_INSTALL_BIN_LETTER}")
 
@@ -253,6 +265,18 @@ if (EXECUTABLE_PROJECT)
   endif()
 else()
   add_library (${PROJECT_NAME} ${USED_SRCFILES} ${USED_INCFILES} ${USED_RCFILE} ${RESOURCE_FILES} ${${PROJECT_NAME}_MOC_FILES})
+
+  if (DEFINED ${PROJECT_NAME}_DISABLE_COTIRE AND ${PROJECT_NAME}_DISABLE_COTIRE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_ADD_UNITY_BUILD FALSE)
+  else()
+    # To avoid excluding of PROJECT_NAME from cotire tool, we may use cotire
+    # COTIRE_PREFIX_HEADER_IGNORE_PATH instead. But, practically it causes many 'undefined symbols' error.
+    # So, we just exclude PROJECT_NAME from cotire list.
+    # if (DEFINED ${PROJECT_NAME}_COTIRE_IGNORE_PATH)
+    #   set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_PREFIX_HEADER_IGNORE_PATH "${${PROJECT_NAME}_COTIRE_IGNORE_PATH}")
+    # endif()
+  endif()
 
   if (MSVC)
     if (BUILD_FORCE_RelWithDebInfo)
@@ -346,6 +370,10 @@ foreach (USED_ITEM ${USED_EXTERNLIB_AND_TOOLKITS})
             add_definitions (-DHAVE_GLES2)
           endif()
 
+          if ("${CURRENT_CSF}" STREQUAL "${CSF_Draco}")
+            set (CURRENT_CSF "")
+            set (USED_DRACO 1)
+          endif()
           set (LIBRARY_FROM_CACHE 0)
           separate_arguments (CURRENT_CSF)
           foreach (CSF_LIBRARY ${CURRENT_CSF})
@@ -373,7 +401,7 @@ foreach (USED_ITEM ${USED_EXTERNLIB_AND_TOOLKITS})
             endforeach()
           endforeach()
 
-          if (NOT ${LIBRARY_FROM_CACHE})
+          if (NOT ${LIBRARY_FROM_CACHE} AND NOT "${CURRENT_CSF}" STREQUAL "")
             # prepare a list from a string with whitespaces
             separate_arguments (CURRENT_CSF)
             list (APPEND USED_EXTERNAL_LIBS_BY_CURRENT_PROJECT ${CURRENT_CSF})
@@ -383,6 +411,28 @@ foreach (USED_ITEM ${USED_EXTERNLIB_AND_TOOLKITS})
     endif()
   endif()
 endforeach()
+
+if (USE_DRACO)
+  if (USED_DRACO)
+    set (USED_LIB_RELEASE ${3RDPARTY_DRACO_LIBRARY})
+    if (WIN32)
+      set (USED_LIB_DEBUG ${3RDPARTY_DRACO_LIBRARY_DEBUG})
+    else()
+      set (USED_LIB_DEBUG ${3RDPARTY_DRACO_LIBRARY})
+    endif()
+    set (USED_LIB_CONF)
+    if (EXISTS ${USED_LIB_DEBUG})
+      set (USED_LIB_CONF "$<$<CONFIG:DEBUG>:${USED_LIB_DEBUG}>;${USED_LIB_CONF}")
+    endif()
+    if (EXISTS ${USED_LIB_RELEASE})
+      set (USED_LIB_CONF "$<$<CONFIG:RELEASE>:${USED_LIB_RELEASE}>;${USED_LIB_CONF}")
+      set (USED_LIB_CONF "$<$<CONFIG:RELWITHDEBINFO>:${USED_LIB_RELEASE}>;${USED_LIB_CONF}")
+    endif()
+    if (DEFINED USED_LIB_CONF)
+      set_property (TARGET ${PROJECT_NAME} APPEND PROPERTY LINK_LIBRARIES "${USED_LIB_CONF}")
+    endif()
+  endif()
+endif()
 
 if (APPLE)
   list (FIND USED_EXTERNAL_LIBS_BY_CURRENT_PROJECT X11 IS_X11_FOUND)
