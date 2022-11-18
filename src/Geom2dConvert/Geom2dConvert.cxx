@@ -519,7 +519,6 @@ static Handle(Geom2d_BSplineCurve) MultNumandDenom(const Handle(Geom2d_BSplineCu
   Handle(TColStd_HArray1OfReal)      resKnots;
   Handle(TColStd_HArray1OfInteger)   resMults; 
   Standard_Real                      start_value,end_value;
-  Standard_Real                      tolerance=Precision::Confusion();
   Standard_Integer                   resNbPoles,degree,
                                      ii,jj,
 				     aStatus;
@@ -531,6 +530,7 @@ static Handle(Geom2d_BSplineCurve) MultNumandDenom(const Handle(Geom2d_BSplineCu
   BS->KnotSequence(BSFlatKnots);
   start_value = BSKnots(1);
   end_value = BSKnots(BS->NbKnots());
+  Standard_Real tolerance = 10.*Epsilon(Abs(end_value));
 
   a->Knots(aKnots);
   a->Poles(aPoles);
