@@ -1,0 +1,22 @@
+puts "========"
+puts "0031395: Mesh - BRepMesh produces poor mesh on shape with hidden self-intersections"
+puts "========"
+puts ""
+
+restore [locate_data_file log368.brep] result
+
+tclean result
+incmesh result 0.2
+
+vinit
+vsetdispmode 1
+vdefaults -autoTriang 0
+
+checkview -display result -3d -path ${imagedir}/${test_image}.png
+
+set log [tricheck result]
+if { [llength $log] != 0 } {
+  puts "Error : Invalid mesh"
+} else {
+  puts "Mesh is OK"
+}

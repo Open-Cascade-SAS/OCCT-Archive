@@ -226,7 +226,7 @@ Standard_Boolean BRepMesh_CurveTessellator::isInToleranceOfVertex (
   const TopoDS_Vertex& theVertex) const
 {
   const gp_Pnt        aPoint     = BRep_Tool::Pnt(theVertex);
-  const Standard_Real aTolerance = BRep_Tool::Tolerance(theVertex);
+  const Standard_Real aTolerance = BRep_Tool::Tolerance(theVertex) * 1.1;
 
   return (thePoint.SquareDistance (aPoint) < aTolerance * aTolerance);
 }
@@ -243,9 +243,9 @@ Standard_Boolean BRepMesh_CurveTessellator::Value (
   thePoint     = myDiscretTool.Value     (theIndex);
   theParameter = myDiscretTool.Parameter (theIndex);
 
-  /*if (!isInToleranceOfVertex(thePoint, myFirstVertex) &&
+  if (!isInToleranceOfVertex(thePoint, myFirstVertex) &&
       !isInToleranceOfVertex(thePoint, myLastVertex))
-  {*/
+  {
     if (!myCurve.IsCurveOnSurface())
     {
       return Standard_True;
@@ -281,9 +281,9 @@ Standard_Boolean BRepMesh_CurveTessellator::Value (
     aSurface->D0(aUV.X(), aUV.Y(), aPntOnSurf);
 
     return (thePoint.SquareDistance(aPntOnSurf) < myEdgeSqTol);
-  /*}
+  }
 
-  return Standard_False;*/
+  return Standard_False;
 }
 
 //=======================================================================
