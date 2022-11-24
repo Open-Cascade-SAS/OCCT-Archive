@@ -279,7 +279,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(void)
 void IntAna_QuadQuadGeo::InitTolerances()
 {
   myEPSILON_DISTANCE               = 1.0e-14;
-  myEPSILON_ANGLE_CONE             = Precision::Angular();
+  myEPSILON_ANGLE_CONE             = 1.0e-10; //Precision::Angular();
   myEPSILON_MINI_CIRCLE_RADIUS     = 0.01*Precision::Confusion();
   myEPSILON_CYLINDER_DELTA_RADIUS  = 1.0e-13;
   myEPSILON_CYLINDER_DELTA_DISTANCE= Precision::Confusion();
