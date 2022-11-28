@@ -43,7 +43,7 @@
 #endif
 
 #ifndef OCCT_MMGT_OPT_DEFAULT
-#define OCCT_MMGT_OPT_DEFAULT 0
+#define OCCT_MMGT_OPT_DEFAULT 1
 #endif
 
 //=======================================================================
