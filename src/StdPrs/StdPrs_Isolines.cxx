@@ -40,6 +40,8 @@
 #include <TColgp_SequenceOfPnt2d.hxx>
 #include <Standard_ErrorHandler.hxx>
 #include <Geom_Surface.hxx>
+#include <Geom_OffsetSurface.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
 
 #include <algorithm>
 
@@ -173,7 +175,9 @@ void StdPrs_Isolines::AddOnTriangulation (const TopoDS_Face&          theFace,
   // Evaluate parameters for uv isolines.
   TColStd_SequenceOfReal aUIsoParams;
   TColStd_SequenceOfReal aVIsoParams;
-  UVIsoParameters (theFace, aNbIsoU, aNbIsoV, theDrawer->MaximalParameterValue(), aUIsoParams, aVIsoParams);
+  Standard_Real aUmin = 0., aUmax = 0., aVmin = 0., aVmax = 0.;
+  UVIsoParameters (theFace, aNbIsoU, aNbIsoV, theDrawer->MaximalParameterValue(), aUIsoParams, aVIsoParams,
+                   aUmin, aUmax, aVmin, aVmax);
 
   // Access surface definition.
   TopLoc_Location aLocSurface;
@@ -196,6 +200,24 @@ void StdPrs_Isolines::AddOnTriangulation (const TopoDS_Face&          theFace,
   {
     aSurface = Handle (Geom_Surface)::DownCast (
       aSurface->Transformed ((aLocSurface / aLocTriangulation).Transformation()));
+  }
+
+  const Handle(Standard_Type)& TheType = aSurface->DynamicType();
+  if (TheType == STANDARD_TYPE(Geom_OffsetSurface))
+  {
+    Standard_Real u1, u2, v1, v2;
+    aSurface->Bounds(u1, u2, v1, v2);
+    //Isolines of Offset surfaces are calculated by approximation and
+    //cannot be calculated for infinite limits.
+    if (Precision::IsInfinite(u1) || Precision::IsInfinite(u2) ||
+      Precision::IsInfinite(v1) || Precision::IsInfinite(v2))
+    {
+      u1 = Max (aUmin, u1);
+      u2 = Min (aUmax, u2);
+      v1 = Max (aVmin, v1);
+      v2 = Min (aVmax, v2);
+      aSurface = new Geom_RectangularTrimmedSurface(aSurface, u1, u2, v1, v2);
+    }
   }
 
   addOnTriangulation (aTriangulation, aSurface, aLocTriangulation, aUIsoParams, aVIsoParams, theUPolylines, theVPolylines);
@@ -328,7 +350,9 @@ void StdPrs_Isolines::AddOnSurface (const TopoDS_Face&          theFace,
 
   // Evaluate parameters for uv isolines.
   TColStd_SequenceOfReal aUIsoParams, aVIsoParams;
-  UVIsoParameters (theFace, aNbIsoU, aNbIsoV, theDrawer->MaximalParameterValue(), aUIsoParams, aVIsoParams);
+  Standard_Real aUmin = 0., aUmax = 0., aVmin = 0., aVmax = 0.;
+  UVIsoParameters (theFace, aNbIsoU, aNbIsoV, theDrawer->MaximalParameterValue(), aUIsoParams, aVIsoParams,
+                   aUmin, aUmax, aVmin, aVmax);
 
   BRepAdaptor_Surface aSurface (theFace);
   addOnSurface (new BRepAdaptor_HSurface (aSurface),
@@ -584,19 +608,12 @@ void StdPrs_Isolines::UVIsoParameters (const TopoDS_Face&      theFace,
                                        const Standard_Integer  theNbIsoV,
                                        const Standard_Real     theUVLimit,
                                        TColStd_SequenceOfReal& theUIsoParams,
-                                       TColStd_SequenceOfReal& theVIsoParams)
+                                       TColStd_SequenceOfReal& theVIsoParams,
+                                       Standard_Real& theUmin,
+                                       Standard_Real& theUmax,
+                                       Standard_Real& theVmin,
+                                       Standard_Real& theVmax)
 {
-  Standard_Real aUmin = 0.0;
-  Standard_Real aUmax = 0.0;
-  Standard_Real aVmin = 0.0;
-  Standard_Real aVmax = 0.0;
-
-  BRepTools::UVBounds (theFace, aUmin, aUmax, aVmin, aVmax);
-
-  aUmin = Max (aUmin, -theUVLimit);
-  aUmax = Min (aUmax,  theUVLimit);
-  aVmin = Max (aVmin, -theUVLimit);
-  aVmax = Min (aVmax,  theUVLimit);
 
   TopLoc_Location aLocation;
   const Handle(Geom_Surface)& aSurface = BRep_Tool::Surface (theFace, aLocation);
@@ -604,6 +621,23 @@ void StdPrs_Isolines::UVIsoParameters (const TopoDS_Face&      theFace,
   {
     return;
   }
+
+  BRepTools::UVBounds (theFace, theUmin, theUmax, theVmin, theVmax);
+
+  Standard_Real aUmin = theUmin;
+  Standard_Real aUmax = theUmax;
+  Standard_Real aVmin = theVmin;
+  Standard_Real aVmax = theVmax;
+
+  if (Precision::IsInfinite (aUmin))
+    aUmin = -theUVLimit;
+  if (Precision::IsInfinite (aUmax))
+    aUmax = theUVLimit;
+  if (Precision::IsInfinite (aVmin))
+    aVmin = -theUVLimit;
+  if (Precision::IsInfinite (aVmax))
+    aVmax = theUVLimit;
+
 
   const Standard_Boolean isUClosed = aSurface->IsUClosed();
   const Standard_Boolean isVClosed = aSurface->IsVClosed();
