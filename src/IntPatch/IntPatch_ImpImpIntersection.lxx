@@ -71,3 +71,9 @@ inline const Handle(IntPatch_Line)& IntPatch_ImpImpIntersection::Line (const Sta
   if (!IsDone ()) { throw StdFail_NotDone(); }
   return slin(Index);
 }
+
+inline void IntPatch_ImpImpIntersection::SetAngularTolerance (Standard_Real theAngularTolerance)
+{
+  myAngularTolerance = theAngularTolerance;
+  myUseAngularTolerance = Standard_True;
+}

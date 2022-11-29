@@ -29,7 +29,8 @@ IntPatch_ImpImpIntersection::IntPatch_ImpImpIntersection ():
 myDone(IntStatus_Fail),
 empt(Standard_True),
 tgte(Standard_False),
-oppo(Standard_False)
+oppo(Standard_False),
+myUseAngularTolerance(Standard_False)
 {
 }
 //=======================================================================
@@ -231,7 +232,7 @@ void IntPatch_ImpImpIntersection::Perform(const Handle(Adaptor3d_Surface)&  S1,
     }
     //
     case 33: { // Cone/Cone
-      if (!IntCoCo(quad1, quad2, TolTang, empt, SameSurf, multpoint, slin, spnt)) {
+      if (!IntCoCo(quad1, quad2, TolTang, empt, SameSurf, multpoint, slin, spnt, myUseAngularTolerance, myAngularTolerance)) {
         return;
       }
       bEmpty = empt;

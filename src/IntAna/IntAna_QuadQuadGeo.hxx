@@ -61,6 +61,9 @@ public:
   //! Empty constructor.
   Standard_EXPORT IntAna_QuadQuadGeo();
   
+  //! Constructor with angular tolerance
+  Standard_EXPORT IntAna_QuadQuadGeo(Standard_Real theAngularTolerance, Standard_Boolean theUseAngularTolerance);
+  
   //! Creates the intersection between two planes.
   //! TolAng is the angular tolerance used to determine
   //! if the planes are parallel.
@@ -261,7 +264,8 @@ protected:
   Standard_Real myEPSILON_AXES_PARA;
   Standard_Boolean myCommonGen;
   gp_Pnt myPChar;
-
+  Standard_Real myAngularTolerance;
+  Standard_Boolean myUseAngularTolerance;
 
 private:
 

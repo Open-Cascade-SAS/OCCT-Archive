@@ -146,3 +146,12 @@ inline GeomInt_IntSS::GeomInt_IntSS ()
 {
   return myIntersector.Point(Index).Value();
 }
+
+//=======================================================================
+//function : SetAngularTolerance
+//purpose  : 
+//=======================================================================
+inline void GeomInt_IntSS::SetAngularTolerance (Standard_Real theAngularTolerance)
+{
+  myIntersector.SetAngularTolerance(theAngularTolerance);
+}

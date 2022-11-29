@@ -108,8 +108,8 @@ public:
   //! An exception is raised if Index<=0 or Index>NbLine.
     const Handle(IntPatch_Line)& Line (const Standard_Integer Index) const;
 
-
-
+  //! Sets the angular tolerance
+  void SetAngularTolerance (Standard_Real theAngularTolerance);
 
 protected:
 
@@ -128,7 +128,8 @@ private:
   IntPatch_SequenceOfPoint spnt;
   IntPatch_SequenceOfLine slin;
   IntPatch_TheSOnBounds solrst;
-
+  Standard_Real myAngularTolerance;
+  Standard_Boolean myUseAngularTolerance;
 
 };
 

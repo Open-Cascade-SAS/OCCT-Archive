@@ -53,7 +53,8 @@ IntPatch_Intersection::IntPatch_Intersection ()
    myU1Start(0.0),
    myV1Start(0.0),
    myU2Start(0.0),
-   myV2Start(0.0)
+   myV2Start(0.0),
+   myUseAngularTolerance(Standard_False)
 {
 }
 
@@ -76,7 +77,8 @@ IntPatch_Intersection::IntPatch_Intersection(const Handle(Adaptor3d_Surface)&  S
    myU1Start(0.0),
    myV1Start(0.0),
    myU2Start(0.0),
-   myV2Start(0.0)
+   myV2Start(0.0),
+   myUseAngularTolerance(Standard_False)
 {
   if(myTolArc<1e-8) myTolArc=1e-8;
   if(myTolTang<1e-8) myTolTang=1e-8;
@@ -102,7 +104,8 @@ IntPatch_Intersection::IntPatch_Intersection(const Handle(Adaptor3d_Surface)&  S
    myU1Start(0.0),
    myV1Start(0.0),
    myU2Start(0.0),
-   myV2Start(0.0)
+   myV2Start(0.0),
+   myUseAngularTolerance(Standard_False)
 {
   Perform(S1,D1,TolArc,TolTang);
 }
@@ -127,6 +130,12 @@ void IntPatch_Intersection::SetTolerances(const Standard_Real TolArc,
   //if(myUVMaxStep<1.0e-3) myUVMaxStep=1e-3;
   if(myFleche>10) myFleche=10;
   if(myUVMaxStep>0.5) myUVMaxStep=0.5;
+}
+
+void IntPatch_Intersection::SetAngularTolerance (Standard_Real theAngularTolerance)
+{
+  myAngularTolerance = theAngularTolerance;
+  myUseAngularTolerance = Standard_True;
 }
 
 //======================================================================
@@ -1354,8 +1363,13 @@ void IntPatch_Intersection::GeomGeomPerfom(const Handle(Adaptor3d_Surface)& theS
                                            const GeomAbs_SurfaceType theTyps2,
                                            const Standard_Boolean theIsReqToKeepRLine)
 {
-  IntPatch_ImpImpIntersection interii(theS1,theD1,theS2,theD2,
-                                      myTolArc,myTolTang, theIsReqToKeepRLine);
+  IntPatch_ImpImpIntersection interii;
+
+  if (myUseAngularTolerance)
+  {
+    interii.SetAngularTolerance(myAngularTolerance);
+  }
+  interii.Perform(theS1, theD1, theS2, theD2, myTolArc, myTolTang, theIsReqToKeepRLine);
 
   if (!interii.IsDone())
   {

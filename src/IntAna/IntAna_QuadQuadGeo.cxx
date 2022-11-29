@@ -254,24 +254,53 @@ gp_Ax2 DirToAx2(const gp_Pnt& P,const gp_Dir& D)
 //purpose  : Empty constructor
 //=======================================================================
 IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(void)
-    : done(Standard_False),
-      nbint(0),
-      typeres(IntAna_Empty),
-      pt1(0,0,0),
-      pt2(0,0,0),
-      pt3(0,0,0),
-      pt4(0,0,0),
-      param1(0),
-      param2(0),
-      param3(0),
-      param4(0),
-      param1bis(0),
-      param2bis(0),
-      myCommonGen(Standard_False),
-      myPChar(0,0,0)
+: done(Standard_False),
+  nbint(0),
+  typeres(IntAna_Empty),
+  pt1(0,0,0),
+  pt2(0,0,0),
+  pt3(0,0,0),
+  pt4(0,0,0),
+  param1(0),
+  param2(0),
+  param3(0),
+  param4(0),
+  param1bis(0),
+  param2bis(0),
+  myCommonGen(Standard_False),
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
 }
+
+//=======================================================================
+//function : IntAna_QuadQuadGeo
+//purpose  : Constructor with angular tolerance
+//=======================================================================
+IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(Standard_Real theAngularTolerance, Standard_Boolean theUseAngularTolerance)
+: done(Standard_False),
+  nbint(0),
+  typeres(IntAna_Empty),
+  pt1(0,0,0),
+  pt2(0,0,0),
+  pt3(0,0,0),
+  pt4(0,0,0),
+  param1(0),
+  param2(0),
+  param3(0),
+  param4(0),
+  param1bis(0),
+  param2bis(0),
+  myCommonGen(Standard_False),
+  myPChar(0,0,0),
+  myAngularTolerance(theAngularTolerance),
+  myUseAngularTolerance(theUseAngularTolerance)
+{
+  InitTolerances();
+}
+
 //=======================================================================
 //function : InitTolerances
 //purpose  : 
@@ -279,12 +308,20 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(void)
 void IntAna_QuadQuadGeo::InitTolerances()
 {
   myEPSILON_DISTANCE               = 1.0e-14;
-  myEPSILON_ANGLE_CONE             = Precision::Angular();
+  if (myUseAngularTolerance)
+  {
+    myEPSILON_ANGLE_CONE             = myAngularTolerance;
+  }
+  else
+  {
+    myEPSILON_ANGLE_CONE             = Precision::Angular();
+  }
   myEPSILON_MINI_CIRCLE_RADIUS     = 0.01*Precision::Confusion();
   myEPSILON_CYLINDER_DELTA_RADIUS  = 1.0e-13;
   myEPSILON_CYLINDER_DELTA_DISTANCE= Precision::Confusion();
   myEPSILON_AXES_PARA              = Precision::Angular();
 }
+
 //=======================================================================
 //function : IntAna_QuadQuadGeo
 //purpose  : Pln  Pln 
@@ -307,7 +344,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Pln& P1,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(P1,P2,TolAng,Tol);
@@ -652,7 +691,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo( const gp_Pln& P
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(P,Co,Tolang,Tol);
@@ -868,7 +909,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Pln& P,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(P,S);
@@ -937,7 +980,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl1,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Cyl1,Cyl2,Tol);
@@ -1222,7 +1267,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Cyl,Con,Tol);
@@ -1278,7 +1325,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Cyl,Sph,Tol);
@@ -1344,7 +1393,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Con1,Con2,Tol);
@@ -1800,7 +1851,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Sph,Con,Tol);
@@ -1912,7 +1965,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Sph1,Sph2,Tol);
@@ -2026,7 +2081,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Pln& Pln,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Pln,Tor,Tol);
@@ -2138,7 +2195,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Cyl,Tor,Tol);
@@ -2221,7 +2280,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cone& Con,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Con,Tor,Tol);
@@ -2359,7 +2420,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Sphere& Sph,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Sph,Tor,Tol);
@@ -2456,7 +2519,9 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Torus& Tor1,
   param1bis(0),
   param2bis(0),
   myCommonGen(Standard_False),
-  myPChar(0,0,0)
+  myPChar(0,0,0),
+  myAngularTolerance(0.0),
+  myUseAngularTolerance(Standard_False)
 {
   InitTolerances();
   Perform(Tor1,Tor2,Tol);
@@ -2692,6 +2757,7 @@ const gp_Pnt& IntAna_QuadQuadGeo::PChar() const
 {
   return myPChar;
 }
+
 //=======================================================================
 //function : RefineDir
 //purpose  : 

@@ -125,7 +125,9 @@ static Standard_Boolean IntCoCo(const IntSurf_Quadric&,
 				Standard_Boolean&,
 				Standard_Boolean&,
 				IntPatch_SequenceOfLine&,
-				IntPatch_SequenceOfPoint&);
+				IntPatch_SequenceOfPoint&,
+				Standard_Boolean theUseAngularTolerance = Standard_False,
+				Standard_Real theAngularTolerance = 0.0);
 
 //torus
 static Standard_Boolean IntPTo(const IntSurf_Quadric&,

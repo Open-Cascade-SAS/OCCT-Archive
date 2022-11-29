@@ -90,6 +90,9 @@ public:
   
   Standard_EXPORT void TolFixTangents (Standard_Real& aTolCheck, Standard_Real& aTolAngCheck);
   
+  //! Set angular tolerance
+  Standard_EXPORT void SetAngularTolerance (Standard_Real theAngularTolerance);
+  
   //! converts RLine to Geom(2d)_Curve.
   Standard_EXPORT static void TreatRLine (const Handle(IntPatch_RLine)& theRL, const Handle(GeomAdaptor_Surface)& theHS1, const Handle(GeomAdaptor_Surface)& theHS2, Handle(Geom_Curve)& theC3d, Handle(Geom2d_Curve)& theC2d1, Handle(Geom2d_Curve)& theC2d2, Standard_Real& theTolReached);
   

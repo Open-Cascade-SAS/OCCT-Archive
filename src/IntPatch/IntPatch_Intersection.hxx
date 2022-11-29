@@ -62,6 +62,8 @@ public:
   //! points in their respective parametric spaces.
   Standard_EXPORT void SetTolerances (const Standard_Real TolArc, const Standard_Real TolTang, const Standard_Real UVMaxStep, const Standard_Real Fleche);
   
+  Standard_EXPORT void SetAngularTolerance (Standard_Real theAngularTolerance);
+  
   //! Flag theIsReqToKeepRLine has been entered only for
   //! compatibility with TopOpeBRep package. It shall be deleted
   //! after deleting TopOpeBRep.
@@ -197,7 +199,8 @@ private:
   Standard_Real myV1Start;
   Standard_Real myU2Start;
   Standard_Real myV2Start;
-
+  Standard_Real myAngularTolerance;
+  Standard_Boolean myUseAngularTolerance;
 
 };
 
