@@ -208,6 +208,9 @@ public:
   Standard_EXPORT Standard_Boolean ObjectTransformation (const Standard_Integer theX, const Standard_Integer theY,
                                                          const Handle(V3d_View)& theView, gp_Trsf& theTrsf);
 
+  //! Moves the manipulator and objests to the location of the mouse.
+  Standard_EXPORT void SetMouse (const Standard_Integer theX, const Standard_Integer theY, const Handle(V3d_View)& theView);
+
   //! Make inactive the current selected manipulator part and reset current axis index and current mode.
   //! After its call HasActiveMode() returns false.
   //! @sa HasActiveMode()
@@ -278,13 +281,68 @@ public: //! @name Setters for parameters
   //! Sets position of the manipulator object.
   Standard_EXPORT void SetPosition (const gp_Ax2& thePosition);
 
-  Standard_ShortReal Size() const { return myAxes[0].Size(); }
-
-  //! Sets size (length of side of the manipulator cubic bounding box.
-  Standard_EXPORT void SetSize (const Standard_ShortReal theSideLength);
+  //! Gets gaps between translator, scaler and rotator sub-presentations.
+  Standard_ShortReal Gap() const { return myIndent; }
 
   //! Sets gaps between translator, scaler and rotator sub-presentations.
   Standard_EXPORT void SetGap (const Standard_ShortReal theValue);
+
+  //! Sets the angular size of the rotation disk.
+  Standard_EXPORT void SetArcAngle (const Standard_ShortReal theStartAngle, const Standard_ShortReal theFinishAngle);
+
+  //! Gets the thickness of the translation axis.
+  Standard_ShortReal AxisRadius() const { return myAxisRadius; }
+
+  //! Sets the thickness of the translation axis.
+  Standard_EXPORT void SetAxisRadius (const Standard_ShortReal theValue);
+
+  //! Gets thickness of the rotation disk.
+  Standard_ShortReal DiskThickness() const { return myDiskThickness; }
+
+  //! Sets thickness of the rotation disk.
+  Standard_EXPORT void SetDiskThickness (const Standard_ShortReal theDiskThickness);
+
+  //! Gets inner radius of the rotation disk.
+  Standard_ShortReal InnerRadius() const { return myInnerRadius; }
+
+  //! Sets inner radius of the rotation disk.
+  Standard_EXPORT void SetInnerRadius (const Standard_ShortReal theInnerRadius);
+
+  //! Gets length of the translation axis.
+  Standard_ShortReal ArrowLengthFactor() const { return myLength; }
+
+  //! Sets length of the translation axis.
+  Standard_EXPORT void SetArrowLengthFactor (const Standard_ShortReal theArrowLengthFactor);
+
+  //! Gets length of the arrow tip of the translation axis.
+  Standard_ShortReal ArrowHeadLength() const { return myArrowHeadLength; }
+
+  //! Sets length of the arrow tip of the translation axis.
+  Standard_EXPORT void SetArrowHeadLength (const Standard_ShortReal theArrowHeadLength);
+
+  //! Gets size of drag plane.
+  Standard_ShortReal DragPlaneSize() const { return myDragPlaneSize; }
+
+  //! Sets size of drag plane.
+  Standard_EXPORT void SetDragPlaneSize (const Standard_ShortReal theDragPlaneSize);
+
+  //! Gets size of the scaling box.
+  Standard_ShortReal BoxSize() const { return myBoxSize; }
+
+  //! Sets size of the scaling box.
+  Standard_EXPORT void SetBoxSize (const Standard_ShortReal theBoxSize);
+
+  //! Sets the sensitivity of the translation part.
+  void SetTranslatorSensitivity (const Standard_Integer theSensitivity) { myTranslatorSensitivity = theSensitivity; }
+
+  //! Sets the sensitivity of the rotation part.
+  void SetRotatorSensitivity (const Standard_Integer theSensitivity) { myRotatorSensitivity = theSensitivity; }
+
+  //! Sets the sensitivity of the scale part.
+  void SetScalerSensitivity (const Standard_Integer theSensitivity) { myScalerSensitivity = theSensitivity; }
+
+  //! Sets the sensitivity of the dragging part.
+  void SetDraggerSensitivity (const Standard_Integer theSensitivity) { myDraggerSensitivity = theSensitivity; }
 
 public:
 
@@ -359,6 +417,8 @@ protected:
 
   Standard_EXPORT void adjustSize (const Bnd_Box& theBox);
 
+  Standard_EXPORT void setSize (const Standard_ShortReal theSideLength);
+
   Standard_EXPORT void setTransformPersistence (const Handle(Graphic3d_TransformPers)& theTrsfPers);
 
   //! Redefines local transformation management method to inform user of inproper use.
@@ -398,24 +458,18 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
   public:
 
     Disk()
-      : Quadric(),
-      myInnerRad(0.0f),
-      myOuterRad(1.0f)
+      : Quadric()
     { }
 
     ~Disk() { }
 
     void Init (const Standard_ShortReal theInnerRadius,
                const Standard_ShortReal theOuterRadius,
-               const gp_Ax1& thePosition,
-               const Standard_Integer theSlicesNb = 20,
-               const Standard_Integer theStacksNb = 20);
-
-  protected:
-
-    gp_Ax1             myPosition;
-    Standard_ShortReal myInnerRad;
-    Standard_ShortReal myOuterRad;
+               const gp_Ax1&            thePosition,
+               const Standard_ShortReal theStartAngle,
+               const Standard_ShortReal theEndAngle,
+               const Standard_Integer   theSlicesNb = 20,
+               const Standard_Integer   theStacksNb = 20);
   };
 
   class Sphere : public Quadric
@@ -472,11 +526,9 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
 
     ~Sector() { }
 
-    void Init(const Standard_ShortReal theRadius,
-              const gp_Ax1&            thePosition,
-              const gp_Dir&            theXDirection,
-              const Standard_Integer   theSlicesNb = 5,
-              const Standard_Integer   theStacksNb = 5);
+    void Init (const Standard_ShortReal theSize,
+               const gp_Ax1&            thePosition,
+               const gp_Dir&            theXDirection);
 
   protected:
 
@@ -499,7 +551,8 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
 
     void Compute (const Handle(PrsMgr_PresentationManager)& thePrsMgr,
                   const Handle(Prs3d_Presentation)& thePrs,
-                  const Handle(Prs3d_ShadingAspect)& theAspect);
+                  const Handle(Prs3d_ShadingAspect)& theAspect,
+                  const Handle(AIS_Manipulator)& theManipulator);
 
     const gp_Ax1& ReferenceAxis() const { return myReferenceAxis; }
 
@@ -567,15 +620,19 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
 
     void SetScaling (const Standard_Boolean theIsEnabled) { myHasScaling = theIsEnabled; }
 
-    void SetDragging(const Standard_Boolean theIsEnabled) { myHasDragging = theIsEnabled; }
+    void SetDragging (const Standard_Boolean theIsEnabled) { myHasDragging = theIsEnabled; }
+
+    void SetArcAngle (const Standard_ShortReal theStartAngle, const Standard_ShortReal theEndAngle)
+    {
+      myStartAngle = theStartAngle;
+      myEndAngle = theEndAngle;
+    }
+
+    Standard_ShortReal StartAngle() const { return myStartAngle; }
+
+    Standard_ShortReal EndAngle() const { return myEndAngle; }
 
     Quantity_Color Color() const { return myColor; }
-
-    Standard_ShortReal AxisLength() const { return myLength; }
-
-    Standard_ShortReal AxisRadius() const { return myAxisRadius; }
-
-    void SetAxisRadius (const Standard_ShortReal theValue) { myAxisRadius = theValue; }
 
     const Handle(Prs3d_Presentation)& TranslatorHighlightPrs() const { return myHighlightTranslator; }
 
@@ -595,32 +652,6 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
 
     const Handle(Graphic3d_ArrayOfTriangles)& TriangleArray() const { return myTriangleArray; }
 
-    void SetIndent (const Standard_ShortReal theValue) { myIndent = theValue; }
-
-    Standard_ShortReal Size() const { return myLength + myBoxSize + myDiskThickness + myIndent * 2.0f; }
-
-    gp_Pnt ScalerCenter (const gp_Pnt& theLocation) const { return theLocation.XYZ() + myPosition.Direction().XYZ() * (myLength + myIndent + myBoxSize * 0.5f); }
-
-    void SetSize (const Standard_ShortReal theValue)
-    {
-      if (myIndent > theValue * 0.1f)
-      {
-        myLength = theValue * 0.7f;
-        myBoxSize = theValue * 0.15f;
-        myDiskThickness = theValue * 0.05f;
-        myIndent = theValue * 0.05f;
-      }
-      else // use pre-set value of predent
-      {
-        Standard_ShortReal aLength = theValue - 2 * myIndent;
-        myLength = aLength * 0.8f;
-        myBoxSize = aLength * 0.15f;
-        myDiskThickness = aLength * 0.05f;
-      }
-      myInnerRadius = myIndent * 2 + myBoxSize + myLength;
-      myAxisRadius = myBoxSize / 4.0f;
-    }
-
     Standard_Integer FacettesNumber() const { return myFacettesNumber; }
 
   public:
@@ -628,29 +659,22 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
     const gp_Pnt& TranslatorTipPosition() const { return myArrowTipPos; }
     const Sector& DraggerSector() const { return mySector; }
     const Disk& RotatorDisk() const { return myCircle; }
-    float RotatorDiskRadius() const { return myCircleRadius; }
     const Cube& ScalerCube() const { return myCube; }
     const gp_Pnt& ScalerCubePosition() const { return myCubePos; }
 
   protected:
 
     gp_Ax1 myReferenceAxis; //!< Returns reference axis assignment.
-    gp_Ax1 myPosition; //!< Position of the axis including local transformation.
+    gp_Ax1 myPosition;      //!< Position of the axis including local transformation.
     Quantity_Color myColor;
 
     Standard_Boolean myHasTranslation;
-    Standard_ShortReal myLength; //!< Length of translation axis.
-    Standard_ShortReal myAxisRadius;
-
     Standard_Boolean myHasScaling;
-    Standard_ShortReal myBoxSize; //!< Size of scaling cube.
-
     Standard_Boolean myHasRotation;
-    Standard_ShortReal myInnerRadius; //!< Radius of rotation circle.
-    Standard_ShortReal myDiskThickness;
-    Standard_ShortReal myIndent; //!< Gap between visual part of the manipulator.
-
     Standard_Boolean myHasDragging;
+
+    Standard_ShortReal myStartAngle;      //!< Start angle of the arc.
+    Standard_ShortReal myEndAngle;        //!< End angle of the arc.
 
   protected:
 
@@ -659,7 +683,6 @@ protected: //! @name Auxiliary classes to fill presentation with proper primitiv
     gp_Pnt   myArrowTipPos;
     Sector   mySector;
     Disk     myCircle;
-    float    myCircleRadius;
     Cube     myCube;
     gp_Pnt   myCubePos;
 
@@ -682,6 +705,23 @@ protected:
   Axis myAxes[3]; //!< Tree axes of the manipulator.
   Sphere myCenter; //!< Visual part displaying the center sphere of the manipulator.
   gp_Ax2 myPosition; //!< Position of the manipulator object. it displays its location and position of its axes.
+
+  Standard_ShortReal myLength;          //!< Length of translation axis.
+  Standard_ShortReal myArrowHeadLength; //!< Length of the arrow tip.
+  Standard_ShortReal myAxisRadius;      //!< Radius of axis.
+
+  Standard_ShortReal myBoxSize;         //!< Size of scaling cube.
+
+  Standard_ShortReal myInnerRadius;     //!< Radius of rotation circle.
+  Standard_ShortReal myDiskThickness;   //!< Thickness of the rotating disc.
+  Standard_ShortReal myIndent;          //!< Gap between visual part of the manipulator.
+
+  Standard_ShortReal myDragPlaneSize;   //!< Size of the plane to drag.
+
+  Standard_Integer myTranslatorSensitivity;
+  Standard_Integer myRotatorSensitivity;
+  Standard_Integer myScalerSensitivity;
+  Standard_Integer myDraggerSensitivity;
 
   Standard_Integer myCurrentIndex; //!< Index of active axis.
   AIS_ManipulatorMode myCurrentMode; //!< Name of active manipulation mode.

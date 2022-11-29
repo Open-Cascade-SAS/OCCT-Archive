@@ -12859,9 +12859,16 @@ static int VManipulator (Draw_Interpretor& theDi,
   aCmd.AddOption ("followDragging",    "... {0|1} - set following dragging transform");
   aCmd.AddOption ("gap",               "... value - set gap between sub-parts");
   aCmd.AddOption ("part",              "... axis mode {0|1} - set visual part");
-  aCmd.AddOption ("parts",             "... all axes mode {0|1} - set visual part");
+  aCmd.AddOption ("parts",             "... all mode {0|1} - set visual part");
+  aCmd.AddOption ("angle",             "... startAngle endAngle - set arc angle");
+  aCmd.AddOption ("axisrad",           "... radius - set axis radius");
+  aCmd.AddOption ("diskthickness",     "... value - set disk thickness");
+  aCmd.AddOption ("innerrad",          "... radius - set axis radius");
+  aCmd.AddOption ("arrlen",            "... len - set axis lenght");
+  aCmd.AddOption ("arrheadlen",        "... len - set length of the arrow tip");
+  aCmd.AddOption ("dragplanesize",     "... size - set size of the drag plane");
+  aCmd.AddOption ("boxsize",           "... size - set size os scaling box");
   aCmd.AddOption ("pos",               "... x y z [nx ny nz [xx xy xz]] - set position of manipulator");
-  aCmd.AddOption ("size",              "... size - set size of manipulator");
   aCmd.AddOption ("zoomable",          "... {0|1} - set zoom persistence");
 
   aCmd.Parse (theArgsNb, theArgVec);
@@ -12978,7 +12985,84 @@ static int VManipulator (Draw_Interpretor& theDi,
       return 1;
     }
 
-    aManipulator->SetPart(static_cast<AIS_ManipulatorMode>(aMode), aOnOff);
+    aManipulator->SetPart (static_cast<AIS_ManipulatorMode>(aMode), aOnOff);
+  }
+  if (aCmd.HasOption ("angle", 2, Standard_True))
+  {
+    Standard_Integer aStartAngle = aCmd.ArgInt ("angle", 0);
+    Standard_Integer anEndAngle = aCmd.ArgInt ("angle", 1);
+    aManipulator->SetArcAngle (Standard_ShortReal (aStartAngle * M_PI / 180.0f),
+                               Standard_ShortReal (anEndAngle * M_PI / 180.0f));
+  }
+  if (aCmd.HasOption ("axisrad", 1, Standard_True))
+  {
+    Standard_ShortReal aRadius = aCmd.ArgFloat ("axisrad", 0);
+    if (aRadius <= 0 )
+    {
+      Message::SendFail ("Syntax error: radius value should be positive");
+      return 1;
+    }
+    aManipulator->SetAxisRadius (aRadius);
+  }
+  if (aCmd.HasOption("diskthickness", 1, Standard_True))
+  {
+    Standard_ShortReal aDiskThickness = aCmd.ArgFloat ("diskthickness", 0);
+    if (aDiskThickness <= 0)
+    {
+      Message::SendFail ("Syntax error: disk thickness value should be positive");
+      return 1;
+    }
+    aManipulator->SetDiskThickness (aDiskThickness);
+  }
+  if (aCmd.HasOption("innerrad", 1, Standard_True))
+  {
+    Standard_ShortReal anInnerRadius = aCmd.ArgFloat ("innerrad", 0);
+    if (anInnerRadius <= 0)
+    {
+      Message::SendFail ("Syntax error: disk thickness value should be positive");
+      return 1;
+    }
+    aManipulator->SetInnerRadius (anInnerRadius);
+  }
+  if (aCmd.HasOption ("arrlen", 1, Standard_True))
+  {
+    Standard_ShortReal anArrowLength = aCmd.ArgFloat ("arrlen", 0);
+    if (anArrowLength <= 0)
+    {
+      Message::SendFail ("Syntax error: arrow lenght value should be positive");
+      return 1;
+    }
+    aManipulator->SetArrowLengthFactor (anArrowLength);
+  }
+  if (aCmd.HasOption ("arrheadlen", 1, Standard_True))
+  {
+    Standard_ShortReal anArrowHeadLength = aCmd.ArgFloat ("arrheadlen", 0);
+    if (anArrowHeadLength <= 0)
+    {
+      Message::SendFail ("Syntax error: arrow head lenght value should be positive");
+      return 1;
+    }
+    aManipulator->SetArrowHeadLength (anArrowHeadLength);
+  }
+  if (aCmd.HasOption ("dragplanesize", 1, Standard_True))
+  {
+    Standard_ShortReal aDragPlaneSize = aCmd.ArgFloat ("dragplanesize", 0);
+    if (aDragPlaneSize <= 0)
+    {
+      Message::SendFail ("Syntax error: drag plane size should be positive");
+      return 1;
+    }
+    aManipulator->SetDragPlaneSize (aDragPlaneSize);
+  }
+  if (aCmd.HasOption ("boxsize", 1, Standard_True))
+  {
+    Standard_ShortReal aBoxSize = aCmd.ArgFloat ("boxsize", 0);
+    if (aBoxSize <= 0)
+    {
+      Message::SendFail ("Syntax error: box size should be positive");
+      return 1;
+    }
+    aManipulator->SetBoxSize (aBoxSize);
   }
   if (aCmd.HasOption ("pos", 3, Standard_True))
   {
@@ -12988,18 +13072,13 @@ static int VManipulator (Draw_Interpretor& theDi,
 
     aManipulator->SetPosition (gp_Ax2 (aLocation, aVDir, aXDir));
   }
-  if (aCmd.HasOption ("size", 1, Standard_True))
-  {
-    aManipulator->SetSize (aCmd.ArgFloat ("size"));
-  }
   if (aCmd.HasOption ("zoomable", 1, Standard_True))
   {
     aManipulator->SetZoomPersistence (!aCmd.ArgBool ("zoomable"));
 
     if (ViewerTest::GetAISContext()->IsDisplayed (aManipulator))
     {
-      ViewerTest::GetAISContext()->Remove  (aManipulator, Standard_False);
-      ViewerTest::GetAISContext()->Display (aManipulator, Standard_False);
+      ViewerTest::GetAISContext()->Redisplay (aManipulator, Standard_False);
     }
   }
 
@@ -14929,9 +15008,17 @@ void ViewerTest::ViewerCommands(Draw_Interpretor& theCommands)
       "\n      '-followDragging    {0|1}'        - set following dragging transform"
       "\n      '-gap value'                      - set gap between sub-parts"
       "\n      '-part axis mode    {0|1}'        - set visual part"
-      "\n      '-parts axis mode   {0|1}'        - set visual part"
+      "\n      '-parts mode        {0|1}'        - set visual part"
+      "\n      '-angle startAngle endAngle       - set arc angle"
+      "\n      '-axisrad radius                  - set axis radius"
+      "\n      '-diskthickness value             - set disk thickness"
+      "\n      '-innerrad radius                 - set axis radius"
+      "\n      '-arrlen len                      - set axis lenght"
+      "\n      '-arrheadlen len                  - set length of the arrow tip"
+      "\n      '-dragplanesize size              - set size of the drag plane"
+      "\n      '-boxsize size                    - set size os scaling box"
       "\n      '-pos x y z [nx ny nz [xx xy xz]' - set position of manipulator"
-      "\n      '-size value'                     - set size of manipulator"
+      //"\n      '-size value'                     - set size of manipulator"
       "\n      '-zoomable {0|1}'                 - set zoom persistence",
     __FILE__, VManipulator, group);
 
