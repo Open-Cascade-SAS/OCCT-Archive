@@ -226,6 +226,16 @@ public:
                                                         const Standard_Boolean theToImport,
                                                         Handle(DE_Provider)& theProvider) const;
 
+  //! Updates all registered nodes, save all result.
+  //! @param[in] theToForceUpdate flag to turn on/of nodes according opportunity to transfer
+  Standard_EXPORT void UpdateLoad(const Standard_Boolean theToForceUpdate = Standard_False) const;
+
+  //! Gets flag to save updates operation while transfer checks
+  Standard_Boolean KeepUpdates() const { return myKeepUpdates; }
+
+  //! Sets flag to save updates operation while transfer checks
+  void SetKeepUpdates(const Standard_Boolean theToKeepUpdates) { myKeepUpdates = theToKeepUpdates; }
+
   //! Gets format map, contains vendor map with nodes
   //! @return internal map of formats
   Standard_EXPORT const DE_ConfigurationFormatMap& Nodes() const;
@@ -248,6 +258,7 @@ public:
 
 private:
 
+  Standard_Boolean myKeepUpdates; //!< Flag to save updates operation while transfer checks
   DE_ConfigurationFormatMap myConfiguration; //!< Internal map of formats
 };
 
