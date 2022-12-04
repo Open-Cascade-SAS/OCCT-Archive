@@ -78,11 +78,13 @@ void HLRAlgo_PolyInternalData::UpdateLinks (HLRAlgo_Array1OfTData& theTData,
     HLRAlgo_PolyInternalNode::NodeIndices& A2 = thePINod.ChangeValue(TD->Node2)->Indices();
     HLRAlgo_PolyInternalNode::NodeIndices& A3 = thePINod.ChangeValue(TD->Node3)->Indices();
 
+    bool notFound = true;
     {
     n1 = TD->Node1;
     n2 = TD->Node2;
     newSeg = Standard_False;
     if (A1.NdSg == 0 && A2.NdSg == 0) {
+      notFound = false;
       newSeg = Standard_True;
       myNbPISeg++;
       A1.NdSg = myNbPISeg;
@@ -107,6 +109,7 @@ void HLRAlgo_PolyInternalData::UpdateLinks (HLRAlgo_Array1OfTData& theTData,
 	  }
 	}
 	if (find == 0) {
+	  notFound = false;
 	  newSeg = Standard_True;
 	  myNbPISeg++;
 	  if (icsv == 1) aSegIndices->NxtSg1 = myNbPISeg;
@@ -115,6 +118,7 @@ void HLRAlgo_PolyInternalData::UpdateLinks (HLRAlgo_Array1OfTData& theTData,
 	else aSegIndices->Conex2 = i;
       }
       else {
+	notFound = false;
 	newSeg = Standard_True;
 	myNbPISeg++;
 	A1.NdSg = myNbPISeg;
@@ -145,11 +149,13 @@ void HLRAlgo_PolyInternalData::UpdateLinks (HLRAlgo_Array1OfTData& theTData,
     }
     }
 
+    if (notFound)
     {
     n1 = TD->Node2;
     n2 = TD->Node3;
     newSeg = Standard_False;
     if (A2.NdSg == 0 && A3.NdSg == 0) {
+      notFound = false;
       newSeg = Standard_True;
       myNbPISeg++;
       A2.NdSg = myNbPISeg;
@@ -174,6 +180,7 @@ void HLRAlgo_PolyInternalData::UpdateLinks (HLRAlgo_Array1OfTData& theTData,
 	  }
 	}
 	if (find == 0) {
+	  notFound = false;
 	  newSeg = Standard_True;
 	  myNbPISeg++;
 	  if (icsv == 1) aSegIndices->NxtSg1 = myNbPISeg;
@@ -182,6 +189,7 @@ void HLRAlgo_PolyInternalData::UpdateLinks (HLRAlgo_Array1OfTData& theTData,
 	else aSegIndices->Conex2 = i;
       }
       else {
+	notFound = false;
 	newSeg = Standard_True;
 	myNbPISeg++;
 	A2.NdSg = myNbPISeg;
@@ -212,11 +220,13 @@ void HLRAlgo_PolyInternalData::UpdateLinks (HLRAlgo_Array1OfTData& theTData,
     }
     }
 
+    if (notFound)
     {
     n1 = TD->Node3;
     n2 = TD->Node1;
     newSeg = Standard_False;
     if (A3.NdSg == 0 && A1.NdSg == 0) {
+      notFound = false;
       newSeg = Standard_True;
       myNbPISeg++;
       A3.NdSg = myNbPISeg;
@@ -241,6 +251,7 @@ void HLRAlgo_PolyInternalData::UpdateLinks (HLRAlgo_Array1OfTData& theTData,
 	  }
 	}
 	if (find == 0) {
+	  notFound = false;
 	  newSeg = Standard_True;
 	  myNbPISeg++;
 	  if (icsv == 1) aSegIndices->NxtSg1 = myNbPISeg;
@@ -249,6 +260,7 @@ void HLRAlgo_PolyInternalData::UpdateLinks (HLRAlgo_Array1OfTData& theTData,
 	else aSegIndices->Conex2 = i;
       }
       else {
+	notFound = false;
 	newSeg = Standard_True;
 	myNbPISeg++;
 	A3.NdSg = myNbPISeg;
