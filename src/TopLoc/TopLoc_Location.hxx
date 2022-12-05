@@ -153,7 +153,7 @@ Standard_Boolean operator != (const TopLoc_Location& Other) const
 
   static Standard_Real ScalePrec()
   {
-    return  1.e-14;
+    return  1.e-13;
   }
 
 protected:

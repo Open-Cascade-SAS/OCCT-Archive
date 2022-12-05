@@ -3703,14 +3703,17 @@ static void setDimObjectToXCAF(const Handle(Standard_Transient)& theEnt,
               Handle(StepBasic_NamedUnit) NU = anUnit.NamedUnit();
               STEPConstruct_UnitContext anUnitCtx;
               anUnitCtx.ComputeFactors(NU, theLocalFactors);
-              if (aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndLengthMeasureWithUnit))) {
-                aVal = aVal * anUnitCtx.LengthFactor();
-
+              if (aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndPlaneAngleMeasureWithUnitAndQRI)) ||
+                  aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndPlaneAngleMeasureWithUnit)))
+              {
+                convertAngleValue(anUnitCtx, aVal);
               }
-              else
-                if (aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndPlaneAngleMeasureWithUnit))) {
-                  convertAngleValue(anUnitCtx, aVal);
-                }
+              else if (aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndLengthMeasureWithUnit)) ||
+                       aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndLengthMeasureWithUnitAndQRI)) ||
+                       anUnitCtx.LengthFactor() > 0.)
+              {
+                aVal = aVal * anUnitCtx.LengthFactor();
+              }
               Handle(TCollection_HAsciiString) aName = aMWU->Name();
               if (aName->Search("upper") > 0) // upper limit
                 aDim2 = aVal;
@@ -3810,13 +3813,11 @@ static void setDimObjectToXCAF(const Handle(Standard_Transient)& theEnt,
         Handle(StepBasic_NamedUnit) NU = anUnit.NamedUnit();
         STEPConstruct_UnitContext anUnitCtxUpperBound;
         anUnitCtxUpperBound.ComputeFactors(NU, theLocalFactors);
-        if (aMWU->IsKind(STANDARD_TYPE(StepBasic_PlaneAngleMeasureWithUnit)) ||
-          aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndPlaneAngleMeasureWithUnitAndQRI)))
+        if (aMWU->IsKind(STANDARD_TYPE(StepBasic_PlaneAngleMeasureWithUnit)))
         {
           convertAngleValue(anUnitCtxUpperBound, aVal);
         }
-        else if ((aMWU->IsKind(STANDARD_TYPE(StepBasic_MeasureWithUnit)) && anUnitCtxUpperBound.LengthFactor() > 0.) ||
-          aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndLengthMeasureWithUnitAndQRI)))
+        else if (anUnitCtxUpperBound.LengthFactor() > 0.)
         {
           aVal = aVal * anUnitCtxUpperBound.LengthFactor();
         }
@@ -3846,13 +3847,11 @@ static void setDimObjectToXCAF(const Handle(Standard_Transient)& theEnt,
         NU = anUnit.NamedUnit();
         STEPConstruct_UnitContext anUnitCtxLowerBound;
         anUnitCtxLowerBound.ComputeFactors(NU, theLocalFactors);
-        if (aMWU->IsKind(STANDARD_TYPE(StepBasic_PlaneAngleMeasureWithUnit)) ||
-          aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndPlaneAngleMeasureWithUnitAndQRI)))
+        if (aMWU->IsKind(STANDARD_TYPE(StepBasic_PlaneAngleMeasureWithUnit)))
         {
           convertAngleValue(anUnitCtxLowerBound, aVal);
         }
-        else if ((aMWU->IsKind(STANDARD_TYPE(StepBasic_MeasureWithUnit)) && anUnitCtxLowerBound.LengthFactor() > 0.) ||
-                 aMWU->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndLengthMeasureWithUnitAndQRI)))
+        else if (anUnitCtxUpperBound.LengthFactor() > 0.)
         {
           aVal = aVal * anUnitCtxLowerBound.LengthFactor();
         }
