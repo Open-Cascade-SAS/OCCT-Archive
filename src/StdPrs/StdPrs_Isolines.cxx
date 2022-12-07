@@ -394,12 +394,12 @@ void StdPrs_Isolines::addOnSurface (const Handle(BRepAdaptor_HSurface)& theSurfa
                                     Prs3d_NListOfSequenceOfPnt&         theVPolylines)
 {
   // Choose a deflection for sampling edge uv curves.
-  Standard_Real aUVLimit = theDrawer->MaximalParameterValue();
-  Standard_Real aUmin  = Max (theSurface->FirstUParameter(), -aUVLimit);
-  Standard_Real aUmax  = Min (theSurface->LastUParameter(),   aUVLimit);
-  Standard_Real aVmin  = Max (theSurface->FirstVParameter(), -aUVLimit);
-  Standard_Real aVmax  = Min (theSurface->LastVParameter(),   aUVLimit);
-  Standard_Real aSamplerDeflection = Max (aUmax - aUmin, aVmax - aVmin) * theDrawer->DeviationCoefficient();
+  const Standard_Real aUVLimit = theDrawer->MaximalParameterValue();
+  const Standard_Real aUmin  = Max (theSurface->FirstUParameter(), -aUVLimit);
+  const Standard_Real aUmax  = Min (theSurface->LastUParameter(),   aUVLimit);
+  const Standard_Real aVmin  = Max (theSurface->FirstVParameter(), -aUVLimit);
+  const Standard_Real aVmax  = Min (theSurface->LastVParameter(),   aUVLimit);
+  const Standard_Real aSamplerDeflection = Max (aUmax - aUmin, aVmax - aVmin) * theDrawer->DeviationCoefficient();
   Standard_Real aHatchingTolerance = RealLast();
 
   try
@@ -562,12 +562,10 @@ void StdPrs_Isolines::addOnSurface (const Handle(BRepAdaptor_HSurface)& theSurfa
         Standard_Real aSegmentP1 = aHatcher.Start (anI, aJ);
         Standard_Real aSegmentP2 = aHatcher.End (anI, aJ);
 
-        if (!aBSurface.IsNull())
+        if (aBSurface.IsNull())
         {
-          aBSurfaceCurve.Load (isIsoU ? aBSurface->UIso (anIsoParam) : aBSurface->VIso (anIsoParam));
-
-          findLimits (aBSurfaceCurve, aUVLimit, aSegmentP1, aSegmentP2);
-
+          aCanonicalCurve.Load (isIsoU ? GeomAbs_IsoU : GeomAbs_IsoV, anIsoParam, aSegmentP1, aSegmentP2);
+          findLimits (aCanonicalCurve, aUVLimit, aSegmentP1, aSegmentP2);
           if (aSegmentP2 - aSegmentP1 <= Precision::Confusion())
           {
             continue;
@@ -575,17 +573,23 @@ void StdPrs_Isolines::addOnSurface (const Handle(BRepAdaptor_HSurface)& theSurfa
         }
         else
         {
-          aCanonicalCurve.Load (isIsoU ? GeomAbs_IsoU : GeomAbs_IsoV, anIsoParam, aSegmentP1, aSegmentP2);
-
-          findLimits (aCanonicalCurve, aUVLimit, aSegmentP1, aSegmentP2);
-
+          if (isIsoU)
+          {
+            aBSurfaceCurve.Load (aBSurface->UIso (anIsoParam), aVmin, aVmax);
+          }
+          else
+          {
+            aBSurfaceCurve.Load (aBSurface->VIso (anIsoParam), aUmin, aUmax);
+          }
+          findLimits (aBSurfaceCurve, aUVLimit, aSegmentP1, aSegmentP2);
           if (aSegmentP2 - aSegmentP1 <= Precision::Confusion())
           {
             continue;
           }
         }
-        Adaptor3d_Curve* aCurve = aBSurface.IsNull() ? (Adaptor3d_Curve*) &aCanonicalCurve
-          : (Adaptor3d_Curve*) &aBSurfaceCurve;
+        Adaptor3d_Curve* aCurve = aBSurface.IsNull()
+                                ? (Adaptor3d_Curve*) &aCanonicalCurve
+                                : (Adaptor3d_Curve*) &aBSurfaceCurve;
 
         Handle(TColgp_HSequenceOfPnt) aPoints = new TColgp_HSequenceOfPnt();
         StdPrs_DeflectionCurve::Add (Handle(Prs3d_Presentation)(),
