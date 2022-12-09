@@ -171,6 +171,11 @@ protected:
     <Standard_Integer,
     BOPDS_MapOfPaveBlock> BOPAlgo_DataMapOfIntegerMapOfPaveBlock;
 
+  typedef NCollection_DataMap
+    <Handle(BOPDS_PaveBlock),
+     BOPCol_ListOfInteger,
+     TColStd_MapTransientHasher> BOPAlgo_DataMapOfPaveBlockListOfInteger;
+
   //! Sets non-destructive mode automatically if an argument 
   //! contains a locked sub-shape (see TopoDS_Shape::Locked()).
   Standard_EXPORT void SetNonDestructive();
@@ -294,6 +299,14 @@ protected:
                                     BOPCol_DataMapOfIntegerInteger& theDMNewSD,
                                     const BOPCol_IndexedMapOfShape& theMicroEdges,
                                     const BOPCol_BaseAllocator& theAllocator);
+
+  //! Treatment of section edges.
+  Standard_EXPORT void PostTreatFF1 (BOPDS_IndexedDataMapOfShapeCoupleOfPaveBlocks& theMSCPB,
+                                     BOPDS_DataMapOfPaveBlockListOfPaveBlock& theDMExEdges,
+                                     BOPCol_DataMapOfIntegerInteger& theDMNewSD,
+                                     const BOPCol_IndexedMapOfShape& theMicroEdges,
+                                     const BOPCol_IndexedMapOfShape& theVertsOnRejectedPB,
+                                     const BOPCol_BaseAllocator& theAllocator);
   
   Standard_EXPORT void FindPaveBlocks (const Standard_Integer theV, const Standard_Integer theF, BOPDS_ListOfPaveBlock& theLPB);
   
@@ -363,6 +376,15 @@ protected:
   //! The list <theLPB> contains images of <thePB> which were created in
   //! the post treatment of section edges.
   Standard_EXPORT void UpdateExistingPaveBlocks (const Handle(BOPDS_PaveBlock)& thePB, BOPDS_ListOfPaveBlock& theLPB, const Standard_Integer nF1, const Standard_Integer nF2);
+
+  //! Replaces existing pave block <thePB> with new pave blocks <theLPB>.
+  //! The list <theLPB> contains images of <thePB> which were created in
+  //! the post treatment of section edges.
+  Standard_EXPORT void UpdateExistingPaveBlocks1 (const Handle(BOPDS_PaveBlock)& thePB,
+                                                  BOPDS_ListOfPaveBlock& theLPB,
+                                                  const Standard_Integer nF1,
+                                                  const Standard_Integer nF2,
+                                                  const BOPAlgo_DataMapOfPaveBlockListOfInteger& thePBFacesMap);
   
 
   //! Treatment of vertices that were created in EE intersections.
@@ -379,6 +401,11 @@ protected:
 
   //! Updates the information about faces
   Standard_EXPORT void UpdateFaceInfo (BOPDS_DataMapOfPaveBlockListOfPaveBlock& theDME, const BOPCol_DataMapOfIntegerInteger& theDMV);
+
+  //! Updates the information about faces
+  Standard_EXPORT void UpdateFaceInfo1 (BOPDS_DataMapOfPaveBlockListOfPaveBlock& theDME,
+                                        const BOPCol_DataMapOfIntegerInteger& theDMV,
+                                        const BOPAlgo_DataMapOfPaveBlockListOfInteger& thePBFacesMap);
   
 
   //! Updates tolerance of vertex with index <nV>
