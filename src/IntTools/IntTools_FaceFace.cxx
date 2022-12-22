@@ -988,15 +988,19 @@ void IntTools_FaceFace::MakeCurve(const Standard_Integer Index,
         if (typl == IntPatch_Circle || typl == IntPatch_Ellipse) {//// 
           if(myApprox1) { 
             Handle (Geom2d_Curve) C2d;
-            GeomInt_IntSS::BuildPCurves(fprm, lprm, Tolpc, 
-                        myHS1->Surface(), newc, C2d);
+            GeomInt_IntSS::BuildPCurves(fprm, lprm,
+                                        myHS1->FirstUParameter(), myHS1->LastUParameter(),
+                                        myHS1->FirstVParameter(), myHS1->LastVParameter(),
+                                        Tolpc, myHS1->Surface(), newc, C2d);
             aCurve.SetFirstCurve2d(C2d);
           }
 
           if(myApprox2) { 
             Handle (Geom2d_Curve) C2d;
-            GeomInt_IntSS::BuildPCurves(fprm,lprm,Tolpc,
-                    myHS2->Surface(),newc,C2d);
+            GeomInt_IntSS::BuildPCurves(fprm, lprm,
+                                        myHS2->FirstUParameter(), myHS2->LastUParameter(),
+                                        myHS2->FirstVParameter(), myHS2->LastVParameter(),
+                                        Tolpc, myHS2->Surface(), newc, C2d);
             aCurve.SetSecondCurve2d(C2d);
           }
         }
@@ -1057,15 +1061,19 @@ void IntTools_FaceFace::MakeCurve(const Standard_Integer Index,
               
               if(myApprox1) { 
                 Handle (Geom2d_Curve) C2d;
-                GeomInt_IntSS::BuildPCurves(fprm, lprm, Tolpc, 
-                        myHS1->Surface(), newc, C2d);
+                GeomInt_IntSS::BuildPCurves(fprm, lprm,
+                                            myHS1->FirstUParameter(), myHS1->LastUParameter(),
+                                            myHS1->FirstVParameter(), myHS1->LastVParameter(),
+                                            Tolpc, myHS1->Surface(), newc, C2d);
                 aCurve.SetFirstCurve2d(C2d);
               }
 
               if(myApprox2) { 
                 Handle (Geom2d_Curve) C2d;
-                GeomInt_IntSS::BuildPCurves(fprm, lprm, Tolpc,
-                        myHS2->Surface(), newc, C2d);
+                GeomInt_IntSS::BuildPCurves(fprm, lprm,
+                                            myHS2->FirstUParameter(), myHS2->LastUParameter(),
+                                            myHS2->FirstVParameter(), myHS2->LastVParameter(),
+                                            Tolpc, myHS2->Surface(), newc, C2d);
                 aCurve.SetSecondCurve2d(C2d);
               }
             }//  end of if (typl == IntPatch_Circle || typl == IntPatch_Ellipse)
