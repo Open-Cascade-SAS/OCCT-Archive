@@ -41,9 +41,17 @@ namespace
   {
   public:
     //! Constructor.
-    EdgeAmplifier(const IMeshTools_Parameters& theParameters)
-      : myParameters(theParameters)
+    EdgeAmplifier(const IMeshTools_Parameters& theParameters,
+                  const Standard_Boolean       isUseVertexTolerance = Standard_False)
+      : myParameters        (theParameters),
+        myUseVertexTolerance(isUseVertexTolerance)
     {
+    }
+
+    //! Take vertex tolerance into account.
+    void SetUseVertexTolerance(const Standard_Boolean isUseVertexTolerance)
+    {
+      myUseVertexTolerance = isUseVertexTolerance;
     }
 
     //! Main operator.
@@ -75,7 +83,7 @@ namespace
       Handle(IMeshTools_CurveTessellator) aTessellator =
         BRepMesh_EdgeDiscret::CreateEdgeTessellator(
           aDEdge, aPCurve->GetOrientation(), aDFace,
-          myParameters, aPointsNb);
+          myParameters, aPointsNb, myUseVertexTolerance);
 
       BRepMesh_EdgeDiscret::Tessellate3d(aDEdge, aTessellator, Standard_False);
       BRepMesh_EdgeDiscret::Tessellate2d(aDEdge, Standard_False);
@@ -89,6 +97,7 @@ namespace
 
   private:
     const IMeshTools_Parameters& myParameters;
+    Standard_Boolean             myUseVertexTolerance;
   };
 
   //! Returns True if some of two vertcies is same with reference one.
@@ -190,12 +199,14 @@ void BRepMesh_ModelHealer::amplifyEdges()
     new NCollection_IncAllocator(IMeshData::MEMORY_BLOCK_SIZE_HUGE);
 
   Standard_Integer aAmpIt = 0;
-  const Standard_Real aIterNb = 5;
+  const Standard_Integer aIterNb = 6;
   IMeshData::MapOfIEdgePtr aEdgesToUpdate(1, aTmpAlloc);
   EdgeAmplifier anEdgeAmplifier (myParameters);
 
   while (aAmpIt++ < aIterNb && popEdgesToUpdate(aEdgesToUpdate))
   {
+    anEdgeAmplifier.SetUseVertexTolerance (aAmpIt == aIterNb);
+
     // Try to update discretization by decreasing deflection of problematic edges.
     OSD_Parallel::ForEach(aEdgesToUpdate.cbegin(), aEdgesToUpdate.cend(),
                           anEdgeAmplifier,

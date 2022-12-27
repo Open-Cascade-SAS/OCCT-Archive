@@ -36,9 +36,11 @@ IMPLEMENT_STANDARD_RTTIEXT(BRepMesh_CurveTessellator, IMeshTools_CurveTessellato
 BRepMesh_CurveTessellator::BRepMesh_CurveTessellator(
   const IMeshData::IEdgeHandle& theEdge,
   const IMeshTools_Parameters&  theParameters,
-  const Standard_Integer        theMinPointsNb)
+  const Standard_Integer        theMinPointsNb,
+  const Standard_Boolean        isUseVertexTolerance)
   : myDEdge(theEdge),
     myParameters(theParameters),
+    myUseVertexTolerance(isUseVertexTolerance),
     myEdge(theEdge->GetEdge()),
     myCurve(myEdge),
     myMinPointsNb (theMinPointsNb)
@@ -55,9 +57,11 @@ BRepMesh_CurveTessellator::BRepMesh_CurveTessellator (
   const TopAbs_Orientation      theOrientation,
   const IMeshData::IFaceHandle& theFace,
   const IMeshTools_Parameters&  theParameters,
-  const Standard_Integer        theMinPointsNb)
+  const Standard_Integer        theMinPointsNb,
+  const Standard_Boolean        isUseVertexTolerance)
   : myDEdge(theEdge),
     myParameters(theParameters),
+    myUseVertexTolerance(isUseVertexTolerance),
     myEdge(TopoDS::Edge(theEdge->GetEdge().Oriented(theOrientation))),
     myCurve(myEdge, theFace->GetFace()),
     myMinPointsNb (theMinPointsNb)
@@ -225,10 +229,15 @@ Standard_Boolean BRepMesh_CurveTessellator::isInToleranceOfVertex (
   const gp_Pnt&        thePoint,
   const TopoDS_Vertex& theVertex) const
 {
-  const gp_Pnt        aPoint     = BRep_Tool::Pnt(theVertex);
-  const Standard_Real aTolerance = BRep_Tool::Tolerance(theVertex) * 1.1;
+  if (myUseVertexTolerance)
+  {
+    const gp_Pnt        aPoint     = BRep_Tool::Pnt(theVertex);
+    const Standard_Real aTolerance = BRep_Tool::Tolerance(theVertex) * 1.1;
 
-  return (thePoint.SquareDistance (aPoint) < aTolerance * aTolerance);
+    return (thePoint.SquareDistance (aPoint) < aTolerance * aTolerance);
+  }
+
+  return Standard_False;
 }
 
 //=======================================================================

@@ -267,7 +267,7 @@ void BRepMesh_FaceChecker::perform(const Standard_Integer theWireIndex) const
   Handle(IMeshData::MapOfIEdgePtr)& aIntersections = myWiresIntersectingEdges->ChangeValue(theWireIndex);
 
   // TODO: Tolerance is set to twice value of face deflection in order to fit regressions.
-  BndBox2dTreeSelector aSelector(2 * myDFace->GetDeflection());
+  BndBox2dTreeSelector aSelector(2 * Precision::PConfusion()/*myDFace->GetDeflection()*/);
   for (Standard_Integer aWireIt = theWireIndex; aWireIt < myDFace->WiresNb(); ++aWireIt)
   {
     const Handle(IMeshData::BndBox2dTree)& aBndBoxTree2 = myWiresBndBoxTree->Value(aWireIt);

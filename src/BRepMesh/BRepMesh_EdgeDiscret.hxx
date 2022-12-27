@@ -47,7 +47,8 @@ public:
     const TopAbs_Orientation      theOrientation,
     const IMeshData::IFaceHandle& theDFace,
     const IMeshTools_Parameters&  theParameters,
-    const Standard_Integer        theMinPointsNb = 2);
+    const Standard_Integer        theMinPointsNb = 2,
+    const Standard_Boolean        isUseVertexTolerance = Standard_False);
 
   //! Creates instance of tessellation extractor.
   Standard_EXPORT static Handle(IMeshTools_CurveTessellator) CreateEdgeTessellationExtractor(

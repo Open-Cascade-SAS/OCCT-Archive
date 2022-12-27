@@ -64,11 +64,12 @@ Handle(IMeshTools_CurveTessellator) BRepMesh_EdgeDiscret::CreateEdgeTessellator(
   const TopAbs_Orientation      theOrientation,
   const IMeshData::IFaceHandle& theDFace,
   const IMeshTools_Parameters&  theParameters,
-  const Standard_Integer        theMinPointsNb)
+  const Standard_Integer        theMinPointsNb,
+  const Standard_Boolean        isUseVertexTolerance)
 {
   return theDEdge->GetSameParam() ? 
-    new BRepMesh_CurveTessellator(theDEdge, theParameters, theMinPointsNb) :
-    new BRepMesh_CurveTessellator(theDEdge, theOrientation, theDFace, theParameters, theMinPointsNb);
+    new BRepMesh_CurveTessellator(theDEdge, theParameters, theMinPointsNb, isUseVertexTolerance) :
+    new BRepMesh_CurveTessellator(theDEdge, theOrientation, theDFace, theParameters, theMinPointsNb, isUseVertexTolerance);
 }
 
 //=======================================================================
