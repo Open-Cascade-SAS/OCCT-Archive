@@ -14,6 +14,7 @@
 #include <IGESCAFControl_Provider.hxx>
 
 #include <BinXCAFDrivers.hxx>
+#include <IGESControl_Controller.hxx>
 #include <IGESCAFControl_ConfigurationNode.hxx>
 #include <IGESCAFControl_Reader.hxx>
 #include <IGESCAFControl_Writer.hxx>
@@ -22,6 +23,7 @@
 #include <Interface_Static.hxx>
 #include <Message.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
+#include <XSControl_WorkSession.hxx>
 #include <UnitsMethods.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(IGESCAFControl_Provider, DE_Provider)
@@ -40,6 +42,25 @@ IGESCAFControl_Provider::IGESCAFControl_Provider()
 IGESCAFControl_Provider::IGESCAFControl_Provider(const Handle(DE_ConfigurationNode)& theNode)
   : DE_Provider(theNode)
 {}
+
+//=======================================================================
+// function : STEPCAFControl_Provider
+// purpose  :
+//=======================================================================
+void IGESCAFControl_Provider::personizeWS(Handle(XSControl_WorkSession)& theWS)
+{
+  if (theWS.IsNull())
+  {
+    Message::SendWarning() << "Warning: IGESCAFControl_Provider :"
+      << " Null work session, use internal temporary session";
+    theWS = new XSControl_WorkSession();
+  }
+  Handle(IGESControl_Controller) aCntrl = Handle(IGESControl_Controller)::DownCast(theWS->NormAdaptor());
+  if (aCntrl.IsNull())
+  {
+    theWS->SelectNorm("IGES");
+  }
+}
 
 //=======================================================================
 // function : initStatic
@@ -161,12 +182,10 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   Handle(IGESCAFControl_ConfigurationNode) aNode = Handle(IGESCAFControl_ConfigurationNode)::DownCast(GetNode());
   initStatic(aNode);
 
+  personizeWS(theWS);
   XCAFDoc_DocumentTool::SetLengthUnit(theDocument, aNode->GlobalParameters.LengthUnit, UnitsMethods_LengthUnit_Millimeter);
   IGESCAFControl_Reader aReader;
-  if (!theWS.IsNull())
-  {
-    aReader.SetWS(theWS);
-  }
+  aReader.SetWS(theWS);
 
   aReader.SetReadVisible(aNode->InternalParameters.ReadOnlyVisible);
 
@@ -213,12 +232,9 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   Handle(IGESCAFControl_ConfigurationNode) aNode = Handle(IGESCAFControl_ConfigurationNode)::DownCast(GetNode());
   initStatic(aNode);
 
+  personizeWS(theWS);
   XCAFDoc_DocumentTool::SetLengthUnit(theDocument, aNode->InternalParameters.WriteUnit, UnitsMethods_LengthUnit_Millimeter);
-  IGESCAFControl_Writer aWriter;
-  if (!theWS.IsNull())
-  {
-    aWriter = IGESCAFControl_Writer(theWS);
-  }
+  IGESCAFControl_Writer aWriter(theWS);
   aWriter.SetColorMode(aNode->InternalParameters.WriteColor);
   aWriter.SetNameMode(aNode->InternalParameters.WriteName);
   aWriter.SetLayerMode(aNode->InternalParameters.WriteLayer);
@@ -249,7 +265,7 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
                                    const Handle(TDocStd_Document)& theDocument,
                                    const Message_ProgressRange& theProgress)
 {
-  Handle(XSControl_WorkSession) aWS;
+  Handle(XSControl_WorkSession) aWS = new XSControl_WorkSession();
   return Read(thePath, theDocument, aWS, theProgress);
 }
 
@@ -261,7 +277,7 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
                                     const Handle(TDocStd_Document)& theDocument,
                                     const Message_ProgressRange& theProgress)
 {
-  Handle(XSControl_WorkSession) aWS;
+  Handle(XSControl_WorkSession) aWS = new XSControl_WorkSession();
   return Write(thePath, theDocument, aWS, theProgress);
 }
 
@@ -283,11 +299,9 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   }
   Handle(IGESCAFControl_ConfigurationNode) aNode = Handle(IGESCAFControl_ConfigurationNode)::DownCast(GetNode());
   initStatic(aNode);
+  personizeWS(theWS);
   IGESControl_Reader aReader;
-  if (!theWS.IsNull())
-  {
-    aReader.SetWS(theWS);
-  }
+  aReader.SetWS(theWS);
   aReader.SetReadVisible(aNode->InternalParameters.ReadOnlyVisible);
   IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
   aReadStat = aReader.ReadFile(thePath.ToCString());
@@ -359,7 +373,7 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
                                    TopoDS_Shape& theShape,
                                    const Message_ProgressRange& theProgress)
 {
-  Handle(XSControl_WorkSession) aWS;
+  Handle(XSControl_WorkSession) aWS = new XSControl_WorkSession();
   return Read(thePath, theShape, aWS, theProgress);
 }
 
@@ -371,7 +385,7 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
                                     const TopoDS_Shape& theShape,
                                     const Message_ProgressRange& theProgress)
 {
-  Handle(XSControl_WorkSession) aWS;
+  Handle(XSControl_WorkSession) aWS = new XSControl_WorkSession();
   return Write(thePath, theShape, aWS, theProgress);
 }
 
