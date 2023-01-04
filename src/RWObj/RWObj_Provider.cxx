@@ -51,17 +51,19 @@ bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
   (void)theWS;
   if (theDocument.IsNull())
   {
-    Message::SendFail() << "Error in the RWObj_Provider during reading the file " <<
-      thePath << "\t: theDocument shouldn't be null";
+    Message::SendFail() << "Error: RWObj_Provider : "
+      << "Null document";
     return false;
   }
-  if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWObj_ConfigurationNode)))
+  if (GetNode().IsNull() ||
+      !GetNode()->IsKind(STANDARD_TYPE(RWObj_ConfigurationNode)))
   {
-    Message::SendFail() << "Error in the RWObj_ConfigurationNode during reading the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
+    Message::SendFail() << "Error: RWObj_Provider : "
+      << "Incorrect or empty Configuration Node";
     return false;
   }
-  Handle(RWObj_ConfigurationNode) aNode = Handle(RWObj_ConfigurationNode)::DownCast(GetNode());
+  Handle(RWObj_ConfigurationNode) aNode =
+    Handle(RWObj_ConfigurationNode)::DownCast(GetNode());
   RWObj_CafReader aReader;
   aReader.SetSinglePrecision(aNode->InternalParameters.ReadSinglePrecision);
   aReader.SetSystemLengthUnit(aNode->GlobalParameters.LengthUnit / 1000);
@@ -73,10 +75,13 @@ bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
   aReader.SetMemoryLimitMiB(aNode->InternalParameters.ReadMemoryLimitMiB);
   if (!aReader.Perform(thePath, theProgress))
   {
-    Message::SendFail() << "Error in the RWObj_ConfigurationNode during reading the file " << thePath;
+    Message::SendFail() << "Error: RWObj_Provider : [" <<
+      thePath << "] : Cannot read any relevant data from the Obj file";
     return false;
   }
-  XCAFDoc_DocumentTool::SetLengthUnit(theDocument, aNode->GlobalParameters.LengthUnit, UnitsMethods_LengthUnit_Millimeter);
+  XCAFDoc_DocumentTool::SetLengthUnit(theDocument,
+                                      aNode->GlobalParameters.LengthUnit,
+                                      UnitsMethods_LengthUnit_Millimeter);
   return true;
 }
 
@@ -90,13 +95,15 @@ bool RWObj_Provider::Write(const TCollection_AsciiString& thePath,
                            const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWObj_ConfigurationNode)))
+  if (GetNode().IsNull() ||
+      !GetNode()->IsKind(STANDARD_TYPE(RWObj_ConfigurationNode)))
   {
-    Message::SendFail() << "Error in the RWObj_ConfigurationNode during writing the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
+    Message::SendFail() << "Error: RWObj_Provider : "
+      << "Incorrect or empty Configuration Node";
     return false;
   }
-  Handle(RWObj_ConfigurationNode) aNode = Handle(RWObj_ConfigurationNode)::DownCast(GetNode());
+  Handle(RWObj_ConfigurationNode) aNode =
+    Handle(RWObj_ConfigurationNode)::DownCast(GetNode());
 
   TColStd_IndexedDataMapOfStringString aFileInfo;
   if (!aNode->InternalParameters.WriteAuthor.IsEmpty())
@@ -107,7 +114,6 @@ bool RWObj_Provider::Write(const TCollection_AsciiString& thePath,
   {
     aFileInfo.Add("Comments", aNode->InternalParameters.WriteComment);
   }
-
   RWMesh_CoordinateSystemConverter aConverter;
   aConverter.SetInputLengthUnit(aNode->GlobalParameters.LengthUnit / 1000);
   aConverter.SetInputCoordinateSystem(aNode->InternalParameters.SystemCS);
@@ -118,7 +124,8 @@ bool RWObj_Provider::Write(const TCollection_AsciiString& thePath,
   aWriter.SetCoordinateSystemConverter(aConverter);
   if (!aWriter.Perform(theDocument, aFileInfo, theProgress))
   {
-    Message::SendFail() << "Error in the RWObj_ConfigurationNode during writing the file " << thePath;
+    Message::SendFail() << "Error: RWObj_Provider : [" <<
+      thePath << "] : Cannot write any relevant data to the Obj file";
     return false;
   }
   return true;
@@ -134,13 +141,15 @@ bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
                           const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWObj_ConfigurationNode)))
+  if (GetNode().IsNull() ||
+      !GetNode()->IsKind(STANDARD_TYPE(RWObj_ConfigurationNode)))
   {
-    Message::SendFail() << "Error in the RWObj_ConfigurationNode during writing the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
+    Message::SendFail() << "Error: RWObj_Provider : "
+      << "Incorrect or empty Configuration Node";
     return false;
   }
-  Handle(RWObj_ConfigurationNode) aNode = Handle(RWObj_ConfigurationNode)::DownCast(GetNode());
+  Handle(RWObj_ConfigurationNode) aNode =
+    Handle(RWObj_ConfigurationNode)::DownCast(GetNode());
   RWMesh_CoordinateSystemConverter aConverter;
   aConverter.SetOutputLengthUnit(aNode->GlobalParameters.LengthUnit / 1000);
   aConverter.SetOutputCoordinateSystem(aNode->InternalParameters.SystemCS);
@@ -155,7 +164,8 @@ bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
   aSimpleReader.SetMemoryLimit(aNode->InternalParameters.ReadMemoryLimitMiB);
   if (!aSimpleReader.Read(thePath, theProgress))
   {
-    Message::SendFail() << "Error in the RWObj_ConfigurationNode during reading the file " << thePath;
+    Message::SendFail() << "Error: RWObj_Provider : [" <<
+      thePath << "] : Cannot read any relevant data from the Obj file";
     return false;
   }
   Handle(Poly_Triangulation) aTriangulation = aSimpleReader.GetTriangulation();
@@ -178,7 +188,8 @@ bool RWObj_Provider::Write(const TCollection_AsciiString& thePath,
 {
   (void)theWS;
   Handle(TDocStd_Document) aDoc = new TDocStd_Document("BinXCAF");
-  Handle(XCAFDoc_ShapeTool) aShTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
+  Handle(XCAFDoc_ShapeTool) aShTool =
+    XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
   aShTool->AddShape(theShape);
   return Write(thePath, aDoc, theWS, theProgress);
 }

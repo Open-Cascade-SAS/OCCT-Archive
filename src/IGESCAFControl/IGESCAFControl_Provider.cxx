@@ -141,13 +141,12 @@ void IGESCAFControl_Provider::initStatic(const Handle(DE_ConfigurationNode)& the
   myOldValues.WriteOffsetMode =
     Interface_Static::IVal("write.iges.offset.mode") == 1;
 
-  myOldGlobalValues.LengthUnit = Interface_Static::IVal("xstep.cascade.unit");
-
+  myOldGlobalValues.LengthUnit = 0.001 *
+    UnitsMethods::GetLengthFactorValue(Interface_Static::IVal("xstep.cascade.unit"));
   // Set new values
-  UnitsMethods::SetCasCadeLengthUnit(aNode->GlobalParameters.LengthUnit,
-                                     UnitsMethods_LengthUnit_Millimeter);
   TCollection_AsciiString aStrUnit(
-    UnitsMethods::DumpLengthUnit(aNode->GlobalParameters.LengthUnit));
+    UnitsMethods::DumpLengthUnit(aNode->GlobalParameters.LengthUnit,
+    UnitsMethods_LengthUnit_Meter));
   aStrUnit.UpperCase();
   Interface_Static::SetCVal("xstep.cascade.unit", aStrUnit.ToCString());
   setStatic(aNode->InternalParameters);
@@ -225,8 +224,12 @@ void IGESCAFControl_Provider::resetStatic()
   {
     return;
   }
-  Interface_Static::SetIVal("xstep.cascade.unit", myOldGlobalValues.LengthUnit);
-  UnitsMethods::SetCasCadeLengthUnit(myOldGlobalValues.LengthUnit);
+  // Set new values
+  TCollection_AsciiString aStrUnit(
+    UnitsMethods::DumpLengthUnit(myOldGlobalValues.LengthUnit,
+    UnitsMethods_LengthUnit_Meter));
+  aStrUnit.UpperCase();
+  Interface_Static::SetCVal("xstep.cascade.unit", aStrUnit.ToCString());
   setStatic(myOldValues);
 }
 
@@ -326,10 +329,28 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   initStatic(aNode);
 
   personizeWS(theWS);
-  XCAFDoc_DocumentTool::SetLengthUnit(theDocument,
-                                      aNode->InternalParameters.WriteUnit,
-                                      UnitsMethods_LengthUnit_Millimeter);
+  TCollection_AsciiString aUnit(
+    UnitsMethods::DumpLengthUnit(aNode->InternalParameters.WriteUnit));
+  aUnit.UpperCase();
+
   IGESCAFControl_Writer aWriter(theWS, Standard_True);
+  if (aNode->InternalParameters.WriteUnit > UnitsMethods_LengthUnit_Undefined &&
+      aNode->InternalParameters.WriteUnit <= UnitsMethods_LengthUnit_Microinch)
+  {
+    Handle(IGESData_IGESModel) aModel = aWriter.Model();
+    IGESData_GlobalSection aGSesction = aModel->GlobalSection();
+    Handle(TCollection_HAsciiString) aName = new TCollection_HAsciiString(
+      IGESData_BasicEditor::UnitFlagName(aNode->InternalParameters.WriteUnit));
+    if (aGSesction.UnitFlag() == 3)
+    {
+      aGSesction.SetUnitName(aName);
+    }
+    else if (aGSesction.UnitFlag() > 0)
+    {
+      aGSesction.SetUnitFlag(aNode->InternalParameters.WriteUnit);
+    }
+    aModel->SetGlobalSection(aGSesction);
+  }
   aWriter.SetColorMode(aNode->InternalParameters.WriteColor);
   aWriter.SetNameMode(aNode->InternalParameters.WriteName);
   aWriter.SetLayerMode(aNode->InternalParameters.WriteLayer);
