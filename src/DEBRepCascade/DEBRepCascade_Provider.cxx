@@ -51,38 +51,14 @@ bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
                                   const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
-                                   const Handle(TDocStd_Document)& theDocument,
-                                   Handle(XSControl_WorkSession)& theWS,
-                                   const Message_ProgressRange& theProgress)
-{
-  (void)theWS;
-  return Write(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
-                                  const Handle(TDocStd_Document)& theDocument,
-                                  const Message_ProgressRange& theProgress)
-{
-  if(theDocument.IsNull())
+  if (theDocument.IsNull())
   {
     Message::SendFail() << "Error in the DEBRepCascade_Provider during reading the file " <<
       thePath << "\t: theDocument shouldn't be null";
     return false;
   }
   TopoDS_Shape aShape;
-  if (!Read(thePath, aShape, theProgress))
+  if (!Read(thePath, aShape, theWS, theProgress))
   {
     return false;
   }
@@ -97,8 +73,10 @@ bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
                                    const Handle(TDocStd_Document)& theDocument,
+                                   Handle(XSControl_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
+  (void)theWS;
   TopoDS_Shape aShape;
   TDF_LabelSequence aLabels;
   Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
@@ -126,7 +104,7 @@ bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
     }
     aShape = aComp;
   }
-  return Write(thePath, aShape, theProgress);
+  return Write(thePath, aShape, theWS, theProgress);
 }
 
 //=======================================================================
@@ -139,30 +117,6 @@ bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
                                   const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
-                                   const TopoDS_Shape& theShape,
-                                   Handle(XSControl_WorkSession)& theWS,
-                                   const Message_ProgressRange& theProgress)
-{
-  (void)theWS;
-  return Write(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
-                                  TopoDS_Shape& theShape,
-                                  const Message_ProgressRange& theProgress)
-{
   bool isBinaryFormat = true;
   {
     // probe file header to recognize format
@@ -214,8 +168,10 @@ bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
                                    const TopoDS_Shape& theShape,
+                                   Handle(XSControl_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
+  (void)theWS;
   if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(DEBRepCascade_ConfigurationNode)))
   {
     Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
@@ -232,7 +188,7 @@ bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
         thePath << "\t: Unknown format version";
       return false;
     }
-    if (aNode->InternalParameters.WriteNormals && 
+    if (aNode->InternalParameters.WriteNormals &&
         aNode->InternalParameters.WriteVersionBin < BinTools_FormatVersion_VERSION_4)
     {
       Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
@@ -272,7 +228,6 @@ bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
       return false;
     }
   }
-
   return true;
 }
 

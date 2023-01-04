@@ -51,30 +51,6 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
                           const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
-                           const Handle(TDocStd_Document)& theDocument,
-                           Handle(XSControl_WorkSession)& theWS,
-                           const Message_ProgressRange& theProgress)
-{
-  (void)theWS;
-  return Write(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
-                          const Handle(TDocStd_Document)& theDocument,
-                          const Message_ProgressRange& theProgress)
-{
   if (theDocument.IsNull())
   {
     Message::SendFail() << "Error in the RWStl_Provider during reading the file " <<
@@ -82,7 +58,7 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
     return false;
   }
   TopoDS_Shape aShape;
-  if (!Read(thePath, aShape, theProgress))
+  if (!Read(thePath, aShape, theWS, theProgress))
   {
     return false;
   }
@@ -97,8 +73,10 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
                            const Handle(TDocStd_Document)& theDocument,
+                           Handle(XSControl_WorkSession)& theWS,
                            const Message_ProgressRange& theProgress)
 {
+  (void)theWS;
   TopoDS_Shape aShape;
   TDF_LabelSequence aLabels;
   Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
@@ -126,7 +104,7 @@ bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
     }
     aShape = aComp;
   }
-  return Write(thePath, aShape, theProgress);
+  return Write(thePath, aShape, theWS, theProgress);
 }
 
 //=======================================================================
@@ -139,30 +117,6 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
                           const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
-                           const TopoDS_Shape& theShape,
-                           Handle(XSControl_WorkSession)& theWS,
-                           const Message_ProgressRange& theProgress)
-{
-  (void)theWS;
-  return Write(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
-                          TopoDS_Shape& theShape,
-                          const Message_ProgressRange& theProgress)
-{
   Message::SendWarning() << "OCCT Stl reader does not support model scaling according to custom length unit";
   if (!GetNode()->IsKind(STANDARD_TYPE(RWStl_ConfigurationNode)))
   {
@@ -172,7 +126,7 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
   }
   Handle(RWStl_ConfigurationNode) aNode = Handle(RWStl_ConfigurationNode)::DownCast(GetNode());
   double aMergeAngle = aNode->InternalParameters.ReadMergeAngle * M_PI / 180.0;
-  if(aMergeAngle != M_PI_2)
+  if (aMergeAngle != M_PI_2)
   {
     if (aMergeAngle < 0.0 || aMergeAngle > M_PI_2)
     {
@@ -210,8 +164,10 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
                            const TopoDS_Shape& theShape,
+                           Handle(XSControl_WorkSession)& theWS,
                            const Message_ProgressRange& theProgress)
 {
+  (void)theWS;
   Message::SendWarning() << "OCCT Stl writer does not support model scaling according to custom length unit";
   if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWStl_ConfigurationNode)))
   {

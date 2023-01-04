@@ -22,16 +22,20 @@
 #include <Draw_ProgressIndicator.hxx>
 #include <Message.hxx>
 #include <IFSelect_SessionPilot.hxx>
-#include <IGESCAFControl_Reader.hxx>
-#include <IGESCAFControl_Writer.hxx>
-#include <IGESControl_Controller.hxx>
+#include <IGESCAFControl_ConfigurationNode.hxx>
+#include <IGESCAFControl_Provider.hxx>
+//#include <IGESCAFControl_Reader.hxx>
+//#include <IGESCAFControl_Writer.hxx>
+//#include <IGESControl_Controller.hxx>
 #include <Interface_Macros.hxx>
 #include <OSD_OpenFile.hxx>
 #include <OSD_Path.hxx>
-#include <STEPCAFControl_ExternFile.hxx>
-#include <STEPCAFControl_Reader.hxx>
-#include <STEPCAFControl_Writer.hxx>
-#include <STEPControl_Controller.hxx>
+#include <STEPCAFControl_ConfigurationNode.hxx>
+#include <STEPCAFControl_Provider.hxx>
+//#include <STEPCAFControl_ExternFile.hxx>
+//#include <STEPCAFControl_Reader.hxx>
+//#include <STEPCAFControl_Writer.hxx>
+//#include <STEPControl_Controller.hxx>
 #include <TDF_Data.hxx>
 #include <TDocStd_Application.hxx>
 #include <TDocStd_Document.hxx>
@@ -86,44 +90,44 @@ static bool parseCoordinateSystem(const char* theArg,
   return Standard_True;
 }
 
-static Standard_Boolean ClearDicWS()
-{
-  thedictws.Clear();
-  return Standard_True;
-}
+//static Standard_Boolean ClearDicWS()
+//{
+//  thedictws.Clear();
+//  return Standard_True;
+//}
+//
+//static void AddWS(TCollection_AsciiString filename,
+//                  const Handle(XSControl_WorkSession)& WS)
+//{
+//  WS->SetVars(new XSDRAW_Vars); // support of DRAW variables
+//  thedictws.Bind(filename, WS);
+//}
 
-static void AddWS(TCollection_AsciiString filename,
-                  const Handle(XSControl_WorkSession)& WS)
-{
-  WS->SetVars(new XSDRAW_Vars); // support of DRAW variables
-  thedictws.Bind(filename, WS);
-}
 
-
-static Standard_Boolean FillDicWS(NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)>& dicFile)
-{
-  ClearDicWS();
-  if (dicFile.IsEmpty())
-  {
-    return Standard_False;
-  }
-  Handle(STEPCAFControl_ExternFile) EF;
-  NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)>::Iterator DicEFIt(dicFile);
-  for (; DicEFIt.More(); DicEFIt.Next())
-  {
-    TCollection_AsciiString filename = DicEFIt.Key();
-    EF = DicEFIt.Value();
-    AddWS(filename, EF->GetWS());
-  }
-  return Standard_True;
-}
+//static Standard_Boolean FillDicWS(NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)>& dicFile)
+//{
+  //ClearDicWS();
+  //if (dicFile.IsEmpty())
+  //{
+  //  return Standard_False;
+  //}
+  //Handle(STEPCAFControl_ExternFile) EF;
+  //NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)>::Iterator DicEFIt(dicFile);
+  //for (; DicEFIt.More(); DicEFIt.Next())
+  //{
+  //  TCollection_AsciiString filename = DicEFIt.Key();
+  //  EF = DicEFIt.Value();
+  //  AddWS(filename, EF->GetWS());
+  //}
+//  return Standard_True;
+//}
 
 static Standard_Boolean SetCurrentWS(TCollection_AsciiString filename)
 {
-  if (!thedictws.IsBound(filename)) return Standard_False;
-  Handle(XSControl_WorkSession) CurrentWS =
-    Handle(XSControl_WorkSession)::DownCast(thedictws.ChangeFind(filename));
-  XSDRAW::Pilot()->SetSession(CurrentWS);
+  //if (!thedictws.IsBound(filename)) return Standard_False;
+  //Handle(XSControl_WorkSession) CurrentWS =
+  //  Handle(XSControl_WorkSession)::DownCast(thedictws.ChangeFind(filename));
+  //XSDRAW::Pilot()->SetSession(CurrentWS);
 
   return Standard_True;
 }
@@ -227,20 +231,10 @@ static Standard_Integer ReadIges(Draw_Interpretor& di, Standard_Integer argc, co
     di << "Use: " << argv[0] << " Doc filename [mode]: read IGES file to a document\n";
     return 0;
   }
-
-  DeclareAndCast(IGESControl_Controller, ctl, XSDRAW::Controller());
-  if (ctl.IsNull()) XSDRAW::SetNorm("IGES");
-
-  TCollection_AsciiString fnom, rnom;
-  Standard_Boolean modfic = XSDRAW::FileAndVar(argv[2], argv[1], "IGES", fnom, rnom);
-  if (modfic) di << " File IGES to read : " << fnom.ToCString() << "\n";
-  else        di << " Model taken from the session : " << fnom.ToCString() << "\n";
-  //  di<<" -- Names of variables BREP-DRAW prefixed by : "<<rnom<<"\n";
-
-  IGESCAFControl_Reader reader(XSDRAW::Session(), modfic);
+  Handle(IGESCAFControl_ConfigurationNode) aNode =
+    new IGESCAFControl_ConfigurationNode();
   Standard_Integer onlyvisible = Interface_Static::IVal("read.iges.onlyvisible");
-  reader.SetReadVisible(onlyvisible == 1);
-
+  aNode->InternalParameters.ReadOnlyVisible = onlyvisible == 1;
   if (argc == 4)
   {
     Standard_Boolean mode = Standard_True;
@@ -249,39 +243,11 @@ static Standard_Integer ReadIges(Draw_Interpretor& di, Standard_Integer argc, co
       {
         case '-': mode = Standard_False; break;
         case '+': mode = Standard_True; break;
-        case 'c': reader.SetColorMode(mode); break;
-        case 'n': reader.SetNameMode(mode); break;
-        case 'l': reader.SetLayerMode(mode); break;
+        case 'c': aNode->InternalParameters.ReadColor = mode; break;
+        case 'n': aNode->InternalParameters.ReadName = mode; break;
+        case 'l': aNode->InternalParameters.ReadLayer = mode; break;
       }
   }
-
-  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(di);
-  Message_ProgressScope aRootScope(aProgress->Start(), "IGES import", modfic ? 2 : 1);
-
-  IFSelect_ReturnStatus readstat = IFSelect_RetVoid;
-  if (modfic)
-  {
-    Message_ProgressScope aReadScope(aRootScope.Next(), "File reading", 1);
-    aReadScope.Show();
-    readstat = reader.ReadFile(fnom.ToCString());
-  }
-  else if (XSDRAW::Session()->NbStartingEntities() > 0)
-  {
-    readstat = IFSelect_RetDone;
-  }
-  if (readstat != IFSelect_RetDone)
-  {
-    if (modfic)
-    {
-      di << "Could not read file " << fnom.ToCString() << " , abandon\n";
-    }
-    else
-    {
-      di << "No model loaded\n";
-    }
-    return 1;
-  }
-
   Handle(TDocStd_Document) doc;
   if (!DDocStd::GetDocument(argv[1], doc, Standard_False))
   {
@@ -290,18 +256,18 @@ static Standard_Integer ReadIges(Draw_Interpretor& di, Standard_Integer argc, co
     TDataStd_Name::Set(doc->GetData()->Root(), argv[1]);
     Handle(DDocStd_DrawDocument) DD = new DDocStd_DrawDocument(doc);
     Draw::Set(argv[1], DD);
-    //     di << "Document saved with name " << argv[1];
   }
-  if (!reader.Transfer(doc, aRootScope.Next()))
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(di);
+  Handle(IGESCAFControl_Provider) aProvider =
+    new IGESCAFControl_Provider(aNode);
+  aProvider->SetToUpdateStaticParameters(false);
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  if (!aProvider->Read(argv[2], doc, aWS, aProgress->Start()))
   {
-    di << "Cannot read any relevant data from the IGES file\n";
+    di << "Error: Can't read IGES file\n";
     return 1;
   }
-
-  //  Handle(DDocStd_DrawDocument) DD = new DDocStd_DrawDocument(doc);  
-  //  Draw::Set(argv[1],DD);       
-  di << "Document saved with name " << argv[1];
-
+  Message::SendInfo() << "Document saved with name " << argv[1];
   return 0;
 }
 
@@ -317,7 +283,8 @@ static Standard_Integer WriteIges(Draw_Interpretor& di, Standard_Integer argc, c
     di << "Use: " << argv[0] << " Doc filename [mode]: write document to IGES file\n";
     return 0;
   }
-
+  Handle(IGESCAFControl_ConfigurationNode) aNode =
+    new IGESCAFControl_ConfigurationNode();
   Handle(TDocStd_Document) Doc;
   DDocStd::GetDocument(argv[1], Doc);
   if (Doc.IsNull())
@@ -325,19 +292,6 @@ static Standard_Integer WriteIges(Draw_Interpretor& di, Standard_Integer argc, c
     di << argv[1] << " is not a document\n";
     return 1;
   }
-
-  XSDRAW::SetNorm("IGES");
-
-  TCollection_AsciiString fnom, rnom;
-  const Standard_Boolean modfic = XSDRAW::FileAndVar(argv[2], argv[1], "IGES", fnom, rnom);
-
-  //  IGESControl_Writer ICW (Interface_Static::CVal("write.iges.unit"),
-  //			  Interface_Static::IVal("write.iges.brep.mode"));
-
-  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(di);
-  Message_ProgressScope aRootScope(aProgress->Start(), "IGES export", modfic ? 2 : 1);
-
-  IGESCAFControl_Writer writer(XSDRAW::Session(), Standard_True);
   if (argc == 4)
   {
     Standard_Boolean mode = Standard_True;
@@ -346,30 +300,21 @@ static Standard_Integer WriteIges(Draw_Interpretor& di, Standard_Integer argc, c
       {
         case '-': mode = Standard_False; break;
         case '+': mode = Standard_True; break;
-        case 'c': writer.SetColorMode(mode); break;
-        case 'n': writer.SetNameMode(mode); break;
-        case 'l': writer.SetLayerMode(mode); break;
+        case 'c': aNode->InternalParameters.WriteColor = mode; break;
+        case 'n': aNode->InternalParameters.WriteName = mode; break;
+        case 'l': aNode->InternalParameters.WriteLayer = mode; break;
       }
   }
-  writer.Transfer(Doc, aRootScope.Next());
-
-  if (modfic)
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(di);
+  Handle(IGESCAFControl_Provider) aProvider =
+    new IGESCAFControl_Provider(aNode);
+  aProvider->SetToUpdateStaticParameters(false);
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  const TCollection_AsciiString aPath = argv[2];
+  if (!aProvider->Write(aPath, Doc, aWS, aProgress->Start()))
   {
-    Message_ProgressScope aWriteScope(aRootScope.Next(), "File writing", 1);
-    aWriteScope.Show();
-    di << "Writing IGES model to file " << argv[2] << "\n";
-    if (writer.Write(argv[2]))
-    {
-      di << " Write OK\n";
-    }
-    else
-    {
-      di << " Write failed\n";
-    }
-  }
-  else
-  {
-    di << "Document has been translated into the session";
+    di << "Error: Can't write IGES file\n";
+    return 1;
   }
   return 0;
 }
@@ -380,11 +325,6 @@ static Standard_Integer WriteIges(Draw_Interpretor& di, Standard_Integer argc, c
 //=======================================================================
 static Standard_Integer ReadStep(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
-  DeclareAndCast(STEPControl_Controller, ctl, XSDRAW::Controller());
-  if (ctl.IsNull())
-  {
-    XSDRAW::SetNorm ("STEP");
-  }
 
   Standard_CString aDocName = NULL;
   TCollection_AsciiString aFilePath, aModeStr;
@@ -411,101 +351,73 @@ static Standard_Integer ReadStep(Draw_Interpretor& di, Standard_Integer argc, co
     }
     else
     {
-      Message::SendFail() << "Syntax error at '" << argv[anArgIter] << "'";
+      di << "Syntax error at '" << argv[anArgIter] << "'";
       return 1;
     }
   }
-
-  TCollection_AsciiString aFileName, anOldVarName;
-  Standard_Boolean isFileMode = XSDRAW::FileAndVar (aFilePath.ToCString(), aDocName, "STEP", aFileName, anOldVarName);
-  if (isFileMode) di << " File STEP to read : " << aFileName << "\n";
-  else            di << " Model taken from the session : " << aFileName << "\n";
-  //  di<<" -- Names of variables BREP-DRAW prefixed by : "<<rnom<<"\n";
-
-  STEPCAFControl_Reader aReader (XSDRAW::Session(), isFileMode);
+  Handle(STEPCAFControl_ConfigurationNode) aNode =
+    new STEPCAFControl_ConfigurationNode();
   if (!aModeStr.IsEmpty())
   {
     Standard_Boolean aMode = Standard_True;
     for (Standard_Integer i = 1; aModeStr.Value (i); ++i)
     {
-      switch (aModeStr.Value (i))
+      switch (aModeStr.Value(i))
       {
-        case '-' : aMode = Standard_False; break;
-        case '+' : aMode = Standard_True;  break;
-        case 'c' : aReader.SetColorMode (aMode); break;
-        case 'n' : aReader.SetNameMode  (aMode); break;
-        case 'l' : aReader.SetLayerMode (aMode); break;
-        case 'v' : aReader.SetPropsMode (aMode); break;
+        case '-': aMode = Standard_False; break;
+        case '+': aMode = Standard_True; break;
+        case 'c': aNode->InternalParameters.WriteColor = aMode; break;
+        case 'n': aNode->InternalParameters.WriteName = aMode; break;
+        case 'l': aNode->InternalParameters.WriteLayer = aMode; break;
+        case 'v': aNode->InternalParameters.WriteProps = aMode; break;
         default:
         {
-          Message::SendFail() << "Syntax error at '" << aModeStr << "'\n";
+          di << "Syntax error at '" << aModeStr << "'\n";
           return 1;
         }
       }
     }
   }
-  
-  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (di);
-  Message_ProgressScope aRootScope (aProgress->Start(), "STEP import", isFileMode ? 2 : 1);
-
-  IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
-  if (isFileMode)
-  {
-    Message_ProgressScope aReadScope (aRootScope.Next(), "File reading", 1);
-    aReadScope.Show();
-    if (toTestStream)
-    {
-      std::ifstream aStream;
-      OSD_OpenStream (aStream, aFileName.ToCString(), std::ios::in | std::ios::binary);
-      TCollection_AsciiString aFolder, aFileNameShort;
-      OSD_Path::FolderAndFileFromPath (aFileName, aFolder, aFileNameShort);
-      aReadStat = aReader.ReadStream (aFileNameShort.ToCString(), aStream);
-    }
-    else
-    {
-      aReadStat = aReader.ReadFile (aFileName.ToCString());
-    }
-  }
-  else if (XSDRAW::Session()->NbStartingEntities() > 0)
-  {
-    aReadStat = IFSelect_RetDone;
-  }
-  if (aReadStat != IFSelect_RetDone)
-  {
-    if (isFileMode)
-    {
-      di << "Could not read file " << aFileName << " , abandon\n";
-    }
-    else
-    {
-      di << "No model loaded\n";
-    }
-    return 1;
-  }
-
   Handle(TDocStd_Document) aDoc;
-  if (!DDocStd::GetDocument (aDocName, aDoc, Standard_False))
+  if (!DDocStd::GetDocument(aDocName, aDoc, Standard_False))
   {
     Handle(TDocStd_Application) anApp = DDocStd::GetApplication();
     anApp->NewDocument("BinXCAF", aDoc);
-    TDataStd_Name::Set (aDoc->GetData()->Root(), aDocName);
-    Handle(DDocStd_DrawDocument) aDrawDoc = new DDocStd_DrawDocument (aDoc);
-    Draw::Set (aDocName, aDrawDoc);
-    //     di << "Document saved with name " << aDocName;
+    TDataStd_Name::Set(aDoc->GetData()->Root(), aDocName);
+    Handle(DDocStd_DrawDocument) aDrawDoc = new DDocStd_DrawDocument(aDoc);
+    Draw::Set(aDocName, aDrawDoc);
   }
-  if (!aReader.Transfer (aDoc, aRootScope.Next()))
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (di);
+  Handle(STEPCAFControl_Provider) aProvider =
+    new STEPCAFControl_Provider(aNode);
+  aProvider->SetToUpdateStaticParameters(false);
+  Standard_Boolean aReadStat = Standard_False;
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  if (toTestStream)
+  {
+    std::ifstream aStream;
+    OSD_OpenStream (aStream, aFilePath.ToCString(), std::ios::in | std::ios::binary);
+    TCollection_AsciiString aFolder, aFileNameShort;
+    OSD_Path::FolderAndFileFromPath (aFilePath, aFolder, aFileNameShort);
+    aReadStat =
+      aProvider->Read(aStream, aDoc, aFilePath, aWS, aProgress->Start());
+  }
+  else
+  {
+    aReadStat =
+      aProvider->Read(aFilePath, aDoc, aWS, aProgress->Start());
+  }
+  if (!aReadStat)
   {
     di << "Cannot read any relevant data from the STEP file\n";
     return 1;
   }
-
   Handle(DDocStd_DrawDocument) aDrawDoc = new DDocStd_DrawDocument (aDoc);
   Draw::Set (aDocName, aDrawDoc);
-  di << "Document saved with name " << aDocName;
-
-  NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> aDicFile = aReader.ExternFiles();
-  FillDicWS (aDicFile);
-  AddWS (aFileName, XSDRAW::Session());
+  Message::SendInfo() << "Document saved with name " << aDocName;
+  //NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> aDicFile = aReader.ExternFiles();
+  //FillDicWS (aDicFile);
+  //AddWS (aFileName, XSDRAW::Session());
   return 0;
 }
 
@@ -515,22 +427,15 @@ static Standard_Integer ReadStep(Draw_Interpretor& di, Standard_Integer argc, co
 //=======================================================================
 static Standard_Integer WriteStep(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
-  DeclareAndCast(STEPControl_Controller,ctl,XSDRAW::Controller());
-  if (ctl.IsNull())
-  {
-    XSDRAW::SetNorm ("STEP");
-  }
-  STEPCAFControl_Writer aWriter (XSDRAW::Session(), Standard_True);
-
   Handle(TDocStd_Document) aDoc;
   TCollection_AsciiString aDocName, aFilePath;
-  STEPControl_StepModelType aMode = STEPControl_AsIs;
+  Handle(STEPCAFControl_ConfigurationNode) aNode =
+    new STEPCAFControl_ConfigurationNode();
   bool hasModeArg = false, toTestStream = false;
-  TCollection_AsciiString aMultiFilePrefix, aLabelName;
   TDF_Label aLabel;
   for (Standard_Integer anArgIter = 1; anArgIter < argc; ++anArgIter)
   {
-    TCollection_AsciiString anArgCase (argv[anArgIter]);
+    TCollection_AsciiString anArgCase(argv[anArgIter]);
     anArgCase.LowerCase();
     if (anArgCase == "-stream")
     {
@@ -539,7 +444,7 @@ static Standard_Integer WriteStep(Draw_Interpretor& di, Standard_Integer argc, c
     else if (aDocName.IsEmpty())
     {
       Standard_CString aDocNameStr = argv[anArgIter];
-      DDocStd::GetDocument (aDocNameStr, aDoc);
+      DDocStd::GetDocument(aDocNameStr, aDoc);
       if (aDoc.IsNull())
       {
         di << "Syntax error: '" << argv[anArgIter] << "' is not a document";
@@ -554,52 +459,57 @@ static Standard_Integer WriteStep(Draw_Interpretor& di, Standard_Integer argc, c
     else if (!hasModeArg)
     {
       hasModeArg = true;
-      switch (anArgCase.Value (1))
+      switch (anArgCase.Value(1))
       {
         case 'a':
-        case '0': aMode = STEPControl_AsIs;                    break;
+        case '0': aNode->InternalParameters.WriteModelType = STEPControl_AsIs; break;
         case 'f':
-        case '1': aMode = STEPControl_FacetedBrep;             break;
+        case '1': aNode->InternalParameters.WriteModelType = STEPControl_FacetedBrep; break;
         case 's':
-        case '2': aMode = STEPControl_ShellBasedSurfaceModel;  break;
+        case '2': aNode->InternalParameters.WriteModelType = STEPControl_ShellBasedSurfaceModel; break;
         case 'm':
-        case '3': aMode = STEPControl_ManifoldSolidBrep;       break;
+        case '3': aNode->InternalParameters.WriteModelType = STEPControl_ManifoldSolidBrep; break;
         case 'w':
-        case '4': aMode = STEPControl_GeometricCurveSet;       break;
+        case '4': aNode->InternalParameters.WriteModelType = STEPControl_GeometricCurveSet; break;
         default:
         {
-          di << "Syntax error: mode '" << argv[anArgIter] << "' is incorrect [give fsmw]";
+          di << "Syntax error: mode '" << anArgCase.Value(1) << "' is incorrect [give fsmw]";
           return 1;
         }
       }
       Standard_Boolean wrmode = Standard_True;
       for (Standard_Integer i = 1; i <= anArgCase.Length(); ++i)
       {
-        switch (anArgCase.Value (i))
+        switch (anArgCase.Value(i))
         {
-          case '-' : wrmode = Standard_False; break;
-          case '+' : wrmode = Standard_True;  break;
-          case 'c' : aWriter.SetColorMode (wrmode); break;
-          case 'n' : aWriter.SetNameMode  (wrmode); break;
-          case 'l' : aWriter.SetLayerMode (wrmode); break;
-          case 'v' : aWriter.SetPropsMode (wrmode); break;
+          case '-': wrmode = Standard_False; break;
+          case '+': wrmode = Standard_True; break;
+          case 'c': aNode->InternalParameters.WriteColor = wrmode; break;
+          case 'n': aNode->InternalParameters.WriteName = wrmode; break;
+          case 'l': aNode->InternalParameters.WriteLayer = wrmode; break;
+          case 'v': aNode->InternalParameters.WriteProps = wrmode; break;
+          default:
+          {
+            di << "Syntax error at '" << anArgCase.Value(i) << "'\n";
+            return 1;
+          }
         }
       }
     }
-    else if (aMultiFilePrefix.IsEmpty()
-          && anArgCase.Search (":") == -1)
+    else if (aNode->InternalParameters.WriteMultiPrefix.IsEmpty()
+             && anArgCase.Search(":") == -1)
     {
-      aMultiFilePrefix = argv[anArgIter];
+      aNode->InternalParameters.WriteMultiPrefix = argv[anArgIter];
     }
     else if (aLabel.IsNull())
     {
-      if (!DDF::FindLabel (aDoc->Main().Data(), argv[anArgIter], aLabel)
-       || aLabel.IsNull())
+      if (!DDF::FindLabel(aDoc->Main().Data(), argv[anArgIter], aLabel)
+          || aLabel.IsNull())
       {
         di << "Syntax error: No label for entry '" << argv[anArgIter] << "'";
         return 1;
       }
-      aLabelName = argv[anArgIter];
+      aNode->InternalParameters.WriteLabels.Append(argv[anArgIter]);
     }
     else
     {
@@ -612,84 +522,34 @@ static Standard_Integer WriteStep(Draw_Interpretor& di, Standard_Integer argc, c
     di << "Syntax error: wrong number of arguments";
     return 1;
   }
-
-  TCollection_AsciiString aFileName, anOldVarName;
-  const Standard_Boolean isFileMode = XSDRAW::FileAndVar (aFilePath.ToCString(), aDocName.ToCString(), "STEP", aFileName, anOldVarName);
-
-  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (di);
-  Message_ProgressScope aRootScope (aProgress->Start(), "STEP export", isFileMode ? 2 : 1);
-  if (!aLabel.IsNull())
-  {  
-    di << "Translating label " << aLabelName << " of document " << aDocName << " to STEP\n";
-    if (!aWriter.Transfer (aLabel, aMode,
-                           !aMultiFilePrefix.IsEmpty() ? aMultiFilePrefix.ToCString() : NULL,
-                           aRootScope.Next()))
-    {
-      di << "Error: the label of document cannot be translated or gives no result";
-      return 1;
-    }
-  }
-  else
-  {
-    di << "Translating document " << aDocName << " to STEP\n";
-    if (!aWriter.Transfer (aDoc, aMode,
-                           !aMultiFilePrefix.IsEmpty() ? aMultiFilePrefix.ToCString() : NULL,
-                           aRootScope.Next()))
-    {
-      di << "Error: The document cannot be translated or gives no result\n";
-    }
-  }
-
-  if (!isFileMode)
-  {
-    di << "Document has been translated into the session";
-    return 0;
-  }
-
-  Message_ProgressScope aWriteScope (aRootScope.Next(), "File writing", 1);
-  aWriteScope.Show();
-  di << "Writing STEP file " << aFilePath << "\n";
-
-  IFSelect_ReturnStatus aStat = IFSelect_RetVoid;
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(di);
+  Handle(STEPCAFControl_Provider) aProvider =
+    new STEPCAFControl_Provider(aNode);
+  aProvider->SetToUpdateStaticParameters(false);
+  Standard_Boolean aReadStat = Standard_False;
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
   if (toTestStream)
   {
     std::ofstream aStream;
-    OSD_OpenStream (aStream, aFilePath, std::ios::out | std::ios::binary);
-    aStat = aWriter.WriteStream (aStream);
-    aStream.close();
-    if (!aStream.good()
-      && aStat == IFSelect_RetDone)
-    {
-      aStat = IFSelect_RetFail;
-    }
+    OSD_OpenStream(aStream, aFilePath, std::ios::out | std::ios::binary);
+    TCollection_AsciiString aFolder, aFileNameShort;
+    OSD_Path::FolderAndFileFromPath(aFilePath, aFolder, aFileNameShort);
+    aReadStat =
+      aProvider->Write(aStream, aDoc, aWS, aProgress->Start());
   }
   else
   {
-    aStat = aWriter.Write (aFilePath.ToCString());
+    aReadStat =
+      aProvider->Write(aFilePath, aDoc, aWS, aProgress->Start());
   }
-
-  switch (aStat)
+  if (!aReadStat)
   {
-    case IFSelect_RetVoid:
-    {
-      di << "Error: no file written";
-      break;
-    }
-    case IFSelect_RetDone:
-    {
-      di << "File " << aFilePath << " written\n";
-
-      NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> aDicFile = aWriter.ExternFiles();
-      FillDicWS (aDicFile);
-      AddWS (aFilePath, XSDRAW::Session());
-      break;
-    }
-    default:
-    {
-      di << "Error on writing file";
-      break;
-    }
+    di << "Cannot write any relevant data to the STEP file\n";
+    return 1;
   }
+  //NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> aDicFile = aWriter.ExternFiles();
+  //FillDicWS(aDicFile);
+  //AddWS(aFilePath, XSDRAW::Session());
   return 0;
 }
 
@@ -1228,7 +1088,8 @@ static Standard_Integer ReadFile(Draw_Interpretor& theDI,
   if (aStat)
   {
     TopoDS_Shape aShape;
-    aStat = isNoDoc ? aConf->Read(aFilePath, aShape) : aConf->Read(aFilePath, aDoc);
+    Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+    aStat = isNoDoc ? aConf->Read(aFilePath, aShape, aWS) : aConf->Read(aFilePath, aDoc, aWS);
     if(isNoDoc && aStat)
     {
       DBRep::Set(aDocShapeName.ToCString(), aShape);
@@ -1304,6 +1165,7 @@ static Standard_Integer WriteFile(Draw_Interpretor& theDI,
   {
     aStat = aConf->Load(aConfString);
   }
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
   if (aStat)
   {
     if(isNoDoc)
@@ -1314,11 +1176,11 @@ static Standard_Integer WriteFile(Draw_Interpretor& theDI,
         Message::SendFail() << "Error: incorrect shape";
         return 1;
       }
-      aStat = aConf->Write(aFilePath, aShape);
+      aStat = aConf->Write(aFilePath, aShape, aWS);
     }
     else
     {
-      aStat = aConf->Write(aFilePath, aDoc);
+      aStat = aConf->Write(aFilePath, aDoc, aWS);
     }
   }
   if (!aStat)

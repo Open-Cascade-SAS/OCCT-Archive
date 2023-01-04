@@ -31,7 +31,7 @@ namespace
 {
   static const TCollection_AsciiString& THE_CONFIGURATION_SCOPE()
   {
-    static const TCollection_AsciiString aScope ("global");
+    static const TCollection_AsciiString aScope("global");
     return aScope;
   }
 
@@ -109,10 +109,6 @@ Standard_Boolean DE_Wrapper::Read(const TCollection_AsciiString& thePath,
   {
     return Standard_False;
   }
-  if (theWS.IsNull())
-  {
-    return Read(thePath, theDocument, theProgress);
-  }
   Handle(DE_Provider) aProvider;
   if (!FindProvider(thePath, Standard_True, aProvider))
   {
@@ -134,10 +130,6 @@ Standard_Boolean DE_Wrapper::Write(const TCollection_AsciiString& thePath,
   {
     return Standard_False;
   }
-  if (theWS.IsNull())
-  {
-    return Write(thePath, theDocument, theProgress);
-  }
   Handle(DE_Provider) aProvider;
   if (!FindProvider(thePath, Standard_False, aProvider))
   {
@@ -151,54 +143,10 @@ Standard_Boolean DE_Wrapper::Write(const TCollection_AsciiString& thePath,
 // purpose  :
 //=======================================================================
 Standard_Boolean DE_Wrapper::Read(const TCollection_AsciiString& thePath,
-                                  const Handle(TDocStd_Document)& theDocument,
-                                  const Message_ProgressRange& theProgress)
-{
-  if (theDocument.IsNull())
-  {
-    return Standard_False;
-  }
-  Handle(DE_Provider) aProvider;
-  if (!FindProvider(thePath, Standard_True, aProvider))
-  {
-    return Standard_False;
-  }
-  return aProvider->Read(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-Standard_Boolean DE_Wrapper::Write(const TCollection_AsciiString& thePath,
-                                   const Handle(TDocStd_Document)& theDocument,
-                                   const Message_ProgressRange& theProgress)
-{
-  if (theDocument.IsNull())
-  {
-    return Standard_False;
-  }
-  Handle(DE_Provider) aProvider;
-  if (!FindProvider(thePath, Standard_False, aProvider))
-  {
-    return Standard_False;
-  }
-  return aProvider->Write(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-Standard_Boolean DE_Wrapper::Read(const TCollection_AsciiString& thePath,
                                   TopoDS_Shape& theShape,
                                   Handle(XSControl_WorkSession)& theWS,
                                   const Message_ProgressRange& theProgress)
 {
-  if (theWS.IsNull())
-  {
-    return Read(thePath, theShape, theProgress);
-  }
   Handle(DE_Provider) aProvider;
   if (!FindProvider(thePath, Standard_True, aProvider))
   {
@@ -216,49 +164,12 @@ Standard_Boolean DE_Wrapper::Write(const TCollection_AsciiString& thePath,
                                    Handle(XSControl_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
-  if (theWS.IsNull())
-  {
-    return Write(thePath, theShape, theProgress);
-  }
   Handle(DE_Provider) aProvider;
   if (!FindProvider(thePath, Standard_False, aProvider))
   {
     return Standard_False;
   }
   return aProvider->Write(thePath, theShape, theWS, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-Standard_Boolean DE_Wrapper::Read(const TCollection_AsciiString& thePath,
-                                  TopoDS_Shape& theShape,
-                                  const Message_ProgressRange& theProgress)
-{
-
-  Handle(DE_Provider) aProvider;
-  if (!FindProvider(thePath, Standard_True, aProvider))
-  {
-    return Standard_False;
-  }
-  return aProvider->Read(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-Standard_Boolean DE_Wrapper::Write(const TCollection_AsciiString& thePath,
-                                   const TopoDS_Shape& theShape,
-                                   const Message_ProgressRange& theProgress)
-{
-  Handle(DE_Provider) aProvider;
-  if (!FindProvider(thePath, Standard_False, aProvider))
-  {
-    return Standard_False;
-  }
-  return aProvider->Write(thePath, theShape, theProgress);
 }
 
 //=======================================================================

@@ -59,30 +59,6 @@ bool DEXCAFCascade_Provider::Read(const TCollection_AsciiString& thePath,
                                   const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool DEXCAFCascade_Provider::Write(const TCollection_AsciiString& thePath,
-                                   const Handle(TDocStd_Document)& theDocument,
-                                   Handle(XSControl_WorkSession)& theWS,
-                                   const Message_ProgressRange& theProgress)
-{
-  (void)theWS;
-  return Write(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool DEXCAFCascade_Provider::Read(const TCollection_AsciiString& thePath,
-                                  const Handle(TDocStd_Document)& theDocument,
-                                  const Message_ProgressRange& theProgress)
-{
   if (theDocument.IsNull())
   {
     Message::SendFail() << "Error in the DEXCAFCascade_Provider during reading the file " <<
@@ -141,8 +117,10 @@ bool DEXCAFCascade_Provider::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool DEXCAFCascade_Provider::Write(const TCollection_AsciiString& thePath,
                                    const Handle(TDocStd_Document)& theDocument,
+                                   Handle(XSControl_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
+  (void)theWS;
   Handle(TDocStd_Application) anApp = new TDocStd_Application();
   BinXCAFDrivers::DefineFormat(anApp);
   PCDM_StoreStatus aStatus = PCDM_SS_Doc_IsNull;
@@ -211,30 +189,6 @@ bool DEXCAFCascade_Provider::Read(const TCollection_AsciiString& thePath,
                                   const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool DEXCAFCascade_Provider::Write(const TCollection_AsciiString& thePath,
-                                   const TopoDS_Shape& theShape,
-                                   Handle(XSControl_WorkSession)& theWS,
-                                   const Message_ProgressRange& theProgress)
-{
-  (void)theWS;
-  return Write(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool DEXCAFCascade_Provider::Read(const TCollection_AsciiString& thePath,
-                                  TopoDS_Shape& theShape,
-                                  const Message_ProgressRange& theProgress)
-{
   if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(DEXCAFCascade_ConfigurationNode)))
   {
     Message::SendFail() << "Error in the DEXCAFCascade_Provider during reading the file " << thePath
@@ -245,7 +199,7 @@ bool DEXCAFCascade_Provider::Read(const TCollection_AsciiString& thePath,
   Handle(TDocStd_Application) anApp = new TDocStd_Application();
   BinXCAFDrivers::DefineFormat(anApp);
   anApp->NewDocument("BinXCAF", aDocument);
-  Read(thePath, aDocument, theProgress);
+  Read(thePath, aDocument, theWS, theProgress);
   TDF_LabelSequence aLabels;
   Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(aDocument->Main());
   aSTool->GetFreeShapes(aLabels);
@@ -281,12 +235,14 @@ bool DEXCAFCascade_Provider::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool DEXCAFCascade_Provider::Write(const TCollection_AsciiString& thePath,
                                    const TopoDS_Shape& theShape,
+                                   Handle(XSControl_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
+  (void)theWS;
   Handle(TDocStd_Document) aDoc = new TDocStd_Document("BinXCAF");
   Handle(XCAFDoc_ShapeTool) aShTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
   aShTool->AddShape(theShape);
-  return Write(thePath, aDoc, theProgress);
+  return Write(thePath, aDoc, theWS, theProgress);
 }
 
 //=======================================================================

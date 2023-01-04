@@ -49,30 +49,6 @@ bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
                           const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWObj_Provider::Write(const TCollection_AsciiString& thePath,
-                           const Handle(TDocStd_Document)& theDocument,
-                           Handle(XSControl_WorkSession)& theWS,
-                           const Message_ProgressRange& theProgress)
-{
-  (void)theWS;
-  return Write(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
-                          const Handle(TDocStd_Document)& theDocument,
-                          const Message_ProgressRange& theProgress)
-{
   if (theDocument.IsNull())
   {
     Message::SendFail() << "Error in the RWObj_Provider during reading the file " <<
@@ -110,8 +86,10 @@ bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool RWObj_Provider::Write(const TCollection_AsciiString& thePath,
                            const Handle(TDocStd_Document)& theDocument,
+                           Handle(XSControl_WorkSession)& theWS,
                            const Message_ProgressRange& theProgress)
 {
+  (void)theWS;
   if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWObj_ConfigurationNode)))
   {
     Message::SendFail() << "Error in the RWObj_ConfigurationNode during writing the file " <<
@@ -156,30 +134,6 @@ bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
                           const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWObj_Provider::Write(const TCollection_AsciiString& thePath,
-                           const TopoDS_Shape& theShape,
-                           Handle(XSControl_WorkSession)& theWS,
-                           const Message_ProgressRange& theProgress)
-{
-  (void)theWS;
-  return Write(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
-                          TopoDS_Shape& theShape,
-                          const Message_ProgressRange& theProgress)
-{
   if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWObj_ConfigurationNode)))
   {
     Message::SendFail() << "Error in the RWObj_ConfigurationNode during writing the file " <<
@@ -219,12 +173,14 @@ bool RWObj_Provider::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool RWObj_Provider::Write(const TCollection_AsciiString& thePath,
                            const TopoDS_Shape& theShape,
+                           Handle(XSControl_WorkSession)& theWS,
                            const Message_ProgressRange& theProgress)
 {
+  (void)theWS;
   Handle(TDocStd_Document) aDoc = new TDocStd_Document("BinXCAF");
   Handle(XCAFDoc_ShapeTool) aShTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
   aShTool->AddShape(theShape);
-  return Write(thePath, aDoc, theProgress);
+  return Write(thePath, aDoc, theWS, theProgress);
 }
 
 //=======================================================================
