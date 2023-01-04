@@ -976,14 +976,14 @@ Standard_Boolean LocOpe_SplitShape::AddOpenWire(const TopoDS_Wire& W,
         
       }
     }        
+    bool isBuildF2 = true;
     //check overlapping edges for second face
     if(nbAddBound <2)
-      return Standard_False;
+        isBuildF2 = false;
     if(nbAddBound ==2 && !anE1.IsNull() && !anE2.IsNull())
     {
       if(checkOverlapping(TopoDS::Edge(anE1), TopoDS::Edge(anE2),FaceRef ))
-        return Standard_False;
-      
+          isBuildF2 = false;
     }
 
     nbAddBound =0;
@@ -1010,26 +1010,29 @@ Standard_Boolean LocOpe_SplitShape::AddOpenWire(const TopoDS_Wire& W,
         return Standard_False;
       
     }
-
     TopoDS_Face newF1,newF2;
     aLocalFace = FaceRef.EmptyCopied();
     newF1 = TopoDS::Face(aLocalFace);
     newF1.Orientation(TopAbs_FORWARD);
-    aLocalFace = FaceRef.EmptyCopied();
-    newF2 = TopoDS::Face(aLocalFace);
-    newF2.Orientation(TopAbs_FORWARD);
+    if (isBuildF2)
+    {
+        aLocalFace = FaceRef.EmptyCopied();
+        newF2 = TopoDS::Face(aLocalFace);
+        newF2.Orientation(TopAbs_FORWARD);
+    }
     
     // modifs JAG 97.05.28
 
     B.Add(newF1,newW1);
-    B.Add(newF2,newW2);
+    if (isBuildF2)
+      B.Add(newF2,newW2);
     for (exp.Init(FaceRef.Oriented(TopAbs_FORWARD),TopAbs_WIRE); exp.More(); exp.Next()) {
       const TopoDS_Wire& wir = TopoDS::Wire(exp.Current());
       if (!wir.IsSame(wfirst)) {
         if (IsInside(newF1, wir)) {
           B.Add(newF1,wir);
         }
-        else if (IsInside(newF2, wir)) {
+        else if (isBuildF2 && IsInside(newF2, wir)) {
           B.Add(newF2,wir);
         }
         else {
@@ -1040,7 +1043,8 @@ Standard_Boolean LocOpe_SplitShape::AddOpenWire(const TopoDS_Wire& W,
       }
     }
     lf.Append(newF1);
-    lf.Append(newF2);
+    if (isBuildF2)
+      lf.Append(newF2);
     
     // Mise a jour des descendants des wires
     for (exp.Init(F,TopAbs_WIRE); exp.More(); exp.Next()) {
@@ -1054,7 +1058,8 @@ Standard_Boolean LocOpe_SplitShape::AddOpenWire(const TopoDS_Wire& W,
       if (itl.More()) { // on a trouve le wire
         ls.Remove(itl);
         ls.Append(newW1);
-        ls.Append(newW2);
+        if (isBuildF2)
+          ls.Append(newW2);
       }
     }
   }
