@@ -153,8 +153,8 @@ static Standard_Integer igesbrep (Draw_Interpretor& di, Standard_Integer argc, c
       di << "All Geometry Transfer\n";
       di<<"spline_continuity (read) : "<<Interface_Static::IVal("read.iges.bspline.continuity")<<" (0 : no modif, 1 : C1, 2 : C2)\n";
       di<<"  To modify : command  param read.iges.bspline.continuity\n";
-      Handle(XSControl_WorkSession) thesession = Reader.WS();
-      thesession->ClearContext();
+      const Handle(XSControl_WorkSession)& thesession = Reader.WS();
+      thesession->TransferReader()->Context().Clear();
       XSDRAW::SetTransferProcess (thesession->TransferReader()->TransientProcess());
 
       aPSRoot.SetName("Translation");
@@ -255,8 +255,8 @@ static Standard_Integer igesbrep (Draw_Interpretor& di, Standard_Integer argc, c
         di << "All Geometry Transfer\n";
         di<<"spline_continuity (read) : "<<Interface_Static::IVal("read.iges.bspline.continuity")<<" (0 : no modif, 1 : C1, 2 : C2)\n";
         di<<"  To modify : command  param read.iges.bspline.continuity\n";
-        Handle(XSControl_WorkSession) thesession = Reader.WS();
-        thesession->ClearContext();
+        const Handle(XSControl_WorkSession)& thesession = Reader.WS();
+        thesession->TransferReader()->Context().Clear();
         XSDRAW::SetTransferProcess (thesession->TransferReader()->TransientProcess());
 
         aPSRoot.SetName("Translation");

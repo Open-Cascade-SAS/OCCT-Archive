@@ -96,7 +96,7 @@ if [catch {ReadFile D7 $write_path -conf "global.general.length.unit : 0.0254 "}
 }
 XGetOneShape S7 D7
 
-array set areas {0 11995.4 1 0.0119954 2 47916.8 3 11979.2 4 0.0479168 5 0.0119792 6 47916.8 7 18.5678}
+array set areas {0 11995.4 1 0.0119954 2 0.0119792 3 0.0119792 4 0.0119792 5 1.19955e-08 6 11979.2 7 18.5678}
 array set results {0 S0 1 S1 2 S2 3 S3 4 S4 5 S5 6 S6 7 S7}
 for { set anind 0} { $anind < 8 } { incr anind } {
   checkprops $results($anind) -s $areas($anind) -eps 1e-2

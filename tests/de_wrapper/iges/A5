@@ -53,7 +53,7 @@ if [catch {readfile S5 $filename -conf "global.general.length.unit : 1000 "} cat
     puts "OK : Reading is correct"
 }
 
-array set volumes {0 11995.4 1 0.0119954 2 11995.4 3 0.0119954 4 11995.4 5 0.0119954}
+array set volumes {0 11995.4 1 0.0119954 2 11995.4 3 0.0119954 4 0.0119954 5 1.20093e-08}
 array set results {0 res0 1 res1 2 S2 3 S3 4 S4 5 S5}
 for { set anind 0} { $anind < 6 } { incr anind } {
   checkprops $results($anind) -s $volumes($anind) -eps 1e-2

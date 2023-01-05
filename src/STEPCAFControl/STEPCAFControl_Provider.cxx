@@ -526,11 +526,6 @@ bool STEPCAFControl_Provider::Write(std::ostream& theOStream,
   Handle(STEPCAFControl_ConfigurationNode) aNode =
     Handle(STEPCAFControl_ConfigurationNode)::DownCast(GetNode());
   initStatic(aNode);
-  XCAFDoc_DocumentTool::SetLengthUnit(theDocument,
-                                      UnitsMethods::GetLengthUnitScale(
-                                      aNode->InternalParameters.WriteUnit,
-                                      UnitsMethods_LengthUnit_Millimeter),
-                                      UnitsMethods_LengthUnit_Millimeter);
   personizeWS(theWS);
   STEPCAFControl_Writer aWriter(theWS, Standard_True);
   STEPControl_StepModelType aMode =
@@ -539,6 +534,10 @@ bool STEPCAFControl_Provider::Write(std::ostream& theOStream,
   aWriter.SetNameMode(aNode->InternalParameters.WriteName);
   aWriter.SetLayerMode(aNode->InternalParameters.WriteLayer);
   aWriter.SetPropsMode(aNode->InternalParameters.WriteProps);
+  Handle(StepData_StepModel) aModel = aWriter.ChangeWriter().Model();
+  aModel->SetWriteLengthUnit(UnitsMethods::GetLengthUnitScale(
+    aNode->InternalParameters.WriteUnit,
+    UnitsMethods_LengthUnit_Millimeter));
   TDF_LabelSequence aLabels;
   TCollection_AsciiString aLabelsString;
   for (TColStd_SequenceOfAsciiString::Iterator anIter(aNode->InternalParameters.WriteLabels);
