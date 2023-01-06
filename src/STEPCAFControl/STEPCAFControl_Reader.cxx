@@ -862,6 +862,8 @@ Handle(STEPCAFControl_ExternFile) STEPCAFControl_Reader::ReadExternFile (const S
   EF->SetWS(newWS);
   EF->SetName(new TCollection_HAsciiString(file));
 
+  myReader.WS()->AppendReferenceWS(file, newWS);
+
   // read file
   EF->SetLoadStatus(sr.ReadFile(fullname));
 

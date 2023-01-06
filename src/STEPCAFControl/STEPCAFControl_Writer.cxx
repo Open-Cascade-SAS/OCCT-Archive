@@ -800,6 +800,7 @@ TopoDS_Shape STEPCAFControl_Writer::TransferExternFiles (const TDF_Label &L,
     EF->SetWS ( newWS );
     EF->SetName ( name );
     EF->SetLabel ( L );
+    Writer().WS()->AppendReferenceWS(name->String(), newWS);
     Standard_Integer assemblymode = Interface_Static::IVal ("write.step.assembly");
     Interface_Static::SetCVal ("write.step.assembly", "Off");
     const Standard_CString multi = 0;
