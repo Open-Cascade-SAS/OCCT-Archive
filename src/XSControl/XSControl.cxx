@@ -25,7 +25,7 @@ Handle(XSControl_WorkSession)  XSControl::Session
     Handle(XSControl_Vars)  XSControl::Vars
   (const Handle(IFSelect_SessionPilot)& pilot)
 {
-  Handle(XSControl_Vars) avars;
+  Handle(XSControl_Vars) avars = new XSControl_Vars;;
   Handle(XSControl_WorkSession) WS = XSControl::Session(pilot);
   //if (!WS.IsNull()) avars = WS->Vars();
   return avars;
