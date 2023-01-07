@@ -145,12 +145,14 @@ bool RWGltf_Provider::Write(const TCollection_AsciiString& thePath,
   anExt.LowerCase();
   RWGltf_CafWriter aWriter(thePath, anExt.EndsWith(".glb"));
   aWriter.SetCoordinateSystemConverter(aConverter);
+  aWriter.SetCompressionParameters(aNode->InternalParameters.WriteDracoParameters);
   aWriter.SetTransformationFormat(aNode->InternalParameters.WriteTrsfFormat);
   aWriter.SetNodeNameFormat(aNode->InternalParameters.WriteNodeNameFormat);
   aWriter.SetMeshNameFormat(aNode->InternalParameters.WriteMeshNameFormat);
   aWriter.SetForcedUVExport(aNode->InternalParameters.WriteForcedUVExport);
   aWriter.SetToEmbedTexturesInGlb(aNode->InternalParameters.WriteEmbedTexturesInGlb);
   aWriter.SetMergeFaces(aNode->InternalParameters.WriteMergeFaces);
+  aWriter.SetParallel(aNode->InternalParameters.WriteParallel);
   aWriter.SetSplitIndices16(aNode->InternalParameters.WriteSplitIndices16);
   if (!aWriter.Perform(theDocument, aFileInfo, theProgress))
   {

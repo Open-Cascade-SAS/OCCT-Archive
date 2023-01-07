@@ -139,27 +139,71 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
       return false;
     }
   }
-  if (!aNode->InternalParameters.ReadBRep)
+  switch (aNode->InternalParameters.ReadShapeType)
   {
-    Handle(Poly_Triangulation) aTriangulation =
-      RWStl::ReadFile(thePath.ToCString(), aMergeAngle, theProgress);
-
-    TopoDS_Face aFace;
-    BRep_Builder aB;
-    aB.MakeFace(aFace);
-    aB.UpdateFace(aFace, aTriangulation);
-    theShape = aFace;
-  }
-  else
-  {
-    Standard_DISABLE_DEPRECATION_WARNINGS
-      if (!StlAPI::Read(theShape, thePath.ToCString()))
+    case(RWStl_ConfigurationNode::ReadMode_ShapeType_MultiMesh):
+    {
+      NCollection_Sequence<Handle(Poly_Triangulation)> aTriangList;
+      // Read STL file to the triangulation list.
+      RWStl::ReadFile(thePath.ToCString(), aMergeAngle, aTriangList, theProgress);
+      BRep_Builder aB;
+      TopoDS_Face aFace;
+      if (aTriangList.Size() == 1)
       {
-        Message::SendFail() << "Error: RWStl_Provider : [" <<
-          thePath << "] : Cannot read any relevant data from the STL file";
-        return false;
+        aB.MakeFace(aFace);
+        aB.UpdateFace(aFace, aTriangList.First());
+        theShape = aFace;
       }
-    Standard_ENABLE_DEPRECATION_WARNINGS
+      else
+      {
+        TopoDS_Compound aCmp;
+        for (NCollection_Sequence<Handle(Poly_Triangulation)>::Iterator anIt(aTriangList);
+             anIt.More(); anIt.Next())
+        {
+          if (aCmp.IsNull())
+          {
+            aB.MakeCompound(aCmp);
+          }
+          if (aFace.IsNull())
+          {
+            aB.MakeFace(aFace);
+          }
+          aB.UpdateFace(aFace, anIt.Value());
+          aB.Add(aCmp, aFace);
+        }
+        theShape = aCmp;
+      }
+      break;
+    }
+    case(RWStl_ConfigurationNode::ReadMode_ShapeType_SingleMesh):
+    {
+      // Read STL file to the triangulation.
+      Handle(Poly_Triangulation) aTriangulation =
+        RWStl::ReadFile(thePath.ToCString(), aMergeAngle, theProgress);
+
+      if (!aTriangulation.IsNull())
+      {
+        TopoDS_Face aFace;
+        BRep_Builder aB;
+        aB.MakeFace(aFace);
+        aB.UpdateFace(aFace, aTriangulation);
+        theShape = aFace;
+      }
+      break;
+    }
+    case(RWStl_ConfigurationNode::ReadMode_ShapeType_CompShape):
+    {
+      Standard_DISABLE_DEPRECATION_WARNINGS
+        StlAPI::Read(theShape, thePath.ToCString());
+      Standard_ENABLE_DEPRECATION_WARNINGS
+        break;
+    }
+  }
+  if (theShape.IsNull())
+  {
+    Message::SendFail() << "Error: RWStl_Provider : [" <<
+      thePath << "] : Cannot read any relevant data from the STL file";
+    return false;
   }
   return true;
 }

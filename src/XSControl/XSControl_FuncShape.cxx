@@ -19,6 +19,7 @@
 #include <IFSelect_Functions.hxx>
 #include <IFSelect_SessionPilot.hxx>
 #include <Interface_Macros.hxx>
+#include <Interface_InterfaceModel.hxx>
 #include <Message.hxx>
 #include <Message_Messenger.hxx>
 #include <ShapeExtend_Explorer.hxx>
@@ -29,6 +30,7 @@
 #include <TopoDS_Iterator.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <Transfer_SimpleBinderOfTransient.hxx>
+#include <Transfer_FinderProcess.hxx>
 #include <Transfer_TransientListBinder.hxx>
 #include <Transfer_TransientProcess.hxx>
 #include <TransferBRep.hxx>
@@ -39,6 +41,7 @@
 #include <XSControl_Controller.hxx>
 #include <XSControl_FuncShape.hxx>
 #include <XSControl_TransferReader.hxx>
+#include <XSControl_TransferWriter.hxx>
 #include <XSControl_Vars.hxx>
 #include <XSControl_WorkSession.hxx>
 
@@ -780,7 +783,7 @@ Standard_Integer  XSControl_FuncShape::MoreShapes
     for (i = n1; i <= n2 ; i ++) {
       const char* nomshh = &nomsh[0];
       sprintf (nomsh,"%s%d",nom,i);
-      TopoDS_Shape Shape = session->Vars()->GetShape(nomshh);
+      TopoDS_Shape Shape;// = session->Vars()->GetShape(nomshh);
       if (Shape.IsNull()) continue;
       list->Append(Shape);
       nbsh ++;
@@ -789,7 +792,7 @@ Standard_Integer  XSControl_FuncShape::MoreShapes
     return nbsh;
   }
   const char* a1 = (const char *)name;
-  TopoDS_Shape Shape = session->Vars()->GetShape(a1);
+  TopoDS_Shape Shape;// = session->Vars()->GetShape(a1);
   if (Shape.IsNull()) { sout<<"not a shape draw:"<<a1<<std::endl; return 0; }
   list->Append(Shape);
   return 1;

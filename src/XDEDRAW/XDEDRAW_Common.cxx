@@ -96,6 +96,7 @@ static void CollectActiveWorkSessions(const Handle(XSControl_WorkSession)& theWS
   {
     return;
   }
+  theMap.Bind(theName, theWS);
   for (XSControl_WorkSessionMap::Iterator anIter(theWS->ReferenceWS());
        anIter.More(); anIter.Next())
   {
@@ -108,15 +109,15 @@ static void CollectActiveWorkSessions(const Handle(XSControl_WorkSession)& theWS
 //purpose  : Set current file if many files are read
 //=======================================================================
 static Standard_Integer SetCurWS(Draw_Interpretor& theDI,
-                                 Standard_Integer theArgc,
-                                 const char** theArgv)
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
-  if (theArgc < 2)
+  if (theNbArgs < 2)
   {
-    theDI << "Use: " << theArgv[0] << " filename \n";
+    theDI << "Use: " << theArgVec[0] << " filename \n";
     return 1;
   }
-  const TCollection_AsciiString aSessionName(theArgv[1]);
+  const TCollection_AsciiString aSessionName(theArgVec[1]);
   Handle(XSControl_WorkSession) aSession;
   if (!THE_PREVIOUS_WORK_SESSIONS.Find(aSessionName, aSession))
   {
@@ -140,11 +141,11 @@ static Standard_Integer SetCurWS(Draw_Interpretor& theDI,
 //purpose  : List all files recorded after translation
 //=======================================================================
 static Standard_Integer GetDicWSList(Draw_Interpretor& theDI,
-                                     Standard_Integer theArgc,
-                                     const char** theArgv)
+                                     Standard_Integer theNbArgs,
+                                     const char** theArgVec)
 {
-  (void)theArgc;
-  (void)theArgv;
+  (void)theNbArgs;
+  (void)theArgVec;
   Message::SendInfo() << "Active sessions list:";
   TCollection_AsciiString aWSs;
   for (XSControl_WorkSessionMap::Iterator anIter(THE_PREVIOUS_WORK_SESSIONS);
@@ -160,11 +161,11 @@ static Standard_Integer GetDicWSList(Draw_Interpretor& theDI,
 //purpose  : Return name of file which is current
 //=======================================================================
 static Standard_Integer GetCurWS(Draw_Interpretor& theDI,
-                                 Standard_Integer theArgc,
-                                 const char** theArgv)
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
-  (void)theArgc;
-  (void)theArgv;
+  (void)theNbArgs;
+  (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAW::Session();
   theDI << "\"" << WS->LoadedFile() << "\"";
   return 0;
@@ -194,26 +195,24 @@ static Standard_Real GetLengthUnit(const Handle(TDocStd_Document)& theDoc = null
 //purpose  : Apply fromshape command to all the loaded WSs
 //=======================================================================
 static Standard_Integer FromShape(Draw_Interpretor& theDI,
-                                  Standard_Integer theArgc,
-                                  const char** theArgv)
+                                  Standard_Integer theNbArgs,
+                                  const char** theArgVec)
 {
-  if (theArgc < 2)
+  if (theNbArgs < 2)
   {
-    theDI << theArgv[0] << " shape: search for shape origin among all last tranalated files\n";
+    theDI << theArgVec[0] << " shape: search for shape origin among all last tranalated files\n";
     return 0;
   }
 
   char command[256];
-  Sprintf(command, "fromshape %.200s -1", theArgv[1]);
-  NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)> DictWS = thedictws;
-  if (DictWS.IsEmpty()) return theDI.Eval(command);
+  Sprintf(command, "fromshape %.200s -1", theArgVec[1]);
+  XSControl_WorkSessionMap DictWS = THE_PREVIOUS_WORK_SESSIONS;
+  if (DictWS.IsEmpty())
+    return theDI.Eval(command);
 
   Handle(XSControl_WorkSession) WS = XSDRAW::Session();
-
-  NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)>::Iterator DicIt(DictWS);
-  //  theDI << "Searching for shape among all the loaded files:\n";
-  Standard_Integer num = 0;
-  for (; DicIt.More(); DicIt.Next(), num++)
+  for (XSControl_WorkSessionMap::Iterator DicIt(DictWS);
+       DicIt.More(); DicIt.Next())
   {
     Handle(XSControl_WorkSession) CurrentWS =
       Handle(XSControl_WorkSession)::DownCast(DicIt.Value());
@@ -230,23 +229,23 @@ static Standard_Integer FromShape(Draw_Interpretor& theDI,
 //purpose  : Read IGES to DECAF document
 //=======================================================================
 static Standard_Integer ReadIges(Draw_Interpretor& theDI,
-                                 Standard_Integer theArgc,
-                                 const char** theArgv)
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
-  if (theArgc < 3)
+  if (theNbArgs < 3)
   {
-    theDI << "Use: " << theArgv[0] << " Doc filename [mode]: read IGES file to a document\n";
+    theDI << "Use: " << theArgVec[0] << " Doc filename [mode]: read IGES file to a document\n";
     return 0;
   }
   Handle(IGESCAFControl_ConfigurationNode) aNode =
     new IGESCAFControl_ConfigurationNode();
   Standard_Integer onlyvisible = Interface_Static::IVal("read.iges.onlyvisible");
   aNode->InternalParameters.ReadOnlyVisible = onlyvisible == 1;
-  if (theArgc == 4)
+  if (theNbArgs == 4)
   {
     Standard_Boolean aMode = Standard_True;
-    for (Standard_Integer i = 0; theArgv[3][i]; i++)
-      switch (theArgv[3][i])
+    for (Standard_Integer i = 0; theArgVec[3][i]; i++)
+      switch (theArgVec[3][i])
       {
         case '-': aMode = Standard_False; break;
         case '+': aMode = Standard_True; break;
@@ -256,13 +255,13 @@ static Standard_Integer ReadIges(Draw_Interpretor& theDI,
       }
   }
   Handle(TDocStd_Document) aDoc;
-  if (!DDocStd::GetDocument(theArgv[1], aDoc, Standard_False))
+  if (!DDocStd::GetDocument(theArgVec[1], aDoc, Standard_False))
   {
     Handle(TDocStd_Application) anApp = DDocStd::GetApplication();
     anApp->NewDocument("BinXCAF", aDoc);
-    TDataStd_Name::Set(aDoc->GetData()->Root(), theArgv[1]);
+    TDataStd_Name::Set(aDoc->GetData()->Root(), theArgVec[1]);
     Handle(DDocStd_DrawDocument) aDrawD = new DDocStd_DrawDocument(aDoc);
-    Draw::Set(theArgv[1], aDrawD);
+    Draw::Set(theArgVec[1], aDrawD);
   }
   aNode->GlobalParameters.LengthUnit = GetLengthUnit(aDoc);
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI);
@@ -270,13 +269,13 @@ static Standard_Integer ReadIges(Draw_Interpretor& theDI,
     new IGESCAFControl_Provider(aNode);
   aProvider->SetToUpdateStaticParameters(false);
   Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
-  if (!aProvider->Read(theArgv[2], aDoc, aWS, aProgress->Start()))
+  if (!aProvider->Read(theArgVec[2], aDoc, aWS, aProgress->Start()))
   {
     theDI << "Error: Can't read IGES file\n";
     return 1;
   }
-  CollectActiveWorkSessions(aWS, theArgv[2], THE_PREVIOUS_WORK_SESSIONS);
-  Message::SendInfo() << "Document saved with name " << theArgv[1];
+  CollectActiveWorkSessions(aWS, theArgVec[2], THE_PREVIOUS_WORK_SESSIONS);
+  Message::SendInfo() << "Document saved with name " << theArgVec[1];
   return 0;
 }
 
@@ -286,28 +285,28 @@ static Standard_Integer ReadIges(Draw_Interpretor& theDI,
 //=======================================================================
 //=======================================================================
 static Standard_Integer WriteIges(Draw_Interpretor& theDI,
-                                  Standard_Integer theArgc,
-                                  const char** theArgv)
+                                  Standard_Integer theNbArgs,
+                                  const char** theArgVec)
 {
-  if (theArgc < 3)
+  if (theNbArgs < 3)
   {
-    theDI << "Use: " << theArgv[0] << " Doc filename [mode]: write document to IGES file\n";
+    theDI << "Use: " << theArgVec[0] << " Doc filename [mode]: write document to IGES file\n";
     return 0;
   }
   Handle(IGESCAFControl_ConfigurationNode) aNode =
     new IGESCAFControl_ConfigurationNode();
   Handle(TDocStd_Document) aDoc;
-  DDocStd::GetDocument(theArgv[1], aDoc);
+  DDocStd::GetDocument(theArgVec[1], aDoc);
   if (aDoc.IsNull())
   {
-    theDI << theArgv[1] << " is not a document\n";
+    theDI << theArgVec[1] << " is not a document\n";
     return 1;
   }
-  if (theArgc == 4)
+  if (theNbArgs == 4)
   {
     Standard_Boolean aMode = Standard_True;
-    for (Standard_Integer i = 0; theArgv[3][i]; i++)
-      switch (theArgv[3][i])
+    for (Standard_Integer i = 0; theArgVec[3][i]; i++)
+      switch (theArgVec[3][i])
       {
         case '-': aMode = Standard_False; break;
         case '+': aMode = Standard_True; break;
@@ -322,7 +321,7 @@ static Standard_Integer WriteIges(Draw_Interpretor& theDI,
     new IGESCAFControl_Provider(aNode);
   aProvider->SetToUpdateStaticParameters(false);
   Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
-  const TCollection_AsciiString aPath = theArgv[2];
+  const TCollection_AsciiString aPath = theArgVec[2];
   if (!aProvider->Write(aPath, aDoc, aWS, aProgress->Start()))
   {
     theDI << "Error: Can't write IGES file\n";
@@ -337,16 +336,16 @@ static Standard_Integer WriteIges(Draw_Interpretor& theDI,
 //purpose  : Read STEP file to DECAF document 
 //=======================================================================
 static Standard_Integer ReadStep(Draw_Interpretor& theDI,
-                                 Standard_Integer theArgc,
-                                 const char** theArgv)
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
 
   Standard_CString aDocName = NULL;
   TCollection_AsciiString aFilePath, aModeStr;
   bool aToTestStream = false;
-  for (Standard_Integer anArgIter = 1; anArgIter < theArgc; ++anArgIter)
+  for (Standard_Integer anArgIter = 1; anArgIter < theNbArgs; ++anArgIter)
   {
-    TCollection_AsciiString anArgCase(theArgv[anArgIter]);
+    TCollection_AsciiString anArgCase(theArgVec[anArgIter]);
     anArgCase.LowerCase();
     if (anArgCase == "-stream")
     {
@@ -354,19 +353,19 @@ static Standard_Integer ReadStep(Draw_Interpretor& theDI,
     }
     else if (aDocName == NULL)
     {
-      aDocName = theArgv[anArgIter];
+      aDocName = theArgVec[anArgIter];
     }
     else if (aFilePath.IsEmpty())
     {
-      aFilePath = theArgv[anArgIter];
+      aFilePath = theArgVec[anArgIter];
     }
     else if (aModeStr.IsEmpty())
     {
-      aModeStr = theArgv[anArgIter];
+      aModeStr = theArgVec[anArgIter];
     }
     else
     {
-      theDI << "Syntax error at '" << theArgv[anArgIter] << "'\n";
+      theDI << "Syntax error at '" << theArgVec[anArgIter] << "'\n";
       return 1;
     }
   }
@@ -440,8 +439,8 @@ static Standard_Integer ReadStep(Draw_Interpretor& theDI,
 //purpose  : Write DECAF document to STEP
 //=======================================================================
 static Standard_Integer WriteStep(Draw_Interpretor& theDI,
-                                  Standard_Integer theArgc,
-                                  const char** theArgv)
+                                  Standard_Integer theNbArgs,
+                                  const char** theArgVec)
 {
   Handle(TDocStd_Document) aDoc;
   TCollection_AsciiString aDocName, aFilePath;
@@ -449,9 +448,9 @@ static Standard_Integer WriteStep(Draw_Interpretor& theDI,
     new STEPCAFControl_ConfigurationNode();
   bool aHasModeArg = false, aToTestStream = false;
   TDF_Label aLabel;
-  for (Standard_Integer anArgIter = 1; anArgIter < theArgc; ++anArgIter)
+  for (Standard_Integer anArgIter = 1; anArgIter < theNbArgs; ++anArgIter)
   {
-    TCollection_AsciiString anArgCase(theArgv[anArgIter]);
+    TCollection_AsciiString anArgCase(theArgVec[anArgIter]);
     anArgCase.LowerCase();
     if (anArgCase == "-stream")
     {
@@ -459,18 +458,18 @@ static Standard_Integer WriteStep(Draw_Interpretor& theDI,
     }
     else if (aDocName.IsEmpty())
     {
-      Standard_CString aDocNameStr = theArgv[anArgIter];
+      Standard_CString aDocNameStr = theArgVec[anArgIter];
       DDocStd::GetDocument(aDocNameStr, aDoc);
       if (aDoc.IsNull())
       {
-        theDI << "Syntax error: '" << theArgv[anArgIter] << "' is not a document\n";
+        theDI << "Syntax error: '" << theArgVec[anArgIter] << "' is not a document\n";
         return 1;
       }
       aDocName = aDocNameStr;
     }
     else if (aFilePath.IsEmpty())
     {
-      aFilePath = theArgv[anArgIter];
+      aFilePath = theArgVec[anArgIter];
     }
     else if (!aHasModeArg)
     {
@@ -520,15 +519,15 @@ static Standard_Integer WriteStep(Draw_Interpretor& theDI,
     else if (aNode->InternalParameters.WriteMultiPrefix.IsEmpty()
              && anArgCase.Search(":") == -1)
     {
-      aNode->InternalParameters.WriteMultiPrefix = theArgv[anArgIter];
+      aNode->InternalParameters.WriteMultiPrefix = theArgVec[anArgIter];
     }
     else if (aLabel.IsNull())
     {
-      aNode->InternalParameters.WriteLabels.Append(theArgv[anArgIter]);
+      aNode->InternalParameters.WriteLabels.Append(theArgVec[anArgIter]);
     }
     else
     {
-      theDI << "Syntax error: unknown argument '" << theArgv[anArgIter] << "'\n";
+      theDI << "Syntax error: unknown argument '" << theArgVec[anArgIter] << "'\n";
       return 1;
     }
   }
@@ -572,28 +571,28 @@ static Standard_Integer WriteStep(Draw_Interpretor& theDI,
 //purpose  :
 //=======================================================================
 static Standard_Integer Expand(Draw_Interpretor& theDI,
-                               Standard_Integer theArgc,
-                               const char** theArgv)
+                               Standard_Integer theNbArgs,
+                               const char** theArgVec)
 {
-  if (theArgc < 3)
+  if (theNbArgs < 3)
   {
-    theDI << "Use: " << theArgv[0]
+    theDI << "Use: " << theArgVec[0]
       << " Doc recurs(0/1) or Doc recurs(0/1) label1 label2 ... or Doc recurs(0/1 shape1 shape2 ...\n";
     return 1;
   }
   Handle(TDocStd_Document) Doc;
-  DDocStd::GetDocument(theArgv[1], Doc);
+  DDocStd::GetDocument(theArgVec[1], Doc);
   if (Doc.IsNull())
   {
-    theDI << theArgv[1] << " is not a document\n"; return 1;
+    theDI << theArgVec[1] << " is not a document\n"; return 1;
   }
 
   Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(Doc->Main());
   Standard_Boolean recurs = Standard_False;
-  if (atoi(theArgv[2]) != 0)
+  if (atoi(theArgVec[2]) != 0)
     recurs = Standard_True;
 
-  if (theArgc == 3)
+  if (theNbArgs == 3)
   {
     if (!XCAFDoc_Editor::Expand(Doc->Main(), recurs))
     {
@@ -603,14 +602,14 @@ static Standard_Integer Expand(Draw_Interpretor& theDI,
   }
   else
   {
-    for (Standard_Integer i = 3; i < theArgc; i++)
+    for (Standard_Integer i = 3; i < theNbArgs; i++)
     {
       TDF_Label aLabel;
-      TDF_Tool::Label(Doc->GetData(), theArgv[i], aLabel);
+      TDF_Tool::Label(Doc->GetData(), theArgVec[i], aLabel);
       if (aLabel.IsNull())
       {
         TopoDS_Shape aShape;
-        aShape = DBRep::Get(theArgv[i]);
+        aShape = DBRep::Get(theArgVec[i]);
         aLabel = aShapeTool->FindShape(aShape);
       }
 
@@ -624,7 +623,7 @@ static Standard_Integer Expand(Draw_Interpretor& theDI,
       }
       else
       {
-        theDI << theArgv[i] << " is not a shape\n"; return 1;
+        theDI << theArgVec[i] << " is not a shape\n"; return 1;
       }
     }
   }
@@ -636,46 +635,46 @@ static Standard_Integer Expand(Draw_Interpretor& theDI,
 //purpose  :
 //=======================================================================
 static Standard_Integer Extract(Draw_Interpretor& theDI,
-                                Standard_Integer theArgc,
-                                const char** theArgv)
+                                Standard_Integer theNbArgs,
+                                const char** theArgVec)
 {
-  if (theArgc < 4)
+  if (theNbArgs < 4)
   {
-    theDI << "Use: " << theArgv[0] << "dstDoc [dstAssmblSh] srcDoc srcLabel1 srcLabel2 ...\n";
+    theDI << "Use: " << theArgVec[0] << "dstDoc [dstAssmblSh] srcDoc srcLabel1 srcLabel2 ...\n";
     return 1;
   }
 
   Handle(TDocStd_Document) aSrcDoc, aDstDoc;
-  DDocStd::GetDocument(theArgv[1], aDstDoc);
+  DDocStd::GetDocument(theArgVec[1], aDstDoc);
   if (aDstDoc.IsNull())
   {
-    theDI << "Error " << theArgv[1] << " is not a document\n";
+    theDI << "Error " << theArgVec[1] << " is not a document\n";
     return 1;
   }
   TDF_Label aDstLabel;
   Standard_Integer anArgInd = 3;
-  TDF_Tool::Label(aDstDoc->GetData(), theArgv[2], aDstLabel);
+  TDF_Tool::Label(aDstDoc->GetData(), theArgVec[2], aDstLabel);
   Handle(XCAFDoc_ShapeTool) aDstShapeTool = XCAFDoc_DocumentTool::ShapeTool(aDstDoc->Main());
   if (aDstLabel.IsNull())
   {
     aDstLabel = aDstShapeTool->Label();
     anArgInd = 2; // to get Src Doc
   }
-  DDocStd::GetDocument(theArgv[anArgInd++], aSrcDoc);
+  DDocStd::GetDocument(theArgVec[anArgInd++], aSrcDoc);
   if (aSrcDoc.IsNull())
   {
-    theDI << "Error " << theArgv[anArgInd] << " is not a document\n";
+    theDI << "Error " << theArgVec[anArgInd] << " is not a document\n";
     return 1;
   }
 
   TDF_LabelSequence aSrcShapes;
-  for (; anArgInd < theArgc; anArgInd++)
+  for (; anArgInd < theNbArgs; anArgInd++)
   {
     TDF_Label aSrcLabel;
-    TDF_Tool::Label(aSrcDoc->GetData(), theArgv[anArgInd], aSrcLabel);
+    TDF_Tool::Label(aSrcDoc->GetData(), theArgVec[anArgInd], aSrcLabel);
     if (aSrcLabel.IsNull())
     {
-      theDI << "[" << theArgv[anArgInd] << "] is not valid Src label\n";
+      theDI << "[" << theArgVec[anArgInd] << "] is not valid Src label\n";
       return 1;
     }
     aSrcShapes.Append(aSrcLabel);
@@ -699,12 +698,12 @@ static Standard_Integer Extract(Draw_Interpretor& theDI,
 //purpose  :
 //=======================================================================
 static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
-                                 Standard_Integer  theArgc,
-                                 const char** theArgv)
+                                 Standard_Integer  theNbArgs,
+                                 const char** theArgVec)
 {
-  if (theArgc < 3)
+  if (theNbArgs < 3)
   {
-    theDI.PrintHelp(theArgv[0]);
+    theDI.PrintHelp(theArgVec[0]);
     return 1;
   }
   Handle(Vrml_ConfigurationNode) aNode =
@@ -714,13 +713,13 @@ static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
   Standard_CString aDocName = NULL;
   TCollection_AsciiString aFilePath;
   aNode->GlobalParameters.LengthUnit = GetLengthUnit(aDoc);
-  for (Standard_Integer anArgIt = 1; anArgIt < theArgc; anArgIt++)
+  for (Standard_Integer anArgIt = 1; anArgIt < theNbArgs; anArgIt++)
   {
-    TCollection_AsciiString anArg(theArgv[anArgIt]);
+    TCollection_AsciiString anArg(theArgVec[anArgIt]);
     anArg.LowerCase();
-    if (anArgIt + 1 < theArgc && anArg == "-fileunit")
+    if (anArgIt + 1 < theNbArgs && anArg == "-fileunit")
     {
-      const TCollection_AsciiString aUnitStr(theArgv[++anArgIt]);
+      const TCollection_AsciiString aUnitStr(theArgVec[++anArgIt]);
       aNode->InternalParameters.ReadFileUnit = UnitsAPI::AnyToSI(1.0, aUnitStr.ToCString());
       if (aNode->InternalParameters.ReadFileUnit <= 0.0)
       {
@@ -728,27 +727,27 @@ static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
         return 1;
       }
     }
-    else if (anArgIt + 1 < theArgc && anArg == "-filecoordsys")
+    else if (anArgIt + 1 < theNbArgs && anArg == "-filecoordsys")
     {
-      if (!parseCoordinateSystem(theArgv[++anArgIt], aNode->InternalParameters.ReadFileCoordinateSys))
+      if (!parseCoordinateSystem(theArgVec[++anArgIt], aNode->InternalParameters.ReadFileCoordinateSys))
       {
-        theDI << "Error: unknown coordinate system '" << theArgv[anArgIt] << "'\n";
+        theDI << "Error: unknown coordinate system '" << theArgVec[anArgIt] << "'\n";
         return 1;
       }
     }
-    else if (anArgIt + 1 < theArgc && anArg == "-systemcoordsys")
+    else if (anArgIt + 1 < theNbArgs && anArg == "-systemcoordsys")
     {
-      if (!parseCoordinateSystem(theArgv[++anArgIt], aNode->InternalParameters.ReadSystemCoordinateSys))
+      if (!parseCoordinateSystem(theArgVec[++anArgIt], aNode->InternalParameters.ReadSystemCoordinateSys))
       {
-        theDI << "Error: unknown coordinate system '" << theArgv[anArgIt] << "'\n";
+        theDI << "Error: unknown coordinate system '" << theArgVec[anArgIt] << "'\n";
         return 1;
       }
     }
     else if (anArg == "-fillincomplete")
     {
       aNode->InternalParameters.ReadFillIncomplete = true;
-      if (anArgIt + 1 < theArgc &&
-          Draw::ParseOnOff(theArgv[anArgIt + 1], aNode->InternalParameters.ReadFillIncomplete))
+      if (anArgIt + 1 < theNbArgs &&
+          Draw::ParseOnOff(theArgVec[anArgIt + 1], aNode->InternalParameters.ReadFillIncomplete))
       {
         ++anArgIt;
       }
@@ -759,16 +758,16 @@ static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
     }
     else if (aDocName == nullptr)
     {
-      aDocName = theArgv[anArgIt];
+      aDocName = theArgVec[anArgIt];
       DDocStd::GetDocument(aDocName, aDoc, Standard_False);
     }
     else if (aFilePath.IsEmpty())
     {
-      aFilePath = theArgv[anArgIt];
+      aFilePath = theArgVec[anArgIt];
     }
     else
     {
-      theDI << "Syntax error at '" << theArgv[anArgIt] << "'\n";
+      theDI << "Syntax error at '" << theArgVec[anArgIt] << "'\n";
       return 1;
     }
   }
@@ -796,7 +795,6 @@ static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
   }
   Handle(Vrml_Provider) aProvider =
     new Vrml_Provider(aNode);
-
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
   Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
   if (!aProvider->Read(aFilePath, aDoc, aWS, aProgress->Start()))
@@ -816,24 +814,24 @@ static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
 //purpose  : Write DECAF document to Vrml
 //=======================================================================
 static Standard_Integer WriteVrml(Draw_Interpretor& theDI,
-                                  Standard_Integer theArgc,
-                                  const char** theArgv)
+                                  Standard_Integer theNbArgs,
+                                  const char** theArgVec)
 {
-  if (theArgc < 3)
+  if (theNbArgs < 3)
   {
-    theDI << "Use: " << theArgv[0] << " Doc filename: write document to Vrml file\n";
+    theDI << "Use: " << theArgVec[0] << " Doc filename: write document to Vrml file\n";
     return 0;
   }
 
   Handle(TDocStd_Document) aDoc;
-  DDocStd::GetDocument(theArgv[1], aDoc);
+  DDocStd::GetDocument(theArgVec[1], aDoc);
   if (aDoc.IsNull())
   {
-    theDI << theArgv[1] << " is not a document\n";
+    theDI << theArgVec[1] << " is not a document\n";
     return 1;
   }
 
-  if (theArgc < 3 || theArgc > 5)
+  if (theNbArgs < 3 || theNbArgs > 5)
   {
     theDI << "wrong number of parameters\n";
     return 0;
@@ -846,12 +844,12 @@ static Standard_Integer WriteVrml(Draw_Interpretor& theDI,
 
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
   Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
-  if (!aProvider->Write(theArgv[2], aDoc, aWS, aProgress->Start()))
+  if (!aProvider->Write(theArgVec[2], aDoc, aWS, aProgress->Start()))
   {
-    theDI << "Error: file writing failed '" << theArgv[2] << "'\n";
+    theDI << "Error: file writing failed '" << theArgVec[2] << "'\n";
     return 1;
   }
-  CollectActiveWorkSessions(aWS, theArgv[2], THE_PREVIOUS_WORK_SESSIONS);
+  CollectActiveWorkSessions(aWS, theArgVec[2], THE_PREVIOUS_WORK_SESSIONS);
   return 0;
 }
 

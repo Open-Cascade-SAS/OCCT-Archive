@@ -25,6 +25,7 @@
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
 #include <XSControl_WorkSession.hxx>
+#include <XSControl_TransferWriter.hxx>
 #include <UnitsMethods.hxx>
 
 //=======================================================================

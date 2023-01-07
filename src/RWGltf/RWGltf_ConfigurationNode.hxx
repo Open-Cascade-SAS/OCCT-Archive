@@ -16,6 +16,7 @@
 
 #include <DE_ConfigurationNode.hxx>
 #include <RWMesh_CoordinateSystem.hxx>
+#include <RWGltf_DracoParameters.hxx>
 #include <RWGltf_WriterTrsfFormat.hxx>
 #include <RWMesh_NameFormat.hxx>
 
@@ -107,10 +108,12 @@ public:
     RWGltf_WriterTrsfFormat WriteTrsfFormat = RWGltf_WriterTrsfFormat_Compact; //!< Transformation format to write into glTF file
     RWMesh_NameFormat WriteNodeNameFormat = RWMesh_NameFormat_InstanceOrProduct; //!< Name format for exporting Nodes
     RWMesh_NameFormat WriteMeshNameFormat = RWMesh_NameFormat_Product; //!< Name format for exporting Meshes
+    RWGltf_DracoParameters WriteDracoParameters; //!< Defines draco compression parameters
     bool WriteForcedUVExport = false; //!< Export UV coordinates even if there are no mapped texture
     bool WriteEmbedTexturesInGlb = true; //!< Flag to write image textures into GLB file
     bool WriteMergeFaces = false; //!< Flag to merge faces within a single part
     bool WriteSplitIndices16 = false; //!< Flag to prefer keeping 16-bit indexes while merging face
+    bool WriteParallel = false; //!< Flag to use multithreading
   } InternalParameters;
 };
 

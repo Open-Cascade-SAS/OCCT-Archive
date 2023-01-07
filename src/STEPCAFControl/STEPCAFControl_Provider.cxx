@@ -340,7 +340,7 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   if (!aReader.Transfer(theDocument, theProgress))
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : [" <<
-      aFile << "] : Cannot read any relevant data from the IGES file";
+      aFile << "] : Cannot read any relevant data from the STEP file";
     resetStatic();
     return false;
   }
@@ -398,7 +398,7 @@ bool STEPCAFControl_Provider::Read(std::istream& theIStream,
   if (!aReader.Transfer(theDocument, theProgress))
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : "
-      << "Cannot read any relevant data from the IGES file";
+      << "Cannot read any relevant data from the STEP file";
     resetStatic();
     return false;
   }

@@ -98,7 +98,7 @@ static Standard_Integer XSTEPDRAWRUN (Draw_Interpretor& di, Standard_Integer arg
   deja = 1;
   thepilot   = new IFSelect_SessionPilot("XSTEP-DRAW>");
   Handle(XSControl_WorkSession) WS = new XSControl_WorkSession;
-  WS->SetVars (new XSDRAW_Vars);
+  //WS->SetVars (new XSDRAW_Vars);
   thepilot->SetSession (WS);
 
   IFSelect_Functions::Init();

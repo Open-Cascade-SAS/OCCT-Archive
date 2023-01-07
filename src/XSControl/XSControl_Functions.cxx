@@ -27,6 +27,7 @@
 #include <XSControl_Functions.hxx>
 #include <XSControl_SelectForTransfer.hxx>
 #include <XSControl_TransferReader.hxx>
+#include <XSControl_TransferWriter.hxx>
 #include <XSControl_WorkSession.hxx>
 
 // #######################################################################

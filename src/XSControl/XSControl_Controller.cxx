@@ -44,6 +44,7 @@
 #include <Transfer_Binder.hxx>
 #include <Transfer_SimpleBinderOfTransient.hxx>
 #include <Transfer_TransientMapper.hxx>
+#include <Transfer_FinderProcess.hxx>
 #include <TransferBRep_ShapeMapper.hxx>
 #include <XSControl_ConnectedShapes.hxx>
 #include <XSControl_Controller.hxx>

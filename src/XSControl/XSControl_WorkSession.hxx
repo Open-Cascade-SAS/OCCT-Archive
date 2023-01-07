@@ -22,9 +22,11 @@
 
 #include <IFSelect_WorkSession.hxx>
 #include <IFSelect_ReturnStatus.hxx>
+#include <Message_ProgressRange.hxx>
 
 class XSControl_Controller;
 class XSControl_TransferReader;
+class XSControl_TransferWriter;
 class XSControl_Vars;
 class Transfer_TransientProcess;
 class Interface_InterfaceModel;

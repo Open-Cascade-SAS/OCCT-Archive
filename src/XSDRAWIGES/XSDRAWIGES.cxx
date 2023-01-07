@@ -36,6 +36,7 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_MapOfTransient.hxx>
 #include <TopoDS_Shape.hxx>
+#include <Transfer_FinderProcess.hxx>
 #include <Transfer_IteratorOfProcessForTransient.hxx>
 #include <Transfer_TransientProcess.hxx>
 #include <XSControl.hxx>
