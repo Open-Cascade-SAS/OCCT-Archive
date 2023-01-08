@@ -11,130 +11,63 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-#include <BRepTools.hxx>
+#include <XSDRAWIGES.hxx>
+
 #include <DBRep.hxx>
-#include <Draw_Appli.hxx>
+#include <DDocStd.hxx>
+#include <DDocStd_DrawDocument.hxx>
+#include <Draw.hxx>
+#include <Draw_Interpretor.hxx>
 #include <Draw_ProgressIndicator.hxx>
-#include <DrawTrSurf.hxx>
-#include <IFSelect_Functions.hxx>
-#include <IFSelect_SessionPilot.hxx>
+#include <OSD_OpenFile.hxx>
+#include <OSD_Path.hxx>
+#include <IGESCAFControl_ConfigurationNode.hxx>
+#include <IGESCAFControl_Provider.hxx>
 #include <IGESControl_Controller.hxx>
 #include <IGESControl_Reader.hxx>
 #include <IGESControl_Writer.hxx>
 #include <IGESData_IGESEntity.hxx>
 #include <IGESData_IGESModel.hxx>
 #include <IGESSelect_Activator.hxx>
-#include <Interface_Macros.hxx>
 #include <Interface_Static.hxx>
-#include <Message_ProgressScope.hxx>
-#include <Standard_ErrorHandler.hxx>
-#include <Standard_Failure.hxx>
-#include <TCollection_AsciiString.hxx>
-#include <TColStd_HSequenceOfTransient.hxx>
-#include <TColStd_MapOfTransient.hxx>
-#include <TopoDS_Shape.hxx>
-#include <Transfer_FinderProcess.hxx>
-#include <Transfer_IteratorOfProcessForTransient.hxx>
-#include <Transfer_TransientProcess.hxx>
-#include <XSControl.hxx>
-#include <XSControl_WorkSession.hxx>
-#include <XSControl_TransferReader.hxx>
-#include <XSDRAW.hxx>
-#include <XSDRAWIGES.hxx>
-#include <DDocStd.hxx>
-#include <DDocStd_DrawDocument.hxx>
-#include <DE_ConfigurationContext.hxx>
-#include <DE_Wrapper.hxx>
-#include <Draw.hxx>
-#include <Draw_Interpretor.hxx>
-#include <Draw_ProgressIndicator.hxx>
 #include <Message.hxx>
-#include <IFSelect_SessionPilot.hxx>
-#include <IGESCAFControl_ConfigurationNode.hxx>
-#include <IGESCAFControl_Provider.hxx>
-#include <OSD_OpenFile.hxx>
-#include <OSD_Path.hxx>
-#include <STEPCAFControl_ConfigurationNode.hxx>
-#include <STEPCAFControl_Provider.hxx>
-#include <TDocStd_Application.hxx>
-#include <TDocStd_Document.hxx>
-#include <XDEDRAW_Common.hxx>
+#include <XSControl_WorkSession.hxx>
+#include <XSDRAWBase.hxx>
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
 #include <XSControl_WorkSession.hxx>
-#include <XSDRAW.hxx>
-#include <Vrml_ConfigurationNode.hxx>
-#include <Vrml_Provider.hxx>
-
-#include <DBRep.hxx>
-#include <XCAFDoc_DocumentTool.hxx>
-#include <XCAFDoc_ShapeTool.hxx>
-#include <XCAFDoc_Editor.hxx>
-#include <TDF_Tool.hxx>
+#include <TDataStd_Name.hxx>
+#include <TDocStd_Application.hxx>
 #include <TopoDS_Shape.hxx>
-#include <Interface_Static.hxx>
-#include <UnitsAPI.hxx>
-#include <UnitsMethods.hxx>
 
-#include <stdio.h>
-
-namespace
-{
-
-  //=======================================================================
-//function : WriteShape
-//purpose  : Creates a file Shape_'number'
 //=======================================================================
-  void WriteShape(const TopoDS_Shape& shape, const Standard_Integer number)
-  {
-    char fname[110];
-    sprintf(fname, "Shape_%d", number);
-    std::ofstream f(fname, std::ios::out | std::ios::binary);
-    std::cout << "Output file name : " << fname << std::endl;
-    f << "DBRep_DrawableShape\n";
-
-    BRepTools::Write(shape, f);
-    f.close();
-  }
-
-  TCollection_AsciiString XSDRAW_CommandPart
-  (Standard_Integer argc, const char** argv, const Standard_Integer argf)
-  {
-    TCollection_AsciiString res;
-    for (Standard_Integer i = argf; i < argc; i++)
-    {
-      if (i > argf) res.AssignCat(" ");
-      res.AssignCat(argv[i]);
-    }
-    return res;
-  }
-}
-
-//--------------------------------------------------------------
-// Function : igesbrep
-//--------------------------------------------------------------
-static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
+//function : igesbrep
+//purpose  :
+//=======================================================================
+static Standard_Integer igesbrep(Draw_Interpretor& theDI,
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
-  DeclareAndCast(IGESControl_Controller, ctl, XSDRAW::Controller());
-  if (ctl.IsNull()) XSDRAW::SetNorm("IGES");
+  DeclareAndCast(IGESControl_Controller, ctl, XSDRAWBase::Controller());
+  if (ctl.IsNull()) XSDRAWBase::SetNorm("IGES");
 
   // Progress indicator
-  Handle(Draw_ProgressIndicator) progress = new Draw_ProgressIndicator(di, 1);
+  Handle(Draw_ProgressIndicator) progress = new Draw_ProgressIndicator(theDI, 1);
   Message_ProgressScope aPSRoot(progress->Start(), "Reading", 100);
 
-  IGESControl_Reader Reader(XSDRAW::Session(), Standard_False);
+  IGESControl_Reader Reader(XSDRAWBase::Session(), Standard_False);
   Standard_Boolean aFullMode = Standard_True;
   Reader.WS()->SetModeStat(aFullMode);
   if (ctl.IsNull())
-    ctl = Handle(IGESControl_Controller)::DownCast(XSDRAW::Controller());
+    ctl = Handle(IGESControl_Controller)::DownCast(XSDRAWBase::Controller());
 
   TCollection_AsciiString fnom, rnom;
 
-  Standard_Boolean modfic = XSDRAW::FileAndVar
-  (argv[1], argv[2], "IGESBREP", fnom, rnom);
-  if (modfic) di << " File IGES to read : " << fnom.ToCString() << "\n";
-  else        di << " Model taken from the session : " << fnom.ToCString() << "\n";
-  di << " -- Names of variables BREP-DRAW prefixed by : " << rnom.ToCString() << "\n";
+  Standard_Boolean modfic = XSDRAWBase::FileAndVar
+  (theArgVec[1], theArgVec[2], "IGESBREP", fnom, rnom);
+  if (modfic) theDI << " File IGES to read : " << fnom.ToCString() << "\n";
+  else        theDI << " Model taken from the session : " << fnom.ToCString() << "\n";
+  theDI << " -- Names of variables BREP-DRAW prefixed by : " << rnom.ToCString() << "\n";
   IFSelect_ReturnStatus readstat = IFSelect_RetVoid;
 
 #ifdef CHRONOMESURE
@@ -148,7 +81,7 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
   progress->Show(aPSRoot);
 
   if (modfic) readstat = Reader.ReadFile(fnom.ToCString());
-  else  if (XSDRAW::Session()->NbStartingEntities() > 0) readstat = IFSelect_RetDone;
+  else  if (XSDRAWBase::Session()->NbStartingEntities() > 0) readstat = IFSelect_RetDone;
 
   aPSRoot.Next(20); // On average loading takes 20% 
   if (aPSRoot.UserBreak())
@@ -156,12 +89,12 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
 
   if (readstat != IFSelect_RetDone)
   {
-    if (modfic) di << "Could not read file " << fnom.ToCString() << " , abandon\n";
-    else di << "No model loaded\n";
+    if (modfic) theDI << "Could not read file " << fnom.ToCString() << " , abandon\n";
+    else theDI << "No model loaded\n";
     return 1;
   }
   // Choice of treatment
-  Standard_Boolean fromtcl = (argc > 3);
+  Standard_Boolean fromtcl = (theNbArgs > 3);
   Standard_Integer modepri = 1, nent, nbs;
   if (fromtcl) modepri = 4;
 
@@ -183,18 +116,18 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
 
     if (modepri == 0)
     {  //fin
-      di << "Bye and good luck! \n";
+      theDI << "Bye and good luck! \n";
       break;
     }
 
     else if (modepri <= 2)
     {  // 1 : Visible Roots, 2 : All Roots
-      di << "All Geometry Transfer\n";
-      di << "spline_continuity (read) : " << Interface_Static::IVal("read.iges.bspline.continuity") << " (0 : no modif, 1 : C1, 2 : C2)\n";
-      di << "  To modify : command  param read.iges.bspline.continuity\n";
+      theDI << "All Geometry Transfer\n";
+      theDI << "spline_continuity (read) : " << Interface_Static::IVal("read.iges.bspline.continuity") << " (0 : no modif, 1 : C1, 2 : C2)\n";
+      theDI << "  To modify : command  param read.iges.bspline.continuity\n";
       const Handle(XSControl_WorkSession)& thesession = Reader.WS();
       thesession->TransferReader()->Context().Clear();
-      XSDRAW::SetTransferProcess(thesession->TransferReader()->TransientProcess());
+      XSDRAWBase::SetTransferProcess(thesession->TransferReader()->TransientProcess());
 
       aPSRoot.SetName("Translation");
       progress->Show(aPSRoot);
@@ -207,7 +140,7 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
 
       // result in only one shape for all the roots
       //        or in one shape for one root.
-      di << "Count of shapes produced : " << Reader.NbShapes() << "\n";
+      theDI << "Count of shapes produced : " << Reader.NbShapes() << "\n";
       Standard_Integer answer = 1;
       if (Reader.NbShapes() > 1)
       {
@@ -223,10 +156,10 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
       {
         TopoDS_Shape shape = Reader.OneShape();
         // save the shape
-        if (shape.IsNull()) { di << "No Shape produced\n"; continue; }
+        if (shape.IsNull()) { theDI << "No Shape produced\n"; continue; }
         char fname[110];
         Sprintf(fname, "%s", rnom.ToCString());
-        di << "Saving shape in variable Draw : " << fname << "\n";
+        theDI << "Saving shape in variable Draw : " << fname << "\n";
         if (answer == 3) WriteShape(shape, 1);
         try
         {
@@ -235,10 +168,10 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
         }
         catch (Standard_Failure const& anException)
         {
-          di << "** Exception : ";
-          di << anException.GetMessageString();
-          di << " ** Skip\n";
-          di << "Saving shape in variable Draw : " << fname << "\n";
+          theDI << "** Exception : ";
+          theDI << anException.GetMessageString();
+          theDI << " ** Skip\n";
+          theDI << "Saving shape in variable Draw : " << fname << "\n";
           WriteShape(shape, 1);
         }
       }
@@ -250,10 +183,10 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
         {
           // save all the shapes
           TopoDS_Shape shape = Reader.Shape(inum);
-          if (shape.IsNull()) { di << "No Shape produced\n"; continue; }
+          if (shape.IsNull()) { theDI << "No Shape produced\n"; continue; }
           char fname[110];
           Sprintf(fname, "%s_%d", rnom.ToCString(), inum);
-          di << "Saving shape in variable Draw : " << fname << "\n";
+          theDI << "Saving shape in variable Draw : " << fname << "\n";
           if (answer == 4) WriteShape(shape, inum);
           try
           {
@@ -262,9 +195,9 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
           }
           catch (Standard_Failure const& anException)
           {
-            di << "** Exception : ";
-            di << anException.GetMessageString();
-            di << " ** Skip\n";
+            theDI << "** Exception : ";
+            theDI << anException.GetMessageString();
+            theDI << " ** Skip\n";
           }
         }
       }
@@ -277,16 +210,16 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
       std::cout << "spline_continuity (read) : " << Interface_Static::IVal("read.iges.bspline.continuity") << " (0 : no modif, 1 : C1, 2 : C2)" << std::endl;
       std::cout << "  To modify : command  param read.iges.bspline.continuity" << std::endl;
       std::cout << " give the number of the Entity : " << std::flush;
-      nent = XSDRAW::GetEntityNumber();
+      nent = XSDRAWBase::GetEntityNumber();
 
       if (!Reader.TransferOne(nent))
-        di << "Transfer entity n0 " << nent << " : no result\n";
+        theDI << "Transfer entity n0 " << nent << " : no result\n";
       else
       {
         nbs = Reader.NbShapes();
         char shname[30];  Sprintf(shname, "%s_%d", rnom.ToCString(), nent);
-        di << "Transfer entity n0 " << nent << " OK  -> DRAW Shape: " << shname << "\n";
-        di << "Now, " << nbs << " Shapes produced\n";
+        theDI << "Transfer entity n0 " << nent << " OK  -> DRAW Shape: " << shname << "\n";
+        theDI << "Now, " << nbs << " Shapes produced\n";
         TopoDS_Shape sh = Reader.Shape(nbs);
         DBRep::Set(shname, sh);
       }
@@ -301,14 +234,14 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
       //   * donne iges-visible + xst-transferrable-roots
       //   *r donne xst-model-roots (TOUTES racines)
 
-      if (fromtcl && argv[3][0] == '*' && argv[3][1] == '\0')
+      if (fromtcl && theArgVec[3][0] == '*' && theArgVec[3][1] == '\0')
       {
-        di << "All Geometry Transfer\n";
-        di << "spline_continuity (read) : " << Interface_Static::IVal("read.iges.bspline.continuity") << " (0 : no modif, 1 : C1, 2 : C2)\n";
-        di << "  To modify : command  param read.iges.bspline.continuity\n";
+        theDI << "All Geometry Transfer\n";
+        theDI << "spline_continuity (read) : " << Interface_Static::IVal("read.iges.bspline.continuity") << " (0 : no modif, 1 : C1, 2 : C2)\n";
+        theDI << "  To modify : command  param read.iges.bspline.continuity\n";
         const Handle(XSControl_WorkSession)& thesession = Reader.WS();
         thesession->TransferReader()->Context().Clear();
-        XSDRAW::SetTransferProcess(thesession->TransferReader()->TransientProcess());
+        XSDRAWBase::SetTransferProcess(thesession->TransferReader()->TransientProcess());
 
         aPSRoot.SetName("Translation");
         progress->Show(aPSRoot);
@@ -324,7 +257,7 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
         // save the shape
         char fname[110];
         Sprintf(fname, "%s", rnom.ToCString());
-        di << "Saving shape in variable Draw : " << fname << "\n";
+        theDI << "Saving shape in variable Draw : " << fname << "\n";
         try
         {
           OCC_CATCH_SIGNALS
@@ -332,10 +265,10 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
         }
         catch (Standard_Failure const& anException)
         {
-          di << "** Exception : ";
-          di << anException.GetMessageString();
-          di << " ** Skip\n";
-          di << "Saving shape in variable Draw : " << fname << "\n";
+          theDI << "** Exception : ";
+          theDI << anException.GetMessageString();
+          theDI << " ** Skip\n";
+          theDI << "Saving shape in variable Draw : " << fname << "\n";
           WriteShape(shape, 1);
         }
         return 0;
@@ -344,32 +277,32 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
       if (fromtcl)
       {
         modepri = 0;    // d office, une seule passe
-        if (argv[3][0] == '*' && argv[3][1] == 'r' && argv[3][2] == '\0')
+        if (theArgVec[3][0] == '*' && theArgVec[3][1] == 'r' && theArgVec[3][2] == '\0')
         {
-          di << "All Roots : ";
-          list = XSDRAW::GetList("xst-model-roots");
+          theDI << "All Roots : ";
+          list = XSDRAWBase::GetList("xst-model-roots");
         }
         else
         {
-          TCollection_AsciiString compart = XSDRAW_CommandPart(argc, argv, 3);
-          di << "List given by " << compart.ToCString() << " : ";
-          list = XSDRAW::GetList(compart.ToCString());
+          TCollection_AsciiString compart = XSDRAW_CommandPart(theNbArgs, theArgVec, 3);
+          theDI << "List given by " << compart.ToCString() << " : ";
+          list = XSDRAWBase::GetList(compart.ToCString());
         }
         if (list.IsNull())
         {
-          di << "No list defined. Give a selection name or * for all visible transferrable roots\n";
+          theDI << "No list defined. Give a selection name or * for all visible transferrable roots\n";
           continue;
         }
       }
       else
       {
         std::cout << "Name of Selection :" << std::flush;
-        list = XSDRAW::GetList();
+        list = XSDRAWBase::GetList();
         if (list.IsNull()) { std::cout << "No list defined" << std::endl; continue; }
       }
 
       Standard_Integer nbl = list->Length();
-      di << "Nb entities selected : " << nbl << "\n";
+      theDI << "Nb entities selected : " << nbl << "\n";
       if (nbl == 0) continue;
       while (answer)
       {
@@ -388,16 +321,16 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
           for (Standard_Integer ill = 1; ill <= nbl; ill++)
           {
             Handle(Standard_Transient) ent = list->Value(ill);
-            di << "  ";// model->Print(ent,di);
+            theDI << "  ";// model->Print(ent,theDI);
           }
-          di << "\n";
+          theDI << "\n";
         }
         if (answer == 1 || answer == 2)
         {
           Standard_Integer nbt = 0;
           Handle(XSControl_WorkSession) thesession = Reader.WS();
 
-          XSDRAW::SetTransferProcess(thesession->TransferReader()->TransientProcess());
+          XSDRAWBase::SetTransferProcess(thesession->TransferReader()->TransientProcess());
           aPSRoot.SetName("Translation");
           progress->Show(aPSRoot);
 
@@ -407,13 +340,13 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
             nent = Reader.Model()->Number(list->Value(ill));
             if (nent == 0) continue;
             if (!Reader.TransferOne(nent, aPS.Next()))
-              di << "Transfer entity n0 " << nent << " : no result\n";
+              theDI << "Transfer entity n0 " << nent << " : no result\n";
             else
             {
               nbs = Reader.NbShapes();
               char shname[30];  Sprintf(shname, "%s_%d", rnom.ToCString(), nbs);
-              di << "Transfer entity n0 " << nent << " OK  -> DRAW Shape: " << shname << "\n";
-              di << "Now, " << nbs << " Shapes produced\n";
+              theDI << "Transfer entity n0 " << nent << " OK  -> DRAW Shape: " << shname << "\n";
+              theDI << "Now, " << nbs << " Shapes produced\n";
               TopoDS_Shape sh = Reader.Shape(nbs);
               DBRep::Set(shname, sh);
               nbt++;
@@ -421,55 +354,58 @@ static Standard_Integer igesbrep(Draw_Interpretor& di, Standard_Integer argc, co
           }
           if (aPSRoot.UserBreak())
             return 1;
-          di << "Nb Shapes successfully produced : " << nbt << "\n";
+          theDI << "Nb Shapes successfully produced : " << nbt << "\n";
           answer = 0;  // on ne reboucle pas
         }
       }
     }
-    else di << "Unknown mode n0 " << modepri << "\n";
+    else theDI << "Unknown mode n0 " << modepri << "\n";
   }
   return 0;
 }
 
-//--------------------------------------------------------------
-// Function : testreadiges
-//
-//--------------------------------------------------------------
-static Standard_Integer testread(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
+//=======================================================================
+//function : testread
+//purpose  :
+//=======================================================================
+static Standard_Integer testread(Draw_Interpretor& theDI,
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
-  if (argc != 3)
+  if (theNbArgs != 3)
   {
-    di << "ERROR in " << argv[0] << "Wrong Number of Arguments.\n";
-    di << " Usage : " << argv[0] << " file_name shape_name\n";
+    theDI << "ERROR in " << theArgVec[0] << "Wrong Number of Arguments.\n";
+    theDI << " Usage : " << theArgVec[0] << " file_name shape_name\n";
     return 1;
   }
   IGESControl_Reader Reader;
-  Standard_CString filename = argv[1];
+  Standard_CString filename = theArgVec[1];
   IFSelect_ReturnStatus readstat = Reader.ReadFile(filename);
-  di << "Status from reading IGES file " << filename << " : ";
+  theDI << "Status from reading IGES file " << filename << " : ";
   switch (readstat)
   {
-    case IFSelect_RetVoid: { di << "empty file\n"; return 1; }
-    case IFSelect_RetDone: { di << "file read\n";    break; }
-    case IFSelect_RetError: { di << "file not found\n";   return 1; }
-    case IFSelect_RetFail: { di << "error during read\n";  return 1; }
-    default: { di << "failure\n";   return 1; }
+    case IFSelect_RetVoid: { theDI << "empty file\n"; return 1; }
+    case IFSelect_RetDone: { theDI << "file read\n";    break; }
+    case IFSelect_RetError: { theDI << "file not found\n";   return 1; }
+    case IFSelect_RetFail: { theDI << "error during read\n";  return 1; }
+    default: { theDI << "failure\n";   return 1; }
   }
   Reader.TransferRoots();
   TopoDS_Shape shape = Reader.OneShape();
-  DBRep::Set(argv[2], shape);
-  di << "Count of shapes produced : " << Reader.NbShapes() << "\n";
+  DBRep::Set(theArgVec[2], shape);
+  theDI << "Count of shapes produced : " << Reader.NbShapes() << "\n";
   return 0;
 }
 
-//--------------------------------------------------------------
-// Function : brepiges
-//
-//--------------------------------------------------------------
-
-static Standard_Integer brepiges(Draw_Interpretor& di, Standard_Integer n, const char** a)
+//=======================================================================
+//function : brepiges
+//purpose  :
+//=======================================================================
+static Standard_Integer brepiges(Draw_Interpretor& theDI,
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
-  XSDRAW::SetNorm("IGES");
+  XSDRAWBase::SetNorm("IGES");
   // ecriture dans le model d'une entite :
   //    -  model_AddEntity(ent)             : ecriture de l`entite seule
   //    -  model->AddWithRefs(ent, protocol): ecriture de l`entite et eventuellement 
@@ -478,115 +414,117 @@ static Standard_Integer brepiges(Draw_Interpretor& di, Standard_Integer n, const
 
   IGESControl_Writer ICW(Interface_Static::CVal("write.iges.unit"),
                          Interface_Static::IVal("write.iges.brep.mode"));
-  di << "unit (write) : " << Interface_Static::CVal("write.iges.unit") << "\n";
-  di << "mode  write  : " << Interface_Static::CVal("write.iges.brep.mode") << "\n";
-  di << "  To modify : command  param\n";
+  theDI << "unit (write) : " << Interface_Static::CVal("write.iges.unit") << "\n";
+  theDI << "mode  write  : " << Interface_Static::CVal("write.iges.brep.mode") << "\n";
+  theDI << "  To modify : command  param\n";
 
   //  Mode d emploi (K4B ->) : brepiges shape [+shape][ +shape] nomfic
   //   c a d tant qu il y a des + on ajoute ce qui suit
   const char* nomfic = NULL;
   Standard_Integer npris = 0;
 
-  Handle(Draw_ProgressIndicator) progress = new Draw_ProgressIndicator(di, 1);
+  Handle(Draw_ProgressIndicator) progress = new Draw_ProgressIndicator(theDI, 1);
   Message_ProgressScope aPSRoot(progress->Start(), "Translating", 100);
   progress->Show(aPSRoot);
 
   Message_ProgressScope aPS(aPSRoot.Next(90), NULL, n);
-  for (Standard_Integer i = 1; i < n && aPS.More(); i++)
+  for (Standard_Integer i = 1; i < theNbArgs && aPS.More(); i++)
   {
-    const char* nomvar = a[i];
-    if (a[i][0] == '+') nomvar = &(a[i])[1];
-    else if (i > 1) { nomfic = a[i];  break; }
+    const char* nomvar = theArgVec[i];
+    if (theArgVec[i][0] == '+') nomvar = &(theArgVec[i])[1];
+    else if (i > 1) { nomfic = theArgVec[i];  break; }
     TopoDS_Shape Shape = DBRep::Get(nomvar);
     if (ICW.AddShape(Shape, aPS.Next())) npris++;
     else if (ICW.AddGeom(DrawTrSurf::GetCurve(nomvar))) npris++;
     else if (ICW.AddGeom(DrawTrSurf::GetSurface(nomvar))) npris++;
   }
   ICW.ComputeModel();
-  XSDRAW::SetModel(ICW.Model());
-  XSDRAW::SetTransferProcess(ICW.TransferProcess());
+  XSDRAWBase::SetModel(ICW.Model());
+  XSDRAWBase::SetTransferProcess(ICW.TransferProcess());
 
   if (aPSRoot.UserBreak())
     return 1;
   aPSRoot.SetName("Writing");
   progress->Show(aPSRoot);
 
-  di << npris << " Shapes written, giving " << XSDRAW::Model()->NbEntities() << " Entities\n";
+  theDI << npris << " Shapes written, giving " << XSDRAWBase::Model()->NbEntities() << " Entities\n";
 
   if (!nomfic) // delayed write
   {
-    di << " Now, to write a file, command : writeall filename\n";
+    theDI << " Now, to write a file, command : writeall filename\n";
     return 0;
   }
 
   // write file
-  if (!ICW.Write(nomfic)) di << " Error: could not write file " << nomfic;
-  else                     di << " File " << nomfic << " written";
+  if (!ICW.Write(nomfic)) theDI << " Error: could not write file " << nomfic;
+  else                     theDI << " File " << nomfic << " written";
 
   return 0;
 }
 
-//--------------------------------------------------------------
-// Function : testwriteiges
-//
-//--------------------------------------------------------------
-
-static Standard_Integer testwrite(Draw_Interpretor& di, Standard_Integer n, const char** a)
+//=======================================================================
+//function : testwrite
+//purpose  :
+//=======================================================================
+static Standard_Integer testwrite(Draw_Interpretor& theDI,
+                                  Standard_Integer theNbArgs,
+                                  const char** theArgVec)
 {
-  if (n != 3)
+  if (theNbArgs != 3)
   {
-    di << "ERROR in " << a[0] << "Wrong Number of Arguments.\n";
-    di << " Usage : " << a[0] << " file_name shape_name\n";
+    theDI << "ERROR in " << theArgVec[0] << "Wrong Number of Arguments.\n";
+    theDI << " Usage : " << theArgVec[0] << " file_name shape_name\n";
     return 1;
   }
   IGESControl_Writer Writer;
-  Standard_CString filename = a[1];
-  TopoDS_Shape shape = DBRep::Get(a[2]);
+  Standard_CString filename = theArgVec[1];
+  TopoDS_Shape shape = DBRep::Get(theArgVec[2]);
   Standard_Boolean ok = Writer.AddShape(shape);
   if (!ok)
   {
-    di << "Shape not add\n";
+    theDI << "Shape not add\n";
     return 1;
   }
 
   if (!(Writer.Write(filename)))
   {
-    di << "Error on writing file\n";
+    theDI << "Error on writing file\n";
     return 1;
   }
-  di << "File Is Written\n";
+  theDI << "File Is Written\n";
   return 0;
 }
-//--------------------------------------------------------------
-// Function : igesparam
-//
-//--------------------------------------------------------------
 
-
-static Standard_Integer igesparam(Draw_Interpretor& di, Standard_Integer, const char**)
+//=======================================================================
+//function : igesparam
+//purpose  :
+//=======================================================================
+static Standard_Integer igesparam(Draw_Interpretor& theDI,
+                                  Standard_Integer,
+                                  const char**)
 {
   //  liste des parametres
-  di << "List of parameters which control IGES :\n";
-  di << "  unit : write.iges.unit\n  mode write : write.iges.brep.mode\n  spline_continuity (read) : read.iges.bspline.continuity\nSee definition by  defparam, read/edit value by  param\n";
-  di << "unit (write) : " << Interface_Static::CVal("write.iges.unit") << "\n";
-  di << "mode  write  : " << Interface_Static::CVal("write.iges.brep.mode") << "\n";
-  di << "spline_continuity (read) : " << Interface_Static::IVal("read.iges.bspline.continuity") << " (0 : no modif, 1 : C1, 2 : C2)\n";
-  di << "\n To modifier, param nom_param new_val\n";
+  theDI << "List of parameters which control IGES :\n";
+  theDI << "  unit : write.iges.unit\n  mode write : write.iges.brep.mode\n  spline_continuity (read) : read.iges.bspline.continuity\nSee definition by  defparam, read/edit value by  param\n";
+  theDI << "unit (write) : " << Interface_Static::CVal("write.iges.unit") << "\n";
+  theDI << "mode  write  : " << Interface_Static::CVal("write.iges.brep.mode") << "\n";
+  theDI << "spline_continuity (read) : " << Interface_Static::IVal("read.iges.bspline.continuity") << " (0 : no modif, 1 : C1, 2 : C2)\n";
+  theDI << "\n To modifier, param nom_param new_val\n";
   return 0;
 }
 
-
-//--------------------------------------------------------------
-// Function : tplosttrim
-//
-//--------------------------------------------------------------
-
-static Standard_Integer XSDRAWIGES_tplosttrim(Draw_Interpretor& di, Standard_Integer n, const char** a)
+//=======================================================================
+//function : XSDRAWIGES_tplosttrim
+//purpose  :
+//=======================================================================
+static Standard_Integer XSDRAWIGES_tplosttrim(Draw_Interpretor& theDI,
+                                              Standard_Integer theNbArgs,
+                                              const char** theArgVec)
 {
-  Handle(IFSelect_SessionPilot) pilot = XSDRAW::Pilot();
+  Handle(IFSelect_SessionPilot) pilot = XSDRAWBase::Pilot();
 
   //  Standard_Integer narg = pilot->NbWords();
-  Standard_Integer narg = n;
+  Standard_Integer narg = theNbArgs;
 
   const Handle(Transfer_TransientProcess)& TP = XSControl::Session(pilot)->TransferReader()->TransientProcess();
   TColStd_Array1OfAsciiString strarg(1, 3);
@@ -597,7 +535,7 @@ static Standard_Integer XSDRAWIGES_tplosttrim(Draw_Interpretor& di, Standard_Int
   typarg.SetValue(1, "IGESGeom_TrimmedSurface");
   typarg.SetValue(2, "IGESGeom_BoundedSurface");
   typarg.SetValue(3, "IGESSolid_Face");
-  if (TP.IsNull()) { di << "No Transfer Read\n"; return 1; }
+  if (TP.IsNull()) { theDI << "No Transfer Read\n"; return 1; }
   Standard_Integer nbFaces = 0, totFaces = 0;
   Handle(IFSelect_WorkSession) WS = pilot->Session();
   Transfer_IteratorOfProcessForTransient itrp = TP->AbnormalResult();
@@ -605,13 +543,13 @@ static Standard_Integer XSDRAWIGES_tplosttrim(Draw_Interpretor& di, Standard_Int
   if (narg > 1)
   {
     //    TCollection_AsciiString Arg = pilot->Word(1);
-    TCollection_AsciiString Arg(a[1]);
+    TCollection_AsciiString Arg(theArgVec[1]);
     for (k = 1; k <= 3; k++)
     {
       if (typarg.Value(k).Location(Arg, 1, typarg.Value(k).Length()) != 0) break;
     }
   }
-  if (k == 4) { di << "Invalid argument\n"; return 0; }
+  if (k == 4) { theDI << "Invalid argument\n"; return 0; }
   for (Standard_Integer j = 1; j <= 3; j++)
   {
     TColStd_MapOfTransient aMap;
@@ -620,7 +558,7 @@ static Standard_Integer XSDRAWIGES_tplosttrim(Draw_Interpretor& di, Standard_Int
     if (!list.IsNull()) itrp.Filter(list);
     else
     {
-      di << "No untrimmed faces\n";
+      theDI << "No untrimmed faces\n";
       return 0;
     }
     for (itrp.Start(); itrp.More(); itrp.Next())
@@ -642,56 +580,58 @@ static Standard_Integer XSDRAWIGES_tplosttrim(Draw_Interpretor& di, Standard_Int
     }
     if (nbFaces != 0)
     {
-      if (j == 1) di << "Number of untrimmed faces: \n";
+      if (j == 1) theDI << "Number of untrimmed faces: \n";
       switch (k)
       {
         case 1:
-          di << "Trimmed Surface: \n"; break;
+          theDI << "Trimmed Surface: \n"; break;
         case 2:
-          di << "Bounded Surface: \n"; break;
+          theDI << "Bounded Surface: \n"; break;
         case 3:
-          di << "Face: \n"; break;
+          theDI << "Face: \n"; break;
       }
 
       TColStd_MapIteratorOfMapOfTransient itmap;
       Standard_SStream aTmpStream;
       for (itmap.Initialize(aMap); itmap.More(); itmap.Next())
       {
-        XSDRAW::Model()->Print(itmap.Key(), aTmpStream);
+        XSDRAWBase::Model()->Print(itmap.Key(), aTmpStream);
         aTmpStream << "  ";
       }
-      di << aTmpStream.str().c_str();
-      di << "\n";
-      di << "\nNumber:" << nbFaces << "\n";
+      theDI << aTmpStream.str().c_str();
+      theDI << "\n";
+      theDI << "\nNumber:" << nbFaces << "\n";
       totFaces += nbFaces;
     }
     if (narg > 1) break;
     nbFaces = 0;
   }
 
-  if (totFaces == 0) di << "No untrimmed faces\n";
-  else              di << "Total number :" << totFaces << "\n";
+  if (totFaces == 0) theDI << "No untrimmed faces\n";
+  else              theDI << "Total number :" << totFaces << "\n";
   return 0;
 }
-//-------------------------------------------------------------------
-//--------------------------------------------------------------
-// Function : TPSTAT
-//
-//--------------------------------------------------------------
-static Standard_Integer XSDRAWIGES_TPSTAT(Draw_Interpretor& di, Standard_Integer n, const char** a)
+
+//=======================================================================
+//function : XSDRAWIGES_TPSTAT
+//purpose  :
+//=======================================================================
+static Standard_Integer XSDRAWIGES_TPSTAT(Draw_Interpretor& theDI,
+                                          Standard_Integer theNbArgs,
+                                          const char** theArgVec)
 {
-  Handle(IFSelect_SessionPilot) pilot = XSDRAW::Pilot();
-  Standard_Integer argc = n;//= pilot->NbWords();
-  const Standard_CString arg1 = a[1];//pilot->Arg(1);
+  Handle(IFSelect_SessionPilot) pilot = XSDRAWBase::Pilot();
+  Standard_Integer theNbArgs = theNbArgs;//= pilot->NbWords();
+  const Standard_CString arg1 = theArgVec[1];//pilot->Arg(1);
   const Handle(Transfer_TransientProcess)& TP = XSControl::Session(pilot)->TransferReader()->TransientProcess();
   IGESControl_Reader read; //(XSControl::Session(pilot),Standard_False);
 //        ****    tpent        ****
   Handle(Interface_InterfaceModel) model = TP->Model();
-  if (model.IsNull()) { di << "No Transfer Read\n"; return -1; }
+  if (model.IsNull()) { theDI << "No Transfer Read\n"; return -1; }
   Handle(XSControl_WorkSession) thesession = read.WS();
   thesession->SetMapReader(TP);
   Standard_Integer mod1 = 0;
-  if (argc > 1)
+  if (theNbArgs > 1)
   {
     char a2 = arg1[1]; if (a2 == '\0') a2 = '!';
     switch (arg1[0])
@@ -705,10 +645,10 @@ static Standard_Integer XSDRAWIGES_TPSTAT(Draw_Interpretor& di, Standard_Integer
       default: mod1 = -2; break;
     }
   }
-  if (mod1 < -1) di << "Unknown Mode\n";
+  if (mod1 < -1) theDI << "Unknown Mode\n";
   if (mod1 < 0)
   {
-    di << "Modes available :\n"
+    theDI << "Modes available :\n"
       << "g : general    c : checks (count)  C (list)\n"
       << "r : number of CasCade resulting shapes\n"
       << "s : mapping between IGES entities and CasCade shapes\n";
@@ -718,43 +658,26 @@ static Standard_Integer XSDRAWIGES_TPSTAT(Draw_Interpretor& di, Standard_Integer
   return 0;
 }
 
-static Standard_Integer etest(Draw_Interpretor& di, Standard_Integer argc, const char** a)
+//=======================================================================
+//function : etest
+//purpose  :
+//=======================================================================
+static Standard_Integer etest(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    di << "etest igesfile shape\n";
+    theDI << "etest igesfile shape\n";
     return 0;
   }
   IGESControl_Reader aReader;
-  aReader.ReadFile(a[1]);
+  aReader.ReadFile(theArgVec[1]);
   aReader.SetReadVisible(Standard_True);
   aReader.TransferRoots();
   TopoDS_Shape shape = aReader.OneShape();
-  DBRep::Set(a[2], shape);
+  DBRep::Set(theArgVec[2], shape);
   return 0;
-}
-
-extern "C" {
-  static void cleanpilot()
-  {
-    XSDRAW::Session()->ClearData(1);
-  }
-}
-
-
-//--------------------------------------------------------------
-// Function : Init(s)
-//
-//--------------------------------------------------------------
-
-void  XSDRAWIGES::InitSelect()
-{
-  Handle(IGESSelect_Activator)    igesact = new IGESSelect_Activator;
-  IGESControl_Controller::Init();
-  //  XSDRAW::SetNorm ("IGES");  trop tot
-  XSDRAW::SetController(XSControl_Controller::Recorded("iges"));
-
-  atexit(cleanpilot);
 }
 
 //=======================================================================
@@ -796,18 +719,18 @@ static Standard_Integer ReadIges(Draw_Interpretor& theDI,
     Handle(DDocStd_DrawDocument) aDrawD = new DDocStd_DrawDocument(aDoc);
     Draw::Set(theArgVec[1], aDrawD);
   }
-  aNode->GlobalParameters.LengthUnit = GetLengthUnit(aDoc);
+  aNode->GlobalParameters.LengthUnit = XSDRAWBase::GetLengthUnit(aDoc);
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI);
   Handle(IGESCAFControl_Provider) aProvider =
     new IGESCAFControl_Provider(aNode);
   aProvider->SetToUpdateStaticParameters(false);
-  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
   if (!aProvider->Read(theArgVec[2], aDoc, aWS, aProgress->Start()))
   {
     theDI << "Error: Can't read IGES file\n";
     return 1;
   }
-  CollectActiveWorkSessions(aWS, theArgVec[2], THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, theArgVec[2], THE_PREVIOUS_WORK_SESSIONS);
   Message::SendInfo() << "Document saved with name " << theArgVec[1];
   return 0;
 }
@@ -848,52 +771,41 @@ static Standard_Integer WriteIges(Draw_Interpretor& theDI,
         case 'l': aNode->InternalParameters.WriteLayer = aMode; break;
       }
   }
-  aNode->GlobalParameters.LengthUnit = GetLengthUnit(aDoc);
+  aNode->GlobalParameters.LengthUnit = XSDRAWBase::GetLengthUnit(aDoc);
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI);
   Handle(IGESCAFControl_Provider) aProvider =
     new IGESCAFControl_Provider(aNode);
   aProvider->SetToUpdateStaticParameters(false);
-  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
   const TCollection_AsciiString aPath = theArgVec[2];
   if (!aProvider->Write(aPath, aDoc, aWS, aProgress->Start()))
   {
     theDI << "Error: Can't write IGES file\n";
     return 1;
   }
-  CollectActiveWorkSessions(aWS, aPath, THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, aPath, THE_PREVIOUS_WORK_SESSIONS);
   return 0;
 }
 
 
 //=======================================================================
 //function : InitToBRep
-//purpose  : 
+//purpose  :
 //=======================================================================
-
-void  XSDRAWIGES::InitToBRep(Draw_Interpretor& theCommands)
+void XSDRAWIGES::Factory(Draw_Interpretor& theDI)
 {
   const char* g = "DE: IGES";
-  theCommands.Add("igesbrep", "igesbrep [file else already loaded model] [name DRAW]", __FILE__, igesbrep, g);
-  theCommands.Add("testreadiges", "testreadiges [file else already loaded model] [name DRAW]", __FILE__, testread, g);
-  theCommands.Add("igesread", "igesread [file else already loaded model] [name DRAW]", __FILE__, igesbrep, g);
-  theCommands.Add("igesparam", "igesparam ->list, + name ->one param, + name val->change", __FILE__, igesparam, g);
-  theCommands.Add("TPSTAT", " ", __FILE__, XSDRAWIGES_TPSTAT, g);
-  theCommands.Add("tplosttrim", "number of untrimmed faces during last transfer", __FILE__, XSDRAWIGES_tplosttrim, g);
-  theCommands.Add("etest", "test of eviewer", __FILE__, etest, g);
+  theDI.Add("igesbrep", "igesbrep [file else already loaded model] [name DRAW]", __FILE__, igesbrep, g);
+  theDI.Add("testreadiges", "testreadiges [file else already loaded model] [name DRAW]", __FILE__, testread, g);
+  theDI.Add("igesread", "igesread [file else already loaded model] [name DRAW]", __FILE__, igesbrep, g);
+  theDI.Add("igesparam", "igesparam ->list, + name ->one param, + name val->change", __FILE__, igesparam, g);
+  theDI.Add("TPSTAT", " ", __FILE__, XSDRAWIGES_TPSTAT, g);
+  theDI.Add("tplosttrim", "number of untrimmed faces during last transfer", __FILE__, XSDRAWIGES_tplosttrim, g);
+  theDI.Add("etest", "test of eviewer", __FILE__, etest, g);
 
-  theCommands.Add("ReadIges", "Doc filename: Read IGES file to DECAF document", __FILE__, ReadIges, g);
-  theCommands.Add("WriteIges", "Doc filename: Write DECAF document to IGES file", __FILE__, WriteIges, g);
+  theDI.Add("ReadIges", "Doc filename: Read IGES file to DECAF document", __FILE__, ReadIges, g);
+  theDI.Add("WriteIges", "Doc filename: Write DECAF document to IGES file", __FILE__, WriteIges, g);
+  theDI.Add("brepiges", "brepiges sh1 [+sh2 [+sh3 ..]] filename.igs", __FILE__, brepiges, g);
+  theDI.Add("testwriteiges", "testwriteiges filename.igs shape", __FILE__, testwrite, g);
 }
 
-
-//=======================================================================
-//function : InitFromBRep
-//purpose  : 
-//=======================================================================
-
-void  XSDRAWIGES::InitFromBRep(Draw_Interpretor& theCommands)
-{
-  const char* g = "DE: IGES";
-  theCommands.Add("brepiges", "brepiges sh1 [+sh2 [+sh3 ..]] filename.igs", __FILE__, brepiges, g);
-  theCommands.Add("testwriteiges", "testwriteiges filename.igs shape", __FILE__, testwrite, g);
-}

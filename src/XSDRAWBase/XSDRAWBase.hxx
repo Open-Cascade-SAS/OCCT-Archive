@@ -22,15 +22,16 @@
 #include <TopTools_HSequenceOfShape.hxx>
 
 class IFSelect_SessionPilot;
-class XSControl_WorkSession;
-class XSControl_Controller;
 class Interface_Protocol;
 class Interface_InterfaceModel;
 class Standard_Transient;
+class TCollection_AsciiString;
+class TDocStd_Document;
 class Transfer_TransientProcess;
 class Transfer_FinderProcess;
+class XSControl_Controller;
 class XSControl_TransferReader;
-class TCollection_AsciiString;
+class XSControl_WorkSession;
 
 //! Basic package to work functions of X-STEP (IFSelect & Co)
 //! under control of DRAW
@@ -175,6 +176,15 @@ public:
   //! second
   //! In case of failure, returns a Null Handle
   Standard_EXPORT static Handle(TColStd_HSequenceOfTransient) GetList(const Standard_CString first = "", const Standard_CString second = "");
+
+  //!
+  Standard_EXPORT static Standard_Real GetLengthUnit(const Handle(TDocStd_Document)& theDoc = nullptr);
+
+  //!
+  Standard_EXPORT static void CollectActiveWorkSessions(const Handle(XSControl_WorkSession)& theWS,
+                                                        const TCollection_AsciiString& theName,
+                                                        XSControl_WorkSessionMap& theMap,
+                                                        const Standard_Boolean theIsFirst = Standard_True);
 
   //! Analyses given file name and variable name, with a default
   //! name for variables. Returns resulting file name and variable

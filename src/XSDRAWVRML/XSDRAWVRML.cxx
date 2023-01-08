@@ -11,42 +11,46 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <XSDRAWVRML.hxx>
+
+#include <DBRep.hxx>
 #include <DDocStd.hxx>
 #include <DDocStd_DrawDocument.hxx>
-#include <DE_ConfigurationContext.hxx>
-#include <DE_Wrapper.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
 #include <Draw_ProgressIndicator.hxx>
-#include <Message.hxx>
-#include <IFSelect_SessionPilot.hxx>
-#include <IGESCAFControl_ConfigurationNode.hxx>
-#include <IGESCAFControl_Provider.hxx>
-#include <OSD_OpenFile.hxx>
-#include <OSD_Path.hxx>
-#include <STEPCAFControl_ConfigurationNode.hxx>
-#include <STEPCAFControl_Provider.hxx>
-#include <TDocStd_Application.hxx>
-#include <TDocStd_Document.hxx>
-#include <XSDRAWVRML.hxx>
-#include <XSAlgo.hxx>
-#include <XSAlgo_AlgoContainer.hxx>
-#include <XSControl_WorkSession.hxx>
-#include <XSDRAW.hxx>
 #include <Vrml_ConfigurationNode.hxx>
 #include <Vrml_Provider.hxx>
-
-#include <DBRep.hxx>
-#include <XCAFDoc_DocumentTool.hxx>
-#include <XCAFDoc_ShapeTool.hxx>
-#include <XCAFDoc_Editor.hxx>
-#include <TDF_Tool.hxx>
+#include <XSControl_WorkSession.hxx>
+#include <XSDRAWBase.hxx>
+#include <TDataStd_Name.hxx>
+#include <TDocStd_Application.hxx>
 #include <TopoDS_Shape.hxx>
-#include <Interface_Static.hxx>
 #include <UnitsAPI.hxx>
-#include <UnitsMethods.hxx>
 
-#include <stdio.h>
+//=============================================================================
+//function : parseCoordinateSystem
+//purpose  : Parse RWMesh_CoordinateSystem enumeration
+//=============================================================================
+static bool parseCoordinateSystem(const char* theArg,
+                                  RWMesh_CoordinateSystem& theSystem)
+{
+  TCollection_AsciiString aCSStr(theArg);
+  aCSStr.LowerCase();
+  if (aCSStr == "zup")
+  {
+    theSystem = RWMesh_CoordinateSystem_Zup;
+  }
+  else if (aCSStr == "yup")
+  {
+    theSystem = RWMesh_CoordinateSystem_Yup;
+  }
+  else
+  {
+    return Standard_False;
+  }
+  return Standard_True;
+}
 
 //=======================================================================
 //function : ReadVrml
@@ -67,7 +71,7 @@ static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
   Standard_Boolean toUseExistingDoc = Standard_False;
   Standard_CString aDocName = NULL;
   TCollection_AsciiString aFilePath;
-  aNode->GlobalParameters.LengthUnit = GetLengthUnit(aDoc);
+  aNode->GlobalParameters.LengthUnit = XSDRAWBase::GetLengthUnit(aDoc);
   for (Standard_Integer anArgIt = 1; anArgIt < theNbArgs; anArgIt++)
   {
     TCollection_AsciiString anArg(theArgVec[anArgIt]);
@@ -151,7 +155,7 @@ static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
   Handle(Vrml_Provider) aProvider =
     new Vrml_Provider(aNode);
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
-  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
   if (!aProvider->Read(aFilePath, aDoc, aWS, aProgress->Start()))
   {
     theDI << "Error: file reading failed '" << aFilePath << "'\n";
@@ -160,7 +164,7 @@ static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
   TDataStd_Name::Set(aDoc->GetData()->Root(), aDocName);
   Handle(DDocStd_DrawDocument) aDD = new DDocStd_DrawDocument(aDoc);
   Draw::Set(aDocName, aDD);
-  CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
   return 0;
 }
 
@@ -193,21 +197,20 @@ static Standard_Integer WriteVrml(Draw_Interpretor& theDI,
   }
   Handle(Vrml_ConfigurationNode) aNode =
     new Vrml_ConfigurationNode();
-  aNode->GlobalParameters.LengthUnit = GetLengthUnit(aDoc);
+  aNode->GlobalParameters.LengthUnit = XSDRAWBase::GetLengthUnit(aDoc);
   Handle(Vrml_Provider) aProvider =
     new Vrml_Provider(aNode);
 
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
-  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
   if (!aProvider->Write(theArgVec[2], aDoc, aWS, aProgress->Start()))
   {
     theDI << "Error: file writing failed '" << theArgVec[2] << "'\n";
     return 1;
   }
-  CollectActiveWorkSessions(aWS, theArgVec[2], THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, theArgVec[2], THE_PREVIOUS_WORK_SESSIONS);
   return 0;
 }
-
 
 //=======================================================================
 //function : loadvrml
@@ -224,12 +227,12 @@ static Standard_Integer loadvrml(Draw_Interpretor& theDI,
   }
   Handle(Vrml_ConfigurationNode) aNode =
     new Vrml_ConfigurationNode();
-  aNode->GlobalParameters.LengthUnit = GetLengthUnit();
+  aNode->GlobalParameters.LengthUnit = XSDRAWBase::GetLengthUnit();
   Handle(Vrml_Provider) aProvider =
     new Vrml_Provider(aNode);
   TopoDS_Shape aShape;
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
-  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
   if (!aProvider->Read(theArgVec[2], aShape, aWS, aProgress->Start()))
   {
     theDI << "Error: file reading failed '" << theArgVec[2] << "'\n";
@@ -269,7 +272,7 @@ static Standard_Integer writevrml(Draw_Interpretor& theDI,
   aType = Min(2, aType);
   Handle(Vrml_ConfigurationNode) aNode =
     new Vrml_ConfigurationNode();
-  aNode->GlobalParameters.LengthUnit = GetLengthUnit();
+  aNode->GlobalParameters.LengthUnit = XSDRAWBase::GetLengthUnit();
   Handle(Vrml_Provider) aProvider =
     new Vrml_Provider(aNode);
   aNode->InternalParameters.WriterVersion =
@@ -277,7 +280,7 @@ static Standard_Integer writevrml(Draw_Interpretor& theDI,
   aNode->InternalParameters.WriteRepresentationType =
     (Vrml_ConfigurationNode::WriteMode_RepresentationType)aType;
 
-  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
   if (!aProvider->Write(theArgVec[2], aShape, aWS, aProgress->Start()))
   {
@@ -287,7 +290,11 @@ static Standard_Integer writevrml(Draw_Interpretor& theDI,
   return 0;
 }
 
-void XSDRAWVRML::InitCommands(Draw_Interpretor& theDI)
+//=============================================================================
+//function : Factory
+//purpose  :
+//=============================================================================
+void XSDRAWVRML::Factory(Draw_Interpretor& theDI)
 {
   static Standard_Boolean initactor = Standard_False;
   if (initactor)

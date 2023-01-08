@@ -11,40 +11,24 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <XSDRAWDEWrapper.hxx>
+
 #include <DBRep.hxx>
-#include <Draw_Appli.hxx>
+#include <DDocStd.hxx>
+#include <DDocStd_DrawDocument.hxx>
+#include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
 #include <Draw_ProgressIndicator.hxx>
-#include <IFSelect_SessionPilot.hxx>
-#include <Interface_Macros.hxx>
-#include <Interface_Static.hxx>
+#include <De_ConfigurationNode.hxx>
+#include <DE_ConfigurationContext.hxx>
+#include <DE_Provider.hxx>
+#include <DE_Wrapper.hxx>
 #include <Message.hxx>
-#include <Message_ProgressScope.hxx>
-#include <OSD_OpenFile.hxx>
-#include <OSD_Path.hxx>
-#include <STEPControl_ActorWrite.hxx>
-#include <STEPControl_Controller.hxx>
-#include <STEPControl_Reader.hxx>
-#include <STEPControl_StepModelType.hxx>
-#include <STEPControl_Writer.hxx>
-#include <StepData_StepModel.hxx>
-#include <StepGeom_Axis2Placement3d.hxx>
-#include <StepSelect_Activator.hxx>
-#include <STEPSelections_AssemblyExplorer.hxx>
-#include <STEPSelections_Counter.hxx>
-#include <StepToTopoDS_MakeTransformed.hxx>
-#include <TColStd_HSequenceOfTransient.hxx>
-#include <TopExp_Explorer.hxx>
-#include <Transfer_TransientProcess.hxx>
-#include <XSAlgo.hxx>
-#include <XSAlgo_AlgoContainer.hxx>
-#include <XSControl_Controller.hxx>
 #include <XSControl_WorkSession.hxx>
-#include <XSDRAW.hxx>
-#include <XSDRAWDEWrapper.hxx>
-#include <UnitsMethods.hxx>
-
-#include <stdio.h>
+#include <XSDRAWBase.hxx>
+#include <TDataStd_Name.hxx>
+#include <TDocStd_Application.hxx>
+#include <TopoDS_Shape.hxx>
 
 //=======================================================================
 //function : DumpConfiguration
@@ -279,13 +263,13 @@ static Standard_Integer ReadFile(Draw_Interpretor& theDI,
   if (aStat)
   {
     TopoDS_Shape aShape;
-    Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+    Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
     aStat = isNoDoc ? aConf->Read(aFilePath, aShape, aWS) : aConf->Read(aFilePath, aDoc, aWS);
     if (isNoDoc && aStat)
     {
       DBRep::Set(aDocShapeName.ToCString(), aShape);
     }
-    CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
+    XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
   }
   if (!aStat)
   {
@@ -358,7 +342,7 @@ static Standard_Integer WriteFile(Draw_Interpretor& theDI,
   {
     aStat = aConf->Load(aConfString);
   }
-  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
   if (aStat)
   {
     if (isNoDoc)
@@ -380,11 +364,11 @@ static Standard_Integer WriteFile(Draw_Interpretor& theDI,
   {
     return 1;
   }
-  CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
   return 0;
 }
 
-void XSDRAWDEWrapper::InitCommands(Draw_Interpretor& theDI)
+void XSDRAWDEWrapper::Factory(Draw_Interpretor& theDI)
 {
   static Standard_Boolean initactor = Standard_False;
   if (initactor)

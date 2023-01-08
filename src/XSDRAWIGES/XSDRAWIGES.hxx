@@ -19,7 +19,7 @@
 
 #include <Draw_Interpretor.hxx>
 
-class XSDRAWIGES 
+class XSDRAWIGES
 {
   DEFINE_STANDARD_ALLOC
 public:
