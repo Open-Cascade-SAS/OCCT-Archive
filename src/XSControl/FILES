@@ -4,10 +4,6 @@ XSControl_ConnectedShapes.cxx
 XSControl_ConnectedShapes.hxx
 XSControl_Controller.cxx
 XSControl_Controller.hxx
-XSControl_FuncShape.cxx
-XSControl_FuncShape.hxx
-XSControl_Functions.cxx
-XSControl_Functions.hxx
 XSControl_Reader.cxx
 XSControl_Reader.hxx
 XSControl_SelectForTransfer.cxx

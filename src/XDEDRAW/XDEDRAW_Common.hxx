@@ -21,8 +21,6 @@
 
 #include <Draw_Interpretor.hxx>
 
-
-
 class XDEDRAW_Common 
 {
 public:

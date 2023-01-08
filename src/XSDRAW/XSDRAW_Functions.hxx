@@ -1,7 +1,4 @@
-// Created on: 1995-03-16
-// Created by: Christian CAILLET
-// Copyright (c) 1995-1999 Matra Datavision
-// Copyright (c) 1999-2014 OPEN CASCADE SAS
+// Copyright (c) 2023 OPEN CASCADE SAS
 //
 // This file is part of Open CASCADE Technology software library.
 //
@@ -17,21 +14,21 @@
 #ifndef _XSDRAW_Functions_HeaderFile
 #define _XSDRAW_Functions_HeaderFile
 
-//! Defines additional commands for XSDRAW to :
-//! - control of initialisation (xinit, xnorm, newmodel)
-//! - analyse of the result of a transfer (recorded in a
-//! TransientProcess for Read, FinderProcess for Write) :
-//! statistics, various lists (roots,complete,abnormal), what
-//! about one specific entity, producing a model with the
-//! abnormal result
+#include <Standard.hxx>
+#include <Standard_DefineAlloc.hxx>
+#include <Standard_Handle.hxx>
+
+//! Functions from XSControl gives access to actions which can be
+//! commanded with the resources provided by XSControl: especially
+//! Controller and Transfer
 //!
-//! This appendix of XSDRAW is compiled separately to distinguish
-//! basic features from user callable forms
-class XSDRAW_Functions 
+//! It works by adding functions by method Init
+class XSDRAW_Functions
 {
- public:
-  
-  //! Defines and loads all basic functions for XSDRAW (as ActFunc)
+  DEFINE_STANDARD_ALLOC
+public:
+
+  //! Defines and loads all functions for XSControl (as ActFunc)
   Standard_EXPORT static void Init();
 };
 

@@ -1,7 +1,4 @@
-// Created on: 1996-03-26
-// Created by: Christian CAILLET
-// Copyright (c) 1996-1999 Matra Datavision
-// Copyright (c) 1999-2014 OPEN CASCADE SAS
+// Copyright (c) 2023 OPEN CASCADE SAS
 //
 // This file is part of Open CASCADE Technology software library.
 //
@@ -14,20 +11,23 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-#ifndef _XSControl_Functions_HeaderFile
-#define _XSControl_Functions_HeaderFile
+#ifndef _XSDRAWPLY_HeaderFile
+#define _XSDRAWPLY_HeaderFile
 
-//! Functions from XSControl gives access to actions which can be
-//! commanded with the resources provided by XSControl: especially
-//! Controller and Transfer
-//!
-//! It works by adding functions by method Init
-class XSControl_Functions 
+#include <Standard.hxx>
+#include <Standard_DefineAlloc.hxx>
+
+#include <Draw_Interpretor.hxx>
+
+class XSDRAWPLY
 {
- public:
+  DEFINE_STANDARD_ALLOC
+public:
 
-  //! Defines and loads all functions for XSControl (as ActFunc)
   Standard_EXPORT static void Init();
+
+  //! Loads all Draw commands of XSDRAWSTL. Used for plugin.
+  Standard_EXPORT static void Factory(Draw_Interpretor& theDI);
 };
 
-#endif // _XSControl_Functions_HeaderFile
+#endif // _XSDRAWPLY_HeaderFile

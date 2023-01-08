@@ -41,7 +41,7 @@ class TCollection_AsciiString;
 //! Works with some "static" data : a SessionPilot (used to run)
 //! with its WorkSession and Model and TransferReader, a
 //! FinderProcess
-class XSDRAW 
+class XSDRAW
 {
  public:
 

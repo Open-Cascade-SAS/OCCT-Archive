@@ -33,8 +33,6 @@ IFSelect_Editor.cxx
 IFSelect_Editor.hxx
 IFSelect_EditValue.hxx
 IFSelect_FileModifier.gxx
-IFSelect_Functions.cxx
-IFSelect_Functions.hxx
 IFSelect_GeneralModifier.cxx
 IFSelect_GeneralModifier.hxx
 IFSelect_GraphCounter.cxx
