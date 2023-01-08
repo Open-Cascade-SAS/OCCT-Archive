@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2014 OPEN CASCADE SAS
+// Copyright (c) 2023 OPEN CASCADE SAS
 //
 // This file is part of Open CASCADE Technology software library.
 //
@@ -10,8 +10,6 @@
 //
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
-
-//#58 rln 28.12.98 Versioning
 
 #include <IFSelect_Act.hxx>
 #include <IFSelect_CheckCounter.hxx>
@@ -217,9 +215,18 @@ static IFSelect_ReturnStatus fun3
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    XRead / Load         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Read/Load : give file name !" << std::endl; return IFSelect_RetError; }
-  if (WS->Protocol().IsNull()) { sout << "Protocol not defined" << std::endl; return IFSelect_RetError; }
-  if (WS->WorkLibrary().IsNull()) { sout << "WorkLibrary not defined" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Read/Load : give file name !" << std::endl; return IFSelect_RetError;
+  }
+  if (WS->Protocol().IsNull())
+  {
+    sout << "Protocol not defined" << std::endl; return IFSelect_RetError;
+  }
+  if (WS->WorkLibrary().IsNull())
+  {
+    sout << "WorkLibrary not defined" << std::endl; return IFSelect_RetError;
+  }
 
   IFSelect_ReturnStatus status = WS->ReadFile(arg1);
   // status : 0 OK, 1 erreur lecture, 2 Fail(try/catch),
@@ -247,7 +254,10 @@ static IFSelect_ReturnStatus fun4
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    Write All         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Write All : give file name !" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Write All : give file name !" << std::endl; return IFSelect_RetError;
+  }
   return WS->SendAll(arg1);
 }
 
@@ -260,10 +270,16 @@ static IFSelect_ReturnStatus fun5
   //  const Standard_CString arg2 = pilot->Arg(2);
   //        ****    Write Selected         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Write Selected : give file name + givelist !" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Write Selected : give file name + givelist !" << std::endl; return IFSelect_RetError;
+  }
   Handle(TColStd_HSequenceOfTransient) result =
     XSDRAW_FunctionsSession::GiveList(WS, pilot->CommandPart(2));
-  if (result.IsNull()) { sout << "No entity selected" << std::endl; return IFSelect_RetError; }
+  if (result.IsNull())
+  {
+    sout << "No entity selected" << std::endl; return IFSelect_RetError;
+  }
   else sout << "Nb Entities selected : " << result->Length() << std::endl;
   Handle(IFSelect_SelectPointed) sp = new IFSelect_SelectPointed;
   sp->SetList(result);
@@ -278,7 +294,10 @@ static IFSelect_ReturnStatus fun6
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    Write Entite(s)         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Write Entitie(s) : give file name + n0s entitie(s)!" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Write Entitie(s) : give file name + n0s entitie(s)!" << std::endl; return IFSelect_RetError;
+  }
   int ko = 0;
   Handle(IFSelect_SelectPointed) sp = new IFSelect_SelectPointed;
   for (Standard_Integer ia = 2; ia < argc; ia++)
@@ -288,11 +307,20 @@ static IFSelect_ReturnStatus fun6
     {
       Handle(Standard_Transient) item = WS->StartingEntity(id);
       if (sp->Add(item)) sout << "Added:no." << id << std::endl;
-      else { sout << " Fail Add n0." << id << std::endl; ko++; }
+      else
+      {
+        sout << " Fail Add n0." << id << std::endl; ko++;
+      }
     }
-    else { sout << "Not an entity number:" << pilot->Arg(ia) << std::endl; ko++; }
+    else
+    {
+      sout << "Not an entity number:" << pilot->Arg(ia) << std::endl; ko++;
+    }
   }
-  if (ko > 0) { sout << ko << " bad arguments, abandon" << std::endl; return IFSelect_RetError; }
+  if (ko > 0)
+  {
+    sout << ko << " bad arguments, abandon" << std::endl; return IFSelect_RetError;
+  }
   return WS->SendSelected(arg1, sp);
 }
 
@@ -304,8 +332,14 @@ static IFSelect_ReturnStatus fun7
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    Entity Label       ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Give entity number" << std::endl; return IFSelect_RetError; }
-  if (!WS->HasModel()) { sout << "No loaded model, abandon" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Give entity number" << std::endl; return IFSelect_RetError;
+  }
+  if (!WS->HasModel())
+  {
+    sout << "No loaded model, abandon" << std::endl; return IFSelect_RetError;
+  }
   Standard_Integer nument = WS->NumberFromLabel(arg1);
   if (nument <= 0 || nument > WS->NbStartingEntities())
   {
@@ -325,8 +359,14 @@ static IFSelect_ReturnStatus fun8
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    Entity Number      ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Give label to search" << std::endl; return IFSelect_RetError; }
-  if (!WS->HasModel()) { sout << "No loaded model, abandon" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Give label to search" << std::endl; return IFSelect_RetError;
+  }
+  if (!WS->HasModel())
+  {
+    sout << "No loaded model, abandon" << std::endl; return IFSelect_RetError;
+  }
   const Handle(Interface_InterfaceModel)& model = WS->Model();
   Standard_Integer i, cnt = 0;
   Standard_Boolean exact = Standard_False;
@@ -398,7 +438,10 @@ static IFSelect_ReturnStatus funcount
   Standard_Integer i; // svv Jan11 2000 : porting on DEC
   for (i = 2; i < argc; i++)
   {
-    if (!strcmp(pilot->Arg(i), "on")) { onflag = i; break; }
+    if (!strcmp(pilot->Arg(i), "on"))
+    {
+      onflag = i; break;
+    }
   }
 
   Handle(IFSelect_Selection) sel = WS->GiveSelection(arg1);
@@ -474,7 +517,10 @@ static IFSelect_ReturnStatus funsigntype
     else
     {
       signtype = GetCasted(IFSelect_Signature, WS->NamedItem(arg1));
-      if (signtype.IsNull()) { sout << "Not a Signature : " << arg1 << std::endl; return IFSelect_RetError; }
+      if (signtype.IsNull())
+      {
+        sout << "Not a Signature : " << arg1 << std::endl; return IFSelect_RetError;
+      }
       else sout << "signtype now set to " << arg1 << std::endl;
     }
     WS->SetSignType(signtype);
@@ -639,9 +685,15 @@ static IFSelect_ReturnStatus funsign
   const Standard_CString arg1 = pilot->Arg(1);
   const Standard_CString arg2 = pilot->Arg(2);
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << " Give signature name + n0 or id of entity" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << " Give signature name + n0 or id of entity" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Signature, sign, WS->NamedItem(arg1));
-  if (sign.IsNull()) { sout << "Not a signature : " << arg1 << std::endl; return IFSelect_RetError; }
+  if (sign.IsNull())
+  {
+    sout << "Not a signature : " << arg1 << std::endl; return IFSelect_RetError;
+  }
   Standard_Integer num = pilot->Number(arg2);
   Handle(Standard_Transient) ent = WS->StartingEntity(num);
   if (num == 0) return IFSelect_RetError;
@@ -657,7 +709,10 @@ static IFSelect_ReturnStatus funqp
   const Standard_CString arg1 = pilot->Arg(1);
   const Standard_CString arg2 = pilot->Arg(2);
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << " Give 2 numeros or labels : dad son" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << " Give 2 numeros or labels : dad son" << std::endl; return IFSelect_RetError;
+  }
   Standard_Integer n1 = WS->NumberFromLabel(arg1);
   Standard_Integer n2 = WS->NumberFromLabel(arg2);
   sout << "QueryParent for dad:" << arg1 << ":" << n1 << " and son:" << arg2 << ":" << n2 << std::endl;
@@ -694,7 +749,10 @@ static IFSelect_ReturnStatus fun14
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    NewInt            ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 1) { sout << "Donner la valeur entiere pour IntParam" << std::endl; return IFSelect_RetError; }
+  if (argc < 1)
+  {
+    sout << "Donner la valeur entiere pour IntParam" << std::endl; return IFSelect_RetError;
+  }
   Handle(IFSelect_IntParam) intpar = new IFSelect_IntParam;
   if (argc >= 1)       intpar->SetValue(atoi(arg1));
   return pilot->RecordItem(intpar);
@@ -727,7 +785,10 @@ static IFSelect_ReturnStatus fun16
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    NewText           ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 1) { sout << "Donner la valeur texte pour TextParam" << std::endl; return IFSelect_RetError; }
+  if (argc < 1)
+  {
+    sout << "Donner la valeur texte pour TextParam" << std::endl; return IFSelect_RetError;
+  }
   Handle(TCollection_HAsciiString) textpar = new TCollection_HAsciiString();
   if (argc >= 1) textpar->AssignCat(arg1);
   return pilot->RecordItem(textpar);
@@ -759,7 +820,10 @@ static IFSelect_ReturnStatus fun19
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    DumpSel           ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Give 1 argument : Selection Name" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Give 1 argument : Selection Name" << std::endl; return IFSelect_RetError;
+  }
   WS->DumpSelection(GetCasted(IFSelect_Selection, WS->NamedItem(arg1)));
   return IFSelect_RetVoid;
 }
@@ -776,7 +840,10 @@ static IFSelect_ReturnStatus fun20
   char mode = pilot->Arg(0)[0];  // givelist/makelist
   if (mode == 'g') mode = pilot->Arg(0)[4];  // l list  s short  p pointed
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Give Entity ID, or Selection Name [+ optional other selection or entity]" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Give Entity ID, or Selection Name [+ optional other selection or entity]" << std::endl; return IFSelect_RetError;
+  }
 
   //    MakeList : sur Pointed existante ou a creer
   Handle(IFSelect_SelectPointed) pnt;
@@ -834,7 +901,10 @@ static IFSelect_ReturnStatus fun20c
   Standard_Integer argc = pilot->NbWords();
   //        ****    GiveCount         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Give Entity ID, or Selection Name [+ optional other selection or entity]" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Give Entity ID, or Selection Name [+ optional other selection or entity]" << std::endl; return IFSelect_RetError;
+  }
   //  WS->EvaluateSelection(GetCasted(IFSelect_Selection,WS->NamedItem(arg1)));
   Handle(TColStd_HSequenceOfTransient) result =
     XSDRAW_FunctionsSession::GiveList(WS, pilot->CommandPart(1));
@@ -850,7 +920,10 @@ static IFSelect_ReturnStatus funselsuite
   Standard_Integer argc = pilot->NbWords();
   //        ****    SelSuite         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Give Entity ID, or Selection Name [+ optional other selection or entity]" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Give Entity ID, or Selection Name [+ optional other selection or entity]" << std::endl; return IFSelect_RetError;
+  }
   //  WS->EvaluateSelection(GetCasted(IFSelect_Selection,WS->NamedItem(arg1)));
   Handle(IFSelect_SelectSuite) selsuite = new IFSelect_SelectSuite;
 
@@ -914,7 +987,10 @@ static IFSelect_ReturnStatus fun24
   //        ****    Item Label         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   TCollection_AsciiString label;
-  if (argc < 2) { sout << " Give  label to search" << std::endl;  return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << " Give  label to search" << std::endl;  return IFSelect_RetError;
+  }
   for (int i = 1; i < argc; i++)
   {
     label.AssignCat(pilot->Arg(i));
@@ -945,7 +1021,10 @@ static IFSelect_ReturnStatus fun25
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    Save (Dump)       ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner nom du Fichier" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner nom du Fichier" << std::endl; return IFSelect_RetError;
+  }
   IFSelect_SessionFile dumper(WS, arg1);
   if (!dumper.IsDone()) return IFSelect_RetFail;
   return IFSelect_RetDone;
@@ -959,7 +1038,10 @@ static IFSelect_ReturnStatus fun26
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    Restore (Dump)    ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner nom du Fichier" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner nom du Fichier" << std::endl; return IFSelect_RetError;
+  }
   IFSelect_SessionFile dumper(WS);
   Standard_Integer readstat = dumper.Read(arg1);
   if (readstat == 0) return IFSelect_RetDone;
@@ -1022,7 +1104,10 @@ static IFSelect_ReturnStatus fun27
   {
     if (argc > 2) sout << "     FORMER STATUS of Static Parameter " << arg1 << std::endl;
     else          sout << "     ACTUAL STATUS of Static Parameter " << arg1 << std::endl;
-    if (!Interface_Static::IsPresent(arg1)) { sout << " Parameter " << arg1 << " undefined" << std::endl; return IFSelect_RetError; }
+    if (!Interface_Static::IsPresent(arg1))
+    {
+      sout << " Parameter " << arg1 << " undefined" << std::endl; return IFSelect_RetError;
+    }
     if (!Interface_Static::IsSet(arg1)) sout << " Parameter " << arg1 << " not valued" << std::endl;
     else if (argc == 2) Interface_Static::Static(arg1)->Print(sout);
     else sout << " Value : " << Interface_Static::CVal(arg1) << std::endl;
@@ -1042,7 +1127,10 @@ static IFSelect_ReturnStatus fun27
       {
         sout << "   OK" << std::endl;  return IFSelect_RetDone;
       }
-      else { sout << " , refused" << std::endl;  return IFSelect_RetError; }
+      else
+      {
+        sout << " , refused" << std::endl;  return IFSelect_RetError;
+      }
     }
   }
   return IFSelect_RetVoid;
@@ -1113,7 +1201,10 @@ static IFSelect_ReturnStatus fun32
   const Standard_CString arg2 = pilot->Arg(2);
   //        ****    FileRoot          ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner Dispatch et nom de Root" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner Dispatch et nom de Root" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(arg1));
   if (argc < 3)
   {
@@ -1243,16 +1334,28 @@ static IFSelect_ReturnStatus fun38
   const Standard_CString arg2 = pilot->Arg(2);
   //        ****    SetModelContent    ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Donner nom selection et mode (k=keep,r=remove)" << std::endl;  return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Donner nom selection et mode (k=keep,r=remove)" << std::endl;  return IFSelect_RetError;
+  }
   Standard_Boolean keepmode;
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   if (sel.IsNull())
   {
     sout << "Pas de Selection de Nom : " << arg1 << std::endl; return IFSelect_RetError;
   }
-  if (arg2[0] == 'k') { sout << " -- SetContent keep ..."; keepmode = Standard_True; }
-  else if (arg2[0] == 'r') { sout << " -- SetContent remove ..."; keepmode = Standard_False; }
-  else { sout << "Donner nom selection et mode (k=keep,r=remove)" << std::endl;  return IFSelect_RetError; }
+  if (arg2[0] == 'k')
+  {
+    sout << " -- SetContent keep ..."; keepmode = Standard_True;
+  }
+  else if (arg2[0] == 'r')
+  {
+    sout << " -- SetContent remove ..."; keepmode = Standard_False;
+  }
+  else
+  {
+    sout << "Donner nom selection et mode (k=keep,r=remove)" << std::endl;  return IFSelect_RetError;
+  }
 
   if (WS->SetModelContent(sel, keepmode)) sout << " Done" << std::endl;
   else sout << " Result empty, ignored" << std::endl;
@@ -1276,7 +1379,10 @@ static IFSelect_ReturnStatus fun41
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    Modifier           ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner Nom du Modifier" << std::endl;  return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner Nom du Modifier" << std::endl;  return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_GeneralModifier, modif, WS->NamedItem(arg1));
   if (modif.IsNull())
   {
@@ -1380,7 +1486,10 @@ static IFSelect_ReturnStatus fun44
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    ResetApplied (modifier)    ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Designer un modifier" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Designer un modifier" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_GeneralModifier, modif, WS->NamedItem(arg1));
   if (modif.IsNull())
   {
@@ -1400,14 +1509,23 @@ static IFSelect_ReturnStatus fun45
   const Standard_CString arg3 = pilot->Arg(3);
   //        ****    ModifMove         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 4) { sout << "modifmove MF rang1 rang2, M pour Model F pour File" << std::endl; return IFSelect_RetError; }
+  if (argc < 4)
+  {
+    sout << "modifmove MF rang1 rang2, M pour Model F pour File" << std::endl; return IFSelect_RetError;
+  }
   Standard_Boolean formodel;
   if (arg1[0] == 'm' || arg1[0] == 'M') formodel = Standard_True;
   else if (arg1[0] == 'f' || arg1[0] == 'F') formodel = Standard_False;
-  else { sout << "preciser M pour Model, F pour File" << std::endl; return IFSelect_RetError; }
+  else
+  {
+    sout << "preciser M pour Model, F pour File" << std::endl; return IFSelect_RetError;
+  }
   Standard_Integer before = atoi(arg2);
   Standard_Integer after = atoi(arg3);
-  if (before == 0 || after == 0) { sout << "Donner 2 Entiers Positifs" << std::endl; return IFSelect_RetError; }
+  if (before == 0 || after == 0)
+  {
+    sout << "Donner 2 Entiers Positifs" << std::endl; return IFSelect_RetError;
+  }
   if (!WS->ChangeModifierRank(formodel, before, after)) return IFSelect_RetFail;
   return IFSelect_RetDone;
 }
@@ -1421,7 +1539,10 @@ static IFSelect_ReturnStatus fun51
   const Standard_CString arg2 = pilot->Arg(2);
   //        ****    DispSel           ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Donner Noms Dispatch et Selection Finale" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Donner Noms Dispatch et Selection Finale" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(arg1));
   if (disp.IsNull())
   {
@@ -1462,7 +1583,10 @@ static IFSelect_ReturnStatus fun_dispcount
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    DispCount         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner Nom IntParam pour Count" << std::endl;  return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner Nom IntParam pour Count" << std::endl;  return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_IntParam, par, WS->NamedItem(arg1));
   if (par.IsNull())
   {
@@ -1481,7 +1605,10 @@ static IFSelect_ReturnStatus fun_dispfiles
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    DispFiles         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner Nom IntParam pour NbFiles" << std::endl;  return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner Nom IntParam pour NbFiles" << std::endl;  return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_IntParam, par, WS->NamedItem(arg1));
   if (par.IsNull())
   {
@@ -1501,7 +1628,10 @@ static IFSelect_ReturnStatus fun_dispsign
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    DispFiles         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner Nom Signature" << std::endl;  return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner Nom Signature" << std::endl;  return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Signature, sig, WS->NamedItem(arg1));
   if (sig.IsNull())
   {
@@ -1521,9 +1651,15 @@ static IFSelect_ReturnStatus fun56
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    Dispatch           ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner Nom du Dispatch" << std::endl;  return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner Nom du Dispatch" << std::endl;  return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(arg1));
-  if (disp.IsNull()) { sout << "Pas un dispatch : " << arg1 << std::endl; return IFSelect_RetError; }
+  if (disp.IsNull())
+  {
+    sout << "Pas un dispatch : " << arg1 << std::endl; return IFSelect_RetError;
+  }
   Standard_Integer num = WS->DispatchRank(disp);
   sout << "Dispatch de Nom : " << arg1 << " , en ShareOut, Numero " << num << " : ";
   Handle(IFSelect_Selection) sel = WS->ItemSelection(disp);
@@ -1544,7 +1680,10 @@ static IFSelect_ReturnStatus fun57
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    Remove           ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Give Name to Remove !" << std::endl;  return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Give Name to Remove !" << std::endl;  return IFSelect_RetError;
+  }
   if (!WS->RemoveNamedItem(arg1)) return IFSelect_RetFail;
   return IFSelect_RetDone;
 }
@@ -1607,7 +1746,10 @@ static IFSelect_ReturnStatus fun_evaladisp
       << "See also : writedisp" << std::endl;
     return IFSelect_RetVoid;
   }
-  if (arg1[1] != '\0') { sout << "first parameter : mode, must be a number between 0 and 3" << std::endl; return IFSelect_RetError; }
+  if (arg1[1] != '\0')
+  {
+    sout << "first parameter : mode, must be a number between 0 and 3" << std::endl; return IFSelect_RetError;
+  }
   Standard_Integer mode = atoi(arg1);  sout << " Mode " << mode << "\n";
   //  DeclareAndCast(IFSelect_Dispatch,disp,WS->NamedItem(pilot->Arg(2)));
   Handle(IFSelect_Dispatch) disp = XSDRAW_FunctionsSession::GiveDispatch(WS, pilot->Arg(2), Standard_True);
@@ -1623,7 +1765,10 @@ static IFSelect_ReturnStatus fun_evaladisp
     Handle(TColStd_HSequenceOfTransient) list = XSDRAW_FunctionsSession::GiveList
     (pilot->Session(), pilot->CommandPart(3));
     Standard_Integer nb = (list.IsNull() ? 0 : list->Length());
-    if (nb > 0) { sp->AddList(list);  sel = sp; }
+    if (nb > 0)
+    {
+      sp->AddList(list);  sel = sp;
+    }
   }
 
   if (sel.IsNull() && selsav.IsNull())
@@ -1682,7 +1827,10 @@ static IFSelect_ReturnStatus fun_writedisp
     Handle(TColStd_HSequenceOfTransient) list = XSDRAW_FunctionsSession::GiveList
     (pilot->Session(), pilot->CommandPart(3));
     Standard_Integer nb = (list.IsNull() ? 0 : list->Length());
-    if (nb > 0) { sp->AddList(list);  sel = sp; }
+    if (nb > 0)
+    {
+      sp->AddList(list);  sel = sp;
+    }
   }
 
   if (sel.IsNull() && selsav.IsNull())
@@ -1720,7 +1868,10 @@ static IFSelect_ReturnStatus fun59
   Standard_Integer mode = 0;
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (argc < 2) sout << " -- mode par defaut 0\n";
-  else { mode = atoi(arg1); sout << " -- mode : " << mode << std::endl; }
+  else
+  {
+    mode = atoi(arg1); sout << " -- mode : " << mode << std::endl;
+  }
   WS->EvaluateComplete(mode);  return IFSelect_RetVoid;
 }
 
@@ -1745,7 +1896,10 @@ static IFSelect_ReturnStatus fun61
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    RunTransformer    ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner Nom de Transformer" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner Nom de Transformer" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Transformer, tsf, WS->NamedItem(arg1));
   Standard_Integer effect = WS->RunTransformer(tsf);
   switch (effect)
@@ -1864,7 +2018,10 @@ static IFSelect_ReturnStatus fun70
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    SelToggle         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner Nom de Selection" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner Nom de Selection" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   if (!WS->ToggleSelectExtract(sel))
   {
@@ -1884,7 +2041,10 @@ static IFSelect_ReturnStatus fun71
   const Standard_CString arg2 = pilot->Arg(2);
   //        ****    SelInput          ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Donner Noms Selections cible et input" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Donner Noms Selections cible et input" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, sou, WS->NamedItem(arg2));
   if (sel.IsNull() || sou.IsNull())
@@ -1931,7 +2091,10 @@ static IFSelect_ReturnStatus fun73
   //                                         Range From
   if (pilot->Word(1).IsEqual("from"))
   {
-    if (argc < 3) { sout << "Forme admise : from <i>" << std::endl; return IFSelect_RetError; }
+    if (argc < 3)
+    {
+      sout << "Forme admise : from <i>" << std::endl; return IFSelect_RetError;
+    }
     low = GetCasted(IFSelect_IntParam, WS->NamedItem(arg2));
     sel = new IFSelect_SelectRange;
     sel->SetFrom(low);
@@ -1939,7 +2102,10 @@ static IFSelect_ReturnStatus fun73
   }
   else if (pilot->Word(1).IsEqual("until"))
   {
-    if (argc < 3) { sout << "Forme admise : until <i>" << std::endl; return IFSelect_RetError; }
+    if (argc < 3)
+    {
+      sout << "Forme admise : until <i>" << std::endl; return IFSelect_RetError;
+    }
     up = GetCasted(IFSelect_IntParam, WS->NamedItem(arg2));
     sel = new IFSelect_SelectRange;
     sel->SetUntil(up);
@@ -2010,7 +2176,10 @@ static IFSelect_ReturnStatus fun77
   const Standard_CString arg2 = pilot->Arg(2);
   //        ****    SelControlMain       ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Donner Noms de Control et MainInput" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Donner Noms de Control et MainInput" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, selmain, WS->NamedItem(arg2));
   if (WS->SetControl(sel, selmain, Standard_True)) return IFSelect_RetDone;
@@ -2027,7 +2196,10 @@ static IFSelect_ReturnStatus fun78
   const Standard_CString arg2 = pilot->Arg(2);
   //        ****    SelControlSecond       ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Donner Noms de Control et SecondInput" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Donner Noms de Control et SecondInput" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, seldif, WS->NamedItem(arg2));
   if (WS->SetControl(sel, seldif, Standard_False))  return IFSelect_RetDone;
@@ -2052,7 +2224,10 @@ static IFSelect_ReturnStatus fun80
   const Standard_CString arg2 = pilot->Arg(2);
   //        ****    SelCombAdd        ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Donner n0 Combine et une Input" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Donner n0 Combine et une Input" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, seladd, WS->NamedItem(arg2));
   if (WS->CombineAdd(sel, seladd)) return IFSelect_RetDone;
@@ -2069,7 +2244,10 @@ static IFSelect_ReturnStatus fun81
   const Standard_CString arg2 = pilot->Arg(2);
   //        ****    SelCombRem        ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Donner n0 Combine et RANG a supprimer" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Donner n0 Combine et RANG a supprimer" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, inp, WS->NamedItem(arg2));
   if (WS->CombineRemove(sel, inp)) return IFSelect_RetDone;
@@ -2085,7 +2263,10 @@ static IFSelect_ReturnStatus fun82
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    SelEntNumber      ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner Nom IntParam pour n0 Entite" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner Nom IntParam pour n0 Entite" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_IntParam, par, WS->NamedItem(arg1));
   Handle(IFSelect_SelectEntityNumber) sel = new IFSelect_SelectEntityNumber;
   sel->SetNumber(par);
@@ -2115,7 +2296,10 @@ static IFSelect_ReturnStatus fun85
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    SelTextType Exact ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner le TYPE a selectionner" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner le TYPE a selectionner" << std::endl; return IFSelect_RetError;
+  }
   return pilot->RecordItem(new IFSelect_SelectSignature
   (new IFSelect_SignType, arg1, Standard_True));
 }
@@ -2148,7 +2332,10 @@ static IFSelect_ReturnStatus fun89
   const Standard_CString arg1 = pilot->Arg(1);
   //        ****    SelTextType Contain **
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner le TYPE a selectionner" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner le TYPE a selectionner" << std::endl; return IFSelect_RetError;
+  }
   return pilot->RecordItem(new IFSelect_SelectSignature
   (new IFSelect_SignType, arg1, Standard_False));
 }
@@ -2186,7 +2373,10 @@ static IFSelect_ReturnStatus fun91
     return IFSelect_RetError;
   }
   DeclareAndCast(IFSelect_SelectPointed, sp, WS->NamedItem(arg1));
-  if (sp.IsNull()) { sout << "Pas une SelectPointed:" << arg1 << std::endl; return IFSelect_RetError; }
+  if (sp.IsNull())
+  {
+    sout << "Pas une SelectPointed:" << arg1 << std::endl; return IFSelect_RetError;
+  }
   const Handle(Interface_InterfaceModel)& model = WS->Model();  // pour Print
   if (argc == 2)
   {    // listage simple
@@ -2197,7 +2387,10 @@ static IFSelect_ReturnStatus fun91
       Handle(Standard_Transient) pointed = sp->Item(i);
       Standard_Integer id = WS->StartingNumber(pointed);
       if (id == 0) sout << " (inconnu)";
-      else { sout << "  "; model->Print(pointed, sout); }
+      else
+      {
+        sout << "  "; model->Print(pointed, sout);
+      }
     }
     if (nb > 0) sout << std::endl;
     return IFSelect_RetDone;
@@ -2210,7 +2403,10 @@ static IFSelect_ReturnStatus fun91
     if (id == 0)
     {
       if (!argi.IsEqual("0")) sout << "Incorrect,ignore:" << argi << std::endl;
-      else { sout << "Clear SelectPointed" << std::endl; sp->Clear(); }
+      else
+      {
+        sout << "Clear SelectPointed" << std::endl; sp->Clear();
+      }
     }
     else if (argi.Value(1) == '-')
     {
@@ -2262,9 +2458,15 @@ static IFSelect_ReturnStatus fun93
   Handle(IFSelect_WorkSession) WS = pilot->Session();
   //        ****    SelSignature        ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) { sout << "Give name of Signature or Counter, text + option exact(D) else contains" << std::endl; return IFSelect_RetError; }
+  if (argc < 3)
+  {
+    sout << "Give name of Signature or Counter, text + option exact(D) else contains" << std::endl; return IFSelect_RetError;
+  }
   Standard_Boolean exact = Standard_True;
-  if (argc > 3) { if (pilot->Arg(3)[0] == 'c') exact = Standard_False; }
+  if (argc > 3)
+  {
+    if (pilot->Arg(3)[0] == 'c') exact = Standard_False;
+  }
 
   DeclareAndCast(IFSelect_Signature, sign, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_SignCounter, cnt, WS->NamedItem(arg1));
@@ -2272,7 +2474,10 @@ static IFSelect_ReturnStatus fun93
 
   if (!sign.IsNull())     sel = new IFSelect_SelectSignature(sign, arg2, exact);
   else if (!cnt.IsNull()) sel = new IFSelect_SelectSignature(cnt, arg2, exact);
-  else { sout << arg1 << ":neither Signature nor Counter" << std::endl; return IFSelect_RetError; }
+  else
+  {
+    sout << arg1 << ":neither Signature nor Counter" << std::endl; return IFSelect_RetError;
+  }
 
   return pilot->RecordItem(sel);
 }
@@ -2285,9 +2490,15 @@ static IFSelect_ReturnStatus fun94
   Handle(IFSelect_WorkSession) WS = pilot->Session();
   //        ****    SignCounter        ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner nom signature" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner nom signature" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_Signature, sign, WS->NamedItem(arg1));
-  if (sign.IsNull()) { sout << arg1 << ":pas une signature" << std::endl; return IFSelect_RetError; }
+  if (sign.IsNull())
+  {
+    sout << arg1 << ":pas une signature" << std::endl; return IFSelect_RetError;
+  }
   Handle(IFSelect_SignCounter) cnt = new IFSelect_SignCounter(sign, Standard_True, Standard_True);
   return pilot->RecordItem(cnt);
 }
@@ -2300,9 +2511,15 @@ static IFSelect_ReturnStatus funbselected
   Handle(IFSelect_WorkSession) WS = pilot->Session();
   //        ****    NbSelected = GraphCounter        ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) { sout << "Donner nom selection (deduction) a appliquer" << std::endl; return IFSelect_RetError; }
+  if (argc < 2)
+  {
+    sout << "Donner nom selection (deduction) a appliquer" << std::endl; return IFSelect_RetError;
+  }
   DeclareAndCast(IFSelect_SelectDeduct, applied, WS->GiveSelection(arg1));
-  if (applied.IsNull()) { sout << arg1 << ":pas une SelectDeduct" << std::endl; return IFSelect_RetError; }
+  if (applied.IsNull())
+  {
+    sout << arg1 << ":pas une SelectDeduct" << std::endl; return IFSelect_RetError;
+  }
   Handle(IFSelect_GraphCounter) cnt = new IFSelect_GraphCounter(Standard_True, Standard_True);
   cnt->SetApplied(applied);
   return pilot->RecordItem(cnt);
@@ -2440,7 +2657,10 @@ static IFSelect_ReturnStatus fun_editvalue
     Standard_Boolean stated = Standard_False;
     Handle(IFSelect_ListEditor) listed = edf->ListEditor(num);
     if (listed.IsNull()) return IFSelect_RetError;
-    if (argval[0] == '.') { listr.Nullify();  stated = listed->LoadEdited(listr); }
+    if (argval[0] == '.')
+    {
+      listr.Nullify();  stated = listed->LoadEdited(listr);
+    }
     else if (argval[0] == '+')
     {
       Standard_Integer numadd = 0;
@@ -2496,7 +2716,10 @@ static IFSelect_ReturnStatus fun_editclear
   {
     sout << "Not an EditForm : " << arg1 << std::endl; return IFSelect_RetError;
   }
-  if (argc < 3) { edf->ClearEdit(); sout << "All Modifications Cleared" << std::endl; }
+  if (argc < 3)
+  {
+    edf->ClearEdit(); sout << "All Modifications Cleared" << std::endl;
+  }
   else
   {
     Standard_Integer num = edf->NameNumber(arg2);

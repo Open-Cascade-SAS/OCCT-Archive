@@ -32,7 +32,7 @@
 
 //=======================================================================
 //function : DumpConfiguration
-//purpose  : 
+//purpose  :
 //=======================================================================
 static Standard_Integer DumpConfiguration(Draw_Interpretor& theDI,
                                           Standard_Integer theNbArgs,
@@ -103,7 +103,7 @@ static Standard_Integer DumpConfiguration(Draw_Interpretor& theDI,
 
 //=======================================================================
 //function : CompareConfiguration
-//purpose  : 
+//purpose  :
 //=======================================================================
 static Standard_Integer CompareConfiguration(Draw_Interpretor& theDI,
                                              Standard_Integer theNbArgs,
@@ -160,7 +160,7 @@ static Standard_Integer CompareConfiguration(Draw_Interpretor& theDI,
 
 //=======================================================================
 //function : LoadConfiguration
-//purpose  : 
+//purpose  :
 //=======================================================================
 static Standard_Integer LoadConfiguration(Draw_Interpretor& theDI,
                                           Standard_Integer theNbArgs,
@@ -195,7 +195,7 @@ static Standard_Integer LoadConfiguration(Draw_Interpretor& theDI,
 
 //=======================================================================
 //function : ReadFile
-//purpose  : 
+//purpose  :
 //=======================================================================
 static Standard_Integer ReadFile(Draw_Interpretor& theDI,
                                  Standard_Integer theNbArgs,
@@ -280,7 +280,7 @@ static Standard_Integer ReadFile(Draw_Interpretor& theDI,
 
 //=======================================================================
 //function : WriteFile
-//purpose  : 
+//purpose  :
 //=======================================================================
 static Standard_Integer WriteFile(Draw_Interpretor& theDI,
                                   Standard_Integer theNbArgs,

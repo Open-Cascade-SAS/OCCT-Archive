@@ -18,6 +18,8 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
+#include <Draw_Interpretor.hxx>
+
 //! Functions from XSControl gives access to actions which can be
 //! commanded with the resources provided by XSControl: especially
 //! Controller and Transfer
@@ -29,7 +31,7 @@ class XSDRAW_Functions
 public:
 
   //! Defines and loads all functions for XSControl (as ActFunc)
-  Standard_EXPORT static void Init();
+  Standard_EXPORT static void Init(Draw_Interpretor& theDI);
 };
 
 #endif // _XSDRAW_Functions_HeaderFile
