@@ -18,6 +18,8 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
+#include <Draw_Interpretor.hxx>
+
 //! Defines additional commands for XSControl to :
 //! - control of initialisation (xinit, xnorm, newmodel)
 //! - analyse of the result of a transfer (recorded in a
@@ -33,7 +35,7 @@ class XSDRAW_FunctionsShape
   DEFINE_STANDARD_ALLOC
 public:
   //! Defines and loads all functions which work on shapes for XSControl (as ActFunc)
-  Standard_EXPORT static void Init();
+  Standard_EXPORT static void Init(Draw_Interpretor& theDI);
 };
 
 #endif // _XSDRAW_FunctionsShape_HeaderFile

@@ -164,7 +164,7 @@ static Standard_Integer ReadVrml(Draw_Interpretor& theDI,
   TDataStd_Name::Set(aDoc->GetData()->Root(), aDocName);
   Handle(DDocStd_DrawDocument) aDD = new DDocStd_DrawDocument(aDoc);
   Draw::Set(aDocName, aDD);
-  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, XSDRAWBase::WorkSessionList());
   return 0;
 }
 
@@ -208,7 +208,7 @@ static Standard_Integer WriteVrml(Draw_Interpretor& theDI,
     theDI << "Error: file writing failed '" << theArgVec[2] << "'\n";
     return 1;
   }
-  XSDRAWBase::CollectActiveWorkSessions(aWS, theArgVec[2], THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, theArgVec[2], XSDRAWBase::WorkSessionList());
   return 0;
 }
 
@@ -296,14 +296,14 @@ static Standard_Integer writevrml(Draw_Interpretor& theDI,
 //=============================================================================
 void XSDRAWVRML::Factory(Draw_Interpretor& theDI)
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean anInitActor = Standard_False;
+  if (anInitActor)
   {
     return;
   }
-  initactor = Standard_True;
+  anInitActor = Standard_True;
 
-  Standard_CString g = "XDE translation commands";
+  Standard_CString aGroup = "XDE translation commands";
 
   theDI.Add("ReadVrml",
             "ReadVrml docName filePath [-fileCoordSys {Zup|Yup}] [-fileUnit Unit]"
@@ -315,10 +315,10 @@ void XSDRAWVRML::Factory(Draw_Interpretor& theDI)
             "\n\t\t:   -noCreateDoc    read into existing XDE document."
             "\n\t\t:   -fillIncomplete fill the document with partially retrieved data even if reader has failed with "
             "error; true when not specified",
-            __FILE__, ReadVrml, g);
+            __FILE__, ReadVrml, aGroup);
   theDI.Add("WriteVrml",
             "WriteVrml Doc filename [version VRML#1.0/VRML#2.0 (1/2): 2 by default] [representation shaded/wireframe/both (0/1/2): 0 by default]",
-            __FILE__, WriteVrml, g);
-  theDI.Add("loadvrml", "shape file", __FILE__, loadvrml, g);
-  theDI.Add("writevrml", "shape file [version VRML#1.0/VRML#2.0 (1/2): 2 by default] [representation shaded/wireframe/both (0/1/2): 1 by default]", __FILE__, writevrml, g);
+            __FILE__, WriteVrml, aGroup);
+  theDI.Add("loadvrml", "shape file", __FILE__, loadvrml, aGroup);
+  theDI.Add("writevrml", "shape file [version VRML#1.0/VRML#2.0 (1/2): 2 by default] [representation shaded/wireframe/both (0/1/2): 1 by default]", __FILE__, writevrml, aGroup);
 }

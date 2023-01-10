@@ -11,11 +11,12 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <XSDRAW_FunctionsShape.hxx>
+
 #include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
 #include <Geom_Geometry.hxx>
 #include <IFSelect_Act.hxx>
-#include <IFSelect_Functions.hxx>
 #include <IFSelect_SessionPilot.hxx>
 #include <Interface_Macros.hxx>
 #include <Interface_InterfaceModel.hxx>
@@ -50,8 +51,8 @@
 //function : XSControl_tpdraw
 //purpose  : 
 //=======================================================================
-static IFSelect_ReturnStatus XSControl_tpdraw
-(const Handle(IFSelect_SessionPilot)& pilot)
+static Standard_Integer XSControl_tpdraw
+(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
 {
   Standard_Integer argc = pilot->NbWords();
   const Standard_CString arg1 = pilot->Arg(1);
@@ -271,8 +272,8 @@ static IFSelect_ReturnStatus XSControl_tpdraw
 //function : XSControl_tpcompound
 //purpose  :
 //=======================================================================
-static IFSelect_ReturnStatus XSControl_tpcompound
-(const Handle(IFSelect_SessionPilot)& pilot)
+static Standard_Integer XSControl_tpcompound
+(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
 {
   Standard_Integer argc = pilot->NbWords();
   const Standard_CString arg1 = pilot->Arg(1);
@@ -317,8 +318,8 @@ static IFSelect_ReturnStatus XSControl_tpcompound
 //function : XSControl_traccess
 //purpose  : 
 //=======================================================================
-static IFSelect_ReturnStatus XSControl_traccess
-(const Handle(IFSelect_SessionPilot)& pilot)
+static Standard_Integer XSControl_traccess
+(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
 {
   Standard_Integer argc = pilot->NbWords();
   const Standard_CString arg1 = pilot->Arg(1);
@@ -418,8 +419,8 @@ static Standard_Boolean XSControl_IsEqualSubShape(const TopoDS_Shape& Shape,
 //function : XSControl_fromshape
 //purpose  : 
 //=======================================================================
-static IFSelect_ReturnStatus XSControl_fromshape
-(const Handle(IFSelect_SessionPilot)& pilot)
+static Standard_Integer XSControl_fromshape
+(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
 {
   Standard_Integer argc = pilot->NbWords();
   const Standard_CString arg1 = pilot->Arg(1);
@@ -614,8 +615,8 @@ static IFSelect_ReturnStatus XSControl_fromshape
 //function : XSControl_trconnexentities
 //purpose  : 
 //=======================================================================
-static IFSelect_ReturnStatus XSControl_trconnexentities
-(const Handle(IFSelect_SessionPilot)& pilot)
+static Standard_Integer XSControl_trconnexentities
+(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
 {
   Standard_Integer argc = pilot->NbWords();
   const Standard_CString arg1 = pilot->Arg(1);
@@ -660,8 +661,8 @@ static IFSelect_ReturnStatus XSControl_trconnexentities
 //function : XSControl_trimport
 //purpose  : 
 //=======================================================================
-static IFSelect_ReturnStatus XSControl_trimport
-(const Handle(IFSelect_SessionPilot)& pilot)
+static Standard_Integer XSControl_trimport
+(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
 {
   //  FileName ou . (pour courant)  VarName  GiveList (obligatoire)
   //    GiveList : * pour xst-transferrable-roots
@@ -791,8 +792,8 @@ static IFSelect_ReturnStatus XSControl_trimport
 //function : XSControl_twrite
 //purpose  : 
 //=======================================================================
-static IFSelect_ReturnStatus XSControl_twrite
-(const Handle(IFSelect_SessionPilot)& pilot)
+static Standard_Integer XSControl_twrite
+(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
 {
   Standard_Integer argc = pilot->NbWords();
   const Standard_CString arg1 = pilot->Arg(1);
@@ -828,14 +829,13 @@ static IFSelect_ReturnStatus XSControl_twrite
 //function : Init
 //purpose  :
 //=======================================================================
-void  XSDRAW_FunctionsShape::Init()
+void  XSDRAW_FunctionsShape::Init(Draw_Interpretor& theDI)
 {
   static int THE_XSDRAW_FunctionsShape_initactor = 0;
   if (THE_XSDRAW_FunctionsShape_initactor)
   {
     return;
   }
-
   THE_XSDRAW_FunctionsShape_initactor = 1;
 
   IFSelect_Act::SetGroup("DE: General");

@@ -269,7 +269,7 @@ static Standard_Integer ReadFile(Draw_Interpretor& theDI,
     {
       DBRep::Set(aDocShapeName.ToCString(), aShape);
     }
-    XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
+    XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, XSDRAWBase::WorkSessionList());
   }
   if (!aStat)
   {
@@ -364,10 +364,14 @@ static Standard_Integer WriteFile(Draw_Interpretor& theDI,
   {
     return 1;
   }
-  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, XSDRAWBase::WorkSessionList());
   return 0;
 }
 
+//=======================================================================
+//function : Factory
+//purpose  :
+//=======================================================================
 void XSDRAWDEWrapper::Factory(Draw_Interpretor& theDI)
 {
   static Standard_Boolean initactor = Standard_False;
@@ -377,7 +381,7 @@ void XSDRAWDEWrapper::Factory(Draw_Interpretor& theDI)
   }
   initactor = Standard_True;
 
-  Standard_CString g = "XDE translation commands";
+  Standard_CString aGroup = "XDE translation commands";
   theDI.Add("DumpConfiguration",
             "DumpConfiguration [-path <path>] [-recursive {on|off}] [-format fmt1 fmt2 ...] [-vendor vend1 vend2 ...]\n"
             "\n\t\t: Dump special resource generated from global configuration."
@@ -385,33 +389,33 @@ void XSDRAWDEWrapper::Factory(Draw_Interpretor& theDI)
             "\n\t\t:   '-recursive' - flag to generate a resource from providers. Default is On. Off disables other options"
             "\n\t\t:   '-format' - flag to generate a resource for choosen formats. If list is empty, generate it for all"
             "\n\t\t:   '-vendor' - flag to generate a resource for choosen vendors. If list is empty, generate it for all",
-            __FILE__, DumpConfiguration, g);
+            __FILE__, DumpConfiguration, aGroup);
   theDI.Add("LoadConfiguration",
             "LoadConfiguration conf [-recursive {on|off}]\n"
             "\n\t\t:   'conf' - path to the resouce file or string value in the special format"
             "\n\t\t:   '-recursive' - flag to generate a resource for all providers. Default is true"
             "\n\t\t: Configure global configuration according special resource",
-            __FILE__, LoadConfiguration, g);
+            __FILE__, LoadConfiguration, aGroup);
   theDI.Add("CompareConfiguration",
             "CompareConfiguration conf1 conf2\n"
             "\n\t\t:   'conf1' - path to the first resouce file or string value in the special format"
             "\n\t\t:   'conf2' - path to the second resouce file or string value in the special format"
             "\n\t\t: Compare two configurations",
-            __FILE__, CompareConfiguration, g);
+            __FILE__, CompareConfiguration, aGroup);
   theDI.Add("ReadFile",
             "ReadFile docName filePath [-conf <value|path>]\n"
             "\n\t\t: Read CAD file to document with registered format's providers. Use global configuration by default.",
-            __FILE__, ReadFile, g);
+            __FILE__, ReadFile, aGroup);
   theDI.Add("readfile",
             "readfile shapeName filePath [-conf <value|path>]\n"
             "\n\t\t: Read CAD file to shape with registered format's providers. Use global configuration by default.",
-            __FILE__, ReadFile, g);
+            __FILE__, ReadFile, aGroup);
   theDI.Add("WriteFile",
             "WriteFile docName filePath [-conf <value|path>]\n"
             "\n\t\t: Write CAD file to document with registered format's providers. Use global configuration by default.",
-            __FILE__, WriteFile, g);
+            __FILE__, WriteFile, aGroup);
   theDI.Add("writefile",
             "writefile shapeName filePath [-conf <value|path>]\n"
             "\n\t\t: Write CAD file to shape with registered format's providers. Use global configuration by default.",
-            __FILE__, WriteFile, g);
+            __FILE__, WriteFile, aGroup);
 }

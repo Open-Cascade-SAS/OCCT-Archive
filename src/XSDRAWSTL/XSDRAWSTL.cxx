@@ -39,26 +39,25 @@ static Standard_Integer writestl(Draw_Interpretor& theDI,
   {
     theDI << "Use: " << theArgVec[0]
       << " shape file [ascii/binary (0/1) : 1 by default]\n";
+    return 1;
   }
-  else
+  TopoDS_Shape aShape = DBRep::Get(theArgVec[1]);
+  Standard_Boolean isASCIIMode = Standard_False;
+  if (theNbArgs == 4)
   {
-    TopoDS_Shape aShape = DBRep::Get(theArgVec[1]);
-    Standard_Boolean isASCIIMode = Standard_False;
-    if (theNbArgs == 4)
-    {
-      isASCIIMode = (Draw::Atoi(theArgVec[3]) == 0);
-    }
-    Handle(RWStl_ConfigurationNode) aNode = new RWStl_ConfigurationNode();
-    aNode->GlobalParameters.LengthUnit = XSDRAWBase::GetLengthUnit();
-    Handle(RWStl_Provider) aProvider = new RWStl_Provider(aNode);
-    aNode->InternalParameters.WriteAscii = isASCIIMode;
-    Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
-    Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI);
-    if (!aProvider->Write(theArgVec[2], aShape, aWS, aProgress->Start()))
-    {
-      theDI << "Error: Mesh writing has been failed.\n";
-    }
+    isASCIIMode = (Draw::Atoi(theArgVec[3]) == 0);
   }
+  Handle(RWStl_ConfigurationNode) aNode = new RWStl_ConfigurationNode();
+  aNode->GlobalParameters.LengthUnit = XSDRAWBase::GetLengthUnit();
+  Handle(RWStl_Provider) aProvider = new RWStl_Provider(aNode);
+  aNode->InternalParameters.WriteAscii = isASCIIMode;
+  Handle(XSControl_WorkSession) aWS = XSDRAWBase::Session();
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI);
+  if (!aProvider->Write(theArgVec[2], aShape, aWS, aProgress->Start()))
+  {
+    theDI << "Error: Mesh writing has been failed.\n";
+  }
+  XSDRAWBase::CollectActiveWorkSessions(aWS, theArgVec[2], XSDRAWBase::WorkSessionList());
   return 0;
 }
 
@@ -159,6 +158,7 @@ static Standard_Integer readstl(Draw_Interpretor& theDI,
     return 1;
   }
   DBRep::Set(aShapeName.ToCString(), aShape);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, XSDRAWBase::WorkSessionList());
   return 0;
 }
 

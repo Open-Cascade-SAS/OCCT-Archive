@@ -21,39 +21,14 @@
 
 #include <Draw_Interpretor.hxx>
 
-
 //! Contains commands to work with geometric validation
 //! properties of shapes
 class XDEDRAW_Props 
 {
+  DEFINE_STANDARD_ALLOC
 public:
 
-  DEFINE_STANDARD_ALLOC
-
-  
   Standard_EXPORT static void InitCommands (Draw_Interpretor& theCommands);
-
-
-
-
-protected:
-
-
-
-
-
-private:
-
-
-
-
-
 };
-
-
-
-
-
-
 
 #endif // _XDEDRAW_Props_HeaderFile

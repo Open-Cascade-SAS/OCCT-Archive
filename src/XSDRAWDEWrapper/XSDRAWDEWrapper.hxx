@@ -24,8 +24,6 @@ class XSDRAWDEWrapper
   DEFINE_STANDARD_ALLOC
 public:
 
-  Standard_EXPORT static void Init();
-
   //! Loads all Draw commands of XSDRAWDEWrapper. Used for plugin.
   Standard_EXPORT static void Factory(Draw_Interpretor& theDI);
 };

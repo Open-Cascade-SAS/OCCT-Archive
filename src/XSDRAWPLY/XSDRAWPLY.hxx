@@ -24,9 +24,7 @@ class XSDRAWPLY
   DEFINE_STANDARD_ALLOC
 public:
 
-  Standard_EXPORT static void Init();
-
-  //! Loads all Draw commands of XSDRAWSTL. Used for plugin.
+  //! Loads all Draw commands of XSDRAWPLY. Used for plugin.
   Standard_EXPORT static void Factory(Draw_Interpretor& theDI);
 };
 

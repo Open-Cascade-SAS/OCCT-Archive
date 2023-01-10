@@ -24,9 +24,8 @@
 //! Contains commands to work with notes
 class XDEDRAW_Notes 
 {
-public:
-
   DEFINE_STANDARD_ALLOC
+public:
 
   Standard_EXPORT static void InitCommands (Draw_Interpretor& theCommands);
 };

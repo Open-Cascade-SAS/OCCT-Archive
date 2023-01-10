@@ -485,7 +485,7 @@ static Standard_Integer WriteGltf(Draw_Interpretor& theDI,
 //=======================================================================
 void XSDRAWGLTF::Factory(Draw_Interpretor& theDI)
 {
-  const char* g = "XSTEP-STL/VRML";  // Step transfer file commands
+  const char* aGroup = "XSTEP-STL/VRML";  // Step transfer file commands
 
   theDI.Add("ReadGltf",
             "ReadGltf Doc file [-parallel {on|off}] [-listExternalFiles] [-noCreateDoc] [-doublePrecision {on|off}] [-assetInfo]"
@@ -501,11 +501,11 @@ void XSDRAWGLTF::Factory(Draw_Interpretor& theDI)
             "\n\t\t:   -allScenes load all scenes defined in the document instead of default one (false by default)"
             "\n\t\t:   -toPrintDebugInfo print additional debug information during data reading"
             "\n\t\t:   -assetInfo print asset information",
-            __FILE__, ReadGltf, g);
+            __FILE__, ReadGltf, aGroup);
   theDI.Add("readgltf",
             "readgltf shape file"
             "\n\t\t: Same as ReadGltf but reads glTF file into a shape instead of a document.",
-            __FILE__, ReadGltf, g);
+            __FILE__, ReadGltf, aGroup);
   theDI.Add("WriteGltf",
             "WriteGltf Doc file [-trsfFormat {compact|TRS|mat4}]=compact"
             "\n\t\t:            [-systemCoordSys {Zup|Yup}]=Zup"
@@ -535,12 +535,8 @@ void XSDRAWGLTF::Factory(Draw_Interpretor& theDI)
             "\n                        and custom attributes when using Draco compression (by default 12)"
             "\n\t\t:   -unifiedQuantization  quantization is applied on each primitive separately if this option is false"
             "\n\t\t:   -parallel             use multithreading for Draco compression",
-            __FILE__, WriteGltf, g);
+            __FILE__, WriteGltf, aGroup);
   theDI.Add("writegltf",
             "writegltf shape file",
-            __FILE__, WriteGltf, g);
-  XSDRAWBase::LoadDraw(theDI);
-#ifdef OCCT_DEBUG
-  theDI << "Draw Plugin : All XSDRAWGLTF commands are loaded\n";
-#endif
+            __FILE__, WriteGltf, aGroup);
 }

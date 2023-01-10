@@ -59,10 +59,6 @@ static Standard_Integer stepread(Draw_Interpretor& theDI,
     theDI << "Use: stepread  [file] [f or r (type of model full or reduced)]\n";
     return 1;
   }
-  //  On admet le controller AP214 ou une variante
-  DeclareAndCast(STEPControl_Controller, ctl, XSDRAWBase::Controller());
-  if (ctl.IsNull()) XSDRAWBase::SetNorm("STEP");
-
 
   // Progress indicator
   Handle(Draw_ProgressIndicator) progress = new Draw_ProgressIndicator(theDI, 1);
@@ -97,7 +93,6 @@ static Standard_Integer stepread(Draw_Interpretor& theDI,
     }
     else
       fromtcl = Standard_True;
-
   }
   if (!fromtcl)
     fromtcl = theNbArgs > k;
@@ -254,56 +249,56 @@ static Standard_Integer stepread(Draw_Interpretor& theDI,
   return 0;
 }
 
-//=======================================================================
-//function : testreadstep
-//purpose  :
-//=======================================================================
-static Standard_Integer testreadstep(Draw_Interpretor& theDI,
-                                     Standard_Integer theNbArgs,
-                                     const char** theArgVec)
-{
-  if (theNbArgs < 3 || theNbArgs > 4)
-  {
-    theDI << "ERROR in " << theArgVec[0] << "Wrong Number of Arguments.\n";
-    theDI << " Usage : " << theArgVec[0] << " file_name shape_name [-stream]\n";
-    theDI << " Option -stream forces usage of API accepting stream\n";
-    return 1;
-  }
-
-  Standard_Boolean useStream = (theNbArgs > 3 && !strcasecmp(theArgVec[3], "-stream"));
-
-  STEPControl_Reader Reader;
-  Standard_CString filename = theArgVec[1];
-  IFSelect_ReturnStatus readstat;
-  if (useStream)
-  {
-    std::ifstream aStream;
-    OSD_OpenStream(aStream, filename, std::ios::in | std::ios::binary);
-    TCollection_AsciiString aFolder, aFileNameShort;
-    OSD_Path::FolderAndFileFromPath(filename, aFolder, aFileNameShort);
-    readstat = Reader.ReadStream(aFileNameShort.ToCString(), aStream);
-  }
-  else
-  {
-    readstat = Reader.ReadFile(filename);
-  }
-  theDI << "Status from reading STEP file " << filename << " : ";
-  switch (readstat)
-  {
-    case IFSelect_RetVoid: { theDI << "empty file\n"; return 1; }
-    case IFSelect_RetDone: { theDI << "file read\n";    break; }
-    case IFSelect_RetError: { theDI << "file not found\n";   return 1; }
-    case IFSelect_RetFail: { theDI << "error during read\n";  return 1; }
-    default: { theDI << "failure\n";   return 1; }
-  }
-  XSAlgo::AlgoContainer()->PrepareForTransfer(); // update unit info
-  Reader.SetSystemLengthUnit(UnitsMethods::GetCasCadeLengthUnit());
-  Reader.TransferRoots();
-  TopoDS_Shape shape = Reader.OneShape();
-  DBRep::Set(theArgVec[2], shape);
-  theDI << "Count of shapes produced : " << Reader.NbShapes() << "\n";
-  return 0;
-}
+////=======================================================================
+////function : testreadstep
+////purpose  :
+////=======================================================================
+//static Standard_Integer testreadstep(Draw_Interpretor& theDI,
+//                                     Standard_Integer theNbArgs,
+//                                     const char** theArgVec)
+//{
+//  if (theNbArgs < 3 || theNbArgs > 4)
+//  {
+//    theDI << "ERROR in " << theArgVec[0] << "Wrong Number of Arguments.\n";
+//    theDI << " Usage : " << theArgVec[0] << " file_name shape_name [-stream]\n";
+//    theDI << " Option -stream forces usage of API accepting stream\n";
+//    return 1;
+//  }
+//
+//  Standard_Boolean useStream = (theNbArgs > 3 && !strcasecmp(theArgVec[3], "-stream"));
+//
+//  STEPControl_Reader Reader;
+//  Standard_CString filename = theArgVec[1];
+//  IFSelect_ReturnStatus readstat;
+//  if (useStream)
+//  {
+//    std::ifstream aStream;
+//    OSD_OpenStream(aStream, filename, std::ios::in | std::ios::binary);
+//    TCollection_AsciiString aFolder, aFileNameShort;
+//    OSD_Path::FolderAndFileFromPath(filename, aFolder, aFileNameShort);
+//    readstat = Reader.ReadStream(aFileNameShort.ToCString(), aStream);
+//  }
+//  else
+//  {
+//    readstat = Reader.ReadFile(filename);
+//  }
+//  theDI << "Status from reading STEP file " << filename << " : ";
+//  switch (readstat)
+//  {
+//    case IFSelect_RetVoid: { theDI << "empty file\n"; return 1; }
+//    case IFSelect_RetDone: { theDI << "file read\n";    break; }
+//    case IFSelect_RetError: { theDI << "file not found\n";   return 1; }
+//    case IFSelect_RetFail: { theDI << "error during read\n";  return 1; }
+//    default: { theDI << "failure\n";   return 1; }
+//  }
+//  XSAlgo::AlgoContainer()->PrepareForTransfer(); // update unit info
+//  Reader.SetSystemLengthUnit(UnitsMethods::GetCasCadeLengthUnit());
+//  Reader.TransferRoots();
+//  TopoDS_Shape shape = Reader.OneShape();
+//  DBRep::Set(theArgVec[2], shape);
+//  theDI << "Count of shapes produced : " << Reader.NbShapes() << "\n";
+//  return 0;
+//}
 
 //=======================================================================
 //function : steptrans
@@ -319,7 +314,11 @@ static Standard_Integer steptrans(Draw_Interpretor& theDI,
     return 1;
   }
   TopoDS_Shape shape = DBRep::Get(theArgVec[1]);
-  if (shape.IsNull()) { theDI << "Not a shape : " << theArgVec[1] << "\n"; return 1; }
+  if (shape.IsNull())
+  {
+    theDI << "Not a shape : " << theArgVec[1] << "\n";
+    return 1;
+  }
   Handle(StepGeom_Axis2Placement3d) ax1, ax2;
   Standard_Integer n1 = 0, n2 = 0;
   n1 = XSDRAWBase::GetEntityNumber(theArgVec[3]);
@@ -337,7 +336,8 @@ static Standard_Integer steptrans(Draw_Interpretor& theDI,
     DBRep::Set(theArgVec[2], shape);
     theDI << "Transformed Shape as " << theArgVec[2] << "\n";
   }
-  else theDI << "No transformation computed\n";
+  else
+    theDI << "No transformation computed\n";
   return 0;
 }
 
@@ -351,15 +351,6 @@ static Standard_Integer stepwrite(Draw_Interpretor& theDI,
                                   Standard_Integer theNbArgs,
                                   const char** theArgVec)
 {
-  //  On admet le controller AP214 ou une variante
-  DeclareAndCast(STEPControl_Controller, ctl, XSDRAWBase::Controller());
-  if (ctl.IsNull())
-  {
-    XSDRAWBase::SetNorm("STEP");
-    //sln 14.01.2002 OCC51: assign new value to ctl in order to avoid exception during using one in the function
-    ctl = Handle(STEPControl_Controller)::DownCast(XSDRAWBase::Controller());
-  }
-
   if (theNbArgs < 3)
   {
     theDI << "Give mode[1-4] and Shape name + optional file. Mode possible\n";
@@ -440,82 +431,82 @@ static Standard_Integer stepwrite(Draw_Interpretor& theDI,
   return 0;
 }
 
-//=======================================================================
-//function : testwritestep
-//purpose  :
-//=======================================================================
-static Standard_Integer testwrite(Draw_Interpretor& theDI,
-                                  Standard_Integer theNbArgs,
-                                  const char** theArgVec)
-{
-  TCollection_AsciiString aFilePath;
-  TopoDS_Shape aShape;
-  bool toTestStream = false;
-  for (Standard_Integer anArgIter = 1; anArgIter < theNbArgs; ++anArgIter)
-  {
-    TCollection_AsciiString anArgCase(theArgVec[anArgIter]);
-    anArgCase.LowerCase();
-    if (anArgCase == "-stream")
-    {
-      toTestStream = true;
-    }
-    else if (aFilePath.IsEmpty())
-    {
-      aFilePath = theArgVec[anArgIter];
-    }
-    else if (aShape.IsNull())
-    {
-      aShape = DBRep::Get(theArgVec[anArgIter]);
-      if (aShape.IsNull())
-      {
-        theDI << "Syntax error: '" << theArgVec[anArgIter] << "' is not a shape";
-        return 1;
-      }
-    }
-    else
-    {
-      theDI << "Syntax error: unknown argument '" << theArgVec[anArgIter] << "'";
-      return 1;
-    }
-  }
-  if (aShape.IsNull())
-  {
-    theDI << "Syntax error: wrong number of arguments";
-    return 1;
-  }
-
-  STEPControl_Writer aWriter;
-  IFSelect_ReturnStatus aStat = aWriter.Transfer(aShape, STEPControl_AsIs);
-  if (aStat != IFSelect_RetDone)
-  {
-    theDI << "Error on transferring shape";
-    return 1;
-  }
-
-  if (toTestStream)
-  {
-    std::ofstream aStream;
-    OSD_OpenStream(aStream, aFilePath, std::ios::out | std::ios::binary);
-    aStat = aWriter.WriteStream(aStream);
-    aStream.close();
-    if (!aStream.good()
-        && aStat == IFSelect_RetDone)
-    {
-      aStat = IFSelect_RetFail;
-    }
-  }
-  else
-  {
-    aStat = aWriter.Write(aFilePath.ToCString());
-  }
-  if (aStat != IFSelect_RetDone)
-  {
-    theDI << "Error on writing file";
-    return 1;
-  }
-  theDI << "File Is Written";
-  return 0;
-}
+////=======================================================================
+////function : testwritestep
+////purpose  :
+////=======================================================================
+//static Standard_Integer testwrite(Draw_Interpretor& theDI,
+//                                  Standard_Integer theNbArgs,
+//                                  const char** theArgVec)
+//{
+//  TCollection_AsciiString aFilePath;
+//  TopoDS_Shape aShape;
+//  bool toTestStream = false;
+//  for (Standard_Integer anArgIter = 1; anArgIter < theNbArgs; ++anArgIter)
+//  {
+//    TCollection_AsciiString anArgCase(theArgVec[anArgIter]);
+//    anArgCase.LowerCase();
+//    if (anArgCase == "-stream")
+//    {
+//      toTestStream = true;
+//    }
+//    else if (aFilePath.IsEmpty())
+//    {
+//      aFilePath = theArgVec[anArgIter];
+//    }
+//    else if (aShape.IsNull())
+//    {
+//      aShape = DBRep::Get(theArgVec[anArgIter]);
+//      if (aShape.IsNull())
+//      {
+//        theDI << "Syntax error: '" << theArgVec[anArgIter] << "' is not a shape";
+//        return 1;
+//      }
+//    }
+//    else
+//    {
+//      theDI << "Syntax error: unknown argument '" << theArgVec[anArgIter] << "'";
+//      return 1;
+//    }
+//  }
+//  if (aShape.IsNull())
+//  {
+//    theDI << "Syntax error: wrong number of arguments";
+//    return 1;
+//  }
+//
+//  STEPControl_Writer aWriter;
+//  IFSelect_ReturnStatus aStat = aWriter.Transfer(aShape, STEPControl_AsIs);
+//  if (aStat != IFSelect_RetDone)
+//  {
+//    theDI << "Error on transferring shape";
+//    return 1;
+//  }
+//
+//  if (toTestStream)
+//  {
+//    std::ofstream aStream;
+//    OSD_OpenStream(aStream, aFilePath, std::ios::out | std::ios::binary);
+//    aStat = aWriter.WriteStream(aStream);
+//    aStream.close();
+//    if (!aStream.good()
+//        && aStat == IFSelect_RetDone)
+//    {
+//      aStat = IFSelect_RetFail;
+//    }
+//  }
+//  else
+//  {
+//    aStat = aWriter.Write(aFilePath.ToCString());
+//  }
+//  if (aStat != IFSelect_RetDone)
+//  {
+//    theDI << "Error on writing file";
+//    return 1;
+//  }
+//  theDI << "File Is Written";
+//  return 0;
+//}
 
 //=======================================================================
 //function : countexpected
@@ -525,8 +516,7 @@ static Standard_Integer countexpected(Draw_Interpretor& theDI,
                                       Standard_Integer /*theNbArgs*/,
                                       const char** /*theArgVec*/)
 {
-  Handle(IFSelect_SessionPilot) pilot = XSDRAWBase::Pilot();
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(IFSelect_WorkSession) WS = XSDRAWBase::Session();
   const Interface_Graph& graph = WS->Graph();
 
   Handle(TColStd_HSequenceOfTransient) roots = WS->GiveList("xst-transferrable-roots", "");
@@ -560,8 +550,7 @@ static Standard_Integer dumpassembly(Draw_Interpretor& /*theDI*/,
                                      Standard_Integer /*theNbArgs*/,
                                      const char** /*theArgVec*/)
 {
-  Handle(IFSelect_SessionPilot) pilot = XSDRAWBase::Pilot();
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(IFSelect_WorkSession) WS = XSDRAWBase::Session();
   const Interface_Graph& graph = WS->Graph();
 
   STEPSelections_AssemblyExplorer exp(graph);
@@ -627,7 +616,6 @@ static Standard_Integer ReadStep(Draw_Interpretor& theDI,
                                  Standard_Integer theNbArgs,
                                  const char** theArgVec)
 {
-
   Standard_CString aDocName = NULL;
   TCollection_AsciiString aFilePath, aModeStr;
   bool aToTestStream = false;
@@ -717,7 +705,7 @@ static Standard_Integer ReadStep(Draw_Interpretor& theDI,
   }
   Handle(DDocStd_DrawDocument) aDrawDoc = new DDocStd_DrawDocument(aDoc);
   Draw::Set(aDocName, aDrawDoc);
-  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, XSDRAWBase::WorkSessionList());
   Message::SendInfo() << "Document saved with name " << aDocName;
   return 0;
 }
@@ -850,7 +838,7 @@ static Standard_Integer WriteStep(Draw_Interpretor& theDI,
     theDI << "Cannot write any relevant data to the STEP file\n";
     return 1;
   }
-  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, THE_PREVIOUS_WORK_SESSIONS);
+  XSDRAWBase::CollectActiveWorkSessions(aWS, aFilePath, XSDRAWBase::WorkSessionList());
   return 0;
 }
 
@@ -861,11 +849,11 @@ static Standard_Integer WriteStep(Draw_Interpretor& theDI,
 void XSDRAWSTEP::Factory(Draw_Interpretor& theDI)
 {
   const char* g = "DE: STEP";  // Step transfer file commands
-  theDI.Add("stepwrite", "stepwrite mode[0-4 afsmw] shape", __FILE__, stepwrite, g);
-  theDI.Add("testwritestep", "testwritestep filename.stp shape [-stream]",
-            __FILE__, testwrite, g);
-  theDI.Add("stepread", "stepread  [file] [f or r (type of model full or reduced)]", __FILE__, stepread, g);
-  theDI.Add("testreadstep", "testreadstep file shape [-stream]", __FILE__, testreadstep, g);
+  theDI.Add("stepwrite", "stepwrite [mode[0-4 afsmw]] shape", __FILE__, stepwrite, g);
+  //theDI.Add("testwritestep", "testwritestep filename.stp shape [-stream]",
+  //          __FILE__, testwrite, g);
+  theDI.Add("stepread", "stepread [file] [f or r (type of model full or reduced)]", __FILE__, stepread, g);
+  //theDI.Add("testreadstep", "testreadstep file shape [-stream]", __FILE__, testreadstep, g);
   theDI.Add("steptrans", "steptrans shape stepax1 stepax2", __FILE__, steptrans, g);
   theDI.Add("countexpected", "TEST", __FILE__, countexpected, g);
   theDI.Add("dumpassembly", "TEST", __FILE__, dumpassembly, g);

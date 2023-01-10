@@ -18,6 +18,8 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
+#include <Draw_Interpretor.hxx>
+
 //! Functions gives access to all the actions which can be
 //! commanded with the resources provided by IFSelect : especially
 //! WorkSession and various types of Selections and Dispatches
@@ -29,7 +31,7 @@ class XSDRAW_FunctionsSession
 public:
 
   //! Defines and loads all basic functions (as ActFunc)
-  Standard_EXPORT static void Init();
+  Standard_EXPORT static void Init(Draw_Interpretor& theDI);
 };
 
 #endif // _XSDRAW_FunctionsSession_HeaderFile

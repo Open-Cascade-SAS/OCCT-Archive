@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <XSDRAW_FunctionsSession.hxx>
+
 #include <IFSelect_Act.hxx>
 #include <IFSelect_CheckCounter.hxx>
 #include <IFSelect_DispGlobal.hxx>
@@ -50,7 +52,7 @@
 #include <IFSelect_SignType.hxx>
 #include <IFSelect_Transformer.hxx>
 #include <IFSelect_WorkLibrary.hxx>
-#include <IFSelect_WorkSession.hxx>
+#include <XSControl_WorkSession.hxx>
 #include <Interface_Category.hxx>
 #include <Interface_CheckIterator.hxx>
 #include <Interface_EntityIterator.hxx>
@@ -67,14 +69,16 @@
 #include <TColStd_HSequenceOfAsciiString.hxx>
 #include <TColStd_HSequenceOfHAsciiString.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
+#include <XSDRAWBase.hxx>
 
-#include <stdio.h>
-//  Decomposition of a file name in its parts : prefix, root, suffix
-static void SplitFileName
-(const Standard_CString filename,
- TCollection_AsciiString& prefix,
- TCollection_AsciiString& fileroot,
- TCollection_AsciiString& suffix)
+//=======================================================================
+//function : SplitFileName
+//purpose  : Decomposition of a file name in its parts : prefix, root, suffix
+//=======================================================================
+static void SplitFileName(const Standard_CString filename,
+                          TCollection_AsciiString& prefix,
+                          TCollection_AsciiString& fileroot,
+                          TCollection_AsciiString& suffix)
 {
   Standard_Integer nomdeb, nomfin, nomlon;
   TCollection_AsciiString resfile(filename);
@@ -90,9 +94,13 @@ static void SplitFileName
   if (nomfin <= nomlon) suffix = resfile.SubString(nomfin, nomlon);
 }
 
-Handle(TColStd_HSequenceOfTransient) GiveList
-(const Handle(IFSelect_WorkSession)& WS,
- const Standard_CString first, const Standard_CString second)
+//=======================================================================
+//function : GiveList
+//purpose  :
+//=======================================================================
+Handle(TColStd_HSequenceOfTransient) GiveList(const Handle(XSControl_WorkSession)& WS,
+                                              const Standard_CString first,
+                                              const Standard_CString second)
 {
   return WS->GiveList(first, second);
 }
@@ -104,9 +112,13 @@ Handle(TColStd_HSequenceOfTransient) GiveList
 //  Or a name of dispatch + a parameter :  dispatch-name(param-value)
 //  According to type of Dispatch : integer , signature name
 
-Handle(IFSelect_Dispatch) GiveDispatch
-(const Handle(IFSelect_WorkSession)& WS,
- const Standard_CString name, const Standard_Boolean mode)
+//=======================================================================
+//function : GiveDispatch
+//purpose  :
+//=======================================================================
+Handle(IFSelect_Dispatch) GiveDispatch(const Handle(XSControl_WorkSession)& WS,
+                                       const Standard_CString name,
+                                       const Standard_Boolean mode)
 {
   DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(name));
   if (!disp.IsNull()) return disp;    // OK as it is given
@@ -121,14 +133,13 @@ Handle(IFSelect_Dispatch) GiveDispatch
   if (disp.IsNull()) return disp;     // KO anyway
 
 //  According to the type of dispatch :
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
   DeclareAndCast(IFSelect_DispPerCount, dc, disp);
   if (!dc.IsNull())
   {
     Standard_Integer nb = atoi(&(nam.ToCString())[paro]);
     if (nb <= 0)
     {
-      sout << " DispPerCount, count is not positive" << std::endl;
+      Message::SendInfo() << " DispPerCount, count is not positive";
       disp.Nullify();
       return disp;
     }
@@ -146,7 +157,7 @@ Handle(IFSelect_Dispatch) GiveDispatch
     Standard_Integer nb = atoi(&(nam.ToCString())[paro]);
     if (nb <= 0)
     {
-      sout << " DispPerFiles, count is not positive" << std::endl;
+      Message::SendInfo() << " DispPerFiles, count is not positive";
       disp.Nullify();
       return disp;
     }
@@ -164,14 +175,14 @@ Handle(IFSelect_Dispatch) GiveDispatch
     DeclareAndCast(IFSelect_Signature, sg, WS->NamedItem(&(nam.ToCString())[paro]));
     if (sg.IsNull())
     {
-      sout << "DispPerSignature " << nam << " , Signature not valid : " << &(nam.ToCString())[paro] << std::endl;
+      Message::SendInfo() << "DispPerSignature " << nam << " , Signature not valid : " << &(nam.ToCString())[paro];
       disp.Nullify();
       return disp;
     }
     if (mode) ds->SetSignCounter(new IFSelect_SignCounter(sg));
     return ds;
   }
-  sout << "Dispatch : " << name << " , Parameter : " << &(nam.ToCString())[paro] << std::endl;
+  Message::SendInfo() << "Dispatch : " << name << " , Parameter : " << &(nam.ToCString())[paro];
   return disp;
 }
 
@@ -181,51 +192,66 @@ Handle(IFSelect_Dispatch) GiveDispatch
 
 //  Les definitions
 
-static IFSelect_ReturnStatus funstatus
-(const Handle(IFSelect_SessionPilot)&)
+//=======================================================================
+//function : funstatus
+//purpose  :
+//=======================================================================
+static Standard_Integer funstatus(Draw_Interpretor& theDI,
+                                  Standard_Integer theNbArgs,
+                                  const char** theArgVec)
 {
   //        ****    Version & cie     ****
     //#58 rln
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  sout << "Processor Version : " << XSTEP_PROCESSOR_VERSION << std::endl;
-  sout << "OL Version        : " << XSTEP_SYSTEM_VERSION << std::endl;
-  sout << "Configuration     : " << XSTEP_Config << std::endl;
-  sout << "UL Names          : " << XSTEP_ULNames << std::endl;
-  return IFSelect_RetVoid;
+  Message::SendInfo() << "Processor Version : " << XSTEP_PROCESSOR_VERSION;
+  Message::SendInfo() << "OL Version        : " << XSTEP_SYSTEM_VERSION;
+  Message::SendInfo() << "Configuration     : " << XSTEP_Config;
+  Message::SendInfo() << "UL Names          : " << XSTEP_ULNames;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun1
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun1
+//purpose  :
+//=======================================================================
+static Standard_Integer fun1(Draw_Interpretor& theDI,
+                             Standard_Integer theNbArgs,
+                             const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    ToggleHandler     ****
   Standard_Boolean hand = !WS->ErrorHandle();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (hand) sout << " --  Mode Catch Error now Active" << std::endl;
-  else      sout << " --  Mode Catch Error now Inactive" << std::endl;
+  if (hand) Message::SendInfo() << " --  Mode Catch Error now Active";
+  else      Message::SendInfo() << " --  Mode Catch Error now Inactive";
   WS->SetErrorHandle(hand);
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun3
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun3
+//purpose  :
+//=======================================================================
+static Standard_Integer fun3(Draw_Interpretor& theDI,
+                             Standard_Integer theNbArgs,
+                             const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    XRead / Load         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Read/Load : give file name !" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Read/Load : give file name !";
+    return 1;
   }
   if (WS->Protocol().IsNull())
   {
-    sout << "Protocol not defined" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Protocol not defined";
+    return 1;
   }
   if (WS->WorkLibrary().IsNull())
   {
-    sout << "WorkLibrary not defined" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "WorkLibrary not defined";
+    return 1;
   }
 
   IFSelect_ReturnStatus status = WS->ReadFile(arg1);
@@ -233,164 +259,199 @@ static IFSelect_ReturnStatus fun3
   //          -1 fichier non trouve, -2 lecture faite mais resultat vide
   switch (status)
   {
-    case IFSelect_RetVoid: sout << "file:" << arg1 << " gives empty result" << std::endl; break;
-    case IFSelect_RetError: sout << "file:" << arg1 << " could not be opened" << std::endl; break;
-    case IFSelect_RetDone: sout << "file:" << arg1 << " read" << std::endl; break;
-    case IFSelect_RetFail: sout << "file:" << arg1 << " : error while reading" << std::endl; break;
-    case IFSelect_RetStop: sout << "file:" << arg1 << " : EXCEPTION while reading" << std::endl; break;
-    default: sout << "file:" << arg1 << " could not be read" << std::endl; break;
+    case IFSelect_RetVoid: Message::SendInfo() << "file:" << arg1 << " gives empty result"; break;
+    case IFSelect_RetError: Message::SendInfo() << "file:" << arg1 << " could not be opened"; break;
+    case IFSelect_RetDone: Message::SendInfo() << "file:" << arg1 << " read"; break;
+    case IFSelect_RetFail: Message::SendInfo() << "file:" << arg1 << " : error while reading"; break;
+    case IFSelect_RetStop: Message::SendInfo() << "file:" << arg1 << " : EXCEPTION while reading"; break;
+    default: Message::SendInfo() << "file:" << arg1 << " could not be read"; break;
   }
   if (status != IFSelect_RetDone) return status;
-  //      sout<<" - clearing list of already written files"<<std::endl;
+  //      Message::SendInfo()<<" - clearing list of already written files"<<std::endl;
   WS->BeginSentFiles(Standard_True);
   return status;
 }
 
-static IFSelect_ReturnStatus fun4
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun4
+//purpose  :
+//=======================================================================
+static Standard_Integer fun4(Draw_Interpretor& theDI,
+                             Standard_Integer theNbArgs,
+                             const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Write All         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Write All : give file name !" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Write All : give file name !";
+    return 1;
   }
   return WS->SendAll(arg1);
 }
 
-static IFSelect_ReturnStatus fun5
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun5
+//purpose  :
+//=======================================================================
+static Standard_Integer fun5(Draw_Interpretor& theDI,
+                             Standard_Integer theNbArgs,
+                             const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  //  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  //  const Standard_CString arg2 = theArgVec[2];
   //        ****    Write Selected         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Write Selected : give file name + givelist !" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Write Selected : give file name + givelist !";
+    return 1;
   }
   Handle(TColStd_HSequenceOfTransient) result =
     XSDRAW_FunctionsSession::GiveList(WS, pilot->CommandPart(2));
   if (result.IsNull())
   {
-    sout << "No entity selected" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "No entity selected";
+    return 1;
   }
-  else sout << "Nb Entities selected : " << result->Length() << std::endl;
+  else Message::SendInfo() << "Nb Entities selected : " << result->Length();
   Handle(IFSelect_SelectPointed) sp = new IFSelect_SelectPointed;
   sp->SetList(result);
   return WS->SendSelected(arg1, sp);
 }
 
-static IFSelect_ReturnStatus fun6
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun6
+//purpose  :
+//=======================================================================
+static Standard_Integer fun6(Draw_Interpretor& theDI,
+                             Standard_Integer theNbArgs,
+                             const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Write Entite(s)         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Write Entitie(s) : give file name + n0s entitie(s)!" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Write Entitie(s) : give file name + n0s entitie(s)!";
+    return 1;
   }
   int ko = 0;
   Handle(IFSelect_SelectPointed) sp = new IFSelect_SelectPointed;
-  for (Standard_Integer ia = 2; ia < argc; ia++)
+  for (Standard_Integer ia = 2; ia < theNbArgs; ia++)
   {
     Standard_Integer id = pilot->Number(pilot->Arg(ia));
     if (id > 0)
     {
       Handle(Standard_Transient) item = WS->StartingEntity(id);
-      if (sp->Add(item)) sout << "Added:no." << id << std::endl;
+      if (sp->Add(item)) Message::SendInfo() << "Added:no." << id;
       else
       {
-        sout << " Fail Add n0." << id << std::endl; ko++;
+        Message::SendInfo() << " Fail Add n0." << id; ko++;
       }
     }
     else
     {
-      sout << "Not an entity number:" << pilot->Arg(ia) << std::endl; ko++;
+      Message::SendInfo() << "Not an entity number:" << pilot->Arg(ia); ko++;
     }
   }
   if (ko > 0)
   {
-    sout << ko << " bad arguments, abandon" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << ko << " bad arguments, abandon";
+    return 1;
   }
   return WS->SendSelected(arg1, sp);
 }
 
-static IFSelect_ReturnStatus fun7
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun7
+//purpose  :
+//=======================================================================
+static Standard_Integer fun7(Draw_Interpretor& theDI,
+                             Standard_Integer theNbArgs,
+                             const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Entity Label       ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give entity number" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Give entity number";
+    return 1;
   }
   if (!WS->HasModel())
   {
-    sout << "No loaded model, abandon" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "No loaded model, abandon";
+    return 1;
   }
   Standard_Integer nument = WS->NumberFromLabel(arg1);
   if (nument <= 0 || nument > WS->NbStartingEntities())
   {
-    sout << "Not a suitable number: " << arg1 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Not a suitable number: " << arg1;
+    return 1;
   }
-  sout << "N0." << nument << " ->Label in Model : ";
-  WS->Model()->PrintLabel(WS->StartingEntity(nument), sout);
-  sout << std::endl;
-  return IFSelect_RetVoid;
+  Message::SendInfo() << "N0." << nument << " ->Label in Model : ";
+  WS->Model()->PrintLabel(WS->StartingEntity(nument), Message::SendInfo());
+  Message::SendInfo();
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun8
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun8
+//purpose  :
+//=======================================================================
+static Standard_Integer fun8(Draw_Interpretor& theDI,
+                             Standard_Integer theNbArgs,
+                             const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Entity Number      ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give label to search" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Give label to search";
+    return 1;
   }
   if (!WS->HasModel())
   {
-    sout << "No loaded model, abandon" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "No loaded model, abandon";
+    return 1;
   }
   const Handle(Interface_InterfaceModel)& model = WS->Model();
   Standard_Integer i, cnt = 0;
   Standard_Boolean exact = Standard_False;
-  sout << " **  Search Entity Number for Label : " << arg1 << std::endl;
+  Message::SendInfo() << " **  Search Entity Number for Label : " << arg1;
   for (i = model->NextNumberForLabel(arg1, 0, exact); i != 0;
        i = model->NextNumberForLabel(arg1, i, exact))
   {
     cnt++;
-    sout << " **  Found n0/id:";
-    model->Print(model->Value(i), sout);
-    sout << std::endl;
+    Message::SendInfo() << " **  Found n0/id:";
+    model->Print(model->Value(i), Message::SendInfo());
+    Message::SendInfo();
   }
 
-  if (cnt == 0) sout << " **  No Match" << std::endl;
-  else if (cnt == 1) sout << " **  1 Match" << std::endl;
-  else sout << cnt << " Matches" << std::endl;
-  return IFSelect_RetVoid;
+  if (cnt == 0) Message::SendInfo() << " **  No Match";
+  else if (cnt == 1) Message::SendInfo() << " **  1 Match";
+  else Message::SendInfo() << cnt << " Matches";
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun9
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun9
+//purpose  :
+//=======================================================================
+static Standard_Integer fun9(Draw_Interpretor& theDI,
+                             Standard_Integer theNbArgs,
+                             const char** theArgVec)
 {
   //        ****    List Types         ****
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   Handle(IFSelect_Signature) signtype = WS->SignType();
   if (signtype.IsNull()) signtype = new IFSelect_SignType;
   Handle(IFSelect_SignCounter) counter =
@@ -398,24 +459,28 @@ static IFSelect_ReturnStatus fun9
   return pilot->ExecuteCounter(counter, 1);
 }
 
-static IFSelect_ReturnStatus funcount
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : funcount
+//purpose  :
+//=======================================================================
+static Standard_Integer funcount(Draw_Interpretor& theDI,
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg0 = pilot->Arg(0);
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg0 = theArgVec[0];
+  const Standard_CString arg1 = theArgVec[1];
   Standard_Boolean listmode = (arg0[0] == 'l');
   //        ****    List Counter         ****
 
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Designer signature ou compteur, + facultatif selection + facultatif entite" << std::endl;
-    sout << " signature/compteur seul -> tout le modele" << std::endl
-      << " sign/compteur + selection -> cette selection, evaluation normale" << std::endl
-      << " sign/compteur + sel + num -> cette selection evaluee sur entite n0 num" << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Designer signature ou compteur, + facultatif selection + facultatif entite";
+    Message::SendInfo() << " signature/compteur seul -> tout le modele"
+      << " sign/compteur + selection -> cette selection, evaluation normale"
+      << " sign/compteur + sel + num -> cette selection evaluee sur entite n0 num";
+    return 1;
   }
   DeclareAndCast(IFSelect_SignCounter, counter, WS->NamedItem(arg1));
   if (counter.IsNull())
@@ -424,21 +489,21 @@ static IFSelect_ReturnStatus funcount
     if (!signa.IsNull()) counter = new IFSelect_SignCounter(signa, Standard_False, listmode);
   }
   //  Handle(IFSelect_Selection) sel;
-  //  Standard_Integer n3 = 0;  if (argc > 3) n3 = WS->NumberFromLabel(arg3);
-  //  if (argc > 2) sel = GetCasted(IFSelect_Selection,WS->NamedItem(arg2));
-  //  if (counter.IsNull() || (argc > 2 && n3 <= 0 && sel.IsNull()) ) {
-  //    sout<<"Nom:"<<arg1; if (argc > 2) sout<<" et/ou "<<arg2;
-  //    sout<<" incorrect (demande: compteur ou signature [selection])"<<std::endl;
-  //    return IFSelect_RetError;
+  //  Standard_Integer n3 = 0;  if (theNbArgs > 3) n3 = WS->NumberFromLabel(arg3);
+  //  if (theNbArgs > 2) sel = GetCasted(IFSelect_Selection,WS->NamedItem(arg2));
+  //  if (counter.IsNull() || (theNbArgs > 2 && n3 <= 0 && sel.IsNull()) ) {
+  //    Message::SendInfo()<<"Nom:"<<arg1; if (theNbArgs > 2) Message::SendInfo()<<" et/ou "<<arg2;
+  //    Message::SendInfo()<<" incorrect (demande: compteur ou signature [selection])"<<std::endl;
+  //    return 1;
   //  }
 
   //  Ajout : si Selection, on applique un GraphCounter
   //   Et en ce cas, on peut en avoir plusieurs : la limite est le mot-cle "on"
   Standard_Integer onflag = 0;
   Standard_Integer i; // svv Jan11 2000 : porting on DEC
-  for (i = 2; i < argc; i++)
+  for (i = 2; i < theNbArgs; i++)
   {
-    if (!strcmp(pilot->Arg(i), "on"))
+    if (!strcmp(theArgVec[i], "on"))
     {
       onflag = i; break;
     }
@@ -454,11 +519,11 @@ static IFSelect_ReturnStatus funcount
       Handle(IFSelect_SelectSuite) suite = new IFSelect_SelectSuite;
       for (i = 1; i < onflag; i++)
       {
-        sel = WS->GiveSelection(pilot->Arg(i));
+        sel = WS->GiveSelection(theArgVec[i]);
         if (!suite->AddInput(sel))
         {
-          sout << "Incorrect definition for applied selection" << std::endl;
-          return IFSelect_RetError;
+          Message::SendInfo() << "Incorrect definition for applied selection";
+          return 1;
         }
       }
       seld = suite;
@@ -471,8 +536,8 @@ static IFSelect_ReturnStatus funcount
 
   if (counter.IsNull())
   {
-    sout << "Neither Counter nor Signature : " << arg1 << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Neither Counter nor Signature : " << arg1;
+    return 1;
   }
 
   if (onflag == 0) onflag = 1;
@@ -482,129 +547,146 @@ static IFSelect_ReturnStatus funcount
   return pilot->ExecuteCounter(counter, onflag + 1, pcm);
 }
 
-static IFSelect_ReturnStatus funsigntype
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : funsigntype
+//purpose  :
+//=======================================================================
+static Standard_Integer funsigntype(Draw_Interpretor& theDI,
+                                    Standard_Integer theNbArgs,
+                                    const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Sign Type              ****
   Handle(IFSelect_Signature) signtype = WS->SignType();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (signtype.IsNull()) sout << "signtype actually undefined" << std::endl;
+  if (signtype.IsNull()) Message::SendInfo() << "signtype actually undefined";
   else
   {
     Handle(TCollection_HAsciiString) str = WS->Name(signtype);
     Standard_Integer id = WS->ItemIdent(signtype);
-    sout << signtype->Label() << std::endl;
+    Message::SendInfo() << signtype->Label();
     if (str.IsNull())
     {
-      if (id > 0) sout << "signtype : item n0 " << id << std::endl;
+      if (id > 0) Message::SendInfo() << "signtype : item n0 " << id;
     }
     else
     {
-      sout << "signtype : also named as " << str->ToCString() << std::endl;
+      Message::SendInfo() << "signtype : also named as " << str->ToCString();
     }
   }
-  if (argc < 2) sout << "signtype newitem  to change, signtype . to clear" << std::endl;
+  if (theNbArgs < 2) Message::SendInfo() << "signtype newitem  to change, signtype . to clear";
   else
   {
     if (arg1[0] == '.' && arg1[1] == '\0')
     {
       signtype.Nullify();
-      sout << "signtype now cleared" << std::endl;
+      Message::SendInfo() << "signtype now cleared";
     }
     else
     {
       signtype = GetCasted(IFSelect_Signature, WS->NamedItem(arg1));
       if (signtype.IsNull())
       {
-        sout << "Not a Signature : " << arg1 << std::endl; return IFSelect_RetError;
+        Message::SendInfo() << "Not a Signature : " << arg1;
+        return 1;
       }
-      else sout << "signtype now set to " << arg1 << std::endl;
+      else Message::SendInfo() << "signtype now set to " << arg1;
     }
     WS->SetSignType(signtype);
-    return IFSelect_RetDone;
+    return 0;
   }
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-static IFSelect_ReturnStatus funsigncase
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : funsigncase
+//purpose  :
+//=======================================================================
+static Standard_Integer funsigncase(Draw_Interpretor& theDI,
+                                    Standard_Integer theNbArgs,
+                                    const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Sign Case              ****
   Handle(IFSelect_Signature) signcase = GetCasted(IFSelect_Signature, WS->NamedItem(arg1));
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (signcase.IsNull()) sout << "Not a Signature : " << arg1 << std::endl;
+  if (signcase.IsNull()) Message::SendInfo() << "Not a Signature : " << arg1;
   else
   {
     Standard_Boolean hasmin, hasmax;  Standard_Integer valmin, valmax;
     if (signcase->IsIntCase(hasmin, valmin, hasmax, valmax))
     {
-      sout << "Signature " << arg1 << " : Integer Case";
-      if (hasmin) sout << " - Mini:" << valmin;
-      if (hasmax) sout << " - Maxi:" << valmax;
-      sout << std::endl;
+      Message::SendInfo() << "Signature " << arg1 << " : Integer Case";
+      if (hasmin) Message::SendInfo() << " - Mini:" << valmin;
+      if (hasmax) Message::SendInfo() << " - Maxi:" << valmax;
+      Message::SendInfo();
     }
     Handle(TColStd_HSequenceOfAsciiString) caselist = signcase->CaseList();
-    if (caselist.IsNull()) sout << "Signature " << arg1 << " : no predefined case, see command  count " << arg1 << std::endl;
+    if (caselist.IsNull()) Message::SendInfo() << "Signature " << arg1 << " : no predefined case, see command  count " << arg1;
     else
     {
       Standard_Integer i, nb = caselist->Length();
-      sout << "Signature " << arg1 << " : " << nb << " basic cases :" << std::endl;
-      for (i = 1; i <= nb; i++) sout << "  " << caselist->Value(i);
-      sout << std::endl;
+      Message::SendInfo() << "Signature " << arg1 << " : " << nb << " basic cases :";
+      for (i = 1; i <= nb; i++) Message::SendInfo() << "  " << caselist->Value(i);
+      Message::SendInfo();
     }
   }
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-
-static IFSelect_ReturnStatus fun10
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun10
+//purpose  :
+//=======================================================================
+static Standard_Integer fun10(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Entity Status          ****
   Standard_Integer i, nb;
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
     nb = Interface_Category::NbCategories();
-    sout << " Categories defined :" << nb << " i.e. :\n";
+    Message::SendInfo() << " Categories defined :" << nb << " i.e. :\n";
     for (i = 0; i <= nb; i++)
-      sout << "Cat." << i << "  : " << Interface_Category::Name(i) << "\n";
-    sout << " On a given entity : give its number" << std::endl;
-    return IFSelect_RetVoid;
+      Message::SendInfo() << "Cat." << i << "  : " << Interface_Category::Name(i) << "\n";
+    Message::SendInfo() << " On a given entity : give its number";
+    return 0;
   }
   Standard_Integer num = pilot->Number(arg1);
   if (num <= 0 || num > WS->NbStartingEntities())
   {
-    sout << "Not a suitable entity number : " << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Not a suitable entity number : " << arg1;
+    return 1;
   }
   Handle(Standard_Transient) ent = WS->StartingEntity(num);
-  WS->PrintEntityStatus(ent, sout);
-  return IFSelect_RetVoid;
+  WS->PrintEntityStatus(ent, Message::SendInfo());
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun11
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun11
+//purpose  :
+//=======================================================================
+static Standard_Integer fun11(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  //  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  //  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    DumpModel (Data)  ****
   Standard_Integer niv = 0;
   //  char arg10 = arg1[0];
-  //  if (argc < 2) arg10 = '?';
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
+  //  if (theNbArgs < 2) arg10 = '?';
   switch (arg1[0])
   {
     case '?':
-      sout << "? for this help, else give a listing mode (first letter suffices) :\n"
+      Message::SendInfo() << "? for this help, else give a listing mode (first letter suffices) :\n"
         << " general    General Statistics\n roots    Roots\n"
         << " entities   All Entities\n"
         << " listfails  CheckList (fails)    per entity\n"
@@ -613,8 +695,8 @@ static IFSelect_ReturnStatus fun11
         << " check      CheckList (complete) per message (counting)\n"
         << " totalcheck CheckList (complete) per message (listing n0 ents)\n"
         << " FAILS      CheckList (fails)    per message (listing complete)\n"
-        << " TOTALCHECK CheckList (complete) per message (listing complete)" << std::endl;
-      return IFSelect_RetVoid;
+        << " TOTALCHECK CheckList (complete) per message (listing complete)";
+      return 0;
     case 'g': niv = 0; break;
     case 'r': niv = 1; break;
     case 'e': niv = 2; break;
@@ -625,242 +707,301 @@ static IFSelect_ReturnStatus fun11
     case 'T': niv = 7; break;
     case 'f': niv = 8; break;
     case 'F': niv = 10; break;
-    default: sout << "Unknown Mode .  data tout court pour help" << std::endl; return IFSelect_RetError;
+    default: Message::SendInfo() << "Unknown Mode .  data tout court pour help";
+      return 1;
   }
   WS->TraceDumpModel(niv);
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fundumpent
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fundumpent
+//purpose  :
+//=======================================================================
+static Standard_Integer fundumpent(Draw_Interpretor& theDI,
+                                   Standard_Integer theNbArgs,
+                                   const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
   Handle(IFSelect_WorkLibrary) WL = WS->WorkLibrary();
   Standard_Integer levdef = 0, levmax = 10, level;
   WL->DumpLevels(levdef, levmax);
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2 || (argc == 2 && levmax < 0))
+  if (theNbArgs < 2 || (theNbArgs == 2 && levmax < 0))
   {
-    sout << "Give n0 or id of entity";
-    if (levmax < 0) sout << "  and dump level" << std::endl;
-    else sout << "  + optional, dump level in [0 - " << levmax << "] , default = " << levdef << std::endl;
+    Message::SendInfo() << "Give n0 or id of entity";
+    if (levmax < 0) Message::SendInfo() << "  and dump level";
+    else Message::SendInfo() << "  + optional, dump level in [0 - " << levmax << "] , default = " << levdef;
     for (level = 0; level <= levmax; level++)
     {
       Standard_CString help = WL->DumpHelp(level);
-      if (help[0] != '\0') sout << level << " : " << help << std::endl;
+      if (help[0] != '\0') Message::SendInfo() << level << " : " << help;
     }
-    return IFSelect_RetError;
+    return 1;
   }
 
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   Standard_Integer num = pilot->Number(arg1);
-  if (num == 0) return IFSelect_RetError;
+  if (num == 0)
+    return 1;
   level = levdef;
-  if (argc > 2) level = atoi(arg2);
+  if (theNbArgs > 2) level = atoi(arg2);
   Handle(Standard_Transient) ent = WS->StartingEntity(num);
   if (ent.IsNull())
   {
-    sout << "No entity with given id " << arg1 << " (" << num << ") is found in the current model" << std::endl;
+    Message::SendInfo() << "No entity with given id " << arg1 << " (" << num << ") is found in the current model";
   }
   else
   {
-    sout << "  --   DUMP  Entity n0 " << num << "  level " << level << std::endl;
-    WL->DumpEntity(WS->Model(), WS->Protocol(), ent, sout, level);
+    Message::SendInfo() << "  --   DUMP  Entity n0 " << num << "  level " << level;
+    WL->DumpEntity(WS->Model(), WS->Protocol(), ent, Message::SendInfo(), level);
 
     Interface_CheckIterator chl = WS->CheckOne(ent);
-    if (!chl.IsEmpty(Standard_False)) chl.Print(sout, WS->Model(), Standard_False);
+    if (!chl.IsEmpty(Standard_False)) chl.Print(Message::SendInfo(), WS->Model(), Standard_False);
   }
-  //  sout << std::flush;
+  //  Message::SendInfo() << std::flush;
 
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-static IFSelect_ReturnStatus funsign
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : funsign
+//purpose  :
+//=======================================================================
+static Standard_Integer funsign(Draw_Interpretor& theDI,
+                                Standard_Integer theNbArgs,
+                                const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  if (theNbArgs < 3)
   {
-    sout << " Give signature name + n0 or id of entity" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << " Give signature name + n0 or id of entity";
+    return 1;
   }
   DeclareAndCast(IFSelect_Signature, sign, WS->NamedItem(arg1));
   if (sign.IsNull())
   {
-    sout << "Not a signature : " << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Not a signature : " << arg1;
+    return 1;
   }
   Standard_Integer num = pilot->Number(arg2);
   Handle(Standard_Transient) ent = WS->StartingEntity(num);
-  if (num == 0) return IFSelect_RetError;
-  sout << "Entity n0 " << num << " : " << WS->SignValue(sign, ent) << std::endl;
-  return IFSelect_RetVoid;
+  if (num == 0)
+    return 1;
+  Message::SendInfo() << "Entity n0 " << num << " : " << WS->SignValue(sign, ent);
+  return 0;
 }
 
-static IFSelect_ReturnStatus funqp
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : funqp
+//purpose  :
+//=======================================================================
+static Standard_Integer funqp(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  if (theNbArgs < 3)
   {
-    sout << " Give 2 numeros or labels : dad son" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << " Give 2 numeros or labels : dad son";
+    return 1;
   }
   Standard_Integer n1 = WS->NumberFromLabel(arg1);
   Standard_Integer n2 = WS->NumberFromLabel(arg2);
-  sout << "QueryParent for dad:" << arg1 << ":" << n1 << " and son:" << arg2 << ":" << n2 << std::endl;
+  Message::SendInfo() << "QueryParent for dad:" << arg1 << ":" << n1 << " and son:" << arg2 << ":" << n2;
   Standard_Integer qp = WS->QueryParent(WS->StartingEntity(n1), WS->StartingEntity(n2));
-  if (qp < 0) sout << arg1 << " is not super-entity of " << arg2 << std::endl;
-  else if (qp == 0) sout << arg1 << " is same as " << arg2 << std::endl;
-  else sout << arg1 << " is super-entity of " << arg2 << " , max level found=" << qp << std::endl;
-  //  sout<<" Trouve "<<qp<<std::endl;
-  return IFSelect_RetVoid;
+  if (qp < 0) Message::SendInfo() << arg1 << " is not super-entity of " << arg2;
+  else if (qp == 0) Message::SendInfo() << arg1 << " is same as " << arg2;
+  else Message::SendInfo() << arg1 << " is super-entity of " << arg2 << " , max level found=" << qp;
+  //  Message::SendInfo()<<" Trouve "<<qp<<std::endl;
+  return 0;
 }
 
-
-static IFSelect_ReturnStatus fun12
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun12
+//purpose  :
+//=======================================================================
+static Standard_Integer fun12(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    DumpShare         ****
-  WS->DumpShare();  return IFSelect_RetVoid;
+  WS->DumpShare(); return 0;
 }
 
-static IFSelect_ReturnStatus fun13
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun13
+//purpose  :
+//=======================================================================
+static Standard_Integer fun13(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    ListItems         ****
-  WS->ListItems(pilot->Arg(1));  return IFSelect_RetVoid;
+  WS->ListItems(theArgVec[1]); return 0;
 }
 
-static IFSelect_ReturnStatus fun14
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun14
+//purpose  :
+//=======================================================================
+static Standard_Integer fun14(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    NewInt            ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 1)
+  if (theNbArgs < 1)
   {
-    sout << "Donner la valeur entiere pour IntParam" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner la valeur entiere pour IntParam";
+    return 1;
   }
   Handle(IFSelect_IntParam) intpar = new IFSelect_IntParam;
-  if (argc >= 1)       intpar->SetValue(atoi(arg1));
+  if (theNbArgs >= 1)       intpar->SetValue(atoi(arg1));
   return pilot->RecordItem(intpar);
 }
 
-static IFSelect_ReturnStatus fun15
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun15
+//purpose  :
+//=======================================================================
+static Standard_Integer fun15(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SetInt            ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Donner 2 arguments : nom Parametre et Valeur" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner 2 arguments : nom Parametre et Valeur";
+    return 1;
   }
   Standard_Integer val = atoi(arg2);
   DeclareAndCast(IFSelect_IntParam, par, WS->NamedItem(arg1));
-  if (!WS->SetIntValue(par, val)) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->SetIntValue(par, val))
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun16
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun16
+//purpose  :
+//=======================================================================
+static Standard_Integer fun16(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    NewText           ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 1)
+  if (theNbArgs < 1)
   {
-    sout << "Donner la valeur texte pour TextParam" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner la valeur texte pour TextParam";
+    return 1;
   }
   Handle(TCollection_HAsciiString) textpar = new TCollection_HAsciiString();
-  if (argc >= 1) textpar->AssignCat(arg1);
+  if (theNbArgs >= 1) textpar->AssignCat(arg1);
   return pilot->RecordItem(textpar);
 }
 
-static IFSelect_ReturnStatus fun17
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun17
+//purpose  :
+//=======================================================================
+static Standard_Integer fun17(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SetText           ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Donner 2 arguments : nom Parametre et Valeur" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner 2 arguments : nom Parametre et Valeur";
+    return 1;
   }
   DeclareAndCast(TCollection_HAsciiString, par, WS->NamedItem(arg1));
-  if (!WS->SetTextValue(par, arg2)) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->SetTextValue(par, arg2))
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun19
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun19
+//purpose  :
+//=======================================================================
+static Standard_Integer fun19(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    DumpSel           ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give 1 argument : Selection Name" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Give 1 argument : Selection Name";
+    return 1;
   }
   WS->DumpSelection(GetCasted(IFSelect_Selection, WS->NamedItem(arg1)));
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun20
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun20
+//purpose  :
+//=======================================================================
+static Standard_Integer fun20(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
   //        ****    EvalSel           ****
   //        ****    GiveList          ****
   //        ****    GiveShort GivePointed  ****
   //        ****    MakeList          ****
-  char mode = pilot->Arg(0)[0];  // givelist/makelist
-  if (mode == 'g') mode = pilot->Arg(0)[4];  // l list  s short  p pointed
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  char mode = theArgVec[0][0];  // givelist/makelist
+  if (mode == 'g') mode = theArgVec[0][4];  // l list  s short  p pointed
+  if (theNbArgs < 2)
   {
-    sout << "Give Entity ID, or Selection Name [+ optional other selection or entity]" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Give Entity ID, or Selection Name [+ optional other selection or entity]";
+    return 1;
   }
 
   //    MakeList : sur Pointed existante ou a creer
   Handle(IFSelect_SelectPointed) pnt;
   if (mode == 'm')
   {
-    const Standard_CString arg1 = pilot->Arg(1);
+    const Standard_CString arg1 = theArgVec[1];
     Handle(Standard_Transient) item = WS->NamedItem(arg1);
     pnt = GetCasted(IFSelect_SelectPointed, item);
     if (!pnt.IsNull())
     {
-      sout << arg1 << ":Already existing Selection for List, cleared then filled" << std::endl;
+      Message::SendInfo() << arg1 << ":Already existing Selection for List, cleared then filled";
       pnt->Clear();
     }
     else if (!item.IsNull())
     {
-      sout << arg1 << ":Already existing Item not for a List, command ignored" << std::endl;
-      return IFSelect_RetFail;
+      Message::SendInfo() << arg1 << ":Already existing Item not for a List, command ignored";
+      return 1;
     }
     else
     {
@@ -871,94 +1012,111 @@ static IFSelect_ReturnStatus fun20
 
   Handle(TColStd_HSequenceOfTransient) result =
     XSDRAW_FunctionsSession::GiveList(WS, pilot->CommandPart((mode == 'm' ? 2 : 1)));
-  if (result.IsNull()) return IFSelect_RetError;
+  if (result.IsNull())
+    return 1;
   Interface_EntityIterator iter(result);
-  sout << pilot->CommandPart((mode == 'm' ? 2 : 1)) << " : ";
-  if (mode == 'l')   WS->ListEntities(iter, 0, sout);
-  else if (mode == 's' || mode == 'm') WS->ListEntities(iter, 2, sout);
+  Message::SendInfo() << pilot->CommandPart((mode == 'm' ? 2 : 1)) << " : ";
+  if (mode == 'l')   WS->ListEntities(iter, 0, Message::SendInfo());
+  else if (mode == 's' || mode == 'm') WS->ListEntities(iter, 2, Message::SendInfo());
   else if (mode == 'p')
   {
-    sout << iter.NbEntities() << " Entities : ";
+    Message::SendInfo() << iter.NbEntities() << " Entities : ";
     for (iter.Start(); iter.More(); iter.Next())
-      sout << " +" << WS->StartingNumber(iter.Value());
-    sout << std::endl;
+      Message::SendInfo() << " +" << WS->StartingNumber(iter.Value());
+    Message::SendInfo();
   }
 
   if (!pnt.IsNull())
   {
     pnt->SetList(result);
-    sout << "List set to a SelectPointed : " << pilot->Arg(1) << std::endl;
-    sout << "Later editable by command setlist" << std::endl;
+    Message::SendInfo() << "List set to a SelectPointed : " << theArgVec[1];
+    Message::SendInfo() << "Later editable by command setlist";
   }
 
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun20c
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun20c
+//purpose  :
+//=======================================================================
+static Standard_Integer fun20c(Draw_Interpretor& theDI,
+                               Standard_Integer theNbArgs,
+                               const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
   //        ****    GiveCount         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give Entity ID, or Selection Name [+ optional other selection or entity]" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Give Entity ID, or Selection Name [+ optional other selection or entity]";
+    return 1;
   }
   //  WS->EvaluateSelection(GetCasted(IFSelect_Selection,WS->NamedItem(arg1)));
   Handle(TColStd_HSequenceOfTransient) result =
     XSDRAW_FunctionsSession::GiveList(WS, pilot->CommandPart(1));
-  if (result.IsNull()) return IFSelect_RetError;
-  sout << pilot->CommandPart(1) << " : List of " << result->Length() << " Entities" << std::endl;
-  return IFSelect_RetVoid;
+  if (result.IsNull())
+    return 1;
+  Message::SendInfo() << pilot->CommandPart(1) << " : List of " << result->Length() << " Entities";
+  return 0;
 }
 
-static IFSelect_ReturnStatus funselsuite
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : funselsuite
+//purpose  :
+//=======================================================================
+static Standard_Integer funselsuite(Draw_Interpretor& theDI,
+                                    Standard_Integer theNbArgs,
+                                    const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
   //        ****    SelSuite         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give Entity ID, or Selection Name [+ optional other selection or entity]" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Give Entity ID, or Selection Name [+ optional other selection or entity]";
+    return 1;
   }
   //  WS->EvaluateSelection(GetCasted(IFSelect_Selection,WS->NamedItem(arg1)));
   Handle(IFSelect_SelectSuite) selsuite = new IFSelect_SelectSuite;
 
-  for (Standard_Integer i = 1; i < argc; i++)
+  for (Standard_Integer i = 1; i < theNbArgs; i++)
   {
-    Handle(IFSelect_Selection) sel = WS->GiveSelection(pilot->Arg(i));
+    Handle(IFSelect_Selection) sel = WS->GiveSelection(theArgVec[i]);
     if (!selsuite->AddInput(sel))
     {
-      sout << pilot->Arg(i - 1) << " : not a SelectDeduct, no more can be added. Abandon" << std::endl;
-      return IFSelect_RetError;
+      Message::SendInfo() << pilot->Arg(i - 1) << " : not a SelectDeduct, no more can be added. Abandon";
+      return 1;
     }
   }
   selsuite->SetLabel(pilot->CommandPart(1));
   return pilot->RecordItem(selsuite);
 }
 
-
-static IFSelect_ReturnStatus fun21
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun21
+//purpose  :
+//=======================================================================
+static Standard_Integer fun21(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    ClearItems           ****
   WS->ClearItems();  WS->ClearFinalModifiers();  WS->ClearShareOut(Standard_False);
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun22
-(const Handle(IFSelect_SessionPilot)& pilot)
+static Standard_Integer fun22(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    ClearData           ****
   Standard_Integer mode = -1;
-  if (argc >= 2)
+  if (theNbArgs >= 2)
   {
     if (arg1[0] == 'a') mode = 1;
     if (arg1[0] == 'g') mode = 2;
@@ -967,109 +1125,128 @@ static IFSelect_ReturnStatus fun22
     if (arg1[0] == '?') mode = -1;
   }
   else mode = 0;
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (mode <= 0)
   {
-    if (mode < 0) sout << "Give a suitable mode";
-    sout << "  Available Modes :\n"
-      << " a : all data    g : graph+check  c : check  p : selectpointed" << std::endl;
+    if (mode < 0) Message::SendInfo() << "Give a suitable mode";
+    Message::SendInfo() << "  Available Modes :\n"
+      << " a : all data    g : graph+check  c : check  p : selectpointed";
     return (mode < 0 ? IFSelect_RetError : IFSelect_RetVoid);
   }
   WS->ClearData(mode);
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun24
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun24
+//purpose  :
+//=======================================================================
+static Standard_Integer fun24(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
   //        ****    Item Label         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
   TCollection_AsciiString label;
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << " Give  label to search" << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << " Give  label to search";
+    return 1;
   }
-  for (int i = 1; i < argc; i++)
+  for (int i = 1; i < theNbArgs; i++)
   {
-    label.AssignCat(pilot->Arg(i));
-    if (i < argc - 1) label.AssignCat(" ");
+    label.AssignCat(theArgVec[i]);
+    if (i < theNbArgs - 1) label.AssignCat(" ");
   }
   for (int mode = 0; mode <= 2; mode++)
   {
     int nbitems = 0;  int id;
-    sout << "Searching label : " << label << ". in mode ";
-    if (mode == 0) sout << " exact" << std::endl;
-    if (mode == 1) sout << " same head" << std::endl;
-    if (mode == 2) sout << " search if present" << std::endl;
+    Message::SendInfo() << "Searching label : " << label << ". in mode ";
+    if (mode == 0) Message::SendInfo() << " exact";
+    if (mode == 1) Message::SendInfo() << " same head";
+    if (mode == 2) Message::SendInfo() << " search if present";
     for (id = WS->NextIdentForLabel(label.ToCString(), 0, mode); id != 0;
          id = WS->NextIdentForLabel(label.ToCString(), id, mode))
     {
-      sout << " " << id;  nbitems++;
+      Message::SendInfo() << " " << id;  nbitems++;
     }
-    sout << " -- giving " << nbitems << " found" << std::endl;
+    Message::SendInfo() << " -- giving " << nbitems << " found";
   }
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun25
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun25
+//purpose  :
+//=======================================================================
+static Standard_Integer fun25(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Save (Dump)       ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner nom du Fichier" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner nom du Fichier";
+    return 1;
   }
   IFSelect_SessionFile dumper(WS, arg1);
-  if (!dumper.IsDone()) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!dumper.IsDone())
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun26
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun26
+//purpose  :
+//=======================================================================
+static Standard_Integer fun26(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Restore (Dump)    ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner nom du Fichier" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner nom du Fichier";
+    return 1;
   }
   IFSelect_SessionFile dumper(WS);
   Standard_Integer readstat = dumper.Read(arg1);
-  if (readstat == 0) return IFSelect_RetDone;
-  else if (readstat > 0) sout << "-- Erreur Lecture Fichier " << arg1 << std::endl;
-  else                    sout << "-- Pas pu ouvrir Fichier " << arg1 << std::endl;
-  return IFSelect_RetDone;
+  if (readstat == 0) return 0;
+  else if (readstat > 0) Message::SendInfo() << "-- Erreur Lecture Fichier " << arg1;
+  else                    Message::SendInfo() << "-- Pas pu ouvrir Fichier " << arg1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun27
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun27
+//purpose  :
+//=======================================================================
+static Standard_Integer fun27(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  const Standard_CString arg1 = pilot->Arg(1);
-  Standard_CString arg2 = pilot->Arg(2);
+  Standard_Integer theNbArgs = theNbArgs;
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  const Standard_CString arg1 = theArgVec[1];
+  Standard_CString arg2 = theArgVec[2];
   const Standard_CString anEmptyStr = "";
   if (arg2 && strlen(arg2) == 2 && arg2[0] == '"' && arg2[1] == '"')
   {
     arg2 = anEmptyStr;
   }
   //        ****    Param(Value)         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2 || (argc == 3 && strcmp(arg1, "-p") == 0))
+  if (theNbArgs < 2 || (theNbArgs == 3 && strcmp(arg1, "-p") == 0))
   {
     Handle(TColStd_HSequenceOfHAsciiString) li = Interface_Static::Items();
     Standard_Integer i, nb = li->Length(), aPatternNb = 0;
     size_t aPatternLen = strlen(arg2);
-    if (argc == 3)
+    if (theNbArgs == 3)
     {
       for (i = 1; i <= nb; i++)
       {
@@ -1083,17 +1260,17 @@ static IFSelect_ReturnStatus fun27
     {
       aPatternNb = nb;
     }
-    sout << " List of parameters : " << aPatternNb << " items : " << std::endl;
+    Message::SendInfo() << " List of parameters : " << aPatternNb << " items : ";
     for (i = 1; i <= nb; i++)
     {
-      if (argc == 3 && strncmp(li->Value(i)->String().ToCString(), arg2, aPatternLen) != 0)
+      if (theNbArgs == 3 && strncmp(li->Value(i)->String().ToCString(), arg2, aPatternLen) != 0)
       {
         continue;
       }
-      sout << li->Value(i)->String();
-      sout << " : " << Interface_Static::CVal(li->Value(i)->ToCString()) << std::endl;
+      Message::SendInfo() << li->Value(i)->String();
+      Message::SendInfo() << " : " << Interface_Static::CVal(li->Value(i)->ToCString());
     }
-    return IFSelect_RetVoid;
+    return 0;
   }
   else if (atoi(arg1) > 0)
   {
@@ -1102,152 +1279,182 @@ static IFSelect_ReturnStatus fun27
   }
   else
   {
-    if (argc > 2) sout << "     FORMER STATUS of Static Parameter " << arg1 << std::endl;
-    else          sout << "     ACTUAL STATUS of Static Parameter " << arg1 << std::endl;
+    if (theNbArgs > 2) Message::SendInfo() << "     FORMER STATUS of Static Parameter " << arg1;
+    else          Message::SendInfo() << "     ACTUAL STATUS of Static Parameter " << arg1;
     if (!Interface_Static::IsPresent(arg1))
     {
-      sout << " Parameter " << arg1 << " undefined" << std::endl; return IFSelect_RetError;
+      Message::SendInfo() << " Parameter " << arg1 << " undefined";
+      return 1;
     }
-    if (!Interface_Static::IsSet(arg1)) sout << " Parameter " << arg1 << " not valued" << std::endl;
-    else if (argc == 2) Interface_Static::Static(arg1)->Print(sout);
-    else sout << " Value : " << Interface_Static::CVal(arg1) << std::endl;
+    if (!Interface_Static::IsSet(arg1)) Message::SendInfo() << " Parameter " << arg1 << " not valued";
+    else if (theNbArgs == 2) Interface_Static::Static(arg1)->Print(Message::SendInfo());
+    else Message::SendInfo() << " Value : " << Interface_Static::CVal(arg1);
 
-    if (argc == 2) sout << "To modify, param name_param new_val" << std::endl;
+    if (theNbArgs == 2) Message::SendInfo() << "To modify, param name_param new_val";
     else
     {
       if (strlen(arg2) != 0)
       {
-        sout << " New demanded value : " << arg2;
+        Message::SendInfo() << " New demanded value : " << arg2;
       }
       else
       {
-        sout << " New demanded value : not valued";
+        Message::SendInfo() << " New demanded value : not valued";
       }
       if (Interface_Static::SetCVal(arg1, arg2))
       {
-        sout << "   OK" << std::endl;  return IFSelect_RetDone;
+        Message::SendInfo() << "   OK";
+        return 0;
       }
       else
       {
-        sout << " , refused" << std::endl;  return IFSelect_RetError;
+        Message::SendInfo() << " , refused";
+        return 1;
       }
     }
   }
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun29
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun29
+//purpose  :
+//=======================================================================
+static Standard_Integer fun29(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SentFiles         ****
   Handle(TColStd_HSequenceOfHAsciiString) list = WS->SentFiles();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (list.IsNull())
   {
-    sout << "List of Sent Files not enabled" << std::endl; return IFSelect_RetVoid;
+    Message::SendInfo() << "List of Sent Files not enabled"; return 0;
   }
   Standard_Integer i, nb = list->Length();
-  sout << "  Sent Files : " << nb << " : " << std::endl;
+  Message::SendInfo() << "  Sent Files : " << nb << " : ";
   for (i = 1; i <= nb; i++)
-    sout << list->Value(i)->ToCString() << std::endl;
-  return IFSelect_RetVoid;
+    Message::SendInfo() << list->Value(i)->ToCString();
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun30
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun30
+//purpose  :
+//=======================================================================
+static Standard_Integer fun30(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    FilePrefix        ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    if (WS->FilePrefix().IsNull()) sout << "Pas de prefixe defini" << std::endl;
-    else sout << "Prefixe : " << WS->FilePrefix()->ToCString() << std::endl;
-    sout << "Pour changer :  filepref newprefix" << std::endl;
-    return IFSelect_RetVoid;
+    if (WS->FilePrefix().IsNull()) Message::SendInfo() << "Pas de prefixe defini";
+    else Message::SendInfo() << "Prefixe : " << WS->FilePrefix()->ToCString();
+    Message::SendInfo() << "Pour changer :  filepref newprefix";
+    return 0;
   }
   WS->SetFilePrefix(arg1);
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun31
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun31
+//purpose  :
+//=======================================================================
+static Standard_Integer fun31(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    FileExtension     ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    if (WS->FileExtension().IsNull()) sout << "Pas d extension definie" << std::endl;
-    else sout << "Extension : " << WS->FileExtension()->ToCString() << std::endl;
-    sout << "Pour changer :  fileext newext" << std::endl;
-    return IFSelect_RetVoid;
+    if (WS->FileExtension().IsNull()) Message::SendInfo() << "Pas d extension definie";
+    else Message::SendInfo() << "Extension : " << WS->FileExtension()->ToCString();
+    Message::SendInfo() << "Pour changer :  fileext newext";
+    return 0;
   }
   WS->SetFileExtension(arg1);
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun32
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun32
+//purpose  :
+//=======================================================================
+static Standard_Integer fun32(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    FileRoot          ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Dispatch et nom de Root" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner Dispatch et nom de Root";
+    return 1;
   }
   DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(arg1));
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    if (WS->FileRoot(disp).IsNull()) sout << "Pas de racine definie pour " << arg1 << std::endl;
-    else sout << "Racine pour " << arg1 << " : " << WS->FileRoot(disp)->ToCString() << std::endl;
-    sout << "Pour changer :  fileroot nomdisp newroot" << std::endl;
-    return IFSelect_RetVoid;
+    if (WS->FileRoot(disp).IsNull()) Message::SendInfo() << "Pas de racine definie pour " << arg1;
+    else Message::SendInfo() << "Racine pour " << arg1 << " : " << WS->FileRoot(disp)->ToCString();
+    Message::SendInfo() << "Pour changer :  fileroot nomdisp newroot";
+    return 0;
   }
-  if (!WS->SetFileRoot(disp, arg2)) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->SetFileRoot(disp, arg2))
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun33
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun33
+//purpose  :
+//=======================================================================
+static Standard_Integer fun33(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Default File Root     ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    if (WS->DefaultFileRoot().IsNull()) sout << "Pas de racine par defaut definie" << std::endl;
-    else sout << "Racine par defaut : " << WS->DefaultFileRoot()->ToCString() << std::endl;
-    sout << "Pour changer :  filedef newdef" << std::endl;
-    return IFSelect_RetVoid;
+    if (WS->DefaultFileRoot().IsNull()) Message::SendInfo() << "Pas de racine par defaut definie";
+    else Message::SendInfo() << "Racine par defaut : " << WS->DefaultFileRoot()->ToCString();
+    Message::SendInfo() << "Pour changer :  filedef newdef";
+    return 0;
   }
   WS->SetDefaultFileRoot(arg1);
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun34
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun34
+//purpose  :
+//=======================================================================
+static Standard_Integer fun34(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    EvalFile          ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (!WS->HasModel())
   {
-    sout << "Pas de Modele charge, abandon" << std::endl;  return IFSelect_RetFail;
+    Message::SendInfo() << "Pas de Modele charge, abandon";
+    return 1;
   }
 
-  sout << "Evaluation avec Memorisation des resultats" << std::endl;
+  Message::SendInfo() << "Evaluation avec Memorisation des resultats";
   WS->EvaluateFile();
   Standard_Integer nbf = WS->NbFiles();
   for (Standard_Integer i = 1; i <= nbf; i++)
@@ -1255,41 +1462,51 @@ static IFSelect_ReturnStatus fun34
     Handle(Interface_InterfaceModel) mod = WS->FileModel(i);
     if (mod.IsNull())
     {
-      sout << "Modele " << i << " Model non genere ..." << std::endl; continue;
+      Message::SendInfo() << "Modele " << i << " Model non genere ..."; continue;
     }
     TCollection_AsciiString name = WS->FileName(i);
-    sout << "Fichier n0 " << i << " Nb Entites : " << mod->NbEntities() << "  Nom: ";
-    sout << name << std::endl;
+    Message::SendInfo() << "Fichier n0 " << i << " Nb Entites : " << mod->NbEntities() << "  Nom: ";
+    Message::SendInfo() << name;
   }
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun35
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun35
+//purpose  :
+//=======================================================================
+static Standard_Integer fun35(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    ClearFile          ****
-  WS->ClearFile();  return IFSelect_RetDone;
+  WS->ClearFile();
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun36
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun36
+//purpose  :
+//=======================================================================
+static Standard_Integer fun36(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
   //        ****    Split              ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
   IFSelect_ReturnStatus stat = IFSelect_RetVoid;
-  if (argc < 2) sout << "Split : derniere liste de dispatches definie" << std::endl;
+  if (theNbArgs < 2) Message::SendInfo() << "Split : derniere liste de dispatches definie";
   else
   {
     WS->ClearShareOut(Standard_True);
-    for (Standard_Integer i = 1; i < argc; i++)
+    for (Standard_Integer i = 1; i < theNbArgs; i++)
     {
-      DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(pilot->Arg(i)));
+      DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(theArgVec[i]));
       if (disp.IsNull())
       {
-        sout << "Pas un dispatch:" << pilot->Arg(i) << ", Splitt abandonne" << std::endl;
+        Message::SendInfo() << "Pas un dispatch:" << theArgVec[i] << ", Splitt abandonne";
         stat = IFSelect_RetError;
       }
       else WS->SetActive(disp, Standard_True);
@@ -1297,138 +1514,166 @@ static IFSelect_ReturnStatus fun36
   }
   if (stat == IFSelect_RetError) return stat;
   WS->BeginSentFiles(Standard_True);
-  if (!WS->SendSplit()) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->SendSplit())
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun37
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun37
+//purpose  :
+//=======================================================================
+static Standard_Integer fun37(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Remaining Data     ****
   char mode = '?';  IFSelect_RemainMode numod = IFSelect_RemainDisplay;
-  if (argc >= 2) mode = arg1[0];
+  if (theNbArgs >= 2) mode = arg1[0];
   if (mode == 'u') numod = IFSelect_RemainUndo;
   else if (mode == 'l') numod = IFSelect_RemainDisplay;
   else if (mode == 'c') numod = IFSelect_RemainCompute;
   else if (mode == 'f') numod = IFSelect_RemainForget;
   else
   {
-    Message_Messenger::StreamBuffer sout = Message::SendInfo();
-    if (argc < 2) sout << "Donner un Mode - ";
-    sout << "Modes possibles : l  list, c compute, u undo, f forget" << std::endl;
-    if (mode == '?') return IFSelect_RetDone;   else return IFSelect_RetError;
+    if (theNbArgs < 2) Message::SendInfo() << "Donner un Mode - ";
+    Message::SendInfo() << "Modes possibles : l  list, c compute, u undo, f forget";
+    if (mode == '?') return 0;   else return 1;
   }
-  if (!WS->SetRemaining(numod)) return IFSelect_RetVoid;
-  return IFSelect_RetDone;
+  if (!WS->SetRemaining(numod)) return 0;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun38
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun38
+//purpose  :
+//=======================================================================
+static Standard_Integer fun38(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SetModelContent    ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Donner nom selection et mode (k=keep,r=remove)" << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Donner nom selection et mode (k=keep,r=remove)";
+    return 1;
   }
   Standard_Boolean keepmode;
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   if (sel.IsNull())
   {
-    sout << "Pas de Selection de Nom : " << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Pas de Selection de Nom : " << arg1;
+    return 1;
   }
   if (arg2[0] == 'k')
   {
-    sout << " -- SetContent keep ..."; keepmode = Standard_True;
+    Message::SendInfo() << " -- SetContent keep ..."; keepmode = Standard_True;
   }
   else if (arg2[0] == 'r')
   {
-    sout << " -- SetContent remove ..."; keepmode = Standard_False;
+    Message::SendInfo() << " -- SetContent remove ..."; keepmode = Standard_False;
   }
   else
   {
-    sout << "Donner nom selection et mode (k=keep,r=remove)" << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Donner nom selection et mode (k=keep,r=remove)";
+    return 1;
   }
 
-  if (WS->SetModelContent(sel, keepmode)) sout << " Done" << std::endl;
-  else sout << " Result empty, ignored" << std::endl;
-  return IFSelect_RetDone;
+  if (WS->SetModelContent(sel, keepmode)) Message::SendInfo() << " Done";
+  else Message::SendInfo() << " Result empty, ignored";
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun40
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun40
+//purpose  :
+//=======================================================================
+static Standard_Integer fun40(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    ListModif          ****
   WS->ListFinalModifiers(Standard_True);
-  WS->ListFinalModifiers(Standard_False);  return IFSelect_RetVoid;
+  WS->ListFinalModifiers(Standard_False); return 0;
 }
 
-static IFSelect_ReturnStatus fun41
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun41
+//purpose  :
+//=======================================================================
+static Standard_Integer fun41(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Modifier           ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom du Modifier" << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Donner Nom du Modifier";
+    return 1;
   }
   DeclareAndCast(IFSelect_GeneralModifier, modif, WS->NamedItem(arg1));
   if (modif.IsNull())
   {
-    sout << "Pas de Modifier de Nom : " << arg1 << std::endl; return IFSelect_RetVoid;
+    Message::SendInfo() << "Pas de Modifier de Nom : " << arg1; return 0;
   }
   Handle(IFSelect_IntParam) low, up;
 
   Handle(IFSelect_Dispatch) disp = modif->Dispatch();
-  sout << "Modifier : " << arg1 << " Label : " << modif->Label() << std::endl;
+  Message::SendInfo() << "Modifier : " << arg1 << " Label : " << modif->Label();
   Standard_Integer rank = WS->ModifierRank(modif);
   if (modif->IsKind(STANDARD_TYPE(IFSelect_Modifier)))
-    sout << "Model Modifier n0." << rank;
-  else sout << "File Modifier n0." << rank;
-  if (disp.IsNull()) sout << "  Applique a tous les Dispatchs" << std::endl;
+    Message::SendInfo() << "Model Modifier n0." << rank;
+  else Message::SendInfo() << "File Modifier n0." << rank;
+  if (disp.IsNull()) Message::SendInfo() << "  Applique a tous les Dispatchs";
   else
   {
-    sout << "  Dispatch : " << disp->Label();
-    if (WS->HasName(disp)) sout << " - Nom:" << WS->Name(disp)->ToCString();
-    sout << std::endl;
+    Message::SendInfo() << "  Dispatch : " << disp->Label();
+    if (WS->HasName(disp)) Message::SendInfo() << " - Nom:" << WS->Name(disp)->ToCString();
+    Message::SendInfo();
   }
 
   Handle(IFSelect_Selection) sel = modif->Selection();
-  if (!sel.IsNull()) sout << "  Selection : " << sel->Label();
-  if (WS->HasName(sel)) sout << " - Nom:" << WS->Name(sel)->ToCString();
-  sout << std::endl;
-  return IFSelect_RetVoid;
+  if (!sel.IsNull()) Message::SendInfo() << "  Selection : " << sel->Label();
+  if (WS->HasName(sel)) Message::SendInfo() << " - Nom:" << WS->Name(sel)->ToCString();
+  Message::SendInfo();
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun42
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun42
+//purpose  :
+//=======================================================================
+static Standard_Integer fun42(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    ModifSel           ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom Modifier; + Nom Selection optionnel\n"
-      << "Selection pour Mettre une Selection, sinon Annule" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner Nom Modifier; + Nom Selection optionnel\n"
+      << "Selection pour Mettre une Selection, sinon Annule";
+    return 1;
   }
   DeclareAndCast(IFSelect_GeneralModifier, modif, WS->NamedItem(arg1));
   if (modif.IsNull())
   {
-    sout << "Pas un nom de Modifier : " << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Pas un nom de Modifier : " << arg1;
+    return 1;
   }
   Handle(IFSelect_Selection) sel;
   if (arg2[0] != '\0')
@@ -1436,33 +1681,40 @@ static IFSelect_ReturnStatus fun42
     sel = GetCasted(IFSelect_Selection, WS->NamedItem(arg2));
     if (sel.IsNull())
     {
-      sout << "Pas un nom de Selection : " << arg2 << std::endl;  return IFSelect_RetError;
+      Message::SendInfo() << "Pas un nom de Selection : " << arg2;
+      return 1;
     }
   }
-  if (!WS->SetItemSelection(modif, sel)) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->SetItemSelection(modif, sel))
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun43
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun43
+//purpose  :
+//=======================================================================
+static Standard_Integer fun43(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SetAppliedModifier           ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom Modifier; + Nom Dispatch ou Transformer optionnel :\n"
+    Message::SendInfo() << "Donner Nom Modifier; + Nom Dispatch ou Transformer optionnel :\n"
       << " - rien : tous Dispatches\n - Dispatch : ce Dispatch seul\n"
-      << " - Transformer : pas un Dispatch mais un Transformer" << std::endl;
-    return IFSelect_RetError;
+      << " - Transformer : pas un Dispatch mais un Transformer";
+    return 1;
   }
   DeclareAndCast(IFSelect_GeneralModifier, modif, WS->NamedItem(arg1));
   if (modif.IsNull())
   {
-    sout << "Pas un nom de Modifier : " << arg1 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Pas un nom de Modifier : " << arg1;
+    return 1;
   }
   Handle(Standard_Transient) item;
   if (arg2[0] != '\0')
@@ -1470,300 +1722,371 @@ static IFSelect_ReturnStatus fun43
     item = WS->NamedItem(arg2);
     if (item.IsNull())
     {
-      sout << "Pas un nom connu : " << arg2 << std::endl;  return IFSelect_RetError;
+      Message::SendInfo() << "Pas un nom connu : " << arg2;
+      return 1;
     }
   }
   else item = WS->ShareOut();
-  if (!WS->SetAppliedModifier(modif, item)) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->SetAppliedModifier(modif, item))
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun44
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun44
+//purpose  :
+//=======================================================================
+static Standard_Integer fun44(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    ResetApplied (modifier)    ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Designer un modifier" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Designer un modifier";
+    return 1;
   }
   DeclareAndCast(IFSelect_GeneralModifier, modif, WS->NamedItem(arg1));
   if (modif.IsNull())
   {
-    sout << "Pas un nom de Modifier : " << arg1 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Pas un nom de Modifier : " << arg1;
+    return 1;
   }
-  if (!WS->ResetAppliedModifier(modif)) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->ResetAppliedModifier(modif))
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun45
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun45
+//purpose  :
+//=======================================================================
+static Standard_Integer fun45(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  const Standard_CString arg3 = pilot->Arg(3);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  const Standard_CString arg3 = theArgVec[3];
   //        ****    ModifMove         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 4)
+  if (theNbArgs < 4)
   {
-    sout << "modifmove MF rang1 rang2, M pour Model F pour File" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "modifmove MF rang1 rang2, M pour Model F pour File";
+    return 1;
   }
   Standard_Boolean formodel;
   if (arg1[0] == 'm' || arg1[0] == 'M') formodel = Standard_True;
   else if (arg1[0] == 'f' || arg1[0] == 'F') formodel = Standard_False;
   else
   {
-    sout << "preciser M pour Model, F pour File" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "preciser M pour Model, F pour File";
+    return 1;
   }
   Standard_Integer before = atoi(arg2);
   Standard_Integer after = atoi(arg3);
   if (before == 0 || after == 0)
   {
-    sout << "Donner 2 Entiers Positifs" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner 2 Entiers Positifs";
+    return 1;
   }
-  if (!WS->ChangeModifierRank(formodel, before, after)) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->ChangeModifierRank(formodel, before, after))
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun51
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun51
+//purpose  :
+//=======================================================================
+static Standard_Integer fun51(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    DispSel           ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Donner Noms Dispatch et Selection Finale" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner Noms Dispatch et Selection Finale";
+    return 1;
   }
   DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(arg1));
   if (disp.IsNull())
   {
-    sout << "Pas un nom de Dispatch : " << arg1 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Pas un nom de Dispatch : " << arg1;
+    return 1;
   }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg2));
   if (sel.IsNull())
   {
-    sout << "Pas un nom de Selection : " << arg2 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Pas un nom de Selection : " << arg2;
+    return 1;
   }
-  if (!WS->SetItemSelection(disp, sel)) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->SetItemSelection(disp, sel))
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun_dispone
-(const Handle(IFSelect_SessionPilot)& pilot)
-{
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  //        ****    DispOne           ****
-  Handle(IFSelect_DispPerOne) disp = new IFSelect_DispPerOne;
-  return pilot->RecordItem(disp);
-}
+////=======================================================================
+////function : fun_dispone
+////purpose  :
+////=======================================================================
+//static Standard_Integer fun_dispone(Draw_Interpretor& theDI,
+//                                    Standard_Integer theNbArgs,
+//                                    const char** theArgVec)
+//{
+//  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+//  //        ****    DispOne           ****
+//  Handle(IFSelect_DispPerOne) disp = new IFSelect_DispPerOne;
+//  return pilot->RecordItem(disp);
+//}
 
-static IFSelect_ReturnStatus fun_dispglob
-(const Handle(IFSelect_SessionPilot)& pilot)
-{
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  //        ****    DispGlob          ****
-  Handle(IFSelect_DispGlobal) disp = new IFSelect_DispGlobal;
-  return pilot->RecordItem(disp);
-}
+////=======================================================================
+////function : fun_dispglob
+////purpose  :
+////=======================================================================
+//static Standard_Integer fun_dispglob(Draw_Interpretor& theDI,
+//                                     Standard_Integer theNbArgs,
+//                                     const char** theArgVec)
+//{
+//  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+//  //        ****    DispGlob          ****
+//  Handle(IFSelect_DispGlobal) disp = new IFSelect_DispGlobal;
+//  return pilot->RecordItem(disp);
+//}
 
-static IFSelect_ReturnStatus fun_dispcount
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_dispcount
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_dispcount(Draw_Interpretor& theDI,
+                                      Standard_Integer theNbArgs,
+                                      const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    DispCount         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom IntParam pour Count" << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Donner Nom IntParam pour Count";
+    return 1;
   }
   DeclareAndCast(IFSelect_IntParam, par, WS->NamedItem(arg1));
   if (par.IsNull())
   {
-    sout << "Pas un nom de IntParam : " << arg1 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Pas un nom de IntParam : " << arg1;
+    return 1;
   }
   Handle(IFSelect_DispPerCount) disp = new IFSelect_DispPerCount;
   disp->SetCount(par);
   return pilot->RecordItem(disp);
 }
 
-static IFSelect_ReturnStatus fun_dispfiles
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_dispfiles
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_dispfiles(Draw_Interpretor& theDI,
+                                      Standard_Integer theNbArgs,
+                                      const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    DispFiles         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom IntParam pour NbFiles" << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Donner Nom IntParam pour NbFiles";
+    return 1;
   }
   DeclareAndCast(IFSelect_IntParam, par, WS->NamedItem(arg1));
   if (par.IsNull())
   {
-    sout << "Pas un nom de IntParam : " << arg1 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Pas un nom de IntParam : " << arg1;
+    return 1;
   }
   Handle(IFSelect_DispPerFiles) disp = new IFSelect_DispPerFiles;
   disp->SetCount(par);
   return pilot->RecordItem(disp);
 }
 
-
-static IFSelect_ReturnStatus fun_dispsign
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_dispsign
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_dispsign(Draw_Interpretor& theDI,
+                                     Standard_Integer theNbArgs,
+                                     const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    DispFiles         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom Signature" << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Donner Nom Signature";
+    return 1;
   }
   DeclareAndCast(IFSelect_Signature, sig, WS->NamedItem(arg1));
   if (sig.IsNull())
   {
-    sout << "Pas un nom de Signature : " << arg1 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Pas un nom de Signature : " << arg1;
+    return 1;
   }
   Handle(IFSelect_DispPerSignature) disp = new IFSelect_DispPerSignature;
   disp->SetSignCounter(new IFSelect_SignCounter(sig));
   return pilot->RecordItem(disp);
 }
 
-
-static IFSelect_ReturnStatus fun56
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun56
+//purpose  :
+//=======================================================================
+static Standard_Integer fun56(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Dispatch           ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom du Dispatch" << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Donner Nom du Dispatch";
+    return 1;
   }
   DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(arg1));
   if (disp.IsNull())
   {
-    sout << "Pas un dispatch : " << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Pas un dispatch : " << arg1;
+    return 1;
   }
   Standard_Integer num = WS->DispatchRank(disp);
-  sout << "Dispatch de Nom : " << arg1 << " , en ShareOut, Numero " << num << " : ";
+  Message::SendInfo() << "Dispatch de Nom : " << arg1 << " , en ShareOut, Numero " << num << " : ";
   Handle(IFSelect_Selection) sel = WS->ItemSelection(disp);
   Handle(TCollection_HAsciiString) selname = WS->Name(sel);
-  if (sel.IsNull())  sout << "Pas de Selection Finale" << std::endl;
-  else if (selname.IsNull()) sout << "Selection Finale : #" << WS->ItemIdent(sel) << std::endl;
-  else sout << "Selection Finale : " << selname->ToCString() << std::endl;
-  if (disp->HasRootName()) sout << "-- Racine nom de fichier : "
-    << disp->RootName()->ToCString() << std::endl;
-  return IFSelect_RetVoid;
+  if (sel.IsNull())  Message::SendInfo() << "Pas de Selection Finale";
+  else if (selname.IsNull()) Message::SendInfo() << "Selection Finale : #" << WS->ItemIdent(sel);
+  else Message::SendInfo() << "Selection Finale : " << selname->ToCString();
+  if (disp->HasRootName()) Message::SendInfo() << "-- Racine nom de fichier : "
+    << disp->RootName()->ToCString();
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun57
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun57
+//purpose  :
+//=======================================================================
+static Standard_Integer fun57(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Remove           ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give Name to Remove !" << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Give Name to Remove !";
+    return 1;
   }
-  if (!WS->RemoveNamedItem(arg1)) return IFSelect_RetFail;
-  return IFSelect_RetDone;
+  if (!WS->RemoveNamedItem(arg1))
+    return 1;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun58
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun58
+//purpose  :
+//=======================================================================
+static Standard_Integer fun58(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    EvalDisp          ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "evaldisp mode disp [disp ...] :  Mode + Name(s) of Dispatch(es). Mode:\n"
-      << "  0 brief  1 +forgotten ents  2 +duplicata  3 1+2" << std::endl
-      << "See also : evaladisp  writedisp  xsplit" << std::endl;
-    return IFSelect_RetVoid;
+    Message::SendInfo() << "evaldisp mode disp [disp ...] :  Mode + Name(s) of Dispatch(es). Mode:\n"
+      << "  0 brief  1 +forgotten ents  2 +duplicata  3 1+2"
+      << "See also : evaladisp  writedisp  xsplit";
+    return 0;
   }
   Standard_Boolean OK = Standard_True;
-  Standard_Integer i, mode = atoi(arg1);  sout << " Mode " << mode << "\n";
-  for (i = 2; i < argc; i++)
+  Standard_Integer i, mode = atoi(arg1);  Message::SendInfo() << " Mode " << mode << "\n";
+  for (i = 2; i < theNbArgs; i++)
   {
-    DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(pilot->Arg(i)));
+    DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(theArgVec[i]));
     if (disp.IsNull())
     {
-      sout << "Not a dispatch:" << pilot->Arg(i) << std::endl; OK = Standard_False;
+      Message::SendInfo() << "Not a dispatch:" << theArgVec[i]; OK = Standard_False;
     }
   }
   if (!OK)
   {
-    sout << "Some of the parameters are not correct" << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Some of the parameters are not correct";
+    return 1;
   }
 
   WS->ClearShareOut(Standard_True);
-  for (i = 2; i < argc; i++)
+  for (i = 2; i < theNbArgs; i++)
   {
-    DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(pilot->Arg(i)));
+    DeclareAndCast(IFSelect_Dispatch, disp, WS->NamedItem(theArgVec[i]));
     WS->SetActive(disp, Standard_True);
   }
   //      WS->EvaluateDispatch(disp,mode);
   WS->EvaluateComplete(mode);
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-
-static IFSelect_ReturnStatus fun_evaladisp
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_evaladisp
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_evaladisp(Draw_Interpretor& theDI,
+                                      Standard_Integer theNbArgs,
+                                      const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    EvalADisp [GiveList]         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "evaladisp mode(=0-1-2-3) disp [givelist] :  Mode + Dispatch [+ GiveList]\n  If GiveList not given, computed from Selection of the Dispatch. Mode:\n"
-      << "  0 brief  1 +forgotten ents  2 +duplicata  3 1+2" << std::endl
-      << "See also : writedisp" << std::endl;
-    return IFSelect_RetVoid;
+    Message::SendInfo() << "evaladisp mode(=0-1-2-3) disp [givelist] :  Mode + Dispatch [+ GiveList]\n  If GiveList not given, computed from Selection of the Dispatch. Mode:\n"
+      << "  0 brief  1 +forgotten ents  2 +duplicata  3 1+2"
+      << "See also : writedisp";
+    return 0;
   }
   if (arg1[1] != '\0')
   {
-    sout << "first parameter : mode, must be a number between 0 and 3" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "first parameter : mode, must be a number between 0 and 3";
+    return 1;
   }
-  Standard_Integer mode = atoi(arg1);  sout << " Mode " << mode << "\n";
-  //  DeclareAndCast(IFSelect_Dispatch,disp,WS->NamedItem(pilot->Arg(2)));
-  Handle(IFSelect_Dispatch) disp = XSDRAW_FunctionsSession::GiveDispatch(WS, pilot->Arg(2), Standard_True);
+  Standard_Integer mode = atoi(arg1);  Message::SendInfo() << " Mode " << mode << "\n";
+  //  DeclareAndCast(IFSelect_Dispatch,disp,WS->NamedItem(theArgVec[2]));
+  Handle(IFSelect_Dispatch) disp = XSDRAW_FunctionsSession::GiveDispatch(WS, theArgVec[2], Standard_True);
   if (disp.IsNull())
   {
-    sout << "Not a dispatch:" << pilot->Arg(2) << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Not a dispatch:" << theArgVec[2];
+    return 1;
   }
   Handle(IFSelect_Selection) selsav = disp->FinalSelection();
   Handle(IFSelect_Selection) sel;
-  if (argc > 3)
+  if (theNbArgs > 3)
   {
     Handle(IFSelect_SelectPointed) sp = new IFSelect_SelectPointed;
     Handle(TColStd_HSequenceOfTransient) list = XSDRAW_FunctionsSession::GiveList
-    (pilot->Session(), pilot->CommandPart(3));
+    (XSDRAWBase::Session(), pilot->CommandPart(3));
     Standard_Integer nb = (list.IsNull() ? 0 : list->Length());
     if (nb > 0)
     {
@@ -1773,11 +2096,12 @@ static IFSelect_ReturnStatus fun_evaladisp
 
   if (sel.IsNull() && selsav.IsNull())
   {
-    sout << "No Selection nor GiveList defined" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "No Selection nor GiveList defined";
+    return 1;
   }
   if (sel.IsNull() && !selsav.IsNull())
   {
-    if (argc > 3) sout << "GiveList is empty, hence computed from the Selection of the Dispatch" << std::endl;
+    if (theNbArgs > 3) Message::SendInfo() << "GiveList is empty, hence computed from the Selection of the Dispatch";
     sel = selsav;
   }
   disp->SetFinalSelection(sel);
@@ -1786,46 +2110,51 @@ static IFSelect_ReturnStatus fun_evaladisp
   WS->EvaluateDispatch(disp, mode);
   disp->SetFinalSelection(selsav);
 
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun_writedisp
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_writedisp
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_writedisp(Draw_Interpretor& theDI,
+                                      Standard_Integer theNbArgs,
+                                      const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    EvalADisp [GiveList]         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "writedisp filename disp [givelist] :  FileName + Dispatch [+ GiveList]\n  If GiveList not given, computed from Selection of the Dispatch.\n"
+    Message::SendInfo() << "writedisp filename disp [givelist] :  FileName + Dispatch [+ GiveList]\n  If GiveList not given, computed from Selection of the Dispatch.\n"
       << "FileName : rootname.ext will gives rootname_1.ext etc...\n"
       << "  path/rootname.ext gives  path/rootname_1.ext etc...\n"
-      << "See also : evaladisp" << std::endl;
-    return IFSelect_RetVoid;
+      << "See also : evaladisp";
+    return 0;
   }
   TCollection_AsciiString prefix, rootname, suffix;
   SplitFileName(arg1, prefix, rootname, suffix);
   if (rootname.Length() == 0 || suffix.Length() == 0)
   {
-    sout << "Empty Root Name or Extension" << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Empty Root Name or Extension";
+    return 1;
   }
 
-  //  DeclareAndCast(IFSelect_Dispatch,disp,WS->NamedItem(pilot->Arg(2)));
-  Handle(IFSelect_Dispatch) disp = XSDRAW_FunctionsSession::GiveDispatch(WS, pilot->Arg(2), Standard_True);
+  //  DeclareAndCast(IFSelect_Dispatch,disp,WS->NamedItem(theArgVec[2]));
+  Handle(IFSelect_Dispatch) disp = XSDRAW_FunctionsSession::GiveDispatch(WS, theArgVec[2], Standard_True);
   if (disp.IsNull())
   {
-    sout << "Not a dispatch:" << pilot->Arg(2) << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Not a dispatch:" << theArgVec[2];
+    return 1;
   }
   Handle(IFSelect_Selection) selsav = disp->FinalSelection();
   Handle(IFSelect_Selection) sel;
-  if (argc > 3)
+  if (theNbArgs > 3)
   {
     Handle(IFSelect_SelectPointed) sp = new IFSelect_SelectPointed;
     Handle(TColStd_HSequenceOfTransient) list = XSDRAW_FunctionsSession::GiveList
-    (pilot->Session(), pilot->CommandPart(3));
+    (XSDRAWBase::Session(), pilot->CommandPart(3));
     Standard_Integer nb = (list.IsNull() ? 0 : list->Length());
     if (nb > 0)
     {
@@ -1835,11 +2164,12 @@ static IFSelect_ReturnStatus fun_writedisp
 
   if (sel.IsNull() && selsav.IsNull())
   {
-    sout << "No Selection nor GiveList defined" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "No Selection nor GiveList defined";
+    return 1;
   }
   if (sel.IsNull() && !selsav.IsNull())
   {
-    if (argc > 3) sout << "GiveList is empty, hence computed from the Selection of the Dispatch" << std::endl;
+    if (theNbArgs > 3) Message::SendInfo() << "GiveList is empty, hence computed from the Selection of the Dispatch";
     sel = selsav;
   }
 
@@ -1857,96 +2187,123 @@ static IFSelect_ReturnStatus fun_writedisp
   return (OK ? IFSelect_RetDone : IFSelect_RetFail);
 }
 
-
-static IFSelect_ReturnStatus fun59
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun59
+//purpose  :
+//=======================================================================
+static Standard_Integer fun59(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    EvalComplete      ****
   Standard_Integer mode = 0;
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2) sout << " -- mode par defaut 0\n";
+  if (theNbArgs < 2) Message::SendInfo() << " -- mode par defaut 0\n";
   else
   {
-    mode = atoi(arg1); sout << " -- mode : " << mode << std::endl;
+    mode = atoi(arg1); Message::SendInfo() << " -- mode : " << mode;
   }
-  WS->EvaluateComplete(mode);  return IFSelect_RetVoid;
+  WS->EvaluateComplete(mode); return 0;
 }
 
-static IFSelect_ReturnStatus fun60
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun60
+//purpose  :
+//=======================================================================
+static Standard_Integer fun60(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    LastRunCheckList    ****
   Interface_CheckIterator chlist = WS->LastRunCheckList();
   Handle(IFSelect_CheckCounter) counter = new IFSelect_CheckCounter(0);
   counter->Analyse(chlist, WS->Model(), Standard_False);
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  counter->PrintCount(sout);
-  return IFSelect_RetVoid;
+  counter->PrintCount(Message::SendInfo());
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun61
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun61
+//purpose  :
+//=======================================================================
+static Standard_Integer fun61(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    RunTransformer    ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom de Transformer" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner Nom de Transformer";
+    return 1;
   }
   DeclareAndCast(IFSelect_Transformer, tsf, WS->NamedItem(arg1));
   Standard_Integer effect = WS->RunTransformer(tsf);
   switch (effect)
   {
-    case -4: sout << "Edition sur place, nouveau Protocole, erreur recalcul graphe" << std::endl; break;
-    case -3: sout << "Erreur, Transformation ignoree" << std::endl; break;
-    case -2: sout << "Erreur sur edition sur place, risque de corruption (verifier)" << std::endl; break;
-    case -1: sout << "Erreur sur edition locale, risque de corruption (verifier)" << std::endl; break;
+    case -4: Message::SendInfo() << "Edition sur place, nouveau Protocole, erreur recalcul graphe"; break;
+    case -3: Message::SendInfo() << "Erreur, Transformation ignoree"; break;
+    case -2: Message::SendInfo() << "Erreur sur edition sur place, risque de corruption (verifier)"; break;
+    case -1: Message::SendInfo() << "Erreur sur edition locale, risque de corruption (verifier)"; break;
     case  0:
-      if (tsf.IsNull()) sout << "Erreur, pas un Transformer: " << arg1 << std::endl;
-      else sout << "Execution non faite" << std::endl;
+      if (tsf.IsNull()) Message::SendInfo() << "Erreur, pas un Transformer: " << arg1;
+      else Message::SendInfo() << "Execution non faite";
       break;
-    case  1: sout << "Transformation locale (graphe non touche)" << std::endl; break;
-    case  2: sout << "Edition sur place (graphe recalcule)" << std::endl;  break;
-    case  3: sout << "Modele reconstruit" << std::endl; break;
-    case  4: sout << "Edition sur place, nouveau Protocole" << std::endl;  break;
-    case  5: sout << "Nouveau Modele avec nouveau Protocole" << std::endl; break;
+    case  1: Message::SendInfo() << "Transformation locale (graphe non touche)"; break;
+    case  2: Message::SendInfo() << "Edition sur place (graphe recalcule)";  break;
+    case  3: Message::SendInfo() << "Modele reconstruit"; break;
+    case  4: Message::SendInfo() << "Edition sur place, nouveau Protocole";  break;
+    case  5: Message::SendInfo() << "Nouveau Modele avec nouveau Protocole"; break;
     default: break;
   }
   return ((effect > 0) ? IFSelect_RetDone : IFSelect_RetFail);
 }
 
-static IFSelect_ReturnStatus fun62
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun62
+//purpose  :
+//=======================================================================
+static Standard_Integer fun62(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    TransformStandard Copy         ****
   return pilot->RecordItem(WS->NewTransformStandard(Standard_True));
 }
 
-static IFSelect_ReturnStatus fun63
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun63
+//purpose  :
+//=======================================================================
+static Standard_Integer fun63(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    TransformStandard OntheSpot         ****
   return pilot->RecordItem(WS->NewTransformStandard(Standard_False));
 }
 
-static IFSelect_ReturnStatus fun6465
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun6465
+//purpose  :
+//=======================================================================
+static Standard_Integer fun6465(Draw_Interpretor& theDI,
+                                Standard_Integer theNbArgs,
+                                const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    Run Modifier avec Standard Copy     ****
   //        ****    Run Modifier avec OnTheSpot         ****
-  Standard_Boolean runcopy = (pilot->Arg(0)[3] == 'c');
+  Standard_Boolean runcopy = (theArgVec[0][3] == 'c');
   //  soit c est un nom, sinon c est une commande
   Handle(IFSelect_Modifier) modif;
   if (WS->NameIdent(arg1) > 0)
@@ -1957,15 +2314,16 @@ static IFSelect_ReturnStatus fun6465
     pilot->Perform();
     modif = GetCasted(IFSelect_Modifier, pilot->RecordedItem());
   }
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
+  Message_Messenger::StreamBuffer Message::SendInfo() = Message::SendInfo();
   if (modif.IsNull())
   {
-    sout << "Pas un nom de Modifier : " << arg1 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Pas un nom de Modifier : " << arg1;
+    return 1;
   }
 
   Handle(TColStd_HSequenceOfTransient) list;
   Handle(IFSelect_SelectPointed) sp;
-  if (argc > 2)
+  if (theNbArgs > 2)
   {
     list = XSDRAW_FunctionsSession::GiveList(WS, pilot->CommandPart(2));
     sp = new IFSelect_SelectPointed;
@@ -1974,116 +2332,142 @@ static IFSelect_ReturnStatus fun6465
 
   Standard_Integer effect = 0;
   effect = WS->RunModifierSelected(modif, sp, runcopy);
-  //      sout<<"Modifier applique sur TransformStandard #"<<WS->ItemIdent(tsf)<<std::endl;
+  //      Message::SendInfo()<<"Modifier applique sur TransformStandard #"<<WS->ItemIdent(tsf)<<std::endl;
   switch (effect)
   {
-    case -4: sout << "Edition sur place, nouveau Protocole, erreur recalcul graphe" << std::endl; break;
-    case -3: sout << "Erreur, Transformation ignoree" << std::endl; break;
-    case -2: sout << "Erreur sur edition sur place, risque de corruption (verifier)" << std::endl; break;
-    case -1: sout << "Erreur sur edition locale, risque de corruption (verifier)" << std::endl; break;
+    case -4: Message::SendInfo() << "Edition sur place, nouveau Protocole, erreur recalcul graphe"; break;
+    case -3: Message::SendInfo() << "Erreur, Transformation ignoree"; break;
+    case -2: Message::SendInfo() << "Erreur sur edition sur place, risque de corruption (verifier)"; break;
+    case -1: Message::SendInfo() << "Erreur sur edition locale, risque de corruption (verifier)"; break;
     case  0:
-      if (modif.IsNull()) sout << "Erreur, pas un Modifier: " << arg1 << std::endl;
-      else sout << "Execution non faite" << std::endl;
+      if (modif.IsNull()) Message::SendInfo() << "Erreur, pas un Modifier: " << arg1;
+      else Message::SendInfo() << "Execution non faite";
       break;
-    case  1: sout << "Transformation locale (graphe non touche)" << std::endl; break;
-    case  2: sout << "Edition sur place (graphe recalcule)" << std::endl;  break;
-    case  3: sout << "Modele reconstruit" << std::endl; break;
-    case  4: sout << "Edition sur place, nouveau Protocole" << std::endl;  break;
-    case  5: sout << "Nouveau Modele avec nouveau Protocole" << std::endl; break;
+    case  1: Message::SendInfo() << "Transformation locale (graphe non touche)"; break;
+    case  2: Message::SendInfo() << "Edition sur place (graphe recalcule)";  break;
+    case  3: Message::SendInfo() << "Modele reconstruit"; break;
+    case  4: Message::SendInfo() << "Edition sur place, nouveau Protocole";  break;
+    case  5: Message::SendInfo() << "Nouveau Modele avec nouveau Protocole"; break;
     default: break;
   }
   return ((effect > 0) ? IFSelect_RetDone : IFSelect_RetFail);
 }
 
-static IFSelect_ReturnStatus fun66
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun66
+//purpose  :
+//=======================================================================
+static Standard_Integer fun66(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
   //        ****    (xset) ModifReorder         ****
   char opt = ' ';
-  Standard_Integer argc = pilot->NbWords();
-  if (argc >= 2) opt = pilot->Word(1).Value(1);
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
+  Standard_Integer theNbArgs = theNbArgs;
+  if (theNbArgs >= 2) opt = pilot->Word(1).Value(1);
   if (opt != 'f' && opt != 'l')
   {
-    sout << "Donner option : f -> root-first  l -> root-last" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner option : f -> root-first  l -> root-last";
+    return 1;
   }
   return pilot->RecordItem(new IFSelect_ModifReorder(opt == 'l'));
 }
 
-static IFSelect_ReturnStatus fun70
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun70
+//purpose  :
+//=======================================================================
+static Standard_Integer fun70(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    SelToggle         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom de Selection" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner Nom de Selection";
+    return 1;
   }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   if (!WS->ToggleSelectExtract(sel))
   {
-    sout << "Pas une SelectExtract : " << arg1 << std::endl; return IFSelect_RetFail;
+    Message::SendInfo() << "Pas une SelectExtract : " << arg1;
+    return 1;
   }
-  if (WS->IsReversedSelectExtract(sel)) sout << arg1 << " a present Reversed" << std::endl;
-  else sout << arg1 << " a present Directe" << std::endl;
-  return IFSelect_RetDone;
+  if (WS->IsReversedSelectExtract(sel)) Message::SendInfo() << arg1 << " a present Reversed";
+  else Message::SendInfo() << arg1 << " a present Directe";
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun71
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun71
+//purpose  :
+//=======================================================================
+static Standard_Integer fun71(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SelInput          ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Donner Noms Selections cible et input" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner Noms Selections cible et input";
+    return 1;
   }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, sou, WS->NamedItem(arg2));
   if (sel.IsNull() || sou.IsNull())
   {
-    sout << "Incorrect : " << arg1 << "," << arg2 << std::endl;  return IFSelect_RetError;
+    Message::SendInfo() << "Incorrect : " << arg1 << "," << arg2;
+    return 1;
   }
   if (!WS->SetInputSelection(sel, sou))
   {
-    sout << "Nom incorrect ou Selection " << arg1 << " ni Extract ni Deduct" << std::endl;
-    return IFSelect_RetFail;
+    Message::SendInfo() << "Nom incorrect ou Selection " << arg1 << " ni Extract ni Deduct";
+    return 1;
   }
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun72
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun72
+//purpose  :
+//=======================================================================
+static Standard_Integer fun72(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SelModelRoots     ****
   return pilot->RecordItem(new IFSelect_SelectModelRoots);
 }
 
-static IFSelect_ReturnStatus fun73
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun73
+//purpose  :
+//=======================================================================
+static Standard_Integer fun73(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SelRange          ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc >= 2 && arg1[0] == '?') argc = 1;
-  if (argc < 2)
+  if (theNbArgs >= 2 && arg1[0] == '?') theNbArgs = 1;
+  if (theNbArgs < 2)
   {
-    sout << "Donner la description du SelectRange"
+    Message::SendInfo() << "Donner la description du SelectRange"
       << "    Formes admises :\n <n1> <n2>  : Range de <n1> a <n2>\n"
       << " <n1> tout seul : Range n0 <n1>\n  from <n1>  : Range From <n1>\n"
-      << "  until <n2> : Range Until <n2>" << std::endl;
-    return IFSelect_RetVoid;
+      << "  until <n2> : Range Until <n2>";
+    return 0;
   }
 
   Handle(IFSelect_IntParam) low, up;
@@ -2091,9 +2475,10 @@ static IFSelect_ReturnStatus fun73
   //                                         Range From
   if (pilot->Word(1).IsEqual("from"))
   {
-    if (argc < 3)
+    if (theNbArgs < 3)
     {
-      sout << "Forme admise : from <i>" << std::endl; return IFSelect_RetError;
+      Message::SendInfo() << "Forme admise : from <i>";
+      return 1;
     }
     low = GetCasted(IFSelect_IntParam, WS->NamedItem(arg2));
     sel = new IFSelect_SelectRange;
@@ -2102,16 +2487,17 @@ static IFSelect_ReturnStatus fun73
   }
   else if (pilot->Word(1).IsEqual("until"))
   {
-    if (argc < 3)
+    if (theNbArgs < 3)
     {
-      sout << "Forme admise : until <i>" << std::endl; return IFSelect_RetError;
+      Message::SendInfo() << "Forme admise : until <i>";
+      return 1;
     }
     up = GetCasted(IFSelect_IntParam, WS->NamedItem(arg2));
     sel = new IFSelect_SelectRange;
     sel->SetUntil(up);
     //                                         Range One (n-th)
   }
-  else if (argc < 3)
+  else if (theNbArgs < 3)
   {
     low = GetCasted(IFSelect_IntParam, WS->NamedItem(arg1));
     sel = new IFSelect_SelectRange;
@@ -2128,144 +2514,189 @@ static IFSelect_ReturnStatus fun73
   return pilot->RecordItem(sel);
 }
 
-static IFSelect_ReturnStatus fun74
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun74
+//purpose  :
+//=======================================================================
+static Standard_Integer fun74(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SelRoots          ****
   return pilot->RecordItem(new IFSelect_SelectRoots);
 }
 
-static IFSelect_ReturnStatus fun75
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun75
+//purpose  :
+//=======================================================================
+static Standard_Integer fun75(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SelShared         ****
   return pilot->RecordItem(new IFSelect_SelectShared);
 }
 
-static IFSelect_ReturnStatus fun76
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun76
+//purpose  :
+//=======================================================================
+static Standard_Integer fun76(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SelDiff           ****
   Handle(IFSelect_Selection) sel = new IFSelect_SelectDiff;
-  if (sel.IsNull()) return IFSelect_RetFail;
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3) sout << "Diff sans input : ne pas oublier de les definir (ctlmain, ctlsec)!" << std::endl;
+  if (sel.IsNull())
+    return 1;
+  if (theNbArgs < 3) Message::SendInfo() << "Diff sans input : ne pas oublier de les definir (ctlmain, ctlsec)!";
   DeclareAndCast(IFSelect_Selection, selmain, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, selsec, WS->NamedItem(arg2));
-  if (argc >= 2)
+  if (theNbArgs >= 2)
     if (!WS->SetControl(sel, selmain, Standard_True))
-      sout << "Echec ControlMain:" << arg1 << " , a refaire (ctlmain)" << std::endl;
-  if (argc >= 3)
+      Message::SendInfo() << "Echec ControlMain:" << arg1 << " , a refaire (ctlmain)";
+  if (theNbArgs >= 3)
     if (!WS->SetControl(sel, selsec, Standard_False))
-      sout << "Echec ControlSecond:" << arg2 << " , a refaire (ctlsec)" << std::endl;
+      Message::SendInfo() << "Echec ControlSecond:" << arg2 << " , a refaire (ctlsec)";
   return pilot->RecordItem(sel);
 }
 
-static IFSelect_ReturnStatus fun77
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun77
+//purpose  :
+//=======================================================================
+static Standard_Integer fun77(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SelControlMain       ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Donner Noms de Control et MainInput" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner Noms de Control et MainInput";
+    return 1;
   }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, selmain, WS->NamedItem(arg2));
-  if (WS->SetControl(sel, selmain, Standard_True)) return IFSelect_RetDone;
-  sout << "Nom incorrect ou Selection " << arg1 << " pas de type Control" << std::endl;
-  return IFSelect_RetFail;
+  if (WS->SetControl(sel, selmain, Standard_True)) return 0;
+  Message::SendInfo() << "Nom incorrect ou Selection " << arg1 << " pas de type Control";
+  return 1;
 }
 
-static IFSelect_ReturnStatus fun78
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun78
+//purpose  :
+//=======================================================================
+static Standard_Integer fun78(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SelControlSecond       ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Donner Noms de Control et SecondInput" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner Noms de Control et SecondInput";
+    return 1;
   }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, seldif, WS->NamedItem(arg2));
-  if (WS->SetControl(sel, seldif, Standard_False))  return IFSelect_RetDone;
-  sout << "Nom incorrect ou Selection " << arg1 << " pas de type Control" << std::endl;
-  return IFSelect_RetFail;
+  if (WS->SetControl(sel, seldif, Standard_False))  return 0;
+  Message::SendInfo() << "Nom incorrect ou Selection " << arg1 << " pas de type Control";
+  return 1;
 }
 
-static IFSelect_ReturnStatus fun79
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun79
+//purpose  :
+//=======================================================================
+static Standard_Integer fun79(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SelModelAll       ****
   return pilot->RecordItem(new IFSelect_SelectModelEntities);
 }
 
-static IFSelect_ReturnStatus fun80
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun80
+//purpose  :
+//=======================================================================
+static Standard_Integer fun80(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SelCombAdd        ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Donner n0 Combine et une Input" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner n0 Combine et une Input";
+    return 1;
   }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, seladd, WS->NamedItem(arg2));
-  if (WS->CombineAdd(sel, seladd)) return IFSelect_RetDone;
-  sout << "Nom incorrect ou Selection " << arg1 << " pas Combine" << std::endl;
-  return IFSelect_RetFail;
+  if (WS->CombineAdd(sel, seladd)) return 0;
+  Message::SendInfo() << "Nom incorrect ou Selection " << arg1 << " pas Combine";
+  return 1;
 }
 
-static IFSelect_ReturnStatus fun81
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun81
+//purpose  :
+//=======================================================================
+static Standard_Integer fun81(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
   //        ****    SelCombRem        ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Donner n0 Combine et RANG a supprimer" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner n0 Combine et RANG a supprimer";
+    return 1;
   }
   DeclareAndCast(IFSelect_Selection, sel, WS->NamedItem(arg1));
   DeclareAndCast(IFSelect_Selection, inp, WS->NamedItem(arg2));
-  if (WS->CombineRemove(sel, inp)) return IFSelect_RetDone;
-  sout << "Nom incorrect ou Selection " << arg1 << " ni Union ni Intersection" << std::endl;
-  return IFSelect_RetFail;
+  if (WS->CombineRemove(sel, inp)) return 0;
+  Message::SendInfo() << "Nom incorrect ou Selection " << arg1 << " ni Union ni Intersection";
+  return 1;
 }
 
-static IFSelect_ReturnStatus fun82
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun82
+//purpose  :
+//=======================================================================
+static Standard_Integer fun82(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    SelEntNumber      ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner Nom IntParam pour n0 Entite" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner Nom IntParam pour n0 Entite";
+    return 1;
   }
   DeclareAndCast(IFSelect_IntParam, par, WS->NamedItem(arg1));
   Handle(IFSelect_SelectEntityNumber) sel = new IFSelect_SelectEntityNumber;
@@ -2273,199 +2704,254 @@ static IFSelect_ReturnStatus fun82
   return pilot->RecordItem(sel);
 }
 
-static IFSelect_ReturnStatus fun83
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun83
+//purpose  :
+//=======================================================================
+static Standard_Integer fun83(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SelUnion          ****
   return pilot->RecordItem(new IFSelect_SelectUnion);
 }
 
-static IFSelect_ReturnStatus fun84
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun84
+//purpose  :
+//=======================================================================
+static Standard_Integer fun84(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SelIntersection   ****
   return pilot->RecordItem(new IFSelect_SelectIntersection);
 }
 
-static IFSelect_ReturnStatus fun85
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun85
+//purpose  :
+//=======================================================================
+static Standard_Integer fun85(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    SelTextType Exact ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner le TYPE a selectionner" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner le TYPE a selectionner";
+    return 1;
   }
   return pilot->RecordItem(new IFSelect_SelectSignature
   (new IFSelect_SignType, arg1, Standard_True));
 }
 
-static IFSelect_ReturnStatus fun86
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun86
+//purpose  :
+//=======================================================================
+static Standard_Integer fun86(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
   //        ****    SelErrorEntities  ****
   return pilot->RecordItem(new IFSelect_SelectErrorEntities);
 }
 
-static IFSelect_ReturnStatus fun87
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun87
+//purpose  :
+//=======================================================================
+static Standard_Integer fun87(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
   //        ****    SelUnknownEntities  **
   return pilot->RecordItem(new IFSelect_SelectUnknownEntities);
 }
 
-static IFSelect_ReturnStatus fun88
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun88
+//purpose  :
+//=======================================================================
+static Standard_Integer fun88(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
   //        ****    SelSharing        ****
   return pilot->RecordItem(new IFSelect_SelectSharing);
 }
 
-static IFSelect_ReturnStatus fun89
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun89
+//purpose  :
+//=======================================================================
+static Standard_Integer fun89(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    SelTextType Contain **
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner le TYPE a selectionner" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner le TYPE a selectionner";
+    return 1;
   }
   return pilot->RecordItem(new IFSelect_SelectSignature
   (new IFSelect_SignType, arg1, Standard_False));
 }
 
-static IFSelect_ReturnStatus fun90
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun90
+//purpose  :
+//=======================================================================
+static Standard_Integer fun90(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
   //        ****    SelPointed        ****
   Handle(IFSelect_SelectPointed) sp = new IFSelect_SelectPointed;
-  if (pilot->NbWords() > 1)
+  if (theNbArgs > 1)
   {
-    Handle(TColStd_HSequenceOfTransient) list = XSDRAW_FunctionsSession::GiveList
-    (pilot->Session(), pilot->CommandPart(1));
-    if (list.IsNull()) return IFSelect_RetFail;
-    Message_Messenger::StreamBuffer sout = Message::SendInfo();
-    sout << "SelectPointed : " << list->Length() << " entities" << std::endl;
+    Handle(TColStd_HSequenceOfTransient) list = GiveList
+    (XSDRAWBase::Session(), pilot->CommandPart(1));
+    if (list.IsNull())
+      return 1;
+    Message::SendInfo() << "SelectPointed : " << list->Length() << " entities";
     sp->AddList(list);
   }
   return pilot->RecordItem(sp);
 }
 
-static IFSelect_ReturnStatus fun91
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun91
+//purpose  :
+//=======================================================================
+static Standard_Integer fun91(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    SetPointed (edit) / SetList (edit)    ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner NOM SelectPointed + Option(s) :\n"
+    Message::SendInfo() << "Donner NOM SelectPointed + Option(s) :\n"
       << " aucune : liste des entites pointees\n"
-      << " 0: Clear  +nn ajout entite nn  -nn enleve nn  /nn toggle nn" << std::endl;
-    return IFSelect_RetError;
+      << " 0: Clear  +nn ajout entite nn  -nn enleve nn  /nn toggle nn";
+    return 1;
   }
   DeclareAndCast(IFSelect_SelectPointed, sp, WS->NamedItem(arg1));
   if (sp.IsNull())
   {
-    sout << "Pas une SelectPointed:" << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Pas une SelectPointed:" << arg1;
+    return 1;
   }
   const Handle(Interface_InterfaceModel)& model = WS->Model();  // pour Print
-  if (argc == 2)
+  if (theNbArgs == 2)
   {    // listage simple
     Standard_Integer nb = sp->NbItems();
-    sout << " SelectPointed : " << arg1 << " : " << nb << " Items :" << std::endl;
+    Message::SendInfo() << " SelectPointed : " << arg1 << " : " << nb << " Items :";
     for (Standard_Integer i = 1; i <= nb; i++)
     {
       Handle(Standard_Transient) pointed = sp->Item(i);
       Standard_Integer id = WS->StartingNumber(pointed);
-      if (id == 0) sout << " (inconnu)";
+      if (id == 0) Message::SendInfo() << " (inconnu)";
       else
       {
-        sout << "  "; model->Print(pointed, sout);
+        Message::SendInfo() << "  "; model->Print(pointed, Message::SendInfo());
       }
     }
-    if (nb > 0) sout << std::endl;
-    return IFSelect_RetDone;
+    if (nb > 0) Message::SendInfo();
+    return 0;
   }
 
-  for (Standard_Integer ia = 2; ia < argc; ia++)
+  for (Standard_Integer ia = 2; ia < theNbArgs; ia++)
   {
     const TCollection_AsciiString argi = pilot->Word(ia);
     Standard_Integer id = pilot->Number(&(argi.ToCString())[1]);
     if (id == 0)
     {
-      if (!argi.IsEqual("0")) sout << "Incorrect,ignore:" << argi << std::endl;
+      if (!argi.IsEqual("0")) Message::SendInfo() << "Incorrect,ignore:" << argi;
       else
       {
-        sout << "Clear SelectPointed" << std::endl; sp->Clear();
+        Message::SendInfo() << "Clear SelectPointed"; sp->Clear();
       }
     }
     else if (argi.Value(1) == '-')
     {
       Handle(Standard_Transient) item = WS->StartingEntity(id);
-      if (sp->Remove(item)) sout << "Removed:no." << id;
-      else sout << " Echec Remove " << id;
-      sout << ": " << std::endl;
-      model->Print(item, sout);
+      if (sp->Remove(item)) Message::SendInfo() << "Removed:no." << id;
+      else Message::SendInfo() << " Echec Remove " << id;
+      Message::SendInfo() << ": ";
+      model->Print(item, Message::SendInfo());
     }
     else if (argi.Value(1) == '/')
     {
       Handle(Standard_Transient) item = WS->StartingEntity(id);
-      if (sp->Remove(item)) sout << "Toggled:n0." << id;
-      else sout << " Echec Toggle " << id;
-      sout << ": " << std::endl;
-      model->Print(item, sout);
+      if (sp->Remove(item)) Message::SendInfo() << "Toggled:n0." << id;
+      else Message::SendInfo() << " Echec Toggle " << id;
+      Message::SendInfo() << ": ";
+      model->Print(item, Message::SendInfo());
     }
     else if (argi.Value(1) == '+')
     {
       Handle(Standard_Transient) item = WS->StartingEntity(id);
-      if (sp->Add(item)) sout << "Added:no." << id;
-      else sout << " Echec Add " << id;
-      sout << ": " << std::endl;
-      model->Print(item, sout);
+      if (sp->Add(item)) Message::SendInfo() << "Added:no." << id;
+      else Message::SendInfo() << " Echec Add " << id;
+      Message::SendInfo() << ": ";
+      model->Print(item, Message::SendInfo());
     }
     else
     {
-      sout << "Ignore:" << argi << " , donner n0 PRECEDE de + ou - ou /" << std::endl;
+      Message::SendInfo() << "Ignore:" << argi << " , donner n0 PRECEDE de + ou - ou /";
     }
   }
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun92
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun92
+//purpose  :
+//=======================================================================
+static Standard_Integer fun92(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SelIncorrectEntities  ****
   WS->ComputeCheck();
   return pilot->RecordItem(new IFSelect_SelectIncorrectEntities);
 }
 
-static IFSelect_ReturnStatus fun93
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun93
+//purpose  :
+//=======================================================================
+static Standard_Integer fun93(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SelSignature        ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "Give name of Signature or Counter, text + option exact(D) else contains" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Give name of Signature or Counter, text + option exact(D) else contains";
+    return 1;
   }
   Standard_Boolean exact = Standard_True;
-  if (argc > 3)
+  if (theNbArgs > 3)
   {
-    if (pilot->Arg(3)[0] == 'c') exact = Standard_False;
+    if (theArgVec[3][0] == 'c') exact = Standard_False;
   }
 
   DeclareAndCast(IFSelect_Signature, sign, WS->NamedItem(arg1));
@@ -2476,72 +2962,85 @@ static IFSelect_ReturnStatus fun93
   else if (!cnt.IsNull()) sel = new IFSelect_SelectSignature(cnt, arg2, exact);
   else
   {
-    sout << arg1 << ":neither Signature nor Counter" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << arg1 << ":neither Signature nor Counter";
+    return 1;
   }
 
   return pilot->RecordItem(sel);
 }
 
-static IFSelect_ReturnStatus fun94
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun94
+//purpose  :
+//=======================================================================
+static Standard_Integer fun94(Draw_Interpretor& theDI,
+                              Standard_Integer theNbArgs,
+                              const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    SignCounter        ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner nom signature" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner nom signature";
+    return 1;
   }
   DeclareAndCast(IFSelect_Signature, sign, WS->NamedItem(arg1));
   if (sign.IsNull())
   {
-    sout << arg1 << ":pas une signature" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << arg1 << ":pas une signature";
+    return 1;
   }
   Handle(IFSelect_SignCounter) cnt = new IFSelect_SignCounter(sign, Standard_True, Standard_True);
   return pilot->RecordItem(cnt);
 }
 
-static IFSelect_ReturnStatus funbselected
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : funbselected
+//purpose  :
+//=======================================================================
+static Standard_Integer funbselected(Draw_Interpretor& theDI,
+                                     Standard_Integer theNbArgs,
+                                     const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  Standard_Integer theNbArgs = theNbArgs;
+  const Standard_CString arg1 = theArgVec[1];
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    NbSelected = GraphCounter        ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner nom selection (deduction) a appliquer" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Donner nom selection (deduction) a appliquer";
+    return 1;
   }
   DeclareAndCast(IFSelect_SelectDeduct, applied, WS->GiveSelection(arg1));
   if (applied.IsNull())
   {
-    sout << arg1 << ":pas une SelectDeduct" << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << arg1 << ":pas une SelectDeduct";
+    return 1;
   }
   Handle(IFSelect_GraphCounter) cnt = new IFSelect_GraphCounter(Standard_True, Standard_True);
   cnt->SetApplied(applied);
   return pilot->RecordItem(cnt);
 }
 
-//  #########################################
-//  ####    EDITOR  -  EDITFORM          ####
-//  #########################################
-
-static IFSelect_ReturnStatus fun_editlist
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_editlist
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_editlist(Draw_Interpretor& theDI,
+                                     Standard_Integer theNbArgs,
+                                     const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  Standard_Integer theNbArgs = theNbArgs;
+  if (theNbArgs < 2)
   {
-    sout << "Give the name of an EditForm or an Editor" << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Give the name of an EditForm or an Editor";
+    return 1;
   }
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   //  EditForm
 
@@ -2549,28 +3048,28 @@ static IFSelect_ReturnStatus fun_editlist
   Handle(IFSelect_Editor) edt;
   if (!edf.IsNull())
   {
-    sout << "Print EditForm " << arg1 << std::endl;
+    Message::SendInfo() << "Print EditForm " << arg1;
     edt = edf->Editor();
-    if (argc < 3)
+    if (theNbArgs < 3)
     {
 
       //       DEFINITIONS : Editor (direct ou via EditForm)
 
       if (edt.IsNull()) edt = GetCasted(IFSelect_Editor, WS->NamedItem(arg1));
-      if (edt.IsNull()) return IFSelect_RetVoid;
+      if (edt.IsNull()) return 0;
 
-      sout << "Editor, Label : " << edt->Label() << std::endl;
-      sout << std::endl << " --  Names (short - complete) + Labels of Values" << std::endl;
-      edt->PrintNames(sout);
-      sout << std::endl << " --  Definitions  --" << std::endl;
-      edt->PrintDefs(sout);
+      Message::SendInfo() << "Editor, Label : " << edt->Label();
+      Message::SendInfo() << " --  Names (short - complete) + Labels of Values";
+      edt->PrintNames(Message::SendInfo());
+      Message::SendInfo() << " --  Definitions  --";
+      edt->PrintDefs(Message::SendInfo());
       if (!edf.IsNull())
       {
-        edf->PrintDefs(sout);
-        sout << std::endl << "To display values, add an option : o original  f final  m modified" << std::endl;
+        edf->PrintDefs(Message::SendInfo());
+        Message::SendInfo() << "To display values, add an option : o original  f final  m modified";
       }
 
-      return IFSelect_RetVoid;
+      return 0;
 
     }
     else
@@ -2580,64 +3079,70 @@ static IFSelect_ReturnStatus fun_editlist
       if (opt == 'o') what = -1;
       else if (opt == 'f') what = 1;
 
-      edf->PrintValues(sout, what, Standard_False);
+      edf->PrintValues(Message::SendInfo(), what, Standard_False);
     }
   }
 
-  return IFSelect_RetVoid;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun_editvalue
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_editvalue
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_editvalue(Draw_Interpretor& theDI,
+                                      Standard_Integer theNbArgs,
+                                      const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 3)
+  Standard_Integer theNbArgs = theNbArgs;
+  if (theNbArgs < 3)
   {
-    sout << "Give the name of an EditForm + name of Value [+ newvalue or . to nullify]" << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Give the name of an EditForm + name of Value [+ newvalue or . to nullify]";
+    return 1;
   }
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   DeclareAndCast(IFSelect_EditForm, edf, WS->NamedItem(arg1));
   if (edf.IsNull())
   {
-    sout << "Not an EditForm : " << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Not an EditForm : " << arg1;
+    return 1;
   }
   Standard_Integer num = edf->NameNumber(arg2);
-  if (num == 0) sout << "Unknown Value Name : " << arg2 << std::endl;
-  if (num < 0) sout << "Not Extracted Value Name : " << arg2 << std::endl;
-  if (num <= 0) return IFSelect_RetError;
+  if (num == 0) Message::SendInfo() << "Unknown Value Name : " << arg2;
+  if (num < 0) Message::SendInfo() << "Not Extracted Value Name : " << arg2;
+  if (num <= 0)
+    return 1;
 
   Standard_Boolean islist = edf->Editor()->IsList(num);
   Standard_CString name = edf->Editor()->Name(num, Standard_True); // vrai nom
   Handle(TColStd_HSequenceOfHAsciiString) listr;
   Handle(TCollection_HAsciiString) str;
-  sout << "Value Name : " << name << (edf->IsModified(num) ? "(already edited) : " : " : ");
+  Message::SendInfo() << "Value Name : " << name << (edf->IsModified(num) ? "(already edited) : " : " : ");
 
   if (islist)
   {
     listr = edf->EditedList(num);
-    if (listr.IsNull()) sout << "(NULL LIST)" << std::endl;
+    if (listr.IsNull()) Message::SendInfo() << "(NULL LIST)";
     else
     {
       Standard_Integer ilist, nblist = listr->Length();
-      sout << "(List : " << nblist << " Items)" << std::endl;
+      Message::SendInfo() << "(List : " << nblist << " Items)";
       for (ilist = 1; ilist <= nblist; ilist++)
       {
         str = listr->Value(ilist);
-        sout << "  [" << ilist << "]	" << (str.IsNull() ? "(NULL)" : str->ToCString()) << std::endl;
+        Message::SendInfo() << "  [" << ilist << "]	" << (str.IsNull() ? "(NULL)" : str->ToCString());
       }
     }
-    if (argc < 4) sout << "To Edit, options by editval edit-form value-name ?" << std::endl;
+    if (theNbArgs < 4) Message::SendInfo() << "To Edit, options by editval edit-form value-name ?";
   }
   else
   {
     str = edf->EditedValue(num);
-    sout << (str.IsNull() ? "(NULL)" : str->ToCString()) << std::endl;
+    Message::SendInfo() << (str.IsNull() ? "(NULL)" : str->ToCString());
   }
-  if (argc < 4) return IFSelect_RetVoid;
+  if (theNbArgs < 4) return 0;
 
   //  Valeur simple ou liste ?
   Standard_Integer numarg = 3;
@@ -2648,15 +3153,16 @@ static IFSelect_ReturnStatus fun_editvalue
   {
     if (argval[0] == '?')
     {
-      sout << "To Edit, options" << std::endl << " + val : add value at end (blanks allowed)"
-        << std::endl << " +nn text : insert val before item nn" << std::endl
-        << " nn text : replace item nn with a new value" << std::endl
-        << " -nn : remove item nn" << std::endl << " . : clear the list" << std::endl;
-      return IFSelect_RetVoid;
+      Message::SendInfo() << "To Edit, options" << " + val : add value at end (blanks allowed)"
+        << " +nn text : insert val before item nn"
+        << " nn text : replace item nn with a new value"
+        << " -nn : remove item nn" << " . : clear the list";
+      return 0;
     }
     Standard_Boolean stated = Standard_False;
     Handle(IFSelect_ListEditor) listed = edf->ListEditor(num);
-    if (listed.IsNull()) return IFSelect_RetError;
+    if (listed.IsNull())
+      return 1;
     if (argval[0] == '.')
     {
       listr.Nullify();  stated = listed->LoadEdited(listr);
@@ -2679,8 +3185,8 @@ static IFSelect_ReturnStatus fun_editvalue
       (new TCollection_HAsciiString(pilot->CommandPart(numarg + 1)), numset);
     }
     if (stated) stated = edf->ModifyList(num, listed, Standard_True);
-    if (stated) sout << "List Edition done" << std::endl;
-    else sout << "List Edition not done, option" << argval << std::endl;
+    if (stated) Message::SendInfo() << "List Edition done";
+    else Message::SendInfo() << "List Edition not done, option" << argval;
   }
   else
   {
@@ -2688,154 +3194,171 @@ static IFSelect_ReturnStatus fun_editvalue
     else str = new TCollection_HAsciiString(pilot->CommandPart(numarg));
     if (edf->Modify(num, str, Standard_True))
     {
-      sout << "Now set to " << (str.IsNull() ? "(NULL)" : str->ToCString()) << std::endl;
+      Message::SendInfo() << "Now set to " << (str.IsNull() ? "(NULL)" : str->ToCString());
     }
     else
     {
-      sout << "Modify not done" << std::endl;  return IFSelect_RetFail;
+      Message::SendInfo() << "Modify not done";
+      return 1;
     }
   }
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun_editclear
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_editclear
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_editclear(Draw_Interpretor& theDI,
+                                      Standard_Integer theNbArgs,
+                                      const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give the name of an EditForm [+ name of Value  else all]" << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Give the name of an EditForm [+ name of Value  else all]";
+    return 1;
   }
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   DeclareAndCast(IFSelect_EditForm, edf, WS->NamedItem(arg1));
   if (edf.IsNull())
   {
-    sout << "Not an EditForm : " << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Not an EditForm : " << arg1;
+    return 1;
   }
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    edf->ClearEdit(); sout << "All Modifications Cleared" << std::endl;
+    edf->ClearEdit(); Message::SendInfo() << "All Modifications Cleared";
   }
   else
   {
     Standard_Integer num = edf->NameNumber(arg2);
-    if (num == 0) sout << "Unknown Value Name : " << arg2 << std::endl;
-    if (num < 0) sout << "Not Extracted Value Name : " << arg2 << std::endl;
-    if (num <= 0) return IFSelect_RetError;
+    if (num == 0) Message::SendInfo() << "Unknown Value Name : " << arg2;
+    if (num < 0) Message::SendInfo() << "Not Extracted Value Name : " << arg2;
+    if (num <= 0)
+      return 1;
     if (!edf->IsModified(num))
     {
-      sout << "Value " << arg2 << " was not modified" << std::endl; return IFSelect_RetVoid;
+      Message::SendInfo() << "Value " << arg2 << " was not modified"; return 0;
     }
     edf->ClearEdit(num);
-    sout << "Modification on Value " << arg2 << " Cleared" << std::endl;
+    Message::SendInfo() << "Modification on Value " << arg2 << " Cleared";
   }
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun_editapply
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_editapply
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_editapply(Draw_Interpretor& theDI,
+                                      Standard_Integer theNbArgs,
+                                      const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give the name of an EditForm [+ option keep to re-apply edited values]" << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Give the name of an EditForm [+ option keep to re-apply edited values]";
+    return 1;
   }
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   DeclareAndCast(IFSelect_EditForm, edf, WS->NamedItem(arg1));
   if (edf.IsNull())
   {
-    sout << "Not an EditForm : " << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Not an EditForm : " << arg1;
+    return 1;
   }
 
   Handle(Standard_Transient) ent = edf->Entity();
   Handle(Interface_InterfaceModel) model = edf->Model();
   if (!model.IsNull())
   {
-    if (ent.IsNull()) sout << "Applying modifications on loaded model" << std::endl;
+    if (ent.IsNull()) Message::SendInfo() << "Applying modifications on loaded model";
     else
     {
-      sout << "Applying modifications on loaded entity : ";
-      model->PrintLabel(ent, sout);
+      Message::SendInfo() << "Applying modifications on loaded entity : ";
+      model->PrintLabel(ent, Message::SendInfo());
     }
   }
-  else sout << "Applying modifications" << std::endl;
+  else Message::SendInfo() << "Applying modifications";
 
   if (!edf->ApplyData(edf->Entity(), edf->Model()))
   {
-    sout << "Modifications could not be applied" << std::endl;
-    return IFSelect_RetFail;
+    Message::SendInfo() << "Modifications could not be applied";
+    return 1;
   }
-  sout << "Modifications have been applied" << std::endl;
+  Message::SendInfo() << "Modifications have been applied";
 
   Standard_Boolean stat = Standard_True;
-  if (argc > 2 && arg2[0] == 'k') stat = Standard_False;
+  if (theNbArgs > 2 && arg2[0] == 'k') stat = Standard_False;
   if (stat)
   {
     edf->ClearEdit();
-    sout << "Edited values are cleared" << std::endl;
+    Message::SendInfo() << "Edited values are cleared";
   }
-  else sout << "Edited values are kept for another loading/applying" << std::endl;
+  else Message::SendInfo() << "Edited values are kept for another loading/applying";
 
-  return IFSelect_RetDone;
+  return 0;
 }
 
-static IFSelect_ReturnStatus fun_editload
-(const Handle(IFSelect_SessionPilot)& pilot)
+//=======================================================================
+//function : fun_editload
+//purpose  :
+//=======================================================================
+static Standard_Integer fun_editload(Draw_Interpretor& theDI,
+                                     Standard_Integer theNbArgs,
+                                     const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give the name of an EditForm [+ Entity-Ident]" << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Give the name of an EditForm [+ Entity-Ident]";
+    return 1;
   }
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  Handle(IFSelect_WorkSession) WS = pilot->Session();
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   DeclareAndCast(IFSelect_EditForm, edf, WS->NamedItem(arg1));
   if (edf.IsNull())
   {
-    sout << "Not an EditForm : " << arg1 << std::endl; return IFSelect_RetError;
+    Message::SendInfo() << "Not an EditForm : " << arg1;
+    return 1;
   }
 
-  Standard_Integer num = (argc < 3 ? 0 : pilot->Number(arg2));
+  Standard_Integer num = (theNbArgs < 3 ? 0 : pilot->Number(arg2));
   Standard_Boolean stat = Standard_False;
-  if (argc < 3)
+  if (theNbArgs < 3)
   {
-    sout << "EditForm " << arg1 << " : Loading Model" << std::endl;
+    Message::SendInfo() << "EditForm " << arg1 << " : Loading Model";
     stat = edf->LoadModel(WS->Model());
   }
   else if (num <= 0)
   {
-    sout << "Not an entity ident : " << arg2 << std::endl;
-    return IFSelect_RetError;
+    Message::SendInfo() << "Not an entity ident : " << arg2;
+    return 1;
   }
   else
   {
-    sout << "EditForm " << arg1 << " : Loading Entity " << arg2 << std::endl;
+    Message::SendInfo() << "EditForm " << arg1 << " : Loading Entity " << arg2;
     stat = edf->LoadData(WS->StartingEntity(num), WS->Model());
   }
 
   if (!stat)
   {
-    sout << "Loading not done" << std::endl;
-    return IFSelect_RetFail;
+    Message::SendInfo() << "Loading not done";
+    return 1;
   }
-  sout << "Loading done" << std::endl;
-  return IFSelect_RetDone;
+  Message::SendInfo() << "Loading done";
+  return 0;
 }
 
-Handle(Standard_Transient) GiveEntity
-(const Handle(IFSelect_WorkSession)& WS,
- const Standard_CString name)
+//=======================================================================
+//function : GiveEntity
+//purpose  :
+//=======================================================================
+Handle(Standard_Transient) GiveEntity(const Handle(XSControl_WorkSession)& WS,
+                                      const Standard_CString name)
 {
   Handle(Standard_Transient) ent;  // demarre a Null
   Standard_Integer num = GiveEntityNumber(WS, name);
@@ -2843,9 +3366,12 @@ Handle(Standard_Transient) GiveEntity
   return ent;
 }
 
-Standard_Integer GiveEntityNumber
-(const Handle(IFSelect_WorkSession)& WS,
- const Standard_CString name)
+//=======================================================================
+//function : GiveEntityNumber
+//purpose  :
+//=======================================================================
+Standard_Integer GiveEntityNumber(const Handle(XSControl_WorkSession)& WS,
+                                  const Standard_CString name)
 {
   Standard_Integer num = 0;
   if (!name || name[0] == '\0')
@@ -2860,7 +3386,11 @@ Standard_Integer GiveEntityNumber
   return num;
 }
 
-void XSDRAW_FunctionsSession::Init()
+//=======================================================================
+//function : Init
+//purpose  :
+//=======================================================================
+void XSDRAW_FunctionsSession::Init(Draw_Interpretor& theDI)
 {
   static int THE_XSDRAW_FunctionsSession_initactor = 0;
   if (THE_XSDRAW_FunctionsSession_initactor)
@@ -2869,128 +3399,128 @@ void XSDRAW_FunctionsSession::Init()
   }
 
   THE_XSDRAW_FunctionsSession_initactor = 1;
-  IFSelect_Act::SetGroup("DE: General");
-  IFSelect_Act::AddFunc("xstatus", "Lists XSTEP Status : Version, System Name ...", funstatus);
-  IFSelect_Act::AddFunc("handler", "Toggle status catch Handler Error of the session", fun1);
-  IFSelect_Act::AddFunc("xload", "file:string  : Read File -> Load Model", fun3);
-  IFSelect_Act::AddFunc("xread", "file:string  : Read File -> Load Model", fun3);
-  IFSelect_Act::AddFunc("writeall", "file:string  : Write all model (no split)", fun4);
-  IFSelect_Act::AddFunc("writesel", "file:string sel:Selection : Write Selected (no split)", fun5);
-  IFSelect_Act::AddFunc("writeent", "file:string  n1ent n2ent...:integer : Write Entite(s) (no split)", fun6);
-  IFSelect_Act::AddFunc("writent", "file:string  n1ent n2ent...:integer : Write Entite(s) (no split)", fun6);
-  IFSelect_Act::AddFunc("elabel", "nument:integer   : Displays Label Model of an entity", fun7);
-  IFSelect_Act::AddFunc("enum", "label:string  : Displays entities n0.s of which Label Model ends by..", fun8);
+  Standard_CString aGroup = "DE: General";
+  theDI.Add("xstatus", "Lists XSTEP Status : Version, System Name ...", __FILE__, funstatus, aGroup);
+  theDI.Add("handler", "Toggle status catch Handler Error of the session", __FILE__, fun1, aGroup);
+  theDI.Add("xload", "file:string  : Read File -> Load Model", __FILE__, fun3, aGroup);
+  theDI.Add("xread", "file:string  : Read File -> Load Model", __FILE__, fun3, aGroup);
+  theDI.Add("writeall", "file:string  : Write all model (no split)", __FILE__, fun4, aGroup);
+  theDI.Add("writesel", "file:string sel:Selection : Write Selected (no split)", __FILE__, fun5, aGroup);
+  theDI.Add("writeent", "file:string  n1ent n2ent...:integer : Write Entite(s) (no split)", __FILE__, fun6, aGroup);
+  theDI.Add("writent", "file:string  n1ent n2ent...:integer : Write Entite(s) (no split)", __FILE__, fun6, aGroup);
+  theDI.Add("elabel", "nument:integer   : Displays Label Model of an entity", __FILE__, fun7, aGroup);
+  theDI.Add("enum", "label:string  : Displays entities n0.s of which Label Model ends by..", __FILE__, fun8, aGroup);
 
-  IFSelect_Act::AddFunc("listtypes", "List nb entities per type. Optional selection name  else all model", fun9);
-  IFSelect_Act::AddFunc("count", "Count : counter [selection]", funcount);
-  IFSelect_Act::AddFunc("listcount", "List Counted : counter [selection [nument]]", funcount);
-  IFSelect_Act::AddFunc("sumcount", "Summary Counted : counter [selection [nument]]", funcount);
-  IFSelect_Act::AddFunc("signtype", "Sign Type [newone]", funsigntype);
-  IFSelect_Act::AddFunc("signcase", "signature : displays possible cases", funsigncase);
+  theDI.Add("listtypes", "List nb entities per type. Optional selection name  else all model", __FILE__, fun9, aGroup);
+  theDI.Add("count", "Count : counter [selection]", __FILE__, funcount, aGroup);
+  theDI.Add("listcount", "List Counted : counter [selection [nument]]", __FILE__, funcount, aGroup);
+  theDI.Add("sumcount", "Summary Counted : counter [selection [nument]]", __FILE__, funcount, aGroup);
+  theDI.Add("signtype", "Sign Type [newone]", __FILE__, funsigntype, aGroup);
+  theDI.Add("signcase", "signature : displays possible cases", __FILE__, funsigncase, aGroup);
 
-  IFSelect_Act::AddFunc("estatus", "ent/nument : displays status of an entity", fun10);
-  IFSelect_Act::AddFunc("data", "Data (DumpModel); whole help : data tout court", fun11);
-  IFSelect_Act::AddFunc("entity", "give n0 ou id of entity [+ level]", fundumpent);
-  IFSelect_Act::AddFunc("signature", "signature name + n0/ident entity", funsign);
-  IFSelect_Act::AddFunc("queryparent", " give 2 n0s/labels of entities : dad son", funqp);
+  theDI.Add("estatus", "ent/nument : displays status of an entity", __FILE__, fun10, aGroup);
+  theDI.Add("data", "Data (DumpModel); whole help : data tout court", __FILE__, fun11, aGroup);
+  theDI.Add("entity", "give n0 ou id of entity [+ level]", __FILE__, fundumpent, aGroup);
+  theDI.Add("signature", "signature name + n0/ident entity", __FILE__, funsign, aGroup);
+  theDI.Add("queryparent", " give 2 n0s/labels of entities : dad son", __FILE__, funqp, aGroup);
 
-  IFSelect_Act::AddFunc("dumpshare", "Dump Share (dispatches, IntParams)", fun12);
-  IFSelect_Act::AddFunc("listitems", "List Items [label else all]  ->Type,Label[,Name]", fun13);
-  IFSelect_Act::AddFSet("integer", "value:integer : cree un IntParam", fun14);
-  IFSelect_Act::AddFunc("setint", "name:IntParam   newValue:integer  : Change valeur IntParam", fun15);
-  IFSelect_Act::AddFSet("text", "value:string  : cree un TextParam", fun16);
-  IFSelect_Act::AddFunc("settext", "Name:TextParam  newValue:string   : Change valeur TextParam", fun17);
-  IFSelect_Act::AddFunc("dumpsel", "Dump Selection suivi du Nom de la Selection a dumper", fun19);
-  IFSelect_Act::AddFunc("evalsel", "name:Selection [num/sel]  : Evalue une Selection", fun20);
-  IFSelect_Act::AddFunc("givelist", "num/sel [num/sel ...]  : Evaluates GiveList", fun20);
-  IFSelect_Act::AddFunc("giveshort", "num/sel [num/sel ...]  : GiveList in short form", fun20);
-  IFSelect_Act::AddFunc("givepointed", "num/sel [num/sel ...]  : GiveList to fill a SelectPointed", fun20);
-  IFSelect_Act::AddFunc("makelist", "listname [givelist] : Makes a List(SelectPointed) from GiveList", fun20);
-  IFSelect_Act::AddFunc("givecount", "num/sel [num/sel ...]  : Counts GiveList", fun20c);
-  IFSelect_Act::AddFSet("selsuite", "sel sel ...  : Creates a SelectSuite", funselsuite);
-  IFSelect_Act::AddFunc("clearitems", "Clears all items (selections, dispatches, etc)", fun21);
-  IFSelect_Act::AddFunc("cleardata", "mode:a-g-c-p  : Clears all or some data (model, check...)", fun22);
+  theDI.Add("dumpshare", "Dump Share (dispatches, IntParams)", __FILE__, fun12, aGroup);
+  theDI.Add("listitems", "List Items [label else all]  ->Type,Label[,Name]", __FILE__, fun13, aGroup);
+  theDI.Add("integer", "value:integer : cree un IntParam", __FILE__, fun14, aGroup);
+  theDI.Add("setint", "name:IntParam   newValue:integer  : Change valeur IntParam", __FILE__, fun15, aGroup);
+  theDI.Add("text", "value:string  : cree un TextParam", __FILE__, fun16, aGroup);
+  theDI.Add("settext", "Name:TextParam  newValue:string   : Change valeur TextParam", __FILE__, fun17, aGroup);
+  theDI.Add("dumpsel", "Dump Selection suivi du Nom de la Selection a dumper", __FILE__, fun19, aGroup);
+  theDI.Add("evalsel", "name:Selection [num/sel]  : Evalue une Selection", __FILE__, fun20, aGroup);
+  theDI.Add("givelist", "num/sel [num/sel ...]  : Evaluates GiveList", __FILE__, fun20, aGroup);
+  theDI.Add("giveshort", "num/sel [num/sel ...]  : GiveList in short form", __FILE__, fun20, aGroup);
+  theDI.Add("givepointed", "num/sel [num/sel ...]  : GiveList to fill a SelectPointed", __FILE__, fun20, aGroup);
+  theDI.Add("makelist", "listname [givelist] : Makes a List(SelectPointed) from GiveList", __FILE__, fun20, aGroup);
+  theDI.Add("givecount", "num/sel [num/sel ...]  : Counts GiveList", __FILE__, fun20c, aGroup);
+  theDI.Add("selsuite", "sel sel ...  : Creates a SelectSuite", __FILE__, funselsuite, aGroup);
+  theDI.Add("clearitems", "Clears all items (selections, dispatches, etc)", __FILE__, fun21, aGroup);
+  theDI.Add("cleardata", "mode:a-g-c-p  : Clears all or some data (model, check...)", __FILE__, fun22, aGroup);
 
-  IFSelect_Act::AddFunc("itemlabel", "xxx xxx : liste items having this label", fun24);
-  IFSelect_Act::AddFunc("xsave", "filename:string  : sauve items-session", fun25);
-  IFSelect_Act::AddFunc("xrestore", "filename:string  : restaure items-session", fun26);
-  IFSelect_Act::AddFunc("param", "[-p Pattern] - displays all parameters or filtered by pattern;\n"
-                        "par_name - displays parameter;\n"
-                        "par_name par_value - changes parameter's value", fun27);
+  theDI.Add("itemlabel", "xxx xxx : liste items having this label", __FILE__, fun24, aGroup);
+  theDI.Add("xsave", "filename:string  : sauve items-session", __FILE__, fun25, aGroup);
+  theDI.Add("xrestore", "filename:string  : restaure items-session", __FILE__, fun26, aGroup);
+  theDI.Add("param", "[-p Pattern] - displays all parameters or filtered by pattern;\n"
+            "par_name - displays parameter;\n"
+            "par_name par_value - changes parameter's value", __FILE__, fun27, aGroup);
 
-  IFSelect_Act::AddFunc("sentfiles", "Lists files sent from last Load", fun29);
-  IFSelect_Act::AddFunc("fileprefix", "prefix:string    : definit File Prefix", fun30);
-  IFSelect_Act::AddFunc("fileext", "extent:string    : definit File Extension", fun31);
-  IFSelect_Act::AddFunc("fileroot", "disp:Dispatch  root:string  : definit File Root sur un Dispatch", fun32);
-  IFSelect_Act::AddFunc("filedef", "defroot:string   : definit File DefaultRoot", fun33);
-  IFSelect_Act::AddFunc("evalfile", "Evaluation du FileNaming et memorisation", fun34);
-  IFSelect_Act::AddFunc("clearfile", "Efface la liste d'EvalFile", fun35);
-  IFSelect_Act::AddFunc("xsplit", "[disp:Dispatch  sinon tout]  : Split, la grande affaire !", fun36);
-  IFSelect_Act::AddFunc("remaining", "options... : Remaining Entities, help complet par  remaining ?", fun37);
-  IFSelect_Act::AddFunc("setcontent", "sel:Selection mode:k ou r  : Restreint contenu du modele", fun38);
+  theDI.Add("sentfiles", "Lists files sent from last Load", __FILE__, fun29, aGroup);
+  theDI.Add("fileprefix", "prefix:string    : definit File Prefix", __FILE__, fun30, aGroup);
+  theDI.Add("fileext", "extent:string    : definit File Extension", __FILE__, fun31, aGroup);
+  theDI.Add("fileroot", "disp:Dispatch  root:string  : definit File Root sur un Dispatch", __FILE__, fun32, aGroup);
+  theDI.Add("filedef", "defroot:string   : definit File DefaultRoot", __FILE__, fun33, aGroup);
+  theDI.Add("evalfile", "Evaluation du FileNaming et memorisation", __FILE__, fun34, aGroup);
+  theDI.Add("clearfile", "Efface la liste d'EvalFile", __FILE__, fun35, aGroup);
+  theDI.Add("xsplit", "[disp:Dispatch  sinon tout]  : Split, la grande affaire !", __FILE__, fun36, aGroup);
+  theDI.Add("remaining", "options... : Remaining Entities, help complet par  remaining ?", __FILE__, fun37, aGroup);
+  theDI.Add("setcontent", "sel:Selection mode:k ou r  : Restreint contenu du modele", __FILE__, fun38, aGroup);
 
-  IFSelect_Act::AddFunc("listmodif", "List Final Modifiers", fun40);
-  IFSelect_Act::AddFunc("dumpmodif", "modif:Modifier  : Affiche le Statut d'un Modifier", fun41);
-  IFSelect_Act::AddFunc("modifsel", "modif:Modifier [sel:Selection]  : Change/Annule Selection de Modifier", fun42);
-  IFSelect_Act::AddFunc("setapplied", "modif:Modifier [name:un item sinon sortie fichier]  : Applique un Modifier", fun43);
-  IFSelect_Act::AddFunc("resetapplied", "modif:Modifier  : Enleve un Modifier de la sortie fichier", fun44);
-  IFSelect_Act::AddFunc("modifmove", "modif:Modifier M(model)/F(file) avant,apres:integer  : Deplace un Modifier (sortie fichier)", fun45);
+  theDI.Add("listmodif", "List Final Modifiers", __FILE__, fun40, aGroup);
+  theDI.Add("dumpmodif", "modif:Modifier  : Affiche le Statut d'un Modifier", __FILE__, fun41, aGroup);
+  theDI.Add("modifsel", "modif:Modifier [sel:Selection]  : Change/Annule Selection de Modifier", __FILE__, fun42, aGroup);
+  theDI.Add("setapplied", "modif:Modifier [name:un item sinon sortie fichier]  : Applique un Modifier", __FILE__, fun43, aGroup);
+  theDI.Add("resetapplied", "modif:Modifier  : Enleve un Modifier de la sortie fichier", __FILE__, fun44, aGroup);
+  theDI.Add("modifmove", "modif:Modifier M(model)/F(file) avant,apres:integer  : Deplace un Modifier (sortie fichier)", __FILE__, fun45, aGroup);
 
-  IFSelect_Act::AddFunc("dispsel", "disp:Dispatch sel:Selection  -> Selection Finale de Dispatch", fun51);
-  IFSelect_Act::AddFSet("dispone", "cree DispPerOne", fun_dispone);
-  IFSelect_Act::AddFSet("dispglob", "cree DispGlobal", fun_dispglob);
-  IFSelect_Act::AddFSet("dispcount", "count:IntParam  : cree DispPerCount", fun_dispcount);
-  IFSelect_Act::AddFSet("dispfile", "files:IntParam  : cree DispPerFiles", fun_dispfiles);
-  IFSelect_Act::AddFSet("dispsign", "sign:Signature  : cree DispPerSignature", fun_dispsign);
-  IFSelect_Act::AddFunc("dumpdisp", "disp:Dispatch   : Affiche le Statut d'un Dispatch", fun56);
+  theDI.Add("dispsel", "disp:Dispatch sel:Selection  -> Selection Finale de Dispatch", __FILE__, fun51, aGroup);
+  theDI.Add("dispone", "cree DispPerOne", __FILE__, fun_dispone, aGroup);
+  theDI.Add("dispglob", "cree DispGlobal", __FILE__, fun_dispglob, aGroup);
+  theDI.Add("dispcount", "count:IntParam  : cree DispPerCount", __FILE__, fun_dispcount, aGroup);
+  theDI.Add("dispfile", "files:IntParam  : cree DispPerFiles", __FILE__, fun_dispfiles, aGroup);
+  theDI.Add("dispsign", "sign:Signature  : cree DispPerSignature", __FILE__, fun_dispsign, aGroup);
+  theDI.Add("dumpdisp", "disp:Dispatch   : Affiche le Statut d'un Dispatch", __FILE__, fun56, aGroup);
 
-  IFSelect_Act::AddFunc("xremove", "nom  : Remove a Control Item de la Session", fun57);
-  IFSelect_Act::AddFunc("evaldisp", "mode=[0-3]  disp:Dispatch  : Evaluates one or more Dispatch(es)", fun58);
-  IFSelect_Act::AddFunc("evaladisp", "mode=[0-3]  disp:Dispatch [givelist]  : Evaluates a Dispatch (on a GiveList)", fun_evaladisp);
-  IFSelect_Act::AddFunc("writedisp", "filepattern  disp:Dispatch [givelist]  : Writes Entities by Splitting by a Dispatch", fun_writedisp);
-  IFSelect_Act::AddFunc("evalcomplete", "Evaluation Complete de la Repartition", fun59);
+  theDI.Add("xremove", "nom  : Remove a Control Item de la Session", __FILE__, fun57, aGroup);
+  theDI.Add("evaldisp", "mode=[0-3]  disp:Dispatch  : Evaluates one or more Dispatch(es)", __FILE__, fun58, aGroup);
+  theDI.Add("evaladisp", "mode=[0-3]  disp:Dispatch [givelist]  : Evaluates a Dispatch (on a GiveList)", __FILE__, fun_evaladisp, aGroup);
+  theDI.Add("writedisp", "filepattern  disp:Dispatch [givelist]  : Writes Entities by Splitting by a Dispatch", __FILE__, fun_writedisp, aGroup);
+  theDI.Add("evalcomplete", "Evaluation Complete de la Repartition", __FILE__, fun59, aGroup);
 
-  IFSelect_Act::AddFunc("runcheck", "affiche LastRunCheckList (write,modif)", fun60);
-  IFSelect_Act::AddFunc("runtranformer", "transf:Transformer  : Applique un Transformer", fun61);
-  IFSelect_Act::AddFSet("copy", "cree TransformStandard, option Copy, vide", fun62);
-  IFSelect_Act::AddFSet("onthespot", "cree TransformStandard, option OntheSpot, vide", fun63);
-  IFSelect_Act::AddFunc("runcopy", "modif:ModelModifier [givelist] : Run <modif> via TransformStandard option Copy", fun6465);
-  IFSelect_Act::AddFunc("runonthespot", "modif:ModelModifier [givelist] : Run <modif> via TransformStandard option OnTheSpot", fun6465);
-  IFSelect_Act::AddFSet("reorder", "[f ou t] reordonne le modele", fun66);
+  theDI.Add("runcheck", "affiche LastRunCheckList (write,modif)", __FILE__, fun60, aGroup);
+  theDI.Add("runtranformer", "transf:Transformer  : Applique un Transformer", __FILE__, fun61, aGroup);
+  theDI.Add("copy", "cree TransformStandard, option Copy, vide", __FILE__, fun62, aGroup);
+  theDI.Add("onthespot", "cree TransformStandard, option OntheSpot, vide", __FILE__, fun63, aGroup);
+  theDI.Add("runcopy", "modif:ModelModifier [givelist] : Run <modif> via TransformStandard option Copy", __FILE__, fun6465, aGroup);
+  theDI.Add("runonthespot", "modif:ModelModifier [givelist] : Run <modif> via TransformStandard option OnTheSpot", __FILE__, fun6465, aGroup);
+  theDI.Add("reorder", "[f ou t] reordonne le modele", __FILE__, fun66, aGroup);
 
-  IFSelect_Act::AddFunc("toggle", "sel:Selection genre Extract  : Toggle Direct/Reverse", fun70);
-  IFSelect_Act::AddFunc("input", "sel:Selection genre Deduct ou Extract  input:Selection  : Set Input", fun71);
-  IFSelect_Act::AddFSet("modelroots", "cree SelectModelRoots", fun72);
-  IFSelect_Act::AddFSet("range", "options... : cree SelectRange ...; tout court pour help", fun73);
-  IFSelect_Act::AddFSet("roots", "cree SelectRoots (local roots)", fun74);
-  IFSelect_Act::AddFSet("shared", "cree SelectShared", fun75);
-  IFSelect_Act::AddFSet("diff", "[main:Selection diff:Selection]  : cree SelectDiff", fun76);
-  IFSelect_Act::AddFunc("selmain", "sel:Selection genre Control  main:Selection  : Set Main Input", fun77);
-  IFSelect_Act::AddFunc("selsecond", "sel:Selection genre Control  sec:Selection   : Set Second Input", fun78);
-  IFSelect_Act::AddFSet("modelall", "cree SelectModelAll", fun79);
-  IFSelect_Act::AddFunc("seladd", "sel:Selection genre Combine  input:Selection  : Add Selection", fun80);
-  IFSelect_Act::AddFunc("selrem", "sel:Selection genre Combine  input:Selection  : Remove Selection", fun81);
-  IFSelect_Act::AddFSet("number", "num:IntParam  : Cree SelectEntityNumber", fun82);
+  theDI.Add("toggle", "sel:Selection genre Extract  : Toggle Direct/Reverse", __FILE__, fun70, aGroup);
+  theDI.Add("input", "sel:Selection genre Deduct ou Extract  input:Selection  : Set Input", __FILE__, fun71, aGroup);
+  theDI.Add("modelroots", "cree SelectModelRoots", __FILE__, fun72, aGroup);
+  theDI.Add("range", "options... : cree SelectRange ...; tout court pour help", __FILE__, fun73, aGroup);
+  theDI.Add("roots", "cree SelectRoots (local roots)", __FILE__, fun74, aGroup);
+  theDI.Add("shared", "cree SelectShared", __FILE__, fun75, aGroup);
+  theDI.Add("diff", "[main:Selection diff:Selection]  : cree SelectDiff", __FILE__, fun76, aGroup);
+  theDI.Add("selmain", "sel:Selection genre Control  main:Selection  : Set Main Input", __FILE__, fun77, aGroup);
+  theDI.Add("selsecond", "sel:Selection genre Control  sec:Selection   : Set Second Input", __FILE__, fun78, aGroup);
+  theDI.Add("modelall", "cree SelectModelAll", __FILE__, fun79, aGroup);
+  theDI.Add("seladd", "sel:Selection genre Combine  input:Selection  : Add Selection", __FILE__, fun80, aGroup);
+  theDI.Add("selrem", "sel:Selection genre Combine  input:Selection  : Remove Selection", __FILE__, fun81, aGroup);
+  theDI.Add("number", "num:IntParam  : Cree SelectEntityNumber", __FILE__, fun82, aGroup);
 
-  IFSelect_Act::AddFSet("union", "cree SelectUnion (vide), cf aussi combadd, combrem", fun83);
-  IFSelect_Act::AddFSet("intersect", "cree SelectIntersection (vide), cf aussi combadd, combrem", fun84);
-  IFSelect_Act::AddFSet("typexact", "type:string  : cree SelectTextType Exact", fun85);
-  IFSelect_Act::AddFSet("errors", "cree SelectErrorEntities (from file)", fun86);
-  IFSelect_Act::AddFSet("unknown", "cree SelectUnknownEntities", fun87);
-  IFSelect_Act::AddFSet("sharing", "cree SelectSharing", fun88);
-  IFSelect_Act::AddFSet("typecontain", "type:string  : cree SelectTextType Contains", fun89);
-  IFSelect_Act::AddFSet("pointed", "cree SelectPointed [num/sel num/sel]", fun90);
-  IFSelect_Act::AddFunc("setpointed", "sel:SelectPointed  : edition SelectPointed. tout court pour help", fun91);
-  IFSelect_Act::AddFunc("setlist", "sel:SelectPointed  : edition SelectPointed. tout court pour help", fun91);
-  IFSelect_Act::AddFSet("incorrect", "cree SelectIncorrectEntities (computed)", fun92);
+  theDI.Add("union", "cree SelectUnion (vide), cf aussi combadd, combrem", __FILE__, fun83, aGroup);
+  theDI.Add("intersect", "cree SelectIntersection (vide), cf aussi combadd, combrem", __FILE__, fun84, aGroup);
+  theDI.Add("typexact", "type:string  : cree SelectTextType Exact", __FILE__, fun85, aGroup);
+  theDI.Add("errors", "cree SelectErrorEntities (from file)", __FILE__, fun86, aGroup);
+  theDI.Add("unknown", "cree SelectUnknownEntities", __FILE__, fun87, aGroup);
+  theDI.Add("sharing", "cree SelectSharing", __FILE__, fun88, aGroup);
+  theDI.Add("typecontain", "type:string  : cree SelectTextType Contains", __FILE__, fun89, aGroup);
+  theDI.Add("pointed", "cree SelectPointed [num/sel num/sel]", __FILE__, fun90, aGroup);
+  theDI.Add("setpointed", "sel:SelectPointed  : edition SelectPointed. tout court pour help", __FILE__, fun91, aGroup);
+  theDI.Add("setlist", "sel:SelectPointed  : edition SelectPointed. tout court pour help", __FILE__, fun91, aGroup);
+  theDI.Add("incorrect", "cree SelectIncorrectEntities (computed)", __FILE__, fun92, aGroup);
 
-  IFSelect_Act::AddFSet("signsel", "sign:Signature|cnt:Counter text:string [e(D)|c] : cree SelectSignature", fun93);
-  IFSelect_Act::AddFSet("signcounter", "sign:Signature : cree SignCounter", fun94);
-  IFSelect_Act::AddFSet("nbselected", "applied:Selection : cree GraphCounter(=NbSelected)", funbselected);
+  theDI.Add("signsel", "sign:Signature|cnt:Counter text:string [e(D)|c] : cree SelectSignature", __FILE__, fun93, aGroup);
+  theDI.Add("signcounter", "sign:Signature : cree SignCounter", __FILE__, fun94, aGroup);
+  theDI.Add("nbselected", "applied:Selection : cree GraphCounter(=NbSelected)", __FILE__, funbselected, aGroup);
 
-  IFSelect_Act::AddFunc("editlist", "editor or editform : lists defs + values", fun_editlist);
-  IFSelect_Act::AddFunc("editvalue", "editform paramname [newval or .] : lists-changes a value", fun_editvalue);
-  IFSelect_Act::AddFunc("editclear", "editform [paramname] : clears edition on all or one param", fun_editclear);
-  IFSelect_Act::AddFunc("editload", "editform [entity-id] : loads from model or an entity", fun_editload);
-  IFSelect_Act::AddFunc("editapply", "editform [keep] : applies on loaded data", fun_editapply);
+  theDI.Add("editlist", "editor or editform : lists defs + values", __FILE__, fun_editlist, aGroup);
+  theDI.Add("editvalue", "editform paramname [newval or .] : lists-changes a value", __FILE__, fun_editvalue, aGroup);
+  theDI.Add("editclear", "editform [paramname] : clears edition on all or one param", __FILE__, fun_editclear, aGroup);
+  theDI.Add("editload", "editform [entity-id] : loads from model or an entity", __FILE__, fun_editload, aGroup);
+  theDI.Add("editapply", "editform [keep] : applies on loaded data", __FILE__, fun_editapply, aGroup);
 }
