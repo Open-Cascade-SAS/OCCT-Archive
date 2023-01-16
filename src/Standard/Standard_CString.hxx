@@ -51,6 +51,15 @@ __Standard_API int    Printf  (const char* theFormat, ...);
 __Standard_API int    Fprintf (FILE* theFile, const char* theFormat, ...);
 __Standard_API int    Sprintf (char* theBuffer, const char* theFormat, ...);
 
+//! Equivalent of standard C function vsprintf() that always uses C locale.
+//! Note that this function does not check buffer bounds and should be used with precaution measures
+//! (only with format fitting into the buffer of known size).
+//! @param theBuffer  [in] [out] string buffer to fill
+//! @param theFormat  [in] format to apply
+//! @param theArgList [in] argument list for specified format
+//! @return the total number of characters written, or a negative number on error
+Standard_EXPORT int Vsprintf (char* theBuffer, const char* theFormat, va_list theArgList);
+
 //============================================================================
 //==== IsEqual : Returns Standard_True if two booleans have the same value
 //============================================================================
