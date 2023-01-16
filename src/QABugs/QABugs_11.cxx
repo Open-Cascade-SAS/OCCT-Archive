@@ -1309,7 +1309,7 @@ static Standard_Integer OCC369(Draw_Interpretor& di, Standard_Integer argc, cons
     if(aShape.IsNull()) {di << "OCC369 FAULTY. Entry shape is NULL \n"; return 0;}
 
     // 3. Build mesh
-    BRepMesh_FastDiscret::Parameters aMeshParams;
+    IMeshTools_Parameters aMeshParams;
     aMeshParams.Relative = Standard_True;
     aMeshParams.Deflection = 0.2;
     aMeshParams.Angle = M_PI / 6;

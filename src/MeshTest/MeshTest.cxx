@@ -130,7 +130,7 @@ options:\n\
         -surf_def_off   disables control of deflection of mesh from real\n\
                         surface (enabled by default)\n\
         -parallel       enables parallel execution (switched off by default)\n\
-        -adaptive       enables adaptive computation of minimal value in parametric space\n";
+        -adjust_min     enables local adjustment of min size depending on edge size\n";
     return 0;
   }
 
@@ -148,7 +148,7 @@ options:\n\
   Standard_Boolean isInParallel    = Standard_False;
   Standard_Boolean isIntVertices   = Standard_True;
   Standard_Boolean isControlSurDef = Standard_True;
-  Standard_Boolean isAdaptiveMin   = Standard_False;
+  Standard_Boolean isAdjustMinSize = Standard_False;
 
   if (nbarg > 3)
   {
@@ -168,8 +168,8 @@ options:\n\
         isIntVertices = Standard_False;
       else if (aOpt == "-surf_def_off")
         isControlSurDef = Standard_False;
-      else if (aOpt == "-adaptive")
-        isAdaptiveMin   = Standard_True;
+      else if (aOpt == "-adjust_min")
+        isAdjustMinSize = Standard_True;
       else if (i < nbarg)
       {
         Standard_Real aVal = Draw::Atof(argv[i++]);
@@ -186,7 +186,7 @@ options:\n\
   di << "Incremental Mesh, multi-threading "
      << (isInParallel ? "ON" : "OFF") << "\n";
 
-  BRepMesh_FastDiscret::Parameters aMeshParams;
+  IMeshTools_Parameters aMeshParams;
   aMeshParams.Deflection = aLinDeflection;
   aMeshParams.Angle = aAngDeflection;
   aMeshParams.Relative =  isRelative;
@@ -194,13 +194,10 @@ options:\n\
   aMeshParams.MinSize = aMinSize;
   aMeshParams.InternalVerticesMode = isIntVertices;
   aMeshParams.ControlSurfaceDeflection = isControlSurDef;
-  aMeshParams.AdaptiveMin = isAdaptiveMin;
+  aMeshParams.AdjustMinSize = isAdjustMinSize;
   
   Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(di, 1);
-  BRepMesh_IncrementalMesh aMesher;
-  aMesher.SetShape (aShape);
-  aMesher.ChangeParameters() = aMeshParams;
-  aMesher.Perform (aProgress);
+  BRepMesh_IncrementalMesh aMesher (aShape, aMeshParams);
 
   di << "Meshing statuses: ";
   Standard_Integer statusFlags = aMesher.GetStatusFlags();
@@ -408,114 +405,6 @@ static Standard_Integer MemLeakTest(Draw_Interpretor&, Standard_Integer /*nbarg*
   }
   return 0;
 }
-
-//=======================================================================
-//function : fastdiscret
-//purpose  : 
-//=======================================================================
-
-static Standard_Integer fastdiscret(Draw_Interpretor& di, Standard_Integer nbarg, const char** argv)
-{
-  if (nbarg < 3) return 1;
-
-  TopoDS_Shape S = DBRep::Get(argv[1]);
-  if (S.IsNull()) return 1;
-
-  const Standard_Real d = Draw::Atof(argv[2]);
-
-  Bnd_Box B;
-  BRepBndLib::Add(S,B);
-  BRepMesh_FastDiscret::Parameters aParams;
-  aParams.Deflection = d;
-  aParams.Angle = 0.5;
-  BRepMesh_FastDiscret MESH(B,aParams);
-
-  //Standard_Integer NbIterations = MESH.NbIterations();
-  //if (nbarg > 4) NbIterations = Draw::Atoi(argv[4]);
-  //MESH.NbIterations() = NbIterations;
-
-  di<<"Starting FastDiscret with :\n";
-  di<<"  Deflection="<<d<<"\n";
-  di<<"  Angle="<<0.5<<"\n";
-
-  Handle(Poly_Triangulation) T;
-  BRep_Builder aBuilder;
-  TopExp_Explorer ex;
-
-  // Clear existing triangulations
-  for (ex.Init(S, TopAbs_FACE); ex.More(); ex.Next())
-    aBuilder.UpdateFace(TopoDS::Face(ex.Current()),T);
-
-  MESH.Perform(S);
-
-  TopoDS_Compound aCompGood, aCompFailed, aCompViolating;
-
-  TopLoc_Location L;
-  Standard_Integer nbtriangles = 0, nbnodes = 0, nbfailed = 0, nbviolating = 0;
-  Standard_Real maxdef = 0.0;
-  for (ex.Init(S, TopAbs_FACE); ex.More(); ex.Next())
-  {
-    T = BRep_Tool::Triangulation(TopoDS::Face(ex.Current()),L);
-    if (T.IsNull())
-    {
-      nbfailed++;
-      if (aCompFailed.IsNull())
-        aBuilder.MakeCompound(aCompFailed);
-      aBuilder.Add(aCompFailed,ex.Current());
-    }
-    else
-    {
-      nbtriangles += T->NbTriangles();
-      nbnodes += T->NbNodes();
-      if (T->Deflection() > maxdef) maxdef = T->Deflection();
-      if (T->Deflection() > d)
-      {
-        nbviolating++;
-        if (aCompViolating.IsNull())
-          aBuilder.MakeCompound(aCompViolating);
-        aBuilder.Add(aCompViolating,ex.Current());
-      }
-      else
-      {
-        if (aCompGood.IsNull())
-          aBuilder.MakeCompound(aCompGood);
-        aBuilder.Add(aCompGood,ex.Current());
-      }
-    }
-  }
-
-  if (!aCompGood.IsNull())
-  {
-    char name[256];
-    strcpy(name,argv[1]);
-    strcat(name,"_good");
-    DBRep::Set(name,aCompGood);
-  }
-  if (!aCompFailed.IsNull())
-  {
-    char name[256];
-    strcpy(name,argv[1]);
-    strcat(name,"_failed");
-    DBRep::Set(name,aCompFailed);
-  }
-  if (!aCompViolating.IsNull())
-  {
-    char name[256];
-    strcpy(name,argv[1]);
-    strcat(name,"_violating");
-    DBRep::Set(name,aCompViolating);
-  }
-
-  di<<"FastDiscret completed with :\n";
-  di<<"  MaxDeflection="<<maxdef<<"\n";
-  di<<"  NbNodes="<<nbnodes<<"\n";
-  di<<"  NbTriangles="<<nbtriangles<<"\n";
-  di<<"  NbFailed="<<nbfailed<<"\n";
-  di<<"  NbViolating="<<nbviolating<<"\n";
-
-  return 0;
-}
-
 
 //=======================================================================
 //function : triangule
@@ -1779,7 +1668,6 @@ void  MeshTest::Commands(Draw_Interpretor& theCommands)
   theCommands.Add("incmesh","Builds triangular mesh for the shape, run w/o args for help",__FILE__, incrementalmesh, g);
   theCommands.Add("tessellate","Builds triangular mesh for the surface, run w/o args for help",__FILE__, tessellate, g);
   theCommands.Add("MemLeakTest","MemLeakTest",__FILE__, MemLeakTest, g);
-  theCommands.Add("fastdiscret","fastdiscret shape deflection",__FILE__, fastdiscret, g);
   theCommands.Add("mesh","mesh result Shape deflection",__FILE__, triangule, g);
   theCommands.Add("addshape","addshape meshname Shape [deflection]",__FILE__, addshape, g);
   //theCommands.Add("smooth","smooth meshname",__FILE__, smooth, g);

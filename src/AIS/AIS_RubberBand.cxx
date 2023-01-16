@@ -296,13 +296,13 @@ Standard_Boolean AIS_RubberBand::fillTriangles()
   Handle(BRepMesh_DataStructureOfDelaun) aMeshStructure = new BRepMesh_DataStructureOfDelaun(anAllocator);
   Standard_Integer aPtsLower = myPoints.Lower();
   Standard_Integer aPtsUpper = myPoints.Upper();
-  BRepMesh::Array1OfInteger anIndexes (0, myPoints.Length() - 1);
+  IMeshData::VectorOfInteger anIndexes (myPoints.Length());
   for (Standard_Integer aPtIdx = aPtsLower; aPtIdx <= aPtsUpper; ++aPtIdx)
   {
     gp_XY aP ((Standard_Real)myPoints.Value (aPtIdx).x(),
               (Standard_Real)myPoints.Value (aPtIdx).y());
     BRepMesh_Vertex aVertex (aP, aPtIdx, BRepMesh_Frontier);
-    anIndexes.ChangeValue (aPtIdx - aPtsLower) = aMeshStructure->AddNode (aVertex);
+    anIndexes.Append (aMeshStructure->AddNode (aVertex));
   }
 
   Standard_Real aPtSum = 0;
@@ -325,7 +325,7 @@ Standard_Boolean AIS_RubberBand::fillTriangles()
   }
 
   BRepMesh_Delaun aTriangulation (aMeshStructure, anIndexes);
-  const BRepMesh::MapOfInteger& aTriangles = aMeshStructure->ElementsOfDomain();
+  const IMeshData::MapOfInteger& aTriangles = aMeshStructure->ElementsOfDomain();
   if (aTriangles.Extent() < 1)
     return Standard_False;
 
@@ -338,7 +338,7 @@ Standard_Boolean AIS_RubberBand::fillTriangles()
   }
 
   Standard_Integer aVertexIndex = 1;
-  BRepMesh::MapOfInteger::Iterator aTriangleIt (aTriangles);
+  IMeshData::IteratorOfMapOfInteger aTriangleIt (aTriangles);
   for (; aTriangleIt.More(); aTriangleIt.Next())
   {
     const Standard_Integer aTriangleId = aTriangleIt.Key();

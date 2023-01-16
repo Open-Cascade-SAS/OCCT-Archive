@@ -840,7 +840,7 @@ void DBRep_DrawableShape::DisplayHiddenLines(Draw_Display& dis)
   if (!strcmp(dout.GetType(id),"PERS")) focal = dout.Focal(id);
   Standard_Real Ang,Def;
   HLRBRep::PolyHLRAngleAndDeflection(myAng,Ang,Def);
-  BRepMesh_FastDiscret::Parameters aMeshParams;
+  IMeshTools_Parameters aMeshParams;
   aMeshParams.Relative = Standard_True;
   aMeshParams.Deflection = Def;
   aMeshParams.Angle = Ang;

@@ -68,7 +68,7 @@ void StdPrs_HLRPolyShape::Add(const Handle (Prs3d_Presentation)& aPresentation,
   {
     const Standard_Boolean aRel = aDrawer->TypeOfDeflection() == Aspect_TOD_RELATIVE;
     Standard_Real aDef = aRel ? aDrawer->HLRDeviationCoefficient() : aDrawer->MaximalChordialDeviation();
-    BRepMesh_FastDiscret::Parameters aMeshParams;
+    IMeshTools_Parameters aMeshParams;
     aMeshParams.Relative = aRel;
     aMeshParams.Angle = aDrawer->HLRAngle();
     aMeshParams.Deflection = aDef;
