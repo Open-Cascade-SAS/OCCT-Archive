@@ -279,7 +279,7 @@ public:
   }
 
   //! Move assignment
-  NCollection_Array1& Move (NCollection_Array1&& theOther)
+  NCollection_Array1& Move (NCollection_Array1& theOther)
   {
     if (&theOther == this)
     {
