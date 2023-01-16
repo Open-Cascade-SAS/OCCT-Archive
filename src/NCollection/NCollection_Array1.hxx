@@ -348,6 +348,9 @@ public:
   const TheItemType& operator() (const Standard_Integer theIndex) const
   { return Value (theIndex); }
 
+  //! operator[] - alias to Value
+  const TheItemType& operator[] (Standard_Integer theIndex) const { return Value (theIndex); }
+
   //! Variable value access
   TheItemType& ChangeValue (const Standard_Integer theIndex)
   {
@@ -358,6 +361,9 @@ public:
   //! operator() - alias to ChangeValue
   TheItemType& operator() (const Standard_Integer theIndex)
   { return ChangeValue (theIndex); }
+
+  //! operator[] - alias to ChangeValue
+  TheItemType& operator[] (Standard_Integer theIndex) { return ChangeValue (theIndex); }
 
   //! Set value 
   void SetValue (const Standard_Integer theIndex,
