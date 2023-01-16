@@ -20,6 +20,7 @@
 #include <IMeshTools_Parameters.hxx>
 #include <IMeshData_Types.hxx>
 #include <IMeshTools_MeshAlgoFactory.hxx>
+#include <NCollection_Array1.hxx>
 
 //! Class implements functionality starting triangulation of model's faces.
 //! Each face is processed separately and can be executed in parallel mode.
@@ -36,12 +37,7 @@ public:
   //! Destructor.
   Standard_EXPORT virtual ~BRepMesh_FaceDiscret();
 
-  //! Functor API to discretize the given edge.
-  inline void operator() (const Standard_Integer theFaceIndex) const {
-    process(theFaceIndex);
-  }
-
-  DEFINE_STANDARD_RTTI_INLINE(BRepMesh_FaceDiscret, IMeshTools_ModelAlgo)
+  DEFINE_STANDARD_RTTIEXT(BRepMesh_FaceDiscret, IMeshTools_ModelAlgo)
 
 protected:
 
@@ -54,6 +50,9 @@ private:
 
   //! Checks existing discretization of the face and updates data model.
   void process(const Standard_Integer theFaceIndex) const;
+
+private:
+  class FaceListFunctor;
 
 private:
 

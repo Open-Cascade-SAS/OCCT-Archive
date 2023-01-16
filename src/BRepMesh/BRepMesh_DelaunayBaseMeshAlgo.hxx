@@ -23,7 +23,7 @@
 class BRepMesh_DataStructureOfDelaun;
 class BRepMesh_Delaun;
 
-//! Class provides base fuctionality to build face triangulation using Dealunay approach.
+//! Class provides base functionality to build face triangulation using Dealunay approach.
 //! Performs generation of mesh using raw data from model.
 class BRepMesh_DelaunayBaseMeshAlgo : public BRepMesh_ConstrainedBaseMeshAlgo
 {
@@ -35,7 +35,7 @@ public:
   //! Destructor.
   Standard_EXPORT virtual ~BRepMesh_DelaunayBaseMeshAlgo();
 
-  DEFINE_STANDARD_RTTI_INLINE(BRepMesh_DelaunayBaseMeshAlgo, BRepMesh_ConstrainedBaseMeshAlgo)
+  DEFINE_STANDARD_RTTIEXT(BRepMesh_DelaunayBaseMeshAlgo, BRepMesh_ConstrainedBaseMeshAlgo)
 
 protected:
 

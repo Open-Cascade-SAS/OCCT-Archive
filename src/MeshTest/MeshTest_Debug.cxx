@@ -19,6 +19,9 @@
 #include <TCollection_AsciiString.hxx>
 #include <TColgp_Array1OfPnt.hxx>
 #include <Poly_Polygon3D.hxx>
+#include <BRepMesh_Edge.hxx>
+#include <BRepMesh_Vertex.hxx>
+#include <BRepMesh_Triangle.hxx>
 #include <BRepMesh_DataStructureOfDelaun.hxx>
 
 // This file defines global functions not declared in any public header,
@@ -51,8 +54,8 @@ Standard_EXPORT const char* MeshTest_DrawLinks(const char* theNameStr, void* the
       const BRepMesh_Vertex& aV1 = aMeshData->GetNode(n1);
       const BRepMesh_Vertex& aV2 = aMeshData->GetNode(n2);
       Handle(Draw_Segment3D) aSeg = new Draw_Segment3D(gp_Pnt(aV1.Coord().X(), aV1.Coord().Y(), 0),
-        gp_Pnt(aV2.Coord().X(), aV2.Coord().Y(), 0),
-        Draw_bleu);
+                                                       gp_Pnt(aV2.Coord().X(), aV2.Coord().Y(), 0), 
+                                                       Draw_bleu);
       Draw::Set((aName + "_" + i).ToCString(), aSeg);
     }
     return theNameStr;
@@ -74,7 +77,7 @@ Standard_EXPORT const char* MeshTest_DrawTriangles(const char* theNameStr, void*
     return "Error: name or face attribute is null";
   }
   try {
-    const Handle(BRepMesh_DataStructureOfDelaun)& aMeshData =
+    const Handle(BRepMesh_DataStructureOfDelaun)& aMeshData = 
       *(Handle(BRepMesh_DataStructureOfDelaun)*)theDataStruct;
 
     if (aMeshData.IsNull())

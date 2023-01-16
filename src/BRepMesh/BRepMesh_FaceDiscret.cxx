@@ -21,6 +21,8 @@
 #include <IMeshTools_MeshAlgo.hxx>
 #include <OSD_Parallel.hxx>
 
+IMPLEMENT_STANDARD_RTTIEXT(BRepMesh_FaceDiscret, IMeshTools_ModelAlgo)
+
 //=======================================================================
 // Function: Constructor
 // Purpose : 
@@ -39,6 +41,24 @@ BRepMesh_FaceDiscret::~BRepMesh_FaceDiscret()
 {
 }
 
+//! Auxiliary functor for parallel processing of Faces.
+class BRepMesh_FaceDiscret::FaceListFunctor
+{
+public:
+  FaceListFunctor (BRepMesh_FaceDiscret* theAlgo)
+  : myAlgo (theAlgo)
+  {
+  }
+
+  void operator() (const Standard_Integer theFaceIndex) const
+  {
+    myAlgo->process(theFaceIndex);
+  }
+
+private:
+  mutable BRepMesh_FaceDiscret* myAlgo;
+};
+
 //=======================================================================
 // Function: Perform
 // Purpose : 
@@ -54,7 +74,8 @@ Standard_Boolean BRepMesh_FaceDiscret::performInternal(
     return Standard_False;
   }
 
-  OSD_Parallel::For(0, myModel->FacesNb(), *this, !(myParameters.InParallel && myModel->FacesNb() > 1));
+  FaceListFunctor aFunctor(this);
+  OSD_Parallel::For(0, myModel->FacesNb(), aFunctor, !(myParameters.InParallel && myModel->FacesNb() > 1));
 
   myModel.Nullify(); // Do not hold link to model.
   return Standard_True;
