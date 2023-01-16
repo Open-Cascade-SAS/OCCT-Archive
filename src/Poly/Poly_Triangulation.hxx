@@ -34,6 +34,8 @@ class Standard_NullObject;
 
 
 class Poly_Triangulation;
+class Poly_TriangulationParameters;
+
 DEFINE_STANDARD_HANDLE(Poly_Triangulation, Standard_Transient)
 
 //! Provides a triangulation for a surface, a set of surfaces, or
@@ -105,6 +107,12 @@ public:
 
   //! Deallocates the UV nodes.
   Standard_EXPORT void RemoveUVNodes();
+
+  //! Returns initial set of parameters used to generate this triangulation.
+  const Handle(Poly_TriangulationParameters)& Parameters() const { return myParams; }
+
+  //! Updates initial set of parameters used to generate this triangulation.
+  void Parameters (const Handle(Poly_TriangulationParameters)& theParams) { myParams = theParams; }
 
   //! Returns the number of nodes for this triangulation.
   Standard_Integer NbNodes() const { return myNodes.Length(); }
@@ -204,6 +212,7 @@ protected:
   Poly_Array1OfTriangle              myTriangles;
   Handle(TShort_HArray1OfShortReal)  myNormals;
 
+  Handle(Poly_TriangulationParameters) myParams;
 };
 
 #endif // _Poly_Triangulation_HeaderFile
