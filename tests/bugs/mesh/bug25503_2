@@ -13,11 +13,11 @@ puts "===> meshing full sphere"
 psphere a 100
 puts ""
 puts "incmesh first time"
-set t3 [expr [lindex [time {incmesh a 0.015}] 0]/1000000]
+set t3 [expr [lindex [time {incmesh a 0.015 -a 1}] 0]/1000000]
 puts "spent $t3 sec"
 puts ""
 puts "incmesh second time"
-set t4 [expr [lindex [time {incmesh a 0.015}] 0]/1000000]
+set t4 [expr [lindex [time {incmesh a 0.015 -a 1}] 0]/1000000]
 puts "spent $t4 sec"
 if {$t4 != 0} {puts "Error: second time must be quicker"}
 puts ""

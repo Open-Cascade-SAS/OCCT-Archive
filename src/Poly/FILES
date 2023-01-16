@@ -29,7 +29,5 @@ Poly_PolygonOnTriangulation.lxx
 Poly_Triangle.cxx
 Poly_Triangle.hxx
 Poly_Triangle.lxx
-Poly_TriangulationParameters.hxx
-Poly_TriangulationParameters.cxx
 Poly_Triangulation.cxx
 Poly_Triangulation.hxx

@@ -20,5 +20,5 @@ isos result 0
 triangles result
 vfit
 
-checktrinfo result -tri !5496 -nod !5406
-checkview -screenshot -3d -path ${imagedir}/${test_image}.png
+checktrinfo result -tri 10924 -nod 7869
+checkview -screenshot -2d -path ${imagedir}/${test_image}_axo.png
