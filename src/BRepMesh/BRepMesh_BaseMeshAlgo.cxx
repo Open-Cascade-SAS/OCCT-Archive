@@ -101,38 +101,44 @@ Standard_Boolean BRepMesh_BaseMeshAlgo::initDataStructure()
 
     for (Standard_Integer aEdgeIt = 0; aEdgeIt < aDWire->EdgesNb(); ++aEdgeIt)
     {
-      const IMeshData::IEdgeHandle    aDEdge = aDWire->GetEdge(aEdgeIt);
+      const IMeshData::IEdgeHandle    aDEdge = aDWire->GetEdge (aEdgeIt);
       const IMeshData::ICurveHandle&  aCurve = aDEdge->GetCurve();
-      const IMeshData::IPCurveHandle& aPCurve = aDEdge->GetPCurve(
-        myDFace.get(), aDWire->GetEdgeOrientation(aEdgeIt));
+      const IMeshData::ListOfInteger& aListOfPCurves = aDEdge->GetPCurves (myDFace.get());
 
-      const TopAbs_Orientation aOri = fixSeamEdgeOrientation(aDEdge, aPCurve);
-
-      Standard_Integer aPrevNodeIndex = -1;
-      const Standard_Integer aLastPoint = aPCurve->ParametersNb() - 1;
-      for (Standard_Integer aPointIt = 0; aPointIt <= aLastPoint; ++aPointIt)
+      for (IMeshData::ListOfInteger::Iterator aPCurveIt(aListOfPCurves); aPCurveIt.More(); aPCurveIt.Next())
       {
-        const Standard_Integer aNodeIndex = registerNode(
-          aCurve ->GetPoint(aPointIt),
-          aPCurve->GetPoint(aPointIt),
-          BRepMesh_Frontier, Standard_False/*aPointIt > 0 && aPointIt < aLastPoint*/);
+        const IMeshData::IPCurveHandle& aPCurve = aDEdge->GetPCurve (aPCurveIt.Value());
 
-        aPCurve->GetIndex(aPointIt) = aNodeIndex;
-        myUsedNodes->Bind(aNodeIndex, aNodeIndex);
+        const TopAbs_Orientation aOri = fixSeamEdgeOrientation(aDEdge, aPCurve);
 
-        if (aPrevNodeIndex != -1 && aPrevNodeIndex != aNodeIndex)
+        Standard_Integer aPrevNodeIndex = -1;
+        const Standard_Integer aLastPoint = aPCurve->ParametersNb() - 1;
+
+        Standard_Integer aPointIt = 0;
+        for (; aPointIt <= aLastPoint; ++aPointIt)
         {
-          const Standard_Integer aLinksNb   = myStructure->NbLinks();
-          const Standard_Integer aLinkIndex = addLinkToMesh(aPrevNodeIndex, aNodeIndex, aOri);
-          if (aWireIt != 0 && aLinkIndex <= aLinksNb)
-          {
-            // Prevent holes around wire of zero area.
-            BRepMesh_Edge& aLink = const_cast<BRepMesh_Edge&>(myStructure->GetLink(aLinkIndex));
-            aLink.SetMovability(BRepMesh_Fixed);
-          }
-        }
+          const Standard_Integer aNodeIndex = registerNode(
+            aCurve->GetPoint(aPointIt),
+            aPCurve->GetPoint(aPointIt),
+            BRepMesh_Frontier, Standard_False/*aPointIt > 0 && aPointIt < aLastPoint*/);
 
-        aPrevNodeIndex = aNodeIndex;
+          aPCurve->GetIndex (aPointIt) = aNodeIndex;
+          myUsedNodes->Bind (aNodeIndex, aNodeIndex);
+
+          if (aPrevNodeIndex != -1 && aPrevNodeIndex != aNodeIndex)
+          {
+            const Standard_Integer aLinksNb = myStructure->NbLinks();
+            const Standard_Integer aLinkIndex = addLinkToMesh(aPrevNodeIndex, aNodeIndex, aOri);
+            if (aWireIt != 0 && aLinkIndex <= aLinksNb)
+            {
+              // Prevent holes around wire of zero area.
+              BRepMesh_Edge& aLink = const_cast<BRepMesh_Edge&>(myStructure->GetLink(aLinkIndex));
+              aLink.SetMovability(BRepMesh_Fixed);
+            }
+          }
+
+          aPrevNodeIndex = aNodeIndex;
+        }
       }
     }
   }
