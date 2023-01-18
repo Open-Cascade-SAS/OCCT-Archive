@@ -48,6 +48,10 @@ public:
     const IMeshData::IFacePtr& theDFace,
     const TopAbs_Orientation   theOrientation) const Standard_OVERRIDE;
 
+  //! Returns an array of pcurves indices for the specified discrete face.
+  Standard_EXPORT virtual const IMeshData::ListOfInteger& GetPCurves(
+    const IMeshData::IFacePtr& theDFace) const Standard_OVERRIDE;
+
   //! Returns pcurve with the given index.
   Standard_EXPORT virtual const IMeshData::IPCurveHandle& GetPCurve (
     const Standard_Integer theIndex) const Standard_OVERRIDE;
