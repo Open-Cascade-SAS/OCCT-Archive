@@ -446,12 +446,12 @@ static Standard_Integer getLayerRefs(Draw_Interpretor& theDI,
 
 void XDEDRAW_Layers::InitCommands(Draw_Interpretor& di) 
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
 
   //=====================================
   // Work with layers

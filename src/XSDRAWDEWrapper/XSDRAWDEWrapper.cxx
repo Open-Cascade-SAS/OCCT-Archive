@@ -20,7 +20,6 @@
 #include <Draw_PluginMacro.hxx>
 #include <Draw_Interpretor.hxx>
 #include <Draw_ProgressIndicator.hxx>
-#include <De_ConfigurationNode.hxx>
 #include <DE_ConfigurationContext.hxx>
 #include <DE_Provider.hxx>
 #include <DE_Wrapper.hxx>
@@ -375,12 +374,12 @@ static Standard_Integer WriteFile(Draw_Interpretor& theDI,
 //=======================================================================
 void XSDRAWDEWrapper::Factory(Draw_Interpretor& theDI)
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
 
   Standard_CString aGroup = "XDE translation commands";
   theDI.Add("DumpConfiguration",

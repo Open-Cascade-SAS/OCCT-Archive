@@ -974,7 +974,7 @@ void XSControl_TransferReader::PrintStats (Standard_OStream& sout,
   if (what > 10)  {  sout<<" ***  Not yet implemented"<<std::endl;  return;  }
   if (what < 10)  {
     sout << "******        Data recorded on Last Transfer                 ******"<<std::endl;
-    PrintStatsProcess (myTP,what,mode);
+    PrintStatsProcess (myTP, sout, what,mode);
   }
   //  reste  what = 10 : on liste les racines des final results
   sout << "******        Final Results                                  ******"<<std::endl;
@@ -1127,11 +1127,12 @@ static void PrintPercent(const Handle(Message_Messenger)& sout, const Standard_C
 //=======================================================================
 
 void XSControl_TransferReader::PrintStatsProcess(const Handle(Transfer_TransientProcess)& TP,
+                                                 Standard_OStream& theStream,
                                                  const Standard_Integer what,
                                                  const Standard_Integer mode)
 {
   Handle(TColStd_HSequenceOfTransient) list;  // null
-  XSControl_TransferReader::PrintStatsOnList (TP,list,what,mode);
+  XSControl_TransferReader::PrintStatsOnList (TP, theStream,list,what,mode);
 }
 
 
@@ -1141,33 +1142,32 @@ void XSControl_TransferReader::PrintStatsProcess(const Handle(Transfer_Transient
 //=======================================================================
 
 void XSControl_TransferReader::PrintStatsOnList(const Handle(Transfer_TransientProcess)& TP,
+                                                Standard_OStream& theStream,
                                                 const Handle(TColStd_HSequenceOfTransient)& list,
                                                 const Standard_Integer what,
                                                 const Standard_Integer mode)
 {
-  Message_Messenger::StreamBuffer sout = TP->Messenger()->SendInfo();
-
   char mess[250];
   if (TP.IsNull()) return;
-  if (what == 0) {  TP->PrintStats(0,sout);  return;  }
+  if (what == 0) {  TP->PrintStats(0, theStream);  return;  }
 
-  sout<<"\n*******************************************************************\n";
-  sout << "******        Statistics on Transfer Process (Read)          ******"<<std::endl;
-  if (what == 1) sout << "******        Individual Transfers  (Roots)                  ******\n";
-  if (what == 2) sout << "******        All recorded data about Transfer               ******\n";
-  if (what == 3) sout << "******        Abnormal records                               ******\n";
+  theStream <<"\n*******************************************************************\n";
+  theStream << "******        Statistics on Transfer Process (Read)          ******"<<std::endl;
+  if (what == 1) theStream << "******        Individual Transfers  (Roots)                  ******\n";
+  if (what == 2) theStream << "******        All recorded data about Transfer               ******\n";
+  if (what == 3) theStream << "******        Abnormal records                               ******\n";
   if (what == 1 || what == 2 || what == 3) {
-    if (mode == 0) sout<<"******        (n0s of recorded entities)                     ******\n";
-    if (mode == 1) sout<<"******        (per entity : type + result)                   ******\n";
-    if (mode == 2) sout<<"******        (per entity : type + result/status)            ******\n";
-    if (mode == 3) sout<<"******        (count per type of entity)                     ******\n";
-    if (mode == 4) sout<<"******        (count per type of result)                     ******\n";
-    if (mode == 5) sout<<"******   (count per couple entity-type / result-type/status) ******\n";
-    if (mode == 6) sout<<"******   (list per couple entity-type / result-type/status)  ******\n";
+    if (mode == 0) theStream<<"******        (n0s of recorded entities)                     ******\n";
+    if (mode == 1) theStream<<"******        (per entity : type + result)                   ******\n";
+    if (mode == 2) theStream<<"******        (per entity : type + result/status)            ******\n";
+    if (mode == 3) theStream<<"******        (count per type of entity)                     ******\n";
+    if (mode == 4) theStream<<"******        (count per type of result)                     ******\n";
+    if (mode == 5) theStream<<"******   (count per couple entity-type / result-type/status) ******\n";
+    if (mode == 6) theStream<<"******   (list per couple entity-type / result-type/status)  ******\n";
   }
-  if (what == 4) sout << "******        Check messages                                 ******\n";
-  if (what == 5) sout << "******        Fail  messages                                 ******\n";
-  sout<<"*******************************************************************\n";
+  if (what == 4) theStream << "******        Check messages                                 ******\n";
+  if (what == 5) theStream << "******        Fail  messages                                 ******\n";
+  theStream <<"*******************************************************************\n";
 
   //  Cas what = 1,2,3 : contenu du TP (binders)
 
@@ -1190,10 +1190,10 @@ void XSControl_TransferReader::PrintStatsOnList(const Handle(Transfer_TransientP
     IFSelect_PrintCount pcm = IFSelect_CountByItem;
     if (mode == 6) pcm = IFSelect_ListByItem;
 
-    sout  <<"****        Entities in Model   : "<<model->NbEntities()<<std::endl;
-    sout  <<"****        Nb Items (Transfer) : "<<nb<<std::endl;
+    theStream <<"****        Entities in Model   : "<<model->NbEntities()<<std::endl;
+    theStream <<"****        Nb Items (Transfer) : "<<nb<<std::endl;
     if (!nolist)
-      sout<<"****        Nb Items (Listed)   : "<<nl<<std::endl;
+      theStream <<"****        Nb Items (Listed)   : "<<nl<<std::endl;
 
     for (itrp.Start(); itrp.More(); itrp.Next()) {
       nbi ++;
@@ -1203,13 +1203,13 @@ void XSControl_TransferReader::PrintStatsOnList(const Handle(Transfer_TransientP
 	nbnr ++;
 	if (notrec) counter->Add(ent,"(not recorded)");
 	else if (mode == 1 || mode == 2) {
-	  sout<<"["<<Interface_MSG::Blanks (nbi,4)<<nbi<<" ]:";
-	  model->Print (ent, sout);
-	  sout<<"   "<<model->TypeName(ent,Standard_False)<<"  (not recorded)"<<std::endl;
+    theStream <<"["<<Interface_MSG::Blanks (nbi,4)<<nbi<<" ]:";
+	  model->Print (ent, theStream);
+    theStream <<"   "<<model->TypeName(ent,Standard_False)<<"  (not recorded)"<<std::endl;
 	  continue;
 	}
       }
-      if (mode == 0)  {  sout<<"  "<<model->Number(ent); continue;  }
+      if (mode == 0)  { theStream <<"  "<<model->Number(ent); continue;  }
       if (mode != 3) {
 	stat = BinderStatus(binder,mess);
         // 0 Binder Null.   1 void  2 Warning seul  3 Fail seul
@@ -1224,22 +1224,22 @@ void XSControl_TransferReader::PrintStatsOnList(const Handle(Transfer_TransientP
 
       //  mode : 0 list num;  1 : num+label + type + result (abrege);  2 : complet
       if (mode == 1 || mode == 2) {
-	sout<<"["<<Interface_MSG::Blanks (i,4)<<i<<" ]:";
-	model->Print (ent, sout);
-	sout<<"   "<<model->TypeName(ent,Standard_False);
-	sout<<"	Result:"<<mess<<std::endl;
+        theStream <<"["<<Interface_MSG::Blanks (i,4)<<i<<" ]:";
+	model->Print (ent, theStream);
+  theStream <<"   "<<model->TypeName(ent,Standard_False);
+  theStream <<"	Result:"<<mess<<std::endl;
 	if (mode == 1) continue;
 
 	const Handle(Interface_Check)& ch = binder->Check();
 	Standard_Integer newi,newnbw = ch->NbWarnings(), newnbf = ch->NbFails();
 
 	if (newnbw > 0) {
-	  sout<<" - Warnings : "<<newnbw<<":\n";
-	  for (newi = 1; newi <= newnbw; newi ++) sout<<ch->CWarning(newi)<<std::endl;
+    theStream <<" - Warnings : "<<newnbw<<":\n";
+	  for (newi = 1; newi <= newnbw; newi ++) theStream <<ch->CWarning(newi)<<std::endl;
 	}
 	if (newnbf > 0) {
-	  sout<<" - Fails : "<<newnbf<<":\n";
-	  for (newi = 1; newi <= newnbf; newi ++) sout<<ch->CFail(newi)<<std::endl;
+    theStream <<" - Fails : "<<newnbf<<":\n";
+	  for (newi = 1; newi <= newnbf; newi ++) theStream <<ch->CFail(newi)<<std::endl;
 	}
 	continue;
       }
@@ -1265,11 +1265,11 @@ void XSControl_TransferReader::PrintStatsOnList(const Handle(Transfer_TransientP
 
       //    Fin de l iteration
     }
-    if (!counter.IsNull()) counter->PrintList (sout, model, pcm);
-    else sout<<std::endl;
+    if (!counter.IsNull()) counter->PrintList (theStream, model, pcm);
+    else theStream <<std::endl;
     //    Pourcentages
     if (mode != 3 && nbi > 0) {
-      sout << "******        Percentages according Transfer Status          ******"<<std::endl;
+      theStream << "******        Percentages according Transfer Status          ******"<<std::endl;
       PrintPercent (TP->Messenger(),"Result          ",nbr+nbrw,nl);
       PrintPercent (TP->Messenger(),"Result + FAIL   ",nbrf,nl);
       PrintPercent (TP->Messenger(),"FAIL, no Result ",nbf,nl);
@@ -1297,14 +1297,14 @@ void XSControl_TransferReader::PrintStatsOnList(const Handle(Transfer_TransientP
     chl.SetName("** TRANSFER READ CHECK **");
     if (mode == 0)
     {
-      chl.Print (sout, model, (what == 5));
+      chl.Print (theStream, model, (what == 5));
     }
     else {
       IFSelect_PrintCount pcm = IFSelect_CountByItem;
       if (mode == 2) pcm = IFSelect_ListByItem;
       Handle(IFSelect_CheckCounter) counter = new IFSelect_CheckCounter(Standard_True);
       counter->Analyse   (chl,model,Standard_True,(what == 5));
-      counter->PrintList (sout, model, pcm);
+      counter->PrintList (theStream, model, pcm);
     }
   }
 

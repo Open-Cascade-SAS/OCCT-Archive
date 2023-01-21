@@ -1,3 +1,3 @@
-project(TKSTL)
+project(TKXDEOBJ)
 
 OCCT_INCLUDE_CMAKE_FILE (adm/cmake/occt_toolkit)

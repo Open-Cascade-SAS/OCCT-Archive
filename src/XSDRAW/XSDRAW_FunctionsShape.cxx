@@ -77,7 +77,6 @@ static Standard_Integer XSControl_tpdraw(Draw_Interpretor& theDI,
                                          const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   const Standard_CString arg2 = theArgVec[2];
   const Standard_CString arg3 = theArgVec[3];
@@ -301,7 +300,6 @@ static Standard_Integer XSControl_tpcompound(Draw_Interpretor& theDI,
                                              const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   const Handle(Transfer_TransientProcess)& TP = XSDRAWBase::Session()->TransferReader()->TransientProcess();
   if (TP.IsNull())
@@ -352,7 +350,6 @@ static Standard_Integer XSControl_traccess(Draw_Interpretor& theDI,
                                            const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   const Standard_CString arg2 = theArgVec[2];
   TCollection_AsciiString aCommand(theArgVec[0]);
@@ -460,7 +457,6 @@ static Standard_Integer XSControl_fromshape(Draw_Interpretor& theDI,
                                             const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   //        ****    fromshape (tread)         ****
   if (theNbArgs < 2)
@@ -525,14 +521,14 @@ static Standard_Integer XSControl_fromshape(Draw_Interpretor& theDI,
           TopoDS_Shape sh = TransferBRep::ShapeResult(TP, ent);
           if (sh.IsNull())
           {
-            ent.Nullify();
             continue;
           }
-          if (XSControl_IsEqualSubShape(Shape, sh, aLevel)) break;
+          if (XSControl_IsEqualSubShape(Shape, sh, aLevel))
+            break;
           modrec = -2;
           sh.Location(L);
-          if (XSControl_IsEqualSubShape(S0, sh, aLevel)) break;
-          ent.Nullify();
+          if (XSControl_IsEqualSubShape(S0, sh, aLevel))
+            break;
           modrec = 2;
         }
       }
@@ -643,9 +639,13 @@ static Standard_Integer XSControl_fromshape(Draw_Interpretor& theDI,
       }
     }
   }
-  if (!yena) aSSC.SStream() << "No transfer (either import or export) recorded" << std::endl;
+  if (!yena)
+  {
+    aSSC.SStream() << "No transfer (either import or export) recorded" << std::endl;
+    return 1;
+  }
 
-  return 1;
+  return 0;
 }
 
 //=======================================================================
@@ -657,7 +657,6 @@ static Standard_Integer XSControl_trconnexentities(Draw_Interpretor& theDI,
                                                    const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   //        ****    connected entities (last transfer)         ****
   const Handle(XSControl_TransferReader)& TR = XSDRAWBase::Session()->TransferReader();
@@ -706,7 +705,6 @@ static Standard_Integer XSControl_twrite(Draw_Interpretor& theDI,
                                          const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   //        ****    twrite         ****
   Handle(XSControl_TransferWriter) TW = XSDRAWBase::Session()->TransferWriter();

@@ -486,12 +486,12 @@ static Standard_Integer WriteGltf(Draw_Interpretor& theDI,
 //=======================================================================
 void XSDRAWGLTF::Factory(Draw_Interpretor& theDI)
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
   const char* aGroup = "XSTEP-STL/VRML";  // Step transfer file commands
 
   theDI.Add("ReadGltf",

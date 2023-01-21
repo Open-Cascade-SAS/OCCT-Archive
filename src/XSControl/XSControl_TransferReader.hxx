@@ -340,11 +340,18 @@ class XSControl_TransferReader : public Standard_Transient
   //! 2 : ShortByItem       (count + 5 first numbers)
   //! 3 : ListByItem        (count + entity numbers)
   //! 4 : EntitiesByItem    (count + entity numbers and labels)
-  Standard_EXPORT static void PrintStatsProcess (const Handle(Transfer_TransientProcess)& theTP, const Standard_Integer theWhat, const Standard_Integer theMode = 0);
+  Standard_EXPORT static void PrintStatsProcess (const Handle(Transfer_TransientProcess)& theTP,
+                                                 Standard_OStream& theStream,
+                                                 const Standard_Integer theWhat,
+                                                 const Standard_Integer theMode = 0);
   
   //! Works as PrintStatsProcess, but displays data only on the
   //! entities which are in <list> (filter)
-  Standard_EXPORT static void PrintStatsOnList (const Handle(Transfer_TransientProcess)& theTP, const Handle(TColStd_HSequenceOfTransient)& theList, const Standard_Integer theWhat, const Standard_Integer theMode = 0);
+  Standard_EXPORT static void PrintStatsOnList (const Handle(Transfer_TransientProcess)& theTP,
+                                                Standard_OStream& theStream,
+                                                const Handle(TColStd_HSequenceOfTransient)& theList,
+                                                const Standard_Integer theWhat,
+                                                const Standard_Integer theMode = 0);
 
   DEFINE_STANDARD_RTTIEXT(XSControl_TransferReader,Standard_Transient)
 

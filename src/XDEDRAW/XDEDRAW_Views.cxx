@@ -1304,12 +1304,12 @@ static Standard_Integer getClippingPlaneCapping(Draw_Interpretor& di, Standard_I
 
 void XDEDRAW_Views::InitCommands(Draw_Interpretor& di) 
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
   
   Standard_CString g = "XDE Views commands";
 

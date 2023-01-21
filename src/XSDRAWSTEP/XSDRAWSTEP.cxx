@@ -899,12 +899,12 @@ static Standard_Integer WriteStep(Draw_Interpretor& theDI,
 //=======================================================================
 void XSDRAWSTEP::Factory(Draw_Interpretor& theDI)
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
   const char* g = "DE: STEP";  // Step transfer file commands
   theDI.Add("stepwrite", "stepwrite mode[0-4 afsmw] shape", __FILE__, stepwrite, g);
   theDI.Add("testwritestep", "testwritestep filename.stp shape [-stream]",

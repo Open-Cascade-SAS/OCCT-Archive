@@ -1297,12 +1297,12 @@ static Standard_Integer XSetVisMaterial (Draw_Interpretor& , Standard_Integer th
 
 void XDEDRAW_Colors::InitCommands(Draw_Interpretor& di) 
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
 
   //=====================================
   // Work with colors

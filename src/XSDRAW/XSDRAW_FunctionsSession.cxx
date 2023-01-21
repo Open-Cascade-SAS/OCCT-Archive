@@ -105,7 +105,6 @@ static Standard_Integer funstatus(Draw_Interpretor& theDI,
                                   const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   //        ****    Version & cie     ****
@@ -126,7 +125,6 @@ static Standard_Integer fun1(Draw_Interpretor& theDI,
                              const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -147,7 +145,6 @@ static Standard_Integer fun3(Draw_Interpretor& theDI,
                              const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -195,7 +192,6 @@ static Standard_Integer fun4(Draw_Interpretor& theDI,
                              const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -205,7 +201,7 @@ static Standard_Integer fun4(Draw_Interpretor& theDI,
     aSSC.SStream() << "Write All : give file name !";
     return 1;
   }
-  return WS->SendAll(arg1) == IFSelect_RetDone;
+  return (WS->SendAll(arg1) == IFSelect_RetDone ? 0 : 1);
 }
 
 //=======================================================================
@@ -217,7 +213,6 @@ static Standard_Integer fun6(Draw_Interpretor& theDI,
                              const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -251,7 +246,7 @@ static Standard_Integer fun6(Draw_Interpretor& theDI,
     aSSC.SStream() << ko << " bad arguments, abandon";
     return 1;
   }
-  return WS->SendSelected(arg1, sp) == IFSelect_RetDone;
+  return (WS->SendSelected(arg1, sp) == IFSelect_RetDone ? 0 : 1);
 }
 
 //=======================================================================
@@ -263,7 +258,6 @@ static Standard_Integer fun7(Draw_Interpretor& theDI,
                              const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -299,7 +293,6 @@ static Standard_Integer fun8(Draw_Interpretor& theDI,
                              const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -342,15 +335,27 @@ static Standard_Integer fun9(Draw_Interpretor& theDI,
                              const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theNbArgs;
-  (void)theArgVec;
   Handle(IFSelect_WorkSession) WS = XSDRAWBase::Session();
   Handle(IFSelect_Signature) signtype = WS->SignType();
   if (signtype.IsNull()) signtype = new IFSelect_SignType;
-  Handle(IFSelect_SignCounter) counter =
+  Handle(IFSelect_SignCounter) aCounter =
     new IFSelect_SignCounter(signtype, Standard_False);
-  counter->AddModel(WS->Model());
-  counter->PrintList(aSSC.SStream(), WS->Model(), IFSelect_CountByItem);
+  if (theNbArgs == 1)
+  {
+    aCounter->AddModel(WS->Model());
+  }
+  else
+  {
+    //   on demande un givelist
+    Handle(TColStd_HSequenceOfTransient) list = WS->GiveList(theArgVec[1]);
+    if (list.IsNull())
+    {
+      theDI << "Error: Nothing selected from : " << theArgVec[1] << "\n";
+      return 1;
+    }
+    aCounter->AddWithGraph(list, WS->Graph());
+  }
+  aCounter->PrintList(aSSC.SStream(), WS->Model(), IFSelect_CountByItem);
   return 0;
 }
 
@@ -363,7 +368,6 @@ static Standard_Integer funsigntype(Draw_Interpretor& theDI,
                                     const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -417,7 +421,6 @@ static Standard_Integer funsigncase(Draw_Interpretor& theDI,
                                     const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Standard_CString arg1 = theArgVec[1];
@@ -456,7 +459,6 @@ static Standard_Integer fun10(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -491,8 +493,11 @@ static Standard_Integer fun11(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
-  (void)theNbArgs;
+  if (theNbArgs < 2)
+  {
+    aSSC.SStream() << "Error: Empty Mode\n";
+    return 1;
+  }
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //  
   const Standard_CString arg1 = theArgVec[1];
@@ -524,10 +529,10 @@ static Standard_Integer fun11(Draw_Interpretor& theDI,
     case 'T': niv = 7; break;
     case 'f': niv = 8; break;
     case 'F': niv = 10; break;
-    default: aSSC.SStream() << "Unknown Mode .  data tout court pour help";
+    default: aSSC.SStream() << "Unknown Mode .   tout court pour help";
       return 1;
   }
-  WS->TraceDumpModel(niv);
+  WS->DumpModel(niv, aSSC.SStream());
   return 0;
 }
 
@@ -542,7 +547,6 @@ static Standard_Integer fundumpent(Draw_Interpretor& theDI,
   XSDRAW::StreamContainer aSSC(theDI);
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   Handle(IFSelect_WorkLibrary) WL = WS->WorkLibrary();
-  Standard_SStream aStream;
   Standard_Integer levdef = 0, levmax = 10, level;
   WL->DumpLevels(levdef, levmax);
   if (theNbArgs < 2 || (theNbArgs == 2 && levmax < 0))
@@ -556,7 +560,7 @@ static Standard_Integer fundumpent(Draw_Interpretor& theDI,
     {
       Standard_CString help = WL->DumpHelp(level);
       if (help[0] != '\0')
-        aStream << level << " : " << help;
+        aSSC.SStream() << level << " : " << help;
     }
     return 1;
   }
@@ -572,16 +576,16 @@ static Standard_Integer fundumpent(Draw_Interpretor& theDI,
   Handle(Standard_Transient) ent = WS->StartingEntity(num);
   if (ent.IsNull())
   {
-    aStream << "No entity with given id " << arg1 << " (" << num << ") is found in the current model";
+    aSSC.SStream() << "No entity with given id " << arg1 << " (" << num << ") is found in the current model";
   }
   else
   {
-    aStream << "  --   DUMP  Entity n0 " << num << "  level " << level;
-    WL->DumpEntity(WS->Model(), WS->Protocol(), ent, aStream, level);
+    aSSC.SStream() << "  --   DUMP  Entity n0 " << num << "  level " << level;
+    WL->DumpEntity(WS->Model(), WS->Protocol(), ent, aSSC.SStream(), level);
 
     Interface_CheckIterator chl = WS->CheckOne(ent);
     if (!chl.IsEmpty(Standard_False))
-      chl.Print(aStream, WS->Model(), Standard_False);
+      chl.Print(aSSC.SStream(), WS->Model(), Standard_False);
   }
   return 0;
 }
@@ -595,7 +599,6 @@ static Standard_Integer funsign(Draw_Interpretor& theDI,
                                 const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -628,7 +631,6 @@ static Standard_Integer funqp(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -658,7 +660,6 @@ static Standard_Integer fun12(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -676,7 +677,6 @@ static Standard_Integer fun13(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   //        ****    ListItems         ****
@@ -693,7 +693,6 @@ static Standard_Integer fun15(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -720,7 +719,6 @@ static Standard_Integer fun17(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -746,7 +744,6 @@ static Standard_Integer fun19(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -769,7 +766,6 @@ static Standard_Integer fun21(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -783,7 +779,6 @@ static Standard_Integer fun22(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -802,7 +797,7 @@ static Standard_Integer fun22(Draw_Interpretor& theDI,
   {
     if (mode < 0) aSSC.SStream() << "Give a suitable mode";
     aSSC.SStream() << "  Available Modes :\n"
-      << " a : all data    g : graph+check  c : check  p : selectpointed";
+      << " a : all     g : graph+check  c : check  p : selectpointed";
     return 1;
   }
   WS->ClearData(mode);
@@ -818,7 +813,6 @@ static Standard_Integer fun24(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   //        ****    Item Label         ****
@@ -859,7 +853,6 @@ static Standard_Integer fun25(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -884,7 +877,6 @@ static Standard_Integer fun26(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -912,7 +904,6 @@ static Standard_Integer fun27(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Standard_CString arg1 = theArgVec[1];
   Standard_CString arg2 = theArgVec[2];
@@ -1006,7 +997,6 @@ static Standard_Integer fun29(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -1033,7 +1023,6 @@ static Standard_Integer fun30(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1058,7 +1047,6 @@ static Standard_Integer fun31(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1083,7 +1071,6 @@ static Standard_Integer fun32(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1116,7 +1103,6 @@ static Standard_Integer fun33(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1141,7 +1127,6 @@ static Standard_Integer fun34(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -1178,7 +1163,6 @@ static Standard_Integer fun35(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -1196,7 +1180,6 @@ static Standard_Integer fun36(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   //        ****    Split              ****
@@ -1233,7 +1216,6 @@ static Standard_Integer fun37(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1267,7 +1249,6 @@ static Standard_Integer fun38(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1313,7 +1294,6 @@ static Standard_Integer fun40(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -1332,7 +1312,6 @@ static Standard_Integer fun41(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1380,7 +1359,6 @@ static Standard_Integer fun42(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1422,7 +1400,6 @@ static Standard_Integer fun43(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1466,7 +1443,6 @@ static Standard_Integer fun44(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1496,7 +1472,6 @@ static Standard_Integer fun45(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1537,7 +1512,6 @@ static Standard_Integer fun51(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Standard_CString arg1 = theArgVec[1];
   const Standard_CString arg2 = theArgVec[2];
@@ -1573,7 +1547,6 @@ static Standard_Integer fun56(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1610,7 +1583,6 @@ static Standard_Integer fun57(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1634,7 +1606,6 @@ static Standard_Integer fun58(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1682,7 +1653,6 @@ static Standard_Integer fun59(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1706,7 +1676,6 @@ static Standard_Integer fun60(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -1727,7 +1696,6 @@ static Standard_Integer fun61(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1768,7 +1736,6 @@ static Standard_Integer fun70(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1798,7 +1765,6 @@ static Standard_Integer fun71(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1833,7 +1799,6 @@ static Standard_Integer fun77(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1861,7 +1826,6 @@ static Standard_Integer fun78(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1888,7 +1852,6 @@ static Standard_Integer fun80(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1916,7 +1879,6 @@ static Standard_Integer fun81(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -1944,7 +1906,6 @@ static Standard_Integer fun91(Draw_Interpretor& theDI,
                               const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
 
   const Standard_CString arg1 = theArgVec[1];
@@ -2033,7 +1994,6 @@ static Standard_Integer fun_editlist(Draw_Interpretor& theDI,
                                      const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   if (theNbArgs < 2)
   {
     aSSC.SStream() << "Give the name of an EditForm or an Editor";
@@ -2096,7 +2056,6 @@ static Standard_Integer fun_editclear(Draw_Interpretor& theDI,
                                       const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   if (theNbArgs < 2)
   {
     aSSC.SStream() << "Give the name of an EditForm [+ name of Value  else all]";
@@ -2142,7 +2101,6 @@ static Standard_Integer fun_editapply(Draw_Interpretor& theDI,
                                       const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   if (theNbArgs < 2)
   {
     aSSC.SStream() << "Give the name of an EditForm [+ option keep to re-apply edited values]";
@@ -2199,7 +2157,6 @@ static Standard_Integer fun_editload(Draw_Interpretor& theDI,
                                      const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   if (theNbArgs < 2)
   {
     aSSC.SStream() << "Give the name of an EditForm [+ Entity-Ident]";

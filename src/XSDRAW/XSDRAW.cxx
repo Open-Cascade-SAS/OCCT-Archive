@@ -17,15 +17,17 @@
 #include <XSDRAW_Functions.hxx>
 #include <XSDRAW_FunctionsSession.hxx>
 #include <XSDRAW_FunctionsShape.hxx>
+#include <XSAlgo.hxx>
 
 void XSDRAW::Factory(Draw_Interpretor& theDI)
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
+  XSAlgo::Init();
   XSDRAW_Functions::Init(theDI);
   XSDRAW_FunctionsSession::Init(theDI);
   XSDRAW_FunctionsShape::Init(theDI);

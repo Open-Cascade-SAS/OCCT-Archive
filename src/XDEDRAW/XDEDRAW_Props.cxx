@@ -976,12 +976,12 @@ static Standard_Integer GetValidationProps(Draw_Interpretor& di, Standard_Intege
 
 void XDEDRAW_Props::InitCommands(Draw_Interpretor& di) 
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
 
   Standard_CString g = "XDE property's commands";
   

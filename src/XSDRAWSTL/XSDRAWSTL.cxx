@@ -169,12 +169,12 @@ static Standard_Integer readstl(Draw_Interpretor& theDI,
 //=============================================================================
 void XSDRAWSTL::Factory(Draw_Interpretor& theDI)
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
   const char* g = "XSTEP-STL/VRML";  // Step transfer file commands
 
   theDI.Add("writestl", "shape file [ascii/binary (0/1) : 1 by default] [InParallel (0/1) : 0 by default]", __FILE__, writestl, g);

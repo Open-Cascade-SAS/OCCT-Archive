@@ -13,6 +13,7 @@
 
 #include <XSDRAWBase.hxx>
 
+#include <Interface_Static.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
@@ -78,7 +79,10 @@ Standard_Real XSDRAWBase::GetLengthUnit(const Handle(TDocStd_Document)& theDoc)
       return aUnit;
     }
   }
-  XSAlgo::AlgoContainer()->PrepareForTransfer();
+  if (Interface_Static::IsPresent("xstep.cascade.unit"))
+  {
+    UnitsMethods::SetCasCadeLengthUnit(Interface_Static::IVal("xstep.cascade.unit"));
+  }
   return UnitsMethods::GetCasCadeLengthUnit();
 }
 

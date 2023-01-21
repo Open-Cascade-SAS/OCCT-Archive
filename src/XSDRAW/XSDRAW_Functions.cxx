@@ -70,7 +70,6 @@ static Standard_Integer XSControl_xnorm(Draw_Interpretor& theDI,
                                         const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   Handle(XSControl_Controller) control = WS->NormAdaptor();
   if (theNbArgs == 1)
@@ -131,7 +130,6 @@ static Standard_Integer XSControl_tpclear(Draw_Interpretor& theDI,
                                           const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   const Standard_Boolean modew = (theArgVec[0][2] == 'w');
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -163,7 +161,6 @@ static Standard_Integer XSControl_tpstat(Draw_Interpretor& theDI,
                                          const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(Transfer_TransientProcess)& TP =
@@ -241,7 +238,7 @@ static Standard_Integer XSControl_tpstat(Draw_Interpretor& theDI,
     if (TP->Model() != WS->Model()) aSSC.SStream() << "Model differs from the session";
     Handle(TColStd_HSequenceOfTransient) list =
       WS->GiveList(theArgVec[2]);
-    XSControl_TransferReader::PrintStatsOnList(TP, list, mod1, mod2);
+    XSControl_TransferReader::PrintStatsOnList(TP, aSSC.SStream(), list, mod1, mod2);
     //    TP->PrintStats (1,aSSC.SStream());
   }
   else aSSC.SStream() << "TransferRead : not defined";
@@ -257,7 +254,6 @@ static Standard_Integer XSControl_tpent(Draw_Interpretor& theDI,
                                         const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(Transfer_TransientProcess)& TP =
@@ -302,7 +298,6 @@ static Standard_Integer XSControl_tpitem(Draw_Interpretor& theDI,
                                          const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   //        ****    tpitem/tproot/twitem/twroot        ****
   if (theNbArgs < 2)
@@ -333,7 +328,6 @@ static Standard_Integer XSControl_trecord(Draw_Interpretor& theDI,
                                           const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(Transfer_TransientProcess)& TP = WS->TransferReader()->TransientProcess();
@@ -385,7 +379,6 @@ static Standard_Integer XSControl_trstat(Draw_Interpretor& theDI,
                                          const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   //        ****    trstat : TransferReader        ****
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -451,7 +444,6 @@ static Standard_Integer XSControl_trbegin(Draw_Interpretor& theDI,
                                           const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   //        ****    trbegin : TransferReader        ****
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   Handle(XSControl_TransferReader) TR = WS->TransferReader();
@@ -483,7 +475,6 @@ static Standard_Integer XSControl_tread(Draw_Interpretor& theDI,
                                         const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   //const Standard_CString arg1 = pilot->Arg(1);
   //        ****    tread : TransferReader        ****
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -531,7 +522,6 @@ static Standard_Integer XSControl_trtp(Draw_Interpretor& theDI,
                                        const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   //        ****    TReader -> TProcess         ****
@@ -553,7 +543,6 @@ static Standard_Integer XSControl_tptr(Draw_Interpretor& theDI,
                                        const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   //        ****    TProcess -> TReader         ****
@@ -570,7 +559,6 @@ static Standard_Integer XSControl_twmode(Draw_Interpretor& theDI,
                                          const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   //        ****    twmode         ****
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -605,7 +593,6 @@ static Standard_Integer XSControl_twstat(Draw_Interpretor& theDI,
                                          const char** theArgVec)
 {
   XSDRAW::StreamContainer aSSC(theDI);
-  (void)theDI;
   (void)theNbArgs;
   (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -629,12 +616,12 @@ static Standard_Integer XSControl_twstat(Draw_Interpretor& theDI,
 //=======================================================================
 void XSDRAW_Functions::Init(Draw_Interpretor& theDI)
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
   Standard_CString aGroup = "DE: General";
 
   theDI.Add("xinit"

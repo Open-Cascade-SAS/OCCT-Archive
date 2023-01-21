@@ -59,26 +59,28 @@ static Standard_Integer SetCurWS(Draw_Interpretor& theDI,
                                  Standard_Integer theNbArgs,
                                  const char** theArgVec)
 {
-  //if (theNbArgs < 2)
-  //{
-  //  theDI << "Use: " << theArgVec[0] << " filename \n";
-  //  return 1;
-  //}
-  //const TCollection_AsciiString aSessionName(theArgVec[1]);
-  //Handle(XSControl_WorkSession) aSession;
-  //if (!THE_PREVIOUS_WORK_SESSIONS.Find(aSessionName, aSession))
-  //{
-  //  TCollection_AsciiString aWSs;
-  //  for (XSControl_WorkSessionMap::Iterator anIter(THE_PREVIOUS_WORK_SESSIONS);
-  //       anIter.More(); anIter.Next())
-  //  {
-  //    aWSs += "\"";
-  //    aWSs += anIter.Key();
-  //    aWSs += "\"\n";
-  //  }
-  //  theDI << "Error: Can't find active session. Active sessions list:\n" << aWSs;
-  //  return 1;
-  //}
+  if (theNbArgs < 2)
+  {
+    theDI << "Use: " << theArgVec[0] << " filename \n";
+    return 1;
+  }
+  const TCollection_AsciiString aSessionName(theArgVec[1]);
+  Handle(XSControl_WorkSession) aSession;
+  const XSControl_WorkSessionMap& aWSList = XSDRAWBase::WorkSessionList();
+  if (!aWSList.Find(aSessionName, aSession))
+  {
+    TCollection_AsciiString aWSs;
+    for (XSControl_WorkSessionMap::Iterator anIter(aWSList);
+         anIter.More(); anIter.Next())
+    {
+      aWSs += "\"";
+      aWSs += anIter.Key();
+      aWSs += "\"\n";
+    }
+    theDI << "Error: Can't find active session. Active sessions list:\n" << aWSs;
+    return 1;
+  }
+  XSDRAWBase::Session() = aSession;
   return 0;
 }
 
@@ -90,15 +92,15 @@ static Standard_Integer GetDicWSList(Draw_Interpretor& theDI,
                                      Standard_Integer theNbArgs,
                                      const char** theArgVec)
 {
-  //(void)theNbArgs;
-  //(void)theArgVec;
-  //Message::SendInfo() << "Active sessions list:";
-  //TCollection_AsciiString aWSs;
-  //for (XSControl_WorkSessionMap::Iterator anIter(THE_PREVIOUS_WORK_SESSIONS);
-  //     anIter.More(); anIter.Next())
-  //{
-  //  theDI << "\"" << anIter.Key() << "\"\n";
-  //}
+  (void)theNbArgs;
+  (void)theArgVec;
+  Message::SendInfo() << "Active sessions list:";
+  TCollection_AsciiString aWSs;
+  for (XSControl_WorkSessionMap::Iterator anIter(XSDRAWBase::WorkSessionList());
+       anIter.More(); anIter.Next())
+  {
+    theDI << "\"" << anIter.Key() << "\"\n";
+  }
   return 0;
 }
 
@@ -125,25 +127,25 @@ static Standard_Integer FromShape(Draw_Interpretor& theDI,
                                   Standard_Integer theNbArgs,
                                   const char** theArgVec)
 {
-  //if (theNbArgs < 2)
-  //{
-  //  theDI << theArgVec[0] << " shape: search for shape origin among all last tranalated files\n";
-  //  return 0;
-  //}
+  if (theNbArgs < 2)
+  {
+    theDI << theArgVec[0] << " shape: search for shape origin among all last tranalated files\n";
+    return 0;
+  }
 
-  //char command[256];
-  //Sprintf(command, "fromshape %.200s -1", theArgVec[1]);
-  //XSControl_WorkSessionMap DictWS = THE_PREVIOUS_WORK_SESSIONS;
-  //if (DictWS.IsEmpty())
-  //  return theDI.Eval(command);
+  char command[256];
+  Sprintf(command, "fromshape %.200s -1", theArgVec[1]);
+  const XSControl_WorkSessionMap& DictWS = XSDRAWBase::WorkSessionList();
+  if (DictWS.IsEmpty())
+    return theDI.Eval(command);
 
-  //Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
-  //for (XSControl_WorkSessionMap::Iterator DicIt(DictWS);
-  //     DicIt.More(); DicIt.Next())
-  //{
-  //  Handle(XSControl_WorkSession) CurrentWS = DicIt.Value();
-  //  theDI.Eval(command);
-  //}
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  for (XSControl_WorkSessionMap::Iterator DicIt(DictWS);
+       DicIt.More(); DicIt.Next())
+  {
+    Handle(XSControl_WorkSession) CurrentWS = DicIt.Value();
+    theDI.Eval(command);
+  }
   return 0;
 }
 
@@ -276,12 +278,12 @@ static Standard_Integer Extract(Draw_Interpretor& theDI,
 
 void XDEDRAW_Common::InitCommands(Draw_Interpretor& theDI)
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
 
   Standard_CString g = "XDE translation commands";
 

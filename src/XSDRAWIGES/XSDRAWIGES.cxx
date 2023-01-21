@@ -885,14 +885,14 @@ static Standard_Integer WriteIges(Draw_Interpretor& theDI,
 //=======================================================================
 void XSDRAWIGES::Factory(Draw_Interpretor& theDI)
 {
-  static Standard_Boolean initactor = Standard_False;
-  if (initactor)
+  static Standard_Boolean aIsActivated = Standard_False;
+  if (aIsActivated)
   {
     return;
   }
   IGESControl_Controller::Init();
 
-  initactor = Standard_True;
+  aIsActivated = Standard_True;
   const char* aGroup = "DE: IGES";
 
   theDI.Add("tplosttrim", "number of untrimmed faces during last transfer", __FILE__, XSDRAWIGES_tplosttrim, aGroup);
