@@ -13,7 +13,6 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-
 #include <DBRep.hxx>
 #include <DDocStd.hxx>
 #include <Draw.hxx>
@@ -90,7 +89,6 @@ static Standard_Integer removeLayer (Draw_Interpretor& di, Standard_Integer argc
   return 0;
 }
 
-
 static Standard_Integer setLayer (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
   if (argc<4) {
@@ -118,7 +116,6 @@ static Standard_Integer setLayer (Draw_Interpretor& di, Standard_Integer argc, c
   }
   return 0;
 }
-
 
 static Standard_Integer getLayers (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
@@ -151,7 +148,6 @@ static Standard_Integer getLayers (Draw_Interpretor& di, Standard_Integer argc, 
   return 0;
 }
 
-
 static Standard_Integer getLayerLabels (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
   if (argc!=2) {
@@ -179,7 +175,6 @@ static Standard_Integer getLayerLabels (Draw_Interpretor& di, Standard_Integer a
   return 0;
 }
 
-
 static Standard_Integer getOneLayer (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
   if (argc!=3) {
@@ -199,7 +194,6 @@ static Standard_Integer getOneLayer (Draw_Interpretor& di, Standard_Integer argc
   }
   return 0;
 }
-
 
 static Standard_Integer setLinkLayer (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
@@ -231,7 +225,6 @@ static Standard_Integer setLinkLayer (Draw_Interpretor& di, Standard_Integer arg
   return 0;
 }
 
-
 static Standard_Integer getAllLayers (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
   if (argc!=2) {
@@ -261,7 +254,6 @@ static Standard_Integer getAllLayers (Draw_Interpretor& di, Standard_Integer arg
   return 0;
 }
 
-
 static Standard_Integer unSetLayer (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
   if (argc!=4) {
@@ -288,7 +280,6 @@ static Standard_Integer unSetLayer (Draw_Interpretor& di, Standard_Integer argc,
   return 0;
 }
 
-
 static Standard_Integer unSetAllLayers (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
   if (argc!=3) {
@@ -313,7 +304,6 @@ static Standard_Integer unSetAllLayers (Draw_Interpretor& di, Standard_Integer a
   }
   return 0;
 }
-
 
 static Standard_Integer removeAllLayers (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
@@ -364,7 +354,6 @@ static Standard_Integer setVisibility (Draw_Interpretor& di, Standard_Integer ar
   localLayerTool->SetVisibility(aLabel, isvisible);
   return 0;
 }
-
 
 static Standard_Integer isVisible (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {

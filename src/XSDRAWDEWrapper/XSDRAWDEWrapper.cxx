@@ -17,6 +17,7 @@
 #include <DDocStd.hxx>
 #include <DDocStd_DrawDocument.hxx>
 #include <Draw.hxx>
+#include <Draw_PluginMacro.hxx>
 #include <Draw_Interpretor.hxx>
 #include <Draw_ProgressIndicator.hxx>
 #include <De_ConfigurationNode.hxx>
@@ -419,3 +420,6 @@ void XSDRAWDEWrapper::Factory(Draw_Interpretor& theDI)
             "\n\t\t: Write CAD file to shape with registered format's providers. Use global configuration by default.",
             __FILE__, WriteFile, aGroup);
 }
+
+// Declare entry point PLUGINFACTORY
+DPLUGIN(XSDRAWDEWrapper)

@@ -16,7 +16,6 @@
 
 #include <BRepLib.hxx>
 #include <IFSelect_CheckCounter.hxx>
-#include <IFSelect_Functions.hxx>
 #include <IGESControl_Controller.hxx>
 #include <IGESControl_Reader.hxx>
 #include <IGESData_FileProtocol.hxx>

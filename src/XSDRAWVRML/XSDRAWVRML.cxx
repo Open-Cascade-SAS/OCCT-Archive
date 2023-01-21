@@ -18,6 +18,7 @@
 #include <DDocStd_DrawDocument.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
+#include <Draw_PluginMacro.hxx>
 #include <Draw_ProgressIndicator.hxx>
 #include <Vrml_ConfigurationNode.hxx>
 #include <Vrml_Provider.hxx>
@@ -322,3 +323,7 @@ void XSDRAWVRML::Factory(Draw_Interpretor& theDI)
   theDI.Add("loadvrml", "shape file", __FILE__, loadvrml, aGroup);
   theDI.Add("writevrml", "shape file [version VRML#1.0/VRML#2.0 (1/2): 2 by default] [representation shaded/wireframe/both (0/1/2): 1 by default]", __FILE__, writevrml, aGroup);
 }
+
+
+// Declare entry point PLUGINFACTORY
+DPLUGIN(XSDRAWVRML)

@@ -35,6 +35,7 @@
 #include <XSAlgo_AlgoContainer.hxx>
 #include <XSControl_WorkSession.hxx>
 #include <XSDRAW.hxx>
+#include <XSDRAWBase.hxx>
 #include <Vrml_ConfigurationNode.hxx>
 #include <Vrml_Provider.hxx>
 
@@ -50,60 +51,6 @@
 
 #include <stdio.h>
 
-namespace
-{
-  static XSControl_WorkSessionMap THE_PREVIOUS_WORK_SESSIONS;
-}
-
-//=======================================================================
-//function : parseCoordinateSystem
-//purpose  : Parse RWMesh_CoordinateSystem enumeration.
-//=======================================================================
-static bool parseCoordinateSystem(const char* theArg,
-                                  RWMesh_CoordinateSystem& theSystem)
-{
-  TCollection_AsciiString aCSStr(theArg);
-  aCSStr.LowerCase();
-  if (aCSStr == "zup")
-  {
-    theSystem = RWMesh_CoordinateSystem_Zup;
-  }
-  else if (aCSStr == "yup")
-  {
-    theSystem = RWMesh_CoordinateSystem_Yup;
-  }
-  else
-  {
-    return Standard_False;
-  }
-  return Standard_True;
-}
-
-//=======================================================================
-//function : CollectActiveWorkSessions
-//purpose  : Fill map with active workSession items
-//=======================================================================
-static void CollectActiveWorkSessions(const Handle(XSControl_WorkSession)& theWS,
-                                      const TCollection_AsciiString& theName,
-                                      XSControl_WorkSessionMap& theMap,
-                                      const Standard_Boolean theIsFirst = Standard_True)
-{
-  if (theIsFirst)
-  {
-    theMap.Clear();
-  }
-  if (theMap.IsBound(theName))
-  {
-    return;
-  }
-  theMap.Bind(theName, theWS);
-  for (XSControl_WorkSessionMap::Iterator anIter(theWS->ReferenceWS());
-       anIter.More(); anIter.Next())
-  {
-    CollectActiveWorkSessions(anIter.Value(), anIter.Key(), theMap, Standard_False);
-  }
-}
-
 //=======================================================================
 //function : SetCurWS
 //purpose  : Set current file if many files are read
@@ -112,27 +59,26 @@ static Standard_Integer SetCurWS(Draw_Interpretor& theDI,
                                  Standard_Integer theNbArgs,
                                  const char** theArgVec)
 {
-  if (theNbArgs < 2)
-  {
-    theDI << "Use: " << theArgVec[0] << " filename \n";
-    return 1;
-  }
-  const TCollection_AsciiString aSessionName(theArgVec[1]);
-  Handle(XSControl_WorkSession) aSession;
-  if (!THE_PREVIOUS_WORK_SESSIONS.Find(aSessionName, aSession))
-  {
-    TCollection_AsciiString aWSs;
-    for (XSControl_WorkSessionMap::Iterator anIter(THE_PREVIOUS_WORK_SESSIONS);
-         anIter.More(); anIter.Next())
-    {
-      aWSs += "\"";
-      aWSs += anIter.Key();
-      aWSs += "\"\n";
-    }
-    theDI << "Error: Can't find active session. Active sessions list:\n" << aWSs;
-    return 1;
-  }
-  XSDRAW::Pilot()->SetSession(aSession);
+  //if (theNbArgs < 2)
+  //{
+  //  theDI << "Use: " << theArgVec[0] << " filename \n";
+  //  return 1;
+  //}
+  //const TCollection_AsciiString aSessionName(theArgVec[1]);
+  //Handle(XSControl_WorkSession) aSession;
+  //if (!THE_PREVIOUS_WORK_SESSIONS.Find(aSessionName, aSession))
+  //{
+  //  TCollection_AsciiString aWSs;
+  //  for (XSControl_WorkSessionMap::Iterator anIter(THE_PREVIOUS_WORK_SESSIONS);
+  //       anIter.More(); anIter.Next())
+  //  {
+  //    aWSs += "\"";
+  //    aWSs += anIter.Key();
+  //    aWSs += "\"\n";
+  //  }
+  //  theDI << "Error: Can't find active session. Active sessions list:\n" << aWSs;
+  //  return 1;
+  //}
   return 0;
 }
 
@@ -144,15 +90,15 @@ static Standard_Integer GetDicWSList(Draw_Interpretor& theDI,
                                      Standard_Integer theNbArgs,
                                      const char** theArgVec)
 {
-  (void)theNbArgs;
-  (void)theArgVec;
-  Message::SendInfo() << "Active sessions list:";
-  TCollection_AsciiString aWSs;
-  for (XSControl_WorkSessionMap::Iterator anIter(THE_PREVIOUS_WORK_SESSIONS);
-       anIter.More(); anIter.Next())
-  {
-    theDI << "\"" << anIter.Key() << "\"\n";
-  }
+  //(void)theNbArgs;
+  //(void)theArgVec;
+  //Message::SendInfo() << "Active sessions list:";
+  //TCollection_AsciiString aWSs;
+  //for (XSControl_WorkSessionMap::Iterator anIter(THE_PREVIOUS_WORK_SESSIONS);
+  //     anIter.More(); anIter.Next())
+  //{
+  //  theDI << "\"" << anIter.Key() << "\"\n";
+  //}
   return 0;
 }
 
@@ -166,28 +112,9 @@ static Standard_Integer GetCurWS(Draw_Interpretor& theDI,
 {
   (void)theNbArgs;
   (void)theArgVec;
-  Handle(XSControl_WorkSession) WS = XSDRAW::Session();
+  Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   theDI << "\"" << WS->LoadedFile() << "\"";
   return 0;
-}
-
-//=======================================================================
-//function : GetLengthUnit
-//purpose  : Gets length unit value from static interface and document in M
-//=======================================================================
-static Standard_Real GetLengthUnit(const Handle(TDocStd_Document)& theDoc = nullptr)
-{
-  if (!theDoc.IsNull())
-  {
-    Standard_Real aUnit = 1.;
-    if (XCAFDoc_DocumentTool::GetLengthUnit(theDoc, aUnit,
-        UnitsMethods_LengthUnit_Millimeter))
-    {
-      return aUnit;
-    }
-  }
-  XSAlgo::AlgoContainer()->PrepareForTransfer();
-  return UnitsMethods::GetCasCadeLengthUnit();
 }
 
 //=======================================================================
@@ -198,28 +125,25 @@ static Standard_Integer FromShape(Draw_Interpretor& theDI,
                                   Standard_Integer theNbArgs,
                                   const char** theArgVec)
 {
-  if (theNbArgs < 2)
-  {
-    theDI << theArgVec[0] << " shape: search for shape origin among all last tranalated files\n";
-    return 0;
-  }
+  //if (theNbArgs < 2)
+  //{
+  //  theDI << theArgVec[0] << " shape: search for shape origin among all last tranalated files\n";
+  //  return 0;
+  //}
 
-  char command[256];
-  Sprintf(command, "fromshape %.200s -1", theArgVec[1]);
-  XSControl_WorkSessionMap DictWS = THE_PREVIOUS_WORK_SESSIONS;
-  if (DictWS.IsEmpty())
-    return theDI.Eval(command);
+  //char command[256];
+  //Sprintf(command, "fromshape %.200s -1", theArgVec[1]);
+  //XSControl_WorkSessionMap DictWS = THE_PREVIOUS_WORK_SESSIONS;
+  //if (DictWS.IsEmpty())
+  //  return theDI.Eval(command);
 
-  Handle(XSControl_WorkSession) WS = XSDRAW::Session();
-  for (XSControl_WorkSessionMap::Iterator DicIt(DictWS);
-       DicIt.More(); DicIt.Next())
-  {
-    Handle(XSControl_WorkSession) CurrentWS = DicIt.Value();
-    XSDRAW::Pilot()->SetSession(CurrentWS);
-    theDI.Eval(command);
-  }
-
-  XSDRAW::Pilot()->SetSession(WS);
+  //Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
+  //for (XSControl_WorkSessionMap::Iterator DicIt(DictWS);
+  //     DicIt.More(); DicIt.Next())
+  //{
+  //  Handle(XSControl_WorkSession) CurrentWS = DicIt.Value();
+  //  theDI.Eval(command);
+  //}
   return 0;
 }
 

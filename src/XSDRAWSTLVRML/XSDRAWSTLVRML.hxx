@@ -22,8 +22,6 @@
 
 #include <Draw_Interpretor.hxx>
 
-
-
 class XSDRAWSTLVRML 
 {
 public:

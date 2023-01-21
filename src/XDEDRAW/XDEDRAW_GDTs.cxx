@@ -50,7 +50,6 @@
 #include <BRep_Tool.hxx>
 
 
-
 static Standard_Integer DumpDGTs (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
   if (argc < 3) {
@@ -740,7 +739,6 @@ static Standard_Integer getDatumPosition (Draw_Interpretor& di, Standard_Integer
   }
   return 0;
 }
-
 
 static Standard_Integer getDatum (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {

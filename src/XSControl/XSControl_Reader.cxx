@@ -15,7 +15,6 @@
 //:   gka 14.04.99: S4136: apply scaling
 
 #include <BRep_Builder.hxx>
-#include <IFSelect_Functions.hxx>
 #include <Interface_ShareFlags.hxx>
 #include <Message.hxx>
 #include <Message_Messenger.hxx>

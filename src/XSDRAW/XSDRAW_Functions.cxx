@@ -24,6 +24,7 @@
 #include <Transfer_TransientProcess.hxx>
 #include <XSControl.hxx>
 #include <XSControl_Controller.hxx>
+#include <XSDRAW.hxx>
 #include <XSDRAWBase.hxx>
 #include <XSControl_SelectForTransfer.hxx>
 #include <XSControl_TransferReader.hxx>
@@ -38,23 +39,24 @@ static Standard_Integer XSControl_xinit(Draw_Interpretor& theDI,
                                         Standard_Integer theNbArgs,
                                         const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
   if (theNbArgs != 2 && theNbArgs != 1)
   {
-    theDI << "Error:";
+    aSSC.SStream() << "Error:";
     return 1;
   }
   if (theNbArgs > 1)
   {
-    if (!XSDRAWBase::Session()->SelectNorm(theArgVec[1]));
+    if (!XSDRAWBase::Session()->SelectNorm(theArgVec[1]))
     {
-      theDI << "Error:";
+      aSSC.SStream() << "Error:";
       return 1;
     }
   }
   else
   {
-    Message::SendInfo() << "Selected Norm:";
-    theDI << XSDRAWBase::Session()->SelectedNorm() << "\n";
+    aSSC.SStream() << "Selected Norm:";
+    aSSC.SStream() << XSDRAWBase::Session()->SelectedNorm() << "\n";
   }
   return 0;
 }
@@ -67,23 +69,25 @@ static Standard_Integer XSControl_xnorm(Draw_Interpretor& theDI,
                                         Standard_Integer theNbArgs,
                                         const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   Handle(XSControl_Controller) control = WS->NormAdaptor();
   if (theNbArgs == 1)
   {
-    Message::SendInfo() << "Current Norm. xnorm newnorm to change";
+    aSSC.SStream() << "Current Norm. xnorm newnorm to change";
   }
   else
   {
-    Message::SendInfo() << "Selected Norm:";
+    aSSC.SStream() << "Selected Norm:";
   }
   if (control.IsNull())
   {
-    Message::SendInfo() << "no norm currently defined";
+    aSSC.SStream() << "no norm currently defined";
   }
   else
   {
-    Message::SendInfo() << "  Long  Name (complete) : "
+    aSSC.SStream() << "  Long  Name (complete) : "
       << control->Name(Standard_False)
       << "  Short name (resource) : " << control->Name(Standard_True);
   }
@@ -95,12 +99,12 @@ static Standard_Integer XSControl_xnorm(Draw_Interpretor& theDI,
   control = XSControl_Controller::Recorded(theArgVec[1]);
   if (control.IsNull())
   {
-    Message::SendInfo() << " No norm named : " << theArgVec[1];
+    aSSC.SStream() << " No norm named : " << theArgVec[1];
     return 1;
   }
 
   WS->SetController(control);
-  Message::SendInfo() << "new norm : " << control->Name();
+  aSSC.SStream() << "new norm : " << control->Name();
   return 0;
 }
 
@@ -112,12 +116,10 @@ static Standard_Integer XSControl_newmodel(Draw_Interpretor& theDI,
                                            Standard_Integer theNbArgs,
                                            const char** theArgVec)
 {
-  if (!XSDRAWBase::Session()->NewModel().IsNull())
-  {
-    return 0;
-  }
-  Message::SendInfo() << "No new Model produced";
-  return 1;
+  (void)theDI;
+  (void)theNbArgs;
+  (void)theArgVec;
+  return 0;
 }
 
 //=======================================================================
@@ -128,6 +130,9 @@ static Standard_Integer XSControl_tpclear(Draw_Interpretor& theDI,
                                           Standard_Integer theNbArgs,
                                           const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  (void)theNbArgs;
   const Standard_Boolean modew = (theArgVec[0][2] == 'w');
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(Transfer_FinderProcess)& FP =
@@ -137,14 +142,14 @@ static Standard_Integer XSControl_tpclear(Draw_Interpretor& theDI,
   if (modew)
   {
     if (!FP.IsNull()) FP->Clear();
-    else Message::SendInfo() << "No Transfer Write";
+    else aSSC.SStream() << "No Transfer Write";
   }
   else
   {
     if (!TP.IsNull())
       TP->Clear();
     else
-      Message::SendInfo() << "No Transfer Read";
+      aSSC.SStream() << "No Transfer Read";
   }
   return 0;
 }
@@ -157,13 +162,15 @@ static Standard_Integer XSControl_tpstat(Draw_Interpretor& theDI,
                                          Standard_Integer theNbArgs,
                                          const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(Transfer_TransientProcess)& TP =
     WS->TransferReader()->TransientProcess();
   if (TP.IsNull())
   {
-    Message::SendInfo() << "No Transfer Read";
+    aSSC.SStream() << "No Transfer Read";
     return 1;
   }
   //        ****    tpstat        ****
@@ -208,10 +215,10 @@ static Standard_Integer XSControl_tpstat(Draw_Interpretor& theDI,
   }
   //  A present help eventuel
   if (mod1 < -1)
-    Message::SendInfo() << "Unknown Mode";
+    aSSC.SStream() << "Unknown Mode";
   if (mod1 < 0)
   {
-    Message::SendInfo() << "Modes available :\n"
+    aSSC.SStream() << "Modes available :\n"
       << "g : general    c : checks (count)  C (list)\n"
       << "               f : fails  (count)  F (list)\n"
       << "  n : numbers of transferred entities (on TRANSFER ROOTS)\n"
@@ -230,14 +237,14 @@ static Standard_Integer XSControl_tpstat(Draw_Interpretor& theDI,
 
   if (!TP.IsNull())
   {
-    Message::SendInfo() << "TransferRead :";
-    if (TP->Model() != WS->Model()) Message::SendInfo() << "Model differs from the session";
+    aSSC.SStream() << "TransferRead :";
+    if (TP->Model() != WS->Model()) aSSC.SStream() << "Model differs from the session";
     Handle(TColStd_HSequenceOfTransient) list =
-      IFSelect_Functions::GiveList(WS, pilot->CommandPart(2));
+      WS->GiveList(theArgVec[2]);
     XSControl_TransferReader::PrintStatsOnList(TP, list, mod1, mod2);
-    //    TP->PrintStats (1,Message::SendInfo());
+    //    TP->PrintStats (1,aSSC.SStream());
   }
-  else Message::SendInfo() << "TransferRead : not defined";
+  else aSSC.SStream() << "TransferRead : not defined";
   return 0;
 }
 
@@ -249,6 +256,8 @@ static Standard_Integer XSControl_tpent(Draw_Interpretor& theDI,
                                         Standard_Integer theNbArgs,
                                         const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(Transfer_TransientProcess)& TP =
@@ -256,7 +265,7 @@ static Standard_Integer XSControl_tpent(Draw_Interpretor& theDI,
   //        ****    tpent        ****
   if (TP.IsNull())
   {
-    Message::SendInfo() << "No Transfer Read";
+    aSSC.SStream() << "No Transfer Read";
     return 1;
   }
   Handle(Interface_InterfaceModel) model = TP->Model();
@@ -265,22 +274,22 @@ static Standard_Integer XSControl_tpent(Draw_Interpretor& theDI,
 
   if (theNbArgs < 2)
   {
-    Message::SendInfo() << "Give ENTITY NUMBER (IN MODEL TransferProcess)";
+    aSSC.SStream() << "Give ENTITY NUMBER (IN MODEL TransferProcess)";
     return 1;
   }
   Standard_Integer num = atoi(arg1);
   if (num <= 0 || num > model->NbEntities())
   {
-    Message::SendInfo() << "Number not in [1 - "
+    aSSC.SStream() << "Number not in [1 - "
       << model->NbEntities() << "]";
     return 1;
   }
   Handle(Standard_Transient) ent = model->Value(num);
   Standard_Integer index = TP->MapIndex(ent);
   if (index == 0)
-    Message::SendInfo() << "Entity " << num << "  not recorded in transfer";
+    aSSC.SStream() << "Entity " << num << "  not recorded in transfer";
   else
-    WS->PrintTransferStatus(index, Standard_False, Message::SendInfo());
+    WS->PrintTransferStatus(index, Standard_False, aSSC.SStream());
   return 0;
 }
 
@@ -292,11 +301,13 @@ static Standard_Integer XSControl_tpitem(Draw_Interpretor& theDI,
                                          Standard_Integer theNbArgs,
                                          const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   //        ****    tpitem/tproot/twitem/twroot        ****
   if (theNbArgs < 2)
   {
-    Message::SendInfo() << "Give ITEM NUMBER (in TransferProcess)";
+    aSSC.SStream() << "Give ITEM NUMBER (in TransferProcess)";
     return 1;
   }
   Standard_Integer num = atoi(arg1);
@@ -306,9 +317,9 @@ static Standard_Integer XSControl_tpitem(Draw_Interpretor& theDI,
   Handle(Transfer_Binder) binder;
   Handle(Transfer_Finder) finder;
   Handle(Standard_Transient) ent;
-  if (!XSDRAWBase::Session()->PrintTransferStatus(num, modew, Message::SendInfo()))
+  if (!XSDRAWBase::Session()->PrintTransferStatus(num, modew, aSSC.SStream()))
   {
-    Message::SendInfo() << " - Num=" << num << " incorrect";
+    aSSC.SStream() << " - Num=" << num << " incorrect";
   }
   return 0;
 }
@@ -321,6 +332,8 @@ static Standard_Integer XSControl_trecord(Draw_Interpretor& theDI,
                                           Standard_Integer theNbArgs,
                                           const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(Transfer_TransientProcess)& TP = WS->TransferReader()->TransientProcess();
@@ -332,7 +345,7 @@ static Standard_Integer XSControl_trecord(Draw_Interpretor& theDI,
   Handle(Standard_Transient) ent;
   if (mdl.IsNull() || TR.IsNull() || TP.IsNull())
   {
-    Message::SendInfo() << " init not done";
+    aSSC.SStream() << " init not done";
     return 1;
   }
   if (!tous)
@@ -341,24 +354,24 @@ static Standard_Integer XSControl_trecord(Draw_Interpretor& theDI,
   if (tous)
   {
     Standard_Integer nb = TP->NbRoots();
-    Message::SendInfo() << " Recording " << nb << " Roots";
+    aSSC.SStream() << " Recording " << nb << " Roots";
     for (Standard_Integer i = 1; i <= nb; i++)
     {
       ent = TP->Root(i);
       if (TR->RecordResult(ent))
-        Message::SendInfo() << " Root n0." << i;
+        aSSC.SStream() << " Root n0." << i;
       else
-        Message::SendInfo() << " Root n0." << i << " not recorded";
+        aSSC.SStream() << " Root n0." << i << " not recorded";
     }
   }
   else
   {
     if (num < 1 || num > mdl->NbEntities())
-      Message::SendInfo() << "incorrect number:" << num;
+      aSSC.SStream() << "incorrect number:" << num;
     else if (TR->RecordResult(mdl->Value(num)))
-      Message::SendInfo() << " Entity n0." << num;
+      aSSC.SStream() << " Entity n0." << num;
     else
-      Message::SendInfo() << " Entity n0." << num << " not recorded";
+      aSSC.SStream() << " Entity n0." << num << " not recorded";
   }
   return 0;
 }
@@ -371,26 +384,28 @@ static Standard_Integer XSControl_trstat(Draw_Interpretor& theDI,
                                          Standard_Integer theNbArgs,
                                          const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   //        ****    trstat : TransferReader        ****
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(XSControl_TransferReader)& TR = WS->TransferReader();
   if (TR.IsNull())
   {
-    Message::SendInfo() << " init not done";
+    aSSC.SStream() << " init not done";
     return 1;
   }
   Handle(Interface_InterfaceModel)  mdl = TR->Model();
   if (mdl.IsNull())
   {
-    Message::SendInfo() << " No model";
+    aSSC.SStream() << " No model";
     return 1;
   }
-  Message::SendInfo() << " Statistics : FileName : " << TR->FileName();
+  aSSC.SStream() << " Statistics : FileName : " << TR->FileName();
   if (theNbArgs == 1)
   {
     // stats generales
-    TR->PrintStats(Message::SendInfo(), 10, 0);
+    TR->PrintStats(aSSC.SStream(), 10, 0);
   }
   else
   {
@@ -398,31 +413,31 @@ static Standard_Integer XSControl_trstat(Draw_Interpretor& theDI,
     Standard_Integer num = atoi(arg1);
     if (num < 1 || num > mdl->NbEntities())
     {
-      Message::SendInfo() << " incorrect number:" << arg1;
+      aSSC.SStream() << " incorrect number:" << arg1;
       return 1;
     }
     Handle(Standard_Transient) ent = mdl->Value(num);
     if (!TR->IsRecorded(ent))
     {
-      Message::SendInfo() << " Entity " << num << " not recorded";
+      aSSC.SStream() << " Entity " << num << " not recorded";
       return 1;
     }
     Handle(Transfer_ResultFromModel) RM = TR->FinalResult(ent);
     Handle(TColStd_HSequenceOfTransient) list = TR->CheckedList(ent);
     Standard_Integer i, nb = list->Length();
     if (nb > 0)
-      Message::SendInfo() << " Entities implied by Check/Result :" << nb << " i.e.:";
+      aSSC.SStream() << " Entities implied by Check/Result :" << nb << " i.e.:";
     for (i = 1; i <= nb; i++)
     {
-      Message::SendInfo() << "  "; mdl->Print(list->Value(i), Message::SendInfo());
+      aSSC.SStream() << "  "; mdl->Print(list->Value(i), aSSC.SStream());
     }
     if (RM.IsNull())
     {
-      Message::SendInfo() << " no other info";
+      aSSC.SStream() << " no other info";
       return 0;
     }
     Interface_CheckIterator chl = RM->CheckList(Standard_False);
-    WS->PrintCheckList(Message::SendInfo(), chl, Standard_False, IFSelect_EntitiesByItem);
+    WS->PrintCheckList(aSSC.SStream(), chl, Standard_False, IFSelect_EntitiesByItem);
   }
   return 0;
 }
@@ -435,6 +450,8 @@ static Standard_Integer XSControl_trbegin(Draw_Interpretor& theDI,
                                           Standard_Integer theNbArgs,
                                           const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
   //        ****    trbegin : TransferReader        ****
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   Handle(XSControl_TransferReader) TR = WS->TransferReader();
@@ -449,7 +466,7 @@ static Standard_Integer XSControl_trbegin(Draw_Interpretor& theDI,
     TR = WS->TransferReader();
     if (TR.IsNull())
     {
-      Message::SendInfo() << " init not done or failed";
+      aSSC.SStream() << " init not done or failed";
       return 1;
     }
   }
@@ -465,20 +482,21 @@ static Standard_Integer XSControl_tread(Draw_Interpretor& theDI,
                                         Standard_Integer theNbArgs,
                                         const char** theArgVec)
 {
-  Standard_Integer theNbArgs = theNbArgs;
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
   //const Standard_CString arg1 = pilot->Arg(1);
   //        ****    tread : TransferReader        ****
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   Handle(XSControl_TransferReader) TR = WS->TransferReader();
   if (TR.IsNull())
   {
-    Message::SendInfo() << " init not done";
+    aSSC.SStream() << " init not done";
     return 1;
   }
   const Handle(Interface_InterfaceModel)& mdl = TR->Model();
   if (mdl.IsNull())
   {
-    Message::SendInfo() << " No model";
+    aSSC.SStream() << " No model";
     return 1;
   }
   if (theNbArgs < 2)
@@ -487,19 +505,19 @@ static Standard_Integer XSControl_tread(Draw_Interpretor& theDI,
     Handle(Standard_Transient) sel = WS->NamedItem("xst-model-roots");
     if (sel.IsNull())
     {
-      Message::SendInfo() << "Select Roots absent";
+      aSSC.SStream() << "Select Roots absent";
       return 1;
     }
     Handle(TColStd_HSequenceOfTransient) list = WS->GiveList(sel);
-    Message::SendInfo() << " Transferring all roots i.e. : " << TR->TransferList(list);
+    aSSC.SStream() << " Transferring all roots i.e. : " << TR->TransferList(list);
   }
   else
   {
     Handle(TColStd_HSequenceOfTransient) list =
-      IFSelect_Functions::GiveList(WS, pilot->CommandPart(1));
-    Message::SendInfo() << " Transfer of " << list->Length() << " entities";
+      WS->GiveList(theArgVec[1]);
+    aSSC.SStream() << " Transfer of " << list->Length() << " entities";
     Standard_Integer nb = TR->TransferList(list);
-    Message::SendInfo() << " Gives " << nb << " results";
+    aSSC.SStream() << " Gives " << nb << " results";
   }
   return 0;
 }
@@ -512,13 +530,17 @@ static Standard_Integer XSControl_trtp(Draw_Interpretor& theDI,
                                        Standard_Integer theNbArgs,
                                        const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  (void)theNbArgs;
+  (void)theArgVec;
   //        ****    TReader -> TProcess         ****
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(XSControl_TransferReader)& TR = WS->TransferReader();
   if (TR.IsNull())
-    Message::SendInfo() << " No TransferReader";
+    aSSC.SStream() << " No TransferReader";
   else if (TR->TransientProcess().IsNull())
-    Message::SendInfo() << " Transfer Reader without Process";
+    aSSC.SStream() << " Transfer Reader without Process";
   return 0;
 }
 
@@ -530,6 +552,10 @@ static Standard_Integer XSControl_tptr(Draw_Interpretor& theDI,
                                        Standard_Integer theNbArgs,
                                        const char** theArgVec)
 {
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  (void)theNbArgs;
+  (void)theArgVec;
   //        ****    TProcess -> TReader         ****
   XSDRAWBase::Session()->InitTransferReader(3);
   return 0;
@@ -543,7 +569,8 @@ static Standard_Integer XSControl_twmode(Draw_Interpretor& theDI,
                                          Standard_Integer theNbArgs,
                                          const char** theArgVec)
 {
-  Standard_Integer theNbArgs = theNbArgs;
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
   const Standard_CString arg1 = theArgVec[1];
   //        ****    twmode         ****
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
@@ -552,20 +579,20 @@ static Standard_Integer XSControl_twmode(Draw_Interpretor& theDI,
   Standard_Integer modemin, modemax;
   if (control->ModeWriteBounds(modemin, modemax))
   {
-    Message::SendInfo() << "Write Mode : allowed values  " << modemin << " to " << modemax;
+    aSSC.SStream() << "Write Mode : allowed values  " << modemin << " to " << modemax;
     for (Standard_Integer modd = modemin; modd <= modemax; modd++)
     {
-      Message::SendInfo() << modd << "	: " << control->ModeWriteHelp(modd);
+      aSSC.SStream() << modd << "	: " << control->ModeWriteHelp(modd);
     }
   }
-  Message::SendInfo() << "Write Mode : actual = " << TW->TransferMode();
+  aSSC.SStream() << "Write Mode : actual = " << TW->TransferMode();
   if (theNbArgs <= 1)
     return 0;
   Standard_Integer mod = atoi(arg1);
-  Message::SendInfo() << "New value -> " << arg1;
+  aSSC.SStream() << "New value -> " << arg1;
   TW->SetTransferMode(mod);
   if (!control->IsModeWrite(mod))
-    Message::SendInfo() << "Warning : this new value is not supported";
+    aSSC.SStream() << "Warning : this new value is not supported";
   return 0;
 }
 
@@ -577,34 +604,23 @@ static Standard_Integer XSControl_twstat(Draw_Interpretor& theDI,
                                          Standard_Integer theNbArgs,
                                          const char** theArgVec)
 {
-  //Standard_Integer theNbArgs = theNbArgs;
-  //const Standard_CString arg1 = pilot->Arg(1);
-  //const Standard_CString arg2 = pilot->Arg(2);
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  (void)theNbArgs;
+  (void)theArgVec;
   Handle(XSControl_WorkSession) WS = XSDRAWBase::Session();
   const Handle(Transfer_FinderProcess)& FP = WS->TransferWriter()->FinderProcess();
   //        ****    twstat        ****
   //  Pour Write
   if (!FP.IsNull())
   {
-    Message::SendInfo() << "TransferWrite:";
+    aSSC.SStream() << "TransferWrite:";
     //    XSControl_TransferWriter::PrintStatsProcess (FP,mod1,mod2);
-    FP->PrintStats(1, Message::SendInfo());
+    FP->PrintStats(1, aSSC.SStream());
   }
   else
-    Message::SendInfo() << "TransferWrite: not defined";
+    aSSC.SStream() << "TransferWrite: not defined";
   return 0;
-}
-
-//=======================================================================
-//function : XSControl_settransfert
-//purpose  :
-//=======================================================================
-static Standard_Integer XSControl_settransfert(Draw_Interpretor& theDI,
-                                               Standard_Integer theNbArgs,
-                                               const char** theArgVec)
-{
-  //        ****    SelectForTransfer           ****
-  return pilot->RecordItem(new XSControl_SelectForTransfer(XSDRAWBase::Session()->TransferReader()));
 }
 
 //=======================================================================
@@ -667,7 +683,4 @@ void XSDRAW_Functions::Init(Draw_Interpretor& theDI)
             "displays mode transfer write, + num  changes it", __FILE__, XSControl_twmode, aGroup);
   theDI.Add("twstat",
             "Statistics on TransferProcess (WRITE)", __FILE__, XSControl_twstat, aGroup);
-
-  theDI.Add("selecttransfer",
-            "selection (recognize from transfer actor)", __FILE__, XSControl_settransfert);
 }

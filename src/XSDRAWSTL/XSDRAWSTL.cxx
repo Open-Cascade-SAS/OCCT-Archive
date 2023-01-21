@@ -18,6 +18,7 @@
 #include <DDocStd_DrawDocument.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
+#include <Draw_PluginMacro.hxx>
 #include <Draw_ProgressIndicator.hxx>
 #include <RWStl_ConfigurationNode.hxx>
 #include <RWStl_Provider.hxx>
@@ -168,6 +169,12 @@ static Standard_Integer readstl(Draw_Interpretor& theDI,
 //=============================================================================
 void XSDRAWSTL::Factory(Draw_Interpretor& theDI)
 {
+  static Standard_Boolean initactor = Standard_False;
+  if (initactor)
+  {
+    return;
+  }
+  initactor = Standard_True;
   const char* g = "XSTEP-STL/VRML";  // Step transfer file commands
 
   theDI.Add("writestl", "shape file [ascii/binary (0/1) : 1 by default] [InParallel (0/1) : 0 by default]", __FILE__, writestl, g);
@@ -180,3 +187,6 @@ void XSDRAWSTL::Factory(Draw_Interpretor& theDI)
             "\n\t\t: -multi creates a face per solid in multi-domain files; ignored when -brep is set.",
             __FILE__, readstl, g);
 }
+
+// Declare entry point PLUGINFACTORY
+DPLUGIN(XSDRAWSTL)

@@ -18,6 +18,7 @@
 #include <DDocStd_DrawDocument.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
+#include <Draw_PluginMacro.hxx>
 #include <Draw_ProgressIndicator.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepLib_PointCloudShape.hxx>
@@ -326,6 +327,12 @@ static Standard_Integer WritePly(Draw_Interpretor& theDI,
 //=======================================================================
 void XSDRAWPLY::Factory(Draw_Interpretor& theDI)
 {
+  static Standard_Boolean initactor = Standard_False;
+  if (initactor)
+  {
+    return;
+  }
+  initactor = Standard_True;
   const char* g = "XSTEP-STL/VRML";  // Step transfer file commands
   //XSDRAW::LoadDraw(theCommands);
   theDI.Add("WritePly", R"(
@@ -348,3 +355,6 @@ Generate point cloud out of the shape and write it into PLY file.
             "writeply shape file",
             __FILE__, WritePly, g);
 }
+
+// Declare entry point PLUGINFACTORY
+DPLUGIN(XSDRAWPLY)

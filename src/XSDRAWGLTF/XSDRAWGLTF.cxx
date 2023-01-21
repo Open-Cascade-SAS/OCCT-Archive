@@ -18,6 +18,7 @@
 #include <DDocStd_DrawDocument.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
+#include <Draw_PluginMacro.hxx>
 #include <Draw_ProgressIndicator.hxx>
 #include <RWGltf_ConfigurationNode.hxx>
 #include <RWGltf_Provider.hxx>
@@ -485,6 +486,12 @@ static Standard_Integer WriteGltf(Draw_Interpretor& theDI,
 //=======================================================================
 void XSDRAWGLTF::Factory(Draw_Interpretor& theDI)
 {
+  static Standard_Boolean initactor = Standard_False;
+  if (initactor)
+  {
+    return;
+  }
+  initactor = Standard_True;
   const char* aGroup = "XSTEP-STL/VRML";  // Step transfer file commands
 
   theDI.Add("ReadGltf",
@@ -540,3 +547,7 @@ void XSDRAWGLTF::Factory(Draw_Interpretor& theDI)
             "writegltf shape file",
             __FILE__, WriteGltf, aGroup);
 }
+
+
+// Declare entry point PLUGINFACTORY
+DPLUGIN(XSDRAWGLTF)

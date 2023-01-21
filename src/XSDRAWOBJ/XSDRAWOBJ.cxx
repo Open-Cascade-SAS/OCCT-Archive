@@ -18,6 +18,7 @@
 #include <DDocStd_DrawDocument.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
+#include <Draw_PluginMacro.hxx>
 #include <Draw_ProgressIndicator.hxx>
 #include <RWObj_ConfigurationNode.hxx>
 #include <RWObj_Provider.hxx>
@@ -327,6 +328,12 @@ static Standard_Integer WriteObj(Draw_Interpretor& theDI,
 //=======================================================================
 void XSDRAWOBJ::Factory(Draw_Interpretor& theDI)
 {
+  static Standard_Boolean initactor = Standard_False;
+  if (initactor)
+  {
+    return;
+  }
+  initactor = Standard_True;
   const char* g = "XSTEP-STL/VRML";  // Step transfer file commands
   theDI.Add("ReadObj",
             "ReadObj Doc file [-fileCoordSys {Zup|Yup}] [-fileUnit Unit]"
@@ -360,3 +367,6 @@ void XSDRAWOBJ::Factory(Draw_Interpretor& theDI)
             "writeobj shape file",
             __FILE__, WriteObj, g);
 }
+
+// Declare entry point PLUGINFACTORY
+DPLUGIN(XSDRAWOBJ)

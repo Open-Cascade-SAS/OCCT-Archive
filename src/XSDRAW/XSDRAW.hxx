@@ -30,10 +30,23 @@ class XSDRAW
   DEFINE_STANDARD_ALLOC
 public:
 
-  Standard_EXPORT static void Init();
-
   //! Loads all Draw commands of XSDRAWDEWrapper. Used for plugin.
   Standard_EXPORT static void Factory(Draw_Interpretor& theDI);
+
+public:
+
+  class StreamContainer
+  {
+    DEFINE_STANDARD_ALLOC
+  public:
+    StreamContainer(Draw_Interpretor& theDI) : myDI(&theDI) {}
+    Standard_SStream& SStream() { return myStream; }
+    ~StreamContainer() { *myDI << myStream; }
+  private:
+    Draw_Interpretor* myDI;
+    Standard_SStream myStream;
+  };
+
 };
 
 #endif // _XSDRAW_HeaderFile

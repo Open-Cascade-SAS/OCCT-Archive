@@ -13,7 +13,6 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-
 #include <BRep_Builder.hxx>
 #include <DBRep.hxx>
 #include <DDocStd.hxx>
@@ -251,7 +250,6 @@ static Standard_Integer findMainShape(Draw_Interpretor& di, Standard_Integer arg
   di << anEntry.ToCString();
   return 0;
 }
-
 
 static Standard_Integer addSubShape(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {

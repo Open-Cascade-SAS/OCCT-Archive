@@ -15,6 +15,8 @@
 
 #include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
+#include <DBRep.hxx>
+#include <DrawTrSurf.hxx>
 #include <Geom_Geometry.hxx>
 #include <IFSelect_Act.hxx>
 #include <IFSelect_SessionPilot.hxx>
@@ -39,39 +41,60 @@
 #include <XSControl.hxx>
 #include <XSControl_ConnectedShapes.hxx>
 #include <XSControl_Controller.hxx>
-#include <XSDRAW_FunctionsShape.hxx>
+#include <XSDRAW.hxx>
+#include <XSDRAWBase.hxx>
 #include <XSControl_TransferReader.hxx>
 #include <XSControl_TransferWriter.hxx>
 #include <XSControl_Vars.hxx>
 #include <XSControl_WorkSession.hxx>
 
-#include <stdio.h>
+//=======================================================================
+//function : GiveEntityNumber
+//purpose  :
+//=======================================================================
+static Standard_Integer GiveEntityNumber(const Handle(XSControl_WorkSession)& WS,
+                                         const Standard_CString name)
+{
+  Standard_Integer num = 0;
+  if (!name || name[0] == '\0')
+  {
+    char ligne[80];  ligne[0] = '\0';
+    std::cin >> ligne;
+    //    std::cin.clear();  std::cin.getline (ligne,79);
+    if (ligne[0] == '\0') return 0;
+    num = WS->NumberFromLabel(ligne);
+  }
+  else num = WS->NumberFromLabel(name);
+  return num;
+}
 
 //=======================================================================
 //function : XSControl_tpdraw
 //purpose  : 
 //=======================================================================
-static Standard_Integer XSControl_tpdraw
-(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
+static Standard_Integer XSControl_tpdraw(Draw_Interpretor& theDI,
+                                         Standard_Integer theNbArgs,
+                                         const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  const Standard_CString arg3 = pilot->Arg(3);
-  const Handle(Transfer_TransientProcess)& TP = XSControl::Session(pilot)->TransferReader()->TransientProcess();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  const Standard_CString arg3 = theArgVec[3];
+  const Handle(Transfer_TransientProcess)& TP = XSDRAWBase::Session()->TransferReader()->TransientProcess();
   if (TP.IsNull())
   {
-    sout << "No Transfer Read" << std::endl; return IFSelect_RetError;
+    aSSC.SStream() << "No Transfer Read" << std::endl;
+    return 1;
   }
   //        ****    tpdraw        ****
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Donner [mode facultatif : item ou root] , NUMERO , nom DRAW facultatif" << std::endl;
-    sout << "  mode si present : item ou root, sinon n0 d entite modele" << std::endl;
-    sout << "  NUMERO entier : d entite, d item transfert ou de root transfert\n"
+    aSSC.SStream() << "Donner [mode facultatif : item ou root] , NUMERO , nom DRAW facultatif" << std::endl;
+    aSSC.SStream() << "  mode si present : item ou root, sinon n0 d entite modele" << std::endl;
+    aSSC.SStream() << "  NUMERO entier : d entite, d item transfert ou de root transfert\n"
       << "    ou * pour dire tous" << std::endl;
-    return IFSelect_RetError;
+    return 1;
   }
   Standard_Integer mode = 0, num = 0;
   if (arg1[0] == 'i') mode = 1;
@@ -79,17 +102,18 @@ static Standard_Integer XSControl_tpdraw
   Standard_Boolean tout = Standard_False;
   if (mode == 0)
   {
-    if (argc < 2)
+    if (theNbArgs < 2)
     {
-      sout << "Donner au moins un NUMERO ou *" << std::endl; return IFSelect_RetError;
+      aSSC.SStream() << "Donner au moins un NUMERO ou *" << std::endl;
+      return 1;
     }
     if (arg1[0] == '*') tout = Standard_True;
-    else num = IFSelect_Functions::GiveEntityNumber(XSControl::Session(pilot), arg1);
+    else num = GiveEntityNumber(XSDRAWBase::Session(), arg1);
   }
   else
   {
     if (arg2[0] == '*') tout = Standard_True;
-    else num = IFSelect_Functions::GiveEntityNumber(XSControl::Session(pilot), arg2);
+    else num = GiveEntityNumber(XSDRAWBase::Session(), arg2);
   }
 
   Standard_Integer nbvar = 0;
@@ -104,36 +128,36 @@ static Standard_Integer XSControl_tpdraw
   {
     if (mode == 0)
     {
-      sout << "Pas de modele, preciser n0 d item de transfert" << std::endl;
-      return IFSelect_RetError;
+      aSSC.SStream() << "Pas de modele, preciser n0 d item de transfert" << std::endl;
+      return 1;
     }
   }
   if (mode == 0)
   {
-    sout << "Entite de modele";    max = model->NbEntities();
+    aSSC.SStream() << "Entite de modele";    max = model->NbEntities();
   }
   if (mode == 1)
   {
-    sout << "Item de transfert";   max = TP->NbMapped();
+    aSSC.SStream() << "Item de transfert";   max = TP->NbMapped();
   }
   if (mode == 2)
   {
-    sout << "Racine de transfert"; max = TP->NbRoots();
+    aSSC.SStream() << "Racine de transfert"; max = TP->NbRoots();
   }
   if (tout)
   {
     n1 = 1;  n2 = max;
-    sout << ", listage de 1 a " << max << std::endl;
+    aSSC.SStream() << ", listage de 1 a " << max << std::endl;
   }
   else if (num <= 0 || num > max)
   {
-    sout << " - Num=" << num << " hors limite (de 1 a " << max << ")" << std::endl;
-    return IFSelect_RetError;
+    aSSC.SStream() << " - Num=" << num << " hors limite (de 1 a " << max << ")" << std::endl;
+    return 1;
   }
   else
   {
     n1 = n2 = num;  nbvar = -1;  // nbvar : 1ere shape simple = pas de n0
-    sout << ", n0 " << num << std::endl;
+    aSSC.SStream() << ", n0 " << num << std::endl;
   }
 
   for (i = n1; i <= n2; i++)
@@ -163,12 +187,12 @@ static Standard_Integer XSControl_tpdraw
     if (binder.IsNull()) index = 0;
     if (index == 0)
     {
-      if (!tout) sout << "Entite n0 " << num << " : non repertoriee" << std::endl;
+      if (!tout) aSSC.SStream() << "Entite n0 " << num << " : non repertoriee" << std::endl;
       continue;
     }
     if (!binder->HasResult())
     {
-      if (!tout) sout << "Entite n0 " << num << " : pas de resultat" << std::endl;
+      if (!tout) aSSC.SStream() << "Entite n0 " << num << " : pas de resultat" << std::endl;
       continue;
     }
     sh = TransferBRep::ShapeResult(binder);
@@ -179,51 +203,51 @@ static Standard_Integer XSControl_tpdraw
       nbvar++;
       if (sh.IsNull())
       {
-        sout << " (no Shape recorded)" << std::endl; continue;
+        aSSC.SStream() << " (no Shape recorded)" << std::endl; continue;
       }
-      if (tout) sout << "[ " << i << " ]:";
-      if (num == 0) sout << " pas dans le modele";
-      else sout << " ent.n0 " << num;
-      sout << ", item transfert n0 " << index;
+      if (tout) aSSC.SStream() << "[ " << i << " ]:";
+      if (num == 0) aSSC.SStream() << " pas dans le modele";
+      else aSSC.SStream() << " ent.n0 " << num;
+      aSSC.SStream() << ", item transfert n0 " << index;
       if (nbvar == 0)
       {
-        if (argc > 3 && mode > 0) sprintf(nomvar, "%s", arg3);
-        else if (argc > 2 && mode == 0) sprintf(nomvar, "%s", arg2);
+        if (theNbArgs > 3 && mode > 0) sprintf(nomvar, "%s", arg3);
+        else if (theNbArgs > 2 && mode == 0) sprintf(nomvar, "%s", arg2);
         else                            sprintf(nomvar, "tp_%d", i);
       }
       else
       {
-        if (argc > 3 && mode > 0) sprintf(nomvar, "%s_%d", arg3, nbvar);
-        else if (argc > 2 && mode == 0) sprintf(nomvar, "%s_%d", arg2, nbvar);
+        if (theNbArgs > 3 && mode > 0) sprintf(nomvar, "%s_%d", arg3, nbvar);
+        else if (theNbArgs > 2 && mode == 0) sprintf(nomvar, "%s_%d", arg2, nbvar);
         else                            sprintf(nomvar, "tp_%d", i);
       }
-      sout << " -> 1 DRAW Shape: " << nomvar << std::endl;
-      XSControl::Vars(pilot)->SetShape(nomvar, sh);
+      aSSC.SStream() << " -> 1 DRAW Shape: " << nomvar << std::endl;
+      DBRep::Set(nomvar, sh);
       continue;
     }
     DeclareAndCast(TransferBRep_ShapeListBinder, slb, binder);
     if (!slb.IsNull())
     {
       Standard_Integer nbs = slb->NbShapes();
-      if (tout) sout << "[ " << i << " ]:";
-      if (num == 0) sout << " pas dans le modele";
-      else sout << " ent.n0 " << num;
-      sout << ", item transfert n0 " << index;
-      sout << " -> " << nbs << " DRAW Shapes :";
+      if (tout) aSSC.SStream() << "[ " << i << " ]:";
+      if (num == 0) aSSC.SStream() << " pas dans le modele";
+      else aSSC.SStream() << " ent.n0 " << num;
+      aSSC.SStream() << ", item transfert n0 " << index;
+      aSSC.SStream() << " -> " << nbs << " DRAW Shapes :";
       for (Standard_Integer j = 1; j <= nbs; j++)
       {
         sh = slb->Shape(j);  if (nbvar < 0) nbvar = 0;  nbvar++;
         if (sh.IsNull())
         {
-          sout << " (no Shape recorded)" << std::endl; continue;
+          aSSC.SStream() << " (no Shape recorded)" << std::endl; continue;
         }
-        if (argc > 3 && mode > 0) sprintf(nomvar, "%s_%d", arg3, nbvar);
-        else if (argc > 2 && mode == 0) sprintf(nomvar, "%s_%d", arg2, nbvar);
+        if (theNbArgs > 3 && mode > 0) sprintf(nomvar, "%s_%d", arg3, nbvar);
+        else if (theNbArgs > 2 && mode == 0) sprintf(nomvar, "%s_%d", arg2, nbvar);
         else                        sprintf(nomvar, "tp_%d_%d", i, nbvar);
-        sout << " " << nomvar;
-        XSControl::Vars(pilot)->SetShape(nomvar, sh);
+        aSSC.SStream() << " " << nomvar;
+        DBRep::Set(nomvar, sh);
       }
-      sout << std::endl;
+      aSSC.SStream() << std::endl;
       continue;
     }
     DeclareAndCast(Transfer_SimpleBinderOfTransient, trb, binder);
@@ -232,121 +256,130 @@ static Standard_Integer XSControl_tpdraw
       Handle(Standard_Transient) resu = trb->Result();
       if (resu.IsNull())
       {
-        sout << "Entite n0 " << num << " : pas de resultat" << std::endl;
+        aSSC.SStream() << "Entite n0 " << num << " : pas de resultat" << std::endl;
         continue;
       }
       DeclareAndCast(Geom_Geometry, geom, resu);
-      sout << "Entite n0 " << num << " : resultat " << resu->DynamicType()->Name();
+      aSSC.SStream() << "Entite n0 " << num << " : resultat " << resu->DynamicType()->Name();
       if (geom.IsNull())
       {
-        sout << std::endl; continue;
+        aSSC.SStream() << std::endl; continue;
       }
       nbvar++;
       if (nbvar == 0)
       {
-        if (argc > 3 && mode > 0) sprintf(nomvar, "%s", arg3);
-        else if (argc > 2 && mode == 0) sprintf(nomvar, "%s", arg2);
+        if (theNbArgs > 3 && mode > 0) sprintf(nomvar, "%s", arg3);
+        else if (theNbArgs > 2 && mode == 0) sprintf(nomvar, "%s", arg2);
         else                            sprintf(nomvar, "tp_%d", i);
       }
       else
       {
-        if (argc > 3 && mode > 0) sprintf(nomvar, "%s_%d", arg3, nbvar);
-        else if (argc > 2 && mode == 0) sprintf(nomvar, "%s_%d", arg2, nbvar);
+        if (theNbArgs > 3 && mode > 0) sprintf(nomvar, "%s_%d", arg3, nbvar);
+        else if (theNbArgs > 2 && mode == 0) sprintf(nomvar, "%s_%d", arg2, nbvar);
         else                            sprintf(nomvar, "tp_%d", i);
       }
       char* nomv = nomvar;
-      XSControl::Vars(pilot)->Set(nomv, geom);
-      sout << " -> DRAW Geom : " << nomvar << std::endl;
+      DrawTrSurf::Set(nomv, geom);
+      aSSC.SStream() << " -> DRAW Geom : " << nomvar << std::endl;
       continue;
     }
 
     if (sh.IsNull() && trb.IsNull())
-      if (!tout) sout << "Entite n0 " << num << " : resultat pas une Shape mais " << binder->ResultTypeName() << std::endl;
+      if (!tout) aSSC.SStream() << "Entite n0 " << num << " : resultat pas une Shape mais " << binder->ResultTypeName() << std::endl;
   }
 
-  if (sh.IsNull()) sout << " (No Shape)" << std::endl;
-  return IFSelect_RetDone;
+  if (sh.IsNull()) aSSC.SStream() << " (No Shape)" << std::endl;
+  return 0;
 }
 
 //=======================================================================
 //function : XSControl_tpcompound
 //purpose  :
 //=======================================================================
-static Standard_Integer XSControl_tpcompound
-(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
+static Standard_Integer XSControl_tpcompound(Draw_Interpretor& theDI,
+                                             Standard_Integer theNbArgs,
+                                             const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Handle(Transfer_TransientProcess)& TP = XSControl::Session(pilot)->TransferReader()->TransientProcess();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  const Standard_CString arg1 = theArgVec[1];
+  const Handle(Transfer_TransientProcess)& TP = XSDRAWBase::Session()->TransferReader()->TransientProcess();
   if (TP.IsNull())
   {
-    sout << "No Transfer Read" << std::endl; return IFSelect_RetError;
+    aSSC.SStream() << "No Transfer Read" << std::endl;
+    return 1;
   }
   //        ****    tpcompound        ****
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give a NAME for the Compound  + optional givelist, else roots are taken" << std::endl; return IFSelect_RetError;
+    aSSC.SStream() << "Give a NAME for the Compound  + optional givelist, else roots are taken" << std::endl;
+    return 1;
   }
   Handle(TopTools_HSequenceOfShape) list;
-  if (argc == 2) list = TransferBRep::Shapes(TP);
+  if (theNbArgs == 2) list = TransferBRep::Shapes(TP);
   else
   {
-    Handle(TColStd_HSequenceOfTransient) lise = IFSelect_Functions::GiveList(pilot->Session(), pilot->CommandPart(2));
+    Handle(TColStd_HSequenceOfTransient) lise = XSDRAWBase::Session()->GiveList(theArgVec[2]);
     if (lise.IsNull())
     {
-      sout << "Not a valid entity list : " << pilot->CommandPart(2) << std::endl; return IFSelect_RetError;
+      aSSC.SStream() << "Not a valid entity list : " << theArgVec[2] << std::endl;
+      return 1;
     }
     list = TransferBRep::Shapes(TP, lise);
-    sout << lise->Length() << " Entities, ";
+    aSSC.SStream() << lise->Length() << " Entities, ";
   }
   if (list.IsNull())
   {
-    sout << "No Shape listed" << std::endl; return IFSelect_RetError;
+    aSSC.SStream() << "No Shape listed" << std::endl;
+    return 1;
   }
   Standard_Integer nb = list->Length();
-  sout << nb << " Shape(s) listed" << std::endl;
+  aSSC.SStream() << nb << " Shape(s) listed" << std::endl;
   TopoDS_Compound C;
   BRep_Builder B;
   B.MakeCompound(C);
   for (Standard_Integer i = 1; i <= nb; i++)  B.Add(C, list->Value(i));
-  XSControl::Vars(pilot)->SetShape(arg1, C);
-  return IFSelect_RetDone;
+  DBRep::Set(arg1, C);
+  return 0;
 }
 
 //=======================================================================
 //function : XSControl_traccess
 //purpose  : 
 //=======================================================================
-static Standard_Integer XSControl_traccess
-(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
+static Standard_Integer XSControl_traccess(Draw_Interpretor& theDI,
+                                           Standard_Integer theNbArgs,
+                                           const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  const Standard_CString arg1 = theArgVec[1];
+  const Standard_CString arg2 = theArgVec[2];
+  TCollection_AsciiString aCommand(theArgVec[0]);
   //        ****    trdraw : TransferReader        **** 26
   //        ****    trsave : TransferReader        **** 27
   //        ****    trcomp  (comp -> DRAW)         **** 28
   //        ****    trscomp (comp -> save)         **** 29
-  Standard_Boolean cascomp = (pilot->Word(0).Location(1, 'o', 1, 5) > 0);
-  Standard_Boolean cassave = (pilot->Word(0).Location(1, 's', 1, 5) > 0);
+  Standard_Boolean cascomp = (aCommand.Location(1, 'o', 1, 5) > 0);
+  Standard_Boolean cassave = (aCommand.Location(1, 's', 1, 5) > 0);
   TCollection_AsciiString nomsh, noms;
-  const Handle(XSControl_TransferReader)& TR = XSControl::Session(pilot)->TransferReader();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
+  const Handle(XSControl_TransferReader)& TR = XSDRAWBase::Session()->TransferReader();
   if (TR.IsNull())
   {
-    sout << " manque init" << std::endl; return IFSelect_RetError;
+    aSSC.SStream() << " manque init" << std::endl;
+    return 1;
   }
   const Handle(Interface_InterfaceModel)& mdl = TR->Model();
   if (mdl.IsNull())
   {
-    sout << " modele absent" << std::endl; return IFSelect_RetError;
+    aSSC.SStream() << " modele absent" << std::endl;
+    return 1;
   }
-  Standard_Integer num = (argc > 1 ? IFSelect_Functions::GiveEntityNumber(XSControl::Session(pilot), arg1) : 0);
+  Standard_Integer num = (theNbArgs > 1 ? GiveEntityNumber(XSDRAWBase::Session(), arg1) : 0);
 
-  if (argc > 1) nomsh = arg1;
+  if (theNbArgs > 1) nomsh = arg1;
   else nomsh = cascomp ? "TREAD_COMP" : "TREAD_LIST";
-  if (cassave) sout << " save shapes -> current directory" << std::endl;
+  if (cassave) aSSC.SStream() << " save shapes -> current directory" << std::endl;
 
   if (num == 0 || cascomp)
   {
@@ -355,41 +388,43 @@ static Standard_Integer XSControl_traccess
     B.MakeCompound(C);
 
     const Handle(TopTools_HSequenceOfShape)& list = TR->ShapeResultList(Standard_True);
-    sout << " TOUS RESULTATS par ShapeResultList, soit " << list->Length() << std::endl;
+    aSSC.SStream() << " TOUS RESULTATS par ShapeResultList, soit " << list->Length() << std::endl;
     for (Standard_Integer i = 1, nb = list->Length(); i <= nb; ++i)
     {
       noms = nomsh + "_" + i;
-      if ((i % 1000) == 0) sout << "(" << i << ")" << std::endl;
-      else if ((i % 100) == 0) sout << "*";
-      else if ((i % 10) == 0) sout << "0";
-      else                     sout << ".";
+      if ((i % 1000) == 0) aSSC.SStream() << "(" << i << ")" << std::endl;
+      else if ((i % 100) == 0) aSSC.SStream() << "*";
+      else if ((i % 10) == 0) aSSC.SStream() << "0";
+      else                     aSSC.SStream() << ".";
       if (list->Value(i).IsNull()) continue;
-      if (!cascomp && !cassave) XSControl::Vars(pilot)->SetShape(noms.ToCString(), list->Value(i));
+      if (!cascomp && !cassave) DBRep::Set(noms.ToCString(), list->Value(i));
       else if (!cascomp && cassave) BRepTools::Write(list->Value(i), noms.ToCString());
       else if (cascomp) B.Add(C, list->Value(i));
     }
-    sout << std::endl;
-    if (cascomp && !cassave) XSControl::Vars(pilot)->SetShape(nomsh.ToCString(), C);
+    aSSC.SStream() << std::endl;
+    if (cascomp && !cassave) DBRep::Set(nomsh.ToCString(), C);
     else if (cascomp && cassave) BRepTools::Write(C, nomsh.ToCString());
   }
   else
   {
     if (num < 1 || num > mdl->NbEntities())
     {
-      sout << " incorrect:" << arg1 << std::endl; return IFSelect_RetError;
+      aSSC.SStream() << " incorrect:" << arg1 << std::endl;
+      return 1;
     }
     TopoDS_Shape sh = TR->ShapeResult(mdl->Value(num));
     if (sh.IsNull())
     {
-      sout << " Pas de resultat pour " << arg1 << std::endl; return IFSelect_RetError;
+      aSSC.SStream() << " Pas de resultat pour " << arg1 << std::endl;
+      return 1;
     }
-    if (argc > 2) nomsh = arg2;
+    if (theNbArgs > 2) nomsh = arg2;
     else nomsh = TCollection_AsciiString("TREAD_") + num;
-    if (!cascomp && !cassave) XSControl::Vars(pilot)->SetShape(nomsh.ToCString(), sh);
+    if (!cascomp && !cassave) DBRep::Set(nomsh.ToCString(), sh);
     else if (!cascomp && cassave) BRepTools::Write(sh, nomsh.ToCString());
-    else sout << "Option non comprise" << std::endl;
+    else aSSC.SStream() << "Option non comprise" << std::endl;
   }
-  return IFSelect_RetDone;
+  return 0;
 }
 
 //=======================================================================
@@ -398,7 +433,8 @@ static Standard_Integer XSControl_traccess
 //=======================================================================
 // PTV 23.08.2000 Added for checking where are an entity from.
 static Standard_Boolean XSControl_IsEqualSubShape(const TopoDS_Shape& Shape,
-                                                  TopoDS_Shape& sh, Standard_Integer aLevel)
+                                                  TopoDS_Shape& sh,
+                                                  Standard_Integer aLevel)
 {
   if (sh.IsSame(Shape)) return Standard_True;
   if (aLevel > 0)
@@ -419,29 +455,30 @@ static Standard_Boolean XSControl_IsEqualSubShape(const TopoDS_Shape& Shape,
 //function : XSControl_fromshape
 //purpose  : 
 //=======================================================================
-static Standard_Integer XSControl_fromshape
-(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
+static Standard_Integer XSControl_fromshape(Draw_Interpretor& theDI,
+                                            Standard_Integer theNbArgs,
+                                            const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    fromshape (tread)         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give name of a DRAW Shape" << std::endl;
-    return IFSelect_RetError;
+    aSSC.SStream() << "Give name of a DRAW Shape" << std::endl;
+    return 1;
   }
   const char* a1 = (char*)arg1;
-  TopoDS_Shape Shape = XSControl::Vars(pilot)->GetShape(a1);
+  TopoDS_Shape Shape = DBRep::Get(a1);
   if (Shape.IsNull())
   {
-    sout << "Not a DRAW Shape:" << arg1 << std::endl;
-    return IFSelect_RetError;
+    aSSC.SStream() << "Not a DRAW Shape:" << arg1 << std::endl;
+    return 1;
   }
   Standard_Boolean yena = Standard_False;
   Standard_Integer aLevel = 1;
-  if (argc >= 3)
-    aLevel = atoi(pilot->Arg(2));
+  if (theNbArgs >= 3)
+    aLevel = atoi(theArgVec[2]);
   Standard_Boolean silent = Standard_False;
   if (aLevel < 0)
   {
@@ -450,14 +487,14 @@ static Standard_Integer XSControl_fromshape
   }
 
   //    IMPORT
-  const Handle(XSControl_TransferReader)& TR = XSControl::Session(pilot)->TransferReader();
+  const Handle(XSControl_TransferReader)& TR = XSDRAWBase::Session()->TransferReader();
   if (TR.IsNull())
   {
-  }  // sout<<"No read transfer (import) recorded"<<std::endl;
+  }  // aSSC.SStream()<<"No read transfer (import) recorded"<<std::endl;
   else
   {
     yena = Standard_True;
-    if (!silent) sout << "Shape " << arg1 << " : ";
+    if (!silent) aSSC.SStream() << "Shape " << arg1 << " : ";
     Standard_Integer modrec = 1;
     Handle(Standard_Transient) ent = TR->EntityFromShapeResult(Shape, modrec);
     if (ent.IsNull())
@@ -472,8 +509,8 @@ static Standard_Integer XSControl_fromshape
       if (TP.IsNull())
       {
         if (silent)
-          sout << "Shape " << arg1 << " : ";
-        sout << "no map" << std::endl;
+          aSSC.SStream() << "Shape " << arg1 << " : ";
+        aSSC.SStream() << "no map" << std::endl;
       }
       else
       {
@@ -481,7 +518,7 @@ static Standard_Integer XSControl_fromshape
         TopLoc_Location L;
         S0.Location(L);
         Standard_Integer i, nb = TP->NbMapped();
-        if (!silent) sout << "searching in map among " << nb << " ...";
+        if (!silent) aSSC.SStream() << "searching in map among " << nb << " ...";
         for (i = 1; i <= nb; i++)
         {
           ent = TP->Mapped(i);
@@ -502,19 +539,19 @@ static Standard_Integer XSControl_fromshape
     }
     if (!ent.IsNull())
     {
-      if (silent) sout << "Shape " << arg1 << ": ";
-      if (modrec < 0) sout << "(moved from origin) ";
-      //else sout<<"(origin) ";
+      if (silent) aSSC.SStream() << "Shape " << arg1 << ": ";
+      if (modrec < 0) aSSC.SStream() << "(moved from origin) ";
+      //else aSSC.SStream()<<"(origin) ";
     }
     //  on affiche
     if (ent.IsNull())
     {
-      if (!silent) sout << " unknown as imported";
+      if (!silent) aSSC.SStream() << " unknown as imported";
       // skl 11.05.2004
       // if Shape is a compound try to make "fromshape" for its subshapes
       if (Shape.ShapeType() == TopAbs_COMPOUND)
       {
-        sout << std::endl << "Subshapes imported from entities:";
+        aSSC.SStream() << std::endl << "Subshapes imported from entities:";
         TopoDS_Iterator Iter(Shape);
         for (; Iter.More(); Iter.Next())
         {
@@ -528,22 +565,22 @@ static Standard_Integer XSControl_fromshape
           }
           if (!subent.IsNull())
           {
-            sout << "  " << XSControl::Session(pilot)->Model()->Number(subent);
+            aSSC.SStream() << "  " << XSDRAWBase::Session()->Model()->Number(subent);
           }
         }
       }
     }
     else
     {
-      sout << "imported from entity ";
-      XSControl::Session(pilot)->Model()->Print(ent, sout);
-      if (silent) sout << " in file " << XSControl::Session(pilot)->LoadedFile() << std::endl;
+      aSSC.SStream() << "imported from entity ";
+      XSDRAWBase::Session()->Model()->Print(ent, aSSC.SStream());
+      if (silent) aSSC.SStream() << " in file " << XSDRAWBase::Session()->LoadedFile() << std::endl;
     }
-    if (!silent) sout << std::endl;
+    if (!silent) aSSC.SStream() << std::endl;
   }
 
   //   ET EN EXPORT ?
-  const Handle(Transfer_FinderProcess)& FP = XSControl::Session(pilot)->TransferWriter()->FinderProcess();
+  const Handle(Transfer_FinderProcess)& FP = XSDRAWBase::Session()->TransferWriter()->FinderProcess();
   if (FP.IsNull())
   {
   }
@@ -555,10 +592,10 @@ static Standard_Integer XSControl_fromshape
     if (!fnd.IsNull()) ent = FP->FindTransient(fnd);
     if (!ent.IsNull())
     {
-      sout << "Shape " << arg1 << ": exported to entity ";
-      XSControl::Session(pilot)->Model()->Print(ent, sout);
-      if (silent) sout << " in file " << XSControl::Session(pilot)->LoadedFile();
-      sout << std::endl;
+      aSSC.SStream() << "Shape " << arg1 << ": exported to entity ";
+      XSDRAWBase::Session()->Model()->Print(ent, aSSC.SStream());
+      if (silent) aSSC.SStream() << " in file " << XSDRAWBase::Session()->LoadedFile();
+      aSSC.SStream() << std::endl;
     }
     // abv 31.08.00: treat case of split shape (several results)
     // it is supposed that results are of the same type and lie in one-level comp
@@ -573,16 +610,16 @@ static Standard_Integer XSControl_fromshape
         if (!TransientListBinder.IsNull())
         {
           Standard_Integer i = 1, nb = TransientListBinder->NbTransients();
-          if (nb > 0) sout << "Shape " << arg1 << ": exported to entities ";
+          if (nb > 0) aSSC.SStream() << "Shape " << arg1 << ": exported to entities ";
           for (; i <= nb; i++)
           {
-            XSControl::Session(pilot)->Model()->Print(TransientListBinder->Transient(i), sout);
-            if (i < nb) sout << ", ";
+            XSDRAWBase::Session()->Model()->Print(TransientListBinder->Transient(i), aSSC.SStream());
+            if (i < nb) aSSC.SStream() << ", ";
           }
           if (nb > 0)
           {
-            if (silent) sout << " in file " << XSControl::Session(pilot)->LoadedFile();
-            sout << std::endl;
+            if (silent) aSSC.SStream() << " in file " << XSDRAWBase::Session()->LoadedFile();
+            aSSC.SStream() << std::endl;
           }
         }
         /*	else {
@@ -595,235 +632,108 @@ static Standard_Integer XSControl_fromshape
                 Handle(Standard_Transient) cent = FP->FindTransient (cfnd);
                 if ( cent.IsNull() ) continue;
                 if ( start )
-            sout<<"Shape "<<arg1<<" : exported to entities ";
-                else sout << ", ";
+            aSSC.SStream()<<"Shape "<<arg1<<" : exported to entities ";
+                else aSSC.SStream() << ", ";
                 start = Standard_False;
-                XSControl::Session(pilot)->Model()->Print(cent,sout);
+                XSControl::Session(pilot)->Model()->Print(cent,aSSC.SStream());
               }
-              if ( ! start ) sout<<std::endl;
+              if ( ! start ) aSSC.SStream()<<std::endl;
             }
           }  */
       }
     }
   }
-  if (!yena) sout << "No transfer (either import or export) recorded" << std::endl;
+  if (!yena) aSSC.SStream() << "No transfer (either import or export) recorded" << std::endl;
 
-  return IFSelect_RetVoid;
+  return 1;
 }
 
 //=======================================================================
 //function : XSControl_trconnexentities
 //purpose  : 
 //=======================================================================
-static Standard_Integer XSControl_trconnexentities
-(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
+static Standard_Integer XSControl_trconnexentities(Draw_Interpretor& theDI,
+                                                   Standard_Integer theNbArgs,
+                                                   const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    connected entities (last transfer)         ****
-  const Handle(XSControl_TransferReader)& TR = XSControl::Session(pilot)->TransferReader();
+  const Handle(XSControl_TransferReader)& TR = XSDRAWBase::Session()->TransferReader();
   Handle(Transfer_TransientProcess) TP;
   if (!TR.IsNull()) TP = TR->TransientProcess();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (TP.IsNull())
   {
-    sout << "no transfer map" << std::endl; return IFSelect_RetVoid;
+    aSSC.SStream() << "no transfer map" << std::endl;
+    return 1;
   }
-  if (argc < 2)
+  if (theNbArgs < 2)
   {
-    sout << "Give name of a DRAW Shape + optional shape type v-e-w-f(D)-s" << std::endl;
-    return IFSelect_RetError;
+    aSSC.SStream() << "Give name of a DRAW Shape + optional shape type v-e-w-f(D)-s" << std::endl;
+    return 1;
   }
-  const char* a1 = (const char*)arg1;
-  TopoDS_Shape Shape = XSControl::Vars(pilot)->GetShape(a1);
+  const char* a1 = arg1;
+  TopoDS_Shape Shape = DBRep::Get(a1);
   if (Shape.IsNull())
   {
-    sout << "Not a DRAW Shape:" << arg1 << std::endl; return IFSelect_RetError;
+    aSSC.SStream() << "Not a DRAW Shape:" << arg1 << std::endl;
+    return 1;
   }
-  sout << "Shape " << arg1 << " : ";
+  aSSC.SStream() << "Shape " << arg1 << " : ";
 
   Handle(TColStd_HSequenceOfTransient) list =
     XSControl_ConnectedShapes::AdjacentEntities(Shape, TP, TopAbs_FACE);
   Standard_Integer i, nb = list->Length();
-  sout << nb << " Entities produced Connected Shapes :" << std::endl;
-  const Handle(Interface_InterfaceModel)& model = XSControl::Session(pilot)->Model();
-  sout << "(";
+  aSSC.SStream() << nb << " Entities produced Connected Shapes :" << std::endl;
+  const Handle(Interface_InterfaceModel)& model = XSDRAWBase::Session()->Model();
+  aSSC.SStream() << "(";
   for (i = 1; i <= nb; i++)
   {
-    if (i > 1) sout << ",";
-    sout << model->Number(list->Value(i));
+    if (i > 1) aSSC.SStream() << ",";
+    aSSC.SStream() << model->Number(list->Value(i));
   }
-  sout << ")" << std::endl;
-  return IFSelect_RetDone;
-}
-
-//=======================================================================
-//function : XSControl_trimport
-//purpose  : 
-//=======================================================================
-static Standard_Integer XSControl_trimport
-(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
-{
-  //  FileName ou . (pour courant)  VarName  GiveList (obligatoire)
-  //    GiveList : * pour xst-transferrable-roots
-  Handle(XSControl_WorkSession) WS = XSControl::Session(pilot);
-
-  Standard_Integer argc = pilot->NbWords();
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  if (argc < 4)
-  {
-    sout << "Give : filename or . for current model;  varname or . to take fileroot\n  GiveList, * for all transferrable roots" << std::endl;
-    return IFSelect_RetError;
-  }
-  const Standard_CString arg1 = pilot->Arg(1);
-  const Standard_CString arg2 = pilot->Arg(2);
-  const Standard_CString arg3 = pilot->Arg(3);
-
-  //  File Name and Variable (root) Name
-
-  TCollection_AsciiString fnom, rnom;
-  Standard_Boolean modfic = XSDRAW_FunctionsShape::FileAndVar
-  (WS, arg1, arg2, "IMPORT", fnom, rnom);
-  if (modfic) sout << " File to read : " << fnom << std::endl;
-  else        sout << " Model taken from the session : " << fnom << std::endl;
-  sout << " -- Names of variables BREP-DRAW prefixed by : " << rnom << std::endl;
-
-  //  keep the current command, because sub-commands will be called
-  TCollection_AsciiString compart = pilot->CommandPart(3);
-
-  //  Reading file if required
-
-  if (modfic)
-  {
-    TCollection_AsciiString comload("xload ");
-    comload.AssignCat(arg1);
-    IFSelect_ReturnStatus status = pilot->Execute(comload);
-    if (status != IFSelect_RetDone)
-    {
-      sout << "Abandon import" << std::endl; return status;
-    }
-  }
-  else
-  {
-    sout << "Currently Loaded Model" << std::endl;
-  }
-
-  //  Selecting Entities
-
-  Handle(TColStd_HSequenceOfTransient)  list;
-  if (arg3[0] == '*' && arg3[1] == '\0')
-  {
-    list = WS->GiveList("xst-transferrable-roots");
-    sout << "All Transferrable Roots : ";
-  }
-  else
-  {
-    sout << "List given by " << compart.ToCString() << " : ";
-    list = WS->GiveList(compart.ToCString());
-  }
-  if (list.IsNull())
-  {
-    sout << "No list defined. Abandon" << std::endl; return IFSelect_RetError;
-  }
-  Standard_Integer nbl = list->Length();
-  sout << "Nb entities selected : " << nbl << std::endl;
-
-  //  Starting Transfer
-
-  WS->InitTransferReader(0);
-  const Handle(XSControl_TransferReader)& TR = WS->TransferReader();
-  if (TR.IsNull())
-  {
-    sout << " init not done or failed" << std::endl; return IFSelect_RetError;
-  }
-
-  TR->BeginTransfer();
-
-  //  Transferring
-  Standard_Integer nbt = TR->TransferList(list);
-  sout << "Nb Entities Selected : " << nbl << " have given " << nbt << " results" << std::endl;
-
-  //  Filling VARS. one compound (trimpcomp) or one shape per ent (trimport)
-  Standard_Boolean iscomp = (pilot->Arg(0)[5] == 'c');
-  Standard_Integer nbs = 0;
-  TopoDS_Shape sh;
-  TopoDS_Compound C;
-  BRep_Builder B;
-  B.MakeCompound(C);
-  Handle(Interface_InterfaceModel)  mdl = TR->Model();
-  if (mdl.IsNull())
-  {
-    sout << " modele absent" << std::endl; return IFSelect_RetError;
-  }
-  for (Standard_Integer il = 1; il <= nbl; il++)
-  {
-    Handle(Standard_Transient) ent = list->Value(il);
-    sh = TR->ShapeResult(ent);
-    if (sh.IsNull()) continue;
-    nbs++;
-    if (iscomp) B.Add(C, sh);
-    else
-    {
-      char nomsh[50];
-      sprintf(nomsh, "%s_%d", rnom.ToCString(), nbs);
-      XSControl::Vars(pilot)->SetShape(nomsh, sh);
-    }
-  }
-  if (nbs == 0) sout << "No Shape produced" << std::endl;
-  else if (nbs == 1)
-  {
-    sout << "One Shape produced, named " << rnom.ToCString() << std::endl;
-    XSControl::Vars(pilot)->SetShape(rnom.ToCString(), sh);
-  }
-  else if (iscomp)
-  {
-    sout << "One compound made of " << nbs << " Shapes, named " << rnom.ToCString() << std::endl;
-    XSControl::Vars(pilot)->SetShape(rnom.ToCString(), C);
-  }
-  else
-  {  // several individual shapes
-    sout << nbs << " Shapes, named " << rnom.ToCString() << "_1 to " << rnom.ToCString() << "_" << nbs << std::endl;
-  }
-
-  return IFSelect_RetDone;
+  aSSC.SStream() << ")" << std::endl;
+  return 0;
 }
 
 //=======================================================================
 //function : XSControl_twrite
 //purpose  : 
 //=======================================================================
-static Standard_Integer XSControl_twrite
-(Draw_Interpretor& theDI, Standard_Integer theNbArgs, const char** theArgVec)
+static Standard_Integer XSControl_twrite(Draw_Interpretor& theDI,
+                                         Standard_Integer theNbArgs,
+                                         const char** theArgVec)
 {
-  Standard_Integer argc = pilot->NbWords();
-  const Standard_CString arg1 = pilot->Arg(1);
+  XSDRAW::StreamContainer aSSC(theDI);
+  (void)theDI;
+  const Standard_CString arg1 = theArgVec[1];
   //        ****    twrite         ****
-  Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  Handle(XSControl_TransferWriter) TW = XSControl::Session(pilot)->TransferWriter();
-  if (argc < 2)
+  Handle(XSControl_TransferWriter) TW = XSDRAWBase::Session()->TransferWriter();
+  if (theNbArgs < 2)
   {
-    sout << " donner nom de shape draw" << std::endl; return IFSelect_RetError;
+    aSSC.SStream() << " donner nom de shape draw" << std::endl;
+    return 1;
   }
-  sout << "Attention, on alimente le modele courant ..." << std::endl;
+  aSSC.SStream() << "Attention, on alimente le modele courant ..." << std::endl;
 
   // Shape
-  for (Standard_Integer i = 1; i < argc; i++)
+  for (Standard_Integer i = 1; i < theNbArgs; i++)
   {
-    const char* ai = (const char*)pilot->Arg(i);
-    TopoDS_Shape Shape = XSControl::Vars(pilot)->GetShape(ai);
+    const char* ai = theArgVec[i];
+    TopoDS_Shape Shape = DBRep::Get(ai);
     if (Shape.IsNull())
     {
-      sout << "pas un nom de shape draw:" << arg1 << std::endl; continue;
+      aSSC.SStream() << "pas un nom de shape draw:" << arg1 << std::endl; continue;
     }
-    sout << "Pour Shape : " << ai;
-    Standard_Integer stat = TW->TransferWriteShape(XSControl::Session(pilot)->Model(), Shape);
-    sout << " Transfer Write Status = " << stat << std::endl;
+    aSSC.SStream() << "Pour Shape : " << ai;
+    Standard_Integer stat = TW->TransferWriteShape(XSDRAWBase::Session()->Model(), Shape);
+    aSSC.SStream() << " Transfer Write Status = " << stat << std::endl;
   }
-  pilot->Session()->ComputeGraph();
+  XSDRAWBase::Session()->ComputeGraph();
   // Transient ? (Geom) : ignore
-  return IFSelect_RetDone;
+  return 0;
 }
-
 
 //=======================================================================
 //function : Init
@@ -838,16 +748,14 @@ void  XSDRAW_FunctionsShape::Init(Draw_Interpretor& theDI)
   }
   THE_XSDRAW_FunctionsShape_initactor = 1;
 
-  IFSelect_Act::SetGroup("DE: General");
-  IFSelect_Act::AddFunc("tpdraw", "[mode:item or root]  num|*  [nomvar] Passes an ITEM to Shape Draw (Start or Result)", XSControl_tpdraw);
-  IFSelect_Act::AddFunc("tpcompound", "name:cstring [givelist] : -> compound with Shapes Root or from givelist", XSControl_tpcompound);
-  IFSelect_Act::AddFunc("trdraw", "results ->DRAW : all;  or num [name] : from ent.num -> DRAW [name/tread_num]", XSControl_traccess);
-  IFSelect_Act::AddFunc("trsave", "results ->files : all;  or num [name] : from ent.num -> DRAW [name/tread_num]", XSControl_traccess);
-  IFSelect_Act::AddFunc("trcomp", "results -> 1 compound -> DRAW + name optional", XSControl_traccess);
-  IFSelect_Act::AddFunc("trscomp", "results -> 1 compound -> file + name optional", XSControl_traccess);
-  IFSelect_Act::AddFunc("fromshape", "shape [level=1]: imported/exported entity (when known)", XSControl_fromshape);
-  IFSelect_Act::AddFunc("trconnexent", "name of draw shape : entities -> connected shapes (when known)", XSControl_trconnexentities);
-  IFSelect_Act::AddFunc("trimport", "filename or .  varname  givelist  -> 1 shape per entity", XSControl_trimport);
-  IFSelect_Act::AddFunc("trimpcomp", "filename or .  varname  givelist -> one xcompound", XSControl_trimport);
-  IFSelect_Act::AddFunc("twrite", "shape : transfer write for this shape, AFTER newmodel !", XSControl_twrite);
+  Standard_CString aGroup = "DE: General";
+  theDI.Add("tpdraw", "[mode:item or root]  num|*  [nomvar] Passes an ITEM to Shape Draw (Start or Result)", XSControl_tpdraw, aGroup);
+  theDI.Add("tpcompound", "name:cstring [givelist] : -> compound with Shapes Root or from givelist", __FILE__, XSControl_tpcompound, aGroup);
+  theDI.Add("trdraw", "results ->DRAW : all;  or num [name] : from ent.num -> DRAW [name/tread_num]", __FILE__, XSControl_traccess, aGroup);
+  theDI.Add("trsave", "results ->files : all;  or num [name] : from ent.num -> DRAW [name/tread_num]", __FILE__, XSControl_traccess, aGroup);
+  theDI.Add("trcomp", "results -> 1 compound -> DRAW + name optional", __FILE__, XSControl_traccess, aGroup);
+  theDI.Add("trscomp", "results -> 1 compound -> file + name optional", __FILE__, XSControl_traccess, aGroup);
+  theDI.Add("fromshape", "shape [level=1]: imported/exported entity (when known)", __FILE__, XSControl_fromshape, aGroup);
+  theDI.Add("trconnexent", "name of draw shape : entities -> connected shapes (when known)", __FILE__, XSControl_trconnexentities, aGroup);
+  theDI.Add("twrite", "shape : transfer write for this shape, AFTER newmodel !", __FILE__, XSControl_twrite, aGroup);
 }

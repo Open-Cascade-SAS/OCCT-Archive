@@ -21,7 +21,6 @@
 
 #include <Draw_Interpretor.hxx>
 
-
 //! Provides DRAW commands for work with DECAF data structures
 class XDEDRAW 
 {

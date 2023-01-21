@@ -18,6 +18,7 @@
 #include <Message.hxx>
 #include <STEPControl_Controller.hxx>
 #include <StepData_StepModel.hxx>
+#include <STEPControl_ActorWrite.hxx>
 #include <STEPCAFControl_ConfigurationNode.hxx>
 #include <STEPCAFControl_Controller.hxx>
 #include <STEPCAFControl_Reader.hxx>
@@ -708,17 +709,28 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   personizeWS(theWS);
   STEPControl_Writer aWriter(theWS, Standard_True);
   Handle(StepData_StepModel) aModel = aWriter.Model();
+  Standard_Integer aNbEntities = (aModel.IsNull() ? 0 : aModel->NbEntities());
   aModel->SetWriteLengthUnit(UnitsMethods::GetLengthUnitScale(
     aNode->InternalParameters.WriteUnit,
     UnitsMethods_LengthUnit_Millimeter));
   IFSelect_ReturnStatus aWritestat =
     aWriter.Transfer(theShape, aNode->InternalParameters.WriteModelType, true, theProgress);
+  if (aNbEntities > 0)
+  {
+    Message::SendTrace() << "STEPCAFControl_Provider : Model not empty before transferring";
+  }
   if (aWritestat != IFSelect_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : "
       << "Can't translate shape to STEP model";
     resetStatic();
     return false;
+  }
+  if (thePath == ".")
+  {
+    resetStatic();
+    Message::SendInfo() << "Step model has been translated into the session";
+    return true;
   }
   if (aWriter.Write(thePath.ToCString()) != IFSelect_RetDone)
   {
@@ -754,11 +766,16 @@ bool STEPCAFControl_Provider::Write(std::ostream& theOStream,
   personizeWS(theWS);
   STEPControl_Writer aWriter(theWS, Standard_True);
   Handle(StepData_StepModel) aModel = aWriter.Model();
+  Standard_Integer aNbEntities = (aModel.IsNull() ? 0 : aModel->NbEntities());
   aModel->SetWriteLengthUnit(UnitsMethods::GetLengthUnitScale(
     aNode->InternalParameters.WriteUnit,
     UnitsMethods_LengthUnit_Millimeter));
   IFSelect_ReturnStatus aWritestat =
     aWriter.Transfer(theShape, aNode->InternalParameters.WriteModelType, true, theProgress);
+  if (aNbEntities > 0)
+  {
+    Message::SendTrace() << "STEPCAFControl_Provider : Model not empty before transferring";
+  }
   if (aWritestat != IFSelect_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : "

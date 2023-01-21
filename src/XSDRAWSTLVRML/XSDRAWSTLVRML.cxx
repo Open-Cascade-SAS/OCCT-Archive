@@ -641,7 +641,6 @@ static Standard_Integer showonly(Draw_Interpretor& theDI,
     return 0;
   }
 
-
   Handle(AIS_InteractiveContext) aContext = ViewerTest::GetAISContext();
   Handle(MeshVS_Mesh) aMesh = getMesh(theArgVec[1], theDI);
   if (aMesh.IsNull())
@@ -797,7 +796,6 @@ static Standard_Integer meshcolors(Draw_Interpretor& theDI,
 
           aMesh->AddBuilder(aBuilder, Standard_True);
         }
-
 
         if (aMode.IsEqual("nodal"))
         {
@@ -1306,12 +1304,7 @@ void XSDRAWSTLVRML::InitCommands(Draw_Interpretor& theCommands)
 //=======================================================================
 void XSDRAWSTLVRML::Factory(Draw_Interpretor& theDI)
 {
-  XSDRAWIGES::InitSelect();
-  XSDRAWIGES::InitToBRep(theDI);
-  XSDRAWIGES::InitFromBRep(theDI);
-  XSDRAWSTEP::InitCommands(theDI);
   XSDRAWSTLVRML::InitCommands(theDI);
-  XSDRAW::LoadDraw(theDI);
 #ifdef OCCT_DEBUG
   theDI << "Draw Plugin : All TKXSDRAW commands are loaded\n";
 #endif

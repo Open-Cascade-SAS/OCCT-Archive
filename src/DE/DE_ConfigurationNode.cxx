@@ -115,6 +115,15 @@ bool DE_ConfigurationNode::IsExportSupported() const
 }
 
 //=======================================================================
+// function : IsExportSupported
+// purpose  :
+//=======================================================================
+bool DE_ConfigurationNode::IsStreamSupported() const
+{
+  return false;
+}
+
+//=======================================================================
 // function : CheckForSupport
 // purpose  :
 //=======================================================================

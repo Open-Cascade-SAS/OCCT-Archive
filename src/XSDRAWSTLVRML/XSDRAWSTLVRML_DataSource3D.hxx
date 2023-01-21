@@ -30,14 +30,12 @@
 #include <Standard_Address.hxx>
 #include <TColStd_Array1OfInteger.hxx>
 
-
 class XSDRAWSTLVRML_DataSource3D;
 DEFINE_STANDARD_HANDLE(XSDRAWSTLVRML_DataSource3D, MeshVS_DataSource)
 
 //! The sample DataSource3D for working with STLMesh_Mesh
 class XSDRAWSTLVRML_DataSource3D : public MeshVS_DataSource
 {
-
 public:
 
   
@@ -74,18 +72,11 @@ public:
   //! There is default method, for advance reflection this method can be redefined.
   Standard_EXPORT virtual Standard_Boolean GetNormal (const Standard_Integer theID, const Standard_Integer theMax, Standard_Real& theNx, Standard_Real& theNy, Standard_Real& theNz) const Standard_OVERRIDE;
 
-
-
-
   DEFINE_STANDARD_RTTIEXT(XSDRAWSTLVRML_DataSource3D,MeshVS_DataSource)
 
 protected:
 
-
-
-
 private:
-
 
   TColStd_PackedMapOfInteger myNodes;
   TColStd_PackedMapOfInteger myElements;
@@ -93,13 +84,6 @@ private:
   Handle(TColStd_HArray2OfReal) myNodeCoords;
   Handle(TColStd_HArray2OfInteger) myElemNodes;
 
-
 };
-
-
-
-
-
-
 
 #endif // _XSDRAWSTLVRML_DataSource3D_HeaderFile

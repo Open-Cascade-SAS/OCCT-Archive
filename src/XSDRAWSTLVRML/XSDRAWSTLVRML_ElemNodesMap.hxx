@@ -23,5 +23,4 @@
 typedef NCollection_DataMap<Standard_Integer,TColStd_DataMapOfIntegerInteger,TColStd_MapIntegerHasher> XSDRAWSTLVRML_ElemNodesMap;
 typedef NCollection_DataMap<Standard_Integer,TColStd_DataMapOfIntegerInteger,TColStd_MapIntegerHasher>::Iterator XSDRAWSTLVRML_DataMapIteratorOfElemNodesMap;
 
-
 #endif

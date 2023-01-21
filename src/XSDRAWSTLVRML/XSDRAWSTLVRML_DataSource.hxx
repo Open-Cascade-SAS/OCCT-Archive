@@ -28,14 +28,12 @@
 #include <TColStd_Array1OfInteger.hxx>
 #include <Poly_Triangulation.hxx>
 
-
 class XSDRAWSTLVRML_DataSource;
 DEFINE_STANDARD_HANDLE(XSDRAWSTLVRML_DataSource, MeshVS_DataSource)
 
 //! The sample DataSource for working with STLMesh_Mesh
 class XSDRAWSTLVRML_DataSource : public MeshVS_DataSource
 {
-
 public:
 
   
@@ -68,18 +66,11 @@ public:
   //! There is default method, for advance reflection this method can be redefined.
   Standard_EXPORT virtual Standard_Boolean GetNormal (const Standard_Integer Id, const Standard_Integer Max, Standard_Real& nx, Standard_Real& ny, Standard_Real& nz) const Standard_OVERRIDE;
 
-
-
-
   DEFINE_STANDARD_RTTIEXT(XSDRAWSTLVRML_DataSource,MeshVS_DataSource)
 
 protected:
 
-
-
-
 private:
-
 
   Handle(Poly_Triangulation) myMesh;
   TColStd_PackedMapOfInteger myNodes;
@@ -88,13 +79,6 @@ private:
   Handle(TColStd_HArray2OfReal) myNodeCoords;
   Handle(TColStd_HArray2OfReal) myElemNormals;
 
-
 };
-
-
-
-
-
-
 
 #endif // _XSDRAWSTLVRML_DataSource_HeaderFile

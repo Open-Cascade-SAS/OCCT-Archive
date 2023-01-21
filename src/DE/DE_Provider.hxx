@@ -61,10 +61,23 @@ public:
   //! @param[in] theWS current work session
   //! @param theProgress[in] progress indicator
   //! @return True if Read was successful
-  Standard_EXPORT virtual Standard_Boolean Read(const TCollection_AsciiString& thePath,
-                                                const Handle(TDocStd_Document)& theDocument,
-                                                Handle(XSControl_WorkSession)& theWS,
-                                                const Message_ProgressRange& theProgress = Message_ProgressRange());
+  Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
+                                    const Handle(TDocStd_Document)& theDocument,
+                                    Handle(XSControl_WorkSession)& theWS,
+                                    const Message_ProgressRange& theProgress = Message_ProgressRange());
+
+  //! Reads a CAD file, according internal configuration
+  //! @param[in] theIStream stream to import CAD data
+  //! @param[out] theDocument document to save result
+  //! @paramp[in] theName name of CAD file, can be empty
+  //! @param[in] theWS current work session
+  //! @param theProgress[in] progress indicator
+  //! @return true if Read operation has ended correctly
+  Standard_EXPORT virtual bool Read(std::istream& theIStream,
+                                    const Handle(TDocStd_Document)& theDocument,
+                                    const TCollection_AsciiString theName,
+                                    Handle(XSControl_WorkSession)& theWS,
+                                    const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Writes a CAD file, according internal configuration
   //! @param[in] thePath path to the export CAD file
@@ -72,10 +85,21 @@ public:
   //! @param[in] theWS current work session
   //! @param theProgress[in] progress indicator
   //! @return True if Write was successful
-  Standard_EXPORT virtual Standard_Boolean Write(const TCollection_AsciiString& thePath,
-                                                 const Handle(TDocStd_Document)& theDocument,
-                                                 Handle(XSControl_WorkSession)& theWS,
-                                                 const Message_ProgressRange& theProgress = Message_ProgressRange());
+  Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
+                                     const Handle(TDocStd_Document)& theDocument,
+                                     Handle(XSControl_WorkSession)& theWS,
+                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
+
+  //! Writes a CAD file, according internal configuration
+  //! @param[in] theOStream stream to export CAD data
+  //! @param[out] theDocument document to export
+  //! @param[in] theWS current work session
+  //! @param theProgress[in] progress indicator
+  //! @return true if Write operation has ended correctly
+  Standard_EXPORT virtual bool Write(std::ostream& theOStream,
+                                     const Handle(TDocStd_Document)& theDocument,
+                                     Handle(XSControl_WorkSession)& theWS,
+                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Reads a CAD file, according internal configuration
   //! @param[in] thePath path to the import CAD file
@@ -83,10 +107,23 @@ public:
   //! @param[in] theWS current work session
   //! @param theProgress[in] progress indicator
   //! @return True if Read was successful
-  Standard_EXPORT virtual Standard_Boolean Read(const TCollection_AsciiString& thePath,
-                                                TopoDS_Shape& theShape,
-                                                Handle(XSControl_WorkSession)& theWS,
-                                                const Message_ProgressRange& theProgress = Message_ProgressRange());
+  Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
+                                    TopoDS_Shape& theShape,
+                                    Handle(XSControl_WorkSession)& theWS,
+                                    const Message_ProgressRange& theProgress = Message_ProgressRange());
+
+  //! Reads a CAD file, according internal configuration
+  //! @param[in] theIStream stream to the CAD file
+  //! @param[out] theShape shape to save result
+  //! @paramp[in] theName name of CAD file, can be empty
+  //! @param[in] theWS current work session
+  //! @param theProgress[in] progress indicator
+  //! @return true if Read operation has ended correctly
+  Standard_EXPORT virtual bool Read(std::istream& theIStream,
+                                    TopoDS_Shape& theShape,
+                                    const TCollection_AsciiString theName,
+                                    Handle(XSControl_WorkSession)& theWS,
+                                    const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Writes a CAD file, according internal configuration
   //! @param[in] thePath path to the export CAD file
@@ -94,10 +131,21 @@ public:
   //! @param[in] theWS current work session
   //! @param theProgress[in] progress indicator
   //! @return True if Write was successful
-  Standard_EXPORT virtual Standard_Boolean Write(const TCollection_AsciiString& thePath,
-                                                 const TopoDS_Shape& theShape,
-                                                 Handle(XSControl_WorkSession)& theWS,
-                                                 const Message_ProgressRange& theProgress = Message_ProgressRange());
+  Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
+                                     const TopoDS_Shape& theShape,
+                                     Handle(XSControl_WorkSession)& theWS,
+                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
+
+  //! Writes a CAD file, according internal configuration
+  //! @param[in] theOStream stream to export CAD data
+  //! @param[out] theShape shape to export
+  //! @param[in] theWS current work session
+  //! @param theProgress[in] progress indicator
+  //! @return true if Write operation has ended correctly
+  Standard_EXPORT virtual bool Write(std::ostream& theOStream,
+                                     const TopoDS_Shape& theShape,
+                                     Handle(XSControl_WorkSession)& theWS,
+                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
 public:
 
@@ -111,21 +159,22 @@ public:
 
   //! Gets internal configuration node
   //! @return configuration node object
-  Handle(DE_ConfigurationNode) GetNode() const
-  {
-    return myNode;
-  }
+  Handle(DE_ConfigurationNode) GetNode() const { return myNode; }
 
   //! Sets internal configuration node
   //! @param[in] theNode configuration node to set
-  void SetNode(const Handle(DE_ConfigurationNode)& theNode)
-  {
-    myNode = theNode;
-  }
+  void SetNode(const Handle(DE_ConfigurationNode)& theNode) { myNode = theNode; }
+
+  //! Gets path to folder to create temp CAD files, that not support stream
+  TCollection_AsciiString GetTempFolderPath() const { return myTempFolder; }
+
+  //! Sets path to folder to create temp CAD files, that not support stream
+  void SetTempFolderPath(const TCollection_AsciiString& theFolder) { myTempFolder = theFolder; }
 
 private:
 
   Handle(DE_ConfigurationNode) myNode; //!< Internal configuration for the own format
+  TCollection_AsciiString myTempFolder; //!< Path to folder to create temp CAD files, that not support stream
 };
 
 #endif // _DE_Provider_HeaderFile

@@ -13,7 +13,6 @@
 
 #include <IGESSelect.hxx>
 
-#include <IFSelect_Functions.hxx>
 #include <IFSelect_SessionPilot.hxx>
 #include <IFSelect_ShareOut.hxx>
 #include <IFSelect_WorkSession.hxx>
@@ -26,8 +25,6 @@
 
 void  IGESSelect::Run ()
 {
-//  Handle(IFSelect_BasicActivator) Activator = new IFSelect_BasicActivator;
-  IFSelect_Functions::Init();
   Handle(IFSelect_SessionPilot)   pilot = new IFSelect_SessionPilot("XSTEP-IGES>");
   Handle(IGESSelect_Activator)    igesact = new IGESSelect_Activator;
   pilot->SetSession (new IFSelect_WorkSession ( ));

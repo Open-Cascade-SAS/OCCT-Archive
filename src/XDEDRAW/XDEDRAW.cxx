@@ -149,7 +149,6 @@ static Standard_Integer newDoc (Draw_Interpretor& di, Standard_Integer argc, con
   return 0;
 }
 
-
 //=======================================================================
 //function : saveDoc
 //purpose  :
@@ -316,7 +315,6 @@ static Standard_Integer dump (Draw_Interpretor& di, Standard_Integer argc, const
   return 0;
 }
 
-
 //=======================================================================
 //function : StatAssembly
 //purpose  : recursive part of statistics
@@ -441,7 +439,6 @@ static void StatAssembly(const TDF_Label L,
 
 }
 
-
 //=======================================================================
 //function : statdoc
 //purpose  : 
@@ -524,7 +521,6 @@ static Standard_Integer statdoc (Draw_Interpretor& di, Standard_Integer argc, co
   return 0;
 }
 
-
 //=======================================================================
 //function : setPrs
 //purpose  :
@@ -574,7 +570,6 @@ static Standard_Integer setPrs (Draw_Interpretor& di, Standard_Integer argc, con
   }
   return 0;
 }
-
 
 //=======================================================================
 //function : show
@@ -994,7 +989,6 @@ static Standard_Integer xwd (Draw_Interpretor& di, Standard_Integer argc, const 
   return 0;
 }
 
-
 //=======================================================================
 //function : XAttributeValue
 //purpose  :
@@ -1023,7 +1017,6 @@ static Standard_Integer XAttributeValue (Draw_Interpretor& di, Standard_Integer 
   return 0;
 }
 
-
 //=======================================================================
 //function : setviewName
 //purpose  :
@@ -1040,7 +1033,6 @@ static Standard_Integer setviewName (Draw_Interpretor& di, Standard_Integer argc
   return 0;
 }
 
-
 //=======================================================================
 //function : getviewName
 //purpose  : auxiliary
@@ -1052,7 +1044,6 @@ static Standard_Integer getviewName (Draw_Interpretor&  di, Standard_Integer /*a
   else di << "Display names OFF\n";
   return 0;
 }
-
 
 //=======================================================================
 //function : XSetTransparency
@@ -1721,7 +1712,6 @@ static Standard_Integer testDoc (Draw_Interpretor&,
   return 0;
 }
 
-
 //=======================================================================
 //function : Init
 //purpose  :
@@ -1848,32 +1838,13 @@ void XDEDRAW::Init(Draw_Interpretor& di)
   XDEDRAW_Views::InitCommands(di);
   XDEDRAW_Notes::InitCommands(di);
   XDEDRAW_Common::InitCommands ( di );//moved from EXE
-
-  DE_Wrapper::GlobalWrapper()->Bind(new RWObj_ConfigurationNode());
-  DE_Wrapper::GlobalWrapper()->Bind(new RWPly_ConfigurationNode());
-  DE_Wrapper::GlobalWrapper()->Bind(new RWGltf_ConfigurationNode());
-  DE_Wrapper::GlobalWrapper()->Bind(new IGESCAFControl_ConfigurationNode());
-  DE_Wrapper::GlobalWrapper()->Bind(new STEPCAFControl_ConfigurationNode());
-  DE_Wrapper::GlobalWrapper()->Bind(new Vrml_ConfigurationNode());
-  DE_Wrapper::GlobalWrapper()->Bind(new DEXCAFCascade_ConfigurationNode());
-  DE_Wrapper::GlobalWrapper()->Bind(new RWStl_ConfigurationNode());
-  DE_Wrapper::GlobalWrapper()->Bind(new DEBRepCascade_ConfigurationNode());
 }
-
 
 //==============================================================================
 // XDEDRAW::Factory
 //==============================================================================
 void XDEDRAW::Factory(Draw_Interpretor& theDI)
 {
-  XSDRAWIGES::InitSelect();
-  XSDRAWIGES::InitToBRep(theDI);
-  XSDRAWIGES::InitFromBRep(theDI);
-
-  XSDRAWSTEP::InitCommands(theDI);
-
-  XSDRAW::LoadDraw(theDI);
-
   XDEDRAW::Init(theDI);
 
 #ifdef OCCT_DEBUG

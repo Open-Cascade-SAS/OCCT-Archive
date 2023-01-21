@@ -93,7 +93,6 @@ static double TetraVol(gp_Pnt RefPoint, gp_Pnt Som1, gp_Pnt Som2, gp_Pnt Som3)
     return (-curVolume);
 }
 
-
 //=======================================================================
 //function : TetraCen
 //purpose  : auxiliary
@@ -108,7 +107,6 @@ static gp_XYZ TetraCen(const gp_Pnt& RefPoint,
   curCentr = plnPnt + (RefPoint.XYZ() - plnPnt)/4;
   return curCentr;
 }
-
 
 //=======================================================================
 //function : CalculVolume
@@ -174,9 +172,7 @@ static Standard_Real CalculVolume(const TopoDS_Shape& So,
   return (myVolume);
 }
 
-
 // --------------------- VolumeFix End   ---
-
 
 //=======================================================================
 // Section: Work with val props
@@ -243,7 +239,6 @@ static Standard_Integer SetProps (Draw_Interpretor& di, Standard_Integer argc, c
   return 0;
 }
 
-
 //=======================================================================
 //function : SetVolume
 //purpose  : 
@@ -281,7 +276,6 @@ static Standard_Integer SetVolume (Draw_Interpretor& di, Standard_Integer argc, 
   return 0;
 }
 
-
 //=======================================================================
 //function : SetArea
 //purpose  : 
@@ -317,7 +311,6 @@ static Standard_Integer SetArea (Draw_Interpretor& di, Standard_Integer argc, co
   di << res;
   return 0;
 }
-
 
 //=======================================================================
 //function : SetCentroid
@@ -357,7 +350,6 @@ static Standard_Integer SetCentroid (Draw_Interpretor& di, Standard_Integer argc
   return 0;
 }
 
-
 //=======================================================================
 //function : GetVolume
 //purpose  : 
@@ -393,7 +385,6 @@ static Standard_Integer GetVolume (Draw_Interpretor& di, Standard_Integer argc, 
   return 0;
 }
 
-
 //=======================================================================
 //function : GetArea
 //purpose  : 
@@ -428,7 +419,6 @@ static Standard_Integer GetArea (Draw_Interpretor& di, Standard_Integer argc, co
   }
   return 0;
 }
-
 
 //=======================================================================
 //function : GetCentroid
@@ -679,7 +669,6 @@ static Standard_Integer CheckProps (Draw_Interpretor& di, Standard_Integer argc,
   return 0;
 }
 
-
 //=======================================================================
 //function : ShapeVolume
 //purpose  : 
@@ -708,7 +697,6 @@ static Standard_Integer ShapeVolume (Draw_Interpretor& di, Standard_Integer argc
   di << aSStream;
   return 0;
 }
-
 
 //=======================================================================
 //function : GetMassProps
@@ -793,7 +781,6 @@ static Standard_Boolean GetMassProps(const TDF_Label& aLabel, gp_XYZ& theCenterG
   return Standard_True;
 }
 
-
 //=======================================================================
 //function : ShapeMassProps
 //purpose  : 
@@ -862,7 +849,6 @@ static Standard_Integer ShapeMassProps (Draw_Interpretor& di, Standard_Integer a
   }
   return 0;
 }
-
 
 //=======================================================================
 //function : SetMaterial

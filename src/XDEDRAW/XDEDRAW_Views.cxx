@@ -103,7 +103,6 @@ static Standard_Integer removeView(Draw_Interpretor& di, Standard_Integer argc, 
   return 0;
 }
 
-
 //=======================================================================
 //function : setClippingPlanes
 //purpose  : 
