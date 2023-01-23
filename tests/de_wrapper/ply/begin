@@ -1,3 +1,5 @@
 # File: begin
 
+pload PLY OBJ
+
 set filename [locate_data_file "P-51 Mustang.obj"]

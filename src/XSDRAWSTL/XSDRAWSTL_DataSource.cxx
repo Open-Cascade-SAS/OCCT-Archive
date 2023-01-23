@@ -13,32 +13,32 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-#include <XSDRAWSTLVRML_DataSource.hxx>
+#include <XSDRAWSTL_DataSource.hxx>
 
 #include <Precision.hxx>
 #include <Standard_Type.hxx>
 #include <TColStd_DataMapOfIntegerReal.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(XSDRAWSTLVRML_DataSource,MeshVS_DataSource)
+IMPLEMENT_STANDARD_RTTIEXT(XSDRAWSTL_DataSource, MeshVS_DataSource)
 
 //================================================================
 // Function : Constructor
 // Purpose  :
 //================================================================
-XSDRAWSTLVRML_DataSource::XSDRAWSTLVRML_DataSource (const Handle(Poly_Triangulation)& aMesh)
+XSDRAWSTL_DataSource::XSDRAWSTL_DataSource(const Handle(Poly_Triangulation)& aMesh)
 {
   myMesh = aMesh;
 
-  if( !myMesh.IsNull() )
+  if (!myMesh.IsNull())
   {
     const Standard_Integer aNbNodes = myMesh->NbNodes();
-    myNodeCoords = new TColStd_HArray2OfReal (1, aNbNodes, 1, 3);
+    myNodeCoords = new TColStd_HArray2OfReal(1, aNbNodes, 1, 3);
     std::cout << "Nodes : " << aNbNodes << std::endl;
 
     for (Standard_Integer i = 1; i <= aNbNodes; i++)
     {
-      myNodes.Add( i );
-      gp_Pnt xyz = myMesh->Node (i);
+      myNodes.Add(i);
+      gp_Pnt xyz = myMesh->Node(i);
 
       myNodeCoords->SetValue(i, 1, xyz.X());
       myNodeCoords->SetValue(i, 2, xyz.Y());
@@ -53,16 +53,16 @@ XSDRAWSTLVRML_DataSource::XSDRAWSTLVRML_DataSource (const Handle(Poly_Triangulat
 
     for (Standard_Integer i = 1; i <= aNbTris; i++)
     {
-      myElements.Add( i );
+      myElements.Add(i);
 
-      const Poly_Triangle aTri = myMesh->Triangle (i);
+      const Poly_Triangle aTri = myMesh->Triangle(i);
 
       Standard_Integer V[3];
-      aTri.Get (V[0], V[1], V[2]);
+      aTri.Get(V[0], V[1], V[2]);
 
-      const gp_Pnt aP1 = myMesh->Node (V[0]);
-      const gp_Pnt aP2 = myMesh->Node (V[1]);
-      const gp_Pnt aP3 = myMesh->Node (V[2]);
+      const gp_Pnt aP1 = myMesh->Node(V[0]);
+      const gp_Pnt aP2 = myMesh->Node(V[1]);
+      const gp_Pnt aP3 = myMesh->Node(V[2]);
 
       gp_Vec aV1(aP1, aP2);
       gp_Vec aV2(aP2, aP3);
@@ -75,12 +75,12 @@ XSDRAWSTLVRML_DataSource::XSDRAWSTLVRML_DataSource (const Handle(Poly_Triangulat
 
       for (Standard_Integer j = 0; j < 3; j++)
       {
-        myElemNodes->SetValue(i, j+1, V[j]);
+        myElemNodes->SetValue(i, j + 1, V[j]);
       }
 
-      myElemNormals->SetValue (i, 1, aN.X());
-      myElemNormals->SetValue (i, 2, aN.Y());
-      myElemNormals->SetValue (i, 3, aN.Z());
+      myElemNormals->SetValue(i, 1, aN.X());
+      myElemNormals->SetValue(i, 2, aN.Y());
+      myElemNormals->SetValue(i, 3, aN.Z());
     }
   }
   std::cout << "Construction is finished" << std::endl;
@@ -90,25 +90,25 @@ XSDRAWSTLVRML_DataSource::XSDRAWSTLVRML_DataSource (const Handle(Poly_Triangulat
 // Function : GetGeom
 // Purpose  :
 //================================================================
-Standard_Boolean XSDRAWSTLVRML_DataSource::GetGeom
-( const Standard_Integer ID, const Standard_Boolean IsElement,
+Standard_Boolean XSDRAWSTL_DataSource::GetGeom
+(const Standard_Integer ID, const Standard_Boolean IsElement,
  TColStd_Array1OfReal& Coords, Standard_Integer& NbNodes,
- MeshVS_EntityType& Type ) const
+ MeshVS_EntityType& Type) const
 {
-  if( myMesh.IsNull() )
+  if (myMesh.IsNull())
     return Standard_False;
 
-  if( IsElement )
+  if (IsElement)
   {
-    if( ID>=1 && ID<=myElements.Extent() )
+    if (ID >= 1 && ID <= myElements.Extent())
     {
       Type = MeshVS_ET_Face;
       NbNodes = 3;
 
-      for( Standard_Integer i = 1, k = 1; i <= 3; i++ )
+      for (Standard_Integer i = 1, k = 1; i <= 3; i++)
       {
         Standard_Integer IdxNode = myElemNodes->Value(ID, i);
-        for(Standard_Integer j = 1; j <= 3; j++, k++ )
+        for (Standard_Integer j = 1; j <= 3; j++, k++)
           Coords(k) = myNodeCoords->Value(IdxNode, j);
       }
 
@@ -118,14 +118,14 @@ Standard_Boolean XSDRAWSTLVRML_DataSource::GetGeom
       return Standard_False;
   }
   else
-    if( ID>=1 && ID<=myNodes.Extent() )
+    if (ID >= 1 && ID <= myNodes.Extent())
     {
       Type = MeshVS_ET_Node;
       NbNodes = 1;
 
-      Coords( 1 ) = myNodeCoords->Value(ID, 1);
-      Coords( 2 ) = myNodeCoords->Value(ID, 2);
-      Coords( 3 ) = myNodeCoords->Value(ID, 3);
+      Coords(1) = myNodeCoords->Value(ID, 1);
+      Coords(2) = myNodeCoords->Value(ID, 2);
+      Coords(3) = myNodeCoords->Value(ID, 3);
       return Standard_True;
     }
     else
@@ -136,12 +136,12 @@ Standard_Boolean XSDRAWSTLVRML_DataSource::GetGeom
 // Function : GetGeomType
 // Purpose  :
 //================================================================
-Standard_Boolean XSDRAWSTLVRML_DataSource::GetGeomType
-( const Standard_Integer,
+Standard_Boolean XSDRAWSTL_DataSource::GetGeomType
+(const Standard_Integer,
  const Standard_Boolean IsElement,
- MeshVS_EntityType& Type ) const
+ MeshVS_EntityType& Type) const
 {
-  if( IsElement )
+  if (IsElement)
   {
     Type = MeshVS_ET_Face;
     return Standard_True;
@@ -157,8 +157,8 @@ Standard_Boolean XSDRAWSTLVRML_DataSource::GetGeomType
 // Function : GetAddr
 // Purpose  :
 //================================================================
-Standard_Address XSDRAWSTLVRML_DataSource::GetAddr
-( const Standard_Integer, const Standard_Boolean ) const
+Standard_Address XSDRAWSTL_DataSource::GetAddr
+(const Standard_Integer, const Standard_Boolean) const
 {
   return NULL;
 }
@@ -167,20 +167,20 @@ Standard_Address XSDRAWSTLVRML_DataSource::GetAddr
 // Function : GetNodesByElement
 // Purpose  :
 //================================================================
-Standard_Boolean XSDRAWSTLVRML_DataSource::GetNodesByElement
-( const Standard_Integer ID,
+Standard_Boolean XSDRAWSTL_DataSource::GetNodesByElement
+(const Standard_Integer ID,
  TColStd_Array1OfInteger& theNodeIDs,
- Standard_Integer& /*theNbNodes*/ ) const
+ Standard_Integer& /*theNbNodes*/) const
 {
-  if( myMesh.IsNull() )
+  if (myMesh.IsNull())
     return Standard_False;
 
-  if( ID>=1 && ID<=myElements.Extent() && theNodeIDs.Length() >= 3 )
+  if (ID >= 1 && ID <= myElements.Extent() && theNodeIDs.Length() >= 3)
   {
     Standard_Integer aLow = theNodeIDs.Lower();
-    theNodeIDs (aLow)     = myElemNodes->Value(ID, 1 );
-    theNodeIDs (aLow + 1) = myElemNodes->Value(ID, 2 );
-    theNodeIDs (aLow + 2) = myElemNodes->Value(ID, 3 );
+    theNodeIDs(aLow) = myElemNodes->Value(ID, 1);
+    theNodeIDs(aLow + 1) = myElemNodes->Value(ID, 2);
+    theNodeIDs(aLow + 2) = myElemNodes->Value(ID, 3);
     return Standard_True;
   }
   return Standard_False;
@@ -190,7 +190,7 @@ Standard_Boolean XSDRAWSTLVRML_DataSource::GetNodesByElement
 // Function : GetAllNodes
 // Purpose  :
 //================================================================
-const TColStd_PackedMapOfInteger& XSDRAWSTLVRML_DataSource::GetAllNodes() const
+const TColStd_PackedMapOfInteger& XSDRAWSTL_DataSource::GetAllNodes() const
 {
   return myNodes;
 }
@@ -199,7 +199,7 @@ const TColStd_PackedMapOfInteger& XSDRAWSTLVRML_DataSource::GetAllNodes() const
 // Function : GetAllElements
 // Purpose  :
 //================================================================
-const TColStd_PackedMapOfInteger& XSDRAWSTLVRML_DataSource::GetAllElements() const
+const TColStd_PackedMapOfInteger& XSDRAWSTL_DataSource::GetAllElements() const
 {
   return myElements;
 }
@@ -208,14 +208,14 @@ const TColStd_PackedMapOfInteger& XSDRAWSTLVRML_DataSource::GetAllElements() con
 // Function : GetNormal
 // Purpose  :
 //================================================================
-Standard_Boolean XSDRAWSTLVRML_DataSource::GetNormal
-( const Standard_Integer Id, const Standard_Integer Max,
- Standard_Real& nx, Standard_Real& ny,Standard_Real& nz ) const
+Standard_Boolean XSDRAWSTL_DataSource::GetNormal
+(const Standard_Integer Id, const Standard_Integer Max,
+ Standard_Real& nx, Standard_Real& ny, Standard_Real& nz) const
 {
-  if( myMesh.IsNull() )
+  if (myMesh.IsNull())
     return Standard_False;
 
-  if( Id>=1 && Id<=myElements.Extent() && Max>=3 )
+  if (Id >= 1 && Id <= myElements.Extent() && Max >= 3)
   {
     nx = myElemNormals->Value(Id, 1);
     ny = myElemNormals->Value(Id, 2);

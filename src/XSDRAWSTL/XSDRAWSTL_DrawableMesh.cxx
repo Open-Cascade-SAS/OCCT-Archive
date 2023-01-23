@@ -16,15 +16,15 @@
 #include <Draw_Display.hxx>
 #include <MeshVS_Mesh.hxx>
 #include <Standard_Type.hxx>
-#include <XSDRAWSTLVRML_DrawableMesh.hxx>
+#include <XSDRAWSTL_DrawableMesh.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(XSDRAWSTLVRML_DrawableMesh,Draw_Drawable3D)
+IMPLEMENT_STANDARD_RTTIEXT(XSDRAWSTL_DrawableMesh, Draw_Drawable3D)
 
 //================================================================
 // Function : DrawOn
 // Purpose  :
 //================================================================
-XSDRAWSTLVRML_DrawableMesh::XSDRAWSTLVRML_DrawableMesh( const Handle( MeshVS_Mesh )& aMesh )
+XSDRAWSTL_DrawableMesh::XSDRAWSTL_DrawableMesh(const Handle(MeshVS_Mesh)& aMesh)
 {
   myMesh = aMesh;
 }
@@ -33,15 +33,14 @@ XSDRAWSTLVRML_DrawableMesh::XSDRAWSTLVRML_DrawableMesh( const Handle( MeshVS_Mes
 // Function :
 // Purpose  :
 //================================================================
-void XSDRAWSTLVRML_DrawableMesh::DrawOn(Draw_Display& /*d*/) const
-{
-}
+void XSDRAWSTL_DrawableMesh::DrawOn(Draw_Display& /*d*/) const
+{}
 
 //================================================================
 // Function :
 // Purpose  :
 //================================================================
-Handle( MeshVS_Mesh ) XSDRAWSTLVRML_DrawableMesh::GetMesh() const
+Handle(MeshVS_Mesh) XSDRAWSTL_DrawableMesh::GetMesh() const
 {
   return myMesh;
 }

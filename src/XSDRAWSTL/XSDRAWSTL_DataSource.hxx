@@ -13,8 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-#ifndef _XSDRAWSTLVRML_DataSource_HeaderFile
-#define _XSDRAWSTLVRML_DataSource_HeaderFile
+#ifndef _XSDRAWSTL_DataSource_HeaderFile
+#define _XSDRAWSTL_DataSource_HeaderFile
 
 #include <Standard.hxx>
 
@@ -28,17 +28,17 @@
 #include <TColStd_Array1OfInteger.hxx>
 #include <Poly_Triangulation.hxx>
 
-class XSDRAWSTLVRML_DataSource;
-DEFINE_STANDARD_HANDLE(XSDRAWSTLVRML_DataSource, MeshVS_DataSource)
+class XSDRAWSTL_DataSource;
+DEFINE_STANDARD_HANDLE(XSDRAWSTL_DataSource, MeshVS_DataSource)
 
 //! The sample DataSource for working with STLMesh_Mesh
-class XSDRAWSTLVRML_DataSource : public MeshVS_DataSource
+class XSDRAWSTL_DataSource : public MeshVS_DataSource
 {
 public:
 
   
   //! Constructor
-  Standard_EXPORT XSDRAWSTLVRML_DataSource(const Handle(Poly_Triangulation)& aMesh);
+  Standard_EXPORT XSDRAWSTL_DataSource(const Handle(Poly_Triangulation)& aMesh);
   
   //! Returns geometry information about node (if IsElement is False) or element (IsElement is True) by coordinates.
   //! For element this method must return all its nodes coordinates in the strict order: X, Y, Z and
@@ -66,7 +66,7 @@ public:
   //! There is default method, for advance reflection this method can be redefined.
   Standard_EXPORT virtual Standard_Boolean GetNormal (const Standard_Integer Id, const Standard_Integer Max, Standard_Real& nx, Standard_Real& ny, Standard_Real& nz) const Standard_OVERRIDE;
 
-  DEFINE_STANDARD_RTTIEXT(XSDRAWSTLVRML_DataSource,MeshVS_DataSource)
+  DEFINE_STANDARD_RTTIEXT(XSDRAWSTL_DataSource,MeshVS_DataSource)
 
 protected:
 
@@ -81,4 +81,4 @@ private:
 
 };
 
-#endif // _XSDRAWSTLVRML_DataSource_HeaderFile
+#endif // _XSDRAWSTL_DataSource_HeaderFile

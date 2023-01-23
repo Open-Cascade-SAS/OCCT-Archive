@@ -25,30 +25,56 @@
 #include <StepData_WriterLib.hxx>
 #include <StepData_NodeOfWriterLib.hxx>
 
- 
+//=======================================================================
+// function : StepData_GlobalNodeOfWriterLib
+// purpose  :
+//=======================================================================
+StepData_GlobalNodeOfWriterLib::StepData_GlobalNodeOfWriterLib() {}
 
+//=======================================================================
+// function : Add
+// purpose  :
+//=======================================================================
+void StepData_GlobalNodeOfWriterLib::Add(const Handle(StepData_ReadWriteModule)& amodule,
+                                         const Handle(StepData_Protocol)& aprotocol)
+{
+  if (themod == amodule) return;
+  if (theprot == aprotocol) themod = amodule;
+  else if (thenext.IsNull())
+  {
+    if (themod.IsNull()) { themod = amodule;   theprot = aprotocol; }
+    else
+    {
+      thenext = new StepData_GlobalNodeOfWriterLib;
+      thenext->Add(amodule, aprotocol);
+    }
+  }
+  else thenext->Add(amodule, aprotocol);
+}
 
+//=======================================================================
+// function : Module
+// purpose  :
+//=======================================================================
+const Handle(StepData_ReadWriteModule)& StepData_GlobalNodeOfWriterLib::Module() const
+{
+  return themod;
+}
 
+//=======================================================================
+// function : Protocol
+// purpose  :
+//=======================================================================
+const Handle(StepData_Protocol)& StepData_GlobalNodeOfWriterLib::Protocol() const
+{
+  return theprot;
+}
 
-
-
-
-
-#define TheObject Handle(Standard_Transient)
-#define TheObject_hxx <Standard_Transient.hxx>
-#define Handle_TheModule Handle(StepData_ReadWriteModule)
-#define TheModule StepData_ReadWriteModule
-#define TheModule_hxx <StepData_ReadWriteModule.hxx>
-#define Handle_TheProtocol Handle(StepData_Protocol)
-#define TheProtocol StepData_Protocol
-#define TheProtocol_hxx <StepData_Protocol.hxx>
-#define LibCtl_GlobalNode StepData_GlobalNodeOfWriterLib
-#define LibCtl_GlobalNode_hxx <StepData_GlobalNodeOfWriterLib.hxx>
-#define LibCtl_Node StepData_NodeOfWriterLib
-#define LibCtl_Node_hxx <StepData_NodeOfWriterLib.hxx>
-#define Handle_LibCtl_GlobalNode Handle(StepData_GlobalNodeOfWriterLib)
-#define Handle_LibCtl_Node Handle(StepData_NodeOfWriterLib)
-#define LibCtl_Library StepData_WriterLib
-#define LibCtl_Library_hxx <StepData_WriterLib.hxx>
-#include <LibCtl_GlobalNode.gxx>
-
+//=======================================================================
+// function : Next
+// purpose  :
+//=======================================================================
+const Handle(StepData_GlobalNodeOfWriterLib)& StepData_GlobalNodeOfWriterLib::Next() const
+{
+  return thenext;
+}

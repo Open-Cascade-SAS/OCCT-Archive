@@ -22,23 +22,190 @@
 #include <Interface_ReaderModule.hxx>
 #include <Interface_Protocol.hxx>
 #include <Interface_GlobalNodeOfReaderLib.hxx>
- 
 
-#define TheObject Handle(Standard_Transient)
-#define TheObject_hxx <Standard_Transient.hxx>
-#define Handle_TheModule Handle(Interface_ReaderModule)
-#define TheModule Interface_ReaderModule
-#define TheModule_hxx <Interface_ReaderModule.hxx>
-#define Handle_TheProtocol Handle(Interface_Protocol)
-#define TheProtocol Interface_Protocol
-#define TheProtocol_hxx <Interface_Protocol.hxx>
-#define LibCtl_GlobalNode Interface_GlobalNodeOfReaderLib
-#define LibCtl_GlobalNode_hxx <Interface_GlobalNodeOfReaderLib.hxx>
-#define LibCtl_Node Interface_NodeOfReaderLib
-#define LibCtl_Node_hxx <Interface_NodeOfReaderLib.hxx>
-#define Handle_LibCtl_GlobalNode Handle(Interface_GlobalNodeOfReaderLib)
-#define Handle_LibCtl_Node Handle(Interface_NodeOfReaderLib)
-#define LibCtl_Library Interface_ReaderLib
-#define LibCtl_Library_hxx <Interface_ReaderLib.hxx>
-#include <LibCtl_Library.gxx>
+#include <Standard_NoSuchObject.hxx>
 
+static Handle(Interface_GlobalNodeOfReaderLib) THE_GLOBAL_NODE_OF_READ_LIBS;
+
+static Handle(Interface_Protocol) THE_GLOBAL_PROTOCOL;
+static Handle(Interface_NodeOfReaderLib) THE_LAST_NODE_OF_READ_LIBS;
+
+//=======================================================================
+// function : SetGlobal
+// purpose  :
+//=======================================================================
+void Interface_ReaderLib::SetGlobal(const Handle(Interface_ReaderModule)& amodule,
+                                    const Handle(Interface_Protocol)& aprotocol)
+{
+  if (THE_GLOBAL_NODE_OF_READ_LIBS.IsNull()) THE_GLOBAL_NODE_OF_READ_LIBS = new Interface_GlobalNodeOfReaderLib;
+  THE_GLOBAL_NODE_OF_READ_LIBS->Add(amodule, aprotocol);
+}
+
+//=======================================================================
+// function : Interface_ReaderLib
+// purpose  :
+//=======================================================================
+Interface_ReaderLib::Interface_ReaderLib(const Handle(Interface_Protocol)& aprotocol)
+{
+  Standard_Boolean last = Standard_False;
+  if (aprotocol.IsNull()) return;    // PAS de protocole = Lib VIDE
+  if (!THE_GLOBAL_PROTOCOL.IsNull()) last =
+    (THE_GLOBAL_PROTOCOL == aprotocol);
+
+  if (last) thelist = THE_LAST_NODE_OF_READ_LIBS;
+  //  Si Pas d optimisation disponible : construire la liste
+  else
+  {
+    AddProtocol(aprotocol);
+    //  Ceci definit l optimisation (pour la fois suivante)
+    THE_LAST_NODE_OF_READ_LIBS = thelist;
+    THE_GLOBAL_PROTOCOL = aprotocol;
+  }
+}
+
+//=======================================================================
+// function : Interface_ReaderLib
+// purpose  :
+//=======================================================================
+Interface_ReaderLib::Interface_ReaderLib() {}
+
+//=======================================================================
+// function : AddProtocol
+// purpose  :
+//=======================================================================
+void Interface_ReaderLib::AddProtocol(const Handle(Standard_Transient)& aprotocol)
+{
+  //  DownCast car Protocol->Resources, meme redefini et utilise dans d autres
+  //  librairies, doit toujours renvoyer le type le plus haut
+  Handle(Interface_Protocol) aproto = Handle(Interface_Protocol)::DownCast(aprotocol);
+  if (aproto.IsNull()) return;
+
+  //  D abord, ajouter celui-ci a la liste : chercher le Node
+  Handle(Interface_GlobalNodeOfReaderLib) curr;
+  for (curr = THE_GLOBAL_NODE_OF_READ_LIBS; !curr.IsNull(); )
+  {        // curr->Next : plus loin
+    const Handle(Interface_Protocol)& protocol = curr->Protocol();
+    if (!protocol.IsNull())
+    {
+      //  Match Protocol ?
+      if (protocol->DynamicType() == aprotocol->DynamicType())
+      {
+        if (thelist.IsNull()) thelist = new Interface_NodeOfReaderLib;
+        thelist->AddNode(curr);
+        break;  // UN SEUL MODULE PAR PROTOCOLE
+      }
+    }
+    curr = curr->Next();  // cette formule est refusee dans "for"
+  }
+  //  Ensuite, Traiter les ressources
+  Standard_Integer nb = aproto->NbResources();
+  for (Standard_Integer i = 1; i <= nb; i++)
+  {
+    AddProtocol(aproto->Resource(i));
+  }
+  //  Ne pas oublier de desoptimiser
+  THE_GLOBAL_PROTOCOL.Nullify();
+  THE_LAST_NODE_OF_READ_LIBS.Nullify();
+}
+
+//=======================================================================
+// function : Clear
+// purpose  :
+//=======================================================================
+void Interface_ReaderLib::Clear()
+{
+  thelist = new Interface_NodeOfReaderLib;
+}
+
+//=======================================================================
+// function : SetComplete
+// purpose  :
+//=======================================================================
+void Interface_ReaderLib::SetComplete()
+{
+  thelist = new Interface_NodeOfReaderLib;
+  //    On prend chacun des Protocoles de la Liste Globale et on l ajoute
+  Handle(Interface_GlobalNodeOfReaderLib) curr;
+  for (curr = THE_GLOBAL_NODE_OF_READ_LIBS; !curr.IsNull(); )
+  {        // curr->Next : plus loin
+    const Handle(Interface_Protocol)& protocol = curr->Protocol();
+    //    Comme on prend tout tout tout, on ne se preoccupe pas des Ressources !
+    if (!protocol.IsNull()) thelist->AddNode(curr);
+    curr = curr->Next();  // cette formule est refusee dans "for"
+  }
+}
+
+//=======================================================================
+// function : Select
+// purpose  :
+//=======================================================================
+Standard_Boolean Interface_ReaderLib::Select(const Handle(Standard_Transient)& obj,
+                                             Handle(Interface_ReaderModule)& module,
+                                             Standard_Integer& CN) const
+{
+  module.Nullify();  CN = 0;    // Reponse "pas trouve"
+  if (thelist.IsNull()) return Standard_False;
+  Handle(Interface_NodeOfReaderLib) curr = thelist;
+  for (curr = thelist; !curr.IsNull(); )
+  {        // curr->Next : plus loin
+    const Handle(Interface_Protocol)& protocol = curr->Protocol();
+    if (!protocol.IsNull())
+    {
+      CN = protocol->CaseNumber(obj);
+      if (CN > 0)
+      {
+        module = curr->Module();
+        return Standard_True;
+      }
+    }
+    curr = curr->Next();        // cette formule est refusee dans "for"
+  }
+  return Standard_False;        // ici, pas trouce
+}
+
+//=======================================================================
+// function : Start
+// purpose  :
+//=======================================================================
+void Interface_ReaderLib::Start()
+{
+  thecurr = thelist;
+}
+
+//=======================================================================
+// function : More
+// purpose  :
+//=======================================================================
+Standard_Boolean Interface_ReaderLib::More() const
+{
+  return (!thecurr.IsNull());
+}
+
+//=======================================================================
+// function : Next
+// purpose  :
+//=======================================================================
+void Interface_ReaderLib::Next()
+{
+  if (!thecurr.IsNull()) thecurr = thecurr->Next();
+}
+
+//=======================================================================
+// function : Module
+// purpose  :
+//=======================================================================
+const Handle(Interface_ReaderModule)& Interface_ReaderLib::Module() const
+{
+  if (thecurr.IsNull()) throw Standard_NoSuchObject("Library from LibCtl");
+  return thecurr->Module();
+}
+
+//=======================================================================
+// function : Protocol
+// purpose  :
+//=======================================================================
+const Handle(Interface_Protocol)& Interface_ReaderLib::Protocol() const
+{
+  if (thecurr.IsNull()) throw Standard_NoSuchObject("Library from LibCtl");
+  return thecurr->Protocol();
+}

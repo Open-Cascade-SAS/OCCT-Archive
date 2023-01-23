@@ -1,5 +1,7 @@
 # File : begin
 
+pload XDE
+
 proc changeconf {value conf} {
   set res ""
   foreach iter [split $conf \n] {

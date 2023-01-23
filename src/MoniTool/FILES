@@ -17,9 +17,6 @@ MoniTool_IndexedDataMapOfShapeTransient.hxx
 MoniTool_IntVal.cxx
 MoniTool_IntVal.hxx
 MoniTool_Macros.hxx
-MoniTool_MTHasher.cxx
-MoniTool_MTHasher.hxx
-MoniTool_MTHasher.lxx
 MoniTool_RealVal.cxx
 MoniTool_RealVal.hxx
 MoniTool_SequenceOfElement.hxx
@@ -39,6 +36,4 @@ MoniTool_TransientElem.cxx
 MoniTool_TransientElem.hxx
 MoniTool_TypedValue.cxx
 MoniTool_TypedValue.hxx
-MoniTool_ValueInterpret.hxx
-MoniTool_ValueSatisfies.hxx
 MoniTool_ValueType.hxx

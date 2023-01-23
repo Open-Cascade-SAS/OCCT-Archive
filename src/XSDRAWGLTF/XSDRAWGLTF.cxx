@@ -16,6 +16,8 @@
 #include <DBRep.hxx>
 #include <DDocStd.hxx>
 #include <DDocStd_DrawDocument.hxx>
+#include <DE_ConfigurationNode.hxx>
+#include <DE_Wrapper.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
 #include <Draw_PluginMacro.hxx>
@@ -492,8 +494,9 @@ void XSDRAWGLTF::Factory(Draw_Interpretor& theDI)
     return;
   }
   aIsActivated = Standard_True;
-  const char* aGroup = "XSTEP-STL/VRML";  // Step transfer file commands
+  DE_Wrapper::GlobalWrapper()->Bind(new RWGltf_ConfigurationNode());
 
+  const char* aGroup = "XSTEP-STL/VRML";  // Step transfer file commands
   theDI.Add("ReadGltf",
             "ReadGltf Doc file [-parallel {on|off}] [-listExternalFiles] [-noCreateDoc] [-doublePrecision {on|off}] [-assetInfo]"
             "\n\t\t: Read glTF file into XDE document."
@@ -547,7 +550,6 @@ void XSDRAWGLTF::Factory(Draw_Interpretor& theDI)
             "writegltf shape file",
             __FILE__, WriteGltf, aGroup);
 }
-
 
 // Declare entry point PLUGINFACTORY
 DPLUGIN(XSDRAWGLTF)

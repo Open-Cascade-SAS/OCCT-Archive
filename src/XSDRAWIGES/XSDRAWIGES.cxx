@@ -17,6 +17,8 @@
 #include <DBRep.hxx>
 #include <DDocStd.hxx>
 #include <DDocStd_DrawDocument.hxx>
+#include <DE_ConfigurationNode.hxx>
+#include <DE_Wrapper.hxx>
 #include <Draw.hxx>
 #include <DrawTrSurf.hxx>
 #include <Draw_Interpretor.hxx>
@@ -40,6 +42,7 @@
 #include <XSAlgo_AlgoContainer.hxx>
 #include <XSControl_TransferReader.hxx>
 #include <XSControl_WorkSession.hxx>
+#include <TColStd_Array1OfAsciiString.hxx>
 #include <TColStd_MapIteratorOfMapOfTransient.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDocStd_Application.hxx>
@@ -890,9 +893,11 @@ void XSDRAWIGES::Factory(Draw_Interpretor& theDI)
   {
     return;
   }
-  IGESControl_Controller::Init();
-
   aIsActivated = Standard_True;
+
+  IGESControl_Controller::Init();
+  DE_Wrapper::GlobalWrapper()->Bind(new IGESCAFControl_ConfigurationNode());
+
   const char* aGroup = "DE: IGES";
 
   theDI.Add("tplosttrim", "number of untrimmed faces during last transfer", __FILE__, XSDRAWIGES_tplosttrim, aGroup);

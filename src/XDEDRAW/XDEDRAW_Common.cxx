@@ -13,31 +13,23 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <XDEDRAW_Common.hxx>
+
 #include <DDocStd.hxx>
 #include <DDocStd_DrawDocument.hxx>
 #include <DE_ConfigurationContext.hxx>
 #include <DE_Wrapper.hxx>
+#include <DEBRepCascade_ConfigurationNode.hxx>
+#include <DEXCAFCascade_ConfigurationNode.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
 #include <Draw_ProgressIndicator.hxx>
 #include <Message.hxx>
-#include <IFSelect_SessionPilot.hxx>
-#include <IGESCAFControl_ConfigurationNode.hxx>
-#include <IGESCAFControl_Provider.hxx>
 #include <OSD_OpenFile.hxx>
 #include <OSD_Path.hxx>
-#include <STEPCAFControl_ConfigurationNode.hxx>
-#include <STEPCAFControl_Provider.hxx>
 #include <TDocStd_Application.hxx>
 #include <TDocStd_Document.hxx>
-#include <XDEDRAW_Common.hxx>
-#include <XSAlgo.hxx>
-#include <XSAlgo_AlgoContainer.hxx>
-#include <XSControl_WorkSession.hxx>
-#include <XSDRAW.hxx>
 #include <XSDRAWBase.hxx>
-#include <Vrml_ConfigurationNode.hxx>
-#include <Vrml_Provider.hxx>
 
 #include <DBRep.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
@@ -45,11 +37,6 @@
 #include <XCAFDoc_Editor.hxx>
 #include <TDF_Tool.hxx>
 #include <TopoDS_Shape.hxx>
-#include <Interface_Static.hxx>
-#include <UnitsAPI.hxx>
-#include <UnitsMethods.hxx>
-
-#include <stdio.h>
 
 //=======================================================================
 //function : SetCurWS
@@ -276,6 +263,10 @@ static Standard_Integer Extract(Draw_Interpretor& theDI,
   return 0;
 }
 
+//=======================================================================
+//function : InitCommands
+//purpose  :
+//=======================================================================
 void XDEDRAW_Common::InitCommands(Draw_Interpretor& theDI)
 {
   static Standard_Boolean aIsActivated = Standard_False;
@@ -285,16 +276,19 @@ void XDEDRAW_Common::InitCommands(Draw_Interpretor& theDI)
   }
   aIsActivated = Standard_True;
 
-  Standard_CString g = "XDE translation commands";
+  DE_Wrapper::GlobalWrapper()->Bind(new DEBRepCascade_ConfigurationNode());
+  DE_Wrapper::GlobalWrapper()->Bind(new DEXCAFCascade_ConfigurationNode());
 
-  theDI.Add("XFileList", "Print list of files that was transferred by the last transfer", __FILE__, GetDicWSList, g);
-  theDI.Add("XFileCur", ": returns name of file which is set as current", __FILE__, GetCurWS, g);
-  theDI.Add("XFileSet", "filename: Set the specified file to be the current one", __FILE__, SetCurWS, g);
-  theDI.Add("XFromShape", "shape: do fromshape command for all the files", __FILE__, FromShape, g);
+  Standard_CString aGroup = "XDE translation commands";
+
+  theDI.Add("XFileList", "Print list of files that was transferred by the last transfer", __FILE__, GetDicWSList, aGroup);
+  theDI.Add("XFileCur", ": returns name of file which is set as current", __FILE__, GetCurWS, aGroup);
+  theDI.Add("XFileSet", "filename: Set the specified file to be the current one", __FILE__, SetCurWS, aGroup);
+  theDI.Add("XFromShape", "shape: do fromshape command for all the files", __FILE__, FromShape, aGroup);
 
   theDI.Add("XExpand", "XExpand Doc recursively(0/1) or XExpand Doc recursively(0/1) label1 label2 ..."
-            "or XExpand Doc recursively(0/1) shape1 shape2 ...", __FILE__, Expand, g);
+            "or XExpand Doc recursively(0/1) shape1 shape2 ...", __FILE__, Expand, aGroup);
   theDI.Add("XExtract", "XExtract dstDoc [dstAssmblSh] srcDoc srcLabel1 srcLabel2 ...\t"
             "Extracts given srcLabel1 srcLabel2 ... from srcDoc into given Doc or assembly shape",
-            __FILE__, Extract, g);
+            __FILE__, Extract, aGroup);
 }

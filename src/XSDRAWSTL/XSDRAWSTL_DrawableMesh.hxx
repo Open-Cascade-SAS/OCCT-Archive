@@ -13,8 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-#ifndef _XSDRAWSTLVRML_DrawableMesh_HeaderFile
-#define _XSDRAWSTLVRML_DrawableMesh_HeaderFile
+#ifndef _XSDRAWSTL_DrawableMesh_HeaderFile
+#define _XSDRAWSTL_DrawableMesh_HeaderFile
 
 #include <Standard.hxx>
 #include <Standard_Type.hxx>
@@ -23,21 +23,21 @@
 class MeshVS_Mesh;
 class Draw_Display;
 
-class XSDRAWSTLVRML_DrawableMesh;
-DEFINE_STANDARD_HANDLE(XSDRAWSTLVRML_DrawableMesh, Draw_Drawable3D)
+class XSDRAWSTL_DrawableMesh;
+DEFINE_STANDARD_HANDLE(XSDRAWSTL_DrawableMesh, Draw_Drawable3D)
 
-class XSDRAWSTLVRML_DrawableMesh : public Draw_Drawable3D
+class XSDRAWSTL_DrawableMesh : public Draw_Drawable3D
 {
 public:
 
   
-  Standard_EXPORT XSDRAWSTLVRML_DrawableMesh(const Handle(MeshVS_Mesh)& aMesh);
+  Standard_EXPORT XSDRAWSTL_DrawableMesh(const Handle(MeshVS_Mesh)& aMesh);
   
   Standard_EXPORT virtual void DrawOn (Draw_Display& dis) const Standard_OVERRIDE;
   
   Standard_EXPORT Handle(MeshVS_Mesh) GetMesh() const;
 
-  DEFINE_STANDARD_RTTIEXT(XSDRAWSTLVRML_DrawableMesh,Draw_Drawable3D)
+  DEFINE_STANDARD_RTTIEXT(XSDRAWSTL_DrawableMesh,Draw_Drawable3D)
 
 protected:
 
@@ -47,4 +47,4 @@ private:
 
 };
 
-#endif // _XSDRAWSTLVRML_DrawableMesh_HeaderFile
+#endif // _XSDRAWSTL_DrawableMesh_HeaderFile

@@ -16,6 +16,8 @@
 #include <DBRep.hxx>
 #include <DDocStd.hxx>
 #include <DDocStd_DrawDocument.hxx>
+#include <DE_ConfigurationNode.hxx>
+#include <DE_Wrapper.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
 #include <Draw_PluginMacro.hxx>
@@ -333,7 +335,10 @@ void XSDRAWPLY::Factory(Draw_Interpretor& theDI)
     return;
   }
   aIsActivated = Standard_True;
-  const char* g = "XSTEP-STL/VRML";  // Step transfer file commands
+
+  DE_Wrapper::GlobalWrapper()->Bind(new RWPly_ConfigurationNode());
+
+  const char* aGroup = "XSTEP-STL/VRML";  // Step transfer file commands
   //XSDRAW::LoadDraw(theCommands);
   theDI.Add("WritePly", R"(
 WritePly Doc file [-normals {0|1}]=1 [-colors {0|1}]=1 [-uv {0|1}]=0 [-partId {0|1}]=1 [-faceId {0|1}]=0
@@ -350,10 +355,10 @@ Generate point cloud out of the shape and write it into PLY file.
  -distance   sets distance from shape into the range [0, Value];
  -density    sets density of points to generate randomly on surface;
  -tolerance  sets tolerance; default value is Precision::Confusion();
-)", __FILE__, WritePly, g);
+)", __FILE__, WritePly, aGroup);
   theDI.Add("writeply",
             "writeply shape file",
-            __FILE__, WritePly, g);
+            __FILE__, WritePly, aGroup);
 }
 
 // Declare entry point PLUGINFACTORY

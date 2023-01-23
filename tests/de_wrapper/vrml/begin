@@ -1,3 +1,5 @@
 # File: begin
 
+pload VRML
+
 set filename [locate_data_file "bug29597_vrml2.wrl"]

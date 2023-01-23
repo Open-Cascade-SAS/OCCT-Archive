@@ -13,6 +13,8 @@
 
 #include <XSDRAWOBJ.hxx>
 
+#include <DE_ConfigurationNode.hxx>
+#include <DE_Wrapper.hxx>
 #include <DBRep.hxx>
 #include <DDocStd.hxx>
 #include <DDocStd_DrawDocument.hxx>
@@ -334,7 +336,10 @@ void XSDRAWOBJ::Factory(Draw_Interpretor& theDI)
     return;
   }
   aIsActivated = Standard_True;
-  const char* g = "XSTEP-STL/VRML";  // Step transfer file commands
+
+  DE_Wrapper::GlobalWrapper()->Bind(new RWObj_ConfigurationNode());
+
+  const char* aGroup = "XSTEP-STL/VRML";  // Step transfer file commands
   theDI.Add("ReadObj",
             "ReadObj Doc file [-fileCoordSys {Zup|Yup}] [-fileUnit Unit]"
             "\n\t\t:                  [-resultCoordSys {Zup|Yup}] [-singlePrecision]"
@@ -346,14 +351,14 @@ void XSDRAWOBJ::Factory(Draw_Interpretor& theDI)
             "\n\t\t:   -singlePrecision truncate vertex data to single precision during read; FALSE by default."
             "\n\t\t:   -listExternalFiles do not read mesh and only list external files."
             "\n\t\t:   -noCreateDoc    read into existing XDE document.",
-            __FILE__, ReadObj, g);
+            __FILE__, ReadObj, aGroup);
   theDI.Add("readobj",
             "readobj shape file [-fileCoordSys {Zup|Yup}] [-fileUnit Unit]"
             "\n\t\t:                    [-resultCoordSys {Zup|Yup}] [-singlePrecision]"
             "\n\t\t:                    [-singleFace]"
             "\n\t\t: Same as ReadObj but reads OBJ file into a shape instead of a document."
             "\n\t\t:   -singleFace merge OBJ content into a single triangulation Face.",
-            __FILE__, ReadObj, g);
+            __FILE__, ReadObj, aGroup);
   theDI.Add("WriteObj",
             "WriteObj Doc file [-fileCoordSys {Zup|Yup}] [-fileUnit Unit]"
             "\n\t\t:                   [-systemCoordSys {Zup|Yup}]"
@@ -362,10 +367,10 @@ void XSDRAWOBJ::Factory(Draw_Interpretor& theDI)
             "\n\t\t:   -fileUnit       length unit of OBJ file content;"
             "\n\t\t:   -fileCoordSys   coordinate system defined by OBJ file; Yup when not specified."
             "\n\t\t:   -systemCoordSys system coordinate system; Zup when not specified.",
-            __FILE__, WriteObj, g);
+            __FILE__, WriteObj, aGroup);
   theDI.Add("writeobj",
             "writeobj shape file",
-            __FILE__, WriteObj, g);
+            __FILE__, WriteObj, aGroup);
 }
 
 // Declare entry point PLUGINFACTORY

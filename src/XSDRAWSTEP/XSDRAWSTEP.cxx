@@ -16,6 +16,8 @@
 #include <DBRep.hxx>
 #include <DDocStd.hxx>
 #include <DDocStd_DrawDocument.hxx>
+#include <DE_ConfigurationNode.hxx>
+#include <DE_Wrapper.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
 #include <Draw_PluginMacro.hxx>
@@ -905,21 +907,24 @@ void XSDRAWSTEP::Factory(Draw_Interpretor& theDI)
     return;
   }
   aIsActivated = Standard_True;
-  const char* g = "DE: STEP";  // Step transfer file commands
-  theDI.Add("stepwrite", "stepwrite mode[0-4 afsmw] shape", __FILE__, stepwrite, g);
+
+  DE_Wrapper::GlobalWrapper()->Bind(new STEPCAFControl_ConfigurationNode());
+
+  const char* aGroup = "DE: STEP";  // Step transfer file commands
+  theDI.Add("stepwrite", "stepwrite mode[0-4 afsmw] shape", __FILE__, stepwrite, aGroup);
   theDI.Add("testwritestep", "testwritestep filename.stp shape [-stream]",
-            __FILE__, testwrite, g);
-  theDI.Add("stepread", "stepread  [file] [f or r (type of model full or reduced)]", __FILE__, stepread, g);
-  theDI.Add("testreadstep", "testreadstep file shape [-stream]", __FILE__, testreadstep, g);
-  theDI.Add("steptrans", "steptrans shape stepax1 stepax2", __FILE__, steptrans, g);
-  theDI.Add("countexpected", "TEST", __FILE__, countexpected, g);
-  theDI.Add("dumpassembly", "TEST", __FILE__, dumpassembly, g);
-  theDI.Add("stepfileunits", "stepfileunits name_file", __FILE__, stepfileunits, g);
+            __FILE__, testwrite, aGroup);
+  theDI.Add("stepread", "stepread  [file] [f or r (type of model full or reduced)]", __FILE__, stepread, aGroup);
+  theDI.Add("testreadstep", "testreadstep file shape [-stream]", __FILE__, testreadstep, aGroup);
+  theDI.Add("steptrans", "steptrans shape stepax1 stepax2", __FILE__, steptrans, aGroup);
+  theDI.Add("countexpected", "TEST", __FILE__, countexpected, aGroup);
+  theDI.Add("dumpassembly", "TEST", __FILE__, dumpassembly, aGroup);
+  theDI.Add("stepfileunits", "stepfileunits name_file", __FILE__, stepfileunits, aGroup);
   theDI.Add("ReadStep",
             "Doc filename [mode] [-stream]"
             "\n\t\t: Read STEP file to a document."
             "\n\t\t:  -stream read using istream reading interface (testing)",
-            __FILE__, ReadStep, g);
+            __FILE__, ReadStep, aGroup);
   theDI.Add("WriteStep",
             "Doc filename [mode=a [multifile_prefix] [label]] [-stream]"
             "\n\t\t: Write DECAF document to STEP file"
@@ -930,7 +935,7 @@ void XSDRAWSTEP::Factory(Draw_Interpretor& theDI)
             "\n\t\t:                     and defines common prefix for their names"
             "\n\t\t:   label  tag of the sub-assembly label to save only that sub-assembly"
             "\n\t\t:  -stream read using ostream writing interface (testing)",
-            __FILE__, WriteStep, g);
+            __FILE__, WriteStep, aGroup);
 }
 
 // Declare entry point PLUGINFACTORY
