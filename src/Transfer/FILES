@@ -32,7 +32,6 @@ Transfer_IteratorOfProcessForTransient.hxx
 Transfer_IteratorOfProcessForTransient_0.cxx
 Transfer_MapContainer.cxx
 Transfer_MapContainer.hxx
-Transfer_Mapper.gxx
 Transfer_MultipleBinder.cxx
 Transfer_MultipleBinder.hxx
 Transfer_ProcessForFinder.hxx

@@ -38,8 +38,8 @@ static void  ShapeAppend
    const Handle(TopTools_HSequenceOfShape)& shapes)
 {
   if (binder.IsNull()) return;
-  if (binder->IsKind(STANDARD_TYPE(TransferBRep_BinderOfShape))) {
-    DeclareAndCast(TransferBRep_BinderOfShape,shbind,binder);
+  if (binder->IsKind(STANDARD_TYPE(TransferBRep_ShapeBinder))) {
+    DeclareAndCast(TransferBRep_ShapeBinder,shbind,binder);
     if (shbind->HasResult()) shapes->Append (shbind->Result());
   }
   else if (binder->IsKind(STANDARD_TYPE(TransferBRep_ShapeListBinder))) {
@@ -63,7 +63,7 @@ static void  ShapeAppend
   TopoDS_Shape shape;
   Handle(Transfer_Binder) bnd = binder;
   while (!bnd.IsNull()) {
-    DeclareAndCast(TransferBRep_BinderOfShape,shb,bnd);
+    DeclareAndCast(TransferBRep_ShapeBinder,shb,bnd);
     if (!shb.IsNull()) return shb->Result();
     DeclareAndCast(Transfer_SimpleBinderOfTransient,hsb,bnd);
     if (!hsb.IsNull()) {
@@ -344,7 +344,7 @@ Interface_CheckIterator TransferBRep::BRepCheck
     Handle(Standard_Transient) ent = ach->Entity();
     if (ent.IsNull()) continue;
     if (!alsoshapes) {
-      if (ent->IsKind(STANDARD_TYPE(TransferBRep_BinderOfShape)) ||
+      if (ent->IsKind(STANDARD_TYPE(TransferBRep_ShapeBinder)) ||
 	  ent->IsKind(STANDARD_TYPE(TopoDS_HShape)) ||
 	  ent->IsKind(STANDARD_TYPE(TransferBRep_ShapeMapper)) ) continue;
     }
@@ -363,7 +363,7 @@ Interface_CheckIterator TransferBRep::BRepCheck
     Handle(Standard_Transient) ent = ach->Entity();
     if (ent.IsNull()) continue;
     DeclareAndCast(TopoDS_HShape,hs,ent);
-    DeclareAndCast(TransferBRep_BinderOfShape,sb,ent);
+    DeclareAndCast(TransferBRep_ShapeBinder,sb,ent);
     DeclareAndCast(TransferBRep_ShapeMapper,sm,ent);
     if (!hs.IsNull()) ls->Append (hs->Shape());
     if (!sb.IsNull()) ls->Append (sb->Result());
@@ -377,7 +377,7 @@ Interface_CheckIterator TransferBRep::BRepCheck
 {
   TopoDS_Shape S;
   DeclareAndCast(TopoDS_HShape,hs,obj);
-  DeclareAndCast(TransferBRep_BinderOfShape,sb,obj);
+  DeclareAndCast(TransferBRep_ShapeBinder,sb,obj);
   DeclareAndCast(TransferBRep_ShapeMapper,sm,obj);
   if (!hs.IsNull()) S = hs->Shape();
   if (!sb.IsNull()) S = sb->Result();
@@ -397,7 +397,7 @@ Interface_CheckIterator TransferBRep::BRepCheck
     } else {
       TopoDS_Shape sh;
       DeclareAndCast(TopoDS_HShape,hsh,ent);
-      DeclareAndCast(TransferBRep_BinderOfShape,sbs,ent);
+      DeclareAndCast(TransferBRep_ShapeBinder,sbs,ent);
       DeclareAndCast(TransferBRep_ShapeMapper,smp,ent);
       if (!hsh.IsNull()) sh = hsh->Shape();
       if (!sbs.IsNull()) sh = sbs->Result();

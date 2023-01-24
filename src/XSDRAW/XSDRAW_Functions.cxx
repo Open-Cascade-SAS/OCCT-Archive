@@ -22,7 +22,6 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <Transfer_ResultFromModel.hxx>
 #include <Transfer_TransientProcess.hxx>
-#include <XSControl.hxx>
 #include <XSControl_Controller.hxx>
 #include <XSDRAW.hxx>
 #include <XSDRAWBase.hxx>

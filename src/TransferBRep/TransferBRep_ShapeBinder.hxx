@@ -19,10 +19,10 @@
 
 #include <Standard.hxx>
 #include <Standard_Type.hxx>
-
-#include <TransferBRep_BinderOfShape.hxx>
 #include <TopAbs_ShapeEnum.hxx>
-class TopoDS_Shape;
+#include <TopoDS_Shape.hxx>
+#include <Transfer_Binder.hxx>
+
 class TopoDS_Vertex;
 class TopoDS_Edge;
 class TopoDS_Wire;
@@ -32,18 +32,16 @@ class TopoDS_Solid;
 class TopoDS_CompSolid;
 class TopoDS_Compound;
 
-
 class TransferBRep_ShapeBinder;
-DEFINE_STANDARD_HANDLE(TransferBRep_ShapeBinder, TransferBRep_BinderOfShape)
+DEFINE_STANDARD_HANDLE(TransferBRep_ShapeBinder, Transfer_Binder)
 
 //! A ShapeBinder is a BinderOfShape with some additional services
 //! to cast the Result under various kinds of Shapes
-class TransferBRep_ShapeBinder : public TransferBRep_BinderOfShape
+class TransferBRep_ShapeBinder : public Transfer_Binder
 {
 
 public:
 
-  
   //! Creates an empty ShapeBinder
   Standard_EXPORT TransferBRep_ShapeBinder();
   
@@ -69,27 +67,31 @@ public:
   
   Standard_EXPORT TopoDS_Compound Compound() const;
 
+  //! Returns the Type permitted for the Result, i.e. the Type
+//! of the Parameter Class <Shape from TopoDS> (statically defined)
+  Standard_EXPORT Handle(Standard_Type) ResultType() const Standard_OVERRIDE;
 
+  //! Returns the Type Name computed for the Result (dynamic)
+  Standard_EXPORT Standard_CString ResultTypeName() const Standard_OVERRIDE;
 
+  //! Defines the Result
+  Standard_EXPORT void SetResult(const TopoDS_Shape& res);
 
-  DEFINE_STANDARD_RTTIEXT(TransferBRep_ShapeBinder,TransferBRep_BinderOfShape)
+  //! Returns the defined Result, if there is one
+  Standard_EXPORT const TopoDS_Shape& Result() const;
+
+  //! Returns the defined Result, if there is one, and allows to
+  //! change it (avoids Result + SetResult).
+  //! Admits that Result can be not yet defined
+  //! Warning : a call to CResult causes Result to be known as defined
+  Standard_EXPORT TopoDS_Shape& CResult();
+
+  DEFINE_STANDARD_RTTIEXT(TransferBRep_ShapeBinder, Transfer_Binder)
 
 protected:
 
-
-
-
-private:
-
-
-
+  TopoDS_Shape theres;
 
 };
-
-
-
-
-
-
 
 #endif // _TransferBRep_ShapeBinder_HeaderFile

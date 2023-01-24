@@ -38,14 +38,12 @@
 #include <TransferBRep.hxx>
 #include <TransferBRep_ShapeListBinder.hxx>
 #include <TransferBRep_ShapeMapper.hxx>
-#include <XSControl.hxx>
 #include <XSControl_ConnectedShapes.hxx>
 #include <XSControl_Controller.hxx>
 #include <XSDRAW.hxx>
 #include <XSDRAWBase.hxx>
 #include <XSControl_TransferReader.hxx>
 #include <XSControl_TransferWriter.hxx>
-#include <XSControl_Vars.hxx>
 #include <XSControl_WorkSession.hxx>
 
 //=======================================================================
@@ -618,24 +616,6 @@ static Standard_Integer XSControl_fromshape(Draw_Interpretor& theDI,
             aSSC.SStream() << std::endl;
           }
         }
-        /*	else {
-            TopoDS_Shape comp = TransferBRep::ShapeResult(bnd);
-            if ( ! comp.IsNull() && comp.ShapeType() < Shape.ShapeType() ) {
-              Standard_Boolean start = Standard_True;
-              for ( TopoDS_Iterator it(comp); it.More(); it.Next() ) {
-                Handle(Transfer_Finder) cfnd = TransferBRep::ShapeMapper (FP,it.Value());
-                if ( cfnd.IsNull() ) continue;
-                Handle(Standard_Transient) cent = FP->FindTransient (cfnd);
-                if ( cent.IsNull() ) continue;
-                if ( start )
-            aSSC.SStream()<<"Shape "<<arg1<<" : exported to entities ";
-                else aSSC.SStream() << ", ";
-                start = Standard_False;
-                XSControl::Session(pilot)->Model()->Print(cent,aSSC.SStream());
-              }
-              if ( ! start ) aSSC.SStream()<<std::endl;
-            }
-          }  */
       }
     }
   }

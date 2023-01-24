@@ -1,5 +1,3 @@
-XSControl.cxx
-XSControl.hxx
 XSControl_ConnectedShapes.cxx
 XSControl_ConnectedShapes.hxx
 XSControl_Controller.cxx
@@ -14,10 +12,6 @@ XSControl_TransferReader.cxx
 XSControl_TransferReader.hxx
 XSControl_TransferWriter.cxx
 XSControl_TransferWriter.hxx
-XSControl_Utils.cxx
-XSControl_Utils.hxx
-XSControl_Vars.cxx
-XSControl_Vars.hxx
 XSControl_WorkSession.cxx
 XSControl_WorkSession.hxx
 XSControl_Writer.cxx

@@ -20,12 +20,12 @@
 #include <Standard_Failure.hxx>
 #include <Standard_Transient.hxx>
 #include <Standard_Type.hxx>
+#include <TransferBRep.hxx>
 #include <Transfer_ActorOfFinderProcess.hxx>
 #include <Transfer_SimpleBinderOfTransient.hxx>
 #include <Transfer_TransientMapper.hxx>
 #include <XSControl_Controller.hxx>
 #include <XSControl_TransferWriter.hxx>
-#include <XSControl_Utils.hxx>
 #include <ShapeUpgrade_RemoveLocations.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(XSControl_TransferWriter,Standard_Transient)
@@ -72,8 +72,9 @@ void XSControl_TransferWriter::PrintStats (const Standard_Integer , const Standa
 Standard_Boolean XSControl_TransferWriter::RecognizeTransient (const Handle(Standard_Transient)& obj)
 {
   if (myController.IsNull()) return Standard_False;
-  XSControl_Utils xu;
-  TopoDS_Shape sh = xu.BinderShape (obj);
+
+  Handle(Transfer_Binder) aBinder = Handle(Transfer_Binder)::DownCast(obj);
+  TopoDS_Shape sh = TransferBRep::ShapeResult(aBinder);
   if (!sh.IsNull()) return RecognizeShape (sh);
   return myController->RecognizeWriteTransient (obj,myTransferMode);
 }

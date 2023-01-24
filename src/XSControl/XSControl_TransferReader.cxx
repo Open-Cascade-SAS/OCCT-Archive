@@ -45,7 +45,6 @@
 #include <TransferBRep_ShapeBinder.hxx>
 #include <XSControl_Controller.hxx>
 #include <XSControl_TransferReader.hxx>
-#include <XSControl_Utils.hxx>
 #include <Message.hxx>
 
 #include <stdio.h>
@@ -395,8 +394,7 @@ TopoDS_Shape XSControl_TransferReader::ShapeResult
   if (res.IsNull()) return tres;
   Handle(Transfer_ResultFromTransient) mres = res->MainResult();
   if (mres.IsNull()) return tres;
-  XSControl_Utils xu;
-  TopoDS_Shape sh = xu.BinderShape (mres->Binder());
+  TopoDS_Shape sh = TransferBRep::ShapeResult(mres->Binder());
 
 //   Ouh la vilaine verrue
   Standard_Real tolang = Interface_Static::RVal("read.encoderegularity.angle");
@@ -444,12 +442,11 @@ Handle(Standard_Transient) XSControl_TransferReader::EntityFromResult
 {
   Handle(Standard_Transient) nulh;
   //  cas de la shape
-  XSControl_Utils xu;
-  TopoDS_Shape sh = xu.BinderShape (res);
-  if (!sh.IsNull()) return EntityFromShapeResult (sh,mode);
-
   Handle(Transfer_Binder) abinder;
   DeclareAndCast(Transfer_Binder,binder,res);
+  TopoDS_Shape sh = TransferBRep::ShapeResult(binder);
+  if (!sh.IsNull()) return EntityFromShapeResult (sh,mode);
+
   Standard_Integer i,j,nb;
 
   if (mode == 0 || mode == 1) {
@@ -511,7 +508,6 @@ Handle(Standard_Transient) XSControl_TransferReader::EntityFromShapeResult
   if (res.IsNull()) return nulh;
   Standard_Integer i,j,nb;
 
-  XSControl_Utils xu;
   if (mode == 0 || mode == 1 || mode == -1) {
     //  on regarde dans le TransientProcess
     if (!myTP.IsNull()) {
@@ -548,7 +544,7 @@ Handle(Standard_Transient) XSControl_TransferReader::EntityFromShapeResult
       for (ir = 1; ir <= nr; ir ++) {
         DeclareAndCast(Transfer_ResultFromTransient,rft,list->Value(ir));
         if (rft.IsNull()) continue;
-        TopoDS_Shape sh = xu.BinderShape (rft->Binder());
+        TopoDS_Shape sh = TransferBRep::ShapeResult(rft->Binder());
         if (!sh.IsNull() && sh == res) return rft->Start();
       }
       
@@ -579,7 +575,6 @@ Handle(TColStd_HSequenceOfTransient) XSControl_TransferReader::EntitiesFromShape
 
   //  A present, recherche et enregistrement
 
-  XSControl_Utils xu;
   if (mode == 0 || mode == 1) {
     //  on regarde dans le TransientProcess
     if (!myTP.IsNull()) {
@@ -587,7 +582,7 @@ Handle(TColStd_HSequenceOfTransient) XSControl_TransferReader::EntitiesFromShape
       for (j = 1; j <= nb; j ++) {
 	i = (mode == 0 ? myModel->Number (myTP->Root(j)) : j);
 	if (i == 0) continue;
-	TopoDS_Shape sh = xu.BinderShape (myTP->MapItem(i));
+	TopoDS_Shape sh = TransferBRep::ShapeResult(myTP->MapItem(i));
 	if (!sh.IsNull() && shapes.Contains(sh)) {
 	  lt->Append (myTP->Mapped(i));
           j=nb; //skl (for looking for entities in checkbrep)
@@ -609,7 +604,7 @@ Handle(TColStd_HSequenceOfTransient) XSControl_TransferReader::EntitiesFromShape
       for (ir = 1; ir <= nr; ir ++) {
         DeclareAndCast(Transfer_ResultFromTransient,rft,list->Value(i));
         if (rft.IsNull()) continue;
-        TopoDS_Shape sh = xu.BinderShape (rft->Binder());
+        TopoDS_Shape sh = TransferBRep::ShapeResult(rft->Binder());
         if (!sh.IsNull() && shapes.Contains(sh)) lt->Append (rft->Start());
       }
       

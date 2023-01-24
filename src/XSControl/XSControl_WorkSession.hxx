@@ -27,7 +27,6 @@
 class XSControl_Controller;
 class XSControl_TransferReader;
 class XSControl_TransferWriter;
-class XSControl_Vars;
 class Transfer_TransientProcess;
 class Interface_InterfaceModel;
 class Transfer_FinderProcess;

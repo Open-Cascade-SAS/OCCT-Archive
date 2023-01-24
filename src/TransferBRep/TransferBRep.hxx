@@ -25,7 +25,6 @@
 #include <Standard_Boolean.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TopAbs_Orientation.hxx>
-#include <TransferBRep_HSequenceOfTransferResultInfo.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 #include <Standard_Integer.hxx>
 class TopoDS_Shape;
@@ -40,6 +39,8 @@ class TransferBRep_TransferResultInfo;
 class Interface_CheckIterator;
 class Interface_InterfaceModel;
 
+typedef NCollection_Sequence<Handle(TransferBRep_TransferResultInfo)> TransferBRep_SequenceOfTransferResultInfo;
+DEFINE_HSEQUENCE(TransferBRep_HSequenceOfTransferResultInfo, TransferBRep_SequenceOfTransferResultInfo)
 
 //! This package gathers services to simply read files and convert
 //! them to Shapes from CasCade. IE. it can be used in conjunction
