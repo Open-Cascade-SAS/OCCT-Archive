@@ -329,72 +329,72 @@ STEPControl_Controller::STEPControl_Controller ()
   myAdaptorProtocol = STEPEdit::Protocol();
   myAdaptorRead     = new STEPControl_ActorRead;  // par ex pour Recognize
 
-  SetModeWrite (0,4);
-  SetModeWriteHelp (0,"As Is");
-  SetModeWriteHelp (1,"Faceted Brep");
-  SetModeWriteHelp (2,"Shell Based");
-  SetModeWriteHelp (3,"Manifold Solid");
-  SetModeWriteHelp (4,"Wireframe");
-  TraceStatic ("read.surfacecurve.mode",5);
+  //SetModeWrite (0,4);
+  //SetModeWriteHelp (0,"As Is");
+  //SetModeWriteHelp (1,"Faceted Brep");
+  //SetModeWriteHelp (2,"Shell Based");
+  //SetModeWriteHelp (3,"Manifold Solid");
+  //SetModeWriteHelp (4,"Wireframe");
+  //TraceStatic ("read.surfacecurve.mode",5);
 
-  //   ---  SELECTIONS, SIGNATURES, COMPTEURS, EDITEURS
+  ////   ---  SELECTIONS, SIGNATURES, COMPTEURS, EDITEURS
 
-  DeclareAndCast(IFSelect_Selection,xmr,SessionItem("xst-model-roots"));
-  if (!xmr.IsNull()) {
-    Handle(IFSelect_Signature) sty = STEPEdit::SignType();
-    AddSessionItem (sty,"step-type");
-    Handle(IFSelect_SignCounter) tys = new IFSelect_SignCounter(sty,Standard_False,Standard_True);
-    AddSessionItem (tys,"step-types");
+  //DeclareAndCast(IFSelect_Selection,xmr,SessionItem("xst-model-roots"));
+  //if (!xmr.IsNull()) {
+  //  Handle(IFSelect_Signature) sty = STEPEdit::SignType();
+  //  AddSessionItem (sty,"step-type");
+  //  Handle(IFSelect_SignCounter) tys = new IFSelect_SignCounter(sty,Standard_False,Standard_True);
+  //  AddSessionItem (tys,"step-types");
 
-    //szv:mySignType = sty;
-    
-    //pdn S4133 18.02.99
-    AddSessionItem (new IFSelect_SignAncestor(),"xst-derived");
+  //  //szv:mySignType = sty;
+  //  
+  //  //pdn S4133 18.02.99
+  //  AddSessionItem (new IFSelect_SignAncestor(),"xst-derived");
 
-    Handle(STEPSelections_SelectDerived) stdvar = new STEPSelections_SelectDerived();
-    stdvar->SetProtocol(STEPEdit::Protocol());
-    AddSessionItem (stdvar,"step-derived");
-    
-    Handle(IFSelect_SelectSignature) selsdr = STEPEdit::NewSelectSDR();
-    selsdr->SetInput (xmr);
-    AddSessionItem (selsdr,"step-shape-def-repr");
+  //  Handle(STEPSelections_SelectDerived) stdvar = new STEPSelections_SelectDerived();
+  //  stdvar->SetProtocol(STEPEdit::Protocol());
+  //  AddSessionItem (stdvar,"step-derived");
+  //  
+  //  Handle(IFSelect_SelectSignature) selsdr = STEPEdit::NewSelectSDR();
+  //  selsdr->SetInput (xmr);
+  //  AddSessionItem (selsdr,"step-shape-def-repr");
 
-    AddSessionItem (STEPEdit::NewSelectPlacedItem(),"step-placed-items");
-    // input deja pret avec ModelAll
-    AddSessionItem (STEPEdit::NewSelectShapeRepr(),"step-shape-repr");
-  }
-  
-  //pdn
-  Handle(STEPSelections_SelectFaces) stfaces = new STEPSelections_SelectFaces;
-  stfaces->SetInput (xmr);
-  AddSessionItem (stfaces,"step-faces");
-  
-  Handle(STEPSelections_SelectInstances) stinst = new STEPSelections_SelectInstances;
-  AddSessionItem (stinst,"step-instances");
-  
-  Handle(STEPSelections_SelectGSCurves) stcurves = new STEPSelections_SelectGSCurves;
-  stcurves->SetInput (xmr);
-  AddSessionItem (stcurves,"step-GS-curves");
-  
-  Handle(STEPSelections_SelectAssembly) assembly = new STEPSelections_SelectAssembly;
-  assembly->SetInput (xmr);
-  AddSessionItem (assembly,"step-assembly");
-  
-  Handle(APIHeaderSection_EditHeader) edhead = new APIHeaderSection_EditHeader;
-  Handle(IFSelect_EditForm) edheadf = new IFSelect_EditForm (edhead,Standard_False,Standard_True,"Step Header");
-  AddSessionItem (edhead,"step-header-edit");
-  AddSessionItem (edheadf,"step-header");
+  //  AddSessionItem (STEPEdit::NewSelectPlacedItem(),"step-placed-items");
+  //  // input deja pret avec ModelAll
+  //  AddSessionItem (STEPEdit::NewSelectShapeRepr(),"step-shape-repr");
+  //}
+  //
+  ////pdn
+  //Handle(STEPSelections_SelectFaces) stfaces = new STEPSelections_SelectFaces;
+  //stfaces->SetInput (xmr);
+  //AddSessionItem (stfaces,"step-faces");
+  //
+  //Handle(STEPSelections_SelectInstances) stinst = new STEPSelections_SelectInstances;
+  //AddSessionItem (stinst,"step-instances");
+  //
+  //Handle(STEPSelections_SelectGSCurves) stcurves = new STEPSelections_SelectGSCurves;
+  //stcurves->SetInput (xmr);
+  //AddSessionItem (stcurves,"step-GS-curves");
+  //
+  //Handle(STEPSelections_SelectAssembly) assembly = new STEPSelections_SelectAssembly;
+  //assembly->SetInput (xmr);
+  //AddSessionItem (assembly,"step-assembly");
+  //
+  //Handle(APIHeaderSection_EditHeader) edhead = new APIHeaderSection_EditHeader;
+  //Handle(IFSelect_EditForm) edheadf = new IFSelect_EditForm (edhead,Standard_False,Standard_True,"Step Header");
+  //AddSessionItem (edhead,"step-header-edit");
+  //AddSessionItem (edheadf,"step-header");
 
-  Handle(STEPEdit_EditContext) edctx = new STEPEdit_EditContext;
-  Handle(IFSelect_EditForm) edctxf = new IFSelect_EditForm (edctx,Standard_False,Standard_True,"STEP Product Definition Context");
-  AddSessionItem (edctx,"step-context-edit");
-  AddSessionItem (edctxf,"step-context");
+  //Handle(STEPEdit_EditContext) edctx = new STEPEdit_EditContext;
+  //Handle(IFSelect_EditForm) edctxf = new IFSelect_EditForm (edctx,Standard_False,Standard_True,"STEP Product Definition Context");
+  //AddSessionItem (edctx,"step-context-edit");
+  //AddSessionItem (edctxf,"step-context");
 
 
-  Handle(STEPEdit_EditSDR) edsdr = new STEPEdit_EditSDR;
-  Handle(IFSelect_EditForm) edsdrf = new IFSelect_EditForm (edsdr,Standard_False,Standard_True,"STEP Product Data (SDR)");
-  AddSessionItem (edsdr,"step-SDR-edit");
-  AddSessionItem (edsdrf,"step-SDR-data");
+  //Handle(STEPEdit_EditSDR) edsdr = new STEPEdit_EditSDR;
+  //Handle(IFSelect_EditForm) edsdrf = new IFSelect_EditForm (edsdr,Standard_False,Standard_True,"STEP Product Data (SDR)");
+  //AddSessionItem (edsdr,"step-SDR-edit");
+  //AddSessionItem (edsdrf,"step-SDR-data");
 }
 
 Handle(Interface_InterfaceModel)  STEPControl_Controller::NewModel () const
@@ -441,77 +441,77 @@ void STEPControl_Controller::Customise(Handle(XSControl_WorkSession)& WS)
 {
   XSControl_Controller::Customise(WS);
 
-  Handle(IFSelect_SelectModelRoots) slr;
-  Handle(Standard_Transient) slr1 = WS->NamedItem("xst-model-roots");
-  if(!slr1.IsNull())
-    slr = Handle(IFSelect_SelectModelRoots)::DownCast(slr1);
-  else  {
-    slr = new IFSelect_SelectModelRoots;
-    WS->AddNamedItem ("xst-model-roots",slr);
-  }
+ // Handle(IFSelect_SelectModelRoots) slr;
+ // Handle(Standard_Transient) slr1 = WS->NamedItem("xst-model-roots");
+ // if(!slr1.IsNull())
+ //   slr = Handle(IFSelect_SelectModelRoots)::DownCast(slr1);
+ // else  {
+ //   slr = new IFSelect_SelectModelRoots;
+ //   WS->AddNamedItem ("xst-model-roots",slr);
+ // }
 
-  Handle(STEPSelections_SelectForTransfer) st1= new STEPSelections_SelectForTransfer;
-  st1->SetReader (WS->TransferReader());
-  WS->AddNamedItem ("xst-transferrable-roots",st1);
+ // Handle(STEPSelections_SelectForTransfer) st1= new STEPSelections_SelectForTransfer;
+ // st1->SetReader (WS->TransferReader());
+ // WS->AddNamedItem ("xst-transferrable-roots",st1);
 
-  if (!slr.IsNull()) {
-    Handle(IFSelect_Signature) sty = STEPEdit::SignType();
-    WS->AddNamedItem ("step-type",sty);
-    
-    Handle(IFSelect_SignCounter) tys = new IFSelect_SignCounter(sty,Standard_False,Standard_True);
-    WS->AddNamedItem ("step-types",tys);
+ // if (!slr.IsNull()) {
+ //   Handle(IFSelect_Signature) sty = STEPEdit::SignType();
+ //   WS->AddNamedItem ("step-type",sty);
+ //   
+ //   Handle(IFSelect_SignCounter) tys = new IFSelect_SignCounter(sty,Standard_False,Standard_True);
+ //   WS->AddNamedItem ("step-types",tys);
 
-	//szv:mySignType = sty;
-    WS->SetSignType( sty );
-    
-    //pdn S4133 18.02.99
-    WS->AddNamedItem ("xst-derived",new IFSelect_SignAncestor());
-    Handle(STEPSelections_SelectDerived) stdvar = new STEPSelections_SelectDerived();
-    stdvar->SetProtocol(STEPEdit::Protocol());
-    WS->AddNamedItem ("step-derived",stdvar);
-    
-    Handle(IFSelect_SelectSignature) selsdr = STEPEdit::NewSelectSDR();
-    selsdr->SetInput (slr);
-    WS->AddNamedItem ("step-shape-def-repr",selsdr);
-    Handle(IFSelect_SelectSignature) selrrs = STEPEdit::NewSelectPlacedItem();
-    WS->AddNamedItem ("step-placed-items",selrrs);
-    Handle(IFSelect_SelectSignature) selsr = STEPEdit::NewSelectShapeRepr();
-    // input deja pret avec ModelAll
-    WS->AddNamedItem ("step-shape-repr",selsr);
-  }
-  
-  //pdn
-  Handle(STEPSelections_SelectFaces) stfaces = new STEPSelections_SelectFaces;
-  stfaces->SetInput (slr);
-  WS->AddNamedItem ("step-faces",stfaces);
-  
-  Handle(STEPSelections_SelectInstances) stinst = new STEPSelections_SelectInstances;
-  WS->AddNamedItem ("step-instances",stinst);
-  
-  Handle(STEPSelections_SelectGSCurves) stcurves = new STEPSelections_SelectGSCurves;
-  stcurves->SetInput (slr);
-  WS->AddNamedItem ("step-GS-curves",stcurves);
-  
-  Handle(STEPSelections_SelectAssembly) assembly = new STEPSelections_SelectAssembly;
-  assembly->SetInput (slr);
-  WS->AddNamedItem ("step-assembly",assembly);
-  
-  Handle(APIHeaderSection_EditHeader) edhead = new APIHeaderSection_EditHeader;
-  Handle(IFSelect_EditForm) edheadf = new IFSelect_EditForm (edhead,Standard_False,Standard_True,"Step Header");
-  WS->AddNamedItem ("step-header-edit",edhead);
-  WS->AddNamedItem ("step-header",edheadf);
+	////szv:mySignType = sty;
+ //   WS->SetSignType( sty );
+ //   
+ //   //pdn S4133 18.02.99
+ //   WS->AddNamedItem ("xst-derived",new IFSelect_SignAncestor());
+ //   Handle(STEPSelections_SelectDerived) stdvar = new STEPSelections_SelectDerived();
+ //   stdvar->SetProtocol(STEPEdit::Protocol());
+ //   WS->AddNamedItem ("step-derived",stdvar);
+ //   
+ //   Handle(IFSelect_SelectSignature) selsdr = STEPEdit::NewSelectSDR();
+ //   selsdr->SetInput (slr);
+ //   WS->AddNamedItem ("step-shape-def-repr",selsdr);
+ //   Handle(IFSelect_SelectSignature) selrrs = STEPEdit::NewSelectPlacedItem();
+ //   WS->AddNamedItem ("step-placed-items",selrrs);
+ //   Handle(IFSelect_SelectSignature) selsr = STEPEdit::NewSelectShapeRepr();
+ //   // input deja pret avec ModelAll
+ //   WS->AddNamedItem ("step-shape-repr",selsr);
+ // }
+ // 
+ // //pdn
+ // Handle(STEPSelections_SelectFaces) stfaces = new STEPSelections_SelectFaces;
+ // stfaces->SetInput (slr);
+ // WS->AddNamedItem ("step-faces",stfaces);
+ // 
+ // Handle(STEPSelections_SelectInstances) stinst = new STEPSelections_SelectInstances;
+ // WS->AddNamedItem ("step-instances",stinst);
+ // 
+ // Handle(STEPSelections_SelectGSCurves) stcurves = new STEPSelections_SelectGSCurves;
+ // stcurves->SetInput (slr);
+ // WS->AddNamedItem ("step-GS-curves",stcurves);
+ // 
+ // Handle(STEPSelections_SelectAssembly) assembly = new STEPSelections_SelectAssembly;
+ // assembly->SetInput (slr);
+ // WS->AddNamedItem ("step-assembly",assembly);
+ // 
+ // Handle(APIHeaderSection_EditHeader) edhead = new APIHeaderSection_EditHeader;
+ // Handle(IFSelect_EditForm) edheadf = new IFSelect_EditForm (edhead,Standard_False,Standard_True,"Step Header");
+ // WS->AddNamedItem ("step-header-edit",edhead);
+ // WS->AddNamedItem ("step-header",edheadf);
 
-  Handle(STEPEdit_EditContext) edctx = new STEPEdit_EditContext;
-  Handle(IFSelect_EditForm) edctxf = new IFSelect_EditForm (edctx,Standard_False,Standard_True,"STEP Product Definition Context");
-  WS->AddNamedItem ("step-context-edit",edctx);
-  WS->AddNamedItem ("step-context",edctxf);
+ // Handle(STEPEdit_EditContext) edctx = new STEPEdit_EditContext;
+ // Handle(IFSelect_EditForm) edctxf = new IFSelect_EditForm (edctx,Standard_False,Standard_True,"STEP Product Definition Context");
+ // WS->AddNamedItem ("step-context-edit",edctx);
+ // WS->AddNamedItem ("step-context",edctxf);
 
 
-  Handle(STEPEdit_EditSDR) edsdr = new STEPEdit_EditSDR;
-  Handle(IFSelect_EditForm) edsdrf = new IFSelect_EditForm (edsdr,Standard_False,Standard_True,"STEP Product Data (SDR)");
-  WS->AddNamedItem ("step-SDR-edit",edsdr);
-  WS->AddNamedItem ("step-SDR-data",edsdrf);
+ // Handle(STEPEdit_EditSDR) edsdr = new STEPEdit_EditSDR;
+ // Handle(IFSelect_EditForm) edsdrf = new IFSelect_EditForm (edsdr,Standard_False,Standard_True,"STEP Product Data (SDR)");
+ // WS->AddNamedItem ("step-SDR-edit",edsdr);
+ // WS->AddNamedItem ("step-SDR-data",edsdrf);
 
-  
-  
+ // 
+ // 
 }

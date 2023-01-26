@@ -376,102 +376,102 @@ Handle(Standard_Transient)  XSControl_Controller::SessionItem (const Standard_CS
 
 void XSControl_Controller::Customise (Handle(XSControl_WorkSession)& WS)
 {
-  WS->SetParams (myParams,myParamUses);
+  //WS->SetParams (myParams,myParamUses);
 
-  // General
-  if (!myAdaptorSession.IsEmpty()) {
-    NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)>::Iterator iter(myAdaptorSession);
-    for (; iter.More(); iter.Next())
-      WS->AddNamedItem (iter.Key().ToCString(), iter.ChangeValue());
-  }
+  //// General
+  //if (!myAdaptorSession.IsEmpty()) {
+  //  NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)>::Iterator iter(myAdaptorSession);
+  //  for (; iter.More(); iter.Next())
+  //    WS->AddNamedItem (iter.Key().ToCString(), iter.ChangeValue());
+  //}
 
-  if (WS->NamedItem("xst-model-all").IsNull()) {
+  //if (WS->NamedItem("xst-model-all").IsNull()) {
 
-    Handle(IFSelect_SelectModelEntities) sle = new IFSelect_SelectModelEntities;
-    WS->AddNamedItem ("xst-model-all",sle);
+  //  Handle(IFSelect_SelectModelEntities) sle = new IFSelect_SelectModelEntities;
+  //  WS->AddNamedItem ("xst-model-all",sle);
 
-    Handle(IFSelect_SelectModelRoots)    slr = new IFSelect_SelectModelRoots;
-    WS->AddNamedItem ("xst-model-roots",slr);
+  //  Handle(IFSelect_SelectModelRoots)    slr = new IFSelect_SelectModelRoots;
+  //  WS->AddNamedItem ("xst-model-roots",slr);
 
-    if(strcasecmp(WS->SelectedNorm(),"STEP")) {
-      Handle(XSControl_SelectForTransfer) st1 = new XSControl_SelectForTransfer;
-      st1->SetInput (slr);
-      st1->SetReader (WS->TransferReader());
-      WS->AddNamedItem ("xst-transferrable-roots",st1);
-    }
+  //  if(strcasecmp(WS->SelectedNorm(),"STEP")) {
+  //    Handle(XSControl_SelectForTransfer) st1 = new XSControl_SelectForTransfer;
+  //    st1->SetInput (slr);
+  //    st1->SetReader (WS->TransferReader());
+  //    WS->AddNamedItem ("xst-transferrable-roots",st1);
+  //  }
 
-    Handle(XSControl_SelectForTransfer) st2 = new XSControl_SelectForTransfer;
-    st2->SetInput (sle);
-    st2->SetReader (WS->TransferReader());
-    WS->AddNamedItem ("xst-transferrable-all",st2);
-   
-    Handle(XSControl_SignTransferStatus) strs = new XSControl_SignTransferStatus;
-    strs->SetReader (WS->TransferReader());
-    WS->AddNamedItem ("xst-transfer-status",strs);
-  
-    Handle(XSControl_ConnectedShapes) scs = new XSControl_ConnectedShapes;
-    scs->SetReader (WS->TransferReader());
-    WS->AddNamedItem ("xst-connected-faces",scs);
+  //  Handle(XSControl_SelectForTransfer) st2 = new XSControl_SelectForTransfer;
+  //  st2->SetInput (sle);
+  //  st2->SetReader (WS->TransferReader());
+  //  WS->AddNamedItem ("xst-transferrable-all",st2);
+  // 
+  //  Handle(XSControl_SignTransferStatus) strs = new XSControl_SignTransferStatus;
+  //  strs->SetReader (WS->TransferReader());
+  //  WS->AddNamedItem ("xst-transfer-status",strs);
+  //
+  //  Handle(XSControl_ConnectedShapes) scs = new XSControl_ConnectedShapes;
+  //  scs->SetReader (WS->TransferReader());
+  //  WS->AddNamedItem ("xst-connected-faces",scs);
 
-    Handle(IFSelect_SignType) stp = new IFSelect_SignType (Standard_False);
-    WS->AddNamedItem ("xst-long-type",stp);
+  //  Handle(IFSelect_SignType) stp = new IFSelect_SignType (Standard_False);
+  //  WS->AddNamedItem ("xst-long-type",stp);
 
-    Handle(IFSelect_SignType) stc = new IFSelect_SignType (Standard_True);
-    WS->AddNamedItem ("xst-type",stc);
+  //  Handle(IFSelect_SignType) stc = new IFSelect_SignType (Standard_True);
+  //  WS->AddNamedItem ("xst-type",stc);
 
-    WS->AddNamedItem ("xst-ancestor-type",new IFSelect_SignAncestor);
-    WS->AddNamedItem ("xst-types",new IFSelect_SignCounter(stp,Standard_False,Standard_True));
-    WS->AddNamedItem ("xst-category",new IFSelect_SignCategory);
-    WS->AddNamedItem ("xst-validity",new IFSelect_SignValidity);
+  //  WS->AddNamedItem ("xst-ancestor-type",new IFSelect_SignAncestor);
+  //  WS->AddNamedItem ("xst-types",new IFSelect_SignCounter(stp,Standard_False,Standard_True));
+  //  WS->AddNamedItem ("xst-category",new IFSelect_SignCategory);
+  //  WS->AddNamedItem ("xst-validity",new IFSelect_SignValidity);
 
-    Handle(IFSelect_DispPerOne) dispone = new IFSelect_DispPerOne;
-    dispone->SetFinalSelection(slr);
-    WS->AddNamedItem ("xst-disp-one",dispone);
+  //  Handle(IFSelect_DispPerOne) dispone = new IFSelect_DispPerOne;
+  //  dispone->SetFinalSelection(slr);
+  //  WS->AddNamedItem ("xst-disp-one",dispone);
 
-    Handle(IFSelect_DispPerCount) dispcount = new IFSelect_DispPerCount;
-    Handle(IFSelect_IntParam) intcount = new IFSelect_IntParam;
-    intcount->SetValue(5);
-    dispcount->SetCount(intcount);
-    dispcount->SetFinalSelection(slr);
-    WS->AddNamedItem ("xst-disp-count",dispcount);
+  //  Handle(IFSelect_DispPerCount) dispcount = new IFSelect_DispPerCount;
+  //  Handle(IFSelect_IntParam) intcount = new IFSelect_IntParam;
+  //  intcount->SetValue(5);
+  //  dispcount->SetCount(intcount);
+  //  dispcount->SetFinalSelection(slr);
+  //  WS->AddNamedItem ("xst-disp-count",dispcount);
 
-    Handle(IFSelect_DispPerFiles) dispfiles = new IFSelect_DispPerFiles;
-    Handle(IFSelect_IntParam) intfiles = new IFSelect_IntParam;
-    intfiles->SetValue(10);
-    dispfiles->SetCount(intfiles);
-    dispfiles->SetFinalSelection(slr);
-    WS->AddNamedItem ("xst-disp-files",dispfiles);
+  //  Handle(IFSelect_DispPerFiles) dispfiles = new IFSelect_DispPerFiles;
+  //  Handle(IFSelect_IntParam) intfiles = new IFSelect_IntParam;
+  //  intfiles->SetValue(10);
+  //  dispfiles->SetCount(intfiles);
+  //  dispfiles->SetFinalSelection(slr);
+  //  WS->AddNamedItem ("xst-disp-files",dispfiles);
 
-    Handle(IFSelect_DispPerSignature) dispsign = new IFSelect_DispPerSignature;
-    dispsign->SetSignCounter(new IFSelect_SignCounter(Handle(IFSelect_Signature)(stc)));
-    dispsign->SetFinalSelection(slr);
-    WS->AddNamedItem ("xst-disp-sign",dispsign);
+  //  Handle(IFSelect_DispPerSignature) dispsign = new IFSelect_DispPerSignature;
+  //  dispsign->SetSignCounter(new IFSelect_SignCounter(Handle(IFSelect_Signature)(stc)));
+  //  dispsign->SetFinalSelection(slr);
+  //  WS->AddNamedItem ("xst-disp-sign",dispsign);
 
-    // Not used directly but useful anyway
-    WS->AddNamedItem ("xst-pointed",new IFSelect_SelectPointed);
-    WS->AddNamedItem ("xst-sharing",new IFSelect_SelectSharing);
-    WS->AddNamedItem ("xst-shared",new IFSelect_SelectShared);
-    WS->AddNamedItem ("xst-nb-selected",new IFSelect_GraphCounter);
+  //  // Not used directly but useful anyway
+  //  WS->AddNamedItem ("xst-pointed",new IFSelect_SelectPointed);
+  //  WS->AddNamedItem ("xst-sharing",new IFSelect_SelectSharing);
+  //  WS->AddNamedItem ("xst-shared",new IFSelect_SelectShared);
+  //  WS->AddNamedItem ("xst-nb-selected",new IFSelect_GraphCounter);
 
-    //szv:mySignType = stp;
-    WS->SetSignType( stp );
-  }
+  //  //szv:mySignType = stp;
+  //  WS->SetSignType( stp );
+  //}
 
-  // Applied Modifiers
-  Standard_Integer i, nb = myAdaptorApplied.Length();
-  for (i = 1; i <= nb; i ++) {
-    const Handle(Standard_Transient) &anitem = myAdaptorApplied.Value(i);
-    Handle(TCollection_HAsciiString) name = WS->Name(anitem);
-    WS->SetAppliedModifier(GetCasted(IFSelect_GeneralModifier,anitem),WS->ShareOut());
-  }
+  //// Applied Modifiers
+  //Standard_Integer i, nb = myAdaptorApplied.Length();
+  //for (i = 1; i <= nb; i ++) {
+  //  const Handle(Standard_Transient) &anitem = myAdaptorApplied.Value(i);
+  //  Handle(TCollection_HAsciiString) name = WS->Name(anitem);
+  //  WS->SetAppliedModifier(GetCasted(IFSelect_GeneralModifier,anitem),WS->ShareOut());
+  //}
 
-  // Editors of Parameters
-  // Here for the specific manufacturers of controllers could create the
-  // Parameters: So wait here
+  //// Editors of Parameters
+  //// Here for the specific manufacturers of controllers could create the
+  //// Parameters: So wait here
 
-  Handle(TColStd_HSequenceOfHAsciiString) listat = Interface_Static::Items();
-  Handle(IFSelect_ParamEditor) paramed = IFSelect_ParamEditor::StaticEditor (listat,"All Static Parameters");
-  WS->AddNamedItem ("xst-static-params-edit",paramed);
-  Handle(IFSelect_EditForm) paramform = paramed->Form(Standard_False);
-  WS->AddNamedItem ("xst-static-params",paramform);
+  //Handle(TColStd_HSequenceOfHAsciiString) listat = Interface_Static::Items();
+  //Handle(IFSelect_ParamEditor) paramed = IFSelect_ParamEditor::StaticEditor (listat,"All Static Parameters");
+  //WS->AddNamedItem ("xst-static-params-edit",paramed);
+  //Handle(IFSelect_EditForm) paramform = paramed->Form(Standard_False);
+  //WS->AddNamedItem ("xst-static-params",paramform);
 }
