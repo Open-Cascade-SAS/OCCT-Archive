@@ -13,9 +13,7 @@
 
 #include <XSDRAW_Functions.hxx>
 
-#include <IFSelect_Act.hxx>
 #include <IFSelect_CheckCounter.hxx>
-#include <IFSelect_SessionPilot.hxx>
 #include <Interface_Static.hxx>
 #include <Message.hxx>
 #include <Message_Messenger.hxx>

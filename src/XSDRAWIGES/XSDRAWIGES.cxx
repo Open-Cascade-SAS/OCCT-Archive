@@ -33,7 +33,6 @@
 #include <IGESControl_Writer.hxx>
 #include <IGESData_IGESEntity.hxx>
 #include <IGESData_IGESModel.hxx>
-#include <IGESSelect_Activator.hxx>
 #include <Interface_Static.hxx>
 #include <Message.hxx>
 #include <XSControl_WorkSession.hxx>

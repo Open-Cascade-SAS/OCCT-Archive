@@ -13,7 +13,6 @@
 
 #include <XSDRAW_FunctionsSession.hxx>
 
-#include <IFSelect_Act.hxx>
 #include <IFSelect_CheckCounter.hxx>
 #include <IFSelect_DispGlobal.hxx>
 #include <IFSelect_DispPerCount.hxx>
@@ -45,7 +44,6 @@
 #include <IFSelect_SelectUnion.hxx>
 #include <IFSelect_SelectUnknownEntities.hxx>
 #include <IFSelect_SessionFile.hxx>
-#include <IFSelect_SessionPilot.hxx>
 #include <IFSelect_ShareOut.hxx>
 #include <IFSelect_SignatureList.hxx>
 #include <IFSelect_SignCounter.hxx>

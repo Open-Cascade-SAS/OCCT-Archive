@@ -67,6 +67,5 @@ Transfer_TransientMapper.hxx
 Transfer_TransientMapper_0.cxx
 Transfer_TransientProcess.cxx
 Transfer_TransientProcess.hxx
-Transfer_UndefMode.hxx
 Transfer_VoidBinder.cxx
 Transfer_VoidBinder.hxx

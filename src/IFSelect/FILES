@@ -1,10 +1,5 @@
 IFSelect.cxx
 IFSelect.hxx
-IFSelect_Act.cxx
-IFSelect_Act.hxx
-IFSelect_ActFunc.hxx
-IFSelect_Activator.cxx
-IFSelect_Activator.hxx
 IFSelect_AppliedModifiers.cxx
 IFSelect_AppliedModifiers.hxx
 IFSelect_BasicDumper.cxx
@@ -132,8 +127,6 @@ IFSelect_SessionDumper.cxx
 IFSelect_SessionDumper.hxx
 IFSelect_SessionFile.cxx
 IFSelect_SessionFile.hxx
-IFSelect_SessionPilot.cxx
-IFSelect_SessionPilot.hxx
 IFSelect_ShareOut.cxx
 IFSelect_ShareOut.hxx
 IFSelect_ShareOutResult.cxx

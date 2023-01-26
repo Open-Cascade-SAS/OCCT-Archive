@@ -18,8 +18,6 @@
 #include <DBRep.hxx>
 #include <DrawTrSurf.hxx>
 #include <Geom_Geometry.hxx>
-#include <IFSelect_Act.hxx>
-#include <IFSelect_SessionPilot.hxx>
 #include <Interface_Macros.hxx>
 #include <Interface_InterfaceModel.hxx>
 #include <Message.hxx>
