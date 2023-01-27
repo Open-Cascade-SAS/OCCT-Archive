@@ -24,10 +24,9 @@
 #include <TColStd_SequenceOfTransient.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 #include <Standard_CString.hxx>
-#include <IFSelect_ReturnStatus.hxx>
+#include <XSControl_ReturnStatus.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <Standard_Integer.hxx>
-#include <IFSelect_PrintCount.hxx>
 #include <Message_ProgressRange.hxx>
 
 class XSControl_WorkSession;
@@ -59,7 +58,7 @@ class TopoDS_Shape;
 //! initialize the transfer norm first, as shown in the example below.
 //! Example:
 //! Control_Reader reader;
-//! IFSelect_ReturnStatus status = reader.ReadFile (filename.);
+//! XSControl_ReturnStatus status = reader.ReadFile (filename.);
 //! When using IGESControl_Reader or STEPControl_Reader - as the
 //! above example shows - the reader initializes the norm directly.
 //! Note that loading the file only stores the data. It does
@@ -102,10 +101,10 @@ public:
   
   //! Loads a file and returns the read status
   //! Zero for a Model which compies with the Controller
-  Standard_EXPORT IFSelect_ReturnStatus ReadFile (const Standard_CString filename);
+  Standard_EXPORT XSControl_ReturnStatus ReadFile (const Standard_CString filename);
 
   //! Loads a file from stream and returns the read status
-  Standard_EXPORT IFSelect_ReturnStatus ReadStream(const Standard_CString theName, std::istream& theIStream);
+  Standard_EXPORT XSControl_ReturnStatus ReadStream(const Standard_CString theName, std::istream& theIStream);
   
   //! Returns the model. It can then be consulted (header, product)
   Standard_EXPORT Handle(Interface_InterfaceModel) Model() const;
@@ -202,28 +201,6 @@ public:
   //! - a shape if there is one result,
   //! - a compound containing the resulting shapes if there are more than one.
   Standard_EXPORT TopoDS_Shape OneShape() const;
-  
-  //! Prints the check list attached to loaded data, on the Standard
-  //! Trace File (starts at std::cout)
-  //! All messages or fails only, according to <failsonly>
-  //! mode = 0 : per entity, prints messages
-  //! mode = 1 : per message, just gives count of entities per check
-  //! mode = 2 : also gives entity numbers
-  Standard_EXPORT void PrintCheckLoad (const Standard_Boolean failsonly, const IFSelect_PrintCount mode) const;
-
-  //! Prints the check list attached to loaded data.
-  Standard_EXPORT void PrintCheckLoad (Standard_OStream& theStream, const Standard_Boolean failsonly, const IFSelect_PrintCount mode) const;
-  
-  //! Displays check results for the
-  //! last translation of IGES or STEP entities to Open CASCADE
-  //! entities. Only fail messages are displayed if failsonly is
-  //! true. All messages are displayed if failsonly is
-  //! false. mode determines the contents and the order of the
-  //! messages according to the terms of the IFSelect_PrintCount enumeration.
-  Standard_EXPORT void PrintCheckTransfer (const Standard_Boolean failsonly, const IFSelect_PrintCount mode) const;
-
-  //! Displays check results for the last translation of IGES or STEP entities to Open CASCADE entities.
-  Standard_EXPORT void PrintCheckTransfer (Standard_OStream& theStream, const Standard_Boolean failsonly, const IFSelect_PrintCount mode) const;
   
   //! Displays the statistics for
   //! the last translation. what defines the kind of

@@ -6,5 +6,7 @@ HeaderSection_FileName.cxx
 HeaderSection_FileName.hxx
 HeaderSection_FileSchema.cxx
 HeaderSection_FileSchema.hxx
+HeaderSection_MakeHeader.cxx
+HeaderSection_MakeHeader.hxx
 HeaderSection_Protocol.cxx
 HeaderSection_Protocol.hxx

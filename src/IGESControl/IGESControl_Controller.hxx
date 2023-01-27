@@ -21,7 +21,7 @@
 #include <Standard_Type.hxx>
 
 #include <XSControl_Controller.hxx>
-#include <IFSelect_ReturnStatus.hxx>
+#include <XSControl_ReturnStatus.hxx>
 #include <Standard_Integer.hxx>
 class Interface_InterfaceModel;
 class Transfer_ActorOfTransientProcess;
@@ -61,7 +61,7 @@ public:
   //! -2 bad model (requires an IGESModel)
   //! modeshape : 0  groupe of face (version < 5.1)
   //! 1  BREP-version 5.1 of IGES
-  Standard_EXPORT virtual IFSelect_ReturnStatus TransferWriteShape
+  Standard_EXPORT virtual XSControl_ReturnStatus TransferWriteShape
                    (const TopoDS_Shape& shape,
                     const Handle(Transfer_FinderProcess)& FP,
                     const Handle(Interface_InterfaceModel)& model,
@@ -73,8 +73,6 @@ public:
   //! Returns True when done, False if could not be done
   //! Also, it creates and records an Adaptor for FNES
   Standard_EXPORT static Standard_Boolean Init();
-  
-  Standard_EXPORT virtual void Customise (Handle(XSControl_WorkSession)& WS) Standard_OVERRIDE;
 
 
 

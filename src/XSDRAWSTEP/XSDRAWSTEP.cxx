@@ -131,7 +131,7 @@ static Standard_Integer stepread(Draw_Interpretor& theDI,
   if (modfic) theDI << " File STEP to read : " << fnom.ToCString() << "\n";
   else        theDI << " Model taken from the session : " << fnom.ToCString() << "\n";
   theDI << " -- Names of variables BREP-DRAW prefixed by : " << rnom.ToCString() << "\n";
-  IFSelect_ReturnStatus readstat = IFSelect_RetVoid;
+  XSControl_ReturnStatus readstat = XSControl_RetVoid;
 
   aPSRoot.SetName("Loading");
   progress->Show(aPSRoot);
@@ -164,13 +164,13 @@ static Standard_Integer stepread(Draw_Interpretor& theDI,
   sr.WS()->SetModeStat(aFullMode);
 
   if (modfic) readstat = sr.ReadFile(fnom.ToCString());
-  else  if (XSDRAWBase::Session()->NbStartingEntities() > 0) readstat = IFSelect_RetDone;
+  else  if (XSDRAWBase::Session()->NbStartingEntities() > 0) readstat = XSControl_RetDone;
 
   aPSRoot.Next(20); // On average loading takes 20% 
   if (aPSRoot.UserBreak())
     return 1;
 
-  if (readstat != IFSelect_RetDone)
+  if (readstat != XSControl_RetDone)
   {
     if (modfic) theDI << "Could not read file " << fnom.ToCString() << " , abandon\n";
     else theDI << "No model loaded\n";
@@ -328,7 +328,7 @@ static Standard_Integer testreadstep(Draw_Interpretor& theDI,
 
   STEPControl_Reader Reader;
   Standard_CString filename = theArgVec[1];
-  IFSelect_ReturnStatus readstat;
+  XSControl_ReturnStatus readstat;
   if (useStream)
   {
     std::ifstream aStream;
@@ -344,10 +344,10 @@ static Standard_Integer testreadstep(Draw_Interpretor& theDI,
   theDI << "Status from reading STEP file " << filename << " : ";
   switch (readstat)
   {
-    case IFSelect_RetVoid: { theDI << "empty file\n"; return 1; }
-    case IFSelect_RetDone: { theDI << "file read\n";    break; }
-    case IFSelect_RetError: { theDI << "file not found\n";   return 1; }
-    case IFSelect_RetFail: { theDI << "error during read\n";  return 1; }
+    case XSControl_RetVoid: { theDI << "empty file\n"; return 1; }
+    case XSControl_RetDone: { theDI << "file read\n";    break; }
+    case XSControl_RetError: { theDI << "file not found\n";   return 1; }
+    case XSControl_RetFail: { theDI << "error during read\n";  return 1; }
     default: { theDI << "failure\n";   return 1; }
   }
   XSAlgo::AlgoContainer()->PrepareForTransfer(); // update unit info
@@ -453,7 +453,7 @@ static Standard_Integer stepwrite(Draw_Interpretor& theDI,
   progress->Show(aPSRoot);
 
   Standard_Integer stat = sw.Transfer(shape, mode, Standard_True, aPSRoot.Next(90));
-  if (stat == IFSelect_RetDone)
+  if (stat == XSControl_RetDone)
   {
     theDI << "Translation: OK\n";
   }
@@ -482,9 +482,9 @@ static Standard_Integer stepwrite(Draw_Interpretor& theDI,
   stat = sw.Write(nomfic);
   switch (stat)
   {
-    case IFSelect_RetVoid: theDI << "Error: No file written\n"; return 1;
-    case IFSelect_RetDone: theDI << "File " << nomfic << " written\n"; break;
-    case IFSelect_RetStop: theDI << "Error on writing file: no space on disk or destination is write protected\n"; return 1;
+    case XSControl_RetVoid: theDI << "Error: No file written\n"; return 1;
+    case XSControl_RetDone: theDI << "File " << nomfic << " written\n"; break;
+    case XSControl_RetStop: theDI << "Error on writing file: no space on disk or destination is write protected\n"; return 1;
     default: theDI << "Error: File " << nomfic << " written with fail messages\n"; return 1;
   }
   XSDRAWBase::CollectActiveWorkSessions(aWS, nomfic, XSDRAWBase::WorkSessionList());
@@ -536,8 +536,8 @@ static Standard_Integer testwrite(Draw_Interpretor& theDI,
   }
 
   STEPControl_Writer aWriter;
-  IFSelect_ReturnStatus aStat = aWriter.Transfer(aShape, STEPControl_AsIs);
-  if (aStat != IFSelect_RetDone)
+  XSControl_ReturnStatus aStat = aWriter.Transfer(aShape, STEPControl_AsIs);
+  if (aStat != XSControl_RetDone)
   {
     theDI << "Error on transferring shape\n";
     return 1;
@@ -550,16 +550,16 @@ static Standard_Integer testwrite(Draw_Interpretor& theDI,
     aStat = aWriter.WriteStream(aStream);
     aStream.close();
     if (!aStream.good()
-        && aStat == IFSelect_RetDone)
+        && aStat == XSControl_RetDone)
     {
-      aStat = IFSelect_RetFail;
+      aStat = XSControl_RetFail;
     }
   }
   else
   {
     aStat = aWriter.Write(aFilePath.ToCString());
   }
-  if (aStat != IFSelect_RetDone)
+  if (aStat != XSControl_RetDone)
   {
     theDI << "Error on writing file\n";
     return 1;
@@ -632,9 +632,9 @@ static Standard_Integer stepfileunits(Draw_Interpretor& theDI,
     return 1;
   }
   STEPControl_Reader aStepReader;
-  IFSelect_ReturnStatus readstat = IFSelect_RetVoid;
+  XSControl_ReturnStatus readstat = XSControl_RetVoid;
   readstat = aStepReader.ReadFile(theArgVec[1]);
-  if (readstat != IFSelect_RetDone)
+  if (readstat != XSControl_RetDone)
   {
     theDI << "No model loaded\n";
     return 1;

@@ -15,7 +15,7 @@
 // commercial license or contractual agreement.
 
 
-#include <APIHeaderSection_MakeHeader.hxx>
+#include <HeaderSection_MakeHeader.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <Interface_Static.hxx>
 #include <Quantity_Color.hxx>
@@ -247,7 +247,7 @@ Standard_Boolean STEPConstruct_Styles::CreateMDGPR (const Handle(StepRepr_Repres
 
   // for AP203, add subschema name
   if ( Interface_Static::IVal("write.step.schema") ==3 ) {
-    APIHeaderSection_MakeHeader mkHdr ( Handle(StepData_StepModel)::DownCast ( Model() ) );
+    HeaderSection_MakeHeader mkHdr ( Handle(StepData_StepModel)::DownCast ( Model() ) );
     Handle(TCollection_HAsciiString) subSchema = 
       new TCollection_HAsciiString ( "SHAPE_APPEARANCE_LAYER_MIM" );
     mkHdr.AddSchemaIdentifier ( subSchema );

@@ -25,7 +25,7 @@ IMPLEMENT_STANDARD_RTTIEXT(STEPCAFControl_ExternFile,Standard_Transient)
 //purpose  : 
 //=======================================================================
 STEPCAFControl_ExternFile::STEPCAFControl_ExternFile ()
-     : myLoadStatus(IFSelect_RetVoid), myTransferStatus(Standard_False),
-       myWriteStatus(IFSelect_RetVoid)
+     : myLoadStatus(XSControl_RetVoid), myTransferStatus(Standard_False),
+       myWriteStatus(XSControl_RetVoid)
 {
 }

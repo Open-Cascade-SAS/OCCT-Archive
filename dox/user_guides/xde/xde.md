@@ -1240,8 +1240,8 @@ To read a STEP file by itself, use:
 ~~~~{.cpp}
 const char* theFilename = ...;
 STEPCAFControl_Reader aReader;
-IFSelect_ReturnStatus aReadStat = aReader.ReadFile (theFilename);
-if (aReadStat != IFSelect_RetDone) { .. reader/parser error .. }
+XSControl_ReturnStatus aReadStat = aReader.ReadFile (theFilename);
+if (aReadStat != XSControl_RetDone) { .. reader/parser error .. }
 // the various ways of reading a file are available here too:
 // to read it by the reader, to take it from a WorkSession ...
 Handle(TDocStd_Document) aDoc = ...;
@@ -1278,8 +1278,8 @@ if (!aWriter.Transfer (aDoc, aMode))
 
 // writing the File
 const char* theFilename = ...;
-IFSelect_ReturnStatus aStat = aWriter.Write (theFilename);
-if (aStat != IFSelect_RetDone) { .. writing failed .. }
+XSControl_ReturnStatus aStat = aWriter.Write (theFilename);
+if (aStat != XSControl_RetDone) { .. writing failed .. }
 ~~~~
 
 @subsection occt_xde_2_11_3 Reading an IGES File

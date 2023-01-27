@@ -342,7 +342,7 @@ TCollection_ExtendedString STEPCAFControl_Reader::convertName (const TCollection
 //function : ReadFile
 //purpose  :
 //=======================================================================
-IFSelect_ReturnStatus STEPCAFControl_Reader::ReadFile (const Standard_CString theFileName)
+XSControl_ReturnStatus STEPCAFControl_Reader::ReadFile (const Standard_CString theFileName)
 {
   return myReader.ReadFile (theFileName);
 }
@@ -351,7 +351,7 @@ IFSelect_ReturnStatus STEPCAFControl_Reader::ReadFile (const Standard_CString th
 //function : ReadStream
 //purpose  :
 //=======================================================================
-IFSelect_ReturnStatus STEPCAFControl_Reader::ReadStream (const Standard_CString theName,
+XSControl_ReturnStatus STEPCAFControl_Reader::ReadStream (const Standard_CString theName,
                                                          std::istream& theIStream)
 {
   return myReader.ReadStream (theName, theIStream);
@@ -404,7 +404,7 @@ Standard_Boolean STEPCAFControl_Reader::Perform (const Standard_CString filename
                                                  const Handle(TDocStd_Document) &doc,
                                                  const Message_ProgressRange& theProgress)
 {
-  if (ReadFile (filename) != IFSelect_RetDone)
+  if (ReadFile (filename) != XSControl_RetDone)
   {
     return Standard_False;
   }
@@ -421,7 +421,7 @@ Standard_Boolean STEPCAFControl_Reader::Perform (const TCollection_AsciiString &
                                                  const Handle(TDocStd_Document) &doc,
                                                  const Message_ProgressRange& theProgress)
 {
-  if ( ReadFile (filename.ToCString()) != IFSelect_RetDone)
+  if ( ReadFile (filename.ToCString()) != XSControl_RetDone)
   {
     return Standard_False;
   }
@@ -868,7 +868,7 @@ Handle(STEPCAFControl_ExternFile) STEPCAFControl_Reader::ReadExternFile (const S
   EF->SetLoadStatus(sr.ReadFile(fullname));
 
   // transfer in single-result mode
-  if (EF->GetLoadStatus() == IFSelect_RetDone) {
+  if (EF->GetLoadStatus() == XSControl_RetDone) {
     TDF_LabelSequence labels;
     EF->SetTransferStatus (Transfer (sr, 0, doc, labels, Standard_False, theProgress));
     if (labels.Length() > 0) EF->SetLabel (labels.Value(1));

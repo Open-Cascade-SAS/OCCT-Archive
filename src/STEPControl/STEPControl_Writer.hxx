@@ -22,7 +22,7 @@
 #include <Standard_Handle.hxx>
 
 #include <Standard_Real.hxx>
-#include <IFSelect_ReturnStatus.hxx>
+#include <XSControl_ReturnStatus.hxx>
 #include <STEPControl_StepModelType.hxx>
 #include <Standard_Integer.hxx>
 #include <Message_ProgressRange.hxx>
@@ -83,17 +83,17 @@ public:
   //! shell_based_surface_model entity.
   //! - STEPControlStd_GeometricCurveSet translates a shape into a STEP
   //! geometric_curve_set entity.
-  Standard_EXPORT IFSelect_ReturnStatus Transfer
+  Standard_EXPORT XSControl_ReturnStatus Transfer
                    (const TopoDS_Shape& sh,
                     const STEPControl_StepModelType mode,
                     const Standard_Boolean compgraph = Standard_True,
                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Writes a STEP model in the file identified by filename.
-  Standard_EXPORT IFSelect_ReturnStatus Write (const Standard_CString theFileName);
+  Standard_EXPORT XSControl_ReturnStatus Write (const Standard_CString theFileName);
 
   //! Writes a STEP model in the std::ostream.
-  Standard_EXPORT IFSelect_ReturnStatus WriteStream (std::ostream& theOStream);
+  Standard_EXPORT XSControl_ReturnStatus WriteStream (std::ostream& theOStream);
 
   //! Displays the statistics for the
   //! last translation. what defines the kind of statistics that are displayed:

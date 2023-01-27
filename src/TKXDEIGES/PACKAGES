@@ -10,7 +10,6 @@ IGESSolid
 IGESDefs
 IGESAppli
 IGESConvGeom
-IGESSelect
 IGESToBRep
 GeomToIGES
 Geom2dToIGES

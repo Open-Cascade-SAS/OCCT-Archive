@@ -21,6 +21,8 @@
 #include <Standard_Handle.hxx>
 
 #include <TColStd_SequenceOfTransient.hxx>
+#include <TColStd_SequenceOfInteger.hxx>
+
 #include <STEPConstruct_Tool.hxx>
 #include <Standard_Integer.hxx>
 #include <Standard_CString.hxx>

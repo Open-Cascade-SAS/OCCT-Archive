@@ -38,7 +38,7 @@ inline Handle(XSControl_WorkSession) STEPCAFControl_ExternFile::GetWS () const
 //purpose  : 
 //=======================================================================
 
-inline void STEPCAFControl_ExternFile::SetLoadStatus (const IFSelect_ReturnStatus stat)
+inline void STEPCAFControl_ExternFile::SetLoadStatus (const XSControl_ReturnStatus stat)
 {
   myLoadStatus = stat;
 }
@@ -48,7 +48,7 @@ inline void STEPCAFControl_ExternFile::SetLoadStatus (const IFSelect_ReturnStatu
 //purpose  : 
 //=======================================================================
 
-inline IFSelect_ReturnStatus STEPCAFControl_ExternFile::GetLoadStatus () const
+inline XSControl_ReturnStatus STEPCAFControl_ExternFile::GetLoadStatus () const
 {
   return myLoadStatus;
 }
@@ -78,7 +78,7 @@ inline Standard_Boolean STEPCAFControl_ExternFile::GetTransferStatus () const
 //purpose  : 
 //=======================================================================
 
-inline void STEPCAFControl_ExternFile::SetWriteStatus (const IFSelect_ReturnStatus stat)
+inline void STEPCAFControl_ExternFile::SetWriteStatus (const XSControl_ReturnStatus stat)
 {
   myWriteStatus = stat;
 }
@@ -88,7 +88,7 @@ inline void STEPCAFControl_ExternFile::SetWriteStatus (const IFSelect_ReturnStat
 //purpose  : 
 //=======================================================================
 
-inline IFSelect_ReturnStatus STEPCAFControl_ExternFile::GetWriteStatus () const
+inline XSControl_ReturnStatus STEPCAFControl_ExternFile::GetWriteStatus () const
 {
   return myWriteStatus;
 }

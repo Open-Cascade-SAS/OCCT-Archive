@@ -169,7 +169,7 @@ static Standard_Integer igesbrep(Draw_Interpretor& theDI,
   if (modfic) theDI << " File IGES to read : " << fnom.ToCString() << "\n";
   else        theDI << " Model taken from the session : " << fnom.ToCString() << "\n";
   theDI << " -- Names of variables BREP-DRAW prefixed by : " << rnom.ToCString() << "\n";
-  IFSelect_ReturnStatus readstat = IFSelect_RetVoid;
+  XSControl_ReturnStatus readstat = XSControl_RetVoid;
 
 #ifdef CHRONOMESURE
   OSD_Timer Chr; Chr.Reset();
@@ -181,13 +181,13 @@ static Standard_Integer igesbrep(Draw_Interpretor& theDI,
   progress->Show(aPSRoot);
 
   if (modfic) readstat = Reader.ReadFile(fnom.ToCString());
-  else  if (XSDRAWBase::Session()->NbStartingEntities() > 0) readstat = IFSelect_RetDone;
+  else  if (XSDRAWBase::Session()->NbStartingEntities() > 0) readstat = XSControl_RetDone;
 
   aPSRoot.Next(20); // On average loading takes 20% 
   if (aPSRoot.UserBreak())
     return 1;
 
-  if (readstat != IFSelect_RetDone)
+  if (readstat != XSControl_RetDone)
   {
     if (modfic) theDI << "Could not read file " << fnom.ToCString() << " , abandon\n";
     else theDI << "No model loaded\n";
@@ -477,14 +477,14 @@ static Standard_Integer testread(Draw_Interpretor& theDI,
   }
   IGESControl_Reader Reader;
   Standard_CString filename = theArgVec[1];
-  IFSelect_ReturnStatus readstat = Reader.ReadFile(filename);
+  XSControl_ReturnStatus readstat = Reader.ReadFile(filename);
   theDI << "Status from reading IGES file " << filename << " : ";
   switch (readstat)
   {
-    case IFSelect_RetVoid: { theDI << "empty file\n"; return 1; }
-    case IFSelect_RetDone: { theDI << "file read\n";    break; }
-    case IFSelect_RetError: { theDI << "file not found\n";   return 1; }
-    case IFSelect_RetFail: { theDI << "error during read\n";  return 1; }
+    case XSControl_RetVoid: { theDI << "empty file\n"; return 1; }
+    case XSControl_RetDone: { theDI << "file read\n";    break; }
+    case XSControl_RetError: { theDI << "file not found\n";   return 1; }
+    case XSControl_RetFail: { theDI << "error during read\n";  return 1; }
     default: { theDI << "failure\n";   return 1; }
   }
   Reader.TransferRoots();

@@ -302,10 +302,10 @@ void STEPCAFControl_Writer::Init (const Handle(XSControl_WorkSession)& WS,
 //function : Write
 //purpose  :
 //=======================================================================
-IFSelect_ReturnStatus STEPCAFControl_Writer::Write (const Standard_CString theFileName)
+XSControl_ReturnStatus STEPCAFControl_Writer::Write (const Standard_CString theFileName)
 {
-  IFSelect_ReturnStatus aStatus = myWriter.Write (theFileName);
-  if (aStatus != IFSelect_RetDone)
+  XSControl_ReturnStatus aStatus = myWriter.Write (theFileName);
+  if (aStatus != XSControl_RetDone)
   {
     return aStatus;
   }
@@ -323,7 +323,7 @@ IFSelect_ReturnStatus STEPCAFControl_Writer::Write (const Standard_CString theFi
        anExtFileIter.More(); anExtFileIter.Next())
   {
     Handle(STEPCAFControl_ExternFile) anExtFile = anExtFileIter.Value();
-    if (anExtFile->GetWriteStatus() != IFSelect_RetVoid)
+    if (anExtFile->GetWriteStatus() != XSControl_RetVoid)
     {
       continue;
     }
@@ -338,9 +338,9 @@ IFSelect_ReturnStatus STEPCAFControl_Writer::Write (const Standard_CString theFi
     std::cout << "Writing external file: " << aFileName << std::endl;
 #endif
     
-    const IFSelect_ReturnStatus anExtStatus = anExtFile->GetWS()->SendAll (aFileName.ToCString());
+    const XSControl_ReturnStatus anExtStatus = anExtFile->GetWS()->SendAll (aFileName.ToCString());
     anExtFile->SetWriteStatus (anExtStatus);
-    if (anExtStatus != IFSelect_RetDone)
+    if (anExtStatus != XSControl_RetDone)
     {
       aStatus = anExtStatus;
     }
@@ -373,12 +373,12 @@ void STEPCAFControl_Writer::prepareUnit(const TDF_Label& theLabel,
 //function : WriteStream
 //purpose  :
 //=======================================================================
-IFSelect_ReturnStatus STEPCAFControl_Writer::WriteStream (std::ostream& theStream)
+XSControl_ReturnStatus STEPCAFControl_Writer::WriteStream (std::ostream& theStream)
 {
   if (!myFiles.IsEmpty())
   {
     // writing external files is unsupported via stream interface
-    return IFSelect_RetError;
+    return XSControl_RetError;
   }
 
   return myWriter.WriteStream (theStream);
@@ -441,7 +441,7 @@ Standard_Boolean STEPCAFControl_Writer::Perform (const Handle(TDocStd_Document) 
                                                  const Message_ProgressRange& theProgress)
 {
   if (!Transfer(doc, STEPControl_AsIs, 0L, theProgress)) return Standard_False;
-  return Write ( filename ) == IFSelect_RetDone;
+  return Write ( filename ) == XSControl_RetDone;
 }
 
 
@@ -455,7 +455,7 @@ Standard_Boolean STEPCAFControl_Writer::Perform (const Handle(TDocStd_Document) 
                                                  const Message_ProgressRange& theProgress)
 {
   if ( ! Transfer ( doc, STEPControl_AsIs, 0L, theProgress ) ) return Standard_False;
-  return Write ( filename.ToCString() ) == IFSelect_RetDone;
+  return Write ( filename.ToCString() ) == XSControl_RetDone;
 }
 
 

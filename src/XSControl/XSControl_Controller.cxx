@@ -11,27 +11,6 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-
-#include <IFSelect_DispPerCount.hxx>
-#include <IFSelect_DispPerFiles.hxx>
-#include <IFSelect_DispPerOne.hxx>
-#include <IFSelect_DispPerSignature.hxx>
-#include <IFSelect_EditForm.hxx>
-#include <IFSelect_GraphCounter.hxx>
-#include <IFSelect_IntParam.hxx>
-#include <IFSelect_ParamEditor.hxx>
-#include <IFSelect_SelectModelEntities.hxx>
-#include <IFSelect_SelectModelRoots.hxx>
-#include <IFSelect_SelectPointed.hxx>
-#include <IFSelect_SelectShared.hxx>
-#include <IFSelect_SelectSharing.hxx>
-#include <IFSelect_ShareOut.hxx>
-#include <IFSelect_SignAncestor.hxx>
-#include <IFSelect_Signature.hxx>
-#include <IFSelect_SignCategory.hxx>
-#include <IFSelect_SignCounter.hxx>
-#include <IFSelect_SignType.hxx>
-#include <IFSelect_SignValidity.hxx>
 #include <Interface_Macros.hxx>
 #include <Interface_Static.hxx>
 #include <Standard_DomainError.hxx>
@@ -255,7 +234,7 @@ Standard_Boolean  XSControl_Controller::RecognizeWriteTransient
 //purpose  : internal function
 //=======================================================================
 
-static IFSelect_ReturnStatus TransferFinder
+static XSControl_ReturnStatus TransferFinder
   (const Handle(Transfer_ActorOfFinderProcess)& theActor,
    const Handle(Transfer_Finder)& theMapper,
    const Handle(Transfer_FinderProcess)& theFP,
@@ -263,14 +242,14 @@ static IFSelect_ReturnStatus TransferFinder
    const Standard_Integer theModeTrans,
    const Message_ProgressRange& theProgress)
 {
-  if (theActor.IsNull()) return IFSelect_RetError;
-  if (theModel.IsNull()) return IFSelect_RetError;
+  if (theActor.IsNull()) return XSControl_RetError;
+  if (theModel.IsNull()) return XSControl_RetError;
   theActor->ModeTrans() = theModeTrans;
   theFP->SetModel (theModel);
   theFP->SetActor (theActor);
   theFP->Transfer (theMapper, theProgress);
 
-  IFSelect_ReturnStatus stat = IFSelect_RetFail;
+  XSControl_ReturnStatus stat = XSControl_RetFail;
   Handle(Transfer_Binder) binder = theFP->Find (theMapper);
   Handle(Transfer_SimpleBinderOfTransient) bindtr;
   while (!binder.IsNull()) {
@@ -278,7 +257,7 @@ static IFSelect_ReturnStatus TransferFinder
     if (!bindtr.IsNull()) {
       Handle(Standard_Transient) ent = bindtr->Result();
       if (!ent.IsNull()) {
-        stat = IFSelect_RetDone;
+        stat = XSControl_RetDone;
         theModel->AddWithRefs (ent);
       }
     }
@@ -292,14 +271,14 @@ static IFSelect_ReturnStatus TransferFinder
 //purpose  : 
 //=======================================================================
 
-IFSelect_ReturnStatus XSControl_Controller::TransferWriteTransient
+XSControl_ReturnStatus XSControl_Controller::TransferWriteTransient
   (const Handle(Standard_Transient)& theObj,
    const Handle(Transfer_FinderProcess)& theFP,
    const Handle(Interface_InterfaceModel)& theModel,
    const Standard_Integer theModeTrans,
    const Message_ProgressRange& theProgress) const
 {
-  if (theObj.IsNull()) return IFSelect_RetVoid;
+  if (theObj.IsNull()) return XSControl_RetVoid;
   return TransferFinder
     (myAdaptorWrite,new Transfer_TransientMapper(theObj),theFP,theModel,theModeTrans, theProgress);
 }
@@ -323,155 +302,16 @@ Standard_Boolean XSControl_Controller::RecognizeWriteShape
 //purpose  : 
 //=======================================================================
 
-IFSelect_ReturnStatus XSControl_Controller::TransferWriteShape
+XSControl_ReturnStatus XSControl_Controller::TransferWriteShape
   (const TopoDS_Shape& shape,
    const Handle(Transfer_FinderProcess)& FP,
    const Handle(Interface_InterfaceModel)& model,
    const Standard_Integer modetrans,
    const Message_ProgressRange& theProgress) const
 {
-  if (shape.IsNull()) return IFSelect_RetVoid;
+  if (shape.IsNull()) return XSControl_RetVoid;
 
-  IFSelect_ReturnStatus theReturnStat = TransferFinder
+  XSControl_ReturnStatus theReturnStat = TransferFinder
     (myAdaptorWrite,new TransferBRep_ShapeMapper(shape),FP,model,modetrans, theProgress);
   return theReturnStat;
-}
-
-// ###########################
-//  Cutomisation ! On enregistre des Items pour une WorkSession
-//     (annule et remplace)
-//     Ensuite, on les remet en place a la demande
-
-//=======================================================================
-//function : AddSessionItem
-//purpose  : 
-//=======================================================================
-
-void XSControl_Controller::AddSessionItem
-  (const Handle(Standard_Transient)& theItem, const Standard_CString theName, const Standard_Boolean toApply)
-{
-  if (theItem.IsNull() || theName[0] == '\0') return;
-  myAdaptorSession.Bind(theName,theItem);
-  if (toApply && theItem->IsKind(STANDARD_TYPE(IFSelect_GeneralModifier)))
-    myAdaptorApplied.Append(theItem);
-}
-
-//=======================================================================
-//function : SessionItem
-//purpose  : 
-//=======================================================================
-
-Handle(Standard_Transient)  XSControl_Controller::SessionItem (const Standard_CString theName) const
-{
-  Handle(Standard_Transient) item;
-  if (!myAdaptorSession.IsEmpty())
-    item = myAdaptorSession.Find(theName);
-  return item;
-}
-
-//=======================================================================
-//function : Customise
-//purpose  : 
-//=======================================================================
-
-void XSControl_Controller::Customise (Handle(XSControl_WorkSession)& WS)
-{
-  //WS->SetParams (myParams,myParamUses);
-
-  //// General
-  //if (!myAdaptorSession.IsEmpty()) {
-  //  NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)>::Iterator iter(myAdaptorSession);
-  //  for (; iter.More(); iter.Next())
-  //    WS->AddNamedItem (iter.Key().ToCString(), iter.ChangeValue());
-  //}
-
-  //if (WS->NamedItem("xst-model-all").IsNull()) {
-
-  //  Handle(IFSelect_SelectModelEntities) sle = new IFSelect_SelectModelEntities;
-  //  WS->AddNamedItem ("xst-model-all",sle);
-
-  //  Handle(IFSelect_SelectModelRoots)    slr = new IFSelect_SelectModelRoots;
-  //  WS->AddNamedItem ("xst-model-roots",slr);
-
-  //  if(strcasecmp(WS->SelectedNorm(),"STEP")) {
-  //    Handle(XSControl_SelectForTransfer) st1 = new XSControl_SelectForTransfer;
-  //    st1->SetInput (slr);
-  //    st1->SetReader (WS->TransferReader());
-  //    WS->AddNamedItem ("xst-transferrable-roots",st1);
-  //  }
-
-  //  Handle(XSControl_SelectForTransfer) st2 = new XSControl_SelectForTransfer;
-  //  st2->SetInput (sle);
-  //  st2->SetReader (WS->TransferReader());
-  //  WS->AddNamedItem ("xst-transferrable-all",st2);
-  // 
-  //  Handle(XSControl_SignTransferStatus) strs = new XSControl_SignTransferStatus;
-  //  strs->SetReader (WS->TransferReader());
-  //  WS->AddNamedItem ("xst-transfer-status",strs);
-  //
-  //  Handle(XSControl_ConnectedShapes) scs = new XSControl_ConnectedShapes;
-  //  scs->SetReader (WS->TransferReader());
-  //  WS->AddNamedItem ("xst-connected-faces",scs);
-
-  //  Handle(IFSelect_SignType) stp = new IFSelect_SignType (Standard_False);
-  //  WS->AddNamedItem ("xst-long-type",stp);
-
-  //  Handle(IFSelect_SignType) stc = new IFSelect_SignType (Standard_True);
-  //  WS->AddNamedItem ("xst-type",stc);
-
-  //  WS->AddNamedItem ("xst-ancestor-type",new IFSelect_SignAncestor);
-  //  WS->AddNamedItem ("xst-types",new IFSelect_SignCounter(stp,Standard_False,Standard_True));
-  //  WS->AddNamedItem ("xst-category",new IFSelect_SignCategory);
-  //  WS->AddNamedItem ("xst-validity",new IFSelect_SignValidity);
-
-  //  Handle(IFSelect_DispPerOne) dispone = new IFSelect_DispPerOne;
-  //  dispone->SetFinalSelection(slr);
-  //  WS->AddNamedItem ("xst-disp-one",dispone);
-
-  //  Handle(IFSelect_DispPerCount) dispcount = new IFSelect_DispPerCount;
-  //  Handle(IFSelect_IntParam) intcount = new IFSelect_IntParam;
-  //  intcount->SetValue(5);
-  //  dispcount->SetCount(intcount);
-  //  dispcount->SetFinalSelection(slr);
-  //  WS->AddNamedItem ("xst-disp-count",dispcount);
-
-  //  Handle(IFSelect_DispPerFiles) dispfiles = new IFSelect_DispPerFiles;
-  //  Handle(IFSelect_IntParam) intfiles = new IFSelect_IntParam;
-  //  intfiles->SetValue(10);
-  //  dispfiles->SetCount(intfiles);
-  //  dispfiles->SetFinalSelection(slr);
-  //  WS->AddNamedItem ("xst-disp-files",dispfiles);
-
-  //  Handle(IFSelect_DispPerSignature) dispsign = new IFSelect_DispPerSignature;
-  //  dispsign->SetSignCounter(new IFSelect_SignCounter(Handle(IFSelect_Signature)(stc)));
-  //  dispsign->SetFinalSelection(slr);
-  //  WS->AddNamedItem ("xst-disp-sign",dispsign);
-
-  //  // Not used directly but useful anyway
-  //  WS->AddNamedItem ("xst-pointed",new IFSelect_SelectPointed);
-  //  WS->AddNamedItem ("xst-sharing",new IFSelect_SelectSharing);
-  //  WS->AddNamedItem ("xst-shared",new IFSelect_SelectShared);
-  //  WS->AddNamedItem ("xst-nb-selected",new IFSelect_GraphCounter);
-
-  //  //szv:mySignType = stp;
-  //  WS->SetSignType( stp );
-  //}
-
-  //// Applied Modifiers
-  //Standard_Integer i, nb = myAdaptorApplied.Length();
-  //for (i = 1; i <= nb; i ++) {
-  //  const Handle(Standard_Transient) &anitem = myAdaptorApplied.Value(i);
-  //  Handle(TCollection_HAsciiString) name = WS->Name(anitem);
-  //  WS->SetAppliedModifier(GetCasted(IFSelect_GeneralModifier,anitem),WS->ShareOut());
-  //}
-
-  //// Editors of Parameters
-  //// Here for the specific manufacturers of controllers could create the
-  //// Parameters: So wait here
-
-  //Handle(TColStd_HSequenceOfHAsciiString) listat = Interface_Static::Items();
-  //Handle(IFSelect_ParamEditor) paramed = IFSelect_ParamEditor::StaticEditor (listat,"All Static Parameters");
-  //WS->AddNamedItem ("xst-static-params-edit",paramed);
-  //Handle(IFSelect_EditForm) paramform = paramed->Form(Standard_False);
-  //WS->AddNamedItem ("xst-static-params",paramform);
 }

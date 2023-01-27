@@ -213,7 +213,7 @@ Standard_Boolean IGESCAFControl_Writer::Perform (const Handle(TDocStd_Document) 
                                                  const Message_ProgressRange& theProgress)
 {
   if ( ! Transfer ( doc, theProgress ) ) return Standard_False;
-  return Write ( filename ) == IFSelect_RetDone;
+  return Write ( filename ) == XSControl_RetDone;
 }
   
 //=======================================================================
@@ -226,7 +226,7 @@ Standard_Boolean IGESCAFControl_Writer::Perform (const Handle(TDocStd_Document) 
                                                  const Message_ProgressRange& theProgress)
 {
   if ( ! Transfer ( doc, theProgress ) ) return Standard_False;
-  return Write ( filename.ToCString() ) == IFSelect_RetDone;
+  return Write ( filename.ToCString() ) == XSControl_RetDone;
 }
   
 //=======================================================================

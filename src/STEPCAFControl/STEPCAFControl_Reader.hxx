@@ -17,7 +17,7 @@
 #define _STEPCAFControl_Reader_HeaderFile
 
 #include <STEPControl_Reader.hxx>
-#include <IFSelect_ReturnStatus.hxx>
+#include <XSControl_ReturnStatus.hxx>
 #include <TDF_LabelSequence.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <STEPCAFControl_DataMapOfShapePD.hxx>
@@ -78,13 +78,13 @@ public:
   //! Provided for use like single-file reader.
   //! @param theFileName [in] file to open
   //! @return read status
-  Standard_EXPORT IFSelect_ReturnStatus ReadFile (const Standard_CString theFileName);
+  Standard_EXPORT XSControl_ReturnStatus ReadFile (const Standard_CString theFileName);
 
   //! Loads a file from stream and returns the read status.
   //! @param theName [in] auxiliary stream name
   //! @param theIStream [in] stream to read from
   //! @return read status
-  Standard_EXPORT IFSelect_ReturnStatus ReadStream (const Standard_CString theName,
+  Standard_EXPORT XSControl_ReturnStatus ReadStream (const Standard_CString theName,
                                                     std::istream& theIStream);
 
   //! Returns number of roots recognized for transfer

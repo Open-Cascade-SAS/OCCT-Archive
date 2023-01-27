@@ -282,16 +282,16 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   aReader.SetNameMode(aNode->InternalParameters.ReadName);
   aReader.SetLayerMode(aNode->InternalParameters.ReadLayer);
 
-  IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
+  XSControl_ReturnStatus aReadStat = XSControl_RetVoid;
   if (!toUseLoaded)
   {
     aReadStat = aReader.ReadFile(thePath.ToCString());
   }
   else if (theWS->NbStartingEntities() > 0)
   {
-    aReadStat = IFSelect_RetDone;
+    aReadStat = XSControl_RetDone;
   }
-  if (aReadStat != IFSelect_RetDone)
+  if (aReadStat != XSControl_RetDone)
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : ["
       << aFile << "] : abandon, no model loaded";
@@ -403,9 +403,9 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   IGESControl_Reader aReader;
   aReader.SetWS(theWS);
   aReader.SetReadVisible(aNode->InternalParameters.ReadOnlyVisible);
-  IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
+  XSControl_ReturnStatus aReadStat = XSControl_RetVoid;
   aReadStat = aReader.ReadFile(thePath.ToCString());
-  if (aReadStat != IFSelect_RetDone)
+  if (aReadStat != XSControl_RetDone)
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : [" <<
       thePath << "] : Could not read file, no model loaded";

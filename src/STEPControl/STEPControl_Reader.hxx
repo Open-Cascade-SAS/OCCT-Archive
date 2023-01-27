@@ -21,11 +21,14 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
-#include <XSControl_Reader.hxx>
 #include <Standard_Integer.hxx>
 #include <TColStd_SequenceOfAsciiString.hxx>
 #include <TColStd_Array1OfAsciiString.hxx>
 #include <TColStd_Array1OfReal.hxx>
+#include <TopTools_SequenceOfShape.hxx>
+#include <Message_ProgressRange.hxx>
+#include <DE_ReturnStatus.hxx>
+
 class XSControl_WorkSession;
 class StepData_StepModel;
 class StepRepr_RepresentationContext;
@@ -66,38 +69,36 @@ class StepRepr_RepresentationContext;
 //! WS = reader.WS();
 //! if ( WS->TransferReader()->HasResult(ent) )
 //! TopoDS_Shape shape = WS->TransferReader()->ShapeResult(ent);
-class STEPControl_Reader  : public XSControl_Reader
+class STEPControl_Reader : public Standard_Transient
 {
+  DEFINE_STANDARD_ALLOC
 public:
 
-  DEFINE_STANDARD_ALLOC
-
-  
   //! Creates a reader object with an empty STEP model.
   Standard_EXPORT STEPControl_Reader();
-  
+
   //! Creates a Reader for STEP from an already existing Session
   //! Clears the session if it was not yet set for STEP
   Standard_EXPORT STEPControl_Reader(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
-  
+
   //! Returns the model as a StepModel.
   //! It can then be consulted (header, product)
   Standard_EXPORT Handle(StepData_StepModel) StepModel() const;
-  
+
   //! Transfers a root given its rank in the list of candidate roots
   //! Default is the first one
   //! Returns True if a shape has resulted, false else
   //! Same as inherited TransferOneRoot, kept for compatibility
-  Standard_EXPORT Standard_Boolean TransferRoot (const Standard_Integer num = 1,
-                                                 const Message_ProgressRange& theProgress = Message_ProgressRange());
-  
+  Standard_EXPORT Standard_Boolean TransferRoot(const Standard_Integer num = 1,
+                                                const Message_ProgressRange& theProgress = Message_ProgressRange());
+
   //! Determines the list of root entities from Model which are candidate for
   //! a transfer to a Shape (type of entities is PRODUCT)
-  Standard_EXPORT virtual Standard_Integer NbRootsForTransfer() Standard_OVERRIDE;
-  
+  Standard_EXPORT virtual Standard_Integer NbRootsForTransfer();
+
   //! Returns sequence of all unit names for shape representations
   //! found in file
-  Standard_EXPORT void FileUnits (TColStd_SequenceOfAsciiString& theUnitLengthNames, TColStd_SequenceOfAsciiString& theUnitAngleNames, TColStd_SequenceOfAsciiString& theUnitSolidAngleNames);
+  Standard_EXPORT void FileUnits(TColStd_SequenceOfAsciiString& theUnitLengthNames, TColStd_SequenceOfAsciiString& theUnitAngleNames, TColStd_SequenceOfAsciiString& theUnitSolidAngleNames);
 
   //! Sets system length unit used by transfer process
   Standard_EXPORT void SetSystemLengthUnit(const Standard_Real theLengthUnit);
@@ -105,28 +106,62 @@ public:
   //! Returns system length unit used by transfer process
   Standard_EXPORT Standard_Real SystemLengthUnit() const;
 
+  //! Loads a file and returns the read status
+//! Zero for a Model which compies with the Controller
+  Standard_EXPORT XSControl_ReturnStatus ReadFile(const Standard_CString filename);
+
+  //! Loads a file from stream and returns the read status
+  Standard_EXPORT XSControl_ReturnStatus ReadStream(const Standard_CString theName, std::istream& theIStream);
+
+  //! Determines the list of root entities which are candidate for
+//! a transfer to a Shape, and returns the number
+//! of entities in the list
+  Standard_EXPORT virtual Standard_Integer NbRootsForTransfer();
+
+  //! Returns an IGES or STEP root
+  //! entity for translation. The entity is identified by its
+  //! rank in a list.
+  Standard_EXPORT Handle(Standard_Transient) RootForTransfer(const Standard_Integer num = 1);
+
+  //! Translates a root identified by the rank num in the model.
+  //! false is returned if no shape is produced.
+  Standard_EXPORT Standard_Boolean TransferOneRoot(const Standard_Integer num = 1,
+                                                   const Message_ProgressRange& theProgress = Message_ProgressRange());
+
+  //! Translates an IGES or STEP
+  //! entity identified by the rank num in the model.
+  //! false is returned if no shape is produced.
+  Standard_EXPORT Standard_Boolean TransferOne(const Standard_Integer num,
+                                               const Message_ProgressRange& theProgress = Message_ProgressRange());
+
+  //! Translates an IGES or STEP
+  //! entity in the model. true is returned if a shape is
+  //! produced; otherwise, false is returned.
+  Standard_EXPORT Standard_Boolean TransferEntity(const Handle(Standard_Transient)& start,
+                                                  const Message_ProgressRange& theProgress = Message_ProgressRange());
+
+  //! Translates a list of entities.
+  //! Returns the number of IGES or STEP entities that were
+  //! successfully translated. The list can be produced with GiveList.
+  //! Warning - This function does not clear the existing output shapes.
+  Standard_EXPORT Standard_Integer TransferList(const Handle(TColStd_HSequenceOfTransient)& list,
+                                                const Message_ProgressRange& theProgress = Message_ProgressRange());
 
 protected:
 
+  //! Returns  units for length , angle and solidangle for shape representations
+  Standard_EXPORT Standard_Boolean findUnits(const Handle(StepRepr_RepresentationContext)& theReprContext, TColStd_Array1OfAsciiString& theNameUnits, TColStd_Array1OfReal& theFactorUnits);
 
-
-
+  //! Returns a sequence of produced shapes
+  Standard_EXPORT TopTools_SequenceOfShape& Shapes();
 
 private:
 
-  
-  //! Returns  units for length , angle and solidangle for shape representations
-  Standard_EXPORT Standard_Boolean findUnits (const Handle(StepRepr_RepresentationContext)& theReprContext, TColStd_Array1OfAsciiString& theNameUnits, TColStd_Array1OfReal& theFactorUnits);
-
-
-
+  Standard_Boolean therootsta;
+  TColStd_SequenceOfTransient theroots;
+  Handle(XSControl_WorkSession) thesession;
+  TopTools_SequenceOfShape theshapes;
 
 };
-
-
-
-
-
-
 
 #endif // _STEPControl_Reader_HeaderFile

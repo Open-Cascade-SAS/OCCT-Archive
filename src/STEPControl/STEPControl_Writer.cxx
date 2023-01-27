@@ -123,7 +123,7 @@ void STEPControl_Writer::UnsetTolerance ()
 //purpose  : 
 //=======================================================================
 
-IFSelect_ReturnStatus STEPControl_Writer::Transfer
+XSControl_ReturnStatus STEPControl_Writer::Transfer
   (const TopoDS_Shape& sh,
    const STEPControl_StepModelType mode,
    const Standard_Boolean compgraph,
@@ -138,7 +138,7 @@ IFSelect_ReturnStatus STEPControl_Writer::Transfer
     case STEPControl_GeometricCurveSet :      mws = 4;  break;
     default : break;
   }
-  if (mws < 0) return IFSelect_RetError;    // cas non reconnu
+  if (mws < 0) return XSControl_RetError;    // cas non reconnu
   thesession->TransferWriter()->SetTransferMode (mws);
   if (!Model()->IsInitializedUnit())
   {
@@ -153,7 +153,7 @@ IFSelect_ReturnStatus STEPControl_Writer::Transfer
 //function : Write
 //purpose  :
 //=======================================================================
-IFSelect_ReturnStatus STEPControl_Writer::Write (const Standard_CString theFileName)
+XSControl_ReturnStatus STEPControl_Writer::Write (const Standard_CString theFileName)
 {
   return thesession->SendAll (theFileName);
 }
@@ -162,25 +162,25 @@ IFSelect_ReturnStatus STEPControl_Writer::Write (const Standard_CString theFileN
 //function : WriteStream
 //purpose  :
 //=======================================================================
-IFSelect_ReturnStatus STEPControl_Writer::WriteStream (std::ostream& theOStream)
+XSControl_ReturnStatus STEPControl_Writer::WriteStream (std::ostream& theOStream)
 {
   Handle(StepData_StepModel) aModel = Model();
   if (aModel.IsNull())
   {
-    return IFSelect_RetFail;
+    return XSControl_RetFail;
   }
 
   Handle(StepData_Protocol) aProtocol = Handle(StepData_Protocol)::DownCast (aModel->Protocol());
   if (aProtocol.IsNull())
   {
-    return IFSelect_RetFail;
+    return XSControl_RetFail;
   }
 
   StepData_StepWriter aWriter (aModel);
   aWriter.SendModel (aProtocol);
   return aWriter.Print (theOStream)
-       ? IFSelect_RetDone
-       : IFSelect_RetFail;
+       ? XSControl_RetDone
+       : XSControl_RetFail;
 }
 
 //=======================================================================

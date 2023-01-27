@@ -26,7 +26,7 @@
 #include <Interface_HArray1OfHAsciiString.hxx>
 #include <Standard_Transient.hxx>
 #include <NCollection_Vector.hxx>
-#include <IFSelect_ReturnStatus.hxx>
+#include <XSControl_ReturnStatus.hxx>
 #include <NCollection_DataMap.hxx>
 #include <Message_ProgressRange.hxx>
 
@@ -113,29 +113,7 @@ class XSControl_Controller : public Standard_Transient
   //! Returns the Actor for Write attached to the pair (norm,appli)
   //! Read from field. Can be redefined
   Standard_EXPORT virtual Handle(Transfer_ActorOfFinderProcess) ActorWrite() const;
-  
-  //! Sets mininum and maximum values for modetrans (write)
-  //! Erases formerly recorded bounds and values
-  //! Actually only for shape
-  //! Then, for each value a little help can be attached
-  Standard_EXPORT void SetModeWrite (const Standard_Integer modemin, const Standard_Integer modemax, const Standard_Boolean shape = Standard_True);
-  
-  //! Attaches a short line of help to a value of modetrans (write)
-  Standard_EXPORT void SetModeWriteHelp (const Standard_Integer modetrans, const Standard_CString help, const Standard_Boolean shape = Standard_True);
-  
-  //! Returns recorded min and max values for modetrans (write)
-  //! Actually only for shapes
-  //! Returns True if bounds are set, False else (then, free value)
-  Standard_EXPORT Standard_Boolean ModeWriteBounds (Standard_Integer& modemin, Standard_Integer& modemax, const Standard_Boolean shape = Standard_True) const;
-  
-  //! Tells if a value of <modetrans> is a good value(within bounds)
-  //! Actually only for shapes
-  Standard_EXPORT Standard_Boolean IsModeWrite (const Standard_Integer modetrans, const Standard_Boolean shape = Standard_True) const;
-  
-  //! Returns the help line recorded for a value of modetrans
-  //! empty if help not defined or not within bounds or if values are free
-  Standard_EXPORT Standard_CString ModeWriteHelp (const Standard_Integer modetrans, const Standard_Boolean shape = Standard_True) const;
-  
+
   //! Tells if <obj> (an application object) is a valid candidate
   //! for a transfer to a Model.
   //! By default, asks the ActorWrite if known (through a
@@ -152,7 +130,7 @@ class XSControl_Controller : public Standard_Transient
   //! 0  OK ,  1 No Result ,  2 Fail (e.g. exception raised)
   //! -1 bad conditions ,  -2 bad model or null model
   //! For type of object not recognized : should return 1
-  Standard_EXPORT virtual IFSelect_ReturnStatus TransferWriteTransient 
+  Standard_EXPORT virtual XSControl_ReturnStatus TransferWriteTransient 
                    (const Handle(Standard_Transient)& obj,
                     const Handle(Transfer_FinderProcess)& FP,
                     const Handle(Interface_InterfaceModel)& model,
@@ -169,29 +147,12 @@ class XSControl_Controller : public Standard_Transient
   //! Returned value is a status, as follows :
   //! Done  OK ,  Void : No Result ,  Fail : Fail (e.g. exception)
   //! Error : bad conditions , bad model or null model
-  Standard_EXPORT virtual IFSelect_ReturnStatus TransferWriteShape
+  Standard_EXPORT virtual XSControl_ReturnStatus TransferWriteShape
                    (const TopoDS_Shape& shape,
                     const Handle(Transfer_FinderProcess)& FP,
                     const Handle(Interface_InterfaceModel)& model,
                     const Standard_Integer modetrans = 0,
                     const Message_ProgressRange& theProgress = Message_ProgressRange()) const;
-  
-  //! Records a Session Item, to be added for customisation of the Work Session.
-  //! It must have a specific name.
-  //! <setapplied> is used if <item> is a GeneralModifier, to decide
-  //! If set to true, <item> will be applied to the hook list "send".
-  //! Else, it is not applied to any hook list.
-  //! Remark : this method is to be called at Create time,
-  //! the recorded items will be used by Customise
-  //! Warning : if <name> conflicts, the last recorded item is kept
-  Standard_EXPORT void AddSessionItem (const Handle(Standard_Transient)& theItem, const Standard_CString theName, const Standard_Boolean toApply = Standard_False);
-  
-  //! Returns an item given its name to record in a Session
-  //! If <name> is unknown, returns a Null Handle
-  Standard_EXPORT Handle(Standard_Transient) SessionItem (const Standard_CString theName) const;
-  
-  //! Customises a WorkSession, by adding to it the recorded items (by AddSessionItem)
-  Standard_EXPORT virtual void Customise (Handle(XSControl_WorkSession)& WS);
   
   const NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)> & AdaptorSession() const
   { return myAdaptorSession; }
@@ -216,13 +177,6 @@ class XSControl_Controller : public Standard_Transient
   Handle(Transfer_ActorOfTransientProcess) myAdaptorRead;
   Handle(Transfer_ActorOfFinderProcess) myAdaptorWrite;
   NCollection_DataMap<TCollection_AsciiString, Handle(Standard_Transient)> myAdaptorSession;
-
- private:
-
-  TColStd_SequenceOfTransient myAdaptorApplied;
-  NCollection_Vector<Handle(Standard_Transient)> myParams;
-  NCollection_Vector<Standard_Integer> myParamUses;
-  Handle(Interface_HArray1OfHAsciiString) myModeWriteShapeN;
 };
 
 #endif // _XSControl_Controller_HeaderFile

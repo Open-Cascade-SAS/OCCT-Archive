@@ -21,7 +21,7 @@
 #include <Standard_Type.hxx>
 
 #include <Standard_Transient.hxx>
-#include <IFSelect_ReturnStatus.hxx>
+#include <XSControl_ReturnStatus.hxx>
 #include <Transfer_FinderProcess.hxx>
 class XSControl_Controller;
 class Interface_InterfaceModel;
@@ -99,7 +99,7 @@ class XSControl_TransferWriter : public Standard_Transient
   //! Works by calling the Controller
   //! Returns status : =0 if OK, >0 if error during transfer, <0 if
   //! transfer badly initialised
-  Standard_EXPORT IFSelect_ReturnStatus TransferWriteTransient
+  Standard_EXPORT XSControl_ReturnStatus TransferWriteTransient
                    (const Handle(Interface_InterfaceModel)& theModel,
                     const Handle(Standard_Transient)& theObj,
                     const Message_ProgressRange& theProgress = Message_ProgressRange());
@@ -113,7 +113,7 @@ class XSControl_TransferWriter : public Standard_Transient
   //! Works by calling the Controller
   //! Returns status : =0 if OK, >0 if error during transfer, <0 if
   //! transfer badly initialised
-  Standard_EXPORT IFSelect_ReturnStatus TransferWriteShape
+  Standard_EXPORT XSControl_ReturnStatus TransferWriteShape
                    (const Handle(Interface_InterfaceModel)& theModel,
                     const TopoDS_Shape& theShape,
                     const Message_ProgressRange& theProgress = Message_ProgressRange());

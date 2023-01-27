@@ -62,7 +62,7 @@ Administrative data, in the Global Section of the IGES  file (such as the file n
 Before performing any  other operation, you have to load the file using the syntax below. 
 ~~~~{.cpp}
 IGESControl_Reader reader; 
-IFSelect_ReturnStatus stat  = reader.ReadFile(“filename.igs”); 
+XSControl_ReturnStatus stat  = reader.ReadFile(“filename.igs”); 
 ~~~~
 The loading operation  only loads the IGES file into computer memory; it does not translate it. 
 
@@ -1125,7 +1125,7 @@ Allows writing the prepared model to a file with name *filename.igs*.
 Before performing any other operation, you must load an IGES  file with: 
 ~~~~{.cpp}
 IGESCAFControl_Reader reader(XSDRAW::Session(),  Standard_False); 
-IFSelect_ReturnStatus stat = reader.ReadFile(“filename.igs”); 
+XSControl_ReturnStatus stat = reader.ReadFile(“filename.igs”); 
 ~~~~
 Loading the file only memorizes, but does not translate the  data. 
 
@@ -1183,7 +1183,7 @@ aWriter.SetNameMode(mode);
 
 You can perform the translation of a document by calling the  function: 
 ~~~~{.cpp}
-IFSelect_ReturnStatus aRetSt = aWriter.Transfer(doc); 
+XSControl_ReturnStatus aRetSt = aWriter.Transfer(doc); 
 ~~~~
 where "doc" is a variable which contains a handle to the input document for transferring  and should have a type *Handle(TDocStd_Document)*.
  
@@ -1191,11 +1191,11 @@ where "doc" is a variable which contains a handle to the input document for tran
 
 Write an IGES file with: 
 ~~~~{.cpp}
-IFSelect_ReturnStatus statw =  aWriter.WriteFile("filename.igs"); 
+XSControl_ReturnStatus statw =  aWriter.WriteFile("filename.igs"); 
 ~~~~
 or 
 ~~~~{.cpp}
-IFSelect_ReturnStatus statw = writer.WriteFile (S); 
+XSControl_ReturnStatus statw = writer.WriteFile (S); 
 ~~~~
 where S is OStream.  
 

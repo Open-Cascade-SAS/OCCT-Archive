@@ -84,14 +84,14 @@ Standard_Boolean XSControl_TransferWriter::RecognizeTransient (const Handle(Stan
 //purpose  : 
 //=======================================================================
 
-IFSelect_ReturnStatus XSControl_TransferWriter::TransferWriteTransient
+XSControl_ReturnStatus XSControl_TransferWriter::TransferWriteTransient
   (const Handle(Interface_InterfaceModel)& model,
    const Handle(Standard_Transient)& obj,
    const Message_ProgressRange& theProgress)
 {
-  IFSelect_ReturnStatus status = IFSelect_RetVoid;
-  if (myController.IsNull()) return IFSelect_RetError;
-  if (model.IsNull()) return IFSelect_RetVoid;
+  XSControl_ReturnStatus status = XSControl_RetVoid;
+  if (myController.IsNull()) return XSControl_RetError;
+  if (model.IsNull()) return XSControl_RetVoid;
 
   if (myTransferWriter.IsNull()) myTransferWriter = new Transfer_FinderProcess;
   Handle(Transfer_ActorOfFinderProcess) nulact;
@@ -110,7 +110,7 @@ IFSelect_ReturnStatus XSControl_TransferWriter::TransferWriteTransient
     sout<<"****  ****  TransferWriteShape, EXCEPTION : ";
     sout<<anException.GetMessageString(); 
     sout<<std::endl;
-    status = IFSelect_RetFail;
+    status = XSControl_RetFail;
   }
   return status;
 }
@@ -132,14 +132,14 @@ Standard_Boolean XSControl_TransferWriter::RecognizeShape (const TopoDS_Shape& s
 //purpose  : 
 //=======================================================================
 
-IFSelect_ReturnStatus XSControl_TransferWriter::TransferWriteShape
+XSControl_ReturnStatus XSControl_TransferWriter::TransferWriteShape
   (const Handle(Interface_InterfaceModel)& theModel,
    const TopoDS_Shape& theShape,
    const Message_ProgressRange& theProgress)
 {
-  IFSelect_ReturnStatus status = IFSelect_RetVoid;
-  if (myController.IsNull()) return IFSelect_RetError;
-  if (theModel.IsNull()) return IFSelect_RetVoid;
+  XSControl_ReturnStatus status = XSControl_RetVoid;
+  if (myController.IsNull()) return XSControl_RetError;
+  if (theModel.IsNull()) return XSControl_RetVoid;
 
   TopoDS_Shape aShape = theShape;
   Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
@@ -169,7 +169,7 @@ IFSelect_ReturnStatus XSControl_TransferWriter::TransferWriteShape
     sout<<"****  ****  TransferWriteShape, EXCEPTION : "; 
     sout<<anException.GetMessageString(); 
     sout<<std::endl;
-    status = IFSelect_RetFail;
+    status = XSControl_RetFail;
   }
   return status;
 }

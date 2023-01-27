@@ -21,7 +21,7 @@
 #include <Standard_Type.hxx>
 
 #include <XSControl_Controller.hxx>
-#include <IFSelect_ReturnStatus.hxx>
+#include <XSControl_ReturnStatus.hxx>
 #include <Standard_Integer.hxx>
 class Interface_InterfaceModel;
 class XSControl_WorkSession;
@@ -47,15 +47,13 @@ public:
   //! It is taken from STEP Template Model
   Standard_EXPORT Handle(Interface_InterfaceModel) NewModel() const Standard_OVERRIDE;
   
-  Standard_EXPORT virtual void Customise (Handle(XSControl_WorkSession)& WS) Standard_OVERRIDE;
-  
   //! Takes one Shape and transfers it to the InterfaceModel
   //! (already created by NewModel for instance)
   //! <modeshape> is to be interpreted by each kind of XstepAdaptor
   //! Returns a status : 0 OK  1 No result  2 Fail  -1 bad modeshape
   //! -2 bad model (requires a StepModel)
   //! modeshape : 1 Facetted BRep, 2 Shell, 3 Manifold Solid
-  Standard_EXPORT virtual IFSelect_ReturnStatus TransferWriteShape
+  Standard_EXPORT virtual XSControl_ReturnStatus TransferWriteShape
                    (const TopoDS_Shape& shape,
                     const Handle(Transfer_FinderProcess)& FP,
                     const Handle(Interface_InterfaceModel)& model,

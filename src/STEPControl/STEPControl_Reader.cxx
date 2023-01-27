@@ -11,10 +11,6 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
-
-#include <Interface_EntityIterator.hxx>
-#include <Interface_Graph.hxx>
-#include <Interface_Static.hxx>
 #include <StepBasic_ApplicationContext.hxx>
 #include <StepBasic_ConversionBasedUnit.hxx>
 #include <StepBasic_DocumentProductEquivalence.hxx>
@@ -67,7 +63,6 @@
 STEPControl_Reader::STEPControl_Reader ()
 {
   STEPControl_Controller::Init();
-  SetNorm ("STEP");
 }
 
 //=======================================================================
@@ -75,12 +70,9 @@ STEPControl_Reader::STEPControl_Reader ()
 //purpose  : 
 //=======================================================================
 
-STEPControl_Reader::STEPControl_Reader
-  (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch)
+STEPControl_Reader::STEPControl_Reader(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch)
 {
   STEPControl_Controller::Init();
-  SetWS (WS,scratch);
-  SetNorm ("STEP");
 }
 
 //=======================================================================

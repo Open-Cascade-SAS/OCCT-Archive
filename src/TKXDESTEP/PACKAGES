@@ -10,7 +10,6 @@ StepToGeom
 StepToTopoDS
 TopoDSToStep
 STEPControl
-STEPSelections
 StepAP209
 RWStepAP242
 StepAP242
@@ -32,9 +31,7 @@ StepGeom
 RWStepGeom
 StepShape
 RWStepShape
-StepSelect
 StepData
 StepFile
 RWHeaderSection
-APIHeaderSection
 HeaderSection

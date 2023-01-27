@@ -352,6 +352,6 @@ Standard_Boolean IGESCAFControl_Reader::Perform (const Standard_CString filename
                                                  const Handle(TDocStd_Document) &doc,
                                                  const Message_ProgressRange& theProgress)
 {
-  if ( ReadFile ( filename ) != IFSelect_RetDone ) return Standard_False;
+  if ( ReadFile ( filename ) != XSControl_RetDone ) return Standard_False;
   return Transfer ( doc, theProgress );
 }

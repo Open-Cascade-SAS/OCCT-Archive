@@ -22,7 +22,7 @@
 #include <Standard_Handle.hxx>
 
 #include <Standard_CString.hxx>
-#include <IFSelect_ReturnStatus.hxx>
+#include <XSControl_ReturnStatus.hxx>
 #include <Standard_Integer.hxx>
 #include <Message_ProgressRange.hxx>
 
@@ -68,12 +68,12 @@ public:
   Standard_EXPORT Handle(Interface_InterfaceModel) Model (const Standard_Boolean newone = Standard_False);
   
   //! Transfers a Shape according to the mode
-  Standard_EXPORT IFSelect_ReturnStatus TransferShape (const TopoDS_Shape& sh,
+  Standard_EXPORT XSControl_ReturnStatus TransferShape (const TopoDS_Shape& sh,
                                                        const Standard_Integer mode = 0,
                                                        const Message_ProgressRange& theProgress = Message_ProgressRange());
   
   //! Writes the produced model
-  Standard_EXPORT IFSelect_ReturnStatus WriteFile (const Standard_CString filename);
+  Standard_EXPORT XSControl_ReturnStatus WriteFile (const Standard_CString filename);
   
   //! Prints Statistics about Transfer
   Standard_EXPORT void PrintStatsTransfer (const Standard_Integer what, const Standard_Integer mode = 0) const;

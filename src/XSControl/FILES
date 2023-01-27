@@ -1,9 +1,14 @@
+IFSelect_WorkLibrary.cxx
+IFSelect_WorkLibrary.hxx
+IFSelect_WorkSession.cxx
+IFSelect_WorkSession.hxx
 XSControl_ConnectedShapes.cxx
 XSControl_ConnectedShapes.hxx
 XSControl_Controller.cxx
 XSControl_Controller.hxx
 XSControl_Reader.cxx
 XSControl_Reader.hxx
+XSControl_ReturnStatus.hxx
 XSControl_SelectForTransfer.cxx
 XSControl_SelectForTransfer.hxx
 XSControl_SignTransferStatus.cxx

@@ -322,16 +322,16 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   aReader.SetNameMode(aNode->InternalParameters.ReadName);
   aReader.SetLayerMode(aNode->InternalParameters.ReadLayer);
   aReader.SetPropsMode(aNode->InternalParameters.ReadProps);
-  IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
+  XSControl_ReturnStatus aReadStat = XSControl_RetVoid;
   if (!toUseLoaded)
   {
     aReadStat = aReader.ReadFile(thePath.ToCString());
   }
   else if (theWS->NbStartingEntities() > 0)
   {
-    aReadStat = IFSelect_RetDone;
+    aReadStat = XSControl_RetDone;
   }
-  if (aReadStat != IFSelect_RetDone)
+  if (aReadStat != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : ["
       << aFile << "] : abandon, no model loaded";
@@ -387,9 +387,9 @@ bool STEPCAFControl_Provider::Read(std::istream& theIStream,
   aReader.SetNameMode(aNode->InternalParameters.ReadName);
   aReader.SetLayerMode(aNode->InternalParameters.ReadLayer);
   aReader.SetPropsMode(aNode->InternalParameters.ReadProps);
-  IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
+  XSControl_ReturnStatus aReadStat = XSControl_RetVoid;
   aReadStat = aReader.ReadStream(theName.ToCString(), theIStream);
-  if (aReadStat != IFSelect_RetDone)
+  if (aReadStat != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : "
       << "Abandon, no model loaded via stream";
@@ -496,7 +496,7 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
     Message::SendInfo() << "Document has been translated into the session";
     return true;
   }
-  if (aWriter.Write(thePath.ToCString()) != IFSelect_RetDone)
+  if (aWriter.Write(thePath.ToCString()) != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : [" <<
       thePath << "] : Write failed";
@@ -588,7 +588,7 @@ bool STEPCAFControl_Provider::Write(std::ostream& theOStream,
     resetStatic();
     return false;
   }
-  if (aWriter.WriteStream(theOStream) != IFSelect_RetDone)
+  if (aWriter.WriteStream(theOStream) != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : Write to stream failed";
     resetStatic();
@@ -621,7 +621,7 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   initStatic(aNode);
   personizeWS(theWS);
   STEPControl_Reader aReader(theWS);
-  if (aReader.ReadFile(thePath.ToCString()) != IFSelect_RetDone)
+  if (aReader.ReadFile(thePath.ToCString()) != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : ["
       << thePath << "] : abandon, no model loaded";
@@ -665,7 +665,7 @@ bool STEPCAFControl_Provider::Read(std::istream& theIStream,
   initStatic(aNode);
   personizeWS(theWS);
   STEPControl_Reader aReader(theWS);
-  if (aReader.ReadStream(theName.ToCString(), theIStream) != IFSelect_RetDone)
+  if (aReader.ReadStream(theName.ToCString(), theIStream) != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : "
       << "Abandon, no model loaded from STEP stream";
@@ -713,13 +713,13 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   aModel->SetWriteLengthUnit(UnitsMethods::GetLengthUnitScale(
     aNode->InternalParameters.WriteUnit,
     UnitsMethods_LengthUnit_Millimeter));
-  IFSelect_ReturnStatus aWritestat =
+  XSControl_ReturnStatus aWritestat =
     aWriter.Transfer(theShape, aNode->InternalParameters.WriteModelType, true, theProgress);
   if (aNbEntities > 0)
   {
     Message::SendTrace() << "STEPCAFControl_Provider : Model not empty before transferring";
   }
-  if (aWritestat != IFSelect_RetDone)
+  if (aWritestat != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : "
       << "Can't translate shape to STEP model";
@@ -732,7 +732,7 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
     Message::SendInfo() << "Step model has been translated into the session";
     return true;
   }
-  if (aWriter.Write(thePath.ToCString()) != IFSelect_RetDone)
+  if (aWriter.Write(thePath.ToCString()) != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : "
       << "Can't write STEP file " << thePath;
@@ -770,20 +770,20 @@ bool STEPCAFControl_Provider::Write(std::ostream& theOStream,
   aModel->SetWriteLengthUnit(UnitsMethods::GetLengthUnitScale(
     aNode->InternalParameters.WriteUnit,
     UnitsMethods_LengthUnit_Millimeter));
-  IFSelect_ReturnStatus aWritestat =
+  XSControl_ReturnStatus aWritestat =
     aWriter.Transfer(theShape, aNode->InternalParameters.WriteModelType, true, theProgress);
   if (aNbEntities > 0)
   {
     Message::SendTrace() << "STEPCAFControl_Provider : Model not empty before transferring";
   }
-  if (aWritestat != IFSelect_RetDone)
+  if (aWritestat != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : "
       << "Can't translate shape to STEP model";
     resetStatic();
     return false;
   }
-  if (aWriter.WriteStream(theOStream) != IFSelect_RetDone)
+  if (aWriter.WriteStream(theOStream) != XSControl_RetDone)
   {
     Message::SendFail() << "Error: STEPCAFControl_Provider : "
       << "Can't write STEP to stream";

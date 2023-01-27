@@ -88,8 +88,8 @@ namespace DFBrowser_OpenApplication
     STEPCAFControl_Reader aStepReader;
 
     const TCollection_AsciiString aStr (theFileName);
-    IFSelect_ReturnStatus aStatus = aStepReader.ReadFile (aStr.ToCString());
-    if (aStatus != IFSelect_RetDone)
+    XSControl_ReturnStatus aStatus = aStepReader.ReadFile (aStr.ToCString());
+    if (aStatus != XSControl_RetDone)
       return Handle(TDocStd_Application)();
 
     aStepReader.SetColorMode (Standard_True);

@@ -13,7 +13,7 @@
 
 #include <STEPEdit.hxx>
 
-#include <APIHeaderSection_MakeHeader.hxx>
+#include <HeaderSection_MakeHeader.hxx>
 #include <IFSelect_SelectModelEntities.hxx>
 #include <IFSelect_SelectModelRoots.hxx>
 #include <IFSelect_SelectSignature.hxx>
@@ -37,7 +37,7 @@ Handle(Interface_Protocol)  STEPEdit::Protocol ()
 
 Handle(StepData_StepModel)  STEPEdit::NewModel ()
 {
-  APIHeaderSection_MakeHeader head;
+  HeaderSection_MakeHeader head;
   return head.NewModel(STEPEdit::Protocol());
 }
 
