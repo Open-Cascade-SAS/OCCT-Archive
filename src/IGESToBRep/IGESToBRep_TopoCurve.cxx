@@ -1330,7 +1330,7 @@ TopoDS_Shape IGESToBRep_TopoCurve::TransferBoundaryOnFace(TopoDS_Face&  face,
     } 
     else
       Curves2d = start->ParameterCurves(i);
-    Result = Result & IB->Transfer (okCurve, okCurve3d, okCurve2d,
+    Result = Result && IB->Transfer (okCurve, okCurve3d, okCurve2d,
 				    start->ModelSpaceCurve(i), start->Sense(i) == 2,
 				    Curves2d, i);
   }

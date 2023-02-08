@@ -252,7 +252,7 @@ TopoDS_Shape IGESToBRep_BRepEntity::TransferEdge
 	    Standard_Real dist2f = p2.Distance ( pf );
 	    Standard_Real dist1l = p1.Distance ( pl );
 	    Standard_Real dist2l = p2.Distance ( pl );
-	    if ( V1.IsSame(V2) || dist1f + dist2l <= dist1l + dist2f + Precision::Confusion() ) {
+	    if ( V1.IsSame(V2) || dist1f + dist2l <= dist1l + dist2f + (Precision::Confusion() / GetUnitFactor()) ) {
 	      //:77 if (BRepTools::Compare(V1, Vf)) //the part 'else' only if, in fact, edge should be reversed
 	      V1.Orientation(TopAbs_FORWARD);
 	      B.Add(E,V1);
@@ -395,7 +395,7 @@ TopoDS_Shape IGESToBRep_BRepEntity::TransferLoop(const Handle(IGESSolid_Loop)& s
 	    Curves2d->SetValue (i, start->ParametricCurve(iedge,i));
 	}
 	Handle(ShapeExtend_WireData) lsewd;//result of translation of current edge
-	Result = Result & IB->Transfer (okCurve, okCurve3d, okCurve2d,
+	Result = Result && IB->Transfer (okCurve, okCurve3d, okCurve2d,
 					curve3d, Curves2d, !orientation,
 					iedge, lsewd);
 	if (iedge == 1) sewd = IB->WireData();//initialization
