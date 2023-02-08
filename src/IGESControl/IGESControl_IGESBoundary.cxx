@@ -150,6 +150,7 @@ static Standard_Boolean Connect (const Handle(ShapeAnalysis_Wire)& theSAW,
                                                      const Standard_Integer number,
                                                      Handle(ShapeExtend_WireData)& Gsewd) 
 {
+  (void)number;
   Gsewd                                = new ShapeExtend_WireData;//local translation (for mysewd)
   Handle(ShapeExtend_WireData) Gsewd3d = new ShapeExtend_WireData;//local translation (for mysewd3d)
   Handle(ShapeExtend_WireData) Gsewd2d = new ShapeExtend_WireData;//local translation (for mysewd2d)
@@ -384,17 +385,31 @@ static Standard_Boolean Connect (const Handle(ShapeAnalysis_Wire)& theSAW,
     }
   }
   
-  if (number > 1) {
-    okCurve   = okCurve && Connect (saw, mysewd, Gsewd, (len3d > 1) || (len2d > 1), maxtol,
-      distmin, revsewd, revnextsewd);
+  if (!mysewd.IsNull())
+  {
+    okCurve = okCurve && Connect(saw, mysewd, Gsewd, (len3d > 1) || (len2d > 1), maxtol,
+                                 distmin, revsewd, revnextsewd);
+  }
+  else
+  {
+    mysewd = Gsewd;
+  }
+  if (!mysewd3d.IsNull())
+  {
     okCurve3d = okCurve3d && Connect (saw3d, mysewd3d, Gsewd3d, len3d > 1, maxtol,
       distmin, revsewd, revnextsewd);
+  }
+  else
+  {
+    mysewd3d = Gsewd3d;
+  }
+  if (!mysewd2d.IsNull())
+  {
     okCurve2d = okCurve2d && Connect (saw2d, mysewd2d, Gsewd2d, len2d > 1, maxtol,
       distmin, revsewd, revnextsewd);
   }
-  else {
-    mysewd   = Gsewd;
-    mysewd3d = Gsewd3d;
+  else
+  {
     mysewd2d = Gsewd2d;
   }
   return okCurve;

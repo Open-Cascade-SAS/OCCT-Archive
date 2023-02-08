@@ -312,7 +312,7 @@ Handle(Geom_CylindricalSurface) IGESToBRep_BasicSurface::TransferRigthCylindrica
     // Direction Reading Error : Null IGESEntity
     return res;
   }
-  if (radius < Precision::Confusion()) {
+  if (radius < (Precision::Confusion() / GetUnitFactor())) {
     return res;
   }
     
@@ -374,7 +374,7 @@ Handle(Geom_ConicalSurface) IGESToBRep_BasicSurface::TransferRigthConicalSurface
   if (radius < 0) {
     return res;
   }
-  if (radius < Precision::Confusion())
+  if (radius < (Precision::Confusion() / GetUnitFactor()))
     radius = 0.;
   
   gp_Pnt Pt = Point->Value();
@@ -427,7 +427,7 @@ Handle(Geom_SphericalSurface) IGESToBRep_BasicSurface::TransferSphericalSurface
     // Direction Reading Error : Null IGESEntity
     return res;
   }
-  if (radius < Precision::Confusion()){
+  if (radius < (Precision::Confusion() / GetUnitFactor())){
    
     return res;
   }
@@ -483,7 +483,7 @@ Handle(Geom_ToroidalSurface) IGESToBRep_BasicSurface::TransferToroidalSurface
     // Direction Reading Error : Null IGESEntity
     return res;
   }
-  if (major < Precision::Confusion()||minor < Precision::Confusion()){
+  if (major < (Precision::Confusion() / GetUnitFactor()) || minor < (Precision::Confusion() / GetUnitFactor())){
    
     return res;
   }

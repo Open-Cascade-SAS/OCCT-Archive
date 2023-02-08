@@ -1249,7 +1249,7 @@ Handle(Geom_Curve)  IGESToBRep_BasicCurve::TransferLine
 
   // modif du 15/10/97  : test moins severe
   // beaucoup de points confondus a GetEpsGeom()*GetUnitFactor()
-  if (!Ps.IsEqual(Pe,Precision::Confusion())) { //:l3 abv 11 Jan 99: GetEpsGeom()*GetUnitFactor()/10.)) {
+  if (!Ps.IsEqual(Pe,Precision::Confusion() / GetUnitFactor())) { //:l3 abv 11 Jan 99: GetEpsGeom()*GetUnitFactor()/10.)) {
     gp_Lin line(Ps, gp_Dir(gp_Vec(Ps,Pe)));
     Standard_Real t1 = ElCLib::Parameter(line, Ps);
     Standard_Real t2 = ElCLib::Parameter(line, Pe);
@@ -1299,7 +1299,7 @@ Handle(Geom2d_Curve)  IGESToBRep_BasicCurve::Transfer2dLine
 		 start->EndPoint().Y());
   }
 
-  if (!beg.IsEqual(end,Precision::PConfusion())) { //:l3 abv 11 Jan 99: GetEpsCoeff())) {
+  if (!beg.IsEqual(end,Precision::PConfusion() / GetUnitFactor())) { //:l3 abv 11 Jan 99: GetEpsCoeff())) {
     gp_Lin2d line2d(beg, gp_Dir2d(gp_Vec2d(beg,end)));
     Standard_Real t1 = ElCLib::Parameter(line2d, beg);
     Standard_Real t2 = ElCLib::Parameter(line2d, end);
