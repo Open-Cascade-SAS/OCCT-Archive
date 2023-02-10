@@ -193,7 +193,7 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
             PasC = PasC / 2.0;
             PasCu = Abs(PasC*previousd2d.X());
             PasCv = Abs(PasC*previousd2d.Y());
-            if (PasCu <= tolerance(1) && PasCv <= tolerance(2)) {
+            if (PasCu <= tolerance(1) && PasCv <= tolerance(2) || Cadre) {
               if (CurrentLine->NbPoints() == 1) break;
               Arrive = Standard_True;
               CurrentLine->AddStatusLast(Standard_False);
@@ -201,7 +201,7 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               Rajout = Standard_True;
               seqAlone.Append(lines.Length() + 1);
               seqAjout.Append(lines.Length() + 1);
-            }  
+            }
           }
           else { // test stop
             Rsnld.Root(UVap);
