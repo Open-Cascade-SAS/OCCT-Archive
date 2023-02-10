@@ -66,7 +66,7 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
   Standard_Integer I = 0, N = 0, SaveN = 0;
   Standard_Real aBornInf[2] = {}, aBornSup[2] = {}, aUVap[2] = {};
   math_Vector BornInf(aBornInf,1,2), BornSup(aBornSup,1,2), UVap(aUVap,1,2);
-  Standard_Real PasC = 0.0, PasCu = 0.0, PasCv = 0.0;
+  Standard_Real PasC = 0.0, PasCPrev = 0.0, PasCu = 0.0, PasCv = 0.0;
   Standard_Boolean Arrive = false; // shows if the line ends
   Standard_Boolean Cadre = false;  // shows if one is on border of the domain
   Standard_Boolean ArretAjout = false;  //shows if one is on added point
@@ -171,6 +171,7 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
       // modified by NIZHNY-MKK  Fri Oct 27 12:39:37 2000
       Standard_Integer IndexOfPathPointDoNotCheck=0;
       Standard_Integer aNbIter = 10;
+      Standard_Boolean aSamePasC = Standard_False;
       while (!Arrive) { //    as one of stop tests is not checked
         Cadre = Cadrage(BornInf,BornSup,UVap,PasC,StepSign);
         //  Border?
@@ -190,10 +191,14 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
         }
         if (Rsnld.IsDone()) {
           if (Abs(Func.Root()) > Func.Tolerance()) {
+            if (Abs(PasC - PasCPrev) < Precision::Confusion())
+              aSamePasC = Standard_True;
+            PasCPrev = PasC;
             PasC = PasC / 2.0;
             PasCu = Abs(PasC*previousd2d.X());
             PasCv = Abs(PasC*previousd2d.Y());
-            if (PasCu <= tolerance(1) && PasCv <= tolerance(2)) {
+            if ((PasCu <= tolerance(1) && PasCv <= tolerance(2)) || (Cadre && aSamePasC))
+            {
               if (CurrentLine->NbPoints() == 1) break;
               Arrive = Standard_True;
               CurrentLine->AddStatusLast(Standard_False);
@@ -201,7 +206,7 @@ void IntWalk_IWalking::ComputeOpenLine(const TColStd_SequenceOfReal& Umult,
               Rajout = Standard_True;
               seqAlone.Append(lines.Length() + 1);
               seqAjout.Append(lines.Length() + 1);
-            }  
+            }
           }
           else { // test stop
             Rsnld.Root(UVap);

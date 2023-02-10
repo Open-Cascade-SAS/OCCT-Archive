@@ -1,0 +1,10 @@
+puts "====================================="
+puts "OCC33226: Data Exchange - Infinite loop in HLRBRep_InternalAlgo::Update() generating 2D view of right hand side from STEP file"
+puts "====================================="
+puts "" 
+
+set viewname "vright" 
+set length 45.4352
+
+restore [locate_data_file bug33226_1189.brep] a
+COMPUTE_HLR $viewname $algotype 
