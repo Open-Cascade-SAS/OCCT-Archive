@@ -3,8 +3,6 @@ puts "OCC27884: Modeling Algorithms - Possible improvement for 2d classifier"
 puts "================================================================="
 puts ""
 
-puts "TODO ?CR33225 Windows: Error: algorithm slowed down"
-
 pload ALL
 pload QAcommands
 
