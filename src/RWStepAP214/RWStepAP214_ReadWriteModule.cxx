@@ -194,6 +194,7 @@ IMPLEMENT_STANDARD_RTTIEXT(RWStepAP214_ReadWriteModule,StepData_ReadWriteModule)
 #include <StepGeom_Hyperbola.hxx>
 #include <StepGeom_IntersectionCurve.hxx>
 #include <StepVisual_Invisibility.hxx>
+#include <StepVisual_LeaderDirectedCallout.hxx>
 #include <StepBasic_LengthMeasureWithUnit.hxx>
 #include <StepBasic_LengthUnit.hxx>
 #include <StepGeom_Line.hxx>
@@ -626,6 +627,7 @@ IMPLEMENT_STANDARD_RTTIEXT(RWStepAP214_ReadWriteModule,StepData_ReadWriteModule)
 #include <RWStepGeom_RWHyperbola.hxx>
 #include <RWStepGeom_RWIntersectionCurve.hxx>
 #include <RWStepVisual_RWInvisibility.hxx>
+#include <RWStepVisual_RWLeaderDirectedCallout.hxx>
 #include <RWStepBasic_RWLengthMeasureWithUnit.hxx>
 #include <RWStepBasic_RWLengthUnit.hxx>
 #include <RWStepGeom_RWLine.hxx>
@@ -1360,6 +1362,9 @@ IMPLEMENT_STANDARD_RTTIEXT(RWStepAP214_ReadWriteModule,StepData_ReadWriteModule)
 #include <RWStepDimTol_RWGeoTolAndGeoTolWthDatRefAndGeoTolWthMaxTol.hxx>
 #include <RWStepDimTol_RWGeoTolAndGeoTolWthMaxTol.hxx>
 #include <RWStepVisual_RWAnnotationCurveOccurrence.hxx>
+#include <RWStepVisual_RWAnnotationCurveOccurrenceAndGeomReprItem.hxx>
+#include <RWStepVisual_RWAnnotationLeaderCurveOccurrenceAndGeomReprItem.hxx>
+#include <RWStepVisual_RWAnnotationLeaderTerminatorOccurrenceAndGeomReprItem.hxx>
 #include <RWStepVisual_RWAnnotationOccurrence.hxx>
 #include <RWStepVisual_RWAnnotationPlane.hxx>
 #include <RWStepVisual_RWDraughtingCallout.hxx>
@@ -1410,6 +1415,9 @@ IMPLEMENT_STANDARD_RTTIEXT(RWStepAP214_ReadWriteModule,StepData_ReadWriteModule)
 #include <StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMaxTol.hxx>
 #include <StepDimTol_GeoTolAndGeoTolWthMaxTol.hxx>
 #include <StepVisual_AnnotationCurveOccurrence.hxx>
+#include <StepVisual_AnnotationCurveOccurrenceAndGeomReprItem.hxx>
+#include <StepVisual_AnnotationLeaderCurveOccurrenceAndGeomReprItem.hxx>
+#include <StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem.hxx>
 #include <StepVisual_AnnotationPlane.hxx>
 #include <StepVisual_DraughtingCallout.hxx>
 
@@ -1442,8 +1450,6 @@ IMPLEMENT_STANDARD_RTTIEXT(RWStepAP214_ReadWriteModule,StepData_ReadWriteModule)
 #include <RWStepVisual_RWCameraModelD3MultiClipping.hxx>
 #include <RWStepVisual_RWCameraModelD3MultiClippingIntersection.hxx>
 #include <RWStepVisual_RWCameraModelD3MultiClippingUnion.hxx>
-#include <StepVisual_AnnotationCurveOccurrenceAndGeomReprItem.hxx>
-#include <RWStepVisual_RWAnnotationCurveOccurrenceAndGeomReprItem.hxx>
 
 #include <RWStepVisual_RWSurfaceStyleTransparent.hxx>
 #include <RWStepVisual_RWSurfaceStyleReflectanceAmbient.hxx>
@@ -1766,8 +1772,11 @@ static TCollection_AsciiString Reco_HalfSpaceSolid ("HALF_SPACE_SOLID");
 static TCollection_AsciiString Reco_Hyperbola ("HYPERBOLA");
 static TCollection_AsciiString Reco_IntersectionCurve ("INTERSECTION_CURVE");
 static TCollection_AsciiString Reco_Invisibility ("INVISIBILITY");
+static TCollection_AsciiString Reco_LeaderCurve ("LEADER_CURVE");
+static TCollection_AsciiString Reco_LeaderTerminator ("LEADER_TERMINATOR");
 static TCollection_AsciiString Reco_LengthMeasureWithUnit ("LENGTH_MEASURE_WITH_UNIT");
 static TCollection_AsciiString Reco_LengthUnit ("LENGTH_UNIT");
+static TCollection_AsciiString Reco_LeaderDirectedCallout ("LEADER_DIRECTED_CALLOUT");
 static TCollection_AsciiString Reco_Line ("LINE");
 static TCollection_AsciiString Reco_LocalTime ("LOCAL_TIME");
 static TCollection_AsciiString Reco_Loop ("LOOP");
@@ -2349,6 +2358,8 @@ static TCollection_AsciiString Reco_ComplexTriangulatedFace("COMPLEX_TRIANGULATE
 static TCollection_AsciiString Reco_ComplexTriangulatedSurfaceSet("COMPLEX_TRIANGULATED_SURFACE_SET");
 static TCollection_AsciiString Reco_CubicBezierTessellatedEdge("CUBIC_BEZIER_TESSELLATED_EDGE");
 static TCollection_AsciiString Reco_CubicBezierTriangulatedFace("CUBIC_BEZIER_TRIANGULATED_FACE");
+
+
 
 // -- Definition of the libraries --
 
@@ -3105,6 +3116,9 @@ RWStepAP214_ReadWriteModule::RWStepAP214_ReadWriteModule ()
   typenums.Bind(Reco_ComplexTriangulatedSurfaceSet, 816);
   typenums.Bind(Reco_CubicBezierTessellatedEdge, 817);
   typenums.Bind(Reco_CubicBezierTriangulatedFace, 818);
+  typenums.Bind(Reco_LeaderCurve, 822);
+  typenums.Bind(Reco_LeaderTerminator, 823);
+  typenums.Bind(Reco_LeaderDirectedCallout, 824);
 
   
 //    SHORT NAMES
@@ -3744,6 +3758,17 @@ Standard_Integer RWStepAP214_ReadWriteModule::CaseStep
         (types(8).IsEqual(StepType(247)))) {
         return 800;
       }
+      else if ((types(1).IsEqual(StepType(7))) &&
+               (types(2).IsEqual(StepType(10))) &&
+               (types(3).IsEqual(StepType(106))) &&
+               (types(4).IsEqual(StepType(144))) &&
+               (types(5).IsEqual(StepType(823))) &&
+               (types(6).IsEqual(StepType(247))) &&
+               (types(7).IsEqual(StepType(270))) &&
+               (types(8).IsEqual(StepType(294))))
+      {
+        return 821;
+      }
     }
     else if (NbComp == 7) {
       if ((types(1).IsEqual(StepType(48))) &&
@@ -3835,6 +3860,16 @@ Standard_Integer RWStepAP214_ReadWriteModule::CaseStep
                (types(6).IsEqual(StepType(144))) &&
                (types(7).IsEqual(StepType(271)))) {
         return 323;
+      }
+      else if ((types(1).IsEqual(StepType(4))) &&
+               (types(2).IsEqual(StepType(7))) &&
+               (types(3).IsEqual(StepType(106))) &&
+               (types(4).IsEqual(StepType(144))) &&
+               (types(5).IsEqual(StepType(822))) &&
+               (types(6).IsEqual(StepType(247))) &&
+               (types(7).IsEqual(StepType(270))))
+      {
+        return 820;
       }
     }
     // Added by FMA
@@ -4333,6 +4368,10 @@ Standard_Boolean RWStepAP214_ReadWriteModule::IsComplex
     case 715:
       return Standard_True;
     case 719:
+      return Standard_True;
+    case 820:
+      return Standard_True;
+    case 821:
       return Standard_True;
     default:
       return Standard_False;
@@ -5092,6 +5131,9 @@ const TCollection_AsciiString& RWStepAP214_ReadWriteModule::StepType
   case 816: return Reco_ComplexTriangulatedSurfaceSet;
   case 817: return Reco_CubicBezierTessellatedEdge;
   case 818: return Reco_CubicBezierTriangulatedFace;
+  case 822: return Reco_LeaderCurve;
+  case 823: return Reco_LeaderTerminator;
+  case 824: return Reco_LeaderDirectedCallout;
   default : return PasReco;
   }
 }
@@ -5429,7 +5471,24 @@ Standard_Boolean RWStepAP214_ReadWriteModule::ComplexType(const Standard_Integer
       types.Append(StepType(709));
       types.Append(StepType(708));
       break;
-    default: return Standard_False;
+    case 820:
+      types.Append(StepType(4));
+      types.Append(StepType(7));
+      types.Append(StepType(106));
+      types.Append(StepType(144));
+      types.Append(StepType(822));
+      types.Append(StepType(247));
+      types.Append(StepType(270));
+      break;
+    case 821:
+      types.Append(StepType(4));
+      types.Append(StepType(10));
+      types.Append(StepType(106));
+      types.Append(StepType(144));
+      types.Append(StepType(823));
+      types.Append(StepType(247));
+      types.Append(StepType(270));
+      break;
     }
   return Standard_True;
 }
@@ -10694,7 +10753,28 @@ void RWStepAP214_ReadWriteModule::ReadStep(const Standard_Integer CN,
     aTool.ReadStep(data, num, ach, anEnt);
   }
   break;
-  default: 
+  case 820:
+  {
+    DeclareAndCast(StepVisual_AnnotationLeaderCurveOccurrenceAndGeomReprItem, anEnt, ent);
+    RWStepVisual_RWAnnotationLeaderCurveOccurrenceAndGeomReprItem aTool;
+    aTool.ReadStep(data, num, ach, anEnt);
+  }
+  break;
+  case 821:
+  {
+    DeclareAndCast(StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem, anEnt, ent);
+    RWStepVisual_RWAnnotationLeaderTerminatorOccurrenceAndGeomReprItem aTool;
+    aTool.ReadStep(data, num, ach, anEnt);
+  }
+  break;
+  case 824:
+  {
+    DeclareAndCast(StepVisual_LeaderDirectedCallout, anEnt, ent);
+    RWStepVisual_RWLeaderDirectedCallout aTool;
+    aTool.ReadStep(data, num, ach, anEnt);
+  }
+  break;
+  default:
     ach->AddFail("Type Mismatch when reading - Entity");
   }
   return;
@@ -16235,6 +16315,27 @@ void RWStepAP214_ReadWriteModule::WriteStep(const Standard_Integer CN,
   {
     DeclareAndCast(StepVisual_CubicBezierTriangulatedFace, anEnt, ent);
     RWStepVisual_RWCubicBezierTriangulatedFace aTool;
+    aTool.WriteStep(SW, anEnt);
+  }
+  break;
+  case 820:
+  {
+    DeclareAndCast(StepVisual_AnnotationLeaderCurveOccurrenceAndGeomReprItem, anEnt, ent);
+    RWStepVisual_RWAnnotationLeaderCurveOccurrenceAndGeomReprItem aTool;
+    aTool.WriteStep(SW, anEnt);
+  }
+  break;
+  case 821:
+  {
+    DeclareAndCast(StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem, anEnt, ent);
+    RWStepVisual_RWAnnotationLeaderTerminatorOccurrenceAndGeomReprItem aTool;
+    aTool.WriteStep(SW, anEnt);
+  }
+  break;
+  case 824:
+  {
+    DeclareAndCast(StepVisual_LeaderDirectedCallout, anEnt, ent);
+    RWStepVisual_RWLeaderDirectedCallout aTool;
     aTool.WriteStep(SW, anEnt);
   }
   break;

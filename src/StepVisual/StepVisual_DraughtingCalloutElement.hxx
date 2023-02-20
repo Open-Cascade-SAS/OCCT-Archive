@@ -25,6 +25,7 @@
 class Standard_Transient;
 class StepVisual_AnnotationCurveOccurrence;
 class StepVisual_AnnotationFillAreaOccurrence;
+class StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem;
 class StepVisual_AnnotationTextOccurrence;
 class StepVisual_TessellatedAnnotationOccurrence;
 
@@ -42,6 +43,7 @@ public:
   //! 2 -> AnnotationTextOccurrence
   //! 3 -> TessellatedAnnotationOccurrence
   //! 4 -> AnnotationFillAreaOccurrence
+  //! 5 -> AnnotationLeaderTerminatorOccurrence
   //! 0 else
   Standard_EXPORT Standard_Integer CaseNum (const Handle(Standard_Transient)& ent)  const;
   
@@ -56,5 +58,9 @@ public:
 
   //! returns Value as a AnnotationFillAreaOccurrence
   Standard_EXPORT Handle(StepVisual_AnnotationFillAreaOccurrence) AnnotationFillAreaOccurrence()  const;
+
+  //! returns Value as a AnnotationLeaderTerminatorOccurrence
+  Standard_EXPORT Handle(StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem) AnnotationLeaderTerminatorOccurrence() const;
+
 };
 #endif // StepVisual_DraughtingCalloutElement

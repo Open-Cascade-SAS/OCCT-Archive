@@ -445,6 +445,7 @@
 #include <RWStepVisual_RWFillAreaStyle.hxx>
 #include <RWStepVisual_RWFillAreaStyleColour.hxx>
 #include <RWStepVisual_RWInvisibility.hxx>
+#include <RWStepVisual_RWLeaderDirectedCallout.hxx>
 #include <RWStepVisual_RWMechanicalDesignGeometricPresentationArea.hxx>
 #include <RWStepVisual_RWMechanicalDesignGeometricPresentationRepresentation.hxx>
 #include <RWStepVisual_RWOverRidingStyledItem.hxx>
@@ -910,6 +911,10 @@
 #include <StepShape_Vertex.hxx>
 #include <StepShape_VertexLoop.hxx>
 #include <StepShape_VertexPoint.hxx>
+#include <StepVisual_AnnotationCurveOccurrence.hxx>
+#include <StepVisual_AnnotationCurveOccurrenceAndGeomReprItem.hxx>
+#include <StepVisual_AnnotationLeaderCurveOccurrenceAndGeomReprItem.hxx>
+#include <StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem.hxx>
 #include <StepVisual_AnnotationText.hxx>
 #include <StepVisual_AnnotationTextOccurrence.hxx>
 #include <StepVisual_AreaInSet.hxx>
@@ -934,6 +939,7 @@
 #include <StepVisual_FillAreaStyle.hxx>
 #include <StepVisual_FillAreaStyleColour.hxx>
 #include <StepVisual_Invisibility.hxx>
+#include <StepVisual_LeaderDirectedCallout.hxx>
 #include <StepVisual_MechanicalDesignGeometricPresentationArea.hxx>
 #include <StepVisual_MechanicalDesignGeometricPresentationRepresentation.hxx>
 #include <StepVisual_OverRidingStyledItem.hxx>
@@ -1148,6 +1154,9 @@ IMPLEMENT_STANDARD_RTTIEXT(RWStepAP214_GeneralModule,StepData_GeneralModule)
 #include <RWStepDimTol_RWGeoTolAndGeoTolWthDatRefAndGeoTolWthMaxTol.hxx>
 #include <RWStepDimTol_RWGeoTolAndGeoTolWthMaxTol.hxx>
 #include <RWStepVisual_RWAnnotationCurveOccurrence.hxx>
+#include <RWStepVisual_RWAnnotationCurveOccurrenceAndGeomReprItem.hxx>
+#include <RWStepVisual_RWAnnotationLeaderCurveOccurrenceAndGeomReprItem.hxx>
+#include <RWStepVisual_RWAnnotationLeaderTerminatorOccurrenceAndGeomReprItem.hxx>
 #include <RWStepVisual_RWAnnotationOccurrence.hxx>
 #include <RWStepVisual_RWAnnotationPlane.hxx>
 #include <RWStepVisual_RWDraughtingCallout.hxx>
@@ -1216,8 +1225,6 @@ IMPLEMENT_STANDARD_RTTIEXT(RWStepAP214_GeneralModule,StepData_GeneralModule)
 #include <RWStepVisual_RWCameraModelD3MultiClipping.hxx>
 #include <RWStepVisual_RWCameraModelD3MultiClippingIntersection.hxx>
 #include <RWStepVisual_RWCameraModelD3MultiClippingUnion.hxx>
-#include <StepVisual_AnnotationCurveOccurrenceAndGeomReprItem.hxx>
-#include <RWStepVisual_RWAnnotationCurveOccurrenceAndGeomReprItem.hxx>
 
 // Added for kinematics implementation
 #include <RWStepKinematics_RWActuatedKinPairAndOrderKinPair.hxx>
@@ -5867,6 +5874,27 @@ void RWStepAP214_GeneralModule::FillSharedCase(const Standard_Integer CN,
     aTool.Share(anEnt, iter);
   }
   break;
+  case 820:
+  {
+    DeclareAndCast(StepVisual_AnnotationLeaderCurveOccurrenceAndGeomReprItem, anEnt, ent);
+    RWStepVisual_RWAnnotationLeaderCurveOccurrenceAndGeomReprItem aTool;
+    aTool.Share(anEnt, iter);
+  }
+  break;
+  case 821:
+  {
+    DeclareAndCast(StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem, anEnt, ent);
+    RWStepVisual_RWAnnotationLeaderTerminatorOccurrenceAndGeomReprItem aTool;
+    aTool.Share(anEnt, iter);
+  }
+  break;
+  case 824:
+  {
+    DeclareAndCast(StepVisual_LeaderDirectedCallout, anEnt, ent);
+    RWStepVisual_RWLeaderDirectedCallout aTool;
+    aTool.Share(anEnt, iter);
+  }
+  break;
   default : break;
   }
 }
@@ -8173,7 +8201,15 @@ Standard_Boolean RWStepAP214_GeneralModule::NewVoid
    case 818:
      ent = new StepVisual_CubicBezierTriangulatedFace;
      break;
-
+   case 820:
+     ent = new StepVisual_AnnotationLeaderCurveOccurrenceAndGeomReprItem;
+     break;
+   case 821:
+     ent = new StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem;
+     break;
+   case 824:
+     ent = new StepVisual_LeaderDirectedCallout;
+     break;
   default: 
     return Standard_False;
   }
@@ -8870,6 +8906,9 @@ Standard_Integer  RWStepAP214_GeneralModule::CategoryNumber
   case 816: return cataux;
   case 817: return cataux;
   case 818: return cataux;
+  case 820: return catdr;
+  case 821: return catdr;
+  case 824: return cataux;
   default : break;
   }
   return 0;

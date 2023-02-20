@@ -163,6 +163,7 @@ static Standard_CString schemaAP242DIS = "AP242_MANAGED_MODEL_BASED_3D_ENGINEERI
 #include <StepGeom_Hyperbola.hxx>
 #include <StepGeom_IntersectionCurve.hxx>
 #include <StepVisual_Invisibility.hxx>
+#include <StepVisual_LeaderDirectedCallout.hxx>
 #include <StepBasic_LengthUnit.hxx>
 #include <StepGeom_Line.hxx>
 #include <StepBasic_LocalTime.hxx>
@@ -663,6 +664,8 @@ static Standard_CString schemaAP242DIS = "AP242_MANAGED_MODEL_BASED_3D_ENGINEERI
 #include <StepVisual_CameraModelD3MultiClipping.hxx>
 #include <StepVisual_CameraModelD3MultiClippingIntersection.hxx>
 #include <StepVisual_CameraModelD3MultiClippingUnion.hxx>
+#include <StepVisual_AnnotationLeaderCurveOccurrenceAndGeomReprItem.hxx>
+#include <StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem.hxx>
 #include <StepVisual_AnnotationCurveOccurrenceAndGeomReprItem.hxx>
 
 // Added for kinematics implementation
@@ -1558,6 +1561,9 @@ StepAP214_Protocol::StepAP214_Protocol ()
   types.Bind(STANDARD_TYPE(StepVisual_ComplexTriangulatedSurfaceSet), 816);
   types.Bind(STANDARD_TYPE(StepVisual_CubicBezierTessellatedEdge), 817);
   types.Bind(STANDARD_TYPE(StepVisual_CubicBezierTriangulatedFace), 818);
+  types.Bind(STANDARD_TYPE(StepVisual_AnnotationLeaderCurveOccurrenceAndGeomReprItem), 820);
+  types.Bind(STANDARD_TYPE(StepVisual_AnnotationLeaderTerminatorOccurrenceAndGeomReprItem), 821);
+  types.Bind(STANDARD_TYPE(StepVisual_LeaderDirectedCallout), 824);
 }
 
 
