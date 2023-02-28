@@ -226,304 +226,266 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferCurveAndSurface
 //function : TransferGeometry
 //purpose  : 
 //=======================================================================
-
 TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
-                               (const Handle(IGESData_IGESEntity)& start,
+                               (const Handle(IGESData_IGESEntity)& theStart,
                                 const Message_ProgressRange& theProgress)
 {
   // Declaration of messages// 
   // DCE 22/12/98
-  //Message_Msg msg1005("IGES_1005");  //  Software error :  start IsNull.
-  //Message_Msg msg1015("IGES_1015");  //  invalid type or exception raising (software error).
-  //Message_Msg msg1010("IGES_1010");  //  Not sameparameter.
-  //  Message_Msg msg1015("IGES_1015");
-  //Message_Msg msg210 ("XSTEP_210");  
-  //Message_Msg msg202 ("XSTEP_202");
+  //Message_Msg aMsg1005("IGES_1005");  //  Software error :  start IsNull.
+  //Message_Msg aMsg1015("IGES_1015");  //  invalid type or exception raising (software error).
+  //Message_Msg aMsg1010("IGES_1010");  //  Not sameparameter.
+  //  Message_Msg aMsg1015("IGES_1015");
+  //Message_Msg aMsg210 ("XSTEP_210");  
+  //Message_Msg aMsg202 ("XSTEP_202");
   ////////////////////////////
-  TopoDS_Shape res;
-  gp_Trsf T408;
-  if (start.IsNull()) {
-    Message_Msg msg1005("IGES_1005");  //  Software error :  start IsNull.
-    SendFail(start, msg1005);
-    return res;
+  TopoDS_Shape aRes;
+  gp_Trsf aT408;
+  if (theStart.IsNull())
+  {
+    Message_Msg aMsg1005("IGES_1005");  //  Software error :  start IsNull.
+    SendFail(theStart, aMsg1005);
+    return aRes;
   }
 
-  // Read of the DE number and the type number of the entity
-  Handle(TCollection_HAsciiString) label = GetModel()->StringLabel(start);
-  //Standard_Integer typeNumber = start->TypeNumber();
-  
   // sln 13.06.2002 OCC448: Avoid transferring invisible sub entities which
   // logically depend on the one
-  Standard_Integer onlyvisible = Interface_Static::IVal("read.iges.onlyvisible");
-  
-  if (IGESToBRep::IsCurveAndSurface(start)) {
-    if(onlyvisible && start->BlankStatus() == 1)
-      return res;
-    try {
+  Standard_Integer anOnlyvisible = Interface_Static::IVal("read.iges.onlyvisible");
+
+  if (IGESToBRep::IsCurveAndSurface(theStart))
+  {
+    if(anOnlyvisible && theStart->BlankStatus() == 1)
+      return aRes;
+    try
+    {
       OCC_CATCH_SIGNALS
-        res = TransferCurveAndSurface(start, theProgress);
+        aRes = TransferCurveAndSurface(theStart, theProgress);
     }
-    catch(Standard_Failure const&) {
-      Message_Msg msg1015("IGES_1015");
-      SendFail(start, msg1015);
+    catch(Standard_Failure const&)
+    {
+      Message_Msg aMsg1015("IGES_1015");
+      SendFail(theStart, aMsg1015);
     }
-    return res;
+    return aRes;
   }
 
   //408 : SingularSubfigure
-  if (start->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure))) 
+  if (theStart->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure)))
     {
-      if(onlyvisible && start->BlankStatus() == 1)
-        return res;
-        
-      DeclareAndCast(IGESBasic_SingularSubfigure, st408, start);
-      Handle (IGESBasic_SubfigureDef) stsub = st408->Subfigure();
-      gp_XYZ trans = st408->Translation();
-      gp_Vec vectr(trans);
-      Standard_Real scunit = GetUnitFactor();
-      vectr.Multiply(scunit);
-      T408.SetTranslation(vectr);
-      if (st408->HasScaleFactor()) {
-	  Standard_Real scalef = st408->ScaleFactor();
-	  T408.SetScaleFactor(scalef);
-	}
-      if (HasShapeResult(stsub)) {
-	res = GetShapeResult(stsub);
-      }
-      else {
-	try {
-	  OCC_CATCH_SIGNALS
-	  res = TransferGeometry(stsub, theProgress);
-	}
-    catch(Standard_Failure const&) {
-	  res.Nullify();
-          Message_Msg msg1015("IGES_1015");
-	  SendFail( st408, msg1015);
-	}
-	if (!res.IsNull()) {
-	  SetShapeResult(stsub,res);
-	}
-      }
-    }
-  
-  // 308 : SubfigureDefinition
-  else if (start->IsKind(STANDARD_TYPE(IGESBasic_SubfigureDef))) {
-    DeclareAndCast(IGESBasic_SubfigureDef, st308, start);
-    TopoDS_Compound group;
-    BRep_Builder B;
-    B.MakeCompound (group);
-    if (st308->NbEntities() < 1) {
-      Message_Msg msg210 ("XSTEP_210");  
-      SendFail( st308, msg210);
-      return res;
-    }
-    Message_ProgressScope PS (theProgress, "Subfigure item", st308->NbEntities());
-    for (Standard_Integer i=1; i <= st308->NbEntities() && PS.More(); i++)
-    {
-      Message_ProgressRange aRange = PS.Next();
-      TopoDS_Shape item;
-      if (st308->AssociatedEntity(i).IsNull()) {
-	Message_Msg msg1020("IGES_1020");
-        msg1020.Arg(i);
-	SendWarning( st308, msg1020);
-	continue;
-      }
-      if(onlyvisible && st308->AssociatedEntity(i)->BlankStatus() == 1 )
-        continue;      
-        
-      if (HasShapeResult(st308->AssociatedEntity(i)))
-	{
-	  item = GetShapeResult(st308->AssociatedEntity(i));
-	}
-      else {
-	try {      
-	  OCC_CATCH_SIGNALS
-	  item = TransferGeometry (st308->AssociatedEntity(i), aRange);
-	}
-    catch(Standard_Failure const&) {
-	  item.Nullify();
-	  Message_Msg msg1015("IGES_1015");
-	  SendFail( st308->AssociatedEntity(i), msg1015);
-	}
-      }
-      if (item.IsNull()) {
-	Message_Msg msg1025("IGES_1025");
-        msg1025.Arg(i);
-	SendWarning (start,msg1025);
-      }
-      else {
-	B.Add(group, item);
-	SetShapeResult (st308->AssociatedEntity(i),item);
-      }
-    }
-    res = group;
-  }
-  else if (start->IsKind(STANDARD_TYPE(IGESBasic_Group))) {
-    if(onlyvisible && start->BlankStatus() == 1)
-      return res;      
-    
-    DeclareAndCast(IGESBasic_Group, st402f1, start);
-    TopoDS_Compound group;
-    BRep_Builder B;
-    B.MakeCompound (group);
-    if (st402f1->NbEntities() < 1) {
-      Message_Msg msg202 ("XSTEP_202");
-      msg202.Arg(st402f1->FormNumber());
-      SendFail(st402f1, msg202);
-      return res;
-    }
-    Message_ProgressScope PS (theProgress, "Group item", st402f1->NbEntities());
-    Standard_Boolean ProblemInGroup = Standard_False;
-    for (Standard_Integer i=1; i <= st402f1->NbEntities() && PS.More(); i++)
-    {
-      Message_ProgressRange aRange = PS.Next();
-      TopoDS_Shape item;
-      if (st402f1->Entity(i).IsNull()) {
-	Message_Msg msg1020("IGES_1020");
-	msg1020.Arg(i);
-	SendFail( st402f1, msg1020);
-	continue;
-      }
-      
-      if(onlyvisible && st402f1->Entity(i)->BlankStatus() == 1)
-        continue;      
-      
-      if (HasShapeResult(st402f1->Entity(i))) {
-	item = GetShapeResult(st402f1->Entity(i));
-      }
-      else {
-	try {
-	  OCC_CATCH_SIGNALS
-	  item = TransferGeometry (st402f1->Entity(i), aRange);
-	}
-    catch(Standard_Failure const&) {
-	  item.Nullify();
-	  Message_Msg msg1015("IGES_1015");
-	  SendFail(st402f1->Entity(i),msg1015);
-	}
-      }
-      if (item.IsNull()) {
-	//Message_Msg msg1030("IGES_1030");
-	//msg1030.Arg(st402f1->FormNumber());
-	//msg1030.Arg(i);
-	//SendWarning (st402f1,msg1030);
-        ProblemInGroup = Standard_True;
-      }
-      else {
-	B.Add(group, item);
-	SetShapeResult (st402f1->Entity(i),item);
-      }
-    }
-    res = group;
-    if(ProblemInGroup) {
-      Message_Msg msg1030("IGES_1030");
-      msg1030.Arg(st402f1->FormNumber());
-      SendWarning (st402f1,msg1030);
-    }
-  }
-  else if (start->IsKind(STANDARD_TYPE(IGESBasic_GroupWithoutBackP))) {	
-    
-    if(onlyvisible && start->BlankStatus() == 1)
-      return res;      
-    
-    DeclareAndCast(IGESBasic_GroupWithoutBackP, st402f7, start);
-    TopoDS_Compound group;
-//unused    Handle(TCollection_HAsciiString) label = GetModel()->StringLabel(st402f7);
-    BRep_Builder B;
-    B.MakeCompound (group);
-    if (st402f7->NbEntities() < 1) {
-      Message_Msg msg202 ("XSTEP_202");
-      msg202.Arg(st402f7->FormNumber());
-      SendFail(st402f7, msg202); 
-      return res;
-    }
-    Message_ProgressScope PS (theProgress, "Group item", st402f7->NbEntities());
-    Standard_Boolean ProblemInGroup = Standard_False;
-    for (Standard_Integer i=1; i <= st402f7->NbEntities() && PS.More(); i++)
-    {
-      Message_ProgressRange aRange = PS.Next();
-      TopoDS_Shape item;
-      if (st402f7->Entity(i).IsNull()) {
-	Message_Msg msg1020("IGES_1020");
-	msg1020.Arg(i);
-	SendFail( st402f7, msg1020);
-	continue;
-      }
-      
-      if(onlyvisible && st402f7->Entity(i)->BlankStatus() == 1 )
-        continue;      
+      if(anOnlyvisible && theStart->BlankStatus() == 1)
+        return aRes;
 
-      if (HasShapeResult(st402f7->Entity(i))) {
-	item = GetShapeResult(st402f7->Entity(i));
+      DeclareAndCast(IGESBasic_SingularSubfigure, aSt408, theStart);
+      Handle (IGESBasic_SubfigureDef) aStsub = aSt408->Subfigure();
+      gp_XYZ aTrans = aSt408->Translation();
+      gp_Vec aVectr(aTrans);
+      Standard_Real aScunit = GetUnitFactor();
+      aVectr.Multiply(aScunit);
+      aT408.SetTranslation(aVectr);
+      if (aSt408->HasScaleFactor())
+      {
+        Standard_Real aScalef = aSt408->ScaleFactor();
+        aT408.SetScaleFactor(aScalef);
       }
-      else {
-	try {
-	  OCC_CATCH_SIGNALS
-	  item = TransferGeometry (st402f7->Entity(i), aRange);
-	}
-    catch(Standard_Failure const&) {
-	  item.Nullify();
-	  Message_Msg msg1015("IGES_1015");
-	  SendFail(st402f7->Entity(i),msg1015);
-	}
+      if (HasShapeResult(aStsub))
+      {
+        aRes = GetShapeResult(aStsub);
       }
-      if (item.IsNull()) {
-	//Message_Msg msg1030("IGES_1030");
-	//msg1030.Arg(st402f7->FormNumber());
-	//msg1030.Arg(i);
-	//SendWarning (st402f7,msg1030);
-        ProblemInGroup = Standard_True;
-      }
-      else {
-	B.Add(group, item);
-	SetShapeResult (st402f7->Entity(i),item);
+      else
+      {
+        try
+        {
+          OCC_CATCH_SIGNALS
+            aRes = TransferGeometry(aStsub, theProgress);
+        }
+        catch(Standard_Failure const&)
+        {
+          aRes.Nullify();
+          Message_Msg aMsg1015("IGES_1015");
+          SendFail(aSt408, aMsg1015);
+        }
+        if (!aRes.IsNull())
+        {
+          SetShapeResult(aStsub, aRes);
+        }
       }
     }
-    res = group;
-    if(ProblemInGroup) {
-      Message_Msg msg1030("IGES_1030");
-      msg1030.Arg(st402f7->FormNumber());
-      SendWarning (st402f7,msg1030);
+
+  // 308 : SubfigureDefinition
+  else if (theStart->IsKind(STANDARD_TYPE(IGESBasic_SubfigureDef)))
+  {
+    DeclareAndCast(IGESBasic_SubfigureDef, aSt308, theStart);
+    TopoDS_Compound aGroup;
+    BRep_Builder aBuilder;
+    aBuilder.MakeCompound (aGroup);
+    if (aSt308->NbEntities() < 1)
+    {
+      Message_Msg aMsg210 ("XSTEP_210");
+      SendFail(aSt308, aMsg210);
+      return aRes;
+    }
+    Message_ProgressScope aPS (theProgress, "Subfigure item", aSt308->NbEntities());
+    for (Standard_Integer anIndx =1; anIndx <= aSt308->NbEntities() && aPS.More(); anIndx++)
+    {
+      Message_ProgressRange aRange = aPS.Next();
+      TopoDS_Shape anItem;
+      if (aSt308->AssociatedEntity(anIndx).IsNull())
+      {
+        Message_Msg aMsg1020("IGES_1020");
+        aMsg1020.Arg(anIndx);
+        SendWarning(aSt308, aMsg1020);
+        continue;
+      }
+      if(anOnlyvisible && aSt308->AssociatedEntity(anIndx)->BlankStatus() == 1 )
+        continue;      
+        
+      if (HasShapeResult(aSt308->AssociatedEntity(anIndx)))
+      {
+        anItem = GetShapeResult(aSt308->AssociatedEntity(anIndx));
+      }
+      else
+      {
+        try
+        {
+          OCC_CATCH_SIGNALS
+          anItem = TransferGeometry (aSt308->AssociatedEntity(anIndx), aRange);
+        }
+        catch(Standard_Failure const&)
+        {
+          anItem.Nullify();
+          Message_Msg aMsg1015("IGES_1015");
+          SendFail(aSt308->AssociatedEntity(anIndx), aMsg1015);
+        }
+      }
+      if (anItem.IsNull())
+      {
+        Message_Msg aMsg1025("IGES_1025");
+        aMsg1025.Arg(anIndx);
+        SendWarning (theStart, aMsg1025);
+      }
+      else
+      {
+        aBuilder.Add(aGroup, anItem);
+        SetShapeResult (aSt308->AssociatedEntity(anIndx), anItem);
+      }
+    }
+    aRes = aGroup;
+  }
+  // 402 : Group Associativity
+  else if (theStart->IsKind(STANDARD_TYPE(IGESBasic_Group)) ||
+    theStart->IsKind(STANDARD_TYPE(IGESBasic_GroupWithoutBackP)))
+  {
+    if(anOnlyvisible && theStart->BlankStatus() == 1)
+      return aRes;
+
+    DeclareAndCast(IGESBasic_Group, aSt402, theStart);
+    TopoDS_Compound aGroup;
+    BRep_Builder aBuilder;
+    aBuilder.MakeCompound (aGroup);
+    if (aSt402->NbEntities() < 1)
+    {
+      Message_Msg aMsg202 ("XSTEP_202");
+      aMsg202.Arg(aSt402->FormNumber());
+      SendFail(aSt402, aMsg202);
+      return aRes;
+    }
+    Message_ProgressScope aPS (theProgress, "Group item", aSt402->NbEntities());
+    Standard_Boolean aProblemInGroup = Standard_False;
+    for (Standard_Integer anIndx=1; anIndx <= aSt402->NbEntities() && aPS.More(); anIndx++)
+    {
+      Message_ProgressRange aRange = aPS.Next();
+      TopoDS_Shape anItem;
+      if (aSt402->Entity(anIndx).IsNull())
+      {
+        Message_Msg aMsg1020("IGES_1020");
+        aMsg1020.Arg(anIndx);
+        SendFail(aSt402, aMsg1020);
+        continue;
+      }
+
+      if(anOnlyvisible && aSt402->Entity(anIndx)->BlankStatus() == 1)
+        continue;
+
+      if (HasShapeResult(aSt402->Entity(anIndx)))
+      {
+        anItem = GetShapeResult(aSt402->Entity(anIndx));
+      }
+      else
+      {
+        try
+        {
+          OCC_CATCH_SIGNALS
+          anItem = TransferGeometry (aSt402->Entity(anIndx), aRange);
+        }
+        catch(Standard_Failure const&)
+        {
+          anItem.Nullify();
+          Message_Msg aMsg1015("IGES_1015");
+          SendFail(aSt402->Entity(anIndx), aMsg1015);
+        }
+      }
+      if (anItem.IsNull())
+      {
+        aProblemInGroup = Standard_True;
+      }
+      else
+      {
+        aBuilder.Add(aGroup, anItem);
+        SetShapeResult (aSt402->Entity(anIndx), anItem);
+      }
+    }
+    aRes = aGroup;
+    if(aProblemInGroup)
+    {
+      Message_Msg aMsg1030("IGES_1030");
+      aMsg1030.Arg(aSt402->FormNumber());
+      SendWarning (aSt402, aMsg1030);
     }
   }
-  else {
-    Message_Msg msg1001("IGES_1001");
-    msg1001.Arg(start->FormNumber());
-    SendFail (start,msg1001);
-    return res;
+  else
+  {
+    Message_Msg aMsg1001("IGES_1001");
+    aMsg1001.Arg(theStart->FormNumber());
+    SendFail (theStart, aMsg1001);
+    return aRes;
   }
-  
-  if (start->HasTransf()) {
-    gp_Trsf T;
+
+  if (theStart->HasTransf())
+  {
+    gp_Trsf aT;
     SetEpsilon(1.E-04);
-    if (IGESData_ToolLocation::ConvertLocation(GetEpsilon(),start->CompoundLocation(),
-                                               T,GetUnitFactor())) {
-      if (start->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure))) 
-	{
-	  gp_XYZ tra = T.TranslationPart();
-	  gp_XYZ trans = T408.TranslationPart();
-	  tra.Add(trans);
-	  T.SetTranslationPart(tra);
-	  Standard_Real sc = T.ScaleFactor();
-	  Standard_Real scalef = T408.ScaleFactor();
-	  sc = sc*scalef;
-	  T.SetScaleFactor(sc);
-	}
-      TopLoc_Location L(T);
-      res.Move(L, Standard_False);
+    if (IGESData_ToolLocation::ConvertLocation(GetEpsilon(), theStart->CompoundLocation(),
+                                               aT, GetUnitFactor()))
+    {
+      if (theStart->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure)))
+      {
+        gp_XYZ aTra = aT.TranslationPart();
+        gp_XYZ aTrans = aT408.TranslationPart();
+        aTra.Add(aTrans);
+        aT.SetTranslationPart(aTra);
+        Standard_Real aSc = aT.ScaleFactor();
+        Standard_Real aScalef = aT408.ScaleFactor();
+        aSc = aSc*aScalef;
+        aT.SetScaleFactor(aSc);
+      }
+      TopLoc_Location aLoc(aT);
+      aRes.Move(aLoc, Standard_False);
     }
-    else {
-      Message_Msg msg1035("IGES_1035");
-      SendWarning (start,msg1035);
+    else
+    {
+      Message_Msg aMsg1035("IGES_1035");
+      SendWarning (theStart, aMsg1035);
     }
   }
-  else {
-    if (start->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure))) {
-      TopLoc_Location L(T408);
-      res.Move(L);	  
+  else
+  {
+    if (theStart->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure)))
+    {
+      TopLoc_Location aLoc(aT408);
+      aRes.Move(aLoc);
     }
-  }  
-  return res;
+  }
+  return aRes;
 }
 
 
