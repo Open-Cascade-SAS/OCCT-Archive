@@ -2198,12 +2198,12 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
   aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("bool uIsDrawAxis", Graphic3d_TOS_FRAGMENT));
 
   TCollection_AsciiString aSrcVert = TCollection_AsciiString()
-  + EOL"vec3 gridPlane[6] = vec3[] (vec3( 1,  1, 0), vec3(-1, -1, 0), vec3(-1,  1, 0),"
-    EOL"                            vec3(-1, -1, 0), vec3( 1,  1, 0), vec3( 1, -1, 0));"
+  + EOL"vec3 gridPlane[6] = vec3[] (vec3( 1.0,  1.0, 0.0), vec3(-1.0, -1.0, 0.0), vec3(-1.0,  1.0, 0.0),"
+    EOL"                            vec3(-1.0, -1.0, 0.0), vec3( 1.0,  1.0, 0.0), vec3( 1.0, -1.0, 0.0));"
 
     EOL"vec3 UnprojectPoint (float aX, float anY, float aZ)"
     EOL"{"
-    EOL"  vec4 anUnprojPnt = occModelWorldMatrixInverse * occWorldViewMatrixInverse * occProjectionMatrixInverse * vec4 (aX, anY, aZ, 1.0);"
+    EOL"  vec4 anUnprojPnt = occWorldViewMatrixInverse * occProjectionMatrixInverse * vec4 (aX, anY, aZ, 1.0);"
     EOL"  return anUnprojPnt.xyz / anUnprojPnt.w;"
     EOL"}"
 
@@ -2217,7 +2217,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
     EOL"}";
 
   TCollection_AsciiString aSrcFrag = TCollection_AsciiString()
-    + EOL"vec4 grid (vec3 theFragPos3D, vec3 theColor, float theScale, bool theIsDrawAxis)"
+  + EOL"vec4 grid (vec3 theFragPos3D, vec3 theColor, float theScale, bool theIsDrawAxis)"
     EOL"{"
     EOL"  vec2 aCoord = theFragPos3D.xy * theScale;"
     EOL"  vec2 aDerivative = fwidth (aCoord);"
@@ -2257,8 +2257,9 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
     EOL"  float aLinearDepth = computeLinearDepth (aFragPos3D);"
     // TODO : Compute scale
     //EOL"  float aScale = 100.0 / pow (10.0, uScale);"
+    EOL"  float aScaleBig = 10.0 / pow (2.0, 10.0);"
     EOL"  float aScale = 10.0 / pow (2.0, uScale);"
-    EOL"  vec4 aBigGridColor = grid (aFragPos3D, vec3 (0.8), aScale * 0.1, true);"
+    EOL"  vec4 aBigGridColor = grid (aFragPos3D, vec3 (0.8), aScaleBig, true);"
     //EOL"  vec4 aColor = aBigGridColor;"
     EOL"  vec4 aColor = aBigGridColor.a == 0.0"
     EOL"              ? grid (aFragPos3D, vec3 (0.2), aScale, false)"
@@ -2277,19 +2278,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
     EOL"  {"
     EOL"    float anInterpVal = float (aLinearDepth > 0.0) - sign (aLinearDepth) * clamp (1.0 / (abs (aLinearDepth) - 1.0), 0.5, 1.0);"
     EOL"    aColor = mix (aColor, aBackgroundColor, anInterpVal);"
-    //EOL"    aColor = mix (aColor, aBackgroundColor, 0.99);;"
-
-    EOL"    if (gl_FragCoord.x < 200.0)"
-    EOL"    {"
-    EOL"      if (anInterpVal < 0.25)"
-    EOL"        aColor = vec4 (1.0, 0.0, 0.0, 1.0);"
-    EOL"      else if (anInterpVal < 0.5)"
-    EOL"        aColor = vec4 (0.0, 1.0, 0.0, 1.0);"
-    EOL"      else if (anInterpVal < 0.75)"
-    EOL"        aColor = vec4 (0.0, 0.0, 1.0, 1.0);"
-    EOL"      else"
-    EOL"        aColor = vec4 (1.0, 1.0, 0.0, 1.0);"
-    EOL"    }"
+    //EOL"    aColor = mix (aColor, aBackgroundColor, 0.99);"
     EOL"  }"
 
     /*EOL"  if (aLinearDepth < -1.0)"

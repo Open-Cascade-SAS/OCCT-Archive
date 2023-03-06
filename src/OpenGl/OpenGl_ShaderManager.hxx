@@ -232,7 +232,7 @@ public:
     {
       prepareGridProgram();
     }
-    return myContext->BindProgram (myGridProgram);
+    return bindProgramWithState (myGridProgram, Graphic3d_TypeOfShadingModel_Unlit);
   }
 
   //! Generates shader program to render environment cubemap as background.

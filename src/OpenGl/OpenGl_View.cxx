@@ -2604,19 +2604,59 @@ void OpenGl_View::renderGrid()
 {
   const Handle(OpenGl_Context)& aContext = myWorkspace->GetGlContext();
 
-  aContext->ShaderManager()->UpdateModelWorldStateTo (aContext->ModelWorldState.Current());
+  /*aContext->ShaderManager()->UpdateModelWorldStateTo (aContext->ModelWorldState.Current());
   aContext->ShaderManager()->UpdateProjectionStateTo (aContext->ProjectionState.Current());
-  aContext->ShaderManager()->UpdateWorldViewStateTo (aContext->WorldViewState.Current());
+  aContext->ShaderManager()->UpdateWorldViewStateTo (aContext->WorldViewState.Current());*/
+
+  if (MinMaxValues (Standard_True).IsVoid())
+  {
+    Bnd_Box aDummy;
+    aDummy.Set (gp::Origin());
+    aContext->Camera()->ZFitAll (1.0, aDummy, aDummy);
+  }
+
+  Standard_Real aZNear = aContext->Camera()->ZNear();
+  Standard_Real aZFar = aContext->Camera()->ZFar();
+
+  aContext->Camera()->SetZRange (aZNear, Max (aZNear * 1.001, aZFar));
+
+  aContext->ProjectionState.SetCurrent (aContext->Camera()->ProjectionMatrixF());
+
+  aContext->ApplyProjectionMatrix();
+  aContext->ApplyWorldViewMatrix();
 
   aContext->core11fwd->glEnable (GL_BLEND);
   aContext->core11fwd->glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   aContext->core11fwd->glEnable(GL_MULTISAMPLE);
 
-  Graphic3d_Vec4 anUnprojPnt = aContext->WorldViewState.Current().Inverted() * aContext->ProjectionState.Current().Inverted() * Graphic3d_Vec4 (1.0, 1.0, 0.0, 1.0);
-  Graphic3d_Vec3 aVal = anUnprojPnt.xyz() / anUnprojPnt.w();
-  std::cout << anUnprojPnt.w() << std::endl;
-  std::cout << aVal.x() << " " << aVal.y() << " " << aVal.z() << std::endl;
+  Graphic3d_Vec3 gridPlane[4] = { Graphic3d_Vec3 (1.0,  1.0, 0.0), Graphic3d_Vec3(-1.0,  1.0, 0.0),
+                                  Graphic3d_Vec3(-1.0, -1.0, 0.0), Graphic3d_Vec3 (1.0, -1.0, 0.0) };
+
+  for (int i = 0; i < 4; i++)
+  {
+    if (!aContext->WorldViewState.Current().Inverted().IsEqual (aContext->ShaderManager()->WorldViewState().WorldViewMatrixInverse()))
+    {
+      std::cout << "WorldViewState not equal" << std::endl;
+    }
+    if (!aContext->ProjectionState.Current().Inverted().IsEqual (aContext->ShaderManager()->ProjectionState().ProjectionMatrixInverse()))
+    {
+      std::cout << "ProjectionState not equal" << std::endl;
+    }
+    Graphic3d_Vec4 aNearPntVar = aContext->ShaderManager()->WorldViewState().WorldViewMatrixInverse() * aContext->ShaderManager()->ProjectionState().ProjectionMatrixInverse()
+      * Graphic3d_Vec4 (gridPlane[i].x(), gridPlane[i].y(), 0.0, 1.0);
+    Graphic3d_Vec3 aNearPnt = aNearPntVar.xyz() / aNearPntVar.w();
+    Graphic3d_Vec4 aFarPntVar = aContext->WorldViewState.Current().Inverted() * aContext->ProjectionState.Current().Inverted()
+      * Graphic3d_Vec4 (gridPlane[i].x(), gridPlane[i].y(), 1.0, 1.0);
+    Graphic3d_Vec3 aFarPnt = aFarPntVar.xyz() / aFarPntVar.w();
+    float aParam = -aNearPnt.z() / (aFarPnt.z() - aNearPnt.z());
+    Graphic3d_Vec3 aFragPos3D = aNearPnt + (aFarPnt - aNearPnt).Multiplied (aParam);
+
+    //std::cout << aFragPos3D.x() << " " << aFragPos3D.y() << " " << aFragPos3D.z() << std::endl;
+  }
+
+  //std::cout << "ZNear: " << aContext->Camera()->ZNear() << std::endl;
+  //std::cout << "ZFar : " << aContext->Camera()->ZFar() << std::endl;
 
   //Standard_Integer aScale = TCollection_AsciiString(RealToInt(aContext->Camera()->Scale())).Length();
 
@@ -2632,7 +2672,9 @@ void OpenGl_View::renderGrid()
   int k = (int)(log10 (aContext->Camera()->Scale()) / log10(2));
 
   Standard_Integer aScale = k;
-  std::cout << "Scale: " << aScale << std::endl;
+  //std::cout << "Scale: " << aScale << std::endl;
+
+  //aContext->Camera()->SetZRange (aContext->Camera()->ZNear(), aContext->Camera()->ZFar() + 1.0);
 
   if (aContext->ShaderManager()->BindGridProgram())
   {
@@ -2643,10 +2685,11 @@ void OpenGl_View::renderGrid()
     // TODO : add param to draw command
     aProg->SetUniform (aContext, "uIsDrawAxis", GLboolean (true));
 
-    aContext->ShaderManager()->PushState (aContext->ActiveProgram());
     aContext->core20fwd->glDrawArrays (GL_TRIANGLES, 0, 6);
     aContext->BindProgram (NULL);
   }
+
+  aContext->Camera()->SetZRange (aZNear, aZFar);
 }
 
 // =======================================================================
