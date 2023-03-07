@@ -155,8 +155,16 @@ static TopoDS_Edge  MakeEdge
   TopoDS_Edge E;
   B.MakeEdge (E,C3D,Precision::Confusion());
   B.Add (E,V1);  B.Add (E,V2);
-  B.UpdateVertex(V1, U1, E, 0.);
-  B.UpdateVertex(V2, U2, E, 0.);
+  if (!Precision::IsPositiveInfinite(U1) &&
+      !Precision::IsNegativeInfinite(U1))
+  {
+    B.UpdateVertex(V1, U1, E, 0.);
+  }
+  if (!Precision::IsPositiveInfinite(U2) &&
+      !Precision::IsNegativeInfinite(U2))
+  {
+    B.UpdateVertex(V2, U2, E, 0.);
+  }
   return E;
 }
 
@@ -302,11 +310,17 @@ void StepToTopoDS_TranslateEdge::Init(const Handle(StepShape_Edge)& aEdge,
   // ---             * a 3D Curve
   // ----------------------------------------------------------
   
-  if ( C->IsKind(STANDARD_TYPE(StepGeom_Pcurve))) {
+  if (C->IsKind(STANDARD_TYPE(StepGeom_Pcurve)))
+  {
     B.MakeEdge(E);
-//:S4136    B.UpdateEdge (E,preci);
-    B.Add(E, V1);
-    B.Add(E, V2);
+    if (!V1.IsNull())
+    {
+      B.Add(E, V1);
+    }
+    if (!V2.IsNull())
+    {
+      B.Add(E, V2);
+    }
   }
   else if (C->IsKind(STANDARD_TYPE(StepGeom_SurfaceCurve)) ) {
     // For SeamCurve and IntersectionCurve types
@@ -380,6 +394,21 @@ void  StepToTopoDS_TranslateEdge::MakeFromCurve3D
     done = Standard_False;
     return;
   }
+  //BRep_Builder aBuilder;
+  //if (V1.IsNull())
+  //{
+  //  TopoDS_Vertex aTmpVert;
+  //  const Standard_Real aFirst = C1->FirstParameter();
+  //  aBuilder.MakeVertex(aTmpVert, C1->Value(aFirst), preci);
+  //  V1 = aTmpVert;
+  //}
+  //if (V2.IsNull())
+  //{
+  //  TopoDS_Vertex aTmpVert;
+  //  const Standard_Real aFirst = C1->LastParameter();
+  //  aBuilder.MakeVertex(aTmpVert, C1->Value(aFirst), preci);
+  //  V2 = aTmpVert;
+  //}
     // -- Statistics -- -> No Warning message
   aTool.AddContinuity (C1);
   BRep_Builder B;
