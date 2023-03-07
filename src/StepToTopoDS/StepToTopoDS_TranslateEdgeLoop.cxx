@@ -22,6 +22,8 @@
 //    rln 02.06.99 removing #include <StepToTopoDS_DegeneratedTool.hxx>
 //    smh 31.01.01 BUC60810 : IsNull protection
 
+#include <StepToTopoDS_TranslateEdgeLoop.hxx>
+
 #include <BRep_Builder.hxx>
 #include <BRep_CurveRepresentation.hxx>
 #include <BRep_ListIteratorOfListOfCurveRepresentation.hxx>
@@ -29,13 +31,15 @@
 #include <BRep_TEdge.hxx>
 #include <BRep_Tool.hxx>
 #include <ElCLib.hxx>
-#include <Geom2d_BoundedCurve.hxx>
-#include <Geom2d_Curve.hxx>
-#include <Geom2d_Line.hxx>
+#include <Geom2d_BoundedCurve.hxx>#include <Geom2d_Line.hxx>
 #include <Geom_Curve.hxx>
+#include <gp_Dir.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_Surface.hxx>
+#include <Geom_CartesianPoint.hxx>
+#include <Geom2d_Curve.hxx>
+#include <GeomToStep_MakeCartesianPoint.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
 #include <Interface_Static.hxx>
@@ -43,6 +47,7 @@
 #include <ShapeAlgo.hxx>
 #include <ShapeAlgo_AlgoContainer.hxx>
 #include <ShapeAlgo_ToolContainer.hxx>
+#include <Geom_Line.hxx>
 #include <ShapeAnalysis_Curve.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeBuild_Edge.hxx>
@@ -63,13 +68,13 @@
 #include <StepShape_FaceBound.hxx>
 #include <StepShape_OrientedEdge.hxx>
 #include <StepShape_Vertex.hxx>
+#include <StepShape_VertexPoint.hxx>
 #include <StepToGeom.hxx>
 #include <StepToTopoDS.hxx>
 #include <StepToTopoDS_GeometricTool.hxx>
 #include <StepToTopoDS_NMTool.hxx>
 #include <StepToTopoDS_Tool.hxx>
 #include <StepToTopoDS_TranslateEdge.hxx>
-#include <StepToTopoDS_TranslateEdgeLoop.hxx>
 #include <StepToTopoDS_TranslateVertex.hxx>
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -85,6 +90,26 @@
 #include <Transfer_TransientProcess.hxx>
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
+
+// ============================================================================
+// Method  : MakeCurveFromStep
+// Purpose :
+// ============================================================================
+static Handle(Geom_Curve) MakeCurveFromStep (const Handle(StepGeom_Curve)& theStepCurve,
+                                             const Handle(Transfer_TransientProcess) theTP)
+{
+  Handle(Geom_Curve) aResCurve = Handle(Geom_Curve)::DownCast(theTP->FindTransient(theStepCurve));
+  if (!aResCurve.IsNull())
+  {
+    return aResCurve;
+  }
+  aResCurve = StepToGeom::MakeCurve(theStepCurve);
+  if (!aResCurve.IsNull())
+  {
+    theTP->BindTransient(theStepCurve, aResCurve);
+  }
+  return aResCurve;
+}
 
 // ============================================================================
 // Method  : RemoveSinglePCurve
@@ -232,21 +257,13 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
   BRep_Builder B;
   Handle(Transfer_TransientProcess) TP = aTool.TransientProcess();
 
-  Standard_Real preci = Precision();
+  const Standard_Real preci = Precision();
   TopoDS_Wire   W;
   TopoDS_Edge   E;
-  TopoDS_Vertex V;
 
-  Standard_Boolean isSeam, isLikeSeam;
+  Handle(Geom2d_Curve) C2d, C2d1, C2d2;
 
-  Handle(StepShape_OrientedEdge) OrEdge1, OrEdge2;
-  Handle(StepGeom_Curve) StepCurve, StepCurve1, StepCurve2;
-  Handle(StepRepr_DefinitionalRepresentation) DRI, Dri1, Dri2;
-
-  Handle(Geom2d_Curve) C2d, C2d1, C2d2, WhichC2d1, WhichC2d2;
-  TopoDS_Edge   suspectE; //:f1, degEdge; 
-
-  Standard_Integer j, NbEdge = EL->NbEdgeList();
+  const Standard_Integer NbEdge = EL->NbEdgeList();
   if (NbEdge == 0) {
     TP->AddWarning(EL, "Wire not done. EdgeLoop does not contain edges.");
     done = Standard_False;
@@ -281,9 +298,8 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
   //  This case may not be processed, PCurves has to be recomputed from scratch
   // -----------------------------------------------
 //  Standard_Integer theSame = 1; //gka 15.12.98
-
-  for (j=1; j<=NbEdge; j++) {
-    OrEdge1  = EL->EdgeListValue(j);
+  for (Standard_Integer j=1; j<=NbEdge; j++) {
+    Handle(StepShape_OrientedEdge) OrEdge1  = EL->EdgeListValue(j);
 
     if (OrEdge1.IsNull() || OrEdge1->EdgeElement().IsNull())
     {
@@ -349,21 +365,38 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
     StepToTopoDS_TranslateVertex myTranVertex1(Vstart, aTool, NMTool);
     StepToTopoDS_TranslateVertex myTranVertex2(Vend, aTool, NMTool);
 
-    if (myTranVertex1.IsDone()) {
+    if (myTranVertex1.IsDone())
+    {
       V1 = TopoDS::Vertex(myTranVertex1.Value());
     }
-    if (myTranVertex2.IsDone()) {
+    if (myTranVertex2.IsDone())
+    {
       V2 = TopoDS::Vertex(myTranVertex2.Value());
-      gp_Pnt p1 = BRep_Tool::Pnt(V1);
-      gp_Pnt p2 = BRep_Tool::Pnt(V2);
-      if (p1.Distance(p2) <= Precision::Confusion()) { //:S4136: preci) {
-        Standard_Boolean Fixed = Standard_True;
-        if (!iseV) aTool.Bind(Vend, V1); //gka 21.08.1998 bug PRO7656 
-        else if (!istV)  aTool.Bind (Vstart, V2);
-        else aTool.Bind (Vend, V1);
-        if (!C1.IsNull() && !C1->IsClosed() && Fixed)
+    }
+    if (!V1.IsNull() && !V2.IsNull())
+    {
+      gp_Pnt aPnt1 = BRep_Tool::Pnt(V1);
+      gp_Pnt aPnt2 = BRep_Tool::Pnt(V2);
+      if (aPnt1.Distance(aPnt2) <= Precision::Confusion())
+      {
+        Standard_Boolean aIsFixed = Standard_True;
+        if (!iseV)
+        {
+          aTool.Bind(Vend, V1);
+        }
+        else if (!istV)
+        {
+          aTool.Bind(Vstart, V2);
+        }
+        else
+        {
+          aTool.Bind(Vend, V1);
+        }
+        if (!C1.IsNull() && !C1->IsClosed() && aIsFixed)
+        {
           TP->AddWarning(EL->EdgeListValue(j),
-            "Vertex of same coordinates, set confused");
+                         "Vertex of same coordinates, set confused");
+        }
       }
     }
   }
@@ -373,32 +406,111 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
   // and make it be one vertex
   // NOTE: this is done only for the case if at least one of edges 
   // was not yet translated; else nothing will help
-  for (j=1; j<=NbEdge; j++) {
-    OrEdge1  = EL->EdgeListValue (j);
-    OrEdge2  = EL->EdgeListValue (j < NbEdge ? j + 1 : 1);
-    if (OrEdge1.IsNull() || OrEdge2.IsNull())
+  for (Standard_Integer anEdgeInd = 1; anEdgeInd <= NbEdge; anEdgeInd++)
+  {
+    Handle(StepShape_OrientedEdge) anOrEdge1 =
+      EL->EdgeListValue(anEdgeInd);
+    Handle(StepShape_OrientedEdge) anOrEdge2 =
+      EL->EdgeListValue(anEdgeInd < NbEdge ? anEdgeInd + 1 : 1);
+    if (anOrEdge1.IsNull() || anOrEdge2.IsNull())
       continue;
 
-    Handle(StepShape_EdgeCurve) EC1 =
-      Handle(StepShape_EdgeCurve)::DownCast (OrEdge1->EdgeElement());
-    Handle(StepShape_EdgeCurve) EC2 =
-      Handle(StepShape_EdgeCurve)::DownCast (OrEdge2->EdgeElement());
-    if (EC1.IsNull() || EC2.IsNull()) // see #29979
+    if (!anOrEdge1->EdgeElement().IsNull() &&
+        anOrEdge1->EdgeElement()->IsKind(STANDARD_TYPE(StepShape_OrientedEdge)))
+    {
+      anOrEdge1 = Handle(StepShape_OrientedEdge)::DownCast(anOrEdge1->EdgeElement());
+    }
+    if (!anOrEdge2->EdgeElement().IsNull() &&
+        anOrEdge2->EdgeElement()->IsKind(STANDARD_TYPE(StepShape_OrientedEdge)))
+    {
+      anOrEdge2 = Handle(StepShape_OrientedEdge)::DownCast(anOrEdge2->EdgeElement());
+    }
+    Handle(StepShape_EdgeCurve) aEC1 =
+      Handle(StepShape_EdgeCurve)::DownCast(anOrEdge1->EdgeElement());
+    const Handle(StepShape_EdgeCurve) aEC2 =
+      Handle(StepShape_EdgeCurve)::DownCast(anOrEdge2->EdgeElement());
+    if (aEC1.IsNull() || aEC2.IsNull()) // see #29979
     {
       continue;
     }
 
-    Handle(StepShape_Vertex) Vs1, Vs2, Vs11, Vs22;
-    Vs1 = (OrEdge1->Orientation() ? EC1->EdgeEnd() : EC1->EdgeStart());
-    Vs2 = (OrEdge2->Orientation() ? EC2->EdgeStart() : EC2->EdgeEnd());
+    Handle(StepShape_Vertex) aVs1 = anOrEdge1->Orientation() ? aEC1->EdgeEnd() : aEC1->EdgeStart();
+    Handle(StepShape_Vertex) aVs2 = anOrEdge2->Orientation() ? aEC2->EdgeStart() : aEC2->EdgeEnd();
 
-    Vs11 = (OrEdge1->Orientation() ?  EC1->EdgeStart() : EC1->EdgeEnd());
-    Vs22 = (OrEdge2->Orientation() ?  EC2->EdgeEnd() : EC2->EdgeStart());
+    Handle(StepShape_Vertex) aVs11 = anOrEdge1->Orientation() ? aEC1->EdgeStart() : aEC1->EdgeEnd();
+    const Handle(StepShape_Vertex) aVs22 = anOrEdge2->Orientation() ? aEC2->EdgeEnd() : aEC2->EdgeStart();
 
-    if ((Vs1 == Vs2) || (Vs1 == Vs22) || (Vs2 == Vs11) || (Vs22 == Vs11)) continue;
-
-    StepToTopoDS_TranslateVertex myTranVertex1 (Vs1, aTool, NMTool);
-    StepToTopoDS_TranslateVertex myTranVertex2 (Vs2, aTool, NMTool);
+    if (!aVs1.IsNull() && !aVs11.IsNull() &&
+        ((aVs1 == aVs2) || (aVs1 == aVs22) || (aVs2 == aVs11) || (aVs22 == aVs11)))
+    {
+      continue;
+    }
+    if (aVs1.IsNull())
+    {
+      if (aVs2.IsNull())
+      {
+        Handle(Geom_Curve) aCurve;
+        const Handle(Geom_Curve) aCurveFirst = MakeCurveFromStep(aEC1->EdgeGeometry(), TP);
+        const Handle(Geom_Curve) aCurveSecond = MakeCurveFromStep(aEC2->EdgeGeometry(), TP);
+        Standard_Real aLast = Precision::Infinite();
+        aCurve = aCurveFirst;
+        aLast = anOrEdge1->Orientation() ? aCurve->LastParameter() : aCurve->FirstParameter();
+        if (Precision::IsPositiveInfinite(aLast) ||
+            Precision::IsNegativeInfinite(aLast))
+        {
+          aCurve = aCurveSecond;
+          aLast = anOrEdge2->Orientation() ? aCurve->FirstParameter() : aCurve->LastParameter();
+        }
+        if (Precision::IsPositiveInfinite(aLast) ||
+            Precision::IsNegativeInfinite(aLast))
+        {
+          continue;
+        }
+        gp_Pnt aStartP = aCurve->Value(aLast);
+        GeomToStep_MakeCartesianPoint aMkPoint(aStartP);
+        const Handle(StepGeom_CartesianPoint) aGpms = aMkPoint.Value();
+        const Handle(StepShape_VertexPoint) aVSP0 =
+          new StepShape_VertexPoint();
+        const Handle(TCollection_HAsciiString) aName =
+          new TCollection_HAsciiString("");
+        aVSP0->Init(aName, aGpms);
+        aVs2 = aVSP0;
+      }
+      if (!aVs2.IsNull())
+      {
+        aVs1 = aVs2;
+        if (anOrEdge1->Orientation())
+        {
+          aEC1->SetEdgeEnd(aVs1);
+        }
+        else
+        {
+          aEC1->SetEdgeStart(aVs1);
+        }
+        if (anOrEdge2->Orientation())
+        {
+          aEC2->SetEdgeStart(aVs1);
+        }
+        else
+        {
+          aEC2->SetEdgeEnd(aVs1);
+        }
+      }
+    }
+    else if (aVs2.IsNull())
+    {
+      aVs2 = aVs1;
+      if (anOrEdge2->Orientation())
+      {
+        aEC2->SetEdgeStart(aVs1);
+      }
+      else
+      {
+        aEC2->SetEdgeEnd(aVs1);
+      }
+    }
+    StepToTopoDS_TranslateVertex myTranVertex1 (aVs1, aTool, NMTool);
+    StepToTopoDS_TranslateVertex myTranVertex2 (aVs2, aTool, NMTool);
 
     TopoDS_Vertex V1, V2;
     if (myTranVertex1.IsDone())
@@ -412,8 +524,8 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
     gp_Pnt p2 = BRep_Tool::Pnt(V2);
     Standard_Boolean locFixed = Standard_True;
     if (p1.Distance(p2) <= preci) {
-      if (! aTool.IsBound (EC1)) aTool.Bind (Vs1, V2);
-      else if (! aTool.IsBound (EC2)) aTool.Bind (Vs2, V1);
+      if (! aTool.IsBound (aEC1)) aTool.Bind (aVs1, V2);
+      else if (! aTool.IsBound (aEC2)) aTool.Bind (aVs2, V1);
       else locFixed = Standard_False;
     }
     else locFixed = Standard_False;
@@ -425,7 +537,7 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
   // Iteration on each Oriented Edge of the EdgeLoop
   // -----------------------------------------------
 
-  for (j=1; j<=NbEdge; j++) {
+  for (Standard_Integer j=1; j<=NbEdge; j++) {
 
     Standard_Boolean ThereIsLikeSeam = Standard_False;
 
@@ -433,7 +545,7 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
     std::cout << "      Processing Edge :" << j << std::endl;
 #endif
 
-    OrEdge1  = EL->EdgeListValue(j);
+    Handle(StepShape_OrientedEdge) OrEdge1  = EL->EdgeListValue(j);
     if (OrEdge1.IsNull() || OrEdge1->EdgeElement().IsNull())
       continue;
 
@@ -470,7 +582,8 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
         E.Orientation(TopAbs_FORWARD);
       else E.Orientation(TopAbs_REVERSED);
 
-      isSeam = isLikeSeam = Standard_False;
+      Standard_Boolean isSeam = Standard_False;
+      Standard_Boolean isLikeSeam = Standard_False;
 
       // ------------------------------------------
       // Map the StepEdge parametric representation
@@ -538,7 +651,6 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
           }
 
           if (isLikeSeam) {
-            suspectE = E;
             ThereIsLikeSeam = Standard_True;
             hasPcurve = Standard_True;
           }
