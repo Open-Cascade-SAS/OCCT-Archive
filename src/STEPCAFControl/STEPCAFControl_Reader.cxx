@@ -211,7 +211,7 @@
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
 #include <XSControl_TransferReader.hxx>
-#include <XSControl_WorkSession.hxx>
+#include <DE_WorkSession.hxx>
 #include <StepAP242_DraughtingModelItemAssociation.hxx>
 #include <StepAP242_GeometricItemSpecificUsage.hxx>
 #include <StepGeom_CartesianPoint.hxx>
@@ -288,7 +288,7 @@ STEPCAFControl_Reader::STEPCAFControl_Reader()
 //purpose  : 
 //=======================================================================
 
-STEPCAFControl_Reader::STEPCAFControl_Reader(const Handle(XSControl_WorkSession)& WS,
+STEPCAFControl_Reader::STEPCAFControl_Reader(const Handle(DE_WorkSession)& WS,
   const Standard_Boolean scratch)
 : myColorMode(Standard_True),
   myNameMode(Standard_True),
@@ -317,7 +317,7 @@ STEPCAFControl_Reader::~STEPCAFControl_Reader()
 //purpose  : 
 //=======================================================================
 
-void STEPCAFControl_Reader::Init(const Handle(XSControl_WorkSession)& WS,
+void STEPCAFControl_Reader::Init(const Handle(DE_WorkSession)& WS,
   const Standard_Boolean scratch)
 {
   // necessary only in Writer, to set good actor:  WS->SelectNorm ( "STEP" );
@@ -853,7 +853,7 @@ Handle(STEPCAFControl_ExternFile) STEPCAFControl_Reader::ReadExternFile (const S
 #endif
 
   // create new WorkSession and Reader
-  Handle(XSControl_WorkSession) newWS = new XSControl_WorkSession;
+  Handle(DE_WorkSession) newWS = new DE_WorkSession;
   newWS->SelectNorm("STEP");
   STEPControl_Reader sr(newWS, Standard_False);
 
@@ -1052,7 +1052,7 @@ static void SetAssemblyComponentStyle(const Handle(Transfer_TransientProcess) &t
 //purpose  : auxiliary: set style for parts and instances
 //=======================================================================
 
-static void SetStyle(const Handle(XSControl_WorkSession) &theWS, 
+static void SetStyle(const Handle(DE_WorkSession) &theWS, 
                      const XCAFDoc_DataMapOfShapeLabel& theMap, 
                      const Handle(XCAFDoc_ColorTool)& theCTool, 
                      const Handle(XCAFDoc_ShapeTool)& theSTool, 
@@ -1248,7 +1248,7 @@ static Standard_Boolean IsOverriden(const Interface_Graph& theGraph,
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Reader::ReadColors(const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Reader::ReadColors(const Handle(DE_WorkSession) &WS,
   const Handle(TDocStd_Document)& Doc) const
 {
   STEPConstruct_Styles Styles(WS);
@@ -1380,7 +1380,7 @@ TDF_Label STEPCAFControl_Reader::FindInstance(const Handle(StepRepr_NextAssembly
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Reader::ReadNames(const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Reader::ReadNames(const Handle(DE_WorkSession) &WS,
                                                   const Handle(TDocStd_Document)& Doc,
                                                   const STEPCAFControl_DataMapOfPDExternFile& PDFileMap) const
 {
@@ -1490,7 +1490,7 @@ static TDF_Label GetLabelFromPD(const Handle(StepBasic_ProductDefinition) &PD,
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Reader::ReadValProps(const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Reader::ReadValProps(const Handle(DE_WorkSession) &WS,
                                                      const Handle(TDocStd_Document)& Doc,
                                                      const STEPCAFControl_DataMapOfPDExternFile& PDFileMap) const
 {
@@ -1622,7 +1622,7 @@ Standard_Boolean STEPCAFControl_Reader::ReadValProps(const Handle(XSControl_Work
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Reader::ReadLayers(const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Reader::ReadLayers(const Handle(DE_WorkSession) &WS,
                                                    const Handle(TDocStd_Document)& Doc) const
 {
   const Handle(Interface_InterfaceModel) &Model = WS->Model();
@@ -1688,7 +1688,7 @@ Standard_Boolean STEPCAFControl_Reader::ReadLayers(const Handle(XSControl_WorkSe
 //purpose  : 
 //=======================================================================
 
-static Standard_Boolean findNextSHUOlevel(const Handle(XSControl_WorkSession) &WS,
+static Standard_Boolean findNextSHUOlevel(const Handle(DE_WorkSession) &WS,
   const Handle(StepRepr_SpecifiedHigherUsageOccurrence)& SHUO,
   const Handle(XCAFDoc_ShapeTool)& STool,
   const STEPCAFControl_DataMapOfPDExternFile &PDFileMap,
@@ -1734,7 +1734,7 @@ static Standard_Boolean findNextSHUOlevel(const Handle(XSControl_WorkSession) &W
 //function : setSHUOintoDoc
 //purpose  : auxiliary
 //=======================================================================
-static TDF_Label setSHUOintoDoc(const Handle(XSControl_WorkSession) &WS,
+static TDF_Label setSHUOintoDoc(const Handle(DE_WorkSession) &WS,
   const Handle(StepRepr_SpecifiedHigherUsageOccurrence)& SHUO,
   const Handle(XCAFDoc_ShapeTool)& STool,
   const STEPCAFControl_DataMapOfPDExternFile &PDFileMap,
@@ -1793,7 +1793,7 @@ static TDF_Label setSHUOintoDoc(const Handle(XSControl_WorkSession) &WS,
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Reader::ReadSHUOs(const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Reader::ReadSHUOs(const Handle(DE_WorkSession) &WS,
                                                   const Handle(TDocStd_Document)& Doc,
                                                   const STEPCAFControl_DataMapOfPDExternFile& PDFileMap) const
 {
@@ -2414,7 +2414,7 @@ static Standard_Boolean ReadDatums(const Handle(XCAFDoc_ShapeTool) &STool,
 //purpose  : auxiliary find shape index in map og imported shapes
 //=======================================================================
 static Standard_Integer FindShapeIndexForDGT(const Handle(Standard_Transient)& theEnt,
-  const Handle(XSControl_WorkSession)& theWS)
+  const Handle(DE_WorkSession)& theWS)
 {
   const Handle(Transfer_TransientProcess) &aTP = theWS->TransferReader()->TransientProcess();
   // try to find index of given entity
@@ -2440,7 +2440,7 @@ static Standard_Integer FindShapeIndexForDGT(const Handle(Standard_Transient)& t
 //purpose  : 
 //=======================================================================
 static void collectShapeAspect(const Handle(StepRepr_ShapeAspect)& theSA,
-  const Handle(XSControl_WorkSession)& theWS,
+  const Handle(DE_WorkSession)& theWS,
   NCollection_Sequence<Handle(StepRepr_ShapeAspect)>& theSAs)
 {
   if (theSA.IsNull())
@@ -2491,7 +2491,7 @@ static void collectShapeAspect(const Handle(StepRepr_ShapeAspect)& theSA,
 //=======================================================================
 
 static TDF_Label getShapeLabel(const Handle(StepRepr_RepresentationItem)& theItem,
-  const Handle(XSControl_WorkSession)& theWS,
+  const Handle(DE_WorkSession)& theWS,
   const Handle(XCAFDoc_ShapeTool)& theShapeTool)
 {
   TDF_Label aShapeL;
@@ -2520,7 +2520,7 @@ Standard_Boolean STEPCAFControl_Reader::setDatumToXCAF(const Handle(StepDimTol_D
   const XCAFDimTolObjects_DatumModifWithValue theXCAFModifWithVal,
   const Standard_Real theModifValue,
   const Handle(TDocStd_Document)& theDoc,
-  const Handle(XSControl_WorkSession)& theWS)
+  const Handle(DE_WorkSession)& theWS)
 {
   Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDoc->Main());
   Handle(XCAFDoc_DimTolTool) aDGTTool = XCAFDoc_DocumentTool::DimTolTool(theDoc->Main());
@@ -2766,7 +2766,7 @@ Standard_Boolean STEPCAFControl_Reader::setDatumToXCAF(const Handle(StepDimTol_D
 Standard_Boolean STEPCAFControl_Reader::readDatumsAP242(const Handle(Standard_Transient)& theEnt,
   const TDF_Label theGDTL,
   const Handle(TDocStd_Document)& theDoc,
-  const Handle(XSControl_WorkSession)& theWS)
+  const Handle(DE_WorkSession)& theWS)
 {
   const Handle(XSControl_TransferReader) &aTR = theWS->TransferReader();
   const Handle(Transfer_TransientProcess) &aTP = aTR->TransientProcess();
@@ -2913,7 +2913,7 @@ Standard_Boolean STEPCAFControl_Reader::readDatumsAP242(const Handle(Standard_Tr
 //=======================================================================
 TDF_Label STEPCAFControl_Reader::createGDTObjectInXCAF(const Handle(Standard_Transient)& theEnt,
   const Handle(TDocStd_Document)& theDoc,
-  const Handle(XSControl_WorkSession)& theWS)
+  const Handle(DE_WorkSession)& theWS)
 {
   TDF_Label aGDTL;
   if (!theEnt->IsKind(STANDARD_TYPE(StepShape_DimensionalSize)) &&
@@ -3392,7 +3392,7 @@ void convertAngleValue(
 static void setDimObjectToXCAF(const Handle(Standard_Transient)& theEnt,
   const TDF_Label& aDimL,
   const Handle(TDocStd_Document)& theDoc,
-  const Handle(XSControl_WorkSession)& theWS)
+  const Handle(DE_WorkSession)& theWS)
 {
   Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDoc->Main());
   Handle(XCAFDoc_DimTolTool) aDGTTool = XCAFDoc_DocumentTool::DimTolTool(theDoc->Main());
@@ -3932,7 +3932,7 @@ static Standard_Boolean getTolType(const Handle(Standard_Transient)& theEnt,
 static void setGeomTolObjectToXCAF(const Handle(Standard_Transient)& theEnt,
   const TDF_Label& theTolL,
   const Handle(TDocStd_Document)& theDoc,
-  const Handle(XSControl_WorkSession)& theWS)
+  const Handle(DE_WorkSession)& theWS)
 {
   Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDoc->Main());
   Handle(XCAFDoc_DimTolTool) aDGTTool = XCAFDoc_DocumentTool::DimTolTool(theDoc->Main());
@@ -4088,7 +4088,7 @@ static void setGeomTolObjectToXCAF(const Handle(Standard_Transient)& theEnt,
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Reader::ReadGDTs(const Handle(XSControl_WorkSession)& theWS,
+Standard_Boolean STEPCAFControl_Reader::ReadGDTs(const Handle(DE_WorkSession)& theWS,
                                                  const Handle(TDocStd_Document)& theDoc)
 {
   const Handle(Interface_InterfaceModel) &aModel = theWS->Model();
@@ -4298,7 +4298,7 @@ static Handle(StepShape_SolidModel) FindSolidForPDS(const Handle(StepRepr_Produc
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Reader::ReadMaterials(const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Reader::ReadMaterials(const Handle(DE_WorkSession) &WS,
                                                       const Handle(TDocStd_Document)& Doc,
                                                       const Handle(TColStd_HSequenceOfTransient)& SeqPDS) const
 {
@@ -4416,7 +4416,7 @@ Standard_Boolean STEPCAFControl_Reader::ReadMaterials(const Handle(XSControl_Wor
 //purpose  : collect all labels of representations in given representation
 //=======================================================================
 
-void collectViewShapes(const Handle(XSControl_WorkSession)& theWS,
+void collectViewShapes(const Handle(DE_WorkSession)& theWS,
   const Handle(TDocStd_Document)& theDoc,
   const Handle(StepRepr_Representation) theRepr,
   TDF_LabelSequence& theShapes)
@@ -4522,7 +4522,7 @@ Handle(TCollection_HAsciiString) buildClippingPlanes(const Handle(StepGeom_Geome
 //function : ReadViews
 //purpose  :
 //=======================================================================
-Standard_Boolean STEPCAFControl_Reader::ReadViews(const Handle(XSControl_WorkSession)& theWS, const Handle(TDocStd_Document)& theDoc) const
+Standard_Boolean STEPCAFControl_Reader::ReadViews(const Handle(DE_WorkSession)& theWS, const Handle(TDocStd_Document)& theDoc) const
 {
   const Handle(Interface_InterfaceModel) &aModel = theWS->Model();
   Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDoc->Main());

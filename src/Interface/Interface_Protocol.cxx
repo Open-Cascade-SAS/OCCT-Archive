@@ -14,7 +14,7 @@
 
 #include <Interface_Check.hxx>
 #include <Interface_Graph.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_Protocol.hxx>
 #include <Standard_Transient.hxx>
 #include <Standard_Type.hxx>

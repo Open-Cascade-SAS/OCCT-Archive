@@ -140,7 +140,7 @@ DE_Provider::DE_Provider(const Handle(DE_ConfigurationNode)& theNode)
 //=======================================================================
 Standard_Boolean DE_Provider::Read(const TCollection_AsciiString& thePath,
                                    const Handle(TDocStd_Document)& theDocument,
-                                   Handle(XSControl_WorkSession)& theWS,
+                                   Handle(DE_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
   (void)thePath;
@@ -159,7 +159,7 @@ Standard_Boolean DE_Provider::Read(const TCollection_AsciiString& thePath,
 bool DE_Provider::Read(std::istream& theIStream,
                        const Handle(TDocStd_Document)& theDocument,
                        const TCollection_AsciiString theName,
-                       Handle(XSControl_WorkSession)& theWS,
+                       Handle(DE_WorkSession)& theWS,
                        const Message_ProgressRange& theProgress)
 {
   (void)theName;
@@ -200,7 +200,7 @@ bool DE_Provider::Read(std::istream& theIStream,
 //=======================================================================
 Standard_Boolean DE_Provider::Write(const TCollection_AsciiString& thePath,
                                     const Handle(TDocStd_Document)& theDocument,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress)
 {
   (void)thePath;
@@ -218,7 +218,7 @@ Standard_Boolean DE_Provider::Write(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool DE_Provider::Write(std::ostream& theOStream,
                         const Handle(TDocStd_Document)& theDocument,
-                        Handle(XSControl_WorkSession)& theWS,
+                        Handle(DE_WorkSession)& theWS,
                         const Message_ProgressRange& theProgress)
 {
   if (myNode.IsNull() ||
@@ -262,7 +262,7 @@ bool DE_Provider::Write(std::ostream& theOStream,
 //=======================================================================
 Standard_Boolean DE_Provider::Read(const TCollection_AsciiString& thePath,
                                    TopoDS_Shape& theShape,
-                                   Handle(XSControl_WorkSession)& theWS,
+                                   Handle(DE_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
   (void)thePath;
@@ -281,7 +281,7 @@ Standard_Boolean DE_Provider::Read(const TCollection_AsciiString& thePath,
 bool DE_Provider::Read(std::istream& theIStream,
                        TopoDS_Shape& theShape,
                        const TCollection_AsciiString theName,
-                       Handle(XSControl_WorkSession)& theWS,
+                       Handle(DE_WorkSession)& theWS,
                        const Message_ProgressRange& theProgress)
 {
   (void)theName;
@@ -322,7 +322,7 @@ bool DE_Provider::Read(std::istream& theIStream,
 //=======================================================================
 Standard_Boolean DE_Provider::Write(const TCollection_AsciiString& thePath,
                                     const TopoDS_Shape& theShape,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress)
 {
   (void)thePath;
@@ -340,7 +340,7 @@ Standard_Boolean DE_Provider::Write(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool DE_Provider::Write(std::ostream& theOStream,
                         const TopoDS_Shape& theShape,
-                        Handle(XSControl_WorkSession)& theWS,
+                        Handle(DE_WorkSession)& theWS,
                         const Message_ProgressRange& theProgress)
 {
   if (myNode.IsNull() ||

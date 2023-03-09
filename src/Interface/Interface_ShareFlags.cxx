@@ -16,7 +16,7 @@
 #include <Interface_GeneralModule.hxx>
 #include <Interface_Graph.hxx>
 #include <Interface_GTool.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_Protocol.hxx>
 #include <Interface_ReportEntity.hxx>
 #include <Interface_ShareFlags.hxx>
@@ -24,7 +24,7 @@
 #include <Standard_Transient.hxx>
 
 Interface_ShareFlags::Interface_ShareFlags
-  (const Handle(Interface_InterfaceModel)& amodel,
+  (const Handle(DE_DataModel)& amodel,
    const Interface_GeneralLib& lib)
    : theflags (amodel->NbEntities())
 {
@@ -34,7 +34,7 @@ Interface_ShareFlags::Interface_ShareFlags
 }
 
     Interface_ShareFlags::Interface_ShareFlags
-  (const Handle(Interface_InterfaceModel)& amodel,
+  (const Handle(DE_DataModel)& amodel,
    const Handle(Interface_GTool)& gtool)
    : theflags (amodel->NbEntities())
 {
@@ -43,7 +43,7 @@ Interface_ShareFlags::Interface_ShareFlags
 }
 
     Interface_ShareFlags::Interface_ShareFlags
-  (const Handle(Interface_InterfaceModel)& amodel,
+  (const Handle(DE_DataModel)& amodel,
    const Handle(Interface_Protocol)& protocol)
    : theflags (amodel->NbEntities())
 {
@@ -53,7 +53,7 @@ Interface_ShareFlags::Interface_ShareFlags
 }
 
     Interface_ShareFlags::Interface_ShareFlags
-  (const Handle(Interface_InterfaceModel)& amodel)
+  (const Handle(DE_DataModel)& amodel)
    : theflags (amodel->NbEntities())
 {
   Handle(Interface_GTool) gtool = themodel->GTool();
@@ -117,7 +117,7 @@ Interface_ShareFlags::Interface_ShareFlags
 }
 
 
-    Handle(Interface_InterfaceModel)  Interface_ShareFlags::Model () const 
+    Handle(DE_DataModel)  Interface_ShareFlags::Model () const 
       {  return themodel;  }
 
     Standard_Boolean  Interface_ShareFlags::IsShared

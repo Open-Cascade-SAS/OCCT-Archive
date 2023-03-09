@@ -14,7 +14,7 @@
 
 #include <Interface_Graph.hxx>
 #include <Interface_GraphContent.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Standard_Transient.hxx>
 
 Interface_GraphContent::Interface_GraphContent ()    {  }

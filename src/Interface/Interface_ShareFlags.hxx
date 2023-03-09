@@ -24,7 +24,7 @@
 #include <Interface_BitMap.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <Standard_Integer.hxx>
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Interface_GeneralLib;
 class Interface_GTool;
 class Interface_Protocol;
@@ -46,23 +46,23 @@ public:
   //! Creates a ShareFlags from a Model and builds required data
   //! (flags) by calling the General Service Library given as
   //! argument <lib>
-  Standard_EXPORT Interface_ShareFlags(const Handle(Interface_InterfaceModel)& amodel, const Interface_GeneralLib& lib);
+  Standard_EXPORT Interface_ShareFlags(const Handle(DE_DataModel)& amodel, const Interface_GeneralLib& lib);
   
   //! Same as above, but GeneralLib is detained by a GTool
-  Standard_EXPORT Interface_ShareFlags(const Handle(Interface_InterfaceModel)& amodel, const Handle(Interface_GTool)& gtool);
+  Standard_EXPORT Interface_ShareFlags(const Handle(DE_DataModel)& amodel, const Handle(Interface_GTool)& gtool);
   
   //! Same as above, but GeneralLib is defined through a Protocol
-  Standard_EXPORT Interface_ShareFlags(const Handle(Interface_InterfaceModel)& amodel, const Handle(Interface_Protocol)& protocol);
+  Standard_EXPORT Interface_ShareFlags(const Handle(DE_DataModel)& amodel, const Handle(Interface_Protocol)& protocol);
   
   //! Same as above, but works with the GTool of the Model
-  Standard_EXPORT Interface_ShareFlags(const Handle(Interface_InterfaceModel)& amodel);
+  Standard_EXPORT Interface_ShareFlags(const Handle(DE_DataModel)& amodel);
   
   //! Creates a ShareFlags by querying information from a Graph
   //! (remark that Graph also has a method IsShared)
   Standard_EXPORT Interface_ShareFlags(const Interface_Graph& agraph);
   
   //! Returns the Model used for the evaluation
-  Standard_EXPORT Handle(Interface_InterfaceModel) Model() const;
+  Standard_EXPORT Handle(DE_DataModel) Model() const;
   
   //! Returns True if <ent> is Shared by one or more other
   //! Entity(ies) of the Model
@@ -98,7 +98,7 @@ private:
   Standard_EXPORT void Evaluate (const Interface_GeneralLib& lib, const Handle(Interface_GTool)& gtool);
 
 
-  Handle(Interface_InterfaceModel) themodel;
+  Handle(DE_DataModel) themodel;
   Interface_BitMap theflags;
   Handle(TColStd_HSequenceOfTransient) theroots;
 

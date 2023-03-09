@@ -24,7 +24,7 @@
 #include <Standard_Integer.hxx>
 class Interface_Graph;
 class Interface_Check;
-class Interface_InterfaceModel;
+class DE_DataModel;
 
 
 class Interface_Protocol;
@@ -97,10 +97,10 @@ public:
   Standard_EXPORT virtual Standard_Boolean GlobalCheck (const Interface_Graph& G, Handle(Interface_Check)& ach) const;
   
   //! Creates an empty Model of the considered Norm
-  Standard_EXPORT virtual Handle(Interface_InterfaceModel) NewModel() const = 0;
+  Standard_EXPORT virtual Handle(DE_DataModel) NewModel() const = 0;
   
   //! Returns True if <model> is a Model of the considered Norm
-  Standard_EXPORT virtual Standard_Boolean IsSuitableModel (const Handle(Interface_InterfaceModel)& model) const = 0;
+  Standard_EXPORT virtual Standard_Boolean IsSuitableModel (const Handle(DE_DataModel)& model) const = 0;
   
   //! Creates a new Unknown Entity for the considered Norm
   Standard_EXPORT virtual Handle(Standard_Transient) UnknownEntity() const = 0;

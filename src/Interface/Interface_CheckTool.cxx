@@ -20,7 +20,7 @@
 #include <Interface_GeneralModule.hxx>
 #include <Interface_GTool.hxx>
 #include <Interface_HGraph.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_Macros.hxx>
 #include <Interface_Protocol.hxx>
 #include <Interface_ReportEntity.hxx>
@@ -67,7 +67,7 @@ static void raisecheck (Standard_Failure& theException,Handle(Interface_Check)& 
 //purpose  : 
 //=======================================================================
 
-Interface_CheckTool::Interface_CheckTool(const Handle(Interface_InterfaceModel)& model,
+Interface_CheckTool::Interface_CheckTool(const Handle(DE_DataModel)& model,
                                          const Handle(Interface_Protocol)& protocol)
      :  thegtool ( new Interface_GTool(protocol,model->NbEntities()) ) ,
        theshare (model,protocol)
@@ -81,7 +81,7 @@ Interface_CheckTool::Interface_CheckTool(const Handle(Interface_InterfaceModel)&
 //purpose  : 
 //=======================================================================
 
-Interface_CheckTool::Interface_CheckTool(const Handle(Interface_InterfaceModel)& model)
+Interface_CheckTool::Interface_CheckTool(const Handle(DE_DataModel)& model)
      :  thegtool(model->GTool()) , theshare (model,model->GTool())
 {
   thestat = 0;
@@ -177,7 +177,7 @@ void Interface_CheckTool::Print(const Handle(Interface_Check)& ach,
 void Interface_CheckTool::Print(const Interface_CheckIterator& list,
                                 Standard_OStream& S) const 
 {
-  Handle(Interface_InterfaceModel) model = theshare.Model();
+  Handle(DE_DataModel) model = theshare.Model();
   list.Print(S,model,Standard_False);
 }
 
@@ -195,7 +195,7 @@ void Interface_CheckTool::Print(const Interface_CheckIterator& list,
 
 Handle(Interface_Check) Interface_CheckTool::Check(const Standard_Integer num)
 {
-  Handle(Interface_InterfaceModel) model = theshare.Model();
+  Handle(DE_DataModel) model = theshare.Model();
   Handle(Standard_Transient) ent = model->Value(num);
   Handle(Interface_Check) ach = new Interface_Check(ent);  // non filtre par "Warning" : tel quel
   errh = 1;
@@ -217,7 +217,7 @@ void Interface_CheckTool::CheckSuccess (const Standard_Boolean reset)
   if (reset) thestat = 0;
   if (thestat > 3) throw Interface_CheckFailure    // deja teste avec erreur
     ("Interface Model : Global Check");
-  Handle(Interface_InterfaceModel) model = theshare.Model();
+  Handle(DE_DataModel) model = theshare.Model();
   if (model->GlobalCheck()->NbFails() > 0) throw Interface_CheckFailure("Interface Model : Global Check");
   Handle(Interface_Check) modchk = new Interface_Check;
   model->VerifyCheck(modchk);
@@ -256,7 +256,7 @@ void Interface_CheckTool::CheckSuccess (const Standard_Boolean reset)
 Interface_CheckIterator Interface_CheckTool::CompleteCheckList ()
 {
   thestat = 3;
-  Handle(Interface_InterfaceModel) model = theshare.Model();
+  Handle(DE_DataModel) model = theshare.Model();
   Interface_CheckIterator res;
   res.SetModel(model);
   Handle(Interface_Check) globch = model->GlobalCheck();    // GlobalCheck Statique
@@ -309,7 +309,7 @@ Interface_CheckIterator Interface_CheckTool::CompleteCheckList ()
 Interface_CheckIterator Interface_CheckTool::CheckList ()
 {
   thestat = 3;
-  Handle(Interface_InterfaceModel) model = theshare.Model();
+  Handle(DE_DataModel) model = theshare.Model();
   Interface_CheckIterator res;
   res.SetModel(model);
   Standard_Integer i=0, n0 = 1, nb = model->NbEntities();
@@ -361,7 +361,7 @@ Interface_CheckIterator Interface_CheckTool::CheckList ()
 Interface_CheckIterator Interface_CheckTool::AnalyseCheckList ()
 {
   thestat = 2;
-  Handle(Interface_InterfaceModel) model = theshare.Model();
+  Handle(DE_DataModel) model = theshare.Model();
   Interface_CheckIterator res;
   res.SetModel(model);
   Standard_Integer i=0, n0 = 1, nb = model->NbEntities();
@@ -401,7 +401,7 @@ Interface_CheckIterator Interface_CheckTool::AnalyseCheckList ()
 Interface_CheckIterator Interface_CheckTool::VerifyCheckList ()
 {
   thestat = 1;
-  Handle(Interface_InterfaceModel) model = theshare.Model();
+  Handle(DE_DataModel) model = theshare.Model();
   Interface_CheckIterator res;
   res.SetModel(model);
   Standard_Integer i=0, n0 = 1, nb = model->NbEntities();
@@ -445,7 +445,7 @@ Interface_CheckIterator Interface_CheckTool::VerifyCheckList ()
 Interface_CheckIterator Interface_CheckTool::WarningCheckList ()
 {
   thestat = 3;
-  Handle(Interface_InterfaceModel) model = theshare.Model();
+  Handle(DE_DataModel) model = theshare.Model();
   Interface_CheckIterator res;
   res.SetModel(model);
   Standard_Integer i=0, n0 = 1, nb = model->NbEntities();
@@ -490,7 +490,7 @@ Interface_CheckIterator Interface_CheckTool::WarningCheckList ()
 
 Interface_EntityIterator Interface_CheckTool::UnknownEntities ()
 {
-  Handle(Interface_InterfaceModel) model = theshare.Model();
+  Handle(DE_DataModel) model = theshare.Model();
   Interface_EntityIterator res;
   Standard_Integer nb = model->NbEntities();
   for (Standard_Integer i = 1; i <= nb; i ++) {

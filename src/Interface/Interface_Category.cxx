@@ -14,7 +14,7 @@
 
 #include <Interface_Category.hxx>
 #include <Interface_GeneralModule.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_ShareTool.hxx>
 #include <Standard_Transient.hxx>
 #include <Standard_Mutex.hxx>
@@ -45,7 +45,7 @@ Standard_Integer Interface_Category::CatNum
 }
 
 void Interface_Category::Compute
-  (const Handle(Interface_InterfaceModel)& theModel,
+  (const Handle(DE_DataModel)& theModel,
    const Interface_ShareTool& theShares)
 {
   ClearNums();

@@ -24,7 +24,7 @@
 #include <Interface_ShareTool.hxx>
 #include <Standard_Integer.hxx>
 class Interface_GTool;
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Interface_Protocol;
 class Interface_Graph;
 class Interface_HGraph;
@@ -46,12 +46,12 @@ public:
   //! Creates a CheckTool, by calling the General Service Library
   //! and Modules, selected through a Protocol, to work on a Model
   //! Moreover, Protocol recognizes Unknown Entities
-  Standard_EXPORT Interface_CheckTool(const Handle(Interface_InterfaceModel)& model, const Handle(Interface_Protocol)& protocol);
+  Standard_EXPORT Interface_CheckTool(const Handle(DE_DataModel)& model, const Handle(Interface_Protocol)& protocol);
   
   //! Creates a CheckTool, by calling the General Service Library
   //! and Modules, selected through a Protocol, to work on a Model
   //! Protocol and so on are taken from the Model (its GTool)
-  Standard_EXPORT Interface_CheckTool(const Handle(Interface_InterfaceModel)& model);
+  Standard_EXPORT Interface_CheckTool(const Handle(DE_DataModel)& model);
   
   //! Creates a CheckTool from a Graph. The Graph contains a Model
   //! which designates a Protocol: they are used to create ShareTool

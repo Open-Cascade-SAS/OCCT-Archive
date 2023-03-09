@@ -23,7 +23,7 @@
 #include <MoniTool_SignText.hxx>
 class TCollection_AsciiString;
 class Standard_Transient;
-class Interface_InterfaceModel;
+class DE_DataModel;
 
 
 class Interface_SignType;
@@ -47,7 +47,7 @@ public:
   //! of each sub-class of Signature. For a Null Handle, it should
   //! provide ""
   //! It can work with the model which contains the entity
-  Standard_EXPORT virtual Standard_CString Value (const Handle(Standard_Transient)& ent, const Handle(Interface_InterfaceModel)& model) const = 0;
+  Standard_EXPORT virtual Standard_CString Value (const Handle(Standard_Transient)& ent, const Handle(DE_DataModel)& model) const = 0;
   
   //! From a CDL Type Name, returns the Class part (package dropped)
   //! WARNING : buffered, to be immediately copied or printed

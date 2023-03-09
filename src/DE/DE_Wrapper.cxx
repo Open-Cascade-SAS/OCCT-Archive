@@ -102,7 +102,7 @@ void DE_Wrapper::SetGlobalWrapper(const Handle(DE_Wrapper)& theWrapper)
 //=======================================================================
 Standard_Boolean DE_Wrapper::Read(const TCollection_AsciiString& thePath,
                                   const Handle(TDocStd_Document)& theDocument,
-                                  Handle(XSControl_WorkSession)& theWS,
+                                  Handle(DE_WorkSession)& theWS,
                                   const Message_ProgressRange& theProgress)
 {
   if (theDocument.IsNull())
@@ -123,7 +123,7 @@ Standard_Boolean DE_Wrapper::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 Standard_Boolean DE_Wrapper::Write(const TCollection_AsciiString& thePath,
                                    const Handle(TDocStd_Document)& theDocument,
-                                   Handle(XSControl_WorkSession)& theWS,
+                                   Handle(DE_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
   if (theDocument.IsNull())
@@ -144,7 +144,7 @@ Standard_Boolean DE_Wrapper::Write(const TCollection_AsciiString& thePath,
 //=======================================================================
 Standard_Boolean DE_Wrapper::Read(const TCollection_AsciiString& thePath,
                                   TopoDS_Shape& theShape,
-                                  Handle(XSControl_WorkSession)& theWS,
+                                  Handle(DE_WorkSession)& theWS,
                                   const Message_ProgressRange& theProgress)
 {
   Handle(DE_Provider) aProvider;
@@ -161,7 +161,7 @@ Standard_Boolean DE_Wrapper::Read(const TCollection_AsciiString& thePath,
 //=======================================================================
 Standard_Boolean DE_Wrapper::Write(const TCollection_AsciiString& thePath,
                                    const TopoDS_Shape& theShape,
-                                   Handle(XSControl_WorkSession)& theWS,
+                                   Handle(DE_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
   Handle(DE_Provider) aProvider;

@@ -22,7 +22,7 @@
 
 #include <Interface_Graph.hxx>
 #include <Standard_Transient.hxx>
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Interface_GeneralLib;
 class Interface_Protocol;
 class Interface_GTool;
@@ -45,18 +45,18 @@ public:
   Standard_EXPORT Interface_HGraph(const Interface_Graph& agraph);
   
   //! Creates an HGraph with a Graph created from <amodel> and <lib>
-  Standard_EXPORT Interface_HGraph(const Handle(Interface_InterfaceModel)& amodel, const Interface_GeneralLib& lib, const Standard_Boolean theModeStats = Standard_True);
+  Standard_EXPORT Interface_HGraph(const Handle(DE_DataModel)& amodel, const Interface_GeneralLib& lib, const Standard_Boolean theModeStats = Standard_True);
   
   //! Creates an HGraph with a graph itself created from <amodel>
   //! and <protocol>
-  Standard_EXPORT Interface_HGraph(const Handle(Interface_InterfaceModel)& amodel, const Handle(Interface_Protocol)& protocol, const Standard_Boolean theModeStats = Standard_True);
+  Standard_EXPORT Interface_HGraph(const Handle(DE_DataModel)& amodel, const Handle(Interface_Protocol)& protocol, const Standard_Boolean theModeStats = Standard_True);
   
   //! Creates an HGraph with a graph itself created from <amodel>
   //! and <protocol>
-  Standard_EXPORT Interface_HGraph(const Handle(Interface_InterfaceModel)& amodel, const Handle(Interface_GTool)& gtool, const Standard_Boolean theModeStats = Standard_True);
+  Standard_EXPORT Interface_HGraph(const Handle(DE_DataModel)& amodel, const Handle(Interface_GTool)& gtool, const Standard_Boolean theModeStats = Standard_True);
   
   //! Same a above, but works with the GTool in the model
-  Standard_EXPORT Interface_HGraph(const Handle(Interface_InterfaceModel)& amodel, const Standard_Boolean theModeStats = Standard_True);
+  Standard_EXPORT Interface_HGraph(const Handle(DE_DataModel)& amodel, const Standard_Boolean theModeStats = Standard_True);
   
   //! Returns the Graph contained in <me>, for Read Only Operations
   //! Remark that it is returns as "const &"

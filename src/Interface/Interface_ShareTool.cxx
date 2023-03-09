@@ -16,7 +16,7 @@
 #include <Interface_GTool.hxx>
 #include <Interface_HGraph.hxx>
 #include <Interface_InterfaceError.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_Protocol.hxx>
 #include <Interface_ShareTool.hxx>
 #include <Message_Messenger.hxx>
@@ -24,25 +24,25 @@
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 
-Interface_ShareTool::Interface_ShareTool (const Handle(Interface_InterfaceModel)& amodel,
+Interface_ShareTool::Interface_ShareTool (const Handle(DE_DataModel)& amodel,
                                           const Interface_GeneralLib& lib)
 {
   theHGraph = new Interface_HGraph(amodel,lib);
 }
 
-Interface_ShareTool::Interface_ShareTool (const Handle(Interface_InterfaceModel)& amodel,
+Interface_ShareTool::Interface_ShareTool (const Handle(DE_DataModel)& amodel,
                                           const Handle(Interface_GTool)& gtool)
 {
   theHGraph = new Interface_HGraph(amodel,gtool);
 }
 
-Interface_ShareTool::Interface_ShareTool (const Handle(Interface_InterfaceModel)& amodel,
+Interface_ShareTool::Interface_ShareTool (const Handle(DE_DataModel)& amodel,
                                           const Handle(Interface_Protocol)& protocol)
 {
   theHGraph = new Interface_HGraph(amodel,protocol);
 }
 
-Interface_ShareTool::Interface_ShareTool (const Handle(Interface_InterfaceModel)& amodel)
+Interface_ShareTool::Interface_ShareTool (const Handle(DE_DataModel)& amodel)
 {
   theHGraph = new Interface_HGraph(amodel);
 }
@@ -81,7 +81,7 @@ Interface_ShareTool::Interface_ShareTool (const Handle(Interface_HGraph)& ahgrap
 }*/
 
 
-    Handle(Interface_InterfaceModel) Interface_ShareTool::Model () const
+    Handle(DE_DataModel) Interface_ShareTool::Model () const
       {  return theHGraph->Graph().Model();  }
 
     const Interface_Graph& Interface_ShareTool::Graph () const
@@ -154,7 +154,7 @@ Interface_ShareTool::Interface_ShareTool (const Handle(Interface_HGraph)& ahgrap
     Interface_EntityIterator  Interface_ShareTool::All
 (const Handle(Standard_Transient)& ent, const Standard_Boolean rootlast) const
 {
-  Handle(Interface_InterfaceModel) model = Model();
+  Handle(DE_DataModel) model = Model();
   Interface_EntityIterator list;
   Standard_Integer i, n0 = 0, nb = model->NbEntities();
   Handle(TColStd_HArray1OfInteger) fl = new TColStd_HArray1OfInteger (0,nb);

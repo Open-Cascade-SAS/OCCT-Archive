@@ -16,7 +16,7 @@
 #include <Interface_CopyTool.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <Interface_GeneralModule.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_ShareTool.hxx>
 #include <Standard_Transient.hxx>
 #include <Standard_Type.hxx>
@@ -25,7 +25,7 @@
 IMPLEMENT_STANDARD_RTTIEXT(Interface_GeneralModule,Standard_Transient)
 
 void  Interface_GeneralModule::FillShared
-  (const Handle(Interface_InterfaceModel)& /*model*/,
+  (const Handle(DE_DataModel)& /*model*/,
    const Standard_Integer casenum,
    const Handle(Standard_Transient)& ent,
    Interface_EntityIterator& iter) const
@@ -39,7 +39,7 @@ void  Interface_GeneralModule::FillShared
 
 
     void  Interface_GeneralModule::ListImplied
-  (const Handle(Interface_InterfaceModel)& /*model*/,
+  (const Handle(DE_DataModel)& /*model*/,
    const Standard_Integer casenum,
    const Handle(Standard_Transient)& ent,
    Interface_EntityIterator& iter) const

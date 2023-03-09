@@ -12,7 +12,7 @@
 // commercial license or contractual agreement.
 
 
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_SignType.hxx>
 #include <Standard_Transient.hxx>
 #include <Standard_Type.hxx>
@@ -25,8 +25,8 @@ TCollection_AsciiString  Interface_SignType::Text
    const Handle(Standard_Transient)& context) const
 {
   TCollection_AsciiString atext;
-  Handle(Interface_InterfaceModel) model =
-    Handle(Interface_InterfaceModel)::DownCast(context);
+  Handle(DE_DataModel) model =
+    Handle(DE_DataModel)::DownCast(context);
   if (ent.IsNull() || model.IsNull()) return atext;
   atext.AssignCat (Value(ent,model));
   return atext;

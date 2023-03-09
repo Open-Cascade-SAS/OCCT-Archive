@@ -28,7 +28,7 @@
 #include <Standard_Integer.hxx>
 #include <Interface_CheckStatus.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Interface_IntVal;
 class Interface_Check;
 class Standard_Transient;
@@ -61,10 +61,10 @@ public:
   
   //! Defines a Model, used to locate entities (not required, if it
   //! is absent, entities are simply less documented)
-  Standard_EXPORT void SetModel (const Handle(Interface_InterfaceModel)& model);
+  Standard_EXPORT void SetModel (const Handle(DE_DataModel)& model);
   
   //! Returns the stored model (can be a null handle)
-  Standard_EXPORT Handle(Interface_InterfaceModel) Model() const;
+  Standard_EXPORT Handle(DE_DataModel) Model() const;
   
   //! Clears the list of checks
   Standard_EXPORT void Clear();
@@ -183,7 +183,7 @@ public:
   //! Works as Print without a model, but for entities which have
   //! no attached number (Number not positive), tries to compute
   //! this Number from <model> and displays "original" or "computed"
-  Standard_EXPORT void Print (Standard_OStream& S, const Handle(Interface_InterfaceModel)& model, const Standard_Boolean failsonly, const Standard_Integer final = 0) const;
+  Standard_EXPORT void Print (Standard_OStream& S, const Handle(DE_DataModel)& model, const Standard_Boolean failsonly, const Standard_Integer final = 0) const;
   
   //! Clears data of iteration
   Standard_EXPORT void Destroy();
@@ -207,7 +207,7 @@ private:
 
   Handle(Interface_HSequenceOfCheck) thelist;
   Handle(TColStd_HSequenceOfInteger) thenums;
-  Handle(Interface_InterfaceModel) themod;
+  Handle(DE_DataModel) themod;
   TCollection_AsciiString thename;
   Handle(Interface_IntVal) thecurr;
 

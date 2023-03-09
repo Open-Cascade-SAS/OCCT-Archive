@@ -17,7 +17,7 @@
 #include <Interface_GeneralModule.hxx>
 #include <Interface_Graph.hxx>
 #include <Interface_GTool.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_Protocol.hxx>
 #include <Interface_ReportEntity.hxx>
 #include <Interface_ShareTool.hxx>
@@ -40,7 +40,7 @@
 
 
 Interface_Graph::Interface_Graph
-(const Handle(Interface_InterfaceModel)& amodel,
+(const Handle(DE_DataModel)& amodel,
  const Interface_GeneralLib& /*lib*/,
  Standard_Boolean theModeStat)
  : themodel   (amodel), thepresents ("") 
@@ -51,7 +51,7 @@ Interface_Graph::Interface_Graph
 }
 
 Interface_Graph::Interface_Graph
-(const Handle(Interface_InterfaceModel)& amodel,
+(const Handle(DE_DataModel)& amodel,
  const Handle(Interface_Protocol)& /*protocol*/,
  Standard_Boolean theModeStat)
  : themodel   (amodel) , thepresents ("")    
@@ -63,7 +63,7 @@ Interface_Graph::Interface_Graph
 }
 
 Interface_Graph::Interface_Graph
-(const Handle(Interface_InterfaceModel)& amodel,
+(const Handle(DE_DataModel)& amodel,
  const Handle(Interface_GTool)& /*gtool*/,
  Standard_Boolean theModeStat)
  : themodel   (amodel) , thepresents ("") 
@@ -74,7 +74,7 @@ Interface_Graph::Interface_Graph
 }
 
 Interface_Graph::Interface_Graph
-(const Handle(Interface_InterfaceModel)& amodel,
+(const Handle(DE_DataModel)& amodel,
  Standard_Boolean theModeStat)
 : themodel   (amodel) , thepresents ("")  
 {
@@ -281,7 +281,7 @@ Interface_BitMap&  Interface_Graph::CBitMap ()
 
 //  ....      Chargements Elementaires avec Propagation de "Share"      .... //
 
-const Handle(Interface_InterfaceModel)&  Interface_Graph::Model() const 
+const Handle(DE_DataModel)&  Interface_Graph::Model() const 
 {  return themodel;  }
 
 void  Interface_Graph::GetFromModel ()

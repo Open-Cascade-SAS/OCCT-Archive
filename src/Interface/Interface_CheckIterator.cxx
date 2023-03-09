@@ -14,7 +14,7 @@
 
 #include <Interface_Check.hxx>
 #include <Interface_CheckIterator.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_IntVal.hxx>
 #include <Standard_NoSuchObject.hxx>
 #include <Standard_Transient.hxx>
@@ -78,7 +78,7 @@ Standard_CString Interface_CheckIterator::Name () const
 //purpose  : 
 //=======================================================================
 
-void Interface_CheckIterator::SetModel(const Handle(Interface_InterfaceModel)& model)
+void Interface_CheckIterator::SetModel(const Handle(DE_DataModel)& model)
 {
   themod = model;
 }
@@ -89,7 +89,7 @@ void Interface_CheckIterator::SetModel(const Handle(Interface_InterfaceModel)& m
 //purpose  : 
 //=======================================================================
 
-Handle(Interface_InterfaceModel) Interface_CheckIterator::Model() const
+Handle(DE_DataModel) Interface_CheckIterator::Model() const
 {
   return themod;
 }
@@ -514,7 +514,7 @@ void Interface_CheckIterator::Print(Standard_OStream& S,
 //=======================================================================
 
 void Interface_CheckIterator::Print(Standard_OStream& S,
-                                    const Handle(Interface_InterfaceModel)& model,
+                                    const Handle(DE_DataModel)& model,
                                     const Standard_Boolean failsonly,
                                     const Standard_Integer /*final*/) const
 {

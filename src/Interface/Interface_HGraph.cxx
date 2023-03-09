@@ -14,7 +14,7 @@
 
 #include <Interface_GTool.hxx>
 #include <Interface_HGraph.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_Protocol.hxx>
 #include <Standard_Type.hxx>
 
@@ -25,28 +25,28 @@ Interface_HGraph::Interface_HGraph (const Interface_Graph& agraph)
    
 
     Interface_HGraph::Interface_HGraph
-  (const Handle(Interface_InterfaceModel)& amodel,
+  (const Handle(DE_DataModel)& amodel,
    const Interface_GeneralLib& lib,
    const Standard_Boolean theModeStat)
      :  thegraph (amodel,lib,theModeStat)    {  }
 
 
      Interface_HGraph::Interface_HGraph
-  (const Handle(Interface_InterfaceModel)& amodel,
+  (const Handle(DE_DataModel)& amodel,
    const Handle(Interface_Protocol)& protocol,
    const Standard_Boolean theModeStat)
      :  thegraph (amodel,protocol,theModeStat)    {  }
 
 
      Interface_HGraph::Interface_HGraph
-  (const Handle(Interface_InterfaceModel)& amodel,
+  (const Handle(DE_DataModel)& amodel,
    const Handle(Interface_GTool)& gtool,
    const Standard_Boolean theModeStat)
      :  thegraph (amodel,gtool,theModeStat)    {  }
 
 
      Interface_HGraph::Interface_HGraph
-  (const Handle(Interface_InterfaceModel)& amodel,
+  (const Handle(DE_DataModel)& amodel,
     const Standard_Boolean theModeStat)
      :  thegraph (amodel,theModeStat)    {  }
 

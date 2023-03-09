@@ -19,7 +19,7 @@
 #include <Interface_GeneralLib.hxx>
 #include <Interface_GeneralModule.hxx>
 #include <Interface_InterfaceError.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_Protocol.hxx>
 #include <Interface_ReportEntity.hxx>
 #include <Standard_Transient.hxx>
@@ -37,7 +37,7 @@
 //  #####################################################################
 //  ....                        CONSTRUCTEURS                        ....
 Interface_CopyTool::Interface_CopyTool
-  (const Handle(Interface_InterfaceModel)& amodel,
+  (const Handle(DE_DataModel)& amodel,
    const Interface_GeneralLib& lib)
     : thelib (lib) , thelst (amodel->NbEntities())
 {
@@ -49,7 +49,7 @@ Interface_CopyTool::Interface_CopyTool
 }
 
     Interface_CopyTool::Interface_CopyTool
-  (const Handle(Interface_InterfaceModel)& amodel,
+  (const Handle(DE_DataModel)& amodel,
    const Handle(Interface_Protocol)& protocol)
     : thelib (protocol) , thelst (amodel->NbEntities())
 {
@@ -62,7 +62,7 @@ Interface_CopyTool::Interface_CopyTool
 
 
     Interface_CopyTool::Interface_CopyTool
-  (const Handle(Interface_InterfaceModel)& amodel)
+  (const Handle(DE_DataModel)& amodel)
     : thelib (Interface_Protocol::Active()) , thelst (amodel->NbEntities())
 {
   if (Interface_Protocol::Active().IsNull()) throw Interface_InterfaceError("Interface CopyTool : Create with Active Protocol undefined");
@@ -74,7 +74,7 @@ Interface_CopyTool::Interface_CopyTool
   thelev = 0;  theimp = Standard_False;
 }
 
-    Handle(Interface_InterfaceModel)  Interface_CopyTool::Model () const
+    Handle(DE_DataModel)  Interface_CopyTool::Model () const
       {  return themod;  }
 
     void Interface_CopyTool::SetControl
@@ -282,7 +282,7 @@ Interface_CopyTool::Interface_CopyTool
 
 
     void Interface_CopyTool::FillModel
-  (const Handle(Interface_InterfaceModel)& bmodel)
+  (const Handle(DE_DataModel)& bmodel)
 {
 //  Travaux preparatoires concernant les modeles
 //  On commence : cela implique le Header

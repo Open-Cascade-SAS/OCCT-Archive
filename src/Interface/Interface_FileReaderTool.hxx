@@ -25,7 +25,7 @@
 #include <TColStd_HArray1OfTransient.hxx>
 class Interface_Protocol;
 class Interface_FileReaderData;
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Message_Messenger;
 class Interface_Check;
 class Standard_Transient;
@@ -63,10 +63,10 @@ public:
   Standard_EXPORT Handle(Interface_FileReaderData) Data() const;
   
   //! Stores a Model. Used when the Model has been loaded
-  Standard_EXPORT void SetModel (const Handle(Interface_InterfaceModel)& amodel);
+  Standard_EXPORT void SetModel (const Handle(DE_DataModel)& amodel);
   
   //! Returns the stored Model
-  Standard_EXPORT Handle(Interface_InterfaceModel) Model() const;
+  Standard_EXPORT Handle(DE_DataModel) Model() const;
   
   //! Sets Messenger used for outputting messages
   Standard_EXPORT void SetMessenger (const Handle(Message_Messenger)& messenger);
@@ -134,7 +134,7 @@ public:
   Standard_EXPORT Handle(Standard_Transient) UnknownEntity() const;
   
   //! Creates an empty Model of the norm. Uses Protocol to do it
-  Standard_EXPORT Handle(Interface_InterfaceModel) NewModel() const;
+  Standard_EXPORT Handle(DE_DataModel) NewModel() const;
   
   //! Reads and fills Entities from the FileReaderData set by
   //! SetData to an InterfaceModel.
@@ -145,7 +145,7 @@ public:
   //! It Can raise any error which can occur during a load
   //! operation, unless Error Handling is set.
   //! This method can also be redefined if judged necessary.
-  Standard_EXPORT void LoadModel (const Handle(Interface_InterfaceModel)& amodel);
+  Standard_EXPORT void LoadModel (const Handle(DE_DataModel)& amodel);
   
   //! Reads, Fills and Returns one Entity read from a Record of the
   //! FileReaderData. This Method manages also case of Fail or
@@ -156,7 +156,7 @@ public:
   //! Fills model's header; each Interface defines for its Model its
   //! own file header; this method fills it from FileReaderTool.+
   //! It is called by AnalyseFile from InterfaceModel
-  Standard_EXPORT virtual void BeginRead (const Handle(Interface_InterfaceModel)& amodel) = 0;
+  Standard_EXPORT virtual void BeginRead (const Handle(DE_DataModel)& amodel) = 0;
   
   //! Fills an Entity, given record no; specific to each Interface,
   //! called by AnalyseFile from InterfaceModel (which manages its
@@ -176,7 +176,7 @@ public:
   
   //! Ends file reading after reading all the entities
   //! default is doing nothing; redefinable as necessary
-  Standard_EXPORT virtual void EndRead (const Handle(Interface_InterfaceModel)& amodel);
+  Standard_EXPORT virtual void EndRead (const Handle(DE_DataModel)& amodel);
   
   //! Clear fields
   Standard_EXPORT void Clear();
@@ -199,7 +199,7 @@ private:
 
   Handle(Interface_Protocol) theproto;
   Handle(Interface_FileReaderData) thereader;
-  Handle(Interface_InterfaceModel) themodel;
+  Handle(DE_DataModel) themodel;
   Handle(Message_Messenger) themessenger;
   Standard_Integer thetrace;
   Standard_Boolean theerrhand;

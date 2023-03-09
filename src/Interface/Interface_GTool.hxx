@@ -27,7 +27,7 @@
 #include <Standard_Integer.hxx>
 class Interface_Protocol;
 class Interface_SignType;
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Interface_GeneralModule;
 
 
@@ -55,18 +55,7 @@ public:
   
   //! Sets a new SignType
   Standard_EXPORT void SetSignType (const Handle(Interface_SignType)& sign);
-  
-  //! Returns the SignType. Can be null
-  Standard_EXPORT Handle(Interface_SignType) SignType() const;
-  
-  //! Returns the Signature for a Transient Object in a Model
-  //! It calls SignType to do that
-  //! If SignType is not defined, return ClassName of <ent>
-  Standard_EXPORT Standard_CString SignValue (const Handle(Standard_Transient)& ent, const Handle(Interface_InterfaceModel)& model) const;
-  
-  //! Returns the Name of the SignType, or "Class Name"
-  Standard_EXPORT Standard_CString SignName() const;
-  
+
   //! Sets a new Protocol
   //! if <enforce> is False and the new Protocol equates the old one
   //! then nothing is done

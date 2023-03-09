@@ -33,7 +33,7 @@
 #include <TDF_LabelSequence.hxx>
 #include <XCAFDimTolObjects_GeomToleranceObject.hxx>
 
-class XSControl_WorkSession;
+class DE_WorkSession;
 class TDocStd_Document;
 class STEPCAFControl_ExternFile;
 class TopoDS_Shape;
@@ -59,11 +59,11 @@ public:
   //! Creates a reader tool and attaches it to an already existing Session
   //! Clears the session if it was not yet set for STEP
   //! Clears the internal data structures
-  Standard_EXPORT STEPCAFControl_Writer(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
+  Standard_EXPORT STEPCAFControl_Writer(const Handle(DE_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
   
   //! Clears the internal data structures and attaches to a new session
   //! Clears the session if it was not yet set for STEP
-  Standard_EXPORT void Init (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
+  Standard_EXPORT void Init (const Handle(DE_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
   
   //! Writes all the produced models into file
   //! In case of multimodel with extern references,
@@ -187,32 +187,32 @@ protected:
                                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
   
   //! Write external references to STEP
-  Standard_EXPORT Standard_Boolean WriteExternRefs (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels) const;
+  Standard_EXPORT Standard_Boolean WriteExternRefs (const Handle(DE_WorkSession)& WS, const TDF_LabelSequence& labels) const;
   
   //! Write colors assigned to specified labels, to STEP model
-  Standard_EXPORT Standard_Boolean WriteColors (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels);
+  Standard_EXPORT Standard_Boolean WriteColors (const Handle(DE_WorkSession)& WS, const TDF_LabelSequence& labels);
   
   //! Write names assigned to specified labels, to STEP model
-  Standard_EXPORT Standard_Boolean WriteNames (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels) const;
+  Standard_EXPORT Standard_Boolean WriteNames (const Handle(DE_WorkSession)& WS, const TDF_LabelSequence& labels) const;
   
   //! Write D&GTs assigned to specified labels, to STEP model
-  Standard_EXPORT Standard_Boolean WriteDGTs (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels) const;
+  Standard_EXPORT Standard_Boolean WriteDGTs (const Handle(DE_WorkSession)& WS, const TDF_LabelSequence& labels) const;
   
    //! Write D&GTs assigned to specified labels, to STEP model, according AP242
-  Standard_EXPORT Standard_Boolean WriteDGTsAP242 (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels);
+  Standard_EXPORT Standard_Boolean WriteDGTsAP242 (const Handle(DE_WorkSession)& WS, const TDF_LabelSequence& labels);
 
   //! Write materials assigned to specified labels, to STEP model
-  Standard_EXPORT Standard_Boolean WriteMaterials (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels) const;
+  Standard_EXPORT Standard_Boolean WriteMaterials (const Handle(DE_WorkSession)& WS, const TDF_LabelSequence& labels) const;
   
   //! Write validation properties assigned to specified labels,
   //! to STEP model
-  Standard_EXPORT Standard_Boolean WriteValProps (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels, const Standard_CString multi) const;
+  Standard_EXPORT Standard_Boolean WriteValProps (const Handle(DE_WorkSession)& WS, const TDF_LabelSequence& labels, const Standard_CString multi) const;
   
   //! Write layers assigned to specified labels, to STEP model
-  Standard_EXPORT Standard_Boolean WriteLayers (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels) const;
+  Standard_EXPORT Standard_Boolean WriteLayers (const Handle(DE_WorkSession)& WS, const TDF_LabelSequence& labels) const;
   
   //! Write SHUO assigned to specified component, to STEP model
-  Standard_EXPORT Standard_Boolean WriteSHUOs (const Handle(XSControl_WorkSession)& WS, const TDF_LabelSequence& labels);
+  Standard_EXPORT Standard_Boolean WriteSHUOs (const Handle(DE_WorkSession)& WS, const TDF_LabelSequence& labels);
 
   //! Finds length units located in root of label
   //! If it exists, initializes local length unit from it
@@ -222,11 +222,11 @@ protected:
 
 private:
 
-  Standard_EXPORT Handle(StepRepr_ShapeAspect) WriteShapeAspect(const Handle(XSControl_WorkSession) &WS,
+  Standard_EXPORT Handle(StepRepr_ShapeAspect) WriteShapeAspect(const Handle(DE_WorkSession) &WS,
     const TDF_Label theLabel, const TopoDS_Shape theShape, Handle(StepRepr_RepresentationContext)& theRC,
     Handle(StepAP242_GeometricItemSpecificUsage)& theGISU);
 
-  Standard_EXPORT void WritePresentation(const Handle(XSControl_WorkSession)&    WS,
+  Standard_EXPORT void WritePresentation(const Handle(DE_WorkSession)&    WS,
                                          const TopoDS_Shape&                     thePresentation,
                                          const Handle(TCollection_HAsciiString)& thePrsName,
                                          const Standard_Boolean                  hasSemantic,
@@ -235,16 +235,16 @@ private:
                                          const gp_Pnt&                           theTextPosition,
                                          const Handle(Standard_Transient)        theDimension);
 
-  Standard_EXPORT Handle(StepDimTol_Datum) WriteDatumAP242(const Handle(XSControl_WorkSession)& WS,
+  Standard_EXPORT Handle(StepDimTol_Datum) WriteDatumAP242(const Handle(DE_WorkSession)& WS,
                                                            const TDF_LabelSequence&             theShapeL,
                                                            const TDF_Label&                     theDatumL,
                                                            const Standard_Boolean               isFirstDTarget,
                                                            const Handle(StepDimTol_Datum)       theWrittenDatum);
 
-  Standard_EXPORT void WriteToleranceZone(const Handle(XSControl_WorkSession) &WS, const Handle(XCAFDimTolObjects_GeomToleranceObject)& theObject,
+  Standard_EXPORT void WriteToleranceZone(const Handle(DE_WorkSession) &WS, const Handle(XCAFDimTolObjects_GeomToleranceObject)& theObject,
     const Handle(StepDimTol_GeometricTolerance)& theEntity, const Handle(StepRepr_RepresentationContext)& theRC);
 
-  Standard_EXPORT void WriteGeomTolerance(const Handle(XSControl_WorkSession)&                      WS,
+  Standard_EXPORT void WriteGeomTolerance(const Handle(DE_WorkSession)&                      WS,
                                           const TDF_LabelSequence&                                  theShapeSeqL,
                                           const TDF_Label&                                          theGeomTolL,
                                           const Handle(StepDimTol_HArray1OfDatumSystemOrReference)& theDatumSystem,

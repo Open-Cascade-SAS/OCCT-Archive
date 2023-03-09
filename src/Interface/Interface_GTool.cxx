@@ -15,7 +15,7 @@
 #include <Interface_GeneralLib.hxx>
 #include <Interface_GeneralModule.hxx>
 #include <Interface_GTool.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_Protocol.hxx>
 #include <Interface_SignType.hxx>
 #include <Standard_Transient.hxx>
@@ -33,24 +33,6 @@ Interface_GTool::Interface_GTool  ()    {  }
 
     void  Interface_GTool::SetSignType (const Handle(Interface_SignType)& sign)
       {  thesign = sign;  }
-
-    Handle(Interface_SignType)  Interface_GTool::SignType () const
-      {  return thesign;  }
-
-    Standard_CString  Interface_GTool::SignValue
-  (const Handle(Standard_Transient)& ent,
-   const Handle(Interface_InterfaceModel)& model) const
-{
-  if (ent.IsNull()) return "";
-  if (thesign.IsNull()) return Interface_SignType::ClassName(ent->DynamicType()->Name());
-  return thesign->Value (ent,model);
-}
-
-    Standard_CString  Interface_GTool::SignName () const
-{
-  if (thesign.IsNull()) return "Class Name";
-  return thesign->Name();
-}
 
 
     void  Interface_GTool::SetProtocol

@@ -27,7 +27,7 @@
 #include <Standard_Integer.hxx>
 #include <Message_ProgressRange.hxx>
 
-class XSControl_WorkSession;
+class DE_WorkSession;
 class StepData_StepModel;
 class TopoDS_Shape;
 
@@ -49,7 +49,7 @@ public:
   
   //! Creates a Writer from an already existing Session
   //! If <scratch> is True (D), clears already recorded data
-  Standard_EXPORT STEPControl_Writer(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
+  Standard_EXPORT STEPControl_Writer(const Handle(DE_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
   
   //! Sets a length-measure value that
   //! will be written to uncertainty-measure-with-unit
@@ -60,10 +60,10 @@ public:
   Standard_EXPORT void UnsetTolerance();
   
   //! Sets a specific session to <me>
-  Standard_EXPORT void SetWS (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
+  Standard_EXPORT void SetWS (const Handle(DE_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
   
   //! Returns the session used in <me>
-  Standard_EXPORT Handle(XSControl_WorkSession) WS() const;
+  Standard_EXPORT Handle(DE_WorkSession) WS() const;
   
   //! Returns the produced model. Produces a new one if not yet done
   //! or if <newone> is True
@@ -130,7 +130,7 @@ private:
 
 
 
-  Handle(XSControl_WorkSession) thesession;
+  Handle(DE_WorkSession) thesession;
 
 
 };

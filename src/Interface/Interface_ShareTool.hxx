@@ -20,7 +20,7 @@
 #include <Standard_Type.hxx>
 
 class Interface_HGraph;
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Interface_GeneralLib;
 class Interface_GTool;
 class Interface_Protocol;
@@ -43,17 +43,17 @@ public:
   //! Creates a ShareTool from a Model and builds all required data,
   //! by calling the General Service Library and Modules
   //! (GeneralLib given as an argument)
-  Standard_EXPORT Interface_ShareTool(const Handle(Interface_InterfaceModel)& amodel, const Interface_GeneralLib& lib);
+  Standard_EXPORT Interface_ShareTool(const Handle(DE_DataModel)& amodel, const Interface_GeneralLib& lib);
   
   //! Same a above, but GeneralLib is detained by a GTool
-  Standard_EXPORT Interface_ShareTool(const Handle(Interface_InterfaceModel)& amodel, const Handle(Interface_GTool)& gtool);
+  Standard_EXPORT Interface_ShareTool(const Handle(DE_DataModel)& amodel, const Handle(Interface_GTool)& gtool);
   
   //! Same a above, but GeneralLib is defined through a Protocol
   //! Protocol is used to build the working library
-  Standard_EXPORT Interface_ShareTool(const Handle(Interface_InterfaceModel)& amodel, const Handle(Interface_Protocol)& protocol);
+  Standard_EXPORT Interface_ShareTool(const Handle(DE_DataModel)& amodel, const Handle(Interface_Protocol)& protocol);
   
   //! Same as above, but works with the GTool of the Model
-  Standard_EXPORT Interface_ShareTool(const Handle(Interface_InterfaceModel)& amodel);
+  Standard_EXPORT Interface_ShareTool(const Handle(DE_DataModel)& amodel);
   
   //! Creates a ShareTool from an already defined Graph
   //! Remark that the data of the Graph are copied
@@ -64,7 +64,7 @@ public:
   Standard_EXPORT Interface_ShareTool(const Handle(Interface_HGraph)& ahgraph);
   
   //! Returns the Model used for Creation (directly or for Graph)
-  Standard_EXPORT Handle(Interface_InterfaceModel) Model() const;
+  Standard_EXPORT Handle(DE_DataModel) Model() const;
   
   //! Returns the data used by the ShareTool to work
   //! Can then be used directly (read only)

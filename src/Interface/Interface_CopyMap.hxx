@@ -22,7 +22,7 @@
 
 #include <TColStd_Array1OfTransient.hxx>
 #include <Interface_CopyControl.hxx>
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Standard_Transient;
 
 
@@ -40,13 +40,13 @@ public:
 
   
   //! Creates a CopyMap adapted to work from a Model
-  Standard_EXPORT Interface_CopyMap(const Handle(Interface_InterfaceModel)& amodel);
+  Standard_EXPORT Interface_CopyMap(const Handle(DE_DataModel)& amodel);
   
   //! Clears Transfer List. Gets Ready to begin another Transfer
   Standard_EXPORT void Clear() Standard_OVERRIDE;
   
   //! Returns the InterfaceModel used at Creation time
-  Standard_EXPORT Handle(Interface_InterfaceModel) Model() const;
+  Standard_EXPORT Handle(DE_DataModel) Model() const;
   
   //! Binds a Starting Entity identified by its Number <num> in the
   //! Starting Model, to a Result of Transfer <res>
@@ -71,7 +71,7 @@ protected:
 private:
 
 
-  Handle(Interface_InterfaceModel) themod;
+  Handle(DE_DataModel) themod;
   TColStd_Array1OfTransient theres;
 
 

@@ -18,7 +18,7 @@
 
 class DE_ConfigurationNode;
 class TopoDS_Shape;
-class XSControl_WorkSession;
+class DE_WorkSession;
 class TDocStd_Document;
 
 //! Base class to make transfer process.
@@ -63,7 +63,7 @@ public:
   //! @return True if Read was successful
   Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
                                     const Handle(TDocStd_Document)& theDocument,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Reads a CAD file, according internal configuration
@@ -76,7 +76,7 @@ public:
   Standard_EXPORT virtual bool Read(std::istream& theIStream,
                                     const Handle(TDocStd_Document)& theDocument,
                                     const TCollection_AsciiString theName,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Writes a CAD file, according internal configuration
@@ -87,7 +87,7 @@ public:
   //! @return True if Write was successful
   Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
                                      const Handle(TDocStd_Document)& theDocument,
-                                     Handle(XSControl_WorkSession)& theWS,
+                                     Handle(DE_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Writes a CAD file, according internal configuration
@@ -98,7 +98,7 @@ public:
   //! @return true if Write operation has ended correctly
   Standard_EXPORT virtual bool Write(std::ostream& theOStream,
                                      const Handle(TDocStd_Document)& theDocument,
-                                     Handle(XSControl_WorkSession)& theWS,
+                                     Handle(DE_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Reads a CAD file, according internal configuration
@@ -109,7 +109,7 @@ public:
   //! @return True if Read was successful
   Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
                                     TopoDS_Shape& theShape,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Reads a CAD file, according internal configuration
@@ -122,7 +122,7 @@ public:
   Standard_EXPORT virtual bool Read(std::istream& theIStream,
                                     TopoDS_Shape& theShape,
                                     const TCollection_AsciiString theName,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Writes a CAD file, according internal configuration
@@ -133,7 +133,7 @@ public:
   //! @return True if Write was successful
   Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
                                      const TopoDS_Shape& theShape,
-                                     Handle(XSControl_WorkSession)& theWS,
+                                     Handle(DE_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Writes a CAD file, according internal configuration
@@ -144,7 +144,7 @@ public:
   //! @return true if Write operation has ended correctly
   Standard_EXPORT virtual bool Write(std::ostream& theOStream,
                                      const TopoDS_Shape& theShape,
-                                     Handle(XSControl_WorkSession)& theWS,
+                                     Handle(DE_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange());
 
 public:

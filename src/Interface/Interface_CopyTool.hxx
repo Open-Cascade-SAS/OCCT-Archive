@@ -25,7 +25,7 @@
 #include <Interface_GeneralLib.hxx>
 #include <Standard_Integer.hxx>
 #include <TColStd_SequenceOfInteger.hxx>
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Interface_CopyControl;
 class Interface_CopyMap;
 class Standard_Transient;
@@ -67,16 +67,16 @@ public:
   
   //! Creates a CopyTool adapted to work from a Model. Works
   //! with a General Service Library, given as an argument
-  Standard_EXPORT Interface_CopyTool(const Handle(Interface_InterfaceModel)& amodel, const Interface_GeneralLib& lib);
+  Standard_EXPORT Interface_CopyTool(const Handle(DE_DataModel)& amodel, const Interface_GeneralLib& lib);
   
   //! Same as above, but Library is defined through a Protocol
-  Standard_EXPORT Interface_CopyTool(const Handle(Interface_InterfaceModel)& amodel, const Handle(Interface_Protocol)& protocol);
+  Standard_EXPORT Interface_CopyTool(const Handle(DE_DataModel)& amodel, const Handle(Interface_Protocol)& protocol);
   
   //! Same as above, but works with the Active Protocol
-  Standard_EXPORT Interface_CopyTool(const Handle(Interface_InterfaceModel)& amodel);
+  Standard_EXPORT Interface_CopyTool(const Handle(DE_DataModel)& amodel);
   
   //! Returns the Model on which the CopyTool works
-  Standard_EXPORT Handle(Interface_InterfaceModel) Model() const;
+  Standard_EXPORT Handle(DE_DataModel) Model() const;
   
   //! Changes the Map of Result for another one. This allows to work
   //! with a more sophisticated Mapping Control than the Standard
@@ -160,7 +160,7 @@ public:
   
   //! Fills a Model with the result of the transfer (TransferList)
   //! Commands copy of Header too, and calls RenewImpliedRefs
-  Standard_EXPORT void FillModel (const Handle(Interface_InterfaceModel)& bmodel);
+  Standard_EXPORT void FillModel (const Handle(DE_DataModel)& bmodel);
   
   //! Returns the complete list of copied Entities
   //! If <withreports> is given True, the entities which were
@@ -200,7 +200,7 @@ private:
   Standard_EXPORT virtual void Implied (const Handle(Standard_Transient)& entfrom, const Handle(Standard_Transient)& entto);
 
 
-  Handle(Interface_InterfaceModel) themod;
+  Handle(DE_DataModel) themod;
   Handle(Interface_CopyControl) themap;
   Handle(Interface_CopyMap) therep;
   Interface_BitMap thelst;

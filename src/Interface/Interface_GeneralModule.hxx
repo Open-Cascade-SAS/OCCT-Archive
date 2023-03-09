@@ -22,7 +22,7 @@
 
 #include <Standard_Transient.hxx>
 #include <Standard_Integer.hxx>
-class Interface_InterfaceModel;
+class DE_DataModel;
 class Interface_EntityIterator;
 class Interface_ShareTool;
 class Interface_Check;
@@ -52,7 +52,7 @@ public:
   //! CaseNum), considered in the context of a Model <model>
   //! Default calls FillSharedCase (i.e., ignores the model)
   //! Can be redefined to use the model for working
-  Standard_EXPORT virtual void FillShared (const Handle(Interface_InterfaceModel)& model, const Standard_Integer CN, const Handle(Standard_Transient)& ent, Interface_EntityIterator& iter) const;
+  Standard_EXPORT virtual void FillShared (const Handle(DE_DataModel)& model, const Standard_Integer CN, const Handle(Standard_Transient)& ent, Interface_EntityIterator& iter) const;
   
   //! Specific filling of the list of Entities shared by an Entity
   //! <ent>, according a Case Number <CN> (formerly computed by
@@ -70,7 +70,7 @@ public:
   //! FillShared + ListImplied give the complete list of References
   //! Default calls ListImpliedCase (i.e. ignores the model)
   //! Can be redefined to use the model for working
-  Standard_EXPORT virtual void ListImplied (const Handle(Interface_InterfaceModel)& model, const Standard_Integer CN, const Handle(Standard_Transient)& ent, Interface_EntityIterator& iter) const;
+  Standard_EXPORT virtual void ListImplied (const Handle(DE_DataModel)& model, const Standard_Integer CN, const Handle(Standard_Transient)& ent, Interface_EntityIterator& iter) const;
   
   //! List the Implied References of <ent> (see above)
   //! are Referenced while not considered as Shared (not copied if

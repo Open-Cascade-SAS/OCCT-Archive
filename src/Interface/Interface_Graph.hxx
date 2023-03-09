@@ -22,7 +22,7 @@
 #include <Standard_Handle.hxx>
 
 #include <Interface_BitMap.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 
 #include <TCollection_HAsciiString.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
@@ -71,16 +71,16 @@ public:
   //! Entities to work with are contained in <amodel>
   //! Basic Shared and Sharing lists are obtained from a General
   //! Services Library, given directly as an argument
-  Standard_EXPORT Interface_Graph(const Handle(Interface_InterfaceModel)& amodel, const Interface_GeneralLib& lib, const Standard_Boolean theModeStats = Standard_True);
+  Standard_EXPORT Interface_Graph(const Handle(DE_DataModel)& amodel, const Interface_GeneralLib& lib, const Standard_Boolean theModeStats = Standard_True);
   
   //! Same as above, but the Library is defined through a Protocol
-  Standard_EXPORT Interface_Graph(const Handle(Interface_InterfaceModel)& amodel, const Handle(Interface_Protocol)& protocol, const Standard_Boolean theModeStats = Standard_True);
+  Standard_EXPORT Interface_Graph(const Handle(DE_DataModel)& amodel, const Handle(Interface_Protocol)& protocol, const Standard_Boolean theModeStats = Standard_True);
   
   //! Same as above, but the Library is defined through a Protocol
-  Standard_EXPORT Interface_Graph(const Handle(Interface_InterfaceModel)& amodel, const Handle(Interface_GTool)& gtool, const Standard_Boolean theModeStats = Standard_True);
+  Standard_EXPORT Interface_Graph(const Handle(DE_DataModel)& amodel, const Handle(Interface_GTool)& gtool, const Standard_Boolean theModeStats = Standard_True);
   
   //! Same a above but works with the Protocol recorded in the Model
-  Standard_EXPORT Interface_Graph(const Handle(Interface_InterfaceModel)& amodel, const Standard_Boolean theModeStats = Standard_True);
+  Standard_EXPORT Interface_Graph(const Handle(DE_DataModel)& amodel, const Standard_Boolean theModeStats = Standard_True);
   
   //! Creates a Graph from another one, getting all its data
   //! Remark that status are copied from <agraph>, but the other
@@ -145,7 +145,7 @@ public:
   Standard_EXPORT Interface_BitMap& CBitMap();
   
   //! Returns the Model with which this Graph was created
-  Standard_EXPORT const Handle(Interface_InterfaceModel)& Model() const;
+  Standard_EXPORT const Handle(DE_DataModel)& Model() const;
   
   //! Loads Graph with all Entities contained in the Model
   Standard_EXPORT void GetFromModel();
@@ -242,7 +242,7 @@ protected:
   Standard_EXPORT void InitStats();
 
 
-  Handle(Interface_InterfaceModel) themodel;
+  Handle(DE_DataModel) themodel;
   TCollection_AsciiString thepresents;
   Handle(TColStd_HArray1OfInteger) thestats;
   Handle(TColStd_HArray1OfListOfInteger) thesharings;

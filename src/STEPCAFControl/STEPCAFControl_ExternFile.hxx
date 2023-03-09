@@ -22,7 +22,7 @@
 #include <Standard_Boolean.hxx>
 #include <TDF_Label.hxx>
 #include <Standard_Transient.hxx>
-class XSControl_WorkSession;
+class DE_WorkSession;
 class TCollection_HAsciiString;
 
 
@@ -40,9 +40,9 @@ public:
   //! Creates an empty structure
   Standard_EXPORT STEPCAFControl_ExternFile();
   
-    void SetWS (const Handle(XSControl_WorkSession)& WS);
+    void SetWS (const Handle(DE_WorkSession)& WS);
   
-    Handle(XSControl_WorkSession) GetWS() const;
+    Handle(DE_WorkSession) GetWS() const;
   
     void SetLoadStatus (const XSControl_ReturnStatus stat);
   
@@ -77,7 +77,7 @@ protected:
 private:
 
 
-  Handle(XSControl_WorkSession) myWS;
+  Handle(DE_WorkSession) myWS;
   XSControl_ReturnStatus myLoadStatus;
   Standard_Boolean myTransferStatus;
   XSControl_ReturnStatus myWriteStatus;

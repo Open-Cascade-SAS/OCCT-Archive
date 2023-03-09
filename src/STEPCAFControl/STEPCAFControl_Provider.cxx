@@ -27,7 +27,7 @@
 #include <TDataStd_Name.hxx>
 #include <TDF_Tool.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
-#include <XSControl_WorkSession.hxx>
+#include <DE_WorkSession.hxx>
 #include <UnitsMethods.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(STEPCAFControl_Provider, DE_Provider)
@@ -51,13 +51,13 @@ STEPCAFControl_Provider::STEPCAFControl_Provider(const Handle(DE_ConfigurationNo
 // function : STEPCAFControl_Provider
 // purpose  :
 //=======================================================================
-void STEPCAFControl_Provider::personizeWS(Handle(XSControl_WorkSession)& theWS)
+void STEPCAFControl_Provider::personizeWS(Handle(DE_WorkSession)& theWS)
 {
   if (theWS.IsNull())
   {
     Message::SendWarning() << "Warning: STEPCAFControl_Provider :"
       << " Null work session, use internal temporary session";
-    theWS = new XSControl_WorkSession();
+    theWS = new DE_WorkSession();
   }
   Handle(STEPControl_Controller) aCntrl =
     Handle(STEPControl_Controller)::DownCast(theWS->NormAdaptor());
@@ -279,7 +279,7 @@ void STEPCAFControl_Provider::resetStatic()
 //=======================================================================
 bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
                                    const Handle(TDocStd_Document)& theDocument,
-                                   Handle(XSControl_WorkSession)& theWS,
+                                   Handle(DE_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
   if (theDocument.IsNull())
@@ -357,7 +357,7 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
 bool STEPCAFControl_Provider::Read(std::istream& theIStream,
                                    const Handle(TDocStd_Document)& theDocument,
                                    const TCollection_AsciiString theName,
-                                   Handle(XSControl_WorkSession)& theWS,
+                                   Handle(DE_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
   if (theDocument.IsNull())
@@ -413,7 +413,7 @@ bool STEPCAFControl_Provider::Read(std::istream& theIStream,
 //=======================================================================
 bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
                                     const Handle(TDocStd_Document)& theDocument,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress)
 {
   if (GetNode().IsNull() ||
@@ -514,7 +514,7 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool STEPCAFControl_Provider::Write(std::ostream& theOStream,
                                     const Handle(TDocStd_Document)& theDocument,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress)
 {
   if (GetNode().IsNull() ||
@@ -605,7 +605,7 @@ bool STEPCAFControl_Provider::Write(std::ostream& theOStream,
 //=======================================================================
 bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
                                    TopoDS_Shape& theShape,
-                                   Handle(XSControl_WorkSession)& theWS,
+                                   Handle(DE_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
   (void)theProgress;
@@ -649,7 +649,7 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
 bool STEPCAFControl_Provider::Read(std::istream& theIStream,
                                    TopoDS_Shape& theShape,
                                    const TCollection_AsciiString theName,
-                                   Handle(XSControl_WorkSession)& theWS,
+                                   Handle(DE_WorkSession)& theWS,
                                    const Message_ProgressRange& theProgress)
 {
   (void)theProgress;
@@ -692,7 +692,7 @@ bool STEPCAFControl_Provider::Read(std::istream& theIStream,
 //=======================================================================
 bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
                                     const TopoDS_Shape& theShape,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress)
 {
   if (GetNode().IsNull() ||
@@ -749,7 +749,7 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
 //=======================================================================
 bool STEPCAFControl_Provider::Write(std::ostream& theOStream,
                                     const TopoDS_Shape& theShape,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress)
 {
   if (GetNode().IsNull() ||

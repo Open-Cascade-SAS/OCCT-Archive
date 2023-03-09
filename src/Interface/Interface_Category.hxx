@@ -28,7 +28,7 @@
 class Interface_Protocol;
 class Standard_Transient;
 class Interface_ShareTool;
-class Interface_InterfaceModel;
+class DE_DataModel;
 
 //! This class manages categories
 //! A category is defined by a name and a number, and can be
@@ -89,7 +89,7 @@ class Interface_Category
   //! Hence, it can be queried by the method Num.
   //! The Model itself is not recorded, this method is intended to
   //! be used in a wider context (which detains also a Graph, etc)
-  Standard_EXPORT void Compute (const Handle(Interface_InterfaceModel)& theModel, const Interface_ShareTool& theShares);
+  Standard_EXPORT void Compute (const Handle(DE_DataModel)& theModel, const Interface_ShareTool& theShares);
 
   //! Returns the category number recorded for an entity number
   //! Returns 0 if out of range

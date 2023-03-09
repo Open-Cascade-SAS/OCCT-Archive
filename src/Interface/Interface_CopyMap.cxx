@@ -14,7 +14,7 @@
 
 #include <Interface_CopyMap.hxx>
 #include <Interface_InterfaceError.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Standard_Transient.hxx>
 #include <Standard_Type.hxx>
 
@@ -22,7 +22,7 @@ IMPLEMENT_STANDARD_RTTIEXT(Interface_CopyMap,Interface_CopyControl)
 
 //  CopyMap : rien de plus qu une Map passive
 Interface_CopyMap::Interface_CopyMap
-  (const Handle(Interface_InterfaceModel)& amodel)
+  (const Handle(DE_DataModel)& amodel)
     : theres (0,amodel->NbEntities())
       {  themod = amodel;  }
 
@@ -34,7 +34,7 @@ Interface_CopyMap::Interface_CopyMap
   for (Standard_Integer i = 1; i <= nb; i ++) theres.SetValue(i,bid);
 }
 
-    Handle(Interface_InterfaceModel) Interface_CopyMap::Model () const
+    Handle(DE_DataModel) Interface_CopyMap::Model () const
       {  return themod;  }
 
     void Interface_CopyMap::Bind

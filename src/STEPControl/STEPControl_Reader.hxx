@@ -29,7 +29,7 @@
 #include <Message_ProgressRange.hxx>
 #include <DE_ReturnStatus.hxx>
 
-class XSControl_WorkSession;
+class DE_WorkSession;
 class StepData_StepModel;
 class StepRepr_RepresentationContext;
 
@@ -65,7 +65,7 @@ class StepRepr_RepresentationContext;
 //! IFSelect_PrintFail, mode see above; or reader.PrintStatsTransfer();
 //! Gets correspondence between a STEP entity and a result
 //! shape obtained from it.
-//! Handle(XSControl_WorkSession)
+//! Handle(DE_WorkSession)
 //! WS = reader.WS();
 //! if ( WS->TransferReader()->HasResult(ent) )
 //! TopoDS_Shape shape = WS->TransferReader()->ShapeResult(ent);
@@ -79,11 +79,24 @@ public:
 
   //! Creates a Reader for STEP from an already existing Session
   //! Clears the session if it was not yet set for STEP
-  Standard_EXPORT STEPControl_Reader(const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch = Standard_True);
+  Standard_EXPORT STEPControl_Reader(const Handle(DE_WorkSession)& WS,
+                                     const Standard_Boolean scratch = Standard_True);
 
   //! Returns the model as a StepModel.
   //! It can then be consulted (header, product)
   Standard_EXPORT Handle(StepData_StepModel) StepModel() const;
+
+  //! Returns sequence of all unit names for shape representations
+  //! found in file
+  Standard_EXPORT void FileUnits(TColStd_SequenceOfAsciiString& theUnitLengthNames,
+                                 TColStd_SequenceOfAsciiString& theUnitAngleNames,
+                                 TColStd_SequenceOfAsciiString& theUnitSolidAngleNames);
+
+  //! Sets system length unit used by transfer process
+  Standard_EXPORT void SetSystemLengthUnit(const Standard_Real theLengthUnit);
+
+  //! Returns system length unit used by transfer process
+  Standard_EXPORT Standard_Real SystemLengthUnit() const;
 
   //! Transfers a root given its rank in the list of candidate roots
   //! Default is the first one
@@ -96,15 +109,6 @@ public:
   //! a transfer to a Shape (type of entities is PRODUCT)
   Standard_EXPORT virtual Standard_Integer NbRootsForTransfer();
 
-  //! Returns sequence of all unit names for shape representations
-  //! found in file
-  Standard_EXPORT void FileUnits(TColStd_SequenceOfAsciiString& theUnitLengthNames, TColStd_SequenceOfAsciiString& theUnitAngleNames, TColStd_SequenceOfAsciiString& theUnitSolidAngleNames);
-
-  //! Sets system length unit used by transfer process
-  Standard_EXPORT void SetSystemLengthUnit(const Standard_Real theLengthUnit);
-
-  //! Returns system length unit used by transfer process
-  Standard_EXPORT Standard_Real SystemLengthUnit() const;
 
   //! Loads a file and returns the read status
 //! Zero for a Model which compies with the Controller
@@ -150,7 +154,9 @@ public:
 protected:
 
   //! Returns  units for length , angle and solidangle for shape representations
-  Standard_EXPORT Standard_Boolean findUnits(const Handle(StepRepr_RepresentationContext)& theReprContext, TColStd_Array1OfAsciiString& theNameUnits, TColStd_Array1OfReal& theFactorUnits);
+  Standard_EXPORT Standard_Boolean findUnits(const Handle(StepRepr_RepresentationContext)& theReprContext,
+                                             TColStd_Array1OfAsciiString& theNameUnits,
+                                             TColStd_Array1OfReal& theFactorUnits);
 
   //! Returns a sequence of produced shapes
   Standard_EXPORT TopTools_SequenceOfShape& Shapes();
@@ -159,7 +165,7 @@ private:
 
   Standard_Boolean therootsta;
   TColStd_SequenceOfTransient theroots;
-  Handle(XSControl_WorkSession) thesession;
+  Handle(DE_WorkSession) thesession;
   TopTools_SequenceOfShape theshapes;
 
 };

@@ -24,7 +24,7 @@
 #include <TopoDS_Shape.hxx>
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
-#include <XSControl_WorkSession.hxx>
+#include <DE_WorkSession.hxx>
 #include <XSControl_TransferWriter.hxx>
 #include <UnitsMethods.hxx>
 
@@ -35,7 +35,7 @@
 STEPControl_Writer::STEPControl_Writer ()
 {
   STEPControl_Controller::Init();
-  SetWS (new XSControl_WorkSession);
+  SetWS (new DE_WorkSession);
 }
 
 
@@ -46,7 +46,7 @@ STEPControl_Writer::STEPControl_Writer ()
 //=======================================================================
 
 STEPControl_Writer::STEPControl_Writer
-  (const Handle(XSControl_WorkSession)& WS, const Standard_Boolean scratch)
+  (const Handle(DE_WorkSession)& WS, const Standard_Boolean scratch)
 {
   STEPControl_Controller::Init();
   SetWS (WS,scratch);
@@ -59,7 +59,7 @@ STEPControl_Writer::STEPControl_Writer
 //purpose  : 
 //=======================================================================
 
-void STEPControl_Writer::SetWS(const Handle(XSControl_WorkSession)& WS,
+void STEPControl_Writer::SetWS(const Handle(DE_WorkSession)& WS,
                                const Standard_Boolean scratch)
 {
   thesession = WS;
@@ -74,7 +74,7 @@ void STEPControl_Writer::SetWS(const Handle(XSControl_WorkSession)& WS,
 //purpose  : 
 //=======================================================================
 
-Handle(XSControl_WorkSession) STEPControl_Writer::WS () const
+Handle(DE_WorkSession) STEPControl_Writer::WS () const
 {
   return thesession;
 }

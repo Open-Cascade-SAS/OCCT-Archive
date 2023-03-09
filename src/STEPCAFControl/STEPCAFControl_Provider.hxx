@@ -51,7 +51,7 @@ public:
   //! @return true if Read operation has ended correctly
   Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
                                     const Handle(TDocStd_Document)& theDocument,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
   //! Reads a CAD file, according internal configuration
@@ -64,7 +64,7 @@ public:
   Standard_EXPORT virtual bool Read(std::istream& theIStream,
                                     const Handle(TDocStd_Document)& theDocument,
                                     const TCollection_AsciiString theName,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Writes a CAD file, according internal configuration
@@ -75,7 +75,7 @@ public:
   //! @return true if Write operation has ended correctly
   Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
                                      const Handle(TDocStd_Document)& theDocument,
-                                     Handle(XSControl_WorkSession)& theWS,
+                                     Handle(DE_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
   //! Writes a CAD file, according internal configuration
@@ -86,7 +86,7 @@ public:
   //! @return true if Write operation has ended correctly
   Standard_EXPORT virtual bool Write(std::ostream& theOStream,
                                      const Handle(TDocStd_Document)& theDocument,
-                                     Handle(XSControl_WorkSession)& theWS,
+                                     Handle(DE_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Reads a CAD file, according internal configuration
@@ -97,7 +97,7 @@ public:
   //! @return true if Read operation has ended correctly
   Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
                                     TopoDS_Shape& theShape,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
   //! Reads a CAD file, according internal configuration
@@ -110,7 +110,7 @@ public:
   Standard_EXPORT virtual bool Read(std::istream& theIStream,
                                     TopoDS_Shape& theShape,
                                     const TCollection_AsciiString theName,
-                                    Handle(XSControl_WorkSession)& theWS,
+                                    Handle(DE_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Writes a CAD file, according internal configuration
@@ -121,7 +121,7 @@ public:
   //! @return true if Write operation has ended correctly
   Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
                                      const TopoDS_Shape& theShape,
-                                     Handle(XSControl_WorkSession)& theWS,
+                                     Handle(DE_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
   //! Writes a CAD file, according internal configuration
@@ -132,7 +132,7 @@ public:
   //! @return true if Write operation has ended correctly
   Standard_EXPORT virtual bool Write(std::ostream& theOStream,
                                      const TopoDS_Shape& theShape,
-                                     Handle(XSControl_WorkSession)& theWS,
+                                     Handle(DE_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange());
 
 public:
@@ -158,7 +158,7 @@ private:
   //! Personizes work session with current format.
   //! Creates new temporary session if current session is null
   //! @param[in] theWS current work session
-  void personizeWS(Handle(XSControl_WorkSession)& theWS);
+  void personizeWS(Handle(DE_WorkSession)& theWS);
 
   //! Initialize static variables
   void initStatic(const Handle(DE_ConfigurationNode)& theNode);

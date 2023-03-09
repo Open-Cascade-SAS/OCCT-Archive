@@ -19,7 +19,7 @@
 #include <Interface_FileReaderTool.hxx>
 #include <Interface_GeneralLib.hxx>
 #include <Interface_GeneralModule.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <DE_DataModel.hxx>
 #include <Interface_Protocol.hxx>
 #include <Interface_ReaderLib.hxx>
 #include <Interface_ReaderModule.hxx>
@@ -105,7 +105,7 @@ Handle(Interface_FileReaderData) Interface_FileReaderTool::Data () const
 //=======================================================================
 
 void Interface_FileReaderTool::SetModel
-  (const Handle(Interface_InterfaceModel)& amodel)
+  (const Handle(DE_DataModel)& amodel)
 {
   themodel = amodel;
 }
@@ -116,7 +116,7 @@ void Interface_FileReaderTool::SetModel
 //purpose  : 
 //=======================================================================
 
-Handle(Interface_InterfaceModel) Interface_FileReaderTool::Model () const
+Handle(DE_DataModel) Interface_FileReaderTool::Model () const
 {
   return themodel;
 }
@@ -280,7 +280,7 @@ Handle(Standard_Transient) Interface_FileReaderTool::UnknownEntity() const
 //purpose  : 
 //=======================================================================
 
-Handle(Interface_InterfaceModel) Interface_FileReaderTool::NewModel() const
+Handle(DE_DataModel) Interface_FileReaderTool::NewModel() const
 {
   return theproto->NewModel();
 }
@@ -291,7 +291,7 @@ Handle(Interface_InterfaceModel) Interface_FileReaderTool::NewModel() const
 //purpose  : 
 //=======================================================================
 
-void Interface_FileReaderTool::EndRead(const Handle(Interface_InterfaceModel)& )
+void Interface_FileReaderTool::EndRead(const Handle(DE_DataModel)& )
 {
 }    // par defaut, ne fait rien; redefinissable selon besoin
 
@@ -305,7 +305,7 @@ void Interface_FileReaderTool::EndRead(const Handle(Interface_InterfaceModel)& )
 //=======================================================================
 
 void Interface_FileReaderTool::LoadModel
-  (const Handle(Interface_InterfaceModel)& amodel)
+  (const Handle(DE_DataModel)& amodel)
 //
 //   Methode generale de lecture d un fichier : il est lu via un FileReaderData
 //   qui doit y donner acces de la facon la plus performante possible

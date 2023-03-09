@@ -213,7 +213,7 @@
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
 #include <XSControl_TransferWriter.hxx>
-#include <XSControl_WorkSession.hxx>
+#include <DE_WorkSession.hxx>
 #include <UnitsMethods.hxx>
 
 // added by skl 15.01.2004 for D&GT writing
@@ -255,7 +255,7 @@ STEPCAFControl_Writer::STEPCAFControl_Writer () :
        myMatMode  ( Standard_True )
 {
   STEPCAFControl_Controller::Init();
-  Handle(XSControl_WorkSession) WS = new XSControl_WorkSession;
+  Handle(DE_WorkSession) WS = new DE_WorkSession;
   Init ( WS );
 }
 
@@ -265,7 +265,7 @@ STEPCAFControl_Writer::STEPCAFControl_Writer () :
 //purpose  :
 //=======================================================================
 
-STEPCAFControl_Writer::STEPCAFControl_Writer (const Handle(XSControl_WorkSession)& WS,
+STEPCAFControl_Writer::STEPCAFControl_Writer (const Handle(DE_WorkSession)& WS,
                                               const Standard_Boolean scratch) :
   myColorMode(Standard_True),
   myNameMode(Standard_True),
@@ -285,7 +285,7 @@ STEPCAFControl_Writer::STEPCAFControl_Writer (const Handle(XSControl_WorkSession
 //purpose  :
 //=======================================================================
 
-void STEPCAFControl_Writer::Init (const Handle(XSControl_WorkSession)& WS,
+void STEPCAFControl_Writer::Init (const Handle(DE_WorkSession)& WS,
 				  const Standard_Boolean scratch)
 {
   WS->SelectNorm ( "STEP" );
@@ -773,7 +773,7 @@ TopoDS_Shape STEPCAFControl_Writer::TransferExternFiles (const TDF_Label &L,
   if ( ! XCAFDoc_ShapeTool::IsAssembly ( L ) && !XCAFDoc_ShapeTool::IsComponent ( L )) {
     labels.Append ( L );
     // prepare for transfer
-    Handle(XSControl_WorkSession) newWS = new XSControl_WorkSession;
+    Handle(DE_WorkSession) newWS = new DE_WorkSession;
     newWS->SelectNorm ( "STEP" );
     STEPControl_Writer sw ( newWS, Standard_True );
     TDF_LabelSequence Lseq;
@@ -847,7 +847,7 @@ TopoDS_Shape STEPCAFControl_Writer::TransferExternFiles (const TDF_Label &L,
 //purpose  :
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Writer::WriteExternRefs (const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Writer::WriteExternRefs (const Handle(DE_WorkSession) &WS,
 							 const TDF_LabelSequence &labels) const
 {
   if ( labels.Length() <=0 ) return Standard_False;
@@ -1203,7 +1203,7 @@ static Standard_Boolean getFatherColor (const TDF_Label& L,
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Writer::WriteColors (const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Writer::WriteColors (const Handle(DE_WorkSession) &WS,
 						     const TDF_LabelSequence &labels)
 {
   if ( labels.Length() <=0 ) return Standard_False;
@@ -1398,7 +1398,7 @@ Standard_Boolean STEPCAFControl_Writer::WriteColors (const Handle(XSControl_Work
 //purpose  :
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Writer::WriteNames (const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Writer::WriteNames (const Handle(DE_WorkSession) &WS,
 						    const TDF_LabelSequence &labels) const
 {
   if ( labels.Length() <=0 ) return Standard_False;
@@ -1477,7 +1477,7 @@ Standard_Boolean STEPCAFControl_Writer::WriteNames (const Handle(XSControl_WorkS
 //function : WritePropsForLabel
 //purpose  :
 //=======================================================================
-static Standard_Boolean WritePropsForLabel(const Handle(XSControl_WorkSession) &WS,
+static Standard_Boolean WritePropsForLabel(const Handle(DE_WorkSession) &WS,
                                            const Handle(XCAFDoc_ShapeTool) &aSTool,
                                            const STEPCAFControl_DataMapOfLabelShape &myLabels,
                                            const TDF_Label &L,
@@ -1528,7 +1528,7 @@ static Standard_Boolean WritePropsForLabel(const Handle(XSControl_WorkSession) &
 //purpose  :
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Writer::WriteValProps (const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Writer::WriteValProps (const Handle(DE_WorkSession) &WS,
 						       const TDF_LabelSequence &labels,
 						       const Standard_CString multi) const
 {
@@ -1606,7 +1606,7 @@ Standard_Boolean STEPCAFControl_Writer::WriteValProps (const Handle(XSControl_Wo
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Writer::WriteLayers (const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Writer::WriteLayers (const Handle(DE_WorkSession) &WS,
 						     const TDF_LabelSequence  &labels ) const
 {
   
@@ -1750,7 +1750,7 @@ static Standard_Boolean getSHUOstyle(const TDF_Label& aSHUOlab,
 //function : getProDefinitionOfNAUO
 //purpose  : auxiliary
 //=======================================================================
-static Standard_Boolean getProDefinitionOfNAUO(const Handle(XSControl_WorkSession)& WS,
+static Standard_Boolean getProDefinitionOfNAUO(const Handle(DE_WorkSession)& WS,
                                                const TopoDS_Shape& theShape,
                                                Handle(StepBasic_ProductDefinition)& PD,
                                                Handle(StepRepr_NextAssemblyUsageOccurrence)& NAUO,
@@ -1799,7 +1799,7 @@ static Standard_Boolean getProDefinitionOfNAUO(const Handle(XSControl_WorkSessio
 //=======================================================================
 static Standard_Boolean writeSHUO (const Handle(XCAFDoc_GraphNode)& theSHUO,
                                    const Handle(XCAFDoc_ShapeTool)& theSTool,
-                                   const Handle(XSControl_WorkSession)& WS,
+                                   const Handle(DE_WorkSession)& WS,
                                    Handle(StepRepr_SpecifiedHigherUsageOccurrence)& theTopSHUO,
                                    TopoDS_Shape& NAUOShape,
                                    Handle(StepBasic_ProductDefinition)& theRelatingPD,
@@ -1903,7 +1903,7 @@ static Standard_Boolean writeSHUO (const Handle(XCAFDoc_GraphNode)& theSHUO,
 //=======================================================================
 static Standard_Boolean createSHUOStyledItem (const XCAFPrs_Style& style,
                                               const Handle(StepRepr_ProductDefinitionShape)& PDS,
-                                              const Handle(XSControl_WorkSession) &WS,
+                                              const Handle(DE_WorkSession) &WS,
                                               const TopoDS_Shape& Sh,
                                               const Handle(XCAFDoc_ShapeTool)& STool,
                                               MoniTool_DataMapOfShapeTransient& myMapCompMDGPR)
@@ -2038,7 +2038,7 @@ static Standard_Boolean createSHUOStyledItem (const XCAFPrs_Style& style,
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Writer::WriteSHUOs (const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Writer::WriteSHUOs (const Handle(DE_WorkSession) &WS,
                                                     const TDF_LabelSequence  &labels )
 {
   if ( labels.Length() <=0 ) return Standard_False;
@@ -2370,7 +2370,7 @@ static Handle(StepRepr_ReprItemAndMeasureWithUnit) CreateDimValue(const Standard
 //purpose  : auxiliary (write Shape_Aspect entity for given shape)
 //=======================================================================
 
-Handle(StepRepr_ShapeAspect) STEPCAFControl_Writer::WriteShapeAspect (const Handle(XSControl_WorkSession) &WS,
+Handle(StepRepr_ShapeAspect) STEPCAFControl_Writer::WriteShapeAspect (const Handle(DE_WorkSession) &WS,
                                                                       const TDF_Label theLabel,
                                                                       const TopoDS_Shape theShape,
                                                                       Handle(StepRepr_RepresentationContext)& theRC,
@@ -2444,7 +2444,7 @@ Handle(StepRepr_ShapeAspect) STEPCAFControl_Writer::WriteShapeAspect (const Hand
 //function : WritePresentation
 //purpose  : auxiliary (write annotation plane and presentation)
 //======================================================================
-void STEPCAFControl_Writer::WritePresentation(const Handle(XSControl_WorkSession)& WS,
+void STEPCAFControl_Writer::WritePresentation(const Handle(DE_WorkSession)& WS,
                                               const TopoDS_Shape& thePresentation,
                                               const Handle(TCollection_HAsciiString)& thePrsName,
                                               const Standard_Boolean hasSemantic,
@@ -2530,7 +2530,7 @@ void STEPCAFControl_Writer::WritePresentation(const Handle(XSControl_WorkSession
 //           necessary entities and link them to already written datum 
 //           in case of multiple features association)
 //=======================================================================
-Handle(StepDimTol_Datum) STEPCAFControl_Writer::WriteDatumAP242(const Handle(XSControl_WorkSession)& WS,
+Handle(StepDimTol_Datum) STEPCAFControl_Writer::WriteDatumAP242(const Handle(DE_WorkSession)& WS,
                                                                 const TDF_LabelSequence& theShapeL,
                                                                 const TDF_Label& theDatumL,
                                                                 const Standard_Boolean isFirstDTarget,
@@ -2770,7 +2770,7 @@ Handle(StepDimTol_Datum) STEPCAFControl_Writer::WriteDatumAP242(const Handle(XSC
 //purpose  : auxiliary (write all data for given dimension: values, 
 //           qualifiers, modifiers, orientation and tolerance class)
 //======================================================================
-static void WriteDimValues(const Handle(XSControl_WorkSession) &WS,
+static void WriteDimValues(const Handle(DE_WorkSession) &WS,
                            const Handle(XCAFDimTolObjects_DimensionObject) theObject,
                            const Handle(StepRepr_RepresentationContext) theRC,
                            const StepShape_DimensionalCharacteristic theDimension)
@@ -2974,7 +2974,7 @@ static void WriteDimValues(const Handle(XSControl_WorkSession) &WS,
 //function : WriteDerivedGeometry
 //purpose  : auxiliary (write connection point for dimensions)
 //======================================================================
-static void WriteDerivedGeometry (const Handle(XSControl_WorkSession) &WS,
+static void WriteDerivedGeometry (const Handle(DE_WorkSession) &WS,
                                   const Handle(XCAFDimTolObjects_DimensionObject)& theObject,
                                   const Handle(StepRepr_ConstructiveGeometryRepresentation) theRepr,
                                   Handle(StepRepr_ShapeAspect)& theFirstSA,
@@ -3028,7 +3028,7 @@ static void WriteDerivedGeometry (const Handle(XSControl_WorkSession) &WS,
 //purpose  : auxiliary (write Write datum system for given
 //           geometric_tolerance)
 //======================================================================
-static Handle(StepDimTol_HArray1OfDatumSystemOrReference) WriteDatumSystem(const Handle(XSControl_WorkSession) &WS,
+static Handle(StepDimTol_HArray1OfDatumSystemOrReference) WriteDatumSystem(const Handle(DE_WorkSession) &WS,
                                                                            const TDF_Label theGeomTolL,
                                                                            const TDF_LabelSequence theDatumSeq,
                                                                            const STEPConstruct_DataMapOfAsciiStringTransient theDatumMap,
@@ -3204,7 +3204,7 @@ static Handle(StepDimTol_HArray1OfDatumSystemOrReference) WriteDatumSystem(const
 //function : WriteToleranceZone
 //purpose  : auxiliary (write tolerace zones)
 //=======================================================================
-void STEPCAFControl_Writer::WriteToleranceZone (const Handle(XSControl_WorkSession) &WS,
+void STEPCAFControl_Writer::WriteToleranceZone (const Handle(DE_WorkSession) &WS,
                                                 const Handle(XCAFDimTolObjects_GeomToleranceObject)& theObject,
                                                 const Handle(StepDimTol_GeometricTolerance)& theEntity,
                                                 const Handle(StepRepr_RepresentationContext)& theRC)
@@ -3253,7 +3253,7 @@ void STEPCAFControl_Writer::WriteToleranceZone (const Handle(XSControl_WorkSessi
 //purpose  : auxiliary (write Geometric_Tolerance entity for given shapes,
 //           label and datum system)
 //======================================================================
-void STEPCAFControl_Writer::WriteGeomTolerance (const Handle(XSControl_WorkSession) &WS,
+void STEPCAFControl_Writer::WriteGeomTolerance (const Handle(DE_WorkSession) &WS,
                                                 const TDF_LabelSequence& theShapeSeqL,
                                                 const TDF_Label& theGeomTolL,
                                                 const Handle(StepDimTol_HArray1OfDatumSystemOrReference)& theDatumSystem,
@@ -3434,7 +3434,7 @@ void STEPCAFControl_Writer::WriteGeomTolerance (const Handle(XSControl_WorkSessi
 //function : WriteDGTs
 //purpose  : 
 //=======================================================================
-Standard_Boolean STEPCAFControl_Writer::WriteDGTs (const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Writer::WriteDGTs (const Handle(DE_WorkSession) &WS,
                                                    const TDF_LabelSequence  &labels ) const
 {
   
@@ -3771,7 +3771,7 @@ Standard_Boolean STEPCAFControl_Writer::WriteDGTs (const Handle(XSControl_WorkSe
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Writer::WriteDGTsAP242 (const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Writer::WriteDGTsAP242 (const Handle(DE_WorkSession) &WS,
                                                         const TDF_LabelSequence  &labels )
 {
   // Get working data
@@ -4071,7 +4071,7 @@ static Standard_Boolean FindPDSforRI(const Interface_Graph &aGraph,
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean STEPCAFControl_Writer::WriteMaterials (const Handle(XSControl_WorkSession) &WS,
+Standard_Boolean STEPCAFControl_Writer::WriteMaterials (const Handle(DE_WorkSession) &WS,
                                                         const TDF_LabelSequence  &labels ) const
 {
   

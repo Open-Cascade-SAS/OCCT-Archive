@@ -56,8 +56,6 @@ Interface_HSequenceOfCheck.hxx
 Interface_IndexedMapOfAsciiString.hxx
 Interface_InterfaceError.hxx
 Interface_InterfaceMismatch.hxx
-Interface_InterfaceModel.cxx
-Interface_InterfaceModel.hxx
 Interface_IntList.cxx
 Interface_IntList.hxx
 Interface_IntVal.cxx
