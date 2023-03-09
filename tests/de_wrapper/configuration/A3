@@ -53,7 +53,9 @@ provider.STEP.OCC.write.product.name :
 provider.STEP.OCC.write.surfacecurve.mode :      1
 provider.STEP.OCC.write.unit :      2
 provider.STEP.OCC.write.resource.name :  STEP
+provider.STEP.OCC.write.multi.prefix :
 provider.STEP.OCC.write.sequence :       ToSTEP
+provider.STEP.OCC.write.labels :
 provider.STEP.OCC.write.vertex.mode :    0
 provider.STEP.OCC.write.stepcaf.subshapes.name :         0
 provider.STEP.OCC.write.color :  1
@@ -68,13 +70,14 @@ provider.VRML.OCC.read.fill.incomplete :         1
 provider.VRML.OCC.writer.version :       2
 provider.VRML.OCC.write.representation.type :    1
 provider.STL.OCC.read.merge.angle :      90
-provider.STL.OCC.read.brep :     0
+provider.STL.OCC.read.brep :     1
 provider.STL.OCC.write.ascii :   1
 provider.OBJ.OCC.file.length.unit :      1
 provider.OBJ.OCC.system.cs :     0
 provider.OBJ.OCC.file.cs :       1
 provider.OBJ.OCC.read.single.precision :         0
 provider.OBJ.OCC.read.create.shapes :    0
+provider.OBJ.OCC.read.create.single :	 0
 provider.OBJ.OCC.read.root.prefix :
 provider.OBJ.OCC.read.fill.doc :         1
 provider.OBJ.OCC.read.fill.incomplete :  1
@@ -102,10 +105,19 @@ provider.GLTF.OCC.write.author :
 provider.GLTF.OCC.write.trsf.format :    0
 provider.GLTF.OCC.write.node.name.format :       3
 provider.GLTF.OCC.write.mesh.name.format :       1
+provider.GLTF.OCC.write.draco.compression :	 0
+provider.GLTF.OCC.write.draco.level :	 7
+provider.GLTF.OCC.write.draco.position.bits :	 14
+provider.GLTF.OCC.write.draco.normal.bits :	 10
+provider.GLTF.OCC.write.draco.texture.bits :	 12
+provider.GLTF.OCC.write.draco.color.bits :	 8
+provider.GLTF.OCC.write.draco.generic.bits :	 12
+provider.GLTF.OCC.write.draco.unified.quantization :	 0
 provider.GLTF.OCC.write.forced.uv.export :       0
 provider.GLTF.OCC.write.embed.textures.in.glb :  1
 provider.GLTF.OCC.write.merge.faces :    0
 provider.GLTF.OCC.write.split.indices16 :        0
+provider.GLTF.OCC.write.parallel :	 0
 provider.BREP.OCC.write.binary :         1
 provider.BREP.OCC.write.version.binary :         4
 provider.BREP.OCC.write.version.ascii :  3

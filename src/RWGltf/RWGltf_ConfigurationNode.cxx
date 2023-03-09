@@ -53,43 +53,43 @@ bool RWGltf_ConfigurationNode::Load(const Handle(DE_ConfigurationContext)& theRe
 {
   TCollection_AsciiString aScope = THE_CONFIGURATION_SCOPE() + "." + GetFormat() + "." + GetVendor();
 
-  InternalParameters.FileLengthUnit = 
+  InternalParameters.FileLengthUnit =
     theResource->RealVal("file.length.unit", InternalParameters.FileLengthUnit, aScope);
   InternalParameters.SystemCS = (RWMesh_CoordinateSystem)
     (theResource->IntegerVal("system.cs", (int)InternalParameters.SystemCS, aScope) % 2);
   InternalParameters.FileCS = (RWMesh_CoordinateSystem)
     (theResource->IntegerVal("file.cs", (int)InternalParameters.SystemCS, aScope) % 2);
 
-  InternalParameters.ReadSinglePrecision = 
+  InternalParameters.ReadSinglePrecision =
     theResource->BooleanVal("read.single.precision", InternalParameters.ReadSinglePrecision, aScope);
-  InternalParameters.ReadCreateShapes = 
+  InternalParameters.ReadCreateShapes =
     theResource->BooleanVal("read.create.shapes", InternalParameters.ReadCreateShapes, aScope);
-  InternalParameters.ReadRootPrefix = 
+  InternalParameters.ReadRootPrefix =
     theResource->StringVal("read.root.prefix", InternalParameters.ReadRootPrefix, aScope);
-  InternalParameters.ReadFillDoc = 
+  InternalParameters.ReadFillDoc =
     theResource->BooleanVal("read.fill.doc", InternalParameters.ReadFillDoc, aScope);
-  InternalParameters.ReadFillIncomplete = 
+  InternalParameters.ReadFillIncomplete =
     theResource->BooleanVal("read.fill.incomplete", InternalParameters.ReadFillIncomplete, aScope);
-  InternalParameters.ReadMemoryLimitMiB = 
+  InternalParameters.ReadMemoryLimitMiB =
     theResource->IntegerVal("read.memory.limit.mib", InternalParameters.ReadMemoryLimitMiB, aScope);
-  InternalParameters.ReadParallel = 
+  InternalParameters.ReadParallel =
     theResource->BooleanVal("read.parallel", InternalParameters.ReadParallel, aScope);
-  InternalParameters.ReadSkipEmptyNodes = 
+  InternalParameters.ReadSkipEmptyNodes =
     theResource->BooleanVal("read.skip.empty.nodes", InternalParameters.ReadSkipEmptyNodes, aScope);
-  InternalParameters.ReadLoadAllScenes = 
+  InternalParameters.ReadLoadAllScenes =
     theResource->BooleanVal("read.load.all.scenes", InternalParameters.ReadLoadAllScenes, aScope);
-  InternalParameters.ReadUseMeshNameAsFallback = 
+  InternalParameters.ReadUseMeshNameAsFallback =
     theResource->BooleanVal("read.use.mesh.name.as.fallback", InternalParameters.ReadUseMeshNameAsFallback, aScope);
-  InternalParameters.ReadSkipLateDataLoading = 
+  InternalParameters.ReadSkipLateDataLoading =
     theResource->BooleanVal("read.skip.late.data.loading", InternalParameters.ReadSkipLateDataLoading, aScope);
-  InternalParameters.ReadKeepLateData = 
+  InternalParameters.ReadKeepLateData =
     theResource->BooleanVal("read.keep.late.data", InternalParameters.ReadKeepLateData, aScope);
-  InternalParameters.ReadPrintDebugMessages = 
+  InternalParameters.ReadPrintDebugMessages =
     theResource->BooleanVal("read.print.debug.message", InternalParameters.ReadPrintDebugMessages, aScope);
 
-  InternalParameters.WriteComment = 
+  InternalParameters.WriteComment =
     theResource->StringVal("write.comment", InternalParameters.WriteComment, aScope);
-  InternalParameters.WriteAuthor = 
+  InternalParameters.WriteAuthor =
     theResource->StringVal("write.author", InternalParameters.WriteAuthor, aScope);
 
   InternalParameters.WriteTrsfFormat = (RWGltf_WriterTrsfFormat)
@@ -98,14 +98,43 @@ bool RWGltf_ConfigurationNode::Load(const Handle(DE_ConfigurationContext)& theRe
     (theResource->IntegerVal("write.node.name.format", InternalParameters.WriteNodeNameFormat, aScope) % (RWMesh_NameFormat_ProductAndInstanceAndOcaf + 1));
   InternalParameters.WriteMeshNameFormat = (RWMesh_NameFormat)
     (theResource->IntegerVal("write.mesh.name.format", InternalParameters.WriteMeshNameFormat, aScope) % (RWMesh_NameFormat_ProductAndInstanceAndOcaf + 1));
-  InternalParameters.WriteForcedUVExport = 
+
+  // Draco parameters
+  InternalParameters.WriteDracoParameters.DracoCompression =
+    theResource->BooleanVal("write.draco.compression",
+                            InternalParameters.WriteDracoParameters.DracoCompression, aScope);
+  InternalParameters.WriteDracoParameters.CompressionLevel =
+    theResource->IntegerVal("write.draco.level",
+                            InternalParameters.WriteDracoParameters.CompressionLevel, aScope);
+  InternalParameters.WriteDracoParameters.QuantizePositionBits =
+    theResource->IntegerVal("write.draco.position.bits",
+                            InternalParameters.WriteDracoParameters.QuantizePositionBits, aScope);
+  InternalParameters.WriteDracoParameters.QuantizeNormalBits =
+    theResource->IntegerVal("write.draco.normal.bits",
+                            InternalParameters.WriteDracoParameters.QuantizeNormalBits, aScope);
+  InternalParameters.WriteDracoParameters.QuantizeTexcoordBits =
+    theResource->IntegerVal("write.draco.texture.bits",
+                            InternalParameters.WriteDracoParameters.QuantizeTexcoordBits, aScope);
+  InternalParameters.WriteDracoParameters.QuantizeColorBits =
+    theResource->IntegerVal("write.draco.color.bits",
+                            InternalParameters.WriteDracoParameters.QuantizeColorBits, aScope);
+  InternalParameters.WriteDracoParameters.QuantizeGenericBits =
+    theResource->IntegerVal("write.draco.generic.bits",
+                            InternalParameters.WriteDracoParameters.QuantizeGenericBits, aScope);
+  InternalParameters.WriteDracoParameters.UnifiedQuantization =
+    theResource->BooleanVal("write.draco.unified.quantization",
+                            InternalParameters.WriteDracoParameters.UnifiedQuantization, aScope);
+
+  InternalParameters.WriteForcedUVExport =
     theResource->BooleanVal("write.forced.uv.export", InternalParameters.WriteForcedUVExport, aScope);
-  InternalParameters.WriteEmbedTexturesInGlb = 
+  InternalParameters.WriteEmbedTexturesInGlb =
     theResource->BooleanVal("write.embed.textures.in.glb", InternalParameters.WriteEmbedTexturesInGlb, aScope);
-  InternalParameters.WriteMergeFaces = 
+  InternalParameters.WriteMergeFaces =
     theResource->BooleanVal("write.merge.faces", InternalParameters.WriteMergeFaces, aScope);
-  InternalParameters.WriteSplitIndices16 = 
+  InternalParameters.WriteSplitIndices16 =
     theResource->BooleanVal("write.split.indices16", InternalParameters.WriteSplitIndices16, aScope);
+  InternalParameters.WriteParallel =
+    theResource->BooleanVal("write.parallel", InternalParameters.WriteParallel, aScope);
   return true;
 }
 
@@ -258,6 +287,63 @@ TCollection_AsciiString RWGltf_ConfigurationNode::Save() const
   aResult += aScope + "write.mesh.name.format :\t " + InternalParameters.WriteMeshNameFormat + "\n";
   aResult += "!\n";
 
+  // Draco parameters
+  aResult += "!\n";
+  aResult += "!Flag to use Draco compression. If it is TRUE, compression is used\n";
+  aResult += "!Default value: 0(false). Available values: 0(false), 1(true)\n";
+  aResult += aScope + "write.draco.compression :\t " +
+    InternalParameters.WriteDracoParameters.DracoCompression + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Draco compression level\n";
+  aResult += "!Default value: 7. Available values: [0-10]\n";
+  aResult += aScope + "write.draco.level :\t " +
+    InternalParameters.WriteDracoParameters.CompressionLevel + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Quantization bits for position attribute\n";
+  aResult += "!Default value: 14. Available values: any positive value\n";
+  aResult += aScope + "write.draco.position.bits :\t " +
+    InternalParameters.WriteDracoParameters.QuantizePositionBits + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Quantization bits for normal attribute\n";
+  aResult += "!Default value: 10. Available values: any positive value\n";
+  aResult += aScope + "write.draco.normal.bits :\t " +
+    InternalParameters.WriteDracoParameters.QuantizeNormalBits + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Quantization bits for texture coordinate attribute\n";
+  aResult += "!Default value: 12. Available values: any positive value\n";
+  aResult += aScope + "write.draco.texture.bits :\t " +
+    InternalParameters.WriteDracoParameters.QuantizeTexcoordBits + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Quantization bits for color attributes\n";
+  aResult += "!Default value: 8. Available values: any positive value\n";
+  aResult += aScope + "write.draco.color.bits :\t " +
+    InternalParameters.WriteDracoParameters.QuantizeColorBits + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Quantization bits for skinning and custom attributes\n";
+  aResult += "!Default value: 12. Available values: any positive value\n";
+  aResult += aScope + "write.draco.generic.bits :\t " +
+    InternalParameters.WriteDracoParameters.QuantizeGenericBits + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Quantize positions of all primitives using the same quantization grid\n";
+  aResult += "!Default value: 0(false). Available values: 0(false), 1(true)\n";
+  aResult += aScope + "write.draco.unified.quantization :\t " +
+    InternalParameters.WriteDracoParameters.UnifiedQuantization + "\n";
+  aResult += "!\n";
+
   aResult += "!\n";
   aResult += "!Export UV coordinates even if there are no mapped texture\n";
   aResult += "!Default value: 0(false). Available values: 0(false), 1(true)\n";
@@ -280,6 +366,12 @@ TCollection_AsciiString RWGltf_ConfigurationNode::Save() const
   aResult += "!Flag to prefer keeping 16-bit indexes while merging face\n";
   aResult += "!Default value: 0(false). Available values: 0(false), 1(true)\n";
   aResult += aScope + "write.split.indices16 :\t " + InternalParameters.WriteSplitIndices16 + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Flag to use multithreading\n";
+  aResult += "!Default value: 0(false). Available values: 0(false), 1(true)\n";
+  aResult += aScope + "write.parallel :\t " + InternalParameters.WriteParallel + "\n";
   aResult += "!\n";
 
   aResult += "!*****************************************************************************\n";

@@ -87,7 +87,8 @@ public:
     RWMesh_CoordinateSystem FileCS = RWMesh_CoordinateSystem_Yup; //!< File origin coordinate system to perform conversion during read
     // Reading
     bool ReadSinglePrecision = false; //!< Flag for reading vertex data with single or double floating point precision
-    bool ReadCreateShapes = false;  //!< Flag for create a single triangulation
+    bool ReadCreateShapes = false;  //!< Flag for create shapes in shape reading case
+    bool ReadCreateSingle = false;  //!< Flag for create a single triangulation in shape reading case
     TCollection_AsciiString ReadRootPrefix; //!< Root folder for generating root labels names
     bool ReadFillDoc = true; //!< Flag for fill document from shape sequence
     bool ReadFillIncomplete = true; //!< Flag for fill the document with partially retrieved data even if reader has failed with error

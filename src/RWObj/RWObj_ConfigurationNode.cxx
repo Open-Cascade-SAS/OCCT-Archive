@@ -63,6 +63,8 @@ bool RWObj_ConfigurationNode::Load(const Handle(DE_ConfigurationContext)& theRes
     theResource->BooleanVal("read.single.precision", InternalParameters.ReadSinglePrecision, aScope);
   InternalParameters.ReadCreateShapes = 
     theResource->BooleanVal("read.create.shapes", InternalParameters.ReadCreateShapes, aScope);
+  InternalParameters.ReadCreateSingle =
+    theResource->BooleanVal("read.create.single", InternalParameters.ReadCreateSingle, aScope);
   InternalParameters.ReadRootPrefix =
     theResource->StringVal("read.root.prefix", InternalParameters.ReadRootPrefix, aScope);
   InternalParameters.ReadFillDoc = 
@@ -123,9 +125,15 @@ TCollection_AsciiString RWObj_ConfigurationNode::Save() const
   aResult += "!\n";
 
   aResult += "!\n";
-  aResult += "!Flag for create a single triangulation\n";
+  aResult += "!Flag for create shapes in shape reading case\n";
   aResult += "!Default value: 0(false). Available values: 0(false), 1(true)\n";
   aResult += aScope + "read.create.shapes :\t " + InternalParameters.ReadCreateShapes + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Flag for create shapes in shape reading case\n";
+  aResult += "!Default value: 0(false). Available values: 0(false), 1(true)\n";
+  aResult += aScope + "read.create.single :\t " + InternalParameters.ReadCreateSingle + "\n";
   aResult += "!\n";
 
   aResult += "!\n";

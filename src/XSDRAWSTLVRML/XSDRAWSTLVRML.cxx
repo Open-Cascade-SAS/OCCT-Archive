@@ -45,20 +45,16 @@
 #include <Quantity_HArray1OfColor.hxx>
 #include <Quantity_NameOfColor.hxx>
 #include <RWGltf_DracoParameters.hxx>
-#include <RWGltf_CafReader.hxx>
-#include <RWGltf_CafWriter.hxx>
+#include <RWGltf_Provider.hxx>
 #include <RWMesh_FaceIterator.hxx>
-#include <RWStl.hxx>
-#include <RWObj.hxx>
-#include <RWObj_CafReader.hxx>
-#include <RWObj_CafWriter.hxx>
-#include <RWPly_CafWriter.hxx>
+#include <RWObj_ConfigurationNode.hxx>
+#include <RWObj_Provider.hxx>
+#include <RWPly_ConfigurationNode.hxx>
 #include <RWPly_PlyWriterContext.hxx>
-#include <SelectMgr_SelectionManager.hxx>
-#include <Standard_ErrorHandler.hxx>
-#include <StdSelect_ViewerSelector3d.hxx>
-#include <StlAPI.hxx>
-#include <StlAPI_Writer.hxx>
+#include <RWPly_Provider.hxx>
+#include <RWStl.hxx>
+#include <RWStl_ConfigurationNode.hxx>
+#include <RWStl_Provider.hxx>
 #include <TColgp_SequenceOfXYZ.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_Array1OfReal.hxx>
@@ -74,11 +70,9 @@
 #include <UnitsMethods.hxx>
 #include <V3d_View.hxx>
 #include <ViewerTest.hxx>
-#include <VrmlAPI.hxx>
 #include <VrmlAPI_Writer.hxx>
 #include <VrmlData_DataMapOfShapeAppearance.hxx>
 #include <VrmlData_Scene.hxx>
-#include <VrmlData_ShapeConvert.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFPrs_DocumentExplorer.hxx>
@@ -91,166 +85,193 @@
 #include <XSDRAWSTLVRML_DataSource3D.hxx>
 #include <XSDRAWSTLVRML_DrawableMesh.hxx>
 
-#ifndef _STDIO_H
-#include <stdio.h>
-#endif
+extern Standard_Boolean VDisplayAISObject(const TCollection_AsciiString& theName,
+                                          const Handle(AIS_InteractiveObject)& theAISObj,
+                                          Standard_Boolean theReplaceIfExists = Standard_True);
 
-extern Standard_Boolean VDisplayAISObject (const TCollection_AsciiString& theName,
-                                           const Handle(AIS_InteractiveObject)& theAISObj,
-                                           Standard_Boolean theReplaceIfExists = Standard_True);
-
-//! Parse RWMesh_NameFormat enumeration.
-static bool parseNameFormat (const char* theArg,
-                             RWMesh_NameFormat& theFormat)
+namespace
 {
-  TCollection_AsciiString aName (theArg);
-  aName.LowerCase();
-  if (aName == "empty")
+  //=======================================================================
+  //function : GetLengthUnit
+  //purpose  :
+  //=======================================================================
+  Standard_Real getLengthUnit(const Handle(TDocStd_Document)& theDoc = nullptr)
   {
-    theFormat = RWMesh_NameFormat_Empty;
+    if (!theDoc.IsNull())
+    {
+      Standard_Real aUnit = 1.;
+      if (XCAFDoc_DocumentTool::GetLengthUnit(theDoc, aUnit,
+          UnitsMethods_LengthUnit_Millimeter))
+      {
+        return aUnit;
+      }
+    }
+    XSAlgo::AlgoContainer()->PrepareForTransfer();
+    return UnitsMethods::GetCasCadeLengthUnit();
   }
-  else if (aName == "product"
-        || aName == "prod")
-  {
-    theFormat = RWMesh_NameFormat_Product;
-  }
-  else if (aName == "instance"
-        || aName == "inst")
-  {
-    theFormat = RWMesh_NameFormat_Instance;
-  }
-  else if (aName == "instanceorproduct"
-        || aName == "instance||product"
-        || aName == "instance|product"
-        || aName == "instorprod"
-        || aName == "inst||prod"
-        || aName == "inst|prod")
-  {
-    theFormat = RWMesh_NameFormat_InstanceOrProduct;
-  }
-  else if (aName == "productorinstance"
-        || aName == "product||instance"
-        || aName == "product|instance"
-        || aName == "prodorinst"
-        || aName == "prod||inst"
-        || aName == "prod|inst")
-  {
-    theFormat = RWMesh_NameFormat_ProductOrInstance;
-  }
-  else if (aName == "productandinstance"
-        || aName == "prodandinst"
-        || aName == "product&instance"
-        || aName == "prod&inst")
-  {
-    theFormat = RWMesh_NameFormat_ProductAndInstance;
-  }
-  else if (aName == "productandinstanceandocaf"
-        || aName == "verbose"
-        || aName == "debug")
-  {
-    theFormat = RWMesh_NameFormat_ProductAndInstanceAndOcaf;
-  }
-  else
-  {
-    return false;
-  }
-  return true;
-}
 
-//! Parse RWMesh_CoordinateSystem enumeration.
-static bool parseCoordinateSystem (const char* theArg,
-                                   RWMesh_CoordinateSystem& theSystem)
-{
-  TCollection_AsciiString aCSStr (theArg);
-  aCSStr.LowerCase();
-  if (aCSStr == "zup")
+  //=============================================================================
+  //function : parseNameFormat
+  //purpose  : Parse RWMesh_NameFormat enumeration.
+  //=============================================================================
+  static bool parseNameFormat(const char* theArg,
+                              RWMesh_NameFormat& theFormat)
   {
-    theSystem = RWMesh_CoordinateSystem_Zup;
+    TCollection_AsciiString aName(theArg);
+    aName.LowerCase();
+    if (aName == "empty")
+    {
+      theFormat = RWMesh_NameFormat_Empty;
+    }
+    else if (aName == "product"
+             || aName == "prod")
+    {
+      theFormat = RWMesh_NameFormat_Product;
+    }
+    else if (aName == "instance"
+             || aName == "inst")
+    {
+      theFormat = RWMesh_NameFormat_Instance;
+    }
+    else if (aName == "instanceorproduct"
+             || aName == "instance||product"
+             || aName == "instance|product"
+             || aName == "instorprod"
+             || aName == "inst||prod"
+             || aName == "inst|prod")
+    {
+      theFormat = RWMesh_NameFormat_InstanceOrProduct;
+    }
+    else if (aName == "productorinstance"
+             || aName == "product||instance"
+             || aName == "product|instance"
+             || aName == "prodorinst"
+             || aName == "prod||inst"
+             || aName == "prod|inst")
+    {
+      theFormat = RWMesh_NameFormat_ProductOrInstance;
+    }
+    else if (aName == "productandinstance"
+             || aName == "prodandinst"
+             || aName == "product&instance"
+             || aName == "prod&inst")
+    {
+      theFormat = RWMesh_NameFormat_ProductAndInstance;
+    }
+    else if (aName == "productandinstanceandocaf"
+             || aName == "verbose"
+             || aName == "debug")
+    {
+      theFormat = RWMesh_NameFormat_ProductAndInstanceAndOcaf;
+    }
+    else
+    {
+      return false;
+    }
+    return true;
   }
-  else if (aCSStr == "yup")
+
+  //=============================================================================
+  //function : parseCoordinateSystem
+  //purpose  : Parse RWMesh_CoordinateSystem enumeration.
+  //=============================================================================
+  static bool parseCoordinateSystem(const char* theArg,
+                                    RWMesh_CoordinateSystem& theSystem)
   {
-    theSystem = RWMesh_CoordinateSystem_Yup;
+    TCollection_AsciiString aCSStr(theArg);
+    aCSStr.LowerCase();
+    if (aCSStr == "zup")
+    {
+      theSystem = RWMesh_CoordinateSystem_Zup;
+    }
+    else if (aCSStr == "yup")
+    {
+      theSystem = RWMesh_CoordinateSystem_Yup;
+    }
+    else
+    {
+      return Standard_False;
+    }
+    return Standard_True;
   }
-  else
-  {
-    return Standard_False;
-  }
-  return Standard_True;
 }
 
 //=============================================================================
 //function : ReadGltf
 //purpose  : Reads glTF file
 //=============================================================================
-static Standard_Integer ReadGltf (Draw_Interpretor& theDI,
-                                  Standard_Integer theNbArgs,
-                                  const char** theArgVec)
+static Standard_Integer ReadGltf(Draw_Interpretor& theDI,
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
   TCollection_AsciiString aDestName, aFilePath;
+  Handle(RWGltf_ConfigurationNode) aNode =
+    new RWGltf_ConfigurationNode();
   Standard_Boolean toUseExistingDoc = Standard_False;
-  Standard_Boolean toListExternalFiles = Standard_False;
-  Standard_Boolean isParallel = Standard_False;
-  Standard_Boolean isDoublePrec = Standard_False;
-  Standard_Boolean toSkipLateDataLoading = Standard_False;
-  Standard_Boolean toKeepLateData = Standard_True;
-  Standard_Boolean toPrintDebugInfo = Standard_False;
-  Standard_Boolean toLoadAllScenes = Standard_False;
   Standard_Boolean toPrintAssetInfo = Standard_False;
+  Standard_Boolean toListExternalFiles = Standard_False;
   Standard_Boolean isNoDoc = (TCollection_AsciiString(theArgVec[0]) == "readgltf");
   for (Standard_Integer anArgIter = 1; anArgIter < theNbArgs; ++anArgIter)
   {
-    TCollection_AsciiString anArgCase (theArgVec[anArgIter]);
+    TCollection_AsciiString anArgCase(theArgVec[anArgIter]);
     anArgCase.LowerCase();
     if (!isNoDoc
-     && (anArgCase == "-nocreate"
-      || anArgCase == "-nocreatedoc"))
+        && (anArgCase == "-nocreate"
+        || anArgCase == "-nocreatedoc"))
     {
-      toUseExistingDoc = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      toUseExistingDoc = Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArgCase == "-parallel")
     {
-      isParallel = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.ReadParallel =
+        Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArgCase == "-doubleprec"
-          || anArgCase == "-doubleprecision"
-          || anArgCase == "-singleprec"
-          || anArgCase == "-singleprecision")
+             || anArgCase == "-doubleprecision"
+             || anArgCase == "-singleprec"
+             || anArgCase == "-singleprecision")
     {
-      isDoublePrec = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
-      if (anArgCase.StartsWith ("-single"))
+      aNode->InternalParameters.ReadSinglePrecision =
+        !Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
+      if (anArgCase.StartsWith("-single"))
       {
-        isDoublePrec = !isDoublePrec;
+        aNode->InternalParameters.ReadSinglePrecision =
+          Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
       }
     }
     else if (anArgCase == "-skiplateloading")
     {
-      toSkipLateDataLoading = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.ReadSkipLateDataLoading =
+        Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArgCase == "-keeplate")
     {
-      toKeepLateData = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.ReadKeepLateData =
+        Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArgCase == "-allscenes")
     {
-      toLoadAllScenes = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.ReadLoadAllScenes =
+        Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArgCase == "-toprintinfo"
-          || anArgCase == "-toprintdebuginfo")
+             || anArgCase == "-toprintdebuginfo")
     {
-      toPrintDebugInfo = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.ReadPrintDebugMessages =
+        Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArgCase == "-listexternalfiles"
-          || anArgCase == "-listexternals"
-          || anArgCase == "-listexternal"
-          || anArgCase == "-external"
-          || anArgCase == "-externalfiles")
+             || anArgCase == "-listexternals"
+             || anArgCase == "-listexternal"
+             || anArgCase == "-external"
+             || anArgCase == "-externalfiles")
     {
-      toListExternalFiles = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      toListExternalFiles = Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArgCase == "-assetinfo"
-          || anArgCase == "-metadata")
+             || anArgCase == "-metadata")
     {
-      toPrintAssetInfo = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      toPrintAssetInfo = Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (aDestName.IsEmpty())
     {
@@ -262,87 +283,73 @@ static Standard_Integer ReadGltf (Draw_Interpretor& theDI,
     }
     else
     {
-      Message::SendFail() << "Syntax error at '" << theArgVec[anArgIter] << "'";
+      theDI << "Syntax error at '" << theArgVec[anArgIter] << "'\n";
       return 1;
     }
   }
-  if (aFilePath.IsEmpty() && !aDestName.IsEmpty())
+  if (aFilePath.IsEmpty() || aDestName.IsEmpty())
   {
-    if (toListExternalFiles || toPrintAssetInfo)
-    {
-      std::swap (aFilePath, aDestName);
-    }
-  }
-  if (aFilePath.IsEmpty())
-  {
-    Message::SendFail() << "Syntax error: wrong number of arguments";
+    theDI << "Syntax error: wrong number of arguments\n";
     return 1;
   }
 
-  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (theDI, 1);
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
   Handle(TDocStd_Document) aDoc;
   if (!aDestName.IsEmpty()
-   && !isNoDoc)
+      && !isNoDoc)
   {
     Handle(TDocStd_Application) anApp = DDocStd::GetApplication();
     Standard_CString aNameVar = aDestName.ToCString();
-    DDocStd::GetDocument (aNameVar, aDoc, Standard_False);
+    DDocStd::GetDocument(aNameVar, aDoc, Standard_False);
     if (aDoc.IsNull())
     {
       if (toUseExistingDoc)
       {
-        Message::SendFail() << "Error: document with name " << aDestName << " does not exist";
+        theDI << "Error: document with name " << aDestName << " does not exist\n";
         return 1;
       }
-      anApp->NewDocument (TCollection_ExtendedString ("BinXCAF"), aDoc);
+      anApp->NewDocument(TCollection_ExtendedString("BinXCAF"), aDoc);
     }
     else if (!toUseExistingDoc)
     {
-      Message::SendFail() << "Error: document with name " << aDestName << " already exists";
+      theDI << "Error: document with name " << aDestName << " already exists\n";
       return 1;
     }
   }
 
-  Standard_Real aScaleFactorM = 1.;
-  if (!XCAFDoc_DocumentTool::GetLengthUnit(aDoc, aScaleFactorM, UnitsMethods_LengthUnit_Meter))
+  aNode->GlobalParameters.LengthUnit = getLengthUnit(aDoc);
+  Handle(RWGltf_Provider) aProvider =
+    new RWGltf_Provider(aNode);
+  Standard_Boolean aReadStat = Standard_False;
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  if (isNoDoc)
   {
-    XSAlgo::AlgoContainer()->PrepareForTransfer(); // update unit info
-    aScaleFactorM = UnitsMethods::GetCasCadeLengthUnit(UnitsMethods_LengthUnit_Meter);
-  }
-
-  RWGltf_CafReader aReader;
-  aReader.SetSystemLengthUnit (aScaleFactorM);
-  aReader.SetSystemCoordinateSystem (RWMesh_CoordinateSystem_Zup);
-  aReader.SetDocument (aDoc);
-  aReader.SetParallel (isParallel);
-  aReader.SetDoublePrecision (isDoublePrec);
-  aReader.SetToSkipLateDataLoading (toSkipLateDataLoading);
-  aReader.SetToKeepLateData (toKeepLateData);
-  aReader.SetToPrintDebugMessages (toPrintDebugInfo);
-  aReader.SetLoadAllScenes (toLoadAllScenes);
-  if (aDestName.IsEmpty())
-  {
-    aReader.ProbeHeader (aFilePath);
+    TopoDS_Shape aResShape;
+    aReadStat = aProvider->Read(aFilePath, aResShape, aWS, aProgress->Start());
+    if (aReadStat)
+    {
+      DBRep::Set(aDestName.ToCString(), aResShape);
+    }
   }
   else
   {
-    aReader.Perform (aFilePath, aProgress->Start());
-    if (isNoDoc)
+    aReadStat = aProvider->Read(aFilePath, aDoc, aWS, aProgress->Start());
+    if (aReadStat)
     {
-      DBRep::Set (aDestName.ToCString(), aReader.SingleShape());
-    }
-    else
-    {
-      Handle(DDocStd_DrawDocument) aDrawDoc = new DDocStd_DrawDocument (aDoc);
-      TDataStd_Name::Set (aDoc->GetData()->Root(), aDestName);
-      Draw::Set (aDestName.ToCString(), aDrawDoc);
+      Handle(DDocStd_DrawDocument) aDrawDoc = new DDocStd_DrawDocument(aDoc);
+      TDataStd_Name::Set(aDoc->GetData()->Root(), aDestName);
+      Draw::Set(aDestName.ToCString(), aDrawDoc);
     }
   }
-
+  if (!aReadStat)
+  {
+    theDI << "Cannot read any relevant data from the GLTF file\n";
+    return 1;
+  }
   bool isFirstLine = true;
   if (toPrintAssetInfo)
   {
-    for (TColStd_IndexedDataMapOfStringString::Iterator aKeyIter (aReader.Metadata()); aKeyIter.More(); aKeyIter.Next())
+    for (TColStd_IndexedDataMapOfStringString::Iterator aKeyIter(aProvider->GetMetadata()); aKeyIter.More(); aKeyIter.Next())
     {
       if (!isFirstLine)
       {
@@ -358,12 +365,11 @@ static Standard_Integer ReadGltf (Draw_Interpretor& theDI,
     {
       theDI << "\n";
     }
-    for (NCollection_IndexedMap<TCollection_AsciiString>::Iterator aFileIter (aReader.ExternalFiles()); aFileIter.More(); aFileIter.Next())
+    for (NCollection_IndexedMap<TCollection_AsciiString>::Iterator aFileIter(aProvider->GetExternalFiles()); aFileIter.More(); aFileIter.Next())
     {
       theDI << "\"" << aFileIter.Value() << "\" ";
     }
   }
-
   return 0;
 }
 
@@ -371,144 +377,132 @@ static Standard_Integer ReadGltf (Draw_Interpretor& theDI,
 //function : WriteGltf
 //purpose  : Writes glTF file
 //=============================================================================
-static Standard_Integer WriteGltf (Draw_Interpretor& theDI,
-                                   Standard_Integer theNbArgs,
-                                   const char** theArgVec)
+static Standard_Integer WriteGltf(Draw_Interpretor& theDI,
+                                  Standard_Integer theNbArgs,
+                                  const char** theArgVec)
 {
   TCollection_AsciiString aGltfFilePath;
   Handle(TDocStd_Document) aDoc;
+  TopoDS_Shape aShape;
   Handle(TDocStd_Application) anApp = DDocStd::GetApplication();
-  TColStd_IndexedDataMapOfStringString aFileInfo;
-  RWGltf_WriterTrsfFormat aTrsfFormat = RWGltf_WriterTrsfFormat_Compact;
-  RWMesh_CoordinateSystem aSystemCoordSys = RWMesh_CoordinateSystem_Zup;
-  bool toForceUVExport = false, toEmbedTexturesInGlb = true;
-  bool toMergeFaces = false, toSplitIndices16 = false;
-  bool isParallel = false;
-  RWMesh_NameFormat aNodeNameFormat = RWMesh_NameFormat_InstanceOrProduct;
-  RWMesh_NameFormat aMeshNameFormat = RWMesh_NameFormat_Product;
-  RWGltf_DracoParameters aDracoParameters;
+  Handle(RWGltf_ConfigurationNode) aNode =
+    new RWGltf_ConfigurationNode();
   for (Standard_Integer anArgIter = 1; anArgIter < theNbArgs; ++anArgIter)
   {
-    TCollection_AsciiString anArgCase (theArgVec[anArgIter]);
+    TCollection_AsciiString anArgCase(theArgVec[anArgIter]);
     anArgCase.LowerCase();
     if (anArgCase == "-comments"
-     && anArgIter + 1 < theNbArgs)
+        && anArgIter + 1 < theNbArgs)
     {
-      aFileInfo.Add ("Comments", theArgVec[++anArgIter]);
+      aNode->InternalParameters.WriteComment = theArgVec[++anArgIter];
     }
     else if (anArgCase == "-author"
-          && anArgIter + 1 < theNbArgs)
+             && anArgIter + 1 < theNbArgs)
     {
-      aFileInfo.Add ("Author", theArgVec[++anArgIter]);
+      aNode->InternalParameters.WriteAuthor = theArgVec[++anArgIter];
     }
     else if (anArgCase == "-forceuvexport"
-          || anArgCase == "-forceuv")
+             || anArgCase == "-forceuv")
     {
-      toForceUVExport = true;
+      aNode->InternalParameters.WriteForcedUVExport = true;
       if (anArgIter + 1 < theNbArgs
-       && Draw::ParseOnOff (theArgVec[anArgIter + 1], toForceUVExport))
+          && Draw::ParseOnOff(theArgVec[anArgIter + 1], aNode->InternalParameters.WriteForcedUVExport))
       {
         ++anArgIter;
       }
     }
     else if (anArgCase == "-mergefaces")
     {
-      toMergeFaces = true;
+      aNode->InternalParameters.WriteMergeFaces = true;
       if (anArgIter + 1 < theNbArgs
-       && Draw::ParseOnOff (theArgVec[anArgIter + 1], toMergeFaces))
+          && Draw::ParseOnOff(theArgVec[anArgIter + 1], aNode->InternalParameters.WriteMergeFaces))
       {
         ++anArgIter;
       }
     }
     else if (anArgCase == "-splitindices16"
-          || anArgCase == "-splitindexes16"
-          || anArgCase == "-splitindices"
-          || anArgCase == "-splitindexes"
-          || anArgCase == "-splitind")
+             || anArgCase == "-splitindexes16"
+             || anArgCase == "-splitindices"
+             || anArgCase == "-splitindexes"
+             || anArgCase == "-splitind")
     {
-      toSplitIndices16 = true;
+      aNode->InternalParameters.WriteSplitIndices16 = true;
       if (anArgIter + 1 < theNbArgs
-       && Draw::ParseOnOff (theArgVec[anArgIter + 1], toSplitIndices16))
+          && Draw::ParseOnOff(theArgVec[anArgIter + 1], aNode->InternalParameters.WriteSplitIndices16))
       {
         ++anArgIter;
       }
     }
     else if (anArgIter + 1 < theNbArgs
-          && (anArgCase == "-systemcoordinatesystem"
-           || anArgCase == "-systemcoordsystem"
-           || anArgCase == "-systemcoordsys"
-           || anArgCase == "-syscoordsys"))
+             && (anArgCase == "-systemcoordinatesystem"
+             || anArgCase == "-systemcoordsystem"
+             || anArgCase == "-systemcoordsys"
+             || anArgCase == "-syscoordsys"))
     {
-      if (!parseCoordinateSystem (theArgVec[++anArgIter], aSystemCoordSys))
+      if (!parseCoordinateSystem(theArgVec[++anArgIter], aNode->InternalParameters.SystemCS))
       {
-        Message::SendFail() << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'";
+        theDI << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'\n";
         return 1;
       }
     }
     else if (anArgCase == "-trsfformat"
-          && anArgIter + 1 < theNbArgs)
+             && anArgIter + 1 < theNbArgs)
     {
-      TCollection_AsciiString aTrsfStr (theArgVec[++anArgIter]);
+      TCollection_AsciiString aTrsfStr(theArgVec[++anArgIter]);
       aTrsfStr.LowerCase();
       if (aTrsfStr == "compact")
       {
-        aTrsfFormat = RWGltf_WriterTrsfFormat_Compact;
+        aNode->InternalParameters.WriteTrsfFormat = RWGltf_WriterTrsfFormat_Compact;
       }
       else if (aTrsfStr == "mat4")
       {
-        aTrsfFormat = RWGltf_WriterTrsfFormat_Mat4;
+        aNode->InternalParameters.WriteTrsfFormat = RWGltf_WriterTrsfFormat_Mat4;
       }
       else if (aTrsfStr == "trs")
       {
-        aTrsfFormat = RWGltf_WriterTrsfFormat_TRS;
+        aNode->InternalParameters.WriteTrsfFormat = RWGltf_WriterTrsfFormat_TRS;
       }
       else
       {
-        Message::SendFail() << "Syntax error at '" << anArgCase << "'";
+        theDI << "Syntax error at '" << anArgCase << "'\n";
         return 1;
       }
     }
     else if (anArgCase == "-nodenameformat"
-          || anArgCase == "-nodename")
+             || anArgCase == "-nodename")
     {
       ++anArgIter;
       if (anArgIter >= theNbArgs
-      || !parseNameFormat (theArgVec[anArgIter], aNodeNameFormat))
+          || !parseNameFormat(theArgVec[anArgIter], aNode->InternalParameters.WriteNodeNameFormat))
       {
-        Message::SendFail() << "Syntax error at '" << anArgCase << "'";
+        theDI << "Syntax error at '" << anArgCase << "'\n";
         return 1;
       }
     }
     else if (anArgCase == "-meshnameformat"
-          || anArgCase == "-meshname")
+             || anArgCase == "-meshname")
     {
       ++anArgIter;
       if (anArgIter >= theNbArgs
-      || !parseNameFormat (theArgVec[anArgIter], aMeshNameFormat))
+          || !parseNameFormat(theArgVec[anArgIter], aNode->InternalParameters.WriteMeshNameFormat))
       {
-        Message::SendFail() << "Syntax error at '" << anArgCase << "'";
+        theDI << "Syntax error at '" << anArgCase << "'\n";
         return 1;
       }
     }
-    else if (aDoc.IsNull())
+    else if (aDoc.IsNull() && aShape.IsNull())
     {
       Standard_CString aNameVar = theArgVec[anArgIter];
-      DDocStd::GetDocument (aNameVar, aDoc, false);
+      DDocStd::GetDocument(aNameVar, aDoc, false);
       if (aDoc.IsNull())
       {
-        TopoDS_Shape aShape = DBRep::Get (aNameVar);
+        aShape = DBRep::Get(aNameVar);
         if (aShape.IsNull())
         {
-          Message::SendFail() << "Syntax error: '" << aNameVar << "' is not a shape nor document";
+          theDI << "Syntax error: '" << aNameVar << "' is not a shape nor document\n";
           return 1;
         }
-
-        anApp->NewDocument (TCollection_ExtendedString ("BinXCAF"), aDoc);
-        Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool (aDoc->Main());
-        // auto-naming doesn't generate meaningful instance names
-        //aShapeTool->SetAutoNaming (false);
-        aNodeNameFormat = RWMesh_NameFormat_Product;
-        aShapeTool->AddShape (aShape);
+        aNode->InternalParameters.WriteNodeNameFormat = RWMesh_NameFormat_Product;
       }
     }
     else if (aGltfFilePath.IsEmpty())
@@ -517,107 +511,125 @@ static Standard_Integer WriteGltf (Draw_Interpretor& theDI,
     }
     else if (anArgCase == "-texturesSeparate")
     {
-      toEmbedTexturesInGlb = false;
+      aNode->InternalParameters.WriteEmbedTexturesInGlb = false;
     }
     else if (anArgCase == "-draco")
     {
-      aDracoParameters.DracoCompression = Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.WriteDracoParameters.DracoCompression =
+        Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArgCase == "-compressionlevel" && (anArgIter + 1) < theNbArgs
-             && Draw::ParseInteger(theArgVec[anArgIter + 1], aDracoParameters.CompressionLevel))
+             && Draw::ParseInteger(theArgVec[anArgIter + 1],
+             aNode->InternalParameters.WriteDracoParameters.CompressionLevel))
     {
       ++anArgIter;
     }
     else if (anArgCase == "-quantizepositionbits" && (anArgIter + 1) < theNbArgs
-             && Draw::ParseInteger(theArgVec[anArgIter + 1], aDracoParameters.QuantizePositionBits))
+             && Draw::ParseInteger(theArgVec[anArgIter + 1],
+             aNode->InternalParameters.WriteDracoParameters.QuantizePositionBits))
     {
       ++anArgIter;
     }
     else if (anArgCase == "-quantizenormalbits" && (anArgIter + 1) < theNbArgs
-             && Draw::ParseInteger(theArgVec[anArgIter + 1], aDracoParameters.QuantizeNormalBits))
+             && Draw::ParseInteger(theArgVec[anArgIter + 1],
+             aNode->InternalParameters.WriteDracoParameters.QuantizeNormalBits))
     {
       ++anArgIter;
     }
     else if (anArgCase == "-quantizetexcoordbits" && (anArgIter + 1) < theNbArgs
-             && Draw::ParseInteger(theArgVec[anArgIter + 1], aDracoParameters.QuantizeTexcoordBits))
+             && Draw::ParseInteger(theArgVec[anArgIter + 1],
+             aNode->InternalParameters.WriteDracoParameters.QuantizeTexcoordBits))
     {
       ++anArgIter;
     }
     else if (anArgCase == "-quantizecolorbits" && (anArgIter + 1) < theNbArgs
-             && Draw::ParseInteger(theArgVec[anArgIter + 1], aDracoParameters.QuantizeColorBits))
+             && Draw::ParseInteger(theArgVec[anArgIter + 1],
+             aNode->InternalParameters.WriteDracoParameters.QuantizeColorBits))
     {
       ++anArgIter;
     }
     else if (anArgCase == "-quantizegenericbits" && (anArgIter + 1) < theNbArgs
-             && Draw::ParseInteger(theArgVec[anArgIter + 1], aDracoParameters.QuantizeGenericBits))
+             && Draw::ParseInteger(theArgVec[anArgIter + 1],
+             aNode->InternalParameters.WriteDracoParameters.QuantizeGenericBits))
     {
       ++anArgIter;
     }
     else if (anArgCase == "-unifiedquantization")
     {
-      aDracoParameters.UnifiedQuantization = Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.WriteDracoParameters.UnifiedQuantization =
+        Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArgCase == "-parallel")
     {
-      isParallel = Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.WriteParallel =
+        Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else
     {
-      Message::SendFail() << "Syntax error at '" << theArgVec[anArgIter] << "'";
+      theDI << "Syntax error at '" << theArgVec[anArgIter] << "'\n";
       return 1;
     }
   }
   if (aGltfFilePath.IsEmpty())
   {
-    Message::SendFail() << "Syntax error: wrong number of arguments";
+    theDI << "Syntax error: wrong number of arguments\n";
     return 1;
   }
 
-  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (theDI, 1);
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
 
   TCollection_AsciiString anExt = aGltfFilePath;
   anExt.LowerCase();
-  Standard_Real aScaleFactorM = 1.;
-  if (!XCAFDoc_DocumentTool::GetLengthUnit(aDoc, aScaleFactorM, UnitsMethods_LengthUnit_Meter))
+  aNode->GlobalParameters.LengthUnit = getLengthUnit(aDoc);
+  Handle(RWGltf_Provider) aProvider =
+    new RWGltf_Provider(aNode);
+  Standard_Boolean aWriteStat = Standard_False;
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  if (!aDoc.IsNull())
   {
-    XSAlgo::AlgoContainer()->PrepareForTransfer(); // update unit info
-    aScaleFactorM = UnitsMethods::GetCasCadeLengthUnit(UnitsMethods_LengthUnit_Meter);
+    aWriteStat = aProvider->Write(aGltfFilePath, aDoc, aWS, aProgress->Start());
   }
-
-  RWGltf_CafWriter aWriter (aGltfFilePath, anExt.EndsWith (".glb"));
-  aWriter.SetTransformationFormat (aTrsfFormat);
-  aWriter.SetNodeNameFormat (aNodeNameFormat);
-  aWriter.SetMeshNameFormat (aMeshNameFormat);
-  aWriter.SetForcedUVExport (toForceUVExport);
-  aWriter.SetToEmbedTexturesInGlb (toEmbedTexturesInGlb);
-  aWriter.SetMergeFaces (toMergeFaces);
-  aWriter.SetSplitIndices16 (toSplitIndices16);
-  aWriter.SetParallel(isParallel);
-  aWriter.SetCompressionParameters(aDracoParameters);
-  aWriter.ChangeCoordinateSystemConverter().SetInputLengthUnit (aScaleFactorM);
-  aWriter.ChangeCoordinateSystemConverter().SetInputCoordinateSystem (aSystemCoordSys);
-  aWriter.Perform (aDoc, aFileInfo, aProgress->Start());
+  else if (!aShape.IsNull())
+  {
+    aWriteStat = aProvider->Write(aGltfFilePath, aShape, aWS, aProgress->Start());
+  }
+  if (!aWriteStat)
+  {
+    theDI << "Cannot write any relevant data to the GLTF file\n";
+    return 1;
+  }
   return 0;
 }
 
-static Standard_Integer writestl
-(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
+//=============================================================================
+//function : writestl
+//purpose  :
+//=============================================================================
+static Standard_Integer writestl(Draw_Interpretor& theDI,
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
-  if (argc < 3 || argc > 4) {
-    di << "Use: " << argv[0]
-    << " shape file [ascii/binary (0/1) : 1 by default]\n";
-  } else {
-    TopoDS_Shape aShape = DBRep::Get(argv[1]);
-    Standard_Boolean isASCIIMode = Standard_False;
-    if (argc == 4) {
-      isASCIIMode = (Draw::Atoi(argv[3]) == 0);
-    }
-    StlAPI_Writer aWriter;
-    aWriter.ASCIIMode() = isASCIIMode;
-    Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (di);
-    Standard_Boolean isOK = aWriter.Write (aShape, argv[2], aProgress->Start());
-    if (!isOK)
-       di << "** Error **: Mesh writing has been failed.\n";
+  if (theNbArgs < 3 || theNbArgs > 4)
+  {
+    theDI << "Use: " << theArgVec[0]
+      << " shape file [ascii/binary (0/1) : 1 by default]\n";
+    return 1;
+  }
+  TopoDS_Shape aShape = DBRep::Get(theArgVec[1]);
+  Standard_Boolean isASCIIMode = Standard_False;
+  if (theNbArgs == 4)
+  {
+    isASCIIMode = (Draw::Atoi(theArgVec[3]) == 0);
+  }
+  Handle(RWStl_ConfigurationNode) aNode = new RWStl_ConfigurationNode();
+  aNode->GlobalParameters.LengthUnit = getLengthUnit();
+  Handle(RWStl_Provider) aProvider = new RWStl_Provider(aNode);
+  aNode->InternalParameters.WriteAscii = isASCIIMode;
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI);
+  if (!aProvider->Write(theArgVec[2], aShape, aWS, aProgress->Start()))
+  {
+    theDI << "Error: Mesh writing has been failed.\n";
   }
   return 0;
 }
@@ -631,12 +643,11 @@ static Standard_Integer readstl(Draw_Interpretor& theDI,
                                 const char** theArgv)
 {
   TCollection_AsciiString aShapeName, aFilePath;
-  bool toCreateCompOfTris = false;
-  bool anIsMulti = false;
-  double aMergeAngle = M_PI / 2.0;
+  Handle(RWStl_ConfigurationNode) aNode = new RWStl_ConfigurationNode();
+  aNode->GlobalParameters.LengthUnit = getLengthUnit();
   for (Standard_Integer anArgIter = 1; anArgIter < theArgc; ++anArgIter)
   {
-    TCollection_AsciiString anArg (theArgv[anArgIter]);
+    TCollection_AsciiString anArg(theArgv[anArgIter]);
     anArg.LowerCase();
     if (aShapeName.IsEmpty())
     {
@@ -648,111 +659,78 @@ static Standard_Integer readstl(Draw_Interpretor& theDI,
     }
     else if (anArg == "-brep")
     {
-      toCreateCompOfTris = true;
+      Standard_Boolean toCreateCompOfTris = Standard_True;
       if (anArgIter + 1 < theArgc
-       && Draw::ParseOnOff (theArgv[anArgIter + 1], toCreateCompOfTris))
+          && Draw::ParseOnOff(theArgv[anArgIter + 1], toCreateCompOfTris))
       {
         ++anArgIter;
+      }
+      if (toCreateCompOfTris)
+      {
+        aNode->InternalParameters.ReadShapeType =
+          RWStl_ConfigurationNode::ReadMode_ShapeType_CompShape;
       }
     }
     else if (anArg == "-multi")
     {
-      anIsMulti = true;
+      Standard_Boolean anIsMulti = Standard_True;
       if (anArgIter + 1 < theArgc
-       && Draw::ParseOnOff (theArgv[anArgIter + 1], anIsMulti))
+          && Draw::ParseOnOff(theArgv[anArgIter + 1], anIsMulti))
       {
         ++anArgIter;
       }
+      if (anIsMulti)
+      {
+        aNode->InternalParameters.ReadShapeType =
+          RWStl_ConfigurationNode::ReadMode_ShapeType_MultiMesh;
+      }
     }
     else if (anArg == "-mergeangle"
-          || anArg == "-smoothangle"
-          || anArg == "-nomergeangle"
-          || anArg == "-nosmoothangle")
+             || anArg == "-smoothangle"
+             || anArg == "-nomergeangle"
+             || anArg == "-nosmoothangle")
     {
-      if (anArg.StartsWith ("-no"))
+      if (anArg.StartsWith("-no"))
       {
-        aMergeAngle = M_PI / 2.0;
+        aNode->InternalParameters.ReadMergeAngle = M_PI / 2.0;
       }
       else
       {
-        aMergeAngle = M_PI / 4.0;
+        aNode->InternalParameters.ReadMergeAngle = M_PI / 4.0;
         if (anArgIter + 1 < theArgc
-         && Draw::ParseReal (theArgv[anArgIter + 1], aMergeAngle))
+            && Draw::ParseReal(theArgv[anArgIter + 1], aNode->InternalParameters.ReadMergeAngle))
         {
-          if (aMergeAngle < 0.0 || aMergeAngle > 90.0)
+          if (aNode->InternalParameters.ReadMergeAngle < 0.0 ||
+              aNode->InternalParameters.ReadMergeAngle > 90.0)
           {
             theDI << "Syntax error: angle should be within [0,90] range";
             return 1;
           }
-
           ++anArgIter;
-          aMergeAngle = aMergeAngle * M_PI / 180.0;
         }
       }
     }
     else
     {
-      Message::SendFail() << "Syntax error: unknown argument '" << theArgv[anArgIter] << "'";
+      theDI << "Syntax error: unknown argument '" << theArgv[anArgIter] << "'\n";
       return 1;
     }
   }
   if (aFilePath.IsEmpty())
   {
-    Message::SendFail() << "Syntax error: not enough arguments";
+    theDI << "Syntax error: not enough arguments\n";
     return 1;
   }
-
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
+  Handle(RWStl_Provider) aProvider = new RWStl_Provider(aNode);
   TopoDS_Shape aShape;
-  if (!toCreateCompOfTris)
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  if (!aProvider->Read(aFilePath, aShape, aWS, aProgress->Start()))
   {
-    Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (theDI,1);
-    if(anIsMulti)
-    {
-      NCollection_Sequence<Handle(Poly_Triangulation)> aTriangList;
-      // Read STL file to the triangulation list.
-      RWStl::ReadFile(aFilePath.ToCString(),aMergeAngle,aTriangList,aProgress->Start());
-      BRep_Builder aB;
-      TopoDS_Face aFace;
-      if (aTriangList.Size() == 1)
-      {
-        aB.MakeFace (aFace);
-        aB.UpdateFace (aFace,aTriangList.First());
-        aShape = aFace;
-      }
-      else
-      {
-        TopoDS_Compound aCmp;
-        aB.MakeCompound (aCmp);
-      
-        NCollection_Sequence<Handle(Poly_Triangulation)>::Iterator anIt (aTriangList);
-        for (; anIt.More(); anIt.Next())
-        { 
-          aB.MakeFace (aFace);
-          aB.UpdateFace (aFace,anIt.Value());
-          aB.Add (aCmp,aFace);
-        }
-        aShape = aCmp;
-      }
-    }
-    else
-    {
-      // Read STL file to the triangulation.
-      Handle(Poly_Triangulation) aTriangulation = RWStl::ReadFile (aFilePath.ToCString(),aMergeAngle,aProgress->Start());
-
-      TopoDS_Face aFace;
-      BRep_Builder aB;
-      aB.MakeFace (aFace);
-      aB.UpdateFace (aFace,aTriangulation);
-      aShape = aFace;
-    }
+    theDI << "Cannot read any relevant data from the STL file\n";
+    return 1;
   }
-  else
-  {
-    Standard_DISABLE_DEPRECATION_WARNINGS
-    StlAPI::Read(aShape, aFilePath.ToCString());
-    Standard_ENABLE_DEPRECATION_WARNINGS
-  }
-  DBRep::Set (aShapeName.ToCString(), aShape);
+  DBRep::Set(aShapeName.ToCString(), aShape);
   return 0;
 }
 
@@ -760,80 +738,81 @@ static Standard_Integer readstl(Draw_Interpretor& theDI,
 //function : ReadObj
 //purpose  : Reads OBJ file
 //=============================================================================
-static Standard_Integer ReadObj (Draw_Interpretor& theDI,
-                                 Standard_Integer theNbArgs,
-                                 const char** theArgVec)
+static Standard_Integer ReadObj(Draw_Interpretor& theDI,
+                                Standard_Integer theNbArgs,
+                                const char** theArgVec)
 {
   TCollection_AsciiString aDestName, aFilePath;
+  Handle(RWObj_ConfigurationNode) aNode = new RWObj_ConfigurationNode();
+  aNode->GlobalParameters.LengthUnit = getLengthUnit();
   Standard_Boolean toUseExistingDoc = Standard_False;
-  Standard_Real aFileUnitFactor = -1.0;
-  RWMesh_CoordinateSystem aResultCoordSys = RWMesh_CoordinateSystem_Zup, aFileCoordSys = RWMesh_CoordinateSystem_Yup;
-  Standard_Boolean toListExternalFiles = Standard_False, isSingleFace = Standard_False, isSinglePrecision = Standard_False;
+  Standard_Boolean toListExternalFiles = Standard_False;
   Standard_Boolean isNoDoc = (TCollection_AsciiString(theArgVec[0]) == "readobj");
   for (Standard_Integer anArgIter = 1; anArgIter < theNbArgs; ++anArgIter)
   {
-    TCollection_AsciiString anArgCase (theArgVec[anArgIter]);
+    TCollection_AsciiString anArgCase(theArgVec[anArgIter]);
     anArgCase.LowerCase();
     if (anArgIter + 1 < theNbArgs
-     && (anArgCase == "-unit"
-      || anArgCase == "-units"
-      || anArgCase == "-fileunit"
-      || anArgCase == "-fileunits"))
+        && (anArgCase == "-unit"
+        || anArgCase == "-units"
+        || anArgCase == "-fileunit"
+        || anArgCase == "-fileunits"))
     {
-      const TCollection_AsciiString aUnitStr (theArgVec[++anArgIter]);
-      aFileUnitFactor = UnitsAPI::AnyToSI (1.0, aUnitStr.ToCString());
-      if (aFileUnitFactor <= 0.0)
+      const TCollection_AsciiString aUnitStr(theArgVec[++anArgIter]);
+      aNode->InternalParameters.FileLengthUnit = UnitsAPI::AnyToSI(1.0, aUnitStr.ToCString());
+      if (aNode->InternalParameters.FileLengthUnit <= 0.0)
       {
-        Message::SendFail() << "Syntax error: wrong length unit '" << aUnitStr << "'";
+        theDI << "Syntax error: wrong length unit '" << aUnitStr << "'\n";
         return 1;
       }
     }
     else if (anArgIter + 1 < theNbArgs
-          && (anArgCase == "-filecoordinatesystem"
-           || anArgCase == "-filecoordsystem"
-           || anArgCase == "-filecoordsys"))
+             && (anArgCase == "-filecoordinatesystem"
+             || anArgCase == "-filecoordsystem"
+             || anArgCase == "-filecoordsys"))
     {
-      if (!parseCoordinateSystem (theArgVec[++anArgIter], aFileCoordSys))
+      if (!parseCoordinateSystem(theArgVec[++anArgIter], aNode->InternalParameters.FileCS))
       {
-        Message::SendFail() << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'";
+        theDI << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'\n";
         return 1;
       }
     }
     else if (anArgIter + 1 < theNbArgs
-          && (anArgCase == "-resultcoordinatesystem"
-           || anArgCase == "-resultcoordsystem"
-           || anArgCase == "-resultcoordsys"
-           || anArgCase == "-rescoordsys"))
+             && (anArgCase == "-resultcoordinatesystem"
+             || anArgCase == "-resultcoordsystem"
+             || anArgCase == "-resultcoordsys"
+             || anArgCase == "-rescoordsys"))
     {
-      if (!parseCoordinateSystem (theArgVec[++anArgIter], aResultCoordSys))
+      if (!parseCoordinateSystem(theArgVec[++anArgIter], aNode->InternalParameters.SystemCS))
       {
-        Message::SendFail() << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'";
+        theDI << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'\n";
         return 1;
       }
     }
     else if (anArgCase == "-singleprecision"
-          || anArgCase == "-singleprec")
+             || anArgCase == "-singleprec")
     {
-      isSinglePrecision = Standard_True;
+      aNode->InternalParameters.ReadSinglePrecision = Standard_True;
       if (anArgIter + 1 < theNbArgs
-       && Draw::ParseOnOff (theArgVec[anArgIter + 1], isSinglePrecision))
+          && Draw::ParseOnOff(theArgVec[anArgIter + 1],
+          aNode->InternalParameters.ReadSinglePrecision))
       {
         ++anArgIter;
       }
     }
     else if (isNoDoc
-          && (anArgCase == "-singleface"
-           || anArgCase == "-singletriangulation"))
+             && (anArgCase == "-singleface"
+             || anArgCase == "-singletriangulation"))
     {
-      isSingleFace = Standard_True;
+      aNode->InternalParameters.ReadCreateSingle = Standard_True;
     }
     else if (!isNoDoc
-          && (anArgCase == "-nocreate"
-           || anArgCase == "-nocreatedoc"))
+             && (anArgCase == "-nocreate"
+             || anArgCase == "-nocreatedoc"))
     {
       toUseExistingDoc = Standard_True;
       if (anArgIter + 1 < theNbArgs
-       && Draw::ParseOnOff (theArgVec[anArgIter + 1], toUseExistingDoc))
+          && Draw::ParseOnOff(theArgVec[anArgIter + 1], toUseExistingDoc))
       {
         ++anArgIter;
       }
@@ -856,90 +835,70 @@ static Standard_Integer ReadObj (Draw_Interpretor& theDI,
     }
     else
     {
-      Message::SendFail() << "Syntax error at '" << theArgVec[anArgIter] << "'";
+      theDI << "Syntax error at '" << theArgVec[anArgIter] << "'\n";
       return 1;
     }
   }
   if (aFilePath.IsEmpty())
   {
-    Message::SendFail() << "Syntax error: wrong number of arguments";
+    theDI << "Syntax error: wrong number of arguments\n";
     return 1;
   }
-
-  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (theDI, 1);
   Handle(TDocStd_Document) aDoc;
-  if (!isNoDoc
-   && !toListExternalFiles)
+  if (!isNoDoc)
   {
     Handle(TDocStd_Application) anApp = DDocStd::GetApplication();
     Standard_CString aNameVar = aDestName.ToCString();
-    DDocStd::GetDocument (aNameVar, aDoc, Standard_False);
+    DDocStd::GetDocument(aNameVar, aDoc, Standard_False);
     if (aDoc.IsNull())
     {
       if (toUseExistingDoc)
       {
-        Message::SendFail() << "Error: document with name " << aDestName << " does not exist";
+        theDI << "Error: document with name " << aDestName << " does not exist\n";
         return 1;
       }
-      anApp->NewDocument (TCollection_ExtendedString ("BinXCAF"), aDoc);
+      anApp->NewDocument(TCollection_ExtendedString("BinXCAF"), aDoc);
     }
     else if (!toUseExistingDoc)
     {
-      Message::SendFail() << "Error: document with name " << aDestName << " already exists";
+      theDI << "Error: document with name " << aDestName << " already exists\n";
       return 1;
     }
   }
-  Standard_Real aScaleFactorM = 1.;
-  if (!XCAFDoc_DocumentTool::GetLengthUnit(aDoc, aScaleFactorM, UnitsMethods_LengthUnit_Meter))
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
+  Handle(RWObj_Provider) aProvider = new RWObj_Provider(aNode);
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Standard_Boolean aReadStat = Standard_False;
+  if (isNoDoc)
   {
-    XSAlgo::AlgoContainer()->PrepareForTransfer(); // update unit info
-    aScaleFactorM = UnitsMethods::GetCasCadeLengthUnit(UnitsMethods_LengthUnit_Meter);
-  }
-
-  RWObj_CafReader aReader;
-  aReader.SetSinglePrecision (isSinglePrecision);
-  aReader.SetSystemLengthUnit (aScaleFactorM);
-  aReader.SetSystemCoordinateSystem (aResultCoordSys);
-  aReader.SetFileLengthUnit (aFileUnitFactor);
-  aReader.SetFileCoordinateSystem (aFileCoordSys);
-  aReader.SetDocument (aDoc);
-  if (isSingleFace)
-  {
-    RWObj_TriangulationReader aSimpleReader;
-    aSimpleReader.SetSinglePrecision (isSinglePrecision);
-    aSimpleReader.SetCreateShapes (Standard_False);
-    aSimpleReader.SetTransformation (aReader.CoordinateSystemConverter());
-    aSimpleReader.Read (aFilePath.ToCString(), aProgress->Start());
-
-    Handle(Poly_Triangulation) aTriangulation = aSimpleReader.GetTriangulation();
-    TopoDS_Face aFace;
-    BRep_Builder aBuiler;
-    aBuiler.MakeFace (aFace);
-    aBuiler.UpdateFace (aFace, aTriangulation);
-    DBRep::Set (aDestName.ToCString(), aFace);
-    return 0;
-  }
-
-  if (toListExternalFiles)
-  {
-    aReader.ProbeHeader (aFilePath);
-    for (NCollection_IndexedMap<TCollection_AsciiString>::Iterator aFileIter (aReader.ExternalFiles()); aFileIter.More(); aFileIter.Next())
+    TopoDS_Shape aShape;
+    aReadStat = aProvider->Read(aFilePath, aShape, aWS, aProgress->Start());
+    if (aReadStat)
     {
-      theDI << "\"" << aFileIter.Value() << "\" ";
+      DBRep::Set(aDestName.ToCString(), aShape);
     }
   }
   else
   {
-    aReader.Perform (aFilePath, aProgress->Start());
-    if (isNoDoc)
+    aReadStat = aProvider->Read(aFilePath, aDoc, aWS, aProgress->Start());
+    if (aReadStat)
     {
-      DBRep::Set (aDestName.ToCString(), aReader.SingleShape());
+      Handle(DDocStd_DrawDocument) aDrawDoc = new DDocStd_DrawDocument(aDoc);
+      TDataStd_Name::Set(aDoc->GetData()->Root(), aDestName);
+      Draw::Set(aDestName.ToCString(), aDrawDoc);
     }
-    else
+  }
+  if (!aReadStat)
+  {
+    theDI << "Cannot read any relevant data from the Obj file\n";
+    return 1;
+  }
+
+  if (toListExternalFiles)
+  {
+    for (NCollection_IndexedMap<TCollection_AsciiString>::Iterator aFileIter(aProvider->GetExternalFiles()); aFileIter.More(); aFileIter.Next())
     {
-      Handle(DDocStd_DrawDocument) aDrawDoc = new DDocStd_DrawDocument (aDoc);
-      TDataStd_Name::Set (aDoc->GetData()->Root(), aDestName);
-      Draw::Set (aDestName.ToCString(), aDrawDoc);
+      theDI << "\"" << aFileIter.Value() << "\" ";
     }
   }
   return 0;
@@ -949,83 +908,79 @@ static Standard_Integer ReadObj (Draw_Interpretor& theDI,
 //function : WriteObj
 //purpose  : Writes OBJ file
 //=============================================================================
-static Standard_Integer WriteObj (Draw_Interpretor& theDI,
-                                  Standard_Integer theNbArgs,
-                                  const char** theArgVec)
+static Standard_Integer WriteObj(Draw_Interpretor& theDI,
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
   TCollection_AsciiString anObjFilePath;
   Handle(TDocStd_Document) aDoc;
+  TopoDS_Shape aShape;
+  Handle(RWObj_ConfigurationNode) aNode = new RWObj_ConfigurationNode();
+  aNode->GlobalParameters.LengthUnit = getLengthUnit();
   Handle(TDocStd_Application) anApp = DDocStd::GetApplication();
-  TColStd_IndexedDataMapOfStringString aFileInfo;
-  Standard_Real aFileUnitFactor = -1.0;
-  RWMesh_CoordinateSystem aSystemCoordSys = RWMesh_CoordinateSystem_Zup, aFileCoordSys = RWMesh_CoordinateSystem_Yup;
   for (Standard_Integer anArgIter = 1; anArgIter < theNbArgs; ++anArgIter)
   {
-    TCollection_AsciiString anArgCase (theArgVec[anArgIter]);
+    TCollection_AsciiString anArgCase(theArgVec[anArgIter]);
     anArgCase.LowerCase();
-        if (anArgIter + 1 < theNbArgs
-     && (anArgCase == "-unit"
-      || anArgCase == "-units"
-      || anArgCase == "-fileunit"
-      || anArgCase == "-fileunits"))
+    if (anArgIter + 1 < theNbArgs
+        && (anArgCase == "-unit"
+        || anArgCase == "-units"
+        || anArgCase == "-fileunit"
+        || anArgCase == "-fileunits"))
     {
-      const TCollection_AsciiString aUnitStr (theArgVec[++anArgIter]);
-      aFileUnitFactor = UnitsAPI::AnyToSI (1.0, aUnitStr.ToCString());
-      if (aFileUnitFactor <= 0.0)
+      const TCollection_AsciiString aUnitStr(theArgVec[++anArgIter]);
+      aNode->InternalParameters.FileLengthUnit = UnitsAPI::AnyToSI(1.0, aUnitStr.ToCString());
+      if (aNode->InternalParameters.FileLengthUnit <= 0.0)
       {
-        Message::SendFail() << "Syntax error: wrong length unit '" << aUnitStr << "'";
+        theDI << "Syntax error: wrong length unit '" << aUnitStr << "'\n";
         return 1;
       }
     }
     else if (anArgIter + 1 < theNbArgs
-          && (anArgCase == "-filecoordinatesystem"
-           || anArgCase == "-filecoordsystem"
-           || anArgCase == "-filecoordsys"))
+             && (anArgCase == "-filecoordinatesystem"
+             || anArgCase == "-filecoordsystem"
+             || anArgCase == "-filecoordsys"))
     {
-      if (!parseCoordinateSystem (theArgVec[++anArgIter], aFileCoordSys))
+      if (!parseCoordinateSystem(theArgVec[++anArgIter], aNode->InternalParameters.FileCS))
       {
-        Message::SendFail() << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'";
+        theDI << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'\n";
         return 1;
       }
     }
     else if (anArgIter + 1 < theNbArgs
-          && (anArgCase == "-systemcoordinatesystem"
-           || anArgCase == "-systemcoordsystem"
-           || anArgCase == "-systemcoordsys"
-           || anArgCase == "-syscoordsys"))
+             && (anArgCase == "-systemcoordinatesystem"
+             || anArgCase == "-systemcoordsystem"
+             || anArgCase == "-systemcoordsys"
+             || anArgCase == "-syscoordsys"))
     {
-      if (!parseCoordinateSystem (theArgVec[++anArgIter], aSystemCoordSys))
+      if (!parseCoordinateSystem(theArgVec[++anArgIter], aNode->InternalParameters.SystemCS))
       {
-        Message::SendFail() << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'";
+        theDI << "Syntax error: unknown coordinate system '" << theArgVec[anArgIter] << "'\n";
         return 1;
       }
     }
     else if (anArgCase == "-comments"
-          && anArgIter + 1 < theNbArgs)
+             && anArgIter + 1 < theNbArgs)
     {
-      aFileInfo.Add ("Comments", theArgVec[++anArgIter]);
+      aNode->InternalParameters.WriteComment = theArgVec[++anArgIter];
     }
     else if (anArgCase == "-author"
-          && anArgIter + 1 < theNbArgs)
+             && anArgIter + 1 < theNbArgs)
     {
-      aFileInfo.Add ("Author", theArgVec[++anArgIter]);
+      aNode->InternalParameters.WriteAuthor = theArgVec[++anArgIter];
     }
-    else if (aDoc.IsNull())
+    else if (aDoc.IsNull() && aShape.IsNull())
     {
       Standard_CString aNameVar = theArgVec[anArgIter];
-      DDocStd::GetDocument (aNameVar, aDoc, false);
+      DDocStd::GetDocument(aNameVar, aDoc, false);
       if (aDoc.IsNull())
       {
-        TopoDS_Shape aShape = DBRep::Get (aNameVar);
+        aShape = DBRep::Get(aNameVar);
         if (aShape.IsNull())
         {
-          Message::SendFail() << "Syntax error: '" << aNameVar << "' is not a shape nor document";
+          theDI << "Syntax error: '" << aNameVar << "' is not a shape nor document\n";
           return 1;
         }
-
-        anApp->NewDocument (TCollection_ExtendedString ("BinXCAF"), aDoc);
-        Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool (aDoc->Main());
-        aShapeTool->AddShape (aShape);
       }
     }
     else if (anObjFilePath.IsEmpty())
@@ -1034,32 +989,39 @@ static Standard_Integer WriteObj (Draw_Interpretor& theDI,
     }
     else
     {
-      Message::SendFail() << "Syntax error at '" << theArgVec[anArgIter] << "'";
+      theDI << "Syntax error at '" << theArgVec[anArgIter] << "'\n";
       return 1;
     }
   }
   if (anObjFilePath.IsEmpty())
   {
-    Message::SendFail() << "Syntax error: wrong number of arguments";
+    theDI << "Syntax error: wrong number of arguments\n";
     return 1;
   }
-
-  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (theDI, 1);
-
-  const Standard_Real aSystemUnitFactor = UnitsMethods::GetCasCadeLengthUnit() * 0.001;
-  RWObj_CafWriter aWriter (anObjFilePath);
-  aWriter.ChangeCoordinateSystemConverter().SetInputLengthUnit (aSystemUnitFactor);
-  aWriter.ChangeCoordinateSystemConverter().SetInputCoordinateSystem (aSystemCoordSys);
-  aWriter.ChangeCoordinateSystemConverter().SetOutputLengthUnit (aFileUnitFactor);
-  aWriter.ChangeCoordinateSystemConverter().SetOutputCoordinateSystem (aFileCoordSys);
-  aWriter.Perform (aDoc, aFileInfo, aProgress->Start());
+  Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
+  Handle(RWObj_Provider) aProvider = new RWObj_Provider(aNode);
+  Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+  Standard_Boolean aWriteStatus = Standard_False;
+  if (aDoc.IsNull())
+  {
+    aWriteStatus = aProvider->Write(theArgVec[2], aShape, aWS, aProgress->Start());
+  }
+  else
+  {
+    aWriteStatus = aProvider->Write(theArgVec[2], aDoc, aWS, aProgress->Start());
+  }
+  if (!aWriteStatus)
+  {
+    theDI << "Error: Mesh writing has been failed\n";
+    return 1;
+  }
   return 0;
 }
 
 static Standard_Integer writevrml
 (Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
-  if (argc < 3 || argc > 5) 
+  if (argc < 3 || argc > 5)
   {
     di << "wrong number of parameters\n";
     return 0;
@@ -1087,9 +1049,9 @@ static Standard_Integer writevrml
 
   switch (aType)
   {
-  case 0: writer.SetRepresentation(VrmlAPI_ShadedRepresentation); break;
-  case 1: writer.SetRepresentation(VrmlAPI_WireFrameRepresentation); break;
-  case 2: writer.SetRepresentation(VrmlAPI_BothRepresentation); break;
+    case 0: writer.SetRepresentation(VrmlAPI_ShadedRepresentation); break;
+    case 1: writer.SetRepresentation(VrmlAPI_WireFrameRepresentation); break;
+    case 2: writer.SetRepresentation(VrmlAPI_BothRepresentation); break;
   }
 
   if (!writer.Write(aShape, argv[2], aVersion))
@@ -1850,7 +1812,7 @@ static Standard_Integer meshvectors( Draw_Interpretor& di,
       {
         if (!Quantity_Color::ColorFromName (argv[anIdx], aColor))
         {
-          Message::SendFail() << "Syntax error at " << aParam;
+          di << "Syntax error at " << aParam;
           return 1;
         }
       }
@@ -2153,118 +2115,127 @@ static Standard_Integer meshinfo(Draw_Interpretor& di,
 }
 
 //=======================================================================
-//function : writeply
+//function : WritePly
 //purpose  : write PLY file
 //=======================================================================
-static Standard_Integer WritePly (Draw_Interpretor& theDI,
-                                  Standard_Integer theNbArgs,
-                                  const char** theArgVec)
+static Standard_Integer WritePly(Draw_Interpretor& theDI,
+                                 Standard_Integer theNbArgs,
+                                 const char** theArgVec)
 {
   Handle(TDocStd_Document) aDoc;
   Handle(TDocStd_Application) anApp = DDocStd::GetApplication();
   TCollection_AsciiString aShapeName, aFileName;
-
+  Handle(RWPly_ConfigurationNode) aNode = new RWPly_ConfigurationNode();
   Standard_Real aDist = 0.0;
   Standard_Real aDens = Precision::Infinite();
-  Standard_Real aTol  = Precision::Confusion();
-  bool hasColors = true, hasNormals = true, hasTexCoords = false, hasPartId = true, hasFaceId = false;
+  Standard_Real aTol = Precision::Confusion();
   bool isPntSet = false, isDensityPoints = false;
-  TColStd_IndexedDataMapOfStringString aFileInfo;
   for (Standard_Integer anArgIter = 1; anArgIter < theNbArgs; ++anArgIter)
   {
-    TCollection_AsciiString anArg (theArgVec[anArgIter]);
+    TCollection_AsciiString anArg(theArgVec[anArgIter]);
     anArg.LowerCase();
     if (anArg == "-normal")
     {
-      hasNormals = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.WriteNormals =
+        Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArg == "-nonormal")
     {
-      hasNormals = !Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.WriteNormals =
+        !Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArg == "-color"
-          || anArg == "-nocolor"
-          || anArg == "-colors"
-          || anArg == "-nocolors")
+             || anArg == "-nocolor"
+             || anArg == "-colors"
+             || anArg == "-nocolors")
     {
-      hasColors = Draw::ParseOnOffNoIterator (theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.WriteColors =
+        Draw::ParseOnOffNoIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArg == "-uv"
-          || anArg == "-nouv")
+             || anArg == "-nouv")
     {
-      hasTexCoords = Draw::ParseOnOffNoIterator (theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.WriteTexCoords =
+        Draw::ParseOnOffNoIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if (anArg == "-partid")
     {
-      hasPartId = Draw::ParseOnOffNoIterator (theNbArgs, theArgVec, anArgIter);
-      hasFaceId = hasFaceId && !hasPartId;
+      aNode->InternalParameters.WritePartId =
+        Draw::ParseOnOffNoIterator(theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.WriteFaceId =
+        aNode->InternalParameters.WriteFaceId &&
+        !aNode->InternalParameters.WritePartId;
     }
     else if (anArg == "-surfid"
-          || anArg == "-surfaceid"
-          || anArg == "-faceid")
+             || anArg == "-surfaceid"
+             || anArg == "-faceid")
     {
-      hasFaceId = Draw::ParseOnOffNoIterator (theNbArgs, theArgVec, anArgIter);
-      hasPartId = hasPartId && !hasFaceId;
+      aNode->InternalParameters.WriteFaceId =
+        Draw::ParseOnOffNoIterator(theNbArgs, theArgVec, anArgIter);
+      aNode->InternalParameters.WritePartId =
+        aNode->InternalParameters.WritePartId &&
+        !aNode->InternalParameters.WriteFaceId;
     }
     else if (anArg == "-pntset"
-          || anArg == "-pntcloud"
-          || anArg == "-pointset"
-          || anArg == "-pointcloud"
-          || anArg == "-cloud"
-          || anArg == "-points")
+             || anArg == "-pntcloud"
+             || anArg == "-pointset"
+             || anArg == "-pointcloud"
+             || anArg == "-cloud"
+             || anArg == "-points")
     {
-      isPntSet = Draw::ParseOnOffIterator (theNbArgs, theArgVec, anArgIter);
+      isPntSet = Draw::ParseOnOffIterator(theNbArgs, theArgVec, anArgIter);
     }
     else if ((anArg == "-dist"
-           || anArg == "-distance")
-          && anArgIter + 1 < theNbArgs
-          && Draw::ParseReal (theArgVec[anArgIter + 1], aDist))
+             || anArg == "-distance")
+             && anArgIter + 1 < theNbArgs
+             && Draw::ParseReal(theArgVec[anArgIter + 1], aDist))
     {
       ++anArgIter;
       isPntSet = true;
       if (aDist < 0.0)
       {
-        theDI << "Syntax error: -distance value should be >= 0.0";
+        theDI << "Syntax error: -distance value should be >= 0.0\n";
         return 1;
       }
-      aDist = Max (aDist, Precision::Confusion());
+      aDist = Max(aDist, Precision::Confusion());
     }
     else if ((anArg == "-dens"
-           || anArg == "-density")
-          && anArgIter + 1 < theNbArgs
-          && Draw::ParseReal (theArgVec[anArgIter + 1], aDens))
+             || anArg == "-density")
+             && anArgIter + 1 < theNbArgs
+             && Draw::ParseReal(theArgVec[anArgIter + 1], aDens))
     {
       ++anArgIter;
       isDensityPoints = Standard_True;
       isPntSet = true;
       if (aDens <= 0.0)
       {
-        theDI << "Syntax error: -density value should be > 0.0";
+        theDI << "Syntax error: -density value should be > 0.0\n";
         return 1;
       }
     }
     else if ((anArg == "-tol"
-           || anArg == "-tolerance")
-          && anArgIter + 1 < theNbArgs
-          && Draw::ParseReal (theArgVec[anArgIter + 1], aTol))
+             || anArg == "-tolerance")
+             && anArgIter + 1 < theNbArgs
+             && Draw::ParseReal(theArgVec[anArgIter + 1], aTol))
     {
       ++anArgIter;
       isPntSet = true;
       if (aTol < Precision::Confusion())
       {
-        theDI << "Syntax error: -tol value should be >= " << Precision::Confusion();
+        theDI << "Syntax error: -tol value should be >= "
+          << Precision::Confusion() << "\n";
         return 1;
       }
     }
     else if (anArg == "-comments"
-          && anArgIter + 1 < theNbArgs)
+             && anArgIter + 1 < theNbArgs)
     {
-      aFileInfo.Add ("Comments", theArgVec[++anArgIter]);
+      aNode->InternalParameters.WriteComment = theArgVec[++anArgIter];
     }
     else if (anArg == "-author"
-          && anArgIter + 1 < theNbArgs)
+             && anArgIter + 1 < theNbArgs)
     {
-      aFileInfo.Add ("Author", theArgVec[++anArgIter]);
+      aNode->InternalParameters.WriteAuthor = theArgVec[++anArgIter];
     }
     else if (aDoc.IsNull())
     {
@@ -2274,15 +2245,15 @@ static Standard_Integer WritePly (Draw_Interpretor& theDI,
       }
 
       Standard_CString aNameVar = theArgVec[anArgIter];
-      DDocStd::GetDocument (aNameVar, aDoc, false);
+      DDocStd::GetDocument(aNameVar, aDoc, false);
       if (aDoc.IsNull())
       {
-        TopoDS_Shape aShape = DBRep::Get (aNameVar);
+        TopoDS_Shape aShape = DBRep::Get(aNameVar);
         if (!aShape.IsNull())
         {
-          anApp->NewDocument (TCollection_ExtendedString ("BinXCAF"), aDoc);
-          Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool (aDoc->Main());
-          aShapeTool->AddShape (aShape);
+          anApp->NewDocument(TCollection_ExtendedString("BinXCAF"), aDoc);
+          Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
+          aShapeTool->AddShape(aShape);
         }
       }
     }
@@ -2292,131 +2263,136 @@ static Standard_Integer WritePly (Draw_Interpretor& theDI,
     }
     else
     {
-      theDI << "Syntax error at '" << theArgVec[anArgIter] << "'";
+      theDI << "Syntax error at '" << theArgVec[anArgIter] << "'\n";
       return 1;
     }
   }
   if (aDoc.IsNull()
-  && !aShapeName.IsEmpty())
+      && !aShapeName.IsEmpty())
   {
-    theDI << "Syntax error: '" << aShapeName << "' is not a shape nor document";
+    theDI << "Syntax error: '" << aShapeName << "' is not a shape nor document\n";
     return 1;
   }
   else if (aDoc.IsNull()
-        || aFileName.IsEmpty())
+           || aFileName.IsEmpty())
   {
-    theDI << "Syntax error: wrong number of arguments";
+    theDI << "Syntax error: wrong number of arguments\n";
     return 1;
   }
-
-  TDF_LabelSequence aRootLabels;
-  Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool (aDoc->Main());
-  aShapeTool->GetFreeShapes (aRootLabels);
-  if (aRootLabels.IsEmpty())
-  {
-    theDI << "Error: empty document";
-    return 1;
-  }
+  aNode->GlobalParameters.LengthUnit = getLengthUnit(aDoc);
 
   if (isPntSet)
   {
+    TDF_LabelSequence aRootLabels;
+    Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
+    aShapeTool->GetFreeShapes(aRootLabels);
+    if (aRootLabels.IsEmpty())
+    {
+      theDI << "Error: empty document\n";
+      return 1;
+    }
     class PointCloudPlyWriter : public BRepLib_PointCloudShape, public RWPly_PlyWriterContext
     {
     public:
-      PointCloudPlyWriter (Standard_Real theTol)
-      : BRepLib_PointCloudShape (TopoDS_Shape(), theTol) {}
+      PointCloudPlyWriter(Standard_Real theTol)
+        : BRepLib_PointCloudShape(TopoDS_Shape(), theTol)
+      {}
 
-      void AddFaceColor (const TopoDS_Shape& theFace, const Graphic3d_Vec4ub& theColor)
-      { myFaceColor.Bind (theFace, theColor); }
+      void AddFaceColor(const TopoDS_Shape& theFace, const Graphic3d_Vec4ub& theColor)
+      {
+        myFaceColor.Bind(theFace, theColor);
+      }
 
     protected:
-      virtual void addPoint (const gp_Pnt& thePoint,
-                             const gp_Vec& theNorm,
-                             const gp_Pnt2d& theUV,
-                             const TopoDS_Shape& theFace)
+      virtual void addPoint(const gp_Pnt& thePoint,
+                            const gp_Vec& theNorm,
+                            const gp_Pnt2d& theUV,
+                            const TopoDS_Shape& theFace)
       {
         Graphic3d_Vec4ub aColor;
-        myFaceColor.Find (theFace, aColor);
-        RWPly_PlyWriterContext::WriteVertex (thePoint,
-                                             Graphic3d_Vec3 ((float )theNorm.X(), (float )theNorm.Y(), (float )theNorm.Z()),
-                                             Graphic3d_Vec2 ((float )theUV.X(), (float )theUV.Y()),
-                                             aColor);
+        myFaceColor.Find(theFace, aColor);
+        RWPly_PlyWriterContext::WriteVertex(thePoint,
+                                            Graphic3d_Vec3((float)theNorm.X(), (float)theNorm.Y(), (float)theNorm.Z()),
+                                            Graphic3d_Vec2((float)theUV.X(), (float)theUV.Y()),
+                                            aColor);
       }
 
     private:
       NCollection_DataMap<TopoDS_Shape, Graphic3d_Vec4ub> myFaceColor;
     };
 
-    PointCloudPlyWriter aPlyCtx (aTol);
-    aPlyCtx.SetNormals (hasNormals);
-    aPlyCtx.SetColors (hasColors);
-    aPlyCtx.SetTexCoords (hasTexCoords);
+    PointCloudPlyWriter aPlyCtx(aTol);
+    aPlyCtx.SetNormals(aNode->InternalParameters.WriteNormals);
+    aPlyCtx.SetColors(aNode->InternalParameters.WriteColors);
+    aPlyCtx.SetTexCoords(aNode->InternalParameters.WriteTexCoords);
 
     TopoDS_Compound aComp;
-    BRep_Builder().MakeCompound (aComp);
-    for (XCAFPrs_DocumentExplorer aDocExplorer (aDoc, aRootLabels, XCAFPrs_DocumentExplorerFlags_OnlyLeafNodes);
+    BRep_Builder().MakeCompound(aComp);
+    for (XCAFPrs_DocumentExplorer aDocExplorer(aDoc, aRootLabels, XCAFPrs_DocumentExplorerFlags_OnlyLeafNodes);
          aDocExplorer.More(); aDocExplorer.Next())
     {
       const XCAFPrs_DocumentNode& aDocNode = aDocExplorer.Current();
-      for (RWMesh_FaceIterator aFaceIter (aDocNode.RefLabel, aDocNode.Location, true, aDocNode.Style); aFaceIter.More(); aFaceIter.Next())
+      for (RWMesh_FaceIterator aFaceIter(aDocNode.RefLabel, aDocNode.Location, true, aDocNode.Style); aFaceIter.More(); aFaceIter.Next())
       {
-        BRep_Builder().Add (aComp, aFaceIter.Face());
-        Graphic3d_Vec4ub aColorVec (255);
+        BRep_Builder().Add(aComp, aFaceIter.Face());
+        Graphic3d_Vec4ub aColorVec(255);
         if (aFaceIter.HasFaceColor())
         {
           Graphic3d_Vec4 aColorF = aFaceIter.FaceColor();
-          aColorVec.SetValues ((unsigned char )int(aColorF.r() * 255.0f),
-                               (unsigned char )int(aColorF.g() * 255.0f),
-                               (unsigned char )int(aColorF.b() * 255.0f),
-                               (unsigned char )int(aColorF.a() * 255.0f));
+          aColorVec.SetValues((unsigned char)int(aColorF.r() * 255.0f),
+                              (unsigned char)int(aColorF.g() * 255.0f),
+                              (unsigned char)int(aColorF.b() * 255.0f),
+                              (unsigned char)int(aColorF.a() * 255.0f));
         }
-        aPlyCtx.AddFaceColor (aFaceIter.Face(), aColorVec);
+        aPlyCtx.AddFaceColor(aFaceIter.Face(), aColorVec);
       }
     }
-    aPlyCtx.SetShape (aComp);
+    aPlyCtx.SetShape(aComp);
 
     Standard_Integer aNbPoints = isDensityPoints
-                               ? aPlyCtx.NbPointsByDensity (aDens)
-                               : aPlyCtx.NbPointsByTriangulation();
+      ? aPlyCtx.NbPointsByDensity(aDens)
+      : aPlyCtx.NbPointsByTriangulation();
     if (aNbPoints <= 0)
     {
-      theDI << "Error: unable to generate points";
-      return 0;
+      theDI << "Error: unable to generate points\n";
+      return 1;
     }
 
-    if (!aPlyCtx.Open (aFileName)
-     || !aPlyCtx.WriteHeader (aNbPoints, 0, TColStd_IndexedDataMapOfStringString()))
+    if (!aPlyCtx.Open(aFileName)
+        || !aPlyCtx.WriteHeader(aNbPoints, 0, TColStd_IndexedDataMapOfStringString()))
     {
-      theDI << "Error: unable to create file '" << aFileName << "'";
-      return 0;
+      theDI << "Error: unable to create file '" << aFileName << "'\n";
+      return 1;
     }
 
     Standard_Boolean isDone = isDensityPoints
-                            ? aPlyCtx.GeneratePointsByDensity (aDens)
-                            : aPlyCtx.GeneratePointsByTriangulation();
+      ? aPlyCtx.GeneratePointsByDensity(aDens)
+      : aPlyCtx.GeneratePointsByTriangulation();
     if (!isDone)
     {
-      theDI << "Error: Point cloud was not generated in file '" << aFileName << "'";
+      theDI << "Error: Point cloud was not generated in file '" << aFileName << "'\n";
+      return 1;
     }
     else if (!aPlyCtx.Close())
     {
-      theDI << "Error: Point cloud file '" << aFileName << "' was not written";
+      theDI << "Error: Point cloud file '" << aFileName << "' was not written\n";
+      return 1;
     }
     else
     {
-      theDI << aNbPoints;
+      theDI << aNbPoints << "\n";
     }
   }
   else
   {
-    Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator (theDI, 1);
-    RWPly_CafWriter aPlyCtx (aFileName);
-    aPlyCtx.SetNormals (hasNormals);
-    aPlyCtx.SetColors (hasColors);
-    aPlyCtx.SetTexCoords (hasTexCoords);
-    aPlyCtx.SetPartId (hasPartId);
-    aPlyCtx.SetFaceId (hasFaceId);
-    aPlyCtx.Perform (aDoc, aFileInfo, aProgress->Start());
+    Handle(Draw_ProgressIndicator) aProgress = new Draw_ProgressIndicator(theDI, 1);
+    Handle(RWPly_Provider) aProvider = new RWPly_Provider(aNode);
+    Handle(XSControl_WorkSession) aWS = XSDRAW::Session();
+    if (!aProvider->Write(theArgVec[2], aDoc, aWS, aProgress->Start()))
+    {
+      theDI << "Error: file writing failed '" << theArgVec[2] << "'\n";
+      return 1;
+    }
   }
   return 0;
 }

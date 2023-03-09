@@ -53,7 +53,9 @@ provider.STEP.OCC.write.product.name :
 provider.STEP.OCC.write.surfacecurve.mode :      1
 provider.STEP.OCC.write.unit :      2
 provider.STEP.OCC.write.resource.name :  STEP
+provider.STEP.OCC.write.multi.prefix :
 provider.STEP.OCC.write.sequence :       ToSTEP
+provider.STEP.OCC.write.labels :
 provider.STEP.OCC.write.vertex.mode :    0
 provider.STEP.OCC.write.stepcaf.subshapes.name :         0
 provider.STEP.OCC.write.color :  1

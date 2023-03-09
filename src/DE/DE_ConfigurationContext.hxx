@@ -139,6 +139,15 @@ public:
                                                     const TCollection_AsciiString& theDefValue,
                                                     const TCollection_AsciiString& theScope = "") const;
 
+  //! Gets value of parameter as being of specific type
+  //! @param[in] theParam complex parameter name
+  //! @param[in] theDefValue value by default if param is not found or has wrong type
+  //! @param[in] theScope base parameter name
+  //! @return specific type value
+  Standard_EXPORT TColStd_ListOfAsciiString StringSeqVal(const TCollection_AsciiString& theParam,
+                                                         const TColStd_ListOfAsciiString& theDefValue,
+                                                         const TCollection_AsciiString& theScope = "") const;
+
   //! Gets internal resource map
   //! @return map with resource value
   Standard_EXPORT const DE_ResourceMap& GetInternalMap() const { return myResource; }

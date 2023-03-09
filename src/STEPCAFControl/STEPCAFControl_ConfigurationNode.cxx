@@ -131,8 +131,12 @@ bool STEPCAFControl_ConfigurationNode::Load(const Handle(DE_ConfigurationContext
     theResource->IntegerVal("write.unit", InternalParameters.WriteUnit, aScope);
   InternalParameters.WriteResourceName =
     theResource->StringVal("write.resource.name", InternalParameters.WriteResourceName, aScope);
+  InternalParameters.WriteMultiPrefix =
+    theResource->StringVal("write.multi.prefix", InternalParameters.WriteMultiPrefix, aScope);
   InternalParameters.WriteSequence =
     theResource->StringVal("write.sequence", InternalParameters.WriteSequence, aScope);
+  InternalParameters.WriteLabels =
+    theResource->StringSeqVal("write.labels", InternalParameters.WriteLabels, aScope);
   InternalParameters.WriteVertexMode = (WriteMode_VertexMode)
     theResource->IntegerVal("write.vertex.mode", InternalParameters.WriteVertexMode, aScope);
   InternalParameters.WriteSubshapeNames =
@@ -428,10 +432,28 @@ TCollection_AsciiString STEPCAFControl_ConfigurationNode::Save() const
   aResult += "!\n";
 
   aResult += "!\n";
+  aResult += "!Defines prefix for names of external files, if empty do not make multifile\n";
+  aResult += "!Default value: empty. Available values: <string>\n";
+  aResult += aScope + "write.multi.prefix :\t " + InternalParameters.WriteMultiPrefix + "\n";
+  aResult += "!\n";
+
+  aResult += "!\n";
   aResult += "!Defines name of the sequence of operators\n";
   aResult += "!Default value: \"ToSTEP\". Available values: <string>\n";
   aResult += aScope + "write.sequence :\t " + InternalParameters.WriteSequence + "\n";
   aResult += "!\n";
+
+  aResult += "!\n";
+  aResult += "!Defines list of shape labels to export, if empty import full document\n";
+  aResult += "!Default value: empty. Available values: sequense of label entries\n";
+  aResult += aScope + "write.labels :\t ";
+  for (TColStd_ListOfAsciiString::Iterator anIter(InternalParameters.WriteLabels);
+       anIter.More(); anIter.Next())
+  {
+    aResult += anIter.Value();
+    aResult += " ";
+  }
+  aResult += "\n!\n";
 
   aResult += "!\n";
   aResult += "!This parameter indicates which of free vertices writing mode is switch on\n";

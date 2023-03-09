@@ -296,6 +296,18 @@ TCollection_AsciiString DE_ConfigurationContext::StringVal(const TCollection_Asc
 }
 
 //=======================================================================
+//function : StringSeqVal
+//purpose  :
+//=======================================================================
+TColStd_ListOfAsciiString DE_ConfigurationContext::StringSeqVal(const TCollection_AsciiString& theParam,
+                                                                const TColStd_ListOfAsciiString& theDefValue,
+                                                                const TCollection_AsciiString& theScope) const
+{
+  TColStd_ListOfAsciiString aVal;
+  return GetStringSeq(theParam, aVal, theScope) ? aVal : theDefValue;
+}
+
+//=======================================================================
 //function : GetReal
 //purpose  :
 //=======================================================================

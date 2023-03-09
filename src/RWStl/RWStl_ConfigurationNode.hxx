@@ -84,11 +84,17 @@ public:
   Standard_EXPORT virtual bool CheckContent(const Handle(NCollection_Buffer)& theBuffer) const Standard_OVERRIDE;
 
 public:
+  enum ReadMode_ShapeType
+  {
+    ReadMode_ShapeType_MultiMesh = 0,
+    ReadMode_ShapeType_SingleMesh,
+    ReadMode_ShapeType_CompShape,
+  };
   struct RWStl_InternalSection
   {
     // Read
     double ReadMergeAngle = 90.; //!< Input merge angle value
-    bool ReadBRep = false; //!< Setting up Boundary Representation flag
+    ReadMode_ShapeType ReadShapeType = ReadMode_ShapeType_SingleMesh; //!< Defines result type of transferred shape
 
     // Write
     bool WriteAscii = true; //!< Setting up writing mode (Ascii or Binary)

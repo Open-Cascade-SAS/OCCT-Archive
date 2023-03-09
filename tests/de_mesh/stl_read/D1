@@ -49,7 +49,12 @@ set fd [open ${imagedir}/${casename}_zero_ascii_dos.stl w]
 fconfigure $fd -translation crlf
 puts $fd "solid \nendsolid"
 close $fd
-readstl res_zero_ascii_dos ${imagedir}/${casename}_zero_ascii_dos.stl -brep
+puts "REQUIRED ALL: Error: RWStl_Provider :"
+catch {
+  if {[readstl res_zero_ascii_dos ${imagedir}/${casename}_zero_ascii_dos.stl -brep]} {
+    puts "Error: empty file should be marked as invalid input file"
+  }
+}
 
 puts "\n#======================================================================"
 puts "# Ascii file with no facets, LF"
@@ -58,7 +63,11 @@ set fd [open ${imagedir}/${casename}_zero_ascii_unix.stl w]
 fconfigure $fd -translation lf
 puts $fd "solid \nendsolid"
 close $fd
-readstl res_zero_ascii_unix ${imagedir}/${casename}_zero_ascii_unix.stl -brep
+catch {
+  if {[readstl res_zero_ascii_unix ${imagedir}/${casename}_zero_ascii_unix.stl -brep] != 1} {
+    puts "Error: empty file should be marked as invalid input file"
+  }
+}
 
 puts "\n#======================================================================"
 puts "# Binary file with single facet"
@@ -79,7 +88,11 @@ set fd [open ${imagedir}/${casename}_zero_binary.stl w]
 fconfigure $fd -translation binary
 puts -nonewline $fd "stl [string repeat { } 76][binary format i 0]"
 close $fd
-readstl res_zero_binary ${imagedir}/${casename}_zero_binary.stl -brep
+catch {
+  if {[readstl res_zero_binary ${imagedir}/${casename}_zero_binary.stl -brep] != 1} {
+    puts "Error: empty file should be marked as invalid input file"
+  }
+}
 
 puts "\n#======================================================================"
 puts "# Empty file"
@@ -87,5 +100,9 @@ puts "#======================================================================"
 puts "REQUIRED ALL: Error: premature end of file"
 set fd [open ${imagedir}/${casename}_empty.stl w]
 close $fd
-readstl res_empty ${imagedir}/${casename}_empty.stl -brep
+catch {
+  if {[readstl res_empty ${imagedir}/${casename}_empty.stl -brep] != 1} {
+    puts "Error: empty file should be marked as invalid input file"
+  }
+}
 

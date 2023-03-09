@@ -16,6 +16,7 @@
 
 #include <DE_Provider.hxx>
 #include <STEPCAFControl_ConfigurationNode.hxx>
+#include <STEPCAFControl_ExternFile.hxx>
 
 //! The class to transfer STEP files.
 //! Reads and Writes any STEP files into/from OCCT.
@@ -54,6 +55,19 @@ public:
                                     Handle(XSControl_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
+  //! Reads a CAD file, according internal configuration
+  //! @param[in] theIStream stream to import STEP data
+  //! @param[out] theDocument document to save result
+  //! @paramp[in] theName name of step file, can be empty
+  //! @param[in] theWS current work session
+  //! @param theProgress[in] progress indicator
+  //! @return true if Read operation has ended correctly
+  Standard_EXPORT virtual bool Read(std::istream& theIStream,
+                                    const Handle(TDocStd_Document)& theDocument,
+                                    const TCollection_AsciiString theName,
+                                    Handle(XSControl_WorkSession)& theWS,
+                                    const Message_ProgressRange& theProgress = Message_ProgressRange());
+
   //! Writes a CAD file, according internal configuration
   //! @param[in] thePath path to the export CAD file
   //! @param[out] theDocument document to export
@@ -65,23 +79,16 @@ public:
                                      Handle(XSControl_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
-  //! Reads a CAD file, according internal configuration
-  //! @param[in] thePath path to the import CAD file
-  //! @param[out] theDocument document to save result
-  //! @param theProgress[in] progress indicator
-  //! @return true if Read operation has ended correctly
-  Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
-                                    const Handle(TDocStd_Document)& theDocument,
-                                    const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
-
   //! Writes a CAD file, according internal configuration
-  //! @param[in] thePath path to the export CAD file
+  //! @param[in] theOStream stream to export STEP data
   //! @param[out] theDocument document to export
+  //! @param[in] theWS current work session
   //! @param theProgress[in] progress indicator
   //! @return true if Write operation has ended correctly
-  Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
+  Standard_EXPORT virtual bool Write(std::ostream& theOStream,
                                      const Handle(TDocStd_Document)& theDocument,
-                                     const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
+                                     Handle(XSControl_WorkSession)& theWS,
+                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
   //! Reads a CAD file, according internal configuration
   //! @param[in] thePath path to the import CAD file
@@ -94,6 +101,19 @@ public:
                                     Handle(XSControl_WorkSession)& theWS,
                                     const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
+  //! Reads a CAD file, according internal configuration
+  //! @param[in] theIStream stream to the step file
+  //! @param[out] theShape shape to save result
+  //! @paramp[in] theName name of step file, can be empty
+  //! @param[in] theWS current work session
+  //! @param theProgress[in] progress indicator
+  //! @return true if Read operation has ended correctly
+  Standard_EXPORT virtual bool Read(std::istream& theIStream,
+                                    TopoDS_Shape& theShape,
+                                    const TCollection_AsciiString theName,
+                                    Handle(XSControl_WorkSession)& theWS,
+                                    const Message_ProgressRange& theProgress = Message_ProgressRange());
+
   //! Writes a CAD file, according internal configuration
   //! @param[in] thePath path to the export CAD file
   //! @param[out] theShape shape to export
@@ -105,23 +125,16 @@ public:
                                      Handle(XSControl_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
-  //! Reads a CAD file, according internal configuration
-  //! @param[in] thePath path to the import CAD file
-  //! @param[out] theShape shape to save result
-  //! @param theProgress[in] progress indicator
-  //! @return true if Read operation has ended correctly
-  Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
-                                    TopoDS_Shape& theShape,
-                                    const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
-
   //! Writes a CAD file, according internal configuration
-  //! @param[in] thePath path to the export CAD file
+  //! @param[in] theOStream stream to export STEP data
   //! @param[out] theShape shape to export
+  //! @param[in] theWS current work session
   //! @param theProgress[in] progress indicator
   //! @return true if Write operation has ended correctly
-  Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
+  Standard_EXPORT virtual bool Write(std::ostream& theOStream,
                                      const TopoDS_Shape& theShape,
-                                     const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
+                                     Handle(XSControl_WorkSession)& theWS,
+                                     const Message_ProgressRange& theProgress = Message_ProgressRange());
 
 public:
 
@@ -133,18 +146,44 @@ public:
   //! @return provider's vendor name
   Standard_EXPORT virtual TCollection_AsciiString GetVendor() const Standard_OVERRIDE;
 
- private:
+public:
 
-   //! Initialize static variables
-   void initStatic(const Handle(DE_ConfigurationNode)& theNode);
+  //! Sets parameter to update static parameter, that true by default
+  void SetToUpdateStaticParameters(const bool theToUpdate) { myToUpdateStaticParameters = theToUpdate; }
 
-   //! Initialize static variables
-   void setStatic(const STEPCAFControl_ConfigurationNode::STEPCAFControl_InternalSection theParameter);
+  //! Gets parameter to update static parameter, that true by default
+  bool ToUpdateStaticParameters() const { return myToUpdateStaticParameters; }
 
-   //! Reset used interface static variables
-   void resetStatic();
+public:
 
-   STEPCAFControl_ConfigurationNode::STEPCAFControl_InternalSection myOldValues;
+  //! Gets external files used in the last read or write process.
+  //! Processed only on multifile setting up
+  NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> GetExternalFiles() const
+  {
+    return myProcessedExtFiles;
+  }
+
+private:
+
+  //! Personizes work session with current format.
+  //! Creates new temporary session if current session is null
+  //! @param[in] theWS current work session
+  void personizeWS(Handle(XSControl_WorkSession)& theWS);
+
+  //! Initialize static variables
+  void initStatic(const Handle(DE_ConfigurationNode)& theNode);
+
+  //! Initialize static variables
+  void setStatic(const STEPCAFControl_ConfigurationNode::STEPCAFControl_InternalSection theParameter);
+
+  //! Reset used interface static variables
+  void resetStatic();
+
+private:
+
+  bool myToUpdateStaticParameters = true; //!< Flag to updating static parameters
+  STEPCAFControl_ConfigurationNode::STEPCAFControl_InternalSection myOldValues; //!< Container to save previous static parameters
+  NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> myProcessedExtFiles; //!< External files from the last operation
 
 };
 

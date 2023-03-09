@@ -52,33 +52,24 @@ bool RWPly_Provider::Write(const TCollection_AsciiString& thePath,
                            const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Write(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWPly_Provider::Write(const TCollection_AsciiString& thePath,
-                           const Handle(TDocStd_Document)& theDocument,
-                           const Message_ProgressRange& theProgress)
-{
-  if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWPly_ConfigurationNode)))
+  if (GetNode().IsNull() ||
+      !GetNode()->IsKind(STANDARD_TYPE(RWPly_ConfigurationNode)))
   {
-    Message::SendFail() << "Error in the RWPly_Provider during writing the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
+    Message::SendFail() << "Error: RWPly_Provider : "
+      << "Incorrect or empty Configuration Node";
     return false;
   }
-  Handle(RWPly_ConfigurationNode) aNode = Handle(RWPly_ConfigurationNode)::DownCast(GetNode());
+  Handle(RWPly_ConfigurationNode) aNode =
+    Handle(RWPly_ConfigurationNode)::DownCast(GetNode());
 
   TDF_LabelSequence aRootLabels;
-  Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
+  Handle(XCAFDoc_ShapeTool) aShapeTool =
+    XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
   aShapeTool->GetFreeShapes(aRootLabels);
   if (aRootLabels.IsEmpty())
   {
     return Standard_True;
   }
-
   TColStd_IndexedDataMapOfStringString aFileInfo;
   if (!aNode->InternalParameters.WriteAuthor.IsEmpty())
   {
@@ -102,8 +93,8 @@ bool RWPly_Provider::Write(const TCollection_AsciiString& thePath,
   aPlyCtx.SetFaceId(aNode->InternalParameters.WriteFaceId);
   if (!aPlyCtx.Perform(theDocument, aFileInfo, theProgress))
   {
-    Message::SendFail() << "Error in the RWPly_Provider during writing the file " 
-      << thePath << "\t: Cannot perform the document";
+    Message::SendFail() << "Error: RWObj_Provider : [" <<
+      thePath << "] : Cannot write any relevant data to the Ply file";
     return false;
   }
 
@@ -120,21 +111,10 @@ bool RWPly_Provider::Write(const TCollection_AsciiString& thePath,
                            const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Write(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWPly_Provider::Write(const TCollection_AsciiString& thePath,
-                           const TopoDS_Shape& theShape,
-                           const Message_ProgressRange& theProgress)
-{
   Handle(TDocStd_Document) aDoc = new TDocStd_Document("BinXCAF");
   Handle(XCAFDoc_ShapeTool) aShTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
   aShTool->AddShape(theShape);
-  return Write(thePath, aDoc, theProgress);
+  return Write(thePath, aDoc, theWS, theProgress);
 }
 
 //=======================================================================

@@ -102,6 +102,10 @@ public:
   //! @return Standard_True if export is support
   Standard_EXPORT virtual bool IsExportSupported() const;
 
+  //! Checks the stream for import/export supporting
+  //! @return Standard_True if stream is support
+  Standard_EXPORT virtual bool IsStreamSupported() const;
+
   //! Gets CAD format name of associated provider
   //! @return provider CAD format
   Standard_EXPORT virtual TCollection_AsciiString GetFormat() const = 0;
@@ -128,17 +132,11 @@ public:
 
   //! Gets the provider loading status
   //! @return Standard_True if the load is correct
-  Standard_Boolean IsEnabled() const
-  {
-    return myIsEnabled;
-  }
+  Standard_Boolean IsEnabled() const { return myIsEnabled; }
 
   //! Sets the provider loading status
   //! @param[in] theIsLoaded input load status
-  void SetEnabled(const Standard_Boolean theIsLoaded)
-  {
-    myIsEnabled = theIsLoaded;
-  }
+  void SetEnabled(const Standard_Boolean theIsLoaded) { myIsEnabled = theIsLoaded; }
 
 public:
 

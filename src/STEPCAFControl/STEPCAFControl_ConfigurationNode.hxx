@@ -17,6 +17,7 @@
 #include <DE_ConfigurationNode.hxx>
 #include <STEPControl_StepModelType.hxx>
 #include <Resource_FormatType.hxx>
+#include <TColStd_SequenceOfAsciiString.hxx>
 #include <UnitsMethods_LengthUnit.hxx>
 
 //! The purpose of this class is to configure the transfer process for STEP format
@@ -218,7 +219,9 @@ public:
     bool WriteSurfaceCurMode = true; //<! Indicates whether parametric curves (curves in parametric space of surface) should be written into the STEP file
     UnitsMethods_LengthUnit WriteUnit = UnitsMethods_LengthUnit_Millimeter; //<! Defines a unit in which the STEP file should be written
     TCollection_AsciiString WriteResourceName = "STEP"; //<! Defines the name of the resource file to write
+    TCollection_AsciiString WriteMultiPrefix; //<! Defines prefix for names of external files, if empty do not make multifile
     TCollection_AsciiString WriteSequence = "ToSTEP"; //<! Defines the name of the sequence of operators to write
+    TColStd_ListOfAsciiString WriteLabels; //<! Defines list of shape labels to export, if empty import full document
     WriteMode_VertexMode WriteVertexMode = WriteMode_VertexMode_OneCompound; //<! Indicates which of free vertices writing mode is switch on
     bool WriteSubshapeNames = false; //<! Indicates whether to write sub-shape names to 'Name' attributes of STEP Representation Items
     bool WriteColor = true; //<! ColorMode is used to indicate write Colors or not

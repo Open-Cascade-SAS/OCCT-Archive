@@ -51,7 +51,21 @@ bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
                                   const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theDocument, theProgress);
+  if (theDocument.IsNull())
+  {
+    Message::SendFail() << "Error: DEBRepCascade_Provider : "
+      << "Null document";
+    return false;
+  }
+  TopoDS_Shape aShape;
+  if (!Read(thePath, aShape, theWS, theProgress))
+  {
+    return false;
+  }
+  Handle(XCAFDoc_ShapeTool) aShTool =
+    XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
+  aShTool->AddShape(aShape);
+  return true;
 }
 
 //=======================================================================
@@ -64,49 +78,15 @@ bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
                                    const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Write(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
-                                  const Handle(TDocStd_Document)& theDocument,
-                                  const Message_ProgressRange& theProgress)
-{
-  if(theDocument.IsNull())
-  {
-    Message::SendFail() << "Error in the DEBRepCascade_Provider during reading the file " <<
-      thePath << "\t: theDocument shouldn't be null";
-    return false;
-  }
-  TopoDS_Shape aShape;
-  if (!Read(thePath, aShape, theProgress))
-  {
-    return false;
-  }
-  Handle(XCAFDoc_ShapeTool) aShTool = XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
-  aShTool->AddShape(aShape);
-  return true;
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
-                                   const Handle(TDocStd_Document)& theDocument,
-                                   const Message_ProgressRange& theProgress)
-{
   TopoDS_Shape aShape;
   TDF_LabelSequence aLabels;
-  Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
+  Handle(XCAFDoc_ShapeTool) aSTool =
+    XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
   aSTool->GetFreeShapes(aLabels);
   if (aLabels.Length() <= 0)
   {
-    Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
-      thePath << "\t: Document contain no shapes";
+    Message::SendFail() << "Error: DEBRepCascade_Provider : "
+      << "Incorrect or empty Configuration Node";
     return false;
   }
 
@@ -126,7 +106,7 @@ bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
     }
     aShape = aComp;
   }
-  return Write(thePath, aShape, theProgress);
+  return Write(thePath, aShape, theWS, theProgress);
 }
 
 //=======================================================================
@@ -139,7 +119,45 @@ bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
                                   const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theShape, theProgress);
+  bool isBinaryFormat = true;
+  {
+    // probe file header to recognize format
+    const Handle(OSD_FileSystem)& aFileSystem =
+      OSD_FileSystem::DefaultFileSystem();
+    std::shared_ptr<std::istream> aFile =
+      aFileSystem->OpenIStream(thePath, std::ios::in | std::ios::binary);
+    if (aFile.get() == NULL)
+    {
+      Message::SendFail() << "Error: DEBRepCascade_Provider : ["
+        << thePath << "] : Cannot open the file";
+      return false;
+    }
+    char aStringBuf[255] = {};
+    aFile->read(aStringBuf, 255);
+    if (aFile->fail())
+    {
+      Message::SendFail() << "Error: DEBRepCascade_Provider : ["
+        << thePath << "] : Cannot open the file";
+      return false;
+    }
+    isBinaryFormat = !(::strncmp(aStringBuf, "DBRep_DrawableShape", 19) == 0);
+  }
+  Standard_Boolean aReadStatus = Standard_True;
+  if (isBinaryFormat)
+  {
+    aReadStatus = BinTools::Read(theShape, thePath.ToCString(), theProgress);
+  }
+  else
+  {
+    aReadStatus =
+      BRepTools::Read(theShape, thePath.ToCString(), BRep_Builder(), theProgress);
+  }
+  if (!aReadStatus)
+  {
+    Message::SendFail() << "Error: DEBRepCascade_Provider : ["
+      << thePath << "] : Cannot read data from the file";
+  }
+  return aReadStatus;
 }
 
 //=======================================================================
@@ -152,127 +170,72 @@ bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
                                    const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Write(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool DEBRepCascade_Provider::Read(const TCollection_AsciiString& thePath,
-                                  TopoDS_Shape& theShape,
-                                  const Message_ProgressRange& theProgress)
-{
-  bool isBinaryFormat = true;
+  if (GetNode().IsNull() ||
+      !GetNode()->IsKind(STANDARD_TYPE(DEBRepCascade_ConfigurationNode)))
   {
-    // probe file header to recognize format
-    const Handle(OSD_FileSystem)& aFileSystem = OSD_FileSystem::DefaultFileSystem();
-    std::shared_ptr<std::istream> aFile = aFileSystem->OpenIStream(thePath, std::ios::in | std::ios::binary);
-    if (aFile.get() == NULL)
-    {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during reading the file " <<
-        thePath << "\t: Cannot read the file";
-      return false;
-    }
-
-    char aStringBuf[255] = {};
-    aFile->read(aStringBuf, 255);
-    if (aFile->fail())
-    {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during reading the file " <<
-        thePath << "\t: Cannot read the file";
-      return false;
-    }
-    isBinaryFormat = !(::strncmp(aStringBuf, "DBRep_DrawableShape", 19) == 0);
-  }
-
-  if (isBinaryFormat)
-  {
-    if (!BinTools::Read(theShape, thePath.ToCString(), theProgress))
-    {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during reading the file " <<
-        thePath << "\t: Cannot read from the file";
-      return false;
-    }
-  }
-  else
-  {
-    if (!BRepTools::Read(theShape, thePath.ToCString(), BRep_Builder(), theProgress))
-    {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during reading the file " <<
-        thePath << "\t: Cannot read from the file";
-      return false;
-    }
-  }
-
-  return true;
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool DEBRepCascade_Provider::Write(const TCollection_AsciiString& thePath,
-                                   const TopoDS_Shape& theShape,
-                                   const Message_ProgressRange& theProgress)
-{
-  if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(DEBRepCascade_ConfigurationNode)))
-  {
-    Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
+    Message::SendFail() << "Error: DEBRepCascade_Provider : "
+      << "Incorrect or empty Configuration Node";
     return false;
   }
-  Handle(DEBRepCascade_ConfigurationNode) aNode = Handle(DEBRepCascade_ConfigurationNode)::DownCast(GetNode());
+  Handle(DEBRepCascade_ConfigurationNode) aNode =
+    Handle(DEBRepCascade_ConfigurationNode)::DownCast(GetNode());
   if (aNode->InternalParameters.WriteBinary)
   {
-    if (aNode->InternalParameters.WriteVersionBin > static_cast<BinTools_FormatVersion>(BinTools_FormatVersion_UPPER) ||
-        aNode->InternalParameters.WriteVersionBin < static_cast<BinTools_FormatVersion>(BinTools_FormatVersion_LOWER))
+    if (aNode->InternalParameters.WriteVersionBin >
+        static_cast<BinTools_FormatVersion>(BinTools_FormatVersion_UPPER) ||
+        aNode->InternalParameters.WriteVersionBin <
+        static_cast<BinTools_FormatVersion>(BinTools_FormatVersion_LOWER))
     {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
-        thePath << "\t: Unknown format version";
+      Message::SendFail() << "Error: DEBRepCascade_Provider : ["
+        << thePath << "] : Unknown format version";
       return false;
     }
-    if (aNode->InternalParameters.WriteNormals && 
+    if (aNode->InternalParameters.WriteNormals &&
         aNode->InternalParameters.WriteVersionBin < BinTools_FormatVersion_VERSION_4)
     {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
-        thePath << "\t: Vertex normals require binary format version 4 or later";
+      Message::SendFail() << "Error: DEBRepCascade_Provider : ["
+        << thePath << "] : Vertex normals require binary format version 4 or later";
       return false;
     }
 
-    if (!BinTools::Write(theShape, thePath.ToCString(), aNode->InternalParameters.WriteTriangles,
-        aNode->InternalParameters.WriteNormals, aNode->InternalParameters.WriteVersionBin, theProgress))
+    if (!BinTools::Write(theShape, thePath.ToCString(),
+        aNode->InternalParameters.WriteTriangles,
+        aNode->InternalParameters.WriteNormals,
+        aNode->InternalParameters.WriteVersionBin, theProgress))
     {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
-        thePath << "\t: Cannot write the file";
+      Message::SendFail() << "Error: DEBRepCascade_Provider : ["
+        << thePath << "] : Cannot write the file";
       return false;
     }
   }
   else
   {
-    if (aNode->InternalParameters.WriteVersionAscii > static_cast<TopTools_FormatVersion>(TopTools_FormatVersion_UPPER) ||
-        aNode->InternalParameters.WriteVersionAscii < static_cast<TopTools_FormatVersion>(TopTools_FormatVersion_LOWER))
+    if (aNode->InternalParameters.WriteVersionAscii >
+        static_cast<TopTools_FormatVersion>(TopTools_FormatVersion_UPPER) ||
+        aNode->InternalParameters.WriteVersionAscii <
+        static_cast<TopTools_FormatVersion>(TopTools_FormatVersion_LOWER))
     {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
-        thePath << "\t: Unknown format version";
+      Message::SendFail() << "Error: DEBRepCascade_Provider : ["
+        << thePath << "] : Unknown format version";
       return false;
     }
     if (aNode->InternalParameters.WriteNormals &&
         aNode->InternalParameters.WriteVersionAscii < TopTools_FormatVersion_VERSION_3)
     {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
-        thePath << "\t: Error: vertex normals require ascii format version 3 or later";
+      Message::SendFail() << "Error: DEBRepCascade_Provider : ["
+        << thePath << "] : Vertex normals require ascii format version 3 or later";
       return false;
     }
-    if (!BRepTools::Write(theShape, thePath.ToCString(), aNode->InternalParameters.WriteTriangles,
-        aNode->InternalParameters.WriteNormals, aNode->InternalParameters.WriteVersionAscii, theProgress))
+    if (!BRepTools::Write(theShape, thePath.ToCString(),
+        aNode->InternalParameters.WriteTriangles,
+        aNode->InternalParameters.WriteNormals,
+        aNode->InternalParameters.WriteVersionAscii, theProgress))
     {
-      Message::SendFail() << "Error in the DEBRepCascade_Provider during writing the file " <<
-        thePath << "\t: Cannot write the file";
+      Message::SendFail() << "Error: DEBRepCascade_Provider : ["
+        << thePath << "] : Cannot write the file";
       return false;
     }
   }
-
   return true;
 }
 

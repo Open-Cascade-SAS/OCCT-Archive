@@ -51,7 +51,21 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
                           const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theDocument, theProgress);
+  if (theDocument.IsNull())
+  {
+    Message::SendFail() << "Error: RWStl_Provider : "
+      << "Null document";
+    return false;
+  }
+  TopoDS_Shape aShape;
+  if (!Read(thePath, aShape, theWS, theProgress))
+  {
+    return false;
+  }
+  Handle(XCAFDoc_ShapeTool) aShapeTool =
+    XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
+  aShapeTool->AddShape(aShape);
+  return true;
 }
 
 //=======================================================================
@@ -64,49 +78,15 @@ bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
                            const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Write(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
-                          const Handle(TDocStd_Document)& theDocument,
-                          const Message_ProgressRange& theProgress)
-{
-  if (theDocument.IsNull())
-  {
-    Message::SendFail() << "Error in the RWStl_Provider during reading the file " <<
-      thePath << "\t: theDocument shouldn't be null";
-    return false;
-  }
-  TopoDS_Shape aShape;
-  if (!Read(thePath, aShape, theProgress))
-  {
-    return false;
-  }
-  Handle(XCAFDoc_ShapeTool) aShapeTool = XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
-  aShapeTool->AddShape(aShape);
-  return true;
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
-                           const Handle(TDocStd_Document)& theDocument,
-                           const Message_ProgressRange& theProgress)
-{
   TopoDS_Shape aShape;
   TDF_LabelSequence aLabels;
-  Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
+  Handle(XCAFDoc_ShapeTool) aSTool =
+    XCAFDoc_DocumentTool::ShapeTool(theDocument->Main());
   aSTool->GetFreeShapes(aLabels);
   if (aLabels.Length() <= 0)
   {
-    Message::SendFail() << "Error in the RWStl_Provider during writing the file " <<
-      thePath << "\t: Document contain no shapes";
+    Message::SendFail() << "Error: RWStl_Provider : "
+      << "Incorrect or empty Configuration Node";
     return false;
   }
 
@@ -126,7 +106,7 @@ bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
     }
     aShape = aComp;
   }
-  return Write(thePath, aShape, theProgress);
+  return Write(thePath, aShape, theWS, theProgress);
 }
 
 //=======================================================================
@@ -139,7 +119,90 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
                           const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theShape, theProgress);
+  Message::SendWarning()
+    << "OCCT Stl reader does not support model scaling according to custom length unit";
+  if (!GetNode()->IsKind(STANDARD_TYPE(RWStl_ConfigurationNode)))
+  {
+    Message::SendFail() << "Error: RWStl_Provider : "
+      << "Incorrect or empty Configuration Node";
+    return false;
+  }
+  Handle(RWStl_ConfigurationNode) aNode =
+    Handle(RWStl_ConfigurationNode)::DownCast(GetNode());
+  double aMergeAngle = aNode->InternalParameters.ReadMergeAngle * M_PI / 180.0;
+  if (aMergeAngle < 0.0 || aMergeAngle > M_PI_2)
+  {
+    Message::SendFail() << "Error: RWStl_Provider : ["
+      << aMergeAngle << "] The merge angle is out of the valid range";
+    return false;
+  }
+  switch (aNode->InternalParameters.ReadShapeType)
+  {
+    case(RWStl_ConfigurationNode::ReadMode_ShapeType_MultiMesh):
+    {
+      NCollection_Sequence<Handle(Poly_Triangulation)> aTriangList;
+      // Read STL file to the triangulation list.
+      RWStl::ReadFile(thePath.ToCString(), aMergeAngle, aTriangList, theProgress);
+      BRep_Builder aB;
+      TopoDS_Face aFace;
+      if (aTriangList.Size() == 1)
+      {
+        aB.MakeFace(aFace);
+        aB.UpdateFace(aFace, aTriangList.First());
+        theShape = aFace;
+      }
+      else
+      {
+        TopoDS_Compound aCmp;
+        for (NCollection_Sequence<Handle(Poly_Triangulation)>::Iterator anIt(aTriangList);
+             anIt.More(); anIt.Next())
+        {
+          if (aCmp.IsNull())
+          {
+            aB.MakeCompound(aCmp);
+          }
+          if (aFace.IsNull())
+          {
+            aB.MakeFace(aFace);
+          }
+          aB.UpdateFace(aFace, anIt.Value());
+          aB.Add(aCmp, aFace);
+        }
+        theShape = aCmp;
+      }
+      break;
+    }
+    case(RWStl_ConfigurationNode::ReadMode_ShapeType_SingleMesh):
+    {
+      // Read STL file to the triangulation.
+      Handle(Poly_Triangulation) aTriangulation =
+        RWStl::ReadFile(thePath.ToCString(), aMergeAngle, theProgress);
+
+      if (!aTriangulation.IsNull())
+      {
+        TopoDS_Face aFace;
+        BRep_Builder aB;
+        aB.MakeFace(aFace);
+        aB.UpdateFace(aFace, aTriangulation);
+        theShape = aFace;
+      }
+      break;
+    }
+    case(RWStl_ConfigurationNode::ReadMode_ShapeType_CompShape):
+    {
+      Standard_DISABLE_DEPRECATION_WARNINGS
+        StlAPI::Read(theShape, thePath.ToCString());
+      Standard_ENABLE_DEPRECATION_WARNINGS
+        break;
+    }
+  }
+  if (theShape.IsNull())
+  {
+    Message::SendFail() << "Error: RWStl_Provider : [" <<
+      thePath << "] : Cannot read any relevant data from the STL file";
+    return false;
+  }
+  return true;
 }
 
 //=======================================================================
@@ -152,81 +215,24 @@ bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
                            const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Write(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
-                          TopoDS_Shape& theShape,
-                          const Message_ProgressRange& theProgress)
-{
-  Message::SendWarning() << "OCCT Stl reader does not support model scaling according to custom length unit";
-  if (!GetNode()->IsKind(STANDARD_TYPE(RWStl_ConfigurationNode)))
+  Message::SendWarning() <<
+    "OCCT Stl writer does not support model scaling according to custom length unit";
+  if (GetNode().IsNull() ||
+      !GetNode()->IsKind(STANDARD_TYPE(RWStl_ConfigurationNode)))
   {
-    Message::SendFail() << "Error in the RWStl_Provider during reading the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
-    return true;
-  }
-  Handle(RWStl_ConfigurationNode) aNode = Handle(RWStl_ConfigurationNode)::DownCast(GetNode());
-  double aMergeAngle = aNode->InternalParameters.ReadMergeAngle * M_PI / 180.0;
-  if(aMergeAngle != M_PI_2)
-  {
-    if (aMergeAngle < 0.0 || aMergeAngle > M_PI_2)
-    {
-      Message::SendFail() << "Error in the RWStl_Provider during reading the file " <<
-        thePath << "\t: The merge angle is out of the valid range";
-      return false;
-    }
-  }
-  if (!aNode->InternalParameters.ReadBRep)
-  {
-    Handle(Poly_Triangulation) aTriangulation = RWStl::ReadFile(thePath.ToCString(), aMergeAngle, theProgress);
-
-    TopoDS_Face aFace;
-    BRep_Builder aB;
-    aB.MakeFace(aFace);
-    aB.UpdateFace(aFace, aTriangulation);
-    theShape = aFace;
-  }
-  else
-  {
-    Standard_DISABLE_DEPRECATION_WARNINGS
-      if (!StlAPI::Read(theShape, thePath.ToCString()))
-      {
-        Message::SendFail() << "Error in the RWStl_Provider during reading the file " << thePath;
-        return false;
-      }
-    Standard_ENABLE_DEPRECATION_WARNINGS
-  }
-  return true;
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWStl_Provider::Write(const TCollection_AsciiString& thePath,
-                           const TopoDS_Shape& theShape,
-                           const Message_ProgressRange& theProgress)
-{
-  Message::SendWarning() << "OCCT Stl writer does not support model scaling according to custom length unit";
-  if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWStl_ConfigurationNode)))
-  {
-    Message::SendFail() << "Error in the RWStl_Provider during reading the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
+    Message::SendFail() << "Error: RWStl_Provider : "
+      << "Incorrect or empty Configuration Node";
     return false;
   }
-  Handle(RWStl_ConfigurationNode) aNode = Handle(RWStl_ConfigurationNode)::DownCast(GetNode());
+  Handle(RWStl_ConfigurationNode) aNode =
+    Handle(RWStl_ConfigurationNode)::DownCast(GetNode());
 
   StlAPI_Writer aWriter;
   aWriter.ASCIIMode() = aNode->InternalParameters.WriteAscii;
   if (!aWriter.Write(theShape, thePath.ToCString(), theProgress))
   {
-    Message::SendFail() << "Error in the RWStl_Provider during reading the file " <<
-      thePath << "\t: Mesh writing has been failed";
+    Message::SendFail() << "Error: RWStl_Provider : [" <<
+      thePath << "] : Mesh writing has been failed";
     return false;
   }
   return true;

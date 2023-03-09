@@ -56,8 +56,8 @@ bool RWStl_ConfigurationNode::Load(const Handle(DE_ConfigurationContext)& theRes
 
   InternalParameters.ReadMergeAngle = 
     theResource->RealVal("read.merge.angle", InternalParameters.ReadMergeAngle, aScope);
-  InternalParameters.ReadBRep = 
-    theResource->BooleanVal("read.brep", InternalParameters.ReadBRep, aScope);
+  InternalParameters.ReadShapeType = (ReadMode_ShapeType)
+    theResource->IntegerVal("read.brep", InternalParameters.ReadShapeType, aScope);
   InternalParameters.WriteAscii = 
     theResource->BooleanVal("write.ascii", InternalParameters.WriteAscii, aScope);
   return true;
@@ -85,9 +85,9 @@ TCollection_AsciiString RWStl_ConfigurationNode::Save() const
   aResult += "!\n";
 
   aResult += "!\n";
-  aResult += "!Setting up Boundary Representation flag\n";
-  aResult += "!Default value: false. Available values: \"on\", \"off\"\n";
-  aResult += aScope + "read.brep :\t " + InternalParameters.ReadBRep + "\n";
+  aResult += "!Defines result type of transferred shape\n";
+  aResult += "!Default value: 1(SingleMesh). Available values: 0(MultiMesh), 1(SingleMesh), 2(CompShape)\n";
+  aResult += aScope + "read.brep :\t " + InternalParameters.ReadShapeType + "\n";
   aResult += "!\n";
 
   aResult += "!\n";

@@ -15,6 +15,7 @@
 #define _IGESCAFControl_Provider_HeaderFile
 
 #include <DE_Provider.hxx>
+#include <DE_ConfigurationNode.hxx>
 #include <IGESCAFControl_ConfigurationNode.hxx>
 
 //! The class to transfer IGES files.
@@ -65,23 +66,6 @@ public:
                                      Handle(XSControl_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
-  //! Reads a CAD file, according internal configuration
-  //! @param[in] thePath path to the import CAD file
-  //! @param[out] theDocument document to save result
-  //! @param theProgress[in] progress indicator
-  //! @return true if Read operation has ended correctly
-  Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
-                                    const Handle(TDocStd_Document)& theDocument,
-                                    const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
-
-  //! Writes a CAD file, according internal configuration
-  //! @param[in] thePath path to the export CAD file
-  //! @param[out] theDocument document to export
-  //! @param theProgress[in] progress indicator
-  //! @return true if Write operation has ended correctly
-  Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
-                                     const Handle(TDocStd_Document)& theDocument,
-                                     const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
   //! Reads a CAD file, according internal configuration
   //! @param[in] thePath path to the import CAD file
@@ -105,24 +89,6 @@ public:
                                      Handle(XSControl_WorkSession)& theWS,
                                      const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
 
-  //! Reads a CAD file, according internal configuration
-  //! @param[in] thePath path to the import CAD file
-  //! @param[out] theShape shape to save result
-  //! @param theProgress[in] progress indicator
-  //! @return true if Read operation has ended correctly
-  Standard_EXPORT virtual bool Read(const TCollection_AsciiString& thePath,
-                                    TopoDS_Shape& theShape,
-                                    const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
-
-  //! Writes a CAD file, according internal configuration
-  //! @param[in] thePath path to the export CAD file
-  //! @param[out] theShape shape to export
-  //! @param theProgress[in] progress indicator
-  //! @return true if Write operation has ended correctly
-  Standard_EXPORT virtual bool Write(const TCollection_AsciiString& thePath,
-                                     const TopoDS_Shape& theShape,
-                                     const Message_ProgressRange& theProgress = Message_ProgressRange()) Standard_OVERRIDE;
-
 public:
 
   //! Gets CAD format name of associated provider
@@ -133,7 +99,20 @@ public:
   //! @return provider's vendor name
   Standard_EXPORT virtual TCollection_AsciiString GetVendor() const Standard_OVERRIDE;
 
+public:
+
+  //! Sets parameter to update static parameter, that true by default
+  void SetToUpdateStaticParameters(const bool theToUpdate) { myToUpdateStaticParameters = theToUpdate; }
+
+  //! Gets parameter to update static parameter, that true by default
+  bool ToUpdateStaticParameters() const  { return myToUpdateStaticParameters; }
+
 private:
+
+  //! Personizes work session with current format.
+  //! Creates new temporary session if current session is null
+  //! @param[in] theWS current work session
+  void personizeWS(Handle(XSControl_WorkSession)& theWS);
 
   //! Initialize static variables
   void initStatic(const Handle(DE_ConfigurationNode)& theNode);
@@ -144,8 +123,11 @@ private:
   //! Reset used interface static variables
   void resetStatic();
 
-  IGESCAFControl_ConfigurationNode::IGESCAFControl_InternalSection myOldValues;
-  int myOldLengthUnit = 1;
+private:
+
+  bool myToUpdateStaticParameters = true; //!< Flag to updating static parameters
+  IGESCAFControl_ConfigurationNode::IGESCAFControl_InternalSection myOldValues; //!< Container to save previous static parameters
+  IGESCAFControl_ConfigurationNode::DE_SectionGlobal myOldGlobalValues; //!< Container to save previous static parameters
 
 };
 

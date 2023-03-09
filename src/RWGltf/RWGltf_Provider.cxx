@@ -20,13 +20,14 @@
 #include <XCAFDoc_ShapeTool.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 
-namespace 
+namespace
 {
   //=======================================================================
   // function : SetReaderParameters
   // purpose  :
   //=======================================================================
-  static void SetReaderParameters(RWGltf_CafReader& theReader, const Handle(RWGltf_ConfigurationNode) theNode)
+  static void SetReaderParameters(RWGltf_CafReader& theReader,
+                                  const Handle(RWGltf_ConfigurationNode) theNode)
   {
     theReader.SetDoublePrecision(!theNode->InternalParameters.ReadSinglePrecision);
     theReader.SetSystemLengthUnit(theNode->GlobalParameters.LengthUnit / 1000);
@@ -73,7 +74,36 @@ bool RWGltf_Provider::Read(const TCollection_AsciiString& thePath,
                            const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theDocument, theProgress);
+  if (theDocument.IsNull())
+  {
+    Message::SendFail() << "Error: RWGltf_Provider : "
+      << "Null document";
+    return false;
+  }
+  if (GetNode().IsNull() ||
+      !GetNode()->IsKind(STANDARD_TYPE(RWGltf_ConfigurationNode)))
+  {
+    Message::SendFail() << "Error: RWGltf_Provider : "
+      << "Incorrect or empty Configuration Node";
+    return false;
+  }
+  Handle(RWGltf_ConfigurationNode) aNode =
+    Handle(RWGltf_ConfigurationNode)::DownCast(GetNode());
+  RWGltf_CafReader aReader;
+  aReader.SetDocument(theDocument);
+  SetReaderParameters(aReader, aNode);
+  XCAFDoc_DocumentTool::SetLengthUnit(theDocument,
+                                      aNode->GlobalParameters.LengthUnit,
+                                      UnitsMethods_LengthUnit_Millimeter);
+  if (!aReader.Perform(thePath, theProgress))
+  {
+    Message::SendFail() << "Error: RWGltf_Provider : [" <<
+      thePath << "] : Cannot read any relevant data from the GLTF file";
+    return false;
+  }
+  myExternalFiles = aReader.ExternalFiles();
+  myMetadata = aReader.Metadata();
+  return true;
 }
 
 //=======================================================================
@@ -86,58 +116,15 @@ bool RWGltf_Provider::Write(const TCollection_AsciiString& thePath,
                             const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Write(thePath, theDocument, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool RWGltf_Provider::Read(const TCollection_AsciiString& thePath,
-                           const Handle(TDocStd_Document)& theDocument,
-                           const Message_ProgressRange& theProgress)
-{
-  if (theDocument.IsNull())
+  if (GetNode().IsNull() ||
+      !GetNode()->IsKind(STANDARD_TYPE(RWGltf_ConfigurationNode)))
   {
-    Message::SendFail() << "Error in the RWGltf_Provider during reading the file " <<
-      thePath << "\t: theDocument shouldn't be null";
+    Message::SendFail() << "Error: RWGltf_Provider : "
+      << "Incorrect or empty Configuration Node";
     return false;
   }
-  if (GetNode().IsNull() || (!GetNode().IsNull() && !GetNode()->IsKind(STANDARD_TYPE(RWGltf_ConfigurationNode))))
-  {
-    Message::SendFail() << "Error in the RWGltf_Provider during reading the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
-    return false;
-  }
-  Handle(RWGltf_ConfigurationNode) aNode = Handle(RWGltf_ConfigurationNode)::DownCast(GetNode());
-  RWGltf_CafReader aReader;
-  aReader.SetDocument(theDocument);
-  SetReaderParameters(aReader, aNode);
-  XCAFDoc_DocumentTool::SetLengthUnit(theDocument, aNode->GlobalParameters.LengthUnit, UnitsMethods_LengthUnit_Millimeter);
-  if (!aReader.Perform(thePath, theProgress))
-  {
-    Message::SendFail() << "Error in the RWGltf_Provider during reading the file " << thePath;
-    return false;
-  }
-  
-  return true;
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWGltf_Provider::Write(const TCollection_AsciiString& thePath,
-                            const Handle(TDocStd_Document)& theDocument,
-                            const Message_ProgressRange& theProgress)
-{
-  if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWGltf_ConfigurationNode)))
-  {
-    Message::SendFail() << "Error in the RWGltf_Provider during writing the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
-    return false;
-  }
-  Handle(RWGltf_ConfigurationNode) aNode = Handle(RWGltf_ConfigurationNode)::DownCast(GetNode());
+  Handle(RWGltf_ConfigurationNode) aNode =
+    Handle(RWGltf_ConfigurationNode)::DownCast(GetNode());
 
   RWMesh_CoordinateSystemConverter aConverter;
   aConverter.SetInputLengthUnit(aNode->GlobalParameters.LengthUnit / 1000);
@@ -159,16 +146,19 @@ bool RWGltf_Provider::Write(const TCollection_AsciiString& thePath,
   anExt.LowerCase();
   RWGltf_CafWriter aWriter(thePath, anExt.EndsWith(".glb"));
   aWriter.SetCoordinateSystemConverter(aConverter);
+  aWriter.SetCompressionParameters(aNode->InternalParameters.WriteDracoParameters);
   aWriter.SetTransformationFormat(aNode->InternalParameters.WriteTrsfFormat);
   aWriter.SetNodeNameFormat(aNode->InternalParameters.WriteNodeNameFormat);
   aWriter.SetMeshNameFormat(aNode->InternalParameters.WriteMeshNameFormat);
   aWriter.SetForcedUVExport(aNode->InternalParameters.WriteForcedUVExport);
   aWriter.SetToEmbedTexturesInGlb(aNode->InternalParameters.WriteEmbedTexturesInGlb);
   aWriter.SetMergeFaces(aNode->InternalParameters.WriteMergeFaces);
+  aWriter.SetParallel(aNode->InternalParameters.WriteParallel);
   aWriter.SetSplitIndices16(aNode->InternalParameters.WriteSplitIndices16);
   if (!aWriter.Perform(theDocument, aFileInfo, theProgress))
   {
-    Message::SendFail() << "Error in the RWGltf_Provider during writing the file " << thePath;
+    Message::SendFail() << "Error: RWGltf_Provider : [" <<
+      thePath << "] : Cannot write any relevant data to the GLTF file";
     return false;
   }
   return true;
@@ -184,7 +174,27 @@ bool RWGltf_Provider::Read(const TCollection_AsciiString& thePath,
                            const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Read(thePath, theShape, theProgress);
+  if (GetNode().IsNull() ||
+      !GetNode()->IsKind(STANDARD_TYPE(RWGltf_ConfigurationNode)))
+  {
+    Message::SendFail() << "Error: RWGltf_Provider : "
+      << "Incorrect or empty Configuration Node";
+    return false;
+  }
+  Handle(RWGltf_ConfigurationNode) aNode =
+    Handle(RWGltf_ConfigurationNode)::DownCast(GetNode());
+  RWGltf_CafReader aReader;
+  SetReaderParameters(aReader, aNode);
+  if (!aReader.Perform(thePath, theProgress))
+  {
+    Message::SendFail() << "Error: RWGltf_Provider : [" <<
+      thePath << "] : Cannot read any relevant data from the GLTF file";
+    return false;
+  }
+  theShape = aReader.SingleShape();
+  myExternalFiles = aReader.ExternalFiles();
+  myMetadata = aReader.Metadata();
+  return true;
 }
 
 //=======================================================================
@@ -197,47 +207,10 @@ bool RWGltf_Provider::Write(const TCollection_AsciiString& thePath,
                             const Message_ProgressRange& theProgress)
 {
   (void)theWS;
-  return Write(thePath, theShape, theProgress);
-}
-
-//=======================================================================
-// function : Read
-// purpose  :
-//=======================================================================
-bool RWGltf_Provider::Read(const TCollection_AsciiString& thePath,
-                           TopoDS_Shape& theShape,
-                           const Message_ProgressRange& theProgress)
-{
-  if (GetNode().IsNull() || !GetNode()->IsKind(STANDARD_TYPE(RWGltf_ConfigurationNode)))
-  {
-    Message::SendFail() << "Error in the RWGltf_Provider during reading the file " <<
-      thePath << "\t: Incorrect or empty Configuration Node";
-    return false;
-  }
-  Handle(RWGltf_ConfigurationNode) aNode = Handle(RWGltf_ConfigurationNode)::DownCast(GetNode());
-  RWGltf_CafReader aReader;
-  SetReaderParameters(aReader, aNode);
-  if (!aReader.Perform(thePath, theProgress))
-  {
-    Message::SendFail() << "Error in the RWGltf_Provider during reading the file " << thePath;
-    return false;
-  }
-  theShape = aReader.SingleShape();
-  return true;
-}
-
-//=======================================================================
-// function : Write
-// purpose  :
-//=======================================================================
-bool RWGltf_Provider::Write(const TCollection_AsciiString& thePath,
-                            const TopoDS_Shape& theShape,
-                            const Message_ProgressRange& theProgress)
-{
   Handle(TDocStd_Document) aDoc = new TDocStd_Document("BinXCAF");
   Handle(XCAFDoc_ShapeTool) aShTool = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
   aShTool->AddShape(theShape);
-  return Write(thePath, aDoc, theProgress);
+  return Write(thePath, aDoc, theWS, theProgress);
 }
 
 //=======================================================================

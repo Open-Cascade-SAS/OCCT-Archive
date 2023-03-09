@@ -2,9 +2,7 @@ puts "========"
 puts "0030691: test glTF reader on standard sample models"
 puts "========"
 
-ReadGltf D [locate_data_file bug30691_DamagedHelmet.gltf]
-
-set anAssetInfo [ReadGltf [locate_data_file bug30691_DamagedHelmet.gltf] -assetInfo]
+set anAssetInfo [ReadGltf D [locate_data_file bug30691_DamagedHelmet.gltf] -assetInfo]
 if { "$anAssetInfo" != "generator: Khronos Blender glTF 2.0 exporter" } { puts "Error: unexpected asset info" }
 
 XGetOneShape s D
