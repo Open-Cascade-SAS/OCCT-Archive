@@ -22,7 +22,7 @@ This manual principally deals with the next OCCT classes:
 
 @section occt_de_wrapper_2 Supported CAD formats
 
-| CAD format | Extensions | RW support | Thread Safaty | Presentation | Package |
+| CAD format | Extensions | RW support | Thread Safety | Presentation | Package |
 | :--------- | :--------- | :--------- | :----------- | :----------- | :------ |
 | STEP | .stp, .step .stepz | RW | No | BRep, Mesh | STEPCAFControl |
 | XCAF | .xbf | RW | Yes | BRep, Mesh | DEXCAFCascade |
@@ -67,25 +67,30 @@ global.priority.STEP :   OCC DTK
 global.general.length.unit :     1
 provider.STEP.OCC.read.precision.val :   0.0001
 ~~~~
+
 @subsubsection occt_de_wrapper_3_2_1 Configuration resource graph of scopes
    * **global.** is a scope of global parameters
      *  **priority.** is a scope of priority to use vendors with their providers.
      *  **general.** is a scope of global configuration parameter values
-     *  **"..."** is an internal configuration with any internal scopes
-     *  **" : "** is a separator of key-value
-     *  **"..."** parameter value, can't contain new line symbols.
+     *  <strong>"..."</strong> is an internal configuration with any internal scopes
+     *  <strong>". : "</strong> is a separator of key-value
+     *  __...__ parameter value, can't contain new line symbols.
    * **provider.** is a scope of configuration providers
-     * **STEP.** is a scope of CAD format to configure
-     * **OCC.** is a scope of a vendor or provider
-     *  **"..."** is an internal configuration with any internal scopes
-     *  **" : "** is a separator of key-value
-     *  **"..."** parameter value, can't contain new line symbols.
+     *  **STEP.** is a scope of CAD format to configure
+     *  **OCC.** is a scope of a vendor or provider
+     *  <strong>"..."</strong> is an internal configuration with any internal scopes
+     *  <strong>". : "</strong> is a separator of key-value
+     *  <strong>"..."</strong> parameter value, can't contain new line symbols.
 
 @subsubsection occt_de_wrapper_3_2_2 Load configuration resource. Configuration DE Session
 
 Resource should be loaded after registration of all providers that should be configured. The resource impacts on only registered parameters. To configure new registered provider it is necessary to load resource again. The parameters that are not representated in resource will not change and will have the previous value.
 
-There are two ways to load a resource: recursive and only global parameters. Recursive is a way to configure all registered providers. Not recursive is a way to configure only global parameters, for example, to update the priority of vendors.
+There are two way to check available parameters:
+* C++: Open ConfigureNode file and check InternalParameter field. All parameters described with own comment. To check global parameters, you need to check DE_Wrapper class public methods.
+* Resource: Register all available Nodes to the session then save configuration and view all existed parameters.
+
+There are two options to load a resource: recursive and only global parameters. Recursive is a default option to configure all global parameters(units, priority, enable status) and all registered providers. Not recursive - configuring only global parameters, ignoring all providers settings. This option is the best for updating provider's priority.
 
 @subsubsection occt_de_wrapper_3_2_3 Load configuration resource. Sample. Code.
 
@@ -254,6 +259,7 @@ If high priority vendors provider is not supported, the transfer operation is ne
 
 @subsubsection occt_de_wrapper_3_4_2 Priority of Vendors. Sample. DRAW.
 
+There is reccomended to disable recursion to update only global parameters.
 ~~~~{.cpp}
 set conf "
 global.priority.STEP :   OCC DTK
@@ -263,7 +269,7 @@ LoadConfiguration ${conf} -recursive off
 
 @section occt_de_wrapper_4 Transfer CAD file
 
-To transfer from CAD file to OCC or from OCC to XCAF file it is necessary to use configured DE_Wrapper object. It can be local, one-time or global. Global configuration of DE_Wrapper propagates to all nodes via transfer. There are two options to transfer: using OCC shape or XCAF document. It is possible to work only with real path to/from the file. Streaming is not supported (in process).
+To transfer from CAD file to OCC or from OCC to CAD file it is necessary to use configured DE_Wrapper object. It can be local, one-time or global. Global configuration of DE_Wrapper propagates to all nodes via transfer. There are two options to transfer: using OCC shape or XCAF document. It is possible to work only with real path to/from the file. Streaming is not supported (in progress).
 
 Format of input/output file is automatically determined by extension or content.
 
@@ -360,11 +366,11 @@ if (!aProvider->Write(...))
 }
 ~~~~
 
-@subsection occt_de_wrapper_4_4 Templary configuration via transfer
+@subsection occt_de_wrapper_4_4 temporary configuration via transfer
 
 It is possible to change configuration of only one transfer operation. To avoid changing parameters in the session, one-time clone of session can be created and used for transfer. This way is recommended to use in multithreaded mode.
 
-@subsubsection occt_de_wrapper_4_4_1 Templary configuration via transfer. Sample. Code.
+@subsubsection occt_de_wrapper_4_4_1 temporary configuration via transfer. Sample. Code.
 
 Code sample to configure via transfer
 ~~~~{.cpp}
@@ -385,7 +391,7 @@ Code sample to configure via transfer
   }
 ~~~~
 
-@subsubsection occt_de_wrapper_4_4_2 Templary configuration via transfer. Sample. DRAW.
+@subsubsection occt_de_wrapper_4_4_2 temporary configuration via transfer. Sample. DRAW.
 
 Code sample to configure via transfer within DRAW command
 ~~~~{.cpp}
