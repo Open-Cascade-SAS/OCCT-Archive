@@ -5,20 +5,20 @@ Data Exchange Wrapper (DE_Wrapper)  {#occt_user_guides__de_wrapper}
 
 @section occt_de_wrapper_1 Introduction
 
-This manual explains how to use the **Data Exchange Wrapper** (DE Wrapper).
-It provides basic documentation on setting up, using and creating files via DE_Wrapper.
+This guide explains how to use the **Data Exchange Wrapper** (DE Wrapper).
+It provides basic directions on setup, usage and file creation via DE_Wrapper.
 
-The Data Exchange Wrapper (DE Wrapper) module allows reading and writing supported CAD formats to shape object or special XDE document, setting up the transfer process for all CAD files.
+The Data Exchange Wrapper (DE Wrapper) module allows reading and writing supported CAD formats to shape objects or special XDE documents, setting up the transfer process for all CAD files.
 
 It is also possible to add support for new CAD formats by prototyping existing tools.
 
 The DE Wrapper component requires @ref occt_user_guides__xde "XDE" toolkit for operation.
 
-This manual mainly explains how to convert CAD files to an Open CASCADE Technology (OCCT) shape and vice versa. It provides basic documentation on conversion.
-This manual principally deals with the next OCCT classes:
-  * The Provider class, which loads CAD files and translates their contents to OCCT shapes or XDE documents, or translates OCCT shapes or XDE documents to CAD entities and then writes these entities to CAD file.
-  * The Configuration class, which contains all information for the transfer process, such as a unit, tolerance, and all internal information for the OCC readers or writers.
-  * The wrapper class, which contains all loaded configuration objects with own CAD format, reads or writes CAD files according file format derived from file extension or content and saves or loads configuration settings for loaded configuration objects.
+This guide mainly explains how to convert CAD files to Open CASCADE Technology (OCCT) shapes and vice versa.
+This guide principally deals with the following OCCT classes:
+  * The Provider class, which loads CAD files and translates their contents to OCCT shapes or XDE documents, or translates OCCT shapes or XDE documents to CAD entities and then writes those entities to a CAD file.
+  * The Configuration class, which contains all information for the transfer process, such as the units, tolerance, and all internal information for the OCC readers or writers.
+  * The wrapper class, which contains all loaded configuration objects with own CAD format, reads or writes CAD files in the format derived from file extension or contents and saves or loads configuration settings for loaded configuration objects.
 
 @section occt_de_wrapper_2 Supported CAD formats
 
@@ -35,19 +35,19 @@ This manual principally deals with the next OCCT classes:
 | VRML | .wrl .vrml | RW | Yes | Mesh | Vrml |
 
 **Note** :
-  * A value from column "CAD format" is the same with confuguration CAD format name
-  * A provider name for all presented CAD formats is "OCC"
+  * The format names in the first column match the FormatName values used for configuration nodes.
+  * The VendorName for all listed CAD formats is "OCC".
 
-@section occt_de_wrapper_3 Configuration DE Session
+@section occt_de_wrapper_3 DE Session Configuration
 
-Any providers can have their own read/write parameters. To set up a transfer process DE configuration node is used. All needed parameters exist in this one. There are two ways to change parameter values: directly from code, external resource file/string.
-The session is a global or static DE_Wrapper object that keeps registered DE configuration nodes and wraps DE commands to work with them. It has the own configuration parameters contains information of loaded nodes and specilal global parameters.
+Any providers can have their own read/write parameters. The transfer process is set up using DE configuration nodes, which hold all relevant parameters. There are two ways to change the parameter values: directly from code or by an external resource file/string.
+The session is a global or static DE_Wrapper object that stores registered DE configuration nodes and wraps DE commands to work with them. It has some configuration parameters of its own and also keeps track of loaded nodes and specilal global parameters.
 
-@subsection occt_de_wrapper_3_1 Getting DE session. Sample. Code
+@subsection occt_de_wrapper_3_1 Getting a DE session. Code sample
 
-To work with DE session it is nesessary to load or create a DE_Wrapper object.
+Working with a DE session requires a DE_Wrapper object to be loaded or created first.
 
-Getting global DE_Wrapping object:
+Getting the global DE_Wrapping object:
 ~~~~{.cpp}
 Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
 ~~~~
@@ -68,7 +68,7 @@ global.general.length.unit :     1
 provider.STEP.OCC.read.precision.val :   0.0001
 ~~~~
 
-@subsubsection occt_de_wrapper_3_2_1 Configuration resource graph of scopes
+@subsubsection occt_de_wrapper_3_2_1 Configuration resource: graph of scopes
    * **global.** is a scope of global parameters
      *  **priority.** is a scope of priority to use vendors with their providers.
      *  **general.** is a scope of global configuration parameter values
@@ -82,19 +82,19 @@ provider.STEP.OCC.read.precision.val :   0.0001
      *  <strong>". : "</strong> is a separator of key-value
      *  <strong>"..."</strong> parameter value, can't contain new line symbols.
 
-@subsubsection occt_de_wrapper_3_2_2 Load configuration resource. Configuration DE Session
+@subsubsection occt_de_wrapper_3_2_2 Loading configuration resources. Configuring DE Session
 
-Resource should be loaded after registration of all providers that should be configured. The resource impacts on only registered parameters. To configure new registered provider it is necessary to load resource again. The parameters that are not representated in resource will not change and will have the previous value.
+The resource should be loaded after the registration of all providers that should be configured. The resource only impacts registered parameters. To configure a new registered provider it is necessary to load the resource again. Parameters not present in the resource will remain unchanged.
 
-There are two way to check available parameters:
-* C++: Open ConfigureNode file and check InternalParameter field. All parameters described with own comment. To check global parameters, you need to check DE_Wrapper class public methods.
-* Resource: Register all available Nodes to the session then save configuration and view all existed parameters.
+There are two ways to check what parameters are available:
+* C++: Open ConfigureNode file and check the InternalParameter field. Each parameter will be described with a comment. To check the global parameters, use the DE_Wrapper class public methods.
+* Resource: Register all available Nodes to the session, then save the configuration and view all existing parameters.
 
-There are two options to load a resource: recursive and only global parameters. Recursive is a default option to configure all global parameters(units, priority, enable status) and all registered providers. Not recursive - configuring only global parameters, ignoring all providers settings. This option is the best for updating provider's priority.
+There are two options for loading a resource: recursive and global parameters only. Recursive is the default option to configure all global parameters (units, priority, enable status) and all registered providers. Non-recursive configures only global parameters and ignores all provider settings. This option is the best for updating provider priority.
 
-@subsubsection occt_de_wrapper_3_2_3 Load configuration resource. Sample. Code.
+@subsubsection occt_de_wrapper_3_2_3 Loading configuration resources. Code sample
 
-Configure using a resource string:
+Configuring using a resource string:
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
   TCollection_AsciiString aString =
@@ -107,7 +107,7 @@ Configure using a resource string:
     Message::SendFail() << "Error: configuration is incorrect";
   }
 ~~~~
-Configure using a resource file:
+Configuring using a resource file:
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
   TCollection_AsciiString aPathToFile = "";
@@ -117,9 +117,9 @@ Configure using a resource file:
     Message::SendFail() << "Error: configuration is incorrect";
   }
 ~~~~
-@subsubsection occt_de_wrapper_3_2_4 Load configuration resource. Sample. DRAW.
+@subsubsection occt_de_wrapper_3_2_4 Loading configuration resources. DRAW sample
 
-Configure using a resource string:
+Configuring using a resource string:
 ~~~~{.cpp}
 set conf "
 global.priority.STEP :   OCC
@@ -131,24 +131,24 @@ provider.STEP.OCC.read.precision.val :   0.0001
 LoadConfiguration ${conf} -recursive on
 ~~~~
 
-Configure using a resource file:
+Configuring using a resource file:
 ~~~~{.cpp}
 set pathToFile ""
 LoadConfiguration ${pathToFile} -recursive on
 ~~~~
 
-@subsubsection occt_de_wrapper_3_2_5 Saving configuration resource. Dump of configuration DE Session
+@subsubsection occt_de_wrapper_3_2_5 Saving configuration resources. Dump of configuration DE Session
 
-The saving configuration of DE Session is a dump of all parameters of registered providers.
-If the parameter didn't change in the DE Session, its value keeps as default.
+Saving the configuration of a DE Session involves dumping all parameters of registered providers.
+If a parameter did not change during the session, its value remains as default.
 
-There are two ways to save a resource: recursive and only global parameters. Recursive is a way to dump all registered providers information. Not recursive is a way to dump only global parameters, for example, save priority of vendors or length unit.
+There are two ways to save a resource: recursive and global parameters only. Recursive is the way to dump all registered provider information. Non-recursive dumps only global parameters, for example, save priority of vendors or the length unit.
 
-There are options to filter vendors or providers to save. It is necessary to provide correct name of vendor or provider to save only their information.
+It is possible to filter what vendors or providers to save by providing the correct name of the vendor or provider.
 
-@subsubsection occt_de_wrapper_3_2_6 Save configuration resource. Sample. Code.
+@subsubsection occt_de_wrapper_3_2_6 Saving configuration resources. Code sample
 
-Dump to resource string. If a vendors list is empty, saves all vendors. If a providers list is empty, saves all providers of valid vendors:
+Dump to resource string. If the vendors list is empty, saves all vendors. If the providers list is empty, saves all providers of valid vendors.
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
   TColStd_ListOfAsciiString aFormats;
@@ -158,7 +158,7 @@ Dump to resource string. If a vendors list is empty, saves all vendors. If a pro
   Standard_Boolean aIsRecursive = Standard_True;
   TCollection_AsciiString aConf = aSession->aConf->Save(aIsRecursive, aFormats, aVendors);
 ~~~~
-Configure using a resource file. If a vendors list is empty, saves all vendors. If a providers list is empty, saves all providers of valid vendors:
+Configure using a resource file. If the vendors list is empty, saves all vendors. If the providers list is empty, saves all providers of valid vendors.
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
   TCollection_AsciiString aPathToFile = "";
@@ -172,9 +172,9 @@ Configure using a resource file. If a vendors list is empty, saves all vendors. 
     Message::SendFail() << "Error: configuration is not saved";
   }
 ~~~~
-@subsubsection occt_de_wrapper_3_2_7 Save configuration resource. Sample. DRAW.
+@subsubsection occt_de_wrapper_3_2_7 Saving configuration resources. DRAW sample
 
-Dump configuration to string. If no vendors lists are set as an argument or it is empty, saves all vendors. If no providers list as argument or it is empty, saves all providers of valid vendors:
+Dump configuration to string. If no list of vendors is passed or it is empty, all vendors are saved. If no providers list is passed or it is empty, all providers of valid vendors are saved.
 ~~~~{.cpp}
 set vendors "OCC"
 set format "STEP"
@@ -189,30 +189,30 @@ set pathToFile ""
 DumpConfiguration -path ${pathToFile} -recursive on -format ${format} -vendor ${vendors}
 ~~~~
 
-@subsection occt_de_wrapper_3_3 Register providers
+@subsection occt_de_wrapper_3_3 Registering providers
 
-To transfer CAD file using DE Wrapper it is necessary to register CAD provider.
-Provider contains internal and global parameters that has default value in the creating stage.
-All registered providers are set to the map with information about its vendor and keep as smart handle. That is why it is possible to change value via handle in the external code.
+To transfer a CAD file using DE Wrapper, it is necessary to register a CAD provider.
+The provider contains internal and global parameters that have default values in the creation stage.
+All registered providers are set to the map with information about its vendor and kept as smart handles. Therefore, it is possible to change the values via handle from external code.
 
-@subsubsection occt_de_wrapper_3_3_1 Register providers. Sample. Code.
+@subsubsection occt_de_wrapper_3_3_1 Registering providers. Code sample
 
-It is nesessary to register only ConfigurationNode for all needed formats.
+It is nesessary to register only one ConfigurationNode for all needed formats.
 ~~~~{.cpp}
 Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
 Handle(DE_ConfigurationNode) aNode = new STEPCAFControl_ConfigurationNode();
 aSession->Bind(aNode);
 ~~~~
-@subsubsection occt_de_wrapper_3_3_2 Register providers. Sample. DRAW.
+@subsubsection occt_de_wrapper_3_3_2 Registering providers. DRAW Sample
 
-Use a DRAW with all providers registered by following command:
+Use DRAW with all providers registered by the following command:
 ~~~~{.cpp}
 pload XDE
 ~~~~
 
-@subsubsection occt_de_wrapper_3_3_3 Realtime initialization. Sample. Code.
+@subsubsection occt_de_wrapper_3_3_3 Realtime initialization. Code sample
 
-It is possible to change a paramater value by code using smart pointer. To do this it is necessary to keep pointer in user variable.
+It is possible to change a paramater from code using a smart pointer.
 
 ~~~~{.cpp}
 // global variable
@@ -239,11 +239,11 @@ THE_STEP_NODE->InternalParameters.ReadProps = false;
 
 @subsection occt_de_wrapper_3_4 Priority of Vendors
 
-DE session is able to work with several vendors with the same supported CAD format. To choose the preffered vendor for the each format you should use a special priority list.
+DE session is able to work with several vendors with the same supported CAD format. To choose the preffered vendor for each format, use a special priority list.
 
-If high priority vendors provider is not supported, the transfer operation is needed (write/read), then the next vendor will be chosen.
+If the high priority vendor's provider is not supported, a transfer operation is needed (write/read), then the next vendor will be chosen.
 
-@subsubsection occt_de_wrapper_3_4_1 Priority of Vendors. Sample. Code.
+@subsubsection occt_de_wrapper_3_4_1 Priority of Vendors. Code sample
 
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
@@ -257,9 +257,9 @@ If high priority vendors provider is not supported, the transfer operation is ne
   aSession->ChangePriority(aFormat, aVendors, aToDisable);
 ~~~~
 
-@subsubsection occt_de_wrapper_3_4_2 Priority of Vendors. Sample. DRAW.
+@subsubsection occt_de_wrapper_3_4_2 Priority of Vendors. DRAW Sample
 
-There is reccomended to disable recursion to update only global parameters.
+It is recommended to disable recursion and update only global parameters.
 ~~~~{.cpp}
 set conf "
 global.priority.STEP :   OCC DTK
@@ -267,15 +267,15 @@ global.priority.STEP :   OCC DTK
 LoadConfiguration ${conf} -recursive off
 ~~~~
 
-@section occt_de_wrapper_4 Transfer CAD file
+@section occt_de_wrapper_4 Transfer of CAD files
 
-To transfer from CAD file to OCC or from OCC to CAD file it is necessary to use configured DE_Wrapper object. It can be local, one-time or global. Global configuration of DE_Wrapper propagates to all nodes via transfer. There are two options to transfer: using OCC shape or XCAF document. It is possible to work only with real path to/from the file. Streaming is not supported (in progress).
+To transfer from a CAD file to OCC or from OCC to a CAD file, it is necessary to use a configured DE_Wrapper object. It can be local, one-time or global. Global configuration of DE_Wrapper propagates to all nodes via transfer. There are two options for transferring: using OCC shape or XCAF document. It is possible to work only with real path to/from the file. Streaming is not supported (yet).
 
-Format of input/output file is automatically determined by extension or content.
+The format of input/output file is automatically determined by its extension or contents.
 
-@subsection occt_de_wrapper_4_1 Transfer CAD file. Samples. Code.
+@subsection occt_de_wrapper_4_1 Transfer of CAD files. Code samples
 
-Code sample to read Step file to shape
+Reading STEP file to Shape.
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
   TCollection_AsciiString aPathToFile = "example.stp";
@@ -286,7 +286,7 @@ Code sample to read Step file to shape
   }
 ~~~~
 
-Code sample to write Step file from shape
+Writing Shape to STEP file.
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
   TCollection_AsciiString aPathToFile = "example.stp";
@@ -297,7 +297,7 @@ Code sample to write Step file from shape
   }
 ~~~~
 
-Code sample to read Step file to XCAF document
+Reading STEP file into XCAF document.
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
   TCollection_AsciiString aPathToFile = "example.stp";
@@ -308,7 +308,7 @@ Code sample to read Step file to XCAF document
   }
 ~~~~
 
-Code sample to write Step file from XCAF document
+Writing XCAF document into STEP.
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper();
   TCollection_AsciiString aPathToFile = "example.stp";
@@ -319,35 +319,35 @@ Code sample to write Step file from XCAF document
   }
 ~~~~
 
-@subsection occt_de_wrapper_4_2 Transfer CAD file. Samples. DRAW.
+@subsection occt_de_wrapper_4_2 Transfer of CAD files. DRAW samples
 
-DRAW sample to read Step file to shape
+Reading a STEP file into a Shape.
 ~~~~{.cpp}
 set fileName "sample.stp"
 readfile shape ${fileName}
 ~~~~
 
-DRAW sample to write Step file from shape
+Writing a Shape into STEP.
 ~~~~{.cpp}
 set fileName "sample.stp"
 writefile shape ${fileName}
 ~~~~
 
-DRAW sample to read Step file to XCAF document
+Reading STEP into XCAF document.
 ~~~~{.cpp}
 set fileName "sample.stp"
 ReadFile D ${fileName}
 ~~~~
 
-DRAW sample to write Step file from XCAF document
+Writing XCAF document into STEP.
 ~~~~{.cpp}
 set fileName "sample.stp"
 WriteFile D ${fileName}
 ~~~~
 
-@subsection occt_de_wrapper_4_3 Transfer using DE Provider. Sample. Code.
+@subsection occt_de_wrapper_4_3 Transfer using DE Provider. Code sample
 
-It is possible to read and write CAD file directly from special provider.
+It is possible to read and write CAD files directly from a special provider.
 
 ~~~~{.cpp}
 // Creating or getting node
@@ -366,13 +366,13 @@ if (!aProvider->Write(...))
 }
 ~~~~
 
-@subsection occt_de_wrapper_4_4 temporary configuration via transfer
+@subsection occt_de_wrapper_4_4 Temporary configuration via transfer
 
-It is possible to change configuration of only one transfer operation. To avoid changing parameters in the session, one-time clone of session can be created and used for transfer. This way is recommended to use in multithreaded mode.
+It is possible to change the configuration of only one transfer operation. To avoid changing parameters in a session, one-time clone of the session can be created and used for transfer. This way is recommended for use in multithreaded mode.
 
-@subsubsection occt_de_wrapper_4_4_1 temporary configuration via transfer. Sample. Code.
+@subsubsection occt_de_wrapper_4_4_1 Temporary configuration via transfer. Code sample
 
-Code sample to configure via transfer
+Code sample to configure via transfer.
 ~~~~{.cpp}
   Handle(DE_Wrapper) aSession = DE_Wrapper::GlobalWrapper()->Copy();
   TCollection_AsciiString aString =
@@ -391,15 +391,15 @@ Code sample to configure via transfer
   }
 ~~~~
 
-@subsubsection occt_de_wrapper_4_4_2 temporary configuration via transfer. Sample. DRAW.
+@subsubsection occt_de_wrapper_4_4_2 Temporary configuration via transfer. DRAW sample
 
-Code sample to configure via transfer within DRAW command
+Code sample to configure via transfer within DRAW command.
 ~~~~{.cpp}
 set fileName "sample.stp"
 readfile S5 $filename -conf "global.general.length.unit : 1000 "
 ~~~~
 
-Code sample to configure via transfer as variable
+Code sample to configure via transfer as variable.
 ~~~~{.cpp}
 set fileName "sample.stp"
 set conf "
