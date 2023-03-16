@@ -63,6 +63,7 @@ bool DE_Provider::Read(std::istream& theIStream,
 {
   (void)theIStream;
   (void)theDocument;
+  (void)theName;
   (void)theWS;
   (void)theProgress;
   Message::SendFail() << "Error: provider " << GetFormat() <<
@@ -136,6 +137,7 @@ bool DE_Provider::Read(std::istream& theIStream,
 {
   (void)theIStream;
   (void)theShape;
+  (void)theName;
   (void)theWS;
   (void)theProgress;
   Message::SendFail() << "Error: provider " << GetFormat() <<

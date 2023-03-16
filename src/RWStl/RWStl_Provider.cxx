@@ -144,9 +144,9 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
       // Read STL file to the triangulation list.
       RWStl::ReadFile(thePath.ToCString(), aMergeAngle, aTriangList, theProgress);
       BRep_Builder aB;
-      TopoDS_Face aFace;
       if (aTriangList.Size() == 1)
       {
+        TopoDS_Face aFace;
         aB.MakeFace(aFace);
         aB.UpdateFace(aFace, aTriangList.First());
         theShape = aFace;
@@ -161,11 +161,8 @@ bool RWStl_Provider::Read(const TCollection_AsciiString& thePath,
           {
             aB.MakeCompound(aCmp);
           }
-          if (aFace.IsNull())
-          {
-            aB.MakeFace(aFace);
-          }
-          aB.UpdateFace(aFace, anIt.Value());
+          TopoDS_Face aFace;
+          aB.MakeFace(aFace, anIt.Value());
           aB.Add(aCmp, aFace);
         }
         theShape = aCmp;

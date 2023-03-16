@@ -13,20 +13,216 @@
 
 #include <IGESCAFControl_Provider.hxx>
 
-#include <BinXCAFDrivers.hxx>
-#include <IGESControl_Controller.hxx>
 #include <IGESCAFControl_ConfigurationNode.hxx>
 #include <IGESCAFControl_Reader.hxx>
 #include <IGESCAFControl_Writer.hxx>
+#include <IGESControl_Controller.hxx>
 #include <IGESData.hxx>
 #include <IGESData_IGESModel.hxx>
 #include <Interface_Static.hxx>
 #include <Message.hxx>
+#include <UnitsMethods.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XSControl_WorkSession.hxx>
-#include <UnitsMethods.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(IGESCAFControl_Provider, DE_Provider)
+
+namespace
+{
+  //! Special class to handle static parameters.
+  //! Initialize all parameters in the begin of life
+  //! and reset changed parameters in the end of life
+  class IGESCAFControl_ParameterController
+  {
+  public:
+
+    IGESCAFControl_ParameterController(const Handle(IGESCAFControl_ConfigurationNode)& theNode,
+                                       const Standard_Boolean theUpdateStatic);
+
+    ~IGESCAFControl_ParameterController();
+
+  protected:
+
+    void setStatic(const IGESCAFControl_ConfigurationNode::IGESCAFControl_InternalSection theParameter);
+
+  private:
+
+    bool myToUpdateStaticParameters; //!< Flag to updating static parameters
+    IGESCAFControl_ConfigurationNode::IGESCAFControl_InternalSection myOldValues; //!< Container to save previous static parameters
+    IGESCAFControl_ConfigurationNode::DE_SectionGlobal myOldGlobalValues; //!< Container to save previous global parameters
+  };
+
+  //=======================================================================
+  // function : IGESCAFControl_ParameterController
+  // purpose  :
+  //=======================================================================
+  IGESCAFControl_ParameterController::IGESCAFControl_ParameterController(const Handle(IGESCAFControl_ConfigurationNode)& theNode,
+                                                                         const Standard_Boolean theUpdateStatic)
+    : myToUpdateStaticParameters(theUpdateStatic)
+  {
+    IGESControl_Controller::Init();
+    IGESData::Init();
+    if (!myToUpdateStaticParameters)
+    {
+      return;
+    }
+    // Get previous values
+    myOldValues.ReadBSplineContinuity =
+      (IGESCAFControl_ConfigurationNode::ReadMode_BSplineContinuity)
+      Interface_Static::IVal("read.iges.bspline.continuity");
+    myOldValues.ReadPrecisionMode =
+      (IGESCAFControl_ConfigurationNode::ReadMode_Precision)
+      Interface_Static::IVal("read.precision.mode");
+    myOldValues.ReadPrecisionVal =
+      Interface_Static::RVal("read.precision.val");
+    myOldValues.ReadMaxPrecisionMode =
+      (IGESCAFControl_ConfigurationNode::ReadMode_MaxPrecision)
+      Interface_Static::IVal("read.maxprecision.mode");
+    myOldValues.ReadMaxPrecisionVal =
+      Interface_Static::RVal("read.maxprecision.val");
+    myOldValues.ReadSameParamMode =
+      Interface_Static::IVal("read.stdsameparameter.mode") == 1;
+    myOldValues.ReadSurfaceCurveMode =
+      (IGESCAFControl_ConfigurationNode::ReadMode_SurfaceCurve)
+      Interface_Static::IVal("read.surfacecurve.mode");
+    myOldValues.EncodeRegAngle =
+      Interface_Static::RVal("read.encoderegularity.angle") * 180.0 / M_PI;
+
+    myOldValues.ReadApproxd1 =
+      Interface_Static::IVal("read.iges.bspline.approxd1.mode") == 1;
+    myOldValues.ReadResourceName =
+      Interface_Static::CVal("read.iges.resource.name");
+    myOldValues.ReadSequence =
+      Interface_Static::CVal("read.iges.sequence");
+    myOldValues.ReadFaultyEntities =
+      Interface_Static::IVal("read.iges.faulty.entities") == 1;
+    myOldValues.ReadOnlyVisible =
+      Interface_Static::IVal("read.iges.onlyvisible") == 1;
+
+    myOldValues.WriteBRepMode =
+      (IGESCAFControl_ConfigurationNode::WriteMode_BRep)
+      Interface_Static::IVal("write.iges.brep.mode");
+    myOldValues.WriteConvertSurfaceMode =
+      (IGESCAFControl_ConfigurationNode::WriteMode_ConvertSurface)
+      Interface_Static::IVal("write.convertsurface.mode");
+    myOldValues.WriteUnit =
+      (UnitsMethods_LengthUnit)
+      Interface_Static::IVal("write.iges.unit");
+    myOldValues.WriteHeaderAuthor =
+      Interface_Static::CVal("write.iges.header.author");
+    myOldValues.WriteHeaderCompany =
+      Interface_Static::CVal("write.iges.header.company");
+    myOldValues.WriteHeaderProduct =
+      Interface_Static::CVal("write.iges.header.product");
+    myOldValues.WriteHeaderReciever =
+      Interface_Static::CVal("write.iges.header.receiver");
+    myOldValues.WriteResourceName =
+      Interface_Static::CVal("write.iges.resource.name");
+    myOldValues.WriteSequence =
+      Interface_Static::CVal("write.iges.sequence");
+    myOldValues.WritePrecisionMode =
+      (IGESCAFControl_ConfigurationNode::WriteMode_PrecisionMode)
+      Interface_Static::IVal("write.precision.mode");
+    myOldValues.WritePrecisionVal =
+      Interface_Static::RVal("write.precision.val");
+    myOldValues.WritePlaneMode =
+      (IGESCAFControl_ConfigurationNode::WriteMode_PlaneMode)
+      Interface_Static::IVal("write.iges.plane.mode");
+    myOldValues.WriteOffsetMode =
+      Interface_Static::IVal("write.iges.offset.mode") == 1;
+
+    myOldGlobalValues.LengthUnit = 0.001 *
+      UnitsMethods::GetLengthFactorValue(Interface_Static::IVal("xstep.cascade.unit"));
+    // Set new values
+    TCollection_AsciiString aStrUnit(
+      UnitsMethods::DumpLengthUnit(theNode->GlobalParameters.LengthUnit));
+    aStrUnit.UpperCase();
+    Interface_Static::SetCVal("xstep.cascade.unit", aStrUnit.ToCString());
+    UnitsMethods::SetCasCadeLengthUnit(theNode->GlobalParameters.LengthUnit);
+    setStatic(theNode->InternalParameters);
+  }
+
+  //=======================================================================
+  // function : ~IGESCAFControl_ParameterController
+  // purpose  :
+  //=======================================================================
+  IGESCAFControl_ParameterController::~IGESCAFControl_ParameterController()
+  {
+    if (!myToUpdateStaticParameters)
+    {
+      return;
+    }
+    // Set new values
+    TCollection_AsciiString aStrUnit(
+      UnitsMethods::DumpLengthUnit(myOldGlobalValues.LengthUnit,
+      UnitsMethods_LengthUnit_Meter));
+    aStrUnit.UpperCase();
+    Interface_Static::SetCVal("xstep.cascade.unit", aStrUnit.ToCString());
+    setStatic(myOldValues);
+  }
+
+  //=======================================================================
+  // function : setStatic
+  // purpose  :
+  //=======================================================================
+  void IGESCAFControl_ParameterController::setStatic(const IGESCAFControl_ConfigurationNode::IGESCAFControl_InternalSection theParameter)
+  {
+    Interface_Static::SetIVal("read.iges.bspline.continuity",
+                              theParameter.ReadBSplineContinuity);
+    Interface_Static::SetIVal("read.precision.mode",
+                              theParameter.ReadPrecisionMode);
+    Interface_Static::SetRVal("read.precision.val",
+                              theParameter.ReadPrecisionVal);
+    Interface_Static::SetIVal("read.maxprecision.mode",
+                              theParameter.ReadMaxPrecisionMode);
+    Interface_Static::SetRVal("read.maxprecision.val",
+                              theParameter.ReadMaxPrecisionVal);
+    Interface_Static::SetIVal("read.stdsameparameter.mode",
+                              theParameter.ReadSameParamMode);
+    Interface_Static::SetIVal("read.surfacecurve.mode",
+                              theParameter.ReadSurfaceCurveMode);
+    Interface_Static::SetRVal("read.encoderegularity.angle",
+                              theParameter.EncodeRegAngle * M_PI / 180.0);
+
+    Interface_Static::SetIVal("read.iges.bspline.approxd1.mode",
+                              theParameter.ReadApproxd1);
+    Interface_Static::SetCVal("read.iges.resource.name",
+                              theParameter.ReadResourceName.ToCString());
+    Interface_Static::SetCVal("read.iges.sequence",
+                              theParameter.ReadSequence.ToCString());
+    Interface_Static::SetIVal("read.iges.faulty.entities",
+                              theParameter.ReadFaultyEntities);
+    Interface_Static::SetIVal("read.iges.onlyvisible",
+                              theParameter.ReadOnlyVisible);
+
+    Interface_Static::SetIVal("write.iges.brep.mode",
+                              theParameter.WriteBRepMode);
+    Interface_Static::SetIVal("write.convertsurface.mode",
+                              theParameter.WriteConvertSurfaceMode);
+    Interface_Static::SetIVal("write.iges.unit",
+                              theParameter.WriteUnit);
+    Interface_Static::SetCVal("write.iges.header.author",
+                              theParameter.WriteHeaderAuthor.ToCString());
+    Interface_Static::SetCVal("write.iges.header.company",
+                              theParameter.WriteHeaderCompany.ToCString());
+    Interface_Static::SetCVal("write.iges.header.product",
+                              theParameter.WriteHeaderProduct.ToCString());
+    Interface_Static::SetCVal("write.iges.header.receiver",
+                              theParameter.WriteHeaderReciever.ToCString());
+    Interface_Static::SetCVal("write.iges.resource.name",
+                              theParameter.WriteResourceName.ToCString());
+    Interface_Static::SetCVal("write.iges.sequence",
+                              theParameter.WriteSequence.ToCString());
+    Interface_Static::SetIVal("write.precision.mode",
+                              theParameter.WritePrecisionMode);
+    Interface_Static::SetRVal("write.precision.val",
+                              theParameter.WritePrecisionVal);
+    Interface_Static::SetIVal("write.iges.plane.mode",
+                              theParameter.WritePlaneMode);
+    Interface_Static::SetIVal("write.iges.offset.mode",
+                              theParameter.WriteOffsetMode);
+  }
+}
 
 //=======================================================================
 // function : IGESCAFControl_Provider
@@ -64,176 +260,6 @@ void IGESCAFControl_Provider::personizeWS(Handle(XSControl_WorkSession)& theWS)
 }
 
 //=======================================================================
-// function : initStatic
-// purpose  :
-//=======================================================================
-void IGESCAFControl_Provider::initStatic(const Handle(DE_ConfigurationNode)& theNode)
-{
-  Handle(IGESCAFControl_ConfigurationNode) aNode =
-    Handle(IGESCAFControl_ConfigurationNode)::DownCast(theNode);
-  IGESData::Init();
-  if (!myToUpdateStaticParameters)
-  {
-    return;
-  }
-  // Get previous values
-  myOldValues.ReadBSplineContinuity =
-    (IGESCAFControl_ConfigurationNode::ReadMode_BSplineContinuity)
-    Interface_Static::IVal("read.iges.bspline.continuity");
-  myOldValues.ReadPrecisionMode =
-    (IGESCAFControl_ConfigurationNode::ReadMode_Precision)
-    Interface_Static::IVal("read.precision.mode");
-  myOldValues.ReadPrecisionVal =
-    Interface_Static::RVal("read.precision.val");
-  myOldValues.ReadMaxPrecisionMode =
-    (IGESCAFControl_ConfigurationNode::ReadMode_MaxPrecision)
-    Interface_Static::IVal("read.maxprecision.mode");
-  myOldValues.ReadMaxPrecisionVal =
-    Interface_Static::RVal("read.maxprecision.val");
-  myOldValues.ReadSameParamMode =
-    Interface_Static::IVal("read.stdsameparameter.mode") == 1;
-  myOldValues.ReadSurfaceCurveMode =
-    (IGESCAFControl_ConfigurationNode::ReadMode_SurfaceCurve)
-    Interface_Static::IVal("read.surfacecurve.mode");
-  myOldValues.EncodeRegAngle =
-    Interface_Static::RVal("read.encoderegularity.angle") * 180.0 / M_PI;
-
-  myOldValues.ReadApproxd1 =
-    Interface_Static::IVal("read.iges.bspline.approxd1.mode") == 1;
-  myOldValues.ReadResourceName =
-    Interface_Static::CVal("read.iges.resource.name");
-  myOldValues.ReadSequence =
-    Interface_Static::CVal("read.iges.sequence");
-  myOldValues.ReadFaultyEntities =
-    Interface_Static::IVal("read.iges.faulty.entities") == 1;
-  myOldValues.ReadOnlyVisible =
-    Interface_Static::IVal("read.iges.onlyvisible") == 1;
-
-  myOldValues.WriteBRepMode =
-    (IGESCAFControl_ConfigurationNode::WriteMode_BRep)
-    Interface_Static::IVal("write.iges.brep.mode");
-  myOldValues.WriteConvertSurfaceMode =
-    (IGESCAFControl_ConfigurationNode::WriteMode_ConvertSurface)
-    Interface_Static::IVal("write.convertsurface.mode");
-  myOldValues.WriteUnit =
-    (UnitsMethods_LengthUnit)
-    Interface_Static::IVal("write.iges.unit");
-  myOldValues.WriteHeaderAuthor =
-    Interface_Static::CVal("write.iges.header.author");
-  myOldValues.WriteHeaderCompany =
-    Interface_Static::CVal("write.iges.header.company");
-  myOldValues.WriteHeaderProduct =
-    Interface_Static::CVal("write.iges.header.product");
-  myOldValues.WriteHeaderReciever =
-    Interface_Static::CVal("write.iges.header.receiver");
-  myOldValues.WriteResourceName =
-    Interface_Static::CVal("write.iges.resource.name");
-  myOldValues.WriteSequence =
-    Interface_Static::CVal("write.iges.sequence");
-  myOldValues.WritePrecisionMode =
-    (IGESCAFControl_ConfigurationNode::WriteMode_PrecisionMode)
-    Interface_Static::IVal("write.precision.mode");
-  myOldValues.WritePrecisionVal =
-    Interface_Static::RVal("write.precision.val");
-  myOldValues.WritePlaneMode =
-    (IGESCAFControl_ConfigurationNode::WriteMode_PlaneMode)
-    Interface_Static::IVal("write.iges.plane.mode");
-  myOldValues.WriteOffsetMode =
-    Interface_Static::IVal("write.iges.offset.mode") == 1;
-
-  myOldGlobalValues.LengthUnit = 0.001 *
-    UnitsMethods::GetLengthFactorValue(Interface_Static::IVal("xstep.cascade.unit"));
-  // Set new values
-  TCollection_AsciiString aStrUnit(
-    UnitsMethods::DumpLengthUnit(aNode->GlobalParameters.LengthUnit));
-  aStrUnit.UpperCase();
-  Interface_Static::SetCVal("xstep.cascade.unit", aStrUnit.ToCString());
-  UnitsMethods::SetCasCadeLengthUnit(aNode->GlobalParameters.LengthUnit);
-  setStatic(aNode->InternalParameters);
-}
-
-//=======================================================================
-// function : setStatic
-// purpose  :
-//=======================================================================
-void IGESCAFControl_Provider::setStatic(const IGESCAFControl_ConfigurationNode::IGESCAFControl_InternalSection theParameter)
-{
-  Interface_Static::SetIVal("read.iges.bspline.continuity",
-                            theParameter.ReadBSplineContinuity);
-  Interface_Static::SetIVal("read.precision.mode",
-                            theParameter.ReadPrecisionMode);
-  Interface_Static::SetRVal("read.precision.val",
-                            theParameter.ReadPrecisionVal);
-  Interface_Static::SetIVal("read.maxprecision.mode",
-                            theParameter.ReadMaxPrecisionMode);
-  Interface_Static::SetRVal("read.maxprecision.val",
-                            theParameter.ReadMaxPrecisionVal);
-  Interface_Static::SetIVal("read.stdsameparameter.mode",
-                            theParameter.ReadSameParamMode);
-  Interface_Static::SetIVal("read.surfacecurve.mode",
-                            theParameter.ReadSurfaceCurveMode);
-  Interface_Static::SetRVal("read.encoderegularity.angle",
-                            theParameter.EncodeRegAngle * M_PI / 180.0);
-
-  Interface_Static::SetIVal("read.iges.bspline.approxd1.mode",
-                            theParameter.ReadApproxd1);
-  Interface_Static::SetCVal("read.iges.resource.name",
-                            theParameter.ReadResourceName.ToCString());
-  Interface_Static::SetCVal("read.iges.sequence",
-                            theParameter.ReadSequence.ToCString());
-  Interface_Static::SetIVal("read.iges.faulty.entities",
-                            theParameter.ReadFaultyEntities);
-  Interface_Static::SetIVal("read.iges.onlyvisible",
-                            theParameter.ReadOnlyVisible);
-
-  Interface_Static::SetIVal("write.iges.brep.mode",
-                            theParameter.WriteBRepMode);
-  Interface_Static::SetIVal("write.convertsurface.mode",
-                            theParameter.WriteConvertSurfaceMode);
-  Interface_Static::SetIVal("write.iges.unit",
-                            theParameter.WriteUnit);
-  Interface_Static::SetCVal("write.iges.header.author",
-                            theParameter.WriteHeaderAuthor.ToCString());
-  Interface_Static::SetCVal("write.iges.header.company",
-                            theParameter.WriteHeaderCompany.ToCString());
-  Interface_Static::SetCVal("write.iges.header.product",
-                            theParameter.WriteHeaderProduct.ToCString());
-  Interface_Static::SetCVal("write.iges.header.receiver",
-                            theParameter.WriteHeaderReciever.ToCString());
-  Interface_Static::SetCVal("write.iges.resource.name",
-                            theParameter.WriteResourceName.ToCString());
-  Interface_Static::SetCVal("write.iges.sequence",
-                            theParameter.WriteSequence.ToCString());
-  Interface_Static::SetIVal("write.precision.mode",
-                            theParameter.WritePrecisionMode);
-  Interface_Static::SetRVal("write.precision.val",
-                            theParameter.WritePrecisionVal);
-  Interface_Static::SetIVal("write.iges.plane.mode",
-                            theParameter.WritePlaneMode);
-  Interface_Static::SetIVal("write.iges.offset.mode",
-                            theParameter.WriteOffsetMode);
-}
-
-//=======================================================================
-// function : resetStatic
-// purpose  :
-//=======================================================================
-void IGESCAFControl_Provider::resetStatic()
-{
-  if (!myToUpdateStaticParameters)
-  {
-    return;
-  }
-  // Set new values
-  TCollection_AsciiString aStrUnit(
-    UnitsMethods::DumpLengthUnit(myOldGlobalValues.LengthUnit,
-    UnitsMethods_LengthUnit_Meter));
-  aStrUnit.UpperCase();
-  Interface_Static::SetCVal("xstep.cascade.unit", aStrUnit.ToCString());
-  setStatic(myOldValues);
-}
-
-//=======================================================================
 // function : Read
 // purpose  :
 //=======================================================================
@@ -256,8 +282,7 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   }
   Handle(IGESCAFControl_ConfigurationNode) aNode =
     Handle(IGESCAFControl_ConfigurationNode)::DownCast(GetNode());
-  initStatic(aNode);
-
+  IGESCAFControl_ParameterController aParamController(aNode, myToUpdateStaticParameters);
   personizeWS(theWS);
   XCAFDoc_DocumentTool::SetLengthUnit(theDocument,
                                       aNode->GlobalParameters.LengthUnit,
@@ -301,17 +326,14 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : ["
       << aFile << "] : abandon, no model loaded";
-    resetStatic();
     return false;
   }
   if (!aReader.Transfer(theDocument, theProgress))
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : [" <<
       aFile << "] : Cannot read any relevant data from the IGES file";
-    resetStatic();
     return false;
   }
-  resetStatic();
   return true;
 }
 
@@ -332,8 +354,7 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   }
   Handle(IGESCAFControl_ConfigurationNode) aNode =
     Handle(IGESCAFControl_ConfigurationNode)::DownCast(GetNode());
-  initStatic(aNode);
-
+  IGESCAFControl_ParameterController aParamController(aNode, myToUpdateStaticParameters);
   personizeWS(theWS);
   TCollection_AsciiString aUnit(
     UnitsMethods::DumpLengthUnit(aNode->InternalParameters.WriteUnit));
@@ -365,12 +386,10 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : "
       << "The document cannot be translated or gives no result";
-    resetStatic();
     return false;
   }
   if (thePath == ".")
   {
-    resetStatic();
     Message::SendInfo() << "Document has been translated into the session";
     return true;
   }
@@ -378,11 +397,9 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : [" <<
       thePath << "] : Write failed";
-    resetStatic();
     return false;
   }
   Message::SendInfo() << "IGES file [" << thePath << "] Successfully written";
-  resetStatic();
   return true;
 }
 
@@ -404,7 +421,7 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   }
   Handle(IGESCAFControl_ConfigurationNode) aNode =
     Handle(IGESCAFControl_ConfigurationNode)::DownCast(GetNode());
-  initStatic(aNode);
+  IGESCAFControl_ParameterController aParamController(aNode, myToUpdateStaticParameters);
   personizeWS(theWS);
   IGESControl_Reader aReader;
   aReader.SetWS(theWS);
@@ -422,18 +439,15 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : [" <<
       thePath << "] : Could not read file, no model loaded";
-    resetStatic();
     return false;
   }
   if (aReader.TransferRoots() <= 0)
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : [" <<
       thePath << "] : Cannot read any relevant data from the IGES file";
-    resetStatic();
     return false;
   }
   theShape = aReader.OneShape();
-  resetStatic();
   return true;
 }
 
@@ -456,7 +470,8 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   }
   Handle(IGESCAFControl_ConfigurationNode) aNode =
     Handle(IGESCAFControl_ConfigurationNode)::DownCast(GetNode());
-  initStatic(aNode);
+  IGESCAFControl_ParameterController aParamController(aNode, myToUpdateStaticParameters);
+  personizeWS(theWS);
   TCollection_AsciiString aUnit(
     UnitsMethods::DumpLengthUnit(aNode->InternalParameters.WriteUnit));
   aUnit.UpperCase();
@@ -467,7 +482,6 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : "
       << "Can't translate shape to IGES model";
-    resetStatic();
     return false;
   }
 
@@ -475,10 +489,8 @@ bool IGESCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   {
     Message::SendFail() << "Error: IGESCAFControl_Provider : "
       << "Can't write IGES file" << thePath;
-    resetStatic();
     return false;
   }
-  resetStatic();
   return true;
 }
 

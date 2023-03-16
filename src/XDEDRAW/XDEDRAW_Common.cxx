@@ -854,7 +854,7 @@ static Standard_Integer WriteVrml(Draw_Interpretor& theDI,
   }
   Handle(Vrml_ConfigurationNode) aNode =
     new Vrml_ConfigurationNode();
-  aNode->GlobalParameters.LengthUnit = getLengthUnit(aDoc);
+  aNode->GlobalParameters.LengthUnit = getLengthUnit(aDoc) * 0.001;
   Handle(Vrml_Provider) aProvider =
     new Vrml_Provider(aNode);
 

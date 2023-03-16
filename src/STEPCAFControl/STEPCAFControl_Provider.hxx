@@ -170,19 +170,9 @@ private:
   //! @param[in] theWS current work session
   void personizeWS(Handle(XSControl_WorkSession)& theWS);
 
-  //! Initialize static variables
-  void initStatic(const Handle(DE_ConfigurationNode)& theNode);
-
-  //! Initialize static variables
-  void setStatic(const STEPCAFControl_ConfigurationNode::STEPCAFControl_InternalSection theParameter);
-
-  //! Reset used interface static variables
-  void resetStatic();
-
 private:
 
   bool myToUpdateStaticParameters = true; //!< Flag to updating static parameters
-  STEPCAFControl_ConfigurationNode::STEPCAFControl_InternalSection myOldValues; //!< Container to save previous static parameters
   NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> myProcessedExtFiles; //!< External files from the last operation
 
 };
