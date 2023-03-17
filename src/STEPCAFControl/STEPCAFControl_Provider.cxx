@@ -64,6 +64,7 @@ namespace
     : myToUpdateStaticParameters(theUpdateStatic)
   {
     STEPCAFControl_Controller::Init();
+    STEPControl_Controller::Init();
     if (!myToUpdateStaticParameters)
     {
       return;
@@ -278,7 +279,7 @@ STEPCAFControl_Provider::STEPCAFControl_Provider(const Handle(DE_ConfigurationNo
 {}
 
 //=======================================================================
-// function : STEPCAFControl_Provider
+// function : personizeWS
 // purpose  :
 //=======================================================================
 void STEPCAFControl_Provider::personizeWS(Handle(XSControl_WorkSession)& theWS)

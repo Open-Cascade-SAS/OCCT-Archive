@@ -540,6 +540,15 @@ bool STEPCAFControl_ConfigurationNode::IsExportSupported() const
 }
 
 //=======================================================================
+// function : IsExportSupported
+// purpose  :
+//=======================================================================
+bool STEPCAFControl_ConfigurationNode::IsStreamSupported() const
+{
+  return true;
+}
+
+//=======================================================================
 // function : GetFormat
 // purpose  :
 //=======================================================================
