@@ -230,27 +230,31 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
                                (const Handle(IGESData_IGESEntity)& theStart,
                                 const Message_ProgressRange& theProgress)
 {
-  // Declaration of messages// 
-  // DCE 22/12/98
-  //Message_Msg aMsg1005("IGES_1005");  //  Software error :  start IsNull.
-  //Message_Msg aMsg1015("IGES_1015");  //  invalid type or exception raising (software error).
-  //Message_Msg aMsg1010("IGES_1010");  //  Not sameparameter.
-  //  Message_Msg aMsg1015("IGES_1015");
-  //Message_Msg aMsg210 ("XSTEP_210");  
-  //Message_Msg aMsg202 ("XSTEP_202");
-  ////////////////////////////
+// Declaration of messages// 
+// DCE 22/12/98
+//Message_Msg aMsg1005("IGES_1001");  //  The type of the Start is not recognized
+//Message_Msg aMsg1005("IGES_1005");  //  Software error :  the Start IsNull.
+//Message_Msg aMsg1015("IGES_1015");  //  invalid type or exception raising (software error).
+//Message_Msg aMsg1010("IGES_1010");  //  Not sameparameter.
+//Message_Msg aMsg1015("IGES_1020");  //  Associated entity IsNull
+//Message_Msg aMsg1015("IGES_1025");  //  No shape is found for the associated entity for the type 308
+//Message_Msg aMsg1015("IGES_1030");  //  No shape is found for the associated entity for the type 402
+//Message_Msg aMsg1015("IGES_1035");  //  The conversion of a Location is not possible
+//Message_Msg aMsg210 ("XSTEP_210");  //  No associated entities for the type 308
+//Message_Msg aMsg202 ("XSTEP_202");  //  No associated entities for the type 402
+////////////////////////////
   TopoDS_Shape aRes;
   gp_Trsf aT408;
   if (theStart.IsNull())
   {
-    Message_Msg aMsg1005("IGES_1005");  //  Software error :  start IsNull.
+    const Message_Msg aMsg1005("IGES_1005");  //  Software error :  start IsNull.
     SendFail(theStart, aMsg1005);
     return aRes;
   }
 
   // sln 13.06.2002 OCC448: Avoid transferring invisible sub entities which
   // logically depend on the one
-  Standard_Integer anOnlyvisible = Interface_Static::IVal("read.iges.onlyvisible");
+  const Standard_Integer anOnlyvisible = Interface_Static::IVal("read.iges.onlyvisible");
 
   if (IGESToBRep::IsCurveAndSurface(theStart))
   {
@@ -259,11 +263,11 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
     try
     {
       OCC_CATCH_SIGNALS
-        aRes = TransferCurveAndSurface(theStart, theProgress);
+      aRes = TransferCurveAndSurface(theStart, theProgress);
     }
     catch(Standard_Failure const&)
     {
-      Message_Msg aMsg1015("IGES_1015");
+      const Message_Msg aMsg1015("IGES_1015");
       SendFail(theStart, aMsg1015);
     }
     return aRes;
@@ -277,14 +281,14 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
 
       DeclareAndCast(IGESBasic_SingularSubfigure, aSt408, theStart);
       Handle (IGESBasic_SubfigureDef) aStsub = aSt408->Subfigure();
-      gp_XYZ aTrans = aSt408->Translation();
+      const gp_XYZ aTrans = aSt408->Translation();
       gp_Vec aVectr(aTrans);
-      Standard_Real aScunit = GetUnitFactor();
+      const Standard_Real aScunit = GetUnitFactor();
       aVectr.Multiply(aScunit);
       aT408.SetTranslation(aVectr);
       if (aSt408->HasScaleFactor())
       {
-        Standard_Real aScalef = aSt408->ScaleFactor();
+        const Standard_Real aScalef = aSt408->ScaleFactor();
         aT408.SetScaleFactor(aScalef);
       }
       if (HasShapeResult(aStsub))
@@ -296,12 +300,12 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
         try
         {
           OCC_CATCH_SIGNALS
-            aRes = TransferGeometry(aStsub, theProgress);
+          aRes = TransferGeometry(aStsub, theProgress);
         }
         catch(Standard_Failure const&)
         {
           aRes.Nullify();
-          Message_Msg aMsg1015("IGES_1015");
+          const Message_Msg aMsg1015("IGES_1015");
           SendFail(aSt408, aMsg1015);
         }
         if (!aRes.IsNull())
@@ -320,7 +324,7 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
     aBuilder.MakeCompound (aGroup);
     if (aSt308->NbEntities() < 1)
     {
-      Message_Msg aMsg210 ("XSTEP_210");
+      const Message_Msg aMsg210 ("XSTEP_210");
       SendFail(aSt308, aMsg210);
       return aRes;
     }
@@ -336,9 +340,9 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
         SendWarning(aSt308, aMsg1020);
         continue;
       }
-      if(anOnlyvisible && aSt308->AssociatedEntity(anIndx)->BlankStatus() == 1 )
-        continue;      
-        
+      if(anOnlyvisible && aSt308->AssociatedEntity(anIndx)->BlankStatus() == 1)
+        continue;
+
       if (HasShapeResult(aSt308->AssociatedEntity(anIndx)))
       {
         anItem = GetShapeResult(aSt308->AssociatedEntity(anIndx));
@@ -353,7 +357,7 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
         catch(Standard_Failure const&)
         {
           anItem.Nullify();
-          Message_Msg aMsg1015("IGES_1015");
+          const Message_Msg aMsg1015("IGES_1015");
           SendFail(aSt308->AssociatedEntity(anIndx), aMsg1015);
         }
       }
@@ -372,8 +376,7 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
     aRes = aGroup;
   }
   // 402 : Group Associativity
-  else if (theStart->IsKind(STANDARD_TYPE(IGESBasic_Group)) ||
-    theStart->IsKind(STANDARD_TYPE(IGESBasic_GroupWithoutBackP)))
+  else if (theStart->IsKind(STANDARD_TYPE(IGESBasic_Group)))
   {
     if(anOnlyvisible && theStart->BlankStatus() == 1)
       return aRes;
@@ -382,16 +385,17 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
     TopoDS_Compound aGroup;
     BRep_Builder aBuilder;
     aBuilder.MakeCompound (aGroup);
-    if (aSt402->NbEntities() < 1)
+    const Standard_Integer aNbEnt = aSt402->NbEntities();
+    if (aNbEnt < 1)
     {
       Message_Msg aMsg202 ("XSTEP_202");
       aMsg202.Arg(aSt402->FormNumber());
       SendFail(aSt402, aMsg202);
       return aRes;
     }
-    Message_ProgressScope aPS (theProgress, "Group item", aSt402->NbEntities());
+    Message_ProgressScope aPS (theProgress, "Group item", aNbEnt);
     Standard_Boolean aProblemInGroup = Standard_False;
-    for (Standard_Integer anIndx=1; anIndx <= aSt402->NbEntities() && aPS.More(); anIndx++)
+    for (Standard_Integer anIndx=1; anIndx <= aNbEnt && aPS.More(); anIndx++)
     {
       Message_ProgressRange aRange = aPS.Next();
       TopoDS_Shape anItem;
@@ -420,7 +424,7 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
         catch(Standard_Failure const&)
         {
           anItem.Nullify();
-          Message_Msg aMsg1015("IGES_1015");
+          const Message_Msg aMsg1015("IGES_1015");
           SendFail(aSt402->Entity(anIndx), aMsg1015);
         }
       }
@@ -460,20 +464,20 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
       if (theStart->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure)))
       {
         gp_XYZ aTra = aT.TranslationPart();
-        gp_XYZ aTrans = aT408.TranslationPart();
+        const gp_XYZ aTrans = aT408.TranslationPart();
         aTra.Add(aTrans);
         aT.SetTranslationPart(aTra);
         Standard_Real aSc = aT.ScaleFactor();
-        Standard_Real aScalef = aT408.ScaleFactor();
+        const Standard_Real aScalef = aT408.ScaleFactor();
         aSc = aSc*aScalef;
         aT.SetScaleFactor(aSc);
       }
-      TopLoc_Location aLoc(aT);
+      const TopLoc_Location aLoc(aT);
       aRes.Move(aLoc, Standard_False);
     }
     else
     {
-      Message_Msg aMsg1035("IGES_1035");
+      const Message_Msg aMsg1035("IGES_1035");
       SendWarning (theStart, aMsg1035);
     }
   }
@@ -481,7 +485,7 @@ TopoDS_Shape IGESToBRep_CurveAndSurface::TransferGeometry
   {
     if (theStart->IsKind(STANDARD_TYPE(IGESBasic_SingularSubfigure)))
     {
-      TopLoc_Location aLoc(aT408);
+      const TopLoc_Location aLoc(aT408);
       aRes.Move(aLoc);
     }
   }
