@@ -326,7 +326,10 @@ Standard_Boolean XSAlgo_AlgoContainer::CheckPCurve (const TopoDS_Edge& E,
   Standard_Real Dist11 = PV1.Distance(P1), Dist22 = PV2.Distance(P2);
     
   if (!((Dist11 <= preci) && (Dist22 <= preci))) {
-    ShapeBuild_Edge().RemovePCurve(E,face);
+    if (Abs(Interface_Static::IVal("read.surfacecurve.mode")) == 2)
+      ShapeBuild_Edge().RemoveCurve3d(E);
+    else
+      ShapeBuild_Edge().RemovePCurve(E, face);
 #ifdef OCCT_DEBUG
     std::cout<<"Removing pcurve points"<<std::endl;
 #endif      
