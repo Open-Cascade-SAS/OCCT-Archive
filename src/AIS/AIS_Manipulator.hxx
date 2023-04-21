@@ -320,6 +320,12 @@ public: //! @name Setters for parameters
   //! Sets length of the arrow tip of the translation axis.
   Standard_EXPORT void SetArrowHeadLength (const Standard_ShortReal theArrowHeadLength);
 
+  //! Gets radius of the head of the translation arrow axis.
+  Standard_ShortReal ArrowHeadRadius() const { return myArrowHeadRadius; }
+
+  //! Sets radius of the head of the translation arrow axis.
+  Standard_EXPORT void SetArrowHeadRadius (const Standard_ShortReal theValue);
+
   //! Gets size of drag plane.
   Standard_ShortReal DragPlaneSize() const { return myDragPlaneSize; }
 
@@ -709,6 +715,7 @@ protected:
   Standard_ShortReal myLength;          //!< Length of translation axis.
   Standard_ShortReal myArrowHeadLength; //!< Length of the arrow tip.
   Standard_ShortReal myAxisRadius;      //!< Radius of axis.
+  Standard_ShortReal myArrowHeadRadius; //!< Radius of the arrow tip.
 
   Standard_ShortReal myBoxSize;         //!< Size of scaling cube.
 

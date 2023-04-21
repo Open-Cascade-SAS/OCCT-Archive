@@ -12862,6 +12862,7 @@ static int VManipulator (Draw_Interpretor& theDi,
   aCmd.AddOption ("parts",             "... all mode {0|1} - set visual part");
   aCmd.AddOption ("angle",             "... startAngle endAngle - set arc angle");
   aCmd.AddOption ("axisrad",           "... radius - set axis radius");
+  aCmd.AddOption ("arrheadrad",        "... radius - set arrow head radius");
   aCmd.AddOption ("diskthickness",     "... value - set disk thickness");
   aCmd.AddOption ("innerrad",          "... radius - set axis radius");
   aCmd.AddOption ("arrlen",            "... len - set axis lenght");
@@ -13003,6 +13004,16 @@ static int VManipulator (Draw_Interpretor& theDi,
       return 1;
     }
     aManipulator->SetAxisRadius (aRadius);
+  }
+  if (aCmd.HasOption("arrheadrad", 1, Standard_True))
+  {
+    Standard_ShortReal aRadius = aCmd.ArgFloat ("arrheadrad", 0);
+    if (aRadius <= 0)
+    {
+      Message::SendFail("Syntax error: radius value should be positive");
+      return 1;
+    }
+    aManipulator->SetArrowHeadRadius (aRadius);
   }
   if (aCmd.HasOption("diskthickness", 1, Standard_True))
   {
@@ -15009,14 +15020,15 @@ void ViewerTest::ViewerCommands(Draw_Interpretor& theCommands)
       "\n      '-gap value'                      - set gap between sub-parts"
       "\n      '-part axis mode    {0|1}'        - set visual part"
       "\n      '-parts mode        {0|1}'        - set visual part"
-      "\n      '-angle startAngle endAngle       - set arc angle"
-      "\n      '-axisrad radius                  - set axis radius"
-      "\n      '-diskthickness value             - set disk thickness"
-      "\n      '-innerrad radius                 - set axis radius"
-      "\n      '-arrlen len                      - set axis lenght"
-      "\n      '-arrheadlen len                  - set length of the arrow tip"
-      "\n      '-dragplanesize size              - set size of the drag plane"
-      "\n      '-boxsize size                    - set size os scaling box"
+      "\n      '-angle startAngle endAngle'      - set arc angle"
+      "\n      '-axisrad radius'                 - set axis radius"
+      "\n      '-arrheadrad radius'              - set arrow head radius"
+      "\n      '-diskthickness value'            - set disk thickness"
+      "\n      '-innerrad radius'                - set axis radius"
+      "\n      '-arrlen len'                     - set axis lenght"
+      "\n      '-arrheadlen len'                 - set length of the arrow tip"
+      "\n      '-dragplanesize size'             - set size of the drag plane"
+      "\n      '-boxsize size'                   - set size os scaling box"
       "\n      '-pos x y z [nx ny nz [xx xy xz]' - set position of manipulator"
       //"\n      '-size value'                     - set size of manipulator"
       "\n      '-zoomable {0|1}'                 - set zoom persistence",

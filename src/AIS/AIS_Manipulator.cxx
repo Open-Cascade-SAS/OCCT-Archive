@@ -372,6 +372,16 @@ void AIS_Manipulator::SetArrowHeadLength (const Standard_ShortReal theArrowHeadL
 }
 
 //=======================================================================
+//function : SetArrowHeadRadius
+//purpose  : 
+//=======================================================================
+void AIS_Manipulator::SetArrowHeadRadius (const Standard_ShortReal theArrowHeadRadius)
+{
+  myArrowHeadRadius = theArrowHeadRadius;
+  SetToUpdate();
+}
+
+//=======================================================================
 //function : SetDragPlaneSize
 //purpose  : 
 //=======================================================================
@@ -999,6 +1009,7 @@ void AIS_Manipulator::setSize (const Standard_ShortReal theSideLength)
   myDragPlaneSize = myInnerRadius * 0.5f;
   myAxisRadius = myBoxSize / 4.0f;
   myArrowHeadLength = myLength * 0.25f;
+  myArrowHeadRadius = myAxisRadius * 1.5f,
 
   SetToUpdate();
 }
@@ -1577,7 +1588,7 @@ void AIS_Manipulator::Axis::Compute (const Handle(PrsMgr_PresentationManager)& t
     myTriangleArray = Prs3d_Arrow::DrawShaded (gp_Ax1(gp::Origin(), myReferenceAxis.Direction()),
                                                anAxisRadius,
                                                aLenght,
-                                               anAxisRadius * 1.5,
+                                               theManipulator->ArrowHeadRadius(),
                                                anArrowHeadLength,
                                                myFacettesNumber);
     myTranslatorGroup = thePrs->NewGroup();
