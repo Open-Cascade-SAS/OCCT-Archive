@@ -648,8 +648,8 @@ void IntTools_EdgeEdge::MergeSolutions(const IntTools_SequenceOfRanges& theRange
   //
   myRange1.Range(aT11, aT12);
   myRange2.Range(aT21, aT22);
-  dTR1 = 20*aRes1;
-  dTR2 = 20*aRes2;
+  dTR1 = 5*aRes1;
+  dTR2 = 5*aRes2;
   aType = TopAbs_VERTEX;
   //
   for (i = 1; i <= aNbCP;) {
