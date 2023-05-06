@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Quantity_Color.hxx>
 
 #include <Quantity_ColorRGBA.hxx>
@@ -309,7 +311,7 @@ void Quantity_Color::Delta (const Quantity_Color& theColor,
 Standard_Real Quantity_Color::DeltaE2000 (const Quantity_Color& theOther) const
 {
   // get color components in CIE Lch space
-  Standard_Real aL1, aL2, aa1, aa2, ab1, ab2;
+  Standard_Real aL1 = NAN, aL2 = NAN, aa1 = NAN, aa2 = NAN, ab1 = NAN, ab2 = NAN;
   this   ->Values (aL1, aa1, ab1, Quantity_TOC_CIELab);
   theOther.Values (aL2, aa2, ab2, Quantity_TOC_CIELab);
 
@@ -682,7 +684,7 @@ void Quantity_Color::DumpJson (Standard_OStream& theOStream, Standard_Integer) c
 Standard_Boolean Quantity_Color::InitFromJson (const Standard_SStream& theSStream, Standard_Integer& theStreamPos)
 {
   Standard_Integer aPos = theStreamPos;
-  Standard_Real  aRed, aGreen, aBlue;
+  Standard_Real  aRed = NAN, aGreen = NAN, aBlue = NAN;
   OCCT_INIT_VECTOR_CLASS (Standard_Dump::Text (theSStream), "RGB", aPos, 3, &aRed, &aGreen, &aBlue)
 
   SetValues ((Standard_ShortReal)aRed, (Standard_ShortReal)aGreen, (Standard_ShortReal)aBlue, Quantity_TOC_RGB);

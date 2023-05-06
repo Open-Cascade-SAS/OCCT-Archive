@@ -42,7 +42,7 @@ Geom2dGcc_Circ2d2TanOn::
 			   const Standard_Real                ParamOn    ):
   WellDone(Standard_False),
   cirsol(1,8)   ,
-  qualifier1(1,8),
+  NbrSol(0), qualifier1(1,8),
   qualifier2(1,8),
   TheSame1(1,8) ,
   TheSame2(1,8) ,
@@ -53,23 +53,23 @@ Geom2dGcc_Circ2d2TanOn::
   par2sol(1,8)  ,
   pararg1(1,8)  ,
   pararg2(1,8)  ,
-  parcen3(1,8)
+  parcen3(1,8), Invert(Standard_False)
 {
   Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
   Geom2dAdaptor_Curve C2 = Qualified2.Qualified();
   GeomAbs_CurveType Type1 = C1.GetType();
   GeomAbs_CurveType Type2 = C2.GetType();
   GeomAbs_CurveType Type3 = OnCurve.GetType();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  Handle(Geom2d_Curve) CC2 = C2.Curve();
-  Handle(Geom2d_Curve) Con = OnCurve.Curve();
+  const Handle(Geom2d_Curve)& CC1 = C1.Curve();
+  const Handle(Geom2d_Curve)& CC2 = C2.Curve();
+  const Handle(Geom2d_Curve)& Con = OnCurve.Curve();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
 //=============================================================================
 
-  Invert = Standard_False;
-  NbrSol = 0;
+  
+  
   if ((Type1 == GeomAbs_Line || Type1 == GeomAbs_Circle) &&
       (Type2 == GeomAbs_Line || Type2 == GeomAbs_Circle)) {
     if (Type3 == GeomAbs_Line || Type3 == GeomAbs_Circle) {
@@ -376,7 +376,7 @@ Geom2dGcc_Circ2d2TanOn::
 			   const Standard_Real                ParamOn    ):
   WellDone(Standard_False),
   cirsol(1,8)   ,
-  qualifier1(1,8),
+  NbrSol(0), qualifier1(1,8),
   qualifier2(1,8),
   TheSame1(1,8) ,
   TheSame2(1,8) ,
@@ -387,20 +387,20 @@ Geom2dGcc_Circ2d2TanOn::
   par2sol(1,8)  ,
   pararg1(1,8)  ,
   pararg2(1,8)  ,
-  parcen3(1,8) 
+  parcen3(1,8), Invert(Standard_False) 
 {
   Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
   GeomAbs_CurveType Type1 = C1.GetType();
   GeomAbs_CurveType Type3 = OnCurve.GetType();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
-  Handle(Geom2d_Curve) Con = OnCurve.Curve();
+  const Handle(Geom2d_Curve)& CC1 = C1.Curve();
+  const Handle(Geom2d_Curve)& Con = OnCurve.Curve();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
 //=============================================================================
 
-  Invert = Standard_False;
-  NbrSol = 0;
+  
+  
   if (Type1 == GeomAbs_Line || Type1 == GeomAbs_Circle) {
     if (Type3 == GeomAbs_Line || Type3 == GeomAbs_Circle) {
       gp_Pnt2d pnt(Point->Pnt2d());
@@ -567,7 +567,7 @@ Geom2dGcc_Circ2d2TanOn::
 			   const Standard_Real                Tolerance  ):
   WellDone(Standard_False),
   cirsol(1,8)   ,
-  qualifier1(1,8),
+  NbrSol(0), qualifier1(1,8),
   qualifier2(1,8),
   TheSame1(1,8) ,
   TheSame2(1,8) ,
@@ -578,17 +578,17 @@ Geom2dGcc_Circ2d2TanOn::
   par2sol(1,8)  ,
   pararg1(1,8)  ,
   pararg2(1,8)  ,
-  parcen3(1,8)
+  parcen3(1,8), Invert(Standard_False)
 {
   GeomAbs_CurveType Type3 = OnCurve.GetType();
-  Handle(Geom2d_Curve) Con = OnCurve.Curve();
+  const Handle(Geom2d_Curve)& Con = OnCurve.Curve();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
 //=============================================================================
 
-  Invert = Standard_False;
-  NbrSol = 0;
+  
+  
   if (Type3 == GeomAbs_Line || Type3 == GeomAbs_Circle) {
     gp_Pnt2d pnt1(Point1->Pnt2d());
     gp_Pnt2d pnt2(Point2->Pnt2d());

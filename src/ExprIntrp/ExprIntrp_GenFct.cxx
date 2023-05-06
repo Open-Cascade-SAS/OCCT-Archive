@@ -23,9 +23,9 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(ExprIntrp_GenFct,ExprIntrp_Generator)
 
-ExprIntrp_GenFct::ExprIntrp_GenFct ()
+ExprIntrp_GenFct::ExprIntrp_GenFct () : done(Standard_False)
 {
-  done = Standard_False;
+  
 }
 
 Handle( ExprIntrp_GenFct ) ExprIntrp_GenFct::Create()

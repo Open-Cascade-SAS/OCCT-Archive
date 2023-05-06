@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Extrema_ExtElC2d.hxx>
 #include <Extrema_ExtPElC2d.hxx>
@@ -32,11 +34,11 @@
 //function : Extrema_ExtElC2d
 //purpose  :
 //=======================================================================
-Extrema_ExtElC2d::Extrema_ExtElC2d()
+Extrema_ExtElC2d::Extrema_ExtElC2d() : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
-  myDone = Standard_False;
-  myIsPar = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -49,7 +51,7 @@ Extrema_ExtElC2d::Extrema_ExtElC2d()
 //=======================================================================
 Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1,
                                     const gp_Lin2d& C2,
-                                    const Standard_Real)
+                                    const Standard_Real) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 /*-----------------------------------------------------------------------------
 Function:
    Find min distance between 2 straight lines.
@@ -64,9 +66,9 @@ Method:
      
 -----------------------------------------------------------------------------*/
 {
-  myDone = Standard_False;
-  myIsPar = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -110,7 +112,7 @@ Method:
 
 Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, 
 				    const gp_Circ2d& C2,
-				    const Standard_Real)
+				    const Standard_Real) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 /*-----------------------------------------------------------------------------
 Function:
   Find extreme distances between straight line C1 and circle C2.
@@ -123,9 +125,9 @@ Method:
          ( P1P2.T = 0. (2)
 -----------------------------------------------------------------------------*/
 {
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -139,7 +141,7 @@ Method:
 
   Standard_Real Dx = D.Dot(x2);
   Standard_Real Dy = D.Dot(y2);
-  Standard_Real U1, teta[2];
+  Standard_Real U1 = NAN, teta[2];
   gp_Pnt2d O1=C1.Location();
   gp_Pnt2d P1, P2;
   
@@ -171,12 +173,8 @@ Method:
 
 // =============================================================================
 Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, 
-				    const gp_Elips2d& C2)
+				    const gp_Elips2d& C2) : myDone(Standard_True), myIsPar(Standard_False), myNbExt(0)
 {
-  myDone = Standard_True;
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -190,7 +188,7 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1,
 
   Standard_Real Dx = D.Dot(x2);
   Standard_Real Dy = D.Dot(y2);
-  Standard_Real U1, teta[2], r1 = C2.MajorRadius(), r2 = C2.MinorRadius();
+  Standard_Real U1 = NAN, teta[2], r1 = C2.MajorRadius(), r2 = C2.MinorRadius();
   gp_Pnt2d O1=C1.Location(), P1, P2;
   
   if (Abs(Dy) <= RealEpsilon()) {
@@ -216,18 +214,17 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1,
   myPoint[myNbExt][0] = Extrema_POnCurv2d(U1,P1);
   myPoint[myNbExt][1] = Extrema_POnCurv2d(teta[1],P2);
   myNbExt++;
-  myDone = Standard_True;
 }
 
 
 
 //=============================================================================
 
-Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, const gp_Hypr2d& C2)
+Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, const gp_Hypr2d& C2) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -241,7 +238,7 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, const gp_Hypr2d& C2)
   Standard_Real Dx = D.Dot(x2);
   Standard_Real Dy = D.Dot(y2);
 
-  Standard_Real U1, v2, U2=0, R = C2.MajorRadius(), r = C2.MinorRadius();
+  Standard_Real U1 = NAN, v2 = NAN, U2=0, R = C2.MajorRadius(), r = C2.MinorRadius();
   gp_Pnt2d P1, P2;
   if (Abs(Dy) < RealEpsilon()) { return;}
   if (Abs(R - r*Dx/Dy) < RealEpsilon()) return;
@@ -263,11 +260,11 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, const gp_Hypr2d& C2)
 
 //============================================================================
 
-Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, const gp_Parab2d& C2)
+Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, const gp_Parab2d& C2) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -281,7 +278,7 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, const gp_Parab2d& C2)
   Standard_Real Dx = D.Dot(x2);
   Standard_Real Dy = D.Dot(y2);
 
-  Standard_Real U1, U2, P = C2.Parameter();
+  Standard_Real U1 = NAN, U2 = NAN, P = C2.Parameter();
   gp_Pnt2d P1, P2;
   if (Abs(Dy) < RealEpsilon()) { return; }
   U2 = Dx*P/Dy;
@@ -300,12 +297,8 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Lin2d& C1, const gp_Parab2d& C2)
 
 //============================================================================
 
-Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Circ2d& C2)
+Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Circ2d& C2) : myDone(Standard_True), myIsPar(Standard_False), myNbExt(0)
 {
-  myIsPar = Standard_False;
-  myDone  = Standard_False;
-  myNbExt = 0;
-  myDone  = Standard_True;
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -325,8 +318,8 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Circ2d& C2)
     return;
   }
 
-  Standard_Integer NoSol, kk;
-  Standard_Real U1, U2;
+  Standard_Integer NoSol = 0, kk = 0;
+  Standard_Real U1 = NAN, U2 = NAN;
   Standard_Real r1 = C1.Radius(), r2 = C2.Radius();
   Standard_Real Usol2[2], Usol1[2];
   gp_Pnt2d P1[2], P2[2];
@@ -355,17 +348,17 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Circ2d& C2)
 }
 //===========================================================================
 
-Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Elips2d& C2)
+Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Elips2d& C2) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
   }
 
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
   Extrema_ExtPElC2d ExtElip(C1.Location(), C2, 
 			    Precision::Confusion(), 0.0, 2.0*M_PI);
@@ -388,17 +381,17 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Elips2d& C2)
 }
 //============================================================================
 
-Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Hypr2d& C2)
+Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Hypr2d& C2) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
   }
 
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
   Extrema_ExtPElC2d ExtHyp(C1.Location(), C2, Precision::Confusion(), 
 			   RealFirst(), RealLast());
@@ -421,17 +414,17 @@ Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Hypr2d& C2)
 }
 //============================================================================
 
-Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Parab2d& C2)
+Extrema_ExtElC2d::Extrema_ExtElC2d (const gp_Circ2d& C1, const gp_Parab2d& C2) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
   }
 
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
   Extrema_ExtPElC2d ExtParab(C1.Location(), C2, Precision::Confusion(),
 			     RealFirst(), RealLast());

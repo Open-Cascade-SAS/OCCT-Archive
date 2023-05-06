@@ -40,9 +40,9 @@ Vrml_ConfigurationNode::Vrml_ConfigurationNode() :
 // purpose  :
 //=======================================================================
 Vrml_ConfigurationNode::Vrml_ConfigurationNode(const Handle(Vrml_ConfigurationNode)& theNode)
-  :DE_ConfigurationNode(theNode)
+  :DE_ConfigurationNode(theNode), InternalParameters(theNode->InternalParameters)
 {
-  InternalParameters = theNode->InternalParameters;
+  
 }
 
 //=======================================================================

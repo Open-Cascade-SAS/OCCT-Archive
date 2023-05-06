@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepGeom_RWHyperbola.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -46,13 +48,13 @@ void RWStepGeom_RWHyperbola::ReadStep
 
 	// --- own field : semiAxis ---
 
-	Standard_Real aSemiAxis;
+	Standard_Real aSemiAxis = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"semi_axis",ach,aSemiAxis);
 
 	// --- own field : semiImagAxis ---
 
-	Standard_Real aSemiImagAxis;
+	Standard_Real aSemiImagAxis = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"semi_imag_axis",ach,aSemiImagAxis);
 

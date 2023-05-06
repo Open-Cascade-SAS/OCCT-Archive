@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <V3d_CircularGrid.hxx>
 
 #include <Graphic3d_ArrayOfPoints.hxx>
@@ -42,7 +44,7 @@ public:
   : Graphic3d_Structure (theManager), myGrid (theGrid) {}
 
   //! Override method initiating recomputing in V3d_CircularGrid.
-  virtual void Compute() Standard_OVERRIDE
+  void Compute() Standard_OVERRIDE
   {
     GraphicClear (Standard_False);
     myGrid->myGroup = NewGroup();
@@ -120,10 +122,10 @@ void V3d_CircularGrid::UpdateDisplay ()
 {
   gp_Ax3 ThePlane = myViewer->PrivilegedPlane();
 
-  Standard_Real xl, yl, zl;
-  Standard_Real xdx, xdy, xdz;
-  Standard_Real ydx, ydy, ydz;
-  Standard_Real dx, dy, dz;
+  Standard_Real xl = NAN, yl = NAN, zl = NAN;
+  Standard_Real xdx = NAN, xdy = NAN, xdz = NAN;
+  Standard_Real ydx = NAN, ydy = NAN, ydz = NAN;
+  Standard_Real dx = NAN, dy = NAN, dz = NAN;
   ThePlane.Location ().Coord (xl, yl, zl);
   ThePlane.XDirection ().Coord (xdx, xdy, xdz);
   ThePlane.YDirection ().Coord (ydx, ydy, ydz);
@@ -135,10 +137,10 @@ void V3d_CircularGrid::UpdateDisplay ()
     MakeTransform = (RotationAngle() != myCurAngle || XOrigin() != myCurXo || YOrigin() != myCurYo);
     if (!MakeTransform)
     {
-      Standard_Real curxl, curyl, curzl;
-      Standard_Real curxdx, curxdy, curxdz;
-      Standard_Real curydx, curydy, curydz;
-      Standard_Real curdx, curdy, curdz;
+      Standard_Real curxl = NAN, curyl = NAN, curzl = NAN;
+      Standard_Real curxdx = NAN, curxdy = NAN, curxdz = NAN;
+      Standard_Real curydx = NAN, curydy = NAN, curydz = NAN;
+      Standard_Real curdx = NAN, curdy = NAN, curdz = NAN;
       myCurViewPlane.Location ().Coord (curxl, curyl, curzl);
       myCurViewPlane.XDirection ().Coord (curxdx, curxdy, curxdz);
       myCurViewPlane.YDirection ().Coord (curydx, curydy, curydz);
@@ -246,7 +248,7 @@ void V3d_CircularGrid::DefineLines ()
   if (aSeqTenth.Length())
   {
     myGroup->SetGroupPrimitivesAspect (new Graphic3d_AspectLine3d (myTenthColor, Aspect_TOL_SOLID, 1.0));
-    Standard_Integer n, np;
+    Standard_Integer n = 0, np = 0;
     const Standard_Integer nbl = aSeqTenth.Length() / nbpnts;
     Handle(Graphic3d_ArrayOfPolylines) aPrims2 = new Graphic3d_ArrayOfPolylines(aSeqTenth.Length(),nbl);
     for (np = 1, n=0; n<nbl; n++) {
@@ -259,7 +261,7 @@ void V3d_CircularGrid::DefineLines ()
   if (aSeqLines.Length())
   {
     myGroup->SetPrimitivesAspect (new Graphic3d_AspectLine3d (myColor, Aspect_TOL_SOLID, 1.0));
-    Standard_Integer n, np;
+    Standard_Integer n = 0, np = 0;
     const Standard_Integer nbl = aSeqLines.Length() / nbpnts;
     Handle(Graphic3d_ArrayOfPolylines) aPrims3 = new Graphic3d_ArrayOfPolylines(aSeqLines.Length(),nbl);
     for (np = 1, n=0; n<nbl; n++) {
@@ -306,7 +308,7 @@ void V3d_CircularGrid::DefinePoints ()
   MarkerAttrib->SetScale (3.);
 
   const Standard_Integer nbpnts = Standard_Integer (2*aDivision);
-  Standard_Real r, alpha = M_PI / aDivision;
+  Standard_Real r = NAN, alpha = M_PI / aDivision;
 
   // diameters
   TColgp_SequenceOfPnt aSeqPnts;
@@ -318,7 +320,7 @@ void V3d_CircularGrid::DefinePoints ()
   myGroup->SetGroupPrimitivesAspect (MarkerAttrib);
   if (aSeqPnts.Length())
   {
-    Standard_Real X,Y,Z;
+    Standard_Real X = NAN,Y = NAN,Z = NAN;
     const Standard_Integer nbv = aSeqPnts.Length();
     Handle(Graphic3d_ArrayOfPoints) Cercle = new Graphic3d_ArrayOfPoints (nbv);
     for (Standard_Integer i=1; i<=nbv; i++)

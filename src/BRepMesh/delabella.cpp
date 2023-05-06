@@ -89,7 +89,7 @@ struct Vect
 
 	Norm cross (const Vect& v) const // cross prod
 	{
-		Norm n;
+		Norm n{};
 		n.x = (Signed45)y*v.z - (Signed45)z*v.y;
 		n.y = (Signed45)z*v.x - (Signed45)x*v.z;
 		n.z = (Signed29)x*v.y - (Signed29)y*v.x;
@@ -108,7 +108,7 @@ struct CDelaBella : IDelaBella
 
 		Vect operator - (const Vert& v) const // diff
 		{
-			Vect d;
+			Vect d{};
 			d.x = (Signed15)x - (Signed15)v.x;
 			d.y = (Signed15)y - (Signed15)v.y;
 			d.z = (Signed29)z - (Signed29)v.z;
@@ -192,20 +192,20 @@ struct CDelaBella : IDelaBella
 		}
 	};
 
-	Vert* vert_alloc;
-	Face* face_alloc;
-	int max_verts;
-	int max_faces;
+	Vert* vert_alloc{};
+	Face* face_alloc{};
+	int max_verts{};
+	int max_faces{};
 
-	Face* first_dela_face;
-	Face* first_hull_face;
-	Vert* first_hull_vert;
+	Face* first_dela_face{};
+	Face* first_hull_face{};
+	Vert* first_hull_vert{};
 
-	int inp_verts;
-	int out_verts;
+	int inp_verts{};
+	int out_verts{};
 
-	int(*errlog_proc)(void* file, const char* fmt, ...);
-	void* errlog_file;
+	int(*errlog_proc)(void* file, const char* fmt, ...){};
+	void* errlog_file{};
 
 	virtual ~CDelaBella ()
 	{
@@ -294,7 +294,7 @@ struct CDelaBella : IDelaBella
 		Face* cache = face_alloc;
 		Face* hull = 0;
 
-		Face f; // tmp
+		Face f{}; // tmp
 		f.v[0] = vert_alloc + 0;
 		f.v[1] = vert_alloc + 1;
 		f.v[2] = vert_alloc + 2;
@@ -835,7 +835,7 @@ struct CDelaBella : IDelaBella
 		return true;
 	}
 
-	virtual int Triangulate(int points, const float* x, const float* y = 0, int advance_bytes = 0)
+	int Triangulate(int points, const float* x, const float* y = 0, int advance_bytes = 0) override
 	{
 		if (!x)
 			return 0;
@@ -862,7 +862,7 @@ struct CDelaBella : IDelaBella
 		return out_verts;
 	}
 
-	virtual int Triangulate(int points, const double* x, const double* y, int advance_bytes)
+	int Triangulate(int points, const double* x, const double* y, int advance_bytes) override
 	{
 		if (!x)
 			return 0;
@@ -889,7 +889,7 @@ struct CDelaBella : IDelaBella
 		return out_verts;
 	}
 
-	virtual void Destroy()
+	void Destroy() override
 	{
 		if (face_alloc)
 			free(face_alloc);
@@ -899,33 +899,33 @@ struct CDelaBella : IDelaBella
 	}
 
 	// num of points passed to last call to Triangulate()
-	virtual int GetNumInputPoints() const
+	int GetNumInputPoints() const override
 	{
 		return inp_verts;
 	}
 
 	// num of verts returned from last call to Triangulate()
-	virtual int GetNumOutputVerts() const
+	int GetNumOutputVerts() const override
 	{
 		return out_verts;
 	}
 
-	virtual const DelaBella_Triangle* GetFirstDelaunayTriangle() const
+	const DelaBella_Triangle* GetFirstDelaunayTriangle() const override
 	{
 		return first_dela_face;
 	}
 
-	virtual const DelaBella_Triangle* GetFirstHullTriangle() const
+	const DelaBella_Triangle* GetFirstHullTriangle() const override
 	{
 		return first_hull_face;
 	}
 
-	virtual const DelaBella_Vertex* GetFirstHullVertex() const
+	const DelaBella_Vertex* GetFirstHullVertex() const override
 	{
 		return first_hull_vert;
 	}
 
-	virtual void SetErrLog(int(*proc)(void* stream, const char* fmt, ...), void* stream)
+	void SetErrLog(int(*proc)(void* stream, const char* fmt, ...), void* stream) override
 	{
 		errlog_proc = proc;
 		errlog_file = stream;

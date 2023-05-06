@@ -32,13 +32,13 @@ MAT_Arc::MAT_Arc (const Standard_Integer      ArcIndex,
 		  const Handle(MAT_BasicElt)& SecondElement)
  : arcIndex(ArcIndex),
    geomIndex(GeomIndex),
-   firstArcLeft  (0),
+   firstElement(FirstElement), secondElement(SecondElement), firstArcLeft  (0),
    firstArcRight (0),
    secondArcRight (0),
    secondArcLeft (0)   
 {
-  firstElement  = FirstElement;
-  secondElement = SecondElement;
+  
+  
 }
 
 //========================================================================

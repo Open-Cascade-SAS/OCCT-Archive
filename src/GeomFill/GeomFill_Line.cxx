@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(GeomFill_Line,Standard_Transient)
 //function : GeomFill_Line
 //purpose  : 
 //=======================================================================
-GeomFill_Line::GeomFill_Line()
+GeomFill_Line::GeomFill_Line() : myNbPoints(0)
 {
-  myNbPoints = 0;
+  
 }
 
 

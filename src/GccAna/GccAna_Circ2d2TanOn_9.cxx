@@ -34,7 +34,7 @@ GccAna_Circ2d2TanOn::
                         const GccEnt_QualifiedLin&  Qualified2 ,
                         const gp_Circ2d&            OnCirc     ,
                         const Standard_Real                     ):
-   cirsol(1,4)     ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,4)     ,
    qualifier1(1,4) ,
    qualifier2(1,4),
    TheSame1(1,4)   ,
@@ -50,8 +50,8 @@ GccAna_Circ2d2TanOn::
 {
   TheSame1.Init(0);
   TheSame2.Init(0);
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   
   gp_Dir2d dirx(1.,0.);
   if (!(Qualified1.IsEnclosed() ||

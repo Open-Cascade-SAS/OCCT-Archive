@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomFill.hxx>
 
 #include <Geom_Circle.hxx>
@@ -278,7 +280,7 @@ void GeomFill::Knots(const Convert_ParameterisationType  TConv,
 {
   if ((TConv!=Convert_QuasiAngular) && 
       (TConv!=Convert_Polynomial) ) {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real val = 0.;
     for (i=TKnots.Lower(); i<=TKnots.Upper(); i++) {
       TKnots(i) = val;
@@ -317,7 +319,7 @@ void GeomFill::Mults(const Convert_ParameterisationType  TConv,
   default : 
     {
       // Cas rational classsique
-      Standard_Integer i;
+      Standard_Integer i = 0;
       TMults(TMults.Lower())=3;
       for (i=TMults.Lower()+1; i<=TMults.Upper()-1; i++) {
 	TMults(i) = 2;
@@ -348,7 +350,7 @@ Standard_Real GeomFill::GetTolerance(const Convert_ParameterisationType TConv,
   // afin d'eviter des tolerances d'approximation tendant vers 0 !
   Handle(Geom_BSplineCurve) CtoBspl = 
 	GeomConvert::CurveToBSplineCurve(Sect, TConv);
-  Standard_Real Dist;
+  Standard_Real Dist = NAN;
   Dist = CtoBspl->Pole(1).Distance(CtoBspl->Pole(2)) + SpatialTol;
   return Dist*AngularTol/2;
 }
@@ -374,8 +376,8 @@ void GeomFill::GetCircle( const Convert_ParameterisationType  TConv,
 {
   // La classe de convertion
 
-  Standard_Integer i, jj;
-  Standard_Real Cosa,Sina,Angle,Alpha,Cosas2,lambda;
+  Standard_Integer i = 0, jj = 0;
+  Standard_Real Cosa = NAN,Sina = NAN,Angle = NAN,Alpha = NAN,Cosas2 = NAN,lambda = NAN;
   gp_Vec temp, np2;
   Standard_Integer low = Poles.Lower();
   Standard_Integer upp = Poles.Upper();
@@ -459,9 +461,9 @@ Standard_Boolean GeomFill::GetCircle(const Convert_ParameterisationType  TConv,
 				      TColStd_Array1OfReal& Weights, 
 				      TColStd_Array1OfReal& DWeights)
 {
-  Standard_Real Cosa,Sina,Cosas2,Sinas2,Angle,DAngle,Alpha,lambda,Dlambda;
+  Standard_Real Cosa = NAN,Sina = NAN,Cosas2 = NAN,Sinas2 = NAN,Angle = NAN,DAngle = NAN,Alpha = NAN,lambda = NAN,Dlambda = NAN;
   gp_Vec temp, np2, dnp2;
-  Standard_Integer i, jj;
+  Standard_Integer i = 0, jj = 0;
   Standard_Integer NbSpan=(Poles.Length()-1)/2;
   Standard_Integer low = Poles.Lower();
   Standard_Integer upp = Poles.Upper();
@@ -597,11 +599,11 @@ Standard_Boolean GeomFill::GetCircle(const Convert_ParameterisationType  TConv,
 				     TColStd_Array1OfReal& DWeights,
 				     TColStd_Array1OfReal& D2Weights)
 {
-  Standard_Real Cosa,Sina,Cosas2,Sinas2;
-  Standard_Real Angle, DAngle, D2Angle, Alpha;
-  Standard_Real lambda, Dlambda, D2lambda, aux;
+  Standard_Real Cosa = NAN,Sina = NAN,Cosas2 = NAN,Sinas2 = NAN;
+  Standard_Real Angle = NAN, DAngle = NAN, D2Angle = NAN, Alpha = NAN;
+  Standard_Real lambda = NAN, Dlambda = NAN, D2lambda = NAN, aux = NAN;
   gp_Vec temp, dtemp, np2, dnp2, d2np2;
-  Standard_Integer i, jj;
+  Standard_Integer i = 0, jj = 0;
   Standard_Integer NbSpan=(Poles.Length()-1)/2;
   Standard_Integer low = Poles.Lower();
   Standard_Integer upp = Poles.Upper();

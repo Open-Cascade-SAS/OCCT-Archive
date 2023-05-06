@@ -327,7 +327,7 @@ void LDOM_XmlWriter::Write (Standard_OStream& theOStream, const LDOMBasicString&
   {
     case LDOMBasicString::LDOM_Integer:
     {
-      Standard_Integer aValue;
+      Standard_Integer aValue = 0;
       theString.GetInteger (aValue);
 
       TCollection_AsciiString aStrValue (aValue);
@@ -355,7 +355,7 @@ void LDOM_XmlWriter::Write (Standard_OStream& theOStream, const LDOMBasicString&
       const char* aStr = theString.GetString();
       if (aStr)
       {
-        Standard_Integer aLen;
+        Standard_Integer aLen = 0;
         char* encStr = LDOM_CharReference::Encode (aStr, aLen, Standard_False);
         if (aLen > 0)
         {
@@ -408,7 +408,7 @@ void LDOM_XmlWriter::WriteAttribute (Standard_OStream& theOStream, const LDOM_No
   // Integer attribute value
   if (aValueStr.Type() == LDOMBasicString::LDOM_Integer)
   {
-    Standard_Integer anIntValue;
+    Standard_Integer anIntValue = 0;
     aValueStr.GetInteger (anIntValue);
 
     aLength = (Standard_Integer)(20 + strlen (aName));
@@ -429,7 +429,7 @@ void LDOM_XmlWriter::WriteAttribute (Standard_OStream& theOStream, const LDOM_No
   }
   else // String attribute value
   {
-    char* encStr;
+    char* encStr = nullptr;
     const char* aValue = aValueStr.GetString();
     if (aValueStr.Type() == LDOMBasicString::LDOM_AsciiDocClear)
     {

@@ -37,10 +37,10 @@ LDOM_SBuffer::LDOM_StringElem::LDOM_StringElem
 //=======================================================================
 LDOM_SBuffer::LDOM_SBuffer (const Standard_Integer theMaxBuf)
      : myMaxBuf (theMaxBuf), myLength(0),
-       myAlloc (new NCollection_IncAllocator)
+       myCurString(myFirstString), myAlloc (new NCollection_IncAllocator)
 {
   myFirstString = new (myAlloc) LDOM_StringElem (theMaxBuf, myAlloc);
-  myCurString   = myFirstString;
+  
 }
 
 //=======================================================================

@@ -68,7 +68,7 @@ void RWStepVisual_RWTessellatedPointSet::ReadStep (const Handle(StepData_StepRea
     Standard_Integer num2 = sub3;
     for (Standard_Integer i0 = 1; i0 <= nb0; i0++)
     {
-      Standard_Integer anIt0;
+      Standard_Integer anIt0 = 0;
       theData->ReadInteger(num2, i0, "integer", theCheck, anIt0);
       aPointList->SetValue(i0, anIt0);
     }

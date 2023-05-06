@@ -38,10 +38,10 @@ IMPLEMENT_STANDARD_RTTIEXT(CDF_Application,CDM_Application)
 //function : 
 //purpose  : 
 //=======================================================================
-CDF_Application::CDF_Application():myRetrievableStatus(PCDM_RS_OK) 
+CDF_Application::CDF_Application():myDirectory(new CDF_Directory()), myMetaDataDriver(new CDF_FWOSDriver (MetaDataLookUpTable())), myRetrievableStatus(PCDM_RS_OK) 
 {
-  myDirectory      = new CDF_Directory();
-  myMetaDataDriver = new CDF_FWOSDriver (MetaDataLookUpTable());
+  
+  
 }
 
 //=======================================================================

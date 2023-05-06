@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Prs3d.hxx>
 
 #include <gp_Pnt.hxx>
@@ -103,7 +105,7 @@ Standard_Boolean Prs3d::MatchSegment
                   const gp_Pnt& P2,
                   Standard_Real& dist)
 {
-  Standard_Real X1,Y1,Z1,X2,Y2,Z2;
+  Standard_Real X1 = NAN,Y1 = NAN,Z1 = NAN,X2 = NAN,Y2 = NAN,Z2 = NAN;
   P1.Coord(X1,Y1,Z1); P2.Coord(X2,Y2,Z2);
   Standard_Real DX = X2-X1; 
   Standard_Real DY = Y2-Y1; 

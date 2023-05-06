@@ -57,7 +57,7 @@ protected:
 private:
 
 
-  Standard_Integer coordinateSpaceDimension;
+  Standard_Integer coordinateSpaceDimension{};
 
 
 };

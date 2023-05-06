@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWGearPairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -55,7 +57,7 @@ void RWStepKinematics_RWGearPairValue::ReadStep (const Handle(StepData_StepReade
 
   // Own fields of GearPairValue
 
-  Standard_Real aActualRotation1;
+  Standard_Real aActualRotation1 = NAN;
   theData->ReadReal (theNum, 3, "actual_rotation1", theArch, aActualRotation1);
 
   // Initialize entity

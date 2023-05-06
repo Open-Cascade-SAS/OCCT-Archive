@@ -48,7 +48,7 @@ Standard_Boolean GeomConvert_FuncCylinderLSDist::Value(const math_Vector& X,Stan
   Standard_Real anR2 = X(4)*X(4);
 
   F = 0.;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = myPoints->Lower(); i <= myPoints->Upper(); ++i)
   {
     gp_Vec aV(myPoints->Value(i) - aLoc);
@@ -72,7 +72,7 @@ Standard_Boolean GeomConvert_FuncCylinderLSDist::Gradient(const math_Vector& X,m
   Standard_Real x = myDir.X(), y = myDir.Y(), z = myDir.Z();
   G.Init(0.);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = myPoints->Lower(); i <= myPoints->Upper(); ++i)
   {
     gp_Vec aV(myPoints->Value(i) - aLoc);
@@ -110,7 +110,7 @@ Standard_Boolean GeomConvert_FuncCylinderLSDist::Values(const math_Vector& X,Sta
 
   F = 0.;
   G.Init(0.);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = myPoints->Lower(); i <= myPoints->Upper(); ++i)
   {
     gp_Vec aV(myPoints->Value(i) - aLoc);

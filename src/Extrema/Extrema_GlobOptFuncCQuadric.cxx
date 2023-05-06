@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement
 
+#include <math.h>
+
 #include <Extrema_GlobOptFuncCQuadric.hxx>
 
 #include <gp_Pnt.hxx>
@@ -25,7 +27,7 @@
 void Extrema_GlobOptFuncCQuadric::value(Standard_Real ct,
                                         Standard_Real &F)
 {
-  Standard_Real u, v;
+  Standard_Real u = NAN, v = NAN;
   //
   gp_Pnt aCP = myC->Value(ct);
   switch (mySType)
@@ -71,7 +73,7 @@ void Extrema_GlobOptFuncCQuadric::value(Standard_Real ct,
     gp_Pnt aPS = myS->Value(u, v);
     F = Min(F, aCP.SquareDistance(aPS));
   }
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 0; i < 4; ++i)
   {
     F = Min(F, aCP.SquareDistance(myPTrim[i]));
@@ -101,10 +103,10 @@ Standard_Boolean Extrema_GlobOptFuncCQuadric::checkInputData(const math_Vector  
 //=======================================================================
 Extrema_GlobOptFuncCQuadric::Extrema_GlobOptFuncCQuadric(const Adaptor3d_Curve   *C,
                                                      const Adaptor3d_Surface *S)
-: myC(C)
+: myC(C), myTf(myC->FirstParameter()), myTl(myC->LastParameter())
 {
-  myTf = myC->FirstParameter();
-  myTl = myC->LastParameter();
+  
+  
   Standard_Real anUf = S->FirstUParameter(), anUl = S->LastUParameter();
   Standard_Real aVf = S->FirstVParameter(), aVl = S->LastVParameter();
   LoadQuad(S, anUf, anUl, aVf, aVl);
@@ -114,10 +116,10 @@ Extrema_GlobOptFuncCQuadric::Extrema_GlobOptFuncCQuadric(const Adaptor3d_Curve  
 //purpose  : Constructor
 //=======================================================================
 Extrema_GlobOptFuncCQuadric::Extrema_GlobOptFuncCQuadric(const Adaptor3d_Curve *C)
-  : myC(C)
+  : myC(C), myTf(myC->FirstParameter()), myTl(myC->LastParameter())
 {
-  myTf = myC->FirstParameter();
-  myTl = myC->LastParameter();
+  
+  
 }
 //=======================================================================
 //function : Extrema_GlobOptFuncCQuadric
@@ -209,7 +211,7 @@ Standard_Integer Extrema_GlobOptFuncCQuadric::NbVariables() const
 Standard_Boolean Extrema_GlobOptFuncCQuadric::Value(const math_Vector &X,
                                                     Standard_Real     &F)
 {
-  Standard_Real ct;
+  Standard_Real ct = NAN;
   if (!checkInputData(X, ct))
     return Standard_False;
 
@@ -228,7 +230,7 @@ Standard_Boolean Extrema_GlobOptFuncCQuadric::Value(const math_Vector &X,
 void Extrema_GlobOptFuncCQuadric::QuadricParameters(const math_Vector& theCT,
   math_Vector& theUV ) const
 {
-  Standard_Real u, v;
+  Standard_Real u = NAN, v = NAN;
   //
   //Arrays of extremity points parameters correspond to array of corner
   //points  myPTrim[] 
@@ -279,7 +281,7 @@ void Extrema_GlobOptFuncCQuadric::QuadricParameters(const math_Vector& theCT,
     gp_Pnt aPS = myS->Value(u, v);
     F = aCP.SquareDistance(aPS);
   }
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 0; i < 4; ++i)
   {
     Standard_Real Fi = aCP.SquareDistance(myPTrim[i]);

@@ -67,7 +67,7 @@ DEFINE_STANDARD_RTTIEXT(StepKinematics_SurfacePair, StepKinematics_HighOrderKine
 private:
   Handle(StepGeom_Surface) mySurface1;
   Handle(StepGeom_Surface) mySurface2;
-  Standard_Boolean myOrientation;
+  Standard_Boolean myOrientation{};
 
 };
 #endif // _StepKinematics_SurfacePair_HeaderFile_

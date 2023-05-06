@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepGeom_RWSuParameters.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -51,22 +53,22 @@ void RWStepGeom_RWSuParameters::ReadStep (const Handle(StepData_StepReaderData)&
 
   // Own fields of SuParameters
 
-  Standard_Real aA;
+  Standard_Real aA = NAN;
   theData->ReadReal (theNum, 2, "a", theAch, aA);
 
-  Standard_Real aAlpha;
+  Standard_Real aAlpha = NAN;
   theData->ReadReal (theNum, 3, "alpha", theAch, aAlpha);
 
-  Standard_Real aB;
+  Standard_Real aB = NAN;
   theData->ReadReal (theNum, 4, "b", theAch, aB);
 
-  Standard_Real aBeta;
+  Standard_Real aBeta = NAN;
   theData->ReadReal (theNum, 5, "beta", theAch, aBeta);
 
-  Standard_Real aC;
+  Standard_Real aC = NAN;
   theData->ReadReal (theNum, 6, "c", theAch, aC);
 
-  Standard_Real aGamma;
+  Standard_Real aGamma = NAN;
   theData->ReadReal (theNum, 7, "gamma", theAch, aGamma);
 
   // Initialize entity

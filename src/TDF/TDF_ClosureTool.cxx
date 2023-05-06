@@ -117,7 +117,7 @@ void TDF_ClosureTool::LabelAttributes
  const TDF_ClosureMode& aMode) 
 {
   Handle(TDF_DataSet) tmpDataSet;
-  Standard_Boolean BindLabel;
+  Standard_Boolean BindLabel = 0;
   TDF_MapIteratorOfAttributeMap attMItr;
   TDF_MapIteratorOfLabelMap labMItr;
 

@@ -214,8 +214,8 @@ void FSD_File::ReadLine(TCollection_AsciiString& buffer)
 
 void FSD_File::WriteExtendedLine(const TCollection_ExtendedString& buffer)
 {
-  Standard_ExtString extBuffer;
-  Standard_Integer   i,c,d;
+  Standard_ExtString extBuffer = nullptr;
+  Standard_Integer   i = 0,c = 0,d = 0;
 
   extBuffer = buffer.ToExtString();
 
@@ -237,7 +237,7 @@ void FSD_File::WriteExtendedLine(const TCollection_ExtendedString& buffer)
 void FSD_File::ReadExtendedLine(TCollection_ExtendedString& buffer)
 {
   char c = '\0';
-  Standard_ExtCharacter i = 0,j,count = 0;
+  Standard_ExtCharacter i = 0,j = 0,count = 0;
   Standard_Boolean fin = Standard_False;
   Standard_CString tg = ENDOFNORMALEXTENDEDSECTION;
  
@@ -302,7 +302,7 @@ void FSD_File::ReadChar(TCollection_AsciiString& buffer, const Standard_Size rsi
 void FSD_File::ReadString(TCollection_AsciiString& buffer)
 {
   char Buffer[8193];
-  char *bpos;
+  char *bpos = nullptr;
   Standard_Boolean IsEnd = Standard_False,isFirstTime = Standard_True;
   
   buffer.Clear();
@@ -339,9 +339,9 @@ void FSD_File::ReadString(TCollection_AsciiString& buffer)
 void FSD_File::ReadWord(TCollection_AsciiString& buffer)
 {
   char c = '\0';
-  char b[8193],*tmpb;
+  char b[8193],*tmpb = nullptr;
   Standard_Boolean IsEnd = Standard_False;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   tmpb = b;
   memset(b,'\0',8193);
@@ -423,7 +423,7 @@ Storage_BaseDriver& FSD_File::PutReference(const Standard_Integer aValue)
 
 Storage_BaseDriver& FSD_File::PutCharacter(const Standard_Character aValue)
 {
-  unsigned short i;
+  unsigned short i = 0;
 
   i = aValue;
   myStream << i << " ";
@@ -647,7 +647,7 @@ void FSD_File::WriteInfo(const Standard_Integer nbObj,
 			 const TCollection_ExtendedString& dataType,
 			 const TColStd_SequenceOfAsciiString& userInfo) 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   myStream << nbObj;
   myStream << "\n";
@@ -730,7 +730,7 @@ void FSD_File::ReadInfo(Standard_Integer& nbObj,
   ReadLine(appVersion);
   ReadExtendedLine(dataType);
 
-  Standard_Integer i,len = 0;
+  Standard_Integer i = 0,len = 0;
 
   if (!(myStream >> len)) throw Storage_StreamTypeMismatchError();
 
@@ -785,7 +785,7 @@ Storage_Error FSD_File::BeginWriteCommentSection()
 
 void FSD_File::WriteComment(const TColStd_SequenceOfExtendedString& aCom)
 {
- Standard_Integer i,aSize;
+ Standard_Integer i = 0,aSize = 0;
 
  aSize = aCom.Length();
  myStream << aSize << "\n";
@@ -827,7 +827,7 @@ Storage_Error FSD_File::BeginReadCommentSection()
 void FSD_File::ReadComment(TColStd_SequenceOfExtendedString& aCom)
 {
   TCollection_ExtendedString line;
-  Standard_Integer           len,i;
+  Standard_Integer           len = 0,i = 0;
 
   if (!(myStream >> len)) throw Storage_StreamTypeMismatchError();
   
@@ -914,7 +914,7 @@ Storage_Error FSD_File::BeginReadTypeSection()
 
 Standard_Integer FSD_File::TypeSectionSize() 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   if (!(myStream >> i)) throw Storage_StreamTypeMismatchError();
 
@@ -1010,7 +1010,7 @@ Storage_Error FSD_File::BeginReadRootSection()
 
 Standard_Integer FSD_File::RootSectionSize() 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   if (!(myStream >> i)) throw Storage_StreamTypeMismatchError();
   
@@ -1106,7 +1106,7 @@ Storage_Error FSD_File::BeginReadRefSection()
 
 Standard_Integer FSD_File::RefSectionSize() 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   if (!(myStream >> i)) throw Storage_StreamTypeMismatchError();
   FlushEndOfLine();

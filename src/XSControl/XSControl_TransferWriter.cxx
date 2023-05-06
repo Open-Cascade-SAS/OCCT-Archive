@@ -182,7 +182,7 @@ Interface_CheckIterator XSControl_TransferWriter::CheckList () const
 {
   Interface_CheckIterator  chl;
   if (myTransferWriter.IsNull()) return chl;
-  Standard_Integer i, nb = myTransferWriter->NbMapped();
+  Standard_Integer i = 0, nb = myTransferWriter->NbMapped();
   for (i = 1; i <= nb; i ++) {
     DeclareAndCast(Transfer_SimpleBinderOfTransient,tb,myTransferWriter->MapItem(i));
     if (tb.IsNull()) continue;
@@ -206,7 +206,7 @@ Interface_CheckIterator XSControl_TransferWriter::ResultCheckList
 {
   Interface_CheckIterator  chl;
   if (myTransferWriter.IsNull()) return chl;
-  Standard_Integer i, nb = myTransferWriter->NbMapped();
+  Standard_Integer i = 0, nb = myTransferWriter->NbMapped();
   for (i = 1; i <= nb; i ++) {
     DeclareAndCast(Transfer_SimpleBinderOfTransient,tb,myTransferWriter->MapItem(i));
     if (tb.IsNull()) continue;

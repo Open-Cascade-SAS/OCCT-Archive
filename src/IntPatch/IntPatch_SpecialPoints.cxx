@@ -43,18 +43,18 @@ public:
   {
   };
   
-  virtual Standard_Integer NbVariables() const
+  Standard_Integer NbVariables() const override
   {
     return 3;
   };
 
-  virtual Standard_Integer NbEquations() const
+  Standard_Integer NbEquations() const override
   {
     return 3;
   }
 
-  virtual Standard_Boolean Value(const math_Vector& theX,
-                                 math_Vector& theF)
+  Standard_Boolean Value(const math_Vector& theX,
+                                 math_Vector& theF) override
   {
     try
     {
@@ -74,8 +74,8 @@ public:
     return Standard_True;
   };
 
-  virtual Standard_Boolean Derivatives(const math_Vector& theX,
-                                       math_Matrix& theD)
+  Standard_Boolean Derivatives(const math_Vector& theX,
+                                       math_Matrix& theD) override
   {
     try
     {
@@ -112,9 +112,9 @@ public:
     return Standard_True;
   };
 
-  virtual Standard_Boolean Values (const math_Vector& theX,
+  Standard_Boolean Values (const math_Vector& theX,
                                    math_Vector& theF,
-                                   math_Matrix& theD)
+                                   math_Matrix& theD) override
   {
     if(!Value(theX, theF))
       return Standard_False;

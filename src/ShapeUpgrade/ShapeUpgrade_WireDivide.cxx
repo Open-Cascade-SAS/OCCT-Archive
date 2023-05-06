@@ -19,6 +19,8 @@
 //    abv 14.07.99 dealing with edges without 3d curve
 //    svv 10.01.00 porting on DEC
 
+#include <math.h>
+
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -67,15 +69,15 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_WireDivide,ShapeUpgrade_Tool)
 //purpose  : 
 //=======================================================================
 ShapeUpgrade_WireDivide::ShapeUpgrade_WireDivide():
-       ShapeUpgrade_Tool(), myStatus(0)
+       ShapeUpgrade_Tool(), myStatus(0), mySplitCurve3dTool(new ShapeUpgrade_SplitCurve3d), mySplitCurve2dTool(new ShapeUpgrade_SplitCurve2d), myTransferParamTool(new ShapeAnalysis_TransferParametersProj), myEdgeMode(2), myFixSmallCurveTool(new ShapeUpgrade_FixSmallCurves), myEdgeDivide(new ShapeUpgrade_EdgeDivide)
 {
 //  if (ShapeUpgrade::Debug()) std::cout <<"ShapeUpgrade_WireDivide"<<std::endl;
-  mySplitCurve3dTool = new ShapeUpgrade_SplitCurve3d;
-  mySplitCurve2dTool = new ShapeUpgrade_SplitCurve2d;
-  myTransferParamTool = new ShapeAnalysis_TransferParametersProj;
-  myEdgeMode = 2;
-  myFixSmallCurveTool = new ShapeUpgrade_FixSmallCurves; 
-  myEdgeDivide = new ShapeUpgrade_EdgeDivide;
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -167,8 +169,8 @@ void ShapeUpgrade_WireDivide::SetSurface(const Handle(Geom_Surface)& S,
 //purpose  : 
 //=======================================================================
 
-static void CorrectSplitValues(const Handle(TColStd_HSequenceOfReal) orig3d,
-			       const Handle(TColStd_HSequenceOfReal) orig2d,
+static void CorrectSplitValues(const Handle(TColStd_HSequenceOfReal)& orig3d,
+			       const Handle(TColStd_HSequenceOfReal)& orig2d,
 			       Handle(TColStd_HSequenceOfReal) new2d,
 			       Handle(TColStd_HSequenceOfReal) new3d)
 {
@@ -182,7 +184,7 @@ static void CorrectSplitValues(const Handle(TColStd_HSequenceOfReal) orig3d,
   Standard_Real Last3d = orig3d->Value(len3d);
   Standard_Real Last2d = orig2d->Value(len2d);
 
-  Standard_Integer i;// svv #1
+  Standard_Integer i = 0;// svv #1
   for( i = 1; i <= len3d ; i++) {
     Standard_Real par = new2d->Value(i);
     Standard_Integer index = 0;
@@ -232,7 +234,7 @@ static void CorrectSplitValues(const Handle(TColStd_HSequenceOfReal) orig3d,
     }
   }
   if(new2d->Value(len3d) > Last3d) {
-    Standard_Integer ind; // svv #1
+    Standard_Integer ind = 0; // svv #1
     for( ind = len3d; ind > 1 && !fixNew2d(ind); ind--);
     Standard_Real lastFix = new2d->Value(ind);
     for(i = len3d; i >= ind; i--) { 
@@ -257,7 +259,7 @@ static void CorrectSplitValues(const Handle(TColStd_HSequenceOfReal) orig3d,
     }
   }
   if(new3d->Value(len2d) > Last2d) {
-    Standard_Integer ind; // svv #1
+    Standard_Integer ind = 0; // svv #1
     for(ind = len2d; ind > 1 && !fixNew3d(ind); ind--);
     Standard_Real lastFix = new3d->Value(ind);
     for(i = len2d; i >= ind; i--) { 
@@ -364,7 +366,7 @@ void ShapeUpgrade_WireDivide::Perform ()
       Handle(TColGeom2d_HArray1OfCurve) theSegments2dR;
       if ( isSeam ) {
 	Handle(Geom2d_Curve) c2;
-	Standard_Real f2, l2;    
+	Standard_Real f2 = NAN, l2 = NAN;    
 //smh#8
 	TopoDS_Shape tmpE = E.Reversed();
 	TopoDS_Edge erev = TopoDS::Edge (tmpE );
@@ -436,7 +438,7 @@ void ShapeUpgrade_WireDivide::Perform ()
 	  TopoDS_Vertex aVold = TopoDS::Vertex(aItv.Value());
 	  aSeqNMVertices.Append(aVold);
 	  gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aVold));
-	  Standard_Real ppar;
+	  Standard_Real ppar = NAN;
 	  gp_Pnt pproj;
 	  if(!c3d.IsNull())
 	    sac.Project(c3d,aP,Precision(),pproj,ppar,af,al,Standard_False);
@@ -490,7 +492,7 @@ void ShapeUpgrade_WireDivide::Perform ()
       FixSmallCurveTool->SetSplitCurve2dTool(theSplit2dTool);
       FixSmallCurveTool->SetPrecision(MinTolerance());
       Standard_Integer Savnum =0;
-      Standard_Real SavParf;
+      Standard_Real SavParf = NAN;
       Standard_Integer Small = 0;
       for ( Standard_Integer icurv = 1; icurv <= nbc; icurv++ ) {
       
@@ -505,7 +507,7 @@ void ShapeUpgrade_WireDivide::Perform ()
 	// construction of the intermediate Vertex
 	TopoDS_Vertex V;
 	if ( icurv <= nbc && nbc != 1 && ! isDeg ) {
-	  Standard_Real par,parf /*,SavParl*/;
+	  Standard_Real par = NAN,parf = NAN /*,SavParl*/;
           //Standard_Real SaveParf; // SaveParf not used - see below (skl)
 	  gp_Pnt P,P1,PM;
 	  // if edge has 3d curve, take point from it
@@ -629,7 +631,7 @@ void ShapeUpgrade_WireDivide::Perform ()
 	
         Standard_Real f3d = 0., l3d =0.;
         if(!Savnum) Savnum = icurv;
-	Standard_Boolean srNew;
+	Standard_Boolean srNew = 0;
 	if(!theNewCurve3d.IsNull()) {
 	  if(theNewCurve3d->IsKind(STANDARD_TYPE(Geom_BoundedCurve))) {
 	    f3d = theNewCurve3d->FirstParameter();
@@ -668,7 +670,7 @@ void ShapeUpgrade_WireDivide::Perform ()
 	sbe.CopyRanges(newEdge,E, alpha, beta);*/
 	Savnum =0;
 	Handle(Geom2d_Curve) c2dTmp;
-	Standard_Real setF, setL;
+	Standard_Real setF = NAN, setL = NAN;
 	if( ! myFace.IsNull() && sae.PCurve (newEdge, myFace, c2dTmp, setF, setL, Standard_False))
 	  srNew &= ( (setF==f2d) && (setL==l2d) );
 

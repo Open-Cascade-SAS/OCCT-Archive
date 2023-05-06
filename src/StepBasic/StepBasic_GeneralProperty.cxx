@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_GeneralProperty,Standard_Transient)
 //function : StepBasic_GeneralProperty
 //purpose  : 
 //=======================================================================
-StepBasic_GeneralProperty::StepBasic_GeneralProperty ()
+StepBasic_GeneralProperty::StepBasic_GeneralProperty () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

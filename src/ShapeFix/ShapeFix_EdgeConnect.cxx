@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_GCurve.hxx>
 #include <BRep_TEdge.hxx>
@@ -149,7 +151,7 @@ void ShapeFix_EdgeConnect::Build ()
 
   TColgp_SequenceOfXYZ thePositions;
   gp_XYZ thePosition;
-  Standard_Real theMaxDev;
+  Standard_Real theMaxDev = NAN;
   BRep_Builder theBuilder;
 
   // Iterate on shared vertices
@@ -182,7 +184,7 @@ void ShapeFix_EdgeConnect::Build ()
 	Handle(BRep_GCurve) GC = Handle(BRep_GCurve)::DownCast(theCIterator.Value());
 	if ( GC.IsNull() ) continue;
 	// Calculate vertex position for this curve
-	Standard_Real theFParam, theLParam;
+	Standard_Real theFParam = NAN, theLParam = NAN;
 	GC->Range( theFParam, theLParam );
 	gp_Pnt thePoint;
 	if (use_start) {
@@ -196,7 +198,7 @@ void ShapeFix_EdgeConnect::Build ()
       }
     }
       
-    Standard_Integer i, theNbPos = thePositions.Length();
+    Standard_Integer i = 0, theNbPos = thePositions.Length();
 
     // Calculate vertex position
     thePosition = gp_XYZ(0.,0.,0.);

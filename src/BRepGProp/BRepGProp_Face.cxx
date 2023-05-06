@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box2d.hxx>
 #include <BndLib_Add2dCurve.hxx>
 #include <BRepGProp_Face.hxx>
@@ -41,7 +43,7 @@ static const Standard_Real Epsilon1 = Epsilon(1.);
 //=======================================================================
 Standard_Integer BRepGProp_Face::UIntegrationOrder() const {
 
-  Standard_Integer Nu;
+  Standard_Integer Nu = 0;
   switch (mySurface.GetType())
   {
 
@@ -77,7 +79,7 @@ Standard_Integer BRepGProp_Face::UIntegrationOrder() const {
 
 Standard_Integer BRepGProp_Face::VIntegrationOrder() const
 {
- Standard_Integer Nv;
+ Standard_Integer Nv = 0;
  switch (mySurface.GetType()) {
 
  case GeomAbs_Plane :
@@ -113,7 +115,7 @@ Standard_Integer BRepGProp_Face::VIntegrationOrder() const
 
 Standard_Integer BRepGProp_Face::IntegrationOrder() const 
 {
-  Standard_Integer N;
+  Standard_Integer N = 0;
 
   switch (myCurve.GetType()) {
     
@@ -176,7 +178,7 @@ void BRepGProp_Face::Bounds(Standard_Real& U1,
 
 bool BRepGProp_Face::Load(const TopoDS_Edge& E)
 { 
-  Standard_Real a,b;
+  Standard_Real a = NAN,b = NAN;
   Handle(Geom2d_Curve) C = BRep_Tool::CurveOnSurface(E, mySurface.Face(), a,b);
   if (C.IsNull())
   {
@@ -240,7 +242,7 @@ static inline Standard_Real LCoeff(const Standard_Real Eps){
 
 Standard_Integer BRepGProp_Face::SIntOrder(const Standard_Real Eps) const
 {
-  Standard_Integer Nv, Nu;
+  Standard_Integer Nv = 0, Nu = 0;
   switch (mySurface.GetType()) {
   case GeomAbs_Plane:  
     Nu = 1; Nv = 1; break;
@@ -273,7 +275,7 @@ Standard_Integer BRepGProp_Face::SIntOrder(const Standard_Real Eps) const
 
 Standard_Integer BRepGProp_Face::SUIntSubs() const
 {
-  Standard_Integer N;
+  Standard_Integer N = 0;
   switch (mySurface.GetType()) {
   case GeomAbs_Plane:  
     N = 2;  break;
@@ -302,7 +304,7 @@ Standard_Integer BRepGProp_Face::SUIntSubs() const
 
 Standard_Integer BRepGProp_Face::SVIntSubs() const
 {
-  Standard_Integer N;
+  Standard_Integer N = 0;
   switch (mySurface.GetType()) {
   case GeomAbs_Plane:  
     N = 2;  break;
@@ -389,7 +391,7 @@ Standard_Integer BRepGProp_Face::LIntOrder(const Standard_Real Eps) const
   Bnd_Box2d aBox;
 
   BndLib_Add2dCurve::Add(myCurve, 1.e-7, aBox);
-  Standard_Real aXmin, aXmax, aYmin, aYmax;
+  Standard_Real aXmin = NAN, aXmax = NAN, aYmin = NAN, aYmax = NAN;
   aBox.Get(aXmin, aYmin, aXmax, aYmax);
   Standard_Real aVmin = mySurface.FirstVParameter();
   Standard_Real aVmax = mySurface.LastVParameter();
@@ -403,7 +405,7 @@ Standard_Integer BRepGProp_Face::LIntOrder(const Standard_Real Eps) const
 
 
 //  Standard_Real NL, NS = Max(SIntOrder(1.0)*anRInt/LIntSubs(), 1);
-  Standard_Real NL, NS = Max(SIntOrder(1.)*anRInt/aLSubs, 1);
+  Standard_Real NL = NAN, NS = Max(SIntOrder(1.)*anRInt/aLSubs, 1);
   switch (myCurve.GetType()) {
   case GeomAbs_Line:  
     NL = 1;  break;
@@ -441,7 +443,7 @@ Standard_Integer BRepGProp_Face::LIntOrder(const Standard_Real Eps) const
 
 Standard_Integer BRepGProp_Face::LIntSubs() const
 {
-  Standard_Integer N;
+  Standard_Integer N = 0;
   switch (myCurve.GetType()) {
   case GeomAbs_Line:  
     N = 2;  break;
@@ -496,11 +498,11 @@ void BRepGProp_Face::LKnots(TColStd_Array1OfReal& Knots) const
 void BRepGProp_Face::Load(const Standard_Boolean IsFirstParam,
 			  const GeomAbs_IsoType  theIsoType) 
 {
-  Standard_Real aLen;
-  Standard_Real aU1;
-  Standard_Real aU2;
-  Standard_Real aV1;
-  Standard_Real aV2;
+  Standard_Real aLen = NAN;
+  Standard_Real aU1 = NAN;
+  Standard_Real aU2 = NAN;
+  Standard_Real aV1 = NAN;
+  Standard_Real aV2 = NAN;
   gp_Pnt2d      aLoc;
   gp_Dir2d      aDir;
 
@@ -565,7 +567,7 @@ static void GetRealKnots(const Standard_Real                  theMin,
     aStartI = iU;
 
   Standard_Integer aNbNode = Max(0, aEndI - aStartI + 1) + 2;
-  Standard_Integer j;
+  Standard_Integer j = 0;
 
   theRealKnots = new TColStd_HArray1OfReal(1, aNbNode);
   theRealKnots->SetValue(1,       theMin);
@@ -590,7 +592,7 @@ static void GetCurveKnots(const Standard_Real                  theMin,
 
   if (isSBSpline) {
     Handle(Geom2d_BSplineCurve)   aCrv;
-    Standard_Integer              aNbKnots;
+    Standard_Integer              aNbKnots = 0;
     Handle(TColStd_HArray1OfReal) aCrvKnots;
 
     aCrv     = Handle(Geom2d_BSplineCurve)::DownCast(theCurve.Curve());
@@ -632,7 +634,7 @@ void BRepGProp_Face::GetUKnots
   if (myIsUseSpan && (isSBSpline || isCBSpline)) {
     // Using span decomposition for BSpline.
     Handle(TColStd_HArray1OfReal) aKnots;
-    Standard_Integer              aNbKnots;
+    Standard_Integer              aNbKnots = 0;
 
     if (isSBSpline) {
       // Get U knots of BSpline surface.
@@ -682,7 +684,7 @@ void BRepGProp_Face::GetTKnots
   if (myIsUseSpan && isBSpline) {
     // Using span decomposition for BSpline.
     Handle(TColStd_HArray1OfReal) aSurfKnots;
-    Standard_Integer              aNbKnots;
+    Standard_Integer              aNbKnots = 0;
 
     // Get V knots of BSpline surface.
     Handle(Geom_Surface)        aSurf = mySurface.Surface().Surface();

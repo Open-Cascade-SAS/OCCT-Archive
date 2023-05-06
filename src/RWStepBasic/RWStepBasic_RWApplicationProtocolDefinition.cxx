@@ -47,7 +47,7 @@ void RWStepBasic_RWApplicationProtocolDefinition::ReadStep
 
 	// --- own field : applicationProtocolYear ---
 
-	Standard_Integer aApplicationProtocolYear;
+	Standard_Integer aApplicationProtocolYear = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadInteger (num,3,"application_protocol_year",ach,aApplicationProtocolYear);
 

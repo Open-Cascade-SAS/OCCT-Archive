@@ -35,7 +35,7 @@ GccAna_CircLin2dBisec::
    GccAna_CircLin2dBisec (const gp_Circ2d& Circle ,
 		          const gp_Lin2d&  Line   ):
 
-   circle(Circle),
+   NbrSol(2), WellDone(Standard_True), circle(Circle),
    line(Line)
 {
 
@@ -47,8 +47,8 @@ GccAna_CircLin2dBisec::
 //            - WellDone (Boolean showing success or failure of algorithm)+
 //=========================================================================
 
-   NbrSol = 2;
-   WellDone = Standard_True;
+   
+   
  }
 
 //=========================================================================
@@ -87,7 +87,7 @@ Handle(GccInt_Bisec) GccAna_CircLin2dBisec::
     //       ==========================================================
   }
   else {
-    Standard_Integer signe;
+    Standard_Integer signe = 0;
     if ((-ydir*(xcencir-xloc)+xdir*(ycencir-yloc)) > 0.0) {
       signe = 1;
     }

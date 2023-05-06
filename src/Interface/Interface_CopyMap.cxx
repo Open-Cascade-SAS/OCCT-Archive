@@ -23,8 +23,8 @@ IMPLEMENT_STANDARD_RTTIEXT(Interface_CopyMap,Interface_CopyControl)
 //  CopyMap : rien de plus qu une Map passive
 Interface_CopyMap::Interface_CopyMap
   (const Handle(Interface_InterfaceModel)& amodel)
-    : theres (0,amodel->NbEntities())
-      {  themod = amodel;  }
+    : themod(amodel), theres (0,amodel->NbEntities())
+      {   }
 
 
     void Interface_CopyMap::Clear ()

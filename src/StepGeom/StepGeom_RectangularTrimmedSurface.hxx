@@ -84,12 +84,12 @@ private:
 
 
   Handle(StepGeom_Surface) basisSurface;
-  Standard_Real u1;
-  Standard_Real u2;
-  Standard_Real v1;
-  Standard_Real v2;
-  Standard_Boolean usense;
-  Standard_Boolean vsense;
+  Standard_Real u1{};
+  Standard_Real u2{};
+  Standard_Real v1{};
+  Standard_Real v2{};
+  Standard_Boolean usense{};
+  Standard_Boolean vsense{};
 
 
 };

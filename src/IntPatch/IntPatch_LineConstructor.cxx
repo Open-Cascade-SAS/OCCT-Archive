@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor2d_Curve2d.hxx>
 #include <Adaptor3d_TopolTool.hxx>
 #include <IntPatch_ALine.hxx>
@@ -51,11 +53,11 @@ static void Recadre(const Handle(Adaptor3d_Surface)& myHS1,
 		    Standard_Real& v1,
 		    Standard_Real& u2,
 		    Standard_Real& v2) { 
-  Standard_Real f,l,lmf;
+  Standard_Real f = NAN,l = NAN,lmf = NAN;
   GeomAbs_SurfaceType typs1 = myHS1->GetType();
   GeomAbs_SurfaceType typs2 = myHS2->GetType();
 
-  Standard_Boolean myHS1IsUPeriodic,myHS1IsVPeriodic;
+  Standard_Boolean myHS1IsUPeriodic = 0,myHS1IsVPeriodic = 0;
   switch (typs1) { 
   case GeomAbs_Cylinder:
   case GeomAbs_Cone:
@@ -78,7 +80,7 @@ static void Recadre(const Handle(Adaptor3d_Surface)& myHS1,
      }
   }
 
-  Standard_Boolean myHS2IsUPeriodic,myHS2IsVPeriodic;
+  Standard_Boolean myHS2IsUPeriodic = 0,myHS2IsVPeriodic = 0;
   switch (typs2) { 
   case GeomAbs_Cylinder:
   case GeomAbs_Cone:
@@ -206,7 +208,7 @@ static Standard_Real LocalFirstParameter (const Handle(IntPatch_Line)& L)
 	firstp = alin->FirstPoint().ParameterOnLine();
       }
       else {
-	Standard_Boolean included;
+	Standard_Boolean included = 0;
 	firstp = alin->FirstParameter(included);
 	if (!included) {
 	  firstp +=Epsilon(firstp);
@@ -286,7 +288,7 @@ static Standard_Real LocalLastParameter (const Handle(IntPatch_Line)& L)
 	lastp = alin->LastPoint().ParameterOnLine();
       }
       else {
-	Standard_Boolean included;
+	Standard_Boolean included = 0;
 	lastp = alin->LastParameter(included);
 	if (!included) {
 	  lastp -=Epsilon(lastp);
@@ -392,7 +394,7 @@ static Standard_Integer AppendSameVertexA(Handle(IntPatch_ALine)&alig,
 				  const Handle(IntPatch_ALine)& L,
 				  const Standard_Integer index,
 				  Standard_Integer *TabIndex) { 
-  Standard_Integer i,a,n;
+  Standard_Integer i = 0,a = 0,n = 0;
   a=0;
   n=L->NbVertex();
   const IntPatch_Point& Vtxindex = L->Vertex(index);
@@ -423,9 +425,9 @@ static Standard_Integer AppendSameVertexG(Handle(IntPatch_GLine)& glig,const Han
 				  const Standard_Integer index,
 				  const Standard_Real decal,
 				  Standard_Integer *TabIndex) { 
-  Standard_Integer i,a,n;
-  Standard_Real p1,p2,d; //,tol
-  Standard_Boolean aajouter;
+  Standard_Integer i = 0,a = 0,n = 0;
+  Standard_Real p1 = NAN,p2 = NAN,d = NAN; //,tol
+  Standard_Boolean aajouter = 0;
   a=0;
   n=L->NbVertex();
   const IntPatch_Point& Vtxindex = L->Vertex(index);
@@ -474,7 +476,7 @@ static Standard_Integer AppendSameVertexW(Handle(IntPatch_WLine)& wlig,
 				  const Standard_Integer index,
 				  const Standard_Real par,
 				  Standard_Integer *TabIndex) { 
-  Standard_Integer i,a,n;
+  Standard_Integer i = 0,a = 0,n = 0;
   a=0;
   n=L->NbVertex();
   const IntPatch_Point& Vtxindex = L->Vertex(index);
@@ -490,7 +492,7 @@ static Standard_Integer AppendSameVertexW(Handle(IntPatch_WLine)& wlig,
       //-- le debugger voit 2 fois la variable d ici. ???? -> d_2
       if(d_2 <= thetol2) { 
 	Vtxi.SetParameter(par);
-	Standard_Real u1,v1,u2,v2;
+	Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
 	Vtxindex.ParametersOnS1(u1,v1);
 	Vtxindex.ParametersOnS2(u2,v2);
 	Vtxi.SetParameters(u1,v1,u2,v2);
@@ -513,7 +515,7 @@ static Standard_Integer AppendSameVertexR(Handle(IntPatch_RLine)&rlig,
 				  const Handle(IntPatch_RLine)& L,
 				  const Standard_Integer index,
 				  Standard_Integer *TabIndex) { 
-  Standard_Integer i,a,n;
+  Standard_Integer i = 0,a = 0,n = 0;
   a=0;
   n=L->NbVertex();
   const IntPatch_Point& Vtxindex = L->Vertex(index);
@@ -824,7 +826,7 @@ static Standard_Boolean TestWLineIsARLine(const IntPatch_SequenceOfLine& slinref
         Standard_Boolean onFirst = is==0;
         if((onFirst && rlin->IsArcOnS1()) || (!onFirst && rlin->IsArcOnS2())) {
           Handle(Adaptor2d_Curve2d) arc;
-          Standard_Real u,v,u1,v1;
+          Standard_Real u = NAN,v = NAN,u1 = NAN,v1 = NAN;
           if (onFirst) {
             arc = rlin->ArcOnS1();
             POn2S.ParametersOnS1(u,v);
@@ -867,16 +869,16 @@ static Standard_Boolean TestIfWLineIsRestriction(const IntPatch_SequenceOfLine& 
 					  Standard_Real TolArc) { 
 
   Standard_Integer NbPnts = wlin->NbPnts();
-  Standard_Integer allon1=0,allon2=0,i;
+  Standard_Integer allon1=0,allon2=0,i = 0;
   Standard_Real tol2d1=0., tol2d2=0.;
   for(i=1;i<=NbPnts;i++) { 
     const IntSurf_PntOn2S& Pmid = wlin->Point(i);
-    Standard_Real u1,v1,u2,v2;
+    Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
     Pmid.Parameters(u1,v1,u2,v2);
     //-- Estimation d un majorant de Toluv a partir de Tol
     gp_Pnt ap;
     gp_Vec ad1u,ad1v;
-    Standard_Real tol;
+    Standard_Real tol = NAN;
     //------------------------------------------
     S1->D1(u1,v1,ap,ad1u,ad1v);
     tol = ComputeParametricTolerance(TolArc,ad1u,ad1v);
@@ -955,7 +957,7 @@ static void TestWLineToRLine(const IntPatch_SequenceOfLine& slinref,
   Standard_Integer midInd = (ParamMaxOnLine + ParamMinOnLine) / 2;
 
   TColStd_SequenceOfInteger indicesV1,indicesV2;
-  Standard_Integer iv;
+  Standard_Integer iv = 0;
   for (iv=1; iv <= nbvtx; iv++) {
     Standard_Integer plin = (Standard_Integer) WLine->Vertex(iv).ParameterOnLine();
     if (plin == ParamMinOnLine) indicesV1.Append(iv);
@@ -970,7 +972,7 @@ static void TestWLineToRLine(const IntPatch_SequenceOfLine& slinref,
   typedef Standard_Real (IntPatch_Point::* PParOnArc)() const;
 
   // cycle for both surfaces
-  Standard_Integer is;
+  Standard_Integer is = 0;
   for (is=0; is<2; is++) {
     Standard_Boolean onFirst = is==0;
     if(( onFirst && WLine->HasArcOnS1()) ||
@@ -999,7 +1001,7 @@ static void TestWLineToRLine(const IntPatch_SequenceOfLine& slinref,
       }
 
       // resolve arcs for vertices not having a link to an arc
-      Standard_Real utst,vtst;
+      Standard_Real utst = NAN,vtst = NAN;
       TColStd_Array1OfReal paramsResolved(1,nbvtx);
       TColStd_Array1OfTransient arcsResolved(1,nbvtx);
       arcsResolved.Init(Handle(Adaptor2d_Curve2d)());
@@ -1010,7 +1012,7 @@ static void TestWLineToRLine(const IntPatch_SequenceOfLine& slinref,
 	  Standard_Real distmin=RealLast();
 	  for (aDomain->Init(); aDomain->More(); aDomain->Next()) {
 	    const Handle(Adaptor2d_Curve2d)& arc = aDomain->Value();
-	    Standard_Real par,dist;
+	    Standard_Real par = NAN,dist = NAN;
 	    if (ProjectOnArc(utst,vtst,arc,surf,TolArc,par,dist) && dist < distmin) {
 	      arcsResolved(iv) = arc;
 	      paramsResolved(iv) = par;
@@ -1022,7 +1024,7 @@ static void TestWLineToRLine(const IntPatch_SequenceOfLine& slinref,
 
       // prepare list of common arcs for both ends of wline
       TColStd_IndexedMapOfTransient mapArcsV1,mapArcs;
-      Standard_Integer i;
+      Standard_Integer i = 0;
       for (i=1; i <= indicesV1.Length(); i++) {
 	iv = indicesV1(i);
 	Handle(Adaptor2d_Curve2d) arc;
@@ -1081,7 +1083,7 @@ static void TestWLineToRLine(const IntPatch_SequenceOfLine& slinref,
 	  utst = (utst+utst1)*0.5;
 	  vtst = (vtst+vtst1)*0.5;
 	}
-	Standard_Real par,dist;
+	Standard_Real par = NAN,dist = NAN;
 	if (!ProjectOnArc(utst,vtst,arc,surf,TolArc,par,dist)) {
 #ifdef OCCT_DEBUG
 	  std::cout<<" Pb en projection ds IntPatch_LineConstructor"<<std::endl;
@@ -1096,10 +1098,10 @@ static void TestWLineToRLine(const IntPatch_SequenceOfLine& slinref,
 
 	Handle(IntSurf_LineOn2S) LineOn2S = new IntSurf_LineOn2S();
 	const Handle(IntSurf_LineOn2S)& Lori = WLine->Curve();
-	Standard_Integer ivmin,ivmax;
-	Standard_Real parmin, parmax;
+	Standard_Integer ivmin = 0,ivmax = 0;
+	Standard_Real parmin = NAN, parmax = NAN;
 	Standard_Boolean reverse = Standard_False;
-	TColStd_SequenceOfInteger *pIndVmin, *pIndVmax;
+	TColStd_SequenceOfInteger *pIndVmin = nullptr, *pIndVmax = nullptr;
 	if (par1<par2) {
 	  for(i=ParamMinOnLine; i<=ParamMaxOnLine; i++) { 
 	    LineOn2S->Add(Lori->Value(i));
@@ -1187,15 +1189,15 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 				       const Handle(Adaptor3d_TopolTool)& myDom2,
 				       const Standard_Real TolArc)  {
 
-  Standard_Integer i=1,nbvtx;
-  Standard_Real firstp,lastp;
+  Standard_Integer i=1,nbvtx = 0;
+  Standard_Real firstp = NAN,lastp = NAN;
   Standard_Real Tol = Precision::PConfusion()*100.; // JMB le 13 Jan 2000. Report de la correction du PRO19653
   GeomAbs_SurfaceType typs1 = mySurf1->GetType();
   GeomAbs_SurfaceType typs2 = mySurf2->GetType();
 
   IntPatch_IType typl = L->ArcType();
   if(typl == IntPatch_Analytic) { 
-    Standard_Real u1,v1,u2,v2;
+    Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
     Handle(IntPatch_ALine) ALine (Handle(IntPatch_ALine)::DownCast (L));
     slin.Clear();
     nbvtx = ALine->NbVertex();
@@ -1247,7 +1249,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
     return;
   }
   else if(typl == IntPatch_Walking) { 
-    Standard_Real u1,v1,u2,v2;
+    Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
     Handle(IntPatch_WLine) WLine (Handle(IntPatch_WLine)::DownCast (L));
     slin.Clear();
     nbvtx = WLine->NbVertex();
@@ -1265,7 +1267,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
       firstp = WLineVertex_i.ParameterOnLine();
       lastp =  WLineVertex_ip1.ParameterOnLine();
       if(firstp!=lastp && !IsSegmentSmall(WLine,i,i+1/*,TolArc*/)) {  
-	Standard_Integer pmid;
+	Standard_Integer pmid = 0;
 	pmid = (Standard_Integer)((firstp+lastp)/2);
 	Standard_Integer int_lastp = (Standard_Integer)lastp;
 	Standard_Integer int_firstp = (Standard_Integer)firstp;
@@ -1303,7 +1305,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	//            situation when (lastp-firstp) != 1.
 	if(Abs(int_lastp-int_firstp) == 1)
 	  {
-	    Standard_Real vFu1,vFv1,vFu2,vFv2,vLu1,vLv1,vLu2,vLv2;
+	    Standard_Real vFu1 = NAN,vFv1 = NAN,vFu2 = NAN,vFv2 = NAN,vLu1 = NAN,vLv1 = NAN,vLu2 = NAN,vLv2 = NAN;
 	    const IntSurf_PntOn2S& vF = WLineVertex_i. PntOn2S();
 	    const IntSurf_PntOn2S& vL = WLineVertex_ip1. PntOn2S();
 	    vF.Parameters(vFu1,vFv1,vFu2,vFv2);
@@ -1312,7 +1314,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	    Recadre(mySurf1,mySurf2,vLu1,vLv1,vLu2,vLv2);
 	    if(in1 != TopAbs_IN)
 	      {
-		Standard_Real du,dv;
+		Standard_Real du = NAN,dv = NAN;
 		gp_Pnt2d pvF(vFu1,vFv1);
 		gp_Pnt2d pvL(vLu1,vLv1);
 		gp_Pnt2d pPm(u1,v1);
@@ -1334,7 +1336,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	      }
 	    if(in2 != TopAbs_IN)
 	      {
-		Standard_Real du,dv;
+		Standard_Real du = NAN,dv = NAN;
 		gp_Pnt2d pvF(vFu2,vFv2);
 		gp_Pnt2d pvL(vLu2,vLv2);
 		gp_Pnt2d pPm(u2,v2);
@@ -1359,13 +1361,13 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	if (in1 != TopAbs_OUT && in2 != TopAbs_OUT)
 	  {
 	    Standard_Boolean   LignetropPetite=Standard_False;
-	    Standard_Real u1a,v1a,u2a,v2a;
+	    Standard_Real u1a = NAN,v1a = NAN,u2a = NAN,v2a = NAN;
 	    const IntSurf_PntOn2S& Pmid1 = WLine->Point((Standard_Integer)firstp);
 	    Pmid1.Parameters(u1a,v1a,u2a,v2a);
 	    Recadre(mySurf1,mySurf2,u1a,v1a,u2a,v2a);
 	    
 	    const IntSurf_PntOn2S& Pmid2 = WLine->Point((Standard_Integer)lastp);
-	    Standard_Real u1b,v1b,u2b,v2b;
+	    Standard_Real u1b = NAN,v1b = NAN,u2b = NAN,v2b = NAN;
 	    Pmid2.Parameters(u1b,v1b,u2b,v2b);
 	    Recadre(mySurf1,mySurf2,u1b,v1b,u2b,v2b);
 	    
@@ -1406,7 +1408,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
     return;
   }
   else if (typl != IntPatch_Restriction) { // JAG 01.07.96
-    Standard_Real u1,v1,u2,v2;
+    Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
     Handle(IntPatch_GLine) GLine (Handle(IntPatch_GLine)::DownCast (L));
     slin.Clear();
     nbvtx = GLine->NbVertex();
@@ -1567,7 +1569,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	  gp_Pnt   Px = mySurf1->Value(Px2d.X(),Px2d.Y());
 	  gp_Vec P0Px=gp_Vec(P0,Px);
 	  
-	  Standard_Real U1,V1,U2,V2;
+	  Standard_Real U1 = NAN,V1 = NAN,U2 = NAN,V2 = NAN;
 	  Vtx1.PntOn2S().Parameters(U1,V1,U2,V2);
 
 	  gp_Vec D1u,D1v;
@@ -1580,7 +1582,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	  //-- le 23 mars 1999 
 	  TopAbs_State bornin = myDom2->Classify(gp_Pnt2d(U2,V2),Tol,Standard_False);
 	  if(bornin!=TopAbs_OUT) { 
-	    Standard_Real U1t,V1t,U2t,V2t;
+	    Standard_Real U1t = NAN,V1t = NAN,U2t = NAN,V2t = NAN;
 	    Vtx2.PntOn2S().Parameters(U1t,V1t,U2t,V2t);
 	    bornin = myDom2->Classify(gp_Pnt2d(U2t,V2t),Tol,Standard_False);
 	  }
@@ -1593,7 +1595,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	  //-- POPx . D1v = deltau * D1u.D1v  + deltav * D1v.D1v
 	  //--
 	  //-- deltau=
-	  Standard_Real D1uD1v,TgD1u,TgD1v,D1uD1u,D1vD1v,DIS;
+	  Standard_Real D1uD1v = NAN,TgD1u = NAN,TgD1v = NAN,D1uD1u = NAN,D1vD1v = NAN,DIS = NAN;
 	  //Standard_Real DeltaU,DeltaV;
 	  D1uD1u = D1u.Dot(D1u);
 	  D1vD1v = D1v.Dot(D1v);
@@ -1646,7 +1648,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	  gp_Pnt   Px = mySurf2->Value(Px2d.X(),Px2d.Y());
 	  gp_Vec P0Px=gp_Vec(P0,Px);
 	  
-	  Standard_Real U1,V1,U2,V2;
+	  Standard_Real U1 = NAN,V1 = NAN,U2 = NAN,V2 = NAN;
 	  Vtx1.PntOn2S().Parameters(U1,V1,U2,V2);
 	  
 	  gp_Vec D1u,D1v;
@@ -1659,7 +1661,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	  //-- le 23 mars 1999 
 	  TopAbs_State bornin = myDom1->Classify(gp_Pnt2d(U1,V1),Tol,Standard_False);
 	  if(bornin!=TopAbs_OUT) { 
-	    Standard_Real U1t,V1t,U2t,V2t;
+	    Standard_Real U1t = NAN,V1t = NAN,U2t = NAN,V2t = NAN;
 	    Vtx2.PntOn2S().Parameters(U1t,V1t,U2t,V2t);
 	    bornin = myDom1->Classify(gp_Pnt2d(U1t,V1t),Tol,Standard_False);
 	  }
@@ -1672,7 +1674,7 @@ void IntPatch_LineConstructor::Perform(const IntPatch_SequenceOfLine& slinref,
 	  //-- POPx . D1v = deltau * D1u.D1v  + deltav * D1v.D1v
 	  //--
 	  //-- deltau=
-	  Standard_Real D1uD1v,TgD1u,TgD1v,D1uD1u,D1vD1v,DIS;
+	  Standard_Real D1uD1v = NAN,TgD1u = NAN,TgD1v = NAN,D1uD1u = NAN,D1vD1v = NAN,DIS = NAN;
 	  //Standard_Real DeltaU,DeltaV;
 	  D1uD1u = D1u.Dot(D1u);
 	  D1vD1v = D1v.Dot(D1v);

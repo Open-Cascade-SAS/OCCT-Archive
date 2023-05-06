@@ -87,6 +87,7 @@
 #include <Transfer_TransientProcess.hxx>
 #include <TransferBRep.hxx>
 
+#include <math.h>
 #include <stdio.h>
 static void ResetPreci (const TopoDS_Shape& S, Standard_Real maxtol)
 {
@@ -369,7 +370,7 @@ void StepToTopoDS_Builder::Init
     BRep_Builder B;
     B.MakeSolid(S);
     B.Add(S,Sh);
-    Standard_Integer Nb, i;
+    Standard_Integer Nb = 0, i = 0;
     Nb = aFBABWV->NbVoids();
     Message_ProgressScope aPS (aPSRoot.Next(), NULL, Nb);
     for ( i=1; i<=Nb && aPS.More(); i++) {
@@ -639,7 +640,7 @@ static TopoDS_Face TranslateBoundedSurf (const Handle(StepGeom_Surface) &surf,
 
   if (!RS.IsNull())
   {
-    Standard_Real umin, umax, vmin, vmax;
+    Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
     theSurf->Bounds(umin, umax, vmin, vmax);
 
     myMkFace.Init(RS->BasisSurface(), umin, umax, vmin, vmax, TolDegen);
@@ -664,7 +665,7 @@ void StepToTopoDS_Builder::Init
   BRep_Builder B;
   B.MakeCompound(S);
   TopoDS_Edge theEdge;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Real preci = Precision();   //gka
   Standard_Real maxtol = MaxTol();
   Standard_Integer nbElem = GCS->NbElements();
@@ -673,7 +674,7 @@ void StepToTopoDS_Builder::Init
   {
     Message_ProgressRange aRange = aPS.Next();
     StepShape_GeometricSetSelect aGSS = GCS->ElementsValue(i);
-    Handle(Standard_Transient) ent = aGSS.Value();
+    const Handle(Standard_Transient)& ent = aGSS.Value();
 
     TopoDS_Shape res = TransferBRep::ShapeResult ( TP, ent );
     if ( ! res.IsNull() ) { // already translated

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWPointOnPlanarCurvePairWithRange.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -83,7 +85,7 @@ void RWStepKinematics_RWPointOnPlanarCurvePairWithRange::ReadStep (const Handle(
   Handle(StepGeom_Curve) aPointOnPlanarCurvePair_PairCurve;
   theData->ReadEntity (theNum, 7, "point_on_planar_curve_pair.pair_curve", theArch, STANDARD_TYPE(StepGeom_Curve), aPointOnPlanarCurvePair_PairCurve);
 
-  Standard_Boolean aPointOnPlanarCurvePair_Orientation;
+  Standard_Boolean aPointOnPlanarCurvePair_Orientation = 0;
   theData->ReadBoolean (theNum, 8, "point_on_planar_curve_pair.orientation", theArch, aPointOnPlanarCurvePair_Orientation);
 
   // Own fields of PointOnPlanarCurvePairWithRange
@@ -91,7 +93,7 @@ void RWStepKinematics_RWPointOnPlanarCurvePairWithRange::ReadStep (const Handle(
   Handle(StepGeom_TrimmedCurve) aRangeOnPairCurve;
   theData->ReadEntity (theNum, 9, "range_on_pair_curve", theArch, STANDARD_TYPE(StepGeom_TrimmedCurve), aRangeOnPairCurve);
 
-  Standard_Real aLowerLimitYaw;
+  Standard_Real aLowerLimitYaw = NAN;
   Standard_Boolean hasLowerLimitYaw = Standard_True;
   if ( theData->IsParamDefined (theNum,10) ) {
     theData->ReadReal (theNum, 10, "lower_limit_yaw", theArch, aLowerLimitYaw);
@@ -101,7 +103,7 @@ void RWStepKinematics_RWPointOnPlanarCurvePairWithRange::ReadStep (const Handle(
     aLowerLimitYaw = 0;
   }
 
-  Standard_Real aUpperLimitYaw;
+  Standard_Real aUpperLimitYaw = NAN;
   Standard_Boolean hasUpperLimitYaw = Standard_True;
   if ( theData->IsParamDefined (theNum,11) ) {
     theData->ReadReal (theNum, 11, "upper_limit_yaw", theArch, aUpperLimitYaw);
@@ -111,7 +113,7 @@ void RWStepKinematics_RWPointOnPlanarCurvePairWithRange::ReadStep (const Handle(
     aUpperLimitYaw = 0;
   }
 
-  Standard_Real aLowerLimitPitch;
+  Standard_Real aLowerLimitPitch = NAN;
   Standard_Boolean hasLowerLimitPitch = Standard_True;
   if ( theData->IsParamDefined (theNum,12) ) {
     theData->ReadReal (theNum, 12, "lower_limit_pitch", theArch, aLowerLimitPitch);
@@ -121,7 +123,7 @@ void RWStepKinematics_RWPointOnPlanarCurvePairWithRange::ReadStep (const Handle(
     aLowerLimitPitch = 0;
   }
 
-  Standard_Real aUpperLimitPitch;
+  Standard_Real aUpperLimitPitch = NAN;
   Standard_Boolean hasUpperLimitPitch = Standard_True;
   if ( theData->IsParamDefined (theNum,13) ) {
     theData->ReadReal (theNum, 13, "upper_limit_pitch", theArch, aUpperLimitPitch);
@@ -131,7 +133,7 @@ void RWStepKinematics_RWPointOnPlanarCurvePairWithRange::ReadStep (const Handle(
     aUpperLimitPitch = 0;
   }
 
-  Standard_Real aLowerLimitRoll;
+  Standard_Real aLowerLimitRoll = NAN;
   Standard_Boolean hasLowerLimitRoll = Standard_True;
   if ( theData->IsParamDefined (theNum,14) ) {
     theData->ReadReal (theNum, 14, "lower_limit_roll", theArch, aLowerLimitRoll);
@@ -141,7 +143,7 @@ void RWStepKinematics_RWPointOnPlanarCurvePairWithRange::ReadStep (const Handle(
     aLowerLimitRoll = 0;
   }
 
-  Standard_Real aUpperLimitRoll;
+  Standard_Real aUpperLimitRoll = NAN;
   Standard_Boolean hasUpperLimitRoll = Standard_True;
   if ( theData->IsParamDefined (theNum,15) ) {
     theData->ReadReal (theNum, 15, "upper_limit_roll", theArch, aUpperLimitRoll);

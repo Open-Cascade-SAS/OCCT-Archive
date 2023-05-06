@@ -56,7 +56,7 @@ protected:
 private:
 
 
-  Standard_Integer dayComponent;
+  Standard_Integer dayComponent{};
 
 
 };

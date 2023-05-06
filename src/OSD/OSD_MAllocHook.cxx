@@ -302,7 +302,7 @@ Standard_Boolean OSD_MAllocHook::LogFileHandler::MakeReport
   while (fgets(aStr, MAX_STR-1, aLogFile) != NULL)
   {
     // detect operation type, request number and block size
-    unsigned long aReqNum, aSize;
+    unsigned long aReqNum = 0, aSize = 0;
     char* aType = aStr;
     char* pStr = aStr;
     //sscanf(aStr, "%5s %lu %lu", aType, &aReqNum, &aSize);

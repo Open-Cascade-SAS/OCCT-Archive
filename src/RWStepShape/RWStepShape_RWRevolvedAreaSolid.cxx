@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepShape_RWRevolvedAreaSolid.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -54,7 +56,7 @@ void RWStepShape_RWRevolvedAreaSolid::ReadStep
 
 	// --- own field : angle ---
 
-	Standard_Real aAngle;
+	Standard_Real aAngle = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"angle",ach,aAngle);
 

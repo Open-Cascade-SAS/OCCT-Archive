@@ -110,17 +110,17 @@ static Standard_Integer StepFile_Read (const char* theName,
 
   sout << "      ...    STEP File   Read    ...\n";
 
-  Standard_Integer nbhead, nbrec, nbpar;
+  Standard_Integer nbhead = 0, nbrec = 0, nbpar = 0;
   aFileDataModel.GetFileNbR (&nbhead,&nbrec,&nbpar);  // renvoi par lex/yacc
   Handle(StepData_StepReaderData) undirec =
     new StepData_StepReaderData(nbhead,nbrec,nbpar, theStepModel->SourceCodePage());  // creation tableau de records
   for ( Standard_Integer nr = 1; nr <= nbrec; nr ++) {
-    int nbarg; char* ident; char* typrec = 0;
+    int nbarg = 0; char* ident = nullptr; char* typrec = 0;
     aFileDataModel.GetRecordDescription(&ident, &typrec, &nbarg);
     undirec->SetRecord (nr, ident, typrec, nbarg);
 
     if (nbarg>0) {
-      Interface_ParamType typa; char* val;
+      Interface_ParamType typa; char* val = nullptr;
       while(aFileDataModel.GetArgDescription (&typa, &val) == 1) {
         undirec->AddStepParam (nr, val, typa);
       }

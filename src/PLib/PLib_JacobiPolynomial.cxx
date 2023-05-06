@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math.hxx>
 #include <math_Vector.hxx>
 #include <PLib.hxx>
@@ -37,9 +39,9 @@ const Standard_Integer UNDEFINED=-999;
 //=======================================================================
 
  PLib_JacobiPolynomial::PLib_JacobiPolynomial (const Standard_Integer WorkDegree, 
-                                               const GeomAbs_Shape ConstraintOrder)
+                                               const GeomAbs_Shape ConstraintOrder) : myWorkDegree(WorkDegree)
 {
-  myWorkDegree = WorkDegree;
+  
     
   switch (ConstraintOrder) {
     case GeomAbs_C0: myNivConstr = 0; break;
@@ -91,7 +93,7 @@ void PLib_JacobiPolynomial::Weights(const Standard_Integer NbGaussPoints,
                                        TColStd_Array2OfReal& TabWeights) const 
 {
 
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   Standard_Real const *pdb=NULL;     // the current pointer to WeightsDB
   switch (myNivConstr) {
     case 0: pdb = WeightsDB_C0; break;
@@ -167,7 +169,7 @@ Standard_Real PLib_JacobiPolynomial::MaxError(const Standard_Integer Dimension,
                                                  Standard_Real& JacCoeff, 
                                                  const Standard_Integer NewDegree) const 
 {
-  Standard_Integer i,idim,ibeg,icut;
+  Standard_Integer i = 0,idim = 0,ibeg = 0,icut = 0;
 
   math_Vector MaxErrDim(1,Dimension,0.);
 
@@ -198,8 +200,8 @@ void PLib_JacobiPolynomial::ReduceDegree(const Standard_Integer Dimension,
                                             Standard_Integer& NewDegree,
                                             Standard_Real& MaxError) const
 {
-  Standard_Integer i,idim,icut, ia = 2*(myNivConstr+1)-1;
-  Standard_Real Bid,Eps1,Error;
+  Standard_Integer i = 0,idim = 0,icut = 0, ia = 2*(myNivConstr+1)-1;
+  Standard_Real Bid = NAN,Eps1 = NAN,Error = NAN;
 
   math_Vector MaxErrDim(1,Dimension,0.);
 
@@ -249,8 +251,8 @@ Standard_Real PLib_JacobiPolynomial::AverageError(const Standard_Integer Dimensi
                                                      const Standard_Integer NewDegree) 
                                                      const
 {
-  Standard_Integer i,idim, icut = Max (2*(myNivConstr+1)+1, NewDegree+1);
-  Standard_Real BidJ, AverageErr = 0.;
+  Standard_Integer i = 0,idim = 0, icut = Max (2*(myNivConstr+1)+1, NewDegree+1);
+  Standard_Real BidJ = NAN, AverageErr = 0.;
   Standard_Real * JacArray = &JacCoeff;
   for (idim=1; idim<=Dimension; idim++) {
     for (i=icut; i<=myDegree; i++) {
@@ -273,9 +275,9 @@ void PLib_JacobiPolynomial::ToCoefficients(const Standard_Integer Dimension,
 					   TColStd_Array1OfReal& Coefficients) const
 {
   const Standard_Integer MAXM=31;
-  Standard_Integer i,iptt,j,idim, ii, jj;
+  Standard_Integer i = 0,iptt = 0,j = 0,idim = 0, ii = 0, jj = 0;
   Standard_Real const *pTr=NULL;  // the pointer to TransMatrix
-  Standard_Real Bid;
+  Standard_Real Bid = NAN;
   Standard_Integer ibegJC=JacCoeff.Lower(), ibegC=Coefficients.Lower();
 
   switch (myNivConstr) {
@@ -325,8 +327,8 @@ void PLib_JacobiPolynomial::D0123(const Standard_Integer NDeriv,
 				  TColStd_Array1OfReal& BasisD2,
 				  TColStd_Array1OfReal& BasisD3)
 {
-  Standard_Integer i,j, HermitNivConstr = 2*(myNivConstr+1);
-  Standard_Real Aux1,Aux2;
+  Standard_Integer i = 0,j = 0, HermitNivConstr = 2*(myNivConstr+1);
+  Standard_Real Aux1 = NAN,Aux2 = NAN;
 
   if (myTNorm.IsNull()) {
 
@@ -361,7 +363,7 @@ void PLib_JacobiPolynomial::D0123(const Standard_Integer NDeriv,
   Standard_Integer ibeg1 = BasisD1.Lower();
   Standard_Integer ibeg2 = BasisD2.Lower();
   Standard_Integer ibeg3 = BasisD3.Lower();
-  Standard_Integer i0, i1, i2, i3;
+  Standard_Integer i0 = 0, i1 = 0, i2 = 0, i3 = 0;
 
 
   if (myDegree == 0) {
@@ -407,7 +409,7 @@ void PLib_JacobiPolynomial::D0123(const Standard_Integer NDeriv,
     }
 
     else {
-      Standard_Real CofA, CofB, Denom;
+      Standard_Real CofA = NAN, CofB = NAN, Denom = NAN;
       for (i=2; i<=myDegree; i++) {
 	i0=i+ibeg0; 
 	i1=i+ibeg1;
@@ -441,7 +443,7 @@ void PLib_JacobiPolynomial::D0123(const Standard_Integer NDeriv,
       BV[i] *= TNorm[i];
   }
   else {
-    Standard_Real TNorm;
+    Standard_Real TNorm = NAN;
     for (i=0; i<=myDegree; i++) {
       TNorm = myTNorm->Value(i);
       BasisValue(i+ibeg0) *= TNorm;

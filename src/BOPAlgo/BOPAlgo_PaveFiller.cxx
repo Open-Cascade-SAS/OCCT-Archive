@@ -58,14 +58,14 @@ namespace
 //=======================================================================
 BOPAlgo_PaveFiller::BOPAlgo_PaveFiller()
   :
-  BOPAlgo_Algo()
+  BOPAlgo_Algo(), myDS(NULL), myIterator(NULL), myNonDestructive(Standard_False), myIsPrimary(Standard_True), myAvoidBuildPCurve(Standard_False), myGlue(BOPAlgo_GlueOff)
 {
-  myDS = NULL;
-  myIterator = NULL;
-  myNonDestructive = Standard_False;
-  myIsPrimary = Standard_True;
-  myAvoidBuildPCurve = Standard_False;
-  myGlue = BOPAlgo_GlueOff;
+  
+  
+  
+  
+  
+  
 }
 //=======================================================================
 //function : 
@@ -75,17 +75,17 @@ BOPAlgo_PaveFiller::BOPAlgo_PaveFiller
 (const Handle (NCollection_BaseAllocator)& theAllocator)
   :
   BOPAlgo_Algo (theAllocator),
-  myFPBDone (1, theAllocator),
+  myDS(NULL), myIterator(NULL), myNonDestructive(Standard_False), myIsPrimary(Standard_True), myAvoidBuildPCurve(Standard_False), myGlue(BOPAlgo_GlueOff), myFPBDone (1, theAllocator),
   myIncreasedSS (1, theAllocator),
   myVertsToAvoidExtension (1, theAllocator),
   myDistances (1, theAllocator)
 {
-  myDS = NULL;
-  myIterator = NULL;
-  myNonDestructive = Standard_False;
-  myIsPrimary = Standard_True;
-  myAvoidBuildPCurve = Standard_False;
-  myGlue = BOPAlgo_GlueOff;
+  
+  
+  
+  
+  
+  
 }
 //=======================================================================
 //function : ~
@@ -387,7 +387,7 @@ void BOPAlgo_PaveFiller::RepeatIntersection (const Message_ProgressRange& theRan
     }
 
     // Check if the vertex created a new vertex with greater tolerance
-    Standard_Integer nVSD;
+    Standard_Integer nVSD = 0;
     if (!myDS->HasShapeSD (i, nVSD))
       continue;
 

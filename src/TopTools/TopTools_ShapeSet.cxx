@@ -385,7 +385,7 @@ void  TopTools_ShapeSet::Dump(Standard_OStream& OS)const
   // dump the shapes
   //-----------------------------------------
 
-  Standard_Integer i, nbShapes = myShapes.Extent();
+  Standard_Integer i = 0, nbShapes = myShapes.Extent();
   
   OS << "\nDump of " << nbShapes << " TShapes";
   OS << "\n\n-----------------\n\n";
@@ -494,7 +494,7 @@ void  TopTools_ShapeSet::Write(Standard_OStream& OS, const Message_ProgressRange
   // write the shapes
   //-----------------------------------------
 
-  Standard_Integer i, nbShapes = myShapes.Extent();
+  Standard_Integer i = 0, nbShapes = myShapes.Extent();
   
   OS << "\nTShapes " << nbShapes << "\n";
 
@@ -675,7 +675,7 @@ void  TopTools_ShapeSet::Read(Standard_IStream& IS, const Message_ProgressRange&
     return;
   }
 
-  Standard_Integer i, nbShapes;
+  Standard_Integer i = 0, nbShapes = 0;
   IS >> nbShapes;
 
   //OCC19559
@@ -810,7 +810,7 @@ void  TopTools_ShapeSet::Read(TopoDS_Shape& S,
       break;
     }
 
-    Standard_Integer l;
+    Standard_Integer l = 0;
     IS >> l;
     S.Location(myLocations.Location(l), Standard_False);
   }

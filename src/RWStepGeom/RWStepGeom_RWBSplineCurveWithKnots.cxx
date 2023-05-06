@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <Interface_ShareTool.hxx>
@@ -63,7 +65,7 @@ void RWStepGeom_RWBSplineCurveWithKnots::ReadStep
 
 	// --- inherited field : degree ---
 
-	Standard_Integer aDegree;
+	Standard_Integer aDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadInteger (num,2,"degree",ach,aDegree);
 
@@ -71,7 +73,7 @@ void RWStepGeom_RWBSplineCurveWithKnots::ReadStep
 
 	Handle(StepGeom_HArray1OfCartesianPoint) aControlPointsList;
 	Handle(StepGeom_CartesianPoint) anent3;
-	Standard_Integer nsub3;
+	Standard_Integer nsub3 = 0;
 	if (data->ReadSubList (num,3,"control_points_list",ach,nsub3)) {
 	  Standard_Integer nb3 = data->NbParams(nsub3);
     if(nb3 <1)
@@ -118,8 +120,8 @@ void RWStepGeom_RWBSplineCurveWithKnots::ReadStep
 	// --- own field : knotMultiplicities ---
 
 	Handle(TColStd_HArray1OfInteger) aKnotMultiplicities;
-	Standard_Integer aKnotMultiplicitiesItem;
-	Standard_Integer nsub7;
+	Standard_Integer aKnotMultiplicitiesItem = 0;
+	Standard_Integer nsub7 = 0;
 	if (data->ReadSubList (num,7,"knot_multiplicities",ach,nsub7)) {
 	  Standard_Integer nb7 = data->NbParams(nsub7);
 	  aKnotMultiplicities = new TColStd_HArray1OfInteger (1, nb7);
@@ -133,8 +135,8 @@ void RWStepGeom_RWBSplineCurveWithKnots::ReadStep
 	// --- own field : knots ---
 
 	Handle(TColStd_HArray1OfReal) aKnots;
-	Standard_Real aKnotsItem;
-	Standard_Integer nsub8;
+	Standard_Real aKnotsItem = NAN;
+	Standard_Integer nsub8 = 0;
 	if (data->ReadSubList (num,8,"knots",ach,nsub8)) {
 	  Standard_Integer nb8 = data->NbParams(nsub8);
 	  aKnots = new TColStd_HArray1OfReal (1, nb8);
@@ -257,7 +259,7 @@ void RWStepGeom_RWBSplineCurveWithKnots::Check
   if(nbMult != nbKno) {
     ach->AddFail("ERROR: No.of KnotMultiplicities not equal No.of Knots");
   }
-  Standard_Integer i;//svv Jan 10 2000: porting on DEC 
+  Standard_Integer i = 0;//svv Jan 10 2000: porting on DEC 
   for (i=1; i<=nbMult-1; i++) {
     sumMult = sumMult + ent->KnotMultiplicitiesValue(i);
   }

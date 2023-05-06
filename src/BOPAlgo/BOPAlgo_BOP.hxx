@@ -125,7 +125,7 @@ protected:
 protected:
 
   BOPAlgo_Operation myOperation;
-  Standard_Integer  myDims[2];
+  Standard_Integer  myDims[2]{};
   TopoDS_Shape      myRC;
 };
 

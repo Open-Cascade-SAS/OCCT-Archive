@@ -20,6 +20,8 @@
 #include <NCollection_List.hxx>
 #include <Standard_DefineAlloc.hxx>
 
+#include <gp_Pnt.hxx>
+
 class gp_Cone;
 class gp_Cylinder;
 class gp_Pln;
@@ -91,16 +93,16 @@ private:
 
 
 
-  Standard_Real CXX;
-  Standard_Real CYY;
-  Standard_Real CZZ;
-  Standard_Real CXY;
-  Standard_Real CXZ;
-  Standard_Real CYZ;
-  Standard_Real CX;
-  Standard_Real CY;
-  Standard_Real CZ;
-  Standard_Real CCte;
+  Standard_Real CXX{};
+  Standard_Real CYY{};
+  Standard_Real CZZ{};
+  Standard_Real CXY{};
+  Standard_Real CXZ{};
+  Standard_Real CYZ{};
+  Standard_Real CX{};
+  Standard_Real CY{};
+  Standard_Real CZ{};
+  Standard_Real CCte{};
   NCollection_List<gp_Pnt> mySpecialPoints;
 
 };

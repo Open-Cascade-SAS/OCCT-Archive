@@ -789,7 +789,7 @@ static void Handler (const int theSignal, siginfo_t */*theSigInfo*/, const Stand
 static void Handler (const int theSignal)
 #endif
 {
-  struct sigaction oldact, act;
+  struct sigaction oldact{}, act{};
   // re-install the signal
   if ( ! sigaction (theSignal, NULL, &oldact) ) {
     // std::cout << " signal is " << theSignal << " handler is " <<  oldact.sa_handler << std::endl;
@@ -1041,7 +1041,7 @@ void OSD::SetSignal (OSD_SignalMode theSignalMode,
   }
 
   // Prepare signal descriptors
-  struct sigaction anActSet, anActDfl, anActOld;
+  struct sigaction anActSet{}, anActDfl{}, anActOld{};
   sigemptyset(&anActSet.sa_mask);
   sigemptyset(&anActDfl.sa_mask);
   sigemptyset(&anActOld.sa_mask);
@@ -1085,7 +1085,7 @@ void OSD::SetSignal (OSD_SignalMode theSignalMode,
     }
     if (theSignalMode == OSD_SignalMode_SetUnhandled && retcode == 0 && anActOld.sa_handler != SIG_DFL)
     {
-      struct sigaction anActOld2;
+      struct sigaction anActOld2{};
       sigemptyset(&anActOld2.sa_mask);
       retcode = sigaction (aSignalTypes[i], &anActOld, &anActOld2);
     }

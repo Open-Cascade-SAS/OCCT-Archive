@@ -37,6 +37,7 @@
 #include <TCollection_ExtendedString.hxx>
 #include <UnitsAPI.hxx>
 
+#include <math.h>
 #include <stdio.h>
 //------------------------------------------------------------------------------------------------------------------
 // Returns 1 if C is above of CMin; 0 if C is bitween CMin and CMax; -1 if C is Below CMax   
@@ -117,7 +118,7 @@ void DsgPrs_AnglePresentation::Add (const Handle(Prs3d_Presentation)& aPresentat
   GC_MakeCircle mkCirc(AttachmentPnt, OppositePnt, aPnt); 
   gp_Circ aCircle2 = mkCirc.Value()->Circ();
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Real AttParam = ElCLib::Parameter(aCircle2, AttachmentPnt);  //must be equal to zero (look circle construction)
   Standard_Real OppParam = ElCLib::Parameter(aCircle2, OppositePnt);    
   
@@ -340,7 +341,7 @@ void DsgPrs_AnglePresentation::Add (const Handle(Prs3d_Presentation)& aPresentat
   aPresentation->CurrentGroup()->SetPrimitivesAspect( LA->LineAspect()->Aspect() );
 
   gp_Circ AngleCirc, AttachCirc;
-  Standard_Real FirstParAngleCirc, LastParAngleCirc, FirstParAttachCirc, LastParAttachCirc;
+  Standard_Real FirstParAngleCirc = NAN, LastParAngleCirc = NAN, FirstParAttachCirc = NAN, LastParAttachCirc = NAN;
   gp_Pnt EndOfArrow1, EndOfArrow2, ProjAttachPoint2;
   gp_Dir DirOfArrow1, DirOfArrow2;
   DsgPrs::ComputeFacesAnglePresentation( LA->ArrowAspect()->Length(),

@@ -68,7 +68,7 @@ Standard_Boolean Intf_Interference::Insert(const Intf_TangentZone& LaZone)
 
 // Loop on edges of the TangentZone :
     npcz=myTZones(Iz).NumberOfPoints();
-    Standard_Integer Ipz0, Ipz1, Ipz2;
+    Standard_Integer Ipz0 = 0, Ipz1 = 0, Ipz2 = 0;
     for (Ipz1=1; Ipz1<=npcz; Ipz1++) {
       Ipz0=Ipz1-1;
       if (Ipz0<=0) Ipz0=npcz;
@@ -76,7 +76,7 @@ Standard_Boolean Intf_Interference::Insert(const Intf_TangentZone& LaZone)
 
 // Loop on edges of the new TangentZone and search of the
 // corresponding point or edge:
-      Standard_Integer Ilz1, Ilz2;
+      Standard_Integer Ilz1 = 0, Ilz2 = 0;
       for (Ilz1=1; Ilz1<=nplz; Ilz1++) {
 	Ilz2=(Ilz1%nplz)+1;
 	
@@ -114,7 +114,7 @@ Standard_Boolean Intf_Interference::Insert(const Intf_TangentZone& LaZone)
     if (lotp!=0) break;
   }
 
-  Standard_Integer Ilc;
+  Standard_Integer Ilc = 0;
   if (lotp!=0) {
     for (Ilc=lotl+1; (((Ilc-1)%nplz)+1)!=lunl; Ilc++) {
       myTZones(lzin).InsertBefore
@@ -159,7 +159,7 @@ void Intf_Interference::Insert(const Intf_SectionPoint& pdeb,
   Standard_Integer TheLS=0;
   Standard_Boolean Begin=Standard_False;
   Intf_SectionPoint TheBout(pfin);
-  Standard_Integer ils, nd, nf;
+  Standard_Integer ils = 0, nd = 0, nf = 0;
   
   for (ils=1; ils<=mySLines.Length(); ils++) {
     Intf_SectionLine& SL=mySLines(ils);

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_ConicalSurface.hxx>
 #include <Geom_CylindricalSurface.hxx>
 #include <Geom_Plane.hxx>
@@ -36,7 +38,7 @@
 //=============================================================================
 GeomToStep_MakeRectangularTrimmedSurface::
   GeomToStep_MakeRectangularTrimmedSurface( const
-    Handle(Geom_RectangularTrimmedSurface)& RTSurf )
+    Handle(Geom_RectangularTrimmedSurface)& RTSurf ) : GeomToStep_Root()
 								      
 {
 
@@ -49,9 +51,9 @@ GeomToStep_MakeRectangularTrimmedSurface::
     done = Standard_False;
     return;
   }
-  Handle(StepGeom_Surface) StepSurf = mkSurf.Value();
+  const Handle(StepGeom_Surface)& StepSurf = mkSurf.Value();
 
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   RTSurf->Bounds(U1, U2, V1, V2);
   
   // -----------------------------------------

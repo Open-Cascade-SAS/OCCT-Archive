@@ -44,9 +44,9 @@
 //function : STEPConstruct_Part
 //purpose  : 
 //=======================================================================
-STEPConstruct_Part::STEPConstruct_Part() 
+STEPConstruct_Part::STEPConstruct_Part() : myDone(Standard_False) 
 {
-  myDone = Standard_False;
+  
 }
 
 //=======================================================================

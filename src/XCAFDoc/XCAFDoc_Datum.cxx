@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <XCAFDoc_Datum.hxx>
 
 #include <Standard_Type.hxx>
@@ -201,7 +203,7 @@ void XCAFDoc_Datum::SetObject(const Handle(XCAFDimTolObjects_DatumObject)& theOb
   }
 
   XCAFDimTolObjects_DatumModifWithValue aM;
-  Standard_Real aV;
+  Standard_Real aV = NAN;
   theObject->GetModifierWithValue(aM, aV);
   if(aM != XCAFDimTolObjects_DatumModifWithValue_None)
   {

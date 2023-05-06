@@ -137,8 +137,8 @@ Standard_Boolean operator > (const Quantity_Period& anOther) const
 
 private:
 
-  Standard_Integer mySec;
-  Standard_Integer myUSec;
+  Standard_Integer mySec{};
+  Standard_Integer myUSec{};
 
 };
 

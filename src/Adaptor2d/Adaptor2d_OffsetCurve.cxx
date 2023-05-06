@@ -224,7 +224,7 @@ void Adaptor2d_OffsetCurve::Intervals(TColStd_Array1OfReal& TI,
   Standard_Integer last = nbInter+1;
   while (T(last) >= myLast) last--;
 
-  Standard_Integer i = TI.Lower(), j;
+  Standard_Integer i = TI.Lower(), j = 0;
   for (j = first-1; j <= last+1; j++) {
     TI(i) = T(j);
     i++;

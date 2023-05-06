@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <ApproxInt_KnotTools.hxx>
 #include <TColgp_Array1OfPnt2d.hxx>
 #include <TColStd_Array1OfReal.hxx>
@@ -45,8 +47,8 @@ static Standard_Real EvalCurv(const Standard_Real dim,
   // V1^V2 is outer product of two vectors:
   // P(i,j) = V1(i)*V2(j) - V1(j)*V2(i);
   Standard_Real mp = 0.;
-  Standard_Integer i, j;
-  Standard_Real p;
+  Standard_Integer i = 0, j = 0;
+  Standard_Real p = NAN;
   for(i = 1; i < dim; ++i)
   {
     for(j = 0; j < i; ++j)
@@ -100,7 +102,7 @@ void ApproxInt_KnotTools::BuildCurvature(
 {
   // Arrays are allocated for max theDim = 7: 1 3d curve + 2 2d curves.
   Standard_Real Val[21], Par[3], Res[21];
-  Standard_Integer i, j, m, ic;
+  Standard_Integer i = 0, j = 0, m = 0, ic = 0;
   Standard_Integer dim = theDim;
   //
   theMaxCurv = 0.;
@@ -189,7 +191,7 @@ void ApproxInt_KnotTools::ComputeKnotInds(const NCollection_LocalArray<Standard_
   Standard_Real aMaxCurv = 0.;
   BuildCurvature(theCoords, theDim, thePars, aCurv, aMaxCurv);
   //  
-  Standard_Integer i, j, dim = theDim;
+  Standard_Integer i = 0, j = 0, dim = theDim;
 #ifdef APPROXINT_KNOTTOOLS_DEBUG
   std::cout << "Discrete curvature array is" << std::endl;
   for(i = aCurv.Lower(); i <= aCurv.Upper(); ++i)
@@ -250,7 +252,7 @@ void ApproxInt_KnotTools::ComputeKnotInds(const NCollection_LocalArray<Standard_
 #endif
 
   //III: Put knots in monotone intervals of curvature.
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   i = 1;
   do
   {
@@ -280,7 +282,7 @@ void ApproxInt_KnotTools::ComputeKnotInds(const NCollection_LocalArray<Standard_
           icm = (anInd - aCurv.Lower()) * theDim;
         NCollection_LocalArray<Standard_Real> V1(theDim), V2(theDim);
         Standard_Real mp = 0., m1 = 0., m2 = 0.;
-        Standard_Real p;
+        Standard_Real p = NAN;
         for(Standard_Integer k = 0; k < theDim; ++k)
         {
           V1[k] = theCoords[icm + k] - theCoords[ici + k];
@@ -482,7 +484,7 @@ Standard_Boolean ApproxInt_KnotTools::InsKnotBefI(const Standard_Integer theI,
   }
   //
   Standard_Real curv = 0.5*(theCurv(anInd) + theCurv(anInd1));
-  Standard_Integer mid = 0, j, jj;
+  Standard_Integer mid = 0, j = 0, jj = 0;
   const Standard_Real aLimitCurvatureChange = 3.0;
   for(j = anInd+1; j < anInd1; ++j)
   {
@@ -532,9 +534,9 @@ Standard_Boolean ApproxInt_KnotTools::InsKnotBefI(const Standard_Integer theI,
           ici1 = (anInd1 - theCurv.Lower()) * theDim,
           icm = (mid - theCurv.Lower()) * theDim;
         NCollection_LocalArray<Standard_Real> V1(theDim), V2(theDim);
-        Standard_Integer i;
+        Standard_Integer i = 0;
         Standard_Real mp = 0., m1 = 0., m2 = 0.;
-        Standard_Real p;
+        Standard_Real p = NAN;
         for(i = 0; i < theDim; ++i)
         {
           V1[i] = theCoords[icm + i] - theCoords[ici + i];
@@ -596,7 +598,7 @@ void ApproxInt_KnotTools::BuildKnots(const TColgp_Array1OfPnt& thePntsXYZ,
     aDim += 2;
 
   NCollection_LocalArray<Standard_Real> aCoords(thePars.Length()*aDim);
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   for(i = thePars.Lower(); i <= thePars.Upper(); ++i)
   {
     j = (i - thePars.Lower()) * aDim;
@@ -654,7 +656,7 @@ void ApproxInt_KnotTools::BuildKnots(const TColgp_Array1OfPnt& thePntsXYZ,
 //=======================================================================
 static Standard_Real MaxParamRatio(const math_Vector& thePars)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Real aMaxRatio = 0.;
   //
   for (i = thePars.Lower() + 1; i < thePars.Upper(); ++i)
@@ -694,7 +696,7 @@ Approx_ParametrizationType ApproxInt_KnotTools::DefineParType(
   TColgp_Array1OfPnt2d aPntU1V1(theFpar, theLpar);
   TColgp_Array1OfPnt2d aPntU2V2(theFpar, theLpar);
 
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
   for (i = theFpar; i <= theLpar; ++i)
   {

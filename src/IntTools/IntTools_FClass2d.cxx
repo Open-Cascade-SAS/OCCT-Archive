@@ -44,6 +44,7 @@
 #include <TopoDS_Wire.hxx>
 #include <Poly.hxx>
 
+#include <math.h>
 #include <stdio.h>
 
 //#define DEBUG_PCLASS_POLYGON
@@ -84,13 +85,13 @@ Standard_Boolean IntTools_FClass2d::IsHole() const
 void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
 			     const Standard_Real TolUV) 
 {
-  Standard_Boolean WireIsNotEmpty, Ancienpnt3dinitialise, degenerated;
-  Standard_Integer firstpoint, NbEdges;
-  Standard_Integer iX, aNbs1, nbs, Avant, BadWire;
-  Standard_Real u, du, Tole, Tol, pfbid, plbid;
-  Standard_Real FlecheU, FlecheV, TolVertex1, TolVertex;
-  Standard_Real uFirst, uLast;
-  Standard_Real aPrCf, aPrCf2;
+  Standard_Boolean WireIsNotEmpty = 0, Ancienpnt3dinitialise = 0, degenerated = 0;
+  Standard_Integer firstpoint = 0, NbEdges = 0;
+  Standard_Integer iX = 0, aNbs1 = 0, nbs = 0, Avant = 0, BadWire = 0;
+  Standard_Real u = NAN, du = NAN, Tole = NAN, Tol = NAN, pfbid = NAN, plbid = NAN;
+  Standard_Real FlecheU = NAN, FlecheV = NAN, TolVertex1 = NAN, TolVertex = NAN;
+  Standard_Real uFirst = NAN, uLast = NAN;
+  Standard_Real aPrCf = NAN, aPrCf2 = NAN;
   //
   TopoDS_Edge  edge;
   TopoDS_Vertex Va,Vb;
@@ -265,9 +266,9 @@ void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
       //-- afar from the last saved point
       Avant = SeqPnt2d.Length();
       for(iX=firstpoint; iX<=aNbs1; iX++) {
-        Standard_Boolean IsRealCurve3d;
-        Standard_Integer ii;
-        Standard_Real aDstX;
+        Standard_Boolean IsRealCurve3d = 0;
+        Standard_Integer ii = 0;
+        Standard_Real aDstX = NAN;
         gp_Pnt2d P2d;
         gp_Pnt P3d;
         //
@@ -291,7 +292,7 @@ void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
         IsRealCurve3d = Standard_True; 
         if (aDstX < aPrCf2)  {
           if(iX>1) {
-            Standard_Real aDstX1;
+            Standard_Real aDstX1 = NAN;
             gp_Pnt MidP3d;
             //
             MidP3d = C3d.Value(0.5*(u+aPrms(iX-1)));
@@ -312,7 +313,7 @@ void IntTools_FClass2d::Init(const TopoDS_Face& aFace,
         //
         ii= SeqPnt2d.Length();
         if(ii>(Avant+4)) { 
-          Standard_Real ul, dU, dV;
+          Standard_Real ul = NAN, dU = NAN, dV = NAN;
           gp_Pnt2d Pp;
           //
           gp_Lin2d Lin(SeqPnt2d(ii-2),gp_Dir2d(gp_Vec2d(SeqPnt2d(ii-2),SeqPnt2d(ii))));
@@ -589,14 +590,14 @@ TopAbs_State IntTools_FClass2d::Perform
   const Standard_Real    uperiod = IsUPer ? surf->UPeriod() : 0.0;
   const Standard_Real    vperiod = IsVPer ? surf->VPeriod() : 0.0;
 
-  Standard_Boolean urecadre, vrecadre, bUseClassifier;
+  Standard_Boolean urecadre = 0, vrecadre = 0, bUseClassifier = 0;
   Standard_Integer dedans = 1;
   //
   urecadre = Standard_False;
   vrecadre = Standard_False;
   //
   if (RecadreOnPeriodic) {
-    Standard_Real du, dv;
+    Standard_Real du = NAN, dv = NAN;
     if (IsUPer) {
       GeomInt::AdjustPeriodic(uu, Umin, Umax, uperiod, uu, du);
     }// if (IsUPer) {
@@ -611,7 +612,7 @@ TopAbs_State IntTools_FClass2d::Perform
     gp_Pnt2d Puv(u,v);
     bUseClassifier = (TabOrien(1) == -1);
     if(!bUseClassifier) {
-      Standard_Integer n, cur, TabOrien_n ;
+      Standard_Integer n = 0, cur = 0, TabOrien_n = 0 ;
       for(n=1; n<=nbtabclass; n++) { 
         cur = ((CSLib_Class2d *)TabClass(n))->SiDans(Puv);
         TabOrien_n=TabOrien(n);
@@ -644,8 +645,8 @@ TopAbs_State IntTools_FClass2d::Perform
     //compute state of the point using face classifier
     if (bUseClassifier) {
       //compute tolerance to use in face classifier
-      Standard_Real aURes, aVRes, aFCTol;
-      Standard_Boolean bUIn, bVIn;
+      Standard_Real aURes = NAN, aVRes = NAN, aFCTol = NAN;
+      Standard_Boolean bUIn = 0, bVIn = 0;
       //
       aURes = surf->UResolution(Toluv);
       aVRes = surf->VResolution(Toluv);
@@ -736,7 +737,7 @@ TopAbs_State IntTools_FClass2d::TestOnRestriction
   Standard_Integer dedans = 1;
 
   if (RecadreOnPeriodic) {
-    Standard_Real du, dv;
+    Standard_Real du = NAN, dv = NAN;
     if (IsUPer) {
       GeomInt::AdjustPeriodic(uu, Umin, Umax, uperiod, uu, du);
     }// if (IsUPer) {

@@ -140,7 +140,7 @@ private:
     mitem           icore[MAX_ALLOC_NB];
     integer         ncore;
     unsigned char   lprot;
-  } mcrgene_;
+  } mcrgene_{};
 
   /* Contains statistics on allocation requests.
      Index 0 corresponds to static_allocation, 1 - to heap allocation.
@@ -151,7 +151,7 @@ private:
   */
   struct {
     integer nrqst[2], ndelt[2], nbyte[2], mbyte[2];
-  } mcrstac_; 
+  } mcrstac_{}; 
 };
 
 #endif

@@ -158,10 +158,10 @@ private:
 
   TopoDS_Compound myWires;
   TopoDS_Compound myEdges;
-  Standard_Real myTolerance;
-  Standard_Boolean myShared;
-  Standard_Boolean mySplitClosed;
-  Standard_Boolean mySplitOpen;
+  Standard_Real myTolerance{};
+  Standard_Boolean myShared{};
+  Standard_Boolean mySplitClosed{};
+  Standard_Boolean mySplitOpen{};
 
 
 };

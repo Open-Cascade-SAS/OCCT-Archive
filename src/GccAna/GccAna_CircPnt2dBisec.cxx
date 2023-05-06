@@ -34,22 +34,22 @@
 //=========================================================================
 GccAna_CircPnt2dBisec::
    GccAna_CircPnt2dBisec (const gp_Circ2d& Circle ,
-		          const gp_Pnt2d&  Point  )
+		          const gp_Pnt2d&  Point  ) : circle(Circle), point(Point), myTolerance(1.e-10)
 {
-  circle = Circle;
-  point = Point;
-  myTolerance = 1.e-10;
+  
+  
+  
   DefineSolutions();
 }
 
 GccAna_CircPnt2dBisec::
    GccAna_CircPnt2dBisec (const gp_Circ2d& Circle ,
 		          const gp_Pnt2d&  Point,
-                          const Standard_Real Tolerance)
+                          const Standard_Real Tolerance) : circle(Circle), point(Point), myTolerance(1.e-10)
 {
-  circle = Circle;
-  point = Point;
-  myTolerance = 1.e-10;
+  
+  
+  
   if (myTolerance < Tolerance)
     myTolerance = Tolerance;
   

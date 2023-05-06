@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -66,7 +68,7 @@ static Standard_Boolean  getNormalFromEdge(const TopoDS_Shape& theShape,
     TopExp_Explorer ex1(aF, TopAbs_EDGE);
     for (; ex1.More(); ex1.Next()) {
       if (ex1.Current().IsSame(theEdge)) {
-        Standard_Real f, l;
+        Standard_Real f = NAN, l = NAN;
         Handle(Geom2d_Curve) aC2d = BRep_Tool::CurveOnSurface(theEdge, aF, f, l);
         gp_Pnt2d aP2d = aC2d->Value(thePar);
         gp_Dir aNorm = getNormalOnFace(aF, aP2d.X(), aP2d.Y());
@@ -138,7 +140,7 @@ static Standard_Boolean FindExtrema(const gp_Pnt&        thePnt,
     if (ext.SupportTypeShape2(iext) == BRepExtrema_IsInFace) {
       TopoDS_Face aF = TopoDS::Face(ext.SupportOnShape2(iext));
       theMinPnt = ext.PointOnShape2(iext);
-      Standard_Real aU, aV;
+      Standard_Real aU = NAN, aV = NAN;
       ext.ParOnFaceS2(iext, aU, aV);
       theNormal = getNormalOnFace(aF, aU, aV);
       return Standard_True;
@@ -149,7 +151,7 @@ static Standard_Boolean FindExtrema(const gp_Pnt&        thePnt,
   for (Standard_Integer iext = 1; iext <= nbext; iext++) {
     if (ext.SupportTypeShape2(iext) == BRepExtrema_IsOnEdge) {
       theMinPnt = ext.PointOnShape2(iext);
-      Standard_Real aPar;
+      Standard_Real aPar = NAN;
       ext.ParOnEdgeS2(iext, aPar);
       TopoDS_Edge aE = TopoDS::Edge(ext.SupportOnShape2(iext));
       if (getNormalFromEdge(theShape, aE, aPar, theNormal))

@@ -452,7 +452,7 @@ void BOPAlgo_Builder::PerformInternal1(const BOPAlgo_PaveFiller& theFiller, cons
 //=======================================================================
 void BOPAlgo_Builder::PostTreat(const Message_ProgressRange& theRange)
 {
-  Standard_Integer i, aNbS;
+  Standard_Integer i = 0, aNbS = 0;
   TopAbs_ShapeEnum aType;
   TopTools_IndexedMapOfShape aMA;
   if (myPaveFiller->NonDestructive()) {

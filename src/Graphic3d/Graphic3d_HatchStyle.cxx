@@ -488,7 +488,7 @@ namespace
 //function : Graphic3d_HatchStyle
 //purpose  :
 //=======================================================================
-Graphic3d_HatchStyle::Graphic3d_HatchStyle (const Handle(Image_PixMap)& thePattern)
+Graphic3d_HatchStyle::Graphic3d_HatchStyle (const Handle(Image_PixMap)& thePattern) : myHatchType(Standard_Atomic_Increment (&THE_HATCH_STYLE_COUNTER))
 {
   Standard_ProgramError_Raise_if (thePattern.IsNull(), "Null pointer to a hatch pattern image");
   Standard_ProgramError_Raise_if (
@@ -501,7 +501,7 @@ Graphic3d_HatchStyle::Graphic3d_HatchStyle (const Handle(Image_PixMap)& thePatte
   myPattern->Allocate (aByteSize);
   std::memcpy (myPattern->ChangeData(), thePattern->Data(), aByteSize);
 
-  myHatchType = Standard_Atomic_Increment (&THE_HATCH_STYLE_COUNTER);
+  
 }
 
 //=======================================================================

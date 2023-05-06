@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box2d.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom2d_Curve.hxx>
@@ -46,9 +48,9 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_ClosedFaceDivide,ShapeUpgrade_FaceDivide
 //purpose  : 
 //=======================================================================
 ShapeUpgrade_ClosedFaceDivide::ShapeUpgrade_ClosedFaceDivide():
-       ShapeUpgrade_FaceDivide()
+       ShapeUpgrade_FaceDivide(), myNbSplit(1)
 {
-  myNbSplit = 1;
+  
 }
 
 //=======================================================================
@@ -57,9 +59,9 @@ ShapeUpgrade_ClosedFaceDivide::ShapeUpgrade_ClosedFaceDivide():
 //=======================================================================
 
 ShapeUpgrade_ClosedFaceDivide::ShapeUpgrade_ClosedFaceDivide(const TopoDS_Face& F):
-       ShapeUpgrade_FaceDivide(F)
+       ShapeUpgrade_FaceDivide(F), myNbSplit(1)
 {
-  myNbSplit = 1;
+  
 }
 
 //=======================================================================
@@ -78,7 +80,7 @@ Standard_Boolean ShapeUpgrade_ClosedFaceDivide::SplitSurface(const Standard_Real
   }
   TopoDS_Face face = TopoDS::Face ( myResult );
   
-  Standard_Real Uf,Ul,Vf,Vl;
+  Standard_Real Uf = NAN,Ul = NAN,Vf = NAN,Vl = NAN;
   ShapeAnalysis::GetFaceUVBounds ( myFace, Uf, Ul, Vf, Vl );
   // 01.10.99 pdn Porting on DEC 
   if( ::Precision::IsInfinite(Uf) || ::Precision::IsInfinite(Ul) || 
@@ -104,7 +106,7 @@ Standard_Boolean ShapeUpgrade_ClosedFaceDivide::SplitSurface(const Standard_Real
 	TopoDS_Edge edge = sewd->Edge(i);
 	ShapeAnalysis_Edge sae;
 	Handle(Geom2d_Curve) c1, c2;
-	Standard_Real f1,f2,l1,l2;
+	Standard_Real f1 = NAN,f2 = NAN,l1 = NAN,l2 = NAN;
 	if(!sae.PCurve(edge,face,c1,f1,l1,Standard_False))
 	  continue;
 //smh#8
@@ -117,11 +119,11 @@ Standard_Boolean ShapeUpgrade_ClosedFaceDivide::SplitSurface(const Standard_Real
 	Bnd_Box2d B1, B2;
 	sac.FillBndBox ( c1, f1, l1, 20, Standard_True, B1 );
 	sac.FillBndBox ( c2, f2, l2, 20, Standard_True, B2 );
-	Standard_Real x1min,y1min,x1max,y1max;
-	Standard_Real x2min,y2min,x2max,y2max;
+	Standard_Real x1min = NAN,y1min = NAN,x1max = NAN,y1max = NAN;
+	Standard_Real x2min = NAN,y2min = NAN,x2max = NAN,y2max = NAN;
 	B1.Get(x1min,y1min,x1max,y1max);
 	B2.Get(x2min,y2min,x2max,y2max);
-	Standard_Real xf,xl,yf,yl;
+	Standard_Real xf = NAN,xl = NAN,yf = NAN,yl = NAN;
 	if(x1min < x2min) {
 	  xf = x1max;
 	  xl = x2min;
@@ -161,7 +163,7 @@ Standard_Boolean ShapeUpgrade_ClosedFaceDivide::SplitSurface(const Standard_Real
     Handle(ShapeAnalysis_Surface) sas = new ShapeAnalysis_Surface( surf );
     Standard_Boolean uclosed = sas->IsUClosed(Precision());
     Standard_Boolean vclosed = sas->IsVClosed(Precision());
-    Standard_Real U1, U2, V1, V2;
+    Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
     if(uclosed) {
       surf -> Bounds(U1, U2, V1, V2);
       GeomAdaptor_Surface GAS ( surf );

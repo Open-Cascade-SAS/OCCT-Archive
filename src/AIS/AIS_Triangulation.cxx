@@ -27,12 +27,12 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(AIS_Triangulation,AIS_InteractiveObject)
 
-AIS_Triangulation::AIS_Triangulation(const Handle(Poly_Triangulation)& Triangulation)
+AIS_Triangulation::AIS_Triangulation(const Handle(Poly_Triangulation)& Triangulation) : myTriangulation(Triangulation), myNbNodes(Triangulation->NbNodes()), myNbTriangles(Triangulation->NbTriangles()), myFlagColor(0)
 {
-  myTriangulation = Triangulation;
-  myNbNodes       = Triangulation->NbNodes();
-  myNbTriangles   = Triangulation->NbTriangles();
-  myFlagColor     = 0;
+  
+  
+  
+  
 }
 
 //=======================================================================

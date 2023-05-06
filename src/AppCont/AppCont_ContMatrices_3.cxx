@@ -354,7 +354,7 @@ void IBTMatrix(const Standard_Integer classe, math_Matrix& IBTMa)
 {
   if (classe > 26) throw Standard_DimensionError("IBTMatrix: classe > 26");
 //  math_Matrix IBTMa(1, classe-4, 1, classe-4);
-  Standard_Integer i, j, k = 0, Som = 0;
+  Standard_Integer i = 0, j = 0, k = 0, Som = 0;
   for (i = 1; i < classe-4; i++) {
     Som += (i)*(i);
   }

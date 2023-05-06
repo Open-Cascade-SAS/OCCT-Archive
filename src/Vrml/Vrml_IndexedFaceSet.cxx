@@ -20,12 +20,12 @@ IMPLEMENT_STANDARD_RTTIEXT(Vrml_IndexedFaceSet,Standard_Transient)
 Vrml_IndexedFaceSet::Vrml_IndexedFaceSet(const Handle(TColStd_HArray1OfInteger)& aCoordIndex, 
 					  const Handle(TColStd_HArray1OfInteger)& aMaterialIndex, 
 					  const Handle(TColStd_HArray1OfInteger)& aNormalIndex, 
-					  const Handle(TColStd_HArray1OfInteger)& aTextureCoordIndex)
+					  const Handle(TColStd_HArray1OfInteger)& aTextureCoordIndex) : myCoordIndex(aCoordIndex), myMaterialIndex(aMaterialIndex), myNormalIndex(aNormalIndex), myTextureCoordIndex(aTextureCoordIndex)
 {
- myCoordIndex = aCoordIndex;
- myMaterialIndex = aMaterialIndex;
- myNormalIndex = aNormalIndex;
- myTextureCoordIndex = aTextureCoordIndex;
+ 
+ 
+ 
+ 
 }
 
  Vrml_IndexedFaceSet::Vrml_IndexedFaceSet()
@@ -79,7 +79,7 @@ Handle(TColStd_HArray1OfInteger) Vrml_IndexedFaceSet::TextureCoordIndex() const
 
 Standard_OStream& Vrml_IndexedFaceSet::Print(Standard_OStream& anOStream) const 
 {
- Standard_Integer i;
+ Standard_Integer i = 0;
  anOStream  << "IndexedFaceSet {\n";
 
  if ( myCoordIndex->Length() != 1 || myCoordIndex->Value(myCoordIndex->Lower())!=0 )

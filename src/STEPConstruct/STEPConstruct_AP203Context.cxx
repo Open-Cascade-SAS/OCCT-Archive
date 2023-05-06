@@ -196,7 +196,7 @@ Handle(StepBasic_PersonAndOrganization) STEPConstruct_AP203Context::DefaultPerso
     Handle(TCollection_HAsciiString) lname = new TCollection_HAsciiString ("");
     Handle(Interface_HArray1OfHAsciiString) mname;
     TColStd_SequenceOfAsciiString names;
-    Standard_Integer i; // svv Jan11 2000 : porting on DEC
+    Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
     for ( i=1; ; i++ ) {
       TCollection_AsciiString token = user.Token ( " \t", i );
       if ( ! token.Length() ) break;

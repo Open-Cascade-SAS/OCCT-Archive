@@ -11,6 +11,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRepGProp_MeshCinert.hxx>
 #include <gp_Pnt.hxx>
 #include <math.hxx>
@@ -42,16 +44,16 @@ void BRepGProp_MeshCinert::SetLocation(const gp_Pnt& CLocation)
 void BRepGProp_MeshCinert::Perform(const TColgp_Array1OfPnt& theNodes)
 {
 
-  Standard_Real Ix, Iy, Iz, Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+  Standard_Real Ix = NAN, Iy = NAN, Iz = NAN, Ixx = NAN, Iyy = NAN, Izz = NAN, Ixy = NAN, Ixz = NAN, Iyz = NAN;
   dim = Ix = Iy = Iz = Ixx = Iyy = Izz = Ixy = Ixz = Iyz = 0.0;
 
   Standard_Integer Order = 2; 
 
-  Standard_Real ds;  
-  Standard_Real ur, um, u;
-  Standard_Real x, y, z; 
-  Standard_Real xloc, yloc, zloc;
-  Standard_Real Upper;
+  Standard_Real ds = NAN;  
+  Standard_Real ur = NAN, um = NAN, u = NAN;
+  Standard_Real x = NAN, y = NAN, z = NAN; 
+  Standard_Real xloc = NAN, yloc = NAN, zloc = NAN;
+  Standard_Real Upper = NAN;
   gp_XYZ P, D;
 
   math_Vector GaussP (1, Order);
@@ -66,12 +68,12 @@ void BRepGProp_MeshCinert::Perform(const TColgp_Array1OfPnt& theNodes)
   {
     const gp_XYZ& aP1 = theNodes(nIndex).XYZ();
     const gp_XYZ& aP2 = theNodes(nIndex + 1).XYZ();
-    Standard_Real dimLocal, IxLocal, IyLocal, IzLocal, IxxLocal, IyyLocal, IzzLocal, IxyLocal, IxzLocal, IyzLocal;
+    Standard_Real dimLocal = NAN, IxLocal = NAN, IyLocal = NAN, IzLocal = NAN, IxxLocal = NAN, IyyLocal = NAN, IzzLocal = NAN, IxyLocal = NAN, IxzLocal = NAN, IyzLocal = NAN;
     dimLocal = IxLocal = IyLocal = IzLocal = IxxLocal = IyyLocal = IzzLocal = IxyLocal = IxzLocal = IyzLocal = 0.0;
 
     loc.Coord (xloc, yloc, zloc);
 
-    Standard_Integer i;
+    Standard_Integer i = 0;
 
     Upper = (aP2 - aP1).Modulus();
     if (Upper < gp::Resolution())
@@ -151,7 +153,7 @@ void BRepGProp_MeshCinert::PreparePolygon(const TopoDS_Edge& theE,
   {
     const TColgp_Array1OfPnt& aNodes = aPolyg->Nodes();
     thePolyg = new TColgp_HArray1OfPnt(1, aNodes.Length());
-    Standard_Integer i;
+    Standard_Integer i = 0;
     if (aLoc.IsIdentity())
     {
       for (i = 1; i <= aNodes.Length(); ++i)
@@ -179,7 +181,7 @@ void BRepGProp_MeshCinert::PreparePolygon(const TopoDS_Edge& theE,
     Standard_Integer aNbNodes = aPOnTri->NbNodes();
     thePolyg = new TColgp_HArray1OfPnt(1, aNbNodes);
     const TColStd_Array1OfInteger& aNodeInds = aPOnTri->Nodes();
-    Standard_Integer i;
+    Standard_Integer i = 0;
     if (aLoc.IsIdentity())
     {
       for (i = 1; i <= aNbNodes; ++i)
@@ -207,7 +209,7 @@ void BRepGProp_MeshCinert::PreparePolygon(const TopoDS_Edge& theE,
     Standard_Integer aNbNodes = aPolyg2D->NbNodes();
     thePolyg = new TColgp_HArray1OfPnt(1, aNbNodes);
     const TColgp_Array1OfPnt2d& aNodes2D = aPolyg2D->Nodes();
-    Standard_Integer i;
+    Standard_Integer i = 0;
     if (aLoc.IsIdentity())
     {
       for (i = 1; i <= aNbNodes; ++i)

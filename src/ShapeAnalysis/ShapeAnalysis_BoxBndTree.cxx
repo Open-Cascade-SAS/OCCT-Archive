@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <ShapeAnalysis_BoxBndTree.hxx>
 #include <Standard_NoSuchObject.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -104,7 +106,7 @@ Standard_Boolean ShapeAnalysis_BoxBndTreeSelector::
     gp_Pnt p1 = BRep_Tool::Pnt(V1);
     gp_Pnt p2 = BRep_Tool::Pnt(V2);
     
-    Standard_Real tailhead, tailtail, headhead, headtail;
+    Standard_Real tailhead = NAN, tailtail = NAN, headhead = NAN, headtail = NAN;
     tailhead = p1.Distance(myLPnt);
     tailtail = p2.Distance(myLPnt);
     headhead = p1.Distance(myFPnt);
@@ -114,7 +116,7 @@ Standard_Boolean ShapeAnalysis_BoxBndTreeSelector::
     if (tailhead > tailtail) {res1 = 1; dm1 = tailtail;}
     if (headtail > headhead) {res2 = 1; dm2 = headhead;}
     Standard_Integer result = res1;
-    Standard_Real min3d;
+    Standard_Real min3d = NAN;
     min3d = Min (dm1, dm2);
     if (min3d > myMin3d)
       return Standard_False;

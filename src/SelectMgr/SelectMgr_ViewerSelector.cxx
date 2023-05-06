@@ -165,12 +165,12 @@ SelectMgr_ViewerSelector::SelectMgr_ViewerSelector()
 : myDepthTolerance (0.0),
   myDepthTolType (SelectMgr_TypeOfDepthTolerance_SensitivityFactor),
   myToPreferClosest (Standard_True),
-  myCameraScale (1.0),
+  myEntitySetBuilder(new BVH_BinnedBuilder<Standard_Real, 3, 4> (BVH_Constants_LeafNodeSizeSingle, BVH_Constants_MaxTreeDepth, Standard_True)), myCameraScale (1.0),
   myToPrebuildBVH (Standard_False),
   myIsSorted (Standard_False),
   myIsLeftChildQueuedFirst (Standard_False)
 {
-  myEntitySetBuilder = new BVH_BinnedBuilder<Standard_Real, 3, 4> (BVH_Constants_LeafNodeSizeSingle, BVH_Constants_MaxTreeDepth, Standard_True);
+  
 }
 
 //=======================================================================
@@ -1044,8 +1044,7 @@ void SelectMgr_ViewerSelector::MoveSelectableObject (const Handle(SelectMgr_Sele
 //=======================================================================
 void SelectMgr_ViewerSelector::RemoveSelectableObject (const Handle(SelectMgr_SelectableObject)& theObject)
 {
-  Handle(SelectMgr_SelectableObject) anObj = theObject;
-  if (myMapOfObjectSensitives.UnBind (theObject))
+   if (myMapOfObjectSensitives.UnBind (theObject))
   {
     RemovePicked (theObject);
     mySelectableObjects.Remove (theObject);

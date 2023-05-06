@@ -185,17 +185,17 @@ private:
 
   Handle(Geom2d_Curve) curve;
   gp_Pnt2d point;
-  Standard_Real sign;
+  Standard_Real sign{};
   TColStd_SequenceOfReal startIntervals;
   TColStd_SequenceOfReal endIntervals;
-  Standard_Integer bisInterval;
-  Standard_Integer currentInterval;
-  Standard_Real shiftParameter;
-  Standard_Real distMax;
-  Standard_Boolean isEmpty;
-  Standard_Boolean isConvex;
-  Standard_Boolean extensionStart;
-  Standard_Boolean extensionEnd;
+  Standard_Integer bisInterval{};
+  Standard_Integer currentInterval{};
+  Standard_Real shiftParameter{};
+  Standard_Real distMax{};
+  Standard_Boolean isEmpty{};
+  Standard_Boolean isConvex{};
+  Standard_Boolean extensionStart{};
+  Standard_Boolean extensionEnd{};
   gp_Pnt2d pointStartBis;
   gp_Pnt2d pointEndBis;
 

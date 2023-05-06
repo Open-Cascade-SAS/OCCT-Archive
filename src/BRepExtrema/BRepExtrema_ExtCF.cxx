@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepExtrema_ExtCF.hxx>
 
 #include <BRep_Tool.hxx>
@@ -47,7 +49,7 @@ void BRepExtrema_ExtCF::Initialize(const TopoDS_Edge& E, const TopoDS_Face& F)
     return; // protect against non-geometric type (e.g. triangulation)
   BRepAdaptor_Curve aC(E);
   myHS = new BRepAdaptor_Surface(Surf);
-  Standard_Real aTolC, aTolS;
+  Standard_Real aTolC = NAN, aTolS = NAN;
   //
   aTolS = Min(BRep_Tool::Tolerance(F), Precision::Confusion());
   aTolS = Min(Surf.UResolution(aTolS), Surf.VResolution(aTolS));
@@ -57,7 +59,7 @@ void BRepExtrema_ExtCF::Initialize(const TopoDS_Edge& E, const TopoDS_Face& F)
   aTolC = aC.Resolution(aTolC);
   aTolC = Max(aTolC, Precision::PConfusion());
   //
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   BRepTools::UVBounds(F, U1, U2, V1, V2);
   myExtCS.Initialize (*myHS, U1, U2, V1, V2, aTolC, aTolS);
 }
@@ -76,7 +78,7 @@ void BRepExtrema_ExtCF::Perform(const TopoDS_Edge& E, const TopoDS_Face& F2)
   if (myHS.IsNull())
     return; // protect against non-geometric type (e.g. triangulation)
 
-  Standard_Real U1, U2;
+  Standard_Real U1 = NAN, U2 = NAN;
   BRep_Tool::Range(E, U1, U2);
 
   BRepAdaptor_Curve Curv(E);

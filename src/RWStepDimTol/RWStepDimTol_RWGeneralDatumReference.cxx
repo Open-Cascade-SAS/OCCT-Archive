@@ -74,11 +74,11 @@ void RWStepDimTol_RWGeneralDatumReference::ReadStep (const Handle(StepData_StepR
   else {
     Handle(StepDimTol_HArray1OfDatumReferenceElement) anItems;
     Handle(StepDimTol_DatumReferenceElement) anEnt;
-    Standard_Integer nbSub;
+    Standard_Integer nbSub = 0;
     if (data->ReadSubList (num,5,"general_datum_reference.base",ach,nbSub)) {
       aType = data->ParamType(nbSub, 1);      
       if (aType == Interface_ParamSub) {
-        Standard_Integer aNewNbSub;
+        Standard_Integer aNewNbSub = 0;
         if (data->ReadSubList (nbSub,1,"general_datum_reference.base",ach,aNewNbSub)) {
           nbSub = aNewNbSub;
         }
@@ -93,7 +93,7 @@ void RWStepDimTol_RWGeneralDatumReference::ReadStep (const Handle(StepData_StepR
     aBase.SetValue(anItems);
   }
 
-  Standard_Integer nbSub;
+  Standard_Integer nbSub = 0;
   Standard_Boolean hasModifiers = data->ReadSubList(num, 6, "general_datum_reference.modifiers", ach, nbSub, Standard_True);
   Handle(StepDimTol_HArray1OfDatumReferenceModifier) aModifiers;
   if (hasModifiers) {
@@ -155,7 +155,7 @@ void RWStepDimTol_RWGeneralDatumReference::WriteStep (StepData_StepWriter& SW,
   }
   else if (aBaseType == 2) {
     Handle(StepDimTol_HArray1OfDatumReferenceElement) anArray = ent->Base().CommonDatumList();
-    Standard_Integer i, nb = (anArray.IsNull() ? 0 : anArray->Length());
+    Standard_Integer i = 0, nb = (anArray.IsNull() ? 0 : anArray->Length());
     SW.OpenTypedSub("COMMON_DATUM_LIST");
     for (i = 1; i <= nb; i++)  
       SW.Send (anArray->Value(i));
@@ -163,7 +163,7 @@ void RWStepDimTol_RWGeneralDatumReference::WriteStep (StepData_StepWriter& SW,
   }
 
   if (ent->HasModifiers()) {
-    Standard_Integer i, nb = ent->NbModifiers();
+    Standard_Integer i = 0, nb = ent->NbModifiers();
     SW.OpenSub();
     for (i = 1; i <= nb; i++) {
       StepDimTol_DatumReferenceModifier aModifier = ent->ModifiersValue(i);
@@ -201,7 +201,7 @@ void RWStepDimTol_RWGeneralDatumReference::Share (const Handle(StepDimTol_Genera
   }
   else if (aBaseType == 2) {
     Handle(StepDimTol_HArray1OfDatumReferenceElement) anArray = ent->Base().CommonDatumList();
-    Standard_Integer i, nb = (anArray.IsNull() ? 0 : anArray->Length());
+    Standard_Integer i = 0, nb = (anArray.IsNull() ? 0 : anArray->Length());
     for (i = 1; i <= nb; i++)  
       iter.AddItem (anArray->Value(i));
   }

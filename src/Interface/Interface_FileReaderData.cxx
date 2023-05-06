@@ -41,12 +41,12 @@ static Standard_Integer thenp0 = -1;
 
 Interface_FileReaderData::Interface_FileReaderData (const Standard_Integer nbr,
 						    const Standard_Integer npar)
-     : therrload (0), thenumpar (0,nbr), theents (0,nbr)
+     : thenum0(++thefic), therrload (0), theparams(new Interface_ParamSet (npar)), thenumpar (0,nbr), theents (0,nbr)
 {
-  theparams = new Interface_ParamSet (npar);
+  
   thenumpar.Init(0);
   thenm0 = -1;
-  thenum0 = ++thefic;
+  
 }
 
     Standard_Integer Interface_FileReaderData::NbRecords () const

@@ -101,9 +101,9 @@ private:
 
 
   Handle(Geom_Surface) mySurface;
-  Standard_Real myTolerance;
-  Standard_Real myTolReached;
-  Standard_Boolean isExisted;
+  Standard_Real myTolerance{};
+  Standard_Real myTolReached{};
+  Standard_Boolean isExisted{};
   TopLoc_Location myLocation;
 
 

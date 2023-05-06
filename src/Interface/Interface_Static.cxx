@@ -18,6 +18,7 @@
 #include <Standard_Type.hxx>
 #include <TCollection_HAsciiString.hxx>
 
+#include <math.h>
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(Interface_Static,Interface_TypedValue)
 
@@ -49,20 +50,20 @@ static char defmess[31];
 {
   switch (Type()) {
     case Interface_ParamInteger : {
-      Standard_Integer lim;
+      Standard_Integer lim = 0;
       if (other->IntegerLimit (Standard_True ,lim)) SetIntegerLimit (Standard_True ,lim);
       if (other->IntegerLimit (Standard_False,lim)) SetIntegerLimit (Standard_False,lim);
     }
       break;
     case Interface_ParamReal : {
-      Standard_Real lim;
+      Standard_Real lim = NAN;
       if (other->RealLimit (Standard_True ,lim)) SetRealLimit (Standard_True ,lim);
       if (other->RealLimit (Standard_False,lim)) SetRealLimit (Standard_False,lim);
       SetUnitDef (other->UnitDef());
     }
       break;
     case Interface_ParamEnum : {
-      Standard_Boolean match;  Standard_Integer e0,e1,i;
+      Standard_Boolean match = 0;  Standard_Integer e0 = 0,e1 = 0,i = 0;
       other->EnumDef (e0,e1,match);
       StartEnum (e0,match);
 //      if (e1 >= e0) theenums = new TColStd_HArray1OfAsciiString(e0,e1);
@@ -171,7 +172,7 @@ Standard_Boolean  Interface_Static::Init
 //    Editions : init donne un petit texte d edition, en 2 termes "cmd var" :
 //  imin <ival>  imax <ival>  rmin <rval>  rmax <rval>  unit <def>
 //  enum <from>  ematch <from>  eval <cval>
-      Standard_Integer i,iblc = 0;
+      Standard_Integer i = 0,iblc = 0;
       for (i = 0; init[i] != '\0'; i ++) if (init[i] == ' ') iblc = i+1;
 //  Reconnaissance du sous-cas et aiguillage
       if      (init[0] == 'i' && init[2] == 'i')
@@ -242,12 +243,12 @@ Standard_CString  Interface_Static::CDef
     return stat->EnumVal(nume);
   }
   if (part[0] == 'i') {
-    Standard_Integer ilim;
+    Standard_Integer ilim = 0;
     if (!stat->IntegerLimit((part[2] == 'a'),ilim)) return "";
     Sprintf(defmess,"%d",ilim);  return defmess;
   }
   if (part[0] == 'r') {
-    Standard_Real rlim;
+    Standard_Real rlim = NAN;
     if (!stat->RealLimit((part[2] == 'a'),rlim)) return "";
     Sprintf(defmess,"%f",rlim);  return defmess;
   }
@@ -263,12 +264,12 @@ Standard_Integer  Interface_Static::IDef
   Handle(Interface_Static) stat = Interface_Static::Static(name);
   if (stat.IsNull()) return 0;
   if (part[0] == 'i') {
-    Standard_Integer ilim;
+    Standard_Integer ilim = 0;
     if (!stat->IntegerLimit((part[2] == 'a'),ilim)) return 0;
     return ilim;
   }
   if (part[0] == 'e') {
-    Standard_Integer startcase,endcase;  Standard_Boolean match;
+    Standard_Integer startcase = 0,endcase = 0;  Standard_Boolean match = 0;
     stat->EnumDef (startcase,endcase,match);
     if (part[1] == 's') return startcase;
     if (part[1] == 'c') return (endcase - startcase + 1);

@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <GeomAdaptor_SurfaceOfLinearExtrusion.hxx>
 #include <GeomAdaptor_SurfaceOfRevolution.hxx>
 #include <BRep_Builder.hxx>
@@ -192,7 +194,7 @@ Standard_Boolean ShapeCustom_SweptToElementary::NewCurve(const TopoDS_Edge& E,
     Handle(Geom_Surface) S = GC->Surface();
     Handle(Geom_SweptSurface) SS;
     if(!IsToConvert(S,SS)) continue;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     C = BRep_Tool::Curve ( E, L, f, l );
     if ( ! C.IsNull() ) C = Handle(Geom_Curve)::DownCast ( C->Copy() );
     Tol = BRep_Tool::Tolerance ( E );
@@ -234,7 +236,7 @@ Standard_Boolean ShapeCustom_SweptToElementary::NewCurve2d(const TopoDS_Edge& E,
   // just copy pcurve if either its surface is changing or edge was copied
   if ( !IsToConvert(S,SS) && E.IsSame(NewE) ) return Standard_False;
   
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   C = BRep_Tool::CurveOnSurface(E,F,f,l);
   if ( ! C.IsNull() ) {
     C = Handle(Geom2d_Curve)::DownCast ( C->Copy() );
@@ -242,7 +244,7 @@ Standard_Boolean ShapeCustom_SweptToElementary::NewCurve2d(const TopoDS_Edge& E,
     if ( !NS.IsNull() && NS->IsKind(STANDARD_TYPE(Geom_ToroidalSurface)) ) {
       if(SS->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution))) {
         Handle(Geom_SurfaceOfRevolution) SR = Handle(Geom_SurfaceOfRevolution)::DownCast(SS);
-        Standard_Real U1,U2,V1,V2;
+        Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
         SR->Bounds(U1,U2,V1,V2);
         gp_Pnt P0;
         SR->D0(U1,V1,P0);
@@ -257,10 +259,10 @@ Standard_Boolean ShapeCustom_SweptToElementary::NewCurve2d(const TopoDS_Edge& E,
        Handle(Geom_SurfaceOfRevolution) SR = Handle(Geom_SurfaceOfRevolution)::DownCast(SS);
         gp_Pnt PR,PS;
         Handle(Geom_SphericalSurface) SPH = Handle(Geom_SphericalSurface)::DownCast(NS);
-        Standard_Real US1,US2,VS1,VS2;
+        Standard_Real US1 = NAN,US2 = NAN,VS1 = NAN,VS2 = NAN;
         SPH->Bounds(US1,US2,VS1,VS2);
         SPH->D0(US1,VS1,PS);
-        Standard_Real UR1,UR2,VR1,VR2;
+        Standard_Real UR1 = NAN,UR2 = NAN,VR1 = NAN,VR2 = NAN;
         SR->Bounds(UR1,UR2,VR1,VR2);
         SR->D0(UR1,VR1,PR);
         gp_Pnt P0 = SPH->Location();

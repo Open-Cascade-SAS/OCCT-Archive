@@ -17,7 +17,7 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Interface_IntVal,Standard_Transient)
 
-Interface_IntVal::Interface_IntVal  ()    {  theval = 0;  }
+Interface_IntVal::Interface_IntVal  () : theval(0)    {   }
 
 Standard_Integer  Interface_IntVal::Value () const  {  return theval;  }
 

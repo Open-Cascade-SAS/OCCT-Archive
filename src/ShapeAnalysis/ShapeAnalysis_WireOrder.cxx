@@ -16,6 +16,8 @@
 //szv#4 S4163
 //    pdn 09.05.99: S4174: preserve order of edges for complete torus
 
+#include <math.h>
+
 #include <gp_Pnt.hxx>
 #include <gp_XY.hxx>
 #include <gp_XYZ.hxx>
@@ -33,9 +35,9 @@
 //purpose  : 
 //=======================================================================
 ShapeAnalysis_WireOrder::ShapeAnalysis_WireOrder()
-        : myGap (0.0), myStat (0), myKeepLoops (Standard_False), myMode (Mode3D)
+        : myTol(Precision::Confusion()), myGap (0.0), myStat (0), myKeepLoops (Standard_False), myMode (Mode3D)
 {
-  myTol = Precision::Confusion();
+  
   Clear();
 }
 
@@ -303,16 +305,16 @@ void ShapeAnalysis_WireOrder::Perform (const Standard_Boolean /*closed*/)
       }
 
       // find minimum distance and joint type for 3D and 2D (if necessary) modes
-      Standard_Integer aCurJointType;
-      Standard_Real aCurMin;
+      Standard_Integer aCurJointType = 0;
+      Standard_Real aCurMin = NAN;
       // distance for four possible cases
       Standard_Real aSeqTailEdgeHead = aLastPnt3D.SquareDistance (aBegins3D (i));
       Standard_Real aSeqTailEdgeTail = aLastPnt3D.SquareDistance (anEnds3D (i));
       Standard_Real aSeqHeadEdgeTail = aFirstPnt3D.SquareDistance (anEnds3D (i));
       Standard_Real aSeqHeadEdgeHead = aFirstPnt3D.SquareDistance (aBegins3D (i));
       // the best distances for joints with head and tail of sequence
-      Standard_Real aMinDistToTail, aMinDistToHead;
-      Standard_Integer aTailJoinType, aHeadJointType;
+      Standard_Real aMinDistToTail = NAN, aMinDistToHead = NAN;
+      Standard_Integer aTailJoinType = 0, aHeadJointType = 0;
       if (aSeqTailEdgeHead <= aSeqTailEdgeTail)
       {
         aTailJoinType = 0;
@@ -594,7 +596,7 @@ void ShapeAnalysis_WireOrder::Perform (const Standard_Boolean /*closed*/)
             Standard_Real aReverseDist =
                     aCurLoopFirst.SquareDistance (aMainLoopLast) + aCurLoopLast.SquareDistance (aMainLoopFirst);
             // take the best result
-            Standard_Real aJoinDist;
+            Standard_Real aJoinDist = NAN;
             if ((aDirectDist < aTol2) || (aDirectDist < 2.0 * aReverseDist))
             {
               aJoinDist = aDirectDist;
@@ -667,7 +669,7 @@ void ShapeAnalysis_WireOrder::Perform (const Standard_Boolean /*closed*/)
     // check if edges were only shifted in reverse or forward, not reordered
     Standard_Boolean isShiftReverse = Standard_True;
     Standard_Boolean isShiftForward = Standard_True;
-    Standard_Integer aFirstIdx, aSecondIdx;
+    Standard_Integer aFirstIdx = 0, aSecondIdx = 0;
     Standard_Integer aLength = aMainLoop->Length();
     for (Standard_Integer i = 1; i <= aLength - 1; i++)
     {
@@ -788,7 +790,7 @@ Standard_Real ShapeAnalysis_WireOrder::Gap (const Standard_Integer num) const
 
 void ShapeAnalysis_WireOrder::SetChains (const Standard_Real gap)
 {
-  Standard_Integer n0, n1, n2, nb = NbEdges(); //szv#4:S4163:12Mar99 o0,o1,o2 not needed
+  Standard_Integer n0 = 0, n1 = 0, n2 = 0, nb = NbEdges(); //szv#4:S4163:12Mar99 o0,o1,o2 not needed
   if (nb == 0) return;
   TColStd_SequenceOfInteger chain;
   n0 = 0;

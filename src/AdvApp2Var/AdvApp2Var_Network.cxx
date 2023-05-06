@@ -39,11 +39,11 @@ AdvApp2Var_Network::AdvApp2Var_Network()
 
 AdvApp2Var_Network::AdvApp2Var_Network(const AdvApp2Var_SequenceOfPatch& Net,
 				       const TColStd_SequenceOfReal& TheU,
-				       const TColStd_SequenceOfReal& TheV)
+				       const TColStd_SequenceOfReal& TheV) : myNet(Net), myUParameters(TheU), myVParameters(TheV)
 {
-  myNet=Net;
-  myUParameters=TheU;
-  myVParameters=TheV;
+  
+  
+  
 }
 
 //==========================================================================================
@@ -75,7 +75,7 @@ void AdvApp2Var_Network::UpdateInU(const Standard_Real CuttingValue)
 {
 
 //  insertion du nouveau parametre de decoupe
-  Standard_Integer i=1,j;
+  Standard_Integer i=1,j = 0;
   while (myUParameters.Value(i)<CuttingValue) {
     i++;
   }

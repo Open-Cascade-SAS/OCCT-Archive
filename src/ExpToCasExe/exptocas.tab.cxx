@@ -231,7 +231,7 @@ namespace exptocas {
   template <typename Base>
   parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, YY_RVREF (semantic_type) v)
     : Base (t)
-    , value (YY_MOVE (v))
+    , value (v)
   {}
 
   template <typename Base>
@@ -262,8 +262,7 @@ namespace exptocas {
   {}
 
 #if 201103L <= YY_CPLUSPLUS
-  parser::by_kind::by_kind (by_kind&& that)
-    : kind_ (that.kind_)
+  parser::by_kind::by_kind (by_kind&& that)      noexcept : kind_ (that.kind_)
   {
     that.clear ();
   }
@@ -341,8 +340,7 @@ namespace exptocas {
   parser::stack_symbol_type::stack_symbol_type ()
   {}
 
-  parser::stack_symbol_type::stack_symbol_type (YY_RVREF (stack_symbol_type) that)
-    : super_type (YY_MOVE (that.state), YY_MOVE (that.value))
+  parser::stack_symbol_type::stack_symbol_type (YY_RVREF (stack_symbol_type) that)  noexcept : super_type (that.state, YY_MOVE (that.value))
   {
 #if 201103L <= YY_CPLUSPLUS
     // that is emptied.
@@ -491,7 +489,7 @@ namespace exptocas {
   int
   parser::parse ()
   {
-    int yyn;
+    int yyn = 0;
     /// Length of the RHS of the rule being reduced.
     int yylen = 0;
 
@@ -503,7 +501,7 @@ namespace exptocas {
     symbol_type yyla;
 
     /// The return value of parse ().
-    int yyresult;
+    int yyresult = 0;
 
 #if YY_EXCEPTIONS
     try
@@ -935,7 +933,7 @@ namespace exptocas {
       {
         ++yynerrs_;
         std::string msg = YY_("syntax error");
-        error (YY_MOVE (msg));
+        error (msg);
       }
 
 

@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <AIS_TextLabel.hxx>
 
 #include <AIS_InteractiveContext.hxx>
@@ -292,7 +294,7 @@ void AIS_TextLabel::Compute (const Handle(PrsMgr_PresentationManager)& ,
       }
 
       gp_Pnt aCenterOfLabel;
-      Standard_Real aWidth, aHeight;
+      Standard_Real aWidth = NAN, aHeight = NAN;
 
       Standard_Boolean isInit = calculateLabelParams (aPosition, aCenterOfLabel, aWidth, aHeight);
       if (myHasOrientation3D)
@@ -363,7 +365,7 @@ void AIS_TextLabel::ComputeSelection (const Handle(SelectMgr_Selection)& theSele
       }
 
       gp_Pnt aCenterOfLabel;
-      Standard_Real aWidth, aHeight;
+      Standard_Real aWidth = NAN, aHeight = NAN;
 
       if (!calculateLabelParams (aPosition, aCenterOfLabel, aWidth, aHeight))
       {

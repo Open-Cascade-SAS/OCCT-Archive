@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_BezierCurve.hxx>
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -37,7 +39,7 @@ static Standard_Boolean Controle(const TColgp_Array1OfPnt& Poles,
 				 gp_Pln& Plan) 
 {
   Standard_Boolean IsPlan = Standard_False;
-  Standard_Real gx,gy,gz;
+  Standard_Real gx = NAN,gy = NAN,gz = NAN;
   gp_Pnt Bary;
   gp_Dir DX, DY;
   Standard_Real aTolSingular = Precision::Confusion();
@@ -47,7 +49,7 @@ static Standard_Boolean Controle(const TColgp_Array1OfPnt& Poles,
   if (gz < Tol && gy > aTolSingular) {
     gp_Pnt P;
     gp_Vec DU, DV;
-    Standard_Real umin, umax, vmin, vmax;
+    Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
     S->Bounds(umin, umax, vmin, vmax);
     S->D1((umin + umax) / 2, (vmin + vmax) / 2, P, DU, DV);
     // On prend DX le plus proche possible de DU
@@ -75,7 +77,7 @@ static Standard_Boolean Controle(const Handle(Geom_Curve)& C,
 			  const Standard_Real Tol) 
 {
   Standard_Boolean B = Standard_True;
-  Standard_Integer ii, Nb;
+  Standard_Integer ii = 0, Nb = 0;
   GeomAbs_CurveType Type;
   GeomAdaptor_Curve AC(C);
   Type = AC.GetType();
@@ -115,7 +117,7 @@ static Standard_Boolean Controle(const Handle(Geom_Curve)& C,
     }
   }
  
-  Standard_Real u, du, f, l, d;
+  Standard_Real u = NAN, du = NAN, f = NAN, l = NAN, d = NAN;
   f = AC.FirstParameter();
   l = AC.LastParameter();
   du = (l - f) / (Nb - 1);
@@ -161,7 +163,7 @@ GeomLib_IsPlanarSurface::GeomLib_IsPlanarSurface(const Handle(Geom_Surface)& S,
       gp_Pnt P;
       gp_Vec DU, DV, Dn;
       gp_Dir Dir = AS.AxeOfRevolution().Direction();
-      Standard_Real Umin, Umax, Vmin, Vmax;
+      Standard_Real Umin = NAN, Umax = NAN, Vmin = NAN, Vmax = NAN;
       S->Bounds(Umin, Umax, Vmin, Vmax);
       S->D1((Umin+Umax)/2, (Vmin+Vmax)/2, P, DU, DV);
       if (DU.Magnitude() <= gp::Resolution() ||
@@ -198,8 +200,8 @@ GeomLib_IsPlanarSurface::GeomLib_IsPlanarSurface(const Handle(Geom_Surface)& S,
   case GeomAbs_SurfaceOfExtrusion :
     {
       Standard_Boolean Essai = Standard_False;
-      Standard_Real Umin, Umax, Vmin, Vmax;
-      Standard_Real norm;
+      Standard_Real Umin = NAN, Umax = NAN, Vmin = NAN, Vmax = NAN;
+      Standard_Real norm = NAN;
       gp_Vec Du, Dv, Dn;
       gp_Pnt P;
 
@@ -235,10 +237,10 @@ GeomLib_IsPlanarSurface::GeomLib_IsPlanarSurface(const Handle(Geom_Surface)& S,
 
   default :
       {
-	Standard_Integer NbU,NbV, ii, jj, kk; 
+	Standard_Integer NbU = 0,NbV = 0, ii = 0, jj = 0, kk = 0; 
 	NbU = 8 + 3*AS.NbUIntervals(GeomAbs_CN);
 	NbV = 8 + 3*AS.NbVIntervals(GeomAbs_CN);
-        Standard_Real Umin, Umax, Vmin, Vmax, du, dv, U, V;
+        Standard_Real Umin = NAN, Umax = NAN, Vmin = NAN, Vmax = NAN, du = NAN, dv = NAN, U = NAN, V = NAN;
 	S->Bounds(Umin, Umax, Vmin, Vmax);
 	du = (Umax-Umin)/(NbU-1);
 	dv = (Vmax-Vmin)/(NbV-1);

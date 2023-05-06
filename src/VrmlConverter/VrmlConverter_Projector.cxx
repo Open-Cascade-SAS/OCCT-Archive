@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BRepBndLib.hxx>
 #include <gp_Ax3.hxx>
@@ -38,17 +40,17 @@ VrmlConverter_Projector::VrmlConverter_Projector (const TopTools_Array1OfShape& 
 						  const Standard_Real YUp,
 						  const Standard_Real ZUp, 
 						  const VrmlConverter_TypeOfCamera Camera,
-						  const VrmlConverter_TypeOfLight Light)
+						  const VrmlConverter_TypeOfLight Light) : myTypeOfCamera(Camera), myTypeOfLight(Light)
 
 {
 
-  myTypeOfCamera = Camera;
-  myTypeOfLight = Light;
+  
+  
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Bnd_Box box;
-  Standard_Real  Xmin, Xmax, Ymin, Ymax, Zmin, Zmax, diagonal;
-  Standard_Real  Xtarget, Ytarget, Ztarget, Angle, MaxAngle, Height, MaxHeight; 
+  Standard_Real  Xmin = NAN, Xmax = NAN, Ymin = NAN, Ymax = NAN, Zmin = NAN, Zmax = NAN, diagonal = NAN;
+  Standard_Real  Xtarget = NAN, Ytarget = NAN, Ztarget = NAN, Angle = NAN, MaxAngle = NAN, Height = NAN, MaxHeight = NAN; 
 
   for ( i=Shapes.Lower(); i <= Shapes.Upper(); i++)
     {

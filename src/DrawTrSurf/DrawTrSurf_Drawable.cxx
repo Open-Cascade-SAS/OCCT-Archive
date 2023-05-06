@@ -57,7 +57,7 @@ void DrawTrSurf_Drawable::DrawCurve2dOn (Adaptor2d_Curve2d&   C,
   gp_Pnt P;
   
   gp_Pnt2d aPoint2d,
-  *aPoint2dPtr ;
+  *aPoint2dPtr = nullptr ;
   if (myDrawMode == 1) {
     Standard_Real Fleche = myDeflection/aDisplay.Zoom();
     GCPnts_UniformDeflection LineVu(C,Fleche);
@@ -73,7 +73,7 @@ void DrawTrSurf_Drawable::DrawCurve2dOn (Adaptor2d_Curve2d&   C,
     }  
   }
   else {
-    Standard_Integer intrv, nbintv = C.NbIntervals(GeomAbs_CN);
+    Standard_Integer intrv = 0, nbintv = C.NbIntervals(GeomAbs_CN);
     TColStd_Array1OfReal TI(1,nbintv+1);
     C.Intervals(TI,GeomAbs_CN);
     C.D0(C.FirstParameter(),aPoint2d);
@@ -144,8 +144,8 @@ void DrawTrSurf_Drawable::DrawCurveOn (Adaptor3d_Curve&   C,
   }
   else
   {
-    Standard_Integer j;
-    Standard_Integer intrv, nbintv = C.NbIntervals(GeomAbs_CN);
+    Standard_Integer j = 0;
+    Standard_Integer intrv = 0, nbintv = C.NbIntervals(GeomAbs_CN);
     TColStd_Array1OfReal TI(1,nbintv+1);
     C.Intervals(TI,GeomAbs_CN);
     C.D0(C.FirstParameter(),P);

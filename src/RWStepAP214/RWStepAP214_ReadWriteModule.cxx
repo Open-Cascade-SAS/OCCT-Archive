@@ -3656,7 +3656,7 @@ Standard_Integer RWStepAP214_ReadWriteModule::CaseStep
 {
   // FMA - le 25-07-96 : Optimisation -> on teste en premier les types les plus
   //                     frequents dans le fichier cad geometry/topology
-  Standard_Integer num;
+  Standard_Integer num = 0;
   if (key.IsEqual(Reco_CartesianPoint)) return 59;  // car tres courant
   if (typenums.Find(key, num)) return num;
   if (typeshor.Find(key, num)) return num; // AJOUT DES TYPES COURTS
@@ -3688,7 +3688,7 @@ Standard_Integer RWStepAP214_ReadWriteModule::CaseStep
 // SHORT TYPES
 //  Pas tres elegant : on convertit d abord
 //  Sinon, il faudrait sortir des routines
-    Standard_Integer i,num = 0;
+    Standard_Integer i = 0,num = 0;
     for (i = 1; i <= NbComp; i ++) {
       if (typeshor.IsBound(theTypes(i)))  {  num = 1;  break;  }
     }

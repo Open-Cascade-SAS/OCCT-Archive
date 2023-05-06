@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_HVertex.hxx>
 #include <Contap_HContTool.hxx>
 #include <Extrema_EPCOfExtPC2d.hxx>
@@ -29,7 +31,7 @@ Standard_Integer Contap_HContTool::NbSamplesV
  const Standard_Real ,
  const Standard_Real )
 {
-  Standard_Integer nbs;
+  Standard_Integer nbs = 0;
   GeomAbs_SurfaceType typS = S->GetType();
   switch(typS) { 
   case GeomAbs_Plane:
@@ -76,7 +78,7 @@ Standard_Integer Contap_HContTool::NbSamplesU
  const Standard_Real ,
  const Standard_Real )
 {
-  Standard_Integer nbs;
+  Standard_Integer nbs = 0;
   GeomAbs_SurfaceType typS = S->GetType();
   switch(typS) { 
   case GeomAbs_Plane:
@@ -266,7 +268,7 @@ Standard_Boolean Contap_HContTool::Project (const Handle(Adaptor2d_Curve2d)& C,
   Standard_Real epsX = 1.e-8;
   Standard_Integer Nbu = 20;
   Standard_Real Tol = 1.e-5;
-  Standard_Real Dist2;
+  Standard_Real Dist2 = NAN;
 
   Extrema_EPCOfExtPC2d extrema (P, *C, Nbu, epsX, Tol);
   if (!extrema.IsDone()) {

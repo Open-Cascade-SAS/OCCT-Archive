@@ -28,13 +28,13 @@
 IMPLEMENT_STANDARD_RTTIEXT(DrawTrSurf_BSplineCurve2d, DrawTrSurf_Curve2d)
 
 DrawTrSurf_BSplineCurve2d::DrawTrSurf_BSplineCurve2d (const Handle(Geom2d_BSplineCurve)& C)
-: DrawTrSurf_Curve2d (C, Draw_vert, 100)
+: DrawTrSurf_Curve2d (C, Draw_vert, 100), drawKnots(Standard_True), knotsForm(Draw_Losange), knotsDim(5), drawPoles(Standard_True)
 {
-  drawKnots = Standard_True;
-  knotsForm = Draw_Losange;
+  
+  
   knotsLook = Draw_violet;
-  knotsDim  = 5;
-  drawPoles = Standard_True;
+  
+  
   polesLook = Draw_rouge;
 }
 
@@ -42,14 +42,14 @@ DrawTrSurf_BSplineCurve2d::DrawTrSurf_BSplineCurve2d (const Handle(Geom2d_BSplin
                                                       const Draw_Color& PolesColor, const Draw_Color& KnotsColor,
                                                       const Draw_MarkerShape KnotsShape, const Standard_Integer KnotsSize,
                                                       const Standard_Boolean ShowPoles, const Standard_Boolean ShowKnots, const Standard_Integer Discret)
-: DrawTrSurf_Curve2d (C, CurvColor, Discret)
+: DrawTrSurf_Curve2d (C, CurvColor, Discret), drawKnots(ShowKnots), knotsForm(KnotsShape), knotsLook(KnotsColor), knotsDim(KnotsSize), drawPoles(ShowPoles), polesLook(PolesColor)
 {
-  drawKnots = ShowKnots;
-  knotsForm = KnotsShape;
-  knotsLook = KnotsColor;
-  knotsDim  = KnotsSize;
-  drawPoles = ShowPoles;
-  polesLook = PolesColor;
+  
+  
+  
+  
+  
+  
 }
 
 void DrawTrSurf_BSplineCurve2d::DrawOn (Draw_Display& dis) const

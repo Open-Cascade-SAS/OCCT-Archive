@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Quantity_ColorRGBA.hxx>
 
 #include <NCollection_Vec4.hxx>
@@ -160,7 +162,7 @@ bool Quantity_ColorRGBA::ColorFromHex (const char* const   theHexColorString,
     return false;
   }
 
-  ColorInteger aHexColorInteger;
+  ColorInteger aHexColorInteger = 0;
   if (!convertStringToInteger (aHexColorString, aHexColorInteger, 16u))
   {
     return false;
@@ -217,7 +219,7 @@ Standard_Boolean Quantity_ColorRGBA::InitFromJson (const Standard_SStream& theSS
 {
   Standard_Integer aPos = theStreamPos;
 
-  Standard_Real aRed, aGreen, aBlue, anAlpha;
+  Standard_Real aRed = NAN, aGreen = NAN, aBlue = NAN, anAlpha = NAN;
   OCCT_INIT_VECTOR_CLASS (Standard_Dump::Text (theSStream), "RGBA", aPos, 4, &aRed, &aGreen, &aBlue, &anAlpha)
 
   SetValues ((Standard_ShortReal)aRed, (Standard_ShortReal)aGreen, (Standard_ShortReal)aBlue, (Standard_ShortReal)anAlpha);

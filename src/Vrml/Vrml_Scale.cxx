@@ -20,9 +20,9 @@ Vrml_Scale::Vrml_Scale()
   myScaleFactor = tmpV;
 }
 
-Vrml_Scale::Vrml_Scale(const gp_Vec& aScaleFactor)
+Vrml_Scale::Vrml_Scale(const gp_Vec& aScaleFactor) : myScaleFactor(aScaleFactor)
 {
-  myScaleFactor = aScaleFactor;
+  
 }
 
  void Vrml_Scale::SetScaleFactor(const gp_Vec& aScaleFactor) 

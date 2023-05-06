@@ -311,11 +311,11 @@ private:
   Handle(TColStd_HArray1OfReal) myVal;
   XCAFDimTolObjects_DimensionQualifier myQualifier;
   XCAFDimTolObjects_AngularQualifier myAngularQualifier;
-  Standard_Boolean myIsHole;
+  Standard_Boolean myIsHole{};
   XCAFDimTolObjects_DimensionFormVariance myFormVariance;
   XCAFDimTolObjects_DimensionGrade myGrade;
-  Standard_Integer myL;
-  Standard_Integer myR;
+  Standard_Integer myL{};
+  Standard_Integer myR{};
   XCAFDimTolObjects_DimensionModifiersSequence myModifiers;
   TopoDS_Edge myPath;
   gp_Dir myDir;

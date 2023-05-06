@@ -15,6 +15,8 @@
 // Great zoom leads to non-coincidence of
 // a point and non-infinite lines passing through this point:
 
+#include <math.h>
+
 #include <BndLib_Add3dCurve.hxx>
 #include <GCPnts_TangentialDeflection.hxx>
 #include <gp_Circ.hxx>
@@ -42,14 +44,14 @@ static Standard_Real GetDeflection(const Adaptor3d_Curve&        aCurve,
                                    const Standard_Real         U2, 
                                    const Handle(Prs3d_Drawer)& aDrawer)
 {
-  Standard_Real TheDeflection;
+  Standard_Real TheDeflection = NAN;
 
   if (aDrawer->TypeOfDeflection() == Aspect_TOD_RELATIVE)
   {
     // On calcule la fleche en fonction des min max globaux de la piece:
     Bnd_Box Total;
     BndLib_Add3dCurve::Add(aCurve, U1, U2, 0.,Total);
-    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+    Standard_Real aXmin = NAN, aYmin = NAN, aZmin = NAN, aXmax = NAN, aYmax = NAN, aZmax = NAN;
     Total.Get( aXmin, aYmin, aZmin, aXmax, aYmax, aZmax );
     Standard_Real m = RealLast();
     if ( ! (Total.IsOpenXmin() || Total.IsOpenXmax() ))
@@ -156,8 +158,8 @@ static void drawCurve (Adaptor3d_Curve&              aCurve,
       TColStd_Array1OfReal T(1, nbinter+1);
       aCurve.Intervals(T, GeomAbs_C1);
 
-      Standard_Real theU1, theU2;
-      Standard_Integer NumberOfPoints, i, j;
+      Standard_Real theU1 = NAN, theU2 = NAN;
+      Standard_Integer NumberOfPoints = 0, i = 0, j = 0;
       TColgp_SequenceOfPnt SeqP;
 
       for (j = 1; j <= nbinter; j++) {
@@ -212,7 +214,7 @@ static Standard_Boolean MatchCurve (
 		       const Standard_Real   U1,
 		       const Standard_Real   U2)
 {
-  Standard_Real retdist;
+  Standard_Real retdist = NAN;
   switch (aCurve.GetType())
   {
     case GeomAbs_Line:
@@ -288,7 +290,7 @@ void StdPrs_DeflectionCurve::Add (const Handle (Prs3d_Presentation)& aPresentati
     aGroup->SetPrimitivesAspect (aDrawer->LineAspect()->Aspect());
   }
 
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   if (FindLimits(aCurve, aDrawer->MaximalParameterValue(), V1, V2))
   {
     TColgp_SequenceOfPnt Points;
@@ -392,7 +394,7 @@ void StdPrs_DeflectionCurve::Add (const Handle (Prs3d_Presentation)& aPresentati
                                   const Standard_Real                anAngle,
                                   const Standard_Boolean theToDrawCurve)
 {
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   if (!FindLimits(aCurve, aLimit, V1, V2))
   {
     return;
@@ -420,7 +422,7 @@ void StdPrs_DeflectionCurve::Add (const Handle (Prs3d_Presentation)& aPresentati
                                   TColgp_SequenceOfPnt&              Points,
                                   const Standard_Boolean theToDrawCurve)
 {
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   if (!FindLimits(aCurve, aDrawer->MaximalParameterValue(), V1, V2))
   {
     return;
@@ -447,7 +449,7 @@ Standard_Boolean StdPrs_DeflectionCurve::Match
 		       const Adaptor3d_Curve&         aCurve,
 		       const Handle (Prs3d_Drawer)& aDrawer) 
 {
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   if (FindLimits(aCurve, aDrawer->MaximalParameterValue(), V1, V2))
   {
     return MatchCurve(X,Y,Z,aDistance,aCurve,
@@ -515,7 +517,7 @@ Standard_Boolean StdPrs_DeflectionCurve::Match
 			   const Standard_Real   aLimit,
 			   const Standard_Real   anAngle)
 {
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   if (FindLimits(aCurve, aLimit, V1, V2))
   {
     return MatchCurve(X,Y,Z,aDistance,aCurve,aDeflection,anAngle,V1,V2);

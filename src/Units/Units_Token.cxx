@@ -34,12 +34,12 @@ IMPLEMENT_STANDARD_RTTIEXT(Units_Token,Standard_Transient)
 //function : Units_Token
 //purpose  : 
 //=======================================================================
-Units_Token::Units_Token()
+Units_Token::Units_Token() : theword(" "), themean(" "), thevalue(0.), thedimensions(new Units_Dimensions(0.,0.,0.,0.,0.,0.,0.,0.,0.))
 {
-  theword=" ";
-  themean=" ";
-  thevalue=0.;
-  thedimensions=new Units_Dimensions(0.,0.,0.,0.,0.,0.,0.,0.,0.);
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -47,12 +47,12 @@ Units_Token::Units_Token()
 //purpose  : 
 //=======================================================================
 
-Units_Token::Units_Token(const Standard_CString aword)
+Units_Token::Units_Token(const Standard_CString aword) : theword(aword), themean(" "), thevalue(0.), thedimensions(new Units_Dimensions(0.,0.,0.,0.,0.,0.,0.,0.,0.))
 {
-  theword=aword;
-  themean=" ";
-  thevalue=0.;
-  thedimensions=new Units_Dimensions(0.,0.,0.,0.,0.,0.,0.,0.,0.);
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -61,12 +61,12 @@ Units_Token::Units_Token(const Standard_CString aword)
 //=======================================================================
 
 Units_Token::Units_Token(const Standard_CString aword,
-			 const Standard_CString amean)
+			 const Standard_CString amean) : theword(aword), themean(amean), thevalue(0.), thedimensions(new Units_Dimensions(0.,0.,0.,0.,0.,0.,0.,0.,0.))
 {
-  theword=aword;
-  themean=amean;
-  thevalue=0.;
-  thedimensions=new Units_Dimensions(0.,0.,0.,0.,0.,0.,0.,0.,0.);
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -76,12 +76,12 @@ Units_Token::Units_Token(const Standard_CString aword,
 
 Units_Token::Units_Token(const Standard_CString aword,
 			 const Standard_CString amean,
-			 const Standard_Real avalue)
+			 const Standard_Real avalue) : theword(aword), themean(amean), thevalue(avalue), thedimensions(new Units_Dimensions(0.,0.,0.,0.,0.,0.,0.,0.,0.))
 {
-  theword=aword;
-  themean=amean;
-  thevalue=avalue;
-  thedimensions=new Units_Dimensions(0.,0.,0.,0.,0.,0.,0.,0.,0.);
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -92,11 +92,11 @@ Units_Token::Units_Token(const Standard_CString aword,
 Units_Token::Units_Token(const Standard_CString aword,
 			 const Standard_CString amean,
 			 const Standard_Real avalue,
-			 const Handle(Units_Dimensions)& adimensions)
+			 const Handle(Units_Dimensions)& adimensions) : theword(aword), themean(amean), thevalue(avalue)
 {
-  theword=aword;
-  themean=amean;
-  thevalue=avalue;
+  
+  
+  
   if(adimensions.IsNull())
     thedimensions = new Units_Dimensions(0.,0.,0.,0.,0.,0.,0.,0.,0.);
   else
@@ -159,11 +159,11 @@ void Units_Token::Dimensions(const Handle(Units_Dimensions)& adimensions)
 //purpose  : 
 //=======================================================================
 
-Units_Token::Units_Token(const Handle(Units_Token)& atoken)
+Units_Token::Units_Token(const Handle(Units_Token)& atoken) : thevalue(atoken->Value())
 {
   theword       = atoken->Word();
   themean       = atoken->Mean();
-  thevalue      = atoken->Value();
+  
   thedimensions = atoken->Dimensions();
 }
 
@@ -358,7 +358,7 @@ Standard_Boolean Units_Token::IsEqual (const Handle(Units_Token)& atoken) const
 void Units_Token::Dump(const Standard_Integer ashift,
 		       const Standard_Integer alevel) const
 {
-  int i;
+  int i = 0;
   TCollection_AsciiString word = Word();
   TCollection_AsciiString mean = Mean();
 

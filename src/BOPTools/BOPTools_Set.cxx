@@ -31,11 +31,11 @@ static
 BOPTools_Set::BOPTools_Set() 
 :
   myAllocator(NCollection_BaseAllocator::CommonBaseAllocator()),
-  myShapes(myAllocator)
+  myShapes(myAllocator), myNbShapes(0), mySum(0), myUpper(432123)
 {
-  myNbShapes=0;
-  mySum=0;
-  myUpper=432123;
+  
+  
+  
 }
 //=======================================================================
 //function : 
@@ -45,11 +45,11 @@ BOPTools_Set::BOPTools_Set
   (const Handle(NCollection_BaseAllocator)& theAllocator) 
 :
   myAllocator(theAllocator),
-  myShapes(myAllocator)
+  myShapes(myAllocator), myNbShapes(0), mySum(0), myUpper(432123)
 { 
-  myNbShapes=0;
-  mySum=0;  
-  myUpper=432123;
+  
+   
+  
 }
 
 //=======================================================================
@@ -143,7 +143,7 @@ Standard_Integer BOPTools_Set::HashCode (const Standard_Integer theUpperBound) c
 Standard_Boolean BOPTools_Set::IsEqual
   (const BOPTools_Set& theOther)const
 {
-  Standard_Boolean bRet;
+  Standard_Boolean bRet = 0;
   //
   bRet=Standard_False;
   //
@@ -177,7 +177,7 @@ Standard_Boolean BOPTools_Set::IsEqual
 void BOPTools_Set::Add(const TopoDS_Shape& theS,
                        const TopAbs_ShapeEnum theType)
 {
-  Standard_Integer aId, aIdN;
+  Standard_Integer aId = 0, aIdN = 0;
   TopAbs_Orientation aOr;
   TopExp_Explorer aExp;
   //
@@ -235,7 +235,7 @@ void BOPTools_Set::Add(const TopoDS_Shape& theS,
 Standard_Integer NormalizedIds(const Standard_Integer aId,
                                const Standard_Integer aDiv)
 {
-  Standard_Integer aMax, aTresh, aIdRet;
+  Standard_Integer aMax = 0, aTresh = 0, aIdRet = 0;
   //
   aIdRet=aId;
   aMax=::IntegerLast();

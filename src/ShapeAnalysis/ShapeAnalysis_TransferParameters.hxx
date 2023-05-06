@@ -87,19 +87,19 @@ public:
 protected:
 
 
-  Standard_Real myFirst;
-  Standard_Real myLast;
+  Standard_Real myFirst{};
+  Standard_Real myLast{};
   TopoDS_Edge myEdge;
-  Standard_Real myMaxTolerance;
+  Standard_Real myMaxTolerance{};
 
 
 private:
 
 
-  Standard_Real myShift;
-  Standard_Real myScale;
-  Standard_Real myFirst2d;
-  Standard_Real myLast2d;
+  Standard_Real myShift{};
+  Standard_Real myScale{};
+  Standard_Real myFirst2d{};
+  Standard_Real myLast2d{};
   TopoDS_Face myFace;
 
 

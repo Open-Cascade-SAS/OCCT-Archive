@@ -62,7 +62,7 @@ Standard_Boolean BRepExtrema_Poly::Distance (const TopoDS_Shape& S1, const TopoD
   }
   if (nbn2 == 0) return Standard_False;
 
-  Standard_Integer i,n;
+  Standard_Integer i = 0,n = 0;
 
   TColgp_Array1OfPnt TP1(1,nbn1);
   nbn1 = 0;
@@ -106,7 +106,7 @@ Standard_Boolean BRepExtrema_Poly::Distance (const TopoDS_Shape& S1, const TopoD
     }
   }
 
-  Standard_Integer i1,i2;
+  Standard_Integer i1 = 0,i2 = 0;
   for (i1 = 1; i1 <= nbn1; i1++)
   {
     const gp_Pnt& PP1 = TP1(i1);

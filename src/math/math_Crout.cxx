@@ -21,6 +21,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_Crout.hxx>
 #include <math_Matrix.hxx>
 #include <math_NotSquare.hxx>
@@ -29,12 +31,12 @@
 #include <StdFail_NotDone.hxx>
 
 math_Crout::math_Crout(const math_Matrix& A, const Standard_Real MinPivot):
-                       InvA(1, A.RowNumber(), 1, A.ColNumber()) 
+                       InvA(1, A.RowNumber(), 1, A.ColNumber()), Det(1) 
 {
-  Standard_Integer i,j,k;
+  Standard_Integer i = 0,j = 0,k = 0;
   Standard_Integer Nctl = A.RowNumber();
   Standard_Integer lowr = A.LowerRow(), lowc = A.LowerCol();
-  Standard_Real scale;
+  Standard_Real scale = NAN;
 
   math_Matrix L(1, Nctl, 1, Nctl);
   math_Vector Diag(1, Nctl);
@@ -43,7 +45,7 @@ math_Crout::math_Crout(const math_Matrix& A, const Standard_Real MinPivot):
   
   math_NotSquare_Raise_if(Nctl != A.ColNumber(), " ");
   
-  Det = 1;
+  
   for (i =1; i <= Nctl; i++) {
     for (j = 1; j <= i -1; j++) {
       scale = 0.0;
@@ -110,7 +112,7 @@ void math_Crout::Solve(const math_Vector& B, math_Vector& X) const
   
   Standard_Integer n = InvA.RowNumber();
   Standard_Integer lowb = B.Lower(), lowx = X.Lower();
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
   for (i = 1; i <= n; i++) {
     X(i+lowx-1) = InvA(i, 1)*B(1+lowb-1);

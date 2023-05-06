@@ -40,6 +40,8 @@ de Gauss.
 
 //#endif
 
+#include <math.h>
+
 #include <math.hxx>
 #include <math_GaussMultipleIntegration.hxx>
 #include <math_IntegerVector.hxx>
@@ -79,20 +81,20 @@ class IntegrationFunction {
 			const Standard_Integer maxsav, const Standard_Integer NVar,
 			const math_IntegerVector& Ord,
 			const math_Vector& Lowsav,const  math_Vector& Uppsav):
-                        Ordsav(1, NVar),
-                        xr(1, NVar),
+                        Fsav(&F), Ordsav(1, NVar),
+                        NVarsav(NVar), xr(1, NVar),
                         xm(1, NVar),
                         GaussPoint(1, NVar, 1, maxsav),
-                        GaussWeight(1, NVar, 1, maxsav)
+                        GaussWeight(1, NVar, 1, maxsav), Done(Standard_False)
 {
 
-Standard_Integer i, k;
+Standard_Integer i = 0, k = 0;
 math_IntegerVector inc(1, NVar);
 inc.Init(0);
-Fsav = &F;
-NVarsav = NVar;
-Ordsav = Ord;
-Done = Standard_False;
+
+
+
+
 
 //Recuperation des points et poids de Gauss dans le fichier GaussPoints 
   for (i =1; i<= NVarsav; i++) {
@@ -131,14 +133,14 @@ Standard_Boolean IntegrationFunction::recursive_iteration(Standard_Integer& n,
 
 // Termination criterium :
 // Calcul de la valeur de la fonction aux points de Gauss fixes:
-	int local;
+	int local = 0;
    if (n == (NVarsav+1)) {
      math_Vector dx(1, NVarsav);
-     Standard_Integer j ;
+     Standard_Integer j = 0 ;
      for ( j = 1; j <= NVarsav; j++) {
        dx(j) = xr(j)* GaussPoint(j, inc(j));
      }
-     Standard_Real F1;
+     Standard_Real F1 = NAN;
      Standard_Boolean Ok = Fsav->Value(xm + dx, F1);
      if (!Ok) {return Standard_False;}; 
      Standard_Real Interm = 1;
@@ -164,11 +166,11 @@ math_GaussMultipleIntegration::
                 math_GaussMultipleIntegration(math_MultipleVarFunction& F,
 					      const math_Vector& Lower,
 					      const math_Vector& Upper,
-					      const math_IntegerVector& Order)
+					      const math_IntegerVector& Order) : Done(Standard_False)
 {
   Standard_Integer MaxOrder = math::GaussPointsMax();
 
-  Standard_Integer i,  max =0;
+  Standard_Integer i = 0,  max =0;
   Standard_Integer NVar = F.NbVariables();  
   math_IntegerVector Ord(1, NVar);
   math_Vector Lowsav(1, NVar);
@@ -176,7 +178,7 @@ math_GaussMultipleIntegration::
   Lowsav = Lower;
   Uppsav = Upper;
 //  Ord = Order;
-  Done = Standard_False;
+  
   for (i = 1; i <= NVar; i++) {
     if (Order(i) > MaxOrder) {
       Ord(i) = MaxOrder;

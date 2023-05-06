@@ -169,7 +169,7 @@ Standard_CString FSD_BinaryFile::MagicNumber()
 
 void FSD_BinaryFile::ReadChar(TCollection_AsciiString& buffer, const Standard_Size rsize)
 {
-  char             c;
+  char             c = 0;
   Standard_Size ccount = 0;
 
   buffer.Clear();
@@ -492,7 +492,7 @@ Storage_Error FSD_BinaryFile::BeginWriteInfoSection()
   union {
     char ti2[4];
     Standard_Integer aResult;
-  } aWrapUnion;
+  } aWrapUnion{};
 
   aWrapUnion.ti2[0] = 1;
   aWrapUnion.ti2[1] = 2;
@@ -528,7 +528,7 @@ void FSD_BinaryFile::WriteInfo(const Standard_Integer nbObj,
 			 const TCollection_ExtendedString& dataType,
 			 const TColStd_SequenceOfAsciiString& userInfo) 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   PutInteger(nbObj);
   WriteString(dbVersion);
@@ -651,7 +651,7 @@ void FSD_BinaryFile::ReadInfo(Standard_Integer& nbObj,
   ReadString(appVersion);
   ReadExtendedString(dataType);
 
-  Standard_Integer i,len = 0;
+  Standard_Integer i = 0,len = 0;
 
   GetInteger(len);
   TCollection_AsciiString line;
@@ -668,7 +668,7 @@ void FSD_BinaryFile::ReadInfo(Standard_Integer& nbObj,
 //=======================================================================
 void FSD_BinaryFile::ReadCompleteInfo (Standard_IStream& theIStream, Handle(Storage_Data)& theData)
 {
-  FSD_FileHeader aHeaderPos;
+  FSD_FileHeader aHeaderPos{};
   ReadHeader(theIStream, aHeaderPos);
 
   if (theData.IsNull())
@@ -711,7 +711,7 @@ void FSD_BinaryFile::ReadCompleteInfo (Standard_IStream& theIStream, Handle(Stor
       theCallBack = new Storage_HArrayOfCallBack (1, aTypeSectionSize);
 
       TCollection_AsciiString  aTypeName;
-      Standard_Integer         aTypeNum;
+      Standard_Integer         aTypeNum = 0;
 
       for (Standard_Integer i = 1; i <= aTypeSectionSize; i++)
       {
@@ -725,7 +725,7 @@ void FSD_BinaryFile::ReadCompleteInfo (Standard_IStream& theIStream, Handle(Stor
     {
       Standard_Integer aRootSectionSize = RootSectionSize(theIStream);
 
-      Standard_Integer aRef;
+      Standard_Integer aRef = 0;
       TCollection_AsciiString aRootName, aTypeName;
       Handle(Storage_Root) aRoot;
       Handle(Standard_Persistent) aPer;
@@ -744,7 +744,7 @@ void FSD_BinaryFile::ReadCompleteInfo (Standard_IStream& theIStream, Handle(Stor
     {
       Standard_Integer aRefSectionSize = RefSectionSize (theIStream);
 
-      Standard_Integer aTypeNum, aRef = 0;
+      Standard_Integer aTypeNum = 0, aRef = 0;
 
       for (Standard_Integer i = 1; i <= aRefSectionSize; i++)
       {
@@ -814,7 +814,7 @@ Storage_Error FSD_BinaryFile::BeginWriteCommentSection(Standard_OStream& theOStr
 
 void FSD_BinaryFile::WriteComment(const TColStd_SequenceOfExtendedString& aCom)
 {
- Standard_Integer i,aSize;
+ Standard_Integer i = 0,aSize = 0;
 
  aSize = aCom.Length();
  PutInteger(aSize);
@@ -884,7 +884,7 @@ Storage_Error FSD_BinaryFile::BeginReadCommentSection()
 void FSD_BinaryFile::ReadComment(TColStd_SequenceOfExtendedString& aCom)
 {
   TCollection_ExtendedString line;
-  Standard_Integer           len,i;
+  Standard_Integer           len = 0,i = 0;
 
   GetInteger(len);
   for (i = 1; i <= len && !IsEnd(); i++) {
@@ -900,7 +900,7 @@ void FSD_BinaryFile::ReadComment(TColStd_SequenceOfExtendedString& aCom)
 void FSD_BinaryFile::ReadComment (Standard_IStream& theIStream, TColStd_SequenceOfExtendedString& aCom)
 {
   TCollection_ExtendedString line;
-  Standard_Integer           len,i;
+  Standard_Integer           len = 0,i = 0;
 
   GetInteger(theIStream, len);
   for (i = 1; i <= len && theIStream.good(); i++)
@@ -983,7 +983,7 @@ Storage_Error FSD_BinaryFile::BeginReadTypeSection()
 
 Standard_Integer FSD_BinaryFile::TypeSectionSize() 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   GetInteger(i);
   return i;
@@ -995,7 +995,7 @@ Standard_Integer FSD_BinaryFile::TypeSectionSize()
 //=======================================================================
 Standard_Integer FSD_BinaryFile::TypeSectionSize(Standard_IStream& theIStream) 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   GetInteger(theIStream, i);
   return i;
@@ -1096,7 +1096,7 @@ Storage_Error FSD_BinaryFile::BeginReadRootSection()
 
 Standard_Integer FSD_BinaryFile::RootSectionSize() 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   
   GetInteger(i);
   return i;
@@ -1108,7 +1108,7 @@ Standard_Integer FSD_BinaryFile::RootSectionSize()
 //=======================================================================
 Standard_Integer FSD_BinaryFile::RootSectionSize (Standard_IStream& theIStream) 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   GetInteger(theIStream, i);
   return i;
@@ -1210,7 +1210,7 @@ Storage_Error FSD_BinaryFile::BeginReadRefSection()
 
 Standard_Integer FSD_BinaryFile::RefSectionSize() 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   GetInteger(i);
   return i;
@@ -1222,7 +1222,7 @@ Standard_Integer FSD_BinaryFile::RefSectionSize()
 //=======================================================================
 Standard_Integer FSD_BinaryFile::RefSectionSize (Standard_IStream& theIStream) 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   GetInteger(theIStream, i);
   return i;
@@ -1412,7 +1412,7 @@ Storage_Error FSD_BinaryFile::EndReadDataSection()
 
 void FSD_BinaryFile::WriteString(const TCollection_AsciiString& aString)
 {
-  Standard_Integer size;
+  Standard_Integer size = 0;
 
   size = aString.Length();
 
@@ -1431,7 +1431,7 @@ Standard_Integer FSD_BinaryFile::WriteString (Standard_OStream&              the
                                               const TCollection_AsciiString& theString,
                                               const Standard_Boolean         theOnlyCount)
 {
-  Standard_Integer aNumAndStrLen, anAsciiStrLen;
+  Standard_Integer aNumAndStrLen = 0, anAsciiStrLen = 0;
 
   anAsciiStrLen = aNumAndStrLen = theString.Length();
 
@@ -1516,14 +1516,14 @@ void FSD_BinaryFile::ReadString (Standard_IStream& theIStream, TCollection_Ascii
 
 void FSD_BinaryFile::WriteExtendedString(const TCollection_ExtendedString& aString)
 {
-  Standard_Integer size;
+  Standard_Integer size = 0;
 
   size = aString.Length();
 
   PutInteger(size);
 
   if (size > 0) {
-    Standard_ExtString anExtStr;
+    Standard_ExtString anExtStr = nullptr;
 #if OCCT_BINARY_FILE_DO_INVERSE
     TCollection_ExtendedString aCopy = aString;
     anExtStr = aCopy.ToExtString();
@@ -1550,7 +1550,7 @@ Standard_Integer FSD_BinaryFile::WriteExtendedString (Standard_OStream&         
                                                       const TCollection_ExtendedString& theString,
                                                       const Standard_Boolean            theOnlyCount)
 {
-  Standard_Integer aNumAndStrLen, anExtStrLen;
+  Standard_Integer aNumAndStrLen = 0, anExtStrLen = 0;
   anExtStrLen = theString.Length();
 
   aNumAndStrLen = anExtStrLen * sizeof(Standard_ExtCharacter);
@@ -1558,7 +1558,7 @@ Standard_Integer FSD_BinaryFile::WriteExtendedString (Standard_OStream&         
 
   if (anExtStrLen > 0 && !theOnlyCount)
   {
-    Standard_ExtString anExtStr;
+    Standard_ExtString anExtStr = nullptr;
 #if OCCT_BINARY_FILE_DO_INVERSE
     TCollection_ExtendedString aCopy = theString;
     anExtStr = aCopy.ToExtString();
@@ -1759,7 +1759,7 @@ void FSD_BinaryFile::ReadHeaderData( Standard_IStream& theIStream, const Handle(
   TCollection_AsciiString          uinfo,mStorageVersion,mDate,mSchemaName,mSchemaVersion,mApplicationVersion;
   TCollection_ExtendedString       mApplicationName,mDataType;
   TColStd_SequenceOfAsciiString    mUserInfo;
-  Standard_Integer                 mNBObj;
+  Standard_Integer                 mNBObj = 0;
 
   FSD_BinaryFile::GetInteger (theIStream, mNBObj);
   FSD_BinaryFile::ReadString (theIStream, mStorageVersion);
@@ -1816,7 +1816,7 @@ Standard_Real FSD_BinaryFile::InverseReal (const Standard_Real theValue)
   union {
     Standard_Integer i[2];
     Standard_Real    aValue;
-  } aWrapUnion;
+  } aWrapUnion{};
 
   aWrapUnion.aValue = theValue;
 
@@ -1838,7 +1838,7 @@ Standard_ShortReal FSD_BinaryFile::InverseShortReal (const Standard_ShortReal th
   union {
     Standard_ShortReal aValue;
     Standard_Integer   aResult;
-  } aWrapUnion;
+  } aWrapUnion{};
 
   aWrapUnion.aValue  = theValue;
   aWrapUnion.aResult = InverseInt (aWrapUnion.aResult);
@@ -1866,7 +1866,7 @@ inline uint64_t OCCT_InverseSizeSpecialized <8> (const uint64_t theValue, int)
   union {
     Standard_Integer i[2];
     uint64_t    aValue;
-  } aWrapUnion;
+  } aWrapUnion{};
 
   aWrapUnion.aValue = theValue;
 

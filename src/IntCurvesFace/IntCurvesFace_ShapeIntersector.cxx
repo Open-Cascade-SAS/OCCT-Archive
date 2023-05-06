@@ -36,7 +36,7 @@ void IntCurvesFace_ShapeIntersector::Load(const TopoDS_Shape& theShape,
                                           const Standard_Real theTol) 
 { 
   TopExp_Explorer Ex;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for(myNbFaces = 0, i = 0, Ex.Init(theShape, TopAbs_FACE); Ex.More(); ++i, Ex.Next()) 
   {
     ++myNbFaces;
@@ -116,7 +116,7 @@ void IntCurvesFace_ShapeIntersector::PerformNearest(const gp_Lin& theL,
   if (!myPtrNums.IsEmpty() && anIndexFace >= 0)
   { 
     myPtrNums.ChangeValue(anIndexFace) += 1;
-    Standard_Integer im1;
+    Standard_Integer im1 = 0;
     for (im1 = anIndexFace - 1, i = anIndexFace; i >= 1 && myPtrNums.Value(i) > myPtrNums.Value(im1); --i, --im1)
     { 
       std::swap(myPtrIndexNums.ChangeValue(i), myPtrIndexNums.ChangeValue(im1));
@@ -186,7 +186,7 @@ void IntCurvesFace_ShapeIntersector::SortResult()
   }
 
   //Sort according to parameter  w
-  Standard_Boolean isOK;
+  Standard_Boolean isOK = 0;
   do 
   { 
     isOK = Standard_True;

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Contap_ArcFunction.hxx>
 #include <Contap_HContTool.hxx>
 #include <Contap_HCurve2dTool.hxx>
@@ -34,9 +36,9 @@ myCosAng(0.0)
 void Contap_ArcFunction::Set(const Handle(Adaptor3d_Surface)& S)
 {
   mySurf = S;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer nbs = Contap_HContTool::NbSamplePoints(S);
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
   //  gp_Vec d1u,d1v;
   gp_Vec norm;
   if (nbs > 0) {

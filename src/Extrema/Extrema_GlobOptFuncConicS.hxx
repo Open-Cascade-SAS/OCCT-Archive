@@ -64,7 +64,7 @@ private:
              Standard_Real &F);
 
 
-  const Adaptor3d_Curve   *myC;
+  const Adaptor3d_Curve   *myC{};
   const Adaptor3d_Surface *myS;
   GeomAbs_CurveType myCType;
   gp_Lin myLin;
@@ -75,8 +75,8 @@ private:
   gp_Pnt myCPf;
   gp_Pnt myCPl;
   //Boundaries
-  Standard_Real myTf;
-  Standard_Real myTl;
+  Standard_Real myTf{};
+  Standard_Real myTl{};
   Standard_Real myUf;
   Standard_Real myUl;
   Standard_Real myVf;

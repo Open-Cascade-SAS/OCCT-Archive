@@ -72,7 +72,7 @@ void RWStepVisual_RWTessellatedVertex::ReadStep (const Handle(StepData_StepReade
     aTopologicalLink.Nullify();
   }
 
-  Standard_Integer aPointIndex;
+  Standard_Integer aPointIndex = 0;
   theData->ReadInteger(theNum, 4, "point_index", theCheck, aPointIndex);
 
   // Initialize entity

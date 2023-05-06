@@ -53,10 +53,10 @@ ShapeFix_FreeBounds::ShapeFix_FreeBounds(const TopoDS_Shape& shape,
 					 const Standard_Real closetoler,
 					 const Standard_Boolean splitclosed,
 					 const Standard_Boolean splitopen) :
-       myShared (Standard_False), mySewToler (sewtoler), myCloseToler (closetoler),
+       myShape(shape), myShared (Standard_False), mySewToler (sewtoler), myCloseToler (closetoler),
        mySplitClosed (splitclosed), mySplitOpen (splitopen)
 {
-  myShape = shape;
+  
   Perform();
 }
 
@@ -69,10 +69,10 @@ ShapeFix_FreeBounds::ShapeFix_FreeBounds(const TopoDS_Shape& shape,
 					 const Standard_Real closetoler,
 					 const Standard_Boolean splitclosed,
 					 const Standard_Boolean splitopen):
-       myShared (Standard_True), mySewToler (0.), myCloseToler (closetoler),
+       myShape(shape), myShared (Standard_True), mySewToler (0.), myCloseToler (closetoler),
        mySplitClosed (splitclosed), mySplitOpen (splitopen)
 {
-  myShape = shape;
+  
   Perform();
 }
 

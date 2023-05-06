@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRepTools_CopyModification.hxx>
 
 #include <BRep_Tool.hxx>
@@ -85,7 +87,7 @@ Standard_Boolean BRepTools_CopyModification::NewCurve(const TopoDS_Edge&  theEdg
                                                       TopLoc_Location&    theLoc,
                                                       Standard_Real&      theTol)
 {
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   theCurve = BRep_Tool::Curve(theEdge, theLoc, aFirst, aLast);
   theTol = BRep_Tool::Tolerance(theEdge);
 
@@ -171,7 +173,7 @@ Standard_Boolean BRepTools_CopyModification::NewCurve2d(const TopoDS_Edge&    th
                                                         Standard_Real&        theTol)
 {
   theTol = BRep_Tool::Tolerance(theEdge);
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   theCurve = BRep_Tool::CurveOnSurface(theEdge, theFace, aFirst, aLast);
 
   if (!theCurve.IsNull() && myCopyGeom)

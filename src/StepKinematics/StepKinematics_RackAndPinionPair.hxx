@@ -52,7 +52,7 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_RackAndPinionPair, StepKinematics_LowOrderKinematicPairWithMotionCoupling)
 
 private:
-  Standard_Real myPinionRadius;
+  Standard_Real myPinionRadius{};
 
 };
 #endif // _StepKinematics_RackAndPinionPair_HeaderFile_

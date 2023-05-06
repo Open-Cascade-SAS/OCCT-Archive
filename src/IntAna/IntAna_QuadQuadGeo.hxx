@@ -253,12 +253,12 @@ protected:
   Standard_Real param4;
   Standard_Real param1bis;
   Standard_Real param2bis;
-  Standard_Real myEPSILON_DISTANCE;
-  Standard_Real myEPSILON_ANGLE_CONE;
-  Standard_Real myEPSILON_MINI_CIRCLE_RADIUS;
-  Standard_Real myEPSILON_CYLINDER_DELTA_RADIUS;
-  Standard_Real myEPSILON_CYLINDER_DELTA_DISTANCE;
-  Standard_Real myEPSILON_AXES_PARA;
+  Standard_Real myEPSILON_DISTANCE{};
+  Standard_Real myEPSILON_ANGLE_CONE{};
+  Standard_Real myEPSILON_MINI_CIRCLE_RADIUS{};
+  Standard_Real myEPSILON_CYLINDER_DELTA_RADIUS{};
+  Standard_Real myEPSILON_CYLINDER_DELTA_DISTANCE{};
+  Standard_Real myEPSILON_AXES_PARA{};
   Standard_Boolean myCommonGen;
   gp_Pnt myPChar;
 

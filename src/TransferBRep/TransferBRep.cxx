@@ -44,7 +44,7 @@ static void  ShapeAppend
   }
   else if (binder->IsKind(STANDARD_TYPE(TransferBRep_ShapeListBinder))) {
     DeclareAndCast(TransferBRep_ShapeListBinder,slbind,binder);
-    Standard_Integer i,nb = slbind->NbShapes();
+    Standard_Integer i = 0,nb = slbind->NbShapes();
     for (i = 1; i <= nb; i ++) shapes->Append (slbind->Shape(i));
   }
   else if (binder->IsKind(STANDARD_TYPE(Transfer_SimpleBinderOfTransient))) {
@@ -109,7 +109,7 @@ static void  ShapeAppend
     (roots ? TP->RootResult() : TP->CompleteResult());
 
   for (list.Start(); list.More(); list.Next()) {
-    Handle(Transfer_Binder) binder = list.Value();
+    const Handle(Transfer_Binder)& binder = list.Value();
     ShapeAppend (binder,shapes);
   }
   return shapes;
@@ -123,7 +123,7 @@ static void  ShapeAppend
   if (TP.IsNull() && list.IsNull()) return shapes;
   shapes = new TopTools_HSequenceOfShape();
 
-  Standard_Integer ie, ne = list->Length();
+  Standard_Integer ie = 0, ne = list->Length();
   for (ie = 1; ie <= ne; ie ++) {
     Handle(Transfer_Binder) binder = TP->Find(list->Value(ie));
     ShapeAppend (binder,shapes);
@@ -225,7 +225,7 @@ static void FillInfo (const Handle(Transfer_Binder)& Binder,
   InfoSeq = new TransferBRep_HSequenceOfTransferResultInfo;
   if (TP.IsNull() || EntityTypes.IsNull()) return;
   Standard_Integer SeqLen = EntityTypes->Length();
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = 1; i <= SeqLen; i++) {
     InfoSeq->Append (new TransferBRep_TransferResultInfo);
   }
@@ -263,7 +263,7 @@ static void FillInfo (const Handle(Transfer_Binder)& Binder,
   InfoSeq = new TransferBRep_HSequenceOfTransferResultInfo;
   if (FP.IsNull() || ShapeTypes.IsNull()) return;
   Standard_Integer SeqLen = ShapeTypes->Length();
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = 1; i <= SeqLen; i++) {
     InfoSeq->Append (new TransferBRep_TransferResultInfo);
   }
@@ -320,7 +320,7 @@ Interface_CheckIterator TransferBRep::BRepCheck
   nchl.SetModel(model);
   for (chl.Start(); chl.More(); chl.Next()) {
     Standard_Integer num = 0;
-    Handle(Interface_Check) ach = chl.Value();
+    const Handle(Interface_Check)& ach = chl.Value();
     if (ach->NbFails() + ach->NbWarnings() == 0) continue;
     DeclareAndCast(Transfer_Finder,starting,ach->Entity());
     Handle(Standard_Transient) ent;
@@ -339,7 +339,7 @@ Interface_CheckIterator TransferBRep::BRepCheck
 {
   Handle(TColStd_HSequenceOfTransient) ls = new TColStd_HSequenceOfTransient();
   for (chl.Start(); chl.More(); chl.Next()) {
-    const Handle(Interface_Check) ach = chl.Value();
+    const Handle(Interface_Check)& ach = chl.Value();
     if (ach->NbFails() + ach->NbWarnings() == 0) continue;
     Handle(Standard_Transient) ent = ach->Entity();
     if (ent.IsNull()) continue;
@@ -358,7 +358,7 @@ Interface_CheckIterator TransferBRep::BRepCheck
 {
   Handle(TopTools_HSequenceOfShape) ls = new TopTools_HSequenceOfShape();
   for (chl.Start(); chl.More(); chl.Next()) {
-    const Handle(Interface_Check) ach = chl.Value();
+    const Handle(Interface_Check)& ach = chl.Value();
     if (ach->NbFails() + ach->NbWarnings() == 0) continue;
     Handle(Standard_Transient) ent = ach->Entity();
     if (ent.IsNull()) continue;
@@ -385,13 +385,13 @@ Interface_CheckIterator TransferBRep::BRepCheck
   Interface_CheckIterator nchl;
 
   for (chl.Start(); chl.More(); chl.Next()) {
-    const Handle(Interface_Check) ach = chl.Value();
+    const Handle(Interface_Check)& ach = chl.Value();
     if (ach->NbFails() + ach->NbWarnings() == 0) continue;
     Handle(Standard_Transient) ent = ach->Entity();
     if (ent.IsNull()) continue;
     if (S.IsNull()) {
       if (ent == obj) {
-	Handle(Interface_Check) bch(ach);  bch->SetEntity(ent);
+	const Handle(Interface_Check)& bch(ach);  bch->SetEntity(ent);
 	nchl.Add (bch,0);
       }
     } else {
@@ -403,7 +403,7 @@ Interface_CheckIterator TransferBRep::BRepCheck
       if (!sbs.IsNull()) sh = sbs->Result();
       if (!smp.IsNull()) sh = smp->Value();
       if (sh == S) {
-	Handle(Interface_Check) bch(ach);  bch->SetEntity(ent);
+	const Handle(Interface_Check)& bch(ach);  bch->SetEntity(ent);
 	nchl.Add (bch,0);
       }
     }
@@ -421,7 +421,7 @@ void TransferBRep::PrintResultInfo(const Handle(Message_Printer)& Printer,
 				   const Handle(TransferBRep_TransferResultInfo)& ResultInfo,
 				   const Standard_Boolean printEmpty)
 {
-  Standard_Integer R, RW, RF, RWF, NR, NRW, NRF, NRWF;
+  Standard_Integer R = 0, RW = 0, RF = 0, RWF = 0, NR = 0, NRW = 0, NRF = 0, NRWF = 0;
   R    = ResultInfo->Result();
   RW   = ResultInfo->ResultWarning();
   RF   = ResultInfo->ResultFail();

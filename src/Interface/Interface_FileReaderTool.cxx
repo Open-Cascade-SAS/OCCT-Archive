@@ -56,11 +56,11 @@
 //purpose  : 
 //=======================================================================
 
-Interface_FileReaderTool::Interface_FileReaderTool ()
+Interface_FileReaderTool::Interface_FileReaderTool () : themessenger(Message::DefaultMessenger()), theerrhand(Standard_True), thetrace(0)
 {
-  themessenger = Message::DefaultMessenger();
-  theerrhand = Standard_True;
-  thetrace = 0;
+  
+  
+  
   thenbrep0 = thenbreps = 0;
 }
 
@@ -201,7 +201,7 @@ Standard_Boolean  Interface_FileReaderTool::ErrorHandle() const
 
 void Interface_FileReaderTool::SetEntities ()
 {
-  Standard_Integer num;
+  Standard_Integer num = 0;
   thenbreps = 0;  thenbrep0 = 0;
 
   for (num = thereader->FindNextRecord(0);  num > 0;
@@ -342,7 +342,7 @@ void Interface_FileReaderTool::LoadModel
 
   amodel->Reservate (thereader->NbEntities());
 
-  Standard_Integer num, num0 = thereader->FindNextRecord(0);
+  Standard_Integer num = 0, num0 = thereader->FindNextRecord(0);
   num = num0;
 
   while (num > 0) {

@@ -308,7 +308,7 @@ Standard_Boolean LDOMBasicString::GetInteger (Standard_Integer& aResult) const
   case LDOM_AsciiDocClear:
   case LDOM_AsciiHashed:
     {
-      char * ptr;
+      char * ptr = nullptr;
       errno = 0;
       long aValue = strtol ((const char *)myVal.ptr, &ptr, 10);
       if (ptr == myVal.ptr || errno == ERANGE || errno == EINVAL)

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_ExtPC2d.hxx>
 #include <Geom2dAPI_ProjectPointOnCurve.hxx>
 #include <gp_Pnt2d.hxx>
@@ -26,9 +28,9 @@
 //purpose  : 
 //=======================================================================
 Geom2dAPI_ProjectPointOnCurve::Geom2dAPI_ProjectPointOnCurve()
-: myIndex(-1)
+: myIsDone(Standard_False), myIndex(-1)
 {
-  myIsDone = Standard_False;
+  
 }
 
 
@@ -96,7 +98,7 @@ void Geom2dAPI_ProjectPointOnCurve::Init
   // evaluate the lower distance and its index;
 
   if ( myIsDone) {
-    Standard_Real Dist2, Dist2Min = myExtPC.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtPC.SquareDistance(1);
     myIndex = 1;
     
     for ( Standard_Integer i = 2; i <= myExtPC.NbExt(); i++) {

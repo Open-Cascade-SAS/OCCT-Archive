@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Direction.hxx>
 #include <Geom_Direction.hxx>
 #include <GeomToStep_MakeDirection.hxx>
@@ -28,11 +30,11 @@
 //=============================================================================
 // Creation d' une direction de prostep a partir d' une Dir de gp
 //=============================================================================
-GeomToStep_MakeDirection::GeomToStep_MakeDirection( const gp_Dir& D)
+GeomToStep_MakeDirection::GeomToStep_MakeDirection( const gp_Dir& D) : GeomToStep_Root()
 {
   Handle(StepGeom_Direction) Dir = new StepGeom_Direction;
   Handle(TColStd_HArray1OfReal) aDirRatios = new TColStd_HArray1OfReal(1,3);
-  Standard_Real X, Y, Z;
+  Standard_Real X = NAN, Y = NAN, Z = NAN;
 
   D.Coord(X, Y, Z);
   aDirRatios->SetValue(1,X);
@@ -47,11 +49,11 @@ GeomToStep_MakeDirection::GeomToStep_MakeDirection( const gp_Dir& D)
 // Creation d' une direction de prostep a partir d' une Dir2d de gp
 //=============================================================================
 
-GeomToStep_MakeDirection::GeomToStep_MakeDirection( const gp_Dir2d& D)
+GeomToStep_MakeDirection::GeomToStep_MakeDirection( const gp_Dir2d& D) : GeomToStep_Root()
 {
   Handle(StepGeom_Direction) Dir = new StepGeom_Direction;
   Handle(TColStd_HArray1OfReal) aDirRatios = new TColStd_HArray1OfReal(1,2);
-  Standard_Real X, Y;
+  Standard_Real X = NAN, Y = NAN;
 
   D.Coord(X, Y);
   aDirRatios->SetValue(1,X);
@@ -67,12 +69,12 @@ GeomToStep_MakeDirection::GeomToStep_MakeDirection( const gp_Dir2d& D)
 //=============================================================================
 
 GeomToStep_MakeDirection::GeomToStep_MakeDirection
-  ( const Handle(Geom_Direction)& Direc)
+  ( const Handle(Geom_Direction)& Direc) : GeomToStep_Root()
 {
   gp_Dir D;
   Handle(StepGeom_Direction) Dir = new StepGeom_Direction;
   Handle(TColStd_HArray1OfReal) aDirRatios = new TColStd_HArray1OfReal(1,3);
-  Standard_Real X, Y, Z;
+  Standard_Real X = NAN, Y = NAN, Z = NAN;
 
   D=Direc->Dir();
   D.Coord(X, Y, Z);
@@ -90,12 +92,12 @@ GeomToStep_MakeDirection::GeomToStep_MakeDirection
 //=============================================================================
 
 GeomToStep_MakeDirection::GeomToStep_MakeDirection
-  ( const Handle(Geom2d_Direction)& Direc)
+  ( const Handle(Geom2d_Direction)& Direc) : GeomToStep_Root()
 {
   gp_Dir2d D;
   Handle(StepGeom_Direction) Dir = new StepGeom_Direction;
   Handle(TColStd_HArray1OfReal) aDirRatios = new TColStd_HArray1OfReal(1,2);
-  Standard_Real X, Y;
+  Standard_Real X = NAN, Y = NAN;
 
   D=Direc->Dir2d();
   D.Coord(X, Y);

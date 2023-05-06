@@ -22,10 +22,10 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_RevolutePairWithRange, StepKinematics_
 //function : StepKinematics_RevolutePairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_RevolutePairWithRange::StepKinematics_RevolutePairWithRange ()
+StepKinematics_RevolutePairWithRange::StepKinematics_RevolutePairWithRange () : defLowerLimitActualRotation(Standard_False), defUpperLimitActualRotation(Standard_False)
 {
-  defLowerLimitActualRotation = Standard_False;
-  defUpperLimitActualRotation = Standard_False;
+  
+  
 }
 
 //=======================================================================

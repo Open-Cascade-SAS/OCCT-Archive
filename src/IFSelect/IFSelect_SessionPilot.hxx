@@ -212,7 +212,7 @@ private:
   TColStd_Array1OfAsciiString thewords;
   TColStd_Array1OfInteger thewordeb;
   Standard_Boolean therecord;
-  Standard_Integer thenumrec;
+  Standard_Integer thenumrec{};
   Handle(Standard_Transient) theobjrec;
   TColStd_SequenceOfAsciiString thecomlist;
 

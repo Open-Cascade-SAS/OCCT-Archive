@@ -134,8 +134,8 @@ bool Standard_Condition::Wait (int theTimeMilliseconds)
   pthread_mutex_lock (&myMutex);
   if (!myFlag)
   {
-    struct timespec aNow;
-    struct timespec aTimeout;
+    struct timespec aNow{};
+    struct timespec aTimeout{};
     conditionGetRealTime (aNow);
     aTimeout.tv_sec  = (theTimeMilliseconds / 1000);
     aTimeout.tv_nsec = (theTimeMilliseconds - aTimeout.tv_sec * 1000) * 1000000;
@@ -166,8 +166,8 @@ bool Standard_Condition::Check()
   pthread_mutex_lock (&myMutex);
   if (!myFlag)
   {
-    struct timespec aNow;
-    struct timespec aTimeout;
+    struct timespec aNow{};
+    struct timespec aTimeout{};
     conditionGetRealTime (aNow);
     aTimeout.tv_sec  = aNow.tv_sec;
     aTimeout.tv_nsec = aNow.tv_nsec + 100;
@@ -193,8 +193,8 @@ bool Standard_Condition::CheckReset()
   bool wasSignalled = myFlag;
   if (!myFlag)
   {
-    struct timespec aNow;
-    struct timespec aTimeout;
+    struct timespec aNow{};
+    struct timespec aTimeout{};
     conditionGetRealTime (aNow);
     aTimeout.tv_sec  = aNow.tv_sec;
     aTimeout.tv_nsec = aNow.tv_nsec + 100;

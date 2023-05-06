@@ -23,7 +23,7 @@ IMPLEMENT_STANDARD_RTTIEXT(Prs3d_DatumAspect, Prs3d_BasicAspect)
 // purpose  :
 // =======================================================================
 Prs3d_DatumAspect::Prs3d_DatumAspect()
-: myAxes (Prs3d_DatumAxes_XYZAxes),
+: myArrowAspect(new Prs3d_ArrowAspect()), myAxes (Prs3d_DatumAxes_XYZAxes),
   myToDrawLabels (Standard_True),
   myToDrawArrows (Standard_True)
 {
@@ -40,7 +40,7 @@ Prs3d_DatumAspect::Prs3d_DatumAspect()
   myAttributes[Prs3d_DatumAttribute_ShadingNumberOfFacettes]    = 12.0;
 
   myPointAspect = new Prs3d_PointAspect (Aspect_TOM_EMPTY, aDefaultColor, 1.0);
-  myArrowAspect = new Prs3d_ArrowAspect();
+  
   for (int aPartIter = Prs3d_DatumParts_Origin; aPartIter <= Prs3d_DatumParts_XOZAxis; ++aPartIter)
   {
     const Prs3d_DatumParts aPart = (Prs3d_DatumParts )aPartIter;

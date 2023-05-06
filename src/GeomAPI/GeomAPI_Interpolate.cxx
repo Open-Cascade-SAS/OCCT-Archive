@@ -16,6 +16,8 @@
 
 // 08-Aug-95 : xab : interpolation uses BSplCLib::Interpolate
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <GeomAPI_Interpolate.hxx>
 #include <gp_Vec.hxx>
@@ -35,9 +37,9 @@
 static Standard_Boolean CheckPoints(const TColgp_Array1OfPnt& PointArray,
 				    const Standard_Real    Tolerance) 
 {
-  Standard_Integer ii ;
+  Standard_Integer ii = 0 ;
   Standard_Real tolerance_squared = Tolerance * Tolerance,
-  distance_squared ;
+  distance_squared = NAN ;
   Standard_Boolean result = Standard_True ;
   for (ii = PointArray.Lower() ; result && ii < PointArray.Upper() ; ii++) {
     distance_squared = 
@@ -56,10 +58,10 @@ static Standard_Boolean CheckTangents(
 				const TColStd_Array1OfBoolean& TangentFlags,
 				const Standard_Real            Tolerance) 
 {
-  Standard_Integer ii,
-  index ;
+  Standard_Integer ii = 0,
+  index = 0 ;
   Standard_Real tolerance_squared = Tolerance * Tolerance,
-  distance_squared ;
+  distance_squared = NAN ;
   Standard_Boolean result = Standard_True ;
   index = TangentFlags.Lower() ;
   for (ii = Tangents.Lower(); result && ii <= Tangents.Upper() ; ii++) {
@@ -80,8 +82,8 @@ static Standard_Boolean CheckTangents(
 static Standard_Boolean CheckParameters(const 
 					TColStd_Array1OfReal&   Parameters) 
 {
-  Standard_Integer ii ;
-  Standard_Real distance ;
+  Standard_Integer ii = 0 ;
+  Standard_Real distance = NAN ;
   Standard_Boolean result = Standard_True ;
   for (ii = Parameters.Lower() ; result && ii < Parameters.Upper() ; ii++) {
     distance = 
@@ -98,9 +100,9 @@ static void  BuildParameters(const Standard_Boolean        PeriodicFlag,
 			     const TColgp_Array1OfPnt&     PointsArray,
 			     Handle(TColStd_HArray1OfReal)& ParametersPtr) 
 {
-  Standard_Integer ii,
-  index ;
-  Standard_Real distance ;
+  Standard_Integer ii = 0,
+  index = 0 ;
+  Standard_Real distance = NAN ;
   Standard_Integer 
     num_parameters = PointsArray.Length() ;
   if (PeriodicFlag) {
@@ -138,10 +140,10 @@ static void BuildPeriodicTangent(
 		      const TColStd_Array1OfReal&    ParametersArray)
 {
   Standard_Integer 
-    ii,
-    degree ;
-  Standard_Real *point_array,
-  *parameter_array,
+    ii = 0,
+    degree = 0 ;
+  Standard_Real *point_array = nullptr,
+  *parameter_array = nullptr,
   eval_result[2][3] ;
   
   gp_Vec a_vector ;
@@ -182,10 +184,10 @@ static void BuildTangents(const TColgp_Array1OfPnt&      PointsArray,
 			  TColStd_Array1OfBoolean&       TangentFlags,
 		          const TColStd_Array1OfReal&    ParametersArray)
 {
- Standard_Integer ii,
- degree ;
- Standard_Real *point_array,
- *parameter_array,
+ Standard_Integer ii = 0,
+ degree = 0 ;
+ Standard_Real *point_array = nullptr,
+ *parameter_array = nullptr,
  
  eval_result[2][3] ;
  gp_Vec a_vector ;
@@ -245,16 +247,16 @@ static void ScaleTangents(const TColgp_Array1OfPnt&      PointsArray,
 			  const TColStd_Array1OfBoolean& TangentFlags,
 		          const TColStd_Array1OfReal&     ParametersArray)
 {
- Standard_Integer ii,
- jj,
+ Standard_Integer ii = 0,
+ jj = 0,
  degree=0,
- index,
- num_points ;
+ index = 0,
+ num_points = 0 ;
 
- Standard_Real *point_array,
- *parameter_array,
+ Standard_Real *point_array = nullptr,
+ *parameter_array = nullptr,
  value[2],
- ratio,
+ ratio = NAN,
  eval_result[2][3] ;
 
  gp_Vec a_vector ;
@@ -316,19 +318,17 @@ GeomAPI_Interpolate::GeomAPI_Interpolate
 myTolerance(Tolerance),
 myPoints(PointsPtr),
 myIsDone(Standard_False),
-myPeriodic(PeriodicFlag),
+myTangents(new TColgp_HArray1OfVec(myPoints->Lower(),
+			      myPoints->Upper())), myTangentFlags(new TColStd_HArray1OfBoolean(myPoints->Lower(),
+				   myPoints->Upper())), myPeriodic(PeriodicFlag),
 myTangentRequest(Standard_False)
 {
- Standard_Integer ii ;
+ Standard_Integer ii = 0 ;
  Standard_Boolean result = 
    CheckPoints(PointsPtr->Array1(),
 	       Tolerance) ;
- myTangents = 
-     new TColgp_HArray1OfVec(myPoints->Lower(),
-			      myPoints->Upper()) ;
- myTangentFlags =
-      new TColStd_HArray1OfBoolean(myPoints->Lower(),
-				   myPoints->Upper()) ;
+ 
+ 
 
  if (!result) {
    throw Standard_ConstructionError();
@@ -362,7 +362,7 @@ myParameters(ParametersPtr),
 myPeriodic(PeriodicFlag),
 myTangentRequest(Standard_False)
 {
- Standard_Integer ii ;
+ Standard_Integer ii = 0 ;
     
      
  Standard_Boolean result = 
@@ -407,8 +407,8 @@ void GeomAPI_Interpolate::Load(
    const Standard_Boolean Scale ) 
 
 {
- Standard_Boolean result ;
- Standard_Integer ii ;
+ Standard_Boolean result = 0 ;
+ Standard_Integer ii = 0 ;
  myTangentRequest = Standard_True ;
  myTangentFlags = TangentFlagsPtr ;
  if (Tangents.Length() != myPoints->Length() ||
@@ -449,7 +449,7 @@ void GeomAPI_Interpolate::Load(const gp_Vec& InitialTangent,
 			       const gp_Vec& FinalTangent,
 			       const Standard_Boolean Scale )  
 {
-  Standard_Boolean result ;
+  Standard_Boolean result = 0 ;
   myTangentRequest = Standard_True ;
   myTangentFlags->SetValue(1,Standard_True) ;
   myTangentFlags->SetValue(myPoints->Length(),Standard_True) ;
@@ -492,20 +492,20 @@ void GeomAPI_Interpolate::Perform()
 
 void GeomAPI_Interpolate::PerformPeriodic()
 { 
-  Standard_Integer degree,
-  ii,
-  jj,
-  index,
-  index1,
+  Standard_Integer degree = 0,
+  ii = 0,
+  jj = 0,
+  index = 0,
+  index1 = 0,
 //  index2,
-  mult_index,
-  half_order,
-  inversion_problem,
-  num_points,
-  num_distinct_knots,
-  num_poles  ;
+  mult_index = 0,
+  half_order = 0,
+  inversion_problem = 0,
+  num_points = 0,
+  num_distinct_knots = 0,
+  num_poles = 0  ;
  
-  Standard_Real period ;
+  Standard_Real period = NAN ;
 
   gp_Pnt a_point ;
 
@@ -690,18 +690,18 @@ void GeomAPI_Interpolate::PerformPeriodic()
 
 void GeomAPI_Interpolate::PerformNonPeriodic() 
 {
-  Standard_Integer degree,
-  ii,
-  jj,
-  index,
-  index1,
-  index2,
-  index3,
-  mult_index,
-  inversion_problem,
-  num_points,
-  num_distinct_knots,
-  num_poles  ;
+  Standard_Integer degree = 0,
+  ii = 0,
+  jj = 0,
+  index = 0,
+  index1 = 0,
+  index2 = 0,
+  index3 = 0,
+  mult_index = 0,
+  inversion_problem = 0,
+  num_points = 0,
+  num_distinct_knots = 0,
+  num_poles = 0  ;
   
   gp_Pnt a_point ;
 

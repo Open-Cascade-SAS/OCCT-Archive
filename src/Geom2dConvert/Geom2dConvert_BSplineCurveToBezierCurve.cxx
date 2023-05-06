@@ -60,7 +60,7 @@ Geom2dConvert_BSplineCurveToBezierCurve::Geom2dConvert_BSplineCurveToBezierCurve
   Standard_Real Uf = U1, Ul = U2; 
   Standard_Real PTol = ParametricTolerance/2 ;
 
-  Standard_Integer I1, I2;
+  Standard_Integer I1 = 0, I2 = 0;
   myCurve = Handle(Geom2d_BSplineCurve)::DownCast(BasisCurve->Copy());
   if(myCurve->IsPeriodic()) myCurve->SetNotPeriodic();
 
@@ -138,7 +138,7 @@ void Geom2dConvert_BSplineCurveToBezierCurve::Arcs
 void Geom2dConvert_BSplineCurveToBezierCurve::Knots
      (TColStd_Array1OfReal& TKnots) const
 {
- Standard_Integer ii, kk;
+ Standard_Integer ii = 0, kk = 0;
   for (ii = 1, kk = TKnots.Lower();
        ii <=myCurve->NbKnots(); ii++, kk++)
     TKnots(kk) = myCurve->Knot(ii);

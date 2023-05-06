@@ -21,9 +21,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_MeasureValueMember,StepData_SelectReal)
 //function : StepBasic_MeasureValueMember
 //purpose  : 
 //=======================================================================
-StepBasic_MeasureValueMember::StepBasic_MeasureValueMember()
+StepBasic_MeasureValueMember::StepBasic_MeasureValueMember() : thecase(0)
 {
-  thecase = 0;
+  
 }
 
 

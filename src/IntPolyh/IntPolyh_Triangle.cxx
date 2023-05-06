@@ -294,7 +294,7 @@ void IntPolyh_Triangle::MiddleRefinement(const Standard_Integer NumTri,
     (TPoints[FinTP]).Middle( MySurface,P1, P2);
     
     ///les nouveaux triangles
-    Standard_Integer T1,T2,T3,T4;
+    Standard_Integer T1 = 0,T2 = 0,T3 = 0,T4 = 0;
 
     T1=FinTT;
     NewTriangle(numP2,numP3,FinTP,TTriangles,MySurface,TPoints);
@@ -323,7 +323,7 @@ void IntPolyh_Triangle::MiddleRefinement(const Standard_Integer NumTri,
       NewTriangle(numP3b,numP1,FinTP,TTriangles,MySurface,TPoints);
 
       ///On cree les nouveaux edges
-      Standard_Integer E1,E2,E3,E4;
+      Standard_Integer E1 = 0,E2 = 0,E3 = 0,E4 = 0;
       
       E1=FinTE;
       NewEdge(numP1,FinTP,T2,T4,TEdges);
@@ -356,7 +356,7 @@ void IntPolyh_Triangle::MiddleRefinement(const Standard_Integer NumTri,
     }
     else { ///seulement deux nouveaux triangles
       //on cree les nouveaux edges avec T1 et T2
-      Standard_Integer E1,E2,E3;
+      Standard_Integer E1 = 0,E2 = 0,E3 = 0;
       
       E1=FinTE;
       NewEdge(numP1,FinTP,T2,-1,TEdges);
@@ -382,7 +382,7 @@ void IntPolyh_Triangle::MiddleRefinement(const Standard_Integer NumTri,
     (TPoints[FinTP]).Middle(MySurface, P2,P3);
 
     ///les nouveaux triangles
-    Standard_Integer T1,T2,T3,T4;    
+    Standard_Integer T1 = 0,T2 = 0,T3 = 0,T4 = 0;    
     
     T1=FinTT;
     NewTriangle(numP1,numP2,FinTP,TTriangles,MySurface,TPoints);
@@ -411,7 +411,7 @@ void IntPolyh_Triangle::MiddleRefinement(const Standard_Integer NumTri,
       NewTriangle(numP1b,numP3,FinTP,TTriangles,MySurface,TPoints);
 
       ///Nouveaux Edges
-      Standard_Integer E1,E2,E3,E4;
+      Standard_Integer E1 = 0,E2 = 0,E3 = 0,E4 = 0;
 
       E1=FinTE;
       NewEdge(numP2,FinTP,T1,T3,TEdges);
@@ -443,7 +443,7 @@ void IntPolyh_Triangle::MiddleRefinement(const Standard_Integer NumTri,
     }
     else { ///seulement deux nouveaux triangles
       ///Nouveaux Edges
-      Standard_Integer E1,E2,E3;
+      Standard_Integer E1 = 0,E2 = 0,E3 = 0;
 
       E1=FinTE;
       NewEdge(numP2,FinTP,T1,-1,TEdges);
@@ -467,7 +467,7 @@ void IntPolyh_Triangle::MiddleRefinement(const Standard_Integer NumTri,
     const Standard_Integer FinTP = TPoints.NbItems();
     (TPoints[FinTP]).Middle(MySurface, P3,P1);
 
-    Standard_Integer T1,T2,T3,T4;
+    Standard_Integer T1 = 0,T2 = 0,T3 = 0,T4 = 0;
     
     T1=FinTT;
     NewTriangle(numP1,numP2,FinTP,TTriangles,MySurface,TPoints);
@@ -497,7 +497,7 @@ void IntPolyh_Triangle::MiddleRefinement(const Standard_Integer NumTri,
       NewTriangle(numP2b,numP3,FinTP,TTriangles,MySurface,TPoints);
 
       ///Nouveaux Edges
-      Standard_Integer E1,E2,E3,E4;
+      Standard_Integer E1 = 0,E2 = 0,E3 = 0,E4 = 0;
 
       E1=FinTE;
       NewEdge(numP2,FinTP,T1,T2,TEdges);
@@ -529,7 +529,7 @@ void IntPolyh_Triangle::MiddleRefinement(const Standard_Integer NumTri,
     }
     else { ///seulement deux nouveaux triangles
       ///Nouveaux Edges
-      Standard_Integer E1,E2,E4;
+      Standard_Integer E1 = 0,E2 = 0,E4 = 0;
 
       E1=FinTE;
       NewEdge(numP2,FinTP,T1,T2,TEdges);

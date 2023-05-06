@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <HLRAlgo_EdgeIterator.hxx>
 #include <HLRBRep.hxx>
@@ -60,7 +62,7 @@ HLRBRep_HLRToShape::InternalCompound (const Standard_Integer typ,
     Standard_Boolean explor = Standard_False;
 //    Standard_Boolean todraw;
     if (!S.IsNull()) {
-      Standard_Integer v1,v2;
+      Standard_Integer v1 = 0,v2 = 0;
       Standard_Integer index = myAlgo->Index(S);
       if (index == 0) explor = Standard_True;
       else            myAlgo->ShapeBounds(index).Bounds(v1,v2,e1,e2,f1,f2);
@@ -150,7 +152,7 @@ HLRBRep_HLRToShape::DrawFace (const Standard_Boolean visible,
     Standard_Integer ie = Itf.Edge();
     HLRBRep_EdgeData& edf = DS->EDataArray().ChangeValue(ie);
     if (!edf.Used()) {
-      Standard_Boolean todraw;
+      Standard_Boolean todraw = 0;
       if      (typ == 1) todraw =  Itf.IsoLine();
       else if (typ == 2) //outlines
       {
@@ -213,8 +215,8 @@ HLRBRep_HLRToShape::DrawEdge (const Standard_Boolean visible,
   else               todraw =!ed.Rg1Line();
 
   if (todraw) {
-    Standard_Real sta,end;
-    Standard_ShortReal tolsta,tolend;
+    Standard_Real sta = NAN,end = NAN;
+    Standard_ShortReal tolsta = NAN,tolend = NAN;
     BRep_Builder B;
     TopoDS_Edge E;
     HLRAlgo_EdgeIterator It;

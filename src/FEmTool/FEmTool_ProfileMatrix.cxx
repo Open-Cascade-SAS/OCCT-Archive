@@ -19,6 +19,8 @@
 #define No_Standard_DimensionError
 
 
+#include <math.h>
+
 #include <FEmTool_ProfileMatrix.hxx>
 #include <gp.hxx>
 #include <Standard_NotImplemented.hxx>
@@ -35,7 +37,7 @@ IMPLEMENT_STANDARD_RTTIEXT(FEmTool_ProfileMatrix,FEmTool_SparseMatrix)
 FEmTool_ProfileMatrix::FEmTool_ProfileMatrix(const TColStd_Array1OfInteger& FirstIndexes) 
                        : profile(1, 2, 1, FirstIndexes.Length())
 {
-  Standard_Integer i, j, k, l;
+  Standard_Integer i = 0, j = 0, k = 0, l = 0;
   profile(1, 1) = 0;
   profile(2, 1) = 1;
   for(i = 2; i <= FirstIndexes.Length(); i++) {
@@ -78,7 +80,7 @@ FEmTool_ProfileMatrix::FEmTool_ProfileMatrix(const TColStd_Array1OfInteger& Firs
  Standard_Real& FEmTool_ProfileMatrix::ChangeValue(const Standard_Integer I,
 						   const Standard_Integer J)
 {
-  Standard_Integer Ind;
+  Standard_Integer Ind = 0;
   Ind = I-J;
   if (Ind < 0) {
     Ind = -Ind;
@@ -100,8 +102,8 @@ FEmTool_ProfileMatrix::FEmTool_ProfileMatrix(const TColStd_Array1OfInteger& Firs
 //=======================================================================
  Standard_Boolean FEmTool_ProfileMatrix::Decompose() 
 {
-  Standard_Integer i, j, k, ik, jk, DiagAddr, CurrAddr, Kmin, Kj;
-  Standard_Real Sum, a, Eps = 1.e-32;
+  Standard_Integer i = 0, j = 0, k = 0, ik = 0, jk = 0, DiagAddr = 0, CurrAddr = 0, Kmin = 0, Kj = 0;
+  Standard_Real Sum = NAN, a = NAN, Eps = 1.e-32;
 
   SMatrix->Init(0.);
   Standard_Real * SMA =  &SMatrix->ChangeValue(1);
@@ -150,8 +152,8 @@ FEmTool_ProfileMatrix::FEmTool_ProfileMatrix(const TColStd_Array1OfInteger& Firs
 {
   if (!IsDecomp) throw StdFail_NotDone("Decomposition must be done");
  
-  Standard_Integer i, j, jj,DiagAddr, CurrAddr;
-  Standard_Real Sum;
+  Standard_Integer i = 0, j = 0, jj = 0,DiagAddr = 0, CurrAddr = 0;
+  Standard_Real Sum = NAN;
 
   Standard_Real * x = &X(X.Lower());
   x--;
@@ -204,7 +206,7 @@ FEmTool_ProfileMatrix::FEmTool_ProfileMatrix(const TColStd_Array1OfInteger& Firs
 //=======================================================================
  void FEmTool_ProfileMatrix::Multiplied(const math_Vector& X,math_Vector& MX) const
 {
-  Standard_Integer i, j, jj, DiagAddr, CurrAddr;
+  Standard_Integer i = 0, j = 0, jj = 0, DiagAddr = 0, CurrAddr = 0;
   Standard_Real * m = &MX(MX.Lower());
   m--;
   const Standard_Real * x = &X(X.Lower());
@@ -253,7 +255,7 @@ Standard_Boolean FEmTool_ProfileMatrix::IsInProfile(const Standard_Integer i,
 
  void FEmTool_ProfileMatrix::OutM() const
 {
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   std::cout<<"Matrix A"<<std::endl;
   for(i = 1; i <= RowNumber(); i++) {
     for(j = 1; j < i - profile(1, i); j++) 
@@ -272,7 +274,7 @@ Standard_Boolean FEmTool_ProfileMatrix::IsInProfile(const Standard_Integer i,
 
  void FEmTool_ProfileMatrix::OutS() const
 {
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   std::cout<<"Matrix S"<<std::endl;
   for(i = 1; i <= RowNumber(); i++) {
     for(j = 1; j < i - profile(1, i); j++) 

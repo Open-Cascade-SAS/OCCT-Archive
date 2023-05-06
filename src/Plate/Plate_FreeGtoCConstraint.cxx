@@ -37,11 +37,11 @@ static const Standard_Real COSMIN = 1.e-2;
 // G1 Constraints  
 
 Plate_FreeGtoCConstraint::Plate_FreeGtoCConstraint(const gp_XY& point2d,const Plate_D1& D1S,const Plate_D1& D1T,
-						   const Standard_Real IncrementalLoad, const Standard_Integer orientation)
+						   const Standard_Real IncrementalLoad, const Standard_Integer orientation) : pnt2d(point2d), nb_PPConstraints(0), nb_LSConstraints(0)
 {
-  pnt2d = point2d;
-  nb_PPConstraints = 0;
-  nb_LSConstraints = 0;
+  
+  
+  
 
   gp_XYZ normale = D1T.Du^D1T.Dv;
   if(normale.Modulus() < NORMIN) return;
@@ -92,11 +92,11 @@ Plate_FreeGtoCConstraint::Plate_FreeGtoCConstraint(const gp_XY& point2d,const Pl
 
 Plate_FreeGtoCConstraint::Plate_FreeGtoCConstraint(const gp_XY& point2d,const Plate_D1& D1S,const Plate_D1& D1T0,
 						   const Plate_D2& D2S,const Plate_D2& D2T0,
-						   const Standard_Real IncrementalLoad, const Standard_Integer orientation)
+						   const Standard_Real IncrementalLoad, const Standard_Integer orientation) : pnt2d(point2d), nb_PPConstraints(0), nb_LSConstraints(0)
 {
-  pnt2d = point2d;
-  nb_PPConstraints = 0;
-  nb_LSConstraints = 0;
+  
+  
+  
   Plate_D1 D1T = D1T0;
   Plate_D2 D2T = D2T0;
 
@@ -227,11 +227,11 @@ Plate_FreeGtoCConstraint::Plate_FreeGtoCConstraint(const gp_XY& point2d,const Pl
 Plate_FreeGtoCConstraint::Plate_FreeGtoCConstraint(const gp_XY& point2d,const Plate_D1& D1S,const Plate_D1& D1T0,
 						   const Plate_D2& D2S,const Plate_D2& D2T0,
 						   const Plate_D3& D3S,const Plate_D3& D3T0,
-						   const Standard_Real IncrementalLoad, const Standard_Integer orientation)
+						   const Standard_Real IncrementalLoad, const Standard_Integer orientation) : pnt2d(point2d), nb_PPConstraints(0), nb_LSConstraints(0)
 {
-  pnt2d = point2d;
-  nb_PPConstraints = 0;
-  nb_LSConstraints = 0;
+  
+  
+  
   Plate_D1 D1T = D1T0;
   Plate_D2 D2T = D2T0;
   Plate_D3 D3T = D3T0;

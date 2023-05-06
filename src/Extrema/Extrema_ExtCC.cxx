@@ -19,6 +19,8 @@
 //                            tri des solutions pour eviter de rendre plusieurs
 //                            fois la meme solution 
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <Bnd_Range.hxx>
 #include <ElCLib.hxx>
@@ -213,7 +215,7 @@ void Extrema_ExtCC::Perform()
 
   GeomAbs_CurveType type1 = myC[0]->GetType();
   GeomAbs_CurveType type2 = myC[1]->GetType();
-  Standard_Real U11, U12, U21, U22, Tol = Min(myTol[0], myTol[1]);
+  Standard_Real U11 = NAN, U12 = NAN, U21 = NAN, U22 = NAN, Tol = Min(myTol[0], myTol[1]);
 
   U11 = myInf[0];
   U12 = mySup[0];
@@ -282,7 +284,7 @@ void Extrema_ExtCC::Perform()
     }
   } else if (type1 == GeomAbs_Circle && type2 == GeomAbs_Circle) {
     //analytical case - two circles
-    Standard_Boolean bIsDone;
+    Standard_Boolean bIsDone = 0;
     Extrema_ExtElC CCXtrem (myC[0]->Circle(), myC[1]->Circle());
     bIsDone = CCXtrem.IsDone();
     if(bIsDone) {
@@ -541,10 +543,10 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
         //                   ***********  aLin2
         // 
         //Take minimal trimmed distance
-        Standard_Real aDmin, aDists[4] = {mydist11, mydist12, mydist21, mydist22};
+        Standard_Real aDmin = NAN, aDists[4] = {mydist11, mydist12, mydist21, mydist22};
         Extrema_POnCurv aP1, aP2;
         aDmin = aDists[0];
-        Standard_Integer i, imin = 0;
+        Standard_Integer i = 0, imin = 0;
         for (i = 1; i < 4; ++i)
         {
           if (aDmin > aDists[i])
@@ -772,10 +774,10 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
         // 
         //Take minimal trimmed distance
         myIsParallel = Standard_False;
-        Standard_Real aDmin, aDists[4] = { mydist11, mydist12, mydist21, mydist22 };
+        Standard_Real aDmin = NAN, aDists[4] = { mydist11, mydist12, mydist21, mydist22 };
         Extrema_POnCurv aP1, aP2;
         aDmin = aDists[0];
-        Standard_Integer k, imin = 0;
+        Standard_Integer k = 0, imin = 0;
         for (k = 1; k < 4; ++k)
         {
           if (aDmin > aDists[k])
@@ -830,8 +832,8 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ExtElC&  AlgExt,
                                    const Standard_Real    Ut21,
                                    const Standard_Real    Ut22)
 {
-  Standard_Integer i, NbExt;
-  Standard_Real Val, U, U2;
+  Standard_Integer i = 0, NbExt = 0;
+  Standard_Real Val = NAN, U = NAN, U2 = NAN;
   Extrema_POnCurv P1, P2;
 
   myDone = AlgExt.IsDone();
@@ -902,8 +904,8 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ECC&   AlgExt,
                                    const Standard_Real  Ut21,
                                    const Standard_Real  Ut22)
 {
-  Standard_Integer i, NbExt;
-  Standard_Real Val, U, U2;
+  Standard_Integer i = 0, NbExt = 0;
+  Standard_Real Val = NAN, U = NAN, U2 = NAN;
   Extrema_POnCurv P1, P2;
 
   myDone = AlgExt.IsDone();

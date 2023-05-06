@@ -25,8 +25,8 @@ IMPLEMENT_STANDARD_RTTIEXT(XSControl_SelectForTransfer,IFSelect_SelectExtract)
 XSControl_SelectForTransfer::XSControl_SelectForTransfer ()    {  }
 
     XSControl_SelectForTransfer::XSControl_SelectForTransfer
-  (const Handle(XSControl_TransferReader)& TR)
-      {  theTR = TR;  }
+  (const Handle(XSControl_TransferReader)& TR) : theTR(TR)
+      {   }
 
 
     void  XSControl_SelectForTransfer::SetReader

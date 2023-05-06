@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Message_AttributeMeter.hxx>
 
 #include <Message_Report.hxx>
@@ -144,7 +146,7 @@ void Message_AttributeMeter::SetAlertMetrics (const Handle(Message_AlertExtended
     if (anActiveMetrics.Contains (Message_MetricType_ProcessCPUUserTime) ||
         anActiveMetrics.Contains (Message_MetricType_ProcessCPUSystemTime))
     {
-      Standard_Real aProcessUserTime, aProcessSystemTime;
+      Standard_Real aProcessUserTime = NAN, aProcessSystemTime = NAN;
       OSD_Chronometer::GetProcessCPU (aProcessUserTime, aProcessSystemTime);
       if (anActiveMetrics.Contains (Message_MetricType_ProcessCPUUserTime))
       {
@@ -172,7 +174,7 @@ void Message_AttributeMeter::SetAlertMetrics (const Handle(Message_AlertExtended
     if (anActiveMetrics.Contains (Message_MetricType_ThreadCPUUserTime) ||
         anActiveMetrics.Contains (Message_MetricType_ThreadCPUSystemTime))
     {
-      Standard_Real aThreadUserTime, aThreadSystemTime;
+      Standard_Real aThreadUserTime = NAN, aThreadSystemTime = NAN;
       OSD_Chronometer::GetThreadCPU (aThreadUserTime, aThreadSystemTime);
       if (anActiveMetrics.Contains (Message_MetricType_ThreadCPUUserTime))
       {

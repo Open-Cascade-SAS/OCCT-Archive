@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <GeomFill_Boundary.hxx>
 #include <GeomFill_CoonsAlgPatch.hxx>
 #include <gp_Pnt.hxx>
@@ -36,7 +38,7 @@ GeomFill_CoonsAlgPatch::GeomFill_CoonsAlgPatch
  const Handle(GeomFill_Boundary)& B4)
 {
   bound[0] = B1; bound[1] = B2; bound[2] = B3; bound[3] = B4; 
-  Standard_Real deb0, deb1, fin0, fin1;
+  Standard_Real deb0 = NAN, deb1 = NAN, fin0 = NAN, fin1 = NAN;
 
   B2->Bounds(deb1,fin1);
   Handle(Law_Linear) aLaw0 = new Law_Linear();
@@ -99,7 +101,7 @@ void GeomFill_CoonsAlgPatch::Func(Handle(Law_Function)& f1,
 gp_Pnt GeomFill_CoonsAlgPatch::Value(const Standard_Real , 
 				     const Standard_Real V) const 
 {
-  Standard_Real a0,a1,a2,a3;
+  Standard_Real a0 = NAN,a1 = NAN,a2 = NAN,a3 = NAN;
   a0 = a[0]->Value(V);
   a1 = a[1]->Value(V);
   a2 = 1. - a0;
@@ -149,7 +151,7 @@ gp_Pnt GeomFill_CoonsAlgPatch::Value(const Standard_Real ,
 gp_Vec GeomFill_CoonsAlgPatch::D1U(const Standard_Real U, 
 				   const Standard_Real V) const 
 {
-  Standard_Real a0,a1,a2,a3,bid;
+  Standard_Real a0 = NAN,a1 = NAN,a2 = NAN,a3 = NAN,bid = NAN;
   a0 = a[0]->Value(V);
   a[1]->D1(U,bid,a1);
   a2 = 1 - a0;
@@ -204,7 +206,7 @@ gp_Vec GeomFill_CoonsAlgPatch::D1U(const Standard_Real U,
 gp_Vec GeomFill_CoonsAlgPatch::D1V(const Standard_Real U, 
 				   const Standard_Real V) const 
 {
-  Standard_Real a0,a1,a2,a3,bid;
+  Standard_Real a0 = NAN,a1 = NAN,a2 = NAN,a3 = NAN,bid = NAN;
   a[0]->D1(V,bid,a0);
   a1 = a[1]->Value(U);
   a2 = -a0;
@@ -259,7 +261,7 @@ gp_Vec GeomFill_CoonsAlgPatch::D1V(const Standard_Real U,
 gp_Vec GeomFill_CoonsAlgPatch::DUV(const Standard_Real U, 
 				   const Standard_Real V) const 
 {
-  Standard_Real a0,a1,a2,a3,bid;
+  Standard_Real a0 = NAN,a1 = NAN,a2 = NAN,a3 = NAN,bid = NAN;
   a[0]->D1(V,bid,a0);
   a[1]->D1(U,bid,a1);
   a2 = -a0;

@@ -60,7 +60,7 @@ private:
 
 
   Handle(StepBasic_NamedUnit) theUnit;
-  Standard_Real theExponent;
+  Standard_Real theExponent{};
 
 
 };

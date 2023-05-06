@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
@@ -374,7 +376,7 @@ ShapeFix_FaceConnect::ShapeFix_FaceConnect() {}
     TopoDS_Wire theNewW;
     TopoDS_Vertex theOldV1, theOldV2, theNewV1, theNewV2, theNewV;
     gp_Pnt theOldP1, theOldP2;
-    Standard_Real dist1, dist2, curdist1, curdist2;
+    Standard_Real dist1 = NAN, dist2 = NAN, curdist1 = NAN, curdist2 = NAN;
     for ( TopTools_DataMapIteratorOfDataMapOfShapeListOfShape theOEIter( myOriFreeEdges );
 	  theOEIter.More(); theOEIter.Next() ) {
       // Iterate on original free edges
@@ -487,7 +489,7 @@ ShapeFix_FaceConnect::ShapeFix_FaceConnect() {}
 	Handle(ShapeFix_Wire) SFW = new ShapeFix_Wire;
 	Handle(ShapeFix_Face) SFF = new ShapeFix_Face;
 	ShapeAnalysis_Edge SAE;
-	Standard_Real f,l;
+	Standard_Real f = NAN,l = NAN;
 	Handle(Geom2d_Curve) c2d;
 	Handle(ShapeExtend_WireData) sewd;
 
@@ -603,7 +605,7 @@ ShapeFix_FaceConnect::ShapeFix_FaceConnect() {}
 	      else if ( val > theRBound.Z() ) theRBound.SetZ( val );
 	    }
 	    thePosition = gp_Pnt((theLBound.XYZ() + theRBound.XYZ())/2.);
-	    Standard_Real theTolerance = 0., curtoler;
+	    Standard_Real theTolerance = 0., curtoler = NAN;
 	    // Calculate the vertex tolerance
 	    for ( theN2Iter.Initialize(theRV2Iter.Value()); theN2Iter.More(); theN2Iter.Next() ) {
 	      theOldVert = TopoDS::Vertex(theN2Iter.Value());

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <GCPnts_QuasiUniformDeflection.hxx>
 #include <GeomFill.hxx>
@@ -59,7 +61,7 @@ static void GeomFillFusInt(const TColStd_Array1OfReal& I1,
   Standard_Integer ind1=1, ind2=1;
   Standard_Real    Epspar = Precision::PConfusion()*0.99;
   // en suposant que le positionement fonctionne a PConfusion()/2
-  Standard_Real    v1, v2;
+  Standard_Real    v1 = NAN, v2 = NAN;
 // Initialisations : les IND1 et IND2 pointent sur le 1er element
 // de chacune des 2 tables a traiter.
 
@@ -112,7 +114,7 @@ GeomFill_CircularBlendFunc(const Handle(Adaptor3d_Curve)& Path,
 			   const Handle(Adaptor3d_Curve)& Curve2,
 			   const Standard_Real Radius,
 			   const Standard_Boolean Polynomial) 
-                           : maxang(RealFirst()), 
+                           : myRadius(Radius), maxang(RealFirst()), 
 			     minang(RealLast()),
 			     distmin(RealLast())
 {
@@ -120,7 +122,7 @@ GeomFill_CircularBlendFunc(const Handle(Adaptor3d_Curve)& Path,
   myPath = myTPath = Path;
   myCurve1 = myTCurve1 = Curve1;
   myCurve2 = myTCurve2 = Curve2;
-  myRadius =  Radius;
+  
 
   // Estimations numeriques
   Discret();
@@ -141,9 +143,9 @@ GeomFill_CircularBlendFunc(const Handle(Adaptor3d_Curve)& Path,
 void GeomFill_CircularBlendFunc::Discret()
 {
   Standard_Real TFirst =  myPath->FirstParameter();
-  Standard_Real TLast =  myPath->LastParameter(), T;
-  Standard_Integer ii;
-  Standard_Real L1, L2, L;
+  Standard_Real TLast =  myPath->LastParameter(), T = NAN;
+  Standard_Integer ii = 0;
+  Standard_Real L1 = NAN, L2 = NAN, L = NAN;
   Handle(Adaptor3d_Curve) C;
   gp_Pnt P1, P2, P3, Center;
   gp_Vec DCenter;
@@ -168,7 +170,7 @@ void GeomFill_CircularBlendFunc::Discret()
   }
 
   Standard_Real Fleche = 1.e-2 * L;
-  Standard_Real Angle, Cosa, Percent;
+  Standard_Real Angle = NAN, Cosa = NAN, Percent = NAN;
   GCPnts_QuasiUniformDeflection Samp;
   Samp.Initialize (*C, Fleche);
   myBary.SetCoord(0.,0.,0.);
@@ -305,7 +307,7 @@ Standard_Boolean GeomFill_CircularBlendFunc::D1(const Standard_Real Param,
 						TColStd_Array1OfReal& DWeigths) 
 {
   gp_Pnt P1, P2, Center;
-  Standard_Real invnorm1, invnorm2, invnormp;
+  Standard_Real invnorm1 = NAN, invnorm2 = NAN, invnormp = NAN;
 //  gp_Vec DCenter, D2Center, nplan, dnplan, DP1, DP2;
   gp_Vec DCenter, nplan, dnplan, DP1, DP2;
 //  gp_Vec ns1, ns2, Dns1, Dns2, vtmp;
@@ -392,7 +394,7 @@ Standard_Boolean GeomFill_CircularBlendFunc::D2(const Standard_Real Param,
 						TColStd_Array1OfReal& D2Weigths) 
 {
   gp_Pnt P1, P2, Center;
-  Standard_Real invnorm1, invnorm2, invnormp, sc;
+  Standard_Real invnorm1 = NAN, invnorm2 = NAN, invnormp = NAN, sc = NAN;
   gp_Vec DCenter, D2Center, DP1, DP2, D2P1, D2P2;
   gp_Vec nplan, dnplan, d2nplan;
   gp_Vec ns1, ns2, Dns1, Dns2, D2ns1, D2ns2;
@@ -524,7 +526,7 @@ Standard_Boolean GeomFill_CircularBlendFunc::IsRational() const
 Standard_Integer GeomFill_CircularBlendFunc::
 NbIntervals(const GeomAbs_Shape S) const
 {
- Standard_Integer NbI_Center, NbI_Cb1, NbI_Cb2, ii;
+ Standard_Integer NbI_Center = 0, NbI_Cb1 = 0, NbI_Cb2 = 0, ii = 0;
  NbI_Center =  myPath->NbIntervals(GeomFillNextShape(S));
  NbI_Cb1    =  myCurve1->NbIntervals(S);
  NbI_Cb2    =  myCurve2->NbIntervals(S);
@@ -562,7 +564,7 @@ NbIntervals(const GeomAbs_Shape S) const
 void GeomFill_CircularBlendFunc::
 Intervals(TColStd_Array1OfReal& T, const GeomAbs_Shape S) const
 {
- Standard_Integer NbI_Center, NbI_Cb1, NbI_Cb2, ii;
+ Standard_Integer NbI_Center = 0, NbI_Cb1 = 0, NbI_Cb2 = 0, ii = 0;
  NbI_Center =  myPath->NbIntervals(GeomFillNextShape(S));
  NbI_Cb1    =  myCurve1->NbIntervals(S);
  NbI_Cb2    =  myCurve2->NbIntervals(S);
@@ -604,7 +606,7 @@ void GeomFill_CircularBlendFunc::GetTolerance(const Standard_Real BoundTol,
 					      TColStd_Array1OfReal& Tol3d) const
 {
  Standard_Integer low = Tol3d.Lower() , up=Tol3d.Upper();
- Standard_Real Tol;
+ Standard_Real Tol = NAN;
 
  Tol= GeomFill::GetTolerance(myTConv, minang, 
 			     myRadius,  AngleTol, SurfTol);

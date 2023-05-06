@@ -23,6 +23,8 @@
 //  Modified by skv - Thu Sep 25 17:42:42 2003 OCC567
 //  modified by ofv Thu Apr  8 14:58:13 2004 fip
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <Bnd_BoundSortBox.hxx>
 #include <Bnd_Box.hxx>
@@ -170,7 +172,7 @@ public:
   {}
 
   //! Rejects the node
-  virtual Standard_Boolean RejectNode (const BVH_Vec3d& theCMin1,
+  Standard_Boolean RejectNode (const BVH_Vec3d& theCMin1,
                                        const BVH_Vec3d& theCMax1,
                                        const BVH_Vec3d& theCMin2,
                                        const BVH_Vec3d& theCMax2,
@@ -180,7 +182,7 @@ public:
   }
 
   //! Accepts the element
-  virtual Standard_Boolean Accept (const Standard_Integer theID1,
+  Standard_Boolean Accept (const Standard_Integer theID1,
                                    const Standard_Integer theID2) Standard_OVERRIDE
   {
     if (!myBVHSet1->Box (theID1).IsOut (myBVHSet2->Box (theID2)))
@@ -371,10 +373,10 @@ void IntPolyh_MaillageAffinage::FillArrayOfPnt
    const TColStd_Array1OfReal& Vpars,
    const Standard_Real *theDeflTol)
 {
-  Standard_Boolean bDegI, bDeg;
-  Standard_Integer aNbU, aNbV, iCnt, i, j;
-  Standard_Integer aID1, aID2, aJD1, aJD2;
-  Standard_Real aTol, aU, aV, aX, aY, aZ;
+  Standard_Boolean bDegI = 0, bDeg = 0;
+  Standard_Integer aNbU = 0, aNbV = 0, iCnt = 0, i = 0, j = 0;
+  Standard_Integer aID1 = 0, aID2 = 0, aJD1 = 0, aJD2 = 0;
+  Standard_Real aTol = NAN, aU = NAN, aV = NAN, aX = NAN, aY = NAN, aZ = NAN;
   gp_Pnt aP;
   //
   aNbU=(SurfID==1)? NbSamplesU1 : NbSamplesU2;
@@ -418,7 +420,7 @@ void IntPolyh_MaillageAffinage::FillArrayOfPnt
   aTol = !theDeflTol ? IntPolyh_Tools::ComputeDeflection(aS, Upars, Vpars) : *theDeflTol;
   aTol *= 1.2;
 
-  Standard_Real a1,a2,a3,b1,b2,b3;
+  Standard_Real a1 = NAN,a2 = NAN,a3 = NAN,b1 = NAN,b2 = NAN,b3 = NAN;
   //
   aBox.Get(a1,a2,a3,b1,b2,b3);
   aBox.Update(a1-aTol,a2-aTol,a3-aTol,b1+aTol,b2+aTol,b3+aTol);
@@ -447,9 +449,9 @@ void IntPolyh_MaillageAffinage::FillArrayOfPnt(const Standard_Integer SurfID,
   if (!(aJD1 || aJD2))
     DegeneratedIndex(theUPars, aNbU, aS, 2, aID1, aID2);
 
-  Standard_Boolean bDegI, bDeg;
-  Standard_Integer iCnt(0), i, j;
-  Standard_Real aX, aY, aZ, aU, aV;
+  Standard_Boolean bDegI = 0, bDeg = 0;
+  Standard_Integer iCnt(0), i = 0, j = 0;
+  Standard_Real aX = NAN, aY = NAN, aZ = NAN, aU = NAN, aV = NAN;
 
   TPoints.Init(thePointsNorm.NbItems());
 
@@ -483,7 +485,7 @@ void IntPolyh_MaillageAffinage::FillArrayOfPnt(const Standard_Integer SurfID,
 
   // Update box
   Standard_Real Tol = theDeflTol*1.2;
-  Standard_Real a1,a2,a3,b1,b2,b3;
+  Standard_Real a1 = NAN,a2 = NAN,a3 = NAN,b1 = NAN,b2 = NAN,b3 = NAN;
   aBox.Get(a1,a2,a3,b1,b2,b3);
   aBox.Update(a1-Tol,a2-Tol,a3-Tol,b1+Tol,b2+Tol,b3+Tol);
   aBox.Enlarge(MyTolerance);
@@ -518,7 +520,7 @@ void IntPolyh_MaillageAffinage::FillArrayOfPnt
 //=======================================================================
 void IntPolyh_MaillageAffinage::CommonBox()
 {
-  Standard_Real XMin, YMin, ZMin, XMax, YMax, ZMax;
+  Standard_Real XMin = NAN, YMin = NAN, ZMin = NAN, XMax = NAN, YMax = NAN, ZMax = NAN;
   CommonBox(GetBox(1), GetBox(2), XMin, YMin, ZMin, XMax, YMax, ZMax);
 }
 
@@ -539,8 +541,8 @@ void IntPolyh_MaillageAffinage::CommonBox (const Bnd_Box &,
                                            Standard_Real &YMax,
                                            Standard_Real &ZMax) 
 {
-  Standard_Real x10,y10,z10,x11,y11,z11;
-  Standard_Real x20,y20,z20,x21,y21,z21;
+  Standard_Real x10 = NAN,y10 = NAN,z10 = NAN,x11 = NAN,y11 = NAN,z11 = NAN;
+  Standard_Real x20 = NAN,y20 = NAN,z20 = NAN,x21 = NAN,y21 = NAN,z21 = NAN;
 
   MyBox1.Get(x10,y10,z10,x11,y11,z11);
   MyBox2.Get(x20,y20,z20,x21,y21,z21);
@@ -567,7 +569,7 @@ void IntPolyh_MaillageAffinage::CommonBox (const Bnd_Box &,
     }
   }
   //
-  Standard_Real X,Y,Z;
+  Standard_Real X = NAN,Y = NAN,Z = NAN;
   X=XMax-XMin; 
   Y=YMax-YMin; 
   Z=ZMax-ZMin; 
@@ -596,10 +598,10 @@ void IntPolyh_MaillageAffinage::CommonBox (const Bnd_Box &,
   //Marking of points included in the common
   const Standard_Integer FinTP1 = TPoints1.NbItems();
 //  for(Standard_Integer i=0; i<FinTP1; i++) {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for( i=0; i<FinTP1; i++) {
     IntPolyh_Point & Pt1 = TPoints1[i];
-    Standard_Integer r;
+    Standard_Integer r = 0;
     if(Pt1.X()<XMin) { 
       r=1; 
     }   
@@ -631,7 +633,7 @@ void IntPolyh_MaillageAffinage::CommonBox (const Bnd_Box &,
   const Standard_Integer FinTP2 = TPoints2.NbItems();
   for(Standard_Integer ii=0; ii<FinTP2; ii++) {
     IntPolyh_Point & Pt2 = TPoints2[ii];
-    Standard_Integer rr;
+    Standard_Integer rr = 0;
     if(Pt2.X()<XMin) { 
       rr=1;
     }   
@@ -706,7 +708,7 @@ void IntPolyh_MaillageAffinage::FillArrayOfEdges
   
   //maillage surU=u0
   Standard_Integer PntInit=1;
-  Standard_Integer BoucleMeshV;
+  Standard_Integer BoucleMeshV = 0;
   for(BoucleMeshV=1; BoucleMeshV<NbSamplesV-1;BoucleMeshV++){
     TEdges[CpteurTabEdges].SetFirstPoint(PntInit);                // U V
     TEdges[CpteurTabEdges].SetSecondPoint(PntInit+1);             // U V+1
@@ -1031,7 +1033,7 @@ static
   // Find all triangles of the bigger surface with bounding boxes
   // overlapping the bounding box the other surface
   TColStd_ListOfInteger aLIT;
-  Standard_Integer i, aNbT = theTriangles.NbItems();
+  Standard_Integer i = 0, aNbT = theTriangles.NbItems();
   for (i = 0; i < aNbT; ++i) {
     IntPolyh_Triangle& aTriangle = theTriangles[i];
     if (!aTriangle.IsIntersectionPossible() || aTriangle.IsDegenerated()) {
@@ -1059,7 +1061,7 @@ static
   // The criterion of refining for large surface depends on the size of
   // the bounding box of the other - since the criterion should be minimized,
   // the smallest side of the bounding box is taken
-  Standard_Real x0, y0, z0, x1, y1, z1;
+  Standard_Real x0 = NAN, y0 = NAN, z0 = NAN, x1 = NAN, y1 = NAN, z1 = NAN;
   theOppositeBox.Get(x0, y0, z0, x1, y1, z1);
   Standard_Real dx = Abs(x1 - x0);
   Standard_Real dy = Abs(y1 - y0);
@@ -1100,7 +1102,7 @@ void IntPolyh_MaillageAffinage::TrianglesDeflectionsRefinementBSB()
   // to calculate all deflections
   ComputeDeflections(1);
   // Check deflection at output
-  Standard_Real FlecheCritique1;
+  Standard_Real FlecheCritique1 = NAN;
   if (FlecheMin1 > FlecheMax1) {
     return;
   }
@@ -1113,7 +1115,7 @@ void IntPolyh_MaillageAffinage::TrianglesDeflectionsRefinementBSB()
   ComputeDeflections(2);
 
   //-- Check arrows at output
-  Standard_Real FlecheCritique2;
+  Standard_Real FlecheCritique2 = NAN;
   if (FlecheMin2 > FlecheMax2) {
     return;
   }
@@ -1125,8 +1127,8 @@ void IntPolyh_MaillageAffinage::TrianglesDeflectionsRefinementBSB()
   // The greatest of two bounding boxes created in FillArrayOfPoints is found.
   // Then this value is weighted depending on the discretization 
   // (NbSamplesU and NbSamplesV)
-  Standard_Real diag1, diag2;
-  Standard_Real x0, y0, z0, x1, y1, z1;
+  Standard_Real diag1 = NAN, diag2 = NAN;
+  Standard_Real x0 = NAN, y0 = NAN, z0 = NAN, x1 = NAN, y1 = NAN, z1 = NAN;
 
   MyBox1.Get(x0, y0, z0, x1, y1, z1);
   x0 -= x1; y0 -= y1; z0 -= z1;
@@ -1438,7 +1440,7 @@ Standard_Integer IntPolyh_MaillageAffinage::StartingPointsResearch
   nn1.Cross(e1, e2); //normal to the first triangle
   mm1.Cross(f1, f2); //normal to the second triangle
 
-  Standard_Real nn1modulus, mm1modulus;
+  Standard_Real nn1modulus = NAN, mm1modulus = NAN;
   nn1modulus=sqrt(nn1.SquareModulus());
   mm1modulus=sqrt(mm1.SquareModulus());
 
@@ -1561,7 +1563,7 @@ Standard_Integer IntPolyh_MaillageAffinage::NextStartingPointsResearch
     nn1.Cross(e1, e2); //normal to the first triangle
     mm1.Cross(f1, f2); //normal to the second triangle
 
-    Standard_Real nn1modulus, mm1modulus;
+    Standard_Real nn1modulus = NAN, mm1modulus = NAN;
     nn1modulus=sqrt(nn1.SquareModulus());
     mm1modulus=sqrt(mm1.SquareModulus());
     
@@ -1666,7 +1668,7 @@ void CalculPtsInterTriEdgeCoplanaires(const Standard_Integer TriSurfID,
                                       IntPolyh_StartPoint &SP2,
                                       Standard_Integer &NbPoints)
 {
-  Standard_Real aDE, aDC;
+  Standard_Real aDE = NAN, aDC = NAN;
   //
   gp_Vec aVE(Edge.X(), Edge.Y(), Edge.Z());
   gp_Vec aVC(Cote.X(), Cote.Y(), Cote.Z());
@@ -2162,7 +2164,7 @@ Standard_Integer IntPolyh_MaillageAffinage::TriangleEdgeContact
         
       Standard_Real Cote23X=Cote23.X();
       Standard_Real D1=0.0;
-      Standard_Real D3,D4;
+      Standard_Real D3 = NAN,D4 = NAN;
 
       //Combination Eq1 Eq2
       if(Abs(Cote23X)>MyConfusionPrecision) {
@@ -2351,7 +2353,7 @@ Standard_Integer IntPolyh_MaillageAffinage::TriangleCompare ()
   Standard_Real CoupleAngle = -2.0;
   //
   // Intersection of the triangles
-  Standard_Integer i, aNb = aDMILI.Extent();
+  Standard_Integer i = 0, aNb = aDMILI.Extent();
   for (i = 1; i <= aNb; ++i) {
     const Standard_Integer i_S1 = aDMILI.FindKey(i);
     IntPolyh_Triangle &Triangle1 =  TTriangles1[i_S1];
@@ -2419,7 +2421,7 @@ Standard_Boolean CheckCoupleAndGetAngle2(const Standard_Integer T1,
   ///T11 and T22 are two other triangles implied  in the contact edge edge
   /// CT11 couple( T1,T22) and CT22 couple (T2,T11)
   /// these couples will be marked if there is a start point
-  Standard_Boolean Test1 , Test2, Test3;
+  Standard_Boolean Test1 = 0 , Test2 = 0, Test3 = 0;
   Test1 = Test2 = Test3 = Standard_False;
   //
   IntPolyh_ListIteratorOfListOfCouples aIt(TTrianglesContacts);
@@ -2534,7 +2536,7 @@ Standard_Integer IntPolyh_MaillageAffinage::StartPointsChain
         MySectionLine.Init(10000);//Initialisation of array of StartPoint
 
       Standard_Integer NbPoints=-1;
-      Standard_Integer T1I, T2I;
+      Standard_Integer T1I = 0, T2I = 0;
       T1I = aCouple.FirstValue();
       T2I = aCouple.SecondValue();
       
@@ -2600,7 +2602,7 @@ Standard_Integer IntPolyh_MaillageAffinage::StartPointsChain
           //chain of the other side
           IntPolyh_StartPoint SP12;//=SP1;
           if (SP1.E2()>=0) { //&&(SP1.E1()!=-1) already tested
-            Standard_Integer NextTriangle2;
+            Standard_Integer NextTriangle2 = 0;
             if (TEdges2[SP1.E2()].FirstTriangle()!=T2I) NextTriangle2=TEdges2[SP1.E2()].FirstTriangle();
             else NextTriangle2=TEdges2[SP1.E2()].SecondTriangle();
             
@@ -2724,7 +2726,7 @@ Standard_Integer IntPolyh_MaillageAffinage::GetNextChainStartPoint
   Standard_Integer NbPoints=0;
   if( (SP.E1()>=0)&&(SP.E2()==-2) ) {
     //case if the point is on edge of T1
-    Standard_Integer NextTriangle1;
+    Standard_Integer NextTriangle1 = 0;
     if (TEdges1[SP.E1()].FirstTriangle()!=SP.T1()) NextTriangle1=TEdges1[SP.E1()].FirstTriangle();
     else 
       NextTriangle1=TEdges1[SP.E1()].SecondTriangle();
@@ -2747,7 +2749,7 @@ Standard_Integer IntPolyh_MaillageAffinage::GetNextChainStartPoint
   }
   else if( (SP.E1()==-2)&&(SP.E2()>=0) ) {
     //case if the point is on edge of T2
-    Standard_Integer NextTriangle2;
+    Standard_Integer NextTriangle2 = 0;
     if (TEdges2[SP.E2()].FirstTriangle()!=SP.T2()) NextTriangle2=TEdges2[SP.E2()].FirstTriangle();
     else 
       NextTriangle2=TEdges2[SP.E2()].SecondTriangle();
@@ -2774,11 +2776,11 @@ Standard_Integer IntPolyh_MaillageAffinage::GetNextChainStartPoint
   }
   else if( (SP.E1()>=0)&&(SP.E2()>=0) ) {
     ///the point is located on two edges
-      Standard_Integer NextTriangle1;
+      Standard_Integer NextTriangle1 = 0;
       if (TEdges1[SP.E1()].FirstTriangle()!=SP.T1()) NextTriangle1=TEdges1[SP.E1()].FirstTriangle();
       else 
         NextTriangle1=TEdges1[SP.E1()].SecondTriangle();
-      Standard_Integer NextTriangle2;
+      Standard_Integer NextTriangle2 = 0;
       if (TEdges2[SP.E2()].FirstTriangle()!=SP.T2()) NextTriangle2=TEdges2[SP.E2()].FirstTriangle();
       else 
         NextTriangle2=TEdges2[SP.E2()].SecondTriangle();
@@ -2912,9 +2914,9 @@ void DegeneratedIndex(const TColStd_Array1OfReal& aXpars,
                       Standard_Integer& aI1,
                       Standard_Integer& aI2)
 {
-  Standard_Integer i;
-  Standard_Boolean bDegX1, bDegX2;
-  Standard_Real aDegX1, aDegX2, aTol2, aX;
+  Standard_Integer i = 0;
+  Standard_Boolean bDegX1 = 0, bDegX2 = 0;
+  Standard_Real aDegX1 = NAN, aDegX2 = NAN, aTol2 = NAN, aX = NAN;
   //
   aI1=0;
   aI2=0;
@@ -2959,9 +2961,9 @@ Standard_Boolean IsDegenerated(const Handle(Adaptor3d_Surface)& aS,
                                const Standard_Real aTol2,
                                Standard_Real& aDegX)
 {
-  Standard_Boolean bRet;
-  Standard_Integer i, aNbP;
-  Standard_Real aU, dU, aU1, aU2, aV, dV, aV1, aV2, aD2;
+  Standard_Boolean bRet = 0;
+  Standard_Integer i = 0, aNbP = 0;
+  Standard_Real aU = NAN, dU = NAN, aU1 = NAN, aU2 = NAN, aV = NAN, dV = NAN, aV1 = NAN, aV2 = NAN, aD2 = NAN;
   gp_Pnt aP1, aP2;
   //
   bRet=Standard_False;

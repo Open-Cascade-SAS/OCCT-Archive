@@ -68,7 +68,7 @@ private:
   NCollection_Array1<PeriodicityInfo> myPerInfo;
   Standard_Boolean myDone;
   Standard_Integer myDegre;
-  Standard_Integer myNbdiscret, myNbP, myNbP2d;
+  Standard_Integer myNbdiscret, myNbP{}, myNbP2d{};
 };
 
 #endif

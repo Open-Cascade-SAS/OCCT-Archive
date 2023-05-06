@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box2d.hxx>
 #include <gp_Dir2d.hxx>
 #include <gp_Trsf2d.hxx>
@@ -100,7 +102,7 @@ Bnd_Box2d Bnd_Box2d::Transformed (const gp_Trsf2d& T) const
 
   if      (F == gp_Identity) {}
   else if (F == gp_Translation) {
-    Standard_Real DX,DY;
+    Standard_Real DX = NAN,DY = NAN;
     (T.TranslationPart()).Coord(DX,DY);
     if (!(Flags & XminMask))  newb.Xmin += DX;
     if (!(Flags & XmaxMask))  newb.Xmax += DX;
@@ -110,7 +112,7 @@ Bnd_Box2d Bnd_Box2d::Transformed (const gp_Trsf2d& T) const
   else {
     gp_Pnt2d P[4];
     Standard_Boolean Vertex[4];
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Vertex[0] = Standard_True;
     Vertex[1] = Standard_True;
     Vertex[2] = Standard_True;
@@ -264,7 +266,7 @@ Standard_Boolean Bnd_Box2d::IsOut(const gp_Lin2d& theL) const
   {
     return Standard_True;
   }
-  Standard_Real aXMin, aXMax, aYMin, aYMax;
+  Standard_Real aXMin = NAN, aXMax = NAN, aYMin = NAN, aYMax = NAN;
   Get(aXMin, aYMin, aXMax, aYMax);
 
   gp_XY aCenter((aXMin + aXMax) / 2, (aYMin + aYMax) / 2);
@@ -296,7 +298,7 @@ Standard_Boolean Bnd_Box2d::IsOut(const gp_Pnt2d& theP0, const gp_Pnt2d& theP1) 
   }
   
   Standard_Boolean aStatus = Standard_True;
-  Standard_Real aLocXMin, aLocXMax, aLocYMin, aLocYMax;
+  Standard_Real aLocXMin = NAN, aLocXMax = NAN, aLocYMin = NAN, aLocYMax = NAN;
   Get(aLocXMin, aLocYMin, aLocXMax, aLocYMax);
 
   //// Intersect the line containing the segment.
@@ -335,7 +337,7 @@ Standard_Boolean Bnd_Box2d::IsOut (const Bnd_Box2d& Other) const
   else if   (Other.IsWhole())  return Standard_False;
   else if   (Other.IsVoid())   return Standard_True;
   else {
-    Standard_Real OXmin,OXmax,OYmin,OYmax;
+    Standard_Real OXmin = NAN,OXmax = NAN,OYmin = NAN,OYmax = NAN;
     Other.Get(OXmin,OYmin,OXmax,OYmax);
     if      (!(Flags & XminMask) && (OXmax < (Xmin-Gap))) return Standard_True;
     else if (!(Flags & XmaxMask) && (OXmin > (Xmax+Gap))) return Standard_True;

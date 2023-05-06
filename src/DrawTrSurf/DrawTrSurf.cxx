@@ -491,7 +491,7 @@ static Standard_Integer transform (Draw_Interpretor& di, Standard_Integer n, con
 {
   if (n < 5) return 1;
   gp_Trsf T;
-  Standard_Integer i,last = n-1;
+  Standard_Integer i = 0,last = n-1;
   if (!strcmp(a[0],"pscale")) {
     Standard_Real s = Draw::Atof(a[last]);
     last--;
@@ -566,7 +566,7 @@ static Standard_Integer d2transform (Draw_Interpretor& di, Standard_Integer n, c
 {
   if (n < 4) return 1;
   gp_Trsf2d T;
-  Standard_Integer i,last = n-1;
+  Standard_Integer i = 0,last = n-1;
   if (!strcmp(a[0],"2dpscale")) {
     Standard_Real s = Draw::Atof(a[last]);
     last--;
@@ -1305,7 +1305,7 @@ void  DrawTrSurf::BasicCommands(Draw_Interpretor& theCommands)
   DrawTrSurf_Surface::RegisterFactory();
   DrawTrSurf_Triangulation::RegisterFactory();
 
-  const char* g;
+  const char* g = nullptr;
   g = "geometric display commands";
   
   theCommands.Add("nbiso",

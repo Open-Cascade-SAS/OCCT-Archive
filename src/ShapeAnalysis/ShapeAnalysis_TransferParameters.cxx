@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom_Curve.hxx>
@@ -29,10 +31,10 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeAnalysis_TransferParameters,Standard_Transient)
 //function : ShapeAnalysis_TransferParameters
 //purpose  : 
 //=======================================================================
-ShapeAnalysis_TransferParameters::ShapeAnalysis_TransferParameters()
+ShapeAnalysis_TransferParameters::ShapeAnalysis_TransferParameters() : myShift(0.), myScale(1.)
 {
-  myScale = 1.;
-  myShift = 0.;
+  
+  
 }
 
 
@@ -56,7 +58,7 @@ void ShapeAnalysis_TransferParameters::Init(const TopoDS_Edge& E, const TopoDS_F
 {
   myScale = 1.;
   myShift = 0.;
-  Standard_Real l,f,l2d = 0.0,f2d = 0.0;
+  Standard_Real l = NAN,f = NAN,l2d = 0.0,f2d = 0.0;
   TopLoc_Location L;
   myEdge = E;
   ShapeAnalysis_Edge sae;
@@ -117,7 +119,7 @@ Handle(TColStd_HSequenceOfReal) ShapeAnalysis_TransferParameters::Perform
 Standard_Real ShapeAnalysis_TransferParameters::Perform(const Standard_Real Param,
                                                         const Standard_Boolean To2d) 
 {
-  Standard_Real NewParam;
+  Standard_Real NewParam = NAN;
   if(To2d) 
     NewParam = myShift + Param*myScale;
   else
@@ -139,7 +141,7 @@ void ShapeAnalysis_TransferParameters::TransferRange(TopoDS_Edge& newEdge,
   ShapeBuild_Edge sbe;
   if(Is2d) {
     Standard_Real span2d = myLast2d - myFirst2d;  
-    Standard_Real tmp1,tmp2;
+    Standard_Real tmp1 = NAN,tmp2 = NAN;
     if(prevPar > currPar) {
       tmp1 = currPar;
       tmp2 = prevPar;

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <HLRBRep.hxx>
 
 #include <BRep_Builder.hxx>
@@ -88,7 +90,7 @@ TopoDS_Edge HLRBRep::MakeEdge (const HLRBRep_Curve& ec,
     Handle(Geom2d_BSplineCurve) ec2d;
     GeomAdaptor_Curve GAcurve = ec.GetCurve().Curve();
     TopoDS_Edge anEdge = ec.GetCurve().Edge();
-    Standard_Real fpar, lpar;
+    Standard_Real fpar = NAN, lpar = NAN;
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, fpar, lpar);
     if (aCurve->DynamicType() == STANDARD_TYPE(Geom_TrimmedCurve))
       aCurve = (Handle(Geom_TrimmedCurve)::DownCast(aCurve))->BasisCurve();
@@ -179,7 +181,7 @@ TopoDS_Edge HLRBRep::MakeEdge3d(const HLRBRep_Curve& ec,
   //const Standard_Real end = ec.Parameter2d(U2);
 
   TopoDS_Edge anEdge = ec.GetCurve().Edge();
-  Standard_Real fpar, lpar;
+  Standard_Real fpar = NAN, lpar = NAN;
   //BRep_Tool::Range(anEdge, fpar, lpar);
   //Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, fpar, lpar);
   BRepAdaptor_Curve BAcurve(anEdge);

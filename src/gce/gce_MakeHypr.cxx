@@ -30,7 +30,7 @@
 //=========================================================================
 gce_MakeHypr::gce_MakeHypr(const gp_Pnt&   S1     ,
 			   const gp_Pnt&   S2     ,
-			   const gp_Pnt&   Center ) 
+			   const gp_Pnt&   Center ) : gce_Root() 
 {
   gp_Dir XAxis(gp_XYZ(S1.XYZ()-Center.XYZ()));
   gp_Lin L(Center,XAxis);
@@ -46,7 +46,7 @@ gce_MakeHypr::gce_MakeHypr(const gp_Pnt&   S1     ,
 
 gce_MakeHypr::gce_MakeHypr(const gp_Ax2&       A2          ,
 			   const Standard_Real MajorRadius ,
-			   const Standard_Real MinorRadius ) 
+			   const Standard_Real MinorRadius ) : gce_Root() 
 {
   if (MajorRadius < MinorRadius) { TheError = gce_InvertRadius; }
   else if (MajorRadius < 0.0) { TheError = gce_NegativeRadius; }

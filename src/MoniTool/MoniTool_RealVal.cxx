@@ -17,7 +17,7 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(MoniTool_RealVal,Standard_Transient)
 
-MoniTool_RealVal::MoniTool_RealVal  (const Standard_Real val)    {  theval = val;  }
+MoniTool_RealVal::MoniTool_RealVal  (const Standard_Real val) : theval(val)    {   }
 
 Standard_Real  MoniTool_RealVal::Value () const  {  return theval;  }
 

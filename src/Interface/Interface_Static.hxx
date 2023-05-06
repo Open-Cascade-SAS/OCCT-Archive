@@ -264,18 +264,18 @@ private:
   Interface_ParamType thetype;
   Handle(Standard_Type) theotyp;
   Handle(Interface_Static) thewild;
-  Standard_Integer thelims;
-  Standard_Integer theintlow;
-  Standard_Integer theintup;
-  Standard_Real therealow;
-  Standard_Real therealup;
+  Standard_Integer thelims{};
+  Standard_Integer theintlow{};
+  Standard_Integer theintup{};
+  Standard_Real therealow{};
+  Standard_Real therealup{};
   TCollection_AsciiString theunidef;
   Handle(TColStd_HArray1OfAsciiString) theenums;
   NCollection_DataMap<TCollection_AsciiString, Standard_Integer> theeadds;
-  Interface_StaticSatisfies thesatisf;
+  Interface_StaticSatisfies thesatisf{};
   TCollection_AsciiString thesatisn;
   Standard_Boolean theupdate;
-  Standard_Integer theival;
+  Standard_Integer theival{};
   Handle(TCollection_HAsciiString) thehval;
   Handle(Standard_Transient) theoval;
 

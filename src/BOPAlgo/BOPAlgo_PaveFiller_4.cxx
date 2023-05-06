@@ -16,6 +16,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BOPAlgo_Alerts.hxx>
 #include <BOPDS_DS.hxx>
@@ -46,7 +48,7 @@ class BOPAlgo_VertexFace : public BOPAlgo_ParallelAlgo {
     myFlag(-1), myT1(-1.),  myT2(-1.), myTolVNew(-1.) {
   }
   //
-  virtual ~BOPAlgo_VertexFace(){
+  ~BOPAlgo_VertexFace() override{
   }
   //
   void SetIndices(const Standard_Integer nV,
@@ -99,7 +101,7 @@ class BOPAlgo_VertexFace : public BOPAlgo_ParallelAlgo {
     return myContext;
   }
   //
-  virtual void Perform() {
+  void Perform() override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (UserBreak(aPS))
     {
@@ -140,7 +142,7 @@ void BOPAlgo_PaveFiller::PerformVF(const Message_ProgressRange& theRange)
   myIterator->Initialize(TopAbs_VERTEX, TopAbs_FACE);
   Standard_Integer iSize = myIterator->ExpectedLength();
   //
-  Standard_Integer nV, nF;
+  Standard_Integer nV = 0, nF = 0;
   //
   Message_ProgressScope aPSOuter(theRange, NULL, 10);
   if (myGlue == BOPAlgo_GlueFull) {
@@ -164,8 +166,8 @@ void BOPAlgo_PaveFiller::PerformVF(const Message_ProgressRange& theRange)
     return;
   }
   //
-  Standard_Integer nVSD, iFlag, nVx, aNbVF, k;
-  Standard_Real aT1, aT2;
+  Standard_Integer nVSD = 0, iFlag = 0, nVx = 0, aNbVF = 0, k = 0;
+  Standard_Real aT1 = NAN, aT2 = NAN;
   BOPAlgo_VectorOfVertexFace aVVF; 
   //
   aVFs.SetIncrement(iSize);
@@ -292,8 +294,8 @@ void BOPAlgo_PaveFiller::PerformVF(const Message_ProgressRange& theRange)
 //=======================================================================
 void BOPAlgo_PaveFiller::TreatVerticesEE()
 {
-  Standard_Integer i, aNbS,aNbEEs, nF, nV, iFlag;
-  Standard_Real aT1, aT2, dummy;
+  Standard_Integer i = 0, aNbS = 0,aNbEEs = 0, nF = 0, nV = 0, iFlag = 0;
+  Standard_Real aT1 = NAN, aT2 = NAN, dummy = NAN;
   TColStd_ListIteratorOfListOfInteger aItLI;
   Handle(NCollection_BaseAllocator) aAllocator;
   //

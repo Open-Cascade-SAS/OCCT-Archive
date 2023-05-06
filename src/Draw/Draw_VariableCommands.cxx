@@ -222,7 +222,7 @@ static Standard_Integer erase(Draw_Interpretor& di, Standard_Integer n, const ch
   
   if (n <= 1 || donly) {
     // clear, 2dclear, donly, erase (without arguments)
-    Standard_Integer i;
+    Standard_Integer i = 0;
     
     // solve the names for "." before erasing
     if (donly) {
@@ -319,7 +319,7 @@ static Standard_Integer draw(Draw_Interpretor& , Standard_Integer n, const char*
   Standard_Integer mo = Draw::Atoi(a[2]);
   Draw_Display d = dout.MakeDisplay(id);
   d.SetMode(mo);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 3; i < n; i++) {
     Handle(Draw_Drawable3D) D = Draw::Get(a[i]);
     if (!D.IsNull()) D->DrawOn(d);
@@ -405,8 +405,8 @@ static Standard_Integer dname(Draw_Interpretor& di, Standard_Integer n, const ch
     return 1;
   }
   //
-  Standard_PCharacter pC;
-  Standard_Integer i;
+  Standard_PCharacter pC = nullptr;
+  Standard_Integer i = 0;
   Handle(Draw_Drawable3D) aD;
   //
   for (i = 1; i < n; ++i) {
@@ -430,7 +430,7 @@ static Standard_Integer dname(Draw_Interpretor& di, Standard_Integer n, const ch
 static Standard_Integer dump(Draw_Interpretor& DI, Standard_Integer n, const char** a)
 {
   if(n < 2) return 1;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i < n; i++) {
     Handle(Draw_Drawable3D) D = Draw::Get(a[i]);
     if (!D.IsNull()) {
@@ -589,8 +589,8 @@ Standard_Integer isprot(Draw_Interpretor& di, Standard_Integer n, const char** a
 static Standard_Integer pick(Draw_Interpretor& , Standard_Integer n, const char** a)
 {
   if (n < 6) return 1;
-  Standard_Integer id;
-  Standard_Integer X,Y,b;
+  Standard_Integer id = 0;
+  Standard_Integer X = 0,Y = 0,b = 0;
   Standard_Boolean wait = (n == 6);
   if (!wait) id = Draw::Atoi(a[1]);
   dout.Select(id,X,Y,b,wait);
@@ -1145,7 +1145,7 @@ bool Draw::ParseInteger (const Standard_CString theExpressionString, Standard_In
 //=======================================================================
 void Draw::Set(const Standard_CString Name, const Standard_CString val)
 {
-  Standard_PCharacter pName, pVal;
+  Standard_PCharacter pName = nullptr, pVal = nullptr;
   //
   pName=(Standard_PCharacter)Name;
   pVal=(Standard_PCharacter)val;
@@ -1208,7 +1208,7 @@ void  Draw::VariableCommands(Draw_Interpretor& theCommandsArg)
   Draw_Number::RegisterFactory();
 
   // set up some variables
-  const char* n;
+  const char* n = nullptr;
   Handle(Draw_Axis3D) theAxes3d = new Draw_Axis3D(gp_Pnt(0,0,0),Draw_bleu,20);
   n = "axes";
   Draw::Set(n,theAxes3d);
@@ -1237,7 +1237,7 @@ void  Draw::VariableCommands(Draw_Interpretor& theCommandsArg)
   theGrid->Protected(Standard_True);
   
 
-  const char* g;
+  const char* g = nullptr;
 
   g = "DRAW Numeric functions";
 

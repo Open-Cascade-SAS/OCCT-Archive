@@ -23,10 +23,10 @@ IMPLEMENT_STANDARD_RTTIEXT(StepVisual_TessellatedVertex, StepVisual_TessellatedS
 //purpose  : 
 //=======================================================================
 
-StepVisual_TessellatedVertex::StepVisual_TessellatedVertex ()
+StepVisual_TessellatedVertex::StepVisual_TessellatedVertex () : myPointIndex(0), myHasTopologicalLink(Standard_False)
 {
-  myPointIndex = 0;
-  myHasTopologicalLink = Standard_False;
+  
+  
 }
 
 //=======================================================================

@@ -19,6 +19,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_BFGS.hxx>
 #include <math_BracketMinimum.hxx>
 #include <math_BrentMinimum.hxx>
@@ -70,8 +72,8 @@ public:
     Grad = *G;
   }
 
-  virtual Standard_Boolean Value(const Standard_Real x,
-                                 Standard_Real&      fval)
+  Standard_Boolean Value(const Standard_Real x,
+                                 Standard_Real&      fval) override
   {
     *P = *Dir;
     P->Multiply(x);
@@ -80,9 +82,9 @@ public:
     return F->Value(*P, fval);
   }
 
-  virtual Standard_Boolean Values(const Standard_Real x,
+  Standard_Boolean Values(const Standard_Real x,
                                   Standard_Real&      fval,
-                                  Standard_Real&      D)
+                                  Standard_Real&      D) override
   {
     *P = *Dir;
     P->Multiply(x);
@@ -96,13 +98,13 @@ public:
 
     return Standard_False;
   }
-  virtual Standard_Boolean Derivative(const Standard_Real x,
-                                      Standard_Real&      D)
+  Standard_Boolean Derivative(const Standard_Real x,
+                                      Standard_Real&      D) override
   {
     *P = *Dir;
     P->Multiply(x);
     P->Add(*P0);
-    Standard_Real fval;
+    Standard_Real fval = NAN;
     D = 0.;
     if (F->Values(*P, fval, *G))
     {
@@ -214,7 +216,7 @@ static Standard_Boolean MinimizeDirection(math_Vector&       P,
                                           const math_Vector& theLeft,
                                           const math_Vector& theRight)
 {
-  Standard_Real lambda;
+  Standard_Real lambda = NAN;
   if (!ComputeInitScale(F0, Dir, Gr, lambda))
     return Standard_False;
 
@@ -251,7 +253,7 @@ static Standard_Boolean MinimizeDirection(math_Vector&       P,
   }
 
   F.Initialize(P, Dir);
-  Standard_Real F1;
+  Standard_Real F1 = NAN;
   if (!F.Value(lambda, F1))
     return Standard_False;
 
@@ -264,7 +266,7 @@ static Standard_Boolean MinimizeDirection(math_Vector&       P,
   if (Bracket.IsDone())
   {
     // find minimum inside the bracket
-    Standard_Real ax, xx, bx, Fax, Fxx, Fbx;
+    Standard_Real ax = NAN, xx = NAN, bx = NAN, Fax = NAN, Fxx = NAN, Fbx = NAN;
     Bracket.Values(ax, xx, bx);
     Bracket.FunctionValues(Fax, Fxx, Fbx);
 
@@ -285,12 +287,12 @@ static Standard_Boolean MinimizeDirection(math_Vector&       P,
   {
     // Bracket definition is failure. If the bounds are defined then
     // set current point to intersection with bounds
-    Standard_Real aFMin, aFMax;
+    Standard_Real aFMin = NAN, aFMax = NAN;
     if (!F.Value(aMinLambda, aFMin))
       return Standard_False;
     if (!F.Value(aMaxLambda, aFMax))
       return Standard_False;
-    Standard_Real aBestLambda;
+    Standard_Real aBestLambda = NAN;
     if (aFMin < aFMax)
     {
       aBestLambda = aMinLambda;
@@ -317,8 +319,8 @@ void  math_BFGS::Perform(math_MultipleVarFunctionWithGradient& F,
 {
   const Standard_Integer n = TheLocation.Length();
   Standard_Boolean Good = Standard_True;
-  Standard_Integer j, i;
-  Standard_Real fae, fad, fac;
+  Standard_Integer j = 0, i = 0;
+  Standard_Real fae = NAN, fad = NAN, fac = NAN;
 
   math_Vector xi(1, n), dg(1, n), hdg(1, n);
   math_Matrix hessin(1, n, 1, n);

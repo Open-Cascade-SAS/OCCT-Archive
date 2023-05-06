@@ -510,7 +510,7 @@ Handle(Graphic3d_MarkerImage) Graphic3d_MarkerImage::StandardMarker (const Aspec
       anImageA->InitZero (Image_Format_Alpha, aSize, aSize);
 
       // we draw a set of circles
-      Image_ColorRGBA aColor32;
+      Image_ColorRGBA aColor32{};
       aColor32.a() = 255;
       Standard_Real aHLS[3];
       const Standard_ShortReal aDelta = 0.1f;

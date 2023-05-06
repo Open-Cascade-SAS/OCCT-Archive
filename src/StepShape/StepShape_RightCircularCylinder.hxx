@@ -66,8 +66,8 @@ private:
 
 
   Handle(StepGeom_Axis1Placement) position;
-  Standard_Real height;
-  Standard_Real radius;
+  Standard_Real height{};
+  Standard_Real radius{};
 
 
 };

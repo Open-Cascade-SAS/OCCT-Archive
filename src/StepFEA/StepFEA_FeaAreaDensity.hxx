@@ -59,7 +59,7 @@ protected:
 private:
 
 
-  Standard_Real theFeaConstant;
+  Standard_Real theFeaConstant{};
 
 
 };

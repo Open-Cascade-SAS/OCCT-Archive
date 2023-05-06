@@ -160,8 +160,8 @@ private:
   Plate_SequenceOfPinpointConstraint myConstraints;
   Plate_SequenceOfLinearXYZConstraint myLXYZConstraints;
   Plate_SequenceOfLinearScalarConstraint myLScalarConstraints;
-  Standard_Real ddu[10];
-  Standard_Real ddv[10];
+  Standard_Real ddu[10]{};
+  Standard_Real ddv[10]{};
   Standard_Integer maxConstraintOrder;
   Standard_Boolean PolynomialPartOnly;
   Standard_Real Uold;

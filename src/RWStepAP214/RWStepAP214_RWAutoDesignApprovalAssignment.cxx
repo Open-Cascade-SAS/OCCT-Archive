@@ -45,7 +45,7 @@ void RWStepAP214_RWAutoDesignApprovalAssignment::ReadStep
 
 	Handle(StepAP214_HArray1OfAutoDesignGeneralOrgItem) aItems;
 	StepAP214_AutoDesignGeneralOrgItem aItemsItem;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"items",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aItems = new StepAP214_HArray1OfAutoDesignGeneralOrgItem (1, nb2);

@@ -43,7 +43,7 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepVisual_SurfaceStyleTransparent, Standard_Transient)
 
 private:
-  Standard_Real myTransparency;
+  Standard_Real myTransparency{};
 
 };
 #endif // _StepVisual_SurfaceStyleTransparent_HeaderFile_

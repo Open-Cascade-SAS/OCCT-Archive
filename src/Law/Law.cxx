@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Law.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -29,7 +31,7 @@
 
 Handle(Law_BSpFunc) Law::MixBnd(const Handle(Law_Linear)& Lin)
 {
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   Lin->Bounds(f,l);
   TColStd_Array1OfReal Knots(1,4);
   TColStd_Array1OfInteger Mults(1,4);
@@ -50,7 +52,7 @@ Handle(TColStd_HArray1OfReal) Law::MixBnd
  const TColStd_Array1OfInteger& Mults,
  const Handle(Law_Linear)&      Lin)
 {
-  Standard_Integer nbpol = 0, nbfk = 0, i, j, k = 0;
+  Standard_Integer nbpol = 0, nbfk = 0, i = 0, j = 0, k = 0;
   for(i = Mults.Lower(); i <= Mults.Upper(); i++){
     nbfk += Mults(i);
   }
@@ -119,7 +121,7 @@ Handle(TColStd_HArray1OfReal) Law::MixTgt
   Standard_Real first = Knots(Knots.Lower());
   Standard_Real last = Knots(Knots.Upper());
   Standard_Real piv = Knots(Index);
-  Standard_Integer nbpol = 0, nbfk = 0, i, j, k = 0;
+  Standard_Integer nbpol = 0, nbfk = 0, i = 0, j = 0, k = 0;
   for(i = Mults.Lower(); i <= Mults.Upper(); i++){
     nbfk += Mults(i);
   }
@@ -155,7 +157,7 @@ Handle(Law_BSpline) Law::Reparametrize(const Adaptor3d_Curve&   Curve,
 {
   // On evalue la longeur approximative de la courbe.
   
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Real DDFirst = DFirst, DDLast = DLast;
   if(HasDF && Rev) DDFirst = -DFirst;
   if(HasDL && Rev) DDLast = -DLast;
@@ -164,7 +166,7 @@ Handle(Law_BSpline) Law::Reparametrize(const Adaptor3d_Curve&   Curve,
   gp_Pnt P1,P2;
   Standard_Real U1 = Curve.FirstParameter();
   Standard_Real U2 = Curve.LastParameter();
-  Standard_Real U, DU, Length = 0.;
+  Standard_Real U = NAN, DU = NAN, Length = 0.;
   if(!Rev){
     P1 = Curve.Value(U1);
     U = U1;
@@ -192,7 +194,7 @@ Handle(Law_BSpline) Law::Reparametrize(const Adaptor3d_Curve&   Curve,
   Standard_Real DCorde = Length / ( NbPoints - 1); 
   Standard_Real Corde  = DCorde;
   Standard_Integer Index = 1;
-  Standard_Real Alpha;
+  Standard_Real Alpha = NAN;
   Standard_Real fac = 1./(NbPoints-1);
   
   point->SetValue(1,ucourbe(1));
@@ -249,7 +251,7 @@ Handle(Law_BSpline) Law::Scale(const Standard_Real    First,
 			       const Standard_Real    VFirst,
 			       const Standard_Real    VLast)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Real Milieu = 0.5*(First+Last);
   TColStd_Array1OfReal   knot(1,3);
   TColStd_Array1OfReal   fknot(1,10);

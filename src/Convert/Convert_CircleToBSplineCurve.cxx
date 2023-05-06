@@ -14,6 +14,8 @@
 
 //JCV 16/10/91
 
+#include <math.h>
+
 #include <Convert_CircleToBSplineCurve.hxx>
 #include <gp.hxx>
 #include <gp_Ax2d.hxx>
@@ -49,10 +51,10 @@ Convert_CircleToBSplineCurve::Convert_CircleToBSplineCurve
   (const gp_Circ2d& C, const Convert_ParameterisationType Parameterisation)
 :Convert_ConicToBSplineCurve(0,0,0){
 
-  Standard_Integer ii ;
+  Standard_Integer ii = 0 ;
 
-  Standard_Real R,
-  value ;
+  Standard_Real R = NAN,
+  value = NAN ;
   Handle(TColStd_HArray1OfReal) CosNumeratorPtr,
   SinNumeratorPtr ;
 
@@ -133,8 +135,8 @@ Convert_CircleToBSplineCurve::Convert_CircleToBSplineCurve
     throw Standard_DomainError( "Convert_CircleToBSplineCurve");
   }
 
-  Standard_Integer ii;
-  Standard_Real R, value ;
+  Standard_Integer ii = 0;
+  Standard_Real R = NAN, value = NAN ;
   Handle(TColStd_HArray1OfReal) CosNumeratorPtr,SinNumeratorPtr ;
 
 

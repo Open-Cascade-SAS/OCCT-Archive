@@ -708,7 +708,7 @@ Font_Rect Font_FTFont::BoundingBox (const NCollection_String&               theS
   aFormatter.Append (theString, *this);
   aFormatter.Format();
 
-  Font_Rect aBndBox;
+  Font_Rect aBndBox{};
   aFormatter.BndBox (aBndBox);
   return aBndBox;
 }

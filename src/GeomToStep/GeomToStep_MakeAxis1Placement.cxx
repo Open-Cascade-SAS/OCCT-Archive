@@ -31,7 +31,7 @@
 //=============================================================================
 // Creation d' un axis1_placement de prostep a partir d' un Ax1 de gp
 //=============================================================================
-GeomToStep_MakeAxis1Placement::GeomToStep_MakeAxis1Placement( const gp_Ax1& A)
+GeomToStep_MakeAxis1Placement::GeomToStep_MakeAxis1Placement( const gp_Ax1& A) : GeomToStep_Root()
 {
 #include "GeomToStep_MakeAxis1Placement_gen.pxx"
 }
@@ -39,7 +39,7 @@ GeomToStep_MakeAxis1Placement::GeomToStep_MakeAxis1Placement( const gp_Ax1& A)
 // Creation d' un axis1_placement de prostep a partir d' un Ax2d de gp
 //=============================================================================
 
-GeomToStep_MakeAxis1Placement::GeomToStep_MakeAxis1Placement( const gp_Ax2d& A)
+GeomToStep_MakeAxis1Placement::GeomToStep_MakeAxis1Placement( const gp_Ax2d& A) : GeomToStep_Root()
 {
 #include "GeomToStep_MakeAxis1Placement_gen.pxx"
 }
@@ -50,7 +50,7 @@ GeomToStep_MakeAxis1Placement::GeomToStep_MakeAxis1Placement( const gp_Ax2d& A)
 //=============================================================================
 
 GeomToStep_MakeAxis1Placement::GeomToStep_MakeAxis1Placement
-  ( const Handle(Geom_Axis1Placement)& Axis1)
+  ( const Handle(Geom_Axis1Placement)& Axis1) : GeomToStep_Root()
 {
   gp_Ax1 A;
   A = Axis1->Ax1();
@@ -63,7 +63,7 @@ GeomToStep_MakeAxis1Placement::GeomToStep_MakeAxis1Placement
 //=============================================================================
 
 GeomToStep_MakeAxis1Placement::GeomToStep_MakeAxis1Placement
-  ( const Handle(Geom2d_AxisPlacement)& Axis1)
+  ( const Handle(Geom2d_AxisPlacement)& Axis1) : GeomToStep_Root()
 {
   gp_Ax2d A;
   A = Axis1->Ax2d();

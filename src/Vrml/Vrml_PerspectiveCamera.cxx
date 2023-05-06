@@ -30,12 +30,12 @@ Vrml_PerspectiveCamera::Vrml_PerspectiveCamera():
 Vrml_PerspectiveCamera::Vrml_PerspectiveCamera(   const gp_Vec&          aPosition, 
 						  const Vrml_SFRotation& aOrientation, 
 						  const Standard_Real    aFocalDistance, 
-						  const Standard_Real    aHeightAngle)
+						  const Standard_Real    aHeightAngle) : myPosition(aPosition), myOrientation(aOrientation), myFocalDistance(aFocalDistance), myHeightAngle(aHeightAngle)
 {
-    myPosition      = aPosition;
-    myOrientation   = aOrientation;
-    myFocalDistance = aFocalDistance;
-    myHeightAngle   = aHeightAngle;
+    
+    
+    
+    
 }
 
 void Vrml_PerspectiveCamera::SetPosition(const gp_Vec& aPosition)

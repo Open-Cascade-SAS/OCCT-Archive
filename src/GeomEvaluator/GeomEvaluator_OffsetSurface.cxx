@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomEvaluator_OffsetSurface.hxx>
 
 #include <CSLib.hxx>
@@ -47,8 +49,8 @@ static Standard_Boolean shiftPoint (const Standard_Real theUStart, const Standar
                                     const gp_Vec& theD1U, const gp_Vec& theD1V)
 {
   // Get parametric bounds and closure status
-  Standard_Real aUMin, aUMax, aVMin, aVMax;
-  Standard_Boolean isUPeriodic, isVPeriodic;
+  Standard_Real aUMin = NAN, aUMax = NAN, aVMin = NAN, aVMax = NAN;
+  Standard_Boolean isUPeriodic = 0, isVPeriodic = 0;
   if (! theSurf.IsNull())
   {
     theSurf->Bounds (aUMin, aUMax, aVMin, aVMax);
@@ -110,7 +112,7 @@ static void derivatives(Standard_Integer theMaxOrder,
                         TColgp_Array2OfVec& theDerNUV,
                         TColgp_Array2OfVec& theDerSurf)
 {
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   gp_Pnt P;
   gp_Vec DL1U, DL1V, DL2U, DL2V, DL2UV, DL3U, DL3UUV, DL3UVV, DL3V;
 
@@ -508,7 +510,7 @@ void GeomEvaluator_OffsetSurface::CalculateD0(
 
     TColgp_Array2OfVec DerNUV(0, MaxOrder, 0, MaxOrder);
     TColgp_Array2OfVec DerSurf(0, MaxOrder + 1, 0, MaxOrder + 1);
-    Standard_Integer OrderU, OrderV;
+    Standard_Integer OrderU = 0, OrderV = 0;
     Standard_Real Umin = 0, Umax = 0, Vmin = 0, Vmax = 0;
     Bounds(Umin, Umax, Vmin, Vmax);
 
@@ -614,7 +616,7 @@ void GeomEvaluator_OffsetSurface::CalculateD1(
     return;
   }
   
-  Standard_Integer OrderU, OrderV;
+  Standard_Integer OrderU = 0, OrderV = 0;
   TColgp_Array2OfVec DerNUV(0, MaxOrder + 1, 0, MaxOrder + 1);
   TColgp_Array2OfVec DerSurf(0, MaxOrder + 2, 0, MaxOrder + 2);
   Standard_Real Umin = 0, Umax = 0, Vmin = 0, Vmax = 0;
@@ -672,7 +674,7 @@ void GeomEvaluator_OffsetSurface::CalculateD2(
   CSLib::Normal(theD1U, theD1V, the_D1MagTol, NStatus, Normal);
 
   const Standard_Integer MaxOrder = (NStatus == CSLib_Defined) ? 0 : 3;
-  Standard_Integer OrderU, OrderV;
+  Standard_Integer OrderU = 0, OrderV = 0;
   TColgp_Array2OfVec DerNUV(0, MaxOrder + 2, 0, MaxOrder + 2);
   TColgp_Array2OfVec DerSurf(0, MaxOrder + 3, 0, MaxOrder + 3);
 
@@ -745,7 +747,7 @@ void GeomEvaluator_OffsetSurface::CalculateD3(
   CSLib_NormalStatus NStatus;
   CSLib::Normal(theD1U, theD1V, the_D1MagTol, NStatus, Normal);
   const Standard_Integer MaxOrder = (NStatus == CSLib_Defined) ? 0 : 3;
-  Standard_Integer OrderU, OrderV;
+  Standard_Integer OrderU = 0, OrderV = 0;
   TColgp_Array2OfVec DerNUV(0, MaxOrder + 3, 0, MaxOrder + 3);
   TColgp_Array2OfVec DerSurf(0, MaxOrder + 4, 0, MaxOrder + 4);
   Standard_Real Umin = 0, Umax = 0, Vmin = 0, Vmax = 0;
@@ -829,7 +831,7 @@ gp_Vec GeomEvaluator_OffsetSurface::CalculateDN(
   CSLib_NormalStatus NStatus;
   CSLib::Normal(theD1U, theD1V, the_D1MagTol, NStatus, Normal);
   const Standard_Integer MaxOrder = (NStatus == CSLib_Defined) ? 0 : 3;
-  Standard_Integer OrderU, OrderV;
+  Standard_Integer OrderU = 0, OrderV = 0;
   TColgp_Array2OfVec DerNUV(0, MaxOrder + theNu, 0, MaxOrder + theNv);
   TColgp_Array2OfVec DerSurf(0, MaxOrder + theNu + 1, 0, MaxOrder + theNv + 1);
 
@@ -905,7 +907,7 @@ Standard_Boolean GeomEvaluator_OffsetSurface::ReplaceDerivative(
     Bounds(aUMin, aUMax, aVMin, aVMax);
 
     // Calculate step along non-zero derivative
-    Standard_Real aStep;
+    Standard_Real aStep = NAN;
     Handle(Adaptor3d_Surface) aSurfAdapt;
     if (!myBaseAdaptor.IsNull())
       aSurfAdapt = myBaseAdaptor;

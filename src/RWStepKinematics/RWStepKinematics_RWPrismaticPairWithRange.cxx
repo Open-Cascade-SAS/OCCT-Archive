@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWPrismaticPairWithRange.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -78,27 +80,27 @@ void RWStepKinematics_RWPrismaticPairWithRange::ReadStep (const Handle(StepData_
 
   // Inherited fields of LowOrderKinematicPair
 
-  Standard_Boolean aLowOrderKinematicPair_TX;
+  Standard_Boolean aLowOrderKinematicPair_TX = 0;
   theData->ReadBoolean (theNum, 7, "low_order_kinematic_pair.t_x", theArch, aLowOrderKinematicPair_TX);
 
-  Standard_Boolean aLowOrderKinematicPair_TY;
+  Standard_Boolean aLowOrderKinematicPair_TY = 0;
   theData->ReadBoolean (theNum, 8, "low_order_kinematic_pair.t_y", theArch, aLowOrderKinematicPair_TY);
 
-  Standard_Boolean aLowOrderKinematicPair_TZ;
+  Standard_Boolean aLowOrderKinematicPair_TZ = 0;
   theData->ReadBoolean (theNum, 9, "low_order_kinematic_pair.t_z", theArch, aLowOrderKinematicPair_TZ);
 
-  Standard_Boolean aLowOrderKinematicPair_RX;
+  Standard_Boolean aLowOrderKinematicPair_RX = 0;
   theData->ReadBoolean (theNum, 10, "low_order_kinematic_pair.r_x", theArch, aLowOrderKinematicPair_RX);
 
-  Standard_Boolean aLowOrderKinematicPair_RY;
+  Standard_Boolean aLowOrderKinematicPair_RY = 0;
   theData->ReadBoolean (theNum, 11, "low_order_kinematic_pair.r_y", theArch, aLowOrderKinematicPair_RY);
 
-  Standard_Boolean aLowOrderKinematicPair_RZ;
+  Standard_Boolean aLowOrderKinematicPair_RZ = 0;
   theData->ReadBoolean (theNum, 12, "low_order_kinematic_pair.r_z", theArch, aLowOrderKinematicPair_RZ);
 
   // Own fields of PrismaticPairWithRange
 
-  Standard_Real aLowerLimitActualTranslation;
+  Standard_Real aLowerLimitActualTranslation = NAN;
   Standard_Boolean hasLowerLimitActualTranslation = Standard_True;
   if ( theData->IsParamDefined (theNum,13) ) {
     theData->ReadReal (theNum, 13, "lower_limit_actual_translation", theArch, aLowerLimitActualTranslation);
@@ -108,7 +110,7 @@ void RWStepKinematics_RWPrismaticPairWithRange::ReadStep (const Handle(StepData_
     aLowerLimitActualTranslation = 0;
   }
 
-  Standard_Real aUpperLimitActualTranslation;
+  Standard_Real aUpperLimitActualTranslation = NAN;
   Standard_Boolean hasUpperLimitActualTranslation = Standard_True;
   if ( theData->IsParamDefined (theNum,14) ) {
     theData->ReadReal (theNum, 14, "upper_limit_actual_translation", theArch, aUpperLimitActualTranslation);

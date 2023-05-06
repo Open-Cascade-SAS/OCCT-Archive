@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRepLib.hxx>
 #include <BndLib_Add3dCurve.hxx>
 #include <BRep_Tool.hxx>
@@ -25,15 +27,15 @@
 //function : 
 //purpose  : 
 //=======================================================================
-  IntTools_ShrunkRange::IntTools_ShrunkRange ()
+  IntTools_ShrunkRange::IntTools_ShrunkRange () : myT1(-99), myT2(myT1), myTS1(myT1), myTS2(myT1), myIsDone(Standard_False), myIsSplittable(Standard_False), myLength(0.0)
 {
-  myT1=-99;
-  myT2=myT1;
-  myTS1=myT1;
-  myTS2=myT1;
-  myIsDone=Standard_False;
-  myIsSplittable=Standard_False;
-  myLength = 0.0;
+  
+  
+  
+  
+  
+  
+  
 }
 //=======================================================================
 //function : ~
@@ -137,7 +139,7 @@ void IntTools_ShrunkRange::Perform()
   //
   gp_Pnt aP1 = BRep_Tool::Pnt(myV1);
   gp_Pnt aP2 = BRep_Tool::Pnt(myV2);
-  Standard_Real aTolE, aTolV1, aTolV2;
+  Standard_Real aTolE = NAN, aTolV1 = NAN, aTolV2 = NAN;
   aTolE = BRep_Tool::Tolerance(myEdge);
   aTolV1 = BRep_Tool::Tolerance(myV1);
   aTolV2 = BRep_Tool::Tolerance(myV2);

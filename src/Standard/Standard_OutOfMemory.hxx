@@ -75,7 +75,7 @@ public:
   DEFINE_STANDARD_RTTIEXT(Standard_OutOfMemory,Standard_ProgramError)
 
 protected:
-  char myBuffer[1024];
+  char myBuffer[1024]{};
 };
 
 #endif // _Standard_OutOfMemory_HeaderFile

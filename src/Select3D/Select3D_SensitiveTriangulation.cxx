@@ -59,10 +59,10 @@ Select3D_SensitiveTriangulation::Select3D_SensitiveTriangulation (const Handle(S
 : Select3D_SensitiveSet (theOwnerId),
   myTriangul (theTrg),
   myInitLocation (theInitLoc),
-  myPrimitivesNb (0)
+  mySensType(theIsInterior ? Select3D_TOS_INTERIOR : Select3D_TOS_BOUNDARY), myPrimitivesNb (0)
 {
   myInvInitLocation = myInitLocation.Transformation().Inverted();
-  mySensType = theIsInterior ? Select3D_TOS_INTERIOR : Select3D_TOS_BOUNDARY;
+  
   Standard_Integer aNbTriangles = 0;
   gp_XYZ aCenter (0.0, 0.0, 0.0);
   if (!theTrg->HasGeometry())
@@ -157,10 +157,10 @@ Select3D_SensitiveTriangulation::Select3D_SensitiveTriangulation (const Handle(S
   myInitLocation (theInitLoc),
   myCDG3D (theCOG),
   myFreeEdges (theFreeEdges),
-  myPrimitivesNb (0)
+  mySensType(theIsInterior ? Select3D_TOS_INTERIOR : Select3D_TOS_BOUNDARY), myPrimitivesNb (0)
 {
   myInvInitLocation = myInitLocation.Transformation().Inverted();
-  mySensType = theIsInterior ? Select3D_TOS_INTERIOR : Select3D_TOS_BOUNDARY;
+  
   if (theTrg->HasGeometry())
   {
     myPrimitivesNb = theIsInterior ? theTrg->NbTriangles() : theFreeEdges->Length() / 2;
@@ -205,7 +205,7 @@ Select3D_BndBox3d Select3D_SensitiveTriangulation::Box (const Standard_Integer t
 
   if (mySensType == Select3D_TOS_INTERIOR)
   {
-    Standard_Integer aNode1, aNode2, aNode3;
+    Standard_Integer aNode1 = 0, aNode2 = 0, aNode3 = 0;
     myTriangul->Triangle (aPrimIdx + 1).Get (aNode1, aNode2, aNode3);
 
     const gp_Pnt aPnt1 = myTriangul->Node (aNode1);
@@ -360,7 +360,7 @@ Standard_Boolean Select3D_SensitiveTriangulation::overlapsElement (SelectBasics_
   }
   else
   {
-    Standard_Integer aNode1, aNode2, aNode3;
+    Standard_Integer aNode1 = 0, aNode2 = 0, aNode3 = 0;
     myTriangul->Triangle (aPrimitiveIdx + 1).Get (aNode1, aNode2, aNode3);
     const gp_Pnt aPnt1 = myTriangul->Node (aNode1);
     const gp_Pnt aPnt2 = myTriangul->Node (aNode2);
@@ -396,7 +396,7 @@ Standard_Boolean Select3D_SensitiveTriangulation::elementIsInside (SelectBasics_
   }
   else
   {
-    Standard_Integer aNode1, aNode2, aNode3;
+    Standard_Integer aNode1 = 0, aNode2 = 0, aNode3 = 0;
     myTriangul->Triangle (aPrimitiveIdx + 1).Get (aNode1, aNode2, aNode3);
 
     const gp_Pnt aPnt1 = myTriangul->Node (aNode1);

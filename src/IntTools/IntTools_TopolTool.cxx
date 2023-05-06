@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <ElSLib.hxx>
 #include <Geom_BezierSurface.hxx>
@@ -37,25 +39,25 @@ static void Analyse(const TColgp_Array2OfPnt& array2,
 // function: Constructor
 // purpose:
 // =====================================================================================
-IntTools_TopolTool::IntTools_TopolTool()
+IntTools_TopolTool::IntTools_TopolTool() : myNbSmplU(0), myNbSmplV(0), myDU(1.), myDV(1.)
 {
-  myNbSmplU = 0;
-  myNbSmplV = 0;
-  myDU = 1.;
-  myDV = 1.;
+  
+  
+  
+  
 }
 
 // =====================================================================================
 // function: Constructor
 // purpose:
 // =====================================================================================
-IntTools_TopolTool::IntTools_TopolTool(const Handle(Adaptor3d_Surface)& theSurface)
+IntTools_TopolTool::IntTools_TopolTool(const Handle(Adaptor3d_Surface)& theSurface) : myNbSmplU(0), myNbSmplV(0), myDU(1.), myDV(1.)
 {
   Initialize(theSurface);
-  myNbSmplU = 0;
-  myNbSmplV = 0;
-  myDU = 1.;
-  myDV = 1.;
+  
+  
+  
+  
 }
 
 // =====================================================================================
@@ -87,7 +89,7 @@ void IntTools_TopolTool::Initialize(const Handle(Adaptor3d_Surface)& theSurface)
 // =====================================================================================
 void IntTools_TopolTool::ComputeSamplePoints() 
 {
-  Standard_Real uinf, usup, vinf, vsup;
+  Standard_Real uinf = NAN, usup = NAN, vinf = NAN, vsup = NAN;
   uinf = myS->FirstUParameter();  
   usup = myS->LastUParameter();
   vinf = myS->FirstVParameter();  
@@ -96,7 +98,7 @@ void IntTools_TopolTool::ComputeSamplePoints()
 
   if (usup < uinf) { Standard_Real temp = uinf; uinf = usup; usup = temp; }
   if (vsup < vinf) { Standard_Real temp = vinf; vinf = vsup; vsup = temp; }
-  Standard_Boolean isbiguinf, isbigusup, isbigvinf, isbigvsup;
+  Standard_Boolean isbiguinf = 0, isbigusup = 0, isbigvinf = 0, isbigvsup = 0;
   isbiguinf = Precision::IsNegativeInfinite(uinf);
   isbigusup = Precision::IsPositiveInfinite(usup);
   isbigvinf = Precision::IsNegativeInfinite(vinf);
@@ -176,7 +178,7 @@ void IntTools_TopolTool::ComputeSamplePoints()
   case GeomAbs_Sphere:
   case GeomAbs_Torus: {
     gp_Circ aCircle;
-    Standard_Real aRadius1, aRadius2;
+    Standard_Real aRadius1 = NAN, aRadius2 = NAN;
 
     if(typS == GeomAbs_Torus) {
       gp_Torus aTorus = myS->Torus();
@@ -358,7 +360,7 @@ void Analyse(const TColgp_Array2OfPnt& array2,
 	     Standard_Integer&         theNbSamplesV) 
 { 
   gp_Vec Vi,Vip1;
-  Standard_Integer sh,nbch,i,j;
+  Standard_Integer sh = 0,nbch = 0,i = 0,j = 0;
   const Standard_Integer nbup = array2.UpperRow() - array2.LowerRow() + 1;
   const Standard_Integer nbvp = array2.UpperCol() - array2.LowerCol() + 1;
   

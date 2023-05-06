@@ -38,9 +38,9 @@ IMPLEMENT_STANDARD_RTTIEXT(Express_Select, Express_Item)
 
 Express_Select::Express_Select ( const Standard_CString theName,
                                  const Handle(TColStd_HSequenceOfHAsciiString)& theNames)
-: Express_Item (theName), myNames (theNames)
+: Express_Item (theName), myNames (theNames), myItems(new Express_HSequenceOfItem)
 {
-  myItems = new Express_HSequenceOfItem;
+  
 }
 
 //=======================================================================

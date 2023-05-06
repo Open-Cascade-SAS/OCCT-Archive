@@ -28,9 +28,9 @@ STEPSelections_AssemblyLink::STEPSelections_AssemblyLink()
 
 STEPSelections_AssemblyLink::STEPSelections_AssemblyLink(const Handle(StepRepr_NextAssemblyUsageOccurrence)& nauo,
 						       const Handle(Standard_Transient)& item,
-						       const Handle(STEPSelections_AssemblyComponent)& part)
+						       const Handle(STEPSelections_AssemblyComponent)& part) : myNAUO(nauo), myItem(item), myComponent(part)
 {
-  myNAUO = nauo;
-  myItem = item;
-  myComponent = part;
+  
+  
+  
 }

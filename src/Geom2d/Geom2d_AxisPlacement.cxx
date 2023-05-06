@@ -46,7 +46,7 @@ Handle(Geom2d_Geometry) Geom2d_AxisPlacement::Copy() const {
 
 
 
-Geom2d_AxisPlacement::Geom2d_AxisPlacement (const gp_Ax2d& A) { axis = A; }
+Geom2d_AxisPlacement::Geom2d_AxisPlacement (const gp_Ax2d& A) : axis(A) { }
 
 
 Geom2d_AxisPlacement::Geom2d_AxisPlacement (const Pnt2d& P, const Dir2d& V) {

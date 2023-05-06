@@ -16,6 +16,8 @@
 
 //  Modified by skv - Fri Feb  6 11:44:48 2004 OCC5073
 
+#include <math.h>
+
 #include <AdvApprox_ApproxAFunction.hxx>
 #include <AdvApprox_PrefAndRec.hxx>
 #include <Approx_SweepApproximation.hxx>
@@ -77,12 +79,12 @@ public:
   GeomFill_Sweep_Eval(GeomFill_LocFunction& theTool)
     : theAncore(theTool) {}
 
-  virtual void Evaluate(Standard_Integer *Dimension,
+  void Evaluate(Standard_Integer *Dimension,
                         Standard_Real     StartEnd[2],
                         Standard_Real    *Parameter,
                         Standard_Integer *DerivativeRequest,
                         Standard_Real    *Result, // [Dimension]
-                        Standard_Integer *ErrorCode);
+                        Standard_Integer *ErrorCode) override;
 
 private:
   GeomFill_LocFunction& theAncore;
@@ -108,18 +110,18 @@ void GeomFill_Sweep_Eval::Evaluate(Standard_Integer *,/*Dimension*/
 // Purpose :
 //===============================================================
 GeomFill_Sweep::GeomFill_Sweep(const Handle(GeomFill_LocationLaw)& Location,
-                               const Standard_Boolean WithKpart)
+                               const Standard_Boolean WithKpart) : done(Standard_False), myLoc(Location), myKPart(WithKpart), myForceApproxC1(Standard_False), SError(RealLast())
 {
-  done = Standard_False;
+  
 
-  myLoc = Location;
-  myKPart = WithKpart;
+  
+  
   SetTolerance(1.e-4);
-  myForceApproxC1 = Standard_False;
+  
 
   myLoc->GetDomain(First, Last);
   SFirst = SLast = 30.081996;
-  SError = RealLast();
+  
 }
 
 //===============================================================
@@ -285,8 +287,8 @@ Standard_Boolean GeomFill_Sweep::BuildAll(const GeomAbs_Shape Continuity,
 #endif
 
     // La surface
-    Standard_Integer UDegree, VDegree, NbUPoles,
-                     NbVPoles, NbUKnots, NbVKnots;
+    Standard_Integer UDegree = 0, VDegree = 0, NbUPoles = 0,
+                     NbVPoles = 0, NbUKnots = 0, NbVKnots = 0;
     Approx.SurfShape(UDegree, VDegree, NbUPoles,
                      NbVPoles, NbUKnots, NbVKnots);
 
@@ -353,7 +355,7 @@ Standard_Boolean GeomFill_Sweep::BuildAll(const GeomAbs_Shape Continuity,
     {
       myCurve2d = new  (TColGeom2d_HArray1OfCurve) (1, 2 + myLoc->TraceNumber());
       CError = new (TColStd_HArray2OfReal) (1, 2, 1, 2 + myLoc->TraceNumber());
-      Standard_Integer kk, ii, ifin = 1, ideb;
+      Standard_Integer kk = 0, ii = 0, ifin = 1, ideb = 0;
 
       if (myLoc->HasFirstRestriction()) {
         ideb = 1;
@@ -418,7 +420,7 @@ Standard_Boolean GeomFill_Sweep::BuildProduct(const GeomAbs_Shape Continuity,
   if (BSurf.IsNull()) return Ok; // Ce mode de construction est impossible  
 
 
-  Standard_Integer NbIntervalC2, NbIntervalC3;
+  Standard_Integer NbIntervalC2 = 0, NbIntervalC3 = 0;
   GeomFill_LocFunction Func(myLoc);
 
   NbIntervalC2 = myLoc->NbIntervals(GeomAbs_C2);
@@ -501,8 +503,8 @@ static Standard_Boolean IsSweepParallelSpine(const Handle(GeomFill_LocationLaw) 
                                              const Standard_Real                 theTol)
 {
   // Get the first and last transformations of the location
-  Standard_Real aFirst;
-  Standard_Real aLast;
+  Standard_Real aFirst = NAN;
+  Standard_Real aLast = NAN;
   gp_Vec        VBegin;
   gp_Vec        VEnd;
   gp_Mat        M;
@@ -534,10 +536,10 @@ static Standard_Boolean IsSweepParallelSpine(const Handle(GeomFill_LocationLaw) 
                   GTfEnd(3, 1), GTfEnd(3, 2), GTfEnd(3, 3), GTfEnd(3, 4));
 
   Handle(Geom_Surface) aSurf = theSec->BSplineSurface();
-  Standard_Real Umin;
-  Standard_Real Umax;
-  Standard_Real Vmin;
-  Standard_Real Vmax;
+  Standard_Real Umin = NAN;
+  Standard_Real Umax = NAN;
+  Standard_Real Vmin = NAN;
+  Standard_Real Vmax = NAN;
 
   aSurf->Bounds(Umin, Umax, Vmin, Vmax);
 
@@ -583,7 +585,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
   GeomAbs_CurveType SectionType;
   gp_Vec V;
   gp_Mat M;
-  Standard_Real levier, error = 0;
+  Standard_Real levier = NAN, error = 0;
   Standard_Real UFirst = 0, VFirst = First, ULast = 0, VLast = Last;
   Standard_Real Tol = Min(Tol3d, BoundTol);
 
@@ -658,7 +660,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
             (axe, C.Radius());
           if (C.Position().Direction().
             IsOpposite(axe.Direction(), 0.1)) {
-            Standard_Real f, l;
+            Standard_Real f = NAN, l = NAN;
             // L'orientation parametrique est inversee
             l = 2 * M_PI - UFirst;
             f = 2 * M_PI - ULast;
@@ -693,7 +695,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
       Handle(Geom_Curve) Section;
       GeomAdaptor_Curve AC;
       gp_Circ C;
-      Standard_Real R1, R2;
+      Standard_Real R1 = NAN, R2 = NAN;
 
 
       Section = mySec->CirclSection(SLast);
@@ -720,7 +722,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
       C = AC.Circle();
       Centre0 = C.Location();
 
-      Standard_Real Angle;
+      Standard_Real Angle = NAN;
       gp_Vec  N(Centre1, P1);
       if (N.Magnitude() < 1.e-9) {
         gp_Vec Bis(Centre2, P2);
@@ -748,7 +750,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
         if (diso.Magnitude() > 1.e-9 && dsection.Magnitude() > 1.e-9)
           isUReversed = diso.IsOpposite(dsection, 0.1);
         if (isUReversed) {
-          Standard_Real f, l;
+          Standard_Real f = NAN, l = NAN;
           // L'orientation parametrique est inversee
           l = 2 * M_PI - UFirst;
           f = 2 * M_PI - ULast;
@@ -768,7 +770,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
       // La trajectoire
       gp_Pnt Centre;
       isVPeriodic = (Abs(Last - First - 2 * M_PI) < 1.e-15);
-      Standard_Real RotRadius;
+      Standard_Real RotRadius = NAN;
       gp_Vec DP, DS, DN;
       myLoc->D0(0.1, M, DS);
       myLoc->D0(0, M, V);
@@ -808,7 +810,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
       // (2.1) Tore/Sphere ?
       if ((SectionType == GeomAbs_Circle) && IsTrsf) {
         gp_Circ C = AC.Circle();
-        Standard_Real Radius;
+        Standard_Real Radius = NAN;
         Standard_Boolean IsGoodSide = Standard_True;
         C.Transform(Tf2);
         gp_Vec DC;
@@ -851,7 +853,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
             theSection->Transform(Tf2);
             gp_Pnt FirstPoint = theSection->Value(theSection->FirstParameter());
             gp_Pnt LastPoint = theSection->Value(theSection->LastParameter());
-            Standard_Real UfirstOnSec, VfirstOnSec, UlastOnSec, VlastOnSec;
+            Standard_Real UfirstOnSec = NAN, VfirstOnSec = NAN, UlastOnSec = NAN, VlastOnSec = NAN;
             ElSLib::Parameters(theSphere, FirstPoint, UfirstOnSec, VfirstOnSec);
             ElSLib::Parameters(theSphere, LastPoint, UlastOnSec, VlastOnSec);
             if (VfirstOnSec < VlastOnSec)
@@ -903,7 +905,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
 
             if (C.Position().Direction().
               IsOpposite(axeiso.Direction(), 0.1)) {
-              Standard_Real f, l;
+              Standard_Real f = NAN, l = NAN;
               // L'orientation parametrique est inversee
               l = 2 * M_PI - UFirst;
               f = 2 * M_PI - ULast;
@@ -912,7 +914,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
               isUReversed = Standard_True;
             }
             // On calcul le "glissement" parametrique.
-            Standard_Real rot;
+            Standard_Real rot = NAN;
             rot = C.Position().XDirection().AngleWithRef
             (axeiso.XDirection(), axeiso.Direction());
             UFirst -= rot;
@@ -940,9 +942,9 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
         // si la line est ortogonale au cercle de rotation  
         SError = error + levier * Abs(DL.Dot(DP));
         if (SError <= Tol) {
-          Standard_Boolean reverse;
+          Standard_Boolean reverse = 0;
           gp_Lin Dir(Centre, DN);
-          Standard_Real aux;
+          Standard_Real aux = NAN;
           aux = DL.Dot(DN);
           reverse = (aux < 0);  // On choisit ici le sens de parametrisation
 
@@ -997,7 +999,7 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
           }
           if (Ok && reverse) {
             // On reverse le parametre
-            Standard_Real uf, ul;
+            Standard_Real uf = NAN, ul = NAN;
             Handle(Geom_Line) CL = new (Geom_Line)(L);
             uf = CL->ReversedParameter(ULast);
             ul = CL->ReversedParameter(UFirst);
@@ -1030,9 +1032,9 @@ Standard_Boolean GeomFill_Sweep::BuildKPart()
 
   if (Ok) { // On trimme la surface
     if (myExchUV) {
-      Standard_Boolean b;
+      Standard_Boolean b = 0;
       b = isUPeriodic; isUPeriodic = isVPeriodic;  isVPeriodic = b;
-      Standard_Real r;
+      Standard_Real r = NAN;
       r = UFirst; UFirst = VFirst; VFirst = r;
       r = ULast; ULast = VLast; VLast = r;
     }
@@ -1091,7 +1093,7 @@ void GeomFill_Sweep::ErrorOnRestriction(const Standard_Boolean IsFirst,
                                         Standard_Real& UError,
                                         Standard_Real& VError) const
 {
-  Standard_Integer ind;
+  Standard_Integer ind = 0;
   if (IsFirst) ind = 1;
   else ind = myCurve2d->Length();
 

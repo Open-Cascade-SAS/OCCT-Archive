@@ -58,10 +58,10 @@ Handle(Geom2d_Geometry) Geom2d_Ellipse::Copy() const
 //purpose  : 
 //=======================================================================
 
-Geom2d_Ellipse::Geom2d_Ellipse (const gp_Elips2d& E) {
+Geom2d_Ellipse::Geom2d_Ellipse (const gp_Elips2d& E) : majorRadius(E.MajorRadius()), minorRadius(E.MinorRadius()) {
  
-  majorRadius = E.MajorRadius();
-  minorRadius = E.MinorRadius();
+  
+  
   pos = E.Axis();
 }
 

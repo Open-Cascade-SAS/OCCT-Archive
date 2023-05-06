@@ -64,7 +64,7 @@ private:
 
 
   Handle(StepGeom_Direction) refDirection;
-  Standard_Boolean hasRefDirection;
+  Standard_Boolean hasRefDirection{};
 
 
 };

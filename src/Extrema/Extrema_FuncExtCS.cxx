@@ -53,10 +53,10 @@ les algorithmes math_FunctionRoot et math_FunctionRoots.
    myS(NULL),
    myt(0.0),
    myU(0.0),
-   myV(0.0)
+   myV(0.0), myCinit(Standard_False), mySinit(Standard_False)
 {
-  myCinit = Standard_False;
-  mySinit = Standard_False;
+  
+  
 }
 
 //=======================================================================

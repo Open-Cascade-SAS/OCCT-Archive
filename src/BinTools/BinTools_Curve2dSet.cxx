@@ -196,7 +196,7 @@ static BinTools_OStream& operator <<(BinTools_OStream& OS, const Handle(Geom2d_B
   Standard_Boolean aRational = B->IsRational() ? 1:0;
   OS << aRational; // rational
   // poles and weights
-  Standard_Integer i,aDegree = B->Degree(); 
+  Standard_Integer i = 0,aDegree = B->Degree(); 
   OS << (Standard_ExtCharacter)aDegree; // Degree
   for (i = 1; i <= aDegree+1; i++) {
     OS << B->Pole(i); // Pnt2d
@@ -219,7 +219,7 @@ static BinTools_OStream& operator <<(BinTools_OStream& OS, const Handle(Geom2d_B
   Standard_Boolean aPeriodic = B->IsPeriodic() ? 1:0;
   OS << aPeriodic; //periodic
   // poles and weights
-  Standard_Integer i,aDegree,aNbPoles,aNbKnots;
+  Standard_Integer i = 0,aDegree = 0,aNbPoles = 0,aNbKnots = 0;
   aDegree = B->Degree();
   aNbPoles = B->NbPoles();
   aNbKnots = B->NbKnots();
@@ -325,7 +325,7 @@ void BinTools_Curve2dSet::WriteCurve2d(
 void  BinTools_Curve2dSet::Write (Standard_OStream& OS,
                                   const Message_ProgressRange& theRange) const
 {
-  Standard_Integer i, aNbCurves = myMap.Extent();
+  Standard_Integer i = 0, aNbCurves = myMap.Extent();
   Message_ProgressScope aPS(theRange, "Writing 2D curves",aNbCurves);
   OS << "Curve2ds "<< aNbCurves << "\n";
   BinTools_OStream aStream (OS);
@@ -689,7 +689,7 @@ void  BinTools_Curve2dSet::Read (Standard_IStream& IS,
   }
 
   Handle(Geom2d_Curve) C;
-  Standard_Integer i, aNbCurves;
+  Standard_Integer i = 0, aNbCurves = 0;
   IS >> aNbCurves;
   Message_ProgressScope aPS(theRange, "Reading curves 2d", aNbCurves);
   IS.get();//remove <lf>		

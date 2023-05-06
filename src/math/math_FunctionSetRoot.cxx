@@ -25,6 +25,8 @@
 //#endif
 //math_FunctionSetRoot.cxx
 
+#include <math.h>
+
 #include <math_BrentMinimum.hxx>
 #include <math_Function.hxx>
 #include <math_FunctionSetRoot.hxx>
@@ -91,7 +93,7 @@ public :
   //     Standard_Boolean MyDirFunction::Value(const math_Vector& Sol, math_Vector& FF,
   //					   math_Matrix& DF, math_Vector& GH, 
   //					   Standard_Real& F2, Standard_Real& Gnr1);
-  Standard_Boolean Value(const Standard_Real x, Standard_Real& fval) ;
+  Standard_Boolean Value(const Standard_Real x, Standard_Real& fval) override ;
 
 };
 
@@ -99,13 +101,13 @@ MyDirFunction::MyDirFunction(math_Vector& V1,
                              math_Vector& V2,
                              math_Vector& V3,
                              math_Vector& V4,
-                             math_FunctionSetWithDerivatives& f) {
+                             math_FunctionSetWithDerivatives& f) : P0(&V1), Dir(&V2), P(&V3), FV(&V4), F(&f) {
 
-                               P0  = &V1;
-                               Dir = &V2;
-                               P   = &V3;
-                               FV =  &V4;
-                               F   = &f;
+                               
+                               
+                               
+                               
+                               
 }
 
 void MyDirFunction::Initialize(const math_Vector& p0, 
@@ -119,7 +121,7 @@ void MyDirFunction::Initialize(const math_Vector& p0,
 Standard_Boolean MyDirFunction::Value(const Standard_Real x, 
                                       Standard_Real& fval) 
 {
-  Standard_Real p;
+  Standard_Real p = NAN;
   for(Standard_Integer i = P->Lower(); i <= P->Upper(); i++) {
     p = Dir->Value(i);
     P->Value(i) = p * x + P0->Value(i);
@@ -199,9 +201,9 @@ static Standard_Boolean MinimizeDirection(const math_Vector&   P0,
                                           //-------------------------------------------------------
 {
   // (1) Evaluation d'un tolerance parametrique 1D
-  Standard_Real tol1d = 2.1 , invnorme, tsol;
+  Standard_Real tol1d = 2.1 , invnorme = NAN, tsol = NAN;
   Standard_Real Eps = 1.e-16;
-  Standard_Real ax, bx, cx;
+  Standard_Real ax = NAN, bx = NAN, cx = NAN;
 
   for (Standard_Integer ii =1; ii<=Tol.Length(); ii++) {
     invnorme = Abs(Delta(ii));
@@ -211,8 +213,8 @@ static Standard_Boolean MinimizeDirection(const math_Vector&   P0,
   tol1d /= 3; 
 
   //JR/Hp :
-  math_Vector PP0 = P0 ;
-  math_Vector PP1 = P1 ;
+  const math_Vector& PP0 = P0 ;
+  const math_Vector& PP1 = P1 ;
   Delta = PP1 - PP0;
   //  Delta = P1 - P0;
   invnorme = Delta.Norm();
@@ -261,7 +263,7 @@ static Standard_Boolean MinimizeDirection(const math_Vector&   P,
   // (0) Evaluation d'un tolerance parametrique 1D
   Standard_Boolean good = Standard_False;
   Standard_Real Eps = 1.e-20;
-  Standard_Real tol1d = 1.1, Result = PValue, absdir;
+  Standard_Real tol1d = 1.1, Result = PValue, absdir = NAN;
 
   for (Standard_Integer ii =1; ii<=Tol.Length(); ii++) {
     absdir = Abs(Dir(ii));
@@ -270,7 +272,7 @@ static Standard_Boolean MinimizeDirection(const math_Vector&   P,
   if (tol1d > 0.9) return Standard_False;
 
   // (1) On realise une premiere interpolation quadratique
-  Standard_Real ax, bx, cx, df1, df2, Delta, tsol, fsol, tsolbis;
+  Standard_Real ax = NAN, bx = NAN, cx = NAN, df1 = NAN, df2 = NAN, Delta = NAN, tsol = NAN, fsol = NAN, tsolbis = NAN;
   FSR_DEBUG("     essai d interpolation");
 
   df1 = Gradient*Dir;
@@ -426,7 +428,7 @@ static void SearchDirection(const math_Matrix& DF,
 
   Standard_Real ratio = Abs( Direction(Direction.Lower())
     *InvLengthMax(Direction.Lower()) );
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = Direction.Lower()+1; i<=Direction.Upper(); i++) {
     ratio = Max(ratio,  Abs( Direction(i)*InvLengthMax(i)) );
   }
@@ -463,7 +465,7 @@ static void SearchDirection(const math_Matrix& DF,
                             //=====================================================================
 {
   Standard_Integer Ninc = DF.ColNumber(), Neq = DF.RowNumber();
-  Standard_Integer i, j, k, Cons = 0;
+  Standard_Integer i = 0, j = 0, k = 0, Cons = 0;
 
   // verification sur les bornes imposees:
 
@@ -540,7 +542,7 @@ Standard_Boolean Bounds(const math_Vector&  InfBound,
                         //======================================================
 {
   Standard_Boolean Out = Standard_False;
-  Standard_Integer i, Ninc = Sol.Length();
+  Standard_Integer i = 0, Ninc = Sol.Length();
   Standard_Real    monratio = 1;
 
   theIsNewSol = Standard_True;
@@ -710,13 +712,13 @@ void math_FunctionSetRoot::Perform(math_FunctionSetWithDerivatives& F,
     (theInfBound.Length() != Ninc)     ||
     (theSupBound.Length() != Ninc))  { throw Standard_DimensionError(); }
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Boolean ChangeDirection = Standard_False, Sort = Standard_False, isNewSol = Standard_False;
-  Standard_Boolean Good, Verif;
-  Standard_Boolean Stop;
+  Standard_Boolean Good = 0, Verif = 0;
+  Standard_Boolean Stop = 0;
   const Standard_Real EpsSqrt = 1.e-16, Eps = 1.e-32, Eps2 = 1.e-64, Progres = 0.005;
-  Standard_Real F2, PreviousMinimum, Dy, OldF;
-  Standard_Real Ambda, Ambda2, Gnr1, Oldgr;
+  Standard_Real F2 = NAN, PreviousMinimum = NAN, Dy = NAN, OldF = NAN;
+  Standard_Real Ambda = NAN, Ambda2 = NAN, Gnr1 = NAN, Oldgr = NAN;
   math_Vector InvLengthMax(1, Ninc); // Pour bloquer les pas a 1/4 du domaine
   math_IntegerVector aConstraints(1, Ninc); // Pour savoir sur quels bord on se trouve
   for (i = 1; i <= Ninc ; i++) {
@@ -726,7 +728,7 @@ void math_FunctionSetRoot::Perform(math_FunctionSetWithDerivatives& F,
   }
 
   MyDirFunction F_Dir(Temp1, Temp2, Temp3, Temp4, F);
-  Standard_Integer  DescenteIter;
+  Standard_Integer  DescenteIter = 0;
 
   Done = Standard_False;
   Sol = StartingPoint;
@@ -863,7 +865,7 @@ void math_FunctionSetRoot::Perform(math_FunctionSetWithDerivatives& F,
       Stop = Standard_False;
       Good = Standard_False;
       DescenteIter = 0;
-      Standard_Boolean Sortbis;
+      Standard_Boolean Sortbis = 0;
 
       // -------------------------------------------------
       // Traitement standard sans traitement des bords

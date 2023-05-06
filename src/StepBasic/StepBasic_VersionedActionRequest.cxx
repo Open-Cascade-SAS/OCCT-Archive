@@ -25,9 +25,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_VersionedActionRequest,Standard_Transient)
 //function : StepBasic_VersionedActionRequest
 //purpose  : 
 //=======================================================================
-StepBasic_VersionedActionRequest::StepBasic_VersionedActionRequest ()
+StepBasic_VersionedActionRequest::StepBasic_VersionedActionRequest () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

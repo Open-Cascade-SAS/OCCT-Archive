@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <gp_XYZ.hxx>
 
 #include <gp_Mat.hxx>
@@ -21,7 +23,7 @@
 
 Standard_Boolean gp_XYZ::IsEqual (const gp_XYZ& Other,
 				  const Standard_Real Tolerance) const {
-  Standard_Real val;
+  Standard_Real val = NAN;
   val = x - Other.x;
   if (val < 0) val = - val;
   if (val > Tolerance) return Standard_False;

@@ -46,7 +46,7 @@ void GeomFill_Generator::Perform(const Standard_Real PTol)
   
   // Create the surface.
   
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   Standard_Integer NbUPoles = NbPoles();
   Standard_Integer NbVPoles = mySequence.Length();
   Standard_Integer NbUKnots = NbKnots();

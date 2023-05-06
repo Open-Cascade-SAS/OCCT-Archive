@@ -45,7 +45,7 @@ void RWStepVisual_RWCurveStyleFont::ReadStep
 
 	Handle(StepVisual_HArray1OfCurveStyleFontPattern) aPatternList;
 	Handle(StepVisual_CurveStyleFontPattern) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"pattern_list",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aPatternList = new StepVisual_HArray1OfCurveStyleFontPattern (1, nb2);

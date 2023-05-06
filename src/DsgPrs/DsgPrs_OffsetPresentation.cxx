@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DsgPrs_OffsetPresentation.hxx>
 
 #include <ElCLib.hxx>
@@ -62,7 +64,7 @@ void DsgPrs_OffsetPresentation::Add (const Handle(Prs3d_Presentation)& aPresenta
     gp_Dir d4 (v4);
     L4 = gp_Lin(Proj1,d4); // normale
   }
-  Standard_Real parmin,parmax,parcur;
+  Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
   parmin = ElCLib::Parameter(L3,Proj1);
   parmax = parmin;
   parcur = ElCLib::Parameter(L3,Proj2);

@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomConvert_ApproxSurface.hxx>
 
 #include <Adaptor3d_Surface.hxx>
@@ -33,7 +35,7 @@ public:
   GeomConvert_ApproxSurface_Eval (const Handle(Adaptor3d_Surface)& theAdaptor)
   : myAdaptor (theAdaptor) {}
 
-  virtual void Evaluate (Standard_Integer* theDimension,
+  void Evaluate (Standard_Integer* theDimension,
                          Standard_Real*    theUStartEnd,
                          Standard_Real*    theVStartEnd,
                          Standard_Integer* theFavorIso,
@@ -43,7 +45,7 @@ public:
                          Standard_Integer* theUOrder,
                          Standard_Integer* theVOrder,
                          Standard_Real*    theResult,
-                         Standard_Integer* theErrorCode) const;
+                         Standard_Integer* theErrorCode) const override;
 
 private:
 
@@ -77,8 +79,8 @@ void GeomConvert_ApproxSurface_Eval::Evaluate (Standard_Integer * Dimension,
 { 
   *ErrorCode = 0;
 //  Standard_Integer idim;
-  Standard_Integer jpar;
-  Standard_Real Upar,Vpar;
+  Standard_Integer jpar = 0;
+  Standard_Real Upar = NAN,Vpar = NAN;
 
 // Dimension incorrecte
   if (*Dimension!=3) {
@@ -346,7 +348,7 @@ void GeomConvert_ApproxSurface::Approximate(const Handle(Adaptor3d_Surface)& the
 
 // " Init du type d'iso"
   GeomAbs_IsoType IsoType = GeomAbs_IsoV; 
-  Standard_Integer NbDec;
+  Standard_Integer NbDec = 0;
 
   NbDec = theSurf->NbUIntervals(GeomAbs_C2);
   TColStd_Array1OfReal UDec_C2(1, NbDec+1);

@@ -62,74 +62,61 @@ IntCurve_IConicTool::IntCurve_IConicTool(void)
 }
 
 
-IntCurve_IConicTool::IntCurve_IConicTool(const IntCurve_IConicTool& ITool) {
-  prm1=ITool.prm1;
-  prm2=ITool.prm2;
-  prm3=ITool.prm3;
-  Axis=ITool.Axis;
-  Abs_To_Object=ITool.Abs_To_Object;
-  type=ITool.type;
+IntCurve_IConicTool::IntCurve_IConicTool(const IntCurve_IConicTool& ITool) : prm1(ITool.prm1), prm2(ITool.prm2), prm3(ITool.prm3), Axis(ITool.Axis), type(ITool.type), Abs_To_Object(ITool.Abs_To_Object) {
+  
+  
+  
+  
+  
+  
 }
 //======================================================================
 //======================================================================
 IntCurve_IConicTool::IntCurve_IConicTool(const gp_Lin2d& Line)
 : prm1(0.0),
   prm2(0.0),
-  prm3(0.0) 
+  prm3(0.0), type(GeomAbs_Line) 
 {
   Line.Coefficients(Line_a,Line_b,Line_c);
   Axis = gp_Ax22d(Line.Position(),Standard_True);
-  type = GeomAbs_Line;
+  
 }
 //======================================================================
 IntCurve_IConicTool::IntCurve_IConicTool(const gp_Elips2d& Elips)
-: prm1(0.0),
-  prm2(0.0),
-  prm3(0.0) 
+: prm1(Elips.MajorRadius()),
+  prm2(Elips.MinorRadius()),
+  prm3(sqrt(Elips_a*Elips_a-Elips_b*Elips_b)),
+  Axis(Elips.Axis()),
+  type(GeomAbs_Ellipse) 
 {
-  Elips_a = Elips.MajorRadius();
-  Elips_b = Elips.MinorRadius();
-  Elips_c = sqrt(Elips_a*Elips_a-Elips_b*Elips_b);
-  Axis = Elips.Axis();
   Abs_To_Object.SetTransformation(gp::OX2d(),Axis.XAxis());
-  type = GeomAbs_Ellipse;
 }
 //======================================================================
 IntCurve_IConicTool::IntCurve_IConicTool(const gp_Circ2d& C)
-: prm1(0.0),
-  prm2(0.0),
-  prm3(0.0)
+: prm1(C.Radius()), prm2(0.0),
+  prm3(0.0), Axis(C.Axis()), type(GeomAbs_Circle)
 {
-  Circle_r=C.Radius();
-  Axis=C.Axis();
+  
+  
   Circle_x0=Axis.Location().X();
   Circle_y0=Axis.Location().Y();
   Abs_To_Object.SetTransformation(gp::OX2d(),Axis.XAxis());
-  type = GeomAbs_Circle;
+  
 }
 //======================================================================
 IntCurve_IConicTool::IntCurve_IConicTool(const gp_Parab2d& P)
-: prm1(0.0),
-  prm2(0.0),
-  prm3(0.0)
+: prm1(P.Focal()),
+  prm2(4.0*Parab_f), prm3(0.0), type(GeomAbs_Parabola)
 {
-  Parab_f=P.Focal();
-  Parab_2p=4.0*Parab_f;
   Axis=P.Axis();
   Abs_To_Object.SetTransformation(gp::OX2d(),Axis.XAxis());
-  type = GeomAbs_Parabola;
 }
 //======================================================================
 IntCurve_IConicTool::IntCurve_IConicTool(const gp_Hypr2d& H)
-: prm1(0.0),
-  prm2(0.0),
-  prm3(0.0)
+: prm1(H.MajorRadius()),
+  prm2(H.MinorRadius()), prm3(0.0), Axis(H.Axis()), type(GeomAbs_Hyperbola)
 {
-  Hypr_a = H.MajorRadius();
-  Hypr_b = H.MinorRadius();
-  Axis = H.Axis();
   Abs_To_Object.SetTransformation(gp::OX2d(),Axis.XAxis());
-  type = GeomAbs_Hyperbola;
 }
 //----------------------------------------------------------------------
 gp_Pnt2d IntCurve_IConicTool::Value(const Standard_Real X) const {

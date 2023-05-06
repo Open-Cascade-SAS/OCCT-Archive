@@ -26,12 +26,12 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(StepData_UndefinedEntity,Standard_Transient)
 
-StepData_UndefinedEntity::StepData_UndefinedEntity ()
-      {  thecont = new Interface_UndefinedContent;  thesub = Standard_False;  }
+StepData_UndefinedEntity::StepData_UndefinedEntity () : thecont(new Interface_UndefinedContent), thesub(Standard_False)
+      {    }
 
     StepData_UndefinedEntity::StepData_UndefinedEntity
-  (const Standard_Boolean issub)
-      { thesub = issub;  thecont = new Interface_UndefinedContent;  }
+  (const Standard_Boolean issub) : thecont(new Interface_UndefinedContent), thesub(issub)
+      {   }
 
     Handle(Interface_UndefinedContent)
       StepData_UndefinedEntity::UndefinedContent () const
@@ -151,7 +151,7 @@ void StepData_UndefinedEntity::WriteParams (StepData_StepWriter& SW) const
     void  StepData_UndefinedEntity::FillShared
   (Interface_EntityIterator& list) const
 {
-  Standard_Integer i, nb = thecont->NbParams();
+  Standard_Integer i = 0, nb = thecont->NbParams();
   for (i = 1; i <= nb; i ++) {
     Interface_ParamType ptype = thecont->ParamType(i);
     if (ptype == Interface_ParamSub) {

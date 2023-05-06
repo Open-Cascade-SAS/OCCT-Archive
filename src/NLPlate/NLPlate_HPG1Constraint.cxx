@@ -22,12 +22,12 @@
 IMPLEMENT_STANDARD_RTTIEXT(NLPlate_HPG1Constraint,NLPlate_HGPPConstraint)
 
 NLPlate_HPG1Constraint::NLPlate_HPG1Constraint(const gp_XY& UV,const Plate_D1& D1T)
-:myG1Target(D1T)
+:IncrementalLoadingAllowed(Standard_False), myG1Target(D1T), myOrientation(0)
 {
   SetUV(UV);
   SetActiveOrder(1);
-  IncrementalLoadingAllowed = Standard_False;
-  myOrientation = 0;
+  
+  
 }
 void NLPlate_HPG1Constraint::SetIncrementalLoadAllowed(const Standard_Boolean ILA) 
 {

@@ -48,7 +48,7 @@ Standard_Boolean GeomConvert_FuncSphereLSDist::Value(const math_Vector& X,Standa
   Standard_Real anR2 = X(4)*X(4);
 
   F = 0.;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = myPoints->Lower(); i <= myPoints->Upper(); ++i)
   {
     Standard_Real d = (myPoints->Value(i) - aLoc).SquareModulus() - anR2;
@@ -69,7 +69,7 @@ Standard_Boolean GeomConvert_FuncSphereLSDist::Gradient(const math_Vector& X,mat
   Standard_Real anR = X(4), anR2 = anR * anR;
 
   G.Init(0.);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = myPoints->Lower(); i <= myPoints->Upper(); ++i)
   {
     gp_XYZ dLoc = myPoints->Value(i) - aLoc;
@@ -96,7 +96,7 @@ Standard_Boolean GeomConvert_FuncSphereLSDist::Values(const math_Vector& X,Stand
 
   G.Init(0.);
   F = 0.;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = myPoints->Lower(); i <= myPoints->Upper(); ++i)
   {
     gp_XYZ dLoc = myPoints->Value(i) - aLoc;

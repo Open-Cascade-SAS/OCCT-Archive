@@ -16,6 +16,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BOPAlgo_Tools.hxx>
@@ -66,7 +68,7 @@ class BOPAlgo_EdgeEdge :
     BOPAlgo_ParallelAlgo() {
   };
   //
-  virtual ~BOPAlgo_EdgeEdge(){
+  ~BOPAlgo_EdgeEdge() override{
   };
   //
   void SetPaveBlock1(const Handle(BOPDS_PaveBlock)& aPB) {
@@ -96,7 +98,7 @@ class BOPAlgo_EdgeEdge :
     IntTools_EdgeEdge::SetFuzzyValue(theFuzz);
   }
   //
-  virtual void Perform() {
+  void Perform() override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (UserBreak(aPS))
     {
@@ -165,10 +167,10 @@ void BOPAlgo_PaveFiller::PerformEE(const Message_ProgressRange& theRange)
     return; 
   }
   //
-  Standard_Boolean bExpressCompute, bIsPBSplittable1, bIsPBSplittable2;
-  Standard_Integer i, iX, nE1, nE2, aNbCPrts, k, aNbEdgeEdge;
-  Standard_Integer nV11, nV12, nV21, nV22;
-  Standard_Real aTS11, aTS12, aTS21, aTS22, aT11, aT12, aT21, aT22;
+  Standard_Boolean bExpressCompute = 0, bIsPBSplittable1 = 0, bIsPBSplittable2 = 0;
+  Standard_Integer i = 0, iX = 0, nE1 = 0, nE2 = 0, aNbCPrts = 0, k = 0, aNbEdgeEdge = 0;
+  Standard_Integer nV11 = 0, nV12 = 0, nV21 = 0, nV22 = 0;
+  Standard_Real aTS11 = NAN, aTS12 = NAN, aTS21 = NAN, aTS22 = NAN, aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN;
   TopAbs_ShapeEnum aType;
   BOPDS_ListIteratorOfListOfPaveBlock aIt1, aIt2;
   Handle(NCollection_BaseAllocator) aAllocator;
@@ -367,8 +369,8 @@ void BOPAlgo_PaveFiller::PerformEE(const Message_ProgressRange& theRange)
           }
           //
           Standard_Boolean bIsOnPave[4];
-          Standard_Integer nV[4], j;
-          Standard_Real aT1, aT2, aTol;
+          Standard_Integer nV[4], j = 0;
+          Standard_Real aT1 = NAN, aT2 = NAN, aTol = NAN;
           TopoDS_Vertex aVnew;
           IntTools_Range aCR1, aCR2;
           //
@@ -453,8 +455,8 @@ void BOPAlgo_PaveFiller::PerformEE(const Message_ProgressRange& theRange)
           }
           // <-LXBR
           {
-            Standard_Integer nVS[2], iFound;
-            Standard_Real aTolVx, aD2, aDT2;
+            Standard_Integer nVS[2], iFound = 0;
+            Standard_Real aTolVx = NAN, aD2 = NAN, aDT2 = NAN;
             TColStd_MapOfInteger aMV;
             gp_Pnt aPx;
             //
@@ -513,7 +515,7 @@ void BOPAlgo_PaveFiller::PerformEE(const Message_ProgressRange& theRange)
             break;
           }
           //
-          Standard_Boolean bHasSameBounds;
+          Standard_Boolean bHasSameBounds = 0;
           bHasSameBounds=aPB1->HasSameBounds(aPB2);
           if (!bHasSameBounds) {
             break;
@@ -593,7 +595,7 @@ void BOPAlgo_PaveFiller::PerformNewVertices
   //
     // 4. Compute Extra Paves and split Pave blocks by the Extra paves
   Message_ProgressScope aPS(theRange, NULL, 2);
-  Standard_Integer i, aNb = aImages.Extent();
+  Standard_Integer i = 0, aNb = aImages.Extent();
   Message_ProgressScope aPS1(aPS.Next(), NULL, aNb + aNbV);
   for (i = 1; i <= aNb; ++i, aPS1.Next()) {
     if (UserBreak(aPS))
@@ -663,7 +665,7 @@ void BOPAlgo_PaveFiller::TreatNewVertices
   //
   // Prepare for intersection
   TopTools_IndexedDataMapOfShapeReal aVerts;
-  Standard_Integer i, aNbV = theMVCPB.Extent();
+  Standard_Integer i = 0, aNbV = theMVCPB.Extent();
   for (i = 1; i <= aNbV; ++i) {
     const TopoDS_Shape& aV = theMVCPB.FindKey(i);
     Standard_Real aTol = theMVCPB.FindFromIndex(i).Tolerance();
@@ -691,7 +693,7 @@ void BOPAlgo_PaveFiller::TreatNewVertices
 void BOPAlgo_PaveFiller::FillShrunkData(Handle(BOPDS_PaveBlock)& thePB)
 {
   // Vertices
-  Standard_Integer nV1, nV2;
+  Standard_Integer nV1 = 0, nV2 = 0;
   thePB->Indices(nV1, nV2);
 
   if (nV1 < 0 || nV2 < 0)
@@ -712,7 +714,7 @@ void BOPAlgo_PaveFiller::FillShrunkData(Handle(BOPDS_PaveBlock)& thePB)
 
   const TopoDS_Edge& aE=(*(TopoDS_Edge *)(&myDS->Shape(nE))); 
   // Range
-  Standard_Real aT1, aT2;
+  Standard_Real aT1 = NAN, aT2 = NAN;
   thePB->Range(aT1, aT2);
   //
   IntTools_ShrunkRange aSR;
@@ -734,7 +736,7 @@ void BOPAlgo_PaveFiller::AnalyzeShrunkData(const Handle(BOPDS_PaveBlock)& thePB,
   TopoDS_Shape aWarnShape;
   //
   if (!theSR.IsDone() || !theSR.IsSplittable()) {
-    Standard_Real aEFirst, aELast, aPBFirst, aPBLast;
+    Standard_Real aEFirst = NAN, aELast = NAN, aPBFirst = NAN, aPBLast = NAN;
     BRep_Tool::Range(theSR.Edge(), aEFirst, aELast);
     thePB->Range(aPBFirst, aPBLast);
     bWholeEdge = !(aPBFirst > aEFirst || aPBLast < aELast);
@@ -755,7 +757,7 @@ void BOPAlgo_PaveFiller::AnalyzeShrunkData(const Handle(BOPDS_PaveBlock)& thePB,
         AddWarning (new BOPAlgo_AlertTooSmallEdge (aWarnShape));
       else
         AddWarning (new BOPAlgo_AlertBadPositioning (aWarnShape));
-      Standard_Real aTS1, aTS2;
+      Standard_Real aTS1 = NAN, aTS2 = NAN;
       theSR.ShrunkRange(aTS1, aTS2);
       thePB->SetShrunkData(aTS1, aTS2, Bnd_Box(), Standard_False);
       return;
@@ -767,7 +769,7 @@ void BOPAlgo_PaveFiller::AnalyzeShrunkData(const Handle(BOPDS_PaveBlock)& thePB,
       AddWarning (new BOPAlgo_AlertBadPositioning (aWarnShape));
   }
   //
-  Standard_Real aTS1, aTS2;
+  Standard_Real aTS1 = NAN, aTS2 = NAN;
   theSR.ShrunkRange(aTS1, aTS2);
   Bnd_Box aBox = theSR.BndBox();
   aBox.SetGap(aBox.GetGap() + myFuzzyValue / 2.);
@@ -781,8 +783,8 @@ Standard_Boolean BOPAlgo_PaveFiller::ForceInterfVE(const Standard_Integer nV,
                                                    Handle(BOPDS_PaveBlock)& aPB,
                                                    TColStd_MapOfInteger& theMEdges)
 {
-  Standard_Integer nE, nVx, nVSD, iFlag;
-  Standard_Real aT, aTolVNew;
+  Standard_Integer nE = 0, nVx = 0, nVSD = 0, iFlag = 0;
+  Standard_Real aT = NAN, aTolVNew = NAN;
   //
   nE = aPB->OriginalEdge();
   //
@@ -876,7 +878,7 @@ Standard_Boolean BOPAlgo_PaveFiller::GetPBBox(const TopoDS_Edge& theE,
   //
   // check shrunk data
   if (thePB->HasShrunkData()) {
-    Standard_Boolean bIsSplittable;
+    Standard_Boolean bIsSplittable = 0;
     thePB->ShrunkData(theSFirst, theSLast, theBox, bIsSplittable);
     return bValid;
   }
@@ -997,7 +999,7 @@ void BOPAlgo_PaveFiller::ForceInterfEE(const Message_ProgressRange& theRange)
         continue;
 
       // Get indices
-      Standard_Integer nV1, nV2;
+      Standard_Integer nV1 = 0, nV2 = 0;
       aPBR->Indices(nV1, nV2);
 
       // Add pave block to a map
@@ -1029,7 +1031,7 @@ void BOPAlgo_PaveFiller::ForceInterfEE(const Message_ProgressRange& theRange)
       continue;
 
     const BOPDS_Pair& aPair = aPBMap.FindKey(i);
-    Standard_Integer nV1, nV2;
+    Standard_Integer nV1 = 0, nV2 = 0;
     aPair.Indices(nV1, nV2);
 
     const TopoDS_Vertex& aV1 = TopoDS::Vertex(myDS->Shape(nV1));
@@ -1051,7 +1053,7 @@ void BOPAlgo_PaveFiller::ForceInterfEE(const Message_ProgressRange& theRange)
       const Standard_Integer nE1 = aPB1->OriginalEdge();
       const Standard_Integer iR1 = myDS->Rank(nE1);
       const TopoDS_Edge& aE1 = TopoDS::Edge(myDS->Shape(nE1));
-      Standard_Real aT11, aT12;
+      Standard_Real aT11 = NAN, aT12 = NAN;
       aPB1->Range(aT11, aT12);
       BRepAdaptor_Curve aBAC1(aE1);
       gp_Pnt aPm;
@@ -1088,7 +1090,7 @@ void BOPAlgo_PaveFiller::ForceInterfEE(const Message_ProgressRange& theRange)
         }
 
         const TopoDS_Edge& aE2 = TopoDS::Edge(myDS->Shape(nE2));
-        Standard_Real aT21, aT22;
+        Standard_Real aT21 = NAN, aT22 = NAN;
         aPB2->Range(aT21, aT22);
 
         // Check the angle between edges in the middle point.

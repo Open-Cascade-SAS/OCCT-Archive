@@ -197,7 +197,7 @@ private:
 
   Standard_PErrorHandler myPrevious;
   Handle(Standard_Failure) myCaughtError;
-  Standard_JmpBuf myLabel;
+  Standard_JmpBuf myLabel{};
   Standard_HandlerStatus myStatus;
   Standard_ThreadId myThread;
   Callback* myCallbackPtr;

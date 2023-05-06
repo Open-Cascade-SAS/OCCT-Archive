@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <ElCLib.hxx>
 #include <Extrema_ExtSS.hxx>
@@ -111,7 +113,7 @@ void Extrema_ExtSS::Perform(const Adaptor3d_Surface&   S1,
   myPOnS1.Clear();
   myPOnS2.Clear();
   mySqDist.Clear();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   GeomAbs_SurfaceType myS1type  = S1.GetType();
   const Standard_Integer NbU = 20, NbV = 20;
   
@@ -132,7 +134,7 @@ void Extrema_ExtSS::Perform(const Adaptor3d_Surface&   S1,
 	  myDone = Ext.IsDone();
 	  if (myDone) {
 	    Standard_Integer NbExt = Ext.NbExt();
-	    Standard_Real U1, V1,U2,V2;
+	    Standard_Real U1 = NAN, V1 = NAN,U2 = NAN,V2 = NAN;
 	    Extrema_POnSurf PS1;
 	    Extrema_POnSurf PS2;
 	    for (i = 1; i <= NbExt; i++) {
@@ -172,7 +174,7 @@ void Extrema_ExtSS::Perform(const Adaptor3d_Surface&   S1,
       myDone = Ext.IsDone();
       if (myDone) {
 	Standard_Integer NbExt = Ext.NbExt();
-	Standard_Real U1, V1,U2,V2;
+	Standard_Real U1 = NAN, V1 = NAN,U2 = NAN,V2 = NAN;
 	Extrema_POnSurf PS1;
 	Extrema_POnSurf PS2;
 	for (i = 1; i <= NbExt; i++) {
@@ -213,7 +215,7 @@ void Extrema_ExtSS::Perform(const Adaptor3d_Surface&   S1,
     }
     else {
       Standard_Integer NbExt = myExtElSS.NbExt();
-      Standard_Real U1, V1, U2, V2;
+      Standard_Real U1 = NAN, V1 = NAN, U2 = NAN, V2 = NAN;
       Extrema_POnSurf PS1;
       Extrema_POnSurf PS2;
       for (i = 1; i <= NbExt; i++) {

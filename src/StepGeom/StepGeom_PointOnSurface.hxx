@@ -67,8 +67,8 @@ private:
 
 
   Handle(StepGeom_Surface) basisSurface;
-  Standard_Real pointParameterU;
-  Standard_Real pointParameterV;
+  Standard_Real pointParameterU{};
+  Standard_Real pointParameterV{};
 
 
 };

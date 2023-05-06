@@ -35,6 +35,7 @@
 #include <Standard_RangeError.hxx>
 #include <TColStd_Array1OfReal.hxx>
 
+#include <math.h>
 #include <stdio.h>
 #ifdef DRAW
 #include <DrawTrSurf.hxx>
@@ -274,7 +275,7 @@ void GeomFill_SweepSectionGenerator::Perform(const Standard_Boolean Polynomial)
 
   myNbSections = 21 * NSpans;
 
-  Standard_Real U;
+  Standard_Real U = NAN;
 
   Standard_Real U1 = myPath->FirstParameter();
   Standard_Real U2 = myPath->LastParameter();
@@ -493,7 +494,7 @@ Standard_Boolean GeomFill_SweepSectionGenerator::Section
 
   // calcul du cercle osculateur.
 
-  Standard_Real U;
+  Standard_Real U = NAN;
   if ( P == 1) {
     U = myPath->FirstParameter();
   }
@@ -526,7 +527,7 @@ Standard_Boolean GeomFill_SweepSectionGenerator::Section
   else {
     gp_Dir N = D;
     gp_Pnt Q = Pt.Translated( (1./c) * gp_Vec(N));
-    Standard_Real x, y;
+    Standard_Real x = NAN, y = NAN;
     gp_Vec V;
     for ( Standard_Integer i = 1; i <= myFirstSect->NbPoles(); i++) {
       V = gp_Vec(Q, Poles(i));
@@ -633,7 +634,7 @@ void GeomFill_SweepSectionGenerator::Section
     gp_Pnt P2 = myAdpLastSect->Value(U2);
     
     gp_Ax2 Axis;
-    Standard_Real Angle;
+    Standard_Real Angle = NAN;
     if ( P1.Distance(P2) < Precision::Confusion()) {
       Angle = 0.;
     }

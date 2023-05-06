@@ -50,7 +50,7 @@ GccAna_Circ2d2TanOn::
                         const GccEnt_QualifiedLin&  Qualified2  , 
                         const gp_Lin2d&             OnLine      ,
                         const Standard_Real         Tolerance   ):
-   cirsol(1,4)     ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,4)     ,
    qualifier1(1,4) ,
    qualifier2(1,4),
    TheSame1(1,4)   ,
@@ -67,8 +67,8 @@ GccAna_Circ2d2TanOn::
 
    TheSame1.Init(0);
    TheSame2.Init(0);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
        !(Qualified2.IsEnclosed() ||

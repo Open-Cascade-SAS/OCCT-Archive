@@ -111,8 +111,8 @@ private:
 
   Standard_Boolean myModeDrop;
   Standard_Real myLimitAngle;
-  Standard_Integer myStatusWireGaps;
-  Standard_Integer myStatusSmallEdges;
+  Standard_Integer myStatusWireGaps{};
+  Standard_Integer myStatusSmallEdges{};
 
 
 };

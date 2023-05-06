@@ -16,6 +16,8 @@
 
 // 15.06 2000 gka fix against small edges ; merging ends pcurves and 3d curves
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
@@ -50,20 +52,20 @@
 //function : ShapeUpgrade_ShapeConvertToBezier
 //purpose  : 
 //=======================================================================
-ShapeUpgrade_ShapeConvertToBezier::ShapeUpgrade_ShapeConvertToBezier()
+ShapeUpgrade_ShapeConvertToBezier::ShapeUpgrade_ShapeConvertToBezier() : my2dMode(Standard_False), my3dMode(Standard_False), mySurfaceMode(Standard_False), my3dLineMode(Standard_True), my3dCircleMode(Standard_True), my3dConicMode(Standard_True), myPlaneMode(Standard_True), myRevolutionMode(Standard_True), myExtrusionMode(Standard_True), myBSplineMode(Standard_True), myLevel(0)
 {
-  myLevel = 0;
-  my2dMode = Standard_False;
-  my3dMode = Standard_False;
-  mySurfaceMode = Standard_False;
+  
+  
+  
+  
   //set spesial flags to true
-  my3dLineMode = Standard_True;
-  my3dCircleMode = Standard_True;
-  my3dConicMode = Standard_True;
-  myPlaneMode      = Standard_True;
-  myRevolutionMode = Standard_True;
-  myExtrusionMode  = Standard_True;
-  myBSplineMode    = Standard_True;
+  
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -72,20 +74,20 @@ ShapeUpgrade_ShapeConvertToBezier::ShapeUpgrade_ShapeConvertToBezier()
 //=======================================================================
 
 ShapeUpgrade_ShapeConvertToBezier::ShapeUpgrade_ShapeConvertToBezier(const TopoDS_Shape& S):
-       ShapeUpgrade_ShapeDivide(S)
+       ShapeUpgrade_ShapeDivide(S), my2dMode(Standard_False), my3dMode(Standard_False), mySurfaceMode(Standard_False), my3dLineMode(Standard_True), my3dCircleMode(Standard_True), my3dConicMode(Standard_True), myPlaneMode(Standard_True), myRevolutionMode(Standard_True), myExtrusionMode(Standard_True), myBSplineMode(Standard_True), myLevel(0)
 {
-  myLevel = 0;
-  my2dMode = Standard_False;
-  my3dMode = Standard_False;
-  mySurfaceMode = Standard_False;
+  
+  
+  
+  
   //set spesial flags to true
-  my3dLineMode = Standard_True;
-  my3dCircleMode = Standard_True;
-  my3dConicMode = Standard_True;
-  myPlaneMode      = Standard_True;
-  myRevolutionMode = Standard_True;
-  myExtrusionMode  = Standard_True;
-  myBSplineMode    = Standard_True;
+  
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -141,7 +143,7 @@ Standard_Boolean ShapeUpgrade_ShapeConvertToBezier::Perform (const Standard_Bool
 	  TopoDS_Edge edge = sewd->Edge(i);
 	  //TopoDS_Edge edge = TopoDS::Edge(exp1.Current());
 	  Handle(Geom_Curve) c3d;
-	  Standard_Real first, last;
+	  Standard_Real first = NAN, last = NAN;
 	  TopoDS_Vertex V1,V2;
 	  TopExp::Vertices(edge,V1,V2);
 	  if(sae.Curve3d(edge,c3d,first,last,Standard_False)) {
@@ -214,7 +216,7 @@ Standard_Boolean ShapeUpgrade_ShapeConvertToBezier::Perform (const Standard_Bool
 	  
 	  TopoDS_Edge edgenext = sewd->Edge((i == sewd->NbEdges() ? 1 : i+1));
 	  Handle(Geom2d_Curve) c2dnext,c2drevnext,newnextCurve;
-	  Standard_Real first2,last2;
+	  Standard_Real first2 = NAN,last2 = NAN;
 	  Handle(Geom2d_BezierCurve) beziernext,bezierRnext;
 	  if(!sae.PCurve(edgenext,face,c2dnext,first2,last2,Standard_False)) continue ;
 	  if(!c2dnext->IsKind(STANDARD_TYPE(Geom2d_BezierCurve)) ) continue;
@@ -255,7 +257,7 @@ Standard_Boolean ShapeUpgrade_ShapeConvertToBezier::Perform (const Standard_Bool
 	  }
 	   
 	  if(bezier.IsNull()  || beziernext.IsNull() ) continue; //gka fix against small edges ; merging ends of pcurves 
-	  Standard_Real f1,l1,f2,l2;
+	  Standard_Real f1 = NAN,l1 = NAN,f2 = NAN,l2 = NAN;
 	  f1 = bezier->FirstParameter();
 	  l1 = bezier->LastParameter();
 	  f2 = beziernext->FirstParameter();

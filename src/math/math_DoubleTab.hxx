@@ -74,7 +74,7 @@ private:
 
 
   Standard_Address Addr;
-  Standard_Real Buf[16];
+  Standard_Real Buf[16]{};
   Standard_Boolean isAllocated;
   Standard_Integer LowR;
   Standard_Integer UppR;

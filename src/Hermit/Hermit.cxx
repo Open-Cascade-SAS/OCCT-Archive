@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <Geom2d_BSplineCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -41,10 +43,10 @@ static void HermiteCoeff(const Handle(Geom_BSplineCurve)& BS,
   TColStd_Array1OfReal    Knots(1,BS->NbKnots());         
   TColStd_Array1OfReal    Weights(1,BS->NbPoles()); 
   TColStd_Array1OfInteger Mults(1,BS->NbKnots());
-  Standard_Integer        Degree,Index0,Index1;                     // denominateur value for u=0 & u=1
-  Standard_Real           Denom0,Denom1,                            // denominator value for u=0 & u=1
-                          Deriv0,Deriv1 ;                           // derivative denominator value for u=0 & 1
-  Standard_Boolean        Periodic;
+  Standard_Integer        Degree = 0,Index0 = 0,Index1 = 0;                     // denominateur value for u=0 & u=1
+  Standard_Real           Denom0 = NAN,Denom1 = NAN,                            // denominator value for u=0 & u=1
+                          Deriv0 = NAN,Deriv1 = NAN ;                           // derivative denominator value for u=0 & 1
+  Standard_Boolean        Periodic = 0;
   
   BS->Knots(Knots);
   BSplCLib::Reparametrize(0.0,1.0,Knots);                           //affinity on the nodal vector
@@ -77,10 +79,10 @@ static void HermiteCoeff(const Handle(Geom2d_BSplineCurve)& BS,
   TColStd_Array1OfReal    Knots(1,BS->NbKnots());         
   TColStd_Array1OfReal    Weights(1,BS->NbPoles()); 
   TColStd_Array1OfInteger Mults(1,BS->NbKnots());
-  Standard_Integer        Degree,Index0,Index1;
-  Standard_Real           Denom0,Denom1,                            // denominateur value for u=0 & u=1
-                          Deriv0,Deriv1 ;                           // denominator value for u=0 & u=1
-  Standard_Boolean        Periodic;                                 // derivative denominatur value for u=0 & 1
+  Standard_Integer        Degree = 0,Index0 = 0,Index1 = 0;
+  Standard_Real           Denom0 = NAN,Denom1 = NAN,                            // denominateur value for u=0 & u=1
+                          Deriv0 = NAN,Deriv1 = NAN ;                           // denominator value for u=0 & u=1
+  Standard_Boolean        Periodic = 0;                                 // derivative denominatur value for u=0 & 1
   
   BS->Knots(Knots);
   BSplCLib::Reparametrize(0.0,1.0,Knots);                           //affinity on the nodal vector
@@ -108,7 +110,7 @@ static void HermiteCoeff(const Handle(Geom2d_BSplineCurve)& BS,
 static Standard_Boolean SignDenom(const TColgp_Array1OfPnt2d& Poles)
 
 {
-  Standard_Boolean Result;
+  Standard_Boolean Result = 0;
   
   if (Poles(0).Y()<0)                                             
     Result=Standard_False;                                        
@@ -128,8 +130,8 @@ static void Polemax(const TColgp_Array1OfPnt2d& Poles,
 
 {
 //  Standard_Integer i,index=0;
-  Standard_Integer i;
-  Standard_Real Max,Min;                                         //intermediate value of max and min ordinates
+  Standard_Integer i = 0;
+  Standard_Real Max = NAN,Min = NAN;                                         //intermediate value of max and min ordinates
   min=0;max=0;                                                   //initialisation of the indices
   
   Min=Poles(0).Y();                                              //initialisation of the intermediate value
@@ -164,13 +166,13 @@ static void PolyTest(const TColStd_Array1OfReal&         Herm,
 		     const Standard_Real                 Uy)
 
 {
-  Standard_Integer               index,i,                
+  Standard_Integer               index = 0,i = 0,                
                                  I1=0,I2=0,I3=0,I4=0;    //knots index
   TColgp_Array1OfPnt2d           Polesinit(0,3) ;        
   Handle(TColStd_HArray1OfReal)  Knots;                  //array of the BSpline knots + the ones inserted
   Standard_Integer               cas=0,mark=0,dercas=0,  //loop marks
-                                 min,max;                //Pole min and max indices
-  Standard_Real                  Us1,Us2,a;              //boundaries value of the knots to be inserted
+                                 min = 0,max = 0;                //Pole min and max indices
+  Standard_Real                  Us1 = NAN,Us2 = NAN,a = NAN;              //boundaries value of the knots to be inserted
   
   U4=0.0;U5=1.0;                                         //default value
   if (Ux!=1.0){
@@ -249,7 +251,7 @@ static void PolyTest(const TColStd_Array1OfReal&         Herm,
             mark=1;
           }
           if (mark==0){
-            Standard_Real Pole0,Pole3;
+            Standard_Real Pole0 = NAN,Pole3 = NAN;
             Pole0=Polesinit(0).Y();
             Pole3=Polesinit(3).Y();
             if (Pole0<3){                         
@@ -385,13 +387,13 @@ static void PolyTest(const TColStd_Array1OfReal&        Herm,
 		     const Standard_Real                Uy)
 
 {
-  Standard_Integer               index,i,
+  Standard_Integer               index = 0,i = 0,
                                  I1=0,I2=0,I3=0,I4=0;    //knots index
   TColgp_Array1OfPnt2d           Polesinit(0,3) ;
   Handle(TColStd_HArray1OfReal)  Knots;                  //array of the BSpline knots + the ones inserted
   Standard_Integer               cas=0,mark=0,dercas=0,  //loop marks
-                                 min,max;                //Pole min and max indices
-  Standard_Real                  Us1,Us2,a;              //boundaries value of the knots to be inserted
+                                 min = 0,max = 0;                //Pole min and max indices
+  Standard_Real                  Us1 = NAN,Us2 = NAN,a = NAN;              //boundaries value of the knots to be inserted
   
   U4=0.0;U5=1.0;                                         //default value
   if (Ux!=1.0){
@@ -481,7 +483,7 @@ static void PolyTest(const TColStd_Array1OfReal&        Herm,
           }
           if (mark==0)
           {
-            Standard_Real Pole0,Pole3;
+            Standard_Real Pole0 = NAN,Pole3 = NAN;
             Pole0=Polesinit(0).Y();
             Pole3=Polesinit(3).Y();
             if (Pole0<3)
@@ -627,7 +629,7 @@ static void MovePoles(Handle(Geom2d_BSplineCurve)& BS)
 {
   gp_Pnt2d  P ;
 //  Standard_Integer i,index; 
-  Standard_Integer i; 
+  Standard_Integer i = 0; 
 
   for (i=3;i<=(BS->NbPoles()-2);i++){
     P.SetCoord(1,(BS->Pole(i).Coord(1)));           //raising of the no constrained poles to

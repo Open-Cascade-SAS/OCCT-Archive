@@ -27,9 +27,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_DocumentFile,StepBasic_Document)
 //function : StepBasic_DocumentFile
 //purpose  : 
 //=======================================================================
-StepBasic_DocumentFile::StepBasic_DocumentFile ()
+StepBasic_DocumentFile::StepBasic_DocumentFile () : theCharacterizedObject(new StepBasic_CharacterizedObject)
 {
-  theCharacterizedObject = new StepBasic_CharacterizedObject;
+  
 }
 
 //=======================================================================

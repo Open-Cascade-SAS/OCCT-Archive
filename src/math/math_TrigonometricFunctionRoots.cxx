@@ -24,6 +24,8 @@
 #define No_Standard_DimensionError
 //#endif
 
+#include <math.h>
+
 #include <math_TrigonometricFunctionRoots.hxx>
 #include <math_TrigonometricEquationFunction.hxx>
 #include <math_DirectPolynomialRoots.hxx>
@@ -87,12 +89,12 @@ void math_TrigonometricFunctionRoots::Perform(const Standard_Real A,
 					      const Standard_Real InfBound, 
 					      const Standard_Real SupBound) {
 
-  Standard_Integer i, j=0, k, l, NZer=0, Nit = 10;
-  Standard_Real Depi, Delta, Mod, AA, BB, CC, MyBorneInf;
-  Standard_Real Teta, X;
-  Standard_Real Eps, Tol1 = 1.e-15;
+  Standard_Integer i = 0, j=0, k = 0, l = 0, NZer=0, Nit = 10;
+  Standard_Real Depi = NAN, Delta = NAN, Mod = NAN, AA = NAN, BB = NAN, CC = NAN, MyBorneInf = NAN;
+  Standard_Real Teta = NAN, X = NAN;
+  Standard_Real Eps = NAN, Tol1 = 1.e-15;
   TColStd_Array1OfReal ko(1,5), Zer(1,4);
-  Standard_Boolean Flag4;
+  Standard_Boolean Flag4 = 0;
   InfiniteStatus = Standard_False;
   Done = Standard_True;
 
@@ -333,7 +335,7 @@ void math_TrigonometricFunctionRoots::Perform(const Standard_Real A,
     ko(3) = 2.0*E-2.0*A;
     ko(4) = 4.0*B+2.0*D;
     ko(5) = A+C+E;
-    Standard_Boolean bko;
+    Standard_Boolean bko = 0;
     Standard_Integer nbko=0;
     do { 
       bko=Standard_False;
@@ -352,7 +354,7 @@ void math_TrigonometricFunctionRoots::Perform(const Standard_Real A,
 	InfiniteStatus = Standard_True;
 	return;
       }
-      Standard_Boolean triok;
+      Standard_Boolean triok = 0;
       do { 
 	triok=Standard_True;
 	for(i=1;i<NZer;i++) { 

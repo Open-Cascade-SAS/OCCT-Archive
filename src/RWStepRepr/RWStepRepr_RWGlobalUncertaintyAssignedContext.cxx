@@ -50,7 +50,7 @@ void RWStepRepr_RWGlobalUncertaintyAssignedContext::ReadStep
 
 	Handle(StepBasic_HArray1OfUncertaintyMeasureWithUnit) aUncertainty;
 	Handle(StepBasic_UncertaintyMeasureWithUnit) anent3;
-	Standard_Integer nsub3;
+	Standard_Integer nsub3 = 0;
 	if (data->ReadSubList (num,3,"uncertainty",ach,nsub3)) {
 	  Standard_Integer nb3 = data->NbParams(nsub3);
 	  aUncertainty = new StepBasic_HArray1OfUncertaintyMeasureWithUnit (1, nb3);

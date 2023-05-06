@@ -226,7 +226,7 @@ void Poly_Connect::Initialize(const Standard_Integer N)
   myPassedTr.Add (mytr);
   if (mymore)
   {
-    Standard_Integer i, no[3];
+    Standard_Integer i = 0, no[3];
     myTriangulation->Triangle (myfirst).Get (no[0], no[1], no[2]);
     for (i = 0; i < 3; i++)
       if (no[i] == mynode) break;
@@ -241,7 +241,7 @@ void Poly_Connect::Initialize(const Standard_Integer N)
 
 void Poly_Connect::Next()
 {
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   Standard_Integer n[3];
   Standard_Integer t[3];
   Triangles(mytr, t[0], t[1], t[2]);

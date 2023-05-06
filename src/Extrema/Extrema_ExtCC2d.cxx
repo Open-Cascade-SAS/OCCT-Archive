@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor2d_Curve2d.hxx>
 #include <ElCLib.hxx>
 #include <Extrema_Curve2dTool.hxx>
@@ -95,7 +97,7 @@ void Extrema_ExtCC2d::Perform (const Adaptor2d_Curve2d&       C1,
   mypoints.Clear();
   mySqDist.Clear();
   GeomAbs_CurveType type1 = Extrema_Curve2dTool::GetType(C1), type2 = Extrema_Curve2dTool::GetType (*myC);
-  Standard_Real U11, U12, U21, U22, Tol = Min(mytolc1, mytolc2);
+  Standard_Real U11 = NAN, U12 = NAN, U21 = NAN, U22 = NAN, Tol = Min(mytolc1, mytolc2);
 //  Extrema_POnCurv2d P1, P2;
   mynbext = 0;
   inverse = Standard_False;
@@ -451,8 +453,8 @@ void Extrema_ExtCC2d::Results(const Extrema_ExtElC2d&  AlgExt,
 			       const Standard_Real      Period1,
 			       const Standard_Real      Period2)
 {
-  Standard_Integer i, NbExt;
-  Standard_Real Val, U, U2;
+  Standard_Integer i = 0, NbExt = 0;
+  Standard_Real Val = NAN, U = NAN, U2 = NAN;
   Extrema_POnCurv2d P1, P2;
   
   myDone = AlgExt.IsDone();
@@ -514,8 +516,8 @@ void Extrema_ExtCC2d::Results(const Extrema_ECC2d& AlgExt,
                               const Standard_Real  Period1,
                               const Standard_Real  Period2)
 {
-  Standard_Integer i, NbExt;
-  Standard_Real Val, U, U2;
+  Standard_Integer i = 0, NbExt = 0;
+  Standard_Real Val = NAN, U = NAN, U2 = NAN;
   Extrema_POnCurv2d P1, P2;
 
   myDone = AlgExt.IsDone();

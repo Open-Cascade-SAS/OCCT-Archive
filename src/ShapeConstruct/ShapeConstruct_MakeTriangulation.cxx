@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -46,7 +48,7 @@ Standard_Boolean IsRightContour (const TColgp_SequenceOfPnt& pts, const Standard
   if (len < 4) return Standard_True;
 
   TColgp_Array1OfPnt thePts(1,len);
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = 1; i <= len; i++) thePts(i) = pts(i);
   
   gp_XYZ Norm(0,0,0);
@@ -89,7 +91,7 @@ Standard_Boolean IsRightContour (const TColgp_SequenceOfPnt& pts, const Standard
   Standard_Integer len = pts.Length();
   if (len < 3) return gp_Vec(0,0,0);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   gp_XYZ theCenter(0,0,0);
   for (i = 1; i <= len; i++) theCenter += pts(i).XYZ();
   theCenter /= len;
@@ -110,9 +112,9 @@ Standard_Boolean IsRightContour (const TColgp_SequenceOfPnt& pts, const Standard
 //=======================================================================
 
 ShapeConstruct_MakeTriangulation::ShapeConstruct_MakeTriangulation (const TColgp_Array1OfPnt& pnts,
-								    const Standard_Real prec)
+								    const Standard_Real prec) : myPrecision((prec > 0.0)? prec : Precision::Confusion())
 {
-  myPrecision = (prec > 0.0)? prec : Precision::Confusion();
+  
   // Make polygonal wire from points
   BRepBuilderAPI_MakePolygon mkPoly;
   for (Standard_Integer i = pnts.Lower(); i <= pnts.Upper(); i++) mkPoly.Add(pnts(i));
@@ -130,10 +132,10 @@ ShapeConstruct_MakeTriangulation::ShapeConstruct_MakeTriangulation (const TColgp
 //=======================================================================
 
 ShapeConstruct_MakeTriangulation::ShapeConstruct_MakeTriangulation (const TopoDS_Wire& wire,
-								    const Standard_Real prec)
+								    const Standard_Real prec) : myPrecision((prec > 0.0)? prec : Precision::Confusion()), myWire(wire)
 {
-  myPrecision = (prec > 0.0)? prec : Precision::Confusion();
-  myWire = wire;
+  
+  
   Build();
 }
 
@@ -263,9 +265,9 @@ ShapeConstruct_MakeTriangulation::ShapeConstruct_MakeTriangulation (const TopoDS
       if (cindex%4 == 0) {
 	gp_Vec theBaseNorm = MeanNormal(theAPnt->Array1());
 	// Identify sequence of matching facets
-	Standard_Integer len = cindex/2, lindex, rindex, seqlen, j;
-	Standard_Real theC, theC1 = 0.0, theC2 = 0.0;
-	Standard_Integer ii; // svv Jan11 2000 : porting on DEC
+	Standard_Integer len = cindex/2, lindex = 0, rindex = 0, seqlen = 0, j = 0;
+	Standard_Real theC = NAN, theC1 = 0.0, theC2 = 0.0;
+	Standard_Integer ii = 0; // svv Jan11 2000 : porting on DEC
         // skl : change "i" to "ii"
 	for (ii = 0; ii < len; ii++) { 
 	  // Compute normal collinearity for facet
@@ -360,11 +362,11 @@ ShapeConstruct_MakeTriangulation::ShapeConstruct_MakeTriangulation (const TopoDS
   TColgp_SequenceOfPnt pts;
   for (TopoDS_Iterator ite(wire); ite.More(); ite.Next())
     pts.Append(BRep_Tool::Pnt(sae.FirstVertex(TopoDS::Edge(ite.Value()))));
-  Standard_Integer i, nbp = pts.Length();
+  Standard_Integer i = 0, nbp = pts.Length();
   if (nbp < 3) return;
 
   // Create mean plane
-  Standard_Real cMod, maxMod = 0.0;
+  Standard_Real cMod = NAN, maxMod = 0.0;
   gp_XYZ maxVec, Normal(0,0,0);
   for (i = 1; i <= nbp; i++) {
     gp_XYZ vb(pts(i).XYZ());

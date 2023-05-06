@@ -25,7 +25,7 @@
 IMPLEMENT_STANDARD_RTTIEXT(IFSelect_WorkLibrary,Standard_Transient)
 
 //  all deferred but Copy (virtual default)
-IFSelect_WorkLibrary::IFSelect_WorkLibrary ()  {  thelevdef = 0;  }
+IFSelect_WorkLibrary::IFSelect_WorkLibrary () : thelevdef(0)  {   }
 
     Standard_Boolean  IFSelect_WorkLibrary::CopyModel
   (const Handle(Interface_InterfaceModel)& /*original*/,

@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement
 
+#include <math.h>
+
 #include <Extrema_GlobOptFuncConicS.hxx>
 
 #include <gp_Pnt.hxx>
@@ -26,7 +28,7 @@ void Extrema_GlobOptFuncConicS::value(Standard_Real su,
                                       Standard_Real sv,
                                       Standard_Real &F)
 {
-  Standard_Real ct;
+  Standard_Real ct = NAN;
   gp_Pnt aPS = myS->Value(su, sv);
   switch (myCType)
   {
@@ -188,7 +190,7 @@ Standard_Integer Extrema_GlobOptFuncConicS::NbVariables() const
 Standard_Boolean Extrema_GlobOptFuncConicS::Value(const math_Vector &X,
                                                   Standard_Real     &F)
 {
-  Standard_Real su, sv;
+  Standard_Real su = NAN, sv = NAN;
   if (!checkInputData(X, su, sv))
     return Standard_False;
 
@@ -206,7 +208,7 @@ Standard_Boolean Extrema_GlobOptFuncConicS::Value(const math_Vector &X,
 //=======================================================================
 Standard_Real Extrema_GlobOptFuncConicS::ConicParameter(const math_Vector& theUV) const
 {
-  Standard_Real ct;
+  Standard_Real ct = NAN;
   gp_Pnt aPS = myS->Value(theUV(1), theUV(2));
   switch (myCType)
   {

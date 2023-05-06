@@ -298,10 +298,10 @@ private:
   Standard_Integer thelevel;
   Standard_Boolean theindent;
   Standard_Integer theindval;
-  Standard_Integer thetypmode;
+  Standard_Integer thetypmode{};
   Interface_FloatWriter thefloatw;
   Interface_CheckIterator thechecks;
-  Standard_Integer thenum;
+  Standard_Integer thenum{};
   Standard_Integer thelabmode;
   Handle(TColStd_HArray1OfInteger) thescopebeg;
   Handle(TColStd_HArray1OfInteger) thescopeend;

@@ -112,9 +112,9 @@ protected:
   Handle(Geom_Surface) mySurface;
   Standard_Integer myStatus;
   Handle(ShapeExtend_CompositeSurface) myResSurfaces;
-  Standard_Real myArea;
-  Standard_Real myUsize;
-  Standard_Real myVsize;
+  Standard_Real myArea{};
+  Standard_Real myUsize{};
+  Standard_Real myVsize{};
 
 
 private:

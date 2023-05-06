@@ -111,7 +111,7 @@ private:
   Standard_Boolean myDone;
   Standard_Boolean myIsPar;
   Standard_Integer myNbExt;
-  Standard_Real mySqDist[8];
+  Standard_Real mySqDist[8]{};
   Extrema_POnCurv2d myPoint[8][2];
 
 

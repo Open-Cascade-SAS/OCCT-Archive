@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <OSD_Environment.hxx>
 #include <Resource_Manager.hxx>
 #include <TCollection_AsciiString.hxx>
@@ -337,7 +339,7 @@ Standard_Real UnitsAPI::AnyToLS(const Standard_Real aData,
 Standard_Real UnitsAPI::AnyToSI(const Standard_Real aData,
                                 const Standard_CString aUnit)
 {
-  Standard_Real aValue;
+  Standard_Real aValue = NAN;
   CheckLoading (UnitsAPI_DEFAULT); 
   aValue = Units::ToSI(aData,aUnit);
   return aValue;
@@ -353,7 +355,7 @@ Standard_Real UnitsAPI::AnyToSI(const Standard_Real aData,
                                 const Standard_CString aUnit,
                                 Handle(Units_Dimensions) &aDim)
 {
-  Standard_Real aValue;
+  Standard_Real aValue = NAN;
   CheckLoading (UnitsAPI_DEFAULT);
   aValue = Units::ToSI(aData,aUnit,aDim);
   return aValue;
@@ -393,7 +395,7 @@ Standard_Real UnitsAPI::AnyFromLS(const Standard_Real aData,
 Standard_Real UnitsAPI::AnyFromSI(const Standard_Real aData,
                                   const Standard_CString aUnit)
 {
-  Standard_Real aValue;
+  Standard_Real aValue = NAN;
   CheckLoading (UnitsAPI_DEFAULT); 
   aValue = Units::FromSI(aData,aUnit);
   return aValue;

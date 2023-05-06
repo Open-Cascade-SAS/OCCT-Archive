@@ -22,12 +22,12 @@ IMPLEMENT_STANDARD_RTTIEXT(XCAFDimTolObjects_DimensionObject,Standard_Transient)
 //purpose  : 
 //=======================================================================
 
-XCAFDimTolObjects_DimensionObject::XCAFDimTolObjects_DimensionObject()
+XCAFDimTolObjects_DimensionObject::XCAFDimTolObjects_DimensionObject() : myHasPlane(Standard_False), myHasPntText(Standard_False), myHasPoint1(Standard_False), myHasPoint2(Standard_False)
 {
-  myHasPlane = Standard_False;
-  myHasPntText = Standard_False;
-  myHasPoint1 = Standard_False;
-  myHasPoint2 = Standard_False;
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -35,31 +35,31 @@ XCAFDimTolObjects_DimensionObject::XCAFDimTolObjects_DimensionObject()
 //purpose  : 
 //=======================================================================
 
-XCAFDimTolObjects_DimensionObject::XCAFDimTolObjects_DimensionObject(const Handle(XCAFDimTolObjects_DimensionObject)& theObj)
+XCAFDimTolObjects_DimensionObject::XCAFDimTolObjects_DimensionObject(const Handle(XCAFDimTolObjects_DimensionObject)& theObj) : myType(theObj->myType), myVal(theObj->myVal), myQualifier(theObj->myQualifier), myAngularQualifier(theObj->myAngularQualifier), myIsHole(theObj->myIsHole), myFormVariance(theObj->myFormVariance), myGrade(theObj->myGrade), myL(theObj->myL), myR(theObj->myR), myModifiers(theObj->myModifiers), myPath(theObj->myPath), myDir(theObj->myDir), myHasPoint1(theObj->myHasPoint1), myPnt1(theObj->myPnt1), myHasPoint2(theObj->myHasPoint2), myPnt2(theObj->myPnt2), myPntText(theObj->myPntText), myHasPlane(theObj->myHasPlane), myPlane(theObj->myPlane), myHasPntText(theObj->myHasPntText), mySemanticName(theObj->mySemanticName), myPresentation(theObj->myPresentation), myPresentationName(theObj->myPresentationName)
 {
-  myType = theObj->myType;
-  myVal = theObj->myVal;
-  myQualifier = theObj->myQualifier;
-  myAngularQualifier = theObj->myAngularQualifier;
-  myIsHole = theObj->myIsHole;
-  myFormVariance = theObj->myFormVariance;
-  myGrade = theObj->myGrade;
-  myL = theObj->myL;
-  myR = theObj->myR;
-  myModifiers = theObj->myModifiers;
-  myPath = theObj->myPath;
-  myDir = theObj->myDir;
-  myHasPoint1 = theObj->myHasPoint1;
-  myPnt1 = theObj->myPnt1;
-  myHasPoint2 = theObj->myHasPoint2;
-  myPnt2 = theObj->myPnt2;
-  myPntText= theObj->myPntText;
-  myHasPlane = theObj->myHasPlane;
-  myPlane = theObj->myPlane;
-  myHasPntText = theObj->myHasPntText;
-  mySemanticName = theObj->mySemanticName;
-  myPresentation = theObj->myPresentation;
-  myPresentationName = theObj->myPresentationName;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   for (int i = 0; i < theObj->myDescriptions.Length(); i++)
   {
     myDescriptions.Append(theObj->myDescriptions(i));

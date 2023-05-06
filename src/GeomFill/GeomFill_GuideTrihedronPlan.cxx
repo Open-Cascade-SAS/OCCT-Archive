@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomFill_GuideTrihedronPlan.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -78,14 +80,14 @@ GeomFill_GuideTrihedronPlan::GeomFill_GuideTrihedronPlan (const Handle(Adaptor3d
 							  X(1,1),  
 							  XTol(1,1),
 							  Inf(1,1), Sup(1,1),
-							  myStatus(GeomFill_PipeOk)
+							  myNbPts(20), frenet(new (GeomFill_Frenet)()), myStatus(GeomFill_PipeOk)
 {
   myCurve.Nullify();
   myGuide = theGuide; // guide
   myTrimG = theGuide;
-  myNbPts = 20;     // nb points pour calculs
+      // nb points pour calculs
   Pole = new (TColgp_HArray2OfPnt2d)(1,1,1,myNbPts);//tab pr stocker Pprime (pt sur guide)
-  frenet = new (GeomFill_Frenet)();
+  
   XTol.Init(1.e-6);
   XTol(1) = myGuide->Resolution(1.e-6);
 }
@@ -101,8 +103,8 @@ GeomFill_GuideTrihedronPlan::GeomFill_GuideTrihedronPlan (const Handle(Adaptor3d
 //  Bnd_Box2d Box;
 //  Box.Update(-0.1, -0.1, 0.1, 0.1); // Taille minimal
   gp_Vec Tangent,Normal,BiNormal;
-  Standard_Integer ii;
-  Standard_Real t, DeltaG, w = 0.;
+  Standard_Integer ii = 0;
+  Standard_Real t = NAN, DeltaG = NAN, w = 0.;
   Standard_Real f = myCurve->FirstParameter();
   Standard_Real l = myCurve->LastParameter();
   
@@ -316,7 +318,7 @@ Standard_Boolean GeomFill_GuideTrihedronPlan::SetCurve(const Handle(Adaptor3d_Cu
       BiNormal = Tangent.Crossed(Normal);
 
 // derivee premiere du triedre
-      Standard_Real dedx, dedt, dtg_dt;
+      Standard_Real dedx = NAN, dedt = NAN, dtg_dt = NAN;
       E.Derivative(Res, dedx);
       E.DEDT(Res, To, DTangent, dedt);
       dtg_dt = -dedt/dedx;
@@ -487,7 +489,7 @@ Standard_Boolean GeomFill_GuideTrihedronPlan::SetCurve(const Handle(Adaptor3d_Cu
 //=======================================================================
  Standard_Integer GeomFill_GuideTrihedronPlan::NbIntervals(const GeomAbs_Shape S)const
 {
-  Standard_Integer Nb;
+  Standard_Integer Nb = 0;
   GeomAbs_Shape tmpS;
   switch (S) {
   case GeomAbs_C0: tmpS = GeomAbs_C1; break;
@@ -535,8 +537,8 @@ void GeomFill_GuideTrihedronPlan::SetInterval(const Standard_Real First,
 				    gp_Vec& ANormal,
 				    gp_Vec& ABiNormal) 
 {
-  Standard_Integer ii;
-  Standard_Real t, Delta = (myCurve->LastParameter() - 
+  Standard_Integer ii = 0;
+  Standard_Real t = NAN, Delta = (myCurve->LastParameter() - 
 			    myCurve->FirstParameter())/20.001;
 
   ATangent.SetCoord(0.,0.,0.);
@@ -564,7 +566,7 @@ void GeomFill_GuideTrihedronPlan::SetInterval(const Standard_Real First,
 {
   if ((myCurve->GetType() == GeomAbs_Line) &&
       (myGuide->GetType() == GeomAbs_Line)) {
-    Standard_Real Angle;
+    Standard_Real Angle = NAN;
     Angle = myCurve->Line().Angle(myGuide->Line());
     if ((Angle<1.e-12) || ((2*M_PI-Angle)<1.e-12) )
       return Standard_True;
@@ -598,8 +600,8 @@ void  GeomFill_GuideTrihedronPlan::Origine(const Standard_Real ,
 void GeomFill_GuideTrihedronPlan::InitX(const Standard_Real Param)
 {
 
-  Standard_Integer Ideb = 1, Ifin =  Pole->RowLength(), Idemi;
-  Standard_Real Valeur, t1, t2;
+  Standard_Integer Ideb = 1, Ifin =  Pole->RowLength(), Idemi = 0;
+  Standard_Real Valeur = NAN, t1 = NAN, t2 = NAN;
 
   
   Valeur = Pole->Value(1, Ideb).X();

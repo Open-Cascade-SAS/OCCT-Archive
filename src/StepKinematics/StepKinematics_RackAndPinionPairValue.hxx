@@ -46,7 +46,7 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_RackAndPinionPairValue, StepKinematics_PairValue)
 
 private:
-  Standard_Real myActualDisplacement;
+  Standard_Real myActualDisplacement{};
 
 };
 #endif // _StepKinematics_RackAndPinionPairValue_HeaderFile_

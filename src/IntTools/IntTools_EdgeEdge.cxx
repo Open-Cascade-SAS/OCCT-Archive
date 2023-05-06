@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BndLib_Add3dCurve.hxx>
 #include <TColStd_MapOfInteger.hxx>
@@ -105,7 +107,7 @@ static
 void IntTools_EdgeEdge::Prepare()
 {
   GeomAbs_CurveType aCT1, aCT2;
-  Standard_Integer iCT1, iCT2;
+  Standard_Integer iCT1 = 0, iCT2 = 0;
   //
   myCurve1.Initialize(myEdge1);
   myCurve2.Initialize(myEdge2);
@@ -129,7 +131,7 @@ void IntTools_EdgeEdge::Prepare()
   if (iCT1 == iCT2) {
     if (iCT1 != 0) {
       //compute deflection
-      Standard_Real aC1, aC2;
+      Standard_Real aC1 = NAN, aC2 = NAN;
       //
       aC2 = CurveDeflection(myCurve2, myRange2);
       aC1 = (aC2 > Precision::Confusion()) ? 
@@ -163,7 +165,7 @@ void IntTools_EdgeEdge::Prepare()
   myTol = myTol1 + myTol2;
   //
   if (iCT1 != 0 || iCT2 != 0) {
-    Standard_Real f, l, aTM;
+    Standard_Real f = NAN, l = NAN, aTM = NAN;
     //
     myGeom1 = BRep_Tool::Curve(myEdge1, f, l);
     myGeom2 = BRep_Tool::Curve(myEdge2, f, l);
@@ -212,7 +214,7 @@ void IntTools_EdgeEdge::Perform()
   //
   if (myQuickCoincidenceCheck) {
     if (IsCoincident()) {
-      Standard_Real aT11, aT12, aT21, aT22;
+      Standard_Real aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN;
       //
       myRange1.Range(aT11, aT12);
       myRange2.Range(aT21, aT22);
@@ -242,7 +244,7 @@ void IntTools_EdgeEdge::Perform()
   IntTools_SequenceOfRanges aRanges1, aRanges2;
   //
   //3.2. Find ranges containing solutions
-  Standard_Boolean bSplit2;
+  Standard_Boolean bSplit2 = 0;
   FindSolutions(aRanges1, aRanges2, bSplit2);
   //
   //4. Merge solutions and save common parts
@@ -255,9 +257,9 @@ void IntTools_EdgeEdge::Perform()
 //=======================================================================
 Standard_Boolean IntTools_EdgeEdge::IsCoincident() 
 {
-  Standard_Integer i, iCnt, aNbSeg, aNbP2;
-  Standard_Real dT, aT1, aCoeff, aTresh, aD;
-  Standard_Real aT11, aT12, aT21, aT22;
+  Standard_Integer i = 0, iCnt = 0, aNbSeg = 0, aNbP2 = 0;
+  Standard_Real dT = NAN, aT1 = NAN, aCoeff = NAN, aTresh = NAN, aD = NAN;
+  Standard_Real aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN;
   GeomAPI_ProjectPointOnCurve aProjPC;
   gp_Pnt aP1;
   //
@@ -298,8 +300,8 @@ void IntTools_EdgeEdge::FindSolutions(IntTools_SequenceOfRanges& theRanges1,
                                       IntTools_SequenceOfRanges& theRanges2,
                                       Standard_Boolean& bSplit2)
 {
-  Standard_Boolean bIsClosed2;
-  Standard_Real aT11, aT12, aT21, aT22;
+  Standard_Boolean bIsClosed2 = 0;
+  Standard_Real aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN;
   Bnd_Box aB1, aB2;
   //
   bSplit2 = Standard_False;
@@ -328,7 +330,7 @@ void IntTools_EdgeEdge::FindSolutions(IntTools_SequenceOfRanges& theRanges1,
     return;
   }
   //
-  Standard_Integer i, j, aNb1, aNb2;
+  Standard_Integer i = 0, j = 0, aNb1 = 0, aNb2 = 0;
   IntTools_SequenceOfRanges aSegments1, aSegments2;
   //
   aNb1 = IsClosed(myGeom1, aT11, aT12, myTol1, myRes1) ? 2 : 1;
@@ -361,11 +363,11 @@ void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
                                       IntTools_SequenceOfRanges& theRanges1,
                                       IntTools_SequenceOfRanges& theRanges2)
 {
-  Standard_Boolean bOut, bStop, bThin;
-  Standard_Real aT11, aT12, aT21, aT22;
-  Standard_Real aTB11, aTB12, aTB21, aTB22;
-  Standard_Real aSmallStep1, aSmallStep2;
-  Standard_Integer iCom;
+  Standard_Boolean bOut = 0, bStop = 0, bThin = 0;
+  Standard_Real aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN;
+  Standard_Real aTB11 = NAN, aTB12 = NAN, aTB21 = NAN, aTB22 = NAN;
+  Standard_Real aSmallStep1 = NAN, aSmallStep2 = NAN;
+  Standard_Integer iCom = 0;
   Bnd_Box aB1, aB2;
   //
   theR1.Range(aT11, aT12);
@@ -453,8 +455,8 @@ void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
   if (bThin) {
     if (iCom != 0) {
       //check intermediate points
-      Standard_Boolean bSol;
-      Standard_Real aT1;
+      Standard_Boolean bSol = 0;
+      Standard_Real aT1 = NAN;
       gp_Pnt aP1;
       GeomAPI_ProjectPointOnCurve aProjPC;
       //
@@ -468,7 +470,7 @@ void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
         bSol = aProjPC.LowerDistance() <= myTol;
       }
       else {
-        Standard_Real aT2;
+        Standard_Real aT2 = NAN;
         gp_Pnt aP2;
         //
         aT2 = (aT21 + aT22) * .5;
@@ -494,7 +496,7 @@ void IntTools_EdgeEdge::FindSolutions(const IntTools_Range& theR1,
   }
   //
   //split ranges on segments and repeat
-  Standard_Integer i, aNb1;
+  Standard_Integer i = 0, aNb1 = 0;
   IntTools_SequenceOfRanges aSegments1;
   //
   // Build box for first curve to compare
@@ -529,10 +531,10 @@ Standard_Boolean IntTools_EdgeEdge::FindParameters(const BRepAdaptor_Curve& theB
                                                    Standard_Real& aTB1, 
                                                    Standard_Real& aTB2)
 {
-  Standard_Boolean bRet;
-  Standard_Integer aC, i;
-  Standard_Real aCf, aDiff, aDt, aT, aTB, aTOut, aTIn;
-  Standard_Real aDist, aDistP;
+  Standard_Boolean bRet = 0;
+  Standard_Integer aC = 0, i = 0;
+  Standard_Real aCf = NAN, aDiff = NAN, aDt = NAN, aT = NAN, aTB = NAN, aTOut = NAN, aTIn = NAN;
+  Standard_Real aDist = NAN, aDistP = NAN;
   gp_Pnt aP;
   Bnd_Box aCBx;
   //
@@ -632,13 +634,13 @@ void IntTools_EdgeEdge::MergeSolutions(const IntTools_SequenceOfRanges& theRange
   }
   //
   IntTools_Range aRi1, aRi2, aRj1, aRj2;
-  Standard_Boolean bCond;
-  Standard_Integer i, j;
+  Standard_Boolean bCond = 0;
+  Standard_Integer i = 0, j = 0;
   TopAbs_ShapeEnum aType;
-  Standard_Real aT11, aT12, aT21, aT22;
-  Standard_Real aTi11, aTi12, aTi21, aTi22;
-  Standard_Real aTj11, aTj12, aTj21, aTj22;
-  Standard_Real aRes1, aRes2, dTR1, dTR2;
+  Standard_Real aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN;
+  Standard_Real aTi11 = NAN, aTi12 = NAN, aTi21 = NAN, aTi22 = NAN;
+  Standard_Real aTj11 = NAN, aTj12 = NAN, aTj21 = NAN, aTj22 = NAN;
+  Standard_Real aRes1 = NAN, aRes2 = NAN, dTR1 = NAN, dTR2 = NAN;
   TColStd_MapOfInteger aMI;
   //
   aRes1 = Resolution(myCurve1.Curve().Curve(), 
@@ -744,7 +746,7 @@ void IntTools_EdgeEdge::AddSolution(const Standard_Real aT11,
   }
   //
   if (theType == TopAbs_VERTEX) {
-    Standard_Real aT1, aT2;
+    Standard_Real aT1 = NAN, aT2 = NAN;
     //
     FindBestSolution(aT11, aT12, aT21, aT22, aT1, aT2);
     //
@@ -770,9 +772,9 @@ void IntTools_EdgeEdge::FindBestSolution(const Standard_Real aT11,
                                          Standard_Real& aT1,
                                          Standard_Real& aT2)
 {
-  Standard_Integer i, aNbS, iErr;
-  Standard_Real aDMin, aD, aRes1, aSolCriteria, aTouchCriteria;
-  Standard_Real aT1A, aT1B, aT1Min, aT2Min;
+  Standard_Integer i = 0, aNbS = 0, iErr = 0;
+  Standard_Real aDMin = NAN, aD = NAN, aRes1 = NAN, aSolCriteria = NAN, aTouchCriteria = NAN;
+  Standard_Real aT1A = NAN, aT1B = NAN, aT1Min = NAN, aT2Min = NAN;
   GeomAPI_ProjectPointOnCurve aProjPC;
   IntTools_SequenceOfRanges aRanges;
   //
@@ -853,7 +855,7 @@ void IntTools_EdgeEdge::ComputeLineLine()
       return;
   }
 
-  Standard_Real aT11, aT12, aT21, aT22;
+  Standard_Real aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN;
   myRange1.Range (aT11, aT12);
   myRange2.Range (aT21, aT22);
 
@@ -981,11 +983,11 @@ Standard_Boolean IntTools_EdgeEdge::IsIntersection(const Standard_Real aT11,
                                                    const Standard_Real aT21,
                                                    const Standard_Real aT22)
 {
-  Standard_Boolean bRet;
+  Standard_Boolean bRet = 0;
   gp_Pnt aP11, aP12, aP21, aP22;
   gp_Vec aV11, aV12, aV21, aV22;
-  Standard_Real aD11_21, aD11_22, aD12_21, aD12_22, aCriteria, aCoef;
-  Standard_Boolean bSmall_11_21, bSmall_11_22, bSmall_12_21, bSmall_12_22;
+  Standard_Real aD11_21 = NAN, aD11_22 = NAN, aD12_21 = NAN, aD12_22 = NAN, aCriteria = NAN, aCoef = NAN;
+  Standard_Boolean bSmall_11_21 = 0, bSmall_11_22 = 0, bSmall_12_21 = 0, bSmall_12_22 = 0;
   //
   bRet = Standard_True;
   aCoef = 1.e+5;
@@ -1022,7 +1024,7 @@ Standard_Boolean IntTools_EdgeEdge::IsIntersection(const Standard_Real aT11,
       return bRet;
     }
     //
-    Standard_Real anAngleCriteria;
+    Standard_Real anAngleCriteria = NAN;
     Standard_Real anAngle1 = 0.0,
                   anAngle2 = 0.0;
     //
@@ -1044,8 +1046,8 @@ Standard_Boolean IntTools_EdgeEdge::IsIntersection(const Standard_Real aT11,
     if (((anAngle1 < anAngleCriteria) || ((M_PI - anAngle1) < anAngleCriteria)) ||
         ((anAngle2 < anAngleCriteria) || ((M_PI - anAngle2) < anAngleCriteria))) {
       GeomAPI_ProjectPointOnCurve aProjPC;
-      Standard_Integer iErr;
-      Standard_Real aD, aT1Min, aT2Min;
+      Standard_Integer iErr = 0;
+      Standard_Real aD = NAN, aT1Min = NAN, aT2Min = NAN;
       //
       aD = Precision::Infinite();
       aProjPC.Init(myGeom2, aT21, aT22);
@@ -1068,8 +1070,8 @@ Standard_Integer IntTools_EdgeEdge::CheckCoincidence(const Standard_Real aT11,
                                                      const Standard_Real theCriteria,
                                                      const Standard_Real theCurveRes1)
 {
-  Standard_Integer iErr, aNb, aNb1, i;
-  Standard_Real aT1A, aT1B, aT1max, aT2max, aDmax;
+  Standard_Integer iErr = 0, aNb = 0, aNb1 = 0, i = 0;
+  Standard_Real aT1A = NAN, aT1B = NAN, aT1max = NAN, aT2max = NAN, aDmax = NAN;
   GeomAPI_ProjectPointOnCurve aProjPC;
   IntTools_SequenceOfRanges aRanges;
   //
@@ -1129,8 +1131,8 @@ Standard_Integer FindDistPC(const Standard_Real aT1A,
                             Standard_Real& aT2max,
                             const Standard_Boolean bMaxDist) 
 {
-  Standard_Integer iErr, iC;
-  Standard_Real aGS, aXP, aA, aB, aXL, aYP, aYL, aT2P, aT2L;
+  Standard_Integer iErr = 0, iC = 0;
+  Standard_Real aGS = NAN, aXP = NAN, aA = NAN, aB = NAN, aXL = NAN, aYP = NAN, aYL = NAN, aT2P = NAN, aT2L = NAN;
   //
   iC = bMaxDist ? 1 : -1;
   iErr = 0;
@@ -1218,7 +1220,7 @@ Standard_Integer DistPC(const Standard_Real aT1,
                         Standard_Real& aT2max,
                         const Standard_Integer iC)
 {
-  Standard_Integer iErr;
+  Standard_Integer iErr = 0;
   //
   iErr = DistPC(aT1, theC1, theCriteria, theProjPC, aD, aT2, iC);
   if (iErr == 1) {
@@ -1245,7 +1247,7 @@ Standard_Integer DistPC(const Standard_Real aT1,
                         Standard_Real& aT2,
                         const Standard_Integer iC) 
 {
-  Standard_Integer iErr, aNbP2;
+  Standard_Integer iErr = 0, aNbP2 = 0;
   gp_Pnt aP1;
   //
   iErr = 0;
@@ -1283,8 +1285,8 @@ Standard_Integer SplitRangeOnSegments(const Standard_Real aT1,
     return 1;
   }
   //
-  Standard_Real aDt, aT1x, aT2x, aSeg;
-  Standard_Integer aNbSegments, i;
+  Standard_Real aDt = NAN, aT1x = NAN, aT2x = NAN, aSeg = NAN;
+  Standard_Integer aNbSegments = 0, i = 0;
   //
   aNbSegments = theNbSeg;
   aDt = aDiff / aNbSegments;
@@ -1334,8 +1336,8 @@ Standard_Real PointBoxDistance(const Bnd_Box& aB,
 {
   Standard_Real aPCoord[3];
   Standard_Real aBMinCoord[3], aBMaxCoord[3];
-  Standard_Real aDist, aR1, aR2;
-  Standard_Integer i;
+  Standard_Real aDist = NAN, aR1 = NAN, aR2 = NAN;
+  Standard_Integer i = 0;
   //
   aP.Coord(aPCoord[0], aPCoord[1], aPCoord[2]);
   aB.Get(aBMinCoord[0], aBMinCoord[1], aBMinCoord[2], 
@@ -1365,7 +1367,7 @@ Standard_Real PointBoxDistance(const Bnd_Box& aB,
 //=======================================================================
 Standard_Integer TypeToInteger(const GeomAbs_CurveType theCType)
 {
-  Standard_Integer iRet;
+  Standard_Integer iRet = 0;
   //
   switch(theCType) {
   case GeomAbs_Line:
@@ -1430,8 +1432,8 @@ Standard_Real ResolutionCoeff(const BRepAdaptor_Curve& theBAC,
   case GeomAbs_Hyperbola :
   case GeomAbs_Parabola : 
   case GeomAbs_OtherCurve :{
-    Standard_Real k, kMin, aDist, aDt, aT1, aT2, aT;
-    Standard_Integer aNbP, i;
+    Standard_Real k = NAN, kMin = NAN, aDist = NAN, aDt = NAN, aT1 = NAN, aT2 = NAN, aT = NAN;
+    Standard_Integer aNbP = 0, i = 0;
     gp_Pnt aP1, aP2;
     //
     aNbP = 30;
@@ -1471,7 +1473,7 @@ Standard_Real Resolution(const Handle(Geom_Curve)& theCurve,
                          const Standard_Real theResCoeff,
                          const Standard_Real theR3D)
 {
-  Standard_Real aRes;
+  Standard_Real aRes = NAN;
   //
   switch (theCurveType) {
   case GeomAbs_Line :
@@ -1518,8 +1520,8 @@ Standard_Real Resolution(const Handle(Geom_Curve)& theCurve,
 Standard_Real CurveDeflection(const BRepAdaptor_Curve& theBAC,
                               const IntTools_Range& theRange)
 {
-  Standard_Real aDt, aT, aT1, aT2, aDefl;
-  Standard_Integer i, aNbP;
+  Standard_Real aDt = NAN, aT = NAN, aT1 = NAN, aT2 = NAN, aDefl = NAN;
+  Standard_Integer i = 0, aNbP = 0;
   gp_Vec aV1, aV2;
   gp_Pnt aP;
   //

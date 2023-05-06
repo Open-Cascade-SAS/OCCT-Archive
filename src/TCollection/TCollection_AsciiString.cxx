@@ -46,9 +46,9 @@ static inline void Free (Standard_PCharacter aAddr)
 // ----------------------------------------------------------------------------
 // Create an empty AsciiString
 // ----------------------------------------------------------------------------
-TCollection_AsciiString::TCollection_AsciiString()
+TCollection_AsciiString::TCollection_AsciiString() : mylength(0)
 {
-  mylength = 0;
+  
   
   mystring = Allocate(mylength+1);
   mystring[mylength] = '\0';
@@ -116,10 +116,10 @@ TCollection_AsciiString::TCollection_AsciiString(const Standard_Character aChar)
 // Create an AsciiString from a filler
 // ----------------------------------------------------------------------------
 TCollection_AsciiString::TCollection_AsciiString(const Standard_Integer length,
-                                                 const Standard_Character filler )
+                                                 const Standard_Character filler ) : mystring(Allocate(length+1)), mylength(length)
 {
-  mystring = Allocate(length+1);
-  mylength = length;
+  
+  
   for (int i = 0 ; i < length ; i++) mystring[i] = filler;
   mystring[length] = '\0';
 }
@@ -472,7 +472,7 @@ Standard_Integer TCollection_AsciiString::FirstLocationNotInSet
 {
   if (mylength == 0 || Set.mylength == 0) return 0;
   if (FromIndex > 0 && ToIndex <= mylength && FromIndex <= ToIndex ) {
-    Standard_Boolean find;
+    Standard_Boolean find = 0;
     for (int i = FromIndex-1 ; i < ToIndex; i++) {
       find = Standard_False;
       for(int j = 0; j < Set.mylength; j++)  
@@ -735,7 +735,7 @@ Standard_Boolean TCollection_AsciiString::EndsWith (const TCollection_AsciiStrin
 // ----------------------------------------------------------------------------
 Standard_Integer TCollection_AsciiString::IntegerValue()const
 {
-  char *ptr;
+  char *ptr = nullptr;
   Standard_Integer value = (Standard_Integer)strtol(mystring,&ptr,10); 
   if (ptr != mystring) return value;
 
@@ -747,7 +747,7 @@ Standard_Integer TCollection_AsciiString::IntegerValue()const
 // ----------------------------------------------------------------------------
 Standard_Boolean TCollection_AsciiString::IsIntegerValue()const
 {
-  char *ptr;
+  char *ptr = nullptr;
   strtol(mystring,&ptr,10);
 
   if (ptr != mystring) {
@@ -764,7 +764,7 @@ Standard_Boolean TCollection_AsciiString::IsIntegerValue()const
 // ----------------------------------------------------------------------------
 Standard_Boolean TCollection_AsciiString::IsRealValue (Standard_Boolean theToCheckFull)const
 {
-  char *ptr;
+  char *ptr = nullptr;
   Strtod(mystring,&ptr);
   if (theToCheckFull)
   {
@@ -793,7 +793,7 @@ Standard_Boolean TCollection_AsciiString::IsAscii()const
 //------------------------------------------------------------------------
 void TCollection_AsciiString::LeftAdjust ()
 {
-   Standard_Integer i ;
+   Standard_Integer i = 0 ;
    for( i = 0 ; i < mylength ; i ++) if(!IsSpace(mystring[i])) break;
    if( i > 0 ) Remove(1,i);
 }
@@ -890,7 +890,7 @@ void TCollection_AsciiString::Prepend(const TCollection_AsciiString& what)
 // ----------------------------------------------------------------------------
 Standard_Real TCollection_AsciiString::RealValue()const
 {
-  char *ptr;
+  char *ptr = nullptr;
   Standard_Real value = Strtod(mystring,&ptr);
   if (ptr != mystring) return value;
 
@@ -985,7 +985,7 @@ void TCollection_AsciiString::Remove (const Standard_Integer where,
                                       const Standard_Integer ahowmany)
 {
  if (where+ahowmany <= mylength+1) {
-   int i,j;
+   int i = 0,j = 0;
    for(i = where+ahowmany-1, j = where-1; i < mylength; i++, j++)
      mystring[j] = mystring[i];
    mylength -= ahowmany;
@@ -1003,7 +1003,7 @@ void TCollection_AsciiString::Remove (const Standard_Integer where,
 //------------------------------------------------------------------------
 void TCollection_AsciiString::RightAdjust ()
 {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for ( i = mylength-1 ; i >= 0 ; i--)
     if(!IsSpace(mystring[i]))
       break;
@@ -1017,8 +1017,8 @@ void TCollection_AsciiString::RightAdjust ()
 void TCollection_AsciiString::RightJustify(const Standard_Integer Width,
                                            const Standard_Character Filler)
 {
-  Standard_Integer i ;
-  Standard_Integer k ;
+  Standard_Integer i = 0 ;
+  Standard_Integer k = 0 ;
   if (Width > mylength) {
     mystring = Reallocate (mystring, Width + 1);
 
@@ -1041,7 +1041,7 @@ Standard_Integer TCollection_AsciiString::Search
 {
   Standard_Integer size = Standard_Integer( what ? strlen( what ) : 0 );
   if (size) {
-    int k,j;
+    int k = 0,j = 0;
     int i = 0;
     while ( i < mylength-size+1 ) {
       k = i++;
@@ -1063,7 +1063,7 @@ Standard_Integer TCollection_AsciiString::Search
   Standard_Integer size = what.mylength;
   Standard_CString swhat = what.mystring;  
   if (size) {
-    int k,j;
+    int k = 0,j = 0;
     int i = 0;
     while ( i < mylength-size+1 ) {
       k = i++;
@@ -1084,7 +1084,7 @@ Standard_Integer TCollection_AsciiString::SearchFromEnd
 {
   Standard_Integer size = Standard_Integer( what ? strlen( what ) : 0 );
   if (size) {
-    int k,j;
+    int k = 0,j = 0;
     int i = mylength-1;
     while ( i >= size-1 ) {
       k = i--;
@@ -1106,7 +1106,7 @@ Standard_Integer TCollection_AsciiString::SearchFromEnd
   int size = what.mylength;
   if (size) {
     Standard_CString swhat = what.mystring;  
-    int k,j;
+    int k = 0,j = 0;
     int i = mylength-1;
     while ( i >= size-1 ) {
       k = i--;
@@ -1256,9 +1256,9 @@ TCollection_AsciiString TCollection_AsciiString::Token
     throw Standard_NullObject("TCollection_AsciiString::Token : "
                               "parameter 'separators'");
 
-  Standard_Integer theOne ;
+  Standard_Integer theOne = 0 ;
   Standard_Integer StringIndex = 0 ;
-  Standard_Integer SeparatorIndex ;
+  Standard_Integer SeparatorIndex = 0 ;
   Standard_Integer BeginIndex=0 ;
   Standard_Integer EndIndex=0 ;
 
@@ -1327,7 +1327,7 @@ void TCollection_AsciiString::UpperCase()
 //------------------------------------------------------------------------
 Standard_Integer TCollection_AsciiString::UsefullLength () const
 {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for ( i = mylength -1 ; i >= 0 ; i--) 
     if (IsGraphic(mystring[i])) break;
   return i+1;

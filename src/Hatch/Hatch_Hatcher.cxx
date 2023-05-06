@@ -113,7 +113,7 @@ void  Hatch_Hatcher::Trim
 {
   IntAna2d_IntPoint        Pinter;
   IntAna2d_AnaIntersection Inters;
-  Standard_Integer         iLine;
+  Standard_Integer         iLine = 0;
   for (iLine = 1; iLine <= myLines.Length(); iLine++) {
     Inters.Perform(myLines(iLine).myLin,L);
     if (Inters.IsDone()) {
@@ -174,7 +174,7 @@ void  Hatch_Hatcher::Trim
 
 Standard_Integer Hatch_Hatcher::NbIntervals() const
 {
-  Standard_Integer i, nb = 0;
+  Standard_Integer i = 0, nb = 0;
   for (i = 1; i <= myLines.Length(); i++)
     nb += NbIntervals(i);
   return nb;

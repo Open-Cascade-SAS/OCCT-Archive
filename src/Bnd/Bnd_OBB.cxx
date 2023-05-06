@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Bnd_OBB.hxx>
 
 #include <Bnd_Tools.hxx>
@@ -73,7 +75,7 @@ public: //! @name Getting the results
 public: //! @name Definition of rejection/acceptance rules
 
   //! Defines the rules for node rejection
-  virtual Standard_Boolean RejectNode (const BVH_Vec3d& theCMin,
+  Standard_Boolean RejectNode (const BVH_Vec3d& theCMin,
                                        const BVH_Vec3d& theCMax,
                                        Bnd_Range& theMetric) const Standard_OVERRIDE
   {
@@ -116,13 +118,13 @@ public: //! @name Definition of rejection/acceptance rules
   }
 
   //! Rules for node rejection by the metric
-  virtual Standard_Boolean RejectMetric (const Bnd_Range& theMetric) const Standard_OVERRIDE
+  Standard_Boolean RejectMetric (const Bnd_Range& theMetric) const Standard_OVERRIDE
   {
     if (myPrmMin > myPrmMax)
       // no parameters computed
       return Standard_False;
 
-    Standard_Real aMin, aMax;
+    Standard_Real aMin = NAN, aMax = NAN;
     if (!theMetric.GetBounds (aMin, aMax))
       // void metric
       return Standard_False;
@@ -132,7 +134,7 @@ public: //! @name Definition of rejection/acceptance rules
   }
 
   //! Defines the rules for leaf acceptance
-  virtual Standard_Boolean Accept (const Standard_Integer theIndex,
+  Standard_Boolean Accept (const Standard_Integer theIndex,
                                    const Bnd_Range&) Standard_OVERRIDE
   {
     const gp_XYZ& theLeaf = myBVHSet->Element (theIndex);
@@ -153,7 +155,7 @@ public: //! @name Definition of rejection/acceptance rules
 public: //! @name Choosing the best branch
 
   //! Returns true if the metric of the left branch is better than the metric of the right
-  virtual Standard_Boolean IsMetricBetter (const Bnd_Range& theLeft,
+  Standard_Boolean IsMetricBetter (const Bnd_Range& theLeft,
                                            const Bnd_Range& theRight) const Standard_OVERRIDE
   {
     if (myPrmMin > myPrmMax)
@@ -357,7 +359,7 @@ private:
 
   //! Points of ditetrahedron
   //! given by their indices in myLExtremalPoints.
-  Standard_Integer myTriIdx[5];
+  Standard_Integer myTriIdx[5]{};
 
   //! List of extremal points
   gp_XYZ myLExtremalPoints[myNbExtremalPoints];

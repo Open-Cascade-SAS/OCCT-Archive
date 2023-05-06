@@ -164,12 +164,12 @@ private:
 
   Handle(Approx_SweepFunction) myFunc;
   Standard_Boolean done;
-  Standard_Integer Num1DSS;
-  Standard_Integer Num2DSS;
-  Standard_Integer Num3DSS;
-  Standard_Integer udeg;
-  Standard_Integer vdeg;
-  Standard_Integer deg2d;
+  Standard_Integer Num1DSS{};
+  Standard_Integer Num2DSS{};
+  Standard_Integer Num3DSS{};
+  Standard_Integer udeg{};
+  Standard_Integer vdeg{};
+  Standard_Integer deg2d{};
   Handle(TColgp_HArray2OfPnt) tabPoles;
   Handle(TColStd_HArray2OfReal) tabWeights;
   Handle(TColStd_HArray1OfReal) tabUKnots;

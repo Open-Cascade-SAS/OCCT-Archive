@@ -23,12 +23,12 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(MAT_Bisector,Standard_Transient)
 
-MAT_Bisector::MAT_Bisector()
+MAT_Bisector::MAT_Bisector() : thebisectornumber(-1), thefirstparameter(Precision::Infinite()), thesecondparameter(Precision::Infinite()), thelistofbisectors(new MAT_ListOfBisector())
 {
-  thebisectornumber = -1;
-  thefirstparameter  = Precision::Infinite();
-  thesecondparameter = Precision::Infinite();
-  thelistofbisectors = new MAT_ListOfBisector();
+  
+  
+  
+  
 }
 
 void MAT_Bisector::AddBisector(const Handle(MAT_Bisector)& abisector) const
@@ -173,7 +173,7 @@ Standard_Real MAT_Bisector::SecondParameter() const
 void MAT_Bisector::Dump(const Standard_Integer ashift,
 			 const Standard_Integer alevel) const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   for(i=0; i<ashift; i++)std::cout<<"  ";
   std::cout<<" BISECTOR : "<<thebisectornumber<<std::endl;

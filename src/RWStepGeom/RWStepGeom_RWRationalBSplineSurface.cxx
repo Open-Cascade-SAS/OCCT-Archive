@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <Interface_ShareTool.hxx>
@@ -56,13 +58,13 @@ void RWStepGeom_RWRationalBSplineSurface::ReadStep
 
 	// --- inherited field : uDegree ---
 
-	Standard_Integer aUDegree;
+	Standard_Integer aUDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadInteger (num,2,"u_degree",ach,aUDegree);
 
 	// --- inherited field : vDegree ---
 
-	Standard_Integer aVDegree;
+	Standard_Integer aVDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadInteger (num,3,"v_degree",ach,aVDegree);
 
@@ -70,13 +72,13 @@ void RWStepGeom_RWRationalBSplineSurface::ReadStep
 
 	Handle(StepGeom_HArray2OfCartesianPoint) aControlPointsList;
 	Handle(StepGeom_CartesianPoint) anent4;
-	Standard_Integer nsub4;
+	Standard_Integer nsub4 = 0;
 	if (data->ReadSubList (num,4,"control_points_list",ach,nsub4)) {
 	  Standard_Integer nbi4 = data->NbParams(nsub4);
 	  Standard_Integer nbj4 = data->NbParams(data->ParamNumber(nsub4,1));
 	  aControlPointsList = new StepGeom_HArray2OfCartesianPoint (1, nbi4, 1, nbj4);
 	  for (Standard_Integer i4 = 1; i4 <= nbi4; i4 ++) {
-	    Standard_Integer nsi4;
+	    Standard_Integer nsi4 = 0;
 	    if (data->ReadSubList (nsub4,i4,"sub-part(control_points_list)",ach,nsi4)) {
 	      for (Standard_Integer j4 =1; j4 <= nbj4; j4 ++) {
 		//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
@@ -129,14 +131,14 @@ void RWStepGeom_RWRationalBSplineSurface::ReadStep
 	// --- own field : weightsData ---
 
 	Handle(TColStd_HArray2OfReal) aWeightsData;
-	  Standard_Real aWeightsDataItem;
-	Standard_Integer nsub9;
+	  Standard_Real aWeightsDataItem = NAN;
+	Standard_Integer nsub9 = 0;
 	if (data->ReadSubList (num,9,"weights_data",ach,nsub9)) {
 	  Standard_Integer nbi9 = data->NbParams(nsub9);
 	  Standard_Integer nbj9 = data->NbParams(data->ParamNumber(nsub9,1));
 	  aWeightsData = new TColStd_HArray2OfReal (1,nbi9,1,nbj9);
 	  for (Standard_Integer i9 = 1; i9 <= nbi9; i9 ++) {
-	    Standard_Integer nsi9;
+	    Standard_Integer nsi9 = 0;
 	    if (data->ReadSubList (nsub9,i9,"sub-part(weights_data)",ach,nsi9)) {
 	      for (Standard_Integer j9 =1; j9 <= nbj9; j9 ++) {
 		//szv#4:S4163:12Mar99 `Standard_Boolean stat9 =` not needed
@@ -253,8 +255,8 @@ void RWStepGeom_RWRationalBSplineSurface::Check
   Standard_Integer nbWgtV = ent->NbWeightsDataJ();
   Standard_Integer nbCPLU = ent->NbControlPointsListI();
   Standard_Integer nbCPLV = ent->NbControlPointsListJ();
-  Standard_Integer i;
-  Standard_Integer j;
+  Standard_Integer i = 0;
+  Standard_Integer j = 0;
 //  std::cout << "RationalBSplineCurve: nbWgtU=" << nbWgtU << " nbCPLU: " << 
 //    nbCPLU << std::endl;
 //  std::cout << "                      nbWgtV=" << nbWgtV << " nbCPLV: " << 

@@ -94,7 +94,7 @@ protected:
   //! Clear all sequences and temporary map;
   Standard_EXPORT void Clear();
 
-  Standard_Integer myStatus;
+  Standard_Integer myStatus{};
 
 
 private:
@@ -109,8 +109,8 @@ private:
 
   TopoDS_Shape myShape;
   TopoDS_Shape myResult;
-  Standard_Real myMinArea;
-  Standard_Boolean myRemoveFacesMode;
+  Standard_Real myMinArea{};
+  Standard_Boolean myRemoveFacesMode{};
   TopTools_IndexedDataMapOfShapeListOfShape myEdgeFaces;
   TopTools_DataMapOfShapeListOfShape myRemoveEdges;
   TopTools_SequenceOfShape myRemovedFaces;

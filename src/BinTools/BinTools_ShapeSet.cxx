@@ -46,6 +46,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <Message_ProgressRange.hxx>
 
+#include <math.h>
 #include <string.h>
 
 //=======================================================================
@@ -317,7 +318,7 @@ void  BinTools_ShapeSet::Write (Standard_OStream& OS,
   // write the shapes
   //-----------------------------------------
 
-  Standard_Integer i, nbShapes = myShapes.Extent();
+  Standard_Integer i = 0, nbShapes = myShapes.Extent();
   Message_ProgressScope aPSinner(aPS.Next(), "Writing shapes", nbShapes);
   OS << "\nTShapes " << nbShapes << "\n";
   
@@ -460,7 +461,7 @@ void BinTools_ShapeSet::ReadFlagsAndSubs(TopoDS_Shape& S, const TopAbs_ShapeEnum
   Standard_IStream& IS, const Standard_Integer nbShapes)
 {
   // Set the flags
-  Standard_Boolean aFree, aMod, aChecked, anOrient, aClosed, anInf, aConv;
+  Standard_Boolean aFree = 0, aMod = 0, aChecked = 0, anOrient = 0, aClosed = 0, anInf = 0, aConv = 0;
   BinTools::GetBool(IS, aFree);
   BinTools::GetBool(IS, aMod);
   BinTools::GetBool(IS, aChecked);
@@ -512,12 +513,12 @@ void BinTools_ShapeSet::ReadSubs(TopoDS_Shape& S, Standard_IStream& IS,
   else {
     TopAbs_Orientation anOrient;
     anOrient = (TopAbs_Orientation)aChar;
-    Standard_Integer anIndx;
+    Standard_Integer anIndx = 0;
     BinTools::GetInteger(IS, anIndx);
     S = Shape (nbshapes - anIndx + 1);
     S.Orientation(anOrient);
 
-    Standard_Integer l;
+    Standard_Integer l = 0;
     BinTools::GetInteger(IS, l);
     S.Location(myLocations.Location(l), Standard_False);
   }
@@ -633,7 +634,7 @@ void BinTools_ShapeSet::WriteShape (const TopoDS_Shape& S,
       aVal = (TE->Degenerated())  ? Standard_True : Standard_False;
       BinTools::PutBool(OS, aVal);
       
-      Standard_Real first, last;
+      Standard_Real first = NAN, last = NAN;
       BRep_ListIteratorOfListOfCurveRepresentation itrc = TE->Curves();
       while (itrc.More()) {
 	const Handle(BRep_CurveRepresentation)& CR = itrc.Value();
@@ -778,11 +779,11 @@ void  BinTools_ShapeSet::ReadShape (const TopAbs_ShapeEnum T,
 {
   // Read the geometry
 
-  Standard_Integer val, c, pc, pc2 = 0, s, s2, l, l2, t, pt, pt2 = 0;
-  Standard_Real tol, X, Y, Z, first, last, p1 = 0., p2;
-  Standard_Real PfX, PfY, PlX, PlY;
+  Standard_Integer val = 0, c = 0, pc = 0, pc2 = 0, s = 0, s2 = 0, l = 0, l2 = 0, t = 0, pt = 0, pt2 = 0;
+  Standard_Real tol = NAN, X = NAN, Y = NAN, Z = NAN, first = NAN, last = NAN, p1 = 0., p2 = NAN;
+  Standard_Real PfX = NAN, PfY = NAN, PlX = NAN, PlY = NAN;
   gp_Pnt2d aPf, aPl;
-  Standard_Boolean closed, bval;
+  Standard_Boolean closed = 0, bval = 0;
   GeomAbs_Shape reg = GeomAbs_C0;
   try {
     OCC_CATCH_SIGNALS

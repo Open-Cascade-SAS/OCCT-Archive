@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <Geom_Plane.hxx>
 #include <gp_Dir.hxx>
@@ -40,7 +42,7 @@ void StdPrs_Plane::Add (const Handle (Prs3d_Presentation)& aPresentation,
   Handle(Prs3d_PlaneAspect) theaspect = aDrawer->PlaneAspect();
 
   gp_Pnt p1;
-  Standard_Real Xmax,Ymax;
+  Standard_Real Xmax = NAN,Ymax = NAN;
   Xmax = 0.5*Standard_Real(theaspect->PlaneXLength());
   Ymax = 0.5*Standard_Real(theaspect->PlaneYLength());
   if (theaspect->DisplayEdges()) {
@@ -61,7 +63,7 @@ void StdPrs_Plane::Add (const Handle (Prs3d_Presentation)& aPresentation,
     const Standard_Integer nbx = Standard_Integer(Abs(2.*Xmax) / dist) - 1;
     const Standard_Integer nby = Standard_Integer(Abs(2.*Ymax) / dist) - 1;
     Handle(Graphic3d_ArrayOfSegments) aPrims = new Graphic3d_ArrayOfSegments(2*(nbx+nby));
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real cur = -Xmax+dist;
     for (i = 0; i < nbx; i++, cur += dist) {
       aPrims->AddVertex(thegeom->Value(cur, Ymax));

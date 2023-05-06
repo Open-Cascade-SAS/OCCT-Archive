@@ -25,9 +25,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_GroupRelationship,Standard_Transient)
 //function : StepBasic_GroupRelationship
 //purpose  : 
 //=======================================================================
-StepBasic_GroupRelationship::StepBasic_GroupRelationship ()
+StepBasic_GroupRelationship::StepBasic_GroupRelationship () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

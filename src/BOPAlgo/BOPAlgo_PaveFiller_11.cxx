@@ -36,7 +36,7 @@ void BOPAlgo_PaveFiller::CheckSelfInterference()
   //
   BRep_Builder aBB;
   //
-  Standard_Integer i, aNbR = myDS->NbRanges();
+  Standard_Integer i = 0, aNbR = myDS->NbRanges();
   for (i = 0; i < aNbR; ++i) {
     const BOPDS_IndexRange& aR = myDS->Range(i);
     //
@@ -149,7 +149,7 @@ void BOPAlgo_PaveFiller::CheckSelfInterference()
         //
         for (Standard_Integer k = 0; k < 2; ++k) {
           const BOPDS_IndexedMapOfPaveBlock& aMPBF = !k ? aFI.PaveBlocksIn() : aFI.PaveBlocksSc();
-          Standard_Integer iPB, aNbPB = aMPBF.Extent();
+          Standard_Integer iPB = 0, aNbPB = aMPBF.Extent();
           for (iPB = 1; iPB <= aNbPB; ++iPB) {
             const Handle(BOPDS_PaveBlock)& aPB = aMPBF(iPB);
             Standard_ASSERT(aPB->HasEdge(), "Face information is not up to date", continue);
@@ -175,7 +175,7 @@ void BOPAlgo_PaveFiller::CheckSelfInterference()
         TopoDS_Compound aWC;
         aBB.MakeCompound(aWC);
         //
-        Standard_Integer iS, aNbS = aMCS.Extent();
+        Standard_Integer iS = 0, aNbS = aMCS.Extent();
         for (iS = 1; iS <= aNbS; ++iS) {
           const TopoDS_Shape& aSx = aMCS(iS);
           aBB.Add(aWC, aSx);

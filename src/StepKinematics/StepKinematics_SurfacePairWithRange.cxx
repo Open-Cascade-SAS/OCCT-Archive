@@ -22,10 +22,10 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_SurfacePairWithRange, StepKinematics_S
 //function : StepKinematics_SurfacePairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_SurfacePairWithRange::StepKinematics_SurfacePairWithRange ()
+StepKinematics_SurfacePairWithRange::StepKinematics_SurfacePairWithRange () : defLowerLimitActualRotation(Standard_False), defUpperLimitActualRotation(Standard_False)
 {
-  defLowerLimitActualRotation = Standard_False;
-  defUpperLimitActualRotation = Standard_False;
+  
+  
 }
 
 //=======================================================================

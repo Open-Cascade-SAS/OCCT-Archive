@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepClass3d_BndBoxTree.hxx>
 
 #include <TopoDS.hxx>
@@ -37,7 +39,7 @@ Standard_Boolean BRepClass3d_BndBoxTreeSelectorPoint::Accept (const Standard_Int
     const TopoDS_Edge& E = TopoDS::Edge(shp);
     Standard_Real EdgeTSq  = BRep_Tool::Tolerance(E);
     EdgeTSq *= EdgeTSq;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     BRepAdaptor_Curve C(E);
     BRep_Tool::Range(E,f,l);
 
@@ -85,7 +87,7 @@ Standard_Boolean BRepClass3d_BndBoxTreeSelectorLine::Accept (const Standard_Inte
     const TopoDS_Edge& E = TopoDS::Edge(shp);
     Standard_Real EdgeTSq = BRep_Tool::Tolerance(E);
     EdgeTSq *= EdgeTSq;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     BRepAdaptor_Curve C(E);
     BRep_Tool::Range(E, f, l);
 
@@ -133,7 +135,7 @@ Standard_Boolean BRepClass3d_BndBoxTreeSelectorLine::Accept (const Standard_Inte
       if (ExtPL.SquareDistance(1) < VertTSq)
       {
         Extrema_POnCurv PP;
-        Standard_Real paramL;
+        Standard_Real paramL = NAN;
         PP = ExtPL.Point(1);
         paramL = PP.Parameter();
         VertParam VP;

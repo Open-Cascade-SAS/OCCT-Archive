@@ -25,10 +25,10 @@ AppParCurves_ConstraintCouple::
 
 AppParCurves_ConstraintCouple::
   AppParCurves_ConstraintCouple(const Standard_Integer TheIndex,
-				const AppParCurves_Constraint Cons)
+				const AppParCurves_Constraint Cons) : myIndex(TheIndex), myConstraint(Cons)
 {
-  myIndex = TheIndex;
-  myConstraint = Cons;
+  
+  
 }
 
 

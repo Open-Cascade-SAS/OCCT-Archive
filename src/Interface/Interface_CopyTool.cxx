@@ -39,25 +39,25 @@
 Interface_CopyTool::Interface_CopyTool
   (const Handle(Interface_InterfaceModel)& amodel,
    const Interface_GeneralLib& lib)
-    : thelib (lib) , thelst (amodel->NbEntities())
+    : thelib (lib) , themod(amodel), themap(new Interface_CopyMap (amodel)), therep(new Interface_CopyMap (amodel)), thelst (amodel->NbEntities()), thelev(0), theimp(Standard_False)
 {
   thelst.Init(Standard_False);
-  themod = amodel;
-  themap = new Interface_CopyMap (amodel);
-  therep = new Interface_CopyMap (amodel);
-  thelev = 0;  theimp = Standard_False;
+  
+  
+  
+   
 }
 
     Interface_CopyTool::Interface_CopyTool
   (const Handle(Interface_InterfaceModel)& amodel,
    const Handle(Interface_Protocol)& protocol)
-    : thelib (protocol) , thelst (amodel->NbEntities())
+    : thelib (protocol) , themod(amodel), themap(new Interface_CopyMap (amodel)), therep(new Interface_CopyMap (amodel)), thelst (amodel->NbEntities()), thelev(0), theimp(Standard_False)
 {
   thelst.Init(Standard_False);
-  themod = amodel;
-  themap = new Interface_CopyMap (amodel);
-  therep = new Interface_CopyMap (amodel);
-  thelev = 0;  theimp = Standard_False;
+  
+  
+  
+   
 }
 
 
@@ -154,7 +154,7 @@ Interface_CopyTool::Interface_CopyTool
    const Handle(Standard_Transient)& entto)
 {
   Handle(Interface_GeneralModule) module;
-  Standard_Integer CN;
+  Standard_Integer CN = 0;
   if (thelib.Select(entfrom,module,CN))
     module->RenewImpliedCase(CN,entfrom,entto,*this);
 }

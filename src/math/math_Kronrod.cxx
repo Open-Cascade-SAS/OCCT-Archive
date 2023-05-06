@@ -3951,7 +3951,7 @@ Standard_Boolean math::KronrodPointsAndWeights(const Standard_Integer  Index,
 
   if (Index <= 123) {
     // Get points from the array.
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Integer aStartInd = 0;
 
     // Compute the index of starting point in the array.

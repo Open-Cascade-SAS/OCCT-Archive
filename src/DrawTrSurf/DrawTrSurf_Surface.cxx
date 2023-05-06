@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DrawTrSurf_Surface.hxx>
 
 #include <Adaptor3d_IsoCurve.hxx>
@@ -33,13 +35,13 @@ Standard_Real DrawTrSurf_SurfaceLimit = 400;
 //purpose  :
 //=======================================================================
 DrawTrSurf_Surface::DrawTrSurf_Surface (const Handle(Geom_Surface)& S) 
-: DrawTrSurf_Drawable (16, 0.01, 1) 
+: DrawTrSurf_Drawable (16, 0.01, 1), surf(S), nbUIsos(1), nbVIsos(1) 
 {
-  surf = S;
+  
   boundsLook = Draw_jaune;
   isosLook = Draw_bleu;
-  nbUIsos = 1;
-  nbVIsos = 1;
+  
+  
 }
 
 //=======================================================================
@@ -52,13 +54,13 @@ DrawTrSurf_Surface::DrawTrSurf_Surface
    const Draw_Color& BoundsColor, const Draw_Color& IsosColor,
    const Standard_Integer Discret, const Standard_Real Deflection,
    const Standard_Integer DrawMode) 
-:  DrawTrSurf_Drawable (Discret, Deflection, DrawMode) 
+:  DrawTrSurf_Drawable (Discret, Deflection, DrawMode), surf(S), boundsLook(BoundsColor), isosLook(IsosColor), nbUIsos(Abs(Nu)), nbVIsos(Abs(Nv)) 
 {
-  surf = S;
-  boundsLook = BoundsColor;
-  isosLook = IsosColor;
-  nbUIsos = Abs(Nu);
-  nbVIsos = Abs(Nv);
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -76,7 +78,7 @@ void DrawTrSurf_Surface::DrawOn (Draw_Display& dis) const
 //=======================================================================
 void DrawTrSurf_Surface::DrawOn (Draw_Display& dis, const Standard_Boolean Iso) const 
 {
-  Standard_Real UFirst, ULast, VFirst, VLast;
+  Standard_Real UFirst = NAN, ULast = NAN, VFirst = NAN, VLast = NAN;
   surf->Bounds (UFirst, ULast, VFirst, VLast);
   
   Standard_Boolean UfirstInf = Precision::IsNegativeInfinite(UFirst);
@@ -86,7 +88,7 @@ void DrawTrSurf_Surface::DrawOn (Draw_Display& dis, const Standard_Boolean Iso) 
   
   if (UfirstInf || UlastInf) {
     gp_Pnt P1,P2;
-    Standard_Real v;
+    Standard_Real v = NAN;
     if (VfirstInf && VlastInf) 
       v = 0;
     else if (VfirstInf)
@@ -166,7 +168,7 @@ void DrawTrSurf_Surface::DrawOn (Draw_Display& dis, const Standard_Boolean Iso) 
   
   if (Iso) {
     dis.SetColor(isosLook);
-    Standard_Integer i, j;
+    Standard_Integer i = 0, j = 0;
     
     Standard_Real Du = (ULast - UFirst) / (nbUIsos + 1);
     Standard_Real U = UFirst;

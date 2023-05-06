@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Standard_NotImplemented.hxx>
 #include <ElCLib.hxx>
 #include <Extrema_ExtPElC.hxx>
@@ -99,7 +101,7 @@ void Extrema_ExtPExtS::MakePreciser (Standard_Real& U,
     U = myuinf;
   } else {
     
-    Standard_Real step = (myusup - myuinf) / 30, D2e, D2next ,D2prev;
+    Standard_Real step = (myusup - myuinf) / 30, D2e = NAN, D2next = NAN ,D2prev = NAN;
     gp_Pnt
       Pe = ProjectPnt (OrtogSection, myDirection, GetValue(U,myC)),
       Pprev = ProjectPnt (OrtogSection, myDirection, GetValue(U-step, myC)),
@@ -107,7 +109,7 @@ void Extrema_ExtPExtS::MakePreciser (Standard_Real& U,
     D2e = P.SquareDistance(Pe),
     D2next = P.SquareDistance(Pnext),
     D2prev = P.SquareDistance(Pprev);
-    Standard_Boolean notFound;
+    Standard_Boolean notFound = 0;
     if (isMin) 
       notFound =  (D2e > D2prev || D2e > D2next);
     else 
@@ -303,12 +305,12 @@ void Extrema_ExtPExtS::Perform (const gp_Pnt& P)
   if (!anExt.IsDone()) return;
   
   gp_Ax2 anOrtogSection (P, myDirection);
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
   Standard_Boolean
-    isMin,
+    isMin = 0,
     isSimpleCase =
       myDirection.IsParallel(myPosition.Direction(),Precision::Angular());
-  Standard_Integer i, aNbExt = anExt.NbExt();
+  Standard_Integer i = 0, aNbExt = anExt.NbExt();
   math_Vector UV(1,2), Tol(1,2), UVinf(1,2), UVsup(1,2);
   Tol(1) = mytolu;   Tol(2) = mytolv;
   UVinf(1) = myuinf; UVinf(2) = myvinf;
@@ -354,7 +356,7 @@ void Extrema_ExtPExtS::Perform (const gp_Pnt& P)
       math_FunctionSetRoot aFSR (myF, Tol);
       aFSR.Perform(myF, UV, UVinf, UVsup);
 //      for (Standard_Integer k=1 ; k <= myF.NbExt(); 
-      Standard_Integer k;
+      Standard_Integer k = 0;
       for ( k=1 ; k <= myF.NbExt(); k++) {
 	      if (IsOriginalPnt(myF.Point(k).Value(), myPoint, myNbExt)) {
 	        // modified by NIZHNY-MKK  Thu Sep 18 14:46:41 2003.BEGIN
@@ -393,7 +395,7 @@ void Extrema_ExtPExtS::Perform (const gp_Pnt& P)
           Standard_Real dist = Sqrt(myF.SquareDistance(k));
           math_Vector Vals(1, 2);
           const Extrema_POnSurf& PonS=myF.Point(k);
-          Standard_Real u, v;
+          Standard_Real u = NAN, v = NAN;
           PonS.Parameter(u, v);
           UV(1) = u;
           UV(2) = v;

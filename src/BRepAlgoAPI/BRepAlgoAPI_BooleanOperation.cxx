@@ -219,8 +219,8 @@ void BRepAlgoAPI_BooleanOperation::Build(const Message_ProgressRange& theRange)
   {
     myBuilder = new BOPAlgo_BOP(myAllocator);
     myBuilder->SetArguments(myArguments);
-    ((BOPAlgo_BOP*)myBuilder)->SetTools(myTools);
-    ((BOPAlgo_BOP*)myBuilder)->SetOperation(myOperation);
+    (dynamic_cast<BOPAlgo_BOP*>(myBuilder))->SetTools(myTools);
+    (dynamic_cast<BOPAlgo_BOP*>(myBuilder))->SetOperation(myOperation);
   }
 
   // Build the result

@@ -87,7 +87,7 @@ private:
 
 
   Interface_ParamType thetype;
-  Standard_PCharacter theval;
+  Standard_PCharacter theval{};
   Standard_Integer thenum;
 
 

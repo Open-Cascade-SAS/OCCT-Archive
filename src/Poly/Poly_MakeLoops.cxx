@@ -141,7 +141,7 @@ Standard_Integer Poly_MakeLoops::Perform()
 {
   // prepare the set of start indices
   myStartIndices.Clear();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= myMapLink.Extent(); i++)
   {
     const Link& aLink = myMapLink(i);
@@ -162,7 +162,7 @@ Standard_Integer Poly_MakeLoops::Perform()
   Handle(NCollection_IncAllocator) aTempAlloc1 = new NCollection_IncAllocator(4000);
 
   // two pass loop
-  Standard_Integer aPassNum, nbLoopsOnPass2 = 0;
+  Standard_Integer aPassNum = 0, nbLoopsOnPass2 = 0;
   for (aPassNum=0; aPassNum < 2; aPassNum++)
   {
     myHangIndices.Clear();
@@ -199,7 +199,7 @@ Standard_Integer Poly_MakeLoops::Perform()
       if (aStartNumber > 1)
       {
         // it is required to mark hanging edges
-        Standard_Integer aNode;
+        Standard_Integer aNode = 0;
         if (aStartNumber <= aContour.Extent())
           // mark hanging edges starting from the first one till a bifurcation
           aNode = getFirstNode(aIndexS);
@@ -347,7 +347,7 @@ void Poly_MakeLoops::acceptContour
 
   // build a loop, mark links as taken,
   // remove them from the set of start indices
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = theStartNumber; i <= theContour.Extent(); i++)
   {
     Standard_Integer aIndexS = theContour(i);   // index with sign

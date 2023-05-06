@@ -71,7 +71,7 @@ private:
 
 
   Handle(StepGeom_Curve) basisCurve;
-  Standard_Real distance;
+  Standard_Real distance{};
   StepData_Logical selfIntersect;
   Handle(StepGeom_Direction) refDirection;
 

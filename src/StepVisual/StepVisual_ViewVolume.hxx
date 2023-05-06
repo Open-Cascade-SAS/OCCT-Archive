@@ -92,12 +92,12 @@ private:
 
   StepVisual_CentralOrParallel projectionType;
   Handle(StepGeom_CartesianPoint) projectionPoint;
-  Standard_Real viewPlaneDistance;
-  Standard_Real frontPlaneDistance;
-  Standard_Boolean frontPlaneClipping;
-  Standard_Real backPlaneDistance;
-  Standard_Boolean backPlaneClipping;
-  Standard_Boolean viewVolumeSidesClipping;
+  Standard_Real viewPlaneDistance{};
+  Standard_Real frontPlaneDistance{};
+  Standard_Boolean frontPlaneClipping{};
+  Standard_Real backPlaneDistance{};
+  Standard_Boolean backPlaneClipping{};
+  Standard_Boolean viewVolumeSidesClipping{};
   Handle(StepVisual_PlanarBox) viewWindow;
 
 

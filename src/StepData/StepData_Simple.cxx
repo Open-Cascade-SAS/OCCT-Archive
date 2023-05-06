@@ -88,10 +88,10 @@ void StepData_Simple::Check(Handle(Interface_Check)& /*ach*/) const
 
     void  StepData_Simple::Shared (Interface_EntityIterator& list) const
 {
-  Standard_Integer i, nb = thefields.NbFields();
+  Standard_Integer i = 0, nb = thefields.NbFields();
   for (i = 1; i <= nb; i ++) {
     const StepData_Field& fi = thefields.Field(i);
-    Standard_Integer j1,j2,l1,l2;  l1 = l2 = 1;
+    Standard_Integer j1 = 0,j2 = 0,l1 = 0,l2 = 0;  l1 = l2 = 1;
     if (fi.Arity() >= 1) l1 = fi.Length(1);
     if (fi.Arity() >  1) l2 = fi.Length(2);
     for (j1 = 1; j1 <= l1; j1 ++) {

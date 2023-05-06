@@ -34,9 +34,9 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_FixSmallCurves,ShapeUpgrade_Tool)
 //purpose  : 
 //=======================================================================
 
-ShapeUpgrade_FixSmallCurves::ShapeUpgrade_FixSmallCurves()
+ShapeUpgrade_FixSmallCurves::ShapeUpgrade_FixSmallCurves() : myStatus(ShapeExtend::EncodeStatus ( ShapeExtend_OK ))
 {
-  myStatus = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
+  
 }
 //=======================================================================
 //function : Init

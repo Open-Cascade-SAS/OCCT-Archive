@@ -118,8 +118,8 @@ protected:
 
 private:
 
-  Standard_Size myCounters[MemCounter_NB]; //!< Counters' values, in bytes
-  Standard_Boolean myActiveCounters[MemCounter_NB]; //!< container of active state for a counter
+  Standard_Size myCounters[MemCounter_NB]{}; //!< Counters' values, in bytes
+  Standard_Boolean myActiveCounters[MemCounter_NB]{}; //!< container of active state for a counter
 
 };
 

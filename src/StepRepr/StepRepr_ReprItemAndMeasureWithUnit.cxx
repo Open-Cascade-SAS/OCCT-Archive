@@ -26,10 +26,10 @@ IMPLEMENT_STANDARD_RTTIEXT(StepRepr_ReprItemAndMeasureWithUnit,StepRepr_Represen
 //function : StepRepr_ReprItemAndMeasureWithUnit
 //purpose  : 
 //=======================================================================
-StepRepr_ReprItemAndMeasureWithUnit::StepRepr_ReprItemAndMeasureWithUnit()
+StepRepr_ReprItemAndMeasureWithUnit::StepRepr_ReprItemAndMeasureWithUnit() : myMeasureWithUnit(new StepBasic_MeasureWithUnit()), myMeasureRepresentationItem(new StepRepr_MeasureRepresentationItem())
 {
-  myMeasureWithUnit = new StepBasic_MeasureWithUnit();
-  myMeasureRepresentationItem = new StepRepr_MeasureRepresentationItem();
+  
+  
 }
 
 

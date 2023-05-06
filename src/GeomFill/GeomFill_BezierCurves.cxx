@@ -55,7 +55,7 @@ static void SetSameWeights(TColStd_Array1OfReal& W1,
   Standard_Real A = ( W1( 1) * W2( 1)) / ( W1( NU) * W2( NV));
   Standard_Real B = ( W3( 1) * W4( 1)) / ( W3( NU) * W4( NV));
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Real Alfa = W1( NU) / W2( 1);
   for ( i=1; i<=NV; i++) {
     W2(i) *= Alfa;
@@ -115,8 +115,8 @@ static Standard_Boolean Arrange(const Handle(Geom_BezierCurve)& C1,
   GC[2] = Handle(Geom_BezierCurve)::DownCast(C3->Copy());
   GC[3] = Handle(Geom_BezierCurve)::DownCast(C4->Copy());
   
-  Standard_Integer i,j;
-  Standard_Boolean Trouve;
+  Standard_Integer i = 0,j = 0;
+  Standard_Boolean Trouve = 0;
 
   for (i=1; i<=3; i++) {
     Trouve = Standard_False;
@@ -385,7 +385,7 @@ void  GeomFill_BezierCurves::Init(const Handle(Geom_BezierCurve)& C1,
     CC1->Poles(P1);
     CC2->Poles(P2);
     
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i=1; i<=DegU+1; i++) {
       Poles(i, 1) = P1(i);
       Poles(i, 2) = P2(i);

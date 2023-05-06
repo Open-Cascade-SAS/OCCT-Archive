@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWPrismaticPairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -55,7 +57,7 @@ void RWStepKinematics_RWPrismaticPairValue::ReadStep (const Handle(StepData_Step
 
   // Own fields of PrismaticPairValue
 
-  Standard_Real aActualTranslation;
+  Standard_Real aActualTranslation = NAN;
   theData->ReadReal (theNum, 3, "actual_translation", theArch, aActualTranslation);
 
   // Initialize entity

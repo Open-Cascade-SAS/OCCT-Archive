@@ -184,10 +184,10 @@ TCollection_ExtendedString::TCollection_ExtendedString
 // Create a string from a ExtCharacter
 // ----------------------------------------------------------------------------
 TCollection_ExtendedString::TCollection_ExtendedString
-                                        (const Standard_ExtCharacter aChar)
+                                        (const Standard_ExtCharacter aChar) : mylength(1), mystring(allocateExtChars (1))
 {
-  mylength    = 1;
-  mystring    = allocateExtChars (1);
+  
+  
   mystring[0] = aChar;
   mystring[1] = 0;
 }
@@ -197,10 +197,10 @@ TCollection_ExtendedString::TCollection_ExtendedString
 // ----------------------------------------------------------------------------
 TCollection_ExtendedString::TCollection_ExtendedString
                                         (const Standard_Integer      length,
-                                         const Standard_ExtCharacter filler )
+                                         const Standard_ExtCharacter filler ) : mystring(allocateExtChars (length)), mylength(length)
 {
-  mystring = allocateExtChars (length);
-  mylength = length;
+  
+  
   for (int i = 0 ; i < length ; i++) mystring[i] = filler;
   mystring[mylength] = 0;
 }
@@ -212,7 +212,7 @@ TCollection_ExtendedString::TCollection_ExtendedString
                                         (const Standard_Integer aValue)
 {
   union {int bid ;
-         char t [13];} CHN ;
+         char t [13];} CHN{} ;
   Sprintf(&CHN.t[0],"%d",aValue);
   mylength = (int)strlen(CHN.t);
   mystring = allocateExtChars (mylength);
@@ -227,7 +227,7 @@ TCollection_ExtendedString::TCollection_ExtendedString
                                         (const Standard_Real aValue)
 {
   union {int bid ;
-         char t [50];} CHN ;
+         char t [50];} CHN{} ;
   Sprintf(&CHN.t[0],"%g",aValue);
   mylength = (int)strlen( CHN.t );
   mystring = allocateExtChars (mylength);
@@ -239,11 +239,11 @@ TCollection_ExtendedString::TCollection_ExtendedString
 // create an extendedstring from an extendedstring
 // ----------------------------------------------------------------------------
 TCollection_ExtendedString::TCollection_ExtendedString
-                                (const TCollection_ExtendedString& astring)
+                                (const TCollection_ExtendedString& astring) : mylength(astring.mylength), mystring(allocateExtChars (astring.mylength))
 {
   const Standard_Integer aSizeBytes = astring.mylength * sizeof(Standard_ExtCharacter);
-  mylength = astring.mylength;
-  mystring = allocateExtChars (astring.mylength);
+  
+  
   memcpy (mystring, astring.mystring, aSizeBytes);
   mystring[mylength] = 0;
 }
@@ -253,9 +253,9 @@ TCollection_ExtendedString::TCollection_ExtendedString
 //---------------------------------------------------------------------------
 TCollection_ExtendedString::TCollection_ExtendedString
                                 (const TCollection_AsciiString& theString,
-                                 const Standard_Boolean isMultiByte)
+                                 const Standard_Boolean isMultiByte) : mylength(nbSymbols (theString.ToCString()))
 {
-  mylength = nbSymbols (theString.ToCString());
+  
   mystring = allocateExtChars (mylength);
   mystring[mylength] = 0;
   if (isMultiByte && ConvertToUnicode (theString.ToCString()))
@@ -644,7 +644,7 @@ void TCollection_ExtendedString::Remove (const Standard_Integer where,
                                          const Standard_Integer ahowmany)
 {
   if (where+ahowmany <= mylength+1) {
-    int i,j;
+    int i = 0,j = 0;
     for (i = where+ahowmany-1, j = where-1; i < mylength; i++, j++)
       mystring[j] = mystring[i];
     mylength -= ahowmany;
@@ -665,7 +665,7 @@ Standard_Integer TCollection_ExtendedString::Search
   Standard_Integer size = what.mylength;
   Standard_ExtString swhat = what.mystring;  
   if (size) {
-    int k,j;
+    int k = 0,j = 0;
     int i = 0;
     Standard_Boolean find = Standard_False; 
     while ( i < mylength-size+1 && !find) {
@@ -688,7 +688,7 @@ Standard_Integer TCollection_ExtendedString::SearchFromEnd
   Standard_Integer size = what.mylength;
   if (size) {
     Standard_ExtString swhat = what.mystring;  
-    int k,j;
+    int k = 0,j = 0;
     int i = mylength-1;
     Standard_Boolean find = Standard_False; 
     while ( i >= size-1 && !find) {
@@ -771,11 +771,11 @@ TCollection_ExtendedString TCollection_ExtendedString::Token
     throw Standard_NullObject("TCollection_ExtendedString::Token : "
                               "parameter 'separators'");
   
-  int                   i,j,k,l;
+  int                   i = 0,j = 0,k = 0,l = 0;
   Standard_PExtCharacter  buftmp = allocateExtChars (mylength);
-  Standard_ExtCharacter aSep;
+  Standard_ExtCharacter aSep = 0;
   
-  Standard_Boolean isSepFound   = Standard_False, otherSepFound;
+  Standard_Boolean isSepFound   = Standard_False, otherSepFound = 0;
   
   j = 0;
   

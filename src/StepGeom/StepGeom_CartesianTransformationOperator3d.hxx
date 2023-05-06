@@ -63,7 +63,7 @@ private:
 
 
   Handle(StepGeom_Direction) axis3;
-  Standard_Boolean hasAxis3;
+  Standard_Boolean hasAxis3{};
 
 
 };

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_MinRadiusDimension.hxx>
 
 #include <PrsDim.hxx>
@@ -119,7 +121,7 @@ void PrsDim_MinRadiusDimension::ComputeEllipse(const Handle(Prs3d_Presentation)&
   }
   arr->SetLength(myArrowSize);
 
-  Standard_Real U;//,V;
+  Standard_Real U = NAN;//,V;
   gp_Pnt curPos, Center;
   Center = myEllipse.Location();
   if( myAutomaticPosition )
@@ -169,7 +171,7 @@ void PrsDim_MinRadiusDimension::ComputeArcOfEllipse(const Handle(Prs3d_Presentat
   }
   arr->SetLength(myArrowSize);
   
-  Standard_Real par;
+  Standard_Real par = NAN;
   gp_Pnt curPos, Center;
   Center = myEllipse.Location();
   Standard_Boolean IsInDomain = Standard_True;
@@ -263,7 +265,7 @@ void PrsDim_MinRadiusDimension::ComputeSelection(const Handle(SelectMgr_Selectio
 	Standard_Real parEnd = ElCLib::Parameter ( myEllipse, myEndOfArrow );
 	if(!PrsDim::InDomain(myFirstPar, myLastPar, parEnd))
 	  {
-	    Standard_Real parStart, par;
+	    Standard_Real parStart = NAN, par = NAN;
 	    if(PrsDim::DistanceFromApex (myEllipse, myEndOfArrow, myFirstPar) <
 	       PrsDim::DistanceFromApex (myEllipse, myEndOfArrow, myLastPar))
 	      par = myFirstPar;

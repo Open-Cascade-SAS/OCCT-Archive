@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Curve.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
 #include <Geom2dLProp_CurAndInf2d.hxx>
@@ -55,7 +57,7 @@ void MAT2d_CutCurve::Perform(const Handle(Geom2d_Curve)& C)
 
   Geom2dLProp_CurAndInf2d     Sommets;
   Handle(Geom2d_TrimmedCurve) TrimC;
-  Standard_Real               UF,UL,UC;
+  Standard_Real               UF = NAN,UL = NAN,UC = NAN;
   gp_Pnt2d                    PF,PL,PC;
   Standard_Real               PTol  = Precision::PConfusion()*10;
   Standard_Real               Tol   = Precision::Confusion()*10;

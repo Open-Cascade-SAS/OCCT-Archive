@@ -39,7 +39,7 @@ GccAna_Circ2d3Tan::
                       const gp_Pnt2d&            Point3    ,
 		      const Standard_Real        Tolerance ):
 
-   cirsol(1,2)     ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,2)     ,
    qualifier1(1,2) ,
    qualifier2(1,2) ,
    qualifier3(1,2) ,
@@ -57,10 +57,10 @@ GccAna_Circ2d3Tan::
    pararg3(1,2)    
 {
 
-   WellDone = Standard_False;
+   
    Standard_Real Tol = Abs(Tolerance);
    gp_Dir2d dirx(1.0,0.0);
-   NbrSol = 0;
+   
    if (!(Qualified1.IsEnclosed() ||
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
      throw GccEnt_BadQualifier();

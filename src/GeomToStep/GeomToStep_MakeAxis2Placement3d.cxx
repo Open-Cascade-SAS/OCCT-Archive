@@ -55,7 +55,7 @@ static Handle(StepGeom_Axis2Placement3d)  MakeAxis2Placement3d
 // Creation d' un axis2_placement_3d a l origine
 //=============================================================================
 
-GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d ( )
+GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d ( ) : GeomToStep_Root()
 {
   gp_Ax2 A (gp_Pnt(0.,0.,0.), gp_Dir (0.,0.,1.), gp_Dir (1.,0.,0.));
 //   le reste inchange
@@ -71,7 +71,7 @@ GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d ( )
 //=============================================================================
 
 GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d( const gp_Ax2&
-							       A)
+							       A) : GeomToStep_Root()
 {
   Handle(StepGeom_Axis2Placement3d) Axe = MakeAxis2Placement3d
     (A.Location(), A.Direction(), A.XDirection(), "");
@@ -84,7 +84,7 @@ GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d( const gp_Ax2&
 //=============================================================================
 
 GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d
-( const gp_Ax3&	 A)
+( const gp_Ax3&	 A) : GeomToStep_Root()
 {
   Handle(StepGeom_Axis2Placement3d) Axe = MakeAxis2Placement3d
     (A.Location(), A.Direction(), A.XDirection(), "");
@@ -97,7 +97,7 @@ GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d
 //=============================================================================
 
 GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d
-  ( const gp_Trsf& T)
+  ( const gp_Trsf& T) : GeomToStep_Root()
 {
   gp_Ax2 A (gp_Pnt(0.,0.,0.), gp_Dir (0.,0.,1.), gp_Dir (1.,0.,0.));
   A.Transform (T);
@@ -115,7 +115,7 @@ GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d
 //=============================================================================
 
 GeomToStep_MakeAxis2Placement3d::GeomToStep_MakeAxis2Placement3d
-  ( const Handle(Geom_Axis2Placement)& Axis2)
+  ( const Handle(Geom_Axis2Placement)& Axis2) : GeomToStep_Root()
 {
   gp_Ax2 A;
   A = Axis2->Ax2();

@@ -70,8 +70,8 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_PrismaticPairWithRange, StepKinematics_PrismaticPair)
 
 private:
-  Standard_Real myLowerLimitActualTranslation; //!< optional
-  Standard_Real myUpperLimitActualTranslation; //!< optional
+  Standard_Real myLowerLimitActualTranslation{}; //!< optional
+  Standard_Real myUpperLimitActualTranslation{}; //!< optional
   Standard_Boolean defLowerLimitActualTranslation; //!< flag "is LowerLimitActualTranslation defined"
   Standard_Boolean defUpperLimitActualTranslation; //!< flag "is UpperLimitActualTranslation defined"
 

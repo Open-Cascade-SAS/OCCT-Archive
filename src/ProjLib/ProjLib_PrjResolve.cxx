@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <gp_Pnt2d.hxx>
 #include <math_FunctionSetRoot.hxx>
@@ -96,7 +98,7 @@ ProjLib_PrjResolve::ProjLib_PrjResolve(const Adaptor3d_Curve& C,const Adaptor3d_
 // computation of myDone
   myDone = Standard_True;
 
-  Standard_Real ExtraU , ExtraV;
+  Standard_Real ExtraU = NAN , ExtraV = NAN;
 //  if(!StrictInside) {
     ExtraU = 2. * Tol2d.X();
     ExtraV = 2. * Tol2d.Y();

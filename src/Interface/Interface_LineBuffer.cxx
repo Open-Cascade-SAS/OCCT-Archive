@@ -18,10 +18,10 @@
 #include <TCollection_HAsciiString.hxx>
 
 Interface_LineBuffer::Interface_LineBuffer (const Standard_Integer size)
-: myLine (1, size+1)
+: myLine (1, size+1), myMax(size)
 {
   myLine.SetValue (1, '\0');
-  myMax = size;
+  
   myInit = myLen = myGet = myKeep = myFriz = 0;
 }
 

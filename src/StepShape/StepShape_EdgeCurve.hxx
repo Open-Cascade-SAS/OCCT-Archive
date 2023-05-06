@@ -63,7 +63,7 @@ private:
 
 
   Handle(StepGeom_Curve) edgeGeometry;
-  Standard_Boolean sameSense;
+  Standard_Boolean sameSense{};
 
 
 };

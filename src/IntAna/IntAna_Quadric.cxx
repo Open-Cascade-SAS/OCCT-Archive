@@ -20,6 +20,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <gp_Ax3.hxx>
 #include <gp_Trsf.hxx>
 #include <IntAna_Quadric.hxx>
@@ -42,8 +44,8 @@
 //----------------------------------------------------------------------
 //-- Quadric Vide
 //----------------------------------------------------------------------
-IntAna_Quadric::IntAna_Quadric(void) {
-  CXX=CYY=CZZ=CXY=CXZ=CYZ=CX=CY=CZ=0.0;   CCte=1.0;
+IntAna_Quadric::IntAna_Quadric(void) : CCte(1.0) {
+  CXX=CYY=CZZ=CXY=CXZ=CYZ=CX=CY=CZ=0.0;   
 }
 //----------------------------------------------------------------------
 //-- Pln  -----> Quadric
@@ -125,13 +127,13 @@ void IntAna_Quadric::NewCoefficients( Standard_Real& _CXX,Standard_Real& _CYY,St
 				     ,Standard_Real& _CCte
 				     ,const gp_Ax3& Axis) const 
 {
-  Standard_Real t11,t12,t13,t14;                  // x = t11 X + t12 Y + t13 Z + t14
-  Standard_Real t21,t22,t23,t24;                  // y = t21 X + t22 Y + t23 Z + t24
-  Standard_Real t31,t32,t33,t34;                  // z = t31 X + t32 Y + t33 Z + t34
+  Standard_Real t11 = NAN,t12 = NAN,t13 = NAN,t14 = NAN;                  // x = t11 X + t12 Y + t13 Z + t14
+  Standard_Real t21 = NAN,t22 = NAN,t23 = NAN,t24 = NAN;                  // y = t21 X + t22 Y + t23 Z + t24
+  Standard_Real t31 = NAN,t32 = NAN,t33 = NAN,t34 = NAN;                  // z = t31 X + t32 Y + t33 Z + t34
                                  
                                                   //   = X DirX + Y DirY + Z DirZ + Loc
   
-  Standard_Real Cxx,Cyy,Czz,Cxy,Cxz,Cyz,Cx,Cy,Cz,Ccte;            
+  Standard_Real Cxx = NAN,Cyy = NAN,Czz = NAN,Cxy = NAN,Cxz = NAN,Cyz = NAN,Cx = NAN,Cy = NAN,Cz = NAN,Ccte = NAN;            
   
   gp_Trsf Trans;
   Trans.SetTransformation(Axis);

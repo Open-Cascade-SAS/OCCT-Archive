@@ -112,10 +112,9 @@ Standard_Failure::Standard_Failure()
 // purpose  :
 // =======================================================================
 Standard_Failure::Standard_Failure (const Standard_CString theDesc)
-: myMessage (NULL),
-  myStackTrace (NULL)
+: myMessage(StringRef::allocate_message (theDesc)), myStackTrace (NULL)
 {
-  myMessage = StringRef::allocate_message (theDesc);
+  
   const Standard_Integer aStackLength = Standard_Failure_DefaultStackTraceLength;
   if (aStackLength > 0)
   {
@@ -136,12 +135,8 @@ Standard_Failure::Standard_Failure (const Standard_CString theDesc)
 // =======================================================================
 Standard_Failure::Standard_Failure (const Standard_CString theDesc,
                                     const Standard_CString theStackTrace)
-: myMessage (NULL),
-  myStackTrace (NULL)
-{
-  myMessage = StringRef::allocate_message (theDesc);
-  myStackTrace = StringRef::allocate_message (theStackTrace);
-}
+: myMessage(StringRef::allocate_message (theDesc)), myStackTrace(StringRef::allocate_message (theStackTrace))
+{}
 
 // =======================================================================
 // function : Standard_Failure
@@ -149,11 +144,10 @@ Standard_Failure::Standard_Failure (const Standard_CString theDesc,
 // =======================================================================
 Standard_Failure::Standard_Failure (const Standard_Failure& theFailure)
 : Standard_Transient (theFailure),
-  myMessage (NULL),
-  myStackTrace (NULL)
+  myMessage(StringRef::copy_message (theFailure.myMessage)), myStackTrace(StringRef::copy_message (theFailure.myStackTrace))
 {
-  myMessage    = StringRef::copy_message (theFailure.myMessage);
-  myStackTrace = StringRef::copy_message (theFailure.myStackTrace);
+  
+  
 }
 
 // =======================================================================

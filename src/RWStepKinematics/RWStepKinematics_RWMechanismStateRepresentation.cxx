@@ -49,7 +49,7 @@ void RWStepKinematics_RWMechanismStateRepresentation::ReadStep
   // Inherited field : items
   Handle(StepRepr_HArray1OfRepresentationItem) aItems;
   Handle(StepRepr_RepresentationItem) anEnt;
-  Standard_Integer nsub;
+  Standard_Integer nsub = 0;
   if (theData->ReadSubList (theNum, 2, "items", theArch, nsub)) {
     Standard_Integer nb = theData->NbParams(nsub);
     aItems = new StepRepr_HArray1OfRepresentationItem (1, nb);

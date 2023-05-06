@@ -49,7 +49,7 @@ void RWStepGeom_RWUniformCurve::ReadStep
 
 	// --- inherited field : degree ---
 
-	Standard_Integer aDegree;
+	Standard_Integer aDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadInteger (num,2,"degree",ach,aDegree);
 
@@ -57,7 +57,7 @@ void RWStepGeom_RWUniformCurve::ReadStep
 
 	Handle(StepGeom_HArray1OfCartesianPoint) aControlPointsList;
 	Handle(StepGeom_CartesianPoint) anent3;
-	Standard_Integer nsub3;
+	Standard_Integer nsub3 = 0;
 	if (data->ReadSubList (num,3,"control_points_list",ach,nsub3)) {
 	  Standard_Integer nb3 = data->NbParams(nsub3);
 	  aControlPointsList = new StepGeom_HArray1OfCartesianPoint (1, nb3);

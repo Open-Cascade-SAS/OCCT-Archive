@@ -196,7 +196,7 @@ void BOPAlgo_CellsBuilder::IndexParts()
   // for the multi-dimensional case
   // add sub-shapes of the splits into the <myIndex> map
   //
-  Standard_Integer i, aNbS = myIndex.Extent();
+  Standard_Integer i = 0, aNbS = myIndex.Extent();
   for (i = 1; i <= aNbS; ++i) {
     const TopoDS_Shape& aSP = myIndex.FindKey(i);
     const TopTools_ListOfShape& aLSOr = myIndex(i);
@@ -780,7 +780,7 @@ Standard_Boolean BOPAlgo_CellsBuilder::RemoveInternals(const TopTools_ListOfShap
     }
     //
     // Unify same domain
-    Standard_Boolean bFaces, bEdges;
+    Standard_Boolean bFaces = 0, bEdges = 0;
     //
     bFaces = (aType == TopAbs_FACE);
     bEdges = (aType == TopAbs_EDGE);
@@ -808,7 +808,7 @@ Standard_Boolean BOPAlgo_CellsBuilder::RemoveInternals(const TopTools_ListOfShap
     //
     // fill map of modified shapes
     TopTools_IndexedMapOfShape aMG;
-    Standard_Integer i, aNb;
+    Standard_Integer i = 0, aNb = 0;
     //
     TopExp::MapShapes(aShape, TopAbs_VERTEX, aMG);
     TopExp::MapShapes(aShape, TopAbs_EDGE,   aMG);
@@ -881,7 +881,7 @@ Standard_Boolean BOPAlgo_CellsBuilder::RemoveInternals(const TopTools_ListOfShap
       //
       // to build unified solid, select only faces attached to only one solid
       TopTools_ListOfShape aLFUnique;
-      Standard_Integer i, aNb = aDMFS.Extent();
+      Standard_Integer i = 0, aNb = aDMFS.Extent();
       for (i = 1; i <= aNb; ++i) {
         if (aDMFS(i).Extent() == 1) {
           aLFUnique.Append(aDMFS.FindKey(i));

@@ -22,9 +22,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepRepr_ReprItemAndLengthMeasureWithUnitAndQRI,StepR
 //function : StepRepr_ReprItemAndLengthMeasureWithUnitAndQRI
 //purpose  : 
 //=======================================================================
-StepRepr_ReprItemAndLengthMeasureWithUnitAndQRI::StepRepr_ReprItemAndLengthMeasureWithUnitAndQRI() : StepRepr_ReprItemAndMeasureWithUnitAndQRI()
+StepRepr_ReprItemAndLengthMeasureWithUnitAndQRI::StepRepr_ReprItemAndLengthMeasureWithUnitAndQRI() : StepRepr_ReprItemAndMeasureWithUnitAndQRI(), myLengthMeasureWithUnit(new StepBasic_LengthMeasureWithUnit())
 {
-  myLengthMeasureWithUnit = new StepBasic_LengthMeasureWithUnit();
+  
 }
 
 //=======================================================================

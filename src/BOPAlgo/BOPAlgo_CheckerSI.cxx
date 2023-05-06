@@ -57,7 +57,7 @@ class BOPAlgo_FaceSelfIntersect :
     myIF(-1), myTolF(1.e-7) {
   }
   //
-  virtual ~BOPAlgo_FaceSelfIntersect() {
+  ~BOPAlgo_FaceSelfIntersect() override {
   }
   //
   void SetIndex(const Standard_Integer nF) {
@@ -84,7 +84,7 @@ class BOPAlgo_FaceSelfIntersect :
     return myTolF;
   }
   //
-  virtual void Perform() {
+  void Perform() override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (UserBreak(aPS))
     {
@@ -110,9 +110,9 @@ typedef NCollection_Vector<BOPAlgo_FaceSelfIntersect> BOPAlgo_VectorOfFaceSelfIn
 //=======================================================================
 BOPAlgo_CheckerSI::BOPAlgo_CheckerSI()
 :
-  BOPAlgo_PaveFiller()
+  BOPAlgo_PaveFiller(), myLevelOfCheck(BOPDS_DS::NbInterfTypes()-1)
 {
-  myLevelOfCheck=BOPDS_DS::NbInterfTypes()-1;
+  
   myNonDestructive=Standard_True;
   SetAvoidBuildPCurve(Standard_True);
 }
@@ -129,7 +129,7 @@ BOPAlgo_CheckerSI::~BOPAlgo_CheckerSI()
 //=======================================================================
 void BOPAlgo_CheckerSI::SetLevelOfCheck(const Standard_Integer theLevel)
 {
-  Standard_Integer aNbLists;
+  Standard_Integer aNbLists = 0;
   //
   aNbLists=BOPDS_DS::NbInterfTypes();
   if (theLevel >= 0 && theLevel < aNbLists) {
@@ -215,7 +215,7 @@ void BOPAlgo_CheckerSI::Perform(const Message_ProgressRange& theRange)
 //=======================================================================
 void BOPAlgo_CheckerSI::PostTreat()
 {
-  Standard_Integer i, aNb, n1, n2; 
+  Standard_Integer i = 0, aNb = 0, n1 = 0, n2 = 0; 
   BOPDS_Pair aPK;
   //
   BOPDS_MapOfPair& aMPK=
@@ -293,8 +293,8 @@ void BOPAlgo_CheckerSI::PostTreat()
   BOPDS_VectorOfInterfFF& aFFs=myDS->InterfFF();
   aNb=aFFs.Length();
   for (i=0; i!=aNb; ++i) {
-    Standard_Boolean bTangentFaces, bFlag;
-    Standard_Integer aNbC, aNbP, j, iFound;
+    Standard_Boolean bTangentFaces = 0, bFlag = 0;
+    Standard_Integer aNbC = 0, aNbP = 0, j = 0, iFound = 0;
     //
     const BOPDS_InterfFF& aFF=aFFs(i);
     aFF.Indices(n1, n2);

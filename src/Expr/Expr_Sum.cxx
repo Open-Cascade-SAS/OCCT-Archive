@@ -34,7 +34,7 @@ IMPLEMENT_STANDARD_RTTIEXT(Expr_Sum,Expr_PolyExpression)
 
 Expr_Sum::Expr_Sum (const Expr_SequenceOfGeneralExpression& exps)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = exps.Length();
   for (i=1; i<= max; i++) {
     AddOperand(exps(i));
@@ -50,7 +50,7 @@ Expr_Sum::Expr_Sum (const Handle(Expr_GeneralExpression)& exp1, const Handle(Exp
 Handle(Expr_GeneralExpression) Expr_Sum::Copy () const
 {
   Expr_SequenceOfGeneralExpression ops;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = NbOperands();
   for (i=1; i <= max; i++) {
     ops.Append(Expr::CopyShare(Operand(i)));
@@ -111,7 +111,7 @@ Standard_Boolean Expr_Sum::IsLinear () const
 Handle(Expr_GeneralExpression) Expr_Sum::Derivative (const Handle(Expr_NamedUnknown)& X) const
 {
   Expr_SequenceOfGeneralExpression opsder;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = NbOperands();
   for (i=1; i<= max; i++) {
     opsder.Append(Operand(i)->Derivative(X));
@@ -126,7 +126,7 @@ Handle(Expr_GeneralExpression) Expr_Sum::NDerivative (const Handle(Expr_NamedUnk
     throw Standard_OutOfRange();
   }
   Expr_SequenceOfGeneralExpression opsder;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = NbOperands();
   for (i=1; i<= max; i++) {
     opsder.Append(Operand(i)->NDerivative(X,N));
@@ -137,7 +137,7 @@ Handle(Expr_GeneralExpression) Expr_Sum::NDerivative (const Handle(Expr_NamedUnk
 
 Handle(Expr_GeneralExpression) Expr_Sum::ShallowSimplified () const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = NbOperands();
   Standard_Integer nbvals =0;
   Handle(Expr_GeneralExpression) op;
@@ -150,7 +150,7 @@ Handle(Expr_GeneralExpression) Expr_Sum::ShallowSimplified () const
   if (subsum) {
     Handle(Expr_GeneralExpression) other;
     Handle(Expr_Sum) sumop;
-    Standard_Integer nbssumop;
+    Standard_Integer nbssumop = 0;
     for (i=1; i<= max; i++) {
       op = Operand(i);
       if (op->IsKind(STANDARD_TYPE(Expr_Sum))) {

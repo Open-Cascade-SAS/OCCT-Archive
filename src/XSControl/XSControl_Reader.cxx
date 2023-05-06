@@ -164,7 +164,7 @@ Handle(TColStd_HSequenceOfTransient)  XSControl_Reader::GiveList
   }
 
   Handle(TColStd_HSequenceOfTransient) list = new TColStd_HSequenceOfTransient();
-  Standard_Integer i,nbr = NbRootsForTransfer();
+  Standard_Integer i = 0,nbr = NbRootsForTransfer();
   for (i = 1; i <= nbr; i ++) list->Append (RootForTransfer(i));
   return list;
 }
@@ -192,7 +192,7 @@ Standard_Integer  XSControl_Reader::NbRootsForTransfer ()
   if (therootsta) return theroots.Length();
   therootsta = Standard_True;
   Interface_ShareFlags sf (thesession->Graph());
-  Standard_Integer i, nbr = sf.NbRoots();
+  Standard_Integer i = 0, nbr = sf.NbRoots();
   for (i = 1; i <= nbr; i ++) {
     //    on filtre les racines qu on sait transferer
     Handle(Standard_Transient) start = sf.Root(i);
@@ -276,7 +276,7 @@ Standard_Integer  XSControl_Reader::TransferList
 {
   if (list.IsNull()) return 0;
   Standard_Integer nbt = 0;
-  Standard_Integer i, nb = list->Length();
+  Standard_Integer i = 0, nb = list->Length();
   const Handle(XSControl_TransferReader) &TR = thesession->TransferReader();
   TR->BeginTransfer();
   ClearShapes();
@@ -303,7 +303,7 @@ Standard_Integer  XSControl_Reader::TransferRoots (const Message_ProgressRange& 
 {
   NbRootsForTransfer();
   Standard_Integer nbt = 0;
-  Standard_Integer i, nb = theroots.Length();
+  Standard_Integer i = 0, nb = theroots.Length();
   const Handle(XSControl_TransferReader) &TR = thesession->TransferReader();
    
   TR->BeginTransfer();
@@ -374,7 +374,7 @@ TopoDS_Shape  XSControl_Reader::Shape (const Standard_Integer num) const
 TopoDS_Shape  XSControl_Reader::OneShape () const
 {
   TopoDS_Shape sh;
-  Standard_Integer i,nb = theshapes.Length();
+  Standard_Integer i = 0,nb = theshapes.Length();
   if (nb == 0) return sh;
   if (nb == 1) return theshapes.Value(1);
   TopoDS_Compound C;
@@ -468,9 +468,8 @@ void XSControl_Reader::GetStatsTransfer (const Handle(TColStd_HSequenceOfTransie
   nbMapped = nbWithFail = nbWithResult = 0;
   
   for (itrp.Start(); itrp.More(); itrp.Next()) {
-    Handle(Transfer_Binder) binder = itrp.Value();
-    Handle(Standard_Transient) ent = itrp.Starting();
-    nbMapped++;
+    const Handle(Transfer_Binder)& binder = itrp.Value();
+       nbMapped++;
     if (binder.IsNull())  nbWithFail++;
     else
       if(!binder->HasResult()) nbWithFail++;

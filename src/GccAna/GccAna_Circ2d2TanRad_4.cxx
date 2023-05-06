@@ -45,11 +45,11 @@ GccAna_Circ2d2TanRad::
                          const GccEnt_QualifiedLin&  Qualified2 ,
                          const Standard_Real         Radius     ,
                          const Standard_Real                    ):
-   qualifier1(1,4) ,
+   WellDone(Standard_False), qualifier1(1,4) ,
    qualifier2(1,4),
    TheSame1(1,4)   ,
    TheSame2(1,4)   ,
-   cirsol(1,4)     ,
+   NbrSol(0), cirsol(1,4)     ,
    pnttg1sol(1,4)  ,
    pnttg2sol(1,4)  ,
    par1sol(1,4)    ,
@@ -63,8 +63,8 @@ GccAna_Circ2d2TanRad::
   TColStd_Array1OfReal cote2(1,2);
   Standard_Integer nbrcote1=0;
   Standard_Integer nbrcote2=0;
-  NbrSol = 0;
-  WellDone = Standard_False;
+  
+  
   if (!(Qualified1.IsEnclosed() || 
 	Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
       !(Qualified2.IsEnclosed() ||

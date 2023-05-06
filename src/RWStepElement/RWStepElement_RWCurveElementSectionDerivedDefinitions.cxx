@@ -15,6 +15,8 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <RWStepElement_RWCurveElementSectionDerivedDefinitions.hxx>
@@ -52,12 +54,12 @@ void RWStepElement_RWCurveElementSectionDerivedDefinitions::ReadStep (const Hand
   Handle(TCollection_HAsciiString) aCurveElementSectionDefinition_Description;
   data->ReadString (num, 1, "curve_element_section_definition.description", ach, aCurveElementSectionDefinition_Description);
 
-  Standard_Real aCurveElementSectionDefinition_SectionAngle;
+  Standard_Real aCurveElementSectionDefinition_SectionAngle = NAN;
   data->ReadReal (num, 2, "curve_element_section_definition.section_angle", ach, aCurveElementSectionDefinition_SectionAngle);
 
   // Own fields of CurveElementSectionDerivedDefinitions
 
-  Standard_Real aCrossSectionalArea;
+  Standard_Real aCrossSectionalArea = NAN;
   data->ReadReal (num, 3, "cross_sectional_area", ach, aCrossSectionalArea);
 
   Handle(StepElement_HArray1OfMeasureOrUnspecifiedValue) aShearArea;
@@ -80,13 +82,13 @@ void RWStepElement_RWCurveElementSectionDerivedDefinitions::ReadStep (const Hand
     aSecondMomentOfArea = new TColStd_HArray1OfReal (1, nb0);
     Standard_Integer num2 = sub5;
     for ( Standard_Integer i0=1; i0 <= nb0; i0++ ) {
-      Standard_Real anIt0;
+      Standard_Real anIt0 = NAN;
       data->ReadReal (num2, i0, "real", ach, anIt0);
       aSecondMomentOfArea->SetValue(i0, anIt0);
     }
   }
 
-  Standard_Real aTorsionalConstant;
+  Standard_Real aTorsionalConstant = NAN;
   data->ReadReal (num, 6, "torsional_constant", ach, aTorsionalConstant);
 
   StepElement_MeasureOrUnspecifiedValue aWarpingConstant;

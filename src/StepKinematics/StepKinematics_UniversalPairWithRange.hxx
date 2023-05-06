@@ -90,10 +90,10 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_UniversalPairWithRange, StepKinematics_UniversalPair)
 
 private:
-  Standard_Real myLowerLimitFirstRotation; //!< optional
-  Standard_Real myUpperLimitFirstRotation; //!< optional
-  Standard_Real myLowerLimitSecondRotation; //!< optional
-  Standard_Real myUpperLimitSecondRotation; //!< optional
+  Standard_Real myLowerLimitFirstRotation{}; //!< optional
+  Standard_Real myUpperLimitFirstRotation{}; //!< optional
+  Standard_Real myLowerLimitSecondRotation{}; //!< optional
+  Standard_Real myUpperLimitSecondRotation{}; //!< optional
   Standard_Boolean defLowerLimitFirstRotation; //!< flag "is LowerLimitFirstRotation defined"
   Standard_Boolean defUpperLimitFirstRotation; //!< flag "is UpperLimitFirstRotation defined"
   Standard_Boolean defLowerLimitSecondRotation; //!< flag "is LowerLimitSecondRotation defined"

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <HLRAlgo_PolyAlgo.hxx>
 
 #include <BRep_Builder.hxx>
@@ -68,26 +70,26 @@ static Standard_Integer DoError = Standard_False;
 //purpose  :
 //=======================================================================
 HLRBRep_PolyAlgo::HLRBRep_PolyAlgo()
-: myDebug     (Standard_False),
+: myAlgo(new HLRAlgo_PolyAlgo()), myDebug     (Standard_False),
   myTolSta    (0.1),
   myTolEnd    (0.9),
   myTolAngular(0.001)
 {
-  myAlgo = new HLRAlgo_PolyAlgo();
+  
 }
 
 //=======================================================================
 //function : HLRBRep_PolyAlgo
 //purpose  :
 //=======================================================================
-HLRBRep_PolyAlgo::HLRBRep_PolyAlgo (const Handle(HLRBRep_PolyAlgo)& theOther)
+HLRBRep_PolyAlgo::HLRBRep_PolyAlgo (const Handle(HLRBRep_PolyAlgo)& theOther) : myDebug(theOther->Debug()), myTolAngular(theOther->TolAngular()), myTolSta(theOther->TolCoef()), myTolEnd(1.0 - myTolSta), myAlgo(theOther->Algo()), myProj(theOther->Projector())
 {
-  myDebug      = theOther->Debug();
-  myTolAngular = theOther->TolAngular();
-  myTolSta     = theOther->TolCoef();
-  myTolEnd     = 1.0 - myTolSta;
-  myAlgo       = theOther->Algo();
-  myProj       = theOther->Projector();
+  
+  
+  
+  
+  
+  
 
   const Standard_Integer aNbShapes = theOther->NbShapes();
   for (Standard_Integer i = 1; i <= aNbShapes; ++i)
@@ -101,13 +103,13 @@ HLRBRep_PolyAlgo::HLRBRep_PolyAlgo (const Handle(HLRBRep_PolyAlgo)& theOther)
 //purpose  :
 //=======================================================================
 HLRBRep_PolyAlgo::HLRBRep_PolyAlgo (const TopoDS_Shape& theShape)
-: myDebug     (Standard_False),
+: myAlgo(new HLRAlgo_PolyAlgo()), myDebug     (Standard_False),
   myTolSta    (0.1),
   myTolEnd    (0.9),
   myTolAngular(0.001)
 {
   myShapes.Append (theShape);
-  myAlgo = new HLRAlgo_PolyAlgo();
+  
 }
 
 //=======================================================================
@@ -716,7 +718,7 @@ Standard_Boolean HLRBRep_PolyAlgo::AverageNormal (const Standard_Integer iNode,
                                                   Standard_Real& theZ) const
 {
   Standard_Boolean isOK = Standard_False;
-  Standard_Integer jNode = 0, kNode, iiii;
+  Standard_Integer jNode = 0, kNode = 0, iiii = 0;
   theX = 0;
   theY = 0;
   theZ = 0;
@@ -832,8 +834,8 @@ void HLRBRep_PolyAlgo::InitBiPointsWithConnexity (const Standard_Integer theIEdg
                                                   TopTools_ListOfShape& theLS,
                                                   const Standard_Boolean theIsConnex)
 {
-  Standard_Real X1  , Y1  , Z1  , X2  , Y2  , Z2  ;
-  Standard_Real XTI1, YTI1, ZTI1, XTI2, YTI2, ZTI2;
+  Standard_Real X1 = NAN  , Y1 = NAN  , Z1 = NAN  , X2 = NAN  , Y2 = NAN  , Z2 = NAN  ;
+  Standard_Real XTI1 = NAN, YTI1 = NAN, ZTI1 = NAN, XTI2 = NAN, YTI2 = NAN, ZTI2 = NAN;
   Standard_Real U1 = 0.0, U2 = 0.0;
   Handle(Poly_PolygonOnTriangulation) aHPol[2];
   TopLoc_Location aLoc;
@@ -2087,7 +2089,7 @@ void HLRBRep_PolyAlgo::InsertOnOutLine (NCollection_Array1<Handle(HLRAlgo_PolyIn
 
   TopLoc_Location aLoc;
   Standard_Boolean mP3P1 = false;
-  Standard_Real aU3, aV3, aCoef3, X3 = 0., Y3 = 0., Z3 = 0.;
+  Standard_Real aU3 = NAN, aV3 = NAN, aCoef3 = NAN, X3 = 0., Y3 = 0., Z3 = 0.;
 
   const gp_Trsf& aProjTrsf = myProj.Transformation();
 
@@ -2252,8 +2254,8 @@ void HLRBRep_PolyAlgo::CheckFrBackTriangles (HLRAlgo_ListOfBPoint& theList,
                                              NCollection_Array1<Handle(HLRAlgo_PolyInternalData)>& thePID)
 {
   Standard_Real X1 =0.,Y1 =0.,X2 =0.,Y2 =0.,X3 =0.,Y3 =0.;
-  Standard_Real D1,D2,D3;
-  Standard_Real dd,dX,dY,nX,nY;
+  Standard_Real D1 = NAN,D2 = NAN,D3 = NAN;
+  Standard_Real dd = NAN,dX = NAN,dY = NAN,nX = NAN,nY = NAN;
 
   HLRAlgo_Array1OfTData* aTData1 = NULL;
   HLRAlgo_Array1OfPISeg* aPISeg1 = NULL;
@@ -2862,7 +2864,7 @@ void  HLRBRep_PolyAlgo::OrientTriangle (const Standard_Integer theITri,
           }
           else
           {
-            Standard_Real o;
+            Standard_Real o = NAN;
             if (myProj.Perspective())
             {
               aD *= 1 / aDNorm;
@@ -3022,8 +3024,8 @@ void HLRBRep_PolyAlgo::CheckDegeneratedSegment (HLRAlgo_PolyInternalNode::NodeIn
 void HLRBRep_PolyAlgo::UpdateOutLines (HLRAlgo_ListOfBPoint& theList,
                                        NCollection_Array1<Handle(HLRAlgo_PolyInternalData)>& thePID)
 {
-  Standard_Real X1  ,Y1  ,Z1  ,X2  ,Y2  ,Z2;
-  Standard_Real XTI1,YTI1,ZTI1,XTI2,YTI2,ZTI2;
+  Standard_Real X1 = NAN  ,Y1 = NAN  ,Z1 = NAN  ,X2 = NAN  ,Y2 = NAN  ,Z2 = NAN;
+  Standard_Real XTI1 = NAN,YTI1 = NAN,ZTI1 = NAN,XTI2 = NAN,YTI2 = NAN,ZTI2 = NAN;
   const Standard_Integer aNbFaces = myFMap.Extent();
   for (Standard_Integer aFaceIter = 1; aFaceIter <= aNbFaces; ++aFaceIter)
   {
@@ -3041,7 +3043,7 @@ void HLRBRep_PolyAlgo::UpdateOutLines (HLRAlgo_ListOfBPoint& theList,
     HLRAlgo_Array1OfTData& aTData = aPid->TData();
     HLRAlgo_Array1OfPISeg& aPISeg = aPid->PISeg();
     HLRAlgo_Array1OfPINod& aPINod = aPid->PINod();
-    Standard_Integer j,it1,it2,tn1,tn2,tn3,pd,pf;
+    Standard_Integer j = 0,it1 = 0,it2 = 0,tn1 = 0,tn2 = 0,tn3 = 0,pd = 0,pf = 0;
     Standard_Boolean isOutl = false;
     const Standard_Integer aNbSegs = aPid->NbPISeg();
     for (Standard_Integer aSegIter = 1; aSegIter <= aNbSegs; ++aSegIter)
@@ -3157,7 +3159,7 @@ void HLRBRep_PolyAlgo::UpdateEdgesBiPoints (HLRAlgo_ListOfBPoint& theList,
                                             const NCollection_Array1<Handle(HLRAlgo_PolyInternalData)>& thePID,
                                             const Standard_Boolean theIsClosed)
 {
-  Standard_Integer itri1, itri2, tbid;
+  Standard_Integer itri1 = 0, itri2 = 0, tbid = 0;
   for (HLRAlgo_ListIteratorOfListOfBPoint aBPntIter (theList); aBPntIter.More(); aBPntIter.Next())
   {
     HLRAlgo_BiPoint& aBP = aBPntIter.ChangeValue();
@@ -3192,7 +3194,7 @@ void HLRBRep_PolyAlgo::UpdateEdgesBiPoints (HLRAlgo_ListOfBPoint& theList,
             }
           }
 
-          Standard_Boolean isOutl;
+          Standard_Boolean isOutl = 0;
           if      (!(aTriangle.Flags & HLRAlgo_PolyMask_FMskSide) && !(aTriangle2.Flags & HLRAlgo_PolyMask_FMskSide))
           {
             isOutl =  (aTriangle.Flags & HLRAlgo_PolyMask_FMskBack) !=  (aTriangle2.Flags & HLRAlgo_PolyMask_FMskBack);

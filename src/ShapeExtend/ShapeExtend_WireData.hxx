@@ -232,9 +232,9 @@ private:
   Handle(TopTools_HSequenceOfShape) myEdges;
   Handle(TopTools_HSequenceOfShape) myNonmanifoldEdges;
   Handle(TColStd_HSequenceOfInteger) mySeams;
-  Standard_Integer mySeamF;
-  Standard_Integer mySeamR;
-  Standard_Boolean myManifoldMode;
+  Standard_Integer mySeamF{};
+  Standard_Integer mySeamR{};
+  Standard_Boolean myManifoldMode{};
 
 
 };

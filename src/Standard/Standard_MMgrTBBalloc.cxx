@@ -33,9 +33,9 @@ using namespace tbb;
 //purpose  : 
 //=======================================================================
 
-Standard_MMgrTBBalloc::Standard_MMgrTBBalloc(const Standard_Boolean aClear)
+Standard_MMgrTBBalloc::Standard_MMgrTBBalloc(const Standard_Boolean aClear) : myClear(aClear)
 {
-  myClear = aClear;
+  
 }
 
 //=======================================================================

@@ -69,10 +69,10 @@ protected:
 private:
 
 
-  Standard_Integer hourOffset;
-  Standard_Integer minuteOffset;
+  Standard_Integer hourOffset{};
+  Standard_Integer minuteOffset{};
   StepBasic_AheadOrBehind sense;
-  Standard_Boolean hasMinuteOffset;
+  Standard_Boolean hasMinuteOffset{};
 
 
 };

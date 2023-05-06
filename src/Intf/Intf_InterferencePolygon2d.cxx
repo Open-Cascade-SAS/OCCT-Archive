@@ -16,6 +16,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Intf_InterferencePolygon2d.hxx>
 #include <Intf_Polygon2d.hxx>
 #include <Intf_SectionPoint.hxx>
@@ -155,7 +157,7 @@ void Intf_InterferencePolygon2d::Interference
   Bnd_Box2d bSO;
   Bnd_Box2d bST;
 
-  Standard_Integer iObje1, iObje2, n1 = nbso, n2 = Obje2.NbSegments();
+  Standard_Integer iObje1 = 0, iObje2 = 0, n1 = nbso, n2 = Obje2.NbSegments();
   Standard_Real d1 = Obje1.DeflectionOverEstimation(),
     d2 = Obje2.DeflectionOverEstimation();
 
@@ -192,7 +194,7 @@ void Intf_InterferencePolygon2d::Interference
   Bnd_Box2d bSO;
   Bnd_Box2d bST;
 
-  Standard_Integer iObje1, iObje2, n = Obje.NbSegments();
+  Standard_Integer iObje1 = 0, iObje2 = 0, n = Obje.NbSegments();
   Standard_Real d = Obje.DeflectionOverEstimation();
 
   gp_Pnt2d p1b, p1e, p2b, p2e;
@@ -230,11 +232,11 @@ void Intf_InterferencePolygon2d::Clean()
 // if there is no real point of intersection EDGE/EDGE:
   Standard_Integer nbIt=myTZones.Length();
   Standard_Integer decal=0;
-  Standard_Integer addr1, addr2;
+  Standard_Integer addr1 = 0, addr2 = 0;
   Intf_PIType      dim1, dim2;
-  Standard_Real    par;
-  Standard_Integer tsp, tsps;
-  Standard_Integer lpi, ltz;
+  Standard_Real    par = NAN;
+  Standard_Integer tsp = 0, tsps = 0;
+  Standard_Integer lpi = 0, ltz = 0;
   Standard_Boolean Only1Seg=Standard_False;
 
 #define PI1 (myTZones(ltz-decal).GetPoint(lpi))
@@ -242,7 +244,7 @@ void Intf_InterferencePolygon2d::Clean()
 
   for (ltz=1; ltz<=nbIt; ltz++) {
     tsp=tsps=0;
-    Standard_Real pr1mi,pr1ma,pr2mi,pr2ma,delta1,delta2;
+    Standard_Real pr1mi = NAN,pr1ma = NAN,pr2mi = NAN,pr2ma = NAN,delta1 = NAN,delta2 = NAN;
     myTZones(ltz-decal).ParamOnFirst(pr1mi,pr1ma);
     delta1=pr1ma-pr1mi;
     myTZones(ltz-decal).ParamOnSecond(pr2mi,pr2ma);
@@ -437,7 +439,7 @@ void Intf_InterferencePolygon2d::Intersect
     else if (rayIntf>=Tolerance) {
       Standard_Real deltaO=rayIntf/lgO;
       Standard_Real deltaT=rayIntf/lgT;
-      Standard_Real x, y;
+      Standard_Real x = NAN, y = NAN;
       Standard_Real parOdeb=parOSP-deltaO;
       Standard_Real parOfin=parOSP+deltaO;
       Standard_Real parTdeb=parTSP-sigPS*deltaT;
@@ -496,7 +498,7 @@ void Intf_InterferencePolygon2d::Intersect
 	    parTmax=Max(parTmax, parT[i]);
 	  }
 
-	  Standard_Real    delta;
+	  Standard_Real    delta = NAN;
 	  if (parOdeb<0.) {
 	    delta=-parOdeb;
 	    parOdeb=0.;
@@ -565,7 +567,7 @@ void Intf_InterferencePolygon2d::Intersect
   }
   
   //-- lbr : The points too close to each other are suspended
-  Standard_Boolean suppr;
+  Standard_Boolean suppr = 0;
   do { 
     suppr=Standard_False;
     for(Standard_Integer i=2; suppr==Standard_False && i<=nbpi; i++) { 
@@ -621,7 +623,7 @@ void Intf_InterferencePolygon2d::Intersect
       TheTZ.PolygonInsert(thePi(2));
     }
     else {
-      Standard_Integer lpj;
+      Standard_Integer lpj = 0;
       Standard_Integer lmin=1;
       Standard_Integer lmax=1;
       for (lpj=2; lpj<=nbpi; lpj++) {

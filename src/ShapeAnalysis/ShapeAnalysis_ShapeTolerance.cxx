@@ -14,6 +14,8 @@
 //#76 rln 11.03.99 S4135: compute average without weights according to tolerances
 //szv#4 S4163
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <ShapeAnalysis_ShapeTolerance.hxx>
 #include <TopExp_Explorer.hxx>
@@ -86,7 +88,7 @@ Standard_Real ShapeAnalysis_ShapeTolerance::Tolerance(const TopoDS_Shape& shape,
 
  Handle(TopTools_HSequenceOfShape) ShapeAnalysis_ShapeTolerance::InTolerance(const TopoDS_Shape& shape,const Standard_Real valmin,const Standard_Real valmax,const TopAbs_ShapeEnum type) const
 {
-  Standard_Real tol;
+  Standard_Real tol = NAN;
   Standard_Boolean over = (valmax < valmin);  // pas de liminite max
   Handle(TopTools_HSequenceOfShape) sl = new TopTools_HSequenceOfShape ();
 
@@ -191,7 +193,7 @@ Standard_Real ShapeAnalysis_ShapeTolerance::Tolerance(const TopoDS_Shape& shape,
  void ShapeAnalysis_ShapeTolerance::AddTolerance(const TopoDS_Shape& shape,const TopAbs_ShapeEnum type) 
 {
   Standard_Integer nbt   = 0;
-  Standard_Real tol, cmin = 0.,cmoy = 0.,cmax = 0.;
+  Standard_Real tol = NAN, cmin = 0.,cmoy = 0.,cmax = 0.;
 
   TopExp_Explorer myExp;
 

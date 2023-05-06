@@ -16,6 +16,8 @@
 //    Creation of a circle tangent to an element and having center in a point    +
 //================================================================================
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <GccAna_Circ2dTanCen.hxx>
 #include <GccEnt_BadQualifier.hxx>
@@ -48,7 +50,7 @@ GccAna_Circ2dTanCen::
 //   Initialization of fields.                                          +
 //========================================================================
 
-   cirsol(1,2)   ,
+   NbrSol(0), WellDone(Standard_False), cirsol(1,2)   ,
    qualifier1(1,2) ,
    TheSame1(1,2) ,
    pnttg1sol(1,2),
@@ -56,9 +58,9 @@ GccAna_Circ2dTanCen::
    pararg1(1,2)
 {
 
-   NbrSol = 0;
+   
    Standard_Real Radius = 0.0;
-   WellDone = Standard_False;
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
      throw GccEnt_BadQualifier();
@@ -69,7 +71,7 @@ GccAna_Circ2dTanCen::
    gp_Circ2d C1 = Qualified1.Qualified();
    Standard_Real R1 = C1.Radius();
    gp_Pnt2d center1(C1.Location());
-   Standard_Real dist;
+   Standard_Real dist = NAN;
    Standard_Integer signe = 0;
    Standard_Integer signe1 = 0;
 
@@ -221,7 +223,7 @@ GccAna_Circ2dTanCen::
 //   Initialisation of fields.                                           +
 //=========================================================================
 
-   cirsol(1,1)   ,
+   NbrSol(1), WellDone(Standard_True), cirsol(1,1)   ,
    qualifier1(1,1),
    TheSame1(1,1) ,
    pnttg1sol(1,1),
@@ -238,8 +240,8 @@ GccAna_Circ2dTanCen::
    pnttg1sol(1) = Point1;
    par1sol(1)=ElCLib::Parameter(cirsol(1),pnttg1sol(1));
    pararg1(1) = 0.0;
-   NbrSol = 1;
-   WellDone = Standard_True;
+   
+   
  }
 
 //=========================================================================

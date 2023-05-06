@@ -21,9 +21,9 @@
 //purpose  : 
 //=======================================================================
 
-Standard_MMgrRaw::Standard_MMgrRaw(const Standard_Boolean aClear)
+Standard_MMgrRaw::Standard_MMgrRaw(const Standard_Boolean aClear) : myClear(aClear)
 {
-  myClear = aClear;
+  
 }
 
 //=======================================================================

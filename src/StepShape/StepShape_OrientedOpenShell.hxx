@@ -73,7 +73,7 @@ private:
 
 
   Handle(StepShape_OpenShell) openShellElement;
-  Standard_Boolean orientation;
+  Standard_Boolean orientation{};
 
 
 };

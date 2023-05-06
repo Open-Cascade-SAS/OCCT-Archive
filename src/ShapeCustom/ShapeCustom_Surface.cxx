@@ -14,6 +14,8 @@
 //abv 06.01.99 fix of misprint
 //:p6 abv 26.02.99: make ConvertToPeriodic() return Null if nothing done
 
+#include <math.h>
+
 #include <ShapeCustom_Surface.hxx>
 
 #include <ElSLib.hxx>
@@ -78,8 +80,8 @@ Handle(Geom_Surface) ShapeCustom_Surface::ConvertToAnalytical (const Standard_Re
 {
   Handle(Geom_Surface) newSurf;
 
-  Standard_Integer nUP, nVP, nCP, i, j , UDeg, VDeg;
-  Standard_Real U1, U2, V1, V2, C1, C2, DU, DV, U=0, V=0;
+  Standard_Integer nUP = 0, nVP = 0, nCP = 0, i = 0, j = 0 , UDeg = 0, VDeg = 0;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN, C1 = NAN, C2 = NAN, DU = NAN, DV = NAN, U=0, V=0;
   Handle(Geom_Curve) iso;
   Standard_Boolean uClosed = Standard_True;
 
@@ -283,7 +285,7 @@ Handle(Geom_Surface) ShapeCustom_Surface::ConvertToAnalytical (const Standard_Re
 		   0.5*(p3(1).Z()+p3(2).Z()));
 	gp_Vec aVec(p10, p3(1));
 	gp_Vec aVec2(p10, p3(3));
-	Standard_Real RR1 = R(1), RR2 = R(2), RR3;
+	Standard_Real RR1 = R(1), RR2 = R(2), RR3 = NAN;
 	aVec ^= aVec2;
 
 	if (aVec.Magnitude() <= gp::Resolution()) aVec.SetCoord(0., 0., 1.);
@@ -322,7 +324,7 @@ Handle(Geom_Surface) ShapeCustom_Surface::ConvertToAnalytical (const Standard_Re
   gp_Pnt P3d, P3d2;
   Standard_Boolean onSurface = Standard_True;
 
-  Standard_Real dis;  myGap = 0.;
+  Standard_Real dis = NAN;  myGap = 0.;
 
   DU = (U2-U1)/(NP-1);
   DV = (V2-V1)/(NP-1);

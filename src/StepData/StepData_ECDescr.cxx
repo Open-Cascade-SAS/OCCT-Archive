@@ -45,7 +45,7 @@ StepData_ECDescr::StepData_ECDescr  ()    {  }
     Handle(TColStd_HSequenceOfAsciiString)  StepData_ECDescr::TypeList () const
 {
   Handle(TColStd_HSequenceOfAsciiString) tl = new TColStd_HSequenceOfAsciiString();
-  Standard_Integer i, nb = NbMembers();
+  Standard_Integer i = 0, nb = NbMembers();
   for (i = 1; i <= nb; i ++) {
     TCollection_AsciiString nam (Member(i)->TypeName());
     tl->Append(nam);
@@ -56,7 +56,7 @@ StepData_ECDescr::StepData_ECDescr  ()    {  }
 
     Standard_Boolean  StepData_ECDescr::Matches (const Standard_CString name) const
 {
-  Standard_Integer i, nb = NbMembers();
+  Standard_Integer i = 0, nb = NbMembers();
   for (i = 1; i <= nb; i ++) {
     Handle(StepData_ESDescr) member = Member(i);
     if (member->Matches(name)) return Standard_True;
@@ -70,7 +70,7 @@ StepData_ECDescr::StepData_ECDescr  ()    {  }
     Handle(StepData_Described)  StepData_ECDescr::NewEntity () const
 {
   Handle(StepData_Plex) ent = new StepData_Plex (this);
-  Standard_Integer i, nb = NbMembers();
+  Standard_Integer i = 0, nb = NbMembers();
   for (i = 1; i <= nb; i ++) {
     Handle(StepData_ESDescr) member = Member(i);
     Handle(StepData_Simple) mem = Handle(StepData_Simple)::DownCast(member->NewEntity());

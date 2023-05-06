@@ -84,7 +84,7 @@ void RWStepKinematics_RWSlidingCurvePair::ReadStep (const Handle(StepData_StepRe
   Handle(StepGeom_Curve) aPlanarCurvePair_Curve2;
   theData->ReadEntity (theNum, 8, "planar_curve_pair.curve2", theArch, STANDARD_TYPE(StepGeom_Curve), aPlanarCurvePair_Curve2);
 
-  Standard_Boolean aPlanarCurvePair_Orientation;
+  Standard_Boolean aPlanarCurvePair_Orientation = 0;
   theData->ReadBoolean (theNum, 9, "planar_curve_pair.orientation", theArch, aPlanarCurvePair_Orientation);
 
   // Initialize entity

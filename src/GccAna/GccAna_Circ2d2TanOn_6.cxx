@@ -49,7 +49,7 @@ GccAna_Circ2d2TanOn::
                         const GccEnt_QualifiedCirc& Qualified2 ,
                         const gp_Circ2d&            OnCirc     ,
                         const Standard_Real         Tolerance  ):
-   cirsol(1,8)     ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,8)     ,
    qualifier1(1,8) ,
    qualifier2(1,8) ,
    TheSame1(1,8) ,
@@ -65,8 +65,8 @@ GccAna_Circ2d2TanOn::
 {
   TheSame1.Init(0);
   TheSame2.Init(0);
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
       !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 

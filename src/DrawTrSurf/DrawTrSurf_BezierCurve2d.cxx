@@ -27,19 +27,19 @@
 IMPLEMENT_STANDARD_RTTIEXT(DrawTrSurf_BezierCurve2d, DrawTrSurf_Curve2d)
 
 DrawTrSurf_BezierCurve2d::DrawTrSurf_BezierCurve2d (const Handle(Geom2d_BezierCurve)& C)
-: DrawTrSurf_Curve2d (C, Draw_vert, 50)
+: DrawTrSurf_Curve2d (C, Draw_vert, 50), drawPoles(Standard_True)
 {
-  drawPoles = Standard_True;
+  
   polesLook = Draw_rouge;
 }
 
 DrawTrSurf_BezierCurve2d::DrawTrSurf_BezierCurve2d (const Handle(Geom2d_BezierCurve)& C, const Draw_Color& CurvColor,
                                                     const Draw_Color& PolesColor, const Standard_Boolean ShowPoles,
                                                     const Standard_Integer Discret)
-: DrawTrSurf_Curve2d (C, CurvColor, Discret)
+: DrawTrSurf_Curve2d (C, CurvColor, Discret), drawPoles(ShowPoles), polesLook(PolesColor)
 {
-  drawPoles = ShowPoles;
-  polesLook = PolesColor;
+  
+  
 }
 
 void DrawTrSurf_BezierCurve2d::DrawOn (Draw_Display& dis) const

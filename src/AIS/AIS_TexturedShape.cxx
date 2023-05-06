@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <AIS_TexturedShape.hxx>
 
 #include <AIS_GraphicTool.hxx>
@@ -266,8 +268,8 @@ void AIS_TexturedShape::updateAttributes (const Handle(Prs3d_Presentation)& theP
   myAspect = new Graphic3d_AspectFillArea3d (*myDrawer->ShadingAspect()->Aspect());
   if (HasPolygonOffsets())
   {
-    Standard_Integer aMode;
-    Standard_ShortReal aFactor, aUnits;
+    Standard_Integer aMode = 0;
+    Standard_ShortReal aFactor = NAN, aUnits = NAN;
     PolygonOffsets (aMode, aFactor, aUnits);
     myAspect->SetPolygonOffsets (aMode, aFactor, aUnits);
   }

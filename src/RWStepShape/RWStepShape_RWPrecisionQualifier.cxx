@@ -31,7 +31,7 @@ void RWStepShape_RWPrecisionQualifier::ReadStep
 
 	// --- own field : precision_value ---
 
-	Standard_Integer PV;
+	Standard_Integer PV = 0;
 	data->ReadInteger (num,1,"precision_value",ach,PV);
 
 	//--- Initialisation of the read entity ---

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bisector.hxx>
 #include <Bisector_BisecPC.hxx>
 #include <ElCLib.hxx>
@@ -70,20 +72,20 @@ Bisector_BisecPC::Bisector_BisecPC(const Handle(Geom2d_Curve)& Cu,
 				   const gp_Pnt2d&             P,
 				   const Standard_Real         Side,
 				   const Standard_Real         UMin,
-				   const Standard_Real         UMax)
+				   const Standard_Real         UMax) : point(P), sign(Side), bisInterval(1), extensionStart(Standard_False), extensionEnd(Standard_False), isConvex(Bisector::IsConvex(curve,sign))
 
 {
   curve    = Handle (Geom2d_Curve)::DownCast(Cu->Copy());
-  point    = P;
-  sign     = Side;
+  
+  
   startIntervals.Append(UMin);
   endIntervals  .Append(UMax);  
-  bisInterval    = 1;
-  extensionStart = Standard_False;
-  extensionEnd   = Standard_False; 
+  
+  
+  
   pointStartBis  = Value(UMin);
   pointEndBis    = Value(UMax);
-  isConvex = Bisector::IsConvex(curve,sign);
+  
 }
 
 //=============================================================================
@@ -324,7 +326,7 @@ void Bisector_BisecPC::Extension(const Standard_Real    U,
 				       gp_Vec2d&        V2,
 				       gp_Vec2d&        V3 ) const
 {
-  Standard_Real dU;
+  Standard_Real dU = NAN;
 
   V1.SetCoord(0., 0.);
   V2.SetCoord(0., 0.);
@@ -398,7 +400,7 @@ void Bisector_BisecPC::Values(const Standard_Real    U,
   
   Standard_Real SquarePPC = aPPC.SquareMagnitude();
   Standard_Real NorPPC    = Nor.Dot(aPPC);
-  Standard_Real A1;
+  Standard_Real A1 = NAN;
 
   if (Abs(NorPPC) > gp::Resolution() && (NorPPC*sign) < 0.) {
     A1 = 0.5*SquarePPC/NorPPC;
@@ -608,7 +610,7 @@ gp_Vec2d Bisector_BisecPC::DN (const Standard_Real     U,
 Standard_Real Bisector_BisecPC::SearchBound (const Standard_Real U1,
 					     const Standard_Real U2) const
 {
-  Standard_Real Dist1,DistMid,U11,U22; 
+  Standard_Real Dist1 = NAN,DistMid = NAN,U11 = NAN,U22 = NAN; 
   Standard_Real UMid = 0.;
   Standard_Real Tol      = Precision::PConfusion();
   Standard_Real DistMax2 = distMax*distMax;
@@ -646,7 +648,7 @@ void Bisector_BisecPC::ComputeIntervals ()
 {
   Standard_Real U1 =0.,U2 =0.,UProj =0.;
   Standard_Real UStart = 0., UEnd = 0.;
-  Standard_Real Dist1,Dist2,DistProj;
+  Standard_Real Dist1 = NAN,Dist2 = NAN,DistProj = NAN;
   isEmpty        = Standard_False;     
   shiftParameter = 0.;
   Standard_Boolean YaProj   = Standard_False;

@@ -132,13 +132,13 @@ namespace
     }
 
     //! Indicates should the given box be rejected or not.
-    virtual Standard_Boolean Reject(const Bnd_Box2d& theBox) const
+    Standard_Boolean Reject(const Bnd_Box2d& theBox) const override
     {
       return myBox.IsOut(theBox);
     }
 
     //! Accepts segment with the given index in case if it fits conditions.
-    virtual Standard_Boolean Accept(const Standard_Integer& theSegmentIndex)
+    Standard_Boolean Accept(const Standard_Integer& theSegmentIndex) override
     {
       const BRepMesh_FaceChecker::Segment& aSegment = mySegments->Value(theSegmentIndex);
 

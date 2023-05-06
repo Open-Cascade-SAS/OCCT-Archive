@@ -16,17 +16,17 @@
 #include <IFSelect_SelectionIterator.hxx>
 #include <Standard_NoSuchObject.hxx>
 
-IFSelect_SelectionIterator::IFSelect_SelectionIterator ()
+IFSelect_SelectionIterator::IFSelect_SelectionIterator () : thecurr(1), thelist(new IFSelect_HSeqOfSelection())
 {
-  thecurr = 1;
-  thelist = new IFSelect_HSeqOfSelection();
+  
+  
 }
 
     IFSelect_SelectionIterator::IFSelect_SelectionIterator
-  (const Handle(IFSelect_Selection)& sel)
+  (const Handle(IFSelect_Selection)& sel) : thecurr(1), thelist(new IFSelect_HSeqOfSelection())
 {
-  thecurr = 1;
-  thelist = new IFSelect_HSeqOfSelection();
+  
+  
   sel->FillIterator(*this);
 }
 

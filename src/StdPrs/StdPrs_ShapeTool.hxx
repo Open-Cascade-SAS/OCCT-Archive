@@ -99,8 +99,8 @@ private:
   TopExp_Explorer myFaceExplorer;
   TopTools_IndexedDataMapOfShapeListOfShape myEdgeMap;
   TopTools_IndexedMapOfShape myVertexMap;
-  Standard_Integer myEdge;
-  Standard_Integer myVertex;
+  Standard_Integer myEdge{};
+  Standard_Integer myVertex{};
 
 };
 

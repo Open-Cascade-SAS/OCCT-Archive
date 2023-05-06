@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_CurveTessellator.hxx>
 #include <gp_Pnt.hxx>
 #include <TopoDS_Edge.hxx>
@@ -183,7 +185,7 @@ void BRepMesh_CurveTessellator::splitByDeflection2d ()
 
       const TopoDS_Edge aCurrEdge = TopoDS::Edge(myEdge.Oriented(aPCurve->GetOrientation()));
 
-      Standard_Real aF, aL;
+      Standard_Real aF = NAN, aL = NAN;
       Handle (Geom2d_Curve) aCurve2d = BRep_Tool::CurveOnSurface (aCurrEdge, aFace, aF, aL);
       TColStd_Array1OfReal aParamArray (1, aNodesNb);
       for (Standard_Integer i = 1; i <= aNodesNb; ++i)
@@ -305,7 +307,7 @@ void BRepMesh_CurveTessellator::splitSegment (
 
   gp_Pnt2d uvf, uvl, uvm;
   gp_Pnt   P3dF, P3dL, midP3d, midP3dFromSurf;
-  Standard_Real midpar;
+  Standard_Real midpar = NAN;
 
   if (Abs(theLast - theFirst) < 2 * Precision::PConfusion())
   {

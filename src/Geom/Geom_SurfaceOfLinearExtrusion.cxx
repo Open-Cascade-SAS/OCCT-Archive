@@ -77,12 +77,12 @@ Handle(Geom_Geometry) Geom_SurfaceOfLinearExtrusion::Copy () const
 
 Geom_SurfaceOfLinearExtrusion::Geom_SurfaceOfLinearExtrusion 
   ( const Handle(Geom_Curve)& C, 
-    const Dir& V) {
+    const Dir& V) : myEvaluator(new GeomEvaluator_SurfaceOfExtrusion(basisCurve, direction)) {
 
    basisCurve = Handle(Geom_Curve)::DownCast(C->Copy());  // Copy 10-03-93
    direction  = V;
    smooth     = C->Continuity();
-   myEvaluator = new GeomEvaluator_SurfaceOfExtrusion(basisCurve, direction);
+   
  }
 
 

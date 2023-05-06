@@ -25,10 +25,10 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Expr_NamedConstant,Expr_NamedExpression)
 
-Expr_NamedConstant::Expr_NamedConstant(const TCollection_AsciiString& name, const Standard_Real value)
+Expr_NamedConstant::Expr_NamedConstant(const TCollection_AsciiString& name, const Standard_Real value) : myValue(value)
 {
   SetName(name);
-  myValue = value;
+  
 }
 
 const Handle(Expr_GeneralExpression)& Expr_NamedConstant::SubExpression (const Standard_Integer ) const

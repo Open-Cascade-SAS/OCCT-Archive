@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_ExtCC2d.hxx>
 #include <Extrema_ExtPC2d.hxx>
 #include <Extrema_POnCurv2d.hxx>
@@ -50,7 +52,7 @@ void MAT2d_MiniPath::Perform
    const Standard_Boolean                    Sense)
 {
 
-  Standard_Integer         i,j;
+  Standard_Integer         i = 0,j = 0;
   Standard_Integer         NbLines   = Figure.Length();
   MAT2d_Array2OfConnexion  Connexion (1,NbLines,1,NbLines);
   
@@ -71,8 +73,8 @@ void MAT2d_MiniPath::Perform
  
   TColStd_SequenceOfInteger Set1;
   TColStd_SequenceOfInteger Set2;
-  Standard_Real             DistS1S2;
-  Standard_Integer          IndiceLine1,IndiceLine2;
+  Standard_Real             DistS1S2 = NAN;
+  Standard_Integer          IndiceLine1 = 0,IndiceLine2 = 0;
   Standard_Integer          ISuiv =0,MinOnSet1 =0,MinOnSet2 =0;
   //---------------------------------------------------------------------------
   // - 0 Set1 est initialise avec la ligne de depart.
@@ -222,7 +224,7 @@ Handle(MAT2d_Connexion) MAT2d_MiniPath::Father(const Standard_Integer ILine)
 //============================================================================
 void MAT2d_MiniPath::RunOnConnexions() 
 {
-  Standard_Integer                  i;
+  Standard_Integer                  i = 0;
   Handle(MAT2d_Connexion)           C;
   const MAT2d_SequenceOfConnexion&  SC = theConnexions(indStart);
 
@@ -243,7 +245,7 @@ void MAT2d_MiniPath::RunOnConnexions()
 void MAT2d_MiniPath::ExploSons(      MAT2d_SequenceOfConnexion& CResult,
 			       const Handle(MAT2d_Connexion)&   CRef   ) 
 {
-  Standard_Integer                 i;  
+  Standard_Integer                 i = 0;  
   Standard_Integer                 Index = CRef->IndexSecondLine();
 
   if (!theConnexions.IsBound(Index)) return;
@@ -286,8 +288,8 @@ Handle(MAT2d_Connexion) MAT2d_MiniPath::MinimumL1L2
    const Standard_Integer                    IL2) const
 {
   Extrema_POnCurv2d              PointOnCurv1,PointOnCurv2;
-  Standard_Integer               IC1,IC2,IMinC1 =0,IMinC2 =0,i;
-  Standard_Real                  DistL1L2_2,DistP1P2_2;
+  Standard_Integer               IC1 = 0,IC2 = 0,IMinC1 =0,IMinC2 =0,i = 0;
+  Standard_Real                  DistL1L2_2 = NAN,DistP1P2_2 = NAN;
   Standard_Real                  ParameterOnC1 =0.,ParameterOnC2 =0.;
   TColGeom2d_SequenceOfGeometry  L1,L2;
   gp_Pnt2d                       Point1,Point2,P1,P2;

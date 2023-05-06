@@ -71,7 +71,7 @@ protected:
   Handle(Graphic3d_AspectLine3d) myArrowAspect;
   Standard_Real myAngle;
   Standard_Real myLength;
-  Standard_Boolean myIsZoomable;
+  Standard_Boolean myIsZoomable{};
 
 };
 

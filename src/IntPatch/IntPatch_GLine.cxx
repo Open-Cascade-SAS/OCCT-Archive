@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp_Circ.hxx>
 #include <IntPatch_GLine.hxx>
 #include <IntPatch_Point.hxx>
@@ -379,9 +381,9 @@ void IntPatch_GLine::AddVertex (const IntPatch_Point& Pnt)
 
 void IntPatch_GLine::ComputeVertexParameters(const Standard_Real /*Tol*/)
 { 
-  Standard_Boolean   SortIsOK,APointDeleted;
+  Standard_Boolean   SortIsOK = 0,APointDeleted = 0;
   Standard_Boolean   SortAgain = Standard_True;
-  Standard_Integer   i,j;
+  Standard_Integer   i = 0,j = 0;
   const Standard_Real ParamMinOnLine = (fipt? Vertex(indf).ParameterOnLine() : -100000.0);
   const Standard_Real ParamMaxOnLine = (lapt? Vertex(indl).ParameterOnLine() :  100000.0);
 
@@ -740,7 +742,7 @@ void IntPatch_GLine::ComputeVertexParameters(const Standard_Real /*Tol*/)
               // 		   ||(Abs(ponline-M_PI-M_PI) <=PrecisionPConfusion))
               // eap, <<=
 
-              Standard_Real u1a,v1a,u2a,v2a,u1b,v1b,u2b,v2b;
+              Standard_Real u1a = NAN,v1a = NAN,u2a = NAN,v2a = NAN,u1b = NAN,v1b = NAN,u2b = NAN,v2b = NAN;
               VTXM1.Parameters(u1a,v1a,u2a,v2a);
               VTX.Parameters(u1b,v1b,u2b,v2b);
               Standard_Integer flag  = 0;

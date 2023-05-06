@@ -102,7 +102,7 @@ void Message_PrinterOStream::Close ()
   ostr->flush();
   if ( myIsFile )
   {
-    std::ofstream* ofile = (std::ofstream* )ostr;
+    std::ofstream* ofile = dynamic_cast<std::ofstream*>(ostr);
     ofile->close();
     delete ofile;
     myIsFile = Standard_False;

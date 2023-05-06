@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepShape_RWBlock.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -47,19 +49,19 @@ void RWStepShape_RWBlock::ReadStep
 
 	// --- own field : x ---
 
-	Standard_Real aX;
+	Standard_Real aX = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"x",ach,aX);
 
 	// --- own field : y ---
 
-	Standard_Real aY;
+	Standard_Real aY = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"y",ach,aY);
 
 	// --- own field : z ---
 
-	Standard_Real aZ;
+	Standard_Real aZ = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat5 =` not needed
 	data->ReadReal (num,5,"z",ach,aZ);
 

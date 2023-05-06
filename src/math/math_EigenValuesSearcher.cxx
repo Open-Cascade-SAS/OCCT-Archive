@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math_EigenValuesSearcher.hxx>
 #include <StdFail_NotDone.hxx>
 
@@ -28,9 +30,9 @@ static inline Standard_Real pythag(const Standard_Real x,
 }
 
 math_EigenValuesSearcher::math_EigenValuesSearcher(const TColStd_Array1OfReal& Diagonal,
-						   const TColStd_Array1OfReal& Subdiagonal)
+						   const TColStd_Array1OfReal& Subdiagonal) : myIsDone(Standard_False)
 {
-  myIsDone = Standard_False;
+  
 
   Standard_Integer n = Diagonal.Length();
   if (Subdiagonal.Length() != n)
@@ -47,7 +49,7 @@ math_EigenValuesSearcher::math_EigenValuesSearcher(const TColStd_Array1OfReal& D
   Standard_Real* d  = new Standard_Real [n+1];
   Standard_Real* e  = new Standard_Real [n+1];
   Standard_Real** z = new Standard_Real* [n+1];
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   for (i = 1; i <= n; i++)
     z[i] = new Standard_Real [n+1];
 
@@ -59,20 +61,20 @@ math_EigenValuesSearcher::math_EigenValuesSearcher(const TColStd_Array1OfReal& D
     for (j = 1; j <= n; j++)
       z[i][j] = (i == j)? 1. : 0.;
 
-  Standard_Boolean result;
-  Standard_Integer m;
-  Standard_Integer l;
-  Standard_Integer iter;
+  Standard_Boolean result = 0;
+  Standard_Integer m = 0;
+  Standard_Integer l = 0;
+  Standard_Integer iter = 0;
   //Standard_Integer i;
-  Standard_Integer k;
-  Standard_Real    s;
-  Standard_Real    r;
-  Standard_Real    p;
-  Standard_Real    g;
-  Standard_Real    f;
-  Standard_Real    dd;
-  Standard_Real    c;
-  Standard_Real    b;
+  Standard_Integer k = 0;
+  Standard_Real    s = NAN;
+  Standard_Real    r = NAN;
+  Standard_Real    p = NAN;
+  Standard_Real    g = NAN;
+  Standard_Real    f = NAN;
+  Standard_Real    dd = NAN;
+  Standard_Real    c = NAN;
+  Standard_Real    b = NAN;
 
   result = Standard_True;
 
@@ -191,7 +193,7 @@ math_Vector math_EigenValuesSearcher::EigenVector(const Standard_Integer Index) 
 {
   math_Vector theVector(1, myN);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= myN; i++)
     theVector(i) = myEigenVectors->Value(i, Index);
 

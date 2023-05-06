@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -59,7 +61,7 @@ void HLRTopoBRep_FaceIsoLiner::Perform (const Standard_Integer FI,
 {
   (void)FI; // avoid compiler warning
 
-  Standard_Real UMin, UMax, VMin, VMax, U1, U2;
+  Standard_Real UMin = NAN, UMax = NAN, VMin = NAN, VMax = NAN, U1 = NAN, U2 = NAN;
   Standard_Integer ne = 0;
   //BRep_Builder Builder;
   TopoDS_Edge Edge;
@@ -118,7 +120,7 @@ void HLRTopoBRep_FaceIsoLiner::Perform (const Standard_Integer FI,
   for (ExpEdges.Init (TF, TopAbs_EDGE);
        ExpEdges.More();
        ExpEdges.Next()) {
-    Standard_Integer IndE;
+    Standard_Integer IndE = 0;
     const TopoDS_Edge& newE = TopoDS::Edge(ExpEdges.Current());
     const Handle(Geom2d_Curve) PC =
       BRep_Tool::CurveOnSurface (newE, TF, U1, U2);
@@ -142,7 +144,7 @@ void HLRTopoBRep_FaceIsoLiner::Perform (const Standard_Integer FI,
     for(itE.Initialize(DS.FaceIntL(TF));
 	itE.More();
 	itE.Next()) {
-      Standard_Integer IndE;
+      Standard_Integer IndE = 0;
       const TopoDS_Edge& newE = TopoDS::Edge(itE.Value());
       const Handle(Geom2d_Curve) PC =
 	BRep_Tool::CurveOnSurface (newE, TF, U1, U2);
@@ -168,7 +170,7 @@ void HLRTopoBRep_FaceIsoLiner::Perform (const Standard_Integer FI,
   BRepAdaptor_Surface Surface (TF);
   Standard_Real Tolerance = BRep_Tool::Tolerance (TF);
   
-  Standard_Integer IIso;
+  Standard_Integer IIso = 0;
   Standard_Real DeltaU = Abs (UMax - UMin);
   Standard_Real DeltaV = Abs (VMax - VMin);
   Standard_Real Confusion = Min (DeltaU, DeltaV) * HatcherConfusion3d;

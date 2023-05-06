@@ -33,9 +33,9 @@ Units_ShiftedUnit::Units_ShiftedUnit(const Standard_CString aname,
 				     const Standard_Real avalue,
 				     const Standard_Real amove,
 				     const Handle(Units_Quantity)& aquantity)
-     : Units_Unit(aname,asymbol,avalue,aquantity)
+     : Units_Unit(aname,asymbol,avalue,aquantity), themove(amove)
 {
-  themove = amove;
+  
 }
 
 //=======================================================================
@@ -100,7 +100,7 @@ Handle(Units_Token) Units_ShiftedUnit::Token() const
 void Units_ShiftedUnit::Dump(const Standard_Integer ,
 			     const Standard_Integer ) const
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   TCollection_AsciiString string;
 
 //  int i;

@@ -17,6 +17,8 @@
 // PTV    22.08.2002 OCC609 transfer solo vertices into step file.
 // PTV    16.09.2002 OCC725 transfer compound of vertices into one geometrical curve set.
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRep_TEdge.hxx>
@@ -228,7 +230,7 @@ static Standard_Boolean IsManifoldShape(const TopoDS_Shape& theShape) {
 
   TopoDS_Iterator anIt(theShape);
   for ( ; anIt.More(); anIt.Next() ) {
-    TopoDS_Shape aDirectChild = anIt.Value();
+    const TopoDS_Shape& aDirectChild = anIt.Value();
     if (aDirectChild.ShapeType() != TopAbs_COMPOUND)
       aBrepBuilder.Add(aDirectShapes, aDirectChild);
   }  
@@ -498,7 +500,7 @@ Standard_Boolean  STEPControl_ActorWrite::Recognize (const Handle(Transfer_Finde
     }
     for (TopExp_Explorer fedg(theShape,TopAbs_EDGE); fedg.More(); fedg.Next()) {
       const TopoDS_Edge& E = TopoDS::Edge (fedg.Current());
-      TopLoc_Location locbid;  Standard_Real first,last;
+      TopLoc_Location locbid;  Standard_Real first = NAN,last = NAN;
       Handle(Geom_Curve) curv = BRep_Tool::Curve (E,locbid,first,last);
       if (curv.IsNull() || !curv->IsKind(STANDARD_TYPE(Geom_Line)) ) return Standard_False;
     }
@@ -791,7 +793,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferShape
 
     // Transfer Solids to closed Shells. Prepare RepItemSeq & NonManifoldGroup
     for ( TopoDS_Iterator iter(aNMCompound); iter.More(); iter.Next() ) {
-      TopoDS_Shape aSubShape = iter.Value();
+      const TopoDS_Shape& aSubShape = iter.Value();
       if (aSubShape.ShapeType() == TopAbs_SOLID) {
         for ( TopoDS_Iterator aSubIter(aSubShape); aSubIter.More(); aSubIter.Next() ) {
           TopoDS_Shell aSubShell = TopoDS::Shell( aSubIter.Value() );
@@ -1191,7 +1193,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferShape
               aGCSet->SetName(empty);
               // iterates on compound with vertices and traces each vertex
               for ( anExp.ReInit() ; anExp.More(); anExp.Next() ) {
-                TopoDS_Shape aVertex = anExp.Current();
+                const TopoDS_Shape& aVertex = anExp.Current();
                 if ( aVertex.ShapeType() != TopAbs_VERTEX )
                   continue;
                 curNb++;
@@ -1276,7 +1278,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferShape
       if (isManifold)
         shapeRep = new StepShape_ManifoldSurfaceShapeRepresentation;
       else {
-        Standard_Boolean isNewNMSSRCreated;
+        Standard_Boolean isNewNMSSRCreated = 0;
         shapeRep = this->getNMSSRForGroup(shapeGroup, FP, isNewNMSSRCreated);
         useExistingNMSSR = !isNewNMSSRCreated;
       }
@@ -1294,7 +1296,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferShape
           if (isManifold)
             shapeRep = new StepShape_ManifoldSurfaceShapeRepresentation;
           else {
-            Standard_Boolean isNewNMSSRCreated;
+            Standard_Boolean isNewNMSSRCreated = 0;
             shapeRep = this->getNMSSRForGroup(shapeGroup, FP, isNewNMSSRCreated);
             useExistingNMSSR = !isNewNMSSRCreated;
           }
@@ -1459,7 +1461,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferCompound
 
   // Inspect non-manifold topology case (ssv; 10.11.2010)
   Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
-  Standard_Boolean isManifold;
+  Standard_Boolean isManifold = 0;
   if (isNMMode)
     isManifold = IsManifoldShape(theShape);
   else
@@ -1483,7 +1485,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferCompound
   #endif
 
   for (TopoDS_Iterator iter(theShape); iter.More(); iter.Next()) {
-    TopoDS_Shape aSubShape = iter.Value();
+    const TopoDS_Shape& aSubShape = iter.Value();
     if (aSubShape.ShapeType() != TopAbs_VERTEX || !isSeparateVertices) {
 
       // Store non-manifold topology as shells (ssv; 10.11.2010)
@@ -1526,7 +1528,7 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferCompound
   binder->AddResult ( TransientResult(shapeRep) );
 
   // translate components
-  Standard_Integer i, nbs = RepItemSeq->Length();
+  Standard_Integer i = 0, nbs = RepItemSeq->Length();
   Handle(TColStd_HSequenceOfTransient) ItemSeq = new TColStd_HSequenceOfTransient();
   ItemSeq->Append (myContext.GetDefaultAxis());
   myContext.NextLevel();
@@ -1597,7 +1599,7 @@ Handle(Transfer_Binder)  STEPControl_ActorWrite::TransferSubShape
   gp_Trsf aLoc;
   Standard_Boolean isShapeLocated = Standard_False;
   if ( GroupMode() >0) {
-    TopLoc_Location shloc = shape.Location();
+    const TopLoc_Location& shloc = shape.Location();
     isShapeLocated = !shloc.IsIdentity();
     aLoc = shloc.Transformation();
     TopLoc_Location shident;
@@ -1643,7 +1645,7 @@ Handle(Transfer_Binder)  STEPControl_ActorWrite::TransferSubShape
 
   // make location for assembly placement
   GeomToStep_MakeAxis2Placement3d mkax (aLoc);
-  Handle(StepGeom_Axis2Placement3d) AxLoc = mkax.Value();
+  const Handle(StepGeom_Axis2Placement3d)& AxLoc = mkax.Value();
   AX1 = AxLoc;
 
   // create assembly structures (CDSR, NAUO etc.)

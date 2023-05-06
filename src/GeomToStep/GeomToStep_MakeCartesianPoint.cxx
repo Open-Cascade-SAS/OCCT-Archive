@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_CartesianPoint.hxx>
 #include <Geom_CartesianPoint.hxx>
 #include <GeomToStep_MakeCartesianPoint.hxx>
@@ -29,11 +31,11 @@
 //=============================================================================
 // Creation d' un cartesian_point de prostep a partir d' un point3d de gp
 //=============================================================================
-GeomToStep_MakeCartesianPoint::GeomToStep_MakeCartesianPoint( const gp_Pnt& P)
+GeomToStep_MakeCartesianPoint::GeomToStep_MakeCartesianPoint( const gp_Pnt& P) : GeomToStep_Root()
 {
   Handle(StepGeom_CartesianPoint) Pstep = new StepGeom_CartesianPoint;
 //  Handle(TColStd_HArray1OfReal) Acoord = new TColStd_HArray1OfReal(1,3);
-  Standard_Real X, Y, Z;
+  Standard_Real X = NAN, Y = NAN, Z = NAN;
   
   P.Coord(X, Y, Z);
 //  Acoord->SetValue(1,X);
@@ -51,11 +53,11 @@ GeomToStep_MakeCartesianPoint::GeomToStep_MakeCartesianPoint( const gp_Pnt& P)
 // Creation d' un cartesian_point de prostep a partir d' un point 2d de gp
 //=============================================================================
 
-GeomToStep_MakeCartesianPoint::GeomToStep_MakeCartesianPoint( const gp_Pnt2d& P)
+GeomToStep_MakeCartesianPoint::GeomToStep_MakeCartesianPoint( const gp_Pnt2d& P) : GeomToStep_Root()
 {
   Handle(StepGeom_CartesianPoint) Pstep = new StepGeom_CartesianPoint;
 //  Handle(TColStd_HArray1OfReal) Acoord = new TColStd_HArray1OfReal(1,2);
-  Standard_Real X, Y;
+  Standard_Real X = NAN, Y = NAN;
   
   P.Coord(X, Y);
 //  Acoord->SetValue(1,X);
@@ -73,12 +75,12 @@ GeomToStep_MakeCartesianPoint::GeomToStep_MakeCartesianPoint( const gp_Pnt2d& P)
 //=============================================================================
 
 GeomToStep_MakeCartesianPoint::
-  GeomToStep_MakeCartesianPoint( const Handle(Geom_CartesianPoint)& P)
+  GeomToStep_MakeCartesianPoint( const Handle(Geom_CartesianPoint)& P) : GeomToStep_Root()
 
 {
   Handle(StepGeom_CartesianPoint) Pstep = new StepGeom_CartesianPoint;
 //  Handle(TColStd_HArray1OfReal) Acoord = new TColStd_HArray1OfReal(1,3);
-  Standard_Real X, Y, Z;
+  Standard_Real X = NAN, Y = NAN, Z = NAN;
   
   P->Coord(X, Y, Z);
 //  Acoord->SetValue(1,X);
@@ -98,12 +100,12 @@ GeomToStep_MakeCartesianPoint::
 //=============================================================================
 
 GeomToStep_MakeCartesianPoint::
-  GeomToStep_MakeCartesianPoint( const Handle(Geom2d_CartesianPoint)& P)
+  GeomToStep_MakeCartesianPoint( const Handle(Geom2d_CartesianPoint)& P) : GeomToStep_Root()
 
 {
   Handle(StepGeom_CartesianPoint) Pstep = new StepGeom_CartesianPoint;
 //  Handle(TColStd_HArray1OfReal) Acoord = new TColStd_HArray1OfReal(1,2);
-  Standard_Real X, Y;
+  Standard_Real X = NAN, Y = NAN;
   
   P->Coord(X, Y);
 //  Acoord->SetValue(1,X);

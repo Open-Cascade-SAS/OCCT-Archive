@@ -68,7 +68,7 @@ void RWStepRepr_RWMakeFromUsageOption::ReadStep (const Handle(StepData_StepReade
 
   // Own fields of MakeFromUsageOption
 
-  Standard_Integer aRanking;
+  Standard_Integer aRanking = 0;
   data->ReadInteger (num, 6, "ranking", ach, aRanking);
 
   Handle(TCollection_HAsciiString) aRankingRationale;

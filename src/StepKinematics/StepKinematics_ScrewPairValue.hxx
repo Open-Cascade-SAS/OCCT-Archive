@@ -46,7 +46,7 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_ScrewPairValue, StepKinematics_PairValue)
 
 private:
-  Standard_Real myActualRotation;
+  Standard_Real myActualRotation{};
 
 };
 #endif // _StepKinematics_ScrewPairValue_HeaderFile_

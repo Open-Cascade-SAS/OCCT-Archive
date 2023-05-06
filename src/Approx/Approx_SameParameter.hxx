@@ -186,7 +186,7 @@ private:
 
   Standard_Boolean mySameParameter;
   Standard_Boolean myDone;
-  Standard_Real myTolReached;
+  Standard_Real myTolReached{};
   Handle(Geom2d_Curve) myCurve2d;
   Handle(Adaptor2d_Curve2d) myHCurve2d;
   Handle(Adaptor3d_Curve) myC3d;

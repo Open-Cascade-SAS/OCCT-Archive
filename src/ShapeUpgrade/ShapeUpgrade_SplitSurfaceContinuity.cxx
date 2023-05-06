@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_OffsetSurface.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_SurfaceOfLinearExtrusion.hxx>
@@ -35,10 +37,10 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_SplitSurfaceContinuity,ShapeUpgrade_Spli
 //purpose  : 
 //=======================================================================
 ShapeUpgrade_SplitSurfaceContinuity::ShapeUpgrade_SplitSurfaceContinuity()
-: myCont(0)
+: myCriterion(GeomAbs_C1), myTolerance(Precision::Confusion()), myCont(0)
 {
-  myCriterion = GeomAbs_C1;
-  myTolerance = Precision::Confusion();
+  
+  
   
 }
 
@@ -77,7 +79,7 @@ ShapeUpgrade_SplitSurfaceContinuity::ShapeUpgrade_SplitSurfaceContinuity()
  void ShapeUpgrade_SplitSurfaceContinuity::Compute(const Standard_Boolean Segment) 
 {
   if(!Segment) {
-    Standard_Real UF,UL,VF,VL;
+    Standard_Real UF = NAN,UL = NAN,VF = NAN,VL = NAN;
     mySurface->Bounds(UF,UL,VF,VL);
     if(!Precision::IsInfinite(UF)) myUSplitValues->SetValue(1,UF);
     if(!Precision::IsInfinite(UL)) myUSplitValues->SetValue(myUSplitValues->Length(),UL);
@@ -138,7 +140,7 @@ ShapeUpgrade_SplitSurfaceContinuity::ShapeUpgrade_SplitSurfaceContinuity()
       myStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE2 );
     if ( spc.Status ( ShapeExtend_DONE3 ) ) {
       myStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE3 );
-      Handle(Geom_Curve) aNewBascurve = spc.GetCurve();
+      const Handle(Geom_Curve)& aNewBascurve = spc.GetCurve();
       Surface->SetBasisCurve(aNewBascurve);
     }
     return;
@@ -149,7 +151,7 @@ ShapeUpgrade_SplitSurfaceContinuity::ShapeUpgrade_SplitSurfaceContinuity()
     if(tmp->Continuity() >=  myCriterion && myUSplitValues->Length() ==2 && myVSplitValues->Length() == 2) {
       return;
     }
-    Standard_Real U1,U2,V1,V2;
+    Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
     tmp->Bounds(U1,U2,V1,V2);
     Handle(Geom_Surface) theSurf = tmp->BasisSurface();
     ShapeUpgrade_SplitSurfaceContinuity sps;

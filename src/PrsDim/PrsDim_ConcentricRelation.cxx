@@ -100,8 +100,8 @@ void PrsDim_ConcentricRelation::ComputeEdgeVertexConcentric(const Handle(Prs3d_P
   gp_Pnt p1,p2;
   Handle(Geom_Curve) C;
   Handle(Geom_Curve) extCurv;
-  Standard_Boolean isInfinite;
-  Standard_Boolean isOnPlanEdge, isOnPlanVertex;
+  Standard_Boolean isInfinite = 0;
+  Standard_Boolean isOnPlanEdge = 0, isOnPlanVertex = 0;
   if (!PrsDim::ComputeGeometry(E,C,p1,p2,extCurv,isInfinite,isOnPlanEdge,myPlane)) return;
   gp_Pnt P;
   PrsDim::ComputeGeometry(V,P, myPlane, isOnPlanVertex);
@@ -151,7 +151,7 @@ void PrsDim_ConcentricRelation::ComputeTwoEdgesConcentric(const Handle(Prs3d_Pre
   
   gp_Pnt ptat11,ptat12,ptat21,ptat22;
   Handle(Geom_Curve) geom1,geom2;
-  Standard_Boolean isInfinite1,isInfinite2;
+  Standard_Boolean isInfinite1 = 0,isInfinite2 = 0;
   Handle(Geom_Curve) extCurv;
   if (!PrsDim::ComputeGeometry(TopoDS::Edge(myFShape), TopoDS::Edge(mySShape),
 			    myExtShape,

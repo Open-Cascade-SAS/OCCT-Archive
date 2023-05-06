@@ -14,9 +14,9 @@
 
 #include <Vrml_Group.hxx>
 
-Vrml_Group::Vrml_Group()
+Vrml_Group::Vrml_Group() : myFlagPrint(0)
 {
-  myFlagPrint = 0;
+  
 }
 
 Standard_OStream& Vrml_Group::Print(Standard_OStream& anOStream)

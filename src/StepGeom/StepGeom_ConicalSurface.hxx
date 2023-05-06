@@ -61,8 +61,8 @@ protected:
 private:
 
 
-  Standard_Real radius;
-  Standard_Real semiAngle;
+  Standard_Real radius{};
+  Standard_Real semiAngle{};
 
 
 };

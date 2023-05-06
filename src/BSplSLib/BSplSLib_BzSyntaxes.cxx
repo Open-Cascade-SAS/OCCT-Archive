@@ -34,7 +34,7 @@ void BSplSLib::PolesCoefficients (const TColgp_Array2OfPnt& Poles,
 				  TColgp_Array2OfPnt& CachePoles, 
 				  TColStd_Array2OfReal* CacheWeights)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer uclas = Poles.ColLength(); 
   Standard_Integer vclas = Poles.RowLength(); 
   TColStd_Array1OfReal biduflatknots(1,uclas << 1);
@@ -61,7 +61,7 @@ void BSplSLib::PolesCoefficients (const TColgp_Array2OfPnt& Poles,
     // BuilCache exige que les resultats soient formates en [MaxCoeff,MinCoeff]
     TColgp_Array2OfPnt   CPoles  (1,vclas, 1, uclas);
     TColStd_Array2OfReal CWeights(1,vclas, 1, uclas);
-    Standard_Integer ii, jj;
+    Standard_Integer ii = 0, jj = 0;
     BSplSLib::BuildCache(0.,0.,
 			 1.,1.,0,0,
 			 uclas - 1,vclas - 1,0,0,

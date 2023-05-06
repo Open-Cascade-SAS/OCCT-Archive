@@ -26,12 +26,12 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Storage_Data,Standard_Transient)
 
-Storage_Data::Storage_Data()
+Storage_Data::Storage_Data() : myRootData(new Storage_RootData), myTypeData(new Storage_TypeData), myInternal(new Storage_InternalData), myHeaderData(new Storage_HeaderData)
 {
-  myRootData = new Storage_RootData;
-  myTypeData = new Storage_TypeData;
-  myInternal = new Storage_InternalData;
-  myHeaderData = new Storage_HeaderData;
+  
+  
+  
+  
 }
 
 void Storage_Data::AddRoot(const Handle(Standard_Persistent)& anObject) const

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_ExtCS.hxx>
 #include <Extrema_POnCurv.hxx>
 #include <Extrema_POnSurf.hxx>
@@ -90,7 +92,7 @@ void GeomAPI_ExtremaCurveSurface::Init
 
     // evaluate the lower distance and its index;
     
-    Standard_Real Dist2, Dist2Min = myExtCS.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtCS.SquareDistance(1);
     myIndex = 1;
     
     for ( Standard_Integer i = 2; i <= myExtCS.NbExt(); i++) {
@@ -132,7 +134,7 @@ void GeomAPI_ExtremaCurveSurface::Init
 
     // evaluate the lower distance and its index;
     
-    Standard_Real Dist2, Dist2Min = myExtCS.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtCS.SquareDistance(1);
     myIndex = 1;
     
     for ( Standard_Integer i = 2; i <= myExtCS.NbExt(); i++) {

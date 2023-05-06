@@ -120,8 +120,8 @@ BOPAlgo_Operation BOPAlgo_BOP::Operation()const
 //=======================================================================
 void BOPAlgo_BOP::CheckData()
 {
-  Standard_Integer i, j, aNbArgs, aNbTools;
-  Standard_Boolean bFuse;
+  Standard_Integer i = 0, j = 0, aNbArgs = 0, aNbTools = 0;
+  Standard_Boolean bFuse = 0;
   TopTools_ListIteratorOfListOfShape aItLS;
   //
   if (!(myOperation==BOPAlgo_COMMON ||
@@ -178,7 +178,7 @@ void BOPAlgo_BOP::CheckData()
         continue;
       }
 
-      Standard_Integer iDMin, iDMax;
+      Standard_Integer iDMin = 0, iDMax = 0;
       BOPTools_AlgoTools::Dimensions(aS, iDMin, iDMax);
 
       if (iDMin < iDimMin[i])
@@ -355,7 +355,7 @@ void BOPAlgo_BOP::BuildResult(const TopAbs_ShapeEnum theType)
 void BOPAlgo_BOP::Perform(const Message_ProgressRange& theRange)
 {
   Handle(NCollection_BaseAllocator) aAllocator;
-  BOPAlgo_PaveFiller* pPF;
+  BOPAlgo_PaveFiller* pPF = nullptr;
   TopTools_ListIteratorOfListOfShape aItLS;
   //
   GetReport()->Clear();
@@ -585,8 +585,8 @@ void BOPAlgo_BOP::BuildRC(const Message_ProgressRange& theRange)
   }
   // B. Common, Cut, Cut21
   //
-  Standard_Integer i, j, aNb, iDim;
-  Standard_Boolean bCheckEdges, bContains, bCut21, bCommon;
+  Standard_Integer i = 0, j = 0, aNb = 0, iDim = 0;
+  Standard_Boolean bCheckEdges = 0, bContains = 0, bCut21 = 0, bCommon = 0;
   TopTools_ListIteratorOfListOfShape aItLS;
   //
   // prepare the building elements of arguments to get its splits
@@ -662,7 +662,7 @@ void BOPAlgo_BOP::BuildRC(const Message_ProgressRange& theRange)
   //
   // compare the maps and make the result
   //
-  Standard_Integer iDimMin, iDimMax;
+  Standard_Integer iDimMin = 0, iDimMax = 0;
   //
   iDimMin = Min(myDims[0], myDims[1]);
   bCommon = (myOperation == BOPAlgo_COMMON);
@@ -755,7 +755,7 @@ void BOPAlgo_BOP::BuildRC(const Message_ProgressRange& theRange)
     return;
   }
   // The squats around degenerated edges
-  Standard_Integer nVD;
+  Standard_Integer nVD = 0;
   TopTools_IndexedMapOfShape aMVC;
   //
   // 1. Vertices of aC
@@ -841,7 +841,7 @@ void BOPAlgo_BOP::BuildShape(const Message_ProgressRange& theRange)
     return;
   }
   //
-  Standard_Integer i;
+  Standard_Integer i = 0;
   TopAbs_ShapeEnum aType, aT1, aT2;
   TopTools_ListOfShape aLSC, aLCB;
   TopTools_ListIteratorOfListOfShape aItLS, aItLSIm, aItLCB;
@@ -1044,7 +1044,7 @@ void BOPAlgo_BOP::BuildSolid(const Message_ProgressRange& theRange)
   //
   // Find solids in input arguments sharing faces with other solids
   TopTools_MapOfShape aMTSols;
-  Standard_Integer i, aNb = aMFS.Extent();
+  Standard_Integer i = 0, aNb = aMFS.Extent();
   for (i = 1; i < aNb; ++i) {
     const TopTools_ListOfShape& aLSols = aMFS(i);
     if (aLSols.Extent() > 1) {
@@ -1505,7 +1505,7 @@ void RemoveDuplicates(TopTools_ListOfShape& theContainers,
   // compare the contents of the containers and find duplicates
   TopTools_MapOfShape aDuplicates;
   //
-  Standard_Integer i, j, aNb = aContents.Extent();
+  Standard_Integer i = 0, j = 0, aNb = aContents.Extent();
   for (i = 1; i <= aNb; ++i) {
     const TopoDS_Shape& aCi = aContents.FindKey(i);
     if (aDuplicates.Contains(aCi)) {

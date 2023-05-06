@@ -40,10 +40,10 @@
 #include <VrmlData_Scene.hxx>
 #include <VrmlData_ShapeConvert.hxx>
 
-VrmlAPI_Writer::VrmlAPI_Writer()
+VrmlAPI_Writer::VrmlAPI_Writer() : myDrawer(new VrmlConverter_Drawer), myDeflection(-1), DX(1), DY(-1), DZ(1), XUp(0), YUp(0), ZUp(1), Focus(6)
 {
-  myDrawer = new VrmlConverter_Drawer;
-  myDeflection = -1;
+  
+  
   Handle(Quantity_HArray1OfColor) Col1 = new Quantity_HArray1OfColor (1, 1, Quantity_NOC_BLACK);
   Handle(TColStd_HArray1OfReal) kik1 = new TColStd_HArray1OfReal(1,1,0.0);
   Handle(TColStd_HArray1OfReal) kik2 = new TColStd_HArray1OfReal(1,1,0.1);
@@ -55,13 +55,13 @@ VrmlAPI_Writer::VrmlAPI_Writer()
   myWireMaterial = new Vrml_Material(Col1,Col1, Col1, Col1, kik1, kik2);
   myFreeBoundsMaterial = new Vrml_Material(Col1,Col1, Col1, Col1, kik1, kik2);
   myUnfreeBoundsMaterial = new Vrml_Material(Col1,Col1, Col1, Col1, kik1, kik2);
-  DX = 1;      
-  DY = -1;  
-  DZ = 1;
-  XUp = 0;
-  YUp = 0;
-  ZUp = 1;
-  Focus = 6;
+       
+   
+  
+  
+  
+  
+  
   ResetToDefaults();
 }
 

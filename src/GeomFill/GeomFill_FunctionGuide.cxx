@@ -97,7 +97,7 @@ GeomFill_FunctionGuide::GeomFill_FunctionGuide
 	First, Last);
   }
   else {
-    Standard_Integer NbPoles, NbKnots, Deg;
+    Standard_Integer NbPoles = 0, NbKnots = 0, Deg = 0;
     TheLaw->SectionShape(NbPoles, NbKnots, Deg);
     TColStd_Array1OfInteger Mult(1,NbKnots);
     TheLaw->Mults( Mult);
@@ -172,7 +172,7 @@ GeomFill_FunctionGuide::GeomFill_FunctionGuide
   TheGuide->D1(X(1),P,DP);
   TheSurface->D1(X(2),X(3),P1,DP1U,DP1V);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i=1;i<=3;i++)
     {
       D(i,1) = DP.Coord(i);  
@@ -197,7 +197,7 @@ GeomFill_FunctionGuide::GeomFill_FunctionGuide
   TheGuide->D1(X(1),P,DP); //derivee de la generatrice
   TheSurface->D1(X(2),X(3),P1,DP1U,DP1V); //derivee de la new surface
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i=1;i<=3;i++)
     { 
       F(i) = P.Coord(i) - P1.Coord(i);

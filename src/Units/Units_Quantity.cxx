@@ -38,7 +38,7 @@ Standard_Boolean Units_Quantity::IsEqual(const Standard_CString astring) const
 void Units_Quantity::Dump(const Standard_Integer ashift,
 			  const Standard_Integer alevel) const
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   std::cout<<std::endl;
   for(int i=0; i<ashift; i++)std::cout<<"  ";
   std::cout<<Name()<<std::endl;

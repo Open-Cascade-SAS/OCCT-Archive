@@ -35,10 +35,10 @@ IMPLEMENT_STANDARD_RTTIEXT(Express_Schema, Standard_Transient)
 //=======================================================================
 
 Express_Schema::Express_Schema (const Standard_CString theName,
-                                const Handle(Express_HSequenceOfItem)& theItems)
+                                const Handle(Express_HSequenceOfItem)& theItems) : myName(new TCollection_HAsciiString (theName)), myItems(theItems)
 {
-  myName = new TCollection_HAsciiString (theName);
-  myItems = theItems;
+  
+  
   Prepare();
 }
 
@@ -48,10 +48,10 @@ Express_Schema::Express_Schema (const Standard_CString theName,
 //=======================================================================
 
 Express_Schema::Express_Schema (const Handle(TCollection_HAsciiString)& theName,
-                                const Handle(Express_HSequenceOfItem)& theItems)
+                                const Handle(Express_HSequenceOfItem)& theItems) : myName(theName), myItems(theItems)
 {
-  myName = theName;
-  myItems = theItems;
+  
+  
   Prepare();
 }
 

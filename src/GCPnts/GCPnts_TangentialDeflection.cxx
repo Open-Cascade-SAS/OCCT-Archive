@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GCPnts_TangentialDeflection.hxx>
 
 #include <GCPnts_TCurveTypes.hxx>
@@ -46,7 +48,7 @@ namespace
 
   static void D0 (const Adaptor2d_Curve2d& C, const Standard_Real U, gp_Pnt& PP)
   {
-    Standard_Real X, Y;
+    Standard_Real X = NAN, Y = NAN;
     gp_Pnt2d P;
     C.D0 (U, P);
     P.Coord (X, Y);
@@ -56,7 +58,7 @@ namespace
   static void D2 (const Adaptor2d_Curve2d& C, const Standard_Real U,
                   gp_Pnt& PP, gp_Vec& VV1, gp_Vec& VV2)
   {
-    Standard_Real X, Y;
+    Standard_Real X = NAN, Y = NAN;
     gp_Pnt2d P;
     gp_Vec2d V1,V2;
     C.D2 (U, P, V1, V2);
@@ -88,7 +90,7 @@ namespace
                                          TColStd_Array1OfReal& theIntervs,
                                          const Standard_Integer thePreviousIdx)
   {
-    Standard_Integer anIdx;
+    Standard_Integer anIdx = 0;
     for(anIdx = thePreviousIdx; anIdx < theIntervs.Upper(); anIdx++)
     {
       if (theParam >= theIntervs(anIdx) && 
@@ -500,10 +502,10 @@ Standard_Real GCPnts_TangentialDeflection::ArcAngularStep(
 template<class TheCurve>
 void GCPnts_TangentialDeflection::PerformCurve (const TheCurve& theC)
 {
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   gp_XYZ V1, V2;
   gp_Pnt MiddlePoint, CurrentPoint, LastPoint;
-  Standard_Real Du, Dusave, MiddleU, L1, L2;
+  Standard_Real Du = NAN, Dusave = NAN, MiddleU = NAN, L1 = NAN, L2 = NAN;
 
   Standard_Real U1   = myFirstu;
   Standard_Real LTol = Precision::Confusion(); // protection longueur nulle
@@ -674,7 +676,7 @@ void GCPnts_TangentialDeflection::PerformCurve (const TheCurve& theC)
     }
 
     Standard_Real Coef = 0.0, ACoef = 0., FCoef = 0.;
-    Standard_Boolean Correction, TooLarge, TooSmall;
+    Standard_Boolean Correction = 0, TooLarge = 0, TooSmall = 0;
     TooLarge   = Standard_False;
     Correction = Standard_True;
     TooSmall = Standard_False;

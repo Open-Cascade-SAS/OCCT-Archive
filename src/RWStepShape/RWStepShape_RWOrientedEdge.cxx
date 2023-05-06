@@ -57,7 +57,7 @@ void RWStepShape_RWOrientedEdge::ReadStep
 
 	// --- own field : orientation ---
 
-	Standard_Boolean aOrientation;
+	Standard_Boolean aOrientation = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat5 =` not needed
 	data->ReadBoolean (num,5,"orientation",ach,aOrientation);
 

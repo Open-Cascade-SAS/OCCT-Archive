@@ -131,8 +131,7 @@ else {
 //
 // ----------------------------------------------------------------
 OSD_Function  OSD_SharedLibrary::DlSymb(const Standard_CString aName )const{
-void (*fp)();
-fp =  (void (*)()) dlsym (myHandle,aName);
+auto fp =  (void (*)()) dlsym (myHandle,aName);
 if (!BAD(fp)){
   return (OSD_Function)fp;
  }

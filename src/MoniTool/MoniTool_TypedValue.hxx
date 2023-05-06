@@ -337,8 +337,8 @@ private:
   TCollection_AsciiString theunidef;
   Handle(TColStd_HArray1OfAsciiString) theenums;
   NCollection_DataMap<TCollection_AsciiString, Standard_Integer> theeadds;
-  MoniTool_ValueInterpret theinterp;
-  MoniTool_ValueSatisfies thesatisf;
+  MoniTool_ValueInterpret theinterp{};
+  MoniTool_ValueSatisfies thesatisf{};
   TCollection_AsciiString thesatisn;
   Standard_Integer theival;
   Handle(TCollection_HAsciiString) thehval;

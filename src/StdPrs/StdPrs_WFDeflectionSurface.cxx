@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_IsoCurve.hxx>
 #include <BndLib_AddSurface.hxx>
 #include <GeomAbs_IsoType.hxx>
@@ -43,7 +45,7 @@ static void FindLimits(const Handle(Adaptor3d_Surface)& surf ,
   
   if (UfirstInf || UlastInf) {
     gp_Pnt P1,P2;
-    Standard_Real v;
+    Standard_Real v = NAN;
     if (VfirstInf && VlastInf) 
       v = 0;
     else if (VfirstInf)
@@ -130,14 +132,14 @@ void StdPrs_WFDeflectionSurface::Add (
 			      const Handle(Adaptor3d_Surface)&    aSurface,
 			      const Handle (Prs3d_Drawer)&       aDrawer)
 {
-    Standard_Real  U1, U2, V1, V2;
+    Standard_Real  U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
     Standard_Real MaxP = aDrawer->MaximalParameterValue();
     FindLimits(aSurface, MaxP, U1, U2, V1, V2);
     
     Standard_Boolean UClosed = aSurface->IsUClosed();
     Standard_Boolean VClosed = aSurface->IsVClosed();
       
-    Standard_Real TheDeflection;
+    Standard_Real TheDeflection = NAN;
     Aspect_TypeOfDeflection TOD = aDrawer->TypeOfDeflection();    
     if (TOD == Aspect_TOD_RELATIVE) {
 // On calcule la fleche en fonction des min max globaux de la piece:
@@ -145,7 +147,7 @@ void StdPrs_WFDeflectionSurface::Add (
        BndLib_AddSurface::Add (*aSurface, U1, U2, V1, V2, 0., Total);
        Standard_Real m = aDrawer->MaximalChordialDeviation()/
 	 aDrawer->DeviationCoefficient();
-       Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+       Standard_Real aXmin = NAN, aYmin = NAN, aZmin = NAN, aXmax = NAN, aYmax = NAN, aZmax = NAN;
        Total.Get( aXmin, aYmin, aZmin, aXmax, aYmax, aZmax );
        if ( ! (Total.IsOpenXmin() || Total.IsOpenXmax() ))
 	  m = Min ( m , Abs (aXmax-aXmin));

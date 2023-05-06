@@ -18,6 +18,8 @@
 //:s4 abv 26.04.99: sim6049.igs 21677: copy of curve is necessary to get True SP
 //    abv 06.05.99: S4137: adding methods GetTangent2d()
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_GCurve.hxx>
@@ -53,9 +55,9 @@
 //function : ShapeAnalysis_Edge
 //purpose  : 
 //=======================================================================
-ShapeAnalysis_Edge::ShapeAnalysis_Edge()
+ShapeAnalysis_Edge::ShapeAnalysis_Edge() : myStatus(0)
 {
-  myStatus = 0;//ShapeExtend::EncodeStatus (ShapeExtend_OK);
+  //ShapeExtend::EncodeStatus (ShapeExtend_OK);
 }
 
 
@@ -85,7 +87,7 @@ Standard_Boolean ShapeAnalysis_Edge::BoundUV (const TopoDS_Edge& edge,
 					      gp_Pnt2d& first, gp_Pnt2d& last) const
 {
   Handle(Geom2d_Curve) c2d;
-  Standard_Real uf,ul;
+  Standard_Real uf = NAN,ul = NAN;
   if (!PCurve (edge, surface, location, c2d, uf, ul)) return Standard_False;
   first = c2d->Value (uf);
   last  = c2d->Value (ul);
@@ -100,7 +102,7 @@ Standard_Boolean ShapeAnalysis_Edge::BoundUV (const TopoDS_Edge& edge,
 
 Standard_Boolean ShapeAnalysis_Edge::HasCurve3d (const TopoDS_Edge& edge) const
 {
-  Standard_Real cf, cl;
+  Standard_Real cf = NAN, cl = NAN;
   Handle(Geom_Curve) c3d = BRep_Tool::Curve (edge, cf, cl);
   return !c3d.IsNull();
 }
@@ -138,7 +140,7 @@ Standard_Boolean ShapeAnalysis_Edge::Curve3d (const TopoDS_Edge& edge,
 
 Standard_Boolean ShapeAnalysis_Edge::IsClosed3d (const TopoDS_Edge& edge) const
 {
-  Standard_Real cf,cl;
+  Standard_Real cf = NAN,cl = NAN;
   Handle(Geom_Curve) c3d = BRep_Tool::Curve (edge,cf,cl);
   if (c3d.IsNull()) return Standard_False;
   if (!c3d->IsClosed()) return Standard_False;
@@ -170,7 +172,7 @@ Standard_Boolean ShapeAnalysis_Edge::HasPCurve (const TopoDS_Edge& edge,
 						const TopLoc_Location& location) const
 {
   //try { //szv#4:S4163:12Mar99 waste try
-    Standard_Real cf, cl;
+    Standard_Real cf = NAN, cl = NAN;
     Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface (edge, surface, location, cf, cl);
     return !c2d.IsNull();
   /* }
@@ -329,7 +331,7 @@ Standard_Boolean ShapeAnalysis_Edge::GetEndTangent2d (const TopoDS_Edge &edge,
 						      gp_Vec2d &v,
                                                       const Standard_Real dparam) const
 {
-  Standard_Real cf, cl;
+  Standard_Real cf = NAN, cl = NAN;
   Handle(Geom2d_Curve) c2d;
   if ( ! PCurve ( edge, S, L, c2d, cf, cl ) ) {
     v = gp_Vec2d(0,0);
@@ -339,7 +341,7 @@ Standard_Boolean ShapeAnalysis_Edge::GetEndTangent2d (const TopoDS_Edge &edge,
 
   if(dpnew>Precision::Confusion()) {
     gp_Pnt2d ptmp;
-    Standard_Real par1,par2,delta=(cl-cf)*dpnew;
+    Standard_Real par1 = NAN,par2 = NAN,delta=(cl-cf)*dpnew;
     if(Abs(delta)<Precision::PConfusion()) {
       dpnew=0.0;
     }
@@ -420,14 +422,14 @@ Standard_Boolean ShapeAnalysis_Edge::CheckCurve3dWithPCurve (const TopoDS_Edge& 
      return Standard_False;
   
   Handle (Geom2d_Curve) c2d;
-  Standard_Real f2d, l2d; //szv#4:S4163:12Mar99 moved down f3d, l3d
+  Standard_Real f2d = NAN, l2d = NAN; //szv#4:S4163:12Mar99 moved down f3d, l3d
   if (!PCurve (edge, surface, location, c2d, f2d ,l2d, Standard_False)) {
     myStatus |= ShapeExtend::EncodeStatus (ShapeExtend_FAIL1);
     return Standard_False;
   }
 
   Handle (Geom_Curve) c3d; //szv#4:S4163:12Mar99 moved
-  Standard_Real f3d, l3d; //szv#4:S4163:12Mar99 moved
+  Standard_Real f3d = NAN, l3d = NAN; //szv#4:S4163:12Mar99 moved
   if (!Curve3d (edge, c3d, f3d, l3d, Standard_False)) {
     myStatus |= ShapeExtend::EncodeStatus (ShapeExtend_FAIL2);
     return Standard_False;
@@ -493,7 +495,7 @@ Standard_Boolean ShapeAnalysis_Edge::CheckVerticesWithCurve3d (const TopoDS_Edge
   gp_Pnt p1v = BRep_Tool::Pnt (V1);
   gp_Pnt p2v = BRep_Tool::Pnt (V2);
 
-  Standard_Real cf,cl;
+  Standard_Real cf = NAN,cl = NAN;
   Handle(Geom_Curve) c3d;
   if ( ! Curve3d (edge,c3d,cf,cl) ) {
     myStatus |= ShapeExtend::EncodeStatus (ShapeExtend_FAIL1);
@@ -555,7 +557,7 @@ Standard_Boolean ShapeAnalysis_Edge::CheckVerticesWithPCurve (const TopoDS_Edge&
   gp_Pnt p1v = BRep_Tool::Pnt (V1);
   gp_Pnt p2v = BRep_Tool::Pnt (V2);
 
-  Standard_Real cf, cl;
+  Standard_Real cf = NAN, cl = NAN;
   Handle(Geom2d_Curve) c2d;
   if ( ! PCurve ( edge, surf, loc, c2d, cf, cl ) ) {
     myStatus |= ShapeExtend::EncodeStatus (ShapeExtend_FAIL1);
@@ -613,7 +615,7 @@ static Standard_Integer CheckVertexTolerance(const TopoDS_Edge& edge,
   gp_Pnt pnt1 = BRep_Tool::Pnt (V1);
   gp_Pnt pnt2 = BRep_Tool::Pnt (V2);
 
-  Standard_Real a, b;
+  Standard_Real a = NAN, b = NAN;
   Handle(Geom_Curve) c3d;
   if ( ! sae.Curve3d(edge, c3d, a, b, Standard_True)) {
     if ( ! BRep_Tool::Degenerated ( edge ) ) 
@@ -737,7 +739,7 @@ Standard_Boolean ShapeAnalysis_Edge::CheckSameParameter (const TopoDS_Edge& edge
   Standard_Boolean SameParameter = TE->SameParameter();
 
   // Get 3D curve of the edge
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   TopLoc_Location aCurveLoc;
   Handle(Geom_Curve) aC3D = BRep_Tool::Curve(edge, aCurveLoc, aFirst, aLast);
   if (aC3D.IsNull()) {
@@ -770,7 +772,7 @@ Standard_Boolean ShapeAnalysis_Edge::CheckSameParameter (const TopoDS_Edge& edge
     Handle(Geom2d_Curve) aPC;
     Handle(Geom_Surface) aS;
     TopLoc_Location aLoc;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
 
     BRep_Tool::CurveOnSurface(edge, aPC, aS, aLoc, f, l, i);
 
@@ -815,7 +817,7 @@ Standard_Boolean ShapeAnalysis_Edge::CheckSameParameter (const TopoDS_Edge& edge
   // check the deviation for the projection of the 3d curve on plane
   if (!IsPCurveFound && !aFaceSurf.IsNull())
   {
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     Handle(Geom2d_Curve) aPC = BRep_Tool::CurveOnPlane(edge, aFaceSurf, aFaceLoc, f, l);
     if (!aPC.IsNull())
     {
@@ -930,7 +932,7 @@ Standard_Boolean ShapeAnalysis_Edge::CheckOverlapping(const TopoDS_Edge& theEdge
     Standard_Integer NbSol = aMinDist.NbSolution();
     for(Standard_Integer i =1; i<= NbSol && !isOverlap; i++) {
       BRepExtrema_SupportType aType1 = aMinDist.SupportTypeShape1(i);
-      Standard_Real aEndLength, aStartLength, aLengthP; 
+      Standard_Real aEndLength = NAN, aStartLength = NAN, aLengthP = NAN; 
       if(aType1 == BRepExtrema_IsVertex) {
         TopoDS_Shape aSupportShape1 = aMinDist.SupportOnShape1(i);
         TopoDS_Vertex aV1,aV2;
@@ -941,7 +943,7 @@ Standard_Boolean ShapeAnalysis_Edge::CheckOverlapping(const TopoDS_Edge& theEdge
           aLengthP =aLength;
       }
       else if(aType1 == BRepExtrema_IsOnEdge) {
-        Standard_Real aParam1, aFirst, aLast;
+        Standard_Real aParam1 = NAN, aFirst = NAN, aLast = NAN;
         aMinDist.ParOnEdgeS1 ( i, aParam1 );
         BRep_Tool::Range(aFirstEdge,aFirst,aLast);
         BRepAdaptor_Curve anAdaptor(aFirstEdge);

@@ -20,6 +20,8 @@
 //              Value (Appel a des distances remplace par le calcul
 //              de la distance au carre)
 
+#include <math.h>
+
 #include <AdvApp2Var_Context.hxx>
 #include <AdvApp2Var_Patch.hxx>
 #include <GeomPlate_PlateG0Criterion.hxx>
@@ -39,10 +41,10 @@ GeomPlate_PlateG0Criterion(const TColgp_SequenceOfXY& Data,
 			   const TColgp_SequenceOfXYZ& G0Data,
 			   const Standard_Real Maximum,
 			   const AdvApp2Var_CriterionType Type,
-			   const AdvApp2Var_CriterionRepartition Repart)
+			   const AdvApp2Var_CriterionRepartition Repart) : myData(Data), myXYZ(G0Data)
 {
-  myData=Data;
-  myXYZ=G0Data;
+  
+  
   myMaxValue = Maximum;
   myType = Type;
   myRepartition = Repart;
@@ -71,7 +73,7 @@ void GeomPlate_PlateG0Criterion::Value(AdvApp2Var_Patch& P,
   VInt[0] = P.V0();
   VInt[1] = P.V1();
 
-  Standard_Real up,vp, dist = 0.;
+  Standard_Real up = NAN,vp = NAN, dist = 0.;
   
   Standard_Integer dimension = 3 * NbCoeff[1];
   TColStd_Array1OfReal Patch(1, NbCoeff[0] * dimension);
@@ -80,7 +82,7 @@ void GeomPlate_PlateG0Criterion::Value(AdvApp2Var_Patch& P,
   Standard_Real * Coeffs =  (Standard_Real *) &Patch.ChangeValue(1);
   Standard_Real * Digit  =  (Standard_Real *) &Point.ChangeValue(1);
   
-  Standard_Integer k1, k2, pos, ll=1;
+  Standard_Integer k1 = 0, k2 = 0, pos = 0, ll=1;
   for (k1 = 1; k1 <= NbCoeff[0]; k1++) {
 // JAG 99.04.29    pos = 3*(MaxNbCoeff[0])*(k1-1);
     pos = 3*(MaxNbCoeff[1])*(k1-1);
@@ -92,7 +94,7 @@ void GeomPlate_PlateG0Criterion::Value(AdvApp2Var_Patch& P,
     }
   }
 
-  Standard_Integer i, NbCtr = myData.Length();
+  Standard_Integer i = 0, NbCtr = myData.Length();
   for(i=1; i<=NbCtr; i++) {
     gp_XY P2d = myData.Value(i);
 //    gp_Pnt PP = myXYZ.Value(i);

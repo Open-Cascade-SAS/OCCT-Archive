@@ -276,7 +276,7 @@ Standard_Boolean Poly_CoherentTriangle::RemoveConnection
 Standard_Integer Poly_CoherentTriangle::FindConnection
                                 (const Poly_CoherentTriangle& theTri) const
 {
-  Standard_Integer aResult;
+  Standard_Integer aResult = 0;
   if (mypConnected[0] == &theTri)
     aResult = 0;
   else if (mypConnected[1] == &theTri)

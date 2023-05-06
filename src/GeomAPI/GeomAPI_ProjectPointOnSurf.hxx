@@ -155,8 +155,8 @@ private:
   Standard_EXPORT void Init();
 
 
-  Standard_Boolean myIsDone;
-  Standard_Integer myIndex;
+  Standard_Boolean myIsDone{};
+  Standard_Integer myIndex{};
   Extrema_ExtPS myExtPS;
   GeomAdaptor_Surface myGeomAdaptor;
 

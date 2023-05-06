@@ -124,7 +124,7 @@ void Quantity_Date::SetValues(const Standard_Integer mm,
                            const Standard_Integer mis,
                            const Standard_Integer mics){
 
-Standard_Integer i;
+Standard_Integer i = 0;
 
 if ( ! Quantity_Date::IsValid (mm,dd,yy,hh,mn,ss,mis,mics))
    throw Quantity_DateDefinitionError("Quantity_Date::Quantity_Date invalid parameters");
@@ -174,7 +174,7 @@ void Quantity_Date::Values(Standard_Integer& mm,
                            Standard_Integer& mics)const{
 
 
-Standard_Integer i,carry;
+Standard_Integer i = 0,carry = 0;
 
 
 for(yy = 1979, carry = mySec ;; yy++) {
@@ -229,7 +229,7 @@ mics = myUSec - ( mis * 1000);
 
 Quantity_Period Quantity_Date::Difference(const Quantity_Date& OtherDate){
 
-Standard_Integer i1,i2;
+Standard_Integer i1 = 0,i2 = 0;
 
 if (mySec == 0 && myUSec == 0)
      {
@@ -270,7 +270,7 @@ return (result);
 
 Quantity_Date Quantity_Date::Subtract(const Quantity_Period& During){
 
-Standard_Integer ss,mics;
+Standard_Integer ss = 0,mics = 0;
 Quantity_Date result;
 result.mySec  = mySec;
 result.myUSec = myUSec;
@@ -317,7 +317,7 @@ return (result);
 // ~~~~
 // ----------------------------------------------------------------------
 Standard_Integer Quantity_Date::Year(){
-Standard_Integer dummy, year;
+Standard_Integer dummy = 0, year = 0;
  Values(dummy, dummy, year, dummy, dummy, dummy, dummy, dummy);
  return (year);
 }
@@ -328,7 +328,7 @@ Standard_Integer dummy, year;
 // ~~~~~
 // ----------------------------------------------------------------------
 Standard_Integer Quantity_Date::Month(){
-Standard_Integer dummy, month;
+Standard_Integer dummy = 0, month = 0;
  Values(month, dummy, dummy, dummy, dummy, dummy, dummy, dummy);
  return(month); 
 }
@@ -339,7 +339,7 @@ Standard_Integer dummy, month;
 // ----------------------------------------------------------------------
 
 Standard_Integer Quantity_Date::Day(){
-Standard_Integer dummy, day;
+Standard_Integer dummy = 0, day = 0;
  Values(dummy, day, dummy, dummy, dummy, dummy, dummy, dummy);
  return(day);
 }
@@ -350,7 +350,7 @@ Standard_Integer dummy, day;
 // ----------------------------------------------------------------------
 
 Standard_Integer Quantity_Date::Hour(){
-Standard_Integer dummy, hour;
+Standard_Integer dummy = 0, hour = 0;
  Values(dummy, dummy, dummy, hour, dummy, dummy, dummy, dummy);
  return(hour);
 }
@@ -361,7 +361,7 @@ Standard_Integer dummy, hour;
 // ----------------------------------------------------------------------
 
 Standard_Integer Quantity_Date::Minute(){
-Standard_Integer dummy, min;
+Standard_Integer dummy = 0, min = 0;
  Values(dummy, dummy, dummy, dummy, min, dummy, dummy, dummy);
  return(min);
 }
@@ -372,7 +372,7 @@ Standard_Integer dummy, min;
 // ----------------------------------------------------------------------
 
 Standard_Integer Quantity_Date::Second(){
-Standard_Integer dummy, sec;
+Standard_Integer dummy = 0, sec = 0;
  Values(dummy, dummy, dummy, dummy, dummy, sec , dummy, dummy);
  return(sec);
 }
@@ -383,7 +383,7 @@ Standard_Integer dummy, sec;
 // ----------------------------------------------------------------------
 
 Standard_Integer Quantity_Date::MilliSecond(){
-Standard_Integer dummy, msec;
+Standard_Integer dummy = 0, msec = 0;
  Values(dummy, dummy, dummy, dummy, dummy, dummy, msec, dummy);
 return(msec);
 }
@@ -394,7 +394,7 @@ return(msec);
 // ----------------------------------------------------------------------
 
 Standard_Integer Quantity_Date::MicroSecond(){
-Standard_Integer dummy, msec;
+Standard_Integer dummy = 0, msec = 0;
  Values(dummy, dummy, dummy, dummy, dummy, dummy, dummy, msec);
 return(msec);
 }

@@ -41,7 +41,7 @@ Poly_Polygon3D::Poly_Polygon3D(const TColgp_Array1OfPnt& Nodes):
     myDeflection(0.),
     myNodes(1, Nodes.Length())
 {
-  Standard_Integer i, j= 1;
+  Standard_Integer i = 0, j= 1;
   for (i = Nodes.Lower(); i <= Nodes.Upper(); i++)
     myNodes(j++) = Nodes(i);
 }
@@ -54,11 +54,11 @@ Poly_Polygon3D::Poly_Polygon3D(const TColgp_Array1OfPnt& Nodes):
 Poly_Polygon3D::Poly_Polygon3D(const TColgp_Array1OfPnt&   Nodes,
 			       const TColStd_Array1OfReal& P): 
     myDeflection(0.),
-    myNodes(1, Nodes.Length())
+    myNodes(1, Nodes.Length()), myParameters(new TColStd_HArray1OfReal(1, P.Length()))
     
 {
-  myParameters = new TColStd_HArray1OfReal(1, P.Length());
-  Standard_Integer i, j= 1;
+  
+  Standard_Integer i = 0, j= 1;
   for (i = Nodes.Lower(); i <= Nodes.Upper(); i++) {
     myNodes(j) = Nodes(i);
     myParameters->SetValue(j, P(i));

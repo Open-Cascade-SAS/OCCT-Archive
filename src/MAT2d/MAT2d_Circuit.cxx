@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Adaptor2d_OffsetCurve.hxx>
 #include <Geom2d_CartesianPoint.hxx>
 #include <Geom2d_Geometry.hxx>
@@ -71,10 +73,10 @@ static Standard_Real CrossProd(const Handle(Geom2d_Geometry)& Geom1,
 //=============================================================================
 MAT2d_Circuit::MAT2d_Circuit(const GeomAbs_JoinType aJoinType,
                              const Standard_Boolean IsOpenResult)
-: direction(0.0)
+: direction(0.0), myJoinType(aJoinType), myIsOpenResult(IsOpenResult)
 {
-  myJoinType = aJoinType;
-  myIsOpenResult = IsOpenResult;
+  
+  
 }
 
 //=============================================================================
@@ -88,7 +90,7 @@ void  MAT2d_Circuit::Perform
    const Standard_Boolean                     Trigo)
 {
   Standard_Integer          NbLines = FigItem.Length();
-  Standard_Integer          i;
+  Standard_Integer          i = 0;
   TColStd_Array1OfBoolean   Open(1,NbLines);
   MAT2d_SequenceOfConnexion SVide;
   Handle(MAT2d_Connexion)   ConnexionNul;
@@ -211,7 +213,7 @@ Standard_Boolean MAT2d_Circuit::IsSharpCorner(const Handle(Geom2d_Geometry)& Geo
                                               const Handle(Geom2d_Geometry)& Geom2,
                                               const Standard_Real Direction) const
 {
-  Standard_Real    DotProd;
+  Standard_Real    DotProd = NAN;
   Standard_Real    ProVec = CrossProd (Geom1,Geom2,DotProd);
   Standard_Integer NbTest = 1;
   Standard_Real    DU = Precision::Confusion();
@@ -254,7 +256,7 @@ Standard_Boolean MAT2d_Circuit::IsSharpCorner(const Handle(Geom2d_Geometry)& Geo
     // de calcul
     // Si pas dintersection => saillant.
     // Sinon                => rentrant.
-    Standard_Real D ;
+    Standard_Real D = NAN ;
     Standard_Real Tol   = Precision::Confusion();
     Standard_Real MilC1 = (C1->LastParameter() + C1->FirstParameter())*0.5;
     Standard_Real MilC2 = (C2->LastParameter() + C2->FirstParameter())*0.5;
@@ -355,10 +357,10 @@ void  MAT2d_Circuit::ConstructCircuit
 {
   Handle(MAT2d_Connexion)            PrevC,CurC;
   TColGeom2d_SequenceOfGeometry      SetOfItem;
-  Standard_Integer                   NbConnexions;
-  Standard_Integer                   ILastItem;
-  Standard_Integer                   IndLast;
-  Standard_Integer                   i;
+  Standard_Integer                   NbConnexions = 0;
+  Standard_Integer                   ILastItem = 0;
+  Standard_Integer                   IndLast = 0;
+  Standard_Integer                   i = 0;
   
   NbConnexions = Road.Path().Length();
   //-----------------------------------------------------
@@ -476,7 +478,7 @@ void  MAT2d_Circuit::ConstructCircuit
 void MAT2d_Circuit::InitOpen (TColGeom2d_SequenceOfGeometry& Line) const 
 { 
   Handle(Geom2d_TrimmedCurve) Curve;
-  Standard_Real               DotProd;
+  Standard_Real               DotProd = NAN;
 
   Curve = Handle(Geom2d_TrimmedCurve)::DownCast(Line.First());
   Line.InsertBefore(1,new Geom2d_CartesianPoint(Curve->StartPoint()));
@@ -507,8 +509,8 @@ const
   Handle(Standard_Type)          Type;
   Handle(Geom2d_TrimmedCurve)    Curve;
   Standard_Integer               NbItems = Line.Length();
-  Standard_Integer               i;
-  Standard_Real                  ProVec,DotProd;
+  Standard_Integer               i = 0;
+  Standard_Real                  ProVec = NAN,DotProd = NAN;
   Handle(MAT2d_Connexion)        CC;
 
   //--------------------------
@@ -534,7 +536,7 @@ const
   //------------------------------------------
   Standard_Integer IAfter       = ConnexionFrom.Length();
   Standard_Integer NbConnexions = IAfter;
-  Standard_Integer IndCOF;
+  Standard_Integer IndCOF = 0;
 
   for (i = 1; i <= IAfter; i++) {
     CC     = ConnexionFrom.Value(i);
@@ -651,9 +653,9 @@ const
 //=============================================================================
 void  MAT2d_Circuit::InsertCorner (TColGeom2d_SequenceOfGeometry& Line) const
 {
-  Standard_Integer              i,isuiv;
+  Standard_Integer              i = 0,isuiv = 0;
   Handle(Geom2d_TrimmedCurve)   Curve;
-  Standard_Boolean              Insert;
+  Standard_Boolean              Insert = 0;
 
   for ( i = 1; i <= Line.Length(); i++) {
     isuiv  = (i == Line.Length()) ? 1 : i + 1;
@@ -727,7 +729,7 @@ const TColStd_SequenceOfInteger&  MAT2d_Circuit::RefToEqui
 //=============================================================================
 void MAT2d_Circuit::SortRefToEqui (const MAT2d_BiInt& BiRef)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   TColStd_SequenceOfInteger&  S = linkRefEqui.ChangeFind(BiRef);
   TColStd_SequenceOfInteger   SFin;
 
@@ -819,7 +821,7 @@ void MAT2d_Circuit::UpDateLink(const Standard_Integer IFirst,
 			       const Standard_Integer ICurveLast)
 {
   Standard_Integer IEqui = IFirst;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   for (i = ICurveFirst; i <= ICurveLast; i++) {
     MAT2d_BiInt Key(ILine,i);

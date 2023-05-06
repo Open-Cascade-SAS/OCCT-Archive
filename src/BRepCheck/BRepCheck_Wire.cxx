@@ -64,6 +64,7 @@
 #include <TopTools_MapOfOrientedShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 
+#include <math.h>
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(BRepCheck_Wire,BRepCheck_Result)
 
@@ -593,8 +594,8 @@ BRepCheck_Status BRepCheck_Wire::Closed2d(const TopoDS_Face& theFace,
 // Check distance between 2d ends of first and last edges
 //  Modified by Sergey KHROMOV - Mon May 13 12:42:10 2002 Begin
 //   First check if first and last edges are infinite:
-  Standard_Real      aF;
-  Standard_Real      aL;
+  Standard_Real      aF = NAN;
+  Standard_Real      aL = NAN;
   Standard_Boolean   isFirstInfinite = Standard_False;
   Standard_Boolean   isLastInfinite  = Standard_False;
   TopAbs_Orientation anOri;
@@ -763,7 +764,7 @@ BRepCheck_Status BRepCheck_Wire::Orientation(const TopoDS_Face& F,
       // find edges that make a chain on VL if !VL.IsNull 
       // otherwise on VF.
       
-      Standard_Integer ind;
+      Standard_Integer ind = 0;
       if (!VL.IsNull()) {
         ind = myMapVE.FindIndex(VL);
       }
@@ -999,8 +1000,8 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
   }
   BRepCheck_ListOfStatus& aStatusList = *aHList;
 
-  Standard_Integer i,j,Nbedges;
-  Standard_Real first1,last1,first2,last2, tolint;
+  Standard_Integer i = 0,j = 0,Nbedges = 0;
+  Standard_Real first1 = NAN,last1 = NAN,first2 = NAN,last2 = NAN, tolint = NAN;
   gp_Pnt2d pfirst1,plast1,pfirst2,plast2;
   gp_Pnt P3d, P3d2;
   Handle(BRepAdaptor_Surface) HS;
@@ -1089,7 +1090,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
           //-- If the point of intersection is within the tolearnce of a vertex
           //-- this intersection is considered correct (no error)
           Standard_Boolean localok = Standard_False;
-          Standard_Real f,l;
+          Standard_Real f = NAN,l = NAN;
           TopLoc_Location L;
           const Handle(Geom_Curve) ConS = BRep_Tool::Curve(E1,L,f,l);
           if(!ConS.IsNull()) {
@@ -1108,7 +1109,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
               localok==Standard_False && ExplVtx.More();
               ExplVtx.Next()) {
             gp_Pnt p3dvtt;
-            Standard_Real tolvtt, p3dvttDistanceP3d;
+            Standard_Real tolvtt = NAN, p3dvttDistanceP3d = NAN;
             //
             const TopoDS_Vertex& vtt = TopoDS::Vertex(ExplVtx.Current());
             p3dvtt = BRep_Tool::Pnt(vtt);
@@ -1187,8 +1188,8 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
       Inter.Perform(C1,myDomain1,C2,tabDom[j-1],tolint,tolint);
       //
       if(Inter.IsDone()) { 
-	Standard_Integer nbp, nbs;
-	Standard_Real IP_ParamOnFirst, IP_ParamOnSecond;
+	Standard_Integer nbp = 0, nbs = 0;
+	Standard_Real IP_ParamOnFirst = NAN, IP_ParamOnSecond = NAN;
 	IntRes2d_Transition Tr1,Tr2;
 	TopTools_ListOfShape CommonVertices;
 	TopTools_ListIteratorOfListOfShape itl;
@@ -1225,7 +1226,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	    //-- If the point of intersection is within the tolerance of a vertex
 	    //-- this intersection is considered correct (no error)
 	    Standard_Boolean localok = Standard_False;  
-	    Standard_Real f1,l1, f2, l2;
+	    Standard_Real f1 = NAN,l1 = NAN, f2 = NAN, l2 = NAN;
 	    TopLoc_Location L, L2;
 	    //
 	    const Handle(Geom_Curve) ConS = BRep_Tool::Curve(E1,L,f1,l1);    
@@ -1258,7 +1259,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	    //  Modified by Sergey KHROMOV - Mon Apr 15 12:34:22 2002 End
 	    itl.Initialize( CommonVertices );
 	    for (; itl.More(); itl.Next()) {
-	      Standard_Real p3dvttDistanceP3d, p3dvttDistanceP3d2;
+	      Standard_Real p3dvttDistanceP3d = NAN, p3dvttDistanceP3d2 = NAN;
 	      gp_Pnt p3dvtt;
 	      //
 	      const TopoDS_Vertex& vtt = TopoDS::Vertex(itl.Value());
@@ -1286,7 +1287,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	      std::cout << "\n--- BRepCheck Wire: AutoIntersection Phase1 -> Erreur \n" <<std::endl;
 	      
 #endif
-	      Standard_Real distauvtxleplusproche,VParaOnEdge1,VParaOnEdge2;
+	      Standard_Real distauvtxleplusproche = NAN,VParaOnEdge1 = NAN,VParaOnEdge2 = NAN;
 	      gp_Pnt VertexLePlusProche;
 	      //
 	      VParaOnEdge1 =0.;
@@ -1295,7 +1296,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	      //Find the nearest common vertex
 	      itl.Initialize( CommonVertices );
 	      for (; itl.More(); itl.Next())   {
-		Standard_Real disptvtx;
+		Standard_Real disptvtx = NAN;
 		gp_Pnt p3dvtt;
 		//
 		const TopoDS_Vertex& vtt = TopoDS::Vertex(itl.Value());
@@ -1333,7 +1334,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 		Standard_Real du1 = 0.1*(IP_ParamOnFirst -VParaOnEdge1);
 		Standard_Real du2 = 0.1*(IP_ParamOnSecond-VParaOnEdge2);
 		Standard_Real maxd1 = 0., maxd2 = 0.;
-		Standard_Integer k;
+		Standard_Integer k = 0;
 		
 		localok = Standard_True;
 		Standard_Real tole1 = BRep_Tool::Tolerance(E1);
@@ -1427,8 +1428,8 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	for (Standard_Integer s = 1; s <= nbs; ++s) {
 	  const IntRes2d_IntersectionSegment& Seg = Inter.Segment(s);
 	  if (Seg.HasFirstPoint() && Seg.HasLastPoint())   { 
-	    Standard_Boolean localok;
-	    Standard_Integer k;
+	    Standard_Boolean localok = 0;
+	    Standard_Integer k = 0;
 	    IntRes2d_IntersectionPoint PSeg [2];
 	    IntRes2d_Position aPCR1, aPCR2;
 	    //
@@ -1452,8 +1453,8 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 		aCT2=C2.GetType();
 		if (aCT1==GeomAbs_Line && aCT2==GeomAbs_Line) {
 		  // check for the two lines coincidence
-		  Standard_Real aPAR_T, aT11, aT12, aT21, aT22, aT1m, aT2m;
-		  Standard_Real aD2, aTolE1, aTolE2,  aTol2;
+		  Standard_Real aPAR_T = NAN, aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN, aT1m = NAN, aT2m = NAN;
+		  Standard_Real aD2 = NAN, aTolE1 = NAN, aTolE2 = NAN,  aTol2 = NAN;
 		  gp_Lin2d aL1, aL2;
 		  gp_Pnt2d aP1m;
 		  //
@@ -1494,7 +1495,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 		break;
 	      }
 	      //
-	      Standard_Real f,l, tolvtt;
+	      Standard_Real f = NAN,l = NAN, tolvtt = NAN;
 	      TopLoc_Location L, L2;
 	      const Handle(Geom_Curve)& ConS = BRep_Tool::Curve(E1,L,f,l);    
 	      const Handle(Geom_Curve)& ConS2 = BRep_Tool::Curve(E2,L2,f,l);    
@@ -1516,7 +1517,7 @@ BRepCheck_Status BRepCheck_Wire::SelfIntersect(const TopoDS_Face& F,
 	      //  Modified by Sergey KHROMOV - Mon Apr 15 12:34:22 2002 End
 	      itl.Initialize( CommonVertices );
 	      for (; itl.More(); itl.Next()) {
-		Standard_Real p3dvttDistanceP3d, p3dvttDistanceP3d2;
+		Standard_Real p3dvttDistanceP3d = NAN, p3dvttDistanceP3d2 = NAN;
 		gp_Pnt p3dvtt;
 		//
 		const TopoDS_Vertex& vtt = TopoDS::Vertex(itl.Value());
@@ -1688,7 +1689,7 @@ void ChoixUV(const TopoDS_Vertex& theVertex,
   TopoDS_Edge anEFound;
   gp_Pnt2d aPntRef, aPnt;
   gp_Vec2d aDerRef, aDer;
-  Standard_Real aMinAngle, aMaxAngle, anAngle;
+  Standard_Real aMinAngle = NAN, aMaxAngle = NAN, anAngle = NAN;
   Standard_Real a_gpResolution=gp::Resolution();
   TopAbs_Orientation aVOrientation, anEdgOrientation;
   Standard_Real aParam = 0.0, aFirstParam = 0.0, aLastParam = 0.0, aParPiv = 0.0;
@@ -1826,7 +1827,7 @@ void CurveDirForParameter(const Geom2dAdaptor_Curve& aC2d,
                           gp_Vec2d& aVec2d)
 {
   Standard_Real aTol=gp::Resolution();
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   aC2d.D1(aPrm, Pnt, aVec2d);
   //
@@ -1855,9 +1856,9 @@ static Standard_Boolean GetPnt2d(const TopoDS_Vertex    &theVertex,
 				       gp_Pnt2d         &aPnt)
 {
   Handle(Geom2d_Curve) aPCurve;
-  Standard_Real        aFPar;
-  Standard_Real        aLPar;
-  Standard_Real        aParOnEdge;
+  Standard_Real        aFPar = NAN;
+  Standard_Real        aLPar = NAN;
+  Standard_Real        aParOnEdge = NAN;
   TopoDS_Vertex        aFirstVtx;
   TopoDS_Vertex        aLastVtx;
 
@@ -1937,7 +1938,7 @@ static Standard_Boolean IsClosed2dForPeriodicFace
       if (IsOriented(aVtx) && aVtx.IsSame(theVertex)) {
 	gp_Pnt2d         aPnt1;
 	gp_Pnt2d         aPnt2;
-	Standard_Real    a2dTol;
+	Standard_Real    a2dTol = NAN;
 
 	if (!GetPnt2d(theVertex, aSeamEdge, theFace, aPnt1))
 	  continue;

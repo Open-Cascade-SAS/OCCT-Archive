@@ -15,6 +15,8 @@
 //============================================================================
 //======================================================= IntAna2d_Outils.cxx
 //============================================================================
+#include <math.h>
+
 #include <IntAna2d_Outils.hxx>
 #include <math_DirectPolynomialRoots.hxx>
 
@@ -22,10 +24,10 @@ MyDirectPolynomialRoots::MyDirectPolynomialRoots(const Standard_Real A4,
 						 const Standard_Real A3,
 						 const Standard_Real A2,
 						 const Standard_Real A1,
-						 const Standard_Real A0) { 
+						 const Standard_Real A0) : nbsol(0), same(Standard_False) { 
   //-- std::cout<<" IntAna2d : A4..A0 "<<A4<<" "<<A3<<" "<<A2<<" "<<A1<<" "<<A0<<" "<<std::endl;
-  nbsol = 0;
-  same = Standard_False;
+  
+  
 //  Modified by Sergey KHROMOV - Thu Oct 24 13:10:14 2002 Begin
   Standard_Real anAA[5];
 
@@ -41,7 +43,7 @@ MyDirectPolynomialRoots::MyDirectPolynomialRoots(const Standard_Real A4,
     same = Standard_True;
     return;
   }
-  Standard_Integer i,j,nbp;
+  Standard_Integer i = 0,j = 0,nbp = 0;
   for (size_t anIdx = 0; anIdx < sizeof (val) / sizeof (val[0]); anIdx++)
   {
     val[anIdx] = RealLast();
@@ -164,7 +166,7 @@ MyDirectPolynomialRoots::MyDirectPolynomialRoots(const Standard_Real A4,
       TriOK = Standard_True;
       for(i=1; i<nbsol;i++) { 
 	if(Abs(val[i])<Abs(val[i-1])) { 
-	  Standard_Real t;
+	  Standard_Real t = NAN;
 	  t        = val[i];
 	  val[i]   = val[i-1];
 	  val[i-1] = t;
@@ -239,7 +241,7 @@ Standard_Boolean Points_Confondus(const Standard_Real x1,const Standard_Real y1
 
 void Traitement_Points_Confondus(Standard_Integer& nb_pts,
 				 IntAna2d_IntPoint* pts) {
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   for(i=nb_pts;i>1;i--) {  
     Standard_Boolean Non_Egalite=Standard_True;
     for(j=i-1;(j>0) && Non_Egalite;j--) { 
@@ -251,10 +253,10 @@ void Traitement_Points_Confondus(Standard_Integer& nb_pts,
 			  pts[i-1].Value().Y(),
 			  pts[j-1].Value().X(),
 			  pts[j-1].Value().Y())) {
-	Standard_Integer k;
+	Standard_Integer k = 0;
 	Non_Egalite=Standard_False;
 	for(k=i;k<nb_pts;k++) {
-	  Standard_Real Xk,Yk,Uk;
+	  Standard_Real Xk = NAN,Yk = NAN,Uk = NAN;
 	  Xk=pts[k].Value().X();
 	  Yk=pts[k].Value().Y();
 	  Uk=pts[k].ParamOnFirst();
@@ -271,8 +273,8 @@ void Coord_Ancien_Repere(Standard_Real& x1,
                          Standard_Real& y1,
                          const gp_Ax2d& Dir1)
 {
-  Standard_Real t11,t12,t21,t22,t13,t23;
-  Standard_Real x0,y0;  
+  Standard_Real t11 = NAN,t12 = NAN,t21 = NAN,t22 = NAN,t13 = NAN,t23 = NAN;
+  Standard_Real x0 = NAN,y0 = NAN;  
 
   // x1 et y1 Sont les Coordonnees dans le repere lie a Dir1
   // On Renvoie ces Coordonnees dans le repere "absolu"

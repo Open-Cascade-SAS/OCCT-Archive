@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRepGProp_TFunction.hxx>
 #include <gp_Pnt.hxx>
 #include <math_KronrodSingleIntegration.hxx>
@@ -67,7 +69,7 @@ Standard_Boolean BRepGProp_TFunction::Value(const Standard_Real X,
 
   gp_Pnt2d                      aP2d;
   gp_Vec2d                      aV2d;
-  Standard_Real                 aUMax;
+  Standard_Real                 aUMax = NAN;
   Handle(TColStd_HArray1OfReal) anUKnots;
 
   mySurface.D12d(X, aP2d, aV2d);
@@ -83,7 +85,7 @@ Standard_Boolean BRepGProp_TFunction::Value(const Standard_Real X,
   myUFunction.SetVParam(aP2d.Y());
 
   // Compute the integral from myUMin to aUMax of myUFunction.
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Real    aCoeff        = aV2d.Y();
   //Standard_Integer aNbUIntervals = anUKnots->Length() - 1;
   //Standard_Real    aTol          = myTolerance/aNbUIntervals;
@@ -123,7 +125,7 @@ Standard_Boolean BRepGProp_TFunction::Value(const Standard_Real X,
   //  aTol = 0.1;
 
   Standard_Integer              iU           = anUKnots->Upper();
-  Standard_Integer              aNbPntsStart;
+  Standard_Integer              aNbPntsStart = 0;
   Standard_Integer              aNbMaxIter   = 1000;
   math_KronrodSingleIntegration anIntegral;
   Standard_Real                 aLocalErr    = 0.;

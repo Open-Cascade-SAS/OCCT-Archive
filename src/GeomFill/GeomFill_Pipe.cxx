@@ -69,6 +69,7 @@
 #include <TColGeom_SequenceOfCurve.hxx>
 #include <TColgp_Array1OfPnt.hxx>
 
+#include <math.h>
 #include <stdio.h>
 #ifdef OCCT_DEBUG
 static Standard_Boolean Affich = Standard_False;
@@ -87,9 +88,9 @@ static Standard_Boolean CheckSense(const TColGeom_SequenceOfCurve& Seq1,
   Standard_Boolean no_sing = Standard_True;
   Seq2.Clear();
 
-  Handle(Geom_Curve) C1 = Seq1.Value(1);
+  const Handle(Geom_Curve)& C1 = Seq1.Value(1);
   Standard_Real f = C1->FirstParameter(), l = C1->LastParameter();
-  Standard_Integer iP, NP = 21;
+  Standard_Integer iP = 0, NP = 21;
   TColgp_Array1OfPnt Tab(1,NP);
   Standard_Real u = f, h = Abs(f-l) / 20.;
   for (iP=1;iP<=NP;iP++) {
@@ -99,14 +100,14 @@ static Standard_Boolean CheckSense(const TColGeom_SequenceOfCurve& Seq1,
   }
   gp_Ax2 AxeRef, Axe;
   gp_Pnt Pos;
-  Standard_Boolean sing;
+  Standard_Boolean sing = 0;
   GeomLib::AxeOfInertia(Tab,AxeRef,sing);
 
   // si la section est une droite, ca ne marche pas
   if (sing) no_sing = Standard_False;
 
   Pos = AxeRef.Location();
-  Standard_Real alpha1, alpha2, alpha3;
+  Standard_Real alpha1 = NAN, alpha2 = NAN, alpha3 = NAN;
   gp_Pnt P1, P2;
   u = (f+l-h)/2 - h;
   C1->D0(u,P1);
@@ -125,7 +126,7 @@ static Standard_Boolean CheckSense(const TColGeom_SequenceOfCurve& Seq1,
 
   for (Standard_Integer iseq=2; iseq<=Seq1.Length(); iseq++) {
     // discretisation de C2
-    Handle(Geom_Curve) C2 = Seq1.Value(iseq);
+    const Handle(Geom_Curve)& C2 = Seq1.Value(iseq);
     f = C2->FirstParameter();
     l = C2->LastParameter();
     u = f;
@@ -140,7 +141,7 @@ static Standard_Boolean CheckSense(const TColGeom_SequenceOfCurve& Seq1,
     if (sing) no_sing = Standard_False;
 
     Pos = Axe.Location();
-    Standard_Real beta1, beta2, beta3;
+    Standard_Real beta1 = NAN, beta2 = NAN, beta3 = NAN;
     u = (f+l-h)/2 - h;
     C2->D0(u,P1);
     u += h;
@@ -363,7 +364,7 @@ void GeomFill_Pipe::Init(const Handle(Geom_Curve)& Path,
 // rotat : vrai si on veu la rotation false sinon
 // triedre : AC pour absc. curv. ou P pour plan ortho
 {
-  Standard_Real angle;
+  Standard_Real angle = NAN;
   myAdpPath = new (GeomAdaptor_Curve) 
     (Handle(Geom_Curve)::DownCast(Path->Copy()));
 
@@ -678,7 +679,7 @@ void GeomFill_Pipe::Init(const Handle(Geom_Curve)& Path,
     TColStd_SequenceOfReal SeqP;
     SeqC.Clear();
     SeqP.Clear();
-    Standard_Integer i ;
+    Standard_Integer i = 0 ;
     for ( i = 1; i<=NSections.Length(); i++) {
       GeomFill_SectionPlacement Place(myLoc, NSections(i));
       Place.Perform(Precision::Confusion());
@@ -713,7 +714,7 @@ void GeomFill_Pipe::Init(const Handle(Geom_Curve)& Path,
     // creation de la NSections
     Standard_Real first = Path->FirstParameter(),
                   last = Path->LastParameter();
-    Standard_Real deb,fin;
+    Standard_Real deb = NAN,fin = NAN;
     deb = SeqC.First()->FirstParameter();
     fin = SeqC.First()->LastParameter();
     mySec = new (GeomFill_NSections) (SeqC,SeqP,deb,fin,first,last);
@@ -769,7 +770,7 @@ void GeomFill_Pipe::Init(const Handle(Geom_Curve)& Path,
    if (CheckSense(SeqC, NewSeq)) SeqC = NewSeq;
 
    // creation of the NSections
-   Standard_Real deb, fin;
+   Standard_Real deb = NAN, fin = NAN;
    deb = SeqC.First()->FirstParameter();
    fin = SeqC.First()->LastParameter();
    mySec = new (GeomFill_NSections) (SeqC, SeqP, deb, fin, first, last);
@@ -1125,8 +1126,8 @@ void GeomFill_Pipe::ApproxSurf(const Standard_Boolean WithParameters) {
     //throw StdFail_NotDone("Pipe : App not done");
   }
   else {
-    Standard_Integer UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, 
-    NbVKnots;
+    Standard_Integer UDegree = 0, VDegree = 0, NbUPoles = 0, NbVPoles = 0, NbUKnots = 0, 
+    NbVKnots = 0;
     App.SurfShape(UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots);
     
     mySurface = new Geom_BSplineSurface(App.SurfPoles(),
@@ -1137,7 +1138,7 @@ void GeomFill_Pipe::ApproxSurf(const Standard_Boolean WithParameters) {
 					App.SurfVMults(),
 					App.UDegree(),
 					App.VDegree());
-    Standard_Real t2d;
+    Standard_Real t2d = NAN;
     App.TolReached(myError, t2d);
     myStatus = GeomFill_PipeOk;
   }

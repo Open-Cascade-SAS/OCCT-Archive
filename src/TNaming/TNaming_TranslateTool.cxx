@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Curve3D.hxx>
 #include <BRep_CurveOn2Surfaces.hxx>
@@ -251,7 +253,7 @@ void TNaming_TranslateTool::UpdateEdge
   lcr.Clear();
 
   Handle(BRep_GCurve) GC;
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   while (itcr.More()) {
 
     const Handle(BRep_CurveRepresentation)& CR = itcr.Value();

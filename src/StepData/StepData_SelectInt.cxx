@@ -17,7 +17,7 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(StepData_SelectInt,StepData_SelectMember)
 
-StepData_SelectInt::StepData_SelectInt  ()    {  thekind = 0;  theval = 0;  }
+StepData_SelectInt::StepData_SelectInt  () : thekind(0), theval(0)    {    }
 
 Standard_Integer  StepData_SelectInt::Kind () const    {  return thekind;  }
 void  StepData_SelectInt::SetKind (const Standard_Integer kind)    {  thekind = kind;  }

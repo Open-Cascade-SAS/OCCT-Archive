@@ -22,6 +22,8 @@
 //    rln 02.06.99 removing #include <StepToTopoDS_DegeneratedTool.hxx>
 //    smh 31.01.01 BUC60810 : IsNull protection
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_TEdge.hxx>
 #include <BRep_Tool.hxx>
@@ -109,7 +111,7 @@ static void CheckPCurves (TopoDS_Wire& aWire, const TopoDS_Face& aFace,
 {
   if (isPlane) { RemovePCurves (aWire, aFace);return; }
   BRep_Builder B;
-  Standard_Real w1, w2, cf, cl;
+  Standard_Real w1 = NAN, w2 = NAN, cf = NAN, cl = NAN;
   Handle(Geom_Surface) mySurf = BRep_Tool::Surface(aFace);
 
   Handle(ShapeExtend_WireData) sbwd = new ShapeExtend_WireData (aWire);
@@ -152,7 +154,7 @@ static void CheckPCurves (TopoDS_Wire& aWire, const TopoDS_Face& aFace,
 
     if (w1 > w2 && mySurf->IsUPeriodic())
     {
-      Standard_Real u1, u2, v1, v2;
+      Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
       mySurf->Bounds(u1, u2, v1, v2);
       ElCLib::AdjustPeriodic(u1, u2,
         Min(Abs(w2-w1)/2, Precision::PConfusion()),
@@ -225,7 +227,7 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
   TopoDS_Edge   E;
   TopoDS_Vertex V;
 
-  Standard_Boolean isSeam, isLikeSeam;
+  Standard_Boolean isSeam = 0, isLikeSeam = 0;
 
   Handle(StepShape_OrientedEdge) OrEdge1, OrEdge2;
   Handle(StepGeom_Curve) StepCurve, StepCurve1, StepCurve2;
@@ -234,7 +236,7 @@ void StepToTopoDS_TranslateEdgeLoop::Init(const Handle(StepShape_FaceBound)& Fac
   Handle(Geom2d_Curve) C2d, C2d1, C2d2, WhichC2d1, WhichC2d2;
   TopoDS_Edge   suspectE; //:f1, degEdge; 
 
-  Standard_Integer j, NbEdge = EL->NbEdgeList();
+  Standard_Integer j = 0, NbEdge = EL->NbEdgeList();
   if (NbEdge == 0) {
     TP->AddWarning(EL, "Wire not done. EdgeLoop does not contain edges.");
     done = Standard_False;

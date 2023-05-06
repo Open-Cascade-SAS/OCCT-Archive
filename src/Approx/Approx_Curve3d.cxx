@@ -38,16 +38,16 @@ class Approx_Curve3d_Eval : public AdvApprox_EvaluatorFunction
                        Standard_Real First, Standard_Real Last)
     : fonct(theFunc) { StartEndSav[0] = First; StartEndSav[1] = Last; }
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Handle(Adaptor3d_Curve) fonct;
-  Standard_Real StartEndSav[2];
+  Standard_Real StartEndSav[2]{};
 };
 
 void Approx_Curve3d_Eval::Evaluate (Standard_Integer *Dimension,
@@ -105,7 +105,7 @@ Approx_Curve3d::Approx_Curve3d(const Handle(Adaptor3d_Curve)& Curve,
 						 const Standard_Real Tol3d,
 						 const GeomAbs_Shape Order,
 						 const Standard_Integer MaxSegments,
-						 const Standard_Integer MaxDegree)
+						 const Standard_Integer MaxDegree) : myMaxError(0)
 {
   // Initialisation of input parameters of AdvApprox
 
@@ -127,7 +127,7 @@ Approx_Curve3d::Approx_Curve3d(const Handle(Adaptor3d_Curve)& Curve,
  
   AdvApprox_PrefAndRec CutTool(CutPnts_C2,CutPnts_C3);
 
-  myMaxError = 0;
+  
 
   Approx_Curve3d_Eval ev (Curve, First, Last);
   AdvApprox_ApproxAFunction aApprox (Num1DSS, Num2DSS, Num3DSS, 

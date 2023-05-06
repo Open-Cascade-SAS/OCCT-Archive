@@ -15,6 +15,8 @@
 //    pdn 20.04.99 S4181  Moving algorithm for transforming pcurves from IGES processor
 //    abv 05.05.99 S4137: adding methods for copying ranges, reassigning pcurves etc.
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Curve3D.hxx>
 #include <BRep_CurveOnSurface.hxx>
@@ -288,8 +290,8 @@ void ShapeBuild_Edge::SetRange3d (const TopoDS_Edge& edge,
 
 void ShapeBuild_Edge::CopyPCurves (const TopoDS_Edge& toedge, const TopoDS_Edge& fromedge) const
 {
-  TopLoc_Location fromLoc = fromedge.Location();
-  TopLoc_Location toLoc = toedge.Location();
+  const TopLoc_Location& fromLoc = fromedge.Location();
+  const TopLoc_Location& toLoc = toedge.Location();
   for (BRep_ListIteratorOfListOfCurveRepresentation fromitcr
     ((*((Handle(BRep_TEdge)*)&fromedge.TShape()))->ChangeCurves()); fromitcr.More(); fromitcr.Next()) {
       Handle(BRep_GCurve) fromGC = Handle(BRep_GCurve)::DownCast(fromitcr.Value());
@@ -392,7 +394,7 @@ void ShapeBuild_Edge::ReplacePCurve (const TopoDS_Edge& edge,
   const TopoDS_Face& face) const
 {
   BRep_Builder B;
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   TopoDS_Shape dummy = edge.Reversed();
   TopoDS_Edge edgerev = TopoDS::Edge(dummy);
   // reverse face to take second pcurve for seams like SA_Edge::PCurve() does
@@ -443,7 +445,7 @@ Standard_Boolean ShapeBuild_Edge::ReassignPCurve (const TopoDS_Edge& edge,
   Standard_Integer npcurves = CountPCurves ( edge, old );
   //if ( npcurves <1 ) return Standard_False; //gka
 
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   Handle(Geom2d_Curve) pc;
   pc = BRep_Tool::CurveOnSurface ( edge, old, f, l );
   if ( pc.IsNull() ) return Standard_False;
@@ -470,7 +472,7 @@ Standard_Boolean ShapeBuild_Edge::ReassignPCurve (const TopoDS_Edge& edge,
     //smh#8 Porting AIX
     TopoDS_Shape tmpshape = edge.Reversed();
     TopoDS_Edge erev = TopoDS::Edge (tmpshape);
-    Standard_Real cf, cl;
+    Standard_Real cf = NAN, cl = NAN;
     Handle(Geom2d_Curve) pcs = BRep_Tool::CurveOnSurface ( erev, sub, cf, cl );
     if ( edge.Orientation() == TopAbs_REVERSED ) // because B.UpdateEdge does not check edge orientation
       B.UpdateEdge ( edge, pcs, pc, sub, 0. );
@@ -604,12 +606,12 @@ Standard_Boolean ShapeBuild_Edge::BuildCurve3d (const TopoDS_Edge& edge) const
         //#50 S4054 rln 14.12.98 write cylinder in BRep mode into IGES and read back
         //with 2DUse_Forced - pcurve and removed 3D curves have different ranges
         if (BRep_Tool::SameRange (edge)) {
-          Standard_Real first, last;
+          Standard_Real first = NAN, last = NAN;
           BRep_Tool::Range (edge, first, last);
           BRep_Builder().Range (edge, first, last);//explicit setting for all reps
         }
         Handle(Geom_Curve) c3d;
-        Standard_Real f,l;
+        Standard_Real f = NAN,l = NAN;
         c3d = BRep_Tool::Curve(edge,f,l);
         if (c3d.IsNull())
           return Standard_False;

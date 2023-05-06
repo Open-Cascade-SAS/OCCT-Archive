@@ -51,7 +51,7 @@ Standard_Boolean STEPSelections_SelectDerived::Matches(const Handle(Standard_Tra
 						      const TCollection_AsciiString& text,
 						      const Standard_Boolean /*exact*/) const
 {
-  Standard_Integer CN;
+  Standard_Integer CN = 0;
   Handle(StepData_ReadWriteModule) module;
   Standard_Boolean ok = thelib.Select (ent,module,CN);
   if(!ok) return Standard_False;

@@ -29,8 +29,8 @@
 #include <TransferBRep_Reader.hxx>
 
 TransferBRep_Reader::TransferBRep_Reader ()
-    : theDone (Standard_False) , theFilest (0) , theNewpr (Standard_False)
-      {    theShapes = new TopTools_HSequenceOfShape();  theTransi = new TColStd_HSequenceOfTransient();  }
+    : theDone (Standard_False) , theFilest (0) , theNewpr (Standard_False), theShapes(new TopTools_HSequenceOfShape()), theTransi(new TColStd_HSequenceOfTransient())
+      {      }
 
     void  TransferBRep_Reader::SetProtocol
   (const Handle(Interface_Protocol)& protocol)
@@ -119,7 +119,7 @@ TransferBRep_Reader::TransferBRep_Reader ()
     void  TransferBRep_Reader::EndTransfer ()
 {
   theShapes->Append ( TransferBRep::Shapes (theProc,Standard_True) );
-  Standard_Integer i,nb = theProc->NbRoots();
+  Standard_Integer i = 0,nb = theProc->NbRoots();
   for (i = 1; i <= nb; i ++) {
     Handle(Standard_Transient) ent = theProc->Root(i);
     Handle(Standard_Transient) res = theProc->FindTransient(ent);
@@ -168,7 +168,7 @@ TransferBRep_Reader::TransferBRep_Reader ()
   if (!BeginTransfer()) return;
   if (list.IsNull()) return;
   Transfer_TransferOutput TP (theProc,theModel);
-  Standard_Integer i, nb = list->Length();
+  Standard_Integer i = 0, nb = list->Length();
   Message_Messenger::StreamBuffer sout = theProc->Messenger()->SendInfo();
 
   if (theProc->TraceLevel() > 1) 

@@ -116,9 +116,9 @@ void AdvApp2Var_Iso::MakeApprox(const AdvApp2Var_Context& Conditions,
 				AdvApp2Var_Node& NodeEnd)
 {
 // fixed values
-  Standard_Integer NBCRMX=1, NBCRBE;
+  Standard_Integer NBCRMX=1, NBCRBE = 0;
 // data stored in the Context
-  Standard_Integer NDIMEN, NBSESP, NDIMSE;
+  Standard_Integer NDIMEN = 0, NBSESP = 0, NDIMSE = 0;
   NDIMEN = Conditions.TotalDimension();
   NBSESP = Conditions.TotalNumberSSP();
 // Attention : works only in 3D
@@ -176,7 +176,7 @@ void AdvApp2Var_Iso::MakeApprox(const AdvApp2Var_Context& Conditions,
 
 // data relative to the position of iso (front or cut line)
   Handle (TColStd_HArray1OfReal) HEPSAPR = new TColStd_HArray1OfReal(1,NBSESP);
-  Standard_Integer iesp;
+  Standard_Integer iesp = 0;
   switch(myPosition) {
    case 0 :
     for (iesp=1;iesp<=NBSESP;iesp++) {
@@ -247,7 +247,7 @@ void AdvApp2Var_Iso::MakeApprox(const AdvApp2Var_Context& Conditions,
 // the approximations
 //
   Standard_Integer IERCOD=0, NCOEFF=0;
-  Standard_Integer iapp,ncfapp,ierapp;
+  Standard_Integer iapp = 0,ncfapp = 0,ierapp = 0;
 //  Standard_Integer id,ic,ideb;
   for (iapp=0;iapp<=IDERIV;iapp++) {
 //   approximation of the derivative of order iapp
@@ -291,7 +291,7 @@ void AdvApp2Var_Iso::MakeApprox(const AdvApp2Var_Context& Conditions,
     if (NCOEFF<=ncfapp) NCOEFF=ncfapp;
     if (ierapp==-1) IERCOD = -1;
 //   return constraints of order 0 to IORDRE of extremities
-    Standard_Integer ider, jpos=HCONTR1->Lower();
+    Standard_Integer ider = 0, jpos=HCONTR1->Lower();
     for (ider=0; ider<=IORDRE;ider++) {
       gp_Pnt pt(HCONTR1->Value(jpos),
 		HCONTR1->Value(jpos+1),

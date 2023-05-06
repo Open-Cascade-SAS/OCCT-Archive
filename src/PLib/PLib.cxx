@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PLib.hxx>
 
 #include <GeomAbs_Shape.hxx>
@@ -207,7 +209,7 @@ public:
   : myBinom (NULL),
     myMaxBinom (theMaxBinom)
   {
-    Standard_Integer i, im1, ip1, id2, md2, md3, j, k;
+    Standard_Integer i = 0, im1 = 0, ip1 = 0, id2 = 0, md2 = 0, md3 = 0, j = 0, k = 0;
     Standard_Integer np1 = myMaxBinom + 1;
     myBinom = new Standard_Integer*[np1];
     myBinom[0] = new Standard_Integer[1];
@@ -332,11 +334,11 @@ void  PLib::RationalDerivative(const Standard_Integer Degree,
   //  u (1)     u (2) ....   u  (Dimension)     v (1) 
   //
   //
-  Standard_Real Inverse;
+  Standard_Real Inverse = NAN;
   Standard_Real *PolesArray = &Ders;
   Standard_Real *RationalArray = &RDers;
-  Standard_Real Factor ;
-  Standard_Integer ii, Index, OtherIndex, Index1, Index2, jj;
+  Standard_Real Factor = NAN ;
+  Standard_Integer ii = 0, Index = 0, OtherIndex = 0, Index1 = 0, Index2 = 0, jj = 0;
   NCollection_LocalArray<Standard_Real> binomial_array;
   NCollection_LocalArray<Standard_Real> derivative_storage;
   if (Dimension == 3) {
@@ -419,7 +421,7 @@ void  PLib::RationalDerivative(const Standard_Integer Degree,
     }
   }
   else {
-    Standard_Integer kk;
+    Standard_Integer kk = 0;
     Standard_Integer Dimension1 = Dimension + 1;
     Standard_Integer Dimension2 = Dimension << 1;
     Standard_Integer DeRequest1 = DerivativeRequest + 1;
@@ -548,13 +550,13 @@ void  PLib::RationalDerivatives(const Standard_Integer DerivativeRequest,
   // make arrays for the binomial since computing it each time could 
   // raize a performance issue
   // 
-  Standard_Real Inverse;
+  Standard_Real Inverse = NAN;
   Standard_Real *PolesArray = &PolesDerivates;
   Standard_Real *WeightsArray = &WeightsDerivates;
   Standard_Real *RationalArray = &RationalDerivates;
-  Standard_Real Factor ;
+  Standard_Real Factor = NAN ;
   
-  Standard_Integer ii, Index, Index1, Index2, jj;
+  Standard_Integer ii = 0, Index = 0, Index1 = 0, Index2 = 0, jj = 0;
   Standard_Integer DeRequest1 = DerivativeRequest + 1;
   
   NCollection_LocalArray<Standard_Real> binomial_array (DeRequest1);
@@ -594,7 +596,7 @@ void  PLib::RationalDerivatives(const Standard_Integer DerivativeRequest,
     }
   }
   else {
-    Standard_Integer kk;
+    Standard_Integer kk = 0;
     Standard_Integer Dimension2 = Dimension << 1;
     Index  = 0 ;
     Index2 = - Dimension2;
@@ -754,7 +756,7 @@ void  PLib::EvalPolynomial(const Standard_Real    Par,
 {
   Standard_Real* aCoeffs = &PolynomialCoeff + Degree * Dimension;
   Standard_Real* aRes = &Results;
-  Standard_Real* anOriginal;
+  Standard_Real* anOriginal = nullptr;
   Standard_Integer ind = 0;
   switch (DerivativeRequest)
   {
@@ -969,7 +971,7 @@ void  PLib::EvalPoly2Var(const Standard_Real    UParameter,
   TColStd_Array1OfReal Point(1, Dimension*(VDerivativeRequest+1)); 
   Standard_Real * Result =  (Standard_Real *) &Curve.ChangeValue(1);
   Standard_Real * Digit  =  (Standard_Real *) &Point.ChangeValue(1);
-  Standard_Real * ResultArray ;
+  Standard_Real * ResultArray = nullptr ;
   ResultArray = &Results ;
   
   PLib::EvalPolynomial(UParameter,
@@ -1032,12 +1034,12 @@ PLib::EvalLagrange(const Standard_Real                   Parameter,
   //  [0]   is assign to first  point
   //  [1]   is assign to second point
   //
-  Standard_Integer ii, jj, kk, Index, Index1, ReturnCode=0;
+  Standard_Integer ii = 0, jj = 0, kk = 0, Index = 0, Index1 = 0, ReturnCode=0;
   Standard_Integer local_request = DerivativeRequest;
-  Standard_Real  *ParameterArray;
-  Standard_Real  difference;
-  Standard_Real  *PointsArray;
-  Standard_Real  *ResultArray ;
+  Standard_Real  *ParameterArray = nullptr;
+  Standard_Real  difference = NAN;
+  Standard_Real  *PointsArray = nullptr;
+  Standard_Real  *ResultArray = nullptr ;
   
   PointsArray    = &Values ;
   ParameterArray = &Parameters ;
@@ -1155,18 +1157,18 @@ Standard_Integer PLib::EvalCubicHermite
   //  [0]   is assign to first  point
   //  [1]   is assign to last   point
   //
-  Standard_Integer ii, jj, kk, pp, Index, Index1, Degree, ReturnCode;
+  Standard_Integer ii = 0, jj = 0, kk = 0, pp = 0, Index = 0, Index1 = 0, Degree = 0, ReturnCode = 0;
   Standard_Integer local_request = DerivativeRequest ;
   
   ReturnCode = 0 ;
   Degree = 3 ;
   Standard_Real  ParametersArray[4];
-  Standard_Real  difference;
-  Standard_Real  inverse;
-  Standard_Real  *FirstLast;
-  Standard_Real  *PointsArray;
-  Standard_Real  *DerivativesArray;
-  Standard_Real  *ResultArray ;
+  Standard_Real  difference = NAN;
+  Standard_Real  inverse = NAN;
+  Standard_Real  *FirstLast = nullptr;
+  Standard_Real  *PointsArray = nullptr;
+  Standard_Real  *DerivativesArray = nullptr;
+  Standard_Real  *ResultArray = nullptr ;
 
   DerivativesArray = &Derivatives ;
   PointsArray    = &Values ;
@@ -1272,8 +1274,8 @@ Standard_Boolean PLib::HermiteCoefficients(const Standard_Real FirstParameter,
 					   math_Matrix& MatrixCoefs)
 {
   Standard_Integer NbCoeff =  FirstOrder +  LastOrder + 2, Ordre[2];
-  Standard_Integer ii, jj, pp, cote, iof=0;
-  Standard_Real Prod, TBorne = FirstParameter;
+  Standard_Integer ii = 0, jj = 0, pp = 0, cote = 0, iof=0;
+  Standard_Real Prod = NAN, TBorne = FirstParameter;
   math_Vector Coeff(1,NbCoeff), B(1, NbCoeff, 0.0);
   math_Matrix MAT(1,NbCoeff, 1,NbCoeff, 0.0);
 
@@ -1392,7 +1394,7 @@ void PLib::CoefficientsPoles (const Standard_Integer      dim,
   Standard_Integer upwc=0;
   Standard_Integer upwp=0;
   Standard_Integer reflen = Coefs.Length()/dim;
-  Standard_Integer i,j,k; 
+  Standard_Integer i = 0,j = 0,k = 0; 
   //Les Extremites.
   if (rat) { 
     lowc = WCoefs->Lower(); lowp = Weights->Lower();
@@ -1408,7 +1410,7 @@ void PLib::CoefficientsPoles (const Standard_Integer      dim,
     (*Weights) (upwp) = (*WCoefs) (upwc);
   }
   
-  Standard_Real Cnp;
+  Standard_Real Cnp = NAN;
   for (i = 2; i < reflen; i++ ) {
     Cnp = PLib::Bin(reflen - 1, i - 1);
     if (rat) (*Weights)(lowp + i - 1) = (*WCoefs)(lowc + i - 1) / Cnp;
@@ -1502,7 +1504,7 @@ void PLib::Trimming(const Standard_Real U1,
   // decomposee sous la forme du schema iteratif de horner.
 
   Standard_Real lsp = U2 - U1;
-  Standard_Integer indc, indw=0;
+  Standard_Integer indc = 0, indw=0;
   Standard_Integer upc = Coefs.Upper() - dim + 1, upw=0;
   Standard_Integer len = Coefs.Length()/dim;
   Standard_Boolean rat = WCoefs != NULL;
@@ -1515,7 +1517,7 @@ void PLib::Trimming(const Standard_Real U1,
   len --;
 
   for (Standard_Integer i = 1; i <= len; i++) {
-    Standard_Integer j ;
+    Standard_Integer j = 0 ;
     indc = upc - dim*(i-1);
     if (rat) indw = upw - i + 1;
     //calcul du coefficient de degre le plus faible a l'iteration i
@@ -1574,11 +1576,11 @@ void PLib::CoefficientsPoles (const TColgp_Array2OfPnt&   Coefs,
   // par buildcache
 //  Standard_Boolean inv = Standard_False; //ColLength != Coefs.ColLength();
 
-  Standard_Integer Row, Col;
-  Standard_Real W, Cnp;
+  Standard_Integer Row = 0, Col = 0;
+  Standard_Real W = NAN, Cnp = NAN;
 
-  Standard_Integer I1, I2;
-  Standard_Integer NPoleu , NPolev;
+  Standard_Integer I1 = 0, I2 = 0;
+  Standard_Integer NPoleu = 0 , NPolev = 0;
   gp_XYZ Temp;
 
   for (NPoleu = LowerRow; NPoleu <= UpperRow; NPoleu++){
@@ -1665,7 +1667,7 @@ void PLib::UTrimming(const Standard_Real U1,
   TColStd_Array1OfReal Temw (lr,ur);
 
   for (Standard_Integer icol = lc; icol <= uc; icol++) {
-    Standard_Integer irow ;
+    Standard_Integer irow = 0 ;
     for ( irow = lr; irow <= ur; irow++) {
       Temp (irow) = Coeffs  (irow, icol);
       if (rat) Temw (irow) = (*WCoeffs) (irow, icol);
@@ -1699,7 +1701,7 @@ void PLib::VTrimming(const Standard_Real V1,
   TColStd_Array1OfReal Temw (lc,uc);
 
   for (Standard_Integer irow = lr; irow <= ur; irow++) {
-    Standard_Integer icol ;
+    Standard_Integer icol = 0 ;
     for ( icol = lc; icol <= uc; icol++) {
       Temp (icol) = Coeffs  (irow, icol);
       if (rat) Temw (icol) = (*WCoeffs) (irow, icol);
@@ -1754,7 +1756,7 @@ Standard_Boolean PLib::HermiteInterpolate
 
   math_Matrix A(0,FirstOrder+LastOrder+1, 0,FirstOrder+LastOrder+1);
   //  The initialisation of the matrix A
-  Standard_Integer irow ;
+  Standard_Integer irow = 0 ;
   for ( irow=0; irow<=FirstOrder; irow++) {
     Standard_Real FirstVal = 1.;
 
@@ -1794,7 +1796,7 @@ Standard_Boolean PLib::HermiteInterpolate
     //  std::cout << "idim=" << idim << std::endl;
 
     math_Vector B(0,FirstOrder+LastOrder+1);
-    Standard_Integer icol ;
+    Standard_Integer icol = 0 ;
     for ( icol=0; icol<=FirstOrder; icol++) 
       B(icol) = FirstConstr(idim,icol);
 
@@ -1958,8 +1960,8 @@ void PLib::JacobiParameters(const GeomAbs_Shape ConstraintOrder,
 		      const Standard_Real U1, const Standard_Real U2,
 		      Standard_Real& Length)
 {
-  Standard_Integer i,j,idim, degdim;
-  Standard_Real C1,C2,Sum,Tran,X1,X2,Der1,Der2,D1,D2,DD;
+  Standard_Integer i = 0,j = 0,idim = 0, degdim = 0;
+  Standard_Real C1 = NAN,C2 = NAN,Sum = NAN,Tran = NAN,X1 = NAN,X2 = NAN,Der1 = NAN,Der2 = NAN,D1 = NAN,D2 = NAN,DD = NAN;
 
   Standard_Real *PolynomialArray = &PolynomialCoeff ;
 
@@ -2022,11 +2024,11 @@ void PLib::JacobiParameters(const GeomAbs_Shape ConstraintOrder,
 		      const Standard_Real Tol, 
 		      Standard_Real& Length, Standard_Real& Error)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer NbSubInt = 1,    // Current number of subintervals
                    MaxNbIter = 13,  // Max number of iterations
                    NbIter    = 1;   // Current number of iterations
-  Standard_Real    dU,OldLen,LenI;
+  Standard_Real    dU = NAN,OldLen = NAN,LenI = NAN;
 
   PLib::EvalLength(Degree,Dimension, PolynomialCoeff, U1,U2, Length);
 

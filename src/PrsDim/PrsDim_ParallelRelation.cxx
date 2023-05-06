@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_ParallelRelation.hxx>
 
 #include <PrsDim.hxx>
@@ -140,7 +142,7 @@ void PrsDim_ParallelRelation::ComputeSelection(const Handle(SelectMgr_Selection)
 				  myPosition.Z()+size);
       aSelection->Add(box);
     }
-  Standard_Real parmin,parmax,parcur;
+  Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
   parmin = ElCLib::Parameter(L3,Proj1);
   parmax = parmin;
   
@@ -196,7 +198,7 @@ void PrsDim_ParallelRelation::ComputeTwoEdgesParallel(const Handle(Prs3d_Present
 
   gp_Pnt ptat11,ptat12,ptat21,ptat22;//,pint3d;
   Handle(Geom_Curve) geom1,geom2;
-  Standard_Boolean isInfinite1,isInfinite2;
+  Standard_Boolean isInfinite1 = 0,isInfinite2 = 0;
   Handle(Geom_Curve) extCurv;
   if (!PrsDim::ComputeGeometry(E1,E2,myExtShape,
 			    geom1,geom2,

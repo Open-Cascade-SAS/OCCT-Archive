@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_ModelBuilder.hxx>
 #include <BRepMeshData_Model.hxx>
 #include <BRepMesh_ShapeVisitor.hxx>
@@ -60,7 +62,7 @@ Handle (IMeshData_Model) BRepMesh_ModelBuilder::performInternal (
 
     if (theParameters.Relative)
     {
-      Standard_Real aMaxSize;
+      Standard_Real aMaxSize = NAN;
       BRepMesh_ShapeTool::BoxMaxDimension (aBox, aMaxSize);
       aModel->SetMaxSize(aMaxSize);
     }

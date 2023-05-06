@@ -18,9 +18,9 @@
 
 #include <TCollection_ExtendedString.hxx>
 
-TDocStd_PathParser::TDocStd_PathParser(const TCollection_ExtendedString& path)
+TDocStd_PathParser::TDocStd_PathParser(const TCollection_ExtendedString& path) : myPath(path)
 {
-	myPath = path;
+	
 	Parse();
 }
 

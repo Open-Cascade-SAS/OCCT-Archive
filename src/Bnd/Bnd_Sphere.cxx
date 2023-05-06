@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Bnd_Sphere.hxx>
 
 Bnd_Sphere::Bnd_Sphere()
@@ -100,7 +102,7 @@ Standard_Boolean Bnd_Sphere::IsOut( const Bnd_Sphere& theOther ) const
 Standard_Boolean Bnd_Sphere::IsOut( const gp_XYZ& theXYZ,
                                     Standard_Real& theMaxDist) const
 {
-  Standard_Real aCurMinDist, aCurMaxDist;
+  Standard_Real aCurMinDist = NAN, aCurMaxDist = NAN;
   Distances( theXYZ, aCurMinDist, aCurMaxDist );
   if ( aCurMinDist > theMaxDist )
     return Standard_True;

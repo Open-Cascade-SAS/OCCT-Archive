@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Units.hxx>
 #include <Units_Measurement.hxx>
 #include <Units_Operators.hxx>
@@ -25,10 +27,10 @@
 //function : Units_Measurement
 //purpose  : 
 //=======================================================================
-Units_Measurement::Units_Measurement()
+Units_Measurement::Units_Measurement() : themeasurement(0.), myHasToken(Standard_False)
 {
-  themeasurement = 0.;
-  myHasToken = Standard_False;
+  
+  
 }
 
 
@@ -38,11 +40,11 @@ Units_Measurement::Units_Measurement()
 //=======================================================================
 
 Units_Measurement::Units_Measurement(const Standard_Real avalue,
-				     const Handle(Units_Token)& atoken)
+				     const Handle(Units_Token)& atoken) : themeasurement(avalue), thetoken(atoken), myHasToken(Standard_True)
 {
-  themeasurement = avalue;
-  thetoken       = atoken;
-  myHasToken = Standard_True;
+  
+  
+  
 }
 
 
@@ -52,9 +54,9 @@ Units_Measurement::Units_Measurement(const Standard_Real avalue,
 //=======================================================================
 
 Units_Measurement::Units_Measurement(const Standard_Real avalue,
-				     const Standard_CString aunit)
+				     const Standard_CString aunit) : themeasurement(avalue)
 {
-  themeasurement=avalue;
+  
   Units_UnitSentence unit(aunit);
   if(!unit.IsDone()) {
 #ifdef OCCT_DEBUG
@@ -155,7 +157,7 @@ Handle(Units_Token) Units_Measurement::Token() const
 Units_Measurement Units_Measurement::Add
        (const Units_Measurement& ameasurement) const
 {
-  Standard_Real value;
+  Standard_Real value = NAN;
   Units_Measurement measurement;
   if(thetoken->Dimensions()->IsNotEqual((ameasurement.Token())->Dimensions()))
     return measurement;
@@ -175,7 +177,7 @@ Units_Measurement Units_Measurement::Add
 Units_Measurement Units_Measurement::Subtract
   (const Units_Measurement& ameasurement) const
 {
-  Standard_Real value;
+  Standard_Real value = NAN;
   Units_Measurement measurement;
   if(thetoken->Dimensions()->IsNotEqual((ameasurement.Token())->Dimensions()))
     return measurement;

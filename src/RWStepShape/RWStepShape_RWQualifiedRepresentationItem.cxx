@@ -43,7 +43,7 @@ void RWStepShape_RWQualifiedRepresentationItem::ReadStep
 	// --- own field : qualifiers ---
 
 	Handle(StepShape_HArray1OfValueQualifier) quals;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"qualifiers",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  quals = new StepShape_HArray1OfValueQualifier (1,nb2);
@@ -69,7 +69,7 @@ void RWStepShape_RWQualifiedRepresentationItem::WriteStep
   SW.Send(ent->Name());
 
   // --- own field : qualifiers ---
-  Standard_Integer i, nbq = ent->NbQualifiers();
+  Standard_Integer i = 0, nbq = ent->NbQualifiers();
   SW.OpenSub();
   for (i = 1; i <= nbq; i ++) SW.Send (ent->QualifiersValue(i).Value());
   SW.CloseSub();
@@ -78,7 +78,7 @@ void RWStepShape_RWQualifiedRepresentationItem::WriteStep
 
 void RWStepShape_RWQualifiedRepresentationItem::Share(const Handle(StepShape_QualifiedRepresentationItem)& ent, Interface_EntityIterator& iter) const
 {
-  Standard_Integer i, nbq = ent->NbQualifiers();
+  Standard_Integer i = 0, nbq = ent->NbQualifiers();
   for (i = 1; i <= nbq; i ++) iter.AddItem (ent->QualifiersValue(i).Value());
 }
 

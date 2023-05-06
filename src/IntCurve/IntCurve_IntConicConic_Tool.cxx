@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntCurve_IntConicConic_Tool.hxx>
 #include <gp.hxx>
 
@@ -91,7 +93,7 @@ Standard_Real NormalizeOnCircleDomain(const Standard_Real _Param
 //----------------------------------------------------------------------
 PeriodicInterval PeriodicInterval::FirstIntersection(PeriodicInterval& PInter)
 {
-  Standard_Real a,b;
+  Standard_Real a = NAN,b = NAN;
   if(PInter.isnull  || isnull) {
     PeriodicInterval PourSGI; return(PourSGI);
   }
@@ -123,7 +125,7 @@ PeriodicInterval PeriodicInterval::FirstIntersection(PeriodicInterval& PInter)
 //----------------------------------------------------------------------
 PeriodicInterval PeriodicInterval::SecondIntersection(PeriodicInterval& PInter)
 {
-  Standard_Real a,b;
+  Standard_Real a = NAN,b = NAN;
 
   
   if(PInter.isnull 
@@ -153,8 +155,8 @@ Interval::Interval() :
     Binf(0.),
     Bsup(0.),
     HasFirstBound(Standard_False),
-    HasLastBound(Standard_False)
-{ IsNull=Standard_True; }
+    HasLastBound(Standard_False), IsNull(Standard_True)
+{ }
 
 Interval::Interval(const Standard_Real a,const Standard_Real b) { 
   HasFirstBound=HasLastBound=Standard_True;
@@ -165,9 +167,9 @@ Interval::Interval(const Standard_Real a,const Standard_Real b) {
 
 Interval::Interval(const IntRes2d_Domain& Domain)
 : Binf(0.0),
-  Bsup(0.0)
+  Bsup(0.0), IsNull(Standard_False)
 {
-  IsNull=Standard_False;
+  
   if(Domain.HasFirstPoint()) {
     HasFirstBound=Standard_True;
     Binf=Domain.FirstParameter()-Domain.FirstTolerance();
@@ -182,11 +184,11 @@ Interval::Interval(const IntRes2d_Domain& Domain)
 }
 
 Interval::Interval( const Standard_Real a,const Standard_Boolean hf
-		   ,const Standard_Real b,const Standard_Boolean hl) { 
-  Binf=a; Bsup=b;
-  IsNull=Standard_False;
-  HasFirstBound=hf;
-  HasLastBound=hl;
+		   ,const Standard_Real b,const Standard_Boolean hl) : Binf(a), Bsup(b), IsNull(Standard_False), HasFirstBound(hf), HasLastBound(hl) { 
+  
+  
+  
+  
 }
   
 Standard_Real Interval::Length()   { return((IsNull)? -1.0 :Abs(Bsup-Binf)); }
@@ -195,7 +197,7 @@ Interval Interval::IntersectionWithBounded(const Interval& Inter) {
   if(IsNull || Inter.IsNull) { Interval PourSGI; return(PourSGI); }
   if(!(HasFirstBound || HasLastBound)) 
     return(Interval(Inter.Binf,Inter.Bsup));
-  Standard_Real a,b;
+  Standard_Real a = NAN,b = NAN;
   if(HasFirstBound) {
     if(Inter.Bsup < Binf) { Interval PourSGI; return(PourSGI); }
     a=(Inter.Binf < Binf)? Binf : Inter.Binf;

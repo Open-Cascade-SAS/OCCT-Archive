@@ -100,8 +100,8 @@ namespace
 
 void Units_UnitsDictionary::Creates()
 {
-  Standard_Boolean ismove;
-  Standard_Integer i, j, k, charnumber, unitscomputed;
+  Standard_Boolean ismove = 0;
+  Standard_Integer i = 0, j = 0, k = 0, charnumber = 0, unitscomputed = 0;
   Standard_Real matrix[50][50], coeff=0, move=0;
   Handle(Units_Token) token;
   Handle(Units_UnitsSequence) theunitssequence;
@@ -329,7 +329,7 @@ void Units_UnitsDictionary::Creates()
 
 TCollection_AsciiString Units_UnitsDictionary::ActiveUnit(const Standard_CString aquantity) const
 {
-  Standard_Integer index1;
+  Standard_Integer index1 = 0;
   Handle(Units_Unit) unit;
   Handle(Units_UnitsSequence) unitssequence;
   Handle(Units_Quantity) quantity;

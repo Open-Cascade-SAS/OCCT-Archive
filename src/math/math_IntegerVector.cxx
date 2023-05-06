@@ -110,8 +110,8 @@ Standard_Integer math_IntegerVector::Min() const
 
 void math_IntegerVector::Invert()
 {
-  Standard_Integer J;
-  Standard_Integer Temp;
+  Standard_Integer J = 0;
+  Standard_Integer Temp = 0;
 
   for(Standard_Integer Index = Lower(); Index <= Lower() + Length() / 2 ; Index++)
   {

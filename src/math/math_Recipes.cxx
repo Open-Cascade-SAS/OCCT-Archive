@@ -18,6 +18,8 @@
 #define No_Standard_DimensionError
 //#endif
 
+#include <math.h>
+
 #include <cmath>
 
 #include <math_Recipes.hxx>
@@ -55,8 +57,8 @@ static inline Standard_Real PYTHAG (const Standard_Real a, const Standard_Real b
 
 static void EigenSort(math_Vector& d, math_Matrix& v) { // descending order
 
-      Standard_Integer k, i, j;
-      Standard_Real p;
+      Standard_Integer k = 0, i = 0, j = 0;
+      Standard_Real p = NAN;
       Standard_Integer n = d.Length();
 
       for(i = 1; i < n; i++) {
@@ -78,8 +80,8 @@ static void EigenSort(math_Vector& d, math_Matrix& v) { // descending order
 Standard_Integer Jacobi(math_Matrix& a, math_Vector& d, math_Matrix& v, Standard_Integer& nrot) {
 
       Standard_Integer n = a.RowNumber();
-      Standard_Integer j, iq, ip, i;
-      Standard_Real tresh, theta, tau, t, sm, s, h, g, c;
+      Standard_Integer j = 0, iq = 0, ip = 0, i = 0;
+      Standard_Real tresh = NAN, theta = NAN, tau = NAN, t = NAN, sm = NAN, s = NAN, h = NAN, g = NAN, c = NAN;
       math_Vector b(1, n);
       math_Vector z(1, n);
 
@@ -166,8 +168,8 @@ Standard_Integer LU_Decompose(math_Matrix& a,
                      Standard_Real    TINY,
                      const Message_ProgressRange& theProgress) { 
 
-     Standard_Integer i, imax=0, j, k;
-     Standard_Real big, dum, sum, temp;
+     Standard_Integer i = 0, imax=0, j = 0, k = 0;
+     Standard_Real big = NAN, dum = NAN, sum = NAN, temp = NAN;
 
      Standard_Integer n = a.RowNumber();
      d = 1.0;
@@ -247,8 +249,8 @@ void LU_Solve(const math_Matrix& a,
               const math_IntegerVector& indx, 
               math_Vector& b) {
 
-     Standard_Integer i, ii = 0, ip, j;
-     Standard_Real sum;
+     Standard_Integer i = 0, ii = 0, ip = 0, j = 0;
+     Standard_Real sum = NAN;
 
      Standard_Integer n=a.RowNumber();
      Standard_Integer nblow=b.Lower()-1;
@@ -276,8 +278,8 @@ Standard_Integer LU_Invert(math_Matrix& a) {
      math_Matrix inv(1, n, 1, n);
      math_Vector col(1, n);
      math_IntegerVector indx(1, n);
-     Standard_Real d;
-     Standard_Integer i, j;
+     Standard_Real d = NAN;
+     Standard_Integer i = 0, j = 0;
 
      Standard_Integer Error = LU_Decompose(a, indx, d);
      if(!Error) {
@@ -313,8 +315,8 @@ Standard_Integer SVD_Decompose(math_Matrix& a,
                      math_Matrix& v,
                      math_Vector& rv1) {
 
-     Standard_Integer flag, i, its, j, jj, k, l=0, nm=0;
-     Standard_Real ar, aw, aik, aki, c, f, h, s, x, y, z;
+     Standard_Integer flag = 0, i = 0, its = 0, j = 0, jj = 0, k = 0, l=0, nm=0;
+     Standard_Real ar = NAN, aw = NAN, aik = NAN, aki = NAN, c = NAN, f = NAN, h = NAN, s = NAN, x = NAN, y = NAN, z = NAN;
      Standard_Real anorm = 0.0, g = 0.0, scale = 0.0;
      Standard_Integer m = a.RowNumber();
      Standard_Integer n = a.ColNumber();
@@ -537,8 +539,8 @@ void SVD_Solve(const math_Matrix& u,
                const math_Vector& b,
                math_Vector& x) {
 
-     Standard_Integer jj, j, i;
-     Standard_Real s;
+     Standard_Integer jj = 0, j = 0, i = 0;
+     Standard_Real s = NAN;
 
      Standard_Integer m = u.RowNumber();
      Standard_Integer n = u.ColNumber();
@@ -565,11 +567,11 @@ Standard_Integer DACTCL_Decompose(math_Vector& a,
 			const math_IntegerVector& indx,
                         const Standard_Real MinPivot) {
 
-     Standard_Integer i, j, Neq = indx.Length();
-     Standard_Integer jr, jd, jh, is, ie, k, ir, id, ih, mh;
-     Standard_Integer idot, idot1, idot2;
-     Standard_Real aa, d, dot;
-     Standard_Boolean diag;
+     Standard_Integer i = 0, j = 0, Neq = indx.Length();
+     Standard_Integer jr = 0, jd = 0, jh = 0, is = 0, ie = 0, k = 0, ir = 0, id = 0, ih = 0, mh = 0;
+     Standard_Integer idot = 0, idot1 = 0, idot2 = 0;
+     Standard_Real aa = NAN, d = NAN, dot = NAN;
+     Standard_Boolean diag = 0;
 
      jr = 0;
      for (j = 1; j <= Neq; j++) {
@@ -633,10 +635,10 @@ Standard_Integer DACTCL_Solve(const math_Vector& a,
 		    const math_IntegerVector& indx,
                     const Standard_Real MinPivot) {
 
-     Standard_Integer i, j, Neq = indx.Length();
-     Standard_Integer jr, jd, jh, is, k, id;
-     Standard_Integer jh1, idot, idot1, idot2;
-     Standard_Real aa, d, dot;
+     Standard_Integer i = 0, j = 0, Neq = indx.Length();
+     Standard_Integer jr = 0, jd = 0, jh = 0, is = 0, k = 0, id = 0;
+     Standard_Integer jh1 = 0, idot = 0, idot1 = 0, idot2 = 0;
+     Standard_Real aa = NAN, d = NAN, dot = NAN;
 
      jr = 0;
      for (j = 1; j <= Neq; j++) {

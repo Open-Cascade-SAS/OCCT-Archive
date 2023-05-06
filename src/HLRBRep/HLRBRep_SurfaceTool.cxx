@@ -18,7 +18,7 @@
 #include <BRepAdaptor_Surface.hxx>
 
 Standard_Integer  HLRBRep_SurfaceTool::NbSamplesU(const Standard_Address S) { 
-  Standard_Integer nbs;
+  Standard_Integer nbs = 0;
   GeomAbs_SurfaceType typS = ((BRepAdaptor_Surface *)S)->GetType();
   switch(typS) { 
   case GeomAbs_Plane:
@@ -64,7 +64,7 @@ Standard_Integer  HLRBRep_SurfaceTool::NbSamplesU(const Standard_Address S) {
 }
 
 Standard_Integer  HLRBRep_SurfaceTool::NbSamplesV(const Standard_Address S) { 
-  Standard_Integer nbs;
+  Standard_Integer nbs = 0;
   GeomAbs_SurfaceType typS = ((BRepAdaptor_Surface *)S)->GetType();
   switch(typS) { 
   case GeomAbs_Plane:

@@ -66,8 +66,7 @@ Standard_Boolean TPrsStd_NamedShapeDriver::Update (const TDF_Label& aLabel,
   if(S.IsNull()){ 
     return Standard_False; 
   }  
-  TopLoc_Location L  = S.Location();
-
+  
   Handle(AIS_Shape) AISShape;
   if (AIS.IsNull()) AISShape = new AIS_Shape(S);
   else {

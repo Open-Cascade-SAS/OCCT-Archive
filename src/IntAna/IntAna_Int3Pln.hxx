@@ -68,8 +68,8 @@ private:
 
 
 
-  Standard_Boolean done;
-  Standard_Boolean empt;
+  Standard_Boolean done{};
+  Standard_Boolean empt{};
   gp_Pnt pnt;
 
 

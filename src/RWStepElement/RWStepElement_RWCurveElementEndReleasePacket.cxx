@@ -15,6 +15,8 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepElement_RWCurveElementEndReleasePacket.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -47,7 +49,7 @@ void RWStepElement_RWCurveElementEndReleasePacket::ReadStep (const Handle(StepDa
   StepElement_CurveElementFreedom aReleaseFreedom;
   data->ReadEntity (num, 1, "release_freedom", ach, aReleaseFreedom);
 
-  Standard_Real aReleaseStiffness;
+  Standard_Real aReleaseStiffness = NAN;
   data->ReadReal (num, 2, "release_stiffness", ach, aReleaseStiffness);
 
   // Initialize entity

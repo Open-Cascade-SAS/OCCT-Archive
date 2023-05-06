@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math_Gauss.hxx>
 #include <math_Matrix.hxx>
 #include <math_NotSquare.hxx>
@@ -134,7 +136,7 @@ void math_Matrix::Transpose()
   Standard_Integer Row = LowerRowIndex;
   Standard_Integer Col = LowerColIndex;
   SetLowerCol(LowerRowIndex);
-  Standard_Real Temp;
+  Standard_Real Temp = NAN;
   for(Standard_Integer I = LowerRowIndex; I <= UpperRowIndex; I++) {
     for(Standard_Integer J = I; J <= UpperColIndex; J++) {
       Temp = Array(I, J);
@@ -392,7 +394,7 @@ math_Matrix  math_Matrix::Multiplied (const math_Matrix& Right) const
   math_Matrix Result(LowerRowIndex,       UpperRowIndex,
 		     Right.LowerColIndex, Right.UpperColIndex);
   
-  Standard_Real Som;
+  Standard_Real Som = NAN;
   for(Standard_Integer I = LowerRowIndex; I <= UpperRowIndex; I++) {
     for(Standard_Integer J2 = Right.LowerColIndex; J2 <= Right.UpperColIndex; J2++) {
       Som = 0.0;
@@ -415,7 +417,7 @@ math_Matrix  math_Matrix::TMultiply (const math_Matrix& Right) const
   math_Matrix Result(LowerColIndex,       UpperColIndex,
 		     Right.LowerColIndex, Right.UpperColIndex);
   
-  Standard_Real Som;
+  Standard_Real Som = NAN;
   for(Standard_Integer I = LowerColIndex; I <= UpperColIndex; I++) {
     for(Standard_Integer J2 = Right.LowerColIndex; J2 <= Right.UpperColIndex; J2++) {
       Som = 0.0;
@@ -508,7 +510,7 @@ void  math_Matrix::Multiply(const math_Matrix&  Left,
                                  || (ColNumber() != Right.ColNumber()),
                                     "math_Matrix::Multiply() - matrices have incompatible dimensions");
 
-  Standard_Real Som;
+  Standard_Real Som = NAN;
   Standard_Integer I1 = Left.LowerRowIndex;
   for(Standard_Integer I = LowerRowIndex; I <= UpperRowIndex; I++) {
     Standard_Integer J2 = Right.LowerColIndex;  
@@ -536,7 +538,7 @@ void math_Matrix::TMultiply(const math_Matrix& TLeft,
                                  || (ColNumber() != Right.ColNumber()),
                                     "math_Matrix::TMultiply() - matrices have incompatible dimensions");
   
-  Standard_Real Som;
+  Standard_Real Som = NAN;
   Standard_Integer I1 = TLeft.LowerColIndex;
   for(Standard_Integer I = LowerRowIndex; I <= UpperRowIndex; I++) {
     Standard_Integer J2 = Right.LowerColIndex;  
@@ -610,7 +612,7 @@ void math_Matrix::Multiply(const math_Matrix& Right)
   Standard_DimensionError_Raise_if (ColNumber() != Right.RowNumber(),
                                     "math_Matrix::Multiply() - input matrix has incompatible dimensions");
   
-  Standard_Real Som;
+  Standard_Real Som = NAN;
   for(Standard_Integer I = LowerRowIndex; I <= UpperRowIndex; I++) {
     for(Standard_Integer J2 = Right.LowerColIndex; J2 <= Right.UpperColIndex; J2++) {
       Som = 0.0;

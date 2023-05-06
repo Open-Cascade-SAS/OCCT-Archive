@@ -179,7 +179,7 @@ void TDataStd_ReferenceArray::SetInternalArray (const Handle(TDataStd_HLabelArra
   Standard_Integer aLower    = values->Lower();
   Standard_Integer anUpper   = values->Upper();
   Standard_Boolean aDimEqual = Standard_False;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
 #ifdef OCC2932
   if (Lower() == aLower && Upper() == anUpper ) {

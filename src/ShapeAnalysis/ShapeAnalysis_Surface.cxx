@@ -27,6 +27,8 @@
 //:r9 abv 09.04.99: id_turbine-C.stp #3865: check degenerated 2d point by recomputing to 3d instead of Resolution
 //:s5 abv 22.04.99  Adding debug printouts in catch {} blocks
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <Adaptor3d_IsoCurve.hxx>
 #include <BndLib_Add3dCurve.hxx>
@@ -95,14 +97,14 @@ namespace
 //=======================================================================
 ShapeAnalysis_Surface::ShapeAnalysis_Surface(const Handle(Geom_Surface)& S) :
   mySurf(S),
-  myExtOK(Standard_False), //:30
+  myAdSur(new GeomAdaptor_Surface(mySurf)), myExtOK(Standard_False), //:30
   myNbDeg(-1),
   myIsos(Standard_False),
   myIsoBoxes(Standard_False),
   myGap(0.), myUDelt(0.01), myVDelt(0.01), myUCloseVal(-1), myVCloseVal(-1)
 {
   mySurf->Bounds(myUF, myUL, myVF, myVL);
-  myAdSur = new GeomAdaptor_Surface(mySurf);
+  
 }
 
 //=======================================================================
@@ -162,7 +164,7 @@ void ShapeAnalysis_Surface::ComputeSingularities()
   //CKY 27-FEV-98 : en appel direct on peut forcer. En appel interne on optimise
   if (mySurf.IsNull())  return;
 
-  Standard_Real   su1, sv1, su2, sv2;
+  Standard_Real   su1 = NAN, sv1 = NAN, su2 = NAN, sv2 = NAN;
   //  mySurf->Bounds(su1, su2, sv1, sv2);
   Bounds(su1, su2, sv1, sv2);//modified by rln on 12/11/97 mySurf-> is deleted
 
@@ -429,7 +431,7 @@ Standard_Boolean ShapeAnalysis_Surface::ProjectDegenerated(const Standard_Intege
   myGap = Sqrt(gapMin);
   gp_Pnt2d pk;
 
-  Standard_Integer k; // svv Jan11 2000 : porting on DEC
+  Standard_Integer k = 0; // svv Jan11 2000 : porting on DEC
   for (k = j + step; k <= nbrPnt && k >= 1; k += step) {
     pk = pnt2d(k);
     gp_Pnt P1 = points(k);
@@ -564,7 +566,7 @@ Standard_Boolean ShapeAnalysis_Surface::IsUClosed(const Standard_Real preci)
   if (myUCloseVal < 0)
   {
     //    Faut calculer : calculs minimaux
-    Standard_Real uf, ul, vf, vl;
+    Standard_Real uf = NAN, ul = NAN, vf = NAN, vl = NAN;
     Bounds(uf, ul, vf, vl);//modified by rln on 12/11/97 mySurf-> is deleted
     //mySurf->Bounds (uf,ul,vf,vl);
     RestrictBounds (uf, ul, vf, vl);
@@ -777,7 +779,7 @@ Standard_Boolean ShapeAnalysis_Surface::IsVClosed(const Standard_Real preci)
   if (myVCloseVal < 0)
   {
     //    Faut calculer : calculs minimaux
-    Standard_Real uf, ul, vf, vl;
+    Standard_Real uf = NAN, ul = NAN, vf = NAN, vl = NAN;
     Bounds(uf, ul, vf, vl);//modified by rln on 12/11/97 mySurf-> is deleted
                            //    mySurf->Bounds (uf,ul,vf,vl);
     RestrictBounds (uf, ul, vf, vl);
@@ -980,7 +982,7 @@ Standard_Integer ShapeAnalysis_Surface::SurfaceNewton(const gp_Pnt2d &p2dPrev,
   gp_Pnt2d &sol)
 {
   GeomAdaptor_Surface& SurfAdapt = *Adaptor3d();
-  Standard_Real uf, ul, vf, vl;
+  Standard_Real uf = NAN, ul = NAN, vf = NAN, vl = NAN;
   Bounds(uf, ul, vf, vl);
   Standard_Real du = SurfAdapt.UResolution(preci);
   Standard_Real dv = SurfAdapt.VResolution(preci);
@@ -1137,7 +1139,7 @@ gp_Pnt2d ShapeAnalysis_Surface::ValueOfUV(const gp_Pnt& P3D, const Standard_Real
   myGap = -1.;    // devra etre calcule
   Standard_Boolean computed = Standard_True;  // a priori
 
-  Standard_Real uf, ul, vf, vl;
+  Standard_Real uf = NAN, ul = NAN, vf = NAN, vl = NAN;
   Bounds(uf, ul, vf, vl);//modified by rln on 12/11/97 mySurf-> is deleted
 
   { //:c9 abv 3 Mar 98: UKI60107-1 #350: to prevent 'catch' from catching exception raising below it
@@ -1379,7 +1381,7 @@ Standard_Real ShapeAnalysis_Surface::UVFromIso(const gp_Pnt& P3d, const Standard
   Standard_Real theMin = RealLast();
 
   gp_Pnt pntres;
-  Standard_Real Cf, Cl, UU, VV;
+  Standard_Real Cf = NAN, Cl = NAN, UU = NAN, VV = NAN;
 
   //  Initialisation des recherches : point deja trouve (?)
   UU = U; VV = V;

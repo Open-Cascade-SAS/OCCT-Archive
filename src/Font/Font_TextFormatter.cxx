@@ -183,7 +183,7 @@ void Font_TextFormatter::newLine (const Standard_Integer theLastRect,
   }
 
   Standard_ShortReal aXMin = BottomLeft (aFirstCornerId).x();
-  Font_Rect aBndBox;
+  Font_Rect aBndBox{};
   GlyphBoundingBox (aLastCornerId, aBndBox);
   Standard_ShortReal aXMax = aBndBox.Right;
 
@@ -268,7 +268,7 @@ void Font_TextFormatter::Format()
     {
       Standard_Integer aFirstCornerId = myRectLineStart;
 
-      Font_Rect aBndBox;
+      Font_Rect aBndBox{};
       GlyphBoundingBox (aRectIter, aBndBox);
       const Standard_ShortReal aNextXPos = aBndBox.Right - BottomLeft (aFirstCornerId).x();
       Standard_Boolean isCurWordFits = true;
@@ -372,7 +372,7 @@ Standard_Boolean Font_TextFormatter::GlyphBoundingBox (const Standard_Integer th
 // =======================================================================
 Standard_Boolean Font_TextFormatter::IsLFSymbol (const Standard_Integer theIndex) const
 {
-  Font_Rect aBndBox;
+  Font_Rect aBndBox{};
   if (!GlyphBoundingBox (theIndex, aBndBox))
   {
     return Standard_False;

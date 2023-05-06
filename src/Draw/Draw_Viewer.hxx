@@ -153,7 +153,7 @@ class Draw_Viewer {
 
   private :
 
-    Draw_View*                myViews[MAXVIEW];
+    Draw_View*                myViews[MAXVIEW]{};
     Draw_SequenceOfDrawable3D myDrawables;
 };
 

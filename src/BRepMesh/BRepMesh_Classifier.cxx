@@ -88,7 +88,7 @@ void BRepMesh_Classifier::RegisterWire(
   // Accumulate angle
   TColgp_Array1OfPnt2d aPClass(1, aNbPnts);
   Standard_Real anAngle = 0.0;
-  const gp_Pnt2d *p1 = theWire(1), *p2 = theWire(2), *p3;
+  const gp_Pnt2d *p1 = theWire(1), *p2 = theWire(2), *p3 = nullptr;
   aPClass(1) = *p1;
   aPClass(2) = *p2;
 

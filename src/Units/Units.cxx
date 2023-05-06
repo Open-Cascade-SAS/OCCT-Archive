@@ -95,7 +95,7 @@ Handle(Units_UnitsDictionary) Units::DictionaryOfUnits(const Standard_Boolean am
 
 Handle(Units_Quantity) Units::Quantity(const Standard_CString aquantity)
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   Handle(Units_Quantity) quantity;
   Handle(Units_Quantity) nullquantity;
   Handle(Units_QuantitiesSequence) quantitiessequence;
@@ -122,7 +122,7 @@ Handle(Units_Quantity) Units::Quantity(const Standard_CString aquantity)
 static TCollection_AsciiString symbol_string,quantity_string;
 Standard_CString Units::FirstQuantity(const Standard_CString aunit)
 {
-  Standard_Integer i,j,k;
+  Standard_Integer i = 0,j = 0,k = 0;
   Handle(Units_Quantity) thequantity;
   Handle(Units_QuantitiesSequence) quantitiessequence;
   Handle(Units_UnitsSequence) unitssequence;

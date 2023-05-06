@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BOPTools_AlgoTools2D.hxx>
 
 #include <gp_Vec2d.hxx>
@@ -54,10 +56,10 @@ Standard_Integer BOPTools_AlgoTools2D::AttachExistingPCurve
    const TopoDS_Face& theF, 
    const Handle(IntTools_Context)& aCtx)
 {
-  Standard_Boolean bIsToReverse, bIsClosed, bComp;
-  Standard_Integer iRet;
-  Standard_Real aTol, aT11, aT12, aT21, aT22, aTolPPC;
-  Standard_Real aTolSP, aTMax;
+  Standard_Boolean bIsToReverse = 0, bIsClosed = 0, bComp = 0;
+  Standard_Integer iRet = 0;
+  Standard_Real aTol = NAN, aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN, aTolPPC = NAN;
+  Standard_Real aTolSP = NAN, aTMax = NAN;
   Handle(Geom2d_Curve) aC2Dold, aC2DoldC;
   Handle(Geom2d_Curve) aC2DT;
   BRep_Builder aBB;
@@ -81,7 +83,7 @@ Standard_Integer BOPTools_AlgoTools2D::AttachExistingPCurve
   //
   bIsToReverse = BOPTools_AlgoTools::IsSplitToReverse(aE1, aE2, aCtx);
   if (bIsToReverse) {
-    Standard_Real aT21r, aT22r;
+    Standard_Real aT21r = NAN, aT22r = NAN;
     //
     aC2DoldC->Reverse();
     //
@@ -166,10 +168,10 @@ Standard_Integer UpdateClosedPCurve(const TopoDS_Edge& aEold,
                                     const TopoDS_Face& aF, 
                                     const Handle(IntTools_Context)& aCtx)
 {
-  Standard_Boolean bUClosed, bRevOrder;
-  Standard_Integer aNbPoints, iRet;
-  Standard_Real aTS1, aTS2, aTS, aScPr, aUS1, aVS1, aUS2, aVS2, aT, aU, aV;
-  Standard_Real aT1, aT2, aTol;
+  Standard_Boolean bUClosed = 0, bRevOrder = 0;
+  Standard_Integer aNbPoints = 0, iRet = 0;
+  Standard_Real aTS1 = NAN, aTS2 = NAN, aTS = NAN, aScPr = NAN, aUS1 = NAN, aVS1 = NAN, aUS2 = NAN, aVS2 = NAN, aT = NAN, aU = NAN, aV = NAN;
+  Standard_Real aT1 = NAN, aT2 = NAN, aTol = NAN;
   gp_Pnt2d aP2DS1, aP2DS2, aP2D; 
   gp_Vec2d aV2DT, aV2D, aV2DS1, aV2DS2;
   gp_Pnt aP;
@@ -281,11 +283,11 @@ Standard_Integer UpdateClosedPCurve(const TopoDS_Edge& aEold,
 Standard_Boolean IsClosed(const TopoDS_Edge& aE,
                           const TopoDS_Face& aF)
 {
-  Standard_Boolean bRet;
+  Standard_Boolean bRet = 0;
   //
   bRet=BRep_Tool::IsClosed(aE, aF);
   if (bRet) {
-    Standard_Integer iCnt;
+    Standard_Integer iCnt = 0;
     //
     iCnt=0;
     TopExp_Explorer aExp(aF, TopAbs_EDGE);

@@ -160,18 +160,18 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_LowOrderKinematicPairWithRange, StepKinematics_LowOrderKinematicPair)
 
 private:
-  Standard_Real myLowerLimitActualRotationX; //!< optional
-  Standard_Real myUpperLimitActualRotationX; //!< optional
-  Standard_Real myLowerLimitActualRotationY; //!< optional
-  Standard_Real myUpperLimitActualRotationY; //!< optional
-  Standard_Real myLowerLimitActualRotationZ; //!< optional
-  Standard_Real myUpperLimitActualRotationZ; //!< optional
-  Standard_Real myLowerLimitActualTranslationX; //!< optional
-  Standard_Real myUpperLimitActualTranslationX; //!< optional
-  Standard_Real myLowerLimitActualTranslationY; //!< optional
-  Standard_Real myUpperLimitActualTranslationY; //!< optional
-  Standard_Real myLowerLimitActualTranslationZ; //!< optional
-  Standard_Real myUpperLimitActualTranslationZ; //!< optional
+  Standard_Real myLowerLimitActualRotationX{}; //!< optional
+  Standard_Real myUpperLimitActualRotationX{}; //!< optional
+  Standard_Real myLowerLimitActualRotationY{}; //!< optional
+  Standard_Real myUpperLimitActualRotationY{}; //!< optional
+  Standard_Real myLowerLimitActualRotationZ{}; //!< optional
+  Standard_Real myUpperLimitActualRotationZ{}; //!< optional
+  Standard_Real myLowerLimitActualTranslationX{}; //!< optional
+  Standard_Real myUpperLimitActualTranslationX{}; //!< optional
+  Standard_Real myLowerLimitActualTranslationY{}; //!< optional
+  Standard_Real myUpperLimitActualTranslationY{}; //!< optional
+  Standard_Real myLowerLimitActualTranslationZ{}; //!< optional
+  Standard_Real myUpperLimitActualTranslationZ{}; //!< optional
   Standard_Boolean defLowerLimitActualRotationX; //!< flag "is LowerLimitActualRotationX defined"
   Standard_Boolean defUpperLimitActualRotationX; //!< flag "is UpperLimitActualRotationX defined"
   Standard_Boolean defLowerLimitActualRotationY; //!< flag "is LowerLimitActualRotationY defined"

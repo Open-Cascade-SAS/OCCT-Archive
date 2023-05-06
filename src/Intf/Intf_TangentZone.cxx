@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Intf_TangentZone.hxx>
 
 #define  DEBUG_TANGENTZONE 0 
@@ -211,7 +213,7 @@ Standard_Boolean Intf_TangentZone::IsEqual
 {
   if (Result.Length() != Other.Result.Length())
     return Standard_False;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= Result.Length(); i++) {
     if (!Result(i).IsEqual(Other.Result(i)))
       return Standard_False;
@@ -228,7 +230,7 @@ Standard_Boolean Intf_TangentZone::IsEqual
 Standard_Boolean Intf_TangentZone::Contains
  (const Intf_SectionPoint& ThePI) const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= Result.Length(); i++)
     if (ThePI.IsEqual(Result(i)))
       return Standard_True;
@@ -278,7 +280,7 @@ void Intf_TangentZone::InfoSecond(Standard_Integer& segMin,
 Standard_Boolean Intf_TangentZone::RangeContains
  (const Intf_SectionPoint& ThePI) const
 {
-  Standard_Real a, b, c, d;
+  Standard_Real a = NAN, b = NAN, c = NAN, d = NAN;
   ParamOnFirst(a, b);
   ParamOnSecond(c, d);
   if (a<=ThePI.ParamOnFirst() && ThePI.ParamOnFirst()<=b &&
@@ -296,8 +298,8 @@ Standard_Boolean Intf_TangentZone::RangeContains
 Standard_Boolean Intf_TangentZone::HasCommonRange
  (const Intf_TangentZone& Other) const
 {
-  Standard_Real a1,b1,c1,d1;
-  Standard_Real a2,b2,c2,d2;
+  Standard_Real a1 = NAN,b1 = NAN,c1 = NAN,d1 = NAN;
+  Standard_Real a2 = NAN,b2 = NAN,c2 = NAN,d2 = NAN;
   ParamOnFirst(a1, b1);
   ParamOnSecond(a2, b2);
   Other.ParamOnFirst(c1, d1);

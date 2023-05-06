@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRepLib.hxx>
 #include <BRepLib_MakeFace.hxx>
@@ -55,7 +57,7 @@ BRepLib_MakeShell::BRepLib_MakeShell() :
 BRepLib_MakeShell::BRepLib_MakeShell(const Handle(Geom_Surface)& S,
 				     const Standard_Boolean Segment)
 {
-  Standard_Real UMin,UMax,VMin,VMax;
+  Standard_Real UMin = NAN,UMax = NAN,VMin = NAN,VMax = NAN;
   S->Bounds(UMin,UMax,VMin,VMax);
   Init(S,UMin,UMax,VMin,VMax,Segment);
 }
@@ -115,7 +117,7 @@ void BRepLib_MakeShell::Init(const Handle(Geom_Surface)& S,
   TColGeom2d_Array1OfCurve uisos(1,nu+1);
   TColGeom2d_Array1OfCurve visos(1,nv+1);
 
-  Standard_Integer iu,iv;
+  Standard_Integer iu = 0,iv = 0;
 
   GS.UIntervals(upars,GeomAbs_C2);
   gp_Dir2d dv(0,1);
@@ -356,10 +358,10 @@ void BRepLib_MakeShell::Init(const Handle(Geom_Surface)& S,
   myShape.Closed (BRep_Tool::IsClosed (myShape));
 
   // Additional checking for degenerated edges
-  Standard_Boolean isDegenerated;
-  Standard_Real aFirst, aLast;
+  Standard_Boolean isDegenerated = 0;
+  Standard_Real aFirst = NAN, aLast = NAN;
   Standard_Real aTol = Precision::Confusion();
-  Standard_Real anActTol;
+  Standard_Real anActTol = NAN;
   TopExp_Explorer anExp(myShape, TopAbs_EDGE);
   for ( ; anExp.More(); anExp.Next())
   {

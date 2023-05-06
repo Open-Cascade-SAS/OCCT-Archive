@@ -21,6 +21,8 @@
 #define No_Standard_RangeError
 #define No_Standard_OutOfRange
 
+#include <math.h>
+
 #include <GeomAdaptor_Curve.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -97,7 +99,7 @@ GeomAbs_Shape GeomAdaptor_Curve::LocalContinuity(const Standard_Real U1,
   Standard_Integer Nb = myBSplineCurve->NbKnots();
   Standard_Integer Index1 = 0;
   Standard_Integer Index2 = 0;
-  Standard_Real newFirst, newLast;
+  Standard_Real newFirst = NAN, newLast = NAN;
   const TColStd_Array1OfReal& TK = myBSplineCurve->Knots();
   const TColStd_Array1OfInteger& TM = myBSplineCurve->Multiplicities();
   BSplCLib::LocateParameter(myBSplineCurve->Degree(),TK,TM,U1,myBSplineCurve->IsPeriodic(),
@@ -109,7 +111,7 @@ GeomAbs_Shape GeomAdaptor_Curve::LocalContinuity(const Standard_Real U1,
   }
   if ( Abs(newLast-TK(Index2))<Precision::PConfusion())
     Index2--;
-  Standard_Integer MultMax;
+  Standard_Integer MultMax = 0;
   // attention aux courbes peridiques.
   if ( (myBSplineCurve->IsPeriodic()) && (Index1 == Nb) )
     Index1 = 1;
@@ -266,7 +268,7 @@ Standard_Integer GeomAdaptor_Curve::NbIntervals(const GeomAbs_Shape S) const
     }
 
     Standard_Integer aDegree = myBSplineCurve->Degree();
-    Standard_Integer aCont;
+    Standard_Integer aCont = 0;
 
     switch (S)
     {
@@ -316,7 +318,7 @@ Standard_Integer GeomAdaptor_Curve::NbIntervals(const GeomAbs_Shape S) const
     // akm 05/04/02 (OCC278)  If our curve is trimmed we must recalculate 
     //                    the number of intervals obtained from the basis to
     //              vvv   reflect parameter bounds
-    Standard_Integer iNbBasisInt = C.NbIntervals(BaseS), iInt;
+    Standard_Integer iNbBasisInt = C.NbIntervals(BaseS), iInt = 0;
     if (iNbBasisInt>1)
     {
       TColStd_Array1OfReal rdfInter(1,1+iNbBasisInt);
@@ -352,7 +354,7 @@ void GeomAdaptor_Curve::Intervals (TColStd_Array1OfReal& T, const GeomAbs_Shape 
     }
 
     Standard_Integer aDegree = myBSplineCurve->Degree();
-    Standard_Integer aCont;
+    Standard_Integer aCont = 0;
 
     switch (S)
     {
@@ -402,7 +404,7 @@ void GeomAdaptor_Curve::Intervals (TColStd_Array1OfReal& T, const GeomAbs_Shape 
     // akm 05/04/02 (OCC278)  If our curve is trimmed we must recalculate 
     //                    the array of intervals obtained from the basis to
     //              vvv   reflect parameter bounds
-    Standard_Integer iNbBasisInt = C.NbIntervals(BaseS), iInt;
+    Standard_Integer iNbBasisInt = C.NbIntervals(BaseS), iInt = 0;
     if (iNbBasisInt>1)
     {
       TColStd_Array1OfReal rdfInter(1,1+iNbBasisInt);
@@ -746,12 +748,12 @@ Standard_Real GeomAdaptor_Curve::Resolution(const Standard_Real R3D) const
     return R3D / Handle(Geom_Ellipse)::DownCast (myCurve)->MajorRadius();
   }
   case GeomAbs_BezierCurve: {
-    Standard_Real res;
+    Standard_Real res = NAN;
     Handle(Geom_BezierCurve)::DownCast (myCurve)->Resolution(R3D,res);
     return res;
   }
   case GeomAbs_BSplineCurve: {
-    Standard_Real res;
+    Standard_Real res = NAN;
     myBSplineCurve->Resolution(R3D,res);
     return res;
   }

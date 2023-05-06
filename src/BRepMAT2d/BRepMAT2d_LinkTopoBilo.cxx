@@ -164,7 +164,7 @@ void BRepMAT2d_LinkTopoBilo::LinkToWire(const TopoDS_Wire&              W,
 					const BRepMAT2d_BisectingLocus& BiLo)
 {
   BRepTools_WireExplorer       TheExp (W);
-  Standard_Integer             KC;
+  Standard_Integer             KC = 0;
   TopoDS_Vertex                VF,VL;
   TopoDS_Shape                 S;
   Handle(MAT_BasicElt)         BE;
@@ -234,7 +234,7 @@ void LinkToContour (const BRepMAT2d_Explorer&              Explo,
   Handle (Standard_Type)   Type;
   Standard_Boolean         DirectSense   = Standard_True;
   Standard_Boolean         LastPoint     = Standard_False;
-  Standard_Integer         NbSect,ISect;     
+  Standard_Integer         NbSect = 0,ISect = 0;     
 
   //---------------------------------------------------
   // NbSect : number of sections on the current curve.

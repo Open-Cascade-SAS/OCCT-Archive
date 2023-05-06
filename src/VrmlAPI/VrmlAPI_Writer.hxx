@@ -130,8 +130,8 @@ private:
   Standard_Real myDeflection;
   Handle(VrmlConverter_Projector) myPerespectiveCamera;
   Handle(VrmlConverter_Projector) myOrthographicCamera;
-  Standard_Real myTransparency;
-  Standard_Real myShininess;
+  Standard_Real myTransparency{};
+  Standard_Real myShininess{};
   Handle(Vrml_Material) myFrontMaterial;
   Handle(Vrml_Material) myPointsMaterial;
   Handle(Vrml_Material) myUisoMaterial;

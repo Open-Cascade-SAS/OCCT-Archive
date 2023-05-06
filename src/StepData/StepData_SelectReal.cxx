@@ -20,7 +20,7 @@ IMPLEMENT_STANDARD_RTTIEXT(StepData_SelectReal,StepData_SelectMember)
 //  Definitions : cf Field
 #define KindReal 5
 
-StepData_SelectReal::StepData_SelectReal  ()    {  theval = 0.0;  }
+StepData_SelectReal::StepData_SelectReal  () : theval(0.0)    {   }
 
 Standard_Integer  StepData_SelectReal::Kind () const    {  return KindReal;  }
 

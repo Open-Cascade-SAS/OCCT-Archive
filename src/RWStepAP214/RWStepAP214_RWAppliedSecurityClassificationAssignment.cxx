@@ -45,7 +45,7 @@ void RWStepAP214_RWAppliedSecurityClassificationAssignment::ReadStep
   
   Handle(StepAP214_HArray1OfSecurityClassificationItem) aItems;
   StepAP214_SecurityClassificationItem anent2;
-  Standard_Integer nsub2;
+  Standard_Integer nsub2 = 0;
   if (data->ReadSubList (num,2,"items",ach,nsub2)) {
     Standard_Integer nb2 = data->NbParams(nsub2);
     aItems = new StepAP214_HArray1OfSecurityClassificationItem (1, nb2);

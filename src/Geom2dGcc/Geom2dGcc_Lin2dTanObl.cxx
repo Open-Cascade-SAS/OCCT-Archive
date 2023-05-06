@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <GccAna_Lin2dTanObl.hxx>
 #include <GccEnt_BadQualifier.hxx>
 #include <GccEnt_QualifiedCirc.hxx>
@@ -34,8 +36,8 @@ Geom2dGcc_Lin2dTanObl::
 			  const gp_Lin2d&                 TheLine    ,
 			  const Standard_Real             TolAng     ,
 			  const Standard_Real             Angle      ):
-  Paral2(Standard_False),
-  linsol(1,2)    ,
+  WellDone(Standard_False), Paral2(Standard_False),
+  NbrSol(0), linsol(1,2)    ,
   qualifier1(1,2),
   pnttg1sol(1,2) ,
   pntint2sol(1,2),
@@ -45,15 +47,15 @@ Geom2dGcc_Lin2dTanObl::
   pararg2(1,2)
 {
   Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
+  const Handle(Geom2d_Curve)& CC1 = C1.Curve();
   GeomAbs_CurveType Type1 = C1.GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
 //=============================================================================
 
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   if (Type1 == GeomAbs_Circle ) {
     Handle(Geom2d_Circle) CCC1 = Handle(Geom2d_Circle)::DownCast(CC1);
     gp_Circ2d c1(CCC1->Circ2d());
@@ -77,7 +79,7 @@ Geom2dGcc_Lin2dTanObl::
     Standard_Integer   aNbSamples = Geom2dGcc_CurveTool::NbSamples(C1);
     Standard_Real      aStep      = (aLastPar - aFirstPar)/aNbSamples;
     Standard_Real      Param1     = aFirstPar;
-    Standard_Integer   i;
+    Standard_Integer   i = 0;
     
     for (i = 0; i <= aNbSamples && NbrSol < 2; i++) {
       Geom2dGcc_Lin2dTanOblIter Lin(Qc1,TheLine,Param1,TolAng,Angle);
@@ -100,8 +102,8 @@ Geom2dGcc_Lin2dTanObl::
 			  const Standard_Real             TolAng     ,
 			  const Standard_Real             Param1     ,
 			  const Standard_Real             Angle      ):
-  Paral2(Standard_False),
-  linsol(1,2)    ,
+  WellDone(Standard_False), Paral2(Standard_False),
+  NbrSol(0), linsol(1,2)    ,
   qualifier1(1,2),
   pnttg1sol(1,2) ,
   pntint2sol(1,2),
@@ -111,15 +113,15 @@ Geom2dGcc_Lin2dTanObl::
   pararg2(1,2)
 {
   Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
+  const Handle(Geom2d_Curve)& CC1 = C1.Curve();
   GeomAbs_CurveType Type1 = C1.GetType();
 
 //=============================================================================
 //                            Appel a GccAna.                                 +
 //=============================================================================
 
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   if (Type1 == GeomAbs_Circle ) {
     Handle(Geom2d_Circle) CCC1 = Handle(Geom2d_Circle)::DownCast(CC1);
     gp_Circ2d c1(CCC1->Circ2d());
@@ -205,11 +207,11 @@ Standard_Boolean Geom2dGcc_Lin2dTanObl::Add
 			    const Standard_Real          theTol,
 			    const Geom2dAdaptor_Curve   &theC1)
 {
-  Standard_Integer i;
-  Standard_Real    aPar1sol;
-  Standard_Real    aPar2sol;
-  Standard_Real    aPar1arg;
-  Standard_Real    aPar2arg;
+  Standard_Integer i = 0;
+  Standard_Real    aPar1sol = NAN;
+  Standard_Real    aPar2sol = NAN;
+  Standard_Real    aPar1arg = NAN;
+  Standard_Real    aPar2arg = NAN;
   gp_Pnt2d         aPnt1Sol;
   gp_Pnt2d         aPnt2Sol;
   gp_Lin2d         aLin   = theLin.ThisSolution();

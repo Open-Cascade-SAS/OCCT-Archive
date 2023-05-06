@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomFill_DiscreteTrihedron.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -36,11 +38,11 @@ static const Standard_Real TolConf = Precision::Confusion();
 //=======================================================================
 
 GeomFill_DiscreteTrihedron::GeomFill_DiscreteTrihedron() :
-    myUseFrenet(Standard_False)
+    myFrenet(new GeomFill_Frenet()), myKnots(new TColStd_HSequenceOfReal()), myTrihedrons(new GeomFill_HSequenceOfAx2()), myUseFrenet(Standard_False)
 {
-  myFrenet = new GeomFill_Frenet();
-  myKnots      = new TColStd_HSequenceOfReal();
-  myTrihedrons = new GeomFill_HSequenceOfAx2();
+  
+  
+  
 }
 
 //=======================================================================
@@ -106,7 +108,7 @@ void GeomFill_DiscreteTrihedron::Init()
   //Standard_Real Tol = Precision::Confusion();
   Standard_Integer NbSamples = 10;
 
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   for (i = 1; i <= NbIntervals; i++)
   {
     Standard_Real delta = (Knots(i+1) - Knots(i))/NbSamples;
@@ -122,7 +124,7 @@ void GeomFill_DiscreteTrihedron::Init()
   gp_Pnt Origin(0.,0.,0.), Pnt, SubPnt;
   gp_Vec Tangent;
   gp_Dir TangDir;
-  Standard_Real norm;
+  Standard_Real norm = NAN;
   for (i = 1; i <= myKnots->Length(); i++)
   {
     Standard_Real Param = myKnots->Value(i);
@@ -198,11 +200,11 @@ Standard_Boolean GeomFill_DiscreteTrihedron::D0(const Standard_Real Param,
     Standard_Integer NbSamples = 10;
     gp_Pnt Origin(0.,0.,0.);
     
-    Standard_Integer i;
+    Standard_Integer i = 0;
     //gp_Ax2 PrevAxis;
     //Standard_Real PrevParam;
 
-    Standard_Integer I1, I2;
+    Standard_Integer I1 = 0, I2 = 0;
     I1 = 1;
     I2 = myKnots->Length();
     for (;;)
@@ -358,7 +360,7 @@ void GeomFill_DiscreteTrihedron::Intervals(TColStd_Array1OfReal& T,
   ABiNormal = gp_Vec(0, 0, 0);
   Standard_Real Step = (myTrimmed->LastParameter() - 
                         myTrimmed->FirstParameter()) / Num;
-  Standard_Real Param;
+  Standard_Real Param = NAN;
   for (Standard_Integer i = 0; i <= Num; i++) {
     Param = myTrimmed->FirstParameter() + i*Step;
     if (Param > myTrimmed->LastParameter()) Param = myTrimmed->LastParameter();

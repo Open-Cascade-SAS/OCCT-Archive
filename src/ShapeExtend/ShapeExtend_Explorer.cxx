@@ -42,7 +42,7 @@ TopoDS_Shape ShapeExtend_Explorer::CompoundFromSeq
   BRep_Builder B;
   TopoDS_Compound C;
   B.MakeCompound(C);
-  Standard_Integer i,n = seqval->Length();
+  Standard_Integer i = 0,n = seqval->Length();
   for (i = 1; i <= n ; i ++)  B.Add(C,seqval->Value(i));
   return C;
 }
@@ -56,7 +56,7 @@ static void FillList (const Handle(TopTools_HSequenceOfShape)& list,
 		      const TopoDS_Shape& comp, const Standard_Boolean expcomp)
 {
   for (TopoDS_Iterator it (comp); it.More(); it.Next()) {
-    TopoDS_Shape sub = it.Value();
+    const TopoDS_Shape& sub = it.Value();
     if (sub.ShapeType() != TopAbs_COMPOUND) list->Append (sub);
     else if (!expcomp) list->Append (sub);
     else FillList (list,sub,expcomp);
@@ -87,7 +87,7 @@ void ShapeExtend_Explorer::ListFromSeq (const Handle(TopTools_HSequenceOfShape)&
 {
   if (clear) lisval.Clear();
   if (seqval.IsNull()) return;
-  Standard_Integer i, nb = seqval->Length();
+  Standard_Integer i = 0, nb = seqval->Length();
   for (i = 1; i <= nb; i ++) lisval.Append (seqval->Value(i));
 }
 
@@ -118,7 +118,7 @@ TopAbs_ShapeEnum ShapeExtend_Explorer::ShapeType (const TopoDS_Shape& shape,
   if (!compound || res != TopAbs_COMPOUND) return res;
   res = TopAbs_SHAPE;
   for (TopoDS_Iterator iter(shape); iter.More(); iter.Next()) {
-    TopoDS_Shape sh = iter.Value();
+    const TopoDS_Shape& sh = iter.Value();
     if (sh.IsNull()) continue;
     TopAbs_ShapeEnum typ = sh.ShapeType();
     if (typ == TopAbs_COMPOUND) typ = ShapeType (sh,compound);
@@ -248,7 +248,7 @@ void ShapeExtend_Explorer::DispatchList (const Handle(TopTools_HSequenceOfShape)
   if (compsols.IsNull())  compsols  = new TopTools_HSequenceOfShape();
   if (compounds.IsNull()) compounds = new TopTools_HSequenceOfShape();
 
-  Standard_Integer i,nb = list->Length();
+  Standard_Integer i = 0,nb = list->Length();
   for (i = 1; i <= nb; i ++) {
     TopoDS_Shape sh = list->Value(i);
     if (sh.IsNull()) continue;

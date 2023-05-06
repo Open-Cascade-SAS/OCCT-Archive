@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Curve.hxx>
 #include <Geom2dLProp_Curve2dTool.hxx>
 #include <Geom2dLProp_FuncCurExt.hxx>
@@ -26,9 +28,9 @@
 //=============================================================================
 Geom2dLProp_FuncCurExt::Geom2dLProp_FuncCurExt(const Handle(Geom2d_Curve)&  C,
                                                const Standard_Real Tol)
-                                               :theCurve(C)
+                                               :theCurve(C), epsX(Tol)
 {
-  epsX  = Tol;
+  
 }
 
 //=============================================================================
@@ -66,7 +68,7 @@ Standard_Boolean  Geom2dLProp_FuncCurExt::Value (const Standard_Real  X,
 Standard_Boolean Geom2dLProp_FuncCurExt::Derivative(const Standard_Real  X,
                                                     Standard_Real& D)
 {  
-  Standard_Real F;
+  Standard_Real F = NAN;
   return Values (X,F,D) ;
 }
 
@@ -78,7 +80,7 @@ Standard_Boolean Geom2dLProp_FuncCurExt::Values (const Standard_Real  X,
                                                  Standard_Real& F,
                                                  Standard_Real& D)
 {
-  Standard_Real F2;
+  Standard_Real F2 = NAN;
   Standard_Real Dx= epsX/100.;
 
   if (X+Dx > Geom2dLProp_Curve2dTool::LastParameter(theCurve)) {Dx = - Dx;}
@@ -101,7 +103,7 @@ Standard_Boolean Geom2dLProp_FuncCurExt::IsMinKC (const Standard_Real  X) const
   gp_Pnt2d            P1;
   gp_Vec2d            V1,V2,V3;
   Standard_Real  Dx= epsX;
-  Standard_Real  KC,KP;
+  Standard_Real  KC = NAN,KP = NAN;
 
   Geom2dLProp_Curve2dTool::D3(theCurve,X,P1,V1,V2,V3);
   Standard_Real CPV1V2 = V1.Crossed(V2);

@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BOPTools_AlgoTools2D.hxx>
 #include <BOPTools_AlgoTools3D.hxx>
@@ -61,11 +63,11 @@ static
 Standard_Boolean BOPTools_AlgoTools3D::DoSplitSEAMOnFace (const TopoDS_Edge& aSplit,
                                                           const TopoDS_Face& aF)
 {
-  Standard_Boolean bIsUPeriodic, bIsVPeriodic, bIsLeft;
+  Standard_Boolean bIsUPeriodic = 0, bIsVPeriodic = 0, bIsLeft = 0;
   Standard_Real anUPeriod = 0., anVPeriod = 0.;
-  Standard_Real aTol, a, b, aT, anU, dU, anU1;
-  Standard_Real aScPr, anV, dV, anV1;
-  Standard_Real aUmin, aUmax, aVmin, aVmax;
+  Standard_Real aTol = NAN, a = NAN, b = NAN, aT = NAN, anU = NAN, dU = NAN, anU1 = NAN;
+  Standard_Real aScPr = NAN, anV = NAN, dV = NAN, anV1 = NAN;
+  Standard_Real aUmin = NAN, aUmax = NAN, aVmin = NAN, aVmax = NAN;
   gp_Pnt2d aP2D;
   gp_Vec2d aVec2D;
   Handle(Geom2d_Curve) aTmpC1, aTmpC2;
@@ -119,7 +121,7 @@ Standard_Boolean BOPTools_AlgoTools3D::DoSplitSEAMOnFace (const TopoDS_Edge& aSp
       {
         Standard_Boolean bIsUClosed = aSB->IsUClosed();
         Standard_Boolean bIsVClosed = aSB->IsVClosed();
-        Standard_Real aGlobalUmin, aGlobalUmax, aGlobalVmin, aGlobalVmax;
+        Standard_Real aGlobalUmin = NAN, aGlobalUmax = NAN, aGlobalVmin = NAN, aGlobalVmax = NAN;
         aSB->Bounds(aGlobalUmin, aGlobalUmax, aGlobalVmin, aGlobalVmax);
 
         if (bIsUClosed &&
@@ -238,12 +240,12 @@ Standard_Boolean BOPTools_AlgoTools3D::DoSplitSEAMOnFace (const TopoDS_Edge& the
   TopoDS_Face aFace = theFace;
   aFace.Orientation (TopAbs_FORWARD);
 
-  Standard_Real aTS1, aTS2;
+  Standard_Real aTS1 = NAN, aTS2 = NAN;
   Handle(Geom2d_Curve) aC2DSplit = BRep_Tool::CurveOnSurface (aESplit, aFace, aTS1, aTS2);
   if (aC2DSplit.IsNull())
     return Standard_False;
 
-  Standard_Real aT1, aT2;
+  Standard_Real aT1 = NAN, aT2 = NAN;
   Handle(Geom2d_Curve) aC2D1 = BRep_Tool::CurveOnSurface (
     TopoDS::Edge (theEOrigin.Oriented (TopAbs_FORWARD)), aFace, aT1, aT2);
   Handle(Geom2d_Curve) aC2D2 = BRep_Tool::CurveOnSurface (
@@ -314,7 +316,7 @@ void BOPTools_AlgoTools3D::GetNormalToFaceOnEdge (const TopoDS_Edge& aE,
                                                   gp_Dir& aDNF,
                                                   const Handle(IntTools_Context)& theContext)
 {
-  Standard_Real aT, aT1, aT2;
+  Standard_Real aT = NAN, aT1 = NAN, aT2 = NAN;
   
   BRep_Tool::CurveOnSurface(aE, aF, aT1, aT2);
   aT=BOPTools_AlgoTools2D::IntermediatePoint(aT1, aT2);
@@ -335,7 +337,7 @@ void BOPTools_AlgoTools3D::GetNormalToFaceOnEdge (const TopoDS_Edge& aE,
                                                   gp_Dir& aDNF1,
                                                   const Handle(IntTools_Context)& theContext)
 {
-  Standard_Real U, V, aTolPC;
+  Standard_Real U = NAN, V = NAN, aTolPC = NAN;
   gp_Pnt2d aP2D;
   gp_Pnt aP;
   gp_Vec aD1U, aD1V;
@@ -362,14 +364,14 @@ void BOPTools_AlgoTools3D::GetNormalToFaceOnEdge (const TopoDS_Edge& aE,
 Standard_Integer BOPTools_AlgoTools3D::SenseFlag (const gp_Dir& aDNF1,
                                                   const gp_Dir& aDNF2)
 {
-  Standard_Boolean bIsDirsCoinside;
+  Standard_Boolean bIsDirsCoinside = 0;
   //
   bIsDirsCoinside=IntTools_Tools::IsDirsCoinside(aDNF1, aDNF2);
   if (!bIsDirsCoinside) {
     return 0;
   }
   
-  Standard_Real aScPr;
+  Standard_Real aScPr = NAN;
   
   aScPr=aDNF1*aDNF2;
   if (aScPr<0.) {
@@ -510,7 +512,7 @@ Standard_Integer BOPTools_AlgoTools3D::PointNearEdge
    gp_Pnt2d& aPx2DNear,
    gp_Pnt& aPxNear)
 {
-  Standard_Real aFirst, aLast, aETol, aFTol, transVal;
+  Standard_Real aFirst = NAN, aLast = NAN, aETol = NAN, aFTol = NAN, transVal = NAN;
   GeomAbs_SurfaceType aTS;
   Handle(Geom2d_Curve) aC2D;
   Handle(Geom_Surface) aS;
@@ -555,7 +557,7 @@ Standard_Integer BOPTools_AlgoTools3D::PointNearEdge
       gp_Vec2d transVec( aDP );
       transVal = aDt2D + aETol + aFTol;
       if (aTS==GeomAbs_Cylinder) {// pkv/909/F8
-        Standard_Real aR, dT;
+        Standard_Real aR = NAN, dT = NAN;
         //
         gp_Cylinder aCyl=aGAS.Cylinder();
         aR=aCyl.Radius();
@@ -594,7 +596,7 @@ Standard_Integer BOPTools_AlgoTools3D::PointNearEdge
    gp_Pnt& aPxNear,
    const Handle(IntTools_Context)& theContext)
 {
-  Standard_Real aTolE, aTolF, dTx, dT2D;
+  Standard_Real aTolE = NAN, aTolF = NAN, dTx = NAN, dT2D = NAN;
   Handle(Geom_Surface) aS;
   GeomAdaptor_Surface aGAS;
   //
@@ -677,7 +679,7 @@ Standard_Integer BOPTools_AlgoTools3D::PointNearEdge
    gp_Pnt& aPInFace,
    const Handle(IntTools_Context)& theContext)
 {
-  Standard_Real aT, aT1, aT2;
+  Standard_Real aT = NAN, aT1 = NAN, aT2 = NAN;
   //
   // 1. compute parameter on edge
   BRep_Tool::Range(aE, aT1, aT2);
@@ -726,7 +728,7 @@ void Add(const TopoDS_Shape& aS,
          TopTools_IndexedMapOfShape& myShapes, 
          Standard_Boolean& bHasGeometry)
 {
-  Standard_Integer anIndex; 
+  Standard_Integer anIndex = 0; 
   //
   if (bHasGeometry) {
     return;
@@ -736,7 +738,7 @@ void Add(const TopoDS_Shape& aS,
     return;
   }
   //
-  TopoDS_Shape aSx = aS;
+  const TopoDS_Shape& aSx = aS;
   //
   anIndex=myShapes.FindIndex(aSx);
   if (!anIndex) {
@@ -867,8 +869,8 @@ Standard_Integer BOPTools_AlgoTools3D::PointInFace
    gp_Pnt2d& theP2D,
    const Handle(IntTools_Context)& theContext)
 {
-  Standard_Integer i, iErr = 1;
-  Standard_Real aUMin, aUMax, aVMin, aVMax, aUx;
+  Standard_Integer i = 0, iErr = 1;
+  Standard_Real aUMin = NAN, aUMax = NAN, aVMin = NAN, aVMax = NAN, aUx = NAN;
   //
   theContext->UVBounds(theF, aUMin, aUMax, aVMin, aVMax);
   //
@@ -906,8 +908,8 @@ Standard_Integer BOPTools_AlgoTools3D::PointInFace
    gp_Pnt2d& theP2D,
    const Handle(IntTools_Context)& theContext)
 {
-  Standard_Integer iErr;
-  Standard_Real f, l;
+  Standard_Integer iErr = 0;
+  Standard_Real f = NAN, l = NAN;
   Handle(Geom2d_Curve) aC2D;
   //
   iErr = 0;
@@ -955,9 +957,9 @@ Standard_Integer BOPTools_AlgoTools3D::PointInFace
    const Handle(IntTools_Context)& theContext,
    const Standard_Real theDt2D)
 {
-  Standard_Boolean bIsDone, bHasFirstPoint, bHasSecondPoint;
-  Standard_Integer iErr, aIH, aNbDomains;
-  Standard_Real aVx, aV1, aV2;
+  Standard_Boolean bIsDone = 0, bHasFirstPoint = 0, bHasSecondPoint = 0;
+  Standard_Integer iErr = 0, aIH = 0, aNbDomains = 0;
+  Standard_Real aVx = NAN, aV1 = NAN, aV2 = NAN;
   //
   Geom2dHatch_Hatcher& aHatcher = theContext->Hatcher(theF);
   //

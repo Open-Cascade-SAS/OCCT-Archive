@@ -46,7 +46,7 @@ GccAna_Circ2d3Tan::
 //   Initialization of fields.                                           +
 //=========================================================================
 
-   cirsol(1,MaxSol)     ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,MaxSol)     ,
    qualifier1(1,MaxSol) ,
    qualifier2(1,MaxSol) ,
    qualifier3(1,MaxSol) ,
@@ -66,8 +66,8 @@ GccAna_Circ2d3Tan::
 
    gp_Dir2d dirx(1.0,0.0);
    Standard_Real Tol = Abs(Tolerance);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
        !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -334,7 +334,7 @@ GccAna_Circ2d3Tan::
 
    // Debug to create the point on the solution circles.
 
-   Standard_Integer kk ;
+   Standard_Integer kk = 0 ;
    for ( kk = 1; kk <= NbrSol; kk++) {
      gp_Circ2d CC = cirsol(kk);
      Standard_Real NR = CC.Location().Distance(Point3);

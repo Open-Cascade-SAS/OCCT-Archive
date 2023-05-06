@@ -126,7 +126,7 @@ private:
 #endif
 
   //! Is overlap test test completed?
-  Standard_Boolean myIsDone;
+  Standard_Boolean myIsDone{};
 
   Standard_Real myTolerance;
 };

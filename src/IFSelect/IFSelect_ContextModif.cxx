@@ -36,9 +36,9 @@ IFSelect_ContextModif::IFSelect_ContextModif(const Interface_Graph& graph,
                                              const Interface_CopyTool& TC,
                                              const Standard_CString filename)
      : thegraf (graph,Standard_False) , thefile (filename) ,
-       thelist (graph.Size(),' ')
+       thelist (graph.Size(),' '), thesel(Standard_False)
 {
-  themap = TC.Control();  thesel  = Standard_False;  thecurr = thecurt = 0;
+  themap = TC.Control();   thecurr = thecurt = 0;
   Standard_Integer nb = thelist.Length();
   Handle(Standard_Transient) newent;
   for (Standard_Integer i = 1; i <= nb; i ++) {
@@ -55,9 +55,9 @@ IFSelect_ContextModif::IFSelect_ContextModif(const Interface_Graph& graph,
 IFSelect_ContextModif::IFSelect_ContextModif(const Interface_Graph& graph,
                                              const Standard_CString filename)
      : thegraf (graph,Standard_False) , thefile (filename) ,
-       thelist (graph.Size(),' ')
+       thelist (graph.Size(),' '), thesel(Standard_False)
 {
-  thesel  = Standard_False;  thecurr = thecurt = 0;
+   thecurr = thecurt = 0;
   Standard_Integer nb = thelist.Length();
   Handle(Standard_Transient) newent;
   for (Standard_Integer i = 1; i <= nb; i ++)  thelist.SetValue(i,'1');

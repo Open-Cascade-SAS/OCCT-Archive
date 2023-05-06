@@ -33,7 +33,7 @@
 //=============================================================================
 // Creation d' une line de prostep a partir d' une Lin de gp
 //=============================================================================
-GeomToStep_MakeLine::GeomToStep_MakeLine( const gp_Lin& L)
+GeomToStep_MakeLine::GeomToStep_MakeLine( const gp_Lin& L) : GeomToStep_Root()
 {
 #define Vec_gen gp_Vec
 #include "GeomToStep_MakeLine_gen.pxx"
@@ -44,7 +44,7 @@ GeomToStep_MakeLine::GeomToStep_MakeLine( const gp_Lin& L)
 // Creation d' une line de prostep a partir d' une Lin2d de gp
 //=============================================================================
 
-GeomToStep_MakeLine::GeomToStep_MakeLine( const gp_Lin2d& L)
+GeomToStep_MakeLine::GeomToStep_MakeLine( const gp_Lin2d& L) : GeomToStep_Root()
 {
 #define Vec_gen gp_Vec2d
 #include "GeomToStep_MakeLine_gen.pxx"
@@ -55,7 +55,7 @@ GeomToStep_MakeLine::GeomToStep_MakeLine( const gp_Lin2d& L)
 // Creation d' une line de prostep a partir d' une Line de Geom
 //=============================================================================
 
-GeomToStep_MakeLine::GeomToStep_MakeLine ( const Handle(Geom_Line)& Gline)
+GeomToStep_MakeLine::GeomToStep_MakeLine ( const Handle(Geom_Line)& Gline) : GeomToStep_Root()
 {
   gp_Lin L;
   L = Gline->Lin();
@@ -68,7 +68,7 @@ GeomToStep_MakeLine::GeomToStep_MakeLine ( const Handle(Geom_Line)& Gline)
 // Creation d' une line de prostep a partir d' une Line de Geom2d
 //=============================================================================
 
-GeomToStep_MakeLine::GeomToStep_MakeLine ( const Handle(Geom2d_Line)& Gline)
+GeomToStep_MakeLine::GeomToStep_MakeLine ( const Handle(Geom2d_Line)& Gline) : GeomToStep_Root()
 {
   gp_Lin2d L;
   L = Gline->Lin2d();

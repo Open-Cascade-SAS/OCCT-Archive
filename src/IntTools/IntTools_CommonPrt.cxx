@@ -26,7 +26,7 @@
 IntTools_CommonPrt::IntTools_CommonPrt() 
   :
   myType(TopAbs_SHAPE),
-  myAllNullFlag(Standard_False)
+  myVertPar1(0.), myVertPar2(0.), myAllNullFlag(Standard_False)
   
 {
   //
@@ -34,8 +34,8 @@ IntTools_CommonPrt::IntTools_CommonPrt()
   myPnt2.SetCoord(0.,0.,0.);
   //
   // modified by NIZHNY-MKK  Wed Jun  8 16:47:04 2005.BEGIN
-  myVertPar1 = 0.;
-  myVertPar2 = 0.;
+  
+  
   // modified by NIZHNY-MKK  Wed Jun  8 16:47:07 2005.END
 }
 
@@ -57,7 +57,7 @@ IntTools_CommonPrt::IntTools_CommonPrt()
   myPnt2(Other.myPnt2)
 //
 {
-  Standard_Integer i, aNb=Other.myRanges2.Length();
+  Standard_Integer i = 0, aNb=Other.myRanges2.Length();
   for (i=1; i<=aNb; i++) {
     myRanges2.Append(Other.myRanges2(i));
   }
@@ -79,7 +79,7 @@ IntTools_CommonPrt::IntTools_CommonPrt()
   myPnt1=Other.myPnt1;
   myPnt2=Other.myPnt2;
   //
-  Standard_Integer i, aNb=Other.myRanges2.Length();
+  Standard_Integer i = 0, aNb=Other.myRanges2.Length();
   for (i=1; i<=aNb; i++) {
     myRanges2.Append(Other.myRanges2(i));
   }
@@ -263,7 +263,7 @@ IntTools_CommonPrt::IntTools_CommonPrt()
   aCP.SetVertexParameter2(myVertPar2);
 
   IntTools_SequenceOfRanges aSeqRanges;
-  Standard_Integer i, aNb;
+  Standard_Integer i = 0, aNb = 0;
   aNb=myRanges2.Length();
   for (i=1; i<=aNb; i++) {
     aCP.AppendRange2(myRanges2(i));

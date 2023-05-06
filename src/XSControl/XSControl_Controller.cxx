@@ -457,7 +457,7 @@ void XSControl_Controller::Customise (Handle(XSControl_WorkSession)& WS)
   }
 
   // Applied Modifiers
-  Standard_Integer i, nb = myAdaptorApplied.Length();
+  Standard_Integer i = 0, nb = myAdaptorApplied.Length();
   for (i = 1; i <= nb; i ++) {
     const Handle(Standard_Transient) &anitem = myAdaptorApplied.Value(i);
     Handle(TCollection_HAsciiString) name = WS->Name(anitem);

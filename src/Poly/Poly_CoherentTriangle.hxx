@@ -152,10 +152,10 @@ class Poly_CoherentTriangle
   // ---------- PRIVATE FIELDS ----------
 
   Standard_Integer              myNConnections;
-  Standard_Integer              myNodes[3];
-  Standard_Integer              myNodesOnConnected[3];
-  const Poly_CoherentTriangle * mypConnected[3];
-  const Poly_CoherentLink     * mypLink[3];
+  Standard_Integer              myNodes[3]{};
+  Standard_Integer              myNodesOnConnected[3]{};
+  const Poly_CoherentTriangle * mypConnected[3]{};
+  const Poly_CoherentLink     * mypLink[3]{};
 
   friend class Poly_CoherentTriangulation;
 };

@@ -87,7 +87,7 @@ void TDF_Delta::BeforeOrAfterApply(const Standard_Boolean before) const
 
   Standard_Boolean noDeadLock = Standard_True;
   Standard_Integer nbAD = ADlist.Extent();
-  Standard_Boolean next;
+  Standard_Boolean next = 0;
   while (noDeadLock && (nbAD != 0)) {
     itr.Initialize(ADlist);
     while (itr.More()) {

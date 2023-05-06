@@ -28,6 +28,7 @@
 /*14/05/2002 : AGV : Portability UNIX/Windows
 */ 
 /*======================================================================*/ 
+#include <math.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -160,7 +161,7 @@ int perf_stop_meter (const char * const MeterName)
 
   if (ic >= 0 && MeterTable[ic].start_time) {
     t_TimeCounter * const ptc = &MeterTable[ic];
-    PERF_TIME utime;
+    PERF_TIME utime = NAN;
     PICK_TIME (utime)
     ptc->cumul_time += utime - ptc->start_time;
     ptc->start_time = 0;
@@ -181,7 +182,7 @@ int perf_stop_imeter (const int iMeter)
   if (iMeter >= 0 && iMeter < nb_meters) {
     t_TimeCounter * const ptc = &MeterTable[iMeter];
     if (ptc->start_time) {
-      PERF_TIME utime;
+      PERF_TIME utime = NAN;
       PICK_TIME (utime)
       ptc->cumul_time += utime - ptc->start_time;
       ptc->start_time = 0;
@@ -235,7 +236,7 @@ void perf_sprint_all_meters (char *buffer, int length, int reset)
 {
   char string[256];
 
-  int i;
+  int i = 0;
   for (i=0; i<nb_meters; i++) {
     const t_TimeCounter * const ptc = &MeterTable[i];
     if (ptc && ptc->nb_enter) {
@@ -317,7 +318,7 @@ Returns  :      none
 ======================================================================*/
 void perf_destroy_all_meters (void)
 {
-  int i;
+  int i = 0;
   for (i=0; i<nb_meters; i++)
     free (MeterTable[i].name);
   nb_meters = 0;
@@ -376,7 +377,7 @@ Remarks  :      For internal use in this module
 ======================================================================*/
 static int find_meter (const char * const MeterName)
 {
-  int i;
+  int i = 0;
   for (i=0; i<nb_meters; i++)
     if (!strcmp (MeterTable[i].name, MeterName)) return i;
   return -1;

@@ -26,17 +26,17 @@ IMPLEMENT_STANDARD_RTTIEXT(IFSelect_SignCounter,IFSelect_SignatureList)
 
 IFSelect_SignCounter::IFSelect_SignCounter
   (const Standard_Boolean withmap, const Standard_Boolean withlist)
-    : IFSelect_SignatureList (withlist)
+    : IFSelect_SignatureList (withlist), themapstat(withmap)
 {
-  themapstat = withmap;  thenbcomp1 = thenbcomp2 = theselmode = 0;
+   thenbcomp1 = thenbcomp2 = theselmode = 0;
 }
 
     IFSelect_SignCounter::IFSelect_SignCounter
   (const Handle(IFSelect_Signature)& matcher,
    const Standard_Boolean withmap, const Standard_Boolean withlist)
-    : IFSelect_SignatureList (withlist) , thematcher (matcher)
+    : IFSelect_SignatureList (withlist) , themapstat(withmap), thematcher (matcher)
 {
-  themapstat = withmap;  thenbcomp1 = thenbcomp2 = theselmode = 0;
+   thenbcomp1 = thenbcomp2 = theselmode = 0;
   TCollection_AsciiString sign = thematcher->Name();
   SetName (sign.ToCString());
 }

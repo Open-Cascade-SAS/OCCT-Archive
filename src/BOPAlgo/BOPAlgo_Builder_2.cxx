@@ -16,6 +16,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BOPAlgo_Builder.hxx>
 #include <BOPAlgo_Alerts.hxx>
 #include <BOPAlgo_BuilderFace.hxx>
@@ -72,7 +74,7 @@ class BOPAlgo_PairOfShapeBoolean : public BOPAlgo_ParallelAlgo {
     myFlag(Standard_False) {
   }
   //
-  virtual ~BOPAlgo_PairOfShapeBoolean() {
+  ~BOPAlgo_PairOfShapeBoolean() override {
   }
   //
   TopoDS_Shape& Shape1() {
@@ -95,7 +97,7 @@ class BOPAlgo_PairOfShapeBoolean : public BOPAlgo_ParallelAlgo {
     return myContext;
   }
   //
-  virtual void Perform() {
+  void Perform() override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (UserBreak(aPS))
     {
@@ -142,7 +144,7 @@ public:
 
 private:
   //! Disable the range enabled method
-  virtual void Perform(const Message_ProgressRange& /*theRange*/) {};
+  void Perform(const Message_ProgressRange& /*theRange*/) override {};
 
 private:
   Message_ProgressRange myRange;
@@ -163,7 +165,7 @@ class BOPAlgo_VFI : public BOPAlgo_ParallelAlgo {
     myIsInternal(Standard_False) {
   }
   //
-  virtual ~BOPAlgo_VFI(){
+  ~BOPAlgo_VFI() override{
   }
   //
   void SetVertex(const TopoDS_Vertex& aV) {
@@ -194,14 +196,14 @@ class BOPAlgo_VFI : public BOPAlgo_ParallelAlgo {
     return myContext;
   }
   //
-  virtual void Perform() {
+  void Perform() override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (UserBreak(aPS))
     {
       return;
     }
 
-    Standard_Real aT1, aT2, dummy;
+    Standard_Real aT1 = NAN, aT2 = NAN, dummy = NAN;
     //
     Standard_Integer iFlag =
       myContext->ComputeVF(myV, myF, aT1, aT2, dummy, myFuzzyValue);
@@ -242,8 +244,8 @@ void BOPAlgo_Builder::FillImagesFaces(const Message_ProgressRange& theRange)
 //=======================================================================
 void BOPAlgo_Builder::BuildSplitFaces(const Message_ProgressRange& theRange)
 {
-  Standard_Boolean bHasFaceInfo, bIsClosed, bIsDegenerated, bToReverse;
-  Standard_Integer i, j, k, aNbS, aNbPBIn, aNbPBOn, aNbPBSc, aNbAV, nSp;
+  Standard_Boolean bHasFaceInfo = 0, bIsClosed = 0, bIsDegenerated = 0, bToReverse = 0;
+  Standard_Integer i = 0, j = 0, k = 0, aNbS = 0, aNbPBIn = 0, aNbPBOn = 0, aNbPBSc = 0, aNbAV = 0, nSp = 0;
   TopoDS_Face aFF, aFSD;
   TopoDS_Edge aSp, aEE;
   TopAbs_Orientation anOriF, anOriE;

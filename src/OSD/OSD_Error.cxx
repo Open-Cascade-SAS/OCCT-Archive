@@ -22,8 +22,8 @@
 
 #include <stdio.h>
 /* Created by Stephan GARNAUD (ARM) 1992 for Matra Datavision */
-OSD_Error::OSD_Error(){
- myErrno = 0;
+OSD_Error::OSD_Error() : myErrno(0){
+ 
 }
 
 

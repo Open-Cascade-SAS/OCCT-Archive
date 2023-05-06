@@ -15,6 +15,8 @@
 //============================================ IntAna2d_AnaIntersection_5.cxx
 //============================================================================
 
+#include <math.h>
+
 #include <gp_Circ2d.hxx>
 #include <IntAna2d_AnaIntersection.hxx>
 #include <IntAna2d_Conic.hxx>
@@ -26,12 +28,12 @@ void IntAna2d_AnaIntersection::Perform(const gp_Circ2d& Circle,
 				  const IntAna2d_Conic& Conic)
 {
    Standard_Boolean CIsDirect = Circle.IsDirect();
-   Standard_Real A,B,C,D,E,F;
-   Standard_Real pcc,pss,p2sc,pc,ps,pcte;
+   Standard_Real A = NAN,B = NAN,C = NAN,D = NAN,E = NAN,F = NAN;
+   Standard_Real pcc = NAN,pss = NAN,p2sc = NAN,pc = NAN,ps = NAN,pcte = NAN;
    Standard_Real radius=Circle.Radius();
    Standard_Real radius_P2=radius*radius;
-   Standard_Integer i;
-   Standard_Real tx,ty,S;
+   Standard_Integer i = 0;
+   Standard_Real tx = NAN,ty = NAN,S = NAN;
 
    done = Standard_False;
    nbp  = 0;

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_OffsetDimension.hxx>
 
 #include <PrsDim.hxx>
@@ -111,7 +113,7 @@ void PrsDim_OffsetDimension::Compute (const Handle(PrsMgr_PresentationManager)& 
     
     gp_Pln bPln = surf2.Plane();
     
-    Standard_Real uPnt, vPnt;
+    Standard_Real uPnt = NAN, vPnt = NAN;
     ElSLib::Parameters (bPln , aPnt , uPnt, vPnt);
     gp_Pnt bPnt = ElSLib::Value (uPnt, vPnt, bPln);
     if (aPnt.IsEqual(bPnt,Precision::Confusion())) {
@@ -175,7 +177,7 @@ void PrsDim_OffsetDimension::ComputeSelection(const Handle(SelectMgr_Selection)&
     aSel->Add(box);
   }
 
-  Standard_Real parmin,parmax,parcur;
+  Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
   parmin = ElCLib::Parameter(L3,Proj1);
   parmax = parmin;
 
@@ -360,7 +362,7 @@ void PrsDim_OffsetDimension::ComputeTwoFacesOffset(const Handle(Prs3d_Presentati
   else {
     if (myAutomaticPosition && myIsSetBndBox)
       {
-	Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+	Standard_Real aXmin = NAN, aYmin = NAN, aZmin = NAN, aXmax = NAN, aYmax = NAN, aZmax = NAN;
 	myBndBox.Get( aXmin, aYmin, aZmin, aXmax, aYmax, aZmax );
 	myPosition.SetCoord( aXmax, aYmax, aZmax );
       }
@@ -391,7 +393,7 @@ void PrsDim_OffsetDimension::ComputeTwoFacesOffset(const Handle(Prs3d_Presentati
   gp_Pln apln (anax3);
   
   //gp_Pnt proj2;
-  Standard_Real u2,v2, uatt, vatt;
+  Standard_Real u2 = NAN,v2 = NAN, uatt = NAN, vatt = NAN;
   ElSLib::Parameters (apln , mySAttach, uatt,vatt);
   ElSLib::Parameters (apln , curpos   , u2,v2);
   

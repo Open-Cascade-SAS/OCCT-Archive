@@ -34,9 +34,9 @@
 //function :BRepIntCurveSurface_Inter::BRepIntCurveSurface_Inte
 //purpose  : 
 //===========================================================================
-BRepIntCurveSurface_Inter::BRepIntCurveSurface_Inter()
+BRepIntCurveSurface_Inter::BRepIntCurveSurface_Inter() : myFastClass(new  BRepTopAdaptor_TopolTool())
 {
-  myFastClass = new  BRepTopAdaptor_TopolTool();
+  
   Clear();
 }
 

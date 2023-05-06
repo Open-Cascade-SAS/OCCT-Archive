@@ -84,7 +84,7 @@ void RWStepKinematics_RWSlidingSurfacePair::ReadStep (const Handle(StepData_Step
   Handle(StepGeom_Surface) aSurfacePair_Surface2;
   theData->ReadEntity (theNum, 8, "surface_pair.surface2", theArch, STANDARD_TYPE(StepGeom_Surface), aSurfacePair_Surface2);
 
-  Standard_Boolean aSurfacePair_Orientation;
+  Standard_Boolean aSurfacePair_Orientation = 0;
   theData->ReadBoolean (theNum, 9, "surface_pair.orientation", theArch, aSurfacePair_Orientation);
 
   // Initialize entity

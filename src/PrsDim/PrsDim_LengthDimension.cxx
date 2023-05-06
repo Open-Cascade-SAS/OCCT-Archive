@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_LengthDimension.hxx>
 
 #include <PrsDim.hxx>
@@ -531,7 +533,7 @@ Standard_Boolean PrsDim_LengthDimension::InitEdgeFaceLength (const TopoDS_Edge& 
 
   // Take direction for dimension line (will be orthogonalized later) parallel to edge
   BRepAdaptor_Curve aCurveAdaptor (theEdge);
-  Standard_Real aParam;
+  Standard_Real aParam = NAN;
   if (aDistAdaptor.SupportOnShape1 (1).ShapeType() == TopAbs_EDGE)
   {
     aDistAdaptor.ParOnEdgeS1 (1, aParam);
@@ -582,7 +584,7 @@ Standard_Boolean PrsDim_LengthDimension::InitTwoShapesPoints (const TopoDS_Shape
       gp_Pln aFirstPlane;
       Handle(Geom_Surface) aFirstSurface;
       PrsDim_KindOfSurface aFirstSurfKind;
-      Standard_Real aFirstOffset;
+      Standard_Real aFirstOffset = NAN;
 
       TopoDS_Face aFirstFace = TopoDS::Face (theFirstShape);
 
@@ -599,7 +601,7 @@ Standard_Boolean PrsDim_LengthDimension::InitTwoShapesPoints (const TopoDS_Shape
         gp_Pln aSecondPlane;
         Handle(Geom_Surface) aSecondSurface;
         PrsDim_KindOfSurface aSecondSurfKind;
-        Standard_Real aSecondOffset;
+        Standard_Real aSecondOffset = NAN;
 
         TopoDS_Face aSecondFace = TopoDS::Face (theSecondShape);
 
@@ -630,7 +632,7 @@ Standard_Boolean PrsDim_LengthDimension::InitTwoShapesPoints (const TopoDS_Shape
 
           mySecondPoint = PrsDim::ProjectPointOnPlane (myFirstPoint, aSecondPlane);
 
-          Standard_Real anU, aV;
+          Standard_Real anU = NAN, aV = NAN;
           ElSLib::Parameters (aSecondPlane, mySecondPoint, anU, aV);
 
           BRepTopAdaptor_FClass2d aClassifier (aSecondFace, Precision::Confusion());
@@ -650,8 +652,8 @@ Standard_Boolean PrsDim_LengthDimension::InitTwoShapesPoints (const TopoDS_Shape
         }
         else // curvilinear faces
         {
-          Standard_Real aU1Min, aV1Min, aU1Max, aV1Max;
-          Standard_Real aU2Min, aV2Min, aU2Max, aV2Max;
+          Standard_Real aU1Min = NAN, aV1Min = NAN, aU1Max = NAN, aV1Max = NAN;
+          Standard_Real aU2Min = NAN, aV2Min = NAN, aU2Max = NAN, aV2Max = NAN;
           BRepTools::UVBounds (aFirstFace, aU1Min, aU1Max, aV1Min,  aV1Max);
           BRepTools::UVBounds (aSecondFace, aU2Min, aU2Max, aV2Min, aV2Max);
 
@@ -659,7 +661,7 @@ Standard_Boolean PrsDim_LengthDimension::InitTwoShapesPoints (const TopoDS_Shape
                                                    aU1Min, aU1Max, aV1Min, aV1Max,
                                                    aU2Min, aU2Max, aV2Min, aV2Max);
 
-          Standard_Real aU1, aV1, aU2, aV2;
+          Standard_Real aU1 = NAN, aV1 = NAN, aU2 = NAN, aV2 = NAN;
           anExtrema.LowerDistanceParameters (aU1, aV1, aU2, aV2);
           myFirstPoint = BRep_Tool::Surface (aFirstFace)->Value (aU1, aV1);
           mySecondPoint = BRep_Tool::Surface (aSecondFace)->Value (aU2, aV2);

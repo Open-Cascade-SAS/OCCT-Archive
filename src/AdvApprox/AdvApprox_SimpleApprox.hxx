@@ -101,7 +101,7 @@ private:
   Handle(TColStd_HArray1OfReal) myTabPoints;
   Handle(TColStd_HArray2OfReal) myTabWeights;
   Standard_Address myEvaluator;
-  Standard_Integer myDegree;
+  Standard_Integer myDegree{};
   Handle(TColStd_HArray1OfReal) myCoeff;
   Handle(TColStd_HArray2OfReal) myFirstConstr;
   Handle(TColStd_HArray2OfReal) myLastConstr;

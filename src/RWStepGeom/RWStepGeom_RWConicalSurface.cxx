@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepGeom_RWConicalSurface.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -47,13 +49,13 @@ void RWStepGeom_RWConicalSurface::ReadStep
 
 	// --- own field : radius ---
 
-	Standard_Real aRadius;
+	Standard_Real aRadius = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"radius",ach,aRadius);
 
 	// --- own field : semiAngle ---
 
-	Standard_Real aSemiAngle;
+	Standard_Real aSemiAngle = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"semi_angle",ach,aSemiAngle);
 

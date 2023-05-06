@@ -579,7 +579,7 @@ static void cpulimitSignalHandler (int)
 }
 static void *CpuFunc(void* /*threadarg*/)
 {
-  clock_t anElapCurrent;
+  clock_t anElapCurrent = 0;
   for(;;)
   {
     sleep (5);
@@ -635,7 +635,7 @@ static Standard_Integer cpulimit(Draw_Interpretor& di, Standard_Integer n, const
 
 #else 
   // Unix & Linux
-  rlimit rlp;
+  rlimit rlp{};
   rlp.rlim_max = RLIM_INFINITY;
   if (n <= 1)
   {
@@ -655,7 +655,7 @@ static Standard_Integer cpulimit(Draw_Interpretor& di, Standard_Integer n, const
   }
 
   // set signal handler to print a message before death
-  struct sigaction act, oact;
+  struct sigaction act{}, oact{};
   memset (&act, 0, sizeof(act));
   act.sa_handler = cpulimitSignalHandler;
   sigaction (SIGXCPU, &act, &oact);
@@ -663,7 +663,7 @@ static Standard_Integer cpulimit(Draw_Interpretor& di, Standard_Integer n, const
   // cpulimit for elapsed time
   aTimer.Reset();
   aTimer.Start();
-  pthread_t cpulimitThread;
+  pthread_t cpulimitThread = 0;
   if (aFirst) // Launch the thread only at the 1st call.
   {
     aFirst = 0;

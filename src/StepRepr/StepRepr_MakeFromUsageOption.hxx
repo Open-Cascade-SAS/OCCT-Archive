@@ -76,7 +76,7 @@ protected:
 private:
 
 
-  Standard_Integer theRanking;
+  Standard_Integer theRanking{};
   Handle(TCollection_HAsciiString) theRankingRationale;
   Handle(StepBasic_MeasureWithUnit) theQuantity;
 

@@ -70,13 +70,13 @@ class GeomLib_CheckCurveOnSurface_TargetFunc :
   
   //returns the number of parameters of the function
   //(the function is one-dimension).
-  virtual Standard_Integer NbVariables() const {
+  Standard_Integer NbVariables() const override {
     return 1;
   }
   
   //returns value of the function when parameters are equal to theX
-  virtual Standard_Boolean Value(const math_Vector& theX,
-                                 Standard_Real& theFVal)
+  Standard_Boolean Value(const math_Vector& theX,
+                                 Standard_Real& theFVal) override
   {
     return Value(theX(1), theFVal);
   }
@@ -105,15 +105,15 @@ class GeomLib_CheckCurveOnSurface_TargetFunc :
   }
 
   //see analogical method for abstract owner class math_MultipleVarFunction
-  virtual Standard_Integer GetStateNumber()
+  Standard_Integer GetStateNumber() override
   {
     return 0;
   }
   
   //returns the gradient of the function when parameters are
   //equal to theX
-  virtual Standard_Boolean Gradient(const math_Vector& theX,
-                                    math_Vector& theGrad)
+  Standard_Boolean Gradient(const math_Vector& theX,
+                                    math_Vector& theGrad) override
   {
     return Derive(theX(1), theGrad(1));
   }
@@ -163,9 +163,9 @@ class GeomLib_CheckCurveOnSurface_TargetFunc :
   }
   
   //returns value and gradient   
-  virtual Standard_Boolean Values(const math_Vector& theX,
+  Standard_Boolean Values(const math_Vector& theX,
                                   Standard_Real& theVal,
-                                  math_Vector& theGrad) 
+                                  math_Vector& theGrad) override 
   {
     if (!Value(theX, theVal))
     {
@@ -180,10 +180,10 @@ class GeomLib_CheckCurveOnSurface_TargetFunc :
   }
 
   //returns value, gradient and hessian
-  virtual Standard_Boolean Values(const math_Vector& theX,
+  Standard_Boolean Values(const math_Vector& theX,
                                   Standard_Real& theVal,
                                   math_Vector& theGrad,
-                                  math_Matrix& theHessian)
+                                  math_Matrix& theHessian) override
   {
     if (!Value(theX, theVal))
     {
@@ -488,10 +488,10 @@ Standard_Integer FillSubIntervals(const Handle(Adaptor3d_Curve)& theCurve3d,
     }
     else
     {
-      Standard_Integer KnotCount;
+      Standard_Integer KnotCount = 0;
       if(isTrimmed3D)
       {
-        Standard_Integer i;
+        Standard_Integer i = 0;
         KnotCount = 0;
         const TColStd_Array1OfReal& aKnots = aBS3DCurv->Knots();
         for(i = aBS3DCurv->FirstUKnotIndex(); i <= aBS3DCurv->LastUKnotIndex(); ++i)
@@ -516,7 +516,7 @@ Standard_Integer FillSubIntervals(const Handle(Adaptor3d_Curve)& theCurve3d,
         anArrKnots3D = new TColStd_HArray1OfReal(1, aMaxKnots);
         anArrKnots3D->SetValue(1, theFirst);
         anArrKnots3D->SetValue(aMaxKnots, theLast);
-        Standard_Integer i;
+        Standard_Integer i = 0;
         Standard_Real dt = (theLast - theFirst) / (aMaxKnots - 1);
         Standard_Real t = theFirst + dt;
         for(i = 2; i < aMaxKnots; ++i, t += dt)
@@ -538,10 +538,10 @@ Standard_Integer FillSubIntervals(const Handle(Adaptor3d_Curve)& theCurve3d,
     }
     else
     {
-      Standard_Integer KnotCount;
+      Standard_Integer KnotCount = 0;
       if(isTrimmed2D)
       {
-        Standard_Integer i;
+        Standard_Integer i = 0;
         KnotCount = 0;
         const TColStd_Array1OfReal& aKnots = aBS2DCurv->Knots();
         for(i = aBS2DCurv->FirstUKnotIndex(); i <= aBS2DCurv->LastUKnotIndex(); ++i)
@@ -566,7 +566,7 @@ Standard_Integer FillSubIntervals(const Handle(Adaptor3d_Curve)& theCurve3d,
         anArrKnots2D = new TColStd_HArray1OfReal(1, aMaxKnots);
         anArrKnots2D->SetValue(1, theFirst);
         anArrKnots2D->SetValue(aMaxKnots, theLast);
-        Standard_Integer i;
+        Standard_Integer i = 0;
         Standard_Real dt = (theLast - theFirst) / (aMaxKnots - 1);
         Standard_Real t = theFirst + dt;
         for(i = 2; i < aMaxKnots; ++i, t += dt)

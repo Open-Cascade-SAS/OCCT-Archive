@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepTools.hxx>
@@ -180,7 +182,7 @@ void  BRepTools_WireExplorer::Init(const TopoDS_Wire& W,
       gp_Pnt aP;
       gp_Vec aD1U, aD1V;
       aGAS.D1(UMin, VMin, aP, aD1U, aD1V);
-      Standard_Real tol1, tol2, maxtol = .0005*(UMax - UMin);
+      Standard_Real tol1 = NAN, tol2 = NAN, maxtol = .0005*(UMax - UMin);
       Standard_Real a = aD1U.Magnitude();
 
       if (a <= Precision::Confusion())
@@ -322,8 +324,8 @@ void  BRepTools_WireExplorer::Init(const TopoDS_Wire& W,
       for (; itt.More(); itt.Next()) {
         TopoDS_Edge        anEdge = TopoDS::Edge(itt.Key());
         TopAbs_Orientation anOri = anEdge.Orientation();
-        Standard_Real      aF;
-        Standard_Real      aL;
+        Standard_Real      aF = NAN;
+        Standard_Real      aL = NAN;
 
         BRep_Tool::Range(anEdge, aF, aL);
         if ((anOri == TopAbs_FORWARD  && aF == -Precision::Infinite()) ||
@@ -408,11 +410,11 @@ void  BRepTools_WireExplorer::Next()
     if (!myFace.IsNull() && aV1.IsSame(aV2)) {
       Handle(Geom2d_Curve) aPrevPC;
       Handle(Geom2d_Curve) aNextPC;
-      Standard_Real        aPar11, aPar12;
-      Standard_Real        aPar21, aPar22;
-      Standard_Real        aPrevPar;
-      Standard_Real        aNextFPar;
-      Standard_Real        aNextLPar;
+      Standard_Real        aPar11 = NAN, aPar12 = NAN;
+      Standard_Real        aPar21 = NAN, aPar22 = NAN;
+      Standard_Real        aPrevPar = NAN;
+      Standard_Real        aNextFPar = NAN;
+      Standard_Real        aNextLPar = NAN;
 
       aPrevPC = BRep_Tool::CurveOnSurface(myEdge, myFace, aPar11, aPar12);
       aNextPC = BRep_Tool::CurveOnSurface(aNextEdge, myFace, aPar21, aPar22);

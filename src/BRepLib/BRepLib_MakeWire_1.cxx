@@ -353,7 +353,7 @@ void BRepLib_MakeWire::CreateNewListOfEdges(const TopTools_ListOfShape& theL,
   TopTools_ListOfShape& theNewEList)
 {
   ///create the new list (theNewEList) from the input list L
-  Standard_Boolean IsNewEdge;
+  Standard_Boolean IsNewEdge = 0;
   NCollection_List<TopoDS_Vertex> aVList;
   TopExp_Explorer exp;
   BRep_Builder aBB;

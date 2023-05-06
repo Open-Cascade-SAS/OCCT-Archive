@@ -19,6 +19,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <gp_Ax3.hxx>
 #include <gp_Lin.hxx>
 #include <gp_Pnt.hxx>
@@ -196,7 +198,7 @@ void HLRAlgo_Projector::Scaled (const Standard_Boolean On)
 void HLRAlgo_Projector::Project (const gp_Pnt& P, gp_Pnt2d& Pout) const
 {
   if(myType!=-1) { 
-    Standard_Real X,Y;
+    Standard_Real X = NAN,Y = NAN;
     switch (myType) { 
     case 0: {  //-- axono standard
       Standard_Real x07 = P.X()*0.7071067811865475;

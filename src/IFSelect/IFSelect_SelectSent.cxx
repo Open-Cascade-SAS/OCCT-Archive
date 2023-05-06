@@ -24,8 +24,8 @@
 IMPLEMENT_STANDARD_RTTIEXT(IFSelect_SelectSent,IFSelect_SelectExtract)
 
 IFSelect_SelectSent::IFSelect_SelectSent
-  (const Standard_Integer sentcount, const Standard_Boolean atleast)
-      {  thecnt = sentcount;  thelst = atleast;  }
+  (const Standard_Integer sentcount, const Standard_Boolean atleast) : thecnt(sentcount), thelst(atleast)
+      {    }
 
     Standard_Integer  IFSelect_SelectSent::SentCount () const
       {  return thecnt;  }
@@ -44,7 +44,7 @@ IFSelect_SelectSent::IFSelect_SelectSent
     Standard_Integer num = G.EntityNumber(inp.Value());
     if (num == 0) continue;
     Standard_Integer nb = G.Status(num);   // nb sent
-    Standard_Boolean ok;
+    Standard_Boolean ok = 0;
     if (thecnt == 0)  ok = (nb == 0);
     else if (thelst)  ok = (nb >= thecnt);
     else              ok = (nb == thecnt);

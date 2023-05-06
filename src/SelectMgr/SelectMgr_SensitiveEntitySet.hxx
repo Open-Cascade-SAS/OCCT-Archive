@@ -91,7 +91,7 @@ private:
 
   SelectMgr_IndexedMapOfHSensitive mySensitives; //!< Map of entities and its corresponding index in BVH
   SelectMgr_MapOfOwners            myOwnersMap;  //!< Map of entity owners and its corresponding number of sensitives
-  Standard_Boolean  myHasEntityWithPersistence;  //!< flag if some of sensitive entity has own transform persistence
+  Standard_Boolean  myHasEntityWithPersistence{};  //!< flag if some of sensitive entity has own transform persistence
 };
 
 #endif // _SelectMgr_SensitiveEntitySet_HeaderFile

@@ -109,21 +109,21 @@ private:
 
 private:
 
-  const Adaptor3d_Surface* myS;
-  Standard_Boolean myDone;
+  const Adaptor3d_Surface* myS{};
+  Standard_Boolean myDone{};
   Extrema_ExtPElS myExtPElS;
   Extrema_GenExtPS myExtPS;
   Extrema_SequenceOfPOnSurf myPoints;
-  Standard_Real myuinf;
-  Standard_Real myusup;
-  Standard_Real myvinf;
-  Standard_Real myvsup;
-  Standard_Real mytolu;
-  Standard_Real mytolv;
-  Standard_Real d11;
-  Standard_Real d12;
-  Standard_Real d21;
-  Standard_Real d22;
+  Standard_Real myuinf{};
+  Standard_Real myusup{};
+  Standard_Real myvinf{};
+  Standard_Real myvsup{};
+  Standard_Real mytolu{};
+  Standard_Real mytolv{};
+  Standard_Real d11{};
+  Standard_Real d12{};
+  Standard_Real d21{};
+  Standard_Real d22{};
   gp_Pnt P11;
   gp_Pnt P12;
   gp_Pnt P21;

@@ -17,29 +17,29 @@
 #include <Vrml_SFImage.hxx>
 #include <Vrml_Texture2.hxx>
 
-Vrml_Texture2::Vrml_Texture2()
+Vrml_Texture2::Vrml_Texture2() : myFilename(""), myImage(new Vrml_SFImage), myWrapS(Vrml_REPEAT), myWrapT(Vrml_REPEAT)
 {
-  myFilename = "";
+  
 
-  myImage = new Vrml_SFImage;
+  
 
   myImage->SetWidth(0);
   myImage->SetHeight(0);
   myImage->SetNumber(Vrml_NULL);
 
-  myWrapS = Vrml_REPEAT;
-  myWrapT = Vrml_REPEAT; 
+  
+  
 }
 
 Vrml_Texture2::Vrml_Texture2(const TCollection_AsciiString& aFilename,
 			     const Handle(Vrml_SFImage)& aImage,
 			     const Vrml_Texture2Wrap aWrapS,
-			     const Vrml_Texture2Wrap aWrapT)
+			     const Vrml_Texture2Wrap aWrapT) : myFilename(aFilename), myImage(aImage), myWrapS(aWrapS), myWrapT(aWrapT)
 {
-  myFilename = aFilename;
-  myImage = aImage;
-  myWrapS = aWrapS;
-  myWrapT = aWrapT;
+  
+  
+  
+  
 }
 
  void Vrml_Texture2::SetFilename(const TCollection_AsciiString& aFilename) 
@@ -84,7 +84,7 @@ Vrml_Texture2::Vrml_Texture2(const TCollection_AsciiString& aFilename,
 
  Standard_OStream& Vrml_Texture2::Print(Standard_OStream& anOStream) const
 {
- Standard_Integer i;
+ Standard_Integer i = 0;
  anOStream  << "Texture2 {\n";
 
  if ( !(myFilename.IsEqual("") ) )

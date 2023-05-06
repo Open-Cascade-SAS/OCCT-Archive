@@ -16,6 +16,8 @@
 
 // Modified: eap Mar 25 2002 (occ102,occ227), touch case
 
+#include <math.h>
+
 #include <Precision.hxx>
 #include <TopAbs.hxx>
 #include <TopAbs_Orientation.hxx>
@@ -303,11 +305,11 @@ void TopTrans_SurfaceTransition::Compare
   Standard_Real prod = (dironF^Norm).Dot(myTgt);
   if (prod < 0.) Curv = -Curv;
 
-  Standard_Real Ang;
+  Standard_Real Ang = NAN;
   // -----
   Ang = ::FUN_Ang(myNorm,beafter,myTgt,Norm,O);
 
-  Standard_Integer i,j; 
+  Standard_Integer i = 0,j = 0; 
   // -----
   // i = 0,1,2 : cos = 0,>0,<0
   // j = 0,1,2 : sin = 0,>0,<0
@@ -369,7 +371,7 @@ void TopTrans_SurfaceTransition::Compare
     
   // i = 0,1,2 : cos = 0,>0,<0
   // j = 0,1,2 : sin = 0,>0,<0
-  Standard_Integer i,j; ::FUN_getSTA(Ang,tola,i,j);
+  Standard_Integer i = 0,j = 0; ::FUN_getSTA(Ang,tola,i,j);
 
   Standard_Integer kmax = M_INTERNAL(O) ? 2 : 1;
   for (Standard_Integer k=1; k <=kmax; k++) {

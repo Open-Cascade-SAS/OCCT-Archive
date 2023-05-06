@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWPointOnSurfacePairWithRange.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -88,7 +90,7 @@ void RWStepKinematics_RWPointOnSurfacePairWithRange::ReadStep (const Handle(Step
   Handle(StepGeom_RectangularTrimmedSurface) aRangeOnPairSurface;
   theData->ReadEntity (theNum, 8, "range_on_pair_surface", theArch, STANDARD_TYPE(StepGeom_RectangularTrimmedSurface), aRangeOnPairSurface);
 
-  Standard_Real aLowerLimitYaw;
+  Standard_Real aLowerLimitYaw = NAN;
   Standard_Boolean hasLowerLimitYaw = Standard_True;
   if ( theData->IsParamDefined (theNum,9) ) {
     theData->ReadReal (theNum, 9, "lower_limit_yaw", theArch, aLowerLimitYaw);
@@ -98,7 +100,7 @@ void RWStepKinematics_RWPointOnSurfacePairWithRange::ReadStep (const Handle(Step
     aLowerLimitYaw = 0;
   }
 
-  Standard_Real aUpperLimitYaw;
+  Standard_Real aUpperLimitYaw = NAN;
   Standard_Boolean hasUpperLimitYaw = Standard_True;
   if ( theData->IsParamDefined (theNum,10) ) {
     theData->ReadReal (theNum, 10, "upper_limit_yaw", theArch, aUpperLimitYaw);
@@ -108,7 +110,7 @@ void RWStepKinematics_RWPointOnSurfacePairWithRange::ReadStep (const Handle(Step
     aUpperLimitYaw = 0;
   }
 
-  Standard_Real aLowerLimitPitch;
+  Standard_Real aLowerLimitPitch = NAN;
   Standard_Boolean hasLowerLimitPitch = Standard_True;
   if ( theData->IsParamDefined (theNum,11) ) {
     theData->ReadReal (theNum, 11, "lower_limit_pitch", theArch, aLowerLimitPitch);
@@ -118,7 +120,7 @@ void RWStepKinematics_RWPointOnSurfacePairWithRange::ReadStep (const Handle(Step
     aLowerLimitPitch = 0;
   }
 
-  Standard_Real aUpperLimitPitch;
+  Standard_Real aUpperLimitPitch = NAN;
   Standard_Boolean hasUpperLimitPitch = Standard_True;
   if ( theData->IsParamDefined (theNum,12) ) {
     theData->ReadReal (theNum, 12, "upper_limit_pitch", theArch, aUpperLimitPitch);
@@ -128,7 +130,7 @@ void RWStepKinematics_RWPointOnSurfacePairWithRange::ReadStep (const Handle(Step
     aUpperLimitPitch = 0;
   }
 
-  Standard_Real aLowerLimitRoll;
+  Standard_Real aLowerLimitRoll = NAN;
   Standard_Boolean hasLowerLimitRoll = Standard_True;
   if ( theData->IsParamDefined (theNum,13) ) {
     theData->ReadReal (theNum, 13, "lower_limit_roll", theArch, aLowerLimitRoll);
@@ -138,7 +140,7 @@ void RWStepKinematics_RWPointOnSurfacePairWithRange::ReadStep (const Handle(Step
     aLowerLimitRoll = 0;
   }
 
-  Standard_Real aUpperLimitRoll;
+  Standard_Real aUpperLimitRoll = NAN;
   Standard_Boolean hasUpperLimitRoll = Standard_True;
   if ( theData->IsParamDefined (theNum,14) ) {
     theData->ReadReal (theNum, 14, "upper_limit_roll", theArch, aUpperLimitRoll);

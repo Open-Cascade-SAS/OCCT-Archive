@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <ProjLib.hxx>
 
 #include <Adaptor3d_Surface.hxx>
@@ -51,7 +53,7 @@
 //=======================================================================
 gp_Pnt2d  ProjLib::Project(const gp_Pln& Pl, const gp_Pnt& P)
 {
-  Standard_Real U, V;
+  Standard_Real U = NAN, V = NAN;
   ElSLib::Parameters(Pl, P, U, V);
   return gp_Pnt2d(U,V);
 }
@@ -124,7 +126,7 @@ gp_Hypr2d  ProjLib::Project(const gp_Pln& Pl, const gp_Hypr& H)
 
 gp_Pnt2d  ProjLib::Project(const gp_Cylinder& Cy, const gp_Pnt& P)
 {
-  Standard_Real U, V;
+  Standard_Real U = NAN, V = NAN;
   ElSLib::Parameters(Cy, P, U, V);
   return gp_Pnt2d(U,V);
 }
@@ -161,7 +163,7 @@ gp_Lin2d  ProjLib::Project(const gp_Cylinder& Cy, const gp_Circ& Ci)
 
 gp_Pnt2d  ProjLib::Project(const gp_Cone& Co, const gp_Pnt& P)
 {
-  Standard_Real U, V;
+  Standard_Real U = NAN, V = NAN;
   ElSLib::Parameters(Co, P, U, V);
   return gp_Pnt2d(U,V);
 }
@@ -198,7 +200,7 @@ gp_Lin2d  ProjLib::Project(const gp_Cone& Co, const gp_Circ& Ci)
 
 gp_Pnt2d  ProjLib::Project(const gp_Sphere& Sp, const gp_Pnt& P)
 {
-  Standard_Real U, V;
+  Standard_Real U = NAN, V = NAN;
   ElSLib::Parameters(Sp, P, U, V);
   return gp_Pnt2d(U,V);
 }
@@ -223,7 +225,7 @@ gp_Lin2d  ProjLib::Project(const gp_Sphere& Sp, const gp_Circ& Ci)
 
 gp_Pnt2d  ProjLib::Project(const gp_Torus& To, const gp_Pnt& P)
 {
-  Standard_Real U, V;
+  Standard_Real U = NAN, V = NAN;
   ElSLib::Parameters(To, P, U, V);
   return gp_Pnt2d(U,V);
 }

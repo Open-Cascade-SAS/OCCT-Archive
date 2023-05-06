@@ -23,9 +23,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepVisual_TessellatedFace, StepVisual_TessellatedStr
 //purpose  : 
 //=======================================================================
 
-StepVisual_TessellatedFace::StepVisual_TessellatedFace ()
+StepVisual_TessellatedFace::StepVisual_TessellatedFace () : myHasGeometricLink(Standard_False)
 {
-  myHasGeometricLink = Standard_False;
+  
 }
 
 //=======================================================================

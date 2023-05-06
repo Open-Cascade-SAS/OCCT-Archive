@@ -85,11 +85,11 @@ private:
   Standard_EXPORT void DefineSolutions();
 
 
-  Standard_Boolean WellDone;
-  Standard_Integer NbrSol;
+  Standard_Boolean WellDone{};
+  Standard_Integer NbrSol{};
   gp_Circ2d circle;
   gp_Pnt2d point;
-  Standard_Integer theposition;
+  Standard_Integer theposition{};
   Standard_Real myTolerance;
 
 

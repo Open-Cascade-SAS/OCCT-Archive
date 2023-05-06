@@ -73,7 +73,7 @@ private:
 
 
   Handle(StepShape_EdgeLoop) pathElement;
-  Standard_Boolean orientation;
+  Standard_Boolean orientation{};
 
 
 };

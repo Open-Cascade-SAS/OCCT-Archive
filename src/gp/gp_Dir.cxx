@@ -14,6 +14,8 @@
 
 // JCV 07/12/90 Modifs suite a l'introduction des classes XYZ et Mat dans gp
 
+#include <math.h>
+
 #include <gp_Dir.hxx>
 
 #include <gp_Ax2.hxx>
@@ -46,7 +48,7 @@ Standard_Real gp_Dir::Angle (const gp_Dir& Other) const
 Standard_Real gp_Dir::AngleWithRef (const gp_Dir& Other,
 				    const gp_Dir& Vref) const
 {
-  Standard_Real Ang;
+  Standard_Real Ang = NAN;
   gp_XYZ XYZ = coord.Crossed (Other.coord);
   Standard_Real Cosinus = coord.Dot(Other.coord);
   Standard_Real Sinus   = XYZ.Modulus ();

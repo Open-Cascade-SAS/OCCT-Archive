@@ -26,7 +26,7 @@
 //=========================================================================
 //   Creation d une ligne 3d de gp a partir d un Ax1 de gp.               +
 //=========================================================================
-gce_MakeLin::gce_MakeLin(const gp_Ax1& A1)
+gce_MakeLin::gce_MakeLin(const gp_Ax1& A1) : gce_Root()
 {
   TheLin = gp_Lin(A1);
   TheError = gce_Done;
@@ -38,7 +38,7 @@ gce_MakeLin::gce_MakeLin(const gp_Ax1& A1)
 //=========================================================================
 
 gce_MakeLin::gce_MakeLin(const gp_Pnt& P,
-			 const gp_Dir& V)
+			 const gp_Dir& V) : gce_Root()
 {
   TheLin = gp_Lin(P,V);
   TheError = gce_Done;
@@ -50,7 +50,7 @@ gce_MakeLin::gce_MakeLin(const gp_Pnt& P,
 //=========================================================================
 
 gce_MakeLin::gce_MakeLin(const gp_Pnt& P1 ,
-			 const gp_Pnt& P2 ) 
+			 const gp_Pnt& P2 ) : gce_Root() 
 {
   if (P1.Distance(P2) >= gp::Resolution()) {
     TheLin = gp_Lin(P1,gp_Dir(P2.XYZ()-P1.XYZ()));
@@ -65,7 +65,7 @@ gce_MakeLin::gce_MakeLin(const gp_Pnt& P1 ,
 //=========================================================================
 
 gce_MakeLin::gce_MakeLin(const gp_Lin& Lin ,
-			 const gp_Pnt& P   )
+			 const gp_Pnt& P   ) : gce_Root()
 {
   TheLin = gp_Lin(P,Lin.Direction());
   TheError = gce_Done;

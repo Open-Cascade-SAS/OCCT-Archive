@@ -25,6 +25,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_HAsciiString.hxx>
 
+#include <math.h>
 #include <sys/stat.h>
 IMPLEMENT_STANDARD_RTTIEXT(ShapeProcess_Context,Standard_Transient)
 
@@ -34,10 +35,10 @@ static Standard_Mutex THE_SHAPE_PROCESS_MUTEX;
 //function : ShapeProcess_Context
 //purpose  : 
 //=======================================================================
-ShapeProcess_Context::ShapeProcess_Context() 
+ShapeProcess_Context::ShapeProcess_Context() : myMessenger(Message::DefaultMessenger()), myTraceLev(1) 
 {
-  myMessenger = Message::DefaultMessenger();
-  myTraceLev = 1;
+  
+  
 }
 	
 //=======================================================================
@@ -46,11 +47,11 @@ ShapeProcess_Context::ShapeProcess_Context()
 //=======================================================================
 
 ShapeProcess_Context::ShapeProcess_Context (const Standard_CString file,
-                                            const Standard_CString scope)
+                                            const Standard_CString scope) : myMessenger(Message::DefaultMessenger()), myTraceLev(1)
 {
   Init ( file, scope );
-  myMessenger = Message::DefaultMessenger();
-  myTraceLev = 1;
+  
+  
 }
 
 //=======================================================================
@@ -92,7 +93,7 @@ Handle(Resource_Manager) ShapeProcess_Context::LoadResourceManager (const Standa
   static Standard_Time sMtime, sUMtime;
   static TCollection_AsciiString sName;
 
-  struct stat buf;
+  struct stat buf{};
   Standard_Time aMtime(0), aUMtime(0);
   TCollection_AsciiString aPath,aUserPath;
   Resource_Manager::GetResourcePath(aPath,name,Standard_False);
@@ -344,7 +345,7 @@ Standard_Boolean ShapeProcess_Context::GetBoolean (const Standard_CString param,
 Standard_Real ShapeProcess_Context::RealVal (const Standard_CString param,
                                              const Standard_Real def) const
 {
-  Standard_Real val;
+  Standard_Real val = NAN;
   return GetReal ( param, val ) ? val : def;
 }
 
@@ -356,7 +357,7 @@ Standard_Real ShapeProcess_Context::RealVal (const Standard_CString param,
 Standard_Boolean ShapeProcess_Context::BooleanVal (const Standard_CString param,
                                                    const Standard_Boolean def) const
 {
-  Standard_Boolean val;
+  Standard_Boolean val = 0;
   return GetBoolean ( param, val ) ? val : def;
 }
 
@@ -368,7 +369,7 @@ Standard_Boolean ShapeProcess_Context::BooleanVal (const Standard_CString param,
 Standard_Integer ShapeProcess_Context::IntegerVal (const Standard_CString param,
                                                    const Standard_Integer def) const
 {
-  Standard_Integer val;
+  Standard_Integer val = 0;
   return GetInteger ( param, val ) ? val : def;
 }
 

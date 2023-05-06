@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_ExtCC.hxx>
 #include <GeomAPI_ExtremaCurveCurve.hxx>
 #include <GeomAPI_ProjectPointOnCurve.hxx>
@@ -93,7 +95,7 @@ void GeomAPI_ExtremaCurveCurve::Init
 
     // evaluate the lower distance and its index;
     
-    Standard_Real Dist2, Dist2Min = myExtCC.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtCC.SquareDistance(1);
     myIndex = 1;
     
     for ( Standard_Integer i = 2; i <= myExtCC.NbExt(); i++) {
@@ -136,7 +138,7 @@ void GeomAPI_ExtremaCurveCurve::Init
 
     // evaluate the lower distance and its index;
     
-    Standard_Real Dist2, Dist2Min = myExtCC.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtCC.SquareDistance(1);
     myIndex = 1;
     
     for ( Standard_Integer i = 2; i <= myExtCC.NbExt(); i++) {
@@ -384,7 +386,7 @@ void GeomAPI_ExtremaCurveCurve::TotalPerform()
   }
 
   gp_Pnt P11, P12, P21, P22;
-  Standard_Real d11, d12, d21, d22;
+  Standard_Real d11 = NAN, d12 = NAN, d21 = NAN, d22 = NAN;
   myExtCC.TrimmedSquareDistances(d11, d12, d21, d22, P11, P12, P21, P22);
 
   Standard_Real aTotalDist2 = myTotalDist * myTotalDist;

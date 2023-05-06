@@ -27,8 +27,8 @@
 //   droite Line.                                                         +
 //=========================================================================
 GC_MakeRotation::GC_MakeRotation(const gp_Lin&  Line  ,
-				   const Standard_Real     Angle ) {
-  TheRotation = new Geom_Transformation();
+				   const Standard_Real     Angle ) : TheRotation(new Geom_Transformation()) {
+  
   TheRotation->SetRotation(gp_Ax1(Line.Location(),Line.Direction()),Angle);
 }
 
@@ -38,8 +38,8 @@ GC_MakeRotation::GC_MakeRotation(const gp_Lin&  Line  ,
 //=========================================================================
 
 GC_MakeRotation::GC_MakeRotation(const gp_Ax1&  Axis  ,
-				   const Standard_Real     Angle ) {
-  TheRotation = new Geom_Transformation();
+				   const Standard_Real     Angle ) : TheRotation(new Geom_Transformation()) {
+  
   TheRotation->SetRotation(Axis,Angle);
 }
 
@@ -50,8 +50,8 @@ GC_MakeRotation::GC_MakeRotation(const gp_Ax1&  Axis  ,
 
 GC_MakeRotation::GC_MakeRotation(const gp_Pnt&  Point ,
 				   const gp_Dir&  Direc ,
-				   const Standard_Real     Angle ) {
-  TheRotation = new Geom_Transformation();
+				   const Standard_Real     Angle ) : TheRotation(new Geom_Transformation()) {
+  
   TheRotation->SetRotation(gp_Ax1(Point,Direc),Angle);
 }
 

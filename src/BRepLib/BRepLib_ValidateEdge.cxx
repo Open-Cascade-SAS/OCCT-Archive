@@ -17,6 +17,7 @@
 #include <BRepCheck.hxx>
 #include <Extrema_LocateExtPC.hxx>
 #include <GeomLib_CheckCurveOnSurface.hxx>
+#include <utility>
 
 //=============================================================================
 //function : BRepLib_ValidateEdge
@@ -25,8 +26,8 @@
 BRepLib_ValidateEdge::BRepLib_ValidateEdge(Handle(Adaptor3d_Curve) theReferenceCurve, 
                                            Handle(Adaptor3d_CurveOnSurface) theOtherCurve, 
                                            Standard_Boolean theSameParameter):
-  myReferenceCurve(theReferenceCurve),
-  myOtherCurve(theOtherCurve),
+  myReferenceCurve(std::move(theReferenceCurve)),
+  myOtherCurve(std::move(theOtherCurve)),
   mySameParameter(theSameParameter),
   myControlPointsNumber(22),
   myToleranceForChecking(0),

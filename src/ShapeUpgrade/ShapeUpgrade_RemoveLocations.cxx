@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_TEdge.hxx>
 #include <BRep_Tool.hxx>
@@ -40,9 +42,9 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_RemoveLocations,Standard_Transient)
 //function : ShapeUpgrade_RemoveLocations
 //purpose  : 
 //=======================================================================
-ShapeUpgrade_RemoveLocations::ShapeUpgrade_RemoveLocations()
+ShapeUpgrade_RemoveLocations::ShapeUpgrade_RemoveLocations() : myLevelRemoving(TopAbs_SHAPE)
 {
-  myLevelRemoving = TopAbs_SHAPE;
+  
 }
 
 //=======================================================================
@@ -52,7 +54,7 @@ ShapeUpgrade_RemoveLocations::ShapeUpgrade_RemoveLocations()
 
  Standard_Boolean ShapeUpgrade_RemoveLocations::Remove(const TopoDS_Shape& theShape) 
 {
-  TopoDS_Shape aShape = theShape;
+  const TopoDS_Shape& aShape = theShape;
   myShape = aShape;
   TopAbs_ShapeEnum shtype = theShape.ShapeType();
   Standard_Boolean isRemoveLoc = ((shtype != TopAbs_COMPOUND && myLevelRemoving == TopAbs_SHAPE) || 
@@ -94,7 +96,7 @@ static Standard_Boolean RebuildShape(const TopoDS_Edge& theEdge, TopoDS_Edge& th
   if(!isBound) {
     Handle(Geom_Curve) C3d;
     TopLoc_Location aLoc;
-    Standard_Real First3d,Last3d;
+    Standard_Real First3d = NAN,Last3d = NAN;
     C3d = BRep_Tool::Curve( theEdge,aLoc,First3d,Last3d);
     aB.MakeEdge(theNewEdge);
     if(!C3d.IsNull()) {
@@ -115,7 +117,7 @@ static Standard_Boolean RebuildShape(const TopoDS_Edge& theEdge, TopoDS_Edge& th
     Handle(Geom_Surface) aSurf = BRep_Tool::Surface(theFace);
     if(!aSurf->IsKind(STANDARD_TYPE(Geom_Plane))) {
       Handle(Geom2d_Curve) c2d,c2d1;
-      Standard_Real First2d,Last2d;
+      Standard_Real First2d = NAN,Last2d = NAN;
       
       c2d= BRep_Tool::CurveOnSurface( theEdge,theFace,First2d,Last2d);
       if(BRep_Tool::IsClosed(theEdge,theFace)) {
@@ -179,7 +181,7 @@ Standard_Boolean ShapeUpgrade_RemoveLocations::MakeNewShape(const TopoDS_Shape& 
      aNewShape= myMapNewShapes.Find(aShape);
      aNewShape.Orientation(theShape.Orientation());
      if(!theRemoveLoc && !theShape.Location().IsIdentity()) {
-       TopLoc_Location aL = theShape.Location();
+       const TopLoc_Location& aL = theShape.Location();
        aNewShape.Location(aL);
      }
      if(shtype != TopAbs_EDGE) {
@@ -256,7 +258,7 @@ Standard_Boolean ShapeUpgrade_RemoveLocations::MakeNewShape(const TopoDS_Shape& 
     aNewShape.Orientation(TopAbs_FORWARD);
     TopoDS_Iterator aIt(aShape,Standard_False,isRemoveLoc);
     for( ; aIt.More(); aIt.Next()) {
-      TopoDS_Shape subshape = aIt.Value();
+      const TopoDS_Shape& subshape = aIt.Value();
       TopoDS_Shape anewsubshape;
       Standard_Boolean isDoneSubShape = MakeNewShape(subshape,anAncShape,anewsubshape,isRemoveLoc);
       isDone = (isDone || isDoneSubShape);

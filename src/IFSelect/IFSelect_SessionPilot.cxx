@@ -97,7 +97,7 @@ IFSelect_SessionPilot::IFSelect_SessionPilot (const Standard_CString prompt)
   thecommand = command;
   if (thecommand.Value(lc) <= ' ')  {  thecommand.Remove(lc);  lc --;  }
   thenbwords = 0;
-  Standard_Integer i, nc = 0;
+  Standard_Integer i = 0, nc = 0;
   char unarg[MAXCARS];
   for (i = 1; i <= lc; i ++) {
     char val = command.Value(i);
@@ -189,7 +189,7 @@ IFSelect_SessionPilot::IFSelect_SessionPilot (const Standard_CString prompt)
   (const Standard_Integer num)
 {
   if (num < 0 || num > thenbwords) return Standard_False;
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = num; i < thenbwords; i ++) {
     thewords(i).Clear();
     thewords(i).AssignCat(thewords(i+1).ToCString());
@@ -240,7 +240,7 @@ IFSelect_SessionPilot::IFSelect_SessionPilot (const Standard_CString prompt)
     IFSelect_ReturnStatus  IFSelect_SessionPilot::ReadScript
   (const Standard_CString file)
 {
-  FILE* fic; int lefic = 0;
+  FILE* fic = nullptr; int lefic = 0;
   if (file != NULL && file[0] != '\0') {
     fic = OSD_OpenFile (file,"r");
     if (fic) lefic = 1;
@@ -288,7 +288,7 @@ IFSelect_SessionPilot::IFSelect_SessionPilot (const Standard_CString prompt)
 //  Est-ce un nom ?
 
 //  Commande pour un Acteur
-  Handle(IFSelect_Activator) actor;  Standard_Integer num;
+  Handle(IFSelect_Activator) actor;  Standard_Integer num = 0;
   if (IFSelect_Activator::Select(thewords(0).ToCString(),num,actor)) {
     stat = actor->Do(num,this);
 //  Prise en compte des commandes a resultat
@@ -405,7 +405,7 @@ IFSelect_SessionPilot::IFSelect_SessionPilot (const Standard_CString prompt)
 
 	Standard_Integer nb = list->Length();
 	for (Standard_Integer i = 1; i <= nb; i ++) {
-	  Handle(IFSelect_Activator) actor;  Standard_Integer num;
+	  Handle(IFSelect_Activator) actor;  Standard_Integer num = 0;
 	  if (IFSelect_Activator::Select
 	      (list->Value(i).ToCString(),num,actor)) {
 	    if (IFSelect_Activator::Mode (list->Value(i).ToCString()) == 1)
@@ -502,7 +502,7 @@ IFSelect_SessionPilot::IFSelect_SessionPilot (const Standard_CString prompt)
 	RemoveWord(0);  RemoveWord(0);
 
 //  Commande pour un Acteur
-	Handle(IFSelect_Activator) actor;  Standard_Integer num;
+	Handle(IFSelect_Activator) actor;  Standard_Integer num = 0;
 	if (IFSelect_Activator::Select(thewords(0).ToCString(),num,actor)) {
 	  theobjrec.Nullify();
 	  stat = actor->Do(num,this);

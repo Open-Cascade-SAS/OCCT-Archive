@@ -51,7 +51,7 @@ DEFINE_STANDARD_RTTIEXT(StepKinematics_RotationAboutDirection, StepGeom_Geometri
 
 private:
   Handle(StepGeom_Direction) myDirectionOfAxis;
-  Standard_Real myRotationAngle;
+  Standard_Real myRotationAngle{};
 
 };
 #endif // _StepKinematics_RotationAboutDirection_HeaderFile_

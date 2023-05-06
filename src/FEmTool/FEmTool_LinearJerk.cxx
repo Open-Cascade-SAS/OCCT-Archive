@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <FEmTool_ElementsOfRefMatrix.hxx>
 #include <FEmTool_LinearJerk.hxx>
 #include <math.hxx>
@@ -35,12 +37,12 @@ IMPLEMENT_STANDARD_RTTIEXT(FEmTool_LinearJerk,FEmTool_ElementaryCriterion)
 
 FEmTool_LinearJerk::FEmTool_LinearJerk(const Standard_Integer WorkDegree,
 				       const GeomAbs_Shape ConstraintOrder):
-       RefMatrix(0,WorkDegree,0,WorkDegree)
+       RefMatrix(0,WorkDegree,0,WorkDegree), myOrder(PLib::NivConstr(ConstraintOrder))
 {
   static Standard_Integer Order = -333, WDeg = 14;
   static math_Vector MatrixElemts(0, ((WDeg+2)*(WDeg+1))/2 -1 );  
 
-  myOrder = PLib::NivConstr(ConstraintOrder);
+  
 
 
   //Calculating RefMatrix
@@ -63,7 +65,7 @@ FEmTool_LinearJerk::FEmTool_LinearJerk(const Standard_Integer WorkDegree,
     MatrixElemts = anInt.Value();
   }
 
-  Standard_Integer i, j, ii, jj;
+  Standard_Integer i = 0, j = 0, ii = 0, jj = 0;
   for(ii=i = 0; i <= WorkDegree; i++) {
     RefMatrix(i, i) =  MatrixElemts(ii);
     for(j = i+1, jj = ii+1; j <= WorkDegree; j++, jj++) {
@@ -80,7 +82,7 @@ Handle(TColStd_HArray2OfInteger) FEmTool_LinearJerk::DependenceTable() const
   Handle(TColStd_HArray2OfInteger) DepTab = 
     new TColStd_HArray2OfInteger(myCoeff->LowerCol(), myCoeff->UpperCol(),
 				 myCoeff->LowerCol(), myCoeff->UpperCol(),0);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for(i = myCoeff->LowerCol(); i <= myCoeff->UpperCol(); i++) DepTab->SetValue(i,i,1);
   
   return DepTab;
@@ -89,15 +91,15 @@ Handle(TColStd_HArray2OfInteger) FEmTool_LinearJerk::DependenceTable() const
 Standard_Real FEmTool_LinearJerk::Value() 
 {
   Standard_Integer deg = Min(myCoeff->ColLength() - 1, RefMatrix.UpperRow()), 
-                   i, j, j0 = myCoeff->LowerRow(), degH = Min(2*myOrder+1, deg),
-                   NbDim = myCoeff->RowLength(), dim;
+                   i = 0, j = 0, j0 = myCoeff->LowerRow(), degH = Min(2*myOrder+1, deg),
+                   NbDim = myCoeff->RowLength(), dim = 0;
 
   TColStd_Array2OfReal NewCoeff( 1, NbDim, 0, deg);
 
   Standard_Real coeff = (myLast - myFirst)/2., cteh3 = 2./Pow(coeff,5), 
-                mfact, Jline;
+                mfact = NAN, Jline = NAN;
 
-  Standard_Integer k1;
+  Standard_Integer k1 = 0;
 
   Standard_Real J = 0.;
 
@@ -147,8 +149,8 @@ void FEmTool_LinearJerk::Hessian(const Standard_Integer Dimension1,
 
   Standard_Integer deg = Min(RefMatrix.UpperRow(), H.RowNumber() - 1), degH = Min(2*myOrder+1, deg);
 
-  Standard_Real coeff = (myLast - myFirst)/2., cteh3 = 2./Pow(coeff,5), mfact;
-  Standard_Integer k1, k2, i, j, i0 = H.LowerRow(), j0 = H.LowerCol(), i1, j1;
+  Standard_Real coeff = (myLast - myFirst)/2., cteh3 = 2./Pow(coeff,5), mfact = NAN;
+  Standard_Integer k1 = 0, k2 = 0, i = 0, j = 0, i0 = H.LowerRow(), j0 = H.LowerCol(), i1 = 0, j1 = 0;
 
   H.Init(0.);
 
@@ -197,7 +199,7 @@ void FEmTool_LinearJerk::Gradient(const Standard_Integer Dimension,math_Vector& 
   Standard_Integer deg = Min(G.Length() - 1, myCoeff->ColLength() - 1);
 
   math_Vector X(0,deg);
-  Standard_Integer i, i1 = myCoeff->LowerRow();
+  Standard_Integer i = 0, i1 = myCoeff->LowerRow();
   for(i = 0; i <= deg; i++) X(i) = myCoeff->Value(i1+i, Dimension);
 
   math_Matrix H(0,deg,0,deg);

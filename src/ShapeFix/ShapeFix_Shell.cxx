@@ -16,6 +16,8 @@
 
 // pdn 17.12.98 ie_exhaust-A.stp
 
+#include <math.h>
+
 #include <Bnd_Array1OfBox.hxx>
 #include <Bnd_Box.hxx>
 #include <BRep_Builder.hxx>
@@ -54,14 +56,14 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeFix_Shell,ShapeFix_Root)
 //function : ShapeFix_Shell
 //purpose  : 
 //=======================================================================
-ShapeFix_Shell::ShapeFix_Shell()
+ShapeFix_Shell::ShapeFix_Shell() : myStatus(ShapeExtend::EncodeStatus (ShapeExtend_OK)), myFixFaceMode(-1), myFixOrientationMode(-1), myFixFace(new ShapeFix_Face), myNbShells(0), myNonManifold(Standard_False)
 {    
-  myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
-  myFixFaceMode = -1;
-  myFixOrientationMode = -1;
-  myFixFace = new ShapeFix_Face;
-  myNbShells =0;
-  myNonManifold = Standard_False;
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -69,14 +71,14 @@ ShapeFix_Shell::ShapeFix_Shell()
 //purpose  : 
 //=======================================================================
 
-ShapeFix_Shell::ShapeFix_Shell(const TopoDS_Shell& shape)
+ShapeFix_Shell::ShapeFix_Shell(const TopoDS_Shell& shape) : myStatus(ShapeExtend::EncodeStatus (ShapeExtend_OK)), myFixFaceMode(-1), myFixOrientationMode(-1), myFixFace(new ShapeFix_Face), myNonManifold(Standard_False)
 {
-  myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
-  myFixFaceMode = -1;
-  myFixOrientationMode = -1;
-  myFixFace = new ShapeFix_Face;
+  
+  
+  
+  
   Init(shape);
-  myNonManifold = Standard_False;
+  
 }
 
 //=======================================================================
@@ -339,7 +341,7 @@ static Standard_Boolean AddMultiConexityFaces(TopTools_SequenceOfShape& Lface,
   TopTools_SequenceOfShape AddShapes; 
   for(Standard_Integer i1 = 1 ; i1<=Lface.Length();i1++ )  {
    
-    TopoDS_Shape aShape = Lface.Value(i1);
+    const TopoDS_Shape& aShape = Lface.Value(i1);
     
     Standard_Integer aNbMultEdges =0;
     
@@ -347,7 +349,7 @@ static Standard_Boolean AddMultiConexityFaces(TopTools_SequenceOfShape& Lface,
     for(TopoDS_Iterator aItWires(aShape,Standard_False);  aItWires.More();  aItWires.Next()) {
       Standard_Integer aNbEdges =0;
       for(TopoDS_Iterator aItEdges(aItWires.Value(),Standard_False);  aItEdges.More();  aItEdges.Next(),aNbEdges++) {
-        TopoDS_Shape edge = aItEdges.Value();
+        const TopoDS_Shape& edge = aItEdges.Value();
         if(!aMapMultiConnectEdges.Contains(edge)) continue;
         aNbMultEdges++;
       }
@@ -367,7 +369,7 @@ static Standard_Boolean AddMultiConexityFaces(TopTools_SequenceOfShape& Lface,
     TopTools_DataMapOfShapeShape aTmpFaceShell;
     if(GetShells(llPosibleShells,aMap,aTmpShells,aTmpFaceShell,aTmp)) {
       for(Standard_Integer kk =1; kk <= aTmpShells.Length(); kk++) {
-        TopoDS_Shape aSh = aTmpShells.Value(kk);
+        const TopoDS_Shape& aSh = aTmpShells.Value(kk);
         TopTools_MapOfShape mapEdges;
         if(GetFreeEdges(aSh,mapEdges)) {
           Standard_Integer nbedge =0;
@@ -386,7 +388,7 @@ static Standard_Boolean AddMultiConexityFaces(TopTools_SequenceOfShape& Lface,
   for(Standard_Integer k1 =1; k1 <= AddShapes.Length(); k1++) {
     TopTools_DataMapOfShapeInteger MapOtherShells;
     TopTools_MapOfShape dire,reve;
-    TopoDS_Shape aSh = AddShapes.Value(k1);
+    const TopoDS_Shape& aSh = AddShapes.Value(k1);
     TopTools_MapOfShape mapEdges;
     if(!GetFreeEdges(aSh,mapEdges)) continue;
     TopTools_ListOfShape lfaces;
@@ -498,7 +500,7 @@ static Standard_Boolean AddMultiConexityFaces(TopTools_SequenceOfShape& Lface,
 static Standard_Integer BoxIn(const Bnd_Box& theBox1,const Bnd_Box& theBox2)
 {
      Standard_Integer aNumIn = 0;
-     Standard_Real aXmin1,aYmin1,aXmax1,aYmax1,aXmin2,aYmin2,aXmax2,aYmax2,aZmin1,aZmax1,aZmin2,aZmax2;
+     Standard_Real aXmin1 = NAN,aYmin1 = NAN,aXmax1 = NAN,aYmax1 = NAN,aXmin2 = NAN,aYmin2 = NAN,aXmax2 = NAN,aYmax2 = NAN,aZmin1 = NAN,aZmax1 = NAN,aZmin2 = NAN,aZmax2 = NAN;
      theBox1.Get(aXmin1,aYmin1,aZmin1,aXmax1,aYmax1,aZmax1);
      theBox2.Get(aXmin2,aYmin2,aZmin2,aXmax2,aYmax2,aZmax2);
      if(aXmin1 == aXmin2 && aXmax1 == aXmax2 && aYmin1 == aYmin2 && aYmax1 == aYmax2 &&
@@ -573,7 +575,7 @@ static void GlueClosedCandidate(TopTools_SequenceOfShape& OpenShells,
       Standard_Boolean isReversed = Standard_False;
       Standard_Integer nbedge =0;
       TopTools_MapOfShape mapEdges2;
-      TopoDS_Shape aShell2 = OpenShells.Value(j);
+      const TopoDS_Shape& aShell2 = OpenShells.Value(j);
       if(!GetFreeEdges(aShell2,mapEdges2)) continue;
       for(TopTools_MapIteratorOfMapOfShape aIte2( mapEdges2);aIte2.More() && isAddShell;aIte2.Next()) {
         TopoDS_Edge edge2 = TopoDS::Edge(aIte2.Key());
@@ -675,13 +677,13 @@ static void CreateNonManifoldShells(TopTools_SequenceOfShape& SeqShells,
 {
   TopTools_IndexedDataMapOfShapeListOfShape aMap;
   for(Standard_Integer i =1 ; i <= SeqShells.Length(); i++) {
-    TopoDS_Shape aShell = SeqShells.Value(i);
+    const TopoDS_Shape& aShell = SeqShells.Value(i);
     TopTools_IndexedMapOfShape medeg;
     TopExp::MapShapes(aShell,TopAbs_EDGE,medeg);
     for(TopTools_MapIteratorOfMapOfShape mit(aMapMultiConnectEdges); mit.More(); mit.Next()) {
     //for(TopExp_Explorer aExp(aShell,TopAbs_EDGE); aExp.More(); aExp.Next(),nbe++) {
       //TopoDS_Shape ae = aExp.Current();
-      TopoDS_Shape ae =mit.Key();
+      const TopoDS_Shape& ae =mit.Key();
       //if( aMapMultiConnectEdges.Contains(aExp.Current())) {
       if(medeg.Contains(ae)) {
         if(aMap.Contains(ae))
@@ -714,7 +716,7 @@ static void CreateNonManifoldShells(TopTools_SequenceOfShape& SeqShells,
       else if(ismerged) {
         TopoDS_Shape arshell = aMapShells.FindFromKey(alit.Value());
         while(aMapShells.Contains(arshell)){
-          TopoDS_Shape ss = aMapShells.FindFromKey(arshell);
+          const TopoDS_Shape& ss = aMapShells.FindFromKey(arshell);
           if(ss.IsSame(arshell)) break;
           arshell = ss;
         }
@@ -729,7 +731,7 @@ static void CreateNonManifoldShells(TopTools_SequenceOfShape& SeqShells,
       else {
         TopoDS_Shape arshell = aMapShells.FindFromKey(alit.Value());
          while(aMapShells.Contains(arshell)) {
-          TopoDS_Shape ss = aMapShells.FindFromKey(arshell);
+          const TopoDS_Shape& ss = aMapShells.FindFromKey(arshell);
           if(ss.IsSame(arshell)) break;
           arshell = ss;
         }
@@ -749,7 +751,7 @@ static void CreateNonManifoldShells(TopTools_SequenceOfShape& SeqShells,
     }
     if(mapmerge.Extent() >1 || ismerged) {
       for(TopTools_MapIteratorOfMapOfShape alit1(mapmerge); alit1.More();alit1.Next()) {
-        TopoDS_Shape oldShell = alit1.Key();
+        const TopoDS_Shape& oldShell = alit1.Key();
          //while(aMapShells.Contains(oldShell)) {
          //  TopoDS_Shape ss = aMapShells.FindFromKey(oldShell);
          //  if(ss.IsSame(oldShell)) break;
@@ -764,7 +766,7 @@ static void CreateNonManifoldShells(TopTools_SequenceOfShape& SeqShells,
     if(aMapShells.Contains(SeqShells.Value(nn))) {
       TopoDS_Shape aNewShell = aMapShells.FindFromKey(SeqShells.Value(nn));
       while(aMapShells.Contains(aNewShell)) {
-        TopoDS_Shape ss = aMapShells.FindFromKey(aNewShell);
+        const TopoDS_Shape& ss = aMapShells.FindFromKey(aNewShell);
         if(ss.IsSame(aNewShell)) break;
         aNewShell = ss;
       }

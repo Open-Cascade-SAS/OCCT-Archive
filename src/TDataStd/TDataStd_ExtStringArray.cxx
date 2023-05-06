@@ -193,7 +193,7 @@ void TDataStd_ExtStringArray::ChangeArray(const Handle(TColStd_HArray1OfExtended
   Standard_Integer aLower    = newArray->Lower();
   Standard_Integer anUpper   = newArray->Upper();
   Standard_Boolean aDimEqual = Standard_False;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   if (Lower() == aLower && Upper() == anUpper ) {
     aDimEqual = Standard_True;
@@ -267,7 +267,7 @@ Handle(TDF_Attribute) TDataStd_ExtStringArray::NewEmpty () const
 
 void TDataStd_ExtStringArray::Restore(const Handle(TDF_Attribute)& With) 
 {
-  Standard_Integer i, lower, upper;
+  Standard_Integer i = 0, lower = 0, upper = 0;
   Handle(TDataStd_ExtStringArray) anArray = Handle(TDataStd_ExtStringArray)::DownCast(With);
   if(!anArray->myValue.IsNull()) {
     lower = anArray->Lower();
@@ -309,7 +309,7 @@ Standard_OStream& TDataStd_ExtStringArray::Dump (Standard_OStream& anOS) const
 {  
   anOS << "\nExtStringArray :";
   if(!myValue.IsNull()) {
-    Standard_Integer i, lower, upper;
+    Standard_Integer i = 0, lower = 0, upper = 0;
     lower = myValue->Lower();
     upper = myValue->Upper();
     for(i = lower; i<=upper; i++)

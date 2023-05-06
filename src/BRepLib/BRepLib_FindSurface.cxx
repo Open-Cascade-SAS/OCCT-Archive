@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -55,8 +57,8 @@ static Standard_Real Controle(const TColgp_SequenceOfPnt& thePoints,
 			      const Handle(Geom_Plane)& thePlane)
 {
   Standard_Real dfMaxDist=0.;
-  Standard_Real a,b,c,d, dist;
-  Standard_Integer ii;
+  Standard_Real a = NAN,b = NAN,c = NAN,d = NAN, dist = NAN;
+  Standard_Integer ii = 0;
   thePlane->Coefficients(a,b,c,d);
   for (ii=1; ii<=thePoints.Length(); ii++) {
     const gp_XYZ& xyz = thePoints(ii).XYZ();
@@ -77,7 +79,7 @@ inline static Standard_Boolean Is2DConnected(const TopoDS_Edge& theEdge1,
 					     const Handle(Geom_Surface)& theSurface,
 					     const TopLoc_Location& theLocation)
 {
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   //TopLoc_Location aLoc;
   Handle(Geom2d_Curve) aCurve;
   gp_Pnt2d p1, p2;
@@ -210,7 +212,7 @@ static void fillPoints (const BRepAdaptor_Curve&                 theCurve,
                         TColgp_SequenceOfPnt&                    thePoints,
                         TColStd_SequenceOfReal&                  theWeights)
 {
-  Standard_Real aDistPrev = 0., aDistNext;
+  Standard_Real aDistPrev = 0., aDistNext = NAN;
   gp_Pnt aPPrev (theCurve.Value (theParams (0))), aPNext;
 
   for (Standard_Integer iP = 1; iP <= theParams.Length(); ++iP)
@@ -260,11 +262,11 @@ void BRepLib_FindSurface::Init(const TopoDS_Shape&    S,
   if (!ex.More()) return;    // no edges ....
 
   TopoDS_Edge E = TopoDS::Edge(ex.Current());
-  Standard_Real f,l,ff,ll;
+  Standard_Real f = NAN,l = NAN,ff = NAN,ll = NAN;
   Handle(Geom2d_Curve) PC,aPPC;
   Handle(Geom_Surface) SS;
   TopLoc_Location L;
-  Standard_Integer i = 0,j;
+  Standard_Integer i = 0,j = 0;
 
   // iterate on the surfaces of the first edge
   for(;;) {
@@ -398,7 +400,7 @@ void BRepLib_FindSurface::Init(const TopoDS_Shape&    S,
 
   // ======================= Step #2
   myLocation.Identity();
-  Standard_Integer iPoint;
+  Standard_Integer iPoint = 0;
   math_Matrix aMat (1,3,1,3, 0.);
   math_Vector aVec (1,3, 0.);
   // Find the barycenter and normalize weights 

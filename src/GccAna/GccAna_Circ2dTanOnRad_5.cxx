@@ -41,7 +41,7 @@ GccAna_Circ2dTanOnRad::
                           const gp_Circ2d&    OnCirc    ,
                           const Standard_Real Radius    ,
                           const Standard_Real Tolerance ):
-   cirsol(1,2)   ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,2)   ,
    qualifier1(1,2) ,
    TheSame1(1,2) ,
    pnttg1sol(1,2),
@@ -53,8 +53,8 @@ GccAna_Circ2dTanOnRad::
 
    gp_Dir2d dirx(1.0,0.0);
    Standard_Real Tol = Abs(Tolerance);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    Standard_Real Roncirc = OnCirc.Radius();
    Standard_Real dist1 = Point1.Distance(OnCirc.Location())-Roncirc;
    Standard_Real dist2 = Point1.Distance(OnCirc.Location())+Roncirc;

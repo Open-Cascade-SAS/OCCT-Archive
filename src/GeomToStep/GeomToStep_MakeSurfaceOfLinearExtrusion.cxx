@@ -31,7 +31,7 @@
 // SurfaceOfLinearExtrusion de Geom
 //=============================================================================
 GeomToStep_MakeSurfaceOfLinearExtrusion::GeomToStep_MakeSurfaceOfLinearExtrusion
-  ( const Handle(Geom_SurfaceOfLinearExtrusion)& S )
+  ( const Handle(Geom_SurfaceOfLinearExtrusion)& S ) : GeomToStep_Root()
 	
 {
   Handle(StepGeom_SurfaceOfLinearExtrusion) Surf;

@@ -13,6 +13,8 @@
 
 // 25.12.98 pdn: adding empty constructor
 
+#include <math.h>
+
 #include <BRep_TEdge.hxx>
 #include <BRep_TFace.hxx>
 #include <BRep_Tool.hxx>
@@ -46,7 +48,7 @@ Standard_Boolean ShapeFix_ShapeTolerance::LimitTolerance(const TopoDS_Shape& sha
 {
   if (shape.IsNull() || tmin < 0) return Standard_False;
   Standard_Boolean iamax = (tmax >= tmin);
-  Standard_Real prec;
+  Standard_Real prec = NAN;
   Standard_Boolean fait = Standard_False;
   if (styp == TopAbs_VERTEX || styp == TopAbs_EDGE || styp == TopAbs_FACE) {
     for (TopExp_Explorer ex(shape,styp); ex.More(); ex.Next()) {

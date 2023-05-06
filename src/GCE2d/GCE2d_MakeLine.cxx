@@ -27,27 +27,27 @@
 //=========================================================================
 //   Constructions of 2d geometrical elements from Geom2d.
 //=========================================================================
-GCE2d_MakeLine::GCE2d_MakeLine(const gp_Ax2d& A)
+GCE2d_MakeLine::GCE2d_MakeLine(const gp_Ax2d& A) : GCE2d_Root(), TheLine(new Geom2d_Line(A))
 {
   TheError = gce_Done;
-  TheLine = new Geom2d_Line(A);
+  
 }
 
-GCE2d_MakeLine::GCE2d_MakeLine(const gp_Lin2d& L)
+GCE2d_MakeLine::GCE2d_MakeLine(const gp_Lin2d& L) : GCE2d_Root(), TheLine(new Geom2d_Line(L))
 {
   TheError = gce_Done;
-  TheLine = new Geom2d_Line(L);
+  
 }
 
 GCE2d_MakeLine::GCE2d_MakeLine(const gp_Pnt2d& P,
-			       const gp_Dir2d& V)
+			       const gp_Dir2d& V) : GCE2d_Root(), TheLine(new Geom2d_Line(P,V))
 {
   TheError = gce_Done;
-  TheLine = new Geom2d_Line(P,V);
+  
 }
 
 GCE2d_MakeLine::GCE2d_MakeLine(const gp_Pnt2d& P1 ,
-			       const gp_Pnt2d& P2 ) 
+			       const gp_Pnt2d& P2 ) : GCE2d_Root() 
 {
   gce_MakeLin2d L(P1,P2);
   TheError = L.Status();
@@ -57,7 +57,7 @@ GCE2d_MakeLine::GCE2d_MakeLine(const gp_Pnt2d& P1 ,
 }
 
 GCE2d_MakeLine::GCE2d_MakeLine(const gp_Lin2d& Lin   ,
-			       const gp_Pnt2d& Point ) 
+			       const gp_Pnt2d& Point ) : GCE2d_Root() 
 {
   gce_MakeLin2d L(Lin,Point);
   TheError = L.Status();
@@ -67,7 +67,7 @@ GCE2d_MakeLine::GCE2d_MakeLine(const gp_Lin2d& Lin   ,
 }
 
 GCE2d_MakeLine::GCE2d_MakeLine(const gp_Lin2d&     Lin  ,
-			       const Standard_Real Dist ) 
+			       const Standard_Real Dist ) : GCE2d_Root() 
 {
   gce_MakeLin2d L(Lin,Dist);
   TheError = L.Status();

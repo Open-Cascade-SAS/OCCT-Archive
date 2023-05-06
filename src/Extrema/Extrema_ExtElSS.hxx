@@ -112,9 +112,9 @@ private:
 
 
 
-  Standard_Boolean myDone;
-  Standard_Boolean myIsPar;
-  Standard_Integer myNbExt;
+  Standard_Boolean myDone{};
+  Standard_Boolean myIsPar{};
+  Standard_Integer myNbExt{};
   Handle(TColStd_HArray1OfReal) mySqDist;
   Handle(Extrema_HArray1OfPOnSurf) myPOnS1;
   Handle(Extrema_HArray1OfPOnSurf) myPOnS2;

@@ -90,7 +90,7 @@ private:
   Handle(Geom2d_BSplineCurve) myCurve2d1;
   Standard_Real myMaxError2d1;
   Handle(Geom2d_BSplineCurve) myCurve2d2;
-  Standard_Real myMaxError2d2;
+  Standard_Real myMaxError2d2{};
 
 };
 

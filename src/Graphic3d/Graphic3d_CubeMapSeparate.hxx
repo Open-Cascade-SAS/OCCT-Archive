@@ -59,7 +59,7 @@ protected:
   OSD_Path             myPaths[6];  //!< array of paths to cubemap images
   Handle(Image_PixMap) myImages[6]; //!< array of cubemap images
 
-  Standard_Size        mySize;      //!< size of each side of cubemap
+  Standard_Size        mySize{};      //!< size of each side of cubemap
   Image_Format         myFormat;    //!< format each side of cubemap
 
 private:

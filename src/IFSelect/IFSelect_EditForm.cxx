@@ -56,7 +56,7 @@ IFSelect_EditForm::IFSelect_EditForm
       theeditor (editor) , 
       thetouched (0)
 {
-  Standard_Integer i,nb = nums.Length();
+  Standard_Integer i = 0,nb = nums.Length();
   for (i = 1; i <= nb; i ++) thenums.SetValue (i,nums.Value(i));
 }
 
@@ -116,7 +116,7 @@ IFSelect_EditForm::IFSelect_EditForm
   (const Standard_Integer num) const
 {
   if (thecomplete) return num;
-  Standard_Integer i, n = thenums.Upper();
+  Standard_Integer i = 0, n = thenums.Upper();
   for (i = 1; i <= n; i ++) {
     if (thenums.Value(i) == num) return i;
   }
@@ -129,7 +129,7 @@ IFSelect_EditForm::IFSelect_EditForm
   Standard_Integer res = theeditor->NameNumber(name);
   if (thecomplete || res == 0) return res;
 //   Sinon, chercher res dans thenums
-  Standard_Integer i, nb = thenums.Length();
+  Standard_Integer i = 0, nb = thenums.Length();
   for (i = 1; i <= nb; i ++) {
     if (res == thenums.Value(i)) return res;
   }
@@ -142,7 +142,7 @@ IFSelect_EditForm::IFSelect_EditForm
   Standard_Integer res = theeditor->NameNumber(name);
   if (thecomplete || res == 0) return res;
 //   Sinon, chercher res dans thenums
-  Standard_Integer i, nb = thenums.Length();
+  Standard_Integer i = 0, nb = thenums.Length();
   for (i = 1; i <= nb; i ++) {
     if (res == thenums.Value(i)) return i;
   }
@@ -154,7 +154,7 @@ IFSelect_EditForm::IFSelect_EditForm
 {
   theloaded = Standard_True;
   thetouched = 0;
-  Standard_Integer i,nb = theorigs.Upper();
+  Standard_Integer i = 0,nb = theorigs.Upper();
   if (nb == 0) return;
   for (i = 1; i <= nb; i ++) {
     Standard_Integer num = NumberFromRank(i);
@@ -393,7 +393,7 @@ IFSelect_EditForm::IFSelect_EditForm
 
     void  IFSelect_EditForm::ClearEdit (const Standard_Integer num)
 {
-  Standard_Integer i, nb = thestatus.Upper();
+  Standard_Integer i = 0, nb = thestatus.Upper();
   if (num == 0) {
     for (i = 1; i <= nb; i ++)   thestatus.SetValue (i,0);
   } else {
@@ -405,7 +405,7 @@ IFSelect_EditForm::IFSelect_EditForm
 
     void  IFSelect_EditForm::PrintDefs (Standard_OStream& S) const
 {
-  Standard_Integer iv, nbv = NbValues(Standard_True);
+  Standard_Integer iv = 0, nbv = NbValues(Standard_True);
   S<<"***** EditForm,  Label : "<<Label()<<std::endl;
   if (IsComplete()) S<<"Complete, "<<nbv<<" Values"<<std::endl;
   else {
@@ -423,7 +423,7 @@ static void PrintList
 {
   if (list.IsNull())  {  S<<"(NULL LIST)"<<std::endl;  return;  }
 
-  Standard_Integer i,nb = list->Length();
+  Standard_Integer i = 0,nb = list->Length();
   S<<"(List : "<<nb<<" Items)"<<std::endl;
   if (!alsolist) return;
 
@@ -437,7 +437,7 @@ static void PrintList
   (Standard_OStream& S, const Standard_Integer what,
    const Standard_Boolean names, const Standard_Boolean alsolist) const
 {
-  Standard_Integer iv, nbv = NbValues(Standard_True);
+  Standard_Integer iv = 0, nbv = NbValues(Standard_True);
   S<<  "****************************************************"<<std::endl;
   S<<"*****  "<<Label()<<Interface_MSG::Blanks(Label(),40)<<"*****"<<std::endl;
   S<<"*****                                          *****"<<std::endl;
@@ -538,7 +538,7 @@ static void PrintList
     Standard_Boolean  IFSelect_EditForm::Undo ()
 {
   if (thestatus.Upper() == 0 || theorigs.Upper() == 0) return Standard_False;
-  Standard_Integer i, nb = thestatus.Upper();
+  Standard_Integer i = 0, nb = thestatus.Upper();
   for (i = 1; i <= nb; i ++)  {
     if (thestatus.Value (i) != 0) themodifs.SetValue (i,theorigs.Value(i));
   }

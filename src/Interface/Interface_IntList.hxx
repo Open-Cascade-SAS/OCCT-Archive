@@ -132,11 +132,11 @@ public:
 
 private:
 
-  Standard_Integer thenbe;
-  Standard_Integer thenbr;
-  Standard_Integer thenum;
-  Standard_Integer thecount;
-  Standard_Integer therank;
+  Standard_Integer thenbe{};
+  Standard_Integer thenbr{};
+  Standard_Integer thenum{};
+  Standard_Integer thecount{};
+  Standard_Integer therank{};
   Handle(TColStd_HArray1OfInteger) theents;
   Handle(TColStd_HArray1OfInteger) therefs;
 

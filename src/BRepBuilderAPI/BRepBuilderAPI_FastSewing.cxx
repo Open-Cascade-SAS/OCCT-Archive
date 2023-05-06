@@ -584,10 +584,10 @@ BRepBuilderAPI_FastSewing::NodeInspector::
                                     const Standard_Real theTol)
 : myVecOfVertexes(theVec),
   myPoint(thePnt),
-  myResID(-1),
+  mySQToler(theTol*theTol), myResID(-1),
   myIsFindingEnable(Standard_False)
 {
-  mySQToler = theTol*theTol;
+  
 }
 
 //=======================================================================

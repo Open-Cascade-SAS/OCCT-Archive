@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepTools_TrsfModification.hxx>
 #include <Geom2d_Curve.hxx>
@@ -162,7 +164,7 @@ Standard_Boolean BRepTools_TrsfModification::NewTriangulation
     for (Standard_Integer anInd = 1; anInd <= theTriangulation->NbTriangles(); ++anInd)
     {
       Poly_Triangle aTria = theTriangulation->Triangle(anInd);
-      Standard_Integer aN1, aN2, aN3;
+      Standard_Integer aN1 = 0, aN2 = 0, aN3 = 0;
       aTria.Get(aN1, aN2, aN3);
       aTria.Set(aN1, aN3, aN2);
       theTriangulation->SetTriangle(anInd, aTria);
@@ -221,7 +223,7 @@ Standard_Boolean BRepTools_TrsfModification::NewPolygon
   if (theP->HasParameters())
   {
     TopLoc_Location aCurveLoc;
-    Standard_Real aFirst, aLast;
+    Standard_Real aFirst = NAN, aLast = NAN;
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(theE, aCurveLoc, aFirst, aLast);
     if (!aCurve.IsNull())
     {
@@ -272,7 +274,7 @@ Standard_Boolean BRepTools_TrsfModification::NewPolygonOnTriangulation
 
   // transform the parametrization
   Handle(Geom_Surface) aSurf = BRep_Tool::Surface(theF, aLoc);
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   Handle(Geom2d_Curve) aC2d = BRep_Tool::CurveOnSurface(theE, theF, aFirst, aLast);
   if (!aSurf.IsNull() && !aC2d.IsNull() && Abs(Abs(myTrsf.ScaleFactor()) - 1.0) > TopLoc_Location::ScalePrec())
   {
@@ -305,7 +307,7 @@ Standard_Boolean BRepTools_TrsfModification::NewCurve
      TopLoc_Location& L, 
      Standard_Real& Tol)
 {
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   C = BRep_Tool::Curve(E,L,f,l);
   if (C.IsNull())
   {
@@ -373,12 +375,12 @@ Standard_Boolean BRepTools_TrsfModification::NewCurve2d
   if (GAsurf.GetType() == GeomAbs_Plane)
     return Standard_False;
 
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   Handle(Geom2d_Curve) NewC = BRep_Tool::CurveOnSurface(E,F,f,l);
   if (NewC.IsNull())
     return Standard_False;
   
-  Standard_Real newf,newl;
+  Standard_Real newf = NAN,newl = NAN;
 
   Handle(Standard_Type) TheType = NewC->DynamicType();
     
@@ -426,7 +428,7 @@ Standard_Boolean BRepTools_TrsfModification::NewCurve2d
   TopExp::Vertices(E,V1,V2);
   TopoDS_Shape initEFOR = E.Oriented(TopAbs_FORWARD); // skl
   TopoDS_Edge EFOR = TopoDS::Edge(initEFOR/*E.Oriented(TopAbs_FORWARD)*/); //skl
-  Standard_Real aTolV;
+  Standard_Real aTolV = NAN;
   NewParameter(V1, EFOR, f, aTolV);
   NewParameter(V2, EFOR, l, aTolV);
   GeomLib::SameRange(Precision::PConfusion(), NewC, newf, newl, f, l, C);
@@ -452,7 +454,7 @@ Standard_Boolean BRepTools_TrsfModification::NewParameter
   Tol *= Abs(myTrsf.ScaleFactor());
   P = BRep_Tool::Parameter(V,E);
 
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
 
   Handle(Geom_Curve) C = BRep_Tool::Curve(E,loc,f,l);
   if (!C.IsNull()) {

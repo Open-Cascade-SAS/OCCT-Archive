@@ -32,7 +32,7 @@
 //=========================================================================
 GC_MakeTrimmedCylinder::GC_MakeTrimmedCylinder(const gp_Pnt& P1 ,
 						 const gp_Pnt& P2 ,
-						 const gp_Pnt& P3 ) 
+						 const gp_Pnt& P3 ) : GC_Root() 
 {
   GC_MakeCylindricalSurface Cyl(P1,P2,P3);
   TheError = Cyl.Status();
@@ -47,7 +47,7 @@ GC_MakeTrimmedCylinder::GC_MakeTrimmedCylinder(const gp_Pnt& P1 ,
 //=========================================================================
 
 GC_MakeTrimmedCylinder::GC_MakeTrimmedCylinder(const gp_Circ&      Circ   ,
-						 const Standard_Real Height ) {
+						 const Standard_Real Height ) : GC_Root() {
   GC_MakeCylindricalSurface Cyl(Circ);
   TheError = Cyl.Status();
   if (TheError == gce_Done) {
@@ -61,7 +61,7 @@ GC_MakeTrimmedCylinder::GC_MakeTrimmedCylinder(const gp_Circ&      Circ   ,
 
 GC_MakeTrimmedCylinder::GC_MakeTrimmedCylinder(const gp_Ax1&       A1     ,
 						 const Standard_Real Radius ,
-						 const Standard_Real Height ) {
+						 const Standard_Real Height ) : GC_Root() {
   GC_MakeCylindricalSurface Cyl(A1,Radius);
   TheError = Cyl.Status();
   if (TheError == gce_Done) {

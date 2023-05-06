@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_GCurve.hxx>
 #include <BRep_TEdge.hxx>
 #include <BRep_Tool.hxx>
@@ -96,9 +98,9 @@ Standard_Boolean ShapeCustom_ConvertToBSpline::NewSurface (const TopoDS_Face& F,
 							   Standard_Boolean& RevFace) 
 {
   S = BRep_Tool::Surface(F,L);
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   S->Bounds(U1,U2,V1,V2);
-  Standard_Real Umin, Umax,Vmin,Vmax;
+  Standard_Real Umin = NAN, Umax = NAN,Vmin = NAN,Vmax = NAN;
   BRepTools::UVBounds(F,Umin, Umax, Vmin, Vmax);
   if(Precision::IsInfinite(U1) || Precision::IsInfinite(U2)) {
     U1 = Umin;
@@ -133,7 +135,7 @@ Standard_Boolean ShapeCustom_ConvertToBSpline::NewSurface (const TopoDS_Face& F,
   if(S->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface)) ) {
     Handle(Geom_RectangularTrimmedSurface) RTS = 
       Handle(Geom_RectangularTrimmedSurface)::DownCast ( S );
-    Standard_Real UF, UL, VF, VL;
+    Standard_Real UF = NAN, UL = NAN, VF = NAN, VL = NAN;
     RTS->Bounds ( UF, UL, VF, VL );
     S = new Geom_RectangularTrimmedSurface ( res, UF, UL, VF, VL );
   }
@@ -169,7 +171,7 @@ Standard_Boolean ShapeCustom_ConvertToBSpline::NewCurve (const TopoDS_Edge& E,
     Handle(Geom_Surface) S = GC->Surface();
     Handle(Geom_Surface) ES;
     if ( ! IsToConvert ( S, ES ) ) continue;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     C = BRep_Tool::Curve ( E, L, f, l );
     if ( ! C.IsNull() ) C = Handle(Geom_Curve)::DownCast ( C->Copy() );
     Tol = BRep_Tool::Tolerance ( E );
@@ -209,7 +211,7 @@ Standard_Boolean ShapeCustom_ConvertToBSpline::NewCurve2d (const TopoDS_Edge& E,
   // just copy pcurve if either its surface is changing or edge was copied
   if ( ! IsToConvert ( S, ES ) && E.IsSame ( NewE ) ) return Standard_False;
   
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   C = BRep_Tool::CurveOnSurface(E,F,f,l);
   if ( ! C.IsNull() ) 
     C = Handle(Geom2d_Curve)::DownCast ( C->Copy() );

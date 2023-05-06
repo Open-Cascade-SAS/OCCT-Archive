@@ -29,7 +29,7 @@
 //=========================================================================
 gce_MakeElips::gce_MakeElips(const gp_Ax2&       A2          ,
 			     const Standard_Real MajorRadius ,
-			     const Standard_Real MinorRadius ) 
+			     const Standard_Real MinorRadius ) : gce_Root() 
 {
   if (MajorRadius < MinorRadius ) { TheError = gce_InvertRadius;}
   else if (MinorRadius < 0.0) { TheError = gce_NegativeRadius; }
@@ -48,7 +48,7 @@ gce_MakeElips::gce_MakeElips(const gp_Ax2&       A2          ,
 
 gce_MakeElips::gce_MakeElips(const gp_Pnt&   S1     ,
 			     const gp_Pnt&   S2     ,
-			     const gp_Pnt&   Center ) 
+			     const gp_Pnt&   Center ) : gce_Root() 
 {
   Standard_Real D1 = S1.Distance(Center);
   if (D1 < gp::Resolution()) { TheError = gce_NullAxis; }

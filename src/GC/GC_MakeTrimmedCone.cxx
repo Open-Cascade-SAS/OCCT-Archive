@@ -34,7 +34,7 @@
 GC_MakeTrimmedCone::GC_MakeTrimmedCone(const gp_Pnt& P1 ,
 					 const gp_Pnt& P2 ,
 					 const gp_Pnt& P3 ,
-					 const gp_Pnt& P4 ) 
+					 const gp_Pnt& P4 ) : GC_Root() 
 {
   GC_MakeConicalSurface Cone(P1,P2,P3,P4);
   TheError = Cone.Status();
@@ -56,7 +56,7 @@ GC_MakeTrimmedCone::GC_MakeTrimmedCone(const gp_Pnt& P1 ,
 GC_MakeTrimmedCone::GC_MakeTrimmedCone(const gp_Pnt&       P1 ,
 					 const gp_Pnt&       P2 ,
 					 const Standard_Real R1 ,
-					 const Standard_Real R2 ) 
+					 const Standard_Real R2 ) : GC_Root() 
 {
   GC_MakeConicalSurface Cone(P1,P2,R1,R2);
   TheError = Cone.Status();

@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor2d_Curve2d.hxx>
 #include <Adaptor3d_IsoCurve.hxx>
 #include <Bnd_Box.hxx>
@@ -37,13 +39,13 @@
 static Standard_Real GetDeflection(const Handle(BRepAdaptor_Surface)& aFace,
 				   const Handle (VrmlConverter_Drawer)& aDrawer) {
 
-  Standard_Real theRequestedDeflection;
+  Standard_Real theRequestedDeflection = NAN;
   if(aDrawer->TypeOfDeflection() == Aspect_TOD_RELATIVE)   // TOD_RELATIVE, TOD_ABSOLUTE
     {
       Bnd_Box box;
       BndLib_AddSurface::Add(aFace->Surface(), Precision::Confusion(), box);
 
-      Standard_Real  Xmin, Xmax, Ymin, Ymax, Zmin, Zmax, diagonal;
+      Standard_Real  Xmin = NAN, Xmax = NAN, Ymin = NAN, Ymax = NAN, Zmin = NAN, Zmax = NAN, diagonal = NAN;
       box.Get( Xmin, Ymin, Zmin, Xmax, Ymax, Zmax );
       if (!(box.IsOpenXmin() || box.IsOpenXmax() ||
 	    box.IsOpenYmin() || box.IsOpenYmax() ||
@@ -84,7 +86,7 @@ void VrmlConverter_WFDeflectionRestrictedFace::Add
 {
 
   StdPrs_ToolRFace ToolRst (aFace);
-  Standard_Real UF, UL, VF, VL;
+  Standard_Real UF = NAN, UL = NAN, VF = NAN, VL = NAN;
   UF = aFace->FirstUParameter();
   UL = aFace->LastUParameter();
   VF = aFace->FirstVParameter();
@@ -93,8 +95,8 @@ void VrmlConverter_WFDeflectionRestrictedFace::Add
   Standard_Real aLimit = aDrawer->MaximalParameterValue();
 
   // compute bounds of the restriction
-  Standard_Real UMin,UMax,VMin,VMax;
-  Standard_Integer i;
+  Standard_Real UMin = NAN,UMax = NAN,VMin = NAN,VMax = NAN;
+  Standard_Integer i = 0;
 
   UMin = UF;
   UMax = UL;
@@ -138,7 +140,7 @@ void VrmlConverter_WFDeflectionRestrictedFace::Add
 
   // trim the isos
   gp_Pnt2d P1,P2;
-  Standard_Real U1, U2;
+  Standard_Real U1 = NAN, U2 = NAN;
   gp_Pnt dummypnt;
   for (ToolRst.Init(); ToolRst.More(); ToolRst.Next()) {
     TopAbs_Orientation Orient = ToolRst.Orientation();

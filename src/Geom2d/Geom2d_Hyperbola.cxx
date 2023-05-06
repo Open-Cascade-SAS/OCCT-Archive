@@ -60,10 +60,10 @@ Handle(Geom2d_Geometry) Geom2d_Hyperbola::Copy() const
 //purpose  : 
 //=======================================================================
 
-Geom2d_Hyperbola::Geom2d_Hyperbola (const gp_Hypr2d& H) 
+Geom2d_Hyperbola::Geom2d_Hyperbola (const gp_Hypr2d& H) : majorRadius(H.MajorRadius()), minorRadius(H.MinorRadius()) 
 {
-  majorRadius = H.MajorRadius();
-  minorRadius = H.MinorRadius();
+  
+  
   pos = H.Axis();
 }
 

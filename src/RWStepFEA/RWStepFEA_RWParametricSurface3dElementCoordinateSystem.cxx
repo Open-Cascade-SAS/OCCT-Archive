@@ -15,6 +15,8 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepFEA_RWParametricSurface3dElementCoordinateSystem.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -49,10 +51,10 @@ void RWStepFEA_RWParametricSurface3dElementCoordinateSystem::ReadStep (const Han
 
   // Own fields of ParametricSurface3dElementCoordinateSystem
 
-  Standard_Integer aAxis;
+  Standard_Integer aAxis = 0;
   data->ReadInteger (num, 2, "axis", ach, aAxis);
 
-  Standard_Real aAngle;
+  Standard_Real aAngle = NAN;
   data->ReadReal (num, 3, "angle", ach, aAngle);
 
   // Initialize entity

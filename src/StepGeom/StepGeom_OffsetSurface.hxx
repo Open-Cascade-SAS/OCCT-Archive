@@ -67,7 +67,7 @@ private:
 
 
   Handle(StepGeom_Surface) basisSurface;
-  Standard_Real distance;
+  Standard_Real distance{};
   StepData_Logical selfIntersect;
 
 

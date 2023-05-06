@@ -52,13 +52,13 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeFix_Solid,ShapeFix_Root)
 //function : ShapeFix_Solid
 //purpose  : 
 //=======================================================================
-ShapeFix_Solid::ShapeFix_Solid()
+ShapeFix_Solid::ShapeFix_Solid() : myFixShell(new ShapeFix_Shell), myStatus(ShapeExtend::EncodeStatus (ShapeExtend_OK)), myFixShellMode(-1), myFixShellOrientationMode(-1), myCreateOpenSolidMode(Standard_False)
 {
-  myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
-  myFixShellMode = -1;
-  myFixShellOrientationMode = -1;
-  myFixShell = new ShapeFix_Shell;
-  myCreateOpenSolidMode = Standard_False;
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -66,13 +66,13 @@ ShapeFix_Solid::ShapeFix_Solid()
 //purpose  : 
 //=======================================================================
 
-ShapeFix_Solid::ShapeFix_Solid(const TopoDS_Solid& solid)
+ShapeFix_Solid::ShapeFix_Solid(const TopoDS_Solid& solid) : myFixShell(new ShapeFix_Shell), myStatus(ShapeExtend::EncodeStatus (ShapeExtend_OK)), myFixShellMode(-1), myFixShellOrientationMode(-1), myCreateOpenSolidMode(Standard_False)
 {
-  myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
-  myFixShellMode = -1;
-  myFixShellOrientationMode = -1;
-  myFixShell = new ShapeFix_Shell;
-  myCreateOpenSolidMode = Standard_False;
+  
+  
+  
+  
+  
   Init(solid);
 }
 
@@ -167,7 +167,7 @@ static void CollectSolids(const TopTools_SequenceOfShape& aSeqShells ,
       if(!st) continue;
       for ( Standard_Integer j = 1; j <= aSeqShells.Length(); j++ ) {
         if(i==j) continue;
-        TopoDS_Shape aShell2 = aSeqShells.Value(j);
+        const TopoDS_Shape& aShell2 = aSeqShells.Value(j);
         if(!BRep_Tool::IsClosed(aShell2)) continue;
         if(aMapHoles.Contains(aShell2)) continue;
         if(aMapShellHoles.IsBound(aShell2)) {
@@ -245,7 +245,7 @@ static void CollectSolids(const TopTools_SequenceOfShape& aSeqShells ,
 //purpose  : 
 //=======================================================================
 
-static Standard_Boolean CreateSolids(const TopoDS_Shape theShape,TopTools_IndexedMapOfShape& aMapSolids)
+static Standard_Boolean CreateSolids(const TopoDS_Shape& theShape,TopTools_IndexedMapOfShape& aMapSolids)
 {
   TopTools_SequenceOfShape aSeqShells;
   Standard_Boolean isDone = Standard_False;
@@ -432,8 +432,8 @@ Standard_Boolean ShapeFix_Solid::Perform(const Message_ProgressRange& theProgres
     if(aExp.More()) {
       TopoDS_Shell  aShtmp = TopoDS::Shell(aExp.Current());
       ShapeAnalysis_FreeBounds sfb(aShtmp);
-      TopoDS_Compound aC1 = sfb.GetClosedWires();
-      TopoDS_Compound aC2 = sfb.GetOpenWires();
+      const TopoDS_Compound& aC1 = sfb.GetClosedWires();
+      const TopoDS_Compound& aC2 = sfb.GetOpenWires();
       Standard_Integer numedge =0;
       TopExp_Explorer aExp1(aC1,TopAbs_EDGE); 
       for( ; aExp1.More(); aExp1.Next())
@@ -474,7 +474,7 @@ Standard_Boolean ShapeFix_Solid::Perform(const Message_ProgressRange& theProgres
     if(CreateSolids(aResShape,aMapSolids)) {
       SendWarning (Message_Msg ("FixAdvSolid.FixOrientation.MSG20"));// Orientation of shell was corrected.. 
       if(aMapSolids.Extent() ==1) {
-        TopoDS_Shape aResSol = aMapSolids.FindKey(1);
+        const TopoDS_Shape& aResSol = aMapSolids.FindKey(1);
         if(aResShape.ShapeType() == TopAbs_SHELL && myCreateOpenSolidMode) {
           TopoDS_Solid solid;
           BRep_Builder B;

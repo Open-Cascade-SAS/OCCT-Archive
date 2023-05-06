@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2dAdaptor_Curve.hxx>
 #include <Geom2dHatch_Classifier.hxx>
 #include <Geom2dHatch_Element.hxx>
@@ -161,7 +163,7 @@ void Geom2dHatch_Hatcher::KeepSegments (const Standard_Boolean Keep)
 Standard_Integer Geom2dHatch_Hatcher::AddElement (const Geom2dAdaptor_Curve& Curve,
 					       const TopAbs_Orientation Orientation)
 {
-  Standard_Integer IndE ;
+  Standard_Integer IndE = 0 ;
   for (IndE = 1 ; IndE <= myNbElements && myElements.IsBound(IndE) ; IndE++) ;
   if (IndE > myNbElements) {
     myNbElements++ ;
@@ -244,7 +246,7 @@ void Geom2dHatch_Hatcher::ClrElements ()
 
 Standard_Integer Geom2dHatch_Hatcher::AddHatching (const Geom2dAdaptor_Curve& Curve)
 {
-  Standard_Integer IndH ;
+  Standard_Integer IndH = 0 ;
   for (IndH = 1 ; IndH <= myNbHatchings && myHatchings.IsBound(IndH) ; IndH++) ;
   if (IndH > myNbHatchings) {
     myNbHatchings++ ;
@@ -339,7 +341,7 @@ void Geom2dHatch_Hatcher::Trim (const Standard_Integer IndH)
 
   Hatching.ClrPoints() ;
 
-  Standard_Boolean OK, AllOK ;
+  Standard_Boolean OK = 0, AllOK = 0 ;
 
   AllOK = Standard_True ;
   for (Standard_Integer IndE = 1 ; IndE <= myNbElements ; IndE++) {
@@ -744,7 +746,7 @@ Standard_Boolean Geom2dHatch_Hatcher::GlobalTransition (HatchGen_PointOnHatching
 
   gp_Dir2d Tangente2d, Normale2d ;
   gp_Dir   Tangente,   Normale ;
-  Standard_Real Courbure ;
+  Standard_Real Courbure = NAN ;
 
   const Geom2dAdaptor_Curve& CurveH = HatchingCurve (Point.Index()) ;
 
@@ -777,7 +779,7 @@ Standard_Boolean Geom2dHatch_Hatcher::GlobalTransition (HatchGen_PointOnHatching
     
     TopAbs_Orientation ElementOrientation = Element.Orientation() ;
     Standard_Boolean ToReverse = (ElementOrientation == TopAbs_REVERSED);
-    Standard_Real Param ;
+    Standard_Real Param = NAN ;
     switch (PntE.Position()) 
     {
       case TopAbs_FORWARD  : 

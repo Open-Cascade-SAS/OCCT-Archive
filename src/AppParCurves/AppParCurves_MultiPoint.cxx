@@ -32,10 +32,10 @@ AppParCurves_MultiPoint::AppParCurves_MultiPoint()
 
 
 AppParCurves_MultiPoint::AppParCurves_MultiPoint (const Standard_Integer NbPoles, 
-						  const Standard_Integer NbPoles2d)
+						  const Standard_Integer NbPoles2d) : nbP(NbPoles), nbP2d(NbPoles2d)
 {
-  nbP = NbPoles;
-  nbP2d = NbPoles2d;
+  
+  
   if (nbP != 0)  {
     Handle(TColgp_HArray1OfPnt) tab3d = 
       new TColgp_HArray1OfPnt(1, NbPoles);
@@ -50,10 +50,10 @@ AppParCurves_MultiPoint::AppParCurves_MultiPoint (const Standard_Integer NbPoles
 
 
 
-AppParCurves_MultiPoint::AppParCurves_MultiPoint(const TColgp_Array1OfPnt& tabP)
+AppParCurves_MultiPoint::AppParCurves_MultiPoint(const TColgp_Array1OfPnt& tabP) : nbP2d(0), nbP(tabP.Length())
 {
-  nbP2d = 0;
-  nbP = tabP.Length();
+  
+  
   Handle(TColgp_HArray1OfPnt) tab3d = 
     new TColgp_HArray1OfPnt(1, nbP);
   ttabPoint = tab3d;
@@ -66,10 +66,10 @@ AppParCurves_MultiPoint::AppParCurves_MultiPoint(const TColgp_Array1OfPnt& tabP)
 
 
 
-AppParCurves_MultiPoint::AppParCurves_MultiPoint(const TColgp_Array1OfPnt2d& tabP2d)
+AppParCurves_MultiPoint::AppParCurves_MultiPoint(const TColgp_Array1OfPnt2d& tabP2d) : nbP(0), nbP2d(tabP2d.Length())
 {
-  nbP = 0;
-  nbP2d = tabP2d.Length();
+  
+  
   Handle(TColgp_HArray1OfPnt2d) tab2d = 
     new TColgp_HArray1OfPnt2d(1, nbP2d);
   ttabPoint2d = tab2d;
@@ -82,10 +82,10 @@ AppParCurves_MultiPoint::AppParCurves_MultiPoint(const TColgp_Array1OfPnt2d& tab
 
 
 AppParCurves_MultiPoint::AppParCurves_MultiPoint(const TColgp_Array1OfPnt&   tabP,
-						 const TColgp_Array1OfPnt2d& tabP2d)
+						 const TColgp_Array1OfPnt2d& tabP2d) : nbP(tabP.Length()), nbP2d(tabP2d.Length())
 {
-  nbP = tabP.Length();
-  nbP2d = tabP2d.Length();
+  
+  
   Handle(TColgp_HArray1OfPnt) t3d = 
     new TColgp_HArray1OfPnt(1, nbP);
   ttabPoint = t3d;
@@ -95,7 +95,7 @@ AppParCurves_MultiPoint::AppParCurves_MultiPoint(const TColgp_Array1OfPnt&   tab
   ttabPoint2d = t2d;
 
   TColgp_Array1OfPnt& P3d = tabPoint->ChangeArray1();
-  Standard_Integer i, Lower = tabP.Lower();
+  Standard_Integer i = 0, Lower = tabP.Lower();
   for (i = 1; i <= nbP; i++) {
     P3d.SetValue(i, tabP.Value(Lower+i-1));
   }

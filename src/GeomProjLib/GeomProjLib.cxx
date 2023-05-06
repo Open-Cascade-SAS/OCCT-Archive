@@ -47,6 +47,7 @@
 #include <ProjLib_ProjectedCurve.hxx>
 #include <ProjLib_ProjectOnPlane.hxx>
 
+#include <math.h>
 #include <stdio.h>
 #ifdef DRAW
 #include <DrawTrSurf.hxx>
@@ -170,10 +171,10 @@ Handle(Geom2d_Curve) GeomProjLib::Curve2d(const Handle(Geom_Curve)& C,
 					  const Handle(Geom_Surface)& S,
 					        Standard_Real& Tolerance)
 {
- Standard_Real  UFirst,
-                ULast,
-                VFirst,
-                VLast ;
+ Standard_Real  UFirst = NAN,
+                ULast = NAN,
+                VFirst = NAN,
+                VLast = NAN ;
 
  S->Bounds(UFirst,
 	   ULast,
@@ -330,7 +331,7 @@ Handle(Geom_Curve) GeomProjLib::Project( const Handle(Geom_Curve)& C,
     Standard_Real TolV = Pow(Tol, 2./3);
     ProjLib_CompProjectedCurve Proj(HS,HC,TolU,TolV,-1.);
     
-    Standard_Real f,l;
+    Standard_Real f = NAN,l = NAN;
     Proj.Bounds(1,f,l);
     Handle(Adaptor2d_Curve2d) HC2d = Proj.Trim(f,l,TolU);
     Approx_CurveOnSurface Approx(HC2d, HS, f, l, Tol);

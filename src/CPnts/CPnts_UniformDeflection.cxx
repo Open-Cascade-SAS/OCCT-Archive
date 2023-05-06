@@ -38,6 +38,8 @@
 //   each iteration calculates at maximum 3 points
 //-------------------------------------------------------------------------
 
+#include <math.h>
+
 #include <Adaptor2d_Curve2d.hxx>
 #include <Adaptor3d_Curve.hxx>
 #include <CPnts_UniformDeflection.hxx>
@@ -87,8 +89,8 @@ void CPnts_UniformDeflection::Perform()
 {
   gp_Pnt P, P1, P2;
   gp_Vec V1, V2, VV;
-  Standard_Real Un1; 
-  Standard_Real NormD1, NormD2;
+  Standard_Real Un1 = NAN; 
+  Standard_Real NormD1 = NAN, NormD2 = NAN;
 
   myIPoint   = -1;
   myNbPoints = -1;

@@ -43,7 +43,7 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepVisual_SurfaceStyleReflectanceAmbient, Standard_Transient)
 
 private:
-  Standard_Real myAmbientReflectance;
+  Standard_Real myAmbientReflectance{};
 
 };
 #endif // _StepVisual_SurfaceStyleReflectanceAmbient_HeaderFile_

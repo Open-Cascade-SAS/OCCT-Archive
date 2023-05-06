@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math_FunctionWithDerivative.hxx>
 #include <math_NewtonFunctionRoot.hxx>
 #include <StdFail_NotDone.hxx>
@@ -23,17 +25,17 @@ math_NewtonFunctionRoot::math_NewtonFunctionRoot (math_FunctionWithDerivative& F
 						  const Standard_Real EpsF , 
 						  const Standard_Real A,
 						  const Standard_Real B,
-						  const Standard_Integer NbIterations ){
-  EpsilonX = EpsX;
-  EpsilonF = EpsF;
-  Binf = A;
-  Bsup = B;
-  Itermax = NbIterations;
-  Done = Standard_False;
-  X = RealLast();
-  DFx = 0;
-  Fx = RealLast();
-  It = 0;
+						  const Standard_Integer NbIterations ) : EpsilonX(EpsX), EpsilonF(EpsF), Binf(A), Bsup(B), Itermax(NbIterations), Done(Standard_False), X(RealLast()), DFx(0), Fx(RealLast()), It(0){
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   Perform(F, Guess);
 }
 
@@ -42,18 +44,18 @@ math_NewtonFunctionRoot::math_NewtonFunctionRoot (const Standard_Real A ,
 						  const Standard_Real B, 
 						  const Standard_Real EpsX , 
 						  const Standard_Real EpsF , 
-						  const Standard_Integer NbIterations ){
+						  const Standard_Integer NbIterations ) : Binf(A), Bsup(B), EpsilonX(EpsX), EpsilonF(EpsF), Itermax(NbIterations), Done(Standard_False), X(RealLast()), DFx(0), Fx(RealLast()), It(0){
   
-  Binf = A;
-  Bsup = B;
-  EpsilonX = EpsX;
-  EpsilonF = EpsF;
-  Itermax = NbIterations;
-  Done = Standard_False;
-  X = RealLast();
-  DFx = 0;
-  Fx = RealLast();
-  It = 0;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
 
 
@@ -61,17 +63,17 @@ math_NewtonFunctionRoot::math_NewtonFunctionRoot (math_FunctionWithDerivative& F
 						  const Standard_Real Guess, 
 						  const Standard_Real EpsX , 
 						  const Standard_Real EpsF , 
-						  const Standard_Integer NbIterations ){
-  EpsilonX = EpsX;
-  EpsilonF = EpsF;
-  Itermax = NbIterations;
-  Binf = RealFirst();
-  Bsup = RealLast();
-  Done = Standard_False;
-  X = RealLast();
-  DFx = 0;
-  Fx = RealLast();
-  It = 0;
+						  const Standard_Integer NbIterations ) : EpsilonX(EpsX), EpsilonF(EpsF), Itermax(NbIterations), Binf(RealFirst()), Bsup(RealLast()), Done(Standard_False), X(RealLast()), DFx(0), Fx(RealLast()), It(0){
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   Perform(F, Guess);
 }
 
@@ -79,9 +81,9 @@ math_NewtonFunctionRoot::math_NewtonFunctionRoot (math_FunctionWithDerivative& F
 void   math_NewtonFunctionRoot::Perform(math_FunctionWithDerivative& F,
 					const Standard_Real Guess) {
   
-  Standard_Real Dx;
-  Standard_Boolean Ok;
-  Standard_Real AA, BB;
+  Standard_Real Dx = NAN;
+  Standard_Boolean Ok = 0;
+  Standard_Real AA = NAN, BB = NAN;
   
   //--------------------------------------------------
   //-- lbr le 12 Nov 97

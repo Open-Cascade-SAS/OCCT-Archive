@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <DsgPrs.hxx>
 #include <DsgPrs_ParalPresentation.hxx>
 #include <ElCLib.hxx>
@@ -45,7 +47,7 @@ void DsgPrs_ParalPresentation::Add (const Handle(Prs3d_Presentation)& aPresentat
   gp_Pnt Proj1 = ElCLib::Value(ElCLib::Parameter(L1,OffsetPoint),L1);
   gp_Pnt Proj2 = ElCLib::Value(ElCLib::Parameter(L2,OffsetPoint),L2);
   gp_Lin L3 = gce_MakeLin(Proj1,Proj2);
-  Standard_Real parmin,parmax,parcur;
+  Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
   parmin = ElCLib::Parameter(L3,Proj1);
   parmax = parmin;
   parcur = ElCLib::Parameter(L3,Proj2);
@@ -131,7 +133,7 @@ void DsgPrs_ParalPresentation::Add (const Handle(Prs3d_Presentation)& aPresentat
   gp_Pnt Proj1 = ElCLib::Value(ElCLib::Parameter(L1,OffsetPoint),L1);
   gp_Pnt Proj2 = ElCLib::Value(ElCLib::Parameter(L2,OffsetPoint),L2);
   gp_Lin L3 = gce_MakeLin(Proj1,Proj2);
-  Standard_Real parmin,parmax,parcur;
+  Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
   parmin = ElCLib::Parameter(L3,Proj1);
   parmax = parmin;
   parcur = ElCLib::Parameter(L3,Proj2);

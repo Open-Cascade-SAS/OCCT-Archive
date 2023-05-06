@@ -36,9 +36,9 @@ static Handle(TCollection_HAsciiString) nulstr;
 static Handle(Interface_HArray1OfHAsciiString) nularr;
 
 APIHeaderSection_MakeHeader::APIHeaderSection_MakeHeader
-  (const Handle(StepData_StepModel)& model)
+  (const Handle(StepData_StepModel)& model) : done(Standard_True)
 {
-  done = Standard_True;
+  
   if (model->HasHeaderEntity (STANDARD_TYPE(HeaderSection_FileName))) {
     fn = GetCasted(HeaderSection_FileName,
 		   model->HeaderEntity(STANDARD_TYPE(HeaderSection_FileName)));
@@ -384,7 +384,7 @@ void APIHeaderSection_MakeHeader::AddSchemaIdentifier(const Handle(TCollection_H
   Handle(Interface_HArray1OfHAsciiString) idents = fs->SchemaIdentifiers();
 
   // check that requested subschema is already in the list
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for ( i=1; ! idents.IsNull() && i <= idents->Length(); i++ ) {
     if ( aSchem->IsSameString ( idents->Value(i) ) ) return;
   }

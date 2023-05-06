@@ -82,12 +82,12 @@ private:
 
 
 
-  Standard_Real a;
-  Standard_Real b;
-  Standard_Real c;
-  Standard_Real d;
-  Standard_Real e;
-  Standard_Real f;
+  Standard_Real a{};
+  Standard_Real b{};
+  Standard_Real c{};
+  Standard_Real d{};
+  Standard_Real e{};
+  Standard_Real f{};
 
 
 };

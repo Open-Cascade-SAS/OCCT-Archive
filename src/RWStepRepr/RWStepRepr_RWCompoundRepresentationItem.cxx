@@ -43,7 +43,7 @@ void  RWStepRepr_RWCompoundRepresentationItem::ReadStep
 
   Handle(StepRepr_HArray1OfRepresentationItem) aItems;
   Handle(StepRepr_RepresentationItem) anent2;
-  Standard_Integer nsub2;
+  Standard_Integer nsub2 = 0;
   if (data->ReadSubList (num,2,"item_element",ach,nsub2)) {
     Standard_Integer nb2 = data->NbParams(nsub2);
     aItems = new StepRepr_HArray1OfRepresentationItem (1, nb2);
@@ -78,6 +78,6 @@ void  RWStepRepr_RWCompoundRepresentationItem::Share
   (const Handle(StepRepr_CompoundRepresentationItem)& ent,
    Interface_EntityIterator& iter) const
 {
-  Standard_Integer i, nb = ent->NbItemElement();
+  Standard_Integer i = 0, nb = ent->NbItemElement();
   for (i = 1; i <= nb; i ++)  iter.AddItem (ent->ItemElementValue(i));
 }

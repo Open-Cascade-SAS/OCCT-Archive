@@ -293,7 +293,7 @@ private:
   Standard_Integer mySaveTime;
   Standard_Boolean myIsNestedTransactionMode;
   TDF_DeltaList myUndoFILO;
-  Standard_Boolean myOnlyTransactionModification;
+  Standard_Boolean myOnlyTransactionModification{};
   Standard_Boolean mySaveEmptyLabels;
   TDocStd_FormatVersion myStorageFormatVersion;
 

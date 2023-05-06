@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_Deflection.hxx>
 
 #include <BRepBndLib.hxx>
@@ -47,7 +49,7 @@ Standard_Real BRepMesh_Deflection::ComputeAbsoluteDeflection(
 
   // Adjust resulting value in relation to the total size
 
-  Standard_Real aX1, aY1, aZ1, aX2, aY2, aZ2;
+  Standard_Real aX1 = NAN, aY1 = NAN, aZ1 = NAN, aX2 = NAN, aY2 = NAN, aZ2 = NAN;
   aBox.Get(aX1, aY1, aZ1, aX2, aY2, aZ2);
   const Standard_Real aMaxShapeSize = (theMaxShapeSize > 0.0) ? theMaxShapeSize :
                                        Max(aX2 - aX1, Max(aY2 - aY1, aZ2 - aZ1));
@@ -87,7 +89,7 @@ void BRepMesh_Deflection::ComputeDeflection (
   TopExp::Vertices(anEdge, aFirstVertex, aLastVertex);
 
   Handle(Geom_Curve) aCurve;
-  Standard_Real aFirstParam, aLastParam;
+  Standard_Real aFirstParam = NAN, aLastParam = NAN;
   if (BRepMesh_ShapeTool::Range(anEdge, aCurve, aFirstParam, aLastParam))
   {
     const Standard_Real aDistF = aFirstVertex.IsNull() ? -1.0 : 

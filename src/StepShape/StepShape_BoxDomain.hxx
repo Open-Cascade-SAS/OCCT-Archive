@@ -69,9 +69,9 @@ private:
 
 
   Handle(StepGeom_CartesianPoint) corner;
-  Standard_Real xlength;
-  Standard_Real ylength;
-  Standard_Real zlength;
+  Standard_Real xlength{};
+  Standard_Real ylength{};
+  Standard_Real zlength{};
 
 
 };

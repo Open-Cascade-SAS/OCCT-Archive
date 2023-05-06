@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_DefaultRangeSplitter.hxx>
 
 #include <GeomAdaptor_Curve.hxx>
@@ -162,8 +164,8 @@ Standard_Real BRepMesh_DefaultRangeSplitter::computeLengthU()
 
   Standard_Real du     = 0.05 * (myRangeU.second - myRangeU.first);
   Standard_Real dfvave = 0.5  * (myRangeV.second + myRangeV.first);
-  Standard_Real dfucur;
-  Standard_Integer i1;
+  Standard_Real dfucur = NAN;
+  Standard_Integer i1 = 0;
 
   const Handle(BRepAdaptor_Surface)& gFace = GetSurface();
   gFace->D0(myRangeU.first, myRangeV.first,  P11);
@@ -194,8 +196,8 @@ Standard_Real BRepMesh_DefaultRangeSplitter::computeLengthV()
 
   Standard_Real dv     = 0.05 * (myRangeV.second - myRangeV.first);
   Standard_Real dfuave = 0.5  * (myRangeU.second + myRangeU.first);
-  Standard_Real dfvcur;
-  Standard_Integer i1;
+  Standard_Real dfvcur = NAN;
+  Standard_Integer i1 = 0;
 
   const Handle(BRepAdaptor_Surface)& gFace = GetSurface();
   gFace->D0(myRangeU.first,  myRangeV.first, P11);

@@ -40,13 +40,13 @@ IntPolyh_StartPoint::IntPolyh_StartPoint(const Standard_Real _x,
 					 const Standard_Integer _t2,
 					 const Standard_Integer _e2,
 					 const Standard_Real _lambda2,
-					 const Standard_Integer _chainlist):angle(-2.0) { 
-  x=_x; y=_y; z=_z; 
-  u1=_u1; v1=_v1; 
-  u2=_u2; v2=_v2; 
-  t1=_t1; e1=_e1; lambda1=_lambda1; 
-  t2=_t2; e2=_e2; lambda2=_lambda2; 
-  chainlist=_chainlist;
+					 const Standard_Integer _chainlist):x(_x), y(_y), z(_z), u1(_u1), v1(_v1), u2(_u2), v2(_v2), lambda1(_lambda1), lambda2(_lambda2), angle(-2.0), t1(_t1), e1(_e1), t2(_t2), e2(_e2), chainlist(_chainlist) { 
+  
+  
+  
+  
+  
+  
 }
 
 Standard_Real IntPolyh_StartPoint::X() const { return(x); } 
@@ -69,7 +69,7 @@ Standard_Integer IntPolyh_StartPoint::GetEdgePoints(const IntPolyh_Triangle &Tri
 						    Standard_Integer &FirstEdgePoint, 
 						    Standard_Integer &SecondEdgePoint,
 						    Standard_Integer &LastPoint) const {
- Standard_Integer SurfID;
+ Standard_Integer SurfID = 0;
  if(e1!=-1) {
    if(e1==1)      { FirstEdgePoint = Triangle.FirstPoint();  SecondEdgePoint = Triangle.SecondPoint(); 
 		    LastPoint = Triangle.ThirdPoint();  }

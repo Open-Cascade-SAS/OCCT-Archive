@@ -35,17 +35,17 @@ Units_Dimensions::Units_Dimensions(const Standard_Real amass                    
 				   const Standard_Real anamountofsubstance       ,
 				   const Standard_Real aluminousintensity        ,
 				   const Standard_Real aplaneangle               ,
-				   const Standard_Real asolidangle               )
+				   const Standard_Real asolidangle               ) : themass(amass), thelength(alength), thetime(atime), theelectriccurrent(anelectriccurrent), thethermodynamictemperature(athermodynamictemperature), theamountofsubstance(anamountofsubstance), theluminousintensity(aluminousintensity), theplaneangle(aplaneangle), thesolidangle(asolidangle)
 {
-  themass                     = amass                     ;
-  thelength                   = alength                   ;
-  thetime                     = atime                     ;
-  theelectriccurrent          = anelectriccurrent         ;
-  thethermodynamictemperature = athermodynamictemperature ;
-  theamountofsubstance        = anamountofsubstance       ;
-  theluminousintensity        = aluminousintensity        ;
-  theplaneangle               = aplaneangle               ;
-  thesolidangle               = asolidangle               ;
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -181,7 +181,7 @@ Standard_Boolean Units_Dimensions::IsNotEqual
 
 void Units_Dimensions::Dump(const Standard_Integer ashift) const
 {
-  int i;
+  int i = 0;
   for(i=0; i<ashift; i++)std::cout<<"  ";
   std::cout<<" with the physical dimensions : "<<std::endl;
   for(i=0; i<ashift; i++)std::cout<<"  ";

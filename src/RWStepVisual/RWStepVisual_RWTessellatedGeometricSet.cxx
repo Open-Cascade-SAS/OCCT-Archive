@@ -46,7 +46,7 @@ void RWStepVisual_RWTessellatedGeometricSet::ReadStep
   data->ReadString (num, 1, "name", ach, aName);
   
   NCollection_Handle<StepVisual_Array1OfTessellatedItem> anItems;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"items",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  anItems = new StepVisual_Array1OfTessellatedItem(1, nb2);

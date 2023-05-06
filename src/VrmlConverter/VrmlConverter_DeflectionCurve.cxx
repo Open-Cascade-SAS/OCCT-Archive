@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <Bnd_Box.hxx>
 #include <BndLib_Add3dCurve.hxx>
@@ -120,7 +122,7 @@ static void DrawCurve (Adaptor3d_Curve&          aCurve,
 		       const Handle(VrmlConverter_Drawer)& aDrawer, // for passsing of LineAspect
                        Standard_OStream&             anOStream) 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Boolean key = Standard_False;
   Handle(TColgp_HArray1OfVec) HAV1;
   Handle(TColStd_HArray1OfInteger) HAI1;
@@ -164,7 +166,7 @@ static void DrawCurve (Adaptor3d_Curve&          aCurve,
 	 HAI1 = new TColStd_HArray1OfInteger(1,N+2);
 
 	 DU = (U2-U1) / N;
-	 Standard_Real U;
+	 Standard_Real U = NAN;
 	 gp_Pnt p;
 
 	 for (Standard_Integer Index = 1; Index <= N+1; Index++) {
@@ -243,13 +245,13 @@ static Standard_Real GetDeflection(const Adaptor3d_Curve&        aCurve,
 				   const Standard_Real         U2, 
 				   const Handle(VrmlConverter_Drawer)& aDrawer) {
 
-  Standard_Real theRequestedDeflection;
+  Standard_Real theRequestedDeflection = NAN;
   if(aDrawer->TypeOfDeflection() == Aspect_TOD_RELATIVE)   // TOD_RELATIVE, TOD_ABSOLUTE
     {
       Bnd_Box box;
       BndLib_Add3dCurve::Add(aCurve, U1, U2, Precision::Confusion(), box);
 
-      Standard_Real  Xmin, Xmax, Ymin, Ymax, Zmin, Zmax, diagonal;
+      Standard_Real  Xmin = NAN, Xmax = NAN, Ymin = NAN, Ymax = NAN, Zmin = NAN, Zmax = NAN, diagonal = NAN;
       box.Get( Xmin, Ymin, Zmin, Xmax, Ymax, Zmax );
       if (!(box.IsOpenXmin() || box.IsOpenXmax() ||
 	    box.IsOpenYmin() || box.IsOpenYmax() ||
@@ -282,7 +284,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream&                   anOS
 					const Handle(VrmlConverter_Drawer)& aDrawer)
 {
 
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   Standard_Real aLimit = aDrawer->MaximalParameterValue();
   FindLimits(aCurve, aLimit, V1, V2);
  
@@ -325,7 +327,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream&    anOStream,
 					const Standard_Real  aDeflection, 
 					const Standard_Real  aLimit)
 {
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   FindLimits(aCurve, aLimit, V1, V2);
 
   Handle(VrmlConverter_Drawer) aDrawer = new VrmlConverter_Drawer;
@@ -347,7 +349,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream&                   anOS
 					const Handle(VrmlConverter_Drawer)& aDrawer)
 {
   Standard_Real aLimit = aDrawer->MaximalParameterValue();
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   FindLimits(aCurve, aLimit, V1, V2);
 
   DrawCurve(aCurve,
@@ -388,7 +390,7 @@ void VrmlConverter_DeflectionCurve::Add(Standard_OStream& anOStream,
   Handle(TColgp_HArray1OfVec) aHAV1 = new TColgp_HArray1OfVec(1, aNbNodes);
   Handle(TColStd_HArray1OfInteger) aHAI1 = new TColStd_HArray1OfInteger(1, aNbNodes + 1);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   gp_Pnt aPoint;
   gp_Vec aVec;
   for (i = 1; i<=aNbNodes; i++)

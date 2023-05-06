@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <gp_Pnt2d.hxx>
 #include <IntCurve_PConic.hxx>
@@ -28,7 +30,7 @@ Standard_Real IntCurve_ProjectOnPConicTool::FindParameter
 					const Standard_Real)  {
 
 
-  Standard_Real ParamSup,ParamInf,Param=0;
+  Standard_Real ParamSup = NAN,ParamInf = NAN,Param=0;
   if(LowParameter>HighParameter) {
     ParamSup=LowParameter;
     ParamInf=HighParameter;

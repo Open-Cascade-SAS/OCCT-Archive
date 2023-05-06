@@ -436,8 +436,8 @@ void NCollection_BaseSequence::RemoveSeq (const Standard_Integer From,
 
 NCollection_SeqNode * NCollection_BaseSequence::Find (const Standard_Integer theIndex) const 
 {
-  Standard_Integer i;
-  NCollection_SeqNode * p;
+  Standard_Integer i = 0;
+  NCollection_SeqNode * p = nullptr;
   if (theIndex <= myCurrentIndex) {
     if (theIndex < myCurrentIndex / 2) {
       p = myFirstItem;

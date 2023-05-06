@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BOPAlgo_BuilderSolid.hxx>
 #include <BOPAlgo_MakerVolume.hxx>
@@ -211,7 +213,7 @@ void BOPAlgo_MakerVolume::fillPISteps(BOPAlgo_PISteps& theSteps) const
 void BOPAlgo_MakerVolume::CollectFaces()
 {
   //
-  Standard_Integer i, aNbShapes;
+  Standard_Integer i = 0, aNbShapes = 0;
   TopTools_ListIteratorOfListOfShape aIt;
   TopTools_MapOfShape aMFence;
   //
@@ -249,7 +251,7 @@ void BOPAlgo_MakerVolume::CollectFaces()
 void BOPAlgo_MakerVolume::MakeBox(TopTools_MapOfShape& theBoxFaces)
 {
   //
-  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax, anExt;
+  Standard_Real aXmin = NAN, aYmin = NAN, aZmin = NAN, aXmax = NAN, aYmax = NAN, aZmax = NAN, anExt = NAN;
   //
   anExt = sqrt(myBBox.SquareExtent()) * 0.5;
   myBBox.Enlarge(anExt);
@@ -302,7 +304,7 @@ void BOPAlgo_MakerVolume::RemoveBox(TopTools_ListOfShape&      theLSR,
   //
   TopTools_ListIteratorOfListOfShape aIt;
   TopExp_Explorer aExp;
-  Standard_Boolean bFound;
+  Standard_Boolean bFound = 0;
   //
   bFound = Standard_False;
   aIt.Initialize(theLSR);

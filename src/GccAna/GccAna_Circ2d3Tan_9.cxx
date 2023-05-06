@@ -48,7 +48,7 @@ GccAna_Circ2d3Tan::
 //   Initialization of fields.                                           +
 //=========================================================================
 
-   cirsol(1,1)     ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,1)     ,
    qualifier1(1,1) ,
    qualifier2(1,1) ,
    qualifier3(1,1) ,
@@ -67,8 +67,8 @@ GccAna_Circ2d3Tan::
 {
 
    gp_Dir2d dirx(1.0,0.0);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
 
 //=========================================================================
 //   Processing.                                                          +

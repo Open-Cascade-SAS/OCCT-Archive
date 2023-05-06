@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_EqualDistanceRelation.hxx>
 
 #include <PrsDim.hxx>
@@ -54,12 +56,12 @@ PrsDim_EqualDistanceRelation::PrsDim_EqualDistanceRelation( const TopoDS_Shape& 
 						      const TopoDS_Shape& aShape3,
 						      const TopoDS_Shape& aShape4,
 						      const Handle( Geom_Plane )& aPlane )
-: PrsDim_Relation()
+: PrsDim_Relation(), myShape3(aShape3), myShape4(aShape4)
 {
   myFShape = aShape1;
   mySShape = aShape2;
-  myShape3 = aShape3;
-  myShape4 = aShape4;
+  
+  
   myPlane  = aPlane;
 
   //Temporary
@@ -372,7 +374,7 @@ void PrsDim_EqualDistanceRelation::ComputeTwoEdgesLength( const Handle( Prs3d_Pr
   Handle(Geom_Curve) extCurv;
   Standard_Real arrsize = ArrowSize;// size
   Standard_Real Val=0.;
-  Standard_Boolean isInPlane1, isInPlane2;
+  Standard_Boolean isInPlane1 = 0, isInPlane2 = 0;
 
   if(!PrsDim::ComputeGeometry(FirstEdge,geom1, ptat11, ptat12,extCurv,isInfinite1,isInPlane1, Plane ))
     return;
@@ -589,7 +591,7 @@ void PrsDim_EqualDistanceRelation::ComputeTwoVerticesLength( const Handle( Prs3d
 							 gp_Pnt& SecondExtreme, 
 							 DsgPrs_ArrowSide& SymbolPrs )
 {
-  Standard_Boolean isOnPlane1, isOnPlane2;
+  Standard_Boolean isOnPlane1 = 0, isOnPlane2 = 0;
   gp_Dir DirAttach;
   PrsDim::ComputeGeometry( FirstVertex, FirstAttach, Plane, isOnPlane1);
   PrsDim::ComputeGeometry( SecondVertex, SecondAttach, Plane, isOnPlane2);
@@ -685,10 +687,10 @@ void PrsDim_EqualDistanceRelation::ComputeOneEdgeOneVertexLength( const Handle( 
   gp_Pnt ptonedge1,ptonedge2;
   Handle(Geom_Curve) aCurve;
   Handle(Geom_Curve) extCurv;
-  Standard_Boolean isInfinite;
-  Standard_Real Val;
-  Standard_Boolean isOnPlanEdge, isOnPlanVertex;
-  Standard_Integer edgenum ;
+  Standard_Boolean isInfinite = 0;
+  Standard_Real Val = NAN;
+  Standard_Boolean isOnPlanEdge = 0, isOnPlanVertex = 0;
+  Standard_Integer edgenum = 0 ;
 
   if (FirstShape.ShapeType() == TopAbs_VERTEX) {  
     thevertex = TopoDS::Vertex(FirstShape);

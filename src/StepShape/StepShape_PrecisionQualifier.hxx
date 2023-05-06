@@ -54,7 +54,7 @@ protected:
 private:
 
 
-  Standard_Integer thePrecisionValue;
+  Standard_Integer thePrecisionValue{};
 
 
 };

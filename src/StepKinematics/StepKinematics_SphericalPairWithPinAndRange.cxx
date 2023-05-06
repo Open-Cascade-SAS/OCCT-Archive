@@ -22,12 +22,12 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_SphericalPairWithPinAndRange, StepKine
 //function : StepKinematics_SphericalPairWithPinAndRange
 //purpose  :
 //=======================================================================
-StepKinematics_SphericalPairWithPinAndRange::StepKinematics_SphericalPairWithPinAndRange ()
+StepKinematics_SphericalPairWithPinAndRange::StepKinematics_SphericalPairWithPinAndRange () : defLowerLimitYaw(Standard_False), defUpperLimitYaw(Standard_False), defLowerLimitRoll(Standard_False), defUpperLimitRoll(Standard_False)
 {
-  defLowerLimitYaw = Standard_False;
-  defUpperLimitYaw = Standard_False;
-  defLowerLimitRoll = Standard_False;
-  defUpperLimitRoll = Standard_False;
+  
+  
+  
+  
 }
 
 //=======================================================================

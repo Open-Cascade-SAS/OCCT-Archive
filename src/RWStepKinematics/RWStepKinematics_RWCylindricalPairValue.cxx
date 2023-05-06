@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWCylindricalPairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -55,10 +57,10 @@ void RWStepKinematics_RWCylindricalPairValue::ReadStep (const Handle(StepData_St
 
   // Own fields of CylindricalPairValue
 
-  Standard_Real aActualTranslation;
+  Standard_Real aActualTranslation = NAN;
   theData->ReadReal (theNum, 3, "actual_translation", theArch, aActualTranslation);
 
-  Standard_Real aActualRotation;
+  Standard_Real aActualRotation = NAN;
   theData->ReadReal (theNum, 4, "actual_rotation", theArch, aActualRotation);
 
   // Initialize entity

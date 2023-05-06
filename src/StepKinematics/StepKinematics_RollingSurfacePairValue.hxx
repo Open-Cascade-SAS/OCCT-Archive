@@ -54,7 +54,7 @@ DEFINE_STANDARD_RTTIEXT(StepKinematics_RollingSurfacePairValue, StepKinematics_P
 
 private:
   Handle(StepGeom_PointOnSurface) myActualPointOnSurface;
-  Standard_Real myActualRotation;
+  Standard_Real myActualRotation{};
 
 };
 #endif // _StepKinematics_RollingSurfacePairValue_HeaderFile_

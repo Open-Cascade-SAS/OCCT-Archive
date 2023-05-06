@@ -49,7 +49,7 @@ void DsgPrs_ConcentricPresentation::Add(
   aPrims->AddBound(nbp+1);
   aPrims->AddVertex(pt1);
   Standard_Real ucur = dteta;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for (i = 2; i<=nbp; i++, ucur += dteta)
     aPrims->AddVertex(ElCLib::Value(ucur, Circ));
   aPrims->AddVertex(pt1);

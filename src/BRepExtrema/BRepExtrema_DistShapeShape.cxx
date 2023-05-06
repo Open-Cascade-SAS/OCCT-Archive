@@ -16,6 +16,8 @@
 
 // Modified: Mps(10-04-97) portage WNT
 
+#include <math.h>
+
 #include <BRepExtrema_DistShapeShape.hxx>
 
 #include <Standard_OStream.hxx>
@@ -65,8 +67,8 @@ namespace
     }
   }
 
-  inline Standard_Real DistanceInitiale(const TopoDS_Vertex V1,
-                                        const TopoDS_Vertex V2)
+  inline Standard_Real DistanceInitiale(const TopoDS_Vertex& V1,
+                                        const TopoDS_Vertex& V2)
   {
     return (BRep_Tool::Pnt(V1).Distance(BRep_Tool::Pnt(V2)));
   }
@@ -1117,8 +1119,8 @@ void BRepExtrema_DistShapeShape::ParOnFaceS2(const Standard_Integer N,  Standard
 
 void BRepExtrema_DistShapeShape::Dump(Standard_OStream& o) const 
 {
-  Standard_Integer i;
-  Standard_Real r1,r2;
+  Standard_Integer i = 0;
+  Standard_Real r1 = NAN,r2 = NAN;
   
   o<< "the distance  value is :  " << Value()<<std::endl;
   o<< "the number of solutions is :"<<NbSolution()<<std::endl;

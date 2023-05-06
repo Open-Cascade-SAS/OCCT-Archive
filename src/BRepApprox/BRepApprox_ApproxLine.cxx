@@ -32,11 +32,11 @@ IMPLEMENT_STANDARD_RTTIEXT(BRepApprox_ApproxLine,Standard_Transient)
 BRepApprox_ApproxLine::BRepApprox_ApproxLine
    (const Handle(Geom_BSplineCurve)&    CurveXYZ,
     const Handle(Geom2d_BSplineCurve)&  CurveUV1,
-    const Handle(Geom2d_BSplineCurve)&  CurveUV2) 
+    const Handle(Geom2d_BSplineCurve)&  CurveUV2) : myCurveXYZ(CurveXYZ), myCurveUV1(CurveUV1), myCurveUV2(CurveUV2) 
 { 
-  myCurveXYZ = CurveXYZ;
-  myCurveUV1 = CurveUV1;
-  myCurveUV2 = CurveUV2;
+  
+  
+  
 }
 
 

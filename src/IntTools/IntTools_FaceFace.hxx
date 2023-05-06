@@ -117,11 +117,11 @@ protected:
   GeomInt_LineConstructor myLConstruct;
   Handle(GeomAdaptor_Surface) myHS1;
   Handle(GeomAdaptor_Surface) myHS2;
-  Standard_Integer myNbrestr;
-  Standard_Boolean myApprox;
-  Standard_Boolean myApprox1;
-  Standard_Boolean myApprox2;
-  Standard_Real myTolApprox;
+  Standard_Integer myNbrestr{};
+  Standard_Boolean myApprox{};
+  Standard_Boolean myApprox1{};
+  Standard_Boolean myApprox2{};
+  Standard_Real myTolApprox{};
   Standard_Real myTolF1;
   Standard_Real myTolF2;
   Standard_Real myTol;

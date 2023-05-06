@@ -48,7 +48,7 @@ IFSelect_SelectPointed::IFSelect_SelectPointed ()
   theitems.Clear();
   theset = Standard_True;
   if (list.IsNull()) return;
-  Standard_Integer i,nb = list->Length();
+  Standard_Integer i = 0,nb = list->Length();
   for (i = 1; i <= nb; i ++)  theitems.Append (list->Value(i));
 }
 
@@ -92,7 +92,7 @@ IFSelect_SelectPointed::IFSelect_SelectPointed ()
 //   Optimise avec une Map
   Standard_Boolean res = Standard_False;
   if (list.IsNull()) return res;
-  Standard_Integer i, nb = theitems.Length(), nl = list->Length();
+  Standard_Integer i = 0, nb = theitems.Length(), nl = list->Length();
   TColStd_MapOfTransient deja (nb+nl+1);
   for (i = 1; i <= nb; i ++) deja.Add (theitems.Value(i));
 
@@ -108,7 +108,7 @@ IFSelect_SelectPointed::IFSelect_SelectPointed ()
 {
   Standard_Boolean res = Standard_False;
   if (list.IsNull()) return res;
-  Standard_Integer i, nb = list->Length();
+  Standard_Integer i = 0, nb = list->Length();
   for (i = 1; i <= nb; i ++) res |= Remove (list->Value(i));
   return res;
 }
@@ -118,7 +118,7 @@ IFSelect_SelectPointed::IFSelect_SelectPointed ()
 {
   Standard_Boolean res = Standard_True;
   if (list.IsNull()) return res;
-  Standard_Integer i, nb = list->Length();
+  Standard_Integer i = 0, nb = list->Length();
   for (i = 1; i <= nb; i ++) res |= Toggle (list->Value(i));
   return res;
 }

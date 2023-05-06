@@ -150,7 +150,7 @@ static bool checkFont (NCollection_Sequence<Handle(Font_SystemFont)>& theFonts,
 {
 #ifdef HAVE_FREETYPE
   const FT_Long aFaceId = theFaceId != -1 ? theFaceId : 0;
-  FT_Face aFontFace;
+  FT_Face aFontFace = nullptr;
   FT_Error aFaceError = FT_New_Face (theFTLib->Instance(), theFontPath.ToCString(), aFaceId, &aFontFace);
   if (aFaceError != FT_Err_Ok)
   {
@@ -761,7 +761,7 @@ void Font_FontMgr::InitFontDataBase()
       }
 
       Standard_Integer aNByte = 256;
-      Standard_Integer aNbyteRead;
+      Standard_Integer aNbyteRead = 0;
       TCollection_AsciiString aStr; // read string with information
       while (!aFile.IsAtEnd())
       {
@@ -850,7 +850,7 @@ void Font_FontMgr::InitFontDataBase()
       continue; // invalid fonts directory
     }
 
-    Standard_Integer aNbyteRead, aNByte = 256;
+    Standard_Integer aNbyteRead = 0, aNByte = 256;
     TCollection_AsciiString aLine (aNByte);
     Standard_Boolean isFirstLine = Standard_True;
     const TCollection_AsciiString anEncoding ("iso8859-1\n");

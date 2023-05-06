@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepVisual_RWSurfaceStyleTransparent.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -44,7 +46,7 @@ void RWStepVisual_RWSurfaceStyleTransparent::ReadStep (const Handle(StepData_Ste
 
   // Own fields of SurfaceStyleTransparent
 
-  Standard_Real aTransparency;
+  Standard_Real aTransparency = NAN;
   data->ReadReal (num, 1, "transparency", ach, aTransparency);
 
   // Initialize entity

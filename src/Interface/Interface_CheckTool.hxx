@@ -130,7 +130,7 @@ private:
 
   Handle(Interface_GTool) thegtool;
   Interface_ShareTool theshare;
-  Standard_Integer thestat;
+  Standard_Integer thestat{};
 
 
 };

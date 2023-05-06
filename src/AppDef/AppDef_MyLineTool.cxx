@@ -73,7 +73,7 @@ void AppDef_MyLineTool::Value(const AppDef_MultiLine& ML,
 			      TColgp_Array1OfPnt2d& tabPt2d)
 {
   AppDef_MultiPointConstraint MPC = ML.Value(MPointIndex);
-  Standard_Integer i, nbp2d = MPC.NbPoints2d(), low2d = tabPt2d.Lower();
+  Standard_Integer i = 0, nbp2d = MPC.NbPoints2d(), low2d = tabPt2d.Lower();
   Standard_Integer nbp3d = MPC.NbPoints(), low = tabPt.Lower();
   for (i = 1; i <= nbp3d; i++) {
     tabPt(i+low-1) = MPC.Point(i);
@@ -123,7 +123,7 @@ Standard_Boolean AppDef_MyLineTool::Tangency(const AppDef_MultiLine& ML,
 {
   AppDef_MultiPointConstraint MPC = ML.Value(MPointIndex);
   if (MPC.IsTangencyPoint()) {
-    Standard_Integer i, nbp3d = MPC.NbPoints(), low = tabV.Lower();
+    Standard_Integer i = 0, nbp3d = MPC.NbPoints(), low = tabV.Lower();
     Standard_Integer nbp2d = MPC.NbPoints2d(), low2d = tabV2d.Lower();
     for (i = 1; i <= nbp3d; i++) {
       tabV(i+low-1) = MPC.Tang(i);
@@ -204,7 +204,7 @@ Standard_Boolean AppDef_MyLineTool::Curvature(const AppDef_MultiLine& ML,
 {
   AppDef_MultiPointConstraint MPC = ML.Value(MPointIndex);
   if (MPC.IsCurvaturePoint()) {
-    Standard_Integer i, nbp3d = MPC.NbPoints(), low = tabV.Lower();
+    Standard_Integer i = 0, nbp3d = MPC.NbPoints(), low = tabV.Lower();
     Standard_Integer nbp2d = MPC.NbPoints2d(), low2d = tabV2d.Lower();
     for (i = 1; i <= nbp3d; i++) {
       tabV(i+low-1) = MPC.Curv(i);

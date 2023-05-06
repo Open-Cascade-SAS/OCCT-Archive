@@ -51,7 +51,7 @@ OSD_Host::OSD_Host(){}
 // =========================================================================
 
 TCollection_AsciiString OSD_Host::SystemVersion(){
-struct utsname info;
+struct utsname info{};
 TCollection_AsciiString result;
 
  uname (&info);
@@ -64,7 +64,7 @@ TCollection_AsciiString result;
 // =========================================================================
 
 OSD_SysType OSD_Host::SystemId()const{
-struct utsname info; 
+struct utsname info{}; 
  
  uname (&info);
 
@@ -86,7 +86,7 @@ struct utsname info;
 TCollection_AsciiString OSD_Host::HostName(){
 TCollection_AsciiString result;
 char value[65];
-int status;
+int status = 0;
 
 status = gethostname(value, 64);
 if (status == -1) myError.SetValue(errno, Iam, "Host Name");
@@ -100,7 +100,7 @@ if (status == -1) myError.SetValue(errno, Iam, "Host Name");
 
 
 Standard_Integer OSD_Host::AvailableMemory(){
- Standard_Integer result;
+ Standard_Integer result = 0;
 
 #if defined(__osf__) || defined(DECOSF1)
  char buffer[16];
@@ -117,8 +117,8 @@ Standard_Integer OSD_Host::AvailableMemory(){
 // =========================================================================
 
 TCollection_AsciiString OSD_Host::InternetAddress(){
- struct hostent internet_address;
- int a,b,c,d;
+ struct hostent internet_address{};
+ int a = 0,b = 0,c = 0,d = 0;
  char buffer[16];
  TCollection_AsciiString result,host;
 
@@ -139,7 +139,7 @@ TCollection_AsciiString OSD_Host::InternetAddress(){
 
 // =========================================================================
 OSD_OEMType OSD_Host::MachineType(){
-struct utsname info; 
+struct utsname info{}; 
  
  uname (&info);
 

@@ -127,7 +127,7 @@ private:
   Handle(HLRBRep_AreaLimit) myLimits;
   Handle(HLRBRep_AreaLimit) left;
   Handle(HLRBRep_AreaLimit) right;
-  Standard_Integer current;
+  Standard_Integer current{};
 
 
 };

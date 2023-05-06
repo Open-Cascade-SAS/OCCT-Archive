@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(TopoDS_AlertWithShape,Message_Alert)
 //purpose  : 
 //=======================================================================
 
-TopoDS_AlertWithShape::TopoDS_AlertWithShape (const TopoDS_Shape& theShape)
+TopoDS_AlertWithShape::TopoDS_AlertWithShape (const TopoDS_Shape& theShape) : myShape(theShape)
 {
-  myShape = theShape;
+  
 }
 
 //=======================================================================

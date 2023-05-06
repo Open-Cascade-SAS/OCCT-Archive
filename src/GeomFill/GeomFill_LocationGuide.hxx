@@ -190,11 +190,11 @@ private:
   Standard_Boolean rotation;
   Standard_Real OrigParam1;
   Standard_Real OrigParam2;
-  Standard_Real Uf;
-  Standard_Real Ul;
+  Standard_Real Uf{};
+  Standard_Real Ul{};
   Standard_Real myFirstS;
   Standard_Real myLastS;
-  Standard_Real ratio;
+  Standard_Real ratio{};
   Standard_Boolean WithTrans;
   gp_Mat Trans;
   math_Vector TolRes;

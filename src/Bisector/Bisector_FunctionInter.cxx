@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bisector_BisecCC.hxx>
 #include <Bisector_BisecPC.hxx>
 #include <Bisector_Curve.hxx>
@@ -39,11 +41,11 @@ Bisector_FunctionInter::Bisector_FunctionInter ()
 //=============================================================================
 Bisector_FunctionInter::Bisector_FunctionInter (const Handle(Geom2d_Curve)&   C  ,
 						const Handle(Bisector_Curve)& B1 ,
-						const Handle(Bisector_Curve)& B2 )
+						const Handle(Bisector_Curve)& B2 ) : curve(C), bisector1(B1), bisector2(B2)
 {
-  curve     = C;
-  bisector1 = B1;
-  bisector2 = B2;
+  
+  
+  
 }
 
 //=============================================================================
@@ -82,7 +84,7 @@ Standard_Boolean Bisector_FunctionInter::Value (const Standard_Real  X,
 Standard_Boolean Bisector_FunctionInter::Derivative(const Standard_Real  X,
 						          Standard_Real& D)
 {
-  Standard_Real F;
+  Standard_Real F = NAN;
   return Values (X,F,D);
 }
 
@@ -96,7 +98,7 @@ Standard_Boolean Bisector_FunctionInter::Values (const Standard_Real  X,
 {
   gp_Pnt2d PC, PB1, PB2;
   gp_Vec2d TC, TB1, TB2;
-  Standard_Real F1, F2, DF1, DF2;
+  Standard_Real F1 = NAN, F2 = NAN, DF1 = NAN, DF2 = NAN;
 
   curve     ->D1(X,PC ,TC);
   bisector1 ->D1(X,PB1,TB1);

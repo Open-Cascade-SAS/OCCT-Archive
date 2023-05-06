@@ -37,7 +37,7 @@
 //=============================================================================
 GeomToStep_MakeBSplineCurveWithKnots::
   GeomToStep_MakeBSplineCurveWithKnots( const
-    Handle(Geom_BSplineCurve)& BS )
+    Handle(Geom_BSplineCurve)& BS ) : GeomToStep_Root()
 								      
 {
 #define Array1OfPnt_gen TColgp_Array1OfPnt
@@ -51,7 +51,7 @@ GeomToStep_MakeBSplineCurveWithKnots::
 
 GeomToStep_MakeBSplineCurveWithKnots::
   GeomToStep_MakeBSplineCurveWithKnots( const
-    Handle(Geom2d_BSplineCurve)& BS )
+    Handle(Geom2d_BSplineCurve)& BS ) : GeomToStep_Root()
 								      
 {
 #define Array1OfPnt_gen TColgp_Array1OfPnt2d

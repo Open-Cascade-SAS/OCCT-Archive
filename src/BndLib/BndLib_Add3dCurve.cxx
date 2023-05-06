@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BndLib.hxx>
 #include <BndLib_Add3dCurve.hxx>
@@ -52,8 +54,8 @@ static void reduceSplineBox(const Adaptor3d_Curve& theCurve,
 {
   // Guaranteed bounding box based on poles of bspline.
   Bnd_Box aPolesBox;
-  Standard_Real aPolesXMin, aPolesYMin, aPolesZMin,
-                aPolesXMax, aPolesYMax, aPolesZMax;
+  Standard_Real aPolesXMin = NAN, aPolesYMin = NAN, aPolesZMin = NAN,
+                aPolesXMax = NAN, aPolesYMax = NAN, aPolesZMax = NAN;
 
   if (theCurve.GetType() == GeomAbs_BSplineCurve)
   {
@@ -83,7 +85,7 @@ static void reduceSplineBox(const Adaptor3d_Curve& theCurve,
   aPolesBox.Get(aPolesXMin, aPolesYMin, aPolesZMin,
                 aPolesXMax, aPolesYMax, aPolesZMax);
 
-  Standard_Real x, y, z, X, Y, Z;
+  Standard_Real x = NAN, y = NAN, z = NAN, X = NAN, Y = NAN, Z = NAN;
   theOrigBox.Get(x, y, z, X, Y, Z);
 
   // Left bound.
@@ -128,7 +130,7 @@ static Standard_Real FillBox(Bnd_Box& B, const Adaptor3d_Curve& C,
   C.D0(first,P1);  B.Add(P1);
   Standard_Real p = first, dp = last-first, tol= 0.;
   if(Abs(dp) > Precision::PConfusion()){
-    Standard_Integer i;
+    Standard_Integer i = 0;
     dp /= 2*N; 
     for(i = 1; i <= N; i++){
       p += dp;  C.D0(p,P2);  B.Add(P2);
@@ -225,12 +227,12 @@ void BndLib_Add3dCurve::Add( const Adaptor3d_Curve& C,
       }
       //OCC566(apo)->
       Bnd_Box B1;
-      Standard_Integer k, k1 = Bs->FirstUKnotIndex(), k2 = Bs->LastUKnotIndex(),
+      Standard_Integer k = 0, k1 = Bs->FirstUKnotIndex(), k2 = Bs->LastUKnotIndex(),
                        N = Bs->Degree(), NbKnots = Bs->NbKnots();
       TColStd_Array1OfReal Knots(1,NbKnots);
       Bs->Knots(Knots);
       GeomAdaptor_Curve GACurve(Bs);
-      Standard_Real first = Knots(k1), last;
+      Standard_Real first = Knots(k1), last = NAN;
       for(k = k1 + 1; k <= k2; k++){
 	last = Knots(k); 
 	tol = Max(FillBox(B1,GACurve,first,last,N), tol);
@@ -251,7 +253,7 @@ void BndLib_Add3dCurve::Add( const Adaptor3d_Curve& C,
       static Standard_Integer N = 33;
       tol = FillBox(B1,C,U1,U2,N);
       B1.Enlarge(weakness*tol);
-      Standard_Real x, y, z, X, Y, Z;
+      Standard_Real x = NAN, y = NAN, z = NAN, X = NAN, Y = NAN, Z = NAN;
       B1.Get(x, y, z, X, Y, Z);
       B.Update(x, y, z, X, Y, Z);
       B.Enlarge(Tol);
@@ -336,10 +338,10 @@ void BndLib_Add3dCurve::AddGenCurv(const Adaptor3d_Curve& C,
   Standard_Real DeflMax[3] = {-RealLast(), -RealLast(), -RealLast()};
   //
   gp_Pnt P;
-  Standard_Integer i, k;
+  Standard_Integer i = 0, k = 0;
   Standard_Real du = (UMax-UMin)/(Nu-1), du2 = du / 2.;
   NCollection_Array1<gp_XYZ> aPnts(1, Nu);
-  Standard_Real u;
+  Standard_Real u = NAN;
   for (i = 1, u = UMin; i <= Nu; i++, u += du)
   {
     C.D0(u,P);
@@ -396,7 +398,7 @@ void BndLib_Add3dCurve::AddGenCurv(const Adaptor3d_Curve& C,
     {
       if(aPnts(i).Coord(k+1) - CMin < d)
       {
-        Standard_Real umin, umax;
+        Standard_Real umin = NAN, umax = NAN;
         umin = UMin + Max(0, i-2) * du;
         umax = UMin + Min(Nu-1, i) * du;
         Standard_Real cmin = AdjustExtr(C, umin, umax,
@@ -408,7 +410,7 @@ void BndLib_Add3dCurve::AddGenCurv(const Adaptor3d_Curve& C,
       }
       else if(CMax - aPnts(i).Coord(k+1) < d)
       {
-        Standard_Real umin, umax;
+        Standard_Real umin = NAN, umax = NAN;
         umin = UMin + Max(0, i-2) * du;
         umax = UMin + Min(Nu-1, i) * du;
         Standard_Real cmax = AdjustExtr(C, umin, umax,
@@ -445,7 +447,7 @@ public:
   }
 
   Standard_Boolean Value (const math_Vector& X,
-                                Standard_Real& F)
+                                Standard_Real& F) override
   {
     if (!CheckInputData(X(1)))
     {
@@ -460,7 +462,7 @@ public:
 
   
 
-  Standard_Integer NbVariables() const
+  Standard_Integer NbVariables() const override
   {
     return 1;
   }
@@ -500,7 +502,7 @@ public:
   }
 
   Standard_Boolean Value (const Standard_Real X,
-                                Standard_Real& F)
+                                Standard_Real& F) override
   {
     if (!CheckInputData(X))
     {
@@ -600,7 +602,7 @@ Standard_Integer NbSamples(const Adaptor3d_Curve& C,
                            const Standard_Real Umin,
                            const Standard_Real Umax) 
 {
-  Standard_Integer N;
+  Standard_Integer N = 0;
   GeomAbs_CurveType Type = C.GetType();
   switch (Type) {
   case GeomAbs_BezierCurve: 

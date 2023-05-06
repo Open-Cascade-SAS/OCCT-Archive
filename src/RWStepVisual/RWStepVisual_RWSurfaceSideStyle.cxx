@@ -44,7 +44,7 @@ void RWStepVisual_RWSurfaceSideStyle::ReadStep
 
 	Handle(StepVisual_HArray1OfSurfaceStyleElementSelect) aStyles;
 	StepVisual_SurfaceStyleElementSelect aStylesItem;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"styles",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aStyles = new StepVisual_HArray1OfSurfaceStyleElementSelect (1, nb2);

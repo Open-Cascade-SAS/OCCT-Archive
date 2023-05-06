@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWUniversalPairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -55,10 +57,10 @@ void RWStepKinematics_RWUniversalPairValue::ReadStep (const Handle(StepData_Step
 
   // Own fields of UniversalPairValue
 
-  Standard_Real aFirstRotationAngle;
+  Standard_Real aFirstRotationAngle = NAN;
   theData->ReadReal (theNum, 3, "first_rotation_angle", theArch, aFirstRotationAngle);
 
-  Standard_Real aSecondRotationAngle;
+  Standard_Real aSecondRotationAngle = NAN;
   theData->ReadReal (theNum, 4, "second_rotation_angle", theArch, aSecondRotationAngle);
 
   // Initialize entity

@@ -16,6 +16,8 @@
 
 //  Modified by skv - Thu Sep  4 11:22:05 2003 OCC578
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepClass3d_Intersector3d.hxx>
 #include <BRepClass3d_SClassifier.hxx>
@@ -46,7 +48,7 @@ static
 
 //gets transition of line <L> passing through/near the edge <e> of faces <f1>, <f2>. <param> is
 // a parameter on the edge where the minimum distance between <l> and <e> was found
-static Standard_Integer GetTransi(const TopoDS_Face& f1, const TopoDS_Face& f2, const TopoDS_Edge e,
+static Standard_Integer GetTransi(const TopoDS_Face& f1, const TopoDS_Face& f2, const TopoDS_Edge& e,
                      Standard_Real param, const gp_Lin& L, IntCurveSurface_TransitionOnCurve& trans);
 
 static Standard_Boolean GetNormalOnFaceBound(const TopoDS_Edge& E, const TopoDS_Face& F, Standard_Real param, gp_Dir& OutDir);
@@ -103,8 +105,8 @@ void BRepClass3d_SClassifier::PerformInfinitePoint(BRepClass3d_SolidExplorer& aS
   //
   //------------------------------------------------------------
   // 1
-  Standard_Boolean bFound;
-  Standard_Real aParam, aU = 0., aV = 0.;
+  Standard_Boolean bFound = 0;
+  Standard_Real aParam = NAN, aU = 0., aV = 0.;
   gp_Pnt aPoint;
   gp_Dir aDN;
 
@@ -225,14 +227,14 @@ void BRepClass3d_SClassifier::Perform(BRepClass3d_SolidExplorer& SolidExplorer,
   myState = 0;
 
   gp_Lin L;
-  Standard_Real Par;
+  Standard_Real Par = NAN;
 
   // We compute the intersection between the line built in the Solid Explorer and the shape.
   //-- --------------------------------------------------------------------------------
   // Calculate intersection with the face closest to the direction of bounding boxes 
   // by priority so that to have the smallest possible parmin.
   // Optimization to produce as much as possible rejections with other faces.
-  Standard_Integer iFlag;
+  Standard_Integer iFlag = 0;
 
   // If found line passes through a bound of any face, it means that the line
   // is not found properly and it is necessary to repeat whole procedure.
@@ -359,7 +361,7 @@ void BRepClass3d_SClassifier::Perform(BRepClass3d_SolidExplorer& SolidExplorer,
               // The box must be finite in order to correctly prolong the segment to its bounds.
               if (!aBoxF.IsVoid() && !aBoxF.IsWhole())
               {
-                Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+                Standard_Real aXmin = NAN, aYmin = NAN, aZmin = NAN, aXmax = NAN, aYmax = NAN, aZmax = NAN;
                 aBoxF.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
 
                 Standard_Real boxaddW = GetAddToParam(L, Par, aBoxF);
@@ -380,7 +382,7 @@ void BRepClass3d_SClassifier::Perform(BRepClass3d_SolidExplorer& SolidExplorer,
                     Extrema_ExtPS aProj(P, aBAS, Precision::PConfusion(), Precision::PConfusion());
                     if (aProj.IsDone() && aProj.NbExt() > 0)
                     {
-                      Standard_Integer i, indmin = 0;
+                      Standard_Integer i = 0, indmin = 0;
                       Standard_Real d = RealLast();
                       for (i = 1; i <= aProj.NbExt(); ++i)
                       {
@@ -395,7 +397,7 @@ void BRepClass3d_SClassifier::Perform(BRepClass3d_SolidExplorer& SolidExplorer,
                         if (d <= Tol * Tol)
                         {
                           const Extrema_POnSurf& aPonS = aProj.Point(indmin);
-                          Standard_Real anU, anV;
+                          Standard_Real anU = NAN, anV = NAN;
                           aPonS.Parameter(anU, anV);
                           gp_Pnt2d aP2d(anU, anV);
                           TopAbs_State aSt = Intersector3d.ClassifyUVPoint(aP2d);
@@ -527,7 +529,7 @@ Standard_Real GetAddToParam(const gp_Lin&       L,
                             const Standard_Real P,
                             const Bnd_Box&      B)
 {
-  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+  Standard_Real aXmin = NAN, aYmin = NAN, aZmin = NAN, aXmax = NAN, aYmax = NAN, aZmax = NAN;
   B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
   Standard_Real x[2] = {aXmin,aXmax}, y[2] = {aYmin,aYmax}, z[2] = {aZmin,aZmax};
   Standard_Integer i = 0, j = 0, k = 0;
@@ -607,7 +609,7 @@ static Standard_Boolean GetNormalOnFaceBound(const TopoDS_Edge& E,
 //=======================================================================
 static Standard_Integer GetTransi(const TopoDS_Face& f1,
                                   const TopoDS_Face& f2,
-                                  const TopoDS_Edge e,
+                                  const TopoDS_Edge& e,
                                   const Standard_Real param,
                                   const gp_Lin& L,
                                   IntCurveSurface_TransitionOnCurve& trans)

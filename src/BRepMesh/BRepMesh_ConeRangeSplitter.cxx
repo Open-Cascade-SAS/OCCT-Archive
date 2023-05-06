@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_ConeRangeSplitter.hxx>
 
 #include <GCPnts_TangentialDeflection.hxx>
@@ -35,7 +37,7 @@ std::pair<Standard_Real, Standard_Real> BRepMesh_ConeRangeSplitter::GetSplitStep
   Standard_Real aRadius = Max(Abs(aRefR + aRangeV.first  * Sin(aSAng)),
                               Abs(aRefR + aRangeV.second * Sin(aSAng)));
 
-  Standard_Real Dv, Du = GCPnts_TangentialDeflection::ArcAngularStep(
+  Standard_Real Dv = NAN, Du = GCPnts_TangentialDeflection::ArcAngularStep(
     aRadius, GetDFace()->GetDeflection(),
     theParameters.Angle, theParameters.MinSize);
 

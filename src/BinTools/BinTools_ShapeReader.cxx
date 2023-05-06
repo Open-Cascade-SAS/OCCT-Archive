@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BinTools_ShapeReader.hxx>
 #include <TopoDS.hxx>
 #include <BRep_PointOnCurve.hxx>
@@ -97,7 +99,7 @@ TopoDS_Shape BinTools_ShapeReader::ReadShape (BinTools_IStream& theStream)
   TopAbs_ShapeEnum aShapeType = theStream.ShapeType();
   TopAbs_Orientation aShapeOrientation = theStream.ShapeOrientation();
   const TopLoc_Location* aShapeLocation = ReadLocation (theStream);
-  Standard_Real aTol;
+  Standard_Real aTol = NAN;
   static BRep_Builder aBuilder;
   try {
     OCC_CATCH_SIGNALS
@@ -164,12 +166,12 @@ TopoDS_Shape BinTools_ShapeReader::ReadShape (BinTools_IStream& theStream)
         aBuilder.MakeEdge(aE);
         // Read the curve geometry 
         theStream >> aTol;
-        Standard_Boolean aSameParameter, aSameRange, aDegenerated;
+        Standard_Boolean aSameParameter = 0, aSameRange = 0, aDegenerated = 0;
         theStream.ReadBools (aSameParameter, aSameRange, aDegenerated);
         aBuilder.SameParameter (aE, aSameParameter);
         aBuilder.SameRange (aE, aSameRange);
         aBuilder.Degenerated (aE, aDegenerated);
-        Standard_Real aFirst, aLast;
+        Standard_Real aFirst = NAN, aLast = NAN;
         while (theStream) {
           Standard_Byte aPrsType = theStream.ReadByte(); //{0|1|2|3|4|5|6|7}
           if (aPrsType == 0)
@@ -308,7 +310,7 @@ TopoDS_Shape BinTools_ShapeReader::ReadShape (BinTools_IStream& theStream)
     throw Standard_Failure (aMsg.str().c_str());
   }
   // read flags and subs
-  Standard_Boolean aFree, aMod, aChecked, anOrient, aClosed, anInf, aConv;
+  Standard_Boolean aFree = 0, aMod = 0, aChecked = 0, anOrient = 0, aClosed = 0, anInf = 0, aConv = 0;
   theStream.ReadBools (aFree, aMod, aChecked, anOrient, aClosed, anInf, aConv);
   // sub-shapes
   for(TopoDS_Shape aSub = ReadShape (theStream); !aSub.IsNull(); aSub = ReadShape (theStream))

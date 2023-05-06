@@ -116,7 +116,7 @@ void BOPAlgo_Builder::FillIn3DParts(TopTools_DataMapOfShapeShape& theDraftSolids
   // Get all faces
   TopTools_ListOfShape aLFaces(anAlloc);
 
-  Standard_Integer i, aNbS = myDS->NbSourceShapes();
+  Standard_Integer i = 0, aNbS = myDS->NbSourceShapes();
   for (i = 0; i < aNbS; ++i)
   {
     const BOPDS_ShapeInfo& aSI = myDS->ShapeInfo(i);
@@ -248,8 +248,8 @@ void BOPAlgo_Builder::BuildDraftSolid(const TopoDS_Shape& theSolid,
                                       TopoDS_Shape& theDraftSolid,
                                       TopTools_ListOfShape& theLIF)
 {
-  Standard_Boolean bToReverse;
-  Standard_Integer iFlag;
+  Standard_Boolean bToReverse = 0;
+  Standard_Integer iFlag = 0;
   TopAbs_Orientation aOrF, aOrSh, aOrSd;
   TopoDS_Iterator aIt1, aIt2;
   TopoDS_Shell aShD;
@@ -365,7 +365,7 @@ public:
 
 private:
   //! Disable the range enabled method
-  virtual void Perform(const Message_ProgressRange&/* theRange*/) {}
+  void Perform(const Message_ProgressRange&/* theRange*/) override {}
 
 private:
   TopoDS_Solid mySolid; //!< Solid to split
@@ -382,8 +382,8 @@ typedef NCollection_Vector<BOPAlgo_SplitSolid> BOPAlgo_VectorOfBuilderSolid;
 void BOPAlgo_Builder::BuildSplitSolids(TopTools_DataMapOfShapeShape& theDraftSolids,
                                        const Message_ProgressRange& theRange)
 {
-  Standard_Boolean bFlagSD;
-  Standard_Integer i, aNbS;
+  Standard_Boolean bFlagSD = 0;
+  Standard_Integer i = 0, aNbS = 0;
   TopExp_Explorer aExp;
   TopTools_ListIteratorOfListOfShape aIt;
   //
@@ -473,7 +473,7 @@ void BOPAlgo_Builder::BuildSplitSolids(TopTools_DataMapOfShapeShape& theDraftSol
     aBS.SetRunParallel(myRunParallel);
   }//for (i=0; i<aNbS; ++i) {
   //
-  Standard_Integer k, aNbBS;
+  Standard_Integer k = 0, aNbBS = 0;
   //
   aNbBS=aVBS.Length();
   // Set progress range for each task to be run in parallel
@@ -569,7 +569,7 @@ void BOPAlgo_Builder::BuildSplitSolids(TopTools_DataMapOfShapeShape& theDraftSol
 //=======================================================================
 void BOPAlgo_Builder::FillInternalShapes(const Message_ProgressRange& theRange)
 {
-  Standard_Integer i, j,  aNbS, aNbSI, aNbSx;
+  Standard_Integer i = 0, j = 0,  aNbS = 0, aNbSI = 0, aNbSx = 0;
   TopAbs_ShapeEnum aType;
   TopAbs_State aState; 
   TopoDS_Iterator aItS;

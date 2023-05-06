@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Adaptor3d_IsoCurve.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -312,7 +314,7 @@ void Adaptor3d_IsoCurve::Intervals(TColStd_Array1OfReal& TI,
   Standard_Integer last = nbInter+1;
   while (T(last) >= myLast) last--;
 
-  Standard_Integer i = TI.Lower(), j;
+  Standard_Integer i = TI.Lower(), j = 0;
   for (j = first-1; j <= last+1; j++) {
     TI(i) = T(j);
     i++;
@@ -675,7 +677,7 @@ static void computeHR(const gp_Ax3&        axes,
 gp_Circ Adaptor3d_IsoCurve::Circle() const
 {
   gp_Ax3 axes;
-  Standard_Real radius,h = 0.;
+  Standard_Real radius = NAN,h = 0.;
 
   switch (mySurface->GetType()) {
     

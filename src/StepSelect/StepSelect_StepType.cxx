@@ -51,7 +51,7 @@ static TCollection_AsciiString lastvalue;
 {
   lastvalue.Clear();
   Handle(StepData_ReadWriteModule) module;
-  Standard_Integer CN;
+  Standard_Integer CN = 0;
   Standard_Boolean ok = thelib.Select (ent,module,CN);
   if (!ok) {
     lastvalue.AssignCat ("..NOT FROM SCHEMA ");

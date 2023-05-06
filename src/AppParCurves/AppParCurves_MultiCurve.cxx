@@ -27,17 +27,17 @@
 AppParCurves_MultiCurve::AppParCurves_MultiCurve() {}
 
 
-AppParCurves_MultiCurve::AppParCurves_MultiCurve (const Standard_Integer NbPol) 
+AppParCurves_MultiCurve::AppParCurves_MultiCurve (const Standard_Integer NbPol) : tabPoint(new AppParCurves_HArray1OfMultiPoint(1, NbPol)) 
 {
-  tabPoint = new AppParCurves_HArray1OfMultiPoint(1, NbPol);
+  
 }
 
 
 
-AppParCurves_MultiCurve::AppParCurves_MultiCurve (const AppParCurves_Array1OfMultiPoint& tabMU)
+AppParCurves_MultiCurve::AppParCurves_MultiCurve (const AppParCurves_Array1OfMultiPoint& tabMU) : tabPoint(new AppParCurves_HArray1OfMultiPoint(1, tabMU.Length()))
 {
-  tabPoint = new AppParCurves_HArray1OfMultiPoint(1, tabMU.Length());
-  Standard_Integer i, Lower = tabMU.Lower();
+  
+  Standard_Integer i = 0, Lower = tabMU.Lower();
   for (i = 1; i <= tabMU.Length(); i++) {
     tabPoint->SetValue(i, tabMU.Value(Lower+i-1));
   }

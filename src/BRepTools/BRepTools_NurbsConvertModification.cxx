@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepTools_NurbsConvertModification.hxx>
 
 #include <BRep_GCurve.hxx>
@@ -233,8 +235,8 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewSurface
        Standard_Boolean& RevWires,
        Standard_Boolean& RevFace)
 {
-  Standard_Real U1, U2, curvU1, curvU2, surfU1, surfU2, UTol;
-  Standard_Real V1, V2, curvV1, curvV2, surfV1, surfV2, VTol;
+  Standard_Real U1 = NAN, U2 = NAN, curvU1 = NAN, curvU2 = NAN, surfU1 = NAN, surfU2 = NAN, UTol = NAN;
+  Standard_Real V1 = NAN, V2 = NAN, curvV1 = NAN, curvV2 = NAN, surfV1 = NAN, surfV2 = NAN, VTol = NAN;
   RevWires = Standard_False;
   RevFace = Standard_False;
   Handle(Geom_Surface) SS = BRep_Tool::Surface(F,L);
@@ -432,7 +434,7 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewCurve
     L.Identity();
     return Standard_True;
   }
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
 
   Handle(Geom_Curve) Caux = BRep_Tool::Curve(E, L, f, l);
 
@@ -472,7 +474,7 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewCurve
 
   C = GeomConvert::CurveToBSplineCurve(C);
 
-  Standard_Real fnew = C->FirstParameter(), lnew = C->LastParameter(), UTol;
+  Standard_Real fnew = C->FirstParameter(), lnew = C->LastParameter(), UTol = NAN;
 
   Handle(Geom_BSplineCurve) BC = Handle(Geom_BSplineCurve)::DownCast(C) ;
 
@@ -509,7 +511,7 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewPolygon(const TopoDS_Edg
   if (thePoly->HasParameters())
   {
     Standard_Real aTol = BRep_Tool::Tolerance(theEdge);
-    Standard_Real aFirst, aLast;
+    Standard_Real aFirst = NAN, aLast = NAN;
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(theEdge, aFirst, aLast);
     Handle(Geom_Curve) aNewCurve = newCurve(myMap, theEdge, aFirst, aLast);
     if (!aCurve.IsNull() && !aNewCurve.IsNull()) // skip processing degenerated edges
@@ -553,9 +555,9 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewCurve2d
 {
 
   Tol = BRep_Tool::Tolerance(E);
-  Standard_Real f2d,l2d;
+  Standard_Real f2d = NAN,l2d = NAN;
   Handle(Geom2d_Curve) aBaseC2d = BRep_Tool::CurveOnSurface(E,F,f2d,l2d);
-  Standard_Real f3d,l3d;
+  Standard_Real f3d = NAN,l3d = NAN;
   TopLoc_Location Loc;
   Handle(Geom_Curve) C3d = BRep_Tool::Curve(E, Loc, f3d,l3d);
   Standard_Boolean isConvert2d = ((!C3d.IsNull() && !C3d->IsKind(STANDARD_TYPE(Geom_BSplineCurve)) &&
@@ -605,7 +607,7 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewCurve2d
     GeomAdaptor_Curve   G3dAC(C3d, f3d, l3d);
     Handle(GeomAdaptor_Curve) G3dAHC = new GeomAdaptor_Curve(G3dAC);
     
-    Standard_Real Uinf, Usup, Vinf, Vsup, u = 0, v = 0;
+    Standard_Real Uinf = NAN, Usup = NAN, Vinf = NAN, Vsup = NAN, u = 0, v = 0;
     Handle(Geom_Surface) S = BRep_Tool::Surface(F);
     Handle(Standard_Type) myT = S->DynamicType();
     if(myT != STANDARD_TYPE(Geom_Plane)) {
@@ -754,7 +756,7 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewCurve2d
     }
     if (!itled.More()) { // on stocke l`edge et la curve2d
       Handle(Geom2d_Curve) C2dBis;
-      Standard_Real f2dBis,l2dBis;
+      Standard_Real f2dBis = NAN,l2dBis = NAN;
       C2d = new Geom2d_TrimmedCurve(C2d, f2d, l2d);
       Geom2dAdaptor_Curve G2dAC(C2d, f2d, l2d);
       Handle(Geom2dAdaptor_Curve) G2dAHC = new Geom2dAdaptor_Curve(G2dAC);
@@ -817,7 +819,7 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewCurve2d
       else {
         S = BRep_Tool::Surface(newF);// S est une BSplineSurface : pas besoin de la trimmed
       }
-      Standard_Real Uinf, Usup, Vinf, Vsup, u = 0, v = 0;
+      Standard_Real Uinf = NAN, Usup = NAN, Vinf = NAN, Vsup = NAN, u = 0, v = 0;
       S->Bounds(Uinf, Usup, Vinf, Vsup);
       //Uinf -= 1e-9; Usup += 1e-9; Vinf -= 1e-9; Vsup += 1e-9;
       u = (Usup - Uinf)*0.1;
@@ -907,7 +909,7 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewPolygonOnTriangulation(
     TopLoc_Location aLoc;
     Handle(Geom_Surface) aSurf = BRep_Tool::Surface(theFace, aLoc);
     Handle(Geom_Surface) aNewSurf = newSurface(myMap, theFace);
-    Standard_Real aFirst, aLast;
+    Standard_Real aFirst = NAN, aLast = NAN;
     Handle(Geom2d_Curve) aC2d = BRep_Tool::CurveOnSurface(theEdge, theFace, aFirst, aLast);
     Handle(Geom2d_Curve) aNewC2d = newCurve(myMap, theEdge, theFace, aFirst, aLast);
     if (!aSurf.IsNull() && !aC2d.IsNull() && !aNewSurf.IsNull() && !aNewC2d.IsNull())
@@ -949,7 +951,7 @@ Standard_Boolean BRepTools_NurbsConvertModification::NewParameter
 
   gp_Pnt pnt = BRep_Tool::Pnt(V);
   P = BRep_Tool::Parameter(V,E);
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   Handle(Geom_Curve) aNewCurve = newCurve(myMap, E, aFirst, aLast);
   return !aNewCurve.IsNull() && newParameter(pnt, aNewCurve, aFirst, aLast, Tol, P);
 }

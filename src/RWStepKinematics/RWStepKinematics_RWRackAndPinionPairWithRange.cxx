@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWRackAndPinionPairWithRange.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -78,12 +80,12 @@ void RWStepKinematics_RWRackAndPinionPairWithRange::ReadStep (const Handle(StepD
 
   // Inherited fields of RackAndPinionPair
 
-  Standard_Real aRackAndPinionPair_PinionRadius;
+  Standard_Real aRackAndPinionPair_PinionRadius = NAN;
   theData->ReadReal (theNum, 7, "rack_and_pinion_pair.pinion_radius", theArch, aRackAndPinionPair_PinionRadius);
 
   // Own fields of RackAndPinionPairWithRange
 
-  Standard_Real aLowerLimitRackDisplacement;
+  Standard_Real aLowerLimitRackDisplacement = NAN;
   Standard_Boolean hasLowerLimitRackDisplacement = Standard_True;
   if ( theData->IsParamDefined (theNum,8) ) {
     theData->ReadReal (theNum, 8, "lower_limit_rack_displacement", theArch, aLowerLimitRackDisplacement);
@@ -93,7 +95,7 @@ void RWStepKinematics_RWRackAndPinionPairWithRange::ReadStep (const Handle(StepD
     aLowerLimitRackDisplacement = 0;
   }
 
-  Standard_Real aUpperLimitRackDisplacement;
+  Standard_Real aUpperLimitRackDisplacement = NAN;
   Standard_Boolean hasUpperLimitRackDisplacement = Standard_True;
   if ( theData->IsParamDefined (theNum,9) ) {
     theData->ReadReal (theNum, 9, "upper_limit_rack_displacement", theArch, aUpperLimitRackDisplacement);

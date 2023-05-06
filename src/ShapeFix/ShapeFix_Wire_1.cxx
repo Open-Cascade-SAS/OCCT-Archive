@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 // szv 19.08.99: new methods for fixing gaps between edges (3d curves and pcurves)
+#include <math.h>
+
 #include <ShapeFix_Wire.hxx>
 #include <Standard_Failure.hxx>
 
@@ -79,7 +81,7 @@ Standard_Boolean ShapeFix_Wire::FixGaps3d ()
   myStatusGaps3d = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
 // if ( !IsReady() ) return Standard_False;
   
-  Standard_Integer i, start = ( myClosedMode ? 1 : 2 );
+  Standard_Integer i = 0, start = ( myClosedMode ? 1 : 2 );
   if (myFixGapsByRanges) 
   {
     for ( i = start; i <= NbEdges(); i++ ) 
@@ -107,7 +109,7 @@ Standard_Boolean ShapeFix_Wire::FixGaps3d ()
   myStatusGaps2d = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
 //  if ( !IsReady() ) return Standard_False;
 
-  Standard_Integer i, start = ( myClosedMode ? 1 : 2 );
+  Standard_Integer i = 0, start = ( myClosedMode ? 1 : 2 );
   if (myFixGapsByRanges) 
   {
     for ( i = start; i <= NbEdges(); i++ ) 
@@ -173,7 +175,7 @@ static Standard_Real AdjustOnPeriodic3d (const Handle(Geom_Curve)& c,
 //  TopoDS_Face face = myAnalyzer->Face(); // comment by enk 
 
   // Retrieve curves on edges
-  Standard_Real cfirst1, clast1, cfirst2, clast2;
+  Standard_Real cfirst1 = NAN, clast1 = NAN, cfirst2 = NAN, clast2 = NAN;
   Handle(Geom_Curve) C1, C2;
   ShapeAnalysis_Edge SAE;
   if (!SAE.Curve3d(E1,C1,cfirst1,clast1) ||
@@ -199,7 +201,7 @@ static Standard_Real AdjustOnPeriodic3d (const Handle(Geom_Curve)& c,
   gp_Pnt vpnt = (V1.IsSame(V2))? BRep_Tool::Pnt(V1) :
     gp_Pnt((BRep_Tool::Pnt(V1).XYZ()+BRep_Tool::Pnt(V2).XYZ())*0.5);
 
-  Standard_Real first1, last1, first2, last2;
+  Standard_Real first1 = NAN, last1 = NAN, first2 = NAN, last2 = NAN;
   if (reversed1) 
   { 
     first1 = clast1;  last1 = cfirst1; 
@@ -272,7 +274,7 @@ static Standard_Real AdjustOnPeriodic3d (const Handle(Geom_Curve)& c,
 
     Handle(Geom_BSplineCurve) bsp1, bsp2;
     Handle(Geom_Curve) c;
-    Standard_Real first, last;
+    Standard_Real first = NAN, last = NAN;
 
     // iterate on curves
     Standard_Integer nbcurv = (n1==n2? 1 : 2);
@@ -446,7 +448,7 @@ static Standard_Real AdjustOnPeriodic3d (const Handle(Geom_Curve)& c,
       if (Proj.NbPoints()) 
       {
 	Standard_Integer index = 1;
-	Standard_Real dist, mindist=-1.;
+	Standard_Real dist = NAN, mindist=-1.;
 	for (Standard_Integer i=1; i<=Proj.NbPoints(); i++) 
         {
 	  dist = vpnt.Distance(Proj.Point(i));
@@ -461,7 +463,7 @@ static Standard_Real AdjustOnPeriodic3d (const Handle(Geom_Curve)& c,
       if (Proj.NbPoints()) 
       {
 	Standard_Integer index = 1;
-	Standard_Real dist, mindist=-1.;
+	Standard_Real dist = NAN, mindist=-1.;
 	for (Standard_Integer i=1; i<=Proj.NbPoints(); i++) 
         {
 	  dist = vpnt.Distance(Proj.Point(i));
@@ -518,7 +520,7 @@ static Standard_Real AdjustOnPeriodic3d (const Handle(Geom_Curve)& c,
 	    // First find all intersections
 	    gp_Pnt pp1, pp2;
 	    Standard_Integer index1=0, index2=0;
-	    Standard_Real uu1, uu2, pardist, pardist1=-1., pardist2=-1.;
+	    Standard_Real uu1 = NAN, uu2 = NAN, pardist = NAN, pardist1=-1., pardist2=-1.;
 	    for (Standard_Integer i=1; i<=Extr.NbExtrema(); i++) 
             {
 	      Extr.Parameters(i,uu1,uu2);
@@ -766,7 +768,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
   TopoDS_Face face = myAnalyzer->Face();
 
   // Retrieve pcurves on edges
-  Standard_Real cfirst1, clast1, cfirst2, clast2;
+  Standard_Real cfirst1 = NAN, clast1 = NAN, cfirst2 = NAN, clast2 = NAN;
   Handle(Geom2d_Curve) PC1, PC2;
   ShapeAnalysis_Edge SAE;
   if (!SAE.PCurve(E1,face,PC1,cfirst1,clast1) ||
@@ -789,7 +791,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
   Standard_Boolean reversed1 = (E1.Orientation()==TopAbs_REVERSED),
                    reversed2 = (E2.Orientation()==TopAbs_REVERSED);
 
-  Standard_Real first1, last1, first2, last2;
+  Standard_Real first1 = NAN, last1 = NAN, first2 = NAN, last2 = NAN;
   if (reversed1) 
   { 
     first1 = clast1;  last1 = cfirst1;
@@ -860,7 +862,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
 
     Handle(Geom2d_BSplineCurve) bsp1, bsp2;
     Handle(Geom2d_Curve) pc;
-    Standard_Real first, last;
+    Standard_Real first = NAN, last = NAN;
 
     // iterate on pcurves
     Standard_Integer nbcurv = (n1==n2? 1 : 2);
@@ -1038,8 +1040,8 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
       {
 	if (Inter.NbPoints() || Inter.NbSegments()) 
         {
-	  Standard_Integer i, index1 = 0, index2 = 0;
-	  Standard_Real pardist, pardist1=-1., pardist2=-1.;
+	  Standard_Integer i = 0, index1 = 0, index2 = 0;
+	  Standard_Real pardist = NAN, pardist1=-1., pardist2=-1.;
 	  // iterate on intersection points
 	  IntRes2d_IntersectionPoint IP;
 	  for ( i=1; i<=Inter.NbPoints(); i++ ) 
@@ -1148,7 +1150,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
 	Geom2dAPI_ExtremaCurveCurve Extr(pc1,pc2,domfirst1,domlast1,domfirst2,domlast2);
 	if (Extr.NbExtrema()) 
         {
-	  Standard_Real u1, u2;
+	  Standard_Real u1 = NAN, u2 = NAN;
 	  Extr.LowerDistanceParameters(u1,u2);
 	  // Adjust parameters on periodic curves
 	  u1 = AdjustOnPeriodic2d(pc1,reversed1,first1,last1,u1);
@@ -1177,7 +1179,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
 	if (Proj.NbPoints()) 
         {
 	  Standard_Integer index = 1;
-	  Standard_Real dist, mindist=-1.;
+	  Standard_Real dist = NAN, mindist=-1.;
 	  for (Standard_Integer i=1; i<=Proj.NbPoints(); i++) 
           {
 	    dist = cpnt2.Distance(Proj.Point(i));
@@ -1193,7 +1195,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
 	if (Proj.NbPoints()) 
         {
 	  Standard_Integer index = 1;
-	  Standard_Real dist, mindist=-1.;
+	  Standard_Real dist = NAN, mindist=-1.;
 	  for (Standard_Integer i=1; i<=Proj.NbPoints(); i++) 
           {
 	    dist = cpnt1.Distance(Proj.Point(i));
@@ -1222,7 +1224,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
 	  if (Proj.NbPoints()) 
           {
 	    Standard_Integer index = 1;
-	    Standard_Real dist, mindist=-1.;
+	    Standard_Real dist = NAN, mindist=-1.;
 	    for (Standard_Integer i=1; i<=Proj.NbPoints(); i++) 
             {
 	      dist = mpnt.Distance(Proj.Point(i));
@@ -1238,7 +1240,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
 	  if (Proj.NbPoints()) 
           {
 	    Standard_Integer index = 1;
-	    Standard_Real dist, mindist=-1.;
+	    Standard_Real dist = NAN, mindist=-1.;
 	    for (Standard_Integer i=1; i<=Proj.NbPoints(); i++) 
             {
 	      dist = mpnt.Distance(Proj.Point(i));
@@ -1279,12 +1281,12 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
         {
 
 	  // Check whether new points lie inside the surface bounds
-	  Standard_Real umin, umax, vmin, vmax;
+	  Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
 	  myAnalyzer->Surface()->Surface()->Bounds(umin,umax,vmin,vmax);
 	  if (::Precision::IsInfinite(umin) || ::Precision::IsInfinite(umax) ||
 	      ::Precision::IsInfinite(vmin) || ::Precision::IsInfinite(vmax)) 
           {
-	    Standard_Real fumin, fumax, fvmin, fvmax;
+	    Standard_Real fumin = NAN, fumax = NAN, fvmin = NAN, fvmax = NAN;
 	    BRepTools::UVBounds(face,fumin,fumax,fvmin,fvmax);
 	    if (::Precision::IsInfinite(umin)) umin = fumin-preci;
 	    if (::Precision::IsInfinite(umax)) umax = fumax+preci;
@@ -1293,8 +1295,8 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
 	  }
 
 	  gp_Pnt2d ipnt, P1, P2;
-	  Standard_Real u, v;
-	  Standard_Boolean out;
+	  Standard_Real u = NAN, v = NAN;
+	  Standard_Boolean out = 0;
 	  // iterate on curves
 	  for (Standard_Integer j=1; j<=2; j++) 
           {
@@ -1350,7 +1352,7 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
 		IntRes2d_Domain dlin(P1,0.,tolint,P2,P1.Distance(P2),tolint);
 
 		Handle(Geom2d_Curve) pc;
-		Standard_Real fpar, lpar;
+		Standard_Real fpar = NAN, lpar = NAN;
 		if (j==1) 
                 {
 		  if (cfirst1<ipar1) 
@@ -1385,8 +1387,8 @@ static Standard_Real AdjustOnPeriodic2d (const Handle(Geom2d_Curve)& pc,
                 {
 		  if (Inter.NbPoints() || Inter.NbSegments()) 
                   {
-		    Standard_Integer i, index = 1;
-		    Standard_Real uu, dist, mindist=-1.;
+		    Standard_Integer i = 0, index = 1;
+		    Standard_Real uu = NAN, dist = NAN, mindist=-1.;
 		    // iterate on intersection points
 		    for ( i=1; i<=Inter.NbPoints(); i++ ) 
                     {

@@ -18,20 +18,20 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Vrml_LOD,Standard_Transient)
 
-Vrml_LOD::Vrml_LOD()
+Vrml_LOD::Vrml_LOD() : myRange(new TColStd_HArray1OfReal(1,1)), myRangeFlag(Standard_False)
 {
-  myRange = new TColStd_HArray1OfReal(1,1);
+  
   gp_Vec tmpVec(0,0,0);
   myCenter = tmpVec;
-  myRangeFlag = Standard_False;
+  
 }
 
 Vrml_LOD::Vrml_LOD(const Handle(TColStd_HArray1OfReal)& aRange,
-		   const gp_Vec& aCenter)
+		   const gp_Vec& aCenter) : myRange(aRange), myCenter(aCenter), myRangeFlag(Standard_True)
 {
-  myRange = aRange;
-  myCenter = aCenter;
-  myRangeFlag = Standard_True;
+  
+  
+  
 }
 
  void Vrml_LOD::SetRange(const Handle(TColStd_HArray1OfReal)& aRange) 
@@ -57,7 +57,7 @@ Vrml_LOD::Vrml_LOD(const Handle(TColStd_HArray1OfReal)& aRange,
 
  Standard_OStream& Vrml_LOD::Print(Standard_OStream& anOStream) const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   anOStream  << "LOD {\n";
   
   if ( myRangeFlag == Standard_True )

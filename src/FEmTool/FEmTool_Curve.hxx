@@ -99,12 +99,12 @@ private:
   TColStd_Array1OfInteger HasDeri;
   TColStd_Array1OfInteger HasSecn;
   TColStd_Array1OfReal myLength;
-  Standard_Real Uf;
-  Standard_Real Ul;
-  Standard_Real Denom;
-  Standard_Real USum;
+  Standard_Real Uf{};
+  Standard_Real Ul{};
+  Standard_Real Denom{};
+  Standard_Real USum{};
   Standard_Integer myIndex;
-  Standard_Integer myPtr;
+  Standard_Integer myPtr{};
 
 
 };

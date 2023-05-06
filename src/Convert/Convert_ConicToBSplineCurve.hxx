@@ -123,7 +123,7 @@ protected:
   Standard_Integer degree;
   Standard_Integer nbPoles;
   Standard_Integer nbKnots;
-  Standard_Boolean isperiodic;
+  Standard_Boolean isperiodic{};
 
 
 private:

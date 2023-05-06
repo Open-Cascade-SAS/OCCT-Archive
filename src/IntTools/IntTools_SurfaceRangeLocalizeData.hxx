@@ -143,20 +143,20 @@ private:
 
 
 
-  Standard_Integer myNbSampleU;
-  Standard_Integer myNbSampleV;
-  Standard_Real myMinRangeU;
-  Standard_Real myMinRangeV;
+  Standard_Integer myNbSampleU{};
+  Standard_Integer myNbSampleV{};
+  Standard_Real myMinRangeU{};
+  Standard_Real myMinRangeV{};
   IntTools_MapOfSurfaceSample myMapRangeOut;
   IntTools_DataMapOfSurfaceSampleBox myMapBox;
   Handle(TColStd_HArray1OfReal) myUParams;
   Handle(TColStd_HArray1OfReal) myVParams;
   Handle(TColgp_HArray2OfPnt) myGridPoints;
-  Standard_Integer myUIndMin;
-  Standard_Integer myUIndMax;
-  Standard_Integer myVIndMin;
-  Standard_Integer myVIndMax;
-  Standard_Real myDeflection;
+  Standard_Integer myUIndMin{};
+  Standard_Integer myUIndMax{};
+  Standard_Integer myVIndMin{};
+  Standard_Integer myVIndMax{};
+  Standard_Real myDeflection{};
 
 
 };

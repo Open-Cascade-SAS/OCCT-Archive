@@ -68,7 +68,7 @@ void CDM_Reference::Update(const Handle(CDM_MetaData)& aMetaData) {
 }
 
 Standard_Boolean CDM_Reference::IsUpToDate() const {
-  Standard_Integer theActualDocumentVersion;
+  Standard_Integer theActualDocumentVersion = 0;
   if(myToDocument.IsNull())
     theActualDocumentVersion=myMetaData->DocumentVersion(myApplication);
   else
@@ -78,7 +78,7 @@ Standard_Boolean CDM_Reference::IsUpToDate() const {
 }
 void CDM_Reference::SetIsUpToDate() {
   
-  Standard_Integer theActualDocumentVersion;
+  Standard_Integer theActualDocumentVersion = 0;
   if(myToDocument.IsNull())
     theActualDocumentVersion=myMetaData->DocumentVersion(myApplication);
   else

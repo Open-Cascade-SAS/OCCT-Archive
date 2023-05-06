@@ -70,8 +70,8 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_RevolutePairWithRange, StepKinematics_RevolutePair)
 
 private:
-  Standard_Real myLowerLimitActualRotation; //!< optional
-  Standard_Real myUpperLimitActualRotation; //!< optional
+  Standard_Real myLowerLimitActualRotation{}; //!< optional
+  Standard_Real myUpperLimitActualRotation{}; //!< optional
   Standard_Boolean defLowerLimitActualRotation; //!< flag "is LowerLimitActualRotation defined"
   Standard_Boolean defUpperLimitActualRotation; //!< flag "is UpperLimitActualRotation defined"
 

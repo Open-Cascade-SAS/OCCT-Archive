@@ -215,7 +215,7 @@ Standard_Boolean StepData_StepReaderTool::AnalyseRecord
 {
   DeclareAndCast(StepData_StepReaderData,stepdat,Data());
   Handle(Interface_ReaderModule) imodule;
-  Standard_Integer CN;
+  Standard_Integer CN = 0;
   if (therlib.Select(anent,imodule,CN))
   {
     Handle(StepData_ReadWriteModule) module =

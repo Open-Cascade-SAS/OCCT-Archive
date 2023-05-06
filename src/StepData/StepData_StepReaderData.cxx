@@ -324,12 +324,12 @@ StepData_StepReaderData::StepData_StepReaderData
 (const Standard_Integer nbheader, const Standard_Integer nbtotal,
   const Standard_Integer nbpar, const Resource_FormatType theSourceCodePage)
   : Interface_FileReaderData(nbtotal, nbpar), theidents(1, nbtotal),
-  thetypes(1, nbtotal), mySourceCodePage(theSourceCodePage) //, themults (1,nbtotal)
+  thetypes(1, nbtotal), thenbents(0), thelastn(0), thenbhead(nbheader), thenbscop(0), thecheck(new Interface_Check), mySourceCodePage(theSourceCodePage) //, themults (1,nbtotal)
 {
   //  char textnum[10];
-  thenbscop = 0;  thenbents = 0;  thelastn = 0;  thenbhead = nbheader;
+     
   //themults.Init(0);
-  thecheck = new Interface_Check;
+  
   if (initstr) return;
   //for (Standard_Integer i = 0; i < Maxlst; i ++) {
   //  sprintf(textnum,"$%d",i+1);
@@ -349,7 +349,7 @@ void StepData_StepReaderData::SetRecord(const Standard_Integer num,
   const Standard_CString type,
   const Standard_Integer /* nbpar */)
 {
-  Standard_Integer numlst;
+  Standard_Integer numlst = 0;
   /*
     if (strcmp(type,"/ * (SUB) * /") == 0) {    // defini dans recfile.pc
       thetypes.SetValue (num,sublist);
@@ -791,7 +791,7 @@ Standard_Integer StepData_StepReaderData::ReadSub(const Standard_Integer numsub,
     //    Il faut passer au transient ...
     if (htr.IsNull()) {
       htr = new TColStd_HArray1OfTransient(1, nbp);  val = htr;
-      Standard_Integer jp;
+      Standard_Integer jp = 0;
       if (!hin.IsNull()) {
         for (jp = 1; jp < ip; jp++) {
           Handle(StepData_SelectInt) sin = new StepData_SelectInt;
@@ -914,7 +914,7 @@ Standard_Boolean StepData_StepReaderData::ReadField(const Standard_Integer num,
   const Interface_FileParameter& FP = Param(num, nump);
   Standard_CString str = FP.CValue();
   Standard_Boolean OK = Standard_True;
-  Standard_Integer nent, kind;
+  Standard_Integer nent = 0, kind = 0;
   Handle(TCollection_HAsciiString) txt;
   Handle(Standard_Transient) sub;
   Interface_ParamType FT = FP.ParamType();
@@ -967,7 +967,7 @@ Standard_Boolean StepData_StepReaderData::ReadList(const Standard_Integer num,
   StepData_FieldList& list) const
 {
   // controler nbs egaux
-  Standard_Integer i, nb = list.NbFields();
+  Standard_Integer i = 0, nb = list.NbFields();
   if (!CheckNbParams(num, nb, ach, descr->TypeName())) return Standard_False;
   for (i = 1; i <= nb; i++) {
     Handle(StepData_PDescr) pde = descr->Field(i);
@@ -1756,7 +1756,7 @@ void StepData_StepReaderData::SetEntityNumbers(const Standard_Boolean withmap)
   TColStd_IndexedMapOfInteger imap(thenbents);
   TColStd_Array1OfInteger indm(0, nbdirec);    // Index Map -> Record Number (seulement si map)
 
-  Standard_Integer num; // svv Jan11 2000 : porting on DEC
+  Standard_Integer num = 0; // svv Jan11 2000 : porting on DEC
   for (num = 1; num <= nbdirec; num++) {
     Standard_Integer ident = theidents(num);
     if (ident > 0) {      // Ident normal -> Map ?
@@ -1987,7 +1987,7 @@ void StepData_StepReaderData::SetEntityNumbers(const Standard_Boolean withmap)
         if (id < 0) continue;    // deja resolu en tete
 
       // Voila : on va chercher id dans ndi; algorithme de balayage
-        Standard_Integer pass, sens, nok, n0, irec;	pass = sens = nok = 0;
+        Standard_Integer pass = 0, sens = 0, nok = 0, n0 = 0, irec = 0;	pass = sens = nok = 0;
         if (!iamap) pass = 1;                  // si map non disponible
         while (pass < 3) {
           pass++;
@@ -2056,7 +2056,7 @@ void StepData_StepReaderData::SetEntityNumbers(const Standard_Boolean withmap)
           //  Alimenter le Check ...  Pour cela, determiner n0 Entite et Ident
           char failmess[100];
           Standard_Integer nument = 0;
-          Standard_Integer n0ent; // svv Jan11 2000 : porting on DEC
+          Standard_Integer n0ent = 0; // svv Jan11 2000 : porting on DEC
           for (n0ent = 1; n0ent <= nr; n0ent++) {
             if (indi(n0ent) > 0) nument++;
           }

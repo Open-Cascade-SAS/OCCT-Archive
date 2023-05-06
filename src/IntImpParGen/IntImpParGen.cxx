@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntImpParGen.hxx>
 
 #include <IntImpParGen_Tool.hxx>
@@ -28,7 +30,7 @@ Standard_Real IntImpParGen::NormalizeOnDomain(Standard_Real& Param,
 					      const IntRes2d_Domain& TheDomain) {
   Standard_Real modParam = Param;
   if(TheDomain.IsClosed()) {
-    Standard_Real Periode,t;
+    Standard_Real Periode = NAN,t = NAN;
     TheDomain.EquivalentParameters(t,Periode);
     Periode-=t;
     while(   modParam<TheDomain.FirstParameter()
@@ -123,7 +125,7 @@ void IntImpParGen::DetermineTransition(const IntRes2d_Position    Pos1,
       else {
 	gp_Vec2d Norm;
 	Norm.SetCoord(-Tan1.Y(),Tan1.X());
-	Standard_Real Val1,Val2;
+	Standard_Real Val1 = NAN,Val2 = NAN;
 	if (!courbure1) {
 	  Val1=0.0;
 	}

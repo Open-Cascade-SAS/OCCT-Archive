@@ -73,8 +73,8 @@ private:
 
   Handle(StepGeom_Direction) axis;
   Handle(StepGeom_Direction) refDirection;
-  Standard_Boolean hasAxis;
-  Standard_Boolean hasRefDirection;
+  Standard_Boolean hasAxis{};
+  Standard_Boolean hasRefDirection{};
 
 
 };

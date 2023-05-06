@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <IntCurveSurface_Intersection.hxx>
 #include <IntCurveSurface_IntersectionPoint.hxx>
 #include <IntCurveSurface_IntersectionSegment.hxx>
@@ -62,7 +64,7 @@ void IntCurveSurface_Intersection::SetValues(const IntCurveSurface_Intersection&
     lseg.Clear();
     lpnt.Clear();
     Standard_Integer N = Other.lpnt.Length();
-    Standard_Integer i ;
+    Standard_Integer i = 0 ;
     for( i=1; i<= N ; i++) { 
       lpnt.Append(Other.lpnt.Value(i));
     }
@@ -83,7 +85,7 @@ void IntCurveSurface_Intersection::Append(const IntCurveSurface_Intersection& Ot
 //					  const Standard_Real b) 
 					  const Standard_Real ) 
 { 
-  Standard_Integer i,ni;
+  Standard_Integer i = 0,ni = 0;
   if(Other.done) { 
     ni = Other.lpnt.Length();
     for(i=1;i<=ni;i++) {   Append(Other.Point(i)); }
@@ -93,8 +95,8 @@ void IntCurveSurface_Intersection::Append(const IntCurveSurface_Intersection& Ot
 }
 //================================================================================
 void IntCurveSurface_Intersection::Append(const IntCurveSurface_IntersectionPoint& OtherPoint) { 
-  Standard_Integer i,ni;
-  Standard_Real anu,anv,anw,u,v,w;
+  Standard_Integer i = 0,ni = 0;
+  Standard_Real anu = NAN,anv = NAN,anw = NAN,u = NAN,v = NAN,w = NAN;
   IntCurveSurface_TransitionOnCurve   TrOnCurve,anTrOnCurve;
   gp_Pnt P,anP;
   ni = lpnt.Length();
@@ -129,7 +131,7 @@ void IntCurveSurface_Intersection::ResetFields() {
 //================================================================================
 void IntCurveSurface_Intersection::Dump() const { 
   if(done) { 
-    Standard_Integer i,ni;
+    Standard_Integer i = 0,ni = 0;
     ni = lpnt.Length();
     for(i=1;i<=ni;i++) {   Point(i).Dump(); }
     ni = lseg.Length();

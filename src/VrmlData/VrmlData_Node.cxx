@@ -200,8 +200,8 @@ VrmlData_ErrorStatus VrmlData_Node::ReadInteger (VrmlData_InBuffer& theBuffer,
 {
   VrmlData_ErrorStatus aStatus;
   if (OK(aStatus, VrmlData_Scene::ReadLine(theBuffer))) {
-    char * endptr;
-    long aResult;
+    char * endptr = nullptr;
+    long aResult = 0;
     aResult = strtol (theBuffer.LinePtr, &endptr, 10);
     if (endptr == theBuffer.LinePtr)
       aStatus = VrmlData_NumericInputError;
@@ -443,7 +443,7 @@ VrmlData_ErrorStatus VrmlData_UnknownNode::Read (VrmlData_InBuffer& theBuffer)
   while (aLevelCounter >= 0 &&
          OK(aStatus, VrmlData_Scene::ReadLine(theBuffer)))
   {
-    int aChar;
+    int aChar = 0;
     while ((aChar = theBuffer.LinePtr[0]) != '\0') {
       theBuffer.LinePtr++;
       if        (aChar == '{') {

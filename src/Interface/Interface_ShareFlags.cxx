@@ -26,46 +26,46 @@
 Interface_ShareFlags::Interface_ShareFlags
   (const Handle(Interface_InterfaceModel)& amodel,
    const Interface_GeneralLib& lib)
-   : theflags (amodel->NbEntities())
+   : themodel(amodel), theflags (amodel->NbEntities())
 {
   Handle(Interface_GTool) gtool;  // null
-  themodel = amodel;
+  
   Evaluate(lib,gtool);
 }
 
     Interface_ShareFlags::Interface_ShareFlags
   (const Handle(Interface_InterfaceModel)& amodel,
    const Handle(Interface_GTool)& gtool)
-   : theflags (amodel->NbEntities())
+   : themodel(amodel), theflags (amodel->NbEntities())
 {
-  themodel = amodel;
+  
   Evaluate(gtool->Lib(),gtool);
 }
 
     Interface_ShareFlags::Interface_ShareFlags
   (const Handle(Interface_InterfaceModel)& amodel,
    const Handle(Interface_Protocol)& protocol)
-   : theflags (amodel->NbEntities())
+   : themodel(amodel), theflags (amodel->NbEntities())
 {
   Handle(Interface_GTool) gtool;  // null
-  themodel = amodel;
+  
   Evaluate(Interface_GeneralLib(protocol),gtool);
 }
 
     Interface_ShareFlags::Interface_ShareFlags
   (const Handle(Interface_InterfaceModel)& amodel)
-   : theflags (amodel->NbEntities())
+   : themodel(amodel), theflags (amodel->NbEntities())
 {
   Handle(Interface_GTool) gtool = themodel->GTool();
   gtool->Reservate(amodel->NbEntities());
-  themodel = amodel;
+  
   Evaluate (gtool->Lib(),gtool);
 }
 
     Interface_ShareFlags::Interface_ShareFlags (const Interface_Graph& agraph)
-      : theflags (agraph.Model()->NbEntities())
+      : themodel(agraph.Model()), theflags (agraph.Model()->NbEntities())
     {
-      themodel = agraph.Model();
+      
       Standard_Integer nb = themodel->NbEntities();
       if (nb == 0) return;
       theroots = new TColStd_HSequenceOfTransient();
@@ -87,7 +87,7 @@ Interface_ShareFlags::Interface_ShareFlags
   Standard_Integer nb = themodel->NbEntities();
   if (nb == 0) return;
   theroots = new TColStd_HSequenceOfTransient();
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = 1; i <= nb; i ++) {
 
 //    ATTENTION : Si Entite non chargee donc illisible, basculer sur son
@@ -98,7 +98,7 @@ Interface_ShareFlags::Interface_ShareFlags
 //    Resultat obtenu via GeneralLib
     Interface_EntityIterator iter;
     Handle(Interface_GeneralModule) module;
-    Standard_Integer CN;
+    Standard_Integer CN = 0;
     if (patool) {
       if (lib.Select(ent,module,CN))  module->FillShared(themodel,CN,ent,iter);
     } else {

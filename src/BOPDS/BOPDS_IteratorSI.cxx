@@ -57,7 +57,7 @@ BOPDS_IteratorSI::~BOPDS_IteratorSI()
 //=======================================================================
 void BOPDS_IteratorSI::UpdateByLevelOfCheck(const Standard_Integer theLevel)
 {
-  Standard_Integer i, aNbInterfTypes;
+  Standard_Integer i = 0, aNbInterfTypes = 0;
   //
   aNbInterfTypes=BOPDS_DS::NbInterfTypes();
   for (i=theLevel+1; i<aNbInterfTypes; ++i) {

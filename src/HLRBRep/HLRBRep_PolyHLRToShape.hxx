@@ -131,7 +131,7 @@ private:
   Handle(HLRBRep_PolyAlgo) myAlgo;
   HLRBRep_ListOfBPnt2D myBiPntVis;
   HLRBRep_ListOfBPnt2D myBiPntHid;
-  Standard_Boolean myHideMode;
+  Standard_Boolean myHideMode{};
 
 
 };

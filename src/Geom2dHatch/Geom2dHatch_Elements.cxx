@@ -38,12 +38,12 @@ Geom2dHatch_Elements::Geom2dHatch_Elements(const Geom2dHatch_Elements& )
 #endif
 }
 
-Geom2dHatch_Elements::Geom2dHatch_Elements()
+Geom2dHatch_Elements::Geom2dHatch_Elements() : NumWire(0), NumEdge(0), myCurEdge(1), myCurEdgePar(Probing_Start)
 {
-  NumWire = 0;
-  NumEdge = 0;
-  myCurEdge = 1;
-  myCurEdgePar = Probing_Start;
+  
+  
+  
+  
 }
 
 void Geom2dHatch_Elements::Clear()
@@ -119,7 +119,7 @@ Standard_Boolean Geom2dHatch_Elements::OtherSegment (const gp_Pnt2d& P,
                                                      Standard_Real& Par)
 {
   Geom2dHatch_DataMapIteratorOfMapOfElements Itertemp;
-  Standard_Integer                        i;
+  Standard_Integer                        i = 0;
   
   for (Itertemp.Initialize (myMap), i = 1; Itertemp.More(); Itertemp.Next(), i++)
   {

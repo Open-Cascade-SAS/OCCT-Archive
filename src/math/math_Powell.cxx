@@ -19,6 +19,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_BracketMinimum.hxx>
 #include <math_BrentMinimum.hxx>
 #include <math_Function.hxx>
@@ -47,17 +49,17 @@ class DirFunctionBis : public math_Function {
 
     void Initialize(const math_Vector& p0, const math_Vector& dir);
 
-    virtual Standard_Boolean Value(const Standard_Real x, Standard_Real& fval);
+    Standard_Boolean Value(const Standard_Real x, Standard_Real& fval) override;
 };
 
  DirFunctionBis::DirFunctionBis(math_Vector& V1,
 			  math_Vector& V2,
 			  math_Vector& V3,
-			  math_MultipleVarFunction& f) {
-   P0 = &V1;
-   Dir = &V2;
-   P = &V3;
-   F = &f;
+			  math_MultipleVarFunction& f) : P0(&V1), Dir(&V2), P(&V3), F(&f) {
+   
+   
+   
+   
  }
 
 
@@ -83,9 +85,9 @@ static Standard_Boolean MinimizeDirection(math_Vector& P,
 				 Standard_Real& Result,
 				 DirFunctionBis& F) {
 
-  Standard_Real ax;
-  Standard_Real xx;
-  Standard_Real bx;
+  Standard_Real ax = NAN;
+  Standard_Real xx = NAN;
+  Standard_Real bx = NAN;
 
 
   F.Initialize(P, Dir);
@@ -146,8 +148,8 @@ void math_Powell::Perform(math_MultipleVarFunction& F,
                           const math_Matrix& StartingDirections)
 {
   Done = Standard_False;
-  Standard_Integer i, ibig, j;
-  Standard_Real t, fptt, del;
+  Standard_Integer i = 0, ibig = 0, j = 0;
+  Standard_Real t = NAN, fptt = NAN, del = NAN;
   Standard_Integer n = TheLocation.Length();
   math_Vector pt(1,n);
   math_Vector ptt(1,n);

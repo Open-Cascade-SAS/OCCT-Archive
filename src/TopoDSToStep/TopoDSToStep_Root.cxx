@@ -17,8 +17,8 @@
 
 #include <TopoDSToStep_Root.hxx>
 
-TopoDSToStep_Root::TopoDSToStep_Root ()
-{  done = Standard_False;  toler = 0.0001;  }
+TopoDSToStep_Root::TopoDSToStep_Root () : done(Standard_False), toler(0.0001)
+{    }
 
 Standard_Real& TopoDSToStep_Root::Tolerance ()
 {  return toler;  }

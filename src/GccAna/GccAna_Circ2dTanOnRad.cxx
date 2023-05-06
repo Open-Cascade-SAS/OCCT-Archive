@@ -22,6 +22,8 @@
 //              of given radius : Radius.                             +
 //========================================================================
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <GccAna_Circ2dTanOnRad.hxx>
 #include <GccEnt_BadQualifier.hxx>
@@ -58,7 +60,7 @@ GccAna_Circ2dTanOnRad::
                           const gp_Lin2d&             OnLine    ,
                           const Standard_Real         Radius    ,
                           const Standard_Real         Tolerance ) :
-   cirsol(1,4)     ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,4)     ,
    qualifier1(1,4) ,
    TheSame1(1,4)   ,
    pnttg1sol(1,4)  ,
@@ -71,8 +73,8 @@ GccAna_Circ2dTanOnRad::
    TheSame1.Init(0);
    gp_Dir2d dirx(1.0,0.0);
    Standard_Real Tol = Abs(Tolerance);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
      throw GccEnt_BadQualifier();
@@ -86,8 +88,8 @@ GccAna_Circ2dTanOnRad::
      Standard_Integer nbsol = 0;
      Standard_Integer signe = 0;
      gp_Pnt2d Center;
-     Standard_Real xc;
-     Standard_Real yc;
+     Standard_Real xc = NAN;
+     Standard_Real yc = NAN;
      Standard_Real R1 = C1.Radius();
      Standard_Real dist = OnLine.Distance(C1.Location());
      Standard_Real xdir = (OnLine.Direction()).X();
@@ -189,10 +191,10 @@ GccAna_Circ2dTanOnRad::
      }
      else if (nbsol > 0) {
        for (Standard_Integer j = 1 ; j <= nbsol ; j++) {
-	 Standard_Real A,B,C;
+	 Standard_Real A = NAN,B = NAN,C = NAN;
 	 OnLine.Coefficients(A,B,C);
 	 Standard_Real D = A;
-	 Standard_Real x0,y0;
+	 Standard_Real x0 = NAN,y0 = NAN;
 	 if ( Abs(D) <= Tol ) {
 	   A = B;
 	   B = D;

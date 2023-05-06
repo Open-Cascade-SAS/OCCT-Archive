@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BinTools_ShapeWriter.hxx>
 #include <BinTools_LocationSet.hxx>
 
@@ -140,7 +142,7 @@ void BinTools_ShapeWriter::WriteShape (BinTools_OStream& theStream, const TopoDS
       Handle(BRep_TEdge) aTE = Handle(BRep_TEdge)::DownCast (aShape.TShape());
       theStream << aTE->Tolerance();
       theStream.PutBools (aTE->SameParameter(), aTE->SameRange(), aTE->Degenerated());
-      Standard_Real aFirst, aLast;
+      Standard_Real aFirst = NAN, aLast = NAN;
       for(BRep_ListIteratorOfListOfCurveRepresentation anIter = aTE->Curves(); anIter.More(); anIter.Next())
       {
         const Handle(BRep_CurveRepresentation)& aCR = anIter.Value();

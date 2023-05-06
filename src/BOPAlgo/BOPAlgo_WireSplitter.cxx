@@ -185,8 +185,8 @@ typedef NCollection_Vector<BOPAlgo_WS_ConnexityBlock> BOPAlgo_VectorOfConnexityB
 //=======================================================================
 void BOPAlgo_WireSplitter::MakeWires(const Message_ProgressRange& theRange)
 {
-  Standard_Boolean bIsRegular;
-  Standard_Integer aNbVCB, k;
+  Standard_Boolean bIsRegular = 0;
+  Standard_Integer aNbVCB = 0, k = 0;
   TopoDS_Wire aW;
   BOPTools_ListIteratorOfListOfConnexityBlock aItCB;
   TopTools_ListIteratorOfListOfShape aIt;

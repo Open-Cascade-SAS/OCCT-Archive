@@ -14,6 +14,8 @@
 
 //JCV 16/10/91
 
+#include <math.h>
+
 #include <Convert_TorusToBSplineSurface.hxx>
 #include <gp.hxx>
 #include <gp_Torus.hxx>
@@ -39,7 +41,7 @@ static void ComputePoles ( const Standard_Real R,
   Standard_Real deltaU = U2 - U1;
   Standard_Real deltaV = V2 - V1;
 
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
   // Number of spans : maximum opening = 150 degrees ( = PI / 1.2 rds)
   Standard_Integer 
@@ -109,7 +111,7 @@ Convert_TorusToBSplineSurface::Convert_TorusToBSplineSurface
   isuperiodic = Standard_False;
   isvperiodic = Standard_False;
 
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   // construction of the torus in the reference mark xOy.
 
   // Number of spans : maximum opening = 150 degrees ( = PI / 1.2 rds)
@@ -144,7 +146,7 @@ Convert_TorusToBSplineSurface::Convert_TorusToBSplineSurface
 
   // Replace the bspline in the reference of the torus.
   // and calculate the weight of the bspline.
-  Standard_Real W1, W2;
+  Standard_Real W1 = NAN, W2 = NAN;
   gp_Trsf Trsf;
   Trsf.SetTransformation( T.Position(), gp::XOY());
 
@@ -183,8 +185,8 @@ Convert_TorusToBSplineSurface::Convert_TorusToBSplineSurface
   Standard_DomainError_Raise_if( (delta>2*M_PI) || (delta<0.),
 				"Convert_TorusToBSplineSurface");
 
-  Standard_Integer i, j;
-  Standard_Real deltaU, deltaV;
+  Standard_Integer i = 0, j = 0;
+  Standard_Real deltaU = NAN, deltaV = NAN;
 
   isuperiodic = !UTrim;
   isvperiodic =  UTrim;
@@ -192,7 +194,7 @@ Convert_TorusToBSplineSurface::Convert_TorusToBSplineSurface
   Standard_Real R = T.MajorRadius();
   Standard_Real r = T.MinorRadius();
   
-  Standard_Real W1, W2, CosU, CosV;
+  Standard_Real W1 = NAN, W2 = NAN, CosU = NAN, CosV = NAN;
   
   if ( isuperiodic) {
     ComputePoles(R, r, 0, 2.*M_PI, Param1, Param2, poles);
@@ -282,8 +284,8 @@ Convert_TorusToBSplineSurface::Convert_TorusToBSplineSurface
   isuperiodic = Standard_True;
   isvperiodic = Standard_True;
 
-  Standard_Real W1, W2;
-  Standard_Integer i, j;
+  Standard_Real W1 = NAN, W2 = NAN;
+  Standard_Integer i = 0, j = 0;
 
   nbUPoles = 6;
   nbVPoles = 6;

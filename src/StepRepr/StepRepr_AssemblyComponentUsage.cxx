@@ -25,9 +25,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepRepr_AssemblyComponentUsage,StepRepr_ProductDefin
 //function : StepRepr_AssemblyComponentUsage
 //purpose  : 
 //=======================================================================
-StepRepr_AssemblyComponentUsage::StepRepr_AssemblyComponentUsage ()
+StepRepr_AssemblyComponentUsage::StepRepr_AssemblyComponentUsage () : defReferenceDesignator(Standard_False)
 {
-  defReferenceDesignator = Standard_False;
+  
 }
 
 //=======================================================================

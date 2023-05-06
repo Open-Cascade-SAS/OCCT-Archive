@@ -24,15 +24,15 @@
 #include <gp_Pnt2d.hxx>
 #include <StdFail_NotDone.hxx>
 
-GCE2d_MakeParabola::GCE2d_MakeParabola(const gp_Parab2d& Prb)
+GCE2d_MakeParabola::GCE2d_MakeParabola(const gp_Parab2d& Prb) : GCE2d_Root(), TheParabola(new Geom2d_Parabola(Prb))
 {
   TheError = gce_Done;
-  TheParabola = new Geom2d_Parabola(Prb);
+  
 }
 
 GCE2d_MakeParabola::GCE2d_MakeParabola(const gp_Ax2d&         MirrorAxis,
 				       const Standard_Real    Focal     ,
-				       const Standard_Boolean Sense     )
+				       const Standard_Boolean Sense     ) : GCE2d_Root()
 {
   if (Focal <0.0) { TheError = gce_NullFocusLength; }
   else {
@@ -42,7 +42,7 @@ GCE2d_MakeParabola::GCE2d_MakeParabola(const gp_Ax2d&         MirrorAxis,
 }
 
 GCE2d_MakeParabola::GCE2d_MakeParabola(const gp_Ax22d&     Axis ,
-				       const Standard_Real Focal)
+				       const Standard_Real Focal) : GCE2d_Root()
 {
   if (Focal <0.0) { TheError = gce_NullFocusLength; }
   else {
@@ -53,7 +53,7 @@ GCE2d_MakeParabola::GCE2d_MakeParabola(const gp_Ax22d&     Axis ,
 
 GCE2d_MakeParabola::GCE2d_MakeParabola(const gp_Ax2d&         D     ,
 				       const gp_Pnt2d&        F     ,
-				       const Standard_Boolean Sense )
+				       const Standard_Boolean Sense ) : GCE2d_Root()
 {
   TheError = gce_Done;
   gp_Parab2d para(D,F,Sense);
@@ -62,7 +62,7 @@ GCE2d_MakeParabola::GCE2d_MakeParabola(const gp_Ax2d&         D     ,
 
 
 GCE2d_MakeParabola::GCE2d_MakeParabola(const gp_Pnt2d& S1 ,
-				       const gp_Pnt2d& O  ) {
+				       const gp_Pnt2d& O  ) : GCE2d_Root() {
   gce_MakeParab2d P = gce_MakeParab2d(S1,O);
   TheError = P.Status();
   if (TheError == gce_Done) {

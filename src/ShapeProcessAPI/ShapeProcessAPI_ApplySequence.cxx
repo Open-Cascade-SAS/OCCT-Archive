@@ -30,10 +30,10 @@
 //purpose  : 
 //=======================================================================
 ShapeProcessAPI_ApplySequence::ShapeProcessAPI_ApplySequence(const Standard_CString rscName, 
-							     const Standard_CString seqName)
+							     const Standard_CString seqName) : myContext(new ShapeProcess_ShapeContext(rscName))
 {
 
-  myContext = new ShapeProcess_ShapeContext(rscName);
+  
   myContext->SetDetalisation ( TopAbs_FACE );
   TCollection_AsciiString str ( seqName );
 

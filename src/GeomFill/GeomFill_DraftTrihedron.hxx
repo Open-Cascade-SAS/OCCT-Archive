@@ -90,8 +90,8 @@ private:
 
 
   gp_Vec B;
-  Standard_Real myAngle;
-  Standard_Real myCos;
+  Standard_Real myAngle{};
+  Standard_Real myCos{};
 
 
 };

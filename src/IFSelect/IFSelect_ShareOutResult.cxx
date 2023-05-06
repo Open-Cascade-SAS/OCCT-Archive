@@ -25,38 +25,38 @@
 IFSelect_ShareOutResult::IFSelect_ShareOutResult
   (const Handle(IFSelect_ShareOut)& sho,
    const Handle(Interface_InterfaceModel)& amodel)
-      : thegraph(amodel) , thedispres(amodel,Standard_False)
+      : thegraph(amodel) , thedispres(amodel,Standard_False), theshareout(sho), theeval(Standard_False)
 {
-  theshareout = sho;
-  theeval     = Standard_False;
+  
+  
 //  thedisplist = new TColStd_SequenceOfInteger();
 }
 
     IFSelect_ShareOutResult::IFSelect_ShareOutResult
   (const Handle(IFSelect_ShareOut)& sho, const Interface_Graph& G)
-      : thegraph(G) , thedispres(G,Standard_False)
+      : thegraph(G) , thedispres(G,Standard_False), theshareout(sho), theeval(Standard_False)
 {
-  theshareout = sho;
-  theeval     = Standard_False;
+  
+  
 //  thedisplist = new TColStd_SequenceOfInteger();
 }
 
     IFSelect_ShareOutResult::IFSelect_ShareOutResult
   (const Handle(IFSelect_Dispatch)& disp,
    const Handle(Interface_InterfaceModel)& amodel)
-      : thegraph(amodel) , thedispres(amodel,Standard_False)
+      : thegraph(amodel) , thedispres(amodel,Standard_False), thedispatch(disp), theeval(Standard_False)
 {
-  thedispatch = disp;
-  theeval     = Standard_False;
+  
+  
 //  thedisplist = new TColStd_SequenceOfInteger();
 }
 
     IFSelect_ShareOutResult::IFSelect_ShareOutResult
   (const Handle(IFSelect_Dispatch)& disp, const Interface_Graph& G)
-      : thegraph(G) , thedispres(G,Standard_False)
+      : thegraph(G) , thedispres(G,Standard_False), thedispatch(disp), theeval(Standard_False)
 {
-  thedispatch = disp;
-  theeval     = Standard_False;
+  
+  
 //  thedisplist = new TColStd_SequenceOfInteger();
 }
 
@@ -108,7 +108,7 @@ IFSelect_ShareOutResult::IFSelect_ShareOutResult
     nb    = theshareout->NbDispatches();
     first = theshareout->LastRun() + 1;
   }
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = first; i <= nb; i ++) {
     if (!theshareout.IsNull()) disp = theshareout->Dispatch(i);
     if (disp->FinalSelection().IsNull()) continue;    // Dispatch neutralise
@@ -140,7 +140,7 @@ IFSelect_ShareOutResult::IFSelect_ShareOutResult
 {
   thedispres.Next();
   thepacknum ++;
-  Standard_Integer dispnum;
+  Standard_Integer dispnum = 0;
   if (thepacknum <= thedisplist.Length())
     dispnum = thedisplist.Value(thepacknum);
   else {
@@ -212,7 +212,7 @@ IFSelect_ShareOutResult::IFSelect_ShareOutResult
     TCollection_AsciiString IFSelect_ShareOutResult::FileName () const
 {
   Standard_Integer nd = DispatchRank();
-  Standard_Integer np,nbp;
+  Standard_Integer np = 0,nbp = 0;
   PacketsInDispatch(np,nbp);
   return  theshareout->FileName(nd,np,nbp);
 }

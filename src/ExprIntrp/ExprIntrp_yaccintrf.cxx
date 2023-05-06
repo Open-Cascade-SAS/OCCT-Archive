@@ -71,7 +71,7 @@ extern "C" void ExprIntrp_StartDerivate()
 
 extern "C" void ExprIntrp_EndDerivate()
 {
-  int degree;
+  int degree = 0;
   degree = ExprIntrp_GetDegree();
   ExprIntrp_Recept.PushValue(degree);
 }
@@ -156,7 +156,7 @@ extern "C" void ExprIntrp_EndDifferential()
   if (thefunc.IsNull()) {
     throw ExprIntrp_SyntaxError();
   }
-  Standard_Integer rank,degree;
+  Standard_Integer rank = 0,degree = 0;
   Handle(Expr_NamedUnknown) thediff;
   Standard_Integer nbvars = thefunc->NbOfVariables();
 
@@ -548,7 +548,7 @@ extern "C" void ExprIntrp_EndOfFuncDef()
   Standard_Integer nbargs = ExprIntrp_Recept.PopValue();
   Expr_Array1OfNamedUnknown vars(1,nbargs);
   Expr_Array1OfNamedUnknown internvars(1,nbargs);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i=nbargs; i > 0; i--) {
     vars(i) = Handle(Expr_NamedUnknown)::DownCast(ExprIntrp_Recept.Pop());
     internvars(i) = Handle(Expr_NamedUnknown)::DownCast(vars(i)->Copy());

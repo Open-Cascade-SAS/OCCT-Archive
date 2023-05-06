@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRepLib.hxx>
 #include <BRepTools_Modifier.hxx>
@@ -166,7 +168,7 @@ static Standard_Boolean settol (const Handle(ShapeProcess_Context)& context,
   Handle(ShapeProcess_ShapeContext) ctx = Handle(ShapeProcess_ShapeContext)::DownCast ( context );
   if ( ctx.IsNull() ) return Standard_False;
 
-  Standard_Real val;
+  Standard_Real val = NAN;
   if ( ctx->IntegerVal ( "Mode", 0 ) >0 && ctx->GetReal ( "Value", val ) ) {
     Standard_Real rat = ctx->RealVal ( "Ratio", 1. );
     if ( rat >= 1 ) {
@@ -177,7 +179,7 @@ static Standard_Boolean settol (const Handle(ShapeProcess_Context)& context,
 
   BRepLib::UpdateTolerances (ctx->Result(),Standard_True);
 
-  Standard_Real reg;
+  Standard_Real reg = NAN;
   if ( ctx->GetReal ("Regularity", reg) )  
     BRepLib::EncodeRegularity (ctx->Result(), reg);
 
@@ -377,11 +379,11 @@ static Standard_Boolean shapetobezier (const Handle(ShapeProcess_Context)& conte
     SCB.SetBSplineMode(BSplineMode);
   }
   
-  Standard_Real maxTol, minTol;
+  Standard_Real maxTol = NAN, minTol = NAN;
   if ( ctx->GetReal ( "MaxTolerance",   maxTol ) ) SCB.SetMaxTolerance(maxTol);
   if ( ctx->GetReal ( "MinCurveLength", minTol ) ) SCB.SetMinTolerance(minTol);
   
-  Standard_Boolean EdgeMode;
+  Standard_Boolean EdgeMode = 0;
   if ( ctx->GetBoolean ( "EdgeMode", EdgeMode ) ) SCB.SetEdgeMode(EdgeMode);
  
   if ( ! SCB.Perform() && SCB.Status (ShapeExtend_FAIL) ) { 
@@ -459,7 +461,7 @@ static Standard_Boolean splitcontinuity (const Handle(ShapeProcess_Context)& con
 
   tool.SetMsgRegistrator( msg );
     
-  Standard_Real maxTol;
+  Standard_Real maxTol = NAN;
   if ( ctx->GetReal ( "MaxTolerance", maxTol ) ) tool.SetMaxTolerance(maxTol);
   
   if ( ! tool.Perform() && tool.Status (ShapeExtend_FAIL) ) { 
@@ -493,10 +495,10 @@ static Standard_Boolean splitclosedfaces (const Handle(ShapeProcess_Context)& co
   ShapeUpgrade_ShapeDivideClosed tool ( ctx->Result() );
   tool.SetMsgRegistrator( msg );
 
-  Standard_Real closeTol;
+  Standard_Real closeTol = NAN;
   if ( ctx->GetReal ( "CloseTolerance", closeTol ) ) tool.SetPrecision(closeTol);
   
-  Standard_Real maxTol;
+  Standard_Real maxTol = NAN;
   if ( ctx->GetReal ( "MaxTolerance", maxTol ) ) tool.SetMaxTolerance(maxTol);
   
   Standard_Integer num = ctx->IntegerVal ( "NbSplitPoints", 1 );
@@ -539,7 +541,7 @@ static Standard_Boolean fixfacesize (const Handle(ShapeProcess_Context)& context
   FSC.Init(ctx->Result());
   FSC.SetMsgRegistrator ( msg );
 
-  Standard_Real aTol;
+  Standard_Real aTol = NAN;
   if ( ctx->GetReal ( "Tolerance", aTol ) ) FSC.SetPrecision (aTol);
 
   FSC.Perform();
@@ -605,8 +607,8 @@ static Standard_Boolean dropsmallsolids (const Handle(ShapeProcess_Context)& con
   ShapeFix_FixSmallSolid FSS;
   FSS.SetMsgRegistrator( msg );
 
-  Standard_Real aThreshold;
-  Standard_Integer aMode;
+  Standard_Real aThreshold = NAN;
+  Standard_Integer aMode = 0;
   if (ctx->GetInteger ("FixMode", aMode))
     FSS.SetFixMode (aMode);
   if (ctx->GetReal ("VolumeThreshold", aThreshold))

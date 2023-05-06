@@ -20,6 +20,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <FairCurve_Energy.hxx>
 #include <gp_Pnt2d.hxx>
 #include <gp_Vec2d.hxx>
@@ -62,7 +64,7 @@ Standard_Boolean FairCurve_Energy::Value(const math_Vector& X,
 						 Standard_Real& E)
 //=======================================================================
 {
-   Standard_Boolean IsDone;
+   Standard_Boolean IsDone = 0;
    math_Vector Energie(0,0);
    ComputePoles(X);
    IsDone = Compute(0, Energie);
@@ -75,8 +77,8 @@ Standard_Boolean FairCurve_Energy::Gradient(const math_Vector& X,
 						  math_Vector& G)
 //=======================================================================
 {
-   Standard_Boolean IsDone;
-   Standard_Real E;
+   Standard_Boolean IsDone = 0;
+   Standard_Real E = NAN;
  
    IsDone = Values(X, E, G);
    return IsDone;    
@@ -87,7 +89,7 @@ void FairCurve_Energy::Gradient1(const math_Vector& Vect,
 				       math_Vector& Grad)
 //=======================================================================
 {
-  Standard_Integer ii,
+  Standard_Integer ii = 0,
                    DebG = Grad.Lower(), FinG = Grad.Upper();
   Standard_Integer Vdeb = 3, 
                    Vfin = 2*MyPoles->Length()-2;
@@ -138,7 +140,7 @@ Standard_Boolean FairCurve_Energy::Values(const math_Vector& X,
 					        math_Vector& G)
 //=======================================================================
 {
-   Standard_Boolean IsDone;
+   Standard_Boolean IsDone = 0;
 
    ComputePoles(X);
    IsDone = Compute(1, MyGradient);
@@ -156,7 +158,7 @@ Standard_Boolean FairCurve_Energy::Values(const math_Vector& X,
 						math_Matrix& H)
 //=======================================================================
 {
-   Standard_Boolean IsDone;
+   Standard_Boolean IsDone = 0;
 
    ComputePoles(X);
    IsDone = Compute(2, MyHessian);
@@ -175,7 +177,7 @@ void FairCurve_Energy::Hessian1(const math_Vector& Vect,
 //=======================================================================
 {
 
-  Standard_Integer ii, jj, kk, Vk;
+  Standard_Integer ii = 0, jj = 0, kk = 0, Vk = 0;
   Standard_Integer Vdeb = 3 + 2*MyContrOrder1, 
                    Vfin = 2*MyPoles->Length() - 2*(MyContrOrder2+1),
                    Vup  = 2*MyPoles->Length()+MyWithAuxValue;
@@ -386,7 +388,7 @@ void FairCurve_Energy::Hessian1(const math_Vector& Vect,
 Standard_Boolean FairCurve_Energy::Variable(math_Vector& X) const
 //======================================================================= 
 {
-  Standard_Integer ii,
+  Standard_Integer ii = 0,
                    IndexDeb1 = MyPoles->Lower()+1, 
                    IndexDeb2 = X.Lower(),
                    IndexFin1 = MyPoles->Upper()-1,
@@ -436,7 +438,7 @@ Standard_Boolean FairCurve_Energy::Variable(math_Vector& X) const
 void FairCurve_Energy::ComputePoles(const math_Vector& X)
 //======================================================================= 
 {
-  Standard_Integer ii,
+  Standard_Integer ii = 0,
                    IndexDeb1 = MyPoles->Lower()+1, 
                    IndexDeb2 = X.Lower(),
                    IndexFin1 = MyPoles->Upper()-1,

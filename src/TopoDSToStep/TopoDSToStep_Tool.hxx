@@ -101,7 +101,7 @@ private:
 
 
   MoniTool_DataMapOfShapeTransient myDataMap;
-  Standard_Boolean myFacetedContext;
+  Standard_Boolean myFacetedContext{};
   Standard_Real myLowestTol;
   TopoDS_Shell myCurrentShell;
   TopoDS_Face myCurrentFace;
@@ -109,7 +109,7 @@ private:
   TopoDS_Edge myCurrentEdge;
   TopoDS_Vertex myCurrentVertex;
   Standard_Boolean myReversedSurface;
-  Standard_Integer myPCurveMode;
+  Standard_Integer myPCurveMode{};
 
 
 };

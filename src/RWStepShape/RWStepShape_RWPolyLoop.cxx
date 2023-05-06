@@ -43,7 +43,7 @@ void RWStepShape_RWPolyLoop::ReadStep
 
 	Handle(StepGeom_HArray1OfCartesianPoint) aPolygon;
 	Handle(StepGeom_CartesianPoint) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"polygon",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aPolygon = new StepGeom_HArray1OfCartesianPoint (1, nb2);

@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <RWStepGeom_RWBezierSurfaceAndRationalBSplineSurface.hxx>
@@ -66,13 +68,13 @@ void RWStepGeom_RWBezierSurfaceAndRationalBSplineSurface::ReadStep
 	// --- field : uDegree ---
 
 
-	Standard_Integer aUDegree;
+	Standard_Integer aUDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadInteger (num,1,"u_degree",ach,aUDegree);
 	// --- field : vDegree ---
 
 
-	Standard_Integer aVDegree;
+	Standard_Integer aVDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadInteger (num,2,"v_degree",ach,aVDegree);
 	// --- field : controlPointsList ---
@@ -80,13 +82,13 @@ void RWStepGeom_RWBezierSurfaceAndRationalBSplineSurface::ReadStep
 
 	Handle(StepGeom_HArray2OfCartesianPoint) aControlPointsList;
 	Handle(StepGeom_CartesianPoint) anent3;
-	Standard_Integer nsub3;
+	Standard_Integer nsub3 = 0;
 	if (data->ReadSubList (num,3,"control_points_list",ach,nsub3)) {
 	  Standard_Integer nbi3 = data->NbParams(nsub3);
 	  Standard_Integer nbj3 = data->NbParams(data->ParamNumber(nsub3,1));
 	  aControlPointsList = new StepGeom_HArray2OfCartesianPoint (1, nbi3, 1, nbj3);
 	  for (Standard_Integer i3 = 1; i3 <= nbi3; i3 ++) {
-	    Standard_Integer nsi3;
+	    Standard_Integer nsi3 = 0;
 	    if (data->ReadSubList (nsub3,i3,"sub-part(control_points_list)",ach,nsi3)) {
 	      for (Standard_Integer j3 =1; j3 <= nbj3; j3 ++) {
 		//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
@@ -152,14 +154,14 @@ void RWStepGeom_RWBezierSurfaceAndRationalBSplineSurface::ReadStep
 	// --- field : weightsData ---
 
 	Handle(TColStd_HArray2OfReal) aWeightsData;
-	  Standard_Real aWeightsDataItem;
-	Standard_Integer nsub8;
+	  Standard_Real aWeightsDataItem = NAN;
+	Standard_Integer nsub8 = 0;
 	if (data->ReadSubList (num,1,"items",ach,nsub8)) {
 	  Standard_Integer nbi8 = data->NbParams(nsub8);
 	  Standard_Integer nbj8 = data->NbParams(data->ParamNumber(nsub8,1));
 	  aWeightsData = new TColStd_HArray2OfReal (1,nbi8,1,nbj8);
 	  for (Standard_Integer i8 = 1; i8 <= nbi8; i8 ++) {
-	    Standard_Integer nsi8;
+	    Standard_Integer nsi8 = 0;
 	    if (data->ReadSubList(nsub8,i8,"sub-part(weights_data)",ach,nsi8)){
 	      for (Standard_Integer j8 =1; j8 <= nbj8; j8 ++) {
 		//szv#4:S4163:12Mar99 `Standard_Boolean stat8 =` not needed

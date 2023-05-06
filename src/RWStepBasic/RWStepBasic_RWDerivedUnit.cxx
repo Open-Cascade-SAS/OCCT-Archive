@@ -39,7 +39,7 @@ void RWStepBasic_RWDerivedUnit::ReadStep
 
 	Handle(StepBasic_HArray1OfDerivedUnitElement) elts;
 	Handle(StepBasic_DerivedUnitElement) anelt;
-	Standard_Integer nsub1;
+	Standard_Integer nsub1 = 0;
 	if (data->ReadSubList (num,1,"elements",ach,nsub1)) {
 	  Standard_Integer nb1 = data->NbParams(nsub1);
 	  elts = new StepBasic_HArray1OfDerivedUnitElement (1,nb1);
@@ -64,7 +64,7 @@ void RWStepBasic_RWDerivedUnit::WriteStep
 
 	// --- own field : dimensions ---
 
-  Standard_Integer i, nb = ent->NbElements();
+  Standard_Integer i = 0, nb = ent->NbElements();
   SW.OpenSub();
   for (i = 1; i <= nb; i ++) {
     SW.Send (ent->ElementsValue(i));
@@ -76,7 +76,7 @@ void RWStepBasic_RWDerivedUnit::WriteStep
 void RWStepBasic_RWDerivedUnit::Share(const Handle(StepBasic_DerivedUnit)& ent, Interface_EntityIterator& iter) const
 {
 
-  Standard_Integer i, nb = ent->NbElements();
+  Standard_Integer i = 0, nb = ent->NbElements();
   for (i = 1; i <= nb; i ++) {
     iter.GetOneItem(ent->ElementsValue(i));
   }

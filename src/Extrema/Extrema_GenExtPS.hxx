@@ -119,22 +119,22 @@ private:
 
 private:
 
-  Standard_Boolean myDone;
-  Standard_Boolean myInit;
-  Standard_Real myumin;
-  Standard_Real myusup;
-  Standard_Real myvmin;
-  Standard_Real myvsup;
-  Standard_Integer myusample;
-  Standard_Integer myvsample;
-  Standard_Real mytolu;
-  Standard_Real mytolv;
+  Standard_Boolean myDone{};
+  Standard_Boolean myInit{};
+  Standard_Real myumin{};
+  Standard_Real myusup{};
+  Standard_Real myvmin{};
+  Standard_Real myvsup{};
+  Standard_Integer myusample{};
+  Standard_Integer myvsample{};
+  Standard_Real mytolu{};
+  Standard_Real mytolv{};
 
   Extrema_Array2OfPOnSurfParams myPoints;
   Extrema_HUBTreeOfSphere mySphereUBTree;
   Handle(Bnd_HArray1OfSphere) mySphereArray;
   Extrema_FuncPSNorm myF;
-  const Adaptor3d_Surface* myS;
+  const Adaptor3d_Surface* myS{};
   Extrema_ExtFlag myFlag;
   Extrema_ExtAlgo myAlgo;
   Handle(TColStd_HArray1OfReal) myUParams;

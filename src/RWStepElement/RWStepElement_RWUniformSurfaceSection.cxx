@@ -15,6 +15,8 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepElement_RWUniformSurfaceSection.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -55,7 +57,7 @@ void RWStepElement_RWUniformSurfaceSection::ReadStep (const Handle(StepData_Step
 
   // Own fields of UniformSurfaceSection
 
-  Standard_Real aThickness;
+  Standard_Real aThickness = NAN;
   data->ReadReal (num, 4, "thickness", ach, aThickness);
 
   StepElement_MeasureOrUnspecifiedValue aBendingThickness;

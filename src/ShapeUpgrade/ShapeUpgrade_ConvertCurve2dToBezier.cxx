@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_BezierCurve.hxx>
 #include <Geom2d_Conic.hxx>
 #include <Geom2d_Line.hxx>
@@ -34,10 +36,10 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_ConvertCurve2dToBezier,ShapeUpgrade_SplitCurve2d)
 
-ShapeUpgrade_ConvertCurve2dToBezier::ShapeUpgrade_ConvertCurve2dToBezier()
+ShapeUpgrade_ConvertCurve2dToBezier::ShapeUpgrade_ConvertCurve2dToBezier() : mySegments(new TColGeom2d_HSequenceOfCurve), mySplitParams(new TColStd_HSequenceOfReal)
 {
-  mySegments = new TColGeom2d_HSequenceOfCurve;
-  mySplitParams = new TColStd_HSequenceOfReal;
+  
+  
 }
 
 static Handle(Geom2d_BezierCurve) MakeBezier2d(const Handle(Geom2d_Curve)& theCurve2d,
@@ -70,7 +72,7 @@ void ShapeUpgrade_ConvertCurve2dToBezier::Compute()
        myCurve->IsKind(STANDARD_TYPE(Geom2d_BezierCurve)) )
   {
     // static function`s code getted from ShapeConvert
-    Standard_Real tmpF, tmpL, aDeviation;
+    Standard_Real tmpF = NAN, tmpL = NAN, aDeviation = NAN;
     Handle(Geom2d_Line) aTmpLine2d = 
       ShapeCustom_Curve2d::ConvertToLine2d(myCurve, First, Last, Precision::Approximation(),
                                                tmpF, tmpL, aDeviation);
@@ -179,7 +181,7 @@ void ShapeUpgrade_ConvertCurve2dToBezier::Compute()
     TColStd_Array1OfReal knots(1,nbArcs+1);
     tool.Knots(knots);
     mySplitParams->Append(First+Shift);
-    Standard_Integer j; // svv Jan 10 2000 : porting on DEC
+    Standard_Integer j = 0; // svv Jan 10 2000 : porting on DEC
     
     Standard_Real newFirst = First+Shift;
     Standard_Real newLast = First+Shift;
@@ -192,7 +194,7 @@ void ShapeUpgrade_ConvertCurve2dToBezier::Compute()
         {
           newFirst = newLast;
           newLast = nextKnot;
-          Standard_Real tmpF, tmpL, aDeviation;
+          Standard_Real tmpF = NAN, tmpL = NAN, aDeviation = NAN;
           Handle(Geom2d_Line) aTmpLine2d = 
 	    ShapeCustom_Curve2d::ConvertToLine2d(aCrv2d, newFirst, newLast, Precision::Approximation(),
                                                      tmpF, tmpL, aDeviation);

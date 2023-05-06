@@ -270,7 +270,7 @@ protected:
   Handle(IFSelect_WorkSession) thesess;
   Handle(TColStd_HArray1OfInteger) thenums;
   NCollection_DataMap<TCollection_AsciiString, Standard_Integer> thenames;
-  Standard_Integer thenl;
+  Standard_Integer thenl{};
   TColStd_SequenceOfAsciiString theline;
 
 private:
@@ -280,8 +280,8 @@ private:
   TCollection_AsciiString thebuff;
   Standard_Integer thelastgen;
   Standard_Boolean thedone;
-  Standard_Boolean theownflag;
-  Standard_Integer thenewnum;
+  Standard_Boolean theownflag{};
+  Standard_Integer thenewnum{};
 
 };
 

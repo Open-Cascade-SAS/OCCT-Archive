@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AdvApprox_PrefAndRec.hxx>
 #include <Precision.hxx>
 #include <Standard_DomainError.hxx>
@@ -22,12 +24,10 @@
 AdvApprox_PrefAndRec::AdvApprox_PrefAndRec(const TColStd_Array1OfReal& RecCut,
 					   const TColStd_Array1OfReal& PrefCut,
 					   const Standard_Real Weight):
-  myRecCutting(1, RecCut.Length()),
-  myPrefCutting(1, PrefCut.Length()),
+  myRecCutting(RecCut),
+  myPrefCutting(PrefCut),
   myWeight(Weight)
 {
-  myRecCutting =  RecCut;
-  myPrefCutting =  PrefCut;
   if (myWeight <= 1) { throw Standard_DomainError("PrefAndRec : Weight is too small");}
 }
 
@@ -37,8 +37,8 @@ Standard_Boolean AdvApprox_PrefAndRec::Value(const Standard_Real a,
 {
 //  longueur minimum d'un intervalle parametrique : 10*PConfusion()
   Standard_Real lgmin = 10 * Precision::PConfusion();
-  Standard_Integer i;
-  Standard_Real cut, mil=(a+b)/2, dist;
+  Standard_Integer i = 0;
+  Standard_Real cut = NAN, mil=(a+b)/2, dist = NAN;
   Standard_Boolean isfound = Standard_False;
 
   cut = mil;

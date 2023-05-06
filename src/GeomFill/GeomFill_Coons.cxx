@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <GeomFill_Coons.hxx>
 #include <PLib.hxx>
@@ -83,7 +85,7 @@ void  GeomFill_Coons::Init(const TColgp_Array1OfPnt& P1,
   myPoles = new TColgp_HArray2OfPnt( 1, NPolU, 1, NPolV);
 
   // The boundaries are not modified
-  Standard_Integer i,j,k;
+  Standard_Integer i = 0,j = 0,k = 0;
 
   for (i=1; i<=NPolU; i++) {
     myPoles->SetValue( i, 1    , P1(i));
@@ -123,7 +125,7 @@ void  GeomFill_Coons::Init(const TColgp_Array1OfPnt& P1,
   TColStd_Array1OfReal GU(2,NPolU-1);
   TColStd_Array1OfReal FV(2,NPolV-1);
   TColStd_Array1OfReal GV(2,NPolV-1);
-  Standard_Real Dummy;
+  Standard_Real Dummy = NAN;
   for ( i= 2; i< NPolU; i++) {
     CoefU(i).Coord(FU(i), GU(i), Dummy);
   }
@@ -187,12 +189,12 @@ void  GeomFill_Coons::Init(const TColgp_Array1OfPnt&   P1,
 //#endif
   myWeights = new TColStd_HArray2OfReal( 1, NPolU, 1, NPolV);
    // The boundaries are not modified
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   for ( i=1; i<=NPolU; i++) {
     myWeights->SetValue( i, 1    , W1(i));
     myWeights->SetValue( i, NPolV, W3(i));
   }
-  Standard_Real PU,PU1,PV,PV1;
+  Standard_Real PU = NAN,PU1 = NAN,PV = NAN,PV1 = NAN;
   
   for ( j=2; j<=NPolV-1; j++) {
     PV  = (j-1)/NV;

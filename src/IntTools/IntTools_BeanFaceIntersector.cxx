@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntTools_BeanFaceIntersector.hxx>
 
 #include <BndLib_Add3dCurve.hxx>
@@ -114,11 +116,11 @@ myVMinParameter(0.),
 myVMaxParameter(0.),
 myBeanTolerance(0.),
 myFaceTolerance(0.),
-myIsDone(Standard_False),
+myCurveResolution(Precision::PConfusion()), myCriteria(Precision::Confusion()), myIsDone(Standard_False),
 myMinSqDistance(RealLast())
 {
-  myCriteria        = Precision::Confusion();
-  myCurveResolution = Precision::PConfusion();
+  
+  
   
 }
 
@@ -176,7 +178,7 @@ IntTools_BeanFaceIntersector::IntTools_BeanFaceIntersector(const BRepAdaptor_Cur
                                                            const Standard_Real        theVMaxParameter,
                                                            const Standard_Real        theBeanTolerance,
                                                            const Standard_Real        theFaceTolerance) :
-       myFirstParameter(theFirstParOnCurve),
+       myCurve(theCurve), mySurface(theSurface), myFirstParameter(theFirstParOnCurve),
        myLastParameter(theLastParOnCurve),
        myUMinParameter(theUMinParameter),
        myUMaxParameter(theUMaxParameter),
@@ -184,15 +186,15 @@ IntTools_BeanFaceIntersector::IntTools_BeanFaceIntersector(const BRepAdaptor_Cur
        myVMaxParameter(theVMaxParameter),
        myBeanTolerance(theBeanTolerance),
        myFaceTolerance(theFaceTolerance),
-       myIsDone(Standard_False),
+       myCriteria(myBeanTolerance + myFaceTolerance), myIsDone(Standard_False),
        myMinSqDistance(RealLast())
 {
-  myCurve = theCurve;
   
-  myCriteria = myBeanTolerance + myFaceTolerance;
+  
+  
   myCurveResolution = myCurve.Resolution(myCriteria);
 
-  mySurface = theSurface;
+  
   myTrsfSurface = Handle(Geom_Surface)::DownCast(mySurface.Surface().Surface()->Transformed(mySurface.Trsf()));
 }
 
@@ -606,7 +608,7 @@ void IntTools_BeanFaceIntersector::ComputeAroundExactIntersection()
             solutionIsValid = Standard_False;
             //
             if(mySurface.IsUPeriodic()) {
-              Standard_Real aNewU, aUPeriod, aEps, du;
+              Standard_Real aNewU = NAN, aUPeriod = NAN, aEps = NAN, du = NAN;
               //
               aUPeriod = mySurface.UPeriod();
               aEps = Epsilon(aUPeriod);
@@ -623,7 +625,7 @@ void IntTools_BeanFaceIntersector::ComputeAroundExactIntersection()
             solutionIsValid = Standard_False;
             //
             if(mySurface.IsVPeriodic()) {
-              Standard_Real aNewV, aVPeriod, aEps, dv;
+              Standard_Real aNewV = NAN, aVPeriod = NAN, aEps = NAN, dv = NAN;
               //
               aVPeriod = mySurface.VPeriod();
               aEps = Epsilon(aVPeriod);
@@ -811,9 +813,9 @@ void IntTools_BeanFaceIntersector::ComputeLinePlane()
 
   myIsDone = Standard_True;
 
-  Standard_Real A,B,C,D;
-  Standard_Real Al,Bl,Cl;
-  Standard_Real Dis,Direc;
+  Standard_Real A = NAN,B = NAN,C = NAN,D = NAN;
+  Standard_Real Al = NAN,Bl = NAN,Cl = NAN;
+  Standard_Real Dis = NAN,Direc = NAN;
   
   P.Coefficients(A,B,C,D);
   gp_Pnt Orig(L.Location());
@@ -861,14 +863,14 @@ void IntTools_BeanFaceIntersector::ComputeLinePlane()
 
   gp_Pnt pint(Orig.X()+t*Al, Orig.Y()+t*Bl, Orig.Z()+t*Cl);
 
-  Standard_Real u, v;
+  Standard_Real u = NAN, v = NAN;
   ElSLib::Parameters(P, pint, u, v);
   if(myUMinParameter > u || u > myUMaxParameter || myVMinParameter > v || v > myVMaxParameter) {
     return;
   }
   //
   // compute correct range on the edge
-  Standard_Real anAngle, aDt;
+  Standard_Real anAngle = NAN, aDt = NAN;
   gp_Dir aDL, aDP;
   //
   aDL = L.Position().Direction();
@@ -893,7 +895,7 @@ void IntTools_BeanFaceIntersector::ComputeLinePlane()
 // ==================================================================================
 void IntTools_BeanFaceIntersector::ComputeUsingExtremum() 
 {
-  Standard_Real Tol, af, al;
+  Standard_Real Tol = NAN, af = NAN, al = NAN;
   Tol = Precision::PConfusion();
   Handle(Geom_Curve) aCurve = BRep_Tool::Curve  (myCurve.Edge(), af, al);
   GeomAdaptor_Surface aGASurface (myTrsfSurface, 
@@ -942,7 +944,7 @@ void IntTools_BeanFaceIntersector::ComputeUsingExtremum()
         myMinSqDistance = Min (myMinSqDistance, aSqDist);
         if (aSqDist < myCriteria * myCriteria)
         {
-          Standard_Real U1, V1, U2, V2;
+          Standard_Real U1 = NAN, V1 = NAN, U2 = NAN, V2 = NAN;
           Standard_Real adistance1 = Distance(anarg1, U1, V1);
           Standard_Real adistance2 = Distance(anarg2, U2, V2);
           Standard_Boolean validdistance1 = (adistance1 < myCriteria);
@@ -1012,7 +1014,7 @@ void IntTools_BeanFaceIntersector::ComputeUsingExtremum()
             Extrema_POnCurv p1;
             Extrema_POnSurf p2;
             anExtCS.Points (j, p1, p2);
-            Standard_Real U, V;
+            Standard_Real U = NAN, V = NAN;
             p2.Parameter(U, V);
             
             Standard_Integer aNbRanges = myRangeManager.Length();
@@ -1896,7 +1898,7 @@ Standard_Boolean IntTools_BeanFaceIntersector::ComputeLocalized() {
             Extrema_POnSurf p2;
             p1 = anExtremaGen.PointOnCurve(j);
             p2 = anExtremaGen.PointOnSurface(j);
-            Standard_Real U, V, T;
+            Standard_Real U = NAN, V = NAN, T = NAN;
             T = p1.Parameter();
             p2.Parameter(U, V);
             
@@ -1963,7 +1965,7 @@ Standard_Boolean IntTools_BeanFaceIntersector::TestComputeCoinside()
 
   Standard_Integer i = 0;
 
-  Standard_Real U, V;
+  Standard_Real U = NAN, V = NAN;
 
   if(Distance(cfp, U, V) > myCriteria)
     return Standard_False;
@@ -2040,9 +2042,9 @@ void ComputeGridPoints
    const Standard_Real                      theTolerance,
    IntTools_SurfaceRangeLocalizeData &theSurfaceData)
 {
-  Standard_Integer     i;
-  Standard_Integer     j;
-  Standard_Integer     k;
+  Standard_Integer     i = 0;
+  Standard_Integer     j = 0;
+  Standard_Integer     k = 0;
   Standard_Integer     aNbSamples[2] = { theSurf->UDegree(),
                                          theSurf->VDegree() };
   Standard_Integer     aNbKnots[2]   = { theSurf->NbUKnots(),
@@ -2053,7 +2055,7 @@ void ComputeGridPoints
   theSurf->UKnots(aKnotsU);
   theSurf->VKnots(aKnotsV);
 
-  Standard_Integer iLmI;
+  Standard_Integer iLmI = 0;
   Standard_Integer iMin[2]   = { -1, -1 };
   Standard_Integer iMax[2]   = { -1, -1 };
   Standard_Integer aNbGridPnts[2];
@@ -2121,7 +2123,7 @@ void ComputeGridPoints
     
     // Setting the first and last parameters.
     Standard_Integer iAbs    = 1;
-    Standard_Real    aMinPar;
+    Standard_Real    aMinPar = NAN;
     Standard_Real    aMaxPar = (j == 0) ? theLastU : theLastV;
     
     for (i = iMin[j]; i < iMax[j]; i++) {
@@ -2167,8 +2169,8 @@ void ComputeGridPoints
   
   // Compute of grid points.
   gp_Pnt        aPnt;
-  Standard_Real aParU;
-  Standard_Real aParV;
+  Standard_Real aParU = NAN;
+  Standard_Real aParV = NAN;
   gp_Vec aDU, aDV;
   Standard_Real du = 0, dv = 0;
   Standard_Boolean isCalcDefl = aNbGridPnts[0] < 30 && aNbGridPnts[1] < 30;
@@ -2215,8 +2217,8 @@ void ComputeGridPoints
   Standard_Real aDef = 0.;
   if (isCalcDefl)
   {
-    Standard_Real xmin, ymin, zmin, xmax, ymax, zmax;
-    Standard_Real xmin1, ymin1, zmin1, xmax1, ymax1, zmax1;
+    Standard_Real xmin = NAN, ymin = NAN, zmin = NAN, xmax = NAN, ymax = NAN, zmax = NAN;
+    Standard_Real xmin1 = NAN, ymin1 = NAN, zmin1 = NAN, xmax1 = NAN, ymax1 = NAN, zmax1 = NAN;
     aGridBox.Get(xmin, ymin, zmin, xmax, ymax, zmax);
     anExtBox.Get(xmin1, ymin1, zmin1, xmax1, ymax1, zmax1);
     Standard_Integer anExtCount = 0;
@@ -2274,11 +2276,11 @@ void BuildBox(const Handle(Geom_BSplineSurface)       &theSurf,
             IntTools_SurfaceRangeLocalizeData &theSurfaceData,
               Bnd_Box                           &theBox)
 {
-  Standard_Integer i;
-  Standard_Integer j;
-  Standard_Integer aNbUPnts;
-  Standard_Integer aNbVPnts;
-  Standard_Real    aParam;
+  Standard_Integer i = 0;
+  Standard_Integer j = 0;
+  Standard_Integer aNbUPnts = 0;
+  Standard_Integer aNbVPnts = 0;
+  Standard_Real    aParam = NAN;
   gp_Pnt           aPnt;
 
   theSurfaceData.SetFrame(theFirstU, theLastU, theFirstV, theLastV);

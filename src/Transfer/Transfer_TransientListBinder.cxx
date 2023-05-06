@@ -24,8 +24,8 @@ IMPLEMENT_STANDARD_RTTIEXT(Transfer_TransientListBinder,Transfer_Binder)
 //function : Constructor
 //purpose  : 
 //=======================================================================
-Transfer_TransientListBinder::Transfer_TransientListBinder  ()
-{  theres = new TColStd_HSequenceOfTransient();  }
+Transfer_TransientListBinder::Transfer_TransientListBinder  () : theres(new TColStd_HSequenceOfTransient())
+{   }
 
 //=======================================================================
 //function : Constructor
@@ -33,8 +33,8 @@ Transfer_TransientListBinder::Transfer_TransientListBinder  ()
 //=======================================================================
 
 Transfer_TransientListBinder::Transfer_TransientListBinder
-  (const Handle(TColStd_HSequenceOfTransient)& list)
-{  theres = list;  }
+  (const Handle(TColStd_HSequenceOfTransient)& list) : theres(list)
+{   }
 
 //=======================================================================
 //function : IsMultiple

@@ -65,7 +65,7 @@ private:
 
 
   Handle(StepGeom_Axis1Placement) axis;
-  Standard_Real angle;
+  Standard_Real angle{};
 
 
 };

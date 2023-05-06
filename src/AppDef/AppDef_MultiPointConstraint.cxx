@@ -77,7 +77,7 @@ AppDef_MultiPointConstraint::AppDef_MultiPointConstraint
   tabTang = new TColgp_HArray1OfVec(1, tabVec.Length());
   tabTang2d = new TColgp_HArray1OfVec2d(1, tabVec2d.Length());
 
-  Standard_Integer i, Lower = tabVec.Lower();
+  Standard_Integer i = 0, Lower = tabVec.Lower();
   for (i = 1; i <= tabVec.Length(); i++) {
     tabTang->SetValue(i, tabVec.Value(Lower+i-1));
   }
@@ -116,7 +116,7 @@ AppDef_MultiPointConstraint::AppDef_MultiPointConstraint
   tabTang = new TColgp_HArray1OfVec(1, tabVec.Length());
   tabTang2d = new TColgp_HArray1OfVec2d(1, tabVec2d.Length());
 
-  Standard_Integer i, Lower = tabVec.Lower();
+  Standard_Integer i = 0, Lower = tabVec.Lower();
   for (i = 1; i <= tabVec.Length(); i++) {
     tabTang->SetValue(i, tabVec.Value(Lower+i-1));
   }
@@ -139,7 +139,7 @@ AppDef_MultiPointConstraint::AppDef_MultiPointConstraint (
 
   tabTang = new TColgp_HArray1OfVec(1, tabVec.Length());
 
-  Standard_Integer i, Lower = tabVec.Lower();
+  Standard_Integer i = 0, Lower = tabVec.Lower();
   for (i = 1; i <= tabVec.Length(); i++) {
     tabTang->SetValue(i, tabVec.Value(Lower+i-1));
   }
@@ -158,7 +158,7 @@ AppDef_MultiPointConstraint::AppDef_MultiPointConstraint
   }
 
   tabTang = new TColgp_HArray1OfVec(1, tabVec.Length());
-  Standard_Integer i, Lower = tabVec.Lower();
+  Standard_Integer i = 0, Lower = tabVec.Lower();
   for (i = 1; i <= tabVec.Length(); i++) {
     tabTang->SetValue(i, tabVec.Value(Lower+i-1));
   }
@@ -183,7 +183,7 @@ AppDef_MultiPointConstraint::AppDef_MultiPointConstraint
   }
 
   tabTang2d = new TColgp_HArray1OfVec2d(1, tabVec2d.Length());
-  Standard_Integer i, Lower = tabVec2d.Lower();
+  Standard_Integer i = 0, Lower = tabVec2d.Lower();
   for (i = 1; i <= tabVec2d.Length(); i++) {
     tabTang2d->SetValue(i, tabVec2d.Value(Lower+i-1));
   }
@@ -204,7 +204,7 @@ AppDef_MultiPointConstraint::AppDef_MultiPointConstraint
   }
   
   tabTang2d = new TColgp_HArray1OfVec2d(1, tabVec2d.Length());
-  Standard_Integer i, Lower = tabVec2d.Lower();
+  Standard_Integer i = 0, Lower = tabVec2d.Lower();
   for (i = 1; i <= tabVec2d.Length(); i++) {
     tabTang2d->SetValue(i, tabVec2d.Value(Lower+i-1));
   }

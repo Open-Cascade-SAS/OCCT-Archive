@@ -149,7 +149,7 @@ protected:
   Standard_Integer myNbPoints;
   Standard_Integer myOrder;
   Handle(Adaptor3d_Curve) my3dCurve;
-  Standard_Integer myTang;
+  Standard_Integer myTang{};
   Handle(Geom2d_Curve) my2dCurve;
   Handle(Adaptor2d_Curve2d) myHCurve2d;
   Handle(Law_Function) myG0Crit;

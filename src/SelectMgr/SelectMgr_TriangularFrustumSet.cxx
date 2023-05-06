@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <SelectMgr_TriangularFrustumSet.hxx>
 
 #include <BRepMesh_DataStructureOfDelaun.hxx>
@@ -549,7 +551,7 @@ Standard_Boolean SelectMgr_TriangularFrustumSet::OverlapsCylinder (const Standar
   const Standard_Real anAngle = aCylNorm.Angle (aDirNorm);
   const Standard_Real aCosAngle = Cos (anAngle);
   const gp_Pln aPln (myFrustums.First()->myVertices[0], aDirNorm);
-  Standard_Real aCoefA, aCoefB, aCoefC, aCoefD;
+  Standard_Real aCoefA = NAN, aCoefB = NAN, aCoefC = NAN, aCoefD = NAN;
   aPln.Coefficients (aCoefA, aCoefB, aCoefC, aCoefD);
 
   const Standard_Real aTBottom = -(aBottomCenter.XYZ().Dot (aDirNorm.XYZ()) + aCoefD) / aDirNorm.Dot (aDirNorm);
@@ -659,7 +661,7 @@ Standard_Boolean SelectMgr_TriangularFrustumSet::OverlapsCircle (const Standard_
 
   const gp_Dir aDirNorm (aVecPlane1.Crossed (aVecPlane2));
   const gp_Pln aPln (myFrustums.First()->myVertices[0], aDirNorm);
-  Standard_Real aCoefA, aCoefB, aCoefC, aCoefD;
+  Standard_Real aCoefA = NAN, aCoefB = NAN, aCoefC = NAN, aCoefD = NAN;
   aPln.Coefficients (aCoefA, aCoefB, aCoefC, aCoefD);
 
   const Standard_Real aT = -(aCenter.XYZ().Dot (aDirNorm.XYZ()) + aCoefD) / aDirNorm.Dot (aDirNorm);
@@ -903,7 +905,7 @@ Standard_Boolean SelectMgr_TriangularFrustumSet::segmentTriangleIntersection (co
                                                                               const gp_Pnt& theV1, const gp_Pnt& theV2, const gp_Pnt& theV3)
 {
   gp_Vec        aPVec, aTVec, aQVec;
-  Standard_Real aD, aInvD, anU, aV, aT;
+  Standard_Real aD = NAN, aInvD = NAN, anU = NAN, aV = NAN, aT = NAN;
 
   gp_Vec anEdge1 = theV2.XYZ() - theV1.XYZ();
   gp_Vec anEdge2 = theV3.XYZ() - theV1.XYZ();

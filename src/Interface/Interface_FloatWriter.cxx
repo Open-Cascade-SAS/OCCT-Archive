@@ -98,7 +98,7 @@ Standard_Integer Interface_FloatWriter::Convert (const Standard_Real val,
 {
 //    Valeur flottante, expurgee de "0000" qui trainent et de "E+00"
   const Standard_Integer anMasSize = 5; // change 6 to 5: index 5 is not used below
-  char lxp[anMasSize], *pText; 
+  char lxp[anMasSize], *pText = nullptr; 
   int i0 = 0, j0 = 0;
 
   for (Standard_Integer i = 0; i < anMasSize; ++i)

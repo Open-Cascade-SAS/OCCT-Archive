@@ -52,9 +52,9 @@ static void DEBUG(const AppParCurves_MultiCurve& MC) {
 
 
 
-Approx_MCurvesToBSpCurve::Approx_MCurvesToBSpCurve()
+Approx_MCurvesToBSpCurve::Approx_MCurvesToBSpCurve() : myDone(Standard_False)
 {
-  myDone = Standard_False;
+  
 }
 
 void Approx_MCurvesToBSpCurve::Reset()
@@ -78,7 +78,7 @@ void Approx_MCurvesToBSpCurve::Perform
   (const AppParCurves_SequenceOfMultiCurve& TheSeq)
 {
 
-  Standard_Integer i, j, deg=0;
+  Standard_Integer i = 0, j = 0, deg=0;
   Standard_Integer nbcu = TheSeq.Length();
   AppParCurves_MultiCurve CU;
   Standard_Integer nbpolesspl=0, nbknots=0;
@@ -167,8 +167,8 @@ void Approx_MCurvesToBSpCurve::Perform
     }
 
     Standard_Integer kpol = 1, kpoles3d=1, kpoles2d=1;
-    Standard_Integer mydegre, k;
-    Standard_Integer first, last, Inc, thefirst;
+    Standard_Integer mydegre = 0, k = 0;
+    Standard_Integer first = 0, last = 0, Inc = 0, thefirst = 0;
     if (nb3d != 0) thefirst = 1;
     else thefirst = 2;
 

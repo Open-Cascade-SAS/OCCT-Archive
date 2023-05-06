@@ -25,7 +25,7 @@
 #include <StdFail_NotDone.hxx>
 
 GC_MakeSegment::GC_MakeSegment(const gp_Pnt& P1 ,
-				 const gp_Pnt& P2 ) 
+				 const gp_Pnt& P2 ) : GC_Root() 
 {
   Standard_Real dist = P1.Distance(P2);
   Handle(Geom_Line) L = GC_MakeLine(P1,P2);
@@ -35,7 +35,7 @@ GC_MakeSegment::GC_MakeSegment(const gp_Pnt& P1 ,
 
 GC_MakeSegment::GC_MakeSegment(const gp_Lin& Line    ,
 				 const gp_Pnt& Point   ,
-				 const Standard_Real U ) 
+				 const Standard_Real U ) : GC_Root() 
 {
   Standard_Real Ufirst = ElCLib::Parameter(Line,Point);
   Handle(Geom_Line) L = new Geom_Line(Line);
@@ -45,7 +45,7 @@ GC_MakeSegment::GC_MakeSegment(const gp_Lin& Line    ,
 
 GC_MakeSegment::GC_MakeSegment(const gp_Lin& Line  ,
 				 const gp_Pnt& P1    ,
-				 const gp_Pnt& P2    ) 
+				 const gp_Pnt& P2    ) : GC_Root() 
 {
   Standard_Real Ufirst = ElCLib::Parameter(Line,P1);
   Standard_Real Ulast = ElCLib::Parameter(Line,P2);
@@ -56,7 +56,7 @@ GC_MakeSegment::GC_MakeSegment(const gp_Lin& Line  ,
 
 GC_MakeSegment::GC_MakeSegment(const gp_Lin& Line  ,
 				 const Standard_Real    U1    ,
-				 const Standard_Real    U2    ) 
+				 const Standard_Real    U2    ) : GC_Root() 
 {
   Handle(Geom_Line) L = new Geom_Line(Line);
   TheSegment = new Geom_TrimmedCurve(L,U1,U2,Standard_True);

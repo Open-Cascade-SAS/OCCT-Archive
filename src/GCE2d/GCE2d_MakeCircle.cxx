@@ -24,15 +24,15 @@
 #include <gp_Pnt2d.hxx>
 #include <StdFail_NotDone.hxx>
 
-GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Circ2d& C)
+GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Circ2d& C) : GCE2d_Root(), TheCircle(new Geom2d_Circle(C))
 {
   TheError = gce_Done;
-  TheCircle = new Geom2d_Circle(C);
+  
 }
 
 GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Ax2d&         A     ,
 				   const Standard_Real    Radius,
-				   const Standard_Boolean Sense )
+				   const Standard_Boolean Sense ) : GCE2d_Root()
 {
   if (Radius < 0.0) { TheError = gce_NegativeRadius; }
   else {
@@ -42,7 +42,7 @@ GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Ax2d&         A     ,
 }
 
 GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Ax22d&     A     ,
-				   const Standard_Real Radius)
+				   const Standard_Real Radius) : GCE2d_Root()
 {
   if (Radius < 0.0) { TheError = gce_NegativeRadius; }
   else {
@@ -52,7 +52,7 @@ GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Ax22d&     A     ,
 }
 
 GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Circ2d& Circ  ,
-				   const gp_Pnt2d&  Point ) 
+				   const gp_Pnt2d&  Point ) : GCE2d_Root() 
 {
   gp_Circ2d C = gce_MakeCirc2d(Circ,Point);
   TheCircle = new Geom2d_Circle(C);
@@ -60,7 +60,7 @@ GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Circ2d& Circ  ,
 }
 
 GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Circ2d&    Circ ,
-				   const Standard_Real Dist ) 
+				   const Standard_Real Dist ) : GCE2d_Root() 
 {
   gce_MakeCirc2d C = gce_MakeCirc2d(Circ,Dist);
   TheError = C.Status();
@@ -71,7 +71,7 @@ GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Circ2d&    Circ ,
 
 GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Pnt2d& P1 ,
 				   const gp_Pnt2d& P2 ,
-				   const gp_Pnt2d& P3 ) 
+				   const gp_Pnt2d& P3 ) : GCE2d_Root() 
 {
   gce_MakeCirc2d C = gce_MakeCirc2d(P1,P2,P3);
   TheError = C.Status();
@@ -83,7 +83,7 @@ GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Pnt2d& P1 ,
 
 GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Pnt2d&        Point  ,
 				   const Standard_Real    Radius ,
-				   const Standard_Boolean Sense  ) 
+				   const Standard_Boolean Sense  ) : GCE2d_Root() 
 {
   gce_MakeCirc2d C = gce_MakeCirc2d(Point,Radius,Sense);
   TheError = C.Status();
@@ -94,7 +94,7 @@ GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Pnt2d&        Point  ,
 
 GCE2d_MakeCircle::GCE2d_MakeCircle(const gp_Pnt2d&        Center ,
 				   const gp_Pnt2d&        Point  ,
-				   const Standard_Boolean Sense  ) 
+				   const Standard_Boolean Sense  ) : GCE2d_Root() 
 {
   gce_MakeCirc2d C = gce_MakeCirc2d(Center,Point,Sense);
   TheError = C.Status();

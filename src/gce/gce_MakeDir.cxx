@@ -27,7 +27,7 @@
 //   Creation d une direction 3d (Dir) de gp a partir de 2 Pnt de gp.     +
 //=========================================================================
 gce_MakeDir::gce_MakeDir(const gp_Pnt& P1,
-			 const gp_Pnt& P2)
+			 const gp_Pnt& P2) : gce_Root()
 {
   if (P1.Distance(P2) <= gp::Resolution()) { TheError = gce_ConfusedPoints; }
   else {
@@ -36,7 +36,7 @@ gce_MakeDir::gce_MakeDir(const gp_Pnt& P1,
   }
 }
 
-gce_MakeDir::gce_MakeDir(const gp_XYZ& Coord)
+gce_MakeDir::gce_MakeDir(const gp_XYZ& Coord) : gce_Root()
 {
   if (Coord.Modulus() <= gp::Resolution()) { TheError = gce_NullVector; }
   else {
@@ -45,7 +45,7 @@ gce_MakeDir::gce_MakeDir(const gp_XYZ& Coord)
   }
 }
 
-gce_MakeDir::gce_MakeDir(const gp_Vec& V)
+gce_MakeDir::gce_MakeDir(const gp_Vec& V) : gce_Root()
 {
   if (V.Magnitude() <= gp::Resolution()) { TheError = gce_NullVector; }
   else {
@@ -56,7 +56,7 @@ gce_MakeDir::gce_MakeDir(const gp_Vec& V)
 
 gce_MakeDir::gce_MakeDir(const Standard_Real Xv,
 			 const Standard_Real Yv,
-			 const Standard_Real Zv)
+			 const Standard_Real Zv) : gce_Root()
 {
   if (Xv*Xv+Yv*Yv+Zv*Zv <= gp::Resolution()) { TheError = gce_NullVector; }
   else {

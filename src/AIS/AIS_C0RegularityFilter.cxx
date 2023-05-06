@@ -37,7 +37,7 @@ AIS_C0RegularityFilter::AIS_C0RegularityFilter(const TopoDS_Shape& aShape)
 {
   TopTools_IndexedDataMapOfShapeListOfShape SubShapes;
   TopExp::MapShapesAndAncestors(aShape,TopAbs_EDGE,TopAbs_FACE,SubShapes);
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   for (Standard_Integer i = 1; i <= SubShapes.Extent(); i++) {
     Ok = Standard_False;
     TopTools_ListIteratorOfListOfShape it(SubShapes(i));
@@ -56,7 +56,7 @@ AIS_C0RegularityFilter::AIS_C0RegularityFilter(const TopoDS_Shape& aShape)
       }
     }
     if (Ok) {
-      TopoDS_Shape curEdge = SubShapes.FindKey( i );
+      const TopoDS_Shape& curEdge = SubShapes.FindKey( i );
       myMapOfEdges.Add(curEdge);
     }
   }

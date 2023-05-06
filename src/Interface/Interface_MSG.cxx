@@ -122,7 +122,7 @@ Interface_MSG::operator Standard_CString () const
 
 Standard_Integer  Interface_MSG::Read (Standard_IStream& S)
 {
-  Standard_Integer i,nb = 0;
+  Standard_Integer i = 0,nb = 0;
   char buf[200], key[200];
   buf[0] = '\0';
   while (S.getline (buf,200)) {
@@ -158,7 +158,7 @@ Standard_Integer  Interface_MSG::Read (Standard_IStream& S)
   for (; iter.More(); iter.Next()) {
     if (!iter.Key().StartsWith(rootkey)) continue;
     S<<"@"<<iter.Key()<<"\n";
-    const Handle(TCollection_HAsciiString) str = iter.Value();
+    const Handle(TCollection_HAsciiString)& str = iter.Value();
     if (str.IsNull()) continue;
     nb ++;
     S<<str->ToCString()<<"\n";
@@ -237,7 +237,7 @@ void  Interface_MSG::SetMode (const Standard_Boolean running,
 void  Interface_MSG::PrintTrace (Standard_OStream& S)
 {
   Handle(TCollection_HAsciiString) dup;
-  Standard_Integer i, nb = 0;
+  Standard_Integer i = 0, nb = 0;
   if (!thedup.IsNull()) nb = thedup->Length()/2;
   for (i = 1; i <= nb; i ++) {
     dup = thedup->Value(2*i-1);
@@ -370,7 +370,7 @@ Standard_Boolean  Interface_MSG::NDate (const Standard_CString text,
                                         Standard_Integer& mn,
                                         Standard_Integer& ss)
 {
-  Standard_Integer i ,num = 1;
+  Standard_Integer i = 0 ,num = 1;
   for (i = 0; text[i] != '\0'; i ++) {
     char val = text[i];
     if (val >= 48 && val <= 57) {
@@ -413,7 +413,7 @@ Standard_Integer  Interface_MSG::CDate (const Standard_CString text1,
 Standard_CString  Interface_MSG::Blanks (const Standard_Integer val,
                                          const Standard_Integer max)
 {
- Standard_Integer count;
+ Standard_Integer count = 0;
   if (val < 0)  return Interface_MSG::Blanks (-val,max-1);
   if      (val <         10) count = 9;
   else if (val <        100) count = 8;

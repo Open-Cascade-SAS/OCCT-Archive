@@ -1964,7 +1964,7 @@ static const Standard_Real Weight[] = {
 
 void math::GaussPoints(const Standard_Integer Index, math_Vector& GPoint) {
   Standard_Integer Som = 0;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for ( i = 1; i < Index; i++) {
     Som += (i+1) >> 1;
   }
@@ -1979,7 +1979,7 @@ void math::GaussPoints(const Standard_Integer Index, math_Vector& GPoint) {
 
 void math::GaussWeights(const Standard_Integer Index, math_Vector& GWeight) {
   Standard_Integer Som = 0;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
 
   for ( i = 1; i < Index; i++) {
     Som += (i+1) >> 1;
@@ -2011,7 +2011,7 @@ Standard_Boolean math::OrderedGaussPointsAndWeights(const Standard_Integer Index
 
   if (Index <= 61) {
     // Get points from the array.
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Integer aStartInd = 1;
 
     // Compute the index of starting point in the array.

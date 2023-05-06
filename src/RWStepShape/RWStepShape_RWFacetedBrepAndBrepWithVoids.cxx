@@ -43,7 +43,7 @@ void RWStepShape_RWFacetedBrepAndBrepWithVoids::ReadStep
 
 	Handle(StepShape_HArray1OfOrientedClosedShell) aVoids;
 	Handle(StepShape_OrientedClosedShell) anent;
-	Standard_Integer nsub1;
+	Standard_Integer nsub1 = 0;
 	if (data->ReadSubList (num,1,"voids",ach,nsub1)) {
 	  Standard_Integer nb1 = data->NbParams(nsub1);
 	  aVoids = new StepShape_HArray1OfOrientedClosedShell (1, nb1);

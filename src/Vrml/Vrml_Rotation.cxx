@@ -21,9 +21,9 @@ Vrml_Rotation::Vrml_Rotation()
   myRotation = tmpR;
 }
 
-Vrml_Rotation::Vrml_Rotation(const Vrml_SFRotation& aRotation)
+Vrml_Rotation::Vrml_Rotation(const Vrml_SFRotation& aRotation) : myRotation(aRotation)
 {
-  myRotation = aRotation;
+  
 }
 
  void Vrml_Rotation::SetRotation(const Vrml_SFRotation& aRotation) 

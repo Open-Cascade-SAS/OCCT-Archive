@@ -47,7 +47,7 @@ void RWStepShape_RWFaceOuterBound::ReadStep
 
 	// --- inherited field : orientation ---
 
-	Standard_Boolean aOrientation;
+	Standard_Boolean aOrientation = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadBoolean (num,3,"orientation",ach,aOrientation);
 

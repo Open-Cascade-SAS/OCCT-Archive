@@ -21,7 +21,7 @@
 IMPLEMENT_STANDARD_RTTIEXT(IFSelect_GeneralModifier,Standard_Transient)
 
 IFSelect_GeneralModifier::IFSelect_GeneralModifier
-  (const Standard_Boolean maychangegraph)    {  thechgr = maychangegraph;  }
+  (const Standard_Boolean maychangegraph) : thechgr(maychangegraph)    {   }
 
     Standard_Boolean  IFSelect_GeneralModifier::MayChangeGraph () const
       {  return thechgr;  }

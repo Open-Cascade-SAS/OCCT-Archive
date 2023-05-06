@@ -102,11 +102,11 @@ private:
   GCPnts_TangentialDeflection   myDiscretTool;
   TopoDS_Vertex                 myFirstVertex;
   TopoDS_Vertex                 myLastVertex;
-  Standard_Real                 mySquareEdgeDef;
-  Standard_Real                 mySquareMinSize;
-  Standard_Real                 myEdgeSqTol;
-  Standard_Real                 myFaceRangeU[2];
-  Standard_Real                 myFaceRangeV[2];
+  Standard_Real                 mySquareEdgeDef{};
+  Standard_Real                 mySquareMinSize{};
+  Standard_Real                 myEdgeSqTol{};
+  Standard_Real                 myFaceRangeU[2]{};
+  Standard_Real                 myFaceRangeV[2]{};
 };
 
 #endif

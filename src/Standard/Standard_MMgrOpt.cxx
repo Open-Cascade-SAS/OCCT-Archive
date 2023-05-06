@@ -531,7 +531,7 @@ Standard_Integer Standard_MMgrOpt::Purge(Standard_Boolean )
 
   while (aNextPool) {
     // fill the table of pools
-    Standard_Integer iPool;
+    Standard_Integer iPool = 0;
     for (iPool = 0; aNextPool && iPool < NB_POOLS_WIN; iPool++) {
       aPools[iPool] = aNextPool;
       aFreeSize[iPool] = 0;
@@ -574,7 +574,7 @@ Standard_Integer Standard_MMgrOpt::Purge(Standard_Boolean )
 
     // scan free blocks again, and remove those of them
     // that belong to free pools
-    Standard_Integer j;
+    Standard_Integer j = 0;
     for (i = 0; i <= nCells; i++ ) {
       Standard_Size * aFree = myFreeList[i];
       Standard_Size * aPrevFree = NULL;

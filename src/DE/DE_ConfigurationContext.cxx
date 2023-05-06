@@ -42,7 +42,7 @@ namespace
   {
     TCollection_AsciiString aBuffer;
     Standard_Integer aBufSize = 10;
-    Standard_Integer aLen;
+    Standard_Integer aLen = 0;
     theLine.Clear();
     do
     {

@@ -72,7 +72,7 @@ private:
 
   StepBasic_SiPrefix prefix;
   StepBasic_SiUnitName name;
-  Standard_Boolean hasPrefix;
+  Standard_Boolean hasPrefix{};
 
 
 };

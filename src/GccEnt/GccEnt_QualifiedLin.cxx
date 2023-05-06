@@ -42,9 +42,9 @@ Standard_Boolean GccEnt_QualifiedLin::
 
 GccEnt_QualifiedLin::
    GccEnt_QualifiedLin (const gp_Lin2d&       Qualified,
-			const GccEnt_Position Qualifier) {
-   TheQualified = Qualified;
-   TheQualifier = Qualifier;
+			const GccEnt_Position Qualifier) : TheQualified(Qualified), TheQualifier(Qualifier) {
+   
+   
  }
 
 

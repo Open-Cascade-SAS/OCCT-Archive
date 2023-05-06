@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepShape_RWRightCircularCylinder.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -47,13 +49,13 @@ void RWStepShape_RWRightCircularCylinder::ReadStep
 
 	// --- own field : height ---
 
-	Standard_Real aHeight;
+	Standard_Real aHeight = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"height",ach,aHeight);
 
 	// --- own field : radius ---
 
-	Standard_Real aRadius;
+	Standard_Real aRadius = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"radius",ach,aRadius);
 

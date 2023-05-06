@@ -140,7 +140,7 @@ void Units_Lexicon::AddToken(const Standard_CString aword,
   Handle(Units_Token) token;
   Handle(Units_Token) referencetoken;
   Standard_Boolean found = Standard_False;
-  Standard_Integer index;
+  Standard_Integer index = 0;
 
   for(index=1;index<=thesequenceoftokens->Length();index++) {
     referencetoken = thesequenceoftokens->Value(index);

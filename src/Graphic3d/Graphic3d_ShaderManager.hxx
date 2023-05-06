@@ -216,7 +216,7 @@ protected:
 
   Aspect_GraphicsLibrary myGapi;          //!< GAPI name
   Graphic3d_Vec2i  myGapiVersion;         //!< GAPI version major/minor number pair
-  Standard_Boolean myGlslExtensions[Graphic3d_GlslExtension_NB];
+  Standard_Boolean myGlslExtensions[Graphic3d_GlslExtension_NB]{};
   Standard_Boolean myHasFlatShading;      //!< flag indicating flat shading usage
   Standard_Boolean myToReverseDFdxSign;   //!< flag to reverse flat shading normal (workaround)
   Standard_Boolean mySetPointSize;        //!< always set gl_PointSize variable

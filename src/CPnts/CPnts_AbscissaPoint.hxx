@@ -170,11 +170,11 @@ private:
 
 
 
-  Standard_Boolean myDone;
-  Standard_Real myL;
-  Standard_Real myParam;
-  Standard_Real myUMin;
-  Standard_Real myUMax;
+  Standard_Boolean myDone{};
+  Standard_Real myL{};
+  Standard_Real myParam{};
+  Standard_Real myUMin{};
+  Standard_Real myUMax{};
   CPnts_MyRootFunction myF;
 
 

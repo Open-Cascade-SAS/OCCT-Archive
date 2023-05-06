@@ -59,9 +59,9 @@ Handle(Geom2d_Geometry) Geom2d_Parabola::Copy() const
 //purpose  : 
 //=======================================================================
 
-Geom2d_Parabola::Geom2d_Parabola (const gp_Parab2d& Prb) 
+Geom2d_Parabola::Geom2d_Parabola (const gp_Parab2d& Prb) : focalLength(Prb.Focal ()) 
 {
-  focalLength = Prb.Focal ();
+  
   pos         = Prb.Axis();
 }
 

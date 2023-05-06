@@ -45,7 +45,7 @@ void RWStepAP214_RWAutoDesignSecurityClassificationAssignment::ReadStep
 
 	Handle(StepBasic_HArray1OfApproval) aItems;
 	Handle(StepBasic_Approval) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"items",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aItems = new StepBasic_HArray1OfApproval (1, nb2);

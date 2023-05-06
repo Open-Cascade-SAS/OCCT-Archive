@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DsgPrs_LengthPresentation.hxx>
 
 #include <DsgPrs.hxx>
@@ -48,7 +50,7 @@ void DsgPrs_LengthPresentation::Add (const Handle(Prs3d_Presentation)& aPresenta
   gp_Pnt Proj1 = ElCLib::Value(ElCLib::Parameter(L1,OffsetPoint),L1);
   gp_Pnt Proj2 = ElCLib::Value(ElCLib::Parameter(L2,OffsetPoint),L2);
   gp_Lin L3 = Proj1.IsEqual(Proj2,Precision::Confusion())? gp_Lin(Proj1,aDirection) : gce_MakeLin(Proj1,Proj2);
-  Standard_Real parmin,parmax,parcur;
+  Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
   parmin = ElCLib::Parameter(L3,Proj1);
   parmax = parmin;
   parcur = ElCLib::Parameter(L3,Proj2);
@@ -204,7 +206,7 @@ void DsgPrs_LengthPresentation::Add (const Handle(Prs3d_Presentation)& aPresenta
   gp_Pnt Proj1 = ElCLib::Value(ElCLib::Parameter(L1,OffsetPoint),L1);
   gp_Pnt Proj2 = ElCLib::Value(ElCLib::Parameter(L2,OffsetPoint),L2);
   gp_Lin L3 = Proj1.IsEqual(Proj2,Precision::Confusion())? gp_Lin(Proj1,aDirection) : gce_MakeLin(Proj1,Proj2);
-  Standard_Real parmin,parmax,parcur;
+  Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
   parmin = ElCLib::Parameter(L3,Proj1);
   parmax = parmin;
   parcur = ElCLib::Parameter(L3,Proj2);
@@ -279,7 +281,7 @@ void DsgPrs_LengthPresentation::Add( const Handle(Prs3d_Presentation)& aPresenta
   gp_Pnt EndOfArrow2;
   gp_Dir DirOfArrow1;
   Handle( Geom_Curve ) VCurve, UCurve;
-  Standard_Real FirstU, deltaU = 0.0e0, FirstV, deltaV = 0.0e0;
+  Standard_Real FirstU = NAN, deltaU = 0.0e0, FirstV = NAN, deltaV = 0.0e0;
   
   DsgPrs::ComputeCurvilinearFacesLengthPresentation( LA->ArrowAspect()->Length(),
 						     LA->ArrowAspect()->Length(),
@@ -322,8 +324,8 @@ void DsgPrs_LengthPresentation::Add( const Handle(Prs3d_Presentation)& aPresenta
   Prs3d_Text::Draw (aPresentation->CurrentGroup(), LA->TextAspect(), aText, OffsetPoint);
  
   // Two curves from end of Arrow2 to AttachmentPoint2
-  Standard_Real Alpha, delta;
-  Standard_Integer NodeNumber;
+  Standard_Real Alpha = NAN, delta = NAN;
+  Standard_Integer NodeNumber = 0;
   
   Alpha  = Abs( deltaU );
   if (Alpha > Precision::Angular() && Alpha<Precision::Infinite())

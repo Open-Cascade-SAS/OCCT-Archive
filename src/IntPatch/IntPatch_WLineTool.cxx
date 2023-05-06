@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntPatch_WLineTool.hxx>
 
 #include <Adaptor3d_Surface.hxx>
@@ -73,7 +75,7 @@ static void FillPointsHash(const Handle(IntPatch_WLine)         &theWLine,
   // 1 - Delete point.
   // 0 - Store point.
   // -1 - Vertex point (not delete).
-  Standard_Integer i, v;
+  Standard_Integer i = 0, v = 0;
 
   for(i = 1; i <= theWLine->NbPnts(); i++)
     thePointsHash.SetValue(i, 0);
@@ -95,7 +97,7 @@ static Handle(IntPatch_WLine) MakeNewWLine(const Handle(IntPatch_WLine)         
                                            NCollection_Array1<Standard_Integer> &thePointsHash,
                                            const Standard_Boolean theIsOuter)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   Handle(IntSurf_LineOn2S) aPurgedLineOn2S = new IntSurf_LineOn2S();
   Handle(IntPatch_WLine) aLocalWLine = new IntPatch_WLine(aPurgedLineOn2S, Standard_False);
@@ -219,7 +221,7 @@ static Handle(IntPatch_WLine)
                     const Handle(Adaptor3d_TopolTool)  &theDom1,
                     const Handle(Adaptor3d_TopolTool)  &theDom2)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   NCollection_Array1<Standard_Integer> aDelOuterPointsHash(1, theWLine->NbPnts());
   FillPointsHash(theWLine, aDelOuterPointsHash);
@@ -229,7 +231,7 @@ static Handle(IntPatch_WLine)
       return theWLine;
 
   gp_Pnt2d aPntOnF1, aPntOnF2;
-  Standard_Real aX1, aY1, aX2, aY2;
+  Standard_Real aX1 = NAN, aY1 = NAN, aX2 = NAN, aY2 = NAN;
 
   // Iterate over points in walking line and delete which are out of bounds.
   // Forward.
@@ -314,7 +316,7 @@ static Handle(IntPatch_WLine)
     // Vertex geometry.
     IntPatch_Point aVertex = aLocalWLine->Vertex(1);
     aVertex.SetValue(theWLine->Point(aFirstGeomIdx).Value());
-    Standard_Real aU1, aU2, aV1, aV2;
+    Standard_Real aU1 = NAN, aU2 = NAN, aV1 = NAN, aV2 = NAN;
     theWLine->Point(aFirstGeomIdx).Parameters(aU1, aV1, aU2, aV2);
     MovePoint(theS1, aU1, aV1);
     MovePoint(theS2, aU2, aV2);
@@ -329,7 +331,7 @@ static Handle(IntPatch_WLine)
     // Vertex geometry.
     IntPatch_Point aVertex = aLocalWLine->Vertex(aLocalWLine->NbVertex());
     aVertex.SetValue(theWLine->Point(aLastGeomIdx).Value());
-    Standard_Real aU1, aU2, aV1, aV2;
+    Standard_Real aU1 = NAN, aU2 = NAN, aV1 = NAN, aV2 = NAN;
     theWLine->Point(aLastGeomIdx).Parameters(aU1, aV1, aU2, aV2);
     MovePoint(theS1, aU1, aV1);
     MovePoint(theS2, aU2, aV2);
@@ -421,7 +423,7 @@ static Handle(IntPatch_WLine)
   // III: Check points for tube criteria:
   // Workaround to handle case of small amount points after purge.
   // Test "boolean boptuc_complex B5" and similar.
-  Standard_Integer aNbPnt = 0 , i;
+  Standard_Integer aNbPnt = 0 , i = 0;
 
   if (theWLine->NbPnts() <= 2)
     return theWLine;
@@ -1373,7 +1375,7 @@ Handle(IntPatch_WLine) IntPatch_WLineTool::
                      const Handle(Adaptor3d_TopolTool)  &theDom1,
                      const Handle(Adaptor3d_TopolTool)  &theDom2)
 {
-  Standard_Integer i, k, v, nb, nbvtx;
+  Standard_Integer i = 0, k = 0, v = 0, nb = 0, nbvtx = 0;
   Handle(IntPatch_WLine) aResult;
   nbvtx = theWLine->NbVertex();
   nb = theWLine->NbPnts();
@@ -1726,7 +1728,7 @@ static Standard_Boolean IsNeedSkipWL(const Handle(IntPatch_WLine)& theWL,
                                      const Bnd_Box2d& theBoxS2,
                                      const Standard_Real* const theArrPeriods)
 {
-  Standard_Real aFirstp, aLastp;
+  Standard_Real aFirstp = NAN, aLastp = NAN;
   Standard_Integer aNbVtx = theWL->NbVertex();
   Standard_Boolean isNeedSkip = Standard_True;
 
@@ -1734,7 +1736,7 @@ static Standard_Boolean IsNeedSkipWL(const Handle(IntPatch_WLine)& theWL,
     aFirstp = theWL->Vertex (i).ParameterOnLine();
     aLastp  = theWL->Vertex (i + 1).ParameterOnLine();
 
-    Standard_Real aU1, aV1, aU2, aV2;
+    Standard_Real aU1 = NAN, aV1 = NAN, aU2 = NAN, aV2 = NAN;
     const Standard_Integer pmid = (Standard_Integer)((aFirstp + aLastp) / 2);
     const IntSurf_PntOn2S& aPmid = theWL->Point (pmid);
     aPmid.Parameters (aU1, aV1, aU2, aV2);

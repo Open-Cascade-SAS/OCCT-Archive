@@ -35,10 +35,10 @@ DE_ConfigurationNode::DE_ConfigurationNode() :
 // function : DE_ConfigurationNode
 // purpose  :
 //=======================================================================
-DE_ConfigurationNode::DE_ConfigurationNode(const Handle(DE_ConfigurationNode)& theConfigurationNode)
+DE_ConfigurationNode::DE_ConfigurationNode(const Handle(DE_ConfigurationNode)& theConfigurationNode) : GlobalParameters(theConfigurationNode->GlobalParameters), myIsEnabled(theConfigurationNode->IsEnabled())
 {
-  GlobalParameters = theConfigurationNode->GlobalParameters;
-  myIsEnabled = theConfigurationNode->IsEnabled();
+  
+  
 }
 
 //=======================================================================

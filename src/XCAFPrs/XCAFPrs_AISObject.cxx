@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <XCAFPrs_AISObject.hxx>
 
 #include <BRep_Builder.hxx>
@@ -42,13 +44,13 @@ IMPLEMENT_STANDARD_RTTIEXT(XCAFPrs_AISObject,AIS_ColoredShape)
 
 XCAFPrs_AISObject::XCAFPrs_AISObject (const TDF_Label& theLabel)
 : AIS_ColoredShape(TopoDS_Shape()),
-  myToSyncStyles (Standard_True)
+  myLabel(theLabel), myToSyncStyles (Standard_True)
 {
   // define plastic material by default for proper color reproduction
   setMaterial (myDrawer, Graphic3d_NameOfMaterial_Plastified, Standard_False, Standard_False);
   hasOwnMaterial = Standard_True;
 
-  myLabel = theLabel;
+  
 }
 
 //=======================================================================
@@ -72,7 +74,7 @@ static void DisplayText (const TDF_Label& aLabel,
       BRepBndLib::Add (aShape, aBox);
       if ( ! aBox.IsVoid() ) 
       {
-	Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+	Standard_Real aXmin = NAN, aYmin = NAN, aZmin = NAN, aXmax = NAN, aYmax = NAN, aZmax = NAN;
 	aBox.Get (aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
 	gp_Pnt aPnt (0.5 * (aXmin + aXmax), 0.5 * (aYmin + aYmax), 0.5 * (aZmin + aZmax));
 	Prs3d_Text::Draw (aPrs->CurrentGroup(), anAspect, aName->Get(), aPnt);

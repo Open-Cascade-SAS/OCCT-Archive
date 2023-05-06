@@ -115,10 +115,10 @@ protected:
 private:
 
 
-  Standard_Real theCrossSectionalArea;
+  Standard_Real theCrossSectionalArea{};
   Handle(StepElement_HArray1OfMeasureOrUnspecifiedValue) theShearArea;
   Handle(TColStd_HArray1OfReal) theSecondMomentOfArea;
-  Standard_Real theTorsionalConstant;
+  Standard_Real theTorsionalConstant{};
   StepElement_MeasureOrUnspecifiedValue theWarpingConstant;
   Handle(StepElement_HArray1OfMeasureOrUnspecifiedValue) theLocationOfCentroid;
   Handle(StepElement_HArray1OfMeasureOrUnspecifiedValue) theLocationOfShearCentre;

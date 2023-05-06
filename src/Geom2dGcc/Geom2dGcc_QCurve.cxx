@@ -48,7 +48,7 @@ Standard_Boolean Geom2dGcc_QCurve::
 
 Geom2dGcc_QCurve::
    Geom2dGcc_QCurve (const Geom2dAdaptor_Curve&          Curve,
-			 const GccEnt_Position Qualifier) {
-   TheQualified = Curve;
-   TheQualifier = Qualifier;
+			 const GccEnt_Position Qualifier) : TheQualified(Curve), TheQualifier(Qualifier) {
+   
+   
  }

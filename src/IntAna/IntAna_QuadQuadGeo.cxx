@@ -25,6 +25,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <ElSLib.hxx>
 #include <gp_Circ.hxx>
@@ -140,7 +142,7 @@ AxeOperator::AxeOperator(const gp_Ax1& A1,const gp_Ax1& A2,
 :
   Axe1 (A1),
   Axe2 (A2),
-  myEPSILON_DISTANCE (theEpsDistance),
+  thecoplanar(Standard_False), thenormal(Standard_False), myEPSILON_DISTANCE (theEpsDistance),
   myEPSILON_AXES_PARA (theEpsAxesPara)
 {
   //---------------------------------------------------------------------
@@ -151,8 +153,8 @@ AxeOperator::AxeOperator(const gp_Ax1& A1,const gp_Ax1& A2,
   //
   RefineDir(V1);
   RefineDir(V2);
-  thecoplanar= Standard_False;
-  thenormal  = Standard_False;
+  
+  
 
   //--- check if the two axis are parallel
   theparallel=V1.IsParallel(V2, myEPSILON_AXES_PARA);  
@@ -167,7 +169,7 @@ AxeOperator::AxeOperator(const gp_Ax1& A1,const gp_Ax1& A2,
                                                            Axe2.Location())));
   }
   //--- check if Axis are Coplanar
-  Standard_Real D33;
+  Standard_Real D33 = NAN;
   if(thedistance<myEPSILON_DISTANCE) {
     D33=Det33(V1.X(),V1.Y(),V1.Z()
               ,V2.X(),V2.Y(),V2.Z()
@@ -184,7 +186,7 @@ AxeOperator::AxeOperator(const gp_Ax1& A1,const gp_Ax1& A2,
     Standard_Real smx=P2.X() - P1.X();
     Standard_Real smy=P2.Y() - P1.Y();
     Standard_Real smz=P2.Z() - P1.Z();
-    Standard_Real Det1,Det2,Det3,A;
+    Standard_Real Det1 = NAN,Det2 = NAN,Det3 = NAN,A = NAN;
     Det1=V1.Y() * V2.X() - V1.X() * V2.Y();
     Det2=V1.Z() * V2.Y() - V1.Y() * V2.Z();
     Det3=V1.Z() * V2.X() - V1.X() * V2.Z();
@@ -300,7 +302,7 @@ Standard_Real EstimDist(const gp_Cone& theCon1, const gp_Cone& theCon2)
 #endif
 
   Standard_Real aMinDist[2] = { Precision::Infinite(), Precision::Infinite() };
-  Standard_Integer i, j, k;
+  Standard_Integer i = 0, j = 0, k = 0;
   IntAna2d_AnaIntersection anInter;
   for (i = 0; i < 2; ++i)
   {
@@ -397,7 +399,7 @@ void IntAna_QuadQuadGeo::Perform (const gp_Pln& P1,
                                   const Standard_Real TolAng,
                                   const Standard_Real Tol)
 {
-  Standard_Real A1, B1, C1, D1, A2, B2, C2, D2, dist1, dist2, aMVD;
+  Standard_Real A1 = NAN, B1 = NAN, C1 = NAN, D1 = NAN, A2 = NAN, B2 = NAN, C2 = NAN, D2 = NAN, dist1 = NAN, dist2 = NAN, aMVD = NAN;
   //
   done=Standard_False;
   param2bis=0.;
@@ -422,8 +424,8 @@ void IntAna_QuadQuadGeo::Perform (const gp_Pln& P1,
       : IntAna_Empty;
   }
   else {
-    Standard_Real denom, denom2, ddenom, par1, par2;
-    Standard_Real X1, Y1, Z1, X2, Y2, Z2, aEps;
+    Standard_Real denom = NAN, denom2 = NAN, ddenom = NAN, par1 = NAN, par2 = NAN;
+    Standard_Real X1 = NAN, Y1 = NAN, Z1 = NAN, X2 = NAN, Y2 = NAN, Z2 = NAN, aEps = NAN;
     //
     aEps=1.e-16;
     denom=A1*A2 + B1*B2 + C1*C2;
@@ -460,19 +462,19 @@ void IntAna_QuadQuadGeo::Perform (const gp_Pln& P1,
     // So, 
     // the origin should be refined if it is possible
     //
-    Standard_Real aTreshAng, aTreshDist;
+    Standard_Real aTreshAng = NAN, aTreshDist = NAN;
     //
     aTreshAng=2.e-6; // 1.e-4 deg
     aTreshDist=1.e-12;
     //
     if (aMVD < aTreshAng) {
-      Standard_Real aDist1, aDist2;
+      Standard_Real aDist1 = NAN, aDist2 = NAN;
       //
       aDist1=A1*pt1.X() + B1*pt1.Y() + C1*pt1.Z() + D1;
       aDist2=A2*pt1.X() + B2*pt1.Y() + C2*pt1.Z() + D2;
       //
       if (fabs(aDist1)>aTreshDist || fabs(aDist2)>aTreshDist) {
-        Standard_Boolean bIsDone, bIsParallel;
+        Standard_Boolean bIsDone = 0, bIsParallel = 0;
         IntAna_IntConicQuad aICQ;
         //
         // 1.
@@ -549,10 +551,10 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo( const gp_Pln& P
                                    ,const Standard_Real H) 
 {
   done = Standard_False;
-  Standard_Real dist,radius;
-  Standard_Real A,B,C,D;
-  Standard_Real X,Y,Z;
-  Standard_Real sint,cost,h;
+  Standard_Real dist = NAN,radius = NAN;
+  Standard_Real A = NAN,B = NAN,C = NAN,D = NAN;
+  Standard_Real X = NAN,Y = NAN,Z = NAN;
+  Standard_Real sint = NAN,cost = NAN,h = NAN;
   gp_XYZ axex,axey,omega;
 
   
@@ -608,7 +610,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo( const gp_Pln& P
           {
             gp_XYZ omegaXYZ(X,Y,Z);
             gp_XYZ omegaXYZtrnsl( omegaXYZ + 100.*axec.Direction().XYZ() );
-            Standard_Real Xt,Yt,Zt,distt;
+            Standard_Real Xt = NAN,Yt = NAN,Zt = NAN,distt = NAN;
             omegaXYZtrnsl.Coord(Xt,Yt,Zt);
             distt = A*Xt + B*Yt + C*Zt + D;
             gp_XYZ omega1(omegaXYZtrnsl.X()-distt*A, 
@@ -636,7 +638,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo( const gp_Pln& P
           { 
             gp_XYZ omegaXYZ(X,Y,Z);
             gp_XYZ omegaXYZtrnsl( omegaXYZ + 100.*axec.Direction().XYZ() );
-            Standard_Real Xt,Yt,Zt,distt,ht;
+            Standard_Real Xt = NAN,Yt = NAN,Zt = NAN,distt = NAN,ht = NAN;
             omegaXYZtrnsl.Coord(Xt,Yt,Zt);
             distt = A*Xt + B*Yt + C*Zt + D;
             //             ht = Sqrt(radius*radius - distt*distt);
@@ -746,10 +748,10 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo( const gp_Pln& P
   done = Standard_False;
   nbint = 0;
 
-  Standard_Real A,B,C,D;
-  Standard_Real X,Y,Z;
-  Standard_Real dist,sint,cost,sina,cosa,angl,costa;
-  Standard_Real dh;
+  Standard_Real A = NAN,B = NAN,C = NAN,D = NAN;
+  Standard_Real X = NAN,Y = NAN,Z = NAN;
+  Standard_Real dist = NAN,sint = NAN,cost = NAN,sina = NAN,cosa = NAN,angl = NAN,costa = NAN;
+  Standard_Real dh = NAN;
   gp_XYZ axex,axey;
 
   gp_Lin axec(Co.Axis());
@@ -819,7 +821,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo( const gp_Pln& P
   else {
     // Solutions possibles : cercle, ellipse, parabole, hyperbole selon
     // l inclinaison du plan.
-    Standard_Real deltacenter, distance;
+    Standard_Real deltacenter = NAN, distance = NAN;
 
     if (cost < Tolang) {
       // Le plan contient la direction de l axe du cone. La solution est
@@ -958,8 +960,8 @@ void IntAna_QuadQuadGeo::Perform( const gp_Pln& P
 {
   
   done = Standard_False;
-  Standard_Real A,B,C,D,dist, radius;
-  Standard_Real X,Y,Z;
+  Standard_Real A = NAN,B = NAN,C = NAN,D = NAN,dist = NAN, radius = NAN;
+  Standard_Real X = NAN,Y = NAN,Z = NAN;
 
   nbint = 0;
 // debug JAG : on met typeres = IntAna_Empty par defaut...
@@ -1032,10 +1034,10 @@ void IntAna_QuadQuadGeo::Perform(const gp_Cylinder& Cyl1,
                    myEPSILON_CYLINDER_DELTA_DISTANCE, myEPSILON_AXES_PARA);
   Standard_Real R1=Cyl1.Radius();
   Standard_Real R2=Cyl2.Radius();
-  Standard_Real RmR, RmR_Relative;
+  Standard_Real RmR = NAN, RmR_Relative = NAN;
   RmR=(R1>R2)? (R1-R2) : (R2-R1);
   {
-    Standard_Real Rmax;
+    Standard_Real Rmax = NAN;
     Rmax=(R1>R2)? R1 : R2;
     RmR_Relative=RmR/Rmax;
   }
@@ -1209,7 +1211,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Cylinder& Cyl1,
       pt1=pt2=A1A2.PtIntersect();
       
       Standard_Real A=DirCyl1.Angle(DirCyl2);
-      Standard_Real B;
+      Standard_Real B = NAN;
       B=Abs(Sin(0.5*(M_PI-A)));
       A=Abs(Sin(0.5*A));
       
@@ -1245,7 +1247,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Cylinder& Cyl1,
       if(Abs(DistA1A2-Cyl1.Radius()-Cyl2.Radius())<Tol)
       {
         typeres = IntAna_Point;
-        Standard_Real d,p1,p2;
+        Standard_Real d = NAN,p1 = NAN,p2 = NAN;
 
         gp_Dir D1 = Cyl1.Axis().Direction();
         gp_Dir D2 = Cyl2.Axis().Direction();
@@ -1436,7 +1438,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
 {
   done = Standard_True;
   //
-  Standard_Real tg1, tg2, aDA1A2, aTol2;
+  Standard_Real tg1 = NAN, tg2 = NAN, aDA1A2 = NAN, aTol2 = NAN;
   gp_Pnt aPApex1, aPApex2;
 
   Standard_Real TOL_APEX_CONF = 1.e-10;
@@ -1478,7 +1480,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
   // 1
   if(A1A2.Same()) {
     //-- two circles 
-    Standard_Real x;
+    Standard_Real x = NAN;
     gp_Pnt P=Con1.Apex();
     gp_Dir D=Con1.Position().Direction();
     Standard_Real d=gp_Vec(D).Dot(gp_Vec(P,Con2.Apex()));
@@ -1610,10 +1612,10 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
     // 3.2 - one line  when cone1 touches cone2 (iRet=1)
     // 3.3 - two lines when cone1 intersects cone2 (iRet=2)
     //
-    Standard_Integer iRet;
-    Standard_Real aGamma, aBeta1, aBeta2;
-    Standard_Real aD1, aR1, aTgBeta1, aTgBeta2, aHalfPI;
-    Standard_Real aCosGamma, aSinGamma, aDx, aR2, aRD2, aD2;
+    Standard_Integer iRet = 0;
+    Standard_Real aGamma = NAN, aBeta1 = NAN, aBeta2 = NAN;
+    Standard_Real aD1 = NAN, aR1 = NAN, aTgBeta1 = NAN, aTgBeta2 = NAN, aHalfPI = NAN;
+    Standard_Real aCosGamma = NAN, aSinGamma = NAN, aDx = NAN, aR2 = NAN, aRD2 = NAN, aD2 = NAN;
     gp_Pnt2d aP0, aPA1, aP1, aPA2;
     gp_Vec2d aVAx2;
     gp_Ax1 aAx1, aAx2;
@@ -1675,7 +1677,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
     //
     // Finding the solution in 3D
     //
-    Standard_Real aDa;
+    Standard_Real aDa = NAN;
     gp_Pnt aQApex1, aQA1, aQA2, aQX, aQX1, aQX2;
     gp_Dir aD3Ax1, aD3Ax2;
     gp_Lin aLin;
@@ -1753,7 +1755,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
   //Case when cones have common generatrix
   else if(A1A2.Intersect()) {
     //Check if apex of one cone belongs another one
-    Standard_Real u, v, tol2 = Tol*Tol;
+    Standard_Real u = NAN, v = NAN, tol2 = Tol*Tol;
     ElSLib::Parameters(Con2, aPApex1, u, v);
     gp_Pnt p = ElSLib::Value(u, v, Con2);
     if(aPApex1.SquareDistance(p) > tol2) {
@@ -2026,7 +2028,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
   Standard_Real dO1O2=O1.Distance(O2);
   Standard_Real R1=Sph1.Radius();
   Standard_Real R2=Sph2.Radius();
-  Standard_Real Rmin,Rmax;
+  Standard_Real Rmin = NAN,Rmax = NAN;
   typeres=IntAna_Empty;
   param2bis=0.0; //-- pour eviter param2bis not used .... 
 
@@ -2052,7 +2054,7 @@ IntAna_QuadQuadGeo::IntAna_QuadQuadGeo(const gp_Cylinder& Cyl,
     if(t >= 0.0  && t <=Tol) { 
       typeres = IntAna_Point;
       nbint = 1;
-      Standard_Real t2;
+      Standard_Real t2 = NAN;
       if(R1==Rmax) t2=(R1 + (R2 + dO1O2)) * 0.5;
       else         t2=(-R1+(dO1O2-R2))*0.5;
         
@@ -2136,7 +2138,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Pln& Pln,
 {
   done = Standard_True;
   //
-  Standard_Real aRMin, aRMaj;
+  Standard_Real aRMin = NAN, aRMaj = NAN;
   //
   aRMin = Tor.MinorRadius();
   aRMaj = Tor.MajorRadius();
@@ -2148,7 +2150,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Pln& Pln,
   const gp_Ax1 aPlnAx = Pln.Axis();
   const gp_Ax1 aTorAx = Tor.Axis();
   //
-  Standard_Boolean bParallel, bNormal;
+  Standard_Boolean bParallel = 0, bNormal = 0;
   //
   bParallel = aTorAx.IsParallel(aPlnAx, myEPSILON_AXES_PARA);
   bNormal = !bParallel ? aTorAx.IsNormal(aPlnAx, myEPSILON_AXES_PARA) : Standard_False;
@@ -2157,11 +2159,11 @@ void IntAna_QuadQuadGeo::Perform(const gp_Pln& Pln,
     return;
   }
   //
-  Standard_Real aDist;
+  Standard_Real aDist = NAN;
   //
   gp_Pnt aTorLoc = aTorAx.Location();
   if (bParallel) {
-    Standard_Real aDt, X, Y, Z, A, B, C, D, aDR, aTolNum;
+    Standard_Real aDt = NAN, X = NAN, Y = NAN, Z = NAN, A = NAN, B = NAN, C = NAN, D = NAN, aDR = NAN, aTolNum = NAN;
     //
     aTolNum=myEPSILON_CYLINDER_DELTA_RADIUS;
     //
@@ -2248,7 +2250,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Cylinder& Cyl,
 {
   done = Standard_True;
   //
-  Standard_Real aRMin, aRMaj;
+  Standard_Real aRMin = NAN, aRMaj = NAN;
   //
   aRMin = Tor.MinorRadius();
   aRMaj = Tor.MajorRadius();
@@ -2269,7 +2271,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Cylinder& Cyl,
     return;
   }
   //
-  Standard_Real aRCyl;
+  Standard_Real aRCyl = NAN;
   //
   aRCyl = Cyl.Radius();
   if (((aRCyl + Tol) < (aRMaj - aRMin)) || ((aRCyl - Tol) > (aRMaj + aRMin))) {
@@ -2331,7 +2333,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Cone& Con,
 {
   done = Standard_True;
   //
-  Standard_Real aRMin, aRMaj;
+  Standard_Real aRMin = NAN, aRMaj = NAN;
   //
   aRMin = Tor.MinorRadius();
   aRMaj = Tor.MajorRadius();
@@ -2352,8 +2354,8 @@ void IntAna_QuadQuadGeo::Perform(const gp_Cone& Con,
     return;
   }
   //
-  Standard_Real anAngle, aDist, aParam[4], aDt;
-  Standard_Integer i;
+  Standard_Real anAngle = NAN, aDist = NAN, aParam[4], aDt = NAN;
+  Standard_Integer i = 0;
   gp_Pnt aTorLoc, aPCT, aPN, aPt[4];
   gp_Dir aDir[4];
   //
@@ -2469,7 +2471,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Sphere& Sph,
 {
   done = Standard_True;
   //
-  Standard_Real aRMin, aRMaj;
+  Standard_Real aRMin = NAN, aRMaj = NAN;
   //
   aRMin = Tor.MinorRadius();
   aRMaj = Tor.MajorRadius();
@@ -2487,7 +2489,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Sphere& Sph,
     return;
   }
   //
-  Standard_Real aRSph, aDist;
+  Standard_Real aRSph = NAN, aDist = NAN;
   gp_Pnt aTorLoc;
   //
   gp_Dir aXDir = Tor.XAxis().Direction();
@@ -2504,7 +2506,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Sphere& Sph,
   //
   typeres = IntAna_Circle;
   //
-  Standard_Real anAlpha, aBeta;
+  Standard_Real anAlpha = NAN, aBeta = NAN;
   //
   anAlpha = 0.5*(aRMin*aRMin - aRSph*aRSph + aDist*aDist ) / aDist;
   aBeta = Sqrt(Abs(aRMin*aRMin - anAlpha*anAlpha));
@@ -2566,7 +2568,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Torus& Tor1,
 {
   done = Standard_True;
   //
-  Standard_Real aRMin1, aRMin2, aRMaj1, aRMaj2;
+  Standard_Real aRMin1 = NAN, aRMin2 = NAN, aRMaj1 = NAN, aRMaj2 = NAN;
   //
   aRMin1 = Tor1.MinorRadius();
   aRMaj1 = Tor1.MajorRadius();
@@ -2598,7 +2600,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Torus& Tor1,
     return;
   }
   //
-  Standard_Real aDist;
+  Standard_Real aDist = NAN;
   gp_Pnt aP1, aP2;
   //
   gp_Dir aXDir1 = Tor1.XAxis().Direction();
@@ -2615,7 +2617,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Torus& Tor1,
   //
   typeres = IntAna_Circle;
   //
-  Standard_Real anAlpha, aBeta;
+  Standard_Real anAlpha = NAN, aBeta = NAN;
   //
   anAlpha = 0.5*(aRMin1*aRMin1 - aRMin2*aRMin2 + aDist*aDist ) / aDist;
   aBeta = Sqrt(Abs(aRMin1*aRMin1 - anAlpha*anAlpha));
@@ -2708,7 +2710,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Torus& Tor1,
   }
 
   if(n==1) {
-    Standard_Real R1=param1, R2=param1bis, aTmp;
+    Standard_Real R1=param1, R2=param1bis, aTmp = NAN;
     if (R1<R2) {
       aTmp=R1; R1=R2; R2=aTmp;
     }
@@ -2717,7 +2719,7 @@ void IntAna_QuadQuadGeo::Perform(const gp_Torus& Tor1,
     return anElips;
   }
   else {
-    Standard_Real R1=param2, R2=param2bis, aTmp;
+    Standard_Real R1=param2, R2=param2bis, aTmp = NAN;
     if (R1<R2) {
       aTmp=R1; R1=R2; R2=aTmp;
     }
@@ -2793,7 +2795,7 @@ const gp_Pnt& IntAna_QuadQuadGeo::PChar() const
 //=======================================================================
 void RefineDir(gp_Dir& aDir)
 {
-  Standard_Integer k, m, n;
+  Standard_Integer k = 0, m = 0, n = 0;
   Standard_Real aC[3];
   //
   aDir.Coord(aC[0], aC[1], aC[2]);
@@ -2810,7 +2812,7 @@ void RefineDir(gp_Dir& aDir)
   }
   //
   if (m && n) {
-    Standard_Real aEps, aR1, aR2, aNum;
+    Standard_Real aEps = NAN, aR1 = NAN, aR2 = NAN, aNum = NAN;
     //
     aEps=RealEpsilon();
     aR1=1.-aEps;

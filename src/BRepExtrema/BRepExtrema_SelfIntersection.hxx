@@ -120,7 +120,7 @@ private:
   Standard_Real myTolerance;
 
   //! Is the input shape inited?
-  Standard_Boolean myIsInit;
+  Standard_Boolean myIsInit{};
 
   //! List of triangulated faces of the shape.
   BRepExtrema_ShapeList myFaceList;

@@ -202,7 +202,7 @@ protected:
   Standard_Real myFuzzyValue;
   BRepAdaptor_Curve myC;
   BRepAdaptor_Surface myS;
-  Standard_Real myCriteria;
+  Standard_Real myCriteria{};
   Standard_Boolean myIsDone;
   Standard_Integer myErrorStatus;
   Handle(IntTools_Context) myContext;

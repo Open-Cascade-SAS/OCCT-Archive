@@ -25,21 +25,21 @@
 #include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
 
-gce_MakePln::gce_MakePln(const gp_Ax2& A2)
+gce_MakePln::gce_MakePln(const gp_Ax2& A2) : gce_Root()
 {
   ThePln = gp_Pln(gp_Ax3(A2));
   TheError = gce_Done;
 }
 
 gce_MakePln::gce_MakePln(const gp_Pnt& P,
-			 const gp_Dir& V)
+			 const gp_Dir& V) : gce_Root()
 {
   ThePln = gp_Pln(P,V);
   TheError = gce_Done;
 }
 
 gce_MakePln::gce_MakePln(const gp_Pnt& P1,
-			 const gp_Pnt& P2)
+			 const gp_Pnt& P2) : gce_Root()
 {
   if (P1.Distance(P2) <= gp::Resolution()) { TheError = gce_ConfusedPoints; }
   else {
@@ -52,7 +52,7 @@ gce_MakePln::gce_MakePln(const gp_Pnt& P1,
 gce_MakePln::gce_MakePln(const Standard_Real A,
 			 const Standard_Real B,
 			 const Standard_Real C,
-			 const Standard_Real D)
+			 const Standard_Real D) : gce_Root()
 {
   if (A*A + B*B + C*C <= gp::Resolution()) {
     TheError = gce_BadEquation;
@@ -69,7 +69,7 @@ gce_MakePln::gce_MakePln(const Standard_Real A,
 
 gce_MakePln::gce_MakePln(const gp_Pnt& P1 ,
 			 const gp_Pnt& P2 ,
-			 const gp_Pnt& P3 ) 
+			 const gp_Pnt& P3 ) : gce_Root() 
 {
   gp_XYZ V1(P2.XYZ()-P1.XYZ());
   gp_XYZ V2(P3.XYZ()-P1.XYZ());
@@ -88,7 +88,7 @@ gce_MakePln::gce_MakePln(const gp_Pnt& P1 ,
 //=========================================================================
 
 gce_MakePln::gce_MakePln(const gp_Pln&       Pl   ,
-			 const Standard_Real Dist ) 
+			 const Standard_Real Dist ) : gce_Root() 
 {
   gp_Pnt Center(Pl.Location().XYZ()+Dist*gp_XYZ(Pl.Axis().Direction().XYZ()));
   ThePln=gp_Pln(gp_Ax3(Center,Pl.Axis().Direction(),Pl.XAxis().Direction()));
@@ -101,7 +101,7 @@ gce_MakePln::gce_MakePln(const gp_Pln&       Pl   ,
 //=========================================================================
 
 gce_MakePln::gce_MakePln(const gp_Pln& Pl    ,
-			 const gp_Pnt& Point ) 
+			 const gp_Pnt& Point ) : gce_Root() 
 {
   ThePln = gp_Pln(gp_Ax3(Point,Pl.Axis().Direction(),Pl.XAxis().Direction()));
   TheError = gce_Done;
@@ -111,7 +111,7 @@ gce_MakePln::gce_MakePln(const gp_Pln& Pl    ,
 //  Creation d un gp_pln a partir d un Ax1 (Point + Normale).             +
 //=========================================================================
 
-gce_MakePln::gce_MakePln(const gp_Ax1& Axis ) 
+gce_MakePln::gce_MakePln(const gp_Ax1& Axis ) : gce_Root() 
 {
   ThePln = gp_Pln(Axis.Location(),Axis.Direction());
   TheError = gce_Done;

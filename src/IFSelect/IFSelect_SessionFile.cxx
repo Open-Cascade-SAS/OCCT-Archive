@@ -39,10 +39,10 @@ static int deja = 0;
 
 
     IFSelect_SessionFile::IFSelect_SessionFile
-  (const Handle(IFSelect_WorkSession)& WS)
+  (const Handle(IFSelect_WorkSession)& WS) : themode(Standard_False)
 {
   ClearLines();
-  themode = Standard_False;
+  
   if (!deja) {    // au moins celui-la :
     Handle(IFSelect_BasicDumper) basedumper = new IFSelect_BasicDumper;
     deja = 1;
@@ -53,10 +53,10 @@ static int deja = 0;
 }
 
     IFSelect_SessionFile::IFSelect_SessionFile
-  (const Handle(IFSelect_WorkSession)& WS, const Standard_CString filename)
+  (const Handle(IFSelect_WorkSession)& WS, const Standard_CString filename) : themode(Standard_True)
 {
   ClearLines();
-  themode = Standard_True;
+  
   if (!deja) {    // au moins celui-la :
     Handle(IFSelect_BasicDumper) basedumper = new IFSelect_BasicDumper;
     deja = 1;
@@ -181,7 +181,7 @@ static int deja = 0;
   thenames.Clear();
   Standard_Integer nbidents = thesess->MaxIdent();
   thenums = new TColStd_HArray1OfInteger (0,nbidents); thenums->Init(0);
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for ( i = 1; i <= nbidents; i ++) {
     Handle(Standard_Transient) item = thesess->Item(i);
     if (!item.IsNull()) thenums->SetValue(i,-1);
@@ -195,13 +195,13 @@ static int deja = 0;
   sprintf (laligne,"ErrorHandle %d", (thesess->ErrorHandle() ? 1 : 0));
   WriteLine(laligne,'\n');
   Handle(TColStd_HSequenceOfInteger) idents;
-  Standard_Integer nb;
+  Standard_Integer nb = 0;
   Handle(TCollection_HAsciiString) name;
 
   idents = thesess->ItemIdents(STANDARD_TYPE(IFSelect_IntParam));
   nb = idents->Length();
   if (nb > 0) WriteLine ("!INTEGERS",'\n');
-  Standard_Integer j; // svv Jan11 2000 : porting on DEC
+  Standard_Integer j = 0; // svv Jan11 2000 : porting on DEC
   for (j = 1; j <= nb; j ++) {
     i = idents->Value(j);
     Handle(IFSelect_IntParam) P = thesess->IntParam(i);
@@ -866,7 +866,7 @@ static int deja = 0;
   Handle(Standard_Transient) res;
   Standard_Integer nm = num + thelastgen;
   if (nm <= 0 || nm > theline.Length()) return res;
-  Standard_Integer id;
+  Standard_Integer id = 0;
   TCollection_AsciiString name = theline.Value(nm);
   if (name.Value(1) == ':') name.Remove(1);
   if (name.IsEqual("$")) return res;    // item non-defini justement

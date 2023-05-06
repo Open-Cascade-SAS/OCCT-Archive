@@ -63,7 +63,7 @@ private:
 
 
   Handle(StepShape_Loop) bound;
-  Standard_Boolean orientation;
+  Standard_Boolean orientation{};
 
 
 };

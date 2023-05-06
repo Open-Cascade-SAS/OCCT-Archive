@@ -56,9 +56,9 @@ private:
 
   Standard_Real myRadiusStep;
   Standard_Integer myDivisionNumber;
-  Standard_Real myAlpha;
-  Standard_Real myA1;
-  Standard_Real myB1;
+  Standard_Real myAlpha{};
+  Standard_Real myA1{};
+  Standard_Real myB1{};
 
 };
 

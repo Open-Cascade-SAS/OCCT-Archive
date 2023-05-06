@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DrawTrSurf_BSplineCurve.hxx>
 
 #include <Draw_Color.hxx>
@@ -28,14 +30,14 @@
 IMPLEMENT_STANDARD_RTTIEXT(DrawTrSurf_BSplineCurve, DrawTrSurf_Curve)
 
 DrawTrSurf_BSplineCurve::DrawTrSurf_BSplineCurve (const Handle(Geom_BSplineCurve)& C)
-: DrawTrSurf_Curve (C, Draw_vert, 16, 0.05, 1)
+: DrawTrSurf_Curve (C, Draw_vert, 16, 0.05, 1), drawKnots(Standard_True), knotsForm(Draw_Losange), knotsDim(5), drawPoles(Standard_True)
 {
 
-  drawKnots = Standard_True;
-  knotsForm = Draw_Losange;
+  
+  
   knotsLook = Draw_violet;
-  knotsDim  = 5;
-  drawPoles = Standard_True;
+  
+  
   polesLook = Draw_rouge;
 }
 
@@ -45,14 +47,14 @@ DrawTrSurf_BSplineCurve::DrawTrSurf_BSplineCurve (const Handle(Geom_BSplineCurve
                                                   const Standard_Boolean ShowPoles, const Standard_Boolean ShowKnots,
                                                   const Standard_Integer Discret, const Standard_Real Deflection,
                                                   const Standard_Integer DrawMode)
-: DrawTrSurf_Curve (C, CurvColor, Discret, Deflection, DrawMode)
+: DrawTrSurf_Curve (C, CurvColor, Discret, Deflection, DrawMode), drawKnots(ShowKnots), knotsForm(KnotsShape), knotsLook(KnotsColor), knotsDim(KnotsSize), drawPoles(ShowPoles), polesLook(PolesColor)
 {
-  drawKnots = ShowKnots;
-  knotsForm = KnotsShape;
-  knotsLook = KnotsColor;
-  knotsDim  = KnotsSize;
-  drawPoles = ShowPoles;
-  polesLook = PolesColor;
+  
+  
+  
+  
+  
+  
 }
 
 void DrawTrSurf_BSplineCurve::DrawOn (Draw_Display& dis) const
@@ -134,7 +136,7 @@ void DrawTrSurf_BSplineCurve::DrawOn (Draw_Display& dis,
   Handle(Geom_BSplineCurve) C = Handle(Geom_BSplineCurve)::DownCast(curv);
   Standard_Real Eps1 = Abs(Epsilon (U1));
   Standard_Real Eps2 = Abs(Epsilon (U2));
-  Standard_Integer I1, J1, I2, J2;
+  Standard_Integer I1 = 0, J1 = 0, I2 = 0, J2 = 0;
   C->LocateU (U1, Eps1, I1, J1);
   C->LocateU (U2, Eps2, I2, J2);
   Standard_Integer ka  = C->FirstUKnotIndex ();
@@ -181,11 +183,11 @@ void DrawTrSurf_BSplineCurve::DrawOn (Draw_Display& dis,
   }
   else
   {
-    Standard_Integer NbPoints;
+    Standard_Integer NbPoints = 0;
     Standard_Integer Discret = GetDiscretisation();
     Standard_Real Ustart = C->Knot (ka);
     Standard_Real Uend   = C->Knot (kb);
-    Standard_Real Du, U, Ua, Ub, Uk1, Uk2;
+    Standard_Real Du = NAN, U = NAN, Ua = NAN, Ub = NAN, Uk1 = NAN, Uk2 = NAN;
 
     if (I1 > ka)  { ka = I1;  Uk1 = U1; }
     else

@@ -333,11 +333,11 @@ protected:
   //! This method is called from Perform only
   Standard_EXPORT virtual void SameParameterShape();
 
-  Standard_Real myTolerance;
-  Standard_Boolean mySewing;
-  Standard_Boolean myAnalysis;
-  Standard_Boolean myCutting;
-  Standard_Boolean myNonmanifold;
+  Standard_Real myTolerance{};
+  Standard_Boolean mySewing{};
+  Standard_Boolean myAnalysis{};
+  Standard_Boolean myCutting{};
+  Standard_Boolean myNonmanifold{};
   TopTools_IndexedDataMapOfShapeShape myOldShapes;
   TopoDS_Shape mySewedShape;
   TopTools_IndexedMapOfShape myDegenerated;
@@ -345,9 +345,9 @@ protected:
   TopTools_IndexedMapOfShape myMultipleEdges;
   TopTools_IndexedDataMapOfShapeListOfShape myContigousEdges;
   TopTools_DataMapOfShapeShape myContigSecBound;
-  Standard_Integer myNbShapes;
-  Standard_Integer myNbVertices;
-  Standard_Integer myNbEdges;
+  Standard_Integer myNbShapes{};
+  Standard_Integer myNbVertices{};
+  Standard_Integer myNbEdges{};
   TopTools_IndexedDataMapOfShapeListOfShape myBoundFaces;
   TopTools_DataMapOfShapeListOfShape myBoundSections;
   TopTools_DataMapOfShapeShape mySectionBound;
@@ -363,12 +363,12 @@ protected:
 private:
 
 
-  Standard_Boolean myFaceMode;
-  Standard_Boolean myFloatingEdgesMode;
-  Standard_Boolean mySameParameterMode;
-  Standard_Boolean myLocalToleranceMode;
-  Standard_Real myMinTolerance;
-  Standard_Real myMaxTolerance;
+  Standard_Boolean myFaceMode{};
+  Standard_Boolean myFloatingEdgesMode{};
+  Standard_Boolean mySameParameterMode{};
+  Standard_Boolean myLocalToleranceMode{};
+  Standard_Real myMinTolerance{};
+  Standard_Real myMaxTolerance{};
   TopTools_MapOfShape myMergedEdges;
 
 

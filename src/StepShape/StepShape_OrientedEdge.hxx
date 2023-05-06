@@ -71,7 +71,7 @@ private:
 
 
   Handle(StepShape_Edge) edgeElement;
-  Standard_Boolean orientation;
+  Standard_Boolean orientation{};
 
 
 };

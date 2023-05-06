@@ -100,7 +100,7 @@ private:
 
 
   Handle(Geom_Surface) myBasisSurf;
-  Standard_Real myTol;
+  Standard_Real myTol{};
   Handle(Geom_HSequenceOfBSplineSurface) myOsculSurf1;
   Handle(Geom_HSequenceOfBSplineSurface) myOsculSurf2;
   Handle(TColStd_HSequenceOfInteger) myKdeg;

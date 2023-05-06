@@ -270,7 +270,7 @@ protected:
   Standard_EXPORT TopTools_SequenceOfShape& Shapes();
 
 
-  Standard_Boolean therootsta;
+  Standard_Boolean therootsta{};
   TColStd_SequenceOfTransient theroots;
 
 

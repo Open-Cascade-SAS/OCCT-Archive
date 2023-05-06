@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <TopAbs.hxx>
 #include <TopTrans_CurveTransition.hxx>
 
@@ -304,7 +306,7 @@ Standard_Boolean TopTrans_CurveTransition::IsBefore
       // The reference is curv 
       // The first is the interference which have the nearest curvature
       // in the direction
-      Standard_Real deltaC1, deltaC2;
+      Standard_Real deltaC1 = NAN, deltaC2 = NAN;
       if (C1==0. || myCurv==0.) {
 	deltaC1=C1-myCurv;
       }

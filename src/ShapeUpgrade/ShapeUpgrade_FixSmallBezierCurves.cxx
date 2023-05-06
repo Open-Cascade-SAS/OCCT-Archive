@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <Geom2d_BSplineCurve.hxx>
 #include <Geom2d_Curve.hxx>
@@ -53,7 +55,7 @@ Standard_Boolean ShapeUpgrade_FixSmallBezierCurves::Approx(Handle(Geom_Curve)& C
  
   ShapeAnalysis_Edge sae;
   Handle(Geom_Curve) c3d;
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   if(sae.Curve3d(myEdge,c3d,f,l,Standard_False)) {
     if(First < f)
       First = f;
@@ -127,7 +129,7 @@ Standard_Boolean ShapeUpgrade_FixSmallBezierCurves::Approx(Handle(Geom_Curve)& C
   Standard_Boolean isSeam = BRep_Tool::IsClosed ( myEdge, myFace );
   if ( isSeam ) {
     Handle(Geom2d_Curve) c2;
-    Standard_Real f2, l2;
+    Standard_Real f2 = NAN, l2 = NAN;
     //smh#8
     TopoDS_Shape tmpE = myEdge.Reversed();
     TopoDS_Edge erev = TopoDS::Edge (tmpE );

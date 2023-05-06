@@ -66,7 +66,7 @@ private:
 
   Handle(StepShape_BooleanResult) theBooleanResult;
   StepShape_CsgPrimitive theCsgPrimitive;
-  Standard_Integer theTypeOfContent;
+  Standard_Integer theTypeOfContent{};
 
 
 };

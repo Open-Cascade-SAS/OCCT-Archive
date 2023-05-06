@@ -76,8 +76,8 @@ private:
 #ifdef _WIN32
   void*           myEvent;
 #else
-  pthread_mutex_t myMutex;
-  pthread_cond_t  myCond;
+  pthread_mutex_t myMutex{};
+  pthread_cond_t  myCond{};
   bool            myFlag;
 #endif
 

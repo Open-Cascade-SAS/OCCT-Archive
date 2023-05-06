@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom_Curve.hxx>
@@ -56,7 +58,7 @@ Standard_Boolean ShapeUpgrade_ClosedEdgeDivide::Compute(const TopoDS_Edge& anEdg
     gp_Pnt pntV = BRep_Tool::Pnt(V1);
     Standard_Real TolV1 = LimitTolerance( BRep_Tool::Tolerance(V1) );
     TolV1=TolV1*TolV1;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     Handle(Geom_Curve) curve3d = BRep_Tool::Curve (anEdge, f, l);
     myHasCurve3d = !curve3d.IsNull();
     Standard_Real f2d = 0., l2d = 0.;

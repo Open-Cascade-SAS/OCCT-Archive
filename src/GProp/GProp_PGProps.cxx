@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <GProp_PGProps.hxx>
 #include <Standard_DimensionError.hxx>
 #include <Standard_DomainError.hxx>
@@ -37,7 +39,7 @@ GProp_PGProps::GProp_PGProps ()
 
 void GProp_PGProps::AddPoint (const Pnt& P)
 {
-  Standard_Real Xp, Yp, Zp;
+  Standard_Real Xp = NAN, Yp = NAN, Zp = NAN;
   P.Coord (Xp, Yp, Zp);
   Standard_Real Ixy = - Xp * Yp;
   Standard_Real Ixz = - Xp * Zp;
@@ -53,7 +55,7 @@ void GProp_PGProps::AddPoint (const Pnt& P)
     inertia = Mp;
   }
   else {
-    Standard_Real X, Y, Z;
+    Standard_Real X = NAN, Y = NAN, Z = NAN;
     g.Coord (X, Y, Z);
     X = X * dim + Xp;
     Y = Y * dim + Yp;
@@ -70,7 +72,7 @@ void GProp_PGProps::AddPoint (const Pnt& P)
 void GProp_PGProps::AddPoint (const gp_Pnt& P, const Standard_Real Density)
 {
   if (Density <= gp::Resolution())  throw Standard_DomainError();
-  Standard_Real Xp, Yp, Zp;
+  Standard_Real Xp = NAN, Yp = NAN, Zp = NAN;
   P.Coord (Xp, Yp, Zp);
   Standard_Real Ixy = - Xp * Yp;
   Standard_Real Ixz = - Xp * Zp;
@@ -85,7 +87,7 @@ void GProp_PGProps::AddPoint (const gp_Pnt& P, const Standard_Real Density)
     inertia = Mp * Density;
   }
   else {
-    Standard_Real X, Y, Z;
+    Standard_Real X = NAN, Y = NAN, Z = NAN;
     g.Coord (X, Y, Z);
     X = X * dim + Xp * Density;
     Y = Y * dim + Yp * Density;

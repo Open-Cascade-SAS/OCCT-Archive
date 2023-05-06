@@ -64,7 +64,7 @@ IFSelect_SelectSuite::IFSelect_SelectSuite  ()    {  }
 //   Demarrage : on prend l Input/Alternate SI un des 2 est mis
 //   Sinon, on demarre sur la definition de base de la premiere selection
 
-  Standard_Integer i, nb = NbItems();
+  Standard_Integer i = 0, nb = NbItems();
   for (i = 1; i <= nb; i ++) {
     Handle(IFSelect_SelectDeduct) anitem = Item(i);
     if (firstin) anitem->Alternate()->SetList (iter.Content());

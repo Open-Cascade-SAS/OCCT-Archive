@@ -16,6 +16,8 @@
 
 // Modified by cma, Fri Nov 10 17:36:13 1995
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRepLib_MakeEdge2d.hxx>
 #include <HLRAlgo_EdgeIterator.hxx>
@@ -44,13 +46,13 @@ void HLRBRep_PolyHLRToShape::Update (const Handle(HLRBRep_PolyAlgo)& A)
 {
   myAlgo = A;
   myHideMode = Standard_True;
-  Standard_Real sta,end;
-  Standard_ShortReal tolsta,tolend;
+  Standard_Real sta = NAN,end = NAN;
+  Standard_ShortReal tolsta = NAN,tolend = NAN;
   HLRAlgo_EdgeIterator It;
   myBiPntVis.Clear();
   myBiPntHid.Clear();
   TopoDS_Shape S;
-  Standard_Boolean reg1,regn,outl,intl;
+  Standard_Boolean reg1 = 0,regn = 0,outl = 0,intl = 0;
   const gp_Trsf& T = myAlgo->Projector().Transformation();
   HLRAlgo_EdgeStatus status;
 
@@ -106,7 +108,7 @@ HLRBRep_PolyHLRToShape::InternalCompound (const Standard_Integer typ,
     for (ex.Init(S,TopAbs_FACE); ex.More(); ex.Next())
       Map.Add(ex.Current());
   }
-  Standard_Boolean todraw,reg1,regn,outl,intl;
+  Standard_Boolean todraw = 0,reg1 = 0,regn = 0,outl = 0,intl = 0;
   Standard_Boolean added = Standard_False;
   TopoDS_Shape Result;
   BRep_Builder B;

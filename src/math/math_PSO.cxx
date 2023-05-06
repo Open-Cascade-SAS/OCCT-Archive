@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <math_PSO.hxx>
 
 #include <math_BullardGenerator.hxx>
@@ -30,19 +32,12 @@ math_PSO::math_PSO(math_MultipleVarFunction* theFunc,
                    const math_Vector& theSteps,
                    const Standard_Integer theNbParticles,
                    const Standard_Integer theNbIter)
-: myLowBorder(1, theFunc->NbVariables()),
-  myUppBorder(1, theFunc->NbVariables()),
-  mySteps(1, theFunc->NbVariables())
-{
-  myN = theFunc->NbVariables();
-  myNbParticles = theNbParticles;
-  myNbIter = theNbIter;
-  myFunc = theFunc;
-
-  myLowBorder = theLowBorder;
-  myUppBorder = theUppBorder;
-  mySteps     = theSteps;
-}
+: myFunc(theFunc),
+  myLowBorder(theLowBorder),
+  myUppBorder(theUppBorder), mySteps(theSteps),
+  myN(theFunc->NbVariables()), myNbParticles(theNbParticles),
+  myNbIter(theNbIter)
+{}
 
 //=======================================================================
 //function : math_PSO
@@ -78,7 +73,7 @@ void math_PSO::Perform(const math_Vector& theSteps,
 
   // Generate initial particles distribution.
   Standard_Boolean isRegularGridFinished = Standard_False;
-  Standard_Real aCurrValue;
+  Standard_Real aCurrValue = NAN;
   math_Vector   aCurrPoint(1, myN);
 
   PSO_Particle* aParticle = aPool.GetWorstParticle();
@@ -89,7 +84,7 @@ void math_PSO::Perform(const math_Vector& theSteps,
 
     if (aCurrValue < aParticle->Distance)
     {
-      Standard_Integer aDimIdx;
+      Standard_Integer aDimIdx = 0;
       for(aDimIdx = 0; aDimIdx < myN; ++aDimIdx)
       {
         aParticle->Position[aDimIdx] = aCurrPoint(aDimIdx + 1);

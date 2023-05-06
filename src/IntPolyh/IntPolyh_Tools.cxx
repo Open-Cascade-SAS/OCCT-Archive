@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntPolyh_Tools.hxx>
 
 #include <Adaptor3d_Surface.hxx>
@@ -68,7 +70,7 @@ static void EnlargeZone(const Handle(Adaptor3d_Surface)& theSurf,
                         Standard_Real &v0,
                         Standard_Real &v1)
 {
-  Standard_Boolean isToEnlargeU, isToEnlargeV;
+  Standard_Boolean isToEnlargeU = 0, isToEnlargeV = 0;
   IntPolyh_Tools::IsEnlargePossible(theSurf, isToEnlargeU, isToEnlargeV);
   // Enlarge U
   if (isToEnlargeU)
@@ -101,7 +103,7 @@ void IntPolyh_Tools::MakeSampling(const Handle(Adaptor3d_Surface)& theSurf,
   theUPars.Resize(1, theNbSU, Standard_False);
   theVPars.Resize(1, theNbSV, Standard_False);
   //
-  Standard_Real u0, u1, v0, v1;
+  Standard_Real u0 = NAN, u1 = NAN, v0 = NAN, v1 = NAN;
   u0 = theSurf->FirstUParameter();
   u1 = theSurf->LastUParameter();
   v0 = theSurf->FirstVParameter();

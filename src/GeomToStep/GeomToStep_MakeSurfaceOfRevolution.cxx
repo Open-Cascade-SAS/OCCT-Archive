@@ -30,7 +30,7 @@
 // SurfaceOfRevolution de Geom
 //=============================================================================
 GeomToStep_MakeSurfaceOfRevolution::GeomToStep_MakeSurfaceOfRevolution
-  ( const Handle(Geom_SurfaceOfRevolution)& S )
+  ( const Handle(Geom_SurfaceOfRevolution)& S ) : GeomToStep_Root()
 	
 {
   Handle(StepGeom_SurfaceOfRevolution) Surf;

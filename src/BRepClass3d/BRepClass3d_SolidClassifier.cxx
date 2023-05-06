@@ -116,11 +116,11 @@ BRepClass3d_SolidClassifier::BRepClass3d_SolidClassifier(const TopoDS_Shape& S)
 BRepClass3d_SolidClassifier::BRepClass3d_SolidClassifier(const TopoDS_Shape& S,
 							 const gp_Pnt&       P,
 							 const Standard_Real Tol) 
-: explorer(S) { 
+: aSolidLoaded(Standard_True), explorer(S) { 
 #if LBRCOMPT
   STAT.NbConstrShapePnt++;
 #endif
-  aSolidLoaded = Standard_True;
+  
 #if MARCHEPASSIUNESEULEFACE  
   PerformInfinitePoint(1e-7);
   if(State()==TopAbs_OUT) { 

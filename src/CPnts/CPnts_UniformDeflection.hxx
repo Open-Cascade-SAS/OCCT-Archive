@@ -139,21 +139,21 @@ private:
   Standard_EXPORT void Perform();
 
 
-  Standard_Boolean myDone;
-  Standard_Boolean my3d;
-  Standard_Address myCurve;
-  Standard_Boolean myFinish;
-  Standard_Real myTolCur;
-  Standard_Boolean myControl;
-  Standard_Integer myIPoint;
-  Standard_Integer myNbPoints;
-  Standard_Real myParams[3];
+  Standard_Boolean myDone{};
+  Standard_Boolean my3d{};
+  Standard_Address myCurve{};
+  Standard_Boolean myFinish{};
+  Standard_Real myTolCur{};
+  Standard_Boolean myControl{};
+  Standard_Integer myIPoint{};
+  Standard_Integer myNbPoints{};
+  Standard_Real myParams[3]{};
   gp_Pnt myPoints[3];
-  Standard_Real myDwmax;
-  Standard_Real myDeflection;
-  Standard_Real myFirstParam;
-  Standard_Real myLastParam;
-  Standard_Real myDu;
+  Standard_Real myDwmax{};
+  Standard_Real myDeflection{};
+  Standard_Real myFirstParam{};
+  Standard_Real myLastParam{};
+  Standard_Real myDu{};
 
 
 };

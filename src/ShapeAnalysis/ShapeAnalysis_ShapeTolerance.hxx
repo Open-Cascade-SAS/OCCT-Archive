@@ -89,7 +89,7 @@ private:
 
 
 
-  Standard_Real myTols[3];
+  Standard_Real myTols[3]{};
   Standard_Integer myNbTol;
 
 

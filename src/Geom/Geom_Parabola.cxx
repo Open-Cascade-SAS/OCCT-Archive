@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Geom_Parabola.hxx>
 #include <gp_Ax1.hxx>
@@ -251,7 +253,7 @@ Vec Geom_Parabola::DN (const Standard_Real U, const Standard_Integer N) const {
 
 Pnt Geom_Parabola::Focus () const {
 
-  Standard_Real Xp, Yp, Zp, Xd, Yd, Zd;
+  Standard_Real Xp = NAN, Yp = NAN, Zp = NAN, Xd = NAN, Yd = NAN, Zd = NAN;
   pos.Location().Coord (Xp, Yp, Zp);
   pos.XDirection().Coord (Xd, Yd, Zd);
   return Pnt (Xp + focalLength*Xd, Yp + focalLength*Yd, Zp + focalLength*Zd);

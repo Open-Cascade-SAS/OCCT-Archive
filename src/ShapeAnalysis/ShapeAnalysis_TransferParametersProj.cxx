@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_GCurve.hxx>
 #include <BRep_ListOfPointRepresentation.hxx>
@@ -50,11 +52,11 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeAnalysis_TransferParametersProj,ShapeAnalysis_Tr
 //purpose  : 
 //=======================================================================
 ShapeAnalysis_TransferParametersProj::ShapeAnalysis_TransferParametersProj()
-: myPrecision(0.0)
+: myPrecision(0.0), myForceProj(Standard_False), myInitOK(Standard_False)
 {
   myMaxTolerance = 1; //Precision::Infinite(); ?? pdn
-  myForceProj = Standard_False;
-  myInitOK = Standard_False;
+  
+  
 }
 
 
@@ -64,10 +66,10 @@ ShapeAnalysis_TransferParametersProj::ShapeAnalysis_TransferParametersProj()
 //=======================================================================
 
 ShapeAnalysis_TransferParametersProj::ShapeAnalysis_TransferParametersProj(const TopoDS_Edge& E,
-                                                                           const TopoDS_Face& F)
+                                                                           const TopoDS_Face& F) : myForceProj(Standard_False)
 {
   myMaxTolerance = 1; //Precision::Infinite(); ?? pdn
-  myForceProj = Standard_False;
+  
   Init(E,F);
 }
 
@@ -91,7 +93,7 @@ void ShapeAnalysis_TransferParametersProj::Init(const TopoDS_Edge& E,
     
   if ( F.IsNull() ) return;
     
-  Standard_Real f2d, l2d;
+  Standard_Real f2d = NAN, l2d = NAN;
   ShapeAnalysis_Edge sae;
   if(sae.PCurve (E, F, myCurve2d, f2d, l2d, Standard_False)) {
       
@@ -131,7 +133,7 @@ Handle(TColStd_HSequenceOfReal) ShapeAnalysis_TransferParametersProj::Perform
   Standard_Real lastPar = last;
   Standard_Real prevPar = maxPar;
 
-  Standard_Integer j; // svv Jan 10 2000 : porting on DEC
+  Standard_Integer j = 0; // svv Jan 10 2000 : porting on DEC
   for(j = 1; j <= len; j++) {
     Standard_Real par = PreformSegment(Knots->Value(j),To2d,prevPar,lastPar);
     prevPar = par;
@@ -175,11 +177,11 @@ Standard_Real ShapeAnalysis_TransferParametersProj::PreformSegment(const Standar
      (! myForceProj && myPrecision < myMaxTolerance && BRep_Tool::SameParameter(myEdge)))
     return linPar;
   
-  Standard_Real linDev, projDev;
+  Standard_Real linDev = NAN, projDev = NAN;
   
   ShapeAnalysis_Curve sac;
   gp_Pnt pproj;
-  Standard_Real ppar;
+  Standard_Real ppar = NAN;
   if(To2d) {
     gp_Pnt p1 = myCurve->Value(Param).Transformed(myLocation.Inverted());
     Handle(Adaptor3d_Surface) AdS = myAC3d.GetSurface();
@@ -212,7 +214,7 @@ Standard_Real ShapeAnalysis_TransferParametersProj::Perform(const Standard_Real 
      (! myForceProj && myPrecision < myMaxTolerance && BRep_Tool::SameParameter(myEdge)))
     return ShapeAnalysis_TransferParameters::Perform(Knot, To2d);
   
-  Standard_Real res;
+  Standard_Real res = NAN;
   if(To2d) 
     res = PreformSegment(Knot,To2d,myAC3d.FirstParameter(),myAC3d.LastParameter());
   else 
@@ -231,7 +233,7 @@ Standard_Real ShapeAnalysis_TransferParametersProj::Perform(const Standard_Real 
 //function : CorrectParameter
 //purpose  : auxiliary
 //=======================================================================
-static Standard_Real CorrectParameter(const Handle(Geom2d_Curve) crv,
+static Standard_Real CorrectParameter(const Handle(Geom2d_Curve)& crv,
 				      const Standard_Real param)
 {
   if(crv->IsKind(STANDARD_TYPE(Geom2d_TrimmedCurve))) {
@@ -278,7 +280,7 @@ void ShapeAnalysis_TransferParametersProj::TransferRange(TopoDS_Edge& newEdge,
   gp_Pnt p2;
   Standard_Real alpha = 0, beta = 1;
   Standard_Real preci = Precision::PConfusion();
-  Standard_Real firstPar, lastPar;
+  Standard_Real firstPar = NAN, lastPar = NAN;
   if(prevPar < currPar) {
     firstPar = prevPar;
     lastPar  = currPar;
@@ -334,7 +336,7 @@ void ShapeAnalysis_TransferParametersProj::TransferRange(TopoDS_Edge& newEdge,
   TopLoc_Location EdgeLoc = myEdge.Location();
   ShapeAnalysis_Curve sac;
   gp_Pnt pproj;
-  Standard_Real ppar1,ppar2;
+  Standard_Real ppar1 = NAN,ppar2 = NAN;
   BRep_ListOfCurveRepresentation& tolist = (*((Handle(BRep_TEdge)*)&newEdge.TShape()))->ChangeCurves();
   Handle(BRep_GCurve) toGC;
   for (BRep_ListIteratorOfListOfCurveRepresentation toitcr (tolist); toitcr.More(); toitcr.Next()) {
@@ -498,11 +500,11 @@ TopoDS_Vertex ShapeAnalysis_TransferParametersProj::CopyNMVertex (const TopoDS_V
     return anewV;
   
   TopLoc_Location fromLoc;
-  Standard_Real f1,l1;
+  Standard_Real f1 = NAN,l1 = NAN;
   const Handle(Geom_Curve)& C1 = BRep_Tool::Curve(fromedge,fromLoc,f1,l1);
   fromLoc = fromLoc.Predivided(theV.Location());
   
-  Standard_Real f2,l2;
+  Standard_Real f2 = NAN,l2 = NAN;
   Handle(Geom_Curve) C2 = BRep_Tool::Curve(toedge,f2,l2);
   
   anewV = TopoDS::Vertex(theV.EmptyCopied());
@@ -580,7 +582,7 @@ TopoDS_Vertex ShapeAnalysis_TransferParametersProj::CopyNMVertex (const TopoDS_V
   //update tolerance
   Standard_Boolean needUpdate = Standard_False;
   gp_Pnt aPV = (*((Handle(BRep_TVertex)*)&anewV.TShape()))->Pnt();
-  TopLoc_Location toLoc = toedge.Location();
+  const TopLoc_Location& toLoc = toedge.Location();
   BRep_ListIteratorOfListOfCurveRepresentation toitcr
 	((*((Handle(BRep_TEdge)*)&toedge.TShape()))->ChangeCurves());
       

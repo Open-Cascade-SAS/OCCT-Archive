@@ -38,13 +38,13 @@ Interface_IntList::Interface_IntList ()
   Initialize (nbe);
 }
 
-  Interface_IntList::Interface_IntList (const Interface_IntList& other, const Standard_Boolean copied)
+  Interface_IntList::Interface_IntList (const Interface_IntList& other, const Standard_Boolean copied) : thenbe(other.NbEntities())
 {
-  thenbe = other.NbEntities();
+  
   thenum = thecount = therank = 0; //szv#4:S4163:12Mar99 initialization needed
   other.Internals (thenbr, theents, therefs);
   if (copied) {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Handle(TColStd_HArray1OfInteger) ents = new TColStd_HArray1OfInteger (0,thenbe); ents->Init(0);
     for (i = 1; i <= thenbe; i ++)  ents->SetValue (i,theents->Value(i));
     Handle(TColStd_HArray1OfInteger) refs = new TColStd_HArray1OfInteger (0,thenbr); refs->Init(0);
@@ -75,7 +75,7 @@ Standard_Integer  Interface_IntList::NbEntities () const
 void  Interface_IntList::SetNbEntities (const Standard_Integer nbe)
 {
   if (nbe <= theents->Upper()) return;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Handle(TColStd_HArray1OfInteger) ents = new TColStd_HArray1OfInteger (0,nbe); ents->Init(0);
   for (i = 1; i <= thenbe; i ++)  ents->SetValue (i,theents->Value(i));
   theents = ents;
@@ -174,7 +174,7 @@ void  Interface_IntList::Reservate (const Standard_Integer count)
     thenbr -= count;
     return;
   }
-  Standard_Integer up, oldup = 0;
+  Standard_Integer up = 0, oldup = 0;
   if (thenbr == 0) {    //  c-a-d pas encore allouee ...
     up = thenbe/2+1;  if (up < 2) up = 2;
     if (up < count) up = count*3/2;
@@ -268,7 +268,7 @@ Standard_Boolean  Interface_IntList::Remove (const Standard_Integer)
 void  Interface_IntList::Clear ()
 {
   if (thenbr == 0) return;  // deja clear
-  Standard_Integer i,low,up;
+  Standard_Integer i = 0,low = 0,up = 0;
   low = theents->Lower();  up = theents->Upper();
   for (i = low; i <= up; i ++)  theents->SetValue (i,0);
   thenbr = 0;
@@ -279,7 +279,7 @@ void  Interface_IntList::Clear ()
 
 void  Interface_IntList::AdjustSize (const Standard_Integer margin)
 {
-  Standard_Integer i, up = theents->Upper();
+  Standard_Integer i = 0, up = theents->Upper();
   if (up > thenbe) {
     Handle(TColStd_HArray1OfInteger) ents = new TColStd_HArray1OfInteger (0,thenbe); ents->Init(0);
     for (i = 1; i <= thenbe; i ++)  ents->SetValue (i,theents->Value(i));

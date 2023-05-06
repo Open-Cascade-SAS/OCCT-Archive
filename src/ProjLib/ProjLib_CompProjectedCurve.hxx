@@ -246,12 +246,12 @@ private:
   Handle(TColStd_HArray1OfBoolean) mySnglPnts;
   Handle(TColStd_HArray1OfReal) myMaxDistance;
   Handle(TColStd_HArray1OfReal) myTabInt;
-  Standard_Real    myTol3d;
+  Standard_Real    myTol3d{};
   GeomAbs_Shape    myContinuity;
-  Standard_Integer myMaxDegree;
-  Standard_Integer myMaxSeg;
-  Standard_Boolean myProj2d;
-  Standard_Boolean myProj3d;
+  Standard_Integer myMaxDegree{};
+  Standard_Integer myMaxSeg{};
+  Standard_Boolean myProj2d{};
+  Standard_Boolean myProj3d{};
   Standard_Real myMaxDist;
   Standard_Real myTolU;
   Standard_Real myTolV;

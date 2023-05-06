@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <Interface_ShareTool.hxx>
@@ -68,13 +70,13 @@ void RWStepGeom_RWBSplineSurfaceWithKnots::ReadStep
 
 	// --- inherited field : uDegree ---
 
-	Standard_Integer aUDegree;
+	Standard_Integer aUDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadInteger (num,2,"u_degree",ach,aUDegree);
 
 	// --- inherited field : vDegree ---
 
-	Standard_Integer aVDegree;
+	Standard_Integer aVDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadInteger (num,3,"v_degree",ach,aVDegree);
 
@@ -82,13 +84,13 @@ void RWStepGeom_RWBSplineSurfaceWithKnots::ReadStep
 
 	Handle(StepGeom_HArray2OfCartesianPoint) aControlPointsList;
 	Handle(StepGeom_CartesianPoint) anent4;
-	Standard_Integer nsub4;
+	Standard_Integer nsub4 = 0;
 	if (data->ReadSubList (num,4,"control_points_list",ach,nsub4)) {
 	  Standard_Integer nbi4 = data->NbParams(nsub4);
 	  Standard_Integer nbj4 = data->NbParams(data->ParamNumber(nsub4,1));
 	  aControlPointsList = new StepGeom_HArray2OfCartesianPoint (1, nbi4, 1, nbj4);
 	  for (Standard_Integer i4 = 1; i4 <= nbi4; i4 ++) {
-	    Standard_Integer nsi4;
+	    Standard_Integer nsi4 = 0;
 	    if (data->ReadSubList (nsub4,i4,"sub-part(control_points_list)",ach,nsi4)) {
 	      for (Standard_Integer j4 =1; j4 <= nbj4; j4 ++) {
 		//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
@@ -141,8 +143,8 @@ void RWStepGeom_RWBSplineSurfaceWithKnots::ReadStep
 	// --- own field : uMultiplicities ---
 
 	Handle(TColStd_HArray1OfInteger) aUMultiplicities;
-	Standard_Integer aUMultiplicitiesItem;
-	Standard_Integer nsub9;
+	Standard_Integer aUMultiplicitiesItem = 0;
+	Standard_Integer nsub9 = 0;
 	if (data->ReadSubList (num,9,"u_multiplicities",ach,nsub9)) {
 	  Standard_Integer nb9 = data->NbParams(nsub9);
 	  aUMultiplicities = new TColStd_HArray1OfInteger (1, nb9);
@@ -156,8 +158,8 @@ void RWStepGeom_RWBSplineSurfaceWithKnots::ReadStep
 	// --- own field : vMultiplicities ---
 
 	Handle(TColStd_HArray1OfInteger) aVMultiplicities;
-	Standard_Integer aVMultiplicitiesItem;
-	Standard_Integer nsub10;
+	Standard_Integer aVMultiplicitiesItem = 0;
+	Standard_Integer nsub10 = 0;
 	if (data->ReadSubList (num,10,"v_multiplicities",ach,nsub10)) {
 	  Standard_Integer nb10 = data->NbParams(nsub10);
 	  aVMultiplicities = new TColStd_HArray1OfInteger (1, nb10);
@@ -171,8 +173,8 @@ void RWStepGeom_RWBSplineSurfaceWithKnots::ReadStep
 	// --- own field : uKnots ---
 
 	Handle(TColStd_HArray1OfReal) aUKnots;
-	Standard_Real aUKnotsItem;
-	Standard_Integer nsub11;
+	Standard_Real aUKnotsItem = NAN;
+	Standard_Integer nsub11 = 0;
 	if (data->ReadSubList (num,11,"u_knots",ach,nsub11)) {
 	  Standard_Integer nb11 = data->NbParams(nsub11);
 	  aUKnots = new TColStd_HArray1OfReal (1, nb11);
@@ -186,8 +188,8 @@ void RWStepGeom_RWBSplineSurfaceWithKnots::ReadStep
 	// --- own field : vKnots ---
 
 	Handle(TColStd_HArray1OfReal) aVKnots;
-	Standard_Real aVKnotsItem;
-	Standard_Integer nsub12;
+	Standard_Real aVKnotsItem = NAN;
+	Standard_Integer nsub12 = 0;
 	if (data->ReadSubList (num,12,"v_knots",ach,nsub12)) {
 	  Standard_Integer nb12 = data->NbParams(nsub12);
 	  aVKnots = new TColStd_HArray1OfReal (1, nb12);
@@ -350,7 +352,7 @@ void RWStepGeom_RWBSplineSurfaceWithKnots::Check
   Standard_Integer nbKnoV  = ent->NbVKnots();
   Standard_Integer sumMulU = 0;
   Standard_Integer sumMulV = 0;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 //  std::cout << "BSplineSurfaceWithKnots: nbMulU=" << nbMulU << " nbKnoU= " << 
 //    nbKnoU << " nbCPLU= " << nbCPLU << " degreeU= " << dgBSSU << std::endl;
 //  std::cout << "                         nbMulV=" << nbMulV << " nbKnoV= " << 

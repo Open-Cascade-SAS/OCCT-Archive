@@ -34,9 +34,9 @@ RWPly_ConfigurationNode::RWPly_ConfigurationNode() :
 // purpose  :
 //=======================================================================
 RWPly_ConfigurationNode::RWPly_ConfigurationNode(const Handle(RWPly_ConfigurationNode)& theNode)
-  :DE_ConfigurationNode(theNode)
+  :DE_ConfigurationNode(theNode), InternalParameters(theNode->InternalParameters)
 {
-  InternalParameters = theNode->InternalParameters;
+  
 }
 
 //=======================================================================

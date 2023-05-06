@@ -280,7 +280,7 @@ Standard_Boolean BRepExtrema_ProximityDistTool::IsNodeOnBorder (const Standard_I
 {
   Poly_Connect aPolyConnect (theTr);
 
-  Standard_Integer aContTrg; //index of triangle containing exploring node
+  Standard_Integer aContTrg = 0; //index of triangle containing exploring node
   for (aPolyConnect.Initialize (theNodeIdx); aPolyConnect.More(); aPolyConnect.Next())
   {
     aContTrg = aPolyConnect.Value();

@@ -17,6 +17,8 @@
 //:o0 abv 16.02.99: POLYLINE allowed as 3d curve of edge
 //gka,abv 05.04.99: S4136: improving tolerance management, eliminate BRepAPI::Precision()
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepLib.hxx>
@@ -136,7 +138,7 @@ static void DecodeMakeEdgeError(const BRepLib_MakeEdge&   ME,
 // ============================================================================
 
 static Handle(Geom_Curve) MakeCurve
-  (const Handle(StepGeom_Curve)& C1, const Handle(Transfer_TransientProcess) TP)
+  (const Handle(StepGeom_Curve)& C1, const Handle(Transfer_TransientProcess)& TP)
 {
   Handle(Geom_Curve) C2 = Handle(Geom_Curve)::DownCast (TP->FindTransient(C1));
   if (!C2.IsNull()) return C2;
@@ -383,7 +385,7 @@ void  StepToTopoDS_TranslateEdge::MakeFromCurve3D
     // -- Statistics -- -> No Warning message
   aTool.AddContinuity (C1);
   BRep_Builder B;
-  Standard_Real temp1,temp2, U1,U2;
+  Standard_Real temp1 = NAN,temp2 = NAN, U1 = NAN,U2 = NAN;
   gp_Pnt pproj;
   gp_Pnt pv1 = BRep_Tool::Pnt(V1);
   gp_Pnt pv2 = BRep_Tool::Pnt(V2);

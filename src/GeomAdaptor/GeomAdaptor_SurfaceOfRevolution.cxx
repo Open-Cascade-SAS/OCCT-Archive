@@ -18,6 +18,8 @@
 
 #include <Adaptor3d_Curve.hxx>
 #include <ElCLib.hxx>
+#include <math.h>
+
 #include <GeomAdaptor_SurfaceOfRevolution.hxx>
 #include <GeomEvaluator_SurfaceOfRevolution.hxx>
 #include <Standard_NoSuchObject.hxx>
@@ -159,7 +161,7 @@ void GeomAdaptor_SurfaceOfRevolution::Load(const gp_Ax1& V)
     Standard_Real First = myBasisCurve->FirstParameter();
     Standard_Real Last  = myBasisCurve->LastParameter();
     Standard_Integer Ratio = 1;
-    Standard_Real Dist; 
+    Standard_Real Dist = NAN; 
     gp_Pnt PP;
     do {
       PP = myBasisCurve->Value(First+(Last-First)/Ratio);
@@ -485,7 +487,7 @@ GeomAbs_SurfaceType GeomAdaptor_SurfaceOfRevolution::GetType() const
   }//case GeomAbs_Line: 
   //
   case GeomAbs_Circle:   {
-    Standard_Real MajorRadius, aR;
+    Standard_Real MajorRadius = NAN, aR = NAN;
     gp_Lin aLin(myAxis);
     //
     gp_Circ C = myBasisCurve->Circle();

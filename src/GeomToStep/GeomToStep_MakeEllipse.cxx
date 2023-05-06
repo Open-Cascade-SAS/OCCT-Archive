@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Ellipse.hxx>
 #include <Geom_Ellipse.hxx>
 #include <GeomToStep_MakeAxis2Placement2d.hxx>
@@ -32,7 +34,7 @@
 //=============================================================================
 // Creation d'une ellipse de prostep a partir d'une ellipse 3d de gp
 //=============================================================================
-GeomToStep_MakeEllipse::GeomToStep_MakeEllipse( const gp_Elips& E)
+GeomToStep_MakeEllipse::GeomToStep_MakeEllipse( const gp_Elips& E) : GeomToStep_Root()
 {
 #include "GeomToStep_MakeEllipse_gen.pxx"
 }
@@ -43,7 +45,7 @@ GeomToStep_MakeEllipse::GeomToStep_MakeEllipse( const gp_Elips& E)
 // Geom
 //=============================================================================
 
-GeomToStep_MakeEllipse::GeomToStep_MakeEllipse( const Handle(Geom_Ellipse)& Cer)
+GeomToStep_MakeEllipse::GeomToStep_MakeEllipse( const Handle(Geom_Ellipse)& Cer) : GeomToStep_Root()
 {
   gp_Elips E;
   E = Cer->Elips();
@@ -56,7 +58,7 @@ GeomToStep_MakeEllipse::GeomToStep_MakeEllipse( const Handle(Geom_Ellipse)& Cer)
 // Geom2d
 //=============================================================================
 
-GeomToStep_MakeEllipse::GeomToStep_MakeEllipse( const Handle(Geom2d_Ellipse)& Cer)
+GeomToStep_MakeEllipse::GeomToStep_MakeEllipse( const Handle(Geom2d_Ellipse)& Cer) : GeomToStep_Root()
 {
   gp_Elips2d E2d;
   E2d = Cer->Elips2d();
@@ -64,7 +66,7 @@ GeomToStep_MakeEllipse::GeomToStep_MakeEllipse( const Handle(Geom2d_Ellipse)& Ce
   Handle(StepGeom_Ellipse) EStep = new StepGeom_Ellipse;
   StepGeom_Axis2Placement Ax2;
   Handle(StepGeom_Axis2Placement2d) Ax2Step;
-  Standard_Real majorR, minorR;
+  Standard_Real majorR = NAN, minorR = NAN;
   
   GeomToStep_MakeAxis2Placement2d MkAxis2(E2d.Axis());
   Ax2Step = MkAxis2.Value();

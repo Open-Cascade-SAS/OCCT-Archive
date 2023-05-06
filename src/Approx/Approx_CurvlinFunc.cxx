@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Approx_CurvlinFunc.hxx>
 
 #include <Adaptor2d_Curve2d.hxx>
@@ -43,7 +45,7 @@ Standard_IMPORT void ResultChron( OSD_Chronometer & ch, Standard_Real & time);
 
 static Standard_Real cubic(const Standard_Real X, const Standard_Real *Xi, const Standard_Real *Yi)
 {
-  Standard_Real I1, I2, I3, I21, I22, I31, Result;
+  Standard_Real I1 = NAN, I2 = NAN, I3 = NAN, I21 = NAN, I22 = NAN, I31 = NAN, Result = NAN;
 
   I1 = (Yi[0] - Yi[1])/(Xi[0] - Xi[1]);
   I2 = (Yi[1] - Yi[2])/(Xi[1] - Xi[2]);
@@ -68,7 +70,7 @@ static void findfourpoints(const Standard_Real ,
 			   const Standard_Real prevU, Standard_Real *Xi, 
 			   Standard_Real *Yi)
 {
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   Standard_Integer NbInt = Si->Length() - 1;
   if (NbInt < 3) throw Standard_ConstructionError("Approx_CurvlinFunc::GetUParameter");
 
@@ -193,8 +195,8 @@ void Approx_CurvlinFunc::Init()
 void Approx_CurvlinFunc::Init(Adaptor3d_Curve& C, Handle(TColStd_HArray1OfReal)& Si, 
 			      Handle(TColStd_HArray1OfReal)& Ui) const
 {
-  Standard_Real Step, FirstU, LastU;
-  Standard_Integer i, j, k, NbInt, NbIntC3;
+  Standard_Real Step = NAN, FirstU = NAN, LastU = NAN;
+  Standard_Integer i = 0, j = 0, k = 0, NbInt = 0, NbIntC3 = 0;
   FirstU = C.FirstParameter();
   LastU  = C.LastParameter();
 
@@ -260,7 +262,7 @@ Standard_Integer Approx_CurvlinFunc::NbIntervals(const GeomAbs_Shape S) const
     CurOnSur.Load(mySurf1);
     return CurOnSur.NbIntervals(S);
   case 3:
-    Standard_Integer NbInt;
+    Standard_Integer NbInt = 0;
     CurOnSur.Load(myC2D1);
     CurOnSur.Load(mySurf1);
     NbInt = CurOnSur.NbIntervals(S);
@@ -284,7 +286,7 @@ Standard_Integer Approx_CurvlinFunc::NbIntervals(const GeomAbs_Shape S) const
 void Approx_CurvlinFunc::Intervals(TColStd_Array1OfReal& T, const GeomAbs_Shape S) const
 {
   Adaptor3d_CurveOnSurface CurOnSur;
-  Standard_Integer i;
+  Standard_Integer i = 0;
     
   switch(myCase) {
   case 1:
@@ -296,7 +298,7 @@ void Approx_CurvlinFunc::Intervals(TColStd_Array1OfReal& T, const GeomAbs_Shape 
     CurOnSur.Intervals(T, S);
     break;
   case 3:
-    Standard_Integer NbInt;
+    Standard_Integer NbInt = 0;
     CurOnSur.Load(myC2D1);
     CurOnSur.Load(mySurf1);
     NbInt = CurOnSur.NbIntervals(S);
@@ -324,7 +326,7 @@ void Approx_CurvlinFunc::Trim(const Standard_Real First, const Standard_Real Las
   if (First < 0 || Last >1) throw Standard_OutOfRange("Approx_CurvlinFunc::Trim");
   if ((Last - First) < Tol) return;
 
-  Standard_Real FirstU, LastU;
+  Standard_Real FirstU = NAN, LastU = NAN;
   Adaptor3d_CurveOnSurface CurOnSur;
   Handle(Adaptor3d_CurveOnSurface) HCurOnSur;
 
@@ -373,7 +375,7 @@ void Approx_CurvlinFunc::Trim(const Standard_Real First, const Standard_Real Las
 void Approx_CurvlinFunc::Length()
 {
   Adaptor3d_CurveOnSurface CurOnSur;
-  Standard_Real FirstU, LastU;
+  Standard_Real FirstU = NAN, LastU = NAN;
 
   switch(myCase){
   case 1:
@@ -408,7 +410,7 @@ void Approx_CurvlinFunc::Length()
 
 Standard_Real Approx_CurvlinFunc::Length(Adaptor3d_Curve& C, const Standard_Real FirstU, const Standard_Real LastU) const
 {
-  Standard_Real Length;
+  Standard_Real Length = NAN;
 
   Length = GCPnts_AbscissaPoint::Length(C, FirstU, LastU, myTolLen);
   return Length;
@@ -422,7 +424,7 @@ Standard_Real Approx_CurvlinFunc::GetLength() const
 
 Standard_Real Approx_CurvlinFunc::GetSParameter(const Standard_Real U) const
 {
-  Standard_Real S=0, S1, S2;
+  Standard_Real S=0, S1 = NAN, S2 = NAN;
   Adaptor3d_CurveOnSurface CurOnSur;
 
   switch (myCase) {
@@ -452,8 +454,8 @@ Standard_Real Approx_CurvlinFunc::GetUParameter(Adaptor3d_Curve& C,
 						const Standard_Real S, 
 						const Standard_Integer NumberOfCurve) const
 {
-  Standard_Real deltaS, base, U, Length;
-  Standard_Integer NbInt, NInterval, i;
+  Standard_Real deltaS = NAN, base = NAN, U = NAN, Length = NAN;
+  Standard_Integer NbInt = 0, NInterval = 0, i = 0;
   Handle(TColStd_HArray1OfReal) InitUArray, InitSArray;
 #ifdef OCCT_DEBUG_CHRONO
   InitChron(chr_uparam);
@@ -495,7 +497,7 @@ Standard_Real Approx_CurvlinFunc::GetUParameter(Adaptor3d_Curve& C,
   deltaS = (S - InitSArray->Value(NInterval))*Length;
 
 // to find an initial point
-  Standard_Real Xi[4], Yi[4], UGuess;
+  Standard_Real Xi[4], Yi[4], UGuess = NAN;
   findfourpoints(S, NInterval, InitSArray, InitUArray, myPrevS, myPrevU, Xi, Yi);
   UGuess = cubic(S , Xi, Yi);
 
@@ -515,7 +517,7 @@ Standard_Real Approx_CurvlinFunc::GetUParameter(Adaptor3d_Curve& C,
 
 Standard_Real Approx_CurvlinFunc::GetSParameter(Adaptor3d_Curve& C, const Standard_Real U, const Standard_Real Len) const
 {
-  Standard_Real S, Origin;
+  Standard_Real S = NAN, Origin = NAN;
 
   Origin = C.FirstParameter();
   S = myFirstS + Length(C, Origin, U)/Len;    
@@ -528,7 +530,7 @@ Standard_Boolean Approx_CurvlinFunc::EvalCase1(const Standard_Real S, const Stan
 
   gp_Pnt C;
   gp_Vec dC_dU, dC_dS, d2C_dU2, d2C_dS2;
-  Standard_Real U, Mag, dU_dS, d2U_dS2;
+  Standard_Real U = NAN, Mag = NAN, dU_dS = NAN, d2U_dS2 = NAN;
   
   U = GetUParameter (*myC3D, S, 1);
 
@@ -575,7 +577,7 @@ Standard_Boolean Approx_CurvlinFunc::EvalCase2(const Standard_Real S, const Stan
 {
   if(myCase != 2) throw Standard_ConstructionError("Approx_CurvlinFunc::EvalCase2");
 
-  Standard_Boolean Done;
+  Standard_Boolean Done = 0;
 
   Done = EvalCurOnSur(S, Order, Result, 1);
 
@@ -587,7 +589,7 @@ Standard_Boolean Approx_CurvlinFunc::EvalCase3(const Standard_Real S, const Stan
   if(myCase != 3) throw Standard_ConstructionError("Approx_CurvlinFunc::EvalCase3");
   
   TColStd_Array1OfReal tmpRes1(0, 4), tmpRes2(0, 4);
-  Standard_Boolean Done;
+  Standard_Boolean Done = 0;
 
   Done = EvalCurOnSur(S, Order, tmpRes1, 1);
 
@@ -628,7 +630,7 @@ Standard_Boolean Approx_CurvlinFunc::EvalCurOnSur(const Standard_Real S, const S
   else 
     throw Standard_ConstructionError("Approx_CurvlinFunc::EvalCurOnSur");
 
-  Standard_Real Mag, dU_dS, d2U_dS2, dV_dU, dW_dU, dV_dS, dW_dS, d2V_dS2, d2W_dS2, d2V_dU2, d2W_dU2;
+  Standard_Real Mag = NAN, dU_dS = NAN, d2U_dS2 = NAN, dV_dU = NAN, dW_dU = NAN, dV_dS = NAN, dW_dS = NAN, d2V_dS2 = NAN, d2W_dS2 = NAN, d2V_dU2 = NAN, d2W_dU2 = NAN;
   gp_Pnt2d C2D;
   gp_Pnt C;
   gp_Vec2d dC2D_dU, d2C2D_dU2;

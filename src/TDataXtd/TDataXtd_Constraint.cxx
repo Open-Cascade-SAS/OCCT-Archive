@@ -443,7 +443,7 @@ void TDataXtd_Constraint::References(const Handle(TDF_DataSet)& DS) const
 { 
 //bidouille en attendant traitement des contraintes d assemblage en dehors de la part 
 // l attribut placement devrait oriente vers les contraintes de placement en dehors
-  Standard_Integer Lim;
+  Standard_Integer Lim = 0;
   if (myType >= TDataXtd_MATE && myType<=TDataXtd_FACES_ANGLE)  Lim =1;
   else Lim =3;
 

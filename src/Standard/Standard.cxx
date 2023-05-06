@@ -97,7 +97,7 @@ Standard_MMgrFactory::Standard_MMgrFactory()
   Standard_STATIC_ASSERT(sizeof(Standard_WideChar) == sizeof(Standard_Utf16Char));
 #endif
 
-  char* aVar;
+  char* aVar = nullptr;
   aVar = getenv ("MMGT_OPT");
   Standard_Integer anAllocId   = (aVar ?  atoi (aVar): OCCT_MMGT_OPT_DEFAULT);
 

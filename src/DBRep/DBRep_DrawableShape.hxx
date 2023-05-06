@@ -172,7 +172,7 @@ private:
   Standard_Boolean myRg1;
   Standard_Boolean myRgN;
   Standard_Boolean myHid;
-  Standard_Real myAng;
+  Standard_Real myAng{};
 
 };
 

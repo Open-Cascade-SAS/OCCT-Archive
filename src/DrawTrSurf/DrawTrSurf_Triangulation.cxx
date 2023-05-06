@@ -40,7 +40,7 @@ DrawTrSurf_Triangulation::DrawTrSurf_Triangulation (const Handle(Poly_Triangulat
   // Build the connect tool
   Poly_Connect pc(T);
 
-  Standard_Integer i,j,nFree, nInternal, nbTriangles = T->NbTriangles();
+  Standard_Integer i = 0,j = 0,nFree = 0, nInternal = 0, nbTriangles = T->NbTriangles();
   Standard_Integer t[3];
 
   // count the free edges
@@ -88,7 +88,7 @@ DrawTrSurf_Triangulation::DrawTrSurf_Triangulation (const Handle(Poly_Triangulat
 void DrawTrSurf_Triangulation::DrawOn (Draw_Display& dis) const
 {
   // Display the edges
-  Standard_Integer i,n;
+  Standard_Integer i = 0,n = 0;
 
   // free edges
 
@@ -124,7 +124,7 @@ void DrawTrSurf_Triangulation::DrawOn (Draw_Display& dis) const
   if (myTriangles) {
     dis.SetColor(Draw_vert);
     n = myTriangulation->NbTriangles();
-    Standard_Integer t[3],j;
+    Standard_Integer t[3],j = 0;
     for (i = 1; i <= n; i++) {
       myTriangulation->Triangle (i).Get (t[0],t[1],t[2]);
       gp_Pnt P(0,0,0);

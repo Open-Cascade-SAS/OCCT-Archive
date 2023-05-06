@@ -39,17 +39,17 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeFix_Shape,ShapeFix_Root)
 //function : ShapeFix_Shape
 //purpose  : 
 //=======================================================================
-ShapeFix_Shape::ShapeFix_Shape()
+ShapeFix_Shape::ShapeFix_Shape() : myFixSolid(new ShapeFix_Solid), myFixSolidMode(-1), myFixShellMode(-1), myFixFaceMode(-1), myFixWireMode(-1), myFixSameParameterMode(-1), myFixVertexPositionMode(0), myFixVertexTolMode(-1), myStatus(ShapeExtend::EncodeStatus (ShapeExtend_OK))
 {  
-  myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
-  myFixSolidMode = -1;
-  myFixShellMode = -1;
-  myFixFaceMode  = -1;
-  myFixWireMode  = -1;
-  myFixSameParameterMode = -1;
-  myFixVertexPositionMode =0;
-  myFixVertexTolMode = -1;
-  myFixSolid = new ShapeFix_Solid;
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -57,17 +57,17 @@ ShapeFix_Shape::ShapeFix_Shape()
 //purpose  : 
 //=======================================================================
 
-ShapeFix_Shape::ShapeFix_Shape(const TopoDS_Shape& shape)
+ShapeFix_Shape::ShapeFix_Shape(const TopoDS_Shape& shape) : myFixSolid(new ShapeFix_Solid), myFixSolidMode(-1), myFixShellMode(-1), myFixFaceMode(-1), myFixWireMode(-1), myFixSameParameterMode(-1), myFixVertexPositionMode(0), myFixVertexTolMode(-1), myStatus(ShapeExtend::EncodeStatus (ShapeExtend_OK))
 {
-  myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
-  myFixSolidMode = -1;
-  myFixShellMode = -1;
-  myFixFaceMode  = -1;
-  myFixWireMode  = -1;
-  myFixSameParameterMode = -1;
-  myFixSolid = new ShapeFix_Solid;
-  myFixVertexPositionMode =0;
-  myFixVertexTolMode = -1;
+  
+  
+  
+  
+  
+  
+  
+  
+  
   Init(shape);
 }
 

@@ -111,7 +111,7 @@ protected:
 private:
 
 
-  Standard_Integer thecasi[3];
+  Standard_Integer thecasi[3]{};
   Handle(TColStd_HSequenceOfAsciiString) thecasl;
 
 

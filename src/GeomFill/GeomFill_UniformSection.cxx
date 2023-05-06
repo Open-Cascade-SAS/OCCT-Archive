@@ -30,6 +30,7 @@
 #include <TColStd_Array1OfInteger.hxx>
 #include <TColStd_Array1OfReal.hxx>
 
+#include <math.h>
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(GeomFill_UniformSection,GeomFill_SectionLaw)
 
@@ -124,7 +125,7 @@ GeomFill_UniformSection::GeomFill_UniformSection(const Handle(Geom_Curve)& C,
 //=======================================================
  Handle(Geom_BSplineSurface) GeomFill_UniformSection::BSplineSurface() const
 {
-  Standard_Integer ii, NbPoles = myCurve->NbPoles();
+  Standard_Integer ii = 0, NbPoles = myCurve->NbPoles();
   TColgp_Array2OfPnt Poles( 1, NbPoles, 1, 2);
   TColStd_Array1OfReal UKnots(1,myCurve->NbKnots()), VKnots(1,2); 
   TColStd_Array1OfInteger UMults(1,myCurve->NbKnots()), VMults(1,2);
@@ -271,7 +272,7 @@ GeomFill_UniformSection::GeomFill_UniformSection(const Handle(Geom_Curve)& C,
 //=======================================================
  gp_Pnt GeomFill_UniformSection::BarycentreOfSurf() const
 {
-  Standard_Real U = mySection->FirstParameter(), Delta;
+  Standard_Real U = mySection->FirstParameter(), Delta = NAN;
   gp_Pnt P, Bary;
 
   Delta = ( myCurve->LastParameter() - U ) / 20;

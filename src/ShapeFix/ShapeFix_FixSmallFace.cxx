@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepLib.hxx>
@@ -52,9 +54,9 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeFix_FixSmallFace,ShapeFix_Root)
 //#include <GeomLProp_SLProps.hxx>
 //#include <TColStd_Array2OfReal.hxx>
 //#include <TColStd_Array1OfReal.hxx>
-ShapeFix_FixSmallFace::ShapeFix_FixSmallFace()
+ShapeFix_FixSmallFace::ShapeFix_FixSmallFace() : myStatus(ShapeExtend::EncodeStatus ( ShapeExtend_OK ))
 {
-  myStatus = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
+  
   SetPrecision(Precision::Confusion());
 
 }
@@ -129,7 +131,7 @@ ShapeFix_FixSmallFace::ShapeFix_FixSmallFace()
   TColgp_SequenceOfXYZ thePositions;
   gp_XYZ thePosition;
   BRep_Builder theBuilder;
-  Standard_Real theMaxDev;
+  Standard_Real theMaxDev = NAN;
   Standard_Real theMaxTol = 0.0;
   thePositions.Clear();
   gp_Pnt thePoint;
@@ -156,7 +158,7 @@ ShapeFix_FixSmallFace::ShapeFix_FixSmallFace()
   //Calculate common vertex position
   thePosition = gp_XYZ(0.,0.,0.);
   Standard_Integer theNbPos = thePositions.Length();
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (  i = 1; i <= theNbPos; i++ ) thePosition += thePositions.Value(i);
   if ( theNbPos > 1 ) thePosition /= theNbPos;
    
@@ -334,7 +336,7 @@ ShapeFix_FixSmallFace::ShapeFix_FixSmallFace()
   TopExp::Vertices (E1,V1,V2);
   TopExp::Vertices (E2,V3,V4);
   gp_Pnt p1, p2;
-  Standard_Real dev;
+  Standard_Real dev = NAN;
   p1 = BRep_Tool::Pnt(V1);
   p2 =  BRep_Tool::Pnt(V3);
   dev = p1.Distance(p2);
@@ -444,7 +446,7 @@ ShapeFix_FixSmallFace::ShapeFix_FixSmallFace()
   if (theFirstVer.IsNull() || theSecondVer.IsNull()) return theNewEdge;
   //Create new edge
   theBuilder.MakeEdge(theNewEdge);
-  Standard_Real f, l, fp1, lp1/*, fp2, lp2*/;
+  Standard_Real f = NAN, l = NAN, fp1 = NAN, lp1 = NAN/*, fp2, lp2*/;
   TopLoc_Location loc;
   Handle(Geom_Curve) the3dcurve;
   the3dcurve = BRep_Tool::Curve(E1, f, l);
@@ -461,7 +463,7 @@ ShapeFix_FixSmallFace::ShapeFix_FixSmallFace()
       if(!the2dcurve2.IsNull()) GeomLib::SameRange(Precision::Confusion(), the2dcurve2, fp2, lp2, f, l, thenew2);
     }*/
 
-  Standard_Real maxdev; 
+  Standard_Real maxdev = NAN; 
   if ((BRep_Tool::Tolerance(theFirstVer))<=(BRep_Tool::Tolerance(theSecondVer))) 
     maxdev = (BRep_Tool::Tolerance(theSecondVer));
   else  maxdev = (BRep_Tool::Tolerance(theFirstVer));
@@ -554,12 +556,12 @@ ShapeFix_FixSmallFace::ShapeFix_FixSmallFace()
 	  E = TopoDS::Edge (ite.Current());
 	  TopoDS_Vertex V1,V2;
 	  TopExp::Vertices (E,V1,V2);
-	  Standard_Real cf,cl;
+	  Standard_Real cf = NAN,cl = NAN;
 	  Handle(Geom_Curve) C3D = BRep_Tool::Curve (E,cf,cl);
 	  if (C3D.IsNull()) continue;
 	  if (V.IsSame(V1) || V.IsSame(V2)) continue;
 	  Standard_Real vt = BRep_Tool::Tolerance (V);
-	  Standard_Real param;
+	  Standard_Real param = NAN;
 	  Standard_Real dist = SAC.Project (C3D,vp,vt*10.,proj,param,cf,cl);
 	  if (dist==0) continue; //Projection on same curve but on other edge ?
 	  if ( dist <= vt ) 
@@ -568,7 +570,7 @@ ShapeFix_FixSmallFace::ShapeFix_FixSmallFace()
 	      theBuilder.UpdateVertex(theNewVertex, proj, Precision::Confusion());
 	      theBuilder.MakeEdge(theFirstEdge);
 	      theBuilder.MakeEdge(theSecondEdge);
-	      Standard_Real f, l;
+	      Standard_Real f = NAN, l = NAN;
 	      Handle(Geom_Curve) the3dcurve = BRep_Tool::Curve(E, f, l);
 	      theBuilder.UpdateEdge(theFirstEdge, the3dcurve,Precision::Confusion());
 	      theBuilder.UpdateEdge(theSecondEdge, the3dcurve,Precision::Confusion());

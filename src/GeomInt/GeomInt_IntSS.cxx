@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomInt_IntSS.hxx>
 
 #include <Adaptor3d_TopolTool.hxx>
@@ -183,7 +185,7 @@ void GeomInt_IntSS::Perform(const Handle(Geom_Surface)& S1,
                                 const Standard_Boolean OnFirst) const
 {
   const IntPatch_Point&  thept = myIntersector.Point(Index);
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
   if (OnFirst)
     thept.ParametersOnS1(U,V);
   else

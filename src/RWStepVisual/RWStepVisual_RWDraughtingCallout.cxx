@@ -44,7 +44,7 @@ void RWStepVisual_RWDraughtingCallout::ReadStep(const Handle(StepData_StepReader
   // Own field: contents
   Handle(StepVisual_HArray1OfDraughtingCalloutElement) aContents;
   StepVisual_DraughtingCalloutElement anEnt;
-  Standard_Integer nbSub;
+  Standard_Integer nbSub = 0;
   if (data->ReadSubList (num, 2, "contents", ach, nbSub)) {
     Standard_Integer nbElements = data->NbParams(nbSub);
     aContents = new StepVisual_HArray1OfDraughtingCalloutElement (1, nbElements);
@@ -86,7 +86,7 @@ void RWStepVisual_RWDraughtingCallout::Share (const Handle(StepVisual_Draughting
                                               Interface_EntityIterator& iter) const
 {
   // Own field: contents
-  Standard_Integer i, nb = ent->NbContents();
+  Standard_Integer i = 0, nb = ent->NbContents();
   for (i = 1; i <= nb; i++)  
     iter.AddItem (ent->ContentsValue(i).Value());
 }

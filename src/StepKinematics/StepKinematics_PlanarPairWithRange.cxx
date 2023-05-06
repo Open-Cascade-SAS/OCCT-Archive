@@ -22,14 +22,14 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_PlanarPairWithRange, StepKinematics_Pl
 //function : StepKinematics_PlanarPairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_PlanarPairWithRange::StepKinematics_PlanarPairWithRange ()
+StepKinematics_PlanarPairWithRange::StepKinematics_PlanarPairWithRange () : defLowerLimitActualRotation(Standard_False), defUpperLimitActualRotation(Standard_False), defLowerLimitActualTranslationX(Standard_False), defUpperLimitActualTranslationX(Standard_False), defLowerLimitActualTranslationY(Standard_False), defUpperLimitActualTranslationY(Standard_False)
 {
-  defLowerLimitActualRotation = Standard_False;
-  defUpperLimitActualRotation = Standard_False;
-  defLowerLimitActualTranslationX = Standard_False;
-  defUpperLimitActualTranslationX = Standard_False;
-  defLowerLimitActualTranslationY = Standard_False;
-  defUpperLimitActualTranslationY = Standard_False;
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================

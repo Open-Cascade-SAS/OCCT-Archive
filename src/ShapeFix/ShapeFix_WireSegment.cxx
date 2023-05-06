@@ -25,10 +25,10 @@
 //function : ShapeFix_WireSegment
 //purpose  : 
 //=======================================================================
-ShapeFix_WireSegment::ShapeFix_WireSegment()
+ShapeFix_WireSegment::ShapeFix_WireSegment() : myOrient(TopAbs_FORWARD)
 {
   Clear();
-  myOrient = TopAbs_FORWARD;
+  
 }
 
 //=======================================================================
@@ -37,10 +37,10 @@ ShapeFix_WireSegment::ShapeFix_WireSegment()
 //=======================================================================
 
 ShapeFix_WireSegment::ShapeFix_WireSegment(const Handle(ShapeExtend_WireData)& wire,
-					   const TopAbs_Orientation ori)
+					   const TopAbs_Orientation ori) : myOrient(ori)
 {
   Load ( wire );
-  myOrient = ori;
+  
 }
 
 //=======================================================================

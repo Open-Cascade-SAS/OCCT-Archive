@@ -69,7 +69,7 @@ protected:
 private:
 
 
-  Standard_Real theThickness;
+  Standard_Real theThickness{};
   StepElement_MeasureOrUnspecifiedValue theBendingThickness;
   StepElement_MeasureOrUnspecifiedValue theShearThickness;
 

@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Extrema_ExtPElC.hxx>
 #include <Extrema_POnCurv.hxx>
@@ -33,10 +35,10 @@
 //function : Extrema_ExtPElC
 //purpose  : 
 //=======================================================================
-Extrema_ExtPElC::Extrema_ExtPElC()
+Extrema_ExtPElC::Extrema_ExtPElC() : myDone(Standard_False), myNbExt(0)
 {
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
 
   for (Standard_Integer i = 0; i < 4; i++)
   {
@@ -153,7 +155,7 @@ Method:
 
   Standard_Real myuinf = Uinf;
   //Standard_Real TolU = Tol*C.Radius();
-  Standard_Real TolU, aR;
+  Standard_Real TolU = NAN, aR = NAN;
   aR=C.Radius();
   TolU=Precision::Infinite();
   if (aR > gp::Resolution()) {
@@ -169,7 +171,7 @@ Method:
 // 3- Calculate extrema in [Umin,Umax] ...
 
   gp_Pnt Cu;
-  Standard_Real Us;
+  Standard_Real Us = NAN;
   for (Standard_Integer NoSol = 0; NoSol <= 1; NoSol++) {
     Us = Usol[NoSol];
     if (((Uinf-Us) < TolU) && ((Us-Usup) < TolU)) {
@@ -231,7 +233,7 @@ Method:
 
 // 2- Calculation of solutions ...
 
-  Standard_Integer NoSol, NbSol;
+  Standard_Integer NoSol = 0, NbSol = 0;
   Standard_Real A = C.MajorRadius();
   Standard_Real B = C.MinorRadius();
   gp_Vec OPp (O,Pp);
@@ -249,7 +251,7 @@ Method:
 
   if (!Sol.IsDone()) { return; }
   gp_Pnt Cu;
-  Standard_Real Us;
+  Standard_Real Us = NAN;
   NbSol = Sol.NbSolutions();
   for (NoSol = 1; NoSol <= NbSol; NoSol++) {
     Us = Sol.Value(NoSol);
@@ -331,10 +333,10 @@ Method:
   math_DirectPolynomialRoots Sol(C1,-(X*R+Y*r)/2.,0.,(X*R-Y*r)/2.,-C1);
   if (!Sol.IsDone()) { return; }
   gp_Pnt Cu;
-  Standard_Real Us, Vs;
+  Standard_Real Us = NAN, Vs = NAN;
   Standard_Integer NbSol = Sol.NbSolutions();
-  Standard_Boolean DejaEnr;
-  Standard_Integer NoExt;
+  Standard_Boolean DejaEnr = 0;
+  Standard_Integer NoExt = 0;
   gp_Pnt TbExt[4];
   for (Standard_Integer NoSol = 1; NoSol <= NbSol; NoSol++) {
     Vs = Sol.Value(NoSol);
@@ -418,10 +420,10 @@ Method:
   math_DirectPolynomialRoots Sol(1./(4.*F),0.,2.*F-X,-2.*F*Y);
   if (!Sol.IsDone()) { return; }
   gp_Pnt Cu;
-  Standard_Real Us;
+  Standard_Real Us = NAN;
   Standard_Integer NbSol = Sol.NbSolutions();
-  Standard_Boolean DejaEnr;
-  Standard_Integer NoExt;
+  Standard_Boolean DejaEnr = 0;
+  Standard_Integer NoExt = 0;
   gp_Pnt TbExt[3];
   for (Standard_Integer NoSol = 1; NoSol <= NbSol; NoSol++) {
     Us = Sol.Value(NoSol);

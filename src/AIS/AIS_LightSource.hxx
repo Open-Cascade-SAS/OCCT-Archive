@@ -256,7 +256,7 @@ protected:
   Handle(Graphic3d_AspectLine3d)   myArrowLineAspectShadow; //!< arrow shadow style
   Handle(Graphic3d_MarkerImage)    myMarkerImages[2];       //!< icon of disabled (0) and enabled (1) light
   Handle(Select3D_SensitiveSphere) mySensSphere;            //!< sensitive sphere of directional light source
-  Aspect_TypeOfMarker              myMarkerTypes[2];        //!< icon of disabled (0) and enabled (1) light
+  Aspect_TypeOfMarker              myMarkerTypes[2]{};        //!< icon of disabled (0) and enabled (1) light
   Aspect_TypeOfMarker              myCodirMarkerType;       //!< icon of arrow co-directional to camera direction (look from)
   Aspect_TypeOfMarker              myOpposMarkerType;       //!< icon of arrow opposite to camera direction (look at)
 

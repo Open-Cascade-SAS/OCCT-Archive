@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepGProp_MeshProps.hxx>
 
 #include <BRepGProp.hxx>
@@ -39,7 +41,7 @@ static void CalculateElSProps(const Standard_Real x,
   //GProps[4] = Ixx, GProps[5] = Iyy, GProps[6] = Izz,
   //GProps[7] = Ixy, aGProps[8] = Ixz, GProps[9] = Iyz,
   //
-  Standard_Real x2, y2, z2;
+  Standard_Real x2 = NAN, y2 = NAN, z2 = NAN;
   x2 = x * x;
   y2 = y * y;
   z2 = z * z;
@@ -65,7 +67,7 @@ static void CalculateElVProps(const Standard_Real x,
   const Standard_Real y,
   const Standard_Real z, const Standard_Real dv, Standard_Real* GProps)
 {
-  Standard_Real x2, y2, z2;
+  Standard_Real x2 = NAN, y2 = NAN, z2 = NAN;
   x2 = x * x;
   y2 = y * y;
   z2 = z * z;
@@ -117,15 +119,15 @@ static void CalculateElVProps(const Standard_Real x,
   gp_Dir aDN(aNorm);
   gp_Ax3 aPosPln(aPC, aDN);
   //Coordinates of nodes on plane
-  Standard_Real x1, y1, x2, y2, x3, y3;
+  Standard_Real x1 = NAN, y1 = NAN, x2 = NAN, y2 = NAN, x3 = NAN, y3 = NAN;
   ElSLib::PlaneParameters(aPosPln, p1, x1, y1);
   ElSLib::PlaneParameters(aPosPln, p2, x2, y2);
   ElSLib::PlaneParameters(aPosPln, p3, x3, y3);
   //
-  Standard_Real l1, l2; //barycentriche coordinates
-  Standard_Real x, y, z;
-  Standard_Real w; //weight
-  Standard_Integer i;
+  Standard_Real l1 = NAN, l2 = NAN; //barycentriche coordinates
+  Standard_Real x = NAN, y = NAN, z = NAN;
+  Standard_Real w = NAN; //weight
+  Standard_Integer i = 0;
   for (i = 0; i < NbGaussPoints; ++i)
   {
     Standard_Integer ind = 3 * i;
@@ -260,7 +262,7 @@ void BRepGProp_MeshProps::Perform (const Handle(Poly_Triangulation)& theMesh,
   //aGProps[7] = Ixy, aGProps[8] = Ixz, aGProps[9] = Iyz,
 
   Standard_Boolean isVolume = myType == Vinert;
-  Standard_Integer n1, n2, n3; //node indices
+  Standard_Integer n1 = 0, n2 = 0, n3 = 0; //node indices
   for (Standard_Integer i = 1; i <= theMesh->NbTriangles(); ++i)
   {
     const Poly_Triangle aTri = theMesh->Triangle (i);

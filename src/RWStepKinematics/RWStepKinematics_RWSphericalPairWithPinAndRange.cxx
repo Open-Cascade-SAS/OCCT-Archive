@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWSphericalPairWithPinAndRange.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -78,27 +80,27 @@ void RWStepKinematics_RWSphericalPairWithPinAndRange::ReadStep (const Handle(Ste
 
   // Inherited fields of LowOrderKinematicPair
 
-  Standard_Boolean aLowOrderKinematicPair_TX;
+  Standard_Boolean aLowOrderKinematicPair_TX = 0;
   theData->ReadBoolean (theNum, 7, "low_order_kinematic_pair.t_x", theArch, aLowOrderKinematicPair_TX);
 
-  Standard_Boolean aLowOrderKinematicPair_TY;
+  Standard_Boolean aLowOrderKinematicPair_TY = 0;
   theData->ReadBoolean (theNum, 8, "low_order_kinematic_pair.t_y", theArch, aLowOrderKinematicPair_TY);
 
-  Standard_Boolean aLowOrderKinematicPair_TZ;
+  Standard_Boolean aLowOrderKinematicPair_TZ = 0;
   theData->ReadBoolean (theNum, 9, "low_order_kinematic_pair.t_z", theArch, aLowOrderKinematicPair_TZ);
 
-  Standard_Boolean aLowOrderKinematicPair_RX;
+  Standard_Boolean aLowOrderKinematicPair_RX = 0;
   theData->ReadBoolean (theNum, 10, "low_order_kinematic_pair.r_x", theArch, aLowOrderKinematicPair_RX);
 
-  Standard_Boolean aLowOrderKinematicPair_RY;
+  Standard_Boolean aLowOrderKinematicPair_RY = 0;
   theData->ReadBoolean (theNum, 11, "low_order_kinematic_pair.r_y", theArch, aLowOrderKinematicPair_RY);
 
-  Standard_Boolean aLowOrderKinematicPair_RZ;
+  Standard_Boolean aLowOrderKinematicPair_RZ = 0;
   theData->ReadBoolean (theNum, 12, "low_order_kinematic_pair.r_z", theArch, aLowOrderKinematicPair_RZ);
 
   // Own fields of SphericalPairWithPinAndRange
 
-  Standard_Real aLowerLimitYaw;
+  Standard_Real aLowerLimitYaw = NAN;
   Standard_Boolean hasLowerLimitYaw = Standard_True;
   if ( theData->IsParamDefined (theNum,13) ) {
     theData->ReadReal (theNum, 13, "lower_limit_yaw", theArch, aLowerLimitYaw);
@@ -108,7 +110,7 @@ void RWStepKinematics_RWSphericalPairWithPinAndRange::ReadStep (const Handle(Ste
     aLowerLimitYaw = 0;
   }
 
-  Standard_Real aUpperLimitYaw;
+  Standard_Real aUpperLimitYaw = NAN;
   Standard_Boolean hasUpperLimitYaw = Standard_True;
   if ( theData->IsParamDefined (theNum,14) ) {
     theData->ReadReal (theNum, 14, "upper_limit_yaw", theArch, aUpperLimitYaw);
@@ -118,7 +120,7 @@ void RWStepKinematics_RWSphericalPairWithPinAndRange::ReadStep (const Handle(Ste
     aUpperLimitYaw = 0;
   }
 
-  Standard_Real aLowerLimitRoll;
+  Standard_Real aLowerLimitRoll = NAN;
   Standard_Boolean hasLowerLimitRoll = Standard_True;
   if ( theData->IsParamDefined (theNum,15) ) {
     theData->ReadReal (theNum, 15, "lower_limit_roll", theArch, aLowerLimitRoll);
@@ -128,7 +130,7 @@ void RWStepKinematics_RWSphericalPairWithPinAndRange::ReadStep (const Handle(Ste
     aLowerLimitRoll = 0;
   }
 
-  Standard_Real aUpperLimitRoll;
+  Standard_Real aUpperLimitRoll = NAN;
   Standard_Boolean hasUpperLimitRoll = Standard_True;
   if ( theData->IsParamDefined (theNum,16) ) {
     theData->ReadReal (theNum, 16, "upper_limit_roll", theArch, aUpperLimitRoll);

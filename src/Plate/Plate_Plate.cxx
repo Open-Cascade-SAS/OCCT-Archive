@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <gp_XY.hxx>
 #include <math_Gauss.hxx>
 #include <math_Matrix.hxx>
@@ -37,13 +39,13 @@ Plate_Plate::Plate_Plate()
 : order(0), n_el(0), n_dim(0),
   solution(0),points(0),deru(0),derv(0),
   OK(Standard_False),maxConstraintOrder(0),
-  Uold (1.e20),
+  PolynomialPartOnly(Standard_False), Uold (1.e20),
   Vold (1.e20),
   U2 (0.0),
   R (0.0),
   L (0.0)
 {
-  PolynomialPartOnly = Standard_False;
+  
   memset (ddu, 0, sizeof (ddu));
   memset (ddv, 0, sizeof (ddv));
 }
@@ -63,7 +65,7 @@ Plate_Plate::Plate_Plate(const Plate_Plate& Ref)
   R (0.0),
   L (0.0)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   if (Ref.OK) {
     if (n_dim >0 && Ref.solution != 0) {
       solution = new gp_XYZ[n_dim];
@@ -117,7 +119,7 @@ Plate_Plate::Plate_Plate(const Plate_Plate& Ref)
    n_el = Ref.n_el;
    n_dim = Ref.n_dim;
    OK = Ref.OK;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   if (Ref.OK) {
     if (n_dim >0 && Ref.solution != 0) {
       solution = new gp_XYZ[n_dim];
@@ -224,7 +226,7 @@ void Plate_Plate::Load(const Plate_GtoCConstraint& GtoCConst)
 
 void Plate_Plate::Load(const Plate_FreeGtoCConstraint& FGtoCConst) 
 {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for( i=0;i< FGtoCConst.nb_PPC();i++) 
     Load(FGtoCConst.GetPPC(i));
   for(i=0;i< FGtoCConst.nb_LSC();i++) 
@@ -255,14 +257,14 @@ void Plate_Plate::SolveTI(const Standard_Integer ord,
   if(anisotropie > 1.e+6) return;
 
 // computation of the bounding box of the 2d PPconstraints
-  Standard_Real xmin,xmax,ymin,ymax;
+  Standard_Real xmin = NAN,xmax = NAN,ymin = NAN,ymax = NAN;
   UVBox(xmin,xmax,ymin,ymax);
 
   Standard_Real du = 0.5*(xmax - xmin);
   if(anisotropie >1.) du *= anisotropie;
   if(du < 1.e-10) return;
   ddu[0] = 1;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for( i=1;i<=9;i++) ddu[i] = ddu[i-1] / du;
 
   Standard_Real dv = 0.5*(ymax - ymin);
@@ -300,7 +302,7 @@ void Plate_Plate::SolveTI1(const Standard_Integer IterationNumber,
   
   delete [] (gp_XY*)points;
   points = new gp_XY[n_el];
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for( i=0; i<n_el;i++)  Points(i) = myConstraints(i+1).Pnt2d();
 
   delete [] (Standard_Integer*)deru;
@@ -416,7 +418,7 @@ void Plate_Plate::SolveTI2(const Standard_Integer IterationNumber,
 
   Standard_Integer nCC1 = myConstraints.Length();
   Standard_Integer nCC2 = 0;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for( i = 1; i<= myLXYZConstraints.Length(); i++)
     nCC2 += myLXYZConstraints(i).Coeff().ColLength();
 
@@ -557,7 +559,7 @@ void Plate_Plate::SolveTI3(const Standard_Integer IterationNumber,
   Standard_Integer nCC1 = myConstraints.Length();
 
   Standard_Integer nCC2 = 0;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for( i = 1; i<= myLXYZConstraints.Length(); i++)
     nCC2 += myLXYZConstraints(i).Coeff().ColLength();
 
@@ -612,7 +614,7 @@ void Plate_Plate::SolveTI3(const Standard_Integer IterationNumber,
 
   k = 3*n_dimsousmat;
   Standard_Integer kppc = nPPC2;
-  Standard_Integer j ;
+  Standard_Integer j = 0 ;
   for(i = 1; i<= myLScalarConstraints.Length(); i++) {
     for( j=0;j<nCC1;j++){
 
@@ -636,7 +638,7 @@ void Plate_Plate::SolveTI3(const Standard_Integer IterationNumber,
 
     Standard_Integer k2 = nCC1;
     Standard_Integer kppc2 = nCC1;
-    Standard_Integer i2 ;
+    Standard_Integer i2 = 0 ;
     for( i2 = 1; i2<=myLXYZConstraints.Length() ; i2++){
 
       math_Matrix tmpmat(1,myLScalarConstraints(i).GetPPC().Length(),1,myLXYZConstraints(i2).GetPPC().Length() );
@@ -768,7 +770,7 @@ void Plate_Plate::SolveTI3(const Standard_Integer IterationNumber,
     n_dim = n_el+order*(order+1)/2;
     solution = new gp_XYZ[n_dim];
     
-    Standard_Integer icoor ;
+    Standard_Integer icoor = 0 ;
     for( icoor=1; icoor<=3;icoor++){
       for(i=0;i<nCC1;i++)
 	sec_member((icoor-1)*n_dimsousmat+i) = myConstraints(i+1).Value().Coord(icoor);
@@ -853,7 +855,7 @@ void Plate_Plate::fillXYZmatrix(math_Matrix &mat,
 				const Standard_Integer ncc1,
 				const Standard_Integer ncc2) const
 {
-  Standard_Integer i,j ;
+  Standard_Integer i = 0,j = 0 ;
   for( i=0; i<ncc1;i++) {
     for( j=0;j<i;j++) {
       Standard_Real signe = 1;
@@ -1111,8 +1113,8 @@ gp_XYZ Plate_Plate::EvaluateDerivative(const gp_XY& point2d, const Standard_Inte
 Standard_Real Plate_Plate::SolEm(const gp_XY& point2d, const Standard_Integer iu, const Standard_Integer iv) const 
 {
   Plate_Plate* aThis = const_cast<Plate_Plate*>(this);
-  Standard_Real U,V;
-  Standard_Integer IU,IV;
+  Standard_Real U = NAN,V = NAN;
+  Standard_Integer IU = 0,IV = 0;
 
   if(iv>iu)
   {
@@ -1157,7 +1159,7 @@ Standard_Real Plate_Plate::SolEm(const gp_XY& point2d, const Standard_Integer iu
   //
 
   Standard_Integer expo =  mm1 - IU - IV;
-  Standard_Real pr;
+  Standard_Real pr = NAN;
   if(expo<0)
 	{
         pr = R;
@@ -1581,7 +1583,7 @@ Standard_Real Plate_Plate::SolEm(const gp_XY& point2d, const Standard_Integer iu
 void Plate_Plate::UVBox(Standard_Real& UMin, Standard_Real& UMax,
 			Standard_Real& VMin, Standard_Real& VMax) const 
 {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   const Standard_Real Bmin = 1.e-3;
   UMin =  myConstraints(1).Pnt2d().X();
   UMax =  UMin;

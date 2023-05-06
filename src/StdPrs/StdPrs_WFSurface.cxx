@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_IsoCurve.hxx>
 #include <GeomAbs_IsoType.hxx>
 #include <Graphic3d_ArrayOfPolylines.hxx>
@@ -45,7 +47,7 @@ static void FindLimits(const Handle(Adaptor3d_Surface)& surf ,
   
   if (UfirstInf || UlastInf) {
     gp_Pnt P1,P2;
-    Standard_Real v;
+    Standard_Real v = NAN;
     if (VfirstInf && VlastInf) 
       v = 0;
     else if (VfirstInf)
@@ -129,7 +131,7 @@ void StdPrs_WFSurface::Add (const Handle(Prs3d_Presentation)& aPresentation,
 			    const Handle(Prs3d_Drawer)&       aDrawer)
 {
   
-    Standard_Real  U1, U2, V1, V2;
+    Standard_Real  U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
     Standard_Real MaxP = aDrawer->MaximalParameterValue();
 
     FindLimits(aSurface, MaxP, U1, U2, V1, V2);

@@ -16,6 +16,8 @@
 
 #define OPTIMISATION 1 
 
+#include <math.h>
+
 #include <IntCurvesFace_Intersector.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -58,8 +60,8 @@ static void ComputeSamplePars(const Handle(Adaptor3d_Surface)& Hsurface,
   TColStd_Array1OfInteger NbUSubInts(1, NbUInts);
   TColStd_Array1OfInteger NbVSubInts(1, NbVInts);
   //
-  Standard_Integer i, j, ind, NbU, NbV;
-  Standard_Real t, dt;
+  Standard_Integer i = 0, j = 0, ind = 0, NbU = 0, NbV = 0;
+  Standard_Real t = NAN, dt = NAN;
   t = UInts(NbUInts + 1) - UInts(1);
   t = 1. / t;
   NbU = 0;
@@ -132,11 +134,11 @@ IntCurvesFace_Intersector::IntCurvesFace_Intersector(const TopoDS_Face& Face,
   done(Standard_False),
   myReady(Standard_False),
   nbpnt(0),
-  myUseBoundTol (UseBToler),
+  face(Face), myUseBoundTol (UseBToler),
   myIsParallel(Standard_False)
 { 
   BRepAdaptor_Surface surface;
-  face = Face;
+  
   surface.Initialize(Face, aRestr);
   Hsurface = new BRepAdaptor_Surface(surface);
   myTopolTool = new BRepTopAdaptor_TopolTool(Hsurface);
@@ -147,8 +149,8 @@ IntCurvesFace_Intersector::IntCurvesFace_Intersector(const TopoDS_Face& Face,
      && (SurfaceType != GeomAbs_Cone) 
      && (SurfaceType != GeomAbs_Sphere)
      && (SurfaceType != GeomAbs_Torus)) {
-    Standard_Integer nbsu,nbsv;
-    Standard_Real U0,V0,U1,V1;
+    Standard_Integer nbsu = 0,nbsv = 0;
+    Standard_Real U0 = NAN,V0 = NAN,U1 = NAN,V1 = NAN;
     U0 = Hsurface->FirstUParameter();
     U1 = Hsurface->LastUParameter();
     V0 = Hsurface->FirstVParameter();
@@ -253,7 +255,7 @@ void IntCurvesFace_Intersector::InternalCall(const IntCurveSurface_HInter &HICS,
           for(; anExp.More(); anExp.Next())
           {
             TopoDS_Edge anE = TopoDS::Edge(anExp.Current());
-            Standard_Real f, l;
+            Standard_Real f = NAN, l = NAN;
             Handle(Geom_Curve) aPC = BRep_Tool::Curve (anE, f, l);
             GeomAPI_ProjectPointOnCurve aProj (HICSPointindex.Pnt(), aPC, f, l);
             if (aProj.NbPoints() > 0)
@@ -445,7 +447,7 @@ void IntCurvesFace_Intersector::Perform(const Handle(Adaptor3d_Curve)& HCu,
     if(parinf<ParMin) parinf = ParMin;
     if(parsup>ParMax) parsup = ParMax;
     if(parinf>(parsup-1e-9)) return; 
-    Standard_Integer nbs;
+    Standard_Integer nbs = 0;
     nbs = IntCurveSurface_TheHCurveTool::NbSamples(HCu,parinf,parsup);
     
     IntCurveSurface_ThePolygonOfHInter polygon(HCu,

@@ -153,7 +153,7 @@ private:
   HLRTopoBRep_MapOfShapeListOfVData myEdgesVertices;
   HLRTopoBRep_DataMapIteratorOfMapOfShapeListOfVData myEIterator;
   HLRTopoBRep_ListIteratorOfListOfVData myVIterator;
-  HLRTopoBRep_ListOfVData* myVList;
+  HLRTopoBRep_ListOfVData* myVList{};
 
 
 };

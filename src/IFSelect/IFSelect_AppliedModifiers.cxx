@@ -20,9 +20,9 @@ IMPLEMENT_STANDARD_RTTIEXT(IFSelect_AppliedModifiers,Standard_Transient)
 
 IFSelect_AppliedModifiers::IFSelect_AppliedModifiers
   (const Standard_Integer nbmax, const Standard_Integer nbent)
-    : thelists (nbmax+1)
+    : thelists (nbmax+1), thenbent(nbent), theentcnt(0)
 {
-  thenbent = nbent;  theentcnt = 0;
+   
 }
 
    Standard_Boolean  IFSelect_AppliedModifiers::AddModif
@@ -65,7 +65,7 @@ IFSelect_AppliedModifiers::IFSelect_AppliedModifiers
     Handle(TColStd_HSequenceOfInteger) IFSelect_AppliedModifiers::ItemList () const
 {
   Handle(TColStd_HSequenceOfInteger) list = new TColStd_HSequenceOfInteger();
-  Standard_Integer i, nb = (theentcnt > 0 ? theentcnt : thenbent);
+  Standard_Integer i = 0, nb = (theentcnt > 0 ? theentcnt : thenbent);
   for (i = 1; i <= nb; i ++)  list->Append (ItemNum(i));
   return list;
 }

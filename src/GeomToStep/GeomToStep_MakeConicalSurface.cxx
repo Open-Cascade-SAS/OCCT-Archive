@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_ConicalSurface.hxx>
 #include <GeomToStep_MakeAxis2Placement3d.hxx>
 #include <GeomToStep_MakeConicalSurface.hxx>
@@ -30,12 +32,12 @@
 // de Geom
 //=============================================================================
 GeomToStep_MakeConicalSurface::GeomToStep_MakeConicalSurface
-  ( const Handle(Geom_ConicalSurface)& CS )
+  ( const Handle(Geom_ConicalSurface)& CS ) : GeomToStep_Root()
 	
 {
   Handle(StepGeom_ConicalSurface) CSstep = new StepGeom_ConicalSurface;
   Handle(StepGeom_Axis2Placement3d) aPosition;
-  Standard_Real aRadius, aSemiAngle;
+  Standard_Real aRadius = NAN, aSemiAngle = NAN;
   
   GeomToStep_MakeAxis2Placement3d MkAxis(CS->Position());
   aPosition = MkAxis.Value();

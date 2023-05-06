@@ -302,7 +302,7 @@ static void Print(const Handle(Geom2d_BezierCurve)& B,
   }
 
   // poles and weights
-  Standard_Integer i,degree = B->Degree();
+  Standard_Integer i = 0,degree = B->Degree();
   if (!compact) OS << "\n  Degree :";
   OS << degree << " ";
   
@@ -350,7 +350,7 @@ static void Print(const Handle(Geom2d_BSplineCurve)& B,
   }
 
   // poles and weights
-  Standard_Integer i,degree,nbpoles,nbknots;
+  Standard_Integer i = 0,degree = 0,nbpoles = 0,nbknots = 0;
   degree = B->Degree();
   nbpoles = B->NbPoles();
   nbknots = B->NbKnots();
@@ -477,7 +477,7 @@ void GeomTools_Curve2dSet::PrintCurve2d(const Handle(Geom2d_Curve)& C,
 
 void  GeomTools_Curve2dSet::Dump(Standard_OStream& OS)const 
 {
-  Standard_Integer i, nbsurf = myMap.Extent();
+  Standard_Integer i = 0, nbsurf = myMap.Extent();
   OS << "\n -------\n";
   OS << "Dump of "<< nbsurf << " Curve2ds ";
   OS << "\n -------\n\n";
@@ -498,7 +498,7 @@ void  GeomTools_Curve2dSet::Write(Standard_OStream& OS, const Message_ProgressRa
 {
   std::streamsize prec = OS.precision(17);
 
-  Standard_Integer i, nbsurf = myMap.Extent();
+  Standard_Integer i = 0, nbsurf = myMap.Extent();
   OS << "Curve2ds "<< nbsurf << "\n";
   Message_ProgressScope aPS(theProgress, "2D Curves", nbsurf);
   for (i = 1; i <= nbsurf && aPS.More(); i++, aPS.Next()) {
@@ -732,7 +732,7 @@ static Standard_IStream& operator>>(Standard_IStream& IS,
 
 Handle(Geom2d_Curve) GeomTools_Curve2dSet::ReadCurve2d(Standard_IStream& IS)
 {
-  Standard_Integer ctype;
+  Standard_Integer ctype = 0;
 
   Handle(Geom2d_Curve) C;
   try {
@@ -845,7 +845,7 @@ void  GeomTools_Curve2dSet::Read(Standard_IStream& IS, const Message_ProgressRan
     return;
   }
 
-  Standard_Integer i, nbcurve;
+  Standard_Integer i = 0, nbcurve = 0;
   IS >> nbcurve;
   Message_ProgressScope aPS(theProgress, "2D Curves", nbcurve);
   for (i = 1; i <= nbcurve && aPS.More(); i++, aPS.Next()) {

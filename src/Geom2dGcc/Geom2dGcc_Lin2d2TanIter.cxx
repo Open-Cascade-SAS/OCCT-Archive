@@ -18,6 +18,8 @@
 //  CREATION D UNE LIGNE TANGENTE A DEUX COURBES.                        +
 //========================================================================
 
+#include <math.h>
+
 #include <GccEnt_BadQualifier.hxx>
 #include <GccEnt_QualifiedCirc.hxx>
 #include <Geom2dGcc_CurveTool.hxx>
@@ -41,17 +43,17 @@ Geom2dGcc_Lin2d2TanIter::
 Geom2dGcc_Lin2d2TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                          const Geom2dGcc_QCurve&     Qualified2 ,
                          const Standard_Real         Param2     ,
-                         const Standard_Real         Tolang     ) {
+                         const Standard_Real         Tolang     ) : par1sol(0.), pararg1(0.), par2sol(0.0), pararg2(0.0), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier) {
 
-                           par1sol = 0.;
-                           pararg1 = 0.;
-                           par2sol = 0.0;
-                           pararg2 = 0.0;
+                           
+                           
+                           
+                           
                            //Standard_Real Tol = Abs(Tolang);
 
-                           WellDone = Standard_False;
-                           qualifier1 = GccEnt_noqualifier;
-                           qualifier2 = GccEnt_noqualifier;
+                           
+                           
+                           
                            if (Qualified1.IsEnclosed()) { throw GccEnt_BadQualifier(); }
                            gp_Circ2d C1 = Qualified1.Qualified();
                            Geom2dAdaptor_Curve Cu2 = Qualified2.Qualified();
@@ -63,7 +65,7 @@ Geom2dGcc_Lin2d2TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                              Standard_Real Usol = sol.Root();
                              //     gp_Pnt2d Origine,Pt;
                              //  Modified by Sergey KHROMOV - Thu Apr  5 17:39:47 2001 Begin
-                             Standard_Real Norm;
+                             Standard_Real Norm = NAN;
                              func.Value(Usol, Norm);
                              if (Abs(Norm) < Tolang) {
                                //  Modified by Sergey KHROMOV - Thu Apr  5 17:39:48 2001 End
@@ -121,14 +123,14 @@ Geom2dGcc_Lin2d2TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                          const Geom2dGcc_QCurve& Qualified2 ,
                          const Standard_Real      Param1     ,
                          const Standard_Real      Param2     ,
-                         const Standard_Real      Tolang     ) {
-                           par1sol = 0.;
-                           pararg1 = 0.;
-                           par2sol = 0.0;
-                           pararg2 = 0.0;
-                           WellDone = Standard_False;
-                           qualifier1 = GccEnt_noqualifier;
-                           qualifier2 = GccEnt_noqualifier;
+                         const Standard_Real      Tolang     ) : par1sol(0.), pararg1(0.), par2sol(0.0), pararg2(0.0), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier) {
+                           
+                           
+                           
+                           
+                           
+                           
+                           
                            if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
                              Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                              !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -198,15 +200,15 @@ Geom2dGcc_Lin2d2TanIter::
 Geom2dGcc_Lin2d2TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                          const gp_Pnt2d&          ThePoint   ,
                          const Standard_Real      Param1     ,
-                         const Standard_Real      Tolang     ) {
+                         const Standard_Real      Tolang     ) : par1sol(0.), pararg1(0.), par2sol(0.0), pararg2(0.0), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier) {
 
-                           par1sol = 0.;
-                           pararg1 = 0.;
-                           par2sol = 0.0;
-                           pararg2 = 0.0;
-                           WellDone = Standard_False;
-                           qualifier1 = GccEnt_noqualifier;
-                           qualifier2 = GccEnt_noqualifier;
+                           
+                           
+                           
+                           
+                           
+                           
+                           
                            if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
                              Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
                                throw GccEnt_BadQualifier();
@@ -220,7 +222,7 @@ Geom2dGcc_Lin2d2TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                            if (sol.IsDone()) {
                              Standard_Real Usol = sol.Root();
                              //  Modified by Sergey KHROMOV - Thu Apr  5 17:45:17 2001 Begin
-                             Standard_Real Norm;
+                             Standard_Real Norm = NAN;
                              func.Value(Usol, Norm);
                              if (Abs(Norm) < Tolang) {
                                //  Modified by Sergey KHROMOV - Thu Apr  5 17:45:19 2001 End

@@ -23,7 +23,7 @@
 #include <StdFail_NotDone.hxx>
 
 gce_MakeParab::gce_MakeParab(const gp_Ax2&       A2    ,
-			     const Standard_Real Focal ) 
+			     const Standard_Real Focal ) : gce_Root() 
 {
   if (Focal < 0.0) { TheError = gce_NullFocusLength; }
   else {
@@ -33,7 +33,7 @@ gce_MakeParab::gce_MakeParab(const gp_Ax2&       A2    ,
 }
 
 gce_MakeParab::gce_MakeParab(const gp_Ax1& D ,
-			     const gp_Pnt& F )
+			     const gp_Pnt& F ) : gce_Root()
 {
   TheParab = gp_Parab(D,F);
   TheError = gce_Done;

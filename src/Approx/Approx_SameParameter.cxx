@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Approx_SameParameter.hxx>
 
 #include <Adaptor2d_Curve2d.hxx>
@@ -46,12 +48,12 @@ public:
       Poles(thePoles),
       HCurve2d(theHCurve2d) {}
 
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
                          Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
 
 private:
   const TColStd_Array1OfReal& FlatKnots;
@@ -119,7 +121,7 @@ static void ProjectPointOnCurve(const Standard_Real      InitValue,
 
   gp_Pnt a_point;
   gp_Vec vector, d1, d2;
-  Standard_Real func, func_derivative,
+  Standard_Real func = NAN, func_derivative = NAN,
                 param = InitValue;
   Status = Standard_False;
   do
@@ -236,7 +238,7 @@ static Standard_Boolean Check(const TColStd_Array1OfReal& FlatKnots,
     Standard_Real t = unsurnn*i;
     Standard_Real tc3d = pc3d[0]*(1.0 - t) + pc3d[nbp - 1] * t; // weight function.
     gp_Pnt Pc3d = c3d->Value(tc3d);
-    Standard_Real tcons;
+    Standard_Real tcons = NAN;
     BSplCLib::Eval(tc3d, Standard_False, 0, extrap_mode[0],
                    aDegree, FlatKnots, 1, (Standard_Real&)Poles(1), tcons);
 
@@ -276,11 +278,11 @@ Approx_SameParameter::Approx_SameParameter(const Handle(Geom_Curve)&   C3D,
                                            const Standard_Real         Tol)
 : myDeltaMin(Precision::PConfusion()),
   mySameParameter(Standard_True),
-  myDone(Standard_False)
+  myDone(Standard_False), myHCurve2d(new Geom2dAdaptor_Curve(C2D)), myC3d(new GeomAdaptor_Curve(C3D)), mySurf(new GeomAdaptor_Surface(S))
 {
-  myHCurve2d = new Geom2dAdaptor_Curve(C2D);
-  myC3d      = new GeomAdaptor_Curve(C3D);
-  mySurf     = new GeomAdaptor_Surface(S);
+  
+  
+  
   Build(Tol);
 }
 
@@ -294,11 +296,11 @@ Approx_SameParameter::Approx_SameParameter(const Handle(Adaptor3d_Curve)&   C3D,
                                            const Standard_Real               Tol)
 : myDeltaMin(Precision::PConfusion()),
   mySameParameter(Standard_True),
-  myDone(Standard_False)
+  myDone(Standard_False), myHCurve2d(new Geom2dAdaptor_Curve(C2D)), myC3d(C3D), mySurf(S)
 {
-  myC3d = C3D;
-  mySurf = S;
-  myHCurve2d = new Geom2dAdaptor_Curve(C2D);
+  
+  
+  
   Build(Tol);
 }
 
@@ -312,11 +314,11 @@ Approx_SameParameter::Approx_SameParameter(const Handle(Adaptor3d_Curve)&   C3D,
                                            const Standard_Real               Tol)
 : myDeltaMin(Precision::PConfusion()),
   mySameParameter(Standard_True),
-  myDone(Standard_False)
+  myDone(Standard_False), myHCurve2d(C2D), myC3d(C3D), mySurf(S)
 {
-  myC3d = C3D;
-  mySurf = S;
-  myHCurve2d = C2D;
+  
+  
+  
   Build(Tol);
 }
 
@@ -657,7 +659,7 @@ Standard_Boolean Approx_SameParameter::CheckSameParameter(Approx_SameParameter_D
   Projector.Initialize (*myC3d, theData.myC3dPF, theData.myC3dPL, theData.myTol);
 
   Standard_Integer count = 1;
-  Standard_Real previousp = theData.myC3dPF, initp=0, curp;
+  Standard_Real previousp = theData.myC3dPF, initp=0, curp = NAN;
   Standard_Real bornesup = theData.myC3dPL - myDeltaMin;
   Standard_Boolean isProjOk = Standard_False;
   for (Standard_Integer ii = 1; ii < theData.myNbPnt; ii++)
@@ -813,7 +815,7 @@ Standard_Boolean Approx_SameParameter::Interpolate(const Approx_SameParameter_Da
     thePoles(ii) = theData.myPC2d[ii - 2];
     aParameters(ii) = theFlatKnots(ii+2) = theData.myPC3d[ii - 2];
   }
-  Standard_Integer inversion_problem;
+  Standard_Integer inversion_problem = 0;
   BSplCLib::Interpolate(3,theFlatKnots,aParameters,ContactOrder,
                         1,thePoles(1),inversion_problem);
   if(inversion_problem)
@@ -842,7 +844,7 @@ Standard_Boolean Approx_SameParameter::IncreaseNbPoles(const TColStd_Array1OfRea
   const Standard_Integer aDegree = 3;
   const Standard_Integer DerivativeRequest = 0;
   Standard_Integer extrap_mode[2] = {aDegree, aDegree};
-  Standard_Real eval_result;
+  Standard_Real eval_result = NAN;
   Standard_Real *PolesArray = (Standard_Real *) &thePoles(thePoles.Lower());
   Standard_Integer newcount = 0;
   for (Standard_Integer ii = 0; ii < theData.myNbPnt; ii++)

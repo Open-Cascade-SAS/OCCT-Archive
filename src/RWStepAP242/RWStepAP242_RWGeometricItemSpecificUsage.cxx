@@ -55,7 +55,7 @@ void RWStepAP242_RWGeometricItemSpecificUsage::ReadStep
 
   Handle(StepRepr_HArray1OfRepresentationItem) anItems;
   Handle(StepRepr_RepresentationItem) anEnt;
-  Standard_Integer nbSub;
+  Standard_Integer nbSub = 0;
   Interface_ParamType aType = data->ParamType(num, 5);
   if (aType == Interface_ParamIdent) {
     data->ReadEntity(num, 5,"item_identified_representation_usage.identified_item", ach, STANDARD_TYPE(StepRepr_RepresentationItem), anEnt);
@@ -109,7 +109,7 @@ void RWStepAP242_RWGeometricItemSpecificUsage::Share(
   // Inherited fields of ItemIdentifiedRepresentationUsage
 
   iter.AddItem(ent->Definition().Value());
-  Standard_Integer i, nb = ent->NbIdentifiedItem();
+  Standard_Integer i = 0, nb = ent->NbIdentifiedItem();
   for (i = 1; i <= nb; i++)  
     iter.AddItem (ent->IdentifiedItemValue(i));
 }

@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_ShapeTool.hxx>
 #include <IMeshData_Edge.hxx>
 #include <IMeshData_PCurve.hxx>
@@ -89,7 +91,7 @@ void BRepMesh_ShapeTool::BoxMaxDimension(const Bnd_Box& theBox,
   if (theBox.IsVoid())
     return;
 
-  Standard_Real aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ;
+  Standard_Real aMinX = NAN, aMinY = NAN, aMinZ = NAN, aMaxX = NAN, aMaxY = NAN, aMaxZ = NAN;
   theBox.Get(aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ);
 
   theMaxDimension = Max(aMaxX - aMinX, Max(aMaxY - aMinY, aMaxZ - aMinZ));
@@ -115,7 +117,7 @@ void BRepMesh_ShapeTool::CheckAndUpdateFlags (
   const TopoDS_Face& aFace = thePCurve->GetFace ()->GetFace ();
 
   Handle (Geom_Curve) aCurve;
-  Standard_Real aFirstParam, aLastParam;
+  Standard_Real aFirstParam = NAN, aLastParam = NAN;
   Range (aEdge, aCurve, aFirstParam, aLastParam);
   if (aCurve.IsNull())
   {
@@ -326,7 +328,7 @@ Standard_Boolean BRepMesh_ShapeTool::UVPoints (
 {
 
   Handle (Geom2d_Curve) aCurve2d;
-  Standard_Real aFirstParam, aLastParam;
+  Standard_Real aFirstParam = NAN, aLastParam = NAN;
   if (!Range(theEdge, theFace, aCurve2d, aFirstParam, aLastParam, isConsiderOrientation))
   {
     return Standard_False;

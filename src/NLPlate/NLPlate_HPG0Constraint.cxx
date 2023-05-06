@@ -21,12 +21,12 @@
 IMPLEMENT_STANDARD_RTTIEXT(NLPlate_HPG0Constraint,NLPlate_HGPPConstraint)
 
 NLPlate_HPG0Constraint::NLPlate_HPG0Constraint(const gp_XY& UV,const gp_XYZ& Value)
-:myXYZTarget(Value)
+:myXYZTarget(Value), UVIsFree(Standard_False), IncrementalLoadingAllowed(Standard_False)
 {
   SetUV(UV);
   SetActiveOrder(0);
-  UVIsFree = Standard_False;
-  IncrementalLoadingAllowed = Standard_False;
+  
+  
 }
 void NLPlate_HPG0Constraint::SetUVFreeSliding(const Standard_Boolean UVFree) 
 {

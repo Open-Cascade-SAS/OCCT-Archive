@@ -128,10 +128,10 @@ private:
 
 
 
-  Standard_Boolean myDone;
-  Standard_Integer myNbExt;
-  Standard_Real mySqDist[4];
-  Standard_Boolean myIsMin[4];
+  Standard_Boolean myDone{};
+  Standard_Integer myNbExt{};
+  Standard_Real mySqDist[4]{};
+  Standard_Boolean myIsMin[4]{};
   Extrema_POnCurv2d myPoint[4];
 
 

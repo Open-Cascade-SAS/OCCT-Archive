@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <StdPrs_HLRPolyShape.hxx>
 
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -75,12 +77,12 @@ void StdPrs_HLRPolyShape::ComputeHLR (const Handle(Prs3d_Presentation)& aPresent
   Handle(HLRBRep_PolyAlgo) hider = new HLRBRep_PolyAlgo(aShape);
   hider->Projector (aProj);
   hider->Update();
-  Standard_Real sta,end,dx,dy,dz;
-  Standard_ShortReal tolsta, tolend;
+  Standard_Real sta = NAN,end = NAN,dx = NAN,dy = NAN,dz = NAN;
+  Standard_ShortReal tolsta = NAN, tolend = NAN;
   HLRAlgo_EdgeStatus status;
   HLRAlgo_EdgeIterator It;
-  Standard_Boolean reg1,regn,outl, intl;
-  Standard_Address Coordinates;
+  Standard_Boolean reg1 = 0,regn = 0,outl = 0, intl = 0;
+  Standard_Address Coordinates = nullptr;
   TopoDS_Shape S;
 
   HLRBRep_ListOfBPoint BiPntVis, BiPntHid;

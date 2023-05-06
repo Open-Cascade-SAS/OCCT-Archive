@@ -21,13 +21,13 @@ IMPLEMENT_STANDARD_RTTIEXT(XCAFDimTolObjects_DatumObject,Standard_Transient)
 //purpose  : 
 //=======================================================================
 
-XCAFDimTolObjects_DatumObject::XCAFDimTolObjects_DatumObject()
+XCAFDimTolObjects_DatumObject::XCAFDimTolObjects_DatumObject() : myIsDTarget(Standard_False), myIsValidDT(Standard_False), myHasPlane(Standard_False), myHasPnt(Standard_False), myHasPntText(Standard_False)
 {
-  myIsDTarget = Standard_False;
-  myIsValidDT = Standard_False;
-  myHasPlane = Standard_False;
-  myHasPnt = Standard_False;
-  myHasPntText = Standard_False;
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -35,30 +35,30 @@ XCAFDimTolObjects_DatumObject::XCAFDimTolObjects_DatumObject()
 //purpose  : 
 //=======================================================================
 
-XCAFDimTolObjects_DatumObject::XCAFDimTolObjects_DatumObject(const Handle(XCAFDimTolObjects_DatumObject)& theObj)
+XCAFDimTolObjects_DatumObject::XCAFDimTolObjects_DatumObject(const Handle(XCAFDimTolObjects_DatumObject)& theObj) : myName(theObj->myName), myModifiers(theObj->myModifiers), myModifierWithValue(theObj->myModifierWithValue), myValueOfModifier(theObj->myValueOfModifier), myDatumTarget(theObj->myDatumTarget), myPosition(theObj->myPosition), myIsDTarget(theObj->myIsDTarget), myIsValidDT(theObj->myIsValidDT), myDTargetType(theObj->myDTargetType), myLength(theObj->myLength), myWidth(theObj->myWidth), myDatumTargetNumber(theObj->myDatumTargetNumber), myAxis(theObj->myAxis), myPlane(theObj->myPlane), myPnt(theObj->myPnt), myPntText(theObj->myPntText), myHasPlane(theObj->myHasPlane), myHasPnt(theObj->myHasPnt), myHasPntText(theObj->myHasPntText), myPresentation(theObj->myPresentation), mySemanticName(theObj->mySemanticName), myPresentationName(theObj->myPresentationName)
 {
-  myName = theObj->myName;
-  myModifiers = theObj->myModifiers;
-  myModifierWithValue = theObj->myModifierWithValue;
-  myValueOfModifier = theObj->myValueOfModifier;
-  myDatumTarget = theObj->myDatumTarget;
-  myPosition = theObj->myPosition;
-  myIsDTarget = theObj->myIsDTarget;
-  myIsValidDT = theObj->myIsValidDT;
-  myDTargetType = theObj->myDTargetType;
-  myLength = theObj->myLength;
-  myWidth = theObj->myWidth;
-  myDatumTargetNumber = theObj->myDatumTargetNumber;
-  myAxis = theObj->myAxis;
-  myPlane = theObj->myPlane;
-  myPnt= theObj->myPnt;
-  myPntText= theObj->myPntText;
-  myHasPlane = theObj->myHasPlane;
-  myHasPnt = theObj->myHasPnt;
-  myHasPntText = theObj->myHasPntText;
-  myPresentation = theObj->myPresentation;
-  mySemanticName = theObj->mySemanticName;
-  myPresentationName = theObj->myPresentationName;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================

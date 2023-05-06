@@ -39,7 +39,7 @@ void RWStepVisual_RWPresentationStyleAssignment::ReadStep
 
   Handle(StepVisual_HArray1OfPresentationStyleSelect) aStyles;
   StepVisual_PresentationStyleSelect aStylesItem;
-  Standard_Integer nsub1;
+  Standard_Integer nsub1 = 0;
   if (data->ReadSubList (num,1,"styles",ach,nsub1)) {
     Standard_Integer nb1 = data->NbParams(nsub1);
     aStyles = new StepVisual_HArray1OfPresentationStyleSelect (1, nb1);

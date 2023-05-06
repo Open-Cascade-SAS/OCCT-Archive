@@ -17,6 +17,8 @@
 
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <Adaptor3d_Curve.hxx>
+#include <math.h>
+
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <BRep_GCurve.hxx>
 #include <BRepLib_ValidateEdge.hxx>
@@ -64,11 +66,11 @@ static const Standard_Integer NCONTROL=23;
 //purpose  : 
 //=======================================================================
 
-BRepCheck_Edge::BRepCheck_Edge(const TopoDS_Edge& E)
+BRepCheck_Edge::BRepCheck_Edge(const TopoDS_Edge& E) : myGctrl(Standard_True), myIsExactMethod(Standard_False)
 {
   Init(E);
-  myGctrl = Standard_True;
-  myIsExactMethod = Standard_False;
+  
+  
 }
 
 //=======================================================================
@@ -141,7 +143,7 @@ void BRepCheck_Edge::Minimum()
     if (!myCref.IsNull()) {
       Handle(BRep_GCurve) GCref (Handle(BRep_GCurve)::DownCast (myCref));
       Standard_Real eps = Precision::PConfusion();
-      Standard_Real First,Last;
+      Standard_Real First = NAN,Last = NAN;
       GCref->Range(First,Last);
       if (Last<=First) {
         myCref.Nullify();
@@ -321,7 +323,7 @@ void BRepCheck_Edge::InContext(const TopoDS_Shape& S)
         if (cr != myCref && cr->IsCurveOnSurface(Su,L)) {
           pcurvefound = Standard_True;
           Handle(BRep_GCurve) GC (Handle(BRep_GCurve)::DownCast(cr));
-          Standard_Real f,l;
+          Standard_Real f = NAN,l = NAN;
           GC->Range(f,l);
           Standard_Real ff = f, ll = l;
           if(myCref->IsCurve3D())
@@ -567,12 +569,12 @@ void BRepCheck_Edge::SetStatus(const BRepCheck_Status theStatus)
 Standard_Real BRepCheck_Edge::Tolerance()
 {
   Handle(BRep_TEdge)& TE = *((Handle(BRep_TEdge)*)&myShape.TShape());
-  Standard_Integer it, iRep=1, nbRep=(TE->Curves()).Extent();
+  Standard_Integer it = 0, iRep=1, nbRep=(TE->Curves()).Extent();
   if (nbRep<=1) {
     return Precision::Confusion();
   }
   TColStd_Array1OfTransient theRep(1, nbRep*2);
-  Standard_Real First, Last;
+  Standard_Real First = NAN, Last = NAN;
   if (!myHCurve.IsNull()) {
     First = myHCurve->FirstParameter();
     Last=  myHCurve->LastParameter();
@@ -634,9 +636,9 @@ Standard_Real BRepCheck_Edge::Tolerance()
     }
   }
 
-  Standard_Real dist2, tol2, tolCal=0., prm;
+  Standard_Real dist2 = NAN, tol2 = NAN, tolCal=0., prm = NAN;
   gp_Pnt center, othP;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i= 0; i< NCONTROL; i++) {
     prm = ((NCONTROL-1-i)*First + i*Last)/(NCONTROL-1);
     tol2=dist2=0.;

@@ -211,7 +211,7 @@ private:
 
 
 
-  Standard_Real myEpsilon;
+  Standard_Real myEpsilon{};
 
 
 };

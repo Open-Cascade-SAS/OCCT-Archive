@@ -60,7 +60,7 @@ void RWStepGeom_RWTrimmedCurve::ReadStep
   //Standard_Real aParameterValue; //szv#4:S4163:12Mar99 unused
   
   Handle(StepGeom_HArray1OfTrimmingSelect) aTrim1;
-  Standard_Integer nsub3;
+  Standard_Integer nsub3 = 0;
   if (data->ReadSubList (num,3,"trim_1",ach,nsub3)) {
     Standard_Integer nb3 = data->NbParams(nsub3);
     aTrim1 = new StepGeom_HArray1OfTrimmingSelect (1, nb3);
@@ -75,7 +75,7 @@ void RWStepGeom_RWTrimmedCurve::ReadStep
   // --- own field : trim2 ---
   
   Handle(StepGeom_HArray1OfTrimmingSelect) aTrim2;
-  Standard_Integer nsub4;
+  Standard_Integer nsub4 = 0;
   if (data->ReadSubList (num,4,"trim_2",ach,nsub4)) {
     Standard_Integer nb4 = data->NbParams(nsub4);
     aTrim2 = new StepGeom_HArray1OfTrimmingSelect (1, nb4);
@@ -90,7 +90,7 @@ void RWStepGeom_RWTrimmedCurve::ReadStep
   
   // --- own field : senseAgreement ---
   
-  Standard_Boolean aSenseAgreement;
+  Standard_Boolean aSenseAgreement = 0;
   //szv#4:S4163:12Mar99 `Standard_Boolean stat5 =` not needed
   data->ReadBoolean (num,5,"sense_agreement",ach,aSenseAgreement);
   

@@ -103,7 +103,7 @@ public:
 private:
 
   Quantity_NameOfColor myCol;
-  Standard_Real myWid;
+  Standard_Real myWid{};
   Standard_Boolean hasC;
   Standard_Boolean hasW;
 

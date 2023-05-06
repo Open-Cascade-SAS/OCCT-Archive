@@ -517,7 +517,7 @@ TCollection_AsciiString XCAFDoc::AttributeInfo (const Handle(TDF_Attribute)& the
     }
   }
   else if ( theAtt->IsKind(STANDARD_TYPE(XCAFDoc_GraphNode)) ) {
-    Standard_CString type;
+    Standard_CString type = nullptr;
     if ( theAtt->ID() == XCAFDoc::LayerRefGUID() ) {
       type = "Layer Instance Link";
     }

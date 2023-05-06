@@ -24,6 +24,8 @@
 //                                                  Courbes.              +
 //=========================================================================
 
+#include <math.h>
+
 #include <GccAna_Circ2d3Tan.hxx>
 #include <GccEnt_BadQualifier.hxx>
 #include <GccEnt_QualifiedCirc.hxx>
@@ -48,23 +50,23 @@ Geom2dGcc_Circ2d3TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                           const Standard_Real      Param1     ,
                           const Standard_Real      Param2     ,
                           const Standard_Real      Param3     ,
-                          const Standard_Real      Tolerance  ) {
+                          const Standard_Real      Tolerance  ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier) {
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
                               Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                               !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -117,7 +119,7 @@ Geom2dGcc_Circ2d3TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                                 Standard_Real normevec1 = Vec1.Magnitude();
                                 Standard_Real normevec2 = Vec2.Magnitude();
                                 Standard_Real normevec3 = Vec3.Magnitude();
-                                Standard_Real dot1,dot2,dot3;
+                                Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                 if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
                                   dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
                                 }
@@ -175,23 +177,23 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                           const Standard_Real      Param1     ,
                           const Standard_Real      Param2     ,
                           const Standard_Real      Param3     ,
-                          const Standard_Real      Tolerance     ) {
+                          const Standard_Real      Tolerance     ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier) {
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
                               Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                               !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -250,7 +252,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                                 Standard_Real normevec1 = Vec1.Magnitude();
                                 Standard_Real normevec2 = Vec2.Magnitude();
                                 Standard_Real normevec3 = Vec3.Magnitude();
-                                Standard_Real dot1,dot2,dot3;
+                                Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                 if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
                                   dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
                                 }
@@ -307,23 +309,23 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                           const Standard_Real         Param1     ,
                           const Standard_Real         Param2     ,
                           const Standard_Real         Param3     ,
-                          const Standard_Real         Tolerance     ) {
+                          const Standard_Real         Tolerance     ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier) {
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
                               Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                               !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -384,7 +386,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                                 Standard_Real normevec1 = Vec1.Magnitude();
                                 Standard_Real normevec2 = Vec2.Magnitude();
                                 Standard_Real normevec3 = Vec3.Magnitude();
-                                Standard_Real dot1,dot2,dot3;
+                                Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                 if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
                                   dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
                                 }
@@ -442,23 +444,23 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedLin& Qualified1 ,
                           const Standard_Real        Param1     ,
                           const Standard_Real        Param2     ,
                           const Standard_Real        Param3     ,
-                          const Standard_Real        Tolerance  ) {
+                          const Standard_Real        Tolerance  ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier) {
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() ||
                               Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                               !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -519,7 +521,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedLin& Qualified1 ,
                                 Standard_Real normevec1 = Vec1.Magnitude();
                                 Standard_Real normevec2 = Vec2.Magnitude();
                                 Standard_Real normevec3 = Vec3.Magnitude();
-                                Standard_Real dot1,dot2,dot3;
+                                Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                 if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
                                   dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
                                 }
@@ -577,23 +579,23 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedLin&  Qualified1 ,
                           const Standard_Real         Param1     ,
                           const Standard_Real         Param2     ,
                           const Standard_Real         Param3     ,
-                          const Standard_Real         Tolerance  ){
+                          const Standard_Real         Tolerance  ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier){
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() || 
                               Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                               !(Qualified2.IsEnclosed() || 
@@ -655,7 +657,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedLin&  Qualified1 ,
                                     Standard_Real normevec1 = Vec1.Magnitude();
                                     Standard_Real normevec2 = Vec2.Magnitude();
                                     Standard_Real normevec3 = Vec3.Magnitude();
-                                    Standard_Real dot1,dot2,dot3;
+                                    Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                     if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
                                       dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
                                     }
@@ -705,23 +707,23 @@ Geom2dGcc_Circ2d3TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                           const gp_Pnt2d&          Point3     ,
                           const Standard_Real      Param1     ,
                           const Standard_Real      Param2     ,
-                          const Standard_Real      Tolerance  ) {
+                          const Standard_Real      Tolerance  ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier) {
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
                               Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                               !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -773,7 +775,7 @@ Geom2dGcc_Circ2d3TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                                 Standard_Real normevec1 = Vec1.Magnitude();
                                 Standard_Real normevec2 = Vec2.Magnitude();
                                 Standard_Real normevec3 = Vec3.Magnitude();
-                                Standard_Real dot1,dot2,dot3;
+                                Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                 if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
                                   dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
                                 }
@@ -823,23 +825,23 @@ Geom2dGcc_Circ2d3TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                           const gp_Pnt2d&          Point2     ,
                           const gp_Pnt2d&          Point3     ,
                           const Standard_Real      Param1     ,
-                          const Standard_Real      Tolerance     ) {
+                          const Standard_Real      Tolerance     ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier) {
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
                               Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
                                 throw GccEnt_BadQualifier();
@@ -890,7 +892,7 @@ Geom2dGcc_Circ2d3TanIter (const Geom2dGcc_QCurve& Qualified1 ,
                                 Standard_Real normevec1 = Vec1.Magnitude();
                                 Standard_Real normevec2 = Vec2.Magnitude();
                                 Standard_Real normevec3 = Vec3.Magnitude();
-                                Standard_Real dot1,dot2,dot3;
+                                Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                 if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
                                   dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
                                 }
@@ -935,23 +937,23 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedLin&  Qualified1 ,
                           const gp_Pnt2d&             Point3     ,
                           const Standard_Real         Param1     ,
                           const Standard_Real         Param2     ,
-                          const Standard_Real         Tolerance  ) {
+                          const Standard_Real         Tolerance  ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier) {
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() ||
                               Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                               !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -1007,7 +1009,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedLin&  Qualified1 ,
                                 Standard_Real normevec1 = Vec1.Magnitude();
                                 Standard_Real normevec2 = Vec2.Magnitude();
                                 Standard_Real normevec3 = Vec3.Magnitude();
-                                Standard_Real dot1,dot2,dot3;
+                                Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                 if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
                                   dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
                                 }
@@ -1057,23 +1059,23 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                           const Standard_Real         Param1     ,
                           const Standard_Real         Param2     ,
                           const Standard_Real         Param3     ,
-                          const Standard_Real         Tolerance  ) {
+                          const Standard_Real         Tolerance  ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier) {
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
                               Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                               !(Qualified2.IsEnclosed() ||
@@ -1131,7 +1133,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                                 Standard_Real normevec1 = Vec1.Magnitude();
                                 Standard_Real normevec2 = Vec2.Magnitude();
                                 Standard_Real normevec3 = Vec3.Magnitude();
-                                Standard_Real dot1,dot2,dot3;
+                                Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                 if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
                                   dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
                                 }
@@ -1189,23 +1191,23 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                           const gp_Pnt2d&             Point3     ,
                           const Standard_Real         Param1     ,
                           const Standard_Real         Param2     ,
-                          const Standard_Real         Tolerance  ) {
+                          const Standard_Real         Tolerance  ) : TheSame1(Standard_False), TheSame2(Standard_False), TheSame3(Standard_False), par1sol(0.), par2sol(0.), par3sol(0.), pararg1(0.), pararg2(0.), pararg3(0.), WellDone(Standard_False), qualifier1(GccEnt_noqualifier), qualifier2(GccEnt_noqualifier), qualifier3(GccEnt_noqualifier) {
 
-                            TheSame1 = Standard_False;
-                            TheSame2 = Standard_False;
-                            TheSame3 = Standard_False;
-                            par1sol = 0.;
-                            par2sol = 0.;
-                            par3sol = 0.;
-                            pararg1 = 0.;
-                            pararg2 = 0.;
-                            pararg3 = 0.;
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
                             Standard_Real Tol = Abs(Tolerance);
-                            WellDone = Standard_False;
-                            qualifier1 = GccEnt_noqualifier;
-                            qualifier2 = GccEnt_noqualifier;
-                            qualifier3 = GccEnt_noqualifier;
+                            
+                            
+                            
+                            
                             if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
                               Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
                               !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -1259,7 +1261,7 @@ Geom2dGcc_Circ2d3TanIter (const GccEnt_QualifiedCirc& Qualified1 ,
                                 Standard_Real normevec1 = Vec1.Magnitude();
                                 Standard_Real normevec2 = Vec2.Magnitude();
                                 Standard_Real normevec3 = Vec3.Magnitude();
-                                Standard_Real dot1,dot2,dot3;
+                                Standard_Real dot1 = NAN,dot2 = NAN,dot3 = NAN;
                                 if (normevec1 >= gp::Resolution()) {
                                   dot1 = Vec1.Dot(Tan1)/(normevec1);
                                 }

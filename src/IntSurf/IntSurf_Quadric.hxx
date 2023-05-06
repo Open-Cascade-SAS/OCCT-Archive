@@ -114,10 +114,10 @@ private:
   gp_Ax3 ax3;
   gp_Lin lin;
   GeomAbs_SurfaceType typ;
-  Standard_Real prm1;
-  Standard_Real prm2;
-  Standard_Real prm3;
-  Standard_Real prm4;
+  Standard_Real prm1{};
+  Standard_Real prm2{};
+  Standard_Real prm3{};
+  Standard_Real prm4{};
   Standard_Boolean ax3direc;
 
 

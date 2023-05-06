@@ -106,12 +106,12 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_PlanarPairWithRange, StepKinematics_PlanarPair)
 
 private:
-  Standard_Real myLowerLimitActualRotation; //!< optional
-  Standard_Real myUpperLimitActualRotation; //!< optional
-  Standard_Real myLowerLimitActualTranslationX; //!< optional
-  Standard_Real myUpperLimitActualTranslationX; //!< optional
-  Standard_Real myLowerLimitActualTranslationY; //!< optional
-  Standard_Real myUpperLimitActualTranslationY; //!< optional
+  Standard_Real myLowerLimitActualRotation{}; //!< optional
+  Standard_Real myUpperLimitActualRotation{}; //!< optional
+  Standard_Real myLowerLimitActualTranslationX{}; //!< optional
+  Standard_Real myUpperLimitActualTranslationX{}; //!< optional
+  Standard_Real myLowerLimitActualTranslationY{}; //!< optional
+  Standard_Real myUpperLimitActualTranslationY{}; //!< optional
   Standard_Boolean defLowerLimitActualRotation; //!< flag "is LowerLimitActualRotation defined"
   Standard_Boolean defUpperLimitActualRotation; //!< flag "is UpperLimitActualRotation defined"
   Standard_Boolean defLowerLimitActualTranslationX; //!< flag "is LowerLimitActualTranslationX defined"

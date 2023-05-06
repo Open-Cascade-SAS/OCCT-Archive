@@ -28,7 +28,7 @@
 //=============================================================================
 // Creation d' une polyline Step a partir d' une Array1OfPnt 
 //=============================================================================
-GeomToStep_MakePolyline::GeomToStep_MakePolyline( const TColgp_Array1OfPnt& P)
+GeomToStep_MakePolyline::GeomToStep_MakePolyline( const TColgp_Array1OfPnt& P) : GeomToStep_Root()
 {
   gp_Pnt P1;
 #include "GeomToStep_MakePolyline_gen.pxx"
@@ -38,7 +38,7 @@ GeomToStep_MakePolyline::GeomToStep_MakePolyline( const TColgp_Array1OfPnt& P)
 // Creation d' une polyline Step a partir d' une Array1OfPnt2d
 //=============================================================================
 
-GeomToStep_MakePolyline::GeomToStep_MakePolyline( const TColgp_Array1OfPnt2d& P)
+GeomToStep_MakePolyline::GeomToStep_MakePolyline( const TColgp_Array1OfPnt2d& P) : GeomToStep_Root()
 {
   gp_Pnt2d P1;
 #include "GeomToStep_MakePolyline_gen.pxx"

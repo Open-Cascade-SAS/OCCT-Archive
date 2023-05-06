@@ -63,7 +63,7 @@ void RWStepDimTol_RWDatumSystem::ReadStep (const Handle(StepData_StepReaderData)
   
   Handle(StepDimTol_HArray1OfDatumReferenceCompartment) aConstituents;
   Handle(StepDimTol_DatumReferenceCompartment) anEnt;
-  Standard_Integer nbSub;
+  Standard_Integer nbSub = 0;
   if (data->ReadSubList (num,5,"base",ach,nbSub)) {
     Standard_Integer nbElements = data->NbParams(nbSub);
     aConstituents = new StepDimTol_HArray1OfDatumReferenceCompartment (1, nbElements);
@@ -101,7 +101,7 @@ void RWStepDimTol_RWDatumSystem::WriteStep (StepData_StepWriter& SW,
   SW.SendLogical (ent->ProductDefinitional());
   
   // Own fields of DatumSystem
-  Standard_Integer i, nb = ent->NbConstituents();
+  Standard_Integer i = 0, nb = ent->NbConstituents();
   SW.OpenSub();
   for (i = 1; i <= nb; i++)  
     SW.Send (ent->ConstituentsValue(i));
@@ -122,7 +122,7 @@ void RWStepDimTol_RWDatumSystem::Share (const Handle(StepDimTol_DatumSystem) &en
   iter.AddItem (ent->OfShape());
   
   // Own fields of DatumSystem
-  Standard_Integer i, nb = ent->NbConstituents();
+  Standard_Integer i = 0, nb = ent->NbConstituents();
   for (i = 1; i <= nb; i++)  
     iter.AddItem (ent->ConstituentsValue(i));
 }

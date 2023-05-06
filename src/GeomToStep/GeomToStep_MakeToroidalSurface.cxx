@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_ToroidalSurface.hxx>
 #include <GeomToStep_MakeAxis2Placement3d.hxx>
 #include <GeomToStep_MakeToroidalSurface.hxx>
@@ -28,12 +30,12 @@
 // de Geom
 //=============================================================================
 GeomToStep_MakeToroidalSurface::GeomToStep_MakeToroidalSurface
-  ( const Handle(Geom_ToroidalSurface)& S )
+  ( const Handle(Geom_ToroidalSurface)& S ) : GeomToStep_Root()
 	
 {
   Handle(StepGeom_ToroidalSurface) Surf;
   Handle(StepGeom_Axis2Placement3d) aPosition;
-  Standard_Real aMajorRadius, aMinorRadius;
+  Standard_Real aMajorRadius = NAN, aMinorRadius = NAN;
   
   GeomToStep_MakeAxis2Placement3d MkAxis2(S->Position());
   aPosition = MkAxis2.Value();

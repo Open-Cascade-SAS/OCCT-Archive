@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomInt.hxx>
 
 //=======================================================================
@@ -28,7 +30,7 @@ Standard_Boolean GeomInt::AdjustPeriodic(const Standard_Real thePar,
                                          Standard_Real &theOffset,
                                          const Standard_Real theEps)
 {
-  Standard_Boolean bMin, bMax;
+  Standard_Boolean bMin = 0, bMax = 0;
   //
   theOffset = 0.;
   theNewPar = thePar;
@@ -36,7 +38,7 @@ Standard_Boolean GeomInt::AdjustPeriodic(const Standard_Real thePar,
   bMax = thePar - theParMax > theEps;
   //
   if (bMin || bMax) {
-    Standard_Real dp, aNbPer;
+    Standard_Real dp = NAN, aNbPer = NAN;
     //
     dp = (bMin) ? (theParMax - thePar) : (theParMin - thePar);
     modf(dp / thePeriod, &aNbPer);

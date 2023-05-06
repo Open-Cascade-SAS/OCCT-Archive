@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepVisual_RWComplexTriangulatedSurfaceSet.hxx>
 #include <StepVisual_ComplexTriangulatedSurfaceSet.hxx>
 #include <Interface_EntityIterator.hxx>
@@ -64,7 +66,7 @@ void RWStepVisual_RWComplexTriangulatedSurfaceSet::ReadStep(
   theData->ReadEntity(theNum, 2, "tessellated_surface_set.coordinates", theCheck,
     STANDARD_TYPE(StepVisual_CoordinatesList), aTessellatedSurfaceSet_Coordinates);
 
-  Standard_Integer aTessellatedSurfaceSet_Pnmax;
+  Standard_Integer aTessellatedSurfaceSet_Pnmax = 0;
   theData->ReadInteger(theNum, 3, "tessellated_surface_set.pnmax", theCheck, aTessellatedSurfaceSet_Pnmax);
 
   Handle(TColStd_HArray2OfReal) aTessellatedSurfaceSet_Normals;
@@ -81,7 +83,7 @@ void RWStepVisual_RWComplexTriangulatedSurfaceSet::ReadStep(
         Standard_Integer num4 = subj4;
         for (Standard_Integer j0 = 1; j0 <= nbj0; j0++)
         {
-          Standard_Real anIt0;
+          Standard_Real anIt0 = NAN;
           theData->ReadReal(num4, j0, "real", theCheck, anIt0);
           aTessellatedSurfaceSet_Normals->SetValue(i0,j0, anIt0);
         }
@@ -100,7 +102,7 @@ void RWStepVisual_RWComplexTriangulatedSurfaceSet::ReadStep(
     Standard_Integer num2 = sub5;
     for (Standard_Integer i0 = 1; i0 <= nb0; i0++)
     {
-      Standard_Integer anIt0;
+      Standard_Integer anIt0 = 0;
       theData->ReadInteger(num2, i0, "integer", theCheck, anIt0);
       aPnindex->SetValue(i0, anIt0);
     }
@@ -120,7 +122,7 @@ void RWStepVisual_RWComplexTriangulatedSurfaceSet::ReadStep(
         Standard_Integer num4 = subj6;
         for (Standard_Integer j0 = 1; j0 <= nbj0; j0++)
         {
-          Standard_Integer anIt0;
+          Standard_Integer anIt0 = 0;
           theData->ReadInteger(num4, j0, "integer", theCheck, anIt0);
           aTriangleStrips->SetValue(i0,j0, anIt0);
         }
@@ -142,7 +144,7 @@ void RWStepVisual_RWComplexTriangulatedSurfaceSet::ReadStep(
         Standard_Integer num4 = subj7;
         for (Standard_Integer j0 = 1; j0 <= nbj0; j0++)
         {
-          Standard_Integer anIt0;
+          Standard_Integer anIt0 = 0;
           theData->ReadInteger(num4, j0, "integer", theCheck, anIt0);
           aTriangleFans->SetValue(i0,j0, anIt0);
         }

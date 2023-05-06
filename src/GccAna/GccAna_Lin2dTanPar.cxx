@@ -37,7 +37,7 @@
 GccAna_Lin2dTanPar::
    GccAna_Lin2dTanPar (const gp_Pnt2d& ThePoint  ,
                        const gp_Lin2d& Lin1      ):
-   linsol(1,1),
+   NbrSol(1), WellDone(Standard_True), linsol(1,1),
    qualifier1(1,1) ,
    pnttg1sol(1,1),
    par1sol(1,1),
@@ -50,8 +50,8 @@ GccAna_Lin2dTanPar::
    pnttg1sol(1) = ThePoint;
    par1sol(1) = 0.;
    pararg1(1) = 0.;
-   NbrSol = 1;
-   WellDone = Standard_True;
+   
+   
 }
 
 //========================================================================
@@ -68,17 +68,17 @@ GccAna_Lin2dTanPar::
 GccAna_Lin2dTanPar::
    GccAna_Lin2dTanPar (const GccEnt_QualifiedCirc& Qualified1,
                        const gp_Lin2d&             Lin1      ):
-   linsol(1,2),
+   WellDone(Standard_False), NbrSol(0), linsol(1,2),
    qualifier1(1,2) ,
    pnttg1sol(1,2),
    par1sol(1,2),
    pararg1(1,2)
 {
 
-   WellDone = Standard_False;
+   
    Standard_Integer signe = 0;
    Standard_Integer nbsol = 0;
-   NbrSol = 0;
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
      throw GccEnt_BadQualifier();

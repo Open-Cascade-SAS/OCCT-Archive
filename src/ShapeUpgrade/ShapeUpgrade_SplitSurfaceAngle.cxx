@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_ConicalSurface.hxx>
 #include <Geom_CylindricalSurface.hxx>
 #include <Geom_OffsetSurface.hxx>
@@ -34,9 +36,9 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_SplitSurfaceAngle,ShapeUpgrade_SplitSurf
 //function : ShapeUpgrade_SplitSurfaceAngle
 //purpose  : 
 //=======================================================================
-ShapeUpgrade_SplitSurfaceAngle::ShapeUpgrade_SplitSurfaceAngle (const Standard_Real MaxAngle)
+ShapeUpgrade_SplitSurfaceAngle::ShapeUpgrade_SplitSurfaceAngle (const Standard_Real MaxAngle) : myMaxAngle(MaxAngle)
 {
-  myMaxAngle = MaxAngle;
+  
 }
 
 //=======================================================================
@@ -73,7 +75,7 @@ void ShapeUpgrade_SplitSurfaceAngle::Compute(const Standard_Boolean /*Segment*/)
     Handle(Geom_RectangularTrimmedSurface) rts = 
       Handle(Geom_RectangularTrimmedSurface)::DownCast(mySurface);
     isRect = Standard_True;
-    Standard_Real V1,V2;
+    Standard_Real V1 = NAN,V2 = NAN;
     rts->Bounds(U1,U2,V1,V2);
     S = rts->BasisSurface();
   }

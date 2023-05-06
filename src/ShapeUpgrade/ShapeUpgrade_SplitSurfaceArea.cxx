@@ -24,11 +24,11 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_SplitSurfaceArea,ShapeUpgrade_SplitSurfa
 //purpose  : 
 //=======================================================================
 ShapeUpgrade_SplitSurfaceArea::ShapeUpgrade_SplitSurfaceArea():
-       ShapeUpgrade_SplitSurface()
+       ShapeUpgrade_SplitSurface(), myNbParts(1), myIsSplittingIntoSquares(Standard_False)
 {
-  myNbParts = 1;
+  
   myUnbSplit = myVnbSplit = -1;
-  myIsSplittingIntoSquares = Standard_False;
+  
 }
 
 //=======================================================================
@@ -59,7 +59,7 @@ ShapeUpgrade_SplitSurfaceArea::ShapeUpgrade_SplitSurfaceArea():
     aNbUV = 1./aNbUV;
 
   Standard_Boolean anIsFixedUVnbSplits = (myUnbSplit > 0 && myVnbSplit > 0);
-  Standard_Integer nbSplitF, nbSplitS;
+  Standard_Integer nbSplitF = 0, nbSplitS = 0;
   if (myIsSplittingIntoSquares && myNbParts > 0)
   {
     if (!anIsFixedUVnbSplits) //(myUnbSplit <= 0 || myVnbSplit <= 0)

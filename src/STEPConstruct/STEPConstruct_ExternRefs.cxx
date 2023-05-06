@@ -229,7 +229,7 @@ Standard_Boolean STEPConstruct_ExternRefs::LoadExternRefs ()
       // for each DocumentFile, find associated with it data:
       Interface_EntityIterator subs = Graph().Sharings(DocFile);
       for (subs.Start(); subs.More(); subs.Next()) {
-        Handle(Standard_Transient) sub = subs.Value();
+        const Handle(Standard_Transient)& sub = subs.Value();
         
         // FORMAT - ???????
         //
@@ -343,7 +343,7 @@ Standard_CString STEPConstruct_ExternRefs::FileName (const Standard_Integer num)
       Handle(StepBasic_ProductDefinitionWithAssociatedDocuments)::DownCast(myShapes(num));
     if ( aPDWAD.IsNull() || aPDWAD->DocIds().IsNull() )
       return "";
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for ( i=1; i <= aPDWAD->NbDocIds(); i++ ) {
       Handle(StepBasic_Document) Doc = aPDWAD->DocIdsValue(i);
       Handle(TCollection_HAsciiString) aFilename = Doc->Name();
@@ -659,7 +659,7 @@ Standard_Integer STEPConstruct_ExternRefs::AddExternRef (const Standard_CString 
 //      Handle(Standard_Transient) sub = subs.Value();
     Interface_EntityIterator subs = Graph().Sharings(PD);
     for (subs.Start(); subs.More(); subs.Next()) {
-      Handle(Standard_Transient) sub = subs.Value();
+      const Handle(Standard_Transient)& sub = subs.Value();
       if (!sub->IsKind(STANDARD_TYPE(StepRepr_ProductDefinitionShape))) continue;
       Handle(StepRepr_ProductDefinitionShape) ProdDefSh = 
         Handle(StepRepr_ProductDefinitionShape)::DownCast ( sub );
@@ -682,7 +682,7 @@ Standard_Integer STEPConstruct_ExternRefs::AddExternRef (const Standard_CString 
 //        Interface_EntityIterator subs2 = Graph().Sharings(ProdDef);
     Interface_EntityIterator subs2 = Graph().Sharings(PD);
     for (subs2.Start(); subs2.More(); subs2.Next()) {
-      Handle(Standard_Transient) sub2 = subs2.Value();
+      const Handle(Standard_Transient)& sub2 = subs2.Value();
 
       if (sub2->IsKind(STANDARD_TYPE(StepRepr_NextAssemblyUsageOccurrence))) {
         Handle(StepRepr_NextAssemblyUsageOccurrence) NAUO = 

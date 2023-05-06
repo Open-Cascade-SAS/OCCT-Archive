@@ -17,6 +17,8 @@
 // Approximation d une MultiLine de points decrite par le tool MLineTool.
 // avec criteres variationnels
 
+#include <math.h>
+
 #include <AppDef_MultiLine.hxx>
 #include <AppDef_Variational.hxx>
 #include <AppParCurves_MultiBSpCurve.hxx>
@@ -145,7 +147,7 @@ myWithCutting(WithCutting)
   //
   //  Table of Points initialization
   //
-  Standard_Integer ipoint,jp2d,jp3d,index;
+  Standard_Integer ipoint = 0,jp2d = 0,jp3d = 0,index = 0;
   TColgp_Array1OfPnt TabP3d(1, Max(1,myNbP3d));
   TColgp_Array1OfPnt2d TabP2d(1, Max(1,myNbP2d));    
   gp_Pnt2d P2d;
@@ -212,8 +214,8 @@ myWithCutting(WithCutting)
 void AppDef_Variational::Init()
 {
 
-  Standard_Integer ipoint,jp2d,jp3d,index,jndex;
-  Standard_Integer CurMultyPoint;
+  Standard_Integer ipoint = 0,jp2d = 0,jp3d = 0,index = 0,jndex = 0;
+  Standard_Integer CurMultyPoint = 0;
   TColgp_Array1OfVec TabV3d(1, Max(1,myNbP3d));
   TColgp_Array1OfVec2d TabV2d(1, Max(1,myNbP2d));
   TColgp_Array1OfVec TabV3dcurv(1, Max(1,myNbP3d));
@@ -233,7 +235,7 @@ void AppDef_Variational::Init()
 
   //
   // Table of types initialization
-  Standard_Integer iconstr;
+  Standard_Integer iconstr = 0;
   index=1;
   jndex=1;
   CurMultyPoint = 1;
@@ -412,7 +414,7 @@ void AppDef_Variational::Init()
     CurMultyPoint += myNbP3d * 6 + myNbP2d * 2;
   }
   // OverConstraint Detection
-  Standard_Integer MaxSeg;
+  Standard_Integer MaxSeg = 0;
   if(myWithCutting == Standard_True) MaxSeg = myMaxSegment ;
   else MaxSeg = 1;
   if (((myMaxDegree-myNivCont)*MaxSeg-myNbPassPoints-2*myNbTangPoints-3*myNbCurvPoints) < 0 )
@@ -439,7 +441,7 @@ void AppDef_Variational::Approximate()
   if (myIsCreated == Standard_False )  throw StdFail_NotDone();
 
 
-  Standard_Real WQuadratic, WQuality;
+  Standard_Real WQuadratic = NAN, WQuality = NAN;
 
   TColStd_Array1OfReal Ecarts(myFirstPoint, myLastPoint); 
 
@@ -459,7 +461,7 @@ void AppDef_Variational::Approximate()
 
   //---------------------------------------------------------------------
 
-  Standard_Integer jp2d,jp3d,index,ipole, 
+  Standard_Integer jp2d = 0,jp3d = 0,index = 0,ipole = 0, 
     NbElem = TheCurve->NbElements();
 
   TColgp_Array1OfPnt TabP3d(1, Max(1,myNbP3d));
@@ -490,7 +492,7 @@ void AppDef_Variational::Approximate()
 
     TheCurve->GetPolynom(CoeffPtr->ChangeArray1());
 
-    Standard_Integer ii;
+    Standard_Integer ii = 0;
 
     for(ii = 1; ii <= NbElem; ii++)  
       NbCoeffPtr->SetValue(ii, TheCurve->Degree(ii)+1);
@@ -699,7 +701,7 @@ void AppDef_Variational::Distance(math_Matrix& mat)
 
 {
   if (myIsDone == Standard_False)  throw StdFail_NotDone();
-  Standard_Integer ipoint,jp2d,jp3d,index;
+  Standard_Integer ipoint = 0,jp2d = 0,jp3d = 0,index = 0;
   TColgp_Array1OfPnt TabP3d(1,Max(1,myNbP3d));
   TColgp_Array1OfPnt2d TabP2d(1, Max(1,myNbP2d));
   Standard_Integer j0 = mat.LowerCol() - myFirstPoint;
@@ -1150,22 +1152,22 @@ void AppDef_Variational::TheMotor(
 
   Handle(TColStd_HArray1OfReal) CurrentTi, NewTi, OldTi;  
   Handle(TColStd_HArray2OfInteger) Dependence;
-  Standard_Boolean lestim, lconst, ToOptim, iscut;
+  Standard_Boolean lestim = 0, lconst = 0, ToOptim = 0, iscut = 0;
   Standard_Boolean isnear = Standard_False, again = Standard_True; 
-  Standard_Integer NbEst, ICDANA, NumPnt, Iter;
+  Standard_Integer NbEst = 0, ICDANA = 0, NumPnt = 0, Iter = 0;
   Standard_Integer MaxNbEst =5; 
   Standard_Real VOCRI[3] = {BigValue, BigValue, BigValue}, EROLD = BigValue,
-    VALCRI[3], ERRMAX = BigValue, ERRMOY, ERRQUA;
-  Standard_Real CBLONG, LNOLD;
+    VALCRI[3], ERRMAX = BigValue, ERRMOY = NAN, ERRQUA = NAN;
+  Standard_Real CBLONG = NAN, LNOLD = NAN;
   Standard_Integer NbrPnt = myLastPoint - myFirstPoint + 1;
   Standard_Integer NbrConstraint = myNbPassPoints + myNbTangPoints + myNbCurvPoints;
   Handle(FEmTool_Curve) CCurrent, COld, CNew;
   Standard_Real EpsLength = SmallValue;
-  Standard_Real EpsDeg; 
+  Standard_Real EpsDeg = NAN; 
 
-  Standard_Real e1, e2, e3;
-  Standard_Real J1min, J2min, J3min;
-  Standard_Integer iprog;
+  Standard_Real e1 = NAN, e2 = NAN, e3 = NAN;
+  Standard_Real J1min = NAN, J2min = NAN, J3min = NAN;
+  Standard_Integer iprog = 0;
 
   // (0) Init
 
@@ -1368,7 +1370,7 @@ void AppDef_Variational::TheMotor(
         if ( (ERRMAX > WQuality) && (ERRMAX > 2*EROLD)) iregre++;
         if ( (EROLD  > WQuality) && (ERRMAX <= 0.5*EROLD)) iregre--;
       }
-      Standard_Real E1, E2, E3;
+      Standard_Real E1 = NAN, E2 = NAN, E3 = NAN;
       J->GetEstimation(E1, E2, E3);
       if ( (VALCRI[0] > E1) && (VALCRI[0] > 1.1*VOCRI[0])) iregre++;
       if ( (VALCRI[1] > E2) && (VALCRI[1] > 1.1*VOCRI[1])) iregre++;
@@ -1413,7 +1415,7 @@ void AppDef_Variational::TheMotor(
 
       if ((CurrentTi->Value(1)!= 0.) || 
         (CurrentTi->Value(NbrPnt)!= 1.)) {
-          Standard_Real t, DelatT = 
+          Standard_Real t = NAN, DelatT = 
             1.0 /(CurrentTi->Value(NbrPnt)-CurrentTi->Value(1));
           for (Standard_Integer ii=2; ii<NbrPnt; ii++) {
             t = (CurrentTi->Value(ii)-CurrentTi->Value(1))*DelatT;
@@ -1489,7 +1491,7 @@ void AppDef_Variational::Optimization(Handle(AppDef_SmoothCriterion)& J,
   math_Matrix H(0, MxDeg, 0, MxDeg);
   math_Vector G(0, MxDeg), Sol(1, A.NbGlobVar());
 
-  Standard_Integer el, dim;
+  Standard_Integer el = 0, dim = 0;
 
   A.GetAssemblyTable(AssTable);
   Standard_Integer NbConstr = myNbPassPoints + myNbTangPoints + myNbCurvPoints;
@@ -1532,8 +1534,8 @@ void AppDef_Variational::Optimization(Handle(AppDef_SmoothCriterion)& J,
 
   // Updating Curve and reduction of degree
 
-  Standard_Integer Newdeg;
-  Standard_Real MaxError;
+  Standard_Integer Newdeg = 0;
+  Standard_Real MaxError = NAN;
 
   if(NbConstr == 0) {
     for(el = 1; el <= NbElm; el++) {
@@ -1543,7 +1545,7 @@ void AppDef_Variational::Optimization(Handle(AppDef_SmoothCriterion)& J,
   else {
 
     TColStd_Array1OfReal& TabInt = Curve->Knots();
-    Standard_Integer Icnt = 1, p0 = Parameters.Lower() - myFirstPoint, point;
+    Standard_Integer Icnt = 1, p0 = Parameters.Lower() - myFirstPoint, point = 0;
     for(el = 1; el <= NbElm; el++) {     
       while((Icnt < NbConstr) && 
         (Parameters(p0 + myTypConstraints->Value(2 * Icnt - 1)) <= TabInt(el))) Icnt++;
@@ -1573,11 +1575,11 @@ void AppDef_Variational::Project(const Handle(FEmTool_Curve)& C,
 
   MaxErr = QuaErr = AveErr = 0.;
 
-  Standard_Integer Ipnt, NItCv, Iter, i, i0 = -myDimension, d0 = Distance.Lower() - 1;
+  Standard_Integer Ipnt = 0, NItCv = 0, Iter = 0, i = 0, i0 = -myDimension, d0 = Distance.Lower() - 1;
 
-  Standard_Real TNew, Dist, T0, Dist0, F1, F2, Aux, DF, Ecart;
+  Standard_Real TNew = NAN, Dist = NAN, T0 = NAN, Dist0 = NAN, F1 = NAN, F2 = NAN, Aux = NAN, DF = NAN, Ecart = NAN;
 
-  Standard_Boolean EnCour;
+  Standard_Boolean EnCour = 0;
 
   TColStd_Array1OfReal ValOfC(1, myDimension), FirstDerOfC(1, myDimension), 
     SecndDerOfC(1, myDimension);
@@ -1684,8 +1686,8 @@ void AppDef_Variational::ACR(Handle(FEmTool_Curve)& Curve,
   Standard_Integer NbrPnt = Ti.Length(), TiFirst = Ti.Lower(), TiLast = Ti.Upper(),
     KFirst = Knots.Lower(), KLast = Knots.Upper();
 
-  Standard_Real CbLong, DeltaT, VTest, UNew, UOld, DU, TPara, TOld, DTInv, Ratio;
-  Standard_Integer ipnt, ii, IElm, IOld, POld, PCnt, ICnt=0;
+  Standard_Real CbLong = NAN, DeltaT = NAN, VTest = NAN, UNew = NAN, UOld = NAN, DU = NAN, TPara = NAN, TOld = NAN, DTInv = NAN, Ratio = NAN;
+  Standard_Integer ipnt = 0, ii = 0, IElm = 0, IOld = 0, POld = 0, PCnt = 0, ICnt=0;
   Standard_Integer NbCntr = myNbPassPoints + myNbTangPoints + myNbCurvPoints;
 
   //     (1) Calcul de la longueur de courbe
@@ -1806,7 +1808,7 @@ static Standard_Integer NearIndex(const Standard_Real T,
   if(T < TabPar(Loi)) { Flag = -1; return Loi;}
   if(T > TabPar(Upi)) { Flag =  1; return Upi;}
 
-  Standard_Integer Ibeg = Loi, Ifin = Upi, Imidl;
+  Standard_Integer Ibeg = Loi, Ifin = Upi, Imidl = 0;
 
   while(Ibeg + 1 != Ifin) {
     Imidl = (Ibeg + Ifin) / 2;
@@ -1840,9 +1842,9 @@ static void GettingKnots(const TColStd_Array1OfReal& TabPar,
 
   TColStd_Array1OfReal& OldKnots = InCurve->Knots();
   Standard_Integer NbMaxOld = InCurve->NbElements(); 
-  Standard_Integer NbMax = NewKnots.Upper(), Ipt, Ipt1, Ipt2; 
-  Standard_Integer el = 0, i1 = OldKnots.Lower(), i0 = i1 - 1, Flag;
-  Standard_Real TPar;
+  Standard_Integer NbMax = NewKnots.Upper(), Ipt = 0, Ipt1 = 0, Ipt2 = 0; 
+  Standard_Integer el = 0, i1 = OldKnots.Lower(), i0 = i1 - 1, Flag = 0;
+  Standard_Real TPar = NAN;
 
   while((NbElm < NbMax) && (el < NbMaxOld)) {
 
@@ -1904,7 +1906,7 @@ void AppDef_Variational::SplitCurve(const Handle(FEmTool_Curve)& InCurve,
     TColStd_Array1OfReal& OutKnots = OutCurve->Knots();
     TColStd_Array1OfReal& InKnots = InCurve->Knots();
 
-    Standard_Integer i, i0 = OutKnots.Lower();
+    Standard_Integer i = 0, i0 = OutKnots.Lower();
     for(i = InKnots.Lower(); i <= InKnots.Upper(); i++) OutKnots(i) = InKnots(i);
     for(i = NbElmOld + 1; i <= NbElm; i++) OutKnots(i + i0) = NewKnots(i);
 
@@ -1927,13 +1929,13 @@ void AppDef_Variational::InitSmoothCriterion()
 
 
 
-  Standard_Real Length;
+  Standard_Real Length = NAN;
 
   InitParameters(Length);
 
   mySmoothCriterion->SetParameters(myParameters);
 
-  Standard_Real E1, E2, E3;
+  Standard_Real E1 = NAN, E2 = NAN, E3 = NAN;
 
   InitCriterionEstimations(Length, E1,  E2,  E3);
   /*
@@ -1946,7 +1948,7 @@ void AppDef_Variational::InitSmoothCriterion()
   mySmoothCriterion->EstLength() = Length;
   mySmoothCriterion->SetEstimation(E1, E2, E3);
 
-  Standard_Real WQuadratic, WQuality;
+  Standard_Real WQuadratic = NAN, WQuality = NAN;
 
   if(!myWithMinMax && myTolerance != 0.) 
     WQuality = myTolerance;
@@ -1968,7 +1970,7 @@ void AppDef_Variational::InitSmoothCriterion()
 
   Handle(PLib_Base) TheBase = new PLib_HermitJacobi(myMaxDegree, myContinuity);
   Handle(FEmTool_Curve) TheCurve;
-  Standard_Integer NbElem;
+  Standard_Integer NbElem = 0;
   Standard_Real CurvTol = Eps2 * Length / myNbPoints;
 
   // Decoupe de l'intervalle en fonction des contraintes
@@ -2006,8 +2008,8 @@ void AppDef_Variational::InitParameters(Standard_Real& Length)
 
   const Standard_Real Eps1 = Precision::Confusion() * .01;
 
-  Standard_Real aux, dist;
-  Standard_Integer i, i0, i1 = 0, ipoint;
+  Standard_Real aux = NAN, dist = NAN;
+  Standard_Integer i = 0, i0 = 0, i1 = 0, ipoint = 0;
 
 
   Length = 0.;  
@@ -2136,7 +2138,7 @@ void AppDef_Variational::InitCriterionEstimations(const Standard_Real Length,
   Delta = .5 * (myParameters->Value(myLastPoint) - myParameters->Value(myLastPoint - 1));
   if(Delta <= Eps1) Delta = 1.;
 
-  Standard_Real aux;
+  Standard_Real aux = NAN;
 
   if(CurrPoint == 1) {
 
@@ -2179,7 +2181,7 @@ void AppDef_Variational::EstTangent(const Standard_Integer ipnt,
                                     math_Vector& VTang) const
 
 {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   const Standard_Real Eps1 = Precision::Confusion() * .01;
   const Standard_Real EpsNorm = 1.e-9;
 
@@ -2207,7 +2209,7 @@ void AppDef_Variational::EstTangent(const Standard_Integer ipnt,
       Standard_Real V2 = 0.;
       if(V1 > Eps1) V2 = Pnt3.Subtracted(Pnt2).Norm();
       if(V2 > Eps1) {
-        Standard_Real d = V1 / (V1 + V2), d1;
+        Standard_Real d = V1 / (V1 + V2), d1 = NAN;
         d1 = 1. / (d * (1 - d)); d *= d;
         VTang = ((d - 1.) * Pnt1 + Pnt2 - d * Pnt3) * d1;
       }
@@ -2240,7 +2242,7 @@ void AppDef_Variational::EstTangent(const Standard_Integer ipnt,
       Standard_Real V2 = 0.;
       if(V1 > Eps1) V2 = Pnt3.Subtracted(Pnt2).Norm();
       if(V2 > Eps1) {
-        Standard_Real d = V1 / (V1 + V2), d1;
+        Standard_Real d = V1 / (V1 + V2), d1 = NAN;
         d1 = 1. / (d * (1 - d)); d *= d - 2;
         VTang = ((d + 1.) * Pnt1 - Pnt2 - d * Pnt3) * d1;
       }
@@ -2332,13 +2334,13 @@ void AppDef_Variational::EstSecnd(const Standard_Integer ipnt,
                                   const Standard_Real Length, 
                                   math_Vector& VScnd) const
 {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
 
   const Standard_Real Eps = 1.e-9;
 
   Standard_Real Wpnt = 1.;
 
-  Standard_Real aux;
+  Standard_Real aux = NAN;
 
   if(ipnt == myFirstPoint)
     aux = myParameters->Value(ipnt + 1) - myParameters->Value(ipnt);
@@ -2411,7 +2413,7 @@ void AppDef_Variational::InitCutting(const Handle(PLib_Base)& aBase,
 {
 
   // Definition of number of elements
-  Standard_Integer ORCMx = -1, NCont = 0, i, kk, NbElem;
+  Standard_Integer ORCMx = -1, NCont = 0, i = 0, kk = 0, NbElem = 0;
   Standard_Integer NbConstr = myNbPassPoints + myNbTangPoints + myNbCurvPoints;
 
   for(i = 1; i <= NbConstr; i++) {
@@ -2534,15 +2536,15 @@ void AppDef_Variational::Adjusting(
 
 
   /* Local variables */
-  Standard_Integer iter, ipnt;
-  Standard_Real ecart, emold, erold, tpara;
-  Standard_Real vocri[4], j1cibl, vtest, vseuil;
-  Standard_Integer i, numint, flag;
+  Standard_Integer iter = 0, ipnt = 0;
+  Standard_Real ecart = NAN, emold = NAN, erold = NAN, tpara = NAN;
+  Standard_Real vocri[4], j1cibl = NAN, vtest = NAN, vseuil = NAN;
+  Standard_Integer i = 0, numint = 0, flag = 0;
   TColStd_Array1OfReal tbpoid(myFirstPoint, myLastPoint);
-  Standard_Boolean loptim, lrejet;
+  Standard_Boolean loptim = 0, lrejet = 0;
   Handle(AppDef_SmoothCriterion) JNew;
   Handle(FEmTool_Curve) CNew;
-  Standard_Real E1, E2, E3;
+  Standard_Real E1 = NAN, E2 = NAN, E3 = NAN;
 
 
   /* (0.b) Initialisations */
@@ -2694,12 +2696,12 @@ void AppDef_Variational::AssemblingConstraints(const Handle(FEmTool_Curve)& Curv
     V1((Standard_Real*)&G1(0), 0, MxDeg), 
     V2((Standard_Real*)&G2(0), 0, MxDeg);
 
-  Standard_Integer IndexOfConstraint, Ng3d, Ng2d, NBeg2d, NPass, NgPC1, 
-    NTang3d, NTang2d,  
-    Point, TypOfConstr, 
+  Standard_Integer IndexOfConstraint = 0, Ng3d = 0, Ng2d = 0, NBeg2d = 0, NPass = 0, NgPC1 = 0, 
+    NTang3d = 0, NTang2d = 0,  
+    Point = 0, TypOfConstr = 0, 
     p0 = Parameters.Lower() - myFirstPoint,
-    curel = 1, el, i, ipnt, ityp, j, k, pnt, curdim,
-    jt, Ntheta = 6 * myNbP3d + 2 * myNbP2d;
+    curel = 1, el = 0, i = 0, ipnt = 0, ityp = 0, j = 0, k = 0, pnt = 0, curdim = 0,
+    jt = 0, Ntheta = 6 * myNbP3d + 2 * myNbP2d;
   Standard_Integer NbConstr = myNbPassPoints + myNbTangPoints + myNbCurvPoints;
 
   //  Ng3d = 3 * NbConstr + 2 * myNbTangPoints + 5 * myNbCurvPoints;
@@ -2715,13 +2717,13 @@ void AppDef_Variational::AssemblingConstraints(const Handle(FEmTool_Curve)& Curv
 
   TColStd_Array1OfReal& Intervals = Curve->Knots();
 
-  Standard_Real t, R1, R2;
+  Standard_Real t = NAN, R1 = NAN, R2 = NAN;
 
   Handle(PLib_Base) myBase = Curve->Base();
   Handle(PLib_HermitJacobi) myHermitJacobi = Handle(PLib_HermitJacobi)::DownCast (myBase);
   Standard_Integer Order = myHermitJacobi->NivConstr() + 1;
 
-  Standard_Real UFirst, ULast, coeff, c0, mfact, mfact1;
+  Standard_Real UFirst = NAN, ULast = NAN, coeff = NAN, c0 = NAN, mfact = NAN, mfact1 = NAN;
 
   A.NullifyConstraint();
 
@@ -2960,7 +2962,7 @@ Standard_Boolean AppDef_Variational::InitTthetaF(const Standard_Integer ndimen,
   gp_Vec T, V;
   gp_Vec theta1, theta2;
   gp_Vec F;
-  Standard_Real XX, XY, YY, XZ, YZ, ZZ;
+  Standard_Real XX = NAN, XY = NAN, YY = NAN, XZ = NAN, YZ = NAN, ZZ = NAN;
 
   if ((typcon == AppParCurves_TangencyPoint)||(typcon == AppParCurves_CurvaturePoint))
   {

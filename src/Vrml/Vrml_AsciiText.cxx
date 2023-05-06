@@ -17,25 +17,25 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Vrml_AsciiText,Standard_Transient)
 
-Vrml_AsciiText::Vrml_AsciiText()
+Vrml_AsciiText::Vrml_AsciiText() : mySpacing(1), myJustification(Vrml_LEFT), myWidth(0)
 {
     TCollection_AsciiString tmpS("");
     myString =  new TColStd_HArray1OfAsciiString(1,1,tmpS);
 
-    mySpacing = 1;
-    myJustification = Vrml_LEFT;
-    myWidth = 0;
+    
+    
+    
 }
 
  Vrml_AsciiText::Vrml_AsciiText(const Handle(TColStd_HArray1OfAsciiString)& aString, 
 				const Standard_Real aSpacing, 
 				const Vrml_AsciiTextJustification aJustification, 
-				const Standard_Real aWidth)
+				const Standard_Real aWidth) : myString(aString), mySpacing(aSpacing), myJustification(aJustification), myWidth(aWidth)
 {
-    myString = aString;
-    mySpacing = aSpacing;
-    myJustification = aJustification;
-    myWidth = aWidth;
+    
+    
+    
+    
 }
 
 void Vrml_AsciiText::SetString(const  Handle(TColStd_HArray1OfAsciiString)& aString)
@@ -80,7 +80,7 @@ Standard_Real Vrml_AsciiText::Width() const
 
 Standard_OStream& Vrml_AsciiText::Print(Standard_OStream& anOStream) const 
 {
- Standard_Integer i;
+ Standard_Integer i = 0;
 
  anOStream  << "AsciiText {\n";
 

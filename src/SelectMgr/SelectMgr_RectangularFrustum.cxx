@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <SelectMgr_RectangularFrustum.hxx>
 
 #include <BVH_Tools.hxx>
@@ -50,7 +52,7 @@ void SelectMgr_RectangularFrustum::segmentSegmentDistance (const gp_Pnt& theSegP
   Standard_Real anE = aV.Dot (aW);
   Standard_Real aCoef = anA * aC - aB * aB;
   Standard_Real aSn = aCoef;
-  Standard_Real aTc, aTn, aTd = aCoef;
+  Standard_Real aTc = NAN, aTn = NAN, aTd = aCoef;
 
   if (aCoef < gp::Resolution())
   {
@@ -493,7 +495,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsBox (const SelectMgr_Vec3
   Standard_Real aDepth = 0.0;
   BVH_Ray<Standard_Real, 3> aRay(SelectMgr_Vec3(myNearPickedPnt.X(), myNearPickedPnt.Y(), myNearPickedPnt.Z()),
                                  SelectMgr_Vec3(myViewRayDir.X(), myViewRayDir.Y(), myViewRayDir.Z()));
-  Standard_Real aTimeEnter, aTimeLeave;
+  Standard_Real aTimeEnter = NAN, aTimeLeave = NAN;
   if (!BVH_Tools<Standard_Real, 3>::RayBoxIntersection (aRay, theBoxMin, theBoxMax, aTimeEnter, aTimeLeave))
   {
     gp_Pnt aNearestPnt (RealLast(), RealLast(), RealLast());

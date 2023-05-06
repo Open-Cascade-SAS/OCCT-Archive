@@ -268,17 +268,17 @@ private:
   
   Standard_EXPORT Standard_Boolean SplitEdge (const Handle(ShapeExtend_WireData)& sewd, const Standard_Integer num, const Standard_Real param1, const Standard_Real param2, const TopoDS_Vertex& vert, const Standard_Real preci, ShapeFix_DataMapOfShapeBox2d& boxes);
 
-  Standard_Integer myFixWireMode;
-  Standard_Integer myFixOrientationMode;
-  Standard_Integer myFixAddNaturalBoundMode;
-  Standard_Integer myFixMissingSeamMode;
-  Standard_Integer myFixSmallAreaWireMode;
-  Standard_Integer myRemoveSmallAreaFaceMode;
-  Standard_Integer myFixLoopWiresMode;
-  Standard_Integer myFixIntersectingWiresMode;
-  Standard_Integer myFixSplitFaceMode;
-  Standard_Integer myAutoCorrectPrecisionMode;
-  Standard_Integer myFixPeriodicDegenerated;
+  Standard_Integer myFixWireMode{};
+  Standard_Integer myFixOrientationMode{};
+  Standard_Integer myFixAddNaturalBoundMode{};
+  Standard_Integer myFixMissingSeamMode{};
+  Standard_Integer myFixSmallAreaWireMode{};
+  Standard_Integer myRemoveSmallAreaFaceMode{};
+  Standard_Integer myFixLoopWiresMode{};
+  Standard_Integer myFixIntersectingWiresMode{};
+  Standard_Integer myFixSplitFaceMode{};
+  Standard_Integer myAutoCorrectPrecisionMode{};
+  Standard_Integer myFixPeriodicDegenerated{};
 
 
 };

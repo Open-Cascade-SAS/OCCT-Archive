@@ -30,13 +30,13 @@ IMPLEMENT_STANDARD_RTTIEXT(Units_Unit,Standard_Transient)
 Units_Unit::Units_Unit(const Standard_CString aname,
 		       const Standard_CString asymbol,
 		       const Standard_Real avalue,
-		       const Handle(Units_Quantity)& aquantity)
+		       const Handle(Units_Quantity)& aquantity) : thename(new TCollection_HAsciiString(aname)), thevalue(avalue), thequantity(aquantity), thesymbolssequence(new TColStd_HSequenceOfHAsciiString())
 {
-  thename       = new TCollection_HAsciiString(aname);
-  thevalue      = avalue;
-  thequantity = aquantity;
+  
+  
+  
   Handle(TCollection_HAsciiString) symbol = new TCollection_HAsciiString(asymbol);
-  thesymbolssequence = new TColStd_HSequenceOfHAsciiString();
+  
   thesymbolssequence->Prepend(symbol);
 }
 
@@ -46,12 +46,12 @@ Units_Unit::Units_Unit(const Standard_CString aname,
 //=======================================================================
 
 Units_Unit::Units_Unit(const Standard_CString aname,
-		       const Standard_CString asymbol)
+		       const Standard_CString asymbol) : thename(new TCollection_HAsciiString(aname)), thevalue(0.), thesymbolssequence(new TColStd_HSequenceOfHAsciiString())
 {
-  thename       = new TCollection_HAsciiString(aname);
-  thevalue      = 0.;
+  
+  
   Handle(TCollection_HAsciiString) symbol = new TCollection_HAsciiString(asymbol);
-  thesymbolssequence = new TColStd_HSequenceOfHAsciiString();
+  
   thesymbolssequence->Prepend(symbol);
 }
 
@@ -60,11 +60,11 @@ Units_Unit::Units_Unit(const Standard_CString aname,
 //purpose  : 
 //=======================================================================
 
-Units_Unit::Units_Unit(const Standard_CString aname)
+Units_Unit::Units_Unit(const Standard_CString aname) : thename(new TCollection_HAsciiString(aname)), thevalue(0.), thesymbolssequence(new TColStd_HSequenceOfHAsciiString())
 {
-  thename  = new TCollection_HAsciiString(aname);
-  thevalue = 0.;
-  thesymbolssequence = new TColStd_HSequenceOfHAsciiString();
+  
+  
+  
 }
 
 //=======================================================================
@@ -96,7 +96,7 @@ Handle(Units_Token) Units_Unit::Token() const
 
 Standard_Boolean Units_Unit::IsEqual(const Standard_CString astring) const
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   TCollection_AsciiString symbol;
 
   for(index=1;index<=thesymbolssequence->Length();index++)
@@ -116,7 +116,7 @@ Standard_Boolean Units_Unit::IsEqual(const Standard_CString astring) const
 void Units_Unit::Dump(const Standard_Integer /*ashift*/,
 		      const Standard_Integer) const
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   TCollection_AsciiString string;
 
 //  int i;

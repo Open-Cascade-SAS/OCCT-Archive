@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_ExtElC.hxx>
 #include <Extrema_POnCurv.hxx>
 #include <gce_MakeCirc.hxx>
@@ -47,11 +49,11 @@
 //=========================================================================
 gce_MakeCirc::gce_MakeCirc(const gp_Pnt&  P1 ,
 			   const gp_Pnt&  P2 ,
-			   const gp_Pnt&  P3) {
+			   const gp_Pnt&  P3) : gce_Root() {
 //=========================================================================
 //   Traitement.                                                          +
 //=========================================================================
-  Standard_Real dist1, dist2, dist3, aResolution;
+  Standard_Real dist1 = NAN, dist2 = NAN, dist3 = NAN, aResolution = NAN;
   //
   aResolution = gp::Resolution();
   //
@@ -70,7 +72,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Pnt&  P1 ,
     return;
   }
   //
-  Standard_Real x1,y1,z1,x2,y2,z2,x3,y3,z3;
+  Standard_Real x1 = NAN,y1 = NAN,z1 = NAN,x2 = NAN,y2 = NAN,z2 = NAN,x3 = NAN,y3 = NAN,z3 = NAN;
   //
   P1.Coord(x1,y1,z1);
   P2.Coord(x2,y2,z2);
@@ -106,7 +108,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Pnt&  P1 ,
     TheError = gce_IntersectionError; 
   }
   else {
-    Standard_Integer nbext;
+    Standard_Integer nbext = 0;
     //
     //
     if (distmin.IsParallel()) {
@@ -156,7 +158,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Pnt&  P1 ,
 //purpose  : 
 //=======================================================================
 gce_MakeCirc::gce_MakeCirc(const gp_Ax2&       A2      ,
-			   const Standard_Real Radius  ) {
+			   const Standard_Real Radius  ) : gce_Root() {
   if (Radius < 0.) { 
     TheError = gce_NegativeRadius;
   }
@@ -171,7 +173,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Ax2&       A2      ,
 //=========================================================================
 gce_MakeCirc::gce_MakeCirc(const gp_Pnt&       Center  ,
 			   const gp_Pln&       Plane   ,
-			   const Standard_Real Radius  ) {
+			   const Standard_Real Radius  ) : gce_Root() {
   gce_MakeCirc C = gce_MakeCirc(Center,Plane.Position().Direction(),Radius);
   TheCirc = C.Value();
   TheError = C.Status();
@@ -183,7 +185,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Pnt&       Center  ,
 //=======================================================================
 gce_MakeCirc::gce_MakeCirc(const gp_Pnt&       Center  ,
 			   const gp_Dir&       Norm    ,
-			   const Standard_Real Radius  ) {
+			   const Standard_Real Radius  ) : gce_Root() {
    if (Radius < 0.) { 
      TheError = gce_NegativeRadius;
    }
@@ -226,7 +228,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Pnt&       Center  ,
 //=======================================================================
 gce_MakeCirc::gce_MakeCirc(const gp_Pnt&       Center  ,
 			   const gp_Pnt&       Ptaxis  ,
-			   const Standard_Real Radius  ) {
+			   const Standard_Real Radius  ) : gce_Root() {
    if (Radius < 0.) { 
      TheError = gce_NegativeRadius;
    }
@@ -273,7 +275,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Pnt&       Center  ,
 //purpose  : Creation d un gp_Circ par son axe <Axis> et son rayon <Radius>.  
 //=======================================================================
 gce_MakeCirc::gce_MakeCirc(const gp_Ax1&       Axis    ,
-			   const Standard_Real Radius  ) 
+			   const Standard_Real Radius  ) : gce_Root() 
 {
   if (Radius < 0.) { 
     TheError = gce_NegativeRadius;
@@ -318,7 +320,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Ax1&       Axis    ,
 //   donnee.                
 //=======================================================================
 gce_MakeCirc::gce_MakeCirc(const gp_Circ&      Circ    ,
-			   const Standard_Real Dist    )
+			   const Standard_Real Dist    ) : gce_Root()
 {
   Standard_Real Rad = Circ.Radius()+Dist;
   if (Rad < 0.) { 
@@ -335,7 +337,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Circ&      Circ    ,
 //   est egal a la distance de <Point> a l axe de <Circ>. 
 //=======================================================================
 gce_MakeCirc::gce_MakeCirc(const gp_Circ& Circ ,
-			   const gp_Pnt&  P    ) 
+			   const gp_Pnt&  P    ) : gce_Root() 
 {
   Standard_Real Rad = gp_Lin(Circ.Axis()).Distance(P);
   TheCirc = gp_Circ(Circ.Position(),Rad);

@@ -61,7 +61,7 @@ Handle(Transfer_ResultFromTransient)  Transfer_ResultFromTransient::ResultFromKe
 {
   Handle(Transfer_ResultFromTransient) res;
   if (key == thestart) return this;
-  Standard_Integer i, nb = NbSubResults();
+  Standard_Integer i = 0, nb = NbSubResults();
   for (i = 1; i <= nb; i ++) {
     res = SubResult(i)->ResultFromKey(key);
     if (!res.IsNull()) return res;
@@ -73,7 +73,7 @@ Handle(Transfer_ResultFromTransient)  Transfer_ResultFromTransient::ResultFromKe
   (TColStd_IndexedMapOfTransient& map) const
 {
   if (thesubs.IsNull()) return;
-  Standard_Integer i, nb = thesubs->Length();
+  Standard_Integer i = 0, nb = thesubs->Length();
   for (i = 1; i <= nb; i ++)  map.Add (thesubs->Value(i));
   for (i = 1; i <= nb; i ++)  SubResult(i)->FillMap(map);
 }

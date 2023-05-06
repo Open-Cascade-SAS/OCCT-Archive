@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <RWStepVisual_RWColourRgb.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
@@ -39,19 +41,19 @@ void RWStepVisual_RWColourRgb::ReadStep
 
 	// --- own field : red ---
 
-	Standard_Real aRed;
+	Standard_Real aRed = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadReal (num,2,"red",ach,aRed);
 
 	// --- own field : green ---
 
-	Standard_Real aGreen;
+	Standard_Real aGreen = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"green",ach,aGreen);
 
 	// --- own field : blue ---
 
-	Standard_Real aBlue;
+	Standard_Real aBlue = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"blue",ach,aBlue);
 

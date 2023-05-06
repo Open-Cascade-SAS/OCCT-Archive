@@ -36,9 +36,9 @@ Standard_Integer FairCurve_DistributionOfEnergy::NbEquations() const
 				 MyFlatKnots (FlatKnots), 
                                  MyPoles (Poles), 
 				 MyDerivativeOrder (DerivativeOrder),
-				 MyNbValAux (NbValAux)
+				 MyNbVar(1), MyNbValAux (NbValAux)
 {
-  MyNbVar = 1;
+  
   SetDerivativeOrder( DerivativeOrder);
 
 }

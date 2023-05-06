@@ -55,7 +55,7 @@ void RWStepGeom_RWSurfaceCurve::ReadStep
 
 	Handle(StepGeom_HArray1OfPcurveOrSurface) aAssociatedGeometry;
 	StepGeom_PcurveOrSurface aAssociatedGeometryItem;
-	Standard_Integer nsub3;
+	Standard_Integer nsub3 = 0;
 	if (data->ReadSubList (num,3,"associated_geometry",ach,nsub3)) {
 	  Standard_Integer nb3 = data->NbParams(nsub3);
 	  aAssociatedGeometry = new StepGeom_HArray1OfPcurveOrSurface (1, nb3);

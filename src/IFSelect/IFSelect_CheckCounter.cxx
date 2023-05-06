@@ -65,14 +65,14 @@ void  IFSelect_CheckCounter::Analyse(const Interface_CheckIterator& list,
                                      const Standard_Boolean original,
                                      const Standard_Boolean failsonly)
 {
-  Standard_Integer i,nb,num, nbe = (model.IsNull() ? 0 : model->NbEntities());
+  Standard_Integer i = 0,nb = 0,num = 0, nbe = (model.IsNull() ? 0 : model->NbEntities());
   char mess[300];
   sprintf (mess,"Check %s",list.Name());
   SetName (mess);
   for (list.Start(); list.More(); list.Next()) {
     num = list.Number();
     Handle(Standard_Transient) ent;
-    const Handle(Interface_Check) check = list.Value();
+    const Handle(Interface_Check)& check = list.Value();
     ent = check->Entity();
     if (ent.IsNull() && num > 0 && num <= nbe) ent = model->Value(num);
     nb = check->NbFails();

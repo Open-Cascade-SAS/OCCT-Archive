@@ -45,7 +45,7 @@ void RWStepVisual_RWCompositeText::ReadStep
 
 	Handle(StepVisual_HArray1OfTextOrCharacter) aCollectedText;
 	StepVisual_TextOrCharacter aCollectedTextItem;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	nsub2 = data->SubListNumber(num, 2, Standard_False);
 	if (nsub2 !=0) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);

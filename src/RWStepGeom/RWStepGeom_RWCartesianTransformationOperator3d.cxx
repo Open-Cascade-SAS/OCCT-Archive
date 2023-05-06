@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepGeom_RWCartesianTransformationOperator3d.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -78,7 +80,7 @@ void RWStepGeom_RWCartesianTransformationOperator3d::ReadStep
 
 	// --- inherited field : scale ---
 
-	Standard_Real aScale;
+	Standard_Real aScale = NAN;
 	Standard_Boolean hasAscale = Standard_True;
 	if (data->IsParamDefined(num,7)) {
 	  //szv#4:S4163:12Mar99 `Standard_Boolean stat5 =` not needed

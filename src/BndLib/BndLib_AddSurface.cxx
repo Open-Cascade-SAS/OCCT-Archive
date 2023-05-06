@@ -17,6 +17,8 @@
 //  Modified by skv - Fri Aug 27 12:29:04 2004 OCC6503
 
 #include <Adaptor3d_Surface.hxx>
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <Bnd_Box.hxx>
 #include <BndLib.hxx>
@@ -87,7 +89,7 @@ void BndLib_AddSurface::Add(const Adaptor3d_Surface& S,
 
 static Standard_Integer NbUSamples(const Adaptor3d_Surface& S) 
 {
-  Standard_Integer N;
+  Standard_Integer N = 0;
   GeomAbs_SurfaceType Type = S.GetType();
   switch (Type) {
   case GeomAbs_BezierSurface: 
@@ -114,7 +116,7 @@ static Standard_Integer NbUSamples(const Adaptor3d_Surface& S)
 
 static Standard_Integer NbVSamples(const Adaptor3d_Surface& S) 
 {
-  Standard_Integer N;
+  Standard_Integer N = 0;
   GeomAbs_SurfaceType Type = S.GetType();
   switch (Type) {
   case GeomAbs_BezierSurface:
@@ -141,7 +143,7 @@ static gp_Pnt BaryCenter(const gp_Pln        &aPlane,
 			 const Standard_Real  aVMin,
 			 const Standard_Real  aVMax)
 {
-  Standard_Real aU, aV;
+  Standard_Real aU = NAN, aV = NAN;
   Standard_Boolean isU1Inf = Precision::IsInfinite(aUMin);
   Standard_Boolean isU2Inf = Precision::IsInfinite(aUMax);
   Standard_Boolean isV1Inf = Precision::IsInfinite(aVMin);
@@ -432,7 +434,7 @@ void BndLib_AddSurface::Add(const Adaptor3d_Surface& S,
         }
 
         // Use poles to build convex hull.
-        Standard_Integer ip, jp;
+        Standard_Integer ip = 0, jp = 0;
         for (Standard_Integer i = UMinIdx; i <= UMaxIdx; i++)
         {
           ip = i;
@@ -579,8 +581,8 @@ void BndLib_AddSurface::AddGenSurf(const Adaptor3d_Surface& S,
   Standard_Real du = (UMax-UMin)/(Nu-1), du2 = du / 2.;
   Standard_Real dv = (VMax-VMin)/(Nv-1), dv2 = dv / 2.;
   NCollection_Array2<gp_XYZ> aPnts(1, Nu, 1, Nv);
-  Standard_Real u, v;
-  Standard_Integer i, j, k;
+  Standard_Real u = NAN, v = NAN;
+  Standard_Integer i = 0, j = 0, k = 0;
   gp_Pnt P;
   for (i = 1, u = UMin; i <= Nu; i++, u += du){
     for (j = 1, v = VMin;j <= Nv; j++, v += dv){
@@ -664,7 +666,7 @@ void BndLib_AddSurface::AddGenSurf(const Adaptor3d_Surface& S,
       {
         if(aPnts(i,j).Coord(k+1) - CMin < d)
         {
-          Standard_Real umin, umax, vmin, vmax;
+          Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
           umin = UMin + Max(0, i-2) * du;
           umax = UMin + Min(Nu-1, i) * du;
           vmin = VMin + Max(0, j-2) * dv;
@@ -678,7 +680,7 @@ void BndLib_AddSurface::AddGenSurf(const Adaptor3d_Surface& S,
         }
         else if(CMax - aPnts(i,j).Coord(k+1) < d)
         {
-          Standard_Real umin, umax, vmin, vmax;
+          Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
           umin = UMin + Max(0, i-2) * du;
           umax = UMin + Min(Nu-1, i) * du;
           vmin = VMin + Max(0, j-2) * dv;
@@ -725,7 +727,7 @@ public:
     math_Vector X(1,2);
     X(1) = UMin;
     X(2) = (VMin + VMax) / 2.;
-    Standard_Real F1, F2;
+    Standard_Real F1 = NAN, F2 = NAN;
     Value(X, F1);
     X(1) = UMax;
     Value(X, F2);
@@ -741,7 +743,7 @@ public:
   }
 
   Standard_Boolean Value (const math_Vector& X,
-                                  Standard_Real& F)
+                                  Standard_Real& F) override
   {
     if (CheckInputData(X))
     {
@@ -750,7 +752,7 @@ public:
     }
     else
     {
-      Standard_Real UPen = 0., VPen = 0., u0, v0;
+      Standard_Real UPen = 0., VPen = 0., u0 = NAN, v0 = NAN;
       if(X(1) < myUMin)
       {
         UPen = myPenalty * (myUMin - X(1));
@@ -790,7 +792,7 @@ public:
 
   
 
-  Standard_Integer NbVariables() const
+  Standard_Integer NbVariables() const override
   {
     return 2;
   }
@@ -893,7 +895,7 @@ Standard_Integer NbUSamples(const Adaptor3d_Surface& S,
                             const Standard_Real Umin,
                             const Standard_Real Umax) 
 {
-  Standard_Integer N;
+  Standard_Integer N = 0;
   GeomAbs_SurfaceType Type = S.GetType();
   switch (Type) {
   case GeomAbs_BezierSurface: 
@@ -912,7 +914,7 @@ Standard_Integer NbUSamples(const Adaptor3d_Surface& S,
     {
       const Handle(Geom_BSplineSurface)& BS = S.BSpline();
       N = 2*(BS->UDegree() + 1)*(BS->NbUKnots() -1);
-      Standard_Real umin, umax, vmin, vmax;
+      Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
       BS->Bounds(umin, umax, vmin, vmax);
       Standard_Real du = (Umax - Umin) / (umax - umin);
       if(du < .9)
@@ -937,7 +939,7 @@ Standard_Integer NbVSamples(const Adaptor3d_Surface& S,
                             const Standard_Real Vmin,
                             const Standard_Real Vmax) 
 {
-  Standard_Integer N;
+  Standard_Integer N = 0;
   GeomAbs_SurfaceType Type = S.GetType();
   switch (Type) {
   case GeomAbs_BezierSurface:
@@ -956,7 +958,7 @@ Standard_Integer NbVSamples(const Adaptor3d_Surface& S,
     {
       const Handle(Geom_BSplineSurface)& BS = S.BSpline();
       N = 2*(BS->VDegree() + 1)*(BS->NbVKnots() - 1) ;
-      Standard_Real umin, umax, vmin, vmax;
+      Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
       BS->Bounds(umin, umax, vmin, vmax);
       Standard_Real dv = (Vmax - Vmin) / (vmax - vmin);
       if(dv < .9)

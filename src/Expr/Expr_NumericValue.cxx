@@ -25,9 +25,9 @@
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(Expr_NumericValue,Expr_GeneralExpression)
 
-Expr_NumericValue::Expr_NumericValue(const Standard_Real val)
+Expr_NumericValue::Expr_NumericValue(const Standard_Real val) : myValue(val)
 {
-  myValue = val;
+  
 }
 
 Standard_Real Expr_NumericValue::GetValue() const

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AppDef_BSplineCompute.hxx>
 #include <AppDef_MultiLine.hxx>
 #include <AppParCurves_MultiBSpCurve.hxx>
@@ -135,16 +137,16 @@ void  HLRTopoBRep_DSFiller::InsertFace (const Standard_Integer /*FI*/,
   */
 
   const Standard_Integer NbLines = FO.NbLines();
-  Standard_Integer CurLine;
+  Standard_Integer CurLine = 0;
   for (CurLine = 1; CurLine <= NbLines; CurLine++)
   {
     const Contap_Line& Line = FO.Line(CurLine);
     const Standard_Integer NbPoints = Line.NbVertex();
-    Standard_Integer CurPoint;
+    Standard_Integer CurPoint = 0;
     if (Line.TypeContour() == Contap_Restriction)
     {
       // OutLine on restriction
-      TopoDS_Edge E = (*(BRepAdaptor_Curve2d*)(Line.Arc().get())).Edge();
+      TopoDS_Edge E = (*dynamic_cast<BRepAdaptor_Curve2d*>(Line.Arc().get())).Edge();
       OutL.Append(E);
       TopExp::Vertices(E,VF,VL);
       // insert the Internal points.
@@ -311,7 +313,7 @@ void  HLRTopoBRep_DSFiller::InsertFace (const Standard_Integer /*FI*/,
                   if(withPCurve) { 
                     TColgp_Array1OfPnt2d Points2d(1,nbp);
                     for(Standard_Integer i=1;i<=nbp;i++) {
-                      Standard_Real u,v;
+                      Standard_Real u = NAN,v = NAN;
                       Line.Point(i+ipF-1).ParametersOnS2(u,v);
                       Points2d.SetValue(i,gp_Pnt2d(u,v));
                     }
@@ -326,8 +328,8 @@ void  HLRTopoBRep_DSFiller::InsertFace (const Standard_Integer /*FI*/,
                   TColStd_Array1OfInteger mults(1,nbp);
                   TColgp_Array1OfPnt Points(1,nbp);
 
-                  Standard_Real Maxx,Maxy,Maxz,Maxu,Maxv;
-                  Standard_Real Minx,Miny,Minz,Minu,Minv;
+                  Standard_Real Maxx = NAN,Maxy = NAN,Maxz = NAN,Maxu = NAN,Maxv = NAN;
+                  Standard_Real Minx = NAN,Miny = NAN,Minz = NAN,Minu = NAN,Minv = NAN;
                   Maxx=Maxy=Maxz=Maxu=Maxv=-RealLast();
                   Minx=Miny=Minz=Minu=Minv=RealLast();
 		  
@@ -351,7 +353,7 @@ void  HLRTopoBRep_DSFiller::InsertFace (const Standard_Integer /*FI*/,
                   if(withPCurve) {
                     TColgp_Array1OfPnt2d Points2d(1,nbp);
                     for(Standard_Integer i=1;i<=nbp;i++) {
-                      Standard_Real u,v;
+                      Standard_Real u = NAN,v = NAN;
                       Line.Point(i+ipF-1).ParametersOnS2(u,v);
                       if(u<Minu) Minu=u;
                       if(v<Minv) Minv=v;
@@ -371,7 +373,7 @@ void  HLRTopoBRep_DSFiller::InsertFace (const Standard_Integer /*FI*/,
                   Standard_Integer dmin=4,dmax=8,niter=0;
                   Standard_Boolean tg= Standard_False;
                   BRepApprox_Approx Approx;
-                  Standard_Real TOL3d,TOL2d,TOL=0.0001;
+                  Standard_Real TOL3d = NAN,TOL2d = NAN,TOL=0.0001;
 
                   Maxx-=Minx; Maxy-=Miny; Maxz-=Minz;
                   Maxu-=Minu; Maxv-=Minv;
@@ -502,7 +504,7 @@ HLRTopoBRep_DSFiller::MakeVertex (const Contap_Point& P,
   else {
     // if on arc, insert in the DS
     if (P.IsOnArc()) {
-      const TopoDS_Edge& E = (*(BRepAdaptor_Curve2d*)(P.Arc().get())).Edge();
+      const TopoDS_Edge& E = (*dynamic_cast<BRepAdaptor_Curve2d*>(P.Arc().get())).Edge();
       Standard_Real Par = P.ParameterOnArc();
       const gp_Pnt& P3d = P.Value();
 
@@ -592,7 +594,7 @@ void  HLRTopoBRep_DSFiller::ProcessEdges (HLRTopoBRep_Data& DS)
   BRep_Builder B;
   TopoDS_Edge newE;
   TopoDS_Vertex VF,VL,VI;
-  Standard_Real PF,PL,PI;
+  Standard_Real PF = NAN,PL = NAN,PI = NAN;
 
   for (DS.InitEdge(); DS.MoreEdge(); DS.NextEdge()) {
     TopoDS_Edge E = DS.Edge();

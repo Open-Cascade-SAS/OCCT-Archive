@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_ModelPreProcessor.hxx>
 
 #include <BRepMesh_Deflection.hxx>
@@ -186,7 +188,7 @@ namespace
       TopoDS_Edge aE = theDEdge->GetEdge();
       const TopoDS_Face& aF = theDFace->GetFace();
 
-      Standard_Real aFParam, aLParam;
+      Standard_Real aFParam = NAN, aLParam = NAN;
 
       Handle(Geom_Curve) aHC = BRep_Tool::Curve (aE, aFParam, aLParam);
 
@@ -212,7 +214,7 @@ namespace
 
       // Define two pcurves of the seam-edge.
       Handle(Geom2d_Curve) aPC1, aPC2;
-      Standard_Real af, al;
+      Standard_Real af = NAN, al = NAN;
 
       aE.Orientation (TopAbs_FORWARD);
       aPC1 = BRep_Tool::CurveOnSurface (aE, aF, af, al);

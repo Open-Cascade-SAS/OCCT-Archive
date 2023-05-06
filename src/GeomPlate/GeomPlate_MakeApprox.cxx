@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AdvApp2Var_ApproxAFunc2Var.hxx>
 #include <AdvApprox_DichoCutting.hxx>
 #include <Geom_BSplineSurface.hxx>
@@ -41,7 +43,7 @@ public:
   GeomPlate_MakeApprox_Eval (const Handle(Geom_Surface)& theSurf)
   : mySurf (theSurf) {}
 
-  virtual void Evaluate (Standard_Integer* theDimension,
+  void Evaluate (Standard_Integer* theDimension,
                          Standard_Real*    theUStartEnd,
                          Standard_Real*    theVStartEnd,
                          Standard_Integer* theFavorIso,
@@ -51,7 +53,7 @@ public:
                          Standard_Integer* theUOrder,
                          Standard_Integer* theVOrder,
                          Standard_Real*    theResult,
-                         Standard_Integer* theErrorCode) const;
+                         Standard_Integer* theErrorCode) const override;
 
 private:
 
@@ -83,8 +85,8 @@ void GeomPlate_MakeApprox_Eval::Evaluate (Standard_Integer * Dimension,
                         	// Error Code
 {
   *ErrorCode = 0;
-  Standard_Integer idim,jpar;
-  Standard_Real Upar,Vpar;
+  Standard_Integer idim = 0,jpar = 0;
+  Standard_Real Upar = NAN,Vpar = NAN;
 
 // Dimension incorrecte
   if (*Dimension!=3) {
@@ -247,9 +249,9 @@ GeomPlate_MakeApprox::GeomPlate_MakeApprox(const Handle(GeomPlate_Surface)& Surf
 					   const Standard_Integer Nbmax,
 					   const Standard_Integer dgmax,
 					   const GeomAbs_Shape Continuity,
-					   const Standard_Real EnlargeCoeff)
+					   const Standard_Real EnlargeCoeff) : myPlate(SurfPlate)
 {
-  myPlate = SurfPlate;
+  
 
   Standard_Real U0=0., U1=0., V0=0., V1=0.;
   myPlate->RealBounds(U0, U1, V0, V1);
@@ -311,9 +313,9 @@ GeomPlate_MakeApprox::GeomPlate_MakeApprox(const Handle(GeomPlate_Surface)& Surf
 					   const Standard_Real dmax,
 					   const Standard_Integer CritOrder,
 					   const GeomAbs_Shape Continuity,
-					   const Standard_Real EnlargeCoeff)
+					   const Standard_Real EnlargeCoeff) : myPlate(SurfPlate)
 {
-  myPlate = SurfPlate;
+  
 
   TColgp_SequenceOfXY Seq2d;
   TColgp_SequenceOfXYZ Seq3d;
@@ -324,7 +326,7 @@ GeomPlate_MakeApprox::GeomPlate_MakeApprox(const Handle(GeomPlate_Surface)& Surf
     myPlate->Constraints(Seq2d);
 
 //    contraintes 3d correspondantes sur plate
-    Standard_Integer i,nbp=Seq2d.Length();
+    Standard_Integer i = 0,nbp=Seq2d.Length();
     for(i=1;i<=nbp;i++){
       gp_XY P2d=Seq2d.Value(i);
       gp_Pnt PP;

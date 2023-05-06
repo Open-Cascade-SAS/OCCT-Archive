@@ -34,7 +34,7 @@ Geom2dGcc_Circ2dTanCen::
    Geom2dGcc_Circ2dTanCen (const Geom2dGcc_QualifiedCurve& Qualified1 ,
 			   const Handle(Geom2d_Point)&     PCenter    ,
 			   const Standard_Real             Tolerance  ):
-  cirsol(1,2)   ,
+  NbrSol(0), cirsol(1,2)   ,
   qualifier1(1,2),
   TheSame1(1,2) ,
   pnttg1sol(1,2),
@@ -42,7 +42,7 @@ Geom2dGcc_Circ2dTanCen::
   pararg1(1,2)  
 {
   Geom2dAdaptor_Curve C1 = Qualified1.Qualified();
-  Handle(Geom2d_Curve) CC1 = C1.Curve();
+  const Handle(Geom2d_Curve)& CC1 = C1.Curve();
   GeomAbs_CurveType Type1 = C1.GetType();
 
 //=============================================================================
@@ -50,7 +50,7 @@ Geom2dGcc_Circ2dTanCen::
 //=============================================================================
 
   gp_Pnt2d pcenter(PCenter->Pnt2d());
-  NbrSol = 0;
+  
   if ((Type1 == GeomAbs_Line || Type1 == GeomAbs_Circle)) {
     if (Type1 == GeomAbs_Circle) {
       Handle(Geom2d_Circle) CCC1 = Handle(Geom2d_Circle)::DownCast(CC1);

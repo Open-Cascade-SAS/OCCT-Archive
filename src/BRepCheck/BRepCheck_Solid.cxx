@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepCheck.hxx>
 #include <BRepCheck_ListOfStatus.hxx>
@@ -50,7 +52,7 @@ class BRepCheck_HSC : public Standard_Transient {
     };
   //
   Standard_EXPORT
-    virtual ~BRepCheck_HSC(){
+    ~BRepCheck_HSC() override{
   };
   //
   Standard_EXPORT
@@ -74,9 +76,9 @@ class BRepCheck_ToolSolid  {
  public:
   DEFINE_STANDARD_ALLOC
 
-  BRepCheck_ToolSolid() {
-    myIsHole=Standard_False;
-    myPntTol=Precision::Confusion();
+  BRepCheck_ToolSolid() : myIsHole(Standard_False), myPntTol(Precision::Confusion()) {
+    
+    
     myPnt.SetCoord(-1.,-1.,-1.);
   };
    
@@ -105,7 +107,7 @@ class BRepCheck_ToolSolid  {
   //
   // IsOut
   Standard_Boolean IsOut(BRepCheck_ToolSolid& aOther)  {
-    Standard_Boolean bFlag;
+    Standard_Boolean bFlag = 0;
     TopAbs_State aState;
     //
     BRepClass3d_SolidClassifier& aSC=myHSC->SolidClassifier();
@@ -119,7 +121,7 @@ class BRepCheck_ToolSolid  {
   //
   // Init
   void Init() {
-    Standard_Real aT, aT1, aT2, aPAR_T;
+    Standard_Real aT = NAN, aT1 = NAN, aT2 = NAN, aPAR_T = NAN;
     TopExp_Explorer aExp;
     //
     // 0.myHSC
@@ -197,8 +199,8 @@ void BRepCheck_Solid::Minimum()
   }
   myMin = Standard_True;
   //
-  Standard_Boolean bFound, bIsHole, bFlag;
-  Standard_Integer i, j, aNbVTS, aNbVTS1, iCntSh, iCntShInt;
+  Standard_Boolean bFound = 0, bIsHole = 0, bFlag = 0;
+  Standard_Integer i = 0, j = 0, aNbVTS = 0, aNbVTS1 = 0, iCntSh = 0, iCntShInt = 0;
   TopoDS_Solid aZ;
   TopoDS_Iterator aIt, aItF;
   TopoDS_Builder aBB;

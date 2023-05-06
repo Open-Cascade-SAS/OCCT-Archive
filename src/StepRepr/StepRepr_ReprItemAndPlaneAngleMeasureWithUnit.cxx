@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepRepr_ReprItemAndPlaneAngleMeasureWithUnit,StepRep
 //function : StepRepr_ReprItemAndPlaneAngleMeasureWithUnit
 //purpose  : 
 //=======================================================================
-StepRepr_ReprItemAndPlaneAngleMeasureWithUnit::StepRepr_ReprItemAndPlaneAngleMeasureWithUnit() : StepRepr_ReprItemAndMeasureWithUnit()
+StepRepr_ReprItemAndPlaneAngleMeasureWithUnit::StepRepr_ReprItemAndPlaneAngleMeasureWithUnit() : StepRepr_ReprItemAndMeasureWithUnit(), myPlaneAngleMeasureWithUnit(new StepBasic_PlaneAngleMeasureWithUnit())
 {
-  myPlaneAngleMeasureWithUnit = new StepBasic_PlaneAngleMeasureWithUnit();
+  
 }
 
 //=======================================================================

@@ -16,6 +16,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BOPAlgo_Alerts.hxx>
 #include <BOPAlgo_Tools.hxx>
@@ -50,7 +52,7 @@ class BOPAlgo_VertexEdge : public BOPAlgo_ParallelAlgo {
     myIV(-1), myIE(-1), myFlag(-1), myT(-1.), myTolVNew(-1.) {
   };
   //
-  virtual ~BOPAlgo_VertexEdge(){
+  ~BOPAlgo_VertexEdge() override{
   };
   //
   void SetIndices(const Standard_Integer nV,
@@ -109,7 +111,7 @@ class BOPAlgo_VertexEdge : public BOPAlgo_ParallelAlgo {
     return myPB;
   }
   //
-  virtual void Perform() {
+  void Perform() override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (UserBreak(aPS))
     {
@@ -164,7 +166,7 @@ void BOPAlgo_PaveFiller::PerformVE(const Message_ProgressRange& theRange)
     {
       return;
     }
-    Standard_Integer nV, nE;
+    Standard_Integer nV = 0, nE = 0;
     myIterator->Value(nV, nE);
     //
     const BOPDS_ShapeInfo& aSIE=myDS->ShapeInfo(nE);
@@ -213,7 +215,7 @@ void BOPAlgo_PaveFiller::IntersectVE
    const Message_ProgressRange& theRange,
    const Standard_Boolean theAddInterfs)
 {
-  Standard_Integer i, aNbVE = theVEPairs.Extent();
+  Standard_Integer i = 0, aNbVE = theVEPairs.Extent();
   if (!aNbVE) {
     return;
   }
@@ -318,7 +320,7 @@ void BOPAlgo_PaveFiller::IntersectVE
       continue;
     }
     //
-    Standard_Integer nV, nE;
+    Standard_Integer nV = 0, nE = 0;
     aVESolver.Indices(nV, nE);
     // Parameter of vertex on edge
     Standard_Real aT = aVESolver.Parameter();
@@ -334,7 +336,7 @@ void BOPAlgo_PaveFiller::IntersectVE
     for (; itPB.More(); itPB.Next())
     {
       aPB = itPB.Value();
-      Standard_Real aT1, aT2;
+      Standard_Real aT1 = NAN, aT2 = NAN;
       aPB->Range (aT1, aT2);
       if (aT > aT1 && aT < aT2)
         break;
@@ -448,7 +450,7 @@ void BOPAlgo_PaveFiller::SplitPaveBlocks(const TColStd_MapOfInteger& theMEdges,
         Standard_Boolean bCheckDist = (bHasValidRange && !aPBN->IsSplittable());
         if (!bHasValidRange || bCheckDist)
         {
-          Standard_Integer nV1, nV2;
+          Standard_Integer nV1 = 0, nV2 = 0;
           aPBN->Indices(nV1, nV2);
           if (nV1 == nV2)
             // Same vertices -> no valid range, no need to unify vertices
@@ -501,7 +503,7 @@ void BOPAlgo_PaveFiller::SplitPaveBlocks(const TColStd_MapOfInteger& theMEdges,
   }
   //
   // Make Common Blocks
-  Standard_Integer i, aNbCB = aMCBNewPB.Extent();
+  Standard_Integer i = 0, aNbCB = aMCBNewPB.Extent();
   for (i = 1; i <= aNbCB; ++i) {
     const Handle(BOPDS_CommonBlock)& aCB = aMCBNewPB.FindKey(i);
     const BOPDS_ListOfPaveBlock& aLPBN = aMCBNewPB(i);
@@ -522,11 +524,11 @@ void BOPAlgo_PaveFiller::SplitPaveBlocks(const TColStd_MapOfInteger& theMEdges,
       pLPBx->Append(aPB);
     }
     //
-    Standard_Integer nV1, nV2;
+    Standard_Integer nV1 = 0, nV2 = 0;
     aCB->PaveBlock1()->Indices(nV1, nV2);
     Standard_Boolean bIsClosed = (nV1 == nV2);
     //
-    Standard_Integer j, aNbPairs = aMInds.Extent();
+    Standard_Integer j = 0, aNbPairs = aMInds.Extent();
     for (j = 1; j <= aNbPairs; ++j) {
       BOPDS_ListOfPaveBlock& aLPB = aMInds(j);
       //
@@ -564,7 +566,7 @@ void BOPAlgo_PaveFiller::SplitPaveBlocks(const TColStd_MapOfInteger& theMEdges,
           const TopoDS_Edge& aE = TopoDS::Edge(myDS->Shape(aPB->OriginalEdge()));
           Standard_Real aTolE = BRep_Tool::MaxTolerance(aE, TopAbs_VERTEX);
           //
-          Standard_Real aTOut, aDist;
+          Standard_Real aTOut = NAN, aDist = NAN;
           Standard_Integer iErr =
             myContext->ComputePE(aPMFirst, aTolEFirst + aTolE + myFuzzyValue, aE, aTOut, aDist);
           if (!iErr && ((aTOut > aPB->Pave1().Parameter()) && (aTOut < aPB->Pave2().Parameter()))) {

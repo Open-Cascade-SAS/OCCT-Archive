@@ -30,13 +30,13 @@ IMPLEMENT_STANDARD_RTTIEXT(BOPDS_PaveBlock,Standard_Transient)
   BOPDS_PaveBlock::BOPDS_PaveBlock()
 :
   myAllocator(NCollection_BaseAllocator::CommonBaseAllocator()),
-  myExtPaves(myAllocator)
+  myEdge(-1), myOriginalEdge(-1), myExtPaves(myAllocator), myTS1(-99.), myTS2(myTS1), myIsSplittable(Standard_False)
 {
-  myEdge=-1;
-  myOriginalEdge=-1;
-  myTS1=-99.;
-  myTS2=myTS1;
-  myIsSplittable=Standard_False;
+  
+  
+  
+  
+  
 }
 //=======================================================================
 //function : 
@@ -45,14 +45,14 @@ IMPLEMENT_STANDARD_RTTIEXT(BOPDS_PaveBlock,Standard_Transient)
   BOPDS_PaveBlock::BOPDS_PaveBlock(const Handle(NCollection_BaseAllocator)& theAllocator)
 :
   myAllocator(theAllocator),
-  myExtPaves(theAllocator),
-  myMFence(100, theAllocator)
+  myEdge(-1), myOriginalEdge(-1), myExtPaves(theAllocator),
+  myTS1(-99.), myTS2(myTS1), myMFence(100, theAllocator), myIsSplittable(Standard_False)
 {
-  myEdge=-1;
-  myOriginalEdge=-1;
-  myTS1=-99.;
-  myTS2=myTS1;
-  myIsSplittable=Standard_False;
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -171,8 +171,8 @@ IMPLEMENT_STANDARD_RTTIEXT(BOPDS_PaveBlock,Standard_Transient)
 //=======================================================================
   Standard_Boolean BOPDS_PaveBlock::HasSameBounds(const Handle(BOPDS_PaveBlock)& theOther)const
 {
-  Standard_Boolean bFlag1, bFlag2;
-  Standard_Integer n11, n12, n21, n22;
+  Standard_Boolean bFlag1 = 0, bFlag2 = 0;
+  Standard_Integer n11 = 0, n12 = 0, n21 = 0, n22 = 0;
   //
   Indices(n11, n12);
   theOther->Indices(n21, n22);
@@ -256,7 +256,7 @@ void BOPDS_PaveBlock::RemoveExtPave(const Standard_Integer theVertNum)
                                                       const Standard_Real theTol,
                                                       Standard_Integer& theInd) const
 {
-  Standard_Boolean bRet;
+  Standard_Boolean bRet = 0;
   BOPDS_ListIteratorOfListOfPave aIt;
   //
   bRet = Standard_False;
@@ -278,7 +278,7 @@ void BOPDS_PaveBlock::RemoveExtPave(const Standard_Integer theVertNum)
   void BOPDS_PaveBlock::Update(BOPDS_ListOfPaveBlock& theLPB,
                                const Standard_Boolean theFlag)
 {
-  Standard_Integer i, aNb;
+  Standard_Integer i = 0, aNb = 0;
   BOPDS_Pave aPave1, aPave2;
   Handle(BOPDS_PaveBlock) aPB;
   BOPDS_ListIteratorOfListOfPave aIt;

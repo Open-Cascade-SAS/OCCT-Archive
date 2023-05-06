@@ -60,7 +60,7 @@ private:
 private:
 
   gp_Pnt myCenter;
-  Standard_Real myRad;
+  Standard_Real myRad{};
   gp_Dir myDir;
   gp_Pnt myPnt;
 

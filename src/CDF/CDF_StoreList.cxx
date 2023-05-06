@@ -31,8 +31,8 @@ static void CAUGHT(const Standard_Failure& theException,TCollection_ExtendedStri
   status += theException.GetMessageString();
 }
 
-CDF_StoreList::CDF_StoreList(const Handle(CDM_Document)& aDocument) {
-  myMainDocument = aDocument;
+CDF_StoreList::CDF_StoreList(const Handle(CDM_Document)& aDocument) : myMainDocument(aDocument) {
+  
   Add(aDocument);
 }
 

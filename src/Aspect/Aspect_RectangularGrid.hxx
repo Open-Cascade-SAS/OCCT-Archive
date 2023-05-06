@@ -75,12 +75,12 @@ private:
   Standard_Real myYStep;
   Standard_Real myFirstAngle;
   Standard_Real mySecondAngle;
-  Standard_Real a1;
-  Standard_Real b1;
-  Standard_Real c1;
-  Standard_Real a2;
-  Standard_Real b2;
-  Standard_Real c2;
+  Standard_Real a1{};
+  Standard_Real b1{};
+  Standard_Real c1{};
+  Standard_Real a2{};
+  Standard_Real b2{};
+  Standard_Real c2{};
 
 };
 

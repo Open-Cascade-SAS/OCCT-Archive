@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -53,7 +55,7 @@ Standard_Real BRepTopAdaptor_HVertex::Resolution
   const TopoDS_Face& F = brhc->Face();
   BRepAdaptor_Surface S(F,0);
   Standard_Real tv = BRep_Tool::Tolerance(myVtx);
-  Standard_Real pp, p = BRep_Tool::Parameter (myVtx, brhc->Edge(), brhc->Face());
+  Standard_Real pp = NAN, p = BRep_Tool::Parameter (myVtx, brhc->Edge(), brhc->Face());
   TopAbs_Orientation Or = Orientation();
   gp_Pnt2d p2d; gp_Vec2d v2d;
   C->D1(p,p2d,v2d);
@@ -61,7 +63,7 @@ Standard_Real BRepTopAdaptor_HVertex::Resolution
   gp_Vec DU, DV, DC;
   S.D1(p2d.X(),p2d.Y(),P,DU,DV);
   DC.SetLinearForm(v2d.X(),DU,v2d.Y(),DV);
-  Standard_Real ResUV, mag = DC.Magnitude();
+  Standard_Real ResUV = NAN, mag = DC.Magnitude();
 
   Standard_Real URes = S.UResolution(tv);
   Standard_Real VRes = S.VResolution(tv);
@@ -96,7 +98,7 @@ Standard_Real BRepTopAdaptor_HVertex::Resolution
   Standard_Real Dist=P.Distance(P1);
   if ((Dist>1e-12) && ((Dist > 1.1*tv) || (Dist< 0.8*tv))) {
   // Refine if possible
-    Standard_Real Dist1;
+    Standard_Real Dist1 = NAN;
     if (Or == TopAbs_REVERSED) pp = p+tv/Dist;
     else pp = p-tv/Dist;
 

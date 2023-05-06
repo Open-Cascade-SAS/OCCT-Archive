@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWScrewPairWithRange.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -78,12 +80,12 @@ void RWStepKinematics_RWScrewPairWithRange::ReadStep (const Handle(StepData_Step
 
   // Inherited fields of ScrewPair
 
-  Standard_Real aScrewPair_Pitch;
+  Standard_Real aScrewPair_Pitch = NAN;
   theData->ReadReal (theNum, 7, "screw_pair.pitch", theArch, aScrewPair_Pitch);
 
   // Own fields of ScrewPairWithRange
 
-  Standard_Real aLowerLimitActualRotation;
+  Standard_Real aLowerLimitActualRotation = NAN;
   Standard_Boolean hasLowerLimitActualRotation = Standard_True;
   if ( theData->IsParamDefined (theNum,8) ) {
     theData->ReadReal (theNum, 8, "lower_limit_actual_rotation", theArch, aLowerLimitActualRotation);
@@ -93,7 +95,7 @@ void RWStepKinematics_RWScrewPairWithRange::ReadStep (const Handle(StepData_Step
     aLowerLimitActualRotation = 0;
   }
 
-  Standard_Real aUpperLimitActualRotation;
+  Standard_Real aUpperLimitActualRotation = NAN;
   Standard_Boolean hasUpperLimitActualRotation = Standard_True;
   if ( theData->IsParamDefined (theNum,9) ) {
     theData->ReadReal (theNum, 9, "upper_limit_actual_rotation", theArch, aUpperLimitActualRotation);

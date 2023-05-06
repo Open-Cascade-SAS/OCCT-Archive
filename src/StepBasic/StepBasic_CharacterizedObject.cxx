@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_CharacterizedObject,Standard_Transient)
 //function : StepBasic_CharacterizedObject
 //purpose  : 
 //=======================================================================
-StepBasic_CharacterizedObject::StepBasic_CharacterizedObject ()
+StepBasic_CharacterizedObject::StepBasic_CharacterizedObject () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

@@ -19,6 +19,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_Householder.hxx>
 #include <math_Matrix.hxx>
 #include <Standard_DimensionError.hxx>
@@ -39,12 +41,12 @@ math_Householder::math_Householder(const math_Matrix& A, const math_Vector& B,
                                    const Standard_Real EPS):
                                    Sol(1, A.ColNumber(), 1, 1),
                                    Q(1, A.RowNumber(), 
-                                     1, A.ColNumber()) {
+                                     1, A.ColNumber()), mylowerArow(A.LowerRow()), mylowerAcol(A.LowerCol()), myupperArow(A.UpperRow()), myupperAcol(A.UpperCol()) {
 
-  mylowerArow = A.LowerRow();
-  mylowerAcol = A.LowerCol();
-  myupperArow = A.UpperRow();
-  myupperAcol = A.UpperCol();
+  
+  
+  
+  
   math_Matrix B1(1, B.Length(), 1, 1);
   B1.SetCol(1, B);
   Perform(A, B1, EPS);
@@ -57,12 +59,12 @@ math_Householder::math_Householder(const math_Matrix& A, const math_Matrix& B,
                                    Sol(1, A.ColNumber(), 
                                        1, B.ColNumber()),
                                    Q(1, A.RowNumber(), 
-                                     A.LowerCol(), A.UpperCol()) {
+                                     A.LowerCol(), A.UpperCol()), mylowerArow(A.LowerRow()), mylowerAcol(A.LowerCol()), myupperArow(A.UpperRow()), myupperAcol(A.UpperCol()) {
 
-  mylowerArow = A.LowerRow();
-  mylowerAcol = A.LowerCol();
-  myupperArow = A.UpperRow();
-  myupperAcol = A.UpperCol();
+  
+  
+  
+  
   Perform(A, B, EPS);
 }
 
@@ -76,11 +78,11 @@ math_Householder::math_Householder(const math_Matrix& A, const math_Matrix& B,
                                    Sol(1, upperAcol-lowerAcol+1, 
                                        1, B.ColNumber()),
                                    Q(1, upperArow-lowerArow+1, 
-                                     1, upperAcol-lowerAcol+1) {
-  mylowerArow = lowerArow;
-  myupperArow = upperArow;
-  mylowerAcol = lowerAcol;
-  myupperAcol = upperAcol;
+                                     1, upperAcol-lowerAcol+1), mylowerArow(lowerArow), myupperArow(upperArow), mylowerAcol(lowerAcol), myupperAcol(upperAcol) {
+  
+  
+  
+  
 
   Perform(A, B, EPS);
 }
@@ -89,10 +91,10 @@ math_Householder::math_Householder(const math_Matrix& A, const math_Matrix& B,
 void math_Householder::Perform(const math_Matrix& A, const math_Matrix& B, 
                                const Standard_Real EPS) {
 
-  Standard_Integer i, j, k, n, l, m;
-  Standard_Real scale, f, g, h = 0., alfaii;
-  Standard_Real qki;
-  Standard_Real cj;
+  Standard_Integer i = 0, j = 0, k = 0, n = 0, l = 0, m = 0;
+  Standard_Real scale = NAN, f = NAN, g = NAN, h = 0., alfaii = NAN;
+  Standard_Real qki = NAN;
+  Standard_Real cj = NAN;
   n = Q.ColNumber();
   l = Q.RowNumber();
   m = B.ColNumber();

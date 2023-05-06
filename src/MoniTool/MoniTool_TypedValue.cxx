@@ -21,6 +21,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TCollection_HAsciiString.hxx>
 
+#include <math.h>
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(MoniTool_TypedValue,Standard_Transient)
 
@@ -99,7 +100,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
       theoval  (other->ObjectValue())
 {
   NCollection_DataMap<TCollection_AsciiString, Standard_Integer> eadds;
-  Standard_CString satisname;
+  Standard_CString satisname = nullptr;
   other->Internals (theinterp,thesatisf,satisname, eadds);
   thesatisn.AssignCat (satisname);
 
@@ -108,7 +109,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
   if (other->RealLimit    (Standard_False,therealow)) thelims |= 1;
   if (other->RealLimit    (Standard_True ,therealup)) thelims |= 2;
 
-  Standard_Integer startcase, endcase; Standard_Boolean match;
+  Standard_Integer startcase = 0, endcase = 0; Standard_Boolean match = 0;
   if (other->EnumDef (startcase,endcase,match)) {
     theintlow = startcase;  theintup = endcase;
     if (match) thelims |= 4;
@@ -149,7 +150,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
   switch (thetype) {
     case MoniTool_ValueInteger : {
       def.AssignCat("Integer");
-      Standard_Integer ilim;
+      Standard_Integer ilim = 0;
       if (IntegerLimit(Standard_False, ilim)) {
 	Sprintf(mess,"  >= %d",ilim);
 	def.AssignCat(mess);
@@ -162,7 +163,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
       break;
     case MoniTool_ValueReal    : {
       def.AssignCat("Real");
-      Standard_Real rlim;
+      Standard_Real rlim = NAN;
       if (RealLimit(Standard_False, rlim)) {
 	Sprintf(mess,"  >= %f",rlim);
 	def.AssignCat(mess);
@@ -192,7 +193,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
         def.AssignCat(" , alpha: ");
         NCollection_DataMap<TCollection_AsciiString, Standard_Integer>::Iterator listadd(theeadds);
         for (; listadd.More(); listadd.Next()) {
-          TCollection_AsciiString aName = listadd.Key();
+          const TCollection_AsciiString& aName = listadd.Key();
           Standard_CString enva = aName.ToCString();
           if (enva[0] == '?') continue;
           Sprintf(mess,":%d ",listadd.Value());
@@ -268,7 +269,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
   (const Standard_CString init)
 {
 //    Editions : init donne un petit texte d edition, en 2 termes "cmd var" :
-  Standard_Integer i,iblc = 0;
+  Standard_Integer i = 0,iblc = 0;
   for (i = 0; init[i] != '\0'; i ++) if (init[i] == ' ') iblc = i+1;
   if (iblc == 0) return Standard_False;
 //  Reconnaissance du sous-cas et aiguillage
@@ -475,7 +476,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
   (const Standard_CString val) const
 {
   if (thetype != MoniTool_ValueEnum) return (theintlow - 1);
-  Standard_Integer i; // svv Jan 10 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan 10 2000 : porting on DEC
   for (i = theintlow; i <= theintup; i ++)
     if (theenums->Value(i).IsEqual(val)) return i;
 //  cas additionnel ?
@@ -553,7 +554,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
   if (theinterp) return theinterp (this,hval,native);
   if (thetype == MoniTool_ValueEnum) {
 //  On admet les deux formes : Enum de preference, sinon Integer
-    Standard_Integer startcase, endcase; Standard_Boolean match;
+    Standard_Integer startcase = 0, endcase = 0; Standard_Boolean match = 0;
     EnumDef (startcase,endcase,match);
     Standard_Integer encas = EnumCase (hval->ToCString());
     if (encas < startcase) return hval;    // loupe
@@ -573,7 +574,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
   switch (thetype) {
     case MoniTool_ValueInteger : {
       if (!val->IsIntegerValue()) return Standard_False;
-      Standard_Integer ival, ilim;  ival = atoi(val->ToCString());
+      Standard_Integer ival = 0, ilim = 0;  ival = atoi(val->ToCString());
       if (IntegerLimit(Standard_False, ilim))
 	if (ilim > ival) return Standard_False;
       if (IntegerLimit(Standard_True,  ilim))
@@ -582,7 +583,7 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
     }
     case MoniTool_ValueReal    : {
       if (!val->IsRealValue()) return Standard_False;
-      Standard_Real rval, rlim;  rval = val->RealValue();
+      Standard_Real rval = NAN, rlim = NAN;  rval = val->RealValue();
       if (RealLimit(Standard_False, rlim))
 	if (rlim > rval) return Standard_False;
       if (RealLimit(Standard_True,  rlim))
@@ -591,8 +592,8 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
     }
     case MoniTool_ValueEnum    : {
 //  On admet les deux formes : Enum de preference, sinon Integer
-      Standard_Integer startcase, endcase;// unused ival;
-      Standard_Boolean match;
+      Standard_Integer startcase = 0, endcase = 0;// unused ival;
+      Standard_Boolean match = 0;
       EnumDef (startcase,endcase,match);
       if (!match) return Standard_True;
       if (EnumCase (val->ToCString()) >= startcase) return Standard_True;

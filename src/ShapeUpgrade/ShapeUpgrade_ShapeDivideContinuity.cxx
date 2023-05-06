@@ -28,13 +28,13 @@
 //function : ShapeUpgrade_ShapeDivideContinuity
 //purpose  : 
 //=======================================================================
-ShapeUpgrade_ShapeDivideContinuity::ShapeUpgrade_ShapeDivideContinuity()
+ShapeUpgrade_ShapeDivideContinuity::ShapeUpgrade_ShapeDivideContinuity() : myCurve3dCriterion(GeomAbs_C1), myCurve2dCriterion(GeomAbs_C1), mySurfaceCriterion(GeomAbs_C1), myTolerance3d(Precision::Confusion()), myTolerance2d(Precision::PConfusion())
 {
-  myCurve3dCriterion = GeomAbs_C1;
-  myCurve2dCriterion = GeomAbs_C1;
-  mySurfaceCriterion  = GeomAbs_C1;
-  myTolerance3d = Precision::Confusion();
-  myTolerance2d = Precision::PConfusion();
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -43,13 +43,13 @@ ShapeUpgrade_ShapeDivideContinuity::ShapeUpgrade_ShapeDivideContinuity()
 //=======================================================================
 
 ShapeUpgrade_ShapeDivideContinuity::ShapeUpgrade_ShapeDivideContinuity(const TopoDS_Shape& S):
-     ShapeUpgrade_ShapeDivide(S)
+     ShapeUpgrade_ShapeDivide(S), myCurve3dCriterion(GeomAbs_C1), myCurve2dCriterion(GeomAbs_C1), mySurfaceCriterion(GeomAbs_C1), myTolerance3d(Precision::Confusion()), myTolerance2d(Precision::PConfusion())
 {
-  myCurve3dCriterion = GeomAbs_C1;
-  myCurve2dCriterion = GeomAbs_C1;
-  mySurfaceCriterion  = GeomAbs_C1;
-  myTolerance3d = Precision::Confusion();
-  myTolerance2d = Precision::PConfusion();
+  
+  
+  
+  
+  
 }
 
 //=======================================================================

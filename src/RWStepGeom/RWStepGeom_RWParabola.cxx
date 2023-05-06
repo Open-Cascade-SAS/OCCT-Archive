@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepGeom_RWParabola.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -46,7 +48,7 @@ void RWStepGeom_RWParabola::ReadStep
 
 	// --- own field : focalDist ---
 
-	Standard_Real aFocalDist;
+	Standard_Real aFocalDist = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"focal_dist",ach,aFocalDist);
 

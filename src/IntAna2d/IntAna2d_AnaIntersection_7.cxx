@@ -15,6 +15,8 @@
 //============================================ IntAna2d_AnaIntersection_7.cxx
 //============================================================================
 
+#include <math.h>
+
 #include <gp_Circ2d.hxx>
 #include <gp_Parab2d.hxx>
 #include <IntAna2d_AnaIntersection.hxx>
@@ -27,10 +29,10 @@ void IntAna2d_AnaIntersection::Perform(const gp_Parab2d& P,
 				       const IntAna2d_Conic& Conic)
   {
     Standard_Boolean PIsDirect = P.IsDirect();
-    Standard_Real A,B,C,D,E,F;
-    Standard_Real px4,px3,px2,px1,px0;
-    Standard_Integer i;
-    Standard_Real tx,ty,S;
+    Standard_Real A = NAN,B = NAN,C = NAN,D = NAN,E = NAN,F = NAN;
+    Standard_Real px4 = NAN,px3 = NAN,px2 = NAN,px1 = NAN,px0 = NAN;
+    Standard_Integer i = 0;
+    Standard_Real tx = NAN,ty = NAN,S = NAN;
     Standard_Real un_sur_2p=0.5/(P.Parameter());
     gp_Ax2d Axe_rep(P.MirrorAxis());
 

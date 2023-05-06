@@ -27,12 +27,12 @@ IMPLEMENT_STANDARD_RTTIEXT(Select3D_SensitiveCircle, Select3D_SensitiveEntity)
 Select3D_SensitiveCircle::Select3D_SensitiveCircle (const Handle(SelectMgr_EntityOwner)& theOwnerId,
                                                     const gp_Circ& theCircle,
                                                     const Standard_Boolean theIsFilled)
-: Select3D_SensitiveEntity (theOwnerId)
+: Select3D_SensitiveEntity (theOwnerId), mySensType(theIsFilled ? Select3D_TOS_INTERIOR : Select3D_TOS_BOUNDARY), myRadius(theCircle.Radius())
 {
-  myRadius = theCircle.Radius();
+  
   myTrsf.SetTransformation (theCircle.Position(), gp::XOY());
 
-  mySensType = theIsFilled ? Select3D_TOS_INTERIOR : Select3D_TOS_BOUNDARY;
+  
   if (mySensType == Select3D_TOS_BOUNDARY)
   {
     SetSensitivityFactor (6);

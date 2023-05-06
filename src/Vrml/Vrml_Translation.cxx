@@ -20,9 +20,9 @@ Vrml_Translation::Vrml_Translation()
   myTranslation = tmpV;
 }
 
-Vrml_Translation::Vrml_Translation(const gp_Vec& aTranslation)
+Vrml_Translation::Vrml_Translation(const gp_Vec& aTranslation) : myTranslation(aTranslation)
 {
-  myTranslation = aTranslation;
+  
 }
 
  void Vrml_Translation::SetTranslation(const gp_Vec& aTranslation) 

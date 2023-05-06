@@ -83,7 +83,7 @@ Standard_Boolean OSD_DirectoryIterator::More(){
 
 static int strcmp_joker(const char *Mask,const char *Name)
 {
-  const char *p, *s ;
+  const char *p = nullptr, *s = nullptr ;
 
   for(p = Mask,s = Name ; *p && *p != '*' ; p++,s++)
     if (*p != *s) return 0 ;
@@ -99,7 +99,7 @@ static int strcmp_joker(const char *Mask,const char *Name)
 
 void OSD_DirectoryIterator::Next(){
 int again = 1;
-struct stat stat_buf;
+struct stat stat_buf{};
  myFlag = false;   // Initialize to nothing found
 
  do{
@@ -138,7 +138,7 @@ OSD_Directory OSD_DirectoryIterator::Values(){
 OSD_Path thisvalue;
 TCollection_AsciiString Name;
 TCollection_AsciiString Ext;
-Standard_Integer position;
+Standard_Integer position = 0;
 
  if (myEntry) Name = ((struct dirent *)myEntry)->d_name ;
 

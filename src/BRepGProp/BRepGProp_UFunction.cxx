@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRepGProp_UFunction.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_XYZ.hxx>
@@ -46,8 +48,8 @@ Standard_Boolean BRepGProp_UFunction::Value(const Standard_Real  X,
   // Volume computation
   if (myValueType == GProp_Mass) {
     gp_XYZ        aPMP0;
-    Standard_Real aTmpPar1;
-    Standard_Real aTmpPar2;
+    Standard_Real aTmpPar1 = NAN;
+    Standard_Real aTmpPar2 = NAN;
 
     F = VolumeValue(X, aPMP0, aTmpPar1, aTmpPar2);
 
@@ -112,8 +114,8 @@ Standard_Boolean BRepGProp_UFunction::CenterMassValue(const Standard_Real  X,
                                                       Standard_Real &F)
 {
   gp_XYZ        aPmP0;
-  Standard_Real aS;
-  Standard_Real aD1;
+  Standard_Real aS = NAN;
+  Standard_Real aD1 = NAN;
 
   F = VolumeValue(X, aPmP0, aS, aD1);
 
@@ -153,10 +155,10 @@ Standard_Boolean BRepGProp_UFunction::InertiaValue(const Standard_Real  X,
                                                    Standard_Real &F)
 {
   gp_XYZ        aPmP0;
-  Standard_Real aS;
-  Standard_Real aD1;
-  Standard_Real aParam1;
-  Standard_Real aParam2;
+  Standard_Real aS = NAN;
+  Standard_Real aD1 = NAN;
+  Standard_Real aParam1 = NAN;
+  Standard_Real aParam2 = NAN;
   const Standard_Real* aCoeffs = myCoeffs;
 
   F = VolumeValue(X, aPmP0, aS, aD1);
@@ -196,10 +198,10 @@ Standard_Boolean BRepGProp_UFunction::InertiaValue(const Standard_Real  X,
   // Inertia computation for ByPlane mode.
   Standard_Real aD2 = aD1*aD1;
   Standard_Real aD3 = aD1*aD2/3.;
-  Standard_Real aPPar1;
-  Standard_Real aPPar2;
-  Standard_Real aCoeff1;
-  Standard_Real aCoeff2;
+  Standard_Real aPPar1 = NAN;
+  Standard_Real aPPar2 = NAN;
+  Standard_Real aCoeff1 = NAN;
+  Standard_Real aCoeff2 = NAN;
 
   // Inertia computation for XX, YY and ZZ.
   if (myValueType == GProp_InertiaXX ||

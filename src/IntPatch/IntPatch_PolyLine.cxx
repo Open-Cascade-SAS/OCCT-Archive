@@ -17,6 +17,8 @@
 //-- lbr le 12 juin : Ajout des fleches sur les Lines
 //-- msv 13.03.2002 : compute deflection for WLine; Error() returns deflection
 
+#include <math.h>
+
 #include <IntPatch_PolyLine.hxx>
 #include <IntPatch_RLine.hxx>
 #include <IntPatch_WLine.hxx>
@@ -79,7 +81,7 @@ void IntPatch_PolyLine::SetRLine(const Standard_Boolean OnFirst, const Handle(In
 
 void IntPatch_PolyLine::Prepare()
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   myBox.SetVoid();
   Standard_Integer n=NbPoints();
   const Standard_Real eps_2 = myError * myError;
@@ -93,7 +95,7 @@ void IntPatch_PolyLine::Prepare()
     if (i >= 3) {
       gp_XY V13 = P3.XY() - P1.XY();
       gp_XY V12 = P2.XY() - P1.XY();
-      Standard_Real d13_2 = V13.SquareModulus(), d_2;
+      Standard_Real d13_2 = V13.SquareModulus(), d_2 = NAN;
       if (d13_2 > eps_2)
 	d_2 = V13.CrossSquareMagnitude(V12) / d13_2;
       else
@@ -171,7 +173,7 @@ Standard_Integer IntPatch_PolyLine::NbPoints() const
 
 gp_Pnt2d IntPatch_PolyLine::Point(const Standard_Integer Index )  const 
 { 
-  Standard_Real X,Y,X1,Y1,DX,DY;
+  Standard_Real X = NAN,Y = NAN,X1 = NAN,Y1 = NAN,DX = NAN,DY = NAN;
   DX=DY=0;
   if (onfirst) {
     if (typ == IntPatch_Walking) {

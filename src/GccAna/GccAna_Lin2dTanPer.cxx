@@ -125,7 +125,7 @@ GccAna_Lin2dTanPer::
 GccAna_Lin2dTanPer::
    GccAna_Lin2dTanPer (const GccEnt_QualifiedCirc& Qualified1,
                        const gp_Lin2d&             TheLin    ):
-   linsol(1,2),
+   WellDone(Standard_False), NbrSol(0), linsol(1,2),
    qualifier1(1,2) ,
    pnttg1sol(1,2),
    pntint2sol(1,2),
@@ -135,10 +135,10 @@ GccAna_Lin2dTanPer::
    pararg2(1,2)
 {
 
-   WellDone = Standard_False;
+   
    Standard_Integer nbsol = 0;
    Standard_Integer signe = 0;
-   NbrSol = 0;
+   
    gp_Circ2d C1 = Qualified1.Qualified();
 
    if (Qualified1.IsEnclosed()) {
@@ -196,7 +196,7 @@ GccAna_Lin2dTanPer::
 GccAna_Lin2dTanPer::
    GccAna_Lin2dTanPer (const GccEnt_QualifiedCirc& Qualified1,
                        const gp_Circ2d&            TheCircle ):
-   linsol(1,2),
+   WellDone(Standard_False), NbrSol(0), linsol(1,2),
    qualifier1(1,2) ,
    pnttg1sol(1,2),
    pntint2sol(1,2),
@@ -206,8 +206,8 @@ GccAna_Lin2dTanPer::
    pararg2(1,2)
 {
 
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    Standard_Integer signe = 0;
    gp_Circ2d C1 = Qualified1.Qualified();
 

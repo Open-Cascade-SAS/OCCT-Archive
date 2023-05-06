@@ -62,7 +62,7 @@ void RWStepShape_RWSeamEdge::ReadStep (const Handle(StepData_StepReaderData)& da
   Handle(StepShape_Edge) aOrientedEdge_EdgeElement;
   data->ReadEntity (num, 4, "oriented_edge.edge_element", ach, STANDARD_TYPE(StepShape_Edge), aOrientedEdge_EdgeElement);
 
-  Standard_Boolean aOrientedEdge_Orientation;
+  Standard_Boolean aOrientedEdge_Orientation = 0;
   data->ReadBoolean (num, 5, "oriented_edge.orientation", ach, aOrientedEdge_Orientation);
 
   // Own fields of SeamEdge

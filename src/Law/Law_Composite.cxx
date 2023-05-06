@@ -16,6 +16,8 @@
 
 // pmn -> 17/01/1996 added : Continuity, (Nb)Intervals, D2, Trim
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Law_Composite.hxx>
 #include <Law_Function.hxx>
@@ -87,7 +89,7 @@ void Law_Composite::Intervals(TColStd_Array1OfReal& T, const GeomAbs_Shape S) co
   Law_ListIteratorOfLaws It(funclist);
   Handle(Law_Function) func;
   Handle(TColStd_HArray1OfReal) LocT;
-  Standard_Integer nb_index, Iloc, IGlob=2;
+  Standard_Integer nb_index = 0, Iloc = 0, IGlob=2;
 
   func = funclist.First();
   func->Bounds(T(1),T(2));
@@ -179,7 +181,7 @@ void Law_Composite::Bounds(Standard_Real& PFirst, Standard_Real& PLast)
 
 void Law_Composite::Prepare(Standard_Real& W)
 {
-  Standard_Real f,l, Wtest, Eps;
+  Standard_Real f = NAN,l = NAN, Wtest = NAN, Eps = NAN;
   if (W-TFirst < TLast-W) { Eps = PTol; }
   else                    { Eps = -PTol;}
 

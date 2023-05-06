@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <AdvApp2Var_SysBase.hxx>
 #include <AdvApp2Var_MathBase.hxx>
 #include <AdvApp2Var_Data_f2c.hxx>
@@ -275,15 +277,15 @@ int mma1cdi_(integer *ndimen,
   integer c__1 = 1;
 
   /* System generated locals */
-  integer contr1_dim1, contr1_offset, contr2_dim1, contr2_offset, 
-  somtab_dim1, somtab_offset, diftab_dim1, diftab_offset, 
-  fpntab_dim1, fpntab_offset, hermit_dim1, hermit_offset, i__1, 
-  i__2, i__3;
+  integer contr1_dim1 = 0, contr1_offset = 0, contr2_dim1 = 0, contr2_offset = 0, 
+  somtab_dim1 = 0, somtab_offset = 0, diftab_dim1 = 0, diftab_offset = 0, 
+  fpntab_dim1 = 0, fpntab_offset = 0, hermit_dim1 = 0, hermit_offset = 0, i__1 = 0, 
+  i__2 = 0, i__3 = 0;
 
   /* Local variables */
-  integer nroo2, ncfhe, nd, ii, kk;
-  integer ibb, kkm, kkp;
-  doublereal bid1, bid2, bid3 = 0.;
+  integer nroo2 = 0, ncfhe = 0, nd = 0, ii = 0, kk = 0;
+  integer ibb = 0, kkm = 0, kkp = 0;
+  doublereal bid1 = NAN, bid2 = NAN, bid3 = 0.;
 
 /* ********************************************************************** 
 */
@@ -495,13 +497,13 @@ int mma1cnt_(integer *ndimen,
 	     doublereal *crvjac)
 {
   /* System generated locals */
-  integer contr1_dim1, contr1_offset, contr2_dim1, contr2_offset, 
-  hermit_dim1, hermit_offset, crvjac_dim1, crvjac_offset, i__1, 
-  i__2, i__3;
+  integer contr1_dim1 = 0, contr1_offset = 0, contr2_dim1 = 0, contr2_offset = 0, 
+  hermit_dim1 = 0, hermit_offset = 0, crvjac_dim1 = 0, crvjac_offset = 0, i__1 = 0, 
+  i__2 = 0, i__3 = 0;
 
   /* Local variables */
-  integer nd, ii, jj, ibb;
-  doublereal bid;
+  integer nd = 0, ii = 0, jj = 0, ibb = 0;
+  doublereal bid = NAN;
 
 
   /* ***********************************************************************
@@ -632,16 +634,16 @@ int mma1fdi_(integer *ndimen,
 	     integer *iercod)
 {
   /* System generated locals */
-  integer fpntab_dim1, somtab_dim1, somtab_offset, diftab_dim1, 
-  diftab_offset, contr1_dim1, contr1_offset, contr2_dim1, 
-  contr2_offset, i__1, i__2;
-  doublereal d__1;
+  integer fpntab_dim1 = 0, somtab_dim1 = 0, somtab_offset = 0, diftab_dim1 = 0, 
+  diftab_offset = 0, contr1_dim1 = 0, contr1_offset = 0, contr2_dim1 = 0, 
+  contr2_offset = 0, i__1 = 0, i__2 = 0;
+  doublereal d__1 = NAN;
 
   /* Local variables */
-  integer ideb, ifin, nroo2, ideru, iderv;
-  doublereal renor;
-  integer ii, nd, ibb, iim, nbp, iip;
-  doublereal bid1, bid2;
+  integer ideb = 0, ifin = 0, nroo2 = 0, ideru = 0, iderv = 0;
+  doublereal renor = NAN;
+  integer ii = 0, nd = 0, ibb = 0, iim = 0, nbp = 0, iip = 0;
+  doublereal bid1 = NAN, bid2 = NAN;
 
 /* ********************************************************************** 
 */
@@ -962,11 +964,11 @@ int mma1fer_(integer *,//ndimen,
 	     integer *iercod)
 {
   /* System generated locals */
-  integer crvjac_dim1, crvjac_offset, i__1, i__2;
+  integer crvjac_dim1 = 0, crvjac_offset = 0, i__1 = 0, i__2 = 0;
 
   /* Local variables */
-  integer idim, ncfja, ncfnw, ndses, ii, kk, ibb, ier;
-  integer nbr0;
+  integer idim = 0, ncfja = 0, ncfnw = 0, ndses = 0, ii = 0, kk = 0, ibb = 0, ier = 0;
+  integer nbr0 = 0;
 
 
 /* ***********************************************************************
@@ -1156,10 +1158,10 @@ int AdvApp2Var_ApproxF2var::mma1her_(const integer *iordre,
 				     integer *iercod)
 {
   /* System generated locals */
-  integer hermit_dim1, hermit_offset;
+  integer hermit_dim1 = 0, hermit_offset = 0;
 
   /* Local variables */
-  integer ibb;
+  integer ibb = 0;
 
 
 
@@ -1323,11 +1325,11 @@ int mma1jak_(integer *ndimen,
 	     integer *iercod)
 {
   /* System generated locals */
-  integer somtab_dim1, somtab_offset, diftab_dim1, diftab_offset, 
-  crvjac_dim1, crvjac_offset;
+  integer somtab_dim1 = 0, somtab_offset = 0, diftab_dim1 = 0, diftab_offset = 0, 
+  crvjac_dim1 = 0, crvjac_offset = 0;
 
   /* Local variables */
-  integer ibb;
+  integer ibb = 0;
 
 /* ********************************************************************** 
 */
@@ -1437,13 +1439,13 @@ int mma1noc_(doublereal *dfuvin,
 	     doublereal *cntout)
 {
   /* System generated locals */
-  integer i__1;
-  doublereal d__1;
+  integer i__1 = 0;
+  doublereal d__1 = NAN;
 
   /* Local variables */
-  doublereal rider, riord;
-  integer nd, ibb;
-  doublereal bid;
+  doublereal rider = NAN, riord = NAN;
+  integer nd = 0, ibb = 0;
+  doublereal bid = NAN;
 /* ********************************************************************** 
 */
 
@@ -1571,11 +1573,11 @@ int mma1nop_(integer *nbroot,
 
 {
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
 
   /* Local variables */
-  doublereal alinu, blinu, alinv, blinv;
-  integer ii, ibb;
+  doublereal alinu = NAN, blinu = NAN, alinv = NAN, blinv = NAN;
+  integer ii = 0, ibb = 0;
 
 /* ***********************************************************************
  */
@@ -1686,18 +1688,18 @@ int AdvApp2Var_ApproxF2var::mma2ac1_(integer const *ndimen,
 
 {
   /* System generated locals */
-  integer contr1_dim1, contr1_dim2, contr1_offset, contr2_dim1, contr2_dim2,
-  contr2_offset, contr3_dim1, contr3_dim2, contr3_offset, 
-  contr4_dim1, contr4_dim2, contr4_offset, uhermt_dim1, 
-  uhermt_offset, vhermt_dim1, vhermt_offset, patjac_dim1, 
-  patjac_dim2, patjac_offset, i__1, i__2, i__3, i__4, i__5;
+  integer contr1_dim1 = 0, contr1_dim2 = 0, contr1_offset = 0, contr2_dim1 = 0, contr2_dim2 = 0,
+  contr2_offset = 0, contr3_dim1 = 0, contr3_dim2 = 0, contr3_offset = 0, 
+  contr4_dim1 = 0, contr4_dim2 = 0, contr4_offset = 0, uhermt_dim1 = 0, 
+  uhermt_offset = 0, vhermt_dim1 = 0, vhermt_offset = 0, patjac_dim1 = 0, 
+  patjac_dim2 = 0, patjac_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0, i__4 = 0, i__5 = 0;
 
   /* Local variables */
-  logical ldbg;
-  integer ndgu, ndgv;
-  doublereal bidu1, bidu2, bidv1, bidv2;
-  integer ioru1, iorv1, ii, nd, jj, ku, kv;
-  doublereal cnt1, cnt2, cnt3, cnt4;
+  logical ldbg = 0;
+  integer ndgu = 0, ndgv = 0;
+  doublereal bidu1 = NAN, bidu2 = NAN, bidv1 = NAN, bidv2 = NAN;
+  integer ioru1 = 0, iorv1 = 0, ii = 0, nd = 0, jj = 0, ku = 0, kv = 0;
+  doublereal cnt1 = NAN, cnt2 = NAN, cnt3 = NAN, cnt4 = NAN;
 
 /* ********************************************************************** 
 */
@@ -1853,14 +1855,14 @@ int AdvApp2Var_ApproxF2var::mma2ac2_(const integer *ndimen,
 
 {
   /* System generated locals */
-  integer crbiv1_dim1, crbiv1_dim2, crbiv1_offset, crbiv2_dim1, crbiv2_dim2,
-  crbiv2_offset, patjac_dim1, patjac_dim2, patjac_offset, 
-  vhermt_dim1, vhermt_offset, i__1, i__2, i__3, i__4;
+  integer crbiv1_dim1 = 0, crbiv1_dim2 = 0, crbiv1_offset = 0, crbiv2_dim1 = 0, crbiv2_dim2 = 0,
+  crbiv2_offset = 0, patjac_dim1 = 0, patjac_dim2 = 0, patjac_offset = 0, 
+  vhermt_dim1 = 0, vhermt_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0, i__4 = 0;
 
   /* Local variables */
-  logical ldbg;
-  integer ndgv1, ndgv2, ii, jj, nd, kk;
-  doublereal bid1, bid2;
+  logical ldbg = 0;
+  integer ndgv1 = 0, ndgv2 = 0, ii = 0, jj = 0, nd = 0, kk = 0;
+  doublereal bid1 = NAN, bid2 = NAN;
 
 /* ********************************************************************** 
 */
@@ -1999,14 +2001,14 @@ int AdvApp2Var_ApproxF2var::mma2ac3_(const integer *ndimen,
 
 {
   /* System generated locals */
-  integer crbiu1_dim1, crbiu1_dim2, crbiu1_offset, crbiu2_dim1, crbiu2_dim2,
-  crbiu2_offset, patjac_dim1, patjac_dim2, patjac_offset, 
-  uhermt_dim1, uhermt_offset, i__1, i__2, i__3, i__4;
+  integer crbiu1_dim1 = 0, crbiu1_dim2 = 0, crbiu1_offset = 0, crbiu2_dim1 = 0, crbiu2_dim2 = 0,
+  crbiu2_offset = 0, patjac_dim1 = 0, patjac_dim2 = 0, patjac_offset = 0, 
+  uhermt_dim1 = 0, uhermt_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0, i__4 = 0;
 
   /* Local variables */
-  logical ldbg;
-  integer ndgu1, ndgu2, ii, jj, nd, kk;
-  doublereal bid1, bid2;
+  logical ldbg = 0;
+  integer ndgu1 = 0, ndgu2 = 0, ii = 0, jj = 0, nd = 0, kk = 0;
+  doublereal bid1 = NAN, bid2 = NAN;
 
 /* ********************************************************************** 
 */
@@ -2146,12 +2148,12 @@ int AdvApp2Var_ApproxF2var::mma2can_(const integer *ncfmxu,
 
 {
   /* System generated locals */
-  integer patjac_dim1, patjac_dim2, patjac_offset, patcan_dim1, patcan_dim2,
-  patcan_offset, i__1, i__2;
+  integer patjac_dim1 = 0, patjac_dim2 = 0, patjac_offset = 0, patcan_dim1 = 0, patcan_dim2 = 0,
+  patcan_offset = 0, i__1 = 0, i__2 = 0;
 
   /* Local variables */
-  logical ldbg;
-  integer ilon1, ilon2, ii, nd;
+  logical ldbg = 0;
+  integer ilon1 = 0, ilon2 = 0, ii = 0, nd = 0;
 
 /* ********************************************************************** 
 */
@@ -2306,21 +2308,21 @@ int mma2cd1_(integer *ndimen,
   integer c__1 = 1;
 
 /* System generated locals */
-    integer contr1_dim1, contr1_dim2, contr1_offset, contr2_dim1, contr2_dim2,
-	     contr2_offset, contr3_dim1, contr3_dim2, contr3_offset, 
-	    contr4_dim1, contr4_dim2, contr4_offset, uhermt_dim1, 
-	    uhermt_offset, vhermt_dim1, vhermt_offset, fpntbu_dim1, 
-	    fpntbu_offset, fpntbv_dim1, fpntbv_offset, sosotb_dim1, 
-	    sosotb_dim2, sosotb_offset, diditb_dim1, diditb_dim2, 
-	    diditb_offset, soditb_dim1, soditb_dim2, soditb_offset, 
-	    disotb_dim1, disotb_dim2, disotb_offset, i__1, i__2, i__3, i__4, 
-	    i__5;
+    integer contr1_dim1 = 0, contr1_dim2 = 0, contr1_offset = 0, contr2_dim1 = 0, contr2_dim2 = 0,
+	     contr2_offset = 0, contr3_dim1 = 0, contr3_dim2 = 0, contr3_offset = 0, 
+	    contr4_dim1 = 0, contr4_dim2 = 0, contr4_offset = 0, uhermt_dim1 = 0, 
+	    uhermt_offset = 0, vhermt_dim1 = 0, vhermt_offset = 0, fpntbu_dim1 = 0, 
+	    fpntbu_offset = 0, fpntbv_dim1 = 0, fpntbv_offset = 0, sosotb_dim1 = 0, 
+	    sosotb_dim2 = 0, sosotb_offset = 0, diditb_dim1 = 0, diditb_dim2 = 0, 
+	    diditb_offset = 0, soditb_dim1 = 0, soditb_dim2 = 0, soditb_offset = 0, 
+	    disotb_dim1 = 0, disotb_dim2 = 0, disotb_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0, i__4 = 0, 
+	    i__5 = 0;
 
     /* Local variables */
-    integer ncfhu, ncfhv, nuroo, nvroo, nd, ii, jj, kk, ll, ibb, kkm, 
-	    llm, kkp, llp;
-    doublereal bid1, bid2, bid3, bid4;
-    doublereal diu1, diu2, div1, div2, sou1, sou2, sov1, sov2;
+    integer ncfhu = 0, ncfhv = 0, nuroo = 0, nvroo = 0, nd = 0, ii = 0, jj = 0, kk = 0, ll = 0, ibb = 0, kkm = 0, 
+	    llm = 0, kkp = 0, llp = 0;
+    doublereal bid1 = NAN, bid2 = NAN, bid3 = NAN, bid4 = NAN;
+    doublereal diu1 = NAN, diu2 = NAN, div1 = NAN, div2 = NAN, sou1 = NAN, sou2 = NAN, sov1 = NAN, sov2 = NAN;
 
 /* ********************************************************************** 
 */
@@ -2665,17 +2667,17 @@ int mma2cd2_(integer *ndimen,
 {
   integer c__1 = 1;
   /* System generated locals */
-  integer sotbv1_dim1, sotbv1_dim2, sotbv1_offset, sotbv2_dim1, sotbv2_dim2,
-  sotbv2_offset, ditbv1_dim1, ditbv1_dim2, ditbv1_offset, 
-  ditbv2_dim1, ditbv2_dim2, ditbv2_offset, fpntab_dim1, 
-  fpntab_offset, vhermt_dim1, vhermt_offset, sosotb_dim1, 
-  sosotb_dim2, sosotb_offset, diditb_dim1, diditb_dim2, 
-  diditb_offset, soditb_dim1, soditb_dim2, soditb_offset, 
-  disotb_dim1, disotb_dim2, disotb_offset, i__1, i__2, i__3, i__4;
+  integer sotbv1_dim1 = 0, sotbv1_dim2 = 0, sotbv1_offset = 0, sotbv2_dim1 = 0, sotbv2_dim2 = 0,
+  sotbv2_offset = 0, ditbv1_dim1 = 0, ditbv1_dim2 = 0, ditbv1_offset = 0, 
+  ditbv2_dim1 = 0, ditbv2_dim2 = 0, ditbv2_offset = 0, fpntab_dim1 = 0, 
+  fpntab_offset = 0, vhermt_dim1 = 0, vhermt_offset = 0, sosotb_dim1 = 0, 
+  sosotb_dim2 = 0, sosotb_offset = 0, diditb_dim1 = 0, diditb_dim2 = 0, 
+  diditb_offset = 0, soditb_dim1 = 0, soditb_dim2 = 0, soditb_offset = 0, 
+  disotb_dim1 = 0, disotb_dim2 = 0, disotb_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0, i__4 = 0;
 
   /* Local variables */
-  integer ncfhv, nuroo, nvroo, ii, nd, jj, kk, ibb, jjm, jjp;
-  doublereal bid1, bid2, bid3, bid4;
+  integer ncfhv = 0, nuroo = 0, nvroo = 0, ii = 0, nd = 0, jj = 0, kk = 0, ibb = 0, jjm = 0, jjp = 0;
+  doublereal bid1 = NAN, bid2 = NAN, bid3 = NAN, bid4 = NAN;
 
 /* ********************************************************************** 
 */
@@ -2978,17 +2980,17 @@ int mma2cd3_(integer *ndimen,
   integer c__1 = 1;
 
    /* System generated locals */
-    integer sotbu1_dim1, sotbu1_dim2, sotbu1_offset, sotbu2_dim1, sotbu2_dim2,
-	     sotbu2_offset, ditbu1_dim1, ditbu1_dim2, ditbu1_offset, 
-	    ditbu2_dim1, ditbu2_dim2, ditbu2_offset, fpntab_dim1, 
-	    fpntab_offset, uhermt_dim1, uhermt_offset, sosotb_dim1, 
-	    sosotb_dim2, sosotb_offset, diditb_dim1, diditb_dim2, 
-	    diditb_offset, soditb_dim1, soditb_dim2, soditb_offset, 
-	    disotb_dim1, disotb_dim2, disotb_offset, i__1, i__2, i__3, i__4;
+    integer sotbu1_dim1 = 0, sotbu1_dim2 = 0, sotbu1_offset = 0, sotbu2_dim1 = 0, sotbu2_dim2 = 0,
+	     sotbu2_offset = 0, ditbu1_dim1 = 0, ditbu1_dim2 = 0, ditbu1_offset = 0, 
+	    ditbu2_dim1 = 0, ditbu2_dim2 = 0, ditbu2_offset = 0, fpntab_dim1 = 0, 
+	    fpntab_offset = 0, uhermt_dim1 = 0, uhermt_offset = 0, sosotb_dim1 = 0, 
+	    sosotb_dim2 = 0, sosotb_offset = 0, diditb_dim1 = 0, diditb_dim2 = 0, 
+	    diditb_offset = 0, soditb_dim1 = 0, soditb_dim2 = 0, soditb_offset = 0, 
+	    disotb_dim1 = 0, disotb_dim2 = 0, disotb_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0, i__4 = 0;
 
     /* Local variables */
-    integer ncfhu, nuroo, nvroo, ii, nd, jj, kk, ibb, kkm, kkp;
-    doublereal bid1, bid2, bid3, bid4;
+    integer ncfhu = 0, nuroo = 0, nvroo = 0, ii = 0, nd = 0, jj = 0, kk = 0, ibb = 0, kkm = 0, kkp = 0;
+    doublereal bid1 = NAN, bid2 = NAN, bid3 = NAN, bid4 = NAN;
 
 /* ********************************************************************** 
 */
@@ -3304,22 +3306,22 @@ int AdvApp2Var_ApproxF2var::mma2cdi_( integer *ndimen,
   integer c__8 = 8;
 
     /* System generated locals */
-    integer contr1_dim1, contr1_dim2, contr1_offset, contr2_dim1, contr2_dim2,
-	     contr2_offset, contr3_dim1, contr3_dim2, contr3_offset, 
-	    contr4_dim1, contr4_dim2, contr4_offset, sosotb_dim1, sosotb_dim2,
-	     sosotb_offset, diditb_dim1, diditb_dim2, diditb_offset, 
-	    soditb_dim1, soditb_dim2, soditb_offset, disotb_dim1, disotb_dim2,
-	     disotb_offset;
+    integer contr1_dim1 = 0, contr1_dim2 = 0, contr1_offset = 0, contr2_dim1 = 0, contr2_dim2 = 0,
+	     contr2_offset = 0, contr3_dim1 = 0, contr3_dim2 = 0, contr3_offset = 0, 
+	    contr4_dim1 = 0, contr4_dim2 = 0, contr4_offset = 0, sosotb_dim1 = 0, sosotb_dim2 = 0,
+	     sosotb_offset = 0, diditb_dim1 = 0, diditb_dim2 = 0, diditb_offset = 0, 
+	    soditb_dim1 = 0, soditb_dim2 = 0, soditb_offset = 0, disotb_dim1 = 0, disotb_dim2 = 0,
+	     disotb_offset = 0;
 
     /* Local variables */
-    integer ilong;
-    intptr_t iofwr;
+    integer ilong = 0;
+    intptr_t iofwr = 0;
     doublereal* wrkar = 0;
-    doublereal* wrkar_off;
-    integer iszwr;
-    integer ibb, ier = 0;
-    integer isz1, isz2, isz3, isz4;
-    intptr_t ipt1, ipt2, ipt3;
+    doublereal* wrkar_off = nullptr;
+    integer iszwr = 0;
+    integer ibb = 0, ier = 0;
+    integer isz1 = 0, isz2 = 0, isz3 = 0, isz4 = 0;
+    intptr_t ipt1 = 0, ipt2 = 0, ipt3 = 0;
 
 
 
@@ -3621,20 +3623,20 @@ int AdvApp2Var_ApproxF2var::mma2ce1_(integer *numdec,
   integer c__8 = 8;
   
     /* System generated locals */
-    integer sosotb_dim1, sosotb_dim2, sosotb_offset, disotb_dim1, disotb_dim2,
-	     disotb_offset, soditb_dim1, soditb_dim2, soditb_offset, 
-	    diditb_dim1, diditb_dim2, diditb_offset, patjac_dim1, patjac_dim2,
-	     patjac_offset;
+    integer sosotb_dim1 = 0, sosotb_dim2 = 0, sosotb_offset = 0, disotb_dim1 = 0, disotb_dim2 = 0,
+	     disotb_offset = 0, soditb_dim1 = 0, soditb_dim2 = 0, soditb_offset = 0, 
+	    diditb_dim1 = 0, diditb_dim2 = 0, diditb_offset = 0, patjac_dim1 = 0, patjac_dim2 = 0,
+	     patjac_offset = 0;
 
     /* Local variables */
-    logical ldbg;
-    intptr_t iofwr;
+    logical ldbg = 0;
+    intptr_t iofwr = 0;
     doublereal* wrkar = 0;
-    doublereal* wrkar_off;
-    integer iszwr;
-    integer ier;
-    integer isz1, isz2, isz3, isz4, isz5, isz6, isz7;
-    intptr_t ipt1, ipt2, ipt3, ipt4, ipt5, ipt6;
+    doublereal* wrkar_off = nullptr;
+    integer iszwr = 0;
+    integer ier = 0;
+    integer isz1 = 0, isz2 = 0, isz3 = 0, isz4 = 0, isz5 = 0, isz6 = 0, isz7 = 0;
+    intptr_t ipt1 = 0, ipt2 = 0, ipt3 = 0, ipt4 = 0, ipt5 = 0, ipt6 = 0;
 
 
 
@@ -3902,20 +3904,20 @@ int mma2ce2_(integer *numdec,
 
 {
   /* System generated locals */
-  integer sosotb_dim1, sosotb_dim2, sosotb_offset, disotb_dim1, disotb_dim2,
-  disotb_offset, soditb_dim1, soditb_dim2, soditb_offset, 
-  diditb_dim1, diditb_dim2, diditb_offset, gssutb_dim1, gssvtb_dim1,
-  chpair_dim1, chpair_dim2, chpair_offset, chimpr_dim1, 
-  chimpr_dim2, chimpr_offset, patjac_dim1, patjac_dim2, 
-  patjac_offset, vecerr_dim1, vecerr_offset, i__1, i__2, i__3, i__4;
+  integer sosotb_dim1 = 0, sosotb_dim2 = 0, sosotb_offset = 0, disotb_dim1 = 0, disotb_dim2 = 0,
+  disotb_offset = 0, soditb_dim1 = 0, soditb_dim2 = 0, soditb_offset = 0, 
+  diditb_dim1 = 0, diditb_dim2 = 0, diditb_offset = 0, gssutb_dim1 = 0, gssvtb_dim1 = 0,
+  chpair_dim1 = 0, chpair_dim2 = 0, chpair_offset = 0, chimpr_dim1 = 0, 
+  chimpr_dim2 = 0, chimpr_offset = 0, patjac_dim1 = 0, patjac_dim2 = 0, 
+  patjac_offset = 0, vecerr_dim1 = 0, vecerr_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0, i__4 = 0;
   
   /* Local variables */
-  logical ldbg;
-  integer idim, igsu, minu, minv, maxu, maxv, igsv;
+  logical ldbg = 0;
+  integer idim = 0, igsu = 0, minu = 0, minv = 0, maxu = 0, maxv = 0, igsv = 0;
   doublereal vaux[3];
-  integer i2rdu, i2rdv, ndses, nd, ii, jj, kk, nu, nv;
-  doublereal zu, zv;
-  integer nu1, nv1;
+  integer i2rdu = 0, i2rdv = 0, ndses = 0, nd = 0, ii = 0, jj = 0, kk = 0, nu = 0, nv = 0;
+  doublereal zu = NAN, zv = NAN;
+  integer nu1 = 0, nv1 = 0;
 
 /* ********************************************************************** 
 */
@@ -4671,13 +4673,13 @@ int mma2cfu_(integer *ndujac,
 
 {
   /* System generated locals */
-  integer sosotb_dim1, disotb_dim1, disotb_offset, soditb_dim1, 
-  soditb_offset, diditb_dim1, i__1, i__2;
+  integer sosotb_dim1 = 0, disotb_dim1 = 0, disotb_offset = 0, soditb_dim1 = 0, 
+  soditb_offset = 0, diditb_dim1 = 0, i__1 = 0, i__2 = 0;
 
   /* Local variables */
-  logical ldbg;
-  integer nptu2, nptv2, ii, jj;
-  doublereal bid0, bid1, bid2;
+  logical ldbg = 0;
+  integer nptu2 = 0, nptv2 = 0, ii = 0, jj = 0;
+  doublereal bid0 = NAN, bid1 = NAN, bid2 = NAN;
 
 /* ********************************************************************** 
 */
@@ -4887,13 +4889,13 @@ int mma2cfv_(integer *ndvjac,
 
 {
   /* System generated locals */
-  integer chpair_dim1, chpair_offset, chimpr_dim1, chimpr_offset, 
-  patjac_offset, i__1, i__2;
+  integer chpair_dim1 = 0, chpair_offset = 0, chimpr_dim1 = 0, chimpr_offset = 0, 
+  patjac_offset = 0, i__1 = 0, i__2 = 0;
 
   /* Local variables */
-  logical ldbg;
-  integer nptv2, ii, jj;
-  doublereal bid1;
+  logical ldbg = 0;
+  integer nptv2 = 0, ii = 0, jj = 0;
+  doublereal bid1 = NAN;
 
 /* ********************************************************************** 
 */
@@ -5043,15 +5045,15 @@ int AdvApp2Var_ApproxF2var::mma2ds1_(integer *ndimen,
 
 {
   /* System generated locals */
-  integer sosotb_dim1, sosotb_dim2, sosotb_offset, disotb_dim1, disotb_dim2,
-  disotb_offset, soditb_dim1, soditb_dim2, soditb_offset, 
-  diditb_dim1, diditb_dim2, diditb_offset, fpntab_dim1, 
-  fpntab_offset, i__1;
+  integer sosotb_dim1 = 0, sosotb_dim2 = 0, sosotb_offset = 0, disotb_dim1 = 0, disotb_dim2 = 0,
+  disotb_offset = 0, soditb_dim1 = 0, soditb_dim2 = 0, soditb_offset = 0, 
+  diditb_dim1 = 0, diditb_dim2 = 0, diditb_offset = 0, fpntab_dim1 = 0, 
+  fpntab_offset = 0, i__1 = 0;
 
   /* Local variables */
-  logical ldbg;
-  integer ibid1, ibid2, iuouv, nd;
-  integer isz1, isz2;
+  logical ldbg = 0;
+  integer ibid1 = 0, ibid2 = 0, iuouv = 0, nd = 0;
+  integer isz1 = 0, isz2 = 0;
 
 /* ********************************************************************** 
 */
@@ -5364,18 +5366,18 @@ int mma2ds2_(integer *ndimen,
 {
   integer c__0 = 0;
   /* System generated locals */
-  integer sosotb_dim1, sosotb_dim2, sosotb_offset, disotb_dim1, disotb_dim2,
-  disotb_offset, soditb_dim1, soditb_dim2, soditb_offset, 
-  diditb_dim1, diditb_dim2, diditb_offset, fpntab_dim1, 
-  fpntab_offset, i__1, i__2, i__3;
+  integer sosotb_dim1 = 0, sosotb_dim2 = 0, sosotb_offset = 0, disotb_dim1 = 0, disotb_dim2 = 0,
+  disotb_offset = 0, soditb_dim1 = 0, soditb_dim2 = 0, soditb_offset = 0, 
+  diditb_dim1 = 0, diditb_dim2 = 0, diditb_offset = 0, fpntab_dim1 = 0, 
+  fpntab_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0;
 
   /* Local variables */
-  integer jdec;
-  logical ldbg;
-  doublereal alinu, blinu, alinv, blinv, tcons;
+  integer jdec = 0;
+  logical ldbg = 0;
+  doublereal alinu = NAN, blinu = NAN, alinv = NAN, blinv = NAN, tcons = NAN;
   doublereal dbfn1[2], dbfn2[2];
-  integer nuroo, nvroo, id, iu, iv;
-  doublereal um, up;
+  integer nuroo = 0, nvroo = 0, id = 0, iu = 0, iv = 0;
+  doublereal um = NAN, up = NAN;
 
 
 /* ********************************************************************** 
@@ -5742,15 +5744,15 @@ int mma2er1_(integer *ndjacu,
 
 {
   /* System generated locals */
-  integer patjac_dim1, patjac_dim2, patjac_offset, i__1, i__2, i__3;
-  doublereal d__1;
+  integer patjac_dim1 = 0, patjac_dim2 = 0, patjac_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0;
+  doublereal d__1 = NAN;
 
   /* Local variables */
-  logical ldbg;
-  integer minu, minv;
+  logical ldbg = 0;
+  integer minu = 0, minv = 0;
   doublereal vaux[2];
-  integer ii, nd, jj;
-  doublereal bid0, bid1;
+  integer ii = 0, nd = 0, jj = 0;
+  doublereal bid0 = NAN, bid1 = NAN;
 
 /* ********************************************************************** 
 */
@@ -5908,16 +5910,16 @@ int mma2er2_(integer *ndjacu,
 
 {
   /* System generated locals */
-  integer patjac_dim1, patjac_dim2, patjac_offset, i__1, i__2;
-  doublereal d__1;
+  integer patjac_dim1 = 0, patjac_dim2 = 0, patjac_offset = 0, i__1 = 0, i__2 = 0;
+  doublereal d__1 = NAN;
 
   /* Local variables */
-  logical ldbg;
+  logical ldbg = 0;
   doublereal vaux[2];
-  integer i2rdu, i2rdv;
-  doublereal errnu, errnv;
-  integer ii, nd, jj, nu, nv;
-  doublereal bid0, bid1;
+  integer i2rdu = 0, i2rdv = 0;
+  doublereal errnu = NAN, errnv = NAN;
+  integer ii = 0, nd = 0, jj = 0, nu = 0, nv = 0;
+  doublereal bid0 = NAN, bid1 = NAN;
 
 /* ********************************************************************** 
 */
@@ -6155,31 +6157,31 @@ int AdvApp2Var_ApproxF2var::mma2fnc_(integer *ndimen,
   integer c__8 = 8;
 
    /* System generated locals */
-    integer courbe_dim1, courbe_dim2, courbe_offset, somtab_dim1, somtab_dim2,
-	     somtab_offset, diftab_dim1, diftab_dim2, diftab_offset, 
-	    contr1_dim1, contr1_dim2, contr1_offset, contr2_dim1, contr2_dim2,
-	     contr2_offset, errmax_dim1, errmax_offset, errmoy_dim1, 
-	    errmoy_offset, i__1;
-    doublereal d__1;
+    integer courbe_dim1 = 0, courbe_dim2 = 0, courbe_offset = 0, somtab_dim1 = 0, somtab_dim2 = 0,
+	     somtab_offset = 0, diftab_dim1 = 0, diftab_dim2 = 0, diftab_offset = 0, 
+	    contr1_dim1 = 0, contr1_dim2 = 0, contr1_offset = 0, contr2_dim1 = 0, contr2_dim2 = 0,
+	     contr2_offset = 0, errmax_dim1 = 0, errmax_offset = 0, errmoy_dim1 = 0, 
+	    errmoy_offset = 0, i__1 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
-    integer ideb;
-    doublereal tmil;
-    integer  ideb1, ibid1, ibid2, ncfja, ndgre, ilong, 
-	    ndwrk;
+    integer ideb = 0;
+    doublereal tmil = NAN;
+    integer  ideb1 = 0, ibid1 = 0, ibid2 = 0, ncfja = 0, ndgre = 0, ilong = 0, 
+	    ndwrk = 0;
     doublereal* wrkar = 0;
-    doublereal* wrkar_off;
-    integer nupil;
-    intptr_t iofwr;
+    doublereal* wrkar_off = nullptr;
+    integer nupil = 0;
+    intptr_t iofwr = 0;
     doublereal uvpav[4]	/* was [2][2] */;
-    integer nd, ii;
-    integer ibb;
+    integer nd = 0, ii = 0;
+    integer ibb = 0;
     integer ier = 0;
     doublereal uv11[4]	/* was [2][2] */;
-  integer ncb1;
-    doublereal eps3;
-    integer isz1, isz2, isz3, isz4, isz5;
-    intptr_t ipt1, ipt2, ipt3, ipt4,iptt, jptt;
+  integer ncb1 = 0;
+    doublereal eps3 = NAN;
+    integer isz1 = 0, isz2 = 0, isz3 = 0, isz4 = 0, isz5 = 0;
+    intptr_t ipt1 = 0, ipt2 = 0, ipt3 = 0, ipt4 = 0,iptt = 0, jptt = 0;
 
 /* ********************************************************************** 
 */
@@ -6707,16 +6709,16 @@ int AdvApp2Var_ApproxF2var::mma2fx6_(integer *ncfmxu,
 
 {
   /* System generated locals */
-  integer epsfro_dim1, epsfro_offset, patcan_dim1, patcan_dim2, patcan_dim3,
-  patcan_dim4, patcan_offset, errmax_dim1, errmax_dim2, 
-  errmax_offset, ncoefu_dim1, ncoefu_offset, ncoefv_dim1, 
-  ncoefv_offset, i__1, i__2, i__3, i__4, i__5;
-  doublereal d__1, d__2;
+  integer epsfro_dim1 = 0, epsfro_offset = 0, patcan_dim1 = 0, patcan_dim2 = 0, patcan_dim3 = 0,
+  patcan_dim4 = 0, patcan_offset = 0, errmax_dim1 = 0, errmax_dim2 = 0, 
+  errmax_offset = 0, ncoefu_dim1 = 0, ncoefu_offset = 0, ncoefv_dim1 = 0, 
+  ncoefv_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0, i__4 = 0, i__5 = 0;
+  doublereal d__1 = NAN, d__2 = NAN;
 
   /* Local variables */
-  integer idim, ncfu, ncfv, id, ii, nd, jj, ku, kv, ns, ibb;
-  doublereal bid;
-  doublereal tol;
+  integer idim = 0, ncfu = 0, ncfv = 0, id = 0, ii = 0, nd = 0, jj = 0, ku = 0, kv = 0, ns = 0, ibb = 0;
+  doublereal bid = NAN;
+  doublereal tol = NAN;
 
 /* ********************************************************************** 
 */
@@ -7142,12 +7144,12 @@ int AdvApp2Var_ApproxF2var::mma2jmx_(integer *ndgjac,
 	    2.71238965987606292679677228666411 };
 
     /* System generated locals */
-    integer i__1;
+    integer i__1 = 0;
 
     /* Local variables */
-    logical ldbg;
-    integer numax, ii;
-    doublereal bid;
+    logical ldbg = 0;
+    integer numax = 0, ii = 0;
+    doublereal bid = NAN;
 
 
 /* ********************************************************************** 
@@ -7246,12 +7248,12 @@ int mma2moy_(integer *ndgumx,
 	     doublereal *errmoy)
 {
   /* System generated locals */
-    integer patjac_dim1, patjac_dim2, patjac_offset, i__1, i__2, i__3;
+    integer patjac_dim1 = 0, patjac_dim2 = 0, patjac_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0;
    
     /* Local variables */
-    logical ldbg;
-    integer minu, minv, idebu, idebv, ii, nd, jj;
-    doublereal bid0, bid1;
+    logical ldbg = 0;
+    integer minu = 0, minv = 0, idebu = 0, idebv = 0, ii = 0, nd = 0, jj = 0;
+    doublereal bid0 = NAN, bid1 = NAN;
     
     
 /* ********************************************************************** 
@@ -7393,10 +7395,10 @@ int AdvApp2Var_ApproxF2var::mma2roo_(integer *nbpntu,
 				     doublereal *vrootl)
 {
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
 
   /* Local variables */
-  integer ii, ibb;
+  integer ii = 0, ibb = 0;
 
 /* ********************************************************************** 
 */
@@ -7498,13 +7500,13 @@ int mmmapcoe_(integer *ndim,
 
 {
   /* System generated locals */
-  integer somtab_dim1, somtab_offset, diftab_dim1, diftab_offset, 
-  crvjac_dim1, crvjac_offset, gsstab_dim1, i__1, i__2, i__3;
+  integer somtab_dim1 = 0, somtab_offset = 0, diftab_dim1 = 0, diftab_offset = 0, 
+  crvjac_dim1 = 0, crvjac_offset = 0, gsstab_dim1 = 0, i__1 = 0, i__2 = 0, i__3 = 0;
 
   /* Local variables */
-  integer igss, ikdeb;
-  doublereal bidon;
-  integer nd, ik, ir, nbroot, ibb;
+  integer igss = 0, ikdeb = 0;
+  doublereal bidon = NAN;
+  integer nd = 0, ik = 0, ir = 0, nbroot = 0, ibb = 0;
 
 /* ********************************************************************** 
 */
@@ -7660,12 +7662,12 @@ int mmaperm_(integer *ncofmx,
 	     doublereal *errmoy)
 {
   /* System generated locals */
-  integer crvjac_dim1, crvjac_offset, i__1, i__2;
+  integer crvjac_dim1 = 0, crvjac_offset = 0, i__1 = 0, i__2 = 0;
 
   /* Local variables */
-  doublereal bidj;
-  integer i__, ia, nd, ncfcut, ibb;
-  doublereal bid;
+  doublereal bidj = NAN;
+  integer i__ = 0, ia = 0, nd = 0, ncfcut = 0, ibb = 0;
+  doublereal bid = NAN;
 
 /* ********************************************************************** 
 */
@@ -7769,10 +7771,10 @@ int AdvApp2Var_ApproxF2var::mmapptt_(const integer *ndgjac,
 				     integer *iercod)
 {
   /* System generated locals */
-  integer cgauss_dim1, i__1;
+  integer cgauss_dim1 = 0, i__1 = 0;
 
   /* Local variables */
-  integer kjac, iptt, ipdb0, infdg, iptdb, mxjac, ilong, ibb;
+  integer kjac = 0, iptt = 0, ipdb0 = 0, infdg = 0, iptdb = 0, mxjac = 0, ilong = 0, ibb = 0;
 
 /* ********************************************************************** 
 */
@@ -8071,12 +8073,12 @@ int mmjacpt_(const integer *ndimen,
 	     doublereal *ptccan)
 {
     /* System generated locals */
-  integer ptccan_dim1, ptccan_dim2, ptccan_offset, ptclgd_dim1, ptclgd_dim2,
-  ptclgd_offset, ptcaux_dim1, ptcaux_dim2, ptcaux_dim3, 
-  ptcaux_offset, i__1, i__2, i__3;
+  integer ptccan_dim1 = 0, ptccan_dim2 = 0, ptccan_offset = 0, ptclgd_dim1 = 0, ptclgd_dim2 = 0,
+  ptclgd_offset = 0, ptcaux_dim1 = 0, ptcaux_dim2 = 0, ptcaux_dim3 = 0, 
+  ptcaux_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0;
   
   /* Local variables */
-  integer kdim, nd, ii, jj, ibb;
+  integer kdim = 0, nd = 0, ii = 0, jj = 0, ibb = 0;
 
 /* ***********************************************************************
  */

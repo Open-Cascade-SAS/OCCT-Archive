@@ -65,7 +65,7 @@ private:
 
 
   StepElement_CurveElementFreedom theReleaseFreedom;
-  Standard_Real theReleaseStiffness;
+  Standard_Real theReleaseStiffness{};
 
 
 };

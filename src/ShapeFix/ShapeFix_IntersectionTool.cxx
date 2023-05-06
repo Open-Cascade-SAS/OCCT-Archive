@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BndLib_Add2dCurve.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -53,11 +55,11 @@
 //=======================================================================
 ShapeFix_IntersectionTool::ShapeFix_IntersectionTool(const Handle(ShapeBuild_ReShape)& context,
                                                      const Standard_Real preci,
-                                                     const Standard_Real maxtol)
+                                                     const Standard_Real maxtol) : myContext(context), myPreci(preci), myMaxTol(maxtol)
 {
-  myContext = context;
-  myPreci = preci;
-  myMaxTol = maxtol;
+  
+  
+  
 }
 
 
@@ -73,7 +75,7 @@ static gp_Pnt GetPointOnEdge(const TopoDS_Edge &edge,
                              const Standard_Real param )
 {
   if( BRep_Tool::SameParameter(edge) ) {
-    Standard_Real f,l;
+    Standard_Real f = NAN,l = NAN;
     TopLoc_Location L;
     const Handle(Geom_Curve) ConS = BRep_Tool::Curve ( edge, L, f, l );
     if( !ConS.IsNull() )
@@ -97,7 +99,7 @@ Standard_Boolean ShapeFix_IntersectionTool::SplitEdge(const TopoDS_Edge& edge,
                                                       TopoDS_Edge& newE2,
                                                       const Standard_Real preci) const
 {
-  Standard_Real a, b;
+  Standard_Real a = NAN, b = NAN;
   ShapeAnalysis_Edge sae;
 
   TopoDS_Vertex V1 = sae.FirstVertex(edge);
@@ -113,7 +115,7 @@ Standard_Boolean ShapeFix_IntersectionTool::SplitEdge(const TopoDS_Edge& edge,
   gp_Pnt P1;
   TopLoc_Location L;
   if(BRep_Tool::SameParameter(edge) && !BRep_Tool::Degenerated(edge)) {
-    Standard_Real f,l;
+    Standard_Real f = NAN,l = NAN;
     const Handle(Geom_Curve) c3d = BRep_Tool::Curve(edge,L,f,l);
     if(c3d.IsNull())
       return Standard_False;
@@ -137,7 +139,7 @@ Standard_Boolean ShapeFix_IntersectionTool::SplitEdge(const TopoDS_Edge& edge,
     new ShapeAnalysis_TransferParametersProj;
   transferParameters->SetMaxTolerance(preci);
   transferParameters->Init(edge,face);
-  Standard_Real first, last;
+  Standard_Real first = NAN, last = NAN;
   if (a < b ) {
     first = a; 
     last = b;
@@ -188,7 +190,7 @@ Standard_Boolean ShapeFix_IntersectionTool::CutEdge(const TopoDS_Edge &edge,
 {
   if( Abs(cut-pend)<10.*Precision::PConfusion() ) return Standard_False;
   Standard_Real aRange = Abs(cut-pend);
-  Standard_Real a, b;
+  Standard_Real a = NAN, b = NAN;
   BRep_Tool::Range(edge, a, b);
   
   if( aRange<10.*Precision::PConfusion() ) return Standard_False;
@@ -197,7 +199,7 @@ Standard_Boolean ShapeFix_IntersectionTool::CutEdge(const TopoDS_Edge &edge,
   if( !BRep_Tool::SameParameter(edge) ) {
     ShapeAnalysis_Edge sae;
     Handle(Geom2d_Curve) Crv;
-    Standard_Real fp,lp;
+    Standard_Real fp = NAN,lp = NAN;
     if ( sae.PCurve(edge,face,Crv,fp,lp,Standard_False) ) {
       if(Crv->IsKind(STANDARD_TYPE(Geom2d_TrimmedCurve))) {
         Handle(Geom2d_TrimmedCurve) tc = Handle(Geom2d_TrimmedCurve)::DownCast(Crv);
@@ -276,7 +278,7 @@ Standard_Boolean ShapeFix_IntersectionTool::SplitEdge1(const Handle(ShapeExtend_
   TopLoc_Location L;
   const Handle(Geom_Surface)& S = BRep_Tool::Surface(face,L);
   Handle(Geom2d_Curve) c2d;
-  Standard_Real cf,cl;
+  Standard_Real cf = NAN,cl = NAN;
   ShapeAnalysis_Edge sae;
   if(sae.PCurve(newE1,S,L,c2d,cf,cl,Standard_False)) {
     Bnd_Box2d box;
@@ -334,9 +336,9 @@ Standard_Boolean ShapeFix_IntersectionTool::SplitEdge2(const Handle(ShapeExtend_
   Standard_Real param = (param1+param2)/2;
   if(!SplitEdge(edge,param,vert,face,newE1,newE2,preci)) return Standard_False;
   // cut new edges by param1 and param2
-  Standard_Boolean IsCutLine;
+  Standard_Boolean IsCutLine = 0;
   Handle(Geom2d_Curve) Crv1, Crv2;
-  Standard_Real fp1,lp1,fp2,lp2;
+  Standard_Real fp1 = NAN,lp1 = NAN,fp2 = NAN,lp2 = NAN;
   ShapeAnalysis_Edge sae;
   if(sae.PCurve ( newE1, face, Crv1, fp1, lp1, Standard_False )) {
     if(sae.PCurve ( newE2, face, Crv2, fp2, lp2, Standard_False )) {
@@ -385,7 +387,7 @@ Standard_Boolean ShapeFix_IntersectionTool::SplitEdge2(const Handle(ShapeExtend_
   TopLoc_Location L;
   const Handle(Geom_Surface)& S = BRep_Tool::Surface(face,L);
   Handle(Geom2d_Curve) c2d;
-  Standard_Real cf,cl;
+  Standard_Real cf = NAN,cl = NAN;
   if(sae.PCurve(newE1,S,L,c2d,cf,cl,Standard_False)) {
     Bnd_Box2d box;
     Geom2dAdaptor_Curve gac;
@@ -468,7 +470,7 @@ Standard_Boolean ShapeFix_IntersectionTool::UnionVertexes(const Handle(ShapeExte
       edge2 = NewE;
       boxes.Bind(NewE,B2); // update boxes
       // replace vertex in other edge
-      Standard_Integer num21,num22;
+      Standard_Integer num21 = 0,num22 = 0;
       if(num2>1) num21=num2-1;
       else num21=sewd->NbEdges();
       if(num2<sewd->NbEdges()) num22=num2+1;
@@ -532,7 +534,7 @@ Standard_Boolean ShapeFix_IntersectionTool::UnionVertexes(const Handle(ShapeExte
       //boxes.Bind(NewE,boxes.Find(edge2)); // update boxes
       boxes.Bind(NewE,B2); // update boxes
       // replace vertex in other edge
-      Standard_Integer num21,num22;
+      Standard_Integer num21 = 0,num22 = 0;
       if(num2>1) num21=num2-1;
       else num21=sewd->NbEdges();
       if(num2<sewd->NbEdges()) num22=num2+1;
@@ -595,7 +597,7 @@ Standard_Boolean ShapeFix_IntersectionTool::UnionVertexes(const Handle(ShapeExte
       edge2 = NewE;
       boxes.Bind(NewE,B2); // update boxes
       // replace vertex in other edge
-      Standard_Integer num21,num22;
+      Standard_Integer num21 = 0,num22 = 0;
       if(num2>1) num21=num2-1;
       else num21=sewd->NbEdges();
       if(num2<sewd->NbEdges()) num22=num2+1;
@@ -658,7 +660,7 @@ Standard_Boolean ShapeFix_IntersectionTool::UnionVertexes(const Handle(ShapeExte
       edge2 = NewE;
       boxes.Bind(NewE,B2); // update boxes
       // replace vertex in other edge
-      Standard_Integer num21,num22;
+      Standard_Integer num21 = 0,num22 = 0;
       if(num2>1) num21=num2-1;
       else num21=sewd->NbEdges();
       if(num2<sewd->NbEdges()) num22=num2+1;
@@ -722,7 +724,7 @@ static Bnd_Box2d CreateBoxes2d(const Handle(ShapeExtend_WireData)& sewd,
   TopLoc_Location L;
   const Handle(Geom_Surface)& S = BRep_Tool::Surface(face,L);
   Handle(Geom2d_Curve) c2d;
-  Standard_Real cf,cl;
+  Standard_Real cf = NAN,cl = NAN;
   ShapeAnalysis_Edge sae;
   for(Standard_Integer i=1; i<=sewd->NbEdges(); i++){
     TopoDS_Edge E = sewd->Edge(i);
@@ -799,7 +801,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FindVertAndSplitEdge
   gp_Pnt pi1 = GetPointOnEdge(edge1,sas,Crv1,param1);
   BRep_Builder B;
   TopoDS_Vertex V;
-  Standard_Real tolV;
+  Standard_Real tolV = NAN;
   TopoDS_Vertex V1 = sae.FirstVertex(edge2);
   gp_Pnt PV1 = BRep_Tool::Pnt(V1);
   TopoDS_Vertex V2 = sae.LastVertex(edge2);
@@ -884,7 +886,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
       Bnd_Box2d B2 = boxes.Find(edge2);
       if(!B1.IsOut(B2)) {
         // intersection is possible...
-        Standard_Real a1, b1, a2, b2;
+        Standard_Real a1 = NAN, b1 = NAN, a2 = NAN, b2 = NAN;
         Handle(Geom2d_Curve) Crv1, Crv2;
         if( !sae.PCurve(edge1, face, Crv1, a1, b1, Standard_False) ) return Standard_False;
         if( !sae.PCurve(edge2, face, Crv2, a2, b2, Standard_False) ) return Standard_False;
@@ -931,7 +933,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
               
               Standard_Real dista = Abs(a1-param1);
               Standard_Real distb = Abs(b1-param1);
-              Standard_Boolean IsCutLine;
+              Standard_Boolean IsCutLine = 0;
               ModifE1 = CutEdge(edge1, (( dista > distb ) ? a1 : b1 ), param1, face, IsCutLine);
               if (ModifE1)
                 NbCut++;
@@ -960,7 +962,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
 
               Standard_Real dista = Abs(a2-param2);
               Standard_Real distb = Abs(b2-param2);
-              Standard_Boolean IsCutLine;
+              Standard_Boolean IsCutLine = 0;
               ModifE2 = CutEdge(edge2, (( dista > distb ) ? a2 : b2 ), param2, face, IsCutLine);
               if (ModifE2)
                 NbCut++;
@@ -1062,7 +1064,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
             Standard_Real dist1 = Pnt11.Distance(PV1);
             Standard_Real dist2 = Pnt12.Distance(PV1);
             Standard_Real maxdist = Max(dist1,dist2);
-            Standard_Real pdist;
+            Standard_Real pdist = NAN;
             if(edge1.Orientation()==TopAbs_REVERSED)
               pdist = Max(Abs(b1-p11),Abs(b1-p12));
             else
@@ -1092,12 +1094,12 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
               // cut edge1 and update tolerance NewV
               Standard_Real dista = Abs(a1-p11)+Abs(a1-p12);
               Standard_Real distb = Abs(b1-p11)+Abs(b1-p12);
-              Standard_Real pend,cut;
+              Standard_Real pend = NAN,cut = NAN;
               if(dista>distb) pend=a1;
               else pend=b1;
               if(Abs(pend-p11)>Abs(pend-p12)) cut=p12;
               else cut=p11;
-              Standard_Boolean IsCutLine;
+              Standard_Boolean IsCutLine = 0;
               if (CutEdge(edge1, pend, cut, face, IsCutLine))
                 NbCut++;
               if(newtol>BRep_Tool::Tolerance(NewV)) {
@@ -1145,12 +1147,12 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
               // cut edge1 and update tolerance NewV
               Standard_Real dista = Abs(a2-p21)+Abs(a2-p22);
               Standard_Real distb = Abs(b2-p21)+Abs(b2-p22);
-              Standard_Real pend,cut;
+              Standard_Real pend = NAN,cut = NAN;
               if(dista>distb) pend=a2;
               else pend=b2;
               if(Abs(pend-p21)>Abs(pend-p22)) cut=p22;
               else cut=p21;
-              Standard_Boolean IsCutLine;
+              Standard_Boolean IsCutLine = 0;
               if (CutEdge(edge2, pend, cut, face, IsCutLine))
                 NbCut++;
               if(newtol>BRep_Tool::Tolerance(NewV)) {
@@ -1236,7 +1238,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                 TopoDS_Edge tmpE,SegE;
                 // split edge1
                 Standard_Integer akey1=0, akey2=0;
-                Standard_Real newTolerance;
+                Standard_Real newTolerance = NAN;
                 // analysis fo P01
                 newTolerance = Max(tolV1,BRep_Tool::Tolerance(V1));
                 if(P01.Distance(PV1)<newTolerance) {
@@ -1289,7 +1291,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                     dnum1=1;
                   }
                   tmpE = sewd->Edge(num1);
-                  Standard_Real a,b;
+                  Standard_Real a = NAN,b = NAN;
                   Handle(Geom2d_Curve) c2d;
                   sae.PCurve(tmpE,face,c2d,a,b,Standard_False);
                   if( (a-p12)*(b-p12)>0 ) { // p12 - external for [a,b] => split next edge
@@ -1413,7 +1415,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixSelfIntersectWire
                     dnum2=1;
                   }
                   tmpE = sewd->Edge(num2+dnum1);
-                  Standard_Real a,b;
+                  Standard_Real a = NAN,b = NAN;
                   Handle(Geom2d_Curve) c2d;
                   sae.PCurve(tmpE,face,c2d,a,b,Standard_False);
                   if( (a-p22)*(b-p22)>0 ) { // p22 - external for [a,b] => split next edge
@@ -1530,7 +1532,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixIntersectingWires
           Bnd_Box2d B2 = boxes2.Find(edge2);
           if(!B1.IsOut(B2)) {
             // intersection is possible...
-            Standard_Real a1, b1, a2, b2;
+            Standard_Real a1 = NAN, b1 = NAN, a2 = NAN, b2 = NAN;
             Handle(Geom2d_Curve) Crv1, Crv2;
             if( !sae.PCurve(edge1, face, Crv1, a1, b1, Standard_False) ) 
               continue; //return Standard_False; gka 06.09.04
@@ -1631,7 +1633,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixIntersectingWires
                 Standard_Real dist1 = Pnt11.Distance(PV1);
                 Standard_Real dist2 = Pnt12.Distance(PV1);
                 Standard_Real maxdist = Max(dist1,dist2);
-                Standard_Real pdist;
+                Standard_Real pdist = NAN;
                 if(edge1.Orientation()==TopAbs_REVERSED)
                   pdist = Max(Abs(b1-p11),Abs(b1-p12));
                 else
@@ -1659,12 +1661,12 @@ Standard_Boolean ShapeFix_IntersectionTool::FixIntersectingWires
                   // cut edge1 and update tolerance NewV
                   Standard_Real dista = Abs(a1-p11)+Abs(a1-p12);
                   Standard_Real distb = Abs(b1-p11)+Abs(b1-p12);
-                  Standard_Real pend,cut;
+                  Standard_Real pend = NAN,cut = NAN;
                   if(dista>distb) pend=a1;
                   else pend=b1;
                   if(Abs(pend-p11)>Abs(pend-p12)) cut=p12;
                     else cut=p11;
-                  Standard_Boolean IsCutLine;
+                  Standard_Boolean IsCutLine = 0;
                   if(!CutEdge(edge1, pend, cut, face, IsCutLine))
                   {
                     IsModified1 = Standard_False;
@@ -1710,12 +1712,12 @@ Standard_Boolean ShapeFix_IntersectionTool::FixIntersectingWires
                   // cut edge1 and update tolerance NewV
                   Standard_Real dista = Abs(a2-p21)+Abs(a2-p22);
                   Standard_Real distb = Abs(b2-p21)+Abs(b2-p22);
-                  Standard_Real pend,cut;
+                  Standard_Real pend = NAN,cut = NAN;
                   if(dista>distb) pend=a2;
                   else pend=b2;
                   if(Abs(pend-p21)>Abs(pend-p22)) cut=p22;
                   else cut=p21;
-                  Standard_Boolean IsCutLine;
+                  Standard_Boolean IsCutLine = 0;
                   if(!CutEdge(edge2, pend, cut, face, IsCutLine))
                   {
                     IsModified2 = Standard_False;
@@ -1802,7 +1804,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixIntersectingWires
                       if(SplitEdge1(sewd1, face, num1, p11, NewV1, tolV1, boxes1)) {
                         NbModif++;
                         tmpE = sewd1->Edge (num1);
-                        Standard_Real a, b;
+                        Standard_Real a = NAN, b = NAN;
                         Handle (Geom2d_Curve) c2d;
                         sae.PCurve (tmpE, face, c2d, a, b, Standard_False);
                         if ((a - p12)*(b - p12) > 0)
@@ -1885,7 +1887,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixIntersectingWires
                         NbModif++;
                         numseg2=num2+1;
                         tmpE = sewd2->Edge (num2);
-                        Standard_Real a, b;
+                        Standard_Real a = NAN, b = NAN;
                         Handle (Geom2d_Curve) c2d;
                         sae.PCurve (tmpE, face, c2d, a, b, Standard_False);
                         if ((a - p22)*(b - p22) > 0)
@@ -1974,7 +1976,7 @@ Standard_Boolean ShapeFix_IntersectionTool::FixIntersectingWires
       B.Add(newface,wire);
     }
     for(i=1 ; i<=SeqNMShapes.Length(); i++) { 
-      TopoDS_Shape aNMS = SeqNMShapes.Value(i);
+      const TopoDS_Shape& aNMS = SeqNMShapes.Value(i);
       B.Add(newface,aNMS);
     }
     newface.Orientation(ori);

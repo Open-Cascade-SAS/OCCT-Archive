@@ -39,10 +39,10 @@ Message_Msg::Message_Msg ()
 //purpose  : Constructor
 //=======================================================================
 
-Message_Msg::Message_Msg (const Message_Msg& theMsg)
+Message_Msg::Message_Msg (const Message_Msg& theMsg) : myMessageBody(theMsg.myMessageBody), myOriginal(theMsg.myOriginal)
 {
-  myMessageBody = theMsg.myMessageBody;
-  myOriginal = theMsg.myOriginal;
+  
+  
   for ( Standard_Integer i = 1, n = theMsg.mySeqOfFormats.Length(); i <=n; i++ )
     mySeqOfFormats.Append ( theMsg.mySeqOfFormats.Value(i) );
 }
@@ -251,7 +251,7 @@ Message_Msg& Message_Msg::Arg (const Standard_Real theValue)
 const TCollection_ExtendedString& Message_Msg::Get ()
 {
   // remove all non-initialised format specifications
-  Standard_Integer i, anIncrement = 0;
+  Standard_Integer i = 0, anIncrement = 0;
   static const TCollection_ExtendedString anUnknown ("UNKNOWN");
   for (i = 1; i < mySeqOfFormats.Length(); i += 3)
   {

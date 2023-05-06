@@ -91,20 +91,20 @@ private:
 
 private:
 
-  const Adaptor3d_Surface* myS;
-  Standard_Boolean myDone;
-  Standard_Boolean myIsPar;
+  const Adaptor3d_Surface* myS{};
+  Standard_Boolean myDone{};
+  Standard_Boolean myIsPar{};
   Extrema_ExtElCS myExtElCS;
   Extrema_SequenceOfPOnSurf myPOnS;
   Extrema_SequenceOfPOnCurv myPOnC;
-  Standard_Real myuinf;
-  Standard_Real myusup;
-  Standard_Real myvinf;
-  Standard_Real myvsup;
-  Standard_Real mytolC;
-  Standard_Real mytolS;
-  Standard_Real myucinf;
-  Standard_Real myucsup;
+  Standard_Real myuinf{};
+  Standard_Real myusup{};
+  Standard_Real myvinf{};
+  Standard_Real myvsup{};
+  Standard_Real mytolC{};
+  Standard_Real mytolS{};
+  Standard_Real myucinf{};
+  Standard_Real myucsup{};
   TColStd_SequenceOfReal mySqDist;
   GeomAbs_SurfaceType myStype;
 

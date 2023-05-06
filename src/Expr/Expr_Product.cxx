@@ -34,7 +34,7 @@ IMPLEMENT_STANDARD_RTTIEXT(Expr_Product,Expr_PolyExpression)
 
 Expr_Product::Expr_Product (const Expr_SequenceOfGeneralExpression& exps)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = exps.Length();
   for (i=1; i<= max; i++) {
     AddOperand(exps(i));
@@ -49,7 +49,7 @@ Expr_Product::Expr_Product (const Handle(Expr_GeneralExpression)& exp1, const Ha
 
 Handle(Expr_GeneralExpression) Expr_Product::Copy () const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = NbOperands();
   Expr_SequenceOfGeneralExpression simps;
   for (i=1; i<= max; i++) {
@@ -98,7 +98,7 @@ Standard_Boolean Expr_Product::IsIdentical (const Handle(Expr_GeneralExpression)
 
 Standard_Boolean Expr_Product::IsLinear () const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = NbOperands();
   Standard_Boolean lin = Standard_True;
   Standard_Boolean res = Standard_True;
@@ -154,7 +154,7 @@ Handle(Expr_GeneralExpression) Expr_Product::Derivative (const Handle(Expr_Named
 
 Handle(Expr_GeneralExpression) Expr_Product::ShallowSimplified () const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = NbOperands();
   Handle(Expr_GeneralExpression) op;
   Expr_SequenceOfGeneralExpression newops;
@@ -168,7 +168,7 @@ Handle(Expr_GeneralExpression) Expr_Product::ShallowSimplified () const
   if (subprod) {
     Handle(Expr_GeneralExpression) other;
     Handle(Expr_Product) prodop;
-    Standard_Integer nbsprodop;
+    Standard_Integer nbsprodop = 0;
     for (i=1; i<= max; i++) {
       op = Operand(i);
       if (op->IsKind(STANDARD_TYPE(Expr_Product))) {

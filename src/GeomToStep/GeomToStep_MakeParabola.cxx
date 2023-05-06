@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Parabola.hxx>
 #include <Geom_Parabola.hxx>
 #include <GeomToStep_MakeAxis2Placement2d.hxx>
@@ -30,7 +32,7 @@
 // Creation d'une Parabola de prostep a partir d'une Parabola de
 // Geom2d
 //=============================================================================
-GeomToStep_MakeParabola::GeomToStep_MakeParabola(const Handle(Geom2d_Parabola)& C)
+GeomToStep_MakeParabola::GeomToStep_MakeParabola(const Handle(Geom2d_Parabola)& C) : GeomToStep_Root()
 {
   gp_Parab2d gpPar;
   gpPar = C->Parab2d();
@@ -38,7 +40,7 @@ GeomToStep_MakeParabola::GeomToStep_MakeParabola(const Handle(Geom2d_Parabola)& 
   Handle(StepGeom_Parabola) PStep = new StepGeom_Parabola;
   StepGeom_Axis2Placement            Ax2;
   Handle(StepGeom_Axis2Placement2d)  Ax2Step;
-  Standard_Real                   focal;
+  Standard_Real                   focal = NAN;
   
   GeomToStep_MakeAxis2Placement2d MkAxis2(gpPar.Axis());
   Ax2Step = MkAxis2.Value();
@@ -55,7 +57,7 @@ GeomToStep_MakeParabola::GeomToStep_MakeParabola(const Handle(Geom2d_Parabola)& 
 // Geom
 //=============================================================================
 
- GeomToStep_MakeParabola::GeomToStep_MakeParabola(const Handle(Geom_Parabola)& C)
+ GeomToStep_MakeParabola::GeomToStep_MakeParabola(const Handle(Geom_Parabola)& C) : GeomToStep_Root()
 {
   gp_Parab gpPar;
   gpPar = C->Parab();
@@ -63,7 +65,7 @@ GeomToStep_MakeParabola::GeomToStep_MakeParabola(const Handle(Geom2d_Parabola)& 
   Handle(StepGeom_Parabola) PStep = new StepGeom_Parabola;
   StepGeom_Axis2Placement            Ax2;
   Handle(StepGeom_Axis2Placement3d)  Ax2Step;
-  Standard_Real                   focal;
+  Standard_Real                   focal = NAN;
   
   GeomToStep_MakeAxis2Placement3d MkAxis2(gpPar.Position());
   Ax2Step = MkAxis2.Value();

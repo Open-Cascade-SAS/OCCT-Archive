@@ -29,7 +29,7 @@ Standard_Integer HashCode (const Standard_ShortReal theShortReal, const Standard
   {
     Standard_ShortReal R;
     Standard_Integer   I;
-  } U;
+  } U{};
   U.R = theShortReal;
 
   return HashCode (U.I, theUpperBound);

@@ -75,7 +75,7 @@ private:
 
   Handle(StepGeom_Surface) theBasisSurface;
   Handle(StepGeom_HArray1OfSurfaceBoundary) theBoundaries;
-  Standard_Boolean theImplicitOuter;
+  Standard_Boolean theImplicitOuter{};
 
 
 };

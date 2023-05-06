@@ -16,6 +16,8 @@
 
 //  Modified by skv - Thu Sep 30 15:21:07 2004 OCC593
 
+#include <math.h>
+
 #include <Extrema_GenExtPS.hxx>
 
 #include <Bnd_HArray1OfSphere.hxx>
@@ -56,9 +58,9 @@ Bnd_Sphere& theSol)
   Bnd_Sphere& Sphere() const
   { return mySol; }
 
-  virtual Standard_Boolean Reject( const Bnd_Sphere &theBnd ) const = 0;
+  Standard_Boolean Reject( const Bnd_Sphere &theBnd ) const override = 0;
   
-  virtual Standard_Boolean Accept(const Standard_Integer& theObj) = 0;
+  Standard_Boolean Accept(const Standard_Integer& theObj) override = 0;
  protected:
   gp_Pnt                              myXYZ;
   const Handle(Bnd_HArray1OfSphere)&  mySphereArray;
@@ -83,7 +85,7 @@ public:
   Standard_Real MinDist() const
   { return myMinDist; }
 
-  Standard_Boolean Reject( const Bnd_Sphere &theBnd ) const
+  Standard_Boolean Reject( const Bnd_Sphere &theBnd ) const override
   { 
     Bnd_SphereUBTreeSelectorMin* me =
       const_cast<Bnd_SphereUBTreeSelectorMin*>(this);
@@ -91,7 +93,7 @@ public:
     return theBnd.IsOut( myXYZ.XYZ(), me->myMinDist );
   }
 
-  Standard_Boolean Accept(const Standard_Integer&);
+  Standard_Boolean Accept(const Standard_Integer&) override;
 
 private:
 	Standard_Real	myMinDist;
@@ -100,7 +102,7 @@ private:
 Standard_Boolean Bnd_SphereUBTreeSelectorMin::Accept(const Standard_Integer& theInd)
 {
   const Bnd_Sphere& aSph = mySphereArray->Value(theInd);
-  Standard_Real aCurDist;
+  Standard_Real aCurDist = NAN;
 
 //    if ( (aCurDist = aSph.SquareDistance(myXYZ.XYZ())) < mySol.SquareDistance(myXYZ.XYZ()) )
     if ( (aCurDist = aSph.Distance(myXYZ.XYZ())) < mySol.Distance(myXYZ.XYZ()) )
@@ -130,7 +132,7 @@ public:
   Standard_Real MaxDist() const
   { return myMaxDist; }
 
-  Standard_Boolean Reject( const Bnd_Sphere &theBnd ) const
+  Standard_Boolean Reject( const Bnd_Sphere &theBnd ) const override
   { 
     Bnd_SphereUBTreeSelectorMax* me =
       const_cast<Bnd_SphereUBTreeSelectorMax*>(this);
@@ -138,7 +140,7 @@ public:
     return theBnd.IsOut( myXYZ.XYZ(), me->myMaxDist );
   }
 
-  Standard_Boolean Accept(const Standard_Integer&);
+  Standard_Boolean Accept(const Standard_Integer&) override;
 
 private:
 	Standard_Real	myMaxDist;
@@ -147,7 +149,7 @@ private:
 Standard_Boolean Bnd_SphereUBTreeSelectorMax::Accept(const Standard_Integer& theInd)
 {
   const Bnd_Sphere& aSph = mySphereArray->Value(theInd);
-  Standard_Real aCurDist;
+  Standard_Real aCurDist = NAN;
 
 //    if ( (aCurDist = aSph.SquareDistance(myXYZ.XYZ())) > mySol.SquareDistance(myXYZ.XYZ()) )
     if ( (aCurDist = aSph.Distance(myXYZ.XYZ())) > mySol.Distance(myXYZ.XYZ()) )
@@ -208,7 +210,7 @@ Processing:
 -----------------------------------------------------------------------------*/
 
 Extrema_GenExtPS::Extrema_GenExtPS()
-: myumin(0.0),
+: myDone(Standard_False), myInit(Standard_False), myumin(0.0),
   myusup(0.0),
   myvmin(0.0),
   myvsup(0.0),
@@ -216,12 +218,12 @@ Extrema_GenExtPS::Extrema_GenExtPS()
   myvsample(0),
   mytolu(0.0),
   mytolv(0.0),
-  myS(NULL)
+  myS(NULL), myFlag(Extrema_ExtFlag_MINMAX), myAlgo(Extrema_ExtAlgo_Grad)
 {
-  myDone = Standard_False;
-  myInit = Standard_False;
-  myFlag = Extrema_ExtFlag_MINMAX;
-  myAlgo = Extrema_ExtAlgo_Grad;
+  
+  
+  
+  
 }
 
 // =======================================================================
@@ -518,7 +520,7 @@ const Extrema_POnSurfParams& Extrema_GenExtPS::ComputeEdgeParameters
 
 void Extrema_GenExtPS::BuildGrid(const gp_Pnt &thePoint)
 {
-  Standard_Integer NoU, NoV;
+  Standard_Integer NoU = 0, NoV = 0;
 
   //if grid was already built skip its creation
   if (!myInit) {
@@ -638,9 +640,9 @@ void Extrema_GenExtPS::BuildGrid(const gp_Pnt &thePoint)
     // { Point(i, j); Point(i + 1, j); Point(i + 1, j + 1); Point(i, j + 1) }
     //   Or
     // { UEdge(i, j); VEdge(i + 1, j); UEdge(i, j + 1); VEdge(i, j) }
-    Standard_Real aSqrDist01;
-    Standard_Real aDiffDist;
-    Standard_Boolean isOut;
+    Standard_Real aSqrDist01 = NAN;
+    Standard_Real aDiffDist = NAN;
+    Standard_Boolean isOut = 0;
 
     for ( NoU = 1 ; NoU < myusample; NoU++ ) {
       for ( NoV = 1 ; NoV < myvsample; NoV++) {
@@ -680,8 +682,8 @@ void Extrema_GenExtPS::BuildGrid(const gp_Pnt &thePoint)
           // Find closest point inside the face.
           Standard_Real aU[2];
           Standard_Real aV[2];
-          Standard_Real aUPar;
-          Standard_Real aVPar;
+          Standard_Real aUPar = NAN;
+          Standard_Real aVPar = NAN;
 
           // Compute U parameter.
           aUE0.Parameter(aU[0], aV[0]);
@@ -720,7 +722,7 @@ static Standard_Real LengthOfIso(const Adaptor3d_Surface& theS, const GeomAbs_Is
   const Standard_Integer theNbPnts,  const Standard_Real thePar)
 {
   Standard_Real aLen = 0.;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Real dPar = (thePar2 - thePar1) / (theNbPnts - 1);
   gp_Pnt aP1, aP2;
   Standard_Real aPar = thePar1 + dPar;
@@ -836,7 +838,7 @@ void Extrema_GenExtPS::BuildTree()
   //build grid of parametric points 
   myUParams = new TColStd_HArray1OfReal(1,myusample );
   myVParams = new TColStd_HArray1OfReal(1,myvsample );
-  Standard_Integer NoU, NoV;
+  Standard_Integer NoU = 0, NoV = 0;
   Standard_Real U = U0, V = V0;
   for ( NoU = 1 ; NoU <= myusample; NoU++, U += PasU) 
     myUParams->SetValue(NoU, U);
@@ -905,17 +907,17 @@ void Extrema_GenExtPS::Perform(const gp_Pnt& P)
   if(myAlgo == Extrema_ExtAlgo_Grad)
   {
     BuildGrid(P);
-    Standard_Integer NoU,NoV;
+    Standard_Integer NoU = 0,NoV = 0;
 
     if(myFlag == Extrema_ExtFlag_MIN || myFlag == Extrema_ExtFlag_MINMAX) 
     {
       Extrema_ElementType anElemType;
-      Standard_Integer iU;
-      Standard_Integer iV;
-      Standard_Integer iU2;
-      Standard_Integer iV2;
-      Standard_Boolean isMin;
-      Standard_Integer i;
+      Standard_Integer iU = 0;
+      Standard_Integer iV = 0;
+      Standard_Integer iU2 = 0;
+      Standard_Integer iV2 = 0;
+      Standard_Boolean isMin = 0;
+      Standard_Integer i = 0;
 
       for (NoU = 1; NoU < myusample; NoU++) {
         for (NoV = 1; NoV < myvsample; NoV++) {
@@ -993,7 +995,7 @@ void Extrema_GenExtPS::Perform(const gp_Pnt& P)
     
     if(myFlag == Extrema_ExtFlag_MAX || myFlag == Extrema_ExtFlag_MINMAX)
     {
-      Standard_Real Dist;
+      Standard_Real Dist = NAN;
 
       for (NoU = 1; NoU <= myusample; NoU++)
       {

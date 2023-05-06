@@ -26,9 +26,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_ProductCategoryRelationship,Standard_Transi
 //function : StepBasic_ProductCategoryRelationship
 //purpose  : 
 //=======================================================================
-StepBasic_ProductCategoryRelationship::StepBasic_ProductCategoryRelationship ()
+StepBasic_ProductCategoryRelationship::StepBasic_ProductCategoryRelationship () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

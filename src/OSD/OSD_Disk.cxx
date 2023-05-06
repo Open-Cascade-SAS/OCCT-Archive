@@ -184,7 +184,7 @@ Standard_Integer OSD_Disk::DiskSize()
   ULONGLONG aSize = aNbTotalBytes.QuadPart / 512;
   return (Standard_Integer )aSize; // may be an overflow
 #else
-  struct statvfs aBuffer;
+  struct statvfs aBuffer{};
   if (statvfs (myDiskName.ToCString(), &aBuffer) == 0)
   {
     unsigned long aBSize512 = aBuffer.f_frsize / 512;
@@ -216,7 +216,7 @@ Standard_Integer OSD_Disk::DiskFree()
   ULONGLONG aSize = aNbFreeAvailableBytes.QuadPart / 512;
   return (Standard_Integer )aSize; // may be an overflow
 #else
-  struct statvfs aBuffer;
+  struct statvfs aBuffer{};
   if (statvfs (myDiskName.ToCString(), &aBuffer) == 0)
   {
     unsigned long aBSize512 = aBuffer.f_frsize / 512;

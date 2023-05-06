@@ -23,9 +23,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepVisual_TessellatedWire, StepVisual_TessellatedIte
 //purpose  : 
 //=======================================================================
 
-StepVisual_TessellatedWire::StepVisual_TessellatedWire ()
+StepVisual_TessellatedWire::StepVisual_TessellatedWire () : myHasGeometricModelLink(Standard_False)
 {
-  myHasGeometricModelLink = Standard_False;
+  
 }
 
 //=======================================================================

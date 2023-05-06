@@ -46,7 +46,7 @@ void RWHeaderSection_RWFileName::ReadStep
 
 	Handle(Interface_HArray1OfHAsciiString) aAuthor;
 	Handle(TCollection_HAsciiString) aAuthorItem;
-	Standard_Integer nsub3;
+	Standard_Integer nsub3 = 0;
 	nsub3 = data->SubListNumber(num, 3, Standard_False);
 	if (nsub3 !=0) {
 	  Standard_Integer nb3 = data->NbParams(nsub3);
@@ -65,7 +65,7 @@ void RWHeaderSection_RWFileName::ReadStep
 
 	Handle(Interface_HArray1OfHAsciiString) aOrganization;
 	Handle(TCollection_HAsciiString) aOrganizationItem;
-	Standard_Integer nsub4;
+	Standard_Integer nsub4 = 0;
 	nsub4 = data->SubListNumber(num, 4, Standard_False);
 	if (nsub4 !=0) {
 	  Standard_Integer nb4 = data->NbParams(nsub4);

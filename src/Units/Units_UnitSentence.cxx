@@ -65,7 +65,7 @@ void Units_UnitSentence::Analyse()
   if(Sequence()->Length()==0)
     return;
 
-  Standard_Integer index;
+  Standard_Integer index = 0;
   TCollection_AsciiString s;
   Handle(Units_Token) token;
   Handle(Units_Token) previoustoken;
@@ -177,7 +177,7 @@ void Units_UnitSentence::Analyse()
 void Units_UnitSentence::SetUnits
   (const Handle(Units_QuantitiesSequence)& aquantitiessequence)
 {
-  Standard_Integer index,jindex,kindex;
+  Standard_Integer index = 0,jindex = 0,kindex = 0;
   Standard_Boolean istheend=0;
   Handle(Units_Quantity) quantity;
   Handle(Units_TokensSequence) sequenceoftokens;
@@ -186,10 +186,8 @@ void Units_UnitSentence::SetUnits
   Handle(Units_Unit) unit;
   TCollection_AsciiString symbol;
 
-  Handle(Units_QuantitiesSequence) quantitiessequence = aquantitiessequence;
-
-  for(index=1; index<=quantitiessequence->Length(); index++) {
-    quantity = quantitiessequence->Value(index);
+  for(index=1; index<=aquantitiessequence->Length(); index++) {
+    quantity = aquantitiessequence->Value(index);
     unitssequence=quantity->Sequence();
     for(jindex=1; jindex<=unitssequence->Length(); jindex++) {
       unit = unitssequence->Value(jindex);

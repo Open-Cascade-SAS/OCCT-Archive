@@ -24,15 +24,15 @@
 #include <gp_Pnt2d.hxx>
 #include <StdFail_NotDone.hxx>
 
-GCE2d_MakeEllipse::GCE2d_MakeEllipse(const gp_Elips2d& E)
+GCE2d_MakeEllipse::GCE2d_MakeEllipse(const gp_Elips2d& E) : GCE2d_Root(), TheEllipse(new Geom2d_Ellipse(E))
 {
   TheError = gce_Done;
-  TheEllipse = new Geom2d_Ellipse(E);
+  
 }
 
 GCE2d_MakeEllipse::GCE2d_MakeEllipse(const gp_Ax22d&     Axis        ,
 				     const Standard_Real MajorRadius ,
-				     const Standard_Real MinorRadius )
+				     const Standard_Real MinorRadius ) : GCE2d_Root()
 {
   gce_MakeElips2d E = gce_MakeElips2d(Axis,MajorRadius,MinorRadius);
   TheError = E.Status();
@@ -44,7 +44,7 @@ GCE2d_MakeEllipse::GCE2d_MakeEllipse(const gp_Ax22d&     Axis        ,
 GCE2d_MakeEllipse::GCE2d_MakeEllipse(const gp_Ax2d&         MajorAxis   ,
 				     const Standard_Real    MajorRadius ,
 				     const Standard_Real    MinorRadius ,
-				     const Standard_Boolean Sense       )
+				     const Standard_Boolean Sense       ) : GCE2d_Root()
 {
   gce_MakeElips2d E = gce_MakeElips2d(MajorAxis,MajorRadius,MinorRadius,Sense);
   TheError = E.Status();
@@ -55,7 +55,7 @@ GCE2d_MakeEllipse::GCE2d_MakeEllipse(const gp_Ax2d&         MajorAxis   ,
 
 GCE2d_MakeEllipse::GCE2d_MakeEllipse(const gp_Pnt2d& S1     ,
 				     const gp_Pnt2d& S2     ,
-				     const gp_Pnt2d& Center ) {
+				     const gp_Pnt2d& Center ) : GCE2d_Root() {
   gce_MakeElips2d E = gce_MakeElips2d(S1,S2,Center);
   TheError = E.Status();
   if (TheError == gce_Done) {

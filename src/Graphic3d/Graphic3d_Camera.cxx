@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Graphic3d_Camera.hxx>
 
 #include <gp_Pln.hxx>
@@ -782,7 +784,7 @@ gp_XYZ Graphic3d_Camera::ViewDimensions (const Standard_Real theZValue) const
 {
   // view plane dimensions
   Standard_Real aSize = IsOrthographic() ? myScale : (2.0 * theZValue * myFOVyTan);
-  Standard_Real aSizeX, aSizeY;
+  Standard_Real aSizeX = NAN, aSizeY = NAN;
   if (myAspect > 1.0)
   {
     aSizeX = aSize * myAspect;

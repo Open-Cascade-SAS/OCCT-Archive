@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepExtrema_ExtCC.hxx>
 
 #include <BRep_Tool.hxx>
@@ -41,7 +43,7 @@ void BRepExtrema_ExtCC::Initialize(const TopoDS_Edge& E2)
 {
   if (!BRep_Tool::IsGeometric(E2))
     return;  // protect against non-geometric type (e.g. polygon)
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   BRepAdaptor_Curve Curv(E2);
   myHC = new BRepAdaptor_Curve(Curv);
   Standard_Real Tol = Min(BRep_Tool::Tolerance(E2), Precision::Confusion());
@@ -60,7 +62,7 @@ void BRepExtrema_ExtCC::Perform(const TopoDS_Edge& E1)
 {
   if (!BRep_Tool::IsGeometric(E1))
     return;  // protect against non-geometric type (e.g. polygon)
-  Standard_Real U1, U2;
+  Standard_Real U1 = NAN, U2 = NAN;
   BRepAdaptor_Curve Curv(E1);
   Handle(BRepAdaptor_Curve) HC = new BRepAdaptor_Curve(Curv);
   Standard_Real Tol = Min(BRep_Tool::Tolerance(E1), Precision::Confusion());

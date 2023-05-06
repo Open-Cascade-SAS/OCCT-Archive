@@ -73,8 +73,8 @@ private:
 
 
 
-  Standard_Boolean myDone;
-  Standard_Real mySqDist;
+  Standard_Boolean myDone{};
+  Standard_Real mySqDist{};
   Extrema_POnCurv myPoint1;
   Extrema_POnSurf myPoint2;
 

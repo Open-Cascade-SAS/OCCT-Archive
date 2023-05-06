@@ -16,6 +16,8 @@
 
 //              Convertir correctement les unites translatees
 
+#include <math.h>
+
 #include <Resource_Manager.hxx>
 #include <Standard_Type.hxx>
 #include <TCollection_AsciiString.hxx>
@@ -39,10 +41,10 @@ IMPLEMENT_STANDARD_RTTIEXT(Units_UnitsSystem,Standard_Transient)
 //function : Units_UnitsSystem
 //purpose  : 
 //=======================================================================
-Units_UnitsSystem::Units_UnitsSystem()
+Units_UnitsSystem::Units_UnitsSystem() : thequantitiessequence(new Units_QuantitiesSequence()), theactiveunitssequence(new TColStd_HSequenceOfInteger)
 {
-  thequantitiessequence = new Units_QuantitiesSequence();
-  theactiveunitssequence = new TColStd_HSequenceOfInteger;
+  
+  
 }
 
 
@@ -52,12 +54,12 @@ Units_UnitsSystem::Units_UnitsSystem()
 //=======================================================================
 
 Units_UnitsSystem::Units_UnitsSystem(const Standard_CString aName,
-                                     const Standard_Boolean Verbose)
+                                     const Standard_Boolean Verbose) : thequantitiessequence(new Units_QuantitiesSequence()), theactiveunitssequence(new TColStd_HSequenceOfInteger)
 {
   Handle(Resource_Manager) themanager = new Resource_Manager(aName,Verbose);
 
-  thequantitiessequence = new Units_QuantitiesSequence();
-  theactiveunitssequence = new TColStd_HSequenceOfInteger;
+  
+  
 }
 
 
@@ -90,7 +92,7 @@ Handle(TColStd_HSequenceOfInteger) Units_UnitsSystem::ActiveUnitsSequence() cons
 
 void Units_UnitsSystem::Specify(const Standard_CString aquantity,const Standard_CString aunit)
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   Handle(Units_Unit) unit;
   Handle(Units_UnitsSequence) unitssequence;
   Handle(Units_Quantity) quantity;
@@ -152,7 +154,7 @@ void Units_UnitsSystem::Specify(const Standard_CString aquantity,const Standard_
 void Units_UnitsSystem::Remove(const Standard_CString aquantity,
                                const Standard_CString aunit)
 {
-  Standard_Integer index1,index2;
+  Standard_Integer index1 = 0,index2 = 0;
   Handle(Units_Unit) unit;
   Handle(Units_UnitsSequence) unitssequence;
   Handle(Units_Quantity) quantity;
@@ -200,7 +202,7 @@ void Units_UnitsSystem::Remove(const Standard_CString aquantity,
 void Units_UnitsSystem::Activate(const Standard_CString aquantity,
                                  const Standard_CString aunit)
 {
-  Standard_Integer index1,index2;
+  Standard_Integer index1 = 0,index2 = 0;
   Handle(Units_Unit) unit;
   Handle(Units_UnitsSequence) unitssequence;
   Handle(Units_Quantity) quantity;
@@ -231,7 +233,7 @@ void Units_UnitsSystem::Activate(const Standard_CString aquantity,
 
 void Units_UnitsSystem::Activates()
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   Handle(Units_UnitsSequence) unitssequence;
   Handle(Units_Quantity) quantity;
 
@@ -252,7 +254,7 @@ void Units_UnitsSystem::Activates()
 
 TCollection_AsciiString Units_UnitsSystem::ActiveUnit(const Standard_CString aquantity) const
 {
-  Standard_Integer index1,index2;
+  Standard_Integer index1 = 0,index2 = 0;
   Handle(Units_Unit) unit;
   Handle(Units_UnitsSequence) unitssequence;
   Handle(Units_Quantity) quantity;
@@ -304,13 +306,13 @@ Standard_Real Units_UnitsSystem::ConvertValueToUserSystem
 Standard_Real Units_UnitsSystem::ConvertSIValueToUserSystem
   (const Standard_CString aquantity,const Standard_Real avalue) const
 {
-  Standard_Integer index,activeunit;
+  Standard_Integer index = 0,activeunit = 0;
   Handle(Units_UnitsSequence) unitssequence;
   Handle(Units_Quantity) quantity;
   Handle(Units_QuantitiesSequence) quantitiessequence;
   Handle(Units_Unit) unit;
   Handle(Units_ShiftedUnit) sunit;
-  Standard_Real uvalue,umove;
+  Standard_Real uvalue = NAN,umove = NAN;
 
   for(index=1;index<=thequantitiessequence->Length();index++) {
     quantity = thequantitiessequence->Value(index);
@@ -353,13 +355,13 @@ Standard_Real Units_UnitsSystem::ConvertSIValueToUserSystem
 Standard_Real Units_UnitsSystem::ConvertUserSystemValueToSI
   (const Standard_CString aquantity,const Standard_Real avalue) const
 {
-  Standard_Integer index,activeunit;
+  Standard_Integer index = 0,activeunit = 0;
   Handle(Units_UnitsSequence) unitssequence;
   Handle(Units_Quantity) quantity;
   Handle(Units_QuantitiesSequence) quantitiessequence;
   Handle(Units_Unit) unit;
   Handle(Units_ShiftedUnit) sunit;
-  Standard_Real uvalue,umove;
+  Standard_Real uvalue = NAN,umove = NAN;
 
   for(index=1;index<=thequantitiessequence->Length();index++) {
     quantity = thequantitiessequence->Value(index);

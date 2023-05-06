@@ -161,18 +161,18 @@ private:
   Handle(TCollection_HAsciiString) telephoneNumber;
   Handle(TCollection_HAsciiString) electronicMailAddress;
   Handle(TCollection_HAsciiString) telexNumber;
-  Standard_Boolean hasInternalLocation;
-  Standard_Boolean hasStreetNumber;
-  Standard_Boolean hasStreet;
-  Standard_Boolean hasPostalBox;
-  Standard_Boolean hasTown;
-  Standard_Boolean hasRegion;
-  Standard_Boolean hasPostalCode;
-  Standard_Boolean hasCountry;
-  Standard_Boolean hasFacsimileNumber;
-  Standard_Boolean hasTelephoneNumber;
-  Standard_Boolean hasElectronicMailAddress;
-  Standard_Boolean hasTelexNumber;
+  Standard_Boolean hasInternalLocation{};
+  Standard_Boolean hasStreetNumber{};
+  Standard_Boolean hasStreet{};
+  Standard_Boolean hasPostalBox{};
+  Standard_Boolean hasTown{};
+  Standard_Boolean hasRegion{};
+  Standard_Boolean hasPostalCode{};
+  Standard_Boolean hasCountry{};
+  Standard_Boolean hasFacsimileNumber{};
+  Standard_Boolean hasTelephoneNumber{};
+  Standard_Boolean hasElectronicMailAddress{};
+  Standard_Boolean hasTelexNumber{};
 
 
 };

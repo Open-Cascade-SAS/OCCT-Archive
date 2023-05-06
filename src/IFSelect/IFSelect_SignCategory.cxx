@@ -27,7 +27,7 @@ static Standard_CString nulsign = "";
     : IFSelect_Signature ("Category")
 {
   Interface_Category::Init();  // si pas deja fait
-  Standard_Integer i, nb = Interface_Category::NbCategories();
+  Standard_Integer i = 0, nb = Interface_Category::NbCategories();
   for (i = 1; i <= nb; i ++)  AddCase (Interface_Category::Name(i));
 }
 

@@ -14,6 +14,8 @@
 // performance of this software, and specifically disclaims any responsibility 
 // for any damages, special or consequential, connected with its use. 
 
+#include <math.h>
+
 #include <Geom2dConvert_ApproxArcsSegments.hxx>
 
 #include <Adaptor2d_Curve2d.hxx>
@@ -182,7 +184,7 @@ Standard_Boolean Geom2dConvert_ApproxArcsSegments::makeArc
     const Handle(Geom2d_Circle) Circ = new Geom2d_Circle(aCir);
 
       //calculation parameters first and last points of arc.
-    Standard_Real anAlpha1, anAlpha2;
+    Standard_Real anAlpha1 = NAN, anAlpha2 = NAN;
     if (isFirst) {
       anAlpha1 = ElCLib::Parameter(aCir, aP1);
       anAlpha2 = ElCLib::Parameter(aCir, aP2);
@@ -290,7 +292,7 @@ Standard_Boolean Geom2dConvert_ApproxArcsSegments::makeFreeform()
 
   TColGeom2d_SequenceOfCurve aSeqLinearParts;
   Standard_Boolean isDone (Standard_True);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i < seqParamPoints.Length(); i += 2)
   {
     Handle(Geom2d_Curve) aLineCurve;
@@ -372,7 +374,7 @@ Standard_Boolean Geom2dConvert_ApproxArcsSegments::makeFreeform()
 
 void Geom2dConvert_ApproxArcsSegments::getLinearParts (Geom2dConvert_SequenceOfPPoint& theSeqPar)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   // Fill the sequences with values along the curve
   mySeqParams.Clear();
   Adaptor2d_Curve2d& myCurveMut = const_cast<Adaptor2d_Curve2d&>(myCurve);

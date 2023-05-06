@@ -51,7 +51,7 @@ void RWStepDimTol_RWProjectedZoneDefinition::ReadStep (const Handle(StepData_Ste
   
   Handle(StepRepr_HArray1OfShapeAspect) anItems;
   Handle(StepRepr_ShapeAspect) anEnt;
-  Standard_Integer nbSub;
+  Standard_Integer nbSub = 0;
   if (data->ReadSubList (num,2,"tolerance_zone_definition.boundaries",ach,nbSub)) {
     Standard_Integer nbElements = data->NbParams(nbSub);
     anItems = new StepRepr_HArray1OfShapeAspect (1, nbElements);
@@ -112,7 +112,7 @@ void RWStepDimTol_RWProjectedZoneDefinition::Share (const Handle(StepDimTol_Proj
 
   iter.AddItem (ent->Zone());
   
-  Standard_Integer i, nb = ent->NbBoundaries();
+  Standard_Integer i = 0, nb = ent->NbBoundaries();
   for (i = 1; i <= nb; i++)  
     iter.AddItem (ent->BoundariesValue(i));
     

@@ -76,8 +76,8 @@ private:
   Handle(StepGeom_BoundedSurface) parentSurface;
   StepGeom_TransitionCode uTransition;
   StepGeom_TransitionCode vTransition;
-  Standard_Boolean uSense;
-  Standard_Boolean vSense;
+  Standard_Boolean uSense{};
+  Standard_Boolean vSense{};
 
 
 };

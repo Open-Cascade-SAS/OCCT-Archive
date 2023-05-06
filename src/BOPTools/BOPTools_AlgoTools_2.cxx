@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BOPTools_AlgoTools.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -40,7 +42,7 @@ void BOPTools_AlgoTools::UpdateVertex
   (const TopoDS_Vertex& aVF,
    const TopoDS_Vertex& aNewVertex)
 {
-  Standard_Real aTolVF, aTolNewVertex, aDist, aNewTol;
+  Standard_Real aTolVF = NAN, aTolNewVertex = NAN, aDist = NAN, aNewTol = NAN;
   //
   gp_Pnt aPVF=BRep_Tool::Pnt(aVF);
   gp_Pnt aPNewVertex=BRep_Tool::Pnt(aNewVertex);
@@ -64,7 +66,7 @@ void BOPTools_AlgoTools::UpdateVertex (const TopoDS_Edge& aE,
                                        const Standard_Real  aT,
                                        const TopoDS_Vertex& aV)
 {
-  Standard_Real aTolV, aDist, aFirst, aLast;
+  Standard_Real aTolV = NAN, aDist = NAN, aFirst = NAN, aLast = NAN;
   gp_Pnt  aPc; 
 
   gp_Pnt aPv=BRep_Tool::Pnt(aV);
@@ -87,7 +89,7 @@ void BOPTools_AlgoTools::UpdateVertex (const IntTools_Curve& aC,
                                        const Standard_Real  aT,
                                        const TopoDS_Vertex& aV)
 {
-  Standard_Real aTolV, aDist;
+  Standard_Real aTolV = NAN, aDist = NAN;
   gp_Pnt  aPc; 
 
   gp_Pnt aPv=BRep_Tool::Pnt(aV);
@@ -112,7 +114,7 @@ void BOPTools_AlgoTools::MakeSectEdge(const IntTools_Curve& aIC,
                                       const Standard_Real  aP2,
                                       TopoDS_Edge& aNewEdge)
 {
-  Handle(Geom_Curve) aC=aIC.Curve ();
+  const Handle(Geom_Curve)& aC=aIC.Curve ();
   
   BRepBuilderAPI_MakeEdge aMakeEdge(aC, aV1, aV2, aP1, aP2);
   
@@ -197,7 +199,7 @@ void BOPTools_AlgoTools::MakeNewVertex(const TopoDS_Vertex& aV1,
   gp_Pnt aPnt2=BRep_Tool::Pnt(aV2);
   Standard_Real aTol2=BRep_Tool::Tolerance(aV2);
 
-  Standard_Real aMaxTol, aDist;
+  Standard_Real aMaxTol = NAN, aDist = NAN;
         
   aDist=aPnt1.Distance(aPnt2);
   aMaxTol=(aTol1>aTol2)? aTol1 : aTol2;
@@ -233,7 +235,7 @@ void BOPTools_AlgoTools::MakeNewVertex(const TopoDS_Edge& aE1,
                                        const Standard_Real aParm2,
                                        TopoDS_Vertex& aNewVertex)
 {
-  Standard_Real aTol1, aTol2, aMaxTol, aDist; 
+  Standard_Real aTol1 = NAN, aTol2 = NAN, aMaxTol = NAN, aDist = NAN; 
   gp_Pnt aPnt1, aPnt2;
 
   PointOnEdge (aE1, aParm1, aPnt1);
@@ -263,7 +265,7 @@ void BOPTools_AlgoTools::MakeNewVertex(const TopoDS_Edge& aE1,
                                        const TopoDS_Face& aF1,
                                        TopoDS_Vertex& aNewVertex)
 {
-  Standard_Real aTol1, aTol2, aMaxTol;
+  Standard_Real aTol1 = NAN, aTol2 = NAN, aMaxTol = NAN;
   gp_Pnt aPnt;
 
   PointOnEdge (aE1, aParm1, aPnt);
@@ -285,7 +287,7 @@ void BOPTools_AlgoTools::PointOnEdge(const TopoDS_Edge& aE,
                                      const Standard_Real aParm,
                                      gp_Pnt& aPnt)
 {
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   Handle(Geom_Curve) C1=BRep_Tool::Curve(aE, f, l);
   C1->D0(aParm, aPnt);
 }
@@ -299,8 +301,8 @@ void BOPTools_AlgoTools::CorrectRange(const TopoDS_Edge& aE1,
                                       const IntTools_Range& aSR,
                                       IntTools_Range& aNewSR)
 {
-  Standard_Integer i;
-  Standard_Real aRes, aTolE1, aTolE2, aTF, aTL, dT;
+  Standard_Integer i = 0;
+  Standard_Real aRes = NAN, aTolE1 = NAN, aTolE2 = NAN, aTF = NAN, aTL = NAN, dT = NAN;
   BRepAdaptor_Curve aBC;
   GeomAbs_CurveType aCT;
   gp_Pnt aP;
@@ -372,8 +374,8 @@ void BOPTools_AlgoTools::CorrectRange(const TopoDS_Edge& aE,
                                       const IntTools_Range& aSR,
                                       IntTools_Range& aNewSR)
 {
-  Standard_Integer i;
-  Standard_Real aRes, aTolF, aTF, aTL, dT;
+  Standard_Integer i = 0;
+  Standard_Real aRes = NAN, aTolF = NAN, aTF = NAN, aTL = NAN, dT = NAN;
   BRepAdaptor_Curve aBC;
   GeomAbs_CurveType aCT;
   gp_Pnt aP;
@@ -500,7 +502,7 @@ void BOPTools_AlgoTools::Dimensions (const TopoDS_Shape& theS,
 //=======================================================================
 Standard_Integer BOPTools_AlgoTools::Dimension(const TopoDS_Shape& theS)
 {
-  Standard_Integer aDMin, aDMax;
+  Standard_Integer aDMin = 0, aDMax = 0;
   Dimensions (theS, aDMin, aDMax);
   return (aDMin == aDMax) ? aDMin : -1;
 }

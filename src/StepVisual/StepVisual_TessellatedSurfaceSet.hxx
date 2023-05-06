@@ -67,7 +67,7 @@ public :
 private:
 
   Handle(StepVisual_CoordinatesList) myCoordinates;
-  Standard_Integer myPnmax;
+  Standard_Integer myPnmax{};
   Handle(TColStd_HArray2OfReal) myNormals;
 
 };

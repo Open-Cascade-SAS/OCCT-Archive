@@ -334,7 +334,7 @@ void Xw_Window::Position (Standard_Integer& theX1, Standard_Integer& theY1,
   XWindowAttributes anAttributes;
   memset (&anAttributes, 0, sizeof(anAttributes));
   XGetWindowAttributes (myDisplay->GetDisplay(), (Window )myXWindow, &anAttributes);
-  Window aChild;
+  Window aChild = 0;
   XTranslateCoordinates (myDisplay->GetDisplay(), anAttributes.root, (Window )myXWindow,
                          0, 0, &anAttributes.x, &anAttributes.y, &aChild);
 

@@ -250,7 +250,7 @@ Standard_Boolean  XSControl_WorkSession::PrintTransferStatus(const Standard_Inte
 //   ***   CHECK (commun READ+WRITE)   ***
   if (!binder.IsNull()) {
     const Handle(Interface_Check) ch = binder->Check();
-    Standard_Integer i,nbw = ch->NbWarnings(), nbf = ch->NbFails();
+    Standard_Integer i = 0,nbw = ch->NbWarnings(), nbf = ch->NbFails();
     if (nbw > 0) {
       S<<" - Warnings : "<<nbw<<" :\n";
       for (i = 1; i <= nbw; i ++) S<<ch->CWarning(i)<<std::endl;
@@ -288,13 +288,13 @@ void  XSControl_WorkSession::InitTransferReader(const Standard_Integer mode)
       TP->SetGraph (HGraph());
     }
     Handle(TColStd_HSequenceOfTransient) lis = myTransferReader->RecordedList();
-    Standard_Integer i, nb = lis->Length();
+    Standard_Integer i = 0, nb = lis->Length();
     for (i = 1; i <= nb; i ++) TP->SetRoot(lis->Value(i));
   }
   if (mode == 3) {
     Handle(Transfer_TransientProcess) TP = myTransferReader->TransientProcess();
     if (TP.IsNull()) return;
-    Standard_Integer i, nb = TP->NbRoots();
+    Standard_Integer i = 0, nb = TP->NbRoots();
     for (i = 1; i <= nb; i ++) myTransferReader->RecordResult(TP->Root(i));
   }
   if (mode == 4 || mode == 5) myTransferReader->BeginTransfer();

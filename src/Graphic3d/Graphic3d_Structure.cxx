@@ -26,6 +26,7 @@
 
 #include <Standard_Dump.hxx>
 
+#include <math.h>
 #include <stdio.h>
 
 IMPLEMENT_STANDARD_RTTIEXT(Graphic3d_Structure,Standard_Transient)
@@ -873,7 +874,7 @@ void Graphic3d_Structure::TransformBoundaries (const gp_Trsf& theTrsf,
                                                Standard_Real& theYMax,
                                                Standard_Real& theZMax)
 {
-  Standard_Real aXMin, aYMin, aZMin, aXMax, aYMax, aZMax, anU, aV, aW;
+  Standard_Real aXMin = NAN, aYMin = NAN, aZMin = NAN, aXMax = NAN, aYMax = NAN, aZMax = NAN, anU = NAN, aV = NAN, aW = NAN;
 
   Graphic3d_Structure::Transforms (theTrsf, theXMin, theYMin, theZMin, aXMin, aYMin, aZMin);
   Graphic3d_Structure::Transforms (theTrsf, theXMax, theYMax, theZMax, aXMax, aYMax, aZMax);

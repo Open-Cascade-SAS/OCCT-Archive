@@ -19,6 +19,8 @@
 //              Condition d'extraction corrigee
 //              + positionnement par EvalPoly2Var
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <BSplSLib.hxx>
 #include <Convert_GridPolynomialToPoles.hxx>
@@ -86,13 +88,13 @@ Convert_GridPolynomialToPoles(
 			      const Handle(TColStd_HArray1OfReal)& PolynomialVIntervals,
 			      const Handle(TColStd_HArray1OfReal)& TrueUIntervals,
 			      const Handle(TColStd_HArray1OfReal)& TrueVIntervals) :
-			      myDone(Standard_False)
+			      myUDegree(0), myVDegree(0), myDone(Standard_False)
 {
-  Standard_Integer ii;
+  Standard_Integer ii = 0;
   Standard_Integer RealUDegree = Max(MaxUDegree, 2*UContinuity + 1);
   Standard_Integer RealVDegree = Max(MaxVDegree, 2*VContinuity + 1);
-  myUDegree = 0;
-  myVDegree = 0;
+  
+  
   
   // Les controles
   if((NumCoeffPerSurface->LowerRow()!=1) || 
@@ -167,9 +169,9 @@ void Convert_GridPolynomialToPoles::Perform(const Standard_Integer UContinuity,
 
  // (2) Digitalisation -------------------------------------------------------
 
-   Standard_Integer ii, jj, Uindex=0, Vindex=0;
+   Standard_Integer ii = 0, jj = 0, Uindex=0, Vindex=0;
    Standard_Integer Patch_Indice=0;
-   Standard_Real NValue, UValue, VValue;
+   Standard_Real NValue = NAN, UValue = NAN, VValue = NAN;
    Standard_Integer dimension = 3*( myVDegree+1);
    Standard_Integer SizPatch = 3 * (MaxUDegree+1) * (MaxVDegree+1);
    myPoles = new (TColgp_HArray2OfPnt) (1, UParameters->Length(), 
@@ -202,7 +204,7 @@ void Convert_GridPolynomialToPoles::Perform(const Standard_Integer UContinuity,
 
       // (2.1) Extraction du bon Patch
       if (Patch_Indice != Uindex + (myUKnots->Length()-1)*(Vindex-1)) {
-	Standard_Integer k1, k2, pos, ll=1;
+	Standard_Integer k1 = 0, k2 = 0, pos = 0, ll=1;
 	Patch_Indice = Uindex + (myUKnots->Length()-1)*(Vindex-1);
 	for (k1 = 1; k1 <= NumCoeffPerSurface->Value(Patch_Indice, 1); k1++) {
 	  pos = SizPatch*(Patch_Indice-1)+3*(MaxVDegree+1)*(k1-1)+1;
@@ -232,7 +234,7 @@ void Convert_GridPolynomialToPoles::Perform(const Standard_Integer UContinuity,
 
  // (3)Interpolation --------------------------------------------------------------
 
-  Standard_Integer InversionProblem;
+  Standard_Integer InversionProblem = 0;
   BSplSLib::Interpolate(myUDegree, myVDegree, 
 			myUFlatKnots->Array1(),
 			myVFlatKnots->Array1(),
@@ -254,7 +256,7 @@ void  Convert_GridPolynomialToPoles::BuildArray(const Standard_Integer Degree,
  Standard_Integer NumCurves =  Knots->Length()-1;
 
  // Calcul des Multiplicites
- Standard_Integer ii;
+ Standard_Integer ii = 0;
  Standard_Integer multiplicities = Degree - Continuity;
  Mults = new (TColStd_HArray1OfInteger)(1, Knots->Length());
 

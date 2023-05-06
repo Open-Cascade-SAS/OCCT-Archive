@@ -17,15 +17,15 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Vrml_Normal,Standard_Transient)
 
-Vrml_Normal::Vrml_Normal(const Handle(TColgp_HArray1OfVec)& aVector)
+Vrml_Normal::Vrml_Normal(const Handle(TColgp_HArray1OfVec)& aVector) : myVector(aVector)
 {
- myVector = aVector;
+ 
 }
 
- Vrml_Normal::Vrml_Normal()
+ Vrml_Normal::Vrml_Normal() : myVector(new TColgp_HArray1OfVec (1,1))
 {
  gp_Vec Tmp_Vec;
- myVector = new TColgp_HArray1OfVec (1,1);
+ 
  
  Tmp_Vec.SetX(0); Tmp_Vec.SetY(0); Tmp_Vec.SetZ(1);
  myVector->SetValue(1,Tmp_Vec);
@@ -43,7 +43,7 @@ Handle(TColgp_HArray1OfVec) Vrml_Normal::Vector() const
 
 Standard_OStream& Vrml_Normal::Print(Standard_OStream& anOStream) const 
 {
- Standard_Integer i;
+ Standard_Integer i = 0;
 
  anOStream  << "Normal {\n";
  i = myVector->Lower();

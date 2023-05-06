@@ -42,7 +42,7 @@ GccAna_Circ2d2TanOn::
                         const gp_Pnt2d&      Point2     ,
                         const gp_Lin2d&      OnLine     ,
                         const Standard_Real  Tolerance  ):
-   cirsol(1,2)      ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,2)      ,
    qualifier1(1,2)  ,
    qualifier2(1,2),
    TheSame1(1,2)  ,
@@ -58,8 +58,8 @@ GccAna_Circ2d2TanOn::
 {
   TheSame1.Init(0);
   TheSame2.Init(0);
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   
   gp_Dir2d dirx(1.,0.);
   Standard_Real dist   = Point1.Distance(Point2);

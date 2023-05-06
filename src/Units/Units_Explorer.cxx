@@ -26,10 +26,10 @@
 //function : Units_Explorer
 //purpose  : 
 //=======================================================================
-Units_Explorer::Units_Explorer()
+Units_Explorer::Units_Explorer() : thecurrentquantity(1), thecurrentunit(1)
 {
-  thecurrentquantity = 1;
-  thecurrentunit = 1;
+  
+  
 }
 
 //=======================================================================
@@ -95,7 +95,7 @@ void Units_Explorer::Init(const Handle(Units_UnitsSystem)& aunitssystem)
 
 void Units_Explorer::Init(const Handle(Units_UnitsDictionary)& aunitsdictionary)
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   thecurrentquantity = 1;
   thequantitiessequence = aunitsdictionary->Sequence();
   theactiveunitssequence = new TColStd_HSequenceOfInteger();
@@ -116,7 +116,7 @@ void Units_Explorer::Init(const Handle(Units_UnitsDictionary)& aunitsdictionary)
 void Units_Explorer::Init(const Handle(Units_UnitsSystem)& aunitssystem,
 			  const Standard_CString aquantity)
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   thecurrentquantity = 0;
   thequantitiessequence = aunitssystem->QuantitiesSequence();
   theactiveunitssequence = aunitssystem->ActiveUnitsSequence();
@@ -145,7 +145,7 @@ void Units_Explorer::Init(const Handle(Units_UnitsDictionary)& aunitsdictionary,
 			  const Standard_CString aquantity)
 {
   Handle(Units_Quantity) quantity;
-  Standard_Integer index;
+  Standard_Integer index = 0;
   thecurrentquantity = 0;
   thequantitiessequence = aunitsdictionary->Sequence();
   theactiveunitssequence = new TColStd_HSequenceOfInteger();

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2dHatch_Hatching.hxx>
 #include <gp_Pnt2d.hxx>
 #include <HatchGen_Domain.hxx>
@@ -165,7 +167,7 @@ void Geom2dHatch_Hatching::AddPoint (const HatchGen_PointOnHatching& Point,
 {
   Standard_Integer NbPoints = myPoints.Length () ;
 //for (Standard_Integer IPntH = 1 ; IPntH <= NbPoints ; IPntH++) {
-  Standard_Integer IPntH;
+  Standard_Integer IPntH = 0;
   for (IPntH = 1 ; IPntH <= NbPoints ; IPntH++) {
     const HatchGen_PointOnHatching& PntH = myPoints.Value (IPntH) ;
     if (!PntH.IsLower (Point, Confusion)) break ;
@@ -323,7 +325,7 @@ void Geom2dHatch_Hatching::ClrDomains ()
 // Purpose  : returns a 2d point on the curve 
 //=======================================================================
 gp_Pnt2d Geom2dHatch_Hatching::ClassificationPoint () const { 
-  Standard_Real t,a,b;
+  Standard_Real t = NAN,a = NAN,b = NAN;
   a = myCurve.FirstParameter();
   b = myCurve.LastParameter();
   if(b >= Precision::Infinite()) { 

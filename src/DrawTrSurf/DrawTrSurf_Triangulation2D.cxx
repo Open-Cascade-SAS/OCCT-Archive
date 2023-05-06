@@ -43,7 +43,7 @@ DrawTrSurf_Triangulation2D::DrawTrSurf_Triangulation2D
   // Build the connect tool
   Poly_Connect pc(T);
 
-  Standard_Integer i,j,nFree, nInternal, nbTriangles = T->NbTriangles();
+  Standard_Integer i = 0,j = 0,nFree = 0, nInternal = 0, nbTriangles = T->NbTriangles();
   Standard_Integer t[3];
 
   // count the free edges
@@ -102,7 +102,7 @@ Handle(Poly_Triangulation) DrawTrSurf_Triangulation2D::Triangulation() const
 void DrawTrSurf_Triangulation2D::DrawOn(Draw_Display& dis) const 
 {
   // Display the edges
-  Standard_Integer i,n;
+  Standard_Integer i = 0,n = 0;
   if (myTriangulation->HasUVNodes())
   {
     // free edges

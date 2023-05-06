@@ -411,7 +411,7 @@ void TNaming_Tool::FirstOlds (const Handle(TNaming_UsedShapes)& US,
 			      TopTools_IndexedMapOfShape& MS,
 			      TDF_LabelList&          Labels) 
 {  
-  Standard_Integer TransDef;
+  Standard_Integer TransDef = 0;
   Standard_Boolean YaModif = 0;
 
   for (; it.More(); it.Next()) {
@@ -445,7 +445,7 @@ TopoDS_Shape TNaming_Tool::InitialShape(const TopoDS_Shape&  S,
 
   if (!TNaming_Tool::HasLabel(US,S)) return Res;
 
-  Standard_Integer Transdef;
+  Standard_Integer Transdef = 0;
   Label(US,S,Transdef); 
   TopTools_IndexedMapOfShape MS;
   TNaming_OldShapeIterator it(S,Transdef,US);

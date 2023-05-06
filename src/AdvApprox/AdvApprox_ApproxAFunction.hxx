@@ -138,7 +138,7 @@ private:
   Standard_EXPORT void Perform (const Standard_Integer Num1DSS, const Standard_Integer Num2DSS, const Standard_Integer Num3DSS, const AdvApprox_Cutting& CutTool);
 
 
-  Standard_Integer myNumSubSpaces[3];
+  Standard_Integer myNumSubSpaces[3]{};
   Handle(TColStd_HArray1OfReal) my1DTolerances;
   Handle(TColStd_HArray1OfReal) my2DTolerances;
   Handle(TColStd_HArray1OfReal) my3DTolerances;
@@ -154,7 +154,7 @@ private:
   Handle(TColgp_HArray2OfPnt) my3DPoles;
   Handle(TColStd_HArray1OfReal) myKnots;
   Handle(TColStd_HArray1OfInteger) myMults;
-  Standard_Integer myDegree;
+  Standard_Integer myDegree{};
   Standard_Address myEvaluator;
   Handle(TColStd_HArray1OfReal) my1DMaxError;
   Handle(TColStd_HArray1OfReal) my1DAverageError;

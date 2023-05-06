@@ -65,7 +65,7 @@ IFSelect_DispPerSignature::IFSelect_DispPerSignature ()    {  }
   thesign->Clear();
   thesign->AddList (FinalSelection()->RootResult(G).Content(),G.Model());
   Handle(TColStd_HSequenceOfHAsciiString) list = thesign->List();
-  Standard_Integer i,nb,is,nbs = list->Length();
+  Standard_Integer i = 0,nb = 0,is = 0,nbs = list->Length();
   Handle(TCollection_HAsciiString) asign;
   Handle(TColStd_HSequenceOfTransient) ents;
   for (is = 1; is <= nbs; is ++) {

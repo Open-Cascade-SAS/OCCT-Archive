@@ -19,11 +19,11 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(IFSelect_SelectType,IFSelect_SelectAnyType)
 
-IFSelect_SelectType::IFSelect_SelectType ()
-      {  thetype = STANDARD_TYPE(Standard_Transient);  }
+IFSelect_SelectType::IFSelect_SelectType () : thetype(STANDARD_TYPE(Standard_Transient))
+      {   }
 
-    IFSelect_SelectType::IFSelect_SelectType (const Handle(Standard_Type)& atype)
-      {  thetype = atype;  }
+    IFSelect_SelectType::IFSelect_SelectType (const Handle(Standard_Type)& atype) : thetype(atype)
+      {   }
 
     void  IFSelect_SelectType::SetType (const Handle(Standard_Type)& atype)
       {  thetype = atype;  }

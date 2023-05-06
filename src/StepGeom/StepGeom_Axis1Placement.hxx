@@ -64,7 +64,7 @@ private:
 
 
   Handle(StepGeom_Direction) axis;
-  Standard_Boolean hasAxis;
+  Standard_Boolean hasAxis{};
 
 
 };

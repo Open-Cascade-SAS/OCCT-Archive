@@ -44,7 +44,7 @@ void RWStepVisual_RWPresentationArea::ReadStep
 
 	Handle(StepRepr_HArray1OfRepresentationItem) aItems;
 	Handle(StepRepr_RepresentationItem) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"items",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aItems = new StepRepr_HArray1OfRepresentationItem (1, nb2);

@@ -783,8 +783,8 @@ private: //! @name Fields
   // Inputs
   Standard_Boolean myRunParallel;                     //!< Defines the mode of processing of the single feature
   TopoDS_Shape myFeature;                             //!< Feature to remove
-  TopTools_IndexedDataMapOfShapeListOfShape* myEFMap; //!< EF Connection map to find adjacent faces
-  TopTools_IndexedDataMapOfShapeListOfShape* myFSMap; //!< FS Connection map to find solids participating in the feature removal
+  TopTools_IndexedDataMapOfShapeListOfShape* myEFMap{}; //!< EF Connection map to find adjacent faces
+  TopTools_IndexedDataMapOfShapeListOfShape* myFSMap{}; //!< FS Connection map to find solids participating in the feature removal
   Message_ProgressRange                      myRange; //!< Indication of progress
 
   // Results

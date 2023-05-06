@@ -17,6 +17,8 @@
 // - fixed trimming of circles and ellipses (radians used instead of degrees)
 //szv#4 S4163
 
+#include <math.h>
+
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -109,8 +111,8 @@ const Handle(TColStd_HSequenceOfTransient)& TopoDSToStep_WireframeBuilder::Value
 #define Nbpt 23
 
 static Handle(StepGeom_TrimmedCurve) MakeTrimmedCurve (const Handle(StepGeom_Curve) &C,
-						       const Handle(StepGeom_CartesianPoint) P1, 
-						       const Handle(StepGeom_CartesianPoint) P2, 
+						       const Handle(StepGeom_CartesianPoint)& P1, 
+						       const Handle(StepGeom_CartesianPoint)& P2, 
 						       Standard_Real trim1,
 						       Standard_Real trim2,
 						       Standard_Boolean sense)
@@ -195,7 +197,7 @@ Standard_Boolean TopoDSToStep_WireframeBuilder::
     }
   }
 
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   Handle(Geom_Curve) aC = BRep_Tool::Curve(anEdge, aFirst, aLast);
 
   if (!aC.IsNull())
@@ -209,7 +211,7 @@ Standard_Boolean TopoDSToStep_WireframeBuilder::
     {
       return Standard_False;
     }
-    Handle(StepGeom_Curve) aPMSC = aGTSMC.Value();
+    const Handle(StepGeom_Curve)& aPMSC = aGTSMC.Value();
 
     // trim the curve
     Standard_Real aTrim1 = aCA.FirstParameter();
@@ -257,7 +259,7 @@ Standard_Boolean TopoDSToStep_WireframeBuilder::
     Standard_Boolean aIPlan = Standard_False;
     if (!theFace.IsNull())
     {
-      Standard_Real aCF, aCL;
+      Standard_Real aCF = NAN, aCL = NAN;
       Handle(Geom2d_Curve) aC2d = BRep_Tool::CurveOnSurface(anEdge, theFace, aCF, aCL);
       Handle(Geom_Surface) aS = BRep_Tool::Surface(theFace);
       if (aS->IsKind(STANDARD_TYPE(Geom_Plane)) && aC2d->IsKind(STANDARD_TYPE(Geom2d_Line)))

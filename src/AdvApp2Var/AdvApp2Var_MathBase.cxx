@@ -265,14 +265,14 @@ int AdvApp2Var_MathBase::mdsptpt_(integer *ndimen,
 {
   integer c__8 = 8;
   /* System generated locals */
-  integer i__1;
-  doublereal d__1;
+  integer i__1 = 0;
+  doublereal d__1 = NAN;
 
   /* Local variables */
-  integer i__;
+  integer i__ = 0;
   doublereal* differ = 0;
-  integer  ier;
-  intptr_t iofset, j;
+  integer  ier = 0;
+  intptr_t iofset = 0, j = 0;
 
 /* ********************************************************************** 
 */
@@ -384,10 +384,10 @@ int mfac_(doublereal *f,
 
 {
     /* System generated locals */
-    integer i__1;
+    integer i__1 = 0;
 
     /* Local variables */
-    integer i__;
+    integer i__ = 0;
 
 /*    FORTRAN CONFORME AU TEXT */
 /*     CALCUL DE MFACTORIEL N */
@@ -416,11 +416,11 @@ int AdvApp2Var_MathBase::mmapcmp_(integer *ndim,
 
 {
   /* System generated locals */
-  integer crvold_dim1, crvold_offset, crvnew_dim1, crvnew_offset, i__1, 
-  i__2;
+  integer crvold_dim1 = 0, crvold_offset = 0, crvnew_dim1 = 0, crvnew_offset = 0, i__1 = 0, 
+  i__2 = 0;
 
   /* Local variables */
-  integer ipair, nd, ndegre, impair, ibb, idg;
+  integer ipair = 0, nd = 0, ndegre = 0, impair = 0, ibb = 0, idg = 0;
   //extern  int  mgsomsg_();//mgenmsg_(),
 
 /* ********************************************************************** 
@@ -532,13 +532,13 @@ int mmaper0_(integer *ncofmx,
 
 {
   /* System generated locals */
-  integer crvlgd_dim1, crvlgd_offset, i__1, i__2;
-  doublereal d__1;
+  integer crvlgd_dim1 = 0, crvlgd_offset = 0, i__1 = 0, i__2 = 0;
+  doublereal d__1 = NAN;
 
   /* Local variables */
-  integer ncut;
-  doublereal bidon;
-  integer ii, nd;
+  integer ncut = 0;
+  doublereal bidon = NAN;
+  integer ii = 0, nd = 0;
 
 /* ***********************************************************************
  */
@@ -710,13 +710,13 @@ int mmaper2_(integer *ncofmx,
 	    3.72184531357268220291630708234186 };
 
     /* System generated locals */
-    integer crvjac_dim1, crvjac_offset, i__1, i__2;
-    doublereal d__1;
+    integer crvjac_dim1 = 0, crvjac_offset = 0, i__1 = 0, i__2 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
-    integer idec, ncut;
-    doublereal bidon;
-    integer ii, nd;
+    integer idec = 0, ncut = 0;
+    doublereal bidon = NAN;
+    integer ii = 0, nd = 0;
 
 
 
@@ -894,13 +894,13 @@ int mmaper4_(integer *ncofmx,
 	    3.05886060707437081434964933864149 };
 
     /* System generated locals */
-    integer crvjac_dim1, crvjac_offset, i__1, i__2;
-    doublereal d__1;
+    integer crvjac_dim1 = 0, crvjac_offset = 0, i__1 = 0, i__2 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
-    integer idec, ncut;
-    doublereal bidon;
-    integer ii, nd;
+    integer idec = 0, ncut = 0;
+    doublereal bidon = NAN;
+    integer ii = 0, nd = 0;
 
 
 
@@ -1073,13 +1073,13 @@ int mmaper6_(integer *ncofmx,
 	    2.71238965987606292679677228666411 };
 
     /* System generated locals */
-    integer crvjac_dim1, crvjac_offset, i__1, i__2;
-    doublereal d__1;
+    integer crvjac_dim1 = 0, crvjac_offset = 0, i__1 = 0, i__2 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
-    integer idec, ncut;
-    doublereal bidon;
-    integer ii, nd;
+    integer idec = 0, ncut = 0;
+    doublereal bidon = NAN;
+    integer ii = 0, nd = 0;
 
 
 
@@ -1196,10 +1196,10 @@ int AdvApp2Var_MathBase::mmaperx_(integer *ncofmx,
 
 {
   /* System generated locals */
-  integer crvjac_dim1, crvjac_offset;
+  integer crvjac_dim1 = 0, crvjac_offset = 0;
 
   /* Local variables */
-  integer jord;
+  integer jord = 0;
 
 /* ********************************************************************** 
 */
@@ -1291,15 +1291,15 @@ int AdvApp2Var_MathBase::mmaperx_(integer *ncofmx,
 
 {
   /* System generated locals */
-    integer crvold_dim1, crvold_offset, crvnew_dim1, crvnew_offset, i__1, 
-    i__2, i__3;
+    integer crvold_dim1 = 0, crvold_offset = 0, crvnew_dim1 = 0, crvnew_offset = 0, i__1 = 0, 
+    i__2 = 0, i__3 = 0;
     
     /* Local variables */
-    integer nboct;
+    integer nboct = 0;
     doublereal tbaux[61];
-    integer nd;
-    doublereal bid;
-    integer ncf, ncj;
+    integer nd = 0;
+    doublereal bid = NAN;
+    integer ncf = 0, ncj = 0;
 
 
 /*      IMPLICIT DOUBLE PRECISION(A-H,O-Z) */
@@ -1535,19 +1535,19 @@ int AdvApp2Var_MathBase::mmarcin_(integer *ndimax,
 
 {
   /* System generated locals */
-  integer crvold_dim1, crvold_offset, crvnew_dim1, crvnew_offset, i__1, 
-  i__2, i__3;
-  doublereal d__1;
+  integer crvold_dim1 = 0, crvold_offset = 0, crvnew_dim1 = 0, crvnew_offset = 0, i__1 = 0, 
+  i__2 = 0, i__3 = 0;
+  doublereal d__1 = NAN;
   
   /* Local variables */
-  doublereal x0, x1;
-  integer nd;
+  doublereal x0 = NAN, x1 = NAN;
+  integer nd = 0;
   doublereal tabaux[61];
-  integer ibb;
-  doublereal bid;
-  integer ncf;
-  integer ncj;
-  doublereal eps3;
+  integer ibb = 0;
+  doublereal bid = NAN;
+  integer ncf = 0;
+  integer ncj = 0;
+  doublereal eps3 = NAN;
   
 
 
@@ -1762,13 +1762,13 @@ int mmatvec_(integer *nligne,
 
 {
   /* System generated locals */
-  integer i__1, i__2;
+  integer i__1 = 0, i__2 = 0;
   
   /* Local variables */
-    logical ldbg;
-  integer jmin, jmax, i__, j, k;
-  doublereal somme;
-  integer aux;
+    logical ldbg = 0;
+  integer jmin = 0, jmax = 0, i__ = 0, j = 0, k = 0;
+  doublereal somme = NAN;
+  integer aux = 0;
 
 
 /* ***********************************************************************
@@ -1912,12 +1912,12 @@ int AdvApp2Var_MathBase::mmbulld_(integer *nbcoln,
 
 {
   /* System generated locals */
-  integer dtabtr_dim1, dtabtr_offset, i__1, i__2;
+  integer dtabtr_dim1 = 0, dtabtr_offset = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  logical ldbg;
-  doublereal daux;
-  integer nite1, nite2, nchan, i1, i2;
+  logical ldbg = 0;
+  doublereal daux = NAN;
+  integer nite1 = 0, nite2 = 0, nchan = 0, i1 = 0, i2 = 0;
   
 /* ***********************************************************************
  */
@@ -2064,12 +2064,12 @@ int AdvApp2Var_MathBase::mmcdriv_(integer *ndimen,
 
 {
   /* System generated locals */
-  integer courbe_dim1, courbe_offset, crvdrv_dim1, crvdrv_offset, i__1, 
-  i__2;
+  integer courbe_dim1 = 0, courbe_offset = 0, crvdrv_dim1 = 0, crvdrv_offset = 0, i__1 = 0, 
+  i__2 = 0;
   
   /* Local variables */
-  integer i__, j, k;
-  doublereal mfactk, bid;
+  integer i__ = 0, j = 0, k = 0;
+  doublereal mfactk = NAN, bid = NAN;
   
 
 /* ***********************************************************************
@@ -2242,19 +2242,19 @@ int AdvApp2Var_MathBase::mmcglc1_(integer *ndimax,
 
 {
   /* System generated locals */
-  integer courbe_dim1, courbe_offset, i__1;
-  doublereal d__1;
+  integer courbe_dim1 = 0, courbe_offset = 0, i__1 = 0;
+  doublereal d__1 = NAN;
   
   /* Local variables */
-  integer ndec;
-  doublereal tdeb, tfin;
-  integer iter;
+  integer ndec = 0;
+  doublereal tdeb = NAN, tfin = NAN;
+  integer iter = 0;
   doublereal oldso = 0.;
-  integer itmax;
-  doublereal sottc;
-  integer kk, ibb;
-  doublereal dif, pas;
-  doublereal som;
+  integer itmax = 0;
+  doublereal sottc = NAN;
+  integer kk = 0, ibb = 0;
+  doublereal dif = NAN, pas = NAN;
+  doublereal som = NAN;
  
 
 /* ***********************************************************************
@@ -2469,17 +2469,17 @@ int mmchole_(integer *,//mxcoef,
 
 {
   /* System generated locals */
-  integer i__1, i__2, i__3;
-  doublereal d__1;
+  integer i__1 = 0, i__2 = 0, i__3 = 0;
+  doublereal d__1 = NAN;
   
   /* Builtin functions */
   //double sqrt();
   
     /* Local variables */
-  logical ldbg;
-  integer kmin, i__, j, k;
-  doublereal somme;
-  integer ptini, ptcou;
+  logical ldbg = 0;
+  integer kmin = 0, i__ = 0, j = 0, k = 0;
+  doublereal somme = NAN;
+  integer ptini = 0, ptcou = 0;
 
 
 /* ***********************************************************************
@@ -2641,15 +2641,15 @@ int AdvApp2Var_MathBase::mmcvctx_(integer *ndimen,
 
 {
   /* System generated locals */
-  integer ctrtes_dim1, ctrtes_offset, crvres_dim1, crvres_offset, 
-  xmatri_dim1, xmatri_offset, tabaux_dim1, tabaux_offset, i__1, 
-  i__2;
+  integer ctrtes_dim1 = 0, ctrtes_offset = 0, crvres_dim1 = 0, crvres_offset = 0, 
+  xmatri_dim1 = 0, xmatri_offset = 0, tabaux_dim1 = 0, tabaux_offset = 0, i__1 = 0, 
+  i__2 = 0;
   
   /* Local variables */
-  integer moup1, nordr;
-  integer nd;
-  integer ibb, ncf, ndv;
-  doublereal eps1;
+  integer moup1 = 0, nordr = 0;
+  integer nd = 0;
+  integer ibb = 0, ncf = 0, ndv = 0;
+  doublereal eps1 = NAN;
 
 
 /* ***********************************************************************
@@ -2891,10 +2891,10 @@ L9999:
   static char nomprg[8+1] = "MMCVINV ";
   
   /* System generated locals */
-  integer curve_dim1, curve_offset, curveo_dim1, curveo_offset, i__1, i__2;
+  integer curve_dim1 = 0, curve_offset = 0, curveo_dim1 = 0, curveo_offset = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer i__, nd, ibb;
+  integer i__ = 0, nd = 0, ibb = 0;
   
 
 /* ***********************************************************************
@@ -2971,11 +2971,11 @@ int mmcvstd_(integer *ncofmx,
 
 {
   /* System generated locals */
-  integer courbe_dim1, crvcan_dim1, crvcan_offset, i__1, i__2, i__3;
+  integer courbe_dim1 = 0, crvcan_dim1 = 0, crvcan_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0;
   
   /* Local variables */
-  integer ndeg, i__, j, j1, nd, ibb;
-  doublereal bid;
+  integer ndeg = 0, i__ = 0, j = 0, j1 = 0, nd = 0, ibb = 0;
+  doublereal bid = NAN;
   
 
 /* ***********************************************************************
@@ -3124,12 +3124,12 @@ int AdvApp2Var_MathBase::mmdrc11_(integer *iordre,
 
 {
   /* System generated locals */
-  integer courbe_dim1, courbe_offset, points_dim2, points_offset, i__1, 
-  i__2;
+  integer courbe_dim1 = 0, courbe_offset = 0, points_dim2 = 0, points_offset = 0, i__1 = 0, 
+  i__2 = 0;
   
   /* Local variables */
   
-  integer ndeg, i__, j, ndgcb, nd, ibb;
+  integer ndeg = 0, i__ = 0, j = 0, ndgcb = 0, nd = 0, ibb = 0;
   
 
 /* ********************************************************************** 
@@ -3313,10 +3313,10 @@ int mmdrvcb_(integer *ideriv,
 
 {
   /* System generated locals */
-  integer courbe_dim1, tabpnt_dim1, i__1, i__2, i__3;
+  integer courbe_dim1 = 0, tabpnt_dim1 = 0, i__1 = 0, i__2 = 0, i__3 = 0;
   
   /* Local variables */
-  integer ndeg, i__, j, nd, ndgcrb, iptpnt, ibb;
+  integer ndeg = 0, i__ = 0, j = 0, nd = 0, ndgcrb = 0, iptpnt = 0, ibb = 0;
   
 
 /* *********************************************************************** */
@@ -3495,11 +3495,11 @@ int AdvApp2Var_MathBase::mmdrvck_(integer *ncoeff,
 	    1.21645100408832e17,2.43290200817664e18,5.109094217170944e19 };
   
   /* System generated locals */
-  integer courbe_dim1, courbe_offset, i__1, i__2;
+  integer courbe_dim1 = 0, courbe_offset = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer i__, j, k, nd;
-  doublereal mfactk, bid;
+  integer i__ = 0, j = 0, k = 0, nd = 0;
+  doublereal mfactk = NAN, bid = NAN;
   
 
 /*      IMPLICIT INTEGER (I-N) */
@@ -3769,11 +3769,11 @@ int mmexthi_(integer *ndegre,
 
 {
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
   
   /* Local variables */
-  integer iadd, ideb, ndeg2, nmod2, ii, ibb;
-  integer kpt;
+  integer iadd = 0, ideb = 0, ndeg2 = 0, nmod2 = 0, ii = 0, ibb = 0;
+  integer kpt = 0;
 
 /* ********************************************************************** 
 */
@@ -3918,11 +3918,11 @@ int mmextrl_(integer *ndegre,
 	     NCollection_Array1<doublereal>& rootlg)
 {
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
   
   /* Local variables */
-  integer iadd, ideb, ndeg2, nmod2, ii, ibb;
-  integer kpt;
+  integer iadd = 0, ideb = 0, ndeg2 = 0, nmod2 = 0, ii = 0, ibb = 0;
+  integer kpt = 0;
 
 
 /* ********************************************************************** 
@@ -4071,11 +4071,11 @@ int AdvApp2Var_MathBase::mmfmca8_(const integer *ndimen,
 
 {
   /* System generated locals */
-  integer tabini_dim1, tabini_dim2, tabini_offset, tabres_dim1, tabres_dim2,
-  tabres_offset;
+  integer tabini_dim1 = 0, tabini_dim2 = 0, tabini_offset = 0, tabres_dim1 = 0, tabres_dim2 = 0,
+  tabres_offset = 0;
 
   /* Local variables */
-  integer i__, j, k, ilong;
+  integer i__ = 0, j = 0, k = 0, ilong = 0;
 
 
 
@@ -4207,11 +4207,11 @@ L9999:
 
 {
   /* System generated locals */
-  integer tabini_dim1, tabini_dim2, tabini_offset, tabres_dim1, tabres_dim2,
-  tabres_offset, i__1, i__2, i__3;
+  integer tabini_dim1 = 0, tabini_dim2 = 0, tabini_offset = 0, tabres_dim1 = 0, tabres_dim2 = 0,
+  tabres_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0;
   
     /* Local variables */
-  integer i__, j, k, ilong;
+  integer i__ = 0, j = 0, k = 0, ilong = 0;
 
 
 
@@ -4355,14 +4355,14 @@ int AdvApp2Var_MathBase::mmfmcar_(integer *ndimen,
 {
   integer c__8 = 8;
   /* System generated locals */
-    integer patold_dim1, patold_dim2, patnew_dim1, patnew_dim2,
-	    i__1, patold_offset,patnew_offset;
+    integer patold_dim1 = 0, patold_dim2 = 0, patnew_dim1 = 0, patnew_dim2 = 0,
+	    i__1 = 0, patold_offset = 0,patnew_offset = 0;
 
     /* Local variables */
     doublereal* tbaux = 0;
-    integer ksize, numax, kk;
-    intptr_t iofst;
-    integer ibb, ier;
+    integer ksize = 0, numax = 0, kk = 0;
+    intptr_t iofst = 0;
+    integer ibb = 0, ier = 0;
 
 /* ***********************************************************************
  */
@@ -4598,11 +4598,11 @@ int AdvApp2Var_MathBase::mmfmcb5_(integer *isenmsc,
 
 {
   /* System generated locals */
-  integer courb1_dim1, courb1_offset, courb2_dim1, courb2_offset, i__1, 
-  i__2;
+  integer courb1_dim1 = 0, courb1_offset = 0, courb2_dim1 = 0, courb2_offset = 0, i__1 = 0, 
+  i__2 = 0;
   
   /* Local variables */
-  integer i__, nboct, nd;
+  integer i__ = 0, nboct = 0, nd = 0;
   
 
 /* ********************************************************************** 
@@ -4745,13 +4745,13 @@ int AdvApp2Var_MathBase::mmfmtb1_(integer *maxsz1,
   integer c__8 = 8;
 
    /* System generated locals */
-    integer table1_dim1, table1_offset, table2_dim1, table2_offset, i__1, 
-	    i__2;
+    integer table1_dim1 = 0, table1_offset = 0, table2_dim1 = 0, table2_offset = 0, i__1 = 0, 
+	    i__2 = 0;
 
     /* Local variables */
     doublereal* work = 0;
-    integer ilong, isize, ii, jj, ier = 0;
-    intptr_t iofst = 0,iipt, jjpt;
+    integer ilong = 0, isize = 0, ii = 0, jj = 0, ier = 0;
+    intptr_t iofst = 0,iipt = 0, jjpt = 0;
 
 
 /************************************************************************
@@ -4896,15 +4896,15 @@ int AdvApp2Var_MathBase::mmgaus1_(integer *ndimf,
 				  integer *iercod)
 {
   /* System generated locals */
-  integer i__1, i__2;
+  integer i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer ndeg;
+  integer ndeg = 0;
   doublereal h__[20];
-  integer j;
-  doublereal t, u[20], x;
-  integer idimf;
-  doublereal c1x, c2x;
+  integer j = 0;
+  doublereal t = NAN, u[20], x = NAN;
+  integer idimf = 0;
+  doublereal c1x = NAN, c2x = NAN;
 /* ********************************************************************** 
 */
 
@@ -5083,22 +5083,22 @@ int mmherm0_(doublereal *debfin,
 
   
    /* System generated locals */
-    integer i__1, i__2;
-    doublereal d__1;
+    integer i__1 = 0, i__2 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
     doublereal amat[36]	/* was [6][6] */;
     integer iord[2];
-    doublereal prod;
-    integer iord1, iord2;
+    doublereal prod = NAN;
+    integer iord1 = 0, iord2 = 0;
     doublereal miden[36]	/* was [6][6] */;
-    integer ncmat;
-    doublereal epspi, d1, d2;
-    integer ii, jj, pp, ncf;
+    integer ncmat = 0;
+    doublereal epspi = NAN, d1 = NAN, d2 = NAN;
+    integer ii = 0, jj = 0, pp = 0, ncf = 0;
     doublereal cof[6];
-    integer iof[2], ier;
+    integer iof[2], ier = 0;
     doublereal mat[36]	/* was [6][6] */;
-    integer cot;
+    integer cot = 0;
     doublereal abid[72]	/* was [12][6] */;
 /* ***********************************************************************
  */
@@ -5420,12 +5420,12 @@ int mmherm1_(doublereal *debfin,
 	     integer *iercod)
 {
   /* System generated locals */
-  integer hermit_dim1, hermit_dim2, hermit_offset;
+  integer hermit_dim1 = 0, hermit_dim2 = 0, hermit_offset = 0;
 
   /* Local variables */
-  integer nbval;
-  doublereal d1;
-  integer cot;
+  integer nbval = 0;
+  doublereal d1 = NAN;
+  integer cot = 0;
 
 /* ***********************************************************************
  */
@@ -5642,22 +5642,22 @@ int AdvApp2Var_MathBase::mmhjcan_(integer *ndimen,
   integer c__2 = 2;
   integer c__21 = 21;
   /* System generated locals */
-    integer tcbold_dim1, tcbold_dim2, tcbold_offset, tcbnew_dim1, tcbnew_dim2,
-	     tcbnew_offset, i__1, i__2, i__3, i__4, i__5;
+    integer tcbold_dim1 = 0, tcbold_dim2 = 0, tcbold_offset = 0, tcbnew_dim1 = 0, tcbnew_dim2 = 0,
+	     tcbnew_offset = 0, i__1 = 0, i__2 = 0, i__3 = 0, i__4 = 0, i__5 = 0;
 
 
     /* Local variables */
-    logical ldbg;
-    integer ndeg;
+    logical ldbg = 0;
+    integer ndeg = 0;
     doublereal taux1[21];
-    integer d__, e, i__, k;
-    doublereal mfact;
-    integer ncoeff;
+    integer d__ = 0, e = 0, i__ = 0, k = 0;
+    doublereal mfact = NAN;
+    integer ncoeff = 0;
     doublereal tjacap[21];
     integer iordre[2];
-    doublereal hermit[36]/* was [6][3][2] */, ctenor, bornes[2];
-    integer ier;
-    integer aux1, aux2;
+    doublereal hermit[36]/* was [6][3][2] */, ctenor = NAN, bornes[2];
+    integer ier = 0;
+    integer aux1 = 0, aux2 = 0;
 
 /* ***********************************************************************
  */
@@ -5882,13 +5882,13 @@ L9999:
 			    integer *iercod)
 {
   /* System generated locals */
-  integer tabtri_dim1, tabtri_offset, i__1, i__2;
+  integer tabtri_dim1 = 0, tabtri_offset = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  logical idbg;
-  integer icol, ilgn, nlgn, noct, inser;
+  logical idbg = 0;
+  integer icol = 0, ilgn = 0, nlgn = 0, noct = 0, inser = 0;
   doublereal epsega = 0.;
-  integer ibb;
+  integer ibb = 0;
 
 /* ***********************************************************************
  */
@@ -6083,11 +6083,11 @@ L9999:
 			    doublereal *polcan)
 {
     /* System generated locals */
-  integer poljac_dim1, i__1, i__2;
+  integer poljac_dim1 = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer iptt, i__, j, ibb;
-  doublereal bid;
+  integer iptt = 0, i__ = 0, j = 0, ibb = 0;
+  doublereal bid = NAN;
 
 /* ***********************************************************************
  */
@@ -6233,11 +6233,11 @@ L9999:
   static char nomprg[8+1] = "MMJACCV ";
   
   /* System generated locals */
-  integer crvlgd_dim1, crvlgd_offset, crvcan_dim1, crvcan_offset, 
-  polaux_dim1, i__1, i__2;
+  integer crvlgd_dim1 = 0, crvlgd_offset = 0, crvcan_dim1 = 0, crvcan_offset = 0, 
+  polaux_dim1 = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer ndeg, i__, nd, ii, ibb;
+  integer ndeg = 0, i__ = 0, nd = 0, ii = 0, ibb = 0;
 
 /* ***********************************************************************
  */
@@ -6344,16 +6344,16 @@ int mmloncv_(integer *ndimax,
   integer kgar = 0;
   
   /* System generated locals */
-  integer courbe_dim1, courbe_offset, i__1, i__2;
+  integer courbe_dim1 = 0, courbe_offset = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  doublereal tran;
+  doublereal tran = NAN;
   integer ngaus = 0;
-  doublereal c1, c2, d1, d2,
-    wgaus[20] = {0.}, uroot[20] = {0.}, x1, x2, dd;
-  integer ii, jj, kk;
-  doublereal som;
-  doublereal der1, der2;
+  doublereal c1 = NAN, c2 = NAN, d1 = NAN, d2 = NAN,
+    wgaus[20] = {0.}, uroot[20] = {0.}, x1 = NAN, x2 = NAN, dd = NAN;
+  integer ii = 0, jj = 0, kk = 0;
+  doublereal som = NAN;
+  doublereal der1 = NAN, der2 = NAN;
 
 
 
@@ -6883,11 +6883,11 @@ L9999:
 
 {
   /* System generated locals */
-  integer courbe_dim1, courbe_offset, i__1, i__2;
+  integer courbe_dim1 = 0, courbe_offset = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer ncof2;
-  integer isize, nd, kcf, ncf;
+  integer ncof2 = 0;
+  integer isize = 0, nd = 0, kcf = 0, ncf = 0;
 
 
 /* ***********************************************************************
@@ -7012,11 +7012,11 @@ L9999:
 
 {
   /* System generated locals */
-  integer courbe_dim1, courbe_offset, i__1;
+  integer courbe_dim1 = 0, courbe_offset = 0, i__1 = 0;
   
   /* Local variables */
-  integer i__, nd;
-  doublereal fu;
+  integer i__ = 0, nd = 0;
+  doublereal fu = NAN;
   
  
 /* ***********************************************************************
@@ -7098,12 +7098,12 @@ int mmpojac_(doublereal *tparam,
   integer c__2 = 2;
   
     /* System generated locals */
-    integer valjac_dim1, i__1, i__2;
+    integer valjac_dim1 = 0, i__1 = 0, i__2 = 0;
 
     /* Local variables */
-    doublereal cofa, cofb, denom, tnorm[100];
-    integer ii, jj, kk1, kk2;
-    doublereal aux1, aux2;
+    doublereal cofa = NAN, cofb = NAN, denom = NAN, tnorm[100];
+    integer ii = 0, jj = 0, kk1 = 0, kk2 = 0;
+    doublereal aux1 = NAN, aux2 = NAN;
 
 
 /* ***********************************************************************
@@ -7319,12 +7319,12 @@ L9999:
 
 {
   /* System generated locals */
-  integer i__1, i__2;
+  integer i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  logical ldbg;
-  integer imin, jmin, i__, j, k;
-  logical trouve;
+  logical ldbg = 0;
+  integer imin = 0, jmin = 0, i__ = 0, j = 0, k = 0;
+  logical trouve = 0;
 
 /* ***********************************************************************
  */
@@ -7486,20 +7486,20 @@ L9999:
   integer c__100 = 100;
  
    /* System generated locals */
-    integer i__1, i__2;
+    integer i__1 = 0, i__2 = 0;
 
     /* Local variables */
-    logical ldbg;
+    logical ldbg = 0;
     doublereal* mcho = 0;
-    integer jmin, jmax, i__, j, k, l;
-    intptr_t iofv1, iofv2, iofv3, iofv4;
+    integer jmin = 0, jmax = 0, i__ = 0, j = 0, k = 0, l = 0;
+    intptr_t iofv1 = 0, iofv2 = 0, iofv3 = 0, iofv4 = 0;
     doublereal *v1 = 0, *v2 = 0, *v3 = 0, *v4 = 0;
-    integer deblig, dimhch;
+    integer deblig = 0, dimhch = 0;
     doublereal* hchole = 0;
-    intptr_t iofmch, iofmam, iofhch;
+    intptr_t iofmch = 0, iofmam = 0, iofhch = 0;
     doublereal* matsym = 0;
-    integer ier;
-    integer aux;
+    integer ier = 0;
+    integer aux = 0;
 
 
 
@@ -7848,13 +7848,13 @@ int mmrslss_(integer *,//mxcoef,
 	     integer *iercod)
 {
   /* System generated locals */
-  integer i__1, i__2;
+  integer i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  logical ldbg;
-  integer i__, j;
-  doublereal somme;
-  integer pointe, ptcour;
+  logical ldbg = 0;
+  integer i__ = 0, j = 0;
+  doublereal somme = NAN;
+  integer pointe = 0, ptcour = 0;
 
 /* ***********************************************************************
  */
@@ -8004,15 +8004,15 @@ int mmrslw_(integer *normax,
 	    integer *iercod)
 {
   /* System generated locals */
-    integer abmatr_dim1, abmatr_offset, xmatri_dim1, xmatri_offset, i__1, 
-	    i__2, i__3;
-    doublereal d__1;
+    integer abmatr_dim1 = 0, abmatr_offset = 0, xmatri_dim1 = 0, xmatri_offset = 0, i__1 = 0, 
+	    i__2 = 0, i__3 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
-    integer kpiv;
-    doublereal pivot;
-    integer ii, jj, kk;
-    doublereal akj;
+    integer kpiv = 0;
+    doublereal pivot = NAN;
+    integer ii = 0, jj = 0, kk = 0;
+    doublereal akj = NAN;
     
 
 /* ********************************************************************** 
@@ -8228,12 +8228,12 @@ L9999:
 
 {
   /* System generated locals */
-  integer amat_dim1, amat_offset, bmat_dim1, bmat_offset, xmat_dim1, 
-  xmat_offset, aaux_dim1, aaux_offset, i__1, i__2;
+  integer amat_dim1 = 0, amat_offset = 0, bmat_dim1 = 0, bmat_offset = 0, xmat_dim1 = 0, 
+  xmat_offset = 0, aaux_dim1 = 0, aaux_offset = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer i__, j;
-  integer ibb;
+  integer i__ = 0, j = 0;
+  integer ibb = 0;
 
 /*      IMPLICIT DOUBLE PRECISION (A-H,O-Z) */
 /*      IMPLICIT INTEGER (I-N) */
@@ -8369,7 +8369,7 @@ L9999:
 			    doublereal *rtlegd)
 
 {
-  integer ideb, nmod2, nsur2, ilong, ibb;
+  integer ideb = 0, nmod2 = 0, nsur2 = 0, ilong = 0, ibb = 0;
 
 
 /* ********************************************************************** 
@@ -8497,10 +8497,10 @@ L9999:
 			    integer *iercod)
 {
   /* System generated locals */
-  doublereal d__1;
+  doublereal d__1 = NAN;
   
   /* Local variables */
-  integer ideb, ifin, imil, ibb;
+  integer ideb = 0, ifin = 0, imil = 0, ibb = 0;
 
 /* ***********************************************************************
  */
@@ -8650,13 +8650,13 @@ int mmtmave_(integer *nligne,
 
 {
   /* System generated locals */
-  integer i__1, i__2;
+  integer i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  logical ldbg;
-  integer imin, imax, i__, j, k;
-  doublereal somme;
-  integer aux;
+  logical ldbg = 0;
+  integer imin = 0, imax = 0, i__ = 0, j = 0, k = 0;
+  doublereal somme = NAN;
+  integer aux = 0;
   
 
 /* ***********************************************************************
@@ -8800,13 +8800,13 @@ int mmtrpj0_(integer *ncofmx,
 
 {
   /* System generated locals */
-  integer crvlgd_dim1, crvlgd_offset, i__1, i__2;
-  doublereal d__1;
+  integer crvlgd_dim1 = 0, crvlgd_offset = 0, i__1 = 0, i__2 = 0;
+  doublereal d__1 = NAN;
   
   /* Local variables */
-  integer ncut, i__;
-  doublereal bidon, error;
-  integer nd;
+  integer ncut = 0, i__ = 0;
+  doublereal bidon = NAN, error = NAN;
+  integer nd = 0;
   
 
 /* ***********************************************************************
@@ -8980,14 +8980,14 @@ int mmtrpj2_(integer *ncofmx,
 	    3.72184531357268220291630708234186 };
 
     /* System generated locals */
-    integer crvlgd_dim1, crvlgd_offset, i__1, i__2;
-    doublereal d__1;
+    integer crvlgd_dim1 = 0, crvlgd_offset = 0, i__1 = 0, i__2 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
-    integer ncut, i__;
-    doublereal bidon, error;
-    integer ia, nd;
-    doublereal bid, eps1;
+    integer ncut = 0, i__ = 0;
+    doublereal bidon = NAN, error = NAN;
+    integer ia = 0, nd = 0;
+    doublereal bid = NAN, eps1 = NAN;
 
 
 /* ***********************************************************************
@@ -9184,14 +9184,14 @@ int mmtrpj4_(integer *ncofmx,
 	    3.05886060707437081434964933864149 };
 
     /* System generated locals */
-    integer crvlgd_dim1, crvlgd_offset, i__1, i__2;
-    doublereal d__1;
+    integer crvlgd_dim1 = 0, crvlgd_offset = 0, i__1 = 0, i__2 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
-    integer ncut, i__;
-    doublereal bidon, error;
-    integer ia, nd;
-    doublereal bid, eps1;
+    integer ncut = 0, i__ = 0;
+    doublereal bidon = NAN, error = NAN;
+    integer ia = 0, nd = 0;
+    doublereal bid = NAN, eps1 = NAN;
 
 
 
@@ -9388,14 +9388,14 @@ int mmtrpj6_(integer *ncofmx,
 	    2.71238965987606292679677228666411 };
 
     /* System generated locals */
-    integer crvlgd_dim1, crvlgd_offset, i__1, i__2;
-    doublereal d__1;
+    integer crvlgd_dim1 = 0, crvlgd_offset = 0, i__1 = 0, i__2 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
-    integer ncut, i__;
-    doublereal bidon, error;
-    integer ia, nd;
-    doublereal bid, eps1;
+    integer ncut = 0, i__ = 0;
+    doublereal bidon = NAN, error = NAN;
+    integer ia = 0, nd = 0;
+    doublereal bid = NAN, eps1 = NAN;
 
 
 
@@ -9535,10 +9535,10 @@ L9999:
 			    integer *ncfnew)
 {
     /* System generated locals */
-    integer crvlgd_dim1, crvlgd_offset;
+    integer crvlgd_dim1 = 0, crvlgd_offset = 0;
 
     /* Local variables */
-    integer ia;
+    integer ia = 0;
    
 
 /* ***********************************************************************
@@ -9623,15 +9623,15 @@ L9999:
   doublereal c_b2 = 10.;
   
     /* System generated locals */
-    integer i__1;
-    doublereal d__1;
+    integer i__1 = 0;
+    doublereal d__1 = NAN;
 
     /* Local variables */
-    integer nchif, iunit = 1, izero;
-    doublereal vnorm;
-    integer ii;
-    doublereal bid;
-    doublereal eps0;
+    integer nchif = 0, iunit = 1, izero = 0;
+    doublereal vnorm = NAN;
+    integer ii = 0;
+    doublereal bid = NAN;
+    doublereal eps0 = NAN;
 
 
 
@@ -9763,7 +9763,7 @@ L9999:
   
   static char nomprg[8+1] = "MMEPS1  ";
   
-  integer ibb;
+  integer ibb = 0;
   
 
 
@@ -9868,15 +9868,15 @@ L9999:
 
 {
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
   
   /* Local variables */
-  logical ldbg;
-  integer d__;
+  logical ldbg = 0;
+  integer d__ = 0;
   doublereal vaux1[3], vaux2[3];
-  logical colin;
-  doublereal valaux;
-  integer aux;
+  logical colin = 0;
+  doublereal valaux = NAN;
+  integer aux = 0;
  
 /* ***********************************************************************
  */
@@ -10155,8 +10155,8 @@ void AdvApp2Var_MathBase::mmwprcs_(doublereal *epsil1,
  doublereal AdvApp2Var_MathBase::pow__di (doublereal *x,
 				   integer *n)
 {
-  doublereal result ;
-  integer    absolute ;
+  doublereal result = NAN ;
+  integer    absolute = 0 ;
   result = 1.0e0 ;
   if ( *n > 0 ) {absolute = *n;}
   else {absolute = -*n;}
@@ -10212,8 +10212,8 @@ integer pow__ii(integer *x,
 		integer *n)
 
 {
-  integer result ;
-  integer    absolute ;
+  integer result = 0 ;
+  integer    absolute = 0 ;
   result = 1 ;
   if ( *n > 0 ) {absolute = *n;}
   else {absolute = -*n;}
@@ -10273,12 +10273,12 @@ integer pow__ii(integer *x,
 
 {
   /* System generated locals */
-  integer i__1;
-  doublereal ret_val;
+  integer i__1 = 0;
+  doublereal ret_val = NAN;
   
   /* Local variables */
-  integer i__;
-  doublereal x;
+  integer i__ = 0;
+  doublereal x = NAN;
   
 
 
@@ -10348,12 +10348,12 @@ int mvcvin2_(integer *ncoeff,
 
 {
   /* System generated locals */
-  integer i__1, i__2;
+  integer i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer m1jm1, ncfm1, j, k;
-  doublereal bid;
-  doublereal cij1, cij2;
+  integer m1jm1 = 0, ncfm1 = 0, j = 0, k = 0;
+  doublereal bid = NAN;
+  doublereal cij1 = NAN, cij2 = NAN;
   
 
 
@@ -10498,13 +10498,13 @@ int mvcvinv_(integer *ncoeff,
 
 {
   /* System generated locals */
-  integer i__1, i__2;
+  integer i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer m1jm1, ncfm1, j, k;
-  doublereal bid;
+  integer m1jm1 = 0, ncfm1 = 0, j = 0, k = 0;
+  doublereal bid = NAN;
   //extern /* Subroutine */ int maermsg_();
-  doublereal cij1, cij2, cij3;
+  doublereal cij1 = NAN, cij2 = NAN, cij3 = NAN;
   
  
 /* ********************************************************************** 
@@ -10782,11 +10782,11 @@ int mvpscr2_(integer *ncoeff,
 	     doublereal *pntcrb)
 {
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
   
   /* Local variables */
-  integer ndeg, kk;
-  doublereal xxx, yyy;
+  integer ndeg = 0, kk = 0;
+  doublereal xxx = NAN, yyy = NAN;
 
 
 
@@ -10910,11 +10910,11 @@ int mvpscr3_(integer *ncoeff,
 
 {
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
   
   /* Local variables */
-  integer ndeg, kk;
-  doublereal xxx, yyy, zzz;
+  integer ndeg = 0, kk = 0;
+  doublereal xxx = NAN, yyy = NAN, zzz = NAN;
 
 
 
@@ -11049,12 +11049,12 @@ L9999:
 
 {
   /* System generated locals */
-  integer dtab_dim1, dtab_offset, i__1, i__2;
+  integer dtab_dim1 = 0, dtab_offset = 0, i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  integer incr;
-  doublereal dsave;
-  integer i3, i4, i5, incrp1;
+  integer incr = 0;
+  doublereal dsave = NAN;
+  integer i3 = 0, i4 = 0, i5 = 0, incrp1 = 0;
 
 
 /************************************************************************
@@ -11179,12 +11179,12 @@ L9900:
    
 {
   /* System generated locals */
-  integer i__1;
-  doublereal ret_val, d__1, d__2;
+  integer i__1 = 0;
+  doublereal ret_val = NAN, d__1 = NAN, d__2 = NAN;
 
   /* Local variables */
-  doublereal xsom;
-  integer i__, irmax;
+  doublereal xsom = NAN;
+  integer i__ = 0, irmax = 0;
   
   
 

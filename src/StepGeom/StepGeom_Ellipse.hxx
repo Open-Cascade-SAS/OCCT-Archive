@@ -61,8 +61,8 @@ protected:
 private:
 
 
-  Standard_Real semiAxis1;
-  Standard_Real semiAxis2;
+  Standard_Real semiAxis1{};
+  Standard_Real semiAxis2{};
 
 
 };

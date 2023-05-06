@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <V3d.hxx>
 
 #include <Aspect_Grid.hxx>
@@ -34,8 +36,8 @@ namespace
 
 void V3d::ArrowOfRadius(const Handle(Graphic3d_Group)& garrow,const Standard_Real X0,const Standard_Real Y0,const Standard_Real Z0,const Standard_Real Dx,const Standard_Real Dy,const Standard_Real Dz,const Standard_Real Alpha,const Standard_Real Lng)
 {
-  Standard_Real Xc, Yc, Zc, Xi, Yi, Zi, Xj, Yj, Zj;
-  Standard_Real Xn, Yn, Zn, X, Y, Z, X1 = 0., Y1 = 0., Z1 = 0., Norme;
+  Standard_Real Xc = NAN, Yc = NAN, Zc = NAN, Xi = NAN, Yi = NAN, Zi = NAN, Xj = NAN, Yj = NAN, Zj = NAN;
+  Standard_Real Xn = NAN, Yn = NAN, Zn = NAN, X = NAN, Y = NAN, Z = NAN, X1 = 0., Y1 = 0., Z1 = 0., Norme = NAN;
   const Standard_Integer NbPoints = 10;
 
 //      Centre du cercle base de la fleche :
@@ -62,7 +64,7 @@ void V3d::ArrowOfRadius(const Handle(Graphic3d_Group)& garrow,const Standard_Rea
 
   Handle(Graphic3d_ArrayOfPolylines) aPrims = new Graphic3d_ArrayOfPolylines(3*NbPoints,NbPoints);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   const Standard_Real Tg = Tan(Alpha);
   for (i = 1; i <= NbPoints; i++)
   {
@@ -90,7 +92,7 @@ void V3d::CircleInPlane(const Handle(Graphic3d_Group)& gcircle,const Standard_Re
   Standard_Real Norme = Sqrt ( DX*DX + DY*DY + DZ*DZ );
   if ( Norme >= 0.0001 )
   {
-    Standard_Real VX,VY,VZ,X,Y,Z,Xn,Yn,Zn,Xi,Yi,Zi,Xj,Yj,Zj;
+    Standard_Real VX = NAN,VY = NAN,VZ = NAN,X = NAN,Y = NAN,Z = NAN,Xn = NAN,Yn = NAN,Zn = NAN,Xi = NAN,Yi = NAN,Zi = NAN,Xj = NAN,Yj = NAN,Zj = NAN;
 
     VX= DX/Norme; VY = DY/Norme; VZ = DZ/Norme;
 

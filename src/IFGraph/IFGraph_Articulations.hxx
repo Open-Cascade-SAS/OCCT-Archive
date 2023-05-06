@@ -67,7 +67,7 @@ private:
 private:
 
   Interface_Graph thegraph;
-  Standard_Integer thenow;
+  Standard_Integer thenow{};
   Handle(TColStd_HSequenceOfInteger) thelist;
 
 };

@@ -19,6 +19,8 @@
 // Modif : Thu Jan 21 11:40:20 1999. Add trace context #if DEB
 //           add test to avoid loop while in NextConnexEdge (in case of a closed connex wire)
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepLib.hxx>
@@ -79,7 +81,7 @@ static void BCSmoothing(Handle(Geom_BSplineCurve)& theC,
 
     theC->Multiplicities(aMults);
     theC->Knots(aKnots);
-    Standard_Integer i, m = theC->Degree();
+    Standard_Integer i = 0, m = theC->Degree();
     m = m - theCont;
 
     if(m < 1) return;
@@ -146,7 +148,7 @@ static void MakeClosedCurve(Handle(Geom_Curve)& C, const gp_Pnt& PF,
   aBC->SetPeriodic();
   Standard_Integer fk = aBC->FirstUKnotIndex();
   Standard_Integer lk = aBC->LastUKnotIndex();
-  Standard_Integer k;
+  Standard_Integer k = 0;
   Standard_Real eps = Precision::Confusion();
   eps *= eps;
   Standard_Real porig = 2.*l;
@@ -298,7 +300,7 @@ Standard_Integer BRepLib_FuseEdges::NbVertices()
 {
 
   Standard_NullObject_Raise_if(myShape.IsNull(),"FuseEdges : No Shape");
-  Standard_Integer nbedges, nbvertices = 0;
+  Standard_Integer nbedges = 0, nbvertices = 0;
 
   if (!myEdgesDone) {
     BuildListEdges();
@@ -364,7 +366,7 @@ void BRepLib_FuseEdges::BuildListEdges()
   TopExp::MapShapesAndUniqueAncestors(myShape,TopAbs_VERTEX,TopAbs_EDGE,myMapVerLstEdg);
   TopExp::MapShapesAndAncestors(myShape,TopAbs_EDGE,TopAbs_FACE,myMapEdgLstFac);
 
-  Standard_Integer iEdg;
+  Standard_Integer iEdg = 0;
   TopTools_MapOfShape mapUniqEdg;
 
   // for each edge of myMapEdgLstFac
@@ -403,7 +405,7 @@ void BRepLib_FuseEdges::BuildListResultEdges()
     TopoDS_Vertex VF,VL;
     Handle(Geom_Curve) C;
     TopLoc_Location loc;
-    Standard_Real f,l;
+    Standard_Real f = NAN,l = NAN;
     TopoDS_Edge NewEdge;
 
     myMapEdg.Clear();
@@ -730,7 +732,7 @@ Standard_Boolean BRepLib_FuseEdges::SameSupport(const TopoDS_Edge& E1,
 
   Handle(Geom_Curve) C1,C2;
   TopLoc_Location loc;
-  Standard_Real f1,l1,f2,l2;
+  Standard_Real f1 = NAN,l1 = NAN,f2 = NAN,l2 = NAN;
   Handle(Standard_Type) typC1,typC2;
   
   C1 = BRep_Tool::Curve(E1,loc,f1,l1);
@@ -986,7 +988,7 @@ Standard_Boolean BRepLib_FuseEdges::UpdatePCurve(const TopoDS_Edge& theOldEdge,
   Handle(Geom2d_Curve) Curv2d;
   Handle(Geom_Surface) Surf;
   TopLoc_Location loc,locbid;
-  Standard_Real ef,el,cf,cl;
+  Standard_Real ef = NAN,el = NAN,cf = NAN,cl = NAN;
   Standard_Integer iedg = 1;
 
   // take care that we want only Pcurve that maps on the surface where the 3D edges lies.
@@ -1042,7 +1044,7 @@ Standard_Boolean BRepLib_FuseEdges::UpdatePCurve(const TopoDS_Edge& theOldEdge,
 	// update the new edge 
 	if (Curv2d->DynamicType() == STANDARD_TYPE(Geom2d_TrimmedCurve))
 	  Curv2d = Handle(Geom2d_TrimmedCurve)::DownCast (Curv2d)->BasisCurve();
-	Standard_Real f, l;
+	Standard_Real f = NAN, l = NAN;
 	f = Curv2d->FirstParameter();
 	l = Curv2d->LastParameter();
 	if (l-f + 2.* Epsilon(l-f) < el-ef)
@@ -1056,7 +1058,7 @@ Standard_Boolean BRepLib_FuseEdges::UpdatePCurve(const TopoDS_Edge& theOldEdge,
 	    for (; iter.More(); iter.Next())
 	      {
 		TopoDS_Edge& E = TopoDS::Edge(iter.Value());
-		Standard_Real first, last;
+		Standard_Real first = NAN, last = NAN;
 		Handle(Geom2d_Curve) C = BRep_Tool::CurveOnSurface( E, Surf, loc, first, last );
 		Handle(Geom2d_BoundedCurve) BC = Handle(Geom2d_BoundedCurve)::DownCast(C);
 		if (BC.IsNull())

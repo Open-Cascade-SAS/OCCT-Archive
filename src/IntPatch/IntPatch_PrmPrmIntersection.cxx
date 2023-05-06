@@ -17,6 +17,8 @@
 // modified by Edward AGAPOV (eap) Tue Jan 22 12:29:55 2002
 // modified by Oleg FEDYAED  (ofv) Fri Nov 29 16:08:02 2002
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <Adaptor3d_TopolTool.hxx>
 #include <gp_Dir.hxx>
@@ -81,7 +83,7 @@ static void SeveralWlinesProcessing(const Handle(Adaptor3d_Surface)& theSurf1,
   Standard_Real aU1 = 0.0, aV1 = 0.0, aU2 = 0.0, aV2 = 0.0;
 
   Standard_Integer cnbV = theWLline->NbVertex();
-  Standard_Integer ciV;
+  Standard_Integer ciV = 0;
   for( ciV = 1; ciV <= cnbV; ciV++ )
   {
     Standard_Real pntDMin = 1.e+100;
@@ -90,7 +92,7 @@ static void SeveralWlinesProcessing(const Handle(Adaptor3d_Surface)& theSurf1,
     gp_Pnt cPV = theWLline->Vertex(ciV).Value();
     theWLline->Vertex(ciV).Parameters(aU1, aV1, aU2, aV2);
     const gp_Pnt2d aPCS1(aU1, aV1), aPCS2(aU2, aV2);
-    Standard_Integer iL;
+    Standard_Integer iL = 0;
     for( iL = 1; iL <= theSLin.Length(); iL++)
     {
       const Handle(IntPatch_Line)& aSLine = theSLin.Value(iL);
@@ -99,7 +101,7 @@ static void SeveralWlinesProcessing(const Handle(Adaptor3d_Surface)& theSurf1,
         continue;
       const Handle(IntPatch_WLine) aWLine = Handle(IntPatch_WLine)::DownCast(aSLine);
       Standard_Integer tnbV = aWLine->NbVertex();
-      Standard_Integer tiV;
+      Standard_Integer tiV = 0;
       for( tiV = 1; tiV <= tnbV; tiV++ )
       {
         gp_Pnt tPV = aWLine->Vertex(tiV).Value();
@@ -148,7 +150,7 @@ static void SeveralWlinesProcessing(const Handle(Adaptor3d_Surface)& theSurf1,
       Standard_Integer cNbP = theWLline->NbPnts();
 
       TColStd_SequenceOfInteger VPold;
-      Standard_Integer iPo;
+      Standard_Integer iPo = 0;
       for( iPo = 1; iPo <= cnbV; iPo++ )
       {
         Standard_Real Po = theWLline->Vertex(iPo).ParameterOnLine();
@@ -208,7 +210,7 @@ static void SeveralWlinesProcessing(const Handle(Adaptor3d_Surface)& theSurf1,
 
       Standard_Integer pI = ciVpar;
 
-      Standard_Integer iP;
+      Standard_Integer iP = 0;
       for( iP = 1; iP <= cNbP; iP++)
       {
         if( pI == iP )
@@ -233,7 +235,7 @@ static void SeveralWlinesProcessing(const Handle(Adaptor3d_Surface)& theSurf1,
       Handle(IntPatch_WLine) NWLine = new IntPatch_WLine(newL2s,Standard_False,theTrans1,theTrans2);
       NWLine->SetCreatingWayInfo(IntPatch_WLine::IntPatch_WLPrmPrm);
 
-      Standard_Integer iV;
+      Standard_Integer iV = 0;
       for( iV = 1; iV <= cnbV; iV++ )
       {
         if( iV == ciV )
@@ -378,32 +380,32 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
 
   Standard_Integer NbLigCalculee = 0;
 
-  Standard_Real U1,U2,V1,V2;
-  Standard_Real pu1,pu2,pv1,pv2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
+  Standard_Real pu1 = NAN,pu2 = NAN,pv1 = NAN,pv2 = NAN;
 
   TColStd_Array1OfReal StartParams(1,4);
 
   IntWalk_PWalking PW( Surf1, Surf2, TolTangency, Epsilon, Deflection, Increment );
 
   Standard_Real    SeuildPointLigne = 15.0 * Increment * Increment; //-- 10 est insuffisant
-  Standard_Real    incidence;
-  Standard_Real    dminiPointLigne;
+  Standard_Real    incidence = NAN;
+  Standard_Real    dminiPointLigne = NAN;
 
-  Standard_Boolean HasStartPoint,RejetLigne;
+  Standard_Boolean HasStartPoint = 0,RejetLigne = 0;
 
   IntSurf_PntOn2S StartPOn2S;
 
-  Standard_Integer ver;
+  Standard_Integer ver = 0;
 
   gp_Pnt Point3dDebut,Point3dFin;
 
   if( nbLigSec >= 1 ) {
     Standard_Integer *TabL = new Standard_Integer [nbLigSec+1];
-    Standard_Integer ls;
+    Standard_Integer ls = 0;
     for( ls = 1; ls <= nbLigSec; ls++ )
       TabL[ls]=ls;
 
-    Standard_Boolean triok;
+    Standard_Boolean triok = 0;
     do { 
       triok=Standard_True;
       for(Standard_Integer b=2; b<=nbLigSec; b++) {
@@ -423,12 +425,12 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
       Standard_Integer nbp = LineSec.NumberOfPoints();
 
       Standard_Integer *TabPtDep = new Standard_Integer [nbp+1];
-      Standard_Integer ilig;
+      Standard_Integer ilig = 0;
       for( ilig = 1; ilig <= nbp; ilig++) 
         TabPtDep[ilig]=0;
 
-      Standard_Real UminLig1,VminLig1,UmaxLig1,VmaxLig1;
-      Standard_Real UminLig2,VminLig2,UmaxLig2,VmaxLig2;
+      Standard_Real UminLig1 = NAN,VminLig1 = NAN,UmaxLig1 = NAN,VmaxLig1 = NAN;
+      Standard_Real UminLig2 = NAN,VminLig2 = NAN,UmaxLig2 = NAN,VmaxLig2 = NAN;
 
       SectionPointToParameters(LineSec.GetPoint(1),Poly1,Poly2,UminLig1,VminLig1,UminLig2,VminLig2);
 
@@ -463,7 +465,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
           Standard_Integer nbp1_4=nbp/4;
           Standard_Integer nbp3_4=nbp-nbp1_4;
 
-          Standard_Integer nsp;
+          Standard_Integer nsp = 0;
           for(nsp=nbp/2; nsp<nbp3_4; nsp++) { 
             Standard_Real CurrentIncidence =  LineSec.GetPoint(nsp).Incidence();
             if(CurrentIncidence < incidence) { 
@@ -521,7 +523,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
           if(HasStartPoint) { 
             StartPOn2S.Parameters(pu1,pv1,pu2,pv2);
             NbLigCalculee = SLin.Length();
-            Standard_Integer l;
+            Standard_Integer l = 0;
             for( l=1; (l <= NbLigCalculee) && (dminiPointLigne >= SeuildPointLigne); l++) { 
               const Handle(IntPatch_WLine)& testwline = *((Handle(IntPatch_WLine)*)&SLin.Value(l));
 
@@ -566,10 +568,10 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
                   if(!RejetLigne) { 
                     // Calculation transition
                     IntSurf_TypeTrans trans1,trans2;
-                    Standard_Real locu,locv;
+                    Standard_Real locu = NAN,locv = NAN;
                     gp_Vec norm1,norm2,d1u,d1v;
                     gp_Pnt ptbid;
-                    Standard_Integer indextg;
+                    Standard_Integer indextg = 0;
                     gp_Vec tgline(PW.TangentAtLine(indextg));
                     PW.Line()->Value(indextg).ParametersOnS1(locu,locv);
                     Surf1->D1(locu,locv,ptbid,d1u,d1v);
@@ -633,13 +635,13 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
     delete [] TabL;
   }// nbLigSec >= 1
 
-  Standard_Real UminLig1,VminLig1,UmaxLig1,VmaxLig1;
-  Standard_Real UminLig2,VminLig2,UmaxLig2,VmaxLig2;
+  Standard_Real UminLig1 = NAN,VminLig1 = NAN,UmaxLig1 = NAN,VmaxLig1 = NAN;
+  Standard_Real UminLig2 = NAN,VminLig2 = NAN,UmaxLig2 = NAN,VmaxLig2 = NAN;
 
   UminLig1=VminLig1=UminLig2=VminLig2=RealLast();
   UmaxLig1=VmaxLig1=UmaxLig2=VmaxLig2=-UminLig1;
 
-  Standard_Integer z;
+  Standard_Integer z = 0;
   for(z=1; z <= nbTanZon; z++) { 
     const Intf_TangentZone& TangentZone=Interference.ZoneValue(z);
     for(Standard_Integer pz=1; pz<=TangentZone.NumberOfPoints(); pz++) { 
@@ -659,7 +661,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
 
   for(z=1; z <= nbTanZon; z++) {
     const Intf_TangentZone& TangentZone=Interference.ZoneValue(z);
-    Standard_Integer pz;
+    Standard_Integer pz = 0;
     for( pz=1; pz<=TangentZone.NumberOfPoints(); pz++) { 
       SectionPointToParameters(TangentZone.GetPoint(pz),Poly1,Poly2,U1,V1,U2,V2);
 
@@ -673,7 +675,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
         StartPOn2S.Parameters(pu1,pv1,pu2,pv2);
         NbLigCalculee = SLin.Length();
         dminiPointLigne = SeuildPointLigne + SeuildPointLigne; 
-        Standard_Integer l;
+        Standard_Integer l = 0;
         for( l = 1; (l <= NbLigCalculee) && (dminiPointLigne >= SeuildPointLigne); l++)	{ 
           const Handle(IntPatch_WLine)& testwline = *((Handle(IntPatch_WLine)*)&SLin.Value(l));
 
@@ -717,10 +719,10 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
 
               if(!RejetLigne) { 
                 IntSurf_TypeTrans trans1,trans2;
-                Standard_Real locu,locv;
+                Standard_Real locu = NAN,locv = NAN;
                 gp_Vec norm1,norm2,d1u,d1v;
                 gp_Pnt ptbid;
-                Standard_Integer indextg;
+                Standard_Integer indextg = 0;
                 gp_Vec tgline(PW.TangentAtLine(indextg));
                 PW.Line()->Value(indextg).ParametersOnS1(locu,locv);
                 Surf1->D1(locu,locv,ptbid,d1u,d1v);
@@ -797,29 +799,29 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
   Standard_Integer nbLigSec = Interference.NbSectionLines();
   Standard_Integer nbTanZon = Interference.NbTangentZones();
 
-  Standard_Integer NbPntOn2SOnLine;
+  Standard_Integer NbPntOn2SOnLine = 0;
   Standard_Integer NbLigCalculee = 0;
 
-  Standard_Real U1,U2,V1,V2;
-  Standard_Real pu1,pu2,pv1,pv2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
+  Standard_Real pu1 = NAN,pu2 = NAN,pv1 = NAN,pv2 = NAN;
 
   TColStd_Array1OfReal StartParams(1,4);
   IntWalk_PWalking PW(Surf1,Surf1,TolTangency,Epsilon,Deflection,Increment);
 
   Standard_Real    SeuildPointLigne = 15.0 * Increment * Increment; //-- 10 est insuffisant
-  Standard_Real    incidence;
-  Standard_Real    dminiPointLigne;
+  Standard_Real    incidence = NAN;
+  Standard_Real    dminiPointLigne = NAN;
 
-  Standard_Boolean HasStartPoint,RejetLigne;
+  Standard_Boolean HasStartPoint = 0,RejetLigne = 0;
 
   IntSurf_PntOn2S StartPOn2S;
 
-  Standard_Integer ver;
+  Standard_Integer ver = 0;
 
   gp_Pnt Point3dDebut,Point3dFin;
 
   if(nbLigSec>=1) {
-    Standard_Integer ls;
+    Standard_Integer ls = 0;
     for( ls = 1; ls <= nbLigSec; ls++) {
       const Intf_SectionLine& LineSec=Interference.LineValue(ls);
       Standard_Integer nbp = LineSec.NumberOfPoints();
@@ -830,7 +832,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
         NombreDePointsDeDepartDuCheminement++;
         if(NombreDePointsDeDepartDuCheminement == 1) { 
           incidence = 0.0;
-          Standard_Integer nsp1;
+          Standard_Integer nsp1 = 0;
           for( nsp1= nbp/2; nsp1 >= 1; nsp1--) { 
             SectionPointToParameters(LineSec.GetPoint(nsp1),Poly1,Poly1,U1,V1,U2,V2);
             Standard_Real CurrentIncidence =  Abs(U1-U2)+Abs(V1-V2);
@@ -883,16 +885,16 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
           StartPOn2S.Parameters(pu1,pv1,pu2,pv2);
           if(Abs(pu1-pu2)>1e-7 || Abs(pv1-pv2)>1e-7) { 
             NbLigCalculee = SLin.Length();
-            Standard_Integer l;
+            Standard_Integer l = 0;
             for( l = 1; (l <= NbLigCalculee) && (dminiPointLigne >= SeuildPointLigne); l++) { 
               const Handle(IntPatch_WLine)& testwline = *((Handle(IntPatch_WLine)*)&SLin.Value(l));
               if( (testwline->IsOutSurf1Box(gp_Pnt2d(pu1,pv1))==Standard_False) &&
                 (testwline->IsOutSurf2Box(gp_Pnt2d(pu2,pv2))==Standard_False) &&
                 (testwline->IsOutBox(StartPOn2S.Value())==Standard_False) ) { 
                   NbPntOn2SOnLine = testwline->NbPnts();
-                  Standard_Integer ll;
+                  Standard_Integer ll = 0;
                   for( ll=1; (ll < NbPntOn2SOnLine) && (dminiPointLigne >= SeuildPointLigne); ll++) { 
-                    Standard_Real t,Au1,Av1,Au2,Av2,Bu1,Bv1,Bu2,Bv2;
+                    Standard_Real t = NAN,Au1 = NAN,Av1 = NAN,Au2 = NAN,Av2 = NAN,Bu1 = NAN,Bv1 = NAN,Bu2 = NAN,Bv2 = NAN;
                     testwline->Point(ll).Parameters(Au1,Av1,Au2,Av2);
                     testwline->Point(ll+1).Parameters(Bu1,Bv1,Bu2,Bv2);
                     if(Au1>Bu1) {
@@ -946,10 +948,10 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
 
                   if(!RejetLigne) { 
                     IntSurf_TypeTrans trans1,trans2;
-                    Standard_Real locu,locv;
+                    Standard_Real locu = NAN,locv = NAN;
                     gp_Vec norm1,norm2,d1u,d1v;
                     gp_Pnt ptbid;
-                    Standard_Integer indextg;
+                    Standard_Integer indextg = 0;
                     gp_Vec tgline(PW.TangentAtLine(indextg));
                     PW.Line()->Value(indextg).ParametersOnS1(locu,locv);
                     Surf1->D1(locu,locv,ptbid,d1u,d1v);
@@ -967,9 +969,9 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
                     }
 
                     IntSurf_LineOn2S LineOn2S;
-                    Standard_Integer nbpw,imin,imax,i;
+                    Standard_Integer nbpw = 0,imin = 0,imax = 0,i = 0;
                     nbpw = PW.Line()->NbPoints();
-                    Standard_Real u1,v1,u2,v2;
+                    Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
                     i=0;
                     do { 
                       i++;
@@ -1004,7 +1006,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
                       const IntSurf_PntOn2S& POn2SDeb = wline->Point(1);
                       const IntSurf_PntOn2S& POn2SFin = wline->Point(wline->NbPnts());
                       if((POn2SDeb.Value()).Distance(POn2SFin.Value()) <= TolTangency) { 
-                        Standard_Real u1t,v1t,u2t,v2t; 
+                        Standard_Real u1t = NAN,v1t = NAN,u2t = NAN,v2t = NAN; 
                         POn2SDeb.Parameters(u1t,v1t,u2t,v2t);
                         IntPatch_Point vtx;
                         vtx.SetValue(POn2SDeb.Value(),TolTang,Standard_False);
@@ -1045,7 +1047,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
     }// for( ls ...
   }// nbLigSec>=1
 
-  Standard_Integer z;
+  Standard_Integer z = 0;
   for( z = 1; z <= nbTanZon; z++) { 
     const Intf_TangentZone& TangentZone=Interference.ZoneValue(z);
     for(Standard_Integer pz=1; pz<=TangentZone.NumberOfPoints(); pz++) { 
@@ -1062,16 +1064,16 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
         if(Abs(pu1-pu2)>1e-7 || Abs(pv1-pv2)>1e-7) { 
           NbLigCalculee = SLin.Length();
           dminiPointLigne = SeuildPointLigne + SeuildPointLigne; 
-          Standard_Integer l;
+          Standard_Integer l = 0;
           for( l = 1; (l <= NbLigCalculee) && (dminiPointLigne >= SeuildPointLigne); l++) { 
             const Handle(IntPatch_WLine)& testwline = *((Handle(IntPatch_WLine)*)&SLin.Value(l));
             if( (testwline->IsOutSurf1Box(gp_Pnt2d(pu1,pv1))==Standard_False) &&
               (testwline->IsOutSurf2Box(gp_Pnt2d(pu2,pv2))==Standard_False) &&
               (testwline->IsOutBox(StartPOn2S.Value())==Standard_False) ) { 
                 NbPntOn2SOnLine = testwline->NbPnts();
-                Standard_Integer ll;
+                Standard_Integer ll = 0;
                 for( ll = 1; (ll < NbPntOn2SOnLine) && (dminiPointLigne >= SeuildPointLigne); ll++) { 
-                  Standard_Real t,Au1,Av1,Au2,Av2,Bu1,Bv1,Bu2,Bv2;
+                  Standard_Real t = NAN,Au1 = NAN,Av1 = NAN,Au2 = NAN,Av2 = NAN,Bu1 = NAN,Bv1 = NAN,Bu2 = NAN,Bv2 = NAN;
                   testwline->Point(ll).Parameters(Au1,Av1,Au2,Av2);
                   testwline->Point(ll+1).Parameters(Bu1,Bv1,Bu2,Bv2);
                   if(Au1>Bu1) {
@@ -1124,10 +1126,10 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
 
                 if(!RejetLigne)	{ 
                   IntSurf_TypeTrans trans1,trans2;
-                  Standard_Real locu,locv;
+                  Standard_Real locu = NAN,locv = NAN;
                   gp_Vec norm1,norm2,d1u,d1v;
                   gp_Pnt ptbid;
-                  Standard_Integer indextg;
+                  Standard_Integer indextg = 0;
                   gp_Vec tgline(PW.TangentAtLine(indextg));
                   PW.Line()->Value(indextg).ParametersOnS1(locu,locv);
                   Surf1->D1(locu,locv,ptbid,d1u,d1v);
@@ -1145,9 +1147,9 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
                   }
 
                   IntSurf_LineOn2S LineOn2S;
-                  Standard_Integer nbp,imin,imax,i;
+                  Standard_Integer nbp = 0,imin = 0,imax = 0,i = 0;
                   nbp = PW.Line()->NbPoints();
-                  Standard_Real u1,v1,u2,v2;
+                  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
                   i=0;
                   do { 
                     i++;
@@ -1182,7 +1184,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
                     const IntSurf_PntOn2S& POn2SDeb = wline->Point(1);
                     const IntSurf_PntOn2S& POn2SFin = wline->Point(wline->NbPnts());
                     if((POn2SDeb.Value()).Distance(POn2SFin.Value()) <= TolTangency) { 
-                      Standard_Real u1t,v1t,u2t,v2t; 
+                      Standard_Real u1t = NAN,v1t = NAN,u2t = NAN,v2t = NAN; 
                       POn2SDeb.Parameters(u1t,v1t,u2t,v2t);
                       IntPatch_Point vtx;
                       vtx.SetValue(POn2SDeb.Value(),TolTang,Standard_False);
@@ -1255,10 +1257,10 @@ Handle(IntPatch_Line) IntPatch_PrmPrmIntersection::NewLine (const Handle(Adaptor
   TColStd_Array1OfReal V2(Low,High);
   TColStd_Array1OfReal AC(Low,High);
 
-  Standard_Real s,ds;
+  Standard_Real s = NAN,ds = NAN;
   Handle(IntPatch_WLine) TheLine = Handle(IntPatch_WLine)::DownCast(Line(NumLine));
   const IntSurf_PntOn2S& Point=TheLine->Point(Low);
-  Standard_Real u1,v1,u2,v2;
+  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
   Point.Parameters(u1,v1,u2,v2);
   U1(Low) = u1;
   V1(Low) = v1;
@@ -1268,7 +1270,7 @@ Handle(IntPatch_Line) IntPatch_PrmPrmIntersection::NewLine (const Handle(Adaptor
 
   IntWalk_PWalking PW(Surf1,Surf2,0.000001,0.000001,0.001,0.001);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for(i=Low+1; i<=High; i++)
   {
     const IntSurf_PntOn2S& Pointi=TheLine->Point(i);
@@ -1348,11 +1350,11 @@ void SectionPointToParameters(const Intf_SectionPoint& Sp,
                               Standard_Real& v2)
 {
   Intf_PIType       typ;
-  Standard_Integer  Adr1,Adr2;
-  Standard_Real     Param,u,v;
+  Standard_Integer  Adr1 = 0,Adr2 = 0;
+  Standard_Real     Param = NAN,u = NAN,v = NAN;
   gp_Pnt P(Sp.Pnt());
 
-  Standard_Integer Pt1,Pt2,Pt3;
+  Standard_Integer Pt1 = 0,Pt2 = 0,Pt3 = 0;
 
   Sp.InfoFirst(typ,Adr1,Adr2,Param);
   switch(typ) { 
@@ -1371,7 +1373,7 @@ void SectionPointToParameters(const Intf_SectionPoint& Sp,
     }
   case Intf_FACE:
     {
-      Standard_Real ua,va,ub,vb,uc,vc,ca,cb,cc,cabc;
+      Standard_Real ua = NAN,va = NAN,ub = NAN,vb = NAN,uc = NAN,vc = NAN,ca = NAN,cb = NAN,cc = NAN,cabc = NAN;
       Poly1.Triangle(Adr1,Pt1,Pt2,Pt3);
       gp_Pnt PA(Poly1.Point(Pt1));
       gp_Pnt PB(Poly1.Point(Pt2));
@@ -1416,7 +1418,7 @@ void SectionPointToParameters(const Intf_SectionPoint& Sp,
     }
   case Intf_FACE:
     {
-      Standard_Real ua,va,ub,vb,uc,vc,ca,cb,cc,cabc;
+      Standard_Real ua = NAN,va = NAN,ub = NAN,vb = NAN,uc = NAN,vc = NAN,ca = NAN,cb = NAN,cc = NAN,cabc = NAN;
       Poly2.Triangle(Adr1,Pt1,Pt2,Pt3);
       gp_Pnt PA(Poly2.Point(Pt1));
       gp_Pnt PB(Poly2.Point(Pt2));
@@ -1456,7 +1458,7 @@ void IntPatch_PrmPrmIntersection::RemplitLin(const Standard_Integer x1,
                                              const Standard_Integer z2,
                                              IntPatch_PrmPrmIntersection_T3Bits& Map) const 
 {
-  int xg,yg,zg;
+  int xg = 0,yg = 0,zg = 0;
   xg=x1-x2; if(xg<0) xg=-xg; 
   yg=y1-y2; if(yg<0) yg=-yg; 
   zg=z1-z2; if(zg<0) zg=-zg; 
@@ -1532,7 +1534,7 @@ void IntPatch_PrmPrmIntersection::Remplit(const Standard_Integer a,
                                           const Standard_Integer c,
                                           IntPatch_PrmPrmIntersection_T3Bits& Map) const 
 { 
-  int iax,iay,iaz,ibx,iby,ibz,icx,icy,icz;
+  int iax = 0,iay = 0,iaz = 0,ibx = 0,iby = 0,ibz = 0,icx = 0,icy = 0,icz = 0;
   if(a!=-1) Map.Add(a);
   if(b!=-1) Map.Add(b);
   if(c!=-1) Map.Add(c);
@@ -1569,9 +1571,9 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
   empt = Standard_True;
   SLin.Clear();  
 
-  Standard_Real UminLig1,VminLig1,UmaxLig1,VmaxLig1;
-  Standard_Real UminLig2,VminLig2,UmaxLig2,VmaxLig2;
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real UminLig1 = NAN,VminLig1 = NAN,UmaxLig1 = NAN,VmaxLig1 = NAN;
+  Standard_Real UminLig2 = NAN,VminLig2 = NAN,UmaxLig2 = NAN,VmaxLig2 = NAN;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
 
   UminLig1 = Surf1->FirstUParameter();
   VminLig1 = Surf1->FirstVParameter();
@@ -1594,7 +1596,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
   {
     Standard_Real TolPar = Precision::PConfusion();
     IntSurf_ListOfPntOn2S AdditionalPnts;
-    Standard_Real NewU1, NewV1, NewU2, NewV2;
+    Standard_Real NewU1 = NAN, NewV1 = NAN, NewU2 = NAN, NewV2 = NAN;
     for(; IterLOP1.More(); IterLOP1.Next())
     {
       IntSurf_PntOn2S Pnt = IterLOP1.Value();
@@ -1700,9 +1702,9 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
 
   Standard_Real SeuildPointLigne = 15.0 * Increment * Increment;
 
-  Standard_Integer NbLigCalculee = 0, ver;
-  Standard_Real pu1,pu2,pv1,pv2, dminiPointLigne;
-  Standard_Boolean HasStartPoint,RejetLigne;
+  Standard_Integer NbLigCalculee = 0, ver = 0;
+  Standard_Real pu1 = NAN,pu2 = NAN,pv1 = NAN,pv2 = NAN, dminiPointLigne = NAN;
+  Standard_Boolean HasStartPoint = 0,RejetLigne = 0;
   IntSurf_PntOn2S StartPOn2S;
   gp_Pnt Point3dDebut,Point3dFin;
 
@@ -1725,7 +1727,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
     if(HasStartPoint) {
       StartPOn2S.Parameters(pu1,pv1,pu2,pv2);
       NbLigCalculee = SLin.Length();
-      Standard_Integer l;
+      Standard_Integer l = 0;
       for( l = 1; (l <= NbLigCalculee) && (dminiPointLigne >= SeuildPointLigne); l++) { 
         const Handle(IntPatch_WLine)& testwline = *((Handle(IntPatch_WLine)*)&SLin.Value(l));
 
@@ -1773,10 +1775,10 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)&    S
 
             if(!RejetLigne) {
               IntSurf_TypeTrans trans1,trans2;
-              Standard_Real locu,locv;
+              Standard_Real locu = NAN,locv = NAN;
               gp_Vec norm1,norm2,d1u,d1v;
               gp_Pnt ptbid;
-              Standard_Integer indextg;
+              Standard_Integer indextg = 0;
               gp_Vec tgline(PW.TangentAtLine(indextg));
               PW.Line()->Value(indextg).ParametersOnS1(locu,locv);
               Surf1->D1(locu,locv,ptbid,d1u,d1v);
@@ -1866,7 +1868,7 @@ void IntPatch_PrmPrmIntersection::Perform(const Handle(Adaptor3d_Surface)&    Su
 
   //------------------------------------------------------------
 
-  Standard_Real pu1,pu2,pv1,pv2;
+  Standard_Real pu1 = NAN,pu2 = NAN,pv1 = NAN,pv2 = NAN;
 
   TColStd_Array1OfReal StartParams(1,4);
 
@@ -1894,7 +1896,7 @@ void IntPatch_PrmPrmIntersection::Perform(const Handle(Adaptor3d_Surface)&    Su
   //Standard_Real    incidence;
   //Standard_Real    dminiPointLigne;
 
-  Standard_Boolean HasStartPoint;//,RejetLigne;
+  Standard_Boolean HasStartPoint = 0;//,RejetLigne;
 
   IntSurf_PntOn2S StartPOn2S;
 
@@ -1927,10 +1929,10 @@ void IntPatch_PrmPrmIntersection::Perform(const Handle(Adaptor3d_Surface)&    Su
         Point3dFin   = PW.Value(PW.NbPoints()).Value();
 
         IntSurf_TypeTrans trans1,trans2;
-        Standard_Real locu,locv;
+        Standard_Real locu = NAN,locv = NAN;
         gp_Vec norm1,norm2,d1u,d1v;
         gp_Pnt ptbid;
-        Standard_Integer indextg;
+        Standard_Integer indextg = 0;
         gp_Vec tgline(PW.TangentAtLine(indextg));
         PW.Line()->Value(indextg).ParametersOnS1(locu,locv);
         Surf1->D1(locu,locv,ptbid,d1u,d1v);
@@ -1992,9 +1994,9 @@ void AdjustOnPeriodic(const Handle(Adaptor3d_Surface)& Surf1,
                       const Handle(Adaptor3d_Surface)& Surf2,
                       IntPatch_SequenceOfLine& aSLin)
 {
-  Standard_Boolean bIsPeriodic[4], bModified, bIsNull, bIsPeriod;
-  Standard_Integer i, j, k, aNbLines, aNbPx, aIndx, aIndq;
-  Standard_Real aPeriod[4], dPeriod[4], ux[4], uq[4], aEps, du;
+  Standard_Boolean bIsPeriodic[4], bModified = 0, bIsNull = 0, bIsPeriod = 0;
+  Standard_Integer i = 0, j = 0, k = 0, aNbLines = 0, aNbPx = 0, aIndx = 0, aIndq = 0;
+  Standard_Real aPeriod[4], dPeriod[4], ux[4], uq[4], aEps = NAN, du = NAN;
   //
   aEps=Precision::Confusion();
   //
@@ -2105,7 +2107,7 @@ IntSurf_PntOn2S MakeNewPoint(const IntSurf_PntOn2S& replacePnt,
   oldPnt.Parameters(OldParams[0], OldParams[1], OldParams[2], OldParams[3]);
   replacePnt.Parameters(NewParams[0], NewParams[1], NewParams[2], NewParams[3]);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 0; i < 4; i++)
   {
     if (Periods[i] != 0.)
@@ -2208,8 +2210,8 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
     Standard_Integer nbTanZon = Interference.NbTangentZones();
     Standard_Real SeuildPointLigne = 15.0 * Increment * Increment;
 
-    Standard_Integer NbLigCalculee = 0, ver;
-    Standard_Real pu1,pu2,pv1,pv2, incidence, dminiPointLigne;
+    Standard_Integer NbLigCalculee = 0, ver = 0;
+    Standard_Real pu1 = NAN,pu2 = NAN,pv1 = NAN,pv2 = NAN, incidence = NAN, dminiPointLigne = NAN;
     Standard_Boolean HasStartPoint = Standard_False, RejectLine = Standard_False;
     IntSurf_PntOn2S StartPOn2S;
     gp_Pnt Point3dDebut,Point3dFin;
@@ -2226,8 +2228,8 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
       }
       //----------------------------------------1.1
       {
-        Standard_Boolean triok;
-        Standard_Integer nb_A, nb_B, tyu;
+        Standard_Boolean triok = 0;
+        Standard_Integer nb_A = 0, nb_B = 0, tyu = 0;
         do
         {
           triok=Standard_True;
@@ -2265,9 +2267,9 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
           TabPtDep[ilig]=0;
         }
         //
-        Standard_Real UminLig1,VminLig1,UmaxLig1,VmaxLig1;
-        Standard_Real UminLig2,VminLig2,UmaxLig2,VmaxLig2;
-        Standard_Real _x,_y,_z;
+        Standard_Real UminLig1 = NAN,VminLig1 = NAN,UmaxLig1 = NAN,VmaxLig1 = NAN;
+        Standard_Real UminLig2 = NAN,VminLig2 = NAN,UmaxLig2 = NAN,VmaxLig2 = NAN;
+        Standard_Real _x = NAN,_y = NAN,_z = NAN;
         //
         Interference.GetLinePoint(TabL[ls], 1, _x, _y, _z,
           UminLig1, VminLig1, UminLig2, VminLig2, 
@@ -2280,7 +2282,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
         //
         for(Standard_Integer ilig = 2; ilig <= nbp; ilig++ )
         {
-          Standard_Real U1, U2, V1, V2;
+          Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
           Interference.GetLinePoint(TabL[ls],ilig,_x,_y,_z,U1,V1,U2,V2,incidence);
           //
           if(U1>UmaxLig1) UmaxLig1=U1;
@@ -2334,7 +2336,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
           //
           if(TabPtDep[nbps2] == 0)
           {
-            Standard_Real U1, U2, V1, V2;
+            Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
 
             TabPtDep[nbps2] = 1;
             Interference.GetLinePoint(TabL[ls],nbps2,_x,_y,_z,U1,V1,U2,V2,incidence);
@@ -2350,7 +2352,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
             {
               StartPOn2S.Parameters(pu1,pv1,pu2,pv2);
               NbLigCalculee = SLin.Length();
-              Standard_Integer l;
+              Standard_Integer l = 0;
               for( l = 1; (l <= NbLigCalculee) && (dminiPointLigne >= SeuildPointLigne); l++)
               {
                 const Handle(IntPatch_WLine)& testwline = *((Handle(IntPatch_WLine)*)&SLin.Value(l));
@@ -2367,8 +2369,8 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
                   UmaxLig1, VmaxLig1, UmaxLig2, VmaxLig2);
 
                 //
-                Standard_Boolean bPWIsDone;
-                Standard_Real aD11, aD12, aD21, aD22, aDx;
+                Standard_Boolean bPWIsDone = 0;
+                Standard_Real aD11 = NAN, aD12 = NAN, aD21 = NAN, aD22 = NAN, aDx = NAN;
                 //
                 bPWIsDone=PW.IsDone();
 
@@ -2418,7 +2420,7 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
                       if((aD11<=TolTangency && aD22<=TolTangency) ||
                         (aD12<=TolTangency && aD21<=TolTangency))
                       {
-                        Standard_Integer m, mx;
+                        Standard_Integer m = 0, mx = 0;
                         //
                         mx=aNbPointsVer/2;
                         if (aNbPointsVer%2)
@@ -2465,10 +2467,10 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
                     if(!RejectLine)
                     {
                       IntSurf_TypeTrans trans1,trans2;
-                      Standard_Real locu,locv;
+                      Standard_Real locu = NAN,locv = NAN;
                       gp_Vec norm1,norm2,d1u,d1v;
                       gp_Pnt ptbid;
-                      Standard_Integer indextg;
+                      Standard_Integer indextg = 0;
                       gp_Vec tgline(PW.TangentAtLine(indextg));
                       PW.Line()->Value(indextg).ParametersOnS1(locu,locv);
                       Surf1->D1(locu,locv,ptbid,d1u,d1v);
@@ -2545,22 +2547,22 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
     //--------------------------------------------------------------------
     //-- Calcul des parametres approches a partir des Zones De Tangence --
     //--------------------------------------------------------------------
-    Standard_Real UminLig1,VminLig1,UmaxLig1,VmaxLig1;
-    Standard_Real UminLig2,VminLig2,UmaxLig2,VmaxLig2;
+    Standard_Real UminLig1 = NAN,VminLig1 = NAN,UmaxLig1 = NAN,VmaxLig1 = NAN;
+    Standard_Real UminLig2 = NAN,VminLig2 = NAN,UmaxLig2 = NAN,VmaxLig2 = NAN;
 
     UminLig1=VminLig1=UminLig2=VminLig2=RealLast();
     UmaxLig1=VmaxLig1=UmaxLig2=VmaxLig2=-UminLig1;
 
     // NbPointsInTangentZone always == 1 (eap)
 
-    Standard_Integer z;
+    Standard_Integer z = 0;
     for( z=1; z <= nbTanZon; z++)
     { 
       //Standard_Integer NbPointsInTangentZone=Interference.NbPointsInTangentZone(z);
       //for(Standard_Integer pz=1; pz<=NbPointsInTangentZone; pz++) {
       Standard_Integer pz=1;
-      Standard_Real _x,_y,_z;
-      Standard_Real U1, U2, V1, V2;
+      Standard_Real _x = NAN,_y = NAN,_z = NAN;
+      Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
       Interference.GetTangentZonePoint(z,pz,_x,_y,_z,U1,V1,U2,V2);
 
       if(U1>UmaxLig1) UmaxLig1=U1;
@@ -2580,8 +2582,8 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
       //Standard_Integer NbPointsInTangentZone=Interference.NbPointsInTangentZone(z);
       //for(Standard_Integer pz=1; pz<=NbPointsInTangentZone; pz++) { 
       Standard_Integer pz=1;
-      Standard_Real _x,_y,_z;
-      Standard_Real U1, U2, V1, V2;
+      Standard_Real _x = NAN,_y = NAN,_z = NAN;
+      Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
       Interference.GetTangentZonePoint(z,pz,_x,_y,_z,U1,V1,U2,V2);
 
       StartParams(1) = U1;
@@ -2680,10 +2682,10 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
               if(!RejectLine)
               { 
                 IntSurf_TypeTrans trans1,trans2;
-                Standard_Real locu,locv;
+                Standard_Real locu = NAN,locv = NAN;
                 gp_Vec norm1,norm2,d1u,d1v;
                 gp_Pnt ptbid;
-                Standard_Integer indextg;
+                Standard_Integer indextg = 0;
                 gp_Vec tgline(PW.TangentAtLine(indextg));
                 PW.Line()->Value(indextg).ParametersOnS1(locu,locv);
                 Surf1->D1(locu,locv,ptbid,d1u,d1v);
@@ -2764,8 +2766,8 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
   done = Standard_True;
 
   Standard_Integer NbLigCalculee = 0;
-  Standard_Real U1,U2,V1,V2;
-  Standard_Real pu1,pu2,pv1,pv2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
+  Standard_Real pu1 = NAN,pu2 = NAN,pv1 = NAN,pv2 = NAN;
 
   TColStd_Array1OfReal StartParams(1,4);
   Standard_Integer MaxOscill = NbU1;
@@ -2779,10 +2781,10 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
 
   IntWalk_PWalking PW(Surf1,Surf2,TolTangency,Epsilon,Deflection,nIncrement);
   Standard_Real    SeuildPointLigne = 15.0 * Increment * Increment; //-- 10 est insuffisant
-  Standard_Real    dminiPointLigne;
-  Standard_Boolean HasStartPoint,RejetLigne;
+  Standard_Real    dminiPointLigne = NAN;
+  Standard_Boolean HasStartPoint = 0,RejetLigne = 0;
   IntSurf_PntOn2S StartPOn2S;
-  Standard_Integer ver;
+  Standard_Integer ver = 0;
   gp_Pnt Point3dDebut,Point3dFin;
 
   //------------------------------------------------------------
@@ -2879,10 +2881,10 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
             if(!RejetLigne)
             {
               IntSurf_TypeTrans trans1,trans2;
-              Standard_Real locu,locv;
+              Standard_Real locu = NAN,locv = NAN;
               gp_Vec norm1,norm2,d1u,d1v;
               gp_Pnt ptbid;
-              Standard_Integer indextg;
+              Standard_Integer indextg = 0;
               gp_Vec tgline(PW.TangentAtLine(indextg));
               PW.Line()->Value(indextg).ParametersOnS1(locu,locv);
               Surf1->D1(locu,locv,ptbid,d1u,d1v);
@@ -2954,9 +2956,9 @@ void IntPatch_PrmPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
 class IntPatch_InfoPD {
 public:
   //----------------------------------------C-tor
-  IntPatch_InfoPD(const Standard_Integer aNBI) {
-    Standard_Integer aNBI2, i, j;
-    myNBI=aNBI;
+  IntPatch_InfoPD(const Standard_Integer aNBI) : myNBI(aNBI) {
+    Standard_Integer aNBI2 = 0, i = 0, j = 0;
+    
     //
     aNBI2=aNBI*aNBI;
     myP1DS2=new char[aNBI2];
@@ -3054,16 +3056,16 @@ void IntPatch_PrmPrmIntersection::PointDepart(Handle(IntSurf_LineOn2S)& LineOn2S
                                               const Standard_Integer SU_2,
                                               const Standard_Integer SV_2) const 
 { 
-  Standard_Integer i, j, xNBI;
+  Standard_Integer i = 0, j = 0, xNBI = 0;
   //modified by NIZNHY-PKV Tue May 24 11:37:38 2011f
   xNBI=200;
   IntPatch_InfoPD aIPD(xNBI);
   //modified by NIZNHY-PKV Wed May 25 06:47:12 2011t
-  Standard_Integer iC15, SU1, SV1, SU2, SV2;
-  Standard_Real U0, U1, V0, V1, U, V;
-  Standard_Real resu0,resv0;
-  Standard_Real  du1,du2,dv1,dv2, dmaxOn1, dmaxOn2;
-  Standard_Real x0,y0,z0, x1,y1,z1,d;
+  Standard_Integer iC15 = 0, SU1 = 0, SV1 = 0, SU2 = 0, SV2 = 0;
+  Standard_Real U0 = NAN, U1 = NAN, V0 = NAN, V1 = NAN, U = NAN, V = NAN;
+  Standard_Real resu0 = NAN,resv0 = NAN;
+  Standard_Real  du1 = NAN,du2 = NAN,dv1 = NAN,dv2 = NAN, dmaxOn1 = NAN, dmaxOn2 = NAN;
+  Standard_Real x0 = NAN,y0 = NAN,z0 = NAN, x1 = NAN,y1 = NAN,z1 = NAN,d = NAN;
   Bnd_Box Box1, Box2;
   //
   iC15=15;
@@ -3144,11 +3146,11 @@ void IntPatch_PrmPrmIntersection::PointDepart(Handle(IntSurf_LineOn2S)& LineOn2S
     return;
   }
   //
-  Standard_Integer aNbPG;
-  Standard_Real x10,y10,z10,x11,y11,z11;
-  Standard_Real x20,y20,z20,x21,y21,z21;
-  Standard_Real dx, dy, dz, dmax;
-  Standard_Real dx2, dy2, dz2;
+  Standard_Integer aNbPG = 0;
+  Standard_Real x10 = NAN,y10 = NAN,z10 = NAN,x11 = NAN,y11 = NAN,z11 = NAN;
+  Standard_Real x20 = NAN,y20 = NAN,z20 = NAN,x21 = NAN,y21 = NAN,z21 = NAN;
+  Standard_Real dx = NAN, dy = NAN, dz = NAN, dmax = NAN;
+  Standard_Real dx2 = NAN, dy2 = NAN, dz2 = NAN;
   //
   Box1.Get(x10,y10,z10,x11,y11,z11);
   Box2.Get(x20,y20,z20,x21,y21,z21);
@@ -3290,7 +3292,7 @@ void IntPatch_PrmPrmIntersection::PointDepart(Handle(IntSurf_LineOn2S)& LineOn2S
   long unsigned Compt=0;
   int ok=0;
   int indicepointtraite = 0;
-  Standard_Integer k,nu,nv;
+  Standard_Integer k = 0,nu = 0,nv = 0;
   //
   do { 
     indicepointtraite--;
@@ -3301,7 +3303,7 @@ void IntPatch_PrmPrmIntersection::PointDepart(Handle(IntSurf_LineOn2S)& LineOn2S
       int LIM=3;
       if(   DansGrille(i-1) && DansGrille(j-1) && DansGrille(k-1) 
         && DansGrille(i+1) && DansGrille(j+1) && DansGrille(k+1)) { 
-          int si,sj,sk;
+          int si = 0,sj = 0,sk = 0;
           for(si=-1; si<= 1 && nb<LIM; si++) { 
             for(sj=-1; sj<= 1 && nb<LIM; sj++) { 
               for(sk=-1; sk<= 1 && nb<LIM; sk++) { 
@@ -3374,19 +3376,19 @@ void IntPatch_PrmPrmIntersection::PointDepart(Handle(IntSurf_LineOn2S)& LineOn2S
             Standard_Real t = aIPD.xP1(i, j).SquareDistance(P);
             //-- On remplace la plus grande valeur ds Dist[.] par la val courante
             if(Dist3[0]<Dist3[1]) { 
-              Standard_Real z;
+              Standard_Real z = NAN;
               z=Dist3[0]; Dist3[0]=Dist3[1]; Dist3[1]=z;
               z=u3[0]; u3[0]=u3[1]; u3[1]=z;
               z=v3[0]; v3[0]=v3[1]; v3[1]=z;
             }
             if(Dist3[1]<Dist3[2]) { 
-              Standard_Real z;
+              Standard_Real z = NAN;
               z=Dist3[1]; Dist3[1]=Dist3[2]; Dist3[2]=z;
               z=u3[1]; u3[1]=u3[2]; u3[2]=z;
               z=v3[1]; v3[1]=v3[2]; v3[2]=z;
             }
             if(Dist3[0]<Dist3[1]) { 
-              Standard_Real z;
+              Standard_Real z = NAN;
               z=Dist3[0]; Dist3[0]=Dist3[1]; Dist3[1]=z;
               z=u3[0]; u3[0]=u3[1]; u3[1]=z;
               z=v3[0]; v3[0]=v3[1]; v3[1]=z;
@@ -3408,19 +3410,19 @@ void IntPatch_PrmPrmIntersection::PointDepart(Handle(IntSurf_LineOn2S)& LineOn2S
             Standard_Real t = aIPD.xP2(i, j).SquareDistance(P);
             //-- On remplace la plus grande valeur ds Dist3[.] par la val courante
             if(Dist3[0]<Dist3[1]) { 
-              Standard_Real z;
+              Standard_Real z = NAN;
               z=Dist3[0]; Dist3[0]=Dist3[1]; Dist3[1]=z;
               z=u3[0]; u3[0]=u3[1]; u3[1]=z;
               z=v3[0]; v3[0]=v3[1]; v3[1]=z;
             }
             if(Dist3[1]<Dist3[2]) { 
-              Standard_Real z;
+              Standard_Real z = NAN;
               z=Dist3[1]; Dist3[1]=Dist3[2]; Dist3[2]=z;
               z=u3[1]; u3[1]=u3[2]; u3[2]=z;
               z=v3[1]; v3[1]=v3[2]; v3[2]=z;
             }
             if(Dist3[0]<Dist3[1]) { 
-              Standard_Real z;
+              Standard_Real z = NAN;
               z=Dist3[0]; Dist3[0]=Dist3[1]; Dist3[1]=z;
               z=u3[0]; u3[0]=u3[1]; u3[1]=z;
               z=v3[0]; v3[0]=v3[1]; v3[1]=z;
@@ -3456,7 +3458,7 @@ Standard_Boolean IsPointOnLine(const IntSurf_PntOn2S        &thePOn2S,
 {
   Standard_Boolean isOnLine = Standard_False;
   Standard_Real Deflection2 = Deflection*Deflection;
-  Standard_Real pu1, pu2, pv1, pv2;
+  Standard_Real pu1 = NAN, pu2 = NAN, pv1 = NAN, pv2 = NAN;
 
   thePOn2S.Parameters(pu1, pv1, pu2, pv2);
 
@@ -3464,7 +3466,7 @@ Standard_Boolean IsPointOnLine(const IntSurf_PntOn2S        &thePOn2S,
     (theWLine->IsOutSurf2Box(gp_Pnt2d(pu2, pv2)) == Standard_False) &&
     (theWLine->IsOutBox(thePOn2S.Value())        == Standard_False)) {
       const Standard_Integer NbPntOn2SOnLine = theWLine->NbPnts();
-      Standard_Integer ll;
+      Standard_Integer ll = 0;
 
       for (ll=1; ll < NbPntOn2SOnLine && !isOnLine; ll++) {
         const gp_Pnt &Pa     = theWLine->Point(ll).Value();
@@ -3533,7 +3535,7 @@ void AddWLine(IntPatch_SequenceOfLine      &theLines,
 {
   Standard_Integer i = 1;
   Standard_Integer aNbLines = theLines.Length();
-  Standard_Boolean isToRemove;
+  Standard_Boolean isToRemove = 0;
 
   // Check each line of theLines if it is on theWLine.
   while (i <= aNbLines) {
@@ -3553,7 +3555,7 @@ void AddWLine(IntPatch_SequenceOfLine      &theLines,
           // Middle point is on theWLine. Check vertices.
           isToRemove = Standard_True;
 
-          Standard_Integer j;
+          Standard_Integer j = 0;
           const Standard_Integer aNbVtx = aWLine->NbVertex();
 
           for (j = 1; j <= aNbVtx; j++) {

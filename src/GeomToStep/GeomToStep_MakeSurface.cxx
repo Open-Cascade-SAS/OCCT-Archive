@@ -37,7 +37,7 @@
 //=============================================================================
 // Creation d' une Surface de prostep a partir d' une Surface de Geom
 //=============================================================================
-GeomToStep_MakeSurface::GeomToStep_MakeSurface ( const Handle(Geom_Surface)& S)
+GeomToStep_MakeSurface::GeomToStep_MakeSurface ( const Handle(Geom_Surface)& S) : GeomToStep_Root()
 {
   done = Standard_True;
   if (S->IsKind(STANDARD_TYPE(Geom_BoundedSurface))) {

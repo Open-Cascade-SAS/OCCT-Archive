@@ -45,7 +45,7 @@ void RWStepVisual_RWFillAreaStyle::ReadStep
 
 	Handle(StepVisual_HArray1OfFillStyleSelect) aFillStyles;
 	StepVisual_FillStyleSelect aFillStylesItem;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"fill_styles",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aFillStyles = new StepVisual_HArray1OfFillStyleSelect (1, nb2);

@@ -43,6 +43,7 @@
 #include <TColStd_Array1OfInteger.hxx>
 #include <TColStd_Array1OfReal.hxx>
 
+#include <math.h>
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(GeomFill_NSections,GeomFill_SectionLaw)
 
@@ -164,7 +165,7 @@ static void ResultEval(const Handle(Geom_BSplineSurface)& surf,
   //  les poles
   Standard_Integer Psize = Cdim * NbP;
   TColStd_Array1OfReal SPoles(1,Psize);
-  Standard_Integer ii, jj, ipole=1;
+  Standard_Integer ii = 0, jj = 0, ipole=1;
   for (jj=1;jj<=NbP;jj++) {
     for (ii=1;ii<=surf->NbUPoles();ii++) {
       SPoles(ipole) = surf->Pole(ii,jj).X();
@@ -200,13 +201,13 @@ static void ResultEval(const Handle(Geom_BSplineSurface)& surf,
 //purpose  : 
 //=======================================================================
 
-GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC)
+GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC) : mySections(NC), UFirst(0.), ULast(1.), VFirst(0.), VLast(1.)
 {
-  mySections = NC;
-  UFirst = 0.;
-  ULast = 1.;
-  VFirst = 0.;
-  VLast = 1.;
+  
+  
+  
+  
+  
   myRefSurf.Nullify();
   ComputeSurface();
 }
@@ -217,14 +218,14 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC)
 //=======================================================================
 
 GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
-				       const TColStd_SequenceOfReal& NP)
+				       const TColStd_SequenceOfReal& NP) : mySections(NC), myParams(NP), UFirst(0.), ULast(1.), VFirst(0.), VLast(1.)
 {
-  mySections = NC;
-  myParams = NP;
-  UFirst = 0.;
-  ULast = 1.;
-  VFirst = 0.;
-  VLast = 1.;
+  
+  
+  
+  
+  
+  
   myRefSurf.Nullify();
   ComputeSurface();
 }
@@ -236,14 +237,14 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
 GeomFill_NSections::GeomFill_NSections (const TColGeom_SequenceOfCurve& theNC,
                                         const TColStd_SequenceOfReal& theNP,
                                         const Standard_Real theUF,
-                                        const Standard_Real theUL)
+                                        const Standard_Real theUL) : mySections(theNC), myParams(theNP), UFirst(theUF), ULast(theUL), VFirst(0.0), VLast(1.0)
 {
-  mySections = theNC;
-  myParams = theNP;
-  UFirst = theUF;
-  ULast = theUL;
-  VFirst = 0.0;
-  VLast = 1.0;
+  
+  
+  
+  
+  
+  
   myRefSurf.Nullify();
   ComputeSurface();
 }
@@ -258,14 +259,14 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
 				       const Standard_Real UF,
 				       const Standard_Real UL,
 				       const Standard_Real VF,
-				       const Standard_Real VL)
+				       const Standard_Real VL) : mySections(NC), myParams(NP), UFirst(UF), ULast(UL), VFirst(VF), VLast(VL)
 {
-  mySections = NC;
-  myParams = NP;
-  UFirst = UF;
-  ULast = UL;
-  VFirst = VF;
-  VLast = VL;
+  
+  
+  
+  
+  
+  
   myRefSurf.Nullify();
   ComputeSurface();
 }
@@ -282,16 +283,16 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
 				       const Standard_Real UL,
 				       const Standard_Real VF,
 				       const Standard_Real VL,
-				       const Handle(Geom_BSplineSurface)& Surf)
+				       const Handle(Geom_BSplineSurface)& Surf) : mySections(NC), myTrsfs(Trsfs), myParams(NP), UFirst(UF), ULast(UL), VFirst(VF), VLast(VL), myRefSurf(Surf)
 {
-  mySections = NC;
-  myTrsfs = Trsfs;
-  myParams = NP;
-  UFirst = UF;
-  ULast = UL;
-  VFirst = VF;
-  VLast = VL;
-  myRefSurf = Surf;
+  
+  
+  
+  
+  
+  
+  
+  
   ComputeSurface();
 }
 
@@ -312,7 +313,7 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
     TColStd_Array1OfReal weights(1,mySurface->NbUPoles());
     Curve->Poles(poles);
     Curve->Weights(weights);
-    Standard_Integer ii, L =  Poles.Length();
+    Standard_Integer ii = 0, L =  Poles.Length();
     for (ii=1; ii<=L; ii++) {
       Poles(ii).SetXYZ(poles(ii).XYZ());
       Weights(ii) = weights(ii);
@@ -356,10 +357,10 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
   }
 
 
-  Standard_Real ww, EpsW = 10*Precision::PConfusion();
+  Standard_Real ww = NAN, EpsW = 10*Precision::PConfusion();
   Standard_Boolean NullWeight = Standard_False;
   if (!rational) DWeights.Init(0.);
-  Standard_Integer indice = 1, ii;
+  Standard_Integer indice = 1, ii = 0;
 
   //  recopie des poles du resultat sous forme de points 3D et de poids
   for (ii=1; ii<=L && (!NullWeight) ; ii++) {
@@ -449,10 +450,10 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
   }
 
 
-  Standard_Real ww, EpsW = 10*Precision::PConfusion();
+  Standard_Real ww = NAN, EpsW = 10*Precision::PConfusion();
   Standard_Boolean NullWeight = Standard_False;
   if (!rational) D2Weights.Init(0.);
-  Standard_Integer indice = 1, ii;
+  Standard_Integer indice = 1, ii = 0;
 
   //  recopie des poles du resultat sous forme de points 3D et de poids
   for (ii=1; ii<=L && (!NullWeight) ; ii++) {
@@ -536,7 +537,7 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
   if (myRefSurf.IsNull()) {
 
     Standard_Real myPres3d = 1.e-06;
-    Standard_Integer i,j,jdeb=1,jfin=mySections.Length();
+    Standard_Integer i = 0,j = 0,jdeb=1,jfin=mySections.Length();
     
     if (jfin <= jdeb)
     {
@@ -619,11 +620,11 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
   else {
   
     // segmentation de myRefSurf
-    Standard_Real Ui1, Ui2, V0, V1;
+    Standard_Real Ui1 = NAN, Ui2 = NAN, V0 = NAN, V1 = NAN;
     BS = Handle(Geom_BSplineSurface)::DownCast(myRefSurf->Copy());
     Ui1 = UFirst;
     Ui2 = ULast;
-    Standard_Integer i1, i2;
+    Standard_Integer i1 = 0, i2 = 0;
     myRefSurf->LocateU( Ui1, Precision::PConfusion(), i1, i2 );
     if (Abs(Ui1 - myRefSurf->UKnot(i1)) <= Precision::PConfusion())
       Ui1 = myRefSurf->UKnot(i1);
@@ -808,8 +809,8 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
   if (mySurface.IsNull())
     return Bary;
 
-  Standard_Integer ii,jj;
-  Standard_Real U0, U1, V0, V1;
+  Standard_Integer ii = 0,jj = 0;
+  Standard_Real U0 = NAN, U1 = NAN, V0 = NAN, V1 = NAN;
   mySurface->Bounds(U0,U1,V0,V1);
   Standard_Real V = V0, DeltaV = ( V1 - V0 ) / 20;
   Standard_Real U = U0, DeltaU = ( U1 - U0 ) / 20;
@@ -830,8 +831,8 @@ GeomFill_NSections::GeomFill_NSections(const TColGeom_SequenceOfCurve& NC,
 //=======================================================
  Standard_Real GeomFill_NSections::MaximalSection() const
 {
-  Standard_Real L, Lmax=0.;
-  Standard_Integer ii;
+  Standard_Real L = NAN, Lmax=0.;
+  Standard_Integer ii = 0;
   for (ii=1; ii <=mySections.Length(); ii++) {
     GeomAdaptor_Curve AC (mySections(ii));
     L = GCPnts_AbscissaPoint::Length(AC);
@@ -854,7 +855,7 @@ void GeomFill_NSections::GetMinimalWeight(TColStd_Array1OfReal& Weights) const
                      NbV = mySurface->NbVPoles();
     TColStd_Array2OfReal WSurf(1,NbU,1,NbV);
     mySurface->Weights(WSurf);
-    Standard_Integer i,j;
+    Standard_Integer i = 0,j = 0;
     for (i=1;i<=NbU;i++) {
       Standard_Real min = WSurf(i,1);
       for (j=2;j<=NbV;j++) {
@@ -891,7 +892,7 @@ void GeomFill_NSections::GetMinimalWeight(TColStd_Array1OfReal& Weights) const
         gp_Circ C1 = AC1.Circle();
         gp_Circ C2 = AC2.Circle();
         Standard_Real Tol = 1.e-7;
-        Standard_Boolean samedir, samerad, samepos;
+        Standard_Boolean samedir = 0, samerad = 0, samepos = 0;
         samedir = (C1.Axis().IsParallel(C2.Axis(),1.e-4));
         samerad = (Abs(C1.Radius()-C2.Radius())<Tol);
         samepos = (C1.Location().Distance(C2.Location())<Tol);
@@ -905,7 +906,7 @@ void GeomFill_NSections::GetMinimalWeight(TColStd_Array1OfReal& Weights) const
         gp_Lin L1 = AC1.Line();
         gp_Lin L2 = AC2.Line(); 
         Standard_Real Tol = 1.e-7;
-        Standard_Boolean samedir, samelength, samepos;
+        Standard_Boolean samedir = 0, samelength = 0, samepos = 0;
         samedir = (L1.Direction().IsParallel(L2.Direction(),1.e-4));
         gp_Pnt P11 = AC1.Value(AC1.FirstParameter()),
                P12 = AC1.Value(AC1.LastParameter()),
@@ -1007,7 +1008,7 @@ void GeomFill_NSections::GetMinimalWeight(TColStd_Array1OfReal& Weights) const
 //=======================================================
  Handle(Geom_Curve) GeomFill_NSections::CirclSection(const Standard_Real V) const
 {
-  Standard_Real Err;
+  Standard_Real Err = NAN;
   if (!IsConicalLaw(Err)) throw StdFail_NotDone("The Law is not Conical!");
 
   GeomAdaptor_Curve AC1(mySections(1));

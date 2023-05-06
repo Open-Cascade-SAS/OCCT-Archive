@@ -23,6 +23,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <BSplSLib.hxx>
 #include <Geom_BSplineSurface.hxx>
@@ -68,7 +70,7 @@ static void CheckSurfaceData
     throw Standard_ConstructionError("Geom_BSplineSurface: Knot and Mult array size mismatch");
   }
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = SUKnots.Lower(); i < SUKnots.Upper(); i++) {
     if (SUKnots(i+1) - SUKnots(i) <= Epsilon(Abs(SUKnots(i)))) {
       throw Standard_ConstructionError("Geom_BSplineSurface: UKnots interval values too close");
@@ -97,7 +99,7 @@ static void Rational(const TColStd_Array2OfReal& Weights,
 		     Standard_Boolean& Urational,
 		     Standard_Boolean& Vrational)
 {
-  Standard_Integer I,J;
+  Standard_Integer I = 0,J = 0;
   J = Weights.LowerCol ();
   Vrational = Standard_False;
   while (!Vrational && J <= Weights.UpperCol()) {
@@ -168,7 +170,8 @@ Geom_BSplineSurface::Geom_BSplineSurface
  vperiodic(VPeriodic),
  udeg(UDegree),
  vdeg(VDegree),
- maxderivinvok(0)
+ poles(new TColgp_HArray2OfPnt(1,Poles.ColLength(),
+				    1,Poles.RowLength())), uknots(new TColStd_HArray1OfReal    (1,UKnots.Length())), umults(new TColStd_HArray1OfInteger (1,UMults.Length())), vknots(new TColStd_HArray1OfReal    (1,VKnots.Length())), vmults(new TColStd_HArray1OfInteger (1,VMults.Length())), maxderivinvok(0)
 
 {
 
@@ -182,23 +185,22 @@ Geom_BSplineSurface::Geom_BSplineSurface
 
   // copy arrays
 
-  poles   = new TColgp_HArray2OfPnt(1,Poles.ColLength(),
-				    1,Poles.RowLength());
+  
   poles->ChangeArray2() = Poles;
 
   weights = new TColStd_HArray2OfReal (1,Poles.ColLength(),
 				       1,Poles.RowLength(), 1.0);
 
-  uknots  = new TColStd_HArray1OfReal    (1,UKnots.Length());
+  
   uknots->ChangeArray1() = UKnots;
 
-  umults  = new TColStd_HArray1OfInteger (1,UMults.Length());
+  
   umults->ChangeArray1() = UMults;
 
-  vknots  = new TColStd_HArray1OfReal    (1,VKnots.Length());
+  
   vknots->ChangeArray1() = VKnots;
 
-  vmults  = new TColStd_HArray1OfInteger (1,VMults.Length());
+  
   vmults->ChangeArray1() = VMults;
 
   UpdateUKnots();
@@ -237,7 +239,7 @@ Geom_BSplineSurface::Geom_BSplineSurface
   if (Weights.RowLength() != Poles.RowLength())
     throw Standard_ConstructionError("Geom_BSplineSurface: V Weights and Poles array size mismatch");
 
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   for (i = Weights.LowerRow(); i <= Weights.UpperRow(); i++) {
     for (j = Weights.LowerCol(); j <= Weights.UpperCol(); j++) {
       if (Weights(i,j) <= gp::Resolution())  
@@ -544,9 +546,9 @@ void Geom_BSplineSurface::segment(const Standard_Real U1,
       deltaV = aVPeriod;
   }
 
-  Standard_Real NewU1, NewU2, NewV1, NewV2;
-  Standard_Real U, V;
-  Standard_Integer indexU, indexV;
+  Standard_Real NewU1 = NAN, NewU2 = NAN, NewV1 = NAN, NewV2 = NAN;
+  Standard_Real U = NAN, V = NAN;
+  Standard_Integer indexU = 0, indexV = 0;
 
   indexU = 0;
   BSplCLib::LocateParameter(udeg, uknots->Array1(), umults->Array1(),
@@ -617,7 +619,7 @@ void Geom_BSplineSurface::segment(const Standard_Real U1,
   Handle(TColStd_HArray1OfInteger)
     numults = new TColStd_HArray1OfInteger(1, nbuknots);
 
-  Standard_Integer i, k = 1;
+  Standard_Integer i = 0, k = 1;
   for (i = index1U; i <= index2U; i++) {
     nuknots->SetValue(k, uknots->Value(i));
     numults->SetValue(k, umults->Value(i));
@@ -699,7 +701,7 @@ void Geom_BSplineSurface::segment(const Standard_Real U1,
   Handle(TColgp_HArray2OfPnt)
     npoles = new TColgp_HArray2OfPnt(1, nbupoles, 1, nbvpoles);
   k = 1;
-  Standard_Integer j, l;
+  Standard_Integer j = 0, l = 0;
   if (urational || vrational) {
     nweights = new TColStd_HArray2OfReal(1, nbupoles, 1, nbvpoles);
     for (i = pindex1U; i <= pindex2U; i++) {
@@ -1132,7 +1134,7 @@ void Geom_BSplineSurface::PeriodicNormalization
 (Standard_Real&  Uparameter, 
  Standard_Real&  Vparameter) const 
 {
-  Standard_Real Period, aMaxVal, aMinVal;
+  Standard_Real Period = NAN, aMaxVal = NAN, aMinVal = NAN;
   
   if (uperiodic) {
     aMaxVal = ufknots->Value(ufknots->Upper() - udeg);
@@ -1143,11 +1145,11 @@ void Geom_BSplineSurface::PeriodicNormalization
     if(Period <= eps) 
       throw Standard_OutOfRange("Geom_BSplineSurface::PeriodicNormalization: Uparameter is too great number");
 
-    Standard_Boolean isLess, isGreater;
+    Standard_Boolean isLess = 0, isGreater = 0;
     isLess = aMinVal - Uparameter > 0;
     isGreater = Uparameter - aMaxVal > 0;
     if (isLess || isGreater) {
-      Standard_Real aDPar, aNbPer;
+      Standard_Real aDPar = NAN, aNbPer = NAN;
       aDPar = (isLess) ? (aMaxVal - Uparameter) : (aMinVal - Uparameter);
       modf(aDPar / Period, &aNbPer);
       Uparameter += aNbPer * Period;
@@ -1162,11 +1164,11 @@ void Geom_BSplineSurface::PeriodicNormalization
     if(Period <= eps) 
       throw Standard_OutOfRange("Geom_BSplineSurface::PeriodicNormalization: Vparameter is too great number");
 
-    Standard_Boolean isLess, isGreater;
+    Standard_Boolean isLess = 0, isGreater = 0;
     isLess = aMinVal - Vparameter > 0;
     isGreater = Vparameter - aMaxVal > 0;
     if (isLess || isGreater) {
-      Standard_Real aDPar, aNbPer;
+      Standard_Real aDPar = NAN, aNbPer = NAN;
       aDPar = (isLess) ? (aMaxVal - Vparameter) : (aMinVal - Vparameter);
       modf(aDPar / Period, &aNbPer);
       Vparameter += aNbPer * Period;

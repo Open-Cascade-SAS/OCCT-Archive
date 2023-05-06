@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
@@ -52,7 +54,7 @@ void StdPrs_ShadedSurface::Add (const Handle(Prs3d_Presentation)& thePrs,
   theSurface.UIntervals (anInterU, GeomAbs_C1);
   theSurface.VIntervals (anInterV, GeomAbs_C1);
 
-  Standard_Real U1, U2, V1, V2, DU, DV;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN, DU = NAN, DV = NAN;
 
   gp_Pnt P1, P2;
   gp_Vec D1U, D1V, D1, D2;

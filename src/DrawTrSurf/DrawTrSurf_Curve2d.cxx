@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DrawTrSurf_Curve2d.hxx>
 
 #include <Draw_Color.hxx>
@@ -41,14 +43,14 @@ extern Standard_Boolean Draw_Bounds;
 //=======================================================================
 DrawTrSurf_Curve2d::DrawTrSurf_Curve2d (const Handle(Geom2d_Curve)& C,
                                         const Standard_Boolean DispOrigin)
-: DrawTrSurf_Drawable (50)
+: DrawTrSurf_Drawable (50), curv(C), disporigin(DispOrigin), dispcurvradius(Standard_False), radiusmax(1.0e3), radiusratio(0.1)
 {
-  curv = C;
+  
   look = Draw_vert;
-  disporigin = DispOrigin ;
-  dispcurvradius = Standard_False;
-  radiusmax =  1.0e3;
-  radiusratio = 0.1;
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -62,14 +64,14 @@ DrawTrSurf_Curve2d::DrawTrSurf_Curve2d (const Handle(Geom2d_Curve)& C,
 					const Standard_Boolean DispCurvRadius,
 					const Standard_Real  RadiusMax,
 					const Standard_Real  RadiusRatio) :
-       DrawTrSurf_Drawable (Discret)
+       DrawTrSurf_Drawable (Discret), curv(C), look(aColor), disporigin(DispOrigin), dispcurvradius(DispCurvRadius), radiusmax(RadiusMax), radiusratio(RadiusRatio)
 {
-  curv = C;
-  look = aColor;
-  disporigin = DispOrigin ;
-  dispcurvradius = DispCurvRadius;
-  radiusmax =  RadiusMax;
-  radiusratio = RadiusRatio;
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -140,18 +142,18 @@ void DrawTrSurf_Curve2d::DrawOn (Draw_Display& dis) const
 
 // Draw the curvature Radius      
   if (dispcurvradius && (C2d.GetType() != GeomAbs_Line)) {
-    Standard_Integer ii;
-    Standard_Integer intrv, nbintv = C2d.NbIntervals(GeomAbs_CN);
+    Standard_Integer ii = 0;
+    Standard_Integer intrv = 0, nbintv = C2d.NbIntervals(GeomAbs_CN);
     TColStd_Array1OfReal TI(1,nbintv+1);
     C2d.Intervals(TI,GeomAbs_CN);
-    Standard_Real Resolution = 1.0e-9, Curvature;
+    Standard_Real Resolution = 1.0e-9, Curvature = NAN;
     Geom2dLProp_CLProps2d LProp(curv, 2, Resolution);
     gp_Pnt2d P1, P2;    
 
     for (intrv = 1; intrv <= nbintv; intrv++) {
 	Standard_Real t = TI(intrv);
 	Standard_Real step = (TI(intrv+1) - t) / GetDiscretisation();
-	Standard_Real LRad, ratio;
+	Standard_Real LRad = NAN, ratio = NAN;
 	for (ii = 1; ii <= GetDiscretisation(); ii++) {	 
 	  LProp.SetParameter(t);
           if (LProp.IsTangentDefined()) {

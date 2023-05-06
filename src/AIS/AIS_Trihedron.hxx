@@ -241,7 +241,7 @@ protected:
   Standard_Boolean myHasOwnArrowColor;
 
   TCollection_ExtendedString myLabels[Prs3d_DatumParts_NB];
-  Standard_Integer mySelectionPriority[Prs3d_DatumParts_NB];
+  Standard_Integer mySelectionPriority[Prs3d_DatumParts_NB]{};
 
   Handle(Graphic3d_Group) myPartToGroup[Prs3d_DatumParts_NB];
   NCollection_List<Prs3d_DatumParts> mySelectedParts;

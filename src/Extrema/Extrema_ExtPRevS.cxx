@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <ElCLib.hxx>
 #include <Extrema_ExtPElC.hxx>
@@ -207,13 +209,13 @@ static Standard_Boolean IsExtremum (const Standard_Real U, const Standard_Real V
 //purpose  : 
 //=======================================================================
 
-Extrema_ExtPRevS::Extrema_ExtPRevS() 
+Extrema_ExtPRevS::Extrema_ExtPRevS() : mytolv(Precision::Confusion()), myIsAnalyticallyComputable(Standard_False), myDone(Standard_False), myNbExt(0) 
 {
   myvinf = myvsup = 0.0;
-  mytolv = Precision::Confusion();
-  myDone = Standard_False;
-  myNbExt = 0;
-  myIsAnalyticallyComputable = Standard_False;
+  
+  
+  
+  
 
   for (Standard_Integer i = 0; i < 8; i++)
   {
@@ -344,7 +346,7 @@ void Extrema_ExtPRevS::Perform(const gp_Pnt& P)
   if (O.IsEqual(Pp,Precision::Confusion())) // P is on the AxeOfRevolution
     return;
   
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
   gp_Pnt P1, Ppp;
   Standard_Real OPpz = gp_Vec(O,Pp).Dot(Z);
   if (Abs(OPpz) <= gp::Resolution()) {
@@ -373,8 +375,8 @@ void Extrema_ExtPRevS::Perform(const gp_Pnt& P)
   P1 = P.Transformed(T);
   
   gp_Pnt E;
-  Standard_Real Dist2;
-  Standard_Integer i;
+  Standard_Real Dist2 = NAN;
+  Standard_Integer i = 0;
   
   Extrema_ExtPElC anExt;
   PerformExtPElC(anExt, P1, anACurve, mytolv);

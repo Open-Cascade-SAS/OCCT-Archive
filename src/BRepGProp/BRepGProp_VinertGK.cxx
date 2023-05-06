@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRepGProp_Domain.hxx>
 #include <BRepGProp_TFunction.hxx>
 #include <BRepGProp_VinertGK.hxx>
@@ -217,9 +219,9 @@ Standard_Real BRepGProp_VinertGK::Perform(BRepGProp_Face        &theSurface,
 
 {
   Standard_Real aCoeff[4];
-  Standard_Real aXLoc;
-  Standard_Real aYLoc;
-  Standard_Real aZLoc;
+  Standard_Real aXLoc = NAN;
+  Standard_Real aYLoc = NAN;
+  Standard_Real aZLoc = NAN;
 
   loc.Coord(aXLoc, aYLoc, aZLoc);
   thePlane.Coefficients (aCoeff[0], aCoeff[1], aCoeff[2], aCoeff[3]);
@@ -244,9 +246,9 @@ Standard_Real BRepGProp_VinertGK::Perform(BRepGProp_Face        &theSurface,
 
 {
   Standard_Real aCoeff[4];
-  Standard_Real aXLoc;
-  Standard_Real aYLoc;
-  Standard_Real aZLoc;
+  Standard_Real aXLoc = NAN;
+  Standard_Real aYLoc = NAN;
+  Standard_Real aZLoc = NAN;
 
   loc.Coord(aXLoc, aYLoc, aZLoc);
   thePlane.Coefficients (aCoeff[0], aCoeff[1], aCoeff[2], aCoeff[3]);
@@ -299,21 +301,21 @@ Standard_Real BRepGProp_VinertGK::PrivatePerform
 
   //Standard_Real    aCrvTol = 0.5*theTolerance/aNbCurves;
   Standard_Real    aCrvTol = 0.1*theTolerance;
-  Standard_Real    aUMin;
-  Standard_Real    aUMax;
-  Standard_Real    aTMin;
-  Standard_Real    aTMax;
-  Standard_Integer aNbPnts;
+  Standard_Real    aUMin = NAN;
+  Standard_Real    aUMax = NAN;
+  Standard_Real    aTMin = NAN;
+  Standard_Real    aTMax = NAN;
+  Standard_Integer aNbPnts = 0;
   Standard_Integer aNbMaxIter = 1000;
   Standard_Integer aNbVal = 10;
-  Standard_Integer k;
+  Standard_Integer k = 0;
   math_Vector      aLocalValue(1, aNbVal);
   math_Vector      aLocalTolReached(1, aNbVal);
   math_Vector      aValue(1, aNbVal);
   math_Vector      aTolReached(1, aNbVal);
   TColStd_Array1OfBoolean CFlags(1, aNbVal); 
   CFlags.Init(Standard_False);
-  Standard_Boolean isMore;
+  Standard_Boolean isMore = 0;
 
   //aNbVal = 1;
   aValue.Init(0.);
@@ -323,12 +325,12 @@ Standard_Real BRepGProp_VinertGK::PrivatePerform
   CFlags(1) = Standard_True;
 
   if(theCGFlag || theIFlag) {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for(i = 2; i <= 4; ++i) {CFlags(i) = Standard_True;}
   }
 
   if(theIFlag) {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for(i = 5; i <= 10; ++i) {CFlags(i) = Standard_True;}
   }
 

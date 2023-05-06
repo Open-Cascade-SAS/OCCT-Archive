@@ -44,9 +44,9 @@ Bisector_PointOnBis::Bisector_PointOnBis(const Standard_Real Param1,
   param2   (Param2),
   paramBis (ParamBis),
   distance (Distance),
-  point    (P)
+  infinite(Standard_False), point    (P)
 {
-  infinite = Standard_False;
+  
 }
 
 //=============================================================================

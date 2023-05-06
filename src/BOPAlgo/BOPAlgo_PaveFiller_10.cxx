@@ -15,6 +15,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BOPAlgo_PaveFiller.hxx>
 
 #include <Precision.hxx>
@@ -44,7 +46,7 @@ void BOPAlgo_PaveFiller::SetNonDestructive()
     return;
   }
   //
-  Standard_Boolean bFlag;
+  Standard_Boolean bFlag = 0;
   TopTools_ListIteratorOfListOfShape aItLS;
   //
   bFlag=Standard_False;
@@ -74,7 +76,7 @@ void BOPAlgo_PaveFiller::UpdateEdgeTolerance (const Standard_Integer nE,
     TColStd_ListIteratorOfListOfInteger itLI(aLI);
     for (; itLI.More(); itLI.Next())
     {
-      Standard_Integer nV = itLI.Value(), nVSD;
+      Standard_Integer nV = itLI.Value(), nVSD = 0;
       if (!myDS->IsNewShape(nV) &&
           !myDS->HasShapeSD(nV, nVSD))
         return;
@@ -104,8 +106,8 @@ Standard_Integer BOPAlgo_PaveFiller::UpdateVertex
   (const Standard_Integer nV,
    const Standard_Real aTolNew)
 {
-  Standard_Integer nVNew;
-  Standard_Real aTolV;
+  Standard_Integer nVNew = 0;
+  Standard_Real aTolV = NAN;
   BRep_Builder aBB;
   
   nVNew = nV;
@@ -176,7 +178,7 @@ void BOPAlgo_PaveFiller::UpdateCommonBlocksWithSDVertices()
     UpdatePaveBlocksWithSDVertices();
     return;
   }
-  Standard_Integer aNbPBP;
+  Standard_Integer aNbPBP = 0;
   //
   BOPDS_VectorOfListOfPaveBlock& aPBP=myDS->ChangePaveBlocksPool();
   aNbPBP=aPBP.Length();
@@ -184,8 +186,8 @@ void BOPAlgo_PaveFiller::UpdateCommonBlocksWithSDVertices()
     return;
   }
   //
-  Standard_Integer i, nV1, nV2;
-  Standard_Real aTolV;
+  Standard_Integer i = 0, nV1 = 0, nV2 = 0;
+  Standard_Real aTolV = NAN;
   BOPDS_MapOfCommonBlock aMCB;
   BOPDS_ListIteratorOfListOfPaveBlock aItPB;
   Handle(BOPDS_PaveBlock) aPB;
@@ -225,10 +227,10 @@ namespace
     for (Standard_Integer i = 0; i < theInterfs.Length(); i++)
     {
       InterfType& anIntf = theInterfs(i);
-      Standard_Integer anInd;
+      Standard_Integer anInd = 0;
       if (anIntf.HasIndexNew(anInd))
       {
-        Standard_Integer anIndSD;
+        Standard_Integer anIndSD = 0;
         if (theDS->HasShapeSD(anInd, anIndSD))
         {
           anIntf.SetIndexNew(anIndSD);

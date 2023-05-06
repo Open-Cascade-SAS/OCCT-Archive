@@ -71,10 +71,10 @@ OSD_Environment term (which,"");
 Quantity_Date  OSD_Process::SystemDate(){
 Quantity_Date result;
 Standard_Integer month=0,day=0,year=0,hh=0,mn=0,ss=0;
-struct tm transfert;
-struct timeval tval;
-struct timezone tzone;
-int status;
+struct tm transfert{};
+struct timeval tval{};
+struct timezone tzone{};
+int status = 0;
 
  status = gettimeofday( &tval, &tzone );
  if (status == -1) myError.SetValue (errno, Iam, "GetSystem");
@@ -161,7 +161,7 @@ return (result);
 
 void OSD_Process::SetCurrentDirectory(const OSD_Path& where){
 TCollection_AsciiString Name;
-int status;
+int status = 0;
 
  where.SystemName(Name);
 

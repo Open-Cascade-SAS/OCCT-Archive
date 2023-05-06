@@ -158,7 +158,7 @@ protected:
   Handle(ShapeAnalysis_Surface) mySurf;
   Standard_Real myPreci;
   Standard_Boolean myBuild;
-  Standard_Integer myStatus;
+  Standard_Integer myStatus{};
   Standard_Integer myAdjustOverDegen;
   Standard_Integer myNbCashe;
   gp_Pnt myCashe3d[2];

@@ -140,10 +140,10 @@ private:
   Handle(BRepAdaptor_Curve2d) myCurve;
   TColStd_ListOfTransient myCurves;
   TColStd_ListIteratorOfListOfTransient myCIterator;
-  Standard_Real myU0;
-  Standard_Real myV0;
-  Standard_Real myDU;
-  Standard_Real myDV;
+  Standard_Real myU0{};
+  Standard_Real myV0{};
+  Standard_Real myDU{};
+  Standard_Real myDV{};
 
 
 };

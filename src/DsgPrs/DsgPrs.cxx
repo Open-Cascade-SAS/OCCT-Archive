@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DsgPrs.hxx>
 
 #include <Aspect_TypeOfMarker.hxx>
@@ -226,14 +228,14 @@ void DsgPrs::ComputeCurvilinearFacesLengthPresentation( const Standard_Real Firs
 {
   GeomAPI_ProjectPointOnSurf ProjectorOnSurface;
   GeomAPI_ProjectPointOnCurve ProjectorOnCurve;
-  Standard_Real U1, V1, U2, V2;
-  Standard_Real LastU, LastV;
+  Standard_Real U1 = NAN, V1 = NAN, U2 = NAN, V2 = NAN;
+  Standard_Real LastU = NAN, LastV = NAN;
   Standard_Real SquareTolerance = Precision::SquareConfusion();
 
   ProjectorOnSurface.Init( AttachmentPoint1, SecondSurf );
   Standard_Integer Index(1);
   Standard_Real MinDist = RealLast();
-  Standard_Real LocalU, LocalV;
+  Standard_Real LocalU = NAN, LocalV = NAN;
   gp_Vec D1U, D1V;
   gp_Dir LocalDir;
   for (Standard_Integer i = 1; i <= ProjectorOnSurface.NbPoints(); i++)
@@ -585,7 +587,7 @@ Standard_Real DsgPrs::DistanceFromApex(const gp_Elips & elips,
 				       const gp_Pnt   & Apex,
 				       const Standard_Real par)
 {
-  Standard_Real dist;
+  Standard_Real dist = NAN;
   Standard_Real parApex = ElCLib::Parameter ( elips, Apex );
   if(parApex == 0.0 || parApex == M_PI) 
     {//Major case

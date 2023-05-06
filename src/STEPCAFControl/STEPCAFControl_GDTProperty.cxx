@@ -192,7 +192,7 @@ void STEPCAFControl_GDTProperty::GetDimClassOfTolerance(const Handle(StepShape_L
   Handle(TCollection_HAsciiString) aFormV = theLAF->FormVariance();
   Handle(TCollection_HAsciiString) aGrade = theLAF->Grade();
   theFV = XCAFDimTolObjects_DimensionFormVariance_None;
-  Standard_Boolean aFound;
+  Standard_Boolean aFound = 0;
   theHolle = Standard_False;
   //it is not verified information
   for(Standard_Integer c = 0; c <= 1 && !aFormV.IsNull(); c++)
@@ -1166,7 +1166,7 @@ Handle(StepDimTol_HArray1OfDatumReferenceModifier) STEPCAFControl_GDTProperty::
   GetDatumRefModifiers(const XCAFDimTolObjects_DatumModifiersSequence& theModifiers,
                        const XCAFDimTolObjects_DatumModifWithValue& theModifWithVal,
                        const Standard_Real theValue,
-                       const StepBasic_Unit theUnit)
+                       const StepBasic_Unit& theUnit)
 {
   if ((theModifiers.Length() == 0) && (theModifWithVal == XCAFDimTolObjects_DatumModifWithValue_None))
     return NULL;
@@ -1307,7 +1307,7 @@ Handle(TCollection_HAsciiString) STEPCAFControl_GDTProperty::GetTolValueType(con
 //function : GetTessellation
 //purpose  : 
 //=======================================================================
-Handle(StepVisual_TessellatedGeometricSet) STEPCAFControl_GDTProperty::GetTessellation(const TopoDS_Shape theShape)
+Handle(StepVisual_TessellatedGeometricSet) STEPCAFControl_GDTProperty::GetTessellation(const TopoDS_Shape& theShape)
 {
   // Build coordinate list and curves
   NCollection_Handle<StepVisual_VectorOfHSequenceOfInteger> aCurves = new StepVisual_VectorOfHSequenceOfInteger;

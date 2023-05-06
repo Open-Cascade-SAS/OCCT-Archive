@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor2d_Curve2d.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Surface.hxx>
@@ -255,7 +257,7 @@ void Analyse(const TColgp_Array2OfPnt& array2,
 	     Standard_Integer& myNbSamplesV) 
 { 
   gp_Vec Vi,Vip1;
-  Standard_Integer sh,nbch,i,j;
+  Standard_Integer sh = 0,nbch = 0,i = 0,j = 0;
   
   sh = 1;
   nbch = 0;
@@ -329,7 +331,7 @@ void Analyse(const TColgp_Array2OfPnt& array2,
 //=======================================================================
   void BRepTopAdaptor_TopolTool::ComputeSamplePoints() 
 { 
-  Standard_Real uinf,usup,vinf,vsup;
+  Standard_Real uinf = NAN,usup = NAN,vinf = NAN,vsup = NAN;
   uinf = myS->FirstUParameter();  usup = myS->LastUParameter();
   vinf = myS->FirstVParameter();  vsup = myS->LastVParameter();
   if (usup < uinf) { Standard_Real temp=uinf; uinf=usup; usup=temp; }
@@ -342,7 +344,7 @@ void Analyse(const TColgp_Array2OfPnt& array2,
   else if (vinf == RealFirst()) { vinf=vsup-2.e5;  }
   else if (vsup == RealLast()) {  vsup=vinf+2.e5;  }
   
-  Standard_Integer nbsu,nbsv;
+  Standard_Integer nbsu = 0,nbsv = 0;
   GeomAbs_SurfaceType typS = myS->GetType();
   switch(typS) { 
   case GeomAbs_Plane:          { nbsv=2; nbsu=2; } break;
@@ -474,7 +476,7 @@ void Analyse(const TColgp_Array2OfPnt& array2,
 //=======================================================================
   Standard_Boolean BRepTopAdaptor_TopolTool::DomainIsInfinite() 
 {
-  Standard_Real uinf,usup,vinf,vsup;
+  Standard_Real uinf = NAN,usup = NAN,vinf = NAN,vsup = NAN;
   uinf = myS->FirstUParameter();  usup = myS->LastUParameter();
   vinf = myS->FirstVParameter();  vsup = myS->LastVParameter();
   if(Precision::IsNegativeInfinite(uinf)) return(Standard_True);

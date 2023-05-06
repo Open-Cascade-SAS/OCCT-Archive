@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools_Substitution.hxx>
@@ -89,7 +91,7 @@ void BRepTools_Substitution::Build(const TopoDS_Shape& S)
     NewS.EmptyCopy();
 
     if (NewS.ShapeType() == TopAbs_EDGE) {
-      Standard_Real f,l;
+      Standard_Real f = NAN,l = NAN;
       BRep_Tool::Range(TopoDS::Edge(S),f,l);
       B.Range(TopoDS::Edge(NewS),f,l);
     }

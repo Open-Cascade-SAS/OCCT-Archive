@@ -82,12 +82,12 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_LowOrderKinematicPair, StepKinematics_KinematicPair)
 
 private:
-  Standard_Boolean myTX;
-  Standard_Boolean myTY;
-  Standard_Boolean myTZ;
-  Standard_Boolean myRX;
-  Standard_Boolean myRY;
-  Standard_Boolean myRZ;
+  Standard_Boolean myTX{};
+  Standard_Boolean myTY{};
+  Standard_Boolean myTZ{};
+  Standard_Boolean myRX{};
+  Standard_Boolean myRY{};
+  Standard_Boolean myRZ{};
 
 };
 #endif // _StepKinematics_LowOrderKinematicPair_HeaderFile_

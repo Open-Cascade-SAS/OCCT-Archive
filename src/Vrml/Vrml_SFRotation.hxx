@@ -67,10 +67,10 @@ private:
 
 
 
-  Standard_Real myRotationX;
-  Standard_Real myRotationY;
-  Standard_Real myRotationZ;
-  Standard_Real myAngle;
+  Standard_Real myRotationX{};
+  Standard_Real myRotationY{};
+  Standard_Real myRotationZ{};
+  Standard_Real myAngle{};
 
 
 };

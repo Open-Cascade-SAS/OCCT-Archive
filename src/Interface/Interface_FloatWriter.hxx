@@ -111,11 +111,11 @@ private:
 
 
 
-  Standard_Character themainform[12];
-  Standard_Real therange1;
-  Standard_Real therange2;
-  Standard_Character therangeform[12];
-  Standard_Boolean thezerosup;
+  Standard_Character themainform[12]{};
+  Standard_Real therange1{};
+  Standard_Real therange2{};
+  Standard_Character therangeform[12]{};
+  Standard_Boolean thezerosup{};
 
 
 };

@@ -24,8 +24,8 @@
 //   droite Line.                                                         +
 //=========================================================================
 GCE2d_MakeRotation::GCE2d_MakeRotation(const gp_Pnt2d&     Point  ,
-				       const Standard_Real Angle ) {
-  TheRotation = new Geom2d_Transformation();
+				       const Standard_Real Angle ) : TheRotation(new Geom2d_Transformation()) {
+  
   TheRotation->SetRotation(Point,Angle);
 }
 

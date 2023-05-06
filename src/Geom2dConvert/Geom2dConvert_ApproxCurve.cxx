@@ -39,16 +39,16 @@ class Geom2dConvert_ApproxCurve_Eval : public AdvApprox_EvaluatorFunction
                                   Standard_Real First, Standard_Real Last)
     : fonct(theFunc) { StartEndSav[0] = First; StartEndSav[1] = Last; }
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Handle(Adaptor2d_Curve2d) fonct;
-  Standard_Real StartEndSav[2];
+  Standard_Real StartEndSav[2]{};
 };
 
 void Geom2dConvert_ApproxCurve_Eval::Evaluate (Standard_Integer *Dimension,

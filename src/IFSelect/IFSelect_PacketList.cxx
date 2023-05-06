@@ -27,12 +27,12 @@ IMPLEMENT_STANDARD_RTTIEXT(IFSelect_PacketList,Standard_Transient)
 
 IFSelect_PacketList::IFSelect_PacketList
   (const Handle(Interface_InterfaceModel)& model)
-    : thedupls (0,model->NbEntities()) , 
+    : themodel(model), thedupls (0,model->NbEntities()) , 
       thepacks (100) ,
       theflags (0,model->NbEntities()) ,
-      thename  ("Packets")
+      thelast(0), thebegin(Standard_False), thename  ("Packets")
 {
-  themodel = model;  thelast = 0;  thebegin = Standard_False;  // begin-begin
+     // begin-begin
   thedupls.Init(0);  theflags.Init(0);
 }
 
@@ -76,7 +76,7 @@ IFSelect_PacketList::IFSelect_PacketList
   (const Handle(TColStd_HSequenceOfTransient)& list)
 {
   if (list.IsNull()) return;
-  Standard_Integer i , nb = list->Length();
+  Standard_Integer i = 0 , nb = list->Length();
   thepacks.Reservate (nb+1);
   for (i = 1; i <= nb; i ++) Add (list->Value(i));
 }
@@ -99,7 +99,7 @@ IFSelect_PacketList::IFSelect_PacketList
   Interface_EntityIterator list;
   if (numpack <= 0 || numpack > NbPackets()) return list;
   Interface_IntList lisi(thepacks,Standard_False);  lisi.SetNumber (numpack);
-  Standard_Integer i , nb = lisi.Length();
+  Standard_Integer i = 0 , nb = lisi.Length();
   for (i = 1; i <= nb; i ++)
     list.AddItem(themodel->Value(lisi.Value(i)));
   return list;
@@ -107,7 +107,7 @@ IFSelect_PacketList::IFSelect_PacketList
 
     Standard_Integer  IFSelect_PacketList::HighestDuplicationCount () const
 {
-  Standard_Integer i , nb = themodel->NbEntities();
+  Standard_Integer i = 0 , nb = themodel->NbEntities();
   Standard_Integer high = 0;
   for (i = 1; i <= nb; i ++) {
     Standard_Integer j = thedupls.Value(i);
@@ -119,7 +119,7 @@ IFSelect_PacketList::IFSelect_PacketList
     Standard_Integer  IFSelect_PacketList::NbDuplicated
   (const Standard_Integer newcount, const Standard_Boolean andmore) const
 {
-  Standard_Integer i, nb = themodel->NbEntities();
+  Standard_Integer i = 0, nb = themodel->NbEntities();
   Standard_Integer nbdu = 0;
 
   for (i = 1; i <= nb; i ++) {
@@ -135,7 +135,7 @@ IFSelect_PacketList::IFSelect_PacketList
   Standard_Integer nb = themodel->NbEntities();
   Interface_EntityIterator list;
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= nb; i ++) {
     Standard_Integer j = thedupls.Value(i);
     if (j == newcount || (j > newcount && andmore)) list.AddItem(themodel->Value(i));

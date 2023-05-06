@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <AdvApp2Var_ApproxAFunc2Var.hxx>
 #include <AdvApp2Var_EvaluatorFunc2Var.hxx>
 #include <AdvApp2Var_Criterion.hxx>
@@ -171,7 +173,7 @@ AdvApp2Var_ApproxAFunc2Var::AdvApp2Var_ApproxAFunc2Var(
 
 void AdvApp2Var_ApproxAFunc2Var::Init()
 {
-  Standard_Integer ifav,iu=0,iv=0,ndu,ndv;
+  Standard_Integer ifav = 0,iu=0,iv=0,ndu = 0,ndv = 0;
   switch (myFavoriteIso) {
   case GeomAbs_IsoU :
     ifav = 1;
@@ -239,7 +241,7 @@ void AdvApp2Var_ApproxAFunc2Var::Init()
 
 void AdvApp2Var_ApproxAFunc2Var::InitGrid(const Standard_Integer NbInt)
 {
-  Standard_Integer iu=myConditions.UOrder(),iv=myConditions.VOrder(),iint;
+  Standard_Integer iu=myConditions.UOrder(),iv=myConditions.VOrder(),iint = 0;
 
   Handle(AdvApp2Var_Patch) M0 = new AdvApp2Var_Patch (myFirstParInU,myLastParInU,myFirstParInV,myLastParInV,iu,iv);
 
@@ -346,10 +348,10 @@ void AdvApp2Var_ApproxAFunc2Var::ComputePatches(const AdvApprox_Cutting& UChoice
 						const AdvApprox_Cutting& VChoice,
 					 const AdvApp2Var_EvaluatorFunc2Var& Func)
 {
-  Standard_Real Udec, Vdec;
-  Standard_Boolean Umore, Vmore;
-  Standard_Integer NbPatch, NbU, NbV, NumDec;
-  Standard_Integer FirstNA;
+  Standard_Real Udec = NAN, Vdec = NAN;
+  Standard_Boolean Umore = 0, Vmore = 0;
+  Standard_Integer NbPatch = 0, NbU = 0, NbV = 0, NumDec = 0;
+  Standard_Integer FirstNA = 0;
 
   while (myResult.FirstNotApprox(FirstNA)) {
 
@@ -437,10 +439,10 @@ void AdvApp2Var_ApproxAFunc2Var::ComputePatches(const AdvApprox_Cutting& UChoice
 					 const AdvApp2Var_EvaluatorFunc2Var& Func,
 					 const AdvApp2Var_Criterion& Crit)
 {
-  Standard_Real Udec, Vdec, CritValue, m1=0.;
-  Standard_Boolean Umore, Vmore, CritAbs = (Crit.Type() == AdvApp2Var_Absolute);
-  Standard_Integer NbPatch, NbU, NbV, NbInt, NumDec;
-  Standard_Integer FirstNA, decision=0;
+  Standard_Real Udec = NAN, Vdec = NAN, CritValue = NAN, m1=0.;
+  Standard_Boolean Umore = 0, Vmore = 0, CritAbs = (Crit.Type() == AdvApp2Var_Absolute);
+  Standard_Integer NbPatch = 0, NbU = 0, NbV = 0, NbInt = 0, NumDec = 0;
+  Standard_Integer FirstNA = 0, decision=0;
 
   while (myResult.FirstNotApprox(FirstNA)) {
 
@@ -551,9 +553,9 @@ void AdvApp2Var_ApproxAFunc2Var::ComputeConstraints(const AdvApprox_Cutting& UCh
 					 const AdvApprox_Cutting& VChoice,
 					 const AdvApp2Var_EvaluatorFunc2Var& Func)
 {
-  Standard_Real dec;
-  Standard_Boolean more;
-  Standard_Integer ind1, ind2, NbPatch, NbU, NbV;
+  Standard_Real dec = NAN;
+  Standard_Boolean more = 0;
+  Standard_Integer ind1 = 0, ind2 = 0, NbPatch = 0, NbU = 0, NbV = 0;
   Standard_Integer iu = myConditions.UOrder(), iv = myConditions.VOrder();
   AdvApp2Var_Node N1(iu,iv), N2(iu,iv);
 
@@ -638,10 +640,10 @@ void AdvApp2Var_ApproxAFunc2Var::ComputeConstraints(const AdvApprox_Cutting& UCh
 					 const AdvApp2Var_EvaluatorFunc2Var& Func,
 					 const AdvApp2Var_Criterion& Crit)
 {
-  Standard_Real dec;
-  Standard_Boolean more, CritRel = (Crit.Type() == AdvApp2Var_Relative);
-  Standard_Integer ind1, ind2, NbPatch, NbU, NbV;
-  Standard_Integer indN1, indN2;
+  Standard_Real dec = NAN;
+  Standard_Boolean more = 0, CritRel = (Crit.Type() == AdvApp2Var_Relative);
+  Standard_Integer ind1 = 0, ind2 = 0, NbPatch = 0, NbU = 0, NbV = 0;
+  Standard_Integer indN1 = 0, indN2 = 0;
   Standard_Integer iu = myConditions.UOrder(), iv = myConditions.VOrder();
   AdvApp2Var_Node N1(iu,iv), N2(iu,iv);
 
@@ -727,9 +729,9 @@ void AdvApp2Var_ApproxAFunc2Var::ComputeConstraints(const AdvApprox_Cutting& UCh
 void AdvApp2Var_ApproxAFunc2Var::Compute3DErrors()
 {
 
-  Standard_Integer iesp,ipat;
-  Standard_Real error_max,error_moy,error_U0,error_V0,error_U1,error_V1;
-  Standard_Real Tol,F1Tol,F2Tol,F3Tol,F4Tol;
+  Standard_Integer iesp = 0,ipat = 0;
+  Standard_Real error_max = NAN,error_moy = NAN,error_U0 = NAN,error_V0 = NAN,error_U1 = NAN,error_V1 = NAN;
+  Standard_Real Tol = NAN,F1Tol = NAN,F2Tol = NAN,F3Tol = NAN,F4Tol = NAN;
   if ( myNumSubSpaces[2] > 0 ) {
     my3DMaxError = new (TColStd_HArray1OfReal) (1,myNumSubSpaces[2]);
     my3DAverageError = new (TColStd_HArray1OfReal) (1,myNumSubSpaces[2]);
@@ -778,8 +780,8 @@ void AdvApp2Var_ApproxAFunc2Var::Compute3DErrors()
 void AdvApp2Var_ApproxAFunc2Var::ComputeCritError()
 {
 
-  Standard_Integer iesp,ipat;
-  Standard_Real crit_max;
+  Standard_Integer iesp = 0,ipat = 0;
+  Standard_Real crit_max = NAN;
   if ( myNumSubSpaces[2] > 0 ) {
     for (iesp=1;iesp<=myNumSubSpaces[2];iesp++) {
       crit_max = 0.;
@@ -808,7 +810,7 @@ void AdvApp2Var_ApproxAFunc2Var::ConvertBS()
  // Calculate resulting surfaces 
   mySurfaces = new ( TColGeom_HArray1OfSurface) (1,  myNumSubSpaces[2]);
 
-  Standard_Integer j;
+  Standard_Integer j = 0;
   TColStd_Array1OfReal UKnots (1, myResult.NbPatchInU()+1);
   for (j=1; j<=UKnots.Length(); j++) { UKnots.SetValue(j, myResult.UParameter(j)); } 
  
@@ -840,11 +842,11 @@ void AdvApp2Var_ApproxAFunc2Var::ConvertBS()
   Handle(TColStd_HArray1OfReal) Poly = 
     new (TColStd_HArray1OfReal) (1, nmax * Size_eq);
 
-  Standard_Integer SSP, i;
+  Standard_Integer SSP = 0, i = 0;
   for (SSP=1; SSP <= myNumSubSpaces[2]; SSP++) { 
 
     // Creation of the grid of polynoms
-    Standard_Integer n=0,icf=1,ieq;
+    Standard_Integer n=0,icf=1,ieq = 0;
     for (j=1; j<=myResult.NbPatchInV(); j++) {
       for (i=1; i<=myResult.NbPatchInU(); i++) {
 	n++;
@@ -1064,7 +1066,7 @@ Standard_Real
 
 void AdvApp2Var_ApproxAFunc2Var::Dump(Standard_OStream& o) const 
 {
-  Standard_Integer iesp=1,NbKU,NbKV,ik;
+  Standard_Integer iesp=1,NbKU = 0,NbKV = 0,ik = 0;
   o<<std::endl;
   if (!myHasResult) { o<<"No result"<<std::endl; }
   else {

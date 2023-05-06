@@ -15,9 +15,9 @@
 #include <TCollection_AsciiString.hxx>
 #include <Vrml_WWWInline.hxx>
 
-Vrml_WWWInline::Vrml_WWWInline()
+Vrml_WWWInline::Vrml_WWWInline() : myName("")
 {
-  myName = "";
+  
   gp_Vec tmpVec(0,0,0);
   myBboxSize = tmpVec;
   myBboxCenter = tmpVec;
@@ -25,11 +25,11 @@ Vrml_WWWInline::Vrml_WWWInline()
 
 Vrml_WWWInline::Vrml_WWWInline(const TCollection_AsciiString& aName,
 			       const gp_Vec& aBboxSize,
-			       const gp_Vec& aBboxCenter)
+			       const gp_Vec& aBboxCenter) : myName(aName), myBboxSize(aBboxSize), myBboxCenter(aBboxCenter)
 {
-  myName = aName;
-  myBboxSize = aBboxSize;
-  myBboxCenter = aBboxCenter;
+  
+  
+  
 }
 
 void Vrml_WWWInline::SetName(const TCollection_AsciiString& aName) 

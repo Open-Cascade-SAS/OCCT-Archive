@@ -32,9 +32,9 @@ Vrml_SpotLight::Vrml_SpotLight():
 			         const gp_Vec& aLocation,
 			         const gp_Vec& aDirection,
 				 const Standard_Real aDropOffRate, 
-				 const Standard_Real aCutOffAngle) 
+				 const Standard_Real aCutOffAngle) : myOnOff(aOnOff) 
 {
-  myOnOff = aOnOff;
+  
   if (aIntensity < 0. || aIntensity > 1.)
     {
       throw Standard_Failure("Error : Light intensity must be in the range 0.0 to 1.0, inclusive.");

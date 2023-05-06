@@ -16,6 +16,8 @@
 
 //    gka  01.06.99 S4205: changing order of splitting surface/curves for converting to bezier
 
+#include <math.h>
+
 #include <Bnd_Box2d.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -44,11 +46,11 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_FaceDivide,ShapeUpgrade_Tool)
 //purpose  : 
 //=======================================================================
 ShapeUpgrade_FaceDivide::ShapeUpgrade_FaceDivide():
-       ShapeUpgrade_Tool(), myStatus(0)
+       ShapeUpgrade_Tool(), mySegmentMode(Standard_True), myStatus(0), mySplitSurfaceTool(new ShapeUpgrade_SplitSurface), myWireDivideTool(new ShapeUpgrade_WireDivide)
 {
-  mySegmentMode = Standard_True;
-  mySplitSurfaceTool = new ShapeUpgrade_SplitSurface;
-  myWireDivideTool = new ShapeUpgrade_WireDivide;
+  
+  
+  
 }
 
 //=======================================================================
@@ -57,11 +59,11 @@ ShapeUpgrade_FaceDivide::ShapeUpgrade_FaceDivide():
 //=======================================================================
 
 ShapeUpgrade_FaceDivide::ShapeUpgrade_FaceDivide (const TopoDS_Face &F):
-       ShapeUpgrade_Tool(), myStatus(0)
+       ShapeUpgrade_Tool(), mySegmentMode(Standard_True), myStatus(0), mySplitSurfaceTool(new ShapeUpgrade_SplitSurface), myWireDivideTool(new ShapeUpgrade_WireDivide)
 {
-  mySegmentMode = Standard_True;
-  mySplitSurfaceTool = new ShapeUpgrade_SplitSurface;
-  myWireDivideTool = new ShapeUpgrade_WireDivide;
+  
+  
+  
   Init ( F );
 }
 
@@ -123,7 +125,7 @@ Standard_Boolean ShapeUpgrade_FaceDivide::SplitSurface (const Standard_Real theA
   Handle(Geom_Surface) surf;
   surf = BRep_Tool::Surface ( face, L );
   
-  Standard_Real Uf,Ul,Vf,Vl;
+  Standard_Real Uf = NAN,Ul = NAN,Vf = NAN,Vl = NAN;
 //  BRepTools::UVBounds(myFace,Uf,Ul,Vf,Vl);
   ShapeAnalysis::GetFaceUVBounds ( face, Uf, Ul, Vf, Vl );
   if(Precision::IsInfinite(Uf) || Precision::IsInfinite(Ul) ||
@@ -131,7 +133,7 @@ Standard_Boolean ShapeUpgrade_FaceDivide::SplitSurface (const Standard_Real theA
     return Standard_False;
 
   // make little extension to ensure all pcurves fit inside new surface bounds
-  Standard_Real aSUf, aSUl, aSVf, aSVl;
+  Standard_Real aSUf = NAN, aSUl = NAN, aSVf = NAN, aSVl = NAN;
   surf->Bounds(aSUf, aSUl, aSVf, aSVl);
   if (!surf->IsUPeriodic()) {
     Standard_Real dU = (Ul - Uf) * 0.01;

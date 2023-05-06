@@ -143,9 +143,9 @@ private:
 
 
   TopoDS_Shape myShape;
-  Standard_Real myTolerance;
-  Standard_Boolean mySplitClosed;
-  Standard_Boolean mySplitOpen;
+  Standard_Real myTolerance{};
+  Standard_Boolean mySplitClosed{};
+  Standard_Boolean mySplitOpen{};
   Handle(ShapeAnalysis_HSequenceOfFreeBounds) myClosedFreeBounds;
   Handle(ShapeAnalysis_HSequenceOfFreeBounds) myOpenFreeBounds;
 

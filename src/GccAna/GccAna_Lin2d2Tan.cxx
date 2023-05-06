@@ -38,7 +38,7 @@ GccAna_Lin2d2Tan::
    GccAna_Lin2d2Tan (const gp_Pnt2d&             ThePoint1,
                      const gp_Pnt2d&             ThePoint2 ,
                      const Standard_Real         Tolerance ):
-   linsol(1,1),
+   WellDone(Standard_False), NbrSol(0), linsol(1,1),
    qualifier1(1,1),
    qualifier2(1,1) ,
    pnttg1sol(1,1),
@@ -50,8 +50,8 @@ GccAna_Lin2d2Tan::
 {
 
    Standard_Real Tol = Abs(Tolerance);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    Standard_Real dist = ThePoint1.Distance(ThePoint2);
    qualifier1(1) = GccEnt_noqualifier;
    qualifier2(1) = GccEnt_noqualifier;
@@ -84,7 +84,7 @@ GccAna_Lin2d2Tan::
    GccAna_Lin2d2Tan (const GccEnt_QualifiedCirc& Qualified1,
                      const gp_Pnt2d&             ThePoint  ,
                      const Standard_Real         Tolerance ):
-   linsol(1,2),
+   WellDone(Standard_False), NbrSol(0), linsol(1,2),
    qualifier1(1,2),
    qualifier2(1,2),
    pnttg1sol(1,2),
@@ -96,8 +96,8 @@ GccAna_Lin2d2Tan::
 {
 
    Standard_Real Tol = Abs(Tolerance);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
      throw GccEnt_BadQualifier();
@@ -185,7 +185,7 @@ GccAna_Lin2d2Tan::
     GccAna_Lin2d2Tan (const GccEnt_QualifiedCirc& Qualified1,
 		      const GccEnt_QualifiedCirc& Qualified2,
 		      const Standard_Real         Tolerance ):
-    linsol(1,4),
+    WellDone(Standard_False), NbrSol(0), linsol(1,4),
     qualifier1(1,4),
     qualifier2(1,4) ,
     pnttg1sol(1,4),
@@ -197,8 +197,8 @@ GccAna_Lin2d2Tan::
 {
 
     Standard_Real Tol = Abs(Tolerance);
-    WellDone = Standard_False;
-    NbrSol = 0;
+    
+    
     if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	  Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
 	!(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 

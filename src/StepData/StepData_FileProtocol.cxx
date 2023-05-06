@@ -57,7 +57,7 @@ Standard_Boolean StepData_FileProtocol::GlobalCheck(const Interface_Graph& G,
                                                     Handle(Interface_Check)& ach) const
 {
   Standard_Boolean res = Standard_False;
-  Standard_Integer i,nb = NbResources();
+  Standard_Integer i = 0,nb = NbResources();
   for (i = 1; i <= nb; i ++) res |= Resource(i)->GlobalCheck (G,ach);
   return res;
 }

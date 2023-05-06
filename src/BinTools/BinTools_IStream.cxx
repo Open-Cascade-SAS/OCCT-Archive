@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BinTools_IStream.hxx>
 #include <Storage_StreamTypeMismatchError.hxx>
 
@@ -175,7 +177,7 @@ BinTools_IStream& BinTools_IStream::operator >> (Standard_Integer& theValue)
 //=======================================================================
 BinTools_IStream& BinTools_IStream::operator >> (gp_Pnt& theValue)
 {
-  Standard_Real aValue;
+  Standard_Real aValue = NAN;
   for (int aCoord = 1; aCoord <= 3; aCoord++)
   {
     if (!myStream->read ((char*)&aValue, sizeof (Standard_Real)))

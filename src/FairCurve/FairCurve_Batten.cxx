@@ -20,6 +20,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <FairCurve_Batten.hxx>
 #include <FairCurve_EnergyOfBatten.hxx>
@@ -159,8 +161,8 @@ Standard_Boolean FairCurve_Batten::Compute(FairCurve_AnalysisCode& ACode,
   Standard_Real AngleMax = 0.7;      // parameter ruling the function of increment ( 40 degrees )
   Standard_Real AngleMin = 2*M_PI/100; // parameter ruling the function of increment 
                                      // full passage should not cost more than 100 steps.
-  Standard_Real DAngle1, DAngle2,  Ratio, Fraction, Toler;
-  Standard_Real OldDist, NewDist;
+  Standard_Real DAngle1 = NAN, DAngle2 = NAN,  Ratio = NAN, Fraction = NAN, Toler = NAN;
+  Standard_Real OldDist = NAN, NewDist = NAN;
 
 //  Loop of Homotopy : calculation of the step and optimisation 
 
@@ -219,11 +221,11 @@ Standard_Boolean FairCurve_Batten::Compute(const gp_Vec2d& DeltaP1,
 					   const Standard_Real Tolerance)
 // =============================================================================
 {
- Standard_Boolean Ok, OkCompute=Standard_True;
+ Standard_Boolean Ok = 0, OkCompute=Standard_True;
  ACode = FairCurve_OK;
 
 // Deformation of the curve by adding a polynom of interpolation
-   Standard_Integer L = 2 + NewConstraintOrder1 + NewConstraintOrder2, kk, ii;
+   Standard_Integer L = 2 + NewConstraintOrder1 + NewConstraintOrder2, kk = 0, ii = 0;
    TColStd_Array1OfReal knots (1,2);
    knots(1) = 0;
    knots(2) = 1;
@@ -293,7 +295,7 @@ Standard_Boolean FairCurve_Batten::Compute(const gp_Vec2d& DeltaP1,
 
 // Intermediary data
 
- Standard_Real Angle1, Angle2, SlidingLength, 
+ Standard_Real Angle1 = NAN, Angle2 = NAN, SlidingLength = NAN, 
                Alph1 =  OldAngle1 + DeltaAngle1, 
                Alph2 =  OldAngle2 + DeltaAngle2,
                Dist  =  NPoles->Value(NPoles->Upper()) 
@@ -376,7 +378,7 @@ Standard_Boolean FairCurve_Batten::Compute(const gp_Vec2d& DeltaP1,
     OldHeight = NewHeight;
   }
   else {
-    Standard_Real V;
+    Standard_Real V = NAN;
     ACode = EBatten.Status();
     if (!LBatten.Value(0, V) || !LBatten.Value(1, V)) {
        ACode = FairCurve_NullHeight;
@@ -458,7 +460,7 @@ Standard_Real FairCurve_Batten::SlidingOfReference(const Standard_Real Dist,
 						   const Standard_Real Angle2) const
 // ==================================================================
 {
- Standard_Real a1, a2;
+ Standard_Real a1 = NAN, a2 = NAN;
 
 // case of angle without constraints
  if ( (NewConstraintOrder1 == 0) && (NewConstraintOrder2 == 0)) return Dist;
@@ -493,7 +495,7 @@ Standard_Real FairCurve_Batten::Compute(const Standard_Real Dist,
 // ==================================================================
 {
     Standard_Real L1 = Compute(Dist, Angle1);
-    Standard_Real L2 = Compute(Dist, Angle2), Aux;
+    Standard_Real L2 = Compute(Dist, Angle2), Aux = NAN;
     if (L1 < L2) { 
       Aux = L2;
       L2 = L1;

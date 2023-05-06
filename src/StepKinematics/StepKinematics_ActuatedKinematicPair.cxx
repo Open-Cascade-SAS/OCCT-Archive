@@ -22,14 +22,14 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_ActuatedKinematicPair, StepKinematics_
 //function : StepKinematics_ActuatedKinematicPair
 //purpose  :
 //=======================================================================
-StepKinematics_ActuatedKinematicPair::StepKinematics_ActuatedKinematicPair ()
+StepKinematics_ActuatedKinematicPair::StepKinematics_ActuatedKinematicPair () : defTX(Standard_False), defTY(Standard_False), defTZ(Standard_False), defRX(Standard_False), defRY(Standard_False), defRZ(Standard_False)
 {
-  defTX = Standard_False;
-  defTY = Standard_False;
-  defTZ = Standard_False;
-  defRX = Standard_False;
-  defRY = Standard_False;
-  defRZ = Standard_False;
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================

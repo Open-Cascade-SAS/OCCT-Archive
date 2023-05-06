@@ -17,6 +17,8 @@
 // Modified:	Wed Oct 23 09:17:47 1996
 //		check ponctuallity (PRO4896)
 
+#include <math.h>
+
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -65,7 +67,7 @@ static Standard_Boolean Project(const Handle(Geom_Curve)& C,
   GeomAdaptor_Curve GAC(C);
   
   // Afin de faire les extremas, on verifie les distances en bout
-  Standard_Real D1,D2;
+  Standard_Real D1 = NAN,D2 = NAN;
   gp_Pnt P1,P2;
   P1 = GAC.Value(GAC.FirstParameter());
   P2 = GAC.Value(GAC.LastParameter());
@@ -84,8 +86,8 @@ static Standard_Boolean Project(const Handle(Geom_Curve)& C,
 
   Extrema_ExtPC extrema(P,GAC);
   if (extrema.IsDone()) {
-    Standard_Integer i, index = 0, n = extrema.NbExt();
-    Standard_Real Dist2 = RealLast(), dist2min;
+    Standard_Integer i = 0, index = 0, n = extrema.NbExt();
+    Standard_Real Dist2 = RealLast(), dist2min = NAN;
 
     for (i = 1; i <= n; i++) {
       dist2min = extrema.SquareDistance(i);
@@ -124,7 +126,7 @@ static Standard_Boolean Project(const Handle(Geom2d_Curve)& C,
   Handle(GeomAdaptor_Surface) HGAHS = new GeomAdaptor_Surface (S);
   Adaptor3d_CurveOnSurface ACOS(HG2AHC,HGAHS);
 
-  Standard_Real D1,D2;
+  Standard_Real D1 = NAN,D2 = NAN;
   gp_Pnt P1,P2;
   P1 = ACOS.Value(ACOS.FirstParameter());
   P2 = ACOS.Value(ACOS.LastParameter());
@@ -143,8 +145,8 @@ static Standard_Boolean Project(const Handle(Geom2d_Curve)& C,
   Extrema_ExtPC extrema(P,ACOS);
   
   if (extrema.IsDone()) {
-    Standard_Integer i, index = 0, n = extrema.NbExt();
-    Standard_Real Dist2 = RealLast(), dist2min;
+    Standard_Integer i = 0, index = 0, n = extrema.NbExt();
+    Standard_Real Dist2 = RealLast(), dist2min = NAN;
     
     for (i = 1; i <= n; i++) {
       dist2min = extrema.SquareDistance(i);
@@ -711,7 +713,7 @@ void  BRepLib_MakeEdge::Init(const Handle(Geom_Curve)& C,
 {
   // try projecting the vertices on the curve
 
-  Standard_Real p1,p2;
+  Standard_Real p1 = NAN,p2 = NAN;
   
   if (V1.IsNull())
     p1 = C->FirstParameter();
@@ -986,7 +988,7 @@ void  BRepLib_MakeEdge::Init(const Handle(Geom2d_Curve)& C,
 {
   // try projecting the vertices on the curve
 
-  Standard_Real p1,p2;
+  Standard_Real p1 = NAN,p2 = NAN;
   
   if (V1.IsNull())
     p1 = C->FirstParameter();

@@ -21,7 +21,7 @@
 // =======================================================================
 Standard_Integer BVH_BuildQueue::Size()
 {
-  Standard_Integer aSize;
+  Standard_Integer aSize = 0;
 
   myMutex.Lock();
   {

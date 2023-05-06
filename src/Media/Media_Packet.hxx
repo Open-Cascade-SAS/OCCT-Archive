@@ -77,7 +77,7 @@ public:
 protected:
 
   AVPacket* myPacket;      //!< packet
-  double    myDurationSec; //!< packet duration in seconds
+  double    myDurationSec{}; //!< packet duration in seconds
 
 };
 

@@ -27,9 +27,9 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeAnalysis_FreeBoundData,Standard_Transient)
 //function : ShapeAnalysis_FreeBoundData
 //purpose  : Empty constructor
 //=======================================================================
-ShapeAnalysis_FreeBoundData::ShapeAnalysis_FreeBoundData()
+ShapeAnalysis_FreeBoundData::ShapeAnalysis_FreeBoundData() : myNotches(new TopTools_HSequenceOfShape())
 {
-  myNotches = new TopTools_HSequenceOfShape();
+  
   Clear();
 }
 
@@ -38,9 +38,9 @@ ShapeAnalysis_FreeBoundData::ShapeAnalysis_FreeBoundData()
 //purpose  : Creates object with contour given in the form of TopoDS_Wire
 //=======================================================================
 
-ShapeAnalysis_FreeBoundData::ShapeAnalysis_FreeBoundData(const TopoDS_Wire& freebound)
+ShapeAnalysis_FreeBoundData::ShapeAnalysis_FreeBoundData(const TopoDS_Wire& freebound) : myNotches(new TopTools_HSequenceOfShape())
 {
-  myNotches = new TopTools_HSequenceOfShape();
+  
   Clear();
   SetFreeBound(freebound);
 }

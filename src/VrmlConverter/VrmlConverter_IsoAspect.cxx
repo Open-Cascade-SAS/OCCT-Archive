@@ -17,17 +17,17 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(VrmlConverter_IsoAspect,VrmlConverter_LineAspect)
 
-VrmlConverter_IsoAspect::VrmlConverter_IsoAspect():VrmlConverter_LineAspect ()
+VrmlConverter_IsoAspect::VrmlConverter_IsoAspect():VrmlConverter_LineAspect (), myNumber(10)
 {
- myNumber = 10; 
+ 
 }
 
 VrmlConverter_IsoAspect::VrmlConverter_IsoAspect (const Handle(Vrml_Material)& aMaterial,
                                                     const Standard_Boolean OnOff,
 						    const Standard_Integer aNumber) 
- :VrmlConverter_LineAspect (aMaterial, OnOff)
+ :VrmlConverter_LineAspect (aMaterial, OnOff), myNumber(aNumber)
 {
-   myNumber = aNumber;
+   
 }
 
 void VrmlConverter_IsoAspect::SetNumber (const Standard_Integer aNumber) 

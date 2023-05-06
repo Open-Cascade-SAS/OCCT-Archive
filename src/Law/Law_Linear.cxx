@@ -16,6 +16,8 @@
 
 // pmn -> 17/01/1996 added : Continuity, (Nb)Interals, D2, Trim
 
+#include <math.h>
+
 #include <Law_Function.hxx>
 #include <Law_Linear.hxx>
 #include <Standard_Type.hxx>
@@ -106,7 +108,7 @@ Handle(Law_Function) Law_Linear::Trim(const Standard_Real PFirst,
 				      const Standard_Real ) const 
 {
   Handle(Law_Linear) l = new (Law_Linear)();
-  Standard_Real Vdeb, Vfin;
+  Standard_Real Vdeb = NAN, Vfin = NAN;
   Vdeb = (( PFirst-pdeb)*valfin + (pfin-PFirst)*valdeb)/(pfin-pdeb);
   Vfin = (( PLast-pdeb)*valfin + (pfin-PLast)*valdeb)/(pfin-pdeb);
   l->Set(PFirst, Vdeb, PLast, Vfin);

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepVisual_RWSurfaceStyleReflectanceAmbient.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -44,7 +46,7 @@ void RWStepVisual_RWSurfaceStyleReflectanceAmbient::ReadStep (const Handle(StepD
 
   // Own fields of SurfaceStyleReflectanceAmbient
 
-  Standard_Real aAmbientReflectance;
+  Standard_Real aAmbientReflectance = NAN;
   data->ReadReal (num, 1, "ambient_reflectance", ach, aAmbientReflectance);
 
   // Initialize entity

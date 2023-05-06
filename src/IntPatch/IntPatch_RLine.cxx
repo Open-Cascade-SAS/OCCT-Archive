@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <IntPatch_RLine.hxx>
 #include <IntSurf_LineOn2S.hxx>
 #include <IntSurf_PntOn2S.hxx>
@@ -26,7 +28,7 @@ IntPatch_RLine::IntPatch_RLine (const Standard_Boolean Tang,
                                 const IntSurf_TypeTrans Trans1,
                                 const IntSurf_TypeTrans Trans2) :
   IntPatch_PointLine(Tang,Trans1,Trans2),
-  ParamInf1(0.0),
+  onS2(Standard_False), onS1(Standard_False), ParamInf1(0.0),
   ParamSup1(0.0),
   ParamInf2(0.0),
   ParamSup2(0.0),
@@ -36,8 +38,8 @@ IntPatch_RLine::IntPatch_RLine (const Standard_Boolean Tang,
   indl(0)
 {
   typ = IntPatch_Restriction;
-  onS2=Standard_False;
-  onS1=Standard_False;
+  
+  
 }
 
 
@@ -45,7 +47,7 @@ IntPatch_RLine::IntPatch_RLine (const Standard_Boolean Tang,
                                 const IntSurf_Situation Situ1,
                                 const IntSurf_Situation Situ2) :
   IntPatch_PointLine(Tang,Situ1,Situ2),
-  ParamInf1(0.0),
+  onS2(Standard_False), onS1(Standard_False), ParamInf1(0.0),
   ParamSup1(0.0),
   ParamInf2(0.0),
   ParamSup2(0.0),
@@ -55,14 +57,14 @@ IntPatch_RLine::IntPatch_RLine (const Standard_Boolean Tang,
   indl(0)
 {
   typ = IntPatch_Restriction;
-  onS2=Standard_False;
-  onS1=Standard_False;
+  
+  
 }
 
 
 IntPatch_RLine::IntPatch_RLine (const Standard_Boolean Tang) :
   IntPatch_PointLine(Tang),
-  ParamInf1(0.0),
+  onS2(Standard_False), onS1(Standard_False), ParamInf1(0.0),
   ParamSup1(0.0),
   ParamInf2(0.0),
   ParamSup2(0.0),
@@ -72,8 +74,8 @@ IntPatch_RLine::IntPatch_RLine (const Standard_Boolean Tang) :
   indl(0)
 {
   typ = IntPatch_Restriction;
-  onS2=Standard_False;
-  onS1=Standard_False;
+  
+  
 }
 
 void IntPatch_RLine::ParamOnS1(Standard_Real& a,Standard_Real& b) const { 
@@ -124,7 +126,7 @@ void IntPatch_RLine::SetPoint(const Standard_Integer Index,
 //void IntPatch_RLine::ComputeVertexParameters(const Standard_Real Tol)
 void IntPatch_RLine::ComputeVertexParameters(const Standard_Real )
 {
-  Standard_Integer i,j,nbvtx;//k;
+  Standard_Integer i = 0,j = 0,nbvtx = 0;//k;
   
   Standard_Boolean APointDeleted = Standard_False;
   //----------------------------------------------------------
@@ -194,7 +196,7 @@ void IntPatch_RLine::ComputeVertexParameters(const Standard_Real )
 
   //----------------------------------------------------
   //-- On trie les Vertex 
-  Standard_Boolean SortIsOK;
+  Standard_Boolean SortIsOK = 0;
   do { 
     SortIsOK = Standard_True;
     for(i=2; i<=nbvtx; i++) { 
@@ -208,7 +210,7 @@ void IntPatch_RLine::ComputeVertexParameters(const Standard_Real )
   
   do { 	
     APointDeleted = Standard_False;
-    Standard_Boolean restrdiff;
+    Standard_Boolean restrdiff = 0;
     for(i=1; i<=nbvtx && (APointDeleted == Standard_False); i++) { 
       const IntPatch_Point& VTX   = svtx.Value(i);      
       for(j=1; j<=nbvtx && (APointDeleted == Standard_False) ; j++) { 
@@ -374,7 +376,7 @@ void IntPatch_RLine::Dump(const Standard_Integer theMode) const
     printf("Num    [X  Y  Z]     [U1  V1]   [U2  V2]\n");
     for(Standard_Integer i=1; i<=aNbPoints; i++)
     {
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       Point(i).Parameters(u1,v1,u2,v2);
       printf("%4d  [%+10.20f %+10.20f %+10.20f]  [%+10.20f %+10.20f]  [%+10.20f %+10.20f]\n",
               i,Point(i).Value().X(),Point(i).Value().Y(),Point(i).Value().Z(),
@@ -400,7 +402,7 @@ void IntPatch_RLine::Dump(const Standard_Integer theMode) const
   case 1:
     for(Standard_Integer i = 1; i <= aNbPoints; i++)
     {
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       Point(i).Parameters(u1,v1,u2,v2);
       printf("point p%d %+10.20f %+10.20f %+10.20f\n",
               i,Point(i).Value().X(),Point(i).Value().Y(),Point(i).Value().Z());
@@ -410,7 +412,7 @@ void IntPatch_RLine::Dump(const Standard_Integer theMode) const
   case 2:
     for(Standard_Integer i = 1; i <= aNbPoints; i++)
     {
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       Point(i).Parameters(u1,v1,u2,v2);
       printf("point p%d %+10.20f %+10.20f\n", i, u1, v1);
     }
@@ -419,7 +421,7 @@ void IntPatch_RLine::Dump(const Standard_Integer theMode) const
   default:
     for(Standard_Integer i = 1; i <= aNbPoints; i++)
     {
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       Point(i).Parameters(u1,v1,u2,v2);
       printf("point p%d %+10.20f %+10.20f\n", i, u2, v2);
     }

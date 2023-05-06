@@ -138,7 +138,7 @@ protected:
   SwsContext*      myScaleCtx;    //!< scale context for conversion from RGBA to YUV
 
   Image_PixMap     myImgSrcRgba;  //!< input RGBA image
-  VideoRational    myFrameRate;   //!< video framerate
+  VideoRational    myFrameRate{};   //!< video framerate
   int64_t          myFrameCount;  //!< current frame index
 
 };

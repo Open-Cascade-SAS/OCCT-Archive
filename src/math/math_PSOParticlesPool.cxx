@@ -27,13 +27,13 @@ math_PSOParticlesPool::math_PSOParticlesPool(const Standard_Integer theParticles
   myMemory(0, theParticlesCount * (theDimensionCount  // Position
                                  + theDimensionCount  // Velocity
                                  + theDimensionCount) // BestPosition
-                                 - 1) 
+                                 - 1), myParticlesCount(theParticlesCount), myDimensionCount(theDimensionCount) 
 {
-  myParticlesCount = theParticlesCount;
-  myDimensionCount = theDimensionCount;
+  
+  
   myMemory.Init(0.);
   // Pointers adjusting.
-  Standard_Integer aParIdx, aShiftIdx;
+  Standard_Integer aParIdx = 0, aShiftIdx = 0;
   for(aParIdx = 1; aParIdx <= myParticlesCount; ++aParIdx)
   {
     aShiftIdx = (theDimensionCount * 3) * (aParIdx - 1);

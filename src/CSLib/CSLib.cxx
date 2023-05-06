@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <CSLib.hxx>
 #include <CSLib_NormalPolyDef.hxx>
 #include <gp.hxx>
@@ -177,7 +179,7 @@ void CSLib::Normal(const Standard_Integer MaxOrder,
   Standard_Integer i=0,Order=-1;
   Standard_Boolean Trouve=Standard_False;
 //  theStatus = Singular;
-  Standard_Real Norme;
+  Standard_Real Norme = NAN;
   gp_Vec D;
   //Find k0 such that all derivatives N=dS/du ^ dS/dv are null
   //till order k0-1
@@ -236,11 +238,11 @@ void CSLib::Normal(const Standard_Integer MaxOrder,
       }//end while
       if(!definie)
       {  //All lambda i exist
-         Standard_Integer SP;
-         Standard_Real inf,sup;
+         Standard_Integer SP = 0;
+         Standard_Real inf = NAN,sup = NAN;
          inf = 0.0 - M_PI;
          sup = 0.0 + M_PI;
-         Standard_Boolean FU,LU,FV,LV;
+         Standard_Boolean FU = 0,LU = 0,FV = 0,LV = 0;
 
          //Creation of the domain of definition depending on the position
          //of a single point (medium, border, corner).
@@ -377,7 +379,7 @@ gp_Vec CSLib::DNNUV(const Standard_Integer Nu,
 		    const Standard_Integer Nv,
 		    const TColgp_Array2OfVec& DerSurf)
 {
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   gp_Vec D(0,0,0),VG,VD,PV;
   for(i=0;i<=Nu;i++)
     for(j=0;j<=Nv;j++){
@@ -399,7 +401,7 @@ gp_Vec CSLib::DNNUV(const Standard_Integer Nu,
 		    const TColgp_Array2OfVec& DerSurf1,
 		    const TColgp_Array2OfVec& DerSurf2) 
 {
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   gp_Vec D(0,0,0),VG,VD,PV;
   for(i=0;i<=Nu;i++)
     for(j=0;j<=Nv;j++){

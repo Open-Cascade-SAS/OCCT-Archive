@@ -14,9 +14,9 @@
 
 #include <Vrml_Info.hxx>
 
-Vrml_Info::Vrml_Info(const TCollection_AsciiString& aString)
+Vrml_Info::Vrml_Info(const TCollection_AsciiString& aString) : myString(aString)
 {
-  myString = aString;
+  
 }
 
  void Vrml_Info::SetString(const TCollection_AsciiString& aString) 

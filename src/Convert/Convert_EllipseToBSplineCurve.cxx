@@ -14,6 +14,8 @@
 
 //JCV 16/10/91
 
+#include <math.h>
+
 #include <Convert_EllipseToBSplineCurve.hxx>
 #include <gp.hxx>
 #include <gp_Ax2d.hxx>
@@ -49,11 +51,11 @@ Convert_EllipseToBSplineCurve::Convert_EllipseToBSplineCurve
   (const gp_Elips2d& E, const Convert_ParameterisationType Parameterisation)
 :Convert_ConicToBSplineCurve(0,0,0){
 
-  Standard_Integer ii ;
+  Standard_Integer ii = 0 ;
 
-  Standard_Real R,
-  r,
-  value ;
+  Standard_Real R = NAN,
+  r = NAN,
+  value = NAN ;
   Handle(TColStd_HArray1OfReal) CosNumeratorPtr,
   SinNumeratorPtr ;
 
@@ -135,8 +137,8 @@ Convert_EllipseToBSplineCurve::Convert_EllipseToBSplineCurve
 #endif
   Standard_DomainError_Raise_if( (delta > (2*M_PI+Tol)) || (delta <= 0.0e0),
 				"Convert_EllipseToBSplineCurve");
-  Standard_Integer ii;
-  Standard_Real R, r, value;
+  Standard_Integer ii = 0;
+  Standard_Real R = NAN, r = NAN, value = NAN;
   Handle(TColStd_HArray1OfReal) CosNumeratorPtr, SinNumeratorPtr;
   
   R = E.MajorRadius();

@@ -51,6 +51,7 @@
 #include <TopoDS_Wire.hxx>
 #include <GeomLib_CheckCurveOnSurface.hxx>
 #include <errno.h>
+#include <math.h>
 #include <BRepTools_Modifier.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
@@ -140,7 +141,7 @@ void  BRepTools::AddUVBounds(const TopoDS_Face& FF, Bnd_Box2d& B)
   // if the box is empty (face without edges or without pcurves),
   // get natural bounds
   if (aBox.IsVoid()) {
-    Standard_Real UMin,UMax,VMin,VMax;
+    Standard_Real UMin = NAN,UMax = NAN,VMin = NAN,VMax = NAN;
     TopLoc_Location L;
     const Handle(Geom_Surface)& aSurf = BRep_Tool::Surface(F, L);
     if (aSurf.IsNull())
@@ -180,8 +181,8 @@ void BRepTools::AddUVBounds(const TopoDS_Face& aF,
                             const TopoDS_Edge& aE,
                             Bnd_Box2d& aB)
 {
-  Standard_Real aT1, aT2, aXmin = 0.0, aYmin = 0.0, aXmax = 0.0, aYmax = 0.0;
-  Standard_Real aUmin, aUmax, aVmin, aVmax;
+  Standard_Real aT1 = NAN, aT2 = NAN, aXmin = 0.0, aYmin = 0.0, aXmax = 0.0, aYmax = 0.0;
+  Standard_Real aUmin = NAN, aUmax = NAN, aVmin = NAN, aVmax = NAN;
   Bnd_Box2d aBoxC, aBoxS; 
   TopLoc_Location aLoc;
   //
@@ -599,8 +600,8 @@ TopoDS_Wire  BRepTools::OuterWire(const TopoDS_Face& F)
     Wres = TopoDS::Wire(expw.Current());
     expw.Next();
     if (expw.More()) {
-      Standard_Real UMin, UMax, VMin, VMax;
-      Standard_Real umin, umax, vmin, vmax;
+      Standard_Real UMin = NAN, UMax = NAN, VMin = NAN, VMax = NAN;
+      Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
       BRepTools::UVBounds(F,Wres,UMin,UMax,VMin,VMax);
         while (expw.More()) {
           const TopoDS_Wire& W = TopoDS::Wire(expw.Current());
@@ -838,7 +839,7 @@ void BRepTools::Clean (const TopoDS_Shape& theShape, const Standard_Boolean theF
     if (theForce)
     {
       Handle(BRep_CurveRepresentation) aCR;
-      BRep_TEdge* aTE = static_cast<BRep_TEdge*>(anEdge.TShape().get());
+      BRep_TEdge* aTE = dynamic_cast<BRep_TEdge*>(anEdge.TShape().get());
       BRep_ListOfCurveRepresentation& aLCR = aTE->ChangeCurves();
       BRep_ListIteratorOfListOfCurveRepresentation anIterCR(aLCR);
 
@@ -919,7 +920,7 @@ void BRepTools::RemoveUnusedPCurves(const TopoDS_Shape& S)
   TopTools_IndexedMapOfShape Emap;
   TopExp::MapShapes(S, TopAbs_EDGE, Emap);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= Emap.Extent(); i++)
   {
     const Handle(BRep_TEdge)& TE = *((Handle(BRep_TEdge)*) &Emap(i).TShape());
@@ -1278,7 +1279,7 @@ void BRepTools::DetectClosedness(const TopoDS_Face& theFace,
     if (BRep_Tool::IsClosed(anEdge, theFace) &&
         BRepTools::IsReallyClosed(anEdge, theFace))
     {
-      Standard_Real fpar, lpar;
+      Standard_Real fpar = NAN, lpar = NAN;
       Handle(Geom2d_Curve) PCurve1 = BRep_Tool::CurveOnSurface(anEdge, theFace, fpar, lpar);
       Handle(Geom2d_Curve) PCurve2 = BRep_Tool::CurveOnSurface(TopoDS::Edge(anEdge.Reversed()),
                                                                theFace, fpar, lpar);
@@ -1300,7 +1301,7 @@ void BRepTools::DetectClosedness(const TopoDS_Face& theFace,
 
 Standard_Real BRepTools::EvalAndUpdateTol(const TopoDS_Edge& theE, 
                                  const Handle(Geom_Curve)& C3d, 
-                                 const Handle(Geom2d_Curve) C2d, 
+                                 const Handle(Geom2d_Curve)& C2d, 
                                  const Handle(Geom_Surface)& S,
                                  const Standard_Real f,
                                  const Standard_Real l)
@@ -1343,7 +1344,7 @@ Standard_Real BRepTools::EvalAndUpdateTol(const TopoDS_Edge& theE,
       Standard_Integer nbint = 22;
       Standard_Real dt = (last - first) / nbint;
       dt = Max(dt, Precision::Confusion());
-      Standard_Real d, dmax = 0.;
+      Standard_Real d = NAN, dmax = 0.;
       gp_Pnt2d aP2d;
       gp_Pnt aPC, aPS;
       Standard_Integer cnt = 0; 
@@ -1529,7 +1530,7 @@ void BRepTools::CheckLocations(const TopoDS_Shape& theS,
   TopTools_IndexedMapOfShape aMapS;
   TopExp::MapShapes(theS, aMapS, Standard_False, Standard_False);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= aMapS.Extent(); ++i)
   {
     const TopoDS_Shape& anS = aMapS(i);

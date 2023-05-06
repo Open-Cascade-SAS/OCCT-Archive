@@ -282,7 +282,7 @@ Standard_Boolean BRepAlgoAPI_Section::HasAncestorFaceOn1
   (const TopoDS_Shape& aE, 
    TopoDS_Shape& aF) const
 {
-  Standard_Boolean bRes;
+  Standard_Boolean bRes = 0;
   //
   bRes = HasAncestorFace(myDSFiller,1 , aE, aF);
   return bRes;
@@ -295,7 +295,7 @@ Standard_Boolean BRepAlgoAPI_Section::HasAncestorFaceOn2
   (const TopoDS_Shape& aE,
    TopoDS_Shape& aF) const
 {
-  Standard_Boolean bRes;
+  Standard_Boolean bRes = 0;
   //
   bRes = HasAncestorFace(myDSFiller, 2, aE, aF);
   return bRes;
@@ -309,7 +309,7 @@ Standard_Boolean HasAncestorFace (const BOPAlgo_PPaveFiller& pPF,
                                   const TopoDS_Shape& aE,
                                   TopoDS_Shape& aF) 
 {
-  Standard_Boolean bRes;
+  Standard_Boolean bRes = 0;
   //
   bRes = Standard_False;
   if(aE.IsNull()) {
@@ -340,7 +340,7 @@ Standard_Boolean HasAncestorFaces (const BOPAlgo_PPaveFiller& pPF,
                                    TopoDS_Shape& aF2) 
 {
   
-  Standard_Integer aNbFF, i, j, nE, nF1, nF2, aNbVC;
+  Standard_Integer aNbFF = 0, i = 0, j = 0, nE = 0, nF1 = 0, nF2 = 0, aNbVC = 0;
   BOPDS_ListIteratorOfListOfPaveBlock aItLPB;
   //
   const BOPDS_PDS& pDS = pPF->PDS();

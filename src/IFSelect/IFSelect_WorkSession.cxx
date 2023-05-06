@@ -85,15 +85,15 @@ static TCollection_AsciiString bufstr;
 //purpose  : 
 //=======================================================================
 
-IFSelect_WorkSession::IFSelect_WorkSession ()
+IFSelect_WorkSession::IFSelect_WorkSession () : theerrhand(errhand = Standard_True), theshareout(new IFSelect_ShareOut), thegtool(new Interface_GTool), thecheckdone(Standard_False), thecopier(new IFSelect_ModelCopier), themodelstat(Standard_False)
 {
-  theshareout  = new IFSelect_ShareOut;
-  theerrhand   = errhand = Standard_True;
-  thecopier    = new IFSelect_ModelCopier;
+  
+  
+  
   thecopier->SetShareOut (theshareout);
-  thecheckdone = Standard_False;
-  thegtool     = new Interface_GTool;
-  themodelstat = Standard_False;
+  
+  
+  
 }
 
 //=======================================================================
@@ -295,7 +295,7 @@ Standard_Integer IFSelect_WorkSession::StartingNumber (const Handle(Standard_Tra
 Standard_Integer IFSelect_WorkSession::NumberFromLabel
   (const Standard_CString val, const Standard_Integer afternum) const
 {
-  Standard_Integer i, cnt = 0, num = atoi(val);
+  Standard_Integer i = 0, cnt = 0, num = atoi(val);
   if (num > 0 || myModel.IsNull()) return num;    // un n0 direct : gagne !
 //  Sinon, on considere que c est un label; a traiter en CaseNonSensitive ...
   if (num > myModel->NbEntities())  { num = 0; return num; }
@@ -336,7 +336,7 @@ Handle(TCollection_HAsciiString) IFSelect_WorkSession::EntityName (const Handle(
   if (myModel.IsNull() || ent.IsNull()) return 0;
   Interface_ShareTool sht(thegraph->Graph());
 
-  Standard_Integer CN;
+  Standard_Integer CN = 0;
   Handle(Interface_GeneralModule) module;
   if (!thegtool->Select (ent,module,CN)) return 0;
   return module->Name (CN,ent,sht);
@@ -403,7 +403,7 @@ void IFSelect_WorkSession::ClearData (const Standard_Integer mode)
       Handle(TColStd_HSequenceOfInteger) list =
 	ItemIdents(STANDARD_TYPE(IFSelect_SelectPointed));
       Standard_Integer nb = list->Length();
-      Standard_Integer i; // svv #1 
+      Standard_Integer i = 0; // svv #1 
       for (i = 1; i <= nb; i ++) {
 	DeclareAndCast(IFSelect_SelectPointed,sp,Item(list->Value(i)));
 	if (!sp.IsNull()) sp->Clear();
@@ -452,7 +452,7 @@ Standard_Boolean  IFSelect_WorkSession::ComputeGraph
   Standard_Integer nb = myModel->NbEntities();
   if(themodelstat)
   {
-    Standard_Integer i; // svv #1
+    Standard_Integer i = 0; // svv #1
     for (i = 1; i <= nb; i ++) thegraph->CGraph().SetStatus(i,0);
     Interface_BitMap& bm = thegraph->CGraph().CBitMap();
     bm.AddFlag();
@@ -566,9 +566,9 @@ Standard_Boolean IFSelect_WorkSession::ComputeCheck
     //  Et on met a jour le Graphe (BitMap) !  Flag Incorrect (STX + SEM)
     Interface_BitMap& BM = CG.CBitMap();
     BM.Init (Standard_False,Flag_Incorrect);
-    Standard_Integer num, nb = CG.Size();
+    Standard_Integer num = 0, nb = CG.Size();
     for (checklist.Start(); checklist.More(); checklist.Next()) {
-      const Handle(Interface_Check) chk = checklist.Value();
+      const Handle(Interface_Check)& chk = checklist.Value();
       if (!chk->HasFailed()) continue;
       num = checklist.Number();
       if (num > 0 && num <= nb) BM.SetTrue (num,Flag_Incorrect);
@@ -1048,7 +1048,7 @@ Handle(TColStd_HSequenceOfHAsciiString) IFSelect_WorkSession::ItemNamesForLabel
 {
   Handle(TColStd_HSequenceOfHAsciiString) list =
     new TColStd_HSequenceOfHAsciiString();
-  Standard_Integer i,  nb = MaxIdent();
+  Standard_Integer i = 0,  nb = MaxIdent();
   for (i = 1; i <= nb; i ++) {
     Handle(TCollection_HAsciiString) lab = ItemLabel(i);
     Handle(Standard_Transient) item = Item(i);
@@ -1339,7 +1339,7 @@ Handle(TColStd_HSequenceOfTransient) IFSelect_WorkSession::SelectionResultFromLi
 //   On va chercher la derniere deduction de la chaine des inputs
   Handle(IFSelect_Selection) ssel, newinput;
   ssel = sel;
-  Standard_Integer i, nb = MaxIdent();
+  Standard_Integer i = 0, nb = MaxIdent();
   for (i = 1; i <= nb * 2; i ++) {
     newinput  = deduct->Input();
     deduct = GetCasted(IFSelect_SelectDeduct,newinput);
@@ -1618,7 +1618,7 @@ void IFSelect_WorkSession::ClearFinalModifiers ()
 {
   Handle(TColStd_HSequenceOfInteger) list = FinalModifierIdents (Standard_True);
   Standard_Integer nb = list->Length();
-  Standard_Integer i; // svv #1
+  Standard_Integer i = 0; // svv #1
   for (i = 1; i <= nb; i ++)
     RemoveItem(GeneralModifier(list->Value(i)));
   list = FinalModifierIdents (Standard_False);
@@ -1820,7 +1820,7 @@ Standard_Boolean IFSelect_WorkSession::SetModelContent
 
   Handle(Interface_InterfaceModel) newmod  = myModel->NewEmptyModel();
   Interface_CopyTool TC(myModel,theprotocol);
-  Standard_Integer i, nb = myModel->NbEntities();
+  Standard_Integer i = 0, nb = myModel->NbEntities();
   if (keep) {
     for (list.Start(); list.More(); list.Next())
       TC.TransferEntity (list.Value());
@@ -1988,7 +1988,7 @@ Standard_CString IFSelect_WorkSession::GiveFileComplete
 {
 //  ajouter si besoin : Prefix; Extension
   bufstr.Clear(); bufstr.AssignCat (file);
-  Standard_Integer i,j = 0,nb = bufstr.Length();
+  Standard_Integer i = 0,j = 0,nb = bufstr.Length();
   Handle(TCollection_HAsciiString) ext = FileExtension ();
   if (!ext.IsNull()) {
     char val0 = '\0';  if (ext->Length() > 0) val0 = ext->Value(1);
@@ -2173,7 +2173,7 @@ Standard_Boolean IFSelect_WorkSession::SendSplit ()
     */
 //  Decomposer
     if (theshareout.IsNull()) return Standard_False;
-    Standard_Integer i, nbd = theshareout->NbDispatches();
+    Standard_Integer i = 0, nbd = theshareout->NbDispatches();
     Standard_Integer nf = 0;
     Message_Messenger::StreamBuffer sout = Message::SendInfo();
     sout<<" SendSplit .. ";
@@ -2235,7 +2235,7 @@ Interface_EntityIterator IFSelect_WorkSession::SentList
   if (!IsLoaded()) return iter;
   const Interface_Graph& G = thegraph->Graph();
   Standard_Integer nb = G.Size();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for ( i = 1; i <= nb; i ++) {
     Standard_Integer stat = G.Status(i);
     if ( (stat > 0 && newcount < 0) || stat == newcount)
@@ -2256,7 +2256,7 @@ Standard_Integer IFSelect_WorkSession::MaxSendingCount () const
   if (!IsLoaded()) return newcount;
   const Interface_Graph& G = thegraph->Graph();
   Standard_Integer nb = G.Size();
-  Standard_Integer  i;
+  Standard_Integer  i = 0;
   for (i = 1; i <= nb; i ++) {
     Standard_Integer stat = G.Status(i);
     if (stat > newcount) newcount = stat;
@@ -2668,7 +2668,7 @@ static void IFSelect_QueryProp (Interface_IntList& list,
 				const Standard_Integer num, const int quoi)
 {
   list.SetNumber(num);
-  Standard_Integer i, nb = list.Length();
+  Standard_Integer i = 0, nb = list.Length();
   for (i = 1; i <= nb; i ++) {
     if (i > 1) list.SetNumber(num);  // because recursive call + depth first
     Standard_Integer n = list.Value(i);
@@ -2703,11 +2703,11 @@ static void IFSelect_QueryProp (Interface_IntList& list,
 void IFSelect_WorkSession::QueryCheckList (const Interface_CheckIterator& chl)
 {
   if (!IsLoaded()) return;
-  Standard_Integer i,nb = myModel->NbEntities();
+  Standard_Integer i = 0,nb = myModel->NbEntities();
   thecheckana = TCollection_AsciiString (nb+1,' ');
   for (chl.Start(); chl.More(); chl.Next()) {
     Standard_Integer num = chl.Number();
-    const Handle(Interface_Check) ach = chl.Value();
+    const Handle(Interface_Check)& ach = chl.Value();
     if (ach->HasFailed())        thecheckana.SetValue(num,'2');
     else if (ach->HasWarnings()) thecheckana.SetValue(num,'1');
   }
@@ -2779,7 +2779,7 @@ Standard_Integer IFSelect_WorkSession::QueryParent
   Handle(TColStd_HSequenceOfTransient) list =
     thegraph->Graph().Sharings(entson).Content();
   if (list.IsNull()) return -1;
-  Standard_Integer i, nb = list->Length();
+  Standard_Integer i = 0, nb = list->Length();
   for (i = 1; i <= nb; i ++) {
     if (list->Value(i) == entdad) return 1;
     Standard_Integer stat = QueryParent ( entdad,list->Value(i) );
@@ -2803,7 +2803,7 @@ void IFSelect_WorkSession::SetParams
   (const NCollection_Vector<Handle(Standard_Transient)>& params,
    const NCollection_Vector<Standard_Integer>&   uselist)
 {
-  Standard_Integer i, nbp = params.Length(), nbu = uselist.Length();
+  Standard_Integer i = 0, nbp = params.Length(), nbu = uselist.Length();
   Handle(IFSelect_ParamEditor) editor = new IFSelect_ParamEditor
     (nbp+nbu+50,"Parameter Editor");
   for (i = params.Lower(); i <= params.Upper(); i ++) {
@@ -3038,7 +3038,7 @@ void IFSelect_WorkSession::DumpSelection
   IFSelect_SelectionIterator iter; sel->FillIterator(iter);
   for (; iter.More(); iter.Next()) {
     nb ++; 
-    Handle(IFSelect_Selection) newsel = iter.Value();
+    const Handle(IFSelect_Selection)& newsel = iter.Value();
     sout<<" -- "<<newsel->Label()<<std::endl;
   }
   sout << " Nb Inputs:"<<nb<<std::endl;
@@ -3132,7 +3132,7 @@ Handle(TColStd_HSequenceOfTransient) IFSelect_WorkSession::GiveList
 //   Le modele : son contenu
   list = new TColStd_HSequenceOfTransient();
   if (obj == myModel) {
-    Standard_Integer i, nb = myModel->NbEntities();
+    Standard_Integer i = 0, nb = myModel->NbEntities();
     for (i = 1; i <= nb; i ++)  list->Append (myModel->Value(i));
   }
 
@@ -3181,12 +3181,12 @@ Handle(TColStd_HSequenceOfTransient) IFSelect_WorkSession::GiveListFromList
   (const Standard_CString selname, const Handle(Standard_Transient)& ent) const
 {
   Handle(TColStd_HSequenceOfTransient) list;
-  Standard_Integer num;
+  Standard_Integer num = 0;
 
 //   LISTE DEFINIE D OFFICE (en ce cas, la liste d entree est ignoree)
   if (selname[0] == '(') {
 //  liste d entites donnees a la queue leu leu : (ID,ID,ID...)
-    char entid[50];     Standard_Integer i,j = 0;
+    char entid[50];     Standard_Integer i = 0,j = 0;
     TColStd_MapOfInteger numap;
     list = new TColStd_HSequenceOfTransient();
     for (i = 1; selname[i] != '\0'; i ++) {
@@ -3257,7 +3257,7 @@ Handle(TColStd_HSequenceOfTransient) IFSelect_WorkSession::GiveListCombined
 
 //  mode < 0 l1-l2  = 0 l1&l2  > 0 l1|l2 (l1+l2)
   TColStd_MapOfTransient numap;
-  Standard_Integer i,n = l2->Length();
+  Standard_Integer i = 0,n = l2->Length();
   for (i = n; i > 0; i --)  {
     Handle(Standard_Transient) ent = l2->Value(i);
     if (ent.IsNull()) continue;
@@ -3429,7 +3429,7 @@ void IFSelect_WorkSession::TraceDumpEntity
 void IFSelect_WorkSession::PrintEntityStatus
   (const Handle(Standard_Transient)& ent, Standard_OStream& S)
 {
-  Standard_Integer i,nb;
+  Standard_Integer i = 0,nb = 0;
   Standard_Integer num = StartingNumber(ent);
   if (num == 0)  {  std::cout<<" --  PrintEntityStatus : unknown"<<std::endl;  return;  }
 
@@ -3481,7 +3481,7 @@ void IFSelect_WorkSession::PrintCheckList (Standard_OStream& S,
 //  mode : 0  comptage   1 n0s entites   2 n0s+id ents
   if (mode == IFSelect_ItemsByEntity) checklist.Print (S,myModel,failsonly);
   else {
-    Interface_CheckIterator chks = checklist;
+    const Interface_CheckIterator& chks = checklist;
     Handle(IFSelect_CheckCounter) counter =
       new IFSelect_CheckCounter (mode>1 && mode != IFSelect_CountSummary);
     counter->Analyse (chks,myModel,Standard_True,failsonly);
@@ -3608,7 +3608,7 @@ void IFSelect_WorkSession::EvaluateDispatch
     Standard_Integer max = evres->HighestDuplicationCount();
     if (max < 2) sout<<" :   There are none"<<std::endl;
     else {
-      Standard_Integer newcount;
+      Standard_Integer newcount = 0;
       sout<<std::endl;
       for (newcount = 2; newcount <= max; newcount ++) {
 	if (evres->NbDuplicated(newcount,Standard_False) == 0) continue;
@@ -3682,7 +3682,7 @@ void IFSelect_WorkSession::EvaluateComplete
     Standard_Integer max = evres->HighestDuplicationCount();
     if (max < 2) sout<<" :   There are none"<<std::endl;
     else {
-      Standard_Integer newcount;
+      Standard_Integer newcount = 0;
       sout<<std::endl;
       for (newcount = 2; newcount <= max; newcount ++) {
 	if (evres->NbDuplicated(newcount,Standard_False) == 0) continue;
@@ -3722,7 +3722,7 @@ void IFSelect_WorkSession::ListEntities
       if (!titre && mode == 0) sout<<"  Keys : R Root   ? Unknown   * Unloaded"<<std::endl;
       if (!titre && mode == 2) sout<<"(";
       titre = 1;
-      Handle(Standard_Transient) ent = iter.Value();
+      const Handle(Standard_Transient)& ent = iter.Value();
       Standard_Integer num = myModel->Number(ent);
       if (mode == 1) {
     // n0 id (root?) category validity tracetype

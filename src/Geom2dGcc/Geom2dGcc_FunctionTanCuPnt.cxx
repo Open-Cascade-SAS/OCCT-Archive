@@ -37,9 +37,9 @@
 //=========================================================================
 Geom2dGcc_FunctionTanCuPnt::
 Geom2dGcc_FunctionTanCuPnt(const Geom2dAdaptor_Curve& C      ,
-                           const gp_Pnt2d& Point  ) {
-                             TheCurv = C;
-                             ThePoint = Point;
+                           const gp_Pnt2d& Point  ) : TheCurv(C), ThePoint(Point) {
+                             
+                             
 }
 
 

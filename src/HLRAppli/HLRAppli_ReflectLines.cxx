@@ -26,9 +26,9 @@
 //purpose  : Constructor
 //=======================================================================
 
-HLRAppli_ReflectLines::HLRAppli_ReflectLines(const TopoDS_Shape& aShape)
+HLRAppli_ReflectLines::HLRAppli_ReflectLines(const TopoDS_Shape& aShape) : myShape(aShape)
 {
-  myShape = aShape;
+  
 }
 
 //=======================================================================

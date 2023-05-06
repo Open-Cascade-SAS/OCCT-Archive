@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepAdaptor_Surface.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -93,7 +95,7 @@ void BRepAdaptor_Surface::Initialize(const TopoDS_Face& F,
     return;
 
   if (Restriction) {
-    Standard_Real umin,umax,vmin,vmax;
+    Standard_Real umin = NAN,umax = NAN,vmin = NAN,vmax = NAN;
     BRepTools::UVBounds(F,umin,umax,vmin,vmax);
     mySurf.Load(aSurface,umin,umax,vmin,vmax);
   }

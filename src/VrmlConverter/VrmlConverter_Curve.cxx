@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
@@ -81,7 +83,7 @@ static void DrawCurve (const Adaptor3d_Curve&          aCurve,
 		       const Handle(VrmlConverter_Drawer)& aDrawer, // for passsing of LineAspect
                        Standard_OStream&             anOStream) 
 {
-  Standard_Integer nbintervals = 1, i;
+  Standard_Integer nbintervals = 1, i = 0;
   Handle(TColgp_HArray1OfVec) HAV1;
   Handle(TColStd_HArray1OfInteger) HAI1;
   
@@ -117,7 +119,7 @@ static void DrawCurve (const Adaptor3d_Curve&          aCurve,
   default:
     {
 
-      Standard_Real U;
+      Standard_Real U = NAN;
       Standard_Integer N = Max(2, NbP*nbintervals);
 
 //     std::cout << "nbintervals " << nbintervals << std::endl;
@@ -208,7 +210,7 @@ void VrmlConverter_Curve::Add(const Adaptor3d_Curve&                aCurve,
 
 
   Standard_Integer NbPoints = aDrawer->Discretisation();
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   Standard_Real aLimit = aDrawer->MaximalParameterValue();
   FindLimits(aCurve, aLimit, V1, V2);
 

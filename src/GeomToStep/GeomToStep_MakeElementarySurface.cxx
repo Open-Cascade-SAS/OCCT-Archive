@@ -40,7 +40,7 @@
 // ElementarySurface de Geom
 //=============================================================================
 GeomToStep_MakeElementarySurface::GeomToStep_MakeElementarySurface
-  ( const Handle(Geom_ElementarySurface)& S)
+  ( const Handle(Geom_ElementarySurface)& S) : GeomToStep_Root()
 {
   done = Standard_True;
   if (S->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) {

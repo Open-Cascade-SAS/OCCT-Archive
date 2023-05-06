@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_BSplineSurface.hxx>
 #include <GeomAbs_BSplKnotDistribution.hxx>
 #include <GeomToStep_MakeBSplineSurfaceWithKnots.hxx>
@@ -36,12 +38,12 @@
 //=============================================================================
 GeomToStep_MakeBSplineSurfaceWithKnots::
   GeomToStep_MakeBSplineSurfaceWithKnots( const
-    Handle(Geom_BSplineSurface)& BS )
+    Handle(Geom_BSplineSurface)& BS ) : GeomToStep_Root()
 								      
 {
   Handle(StepGeom_BSplineSurfaceWithKnots) BSWK;
-  Standard_Integer aUDegree, aVDegree, NU, NV, i, j, NUknots, NVknots, itampon;
-  Standard_Real rtampon;
+  Standard_Integer aUDegree = 0, aVDegree = 0, NU = 0, NV = 0, i = 0, j = 0, NUknots = 0, NVknots = 0, itampon = 0;
+  Standard_Real rtampon = NAN;
   Handle(StepGeom_CartesianPoint) Pt = new StepGeom_CartesianPoint; 
   Handle(StepGeom_HArray2OfCartesianPoint) aControlPointsList;
   StepGeom_BSplineSurfaceForm aSurfaceForm;

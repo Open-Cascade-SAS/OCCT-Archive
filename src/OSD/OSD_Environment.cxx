@@ -157,7 +157,7 @@ void OSD_Environment::Build ()
   else {
     // Allocation memoire. Surtout tout la heap!
     index = Ibuffer++;
-    char **aTmp;
+    char **aTmp = nullptr;
     aTmp = (char **) realloc ( buffer, Ibuffer * sizeof(char*) );
     if (aTmp)
     {

@@ -31,10 +31,10 @@ IntTools_SurfaceRangeSample::IntTools_SurfaceRangeSample(const Standard_Integer 
 }
 
 IntTools_SurfaceRangeSample::IntTools_SurfaceRangeSample(const IntTools_CurveRangeSample& theRangeU,
-							 const IntTools_CurveRangeSample& theRangeV)
+							 const IntTools_CurveRangeSample& theRangeV) : myRangeU(theRangeU), myRangeV(theRangeV)
 {
-  myRangeU = theRangeU;
-  myRangeV = theRangeV;
+  
+  
 }
 
 IntTools_SurfaceRangeSample::IntTools_SurfaceRangeSample(const IntTools_SurfaceRangeSample& Other)

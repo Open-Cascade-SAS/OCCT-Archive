@@ -46,7 +46,7 @@ namespace
       }
     }
 
-    virtual void Fill (const Standard_Integer theCol,
+    void Fill (const Standard_Integer theCol,
                        const Standard_Integer theRow,
                        const Standard_Integer thePicked) Standard_OVERRIDE
     {
@@ -96,7 +96,7 @@ namespace
       }
     }
 
-    virtual void Fill (const Standard_Integer theCol,
+    void Fill (const Standard_Integer theCol,
                        const Standard_Integer theRow,
                        const Standard_Integer thePicked) Standard_OVERRIDE
     {
@@ -133,7 +133,7 @@ namespace
     }
 
     //! Accumulate the data.
-    virtual void Fill (const Standard_Integer theCol,
+    void Fill (const Standard_Integer theCol,
                        const Standard_Integer theRow,
                        const Standard_Integer thePicked) Standard_OVERRIDE
     {
@@ -156,7 +156,7 @@ namespace
     }
 
     //! Normalize the depth values.
-    virtual void Flush() Standard_OVERRIDE
+    void Flush() Standard_OVERRIDE
     {
       float aFrom  = 0.0f;
       float aDelta = 1.0f;
@@ -208,7 +208,7 @@ namespace
                              SelectMgr_ViewerSelector* theSelector)
     : SelectMgr_SelectionImageFiller (thePixMap, theSelector) {}
 
-    virtual void Fill (const Standard_Integer theCol,
+    void Fill (const Standard_Integer theCol,
                        const Standard_Integer theRow,
                        const Standard_Integer thePicked) Standard_OVERRIDE
     {
@@ -255,7 +255,7 @@ namespace
       }
     }
 
-    virtual void Fill (const Standard_Integer theCol,
+    void Fill (const Standard_Integer theCol,
                        const Standard_Integer theRow,
                        const Standard_Integer thePicked) Standard_OVERRIDE
     {
@@ -300,7 +300,7 @@ namespace
       myMapSelectionModeColors.Bind (0x0100, Quantity_NOC_GOLD);           // MeshVS_SMF_Group
     }
 
-    virtual void Fill (const Standard_Integer theCol,
+    void Fill (const Standard_Integer theCol,
                        const Standard_Integer theRow,
                        const Standard_Integer thePicked) Standard_OVERRIDE
     {
@@ -355,7 +355,7 @@ namespace
                                SelectMgr_ViewerSelector* theSelector)
     : SelectMgr_SelectionImageFiller (thePixMap, theSelector) {}
 
-    virtual void Fill (const Standard_Integer theCol,
+    void Fill (const Standard_Integer theCol,
                        const Standard_Integer theRow,
                        const Standard_Integer thePicked) Standard_OVERRIDE
     {
@@ -378,7 +378,7 @@ namespace
                          SelectMgr_ViewerSelector* theSelector)
     : SelectMgr_SelectionImageFiller (thePixMap, theSelector) {}
 
-    virtual void Fill (const Standard_Integer theCol,
+    void Fill (const Standard_Integer theCol,
                        const Standard_Integer theRow,
                        const Standard_Integer thePicked) Standard_OVERRIDE
     {

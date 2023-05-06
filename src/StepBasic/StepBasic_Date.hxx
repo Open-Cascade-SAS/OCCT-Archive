@@ -56,7 +56,7 @@ protected:
 private:
 
 
-  Standard_Integer yearComponent;
+  Standard_Integer yearComponent{};
 
 
 };

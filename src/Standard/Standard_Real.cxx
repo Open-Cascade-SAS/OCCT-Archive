@@ -13,6 +13,7 @@
 // commercial license or contractual agreement.
 
 #include <float.h>
+#include <math.h>
 #include <Standard_Real.hxx>
 #include <Standard_NumericError.hxx>
 #include <Standard_NullValue.hxx>
@@ -34,7 +35,7 @@ Standard_Integer HashCode (const Standard_Real theReal, const Standard_Integer t
   {
     Standard_Real    R;
     Standard_Integer I[2];
-  } U;
+  } U{};
 
   //  U.R = Abs(me); // Treat me = -0.0 ADN 27/11/97
   U.R = theReal;
@@ -78,7 +79,7 @@ inline Standard_Real apx_for_ACosApprox (const Standard_Real x)
 
 Standard_Real ACosApprox (const Standard_Real Value)
 {
-  double XX;
+  double XX = NAN;
   if (Value < 0.) {
     XX = 1.+Value;
     if (XX < RealSmall())
@@ -157,7 +158,7 @@ union RealMap {
 //--------------------------------------------------------------------
 static int HardwareHighBitsOfDouble()
 {
-  RealMap MaxDouble;
+  RealMap MaxDouble{};
   MaxDouble.real = DBL_MAX;
   //=========================================================
   // representation of the max double in IEEE is
@@ -179,7 +180,7 @@ static int HardwareHighBitsOfDouble()
 //--------------------------------------------------------------------
 static int HardwareLowBitsOfDouble()
 {
-  RealMap MaxDouble;
+  RealMap MaxDouble{};
   MaxDouble.real = DBL_MAX;
   //=========================================================
   // representation of the max double in IEEE is
@@ -199,7 +200,7 @@ static int LowBitsOfDouble = HardwareLowBitsOfDouble();
 
 double NextAfter(const double x, const double y)
 {
-  RealMap res;
+  RealMap res{};
 
   res.real=x;
   

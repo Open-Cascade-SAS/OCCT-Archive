@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepVisual_RWViewVolume.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -58,37 +60,37 @@ void RWStepVisual_RWViewVolume::ReadStep
 
 	// --- own field : viewPlaneDistance ---
 
-	Standard_Real aViewPlaneDistance;
+	Standard_Real aViewPlaneDistance = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"view_plane_distance",ach,aViewPlaneDistance);
 
 	// --- own field : frontPlaneDistance ---
 
-	Standard_Real aFrontPlaneDistance;
+	Standard_Real aFrontPlaneDistance = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"front_plane_distance",ach,aFrontPlaneDistance);
 
 	// --- own field : frontPlaneClipping ---
 
-	Standard_Boolean aFrontPlaneClipping;
+	Standard_Boolean aFrontPlaneClipping = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat5 =` not needed
 	data->ReadBoolean (num,5,"front_plane_clipping",ach,aFrontPlaneClipping);
 
 	// --- own field : backPlaneDistance ---
 
-	Standard_Real aBackPlaneDistance;
+	Standard_Real aBackPlaneDistance = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat6 =` not needed
 	data->ReadReal (num,6,"back_plane_distance",ach,aBackPlaneDistance);
 
 	// --- own field : backPlaneClipping ---
 
-	Standard_Boolean aBackPlaneClipping;
+	Standard_Boolean aBackPlaneClipping = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat7 =` not needed
 	data->ReadBoolean (num,7,"back_plane_clipping",ach,aBackPlaneClipping);
 
 	// --- own field : viewVolumeSidesClipping ---
 
-	Standard_Boolean aViewVolumeSidesClipping;
+	Standard_Boolean aViewVolumeSidesClipping = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat8 =` not needed
 	data->ReadBoolean (num,8,"view_volume_sides_clipping",ach,aViewVolumeSidesClipping);
 

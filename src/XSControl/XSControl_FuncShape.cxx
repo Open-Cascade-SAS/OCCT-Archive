@@ -90,7 +90,7 @@ static IFSelect_ReturnStatus XSControl_tpdraw
   TopoDS_Shape sh;    char nomvar[40];
   //  Standard_Boolean moderoot =  (pilot->Word(0).Value(3) == 'r');
 
-  Standard_Integer n1, n2, i, max=0, index=0;
+  Standard_Integer n1 = 0, n2 = 0, i = 0, max=0, index=0;
   Handle(Interface_InterfaceModel) model = TP->Model();
   if (model.IsNull()) {
     if (mode == 0) {
@@ -391,7 +391,7 @@ static IFSelect_ReturnStatus XSControl_fromshape
 	TopoDS_Shape S0 = Shape;
 	TopLoc_Location L;
 	S0.Location ( L );
-	Standard_Integer i, nb = TP->NbMapped();
+	Standard_Integer i = 0, nb = TP->NbMapped();
 	if ( ! silent ) sout<<"searching in map among "<<nb<<" ...";
 	for (i = 1; i <= nb; i ++) {
 	  ent = TP->Mapped(i);
@@ -423,7 +423,7 @@ static IFSelect_ReturnStatus XSControl_fromshape
         sout<<std::endl<<"Subshapes imported from entities:";
         TopoDS_Iterator Iter(Shape);
         for (; Iter.More(); Iter.Next()) {
-          TopoDS_Shape subsh = Iter.Value();
+          const TopoDS_Shape& subsh = Iter.Value();
           Standard_Integer submodrec = 1;
           Handle(Standard_Transient) subent = TR->EntityFromShapeResult(subsh,submodrec);
           if (subent.IsNull()) {
@@ -530,7 +530,7 @@ static IFSelect_ReturnStatus XSControl_trconnexentities
 
   Handle(TColStd_HSequenceOfTransient) list =
     XSControl_ConnectedShapes::AdjacentEntities (Shape,TP,TopAbs_FACE);
-  Standard_Integer i, nb = list->Length();
+  Standard_Integer i = 0, nb = list->Length();
   sout<<nb<<" Entities produced Connected Shapes :"<<std::endl;
   const Handle(Interface_InterfaceModel) &model = XSControl::Session(pilot)->Model();
   sout<<"(";
@@ -758,7 +758,7 @@ Standard_Integer  XSControl_FuncShape::MoreShapes
     list->Append (li);
     return li->Length();
   }
-  Standard_Integer i, paro = 0, parf = 0, moins = 0, n1 = 0, n2 = 0;
+  Standard_Integer i = 0, paro = 0, parf = 0, moins = 0, n1 = 0, n2 = 0;
   for (i = 0; name[i] != '\0'; i ++) {
     if (name[i] == '(') paro  = i;
     if (name[i] == '-') moins = i;
@@ -819,7 +819,7 @@ Standard_Boolean  XSControl_FuncShape::FileAndVar
     resvar.AssignCat (var);
   else if (resfile.Length() == 0) resvar.AssignCat (def);
   else {
-    Standard_Integer nomdeb, nomfin;
+    Standard_Integer nomdeb = 0, nomfin = 0;
     nomdeb = resfile.SearchFromEnd ("/");
     if (nomdeb <= 0) nomdeb = resfile.SearchFromEnd("\\");  // pour NT
     if (nomdeb <  0) nomdeb = 0;

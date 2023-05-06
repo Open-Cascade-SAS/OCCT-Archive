@@ -35,9 +35,9 @@ IMPLEMENT_STANDARD_RTTIEXT(PCDM_ReferenceIterator,Standard_Transient)
 //=======================================================================
 
 PCDM_ReferenceIterator::PCDM_ReferenceIterator (const Handle(Message_Messenger)& theMsgDriver) :
-      myIterator(0)
+      myIterator(0), myMessageDriver(theMsgDriver)
 {
-  myMessageDriver = theMsgDriver;
+  
 }
 
 //=======================================================================

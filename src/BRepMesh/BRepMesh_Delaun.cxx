@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_Delaun.hxx>
 
 #include <gp_XY.hxx>
@@ -226,7 +228,7 @@ void BRepMesh_Delaun::initCirclesTool (const Bnd_Box2d&       theBox,
                                        const Standard_Integer theCellsCountU,
                                        const Standard_Integer theCellsCountV)
 {
-  Standard_Real aMinX, aMinY, aMaxX, aMaxY;
+  Standard_Real aMinX = NAN, aMinY = NAN, aMaxX = NAN, aMaxY = NAN;
   theBox.Get  ( aMinX, aMinY, aMaxX, aMaxY );
   const Standard_Real aDeltaX = aMaxX - aMinX;
   const Standard_Real aDeltaY = aMaxY - aMinY;
@@ -287,7 +289,7 @@ void BRepMesh_Delaun::perform(IMeshData::VectorOfInteger& theVertexIndices,
 //=======================================================================
 void BRepMesh_Delaun::superMesh(const Bnd_Box2d& theBox)
 {
-  Standard_Real aMinX, aMinY, aMaxX, aMaxY;
+  Standard_Real aMinX = NAN, aMinY = NAN, aMaxX = NAN, aMaxY = NAN;
   theBox.Get  ( aMinX, aMinY, aMaxX, aMaxY );
   Standard_Real aDeltaX = aMaxX - aMinX;
   Standard_Real aDeltaY = aMaxY - aMinY;
@@ -548,7 +550,7 @@ void BRepMesh_Delaun::createTrianglesOnNewVertices(
   Handle(NCollection_IncAllocator) aAllocator =
     new NCollection_IncAllocator(IMeshData::MEMORY_BLOCK_SIZE_HUGE);
 
-  Standard_Real aTolU, aTolV;
+  Standard_Real aTolU = NAN, aTolV = NAN;
   myMeshData->Data()->GetTolerance(aTolU, aTolV);
   const Standard_Real aSqTol = aTolU * aTolU + aTolV * aTolV;
 
@@ -979,7 +981,7 @@ Standard_Boolean BRepMesh_Delaun::meshLeftPolygonOf(
   const BRepMesh_Edge& aRefEdge = GetEdge( theStartEdgeId );
 
   IMeshData::SequenceOfInteger aPolygon;
-  Standard_Integer aStartNode, aPivotNode;
+  Standard_Integer aStartNode = 0, aPivotNode = 0;
   if ( isForward )
   {
     aPolygon.Append( theStartEdgeId );
@@ -1103,7 +1105,7 @@ Standard_Integer BRepMesh_Delaun::findNextPolygonLink(
   const gp_Vec2d&                       theRefLinkDir,
   const IMeshData::SequenceOfBndB2d&    theBoxes,
   const IMeshData::SequenceOfInteger&   thePolygon,
-  const Handle(IMeshData::MapOfInteger) theSkipped,
+  const Handle(IMeshData::MapOfInteger)& theSkipped,
   const Standard_Boolean&               isSkipLeprous,
   IMeshData::MapOfInteger&              theLeprousLinks,
   IMeshData::MapOfInteger&              theDeadLinks,
@@ -2182,14 +2184,14 @@ void BRepMesh_Delaun::RemoveVertex( const BRepMesh_Vertex& theVertex )
   {
     const BRepMesh_Edge& anEdge = GetEdge( aLoopEdgesIt.Key() );
     Standard_Integer aFirstNode = anEdge.FirstNode();
-    Standard_Integer aLastNode;
+    Standard_Integer aLastNode = 0;
     Standard_Integer aPivotNode = anEdge.LastNode();
     Standard_Integer anEdgeId   = aLoopEdgesIt.Key();
     
     Standard_Boolean isPositive = aLoopEdges( anEdgeId ) != 0;
     if ( !isPositive )
     {
-      Standard_Integer aTmp;
+      Standard_Integer aTmp = 0;
       aTmp       = aFirstNode;
       aFirstNode = aPivotNode;
       aPivotNode = aTmp;
@@ -2212,7 +2214,7 @@ void BRepMesh_Delaun::RemoveVertex( const BRepMesh_Vertex& theVertex )
         if ( aLinkIt.Value() != anEdgeId &&
              aLoopEdges.IsBound( aLinkIt.Value() ) )
         {
-          Standard_Integer aCurrentNode;
+          Standard_Integer aCurrentNode = 0;
           anEdgeId = aLinkIt.Value();
           const BRepMesh_Edge& anEdge1 = GetEdge( anEdgeId );
           
@@ -2446,8 +2448,8 @@ Standard_Boolean BRepMesh_Delaun::Contains( const Standard_Integer theTriangleId
   Standard_Real aDistance[3];
   Standard_Real aSqModulus[3];
 
-  Standard_Real aSqMinDist;
-  Standard_Integer aEdgeOnId;
+  Standard_Real aSqMinDist = NAN;
+  Standard_Integer aEdgeOnId = 0;
   aSqMinDist = calculateDist( aVEdges, aPoints, theVertex, aDistance, aSqModulus, aEdgeOnId );
   if ( aSqMinDist < 0 )
     return Standard_False;

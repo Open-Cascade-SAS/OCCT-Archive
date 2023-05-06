@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWGearPair.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -78,19 +80,19 @@ void RWStepKinematics_RWGearPair::ReadStep (const Handle(StepData_StepReaderData
 
   // Own fields of GearPair
 
-  Standard_Real aRadiusFirstLink;
+  Standard_Real aRadiusFirstLink = NAN;
   theData->ReadReal (theNum, 7, "radius_first_link", theArch, aRadiusFirstLink);
 
-  Standard_Real aRadiusSecondLink;
+  Standard_Real aRadiusSecondLink = NAN;
   theData->ReadReal (theNum, 8, "radius_second_link", theArch, aRadiusSecondLink);
 
-  Standard_Real aBevel;
+  Standard_Real aBevel = NAN;
   theData->ReadReal (theNum, 9, "bevel", theArch, aBevel);
 
-  Standard_Real aHelicalAngle;
+  Standard_Real aHelicalAngle = NAN;
   theData->ReadReal (theNum, 10, "helical_angle", theArch, aHelicalAngle);
 
-  Standard_Real aGearRatio;
+  Standard_Real aGearRatio = NAN;
   theData->ReadReal (theNum, 11, "gear_ratio", theArch, aGearRatio);
 
   // Initialize entity

@@ -48,9 +48,9 @@ BRepAlgoAPI_BuilderAlgo::BRepAlgoAPI_BuilderAlgo(const BOPAlgo_PaveFiller& aPF)
   myCheckInverted(Standard_True),
   myFillHistory(Standard_True),
   myIsIntersectionNeeded(Standard_False),
-  myBuilder(NULL)
+  myDSFiller((BOPAlgo_PaveFiller*)&aPF), myBuilder(NULL)
 {
-  myDSFiller = (BOPAlgo_PaveFiller*)&aPF;
+  
 }
 //=======================================================================
 // function: ~

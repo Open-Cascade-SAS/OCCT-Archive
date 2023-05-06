@@ -29,6 +29,8 @@
 
 */
 
+#include <math.h>
+
 #include <Standard_CString.hxx>
 
 #define IEEE_8087 1
@@ -1599,10 +1601,10 @@ get_TI(void)
  static Bigint *
 Balloc(int k MTd)
 {
-	int x;
-	Bigint *rv;
+	int x = 0;
+	Bigint *rv = nullptr;
 #ifndef Omit_Private_Memory
-	unsigned int len;
+	unsigned int len = 0;
 #endif
 #ifdef MULTIPLE_THREADS
 	ThInfo *TI;
@@ -1677,17 +1679,17 @@ y->wds*sizeof(Long) + 2*sizeof(int))
  static Bigint *
 multadd(Bigint *b, int m, int a MTd)	/* multiply by m and add a */
 {
-	int i, wds;
+	int i = 0, wds = 0;
 #ifdef ULLong
-	ULong *x;
-	ULLong carry, y;
+	ULong *x = nullptr;
+	ULLong carry = 0, y = 0;
 #else
 	ULong carry, *x, y;
 #ifdef Pack_32
 	ULong xi, z;
 #endif
 #endif
-	Bigint *b1;
+	Bigint *b1 = nullptr;
 
 	wds = b->wds;
 	x = b->x;
@@ -1729,9 +1731,9 @@ multadd(Bigint *b, int m, int a MTd)	/* multiply by m and add a */
  static Bigint *
 s2b(const char *s, int nd0, int nd, ULong y9, int dplen MTd)
 {
-	Bigint *b;
-	int i, k;
-	Long x, y;
+	Bigint *b = nullptr;
+	int i = 0, k = 0;
+	Long x = 0, y = 0;
 
 	x = (nd + 8) / 9;
 	for(k = 0, y = 1; x > y; y <<= 1, k++) ;
@@ -1791,7 +1793,7 @@ hi0bits(ULong x)
  static int
 lo0bits(ULong *y)
 {
-	int k;
+	int k = 0;
 	ULong x = *y;
 
 	if (x & 7) {
@@ -1834,7 +1836,7 @@ lo0bits(ULong *y)
  static Bigint *
 i2b(int i MTd)
 {
-	Bigint *b;
+	Bigint *b = nullptr;
 
 	b = Balloc(1 MTa);
 	b->x[0] = i;
@@ -1845,12 +1847,12 @@ i2b(int i MTd)
  static Bigint *
 mult(Bigint *a, Bigint *b MTd)
 {
-	Bigint *c;
-	int k, wa, wb, wc;
-	ULong *x, *xa, *xae, *xb, *xbe, *xc, *xc0;
-	ULong y;
+	Bigint *c = nullptr;
+	int k = 0, wa = 0, wb = 0, wc = 0;
+	ULong *x = nullptr, *xa = nullptr, *xae = nullptr, *xb = nullptr, *xbe = nullptr, *xc = nullptr, *xc0 = nullptr;
+	ULong y = 0;
 #ifdef ULLong
-	ULLong carry, z;
+	ULLong carry = 0, z = 0;
 #else
 	ULong carry, z;
 #ifdef Pack_32
@@ -1950,11 +1952,11 @@ mult(Bigint *a, Bigint *b MTd)
  static Bigint *
 pow5mult(Bigint *b, int k MTd)
 {
-	Bigint *b1, *p5, *p51;
+	Bigint *b1 = nullptr, *p5 = nullptr, *p51 = nullptr;
 #ifdef MULTIPLE_THREADS
 	ThInfo *TI;
 #endif
-	int i;
+	int i = 0;
 	static int p05[3] = { 5, 25, 125 };
 
 	if ((i = k & 3))
@@ -2017,9 +2019,9 @@ pow5mult(Bigint *b, int k MTd)
  static Bigint *
 lshift(Bigint *b, int k MTd)
 {
-	int i, k1, n, n1;
-	Bigint *b1;
-	ULong *x, *x1, *xe, z;
+	int i = 0, k1 = 0, n = 0, n1 = 0;
+	Bigint *b1 = nullptr;
+	ULong *x = nullptr, *x1 = nullptr, *xe = nullptr, z = 0;
 
 #ifdef Pack_32
 	n = k >> 5;
@@ -2072,8 +2074,8 @@ lshift(Bigint *b, int k MTd)
  static int
 cmp(Bigint *a, Bigint *b)
 {
-	ULong *xa, *xa0, *xb, *xb0;
-	int i, j;
+	ULong *xa = nullptr, *xa0 = nullptr, *xb = nullptr, *xb0 = nullptr;
+	int i = 0, j = 0;
 
 	i = a->wds;
 	j = b->wds;
@@ -2101,11 +2103,11 @@ cmp(Bigint *a, Bigint *b)
  static Bigint *
 diff(Bigint *a, Bigint *b MTd)
 {
-	Bigint *c;
-	int i, wa, wb;
-	ULong *xa, *xae, *xb, *xbe, *xc;
+	Bigint *c = nullptr;
+	int i = 0, wa = 0, wb = 0;
+	ULong *xa = nullptr, *xae = nullptr, *xb = nullptr, *xbe = nullptr, *xc = nullptr;
 #ifdef ULLong
-	ULLong borrow, y;
+	ULLong borrow = 0, y = 0;
 #else
 	ULong borrow, y;
 #ifdef Pack_32
@@ -2190,7 +2192,7 @@ diff(Bigint *a, Bigint *b MTd)
  static double
 ulp(U *x)
 {
-	Long L;
+	Long L = 0;
 	U u;
 
 	L = (word0(x) & Exp_mask) - (P-1)*Exp_msk1;
@@ -2227,8 +2229,8 @@ ulp(U *x)
  static double
 b2d(Bigint *a, int *e)
 {
-	ULong *xa, *xa0, w, y, z;
-	int k;
+	ULong *xa = nullptr, *xa0 = nullptr, w = 0, y = 0, z = 0;
+	int k = 0;
 	U d;
 #ifdef VAX
 	ULong d0, d1;
@@ -2292,11 +2294,11 @@ b2d(Bigint *a, int *e)
  static Bigint *
 d2b(U *d, int *e, int *bits MTd)
 {
-	Bigint *b;
-	int de, k;
-	ULong *x, y, z;
+	Bigint *b = nullptr;
+	int de = 0, k = 0;
+	ULong *x = nullptr, y = 0, z = 0;
 #ifndef Sudden_Underflow
-	int i;
+	int i = 0;
 #endif
 #ifdef VAX
 	ULong d0, d1;
@@ -2422,7 +2424,7 @@ d2b(U *d, int *e, int *bits MTd)
 ratio(Bigint *a, Bigint *b)
 {
 	U da, db;
-	int k, ka, kb;
+	int k = 0, ka = 0, kb = 0;
 
 	dval(&da) = b2d(a, &ka);
 	dval(&db) = b2d(b, &kb);
@@ -2560,7 +2562,7 @@ static unsigned char hexdig[256] = {
  static int
 match(const char **sp, const char *t)
 {
-	int c, d;
+	int c = 0, d = 0;
 	const char *s = *sp;
 
 	while((d = *t++)) {
@@ -2577,9 +2579,9 @@ match(const char **sp, const char *t)
  static void
 hexnan(U *rvp, const char **sp)
 {
-	ULong c, x[2];
-	const char *s;
-	int c1, havedig, udx0, xshift;
+	ULong c = 0, x[2];
+	const char *s = nullptr;
+	int c1 = 0, havedig = 0, udx0 = 0, xshift = 0;
 
 	/**** if (!hexdig['0']) hexdig_init(); ****/
 	x[0] = x[1] = 0;
@@ -2651,8 +2653,8 @@ hexnan(U *rvp, const char **sp)
  static Bigint *
 increment(Bigint *b MTd)
 {
-	ULong *x, *xe;
-	Bigint *b1;
+	ULong *x = nullptr, *xe = nullptr;
+	Bigint *b1 = nullptr;
 
 	x = b->x;
 	xe = x + b->wds;
@@ -2682,8 +2684,8 @@ increment(Bigint *b MTd)
  static void
 rshift(Bigint *b, int k)
 {
-	ULong *x, *x1, *xe, y;
-	int n;
+	ULong *x = nullptr, *x1 = nullptr, *xe = nullptr, y = 0;
+	int n = 0;
 
 	x = x1 = b->x;
 	n = k >> kshift;
@@ -2711,8 +2713,8 @@ rshift(Bigint *b, int k)
  static ULong
 any_on(Bigint *b, int k)
 {
-	int n, nwds;
-	ULong *x, *x0, x1, x2;
+	int n = 0, nwds = 0;
+	ULong *x = nullptr, *x0 = nullptr, x1 = 0, x2 = 0;
 
 	x = b->x;
 	nwds = b->wds;
@@ -2744,11 +2746,11 @@ enum {	/* rounding values: same as FLT_ROUNDS */
  void
 gethex( const char **sp, U *rvp, int rounding, int sign MTd)
 {
-	Bigint *b;
-	const unsigned char *decpt, *s0, *s, *s1;
-	Long e, e1;
-	ULong L, lostbits, *x;
-	int big, denorm, esign, havedig, k, n, nbits, up, zret;
+	Bigint *b = nullptr;
+	const unsigned char *decpt = nullptr, *s0 = nullptr, *s = nullptr, *s1 = nullptr;
+	Long e = 0, e1 = 0;
+	ULong L = 0, lostbits = 0, *x = nullptr;
+	int big = 0, denorm = 0, esign = 0, havedig = 0, k = 0, n = 0, nbits = 0, up = 0, zret = 0;
 #ifdef IBM
 	int j;
 #endif
@@ -3118,10 +3120,10 @@ dshift(Bigint *b, int p2)
  static int
 quorem(Bigint *b, Bigint *S)
 {
-	int n;
-	ULong *bx, *bxe, q, *sx, *sxe;
+	int n = 0;
+	ULong *bx = nullptr, *bxe = nullptr, q = 0, *sx = nullptr, *sxe = nullptr;
 #ifdef ULLong
-	ULLong borrow, carry, y, ys;
+	ULLong borrow = 0, carry = 0, y = 0, ys = 0;
 #else
 	ULong borrow, carry, y, ys;
 #ifdef Pack_32
@@ -3239,8 +3241,8 @@ quorem(Bigint *b, Bigint *S)
 sulp(U *x, BCinfo *bc)
 {
 	U u;
-	double rv;
-	int i;
+	double rv = NAN;
+	int i = 0;
 
 	rv = ulp(x);
 	if (!bc->scale || (i = 2*P + 1 - ((word0(x) & Exp_mask) >> Exp_shift)) <= 0)
@@ -3255,8 +3257,8 @@ sulp(U *x, BCinfo *bc)
  static void
 bigcomp(U *rv, const char *s0, BCinfo *bc MTd)
 {
-	Bigint *b, *d;
-	int b2, bbits, d2, dd=0, dig, dsign, i, j, nd, nd0, p2, p5, speccase;
+	Bigint *b = nullptr, *d = nullptr;
+	int b2 = 0, bbits = 0, d2 = 0, dd=0, dig = 0, dsign = 0, i = 0, j = 0, nd = 0, nd0 = 0, p2 = 0, p5 = 0, speccase = 0;
 
 	dsign = bc->dsign;
 	nd = bc->nd;
@@ -3458,22 +3460,22 @@ retlow1:
  double
 Strtod(const char *s00, char **se)
 {
-	int bb2, bb5, bbe, bd2, bd5, bbbits, bs2, c, e, e1;
-	int esign, i, j, k, nd, nd0, nf, nz, nz0, nz1, sign;
-	const char *s, *s0, *s1;
-	double aadj, aadj1;
-	Long L;
+	int bb2 = 0, bb5 = 0, bbe = 0, bd2 = 0, bd5 = 0, bbbits = 0, bs2 = 0, c = 0, e = 0, e1 = 0;
+	int esign = 0, i = 0, j = 0, k = 0, nd = 0, nd0 = 0, nf = 0, nz = 0, nz0 = 0, nz1 = 0, sign = 0;
+	const char *s = nullptr, *s0 = nullptr, *s1 = nullptr;
+	double aadj = NAN, aadj1 = NAN;
+	Long L = 0;
 	U aadj2, adj, rv, rv0;
-	ULong y, z;
+	ULong y = 0, z = 0;
 	BCinfo bc;
 	Bigint *bb=0, *bb1=0, *bd=0, *bd0=0, *bs=0, *delta=0;
 #ifdef USE_BF96
-	ULLong bhi, blo, brv, t00, t01, t02, t10, t11, terv, tg, tlo, yz;
-	const BF96 *p10;
-	int bexact, erv;
+	ULLong bhi = 0, blo = 0, brv = 0, t00 = 0, t01 = 0, t02 = 0, t10 = 0, t11 = 0, terv = 0, tg = 0, tlo = 0, yz = 0;
+	const BF96 *p10 = nullptr;
+	int bexact = 0, erv = 0;
 #endif
 #ifdef Avoid_Underflow
-	ULong Lsb, Lsb1;
+	ULong Lsb = 0, Lsb1 = 0;
 #endif
 #ifdef SET_INEXACT
 	int oldinexact;

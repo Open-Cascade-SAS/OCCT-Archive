@@ -39,13 +39,13 @@ void RWStepBasic_RWCoordinatedUniversalTimeOffset::ReadStep
 
 	// --- own field : hourOffset ---
 
-	Standard_Integer aHourOffset;
+	Standard_Integer aHourOffset = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadInteger (num,1,"hour_offset",ach,aHourOffset);
 
 	// --- own field : minuteOffset ---
 
-	Standard_Integer aMinuteOffset;
+	Standard_Integer aMinuteOffset = 0;
 	Standard_Boolean hasAminuteOffset = Standard_True;
 	if (data->IsParamDefined(num,2)) {
 	  //szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed

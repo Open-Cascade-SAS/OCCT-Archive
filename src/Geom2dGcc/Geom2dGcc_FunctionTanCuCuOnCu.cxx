@@ -145,144 +145,144 @@ Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve&     C1  ,
 			     const Geom2dAdaptor_Curve&     C2  ,
 			     const Geom2dAdaptor_Curve&     C3  ,
-			     const Standard_Real Rad ) {
-  Curv1  = C1;
-  Curv2  = C2;
-  Curvon = C3;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_CuCuOnCu;
+			     const Standard_Real Rad ) : Curv1(C1), Curv2(C2), Curvon(C3), FirstRad(Rad), TheType(Geom2dGcc_CuCuOnCu) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Circ2d&    C1  ,
 			     const Geom2dAdaptor_Curve&     C2  ,
 			     const Geom2dAdaptor_Curve&     C3  ,
-			     const Standard_Real Rad ) {
-  Circ1  = C1;
-  Curv2  = C2;
-  Curvon = C3;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_CiCuOnCu;
+			     const Standard_Real Rad ) : Circ1(C1), Curv2(C2), Curvon(C3), FirstRad(Rad), TheType(Geom2dGcc_CiCuOnCu) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Lin2d&     L1  ,
 			     const Geom2dAdaptor_Curve&     C2  ,
 			     const Geom2dAdaptor_Curve&     C3  ,
-			     const Standard_Real Rad ) {
-  Lin1  = L1;
-  Curv2  = C2;
-  Curvon = C3;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_LiCuOnCu;
+			     const Standard_Real Rad ) : Lin1(L1), Curv2(C2), Curvon(C3), FirstRad(Rad), TheType(Geom2dGcc_LiCuOnCu) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1  ,
 			     const gp_Pnt2d&  P2  ,
 			     const Geom2dAdaptor_Curve&  C3  ,
-			     const Standard_Real       Rad ) {
-  Curv1  = C1;
-  Pnt2  = P2;
-  Curvon = C3;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_CuPtOnCu;
+			     const Standard_Real       Rad ) : Curv1(C1), Pnt2(P2), Curvon(C3), FirstRad(Rad), TheType(Geom2dGcc_CuPtOnCu) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1   ,
 			     const Geom2dAdaptor_Curve&  C2   ,
 			     const gp_Lin2d&  OnLi ,
-			     const Standard_Real       Rad  ) {
-  Curv1  = C1;
-  Curv2  = C2;
-  Linon = OnLi;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_CuCuOnLi;
+			     const Standard_Real       Rad  ) : Curv1(C1), Curv2(C2), Linon(OnLi), FirstRad(Rad), TheType(Geom2dGcc_CuCuOnLi) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Circ2d&           C1   ,
 			       const Geom2dAdaptor_Curve& C2   ,
 			       const gp_Lin2d&            OnLi ,
-			       const Standard_Real                 Rad  ) {
-  Circ1  = C1;
-  Curv2  = C2;
-  Linon = OnLi;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_CiCuOnLi;
+			       const Standard_Real                 Rad  ) : Circ1(C1), Curv2(C2), Linon(OnLi), FirstRad(Rad), TheType(Geom2dGcc_CiCuOnLi) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Lin2d& L1  ,
 			       const Geom2dAdaptor_Curve&  C2  ,
 			       const gp_Lin2d&  OnLi ,
-			       const Standard_Real       Rad ) {
-  Lin1  = L1;
-  Curv2  = C2;
-  Linon = OnLi;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_LiCuOnLi;
+			       const Standard_Real       Rad ) : Lin1(L1), Curv2(C2), Linon(OnLi), FirstRad(Rad), TheType(Geom2dGcc_LiCuOnLi) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1  ,
 			       const gp_Pnt2d&            P2  ,
 			       const gp_Lin2d&            OnLi ,
-			       const Standard_Real                 Rad ) {
-  Curv1  = C1;
-  Pnt2  = P2;
-  Linon = OnLi;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_CuPtOnLi;
+			       const Standard_Real                 Rad ) : Curv1(C1), Pnt2(P2), Linon(OnLi), FirstRad(Rad), TheType(Geom2dGcc_CuPtOnLi) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1   ,
 			       const Geom2dAdaptor_Curve& C2   ,
 			       const gp_Circ2d&           OnCi ,
-			       const Standard_Real                 Rad  ) {
-  Curv1  = C1;
-  Curv2  = C2;
-  Circon = OnCi;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_CuCuOnCi;
+			       const Standard_Real                 Rad  ) : Curv1(C1), Curv2(C2), Circon(OnCi), FirstRad(Rad), TheType(Geom2dGcc_CuCuOnCi) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Circ2d&           C1  ,
 			       const Geom2dAdaptor_Curve& C2  ,
 			       const gp_Circ2d&           OnCi ,
-			       const Standard_Real                 Rad ) {
-  Circ1  = C1;
-  Curv2  = C2;
-  Circon = OnCi;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_CuCuOnCi;
+			       const Standard_Real                 Rad ) : Circ1(C1), Curv2(C2), Circon(OnCi), FirstRad(Rad), TheType(Geom2dGcc_CuCuOnCi) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const gp_Lin2d& L1  ,
 			       const Geom2dAdaptor_Curve&  C2  ,
 			       const gp_Circ2d& OnCi ,
-			       const Standard_Real       Rad ) {
-  Lin1  = L1;
-  Curv2  = C2;
-  Circon = OnCi;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_LiCuOnCi;
+			       const Standard_Real       Rad ) : Lin1(L1), Curv2(C2), Circon(OnCi), FirstRad(Rad), TheType(Geom2dGcc_LiCuOnCi) {
+  
+  
+  
+  
+  
 }
 
 Geom2dGcc_FunctionTanCuCuOnCu::
   Geom2dGcc_FunctionTanCuCuOnCu(const Geom2dAdaptor_Curve& C1  ,
 			       const gp_Pnt2d&            P2  ,
 			       const gp_Circ2d&           OnCi ,
-			       const Standard_Real                 Rad ) {
-  Curv1  = C1;
-  Pnt2  = P2;
-  Circon = OnCi;
-  FirstRad = Rad;
-  TheType = Geom2dGcc_CuPtOnCi;
+			       const Standard_Real                 Rad ) : Curv1(C1), Pnt2(P2), Circon(OnCi), FirstRad(Rad), TheType(Geom2dGcc_CuPtOnCi) {
+  
+  
+  
+  
+  
 }
 
 Standard_Integer Geom2dGcc_FunctionTanCuCuOnCu::

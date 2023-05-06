@@ -39,7 +39,7 @@ LDOM_BasicElement& LDOM_BasicElement::Create
   void * aMem = aDoc -> Allocate (sizeof(LDOM_BasicElement));
   LDOM_BasicElement * aNewElem = new (aMem) LDOM_BasicElement;
 
-  Standard_Integer aHash;
+  Standard_Integer aHash = 0;
 //  aDoc -> HashedAllocate (aString, strlen(aString), aNewElem -> myTagName);
   aNewElem -> myTagName =  aDoc -> HashedAllocate (aName, aLen, aHash);
 
@@ -156,7 +156,7 @@ const LDOM_BasicAttribute& LDOM_BasicElement::GetAttribute
                                      (const LDOMBasicString& aName,
                                       const LDOM_BasicNode   * aLastCh) const
 {
-  const LDOM_BasicNode * aNode;
+  const LDOM_BasicNode * aNode = nullptr;
   if (aLastCh)
     aNode = aLastCh -> GetSibling (); 
   else
@@ -184,8 +184,8 @@ const LDOM_BasicAttribute * LDOM_BasicElement::GetFirstAttribute
                                      const LDOM_BasicNode **& thePrevNode) const
 {
   //  Find the First Attribute as well as the Last Child among siblings
-  const LDOM_BasicNode * aFirstAttr;
-  const LDOM_BasicNode ** aPrevNode;
+  const LDOM_BasicNode * aFirstAttr = nullptr;
+  const LDOM_BasicNode ** aPrevNode = nullptr;
   if (theLastCh) {
     aFirstAttr = theLastCh -> mySibling; 
     aPrevNode  = (const LDOM_BasicNode **) &(theLastCh -> mySibling);
@@ -220,13 +220,13 @@ const LDOM_BasicNode * LDOM_BasicElement::AddAttribute
                                    const LDOM_BasicNode           * aLastCh)
 {
   //  Create attribute
-  Standard_Integer aHash;
+  Standard_Integer aHash = 0;
   LDOM_BasicAttribute& anAttr =
     LDOM_BasicAttribute::Create (anAttrName, aDocument, aHash);
   anAttr.myValue = anAttrValue;
 
   //  Initialize the loop of attribute name search
-  const LDOM_BasicNode ** aPrNode;
+  const LDOM_BasicNode ** aPrNode = nullptr;
   const LDOM_BasicAttribute * aFirstAttr = GetFirstAttribute (aLastCh, aPrNode);
   const char * aNameStr = anAttrName.GetString();
 
@@ -283,7 +283,7 @@ const LDOM_BasicNode * LDOM_BasicElement::RemoveAttribute
   if ((myAttributeMask & anAttributeMask) == 0) {
     ; // maybe cause for exception
   } else {
-    const LDOM_BasicNode ** aPrevNode;  // dummy
+    const LDOM_BasicNode ** aPrevNode = nullptr;  // dummy
     const LDOM_BasicAttribute * anAttr = GetFirstAttribute (aLastCh, aPrevNode);
     while (anAttr) {
       if (anAttr -> getNodeType () == LDOM_Node::ATTRIBUTE_NODE)
@@ -379,7 +379,7 @@ void LDOM_BasicElement::AddElementsByTagName
 void LDOM_BasicElement::AddAttributes (LDOM_NodeList&       aList,
                                        const LDOM_BasicNode * aLastChild) const
 {
-  const LDOM_BasicNode * aBNode;
+  const LDOM_BasicNode * aBNode = nullptr;
   if (aLastChild)
     aBNode = aLastChild -> GetSibling();
   else
@@ -411,7 +411,7 @@ void LDOM_BasicElement::ReplaceElement
   for (; aBNode != NULL; aBNode = aBNode -> GetSibling()) {
     if (aBNode -> isNull())
       continue;
-    LDOM_BasicNode * aNewBNode;
+    LDOM_BasicNode * aNewBNode = nullptr;
     const LDOM_Node::NodeType aNewNodeType = aBNode -> getNodeType();
     switch (aNewNodeType) {
     case LDOM_Node::ELEMENT_NODE:
@@ -450,7 +450,7 @@ void LDOM_BasicElement::ReplaceElement
 loop_attr:
   LDOM_BasicNode * aLastAttr = (LDOM_BasicNode *) aLastChild;
   for (; aBNode != NULL; aBNode = aBNode -> GetSibling()) {
-    Standard_Integer aHash;
+    Standard_Integer aHash = 0;
     if (aBNode -> isNull()) continue;
     const LDOM_BasicAttribute * aBNodeAtt= (const LDOM_BasicAttribute *) aBNode;
     LDOM_BasicAttribute * aNewAtt =

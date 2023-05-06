@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeUpgrade_EdgeDivide.hxx>
@@ -30,10 +32,10 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_EdgeDivide,ShapeUpgrade_Tool)
 //purpose  : 
 //=======================================================================
 ShapeUpgrade_EdgeDivide::ShapeUpgrade_EdgeDivide():
-      ShapeUpgrade_Tool()
+      ShapeUpgrade_Tool(), mySplitCurve3dTool(new ShapeUpgrade_SplitCurve3d), mySplitCurve2dTool(new ShapeUpgrade_SplitCurve2d)
 {
-  mySplitCurve3dTool = new ShapeUpgrade_SplitCurve3d;
-  mySplitCurve2dTool = new ShapeUpgrade_SplitCurve2d;
+  
+  
 }
 
 
@@ -59,7 +61,7 @@ Standard_Boolean ShapeUpgrade_EdgeDivide::Compute(const TopoDS_Edge& anEdge)
 {
   Clear();
   
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   Handle(Geom_Curve) curve3d = BRep_Tool::Curve (anEdge, f, l);
   myHasCurve3d = !curve3d.IsNull();
   

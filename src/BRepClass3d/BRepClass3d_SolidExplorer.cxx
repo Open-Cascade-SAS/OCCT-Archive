@@ -49,6 +49,7 @@
 #include <TopoDS_Shell.hxx>
 #include <TopExp.hxx>
 
+#include <math.h>
 #include <stdio.h>
 //OCC454(apo)->
 //<-OCC454(apo)
@@ -63,7 +64,7 @@ Standard_Boolean BRepClass3d_SolidExplorer::FindAPointInTheFace
  gp_Pnt& APoint_,
  Standard_Real& param_)
 {
-  Standard_Real u,v;
+  Standard_Real u = NAN,v = NAN;
   Standard_Boolean r = FindAPointInTheFace(_face,APoint_,u,v,param_);
   return r;
 }
@@ -259,8 +260,8 @@ Standard_Boolean BRepClass3d_SolidExplorer::PointInTheFace
  gp_Vec& theVecD1U,
  gp_Vec& theVecD1V) const
 {
-  Standard_Real u,du = (U2-U1)/6.0;
-  Standard_Real v,dv = (V2-V1)/6.0;
+  Standard_Real u = NAN,du = (U2-U1)/6.0;
+  Standard_Real v = NAN,dv = (V2-V1)/6.0;
   if(du<1e-12) du=1e-12;
   if(dv<1e-12) dv=1e-12;
   Standard_Boolean IsNotUper = !surf->IsUPeriodic(), IsNotVper = !surf->IsVPeriodic();
@@ -450,8 +451,8 @@ Standard_Integer BRepClass3d_SolidExplorer::OtherSegment(const gp_Pnt& P,
   gp_Vec aVecD1U, aVecD1V;
   Standard_Real maxscal=0;
   Standard_Boolean ptfound=Standard_False;
-  Standard_Real Par;
-  Standard_Real _u,_v;
+  Standard_Real Par = NAN;
+  Standard_Real _u = NAN,_v = NAN;
   Standard_Integer IndexPoint=0;
   Standard_Integer NbPointsOK=0;
   Standard_Integer NbFacesInSolid=0;
@@ -492,7 +493,7 @@ Standard_Integer BRepClass3d_SolidExplorer::OtherSegment(const gp_Pnt& P,
         }
       }
       surf->Initialize(face, aRestr);
-      Standard_Real U1,V1,U2,V2;
+      Standard_Real U1 = NAN,V1 = NAN,U2 = NAN,V2 = NAN;
       U1 = surf->FirstUParameter();
       V1 = surf->FirstVParameter();
       U2 = surf->LastUParameter();
@@ -519,8 +520,8 @@ Standard_Integer BRepClass3d_SolidExplorer::OtherSegment(const gp_Pnt& P,
       Extrema_ExtPS Ext(P, GA, TolU, TolV);
       //
       if (Ext.IsDone() && Ext.NbExt() > 0) {
-        Standard_Integer i, iNear,  iEnd;
-        Standard_Real  aUx, aVx, Dist2, Dist2Min;
+        Standard_Integer i = 0, iNear = 0,  iEnd = 0;
+        Standard_Real  aUx = NAN, aVx = NAN, Dist2 = NAN, Dist2Min = NAN;
         Extrema_POnSurf aPx;
         //
         iNear = 1;
@@ -546,8 +547,8 @@ Standard_Integer BRepClass3d_SolidExplorer::OtherSegment(const gp_Pnt& P,
           } 
           else {
             BRepClass_FaceClassifier classifier2d;
-            Standard_Real            aU;
-            Standard_Real            aV;
+            Standard_Real            aU = NAN;
+            Standard_Real            aV = NAN;
 
             (Ext.Point(iNear)).Parameter(aU, aV);
 
@@ -708,7 +709,7 @@ Standard_Boolean BRepClass3d_SolidExplorer::PointInTheFace
   Face.Orientation(TopAbs_FORWARD);
   Handle(BRepAdaptor_Surface) surf = new BRepAdaptor_Surface();
   surf->Initialize(Face);
-  Standard_Real U1,V1,U2,V2;//,u,v;
+  Standard_Real U1 = NAN,V1 = NAN,U2 = NAN,V2 = NAN;//,u,v;
   U1 = surf->FirstUParameter();
   V1 = surf->FirstVParameter();
   U2 = surf->LastUParameter();
@@ -740,7 +741,7 @@ Standard_Boolean BRepClass3d_SolidExplorer::FindAPointInTheFace
 Standard_Boolean BRepClass3d_SolidExplorer::FindAPointInTheFace
 (const TopoDS_Face& _face,
  gp_Pnt& APoint_) 
-{ Standard_Real u,v;
+{ Standard_Real u = NAN,v = NAN;
   Standard_Boolean r = FindAPointInTheFace(_face,APoint_,u,v);
   return r;
 }
@@ -887,7 +888,7 @@ void BRepClass3d_SolidExplorer::InitShape(const TopoDS_Shape& S)
   // Fill mapEV with vertices and edges from shape
   NCollection_UBTreeFiller <Standard_Integer, Bnd_Box> aTreeFiller (myTree);
   //
-  Standard_Integer i, aNbEV = myMapEV.Extent();
+  Standard_Integer i = 0, aNbEV = myMapEV.Extent();
   for (i = 1; i <= aNbEV; ++i) {
     const TopoDS_Shape& aS = myMapEV(i);
     //
@@ -1023,7 +1024,7 @@ Standard_Integer  BRepClass3d_SolidExplorer::Segment(const gp_Pnt& P,
                                                      gp_Lin& L, 
                                                      Standard_Real& Par)  
 {
-  Standard_Integer bRetFlag;
+  Standard_Integer bRetFlag = 0;
   myFirstFace = 0;
   bRetFlag=OtherSegment(P,L,Par);
   return bRetFlag;

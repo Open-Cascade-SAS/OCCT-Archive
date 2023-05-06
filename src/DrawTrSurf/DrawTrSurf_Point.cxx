@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DrawTrSurf_Point.hxx>
 
 #include <Draw_Color.hxx>
@@ -177,7 +179,7 @@ Handle(Draw_Drawable3D) DrawTrSurf_Point::Restore (Standard_IStream& theStream)
   const DrawTrSurf_Params& aParams = DrawTrSurf::Parameters();
   Standard_Integer is3d = 0;
   theStream >> is3d;
-  Standard_Real x,y,z = 0.0;
+  Standard_Real x = NAN,y = NAN,z = 0.0;
   if (is3d)
   {
     theStream >> x >> y >> z;

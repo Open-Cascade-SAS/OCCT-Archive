@@ -26,7 +26,7 @@
 //=========================================================================
 //   Creation d une ligne 2d de gp a partir d un Ax2d de gp.              +
 //=========================================================================
-gce_MakeLin2d::gce_MakeLin2d(const gp_Ax2d& A)
+gce_MakeLin2d::gce_MakeLin2d(const gp_Ax2d& A) : gce_Root()
 {
   TheLin2d = gp_Lin2d(A);
   TheError = gce_Done;
@@ -38,7 +38,7 @@ gce_MakeLin2d::gce_MakeLin2d(const gp_Ax2d& A)
 //=========================================================================
 
 gce_MakeLin2d::gce_MakeLin2d(const gp_Pnt2d& P,
-			     const gp_Dir2d& V)
+			     const gp_Dir2d& V) : gce_Root()
 {
   TheLin2d = gp_Lin2d(P,V);
   TheError = gce_Done;
@@ -51,7 +51,7 @@ gce_MakeLin2d::gce_MakeLin2d(const gp_Pnt2d& P,
 
 gce_MakeLin2d::gce_MakeLin2d(const Standard_Real A,
 			     const Standard_Real B,
-			     const Standard_Real C)
+			     const Standard_Real C) : gce_Root()
 {
   if (A*A + B*B <= gp::Resolution()) {
     TheError = gce_NullAxis;
@@ -68,7 +68,7 @@ gce_MakeLin2d::gce_MakeLin2d(const Standard_Real A,
 //=========================================================================
 
 gce_MakeLin2d::gce_MakeLin2d(const gp_Pnt2d& P1,
-			     const gp_Pnt2d& P2)
+			     const gp_Pnt2d& P2) : gce_Root()
 {
   if (P1.Distance(P2) >= gp::Resolution()) {
     TheLin2d = gp_Lin2d(P1,gp_Dir2d(P2.XY()-P1.XY()));
@@ -85,7 +85,7 @@ gce_MakeLin2d::gce_MakeLin2d(const gp_Pnt2d& P1,
 //=========================================================================
 
 gce_MakeLin2d::gce_MakeLin2d(const gp_Lin2d& Line,
-			     const gp_Pnt2d& Point)
+			     const gp_Pnt2d& Point) : gce_Root()
 {
   TheLin2d = gp_Lin2d(Point,Line.Direction());
   TheError = gce_Done;
@@ -97,7 +97,7 @@ gce_MakeLin2d::gce_MakeLin2d(const gp_Lin2d& Line,
 //=========================================================================
 
 gce_MakeLin2d::gce_MakeLin2d(const gp_Lin2d&     Line,
-			     const Standard_Real Dist)
+			     const Standard_Real Dist) : gce_Root()
 {
   gp_Pnt2d Point(Line.Location().XY()+
 		 Dist*gp_XY(-Line.Direction().Y(),Line.Direction().X()));

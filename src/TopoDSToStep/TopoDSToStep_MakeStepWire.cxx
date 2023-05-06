@@ -16,6 +16,8 @@
 
 //szv#4 S4163
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <Geom2d_Curve.hxx>
@@ -195,7 +197,7 @@ void TopoDSToStep_MakeStepWire::Init (const TopoDS_Wire& aWire,
     Standard_Integer nb = anExtWire2->NbEdges();
     if (nb % 2 == 0)
     {
-      Standard_Integer ie;
+      Standard_Integer ie = 0;
       // check if two adjacent edges are the same
       for (ie = 1; ie < nb; ie++)
       {
@@ -240,7 +242,7 @@ void TopoDSToStep_MakeStepWire::Init (const TopoDS_Wire& aWire,
       // ---------------------------------
       // --- Is the edge Degenerated ? ---
       // ---------------------------------
-      Standard_Real cf, cl;
+      Standard_Real cf = NAN, cl = NAN;
       Handle(Geom2d_Curve) theC2d = BRep_Tool::CurveOnSurface (anEdge, aTool.CurrentFace(), cf, cl);
       if (BRep_Tool::Degenerated (anEdge))
       {

@@ -111,9 +111,9 @@ void StepData_StepModel::VerifyCheck(Handle(Interface_Check)& ach) const
   Handle(StepData_StepModel) me (this);
   Handle(Interface_Protocol) aHP = StepData::HeaderProtocol();
   Interface_ShareTool sh(me,aHP);
-  Handle(Interface_GeneralModule) module;  Standard_Integer CN;
+  Handle(Interface_GeneralModule) module;  Standard_Integer CN = 0;
   for (Interface_EntityIterator iter = Header(); iter.More(); iter.Next()) {
-    Handle(Standard_Transient) head = iter.Value();
+    const Handle(Standard_Transient)& head = iter.Value();
     if (!lib.Select(head,module,CN)) continue;
     module->CheckCase(CN,head,sh,ach);
   }

@@ -24,11 +24,11 @@
 IMPLEMENT_STANDARD_RTTIEXT(IFSelect_SignatureList,Standard_Transient)
 
 IFSelect_SignatureList::IFSelect_SignatureList
-  (const Standard_Boolean withlist)
+  (const Standard_Boolean withlist) : thesignonly(Standard_False), thelistat(withlist), thenbnuls(0)
 {
-  thesignonly = Standard_False;
-  thelistat = withlist;
-  thenbnuls = 0;
+  
+  
+  
   SetName("...");
 }
 
@@ -212,9 +212,9 @@ IFSelect_SignatureList::IFSelect_SignatureList
     nbtot += nbent;
     nbsign ++;
     if (nbent > maxent) maxent = nbent;
-    TCollection_AsciiString name = iter.Key();
+    const TCollection_AsciiString& name = iter.Key();
 //    if (!name.IsIntegerValue()) continue;  pas bien fiable
-    Standard_Integer ic, nc = name.Length();
+    Standard_Integer ic = 0, nc = name.Length();
     Standard_Boolean iaint = Standard_True;
     for (ic = 1; ic <= nc; ic ++) {
       char unc = name.Value(ic);
@@ -239,7 +239,7 @@ IFSelect_SignatureList::IFSelect_SignatureList
     S<<"    For Nb Entities  : "<<nbve<<std::endl;
     S<<"    Cumulated Values : "<<totval<<std::endl;
     S <<"    Maximum Value    : "<<maxval<<std::endl;
-    Standard_Integer avg1, avg2;
+    Standard_Integer avg1 = 0, avg2 = 0;
     avg1 = totval/nbve;
     avg2 = ((totval - (avg1*nbve)) * 10) / nbve;
     S <<"    Average Value    : "<<avg1<<" "<<avg2<<"/10"<<std::endl;

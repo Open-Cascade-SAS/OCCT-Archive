@@ -22,6 +22,8 @@
 //:s5 abv 22.04.99 Adding debug printouts in catch {} blocks
 //    abv 05.05.99 S4137: method CopyPCurves moved to ShapeBuild_Edge
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_GCurve.hxx>
 #include <BRep_TEdge.hxx>
@@ -62,10 +64,10 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeFix_Edge,Standard_Transient)
 //function : ShapeFix_Edge
 //purpose  : 
 //=======================================================================
-ShapeFix_Edge::ShapeFix_Edge()
+ShapeFix_Edge::ShapeFix_Edge() : myStatus(ShapeExtend::EncodeStatus (ShapeExtend_OK)), myProjector(new ShapeConstruct_ProjectCurveOnSurface)
 {
-  myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
-  myProjector = new ShapeConstruct_ProjectCurveOnSurface;
+  
+  
 }
 
 //=======================================================================
@@ -194,7 +196,7 @@ static Handle(Geom2d_Curve) TranslatePCurve (const Handle(Geom_Surface)& aSurf,
                                              Handle(Geom2d_Curve)& aC2d,
                                              const Standard_Real& aTol)
 {
-  Standard_Real uf,ul,vf,vl;
+  Standard_Real uf = NAN,ul = NAN,vf = NAN,vl = NAN;
   aSurf->Bounds(uf,ul,vf,vl);
   
   // cas d une ligne
@@ -342,9 +344,9 @@ static Handle(Geom2d_Curve) TranslatePCurve (const Handle(Geom_Surface)& aSurf,
   TopLoc_Location LocalLoc ;
 
   //Standard_Boolean  IsSameRange = Standard_True //skl
-  Standard_Boolean first_time_in = Standard_True, has_curve, has_closed_curve;
+  Standard_Boolean first_time_in = Standard_True, has_curve = 0, has_closed_curve = 0;
   Handle(BRep_GCurve) geometric_representation_ptr;
-  Standard_Real first, current_first, last, current_last;
+  Standard_Real first = NAN, current_first = NAN, last = NAN, current_last = NAN;
 
   const Handle(Geom_Curve) C = BRep_Tool::Curve(AnEdge, LocalLoc, 
 						current_first, current_last);
@@ -460,7 +462,7 @@ Standard_Boolean ShapeFix_Edge::FixAddPCurve (const TopoDS_Edge& edge,
 //  Standard_Real step = 0;
   try {
     OCC_CATCH_SIGNALS
-    Standard_Real First, Last;
+    Standard_Real First = NAN, Last = NAN;
 
     BRep_Builder B;
 
@@ -482,7 +484,7 @@ Standard_Boolean ShapeFix_Edge::FixAddPCurve (const TopoDS_Edge& edge,
     //  A present, on projette
     //  stat : 0 pas pu faire, 1 analytique, 2 approx
     Handle(Geom2d_Curve) c2d;
-    Standard_Real a1, b1;
+    Standard_Real a1 = NAN, b1 = NAN;
     if ( ! sae.HasPCurve (edge, surf, location)) {
       Standard_Real TolFirst = -1, TolLast = -1;
       TopoDS_Vertex V1, V2;
@@ -513,7 +515,7 @@ Standard_Boolean ShapeFix_Edge::FixAddPCurve (const TopoDS_Edge& edge,
       //  ATTENTION : TranslatePCurve reconstruit une Line // bords, en
       //  intuitant U ou V ...
       //  Ici, on exploite les infos deja connues
-      Standard_Real uf,ul,vf,vl;
+      Standard_Real uf = NAN,ul = NAN,vf = NAN,vl = NAN;
       surf->Bounds (uf,ul,vf,vl);
       //#4 rln 19/02/98 ProSTEP ug_exhaust-A.stp entity #284920 (thoroidal surface)
       //#13 rln 17/03/98 (updating fix #4) call to TranslatePCurve in the case
@@ -600,7 +602,7 @@ Standard_Boolean ShapeFix_Edge::FixVertexTolerance(const TopoDS_Edge& edge,
     anEdgeCopy = TopoDS::Edge(Context()->Apply(edge));
   }
 
-  Standard_Real toler1, toler2;
+  Standard_Real toler1 = NAN, toler2 = NAN;
   if (!sae.CheckVertexTolerance (anEdgeCopy, face, toler1, toler2)) return Standard_False;
   if (sae.Status (ShapeExtend_DONE1))
     myStatus = ShapeExtend::EncodeStatus (ShapeExtend_DONE1);
@@ -636,7 +638,7 @@ Standard_Boolean ShapeFix_Edge::FixVertexTolerance(const TopoDS_Edge& edge)
   {
     anEdgeCopy = TopoDS::Edge(Context()->Apply(edge));
   }
-  Standard_Real toler1, toler2;
+  Standard_Real toler1 = NAN, toler2 = NAN;
   if (!sae.CheckVertexTolerance (anEdgeCopy, toler1, toler2)) return Standard_False;
   if (sae.Status (ShapeExtend_DONE1))
     myStatus = ShapeExtend::EncodeStatus (ShapeExtend_DONE1);
@@ -691,7 +693,7 @@ Standard_Boolean ShapeFix_Edge::FixReversed2d (const TopoDS_Edge& edge,
   if ( ! EA.Status (ShapeExtend_DONE) ) return Standard_False;
   
   Handle(Geom2d_Curve) c2d;
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   EA.PCurve (edge, surface, location, c2d, f, l, Standard_False);
   //#46 rln 01.12.98 buc40130, entity 272 (4-th curve)
   Standard_Real newf = c2d->ReversedParameter (l), newl = c2d->ReversedParameter (f);
@@ -702,7 +704,7 @@ Standard_Boolean ShapeFix_Edge::FixReversed2d (const TopoDS_Edge& edge,
   //#51 rln 15.12.98 pro6562 entity 2788
   //Because of numerical accuracy the range on B-Splines (moreover, on any curve!)
   //the range is changed
-  Standard_Real first, last;
+  Standard_Real first = NAN, last = NAN;
   BRep_Tool::Range (edge, first, last);
   if (first != newf || last != newl) {
     B.SameRange     (edge, Standard_False);
@@ -772,7 +774,7 @@ Standard_Boolean ShapeFix_Edge::FixSameParameter(const TopoDS_Edge& edge,
         // In this case pcurves in BRepLib::SameParameter() will be changed as well
         // and later ShapeBuild_Edge::CopyPCurves() will copy pcurves keeping original range.
         // To prevent this discrepancy we enforce original 3D range.
-        Standard_Real aF, aL;
+        Standard_Real aF = NAN, aL = NAN;
         BRep_Tool::Range (edge, aF, aL);
         B.Range (copyedge, aF, aL, Standard_True); // only 3D
         BRepLib::SameParameter ( copyedge, ( tolerance >= Precision::Confusion() ? tolerance : tol ) );
@@ -791,7 +793,7 @@ Standard_Boolean ShapeFix_Edge::FixSameParameter(const TopoDS_Edge& edge,
   }
   
   // compute deviation on the original pcurves
-  Standard_Real maxdev;
+  Standard_Real maxdev = NAN;
   B.SameParameter ( edge, Standard_True );
 
   // Should check all pcurves in case of non-sameparametrization input.
@@ -809,7 +811,7 @@ Standard_Boolean ShapeFix_Edge::FixSameParameter(const TopoDS_Edge& edge,
   // if BRepLib was OK, compare and select the best variant
   if ( SP )
   {
-    Standard_Real BRLTol = BRep_Tool::Tolerance ( copyedge ), BRLDev;
+    Standard_Real BRLTol = BRep_Tool::Tolerance ( copyedge ), BRLDev = NAN;
     sae.CheckSameParameter ( copyedge, BRLDev );
     myStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE3 );
     if ( BRLTol < BRLDev ) BRLTol = BRLDev;

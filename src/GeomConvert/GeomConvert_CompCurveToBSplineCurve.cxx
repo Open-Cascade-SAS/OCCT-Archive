@@ -17,6 +17,8 @@
 // Modified:	Fri Jul 10 11:23:35 1998
 //              JCT : Add WithRatio,MinM
 
+#include <math.h>
+
 #include <Geom_BoundedCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <GeomConvert.hxx>
@@ -87,7 +89,7 @@ Add(const Handle(Geom_BoundedCurve)& NewCurve,
     return Standard_True;
   }
 
-  Standard_Boolean avant, apres;
+  Standard_Boolean avant = 0, apres = 0;
   myTol = Tolerance;
 
   Standard_Integer LBs = Bs->NbPoles(), LCb = myCurve->NbPoles();
@@ -132,9 +134,9 @@ void GeomConvert_CompCurveToBSplineCurve::Add(
   if (SecondCurve->Degree() < Deg)  { SecondCurve->IncreaseDegree(Deg); }
 
 // Declarationd
-  Standard_Real L1, L2;
-  Standard_Integer ii, jj;
-  Standard_Real  Ratio=1, Ratio1, Ratio2, Delta1, Delta2;
+  Standard_Real L1 = NAN, L2 = NAN;
+  Standard_Integer ii = 0, jj = 0;
+  Standard_Real  Ratio=1, Ratio1 = NAN, Ratio2 = NAN, Delta1 = NAN, Delta2 = NAN;
   Standard_Integer NbP1 = FirstCurve->NbPoles(), NbP2 = SecondCurve->NbPoles();
   Standard_Integer NbK1 = FirstCurve->NbKnots(), NbK2 = SecondCurve->NbKnots();
   TColStd_Array1OfReal Noeuds (1, NbK1+NbK2-1);
@@ -169,7 +171,7 @@ void GeomConvert_CompCurveToBSplineCurve::Add(
   }    
 
 // Les Noeuds
-  Standard_Real eps;
+  Standard_Real eps = NAN;
   for (ii=1; ii<=NbK1; ii++) {
     Noeuds(ii) = Ratio1*FirstCurve->Knot(ii) - Delta1;
     if(ii > 1) {

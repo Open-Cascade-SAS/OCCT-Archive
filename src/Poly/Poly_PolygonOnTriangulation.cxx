@@ -41,9 +41,9 @@ Poly_PolygonOnTriangulation::Poly_PolygonOnTriangulation (const Standard_Integer
 Poly_PolygonOnTriangulation::Poly_PolygonOnTriangulation
 (const TColStd_Array1OfInteger&    Nodes) :
     myDeflection(0.0),
-    myNodes(1, Nodes.Length())
+    myNodes(Nodes)
 {
-  myNodes = Nodes;
+  
 }
 
 //=======================================================================
@@ -55,10 +55,8 @@ Poly_PolygonOnTriangulation::Poly_PolygonOnTriangulation
    (const TColStd_Array1OfInteger&    Nodes, 
     const TColStd_Array1OfReal&       Parameters):
     myDeflection(0.0),
-    myNodes(1, Nodes.Length())
+    myNodes(Nodes), myParameters(new TColStd_HArray1OfReal())
 {
-  myNodes = Nodes;
-  myParameters = new TColStd_HArray1OfReal(1, Parameters.Length());
   myParameters->ChangeArray1() = Parameters;
 }
 

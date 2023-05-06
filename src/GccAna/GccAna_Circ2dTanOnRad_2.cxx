@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <GccAna_Circ2dTanOnRad.hxx>
 #include <GccEnt_BadQualifier.hxx>
@@ -47,7 +49,7 @@ GccAna_Circ2dTanOnRad::
                           const gp_Lin2d&     OnLine    ,
                           const Standard_Real Radius    ,
                           const Standard_Real Tolerance ):
-   cirsol(1,2)   ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,2)   ,
    qualifier1(1,2) ,
    TheSame1(1,2) ,
    pnttg1sol(1,2),
@@ -59,15 +61,15 @@ GccAna_Circ2dTanOnRad::
 
    gp_Dir2d dirx(1.0,0.0);
    Standard_Real Tol = Abs(Tolerance);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    Standard_Real dp1lin = OnLine.Distance(Point1);
 
    if (Radius < 0.0) { throw Standard_NegativeValue(); }
    else {
      if (dp1lin > Radius+Tol) { WellDone = Standard_True; }
-     Standard_Real xc;
-     Standard_Real yc;
+     Standard_Real xc = NAN;
+     Standard_Real yc = NAN;
      Standard_Real x1 = Point1.X();
      Standard_Real y1 = Point1.Y();
      Standard_Real xbid = 0;
@@ -119,7 +121,7 @@ GccAna_Circ2dTanOnRad::
        NbrSol = 2;
      }
      else {
-       Standard_Real A,B,C;
+       Standard_Real A = NAN,B = NAN,C = NAN;
        OnLine.Coefficients(A,B,C);
        Standard_Real D = A;
        if (A == 0.0) {

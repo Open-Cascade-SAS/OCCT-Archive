@@ -26,6 +26,7 @@ IMPLEMENT_STANDARD_RTTIEXT(IntPatch_WLine,IntPatch_PointLine)
 #define DEBUGV 0
 
 #include <Precision.hxx>
+#include <math.h>
 #include <stdio.h>
 
 
@@ -33,13 +34,13 @@ IntPatch_WLine::IntPatch_WLine (const Handle(IntSurf_LineOn2S)& Line,
                                 const Standard_Boolean Tang,
                                 const IntSurf_TypeTrans Trans1,
                                 const IntSurf_TypeTrans Trans2) :
-  IntPatch_PointLine(Tang,Trans1,Trans2),fipt(Standard_False),lapt(Standard_False),
+  IntPatch_PointLine(Tang,Trans1,Trans2),curv(Line), fipt(Standard_False),lapt(Standard_False),
   hasArcOnS1(Standard_False),hasArcOnS2(Standard_False),
   myIsPurgerAllowed(Standard_True),
   myCreationWay(IntPatch_WLUnknown)
 {
   typ = IntPatch_Walking;
-  curv = Line;
+  
   u1period=v1period=u2period=v2period=0.0;
 }
 
@@ -48,26 +49,26 @@ IntPatch_WLine::IntPatch_WLine (const Handle(IntSurf_LineOn2S)& Line,
                                 const Standard_Boolean Tang,
                                 const IntSurf_Situation Situ1,
                                 const IntSurf_Situation Situ2) :
-  IntPatch_PointLine(Tang,Situ1,Situ2),fipt(Standard_False),lapt(Standard_False),
+  IntPatch_PointLine(Tang,Situ1,Situ2),curv(Line), fipt(Standard_False),lapt(Standard_False),
   hasArcOnS1(Standard_False),hasArcOnS2(Standard_False),
   myIsPurgerAllowed(Standard_True),
   myCreationWay(IntPatch_WLUnknown)
 {
   typ = IntPatch_Walking;
-  curv = Line;
+  
   u1period=v1period=u2period=v2period=0.0;
 }
 
 
 IntPatch_WLine::IntPatch_WLine (const Handle(IntSurf_LineOn2S)& Line,
                                 const Standard_Boolean Tang) :
-  IntPatch_PointLine(Tang),fipt(Standard_False),lapt(Standard_False),
+  IntPatch_PointLine(Tang),curv(Line), fipt(Standard_False),lapt(Standard_False),
   hasArcOnS1(Standard_False),hasArcOnS2(Standard_False),
   myIsPurgerAllowed(Standard_True),
   myCreationWay(IntPatch_WLUnknown)
 {
   typ = IntPatch_Walking;
-  curv = Line;
+  
   u1period=v1period=u2period=v2period=0.0;
 }
 
@@ -114,7 +115,7 @@ static void RecadreMemePeriode(IntSurf_PntOn2S& POn2S,const IntSurf_PntOn2S& Ref
 			       const Standard_Real vp1,
 			       const Standard_Real up2,
 			       const Standard_Real vp2) { 
-  Standard_Real u1,v1,u2,v2,pu1,pv1,pu2,pv2;
+  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN,pu1 = NAN,pv1 = NAN,pu2 = NAN,pv2 = NAN;
   POn2S.Parameters(u1,v1,u2,v2);
   RefPOn2S.Parameters(pu1,pv1,pu2,pv2);
   RecadreMemePeriode(u1,v1,u2,v2,pu1,pv1,pu2,pv2,up1,vp1,up2,vp2);
@@ -221,7 +222,7 @@ static Standard_Boolean CompareVerticesOnSurf(const IntPatch_Point& vtx1,
 					      const IntPatch_Point& vtx2,
 					      const Standard_Boolean onFirst)
 {
-  Standard_Real u1,v1,u2,v2, tolU, tolV;
+  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN, tolU = NAN, tolV = NAN;
   if (onFirst) {
     vtx1.ParametersOnS1(u1,v1);
     vtx2.ParametersOnS1(u2,v2);
@@ -247,9 +248,9 @@ void IntPatch_WLine::ComputeVertexParameters( const Standard_Real RTol)
   // MSV Oct 15, 2001: use tolerance of vertex instead of RTol where 
   //                   it is possible
 
-  Standard_Integer i,j,k,nbvtx,nbponline;
-  Standard_Integer indicevertexonline;
-  Standard_Real    indicevertex;
+  Standard_Integer i = 0,j = 0,k = 0,nbvtx = 0,nbponline = 0;
+  Standard_Integer indicevertexonline = 0;
+  Standard_Real    indicevertex = NAN;
 
   Standard_Boolean APointDeleted = Standard_False;
   //----------------------------------------------------------
@@ -282,7 +283,7 @@ void IntPatch_WLine::ComputeVertexParameters( const Standard_Real RTol)
   //-- sur des restrictions differentes
   //-- 
   //-- Phase Creation de nouveaux points sur S1 
-  Standard_Boolean encoreunefois;
+  Standard_Boolean encoreunefois = 0;
   do { 
     nbvtx=NbVertex();
     encoreunefois=Standard_False;
@@ -450,7 +451,7 @@ void IntPatch_WLine::ComputeVertexParameters( const Standard_Real RTol)
 
   //----------------------------------------------------
   //-- On trie les Vertex 
-  Standard_Boolean SortIsOK;
+  Standard_Boolean SortIsOK = 0;
   do { 
     SortIsOK = Standard_True;
     for(i=2; i<=nbvtx; i++) { 
@@ -513,7 +514,7 @@ void IntPatch_WLine::ComputeVertexParameters( const Standard_Real RTol)
           //Adjust first point of curve to corresponding vertex the following way:
           //set 3D point as the point of the vertex and 2D points as the points of the point on curve.
           curv->SetPoint (1, POn2S.Value());
-          Standard_Real mu1,mv1,mu2,mv2;
+          Standard_Real mu1 = NAN,mv1 = NAN,mu2 = NAN,mv2 = NAN;
           curv->Value(1).Parameters(mu1,mv1,mu2,mv2);
           svtx.ChangeValue(i).SetParameter(1);
           svtx.ChangeValue(i).SetParameters(mu1,mv1,mu2,mv2);
@@ -556,7 +557,7 @@ void IntPatch_WLine::ComputeVertexParameters( const Standard_Real RTol)
       //---------------------------------------------------------
       Standard_Boolean Substitution = Standard_False;
       //-- for(k=indicevertexonline+1; !Substitution && k>=indicevertexonline-1;k--) {   avant le 9 oct 97 
-      Standard_Real mu1,mv1,mu2,mv2;
+      Standard_Real mu1 = NAN,mv1 = NAN,mu2 = NAN,mv2 = NAN;
       curv->Value(indicevertexonline).Parameters(mu1,mv1,mu2,mv2);
       
       for(k=indicevertexonline+1; k>=indicevertexonline-1;k--) { 
@@ -593,7 +594,7 @@ void IntPatch_WLine::ComputeVertexParameters( const Standard_Real RTol)
       //Remove duplicating points
       if (Substitution)
       {
-        Standard_Integer ind_point;
+        Standard_Integer ind_point = 0;
         for(ind_point = 2; (ind_point <= nbponline && nbponline > 1); ind_point++) { 
           Standard_Real d = (curv->Value(ind_point-1).Value()).SquareDistance((curv->Value(ind_point).Value()));
           if(d < dmini) { 
@@ -771,7 +772,7 @@ void IntPatch_WLine::ComputeVertexParameters( const Standard_Real RTol)
     }
   }
   if(bFirst == Standard_False) { 
-    Standard_Real pu1,pv1,pu2,pv2;
+    Standard_Real pu1 = NAN,pv1 = NAN,pu2 = NAN,pv2 = NAN;
     Standard_Boolean vtxfound = Standard_False;
     IntPatch_Point vtx;
     curv->Value(1).Parameters(pu1,pv1,pu2,pv2);
@@ -796,7 +797,7 @@ void IntPatch_WLine::ComputeVertexParameters( const Standard_Real RTol)
     indf = 1;
   }
   if(bLast == Standard_False) { 
-    Standard_Real pu1,pv1,pu2,pv2;
+    Standard_Real pu1 = NAN,pv1 = NAN,pu2 = NAN,pv2 = NAN;
     Standard_Boolean vtxfound = Standard_False;    
     IntPatch_Point vtx;
     curv->Value(nbponline).Parameters(pu1,pv1,pu2,pv2);   
@@ -1000,7 +1001,7 @@ void IntPatch_WLine::Dump(const Standard_Integer theMode) const
     printf("Num    [X  Y  Z]     [U1  V1]   [U2  V2]\n");
     for(Standard_Integer i=1; i<=aNbPoints; i++)
     {
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       Point(i).Parameters(u1,v1,u2,v2);
       printf("%4d  [%+10.20f %+10.20f %+10.20f]  [%+10.20f %+10.20f]  [%+10.20f %+10.20f]\n",
               i,Point(i).Value().X(),Point(i).Value().Y(),Point(i).Value().Z(),
@@ -1026,7 +1027,7 @@ void IntPatch_WLine::Dump(const Standard_Integer theMode) const
   case 1:
     for(Standard_Integer i = 1; i <= aNbPoints; i++)
     {
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       Point(i).Parameters(u1,v1,u2,v2);
       printf("point p%d %+10.20f %+10.20f %+10.20f\n",
               i,Point(i).Value().X(),Point(i).Value().Y(),Point(i).Value().Z());
@@ -1036,7 +1037,7 @@ void IntPatch_WLine::Dump(const Standard_Integer theMode) const
   case 2:
     for(Standard_Integer i = 1; i <= aNbPoints; i++)
     {
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       Point(i).Parameters(u1,v1,u2,v2);
       printf("point p%d %+10.20f %+10.20f\n", i, u1, v1);
     }
@@ -1045,7 +1046,7 @@ void IntPatch_WLine::Dump(const Standard_Integer theMode) const
   default:
     for(Standard_Integer i = 1; i <= aNbPoints; i++)
     {
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       Point(i).Parameters(u1,v1,u2,v2);
       printf("point p%d %+10.20f %+10.20f\n", i, u2, v2);
     }

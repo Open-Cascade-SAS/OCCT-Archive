@@ -160,7 +160,7 @@ Standard_Integer  BinTools_LocationSet::NbLocations() const
 void  BinTools_LocationSet::Write(Standard_OStream& OS) const 
 {
   
-  Standard_Integer i, nbLoc = myMap.Extent();
+  Standard_Integer i = 0, nbLoc = myMap.Extent();
   OS << "Locations "<< nbLoc << "\n";
   try {
     OCC_CATCH_SIGNALS
@@ -210,7 +210,7 @@ void  BinTools_LocationSet::Read(Standard_IStream& IS)
 
   myMap.Clear();
   char buffer[255];
-  Standard_Integer l1,p;
+  Standard_Integer l1 = 0,p = 0;
 
   IS >> buffer;
   if (IS.fail() || (strcmp(buffer,"Locations"))) {
@@ -220,7 +220,7 @@ void  BinTools_LocationSet::Read(Standard_IStream& IS)
     return;
   }
 
-  Standard_Integer i, nbLoc;
+  Standard_Integer i = 0, nbLoc = 0;
   IS >> nbLoc;
   IS.get();// remove lf
   TopLoc_Location L;

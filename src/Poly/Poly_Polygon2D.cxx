@@ -37,7 +37,7 @@ Poly_Polygon2D::Poly_Polygon2D(const TColgp_Array1OfPnt2d& Nodes):
     myDeflection(0.),
     myNodes(1, Nodes.Length())
 {
-  Standard_Integer i, j= 1;
+  Standard_Integer i = 0, j= 1;
   for (i = Nodes.Lower(); i <= Nodes.Upper(); i++)
     myNodes(j++) = Nodes(i);
 }

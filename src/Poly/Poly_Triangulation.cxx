@@ -69,12 +69,12 @@ Poly_Triangulation::Poly_Triangulation (const TColgp_Array1OfPnt&    theNodes,
 : myCachedMinMax (NULL),
   myDeflection   (0),
   myNodes        (theNodes.Length()),
-  myTriangles    (1, theTriangles.Length()),
+  myTriangles    (theTriangles),
   myPurpose      (Poly_MeshPurpose_NONE)
 {
   const Poly_ArrayOfNodes aNodeWrapper (theNodes.First(), theNodes.Length());
   myNodes = aNodeWrapper;
-  myTriangles = theTriangles;
+  
 }
 
 //=======================================================================
@@ -88,13 +88,13 @@ Poly_Triangulation::Poly_Triangulation (const TColgp_Array1OfPnt&    theNodes,
 : myCachedMinMax (NULL),
   myDeflection   (0),
   myNodes        (theNodes.Length()),
-  myTriangles    (1, theTriangles.Length()),
+  myTriangles(theTriangles),
   myUVNodes      (theNodes.Length()),
   myPurpose      (Poly_MeshPurpose_NONE)
 {
   const Poly_ArrayOfNodes aNodeWrapper (theNodes.First(), theNodes.Length());
   myNodes = aNodeWrapper;
-  myTriangles = theTriangles;
+  
   const Poly_ArrayOfUVNodes aUVNodeWrapper (theUVNodes.First(), theUVNodes.Length());
   myUVNodes = aUVNodeWrapper;
 }

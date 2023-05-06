@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <HLRBRep_Algo.hxx>
 #include <HLRBRep_Data.hxx>
 #include <StdPrs_HLRToolShape.hxx>
@@ -20,7 +22,7 @@
 
 StdPrs_HLRToolShape::StdPrs_HLRToolShape (
 		  const TopoDS_Shape& TheShape,
-                  const HLRAlgo_Projector& TheProjector)
+                  const HLRAlgo_Projector& TheProjector) : MyCurrentEdgeNumber(0)
 {
   Handle(HLRBRep_Algo) Hider = new HLRBRep_Algo();
   Standard_Integer nbIso = 0; // 5;
@@ -29,7 +31,7 @@ StdPrs_HLRToolShape::StdPrs_HLRToolShape (
   Hider->Update();
   Hider->Hide();
   MyData = Hider->DataStructure();
-  MyCurrentEdgeNumber = 0;
+  
 }
 
 Standard_Integer StdPrs_HLRToolShape::NbEdges() const {
@@ -54,7 +56,7 @@ void StdPrs_HLRToolShape::Visible(BRepAdaptor_Curve& TheEdge,
     .ChangeValue(MyCurrentEdgeNumber)
       .ChangeGeometry()
 	.Curve();
-  Standard_ShortReal t1,t2;
+  Standard_ShortReal t1 = NAN,t2 = NAN;
   myEdgeIterator.Visible(U1,t1,U2,t2);
 }
 void StdPrs_HLRToolShape::InitHidden(const Standard_Integer EdgeNumber) {
@@ -76,6 +78,6 @@ void StdPrs_HLRToolShape::Hidden (BRepAdaptor_Curve& TheEdge,
     .ChangeValue(MyCurrentEdgeNumber)
       .ChangeGeometry()
 	.Curve();
-  Standard_ShortReal t1,t2;
+  Standard_ShortReal t1 = NAN,t2 = NAN;
   myEdgeIterator.Hidden(U1,t1,U2,t2);
 }

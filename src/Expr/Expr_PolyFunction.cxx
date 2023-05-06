@@ -52,7 +52,7 @@ Handle(Expr_GeneralExpression) Expr_PolyFunction::ShallowSimplified () const
 {
   Standard_Boolean allval = Standard_True;
   Standard_Integer max = NbSubExpressions();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; (i <= max) && allval ; i++) {
     allval = SubExpression(i)->IsKind(STANDARD_TYPE(Expr_NumericValue));
   }

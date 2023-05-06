@@ -33,13 +33,13 @@ void RWStepBasic_RWOrdinalDate::ReadStep
 
 	// --- inherited field : yearComponent ---
 
-	Standard_Integer aYearComponent;
+	Standard_Integer aYearComponent = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadInteger (num,1,"year_component",ach,aYearComponent);
 
 	// --- own field : dayComponent ---
 
-	Standard_Integer aDayComponent;
+	Standard_Integer aDayComponent = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadInteger (num,2,"day_component",ach,aDayComponent);
 

@@ -95,8 +95,8 @@ getString (CharType *&                  thePtr,
            Standard_Integer&            theLeftSpaces)
 {
   CharType * anEndPtr = thePtr;
-  CharType * aPtr;
-  Standard_Integer aLeftSpaces;
+  CharType * aPtr = nullptr;
+  Standard_Integer aLeftSpaces = 0;
 
   do 
   {

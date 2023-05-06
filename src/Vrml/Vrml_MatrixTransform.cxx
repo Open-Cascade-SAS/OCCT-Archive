@@ -33,9 +33,9 @@ Vrml_MatrixTransform::Vrml_MatrixTransform()
   myMatrix = T;
 }
 
- Vrml_MatrixTransform::Vrml_MatrixTransform(const gp_Trsf& aMatrix)
+ Vrml_MatrixTransform::Vrml_MatrixTransform(const gp_Trsf& aMatrix) : myMatrix(aMatrix)
 {
-  myMatrix = aMatrix;
+  
 }
 
  void Vrml_MatrixTransform::SetMatrix(const gp_Trsf& aMatrix) 
@@ -50,7 +50,7 @@ Vrml_MatrixTransform::Vrml_MatrixTransform()
 
  Standard_OStream& Vrml_MatrixTransform::Print(Standard_OStream& anOStream) const
 {
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   anOStream  << "MatrixTransform {\n";
 
   if ( Abs(myMatrix.Value(1,1) - 1) > 0.0000001 || Abs(myMatrix.Value(2,1) - 0) > 0.0000001 || Abs(myMatrix.Value(3,1) - 0) > 0.0000001 || 

@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <ShapeAnalysis_CanonicalRecognition.hxx>
 
 #include <BRep_Builder.hxx>
@@ -615,7 +617,7 @@ Handle(Geom_Surface) ShapeAnalysis_CanonicalRecognition::GetSurface(const TopoDS
   }
   gp_Ax3 aPos;
   TColStd_Array1OfReal aParams(1, Max(1, GetNbPars(theTarget)));
-  Standard_Boolean isOK;
+  Standard_Boolean isOK = 0;
   for (; anIter.More(); anIter.Next())
   {
     Handle(Geom_Surface) anElemSurf1 = GetSurface(TopoDS::Face(anIter.Value()), theTol,
@@ -656,7 +658,7 @@ Handle(Geom_Surface) ShapeAnalysis_CanonicalRecognition::GetSurface(const TopoDS
     Handle(Geom_Surface) aSurf;
     TopLoc_Location aLoc;
     Handle(Geom2d_Curve) aPCurve;
-    Standard_Real ff, ll;
+    Standard_Real ff = NAN, ll = NAN;
     BRep_Tool::CurveOnSurface(theEdge, aPCurve, aSurf, aLoc, ff, ll, j);
     if (aSurf.IsNull()) {
       break;
@@ -685,7 +687,7 @@ Handle(Geom_Surface) ShapeAnalysis_CanonicalRecognition::GetSurface(const TopoDS
   Standard_Integer aNbPars = Max(1, GetNbPars(theTarget));
   TColStd_Array1OfReal aParams(1, aNbPars);
 
-  Standard_Integer ifit = -1, i;
+  Standard_Integer ifit = -1, i = 0;
   Standard_Real aMinDev = RealLast();
   if (aSurfs.Size() == 1)
   {
@@ -744,8 +746,8 @@ Handle(Geom_Surface) ShapeAnalysis_CanonicalRecognition::GetSurface(const TopoDS
   gp_Ax3 aPos1 = thePos;
   Standard_Integer aNbPars = GetNbPars(theTarget);
   TColStd_Array1OfReal aParams1(1, Max(1, aNbPars));
-  Standard_Real aGap1;
-  Standard_Integer i;
+  Standard_Real aGap1 = NAN;
+  Standard_Integer i = 0;
   for (i = 1; i <= aNbPars; ++i)
   {
     aParams1(i) = theParams(i);
@@ -766,7 +768,7 @@ Handle(Geom_Surface) ShapeAnalysis_CanonicalRecognition::GetSurface(const TopoDS
     {
       aParams(i) = aParams1(i);
     }
-    Standard_Real aGap;
+    Standard_Real aGap = NAN;
     const TopoDS_Edge& anEdge = TopoDS::Edge(anIter.Value());
     Handle(Geom_Surface) anElemSurf = GetSurface(anEdge, theTol, 
       theType, theTarget, aPos, aParams, aGap, theStatus);
@@ -833,7 +835,7 @@ Standard_Boolean ShapeAnalysis_CanonicalRecognition::GetSurfaceByLS(const TopoDS
 
   //
   Standard_Real aTol = Precision::Confusion();
-  math_MultipleVarFunction* aPFunc; 
+  math_MultipleVarFunction* aPFunc = nullptr; 
   GeomConvert_FuncSphereLSDist aFuncSph(aPoints);
   GeomConvert_FuncCylinderLSDist aFuncCyl(aPoints, thePos.Direction());
   GeomConvert_FuncConeLSDist aFuncCon(aPoints, thePos.Direction());
@@ -854,13 +856,13 @@ Standard_Boolean ShapeAnalysis_CanonicalRecognition::GetSurfaceByLS(const TopoDS
   //
   math_Vector aSteps(1, aNbVar);
   Standard_Integer aNbInt = 10;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= aNbVar; ++i)
   {
     aSteps(i) = (aLBnd(i) - aFBnd(i)) / aNbInt;
   }
   math_PSO aGlobSolver(aPFunc, aFBnd, aLBnd, aSteps);
-  Standard_Real aLSDist;
+  Standard_Real aLSDist = NAN;
   aGlobSolver.Perform(aSteps, aLSDist, aStartPoint);
   SetCanonicParameters(theTarget, aStartPoint, thePos, theParams);
 
@@ -924,7 +926,7 @@ Handle(Geom_Curve) ShapeAnalysis_CanonicalRecognition::GetCurve(const TopoDS_Edg
 {
   theStatus = 0;
   TopLoc_Location aLoc;
-  Standard_Real f, l, nf, nl;
+  Standard_Real f = NAN, l = NAN, nf = NAN, nl = NAN;
   const Handle(Geom_Curve)& aCurv = BRep_Tool::Curve(theEdge, aLoc, f, l);
   if (aCurv.IsNull())
   {
@@ -1049,7 +1051,7 @@ Standard_Boolean CompareConicParams(const GeomAbs_CurveType theTarget, const Sta
   const gp_Ax2& theRefPos, const TColStd_Array1OfReal& theRefParams,
   const gp_Ax2& thePos, const TColStd_Array1OfReal& theParams)
 {
-  Standard_Integer i, aNbPars = GetNbPars(theTarget);
+  Standard_Integer i = 0, aNbPars = GetNbPars(theTarget);
 
   for (i = 1; i <= aNbPars; ++i)
   {
@@ -1243,7 +1245,7 @@ Standard_Boolean GetSamplePoints(const TopoDS_Wire& theWire,
   if(aTotalLength < theTol)
     return Standard_False;
 
-  Standard_Integer i, aNb = aLengths.Length();
+  Standard_Integer i = 0, aNb = aLengths.Length();
   for (i = 0; i < aNb; ++i)
   {
     const BRepAdaptor_Curve& aC = aCurves(i);
@@ -1254,7 +1256,7 @@ Standard_Boolean GetSamplePoints(const TopoDS_Wire& theWire,
     if (!aPointGen.IsDone())
       continue;
     aNbPoints = aPointGen.NbPoints();
-    Standard_Integer j;
+    Standard_Integer j = 0;
     for (j = 1; j <= aNbPoints; ++j)
     {
       Standard_Real t = aPointGen.Parameter(j);
@@ -1290,7 +1292,7 @@ static Standard_Real GetLSGap(const Handle(TColgp_HArray1OfXYZ)& thePoints, cons
   gp_Vec aDir(thePos.Direction());
 
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   if (theTarget == GeomAbs_Sphere)
   {
     Standard_Real anR = theParams(1);
@@ -1316,7 +1318,7 @@ static Standard_Real GetLSGap(const Handle(TColgp_HArray1OfXYZ)& thePoints, cons
     Standard_Real anR = theParams(2);
     for (i = thePoints->Lower(); i <= thePoints->Upper(); ++i)
     {
-      Standard_Real u, v;
+      Standard_Real u = NAN, v = NAN;
       gp_Pnt aPi(thePoints->Value(i));
       ElSLib::ConeParameters(thePos, anR, anAng, aPi, u, v);
       gp_Pnt aPp;
@@ -1347,7 +1349,7 @@ void FillSolverData(const GeomAbs_SurfaceType theTarget,
     theStartPoint(4) = theParams(1);
     Standard_Real aDR = theRelDev * theParams(1);
     Standard_Real aDXYZ = aDR;
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i = 1; i <= 3; ++i)
     {
       theFBnd(i) = theStartPoint(i) - aDXYZ;
@@ -1370,7 +1372,7 @@ void FillSolverData(const GeomAbs_SurfaceType theTarget,
     }
     Standard_Real aDXYZ = aDR;
     Standard_Real aDAng = theRelDev * Abs(theParams(1));
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i = 1; i <= 3; ++i)
     {
       theFBnd(i) = theStartPoint(i) - aDXYZ;

@@ -169,7 +169,7 @@ private:
   Standard_Boolean myAutomaticPosition;
   AIS_TypeOfPlane myTypeOfPlane;
   Standard_Boolean myIsXYZPlane;
-  Standard_Boolean myHasOwnSize;
+  Standard_Boolean myHasOwnSize{};
   Select3D_TypeOfSensitivity myTypeOfSensitivity;
 
 };

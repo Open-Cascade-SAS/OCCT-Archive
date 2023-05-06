@@ -43,7 +43,7 @@ const Standard_Integer        VContinuityRange
   Standard_Integer LastVIndex  = BasisSurface->LastVKnotIndex  ();
   Standard_Integer UDegree     = BasisSurface->UDegree ();
   Standard_Integer VDegree     = BasisSurface->VDegree ();
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
 
 
@@ -167,7 +167,7 @@ Array1OfInteger& USplit,
 Array1OfInteger& VSplit
 
 ) const {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for ( i = 1; i <= usplitIndexes->Length(); i++){
     USplit (i) = usplitIndexes->Value (i);
   }

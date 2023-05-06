@@ -124,7 +124,7 @@ void XCAFDoc_Dimension::SetObject (const Handle(XCAFDimTolObjects_DimensionObjec
 
   Handle(TDataStd_Integer) anAngularQualifier = TDataStd_Integer::Set(Label().FindChild(ChildLab_AngularQualifier), theObject->GetAngularQualifier());
  
-  Standard_Boolean aH;
+  Standard_Boolean aH = 0;
   XCAFDimTolObjects_DimensionFormVariance aF;
   XCAFDimTolObjects_DimensionGrade aG;
   theObject->GetClassOfTolerance(aH,aF,aG);
@@ -140,7 +140,7 @@ void XCAFDoc_Dimension::SetObject (const Handle(XCAFDimTolObjects_DimensionObjec
       aClass->ChangeArray(anArrI);
   }
 
-  Standard_Integer aL, aR;
+  Standard_Integer aL = 0, aR = 0;
   theObject->GetNbOfDecimalPlaces(aL, aR);
   if (aL > 0 || aR > 0)
   {

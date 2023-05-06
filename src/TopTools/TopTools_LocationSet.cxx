@@ -127,7 +127,7 @@ static void WriteTrsf(const gp_Trsf& T,
 
 void  TopTools_LocationSet::Dump(Standard_OStream& OS) const 
 {
-  Standard_Integer i, nbLoc = myMap.Extent();
+  Standard_Integer i = 0, nbLoc = myMap.Extent();
 
   OS << "\n\n";
   OS << "\n -------";
@@ -172,7 +172,7 @@ void  TopTools_LocationSet::Write(Standard_OStream& OS, const Message_ProgressRa
   
   std::streamsize prec = OS.precision(15);
 
-  Standard_Integer i, nbLoc = myMap.Extent();
+  Standard_Integer i = 0, nbLoc = myMap.Extent();
   OS << "Locations " << nbLoc << "\n";
   
   //OCC19559
@@ -246,7 +246,7 @@ void  TopTools_LocationSet::Read(Standard_IStream& IS, const Message_ProgressRan
   myMap.Clear();
 
   char buffer[255];
-  Standard_Integer l1,p;
+  Standard_Integer l1 = 0,p = 0;
 
   IS >> buffer;
   if (strcmp(buffer,"Locations")) {
@@ -254,7 +254,7 @@ void  TopTools_LocationSet::Read(Standard_IStream& IS, const Message_ProgressRan
     return;
   }
 
-  Standard_Integer i, nbLoc;
+  Standard_Integer i = 0, nbLoc = 0;
   IS >> nbLoc;
   
   TopLoc_Location L;
@@ -263,7 +263,7 @@ void  TopTools_LocationSet::Read(Standard_IStream& IS, const Message_ProgressRan
   //OCC19559
   Message_ProgressScope PS(theProgress, "Locations", nbLoc);
   for (i = 1; i <= nbLoc&& PS.More(); i++, PS.Next()) {
-    Standard_Integer typLoc;
+    Standard_Integer typLoc = 0;
     IS >> typLoc;
     
     if (typLoc == 1) {

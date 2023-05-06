@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepGeom_RWRectangularTrimmedSurface.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -47,37 +49,37 @@ void RWStepGeom_RWRectangularTrimmedSurface::ReadStep
 
 	// --- own field : u1 ---
 
-	Standard_Real aU1;
+	Standard_Real aU1 = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"u1",ach,aU1);
 
 	// --- own field : u2 ---
 
-	Standard_Real aU2;
+	Standard_Real aU2 = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"u2",ach,aU2);
 
 	// --- own field : v1 ---
 
-	Standard_Real aV1;
+	Standard_Real aV1 = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat5 =` not needed
 	data->ReadReal (num,5,"v1",ach,aV1);
 
 	// --- own field : v2 ---
 
-	Standard_Real aV2;
+	Standard_Real aV2 = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat6 =` not needed
 	data->ReadReal (num,6,"v2",ach,aV2);
 
 	// --- own field : usense ---
 
-	Standard_Boolean aUsense;
+	Standard_Boolean aUsense = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat7 =` not needed
 	data->ReadBoolean (num,7,"usense",ach,aUsense);
 
 	// --- own field : vsense ---
 
-	Standard_Boolean aVsense;
+	Standard_Boolean aVsense = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat8 =` not needed
 	data->ReadBoolean (num,8,"vsense",ach,aVsense);
 

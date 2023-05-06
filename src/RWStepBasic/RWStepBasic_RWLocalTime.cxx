@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepBasic_RWLocalTime.hxx>
 #include <StepBasic_CoordinatedUniversalTimeOffset.hxx>
@@ -35,13 +37,13 @@ void RWStepBasic_RWLocalTime::ReadStep
 
 	// --- own field : hourComponent ---
 
-	Standard_Integer aHourComponent;
+	Standard_Integer aHourComponent = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadInteger (num,1,"hour_component",ach,aHourComponent);
 
 	// --- own field : minuteComponent ---
 
-	Standard_Integer aMinuteComponent;
+	Standard_Integer aMinuteComponent = 0;
 	Standard_Boolean hasAminuteComponent = Standard_True;
 	if (data->IsParamDefined(num,2)) {
 	  //szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
@@ -54,7 +56,7 @@ void RWStepBasic_RWLocalTime::ReadStep
 
 	// --- own field : secondComponent ---
 
-	Standard_Real aSecondComponent;
+	Standard_Real aSecondComponent = NAN;
 	Standard_Boolean hasAsecondComponent = Standard_True;
 	if (data->IsParamDefined(num,3)) {
 	  //szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed

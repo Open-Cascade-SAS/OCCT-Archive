@@ -57,7 +57,7 @@ protected:
 private:
 
 
-  Standard_Real focalDist;
+  Standard_Real focalDist{};
 
 
 };

@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntTools.hxx>
 
 #include <BRep_Tool.hxx>
@@ -51,7 +53,7 @@
     return 0;
   }
 
-  Standard_Real t2;
+  Standard_Real t2 = NAN;
   gp_Pnt P1, P2, P3;
 
   t2=0.5*(t1+t3);
@@ -96,9 +98,9 @@ Standard_Integer IntTools::PrepareArgs (BRepAdaptor_Curve& C,
 {
   
   TColStd_ListOfReal aPars;
-  Standard_Real dt, tCurrent, tNext, aR, anAbsDeflection;
-  Standard_Integer ip, i, j, aNbDeflectionPoints;
-  Standard_Boolean aRFlag; 
+  Standard_Real dt = NAN, tCurrent = NAN, tNext = NAN, aR = NAN, anAbsDeflection = NAN;
+  Standard_Integer ip = 0, i = 0, j = 0, aNbDeflectionPoints = 0;
+  Standard_Boolean aRFlag = 0; 
   
   GeomAbs_CurveType aCurveType;
   aCurveType=C.GetType();
@@ -183,7 +185,7 @@ Standard_Integer IntTools::PrepareArgs (BRepAdaptor_Curve& C,
   void IntTools::RemoveIdenticalRoots(IntTools_SequenceOfRoots& aSR,
 				      const Standard_Real anEpsT)
 {
-  Standard_Integer aNbRoots, j, k;
+  Standard_Integer aNbRoots = 0, j = 0, k = 0;
   Standard_Real anEpsT2=0.5*anEpsT;
   aNbRoots=aSR.Length();
   for (j=1; j<=aNbRoots; j++) { 
@@ -215,7 +217,7 @@ namespace {
   void IntTools::SortRoots(IntTools_SequenceOfRoots& mySequenceOfRoots,
 			   const Standard_Real /*myEpsT*/)
 {
-  Standard_Integer j, aNbRoots;
+  Standard_Integer j = 0, aNbRoots = 0;
 
   aNbRoots=mySequenceOfRoots.Length();
 
@@ -238,8 +240,8 @@ namespace {
   void  IntTools::FindRootStates(IntTools_SequenceOfRoots& mySequenceOfRoots,
 				 const Standard_Real myEpsNull)
 {
-  Standard_Integer aType, j, aNbRoots;
-  Standard_Real t1, t2, f1, f2, absf2;
+  Standard_Integer aType = 0, j = 0, aNbRoots = 0;
+  Standard_Real t1 = NAN, t2 = NAN, f1 = NAN, f2 = NAN, absf2 = NAN;
 
   aNbRoots=mySequenceOfRoots.Length();
 
@@ -309,7 +311,7 @@ namespace {
 					 const Handle(Geom_Curve)& aCurve,
 					 Standard_Real& aParameter)
 {
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   GeomAbs_CurveType aCurveType;
 
   aFirst=aCurve->FirstParameter();

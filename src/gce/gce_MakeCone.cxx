@@ -30,7 +30,7 @@
 //=========================================================================
 gce_MakeCone::gce_MakeCone(const gp_Ax2&       A2    ,
 			   const Standard_Real Ang   ,
-			   const Standard_Real Radius)
+			   const Standard_Real Radius) : gce_Root()
 {
   if (Radius < 0.0) { TheError = gce_NegativeRadius; }
   else {
@@ -54,7 +54,7 @@ gce_MakeCone::gce_MakeCone(const gp_Ax2&       A2    ,
 gce_MakeCone::gce_MakeCone(const gp_Pnt& P1 ,
 			   const gp_Pnt& P2 ,
 			   const gp_Pnt& P3 ,
-			   const gp_Pnt& P4 ) 
+			   const gp_Pnt& P4 ) : gce_Root() 
 {
   if (P1.Distance(P2)<RealEpsilon() || P3.Distance(P4)<RealEpsilon()) { TheError = gce_ConfusedPoints; return;  }
 
@@ -102,7 +102,7 @@ gce_MakeCone::gce_MakeCone(const gp_Pnt& P1 ,
 
 gce_MakeCone::gce_MakeCone(const gp_Ax1&   Axis  ,
 			   const gp_Pnt&   P1    ,
-			   const gp_Pnt&   P2    ) 
+			   const gp_Pnt&   P2    ) : gce_Root() 
 {
   gp_Pnt P3(Axis.Location());
   gp_Pnt P4(P3.XYZ()+Axis.Direction().XYZ());
@@ -124,7 +124,7 @@ gce_MakeCone::gce_MakeCone(const gp_Ax1&   Axis  ,
 //gce_MakeCone::gce_MakeCone(const gp_Cone&  cone ,
 //			   const gp_Pnt&   P    ) 
 gce_MakeCone::gce_MakeCone(const gp_Cone&   ,
-			   const gp_Pnt&       ) 
+			   const gp_Pnt&       ) : gce_Root() 
 {
   TheError = gce_ConfusedPoints;
 }
@@ -137,7 +137,7 @@ gce_MakeCone::gce_MakeCone(const gp_Cone&   ,
 //gce_MakeCone::gce_MakeCone(const gp_Cone&      cone ,
 //			   const Standard_Real Dist ) 
 gce_MakeCone::gce_MakeCone(const gp_Cone&       ,
-			   const Standard_Real  ) 
+			   const Standard_Real  ) : gce_Root() 
 {
   TheError = gce_Done;
 }
@@ -151,7 +151,7 @@ gce_MakeCone::gce_MakeCone(const gp_Cone&       ,
 
 gce_MakeCone::gce_MakeCone(const gp_Lin&   Axis  ,
 			   const gp_Pnt&   P1    ,
-			   const gp_Pnt&   P2    ) 
+			   const gp_Pnt&   P2    ) : gce_Root() 
 {
   gp_Pnt P3(Axis.Location());
   gp_Pnt P4(P3.XYZ()+Axis.Direction().XYZ());
@@ -171,7 +171,7 @@ gce_MakeCone::gce_MakeCone(const gp_Lin&   Axis  ,
 gce_MakeCone::gce_MakeCone(const gp_Pnt&       P1   ,
 			   const gp_Pnt&       P2   ,
 			   const Standard_Real R1   ,
-			   const Standard_Real R2   ) 
+			   const Standard_Real R2   ) : gce_Root() 
 {
   Standard_Real dist = P1.Distance(P2);
   if (dist < RealEpsilon()) { TheError = gce_NullAxis; }

@@ -121,8 +121,8 @@ protected:
   BOPDS_PDS myDS;
   BOPDS_VectorOfPair myList;
   BOPDS_VectorOfPair::Iterator myIterator;
-  TColStd_ListOfInteger* mySubSet1;
-  TColStd_ListOfInteger* mySubSet2;
+  TColStd_ListOfInteger* mySubSet1{};
+  TColStd_ListOfInteger* mySubSet2{};
 
 private:
 

@@ -157,22 +157,22 @@ public:
 protected:
 
   Handle(Adaptor3d_Surface) myS;
-  Standard_Integer myNbSamplesU;
-  Standard_Integer myNbSamplesV;
+  Standard_Integer myNbSamplesU{};
+  Standard_Integer myNbSamplesV{};
   Handle(TColStd_HArray1OfReal) myUPars;
   Handle(TColStd_HArray1OfReal) myVPars;
 
 private:
 
-  Standard_Integer nbRestr;
-  Standard_Integer idRestr;
-  Standard_Real Uinf;
-  Standard_Real Usup;
-  Standard_Real Vinf;
-  Standard_Real Vsup;
+  Standard_Integer nbRestr{};
+  Standard_Integer idRestr{};
+  Standard_Real Uinf{};
+  Standard_Real Usup{};
+  Standard_Real Vinf{};
+  Standard_Real Vsup{};
   Handle(Adaptor2d_Line2d) myRestr[4];
-  Standard_Integer nbVtx;
-  Standard_Integer idVtx;
+  Standard_Integer nbVtx{};
+  Standard_Integer idVtx{};
   Handle(Adaptor3d_HVertex) myVtx[2];
 
 };

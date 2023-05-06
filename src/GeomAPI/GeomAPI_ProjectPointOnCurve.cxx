@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_ExtPC.hxx>
 #include <GeomAPI_ProjectPointOnCurve.hxx>
 #include <gp_Pnt.hxx>
@@ -74,7 +76,7 @@ GeomAPI_ProjectPointOnCurve::GeomAPI_ProjectPointOnCurve()
 
     // evaluate the lower distance and its index;
     
-    Standard_Real Dist2, Dist2Min = myExtPC.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtPC.SquareDistance(1);
     myIndex = 1;
     
     for ( Standard_Integer i = 2; i <= myExtPC.NbExt(); i++) {
@@ -109,7 +111,7 @@ GeomAPI_ProjectPointOnCurve::GeomAPI_ProjectPointOnCurve()
 
     // evaluate the lower distance and its index;
     
-    Standard_Real Dist2, Dist2Min = myExtPC.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtPC.SquareDistance(1);
     myIndex = 1;
     
     for ( Standard_Integer i = 2; i <= myExtPC.NbExt(); i++) {
@@ -146,7 +148,7 @@ GeomAPI_ProjectPointOnCurve::GeomAPI_ProjectPointOnCurve()
   myIsDone=myExtPC.IsDone() && ( myExtPC.NbExt() > 0);
   if (myIsDone) {
     // evaluate the lower distance and its index;
-    Standard_Real Dist2, Dist2Min = myExtPC.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtPC.SquareDistance(1);
     myIndex = 1;
     
     for ( Standard_Integer i = 2; i <= myExtPC.NbExt(); i++) {

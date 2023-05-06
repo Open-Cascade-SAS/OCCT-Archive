@@ -66,7 +66,7 @@ private:
 
 
   StepFEA_SymmetricTensor23d theFeaConstants;
-  Standard_Real theReferenceTemperature;
+  Standard_Real theReferenceTemperature{};
 
 
 };

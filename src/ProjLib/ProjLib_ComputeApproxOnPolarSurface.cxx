@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <ProjLib_ComputeApproxOnPolarSurface.hxx>
 #include <ElSLib.hxx>
 #include <ElCLib.hxx>
@@ -86,7 +88,7 @@ struct aFuncStruct
   Standard_Real mySqProjOrtTol; // Used to filter non-orthogonal projected point.
   Standard_Real myTolU;
   Standard_Real myTolV;
-  Standard_Real myPeriod[2]; // U and V period correspondingly.
+  Standard_Real myPeriod[2]{}; // U and V period correspondingly.
 };
 
 //=======================================================================
@@ -103,7 +105,7 @@ static void computePeriodicity(const Handle(Adaptor3d_Surface)& theSurf,
   // Compute once information about periodicity.
   // Param space may be reduced in case of rectangular trimmed surface,
   // in this case really trimmed bounds should be set as unperiodic.
-  Standard_Real aTrimF, aTrimL, aBaseF, aBaseL, aDummyF, aDummyL;
+  Standard_Real aTrimF = NAN, aTrimL = NAN, aBaseF = NAN, aBaseL = NAN, aDummyF = NAN, aDummyL = NAN;
   Handle(Geom_Surface) aS = GeomAdaptor::MakeSurface (*theSurf, Standard_False); // Not trim.
   // U param space.
   if (theSurf->IsUPeriodic())
@@ -191,7 +193,7 @@ static gp_Pnt2d Function_Value(const Standard_Real theU,
   gp_Pnt aSurfPnt = theData.mySurf->Value(p2d.X(), p2d.Y());
   Standard_Real aSurfPntDist = aSurfPnt.SquareDistance(p);
 
-  Standard_Real Uinf, Usup, Vinf, Vsup;
+  Standard_Real Uinf = NAN, Usup = NAN, Vinf = NAN, Vsup = NAN;
   Uinf = theData.mySurf->FirstUParameter();
   Usup = theData.mySurf->LastUParameter();
   Vinf = theData.mySurf->FirstVParameter();
@@ -289,7 +291,7 @@ static gp_Pnt2d Function_Value(const Standard_Real theU,
   Standard_Real Dist2Min = RealLast();
   Standard_Real uperiod = theData.myPeriod[0],
                 vperiod = theData.myPeriod[1],
-                u, v;
+                u = NAN, v = NAN;
 
   // U0 and V0 are the points within the initialized period.
   if(U0 < Uinf)
@@ -435,14 +437,14 @@ class ProjLib_PolarFunction : public AppCont_Function
     myStruct.myTolV = Surf->VResolution(Tol3d);
   }
 
-  ~ProjLib_PolarFunction() {}
+  ~ProjLib_PolarFunction() override {}
 
-  Standard_Real FirstParameter() const
+  Standard_Real FirstParameter() const override
   {
     return myStruct.myCurve->FirstParameter();
   }
 
-  Standard_Real LastParameter() const
+  Standard_Real LastParameter() const override
   {
     return myStruct.myCurve->LastParameter();
   }
@@ -454,7 +456,7 @@ class ProjLib_PolarFunction : public AppCont_Function
 
   Standard_Boolean Value(const Standard_Real   theT,
                          NCollection_Array1<gp_Pnt2d>& thePnt2d,
-                         NCollection_Array1<gp_Pnt>&   /*thePnt*/) const
+                         NCollection_Array1<gp_Pnt>&   /*thePnt*/) const override
   {
     thePnt2d(1) = Function_Value(theT, myStruct);
     return Standard_True;
@@ -462,7 +464,7 @@ class ProjLib_PolarFunction : public AppCont_Function
 
   Standard_Boolean D1(const Standard_Real   /*theT*/,
                       NCollection_Array1<gp_Vec2d>& /*theVec2d*/,
-                      NCollection_Array1<gp_Vec>&   /*theVec*/) const
+                      NCollection_Array1<gp_Vec>&   /*theVec*/) const override
     {return Standard_False;}
 };
 
@@ -557,7 +559,7 @@ ProjLib_ComputeApproxOnPolarSurface::ProjLib_ComputeApproxOnPolarSurface
     P2d    = theInitialCurve2d->Value(theInitialCurve2d->FirstParameter());
     P2dBis = theInitialCurve2dBis->Value(theInitialCurve2dBis->FirstParameter());
 
-    Standard_Real Dist, DistBis;
+    Standard_Real Dist = NAN, DistBis = NAN;
     Dist    = P2dproj.Distance(P2d);
     DistBis = P2dproj.Distance(P2dBis);
     if( Dist < DistBis)  {
@@ -585,7 +587,7 @@ static Handle(Geom2d_BSplineCurve) Concat(Handle(Geom2d_BSplineCurve) C1,
                                           Standard_Real theUJump,
                                           Standard_Real theVJump)
 {
-  Standard_Integer deg, deg1, deg2;
+  Standard_Integer deg = 0, deg1 = 0, deg2 = 0;
   deg1 = C1->Degree();
   deg2 = C2->Degree();
   
@@ -599,7 +601,7 @@ static Handle(Geom2d_BSplineCurve) Concat(Handle(Geom2d_BSplineCurve) C1,
   }
   else deg = deg1;
 
-  Standard_Integer np1,np2,nk1,nk2,np,nk;
+  Standard_Integer np1 = 0,np2 = 0,nk1 = 0,nk2 = 0,np = 0,nk = 0;
   np1 = C1->NbPoles();
   nk1 = C1->NbKnots();
   np2 = C2->NbPoles();
@@ -619,7 +621,7 @@ static Handle(Geom2d_BSplineCurve) Concat(Handle(Geom2d_BSplineCurve) C1,
   TColStd_Array1OfInteger M(1,nk);
   TColgp_Array1OfPnt2d    P(1,np);
 
-  Standard_Integer i, count = 0;
+  Standard_Integer i = 0, count = 0;
   // Set Knots and Mults
   for ( i = 1; i <= nk1; i++) {
     count++;
@@ -686,7 +688,7 @@ Handle(Geom2d_BSplineCurve) ProjLib_ComputeApproxOnPolarSurface::Perform
     Handle(Geom_BSplineCurve) BSC = Curve->BSpline();
     Standard_Integer nbInter = Curve->NbIntervals(GeomAbs_C1);
     if(nbInter > 1) {
-      Standard_Integer i, j;
+      Standard_Integer i = 0, j = 0;
       Handle(Geom_TrimmedCurve) GTC;
       Handle(Geom2d_TrimmedCurve) G2dTC;
       TColStd_Array1OfReal Inter(1,nbInter+1);
@@ -702,8 +704,8 @@ Handle(Geom2d_BSplineCurve) ProjLib_ComputeApproxOnPolarSurface::Perform
       // - or this is a curve C1 and the sections of interest are taken otherwise the curve is created.
       
       // initialization 2d
-      Standard_Integer nbInter2d;
-      Standard_Boolean C2dIsToCompute;
+      Standard_Integer nbInter2d = 0;
+      Standard_Boolean C2dIsToCompute = 0;
       C2dIsToCompute = InitialCurve2d.IsNull();
       Handle(Geom2d_BSplineCurve) BSC2d;
       Handle(Geom2d_Curve) G2dC;
@@ -847,7 +849,7 @@ Handle(Geom2d_BSplineCurve) ProjLib_ComputeApproxOnPolarSurface::Perform
 	}
       }
 
-      Standard_Real anUPeriod, anVPeriod;
+      Standard_Real anUPeriod = NAN, anVPeriod = NAN;
       computePeriodicity(S, anUPeriod, anVPeriod);
       Standard_Integer NbC = LOfBSpline2d.Extent();
       Handle(Geom2d_BSplineCurve) CurBS;
@@ -928,7 +930,7 @@ Handle(Adaptor2d_Curve2d)
   NbOfPnts = QUA.NbPoints();
   TColgp_Array1OfPnt Pts(1,NbOfPnts);
   TColStd_Array1OfReal Param(1,NbOfPnts);
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   for( i = 1; i <= NbOfPnts ; i++ ) { 
     Param(i) = QUA.Parameter(i);
     Pts(i) = Curve->Value(Param(i));
@@ -939,7 +941,7 @@ Handle(Adaptor2d_Curve2d)
   Mult.Init(1);
   Mult(1) = Mult(NbOfPnts) = 2;
   
-  Standard_Real Uinf, Usup, Vinf, Vsup;
+  Standard_Real Uinf = NAN, Usup = NAN, Vinf = NAN, Vsup = NAN;
   Uinf = Surf->FirstUParameter();
   Usup = Surf->LastUParameter();
   Vinf = Surf->FirstVParameter();
@@ -947,7 +949,7 @@ Handle(Adaptor2d_Curve2d)
   GeomAbs_SurfaceType Type = Surf->GetType();
   if((Type != GeomAbs_BSplineSurface) && (Type != GeomAbs_BezierSurface) &&
      (Type != GeomAbs_OffsetSurface)) {
-    Standard_Real S, T;
+    Standard_Real S = NAN, T = NAN;
 //    Standard_Integer usens = 0, vsens = 0; 
     // to know the position relatively to the period
     switch (Type) {
@@ -964,7 +966,7 @@ Handle(Adaptor2d_Curve2d)
     case GeomAbs_Cylinder:
       {
 //	Standard_Real Sloc, Tloc;
-        Standard_Real Sloc;
+        Standard_Real Sloc = NAN;
         Standard_Integer usens = 0;
         gp_Cylinder Cylinder = Surf->Cylinder();
         ElSLib::Parameters( Cylinder, Pts(1), S, T);
@@ -986,7 +988,7 @@ Handle(Adaptor2d_Curve2d)
     case GeomAbs_Cone:
       {
 //	Standard_Real Sloc, Tloc;
-        Standard_Real Sloc;
+        Standard_Real Sloc = NAN;
         Standard_Integer usens = 0;
         gp_Cone Cone = Surf->Cone();
         ElSLib::Parameters( Cone, Pts(1), S, T);
@@ -1007,7 +1009,7 @@ Handle(Adaptor2d_Curve2d)
       }
     case GeomAbs_Sphere:
       {
-	Standard_Real Sloc, Tloc;
+	Standard_Real Sloc = NAN, Tloc = NAN;
 	Standard_Integer usens = 0, vsens = 0; //usens steps by half-period
 	Standard_Boolean vparit = Standard_False;
 	gp_Sphere Sphere = Surf->Sphere();
@@ -1046,7 +1048,7 @@ Handle(Adaptor2d_Curve2d)
       }
     case GeomAbs_Torus:
       {
-	Standard_Real Sloc, Tloc;
+	Standard_Real Sloc = NAN, Tloc = NAN;
 	Standard_Integer usens = 0, vsens = 0;
 	gp_Torus Torus = Surf->Torus();
 	ElSLib::Parameters( Torus, Pts(1), S, T);
@@ -1301,7 +1303,7 @@ Handle(Adaptor2d_Curve2d)
                   {
                     myDist = LocalMinSqDist;
                   }
-                  Standard_Real LocalU, LocalV;
+                  Standard_Real LocalU = NAN, LocalV = NAN;
                   aGlobalExtr.Point(imin).Parameter(LocalU, LocalV);
                   if (uperiod > 0. && Abs(U0 - LocalU) >= uperiod/2.)
                   {
@@ -1359,7 +1361,7 @@ Handle(Adaptor2d_Curve2d)
             }
           }
 	  if(!myProjIsDone && uperiod) {
-	    Standard_Real aUinf, aUsup, Uaux;
+	    Standard_Real aUinf = NAN, aUsup = NAN, Uaux = NAN;
 	    aUinf = Surf->FirstUParameter();
 	    aUsup = Surf->LastUParameter();
 	    if((aUsup - U0) > (U0 - aUinf)) 
@@ -1390,7 +1392,7 @@ Handle(Adaptor2d_Curve2d)
 	      }
 	  }
 	  if(!myProjIsDone && vperiod) {
-	    Standard_Real aVinf, aVsup, Vaux;
+	    Standard_Real aVinf = NAN, aVsup = NAN, Vaux = NAN;
 	    aVinf = Surf->FirstVParameter();
 	    aVsup = Surf->LastVParameter();
 	    if((aVsup - V0) > (V0 - aVinf)) 
@@ -1421,7 +1423,7 @@ Handle(Adaptor2d_Curve2d)
 	      }
 	  }	
 	  if(!myProjIsDone && uperiod && vperiod) {
-	    Standard_Real Uaux, Vaux;
+	    Standard_Real Uaux = NAN, Vaux = NAN;
 	    if((Usup - U0) > (U0 - Uinf)) 
 	      Uaux = 2*Uinf - U0 + uperiod;
 	    else 
@@ -1577,11 +1579,11 @@ Handle(Geom2d_BSplineCurve)
   Standard_Real TolU = Surf->UResolution(Tol3d), TolV = Surf->VResolution(Tol3d);
   Standard_Real Tol2d = Max(Sqrt(TolU*TolU + TolV*TolV), Precision::PConfusion());
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   GeomAbs_SurfaceType TheTypeS = Surf->GetType();
   GeomAbs_CurveType TheTypeC = Curve->GetType();
   if(TheTypeS == GeomAbs_Plane) {
-    Standard_Real S, T;
+    Standard_Real S = NAN, T = NAN;
     gp_Pln Plane = Surf->Plane();
     if(TheTypeC == GeomAbs_BSplineCurve) {
       myTolReached = Precision::Confusion();
@@ -1641,7 +1643,7 @@ Handle(Geom2d_BSplineCurve)
       gp_Vec V2(p21,p22);
       if(V1.IsEqual(V2,Tol3d,Tol3d/(p11.Distance(p12)*180/M_PI))){  
 	Standard_Integer Dist2Min = IntegerLast();
-	Standard_Real u,v;
+	Standard_Real u = NAN,v = NAN;
 	if(TheTypeC == GeomAbs_BSplineCurve) {
           myTolReached = Tol3d;
 	  Handle(Geom_BSplineCurve) BSC = Curve->BSpline();
@@ -1739,7 +1741,7 @@ Handle(Geom2d_BSplineCurve)
       gp_Vec V2(p21,p22);
       if(V1.IsEqual(V2,Tol3d,Tol3d/(p11.Distance(p12)*180/M_PI))){ 
 	Standard_Integer Dist2Min = IntegerLast();
-	Standard_Real u,v;
+	Standard_Real u = NAN,v = NAN;
  
 //	gp_Pnt pntproj;
 	if(TheTypeC == GeomAbs_BSplineCurve) {
@@ -1865,7 +1867,7 @@ Handle(Geom2d_BSplineCurve)
 //  DrawTrSurf::Set((Standard_CString ) "initc2d",DDD->ChangeCurve2d().Curve());
 #endif
 
-  Standard_Integer Deg1,Deg2;
+  Standard_Integer Deg1 = 0,Deg2 = 0;
   Deg1 = 2; 
   Deg2 = 8;  
   if(myDegMin > 0)
@@ -1905,7 +1907,7 @@ Handle(Geom2d_BSplineCurve)
   Standard_Real anOldTol2d = Tol2d;
   Standard_Real aNewTol2d = 0;
   if(Fit.IsAllApproximated()) {
-    Standard_Integer j;
+    Standard_Integer j = 0;
     Standard_Integer NbCurves = Fit.NbMultiCurves();
     Standard_Integer MaxDeg = 0;
     // To transform the MultiCurve into BSpline, it is required that all  

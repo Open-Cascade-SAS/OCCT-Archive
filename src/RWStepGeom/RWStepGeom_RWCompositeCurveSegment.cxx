@@ -56,7 +56,7 @@ void RWStepGeom_RWCompositeCurveSegment::ReadStep
 
 	// --- own field : sameSense ---
 
-	Standard_Boolean aSameSense;
+	Standard_Boolean aSameSense = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadBoolean (num,2,"same_sense",ach,aSameSense);
 

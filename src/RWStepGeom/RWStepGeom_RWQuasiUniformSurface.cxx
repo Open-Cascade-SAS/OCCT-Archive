@@ -54,13 +54,13 @@ void RWStepGeom_RWQuasiUniformSurface::ReadStep
 
 	// --- inherited field : uDegree ---
 
-	Standard_Integer aUDegree;
+	Standard_Integer aUDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadInteger (num,2,"u_degree",ach,aUDegree);
 
 	// --- inherited field : vDegree ---
 
-	Standard_Integer aVDegree;
+	Standard_Integer aVDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadInteger (num,3,"v_degree",ach,aVDegree);
 
@@ -68,13 +68,13 @@ void RWStepGeom_RWQuasiUniformSurface::ReadStep
 
 	Handle(StepGeom_HArray2OfCartesianPoint) aControlPointsList;
 	Handle(StepGeom_CartesianPoint) anent4;
-	Standard_Integer nsub4;
+	Standard_Integer nsub4 = 0;
 	if (data->ReadSubList (num,4,"control_points_list",ach,nsub4)) {
 	  Standard_Integer nbi4 = data->NbParams(nsub4);
 	  Standard_Integer nbj4 = data->NbParams(data->ParamNumber(nsub4,1));
 	  aControlPointsList = new StepGeom_HArray2OfCartesianPoint (1, nbi4, 1, nbj4);
 	  for (Standard_Integer i4 = 1; i4 <= nbi4; i4 ++) {
-	    Standard_Integer nsi4;
+	    Standard_Integer nsi4 = 0;
 	    if (data->ReadSubList (nsub4,i4,"sub-part(control_points_list)",ach,nsi4)) {
 	      for (Standard_Integer j4 =1; j4 <= nbj4; j4 ++) {
 		//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed

@@ -38,11 +38,11 @@ IFGraph_SubPartsIterator::IFGraph_SubPartsIterator
 
     IFGraph_SubPartsIterator::IFGraph_SubPartsIterator
   (IFGraph_SubPartsIterator& other)
-      : thegraph (other.Graph())
+      : thegraph (other.Graph()), theparts(new TColStd_HSequenceOfInteger()), thepart(0)
 {
   Standard_Integer nb = thegraph.Size();
-  theparts = new TColStd_HSequenceOfInteger();
-  thepart = 0;
+  
+  
   for (other.Start(); other.More(); other.Next()) {
     thepart ++;
     Standard_Integer nbent = 0;

@@ -48,11 +48,11 @@ GccAna_Circ2d2TanRad::
                          const gp_Pnt2d&             Point2     ,
                          const Standard_Real         Radius     ,
                          const Standard_Real         Tolerance  ):
-   qualifier1(1,2) ,
+   WellDone(Standard_False), qualifier1(1,2) ,
    qualifier2(1,2),
    TheSame1(1,2)   ,
    TheSame2(1,2)   ,
-   cirsol(1,2)     ,
+   NbrSol(0), cirsol(1,2)     ,
    pnttg1sol(1,2)  ,
    pnttg2sol(1,2)  ,
    par1sol(1,2)    ,
@@ -63,8 +63,8 @@ GccAna_Circ2d2TanRad::
 
   gp_Dir2d dirx(1.0,0.0);
   Standard_Real Tol = Abs(Tolerance);
-  NbrSol = 0;
-  WellDone = Standard_False;
+  
+  
   if (!(Qualified1.IsEnclosed() || Qualified1.IsOutside() || 
 	Qualified1.IsUnqualified())) {
     throw GccEnt_BadQualifier();

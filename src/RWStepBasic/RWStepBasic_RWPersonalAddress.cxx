@@ -195,7 +195,7 @@ void RWStepBasic_RWPersonalAddress::ReadStep
 
 	Handle(StepBasic_HArray1OfPerson) aPeople;
 	Handle(StepBasic_Person) anent13;
-	Standard_Integer nsub13;
+	Standard_Integer nsub13 = 0;
 	if (data->ReadSubList (num,13,"people",ach,nsub13)) {
 	  Standard_Integer nb13 = data->NbParams(nsub13);
 	  aPeople = new StepBasic_HArray1OfPerson (1, nb13);

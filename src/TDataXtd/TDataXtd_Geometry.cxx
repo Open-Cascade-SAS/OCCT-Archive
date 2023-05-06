@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <Geom_CartesianPoint.hxx>
 #include <Geom_Circle.hxx>
@@ -157,7 +159,7 @@ Standard_Boolean TDataXtd_Geometry::Line(const Handle(TNaming_NamedShape)& NS,gp
   if (shape.IsNull()) return Standard_False;
   if (shape.ShapeType() == TopAbs_EDGE) {
     const TopoDS_Edge& edge = TopoDS::Edge(shape);
-    Standard_Real first,last;
+    Standard_Real first = NAN,last = NAN;
     // TopLoc_Location loc;
     Handle(Geom_Curve) curve = BRep_Tool::Curve (edge,first,last);
     if (!curve.IsNull()) {
@@ -198,7 +200,7 @@ Standard_Boolean TDataXtd_Geometry::Circle(const Handle(TNaming_NamedShape)& NS,
   if (shape.IsNull()) return Standard_False;
   if (shape.ShapeType() == TopAbs_EDGE) {
     const TopoDS_Edge& edge = TopoDS::Edge(shape);
-    Standard_Real first,last;
+    Standard_Real first = NAN,last = NAN;
     // TopLoc_Location loc;
     Handle(Geom_Curve) curve = BRep_Tool::Curve (edge,first,last);
     if (!curve.IsNull()) {
@@ -241,7 +243,7 @@ Standard_Boolean TDataXtd_Geometry::Ellipse(const Handle(TNaming_NamedShape)& NS
   if (shape.IsNull()) return Standard_False;
   if (shape.ShapeType() == TopAbs_EDGE) {
     const TopoDS_Edge& edge = TopoDS::Edge(shape);
-    Standard_Real first,last;
+    Standard_Real first = NAN,last = NAN;
     Handle(Geom_Curve) curve = BRep_Tool::Curve (edge,first,last);
     if (!curve.IsNull()) {
       if (curve->IsInstance (STANDARD_TYPE (Geom_TrimmedCurve)))
@@ -372,7 +374,7 @@ TDataXtd_GeometryEnum  TDataXtd_Geometry::Type (const Handle(TNaming_NamedShape)
   case TopAbs_EDGE : 
     {    
       const TopoDS_Edge& edge = TopoDS::Edge(shape);    
-      Standard_Real first,last;
+      Standard_Real first = NAN,last = NAN;
       // TopLoc_Location loc;
       Handle(Geom_Curve) curve = BRep_Tool::Curve (edge,first,last);
       if (!curve.IsNull()) {

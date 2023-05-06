@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepLib_MakeWire.hxx>
@@ -293,13 +295,13 @@ void  BRepLib_MakeWire::Add(const TopoDS_Edge& E, Standard_Boolean IsCheckGeomet
           for (Standard_Integer i = 1; i <= myVertices.Extent(); i++) {
             const TopoDS_Vertex& VW = TopoDS::Vertex(myVertices.FindKey(i));
 	    gp_Pnt PW = BRep_Tool::Pnt(VW);
-	    Standard_Real l = PE.Distance(PW), tolE, tolW;
+	    Standard_Real l = PE.Distance(PW), tolE = NAN, tolW = NAN;
 	    tolW = BRep_Tool::Tolerance(VW);
 	    tolE = BRep_Tool::Tolerance(VE);
 	    
 	    if ((l < tolE) || (l < tolW)) {
 
-	      Standard_Real maxtol = .5*(tolW + tolE + l), cW, cE;
+	      Standard_Real maxtol = .5*(tolW + tolE + l), cW = NAN, cE = NAN;
 	      if(maxtol > tolW && maxtol > tolE) {
 		cW = (maxtol - tolE)/l; 
 		cE = 1. - cW;

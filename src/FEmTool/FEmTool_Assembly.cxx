@@ -28,9 +28,9 @@
 //----------------------------------------------------------------------------
 static Standard_Integer MinIndex(const Handle(FEmTool_HAssemblyTable)& Table)
 {
-  Standard_Integer dim, el, nvar, Imin;
+  Standard_Integer dim = 0, el = 0, nvar = 0, Imin = 0;
   Standard_Integer diml = Table->LowerRow(), dimu = Table->UpperRow(),
-                   ell = Table->LowerCol(), elu = Table->UpperCol(), nvarl, nvaru;
+                   ell = Table->LowerCol(), elu = Table->UpperCol(), nvarl = 0, nvaru = 0;
 
   Handle(TColStd_HArray1OfInteger) T = Table->Value(diml, ell);
 
@@ -54,9 +54,9 @@ static Standard_Integer MinIndex(const Handle(FEmTool_HAssemblyTable)& Table)
 //----------------------------------------------------------------------------
 static Standard_Integer MaxIndex(const Handle(FEmTool_HAssemblyTable)& Table)
 {
-  Standard_Integer dim, el, nvar, Imax;
+  Standard_Integer dim = 0, el = 0, nvar = 0, Imax = 0;
   Standard_Integer diml = Table->LowerRow(), dimu = Table->UpperRow(),
-                   ell = Table->LowerCol(), elu = Table->UpperCol(), nvarl, nvaru;
+                   ell = Table->LowerCol(), elu = Table->UpperCol(), nvarl = 0, nvaru = 0;
 
   Handle(TColStd_HArray1OfInteger) T = Table->Value(diml, ell);
 
@@ -83,20 +83,17 @@ static Standard_Integer MaxIndex(const Handle(FEmTool_HAssemblyTable)& Table)
 //=======================================================================
 FEmTool_Assembly::FEmTool_Assembly(const TColStd_Array2OfInteger& Dependence,
 				   const Handle(FEmTool_HAssemblyTable)& Table):
-     myDepTable(1, Dependence.ColLength(), 1, Dependence.RowLength()),
+     myDepTable(Dependence),
+     myRefTable(Table),
+     IsSolved(Standard_False),
      B(MinIndex(Table), MaxIndex(Table))
-     
 {
-  IsSolved = Standard_False;
-  myDepTable = Dependence;
-  myRefTable = Table;
-
   TColStd_Array1OfInteger FirstIndexes(1, B.Length()); FirstIndexes.Init(B.Length());
 
-  Standard_Integer dim, el, nvar, Imin, I0 = 1 - B.Lower(), i;
+  Standard_Integer dim = 0, el = 0, nvar = 0, Imin = 0, I0 = 1 - B.Lower(), i = 0;
 
   Standard_Integer diml = Table->LowerRow(), dimu = Table->UpperRow(),
-                   ell = Table->LowerCol(), elu = Table->UpperCol(), nvarl, nvaru;
+                   ell = Table->LowerCol(), elu = Table->UpperCol(), nvarl = 0, nvaru = 0;
 
   Handle(TColStd_HArray1OfInteger) T;
   for(dim = diml; dim <= dimu; dim++)
@@ -148,7 +145,7 @@ void FEmTool_Assembly::AddMatrix(const Standard_Integer Element,
   Standard_Integer nvarl = T1.Lower(), nvaru = Min(T1.Upper(), nvarl + Mat.RowNumber() - 1);
 
 
-  Standard_Integer I, J, I0 = 1 - B.Lower(), i, ii, j,
+  Standard_Integer I = 0, J = 0, I0 = 1 - B.Lower(), i = 0, ii = 0, j = 0,
 
                    i0 = Mat.LowerRow() - nvarl, j0 = Mat.LowerCol() - nvarl;
 
@@ -187,7 +184,7 @@ void FEmTool_Assembly::AddVector(const Standard_Integer Element,
                    i0 = Vec.Lower() - nvarl;
 
 //  Standard_Integer I, i;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   
   for(i = nvarl; i <= nvaru; i++) 
     B(T(i)) += Vec(i0 + i);
@@ -230,8 +227,8 @@ Standard_Boolean FEmTool_Assembly::Solve()
       TColStd_Array1OfInteger FirstIndexes(1, G.Length());
 //-----------------------------------------------------------------
       TColStd_Array2OfInteger H1(1, NbGlobVar(), 1, NbGlobVar()); H1.Init(1);
-      Standard_Integer i, j, k, l, BlockBeg = 1, BlockEnd;
-      Standard_Boolean Block, Zero;
+      Standard_Integer i = 0, j = 0, k = 0, l = 0, BlockBeg = 1, BlockEnd = 0;
+      Standard_Boolean Block = 0, Zero = 0;
       for(i = 2; i <= NbGlobVar(); i++) {
 	BlockEnd = i - 1;
 	if(!H->IsInProfile(i, BlockEnd)) {
@@ -293,7 +290,7 @@ Standard_Boolean FEmTool_Assembly::Solve()
     }
 
     GHGt->Init(0.);
-    Standard_Integer i, j, k;
+    Standard_Integer i = 0, j = 0, k = 0;
     FEmTool_ListIteratorOfListOfVectors Iter;
     
     for(i = 1; i <= G.Length(); i++) {
@@ -369,7 +366,7 @@ void FEmTool_Assembly::Solution(math_Vector& Solution) const
     H->Solve(B, v1);
     
     math_Vector l(1, G.Length()), v2(1, G.Length());
-    Standard_Integer i, j;
+    Standard_Integer i = 0, j = 0;
     FEmTool_ListIteratorOfListOfVectors Iter;
     
     for(i = 1; i <= G.Length(); i++) {
@@ -434,7 +431,7 @@ void FEmTool_Assembly::ResetConstraint()
 void FEmTool_Assembly::NullifyConstraint() 
 {
   FEmTool_ListIteratorOfListOfVectors Iter;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   for(i = 1; i <= G.Length(); i++) {
   
@@ -468,7 +465,7 @@ void FEmTool_Assembly::AddConstraint(const Standard_Integer IndexofConstraint,
   FEmTool_ListOfVectors& L = G.ChangeValue(IndexofConstraint);
   
   Handle(TColStd_HArray1OfInteger) Indexes = myRefTable->Value(Dimension,Element);
-  Standard_Integer i, Imax = 0, Imin = NbGlobVar();
+  Standard_Integer i = 0, Imax = 0, Imin = NbGlobVar();
 
   for(i = Indexes->Lower(); i <= Indexes->Upper(); i++) {
     Imin = Min(Imin, Indexes->Value(i));

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <algorithm>
 
 #include <Adaptor2d_Curve2d.hxx>
@@ -122,13 +124,13 @@ static void RejectDuplicates(NCollection_Array1<GeomInt_Vertex>& theVtxArr);
 //=======================================================================
 void GeomInt_LineConstructor::Perform(const Handle(IntPatch_Line)& L)
 {
-  Standard_Integer i,nbvtx;
-  Standard_Real firstp,lastp;
+  Standard_Integer i = 0,nbvtx = 0;
+  Standard_Real firstp = NAN,lastp = NAN;
   const Standard_Real Tol = Precision::PConfusion() * 35.0;
   
   const IntPatch_IType typl = L->ArcType();
   if(typl == IntPatch_Analytic)  {
-    Standard_Real u1,v1,u2,v2;
+    Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
     Handle(IntPatch_ALine) ALine (Handle(IntPatch_ALine)::DownCast (L));
     seqp.Clear();
     nbvtx = GeomInt_LineTool::NbVertex(L);
@@ -154,7 +156,7 @@ void GeomInt_LineConstructor::Perform(const Handle(IntPatch_Line)& L)
     return;
   } // if(typl == IntPatch_Analytic)  {
   else if(typl == IntPatch_Walking)  {
-    Standard_Real u1,v1,u2,v2;
+    Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
     Handle(IntPatch_WLine) WLine (Handle(IntPatch_WLine)::DownCast (L));
     seqp.Clear();
     nbvtx = GeomInt_LineTool::NbVertex(L);
@@ -201,7 +203,7 @@ void GeomInt_LineConstructor::Perform(const Handle(IntPatch_Line)& L)
             //more strict check (all two points of WLine are checksed) is
             //applied in this case.
 
-            Standard_Real aU21, aV21, aU22, aV22;
+            Standard_Real aU21 = NAN, aV21 = NAN, aU22 = NAN, aV22 = NAN;
             const IntSurf_PntOn2S& aPfirst = WLine->Point((Standard_Integer) (firstp));
             const IntSurf_PntOn2S& aPlast = WLine->Point((Standard_Integer) (lastp));
             aPfirst.Parameters(u1, v1, u2, v2);
@@ -264,11 +266,11 @@ void GeomInt_LineConstructor::Perform(const Handle(IntPatch_Line)& L)
     //     Why -? It is not known yet. 
     //                                             PKV 22.Apr.2002
     //
-    Standard_Integer aNbParts;
+    Standard_Integer aNbParts = 0;
     //
     aNbParts = seqp.Length()/2;
     if (aNbParts > 1) {  
-      Standard_Boolean bCond;
+      Standard_Boolean bCond = 0;
       GeomAbs_SurfaceType aST1, aST2;
       aST1 = myHS1->GetType();
       aST2 = myHS2->GetType();
@@ -288,7 +290,7 @@ void GeomInt_LineConstructor::Perform(const Handle(IntPatch_Line)& L)
       }
       //
       if (bCond) {
-        Standard_Integer aNb, anIndex, aNbTmp, jx;
+        Standard_Integer aNb = 0, anIndex = 0, aNbTmp = 0, jx = 0;
         TColStd_IndexedMapOfInteger aMap;
         TColStd_SequenceOfReal aSeqTmp;
         //
@@ -334,8 +336,8 @@ void GeomInt_LineConstructor::Perform(const Handle(IntPatch_Line)& L)
       return;
     }
     //----------------------------
-    Standard_Boolean intrvtested;
-    Standard_Real u1,v1,u2,v2;
+    Standard_Boolean intrvtested = 0;
+    Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
     //
     nbvtx = GeomInt_LineTool::NbVertex(L);
     intrvtested = Standard_False;
@@ -473,7 +475,7 @@ void GeomInt_LineConstructor::Perform(const Handle(IntPatch_Line)& L)
   }
   
   if (i > nbvtx)  {
-    Standard_Real U,V;
+    Standard_Real U = NAN,V = NAN;
     for (i=1; i<=GeomInt_LineTool::NbVertex(L); i++ )    {
       if (!GeomInt_LineTool::Vertex(L,i).IsOnDomS1() )      {
         GeomInt_LineTool::Vertex(L,i).ParametersOnS1(U,V);
@@ -498,7 +500,7 @@ void GeomInt_LineConstructor::Perform(const Handle(IntPatch_Line)& L)
   }
   
   if (i > nbvtx)  {
-    Standard_Real U,V;
+    Standard_Real U = NAN,V = NAN;
     for (i=1; i<=GeomInt_LineTool::NbVertex(L); i++ )    {
       if (!GeomInt_LineTool::Vertex(L,i).IsOnDomS2() )      {
         GeomInt_LineTool::Vertex(L,i).ParametersOnS2(U,V);
@@ -620,7 +622,7 @@ void GeomInt_LineConstructor::TreatCircle(const Handle(IntPatch_Line)& theLine,
 
   std::sort(aVtxArr.begin(), aVtxArr.end());
 
-  Standard_Real aU1, aV1, aU2, aV2;
+  Standard_Real aU1 = NAN, aV1 = NAN, aU2 = NAN, aV2 = NAN;
   gp_Pnt aPmid;
   gp_Pnt2d aP2D;
   for (Standard_Integer i = aVtxArr.Lower(); i <= aVtxArr.Upper() - 1; i++)
@@ -663,7 +665,7 @@ void AdjustPeriodic(const Handle(GeomAdaptor_Surface)& myHS1,
                     Standard_Real& u2,
                     Standard_Real& v2)
 {
-  Standard_Boolean myHS1IsUPeriodic, myHS1IsVPeriodic;
+  Standard_Boolean myHS1IsUPeriodic = 0, myHS1IsVPeriodic = 0;
   const GeomAbs_SurfaceType typs1 = myHS1->GetType();
   switch (typs1)
   {
@@ -687,7 +689,7 @@ void AdjustPeriodic(const Handle(GeomAdaptor_Surface)& myHS1,
       break;
     }
   }
-  Standard_Boolean myHS2IsUPeriodic, myHS2IsVPeriodic;
+  Standard_Boolean myHS2IsUPeriodic = 0, myHS2IsVPeriodic = 0;
   const GeomAbs_SurfaceType typs2 = myHS2->GetType();
   switch (typs2)
   {
@@ -711,7 +713,7 @@ void AdjustPeriodic(const Handle(GeomAdaptor_Surface)& myHS1,
       break;
     }
   }
-  Standard_Real du, dv;
+  Standard_Real du = NAN, dv = NAN;
   //
   if (myHS1IsUPeriodic)
   {
@@ -832,8 +834,8 @@ Standard_Boolean RejectMicroCircle(const Handle(IntPatch_GLine)& aGLine,
                                    const IntPatch_IType aType,
                                    const Standard_Real aTol3D)
 {
-  Standard_Boolean bRet;
-  Standard_Real aR;
+  Standard_Boolean bRet = 0;
+  Standard_Real aR = NAN;
   //
   bRet=Standard_False;
   //

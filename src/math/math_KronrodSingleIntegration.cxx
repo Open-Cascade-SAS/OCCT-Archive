@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math.hxx>
 #include <math_Function.hxx>
 #include <math_KronrodSingleIntegration.hxx>
@@ -195,9 +197,9 @@ void math_KronrodSingleIntegration::Perform
   anErrors.Append(myAbsolutError);
   aValues.Append(myValue);
 
-  Standard_Integer i, nint, nbints;
+  Standard_Integer i = 0, nint = 0, nbints = 0;
 
-  Standard_Real maxerr;
+  Standard_Real maxerr = NAN;
   Standard_Integer count = 0;
 
   while(myErrorReached > theTolerance && myNbIterReached < theMaxNbIter) {
@@ -216,7 +218,7 @@ void math_KronrodSingleIntegration::Perform
     Standard_Real b = anIntervals(nint+1);
     Standard_Real c = 0.5*(a + b);
 
-    Standard_Real v1, v2, e1, e2;
+    Standard_Real v1 = NAN, v2 = NAN, e1 = NAN, e2 = NAN;
     
     myIsDone = GKRule(theFunction, a, c, aGaussP, aGaussW, aKronrodP, aKronrodW, 
 		    v1, e1);
@@ -273,16 +275,16 @@ Standard_Boolean math_KronrodSingleIntegration::GKRule(
 			             Standard_Real&    theError)
 {
 
-  Standard_Boolean IsDone;
+  Standard_Boolean IsDone = 0;
   
   Standard_Integer aNKronrod = theKronrodP.Length();
 
-  Standard_Real    aGaussVal;
+  Standard_Real    aGaussVal = NAN;
   Standard_Integer aNPnt2 = (aNKronrod + 1)/2;
-  Standard_Integer i;
-  Standard_Real    aDx;
-  Standard_Real    aVal1;
-  Standard_Real    aVal2;
+  Standard_Integer i = 0;
+  Standard_Real    aDx = NAN;
+  Standard_Real    aVal1 = NAN;
+  Standard_Real    aVal2 = NAN;
 
   math_Vector      f1(1, aNPnt2-1);
   math_Vector      f2(1, aNPnt2-1);

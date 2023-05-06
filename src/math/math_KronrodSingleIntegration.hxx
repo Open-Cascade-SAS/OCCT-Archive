@@ -103,9 +103,9 @@ private:
   Standard_Boolean myIsDone;
   Standard_Real myValue;
   Standard_Real myErrorReached;
-  Standard_Real myAbsolutError;
+  Standard_Real myAbsolutError{};
   Standard_Integer myNbPntsReached;
-  Standard_Integer myNbIterReached;
+  Standard_Integer myNbIterReached{};
 
 
 };

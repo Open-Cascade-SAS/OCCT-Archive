@@ -18,6 +18,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <FEmTool_Curve.hxx>
 #include <PLib.hxx>
 #include <PLib_HermitJacobi.hxx>
@@ -35,7 +37,7 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
                              const Handle(PLib_Base)& TheBase, 
                              const Standard_Real) : 
        myNbElements(NbElements), myDimension(Dimension), 
-       myBase(TheBase), myDegree(1, myNbElements), 
+       myBase(TheBase), myKnots(new TColStd_HArray1OfReal(1, myNbElements + 1)), myDegree(1, myNbElements), 
        myCoeff(1, myDimension*myNbElements*(myBase->WorkDegree() + 1)), 
        myPoly(1, myDimension*myNbElements*(myBase->WorkDegree() + 1)), 
        myDeri(1, myDimension*myNbElements*(myBase->WorkDegree())), 
@@ -44,7 +46,7 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
        HasSecn(1, myNbElements), myLength(1, myNbElements),
        myIndex(0)
 {
-  myKnots = new TColStd_HArray1OfReal(1, myNbElements + 1);
+  
   myDegree.Init(myBase->WorkDegree());
   HasPoly.Init(0);
   HasDeri.Init(0);
@@ -66,7 +68,7 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
  void FEmTool_Curve::SetElement(const Standard_Integer IndexOfElement,
 				const TColStd_Array2OfReal& Coeffs) 
 {
-  Standard_Integer i, j, degBase, deg;
+  Standard_Integer i = 0, j = 0, degBase = 0, deg = 0;
   if (IndexOfElement > myNbElements || IndexOfElement < 1) throw Standard_OutOfRange();
   degBase = myBase->WorkDegree();
   deg = myDegree(IndexOfElement);
@@ -80,7 +82,7 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
   }
 
   Standard_Real stenor = (myKnots->Value(IndexOfElement + 1) - myKnots->Value(IndexOfElement)) / 2.,
-                mfact;
+                mfact = NAN;
   Handle(PLib_HermitJacobi) myHermitJacobi = Handle(PLib_HermitJacobi)::DownCast (myBase);
 
   i1 = iBase;
@@ -105,7 +107,7 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
 //=======================================================================
  void FEmTool_Curve::GetElement(const Standard_Integer IndexOfElement, TColStd_Array2OfReal& Coeffs) 
 {
-  Standard_Integer i, j, degBase, deg;
+  Standard_Integer i = 0, j = 0, degBase = 0, deg = 0;
   if (IndexOfElement > myNbElements || IndexOfElement < 1) throw Standard_OutOfRange();
   degBase = myBase->WorkDegree();
   deg = myDegree(IndexOfElement);
@@ -119,7 +121,7 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
   }
 
   Standard_Real stenor = 2. / (myKnots->Value(IndexOfElement + 1) - myKnots->Value(IndexOfElement)),
-                mfact;
+                mfact = NAN;
 
   Handle(PLib_HermitJacobi) myHermitJacobi = Handle(PLib_HermitJacobi)::DownCast (myBase);
 
@@ -143,7 +145,7 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
  void FEmTool_Curve::GetPolynom(TColStd_Array1OfReal& Coeffs) 
 
 {
-  Standard_Integer IndexOfElement, i, di = Coeffs.Lower() - myPoly.Lower();
+  Standard_Integer IndexOfElement = 0, i = 0, di = Coeffs.Lower() - myPoly.Lower();
 
 
   for(IndexOfElement = 1; IndexOfElement <= myNbElements; IndexOfElement++)
@@ -161,8 +163,8 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
 //=======================================================================
  void FEmTool_Curve::D0(const Standard_Real U, TColStd_Array1OfReal& Pnt) 
 {
-  Standard_Integer deg;
-  Standard_Real S;
+  Standard_Integer deg = 0;
+  Standard_Real S = NAN;
 
   if (!myIndex || (U<Uf) || (U>Ul) ||
       (myKnots->Value(myIndex)!=Uf) ||
@@ -197,8 +199,8 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
 //=======================================================================
  void FEmTool_Curve::D1(const Standard_Real U, TColStd_Array1OfReal& Vec) 
 {
-  Standard_Integer deg, i;
-  Standard_Real S;
+  Standard_Integer deg = 0, i = 0;
+  Standard_Real S = NAN;
 
   if (!myIndex || (U<Uf) || (U>Ul) ||
       (myKnots->Value(myIndex)!=Uf) ||
@@ -239,8 +241,8 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
 //=======================================================================
  void FEmTool_Curve::D2(const Standard_Real U, TColStd_Array1OfReal& Vec) 
 {
-  Standard_Integer deg, i;
-  Standard_Real S;
+  Standard_Integer deg = 0, i = 0;
+  Standard_Real S = NAN;
 
   if (!myIndex || (U<Uf) || (U>Ul) ||
       (myKnots->Value(myIndex)!=Uf) ||
@@ -283,7 +285,7 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
 			    const Standard_Real LastU,
 			    Standard_Real& Length) 
 {
-  Standard_Integer Low, High, deg, degBase, i, Ptr;
+  Standard_Integer Low = 0, High = 0, deg = 0, degBase = 0, i = 0, Ptr = 0;
   if(FirstU > LastU) throw Standard_OutOfRange("FEmTool_Curve::Length");
   
   if(myKnots->Value(1) > FirstU) Low = 1;
@@ -298,11 +300,11 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
       if(LastU >= myKnots->Value(High) && LastU <= myKnots->Value(High+1)) break;
   if(myKnots->Value(myNbElements + 1) < LastU) High = myNbElements;
   
-  Standard_Real Li;
+  Standard_Real Li = NAN;
   degBase = myBase->WorkDegree();
   Length = 0;
 
-  Standard_Real FirstS, LastS;
+  Standard_Real FirstS = NAN, LastS = NAN;
   FirstS = (2*FirstU - myKnots->Value(Low) - myKnots->Value(Low + 1))/
     (myKnots->Value(Low + 1) - myKnots->Value(Low));
   LastS = (2*LastU - myKnots->Value(High) - myKnots->Value(High + 1))/
@@ -454,7 +456,7 @@ FEmTool_Curve::FEmTool_Curve(const Standard_Integer Dimension,
   if (Order >=1) {
     Standard_Integer i1 = (Index - 1)*(degBase)*myDimension - myDimension, 
                      i2 = (Index - 1)*(degBase + 1)*myDimension;
-    Standard_Integer i,j;
+    Standard_Integer i = 0,j = 0;
     if (!HasDeri.Value(Index)) {
       for(i = 1; i <= deg; i++) {
 	i1 += myDimension; i2 += myDimension;

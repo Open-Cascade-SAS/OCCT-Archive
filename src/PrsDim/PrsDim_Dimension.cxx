@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_Dimension.hxx>
 
 #include <PrsDim.hxx>
@@ -471,7 +473,7 @@ void PrsDim_Dimension::drawText (const Handle(Prs3d_Presentation)& thePresentati
     Bnd_Box aShapeBnd;
     BRepBndLib::AddClose (aTextShape, aShapeBnd);
 
-    Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+    Standard_Real aXmin = NAN, aYmin = NAN, aZmin = NAN, aXmax = NAN, aYmax = NAN, aZmax = NAN;
     aShapeBnd.Get (aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
 
     Standard_Real aXalign = aTextWidth  * 0.5 - (aXmax + aXmin) * 0.5;
@@ -652,7 +654,7 @@ void PrsDim_Dimension::DrawLinearDimension (const Handle(Prs3d_Presentation)& th
   Standard_Real anArrowLength   = aDimensionAspect->ArrowAspect()->Length();
   Standard_Real anExtensionSize = aDimensionAspect->ExtensionSize();
   // prepare label string and compute its geometrical width
-  Standard_Real aLabelWidth;
+  Standard_Real aLabelWidth = NAN;
   TCollection_ExtendedString aLabelString = GetValueString (aLabelWidth);
 
   // add margins to cut dimension lines for 3d text
@@ -1619,7 +1621,7 @@ void PrsDim_Dimension::FitTextAlignmentForLinear (const gp_Pnt& theFirstPoint,
   Standard_Real anArrowLength = aDimensionAspect->ArrowAspect()->Length();
 
   // prepare label string and compute its geometrical width
-  Standard_Real aLabelWidth;
+  Standard_Real aLabelWidth = NAN;
   TCollection_ExtendedString aLabelString = GetValueString (aLabelWidth);
 
   // Add margins to cut dimension lines for 3d text

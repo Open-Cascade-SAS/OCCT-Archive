@@ -21,7 +21,7 @@
 Standard_Boolean OSD::RealToCString(const Standard_Real aReal,
 				    Standard_PCharacter& aString)
 {
-  char *p, *q ;
+  char *p = nullptr, *q = nullptr ;
   
   if (Sprintf(aString,"%.17e",aReal)  <= 0) //BUC60808
     return Standard_False ;
@@ -48,7 +48,7 @@ Standard_Boolean OSD::RealToCString(const Standard_Real aReal,
 Standard_Boolean OSD::CStringToReal(const Standard_CString aString,
 				    Standard_Real& aReal)
 {
-  char *endptr ;
+  char *endptr = nullptr ;
   aReal = Strtod(aString, &endptr);
   if (*endptr)
     return Standard_False ;

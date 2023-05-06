@@ -23,10 +23,10 @@
 
 Geom2dGcc_FunctionTanObl::
 Geom2dGcc_FunctionTanObl(const Geom2dAdaptor_Curve& C,
-                         const gp_Dir2d& Dir    )
+                         const gp_Dir2d& Dir    ) : TheCurv(C), TheDirection(Dir)
 {
-  TheCurv = C;
-  TheDirection = Dir;
+  
+  
 }
 
 

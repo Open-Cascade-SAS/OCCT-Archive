@@ -22,9 +22,9 @@ IMPLEMENT_STANDARD_RTTIEXT(Message_AttributeObject, Message_Attribute)
 //=======================================================================
 Message_AttributeObject::Message_AttributeObject (const Handle(Standard_Transient)& theObject,
                                                   const TCollection_AsciiString& theName)
-: Message_Attribute(theName)
+: Message_Attribute(theName), myObject(theObject)
 {
-  myObject = theObject;
+  
 }
 
 //=======================================================================

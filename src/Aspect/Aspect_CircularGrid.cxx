@@ -80,7 +80,7 @@ void Aspect_CircularGrid::Compute(const Standard_Real X,
   Standard_Real cs=0,sn=0;
   Standard_Boolean done = Standard_False;
   Standard_Integer nmax = 2*myDivisionNumber;
-  Standard_Integer nquad,qmax;
+  Standard_Integer nquad = 0,qmax = 0;
 
   if( ra == 0. ) {
     nquad = 4; qmax = nmax/nquad;

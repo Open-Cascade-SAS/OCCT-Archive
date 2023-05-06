@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_EllipseRadiusDimension.hxx>
 
 #include <PrsDim.hxx>
@@ -97,7 +99,7 @@ void PrsDim_EllipseRadiusDimension::ComputeFaceGeometry()
   gp_Pln aPln;
   Handle( Geom_Surface ) aBasisSurf;
   PrsDim_KindOfSurface aSurfType;
-  Standard_Real Offset;
+  Standard_Real Offset = NAN;
   PrsDim::GetPlaneFromFace( TopoDS::Face(  myFShape),
 					aPln,
 					aBasisSurf,
@@ -122,7 +124,7 @@ void PrsDim_EllipseRadiusDimension::ComputeCylFaceGeometry(const PrsDim_KindOfSu
 {
 
   BRepAdaptor_Surface surf1(TopoDS::Face(myFShape));
-  Standard_Real vFirst, vLast;
+  Standard_Real vFirst = NAN, vLast = NAN;
   vFirst = surf1.FirstVParameter();
   vLast  = surf1.LastVParameter();
   Standard_Real vMid = (vFirst + vLast)*0.5;

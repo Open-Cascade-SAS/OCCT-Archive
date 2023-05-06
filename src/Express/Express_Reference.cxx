@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(Express_Reference, Express_Item)
 
 Express_Reference::Express_Reference (const Standard_CString theName,
                                       const Handle(TColStd_HSequenceOfHAsciiString)& theTypes)
-: Express_Item (theName)
+: Express_Item (theName), myTypes(theTypes)
 {
-  myTypes = theTypes;
+  
 }
 
 //=======================================================================

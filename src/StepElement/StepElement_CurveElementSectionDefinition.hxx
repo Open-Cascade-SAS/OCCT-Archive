@@ -66,7 +66,7 @@ private:
 
 
   Handle(TCollection_HAsciiString) theDescription;
-  Standard_Real theSectionAngle;
+  Standard_Real theSectionAngle{};
 
 
 };

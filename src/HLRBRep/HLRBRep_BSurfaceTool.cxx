@@ -24,7 +24,7 @@
 Standard_Integer
 HLRBRep_BSurfaceTool::NbSamplesU(const BRepAdaptor_Surface& S)
 { 
-  Standard_Integer nbs;
+  Standard_Integer nbs = 0;
   GeomAbs_SurfaceType typS = S.GetType();
   switch(typS) { 
   case GeomAbs_Plane:
@@ -77,7 +77,7 @@ HLRBRep_BSurfaceTool::NbSamplesU(const BRepAdaptor_Surface& S)
 Standard_Integer
 HLRBRep_BSurfaceTool::NbSamplesV(const BRepAdaptor_Surface& S)
 { 
-  Standard_Integer nbs;
+  Standard_Integer nbs = 0;
   GeomAbs_SurfaceType typS = S.GetType();
   switch(typS) { 
   case GeomAbs_Plane:

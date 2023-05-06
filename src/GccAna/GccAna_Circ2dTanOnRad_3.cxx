@@ -43,7 +43,7 @@ GccAna_Circ2dTanOnRad::
                           const gp_Circ2d&            OnCirc    ,
                           const Standard_Real         Radius    ,
                           const Standard_Real         Tolerance ):
-   cirsol(1,4)   ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,4)   ,
    qualifier1(1,4) ,
    TheSame1(1,4) ,
    pnttg1sol(1,4),
@@ -65,8 +65,8 @@ GccAna_Circ2dTanOnRad::
    Standard_Real disparal[2];
    Standard_Integer nparal = 0;
    Standard_Integer sign = 0;
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
      throw GccEnt_BadQualifier();

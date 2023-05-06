@@ -16,6 +16,8 @@
 
 // jag 940616 Tolpetit = 1.e-16
 
+#include <math.h>
+
 #include <Adaptor3d_HSurfaceTool.hxx>
 #include <Contap_HContTool.hxx>
 #include <Contap_SurfFunction.hxx>
@@ -47,9 +49,9 @@ Contap_SurfFunction::Contap_SurfFunction ():
 void Contap_SurfFunction::Set(const Handle(Adaptor3d_Surface)& S)
 {
   mySurf = S;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer nbs = Contap_HContTool::NbSamplePoints(S);
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
   gp_Vec norm;
   if (nbs > 0) {
     myMean = 0.;

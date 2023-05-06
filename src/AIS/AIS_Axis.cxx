@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <AIS_Axis.hxx>
 
 #include <Aspect_TypeOfLine.hxx>
@@ -71,7 +73,7 @@ myTypeOfAxis(anAxisType),
 myIsXYZAxis(Standard_True)
 {
   Handle (Prs3d_DatumAspect) DA = new Prs3d_DatumAspect();
-  Standard_Real aLength;
+  Standard_Real aLength = NAN;
   try {
     aLength = UnitsAPI::AnyToLS(100. ,"mm");
   } catch (Standard_Failure const&) {
@@ -112,11 +114,11 @@ AIS_Axis::AIS_Axis(const Handle(Geom_Axis1Placement)& anAxis)
 //=======================================================================
 AIS_Axis::AIS_Axis (const gp_Ax1& theAxis, const Standard_Real theLength)
 : myComponent (new Geom_Line (theAxis)),
-  myTypeOfAxis (AIS_TOAX_ZAxis),
-  myIsXYZAxis (Standard_True)
+  myPfirst(theAxis.Location()), myTypeOfAxis (AIS_TOAX_ZAxis),
+  myIsXYZAxis (Standard_True), myDir(theAxis.Direction())
 {
-  myDir = theAxis.Direction();
-  myPfirst = theAxis.Location();
+  
+  
   if (theLength <= 0 && theLength != -1)
   {
     throw Standard_NumericError ("AIS_Axis::AIS_Axis : invalid value for theLength parameter");
@@ -274,7 +276,7 @@ void AIS_Axis::ComputeFields()
     const gp_Dir& oX   = anAxis.XDirection();
     const gp_Dir& oY   = anAxis.YDirection();
     const gp_Dir& oZ   = anAxis.Direction();
-    Standard_Real xo,yo,zo,x = 0.,y = 0.,z = 0.;
+    Standard_Real xo = NAN,yo = NAN,zo = NAN,x = 0.,y = 0.,z = 0.;
     Orig.Coord(xo,yo,zo);
     myPfirst.SetCoord(xo,yo,zo);
     

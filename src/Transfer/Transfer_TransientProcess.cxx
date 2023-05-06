@@ -29,9 +29,9 @@ IMPLEMENT_STANDARD_RTTIEXT(Transfer_TransientProcess,Transfer_ProcessForTransien
 //purpose  : 
 //=======================================================================
 Transfer_TransientProcess::Transfer_TransientProcess
-  (const Standard_Integer nb) : Transfer_ProcessForTransient (nb)  
+  (const Standard_Integer nb) : Transfer_ProcessForTransient (nb), thetrroots(new TColStd_HSequenceOfTransient)  
 {  
-  thetrroots = new TColStd_HSequenceOfTransient;
+  
 }
 
 
@@ -243,7 +243,7 @@ void Transfer_TransientProcess::PrintStats(const Standard_Integer /*mode*/,
       S<<"****        Nb Entities         : "<<model->NbEntities()<<std::endl;
 
     Standard_Integer nbr = 0, nbe = 0, nbw = 0;
-    Standard_Integer i, max = NbMapped(), nbroots = NbRoots();
+    Standard_Integer i = 0, max = NbMapped(), nbroots = NbRoots();
     S<< "****        Nb Final Results    : "<<nbroots<<std::endl;
 
     for (i = 1; i <= max; i ++) {

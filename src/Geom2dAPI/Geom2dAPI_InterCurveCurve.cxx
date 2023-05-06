@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Curve.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
 #include <Geom2dAdaptor_Curve.hxx>
@@ -31,9 +33,9 @@
 //function : Geom2dAPI_InterCurveCurve
 //purpose  : 
 //=======================================================================
-Geom2dAPI_InterCurveCurve::Geom2dAPI_InterCurveCurve()
+Geom2dAPI_InterCurveCurve::Geom2dAPI_InterCurveCurve() : myIsDone(Standard_False)
 {
-  myIsDone = Standard_False;
+  
 }
 
 
@@ -183,7 +185,7 @@ void Geom2dAPI_InterCurveCurve::Segment
   Standard_NullObject_Raise_if(myCurve1.IsNull(),
                                "Geom2dAPI_InterCurveCurve::Segment");
 
-  Standard_Real aU1, aU2, aV1, aV2;
+  Standard_Real aU1 = NAN, aU2 = NAN, aV1 = NAN, aV2 = NAN;
   aU1 = myCurve1->FirstParameter();
   aU2 = myCurve1->LastParameter();
   if (myCurve2.IsNull())

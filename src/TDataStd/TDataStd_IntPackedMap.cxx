@@ -62,9 +62,9 @@ Handle(TDataStd_IntPackedMap) TDataStd_IntPackedMap::Set (const TDF_Label& theLa
 //purpose  : 
 //=======================================================================
 TDataStd_IntPackedMap::TDataStd_IntPackedMap ()
-     :myIsDelta(Standard_False)
+     :myMap(new TColStd_HPackedMapOfInteger ()), myIsDelta(Standard_False)
 {
-  myMap = new TColStd_HPackedMapOfInteger ();
+  
 }
 //=======================================================================
 //function : ChangeMap

@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntImp_ComputeTangence.hxx>
 #include <IntImp_ConstIsoparametric.hxx>
 #include <Standard_OutOfRange.hxx>
@@ -67,8 +69,8 @@ Standard_Boolean IntImp_ComputeTangence(const gp_Vec DPuv[],
 // l intersection 
 
 {
-   Standard_Real NormDuv[4], aM2, aTol2;
-   Standard_Integer i;
+   Standard_Real NormDuv[4], aM2 = NAN, aTol2 = NAN;
+   Standard_Integer i = 0;
    //
    aTol2=1.e-32;
    //
@@ -134,7 +136,7 @@ Standard_Boolean IntImp_ComputeTangence(const gp_Vec DPuv[],
 
      //-- Tri sur NormDuv  ( en para. avec ChoixRef ) 
      Standard_Boolean triOk = Standard_False;
-     Standard_Real t;
+     Standard_Real t = NAN;
      IntImp_ConstIsoparametric ti;
      for ( i=0;i<=3;i++)
      {

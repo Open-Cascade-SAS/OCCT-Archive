@@ -73,7 +73,7 @@ private:
 
 
   Handle(StepShape_ClosedShell) closedShellElement;
-  Standard_Boolean orientation;
+  Standard_Boolean orientation{};
 
 
 };

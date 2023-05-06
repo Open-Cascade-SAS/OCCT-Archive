@@ -209,7 +209,7 @@ private:
   Standard_Boolean theimp;
   Handle(Standard_Transient) theent;
   Handle(Interface_GeneralModule) themdu;
-  Standard_Integer theCN;
+  Standard_Integer theCN{};
 
 
 };

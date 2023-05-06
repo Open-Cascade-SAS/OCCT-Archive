@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepLib.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -213,7 +215,7 @@ Standard_Boolean BRepLib::FindValidRange
   (const TopoDS_Edge& theEdge, Standard_Real& theFirst, Standard_Real& theLast)
 {
   TopLoc_Location aLoc;
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   if (BRep_Tool::Curve(theEdge, aLoc, f, l).IsNull())
     return Standard_False;
   BRepAdaptor_Curve anAC(theEdge);
@@ -256,8 +258,8 @@ Standard_Boolean BRepLib::FindValidRange
 void BRepLib::BuildPCurveForEdgeOnPlane(const TopoDS_Edge& aE,
                                         const TopoDS_Face& aF)
 {
-  Standard_Boolean bToUpdate;
-  Standard_Real aTolE;
+  Standard_Boolean bToUpdate = 0;
+  Standard_Real aTolE = NAN;
   Handle(Geom2d_Curve) aC2D;
   BRep_Builder aBB;
   //
@@ -277,8 +279,8 @@ void BRepLib::BuildPCurveForEdgeOnPlane(const TopoDS_Edge& aE,
                                         Handle(Geom2d_Curve)& aC2D,
                                         Standard_Boolean& bToUpdate)
 {
-  Standard_Real aT1, aT2;
-  Standard_Boolean isStored;
+  Standard_Real aT1 = NAN, aT2 = NAN;
+  Standard_Boolean isStored = 0;
   aC2D = BRep_Tool::CurveOnSurface(aE, aF, aT1, aT2, &isStored);
   bToUpdate = !isStored && !aC2D.IsNull();
 }

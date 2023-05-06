@@ -25,6 +25,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <Convert_CompPolynomialToPoles.hxx>
 #include <PLib.hxx>
@@ -49,7 +51,7 @@ Convert_CompPolynomialToPoles::Convert_CompPolynomialToPoles(
     const Handle(TColStd_HArray1OfReal)&    TrueIntervals)
      : myDone(Standard_False) 
 {
- Standard_Integer ii, delta;
+ Standard_Integer ii = 0, delta = 0;
  if (NumCurves <= 0               ||
      NumCoeffPerCurve.IsNull()    ||
      Coefficients.IsNull()        ||
@@ -77,7 +79,7 @@ Convert_CompPolynomialToPoles::Convert_CompPolynomialToPoles(
 //
 //  prepare output
 //
- Standard_Integer Tindex, multiplicities ;
+ Standard_Integer Tindex = 0, multiplicities = 0 ;
 
  myKnots = 
  new TColStd_HArray1OfReal(1, NumCurves + 1) ;
@@ -111,7 +113,7 @@ Convert_CompPolynomialToPoles(const Standard_Integer NumCurves,
 			      const TColStd_Array1OfReal& TrueIntervals)
                               : myDone(Standard_False) 
 {
- Standard_Integer ii, delta;
+ Standard_Integer ii = 0, delta = 0;
  if (NumCurves <= 0               ||
      MaxDegree  <= 0              ||
      Dimension  <= 0              ||
@@ -130,7 +132,7 @@ Convert_CompPolynomialToPoles(const Standard_Integer NumCurves,
 //
 //  prepare output
 //
- Standard_Integer Tindex ;
+ Standard_Integer Tindex = 0 ;
 
  myKnots = 
  new TColStd_HArray1OfReal(1, NumCurves + 1) ;
@@ -209,16 +211,16 @@ Perform(const Standard_Integer NumCurves,
 	const TColStd_Array2OfReal& PolynomialIntervals,
 	const TColStd_Array1OfReal& TrueIntervals)
 {
- Standard_Integer ii, 
- num_flat_knots,
- index, Tindex, Pindex,
- coeff_index,
- inversion_problem,
- poles_index,
- num_poles ;
- Standard_Real normalized_value,
- *coefficient_array,
- *poles_array ;
+ Standard_Integer ii = 0, 
+ num_flat_knots = 0,
+ index = 0, Tindex = 0, Pindex = 0,
+ coeff_index = 0,
+ inversion_problem = 0,
+ poles_index = 0,
+ num_poles = 0 ;
+ Standard_Real normalized_value = NAN,
+ *coefficient_array = nullptr,
+ *poles_array = nullptr ;
  
  num_flat_knots = 2 * myDegree + 2 ;
  for (ii=2; ii<myMults->Length(); ii++) {

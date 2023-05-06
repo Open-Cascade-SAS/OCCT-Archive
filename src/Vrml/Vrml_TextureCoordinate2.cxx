@@ -23,9 +23,9 @@ Vrml_TextureCoordinate2::Vrml_TextureCoordinate2()
   myPoint = new TColgp_HArray1OfVec2d(1,1,tmpVec);
 }
 
-Vrml_TextureCoordinate2::Vrml_TextureCoordinate2(const Handle(TColgp_HArray1OfVec2d)& aPoint)
+Vrml_TextureCoordinate2::Vrml_TextureCoordinate2(const Handle(TColgp_HArray1OfVec2d)& aPoint) : myPoint(aPoint)
 {
-  myPoint = aPoint;
+  
 }
 
  void Vrml_TextureCoordinate2::SetPoint(const Handle(TColgp_HArray1OfVec2d)& aPoint) 
@@ -40,7 +40,7 @@ Vrml_TextureCoordinate2::Vrml_TextureCoordinate2(const Handle(TColgp_HArray1OfVe
 
  Standard_OStream& Vrml_TextureCoordinate2::Print(Standard_OStream& anOStream) const
 {
- Standard_Integer i;
+ Standard_Integer i = 0;
  anOStream  << "TextureCoordinate2 {\n";
 
  if ( myPoint->Length() != 1 || Abs(myPoint->Value(myPoint->Lower()).X() - 0) > 0.0001 || 

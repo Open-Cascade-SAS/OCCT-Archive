@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
@@ -81,8 +83,8 @@ static
 //=======================================================================
   Standard_Boolean IntTools_Tools::IsClosed (const Handle(Geom_Curve)& aC3D)
 {
-  Standard_Boolean bRet;
-  Standard_Real aF, aL, aDist, aPC;
+  Standard_Boolean bRet = 0;
+  Standard_Real aF = NAN, aL = NAN, aDist = NAN, aPC = NAN;
   gp_Pnt aP1, aP2;
   
   Handle (Geom_BoundedCurve) aGBC=
@@ -113,8 +115,8 @@ static
    void IntTools_Tools::RejectLines(const IntTools_SequenceOfCurves& aSIn,
         IntTools_SequenceOfCurves& aSOut)
 {
-  Standard_Integer i, j, aNb;
-  Standard_Boolean bFlag;
+  Standard_Integer i = 0, j = 0, aNb = 0;
+  Standard_Boolean bFlag = 0;
   Handle (Geom_Curve) aC3D;
 
   gp_Dir aD1, aD2;
@@ -168,10 +170,10 @@ static
 //=======================================================================
   Standard_Boolean IntTools_Tools::IsDirsCoinside  (const gp_Dir& D1, const gp_Dir& D2)
 {
-  Standard_Boolean bFlag;
+  Standard_Boolean bFlag = 0;
   gp_Pnt P1(D1.X(), D1.Y(), D1.Z());  
   gp_Pnt P2(D2.X(), D2.Y(), D2.Z());
-  Standard_Real dLim=0.0002, d;
+  Standard_Real dLim=0.0002, d = NAN;
   d=P1.Distance (P2); 
   bFlag= (d<dLim || fabs (2.-d)<dLim); 
   return bFlag;
@@ -185,8 +187,8 @@ static
           const gp_Dir& D2,
           const Standard_Real dLim)
 {
-  Standard_Boolean bFlag;
-  Standard_Real d;
+  Standard_Boolean bFlag = 0;
+  Standard_Real d = NAN;
   //
   gp_Pnt P1(D1.X(), D1.Y(), D1.Z());  
   gp_Pnt P2(D2.X(), D2.Y(), D2.Z());
@@ -201,20 +203,20 @@ static
   Standard_Integer IntTools_Tools::SplitCurve(const IntTools_Curve& IC,
            IntTools_SequenceOfCurves& aCvs)
 {
-  Handle (Geom_Curve) aC3D =IC.Curve();
+  const Handle (Geom_Curve)& aC3D =IC.Curve();
   if(aC3D.IsNull())
     return 0;
   //
-  Handle (Geom2d_Curve) aC2D1=IC.FirstCurve2d();
-  Handle (Geom2d_Curve) aC2D2=IC.SecondCurve2d();
-  Standard_Boolean bIsClosed;
+  const Handle (Geom2d_Curve)& aC2D1=IC.FirstCurve2d();
+  const Handle (Geom2d_Curve)& aC2D2=IC.SecondCurve2d();
+  Standard_Boolean bIsClosed = 0;
 
   bIsClosed=IntTools_Tools::IsClosed(aC3D);
   if (!bIsClosed) {
     return 0;
   }
 
-  Standard_Real aF, aL, aMid;
+  Standard_Real aF = NAN, aL = NAN, aMid = NAN;
   
   //
   aF=aC3D->FirstParameter();
@@ -264,7 +266,7 @@ static
 {
   //define parameter division number as 10*e^(-M_PI) = 0.43213918
   const Standard_Real PAR_T = 0.43213918;
-  Standard_Real aParm;
+  Standard_Real aParm = NAN;
   aParm=(1.-PAR_T)*aFirst + PAR_T*aLast;
   return aParm;
 }
@@ -277,8 +279,8 @@ static
           const Standard_Real aTolPV,
           const TopoDS_Vertex& aV)
 {
-  Standard_Boolean bRet;
-  Standard_Real aTolV, aD, dTol;
+  Standard_Boolean bRet = 0;
+  Standard_Real aTolV = NAN, aD = NAN, dTol = NAN;
   gp_Pnt aPv; 
   
   aTolV=BRep_Tool::Tolerance(aV);
@@ -301,8 +303,8 @@ static
 //=======================================================================
   Standard_Boolean IntTools_Tools::IsVertex (const IntTools_CommonPrt& aCmnPrt)
 {
-  Standard_Boolean anIsVertex;
-  Standard_Real aParam;
+  Standard_Boolean anIsVertex = 0;
+  Standard_Real aParam = NAN;
 
   const TopoDS_Edge&    aE1=aCmnPrt.Edge1();
   const IntTools_Range& aR1=aCmnPrt.Range1();
@@ -332,7 +334,7 @@ static
           const TopoDS_Vertex& aV,
           const Standard_Real t)
 {
-  Standard_Real aTolV, aTolV2, d2;
+  Standard_Real aTolV = NAN, aTolV2 = NAN, d2 = NAN;
   gp_Pnt aPv, aPt; 
   
   BRepAdaptor_Curve aBAC(aE);
@@ -354,7 +356,7 @@ static
   Standard_Boolean IntTools_Tools::IsVertex (const TopoDS_Edge& aE,
           const Standard_Real t)
 {
-  Standard_Real aTolV, aTolV2, d2;
+  Standard_Real aTolV = NAN, aTolV2 = NAN, d2 = NAN;
   TopoDS_Vertex aV;
   gp_Pnt aPv, aPt; 
   
@@ -384,7 +386,7 @@ static
   Standard_Integer IntTools_Tools::ComputeVV(const TopoDS_Vertex& aV1, 
           const TopoDS_Vertex& aV2)
 {
-  Standard_Real aTolV1, aTolV2, aTolSum, d;
+  Standard_Real aTolV1 = NAN, aTolV2 = NAN, aTolSum = NAN, d = NAN;
   gp_Pnt aP1, aP2;
 
   aTolV1=BRep_Tool::Tolerance(aV1);
@@ -424,7 +426,7 @@ static
   TopAbs_State IntTools_Tools::ClassifyPointByFace(const TopoDS_Face& aF,
          const gp_Pnt2d& aP2d)
 {
-  Standard_Real aFaceTolerance;
+  Standard_Real aFaceTolerance = NAN;
   TopAbs_State aState;
   
   aFaceTolerance=BRep_Tool::Tolerance(aF);
@@ -442,8 +444,8 @@ static
              const TopoDS_Edge& aE2)
              
 {
-  Standard_Boolean bRet;
-  Standard_Real f1, l1, m1, f2, l2, m2, aTol1, aTol2, aSumTol, aD2;
+  Standard_Boolean bRet = 0;
+  Standard_Real f1 = NAN, l1 = NAN, m1 = NAN, f2 = NAN, l2 = NAN, m2 = NAN, aTol1 = NAN, aTol2 = NAN, aSumTol = NAN, aD2 = NAN;
   gp_Pnt aP1, aP2;
 
   aTol1=BRep_Tool::Tolerance(aE1);
@@ -470,7 +472,7 @@ static
   Standard_Real IntTools_Tools::CurveTolerance(const Handle(Geom_Curve)& aC3D,
             const Standard_Real aTolBase)
 {
-  Standard_Real aTolReached, aTf, aTl, aTolMin, aTolMax;
+  Standard_Real aTolReached = NAN, aTf = NAN, aTl = NAN, aTolMin = NAN, aTolMax = NAN;
 
   aTolReached=aTolBase;
   //
@@ -525,8 +527,8 @@ void ParabolaTolerance(const Handle(Geom_Curve)& aC3D,
     return;
   }
 
-  Standard_Integer aNbPoints;
-  Standard_Real aFocal, aX1, aX2, aTol1, aTol2;
+  Standard_Integer aNbPoints = 0;
+  Standard_Real aFocal = NAN, aX1 = NAN, aX2 = NAN, aTol1 = NAN, aTol2 = NAN;
   gp_Pnt aPf, aPl;
   gp_Parab aParab=aGP->Parab();
   gp_Ax1 aXAxis=aParab.XAxis();
@@ -613,7 +615,7 @@ Standard_Boolean IntTools_Tools::IsOnPave(const Standard_Real aT1,
                                           const IntTools_Range& aRange,
                                           const Standard_Real aTolerance)
 {
-  Standard_Boolean firstisonpave1, firstisonpave2, bIsOnPave;
+  Standard_Boolean firstisonpave1 = 0, firstisonpave2 = 0, bIsOnPave = 0;
   //
   firstisonpave1  = (Abs(aRange.First() - aT1) < aTolerance);
   firstisonpave2  = (Abs(aRange.Last()  - aT1) < aTolerance);
@@ -667,8 +669,8 @@ Standard_Boolean IntTools_Tools::IsOnPave1(const Standard_Real aTR,
                                            const IntTools_Range& aCPRange,
                                            const Standard_Real aTolerance)
 {
-  Standard_Boolean bIsOnPave;
-  Standard_Real aT1, aT2, dT1, dT2;
+  Standard_Boolean bIsOnPave = 0;
+  Standard_Real aT1 = NAN, aT2 = NAN, dT1 = NAN, dT2 = NAN;
   //
   aT1=aCPRange.First();
   aT2=aCPRange.Last();
@@ -690,8 +692,8 @@ Standard_Boolean IntTools_Tools::IsInRange(const IntTools_Range& aRRef,
                                            const IntTools_Range& aR,
                                            const Standard_Real aTolerance)
 {
-  Standard_Boolean bIsIn;
-  Standard_Real aT1, aT2, aTRef1, aTRef2;
+  Standard_Boolean bIsIn = 0;
+  Standard_Real aT1 = NAN, aT2 = NAN, aTRef1 = NAN, aTRef2 = NAN;
   //
   aR.Range(aT1, aT2);
   aRRef.Range(aTRef1, aTRef2);
@@ -720,8 +722,8 @@ Standard_Integer IntTools_Tools::SegPln(const gp_Lin& theLin,
                                         Standard_Real& theTPmin,
                                         Standard_Real& theTPmax)
 {
-  Standard_Integer iRet;
-  Standard_Real aTol, aA, aB, aC, aD, aE, aH, aTP, aDist1, aDist2;
+  Standard_Integer iRet = 0;
+  Standard_Real aTol = NAN, aA = NAN, aB = NAN, aC = NAN, aD = NAN, aE = NAN, aH = NAN, aTP = NAN, aDist1 = NAN, aDist2 = NAN;
   gp_Pnt aP1, aP2;
   //
   iRet=0;
@@ -826,13 +828,13 @@ Standard_Real IntTools_Tools::ComputeIntRange(const Standard_Real theTol1,
                                               const Standard_Real theTol2,
                                               const Standard_Real theAngle)
 {
-  Standard_Real aDt;
+  Standard_Real aDt = NAN;
   //
   if (Abs(M_PI_2 - theAngle) < Precision::Angular()) {
     aDt = theTol2;
   }
   else {
-    Standard_Real a1, a2, anAngle;
+    Standard_Real a1 = NAN, a2 = NAN, anAngle = NAN;
     //
     anAngle = (theAngle > M_PI_2) ? (M_PI - theAngle) : theAngle;
     a1 = theTol1 * tan(M_PI_2 - anAngle);

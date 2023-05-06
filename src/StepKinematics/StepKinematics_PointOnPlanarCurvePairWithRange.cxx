@@ -22,14 +22,14 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_PointOnPlanarCurvePairWithRange, StepK
 //function : StepKinematics_PointOnPlanarCurvePairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_PointOnPlanarCurvePairWithRange::StepKinematics_PointOnPlanarCurvePairWithRange ()
+StepKinematics_PointOnPlanarCurvePairWithRange::StepKinematics_PointOnPlanarCurvePairWithRange () : defLowerLimitYaw(Standard_False), defUpperLimitYaw(Standard_False), defLowerLimitPitch(Standard_False), defUpperLimitPitch(Standard_False), defLowerLimitRoll(Standard_False), defUpperLimitRoll(Standard_False)
 {
-  defLowerLimitYaw = Standard_False;
-  defUpperLimitYaw = Standard_False;
-  defLowerLimitPitch = Standard_False;
-  defUpperLimitPitch = Standard_False;
-  defLowerLimitRoll = Standard_False;
-  defUpperLimitRoll = Standard_False;
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================

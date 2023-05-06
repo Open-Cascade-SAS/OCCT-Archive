@@ -54,7 +54,7 @@ TDataStd_DeltaOnModificationOfIntArray::TDataStd_DeltaOnModificationOfIntArray(c
       if(Arr1 != Arr2) {
 	myUp1 = Arr1->Upper();
 	myUp2 = Arr2->Upper();
-	Standard_Integer i, N=0, aCase=0; 
+	Standard_Integer i = 0, N=0, aCase=0; 
 	if(myUp1 == myUp2) 
 	  {aCase = 1; N = myUp1;}
 	else if(myUp1 < myUp2) 
@@ -122,7 +122,7 @@ void TDataStd_DeltaOnModificationOfIntArray::Apply()
   else 
     aCurAtt->Backup();
 
-  Standard_Integer aCase;
+  Standard_Integer aCase = 0;
   if(myUp1 == myUp2) 
     aCase = 1;
   else if(myUp1 < myUp2) 
@@ -133,7 +133,7 @@ void TDataStd_DeltaOnModificationOfIntArray::Apply()
   if (aCase == 1 && (myIndxes.IsNull() || myValues.IsNull()))
     return;
   
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Handle(TColStd_HArray1OfInteger) IntArr = aCurAtt->Array();
   if(IntArr.IsNull()) return;
   if(aCase == 1) 

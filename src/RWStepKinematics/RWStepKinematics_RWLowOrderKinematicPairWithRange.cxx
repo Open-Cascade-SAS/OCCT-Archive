@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWLowOrderKinematicPairWithRange.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -78,27 +80,27 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
 
   // Inherited fields of LowOrderKinematicPair
 
-  Standard_Boolean aLowOrderKinematicPair_TX;
+  Standard_Boolean aLowOrderKinematicPair_TX = 0;
   theData->ReadBoolean (theNum, 7, "low_order_kinematic_pair.t_x", theArch, aLowOrderKinematicPair_TX);
 
-  Standard_Boolean aLowOrderKinematicPair_TY;
+  Standard_Boolean aLowOrderKinematicPair_TY = 0;
   theData->ReadBoolean (theNum, 8, "low_order_kinematic_pair.t_y", theArch, aLowOrderKinematicPair_TY);
 
-  Standard_Boolean aLowOrderKinematicPair_TZ;
+  Standard_Boolean aLowOrderKinematicPair_TZ = 0;
   theData->ReadBoolean (theNum, 9, "low_order_kinematic_pair.t_z", theArch, aLowOrderKinematicPair_TZ);
 
-  Standard_Boolean aLowOrderKinematicPair_RX;
+  Standard_Boolean aLowOrderKinematicPair_RX = 0;
   theData->ReadBoolean (theNum, 10, "low_order_kinematic_pair.r_x", theArch, aLowOrderKinematicPair_RX);
 
-  Standard_Boolean aLowOrderKinematicPair_RY;
+  Standard_Boolean aLowOrderKinematicPair_RY = 0;
   theData->ReadBoolean (theNum, 11, "low_order_kinematic_pair.r_y", theArch, aLowOrderKinematicPair_RY);
 
-  Standard_Boolean aLowOrderKinematicPair_RZ;
+  Standard_Boolean aLowOrderKinematicPair_RZ = 0;
   theData->ReadBoolean (theNum, 12, "low_order_kinematic_pair.r_z", theArch, aLowOrderKinematicPair_RZ);
 
   // Own fields of LowOrderKinematicPairWithRange
 
-  Standard_Real aLowerLimitActualRotationX;
+  Standard_Real aLowerLimitActualRotationX = NAN;
   Standard_Boolean hasLowerLimitActualRotationX = Standard_True;
   if ( theData->IsParamDefined (theNum,13) ) {
     theData->ReadReal (theNum, 13, "lower_limit_actual_rotation_x", theArch, aLowerLimitActualRotationX);
@@ -108,7 +110,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aLowerLimitActualRotationX = 0;
   }
 
-  Standard_Real aUpperLimitActualRotationX;
+  Standard_Real aUpperLimitActualRotationX = NAN;
   Standard_Boolean hasUpperLimitActualRotationX = Standard_True;
   if ( theData->IsParamDefined (theNum,14) ) {
     theData->ReadReal (theNum, 14, "upper_limit_actual_rotation_x", theArch, aUpperLimitActualRotationX);
@@ -118,7 +120,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aUpperLimitActualRotationX = 0;
   }
 
-  Standard_Real aLowerLimitActualRotationY;
+  Standard_Real aLowerLimitActualRotationY = NAN;
   Standard_Boolean hasLowerLimitActualRotationY = Standard_True;
   if ( theData->IsParamDefined (theNum,15) ) {
     theData->ReadReal (theNum, 15, "lower_limit_actual_rotation_y", theArch, aLowerLimitActualRotationY);
@@ -128,7 +130,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aLowerLimitActualRotationY = 0;
   }
 
-  Standard_Real aUpperLimitActualRotationY;
+  Standard_Real aUpperLimitActualRotationY = NAN;
   Standard_Boolean hasUpperLimitActualRotationY = Standard_True;
   if ( theData->IsParamDefined (theNum,16) ) {
     theData->ReadReal (theNum, 16, "upper_limit_actual_rotation_y", theArch, aUpperLimitActualRotationY);
@@ -138,7 +140,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aUpperLimitActualRotationY = 0;
   }
 
-  Standard_Real aLowerLimitActualRotationZ;
+  Standard_Real aLowerLimitActualRotationZ = NAN;
   Standard_Boolean hasLowerLimitActualRotationZ = Standard_True;
   if ( theData->IsParamDefined (theNum,17) ) {
     theData->ReadReal (theNum, 17, "lower_limit_actual_rotation_z", theArch, aLowerLimitActualRotationZ);
@@ -148,7 +150,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aLowerLimitActualRotationZ = 0;
   }
 
-  Standard_Real aUpperLimitActualRotationZ;
+  Standard_Real aUpperLimitActualRotationZ = NAN;
   Standard_Boolean hasUpperLimitActualRotationZ = Standard_True;
   if ( theData->IsParamDefined (theNum,18) ) {
     theData->ReadReal (theNum, 18, "upper_limit_actual_rotation_z", theArch, aUpperLimitActualRotationZ);
@@ -158,7 +160,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aUpperLimitActualRotationZ = 0;
   }
 
-  Standard_Real aLowerLimitActualTranslationX;
+  Standard_Real aLowerLimitActualTranslationX = NAN;
   Standard_Boolean hasLowerLimitActualTranslationX = Standard_True;
   if ( theData->IsParamDefined (theNum,19) ) {
     theData->ReadReal (theNum, 19, "lower_limit_actual_translation_x", theArch, aLowerLimitActualTranslationX);
@@ -168,7 +170,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aLowerLimitActualTranslationX = 0;
   }
 
-  Standard_Real aUpperLimitActualTranslationX;
+  Standard_Real aUpperLimitActualTranslationX = NAN;
   Standard_Boolean hasUpperLimitActualTranslationX = Standard_True;
   if ( theData->IsParamDefined (theNum,20) ) {
     theData->ReadReal (theNum, 20, "upper_limit_actual_translation_x", theArch, aUpperLimitActualTranslationX);
@@ -178,7 +180,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aUpperLimitActualTranslationX = 0;
   }
 
-  Standard_Real aLowerLimitActualTranslationY;
+  Standard_Real aLowerLimitActualTranslationY = NAN;
   Standard_Boolean hasLowerLimitActualTranslationY = Standard_True;
   if ( theData->IsParamDefined (theNum,21) ) {
     theData->ReadReal (theNum, 21, "lower_limit_actual_translation_y", theArch, aLowerLimitActualTranslationY);
@@ -188,7 +190,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aLowerLimitActualTranslationY = 0;
   }
 
-  Standard_Real aUpperLimitActualTranslationY;
+  Standard_Real aUpperLimitActualTranslationY = NAN;
   Standard_Boolean hasUpperLimitActualTranslationY = Standard_True;
   if ( theData->IsParamDefined (theNum,22) ) {
     theData->ReadReal (theNum, 22, "upper_limit_actual_translation_y", theArch, aUpperLimitActualTranslationY);
@@ -198,7 +200,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aUpperLimitActualTranslationY = 0;
   }
 
-  Standard_Real aLowerLimitActualTranslationZ;
+  Standard_Real aLowerLimitActualTranslationZ = NAN;
   Standard_Boolean hasLowerLimitActualTranslationZ = Standard_True;
   if ( theData->IsParamDefined (theNum,23) ) {
     theData->ReadReal (theNum, 23, "lower_limit_actual_translation_z", theArch, aLowerLimitActualTranslationZ);
@@ -208,7 +210,7 @@ void RWStepKinematics_RWLowOrderKinematicPairWithRange::ReadStep (const Handle(S
     aLowerLimitActualTranslationZ = 0;
   }
 
-  Standard_Real aUpperLimitActualTranslationZ;
+  Standard_Real aUpperLimitActualTranslationZ = NAN;
   Standard_Boolean hasUpperLimitActualTranslationZ = Standard_True;
   if ( theData->IsParamDefined (theNum,24) ) {
     theData->ReadReal (theNum, 24, "upper_limit_actual_translation_z", theArch, aUpperLimitActualTranslationZ);

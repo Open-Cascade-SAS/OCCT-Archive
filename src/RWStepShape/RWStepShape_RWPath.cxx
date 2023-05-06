@@ -44,7 +44,7 @@ void RWStepShape_RWPath::ReadStep
 
 	Handle(StepShape_HArray1OfOrientedEdge) aEdgeList;
 	Handle(StepShape_OrientedEdge) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"edge_list",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aEdgeList = new StepShape_HArray1OfOrientedEdge (1, nb2);

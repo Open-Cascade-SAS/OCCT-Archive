@@ -166,7 +166,7 @@ private:
 #if (defined(_WIN32) || defined(__WIN32__))
   CRITICAL_SECTION myMutex;
 #else
-  pthread_mutex_t myMutex;
+  pthread_mutex_t myMutex{};
 #endif  
 };
 

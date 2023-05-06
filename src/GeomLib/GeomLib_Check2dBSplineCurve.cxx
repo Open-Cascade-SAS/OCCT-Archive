@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_BSplineCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <GeomLib_Check2dBSplineCurve.hxx>
@@ -37,11 +39,11 @@ GeomLib_Check2dBSplineCurve::GeomLib_Check2dBSplineCurve(const Handle(Geom2d_BSp
    myIndSecondPole(-1),
    myIndPrelastPole(-1)
 {
-  Standard_Integer ii,
-    num_poles ;
-  Standard_Real tangent_magnitude,
-    value,
-    vector_magnitude ;
+  Standard_Integer ii = 0,
+    num_poles = 0 ;
+  Standard_Real tangent_magnitude = NAN,
+    value = NAN,
+    vector_magnitude = NAN ;
   num_poles = myCurve->NbPoles() ;
   
   if (( ! myCurve->IsPeriodic() )&& num_poles >= 4) {

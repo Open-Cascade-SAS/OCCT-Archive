@@ -190,7 +190,7 @@ void TDataStd_RealArray::ChangeArray(const Handle(TColStd_HArray1OfReal)& newArr
   Standard_Integer aLower    = newArray->Lower();
   Standard_Integer anUpper   = newArray->Upper();
   Standard_Boolean aDimEqual = Standard_False;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   if (!myValue.IsNull()) {
     if (Lower() == aLower && Upper() == anUpper ) {
@@ -265,7 +265,7 @@ Handle(TDF_Attribute) TDataStd_RealArray::NewEmpty () const
 
 void TDataStd_RealArray::Restore(const Handle(TDF_Attribute)& With) 
 {
-  Standard_Integer i, lower, upper;
+  Standard_Integer i = 0, lower = 0, upper = 0;
   Handle(TDataStd_RealArray) anArray = Handle(TDataStd_RealArray)::DownCast(With);
   if(!anArray->myValue.IsNull()) {
     lower = anArray->Lower();
@@ -307,7 +307,7 @@ Standard_OStream& TDataStd_RealArray::Dump (Standard_OStream& anOS) const
 {  
   anOS << "\nRealArray::" << this <<" :";
   if(!myValue.IsNull()) {
-    Standard_Integer i, lower, upper;
+    Standard_Integer i = 0, lower = 0, upper = 0;
     lower = myValue->Lower();
     upper = myValue->Upper();
     for(i = lower; i<=upper; i++)

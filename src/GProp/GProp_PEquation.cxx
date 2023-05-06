@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp_Pln.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
@@ -27,19 +29,19 @@ GProp_PEquation::GProp_PEquation(const TColgp_Array1OfPnt& Pnts,
 {
   GProp_PGProps Pmat(Pnts);
   g = Pmat.CentreOfMass(); 
-  Standard_Real Xg,Yg,Zg;
+  Standard_Real Xg = NAN,Yg = NAN,Zg = NAN;
   g.Coord(Xg,Yg,Zg);
   GProp_PrincipalProps Pp = Pmat.PrincipalProperties();
   gp_Vec V1 = Pp.FirstAxisOfInertia();
-  Standard_Real Xv1,Yv1,Zv1;
+  Standard_Real Xv1 = NAN,Yv1 = NAN,Zv1 = NAN;
   V1.Coord(Xv1,Yv1,Zv1); 
   gp_Vec V2 = Pp.SecondAxisOfInertia(); 
-  Standard_Real Xv2,Yv2,Zv2;
+  Standard_Real Xv2 = NAN,Yv2 = NAN,Zv2 = NAN;
   V2.Coord(Xv2,Yv2,Zv2);
   gp_Vec V3 = Pp.ThirdAxisOfInertia(); 
-  Standard_Real Xv3,Yv3,Zv3;
+  Standard_Real Xv3 = NAN,Yv3 = NAN,Zv3 = NAN;
   V3.Coord(Xv3,Yv3,Zv3);
-  Standard_Real D,X,Y,Z;
+  Standard_Real D = NAN,X = NAN,Y = NAN,Z = NAN;
   Standard_Real Dmx1 = RealFirst();
   Standard_Real Dmn1 = RealLast();
   Standard_Real Dmx2 = RealFirst();

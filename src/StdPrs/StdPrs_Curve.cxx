@@ -17,6 +17,8 @@
 // Great zoom leads to non-coincidence of
 // a point and non-infinite lines passing through this point:
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Dir.hxx>
@@ -84,7 +86,7 @@ static void FindLimits(const Adaptor3d_Curve& aCurve,
 // purpose:
 //==================================================================
 static void DrawCurve (const Adaptor3d_Curve&        aCurve,
-                       const Handle(Graphic3d_Group) aGroup,
+                       const Handle(Graphic3d_Group)& aGroup,
                        const Standard_Integer        NbP,
                        const Standard_Real           U1,
                        const Standard_Real           U2,
@@ -153,7 +155,7 @@ static Standard_Boolean MatchCurve (
 		       const Standard_Real    U1,
 		       const Standard_Real    U2)
 {
-  Standard_Real retdist;
+  Standard_Real retdist = NAN;
   switch (aCurve.GetType())
   {
     case GeomAbs_Line:
@@ -219,7 +221,7 @@ void StdPrs_Curve::Add (const Handle (Prs3d_Presentation)& aPresentation,
 {
   aPresentation->CurrentGroup()->SetPrimitivesAspect(aDrawer->LineAspect()->Aspect());
 
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   FindLimits(aCurve, aDrawer->MaximalParameterValue(), V1, V2);
 
   const Standard_Integer NbPoints =  aDrawer->Discretisation();
@@ -247,7 +249,7 @@ void StdPrs_Curve::Add (const Handle (Prs3d_Presentation)& aPresentation,
                         TColgp_SequenceOfPnt&              Points,
                         const Standard_Boolean             drawCurve)
 {
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   FindLimits(aCurve, aDrawer->MaximalParameterValue(), V1, V2);
 
   const Standard_Integer NbPoints =  aDrawer->Discretisation();
@@ -315,7 +317,7 @@ Standard_Boolean StdPrs_Curve::Match
 		       const Adaptor3d_Curve&       aCurve,
 		       const Handle (Prs3d_Drawer)& aDrawer)
 {
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   FindLimits(aCurve, aDrawer->MaximalParameterValue(), V1, V2);
 
   const Standard_Integer NbPoints = aDrawer->Discretisation();
@@ -339,7 +341,7 @@ Standard_Boolean StdPrs_Curve::Match
 		       const Standard_Real    aLimit,
 		       const Standard_Integer NbPoints)
 {
-  Standard_Real V1, V2;
+  Standard_Real V1 = NAN, V2 = NAN;
   FindLimits(aCurve, aLimit, V1, V2);
 
   return MatchCurve(X,Y,Z,aDistance,aCurve,

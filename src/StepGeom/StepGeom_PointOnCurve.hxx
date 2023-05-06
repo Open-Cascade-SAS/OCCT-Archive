@@ -62,7 +62,7 @@ private:
 
 
   Handle(StepGeom_Curve) basisCurve;
-  Standard_Real pointParameter;
+  Standard_Real pointParameter{};
 
 
 };

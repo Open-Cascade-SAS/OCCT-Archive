@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BSplSLib.hxx>
 #include <Geom_BSplineSurface.hxx>
 #include <GeomLib_DenominatorMultiplier.hxx>
@@ -34,7 +36,7 @@ GeomLib_DenominatorMultiplier::GeomLib_DenominatorMultiplier
        (const Handle(Geom_BSplineSurface) & Surface,
         const TColStd_Array1OfReal &        KnotVector):mySurface(Surface),
                                                         myKnotFlatVector(1,KnotVector.Length())
-{Standard_Integer i;
+{Standard_Integer i = 0;
  for (i=1;i<=KnotVector.Length();i++)
    myKnotFlatVector.SetValue(i,KnotVector(i));
 }
@@ -47,8 +49,8 @@ GeomLib_DenominatorMultiplier::GeomLib_DenominatorMultiplier
 Standard_Real GeomLib_DenominatorMultiplier::Value(const Standard_Real  UParameter,
 						   const Standard_Real  VParameter)const
 
-{Standard_Real  Dumaxv,Duminv,dDduumaxv,dDduuminv,
-                Dv,Buv=0.0;
+{Standard_Real  Dumaxv = NAN,Duminv = NAN,dDduumaxv = NAN,dDduuminv = NAN,
+                Dv = NAN,Buv=0.0;
 // gp_Pnt         HermPnt;
  gp_Pnt         N;
  gp_Vec         Nu,Nv;
@@ -61,7 +63,7 @@ Standard_Real GeomLib_DenominatorMultiplier::Value(const Standard_Real  UParamet
  
  TColStd_Array1OfReal      surface_v_knots(1,mySurface->NbVKnots()) ;
  TColStd_Array1OfInteger   surface_v_mults(1,mySurface->NbVKnots()) ;
- Standard_Integer          udegree,vdegree;
+ Standard_Integer          udegree = 0,vdegree = 0;
 
  mySurface->UKnots(surface_u_knots) ;
  mySurface->UMultiplicities(surface_u_mults) ;
@@ -100,9 +102,9 @@ Standard_Real GeomLib_DenominatorMultiplier::Value(const Standard_Real  UParamet
 			 Dv);
 
  math_Matrix             BSplineBasisDeriv(1,2,1,4,0.0);
- Standard_Real           B1prim0,Bprelastprim1,
+ Standard_Real           B1prim0 = NAN,Bprelastprim1 = NAN,
                          lambda=(mySurface->Weight(1,1)/mySurface->Weight(mySurface->NbUPoles(),1));
- Standard_Integer        index,i;
+ Standard_Integer        index = 0,i = 0;
 
  BSplCLib::EvalBsplineBasis(1,
 			    4,

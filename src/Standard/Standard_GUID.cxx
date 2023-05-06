@@ -104,7 +104,7 @@ Standard_Boolean Standard_GUID::CheckGUIDFormat(const Standard_CString aGuid)
   if (aGuid == NULL) return Standard_False;
 
   if (strlen(aGuid) == Standard_GUID_SIZE) {
-    Standard_Integer i;
+    Standard_Integer i = 0;
 
     for (i = 0; i < 8 && result; i++) {
       if (!IsXDigit(aGuid[i])) {
@@ -244,32 +244,32 @@ Standard_GUID::Standard_GUID(const Standard_Integer a32b,
 	const Standard_Byte a8b3,
 	const Standard_Byte a8b4,
 	const Standard_Byte a8b5,
-	const Standard_Byte a8b6)
+	const Standard_Byte a8b6) : my32b(a32b), my16b1(a16b1), my16b2(a16b2), my16b3(a16b3), my8b1(a8b1), my8b2(a8b2), my8b3(a8b3), my8b4(a8b4), my8b5(a8b5), my8b6(a8b6)
 {
-	my32b = a32b;
-	my16b1 = a16b1;
-	 my16b2 = a16b2;
-	 my16b3 = a16b3;
-	 my8b1 = a8b1;
-	 my8b2 = a8b2;
-	 my8b3 = a8b3;
-	 my8b4 = a8b4;
-	 my8b5 = a8b5;
-	 my8b6 = a8b6;
+	
+	
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 }
 
-Standard_GUID::Standard_GUID(const Standard_GUID& aGuid)
+Standard_GUID::Standard_GUID(const Standard_GUID& aGuid) : my32b(aGuid.my32b), my16b1(aGuid.my16b1), my16b2(aGuid.my16b2), my16b3(aGuid.my16b3), my8b1(aGuid.my8b1), my8b2(aGuid.my8b2), my8b3(aGuid.my8b3), my8b4(aGuid.my8b4), my8b5(aGuid.my8b5), my8b6(aGuid.my8b6)
 {
-	 my32b  = aGuid.my32b;
-	 my16b1 = aGuid.my16b1;
-	 my16b2 = aGuid.my16b2;
-	 my16b3 = aGuid.my16b3;
-	 my8b1  = aGuid.my8b1;
-	 my8b2  = aGuid.my8b2;
-	 my8b3  = aGuid.my8b3;
-	 my8b4  = aGuid.my8b4;
-	 my8b5  = aGuid.my8b5;
-	 my8b6  = aGuid.my8b6;
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 }
 
 Standard_GUID::Standard_GUID (const Standard_UUID& theUUID)
@@ -328,7 +328,7 @@ void Standard_GUID::ToExtString(const Standard_PExtCharacter aStrGuid) const
 
 Standard_UUID Standard_GUID::ToUUID() const
 {
-  Standard_UUID result ;
+  Standard_UUID result{} ;
 
   result.Data1 = my32b ;
   result.Data2 = my16b1 ;

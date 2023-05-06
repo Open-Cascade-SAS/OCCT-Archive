@@ -26,11 +26,11 @@ IMPLEMENT_STANDARD_RTTIEXT(Express_ComplexType, Express_Type)
 
 Express_ComplexType::Express_ComplexType (const Standard_Integer theImin,
                                           const Standard_Integer theImax,
-                                          const Handle(Express_Type)& theType)
+                                          const Handle(Express_Type)& theType) : myMin(theImin), myMax(theImax), myType(theType)
 {
-  myMin = theImin;
-  myMax = theImax;
-  myType = theType;
+  
+  
+  
 }
 
 //=======================================================================

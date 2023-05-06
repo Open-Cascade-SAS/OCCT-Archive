@@ -32,6 +32,8 @@
 //:s1 abv 22.04.99: PRO7226 #489490: ensure fixing of degenerated edge
 //#9 smh 14.12.99 BUC60615 Using tolerance of verteces during checking degenerated edge.
 
+#include <math.h>
+
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <Bnd_Array1OfBox2d.hxx>
 #include <Bnd_Box2d.hxx>
@@ -89,10 +91,10 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeAnalysis_Wire,Standard_Transient)
 //function : ShapeAnalysis_Wire
 //purpose  : 
 //=======================================================================
-ShapeAnalysis_Wire::ShapeAnalysis_Wire()
+ShapeAnalysis_Wire::ShapeAnalysis_Wire() : myPrecision(::Precision::Confusion())
 {
   ClearStatuses();
-  myPrecision = ::Precision::Confusion();
+  
 }
 
 //=======================================================================
@@ -299,7 +301,7 @@ void ShapeAnalysis_Wire::SetSurface (const Handle(Geom_Surface)& surface,
   myStatusEdgeCurves = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
   if ( ! IsReady() ) return Standard_False;
   
-  Standard_Integer i, nb = myWire->NbEdges();
+  Standard_Integer i = 0, nb = myWire->NbEdges();
   ShapeAnalysis_Edge SAE;
   
   for (i = 1; i <= nb; i++) {
@@ -374,7 +376,7 @@ void ShapeAnalysis_Wire::SetSurface (const Handle(Geom_Surface)& surface,
 {
   myStatusSelfIntersection = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
   if (!IsReady()) return Standard_False;
-  Standard_Integer i, nb = myWire->NbEdges();
+  Standard_Integer i = 0, nb = myWire->NbEdges();
   for (i = 1; i <= nb; i++) {
     CheckSelfIntersectingEdge (i);
     if (LastCheckStatus (ShapeExtend_DONE))
@@ -393,7 +395,7 @@ void ShapeAnalysis_Wire::SetSurface (const Handle(Geom_Surface)& surface,
   TopLoc_Location L;
   const Handle(Geom_Surface)& S = BRep_Tool::Surface(Face(), L);
   Handle(Geom2d_Curve) c2d;
-  Standard_Real cf,cl;
+  Standard_Real cf = NAN,cl = NAN;
   ShapeAnalysis_Edge sae;
   Handle(ShapeExtend_WireData) sbwd = WireData();
   for(i = 1; i <= nb; i++){
@@ -476,7 +478,7 @@ void ShapeAnalysis_Wire::SetSurface (const Handle(Geom_Surface)& surface,
   myStatusGaps3d = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
   if (!IsLoaded() || NbEdges() < 1) return Standard_False; //gka IsLoaded
   
-  Standard_Real dist, maxdist = 0.;
+  Standard_Real dist = NAN, maxdist = 0.;
   
   for (Standard_Integer i = 1; i <= NbEdges(); i++) {
     CheckGap3d(i);
@@ -501,7 +503,7 @@ void ShapeAnalysis_Wire::SetSurface (const Handle(Geom_Surface)& surface,
   myStatusGaps2d = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
   if (!IsReady() || NbEdges() < 1) return Standard_False;
   
-  Standard_Real dist, maxdist = 0.;
+  Standard_Real dist = NAN, maxdist = 0.;
 
   for (Standard_Integer i = 1; i <= NbEdges(); i++) {
     CheckGap2d(i);
@@ -526,7 +528,7 @@ void ShapeAnalysis_Wire::SetSurface (const Handle(Geom_Surface)& surface,
   myStatusCurveGaps = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
   if (!IsReady() || NbEdges() < 1) return Standard_False;
   
-  Standard_Real dist, maxdist = 0.;
+  Standard_Real dist = NAN, maxdist = 0.;
 
   for (Standard_Integer i = 1; i <= NbEdges(); i++) {
     CheckCurveGap(i);
@@ -583,7 +585,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckOrder(ShapeAnalysis_WireOrder &sawo,
     }
     if (!theMode3D || theModeBoth)
     {
-      Standard_Real f, l;
+      Standard_Real f = NAN, l = NAN;
       Handle(Geom2d_Curve) c2d;
       TopoDS_Shape tmpF = myFace.Oriented (TopAbs_FORWARD);
       if (!EA.PCurve(E, TopoDS::Face (tmpF), c2d, f, l))
@@ -731,7 +733,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSmall (const Standard_Integer num,
   // Si pas de C3D, on essaie la C2D ...
 
   gp_Pnt Pm;
-  Standard_Real cf,cl;
+  Standard_Real cf = NAN,cl = NAN;
   Handle(Geom_Curve) c3d;    
   if ( sae.Curve3d (E,c3d,cf,cl,Standard_False) ) Pm = c3d->Value ( (cf+cl)/2. );
   else {
@@ -794,7 +796,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSmall (const Standard_Integer num,
   Standard_Boolean ShapeAnalysis_Wire::CheckSeam(const Standard_Integer num) 
 {
   Handle(Geom2d_Curve) C1, C2;
-  Standard_Real cf, cl;
+  Standard_Real cf = NAN, cl = NAN;
   return CheckSeam (num, C1, C2, cf, cl);
 }
 
@@ -823,7 +825,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
     // skl 30.12.2004 for OCC7630 - we have to check pcurve
     if( sae.HasPCurve(E1,Face()) && sae.HasPCurve(E3,Face()) ) {
       Handle(Geom2d_Curve) c2d;
-      Standard_Real fp,lp;
+      Standard_Real fp = NAN,lp = NAN;
       sae.PCurve ( E2, myFace, c2d, fp, lp, Standard_True );
       gp_Pnt2d p21 = c2d->Value(fp);
       gp_Pnt2d p22 = c2d->Value(lp);
@@ -863,7 +865,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
   gp_Pnt p0 = BRep_Tool::Pnt (V0);
   gp_Pnt p1 = BRep_Tool::Pnt (V1);
   gp_Pnt p2 = BRep_Tool::Pnt (V2);
-  Standard_Real par1, par2;
+  Standard_Real par1 = NAN, par2 = NAN;
   Standard_Boolean lack = Standard_False;
   Standard_Boolean dgnr = Standard_False;
   //pdn 12.03.99 minimal value processing first
@@ -877,7 +879,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
   if (p1.Distance(p2) <= precFirst) { // edge DGNR
     dgnr = mySurf->DegeneratedValues ( p1, precVtx, p2d1, p2d2, par1, par2, forward ); //smh#9
     if ( dgnr ) { // abv 24 Feb 00: trj3_as1-ac-214.stp #6065: avoid making closed edge degenerated
-      Standard_Real a, b;
+      Standard_Real a = NAN, b = NAN;
       Handle(Geom_Curve) C3d = BRep_Tool::Curve ( E2, a, b );
       if ( ! C3d.IsNull() ) {
 	gp_Pnt p = C3d->Value ( 0.5 * ( a + b ) );
@@ -899,9 +901,9 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
     if ( p0.Distance ( p1 ) <= precFin ) {// ou DGNR manquante ?
       //rln S4135 singularity with precision = 2 * prec, but distance <= prec
       //lack = mySurf->DegeneratedValues ( p1, prec, p2d1, p2d2, par1, par2, forward);
-      Standard_Real tmpPreci;
+      Standard_Real tmpPreci = NAN;
       gp_Pnt tmpP3d;
-      Standard_Boolean tmpUIsoDeg;
+      Standard_Boolean tmpUIsoDeg = 0;
       //#77 rln S4135: using singularity which has minimum gap between singular point and input 3D point
       Standard_Integer indMin = -1;
       Standard_Real gapMin2 = RealLast();
@@ -940,7 +942,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
   // make degenerative pcurve parametrized exactly from end of pcurve of the 
   // previous edge to the start of the next one
   if ( lack || n1 != n2 ) { //:i8 abv 18 Sep 98: ProSTEP TR9 r0501-ug.stp #182180: single degedge is a wire at apex of a cone
-    Standard_Real a, b;
+    Standard_Real a = NAN, b = NAN;
     Handle(Geom2d_Curve) c2d;
     if ( sae.PCurve ( E1, myFace, c2d, a, b, Standard_True ) ) {
       p2d1 = c2d->Value ( b );
@@ -1012,7 +1014,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
   Standard_Integer n1 = ( n2  >1 ? n2-1 : NbEdges() );
   TopoDS_Edge E1 = myWire->Edge(n1);
   TopoDS_Edge E2 = myWire->Edge(n2);
-  Standard_Real uf1,ul1,uf2,ul2;
+  Standard_Real uf1 = NAN,ul1 = NAN,uf2 = NAN,ul2 = NAN;
   Handle(Geom_Curve) C1,C2;
   ShapeAnalysis_Edge SAE;
   if (!SAE.Curve3d (E1,C1,uf1,ul1) || !SAE.Curve3d (E2,C2,uf2,ul2)) {
@@ -1041,7 +1043,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
   Standard_Integer n1 = ( n2  >1 ? n2-1 : NbEdges() );
   TopoDS_Edge E1 = myWire->Edge(n1);
   TopoDS_Edge E2 = myWire->Edge(n2);
-  Standard_Real uf1,ul1,uf2,ul2;
+  Standard_Real uf1 = NAN,ul1 = NAN,uf2 = NAN,ul2 = NAN;
   Handle(Geom2d_Curve) C1,C2;
   ShapeAnalysis_Edge SAE;
   if (!SAE.PCurve (E1,myFace,C1,uf1,ul1) || !SAE.PCurve (E2,myFace,C2,uf2,ul2)) {
@@ -1068,7 +1070,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
   if ( !IsLoaded() || NbEdges() < 1 ) return Standard_False;
   Standard_Integer n = ( num >0 ? num  : NbEdges() );
   TopoDS_Edge E = myWire->Edge(n);
-  Standard_Real cuf,cul,pcuf,pcul;
+  Standard_Real cuf = NAN,cul = NAN,pcuf = NAN,pcul = NAN;
   Handle(Geom_Curve) c;
   ShapeAnalysis_Edge SAE;
   if (!SAE.Curve3d (E,c,cuf,cul,Standard_False)) {
@@ -1085,7 +1087,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckDegenerated (const Standard_Integer nu
   Adaptor3d_CurveOnSurface ACS(AC,AS);
   gp_Pnt cpnt, pcpnt;
   Standard_Integer nbp = 45;
-  Standard_Real dist, maxdist=0.;
+  Standard_Real dist = NAN, maxdist=0.;
   for (Standard_Integer i=0; i<nbp; i++) {
     cpnt = c->Value(cuf + i*(cul-cuf)/(nbp-1));
     pcpnt = ACS.Value(pcuf + i*(pcul-pcuf)/(nbp-1));
@@ -1112,7 +1114,7 @@ static gp_Pnt GetPointOnEdge ( const TopoDS_Edge &edge,
 			       const Standard_Real param )
 {
   if ( BRep_Tool::SameParameter ( edge ) ) {
-    Standard_Real f,l;
+    Standard_Real f = NAN,l = NAN;
     TopLoc_Location L;
     const Handle(Geom_Curve) ConS = BRep_Tool::Curve ( edge, L, f, l );
     if ( ! ConS.IsNull() )
@@ -1139,7 +1141,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSelfIntersectingEdge (const Standard_I
   TopoDS_Edge edge = WireData()->Edge ( num >0 ? num : NbEdges() );
   ShapeAnalysis_Edge sae;
 
-  Standard_Real a, b;
+  Standard_Real a = NAN, b = NAN;
   Handle(Geom2d_Curve) Crv;
   if ( ! sae.PCurve ( edge, myFace, Crv, a, b, Standard_False ) ) {
     myStatus |= ShapeExtend::EncodeStatus (ShapeExtend_FAIL1);
@@ -1237,7 +1239,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckIntersectingEdges (const Standard_Inte
   TopoDS_Vertex Vp = sae.FirstVertex ( edge1 );
   TopoDS_Vertex Vn = sae.LastVertex ( edge2 );
 
-  Standard_Real a1, b1, a2, b2;
+  Standard_Real a1 = NAN, b1 = NAN, a2 = NAN, b2 = NAN;
   Handle(Geom2d_Curve) Crv1, Crv2;
   if ( ! sae.PCurve ( edge1, myFace, Crv1, a1, b1, Standard_False ) ) {
     myStatus |= ShapeExtend::EncodeStatus (ShapeExtend_FAIL3);
@@ -1312,7 +1314,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckIntersectingEdges (const Standard_Inte
 
     if ( Tr1.PositionOnCurve() != IntRes2d_Middle &&
 	 Tr2.PositionOnCurve() != IntRes2d_Middle ) continue;
-    Standard_Real param1, param2;
+    Standard_Real param1 = NAN, param2 = NAN;
     param1 = ( num ==1 ? IP.ParamOnSecond() : IP.ParamOnFirst() ); 
     param2 = ( num ==1 ? IP.ParamOnFirst()  : IP.ParamOnSecond() );
     
@@ -1390,7 +1392,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckIntersectingEdges(const Standard_Integ
   TopoDS_Edge edge2 = sbwd->Edge ( n2 );
   
   ShapeAnalysis_Edge sae;
-  Standard_Real a1, b1, a2, b2;
+  Standard_Real a1 = NAN, b1 = NAN, a2 = NAN, b2 = NAN;
   Handle(Geom2d_Curve) Crv1, Crv2;
   if(!sae.PCurve ( edge1, myFace, Crv1, a1, b1, Standard_False )){
     myStatus |= ShapeExtend::EncodeStatus (ShapeExtend_FAIL3);
@@ -1528,7 +1530,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckLacking (const Standard_Integer num,
     return Standard_False;
   }
 
-  Standard_Real a, b;
+  Standard_Real a = NAN, b = NAN;
   gp_Vec2d v1, v2, v12;
   Handle(Geom2d_Curve) c2d;
   if ( ! sae.PCurve ( E1, myFace, c2d, a, b, Standard_True ) ) {
@@ -1662,7 +1664,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckNotchedEdges(const Standard_Integer nu
     return Standard_False;
   }
 
-  Standard_Real a1, b1, a2, b2;
+  Standard_Real a1 = NAN, b1 = NAN, a2 = NAN, b2 = NAN;
   gp_Pnt2d p2d1, p2d2;
   gp_Vec2d v1, v2;
   Handle(Geom2d_Curve) c2d1, c2d2;
@@ -1704,7 +1706,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckNotchedEdges(const Standard_Integer nu
   Adaptor3d_CurveOnSurface Ad2(AC2d2,AdS2);
   
   Adaptor3d_CurveOnSurface longAD, shortAD;
-  Standard_Real lenP, firstP;
+  Standard_Real lenP = NAN, firstP = NAN;
   
   ShapeAnalysis_Curve sac;
   
@@ -1760,7 +1762,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSmallArea(const TopoDS_Wire& theWire)
     return Standard_False;
   myStatus = ShapeExtend::EncodeStatus (ShapeExtend_OK);
 
-  Standard_Real aF, aL, aLength(0.0);
+  Standard_Real aF = NAN, aL = NAN, aLength(0.0);
   const Standard_Real anInv = 1.0 / static_cast<Standard_Real>(aNbControl - 1);
   gp_XY aCenter2d(0., 0.);
 
@@ -1854,7 +1856,7 @@ Standard_Boolean ShapeAnalysis_Wire::CheckSmallArea(const TopoDS_Wire& theWire)
 
  Standard_Boolean ShapeAnalysis_Wire::CheckShapeConnect(const TopoDS_Shape& shape,const Standard_Real prec) 
 {
-  Standard_Real tailhead, tailtail, headhead, headtail;
+  Standard_Real tailhead = NAN, tailtail = NAN, headhead = NAN, headtail = NAN;
   return CheckShapeConnect (tailhead, tailtail, headtail, headhead, shape, prec);
 }
 

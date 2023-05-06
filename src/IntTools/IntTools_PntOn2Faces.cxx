@@ -32,10 +32,10 @@ IntTools_PntOn2Faces::IntTools_PntOn2Faces()
   IntTools_PntOn2Faces::IntTools_PntOn2Faces(const IntTools_PntOnFace& aP1,
 					     const IntTools_PntOnFace& aP2)
 :
-  myIsValid(Standard_False)
+  myIsValid(Standard_False), myPnt1(aP1), myPnt2(aP2)
 {
-  myPnt1=aP1;
-  myPnt2=aP2;
+  
+  
 }
 //=======================================================================
 //function : SetP1

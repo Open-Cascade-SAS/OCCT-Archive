@@ -29,6 +29,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <Geom2d_BSplineCurve.hxx>
 #include <Geom2d_Geometry.hxx>
@@ -123,7 +125,7 @@ Geom2d_BSplineCurve::Geom2d_BSplineCurve
  rational(Standard_False),
  periodic(Periodic),
  deg(Degree),
- maxderivinvok(Standard_False)
+ poles(new TColgp_HArray1OfPnt2d(1,Poles.Length())), knots(new TColStd_HArray1OfReal(1,Knots.Length())), mults(new TColStd_HArray1OfInteger(1,Mults.Length())), maxderivinvok(Standard_False)
 {
   // check
   
@@ -135,13 +137,13 @@ Geom2d_BSplineCurve::Geom2d_BSplineCurve
 
   // copy arrays
 
-  poles =  new TColgp_HArray1OfPnt2d(1,Poles.Length());
+  
   poles->ChangeArray1() = Poles;
 
-  knots = new TColStd_HArray1OfReal(1,Knots.Length());
+  
   knots->ChangeArray1() = Knots;
 
-  mults = new TColStd_HArray1OfInteger(1,Mults.Length());
+  
   mults->ChangeArray1() = Mults;
 
   UpdateKnots();
@@ -177,7 +179,7 @@ Geom2d_BSplineCurve::Geom2d_BSplineCurve
   if (Weights.Length() != Poles.Length())
     throw Standard_ConstructionError("Geom2d_BSplineCurve: Weights and Poles array size mismatch");
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = Weights.Lower(); i <= Weights.Upper(); i++) {
     if (Weights(i) <= gp::Resolution()) {
       throw Standard_ConstructionError("Geom2d_BSplineCurve: Weights values too small");
@@ -295,7 +297,7 @@ void Geom2d_BSplineCurve::IncreaseMultiplicity
   Handle(TColStd_HArray1OfReal) tk = knots;
   TColStd_Array1OfReal k((knots->Array1())(I1),I1,I2);
   TColStd_Array1OfInteger m(I1,I2);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = I1; i <= I2; i++)
     m(i) = M - mults->Value(i);
   InsertKnots(k,m,Epsilon(1.),Standard_True);
@@ -345,7 +347,7 @@ void  Geom2d_BSplineCurve::InsertKnots(const TColStd_Array1OfReal& Knots,
 				       const Standard_Boolean Add)
 {
   // Check and compute new sizes
-  Standard_Integer nbpoles,nbknots;
+  Standard_Integer nbpoles = 0,nbknots = 0;
 
   if (!BSplCLib::PrepareInsertKnots(deg,periodic,
 				    knots->Array1(),mults->Array1(),
@@ -470,7 +472,7 @@ void Geom2d_BSplineCurve::InsertPoleAfter
 
   TColStd_Array1OfReal& newknots = nknots->ChangeArray1();
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i < nbknots; i++) {
     newknots (i) = cknots(i);
   }
@@ -563,7 +565,7 @@ void Geom2d_BSplineCurve::RemovePole
   if (knotSet == GeomAbs_NonUniform || knotSet == GeomAbs_PiecewiseBezier) 
     throw Standard_ConstructionError("BSpline curve: RemovePole: bad knotSet type");
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Handle(TColStd_HArray1OfReal) nknots =
     new TColStd_HArray1OfReal(1,knots->Length()-1);
   TColStd_Array1OfReal& newknots = nknots->ChangeArray1();
@@ -616,7 +618,7 @@ void Geom2d_BSplineCurve::Reverse ()
 { 
   BSplCLib::Reverse(knots->ChangeArray1());
   BSplCLib::Reverse(mults->ChangeArray1());
-  Standard_Integer last;
+  Standard_Integer last = 0;
   if (periodic)
     last = flatknots->Upper() - deg - 1;
   else
@@ -650,9 +652,9 @@ void Geom2d_BSplineCurve::Segment(const Standard_Real aU1,
   //
   Standard_Real AbsUMax = Max(Abs(FirstParameter()),Abs(LastParameter()));
   Standard_Real Eps = Max (Epsilon(AbsUMax), theTolerance);
-  Standard_Real NewU1, NewU2;
-  Standard_Real U, DU=0;
-  Standard_Integer i, k, index;
+  Standard_Real NewU1 = NAN, NewU2 = NAN;
+  Standard_Real U = NAN, DU=0;
+  Standard_Integer i = 0, k = 0, index = 0;
   //
   //f
   Standard_Real U1 = aU1, U2 = aU2;
@@ -891,7 +893,7 @@ void Geom2d_BSplineCurve::SetOrigin(const Standard_Integer Index)
 {
   if (!periodic)
     throw Standard_NoSuchObject("Geom2d_BSplineCurve::SetOrigin");
-  Standard_Integer i,k;
+  Standard_Integer i = 0,k = 0;
   Standard_Integer first = FirstUKnotIndex();
   Standard_Integer last  = LastUKnotIndex();
 
@@ -978,7 +980,7 @@ void Geom2d_BSplineCurve::SetOrigin(const Standard_Integer Index)
 void Geom2d_BSplineCurve::SetNotPeriodic () 
 { 
   if (periodic) {
-    Standard_Integer NbKnots, NbPoles;
+    Standard_Integer NbKnots = 0, NbPoles = 0;
     BSplCLib::PrepareUnperiodize( deg, mults->Array1(),NbKnots,NbPoles);
     
     Handle(TColgp_HArray1OfPnt2d) npoles 
@@ -1117,7 +1119,7 @@ MovePointAndTangent(const Standard_Real    U,
 		    const Standard_Integer EndingCondition,
 		    Standard_Integer&      ErrorStatus) 
 {
-  Standard_Integer ii ;
+  Standard_Integer ii = 0 ;
   if (IsPeriodic()) {
     //
     // for the time being do not deal with periodic curves
@@ -1204,7 +1206,7 @@ void Geom2d_BSplineCurve::UpdateKnots()
 
 void Geom2d_BSplineCurve::PeriodicNormalization(Standard_Real&  Parameter) const 
 {
-  Standard_Real Period ;
+  Standard_Real Period = NAN ;
 
   if (periodic) {
     Period = flatknots->Value(flatknots->Upper() - deg) - flatknots->Value (deg + 1) ;

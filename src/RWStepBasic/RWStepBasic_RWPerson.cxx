@@ -70,7 +70,7 @@ void RWStepBasic_RWPerson::ReadStep
 	Standard_Boolean hasAmiddleNames = Standard_True;
 	if (data->IsParamDefined(num,4)) {
 	  Handle(TCollection_HAsciiString) aMiddleNamesItem;
-	  Standard_Integer nsub4;
+	  Standard_Integer nsub4 = 0;
 	  if (data->ReadSubList (num,4,"middle_names",ach,nsub4)) {
 	    Standard_Integer nb4 = data->NbParams(nsub4);
 	    aMiddleNames = new Interface_HArray1OfHAsciiString (1, nb4);
@@ -92,7 +92,7 @@ void RWStepBasic_RWPerson::ReadStep
 	Standard_Boolean hasAprefixTitles = Standard_True;
 	if (data->IsParamDefined(num,5)) {
 	  Handle(TCollection_HAsciiString) aPrefixTitlesItem;
-	  Standard_Integer nsub5;
+	  Standard_Integer nsub5 = 0;
 	  if (data->ReadSubList (num,5,"prefix_titles",ach,nsub5)) {
 	    Standard_Integer nb5 = data->NbParams(nsub5);
 	    aPrefixTitles = new Interface_HArray1OfHAsciiString (1, nb5);
@@ -114,7 +114,7 @@ void RWStepBasic_RWPerson::ReadStep
 	Standard_Boolean hasAsuffixTitles = Standard_True;
 	if (data->IsParamDefined(num,6)) {
 	  Handle(TCollection_HAsciiString) aSuffixTitlesItem;
-	  Standard_Integer nsub6;
+	  Standard_Integer nsub6 = 0;
 	  if (data->ReadSubList (num,6,"suffix_titles",ach,nsub6)) {
 	    Standard_Integer nb6 = data->NbParams(nsub6);
 	    aSuffixTitles = new Interface_HArray1OfHAsciiString (1, nb6);

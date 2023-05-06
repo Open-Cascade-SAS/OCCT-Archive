@@ -143,7 +143,7 @@ private:
   Handle(HLRAlgo_WiresBlock) myWires;
   HLRBRep_Surface myGeometry;
   Standard_Real mySize;
-  Standard_ShortReal myTolerance;
+  Standard_ShortReal myTolerance{};
 
 };
 

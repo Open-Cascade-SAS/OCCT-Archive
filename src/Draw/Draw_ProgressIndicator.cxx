@@ -92,7 +92,7 @@ void Draw_ProgressIndicator::Show (const Message_ProgressScope& theScope, const 
   {
     if (!myStartTime)
     {
-      time_t aTimeT;
+      time_t aTimeT = 0;
       time(&aTimeT);
       myStartTime = (Standard_Size)aTimeT;
     }
@@ -144,7 +144,7 @@ void Draw_ProgressIndicator::Show (const Message_ProgressScope& theScope, const 
   {
     // In addition, write elapsed/estimated/remaining time
     if ( GetPosition() > 0.01 ) { 
-      time_t aTimeT;
+      time_t aTimeT = 0;
       time ( &aTimeT );
       Standard_Size aTime = (Standard_Size)aTimeT;
       aText << "\nElapsed/estimated time: " << (long)(aTime - myStartTime) <<

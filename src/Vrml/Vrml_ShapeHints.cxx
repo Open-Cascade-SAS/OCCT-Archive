@@ -17,12 +17,12 @@
 Vrml_ShapeHints::Vrml_ShapeHints(const Vrml_VertexOrdering aVertexOrdering, 
 				  const Vrml_ShapeType aShapeType, 
 				  const Vrml_FaceType aFaceType, 
-				  const Standard_Real aAngle)
+				  const Standard_Real aAngle) : myVertexOrdering(aVertexOrdering), myShapeType(aShapeType), myFaceType(aFaceType), myAngle(aAngle)
 {
- myVertexOrdering = aVertexOrdering;
- myShapeType = aShapeType;
- myFaceType = aFaceType;
- myAngle = aAngle;
+ 
+ 
+ 
+ 
 }
 
 void Vrml_ShapeHints::SetVertexOrdering(const Vrml_VertexOrdering aVertexOrdering)

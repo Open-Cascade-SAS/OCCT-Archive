@@ -260,11 +260,11 @@ Standard_Integer XCAFDoc_AssemblyGraph::addNode(const TDF_Label&       theLabel,
 // =======================================================================
 
 XCAFDoc_AssemblyGraph::Iterator::Iterator(const Handle(XCAFDoc_AssemblyGraph)& theGraph,
-                                          const Standard_Integer               theNode)
+                                          const Standard_Integer               theNode) : myGraph(theGraph), myCurrentIndex(theNode)
 {
   Standard_NullObject_Raise_if(theGraph.IsNull(), "Null assembly graph!");
   Standard_NullObject_Raise_if(theNode < 1, "Node ID must be positive one-based integer!");
 
-  myGraph = theGraph;
-  myCurrentIndex = theNode;
+  
+  
 }

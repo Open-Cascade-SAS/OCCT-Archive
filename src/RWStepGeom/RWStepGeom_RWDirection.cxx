@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_ShareTool.hxx>
 #include <RWStepGeom_RWDirection.hxx>
@@ -43,8 +45,8 @@ void RWStepGeom_RWDirection::ReadStep
 	// --- own field : directionRatios ---
 
 	Handle(TColStd_HArray1OfReal) aDirectionRatios;
-	Standard_Real aDirectionRatiosItem;
-	Standard_Integer nsub2;
+	Standard_Real aDirectionRatiosItem = NAN;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"direction_ratios",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aDirectionRatios = new TColStd_HArray1OfReal (1, nb2);
@@ -87,7 +89,7 @@ void  RWStepGeom_RWDirection::Check
    Handle(Interface_Check)& ach) const
 {
   Standard_Integer nbVal = ent->NbDirectionRatios();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for(i=1; i<=nbVal; i++) {
     if(Abs(ent->DirectionRatiosValue(i)) >= RealEpsilon())  break;
   }

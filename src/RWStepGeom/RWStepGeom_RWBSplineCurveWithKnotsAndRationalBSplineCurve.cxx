@@ -13,6 +13,8 @@
 
 // sln 04.10.2001. BUC61003. Correction of looking for items of complex entity
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <Interface_ShareTool.hxx>
@@ -68,7 +70,7 @@ void RWStepGeom_RWBSplineCurveWithKnotsAndRationalBSplineCurve::ReadStep
 	// --- field : degree ---
 
 
-	Standard_Integer aDegree;
+	Standard_Integer aDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadInteger (num,1,"degree",ach,aDegree);
 	// --- field : controlPointsList ---
@@ -76,7 +78,7 @@ void RWStepGeom_RWBSplineCurveWithKnotsAndRationalBSplineCurve::ReadStep
 
 	Handle(StepGeom_HArray1OfCartesianPoint) aControlPointsList;
 	Handle(StepGeom_CartesianPoint) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"control_points_list",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aControlPointsList = new StepGeom_HArray1OfCartesianPoint (1, nb2);
@@ -128,8 +130,8 @@ void RWStepGeom_RWBSplineCurveWithKnotsAndRationalBSplineCurve::ReadStep
 	// --- field : knotMultiplicities ---
 
 	Handle(TColStd_HArray1OfInteger) aKnotMultiplicities;
-	Standard_Integer aKnotMultiplicitiesItem;
-	Standard_Integer nsub6;
+	Standard_Integer aKnotMultiplicitiesItem = 0;
+	Standard_Integer nsub6 = 0;
 	if (data->ReadSubList (num,1,"knot_multiplicities",ach,nsub6)) {
 	  Standard_Integer nb6 = data->NbParams(nsub6);
 	  aKnotMultiplicities = new TColStd_HArray1OfInteger (1, nb6);
@@ -143,8 +145,8 @@ void RWStepGeom_RWBSplineCurveWithKnotsAndRationalBSplineCurve::ReadStep
 	// --- field : knots ---
 
 	Handle(TColStd_HArray1OfReal) aKnots;
-	Standard_Real aKnotsItem;
-	Standard_Integer nsub7;
+	Standard_Real aKnotsItem = NAN;
+	Standard_Integer nsub7 = 0;
 	if (data->ReadSubList (num,2,"knots",ach,nsub7)) {
 	  Standard_Integer nb7 = data->NbParams(nsub7);
 	  aKnots = new TColStd_HArray1OfReal (1, nb7);
@@ -190,8 +192,8 @@ void RWStepGeom_RWBSplineCurveWithKnotsAndRationalBSplineCurve::ReadStep
 	// --- field : weightsData ---
 
 	Handle(TColStd_HArray1OfReal) aWeightsData;
-	Standard_Real aWeightsDataItem;
-	Standard_Integer nsub9;
+	Standard_Real aWeightsDataItem = NAN;
+	Standard_Integer nsub9 = 0;
 	if (data->ReadSubList (num,1,"weights_data",ach,nsub9)) {
 	  Standard_Integer nb9 = data->NbParams(nsub9);
 	  aWeightsData = new TColStd_HArray1OfReal (1, nb9);
@@ -333,7 +335,7 @@ void RWStepGeom_RWBSplineCurveWithKnotsAndRationalBSplineCurve::Check
    const Interface_ShareTool& aShto,
    Handle(Interface_Check)& ach) const
 {
-  Handle(StepGeom_BSplineCurveWithKnotsAndRationalBSplineCurve) aRationalBSC = ent;
+  const Handle(StepGeom_BSplineCurveWithKnotsAndRationalBSplineCurve)& aRationalBSC = ent;
   Handle(StepGeom_BSplineCurveWithKnots) aBSCWK =
     aRationalBSC->BSplineCurveWithKnots();
   RWStepGeom_RWBSplineCurveWithKnots t1;

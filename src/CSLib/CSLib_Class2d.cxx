@@ -16,6 +16,8 @@
 
 //#define No_Standard_OutOfRange
 
+#include <math.h>
+
 #include <CSLib_Class2d.hxx>
 #include <gp_Pnt2d.hxx>
 
@@ -51,8 +53,8 @@ void CSLib_Class2d::Init(const TCol_Containers2d& TP2d,
   //
   else
   {
-    Standard_Integer i, iLower;
-    Standard_Real du, dv, aPrc;
+    Standard_Integer i = 0, iLower = 0;
+    Standard_Real du = NAN, dv = NAN, aPrc = NAN;
     //
     aPrc = 1.e-10;
     N = TP2d.Length();
@@ -126,7 +128,7 @@ Standard_Integer CSLib_Class2d::SiDans(const gp_Pnt2d& P) const
     return 0;
   }
   //
-  Standard_Real x,y, aTolu, aTolv;
+  Standard_Real x = NAN,y = NAN, aTolu = NAN, aTolv = NAN;
   //
   x = P.X(); y = P.Y();
   aTolu=Tolu*(Umax-Umin);
@@ -168,7 +170,7 @@ Standard_Integer CSLib_Class2d::SiDans_OnMode(const gp_Pnt2d& P,
     return 0;
   }
   //
-  Standard_Real x,y, aTolu, aTolv;
+  Standard_Real x = NAN,y = NAN, aTolu = NAN, aTolv = NAN;
   //
   x = P.X(); y = P.Y();
   aTolu=Tol; 
@@ -200,8 +202,8 @@ Standard_Integer CSLib_Class2d::SiDans_OnMode(const gp_Pnt2d& P,
 Standard_Integer CSLib_Class2d::InternalSiDans(const Standard_Real Px,
 					       const Standard_Real Py) const
 { 
-  Standard_Integer nbc, i, ip1, SH, NH;
-  Standard_Real  x, y, nx, ny;
+  Standard_Integer nbc = 0, i = 0, ip1 = 0, SH = 0, NH = 0;
+  Standard_Real  x = NAN, y = NAN, nx = NAN, ny = NAN;
   //
   nbc = 0;
   i   = 0;
@@ -240,9 +242,9 @@ Standard_Integer CSLib_Class2d::InternalSiDans(const Standard_Real Px,
 Standard_Integer CSLib_Class2d::InternalSiDansOuOn(const Standard_Real Px,
 						   const Standard_Real Py) const 
 { 
-  Standard_Integer nbc, i, ip1, SH, NH, iRet;
-  Standard_Real x, y, nx, ny, aX;
-  Standard_Real aYmin;
+  Standard_Integer nbc = 0, i = 0, ip1 = 0, SH = 0, NH = 0, iRet = 0;
+  Standard_Real x = NAN, y = NAN, nx = NAN, ny = NAN, aX = NAN;
+  Standard_Real aYmin = NAN;
   //
   nbc = 0;
   i   = 0;

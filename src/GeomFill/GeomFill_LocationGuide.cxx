@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomFill_LocationGuide.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -160,19 +162,19 @@ static void InGoodPeriod(const Standard_Real Prec,
 //==================================================================
  GeomFill_LocationGuide::
  GeomFill_LocationGuide (const Handle(GeomFill_TrihedronWithGuide)& Triedre)
-                        : TolRes(1,3), Inf(1,3,0.), Sup(1,3,0.), 
+                        : myLaw(Triedre), myNbPts(21), TolRes(1,3), Inf(1,3,0.), Sup(1,3,0.), 
 			  X(1,3), R(1,3), myStatus(GeomFill_PipeOk)
 {
   TolRes.Init(1.e-6);
-  myLaw = Triedre; // loi de triedre
+  // loi de triedre
   mySec.Nullify(); // loi de section
   myCurve.Nullify();
   myFirstS = myLastS = -505e77;
 
-  myNbPts = 21;  // nb points pour les calculs
+   // nb points pour les calculs
   myGuide = myLaw->Guide();  // courbe guide
   if (!myGuide->IsPeriodic()) {
-    Standard_Real f, l, delta;
+    Standard_Real f = NAN, l = NAN, delta = NAN;
     f = myGuide->FirstParameter();
     l = myGuide->LastParameter();
     delta = (l-f)/100;
@@ -218,10 +220,10 @@ static void InGoodPeriod(const Standard_Real Prec,
 //  gp_Pnt P,P1,P2;
   gp_Pnt P;
   gp_Vec T,N,B;
-  Standard_Integer ii, Deg;
-  Standard_Boolean isconst, israt=Standard_False;
-  Standard_Real t, v,w, OldAngle=0, Angle, DeltaG, Diff;
-  Standard_Real CurAngle =  PrecAngle, a1/*, a2*/;
+  Standard_Integer ii = 0, Deg = 0;
+  Standard_Boolean isconst = 0, israt=Standard_False;
+  Standard_Real t = NAN, v = NAN,w = NAN, OldAngle=0, Angle = NAN, DeltaG = NAN, Diff = NAN;
+  Standard_Real CurAngle =  PrecAngle, a1 = NAN/*, a2*/;
   gp_Pnt2d p1,p2;
   Handle(Geom_SurfaceOfRevolution) Revol; // surface de revolution
   Handle(GeomAdaptor_Surface) Pl; // = Revol
@@ -235,13 +237,13 @@ static void InGoodPeriod(const Standard_Real Prec,
   Standard_Real U=0, UPeriod=0;  
   Standard_Real f = myCurve->FirstParameter();
   Standard_Real l = myCurve->LastParameter();
-  Standard_Boolean Ok, uperiodic =  mySec->IsUPeriodic();
+  Standard_Boolean Ok = 0, uperiodic =  mySec->IsUPeriodic();
 
   DeltaG = (myGuide->LastParameter() - myGuide->FirstParameter())/5;
   Handle(Geom_Curve) mySection;
   Standard_Real Tol =1.e-9;
 
-  Standard_Integer NbPoles, NbKnots;
+  Standard_Integer NbPoles = 0, NbKnots = 0;
   mySec->SectionShape(NbPoles, NbKnots, Deg);
 
 
@@ -266,7 +268,7 @@ static void InGoodPeriod(const Standard_Real Prec,
   }
 
    // Bornes de calculs
-  Standard_Real Delta;
+  Standard_Real Delta = NAN;
 //  Standard_Integer bid1, bid2, NbK; 
   Delta =  myGuide->LastParameter() - myGuide->FirstParameter();
   Inf(1) =  myGuide->FirstParameter() - Delta/10;
@@ -511,7 +513,7 @@ static void InGoodPeriod(const Standard_Real Prec,
 //==================================================================
  Handle(GeomFill_LocationLaw) GeomFill_LocationGuide::Copy() const
 {  
-  Standard_Real la;
+  Standard_Real la = NAN;
   Handle(GeomFill_TrihedronWithGuide) L;
   L = Handle(GeomFill_TrihedronWithGuide)::DownCast(myLaw->Copy());
   Handle(GeomFill_LocationGuide) copy = new 
@@ -532,7 +534,7 @@ static void InGoodPeriod(const Standard_Real Prec,
 //==================================================================
 Standard_Boolean GeomFill_LocationGuide::SetCurve(const Handle(Adaptor3d_Curve)& C) 
 {
-  Standard_Real LastAngle;
+  Standard_Real LastAngle = NAN;
   myCurve = C;
   myTrimmed = C;
 
@@ -579,7 +581,7 @@ Standard_Boolean GeomFill_LocationGuide::SetCurve(const Handle(Adaptor3d_Curve)&
 					     gp_Mat& M,
 					     gp_Vec& V)
 {
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   gp_Vec T,N,B;
   gp_Pnt P;
 
@@ -653,7 +655,7 @@ Standard_Boolean GeomFill_LocationGuide::SetCurve(const Handle(Adaptor3d_Curve)&
 { 
   gp_Vec T, N, B;
   gp_Pnt P;
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
 
   myCurve->D0(Param, P);
   V.SetXYZ(P.XYZ());
@@ -733,7 +735,7 @@ Standard_Boolean GeomFill_LocationGuide::SetCurve(const Handle(Adaptor3d_Curve)&
   gp_Vec T, N, B, DT, DN, DB;
 //  gp_Pnt P, P0;
   gp_Pnt P;
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
 
   myCurve->D1(Param, P, DV);
   V.SetXYZ(P.XYZ());
@@ -901,7 +903,7 @@ Standard_Boolean GeomFill_LocationGuide::D2(const Standard_Real Param,
 //  gp_Vec T0, N0, B0, T1, N1, B1;
 //  gp_Pnt P, P0, P1;
   gp_Pnt P;
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
 
   myCurve->D2(Param, P, DV, D2V);
   V.SetXYZ(P.XYZ());
@@ -1177,7 +1179,7 @@ Standard_Boolean GeomFill_LocationGuide::D2(const Standard_Real Param,
  Standard_Integer GeomFill_LocationGuide::NbIntervals
  (const GeomAbs_Shape S) const
 {
-  Standard_Integer Nb_Sec, Nb_Law;
+  Standard_Integer Nb_Sec = 0, Nb_Law = 0;
   Nb_Sec  =  myTrimmed->NbIntervals(S);
   Nb_Law  =  myLaw->NbIntervals(S);
 
@@ -1206,7 +1208,7 @@ Standard_Boolean GeomFill_LocationGuide::D2(const Standard_Real Param,
  void GeomFill_LocationGuide::Intervals(TColStd_Array1OfReal& T,
 					const GeomAbs_Shape S) const
 {
-   Standard_Integer Nb_Sec, Nb_Law;
+   Standard_Integer Nb_Sec = 0, Nb_Law = 0;
   Nb_Sec  =  myTrimmed->NbIntervals(S);
   Nb_Law  =  myLaw->NbIntervals(S);
 
@@ -1304,8 +1306,8 @@ void GeomFill_LocationGuide::Resolution (const Standard_Integer ,
  void GeomFill_LocationGuide::GetAverageLaw(gp_Mat& AM,
 					    gp_Vec& AV) 
 {
-  Standard_Integer ii;
-  Standard_Real U, delta;
+  Standard_Integer ii = 0;
+  Standard_Real U = NAN, delta = NAN;
   gp_Vec V, V1, V2, V3;
   
   myLaw->GetAverageLaw(V1, V2, V3);
@@ -1377,8 +1379,8 @@ void GeomFill_LocationGuide::Resolution (const Standard_Integer ,
 void GeomFill_LocationGuide::InitX(const Standard_Real Param)
 {
 
-  Standard_Integer Ideb = 1, Ifin =  myPoles2d->RowLength(), Idemi;
-  Standard_Real Valeur, t1, t2;
+  Standard_Integer Ideb = 1, Ifin =  myPoles2d->RowLength(), Idemi = 0;
+  Standard_Real Valeur = NAN, t1 = NAN, t2 = NAN;
 
   
   Valeur = myPoles2d->Value(1, Ideb).X();
@@ -1410,7 +1412,7 @@ void GeomFill_LocationGuide::InitX(const Standard_Real Param)
   t2 = myPoles2d->Value(1,Ifin).X();
   Standard_Real diff = t2-t1;
 
-  Standard_Real W1, W2;
+  Standard_Real W1 = NAN, W2 = NAN;
   W1 = myPoles2d->Value(1,Ideb).Coord(2);
   W2 =  myPoles2d->Value(1,Ifin).Coord(2);
   const gp_Pnt2d& P1 = myPoles2d->Value(2, Ideb);
@@ -1459,8 +1461,8 @@ GeomFill_PipeError GeomFill_LocationGuide::ComputeAutomaticLaw(Handle(TColgp_HAr
 {
   gp_Pnt P;
   gp_Vec T,N,B;
-  Standard_Integer ii;
-  Standard_Real t;
+  Standard_Integer ii = 0;
+  Standard_Real t = NAN;
 
   GeomFill_PipeError theStatus = GeomFill_PipeOk;
 

@@ -23,12 +23,12 @@
 //purpose  : 
 //=======================================================================
 ShapeUpgrade_ShapeDivideArea::ShapeUpgrade_ShapeDivideArea():
-       ShapeUpgrade_ShapeDivide()
+       ShapeUpgrade_ShapeDivide(), myMaxArea(Precision::Infinite()), myNbParts(0), myIsSplittingByNumber(Standard_False)
 {
-  myMaxArea = Precision::Infinite();
-  myNbParts = 0;
+  
+  
   myUnbSplit = myVnbSplit = -1;
-  myIsSplittingByNumber = Standard_False;
+  
 }
 
 //=======================================================================
@@ -37,13 +37,13 @@ ShapeUpgrade_ShapeDivideArea::ShapeUpgrade_ShapeDivideArea():
 //=======================================================================
 
 ShapeUpgrade_ShapeDivideArea::ShapeUpgrade_ShapeDivideArea(const TopoDS_Shape& S):
-       ShapeUpgrade_ShapeDivide(S)
+       ShapeUpgrade_ShapeDivide(S), myMaxArea(Precision::Infinite()), myNbParts(0), myIsSplittingByNumber(Standard_False)
        
 {
-  myMaxArea = Precision::Infinite();
-  myNbParts = 0;
+  
+  
   myUnbSplit = myVnbSplit = -1;
-  myIsSplittingByNumber = Standard_False;
+  
 }
 
 //=======================================================================

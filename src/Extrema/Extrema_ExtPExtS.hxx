@@ -92,7 +92,7 @@ private:
   Standard_Boolean myIsAnalyticallyComputable;
   Standard_Boolean myDone;
   Standard_Integer myNbExt;
-  Standard_Real mySqDist[4];
+  Standard_Real mySqDist[4]{};
   Extrema_POnSurf myPoint[4];
 
 

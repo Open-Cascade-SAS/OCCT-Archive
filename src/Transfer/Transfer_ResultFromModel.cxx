@@ -26,8 +26,8 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Transfer_ResultFromModel,Standard_Transient)
 
-Transfer_ResultFromModel::Transfer_ResultFromModel ()
-      {  themnum = 0;  themchk = Interface_CheckAny;  }
+Transfer_ResultFromModel::Transfer_ResultFromModel () : themnum(0), themchk(Interface_CheckAny)
+      {    }
 
     void  Transfer_ResultFromModel::SetModel
   (const Handle(Interface_InterfaceModel)& model)
@@ -122,7 +122,7 @@ Transfer_ResultFromModel::Transfer_ResultFromModel ()
     Handle(TColStd_HSequenceOfTransient)  Transfer_ResultFromModel::Results
   (const Standard_Integer level) const
 {
-  Standard_Integer i,nb;
+  Standard_Integer i = 0,nb = 0;
   Handle(TColStd_HSequenceOfTransient) list = new TColStd_HSequenceOfTransient();
   if (level > 1) {
     TColStd_IndexedMapOfTransient map (themodel.IsNull() ? 1000 : themodel->NbEntities());
@@ -144,7 +144,7 @@ Transfer_ResultFromModel::Transfer_ResultFromModel ()
     Handle(TColStd_HSequenceOfTransient)  Transfer_ResultFromModel::TransferredList
   (const Standard_Integer level) const
 {
-  Standard_Integer i,nb;
+  Standard_Integer i = 0,nb = 0;
   Handle(TColStd_HSequenceOfTransient) list = new TColStd_HSequenceOfTransient();
   Handle(TColStd_HSequenceOfTransient) res  = Results(level);
   nb = res->Length();
@@ -159,7 +159,7 @@ Transfer_ResultFromModel::Transfer_ResultFromModel ()
     Handle(TColStd_HSequenceOfTransient)  Transfer_ResultFromModel::CheckedList
   (const Interface_CheckStatus check, const Standard_Boolean result) const
 {
-  Standard_Integer i,nb;
+  Standard_Integer i = 0,nb = 0;
   Handle(TColStd_HSequenceOfTransient) list = new TColStd_HSequenceOfTransient();
   Handle(TColStd_HSequenceOfTransient) res  = Results(2);
   nb = res->Length();
@@ -177,7 +177,7 @@ Transfer_ResultFromModel::Transfer_ResultFromModel ()
   (const Standard_Boolean erronly, const Standard_Integer level) const
 {
   Interface_CheckIterator chl;
-  Standard_Integer i,nb;
+  Standard_Integer i = 0,nb = 0;
   Handle(TColStd_HSequenceOfTransient) list = new TColStd_HSequenceOfTransient();
   Handle(TColStd_HSequenceOfTransient) res  = Results(level);
   nb = res->Length();

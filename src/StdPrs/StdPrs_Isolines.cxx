@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <StdPrs_Isolines.hxx>
 
 #include <Adaptor3d_IsoCurve.hxx>
@@ -199,7 +201,7 @@ void StdPrs_Isolines::AddOnTriangulation (const TopoDS_Face&          theFace,
   const Handle(Standard_Type)& TheType = aSurface->DynamicType();
   if (TheType == STANDARD_TYPE(Geom_OffsetSurface))
   {
-    Standard_Real u1, u2, v1, v2;
+    Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
     aSurface->Bounds(u1, u2, v1, v2);
     //Isolines of Offset surfaces are calculated by approximation and
     //cannot be calculated for infinite limits.

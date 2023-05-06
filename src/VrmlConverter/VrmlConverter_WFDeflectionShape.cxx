@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -42,13 +44,13 @@ void VrmlConverter_WFDeflectionShape::Add( Standard_OStream&                   a
 
     StdPrs_ShapeTool Tool(aShape);
 
-    Standard_Real theRequestedDeflection;
+    Standard_Real theRequestedDeflection = NAN;
     if(aDrawer->TypeOfDeflection() == Aspect_TOD_RELATIVE)   // TOD_RELATIVE, TOD_ABSOLUTE
       {
 	Bnd_Box box;
 	BRepBndLib::AddClose(aShape, box);
 
-	Standard_Real  Xmin, Xmax, Ymin, Ymax, Zmin, Zmax, diagonal;
+	Standard_Real  Xmin = NAN, Xmax = NAN, Ymin = NAN, Ymax = NAN, Zmin = NAN, Zmax = NAN, diagonal = NAN;
 	box.Get( Xmin, Ymin, Zmin, Xmax, Ymax, Zmax );
 	if (!(box.IsOpenXmin() || box.IsOpenXmax() ||
 	      box.IsOpenYmin() || box.IsOpenYmax() ||

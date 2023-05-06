@@ -31,20 +31,20 @@ AppDef_MultiLine::AppDef_MultiLine (const Standard_Integer NbMult)
 }
 
 
-AppDef_MultiLine::AppDef_MultiLine (const AppDef_Array1OfMultiPointConstraint& tabMultiP)
+AppDef_MultiLine::AppDef_MultiLine (const AppDef_Array1OfMultiPointConstraint& tabMultiP) : tabMult(new AppDef_HArray1OfMultiPointConstraint (1, tabMultiP.Length()))
 {
-  tabMult = new AppDef_HArray1OfMultiPointConstraint (1, tabMultiP.Length());
-  Standard_Integer i, Lower = tabMultiP.Lower();
+  
+  Standard_Integer i = 0, Lower = tabMultiP.Lower();
   for (i = 1; i <= tabMultiP.Length(); i++) {
     tabMult->SetValue(i, tabMultiP.Value(Lower+i-1));
   }
 }
 
 
-AppDef_MultiLine::AppDef_MultiLine (const TColgp_Array1OfPnt& tabP3d)
+AppDef_MultiLine::AppDef_MultiLine (const TColgp_Array1OfPnt& tabP3d) : tabMult(new AppDef_HArray1OfMultiPointConstraint (1, tabP3d.Length()))
 {
-  tabMult = new AppDef_HArray1OfMultiPointConstraint (1, tabP3d.Length());
-  Standard_Integer i, Lower = tabP3d.Lower();
+  
+  Standard_Integer i = 0, Lower = tabP3d.Lower();
   for (i = 1; i <= tabP3d.Length(); i++) {
     AppDef_MultiPointConstraint MP(1, 0);
     MP.SetPoint(1, tabP3d(Lower+i-1));
@@ -54,10 +54,10 @@ AppDef_MultiLine::AppDef_MultiLine (const TColgp_Array1OfPnt& tabP3d)
 
 
 
-AppDef_MultiLine::AppDef_MultiLine (const TColgp_Array1OfPnt2d& tabP2d)
+AppDef_MultiLine::AppDef_MultiLine (const TColgp_Array1OfPnt2d& tabP2d) : tabMult(new AppDef_HArray1OfMultiPointConstraint (1, tabP2d.Length()))
 {
-  tabMult = new AppDef_HArray1OfMultiPointConstraint (1, tabP2d.Length());
-  Standard_Integer i, Lower = tabP2d.Lower();
+  
+  Standard_Integer i = 0, Lower = tabP2d.Lower();
   for (i = 1; i <= tabP2d.Length(); i++) {
     AppDef_MultiPointConstraint MP(0, 1);
     MP.SetPoint2d(1, tabP2d(Lower+i-1));

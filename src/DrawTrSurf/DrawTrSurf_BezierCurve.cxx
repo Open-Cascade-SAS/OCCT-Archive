@@ -27,9 +27,9 @@
 IMPLEMENT_STANDARD_RTTIEXT(DrawTrSurf_BezierCurve, DrawTrSurf_Curve)
 
 DrawTrSurf_BezierCurve::DrawTrSurf_BezierCurve (const Handle(Geom_BezierCurve)& C)
-: DrawTrSurf_Curve (C, Draw_vert, 16, 0.05, 1)
+: DrawTrSurf_Curve (C, Draw_vert, 16, 0.05, 1), drawPoles(Standard_True)
 {
-  drawPoles = Standard_True;
+  
   polesLook = Draw_rouge;
 }
 
@@ -38,10 +38,10 @@ DrawTrSurf_BezierCurve::DrawTrSurf_BezierCurve (
   const Draw_Color& PolesColor, const Standard_Boolean ShowPoles, 
   const Standard_Integer Discret,const Standard_Real Deflection,
   const Standard_Integer DrawMode )
-: DrawTrSurf_Curve (C, CurvColor, Discret, Deflection, DrawMode)
+: DrawTrSurf_Curve (C, CurvColor, Discret, Deflection, DrawMode), drawPoles(ShowPoles), polesLook(PolesColor)
 {
-  drawPoles = ShowPoles;
-  polesLook = PolesColor;
+  
+  
 }
 
 void DrawTrSurf_BezierCurve::DrawOn (Draw_Display& dis) const

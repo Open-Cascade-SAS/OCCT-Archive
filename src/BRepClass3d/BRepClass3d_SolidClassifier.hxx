@@ -77,7 +77,7 @@ private:
 
   Standard_Boolean aSolidLoaded;
   BRepClass3d_SolidExplorer explorer;
-  Standard_Boolean isaholeinspace;
+  Standard_Boolean isaholeinspace{};
 
 
 };

@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepGeom_RWReparametrisedCompositeCurveSegment.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -55,7 +57,7 @@ void RWStepGeom_RWReparametrisedCompositeCurveSegment::ReadStep
 
 	// --- inherited field : sameSense ---
 
-	Standard_Boolean aSameSense;
+	Standard_Boolean aSameSense = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadBoolean (num,2,"same_sense",ach,aSameSense);
 
@@ -67,7 +69,7 @@ void RWStepGeom_RWReparametrisedCompositeCurveSegment::ReadStep
 
 	// --- own field : paramLength ---
 
-	Standard_Real aParamLength;
+	Standard_Real aParamLength = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"param_length",ach,aParamLength);
 

@@ -27,6 +27,7 @@
 #include <IntWalk_StatusDeflection.hxx>
 
 class gp_Pnt;
+class IntSurf_LineOn2S;
 
 //! This class implements an algorithm to determine the
 //! intersection between 2 parametrized surfaces, marching from
@@ -248,12 +249,12 @@ private:
   Standard_Boolean done;
   Handle(IntSurf_LineOn2S) line;
   Standard_Boolean close;
-  Standard_Boolean tgfirst;
-  Standard_Boolean tglast;
+  Standard_Boolean tgfirst{};
+  Standard_Boolean tglast{};
 
   //! Index of point on the surface boundary.
   //! It is used for transition computation
-  Standard_Integer myTangentIdx;
+  Standard_Integer myTangentIdx{};
 
   //! Tangent to WLine in the point with index myTangentIdx
   gp_Dir tgdir;
@@ -262,10 +263,10 @@ private:
   Standard_Real pasMax;
   Standard_Real tolconf;
   Standard_Real myTolTang;
-  Standard_Real pasuv[4];
-  Standard_Real myStepMin[4];
-  Standard_Real pasSav[4];
-  Standard_Real pasInit[4];
+  Standard_Real pasuv[4]{};
+  Standard_Real myStepMin[4]{};
+  Standard_Real pasSav[4]{};
+  Standard_Real pasInit[4]{};
   Standard_Real Um1;
   Standard_Real UM1;
   Standard_Real Vm1;
@@ -281,7 +282,7 @@ private:
   Standard_Integer sensCheminement;
   IntImp_ConstIsoparametric choixIsoSav;
   IntSurf_PntOn2S previousPoint;
-  Standard_Boolean previoustg;
+  Standard_Boolean previoustg{};
   gp_Dir previousd;
   gp_Dir2d previousd1;
   gp_Dir2d previousd2;

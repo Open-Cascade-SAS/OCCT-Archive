@@ -175,10 +175,10 @@ private:
   Standard_Real myUMaxParameter;
   Standard_Real myVMinParameter;
   Standard_Real myVMaxParameter;
-  Standard_Real myBeanTolerance;
-  Standard_Real myFaceTolerance;
-  Standard_Real myCurveResolution;
-  Standard_Real myCriteria;
+  Standard_Real myBeanTolerance{};
+  Standard_Real myFaceTolerance{};
+  Standard_Real myCurveResolution{};
+  Standard_Real myCriteria{};
   GeomAPI_ProjectPointOnSurf myProjector;
   IntTools_MarkedRangeSet myRangeManager;
   Handle(IntTools_Context) myContext;

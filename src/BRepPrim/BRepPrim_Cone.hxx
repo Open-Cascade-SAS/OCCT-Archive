@@ -96,8 +96,8 @@ private:
   Standard_EXPORT void SetParameters (const Standard_Real R1, const Standard_Real R2, const Standard_Real H);
 
 
-  Standard_Real myHalfAngle;
-  Standard_Real myRadius;
+  Standard_Real myHalfAngle{};
+  Standard_Real myRadius{};
 
 
 };

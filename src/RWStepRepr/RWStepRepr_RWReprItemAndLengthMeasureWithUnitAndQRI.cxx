@@ -58,7 +58,7 @@ void RWStepRepr_RWReprItemAndLengthMeasureWithUnitAndQRI::ReadStep
   if (!data->CheckNbParams(num,1,ach,"qualified_representation_item")) return;
   // --- own field : qualifiers ---
   Handle(StepShape_HArray1OfValueQualifier) quals;
-  Standard_Integer nsub;
+  Standard_Integer nsub = 0;
   if (data->ReadSubList (num, 1, "qualifiers", ach, nsub)) {
     Standard_Integer nb = data->NbParams(nsub);
     quals = new StepShape_HArray1OfValueQualifier (1, nb);
@@ -101,7 +101,7 @@ void RWStepRepr_RWReprItemAndLengthMeasureWithUnitAndQRI::WriteStep
   SW.Send(ent->GetMeasureWithUnit()->UnitComponent().Value());
   SW.StartEntity ("QUALIFIED_REPRESENTATION_ITEM");
   Handle(StepShape_QualifiedRepresentationItem) aQRI = ent->GetQualifiedRepresentationItem();
-  Standard_Integer i, nbq = aQRI->NbQualifiers();
+  Standard_Integer i = 0, nbq = aQRI->NbQualifiers();
   SW.OpenSub();
   for (i = 1; i <= nbq; i ++) 
     SW.Send (aQRI->QualifiersValue(i).Value());

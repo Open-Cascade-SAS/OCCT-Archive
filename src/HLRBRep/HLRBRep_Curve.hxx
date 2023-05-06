@@ -214,12 +214,12 @@ private:
 
   BRepAdaptor_Curve myCurve;
   GeomAbs_CurveType myType;
-  const HLRAlgo_Projector* myProj;
-  Standard_Real myOX;
-  Standard_Real myOZ;
-  Standard_Real myVX;
-  Standard_Real myVZ;
-  Standard_Real myOF;
+  const HLRAlgo_Projector* myProj{};
+  Standard_Real myOX{};
+  Standard_Real myOZ{};
+  Standard_Real myVX{};
+  Standard_Real myVZ{};
+  Standard_Real myOF{};
 
 
 };

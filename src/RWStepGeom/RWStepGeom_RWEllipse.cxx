@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <Interface_ShareTool.hxx>
 #include <RWStepGeom_RWEllipse.hxx>
@@ -47,13 +49,13 @@ void RWStepGeom_RWEllipse::ReadStep
 
 	// --- own field : semiAxis1 ---
 
-	Standard_Real aSemiAxis1;
+	Standard_Real aSemiAxis1 = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"semi_axis_1",ach,aSemiAxis1);
 
 	// --- own field : semiAxis2 ---
 
-	Standard_Real aSemiAxis2;
+	Standard_Real aSemiAxis2 = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"semi_axis_2",ach,aSemiAxis2);
 

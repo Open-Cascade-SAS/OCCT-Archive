@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <StdPrs_ToolRFace.hxx>
 
 #include <BRep_Tool.hxx>
@@ -53,7 +55,7 @@ const TopoDS_Edge& StdPrs_ToolRFace::Edge() const
 //=======================================================================
 void StdPrs_ToolRFace::next()
 {
-  Standard_Real aParamU1, aParamU2;
+  Standard_Real aParamU1 = NAN, aParamU2 = NAN;
   for (; myExplorer.More(); myExplorer.Next())
   {
     // skip INTERNAL and EXTERNAL edges

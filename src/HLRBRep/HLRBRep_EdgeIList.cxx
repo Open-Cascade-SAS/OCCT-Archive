@@ -19,6 +19,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <HLRBRep_EdgeIList.hxx>
 #include <HLRBRep_EdgeInterferenceTool.hxx>
 #include <TopCnx_EdgeFaceTransition.hxx>
@@ -77,7 +79,7 @@ ProcessComplex(HLRAlgo_InterferenceList& IL,
   TopCnx_EdgeFaceTransition transTool;
   gp_Dir TgtE, NormE, TgtI, NormI;
   const Standard_Real TolAng = 0.0001;
-  Standard_Real CurvE, CurvI;
+  Standard_Real CurvE = NAN, CurvI = NAN;
   HLRAlgo_ListIteratorOfInterferenceList It1(IL);
 
   while (It1.More()) {

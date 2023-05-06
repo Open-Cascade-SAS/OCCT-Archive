@@ -24,9 +24,9 @@
 //function : Bisector_PolyBis
 // purpose :
 //=============================================================================
-Bisector_PolyBis::Bisector_PolyBis()
+Bisector_PolyBis::Bisector_PolyBis() : nbPoints(0)
 {
-  nbPoints = 0;
+  
 }
 
 //=============================================================================

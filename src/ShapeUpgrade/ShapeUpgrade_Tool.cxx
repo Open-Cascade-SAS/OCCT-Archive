@@ -26,10 +26,10 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_Tool,Standard_Transient)
 //function : ShapeUpgrade_Tool
 //purpose  : 
 //=======================================================================
-ShapeUpgrade_Tool::ShapeUpgrade_Tool()
+ShapeUpgrade_Tool::ShapeUpgrade_Tool() : myMaxTol(1)
 {
   myPrecision = myMinTol = Precision::Confusion();
-  myMaxTol = 1; //Precision::Infinite() ?? pdn
+  //Precision::Infinite() ?? pdn
 }
 
 //=======================================================================

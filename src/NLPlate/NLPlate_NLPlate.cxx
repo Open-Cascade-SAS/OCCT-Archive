@@ -162,7 +162,7 @@ NLPlate_NLPlate::NLPlate_NLPlate(const Handle(Geom_Surface)& InitialSurface) :
 
  Standard_Integer NLPlate_NLPlate::Continuity() const
 {
-  Standard_Integer cont ;
+  Standard_Integer cont = 0 ;
   for( cont=-1; cont<10;cont++)
     {
       if(!(myInitialSurface->IsCNu(cont+1)&&myInitialSurface->IsCNv(cont+1)))break;

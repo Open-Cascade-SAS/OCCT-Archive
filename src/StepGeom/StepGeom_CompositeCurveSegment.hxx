@@ -66,7 +66,7 @@ private:
 
 
   StepGeom_TransitionCode transition;
-  Standard_Boolean sameSense;
+  Standard_Boolean sameSense{};
   Handle(StepGeom_Curve) parentCurve;
 
 

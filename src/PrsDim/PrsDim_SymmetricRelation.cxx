@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_SymmetricRelation.hxx>
 
 #include <PrsDim.hxx>
@@ -93,7 +95,7 @@ void PrsDim_SymmetricRelation::Compute (const Handle(PrsMgr_PresentationManager)
   if (myTool.ShapeType() == TopAbs_EDGE) {
     Handle(Geom_Curve) aCurve,extcurve;
     gp_Pnt p1,p2;
-    Standard_Boolean isinfinite,isonplane;
+    Standard_Boolean isinfinite = 0,isonplane = 0;
     if (PrsDim::ComputeGeometry(TopoDS::Edge(myTool),
 			     aCurve,p1,p2,
 			     extcurve,
@@ -122,11 +124,11 @@ void PrsDim_SymmetricRelation::ComputeSelection(const Handle(SelectMgr_Selection
 {
   Handle(Select3D_SensitiveSegment) seg;
   Handle(SelectMgr_EntityOwner) own = new SelectMgr_EntityOwner(this,7);
-  Standard_Real F,L;
+  Standard_Real F = NAN,L = NAN;
 
   Handle(Geom_Curve) geom_axis, extcurve;
   gp_Pnt p1,p2;
-  Standard_Boolean isinfinite,isonplane;
+  Standard_Boolean isinfinite = 0,isonplane = 0;
   if (!PrsDim::ComputeGeometry(TopoDS::Edge(myTool),
 			    geom_axis,p1,p2,
 			    extcurve,
@@ -173,7 +175,7 @@ void PrsDim_SymmetricRelation::ComputeSelection(const Handle(SelectMgr_Selection
 				    myPosition.Z()+size);
 	aSel->Add(box);
       }
-      Standard_Real parmin,parmax,parcur;
+      Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
       parmin = ElCLib::Parameter(L3,P1);
       parmax = parmin;
       
@@ -220,7 +222,7 @@ void PrsDim_SymmetricRelation::ComputeSelection(const Handle(SelectMgr_Selection
     gp_Pnt ProjCenter1     = ElCLib::Value(ElCLib::Parameter(laxis,Center1),laxis);
     gp_Vec Vp(ProjCenter1,Center1);
     if (Vp.Magnitude() <= Precision::Confusion()) Vp = gp_Vec(laxis.Direction())^myPlane->Pln().Position().Direction();
-    Standard_Real Dt,R,h;
+    Standard_Real Dt = NAN,R = NAN,h = NAN;
     Dt = ProjCenter1.Distance(ProjOffsetPoint);
     R  = circ1.Radius();
     if (Dt > .999*R) {
@@ -251,7 +253,7 @@ void PrsDim_SymmetricRelation::ComputeSelection(const Handle(SelectMgr_Selection
 				  myPosition.Z()+size);
       aSel->Add(box);
     }
-    Standard_Real parmin,parmax,parcur;
+    Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
     parmin = ElCLib::Parameter(L3,P1);
     parmax = parmin;
     
@@ -304,7 +306,7 @@ void PrsDim_SymmetricRelation::ComputeSelection(const Handle(SelectMgr_Selection
 				    myPosition.Z()+size);
 	aSel->Add(box);
       }
-      Standard_Real parmin,parmax,parcur;
+      Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
       parmin = ElCLib::Parameter(L3,P1);
       parmax = parmin;
       
@@ -356,7 +358,7 @@ void PrsDim_SymmetricRelation::ComputeTwoEdgesSymmetric(const Handle(Prs3d_Prese
 //  gp_Pnt pint3d,ptat11,ptat12,ptat21,ptat22;
   gp_Pnt ptat11,ptat12,ptat21,ptat22;
   Handle(Geom_Curve) geom1,geom2;
-  Standard_Boolean isInfinite1,isInfinite2;
+  Standard_Boolean isInfinite1 = 0,isInfinite2 = 0;
   Handle(Geom_Curve) extCurv;
   if (!PrsDim::ComputeGeometry(TopoDS::Edge(myFShape),
 			    TopoDS::Edge(mySShape),
@@ -375,7 +377,7 @@ void PrsDim_SymmetricRelation::ComputeTwoEdgesSymmetric(const Handle(Prs3d_Prese
   aprs->SetInfiniteState((isInfinite1 || isInfinite2) && (myExtShape !=0));
   Handle(Geom_Curve) geom_axis,extcurve;
   gp_Pnt p1,p2;
-  Standard_Boolean isinfinite,isonplane;
+  Standard_Boolean isinfinite = 0,isonplane = 0;
   if (!PrsDim::ComputeGeometry(TopoDS::Edge(myTool),
 			    geom_axis,p1,p2,
 			    extcurve,
@@ -552,7 +554,7 @@ void PrsDim_SymmetricRelation::ComputeTwoVerticesSymmetric(const Handle(Prs3d_Pr
   if(myFShape.ShapeType() != TopAbs_VERTEX || mySShape.ShapeType() != TopAbs_VERTEX) return;
   Handle(Geom_Curve) geom_axis,extcurve;
   gp_Pnt p1,p2;
-  Standard_Boolean isinfinite,isonplane;
+  Standard_Boolean isinfinite = 0,isonplane = 0;
   if (!PrsDim::ComputeGeometry(TopoDS::Edge(myTool),
 			    geom_axis,p1,p2,
 			    extcurve,
@@ -560,7 +562,7 @@ void PrsDim_SymmetricRelation::ComputeTwoVerticesSymmetric(const Handle(Prs3d_Pr
 			    isonplane,
 			    myPlane)) return;
 
-  Standard_Boolean isOnPlane1, isOnPlane2;
+  Standard_Boolean isOnPlane1 = 0, isOnPlane2 = 0;
 
   PrsDim::ComputeGeometry(TopoDS::Vertex(myFShape), myFAttach, myPlane, isOnPlane1);
   PrsDim::ComputeGeometry(TopoDS::Vertex(mySShape), mySAttach, myPlane, isOnPlane2);

@@ -84,7 +84,7 @@ void RWStepVisual_RWTessellatedConnectingEdge::ReadStep(
     Standard_Integer num2 = sub4;
     for (Standard_Integer i0 = 1; i0 <= nb0; i0++)
     {
-      Standard_Integer anIt0;
+      Standard_Integer anIt0 = 0;
       theData->ReadInteger(num2, i0, "integer", theCheck, anIt0);
       aTessellatedEdge_LineStrip->SetValue(i0, anIt0);
     }
@@ -112,7 +112,7 @@ void RWStepVisual_RWTessellatedConnectingEdge::ReadStep(
     Standard_Integer num2 = sub8;
     for (Standard_Integer i0 = 1; i0 <= nb0; i0++)
     {
-      Standard_Integer anIt0;
+      Standard_Integer anIt0 = 0;
       theData->ReadInteger(num2, i0, "integer", theCheck, anIt0);
       aLineStripFace1->SetValue(i0, anIt0);
     }
@@ -127,7 +127,7 @@ void RWStepVisual_RWTessellatedConnectingEdge::ReadStep(
     Standard_Integer num2 = sub9;
     for (Standard_Integer i0 = 1; i0 <= nb0; i0++)
     {
-      Standard_Integer anIt0;
+      Standard_Integer anIt0 = 0;
       theData->ReadInteger(num2, i0, "integer", theCheck, anIt0);
       aLineStripFace2->SetValue(i0, anIt0);
     }

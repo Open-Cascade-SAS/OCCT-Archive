@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -132,7 +134,7 @@ void BRepMAT2d_Explorer::Add(const TopoDS_Wire& Spine,
 
   TopoDS_Edge                 aFirstEdge = anExp.Current();
   TopoDS_Edge                 aPrevEdge = aFirstEdge;
-  Standard_Real               UFirst,ULast, aD;
+  Standard_Real               UFirst = NAN,ULast = NAN, aD = NAN;
   Handle(Geom2d_Curve)        C2d;
   Handle(Geom2d_TrimmedCurve) CT2d;
   Handle(Geom2d_TrimmedCurve) aFirstCurve;
@@ -163,7 +165,7 @@ void BRepMAT2d_Explorer::Add(const TopoDS_Wire& Spine,
 
   // Treatment of the next edges:
   for (; anExp.More(); anExp.Next()) {
-    TopoDS_Edge  anEdge = anExp.Current();
+    const TopoDS_Edge&  anEdge = anExp.Current();
 
     anOldNewE.Add(anEdge, anEdge);
     C2d  = BRep_Tool::CurveOnSurface (anEdge, aFace, UFirst, ULast);
@@ -294,7 +296,7 @@ void BRepMAT2d_Explorer::Add(const TopoDS_Wire& Spine,
   BRep_Builder aBuilder;
 
   if (isModif) {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Integer aNbEdges = anOldNewE.Extent();
 
     aBuilder.MakeWire(aNewWire);

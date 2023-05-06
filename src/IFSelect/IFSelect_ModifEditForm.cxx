@@ -25,7 +25,7 @@ IMPLEMENT_STANDARD_RTTIEXT(IFSelect_ModifEditForm,IFSelect_Modifier)
 
 IFSelect_ModifEditForm::IFSelect_ModifEditForm
   (const Handle(IFSelect_EditForm)& editform)
-    : IFSelect_Modifier (Standard_False)    {  theedit = editform;  }
+    : IFSelect_Modifier (Standard_False), theedit(editform)    {   }
 
     Handle(IFSelect_EditForm)  IFSelect_ModifEditForm::EditForm () const
       {  return theedit;  }

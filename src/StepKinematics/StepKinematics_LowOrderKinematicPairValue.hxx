@@ -76,12 +76,12 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_LowOrderKinematicPairValue, StepKinematics_PairValue)
 
 private:
-  Standard_Real myActualTranslationX;
-  Standard_Real myActualTranslationY;
-  Standard_Real myActualTranslationZ;
-  Standard_Real myActualRotationX;
-  Standard_Real myActualRotationY;
-  Standard_Real myActualRotationZ;
+  Standard_Real myActualTranslationX{};
+  Standard_Real myActualTranslationY{};
+  Standard_Real myActualTranslationZ{};
+  Standard_Real myActualRotationX{};
+  Standard_Real myActualRotationY{};
+  Standard_Real myActualRotationZ{};
 
 };
 #endif // _StepKinematics_LowOrderKinematicPairValue_HeaderFile_

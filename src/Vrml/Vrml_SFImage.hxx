@@ -71,8 +71,8 @@ protected:
 private:
 
 
-  Standard_Integer myWidth;
-  Standard_Integer myHeight;
+  Standard_Integer myWidth{};
+  Standard_Integer myHeight{};
   Vrml_SFImageNumber myNumber;
   Handle(TColStd_HArray1OfInteger) myArray;
   Standard_Boolean myArrayFlag;

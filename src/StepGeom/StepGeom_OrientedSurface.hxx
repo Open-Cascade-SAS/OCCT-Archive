@@ -59,7 +59,7 @@ protected:
 private:
 
 
-  Standard_Boolean theOrientation;
+  Standard_Boolean theOrientation{};
 
 
 };

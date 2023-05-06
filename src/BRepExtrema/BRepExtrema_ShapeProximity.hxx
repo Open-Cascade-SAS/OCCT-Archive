@@ -171,9 +171,9 @@ private:
   Standard_Real myTolerance;
 
   //! Is the 1st shape initialized?
-  Standard_Boolean myIsInitS1;
+  Standard_Boolean myIsInitS1{};
   //! Is the 2nd shape initialized?
-  Standard_Boolean myIsInitS2;
+  Standard_Boolean myIsInitS2{};
 
   //! List of subshapes of the 1st shape.
   BRepExtrema_ShapeList myShapeList1;

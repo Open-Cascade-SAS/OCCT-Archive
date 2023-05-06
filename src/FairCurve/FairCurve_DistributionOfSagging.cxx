@@ -19,6 +19,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <FairCurve_DistributionOfSagging.hxx>
 #include <gp_Pnt2d.hxx>
@@ -44,9 +46,9 @@
 Standard_Boolean FairCurve_DistributionOfSagging::Value(const math_Vector& TParam, math_Vector& Flexion)
 {  
   Standard_Boolean Ok = Standard_True;
-  Standard_Integer ier, ii, jj, kk;
+  Standard_Integer ier = 0, ii = 0, jj = 0, kk = 0;
   gp_XY CPrim  (0., 0.), CSecn (0., 0.);
-  Standard_Integer  LastGradientIndex, FirstNonZero, LastZero; 
+  Standard_Integer  LastGradientIndex = 0, FirstNonZero = 0, LastZero = 0; 
 
   // (0.0) initialisations generales
   Flexion.Init(0.0);
@@ -71,7 +73,7 @@ Standard_Boolean FairCurve_DistributionOfSagging::Value(const math_Vector& TPara
   // (1) Evaluation de la flexion locale = W*W
   Standard_Real NormeCPrim = CPrim.Modulus();
   Standard_Real InvNormeCPrim = 1 / NormeCPrim;
-  Standard_Real Hauteur, WVal, Mesure;
+  Standard_Real Hauteur = NAN, WVal = NAN, Mesure = NAN;
   Standard_Real Numerateur = CPrim ^ CSecn; 
   Standard_Real Denominateur = pow ( NormeCPrim, 2.5);
 
@@ -89,13 +91,13 @@ Standard_Boolean FairCurve_DistributionOfSagging::Value(const math_Vector& TPara
                   NumGrad(1, 2*MyBSplOrder+MyNbValAux),
                   GradNormeCPrim(1, 2*MyBSplOrder+MyNbValAux),
                   NumduGrad(1, 2*MyBSplOrder+MyNbValAux);
-      Standard_Real Facteur;
+      Standard_Real Facteur = NAN;
       Standard_Real XPrim = CPrim.X();
       Standard_Real YPrim = CPrim.Y();
       Standard_Real XSecn = CSecn.X();
       Standard_Real YSecn = CSecn.Y();
       Standard_Real InvDenominateur = 1 / Denominateur;
-      Standard_Real Aux;
+      Standard_Real Aux = NAN;
 
       Facteur = 2 * Mesure * WVal;
       Aux = 2.5 * Numerateur * InvNormeCPrim;
@@ -141,9 +143,9 @@ Standard_Boolean FairCurve_DistributionOfSagging::Value(const math_Vector& TPara
 	                         * (YPrim*InvNormeCPrim) * InvNormeCPrim;
          Standard_Real FacteurW = WVal * InvNormeCPrim;
 
-         Standard_Real Produit, DSeconde, NSeconde;
-         Standard_Real VIntermed;
-         Standard_Integer k1, k2, II, JJ;
+         Standard_Real Produit = NAN, DSeconde = NAN, NSeconde = NAN;
+         Standard_Real VIntermed = NAN;
+         Standard_Integer k1 = 0, k2 = 0, II = 0, JJ = 0;
    
          Facteur = 2 * Mesure;
 

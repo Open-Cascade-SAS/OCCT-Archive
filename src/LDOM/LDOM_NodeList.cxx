@@ -27,9 +27,9 @@ IMPLEMENT_SEQUENCE (LDOM_BasicNodeSequence, LDOM_BasicNodePtr)
 //purpose  : Constructor
 //=======================================================================
 
-LDOM_NodeList::LDOM_NodeList (  )
+LDOM_NodeList::LDOM_NodeList (  ) : mySeq(new LDOM_BasicNodeSequence)
 {
-  mySeq = new LDOM_BasicNodeSequence;
+  
 }
 
 //=======================================================================
@@ -38,9 +38,9 @@ LDOM_NodeList::LDOM_NodeList (  )
 //=======================================================================
 
 LDOM_NodeList::LDOM_NodeList (const Handle(LDOM_MemManager)& aDoc)
-     : myDoc (aDoc)
+     : myDoc (aDoc), mySeq(new LDOM_BasicNodeSequence)
 {
-  mySeq = new LDOM_BasicNodeSequence;
+  
 }
 
 //=======================================================================
@@ -58,11 +58,11 @@ void LDOM_NodeList::Append (const LDOM_BasicNode& aNode) const
 //purpose  : Copy constructor
 //=======================================================================
 
-LDOM_NodeList::LDOM_NodeList (const LDOM_NodeList& theOther)
+LDOM_NodeList::LDOM_NodeList (const LDOM_NodeList& theOther) : mySeq(new LDOM_BasicNodeSequence), myDoc(theOther.myDoc)
 {
-  mySeq = new LDOM_BasicNodeSequence;
+  
   * mySeq = * theOther.mySeq;
-  myDoc = theOther.myDoc;
+  
 }
 
 //=======================================================================

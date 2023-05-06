@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <gp_Dir.hxx>
 #include <gp_Pln.hxx>
@@ -445,7 +447,7 @@ void Bnd_Box::Add (const Bnd_Box& Other)
 
 void Bnd_Box::Add (const gp_Pnt& P)
 {
-  Standard_Real X,Y,Z;
+  Standard_Real X = NAN,Y = NAN,Z = NAN;
   P.Coord(X,Y,Z);
   Update(X,Y,Z);
 }
@@ -469,7 +471,7 @@ void Bnd_Box::Add (const gp_Pnt& P, const gp_Dir& D)
 
 void Bnd_Box::Add (const gp_Dir& D)
 {
-  Standard_Real DX,DY,DZ;
+  Standard_Real DX = NAN,DY = NAN,DZ = NAN;
   D.Coord(DX,DY,DZ);
 
   if (DX < -RealEpsilon()) 
@@ -498,7 +500,7 @@ Standard_Boolean Bnd_Box::IsOut (const gp_Pnt& P) const
   if        (IsWhole())  return Standard_False;
   else if   (IsVoid())   return Standard_True;
   else {
-    Standard_Real X,Y,Z;
+    Standard_Real X = NAN,Y = NAN,Z = NAN;
     P.Coord(X,Y,Z);
     if      (!IsOpenXmin() && (X < (Xmin-Gap))) return Standard_True;
     else if (!IsOpenXmax() && (X > (Xmax+Gap))) return Standard_True;
@@ -521,7 +523,7 @@ Standard_Boolean Bnd_Box::IsOut (const gp_Pln& P) const
   if        (IsWhole())  return Standard_False;
   else if   (IsVoid())   return Standard_True;
   else {
-    Standard_Real A,B,C,D;
+    Standard_Real A = NAN,B = NAN,C = NAN,D = NAN;
     P.Coefficients (A, B ,C ,D);
     Standard_Real d = A * (Xmin-Gap) + B * (Ymin-Gap) + C * (Zmin-Gap) + D;
 //    Standard_Boolean plus = d > 0;
@@ -554,10 +556,10 @@ Standard_Boolean Bnd_Box::IsOut (const gp_Lin& L) const
   if        (IsWhole())  return Standard_False;
   else if   (IsVoid())   return Standard_True;
   else {
-    Standard_Real xmin = 0, xmax = 0, ymin = 0, ymax = 0, zmin, zmax;
-    Standard_Real parmin, parmax, par1, par2;
-    Standard_Boolean xToSet, yToSet;
-    Standard_Real myXmin, myYmin, myZmin, myXmax, myYmax, myZmax;
+    Standard_Real xmin = 0, xmax = 0, ymin = 0, ymax = 0, zmin = NAN, zmax = NAN;
+    Standard_Real parmin = NAN, parmax = NAN, par1 = NAN, par2 = NAN;
+    Standard_Boolean xToSet = 0, yToSet = 0;
+    Standard_Real myXmin = NAN, myYmin = NAN, myZmin = NAN, myXmax = NAN, myYmax = NAN, myZmax = NAN;
     Get (myXmin, myYmin, myZmin, myXmax, myYmax, myZmax);
 
     if (Abs(L.Direction().XYZ().X())>0.) {
@@ -648,8 +650,8 @@ Standard_Boolean Bnd_Box::IsOut (const Bnd_Box& Other) const
 { 
   //modified by NIZNHY-PKV Fri Jul 08 11:03:43 2011f
   if (!Flags && !Other.Flags) {
-    Standard_Boolean bRet;
-    Standard_Real delta;
+    Standard_Boolean bRet = 0;
+    Standard_Real delta = NAN;
     //
     delta = Other.Gap + Gap;
     bRet=((Xmin - Other.Xmax > delta) ||
@@ -766,7 +768,7 @@ Standard_Boolean Bnd_Box::IsOut(const gp_Pnt& P1, const gp_Pnt& P2, const gp_Dir
   else if   (IsVoid())   return Standard_True;
 
   Standard_Real eps = RealSmall();
-  Standard_Real myXmin, myYmin, myZmin, myXmax, myYmax, myZmax;
+  Standard_Real myXmin = NAN, myYmin = NAN, myZmin = NAN, myXmax = NAN, myYmax = NAN, myZmax = NAN;
   Get (myXmin, myYmin, myZmin, myXmax, myYmax, myZmax);
 
   if(Abs(D.X()) < eps && Abs(D.Y()) < eps)
@@ -905,7 +907,7 @@ Standard_Boolean Bnd_Box::IsOut(const gp_Pnt& P1, const gp_Pnt& P2, const gp_Dir
 //=======================================================================
 
 static Standard_Real DistMini2Box( const Standard_Real r1min, const  Standard_Real r1max,  const Standard_Real r2min, const  Standard_Real r2max)
-{  Standard_Real   r1, r2;
+{  Standard_Real   r1 = NAN, r2 = NAN;
 
    r1 = Square(r1min - r2max);
    r2 = Square(r1max - r2min);
@@ -915,9 +917,9 @@ static Standard_Real DistMini2Box( const Standard_Real r1min, const  Standard_Re
 
 
 Standard_Real Bnd_Box::Distance(const Bnd_Box& Other) const 
-{  Standard_Real   xminB1, yminB1, zminB1, xmaxB1, ymaxB1, zmaxB1;
-   Standard_Real   xminB2, yminB2, zminB2, xmaxB2, ymaxB2, zmaxB2;
-   Standard_Real   dist_x, dist_y, dist_z, dist_t;
+{  Standard_Real   xminB1 = NAN, yminB1 = NAN, zminB1 = NAN, xmaxB1 = NAN, ymaxB1 = NAN, zmaxB1 = NAN;
+   Standard_Real   xminB2 = NAN, yminB2 = NAN, zminB2 = NAN, xmaxB2 = NAN, ymaxB2 = NAN, zmaxB2 = NAN;
+   Standard_Real   dist_x = NAN, dist_y = NAN, dist_z = NAN, dist_t = NAN;
 
    Get( xminB1, yminB1, zminB1, xmaxB1, ymaxB1, zmaxB1);
    Other.Get( xminB2, yminB2, zminB2, xmaxB2, ymaxB2, zmaxB2);

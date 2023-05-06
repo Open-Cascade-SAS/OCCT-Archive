@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <Bnd_OBB.hxx>
 #include <BRep_Tool.hxx>
@@ -225,7 +227,7 @@ IntTools_FClass2d& IntTools_Context::FClass2d(const TopoDS_Face& aF)
   IntTools_FClass2d* pFClass2d = NULL;
   if (!myFClass2dMap.Find (aF, pFClass2d))
   {
-    Standard_Real aTolF;
+    Standard_Real aTolF = NAN;
     TopoDS_Face aFF;
     //
     aFF=aF;
@@ -249,7 +251,7 @@ GeomAPI_ProjectPointOnSurf& IntTools_Context::ProjPS(const TopoDS_Face& aF)
   GeomAPI_ProjectPointOnSurf* pProjPS = NULL;
   if (!myProjPSMap.Find (aF, pProjPS))
   {
-    Standard_Real Umin, Usup, Vmin, Vsup;
+    Standard_Real Umin = NAN, Usup = NAN, Vmin = NAN, Vsup = NAN;
     UVBounds(aF, Umin, Usup, Vmin, Vsup);
     const Handle(Geom_Surface)& aS=BRep_Tool::Surface(aF);
     //
@@ -271,7 +273,7 @@ GeomAPI_ProjectPointOnCurve& IntTools_Context::ProjPC(const TopoDS_Edge& aE)
   GeomAPI_ProjectPointOnCurve* pProjPC = NULL;
   if (!myProjPCMap.Find (aE, pProjPC))
   {
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     //
     Handle(Geom_Curve)aC3D=BRep_Tool::Curve (aE, f, l);
     //
@@ -295,7 +297,7 @@ GeomAPI_ProjectPointOnCurve& IntTools_Context::ProjPT
   GeomAPI_ProjectPointOnCurve* pProjPT = NULL;
   if (!myProjPTMap.Find (aC3D, pProjPT))
   {
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     f=aC3D->FirstParameter();
     l=aC3D->LastParameter();
     //
@@ -354,8 +356,8 @@ Geom2dHatch_Hatcher& IntTools_Context::Hatcher(const TopoDS_Face& aF)
   Geom2dHatch_Hatcher* pHatcher = NULL;
   if (!myHatcherMap.Find (aF, pHatcher))
   {
-    Standard_Real aTolArcIntr, aTolTangfIntr, aTolHatch2D, aTolHatch3D;
-    Standard_Real aU1, aU2, aEpsT;
+    Standard_Real aTolArcIntr = NAN, aTolTangfIntr = NAN, aTolHatch2D = NAN, aTolHatch3D = NAN;
+    Standard_Real aU1 = NAN, aU2 = NAN, aEpsT = NAN;
     TopAbs_Orientation aOrE;
     Handle(Geom_Surface) aS;
     Handle(Geom2d_Curve) aC2D;
@@ -462,8 +464,8 @@ Standard_Integer IntTools_Context::ComputePE
   if (!BRep_Tool::IsGeometric(aE2)) { 
     return -2;
   }
-  Standard_Real aTolE2, aTolSum;
-  Standard_Integer aNbProj;
+  Standard_Real aTolE2 = NAN, aTolSum = NAN;
+  Standard_Integer aNbProj = 0;
   //
   GeomAPI_ProjectPointOnCurve& aProjector=ProjPC(aE2);
   aProjector.Perform(aP1);
@@ -526,8 +528,8 @@ Standard_Integer IntTools_Context::ComputeVE
   if (!BRep_Tool::IsGeometric(theE)) { 
     return -2;
   }
-  Standard_Real aDist, aTolV, aTolE, aTolSum;
-  Standard_Integer aNbProj;
+  Standard_Real aDist = NAN, aTolV = NAN, aTolE = NAN, aTolSum = NAN;
+  Standard_Integer aNbProj = 0;
   gp_Pnt aP;
   //
   aP=BRep_Tool::Pnt(theV);
@@ -565,7 +567,7 @@ Standard_Integer IntTools_Context::ComputeVF
    Standard_Real& theTol,
    const Standard_Real theFuzz)
 {
-  Standard_Real aTolV, aTolF, aTolSum, aDist;
+  Standard_Real aTolV = NAN, aTolF = NAN, aTolSum = NAN, aDist = NAN;
   gp_Pnt aP;
 
   aP = BRep_Tool::Pnt(theVertex);
@@ -638,7 +640,7 @@ Standard_Boolean IntTools_Context::IsPointInFace
    const Standard_Real aTol) 
 {
   Standard_Boolean bIn = Standard_False;
-  Standard_Real aDist;
+  Standard_Real aDist = NAN;
   //
   GeomAPI_ProjectPointOnSurf& aProjector=ProjPS(aF);
   aProjector.Perform(aP);
@@ -647,7 +649,7 @@ Standard_Boolean IntTools_Context::IsPointInFace
   if (bDone) {
     aDist = aProjector.LowerDistance();
     if (aDist < aTol) {
-      Standard_Real U, V;
+      Standard_Real U = NAN, V = NAN;
       //
       aProjector.LowerDistanceParameters(U, V);
       gp_Pnt2d aP2D(U, V);
@@ -679,8 +681,8 @@ Standard_Boolean IntTools_Context::IsValidPointForFace
    const TopoDS_Face& aF,
    const Standard_Real aTol) 
 {
-  Standard_Boolean bFlag;
-  Standard_Real Umin, U, V;
+  Standard_Boolean bFlag = 0;
+  Standard_Real Umin = NAN, U = NAN, V = NAN;
 
   GeomAPI_ProjectPointOnSurf& aProjector=ProjPS(aF);
   aProjector.Perform(aP);
@@ -710,7 +712,7 @@ Standard_Boolean IntTools_Context::IsValidPointForFaces
    const TopoDS_Face& aF2,
    const Standard_Real aTol) 
 {
-  Standard_Boolean bFlag1, bFlag2;
+  Standard_Boolean bFlag1 = 0, bFlag2 = 0;
 
   bFlag1=IsValidPointForFace(aP, aF1, aTol);
   if (!bFlag1) {
@@ -730,13 +732,13 @@ Standard_Boolean IntTools_Context::IsValidBlockForFace
    const TopoDS_Face& aF,
    const Standard_Real aTol) 
 {
-  Standard_Boolean bFlag;
-  Standard_Real aTInterm;
+  Standard_Boolean bFlag = 0;
+  Standard_Real aTInterm = NAN;
   gp_Pnt aPInterm;
 
   aTInterm=IntTools_Tools::IntermediatePoint(aT1, aT2);
 
-  Handle(Geom_Curve) aC3D=aC.Curve();
+  const Handle(Geom_Curve)& aC3D=aC.Curve();
   // point 3D
   aC3D->D0(aTInterm, aPInterm);
   //
@@ -796,8 +798,8 @@ Standard_Boolean IntTools_Context::IsVertexOnLine
    const Standard_Real aTolC,
    Standard_Real& aT)
 {
-  Standard_Boolean bRet;
-  Standard_Real aTolV;
+  Standard_Boolean bRet = 0;
+  Standard_Real aTolV = NAN;
   //
   aTolV=BRep_Tool::Tolerance(aV);
   bRet=IntTools_Context::IsVertexOnLine(aV, aTolV, aC, aTolC , aT);
@@ -815,13 +817,13 @@ Standard_Boolean IntTools_Context::IsVertexOnLine
    const Standard_Real aTolC,
    Standard_Real& aT)
 {
-  Standard_Real aFirst, aLast, aDist, aTolSum;
-  Standard_Integer aNbProj;
+  Standard_Real aFirst = NAN, aLast = NAN, aDist = NAN, aTolSum = NAN;
+  Standard_Integer aNbProj = 0;
   gp_Pnt aPv; 
   
   aPv=BRep_Tool::Pnt(aV);
 
-  Handle(Geom_Curve) aC3D=aC.Curve();
+  const Handle(Geom_Curve)& aC3D=aC.Curve();
   
   
   aTolSum=aTolV+aTolC;
@@ -1006,7 +1008,7 @@ Standard_Boolean IntTools_Context::ProjectPointOnEdge
    const TopoDS_Edge& anEdge,
    Standard_Real& aT)
 {
-  Standard_Integer aNbPoints;
+  Standard_Integer aNbPoints = 0;
 
   GeomAPI_ProjectPointOnCurve& aProjector=ProjPC(anEdge);
   aProjector.Perform(aP);

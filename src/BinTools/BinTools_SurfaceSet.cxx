@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BinTools.hxx>
 #include <BinTools_CurveSet.hxx>
 #include <BinTools_SurfaceSet.hxx>
@@ -242,7 +244,7 @@ static BinTools_OStream& operator <<(BinTools_OStream& OS, const Handle(Geom_Bez
   OS << vrational;
 
   // poles and weights
-  Standard_Integer i,j,udegree,vdegree;
+  Standard_Integer i = 0,j = 0,udegree = 0,vdegree = 0;
   udegree = S->UDegree();
   vdegree = S->VDegree();
   OS << (Standard_ExtCharacter)udegree;
@@ -277,7 +279,7 @@ static BinTools_OStream& operator <<(BinTools_OStream& OS, const Handle(Geom_BSp
   OS << vperiodic;
 
 // poles and weights
-  Standard_Integer i,j,udegree,vdegree,nbupoles,nbvpoles,nbuknots,nbvknots;
+  Standard_Integer i = 0,j = 0,udegree = 0,vdegree = 0,nbupoles = 0,nbvpoles = 0,nbuknots = 0,nbvknots = 0;
   udegree  = S->UDegree();
   vdegree  = S->VDegree();
   nbupoles = S->NbUPoles();
@@ -319,7 +321,7 @@ static BinTools_OStream& operator <<(BinTools_OStream& OS, const Handle(Geom_BSp
 static BinTools_OStream& operator <<(BinTools_OStream& OS, const Handle(Geom_RectangularTrimmedSurface)& S)
 {
   OS << (Standard_Byte)RECTANGULAR;
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   S->Bounds(U1,U2,V1,V2);
   OS << U1 << U2 << V1 << V2;
   BinTools_SurfaceSet::WriteSurface (S->BasisSurface(), OS);
@@ -406,7 +408,7 @@ void  BinTools_SurfaceSet::Write (Standard_OStream& OS,
                                   const Message_ProgressRange& theRange)const
 {
 
-  Standard_Integer i, nbsurf = myMap.Extent();
+  Standard_Integer i = 0, nbsurf = myMap.Extent();
   Message_ProgressScope aPS(theRange, "Writing surfaces", nbsurf);
   OS << "Surfaces "<< nbsurf << "\n";
   BinTools_OStream aStream (OS);
@@ -604,7 +606,7 @@ static Standard_IStream& operator>>(Standard_IStream& IS,
   TColgp_Array2OfPnt poles(1,udegree+1,1,vdegree+1);
   TColStd_Array2OfReal weights(1,udegree+1,1,vdegree+1);
   
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   for (i = 1; i <= udegree+1; i++) {
     for (j = 1; j <= vdegree+1; j++) {
       IS >> poles(i,j);//Pnt
@@ -650,7 +652,7 @@ static Standard_IStream& operator>>(Standard_IStream& IS,
   TColgp_Array2OfPnt poles(1,nbupoles,1,nbvpoles);
   TColStd_Array2OfReal weights(1,nbupoles,1,nbvpoles);
   
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   for (i = 1; i <= nbupoles; i++) {
     for (j = 1; j <= nbvpoles; j++) {
       IS >> poles(i,j);//Pnt
@@ -858,7 +860,7 @@ void  BinTools_SurfaceSet::Read (Standard_IStream& IS,
   }
 
   Handle(Geom_Surface) S;
-  Standard_Integer i, nbsurf;
+  Standard_Integer i = 0, nbsurf = 0;
   IS >> nbsurf;
   Message_ProgressScope aPS(theRange, "Reading surfaces", nbsurf);
   IS.get ();//remove <lf>

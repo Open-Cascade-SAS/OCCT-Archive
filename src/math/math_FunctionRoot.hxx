@@ -97,7 +97,7 @@ private:
 
   Standard_Boolean Done;
   Standard_Real TheRoot;
-  Standard_Real TheError;
+  Standard_Real TheError{};
   Standard_Real TheDerivative;
   Standard_Integer NbIter;
 

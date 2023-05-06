@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomFill_DraftTrihedron.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -45,9 +47,9 @@ static gp_Vec DDeriv(const gp_Vec& F, const gp_Vec& DF, const gp_Vec& D2F)
 //purpose  : Constructor
 //=======================================================================
  GeomFill_DraftTrihedron::GeomFill_DraftTrihedron(const gp_Vec& BiNormal,
-						  const Standard_Real Angle)
+						  const Standard_Real Angle) : B(BiNormal)
 {
-  B = BiNormal;
+  
   B.Normalize();
   SetAngle(Angle);
 }
@@ -121,7 +123,7 @@ static gp_Vec DDeriv(const gp_Vec& F, const gp_Vec& DF, const gp_Vec& D2F)
 
   myTrimmed->D2(Param, P, T, aux);
 
-  Standard_Real normT, normb;
+  Standard_Real normT = NAN, normb = NAN;
   normT = T.Magnitude();
   T /=  normT;
   DT.SetLinearForm(-(T.Dot(aux)), T, aux);
@@ -175,11 +177,11 @@ Standard_Boolean GeomFill_DraftTrihedron::D2(const Standard_Real Param,
 {  
   gp_Pnt P;
   gp_Vec T, DT, D2T, aux, aux2;
-  Standard_Real dot;
+  Standard_Real dot = NAN;
 
   myTrimmed->D3(Param, P, T, aux, aux2);
 
-  Standard_Real normT, normb;
+  Standard_Real normT = NAN, normb = NAN;
 
   D2T = DDeriv(T, aux, aux2);
   normT = T.Magnitude();
@@ -205,7 +207,7 @@ Standard_Boolean GeomFill_DraftTrihedron::D2(const Standard_Real Param,
   gp_Vec d2v = d2b.Crossed(T) + 2*db.Crossed(DT) + b.Crossed(D2T);
   
 
-  Standard_Real mu = myCos, rac;
+  Standard_Real mu = myCos, rac = NAN;
   rac = Sqrt(1-mu*mu);
 
   Normal  .SetLinearForm( rac, b  ,  mu, v); 
@@ -301,7 +303,7 @@ Standard_Boolean GeomFill_DraftTrihedron::D2(const Standard_Real Param,
 
   Standard_Real Step = (myTrimmed->LastParameter() - 
                         myTrimmed->FirstParameter()) / Num;
-  Standard_Real Param;
+  Standard_Real Param = NAN;
   for (Standard_Integer i = 0; i <= Num; i++) {
     Param = myTrimmed->FirstParameter() + i*Step;
     if (Param > myTrimmed->LastParameter()) Param = myTrimmed->LastParameter();

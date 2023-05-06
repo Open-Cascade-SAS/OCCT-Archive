@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElSLib.hxx>
 #include <Extrema_ExtPElS.hxx>
 #include <Extrema_POnSurf.hxx>
@@ -29,10 +31,10 @@
 static const Standard_Real ExtPElS_MyEps = Epsilon(2. * M_PI);
 //=============================================================================
 
-Extrema_ExtPElS::Extrema_ExtPElS()
+Extrema_ExtPElS::Extrema_ExtPElS() : myDone(Standard_False), myNbExt(0)
 {
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
   for (Standard_Integer i = 0; i < 4; i++)
   {
     mySqDist[i] = RealLast();
@@ -176,7 +178,7 @@ void Extrema_ExtPElS::Perform(const gp_Pnt&       P,
   gp_Pnt Pp = P.Translated(OZ.Multiplied(-Zp));
   gp_Vec OPp(O, Pp);
   if (OPp.SquareMagnitude() < Tol * Tol) return;
-  Standard_Real B, U1, V1, U2, V2;
+  Standard_Real B = NAN, U1 = NAN, V1 = NAN, U2 = NAN, V2 = NAN;
   Standard_Boolean Same = DirZ.Dot(MP) >= 0.0;
   U1 = gp_Vec(Pos.XDirection()).AngleWithRef(OPp,myZ); //-M_PI<U1<M_PI
   if (U1 > -ExtPElS_MyEps && U1 < ExtPElS_MyEps) { U1 = 0.; }
@@ -263,7 +265,7 @@ void Extrema_ExtPElS::Perform(const gp_Pnt&       P,
 
 // Calculation of extrema ...
   gp_Vec OPp (O,Pp);
-  Standard_Real U1, U2, V;
+  Standard_Real U1 = NAN, U2 = NAN, V = NAN;
   if (OPp.SquareMagnitude() < Tol * Tol) {
     U1 = 0.;
     U2 = 0.;
@@ -400,7 +402,7 @@ void Extrema_ExtPElS::Perform (const gp_Pnt&       P,
 // Projection of point P in plane XOY of the cylinder ...
   gp_Pnt O = S.Location();
   gp_Vec OZ (S.Axis().Direction());
-  Standard_Real U, V = gp_Vec(O,P).Dot(OZ);
+  Standard_Real U = NAN, V = gp_Vec(O,P).Dot(OZ);
   gp_Pnt Pp = P.Translated(OZ.Multiplied(-V));
 
   ElSLib::Parameters(S, P, U, V);

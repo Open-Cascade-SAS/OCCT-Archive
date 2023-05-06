@@ -34,11 +34,11 @@ GeomLib_Interpolate::GeomLib_Interpolate
  const TColStd_Array1OfReal& ParametersArray) 
 : myIsDone(Standard_False)
 {
-  Standard_Integer ii,
-  num_knots,
-  inversion_problem,
-  num_controls,
-  jj ;
+  Standard_Integer ii = 0,
+  num_knots = 0,
+  inversion_problem = 0,
+  num_controls = 0,
+  jj = 0 ;
   
   
   if (NumPoints < Degree ||
@@ -54,7 +54,7 @@ GeomLib_Interpolate::GeomLib_Interpolate
   else {
     gp_Pnt null_point(0.0e0, 0.0e0, 0.0e0) ;
     Standard_Integer  order  = Degree + 1,
-    half_order ;
+    half_order = 0 ;
     if (order  % 2) {
       order  -= 1 ;
     }

@@ -43,7 +43,7 @@ void RWStepShape_RWOpenShell::ReadStep
 
 	Handle(StepShape_HArray1OfFace) aCfsFaces;
 	Handle(StepShape_Face) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"cfs_faces",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aCfsFaces = new StepShape_HArray1OfFace (1, nb2);

@@ -806,7 +806,7 @@ private:
   Handle(TColStd_HArray1OfReal) flatknots;
   Handle(TColStd_HArray1OfReal) knots;
   Handle(TColStd_HArray1OfInteger) mults;
-  Standard_Real maxderivinv;
+  Standard_Real maxderivinv{};
   Standard_Boolean maxderivinvok;
 
 

@@ -65,7 +65,7 @@ void BRepMAT2d_BisectingLocus::Compute(BRepMAT2d_Explorer&        anExplo,
   MAT2d_Mat2d                        TheMAT( IsOpenResult );
   Handle(MAT_ListOfBisector)         TheRoots = new MAT_ListOfBisector();
   MAT2d_SequenceOfSequenceOfGeometry Figure;
-  Standard_Integer                   i;
+  Standard_Integer                   i = 0;
 
   nbSect.Clear();
   theGraph = new MAT_Graph();
@@ -169,10 +169,10 @@ void BRepMAT2d_BisectingLocus::RenumerationAndFusion
          Standard_Integer&             IndexLast,
          MAT_DataMapOfIntegerBasicElt& NewMap)
 {
-  Standard_Integer IndFirst;
-  Standard_Integer i,j;
-  Standard_Integer GeomIndexArc1,GeomIndexArc2,GeomIndexArc3,GeomIndexArc4;
-  Standard_Boolean MergeArc1,MergeArc2;
+  Standard_Integer IndFirst = 0;
+  Standard_Integer i = 0,j = 0;
+  Standard_Integer GeomIndexArc1 = 0,GeomIndexArc2 = 0,GeomIndexArc3 = 0,GeomIndexArc4 = 0;
+  Standard_Boolean MergeArc1 = 0,MergeArc2 = 0;
 
   for ( i = 1; i <= LengthLine; i++) {
     const TColStd_SequenceOfInteger& S = theTool.Circuit()->RefToEqui(ILine,i);
@@ -259,7 +259,7 @@ Handle(MAT_BasicElt) BRepMAT2d_BisectingLocus::BasicElt
 	const Standard_Integer Index  ) 
      const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer Ind = Index;
 
   for (i = 1 ; i < IndLine ; i++){
@@ -323,9 +323,9 @@ static void CutSketch (MAT2d_SequenceOfSequenceOfGeometry&    Figure,
 		       MAT2d_DataMapOfBiIntInteger&           NbSect)
 {
   MAT2d_CutCurve   Cuter;
-  Standard_Integer i,j,k,ico;
-  Standard_Integer ICurveInit;
-  Standard_Integer NbSection;
+  Standard_Integer i = 0,j = 0,k = 0,ico = 0;
+  Standard_Integer ICurveInit = 0;
+  Standard_Integer NbSection = 0;
 
   for ( i = 1; i <= Figure.Length(); i++) {
     TColGeom2d_SequenceOfGeometry& Contour = Figure.ChangeValue(i);  

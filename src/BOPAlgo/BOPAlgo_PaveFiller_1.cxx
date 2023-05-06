@@ -44,7 +44,7 @@
 //=======================================================================
 void BOPAlgo_PaveFiller::PerformVV(const Message_ProgressRange& theRange)
 {
-  Standard_Integer n1, n2, iFlag, aSize;
+  Standard_Integer n1 = 0, n2 = 0, iFlag = 0, aSize = 0;
   Handle(NCollection_BaseAllocator) aAllocator;
   //
   myIterator->Initialize(TopAbs_VERTEX, TopAbs_VERTEX);
@@ -140,7 +140,7 @@ Standard_Integer BOPAlgo_PaveFiller::MakeSDVertices
   TColStd_ListIteratorOfListOfInteger aItLI(theVertIndices);
   TopTools_ListOfShape aLV;
   for (; aItLI.More(); aItLI.Next()) {
-    Standard_Integer nX = aItLI.Value(), nSD1;
+    Standard_Integer nX = aItLI.Value(), nSD1 = 0;
     if (myDS->HasShapeSD(nX, nSD1)) {
       const TopoDS_Shape& aVSD1 = myDS->Shape(nSD1);
       if (nSD == -1) {
@@ -155,10 +155,10 @@ Standard_Integer BOPAlgo_PaveFiller::MakeSDVertices
     aLV.Append(aV);
   }
   BOPTools_AlgoTools::MakeVertex(aLV, aVn);
-  Standard_Integer nV;
+  Standard_Integer nV = 0;
   if (nSD != -1) {
     // update old SD vertex with new value
-    BRep_TVertex* aTVertex = static_cast<BRep_TVertex*>(aVSD.TShape().get());
+    BRep_TVertex* aTVertex = dynamic_cast<BRep_TVertex*>(aVSD.TShape().get());
     aTVertex->Pnt(BRep_Tool::Pnt(aVn));
     aTVertex->Tolerance(BRep_Tool::Tolerance(aVn));
     aVn = aVSD;

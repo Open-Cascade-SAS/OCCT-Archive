@@ -138,11 +138,11 @@ private:
 
 
 
-  Standard_Boolean done;
-  Standard_Boolean para;
-  Standard_Boolean iden;
-  Standard_Boolean empt;
-  Standard_Integer nbp;
+  Standard_Boolean done{};
+  Standard_Boolean para{};
+  Standard_Boolean iden{};
+  Standard_Boolean empt{};
+  Standard_Integer nbp{};
   IntAna2d_IntPoint lpnt[4];
 
 

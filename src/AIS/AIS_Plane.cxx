@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <AIS_Plane.hxx>
 
 #include <AIS_InteractiveContext.hxx>
@@ -421,7 +423,7 @@ void AIS_Plane::SetMinimumSize (const Standard_Real theValue)
     UnsetMinimumSize();
     return;
   }
-  Standard_Real aX, anY;
+  Standard_Real aX = NAN, anY = NAN;
   Size (aX, anY);
   SetTransformPersistence (new Graphic3d_TransformPersScaledAbove (Min (aX, anY) / theValue, myCenter));
 }
@@ -518,7 +520,7 @@ void AIS_Plane::ComputeFrame()
 {
 
   const Handle(Geom_Plane)& pl = myComponent;
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
 
   if (myAutomaticPosition) {
     ElSLib::Parameters(pl->Pln(),myCenter,U,V);
@@ -551,7 +553,7 @@ void AIS_Plane::ComputeFields()
     gp_Dir oY = myAx2->Ax2().YDirection();
     gp_Dir oZ = myAx2->Ax2().Direction();
     myCenter = Orig;
-    Standard_Real xo,yo,zo,x1,y1,z1,x2,y2,z2,x3,y3,z3,x4=0,y4=0,z4=0;
+    Standard_Real xo = NAN,yo = NAN,zo = NAN,x1 = NAN,y1 = NAN,z1 = NAN,x2 = NAN,y2 = NAN,z2 = NAN,x3 = NAN,y3 = NAN,z3 = NAN,x4=0,y4=0,z4=0;
     Standard_Real x5=0,y5=0,z5=0;
     Orig.Coord(xo,yo,zo);
     oX.Coord(x1,y1,z1);

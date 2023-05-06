@@ -101,10 +101,10 @@ private:
   Handle(Geom_Curve) myCurve;
   Handle(Geom2d_Curve) myCurve2d;
   Adaptor3d_CurveOnSurface myAC3d;
-  Standard_Real myPrecision;
+  Standard_Real myPrecision{};
   TopLoc_Location myLocation;
   Standard_Boolean myForceProj;
-  Standard_Boolean myInitOK;
+  Standard_Boolean myInitOK{};
 
 
 };

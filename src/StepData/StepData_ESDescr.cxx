@@ -26,7 +26,7 @@ StepData_ESDescr::StepData_ESDescr  (const Standard_CString name)
 
 void  StepData_ESDescr::SetNbFields (const Standard_Integer nb)
 {
-  Standard_Integer minb,i, oldnb = NbFields();
+  Standard_Integer minb = 0,i = 0, oldnb = NbFields();
   thenames.Clear();
   if (nb == 0)  {  thedescr.Nullify();  return;  }
   Handle(TColStd_HArray1OfTransient) li = new TColStd_HArray1OfTransient(1,nb);
@@ -97,7 +97,7 @@ void  StepData_ESDescr::SetNbFields (const Standard_Integer nb)
 
     Standard_Integer  StepData_ESDescr::Rank (const Standard_CString name) const
 {
-  Standard_Integer rank;
+  Standard_Integer rank = 0;
   if (!thenames.Find(name, rank))
     return 0;
   return rank;

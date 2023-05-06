@@ -157,9 +157,9 @@ private:
 
   Bnd_Box myBox;
   TopoDS_Shape myShape;
-  Standard_Boolean myReject;
-  Standard_Integer myFirstFace;
-  Standard_Real myParamOnEdge;
+  Standard_Boolean myReject{};
+  Standard_Integer myFirstFace{};
+  Standard_Real myParamOnEdge{};
   TopExp_Explorer myShellExplorer;
   TopExp_Explorer myFaceExplorer;
   BRepClass3d_MapOfInter myMapOfInter;

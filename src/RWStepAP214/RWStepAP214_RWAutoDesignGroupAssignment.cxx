@@ -45,7 +45,7 @@ void RWStepAP214_RWAutoDesignGroupAssignment::ReadStep
 
 	Handle(StepAP214_HArray1OfAutoDesignGroupedItem) aItems;
 	StepAP214_AutoDesignGroupedItem aItemsItem;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"items",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aItems = new StepAP214_HArray1OfAutoDesignGroupedItem (1, nb2);

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_FuncPSNorm.hxx>
 #include <Adaptor3d_Surface.hxx>
 #include <Extrema_POnSurf.hxx>
@@ -27,22 +29,22 @@
 Extrema_FuncPSNorm::Extrema_FuncPSNorm ()
 : myS(NULL),
   myU(0.0),
-  myV(0.0)
+  myV(0.0), myPinit(Standard_False), mySinit(Standard_False)
 {
-  myPinit = Standard_False;
-  mySinit = Standard_False;
+  
+  
 }
 
 //=============================================================================
 Extrema_FuncPSNorm::Extrema_FuncPSNorm (const gp_Pnt& P,
                                       const Adaptor3d_Surface& S)
-: myU(0.0),
-  myV(0.0)
+: myP(P), myS(&S), myU(0.0),
+  myV(0.0), myPinit(Standard_True), mySinit(Standard_True)
 {
-  myP = P;
-  myS = &S;
-  myPinit = Standard_True;
-  mySinit = Standard_True;
+  
+  
+  
+  
 }
 
 //=============================================================================
@@ -134,7 +136,7 @@ Standard_Integer Extrema_FuncPSNorm::GetStateNumber ()
    
   for( ; i <=  nbSol; i++)
   {
-    Standard_Real aU, aV;
+    Standard_Real aU = NAN, aV = NAN;
 	myPoint(i).Parameter(aU, aV);
 	if( ((myU - aU ) * (myU - aU ) + (myV - aV ) * (myV - aV )) <= tol2d )
       break;

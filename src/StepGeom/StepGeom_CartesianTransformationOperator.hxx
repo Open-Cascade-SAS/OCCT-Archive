@@ -85,10 +85,10 @@ private:
   Handle(StepGeom_Direction) axis1;
   Handle(StepGeom_Direction) axis2;
   Handle(StepGeom_CartesianPoint) localOrigin;
-  Standard_Real scale;
-  Standard_Boolean hasAxis1;
-  Standard_Boolean hasAxis2;
-  Standard_Boolean hasScale;
+  Standard_Real scale{};
+  Standard_Boolean hasAxis1{};
+  Standard_Boolean hasAxis2{};
+  Standard_Boolean hasScale{};
 
 
 };

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box2d.hxx>
 #include <BndLib_Add2dCurve.hxx>
 #include <BRep_Tool.hxx>
@@ -103,7 +105,7 @@ Standard_Real MaxTol2DCurEdge(const TopoDS_Vertex& theV1,
                               const TopoDS_Face& theF,
                               const Standard_Real theTol)
 {
-  Standard_Real aTolV3D1, aTolV3D2;
+  Standard_Real aTolV3D1 = NAN, aTolV3D2 = NAN;
   if (theV1.IsNull())
   {
     aTolV3D1 = 0.0;
@@ -120,7 +122,7 @@ Standard_Real MaxTol2DCurEdge(const TopoDS_Vertex& theV1,
   {
     aTolV3D2 = BRep_Tool::Tolerance(theV2);
   }
-  Standard_Real aTol2D, anUr, aVr;
+  Standard_Real aTol2D = NAN, anUr = NAN, aVr = NAN;
  
   Standard_Real aTolV3D = Max(aTolV3D1, aTolV3D2);
   BRepAdaptor_Surface aS(theF, Standard_False);
@@ -248,8 +250,7 @@ void CheckSkip(Geom2dInt_GInter& theInter,
   {
     return;
   }
-  const TopoDS_Edge anEl = theE.NextEdge(); // the next edge
-  if (!(BRep_Tool::Tolerance(aVl) > theMaxTol) || theE.NextEdge().IsNull())
+   if (!(BRep_Tool::Tolerance(aVl) > theMaxTol) || theE.NextEdge().IsNull())
   {
     return;
   }
@@ -261,8 +262,8 @@ void CheckSkip(Geom2dInt_GInter& theInter,
   {
     return;
   }
-  Standard_Real anA, aB, aC; // coefficients of the straight line
-  Standard_Real aX1, anY1, aX2, anY2; // coordinates of the ends of edges
+  Standard_Real anA = NAN, aB = NAN, aC = NAN; // coefficients of the straight line
+  Standard_Real aX1 = NAN, anY1 = NAN, aX2 = NAN, anY2 = NAN; // coordinates of the ends of edges
   gp_Pnt2d aP1, aP2; // the ends of edges
 
   theL.Coefficients(anA, aB, aC);
@@ -466,7 +467,7 @@ void  BRepClass_Intersector::LocalGeometry(const BRepClass_Edge& E,
                                            gp_Dir2d& Norm, 
                                            Standard_Real& C) const 
 {
-  Standard_Real fpar, lpar;
+  Standard_Real fpar = NAN, lpar = NAN;
   Handle(Geom2d_Curve) aPCurve = BRep_Tool::CurveOnSurface(E.Edge(), E.Face(), fpar, lpar);
   Geom2dLProp_CLProps2d Prop(aPCurve, U, 2, Precision::PConfusion());
 
@@ -501,7 +502,7 @@ void RefineTolerance(const TopoDS_Face& aF,
   //
   aTypeS=aBAS.GetType();
   if (aTypeS==GeomAbs_Cylinder) {
-    Standard_Real aURes, aVRes, aTolX;
+    Standard_Real aURes = NAN, aVRes = NAN, aTolX = NAN;
     gp_Pnt2d aP2D;
     gp_Vec2d aV2D;
     //

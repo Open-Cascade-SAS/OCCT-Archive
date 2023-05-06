@@ -17,6 +17,8 @@
 // http://www.gamedev.ru/code/articles/?id=4215&page=3
 // and maths found in Wikipedia and elsewhere
 
+#include <math.h>
+
 #include <gp_Quaternion.hxx>
 
 #include <gp_Vec.hxx>
@@ -167,7 +169,7 @@ void gp_Quaternion::SetMatrix (const gp_Mat& theMat)
 
 gp_Mat gp_Quaternion::GetMatrix () const
 {
-  Standard_Real wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
+  Standard_Real wx = NAN, wy = NAN, wz = NAN, xx = NAN, yy = NAN, yz = NAN, xy = NAN, xz = NAN, zz = NAN, x2 = NAN, y2 = NAN, z2 = NAN;
   Standard_Real s  = 2.0 / SquareNorm(); 
   x2 = x * s;    y2 = y * s;    z2 = z * s;
   xx = x * x2;   xy = x * y2;   xz = x * z2;

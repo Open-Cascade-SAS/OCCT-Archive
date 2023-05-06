@@ -23,15 +23,15 @@
 #include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
 
-GC_MakeEllipse::GC_MakeEllipse(const gp_Elips& E)
+GC_MakeEllipse::GC_MakeEllipse(const gp_Elips& E) : GC_Root(), TheEllipse(new Geom_Ellipse(E))
 {
   TheError = gce_Done;
-  TheEllipse = new Geom_Ellipse(E);
+  
 }
 
 GC_MakeEllipse::GC_MakeEllipse(const gp_Ax2&       A2         ,
 				 const Standard_Real MajorRadius,
-				 const Standard_Real MinorRadius)
+				 const Standard_Real MinorRadius) : GC_Root()
 {
   if ( MinorRadius < 0.0) { TheError = gce_NegativeRadius; }
   else if ( MajorRadius < MinorRadius) { TheError = gce_InvertAxis; }
@@ -43,7 +43,7 @@ GC_MakeEllipse::GC_MakeEllipse(const gp_Ax2&       A2         ,
 
 GC_MakeEllipse::GC_MakeEllipse(const gp_Pnt& S1     ,
 				 const gp_Pnt& S2     ,
-				 const gp_Pnt& Center ) {
+				 const gp_Pnt& Center ) : GC_Root() {
   gce_MakeElips E = gce_MakeElips(S1,S2,Center);
   TheError = E.Status();
   if (TheError == gce_Done) {

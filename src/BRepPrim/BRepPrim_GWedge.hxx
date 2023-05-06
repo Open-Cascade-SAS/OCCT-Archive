@@ -211,16 +211,16 @@ private:
   Standard_Real X2Min;
   Standard_Real X2Max;
   TopoDS_Shell myShell;
-  Standard_Boolean ShellBuilt;
+  Standard_Boolean ShellBuilt{};
   TopoDS_Vertex myVertices[8];
-  Standard_Boolean VerticesBuilt[8];
+  Standard_Boolean VerticesBuilt[8]{};
   TopoDS_Edge myEdges[12];
-  Standard_Boolean EdgesBuilt[12];
+  Standard_Boolean EdgesBuilt[12]{};
   TopoDS_Wire myWires[6];
-  Standard_Boolean WiresBuilt[6];
+  Standard_Boolean WiresBuilt[6]{};
   TopoDS_Face myFaces[6];
-  Standard_Boolean FacesBuilt[6];
-  Standard_Boolean myInfinite[6];
+  Standard_Boolean FacesBuilt[6]{};
+  Standard_Boolean myInfinite[6]{};
 
 
 };

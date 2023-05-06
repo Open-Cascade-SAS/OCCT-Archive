@@ -28,6 +28,8 @@
 // abv 19.10.2001  FixAddNaturalBound improved and extracted as separate fix
 // skl,pdn 14.05.2002  OCC55 (correction precision for small faces)
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BndLib_Add2dCurve.hxx>
 #include <BRep_Builder.hxx>
@@ -95,7 +97,7 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeFix_Face,ShapeFix_Root)
 
 static Standard_Boolean IsSurfaceUVInfinite(const Handle(Geom_Surface)& theSurf)
 {
-  Standard_Real UMin,UMax,VMin,VMax;
+  Standard_Real UMin = NAN,UMax = NAN,VMin = NAN,VMax = NAN;
   theSurf->Bounds(UMin,UMax,VMin,VMax);
 
   return (Precision::IsInfinite(UMin) ||
@@ -114,11 +116,11 @@ static Standard_Boolean IsSurfaceUVPeriodic(const Handle(GeomAdaptor_Surface)& t
 //purpose  : 
 //=======================================================================
 
-ShapeFix_Face::ShapeFix_Face()
+ShapeFix_Face::ShapeFix_Face() : myFixWire(new ShapeFix_Wire), myFwd(Standard_True), myStatus(0)
 {
-  myFwd = Standard_True;
-  myStatus = 0;
-  myFixWire = new ShapeFix_Wire;
+  
+  
+  
   ClearModes();
 }
 
@@ -127,11 +129,11 @@ ShapeFix_Face::ShapeFix_Face()
 //purpose  : 
 //=======================================================================
 
-ShapeFix_Face::ShapeFix_Face(const TopoDS_Face &face)
+ShapeFix_Face::ShapeFix_Face(const TopoDS_Face &face) : myFixWire(new ShapeFix_Wire), myFwd(Standard_True), myStatus(0)
 {
-  myFwd = Standard_True;
-  myStatus = 0;
-  myFixWire = new ShapeFix_Wire;
+  
+  
+  
   ClearModes();
   Init( face );
 }
@@ -273,7 +275,7 @@ static Standard_Boolean SplitWire(const TopoDS_Face &face, const TopoDS_Wire& wi
 {
   TColStd_MapOfInteger UsedEdges;
   Handle(ShapeExtend_WireData) sewd = new ShapeExtend_WireData(wire);
-  Standard_Integer i,j,k;
+  Standard_Integer i = 0,j = 0,k = 0;
   ShapeAnalysis_Edge sae;
   for(i=1; i<=sewd->NbEdges(); i++) {
     if(UsedEdges.Contains(i)) continue;
@@ -305,7 +307,7 @@ static Standard_Boolean SplitWire(const TopoDS_Face &face, const TopoDS_Wire& wi
       }
       if(V1.IsSame(V0)) {
         //check that V0 and V1 are same in 2d too
-        Standard_Real a1,b1,a2,b2;
+        Standard_Real a1 = NAN,b1 = NAN,a2 = NAN,b2 = NAN;
         Handle (Geom2d_Curve) curve1 = BRep_Tool::CurveOnSurface(E1,face,a1,b1);
         Handle (Geom2d_Curve) curve2 = BRep_Tool::CurveOnSurface(E2,face,a2,b2);
         gp_Pnt2d v0,v1;
@@ -691,7 +693,7 @@ Standard_Boolean ShapeFix_Face::Perform()
           TopoDS_Shape aCurW = aItW.Value();
           while(aMapReorderedWires.IsBound(aCurW))
           {
-            TopoDS_Shape aFixW = aMapReorderedWires.Find(aCurW);
+            const TopoDS_Shape& aFixW = aMapReorderedWires.Find(aCurW);
             Context()->Replace(aCurW, aFixW);
             aCurW = aFixW;
           }
@@ -715,7 +717,7 @@ Standard_Boolean ShapeFix_Face::Perform()
 
 // Shift all pcurves of edges in the given wire on the given face 
 // to vector <vec>
-static void Shift2dWire(const TopoDS_Wire w, const TopoDS_Face f,
+static void Shift2dWire(const TopoDS_Wire& w, const TopoDS_Face& f,
 			const gp_Vec2d vec, 
                         const Handle(ShapeAnalysis_Surface)& mySurf,
                         Standard_Boolean recompute3d = Standard_False)
@@ -728,7 +730,7 @@ static void Shift2dWire(const TopoDS_Wire w, const TopoDS_Face f,
   for (TopoDS_Iterator ei (w,Standard_False); ei.More(); ei.Next()){
     TopoDS_Edge edge = TopoDS::Edge(ei.Value());
     Handle (Geom2d_Curve) C2d;
-    Standard_Real cf, cl;
+    Standard_Real cf = NAN, cl = NAN;
     if ( ! sae.PCurve(edge, f, C2d, cf, cl, Standard_True) ) continue; 
     C2d->Transform(tr2d);
     if ( recompute3d ) {
@@ -847,15 +849,15 @@ Standard_Boolean ShapeFix_Face::FixAddNaturalBound()
 
   // Collect information on free intervals in U and V
   TColgp_SequenceOfPnt2d intU, intV, centers;
-  Standard_Real SUF, SUL, SVF, SVL;
+  Standard_Real SUF = NAN, SUL = NAN, SVF = NAN, SVL = NAN;
   mySurf->Bounds(SUF, SUL, SVF, SVL);
   intU.Append ( gp_Pnt2d(SUF, SUL) );
   intV.Append ( gp_Pnt2d(SVF, SVL) );
   Standard_Integer nb = ws.Length();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   
   for ( i=1; i <= nb; i ++) {
-    Standard_Real Umin, Vmin, Umax, Vmax;
+    Standard_Real Umin = NAN, Vmin = NAN, Umax = NAN, Vmax = NAN;
 //     Bnd_Box2d B;
     TopoDS_Wire aw = TopoDS::Wire (ws.Value(i));
     // PTV 01.11.2002 ACIS907, OCC921 begin
@@ -947,7 +949,7 @@ Standard_Boolean ShapeFix_Face::FixAddNaturalBound()
         // find corresponding place in boundary 
         ShapeAnalysis_Edge sae;
         TopoDS_Vertex V = sae.FirstVertex ( sbwd->Edge(j) );
-        Standard_Integer k;
+        Standard_Integer k = 0;
         for ( k=1; k <= bnd->NbEdges(); k++ ) {
           if ( ! BRep_Tool::Degenerated ( bnd->Edge(k) ) ) continue;
           if ( BRepTools::Compare ( V, sae.FirstVertex ( bnd->Edge(k) ) ) ) break;
@@ -1082,7 +1084,7 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
       ei.Next();
       if ( ! ei.More() ) {
         length = 0;
-        Standard_Real First, Last;
+        Standard_Real First = NAN, Last = NAN;
         Handle(Geom_Curve) c3d;
         ShapeAnalysis_Edge sae;
         if ( sae.Curve3d(anEdge,c3d,First,Last) ) {
@@ -1157,7 +1159,7 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
 //    Standard_Real toluv = Min ( Ads.UResolution(Precision()), Ads.VResolution(Precision()) );
     Standard_Boolean uclosed = mySurf->IsUClosed();
     Standard_Boolean vclosed = mySurf->IsVClosed();
-    Standard_Real SUF, SUL, SVF, SVL;
+    Standard_Real SUF = NAN, SUL = NAN, SVF = NAN, SVL = NAN;
     mySurf->Bounds(SUF, SUL, SVF, SVL);
     Standard_Real uRange = SUL - SUF;
     Standard_Real vRange = SVL - SVF;
@@ -1169,7 +1171,7 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
     SI.Clear();
     MapIntWires.Clear();
     Standard_Integer NbOuts=0;
-    Standard_Integer i;
+    Standard_Integer i = 0;
 
     NCollection_Array1<Bnd_Box2d> aWireBoxes(1, nb);
     Standard_Real uMiddle = 0, vMiddle = 0;
@@ -1179,7 +1181,7 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
       TopoDS_Shape aShape = ws.Value(i);
       TopoDS_Wire aWire = TopoDS::Wire (aShape);
       Bnd_Box2d aBox;
-      Standard_Real cf,cl;
+      Standard_Real cf = NAN,cl = NAN;
       TopoDS_Iterator ew (aWire);
       for(;ew.More(); ew.Next()) {
         TopoDS_Edge ed = TopoDS::Edge (ew.Value());
@@ -1200,7 +1202,7 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
        BndLib_Add2dCurve::Add(gac,::Precision::Confusion(),aBox);
       }
 
-      Standard_Real aXMin, aXMax, aYMin, aYMax;
+      Standard_Real aXMin = NAN, aXMax = NAN, aYMin = NAN, aYMax = NAN;
       aBox.Get(aXMin, aYMin, aXMax, aYMax);
       if (isFirst) {
         isFirst = Standard_False;
@@ -1273,7 +1275,7 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
           TopoDS_Iterator ew (bw);
           for(;ew.More(); ew.Next()) {
             TopoDS_Edge ed = TopoDS::Edge (ew.Value());
-            Standard_Real cf,cl;
+            Standard_Real cf = NAN,cl = NAN;
             Handle(Geom2d_Curve) cw = BRep_Tool::CurveOnSurface (ed,myFace,cf,cl);
             if (cw.IsNull()) continue;
             gp_Pnt2d unp = cw->Value ((cf+cl)/2.);
@@ -1418,7 +1420,7 @@ Standard_Boolean ShapeFix_Face::FixOrientation(TopTools_DataMapOfShapeListOfShap
     
     if(nb < nbAll) {
       for( i =1; i <= nbAll;i++) {
-        TopoDS_Shape aS2 = allSubShapes.Value(i);
+        const TopoDS_Shape& aS2 = allSubShapes.Value(i);
         if(aS2.ShapeType() != TopAbs_WIRE || 
            (aS2.Orientation() != TopAbs_FORWARD && aS2.Orientation() != TopAbs_REVERSED))
           B.Add ( S,aS2);
@@ -1467,7 +1469,7 @@ static Standard_Boolean CheckWire (const TopoDS_Wire &wire,
     TopoDS_Edge edge = TopoDS::Edge ( ed.Value() );
     if ( ! BRep_Tool::Degenerated ( edge ) ) isDeg = Standard_False;
     Handle(Geom2d_Curve) c2d;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     if ( ! sae.PCurve ( edge, face, c2d, f, l, Standard_True ) ) 
       return Standard_False;
     vec += c2d->Value(l).XY() - c2d->Value(f).XY();
@@ -1533,9 +1535,9 @@ Standard_Boolean ShapeFix_Face::FixMissingSeam()
       return Standard_False;
   }
   
-  Standard_Real URange, VRange, SUF, SUL, SVF, SVL;
+  Standard_Real URange = NAN, VRange = NAN, SUF = NAN, SUL = NAN, SVF = NAN, SVL = NAN;
   mySurf->Bounds ( SUF, SUL, SVF, SVL );
-  Standard_Real fU1,fU2,fV1,fV2;
+  Standard_Real fU1 = NAN,fU2 = NAN,fV1 = NAN,fV2 = NAN;
   BRepTools::UVBounds(myFace,fU1,fU2,fV1,fV2);
   
   //pdn OCC55 fix to faces without the wires to avoid identical first and last parameters
@@ -1574,11 +1576,11 @@ Standard_Boolean ShapeFix_Face::FixMissingSeam()
   }
     
   TopoDS_Wire w1, w2;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for ( i=1; i <= ws.Length(); i++ ) {
     TopoDS_Wire wire = TopoDS::Wire ( ws.Value(i) );
-    Standard_Integer isuopen, isvopen;
-    Standard_Boolean isdeg;
+    Standard_Integer isuopen = 0, isvopen = 0;
+    Standard_Boolean isdeg = 0;
     if ( ! CheckWire ( wire, myFace, URange, VRange, isuopen, isvopen, isdeg ) ) 
       continue;
     if ( w1.IsNull() ) { w1 = wire; ismodeu = isuopen; ismodev = isvopen; isdeg1 = isdeg ? i : 0; }
@@ -1637,7 +1639,7 @@ Standard_Boolean ShapeFix_Face::FixMissingSeam()
     // then usual procedure applied
     gp_Pnt2d p;
     gp_Dir2d d;
-    Standard_Real aRange;
+    Standard_Real aRange = NAN;
 
     if( ismodeu && anIsDegeneratedTor )
     {
@@ -1657,7 +1659,7 @@ Standard_Boolean ShapeFix_Face::FixMissingSeam()
       aRange = 2.*M_PI;
     }
     else if ( ismodev && mySurf->Surface()->IsKind(STANDARD_TYPE(Geom_BSplineSurface))) {
-      Standard_Real uCoord;
+      Standard_Real uCoord = NAN;
       if (mySurf->Value(SUF, SVF).Distance(mySurf->Value(SUF, (SVF + SVL) / 2)) < ::Precision::Confusion())
         uCoord = SUF;
       else if (mySurf->Value(SUL, SVF).Distance(mySurf->Value(SUL, (SVF + SVL) / 2)) < ::Precision::Confusion())
@@ -1669,7 +1671,7 @@ Standard_Boolean ShapeFix_Face::FixMissingSeam()
       aRange = VRange;
     }
     else if ( ismodeu && mySurf->Surface()->IsKind(STANDARD_TYPE(Geom_BSplineSurface))) {
-      Standard_Real vCoord;
+      Standard_Real vCoord = NAN;
       if (mySurf->Value(SUF, SVF).Distance(mySurf->Value((SUF + SUL) / 2, SVF)) < ::Precision::Confusion())
         vCoord = SVF;
       else if (mySurf->Value(SUL, SVL).Distance(mySurf->Value((SUF + SUL) / 2, SVL)) < ::Precision::Confusion())
@@ -1779,7 +1781,7 @@ Standard_Boolean ShapeFix_Face::FixMissingSeam()
         continue;
       TopoDS_Wire w = TopoDS::Wire ( it.Value() );
       if ( w == w11 ) continue;
-      Standard_Real shift;
+      Standard_Real shift = NAN;
       if ( w == w21 ) shift = shiftw2;
 
       else {
@@ -1796,7 +1798,7 @@ Standard_Boolean ShapeFix_Face::FixMissingSeam()
 	for ( TopoDS_Iterator iw(w); iw.More(); iw.Next() ) {
 	  TopoDS_Edge E = TopoDS::Edge ( iw.Value() );
 	  Handle(Geom2d_Curve) C;
-	  Standard_Real a, b;
+	  Standard_Real a = NAN, b = NAN;
 	  if ( ! sae.PCurve ( E, tmpF, C, a, b ) ) continue;
 	  C->Translate ( V );
 	}
@@ -1820,7 +1822,7 @@ Standard_Boolean ShapeFix_Face::FixMissingSeam()
   for ( Standard_Integer i1 = 1; i1 <= nb1 + nb2; i1++ ) {
     TopoDS_Edge edge1 = ( i1 <= nb1 ? wd1->Edge ( i1 ) : wd2->Edge ( i1-nb1 ) );
     Handle(Geom2d_Curve) c2d;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     if ( ! sae.PCurve ( edge1, tmpF, c2d, f, l, Standard_True ) ) return Standard_False;
     gp_Pnt2d pos1 = c2d->Value(l).XY();
     // the best place is end of edge which is nearest to 0 
@@ -2288,7 +2290,7 @@ Standard_Boolean ShapeFix_Face::SplitEdge(const Handle(ShapeExtend_WireData)& se
     TopLoc_Location L;
     const Handle(Geom_Surface)& S = BRep_Tool::Surface(myFace,L);
     Handle(Geom2d_Curve) c2d;
-    Standard_Real cf,cl;
+    Standard_Real cf = NAN,cl = NAN;
     ShapeAnalysis_Edge sae;
     if(sae.PCurve(newE1,S,L,c2d,cf,cl,Standard_False)) {
       Bnd_Box2d box;
@@ -2364,7 +2366,7 @@ Standard_Boolean ShapeFix_Face::SplitEdge(const Handle(ShapeExtend_WireData)& se
     TopLoc_Location L;
     const Handle(Geom_Surface)& S = BRep_Tool::Surface(myFace,L);
     Handle(Geom2d_Curve) c2d;
-    Standard_Real cf,cl;
+    Standard_Real cf = NAN,cl = NAN;
     ShapeAnalysis_Edge sae;
     if(sae.PCurve(newE1,S,L,c2d,cf,cl,Standard_False)) {
       Bnd_Box2d box;
@@ -2486,7 +2488,7 @@ Standard_Boolean ShapeFix_Face::FixSplitFace(const TopTools_DataMapOfShapeListOf
   TopoDS_Shape S = myFace;
   if ( ! Context().IsNull() ) 
     S = Context()->Apply ( myFace );
-  Standard_Integer NbWires=0, NbWiresNew=0, NbEdges;
+  Standard_Integer NbWires=0, NbWiresNew=0, NbEdges = 0;
   for(TopoDS_Iterator iter(S,Standard_False); iter.More(); iter.Next()) {
     const TopoDS_Shape& aShape = iter.Value();
     if(aShape.ShapeType() != TopAbs_WIRE || 
@@ -2597,7 +2599,7 @@ static Standard_Boolean IsPeriodicConicalLoop(const Handle(Geom_ConicalSurface)&
   {
     const TopoDS_Edge& aCurrentEdge = TopoDS::Edge(aWireIter.Value());
     Handle(Geom2d_Curve) aC2d;
-    Standard_Real aPFirst, aPLast;
+    Standard_Real aPFirst = NAN, aPLast = NAN;
 
     aSAE.PCurve(aCurrentEdge, theSurf, aLoc, aC2d, aPFirst, aPLast, Standard_True);
 

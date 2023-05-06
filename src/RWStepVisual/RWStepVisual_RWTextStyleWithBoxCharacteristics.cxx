@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <RWStepVisual_RWTextStyleWithBoxCharacteristics.hxx>
@@ -50,7 +52,7 @@ void RWStepVisual_RWTextStyleWithBoxCharacteristics::ReadStep
   
   // --- own field : characteristics ---
 
-  Standard_Integer numr, numpr;
+  Standard_Integer numr = 0, numpr = 0;
   TCollection_AsciiString TypeHeigth("BOX_HEIGHT");
   TCollection_AsciiString TypeWidth("BOX_WIDTH");
   TCollection_AsciiString TypeSlant("BOX_SLANT_ANGLE");
@@ -58,10 +60,10 @@ void RWStepVisual_RWTextStyleWithBoxCharacteristics::ReadStep
   TCollection_AsciiString TrueType;
 
   Handle(StepVisual_HArray1OfBoxCharacteristicSelect) aCharacteristics;
-  Standard_Real aCharacteristicsItem;
+  Standard_Real aCharacteristicsItem = NAN;
   StepVisual_BoxCharacteristicSelect aBoxCharacteristicSelect;
 
-  Standard_Integer nsub3;
+  Standard_Integer nsub3 = 0;
   nsub3 = data->SubListNumber(num, 3, Standard_False);
   if (nsub3 !=0) {
     Standard_Integer nb3 = data->NbParams(nsub3);

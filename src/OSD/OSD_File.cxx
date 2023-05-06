@@ -1006,7 +1006,7 @@ OSD_KindFile OSD_File::KindOfFile() const
   }
   return OSD_UNKNOWN;
 #else
-  struct stat aStatBuffer;
+  struct stat aStatBuffer{};
   if (stat (aFullName.ToCString(), &aStatBuffer) == 0)
   {
     if      (S_ISDIR (aStatBuffer.st_mode)) { return OSD_DIRECTORY; }
@@ -1345,7 +1345,7 @@ void OSD_File::SetLock (const OSD_LockType theLock)
     myLock = theLock;
   }
 #elif defined(SYSV)
-  struct flock aLockKey;
+  struct flock aLockKey{};
   aLockKey.l_whence = 0;
   aLockKey.l_start = 0;
   aLockKey.l_len = 0;
@@ -1375,7 +1375,7 @@ void OSD_File::SetLock (const OSD_LockType theLock)
 
   if (theLock == OSD_ExclusiveLock)
   {
-    struct stat aStatBuf;
+    struct stat aStatBuf{};
     fstat (myFileChannel, &aStatBuf);
     TCollection_AsciiString aFilePath;
     myPath.SystemName (aFilePath);
@@ -1461,7 +1461,7 @@ void OSD_File::UnLock()
 #elif defined(SYSV)
   if (ImperativeFlag)
   {
-    struct stat aStatBuf;
+    struct stat aStatBuf{};
     fstat (myFileChannel, &aStatBuf);
     TCollection_AsciiString aBuffer;
     myPath.SystemName (aBuffer);
@@ -1469,7 +1469,7 @@ void OSD_File::UnLock()
     ImperativeFlag = Standard_False;
   }
 
-  struct flock aLockKey;
+  struct flock aLockKey{};
   aLockKey.l_type = F_UNLCK;
   const int aStatus = fcntl (myFileChannel, F_SETLK, &aLockKey);
   if (aStatus == -1)
@@ -1529,7 +1529,7 @@ Standard_Size OSD_File::Size()
   TCollection_AsciiString aFilePath;
   myPath.SystemName (aFilePath);
 
-  struct stat aStatBuf;
+  struct stat aStatBuf{};
   const int aStatus = stat (aFilePath.ToCString(), &aStatBuf);
   if (aStatus == -1)
   {

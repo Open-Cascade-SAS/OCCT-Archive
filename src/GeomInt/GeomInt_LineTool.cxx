@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomInt_LineTool.hxx>
 
 #include <Extrema_ExtPS.hxx>
@@ -233,7 +235,7 @@ static Standard_Boolean FindPoint(const gp_Pnt2d&     theFirstPoint,
       gp_Vec2d acurvec(theLastPoint, acurpoint);
 
       //
-      Standard_Real aDotX, anAngleX, aPC;
+      Standard_Real aDotX = NAN, anAngleX = NAN, aPC = NAN;
       //
       aDotX=aVec.Dot(acurvec);
       anAngleX=aVec.Angle(acurvec);
@@ -311,7 +313,7 @@ Standard_Real GeomInt_LineTool::FirstParameter (const Handle(IntPatch_Line)& L)
       Handle(IntPatch_ALine) alin = Handle(IntPatch_ALine)::DownCast(L);
       if (alin->HasFirstPoint())
         return alin->FirstPoint().ParameterOnLine();
-      Standard_Boolean included;
+      Standard_Boolean included = 0;
       Standard_Real firstp = alin->FirstParameter(included);
       if (!included)
         firstp += Epsilon(firstp);
@@ -363,7 +365,7 @@ Standard_Real GeomInt_LineTool::LastParameter (const Handle(IntPatch_Line)& L)
       Handle(IntPatch_ALine) alin = Handle(IntPatch_ALine)::DownCast(L);
       if (alin->HasLastPoint())
         return alin->LastPoint().ParameterOnLine();
-      Standard_Boolean included;
+      Standard_Boolean included = 0;
       Standard_Real lastp = alin->LastParameter(included);
       if (!included)
         lastp -=Epsilon(lastp);
@@ -421,9 +423,9 @@ Standard_Boolean GeomInt_LineTool::
   typedef std::vector<ListOfInteger, NCollection_StdAllocator<
       ListOfInteger> > ArrayOfListOfInteger;
 
-  Standard_Boolean bIsPrevPointOnBoundary, bIsCurrentPointOnBoundary;
-  Standard_Integer nblines, aNbPnts, aNbParts, pit, i, j, aNbListOfPointIndex;
-  Standard_Real aTol, umin, umax, vmin, vmax;
+  Standard_Boolean bIsPrevPointOnBoundary = 0, bIsCurrentPointOnBoundary = 0;
+  Standard_Integer nblines = 0, aNbPnts = 0, aNbParts = 0, pit = 0, i = 0, j = 0, aNbListOfPointIndex = 0;
+  Standard_Real aTol = NAN, umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
 
   //an inc allocator, it will contain wasted space (upon list's Clear()) but it should
   //still be faster than the standard allocator, and wasted memory should not be
@@ -476,16 +478,16 @@ Standard_Boolean GeomInt_LineTool::
       aGASurface->Surface()->Bounds(umin, umax, vmin, vmax);
       //
       for(j=0; j<2; j++) {// exploration of coordinate U,V
-	Standard_Boolean isperiodic;
+	Standard_Boolean isperiodic = 0;
 	//
 	isperiodic = (!j) ? aGASurface->IsUPeriodic() : aGASurface->IsVPeriodic();
 	if(!isperiodic) {
 	  continue;
 	}
 	//
-	Standard_Real aResolution, aPeriod, alowerboundary, aupperboundary, U, V;
-	Standard_Real aParameter, anoffset, anAdjustPar;
-	Standard_Boolean bIsOnFirstBoundary, bIsPointOnBoundary;
+	Standard_Real aResolution = NAN, aPeriod = NAN, alowerboundary = NAN, aupperboundary = NAN, U = NAN, V = NAN;
+	Standard_Real aParameter = NAN, anoffset = NAN, anAdjustPar = NAN;
+	Standard_Boolean bIsOnFirstBoundary = 0, bIsPointOnBoundary = 0;
 	//
 	aResolution = (!j) ? aGASurface->UResolution(aTol) : aGASurface->VResolution(aTol);
 	aPeriod     = (!j) ? aGASurface->UPeriod() : aGASurface->VPeriod();
@@ -546,7 +548,7 @@ Standard_Boolean GeomInt_LineTool::
   }
   //
   // Correct wlines.begin
-  Standard_Integer aLineType;
+  Standard_Integer aLineType = 0;
   TColStd_Array1OfListOfInteger anArrayOfLineEnds(1, nblines);
   Handle(IntSurf_LineOn2S) aSeqOfPntOn2S = new IntSurf_LineOn2S (new NCollection_IncAllocator());
   //
@@ -562,7 +564,7 @@ Standard_Boolean GeomInt_LineTool::
     }
     //
     TColStd_ListOfInteger aListOfFLIndex;
-    Standard_Integer aneighbourindex, aLineTypeNeib;
+    Standard_Integer aneighbourindex = 0, aLineTypeNeib = 0;
     //
     for(j = 0; j < 2; j++) {// neighbour line choice 
       aneighbourindex = (!j) ? (i-1) : (i+1);
@@ -581,7 +583,7 @@ Standard_Boolean GeomInt_LineTool::
       // check if need use derivative.begin .end [absence]
       //
       IntSurf_PntOn2S aNewP = aPoint;
-      Standard_Integer surfit, parit;
+      Standard_Integer surfit = 0, parit = 0;
       //
       for(surfit = 0; surfit < 2; ++surfit) {
 
@@ -655,7 +657,7 @@ Standard_Boolean GeomInt_LineTool::
 	    anotherPar += anoffset;
 	    Standard_Integer aneighbourpointindex = (j == 0) ? aListOfIndex.First() : aListOfIndex.Last();
 	    const IntSurf_PntOn2S& aNeighbourPoint = theWLine->Point(aneighbourpointindex);
-	    Standard_Real nU1, nV1;
+	    Standard_Real nU1 = NAN, nV1 = NAN;
 
 	    if(surfit == 0)
 	      aNeighbourPoint.ParametersOnS1(nU1, nV1);
@@ -697,7 +699,7 @@ Standard_Boolean GeomInt_LineTool::
 	      while((anindexother <= aListOfIndex.Last()) && (anindexother >= aListOfIndex.First())) {
 		anindexother = (j == 0) ? (anindexother + 1) : (anindexother - 1);
 		const IntSurf_PntOn2S& aPrevNeighbourPoint = theWLine->Point(anindexother);
-		Standard_Real nU2, nV2;
+		Standard_Real nU2 = NAN, nV2 = NAN;
 		
 		if(surfit == 0)
 		  aPrevNeighbourPoint.ParametersOnS1(nU2, nV2);
@@ -714,7 +716,7 @@ Standard_Boolean GeomInt_LineTool::
 		  if((fabs(anAngle) < (M_PI * 0.25)) && (aNewVec.Dot(aVecOld) > 0.)) {
 
 		    if(bCheckAngle1) {
-		      Standard_Real U1, U2, V1, V2;
+		      Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
 		      IntSurf_PntOn2S atmppoint = aNewP;
 		      atmppoint.SetValue((surfit == 0), anewU, anewV);
 		      atmppoint.Parameters(U1, V1, U2, V2);
@@ -744,7 +746,7 @@ Standard_Boolean GeomInt_LineTool::
 	if(bComputeLineEnd) {
 	  Standard_Integer aneighbourpointindex1 = (j == 0) ? aListOfIndex.First() : aListOfIndex.Last();
 	  const IntSurf_PntOn2S& aNeighbourPoint = theWLine->Point(aneighbourpointindex1);
-	  Standard_Real nU1, nV1;
+	  Standard_Real nU1 = NAN, nV1 = NAN;
 
 	  if(surfit == 0)
 	    aNeighbourPoint.ParametersOnS1(nU1, nV1);
@@ -757,7 +759,7 @@ Standard_Boolean GeomInt_LineTool::
 	  while((aneighbourpointindex2 <= aListOfIndex.Last()) && (aneighbourpointindex2 >= aListOfIndex.First())) {
 	    aneighbourpointindex2 = (j == 0) ? (aneighbourpointindex2 + 1) : (aneighbourpointindex2 - 1);
 	    const IntSurf_PntOn2S& aPrevNeighbourPoint = theWLine->Point(aneighbourpointindex2);
-	    Standard_Real nU2, nV2;
+	    Standard_Real nU2 = NAN, nV2 = NAN;
 
 	    if(surfit == 0)
 	      aPrevNeighbourPoint.ParametersOnS1(nU2, nV2);
@@ -964,8 +966,8 @@ Standard_Boolean GeomInt_LineTool::
   // Split wlines.end
   //
   // cda002/I3
-  Standard_Real fprm, lprm;
-  Standard_Integer ifprm, ilprm, aNbPoints, aIndex;
+  Standard_Real fprm = NAN, lprm = NAN;
+  Standard_Integer ifprm = 0, ilprm = 0, aNbPoints = 0, aIndex = 0;
   //
   aNbParts=theLConstructor.NbParts();
   //

@@ -83,8 +83,8 @@ DEFINE_STANDARD_RTTIEXT(StepKinematics_SurfacePairWithRange, StepKinematics_Surf
 private:
   Handle(StepGeom_RectangularTrimmedSurface) myRangeOnSurface1;
   Handle(StepGeom_RectangularTrimmedSurface) myRangeOnSurface2;
-  Standard_Real myLowerLimitActualRotation; //!< optional
-  Standard_Real myUpperLimitActualRotation; //!< optional
+  Standard_Real myLowerLimitActualRotation{}; //!< optional
+  Standard_Real myUpperLimitActualRotation{}; //!< optional
   Standard_Boolean defLowerLimitActualRotation; //!< flag "is LowerLimitActualRotation defined"
   Standard_Boolean defUpperLimitActualRotation; //!< flag "is UpperLimitActualRotation defined"
 

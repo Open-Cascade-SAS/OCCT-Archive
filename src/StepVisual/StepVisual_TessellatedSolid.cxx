@@ -23,9 +23,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepVisual_TessellatedSolid, StepVisual_TessellatedIt
 //purpose  : 
 //=======================================================================
 
-StepVisual_TessellatedSolid::StepVisual_TessellatedSolid ()
+StepVisual_TessellatedSolid::StepVisual_TessellatedSolid () : myHasGeometricLink(Standard_False)
 {
-  myHasGeometricLink = Standard_False;
+  
 }
 
 //=======================================================================

@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <RWStepGeom_RWUniformCurveAndRationalBSplineCurve.hxx>
@@ -54,7 +56,7 @@ void RWStepGeom_RWUniformCurveAndRationalBSplineCurve::ReadStep
 	// --- field : degree ---
 
 
-	Standard_Integer aDegree;
+	Standard_Integer aDegree = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadInteger (num,1,"degree",ach,aDegree);
 	// --- field : controlPointsList ---
@@ -62,7 +64,7 @@ void RWStepGeom_RWUniformCurveAndRationalBSplineCurve::ReadStep
 
 	Handle(StepGeom_HArray1OfCartesianPoint) aControlPointsList;
 	Handle(StepGeom_CartesianPoint) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"control_points_list",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aControlPointsList = new StepGeom_HArray1OfCartesianPoint (1, nb2);
@@ -123,8 +125,8 @@ void RWStepGeom_RWUniformCurveAndRationalBSplineCurve::ReadStep
 	// --- field : weightsData ---
 
 	Handle(TColStd_HArray1OfReal) aWeightsData;
-	Standard_Real aWeightsDataItem;
-	Standard_Integer nsub6;
+	Standard_Real aWeightsDataItem = NAN;
+	Standard_Integer nsub6 = 0;
 	if (data->ReadSubList (num,1,"weights_data",ach,nsub6)) {
 	  Standard_Integer nb6 = data->NbParams(nsub6);
 	  aWeightsData = new TColStd_HArray1OfReal (1, nb6);

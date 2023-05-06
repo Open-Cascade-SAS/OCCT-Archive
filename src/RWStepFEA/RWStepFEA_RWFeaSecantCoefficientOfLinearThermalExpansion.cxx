@@ -15,6 +15,8 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepFEA_RWFeaSecantCoefficientOfLinearThermalExpansion.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -52,7 +54,7 @@ void RWStepFEA_RWFeaSecantCoefficientOfLinearThermalExpansion::ReadStep (const H
   StepFEA_SymmetricTensor23d aFeaConstants;
   data->ReadEntity (num, 2, "fea_constants", ach, aFeaConstants);
 
-  Standard_Real aReferenceTemperature;
+  Standard_Real aReferenceTemperature = NAN;
   data->ReadReal (num, 3, "reference_temperature", ach, aReferenceTemperature);
 
   // Initialize entity

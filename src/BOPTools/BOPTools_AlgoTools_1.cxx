@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <BOPTools_AlgoTools.hxx>
 #include <BOPTools_Parallel.hxx>
@@ -542,8 +544,8 @@ static
     return aMaxDist;
   }
   //
-  Standard_Real aT1, aT2, aTint1, aTint2, aHalfR1, aHalfR2, aDist;
-  Standard_Integer i, aNb;
+  Standard_Real aT1 = NAN, aT2 = NAN, aTint1 = NAN, aTint2 = NAN, aHalfR1 = NAN, aHalfR2 = NAN, aDist = NAN;
+  Standard_Integer i = 0, aNb = 0;
   gp_Pnt aP, aPV;
   gp_Pnt2d aP2d;
   NCollection_List<IntRes2d_IntersectionPoint> aLP;
@@ -613,8 +615,8 @@ static
 void CorrectWires(const TopoDS_Face& aFx,
                   const TopTools_IndexedMapOfShape& aMapToAvoid)
 {
-  Standard_Integer i, aNbV;
-  Standard_Real aTol, aTol2, aD2, aD2max, aT1, aT2;
+  Standard_Integer i = 0, aNbV = 0;
+  Standard_Real aTol = NAN, aTol2 = NAN, aD2 = NAN, aD2max = NAN, aT1 = NAN, aT2 = NAN;
   gp_Pnt aP, aPV;
   gp_Pnt2d aP2D;
   TopoDS_Face aF;
@@ -708,7 +710,7 @@ void CorrectEdgeTolerance (const TopoDS_Edge& myShape,
 
   Handle(BRep_TEdge)& TEx = *((Handle(BRep_TEdge)*)&myShape.TShape());
   BRep_ListIteratorOfListOfCurveRepresentation itcrx(TEx->Curves());
-  Standard_Boolean Degenerated, SameParameterx, SameRangex;
+  Standard_Boolean Degenerated = 0, SameParameterx = 0, SameRangex = 0;
 
   Standard_Integer unique = 0;
 
@@ -757,7 +759,7 @@ void CorrectEdgeTolerance (const TopoDS_Edge& myShape,
   
   if (!myCref.IsNull()) {
     Handle(BRep_GCurve) GCref (Handle(BRep_GCurve)::DownCast (myCref));
-    Standard_Real First,Last;
+    Standard_Real First = NAN,Last = NAN;
     GCref->Range(First,Last);
     if (Last<=First) {
       myCref.Nullify();
@@ -815,7 +817,7 @@ void CorrectEdgeTolerance (const TopoDS_Edge& myShape,
       if (cr != myCref && cr->IsCurveOnSurface(Su,L)) {
         pcurvefound = Standard_True;
         Handle(BRep_GCurve) GC (Handle(BRep_GCurve)::DownCast (cr));
-        Standard_Real f,l;
+        Standard_Real f = NAN,l = NAN;
         GC->Range(f,l);
         if (SameRange && (f != First || l != Last)) {
           return ;//BRepCheck_InvalidSameRangeFlag;
@@ -924,7 +926,7 @@ void CorrectEdgeTolerance (const TopoDS_Edge& myShape,
 void CorrectVertexTolerance(const TopoDS_Edge& aE,
                             const TopTools_IndexedMapOfShape& aMapToAvoid)
 {
-  Standard_Real aTolE, aTolV;
+  Standard_Real aTolE = NAN, aTolV = NAN;
   TopoDS_Iterator aIt;
   //
   aTolE=BRep_Tool::Tolerance(aE);
@@ -944,7 +946,7 @@ void CorrectVertexTolerance(const TopoDS_Edge& aE,
 void UpdateEdges(const TopoDS_Face& aF,
                  const TopTools_IndexedMapOfShape& aMapToAvoid)
 {
-  Standard_Real aTolF, aTolE, aTolV;
+  Standard_Real aTolF = NAN, aTolE = NAN, aTolV = NAN;
   TopoDS_Iterator aItF, aItW, aItE;
   //
   aTolE=aTolF= BRep_Tool::Tolerance(aF);

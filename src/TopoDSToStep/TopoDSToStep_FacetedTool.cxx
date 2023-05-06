@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <Geom2d_BezierCurve.hxx>
 #include <Geom2d_BSplineCurve.hxx>
@@ -49,7 +51,7 @@ TopoDSToStep_FacetedError TopoDSToStep_FacetedTool::CheckTopoDSShape
     else if (Su->IsKind(STANDARD_TYPE(Geom_BSplineSurface))) {
       Handle(Geom_BSplineSurface) aBsplS =
 	Handle(Geom_BSplineSurface)::DownCast(Su);
-      Standard_Integer uDeg, vDeg, nUPol, nVPol;
+      Standard_Integer uDeg = 0, vDeg = 0, nUPol = 0, nVPol = 0;
       uDeg = aBsplS->UDegree();
       if (uDeg == 1) {
 	vDeg = aBsplS->VDegree();
@@ -73,7 +75,7 @@ TopoDSToStep_FacetedError TopoDSToStep_FacetedTool::CheckTopoDSShape
     else if (Su->IsKind(STANDARD_TYPE(Geom_BezierSurface))) {
       Handle(Geom_BezierSurface) aBzS = 
 	Handle(Geom_BezierSurface)::DownCast(Su);
-      Standard_Integer uDeg, vDeg, nUPol, nVPol;
+      Standard_Integer uDeg = 0, vDeg = 0, nUPol = 0, nVPol = 0;
       uDeg = aBzS->UDegree();
       if (uDeg == 1) {
 	vDeg = aBzS->VDegree();
@@ -106,7 +108,7 @@ TopoDSToStep_FacetedError TopoDSToStep_FacetedTool::CheckTopoDSShape
       const TopoDS_Edge anEdge = TopoDS::Edge(EdgeExp.Current());
       EdgeExp.Next();
       
-      Standard_Real cf, cl;
+      Standard_Real cf = NAN, cl = NAN;
       Handle(Geom2d_Curve) C2d = 
 	BRep_Tool::CurveOnSurface(anEdge, aFace, cf, cl);
       

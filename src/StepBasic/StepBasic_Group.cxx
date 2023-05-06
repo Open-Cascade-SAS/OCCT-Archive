@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_Group,Standard_Transient)
 //function : StepBasic_Group
 //purpose  : 
 //=======================================================================
-StepBasic_Group::StepBasic_Group ()
+StepBasic_Group::StepBasic_Group () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

@@ -34,10 +34,10 @@ TNaming_Scope::TNaming_Scope () : myWithValid(Standard_False)
 //purpose  : 
 //=======================================================================
 
-TNaming_Scope::TNaming_Scope (TDF_LabelMap& map)
+TNaming_Scope::TNaming_Scope (TDF_LabelMap& map) : myWithValid(Standard_True), myValid(map)
 { 
-  myWithValid = Standard_True;
-  myValid = map;
+  
+  
 }
 
 //=======================================================================

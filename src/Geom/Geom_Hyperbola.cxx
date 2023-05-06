@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Geom_Hyperbola.hxx>
 #include <gp_Ax1.hxx>
@@ -334,7 +336,7 @@ Standard_Real Geom_Hyperbola::Focal () const {
 Pnt Geom_Hyperbola::Focus1 () const {
 
   Standard_Real C = Sqrt(majorRadius * majorRadius + minorRadius * minorRadius);
-  Standard_Real Xp, Yp, Zp, Xd, Yd, Zd;
+  Standard_Real Xp = NAN, Yp = NAN, Zp = NAN, Xd = NAN, Yd = NAN, Zd = NAN;
   pos.Location().Coord (Xp, Yp, Zp);
   pos.XDirection().Coord (Xd, Yd, Zd);
   return Pnt (Xp + C * Xd,  Yp + C * Yd, Zp + C * Zd);
@@ -348,7 +350,7 @@ Pnt Geom_Hyperbola::Focus1 () const {
 Pnt Geom_Hyperbola::Focus2 () const {
 
   Standard_Real C = Sqrt(majorRadius * majorRadius + minorRadius * minorRadius);
-  Standard_Real Xp, Yp, Zp, Xd, Yd, Zd;
+  Standard_Real Xp = NAN, Yp = NAN, Zp = NAN, Xd = NAN, Yd = NAN, Zd = NAN;
   pos.Location().Coord (Xp, Yp, Zp);
   pos.XDirection().Coord (Xd, Yd, Zd);
   return Pnt (Xp - C * Xd,  Yp - C * Yd, Zp - C * Zd);

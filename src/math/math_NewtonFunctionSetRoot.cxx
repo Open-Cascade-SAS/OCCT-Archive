@@ -19,6 +19,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_FunctionSetWithDerivatives.hxx>
 #include <math_NewtonFunctionSetRoot.hxx>
 #include <math_Recipes.hxx>
@@ -117,9 +119,9 @@ void math_NewtonFunctionSetRoot::Perform(
                            const math_Vector& SupBound) 
 {
 
-  Standard_Real d;
-  Standard_Boolean OK;
-  Standard_Integer Error;
+  Standard_Real d = NAN;
+  Standard_Boolean OK = 0;
+  Standard_Integer Error = 0;
   
   Done = Standard_False;
   Sol = StartingPoint;

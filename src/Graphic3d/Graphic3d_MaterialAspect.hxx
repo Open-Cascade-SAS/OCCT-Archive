@@ -261,9 +261,9 @@ private:
   Graphic3d_PBRMaterial    myPBRMaterial;
   TCollection_AsciiString  myStringName;
   Quantity_Color           myColors[Graphic3d_TypeOfReflection_NB];
-  Standard_ShortReal       myTransparencyCoef;
-  Standard_ShortReal       myRefractionIndex;
-  Standard_ShortReal       myShininess;
+  Standard_ShortReal       myTransparencyCoef{};
+  Standard_ShortReal       myRefractionIndex{};
+  Standard_ShortReal       myShininess{};
 
   Graphic3d_TypeOfMaterial myMaterialType;
   Graphic3d_NameOfMaterial myMaterialName;

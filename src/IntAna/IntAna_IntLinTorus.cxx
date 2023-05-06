@@ -16,6 +16,8 @@
 //-- lbr : la methode avec les coefficients est catastrophique. 
 //--       Mise en place d'une vraie solution. 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <ElSLib.hxx>
 #include <gp_Dir.hxx>
@@ -58,9 +60,9 @@ void IntAna_IntLinTorus::Perform (const gp_Lin& L, const gp_Torus& T) {
   NewPL.Transform(trsf);
   DL.Transform(trsf);
 
-  Standard_Real a,b,c,x1,y1,z1,x0,y0,z0;
-  Standard_Real a0,a1,a2,a3,a4;
-  Standard_Real R,r,R2,r2;
+  Standard_Real a = NAN,b = NAN,c = NAN,x1 = NAN,y1 = NAN,z1 = NAN,x0 = NAN,y0 = NAN,z0 = NAN;
+  Standard_Real a0 = NAN,a1 = NAN,a2 = NAN,a3 = NAN,a4 = NAN;
+  Standard_Real R = NAN,r = NAN,R2 = NAN,r2 = NAN;
 
   x1 = DL.X(); y1 = DL.Y(); z1 = DL.Z();
   x0 = NewPL.X(); y0 = NewPL.Y(); z0 = NewPL.Z();
@@ -77,7 +79,7 @@ void IntAna_IntLinTorus::Perform (const gp_Lin& L, const gp_Torus& T) {
   a1 = 2.0*b*c+8.0*R2*z1*z0;
   a0 = c*c+4.0*R2*(z0*z0-r2);
 
-  Standard_Real u,v;
+  Standard_Real u = NAN,v = NAN;
   math_DirectPolynomialRoots mdpr(a4,a3,a2,a1,a0);
   if(mdpr.IsDone()) {
      Standard_Integer nbsolvalid = 0; 

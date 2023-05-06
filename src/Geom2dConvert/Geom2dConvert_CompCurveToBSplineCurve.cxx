@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_BoundedCurve.hxx>
 #include <Geom2d_BSplineCurve.hxx>
 #include <Geom2dConvert.hxx>
@@ -150,9 +152,9 @@ void Geom2dConvert_CompCurveToBSplineCurve::Add(
   if (SecondCurve->Degree() < Deg)  { SecondCurve->IncreaseDegree(Deg); }
 
 // Declarationd
-  Standard_Real L1, L2, U_de_raccord;
-  Standard_Integer ii, jj;
-  Standard_Real  Ratio=1, Ratio1, Ratio2, Delta1, Delta2;
+  Standard_Real L1 = NAN, L2 = NAN, U_de_raccord = NAN;
+  Standard_Integer ii = 0, jj = 0;
+  Standard_Real  Ratio=1, Ratio1 = NAN, Ratio2 = NAN, Delta1 = NAN, Delta2 = NAN;
   Standard_Integer NbP1 = FirstCurve->NbPoles(), NbP2 = SecondCurve->NbPoles();
   Standard_Integer NbK1 = FirstCurve->NbKnots(), NbK2 = SecondCurve->NbKnots();
   TColStd_Array1OfReal Noeuds (1, NbK1+NbK2-1);

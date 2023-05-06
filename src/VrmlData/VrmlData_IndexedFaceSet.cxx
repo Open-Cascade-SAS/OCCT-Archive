@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <VrmlData_IndexedFaceSet.hxx>
 #include <VrmlData_InBuffer.hxx>
 #include <VrmlData_UnknownNode.hxx>
@@ -49,7 +51,7 @@ IMPLEMENT_STANDARD_RTTIEXT(VrmlData_IndexedFaceSet,VrmlData_Faceted)
 VrmlData_ErrorStatus VrmlData_Faceted::readData (VrmlData_InBuffer& theBuffer)
 {
   VrmlData_ErrorStatus aStatus (VrmlData_EmptyData);
-  Standard_Boolean aBool;
+  Standard_Boolean aBool = 0;
   if        (VRMLDATA_LCOMPARE (theBuffer.LinePtr, "ccw")) {
     if (OK(aStatus, ReadBoolean (theBuffer, aBool)))
       myIsCCW = aBool;
@@ -60,7 +62,7 @@ VrmlData_ErrorStatus VrmlData_Faceted::readData (VrmlData_InBuffer& theBuffer)
     if (OK(aStatus, ReadBoolean (theBuffer, aBool)))
       myIsSolid = aBool;
   } else if (VRMLDATA_LCOMPARE (theBuffer.LinePtr, "creaseAngle")) {
-    Standard_Real anAngle;
+    Standard_Real anAngle = NAN;
     if (OK(aStatus, Scene().ReadReal (theBuffer, anAngle,
                                       Standard_False, Standard_False))) {
       if (anAngle < -Precision::Confusion()*0.001)
@@ -246,9 +248,9 @@ const Handle(TopoDS_TShape)& VrmlData_IndexedFaceSet::TShape ()
         {
           if(mapPolyId.Contains(i)) // check to avoid previously skipped faces
           {
-            const Standard_Integer * anArrNodes;
+            const Standard_Integer * anArrNodes = nullptr;
             Polygon(i, anArrNodes);
-            const Standard_Integer * arrIndice;
+            const Standard_Integer * arrIndice = nullptr;
             int nbn = IndiceNormals(i, arrIndice);
             for (Standard_Integer j = 0; j < nbn; j++)
             {

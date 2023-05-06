@@ -16,6 +16,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BOPTools_AlgoTools.hxx>
 #include <BOPAlgo_Alerts.hxx>
 #include <BOPTools_AlgoTools2D.hxx>
@@ -355,8 +357,8 @@ void BOPTools_AlgoTools::OrientEdgesOnWire(TopoDS_Shape& theWire)
 //=======================================================================
 void BOPTools_AlgoTools::OrientFacesOnShell (TopoDS_Shape& aShell)
 {
-  Standard_Boolean bIsProcessed1, bIsProcessed2;
-  Standard_Integer i, aNbE, aNbF, j;
+  Standard_Boolean bIsProcessed1 = 0, bIsProcessed2 = 0;
+  Standard_Integer i = 0, aNbE = 0, aNbF = 0, j = 0;
   TopAbs_Orientation anOrE1, anOrE2;
   TopoDS_Face aF1x, aF2x;
   TopoDS_Shape aShellNew;
@@ -509,7 +511,7 @@ void BOPTools_AlgoTools::MakeConnexityBlock
    TopTools_ListOfShape& theLCB,
    const Handle(NCollection_BaseAllocator)& theAllocator)
 {
-  Standard_Integer  aNbF, aNbAdd1, aNbAdd, i;
+  Standard_Integer  aNbF = 0, aNbAdd1 = 0, aNbAdd = 0, i = 0;
   TopExp_Explorer aExp;
   TopTools_ListIteratorOfListOfShape aIt;
   //
@@ -701,7 +703,7 @@ TopAbs_State BOPTools_AlgoTools::ComputeState
    const Standard_Real theTol,
    const Handle(IntTools_Context)& theContext)
 {
-  Standard_Real aT1, aT2, aT = 0.;
+  Standard_Real aT1 = NAN, aT2 = NAN, aT = 0.;
   TopAbs_State aState;
   Handle(Geom_Curve) aC3D;
   gp_Pnt aP3D; 
@@ -717,7 +719,7 @@ TopAbs_State BOPTools_AlgoTools::ComputeState
     aP3D=BRep_Tool::Pnt(aV);
   }
   else {//usual case
-    Standard_Boolean bF2Inf, bL2Inf;
+    Standard_Boolean bF2Inf = 0, bL2Inf = 0;
     Standard_Real dT=10.;
     //
     bF2Inf = Precision::IsNegativeInfinite(aT1);
@@ -773,7 +775,7 @@ Standard_Boolean BOPTools_AlgoTools::IsInternalFace
    const Standard_Real theTol,
    const Handle(IntTools_Context)& theContext)
 {
-  Standard_Boolean bDegenerated;
+  Standard_Boolean bDegenerated = 0;
   TopAbs_Orientation aOr;
   TopoDS_Edge aE1;
   TopExp_Explorer aExp;
@@ -854,7 +856,7 @@ Standard_Integer BOPTools_AlgoTools::IsInternalFace
    TopTools_ListOfShape& theLF,
    const Handle(IntTools_Context)& theContext)
 {
-  Standard_Integer aNbF, iRet;
+  Standard_Integer aNbF = 0, iRet = 0;
   //
   iRet=0;
   //
@@ -949,9 +951,9 @@ Standard_Boolean BOPTools_AlgoTools::GetFaceOff
    TopoDS_Face& theFOff,
    const Handle(IntTools_Context)& theContext)
 {
-  Standard_Boolean bRet, bIsComputed;
-  Standard_Real aT, aT1, aT2, aAngle, aTwoPI, aAngleMin, aDt3D;
-  Standard_Real aUmin, aUsup, aVmin, aVsup;
+  Standard_Boolean bRet = 0, bIsComputed = 0;
+  Standard_Real aT = NAN, aT1 = NAN, aT2 = NAN, aAngle = NAN, aTwoPI = NAN, aAngleMin = NAN, aDt3D = NAN;
+  Standard_Real aUmin = NAN, aUsup = NAN, aVmin = NAN, aVsup = NAN;
   gp_Pnt aPn1, aPn2, aPx;
   gp_Dir aDN1, aDN2, aDBF, aDBF2, aDTF;
   gp_Vec aVTgt;
@@ -1044,7 +1046,7 @@ Standard_Boolean BOPTools_AlgoTools::GetEdgeOff(const TopoDS_Edge& theE1,
                                                 const TopoDS_Face& theF2,
                                                 TopoDS_Edge& theE2)
 {
-  Standard_Boolean bFound;
+  Standard_Boolean bFound = 0;
   TopAbs_Orientation aOr1, aOr1C, aOr2;
   TopExp_Explorer anExp;
   //
@@ -1191,7 +1193,7 @@ Standard_Boolean BOPTools_AlgoTools::IsSplitToReverse
    const Handle(IntTools_Context)& theContext,
    Standard_Integer *theError)
 {
-  Standard_Boolean bRet;
+  Standard_Boolean bRet = 0;
   TopAbs_ShapeEnum aType;
   //
   bRet=Standard_False;
@@ -1229,7 +1231,7 @@ Standard_Boolean BOPTools_AlgoTools::IsSplitToReverseWithWarn(const TopoDS_Shape
                                                               const Handle(IntTools_Context)& theContext,
                                                               const Handle(Message_Report)& theReport)
 {
-  Standard_Integer anErr;
+  Standard_Integer anErr = 0;
   Standard_Boolean isToReverse = BOPTools_AlgoTools::IsSplitToReverse(theSplit, theShape, theContext, &anErr);
   if (anErr != 0 && !theReport.IsNull())
   {
@@ -1271,7 +1273,7 @@ Standard_Boolean BOPTools_AlgoTools::IsSplitToReverse
   gp_Pnt2d aP2DFSp;
   //
   // Error status
-  Standard_Integer iErr;
+  Standard_Integer iErr = 0;
   // Use the hatcher to find the point in the middle of the face
   iErr = BOPTools_AlgoTools3D::PointInFace(theFSp, aPFSp, aP2DFSp, theContext);
   if (iErr) {
@@ -1323,7 +1325,7 @@ Standard_Boolean BOPTools_AlgoTools::IsSplitToReverse
     return bDone;
   }
   // UV coordinates of the point on the original face
-  Standard_Real aU, aV;
+  Standard_Real aU = NAN, aV = NAN;
   aProjector.LowerDistanceParameters(aU, aV);
   //
   // Compute normal direction for the original face in this point
@@ -1370,7 +1372,7 @@ Standard_Boolean BOPTools_AlgoTools::IsSplitToReverse
     *theError = 0;
 
   // Get the curves from the edges
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   Handle(Geom_Curve) aCSp = BRep_Tool::Curve(theESp, f, l);
   Handle(Geom_Curve) aCOr = BRep_Tool::Curve(theEOr, f, l);
 
@@ -1402,7 +1404,7 @@ Standard_Boolean BOPTools_AlgoTools::IsSplitToReverse
     }
 
     // Find corresponding parameter on the original edge
-    Standard_Real aTmOr;
+    Standard_Real aTmOr = NAN;
     if (!theContext->ProjectPointOnEdge(aCSp->Value(aTm), theEOr, aTmOr))
     {
       // Unable to project the point inside the split edge
@@ -1439,11 +1441,11 @@ Standard_Boolean BOPTools_AlgoTools::IsSplitToReverse
 Standard_Boolean BOPTools_AlgoTools::IsHole(const TopoDS_Shape& aW,
                                             const TopoDS_Shape& aFace)
 {
-  Standard_Boolean bIsHole;
-  Standard_Integer i, aNbS;
-  Standard_Real aT1, aT2, aS;
-  Standard_Real aU1, aU, dU;
-  Standard_Real aX1, aY1, aX0, aY0;
+  Standard_Boolean bIsHole = 0;
+  Standard_Integer i = 0, aNbS = 0;
+  Standard_Real aT1 = NAN, aT2 = NAN, aS = NAN;
+  Standard_Real aU1 = NAN, aU = NAN, dU = NAN;
+  Standard_Real aX1 = NAN, aY1 = NAN, aX0 = NAN, aY0 = NAN;
   TopAbs_Orientation aOr;
   
   gp_Pnt2d aP2D0, aP2D1;
@@ -1566,12 +1568,12 @@ void BOPTools_AlgoTools::MakePCurve(const TopoDS_Edge& aE,
                                     const Handle(IntTools_Context)& theContext)
 
 {
-  Standard_Integer i;
-  Standard_Real aTolE, aT1, aT2, aOutFirst, aOutLast, aOutTol;
+  Standard_Integer i = 0;
+  Standard_Real aTolE = NAN, aT1 = NAN, aT2 = NAN, aOutFirst = NAN, aOutLast = NAN, aOutTol = NAN;
   Handle(Geom2d_Curve) aC2D, aC2DA, aC2Dx1;
   TopoDS_Face aFFWD; 
   BRep_Builder aBB;
-  Standard_Boolean bPC;
+  Standard_Boolean bPC = 0;
   //
   aTolE=BRep_Tool::Tolerance(aE);
   //
@@ -1649,7 +1651,7 @@ Standard_Integer BOPTools_AlgoTools::ComputeVV(const TopoDS_Vertex& aV1,
                                                const gp_Pnt& aP2,
                                                const Standard_Real aTolP2)
 {
-  Standard_Real aTolV1, aTolSum, aTolSum2, aD2;
+  Standard_Real aTolV1 = NAN, aTolSum = NAN, aTolSum2 = NAN, aD2 = NAN;
   gp_Pnt aP1;
   //
   aTolV1=BRep_Tool::Tolerance(aV1);
@@ -1673,7 +1675,7 @@ Standard_Integer BOPTools_AlgoTools::ComputeVV(const TopoDS_Vertex& aV1,
                                                const TopoDS_Vertex& aV2,
                                                const Standard_Real aFuzz)
 {
-  Standard_Real aTolV1, aTolV2, aTolSum, aTolSum2, aD2;
+  Standard_Real aTolV1 = NAN, aTolV2 = NAN, aTolSum = NAN, aTolSum2 = NAN, aD2 = NAN;
   gp_Pnt aP1, aP2;
   Standard_Real aFuzz1 = (aFuzz > Precision::Confusion() ? aFuzz : Precision::Confusion());
   //
@@ -1703,7 +1705,7 @@ void BOPTools_AlgoTools::MakeVertex(const TopTools_ListOfShape& aLV,
     aVnew=*((TopoDS_Vertex*)(&aLV.First()));
   else if (aNb > 1)
   {
-    Standard_Real aNTol;
+    Standard_Real aNTol = NAN;
     gp_Pnt aNC;
     BRepLib::BoundingVertex(aLV, aNC, aNTol);
     BRep_Builder aBB;
@@ -1719,7 +1721,7 @@ Standard_Boolean BOPTools_AlgoTools::GetEdgeOnFace
  const TopoDS_Face& theF2,
  TopoDS_Edge& theE2)
 {
-  Standard_Boolean bFound;
+  Standard_Boolean bFound = 0;
   TopoDS_Iterator aItF, aItW;
   //
   bFound=Standard_False;
@@ -1748,8 +1750,8 @@ Standard_Boolean FindFacePairs (const TopoDS_Edge& theE,
                                 BOPTools_ListOfCoupleOfShape& theLCFF,
                                 const Handle(IntTools_Context)& theContext)
 {
-  Standard_Boolean bFound;
-  Standard_Integer i, aNbCEF;
+  Standard_Boolean bFound = 0;
+  Standard_Integer i = 0, aNbCEF = 0;
   TopAbs_Orientation aOr, aOrC = TopAbs_FORWARD;
   TopTools_MapOfShape aMFP;
   TopoDS_Face aF1, aF2;
@@ -1839,7 +1841,7 @@ Standard_Real AngleWithRef(const gp_Dir& theD1,
                            const gp_Dir& theD2,
                            const gp_Dir& theDRef)
 {
-  Standard_Real aCosinus, aSinus, aBeta, aHalfPI, aScPr;
+  Standard_Real aCosinus = NAN, aSinus = NAN, aBeta = NAN, aHalfPI = NAN, aScPr = NAN;
   gp_XYZ aXYZ;
   //
   aHalfPI=0.5*M_PI;
@@ -1874,13 +1876,13 @@ Standard_Boolean BOPTools_AlgoTools::IsBlockInOnFace
    const TopoDS_Edge& aE1,
    const Handle(IntTools_Context)& aContext)
 {
-  Standard_Boolean bFlag;
-  Standard_Real f1, l1, ULD, VLD;
+  Standard_Boolean bFlag = 0;
+  Standard_Real f1 = NAN, l1 = NAN, ULD = NAN, VLD = NAN;
   gp_Pnt2d aP2D;
   gp_Pnt aP11, aP12;
   //
   aShrR.Range(f1, l1);
-  Standard_Real dt=0.0075,  k;//dt=0.001,  k;
+  Standard_Real dt=0.0075,  k = NAN;//dt=0.001,  k;
   k=dt*(l1-f1);
   f1=f1+k;
   l1=l1-k;
@@ -1925,7 +1927,7 @@ Standard_Boolean BOPTools_AlgoTools::IsBlockInOnFace
   }
   //
   // Treatment intemediate
-  Standard_Real m1, aTolF, aTolE, aTol, aDist;
+  Standard_Real m1 = NAN, aTolF = NAN, aTolE = NAN, aTol = NAN, aDist = NAN;
   m1=IntTools_Tools::IntermediatePoint(f1, l1);
   BOPTools_AlgoTools::PointOnEdge(aE1, m1, aP12);
   //
@@ -1964,8 +1966,8 @@ Standard_Boolean BOPTools_AlgoTools::IsMicroEdge
    const Handle(IntTools_Context)& aCtx,
    const Standard_Boolean bCheckSplittable)
 {
-  Standard_Boolean bRet;
-  Standard_Real aT1, aT2, aTmp;
+  Standard_Boolean bRet = 0;
+  Standard_Real aT1 = NAN, aT2 = NAN, aTmp = NAN;
   Handle(Geom_Curve) aC3D;
   TopoDS_Vertex aV1, aV2;
   //
@@ -2013,7 +2015,7 @@ Standard_Boolean GetFaceDir(const TopoDS_Edge& aE,
                             GeomAPI_ProjectPointOnSurf& aProjPL,
                             const Standard_Real aDt)
 {
-  Standard_Real aTolE;
+  Standard_Real aTolE = NAN;
   gp_Pnt aPx;
   //
   BOPTools_AlgoTools3D::GetNormalToFaceOnEdge(aE, aF, aT, aDN, theContext);
@@ -2058,9 +2060,9 @@ Standard_Boolean FindPointInFace(const TopoDS_Face& aF,
                                  const Standard_Real aDt,
                                  const Standard_Real aTolE)
 {
-  Standard_Integer aNbItMax;
-  Standard_Real aDist, aDTol, aPM, anEps;
-  Standard_Boolean bRet;
+  Standard_Integer aNbItMax = 0;
+  Standard_Real aDist = NAN, aDTol = NAN, aPM = NAN, anEps = NAN;
+  Standard_Boolean bRet = 0;
   gp_Pnt aP1, aPS;
   //
   aDTol = Precision::Angular();
@@ -2126,7 +2128,7 @@ Standard_Real MinStep3D(const TopoDS_Edge& theE1,
                         const Handle(IntTools_Context)& theContext,
                         Standard_Boolean& theSmallFaces)
 {
-  Standard_Real aDt, aTolE, aTolF, aDtMax, aDtMin;
+  Standard_Real aDt = NAN, aTolE = NAN, aTolF = NAN, aDtMax = NAN, aDtMin = NAN;
   //
   // add the current pair of edge/face for checking as well
   BOPTools_CoupleOfShape aCS1;
@@ -2197,7 +2199,7 @@ Standard_Real MinStep3D(const TopoDS_Edge& theE1,
     //
     const BRepAdaptor_Surface& aBAS = theContext->SurfaceAdaptor(aF);
     //
-    Standard_Real aUMin, aUMax, aVMin, aVMax;
+    Standard_Real aUMin = NAN, aUMax = NAN, aVMin = NAN, aVMax = NAN;
     theContext->UVBounds(aF, aUMin, aUMax, aVMin, aVMax);
     //
     Standard_Real aDU = aUMax - aUMin;
@@ -2227,8 +2229,8 @@ Standard_Real MinStep3D(const TopoDS_Edge& theE1,
 //=======================================================================
 Standard_Boolean BOPTools_AlgoTools::IsOpenShell(const TopoDS_Shell& aSh)
 {
-  Standard_Boolean bRet;
-  Standard_Integer i, aNbE, aNbF;
+  Standard_Boolean bRet = 0;
+  Standard_Integer i = 0, aNbE = 0, aNbF = 0;
   TopAbs_Orientation aOrF;
   TopTools_IndexedDataMapOfShapeListOfShape aMEF; 
   TopTools_ListIteratorOfListOfShape aItLS;
@@ -2271,7 +2273,7 @@ Standard_Boolean BOPTools_AlgoTools::IsOpenShell(const TopoDS_Shell& aSh)
 Standard_Boolean BOPTools_AlgoTools::IsInvertedSolid
   (const TopoDS_Solid& aSolid)
 {
-  Standard_Real aTolS;
+  Standard_Real aTolS = NAN;
   TopAbs_State aState;
   BRepClass3d_SolidClassifier aSC(aSolid);
   //

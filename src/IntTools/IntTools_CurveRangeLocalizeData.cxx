@@ -20,10 +20,10 @@
 #include <IntTools_MapIteratorOfMapOfCurveSample.hxx>
 
 IntTools_CurveRangeLocalizeData::IntTools_CurveRangeLocalizeData(const Standard_Integer theNbSample,
-								 const Standard_Real theMinRange)
+								 const Standard_Real theMinRange) : myNbSampleC(theNbSample), myMinRangeC(theMinRange)
 {
-  myNbSampleC = theNbSample;
-  myMinRangeC = theMinRange;
+  
+  
 }
 
 void IntTools_CurveRangeLocalizeData::AddOutRange(const IntTools_CurveRangeSample& theRange) 

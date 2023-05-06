@@ -16,11 +16,11 @@
 
 Vrml_FontStyle::Vrml_FontStyle(const Standard_Real aSize,
 			       const Vrml_FontStyleFamily aFamily,
-			       const Vrml_FontStyleStyle aStyle)
+			       const Vrml_FontStyleStyle aStyle) : mySize(aSize), myFamily(aFamily), myStyle(aStyle)
 {
-  mySize = aSize;
-  myFamily = aFamily;
-  myStyle = aStyle;
+  
+  
+  
 }
 
  void Vrml_FontStyle::SetSize(const Standard_Real aSize) 

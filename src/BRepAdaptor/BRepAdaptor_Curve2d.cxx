@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
 #include <TopoDS_Edge.hxx>
@@ -74,7 +76,7 @@ void  BRepAdaptor_Curve2d::Initialize(const TopoDS_Edge& E,
 {
   myEdge = E;
   myFace = F;
-  Standard_Real pf,pl;
+  Standard_Real pf = NAN,pl = NAN;
   const Handle(Geom2d_Curve) PC = BRep_Tool::CurveOnSurface(E,F,pf,pl);
   Geom2dAdaptor_Curve::Load(PC,pf,pl);
 }

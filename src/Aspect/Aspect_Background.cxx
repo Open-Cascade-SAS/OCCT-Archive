@@ -40,9 +40,9 @@ Quantity_Color MatraGray (Quantity_NOC_MATRAGRAY);
 
 }
 
-Aspect_Background::Aspect_Background (const Quantity_Color& AColor) {
+Aspect_Background::Aspect_Background (const Quantity_Color& AColor) : MyColor(AColor) {
 
-	MyColor	= AColor;
+	
 
 }
 

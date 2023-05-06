@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWGearPairWithRange.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -78,24 +80,24 @@ void RWStepKinematics_RWGearPairWithRange::ReadStep (const Handle(StepData_StepR
 
   // Inherited fields of GearPair
 
-  Standard_Real aGearPair_RadiusFirstLink;
+  Standard_Real aGearPair_RadiusFirstLink = NAN;
   theData->ReadReal (theNum, 7, "gear_pair.radius_first_link", theArch, aGearPair_RadiusFirstLink);
 
-  Standard_Real aGearPair_RadiusSecondLink;
+  Standard_Real aGearPair_RadiusSecondLink = NAN;
   theData->ReadReal (theNum, 8, "gear_pair.radius_second_link", theArch, aGearPair_RadiusSecondLink);
 
-  Standard_Real aGearPair_Bevel;
+  Standard_Real aGearPair_Bevel = NAN;
   theData->ReadReal (theNum, 9, "gear_pair.bevel", theArch, aGearPair_Bevel);
 
-  Standard_Real aGearPair_HelicalAngle;
+  Standard_Real aGearPair_HelicalAngle = NAN;
   theData->ReadReal (theNum, 10, "gear_pair.helical_angle", theArch, aGearPair_HelicalAngle);
 
-  Standard_Real aGearPair_GearRatio;
+  Standard_Real aGearPair_GearRatio = NAN;
   theData->ReadReal (theNum, 11, "gear_pair.gear_ratio", theArch, aGearPair_GearRatio);
 
   // Own fields of GearPairWithRange
 
-  Standard_Real aLowerLimitActualRotation1;
+  Standard_Real aLowerLimitActualRotation1 = NAN;
   Standard_Boolean hasLowerLimitActualRotation1 = Standard_True;
   if ( theData->IsParamDefined (theNum,12) ) {
     theData->ReadReal (theNum, 12, "lower_limit_actual_rotation1", theArch, aLowerLimitActualRotation1);
@@ -105,7 +107,7 @@ void RWStepKinematics_RWGearPairWithRange::ReadStep (const Handle(StepData_StepR
     aLowerLimitActualRotation1 = 0;
   }
 
-  Standard_Real aUpperLimitActualRotation1;
+  Standard_Real aUpperLimitActualRotation1 = NAN;
   Standard_Boolean hasUpperLimitActualRotation1 = Standard_True;
   if ( theData->IsParamDefined (theNum,13) ) {
     theData->ReadReal (theNum, 13, "upper_limit_actual_rotation1", theArch, aUpperLimitActualRotation1);

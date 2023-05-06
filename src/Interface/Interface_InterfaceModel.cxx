@@ -62,10 +62,10 @@ static const Handle(Interface_Check)& nulch()
 //=======================================================================
 
 Interface_InterfaceModel::Interface_InterfaceModel ()
-     : haschecksem (Standard_False), isdispatch (Standard_False)
+     : thecheckstx(new Interface_Check), thechecksem(new Interface_Check), haschecksem (Standard_False), isdispatch (Standard_False)
 {
-  thecheckstx = new Interface_Check;
-  thechecksem = new Interface_Check;
+  
+  
 }
 
 
@@ -498,7 +498,7 @@ void Interface_InterfaceModel::FillSemanticChecks
   for (checks.Start(); checks.More(); checks.Next())  nb ++;
   therepch.ReSize (therepch.Extent() + nb + 2);
   for (checks.Start(); checks.More(); checks.Next()) {
-    const Handle(Interface_Check) ach = checks.Value();
+    const Handle(Interface_Check)& ach = checks.Value();
     Standard_Integer num = checks.Number();
 //    global check : ok si MEME MODELE
     if (num == 0) thechecksem->GetMessages(ach);
@@ -638,7 +638,7 @@ void Interface_InterfaceModel::AddWithRefs(const Handle(Standard_Transient)& ane
   else AddEntity(anent);
 
   Interface_EntityIterator iter;
-  Handle(Interface_GeneralModule) module;  Standard_Integer CN;
+  Handle(Interface_GeneralModule) module;  Standard_Integer CN = 0;
   if (lib.Select (anent,module,CN)) {
     module->FillSharedCase  (CN,anent,iter);
 //    FillShared tout court : supposerait que le modele soit deja pret
@@ -678,7 +678,7 @@ void Interface_InterfaceModel::ReverseOrders (const Standard_Integer after)
   Standard_Integer nb = NbEntities();  //Standard_Integer num; svv #2
   if (nb < 2 || after >= nb) return;
   TColStd_Array1OfTransient ents(1,nb);
-  Standard_Integer i; // svv #1
+  Standard_Integer i = 0; // svv #1
   for (i = 1; i <= nb; i ++)
     ents.SetValue (i, theentities.FindKey(i));
 //    On va vider la Map, puis la recharger : dans l ordre jusqua after
@@ -710,7 +710,7 @@ void Interface_InterfaceModel::ChangeOrder(const Standard_Integer oldnum,
                                            const Standard_Integer newnum,
                                            const Standard_Integer cnt) //szv#4:S4163:12Mar99 `count` hid one from this
 {
-  Standard_Integer nb = NbEntities();  Standard_Integer i; //, num; svv #2 
+  Standard_Integer nb = NbEntities();  Standard_Integer i = 0; //, num; svv #2 
   if (nb < 2 || newnum >= nb || cnt<= 0) return;
   TColStd_Array1OfTransient ents(1,nb);
   //  On va preparer le changement
@@ -756,7 +756,8 @@ void Interface_InterfaceModel::GetFromTransfer
 {
   theentities.Clear();  theentities.ReSize (aniter.NbEntities());
   for (aniter.Start(); aniter.More(); aniter.Next()) {
-    Handle(Standard_Transient) ent = aniter.Value();    AddEntity(ent);
+    const Handle(Standard_Transient)& ent = aniter.Value();
+    AddEntity(ent);
   }
 }
 
@@ -772,7 +773,7 @@ void Interface_InterfaceModel::GetFromTransfer
 Standard_Boolean Interface_InterfaceModel::SetCategoryNumber
   (const Standard_Integer num, const Standard_Integer val)
 {
-  Standard_Integer i,nb = NbEntities();
+  Standard_Integer i = 0,nb = NbEntities();
   if (num < 1 || num > nb) return Standard_False;
   if (thecategory.IsNull()) thecategory = new TCollection_HAsciiString(nb,' ');
   else if (thecategory->Length() < nb) {
@@ -956,7 +957,7 @@ Standard_Integer Interface_InterfaceModel::NextNumberForLabel
   Standard_Integer lnb = labs->Length();
   labs->LowerCase();
 
-  Standard_Integer i; // svv #1
+  Standard_Integer i = 0; // svv #1
   for (i = fromnum+1; i <= n; i ++) {
     Handle(TCollection_HAsciiString) lab = StringLabel (Value(i));
     if (lab.IsNull()) continue;

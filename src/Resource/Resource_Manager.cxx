@@ -187,7 +187,7 @@ static Resource_KindOfLine WhatKindOfLine(OSD_File& aFile,
 				       TCollection_AsciiString& aToken2)
 {
   TCollection_AsciiString WhiteSpace = " \t" ;
-  Standard_Integer Pos1,Pos2,Pos ;
+  Standard_Integer Pos1 = 0,Pos2 = 0,Pos = 0 ;
   TCollection_AsciiString Line ;
 
   if (!GetLine(aFile,Line))
@@ -247,7 +247,7 @@ static Standard_Integer GetLine(OSD_File& aFile,TCollection_AsciiString& aLine)
 {
   TCollection_AsciiString Buffer;
   Standard_Integer BufSize = 10;
-  Standard_Integer Len;
+  Standard_Integer Len = 0;
 
   aLine.Clear();
   do {
@@ -340,7 +340,7 @@ Standard_Boolean Resource_Manager::Save() const
     TColStd_Array1OfAsciiString KeyArray(1,NbKey);
     Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString Iter(myUserMap);
 
-    Standard_Integer Index;
+    Standard_Integer Index = 0;
     for ( Index = 1; Iter.More(); Iter.Next())
       KeyArray(Index++)= Iter.Key();
 
@@ -470,7 +470,7 @@ void Resource_Manager::SetResource(const Standard_CString aResourceName,
 void Resource_Manager::SetResource(const Standard_CString aResource,
 				   const Standard_ExtString aValue)
 {
-  Standard_PCharacter pStr;
+  Standard_PCharacter pStr = nullptr;
   TCollection_AsciiString Resource = aResource;
   TCollection_ExtendedString ExtValue = aValue;
   TCollection_AsciiString FormatStr(ExtValue.Length()*3+10, ' ');

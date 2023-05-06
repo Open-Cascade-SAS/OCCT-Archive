@@ -30,9 +30,9 @@ MAT_Node::MAT_Node(const Standard_Integer     GeomIndex,
 		   const Standard_Real        Distance)
      : nodeIndex(0),
        geomIndex(GeomIndex),
-       distance(Distance)
+       aLinkedArc(LinkedArc.get()), distance(Distance)
 {
-  aLinkedArc = LinkedArc.get();
+  
 }
 
 //=============================================================================

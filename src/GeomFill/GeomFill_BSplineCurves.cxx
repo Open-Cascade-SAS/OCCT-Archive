@@ -65,8 +65,8 @@ static Standard_Boolean Arrange(const Handle(Geom_BSplineCurve)& C1,
   GC[2] = Handle(Geom_BSplineCurve)::DownCast(C3->Copy());
   GC[3] = Handle(Geom_BSplineCurve)::DownCast(C4->Copy());
   
-  Standard_Integer i,j;
-  Standard_Boolean Trouve;
+  Standard_Integer i = 0,j = 0;
+  Standard_Boolean Trouve = 0;
 
   for (i=1; i<=3; i++) {
     Trouve = Standard_False;
@@ -152,7 +152,7 @@ static Standard_Integer SetSameDistribution(Handle(Geom_BSplineCurve)& C1,
     C2->SetKnots(K2);
   }    
   
-  Standard_Integer NP,NK;
+  Standard_Integer NP = 0,NK = 0;
   if ( BSplCLib::PrepareInsertKnots(C1->Degree(),Standard_False,
 				    K1,M1,K2,&M2,NP,NK,Precision::PConfusion(),
 				    Standard_False)) {
@@ -463,7 +463,7 @@ void  GeomFill_BSplineCurves::Init
     TColgp_Array1OfPnt P2( 1, NbPoles);
     CC1->Poles(P1);
     CC2->Poles(P2);
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i=1; i<=NbPoles; i++) {
       Poles(i, 1) = P1(i);
       Poles(i, 2) = P2(i);

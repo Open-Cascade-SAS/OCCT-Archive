@@ -82,6 +82,7 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <UnitsAPI.hxx>
 
+#include <math.h>
 #include <stdio.h>
 static Standard_Boolean CheckShapesPair(const TopoDS_Shape& , const TopoDS_Shape& ); //ota
 
@@ -176,7 +177,7 @@ void TPrsStd_ConstraintTools::ComputeTextAndValue(const Handle(TDataXtd_Constrai
 						 TCollection_ExtendedString&   txt,
 						 const Standard_Boolean  anIsAngle  )
 {
-  Standard_Real outvalue;
+  Standard_Real outvalue = NAN;
   const Handle(TDataStd_Real)& VAL = aConst->GetValue();
   val      = VAL->Get();
   if(anIsAngle){
@@ -217,7 +218,7 @@ void TPrsStd_ConstraintTools::UpdateOnlyValue(const Handle(TDataXtd_Constraint)&
 {
   if (anAIS.IsNull()) return; 
   if (!aConst->IsDimension()) return; 
-  Standard_Real val;
+  Standard_Real val = NAN;
   TCollection_ExtendedString txt;
   TPrsStd_ConstraintTools:: ComputeTextAndValue(aConst,val,txt,aConst->GetType() == TDataXtd_ANGLE);
   Handle(PrsDim_Relation) rel = Handle(PrsDim_Relation)::DownCast(anAIS);
@@ -293,7 +294,7 @@ void TPrsStd_ConstraintTools::ComputeDistance (const Handle(TDataXtd_Constraint)
   }
 
   // Get custom value
-  Standard_Real aValue;
+  Standard_Real aValue = NAN;
   TCollection_ExtendedString aText;
   ComputeTextAndValue (theConst, aValue, aText,Standard_False);
 
@@ -803,7 +804,7 @@ void TPrsStd_ConstraintTools::ComputeAngleForOneFace (const Handle(TDataXtd_Cons
     return;
   }
 
-  Standard_Real val1;
+  Standard_Real val1 = NAN;
   TCollection_ExtendedString txt;
   TPrsStd_ConstraintTools::ComputeTextAndValue (aConst,val1,txt,Standard_True);  
   
@@ -1020,7 +1021,7 @@ void TPrsStd_ConstraintTools::ComputeAngle (const Handle(TDataXtd_Constraint)& a
       return;
     }
   }
-  Standard_Real val1;
+  Standard_Real val1 = NAN;
   TCollection_ExtendedString txt;
   ComputeTextAndValue (aConst,val1,txt,Standard_True);  
   
@@ -1190,7 +1191,7 @@ void TPrsStd_ConstraintTools::ComputeRadius (const Handle(TDataXtd_Constraint)& 
   if (IsFace(shape1))
     shape1 = GetFace(shape1);
 
-  Standard_Real val1;
+  Standard_Real val1 = NAN;
   TCollection_ExtendedString txt;
   ComputeTextAndValue(aConst,val1,txt,Standard_False);
 
@@ -1267,7 +1268,7 @@ void TPrsStd_ConstraintTools::ComputeMinRadius (const Handle(TDataXtd_Constraint
   if (IsFace(shape1))
     shape1 = GetFace(shape1);
 
-  Standard_Real val1;
+  Standard_Real val1 = NAN;
   TCollection_ExtendedString txt;
   ComputeTextAndValue(aConst,val1,txt,Standard_False);
 
@@ -1346,7 +1347,7 @@ void TPrsStd_ConstraintTools::ComputeMaxRadius (const Handle(TDataXtd_Constraint
   if (IsFace(shape1))
     shape1 = GetFace(shape1);
 
-  Standard_Real val1;
+  Standard_Real val1 = NAN;
   TCollection_ExtendedString txt;
   ComputeTextAndValue(aConst,val1,txt,Standard_False);
 
@@ -1591,7 +1592,7 @@ void TPrsStd_ConstraintTools::ComputeEqualRadius(const Handle(TDataXtd_Constrain
     // get the circle plane 
     Handle(Geom_Plane) aPlane2 = new Geom_Plane (anAx32);
 
-    Standard_Real A, B, C ,D1, D2;
+    Standard_Real A = NAN, B = NAN, C = NAN ,D1 = NAN, D2 = NAN;
     aPlane1->Coefficients(A, B, C, D1);//Get normalized coefficients
     aPlane2->Coefficients(A, B, C, D2);//Get normalized coefficients
     const gp_Dir& aDir1 = anAx31.Direction();
@@ -1654,7 +1655,7 @@ void TPrsStd_ConstraintTools::ComputeDiameter(const Handle(TDataXtd_Constraint)&
     NullifyAIS(anAIS);
     return;
   }
-  Standard_Real val1;
+  Standard_Real val1 = NAN;
   TCollection_ExtendedString txt;
   ComputeTextAndValue(aConst,val1,txt,Standard_False);
 
@@ -1801,7 +1802,7 @@ void TPrsStd_ConstraintTools::ComputeOffset (const Handle(TDataXtd_Constraint)& 
   }
 
 
-  Standard_Real val1;
+  Standard_Real val1 = NAN;
   TCollection_ExtendedString txt;
   Handle(PrsDim_LengthDimension) ais;
   //Handle(Prs3d_Drawer) aDrawer;
@@ -2157,7 +2158,7 @@ void TPrsStd_ConstraintTools::ComputeRound(const Handle(TDataXtd_Constraint)& aC
     return;
   }
   
-  Standard_Real val1;
+  Standard_Real val1 = NAN;
   TCollection_ExtendedString txt;
   ComputeTextAndValue(aConst,val1,txt,Standard_False);
   

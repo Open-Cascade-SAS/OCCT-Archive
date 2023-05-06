@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <VrmlData_Group.hxx>
 #include <VrmlData_Scene.hxx>
 #include <VrmlData_WorldInfo.hxx>
@@ -422,7 +424,7 @@ VrmlData_ErrorStatus VrmlData_Group::openFile
                                 (Standard_IStream&              theStream,
                                  const TCollection_AsciiString& theFilename)
 {
-  std::ifstream& aStream = static_cast<std::ifstream&> (theStream);
+  std::ifstream& aStream = dynamic_cast<std::ifstream&> (theStream);
   VrmlData_ErrorStatus aStatus (VrmlData_EmptyData);
   NCollection_List<TCollection_ExtendedString>::Iterator aDirIter =
     Scene().VrmlDirIterator();
@@ -511,7 +513,7 @@ VrmlData_ErrorStatus VrmlData_Group::Write (const char * thePrefix) const
 
         // Output the Rotation
         gp_XYZ anAxis;
-        Standard_Real anAngle;
+        Standard_Real anAngle = NAN;
         if (myTrsf.GetRotation (anAxis, anAngle)) {
           // output the Rotation
           Sprintf (buf, "rotation    %.12g %.12g %.12g %.9g",

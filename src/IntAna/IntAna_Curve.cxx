@@ -37,6 +37,8 @@
 //--       pas etre mene a bien.  
 //----------------------------------------------------------------------
 
+#include <math.h>
+
 #include <algorithm>
 
 #include <ElSLib.hxx>
@@ -399,7 +401,7 @@ void IntAna_Curve::InternalUVValue(const Standard_Real theta,
 //=======================================================================
 gp_Pnt IntAna_Curve::Value(const Standard_Real theta)
 {
-  Standard_Real A, B, C, U, V, sint, cost, SigneSqrtDis;
+  Standard_Real A = NAN, B = NAN, C = NAN, U = NAN, V = NAN, sint = NAN, cost = NAN, SigneSqrtDis = NAN;
   //
   A=0.0;  B=0.0;   C=0.0;
   U=0.0;  V=0.0;  
@@ -418,7 +420,7 @@ Standard_Boolean IntAna_Curve::D1u(const Standard_Real theta,
                                    gp_Vec& Vec)
 {
   //-- Pour detecter le cas ou le calcul est impossible 
-  Standard_Real A, B, C, U, V, sint, cost, SigneSqrtDis;
+  Standard_Real A = NAN, B = NAN, C = NAN, U = NAN, V = NAN, sint = NAN, cost = NAN, SigneSqrtDis = NAN;
   A=0.0;  B=0.0;   C=0.0;
   U=0.0;  V=0.0;  
   sint=0.0;  cost=0.0;
@@ -467,14 +469,14 @@ void IntAna_Curve::FindParameter(const gp_Pnt& theP,
   {
     case GeomAbs_Cylinder:
     {
-      Standard_Real aZ;
+      Standard_Real aZ = NAN;
       ElSLib::CylinderParameters(Ax3, RCyl, theP, aTheta, aZ);
     }
     break;
 
     case GeomAbs_Cone:
     {
-      Standard_Real aZ;
+      Standard_Real aZ = NAN;
       ElSLib::ConeParameters(Ax3, RCyl, Angle, theP, aTheta, aZ);
     }
     break;
@@ -526,7 +528,7 @@ void IntAna_Curve::FindParameter(const gp_Pnt& theP,
                     cost, sint, SigneSqrtDis);
     const gp_Pnt aP(InternalValue(U, V));
     
-    Standard_Real aSqTol;
+    Standard_Real aSqTol = NAN;
     if (aParams[i] == aTheta ||
         (TwoCurves && aParams[i] == DomainSup + DomainSup - aTheta))
       aSqTol = InternalPrecision;

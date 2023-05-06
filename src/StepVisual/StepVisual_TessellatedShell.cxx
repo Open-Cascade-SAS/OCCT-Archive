@@ -23,9 +23,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepVisual_TessellatedShell, StepVisual_TessellatedIt
 //purpose  : 
 //=======================================================================
 
-StepVisual_TessellatedShell::StepVisual_TessellatedShell ()
+StepVisual_TessellatedShell::StepVisual_TessellatedShell () : myHasTopologicalLink(Standard_False)
 {
-  myHasTopologicalLink = Standard_False;
+  
 }
 
 //=======================================================================

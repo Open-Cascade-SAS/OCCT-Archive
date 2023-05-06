@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_HVertex.hxx>
 #include <Extrema_EPCOfExtPC2d.hxx>
 #include <Extrema_POnCurv2d.hxx>
@@ -235,7 +237,7 @@ Standard_Boolean IntPatch_HInterTool::Project (const Handle(Adaptor2d_Curve2d)& 
   Standard_Real epsX = 1.e-8;
   Standard_Integer Nbu = 20;
   Standard_Real Tol = 1.e-5;
-  Standard_Real Dist2;
+  Standard_Real Dist2 = NAN;
 
   Extrema_EPCOfExtPC2d extrema(P,*C,Nbu,epsX,Tol);
   if (!extrema.IsDone()) {

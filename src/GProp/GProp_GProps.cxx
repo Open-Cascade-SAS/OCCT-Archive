@@ -146,7 +146,7 @@ Standard_Real GProp_GProps::RadiusOfGyration (const gp_Ax1& A) const {
 GProp_PrincipalProps GProp_GProps::PrincipalProperties () const {
   
   math_Matrix DiagMat (1, 3, 1, 3);
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   gp_Mat AxisInertia = MatrixOfInertia();
   for (j = 1; j <= 3; j++) {
     for (i = 1; i <= 3; i++) {

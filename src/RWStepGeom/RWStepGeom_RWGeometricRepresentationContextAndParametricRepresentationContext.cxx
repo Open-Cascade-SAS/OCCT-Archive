@@ -36,7 +36,7 @@ void RWStepGeom_RWGeometricRepresentationContextAndParametricRepresentationConte
 
 	// --- field : coordinateSpaceDimension ---
 
-	Standard_Integer aCoordinateSpaceDimension;
+	Standard_Integer aCoordinateSpaceDimension = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadInteger (num,1,"coordinate_space_dimension",ach,aCoordinateSpaceDimension);
 

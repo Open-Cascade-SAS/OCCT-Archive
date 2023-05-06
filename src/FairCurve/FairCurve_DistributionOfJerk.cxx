@@ -22,6 +22,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <FairCurve_DistributionOfJerk.hxx>
 #include <gp_Pnt2d.hxx>
@@ -49,9 +51,9 @@ Standard_Boolean FairCurve_DistributionOfJerk::Value(const math_Vector& TParam,
 						           math_Vector& Jerk)
 {
   Standard_Boolean Ok = Standard_True;
-  Standard_Integer ier, ii, jj, kk;
+  Standard_Integer ier = 0, ii = 0, jj = 0, kk = 0;
   gp_XY CPrim  (0., 0.), CSecn (0., 0.), CTroi(0., 0.);
-  Standard_Integer  LastGradientIndex, FirstNonZero, LastZero; 
+  Standard_Integer  LastGradientIndex = 0, FirstNonZero = 0, LastZero = 0; 
 
   // (0.0) initialisations generales
   Jerk.Init(0.0);
@@ -81,7 +83,7 @@ Standard_Boolean FairCurve_DistributionOfJerk::Value(const math_Vector& TParam,
   Standard_Real ProduitC1C2 =  CPrim*CSecn; 
   Standard_Real DeriveNormeCPrim = ProduitC1C2 * InvNormeCPrim2;
 
-  Standard_Real Hauteur, WVal, Mesure;
+  Standard_Real Hauteur = NAN, WVal = NAN, Mesure = NAN;
   Standard_Real NumRho = CPrim ^ CSecn;
   Standard_Real Numerateur = (CPrim ^ CTroi) - 3 * NumRho * DeriveNormeCPrim; 
   Standard_Real Denominateur = pow ( NormeCPrim, 2.5);
@@ -105,7 +107,7 @@ Standard_Boolean FairCurve_DistributionOfJerk::Value(const math_Vector& TParam,
                   GradDeriveNormeCPrim(1, 2*MyBSplOrder),
                   GradNumRho(1, 2*MyBSplOrder),
                   NumduGrad(1, 2*MyBSplOrder);
-      Standard_Real Facteur;
+      Standard_Real Facteur = NAN;
       Standard_Real XPrim = CPrim.X();
       Standard_Real YPrim = CPrim.Y();
       Standard_Real XSecn = CSecn.X();
@@ -113,7 +115,7 @@ Standard_Boolean FairCurve_DistributionOfJerk::Value(const math_Vector& TParam,
       Standard_Real XTroi = CTroi.X();
       Standard_Real YTroi = CTroi.Y();
       Standard_Real InvDenominateur = 1 / Denominateur;
-      Standard_Real Aux, AuxBis;
+      Standard_Real Aux = NAN, AuxBis = NAN;
 
       Facteur = 2 * Mesure * WVal;
       Aux = 2.5 * Numerateur * InvNormeCPrim;
@@ -179,10 +181,10 @@ Standard_Boolean FairCurve_DistributionOfJerk::Value(const math_Vector& TParam,
 	                         * (YPrim*InvNormeCPrim) * InvNormeCPrim;
          Standard_Real FacteurW = WVal * InvNormeCPrim;
 
-         Standard_Real Produit, Produit2, ProduitV, HNumRho, DSeconde, NSeconde, 
-	               HDeriveNormeCPrim, Aux1, DeriveAuxBis;
-         Standard_Real VIntermed;
-         Standard_Integer k1, k2, II, JJ;
+         Standard_Real Produit = NAN, Produit2 = NAN, ProduitV = NAN, HNumRho = NAN, DSeconde = NAN, NSeconde = NAN, 
+	               HDeriveNormeCPrim = NAN, Aux1 = NAN, DeriveAuxBis = NAN;
+         Standard_Real VIntermed = NAN;
+         Standard_Integer k1 = 0, k2 = 0, II = 0, JJ = 0;
    
          Facteur = 2 * Mesure;
 

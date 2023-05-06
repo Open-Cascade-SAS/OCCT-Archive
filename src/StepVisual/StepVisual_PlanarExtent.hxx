@@ -61,8 +61,8 @@ protected:
 private:
 
 
-  Standard_Real sizeInX;
-  Standard_Real sizeInY;
+  Standard_Real sizeInX{};
+  Standard_Real sizeInY{};
 
 
 };

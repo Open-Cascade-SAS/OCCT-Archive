@@ -16,6 +16,8 @@
 
 // a modifier le cas de 2 points confondus ( Insert a la place d'append ? ) 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <gp.hxx>
 #include <gp_Circ2d.hxx>
@@ -140,7 +142,7 @@ void CircleCircleGeometricIntersection(const gp_Circ2d& C1
 				       ,PeriodicInterval& C1_Res2
 				       ,Standard_Integer& nbsol) {
   
-  Standard_Real C1_binf1,C1_binf2=0,C1_bsup1,C1_bsup2=0;
+  Standard_Real C1_binf1 = NAN,C1_binf2=0,C1_bsup1 = NAN,C1_bsup2=0;
   Standard_Real dO1O2=(C1.Location()).Distance(C2.Location());
   Standard_Real R1=C1.Radius();
   Standard_Real R2=C2.Radius();
@@ -172,7 +174,7 @@ void CircleCircleGeometricIntersection(const gp_Circ2d& C1
     Standard_Real R1pTolR1pTol=R1pTol*R1pTol;
     Standard_Real R1mTolR1mTol=R1mTol*R1mTol;
     Standard_Real dO1O2dO1O2=dO1O2*dO1O2;
-    Standard_Real dAlpha1;
+    Standard_Real dAlpha1 = NAN;
     //--------------------------------------------------------------- Cas 
     //-- C2 coupe le cercle C1+ (=C(x1,y1,R1+Tol))
     //--            1 seul segment donne par Inter C2 C1+
@@ -258,7 +260,7 @@ void CircleCircleGeometricIntersection(const gp_Circ2d& C1
   gp_Vec2d Axe1=C1.XAxis().Direction();
   gp_Vec2d AxeO1O2=gp_Vec2d(C1.Location(),C2.Location());
   
-  Standard_Real dAngle1;
+  Standard_Real dAngle1 = NAN;
   if(AxeO1O2.Magnitude() <= gp::Resolution()) 
     dAngle1=Axe1.Angle(C2.XAxis().Direction());
   else
@@ -392,7 +394,7 @@ void LineCircleGeometricIntersection(const gp_Lin2d& Line,
   Standard_Real dO1O2=Line.Distance(Circle.Location());
   Standard_Real R=Circle.Radius();
   Standard_Real RmTol=R-Tol;
-  Standard_Real binf1,binf2=0,bsup1,bsup2=0;
+  Standard_Real binf1 = NAN,binf2=0,bsup1 = NAN,bsup2=0;
     
   //---------------------------------------------------------------- 
   if(dO1O2 > (R+Tol))  {  //-- pas d intersection avec le 'tuyau'
@@ -408,13 +410,13 @@ void LineCircleGeometricIntersection(const gp_Lin2d& Line,
   }
   else { 
     //---------------------------------------------------------------- 
-    Standard_Boolean b2Sol;
-    Standard_Real dAlpha1;
+    Standard_Boolean b2Sol = 0;
+    Standard_Real dAlpha1 = NAN;
     //---------------------------------------------------------------
     //-- Line coupe le cercle Circle+ (=C(x1,y1,R1+Tol))
     b2Sol=Standard_False;
     if (R>dO1O2+TolTang) {
-      Standard_Real aX2, aTol2;
+      Standard_Real aX2 = NAN, aTol2 = NAN;
       //
       aTol2=Tol*Tol;
       aX2=4.*(R*R-dO1O2*dO1O2);
@@ -479,7 +481,7 @@ void LineCircleGeometricIntersection(const gp_Lin2d& Line,
 #endif  
   
   
-  Standard_Real a,b,c,d;
+  Standard_Real a = NAN,b = NAN,c = NAN,d = NAN;
   Line.Coefficients(a,b,c);
   
   d = a*Circle.Location().X() + b*Circle.Location().Y() + c;
@@ -832,7 +834,7 @@ void IntCurve_IntConicConic::Perform(const gp_Circ2d& Circle1
   Standard_Real R2=Circle2.Radius();
   Standard_Real Tol2=Tol+Tol;     //---- Pour eviter de toujours retourner
                                   //des segments
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   if(Tol < (1e-10))
     Tol2 = 1e-10; 
 
@@ -1110,7 +1112,7 @@ static Standard_Boolean computeIntPoint(const IntRes2d_Domain& theCurDomain,
 
   Standard_Real aRes2 = theParOther + (theResSup - theParCur) * theCosT1T2;
 
-  Standard_Real aFirst2, aLast2, aTol21, aTol22, aTol11, aTol12 ;
+  Standard_Real aFirst2 = NAN, aLast2 = NAN, aTol21 = NAN, aTol22 = NAN, aTol11 = NAN, aTol12 = NAN ;
   
   getDomainParametrs(theDomainOther,aFirst2, aLast2, aTol21, aTol22);
   
@@ -1142,7 +1144,7 @@ static Standard_Boolean computeIntPoint(const IntRes2d_Domain& theCurDomain,
   Standard_Real aResU1 = theParCur;
   Standard_Real aResU2 = theParOther;
 
-  Standard_Real aFirst1, aLast1;
+  Standard_Real aFirst1 = NAN, aLast1 = NAN;
   getDomainParametrs(theCurDomain,aFirst1, aLast1, aTol11, aTol12);
   
   Standard_Boolean isInside1 = (theParCur >= aFirst1 && theParCur <= aLast1);
@@ -1219,13 +1221,13 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& L1
   this->ResetFields();
 
   //-- Coordonnees du point d intersection sur chacune des 2 droites
-  Standard_Real U1,U2; 
+  Standard_Real U1 = NAN,U2 = NAN; 
   //-- Nombre de points solution : 1 : Intersection
   //--                             0 : Non Confondues
   //--                             2 : Confondues a la tolerance pres
-  Standard_Integer nbsol;
+  Standard_Integer nbsol = 0;
   IntRes2d_IntersectionPoint PtSeg1,PtSeg2;
-  Standard_Real aHalfSinL1L2;
+  Standard_Real aHalfSinL1L2 = NAN;
   Standard_Real Tol = TolR;
   if(Tol < Precision::PConfusion())
     Tol = Precision::PConfusion();
@@ -1255,8 +1257,8 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& L1
     Standard_Real U1sup=U1+d;
     Standard_Real U1mU2=U1-U2;
     Standard_Real U1pU2=U1+U2;
-    Standard_Real Res1inf,Res1sup;
-    Standard_Real ProdVectTan;
+    Standard_Real Res1inf = NAN,Res1sup = NAN;
+    Standard_Real ProdVectTan = NAN;
     
 
     //---------------------------------------------------
@@ -1345,8 +1347,8 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& L1
       
       else {
 	//-- Intersection AND Domain1  --------> Segment ---------------------
-	Standard_Real U2inf,U2sup;
-	Standard_Real Res2inf,Res2sup;
+	Standard_Real U2inf = NAN,U2sup = NAN;
+	Standard_Real Res2inf = NAN,Res2sup = NAN;
 	
 	if (isOpposite) { U2inf = U1pU2 -Res1sup; U2sup= U1pU2-Res1inf; }
 	else            { U2inf = Res1inf-U1mU2;  U2sup= Res1sup-U1mU2; }
@@ -1459,7 +1461,7 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& L1
 	    }
 	    gp_Pnt2d Ptdebut;
 	    if(Pos1a==IntRes2d_Middle) { 
-	      Standard_Real t3;
+	      Standard_Real t3 = NAN;
 	      if (isOpposite) {
 		t3 = (Pos2a == IntRes2d_Head)? Res2sup : Res2inf;
 	      }
@@ -1529,7 +1531,7 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& L1
 	      if(Pos1b!=IntRes2d_Middle || Pos2b!=IntRes2d_Middle) {
 		gp_Pnt2d Ptfin;
 		if(Pos1b==IntRes2d_Middle) {
-		  Standard_Real t2;
+		  Standard_Real t2 = NAN;
 		  if (isOpposite) {
 		    t2 = (Pos2b == IntRes2d_Head)? Res2sup : Res2inf;
 		  }
@@ -1682,7 +1684,7 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& L1
       //--
       Standard_Integer ResHasFirstPoint=0;    
       Standard_Integer ResHasLastPoint=0;
-      Standard_Real ParamStart = 0.,ParamStart2,ParamEnd = 0.,ParamEnd2;
+      Standard_Real ParamStart = 0.,ParamStart2 = NAN,ParamEnd = 0.,ParamEnd2 = NAN;
       Standard_Real Org2SurL1=ElCLib::Parameter(L1,L2.Location());
       //== 3 : L1 et L2 bornent
       //== 2 :       L2 borne
@@ -1998,7 +2000,7 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& Line
   //--      ( Rayon * Intervalle.Length()    <    TolConf   )   ### Modif 19 Nov Tol-->TolConf
   //--
   Standard_Real R=Circle.Radius();
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   Standard_Real MaxTol = TolConf;
   if(MaxTol<Tol) MaxTol = Tol;
   if(MaxTol<1.0e-10) MaxTol = 1.0e-10; 
@@ -2110,7 +2112,7 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& Line
       IntImpParGen::DeterminePosition(Pos1a,CIRC_Domain,P1a,SolutionCircle[i].Binf);
       IntImpParGen::DeterminePosition(Pos2a,LIG_Domain,P2a,Linf); 
       Determine_Transition_LC(Pos1a,Tan1,Norm1,T1a , Pos2a,Tan2,Norm2,T2a, Tol);
-      Standard_Real Cinf;
+      Standard_Real Cinf = NAN;
       if(Pos1a==IntRes2d_End) {
 	Cinf = CIRC_Domain.LastParameter();
 	P1a  = CIRC_Domain.LastPoint();
@@ -2147,7 +2149,7 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& Line
 	IntImpParGen::DeterminePosition(Pos1b,CIRC_Domain,P1b,SolutionCircle[i].Bsup);
 	IntImpParGen::DeterminePosition(Pos2b,LIG_Domain,P2b,Lsup);
 	Determine_Transition_LC(Pos1b,Tan1,Norm1,T1b , Pos2b,Tan2,Norm2,T2b, Tol);
-	Standard_Real Csup;
+	Standard_Real Csup = NAN;
 	if(Pos1b==IntRes2d_End) {
 	  Csup = CIRC_Domain.LastParameter();
 	  P1b  = CIRC_Domain.LastPoint();
@@ -2273,7 +2275,7 @@ void LineEllipseGeometricIntersection(const gp_Lin2d& Line,
     eps0 = 1.e-6;
   }
   //
-  Standard_Real anA, aB, aC;
+  Standard_Real anA = NAN, aB = NAN, aC = NAN;
   aTLine.Coefficients(anA, aB, aC);
   if (IsVert)
   {
@@ -2292,7 +2294,7 @@ void LineEllipseGeometricIntersection(const gp_Lin2d& Line,
     if (D < 0.)
     {
       Extrema_ExtElC2d anExt(aTLine, aTEllipse);
-      Standard_Integer i, imin = 0;
+      Standard_Integer i = 0, imin = 0;
       Standard_Real dmin = RealLast();
       for (i = 1; i <= anExt.NbExt(); ++i)
       {
@@ -2542,7 +2544,7 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& L, const
   //-- Calculation of Transitions at Positions.
   //----------------------------------------------------------------------
   Standard_Real R = E.MinorRadius();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Real MaxTol = TolConf;
   if (MaxTol<Tol) MaxTol = Tol;
   if (MaxTol<1.0e-10) MaxTol = 1.0e-10;
@@ -2619,7 +2621,7 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& L, const
       IntImpParGen::DeterminePosition(Pos1a, DE, P1a, SolutionEllipse[i].Binf);
       IntImpParGen::DeterminePosition(Pos2a, DL, P2a, Linf);
       Determine_Transition_LC(Pos1a, Tan1, Norm1, T1a, Pos2a, Tan2, Norm2, T2a, Tol);
-      Standard_Real Einf;
+      Standard_Real Einf = NAN;
       if (Pos1a == IntRes2d_End) {
         Einf = DE.LastParameter();
         P1a = DE.LastPoint();
@@ -2659,7 +2661,7 @@ void IntCurve_IntConicConic::Perform(const gp_Lin2d& L, const
         IntImpParGen::DeterminePosition(Pos1b, DE, P1b, SolutionEllipse[i].Bsup);
         IntImpParGen::DeterminePosition(Pos2b, DL, P2b, Lsup);
         Determine_Transition_LC(Pos1b, Tan1, Norm1, T1b, Pos2b, Tan2, Norm2, T2b, Tol);
-        Standard_Real Esup;
+        Standard_Real Esup = NAN;
         if (Pos1b == IntRes2d_End) {
           Esup = DL.LastParameter();
           P1b = DE.LastPoint();

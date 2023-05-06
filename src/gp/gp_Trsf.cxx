@@ -19,6 +19,8 @@
 
 #define No_Standard_OutOfRange
 
+#include <math.h>
+
 #include <gp_Trsf.hxx>
 
 #include <gp.hxx>
@@ -940,7 +942,7 @@ Standard_Boolean  gp_Trsf::InitFromJson (const Standard_SStream& theSStream, Sta
     }
   }
 
-  Standard_Real ashape;
+  Standard_Real ashape = NAN;
   OCCT_INIT_FIELD_VALUE_INTEGER (aStreamStr, aPos, ashape);
   shape = (gp_TrsfForm)((Standard_Integer)ashape);
 

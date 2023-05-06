@@ -42,7 +42,7 @@ void Resource_Unicode::ConvertSJISToUnicode(const Standard_CString fromstr,TColl
   tostr.Clear();
 
   unsigned char* currentstr = ((unsigned char*) fromstr);
-  unsigned int pl,ph;
+  unsigned int pl = 0,ph = 0;
   // BIG INDIAN USED HERE
   while(*currentstr != '\0') {
     if (issjis1(*currentstr)) {
@@ -74,7 +74,7 @@ void Resource_Unicode::ConvertEUCToUnicode(const Standard_CString fromstr,TColle
   tostr.Clear();
 
   unsigned char* currentstr = ((unsigned char*) fromstr);
-  unsigned int pl,ph;
+  unsigned int pl = 0,ph = 0;
   // BIG INDIAN USED HERE
   while(*currentstr != '\0') {
     if (iseuc(*currentstr)) {
@@ -105,7 +105,7 @@ void Resource_Unicode::ConvertGBToUnicode(const Standard_CString fromstr,TCollec
   tostr.Clear();
 
   unsigned char* currentstr = ((unsigned char*) fromstr);
-  unsigned int pl,ph;
+  unsigned int pl = 0,ph = 0;
   // BIG INDIAN USED HERE
   while(*currentstr != '\0') {
     if (isshift(*currentstr)) {
@@ -364,8 +364,8 @@ Standard_Boolean Resource_Unicode::ConvertUnicodeToSJIS(const TCollection_Extend
   Standard_Integer nbtrans = 0;
   Standard_Integer nbext = 1;
   Standard_Boolean finished = Standard_False;
-  Standard_ExtCharacter curcar;
-  unsigned int pl,ph;
+  Standard_ExtCharacter curcar = 0;
+  unsigned int pl = 0,ph = 0;
   // BIG INDIAN USED HERE
   
   while (!finished) {
@@ -413,8 +413,8 @@ Standard_Boolean Resource_Unicode::ConvertUnicodeToEUC(const TCollection_Extende
   Standard_Integer nbtrans = 0;
   Standard_Integer nbext = 1;
   Standard_Boolean finished = Standard_False;
-  Standard_ExtCharacter curcar;
-  unsigned int pl,ph;
+  Standard_ExtCharacter curcar = 0;
+  unsigned int pl = 0,ph = 0;
   // BIG INDIAN USED HERE
   
   while (!finished) {
@@ -462,8 +462,8 @@ Standard_Boolean Resource_Unicode::ConvertUnicodeToGB(const TCollection_Extended
   Standard_Integer nbtrans = 0;
   Standard_Integer nbext = 1;
   Standard_Boolean finished = Standard_False;
-  Standard_ExtCharacter curcar;
-  unsigned int pl,ph;
+  Standard_ExtCharacter curcar = 0;
+  unsigned int pl = 0,ph = 0;
   // BIG INDIAN USED HERE
   
   while (!finished) {
@@ -511,8 +511,8 @@ Standard_Boolean Resource_Unicode::ConvertUnicodeToANSI(const TCollection_Extend
   Standard_Integer nbtrans = 0;
   Standard_Integer nbext = 1;
   Standard_Boolean finished = Standard_False;
-  Standard_ExtCharacter curcar;
-  unsigned int pl,ph;
+  Standard_ExtCharacter curcar = 0;
+  unsigned int pl = 0,ph = 0;
   // BIG INDIAN USED HERE
   
   while (!finished) {

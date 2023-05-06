@@ -38,7 +38,7 @@ Standard_Integer Interface_Category::CatNum
    const Interface_ShareTool& theShares)
 {
   if (theEnt.IsNull()) return 0;
-  Standard_Integer CN;
+  Standard_Integer CN = 0;
   Handle(Interface_GeneralModule) aModule;
   if (!myGTool->Select (theEnt,aModule,CN)) return 0;
   return aModule->CategoryNumber (CN,theEnt,theShares);
@@ -50,7 +50,7 @@ void Interface_Category::Compute
 {
   ClearNums();
   if (theModel.IsNull()) return;
-  Standard_Integer CN, i, nb = theModel->NbEntities();
+  Standard_Integer CN = 0, i = 0, nb = theModel->NbEntities();
   myGTool->Reservate (nb);
   if (nb == 0) return;
   myNum = new TColStd_HArray1OfInteger (1,nb);  myNum->Init(0);
@@ -94,7 +94,7 @@ Standard_CString Interface_Category::Name (const Standard_Integer theNum)
 
 Standard_Integer Interface_Category::Number (const Standard_CString theName)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = theCats().Lower(); i <= theCats().Upper(); i ++) {
     if (theCats().ChangeValue(i).IsEqual(theName)) return i;
   }

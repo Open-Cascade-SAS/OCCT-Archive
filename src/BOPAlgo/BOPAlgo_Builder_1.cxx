@@ -69,7 +69,7 @@ void BOPAlgo_Builder::FillImagesVertices(const Message_ProgressRange& theRange)
 //=======================================================================
   void BOPAlgo_Builder::FillImagesEdges(const Message_ProgressRange& theRange)
 {
-  Standard_Integer i, aNbS = myDS->NbSourceShapes();
+  Standard_Integer i = 0, aNbS = myDS->NbSourceShapes();
   Message_ProgressScope aPS(theRange, "Filling splits of edges", aNbS);
   for (i = 0; i < aNbS; ++i, aPS.Next()) {
     const BOPDS_ShapeInfo& aSI = myDS->ShapeInfo(i);
@@ -160,7 +160,7 @@ void BOPAlgo_Builder::BuildResult(const TopAbs_ShapeEnum theType)
 //=======================================================================
   void BOPAlgo_Builder::FillImagesContainers(const TopAbs_ShapeEnum theType, const Message_ProgressRange& theRange)
 {
-  Standard_Integer i, aNbS;
+  Standard_Integer i = 0, aNbS = 0;
   TopTools_MapOfShape aMFP(100, myAllocator);
   //
   aNbS=myDS->NbSourceShapes();
@@ -183,7 +183,7 @@ void BOPAlgo_Builder::BuildResult(const TopAbs_ShapeEnum theType)
 //=======================================================================
   void BOPAlgo_Builder::FillImagesCompounds(const Message_ProgressRange& theRange)
 {
-  Standard_Integer i, aNbS;
+  Standard_Integer i = 0, aNbS = 0;
   TopTools_MapOfShape aMFP(100, myAllocator);
   //
   aNbS=myDS->NbSourceShapes();
@@ -266,7 +266,7 @@ void BOPAlgo_Builder::BuildResult(const TopAbs_ShapeEnum theType)
   void BOPAlgo_Builder::FillImagesCompound(const TopoDS_Shape& theS,
                                            TopTools_MapOfShape& theMFP)
 { 
-  Standard_Boolean bInterferred;
+  Standard_Boolean bInterferred = 0;
   TopAbs_Orientation aOrX;
   TopoDS_Iterator aIt;
   BRep_Builder aBB;

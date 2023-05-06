@@ -20,13 +20,13 @@ IMPLEMENT_STANDARD_RTTIEXT(XCAFDimTolObjects_GeomToleranceObject,Standard_Transi
 //purpose  : 
 //=======================================================================
 
-XCAFDimTolObjects_GeomToleranceObject::XCAFDimTolObjects_GeomToleranceObject()
+XCAFDimTolObjects_GeomToleranceObject::XCAFDimTolObjects_GeomToleranceObject() : myHasAxis(Standard_False), myHasPlane(Standard_False), myHasPnt(Standard_False), myHasPntText(Standard_False), myAffectedPlaneType(XCAFDimTolObjects_ToleranceZoneAffectedPlane_None)
 {
-  myHasAxis = Standard_False;
-  myHasPlane = Standard_False;
-  myHasPnt = Standard_False;
-  myHasPntText = Standard_False;
-  myAffectedPlaneType = XCAFDimTolObjects_ToleranceZoneAffectedPlane_None;
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -34,29 +34,29 @@ XCAFDimTolObjects_GeomToleranceObject::XCAFDimTolObjects_GeomToleranceObject()
 //purpose  : 
 //=======================================================================
 
-XCAFDimTolObjects_GeomToleranceObject::XCAFDimTolObjects_GeomToleranceObject(const Handle(XCAFDimTolObjects_GeomToleranceObject)& theObj)
+XCAFDimTolObjects_GeomToleranceObject::XCAFDimTolObjects_GeomToleranceObject(const Handle(XCAFDimTolObjects_GeomToleranceObject)& theObj) : myType(theObj->myType), myTypeOfValue(theObj->myTypeOfValue), myValue(theObj->myValue), myMatReqModif(theObj->myMatReqModif), myZoneModif(theObj->myZoneModif), myValueOfZoneModif(theObj->myValueOfZoneModif), myModifiers(theObj->myModifiers), myMaxValueModif(theObj->myMaxValueModif), myAxis(theObj->myAxis), myHasAxis(theObj->myHasAxis), myPlane(theObj->myPlane), myPnt(theObj->myPnt), myPntText(theObj->myPntText), myHasPlane(theObj->myHasPlane), myHasPnt(theObj->myHasPnt), myHasPntText(theObj->myHasPntText), mySemanticName(theObj->mySemanticName), myAffectedPlaneType(theObj->myAffectedPlaneType), myAffectedPlane(theObj->myAffectedPlane), myPresentation(theObj->myPresentation), myPresentationName(theObj->myPresentationName)
 {
-  myType = theObj->myType;
-  myTypeOfValue = theObj->myTypeOfValue;
-  myValue = theObj->myValue;
-  myMatReqModif = theObj->myMatReqModif;
-  myZoneModif = theObj->myZoneModif;
-  myValueOfZoneModif = theObj->myValueOfZoneModif;
-  myModifiers = theObj->myModifiers;
-  myMaxValueModif = theObj->myMaxValueModif;
-  myAxis = theObj->myAxis;
-  myHasAxis = theObj->myHasAxis;
-  myPlane = theObj->myPlane;
-  myPnt= theObj->myPnt;
-  myPntText= theObj->myPntText;
-  myHasPlane = theObj->myHasPlane;
-  myHasPnt = theObj->myHasPnt;
-  myHasPntText = theObj->myHasPntText;
-  mySemanticName = theObj->mySemanticName;
-  myAffectedPlaneType = theObj->myAffectedPlaneType;
-  myAffectedPlane = theObj->myAffectedPlane;
-  myPresentation = theObj->myPresentation;
-  myPresentationName = theObj->myPresentationName;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================

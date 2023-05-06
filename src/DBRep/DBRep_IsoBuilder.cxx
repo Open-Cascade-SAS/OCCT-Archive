@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepTools.hxx>
@@ -111,7 +113,7 @@ Geom2dHatch_Hatcher (Geom2dHatch_Intersector (IntersectorConfusion,
   for (ExpEdges.Init (TopologicalFace, TopAbs_EDGE); ExpEdges.More(); ExpEdges.Next())
   {
     const TopoDS_Edge& TopologicalEdge = TopoDS::Edge (ExpEdges.Current());
-    Standard_Real U1, U2;
+    Standard_Real U1 = NAN, U2 = NAN;
     const Handle(Geom2d_Curve) PCurve = BRep_Tool::CurveOnSurface (TopologicalEdge, TopologicalFace, U1, U2);
 
     if (PCurve.IsNull())
@@ -213,7 +215,7 @@ Geom2dHatch_Hatcher (Geom2dHatch_Intersector (IntersectorConfusion,
   // Loading and trimming the hatchings.
   //-----------------------------------------------------------------------
 
-  Standard_Integer IIso ;
+  Standard_Integer IIso = 0 ;
   Standard_Real DeltaU = Abs (myUMax - myUMin) ;
   Standard_Real DeltaV = Abs (myVMax - myVMin) ;
   Standard_Real confusion = Min (DeltaU, DeltaV) * HatcherConfusion3d ;
@@ -254,7 +256,7 @@ Geom2dHatch_Hatcher (Geom2dHatch_Intersector (IntersectorConfusion,
   myNbDom = 0 ;
   for (IIso = 1 ; IIso <= NbIsos ; IIso++)
   {
-    Standard_Integer Index ;
+    Standard_Integer Index = 0 ;
 
     Index = myUInd(IIso) ;
     if (Index != 0)
@@ -419,7 +421,7 @@ void DBRep_IsoBuilder::FillGaps(const TopoDS_Face& theFace,
       Handle(Geom2d_Curve)& aCurrC2d = *pPC2;
 
       // Get p-curves parameters
-      Standard_Real fp, lp, fc, lc;
+      Standard_Real fp = NAN, lp = NAN, fc = NAN, lc = NAN;
       fp = aPrevC2d->FirstParameter();
       lp = aPrevC2d->LastParameter();
       fc = aCurrC2d->FirstParameter();
@@ -508,7 +510,7 @@ void DBRep_IsoBuilder::FillGaps(const TopoDS_Face& theFace,
           // Collect intersection points
           NCollection_List<IntRes2d_IntersectionPoint> aLPInt;
           // Get bounding points from segments
-          Standard_Integer iP, aNbInt = anInter.NbSegments();
+          Standard_Integer iP = 0, aNbInt = anInter.NbSegments();
           for (iP = 1; iP <= aNbInt; ++iP)
           {
             aLPInt.Append(anInter.Segment(iP).FirstPoint());
@@ -580,7 +582,7 @@ void DBRep_IsoBuilder::FillGaps(const TopoDS_Face& theFace,
               const gp_Pnt aPOnS = aBASurf.Value(aPInt.X(), aPInt.Y());
               if (aTolV2 > Precision::Infinite() || aPOnS.SquareDistance(aPV) < aTolV2)
               {
-                Standard_Real f, l;
+                Standard_Real f = NAN, l = NAN;
 
                 // Trim the curves with found parameters
 

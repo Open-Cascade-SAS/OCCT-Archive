@@ -16,6 +16,8 @@
 
 //  Modified by skv - Tue Aug  1 16:29:59 2006 OCC13116
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <gp.hxx>
 #include <gp_Circ.hxx>
@@ -95,7 +97,7 @@ static gp_Pnt2d EvalPnt2d(const gp_Vec&    P,
   Standard_Real X = P.Dot(gp_Vec(Sp.Position().XDirection()));
   Standard_Real Y = P.Dot(gp_Vec(Sp.Position().YDirection()));
   Standard_Real Z = P.Dot(gp_Vec(Sp.Position().Direction()));
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
 
   if ( Abs(X) > Precision::PConfusion() ||
        Abs(Y) > Precision::PConfusion() ) {
@@ -139,7 +141,7 @@ void  ProjLib_Sphere::Project(const gp_Circ& C)
   Ys = mySphere.Position().YDirection();
   Zs = mySphere.Position().Direction();
   
-  Standard_Boolean isIsoU, isIsoV;
+  Standard_Boolean isIsoU = 0, isIsoV = 0;
   Standard_Real Tol = Precision::Confusion();
 
   isIsoU = Zc.IsNormal(Zs,Tol) && O.IsEqual(C.Location(),Tol);
@@ -225,7 +227,7 @@ void ProjLib_Sphere::SetInBounds(const Standard_Real U)
   StdFail_NotDone_Raise_if( !isDone, "ProjLib_Sphere:SetInBounds");
   
   // first set the y of the first point in -pi/2 pi/2
-  Standard_Real newY, Y = ElCLib::Value(U,myLin).Y();
+  Standard_Real newY = NAN, Y = ElCLib::Value(U,myLin).Y();
   newY = ElCLib::InPeriod( Y, -M_PI, M_PI);
   
   myLin.Translate(gp_Vec2d(0.,newY-Y));
@@ -258,7 +260,7 @@ void ProjLib_Sphere::SetInBounds(const Standard_Real U)
   myLin.Translate(gp_Vec2d(M_PI,0.));
 
   // il faut maintenant recadrer en U
-  Standard_Real newX, X = ElCLib::Value(U,myLin).X();
+  Standard_Real newX = NAN, X = ElCLib::Value(U,myLin).X();
   newX = ElCLib::InPeriod( X, 0., 2.*M_PI);
   myLin.Translate(gp_Vec2d(newX-X,0.));
 }

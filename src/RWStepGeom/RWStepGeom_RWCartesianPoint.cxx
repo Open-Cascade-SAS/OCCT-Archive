@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <RWStepGeom_RWCartesianPoint.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -48,8 +50,8 @@ void RWStepGeom_RWCartesianPoint::ReadStep
 	//  OPTIMISED : X Y Z directly read and set
 
 //	Handle(TColStd_HArray1OfReal) aCoordinates;
-	Standard_Real aCoordinatesItem;
-	Standard_Integer nsub2, nbcoord=0;
+	Standard_Real aCoordinatesItem = NAN;
+	Standard_Integer nsub2 = 0, nbcoord=0;
 	Standard_Real XYZ[3] = {0.,0.,0.};
 	if (data->ReadSubList (num,2,"coordinates",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);

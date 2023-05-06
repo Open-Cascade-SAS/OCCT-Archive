@@ -34,7 +34,7 @@ TCollection_AsciiString Storage_BaseDriver::ReadMagicNumber (Standard_IStream& t
 
   TCollection_AsciiString aReadMagicNumber;
 
-  char aChar;
+  char aChar = 0;
   Standard_Size aReadCharNb = 0;
 
   while (theIStream.good() && (aReadCharNb < aMagicNumberLen))

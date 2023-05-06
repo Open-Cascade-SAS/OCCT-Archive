@@ -21,7 +21,7 @@
 Plate_GlobalTranslationConstraint::Plate_GlobalTranslationConstraint(const TColgp_SequenceOfXY& SOfXY)
 :myLXYZC(SOfXY.Length()-1,SOfXY.Length() )
 {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for( i=1;i<=SOfXY.Length();i++)
     {
       myLXYZC.SetPPC(i,Plate_PinpointConstraint (SOfXY(i),gp_XYZ(0.,0.,0.),0,0));

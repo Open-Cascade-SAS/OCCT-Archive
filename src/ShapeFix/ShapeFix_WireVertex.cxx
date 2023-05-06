@@ -13,6 +13,8 @@
 
 //szv#4 S4163
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <gp_Pnt.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -115,7 +117,7 @@ Standard_Integer ShapeFix_WireVertex::FixSame()
   BRep_Builder B;
 
   Handle(ShapeExtend_WireData) sbwd = myAnalyzer.WireData();
-  Standard_Integer i, nb = sbwd->NbEdges();
+  Standard_Integer i = 0, nb = sbwd->NbEdges();
 
   for (i = 1; i <= nb; i ++) {
     Standard_Integer j = (i == nb ? 1 : i+1);
@@ -135,7 +137,7 @@ Standard_Integer ShapeFix_WireVertex::FixSame()
     if (stat == 2) {
       // OK mais en reprenant les tolerances
       Handle(Geom_Curve) crv;  
-      Standard_Real cf,cl;
+      Standard_Real cf = NAN,cl = NAN;
       sae.Curve3d ( sbwd->Edge(i), crv, cf, cl );
       B.UpdateVertex (V1,cl,E1,myAnalyzer.Precision());
       sae.Curve3d ( sbwd->Edge(j), crv, cf, cl );
@@ -171,7 +173,7 @@ Standard_Integer ShapeFix_WireVertex::Fix()
 
   Handle(ShapeExtend_WireData) sbwd = myAnalyzer.WireData();
   
-  Standard_Integer i, nb = sbwd->NbEdges();
+  Standard_Integer i = 0, nb = sbwd->NbEdges();
   Standard_Integer nbfix = 0;
   for (i = 1; i <= nb; i ++) {
     //    On note les valeurs
@@ -210,7 +212,7 @@ Standard_Integer ShapeFix_WireVertex::Fix()
     Standard_Real ufol = myAnalyzer.UFollowing(j);
 
     Handle(Geom_Curve) crv;  
-    Standard_Real cf,cl;
+    Standard_Real cf = NAN,cl = NAN;
     //szv#4:S4163:12Mar99 optimized
     if (stat < 4) {
       sae.Curve3d ( sbwd->Edge(i), crv, cf, cl );

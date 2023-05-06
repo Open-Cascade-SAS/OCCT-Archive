@@ -13,6 +13,8 @@
 
 //szv#4 S4163
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <Geom_Curve.hxx>
 #include <gp_Pnt.hxx>
@@ -31,10 +33,10 @@
 //function : ShapeAnalysis_WireVertex
 //purpose  : 
 //=======================================================================
-ShapeAnalysis_WireVertex::ShapeAnalysis_WireVertex()
+ShapeAnalysis_WireVertex::ShapeAnalysis_WireVertex() : myDone(Standard_False), myPreci(Precision::Confusion())
 {
-  myDone = Standard_False;
-  myPreci = Precision::Confusion();
+  
+  
 }
 
 //=======================================================================
@@ -106,8 +108,8 @@ ShapeAnalysis_WireVertex::ShapeAnalysis_WireVertex()
   myDone = Standard_True;
   //  Analyse des vertex qui se suivent
   Handle(Geom_Curve) c1, c2;
-  Standard_Real cf, cl, upre, ufol;
-  Standard_Integer i, j, nb = myStat->Length(), stat;
+  Standard_Real cf = NAN, cl = NAN, upre = NAN, ufol = NAN;
+  Standard_Integer i = 0, j = 0, nb = myStat->Length(), stat = 0;
   ShapeAnalysis_Edge EA;
   for (i = 1; i <= nb; i ++) {
     stat = -1;  // au depart
@@ -141,7 +143,7 @@ ShapeAnalysis_WireVertex::ShapeAnalysis_WireVertex()
     //    Une edge se termine sur l autre : il faudra simplement relimiter
     //    Projection calculee sur une demi-edge (pour eviter les pbs de couture)
     gp_Pnt PJ1,PJ2;
-    Standard_Real U1,U2;
+    Standard_Real U1 = NAN,U2 = NAN;
     Standard_Real dj1 = ShapeAnalysis_Curve().Project (c1,P2,myPreci,PJ1,U1,(cf+upre)/2,upre);
     Standard_Real dj2 = ShapeAnalysis_Curve().Project (c2,P1,myPreci,PJ2,U2,ufol,(ufol+cl)/2);
     if (dj1 <= myPreci)       {  SetStart (i,PJ1.XYZ(),U1);  continue;  }
@@ -335,7 +337,7 @@ const Handle(ShapeExtend_WireData)& ShapeAnalysis_WireVertex::WireData() const
 {
   //szv#4:S4163:12Mar99 optimized
   if (!myStat.IsNull()) {
-    Standard_Integer i,nb = myStat->Length();
+    Standard_Integer i = 0,nb = myStat->Length();
     for (i = num+1; i <= nb; i ++) if (myStat->Value(i) == stat) return i;
   }
   return 0;
@@ -351,7 +353,7 @@ const Handle(ShapeExtend_WireData)& ShapeAnalysis_WireVertex::WireData() const
 {
   //szv#4:S4163:12Mar99 optimized
   if (!myStat.IsNull()) {
-    Standard_Integer i,nb = myStat->Length();
+    Standard_Integer i = 0,nb = myStat->Length();
     for (i = num+1; i <= nb; i ++) {
       Standard_Integer stat = myStat->Value(i);
       if ((crit == -1 && stat < 0) ||

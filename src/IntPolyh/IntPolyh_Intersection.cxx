@@ -36,16 +36,16 @@ static Standard_Integer ComputeIntersection(IntPolyh_PMaillageAffinage& theMaill
 //purpose  : 
 //=======================================================================
 IntPolyh_Intersection::IntPolyh_Intersection(const Handle(Adaptor3d_Surface)& theS1,
-                                             const Handle(Adaptor3d_Surface)& theS2)
+                                             const Handle(Adaptor3d_Surface)& theS2) : mySurf1(theS1), mySurf2(theS2), myNbSU1(10), myNbSV1(10), myNbSU2(10), myNbSV2(10), myIsDone(Standard_False), myIsParallel(Standard_False)
 {
-  mySurf1 = theS1;
-  mySurf2 = theS2;
-  myNbSU1 = 10;
-  myNbSV1 = 10;
-  myNbSU2 = 10;
-  myNbSV2 = 10;
-  myIsDone = Standard_False;
-  myIsParallel = Standard_False;
+  
+  
+  
+  
+  
+  
+  
+  
   mySectionLines.Init(1000);
   myTangentZones.Init(10000);
   Perform();
@@ -60,16 +60,16 @@ IntPolyh_Intersection::IntPolyh_Intersection(const Handle(Adaptor3d_Surface)& th
                                              const Standard_Integer            theNbSV1,
                                              const Handle(Adaptor3d_Surface)& theS2,
                                              const Standard_Integer            theNbSU2,
-                                             const Standard_Integer            theNbSV2)
+                                             const Standard_Integer            theNbSV2) : mySurf1(theS1), mySurf2(theS2), myNbSU1(theNbSU1), myNbSV1(theNbSV1), myNbSU2(theNbSU2), myNbSV2(theNbSV2), myIsDone(Standard_False), myIsParallel(Standard_False)
 {
-  mySurf1 = theS1;
-  mySurf2 = theS2;
-  myNbSU1 = theNbSU1;
-  myNbSV1 = theNbSV1;
-  myNbSU2 = theNbSU2;
-  myNbSV2 = theNbSV2;
-  myIsDone = Standard_False;
-  myIsParallel = Standard_False;
+  
+  
+  
+  
+  
+  
+  
+  
   mySectionLines.Init(1000);
   myTangentZones.Init(10000);
   Perform();
@@ -84,16 +84,16 @@ IntPolyh_Intersection::IntPolyh_Intersection(const Handle(Adaptor3d_Surface)& th
                                              const TColStd_Array1OfReal&       theVPars1,
                                              const Handle(Adaptor3d_Surface)& theS2,
                                              const TColStd_Array1OfReal&       theUPars2,
-                                             const TColStd_Array1OfReal&       theVPars2)
+                                             const TColStd_Array1OfReal&       theVPars2) : mySurf1(theS1), mySurf2(theS2), myNbSU1(theUPars1.Length()), myNbSV1(theVPars1.Length()), myNbSU2(theUPars2.Length()), myNbSV2(theVPars2.Length()), myIsDone(Standard_False), myIsParallel(Standard_False)
 {
-  mySurf1 = theS1;
-  mySurf2 = theS2;
-  myNbSU1 = theUPars1.Length();
-  myNbSV1 = theVPars1.Length();
-  myNbSU2 = theUPars2.Length();
-  myNbSV2 = theVPars2.Length();
-  myIsDone = Standard_False;
-  myIsParallel = Standard_False;
+  
+  
+  
+  
+  
+  
+  
+  
   mySectionLines.Init(1000);
   myTangentZones.Init(10000);
   Perform(theUPars1, theVPars1, theUPars2, theVPars2);
@@ -358,7 +358,7 @@ Standard_Boolean IntPolyh_Intersection::PerformMaillage(const TColStd_Array1OfRe
   if (FinTTC == 0)
   {
     // Check if enlarge for the surfaces is possible
-    Standard_Boolean isEnlargeU1, isEnlargeV1, isEnlargeU2, isEnlargeV2;
+    Standard_Boolean isEnlargeU1 = 0, isEnlargeV1 = 0, isEnlargeU2 = 0, isEnlargeV2 = 0;
     IntPolyh_Tools::IsEnlargePossible(mySurf1, isEnlargeU1, isEnlargeV1);
     IntPolyh_Tools::IsEnlargePossible(mySurf2, isEnlargeU2, isEnlargeV2);
 

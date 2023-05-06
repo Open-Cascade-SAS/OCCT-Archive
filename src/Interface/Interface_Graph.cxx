@@ -87,9 +87,9 @@ Interface_Graph::Interface_Graph
 
 Interface_Graph::Interface_Graph
 (const Interface_Graph& agraph, const Standard_Boolean /*copied*/)
-: themodel   (agraph.Model()), thepresents ("") 
+: themodel   (agraph.Model()), thepresents (""), thesharings(agraph.SharingTable()) 
 {
-  thesharings = agraph.SharingTable();
+  
   Standard_Integer nb = agraph.NbStatuses();
   if(!nb)
     return;
@@ -145,7 +145,7 @@ void Interface_Graph::Evaluate()
     return;
   
 
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = 1; i <= n; i ++) {
      //    ATTENTION : Si Entite non chargee donc illisible, basculer sur son
     //    "Contenu" equivalent
@@ -158,7 +158,7 @@ void Interface_Graph::Evaluate()
     //    Mise en forme : liste d entiers
     for (iter.Start(); iter.More(); iter.Next()) {
       //    num = 0 -> on sort du Model de depart, le noter "Error" et passer
-      Handle(Standard_Transient) entshare = iter.Value();
+      const Handle(Standard_Transient)& entshare = iter.Value();
       if(entshare == ent)
         continue;
 
@@ -349,7 +349,7 @@ void  Interface_Graph::GetFromIter
    if(thestats.IsNull())
     return;
   for (iter.Start(); iter.More(); iter.Next()) {
-    Handle(Standard_Transient) ent = iter.Value();
+    const Handle(Standard_Transient)& ent = iter.Value();
     Standard_Integer num = EntityNumber(ent);
     if (!num) 
       continue;
@@ -368,7 +368,7 @@ void  Interface_Graph::GetFromIter
   if(thestats.IsNull())
     return;
   for (iter.Start(); iter.More(); iter.Next()) {
-    Handle(Standard_Transient) ent = iter.Value();
+    const Handle(Standard_Transient)& ent = iter.Value();
     Standard_Integer num   = EntityNumber(ent);
     if (!num) 
       continue;
@@ -428,7 +428,7 @@ Interface_EntityIterator Interface_Graph::Shareds
 
   //if (num == 0)  throw Standard_DomainError("Interface : Shareds");
   Handle(Interface_GeneralModule) module;
-  Standard_Integer CN;
+  Standard_Integer CN = 0;
   if (themodel->GTool()->Select(aCurEnt,module,CN))  
     module->FillShared(themodel,CN,aCurEnt,iter);
   return iter;
@@ -516,7 +516,7 @@ Handle(TCollection_HAsciiString)  Interface_Graph::Name(const Handle(Standard_Tr
   if (gtool.IsNull()) return str;
 
   Handle(Interface_GeneralModule) module;
-  Standard_Integer CN;
+  Standard_Integer CN = 0;
   if (!gtool->Select(ent,module,CN)) return str;
 
   Interface_ShareTool sht (*this);

@@ -58,7 +58,7 @@ public:
 
 private:
 
-  ShellIndices myIndices;
+  ShellIndices myIndices{};
   NCollection_Array1<Handle(HLRAlgo_PolyData)> myPolyg;
   NCollection_Array1<Handle(HLRAlgo_PolyData)> myHPolHi;
   HLRAlgo_ListOfBPoint mySegList;

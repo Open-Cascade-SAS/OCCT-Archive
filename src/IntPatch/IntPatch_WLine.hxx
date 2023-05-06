@@ -225,8 +225,8 @@ private:
   Handle(IntSurf_LineOn2S) curv;
   Standard_Boolean fipt;
   Standard_Boolean lapt;
-  Standard_Integer indf;
-  Standard_Integer indl;
+  Standard_Integer indf{};
+  Standard_Integer indl{};
   IntPatch_SequenceOfPoint svtx;
   Standard_Real u1period;
   Standard_Real v1period;

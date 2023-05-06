@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_SphericalSurface.hxx>
 #include <GeomToStep_MakeAxis2Placement3d.hxx>
 #include <GeomToStep_MakeSphericalSurface.hxx>
@@ -29,12 +31,12 @@
 // de Geom
 //=============================================================================
 GeomToStep_MakeSphericalSurface::GeomToStep_MakeSphericalSurface
-  ( const Handle(Geom_SphericalSurface)& S )
+  ( const Handle(Geom_SphericalSurface)& S ) : GeomToStep_Root()
 	
 {
   Handle(StepGeom_SphericalSurface) Surf;
   Handle(StepGeom_Axis2Placement3d) aPosition;
-  Standard_Real aRadius;
+  Standard_Real aRadius = NAN;
   
   GeomToStep_MakeAxis2Placement3d MkAxis2(S->Position());
   aPosition = MkAxis2.Value();

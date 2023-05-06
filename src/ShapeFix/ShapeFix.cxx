@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <ShapeFix.hxx>
 //:k2 abv 16.12.98: eliminating code duplication
 //pdn     18.12.98: checking deviation for SP edges
@@ -188,7 +190,7 @@ Standard_Boolean ShapeFix::SameParameter(const TopoDS_Shape& shape,
       Handle(GeomAdaptor_Surface) AS = new GeomAdaptor_Surface ( plane );
       for ( TopExp_Explorer ed ( face, TopAbs_EDGE ); ed.More(); ed.Next() ) {
         TopoDS_Edge edge = TopoDS::Edge ( ed.Current() );
-        Standard_Real f, l;
+        Standard_Real f = NAN, l = NAN;
         Handle(Geom_Curve) crv = BRep_Tool::Curve ( edge, f, l );
         if ( crv.IsNull() )
           continue;
@@ -356,7 +358,7 @@ static Standard_Real getNearPoint(const TColgp_SequenceOfPnt& aSeq1,
 //purpose  : auxiliary for FixVertexPosition
 //=======================================================================
 static Standard_Boolean getNearestEdges(TopTools_ListOfShape& theLEdges,
-                                        const TopoDS_Vertex theVert,
+                                        const TopoDS_Vertex& theVert,
                                         TopTools_SequenceOfShape& theSuitEdges,
                                         TopTools_SequenceOfShape& theRejectEdges,
                                         const Standard_Real theTolerance,
@@ -375,7 +377,7 @@ static Standard_Boolean getNearestEdges(TopTools_ListOfShape& theLEdges,
   TopoDS_Vertex aVert11,aVert12;
   TopExp::Vertices(aEdge1, aVert11,aVert12 );
   aMapEdges.Add(aEdge1);
-  Standard_Real aFirst1,aLast1;
+  Standard_Real aFirst1 = NAN,aLast1 = NAN;
   Handle(Geom_Curve) aCurve1 = BRep_Tool::Curve(aEdge1,aFirst1,aLast1);
   gp_Pnt p11;
   gp_Pnt p12;
@@ -416,7 +418,7 @@ static Standard_Boolean getNearestEdges(TopTools_ListOfShape& theLEdges,
       continue;
     }
     aMapEdges.Add(aEdge);
-    Standard_Real aFirst,aLast;
+    Standard_Real aFirst = NAN,aLast = NAN;
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(aEdge,aFirst,aLast);
     if( !aCurve.IsNull()) {
       gp_Pnt p1;
@@ -505,7 +507,7 @@ Standard_Boolean ShapeFix::FixVertexPosition(TopoDS_Shape& theshape,
     Standard_Integer nV =1;
     TopoDS_Iterator aExp3(aExp1.Current());
     for( ; aExp3.More(); aExp3.Next(),nV++) {
-      TopoDS_Shape aVert =  aExp3.Value();
+      const TopoDS_Shape& aVert =  aExp3.Value();
       if(nV ==1)
         aVert1 = aVert;
       else if(aVert1.IsSame(aVert))
@@ -557,7 +559,7 @@ Standard_Boolean ShapeFix::FixVertexPosition(TopoDS_Shape& theshape,
       Standard_Boolean isLast = (aVert2.IsSame(aVert));
       if(!isFirst && !isLast)
         continue;
-      Standard_Real aFirst,aLast;
+      Standard_Real aFirst = NAN,aLast = NAN;
       Handle(Geom_Curve) aCurve;
       TopoDS_Edge aEdge = TopoDS::Edge(thecontext->Apply(aEdgeOld));
 
@@ -645,7 +647,7 @@ Standard_Boolean ShapeFix::FixVertexPosition(TopoDS_Shape& theshape,
       TopoDS_Vertex aVert1n,aVert2n;
       TopExp::Vertices(aEdge, aVert1n,aVert2n );
       
-      Standard_Real aFirst,aLast;
+      Standard_Real aFirst = NAN,aLast = NAN;
       aCurve = BRep_Tool::Curve(aEdge,aFirst,aLast);
       if( !aCurve.IsNull()) {
         gp_Pnt p1 = aCurve->Value(aFirst);
@@ -686,14 +688,14 @@ Standard_Real ShapeFix::LeastEdgeSize(TopoDS_Shape& theShape)
   Standard_Real aRes = RealLast();
   for(TopExp_Explorer exp(theShape,TopAbs_EDGE); exp.More(); exp.Next()) { 
     TopoDS_Edge edge = TopoDS::Edge ( exp.Current() );
-    Standard_Real first,last;
+    Standard_Real first = NAN,last = NAN;
     Handle(Geom_Curve) c3d = BRep_Tool::Curve(edge, first, last);
     if(!c3d.IsNull()) {
       Bnd_Box bb;
       bb.Add(c3d->Value(first));
       bb.Add(c3d->Value(last));
       bb.Add(c3d->Value((last+first)/2.));
-      Standard_Real x1,x2,y1,y2,z1,z2,size;
+      Standard_Real x1 = NAN,x2 = NAN,y1 = NAN,y2 = NAN,z1 = NAN,z2 = NAN,size = NAN;
       bb.Get(x1,y1,z1,x2,y2,z2);
       size = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1);
       if(size<aRes) aRes = size;

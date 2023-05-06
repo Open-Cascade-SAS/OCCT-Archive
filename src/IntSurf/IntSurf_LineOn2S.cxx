@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <IntSurf_LineOn2S.hxx>
 #include <IntSurf_PntOn2S.hxx>
 #include <Standard_Type.hxx>
@@ -33,7 +35,7 @@ Handle(IntSurf_LineOn2S) IntSurf_LineOn2S::Split (const Standard_Integer Index)
   IntSurf_SequenceOfPntOn2S SS;
   mySeq.Split(Index,SS);
   Handle(IntSurf_LineOn2S) NS = new IntSurf_LineOn2S ();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer leng = SS.Length();
   for (i=1; i<=leng; i++) {
     NS->Add(SS(i));
@@ -84,7 +86,7 @@ Standard_Boolean IntSurf_LineOn2S::IsOutBox(const gp_Pnt& Pxyz)
       gp_Pnt P = mySeq(i).Value();
       myBxyz.Add(P);
     }
-    Standard_Real x0, y0, z0, x1, y1, z1;
+    Standard_Real x0 = NAN, y0 = NAN, z0 = NAN, x1 = NAN, y1 = NAN, z1 = NAN;
     myBxyz.Get(x0, y0, z0, x1, y1, z1);
     x1 -= x0; y1 -= y0; z1 -= z0;
     if (x1>y1)
@@ -119,7 +121,7 @@ Standard_Boolean IntSurf_LineOn2S::IsOutSurf1Box(const gp_Pnt2d& P1uv)
   if (myBuv1.IsWhole())
   {
     Standard_Integer n = NbPoints();
-    Standard_Real pu1, pu2, pv1, pv2;
+    Standard_Real pu1 = NAN, pu2 = NAN, pv1 = NAN, pv2 = NAN;
     myBuv1.SetVoid();
     for (Standard_Integer i = 1; i <= n; i++)
     {
@@ -147,7 +149,7 @@ Standard_Boolean IntSurf_LineOn2S::IsOutSurf2Box(const gp_Pnt2d& P2uv)
   if (myBuv2.IsWhole())
   {
     Standard_Integer n = NbPoints();
-    Standard_Real pu1, pu2, pv1, pv2;
+    Standard_Real pu1 = NAN, pu2 = NAN, pv1 = NAN, pv2 = NAN;
     myBuv2.SetVoid();
     for (Standard_Integer i = 1; i <= n; i++)
     {

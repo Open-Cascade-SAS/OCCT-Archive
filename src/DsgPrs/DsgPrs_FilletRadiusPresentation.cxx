@@ -31,6 +31,7 @@
 #include <Prs3d_Text.hxx>
 #include <TCollection_ExtendedString.hxx>
 
+#include <math.h>
 #include <stdio.h>
 //=======================================================================
 //function : Add
@@ -56,8 +57,8 @@ void DsgPrs_FilletRadiusPresentation::Add (const Handle(Prs3d_Presentation)& aPr
   char valcar[80];
   sprintf(valcar,"%5.2f",theval);
 
-  Standard_Real FirstParCirc, LastParCirc;
-  Standard_Boolean SpecCase;
+  Standard_Real FirstParCirc = NAN, LastParCirc = NAN;
+  Standard_Boolean SpecCase = 0;
   gp_Dir DirOfArrow;
   gp_Circ FilletCirc;
   //  gp_Pnt NewPosition, EndOfArrow;

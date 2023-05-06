@@ -52,8 +52,8 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_UniversalPairValue, StepKinematics_PairValue)
 
 private:
-  Standard_Real myFirstRotationAngle;
-  Standard_Real mySecondRotationAngle;
+  Standard_Real myFirstRotationAngle{};
+  Standard_Real mySecondRotationAngle{};
 
 };
 #endif // _StepKinematics_UniversalPairValue_HeaderFile_

@@ -25,9 +25,9 @@
 //purpose  : Constructor
 //=======================================================================
 
-LDOM_Document::LDOM_Document ()
+LDOM_Document::LDOM_Document () : myMemManager(new LDOM_MemManager (MEMORY_GRANULE))
 {
-  myMemManager = new LDOM_MemManager (MEMORY_GRANULE);
+  
 }
 
 //=======================================================================
@@ -35,9 +35,9 @@ LDOM_Document::LDOM_Document ()
 //purpose  : Constructor to be used in LDOM_MemManager::Doc()
 //=======================================================================
 
-LDOM_Document::LDOM_Document (const LDOM_MemManager& aMemManager)
+LDOM_Document::LDOM_Document (const LDOM_MemManager& aMemManager) : myMemManager(&aMemManager)
 {
-  myMemManager = &aMemManager;
+  
 }
 
 //=======================================================================

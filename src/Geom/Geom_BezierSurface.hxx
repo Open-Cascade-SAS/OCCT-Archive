@@ -609,8 +609,8 @@ private:
   Standard_Boolean vrational;
   Handle(TColgp_HArray2OfPnt) poles;
   Handle(TColStd_HArray2OfReal) weights;
-  Standard_Real umaxderivinv;
-  Standard_Real vmaxderivinv;
+  Standard_Real umaxderivinv{};
+  Standard_Real vmaxderivinv{};
   Standard_Boolean maxderivinvok;
 
 

@@ -155,8 +155,8 @@ protected:
 private:
 
 
-  Standard_Real First;
-  Standard_Real Last;
+  Standard_Real First{};
+  Standard_Real Last{};
   Handle(Geom_Curve) mySection;
   Handle(Law_Function) myLaw;
   Handle(Law_Function) TLaw;

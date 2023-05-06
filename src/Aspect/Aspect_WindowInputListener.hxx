@@ -260,7 +260,7 @@ protected:
 
 protected: //! @name 3d mouse input variables
 
-  bool                   my3dMouseButtonState[32];//!< cached button state
+  bool                   my3dMouseButtonState[32]{};//!< cached button state
   NCollection_Vec3<bool> my3dMouseNoRotate;       //!< ignore  3d mouse rotation axes
   NCollection_Vec3<bool> my3dMouseToReverse;      //!< reverse 3d mouse rotation axes
   float                  my3dMouseAccelTrans;     //!< acceleration ratio for translation event

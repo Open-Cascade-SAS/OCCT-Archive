@@ -112,7 +112,7 @@ Standard_Boolean Expr_PolyExpression::Contains (const Handle(Expr_GeneralExpress
 void Expr_PolyExpression::Replace (const Handle(Expr_NamedUnknown)& var, const Handle(Expr_GeneralExpression)& with)
 {
   Standard_Integer nbop = NbOperands();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Handle(Expr_GeneralExpression) expop;
 
   for(i=1;i <= nbop; i++) {
@@ -132,7 +132,7 @@ void Expr_PolyExpression::Replace (const Handle(Expr_NamedUnknown)& var, const H
 Handle(Expr_GeneralExpression) Expr_PolyExpression::Simplified() const
 {
   Handle(Expr_PolyExpression) cop = Handle(Expr_PolyExpression)::DownCast(Copy());
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer max = cop->NbOperands();
   Handle(Expr_GeneralExpression) op;
   for (i=1; i<= max; i++) {

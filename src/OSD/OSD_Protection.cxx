@@ -104,22 +104,22 @@ static OSD_SingleProtection TabProtSub [16][16] =
 
 // Initialize System, Group, World for read only and User for read & write
 
-OSD_Protection::OSD_Protection(){
- s = OSD_R;
- u = OSD_RWD;
- g = OSD_R;
- w = OSD_R;
+OSD_Protection::OSD_Protection() : s(OSD_R), u(OSD_RWD), g(OSD_R), w(OSD_R){
+ 
+ 
+ 
+ 
 }
 
 OSD_Protection::OSD_Protection(const OSD_SingleProtection System, 
                                      const OSD_SingleProtection User,
                                      const OSD_SingleProtection Group,
-                                     const OSD_SingleProtection World){
+                                     const OSD_SingleProtection World) : s(System), u(User), g(Group), w(World){
 
- s = System;
- u = User;
- g = Group;
- w = World;
+ 
+ 
+ 
+ 
 }
 
 void  OSD_Protection::Values(OSD_SingleProtection& System, 

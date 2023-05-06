@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_IsoCurve.hxx>
 #include <Bnd_Box2d.hxx>
 #include <BndLib_Add2dCurve.hxx>
@@ -44,8 +46,8 @@ void VrmlConverter_WFRestrictedFace::Add
   StdPrs_ToolRFace ToolRst (aFace);
 
   // compute bounds of the restriction
-  Standard_Real UMin,UMax,VMin,VMax;
-  Standard_Integer i;
+  Standard_Real UMin = NAN,UMax = NAN,VMin = NAN,VMax = NAN;
+  Standard_Integer i = 0;
   gp_Pnt2d P1,P2;
   Bnd_Box2d B;
   
@@ -91,7 +93,7 @@ void VrmlConverter_WFRestrictedFace::Add
   }
 
   // trim the isos
-  Standard_Real U1, U2, U, DU;
+  Standard_Real U1 = NAN, U2 = NAN, U = NAN, DU = NAN;
 
   for (ToolRst.Init(); ToolRst.More(); ToolRst.Next()) {
     TopAbs_Orientation Orient = ToolRst.Orientation();

@@ -112,8 +112,8 @@ private:
 
 
   Handle(TColStd_HArray1OfByte) myValues;
-  Standard_Integer myLower;
-  Standard_Integer myUpper;
+  Standard_Integer myLower{};
+  Standard_Integer myUpper{};
   Standard_GUID myID;
 
 };

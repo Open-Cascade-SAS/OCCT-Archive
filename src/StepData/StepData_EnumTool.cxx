@@ -37,7 +37,7 @@ StepData_EnumTool::StepData_EnumTool
    const Standard_CString e32,const Standard_CString e33,
    const Standard_CString e34,const Standard_CString e35,
    const Standard_CString e36,const Standard_CString e37,
-   const Standard_CString e38,const Standard_CString e39)
+   const Standard_CString e38,const Standard_CString e39) : theinit(thetexts.Length()), theopt(Standard_True)
 {
   AddDefinition (e0);   AddDefinition (e1);   AddDefinition (e2);
   AddDefinition (e3);   AddDefinition (e4);   AddDefinition (e5);
@@ -53,7 +53,7 @@ StepData_EnumTool::StepData_EnumTool
   AddDefinition (e33);  AddDefinition (e34);  AddDefinition (e35);
   AddDefinition (e36);  AddDefinition (e37);  AddDefinition (e38);
   AddDefinition (e39);
-  theinit = thetexts.Length();  theopt = Standard_True;
+   
 }
 
     void  StepData_EnumTool::AddDefinition (const Standard_CString term)

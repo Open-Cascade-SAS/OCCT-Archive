@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -109,8 +111,8 @@ void TopoDSToStep_MakeStepEdge::Init(const TopoDS_Edge& aEdge,
   }
 
 #define Nbpt 21
-  Standard_Integer i;
-  Standard_Real    U, U1, U2;
+  Standard_Integer i = 0;
+  Standard_Real    U = NAN, U1 = NAN, U2 = NAN;
   gp_Pnt           P;
   
   Standard_Boolean isSeam = BRep_Tool::IsClosed(aEdge, aTool.CurrentFace());

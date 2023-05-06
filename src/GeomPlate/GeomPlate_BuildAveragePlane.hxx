@@ -101,12 +101,12 @@ private:
   Standard_Real myVmin;
   Standard_Real myUmin;
   Handle(Geom_Plane) myPlane;
-  Standard_Real myTol;
+  Standard_Real myTol{};
   Handle(Geom_Line) myLine;
   gp_Vec myOX;
   gp_Vec myOY;
   gp_Pnt myG;
-  Standard_Integer myNbBoundPoints;
+  Standard_Integer myNbBoundPoints{};
 
 
 };

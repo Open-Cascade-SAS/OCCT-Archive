@@ -79,13 +79,13 @@ protected:
 private:
 
 
-  Standard_Real lengthExponent;
-  Standard_Real massExponent;
-  Standard_Real timeExponent;
-  Standard_Real electricCurrentExponent;
-  Standard_Real thermodynamicTemperatureExponent;
-  Standard_Real amountOfSubstanceExponent;
-  Standard_Real luminousIntensityExponent;
+  Standard_Real lengthExponent{};
+  Standard_Real massExponent{};
+  Standard_Real timeExponent{};
+  Standard_Real electricCurrentExponent{};
+  Standard_Real thermodynamicTemperatureExponent{};
+  Standard_Real amountOfSubstanceExponent{};
+  Standard_Real luminousIntensityExponent{};
 
 
 };

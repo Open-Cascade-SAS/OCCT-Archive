@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepBasic_RWDerivedUnitElement.hxx>
 #include <StepBasic_DerivedUnitElement.hxx>
@@ -38,7 +40,7 @@ void RWStepBasic_RWDerivedUnitElement::ReadStep
 	Handle(StepBasic_NamedUnit) nu;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadEntity(num, 1,"unit", ach, STANDARD_TYPE(StepBasic_NamedUnit), nu);
-	Standard_Real expo;
+	Standard_Real expo = NAN;
 	//szv#4:S4163:12Mar99 `stat1 =` not needed
 	data->ReadReal (num,2,"exponent", ach, expo);
 

@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BOPAlgo_ArgumentAnalyzer.hxx>
 #include <BOPAlgo_BuilderFace.hxx>
 #include <BOPAlgo_CheckerSI.hxx>
@@ -345,7 +347,7 @@ void BOPAlgo_ArgumentAnalyzer::TestTypes()
 void BOPAlgo_ArgumentAnalyzer::TestSelfInterferences(const Message_ProgressRange& theRange)
 {
   Message_ProgressScope aPS(theRange, NULL, (!myShape1.IsNull() && !myShape2.IsNull() ? 2 : 1));
-  Standard_Integer ii;
+  Standard_Integer ii = 0;
   //
   for(ii = 0; ii < 2; ii++) {
     const TopoDS_Shape& aS = (ii == 0) ? myShape1 : myShape2;
@@ -358,7 +360,7 @@ void BOPAlgo_ArgumentAnalyzer::TestSelfInterferences(const Message_ProgressRange
       continue;
     }
     //
-    Standard_Integer n1, n2;
+    Standard_Integer n1 = 0, n2 = 0;
     BOPDS_MapIteratorOfMapOfPair aItMPK;
     TopTools_ListOfShape anArgs;
     BOPAlgo_CheckerSI aChecker;
@@ -812,8 +814,8 @@ void BOPAlgo_ArgumentAnalyzer::TestMergeEdge()
 // ================================================================================
 void BOPAlgo_ArgumentAnalyzer::TestContinuity() 
 {
-  Standard_Integer i, j, aNbS;
-  Standard_Real f, l;
+  Standard_Integer i = 0, j = 0, aNbS = 0;
+  Standard_Real f = NAN, l = NAN;
   TopExp_Explorer aExp;
   //
   for (i = 0; i < 2; ++i) {
@@ -869,8 +871,8 @@ void BOPAlgo_ArgumentAnalyzer::TestContinuity()
 // ================================================================================
 void BOPAlgo_ArgumentAnalyzer::TestCurveOnSurface()
 {
-  Standard_Integer i;
-  Standard_Real aT, aD, aTolE;
+  Standard_Integer i = 0;
+  Standard_Real aT = NAN, aD = NAN, aTolE = NAN;
   TopExp_Explorer aExpF, aExpE;
   //
   for(i = 0; i < 2; i++) {

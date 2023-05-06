@@ -17,6 +17,8 @@
 //  Modified by skv - Fri Jul  1 16:23:17 2005 IDEM(Airbus)
 //  Modified by skv - Wed Jul  7 17:21:09 2004 IDEM(Airbus)
 
+#include <math.h>
+
 #include <Bisector_BisecAna.hxx>
 #include <ElCLib.hxx>
 #include <GccAna_Circ2dBisec.hxx>
@@ -219,11 +221,11 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Curve)& afirstcurve   ,
 				const Standard_Boolean      oncurve       )
 {
 
-  Standard_Boolean ok;
-  Standard_Real    distanceptsol,parameter,firstparameter =0.;
-  Standard_Boolean thesense = Standard_False,sense;
-  Standard_Real    distancemini;
-  Standard_Integer nbsolution;
+  Standard_Boolean ok = 0;
+  Standard_Real    distanceptsol = NAN,parameter = NAN,firstparameter =0.;
+  Standard_Boolean thesense = Standard_False,sense = 0;
+  Standard_Real    distancemini = NAN;
+  Standard_Integer nbsolution = 0;
   Standard_Real    PreConf = Precision::Confusion();
 
   Handle(Standard_Type) type1 = afirstcurve->DynamicType();
@@ -370,7 +372,7 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Curve)& afirstcurve   ,
 					     parameter,
 					     - Precision::Infinite());
       else {
-	Standard_Real parameter2;
+	Standard_Real parameter2 = NAN;
 	parameter2  = ElCLib::Parameter(line,circle1.Location());
 	parameter2  += 1.e-8;
 	thebisector = new Geom2d_TrimmedCurve(bisectorcurve,
@@ -623,7 +625,7 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Curve)& afirstcurve   ,
 	  // -----------------------------------------------------------------
 	  gp_Pnt2d      circlecenter;
 	  gp_Lin2d      gpline;
-	  Standard_Real secondparameter;
+	  Standard_Real secondparameter = NAN;
 	  
 	  circlecenter    = circle1.Location();
 	  gpline          = TheSol->Line(); 
@@ -746,7 +748,7 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Curve)& afirstcurve   ,
     else {
       gp_Lin2d l(apoint,gp_Dir2d(Direc2.XY()-Direc1.XY()));
       Handle(GccInt_Bisec) solution = new GccInt_BLine(l);
-      Standard_Boolean isOk;
+      Standard_Boolean isOk = 0;
       sense = Standard_False;
 //  Modified by skv - Tue Feb 15 17:51:29 2005 Integration Begin
 //       distanceptsol = Distance(apoint,solution,
@@ -806,9 +808,9 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Curve)& afirstcurve  ,
 				const Standard_Real         tolerance    ,
 				const Standard_Boolean      oncurve       )
 {
-  Standard_Boolean ok;
-  Standard_Boolean thesense = Standard_False,sense;
-  Standard_Real    distanceptsol,parameter,firstparameter =0.,secondparameter;
+  Standard_Boolean ok = 0;
+  Standard_Boolean thesense = Standard_False,sense = 0;
+  Standard_Real    distanceptsol = NAN,parameter = NAN,firstparameter =0.,secondparameter = NAN;
   gp_Vec2d VecRef(0.,0.);
   Handle(Geom2d_Curve) curve;
   Handle(GccInt_Bisec) TheSol;
@@ -1061,8 +1063,8 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Point)& afirstpoint  ,
 				const Standard_Real             ,
 				const Standard_Boolean      oncurve       )
 {
-  Standard_Boolean sense,ok;
-  Standard_Real parameter;
+  Standard_Boolean sense = 0,ok = 0;
+  Standard_Real parameter = NAN;
   gp_Vec2d VecRef(0.,0.);
 
   GccAna_Pnt2dBisec bisector(afirstpoint->Pnt2d(),asecondpoint->Pnt2d());

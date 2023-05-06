@@ -46,7 +46,7 @@ void  IFSelect_ListEditor::ClearEdit ()
   theedit = new TColStd_HSequenceOfHAsciiString();
   thestat = new TColStd_HSequenceOfInteger();
   if (theorig.IsNull()) return;
-  Standard_Integer i,nb = theorig->Length();
+  Standard_Integer i = 0,nb = theorig->Length();
   for (i = 1; i <= nb; i ++) {
     theedit->Append (theorig->Value(i));
     thestat->Append (0);
@@ -78,7 +78,7 @@ Standard_Boolean  IFSelect_ListEditor::LoadEdited
   (const Handle(TColStd_HSequenceOfHAsciiString)& list)
 {
   if (list.IsNull()) return Standard_False;
-  Standard_Integer i, nb = list->Length();
+  Standard_Integer i = 0, nb = list->Length();
   if (nb > themax) return Standard_False;
 
 //   check values

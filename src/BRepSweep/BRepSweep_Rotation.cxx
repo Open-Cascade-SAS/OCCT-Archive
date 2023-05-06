@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepSweep_Rotation.hxx>
 
 #include <GeomAdaptor_SurfaceOfRevolution.hxx>
@@ -74,7 +76,7 @@ static Standard_Real ComputeTolerance(TopoDS_Edge& E,
 {
   if(BRep_Tool::Degenerated(E)) return BRep_Tool::Tolerance(E);
 
-  Standard_Real first,last;
+  Standard_Real first = NAN,last = NAN;
   
   Handle(Geom_Surface) surf = BRep_Tool::Surface(F);
   Handle(Geom_Curve)   c3d  = BRep_Tool::Curve(E,first,last);
@@ -109,7 +111,7 @@ static void SetThePCurve(const BRep_Builder& B,
 			 const Handle(Geom2d_Curve)& C)
 {
   // check if there is already a pcurve
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   Handle(Geom2d_Curve) OC;
   TopLoc_Location SL;
   Handle(Geom_Plane) GP = Handle(Geom_Plane)::DownCast(BRep_Tool::Surface(F,SL));
@@ -231,7 +233,7 @@ TopoDS_Shape  BRepSweep_Rotation::MakeEmptyGeneratingEdge
   }
   else
   {
-    Standard_Real First,Last;
+    Standard_Real First = NAN,Last = NAN;
     TopLoc_Location Loc;
     Handle(Geom_Curve) C = Handle(Geom_Curve)::DownCast
       (BRep_Tool::Curve(TopoDS::Edge(aGenE),Loc,First,Last)->Copy());
@@ -328,12 +330,12 @@ TopoDS_Shape  BRepSweep_Rotation::MakeEmptyFace
   (const TopoDS_Shape& aGenS, 
    const Sweep_NumShape& aDirS)
 {
-  Standard_Real toler;
+  Standard_Real toler = NAN;
   TopoDS_Face F;
   Handle(Geom_Surface) S;
   if(aGenS.ShapeType()==TopAbs_EDGE){
     TopLoc_Location L;
-    Standard_Real First,Last;
+    Standard_Real First = NAN,Last = NAN;
     Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(aGenS),L,First,Last);
     toler = BRep_Tool::Tolerance(TopoDS::Edge(aGenS));
     gp_Trsf Tr = L.Transformation();
@@ -419,7 +421,7 @@ void  BRepSweep_Rotation::SetPCurve
 {
   //Set on edges of cap faces the same pcurves as 
   //on edges of the generator face.
-  Standard_Real First,Last;
+  Standard_Real First = NAN,Last = NAN;
   SetThePCurve(myBuilder.Builder(),
 	       TopoDS::Edge(aNewEdge),
 	       TopoDS::Face(aNewFace),
@@ -444,8 +446,8 @@ void  BRepSweep_Rotation::SetGeneratingPCurve
 {
   TopLoc_Location Loc;
   GeomAdaptor_Surface AS(BRep_Tool::Surface(TopoDS::Face(aNewFace),Loc));
-  Standard_Real First,Last;
-  Standard_Real u,v;
+  Standard_Real First = NAN,Last = NAN;
+  Standard_Real u = NAN,v = NAN;
   gp_Pnt point;
   gp_Pnt2d pnt2d;
   gp_Dir2d dir2d;
@@ -550,7 +552,7 @@ void  BRepSweep_Rotation::SetDirectingPCurve
     par = BRep_Tool::Parameter(TopoDS::Vertex(aGenV),TopoDS::Edge(aGenE));
   gp_Pnt p2 = BRep_Tool::Pnt(TopoDS::Vertex(aGenV));
   gp_Pnt2d p22d;
-  Standard_Real u,v;
+  Standard_Real u = NAN,v = NAN;
   Handle(Geom2d_Curve) thePCurve;
 
   switch(AS.GetType()){
@@ -596,7 +598,7 @@ void  BRepSweep_Rotation::SetDirectingPCurve
   case GeomAbs_Torus : 
     {
       gp_Pnt p1;
-      Standard_Real u1,u2,v1,v2;
+      Standard_Real u1 = NAN,u2 = NAN,v1 = NAN,v2 = NAN;
       gp_Torus tor = AS.Torus();
       BRepAdaptor_Curve BC(TopoDS::Edge(aGenE));
       p1 = BC.Value(BC.FirstParameter());
@@ -660,7 +662,7 @@ TopAbs_Orientation
   BRepSweep_Rotation::DirectSolid (const TopoDS_Shape& aGenS,
 				   const Sweep_NumShape&)
 {  // compare the face normal and the direction
-  Standard_Real aU1, aU2, aV1, aV2, aUx, aVx, aX, aMV2, aTol2, aTx;
+  Standard_Real aU1 = NAN, aU2 = NAN, aV1 = NAN, aV2 = NAN, aUx = NAN, aVx = NAN, aX = NAN, aMV2 = NAN, aTol2 = NAN, aTx = NAN;
   TopAbs_Orientation aOr;
   gp_Pnt aP;
   gp_Vec du,dv;
@@ -856,7 +858,7 @@ Standard_Boolean  BRepSweep_Rotation::HasShape
     //
     if(BRep_Tool::Degenerated(anEdge)) return Standard_False;
 
-    Standard_Real aPFirst, aPLast;
+    Standard_Real aPFirst = NAN, aPLast = NAN;
     TopLoc_Location aLoc;
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, aLoc, aPFirst, aPLast);
     if(aCurve.IsNull()) return Standard_False;

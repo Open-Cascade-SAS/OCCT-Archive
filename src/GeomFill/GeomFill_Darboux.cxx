@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomFill_Darboux.hxx>
 
 #include <Adaptor3d_CurveOnSurface.hxx>
@@ -83,8 +85,8 @@ static void NormalD0(const Standard_Real U, const Standard_Real V, const Handle(
     Standard_Integer MaxOrder=3;
     TColgp_Array2OfVec DerNUV(0,MaxOrder,0,MaxOrder);
     TColgp_Array2OfVec DerSurf(0,MaxOrder+1,0,MaxOrder+1);
-    Standard_Integer i,j;//OrderU,OrderV;
-    Standard_Real Umin,Umax,Vmin,Vmax;
+    Standard_Integer i = 0,j = 0;//OrderU,OrderV;
+    Standard_Real Umin = NAN,Umax = NAN,Vmin = NAN,Vmax = NAN;
     Umin = Surf->FirstUParameter();
     Umax = Surf->LastUParameter();
     Vmin = Surf->FirstVParameter();
@@ -142,16 +144,16 @@ static void NormalD1 (const Standard_Real U, const Standard_Real V,
   Standard_Real MagTol=0.000000001;
   CSLib_NormalStatus NStatus;
   CSLib::Normal (D1UNormal, D1VNormal, MagTol, NStatus, Normal);
-  Standard_Integer MaxOrder;
+  Standard_Integer MaxOrder = 0;
   if (NStatus == CSLib_Defined) 
     MaxOrder=0;
   else 
     MaxOrder=3;
-  Standard_Integer OrderU,OrderV;
+  Standard_Integer OrderU = 0,OrderV = 0;
   TColgp_Array2OfVec DerNUV(0,MaxOrder+1,0,MaxOrder+1);
   TColgp_Array2OfVec DerSurf(0,MaxOrder+2,0,MaxOrder+2);
-  Standard_Integer i,j;
-  Standard_Real Umin,Umax,Vmin,Vmax;
+  Standard_Integer i = 0,j = 0;
+  Standard_Real Umin = NAN,Umax = NAN,Vmin = NAN,Vmax = NAN;
   Umin = Surf->FirstUParameter();
   Umax = Surf->LastUParameter();
   Vmin = Surf->FirstVParameter();
@@ -205,17 +207,17 @@ static void NormalD2 (const Standard_Real U, const Standard_Real V,
   Standard_Real MagTol=0.000000001;
   CSLib_NormalStatus NStatus;
   CSLib::Normal (D1UNormal, D1VNormal, MagTol, NStatus, Normal);
-  Standard_Integer MaxOrder;
+  Standard_Integer MaxOrder = 0;
   if (NStatus == CSLib_Defined) 
     MaxOrder=0;
   else 
     MaxOrder=3;
-  Standard_Integer OrderU,OrderV;
+  Standard_Integer OrderU = 0,OrderV = 0;
   TColgp_Array2OfVec DerNUV(0,MaxOrder+2,0,MaxOrder+2);
   TColgp_Array2OfVec DerSurf(0,MaxOrder+3,0,MaxOrder+3);
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   
-  Standard_Real Umin,Umax,Vmin,Vmax;
+  Standard_Real Umin = NAN,Umax = NAN,Vmin = NAN,Vmax = NAN;
   Umin = Surf->FirstUParameter();
   Umax = Surf->LastUParameter();
   Vmin = Surf->FirstVParameter();
@@ -270,9 +272,9 @@ Handle(GeomFill_TrihedronLaw) GeomFill_Darboux::Copy() const
   gp_Vec2d D2d;
   gp_Pnt S;
   gp_Vec dS_du, dS_dv;
-  Handle(Adaptor2d_Curve2d) myCurve2d = static_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetCurve();
-  Handle(Adaptor3d_Surface) mySupport = static_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetSurface();
-  Standard_Integer OrderU, OrderV;
+  Handle(Adaptor2d_Curve2d) myCurve2d = dynamic_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetCurve();
+  Handle(Adaptor3d_Surface) mySupport = dynamic_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetSurface();
+  Standard_Integer OrderU = 0, OrderV = 0;
   myCurve2d->D1(Param, C2d, D2d);
 
 //  Normal = dS_du.Crossed(dS_dv).Normalized();
@@ -303,8 +305,8 @@ Handle(GeomFill_TrihedronLaw) GeomFill_Darboux::Copy() const
   gp_Vec2d D2d, D2_2d;
   gp_Pnt S;
   gp_Vec dS_du, dS_dv, d2S_du, d2S_dv, d2S_duv, F, DF;
-  Handle(Adaptor2d_Curve2d) myCurve2d = static_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetCurve();
-  Handle(Adaptor3d_Surface) mySupport = static_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetSurface();
+  Handle(Adaptor2d_Curve2d) myCurve2d = dynamic_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetCurve();
+  Handle(Adaptor3d_Surface) mySupport = dynamic_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetSurface();
 //  Standard_Integer Order;
   myCurve2d->D2(Param, C2d, D2d, D2_2d);
   mySupport->D2(C2d.X(), C2d.Y(), S, dS_du, dS_dv, 
@@ -343,8 +345,8 @@ Handle(GeomFill_TrihedronLaw) GeomFill_Darboux::Copy() const
   gp_Pnt S;
   gp_Vec dS_du, dS_dv, d2S_du, d2S_dv, d2S_duv, 
          d3S_du, d3S_dv, d3S_duuv, d3S_duvv, F, DF, D2F;
-  Handle(Adaptor2d_Curve2d) myCurve2d = static_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetCurve();
-  Handle(Adaptor3d_Surface) mySupport = static_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetSurface();
+  Handle(Adaptor2d_Curve2d) myCurve2d = dynamic_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetCurve();
+  Handle(Adaptor3d_Surface) mySupport = dynamic_cast<Adaptor3d_CurveOnSurface*>(myTrimmed.get())->GetSurface();
 //  Standard_Integer Order;
   myCurve2d->D3(Param, C2d, D2d, D2_2d, D3_2d);
   mySupport->D3(C2d.X(), C2d.Y(), S, dS_du, dS_dv, 
@@ -408,7 +410,7 @@ Handle(GeomFill_TrihedronLaw) GeomFill_Darboux::Copy() const
   ABiNormal = gp_Vec(0, 0, 0);
   Standard_Real Step = (myTrimmed->LastParameter() - 
                         myTrimmed->FirstParameter()) / Num;
-  Standard_Real Param;
+  Standard_Real Param = NAN;
   for (Standard_Integer i = 0; i <= Num; i++) {
     Param = myTrimmed->FirstParameter() + i*Step;
     if (Param > myTrimmed->LastParameter()) Param = myTrimmed->LastParameter();

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_BezierCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <gp.hxx>
@@ -224,17 +226,17 @@ Standard_Real HLRBRep_Curve::UpdateMinMax(
 {
   Standard_Real a = HLRBRep_BCurveTool::FirstParameter(myCurve);
   Standard_Real b = HLRBRep_BCurveTool::LastParameter(myCurve);
-  Standard_Real x,y,z,tolMinMax = 0;
+  Standard_Real x = NAN,y = NAN,z = NAN,tolMinMax = 0;
   ((HLRAlgo_Projector*) myProj)->Project(Value3D(a),x,y,z);
   HLRAlgo::UpdateMinMax(x,y,z,TotMin,TotMax);
 
   if (myType != GeomAbs_Line) {
     Standard_Integer nbPnt = 30;
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real step = (b-a)/(nbPnt+1);
-    Standard_Real xa,ya,za,xb =0.,yb =0.,zb =0.;
-    Standard_Real dx1,dy1,dz1,dd1;
-    Standard_Real dx2,dy2,dz2,dd2;
+    Standard_Real xa = NAN,ya = NAN,za = NAN,xb =0.,yb =0.,zb =0.;
+    Standard_Real dx1 = NAN,dy1 = NAN,dz1 = NAN,dd1 = NAN;
+    Standard_Real dx2 = NAN,dy2 = NAN,dz2 = NAN,dd2 = NAN;
 
     for (i = 1; i <= nbPnt; i++) {
       a += step;

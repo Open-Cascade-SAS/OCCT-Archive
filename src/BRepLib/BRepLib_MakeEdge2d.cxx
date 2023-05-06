@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepLib.hxx>
@@ -61,7 +63,7 @@ static gp_Pnt Point(const gp_Pnt2d& P)
 static gp_Pnt2d Project(const TopoDS_Vertex& Ve)
 {
   gp_Pnt P = BRep_Tool::Pnt(Ve); 
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
   ElSLib::Parameters(BRepLib::Plane()->Pln(),P,U,V);
   return gp_Pnt2d(U,V);
 }
@@ -86,7 +88,7 @@ static Standard_Boolean Project(const Handle(Geom2d_Curve)& C,
   else {
     Extrema_ExtPC2d extrema(P,AC);
     if (extrema.IsDone()) {
-      Standard_Integer i,n = extrema.NbExt();
+      Standard_Integer i = 0,n = extrema.NbExt();
       
       Standard_Real d2 = RealLast();
       for (i = 1; i <= n; i++) {
@@ -523,7 +525,7 @@ void  BRepLib_MakeEdge2d::Init(const Handle(Geom2d_Curve)& C,
 {
   // try projecting the vertices on the curve
 
-  Standard_Real p1,p2;
+  Standard_Real p1 = NAN,p2 = NAN;
   
   if (V1.IsNull())
     p1 = C->FirstParameter();

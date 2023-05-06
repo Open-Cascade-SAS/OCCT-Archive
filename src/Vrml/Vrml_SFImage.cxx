@@ -17,10 +17,10 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Vrml_SFImage,Standard_Transient)
 
-Vrml_SFImage::Vrml_SFImage()
+Vrml_SFImage::Vrml_SFImage() : myArray(new TColStd_HArray1OfInteger(1,1)), myArrayFlag(Standard_False)
 {
-  myArray = new TColStd_HArray1OfInteger(1,1);
-  myArrayFlag = Standard_False;
+  
+  
 }
  Vrml_SFImage::Vrml_SFImage(const Standard_Integer aWidth, 
 			    const Standard_Integer aHeight, 

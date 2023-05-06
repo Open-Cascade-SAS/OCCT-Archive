@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <DsgPrs.hxx>
 #include <DsgPrs_EqualDistancePresentation.hxx>
 #include <ElCLib.hxx>
@@ -64,7 +66,7 @@ void DsgPrs_EqualDistancePresentation::Add( const Handle( Prs3d_Presentation )& 
   // Two small lines in the middle of this line
   gp_Pnt Middle( (Middle12.XYZ() + Middle34.XYZ()) * 0.5 ), aTextPos;
   Standard_Real Dist = Middle12.Distance( Middle34 );
-  Standard_Real SmallDist;
+  Standard_Real SmallDist = NAN;
   gp_Dir LineDir, OrtDir;
   gp_Vec LineVec, OrtVec;
 
@@ -171,7 +173,7 @@ void DsgPrs_EqualDistancePresentation::Add( const Handle( Prs3d_Presentation )& 
   const Handle(Prs3d_DimensionAspect) LA = aDrawer->DimensionAspect();
   aPresentation->CurrentGroup()->SetPrimitivesAspect(LA->LineAspect()->Aspect());
 
-  Standard_Real aPar11, aPar12, aPar21, aPar22;
+  Standard_Real aPar11 = NAN, aPar12 = NAN, aPar21 = NAN, aPar22 = NAN;
   if(aCirc1.Radius() > Precision::Confusion()){
     aPar11 = ElCLib::Parameter (aCirc1, aPoint1);
     aPar12 = ElCLib::Parameter(aCirc1, aPoint2);
@@ -194,8 +196,8 @@ void DsgPrs_EqualDistancePresentation::Add( const Handle( Prs3d_Presentation )& 
   aPrims->AddVertex(aPoint4);
   aPresentation->CurrentGroup()->AddPrimitiveArray(aPrims);
 
-  Standard_Integer i, aNodeNb;
-  Standard_Real aDelta, aCurPar;
+  Standard_Integer i = 0, aNodeNb = 0;
+  Standard_Real aDelta = NAN, aCurPar = NAN;
   if(aPar12 < aPar11 ) aPar12 += 2.*M_PI;
   if (Abs(aPar12 - aPar11) > Precision::Confusion())
   {

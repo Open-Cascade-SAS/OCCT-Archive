@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BSplineSurface.hxx>
 #include <GeomConvert_BSplineSurfaceToBezierSurface.hxx>
@@ -30,7 +32,7 @@
 GeomConvert_BSplineSurfaceToBezierSurface::GeomConvert_BSplineSurfaceToBezierSurface(const Handle(Geom_BSplineSurface)& BasisSurface)
 {
   mySurface = Handle(Geom_BSplineSurface)::DownCast(BasisSurface->Copy());
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   mySurface->Bounds(U1,U2,V1,V2);
   mySurface->Segment(U1,U2,V1,V2);
   mySurface->IncreaseUMultiplicity(mySurface->FirstUKnotIndex(),
@@ -60,7 +62,7 @@ GeomConvert_BSplineSurfaceToBezierSurface::GeomConvert_BSplineSurfaceToBezierSur
       throw Standard_DomainError("GeomConvert_BSplineSurfaceToBezierSurface");
 
   Standard_Real Uf=U1, Ul=U2, Vf=V1, Vl=V2, PTol = ParametricTolerance/2;
-  Standard_Integer I1, I2;
+  Standard_Integer I1 = 0, I2 = 0;
 
   mySurface = Handle(Geom_BSplineSurface)::DownCast(BasisSurface->Copy());
 
@@ -162,7 +164,7 @@ void GeomConvert_BSplineSurfaceToBezierSurface::Patches
 void GeomConvert_BSplineSurfaceToBezierSurface::UKnots
      (TColStd_Array1OfReal& TKnots) const
 {
- Standard_Integer ii, kk;
+ Standard_Integer ii = 0, kk = 0;
   for (ii = 1, kk = TKnots.Lower();
        ii <= mySurface->NbUKnots(); ii++, kk++)
     TKnots(kk) = mySurface->UKnot(ii);
@@ -176,7 +178,7 @@ void GeomConvert_BSplineSurfaceToBezierSurface::UKnots
 void GeomConvert_BSplineSurfaceToBezierSurface::VKnots
      (TColStd_Array1OfReal& TKnots) const
 {
- Standard_Integer ii, kk;
+ Standard_Integer ii = 0, kk = 0;
   for (ii = 1, kk = TKnots.Lower();
        ii <= mySurface->NbVKnots(); ii++, kk++)
     TKnots(kk) = mySurface->VKnot(ii);

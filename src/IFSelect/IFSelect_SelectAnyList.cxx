@@ -80,7 +80,7 @@ void  IFSelect_SelectAnyList::SetRange
   Standard_Integer rankmax = NbItems(ent);
   Standard_Integer rankfrom = 1;
   if (!thelower.IsNull()) rankfrom = thelower->Value();
-  Standard_Integer rankto;
+  Standard_Integer rankto = 0;
   if (!theupper.IsNull()) rankto   = theupper->Value();
   else rankto = rankmax;
   if (rankfrom < 1) rankfrom = 1;

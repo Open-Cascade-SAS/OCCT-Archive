@@ -144,8 +144,8 @@ public: //! @name plugin API
 protected:
 
   IMeshTools_Parameters myParameters;
-  Standard_Boolean      myModified;
-  Standard_Integer      myStatus;
+  Standard_Boolean      myModified{};
+  Standard_Integer      myStatus{};
 };
 
 #endif

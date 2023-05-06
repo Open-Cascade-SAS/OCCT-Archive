@@ -338,7 +338,7 @@ private:
   TCollection_AsciiString myTrek;
   TCollection_AsciiString myName;
   TCollection_AsciiString myExtension;
-  Standard_Boolean myUNCFlag;
+  Standard_Boolean myUNCFlag{};
   OSD_SysType mySysDep;
 
 };

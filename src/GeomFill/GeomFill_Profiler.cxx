@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <Geom_Conic.hxx>
 #include <Geom_Curve.hxx>
@@ -35,7 +37,7 @@ static void UnifyByInsertingAllKnots(TColGeom_SequenceOfCurve& theCurves,
   // inserting in the first curve the knot-vector of all the others.
   Handle(Geom_BSplineCurve) C = Handle(Geom_BSplineCurve)::DownCast(theCurves(1));
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for ( i = 2; i <= theCurves.Length(); i++) {
     Handle(Geom_BSplineCurve) Ci = 
       Handle(Geom_BSplineCurve)::DownCast(theCurves(i));
@@ -64,7 +66,7 @@ static void UnifyByInsertingAllKnots(TColGeom_SequenceOfCurve& theCurves,
     if ( Ci->IsRational() ) {
       Standard_Integer np = Ci->NbPoles();
       Standard_Real sigma = 0.;
-      Standard_Integer j;
+      Standard_Integer j = 0;
       for ( j = 1; j <= np; j++) {
 	sigma += Ci->Weight(j);
       }
@@ -83,7 +85,7 @@ static void UnifyByInsertingAllKnots(TColGeom_SequenceOfCurve& theCurves,
 //=======================================================================
 static void UnifyBySettingMiddleKnots(TColGeom_SequenceOfCurve& theCurves)
 {
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   
   Handle(Geom_BSplineCurve) C = Handle(Geom_BSplineCurve)::DownCast(theCurves(1));
   
@@ -119,10 +121,10 @@ static void UnifyBySettingMiddleKnots(TColGeom_SequenceOfCurve& theCurves)
 //purpose  : 
 //=======================================================================
 
-GeomFill_Profiler::GeomFill_Profiler()
+GeomFill_Profiler::GeomFill_Profiler() : myIsDone(Standard_False), myIsPeriodic(Standard_True)
 {
-  myIsDone = Standard_False;
-  myIsPeriodic = Standard_True;
+  
+  
 }
 
 
@@ -177,11 +179,11 @@ void GeomFill_Profiler::AddCurve(const Handle(Geom_Curve)& Curve)
 
 void GeomFill_Profiler::Perform(const Standard_Real PTol)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 //  Standard_Integer myDegree = 0, myNbPoles = 0;
   Standard_Integer myDegree = 0;
   Handle(Geom_BSplineCurve) C;
-  Standard_Real U1, U2, UFirst=0, ULast=0;
+  Standard_Real U1 = NAN, U2 = NAN, UFirst=0, ULast=0;
   Standard_Real EcartMax = 0.;
 
   for ( i = 1; i <= mySequence.Length(); i++) {

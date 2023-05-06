@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp_Circ2d.hxx>
 #include <gp_Elips2d.hxx>
 #include <gp_Hypr2d.hxx>
@@ -21,11 +23,11 @@
 #include <gp_XY.hxx>
 #include <IntAna2d_Conic.hxx>
 
-IntAna2d_Conic::IntAna2d_Conic (const gp_Lin2d& L) {
+IntAna2d_Conic::IntAna2d_Conic (const gp_Lin2d& L) : a(0.0), b(0.0), c(0.0) {
 
-  a = 0.0;
-  b = 0.0;
-  c = 0.0;
+  
+  
+  
   L.Coefficients(d,e,f);
   f = 2*f;
 }
@@ -55,9 +57,9 @@ IntAna2d_Conic::IntAna2d_Conic (const gp_Hypr2d& H) {
 void IntAna2d_Conic::NewCoefficients(Standard_Real& A,Standard_Real& B,Standard_Real& C
 			  ,Standard_Real& D,Standard_Real& E,Standard_Real& F
 			  ,const gp_Ax2d& Dir1)  const {
-  Standard_Real t11,t12,t13;                  // x = t11 X + t12 Y + t13
-  Standard_Real t21,t22,t23;                  // y = t21 X + t22 Y + t23
-  Standard_Real A1,B1,C1,D1,E1,F1;            
+  Standard_Real t11 = NAN,t12 = NAN,t13 = NAN;                  // x = t11 X + t12 Y + t13
+  Standard_Real t21 = NAN,t22 = NAN,t23 = NAN;                  // y = t21 X + t22 Y + t23
+  Standard_Real A1 = NAN,B1 = NAN,C1 = NAN,D1 = NAN,E1 = NAN,F1 = NAN;            
 
   //      P0(x,y)=A x x + B y y + ... + F =0  (x,y "absolute" coordinates)
   // and  P1(X(x,y),Y(x,y))=P0(x,y)
@@ -82,20 +84,20 @@ void IntAna2d_Conic::NewCoefficients(Standard_Real& A,Standard_Real& B,Standard_
 
 
 Standard_Real IntAna2d_Conic::Value (const Standard_Real X, const Standard_Real Y) const {
-  Standard_Real _a,_b,_c,_d,_e,_f;
+  Standard_Real _a = NAN,_b = NAN,_c = NAN,_d = NAN,_e = NAN,_f = NAN;
   this->Coefficients(_a,_b,_c,_d,_e,_f);
   return (_a*X*X + _b*Y*Y + 2.*_c*X*Y + 2.*_d*X + 2.*_e*Y +_f);
 }
 
 gp_XY IntAna2d_Conic::Grad (const Standard_Real X, const Standard_Real Y) const {
-  Standard_Real _a,_b,_c,_d,_e,_f;
+  Standard_Real _a = NAN,_b = NAN,_c = NAN,_d = NAN,_e = NAN,_f = NAN;
   this->Coefficients(_a,_b,_c,_d,_e,_f);
   return gp_XY(2.*_a*X + 2.*_c*Y + 2.*_d, 2.*_b*Y + 2.*_c*X + 2.*_e);
 }
 
 void IntAna2d_Conic::ValAndGrad (const Standard_Real X, const Standard_Real Y, 
 				  Standard_Real& Val, gp_XY& Grd) const {
-  Standard_Real la,lb,lc,ld,le,lf;
+  Standard_Real la = NAN,lb = NAN,lc = NAN,ld = NAN,le = NAN,lf = NAN;
   this->Coefficients(la,lb,lc,ld,le,lf);
   Grd.SetCoord(2.*la*X + 2.*lc*Y + 2.*ld, 2.*lb*Y + 2.*lc*X + 2.*le);
   Val = la*X*X + lb*Y*Y + 2.*lc*X*Y + 2.*ld*X + 2.*le*Y +lf;

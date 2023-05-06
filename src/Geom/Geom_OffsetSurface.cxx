@@ -19,6 +19,8 @@
 // Modified     15/11/96 : JPI : ajout equivalent surface pour les surfaces canoniques et modif des methodes D0 D1, ... UIso,VIso
 // Modified     18/11/96 : JPI : inversion de l'offsetValue dans UReverse et Vreverse
 
+#include <math.h>
+
 #include <AdvApprox_ApproxAFunction.hxx>
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -99,7 +101,7 @@ Geom_OffsetSurface::Geom_OffsetSurface (const Handle(Geom_Surface)& theSurf,
 void Geom_OffsetSurface::SetBasisSurface (const Handle(Geom_Surface)& S,
   const Standard_Boolean isNotCheckC0)
 {
-  Standard_Real aUf, aUl, aVf, aVl;
+  Standard_Real aUf = NAN, aUl = NAN, aVf = NAN, aVl = NAN;
   S->Bounds(aUf, aUl, aVf, aVl);
 
   Handle(Geom_Surface) aCheckingSurf = Handle(Geom_Surface)::DownCast(S->Copy());
@@ -437,12 +439,12 @@ public:
   Geom_OffsetSurface_UIsoEvaluator (const Handle(Geom_Surface)& theSurface, const Standard_Real theU)
     : CurrentSurface(theSurface), IsoPar(theU) {}
 
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
     Standard_Real     StartEnd[2],
     Standard_Real    *Parameter,
     Standard_Integer *DerivativeRequest,
     Standard_Real    *Result, // [Dimension]
-    Standard_Integer *ErrorCode);
+    Standard_Integer *ErrorCode) override;
 
 private:
   GeomAdaptor_Surface CurrentSurface;
@@ -479,12 +481,12 @@ public:
   Geom_OffsetSurface_VIsoEvaluator (const Handle(Geom_Surface)& theSurface, const Standard_Real theV)
     : CurrentSurface(theSurface), IsoPar(theV) {}
 
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
     Standard_Real     StartEnd[2],
     Standard_Real    *Parameter,
     Standard_Integer *DerivativeRequest,
     Standard_Real    *Result, // [Dimension]
-    Standard_Integer *ErrorCode);
+    Standard_Integer *ErrorCode) override;
 
 private:
   Handle(Geom_Surface) CurrentSurface;
@@ -542,7 +544,7 @@ Handle(Geom_Curve) Geom_OffsetSurface::UIso (const Standard_Real UU) const
     const Standard_Integer Num1 = 0, Num2 = 0, Num3 = 1;
     Handle(TColStd_HArray1OfReal) T1, T2, T3 = new TColStd_HArray1OfReal(1,Num3);
     T3->Init(Precision::Approximation());
-    Standard_Real U1,U2,V1,V2;
+    Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
     Bounds(U1,U2,V1,V2);
     const GeomAbs_Shape Cont = GeomAbs_C1;
     const Standard_Integer MaxSeg = 100, MaxDeg = 14;
@@ -583,7 +585,7 @@ Handle(Geom_Curve) Geom_OffsetSurface::VIso (const Standard_Real VV) const
     const Standard_Integer Num1 = 0, Num2 = 0, Num3 = 1;
     Handle(TColStd_HArray1OfReal) T1, T2, T3 = new TColStd_HArray1OfReal(1,Num3);
     T3->Init(Precision::Approximation());
-    Standard_Real U1,U2,V1,V2;
+    Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
     Bounds(U1,U2,V1,V2);
     const GeomAbs_Shape Cont = GeomAbs_C1;
     const Standard_Integer MaxSeg = 100, MaxDeg = 14;
@@ -680,7 +682,7 @@ Standard_Real Geom_OffsetSurface::VPeriod() const
 
 Standard_Boolean Geom_OffsetSurface::IsUClosed () const
 {
-  Standard_Boolean UClosed;
+  Standard_Boolean UClosed = 0;
   Handle(Geom_Surface) SBasis = BasisSurface();
 
   if (SBasis->IsKind (STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
@@ -732,7 +734,7 @@ Standard_Boolean Geom_OffsetSurface::IsUClosed () const
 
 Standard_Boolean Geom_OffsetSurface::IsVClosed () const
 {
-  Standard_Boolean VClosed;
+  Standard_Boolean VClosed = 0;
   Handle(Geom_Surface) SBasis = BasisSurface();
 
   if (SBasis->IsKind (STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
@@ -806,7 +808,7 @@ Handle(Geom_Surface) Geom_OffsetSurface::Surface() const
   Handle(Geom_Surface) Result, Base;
   Result.Nullify();
   Handle(Standard_Type) TheType = basisSurf->DynamicType();
-  Standard_Boolean IsTrimmed;
+  Standard_Boolean IsTrimmed = 0;
   Standard_Real U1 = 0., V1 = 0., U2 = 0., V2 = 0.;
 
   // Preambule pour les surface trimmes
@@ -862,7 +864,7 @@ Handle(Geom_Surface) Geom_OffsetSurface::Surface() const
     gp_Ax3 anAxis = C->Position();
     Standard_Boolean isDirect = anAxis.Direct();
     Standard_Real anAlpha = C->SemiAngle();
-    Standard_Real aRadius;
+    Standard_Real aRadius = NAN;
     if (isDirect)
     {
       aRadius = C->RefRadius() + offsetValue * Cos (anAlpha);

@@ -31,7 +31,7 @@ Handle(TColStd_HArray1OfReal)
   const Standard_Real maxdefl = 1.e3;
   const Standard_Real mindefl = 1.e-3;
   Handle(TColStd_HArray1OfReal) Intervals;
-  Standard_Integer nbpnts = 23, i;
+  Standard_Integer nbpnts = 23, i = 0;
   Standard_Real L = 0.;
   Standard_Real tf = C.FirstParameter(), tl = C.LastParameter();
   gp_Pnt2d aP = C.Value(tf);

@@ -19,9 +19,9 @@
 //function : Interface_FileParameter
 //purpose  : 
 //=======================================================================
-Interface_FileParameter::Interface_FileParameter ()
+Interface_FileParameter::Interface_FileParameter () : thetype(Interface_ParamMisc), thenum(0)
 {  
-thetype = Interface_ParamMisc;  thenum = 0;  
+  
 }
 
 //=======================================================================

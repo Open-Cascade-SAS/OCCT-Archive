@@ -19,6 +19,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_DirectPolynomialRoots.hxx>
 #include <StdFail_InfiniteSolutions.hxx>
 
@@ -54,10 +56,10 @@ const Standard_Real ZERO = 1.0e-30;
 
     static Standard_Real Improve(const Standard_Integer N, Standard_Real *Poly, const Standard_Real IniSol) {
 
-        Standard_Real Val = 0., Der, Delta;
+        Standard_Real Val = 0., Der = NAN, Delta = NAN;
         Standard_Real Sol = IniSol;
         Standard_Real IniVal = Value(N, Poly, IniSol);
-        Standard_Integer Index;
+        Standard_Integer Index = 0;
 
 //      std::cout << "Improve\n";
         for(Index = 1; Index < 10; Index++) {
@@ -128,33 +130,33 @@ const Standard_Real ZERO = 1.0e-30;
 			       const Standard_Real B,
 			       const Standard_Real C,
 			       const Standard_Real D,
-			       const Standard_Real E) {
-      InfiniteStatus = Standard_False;
-      Done = Standard_True;
+			       const Standard_Real E) : InfiniteStatus(Standard_False), Done(Standard_True) {
+      
+      
       Solve(A, B, C, D, E);
     }
 
 math_DirectPolynomialRoots::math_DirectPolynomialRoots(const Standard_Real A,
 						       const Standard_Real B,
 						       const Standard_Real C,
-						       const Standard_Real D) {
-  Done = Standard_True;
-  InfiniteStatus = Standard_False;
+						       const Standard_Real D) : Done(Standard_True), InfiniteStatus(Standard_False) {
+  
+  
   Solve(A, B, C, D);
 }
 
 math_DirectPolynomialRoots::math_DirectPolynomialRoots(const Standard_Real A,
 						       const Standard_Real B,
-						       const Standard_Real C) {
-  Done = Standard_True;
-  InfiniteStatus = Standard_False;
+						       const Standard_Real C) : Done(Standard_True), InfiniteStatus(Standard_False) {
+  
+  
   Solve(A, B, C);
 }
 
 math_DirectPolynomialRoots::math_DirectPolynomialRoots(const Standard_Real A,
-						       const Standard_Real B) {
-  Done = Standard_True;
-  InfiniteStatus = Standard_False;
+						       const Standard_Real B) : Done(Standard_True), InfiniteStatus(Standard_False) {
+  
+  
   Solve(A, B);
 }
 
@@ -204,11 +206,11 @@ void math_DirectPolynomialRoots::Solve(const Standard_Real a,
   }        
   ///////////////////////////////////
 
-  Standard_Real A, B, C, D, R3, S3, T3, Q3, Y0, P0, Q0, P, Q, P1, Q1;
-  Standard_Real Discr, Sdiscr;
-  Standard_Integer Index;
-  Standard_Integer Exp;
-  Standard_Real PowRadix1,PowRadix2;
+  Standard_Real A = NAN, B = NAN, C = NAN, D = NAN, R3 = NAN, S3 = NAN, T3 = NAN, Q3 = NAN, Y0 = NAN, P0 = NAN, Q0 = NAN, P = NAN, Q = NAN, P1 = NAN, Q1 = NAN;
+  Standard_Real Discr = NAN, Sdiscr = NAN;
+  Standard_Integer Index = 0;
+  Standard_Integer Exp = 0;
+  Standard_Real PowRadix1 = NAN,PowRadix2 = NAN;
   
   A = b / a;
   B = c / a;
@@ -309,10 +311,10 @@ void math_DirectPolynomialRoots::Solve(const Standard_Real a,
         return;
       }
 
-      Standard_Real Beta, Gamma, Del, P1, P2, P, Ep, Q1, Q2, Q3, Q, Eq, A1, A2, Discr;
-      Standard_Real Sigma, Psi, D1, D2, Sb, Omega, Sp3, Y1, Dbg, Sdbg, Den1, Den2;
-      Standard_Real U, H, Sq;
-      Standard_Integer Exp;
+      Standard_Real Beta = NAN, Gamma = NAN, Del = NAN, P1 = NAN, P2 = NAN, P = NAN, Ep = NAN, Q1 = NAN, Q2 = NAN, Q3 = NAN, Q = NAN, Eq = NAN, A1 = NAN, A2 = NAN, Discr = NAN;
+      Standard_Real Sigma = NAN, Psi = NAN, D1 = NAN, D2 = NAN, Sb = NAN, Omega = NAN, Sp3 = NAN, Y1 = NAN, Dbg = NAN, Sdbg = NAN, Den1 = NAN, Den2 = NAN;
+      Standard_Real U = NAN, H = NAN, Sq = NAN;
+      Standard_Integer Exp = 0;
 
       Beta  = B / A;
       Gamma = C / A;

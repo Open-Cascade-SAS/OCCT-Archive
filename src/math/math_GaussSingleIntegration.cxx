@@ -44,6 +44,8 @@ Etapes du calcul:
 
 //#endif
 
+#include <math.h>
+
 #include <math.hxx>
 #include <math_Function.hxx>
 #include <math_GaussSingleIntegration.hxx>
@@ -75,7 +77,7 @@ math_GaussSingleIntegration::
   const Standard_Integer IterMax = 13;   // Max number of iteration
   Standard_Integer NIter = 1;            // current number of iteration
   Standard_Integer NbInterval = 1;       // current number of subintervals
-  Standard_Real    dU,OldLen,Len;
+  Standard_Real    dU = NAN,OldLen = NAN,Len = NAN;
 
   Perform(F, Lower, Upper, theOrder);
   Len = Val;
@@ -101,10 +103,10 @@ void math_GaussSingleIntegration::Perform(math_Function& F,
 					  const Standard_Real Upper,
 					  const Standard_Integer Order)
 {
-  Standard_Real xr, xm, dx;
-  Standard_Integer j;
-  Standard_Real F1, F2;
-  Standard_Boolean Ok1;
+  Standard_Real xr = NAN, xm = NAN, dx = NAN;
+  Standard_Integer j = 0;
+  Standard_Real F1 = NAN, F2 = NAN;
+  Standard_Boolean Ok1 = 0;
   math_Vector GaussP(1, Order);
   math_Vector GaussW(1, Order);
   Done = Standard_False;

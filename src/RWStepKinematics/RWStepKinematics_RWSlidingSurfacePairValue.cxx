@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWSlidingSurfacePairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -62,7 +64,7 @@ void RWStepKinematics_RWSlidingSurfacePairValue::ReadStep (const Handle(StepData
   Handle(StepGeom_PointOnSurface) aActualPointOnSurface2;
   theData->ReadEntity (theNum, 4, "actual_point_on_surface2", theArch, STANDARD_TYPE(StepGeom_PointOnSurface), aActualPointOnSurface2);
 
-  Standard_Real aActualRotation;
+  Standard_Real aActualRotation = NAN;
   theData->ReadReal (theNum, 5, "actual_rotation", theArch, aActualRotation);
 
   // Initialize entity

@@ -32,8 +32,8 @@ IMPLEMENT_STANDARD_RTTIEXT(Interface_UndefinedContent,Standard_Transient)
 // Unknown (ceci, a defaut d'un double heritage) : description litterale
 
 
-Interface_UndefinedContent::Interface_UndefinedContent () // Unknown
-{  thenbparams = 0;  thenbstr = 0;  }
+Interface_UndefinedContent::Interface_UndefinedContent () : thenbparams(0), thenbstr(0) // Unknown
+{    }
 
 // ....  Les Parametres ....
 
@@ -182,7 +182,7 @@ Interface_UndefinedContent::ParamValue
     thenbstr --;
   }
 //    Supprimer ce parametre de la liste (qui est un tableau)
-  Standard_Integer np; // svv Jan11 2000 : porting on DEC
+  Standard_Integer np = 0; // svv Jan11 2000 : porting on DEC
   for (np = num+1; np <= thenbparams; np ++)
     theparams->SetValue(np-1,theparams->Value(np));
   theparams->SetValue(thenbparams,0);
@@ -242,7 +242,7 @@ Interface_UndefinedContent::ParamValue
   if (!c1ent) {
 //  Literal : le supprimer et renumeroter les Parametres de type "Entity"
 //  (Remove Literal mais dans un tableau)
-    Standard_Integer i; // svv Jan11 2000 : porting on DEC
+    Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
     for (i = rang+1; i <= thenbstr; i ++)
       thevalues->SetValue(i-1,thevalues->Value(i));
     Handle(TCollection_HAsciiString) nulstr;

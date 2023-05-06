@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_NURBSRangeSplitter.hxx>
 
 #include <algorithm>
@@ -57,7 +59,7 @@ namespace
     {
       myParameters = theParameters;
 
-      Standard_Integer aStartIndex, aEndIndex;
+      Standard_Integer aStartIndex = 0, aEndIndex = 0;
       if (myIsoU)
       {
         aStartIndex = 1;
@@ -589,7 +591,7 @@ Handle(IMeshData::SequenceOfReal) BRepMesh_NURBSRangeSplitter::filterParameters(
   }
 
   TColStd_Array1OfReal aParamArray(1, anInitLen);
-  Standard_Integer j;
+  Standard_Integer j = 0;
   for (j = 1; j <= anInitLen; j++)
     aParamArray(j) = theParams(j);
 
@@ -607,7 +609,7 @@ Handle(IMeshData::SequenceOfReal) BRepMesh_NURBSRangeSplitter::filterParameters(
   }
 
   //perform filtering on series
-  Standard_Real aLastAdded, aLastCandidate;
+  Standard_Real aLastAdded = NAN, aLastCandidate = NAN;
   Standard_Boolean isCandidateDefined = Standard_False;
   aLastAdded = aParamArray(1);
   aLastCandidate = aLastAdded;

@@ -81,7 +81,7 @@ protected:
 private:
 
 
-  Standard_Integer degree;
+  Standard_Integer degree{};
   Handle(StepGeom_HArray1OfCartesianPoint) controlPointsList;
   StepGeom_BSplineCurveForm curveForm;
   StepData_Logical closedCurve;

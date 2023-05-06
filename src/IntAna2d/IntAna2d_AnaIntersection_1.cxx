@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp_Circ2d.hxx>
 #include <gp_Lin2d.hxx>
 #include <IntAna2d_AnaIntersection.hxx>
@@ -26,13 +28,13 @@ void IntAna2d_AnaIntersection::Perform (const gp_Lin2d& L1,
  
   done = Standard_False;
 
-  Standard_Real A1,B1,C1;
-  Standard_Real A2,B2,C2;
+  Standard_Real A1 = NAN,B1 = NAN,C1 = NAN;
+  Standard_Real A2 = NAN,B2 = NAN,C2 = NAN;
   L1.Coefficients(A1,B1,C1);
   L2.Coefficients(A2,B2,C2);
 
-  Standard_Real al1,be1,ga1;
-  Standard_Real al2,be2,ga2;
+  Standard_Real al1 = NAN,be1 = NAN,ga1 = NAN;
+  Standard_Real al2 = NAN,be2 = NAN,ga2 = NAN;
   
   Standard_Real Det =Max (Abs(A1),Max(Abs(A2),Max(Abs(B1),Abs(B2))));
 
@@ -99,7 +101,7 @@ void IntAna2d_AnaIntersection::Perform (const gp_Lin2d& L1,
       YS=temp;
     }
 
-    Standard_Real La,Mu;
+    Standard_Real La = NAN,Mu = NAN;
     if (Abs(A1)>=Abs(B1)) {
       La=(YS-L1.Location().Y())/A1;
     }

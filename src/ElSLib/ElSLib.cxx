@@ -22,6 +22,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <ElSLib.hxx>
 #include <gp.hxx>
 #include <gp_Ax3.hxx>
@@ -233,7 +235,7 @@ gp_Vec ElSLib::SphereDN (const Standard_Real    U,
   const gp_XYZ& XDir = Pos.XDirection().XYZ();
   const gp_XYZ& YDir = Pos.YDirection().XYZ();
   const gp_XYZ& ZDir = Pos.Direction ().XYZ();
-  Standard_Real A1,A2,A3,X,Y,Z;
+  Standard_Real A1 = NAN,A2 = NAN,A3 = NAN,X = NAN,Y = NAN,Z = NAN;
   if (Nu == 0) {
     Standard_Real RSinV = Radius * sin(V);
     if (IsOdd (Nv)) { A1 = - RSinV * CosU; A2 = - RSinV * SinU; A3 =   RCosV; }
@@ -285,7 +287,7 @@ gp_Vec ElSLib::TorusDN (const Standard_Real    U,
   const gp_XYZ& XDir = Pos.XDirection().XYZ();
   const gp_XYZ& YDir = Pos.YDirection().XYZ();
   const gp_XYZ& ZDir = Pos.Direction ().XYZ();
-  Standard_Real A1,A2,A3,X=0,Y=0,Z=0;
+  Standard_Real A1 = NAN,A2 = NAN,A3 = NAN,X=0,Y=0,Z=0;
   //  Modified by skv - Tue Sep  9 15:10:34 2003 OCC620 Begin
   Standard_Real eps = 10.*(MinorRadius + MajorRadius)*RealEpsilon();
   //  Modified by skv - Tue Sep  9 15:10:34 2003 OCC620 End
@@ -1415,7 +1417,7 @@ void ElSLib::SphereParameters(const gp_Ax3& Pos,
   gp_Trsf T;
   T.SetTransformation (Pos);
   gp_Pnt Ploc = P.Transformed (T);
-  Standard_Real x, y, z;
+  Standard_Real x = NAN, y = NAN, z = NAN;
   Ploc.Coord (x, y, z);
   Standard_Real l = sqrt (x * x + y * y);
   if (l < gp::Resolution()) {    // point on axis Z of the sphere
@@ -1448,7 +1450,7 @@ void ElSLib::TorusParameters(const gp_Ax3& Pos,
   gp_Trsf Tref;
   Tref.SetTransformation (Pos);
   gp_Pnt Ploc = P.Transformed (Tref);
-  Standard_Real x, y, z;
+  Standard_Real x = NAN, y = NAN, z = NAN;
   Ploc.Coord (x, y, z);
 
   // all that to process case of  Major < Minor.

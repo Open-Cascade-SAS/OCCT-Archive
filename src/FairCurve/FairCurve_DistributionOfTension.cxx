@@ -19,6 +19,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <FairCurve_DistributionOfTension.hxx>
 #include <gp_Pnt2d.hxx>
@@ -51,9 +53,9 @@
 Standard_Boolean FairCurve_DistributionOfTension::Value(const math_Vector& TParam, math_Vector& FTension)
 {
   Standard_Boolean Ok = Standard_True;
-  Standard_Integer ier, ii, jj, kk;
+  Standard_Integer ier = 0, ii = 0, jj = 0, kk = 0;
   gp_XY CPrim  (0., 0.);
-  Standard_Integer  LastGradientIndex, FirstNonZero, LastZero; 
+  Standard_Integer  LastGradientIndex = 0, FirstNonZero = 0, LastZero = 0; 
 
   // (0.0) initialisations generales
   FTension.Init(0.0);
@@ -75,7 +77,7 @@ Standard_Boolean FairCurve_DistributionOfTension::Value(const math_Vector& TPara
 
   // (1) Evaluation de la tension locale --------------------------------
   Standard_Real NormeCPrim = CPrim.Modulus();
-  Standard_Real Hauteur, Difference;
+  Standard_Real Hauteur = NAN, Difference = NAN;
 
   if (MyHeight > 0) {Hauteur = MyHeight;} // it used in MVC to avoid Parametrization Problemes
   else { 
@@ -89,7 +91,7 @@ Standard_Boolean FairCurve_DistributionOfTension::Value(const math_Vector& TPara
   if (MyDerivativeOrder >= 1) {
   // (2) Evaluation du gradient de la tension locale ----------------------
       math_Vector GradDifference (1, 2*MyBSplOrder+MyNbValAux);
-      Standard_Real Xaux, Yaux, Facteur;
+      Standard_Real Xaux = NAN, Yaux = NAN, Facteur = NAN;
 
       Xaux = CPrim.X() / NormeCPrim;
       Yaux = CPrim.Y() / NormeCPrim;
@@ -122,8 +124,8 @@ Standard_Boolean FairCurve_DistributionOfTension::Value(const math_Vector& TPara
          Standard_Real FacteurX =  Difference * (1-pow(Xaux,2)) / NormeCPrim;
          Standard_Real FacteurY =  Difference * (1-pow(Yaux,2)) / NormeCPrim;
          Standard_Real FacteurXY = - Difference * Xaux*Yaux / NormeCPrim;
-         Standard_Real Produit;
-         Standard_Integer k1, k2;
+         Standard_Real Produit = NAN;
+         Standard_Integer k1 = 0, k2 = 0;
    
          Facteur = 2 * Hauteur / MyLengthSliding;
 

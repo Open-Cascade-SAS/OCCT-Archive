@@ -16,6 +16,8 @@
 
 //szv#4 S4163
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom2d_OffsetCurve.hxx>
@@ -41,14 +43,14 @@
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 
-ShapeAnalysis_ShapeContents::ShapeAnalysis_ShapeContents()
+ShapeAnalysis_ShapeContents::ShapeAnalysis_ShapeContents() : myBigSplineSec(new TopTools_HSequenceOfShape), myIndirectSec(new TopTools_HSequenceOfShape), myOffsetSurfaceSec(new TopTools_HSequenceOfShape), myTrimmed3dSec(new TopTools_HSequenceOfShape), myOffsetCurveSec(new TopTools_HSequenceOfShape), myTrimmed2dSec(new TopTools_HSequenceOfShape)
 {
-  myBigSplineSec = new TopTools_HSequenceOfShape;
-  myIndirectSec = new TopTools_HSequenceOfShape;
-  myOffsetSurfaceSec = new TopTools_HSequenceOfShape;
-  myTrimmed3dSec = new TopTools_HSequenceOfShape;
-  myOffsetCurveSec = new TopTools_HSequenceOfShape;
-  myTrimmed2dSec = new TopTools_HSequenceOfShape;
+  
+  
+  
+  
+  
+  
   ClearFlags();
 }
 
@@ -200,7 +202,7 @@ void ShapeAnalysis_ShapeContents::Perform(const TopoDS_Shape& Shape)
       nbwires ++;
       for (TopExp_Explorer edg(wire,TopAbs_EDGE); edg.More(); edg.Next()) {
 	TopoDS_Edge edge = TopoDS::Edge (edg.Current());
-	Standard_Real first,last;	
+	Standard_Real first = NAN,last = NAN;	
 	if (BRep_Tool::IsClosed (edge,face)) nbseam ++;
 	Handle(Geom_Curve) c3d = BRep_Tool::Curve (edge,first,last);
 	if (!c3d.IsNull()) {
@@ -247,7 +249,7 @@ void ShapeAnalysis_ShapeContents::Perform(const TopoDS_Shape& Shape)
     edge.Location(TopLoc_Location());
     mapsh.Add (edge);
     TopLoc_Location loc;
-    Standard_Real first,last;
+    Standard_Real first = NAN,last = NAN;
     myNbEdges++;
     Handle(Geom_Curve) c3d = BRep_Tool::Curve (edge,loc,first,last);
     if (!c3d.IsNull() && c3d->IsKind(STANDARD_TYPE(Geom_OffsetCurve))) {

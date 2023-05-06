@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <DsgPrs_SymmetricPresentation.hxx>
 #include <ElCLib.hxx>
 #include <gce_MakeLin.hxx>
@@ -58,7 +60,7 @@ void DsgPrs_SymmetricPresentation::Add (const Handle(Prs3d_Presentation)& aPrese
   
   gp_Vec VL1(aDirection1);
   gp_Vec VLa(PjAttachPnt1,ProjOffsetPoint);
-  Standard_Real scal;
+  Standard_Real scal = NAN;
   scal = VL1.Dot(VLa);
   if (scal < 0) VL1.Reverse();
   VL1.Multiply(h);
@@ -85,7 +87,7 @@ void DsgPrs_SymmetricPresentation::Add (const Handle(Prs3d_Presentation)& aPrese
   }
 
   gp_Lin L3 = gce_MakeLin(P1,P2);
-  Standard_Real parmin,parmax,parcur;
+  Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
   parmin = ElCLib::Parameter(L3,P1);
   parmax = parmin;
   parcur = ElCLib::Parameter(L3,P2);
@@ -108,7 +110,7 @@ void DsgPrs_SymmetricPresentation::Add (const Handle(Prs3d_Presentation)& aPrese
   gp_Pnt PointMin = ElCLib::Value(parmin,L3);
   gp_Pnt PointMax = ElCLib::Value(parmax,L3);
 
-  Standard_Real X,Y,Z;
+  Standard_Real X = NAN,Y = NAN,Z = NAN;
   Standard_Real D1(aAxis.Distance(AttachmentPoint1)),coeff(.5);
   gp_Pnt pint,Pj_P1,P1Previous = P1;
   
@@ -143,7 +145,7 @@ void DsgPrs_SymmetricPresentation::Add (const Handle(Prs3d_Presentation)& aPrese
   ===================================*/
 
   gp_Vec        Vfix;
-  Standard_Real alpha,b;
+  Standard_Real alpha = NAN,b = NAN;
 
   if(aAxis.Distance(P1) > D1*(1 + coeff) && !Cross){
 
@@ -441,7 +443,7 @@ void DsgPrs_SymmetricPresentation::Add (const Handle(Prs3d_Presentation)& aPrese
   gp_Vec Vp(ProjCenter1,Center1);
   if (Vp.Magnitude() <= Precision::Confusion()) Vp = gp_Vec(aAxis.Direction())^aCircle1.Position().Direction();
 
-  Standard_Real Dt,R,h;
+  Standard_Real Dt = NAN,R = NAN,h = NAN;
   Dt = ProjCenter1.Distance(ProjOffsetPoint);
   R  = aCircle1.Radius();
   if (Dt > .999*R) {
@@ -456,7 +458,7 @@ void DsgPrs_SymmetricPresentation::Add (const Handle(Prs3d_Presentation)& aPrese
   gp_Pnt P2 = ProjOffsetPoint.Translated(v);
 
   gp_Lin L3 = gce_MakeLin(P1,P2);
-  Standard_Real parmin,parmax,parcur;
+  Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
   parmin = ElCLib::Parameter(L3,P1);
   parmax = parmin;
   parcur = ElCLib::Parameter(L3,P2);
@@ -487,7 +489,7 @@ void DsgPrs_SymmetricPresentation::Add (const Handle(Prs3d_Presentation)& aPrese
   Standard_Integer nbp = 10;
   Standard_Real ParamP1       = ElCLib::Parameter(aCircle1,P1);
   Standard_Real ParamPAttach1 = ElCLib::Parameter(aCircle1,AttachmentPoint1);
-  Standard_Real alpha,Dalpha,alphaIter;
+  Standard_Real alpha = NAN,Dalpha = NAN,alphaIter = NAN;
 
   alpha = fabs(ParamP1 - ParamPAttach1);
   if(ParamP1 < ParamPAttach1){
@@ -517,7 +519,7 @@ void DsgPrs_SymmetricPresentation::Add (const Handle(Prs3d_Presentation)& aPrese
   aPrims->AddVertex(AttachmentPoint1);
   alphaIter = Dalpha;
   gp_Pnt PntIter;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for(i = 2; i <= nbp; i++, alphaIter += Dalpha)
     aPrims->AddVertex(ElCLib::Value(ParamPAttach1 + alphaIter,aCircle1));
   aPresentation->CurrentGroup()->AddPrimitiveArray(aPrims);
@@ -741,7 +743,7 @@ void DsgPrs_SymmetricPresentation::Add (const Handle(Prs3d_Presentation)& aPrese
     gp_Pnt P2 = ProjOffsetPoint.Translated(PjAtt1_Att1.Reversed());
 
     gp_Lin L3 = gce_MakeLin(P1,P2);
-    Standard_Real parmin,parmax,parcur;
+    Standard_Real parmin = NAN,parmax = NAN,parcur = NAN;
     parmin = ElCLib::Parameter(L3,P1);
     parmax = parmin;
     parcur = ElCLib::Parameter(L3,P2);

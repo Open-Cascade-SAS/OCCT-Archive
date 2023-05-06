@@ -39,7 +39,7 @@ static TCollection_AsciiString theval;    // temporaire pour construire Value
    const Handle(Interface_InterfaceModel)& model) const
 {
   theval.Clear();
-  Standard_Integer i, nb = thesubs.Length();
+  Standard_Integer i = 0, nb = thesubs.Length();
   for (i = 1; i <= nb; i ++) {
     Standard_Integer tabul = thetabs.Value(i);
     Standard_Boolean maxi  = (tabul < 0);
@@ -66,7 +66,7 @@ static TCollection_AsciiString theval;    // temporaire pour construire Value
    const TCollection_AsciiString& text, const Standard_Boolean exact) const
 {
   if (exact) return IFSelect_Signature::Matches (ent,model,text,exact);
-  Standard_Integer i, nb = thesubs.Length();
+  Standard_Integer i = 0, nb = thesubs.Length();
   for (i = 1; i <= nb; i ++) {
     Handle(IFSelect_Signature) sign =
       Handle(IFSelect_Signature)::DownCast(thesubs.Value(i));

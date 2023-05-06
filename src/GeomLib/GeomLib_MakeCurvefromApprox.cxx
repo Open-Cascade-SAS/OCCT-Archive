@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AdvApprox_ApproxAFunction.hxx>
 #include <Geom2d_BSplineCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -130,7 +132,7 @@ Handle(Geom2d_BSplineCurve) GeomLib_MakeCurvefromApprox::Curve2d
   Knots = myApprox.Knots()->Array1();
   Mults = myApprox.Multiplicities()->Array1();
   
-  Standard_Real X,Y,W;
+  Standard_Real X = NAN,Y = NAN,W = NAN;
   for ( Standard_Integer i = 1; i <= myApprox.NbPoles(); i++) {
     W = Weigths(i);
     Poles(i).Coord(X,Y);
@@ -241,7 +243,7 @@ Handle(Geom_BSplineCurve) GeomLib_MakeCurvefromApprox::Curve
   Knots = myApprox.Knots()->Array1();
   Mults = myApprox.Multiplicities()->Array1();
   
-  Standard_Real X,Y,Z,W;
+  Standard_Real X = NAN,Y = NAN,Z = NAN,W = NAN;
   for ( Standard_Integer i = 1; i <= myApprox.NbPoles(); i++) {
     W = Weigths(i);
     Poles(i).Coord(X,Y,Z);

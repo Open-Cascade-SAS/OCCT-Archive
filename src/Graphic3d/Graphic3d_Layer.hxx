@@ -188,7 +188,7 @@ private:
   mutable Standard_Boolean myIsBVHPrimitivesNeedsReset;
 
   //! Defines if the cached bounding box is outdated.
-  mutable bool myIsBoundingBoxNeedsReset[2];
+  mutable bool myIsBoundingBoxNeedsReset[2]{};
 
   //! Cached layer bounding box.
   mutable Bnd_Box myBoundingBox[2];

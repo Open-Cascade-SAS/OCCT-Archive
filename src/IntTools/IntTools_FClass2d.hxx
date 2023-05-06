@@ -72,17 +72,17 @@ private:
 
   BRepTopAdaptor_SeqOfPtr TabClass;
   TColStd_SequenceOfInteger TabOrien;
-  Standard_Real Toluv;
+  Standard_Real Toluv{};
   TopoDS_Face Face;
-  Standard_Real U1;
-  Standard_Real V1;
-  Standard_Real U2;
-  Standard_Real V2;
-  Standard_Real Umin;
-  Standard_Real Umax;
-  Standard_Real Vmin;
-  Standard_Real Vmax;
-  Standard_Boolean myIsHole;
+  Standard_Real U1{};
+  Standard_Real V1{};
+  Standard_Real U2{};
+  Standard_Real V2{};
+  Standard_Real Umin{};
+  Standard_Real Umax{};
+  Standard_Real Vmin{};
+  Standard_Real Vmax{};
+  Standard_Boolean myIsHole{};
 
   mutable std::unique_ptr<BRepClass_FaceExplorer> myFExplorer;
 

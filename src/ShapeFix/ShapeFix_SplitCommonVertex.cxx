@@ -40,9 +40,9 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeFix_SplitCommonVertex,ShapeFix_Root)
 //function : ShapeFix_SplitCommonVertex
 //purpose  : 
 //=======================================================================
-ShapeFix_SplitCommonVertex::ShapeFix_SplitCommonVertex()
+ShapeFix_SplitCommonVertex::ShapeFix_SplitCommonVertex() : myStatus(ShapeExtend::EncodeStatus ( ShapeExtend_OK ))
 {
-  myStatus = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
+  
   SetPrecision(Precision::Confusion());
 }
 

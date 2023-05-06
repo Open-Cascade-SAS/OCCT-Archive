@@ -14,6 +14,8 @@
 
 //  Modified by skv - Thu Jul  7 14:37:05 2005 OCC9134
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <ElSLib.hxx>
 #include <Extrema_ExtElC.hxx>
@@ -40,11 +42,11 @@
 #include <StdFail_NotDone.hxx>
 #include <TColStd_ListOfInteger.hxx>
 
-Extrema_ExtElCS::Extrema_ExtElCS() 
+Extrema_ExtElCS::Extrema_ExtElCS() : myDone(Standard_False), myNbExt(0), myIsPar(Standard_False) 
 {
-  myDone = Standard_False;
-  myIsPar = Standard_False;
-  myNbExt = 0;
+  
+  
+  
 }
 
 
@@ -101,7 +103,7 @@ void Extrema_ExtElCS::Perform(const gp_Lin& C,
   }
   else
   {
-    Standard_Integer i, aStartIdx = 0;
+    Standard_Integer i = 0, aStartIdx = 0;
 
     Extrema_POnCurv myPOnC1, myPOnC2;
     Extrem.Points(1, myPOnC1, myPOnC2);
@@ -127,7 +129,7 @@ void Extrema_ExtElCS::Perform(const gp_Lin& C,
           mySqDist = new TColStd_HArray1OfReal(1, myNbExt + 2);
           myPoint1 = new Extrema_HArray1OfPOnCurv(1, myNbExt + 2);
           myPoint2 = new Extrema_HArray1OfPOnSurf(1, myNbExt + 2);
-          Standard_Real u, v, w;
+          Standard_Real u = NAN, v = NAN, w = NAN;
           for (i = 1; i <= myNbExt; i++)
           {
             mySqDist->SetValue(i, 0.);
@@ -242,7 +244,7 @@ void Extrema_ExtElCS::Perform(const gp_Lin& C,
 
   Extrema_ExtPElC Extrem(aCenter, C, Precision::Angular(), RealFirst(), RealLast());
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   if (Extrem.IsDone() &&
       Extrem.NbExt() > 0)
   {
@@ -263,7 +265,7 @@ void Extrema_ExtElCS::Perform(const gp_Lin& C,
         {
           Extrema_POnCurv aCPnt(aLinSphere.ParamOnConic(i), aLinSphere.Point(i));
 
-          Standard_Real u,v;
+          Standard_Real u = NAN,v = NAN;
           ElSLib::Parameters(S, aLinSphere.Point(i), u, v);
           Extrema_POnSurf aSPnt(u, v, aLinSphere.Point(i));
 
@@ -380,9 +382,9 @@ void Extrema_ExtElCS::Perform(const gp_Circ& C,
       mySqDist = new TColStd_HArray1OfReal(1, myNbExt);
       myPoint2 = new Extrema_HArray1OfPOnSurf(1, myNbExt);
 
-      Standard_Integer i;
+      Standard_Integer i = 0;
       gp_Pnt PC, PP;
-      Standard_Real U, V;
+      Standard_Real U = NAN, V = NAN;
       Extrema_POnCurv POnC;
       Extrema_POnSurf POnS;
       for (i = 0; i < 2; ++i)
@@ -457,7 +459,7 @@ void Extrema_ExtElCS::Perform(const gp_Circ& C,
     isParallel = Standard_True;
   } else {
     Standard_Integer aNbExt   = anExtC.NbExt();
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Integer aCurI    = 1;
     Standard_Real    aTolConf = Precision::Confusion();
     Standard_Real    aCylRad  = S.Radius();
@@ -498,7 +500,7 @@ void Extrema_ExtElCS::Perform(const gp_Circ& C,
 
         gp_Dir aDir(aPOnAxis.Value().XYZ().Subtracted(aPOnCirc.Value().XYZ()));
         Standard_Real aShift[2] = {aDist + aCylRad, aDist - aCylRad};
-        Standard_Integer j;
+        Standard_Integer j = 0;
 
         for (j = 0; j < 2; j++) {
           gp_Vec aVec(aDir);
@@ -507,8 +509,8 @@ void Extrema_ExtElCS::Perform(const gp_Circ& C,
           aVec.Multiply(aShift[j]);
           aPntOnCyl = aPOnCirc.Value().Translated(aVec);
 
-          Standard_Real aU;
-          Standard_Real aV;
+          Standard_Real aU = NAN;
+          Standard_Real aV = NAN;
 
           ElSLib::Parameters(S, aPntOnCyl, aU, aV);
 
@@ -523,8 +525,8 @@ void Extrema_ExtElCS::Perform(const gp_Circ& C,
       // Adding intersection points to the list of extremas
       for (i=1; i<=aNbInter; i++)
       {
-        Standard_Real aU;
-        Standard_Real aV;
+        Standard_Real aU = NAN;
+        Standard_Real aV = NAN;
 
         gp_Pnt aInterPnt = aCircCylInter.Point(i);
 
@@ -653,7 +655,7 @@ void Extrema_ExtElCS::Perform(const gp_Circ& C,
     gp_Pnt aPOnC = ElCLib::Value(aT, C);
 
     // Compute parameters on sphere
-    Standard_Real aU, aV;
+    Standard_Real aU = NAN, aV = NAN;
     ElSLib::Parameters(S, aPOnC, aU, aV);
     // Compute point on sphere
     gp_Pnt aPOnS = ElSLib::Value(aU, aV, S);
@@ -715,7 +717,7 @@ void Extrema_ExtElCS::Perform(const gp_Circ& C,
     anExtC.Points(it.Value(), P1, P2);
 
     // Compute parameters on sphere
-    Standard_Real aU, aV;
+    Standard_Real aU = NAN, aV = NAN;
     ElSLib::Parameters(S, P1.Value(), aU, aV);
     // Compute point on sphere
     gp_Pnt aPOnS = ElSLib::Value(aU, aV, S);
@@ -786,7 +788,7 @@ void Extrema_ExtElCS::Perform(const gp_Hypr& C,
       mySqDist = new TColStd_HArray1OfReal(1, 1);
       mySqDist->SetValue(1, S.SquareDistance(Ph));
 
-      Standard_Real U, V;
+      Standard_Real U = NAN, V = NAN;
       ElSLib::PlaneParameters(S.Position(), Ph, U, V);
       gp_Pnt Pp = ElSLib::PlaneValue(U, V, S.Position());
       Extrema_POnSurf PS(U, V, Pp);

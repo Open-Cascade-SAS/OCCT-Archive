@@ -155,10 +155,10 @@ private:
   Handle(IFSelect_ShareOut) theshareout;
   Handle(IFSelect_Dispatch) thedispatch;
   Standard_Boolean theeval;
-  Standard_Integer thedispnum;
-  Standard_Integer thepacknum;
-  Standard_Integer thepackdisp;
-  Standard_Integer thenbindisp;
+  Standard_Integer thedispnum{};
+  Standard_Integer thepacknum{};
+  Standard_Integer thepackdisp{};
+  Standard_Integer thenbindisp{};
   TColStd_SequenceOfInteger thedisplist;
 
 };

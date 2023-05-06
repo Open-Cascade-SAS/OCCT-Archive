@@ -77,10 +77,10 @@ public:
 private:
 
   IntRes2d_IntersectionPoint mySinglePoint;
-  Standard_Integer myTypePerform;
+  Standard_Integer myTypePerform{};
   HLRBRep_CInter myIntersector;
   HLRBRep_InterCSurf myCSIntersector;
-  Standard_Address mySurface;
+  Standard_Address mySurface{};
   HLRBRep_ThePolyhedronOfInterCSurf* myPolyhedron;
 
 };

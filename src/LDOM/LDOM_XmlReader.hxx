@@ -89,7 +89,7 @@ class LDOM_XmlReader
   const LDOM_BasicNode          * myLastChild;  // optim. reading attributes
   const char                    * myPtr;
   const char                    * myEndPtr;
-  char                          myBuffer [XML_BUFFER_SIZE+4];
+  char                          myBuffer [XML_BUFFER_SIZE+4]{};
   Standard_Boolean              myTagPerStep;
   LDOM_OSStream::BOMType        myBOM;
 };

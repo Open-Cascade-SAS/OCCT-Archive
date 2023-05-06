@@ -39,7 +39,7 @@
 GccAna_Lin2dBisec::
    GccAna_Lin2dBisec (const gp_Lin2d& Lin1,
 		      const gp_Lin2d& Lin2):
-   linsol(1,2)    ,
+   WellDone(Standard_False), NbrSol(0), linsol(1,2)    ,
    pntint1sol(1,2),
    pntint2sol(1,2),
    par1sol(1,2),
@@ -47,8 +47,8 @@ GccAna_Lin2dBisec::
    pararg1(1,2),
    pararg2(1,2) {
 
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
 
    IntAna2d_AnaIntersection Intp(Lin1,Lin2);
    if (Intp.IsDone()) {

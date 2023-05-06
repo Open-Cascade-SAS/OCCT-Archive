@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBndLib.hxx>
@@ -56,14 +58,14 @@ static Standard_Boolean FindPointOnFace(const TopoDS_Face& face, gp_Pnt2d& pt2d)
     return Standard_False;
   }
 
-  Standard_Integer npoints, nptt = 21;
+  Standard_Integer npoints = 0, nptt = 21;
   TColgp_Array1OfPnt2d points(1, nptt);
   Standard_Real area=0., xcent=0., ycent=0.;
   TopExp_Explorer edgeExp;
 
   for (edgeExp.Init(wireExp.Current(), TopAbs_EDGE); edgeExp.More(); edgeExp.Next()) {    
     // discretize the 2d curve
-    Standard_Real first, last;
+    Standard_Real first = NAN, last = NAN;
     Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(TopoDS::Edge(edgeExp.Current()), face, first, last);
     if (TopoDS::Edge(edgeExp.Current()).Orientation() == TopAbs_REVERSED) {
       Standard_Real change = first;
@@ -76,7 +78,7 @@ static Standard_Boolean FindPointOnFace(const TopoDS_Face& face, gp_Pnt2d& pt2d)
       c2d->D0(last, points(2));
     }
     else {
-      Standard_Real deltaT, t;
+      Standard_Real deltaT = NAN, t = NAN;
       npoints = nptt;
       deltaT = (last - first) / (nptt-1);
       for (Standard_Integer i=1; i<=nptt; i++) {
@@ -95,7 +97,7 @@ static Standard_Boolean FindPointOnFace(const TopoDS_Face& face, gp_Pnt2d& pt2d)
       
     // compute the contribution to the center of gravity
 
-    Standard_Real h, c, d;
+    Standard_Real h = NAN, c = NAN, d = NAN;
     for (Standard_Integer i=1; i<=npoints-1; i++) {
 
       h = 0.5*(points(i).Y() + points(i+1).Y());
@@ -135,7 +137,7 @@ static Standard_Boolean ComputeDir(const TopoDS_Shape& shape, gp_Pnt& pt, gp_Dir
 {
   TopLoc_Location loc;
   if (shape.ShapeType() == TopAbs_EDGE) {
-    Standard_Real first, last;
+    Standard_Real first = NAN, last = NAN;
     Handle(Geom_Curve) curv0 = BRep_Tool::Curve(TopoDS::Edge(shape), loc, first, last);
     Handle(Geom_Curve) curve = Handle(Geom_Curve)::DownCast(curv0->Copy());
     curve->Transform(loc.Transformation()); 
@@ -150,7 +152,7 @@ static Standard_Boolean ComputeDir(const TopoDS_Shape& shape, gp_Pnt& pt, gp_Dir
     gp_Pnt2d pt2d;
     Handle(Geom_Surface) surface = BRep_Tool::Surface(TopoDS::Face(shape));    
     if (BRep_Tool::NaturalRestriction(TopoDS::Face(shape))) {
-      Standard_Real u1, u2, v1, v2;
+      Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
       surface->Bounds(u1, u2, v1, v2);
       pt2d.SetCoord((u1+u2)*0.5, (v1+v2)*0.5);
     }

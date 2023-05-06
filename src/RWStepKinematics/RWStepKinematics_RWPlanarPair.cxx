@@ -77,22 +77,22 @@ void RWStepKinematics_RWPlanarPair::ReadStep (const Handle(StepData_StepReaderDa
 
   // Inherited fields of LowOrderKinematicPair
 
-  Standard_Boolean aLowOrderKinematicPair_TX;
+  Standard_Boolean aLowOrderKinematicPair_TX = 0;
   theData->ReadBoolean (theNum, 7, "low_order_kinematic_pair.t_x", theArch, aLowOrderKinematicPair_TX);
 
-  Standard_Boolean aLowOrderKinematicPair_TY;
+  Standard_Boolean aLowOrderKinematicPair_TY = 0;
   theData->ReadBoolean (theNum, 8, "low_order_kinematic_pair.t_y", theArch, aLowOrderKinematicPair_TY);
 
-  Standard_Boolean aLowOrderKinematicPair_TZ;
+  Standard_Boolean aLowOrderKinematicPair_TZ = 0;
   theData->ReadBoolean (theNum, 9, "low_order_kinematic_pair.t_z", theArch, aLowOrderKinematicPair_TZ);
 
-  Standard_Boolean aLowOrderKinematicPair_RX;
+  Standard_Boolean aLowOrderKinematicPair_RX = 0;
   theData->ReadBoolean (theNum, 10, "low_order_kinematic_pair.r_x", theArch, aLowOrderKinematicPair_RX);
 
-  Standard_Boolean aLowOrderKinematicPair_RY;
+  Standard_Boolean aLowOrderKinematicPair_RY = 0;
   theData->ReadBoolean (theNum, 11, "low_order_kinematic_pair.r_y", theArch, aLowOrderKinematicPair_RY);
 
-  Standard_Boolean aLowOrderKinematicPair_RZ;
+  Standard_Boolean aLowOrderKinematicPair_RZ = 0;
   theData->ReadBoolean (theNum, 12, "low_order_kinematic_pair.r_z", theArch, aLowOrderKinematicPair_RZ);
 
   // Initialize entity

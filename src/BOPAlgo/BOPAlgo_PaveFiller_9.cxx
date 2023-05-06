@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BOPDS_DS.hxx>
 #include <BOPDS_Iterator.hxx>
@@ -38,7 +40,7 @@ class BOPAlgo_ShrunkRange : public IntTools_ShrunkRange {
   : IntTools_ShrunkRange() {
   }
   //
-  virtual ~BOPAlgo_ShrunkRange() {
+  ~BOPAlgo_ShrunkRange() override {
   }
   //
   void SetPaveBlock(const Handle(BOPDS_PaveBlock)& aPB) {
@@ -73,8 +75,8 @@ void BOPAlgo_PaveFiller::FillShrunkData(const TopAbs_ShapeEnum aType1,
     return; 
   }
   //
-  Standard_Integer i, nS[2], nE, nV1, nV2, aNbVSD, k;
-  Standard_Real aT1, aT2;
+  Standard_Integer i = 0, nS[2], nE = 0, nV1 = 0, nV2 = 0, aNbVSD = 0, k = 0;
+  Standard_Real aT1 = NAN, aT2 = NAN;
   BOPDS_ListIteratorOfListOfPaveBlock aItLPB;
   TColStd_MapOfInteger aMI; 
   BOPAlgo_VectorOfShrunkRange aVSD;

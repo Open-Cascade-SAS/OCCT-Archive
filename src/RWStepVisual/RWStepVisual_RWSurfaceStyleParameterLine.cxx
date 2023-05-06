@@ -47,16 +47,16 @@ void RWStepVisual_RWSurfaceStyleParameterLine::ReadStep
   // Par consequent, on doit trouver dans le fichier :
   //     ... , (U_DIRECTION_COUNT(10), V_DIRECTION_COUNT(1)) );
 
-  Standard_Integer numr, numpr;
+  Standard_Integer numr = 0, numpr = 0;
   TCollection_AsciiString UType("U_DIRECTION_COUNT");
   TCollection_AsciiString VType("V_DIRECTION_COUNT");
   TCollection_AsciiString TrueType;
 
   Handle(StepVisual_HArray1OfDirectionCountSelect) aDirectionCounts;
-  Standard_Integer aDirectionCountsItem;
+  Standard_Integer aDirectionCountsItem = 0;
   StepVisual_DirectionCountSelect aDirectionCountSelect;
 
-  Standard_Integer nsub2;
+  Standard_Integer nsub2 = 0;
   if (data->ReadSubList (num,2,"direction_counts",ach,nsub2)) {
     Standard_Integer nb2 = data->NbParams(nsub2);
     aDirectionCounts = new StepVisual_HArray1OfDirectionCountSelect(1, nb2);

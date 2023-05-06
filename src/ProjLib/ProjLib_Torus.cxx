@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Dir2d.hxx>
@@ -88,7 +90,7 @@ static gp_Pnt2d EvalPnt2d( const gp_Vec& Ve, const gp_Torus& To)
 {
   Standard_Real X = Ve.Dot(gp_Vec(To.Position().XDirection()));
   Standard_Real Y = Ve.Dot(gp_Vec(To.Position().YDirection()));
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
 
   if ( Abs(X) > Precision::PConfusion() ||
        Abs(Y) > Precision::PConfusion() ) {
@@ -133,7 +135,7 @@ void  ProjLib_Torus::Project(const gp_Circ& C)
     Standard_Real Z = OC.Dot(myTorus.Position().Direction());
     Z /= myTorus.MinorRadius();
     
-    Standard_Real V;
+    Standard_Real V = NAN;
 
     if ( Z > 1.) {         
       V = M_PI/2.;          // protection stupide 

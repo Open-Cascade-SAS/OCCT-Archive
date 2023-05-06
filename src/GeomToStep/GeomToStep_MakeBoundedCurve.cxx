@@ -34,7 +34,7 @@
 //=============================================================================
 // Creation d' une BoundedCurve de prostep a partir d' une BoundedCurve de Geom
 //=============================================================================
-GeomToStep_MakeBoundedCurve::GeomToStep_MakeBoundedCurve ( const Handle(Geom_BoundedCurve)& C)
+GeomToStep_MakeBoundedCurve::GeomToStep_MakeBoundedCurve ( const Handle(Geom_BoundedCurve)& C) : GeomToStep_Root()
 {
   done = Standard_True;
 
@@ -81,7 +81,7 @@ GeomToStep_MakeBoundedCurve::GeomToStep_MakeBoundedCurve ( const Handle(Geom_Bou
 // Geom2d
 //=============================================================================
 
-GeomToStep_MakeBoundedCurve::GeomToStep_MakeBoundedCurve ( const Handle(Geom2d_BoundedCurve)& C)
+GeomToStep_MakeBoundedCurve::GeomToStep_MakeBoundedCurve ( const Handle(Geom2d_BoundedCurve)& C) : GeomToStep_Root()
 {
   done = Standard_True;
   if (C->IsKind(STANDARD_TYPE(Geom2d_BSplineCurve)))

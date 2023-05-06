@@ -39,8 +39,8 @@ class BSplCLib_BezierArrays
   }
 
  private:
-  Standard_Real aKnots[2];
-  Standard_Integer aMults[2];
+  Standard_Real aKnots[2]{};
+  Standard_Integer aMults[2]{};
   
  public:
   TColStd_Array1OfReal    knots;

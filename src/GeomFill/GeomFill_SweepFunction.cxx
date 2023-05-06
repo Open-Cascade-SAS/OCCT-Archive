@@ -21,6 +21,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <GeomFill_LocationLaw.hxx>
 #include <GeomFill_SectionLaw.hxx>
 #include <GeomFill_SweepFunction.hxx>
@@ -41,13 +43,13 @@ GeomFill_SweepFunction(const Handle(GeomFill_SectionLaw)& Section,
 		       const Handle(GeomFill_LocationLaw)& Location,
 		       const Standard_Real  FirstParameter,
 		       const Standard_Real  FirstParameterOnS,
-		       const Standard_Real  RatioParameterOnS)
+		       const Standard_Real  RatioParameterOnS) : myLoc(Location), mySec(Section), myf(FirstParameter), myfOnS(FirstParameterOnS), myRatio(RatioParameterOnS)
 {
-  myLoc = Location;
-  mySec = Section;
-  myf = FirstParameter;
-  myfOnS = FirstParameterOnS;
-  myRatio =  RatioParameterOnS;
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -61,8 +63,8 @@ Standard_Boolean GeomFill_SweepFunction::D0(const Standard_Real Param,
 					    TColgp_Array1OfPnt2d& Poles2d,
 					    TColStd_Array1OfReal& Weigths) 
 {
-  Standard_Integer ii, L;
-  Standard_Boolean Ok;
+  Standard_Integer ii = 0, L = 0;
+  Standard_Boolean Ok = 0;
   Standard_Real T =  myfOnS + (Param - myf) * myRatio;
   L = Poles.Length();
 
@@ -93,8 +95,8 @@ Standard_Boolean GeomFill_SweepFunction::D0(const Standard_Real Param,
 					     TColStd_Array1OfReal& Weigths,
 					     TColStd_Array1OfReal& DWeigths) 
 {
-  Standard_Integer ii, L;
-  Standard_Boolean Ok;
+  Standard_Integer ii = 0, L = 0;
+  Standard_Boolean Ok = 0;
   Standard_Real T =  myfOnS + (Param - myf) * myRatio;
   gp_XYZ PPrim;
   L = Poles.Length();
@@ -137,8 +139,8 @@ Standard_Boolean GeomFill_SweepFunction::D0(const Standard_Real Param,
 					     TColStd_Array1OfReal& DWeigths,
 					     TColStd_Array1OfReal& D2Weigths) 
 {
-  Standard_Integer ii, L;
-  Standard_Boolean Ok;
+  Standard_Integer ii = 0, L = 0;
+  Standard_Boolean Ok = 0;
   Standard_Real T =  myfOnS + (Param - myf) * myRatio;
   Standard_Real squareratio = myRatio*myRatio;
   L = Poles.Length();
@@ -229,7 +231,7 @@ Standard_Boolean GeomFill_SweepFunction::D0(const Standard_Real Param,
 //=======================================================================
  Standard_Integer GeomFill_SweepFunction::NbIntervals(const GeomAbs_Shape S) const
 {
-  Standard_Integer Nb_Sec, Nb_Loc;
+  Standard_Integer Nb_Sec = 0, Nb_Loc = 0;
   Nb_Sec  =  mySec->NbIntervals(S);
   Nb_Loc  =  myLoc->NbIntervals(S);
 
@@ -243,8 +245,8 @@ Standard_Boolean GeomFill_SweepFunction::D0(const Standard_Real Param,
   TColStd_Array1OfReal IntS(1, Nb_Sec+1);
   TColStd_Array1OfReal IntL(1, Nb_Loc+1);
   TColStd_SequenceOfReal    Inter;
-  Standard_Real T;
-  Standard_Integer ii;
+  Standard_Real T = NAN;
+  Standard_Integer ii = 0;
   mySec->Intervals(IntS, S);
   for (ii=1; ii<=Nb_Sec+1; ii++) {
     T = (IntS(ii) - myfOnS) / myRatio +  myf;
@@ -262,7 +264,7 @@ Standard_Boolean GeomFill_SweepFunction::D0(const Standard_Real Param,
 //=======================================================================
  void GeomFill_SweepFunction::Intervals(TColStd_Array1OfReal& T,const GeomAbs_Shape S) const
 {
-  Standard_Integer Nb_Sec, Nb_Loc, ii;
+  Standard_Integer Nb_Sec = 0, Nb_Loc = 0, ii = 0;
   Nb_Sec  =  mySec->NbIntervals(S);
   Nb_Loc  =  myLoc->NbIntervals(S);
 
@@ -271,7 +273,7 @@ Standard_Boolean GeomFill_SweepFunction::D0(const Standard_Real Param,
     return;
   }
   else if (Nb_Loc==1) {
-    Standard_Real t;
+    Standard_Real t = NAN;
     mySec->Intervals(T, S);
     for (ii=1; ii<=Nb_Sec+1; ii++) {
       t = (T(ii) - myfOnS) / myRatio +  myf;
@@ -283,7 +285,7 @@ Standard_Boolean GeomFill_SweepFunction::D0(const Standard_Real Param,
   TColStd_Array1OfReal IntS(1, Nb_Sec+1);
   TColStd_Array1OfReal IntL(1, Nb_Loc+1);
   TColStd_SequenceOfReal    Inter;
-  Standard_Real t;
+  Standard_Real t = NAN;
 
   mySec->Intervals(IntS, S);
   for (ii=1; ii<=Nb_Sec+1; ii++) {
@@ -304,7 +306,7 @@ Standard_Boolean GeomFill_SweepFunction::D0(const Standard_Real Param,
  void GeomFill_SweepFunction::SetInterval(const Standard_Real First,
 					  const Standard_Real Last) 
 {
-  Standard_Real uf, ul;
+  Standard_Real uf = NAN, ul = NAN;
   myLoc->SetInterval(First, Last);
   uf = myf + (First - myf) * myRatio;
   ul = myf + (Last  - myf) * myRatio;

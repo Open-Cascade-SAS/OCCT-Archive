@@ -26,7 +26,7 @@
 GCE2d_MakeArcOfHyperbola::GCE2d_MakeArcOfHyperbola(const gp_Hypr2d&     Hypr ,
 						 const gp_Pnt2d&        P1   ,
 						 const gp_Pnt2d&        P2   ,
-						 const Standard_Boolean Sense)
+						 const Standard_Boolean Sense) : GCE2d_Root()
 {
   Standard_Real Alpha1 = ElCLib::Parameter(Hypr,P1);
   Standard_Real Alpha2 = ElCLib::Parameter(Hypr,P2);
@@ -39,7 +39,7 @@ GCE2d_MakeArcOfHyperbola::
   GCE2d_MakeArcOfHyperbola(const gp_Hypr2d&       Hypr  ,
 			   const gp_Pnt2d&        P     ,
 			   const Standard_Real    Alpha ,
-			   const Standard_Boolean Sense )
+			   const Standard_Boolean Sense ) : GCE2d_Root()
 {
   Standard_Real Alphafirst = ElCLib::Parameter(Hypr,P);
   Handle(Geom2d_Hyperbola) H = new Geom2d_Hyperbola(Hypr);
@@ -51,7 +51,7 @@ GCE2d_MakeArcOfHyperbola::
   GCE2d_MakeArcOfHyperbola(const gp_Hypr2d&       Hypr ,
 			   const Standard_Real    Alpha1,
 			   const Standard_Real    Alpha2,
-			   const Standard_Boolean Sense )
+			   const Standard_Boolean Sense ) : GCE2d_Root()
 {
   Handle(Geom2d_Hyperbola) H = new Geom2d_Hyperbola(Hypr);
   TheArc = new Geom2d_TrimmedCurve(H,Alpha1,Alpha2,Sense);

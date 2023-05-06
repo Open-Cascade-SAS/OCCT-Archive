@@ -132,7 +132,7 @@ Standard_Time OSD_FileStatCTime (const char* theName)
     aTime = (Standard_Time )aStat.st_ctime;
   }
 #else
-  struct stat aStat;
+  struct stat aStat{};
   if (stat (theName, &aStat) == 0)
   {
     aTime = (Standard_Time )aStat.st_ctime;

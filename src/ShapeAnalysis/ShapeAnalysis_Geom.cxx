@@ -13,6 +13,8 @@
 
 //szv#4 S4163
 
+#include <math.h>
+
 #include <gp_GTrsf.hxx>
 #include <gp_Pln.hxx>
 #include <gp_Pnt.hxx>
@@ -34,21 +36,21 @@ Standard_Boolean ShapeAnalysis_Geom::NearestPlane(const TColgp_Array1OfPnt& Pnts
   //szv#4:S4163:12Mar99 warning
   GProp_PGProps Pmat(Pnts);
   gp_Pnt g = Pmat.CentreOfMass();
-  Standard_Real Xg,Yg,Zg;
+  Standard_Real Xg = NAN,Yg = NAN,Zg = NAN;
   g.Coord(Xg,Yg,Zg);
 
   GProp_PrincipalProps Pp = Pmat.PrincipalProperties();
   gp_Vec V1 = Pp.FirstAxisOfInertia();
-  Standard_Real Xv1,Yv1,Zv1;
+  Standard_Real Xv1 = NAN,Yv1 = NAN,Zv1 = NAN;
   V1.Coord(Xv1,Yv1,Zv1); 
   gp_Vec V2 = Pp.SecondAxisOfInertia(); 
-  Standard_Real Xv2,Yv2,Zv2;
+  Standard_Real Xv2 = NAN,Yv2 = NAN,Zv2 = NAN;
   V2.Coord(Xv2,Yv2,Zv2);
   gp_Vec V3 = Pp.ThirdAxisOfInertia(); 
-  Standard_Real Xv3,Yv3,Zv3;
+  Standard_Real Xv3 = NAN,Yv3 = NAN,Zv3 = NAN;
   V3.Coord(Xv3,Yv3,Zv3);
 
-  Standard_Real D,X,Y,Z;
+  Standard_Real D = NAN,X = NAN,Y = NAN,Z = NAN;
   Standard_Real Dmx1 = RealFirst();
   Standard_Real Dmn1 = RealLast();
   Standard_Real Dmx2 = RealFirst();
@@ -57,7 +59,7 @@ Standard_Boolean ShapeAnalysis_Geom::NearestPlane(const TColgp_Array1OfPnt& Pnts
   Standard_Real Dmn3 = RealLast();
 
   Standard_Integer ilow = Pnts.Lower(), iup = Pnts.Upper();
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = ilow; i <= iup; i ++) {
     Pnts(i).Coord(X,Y,Z);
     D = (X-Xg)*Xv1 +(Y-Yg)*Yv1 + (Z-Zg)*Zv1;

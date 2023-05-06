@@ -18,6 +18,8 @@
 //   CREATION of the BISSECTICE between two CIRCLES.                        +
 //=========================================================================
 
+#include <math.h>
+
 #include <GccAna_Circ2dBisec.hxx>
 #include <GccEnt_BadQualifier.hxx>
 #include <GccInt_BCirc.hxx>
@@ -36,7 +38,7 @@
 //=========================================================================
 GccAna_Circ2dBisec::
    GccAna_Circ2dBisec (const gp_Circ2d& Circ1    ,
-		       const gp_Circ2d& Circ2    ) {
+		       const gp_Circ2d& Circ2    ) : WellDone(Standard_False) {
 
 //=========================================================================
 //  Initialization of fields :                                            +
@@ -50,7 +52,7 @@ GccAna_Circ2dBisec::
 //            - WellDone (Boolean showing success or failure of the algo) +
 //=========================================================================
 
-   WellDone = Standard_False;
+   
    Standard_Real Tol=Precision::Confusion();
 
    Standard_Real R1 = Circ1.Radius();
@@ -155,7 +157,7 @@ Handle(GccInt_Bisec) GccAna_Circ2dBisec::
      Standard_Real R2 = circle2.Radius();
 
      if ((NbrSol == 1) && (intersection == 0)) {
-       Standard_Real R;
+       Standard_Real R = NAN;
        if (Index == 1) 
 	 R = (R1+R2)/2.0;
        else 

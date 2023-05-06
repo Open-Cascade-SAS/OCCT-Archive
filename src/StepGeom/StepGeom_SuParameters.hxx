@@ -74,12 +74,12 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepGeom_SuParameters, StepGeom_GeometricRepresentationItem)
 
 private:
-  Standard_Real myA;
-  Standard_Real myAlpha;
-  Standard_Real myB;
-  Standard_Real myBeta;
-  Standard_Real myC;
-  Standard_Real myGamma;
+  Standard_Real myA{};
+  Standard_Real myAlpha{};
+  Standard_Real myB{};
+  Standard_Real myBeta{};
+  Standard_Real myC{};
+  Standard_Real myGamma{};
 
 };
 #endif // _StepGeom_SuParameters_HeaderFile_

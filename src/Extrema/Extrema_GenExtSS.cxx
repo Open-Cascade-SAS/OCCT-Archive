@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <Extrema_GenExtSS.hxx>
 #include <Extrema_POnSurf.hxx>
@@ -38,18 +40,18 @@ public:
     {
     }
 
-  Standard_EXPORT Standard_Integer NbVariables() const
+  Standard_EXPORT Standard_Integer NbVariables() const override
   {
     return 4;
   }
 
-  Standard_EXPORT virtual Standard_Boolean Value(const math_Vector& X,Standard_Real& F)
+  Standard_EXPORT Standard_Boolean Value(const math_Vector& X,Standard_Real& F) override
   {
     F = myS1->Value(X(1), X(2)).SquareDistance(myS2->Value(X(3), X(4)));
     return true;
   }
 
-  Standard_EXPORT Standard_Boolean Gradient(const math_Vector& X,math_Vector& G)
+  Standard_EXPORT Standard_Boolean Gradient(const math_Vector& X,math_Vector& G) override
   {
     gp_Pnt P1, P2;
     gp_Vec Du1s1, Dv1s1;
@@ -67,7 +69,7 @@ public:
     return true;
   }
 
-  Standard_EXPORT virtual  Standard_Boolean Values(const math_Vector& X,Standard_Real& F,math_Vector& G)
+  Standard_EXPORT  Standard_Boolean Values(const math_Vector& X,Standard_Real& F,math_Vector& G) override
   {
     F = myS1->Value(X(1), X(2)).SquareDistance(myS2->Value(X(3), X(4)));
 
@@ -100,7 +102,7 @@ private:
 //purpose  : 
 //=======================================================================
 Extrema_GenExtSS::Extrema_GenExtSS()
-: myu1min(0.0),
+: myDone(Standard_False), myInit(Standard_False), myu1min(0.0),
   myu1sup(0.0),
   myv1min(0.0),
   myv1sup(0.0),
@@ -114,8 +116,8 @@ Extrema_GenExtSS::Extrema_GenExtSS()
   mytol2(0.0),
   myS2(NULL)
 {
-  myDone = Standard_False;
-  myInit = Standard_False;
+  
+  
 }
 
 // =======================================================================
@@ -223,8 +225,8 @@ void Extrema_GenExtSS::Initialize(const Adaptor3d_Surface& S2,
 
 // Calcul des distances
 
-  Standard_Integer NoU, NoV;
-  Standard_Real U, V;
+  Standard_Integer NoU = 0, NoV = 0;
+  Standard_Real U = NAN, V = NAN;
   for ( NoU = 1, U = U0; NoU <= myusample; NoU++, U += PasU) {
     for ( NoV = 1, V = V0; NoV <= myvsample; NoV++, V += PasV) {
       P1 = myS2->Value(U, V);
@@ -267,8 +269,8 @@ void Extrema_GenExtSS::Perform(const Adaptor3d_Surface& S1,
   myv1sup = V1sup;
   mytol1 = Tol1;
 
-  Standard_Real U1, V1, U2, V2;
-  Standard_Integer NoU1, NoV1, NoU2, NoV2;
+  Standard_Real U1 = NAN, V1 = NAN, U2 = NAN, V2 = NAN;
+  Standard_Integer NoU1 = 0, NoV1 = 0, NoU2 = 0, NoV2 = 0;
   gp_Pnt P1, P2;
 
 // Parametrage de l echantillon sur S1
@@ -322,7 +324,7 @@ b- Calcul des minima:
   UVsup(4) = myv2sup;
   
 
-  Standard_Real distmin = RealLast(), distmax = 0.0, TheDist;
+  Standard_Real distmin = RealLast(), distmax = 0.0, TheDist = NAN;
 
   Standard_Integer N1Umin=0,N1Vmin=0,N2Umin=0,N2Vmin=0;
   gp_Pnt PP1min, PP2min;

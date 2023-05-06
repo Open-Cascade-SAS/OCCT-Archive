@@ -25,8 +25,8 @@ STEPSelections_AssemblyComponent::STEPSelections_AssemblyComponent()
 }
 
 STEPSelections_AssemblyComponent::STEPSelections_AssemblyComponent(const Handle(StepShape_ShapeDefinitionRepresentation)& sdr,
-								 const Handle(STEPSelections_HSequenceOfAssemblyLink)& list)
+								 const Handle(STEPSelections_HSequenceOfAssemblyLink)& list) : mySDR(sdr), myList(list)
 {
-  mySDR = sdr;
-  myList = list;
+  
+  
 }

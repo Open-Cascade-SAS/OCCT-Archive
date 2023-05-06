@@ -43,7 +43,7 @@ GccAna_Circ2d3Tan::GccAna_Circ2d3Tan (const GccEnt_QualifiedCirc& Qualified1 ,
 //   Initialisation of fields.                                           +
 //=========================================================================
 
-:cirsol(1,8)    ,
+:WellDone(Standard_False), NbrSol(0), cirsol(1,8)    ,
 qualifier1(1,8) ,
 qualifier2(1,8) ,
 qualifier3(1,8) ,
@@ -65,8 +65,8 @@ pararg3(1,8)
   
   gp_Dir2d dirx(1.0,0.0);
    Standard_Real Tol = Abs(Tolerance);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
        !(Qualified2.IsEnclosed() || 

@@ -96,7 +96,7 @@ namespace
 
       //! Method is executed in the context of thread,
       //! so this method defines the main calculations.
-      virtual void Perform (int ) Standard_OVERRIDE
+      void Perform (int ) Standard_OVERRIDE
       {
         for (OSD_Parallel::UniversalIterator anIter = myRange.It(); anIter != myRange.End(); anIter = myRange.It())
         {

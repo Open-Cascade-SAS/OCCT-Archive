@@ -14,9 +14,9 @@
 
 #include <Vrml_Switch.hxx>
 
-Vrml_Switch::Vrml_Switch(const Standard_Integer aWhichChild)
+Vrml_Switch::Vrml_Switch(const Standard_Integer aWhichChild) : myWhichChild(aWhichChild)
 {
-  myWhichChild = aWhichChild;
+  
 }
 
  void Vrml_Switch::SetWhichChild(const Standard_Integer aWhichChild) 

@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement
 
+#include <math.h>
+
 #include <Extrema_GlobOptFuncCS.hxx>
 
 #include <gp_Pnt.hxx>
@@ -173,7 +175,7 @@ Standard_Integer Extrema_GlobOptFuncCS::NbVariables() const
 Standard_Boolean Extrema_GlobOptFuncCS::Value(const math_Vector &X,
                                               Standard_Real     &F)
 {
-  Standard_Real cu, su, sv;
+  Standard_Real cu = NAN, su = NAN, sv = NAN;
   if (!checkInputData(X, cu, su, sv))
     return Standard_False;
 
@@ -188,7 +190,7 @@ Standard_Boolean Extrema_GlobOptFuncCS::Value(const math_Vector &X,
 Standard_Boolean Extrema_GlobOptFuncCS::Gradient(const math_Vector &X,
                                                  math_Vector       &G)
 {
-  Standard_Real cu, su, sv;
+  Standard_Real cu = NAN, su = NAN, sv = NAN;
   if (!checkInputData(X, cu, su, sv))
     return Standard_False;
 
@@ -204,7 +206,7 @@ Standard_Boolean Extrema_GlobOptFuncCS::Values(const math_Vector &X,
                                                Standard_Real     &F,
                                                math_Vector       &G)
 {
-  Standard_Real cu, su, sv;
+  Standard_Real cu = NAN, su = NAN, sv = NAN;
   if (!checkInputData(X, cu, su, sv))
     return Standard_False;
 
@@ -222,7 +224,7 @@ Standard_Boolean Extrema_GlobOptFuncCS::Values(const math_Vector &X,
                                                math_Vector       &G,
                                                math_Matrix       &H)
 {
-  Standard_Real cu, su, sv;
+  Standard_Real cu = NAN, su = NAN, sv = NAN;
   if (!checkInputData(X, cu, su, sv))
     return Standard_False;
 

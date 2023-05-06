@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRepLib.hxx>
 #include <BRepLib_FindSurface.hxx>
@@ -439,7 +441,7 @@ void  BRepLib_MakeFace::Init(const Handle(Geom_Surface)& S,
 {
   myError = BRepLib_FaceDone;
   if (Bound) {
-    Standard_Real UMin,UMax,VMin,VMax;
+    Standard_Real UMin = NAN,UMax = NAN,VMin = NAN,VMax = NAN;
     S->Bounds(UMin,UMax,VMin,VMax);
     Init(S,UMin,UMax,VMin,VMax,TolDegen);
   }
@@ -532,7 +534,7 @@ void  BRepLib_MakeFace::Init(const Handle(Geom_Surface)& SS,
   Standard_Real VMin = Vm;
   Standard_Real VMax = VM;
 
-  Standard_Real umin,umax,vmin,vmax,T;
+  Standard_Real umin = NAN,umax = NAN,vmin = NAN,vmax = NAN,T = NAN;
 
   Handle(Geom_Surface) S = SS, BS = SS;
   Handle(Geom_RectangularTrimmedSurface) RS = 
@@ -612,7 +614,7 @@ void  BRepLib_MakeFace::Init(const Handle(Geom_Surface)& SS,
   // compute 3d curves and degenerate flag
   Standard_Real maxTol = TolDegen;
   Handle(Geom_Curve) Cumin,Cumax,Cvmin,Cvmax;
-  Standard_Boolean Dumin,Dumax,Dvmin,Dvmax;
+  Standard_Boolean Dumin = 0,Dumax = 0,Dvmin = 0,Dvmax = 0;
   Dumin = Dumax = Dvmin = Dvmax = Standard_False;
   Standard_Real uminTol = Precision::Confusion(), 
                 umaxTol = Precision::Confusion(), 

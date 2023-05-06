@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Extrema_ExtElC.hxx>
 #include <Extrema_ExtElC2d.hxx>
@@ -49,7 +51,7 @@ static
 //=======================================================================
 class ExtremaExtElC_TrigonometricRoots {
  private:
-  Standard_Real Roots[4];
+  Standard_Real Roots[4]{};
   Standard_Boolean done;
   Standard_Integer NbRoots;
   Standard_Boolean infinite_roots;
@@ -67,7 +69,7 @@ class ExtremaExtElC_TrigonometricRoots {
   }
   //
   Standard_Boolean IsARoot(Standard_Real u) {
-    Standard_Real PIpPI, aEps;
+    Standard_Real PIpPI = NAN, aEps = NAN;
     //
     aEps=RealEpsilon();
     PIpPI = M_PI + M_PI;
@@ -115,11 +117,11 @@ ExtremaExtElC_TrigonometricRoots::
 				   const Standard_Real Cte,
 				   const Standard_Real Binf,
 				   const Standard_Real Bsup) 
-: NbRoots(0),
+: done(Standard_False), NbRoots(0),
   infinite_roots(Standard_False)
 {
-  Standard_Integer i, nbessai;
-  Standard_Real cc ,sc, c, s, cte;
+  Standard_Integer i = 0, nbessai = 0;
+  Standard_Real cc = NAN ,sc = NAN, c = NAN, s = NAN, cte = NAN;
   //
   nbessai = 1;
   cc = CC;
@@ -127,7 +129,7 @@ ExtremaExtElC_TrigonometricRoots::
   c = C;
   s = S;
   cte = Cte;
-  done=Standard_False;
+  
   while (nbessai<=2 && !done) {
     //-- F= AA*CN*CN+2*BB*CN*SN+CC*CN+DD*SN+EE;
     math_TrigonometricFunctionRoots MTFR(cc,sc,c,s,cte,Binf,Bsup); 
@@ -138,9 +140,9 @@ ExtremaExtElC_TrigonometricRoots::
 	infinite_roots=Standard_True;
       }
       else { //else #1
-	Standard_Boolean Triee;
-	Standard_Integer j, SvNbRoots;
-	Standard_Real aTwoPI, aMaxCoef, aPrecision;
+	Standard_Boolean Triee = 0;
+	Standard_Integer j = 0, SvNbRoots = 0;
+	Standard_Real aTwoPI = NAN, aMaxCoef = NAN, aPrecision = NAN;
 	//
 	aTwoPI=M_PI+M_PI;
 	NbRoots=MTFR.NbSolutions();
@@ -163,7 +165,7 @@ ExtremaExtElC_TrigonometricRoots::
 	
 	SvNbRoots=NbRoots;
 	for(i=0; i<SvNbRoots; ++i) {
-	  Standard_Real y;
+	  Standard_Real y = NAN;
 	  Standard_Real co=cos(Roots[i]);
 	  Standard_Real si=sin(Roots[i]);
 	  y=co*(CC*co + (SC+SC)*si + C) + S*si + Cte;
@@ -175,7 +177,7 @@ ExtremaExtElC_TrigonometricRoots::
 	}
 	//
 	do {
-	  Standard_Real t;
+	  Standard_Real t = NAN;
 	  //
 	  Triee=Standard_True;
 	  for(i=1, j=0; i<SvNbRoots; ++i, ++j) {
@@ -225,11 +227,11 @@ ExtremaExtElC_TrigonometricRoots::
 //function : Extrema_ExtElC
 //purpose  : 
 //=======================================================================
-Extrema_ExtElC::Extrema_ExtElC () 
+Extrema_ExtElC::Extrema_ExtElC () : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0) 
 {
-  myDone = Standard_False; 
-  myIsPar = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -241,7 +243,7 @@ Extrema_ExtElC::Extrema_ExtElC ()
 //=======================================================================
 Extrema_ExtElC::Extrema_ExtElC (const gp_Lin& theC1, 
 				const gp_Lin& theC2,
-				const Standard_Real)
+				const Standard_Real) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 // Function:
 //   Find min distance between 2 straight lines.
 
@@ -288,9 +290,9 @@ Extrema_ExtElC::Extrema_ExtElC (const gp_Lin& theC1,
 //   This system has one solution if (D1.D2)^2 != 1
 //   (if straight lines are not parallel).
 {
-  myDone = Standard_False;
-  myNbExt = 0;
-  myIsPar = Standard_False;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -452,15 +454,15 @@ Standard_Boolean Extrema_ExtElC::PlanarLineCircleExtrema(const gp_Lin& theLin,
 //=======================================================================
 Extrema_ExtElC::Extrema_ExtElC (const gp_Lin& C1, 
 				const gp_Circ& C2,
-				const Standard_Real)
+				const Standard_Real) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
-  Standard_Real Dx,Dy,Dz,aRO2O1, aTolRO2O1;
-  Standard_Real R, A1, A2, A3, A4, A5, aTol;
+  Standard_Real Dx = NAN,Dy = NAN,Dz = NAN,aRO2O1 = NAN, aTolRO2O1 = NAN;
+  Standard_Real R = NAN, A1 = NAN, A2 = NAN, A3 = NAN, A4 = NAN, A5 = NAN, aTol = NAN;
   gp_Dir x2, y2, z2, D, D1;
   //
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -574,8 +576,8 @@ Extrema_ExtElC::Extrema_ExtElC (const gp_Lin& C1,
     return; 
   }
   // Storage of solutions ...
-  Standard_Integer NoSol, NbSol;
-  Standard_Real U1,U2;
+  Standard_Integer NoSol = 0, NbSol = 0;
+  Standard_Real U1 = NAN,U2 = NAN;
   gp_Pnt P1,P2;
   //
   NbSol = Sol.NbSolutions();
@@ -600,7 +602,7 @@ Extrema_ExtElC::Extrema_ExtElC (const gp_Lin& C1,
 //purpose  : 
 //=======================================================================
 Extrema_ExtElC::Extrema_ExtElC (const gp_Lin& C1,
-				const gp_Elips& C2)
+				const gp_Elips& C2) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
 /*-----------------------------------------------------------------------------
 Function:
@@ -633,9 +635,9 @@ Method:
       MinR*MajR*Dx*Dy                = 0.
   Use algorithm math_TrigonometricFunctionRoots to solve this equation.
 -----------------------------------------------------------------------------*/
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -693,7 +695,7 @@ Method:
 
 // Storage of solutions ...
   gp_Pnt P1,P2;
-  Standard_Real U1,U2;
+  Standard_Real U1 = NAN,U2 = NAN;
   Standard_Integer NbSol = Sol.NbSolutions();
   for (Standard_Integer NoSol = 1; NoSol <= NbSol; NoSol++) {
     U2 = Sol.Value(NoSol);
@@ -713,7 +715,7 @@ Method:
 //purpose  : 
 //=======================================================================
 Extrema_ExtElC::Extrema_ExtElC (const gp_Lin& C1, 
-				const gp_Hypr& C2)
+				const gp_Hypr& C2) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
 /*-----------------------------------------------------------------------------
 Function:
@@ -750,9 +752,9 @@ Method:
 
   Use the algorithm math_DirectPolynomialRoots to solve this equation.
 -----------------------------------------------------------------------------*/
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -794,7 +796,7 @@ Method:
 
 // Store solutions ...
   gp_Pnt P1,P2;
-  Standard_Real U1,U2, v;
+  Standard_Real U1 = NAN,U2 = NAN, v = NAN;
   Standard_Integer NbSol = Sol.NbSolutions();
   for (Standard_Integer NoSol = 1; NoSol <= NbSol; NoSol++) {
     v = Sol.Value(NoSol);
@@ -816,7 +818,7 @@ Method:
 //purpose  : 
 //=======================================================================
 Extrema_ExtElC::Extrema_ExtElC (const gp_Lin& C1, 
-				const gp_Parab& C2)
+				const gp_Parab& C2) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
 /*-----------------------------------------------------------------------------
 Function:
@@ -849,9 +851,9 @@ Method:
 
   Use the algorithm math_DirectPolynomialRoots to solve this equation.
 -----------------------------------------------------------------------------*/
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -888,7 +890,7 @@ Method:
 
 // Storage of solutions ...
   gp_Pnt P1,P2;
-  Standard_Real U1,U2;
+  Standard_Real U1 = NAN,U2 = NAN;
   Standard_Integer NbSol = Sol.NbSolutions();
   for (Standard_Integer NoSol = 1; NoSol <= NbSol; NoSol++) {
     U2 = Sol.Value(NoSol);
@@ -907,16 +909,16 @@ Method:
 //purpose  : 
 //=======================================================================
 Extrema_ExtElC::Extrema_ExtElC (const gp_Circ& C1, 
-				const gp_Circ& C2)
+				const gp_Circ& C2) : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
-  Standard_Boolean bIsSamePlane, bIsSameAxe;
-  Standard_Real aTolD, aTolD2, aTolA, aD2, aDC2;
+  Standard_Boolean bIsSamePlane = 0, bIsSameAxe = 0;
+  Standard_Real aTolD = NAN, aTolD2 = NAN, aTolA = NAN, aD2 = NAN, aDC2 = NAN;
   gp_Pnt aPc1, aPc2;
   gp_Dir aDc1, aDc2;
   //
-  myIsPar = Standard_False;
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
+  
   for (size_t anIdx = 0; anIdx < sizeof (mySqDist) / sizeof (mySqDist[0]); anIdx++)
   {
     mySqDist[anIdx] = RealLast();
@@ -955,9 +957,9 @@ Extrema_ExtElC::Extrema_ExtElC (const gp_Circ& C1,
     return;
   }
 
-  Standard_Boolean bIn, bOut;
-  Standard_Integer j1, j2;
-  Standard_Real aR1, aR2, aD12, aT11, aT12, aT21, aT22;
+  Standard_Boolean bIn = 0, bOut = 0;
+  Standard_Integer j1 = 0, j2 = 0;
+  Standard_Real aR1 = NAN, aR2 = NAN, aD12 = NAN, aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN;
   gp_Circ aC1, aC2;
   gp_Pnt aP11, aP12, aP21, aP22;
   //
@@ -1025,8 +1027,8 @@ Extrema_ExtElC::Extrema_ExtElC (const gp_Circ& C1,
   bIn = aD12 < (aR1 - aR2 - aTolD);
   if (!bOut && !bIn)
   {
-    Standard_Boolean bNbExt6;
-    Standard_Real aAlpha, aBeta, aT[2], aVal, aDist2;
+    Standard_Boolean bNbExt6 = 0;
+    Standard_Real aAlpha = NAN, aBeta = NAN, aT[2], aVal = NAN, aDist2 = NAN;
     gp_Pnt aPt, aPL1, aPL2;
     gp_Dir aDLt;
     //
@@ -1135,8 +1137,8 @@ void Extrema_ExtElC::Points (const Standard_Integer N,
 //=======================================================================
 void RefineDir(gp_Dir& aDir)
 {
-  Standard_Integer i, j, k, iK;
-  Standard_Real aCx[3], aEps, aX1, aX2, aOne;
+  Standard_Integer i = 0, j = 0, k = 0, iK = 0;
+  Standard_Real aCx[3], aEps = NAN, aX1 = NAN, aX2 = NAN, aOne = NAN;
   //
   iK=3;
   aEps=RealEpsilon();

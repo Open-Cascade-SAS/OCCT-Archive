@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -65,9 +67,9 @@ IMPLEMENT_STANDARD_RTTIEXT(XSAlgo_AlgoContainer,Standard_Transient)
 //function : XSAlgo_AlgoContainer
 //purpose  : 
 //=======================================================================
-XSAlgo_AlgoContainer::XSAlgo_AlgoContainer()
+XSAlgo_AlgoContainer::XSAlgo_AlgoContainer() : myTC(new XSAlgo_ToolContainer)
 {
-  myTC = new XSAlgo_ToolContainer;
+  
 }
 
 //=======================================================================
@@ -284,13 +286,13 @@ TopoDS_Shape XSAlgo_AlgoContainer::PerformFixShape(const TopoDS_Shape& S,
 // Purpose : for CheckPCurve
 // ============================================================================
 
-static TopoDS_Edge MakeEdgeOnCurve(const TopoDS_Edge edge)
+static TopoDS_Edge MakeEdgeOnCurve(const TopoDS_Edge& edge)
 {
   TopoDS_Edge result;
   //BRep_Builder B; // B not used - see below (skl)
   Handle(Geom_Curve) C3d;
   ShapeAnalysis_Edge sae;
-  Standard_Real cf, cl;
+  Standard_Real cf = NAN, cl = NAN;
   if (!sae.Curve3d (edge, C3d, cf, cl, Standard_False )) 
     return result;
   gp_Pnt PV1 = C3d->Value(cf);
@@ -314,7 +316,7 @@ Standard_Boolean XSAlgo_AlgoContainer::CheckPCurve (const TopoDS_Edge& E,
 						    const Standard_Real preci,
 						    const Standard_Boolean isSeam) const
 {
-  Standard_Real w1, w2;  
+  Standard_Real w1 = NAN, w2 = NAN;  
   Handle(Geom2d_Curve) thePC;
   ShapeAnalysis_Edge sae;
   if ( ! sae.PCurve (E, face, thePC, w1, w2, Standard_False ) ) {
@@ -323,7 +325,7 @@ Standard_Boolean XSAlgo_AlgoContainer::CheckPCurve (const TopoDS_Edge& E,
 
   // Check for pcurve longer than surface
   Handle(Geom_Surface) surf = BRep_Tool::Surface(face);
-  Standard_Real UF,UL,VF,VL;
+  Standard_Real UF = NAN,UL = NAN,VF = NAN,VL = NAN;
   surf->Bounds (UF,UL,VF,VL);
   gp_Pnt2d PUV1, PUV2;
   PUV1 = thePC->Value(w1);
@@ -345,7 +347,7 @@ Standard_Boolean XSAlgo_AlgoContainer::CheckPCurve (const TopoDS_Edge& E,
   //  ex. : UVV en DEGRES sur une surface en RADIANS, recalee = 57 tours !
 
   Handle(Geom_Curve) C3d;
-  Standard_Real cf1, cl1;
+  Standard_Real cf1 = NAN, cl1 = NAN;
   sae.Curve3d (E, C3d, cf1, cl1, Standard_False );
 
   gp_Pnt P1 = surf->Value(PUV1.X(), PUV1.Y());
@@ -376,7 +378,7 @@ Standard_Boolean XSAlgo_AlgoContainer::CheckPCurve (const TopoDS_Edge& E,
   BRep_Builder B;
   Handle(Geom2d_Curve) seamPC;
   if ( isSeam ) {
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     TopoDS_Shape REdge = E.Reversed() ;
     if ( ! sae.PCurve ( TopoDS::Edge ( REdge ), 
 		        face, seamPC, f, l, Standard_False ) ||
@@ -422,7 +424,7 @@ Standard_Boolean XSAlgo_AlgoContainer::CheckPCurve (const TopoDS_Edge& E,
   // get corrected pcurve from the temporary edge, and put to original
   sae.PCurve ( edge, face, thePC, w1, w2, Standard_False );
   if ( isSeam ) {
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     TopoDS_Shape REdge = edge.Reversed();
     sae.PCurve ( TopoDS::Edge ( REdge ), face, seamPC, f, l, Standard_False );
     if ( E.Orientation() == TopAbs_REVERSED ) //:abv 14.11.01: coneEl.sat loop

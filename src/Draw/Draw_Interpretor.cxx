@@ -351,7 +351,7 @@ void Draw_Interpretor::add (const Standard_CString          theCommandName,
 
 Standard_Boolean Draw_Interpretor::Remove(Standard_CString const n)
 {
-  Standard_PCharacter pN;
+  Standard_PCharacter pN = nullptr;
   //
   pN=(Standard_PCharacter)n;
  
@@ -522,7 +522,7 @@ Standard_Integer Draw_Interpretor::PrintHelp (const Standard_CString theCommandN
 
 Standard_Boolean Draw_Interpretor::Complete(const Standard_CString line)
 {
-  Standard_PCharacter pLine;
+  Standard_PCharacter pLine = nullptr;
   //
   pLine=(Standard_PCharacter)line;
   return Tcl_CommandComplete (pLine) != 0;

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Curve.hxx>
 #include <Geom2dLProp_Curve2dTool.hxx>
 #include <Geom2dLProp_FuncCurNul.hxx>
@@ -36,7 +38,7 @@ Geom2dLProp_FuncCurNul::Geom2dLProp_FuncCurNul(const Handle(Geom2d_Curve)& C)
 Standard_Boolean Geom2dLProp_FuncCurNul::Value (const Standard_Real  X,
 					        Standard_Real& F)
 {
-  Standard_Real D;
+  Standard_Real D = NAN;
   return Values(X,F,D);
 }
 
@@ -47,7 +49,7 @@ Standard_Boolean Geom2dLProp_FuncCurNul::Value (const Standard_Real  X,
 Standard_Boolean Geom2dLProp_FuncCurNul::Derivative(const Standard_Real  X,
 			                            Standard_Real& D)
 {  
-  Standard_Real F;
+  Standard_Real F = NAN;
   return Values(X,F,D);
 }
 

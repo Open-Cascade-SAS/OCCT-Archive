@@ -63,7 +63,7 @@ private:
 
 
   Handle(StepVisual_PlanarBox) viewWindow;
-  Standard_Boolean viewWindowClipping;
+  Standard_Boolean viewWindowClipping{};
 
 
 };

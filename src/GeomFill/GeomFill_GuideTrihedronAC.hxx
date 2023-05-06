@@ -104,7 +104,7 @@ private:
   Handle(Approx_CurvlinFunc) myGuideAC;
   Standard_Real Lguide;
   Handle(Approx_CurvlinFunc) myCurveAC;
-  Standard_Real L;
+  Standard_Real L{};
   Handle(Adaptor3d_Curve) myCurve;
   Standard_Real UTol;
   Standard_Real STol;

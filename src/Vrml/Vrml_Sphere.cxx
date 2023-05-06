@@ -14,9 +14,9 @@
 
 #include <Vrml_Sphere.hxx>
 
-Vrml_Sphere::Vrml_Sphere(const Standard_Real aRadius)
+Vrml_Sphere::Vrml_Sphere(const Standard_Real aRadius) : myRadius(aRadius)
 {
-  myRadius = aRadius;
+  
 }
 
  void Vrml_Sphere::SetRadius(const Standard_Real aRadius) 

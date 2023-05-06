@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepTools_GTrsfModification.hxx>
 #include <Geom2d_Curve.hxx>
@@ -47,7 +49,7 @@ BRepTools_GTrsfModification::BRepTools_GTrsfModification(const gp_GTrsf& T) :
 myGTrsf(T)
 {
   // on prend comme dilatation maximale pour la tolerance la norme sup
-  Standard_Real loc1, loc2, loc3, loc4;
+  Standard_Real loc1 = NAN, loc2 = NAN, loc3 = NAN, loc4 = NAN;
 
   loc1 = Max(Abs(T.Value(1,1)), Abs(T.Value(1,2)));
   loc2 = Max(Abs(T.Value(2,1)), Abs(T.Value(2,2)));
@@ -145,7 +147,7 @@ Standard_Boolean BRepTools_GTrsfModification::NewCurve
  TopLoc_Location& L, 
  Standard_Real& Tol)
 {
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   gp_GTrsf gtrsf;
   gtrsf.SetVectorialPart(myGTrsf.VectorialPart());
   gtrsf.SetTranslationPart(myGTrsf.TranslationPart());
@@ -219,7 +221,7 @@ Standard_Boolean BRepTools_GTrsfModification::NewCurve2d
   TopLoc_Location loc;
   Tol = BRep_Tool::Tolerance(E);
   Tol *= myGScale;
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   C = BRep_Tool::CurveOnSurface(E,F,f,l);
   if (C.IsNull())
   {
@@ -299,7 +301,7 @@ Standard_Boolean BRepTools_GTrsfModification::NewTriangulation(const TopoDS_Face
     for (Standard_Integer anInd = 1; anInd <= theTriangulation->NbTriangles(); ++anInd)
     {
       Poly_Triangle aTria = theTriangulation->Triangle(anInd);
-      Standard_Integer aN1, aN2, aN3;
+      Standard_Integer aN1 = 0, aN2 = 0, aN3 = 0;
       aTria.Get(aN1, aN2, aN3);
       aTria.Set(aN1, aN3, aN2);
       theTriangulation->SetTriangle(anInd, aTria);

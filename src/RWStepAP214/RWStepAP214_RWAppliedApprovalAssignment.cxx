@@ -45,7 +45,7 @@ void RWStepAP214_RWAppliedApprovalAssignment::ReadStep
   
   Handle(StepAP214_HArray1OfApprovalItem) aItems;
   StepAP214_ApprovalItem aItemsItem;
-  Standard_Integer nsub2;
+  Standard_Integer nsub2 = 0;
   if (data->ReadSubList (num,2,"items",ach,nsub2)) {
     Standard_Integer nb2 = data->NbParams(nsub2);
     aItems = new StepAP214_HArray1OfApprovalItem (1, nb2);

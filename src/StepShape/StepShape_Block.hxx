@@ -70,9 +70,9 @@ private:
 
 
   Handle(StepGeom_Axis2Placement3d) position;
-  Standard_Real x;
-  Standard_Real y;
-  Standard_Real z;
+  Standard_Real x{};
+  Standard_Real y{};
+  Standard_Real z{};
 
 
 };

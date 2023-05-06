@@ -36,6 +36,7 @@
 #include <Standard_Version.hxx>
 #include <TCollection_AsciiString.hxx>
 
+#include <math.h>
 #include <tcl.h>
 
 #include <Standard_WarningDisableFunctionCast.hxx>
@@ -602,7 +603,7 @@ Standard_Boolean Draw_Interprete(const char* com)
 
   if (Draw_BeforeCommand) (*Draw_BeforeCommand) ();
 
-  Standard_Integer c;
+  Standard_Integer c = 0;
 
   c = theCommands.RecordAndEval(Tcl_DStringValue(&command));
 
@@ -735,7 +736,7 @@ namespace
   static bool parseNumericalColorComponent (const Standard_CString theColorComponentString,
                                             Standard_Integer&      theIntegerColorComponent)
   {
-    Standard_Integer anIntegerColorComponent;
+    Standard_Integer anIntegerColorComponent = 0;
     if (!Draw::ParseInteger (theColorComponentString, anIntegerColorComponent))
     {
       return false;
@@ -755,7 +756,7 @@ namespace
   static bool parseNumericalColorComponent (const Standard_CString theColorComponentString,
                                             Standard_ShortReal&    theRealColorComponent)
   {
-    Standard_Real aRealColorComponent;
+    Standard_Real aRealColorComponent = NAN;
     if (!Draw::ParseReal (theColorComponentString, aRealColorComponent))
     {
       return false;
@@ -777,7 +778,7 @@ namespace
   static bool parseColorComponent (const Standard_CString theColorComponentString,
                                    Standard_ShortReal&    theColorComponent)
   {
-    Standard_Integer anIntegerColorComponent;
+    Standard_Integer anIntegerColorComponent = 0;
     if (parseNumericalColorComponent (theColorComponentString, anIntegerColorComponent))
     {
       if (anIntegerColorComponent == 1)
@@ -893,7 +894,7 @@ Standard_Integer Draw::parseColor (const Standard_Integer   theArgNb,
     if (theArgNb >= 2 && theToParseAlpha)
     {
       const Standard_CString anAlphaStr = theArgVec[1];
-      Standard_ShortReal     anAlphaComponent;
+      Standard_ShortReal     anAlphaComponent = NAN;
       if (parseColorComponent (anAlphaStr, anAlphaComponent))
       {
         theColor.SetAlpha (anAlphaComponent);

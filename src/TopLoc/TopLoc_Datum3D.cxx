@@ -59,7 +59,7 @@ void TopLoc_Datum3D::DumpJson (Standard_OStream& theOStream, Standard_Integer th
 void  TopLoc_Datum3D::ShallowDump(Standard_OStream& S) const 
 {
   S << " TopLoc_Datum3D " << (void*)this << std::endl;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   gp_Trsf T = myTrsf;
   for (i = 1; i<=3; i++) {
     S<<"  ( "<<std::setw(10)<<T.Value(i,1);

@@ -161,7 +161,7 @@ Handle(StepData_EDescr)  StepData_Protocol::Descr
   }
   if (!anylevel) return sd;
 
-  Standard_Integer i, nb = NbResources();
+  Standard_Integer i = 0, nb = NbResources();
   for (i = 1; i <= nb; i ++) {
     Handle(StepData_Protocol) sp = Handle(StepData_Protocol)::DownCast(Resource(i));
     if (sp.IsNull()) continue;
@@ -182,7 +182,7 @@ Handle(StepData_ESDescr)  StepData_Protocol::ESDescr
 Handle(StepData_ECDescr)  StepData_Protocol::ECDescr
   (const TColStd_SequenceOfAsciiString& names, const Standard_Boolean anylevel) const
 {
-  Standard_Integer i, nb = names.Length();
+  Standard_Integer i = 0, nb = names.Length();
   Handle(StepData_ECDescr) cd;
   Interface_DataMapIteratorOfDataMapOfTransientInteger iter(thedscnum);
   for (; iter.More(); iter.Next()) {
@@ -227,7 +227,7 @@ Handle(StepData_PDescr)  StepData_Protocol::PDescr
   }
   if (!anylevel) return sd;
 
-  Standard_Integer i, nb = NbResources();
+  Standard_Integer i = 0, nb = NbResources();
   for (i = 1; i <= nb; i ++) {
     Handle(StepData_Protocol) sp = Handle(StepData_Protocol)::DownCast(Resource(i));
     if (sp.IsNull()) continue;
@@ -256,7 +256,7 @@ Handle(StepData_EDescr)  StepData_Protocol::BasicDescr
   }
   if (!anylevel) return sd;
 
-  Standard_Integer i, nb = NbResources();
+  Standard_Integer i = 0, nb = NbResources();
   for (i = 1; i <= nb; i ++) {
     Handle(StepData_Protocol) sp = Handle(StepData_Protocol)::DownCast(Resource(i));
     if (sp.IsNull()) continue;

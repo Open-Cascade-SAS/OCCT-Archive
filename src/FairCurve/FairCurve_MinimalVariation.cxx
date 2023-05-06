@@ -20,6 +20,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <FairCurve_EnergyOfMVC.hxx>
 #include <FairCurve_MinimalVariation.hxx>
@@ -59,8 +61,8 @@ Standard_Boolean FairCurve_MinimalVariation::Compute(FairCurve_AnalysisCode& ACo
   Standard_Real AngleMax = 0.7;      // parameter regulating the function of increment ( 40 degrees )
   Standard_Real AngleMin = 2*M_PI/100; // parameter regulating the function of increment 
                                      // full passage should not contain more than 100 steps.
-  Standard_Real DAngle1, DAngle2,  DRho1, DRho2, Ratio, Fraction, Toler;
-  Standard_Real OldDist, NewDist;
+  Standard_Real DAngle1 = NAN, DAngle2 = NAN,  DRho1 = NAN, DRho2 = NAN, Ratio = NAN, Fraction = NAN, Toler = NAN;
+  Standard_Real OldDist = NAN, NewDist = NAN;
 
 //  Loop of Homotopy : calculation of the step and optimisation 
 
@@ -140,12 +142,12 @@ Standard_Boolean FairCurve_MinimalVariation::Compute(const gp_Vec2d& DeltaP1,
 						     const Standard_Real Tolerance)
 //======================================================================================
 {
- Standard_Boolean Ok, OkCompute=Standard_True;
+ Standard_Boolean Ok = 0, OkCompute=Standard_True;
  ACode = FairCurve_OK;
 
 // Deformation of the curve by adding a polynom of interpolation
    Standard_Integer L = 2 + NewConstraintOrder1 + NewConstraintOrder2,
-                    kk, ii;
+                    kk = 0, ii = 0;
 //                    NbP1 = Poles->Length()-1, kk, ii;
 #ifdef OCCT_DEBUG
    Standard_Integer NbP1 = 
@@ -251,7 +253,7 @@ Standard_Boolean FairCurve_MinimalVariation::Compute(const gp_Vec2d& DeltaP1,
 
 // Intermediaires
 
- Standard_Real Angle1, Angle2, SlidingLength, 
+ Standard_Real Angle1 = NAN, Angle2 = NAN, SlidingLength = NAN, 
                Alph1 =  OldAngle1 + DeltaAngle1, 
                Alph2 =  OldAngle2 + DeltaAngle2,
                Rho1 =   OldCurvature1 + DeltaCurvature1,
@@ -356,7 +358,7 @@ Standard_Boolean FairCurve_MinimalVariation::Compute(const gp_Vec2d& DeltaP1,
     OldPhysicalRatio =  NewPhysicalRatio;
   }
   else {
-    Standard_Real V;
+    Standard_Real V = NAN;
     ACode = EMVC.Status();
     if (!LBatten.Value(0, V) || !LBatten.Value(1, V)) {
        ACode = FairCurve_NullHeight;

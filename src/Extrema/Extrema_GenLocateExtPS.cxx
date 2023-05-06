@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_GenLocateExtPS.hxx>
 
 #include <Extrema_FuncPSNorm.hxx>
@@ -38,7 +40,7 @@ static void CorrectTol(const Standard_Real theU0, const Standard_Real theV0,
   if (epsu > anEpsRef)
   {
     Standard_Integer n = RealToInt(tolog10 * Log(epsu / anEpsRef) + 1) + 1;
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real tol = aTolRef;
     for (i = 1; i <= n; ++i)
     {
@@ -50,7 +52,7 @@ static void CorrectTol(const Standard_Real theU0, const Standard_Real theV0,
   if (epsv > anEpsRef)
   {
     Standard_Integer n = RealToInt(tolog10 * Log(epsv / anEpsRef) + 1) + 1;
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real tol = aTolRef;
     for (i = 1; i <= n; ++i)
     {
@@ -69,10 +71,10 @@ Standard_Boolean Extrema_GenLocateExtPS::IsMinDist(const gp_Pnt& theP, const Ada
 {
   Standard_Real du = Max(theS.UResolution(10.*Precision::Confusion()), 10.*Precision::PConfusion());
   Standard_Real dv = Max(theS.VResolution(10.*Precision::Confusion()), 10.*Precision::PConfusion());
-  Standard_Real u, v;
+  Standard_Real u = NAN, v = NAN;
   gp_Pnt aP0 = theS.Value(theU0, theV0);
   Standard_Real d0 = theP.SquareDistance(aP0);
-  Standard_Integer iu, iv;
+  Standard_Integer iu = 0, iv = 0;
   for (iu = -1; iu <= 1; ++iu)
   {
     u = theU0 + iu * du;
@@ -207,7 +209,7 @@ void Extrema_GenLocateExtPS::Perform(const gp_Pnt& theP,
     Standard_Real aNbExt = F.NbExt();
     mySqDist = F.SquareDistance(1);
     myPoint = F.Point(1);
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i = 2; i <= aNbExt; ++i)
     {
       if (F.SquareDistance(i) < mySqDist)

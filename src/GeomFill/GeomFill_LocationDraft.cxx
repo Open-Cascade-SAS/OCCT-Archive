@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomFill_LocationDraft.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -48,18 +50,18 @@ IMPLEMENT_STANDARD_RTTIEXT(GeomFill_LocationDraft,GeomFill_LocationLaw)
 //==================================================================
 GeomFill_LocationDraft::GeomFill_LocationDraft
  (const gp_Dir& Direction,
-  const Standard_Real Angle)
+  const Standard_Real Angle) : myDir(Direction), myAngle(Angle), myNbPts(41), Intersec(Standard_False), WithTrans(Standard_False)
 {
-  myDir = Direction; // direction de depouille
+  // direction de depouille
  
-  myAngle = Angle; // angle de depouille (teta prime)
+  // angle de depouille (teta prime)
 
   mySurf.Nullify();
   myLaw = new (GeomFill_DraftTrihedron)(myDir, Angle); // triedre
-  myNbPts = 41; // nb de points utilises pour les calculs
+  // nb de points utilises pour les calculs
   myPoles2d = new (TColgp_HArray1OfPnt2d)(1, 2*myNbPts);
-  Intersec = Standard_False; //intersection avec surface d'arret ?
-  WithTrans = Standard_False;
+  //intersection avec surface d'arret ?
+  
 }
 
 
@@ -146,8 +148,8 @@ GeomFill_LocationDraft::GeomFill_LocationDraft
 
   Intersec = Standard_True;
 
-  Standard_Integer ii,jj; 
-  Standard_Real f, l, t;
+  Standard_Integer ii = 0,jj = 0; 
+  Standard_Real f = NAN, l = NAN, t = NAN;
   gp_Pnt P;
   gp_Vec D,T,N,B; 
   Handle(Geom_Line) L;
@@ -213,7 +215,7 @@ GeomFill_LocationDraft::GeomFill_LocationDraft
 					     gp_Mat& M,
 					     gp_Vec& V)
 {
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   gp_Vec T,N,B;
   gp_Pnt P;
 
@@ -240,7 +242,7 @@ GeomFill_LocationDraft::GeomFill_LocationDraft
 					     gp_Vec& V,
 					     TColgp_Array1OfPnt2d& Poles2d)
 { 
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
 //  gp_Vec D,T,N,B,DT,DN,DB;
   gp_Vec D,T,N,B;
   gp_Pnt P;
@@ -263,7 +265,7 @@ GeomFill_LocationDraft::GeomFill_LocationDraft
     Handle(Geom_Line) L = new (Geom_Line) (P, D);
     Handle(GeomAdaptor_Curve) G = new (GeomAdaptor_Curve) (L); 
     
-    Standard_Real t1,t2,Paramt1,t2Param;
+    Standard_Real t1 = NAN,t2 = NAN,Paramt1 = NAN,t2Param = NAN;
     Standard_Real U0=0,V0=0,W0=0;
     
     Standard_Integer ii = 1; 
@@ -349,7 +351,7 @@ GeomFill_LocationDraft::GeomFill_LocationDraft
 					     TColgp_Array1OfPnt2d& Poles2d,
 					     TColgp_Array1OfVec2d& DPoles2d) 
 {  
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   gp_Vec D,T,N,B,DT,DN,DB;
   gp_Pnt P;
 
@@ -375,7 +377,7 @@ GeomFill_LocationDraft::GeomFill_LocationDraft
       Handle(Geom_Line) L = new (Geom_Line) (P, D);
       Handle(GeomAdaptor_Curve) G = new (GeomAdaptor_Curve) (L); 
   
-      Standard_Real t1,t2,Paramt1,t2Param;
+      Standard_Real t1 = NAN,t2 = NAN,Paramt1 = NAN,t2Param = NAN;
       Standard_Real U0=0,V0=0,W0=0;
 
       Standard_Integer ii = 1; 
@@ -485,7 +487,7 @@ GeomFill_LocationDraft::GeomFill_LocationDraft
 					     TColgp_Array1OfVec2d& DPoles2d,
 					     TColgp_Array1OfVec2d& D2Poles2d) 
 {
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   gp_Vec D,T,N,B,DT,DN,DB,D2T,D2N,D2B;
   gp_Pnt P;
 
@@ -513,7 +515,7 @@ GeomFill_LocationDraft::GeomFill_LocationDraft
       Handle(Geom_Line) L = new (Geom_Line) (P, D);
       Handle(GeomAdaptor_Curve) G = new (GeomAdaptor_Curve) (L); 
   
-      Standard_Real t1,t2,Paramt1,t2Param;
+      Standard_Real t1 = NAN,t2 = NAN,Paramt1 = NAN,t2Param = NAN;
       Standard_Real U0=0,V0=0,W0=0;
   
       Standard_Integer ii = 1; 
@@ -752,8 +754,8 @@ void GeomFill_LocationDraft::Resolution (const Standard_Integer Index,
  void GeomFill_LocationDraft::GetAverageLaw(gp_Mat& AM,
 					    gp_Vec& AV) 
 {
-  Standard_Integer ii;
-  Standard_Real U, delta;
+  Standard_Integer ii = 0;
+  Standard_Real U = NAN, delta = NAN;
   gp_Vec V1,V2,V3, V;
   
   myLaw->GetAverageLaw(V1, V2, V3);

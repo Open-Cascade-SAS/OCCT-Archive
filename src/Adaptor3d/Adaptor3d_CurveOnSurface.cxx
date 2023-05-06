@@ -14,6 +14,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <Adaptor3d_CurveOnSurface.hxx>
 
 #include <Adaptor2d_Curve2d.hxx>
@@ -242,9 +244,9 @@ static void Locate1Coord(const Standard_Integer Index,
 			 const Handle(Geom_BSplineCurve)& BSplC,
 			 gp_Pnt2d& LeftBot, gp_Pnt2d& RightTop)
 {
-  Standard_Real Comp1=0, DComp1=0, cur, f = 0.0, l = 0.0;
+  Standard_Real Comp1=0, DComp1=0, cur = NAN, f = 0.0, l = 0.0;
   Standard_Real Tol = Precision::PConfusion()/10;
-  Standard_Integer i = 1, Bnd1, Bnd2;
+  Standard_Integer i = 1, Bnd1 = 0, Bnd2 = 0;
   Standard_Boolean DIsNull= Standard_False; 
   TColStd_Array1OfReal Arr(1,BSplC->NbKnots());  BSplC->Knots(Arr);
   
@@ -346,7 +348,7 @@ static void Locate1Coord(const Standard_Integer Index,
 {
   Standard_Real Comp1=0,DComp1=0; 
   Standard_Real Tol = Precision::PConfusion()/10;
-  Standard_Integer i=1, Up=0, Up1, Up2, Down=0, Down1, Down2;
+  Standard_Integer i=1, Up=0, Up1 = 0, Up2 = 0, Down=0, Down1 = 0, Down2 = 0;
   Standard_Real cur = 0.;
 
   DIsNull= Standard_False; 
@@ -875,7 +877,7 @@ Standard_Integer Adaptor3d_CurveOnSurface::NbIntervals (const GeomAbs_Shape S) c
   if(S == myIntCont && !myIntervals.IsNull())
     return myIntervals->Length()-1;
   
-  Standard_Integer nu,nv,nc;
+  Standard_Integer nu = 0,nv = 0,nc = 0;
   nu=mySurface->NbUIntervals(S);
   nv=mySurface->NbVIntervals(S);
   nc=myCurve->NbIntervals(S);
@@ -887,7 +889,7 @@ Standard_Integer Adaptor3d_CurveOnSurface::NbIntervals (const GeomAbs_Shape S) c
   TColStd_Array1OfReal TabC(TabBuf(nu + nv + 3), 1, nc+1);
 
   Standard_Integer NbSample = 20;
-  Standard_Real U,V,Tdeb,Tfin;
+  Standard_Real U = NAN,V = NAN,Tdeb = NAN,Tfin = NAN;
   Tdeb=myCurve->FirstParameter();
   Tfin=myCurve->LastParameter();
 
@@ -1234,7 +1236,7 @@ gp_Vec Adaptor3d_CurveOnSurface::DN
 Standard_Real Adaptor3d_CurveOnSurface::Resolution
   (const Standard_Real R3d) const
 {
-  Standard_Real ru,rv;
+  Standard_Real ru = NAN,rv = NAN;
   ru = mySurface->UResolution(R3d);
   rv = mySurface->VResolution(R3d);
   return myCurve->Resolution(Min(ru,rv)); 
@@ -1648,7 +1650,7 @@ void Adaptor3d_CurveOnSurface::EvalKPart()
 
 void Adaptor3d_CurveOnSurface::EvalFirstLastSurf()
 { 
-  Standard_Real FirstPar,LastPar;
+  Standard_Real FirstPar = NAN,LastPar = NAN;
   gp_Pnt2d UV, LeftBot, RightTop;
   gp_Vec2d DUV;
   Standard_Real Tol= Precision::PConfusion()/10;
@@ -1756,7 +1758,7 @@ Standard_Boolean Adaptor3d_CurveOnSurface::LocatePart_RevExt(const gp_Pnt2d& UV,
       Locate2Coord(1,UV,DUV,S->FirstUParameter(),S->LastUParameter(),LeftBot,RightTop);
     } 
 
-    Standard_Real u1,u2,v1,v2;
+    Standard_Real u1 = NAN,u2 = NAN,v1 = NAN,v2 = NAN;
     ReverseParam(LeftBot.X(),RightTop.X(),u1,u2);
     LeftBot.SetX(u1);
     RightTop.SetX(u2);

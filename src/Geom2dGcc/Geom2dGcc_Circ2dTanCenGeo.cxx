@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_ExtPC2d.hxx>
 #include <Extrema_POnCurv2d.hxx>
 #include <GccEnt_BadQualifier.hxx>
@@ -59,7 +61,7 @@ Geom2dGcc_Circ2dTanCenGeo (const Geom2dGcc_QCurve&  Qualified1,
   Standard_Integer i = 1;
   Standard_Integer nbsol = 0;
   gp_Dir2d dirx(1.0,0.0);
-  Standard_Real thePar;
+  Standard_Real thePar = NAN;
   Geom2dAdaptor_Curve curve = Qualified1.Qualified();
   Extrema_ExtPC2d distmin(Pcenter, curve, Geom2dGcc_CurveTool::FirstParameter(curve),
                           Geom2dGcc_CurveTool::LastParameter(curve), Tol);
@@ -89,7 +91,7 @@ Geom2dGcc_Circ2dTanCenGeo (const Geom2dGcc_QCurve&  Qualified1,
     Standard_Real normetan1 = Tan1.Magnitude();
     gp_Vec2d Vec1(point1,Pcenter);
     Standard_Real normevec1 = Vec1.Magnitude();
-    Standard_Real dot1;
+    Standard_Real dot1 = NAN;
     if (normevec1 >= gp::Resolution() && normetan1 >= gp::Resolution()) {
       dot1 = Vec1.Dot(Tan1)/(normevec1*normetan1);
     }

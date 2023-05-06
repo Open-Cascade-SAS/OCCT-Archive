@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <Adaptor3d_HSurfaceTool.hxx>
 #include <Adaptor3d_TopolTool.hxx>
@@ -236,10 +238,10 @@ static void ProcessSegments (const Contap_TheSearch&,
 static void Recadre(const Handle(Adaptor3d_Surface)& myHS1,
                     Standard_Real& u1,
                     Standard_Real& v1) { 
-                      Standard_Real f,l,lmf;
+                      Standard_Real f = NAN,l = NAN,lmf = NAN;
                       GeomAbs_SurfaceType typs1 = myHS1->GetType();
 
-                      Standard_Boolean myHS1IsUPeriodic,myHS1IsVPeriodic;
+                      Standard_Boolean myHS1IsUPeriodic = 0,myHS1IsVPeriodic = 0;
                       switch (typs1) { 
   case GeomAbs_Cylinder:
   case GeomAbs_Cone:
@@ -288,7 +290,7 @@ static void LineConstructor(Contap_TheSequenceOfLine& slin,
                               Contap_IType typl = L.TypeContour();
                               //-- std::cout<<"\n ----------- Ligne Constructor "<<std::endl;
                               if(typl == Contap_Walking) { 
-                                Standard_Real u1,v1,u2,v2;
+                                Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
                                 Standard_Integer nbvtx = L.NbVertex();
                                 //-- std::cout<<" WLine -> "<<nbvtx<<" vtx"<<std::endl;
                                 for(Standard_Integer i=1;i<nbvtx;i++) { 
@@ -330,7 +332,7 @@ static void LineConstructor(Contap_TheSequenceOfLine& slin,
                                 }
                               }
                               else if(typl==Contap_Lin) { 
-                                Standard_Real u2,v2;// u1,v1;
+                                Standard_Real u2 = NAN,v2 = NAN;// u1,v1;
                                 Standard_Integer nbvtx = L.NbVertex();
                                 //-- std::cout<<" Lin -> "<<nbvtx<<" vtx"<<std::endl;
                                 for(Standard_Integer i=1;i<nbvtx;i++) { 
@@ -369,7 +371,7 @@ static void LineConstructor(Contap_TheSequenceOfLine& slin,
                                 }
                               }
                               else if(typl==Contap_Circle) { 
-                                Standard_Real u2,v2; //u1,v1,
+                                Standard_Real u2 = NAN,v2 = NAN; //u1,v1,
                                 Standard_Integer nbvtx = L.NbVertex();
                                 //-- std::cout<<" Circ -> "<<nbvtx<<" vtx"<<std::endl;
                                 Standard_Boolean novtx = Standard_True;
@@ -472,10 +474,10 @@ static void KeepInsidePoints(const Contap_TheSearchInside& solins,
 
 {
   Standard_Integer Nba = solrst.NbSegments();
-  Standard_Integer Nbp,indp,inda;
-  Standard_Real U,V,paramproj;
+  Standard_Integer Nbp = 0,indp = 0,inda = 0;
+  Standard_Real U = NAN,V = NAN,paramproj = NAN;
   gp_Pnt2d toproj,Ptproj;
-  Standard_Boolean projok,tokeep;
+  Standard_Boolean projok = 0,tokeep = 0;
   const Handle(Adaptor3d_Surface)& Surf = Func.Surface();
 
   Nbp = solins.NbPoints();
@@ -509,14 +511,14 @@ static void ComputeTangency (const Contap_TheSearch& solrst,
                              TColStd_Array1OfInteger& Destination)
 {
 
-  Standard_Integer i,k;
+  Standard_Integer i = 0,k = 0;
   Standard_Integer NbPoints = solrst.NbPoints();
   Standard_Integer seqlength = 0;
 
-  Standard_Real theparam,test;
-  Standard_Boolean fairpt;
+  Standard_Real theparam = NAN,test = NAN;
+  Standard_Boolean fairpt = 0;
   TopAbs_Orientation arcorien,vtxorien;
-  Standard_Boolean ispassing;
+  Standard_Boolean ispassing = 0;
 
   math_Vector X(1, 2);
   math_Vector F(1, 1);
@@ -545,7 +547,7 @@ static void ComputeTangency (const Contap_TheSearch& solrst,
         SurUneRestrictionSolution==Standard_False && restriction<=solrst.NbSegments(); 
         restriction++) { 
           const Handle(Adaptor2d_Curve2d)& thearcsol = solrst.Segment(restriction).Curve();
-          Standard_Real  paramproj;
+          Standard_Real  paramproj = NAN;
           gp_Pnt2d       pproj;
           Standard_Boolean projok = Contap_HContTool::Project(thearcsol,Ptoproj,paramproj,pproj);
           if(projok) { 
@@ -804,7 +806,7 @@ IntSurf_TypeTrans ComputeTransitionOnLine(Contap_SurfFunction& SFunc,
   //--   Calcul de la tangente dans l espace uv        ---
   //------------------------------------------------------
 
-  Standard_Real det,d1uT,d1vT,normu2,normv2,d1ud1v,alpha,beta;
+  Standard_Real det = NAN,d1uT = NAN,d1vT = NAN,normu2 = NAN,normv2 = NAN,d1ud1v = NAN,alpha = NAN,beta = NAN;
   d1uT = d1u.Dot(tgline);
   d1vT = d1v.Dot(tgline);
   normu2 = d1u.Dot(d1u);
@@ -824,7 +826,7 @@ IntSurf_TypeTrans ComputeTransitionOnLine(Contap_SurfFunction& SFunc,
   //--  pour le contour apparent                       --
   //-----------------------------------------------------
 
-  Standard_Real v1,v2;
+  Standard_Real v1 = NAN,v2 = NAN;
   math_Vector X(1,2);
   math_Matrix Df(1,1,1,2);
   X(1) = u;
@@ -859,17 +861,17 @@ void ProcessSegments (const Contap_TheSearch& solrst,
                       const Handle(Adaptor3d_TopolTool)& Domain)
 
 {     
-  Standard_Integer i,j,k;
+  Standard_Integer i = 0,j = 0,k = 0;
   Standard_Integer nbedg = solrst.NbSegments();
-  Standard_Integer Nblines,Nbpts;
+  Standard_Integer Nblines = 0,Nbpts = 0;
 
   Handle(Adaptor2d_Curve2d) arcRef;
   Contap_Point ptvtx;
 
   Contap_ThePathPointOfTheSearch PStartf,PStartl;
 
-  Standard_Boolean dofirst,dolast,procf,procl;
-  Standard_Real paramf =0.,paraml =0.,U;
+  Standard_Boolean dofirst = 0,dolast = 0,procf = 0,procl = 0;
+  Standard_Real paramf =0.,paraml =0.,U = NAN;
   Contap_Line theline;
 
   gp_Vec tgline;//,norm1,norm2;
@@ -1008,13 +1010,13 @@ void ComputeInternalPointsOnRstr
   // 2eme etape : localisation de la solution par dichotomie
 
 
-  Standard_Integer indexinf,indexsup,i;
+  Standard_Integer indexinf = 0,indexsup = 0,i = 0;
   gp_Vec tgt, vecref, vectest, vtestb, vecregard,d1u,d1v;
   gp_Pnt pcour;
   gp_Pnt2d p2d;
   gp_Vec2d d2d;
-  Standard_Boolean found,ok = Standard_False,toutvu,solution;
-  Standard_Real paramp = 0.,paraminf,paramsup,toler;
+  Standard_Boolean found = 0,ok = Standard_False,toutvu = 0,solution = 0;
+  Standard_Real paramp = 0.,paraminf = NAN,paramsup = NAN,toler = NAN;
 
   if (Line.TypeContour() != Contap_Restriction) {
     return;
@@ -1156,11 +1158,11 @@ void ComputeInternalPoints
   // 2eme etape : localisation de la solution par simili dichotomie
 
 
-  Standard_Integer indexinf,indexsup,index;
+  Standard_Integer indexinf = 0,indexsup = 0,index = 0;
   gp_Vec tgt, vecref, vectest, vtestb, vecregard;
   //gp_Pnt pprec,pcour;
-  Standard_Boolean found,ok = Standard_False,toutvu,solution;
-  Standard_Real paramp = 0.,U,V;
+  Standard_Boolean found = 0,ok = Standard_False,toutvu = 0,solution = 0;
+  Standard_Real paramp = 0.,U = NAN,V = NAN;
 
   math_Vector XInf(1,2),XSup(1,2),X(1,2),F(1,1);
   math_Matrix DF(1,1,1,2);
@@ -1328,7 +1330,7 @@ void ComputeInternalPoints
             }
           }
 
-          Standard_Integer v;
+          Standard_Integer v = 0;
           if (!newpoint) {
             // on est sur un point de cheminement. On regarde alors
             // la correspondance avec un vertex existant.
@@ -1368,15 +1370,15 @@ void Contap_Contour::Perform
   done = Standard_False;
   slin.Clear();
 
-  Standard_Integer i,j,k,Nbvt1,Nbvt2,ivt1,ivt2;
-  Standard_Integer NbPointRst,NbPointIns;
-  Standard_Integer Nblines, Nbpts, indfirst, indlast;
-  Standard_Real U,V;
+  Standard_Integer i = 0,j = 0,k = 0,Nbvt1 = 0,Nbvt2 = 0,ivt1 = 0,ivt2 = 0;
+  Standard_Integer NbPointRst = 0,NbPointIns = 0;
+  Standard_Integer Nblines = 0, Nbpts = 0, indfirst = 0, indlast = 0;
+  Standard_Real U = NAN,V = NAN;
   gp_Pnt2d pt2d;
   gp_Vec2d d2d;
   gp_Pnt ptonsurf;
   gp_Vec d1u,d1v,normale,tgtrst,tgline;
-  Standard_Real currentparam;
+  Standard_Real currentparam = NAN;
   IntSurf_Transition TLine,TArc;
 
   Contap_Line theline;
@@ -1418,7 +1420,7 @@ void Contap_Contour::Perform
   else { 
     BndLib_AddSurface::Add (*Surf, 1e-8, B1);
   }
-  Standard_Real x0,y0,z0,x1,y1,z1,dx,dy,dz;
+  Standard_Real x0 = NAN,y0 = NAN,z0 = NAN,x1 = NAN,y1 = NAN,z1 = NAN,dx = NAN,dy = NAN,dz = NAN;
   if(Box1OK) { 
     B1.Get(x0,y0,z0,x1,y1,z1);
     dx=x1-x0;
@@ -1481,7 +1483,7 @@ void Contap_Contour::Perform
     }
 
     if(bKeepAllPoints) {
-      Standard_Integer Nbp = solins.NbPoints(), indp;
+      Standard_Integer Nbp = solins.NbPoints(), indp = 0;
       for (indp=1; indp <= Nbp; indp++) {
         const IntSurf_InteriorPoint& pti = solins.Value(indp);
         seqpins.Append(pti);
@@ -1667,14 +1669,14 @@ void Contap_Contour::Perform
         for (ivt1=1; ivt1<=Nbvt1; ivt1++) {
           Contap_Point& ptvt = theli.Vertex(ivt1);
           if (!ptvt.IsOnArc() && !ptvt.IsMultiple()) {
-            Standard_Real Up,Vp;
+            Standard_Real Up = NAN,Vp = NAN;
             ptvt.Parameters(Up,Vp);
             gp_Pnt2d toproj(Up,Vp);
-            Standard_Boolean projok;
+            Standard_Boolean projok = 0;
             for (k=1; k<=Nblines;k++) {
               if (slin(k).TypeContour() == Contap_Restriction) {
                 const Handle(Adaptor2d_Curve2d)& thearc = slin(k).Arc();
-                Standard_Real paramproj;
+                Standard_Real paramproj = NAN;
                 gp_Pnt2d Ptproj;
                 projok = Contap_HContTool::Project(thearc,toproj,paramproj,Ptproj);
 
@@ -1745,7 +1747,7 @@ static Standard_Boolean FindLine(Contap_Line& Line,
   //  Standard_Integer i;
   gp_Pnt pt,ptmin;
   gp_Vec tg;
-  Standard_Real para,dist;
+  Standard_Real para = NAN,dist = NAN;
   Standard_Real dismin = RealLast();
 
   Contap_SurfProps::Normale(Surf,Pt2d.X(),Pt2d.Y(),Ptref,Norm);
@@ -1782,13 +1784,13 @@ static void PutPointsOnLine (const Contap_TheSearch& solrst,
                              Contap_TheSequenceOfLine& slin)
 
 {
-  Standard_Integer i,l;//,index; 
+  Standard_Integer i = 0,l = 0;//,index; 
   Standard_Integer NbPoints = solrst.NbPoints();
 
-  Standard_Real theparam;
+  Standard_Real theparam = NAN;
 
   IntSurf_Transition TLine,TArc;
-  Standard_Boolean goon;
+  Standard_Boolean goon = 0;
 
   gp_Pnt2d pt2d;
   gp_Vec2d d2d;
@@ -1924,7 +1926,7 @@ void Contap_Contour::PerformAna(const Handle(Adaptor3d_TopolTool)& Domain)
 
   Standard_Real TolArc = 1.e-5;
 
-  Standard_Integer nbCont, nbPointRst, i;
+  Standard_Integer nbCont = 0, nbPointRst = 0, i = 0;
   //gp_Circ cirsol;
   //gp_Lin linsol;
   Contap_ContAna contana;

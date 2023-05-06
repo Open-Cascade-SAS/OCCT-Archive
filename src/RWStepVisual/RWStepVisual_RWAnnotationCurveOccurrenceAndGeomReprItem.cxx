@@ -47,7 +47,7 @@ const Handle(StepVisual_AnnotationCurveOccurrenceAndGeomReprItem)& ent) const
   // Inherited field : styles
   Handle(StepVisual_HArray1OfPresentationStyleAssignment) aStyles;
   Handle(StepVisual_PresentationStyleAssignment) anEnt;
-  Standard_Integer nsub;
+  Standard_Integer nsub = 0;
   if (data->ReadSubList(num, 1, "styles", ach, nsub)) {
     Standard_Integer nb = data->NbParams(nsub);
     aStyles = new StepVisual_HArray1OfPresentationStyleAssignment(1, nb);

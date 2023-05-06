@@ -120,9 +120,9 @@ private:
 
 
 
-  Standard_Integer thecurrentquantity;
+  Standard_Integer thecurrentquantity{};
   Handle(Units_QuantitiesSequence) thequantitiessequence;
-  Standard_Integer thecurrentunit;
+  Standard_Integer thecurrentunit{};
   Handle(Units_UnitsSequence) theunitssequence;
   Handle(TColStd_HSequenceOfInteger) theactiveunitssequence;
 

@@ -668,7 +668,7 @@ void TDocStd_Document::UpdateReferences(const TCollection_AsciiString& aDocEntry
 {
 
   TDF_AttributeList aRefList;
-  TDocStd_XLink* xRefPtr;
+  TDocStd_XLink* xRefPtr = nullptr;
   for (TDocStd_XLinkIterator xItr (this); xItr.More(); xItr.Next()) {
     xRefPtr = xItr.Value();
     if (xRefPtr->DocumentEntry() == aDocEntry) {

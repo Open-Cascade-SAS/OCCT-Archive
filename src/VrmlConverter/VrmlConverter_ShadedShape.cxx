@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <VrmlConverter_Drawer.hxx>
 #include <VrmlConverter_ShadedShape.hxx>
 #include <Vrml_Normal.hxx>
@@ -49,7 +51,7 @@ void VrmlConverter_ShadedShape::Add( Standard_OStream& anOStream,
   {
   Handle(Poly_Triangulation) T;
   TopLoc_Location theLocation;
-  Standard_Integer i, j, k, decal, nnv, EI;
+  Standard_Integer i = 0, j = 0, k = 0, decal = 0, nnv = 0, EI = 0;
   
   Standard_Integer t[3], n[3];
   gp_Pnt p;
@@ -60,7 +62,7 @@ void VrmlConverter_ShadedShape::Add( Standard_OStream& anOStream,
   
   Standard_Integer nbTriangles = 0, nbVertices = 0;
   
-  Standard_Integer nt, nnn, n1, n2, n3;
+  Standard_Integer nt = 0, nnn = 0, n1 = 0, n2 = 0, n3 = 0;
     
   // iterating on each face of the shape:
   for (ex.Init(aShape, TopAbs_FACE); ex.More(); ex.Next()) {  
@@ -357,7 +359,7 @@ void VrmlConverter_ShadedShape::ComputeNormal(const TopoDS_Face& aFace,
   const Handle(Poly_Triangulation)& T = pc.Triangulation();
   BRepAdaptor_Surface S;
   Standard_Boolean hasUV = T->HasUVNodes();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   TopLoc_Location l;
   Handle(Geom_Surface) GS = BRep_Tool::Surface(aFace, l);
 
@@ -366,7 +368,7 @@ void VrmlConverter_ShadedShape::ComputeNormal(const TopoDS_Face& aFace,
     gp_Vec D1U,D1V;
     gp_Vec D2U,D2V,D2UV;
     gp_Pnt P;
-    Standard_Real U, V;
+    Standard_Real U = NAN, V = NAN;
     CSLib_DerivativeStatus aStatus;
     CSLib_NormalStatus NStat;
     S.Initialize(aFace);

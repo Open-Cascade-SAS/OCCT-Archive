@@ -63,7 +63,7 @@ void RWStepShape_RWEdgeCurve::ReadStep
 
 	// --- own field : sameSense ---
 
-	Standard_Boolean aSameSense;
+	Standard_Boolean aSameSense = 0;
 	data->ReadBoolean (num,5,"same_sense",ach,aSameSense);
 
 	//--- Initialisation of the read entity ---
@@ -131,7 +131,7 @@ void RWStepShape_RWEdgeCurve::Check
   Standard_Boolean theFBOri2 = Standard_True;
   //Standard_Boolean theFSOri1 = Standard_True;
   //Standard_Boolean theFSOri2 = Standard_True;
-  Standard_Boolean Cumulated1, Cumulated2;
+  Standard_Boolean Cumulated1 = 0, Cumulated2 = 0;
 
   // 1- First Vertex != LastVertex but First VertexPoint == Last VertexPoint
   // Remark : time consuming process but useful !
@@ -169,7 +169,7 @@ void RWStepShape_RWEdgeCurve::Check
   // 2- Two-Manifold Topology
 
   Standard_Boolean sharEC = aShto.IsShared(ent);
-  Standard_Integer nbRef;
+  Standard_Integer nbRef = 0;
   if(!sharEC){
     ach->AddFail("ERROR: EdgeCurve not referenced");
   }

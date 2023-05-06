@@ -78,7 +78,7 @@ static void SplitFileName
    TCollection_AsciiString& fileroot,
    TCollection_AsciiString& suffix)
 {
-  Standard_Integer nomdeb, nomfin, nomlon;
+  Standard_Integer nomdeb = 0, nomfin = 0, nomlon = 0;
   TCollection_AsciiString resfile (filename);
   nomlon = resfile.Length();
   nomdeb = resfile.SearchFromEnd ("/");
@@ -240,7 +240,7 @@ static IFSelect_ReturnStatus fun8
   if (argc < 2) { sout<<"Give label to search"<<std::endl; return IFSelect_RetError; }
   if (!WS->HasModel()) { sout<<"No loaded model, abandon"<<std::endl; return IFSelect_RetError; }
   const Handle(Interface_InterfaceModel) &model = WS->Model();
-  Standard_Integer i, cnt = 0;
+  Standard_Integer i = 0, cnt = 0;
   Standard_Boolean exact = Standard_False;
   sout<<" **  Search Entity Number for Label : "<<arg1<<std::endl;
   for (i = model->NextNumberForLabel (arg1, 0, exact)  ; i != 0;
@@ -304,7 +304,7 @@ static IFSelect_ReturnStatus funcount
 //  Ajout : si Selection, on applique un GraphCounter
 //   Et en ce cas, on peut en avoir plusieurs : la limite est le mot-cle "on"
   Standard_Integer onflag = 0;
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = 2; i < argc; i ++) {
     if (!strcmp (pilot->Arg(i),"on")) { onflag = i; break; }
   }
@@ -388,7 +388,7 @@ static IFSelect_ReturnStatus funsigncase
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (signcase.IsNull()) sout<<"Not a Signature : "<<arg1<<std::endl;
   else {
-    Standard_Boolean hasmin,hasmax;  Standard_Integer valmin,valmax;
+    Standard_Boolean hasmin = 0,hasmax = 0;  Standard_Integer valmin = 0,valmax = 0;
     if (signcase->IsIntCase(hasmin,valmin,hasmax,valmax)) {
       sout<<"Signature "<<arg1<<" : Integer Case";
       if (hasmin) sout<<" - Mini:"<<valmin;
@@ -398,7 +398,7 @@ static IFSelect_ReturnStatus funsigncase
     Handle(TColStd_HSequenceOfAsciiString) caselist = signcase->CaseList();
     if (caselist.IsNull()) sout<<"Signature "<<arg1<<" : no predefined case, see command  count "<<arg1<<std::endl;
     else {
-      Standard_Integer i, nb = caselist->Length();
+      Standard_Integer i = 0, nb = caselist->Length();
       sout<<"Signature "<<arg1<<" : "<<nb<<" basic cases :"<<std::endl;
       for (i = 1; i <= nb; i ++) sout<<"  "<<caselist->Value(i);
       sout<<std::endl;
@@ -415,7 +415,7 @@ static IFSelect_ReturnStatus fun10
   Standard_Integer argc = pilot->NbWords();
   const Standard_CString arg1 = pilot->Arg(1);
 //        ****    Entity Status          ****
-  Standard_Integer i,nb;
+  Standard_Integer i = 0,nb = 0;
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (argc < 2) {
     nb = Interface_Category::NbCategories();
@@ -479,7 +479,7 @@ static IFSelect_ReturnStatus fundumpent
   Handle(IFSelect_WorkSession) WS = pilot->Session();
   Standard_Integer argc = pilot->NbWords();
   Handle(IFSelect_WorkLibrary) WL = WS->WorkLibrary();
-  Standard_Integer levdef=0,levmax=10,level;
+  Standard_Integer levdef=0,levmax=10,level = 0;
   WL->DumpLevels (levdef,levmax);
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (argc < 2 || (argc == 2 && levmax < 0)) {
@@ -788,7 +788,7 @@ static IFSelect_ReturnStatus fun24
     if (i < argc-1) label.AssignCat(" ");
   }
   for (int mode = 0; mode <= 2; mode ++) {
-    int nbitems = 0;  int id;
+    int nbitems = 0;  int id = 0;
     sout<<"Searching label : "<<label<<". in mode ";
     if (mode == 0) sout <<" exact" << std::endl;
     if (mode == 1) sout <<" same head" << std::endl;
@@ -849,7 +849,7 @@ static IFSelect_ReturnStatus fun27
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (argc < 2 || (argc == 3 && strcmp (arg1, "-p") == 0)) {
     Handle(TColStd_HSequenceOfHAsciiString) li = Interface_Static::Items();
-    Standard_Integer i,nb = li->Length(), aPatternNb = 0;
+    Standard_Integer i = 0,nb = li->Length(), aPatternNb = 0;
     size_t aPatternLen = strlen(arg2);
     if (argc == 3)
     {
@@ -913,7 +913,7 @@ static IFSelect_ReturnStatus fun29
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (list.IsNull())
     { sout<<"List of Sent Files not enabled"<<std::endl; return IFSelect_RetVoid; }
-  Standard_Integer i, nb = list->Length();
+  Standard_Integer i = 0, nb = list->Length();
   sout<<"  Sent Files : "<<nb<<" : "<<std::endl;
   for (i = 1; i <= nb; i ++)
     sout<<list->Value(i)->ToCString()<<std::endl; 
@@ -1085,7 +1085,7 @@ static IFSelect_ReturnStatus fun38
 //        ****    SetModelContent    ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (argc < 3) { sout<<"Donner nom selection et mode (k=keep,r=remove)"<<std::endl;  return IFSelect_RetError; }
-  Standard_Boolean keepmode;
+  Standard_Boolean keepmode = 0;
   DeclareAndCast(IFSelect_Selection,sel,WS->NamedItem(arg1));
   if (sel.IsNull())
     { sout<<"Pas de Selection de Nom : "<<arg1<<std::endl; return IFSelect_RetError; }
@@ -1219,7 +1219,7 @@ static IFSelect_ReturnStatus fun45
 //        ****    ModifMove         ****
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (argc < 4) { sout<<"modifmove MF rang1 rang2, M pour Model F pour File"<<std::endl; return IFSelect_RetError; }
-  Standard_Boolean formodel;
+  Standard_Boolean formodel = 0;
   if      (arg1[0] == 'm' || arg1[0] == 'M') formodel = Standard_True;
   else if (arg1[0] == 'f' || arg1[0] == 'F') formodel = Standard_False;
   else { sout<<"preciser M pour Model, F pour File"<<std::endl; return IFSelect_RetError; }
@@ -1370,7 +1370,7 @@ static IFSelect_ReturnStatus fun58
 		    <<"See also : evaladisp  writedisp  xsplit"<<std::endl;
 		  return IFSelect_RetVoid;  }
   Standard_Boolean OK = Standard_True;
-  Standard_Integer i , mode = atoi(arg1);  sout<<" Mode "<<mode<<"\n";
+  Standard_Integer i = 0 , mode = atoi(arg1);  sout<<" Mode "<<mode<<"\n";
   for (i = 2; i < argc; i ++) {
     DeclareAndCast(IFSelect_Dispatch,disp,WS->NamedItem(pilot->Arg(i)));
     if (disp.IsNull())
@@ -2136,7 +2136,7 @@ static IFSelect_ReturnStatus fun_editvalue
     listr = edf->EditedList(num);
     if (listr.IsNull()) sout<<"(NULL LIST)"<<std::endl;
     else {
-      Standard_Integer ilist,nblist = listr->Length();
+      Standard_Integer ilist = 0,nblist = listr->Length();
       sout<<"(List : "<<nblist<<" Items)"<<std::endl;
       for (ilist = 1; ilist <= nblist; ilist ++) {
 	str = listr->Value(ilist);

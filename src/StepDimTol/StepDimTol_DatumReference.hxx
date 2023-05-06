@@ -65,7 +65,7 @@ protected:
 private:
 
 
-  Standard_Integer myPrecedence;
+  Standard_Integer myPrecedence{};
   Handle(StepDimTol_Datum) myReferencedDatum;
 
 

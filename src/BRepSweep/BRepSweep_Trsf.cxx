@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepLProp.hxx>
@@ -89,7 +91,7 @@ Standard_Boolean BRepSweep_Trsf::Process(const TopoDS_Shape& aGenS,
 void BRepSweep_Trsf::SetContinuity(const TopoDS_Shape& aGenS, 
 				   const Sweep_NumShape& aDirS)
 {
-  Standard_Real tl = Precision::Confusion(), tol3d;
+  Standard_Real tl = Precision::Confusion(), tol3d = NAN;
   //angular etant un peu severe pour les contours sketches.
   Standard_Real ta = 0.00175;//environ 0.1 degre
   GeomAbs_Shape cont;
@@ -98,7 +100,7 @@ void BRepSweep_Trsf::SetContinuity(const TopoDS_Shape& aGenS,
     if (HasShape(aGenS,aDirS)){
       TopoDS_Edge E = TopoDS::Edge(aGenS);
       BRepAdaptor_Curve e;
-      Standard_Real ud,uf;
+      Standard_Real ud = NAN,uf = NAN;
       TopoDS_Vertex d,f;
       TopExp::Vertices(E,d,f);
       if(d.IsSame(f)){
@@ -122,7 +124,7 @@ void BRepSweep_Trsf::SetContinuity(const TopoDS_Shape& aGenS,
 			   Shape(aGenS,dirv),
 			   aGenS,aDirS,dirv)){
 	  TopLoc_Location Lo;
-	  Standard_Real fi,la;
+	  Standard_Real fi = NAN,la = NAN;
 	  cont = BRep_Tool::Curve(E,Lo,fi,la)->Continuity();
 	  if(cont >= 1){
 	    TopoDS_Shape s_wnt = Shape(aGenS,dirv);
@@ -138,7 +140,7 @@ void BRepSweep_Trsf::SetContinuity(const TopoDS_Shape& aGenS,
   else if(aGenS.ShapeType() == TopAbs_WIRE){
     TopoDS_Edge E1,E2;
     BRepAdaptor_Curve e1,e2;
-    Standard_Real u1,u2;
+    Standard_Real u1 = NAN,u2 = NAN;
     TopTools_IndexedDataMapOfShapeListOfShape M;
     TopExp::MapShapesAndAncestors(aGenS,TopAbs_VERTEX,TopAbs_EDGE,M);
     TopTools_ListIteratorOfListOfShape It,Jt;    

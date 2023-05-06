@@ -54,8 +54,8 @@ private:
 
 
 
-  Standard_Real theRealValue;
-  Standard_Integer theTypeOfContent;
+  Standard_Real theRealValue{};
+  Standard_Integer theTypeOfContent{};
 
 
 };

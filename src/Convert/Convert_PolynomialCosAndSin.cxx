@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Convert_PolynomialCosAndSin.hxx>
 
 #include <gp_Trsf2d.hxx>
@@ -64,18 +66,18 @@ void BuildPolynomialCosAndSin
    Handle(TColStd_HArray1OfReal)& DenominatorPtr)
 {
 
-  Standard_Real  Delta,
-  locUFirst,
+  Standard_Real  Delta = NAN,
+  locUFirst = NAN,
 //  locULast,
 //  temp_value,
-  t_min,
-  t_max,
-  trim_min,
-  trim_max,
-  middle,
-  Angle,
+  t_min = NAN,
+  t_max = NAN,
+  trim_min = NAN,
+  trim_max = NAN,
+  middle = NAN,
+  Angle = NAN,
   PI2 = 2*M_PI ;
-  Standard_Integer ii, degree = num_poles -1 ;
+  Standard_Integer ii = 0, degree = num_poles -1 ;
   locUFirst = UFirst ;
 
   // Return UFirst in [-2PI; 2PI]

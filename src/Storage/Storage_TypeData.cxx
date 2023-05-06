@@ -44,7 +44,7 @@ Standard_Boolean Storage_TypeData::Read (const Handle(Storage_BaseDriver)& theDr
     return Standard_False;
   }
 
-  Standard_Integer        aTypeNum;
+  Standard_Integer        aTypeNum = 0;
   TCollection_AsciiString aTypeName;
 
   Standard_Integer len = theDriver->TypeSectionSize();
@@ -88,7 +88,7 @@ Standard_Boolean Storage_TypeData::IsType(const TCollection_AsciiString& aName) 
 Handle(TColStd_HSequenceOfAsciiString) Storage_TypeData::Types() const
 {
   Handle(TColStd_HSequenceOfAsciiString) r = new TColStd_HSequenceOfAsciiString;
-  Standard_Integer                       i;
+  Standard_Integer                       i = 0;
 
   for (i = 1; i <= myPt.Extent(); i++) {
     r->Append(myPt.FindKey(i));

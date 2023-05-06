@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <RWStepVisual_RWPlanarExtent.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
@@ -39,13 +41,13 @@ void RWStepVisual_RWPlanarExtent::ReadStep
 
 	// --- own field : sizeInX ---
 
-	Standard_Real aSizeInX;
+	Standard_Real aSizeInX = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadReal (num,2,"size_in_x",ach,aSizeInX);
 
 	// --- own field : sizeInY ---
 
-	Standard_Real aSizeInY;
+	Standard_Real aSizeInY = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"size_in_y",ach,aSizeInY);
 

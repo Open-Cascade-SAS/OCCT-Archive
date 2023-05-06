@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_Chamf3dDimension.hxx>
 
 #include <PrsDim.hxx>
@@ -89,7 +91,7 @@ void PrsDim_Chamf3dDimension::Compute (const Handle(PrsMgr_PresentationManager)&
   // Calcul du centre de la face
   //----------------------------
   BRepAdaptor_Surface surfAlgo (TopoDS::Face(myFShape));
-  Standard_Real uFirst, uLast, vFirst, vLast;
+  Standard_Real uFirst = NAN, uLast = NAN, vFirst = NAN, vLast = NAN;
   uFirst = surfAlgo.FirstUParameter();
   uLast = surfAlgo.LastUParameter();
   vFirst = surfAlgo.FirstVParameter();

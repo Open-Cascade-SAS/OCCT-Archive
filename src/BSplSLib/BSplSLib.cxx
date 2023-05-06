@@ -21,6 +21,8 @@
 // pmn  07-10-96 : Correction de DN dans le cas rationnal.
 // pmn  06-02-97 : Correction des poids dans RationalDerivative. (PRO700)
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <BSplSLib.hxx>
 #include <gp_Pnt.hxx>
@@ -52,10 +54,10 @@ struct BSplSLib_DataContainer
         VDegree > BSplCLib::MaxDegree() || BSplCLib::MaxDegree() > 25,
         "BSplSLib: bspline degree is greater than maximum supported");
   }
-  Standard_Real poles[4*(25+1)*(25+1)];
-  Standard_Real knots1[2*25];
-  Standard_Real knots2[2*25];
-  Standard_Real ders[48];
+  Standard_Real poles[4*(25+1)*(25+1)]{};
+  Standard_Real knots1[2*25]{};
+  Standard_Real knots2[2*25]{};
+  Standard_Real ders[48]{};
 };
 
 //**************************************************************************
@@ -122,10 +124,10 @@ void  BSplSLib::RationalDerivative(const Standard_Integer UDeg,
   //     Numerator     Denominator      ...         Numerator          Denominator
   //
   //
-  Standard_Integer ii,jj,pp,qq,index,index1,index2;
-  Standard_Integer M1,M3,M4,N1,iiM1,iiM3,jjM1,ppM1,ppM3;
-  Standard_Integer MinN,MinN1,MinM,MinM1;
-  Standard_Integer index_u,index_u1,index_v,index_v1,index_w;
+  Standard_Integer ii = 0,jj = 0,pp = 0,qq = 0,index = 0,index1 = 0,index2 = 0;
+  Standard_Integer M1 = 0,M3 = 0,M4 = 0,N1 = 0,iiM1 = 0,iiM3 = 0,jjM1 = 0,ppM1 = 0,ppM3 = 0;
+  Standard_Integer MinN = 0,MinN1 = 0,MinM = 0,MinM1 = 0;
+  Standard_Integer index_u = 0,index_u1 = 0,index_v = 0,index_v1 = 0,index_w = 0;
 
   M1 = M + 1;
   N1 = N + 1;
@@ -137,7 +139,7 @@ void  BSplSLib::RationalDerivative(const Standard_Integer UDeg,
   Standard_Real *RArray = (All ? &RDerivatives : (Standard_Real*)StoreDerivatives);
   NCollection_LocalArray<Standard_Real> StoreW (ii);  
   Standard_Real *HomogeneousArray = &HDerivatives; 
-  Standard_Real denominator,Pii,Pip,Pjq;
+  Standard_Real denominator = NAN,Pii = NAN,Pip = NAN,Pjq = NAN;
   
   denominator = 1.0e0 / HomogeneousArray[3];
   index_u  = 0;
@@ -322,8 +324,8 @@ static Standard_Boolean  PrepareEval (const Standard_Real            U,
       vindex  = BSplCLib::PoleIndex(VDegree,vindex,VPer,*VMults);
 
     // get the poles
-    Standard_Integer i,j,ip,jp;
-    Standard_Real w, *pole = dc.poles;
+    Standard_Integer i = 0,j = 0,ip = 0,jp = 0;
+    Standard_Real w = NAN, *pole = dc.poles;
     d1 = UDegree;
     d2 = VDegree;
     Standard_Integer PLowerRow = Poles.LowerRow();
@@ -343,7 +345,7 @@ static Standard_Boolean  PrepareEval (const Standard_Real            U,
       
       w  = Weights->Value(ip,jp);
       Standard_Real eps = Epsilon(w);
-      Standard_Real dw;
+      Standard_Real dw = NAN;
 
       for (i = 0; i <= UDegree && !rational; i++)
         {
@@ -473,8 +475,8 @@ static Standard_Boolean  PrepareEval (const Standard_Real            U,
       vindex  = BSplCLib::PoleIndex(VDegree,vindex,VPer,*VMults);
 
     // get the poles
-    Standard_Integer i,j,ip,jp;
-    Standard_Real w, *pole = dc.poles;
+    Standard_Integer i = 0,j = 0,ip = 0,jp = 0;
+    Standard_Real w = NAN, *pole = dc.poles;
     d1 = VDegree;
     d2 = UDegree;
     Standard_Integer PLowerRow = Poles.LowerRow();
@@ -497,7 +499,7 @@ static Standard_Boolean  PrepareEval (const Standard_Real            U,
 
       w  = Weights->Value(ip,jp);
       Standard_Real eps = Epsilon(w);
-      Standard_Real dw;
+      Standard_Real dw = NAN;
 
       for (i = 0; i <= UDegree && !rational; i++)
         {
@@ -625,7 +627,7 @@ void  BSplSLib::D0
  gp_Pnt& P)
 {
 //  Standard_Integer k ;
-  Standard_Real W ;
+  Standard_Real W = NAN ;
   HomogeneousD0(U,
 		V, 
                 UIndex, 
@@ -674,11 +676,11 @@ void  BSplSLib::HomogeneousD0
  Standard_Real & W,
  gp_Pnt& P)
 {
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
 //  Standard_Integer k,dim;
-  Standard_Integer dim;
-  Standard_Real u1,u2;
-  Standard_Integer d1,d2;
+  Standard_Integer dim = 0;
+  Standard_Real u1 = NAN,u2 = NAN;
+  Standard_Integer d1 = 0,d2 = 0;
   W = 1.0e0 ;
   
   BSplSLib_DataContainer dc (UDegree, VDegree);
@@ -730,12 +732,12 @@ void  BSplSLib::D1
  gp_Vec& Vu,
  gp_Vec& Vv)
 {
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
 //  Standard_Integer k,dim,dim2;
-  Standard_Integer dim,dim2;
-  Standard_Real u1,u2;
-  Standard_Integer d1,d2;
-  Standard_Real *result, *resVu, *resVv;
+  Standard_Integer dim = 0,dim2 = 0;
+  Standard_Real u1 = NAN,u2 = NAN;
+  Standard_Integer d1 = 0,d2 = 0;
+  Standard_Real *result = nullptr, *resVu = nullptr, *resVv = nullptr;
   BSplSLib_DataContainer dc (UDegree, VDegree);
   if (PrepareEval
     (U,V,UIndex,VIndex,UDegree,VDegree,URat,VRat,UPer,VPer,
@@ -831,11 +833,11 @@ void  BSplSLib::HomogeneousD1
  Standard_Real& Du,
  Standard_Real& Dv)
 {
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
 //  Standard_Integer k,dim;
-  Standard_Integer dim;
-  Standard_Real u1,u2;
-  Standard_Integer d1,d2;
+  Standard_Integer dim = 0;
+  Standard_Real u1 = NAN,u2 = NAN;
+  Standard_Integer d1 = 0,d2 = 0;
   
   D = 1.0e0 ;
   Du = 0.0e0 ;
@@ -851,7 +853,7 @@ void  BSplSLib::HomogeneousD1
   BSplCLib::Bohm(u2,d2,1,*dc.knots2,dim,*dc.poles);
   BSplCLib::Eval(u2,d2,*dc.knots2,dim,*(dc.poles+dim*(d2+1)));
   
-  Standard_Real *result, *resVu, *resVv;
+  Standard_Real *result = nullptr, *resVu = nullptr, *resVv = nullptr;
   result = dc.poles;
   resVu  = result + (ufirst ? dim*(d2+1) : dim);
   resVv  = result + (ufirst ? dim : dim*(d2+1));
@@ -904,12 +906,12 @@ void  BSplSLib::D2
  gp_Vec& Vvv,
  gp_Vec& Vuv)
 {
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
 //  Standard_Integer k,dim,dim2;
-  Standard_Integer dim,dim2;
-  Standard_Real u1,u2;
-  Standard_Integer d1,d2;
-  Standard_Real *result, *resVu, *resVv, *resVuu, *resVvv, *resVuv;
+  Standard_Integer dim = 0,dim2 = 0;
+  Standard_Real u1 = NAN,u2 = NAN;
+  Standard_Integer d1 = 0,d2 = 0;
+  Standard_Real *result = nullptr, *resVu = nullptr, *resVv = nullptr, *resVuu = nullptr, *resVvv = nullptr, *resVuv = nullptr;
   BSplSLib_DataContainer dc (UDegree, VDegree);
   if (PrepareEval
       (U,V,UIndex,VIndex,UDegree,VDegree,URat,VRat,UPer,VPer,
@@ -1042,13 +1044,13 @@ void  BSplSLib::D3
  gp_Vec& Vuuv,
  gp_Vec& Vuvv)
 {
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
 //  Standard_Integer k,dim,dim2;
-  Standard_Integer dim,dim2;
-  Standard_Real u1,u2;
-  Standard_Integer d1,d2;
-  Standard_Real *result, *resVu, *resVv, *resVuu, *resVvv, *resVuv,
-  *resVuuu, *resVvvv, *resVuuv, *resVuvv;
+  Standard_Integer dim = 0,dim2 = 0;
+  Standard_Real u1 = NAN,u2 = NAN;
+  Standard_Integer d1 = 0,d2 = 0;
+  Standard_Real *result = nullptr, *resVu = nullptr, *resVv = nullptr, *resVuu = nullptr, *resVvv = nullptr, *resVuv = nullptr,
+  *resVuuu = nullptr, *resVvvv = nullptr, *resVuuv = nullptr, *resVuvv = nullptr;
   BSplSLib_DataContainer dc (UDegree, VDegree);
   if (PrepareEval
     (U,V,UIndex,VIndex,UDegree,VDegree,URat,VRat,UPer,VPer,
@@ -1234,10 +1236,10 @@ void  BSplSLib::DN
  const Standard_Boolean VPer,
  gp_Vec& Vn)
 {
-  Standard_Boolean rational;
-  Standard_Integer k,dim;
-  Standard_Real u1,u2;
-  Standard_Integer d1,d2;
+  Standard_Boolean rational = 0;
+  Standard_Integer k = 0,dim = 0;
+  Standard_Real u1 = NAN,u2 = NAN;
+  Standard_Integer d1 = 0,d2 = 0;
   
   BSplSLib_DataContainer dc (UDegree, VDegree);
   Standard_Boolean ufirst = PrepareEval
@@ -1263,7 +1265,7 @@ void  BSplSLib::DN
   for (k = 0; k <= Min(n1,d1); k++) 
     BSplCLib::Bohm(u2,d2,n2,*dc.knots2,dim,*(dc.poles+k*dim*(d2+1)));
   
-  Standard_Real *result;
+  Standard_Real *result = nullptr;
   if (rational) {
     BSplSLib::RationalDerivative(d1,d2,n1,n2,*dc.poles,*dc.ders,Standard_False);
     result = dc.ders; // because Standard_False ci-dessus.
@@ -1321,7 +1323,7 @@ void  BSplSLib::Iso(const Standard_Real            Param,
   // copy the local poles
   
 //  Standard_Integer f1,l1,f2,l2,i,j,k;
-  Standard_Integer f1,l1,f2,l2,i,j;
+  Standard_Integer f1 = 0,l1 = 0,f2 = 0,l2 = 0,i = 0,j = 0;
   
   if (IsU) {
     f1 = Poles.LowerRow();
@@ -1338,7 +1340,7 @@ void  BSplSLib::Iso(const Standard_Real            Param,
   
   NCollection_LocalArray<Standard_Real> locpoles ((Degree+1) * (l2-f2+1) * dim);
   
-  Standard_Real w, *pole = locpoles;
+  Standard_Real w = NAN, *pole = locpoles;
   index += f1;
 
   for (i = 0; i <= Degree; i++) {
@@ -1402,7 +1404,7 @@ void  BSplSLib::Reverse(      TColgp_Array2OfPnt& Poles,
 			const Standard_Integer    Last, 
 			const Standard_Boolean    UDirection)
 {
-  Standard_Integer i,j, l = Last;
+  Standard_Integer i = 0,j = 0, l = Last;
   if ( UDirection) {
     l = Poles.LowerRow() + 
       (l - Poles.LowerRow())%(Poles.ColLength());
@@ -1468,7 +1470,7 @@ void  BSplSLib::Reverse(      TColStd_Array2OfReal& Weights,
 			const Standard_Integer      Last, 
 			const Standard_Boolean      UDirection)
 {
-  Standard_Integer i,j, l = Last;
+  Standard_Integer i = 0,j = 0, l = Last;
   if ( UDirection) {
     l = Weights.LowerRow() + 
       (l - Weights.LowerRow())%(Weights.ColLength());
@@ -1539,7 +1541,7 @@ Standard_Boolean BSplSLib::IsRational
  const Standard_Real         Epsi)
 {
   Standard_Real eps = (Epsi > 0.0) ? Epsi : Epsilon(Weights(I1,I2));
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   Standard_Integer fi = Weights.LowerRow(), li = Weights.ColLength();
   Standard_Integer fj = Weights.LowerCol(), lj = Weights.RowLength();
 
@@ -1562,7 +1564,7 @@ void  BSplSLib::SetPoles(const TColgp_Array2OfPnt&   Poles,
 			 TColStd_Array1OfReal& FP,
 			 const Standard_Boolean      UDirection)
 {
-  Standard_Integer i, j, l = FP.Lower();
+  Standard_Integer i = 0, j = 0, l = FP.Lower();
   Standard_Integer PLowerRow = Poles.LowerRow();
   Standard_Integer PUpperRow = Poles.UpperRow();
   Standard_Integer PLowerCol = Poles.LowerCol();
@@ -1603,7 +1605,7 @@ void  BSplSLib::SetPoles(const TColgp_Array2OfPnt&   Poles,
 			 TColStd_Array1OfReal& FP,
 			 const Standard_Boolean      UDirection)
 {
-  Standard_Integer i, j, l = FP.Lower();
+  Standard_Integer i = 0, j = 0, l = FP.Lower();
   Standard_Integer PLowerRow = Poles.LowerRow();
   Standard_Integer PUpperRow = Poles.UpperRow();
   Standard_Integer PLowerCol = Poles.LowerCol();
@@ -1647,7 +1649,7 @@ void  BSplSLib::GetPoles(const TColStd_Array1OfReal& FP,
 			 TColgp_Array2OfPnt&   Poles,
 			 const Standard_Boolean      UDirection)
 {
-  Standard_Integer i, j, l = FP.Lower();
+  Standard_Integer i = 0, j = 0, l = FP.Lower();
   Standard_Integer PLowerRow = Poles.LowerRow();
   Standard_Integer PUpperRow = Poles.UpperRow();
   Standard_Integer PLowerCol = Poles.LowerCol();
@@ -1688,7 +1690,7 @@ void  BSplSLib::GetPoles(const TColStd_Array1OfReal& FP,
 			 TColStd_Array2OfReal& Weights,
 			 const Standard_Boolean      UDirection)
 {
-  Standard_Integer i, j, l = FP.Lower();
+  Standard_Integer i = 0, j = 0, l = FP.Lower();
   Standard_Integer PLowerRow = Poles.LowerRow();
   Standard_Integer PUpperRow = Poles.UpperRow();
   Standard_Integer PLowerCol = Poles.LowerCol();
@@ -1931,9 +1933,9 @@ void BSplSLib::BuildCache
  TColgp_Array2OfPnt&            CachePoles,
  TColStd_Array2OfReal*          CacheWeights)
 {  
-  Standard_Boolean rational,rational_u,rational_v,flag_u_or_v;                  
-  Standard_Integer kk,d1,d1p1,d2,d2p1,ii,jj,iii,jjj,Index;
-  Standard_Real u1,min_degree_domain,max_degree_domain,f,factor[2],u2;
+  Standard_Boolean rational = 0,rational_u = 0,rational_v = 0,flag_u_or_v = 0;                  
+  Standard_Integer kk = 0,d1 = 0,d1p1 = 0,d2 = 0,d2p1 = 0,ii = 0,jj = 0,iii = 0,jjj = 0,Index = 0;
+  Standard_Real u1 = NAN,min_degree_domain = NAN,max_degree_domain = NAN,f = NAN,factor[2],u2 = NAN;
   if (Weights != NULL) 
     rational_u = rational_v = Standard_True;
   else
@@ -2064,11 +2066,11 @@ void BSplSLib::BuildCache(const Standard_Real          theU,
                           const TColStd_Array2OfReal*  theWeights,
                                 TColStd_Array2OfReal&  theCacheArray)
 {
-  Standard_Boolean flag_u_or_v;
-  Standard_Integer d1, d2;
-  Standard_Real    u1, u2;
+  Standard_Boolean flag_u_or_v = 0;
+  Standard_Integer d1 = 0, d2 = 0;
+  Standard_Real    u1 = NAN, u2 = NAN;
   Standard_Boolean isRationalOnParam = (theWeights != NULL);
-  Standard_Boolean isRational;
+  Standard_Boolean isRational = 0;
 
   BSplSLib_DataContainer dc(theUDegree, theVDegree);
   flag_u_or_v =
@@ -2110,8 +2112,8 @@ void BSplSLib::BuildCache(const Standard_Real          theU,
   // aFactors[0] corresponds to variable with minimal degree
   // aFactors[1] corresponds to variable with maximal degree
   aFactors[1] = 1.0;
-  Standard_Integer aRow, aCol, i;
-  Standard_Real aCoeff;
+  Standard_Integer aRow = 0, aCol = 0, i = 0;
+  Standard_Real aCoeff = NAN;
   for (aRow = 0; aRow <= d2; aRow++)
   {
     aFactors[0] = 1.0;
@@ -2168,13 +2170,13 @@ void  BSplSLib::CacheD0(const Standard_Real                  UParameter,
   // 0 and 1 
   Standard_Integer 
 //    ii,
-  dimension,
-  min_degree,
-  max_degree  ;
+  dimension = 0,
+  min_degree = 0,
+  max_degree = 0  ;
   
   Standard_Real 
     new_parameter[2] ,
-  inverse ;
+  inverse = NAN ;
   
   Standard_Real * 
     PArray = (Standard_Real *) 
@@ -2266,13 +2268,13 @@ void  BSplSLib::CacheD1(const Standard_Real                  UParameter,
 //    ii,
 //  jj,
 //  kk,
-  dimension,
-  min_degree,
-  max_degree  ;
+  dimension = 0,
+  min_degree = 0,
+  max_degree = 0  ;
   
   Standard_Real
-    inverse_min,
-  inverse_max, 
+    inverse_min = NAN,
+  inverse_max = NAN, 
   new_parameter[2]  ;
   
   Standard_Real * 
@@ -2281,9 +2283,9 @@ void  BSplSLib::CacheD1(const Standard_Real                  UParameter,
   Standard_Real local_poles_array[2][2][3],
   local_poles_and_weights_array[2][2][4],
   local_weights_array[2][2]  ;
-  Standard_Real * my_vec_min,
-  * my_vec_max,
-  * my_point ;
+  Standard_Real * my_vec_min = nullptr,
+  * my_vec_max = nullptr,
+  * my_point = nullptr ;
   my_point = (Standard_Real *) &aPoint  ;
   //
   // initialize in case of rational evaluation
@@ -2472,17 +2474,17 @@ void  BSplSLib::CacheD2(const Standard_Real                  UParameter,
   // the SpanLenght     is the normalizing factor so that the polynomial is between
   // 0 and 1 
   Standard_Integer 
-    ii,
+    ii = 0,
 //  jj,
-  kk,
-  index,
-  dimension,
-  min_degree,
-  max_degree  ;
+  kk = 0,
+  index = 0,
+  dimension = 0,
+  min_degree = 0,
+  max_degree = 0  ;
   
   Standard_Real
-    inverse_min,
-  inverse_max, 
+    inverse_min = NAN,
+  inverse_max = NAN, 
   new_parameter[2]  ;
 
   Standard_Real * 
@@ -2491,12 +2493,12 @@ void  BSplSLib::CacheD2(const Standard_Real                  UParameter,
   Standard_Real local_poles_array[3][3][3],
   local_poles_and_weights_array[3][3][4],
   local_weights_array[3][3]  ;
-  Standard_Real * my_vec_min,
-  * my_vec_max,
-  * my_vec_min_min,
-  * my_vec_max_max,
-  * my_vec_min_max,
-  * my_point ;
+  Standard_Real * my_vec_min = nullptr,
+  * my_vec_max = nullptr,
+  * my_vec_min_min = nullptr,
+  * my_vec_max_max = nullptr,
+  * my_vec_min_max = nullptr,
+  * my_point = nullptr ;
   my_point = (Standard_Real *) &aPoint  ;
   
   //
@@ -2802,7 +2804,7 @@ void BSplSLib::MovePoint (const Standard_Real            U,
 			  TColgp_Array2OfPnt&            NewPoles)
 {
   // calculate the UBSplineBasis in the parameter U
-  Standard_Integer UFirstNonZeroBsplineIndex;
+  Standard_Integer UFirstNonZeroBsplineIndex = 0;
   math_Matrix UBSplineBasis(1, 1,
 			    1, UDegree+1);
   Standard_Integer ErrorCod1 =  BSplCLib::EvalBsplineBasis(0,
@@ -2812,7 +2814,7 @@ void BSplSLib::MovePoint (const Standard_Real            U,
 							   UFirstNonZeroBsplineIndex,
  							   UBSplineBasis);  
   // calculate the VBSplineBasis in the parameter V
-  Standard_Integer VFirstNonZeroBsplineIndex;
+  Standard_Integer VFirstNonZeroBsplineIndex = 0;
   math_Matrix VBSplineBasis(1, 1,
 			    1, VDegree+1);
   Standard_Integer ErrorCod2 =  BSplCLib::EvalBsplineBasis(0,
@@ -2836,7 +2838,7 @@ void BSplSLib::MovePoint (const Standard_Real            U,
   if (ULastIndex > UIndex2) ULastIndex = UIndex2;
 
   Standard_Real maxValue = 0.0;
-  Standard_Integer i, ukk1=0, ukk2;
+  Standard_Integer i = 0, ukk1=0, ukk2 = 0;
 
   for (i = UFirstIndex-UFirstNonZeroBsplineIndex+1; i <= ULastIndex-UFirstNonZeroBsplineIndex+1; i++) {
     if (UBSplineBasis(1,i) > maxValue) {
@@ -2862,7 +2864,7 @@ void BSplSLib::MovePoint (const Standard_Real            U,
   if (VLastIndex > VIndex2) VLastIndex = VIndex2;
 
   maxValue = 0.0;
-  Standard_Integer j, vkk1=0, vkk2;
+  Standard_Integer j = 0, vkk1=0, vkk2 = 0;
 
   for (j = VFirstIndex-VFirstNonZeroBsplineIndex+1; j <= VLastIndex-VFirstNonZeroBsplineIndex+1; j++) {
     if (VBSplineBasis(1,j) > maxValue) {
@@ -2883,9 +2885,9 @@ void BSplSLib::MovePoint (const Standard_Real            U,
   // compute the vector of displacement
   Standard_Real D1 = 0.0;
   Standard_Real D2 = 0.0;
-  Standard_Real hN, Coef, DvalU, DvalV;
+  Standard_Real hN = NAN, Coef = NAN, DvalU = NAN, DvalV = NAN;
 
-  Standard_Integer ii, jj;
+  Standard_Integer ii = 0, jj = 0;
 
   for (i = 1; i <= UDegree+1; i++) {
     ii = i + UFirstNonZeroBsplineIndex - 1;
@@ -3020,17 +3022,17 @@ void BSplSLib::Resolution(const TColgp_Array2OfPnt&      Poles,
 			  Standard_Real&                 UTolerance,
 			  Standard_Real&                 VTolerance)
 {
-  Standard_Real Wij,Wmj,Wji,Wjm;
-  Standard_Real Xij,Xmj,Xji,Xjm,Xpq,Xqp;
-  Standard_Real Yij,Ymj,Yji,Yjm,Ypq,Yqp;
-  Standard_Real Zij,Zmj,Zji,Zjm,Zpq,Zqp;
-  Standard_Real factor,value,min,min_weights=0,inverse,max_derivative[2];
+  Standard_Real Wij = NAN,Wmj = NAN,Wji = NAN,Wjm = NAN;
+  Standard_Real Xij = NAN,Xmj = NAN,Xji = NAN,Xjm = NAN,Xpq = NAN,Xqp = NAN;
+  Standard_Real Yij = NAN,Ymj = NAN,Yji = NAN,Yjm = NAN,Ypq = NAN,Yqp = NAN;
+  Standard_Real Zij = NAN,Zmj = NAN,Zji = NAN,Zjm = NAN,Zpq = NAN,Zqp = NAN;
+  Standard_Real factor = NAN,value = NAN,min = NAN,min_weights=0,inverse = NAN,max_derivative[2];
 
   max_derivative[0] = max_derivative[1] = 0.0e0 ; 
   
-  Standard_Integer PRowLength, PColLength;
-  Standard_Integer ii,jj,pp,qq,ii_index,jj_index,pp_index,qq_index;
-  Standard_Integer ii_minus,upper[2],lower[2],poles_length[2];
+  Standard_Integer PRowLength = 0, PColLength = 0;
+  Standard_Integer ii = 0,jj = 0,pp = 0,qq = 0,ii_index = 0,jj_index = 0,pp_index = 0,qq_index = 0;
+  Standard_Integer ii_minus = 0,upper[2],lower[2],poles_length[2];
   Standard_Integer num_poles[2],num_flat_knots[2];
   
   num_flat_knots[0] = 
@@ -3279,10 +3281,10 @@ void BSplSLib::Interpolate(const Standard_Integer UDegree,
 			   TColStd_Array2OfReal& Weights, 
 			   Standard_Integer& InversionProblem)
 {
-  Standard_Integer ii, jj, ll, kk, dimension;
+  Standard_Integer ii = 0, jj = 0, ll = 0, kk = 0, dimension = 0;
   Standard_Integer ULength = UParameters.Length();
   Standard_Integer VLength = VParameters.Length();
-  Standard_Real * poles_array;
+  Standard_Real * poles_array = nullptr;
   
   // extraction of iso u
   dimension = 4*ULength;
@@ -3368,10 +3370,10 @@ void BSplSLib::Interpolate(const Standard_Integer UDegree,
 			   TColgp_Array2OfPnt& Poles,
 			   Standard_Integer& InversionProblem)
 {
-  Standard_Integer ii, jj, ll, kk, dimension;
+  Standard_Integer ii = 0, jj = 0, ll = 0, kk = 0, dimension = 0;
   Standard_Integer ULength = UParameters.Length();
   Standard_Integer VLength = VParameters.Length();
-  Standard_Real * poles_array;
+  Standard_Real * poles_array = nullptr;
   
   // extraction of iso u
   dimension = 3*ULength;
@@ -3463,12 +3465,12 @@ void BSplSLib::FunctionMultiply
  TColStd_Array2OfReal&                       NewDenominator,
  Standard_Integer&                           theStatus)
 {
-  Standard_Integer num_uparameters,
+  Standard_Integer num_uparameters = 0,
 //  ii,jj,kk,
-  ii,jj,
-  error_code,
-  num_vparameters ;
-  Standard_Real    result ;
+  ii = 0,jj = 0,
+  error_code = 0,
+  num_vparameters = 0 ;
+  Standard_Real    result = NAN ;
   
   num_uparameters = UFlatKnots.Length() - UNewDegree - 1 ;
   num_vparameters = VFlatKnots.Length() - VNewDegree - 1 ;

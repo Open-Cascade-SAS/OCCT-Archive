@@ -45,7 +45,7 @@ void RWStepShape_RWGeometricCurveSet::ReadStep
 
 	Handle(StepShape_HArray1OfGeometricSetSelect) aElements;
 	StepShape_GeometricSetSelect aElementsItem;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"elements",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aElements = new StepShape_HArray1OfGeometricSetSelect (1, nb2);

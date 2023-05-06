@@ -84,10 +84,10 @@ private:
 
 
 
-  Standard_Integer iWire;
-  Standard_Integer nbWires;
-  Standard_Integer iEdge;
-  Standard_Integer nbEdges;
+  Standard_Integer iWire{};
+  Standard_Integer nbWires{};
+  Standard_Integer iEdge{};
+  Standard_Integer nbEdges{};
   Handle(HLRAlgo_WiresBlock) myWires;
   Handle(HLRAlgo_EdgesBlock) myEdges;
 

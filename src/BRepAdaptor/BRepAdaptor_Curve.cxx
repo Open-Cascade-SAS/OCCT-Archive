@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepAdaptor_Curve.hxx>
 
 #include <Adaptor3d_CurveOnSurface.hxx>
@@ -114,7 +116,7 @@ void BRepAdaptor_Curve::Initialize(const TopoDS_Edge& E)
 {
   myConSurf.Nullify();
   myEdge = E;
-  Standard_Real pf,pl;
+  Standard_Real pf = NAN,pl = NAN;
 
   TopLoc_Location L;
   Handle(Geom_Curve) C = BRep_Tool::Curve(E,L,pf,pl);
@@ -153,7 +155,7 @@ void BRepAdaptor_Curve::Initialize(const TopoDS_Edge& E,
 
   myEdge = E;
   TopLoc_Location L;
-  Standard_Real pf,pl;
+  Standard_Real pf = NAN,pl = NAN;
   Handle(Geom_Surface) S = BRep_Tool::Surface(F,L);
   Handle(Geom2d_Curve) PC = BRep_Tool::CurveOnSurface(E,F,pf,pl); 
 

@@ -17,6 +17,8 @@
 //abv 17.11.99: renamed from StepPDR_MakeUnitAndToleranceContext and merged with STEPControl_Unit
 //abv 30.02.00: ability to write file in units other than MM
 
+#include <math.h>
+
 #include <Interface_Static.hxx>
 #include <StepBasic_ConversionBasedUnitAndAreaUnit.hxx>
 #include <StepBasic_ConversionBasedUnitAndLengthUnit.hxx>
@@ -49,13 +51,13 @@ STEPConstruct_UnitContext::STEPConstruct_UnitContext()
   lengthFactor(0.0),
   planeAngleFactor(0.0),
   solidAngleFactor(0.0),
-  areaFactor(0.0),
+  theUncertainty(RealLast()), areaFactor(0.0),
   volumeFactor(0.0)
 {
   lengthDone = planeAngleDone = solidAngleDone = hasUncertainty = 
     areaDone = volumeDone = Standard_False;
   //pdn file r_47-sd.stp initialize field.
-  theUncertainty = RealLast();
+  
 }
 
 //=======================================================================
@@ -408,7 +410,7 @@ Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepBasi
   }  // end of SolidAngleUnit 
   else if (aUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndAreaUnit)) ||
 	   aUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndAreaUnit))) {
-    Standard_Real af;
+    Standard_Real af = NAN;
 #ifdef METER   
     af = parameter;
 #else
@@ -419,7 +421,7 @@ Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepBasi
   }
   else if (aUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndVolumeUnit)) ||
 	   aUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndVolumeUnit))) {
-    Standard_Real af;
+    Standard_Real af = NAN;
 #ifdef METER   
     af = parameter;
 #else

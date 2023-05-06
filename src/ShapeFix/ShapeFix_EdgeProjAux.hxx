@@ -71,10 +71,10 @@ protected:
 
   TopoDS_Face myFace;
   TopoDS_Edge myEdge;
-  Standard_Real myFirstParam;
-  Standard_Real myLastParam;
-  Standard_Boolean myFirstDone;
-  Standard_Boolean myLastDone;
+  Standard_Real myFirstParam{};
+  Standard_Real myLastParam{};
+  Standard_Boolean myFirstDone{};
+  Standard_Boolean myLastDone{};
 
 
 private:

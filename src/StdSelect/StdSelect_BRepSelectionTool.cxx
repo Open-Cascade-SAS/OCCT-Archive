@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <StdSelect_BRepSelectionTool.hxx>
 
 #include <BRep_Tool.hxx>
@@ -503,8 +505,8 @@ void StdSelect_BRepSelectionTool::GetEdgeSensitive (const TopoDS_Shape& theShape
         Standard_Integer aNbIntervals = cu3d.NbIntervals (GeomAbs_C1);
         TColStd_Array1OfReal anIntervals (1, aNbIntervals + 1);
         cu3d.Intervals (anIntervals, GeomAbs_C1);
-        Standard_Real aV1, aV2;
-        Standard_Integer aNumberOfPoints;
+        Standard_Real aV1 = NAN, aV2 = NAN;
+        Standard_Integer aNumberOfPoints = 0;
         TColgp_SequenceOfPnt aPointsSeq;
         for (Standard_Integer anIntervalId = 1; anIntervalId <= aNbIntervals; ++anIntervalId)
         {
@@ -546,7 +548,7 @@ void StdSelect_BRepSelectionTool::GetEdgeSensitive (const TopoDS_Shape& theShape
         nbintervals = Max (1, nbintervals / 3);
       }
 
-      Standard_Real aParam;
+      Standard_Real aParam = NAN;
       Standard_Integer aPntNb = Max (2, theNbPOnEdge * nbintervals);
       Standard_Real aParamDelta = (aParamLast - aParamFirst) / (aPntNb - 1);
       Handle(TColgp_HArray1OfPnt) aPointArray = new TColgp_HArray1OfPnt (1, aPntNb);
@@ -668,7 +670,7 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace (const TopoDS_
         gp_Trsf aTrsf;
         aTrsf.SetTransformation (aCone.Position(), gp::XOY());
 
-        Standard_Real aRad2;
+        Standard_Real aRad2 = NAN;
         if (aRad1 == 0.0)
         {
           aRad2 = Tan (aCone.SemiAngle()) * aHeight;

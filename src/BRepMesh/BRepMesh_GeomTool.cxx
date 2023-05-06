@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_GeomTool.hxx>
 
 #include <BRepMesh_DefaultRangeSplitter.hxx>
@@ -210,7 +212,7 @@ Standard_Boolean BRepMesh_GeomTool::Value(
 
   const TopoDS_Face& aFace = theSurface->Face();
 
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   Handle(Geom2d_Curve) aCurve = 
     BRep_Tool::CurveOnSurface(*myEdge, aFace, aFirst, aLast);
 
@@ -445,14 +447,14 @@ std::pair<Standard_Integer, Standard_Integer> BRepMesh_GeomTool::CellsCount (
 
   const GeomAbs_SurfaceType aType = theSurface->GetType ();
 
-  Standard_Real anErrFactorU, anErrFactorV;
+  Standard_Real anErrFactorU = NAN, anErrFactorV = NAN;
   ComputeErrFactors(theDeflection, theSurface, anErrFactorU, anErrFactorV);
 
   const std::pair<Standard_Real, Standard_Real>& aRangeU = theRangeSplitter->GetRangeU();
   const std::pair<Standard_Real, Standard_Real>& aRangeV = theRangeSplitter->GetRangeV();
   const std::pair<Standard_Real, Standard_Real>& aDelta  = theRangeSplitter->GetDelta ();
 
-  Standard_Integer aCellsCountU, aCellsCountV;
+  Standard_Integer aCellsCountU = 0, aCellsCountV = 0;
   if (aType == GeomAbs_Torus)
   {
     aCellsCountU = (Standard_Integer)Ceiling(Pow(2, Log10(

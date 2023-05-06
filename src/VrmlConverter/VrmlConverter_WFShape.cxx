@@ -45,7 +45,7 @@ void VrmlConverter_WFShape::Add(Standard_OStream&                    anOStream,
 	aDrawer->VIsoAspect()->Number() != 0 ) {
 
       BRepAdaptor_Surface S;
-      Standard_Boolean isoU, isoV;
+      Standard_Boolean isoU = 0, isoV = 0;
       for(Tool.InitFace();Tool.MoreFace();Tool.NextFace()){
 	isoU = (aDrawer->UIsoAspect()->Number() != 0);
 	isoV = (aDrawer->VIsoAspect()->Number() != 0);

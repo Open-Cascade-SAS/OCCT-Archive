@@ -195,7 +195,7 @@ void RWStepBasic_RWOrganizationalAddress::ReadStep
 
 	Handle(StepBasic_HArray1OfOrganization) aOrganizations;
 	Handle(StepBasic_Organization) anent13;
-	Standard_Integer nsub13;
+	Standard_Integer nsub13 = 0;
 	if (data->ReadSubList (num,13,"organizations",ach,nsub13)) {
 	  Standard_Integer nb13 = data->NbParams(nsub13);
 	  aOrganizations = new StepBasic_HArray1OfOrganization (1, nb13);

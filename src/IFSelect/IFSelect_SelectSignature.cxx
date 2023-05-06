@@ -32,7 +32,7 @@ static Standard_Integer multsign
    TColStd_SequenceOfAsciiString& signlist,
    TColStd_SequenceOfInteger&     signmode)
 {
-  Standard_Integer i, nb = signtext.Length(), mode = 0;
+  Standard_Integer i = 0, nb = signtext.Length(), mode = 0;
   for (i = 1; i <= nb; i ++) {
     char unsign = signtext.Value(i);
     if (unsign == '|' || unsign == '!' || unsign == '=') { mode = 1; break; }
@@ -96,9 +96,9 @@ static Standard_Integer multsign
   (const Standard_Integer , const Handle(Standard_Transient)& ent,
    const Interface_Graph& G) const
 {
-  Standard_Boolean res;
-  Standard_CString txt;
-  Handle(Interface_InterfaceModel) model = G.Model();
+  Standard_Boolean res = 0;
+  Standard_CString txt = nullptr;
+  const Handle(Interface_InterfaceModel)& model = G.Model();
   if (theexact <= 0) {
     if (!thematcher.IsNull()) return thematcher->Matches (ent,model,thesigntext, (theexact < 0));
     txt = thecounter->ComputedSign(ent,G);
@@ -121,7 +121,7 @@ static Standard_Integer multsign
     hmod = thesignmode.Value(i);
     jmod = hmod/8;
     imod = hmod - (jmod*8);
-    Standard_Boolean quid;
+    Standard_Boolean quid = 0;
     if (jmod == 0) {
       if (!thematcher.IsNull()) quid = thematcher->Matches (ent,model,signtext,(imod > 2));
       else quid = IFSelect_Signature::MatchValue

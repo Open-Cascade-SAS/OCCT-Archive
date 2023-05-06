@@ -47,7 +47,7 @@ void RWStepShape_RWHalfSpaceSolid::ReadStep
 
 	// --- own field : agreementFlag ---
 
-	Standard_Boolean aAgreementFlag;
+	Standard_Boolean aAgreementFlag = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadBoolean (num,3,"agreement_flag",ach,aAgreementFlag);
 

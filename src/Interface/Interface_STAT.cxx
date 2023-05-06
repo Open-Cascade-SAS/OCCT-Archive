@@ -20,10 +20,10 @@ static Interface_STAT statvoid("");
 static Interface_STAT statact ("");
 static Standard_CString voidname = "";
 
-    Interface_STAT::Interface_STAT (const Standard_CString title)
+    Interface_STAT::Interface_STAT (const Standard_CString title) : thetitle(new TCollection_HAsciiString(title)), thetotal(1.)
 {
-  thetitle = new TCollection_HAsciiString(title);
-  thetotal = 1.;
+  
+  
 }
 
     Interface_STAT::Interface_STAT (const Interface_STAT& other)

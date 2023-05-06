@@ -151,11 +151,11 @@ private:
   Handle(Adaptor3d_Curve) myTPath;
   Handle(Adaptor3d_Curve) myTCurve1;
   Handle(Adaptor3d_Curve) myTCurve2;
-  Standard_Integer myDegree;
-  Standard_Integer myNbKnots;
-  Standard_Integer myNbPoles;
+  Standard_Integer myDegree{};
+  Standard_Integer myNbKnots{};
+  Standard_Integer myNbPoles{};
   Convert_ParameterisationType myTConv;
-  Standard_Boolean myreverse;
+  Standard_Boolean myreverse{};
 
 
 };

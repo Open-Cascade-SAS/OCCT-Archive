@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <RWStepBasic_RWDimensionalExponents.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -33,43 +35,43 @@ void RWStepBasic_RWDimensionalExponents::ReadStep
 
 	// --- own field : lengthExponent ---
 
-	Standard_Real aLengthExponent;
+	Standard_Real aLengthExponent = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadReal (num,1,"length_exponent",ach,aLengthExponent);
 
 	// --- own field : massExponent ---
 
-	Standard_Real aMassExponent;
+	Standard_Real aMassExponent = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadReal (num,2,"mass_exponent",ach,aMassExponent);
 
 	// --- own field : timeExponent ---
 
-	Standard_Real aTimeExponent;
+	Standard_Real aTimeExponent = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"time_exponent",ach,aTimeExponent);
 
 	// --- own field : electricCurrentExponent ---
 
-	Standard_Real aElectricCurrentExponent;
+	Standard_Real aElectricCurrentExponent = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"electric_current_exponent",ach,aElectricCurrentExponent);
 
 	// --- own field : thermodynamicTemperatureExponent ---
 
-	Standard_Real aThermodynamicTemperatureExponent;
+	Standard_Real aThermodynamicTemperatureExponent = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat5 =` not needed
 	data->ReadReal (num,5,"thermodynamic_temperature_exponent",ach,aThermodynamicTemperatureExponent);
 
 	// --- own field : amountOfSubstanceExponent ---
 
-	Standard_Real aAmountOfSubstanceExponent;
+	Standard_Real aAmountOfSubstanceExponent = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat6 =` not needed
 	data->ReadReal (num,6,"amount_of_substance_exponent",ach,aAmountOfSubstanceExponent);
 
 	// --- own field : luminousIntensityExponent ---
 
-	Standard_Real aLuminousIntensityExponent;
+	Standard_Real aLuminousIntensityExponent = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat7 =` not needed
 	data->ReadReal (num,7,"luminous_intensity_exponent",ach,aLuminousIntensityExponent);
 

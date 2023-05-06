@@ -14,13 +14,13 @@
 
 #include <Vrml_Texture2Transform.hxx>
 
-Vrml_Texture2Transform::Vrml_Texture2Transform()
+Vrml_Texture2Transform::Vrml_Texture2Transform() : myRotation(0)
 {
   gp_Vec2d tmpVec(0,0);
   myTranslation = tmpVec;
   myCenter = tmpVec; 
 
-  myRotation = 0;
+  
 
   tmpVec.SetCoord(1,1);
   myScaleFactor = tmpVec;
@@ -29,12 +29,12 @@ Vrml_Texture2Transform::Vrml_Texture2Transform()
 Vrml_Texture2Transform::Vrml_Texture2Transform(const gp_Vec2d& aTranslation,
 					       const Standard_Real aRotation,
 					       const gp_Vec2d& aScaleFactor,
-					       const gp_Vec2d& aCenter)
+					       const gp_Vec2d& aCenter) : myTranslation(aTranslation), myRotation(aRotation), myScaleFactor(aScaleFactor), myCenter(aCenter)
 {
-  myTranslation = aTranslation;
-  myRotation = aRotation;
-  myScaleFactor = aScaleFactor;
-  myCenter = aCenter; 
+  
+  
+  
+  
 }
 
  void Vrml_Texture2Transform::SetTranslation(const gp_Vec2d& aTranslation) 

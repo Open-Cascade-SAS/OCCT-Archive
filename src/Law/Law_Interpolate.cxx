@@ -16,6 +16,8 @@
 
 // Programme cree 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <Law_BSpline.hxx>
 #include <Law_Interpolate.hxx>
@@ -32,8 +34,8 @@
 static Standard_Boolean CheckParameters
 (const TColStd_Array1OfReal&  Parameters) 
 {
-  Standard_Integer ii;
-  Standard_Real distance;
+  Standard_Integer ii = 0;
+  Standard_Real distance = NAN;
   Standard_Boolean result = Standard_True;
   for (ii = Parameters.Lower() ; result && ii < Parameters.Upper() ; ii++) {
     distance = Parameters.Value(ii+1) - Parameters.Value(ii);
@@ -50,8 +52,8 @@ static void  BuildParameters(const Standard_Boolean         PeriodicFlag,
 			     const TColStd_Array1OfReal&    PointsArray,
 			     Handle(TColStd_HArray1OfReal)& ParametersPtr)
 {
-  Standard_Integer ii, index = 2;
-  Standard_Real distance;
+  Standard_Integer ii = 0, index = 2;
+  Standard_Real distance = NAN;
   Standard_Integer num_parameters = PointsArray.Length();
   if (PeriodicFlag) {
     num_parameters += 1;
@@ -123,7 +125,7 @@ static void BuildTangents(const TColStd_Array1OfReal&  PointsArray,
 		          const TColStd_Array1OfReal&  ParametersArray)
 {
   Standard_Integer  degree = 3;//,ii;
-  Standard_Real *point_array, *parameter_array, eval_result[2];
+  Standard_Real *point_array = nullptr, *parameter_array = nullptr, eval_result[2];
   
   if ( PointsArray.Length() < 3) {
     throw Standard_ConstructionError();
@@ -173,15 +175,15 @@ Law_Interpolate::Law_Interpolate
  myTolerance(Tolerance),
  myPoints(PointsPtr),
  myIsDone(Standard_False),
- myPeriodic(PeriodicFlag),
+ myTangents(new TColStd_HArray1OfReal (myPoints->Lower(),
+					  myPoints->Upper())), myTangentFlags(new TColStd_HArray1OfBoolean(myPoints->Lower(),
+						myPoints->Upper())), myPeriodic(PeriodicFlag),
  myTangentRequest(Standard_False) 
      
 {
 //Standard_Integer ii;
-  myTangents = new TColStd_HArray1OfReal (myPoints->Lower(),
-					  myPoints->Upper());
-  myTangentFlags = new TColStd_HArray1OfBoolean(myPoints->Lower(),
-						myPoints->Upper());
+  
+  
 
   BuildParameters(PeriodicFlag,
 		  PointsPtr->Array1(),
@@ -233,7 +235,7 @@ void Law_Interpolate::Load
  const Handle(TColStd_HArray1OfBoolean)& TangentFlagsPtr) 
 {
 //Standard_Boolean result;
-  Standard_Integer ii;
+  Standard_Integer ii = 0;
   myTangentRequest = Standard_True;
   myTangentFlags = TangentFlagsPtr;
   if (Tangents.Length() != myPoints->Length() ||
@@ -284,20 +286,20 @@ void Law_Interpolate::Perform()
 
 void Law_Interpolate::PerformPeriodic()
 { 
-  Standard_Integer degree,
-  ii,
+  Standard_Integer degree = 0,
+  ii = 0,
 //jj,
-  index,
-  index1,
+  index = 0,
+  index1 = 0,
 //index2,
-  mult_index,
-  half_order,
-  inversion_problem,
-  num_points,
-  num_distinct_knots,
-  num_poles;
+  mult_index = 0,
+  half_order = 0,
+  inversion_problem = 0,
+  num_points = 0,
+  num_distinct_knots = 0,
+  num_poles = 0;
   
-  Standard_Real period;
+  Standard_Real period = NAN;
   
 //gp_Pnt a_point;
   
@@ -438,18 +440,18 @@ void Law_Interpolate::PerformPeriodic()
 
 void Law_Interpolate::PerformNonPeriodic() 
 {
-  Standard_Integer degree,
-  ii,
+  Standard_Integer degree = 0,
+  ii = 0,
 //jj,
-  index,
-  index1,
-  index2,
-  index3,
-  mult_index,
-  inversion_problem,
-  num_points,
-  num_distinct_knots,
-  num_poles;
+  index = 0,
+  index1 = 0,
+  index2 = 0,
+  index3 = 0,
+  mult_index = 0,
+  inversion_problem = 0,
+  num_points = 0,
+  num_distinct_knots = 0,
+  num_poles = 0;
   
   num_points =
     num_distinct_knots =

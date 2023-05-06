@@ -226,14 +226,14 @@ private:
   gp_Pnt myProjectionPoint;
   gp_Dir myViewDirection;
   gp_Dir myUpDirection;
-  Standard_Real myZoomFactor;
-  Standard_Real myWindowHorizontalSize;
-  Standard_Real myWindowVerticalSize;
+  Standard_Real myZoomFactor{};
+  Standard_Real myWindowHorizontalSize{};
+  Standard_Real myWindowVerticalSize{};
   Handle(TCollection_HAsciiString) myClippingExpression;
   Standard_Boolean myFrontPlaneClipping;
-  Standard_Real myFrontPlaneDistance;
+  Standard_Real myFrontPlaneDistance{};
   Standard_Boolean myBackPlaneClipping;
-  Standard_Real myBackPlaneDistance;
+  Standard_Real myBackPlaneDistance{};
   Standard_Boolean myViewVolumeSidesClipping;
   Handle(TColgp_HArray1OfPnt) myGDTPoints; // Point for each GDT to describe position of GDT frame in View.
 };

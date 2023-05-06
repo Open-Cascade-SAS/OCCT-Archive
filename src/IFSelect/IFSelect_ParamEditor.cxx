@@ -68,7 +68,7 @@ Standard_Boolean  IFSelect_ParamEditor::Load
    const Handle(Standard_Transient)& /*ent*/,
    const Handle(Interface_InterfaceModel)& /*model*/) const
 {
-  Standard_Integer i, nb = NbValues();
+  Standard_Integer i = 0, nb = NbValues();
   for (i = 1; i <= nb; i ++) form->LoadValue (i,TypedValue(i)->HStringValue());
 
   return Standard_True;
@@ -80,7 +80,7 @@ Standard_Boolean  IFSelect_ParamEditor::Apply
    const Handle(Standard_Transient)& /*ent*/,
    const Handle(Interface_InterfaceModel)& /*model*/) const
 {
-  Standard_Integer i, nb = NbValues();
+  Standard_Integer i = 0, nb = NbValues();
   for (i = 1; i <= nb; i ++)
     if (form->IsModified(i))
       TypedValue (i)->SetHStringValue (form->EditedValue(i));
@@ -94,7 +94,7 @@ Handle(IFSelect_ParamEditor)  IFSelect_ParamEditor::StaticEditor
 {
   Handle(IFSelect_ParamEditor) editor;
   if (list.IsNull()) return editor;
-  Standard_Integer i,nb = list->Length();
+  Standard_Integer i = 0,nb = list->Length();
 //  if (nb == 0) return editor;
   editor = new IFSelect_ParamEditor (nb+10,label);
   for (i = 1; i <= nb; i ++) {

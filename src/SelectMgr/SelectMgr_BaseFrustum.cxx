@@ -26,9 +26,9 @@ IMPLEMENT_STANDARD_RTTIEXT(SelectMgr_BaseFrustum, SelectMgr_BaseIntersector)
 // purpose  :
 //=======================================================================
 SelectMgr_BaseFrustum::SelectMgr_BaseFrustum()
-: myPixelTolerance (2)
+: myPixelTolerance (2), myBuilder(new SelectMgr_FrustumBuilder())
 {
-  myBuilder = new SelectMgr_FrustumBuilder();
+  
 }
 
 //=======================================================================

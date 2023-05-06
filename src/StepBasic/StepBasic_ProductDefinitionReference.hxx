@@ -123,7 +123,7 @@ private:
   Handle(TCollection_HAsciiString) myProductDefinitionFormationId;
   Handle(TCollection_HAsciiString) myProductDefinitionId;
   Handle(TCollection_HAsciiString) myIdOwningOrganizationName;
-  Standard_Boolean hasIdOwningOrganizationName;
+  Standard_Boolean hasIdOwningOrganizationName{};
 };
 
 #endif // _StepBasic_ProductDefinitionReference_HeaderFile

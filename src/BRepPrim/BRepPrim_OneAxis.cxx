@@ -75,7 +75,7 @@ static void BRepPrim_OneAxis_Check(const Standard_Boolean V[],
 				     const Standard_Boolean W[],
 				     const Standard_Boolean F[])
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 0; i < NBVERTICES; i++)
     if (V[i]) throw Standard_DomainError();
   for (i = 0; i < NBEDGES; i++)
@@ -100,12 +100,12 @@ BRepPrim_OneAxis::BRepPrim_OneAxis(const BRepPrim_Builder& B,
        myAngle(2*M_PI),
        myVMin(VMin),
        myVMax(VMax),
-       myMeridianOffset(0)
+       myMeridianOffset(0), ShellBuilt(Standard_False)
 
 {
   // init Built flags
-  Standard_Integer i;
-  ShellBuilt = Standard_False;
+  Standard_Integer i = 0;
+  
   for (i = 0; i < NBVERTICES; i++)
     VerticesBuilt[i] = Standard_False;
   for (i = 0; i < NBEDGES; i++)

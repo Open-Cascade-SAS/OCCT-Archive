@@ -31,9 +31,9 @@ IMPLEMENT_STANDARD_RTTIEXT(CDM_Application,Standard_Transient)
 //function : Constructor
 //purpose  : 
 //=======================================================================
-CDM_Application::CDM_Application()
+CDM_Application::CDM_Application() : myMessenger(new Message_Messenger)
 {
-  myMessenger = new Message_Messenger;
+  
 }
 //=======================================================================
 //function : SetDocumentVersion

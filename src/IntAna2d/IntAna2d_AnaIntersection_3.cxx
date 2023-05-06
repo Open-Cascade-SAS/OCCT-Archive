@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <gp_Circ2d.hxx>
 #include <gp_Lin2d.hxx>
@@ -33,7 +35,7 @@ void IntAna2d_AnaIntersection::Perform(const gp_Lin2d& L,
   iden=Standard_False; 
   para=Standard_False;
   //
-  Standard_Real A,B,C0, d;
+  Standard_Real A = NAN,B = NAN,C0 = NAN, d = NAN;
   gp_Pnt2d aP2D, aP2D1, aP2D2;
   //
   L.Coefficients(A,B,C0);
@@ -53,7 +55,7 @@ void IntAna2d_AnaIntersection::Perform(const gp_Lin2d& L,
     //modified by NIZNHY-PKV Fri Jun 15 09:55:29 2007t
     if (Abs(Abs(d)-C.Radius())<=Epsilon(C.Radius())) {    // Cas de tangence
       
-      Standard_Real u, XS, YS, ang;
+      Standard_Real u = NAN, XS = NAN, YS = NAN, ang = NAN;
       //
       nbp=1;
       XS=C.Location().X() - d*A;
@@ -78,7 +80,7 @@ void IntAna2d_AnaIntersection::Perform(const gp_Lin2d& L,
       lpnt[0].SetValue(XS,YS,u,ang);
     }
     else { // 2 points d intersection
-      Standard_Real h, XS1,YS1, XS2,YS2, ang1,ang2, u1,u2;//,cost,sint angt;                                        
+      Standard_Real h = NAN, XS1 = NAN,YS1 = NAN, XS2 = NAN,YS2 = NAN, ang1 = NAN,ang2 = NAN, u1 = NAN,u2 = NAN;//,cost,sint angt;                                        
       nbp=2;
       h=Sqrt(C.Radius()*C.Radius()-d*d);
       //modified by NIZNHY-PKV Fri Jun 15 09:55:47 2007f

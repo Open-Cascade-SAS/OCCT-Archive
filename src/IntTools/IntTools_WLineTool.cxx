@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntTools_WLineTool.hxx>
 
 #include <BRep_Tool.hxx>
@@ -51,8 +53,8 @@ Standard_Boolean IsDegeneratedZone(const gp_Pnt2d& aP2d,
                                    const Standard_Integer iDir)
 {
   Standard_Boolean bFlag=Standard_True;
-  Standard_Real US1, US2, VS1, VS2, dY, dX, d1, d2, dD;
-  Standard_Real aXm, aYm, aXb, aYb, aXe, aYe;
+  Standard_Real US1 = NAN, US2 = NAN, VS1 = NAN, VS2 = NAN, dY = NAN, dX = NAN, d1 = NAN, d2 = NAN, dD = NAN;
+  Standard_Real aXm = NAN, aYm = NAN, aXb = NAN, aYb = NAN, aXe = NAN, aYe = NAN;
   aS->Bounds(US1, US2, VS1, VS2); 
 
   gp_Pnt aPm, aPb, aPe;
@@ -123,8 +125,8 @@ Standard_Boolean IsPointInDegeneratedZone(const IntSurf_PntOn2S& aP2S,
                                           
 {
   Standard_Boolean bFlag=Standard_True;
-  Standard_Real US11, US12, VS11, VS12, US21, US22, VS21, VS22;
-  Standard_Real U1, V1, U2, V2, aDelta, aD;
+  Standard_Real US11 = NAN, US12 = NAN, VS11 = NAN, VS12 = NAN, US21 = NAN, US22 = NAN, VS21 = NAN, VS22 = NAN;
+  Standard_Real U1 = NAN, V1 = NAN, U2 = NAN, V2 = NAN, aDelta = NAN, aD = NAN;
   gp_Pnt2d aP2d;
 
   Handle(Geom_Surface)aS1 = BRep_Tool::Surface(aF1);
@@ -208,7 +210,7 @@ Standard_Boolean IntTools_WLineTool::NotUseSurfacesForApprox(const TopoDS_Face& 
                                                              const Standard_Integer ifprm,
                                                              const Standard_Integer ilprm)
 {
-  Standard_Boolean bPInDZ;
+  Standard_Boolean bPInDZ = 0;
 
   Handle(IntSurf_LineOn2S) aLineOn2S=WL->Curve();
   
@@ -239,9 +241,9 @@ Standard_Boolean IsPointOnBoundary(const Standard_Real theParameter,
                                    const Standard_Real theResolution,
                                    Standard_Boolean&   IsOnFirstBoundary) 
 {
-  Standard_Boolean bRet;
-  Standard_Integer i;
-  Standard_Real adist;
+  Standard_Boolean bRet = 0;
+  Standard_Integer i = 0;
+  Standard_Real adist = NAN;
   //
   bRet=Standard_False;
   for(i = 0; i < 2; ++i) {
@@ -311,8 +313,8 @@ gp_Pnt2d AdjustByNeighbour(const gp_Pnt2d&     theaNeighbourPoint,
 static
 void RefineVector(gp_Vec2d& aV2D)
 {
-  Standard_Integer k,m;
-  Standard_Real aC[2], aEps, aR1, aR2, aNum;
+  Standard_Integer k = 0,m = 0;
+  Standard_Real aC[2], aEps = NAN, aR1 = NAN, aR2 = NAN, aNum = NAN;
   //
   aEps=RealEpsilon();
   aR1=1.-aEps;
@@ -407,7 +409,7 @@ Standard_Boolean FindPoint(const gp_Pnt2d&     theFirstPoint,
       if ( bIsOut )
         acurvec.Reverse();
 
-      Standard_Real aDotX, anAngleX;
+      Standard_Real aDotX = NAN, anAngleX = NAN;
       //
       aDotX = aVec.Dot(acurvec);
       anAngleX = aVec.Angle(acurvec);
@@ -449,8 +451,8 @@ Standard_Boolean IntTools_WLineTool::
                        IntPatch_SequenceOfLine&                       theNewLines,
                        const Handle(IntTools_Context)& aContext) 
 {
-  Standard_Boolean bRet, bAvoidLineConstructor;
-  Standard_Integer aNbPnts, aNbParts;
+  Standard_Boolean bRet = 0, bAvoidLineConstructor = 0;
+  Standard_Integer aNbPnts = 0, aNbParts = 0;
   //
   bRet=Standard_False;
   aNbPnts=theWLine->NbPnts();
@@ -466,9 +468,9 @@ Standard_Boolean IntTools_WLineTool::
     }
   }
   //
-  Standard_Boolean bIsPrevPointOnBoundary, bIsPointOnBoundary, bIsCurrentPointOnBoundary;
-  Standard_Integer nblines, pit, i, j;
-  Standard_Real aTol;
+  Standard_Boolean bIsPrevPointOnBoundary = 0, bIsPointOnBoundary = 0, bIsCurrentPointOnBoundary = 0;
+  Standard_Integer nblines = 0, pit = 0, i = 0, j = 0;
+  Standard_Real aTol = NAN;
   TColStd_Array1OfListOfInteger anArrayOfLines(1, aNbPnts); 
   TColStd_Array1OfInteger       anArrayOfLineType(1, aNbPnts);
   TColStd_ListOfInteger aListOfPointIndex;
@@ -484,10 +486,10 @@ Standard_Boolean IntTools_WLineTool::
   //
   // Points
   for(pit = 1; pit <= aNbPnts; ++pit) {
-    Standard_Boolean bIsOnFirstBoundary, isperiodic;
-    Standard_Real aResolution, aPeriod, alowerboundary, aupperboundary, U, V;
-    Standard_Real aParameter, anoffset, anAdjustPar;
-    Standard_Real umin, umax, vmin, vmax;
+    Standard_Boolean bIsOnFirstBoundary = 0, isperiodic = 0;
+    Standard_Real aResolution = NAN, aPeriod = NAN, alowerboundary = NAN, aupperboundary = NAN, U = NAN, V = NAN;
+    Standard_Real aParameter = NAN, anoffset = NAN, anAdjustPar = NAN;
+    Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
     //
     bIsCurrentPointOnBoundary = Standard_False;
     const IntSurf_PntOn2S& aPoint = theWLine->Point(pit);
@@ -647,7 +649,7 @@ Standard_Boolean IntTools_WLineTool::
           }
           else {
             Standard_Real aPeriod     = (parit == 0) ? aGASurface->UPeriod() : aGASurface->VPeriod();
-            Standard_Real anoffset, anAdjustPar;
+            Standard_Real anoffset = NAN, anAdjustPar = NAN;
             GeomInt::AdjustPeriodic(aParameter, alowerboundary, aupperboundary,
                                            aPeriod, anAdjustPar, anoffset);
 
@@ -686,7 +688,7 @@ Standard_Boolean IntTools_WLineTool::
             Standard_Real aupperboundary = (bIsUBoundary) ? umax : vmax;
             Standard_Real aPeriod     = (bIsUBoundary) ? aGASurface->UPeriod() : aGASurface->VPeriod();
             Standard_Real aParameter = (bIsUBoundary) ? U : V;
-            Standard_Real anoffset, anAdjustPar;
+            Standard_Real anoffset = NAN, anAdjustPar = NAN;
             GeomInt::AdjustPeriodic(aParameter, alowerboundary, aupperboundary, 
                                            aPeriod, anAdjustPar, anoffset);
 
@@ -695,7 +697,7 @@ Standard_Boolean IntTools_WLineTool::
             anotherPar += anoffset;
             Standard_Integer aneighbourpointindex = (j == 0) ? aListOfIndex.First() : aListOfIndex.Last();
             const IntSurf_PntOn2S& aNeighbourPoint = theWLine->Point(aneighbourpointindex);
-            Standard_Real nU1, nV1;
+            Standard_Real nU1 = NAN, nV1 = NAN;
 
             if(surfit == 0)
               aNeighbourPoint.ParametersOnS1(nU1, nV1);
@@ -737,7 +739,7 @@ Standard_Boolean IntTools_WLineTool::
               while((anindexother <= iLast) && (anindexother >= iFirst)) {
                 anindexother = (j == 0) ? (anindexother + 1) : (anindexother - 1);
                 const IntSurf_PntOn2S& aPrevNeighbourPoint = theWLine->Point(anindexother);
-                Standard_Real nU2, nV2;
+                Standard_Real nU2 = NAN, nV2 = NAN;
                 
                 if(surfit == 0)
                   aPrevNeighbourPoint.ParametersOnS1(nU2, nV2);
@@ -754,7 +756,7 @@ Standard_Boolean IntTools_WLineTool::
                   if((fabs(anAngle) < (M_PI * 0.25)) && (aNewVec.Dot(aVecOld) > 0.)) {
 
                     if(bCheckAngle1) {
-                      Standard_Real U1, U2, V1, V2;
+                      Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
                       IntSurf_PntOn2S atmppoint = aNewP;
                       atmppoint.SetValue((surfit == 0), anewU, anewV);
                       atmppoint.Parameters(U1, V1, U2, V2);
@@ -791,7 +793,7 @@ Standard_Boolean IntTools_WLineTool::
 
           if ( bIsNearBoundary ) {
             // re-compute point near natural boundary or near tangent zone
-            Standard_Real u1, v1, u2, v2;
+            Standard_Real u1 = NAN, v1 = NAN, u2 = NAN, v2 = NAN;
             aNewP.Parameters( u1, v1, u2, v2 );
             if(surfit == 0)
               anewpoint = gp_Pnt2d( u1, v1 );
@@ -800,7 +802,7 @@ Standard_Boolean IntTools_WLineTool::
             
             Standard_Integer aneighbourpointindex1 = (j == 0) ? iFirst : iLast;
             const IntSurf_PntOn2S& aNeighbourPoint = theWLine->Point(aneighbourpointindex1);
-            Standard_Real nU1, nV1;
+            Standard_Real nU1 = NAN, nV1 = NAN;
             
             if(surfit == 0)
               aNeighbourPoint.ParametersOnS1(nU1, nV1);
@@ -827,7 +829,7 @@ Standard_Boolean IntTools_WLineTool::
 
             Standard_Integer aneighbourpointindex1 = (j == 0) ? iFirst : iLast;
             const IntSurf_PntOn2S& aNeighbourPoint = theWLine->Point(aneighbourpointindex1);
-            Standard_Real nU1, nV1;
+            Standard_Real nU1 = NAN, nV1 = NAN;
 
             if(surfit == 0)
               aNeighbourPoint.ParametersOnS1(nU1, nV1);
@@ -840,7 +842,7 @@ Standard_Boolean IntTools_WLineTool::
             while((aneighbourpointindex2 <= iLast) && (aneighbourpointindex2 >= iFirst)) {
               aneighbourpointindex2 = (j == 0) ? (aneighbourpointindex2 + 1) : (aneighbourpointindex2 - 1);
               const IntSurf_PntOn2S& aPrevNeighbourPoint = theWLine->Point(aneighbourpointindex2);
-              Standard_Real nU2, nV2;
+              Standard_Real nU2 = NAN, nV2 = NAN;
 
               if(surfit == 0)
                 aPrevNeighbourPoint.ParametersOnS1(nU2, nV2);
@@ -877,7 +879,7 @@ Standard_Boolean IntTools_WLineTool::
                 //Note, it may be shifted on a period
                 Standard_Integer aneindex1 = (j == 0) ? iFirst : iLast;
                 const IntSurf_PntOn2S& aNeighbourPoint = theWLine->Point(aneindex1);
-                Standard_Real nUn, nVn;
+                Standard_Real nUn = NAN, nVn = NAN;
                 
                 if(surfit == 0)
                   aNeighbourPoint.ParametersOnS2(nUn, nVn);
@@ -930,7 +932,7 @@ Standard_Boolean IntTools_WLineTool::
   // Correct wlines.end
 
   // Split wlines.begin
-  Standard_Integer nbiter;
+  Standard_Integer nbiter = 0;
   //
   nbiter=1;
   if (!bAvoidLineConstructor) {
@@ -938,8 +940,8 @@ Standard_Boolean IntTools_WLineTool::
   }
   //
   for(j = 1; j <= nbiter; ++j) {
-    Standard_Real fprm, lprm;
-    Standard_Integer ifprm, ilprm;
+    Standard_Real fprm = NAN, lprm = NAN;
+    Standard_Integer ifprm = 0, ilprm = 0;
     //
     if(bAvoidLineConstructor) {
       ifprm = 1;

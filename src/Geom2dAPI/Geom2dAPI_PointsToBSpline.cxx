@@ -34,9 +34,9 @@
 //function : Geom2dAPI_PointsToBSpline
 //purpose  : 
 //=======================================================================
-Geom2dAPI_PointsToBSpline::Geom2dAPI_PointsToBSpline()
+Geom2dAPI_PointsToBSpline::Geom2dAPI_PointsToBSpline() : myIsDone(Standard_False)
 {
-  myIsDone = Standard_False;
+  
 }
 
 
@@ -84,9 +84,9 @@ Geom2dAPI_PointsToBSpline::Geom2dAPI_PointsToBSpline
    const Standard_Integer    DegMin, 
    const Standard_Integer    DegMax,
    const GeomAbs_Shape       Continuity,
-   const Standard_Real       Tol2D)
+   const Standard_Real       Tol2D) : myIsDone(Standard_False)
 {
-  myIsDone = Standard_False;
+  
   Init(Points,ParType,DegMin,DegMax,Continuity,Tol2D);
 }
 
@@ -101,9 +101,9 @@ Geom2dAPI_PointsToBSpline::Geom2dAPI_PointsToBSpline
    const Standard_Integer      DegMin, 
    const Standard_Integer      DegMax,
    const GeomAbs_Shape         Continuity,
-   const Standard_Real         Tol2D)
+   const Standard_Real         Tol2D) : myIsDone(Standard_False)
 {
-  myIsDone = Standard_False;
+  
   Init(Points,Params,DegMin,DegMax,Continuity,Tol2D);
 }
 
@@ -120,9 +120,9 @@ Geom2dAPI_PointsToBSpline::Geom2dAPI_PointsToBSpline
    const Standard_Real         W3,
    const Standard_Integer      DegMax,
    const GeomAbs_Shape         Continuity,
-   const Standard_Real         Tol2D)
+   const Standard_Real         Tol2D) : myIsDone(Standard_False)
 {
-  myIsDone = Standard_False;
+  
   Init(Points,W1,W2,W3,DegMax,Continuity,Tol2D);
 }
 
@@ -201,7 +201,7 @@ void Geom2dAPI_PointsToBSpline::Init
   TColgp_Array1OfPnt2d Points(YValues.Lower(),YValues.Upper());
   math_Vector Param(YValues.Lower(),YValues.Upper());
   Standard_Real length = DX * (YValues.Upper() - YValues.Lower());
-  Standard_Integer i;
+  Standard_Integer i = 0;
   
   for (i = YValues.Lower(); i <= YValues.Upper(); i++) {
     Param(i) = (X0+(i-1)*DX)/(X0+length);
@@ -383,7 +383,7 @@ void Geom2dAPI_PointsToBSpline::Init
    const GeomAbs_Shape         Continuity,
    const Standard_Real         Tol2D)
 {
-  Standard_Integer NbPoint = Points.Length(), i;
+  Standard_Integer NbPoint = Points.Length(), i = 0;
 
  
   Standard_Integer nbit = 2;

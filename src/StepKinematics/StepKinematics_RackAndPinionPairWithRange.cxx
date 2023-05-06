@@ -22,10 +22,10 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_RackAndPinionPairWithRange, StepKinema
 //function : StepKinematics_RackAndPinionPairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_RackAndPinionPairWithRange::StepKinematics_RackAndPinionPairWithRange ()
+StepKinematics_RackAndPinionPairWithRange::StepKinematics_RackAndPinionPairWithRange () : defLowerLimitRackDisplacement(Standard_False), defUpperLimitRackDisplacement(Standard_False)
 {
-  defLowerLimitRackDisplacement = Standard_False;
-  defUpperLimitRackDisplacement = Standard_False;
+  
+  
 }
 
 //=======================================================================

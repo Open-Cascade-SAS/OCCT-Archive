@@ -96,10 +96,10 @@ private:
   Standard_EXPORT void Approximate (const Handle(Adaptor3d_Surface)& theSurf, const Standard_Real theTol3d, const GeomAbs_Shape theUContinuity, const GeomAbs_Shape theVContinuity, const Standard_Integer theMaxDegU, const Standard_Integer theMaxDegV, const Standard_Integer theMaxSegments, const Standard_Integer thePrecisCode);
 
 
-  Standard_Boolean myIsDone;
-  Standard_Boolean myHasResult;
+  Standard_Boolean myIsDone{};
+  Standard_Boolean myHasResult{};
   Handle(Geom_BSplineSurface) myBSplSurf;
-  Standard_Real myMaxError;
+  Standard_Real myMaxError{};
 
 
 };

@@ -64,7 +64,7 @@ Standard_Boolean FEmTool_ElementsOfRefMatrix::Value(const math_Vector& X, math_V
     break; 
   }
  
-  Standard_Integer i, j, ii = 0;
+  Standard_Integer i = 0, j = 0, ii = 0;
   for(i = 0; i<=myBase->WorkDegree(); i++)
     for(j = i; j<=myBase->WorkDegree(); j++) {
       F(F.Lower()+ii) = Basis(i)*Basis(j); ii++;

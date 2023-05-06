@@ -92,11 +92,10 @@ const Handle(OSD_ThreadPool)& OSD_ThreadPool::DefaultPool (int theNbThreads)
 // purpose  :
 // =======================================================================
 OSD_ThreadPool::OSD_ThreadPool (int theNbThreads)
-: myNbDefThreads (0),
-  myShutDown (false)
+: myShutDown (false)
 {
   Init (theNbThreads);
-  myNbDefThreads = NbThreads();
+  
 }
 
 // =======================================================================

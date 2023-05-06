@@ -16,6 +16,8 @@
 
 //    pdn 13.07.99 Derivatives are scaled in accordance with local/global parameter transition
 
+#include <math.h>
+
 #include <gp_Pnt.hxx>
 #include <gp_Trsf.hxx>
 #include <gp_Vec.hxx>
@@ -28,9 +30,9 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeExtend_ComplexCurve,Geom_Curve)
 //function : ShapeExtend_ComplexCurve
 //purpose  : 
 //=======================================================================
-ShapeExtend_ComplexCurve::ShapeExtend_ComplexCurve()
+ShapeExtend_ComplexCurve::ShapeExtend_ComplexCurve() : myClosed(Standard_False)
 {
-  myClosed = Standard_False;
+  
 }
 
 //=======================================================================
@@ -51,7 +53,7 @@ ShapeExtend_ComplexCurve::ShapeExtend_ComplexCurve()
 
  void ShapeExtend_ComplexCurve::D0(const Standard_Real U,gp_Pnt& P) const
 {
-  Standard_Real UOut;
+  Standard_Real UOut = NAN;
   Standard_Integer ind = LocateParameter (U, UOut);
   Curve(ind)->D0(UOut, P);
 }
@@ -63,7 +65,7 @@ ShapeExtend_ComplexCurve::ShapeExtend_ComplexCurve()
 
  void ShapeExtend_ComplexCurve::D1(const Standard_Real U,gp_Pnt& P,gp_Vec& V1) const
 {
-  Standard_Real UOut;
+  Standard_Real UOut = NAN;
   Standard_Integer ind = LocateParameter (U, UOut);
   Curve(ind)->D1(UOut, P, V1);
   TransformDN(V1,ind,1);
@@ -76,7 +78,7 @@ ShapeExtend_ComplexCurve::ShapeExtend_ComplexCurve()
 
  void ShapeExtend_ComplexCurve::D2(const Standard_Real U,gp_Pnt& P,gp_Vec& V1,gp_Vec& V2) const
 {
-  Standard_Real UOut;
+  Standard_Real UOut = NAN;
   Standard_Integer ind = LocateParameter (U, UOut);
   Curve(ind)->D2(UOut, P, V1, V2);
   TransformDN(V1,ind,1);
@@ -90,7 +92,7 @@ ShapeExtend_ComplexCurve::ShapeExtend_ComplexCurve()
 
  void ShapeExtend_ComplexCurve::D3(const Standard_Real U,gp_Pnt& P,gp_Vec& V1,gp_Vec& V2,gp_Vec& V3) const
 {
-  Standard_Real UOut;
+  Standard_Real UOut = NAN;
   Standard_Integer ind = LocateParameter (U, UOut);
   Curve(ind)->D3(UOut, P, V1, V2, V3);
   TransformDN(V1,ind,1);
@@ -105,7 +107,7 @@ ShapeExtend_ComplexCurve::ShapeExtend_ComplexCurve()
 
  gp_Vec ShapeExtend_ComplexCurve::DN(const Standard_Real U,const Standard_Integer N) const
 {
-  Standard_Real UOut;
+  Standard_Real UOut = NAN;
   Standard_Integer ind = LocateParameter (U, UOut);
   gp_Vec res = Curve(ind)->DN(UOut, N);
   if(N)

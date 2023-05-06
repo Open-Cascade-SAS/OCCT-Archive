@@ -89,7 +89,7 @@ Standard_Boolean ShapeProcess::Perform (const Handle(ShapeProcess_Context)& cont
   }
   TColStd_SequenceOfAsciiString sequenceOfOperators;
   TCollection_AsciiString oper;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for ( i=1; ; i++ ) {
     oper = sequence.Token ( " \t,;", i );
     if ( oper.Length() <=0 ) break;

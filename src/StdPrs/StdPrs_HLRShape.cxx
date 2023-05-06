@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <StdPrs_HLRShape.hxx>
 
 #include <BRepAdaptor_Curve.hxx>
@@ -43,8 +45,8 @@ void StdPrs_HLRShape::ComputeHLR (const Handle(Prs3d_Presentation)& thePresentat
 
   StdPrs_HLRToolShape aTool(theShape, aProj);
   Standard_Integer aNbEdges = aTool.NbEdges();
-  Standard_Integer anI;
-  Standard_Real anU1, anU2;
+  Standard_Integer anI = 0;
+  Standard_Real anU1 = NAN, anU2 = NAN;
   BRepAdaptor_Curve aCurve;
   Standard_Real aDeviation = theDrawer->MaximalChordialDeviation();
   Handle(Graphic3d_Group) aGroup = thePresentation->CurrentGroup();

@@ -15,6 +15,8 @@
 //============================================ IntAna2d_AnaIntersection_4.cxx
 //============================================================================
 
+#include <math.h>
+
 #include <gp_Circ2d.hxx>
 #include <gp_Lin2d.hxx>
 #include <IntAna2d_AnaIntersection.hxx>
@@ -26,11 +28,11 @@
 void IntAna2d_AnaIntersection::Perform (const gp_Lin2d& L,
 				   const IntAna2d_Conic& Conic)
 {
-  Standard_Real A,B,C,D,E,F;
-  Standard_Real px0,px1,px2;
-  Standard_Real DR_A,DR_B,DR_C,X0,Y0;
-  Standard_Integer i;
-  Standard_Real tx,ty,S;
+  Standard_Real A = NAN,B = NAN,C = NAN,D = NAN,E = NAN,F = NAN;
+  Standard_Real px0 = NAN,px1 = NAN,px2 = NAN;
+  Standard_Real DR_A = NAN,DR_B = NAN,DR_C = NAN,X0 = NAN,Y0 = NAN;
+  Standard_Integer i = 0;
+  Standard_Real tx = NAN,ty = NAN,S = NAN;
   
   done = Standard_False;
   nbp  = 0;

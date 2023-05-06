@@ -15,6 +15,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BOPAlgo_Alerts.hxx>
 #include <BOPAlgo_SectionAttribute.hxx>
@@ -76,13 +78,13 @@ class BOPAlgo_SplitEdge : public BOPAlgo_ParallelAlgo  {
   DEFINE_STANDARD_ALLOC
 
   BOPAlgo_SplitEdge() :
-    BOPAlgo_ParallelAlgo() {
-    myT1=0.;
-    myT2=0.;
-    myTol = 0.;
+    BOPAlgo_ParallelAlgo(), myT1(0.), myT2(0.), myTol(0.) {
+    
+    
+    
   }
   //
-  virtual ~BOPAlgo_SplitEdge() {
+  ~BOPAlgo_SplitEdge() override {
   }
   //
   void SetData(const TopoDS_Edge& aE,
@@ -134,7 +136,7 @@ class BOPAlgo_SplitEdge : public BOPAlgo_ParallelAlgo  {
     myContext = aContext;
   }
   //
-  virtual void Perform () {
+  void Perform () override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (UserBreak(aPS))
     {
@@ -164,7 +166,7 @@ class BOPAlgo_SplitEdge : public BOPAlgo_ParallelAlgo  {
   Bnd_Box myBox;
   Standard_Real myTol;
   //
-  BOPDS_PDS   myDS;
+  BOPDS_PDS   myDS{};
   Handle(IntTools_Context) myContext;
 };
 //
@@ -185,7 +187,7 @@ class BOPAlgo_MPC : public BOPAlgo_ParallelAlgo  {
     myFlag(Standard_False) {
   };
   //
-  virtual ~BOPAlgo_MPC(){
+  ~BOPAlgo_MPC() override{
   };
   //
   void SetEdge(const TopoDS_Edge& aE) {
@@ -232,7 +234,7 @@ class BOPAlgo_MPC : public BOPAlgo_ParallelAlgo  {
     return myContext;
   }
   //
-  virtual void Perform() {
+  void Perform() override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (UserBreak(aPS))
     {
@@ -245,7 +247,7 @@ class BOPAlgo_MPC : public BOPAlgo_ParallelAlgo  {
       // Check if edge has pcurve. If no then make its copy to avoid data races,
       // and use it to build pcurve.
       TopoDS_Edge aCopyE = myE;
-      Standard_Real f, l;
+      Standard_Real f = NAN, l = NAN;
       Handle(Geom2d_Curve) aC2d = BRep_Tool::CurveOnSurface(aCopyE, myF, f, l);
       if (aC2d.IsNull())
       {
@@ -316,11 +318,11 @@ class BOPAlgo_MPC : public BOPAlgo_ParallelAlgo  {
   TopoDS_Face myF;
   TopoDS_Edge myEz;
   TopoDS_Vertex myV1;
-  Standard_Real myT1;
+  Standard_Real myT1{};
   TopoDS_Vertex myV2;
-  Standard_Real myT2;
+  Standard_Real myT2{};
   Handle(Geom2d_Curve) myNewC2d;
-  Standard_Real myNewTol;
+  Standard_Real myNewTol{};
   //
   Handle(IntTools_Context) myContext;
 };
@@ -378,7 +380,7 @@ class BOPAlgo_BPC {
   TopoDS_Edge myE;
   TopoDS_Face myF;
   Handle(Geom2d_Curve) myCurve;
-  Standard_Boolean myToUpdate;
+  Standard_Boolean myToUpdate{};
 private:
   Message_ProgressRange myRange;
 };
@@ -398,8 +400,8 @@ void BOPAlgo_PaveFiller::MakeSplitEdges(const Message_ProgressRange& theRange)
     return;
   }
   //
-  Standard_Integer i, nE, nV1, nV2, nSp, aNbVBSE, k;
-  Standard_Real aT1, aT2;
+  Standard_Integer i = 0, nE = 0, nV1 = 0, nV2 = 0, nSp = 0, aNbVBSE = 0, k = 0;
+  Standard_Real aT1 = NAN, aT2 = NAN;
   BOPDS_ListIteratorOfListOfPaveBlock aItPB;
   Handle(BOPDS_PaveBlock) aPB;
   BOPDS_MapOfCommonBlock aMCB(100);
@@ -566,7 +568,7 @@ Standard_Integer BOPAlgo_PaveFiller::SplitEdge(const Standard_Integer nE,
                                                const Standard_Integer nV2, 
                                                const Standard_Real aT2)
 {
-  Standard_Integer nSp;
+  Standard_Integer nSp = 0;
   TopoDS_Vertex aV1, aV2;
   TopoDS_Edge aE, aSp;
   BOPDS_ShapeInfo aSI;
@@ -603,9 +605,9 @@ void BOPAlgo_PaveFiller::MakePCurves(const Message_ProgressRange& theRange)
   if (myAvoidBuildPCurve ||
       (!mySectionAttribute.PCurveOnS1() && !mySectionAttribute.PCurveOnS2()))
     return;
-  Standard_Boolean bHasPC;
-  Standard_Integer i, nF1, aNbC, k, nE, aNbFF, aNbFI, nEx;
-  Standard_Integer j, aNbPBIn, aNbPBOn;
+  Standard_Boolean bHasPC = 0;
+  Standard_Integer i = 0, nF1 = 0, aNbC = 0, k = 0, nE = 0, aNbFF = 0, aNbFI = 0, nEx = 0;
+  Standard_Integer j = 0, aNbPBIn = 0, aNbPBOn = 0;
   BOPDS_ListIteratorOfListOfPaveBlock aItLPB;
   TopoDS_Face aF1F, aF2F;
   BOPAlgo_VectorOfMPC aVMPC;
@@ -673,8 +675,8 @@ void BOPAlgo_PaveFiller::MakePCurves(const Message_ProgressRange& theRange)
               continue;
             }
             //
-            Standard_Integer nV1x, nV2x;
-            Standard_Real aT1x, aT2x;
+            Standard_Integer nV1x = 0, nV2x = 0;
+            Standard_Real aT1x = NAN, aT2x = NAN;
             TopoDS_Vertex aV1x, aV2x;
             TopoDS_Edge aEz;
             //
@@ -804,8 +806,8 @@ void BOPAlgo_PaveFiller::MakePCurves(const Message_ProgressRange& theRange)
 void UpdateVertices(const TopoDS_Edge& aE, 
                     const TopoDS_Face& aF)
 {
-  Standard_Integer j;
-  Standard_Real aT[2], aUx, aVx, aTolV2, aD2, aD;
+  Standard_Integer j = 0;
+  Standard_Real aT[2], aUx = NAN, aVx = NAN, aTolV2 = NAN, aD2 = NAN, aD = NAN;
   gp_Pnt aP3D, aP3Dx;
   gp_Pnt2d aP2Dx;
   Handle(Geom_Surface) aS;
@@ -854,8 +856,8 @@ void BOPAlgo_PaveFiller::Prepare(const Message_ProgressRange& theRange)
     TopAbs_EDGE,
     TopAbs_FACE
   };
-  Standard_Boolean bIsBasedOnPlane;
-  Standard_Integer i, aNb, n1, nF, aNbF;
+  Standard_Boolean bIsBasedOnPlane = 0;
+  Standard_Integer i = 0, aNb = 0, n1 = 0, nF = 0, aNbF = 0;
   TopExp_Explorer aExp;
   TopTools_IndexedMapOfShape aMF;
   //

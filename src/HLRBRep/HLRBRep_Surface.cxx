@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp_Vec.hxx>
 #include <GProp_PEquation.hxx>
 #include <HLRAlgo_Projector.hxx>
@@ -80,9 +82,9 @@ HLRBRep_Surface::SideRowsOfPoles (const Standard_Real tol,
 				  const Standard_Integer nbvPoles,
 				  TColgp_Array2OfPnt& Pnt) const
 {
-  Standard_Integer iu,iv;
-  Standard_Real x0,y0,x,y,z;
-  Standard_Boolean result;
+  Standard_Integer iu = 0,iv = 0;
+  Standard_Real x0 = NAN,y0 = NAN,x = NAN,y = NAN,z = NAN;
+  Standard_Boolean result = 0;
   Standard_Real tole = (Standard_Real)tol;
   const gp_Trsf& T = myProj->Transformation();
 
@@ -144,7 +146,7 @@ HLRBRep_Surface::IsSide (const Standard_Real tolF,
 {
   gp_Pnt Pt;
   gp_Vec D;
-  Standard_Real r;
+  Standard_Real r = NAN;
 
   if (myType == GeomAbs_Plane) {
     gp_Pln Pl = Plane();
@@ -211,9 +213,9 @@ HLRBRep_Surface::IsAbove (const Standard_Boolean back,
   Standard_Boolean planar = (myType == GeomAbs_Plane);
   if (planar) {
     gp_Pln Pl = Plane();
-    Standard_Real a,b,c,d;
+    Standard_Real a = NAN,b = NAN,c = NAN,d = NAN;
     Pl.Coefficients(a,b,c,d);
-    Standard_Real u,u1,u2,dd,x,y,z;
+    Standard_Real u = NAN,u1 = NAN,u2 = NAN,dd = NAN,x = NAN,y = NAN,z = NAN;
     gp_Pnt P;
     u1 = A->Parameter3d(A->FirstParameter());
     u2 = A->Parameter3d(A->LastParameter());

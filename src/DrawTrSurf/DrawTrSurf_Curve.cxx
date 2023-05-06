@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DrawTrSurf_Curve.hxx>
 
 #include <Draw_Color.hxx>
@@ -145,18 +147,18 @@ void DrawTrSurf_Curve::DrawOn (Draw_Display& dis) const
   }
 // Draw the curvature Radius      
   if (dispcurvradius && (C.GetType() != GeomAbs_Line)) {
-    Standard_Integer ii;
-    Standard_Integer intrv, nbintv = C.NbIntervals(GeomAbs_CN);
+    Standard_Integer ii = 0;
+    Standard_Integer intrv = 0, nbintv = C.NbIntervals(GeomAbs_CN);
     TColStd_Array1OfReal TI(1,nbintv+1);
     C.Intervals(TI,GeomAbs_CN);
-    Standard_Real Resolution = 1.0e-9, Curvature;
+    Standard_Real Resolution = 1.0e-9, Curvature = NAN;
     GeomLProp_CLProps LProp(curv, 2, Resolution);
     gp_Pnt P1, P2;    
 
     for (intrv = 1; intrv <= nbintv; intrv++) {
 	Standard_Real t = TI(intrv);
 	Standard_Real step = (TI(intrv+1) - t) / GetDiscretisation();
-	Standard_Real LRad, ratio;
+	Standard_Real LRad = NAN, ratio = NAN;
 	for (ii = 1; ii <= GetDiscretisation(); ii++) {	 
 	  LProp.SetParameter(t);
           if (LProp.IsTangentDefined()) {

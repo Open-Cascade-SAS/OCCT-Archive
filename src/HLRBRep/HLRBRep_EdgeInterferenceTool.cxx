@@ -19,6 +19,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <HLRBRep_Data.hxx>
 #include <HLRBRep_EdgeInterferenceTool.hxx>
 
@@ -38,8 +40,8 @@ HLRBRep_EdgeInterferenceTool::HLRBRep_EdgeInterferenceTool
 
 void HLRBRep_EdgeInterferenceTool::LoadEdge()
 {
-  Standard_Real p1,p2;
-  Standard_ShortReal t1,t2;
+  Standard_Real p1 = NAN,p2 = NAN;
+  Standard_ShortReal t1 = NAN,t2 = NAN;
   HLRBRep_Array1OfEData& ED = myDS->EDataArray();
   HLRBRep_EdgeData& ed = ED(myDS->Edge());
   ed.Status().Bounds(p1,t1,p2,t2);
@@ -108,8 +110,8 @@ void HLRBRep_EdgeInterferenceTool::InterferenceBoundaryGeometry
    gp_Dir& Norm,
    Standard_Real& CrFE) const
 {
-  Standard_Integer FE;
-  Standard_Real Param;
+  Standard_Integer FE = 0;
+  Standard_Real Param = NAN;
   gp_Dir2d TgFE,NmFE;
   I.Boundary().Value2D(FE,Param);
   myDS->LocalFEGeometry2D(FE,Param,TgFE,NmFE,CrFE);

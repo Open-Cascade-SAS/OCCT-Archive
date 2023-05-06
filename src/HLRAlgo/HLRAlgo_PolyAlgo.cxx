@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <HLRAlgo_PolyAlgo.hxx>
 
 #include <HLRAlgo_BiPoint.hxx>
@@ -66,16 +68,16 @@ void HLRAlgo_PolyAlgo::Clear()
 
 void HLRAlgo_PolyAlgo::Update ()
 {
-  Standard_Integer j;
-  Standard_Integer nxMin,nyMin,nzMin,nxMax,nyMax,nzMax;
-  Standard_Real xShellMin,yShellMin,zShellMin;
-  Standard_Real xShellMax,yShellMax,zShellMax;
-  Standard_Real xPolyTMin,yPolyTMin,zPolyTMin;
-  Standard_Real xPolyTMax,yPolyTMax,zPolyTMax;
-  Standard_Real xTrianMin,yTrianMin,zTrianMin;
-  Standard_Real xTrianMax,yTrianMax,zTrianMax;
-  Standard_Real xSegmnMin,ySegmnMin,zSegmnMin;
-  Standard_Real xSegmnMax,ySegmnMax,zSegmnMax;
+  Standard_Integer j = 0;
+  Standard_Integer nxMin = 0,nyMin = 0,nzMin = 0,nxMax = 0,nyMax = 0,nzMax = 0;
+  Standard_Real xShellMin = NAN,yShellMin = NAN,zShellMin = NAN;
+  Standard_Real xShellMax = NAN,yShellMax = NAN,zShellMax = NAN;
+  Standard_Real xPolyTMin = NAN,yPolyTMin = NAN,zPolyTMin = NAN;
+  Standard_Real xPolyTMax = NAN,yPolyTMax = NAN,zPolyTMax = NAN;
+  Standard_Real xTrianMin = NAN,yTrianMin = NAN,zTrianMin = NAN;
+  Standard_Real xTrianMax = NAN,yTrianMax = NAN,zTrianMax = NAN;
+  Standard_Real xSegmnMin = NAN,ySegmnMin = NAN,zSegmnMin = NAN;
+  Standard_Real xSegmnMax = NAN,ySegmnMax = NAN,zSegmnMax = NAN;
   Standard_Real Big = Precision::Infinite();
   HLRAlgo_PolyData::Box aBox(Big, Big, Big, -Big, -Big, -Big);
 
@@ -158,10 +160,10 @@ void HLRAlgo_PolyAlgo::Update ()
 	xPolyTMax = -Big;
 	yPolyTMax = -Big;
 	zPolyTMax = -Big;
-	Standard_Integer otheri,nbHide = 0;//min,max;
-	Standard_Real X1,X2,X3,Y1,Y2,Y3,Z1,Z2,Z3;
-	Standard_Real dn,dnx,dny,dnz,dx1,dy1,dz1,dx2,dy2,dz2,dx3,dy3;
-	Standard_Real adx1,ady1,adx2,ady2,adx3,ady3;
+	Standard_Integer otheri = 0,nbHide = 0;//min,max;
+	Standard_Real X1 = NAN,X2 = NAN,X3 = NAN,Y1 = NAN,Y2 = NAN,Y3 = NAN,Z1 = NAN,Z2 = NAN,Z3 = NAN;
+	Standard_Real dn = NAN,dnx = NAN,dny = NAN,dnz = NAN,dx1 = NAN,dy1 = NAN,dz1 = NAN,dx2 = NAN,dy2 = NAN,dz2 = NAN,dx3 = NAN,dy3 = NAN;
+	Standard_Real adx1 = NAN,ady1 = NAN,adx2 = NAN,ady2 = NAN,adx3 = NAN,ady3 = NAN;
 	Standard_Real a =0.,b =0.,c =0.,d =0.;
 	HLRAlgo_PolyData::FaceIndices& PolyTIndices = aPd->Indices();
 	TColgp_Array1OfXYZ   & Nodes        = aPd->Nodes();
@@ -205,7 +207,7 @@ void HLRAlgo_PolyAlgo::Update ()
 	    nxMax = (Standard_Integer)((DecaX + xTrianMax) * SurDX);
 	    nyMax = (Standard_Integer)((DecaY + yTrianMax) * SurDY);
 	    nzMax = (Standard_Integer)((DecaZ + zTrianMax) * SurDZ);
-	    Standard_Integer MinTrian,MaxTrian;
+	    Standard_Integer MinTrian = 0,MaxTrian = 0;
 	    MinTrian   = nyMin + (nxMin << 11);
 	    MinTrian <<= 10;
 	    MinTrian  += nzMin - 0x00000200;

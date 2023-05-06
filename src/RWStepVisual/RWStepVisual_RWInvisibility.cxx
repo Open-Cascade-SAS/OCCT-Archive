@@ -38,7 +38,7 @@ void RWStepVisual_RWInvisibility::ReadStep
 
 	Handle(StepVisual_HArray1OfInvisibleItem) aInvisibleItems;
 	StepVisual_InvisibleItem aInvisibleItemsItem;
-	Standard_Integer nsub1;
+	Standard_Integer nsub1 = 0;
 	if (data->ReadSubList (num,1,"invisible_items",ach,nsub1)) {
 	  Standard_Integer nb1 = data->NbParams(nsub1);
 	  aInvisibleItems = new StepVisual_HArray1OfInvisibleItem (1, nb1);

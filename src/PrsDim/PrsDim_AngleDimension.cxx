@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_AngleDimension.hxx>
 
 #include <PrsDim.hxx>
@@ -641,7 +643,7 @@ void PrsDim_AngleDimension::Compute (const Handle(PrsMgr_PresentationManager)& ,
   Standard_Real anArrowLength = aDimensionAspect->ArrowAspect()->Length();
 
   // prepare label string and compute its geometrical width
-  Standard_Real aLabelWidth;
+  Standard_Real aLabelWidth = NAN;
   TCollection_ExtendedString aLabelString = GetValueString (aLabelWidth);
 
   // add margins to label width
@@ -897,7 +899,7 @@ Standard_Boolean PrsDim_AngleDimension::InitTwoEdgesAngle (gp_Pln& theComputedPl
                                      : gp_Pln (aSecondLin.Location(), gp_Vec (aFirstLin.Direction()) ^ gp_Vec (aSecondLin.Direction()));
 
   // Compute geometry for this plane and edges
-  Standard_Boolean isInfinite1,isInfinite2;
+  Standard_Boolean isInfinite1 = 0,isInfinite2 = 0;
   gp_Pnt aFirstPoint1, aLastPoint1, aFirstPoint2, aLastPoint2;
   Handle(Geom_Curve) aFirstCurve = aFirstLine, aSecondCurve = aSecondLine;
   if (!PrsDim::ComputeGeometry (aFirstEdge, aSecondEdge,
@@ -988,7 +990,7 @@ Standard_Boolean PrsDim_AngleDimension::InitTwoFacesAngle()
   gp_Pln aFirstPln, aSecondPln;
   Handle(Geom_Surface) aFirstBasisSurf, aSecondBasisSurf;
   PrsDim_KindOfSurface aFirstSurfType, aSecondSurfType;
-  Standard_Real aFirstOffset, aSecondOffset;
+  Standard_Real aFirstOffset = NAN, aSecondOffset = NAN;
 
   PrsDim::GetPlaneFromFace (aFirstFace, aFirstPln,
                             aFirstBasisSurf,aFirstSurfType,aFirstOffset);
@@ -1028,7 +1030,7 @@ Standard_Boolean PrsDim_AngleDimension::InitTwoFacesAngle (const gp_Pnt& thePoin
   gp_Pln aFirstPln, aSecondPln;
   Handle(Geom_Surface) aFirstBasisSurf, aSecondBasisSurf;
   PrsDim_KindOfSurface aFirstSurfType, aSecondSurfType;
-  Standard_Real aFirstOffset, aSecondOffset;
+  Standard_Real aFirstOffset = NAN, aSecondOffset = NAN;
 
   PrsDim::GetPlaneFromFace (aFirstFace, aFirstPln,
                             aFirstBasisSurf,aFirstSurfType,aFirstOffset);
@@ -1216,7 +1218,7 @@ gp_Pnt PrsDim_AngleDimension::GetTextPosition() const
   Handle(Prs3d_DimensionAspect) aDimensionAspect = myDrawer->DimensionAspect();
 
   // Prepare label string and compute its geometrical width
-  Standard_Real aLabelWidth;
+  Standard_Real aLabelWidth = NAN;
   TCollection_ExtendedString aLabelString = GetValueString (aLabelWidth);
 
   gp_Pnt aFirstAttach = myCenterPoint.Translated (gp_Vec(myCenterPoint, myFirstPoint).Normalized() * GetFlyout());
@@ -1396,7 +1398,7 @@ void PrsDim_AngleDimension::FitTextAlignment (const Prs3d_DimensionTextHorizonta
   Standard_Real anArrowLength = aDimensionAspect->ArrowAspect()->Length();
 
   // Prepare label string and compute its geometrical width
-  Standard_Real aLabelWidth;
+  Standard_Real aLabelWidth = NAN;
   TCollection_ExtendedString aLabelString = GetValueString (aLabelWidth);
 
   // add margins to label width

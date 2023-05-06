@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AdvApprox_ApproxAFunction.hxx>
 #include <AdvApprox_DichoCutting.hxx>
 #include <AdvApprox_PrefAndRec.hxx>
@@ -37,12 +39,12 @@ class Approx_SweepApproximation_Eval : public AdvApprox_EvaluatorFunction
   Approx_SweepApproximation_Eval (Approx_SweepApproximation& theTool)
     : Tool(theTool) {}
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Approx_SweepApproximation &Tool;
@@ -60,14 +62,14 @@ void Approx_SweepApproximation_Eval::Evaluate (Standard_Integer *,/*Dimension*/
 }
 
 Approx_SweepApproximation::
-Approx_SweepApproximation(const Handle(Approx_SweepFunction)& Func) 
+Approx_SweepApproximation(const Handle(Approx_SweepFunction)& Func) : myFunc(Func), myParam(0), myOrder(-1), first(1.e100), last(-1.e100), done(Standard_False) 
 {
-  myFunc  = Func;
+  
   //  Init of variables of control
-  myParam = 0;
-  myOrder = -1;
-  first = 1.e100; last = -1.e100;
-  done = Standard_False;
+  
+  
+  
+  
 }
 
 void Approx_SweepApproximation::Perform(const Standard_Real First,
@@ -80,8 +82,8 @@ void Approx_SweepApproximation::Perform(const Standard_Real First,
 					const Standard_Integer Degmax,
 					const Standard_Integer Segmax)
 {
- Standard_Integer NbPolSect, NbKnotSect, ii;
- Standard_Real Tol, Tol3dMin = Tol3d, The3D2DTol=0 ; 
+ Standard_Integer NbPolSect = 0, NbKnotSect = 0, ii = 0;
+ Standard_Real Tol = NAN, Tol3dMin = Tol3d, The3D2DTol=0 ; 
  GeomAbs_Shape   continuity = Continuity;
 
 // (1) Characteristics of a section
@@ -107,7 +109,7 @@ void Approx_SweepApproximation::Perform(const Standard_Real First,
    if (ThreeDTol->Value(ii) < Tol3dMin) Tol3dMin = ThreeDTol->Value(ii);
 
  if (myFunc->IsRational()) {
-   Standard_Real Size;
+   Standard_Real Size = NAN;
    Num1DSS = NbPolSect;
    TColStd_Array1OfReal Wmin(1, Num1DSS);
    myFunc->GetMinimalWeight(Wmin);
@@ -129,7 +131,7 @@ void Approx_SweepApproximation::Perform(const Standard_Real First,
  else {
    // for 2d define affinity using resolutions, to 
    // avoid homogenuous tolerance of approximation (u/v and 2d/3d)
-   Standard_Real res, tolu, tolv; 
+   Standard_Real res = NAN, tolu = NAN, tolv = NAN; 
    TwoDTol = new (TColStd_HArray1OfReal) (1, Num2DSS);
    AAffin = new (Approx_HArray1OfGTrsf2d) (1, Num2DSS);
    The3D2DTol= 0.9*BoundTol; // 10% of security
@@ -175,7 +177,7 @@ void Approx_SweepApproximation::Perform(const Standard_Real First,
 
 // Checks if myFunc->D2 is implemented
  if (continuity >= GeomAbs_C2) {
-   Standard_Boolean B;
+   Standard_Boolean B = 0;
    B = myFunc->D2(First, First, Last, 
 		  myPoles->ChangeArray1(), myDPoles->ChangeArray1(), 
 		  myD2Poles->ChangeArray1(),
@@ -187,7 +189,7 @@ void Approx_SweepApproximation::Perform(const Standard_Real First,
  }
 // Checks if myFunc->D1 is implemented
  if (continuity == GeomAbs_C1) {
-   Standard_Boolean B;
+   Standard_Boolean B = 0;
    B = myFunc->D1(First, First, Last, 
 		  myPoles->ChangeArray1(), myDPoles->ChangeArray1(), 
 		  myPoles2d->ChangeArray1(), myDPoles2d->ChangeArray1(), 
@@ -267,7 +269,7 @@ Approximation(const Handle(TColStd_HArray1OfReal)& OneDTol,
 
  if (done) {
  // --> Fill Champs of the surface ----
-   Standard_Integer ii, jj;
+   Standard_Integer ii = 0, jj = 0;
 
    vdeg = Approx.Degree();
    // Unfortunately Adv_Approx stores the transposition of the required 
@@ -279,7 +281,7 @@ Approximation(const Handle(TColStd_HArray1OfReal)& OneDTol,
      (1, Num3DSS, 1, Approx.NbPoles());
 
    if (Num1DSS == Num3DSS) {
-     Standard_Real wpoid;
+     Standard_Real wpoid = NAN;
      gp_Pnt P;
      for (ii=1; ii <=Num3DSS; ii++) {
        for (jj=1; jj <=Approx.NbPoles() ; jj++) {
@@ -384,7 +386,7 @@ Standard_Boolean Approx_SweepApproximation::D0(const Standard_Real Param,
 					       const Standard_Real Last,
 					       Standard_Real& Result) 
 {
-  Standard_Integer index, ii;
+  Standard_Integer index = 0, ii = 0;
   Standard_Boolean Ok=Standard_True;
   Standard_Real * LocalResult =  &Result;
 
@@ -448,7 +450,7 @@ Standard_Boolean Approx_SweepApproximation::D1(const Standard_Real Param,
 {
   gp_XY Vcoord;
   gp_Vec Vaux;
-  Standard_Integer index, ii;
+  Standard_Integer index = 0, ii = 0;
   Standard_Boolean Ok=Standard_True;
   Standard_Real * LocalResult =  &Result;
 
@@ -525,7 +527,7 @@ Standard_Boolean Approx_SweepApproximation::D2(const Standard_Real Param,
 {
   gp_XY Vcoord;  
   gp_Vec Vaux;
-  Standard_Integer index, ii;
+  Standard_Integer index = 0, ii = 0;
   Standard_Boolean Ok=Standard_True;
   Standard_Real * LocalResult =  &Result;
 
@@ -642,8 +644,8 @@ Surface(TColgp_Array2OfPnt& TPoles,
 
 Standard_Real Approx_SweepApproximation::MaxErrorOnSurf() const
 {
- Standard_Integer ii;
- Standard_Real MaxError = 0, err;
+ Standard_Integer ii = 0;
+ Standard_Real MaxError = 0, err = NAN;
  if (!done) {throw StdFail_NotDone("Approx_SweepApproximation");}
 
  if (myFunc->IsRational()) {
@@ -666,8 +668,8 @@ Standard_Real Approx_SweepApproximation::MaxErrorOnSurf() const
 
  Standard_Real Approx_SweepApproximation::AverageErrorOnSurf() const
 {
- Standard_Integer ii;
- Standard_Real MoyError = 0, err;
+ Standard_Integer ii = 0;
+ Standard_Real MoyError = 0, err = NAN;
  if (!done) {throw StdFail_NotDone("Approx_SweepApproximation");}
 
  if (myFunc->IsRational()) {

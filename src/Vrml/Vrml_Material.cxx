@@ -22,14 +22,14 @@ Vrml_Material::Vrml_Material(const Handle(Quantity_HArray1OfColor)& aAmbientColo
 			      const Handle(Quantity_HArray1OfColor)& aSpecularColor, 
 			      const Handle(Quantity_HArray1OfColor)& aEmissiveColor, 
 			      const Handle(TColStd_HArray1OfReal)& aShininess, 
-			      const Handle(TColStd_HArray1OfReal)& aTransparency)
+			      const Handle(TColStd_HArray1OfReal)& aTransparency) : myAmbientColor(aAmbientColor), myDiffuseColor(aDiffuseColor), mySpecularColor(aSpecularColor), myEmissiveColor(aEmissiveColor)
 {
- myAmbientColor = aAmbientColor;
- myDiffuseColor = aDiffuseColor;
- mySpecularColor = aSpecularColor;
- myEmissiveColor = aEmissiveColor;
+ 
+ 
+ 
+ 
 
- Standard_Integer i;
+ Standard_Integer i = 0;
  for ( i = aShininess->Lower(); i <= aShininess->Upper(); i++ )
    {
      if (aShininess->Value(i) < 0. || aShininess->Value(i) > 1.)
@@ -102,7 +102,7 @@ Handle(Quantity_HArray1OfColor) Vrml_Material::EmissiveColor() const
 
 void Vrml_Material::SetShininess(const Handle(TColStd_HArray1OfReal)& aShininess)
 {
- Standard_Integer i;
+ Standard_Integer i = 0;
  for ( i = aShininess->Lower(); i <= aShininess->Upper(); i++ )
    {
      if (aShininess->Value(i) < 0. || aShininess->Value(i) > 1.)
@@ -120,7 +120,7 @@ Handle(TColStd_HArray1OfReal) Vrml_Material::Shininess() const
 
 void Vrml_Material::SetTransparency(const Handle(TColStd_HArray1OfReal)& aTransparency)
 {
- Standard_Integer i;
+ Standard_Integer i = 0;
  for ( i = aTransparency->Lower(); i <= aTransparency->Upper(); i++ )
    {
      if (aTransparency->Value(i) < 0. || aTransparency->Value(i) > 1.)
@@ -139,7 +139,7 @@ Handle(TColStd_HArray1OfReal) Vrml_Material::Transparency() const
 Standard_OStream& Vrml_Material::Print(Standard_OStream& anOStream) const 
 {
  NCollection_Vec3<Standard_Real> aColor_sRGB;
- Standard_Integer i;
+ Standard_Integer i = 0;
  anOStream  << "Material {\n";
 
  if ( myAmbientColor->Length() != 1 ||

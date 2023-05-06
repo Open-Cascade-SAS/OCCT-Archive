@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
 #include <BRepExtrema_ExtPF.hxx>
@@ -70,7 +72,7 @@ Standard_Boolean HLRBRep_EdgeFaceTool::UVPoint(const Standard_Real Par,
                                                Standard_Real& U,
                                                Standard_Real& V)
 {
-  Standard_Real pfbid,plbid;
+  Standard_Real pfbid = NAN,plbid = NAN;
   if (BRep_Tool::CurveOnSurface
       (((HLRBRep_Curve  *)E)->Curve().Edge(),
        ((HLRBRep_Surface*)F)->Surface().Face(),pfbid,plbid).IsNull())
@@ -78,7 +80,7 @@ Standard_Boolean HLRBRep_EdgeFaceTool::UVPoint(const Standard_Real Par,
     BRepExtrema_ExtPF proj
       (BRepLib_MakeVertex(((HLRBRep_Curve*)E)->Value3D(Par)),
        ((HLRBRep_Surface*)F)->Surface().Face());
-    Standard_Integer i, index = 0;
+    Standard_Integer i = 0, index = 0;
     Standard_Real dist2 = RealLast();
     const Standard_Integer n = proj.NbExt();
     for (i = 1; i <= n; i++) {

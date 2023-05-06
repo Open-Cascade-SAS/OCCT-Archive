@@ -17,6 +17,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <Convert_ConicToBSplineCurve.hxx>
 #include <Convert_CosAndSinEvalFunction.hxx>
@@ -217,8 +219,8 @@ void  CosAndSinQuasiAngular(Standard_Real  Parameter,
 			    Standard_Real  Result[2])
 {
   Standard_Real 
-  param,
-  *coeff ;
+  param = NAN,
+  *coeff = nullptr ;
  
    coeff = (Standard_Real *) &EvalPoles(EvalPoles.Lower()) ;
 //
@@ -252,13 +254,13 @@ void AlgorithmicCosAndSin(Standard_Integer               Degree,
                           TColStd_Array1OfReal&          SinNumerator,
 			  TColStd_Array1OfReal&          Denominator) 
 {
-   Standard_Integer order,
-   num_poles,
-   pivot_index_problem,
-   ii;
+   Standard_Integer order = 0,
+   num_poles = 0,
+   pivot_index_problem = 0,
+   ii = 0;
  
    Standard_Real  result[2],
-   inverse ;
+   inverse = NAN ;
 
    order = Degree + 1 ;
    num_poles = FlatKnots.Length() - order ;
@@ -321,31 +323,31 @@ void Convert_ConicToBSplineCurve::BuildCosAndSin(
           Handle(TColStd_HArray1OfInteger)&      MultsPtr)  const 
 {
   Standard_Real delta = ULast - UFirst,
-  direct,
-  inverse,
-  value1,
-  value2,
-  cos_beta,
-  sin_beta,
+  direct = NAN,
+  inverse = NAN,
+  value1 = NAN,
+  value2 = NAN,
+  cos_beta = NAN,
+  sin_beta = NAN,
   alpha=0,
-  alpha_2,
-  alpha_4,
-  tan_alpha_2,
-  beta,
-  p_param,
-  q_param,
-  param ;
+  alpha_2 = NAN,
+  alpha_4 = NAN,
+  tan_alpha_2 = NAN,
+  beta = NAN,
+  p_param = NAN,
+  q_param = NAN,
+  param = NAN ;
 
   Standard_Integer num_poles = 0,
-  ii,
-  jj,
+  ii = 0,
+  jj = 0,
   num_knots = 1,
   num_spans = 1,
-  num_flat_knots,
-  num_temp_knots,
+  num_flat_knots = 0,
+  num_temp_knots = 0,
   temp_degree = 0,
-  tgt_theta_flag,
-  num_temp_poles,
+  tgt_theta_flag = 0,
+  num_temp_poles = 0,
   order  = 0;
 
   Convert_CosAndSinEvalFunction *EvaluatorPtr=NULL ;
@@ -610,27 +612,27 @@ void Convert_ConicToBSplineCurve::BuildCosAndSin(
           Handle(TColStd_HArray1OfReal)&         KnotsPtr,
           Handle(TColStd_HArray1OfInteger)&      MultsPtr)  const 
 {
-  Standard_Real half_pi,
-  param,
-  first_param,
-  last_param,
+  Standard_Real half_pi = NAN,
+  param = NAN,
+  first_param = NAN,
+  last_param = NAN,
 //  direct,
-  inverse,
-  value1,
-  value2,
-  value3 ;
+  inverse = NAN,
+  value1 = NAN,
+  value2 = NAN,
+  value3 = NAN ;
 
   Standard_Integer 
-  ii,
-  jj,
-  index,
-  num_poles,
-  num_periodic_poles,
-  temp_degree,
-  pivot_index_problem,
-  num_flat_knots,
-  num_knots,
-  order ;
+  ii = 0,
+  jj = 0,
+  index = 0,
+  num_poles = 0,
+  num_periodic_poles = 0,
+  temp_degree = 0,
+  pivot_index_problem = 0,
+  num_flat_knots = 0,
+  num_knots = 0,
+  order = 0 ;
 
   if (Parameterisation != Convert_TgtThetaOver2 &&
       Parameterisation != Convert_RationalC1) {

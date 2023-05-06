@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_EdgeDiscret.hxx>
 #include <BRepMesh_Deflection.hxx>
 #include <IMeshData_Model.hxx>
@@ -258,7 +260,7 @@ void BRepMesh_EdgeDiscret::Tessellate3d(
   if (theUpdateEnds)
   {
     gp_Pnt aPoint;
-    Standard_Real aParam;
+    Standard_Real aParam = NAN;
     theTessellator->Value(1, aPoint, aParam);
     aCurve->AddPoint(BRep_Tool::Pnt(aFirstVertex), aParam);
   }
@@ -268,7 +270,7 @@ void BRepMesh_EdgeDiscret::Tessellate3d(
     for (Standard_Integer i = 2; i < theTessellator->PointsNb(); ++i)
     {
       gp_Pnt aPoint;
-      Standard_Real aParam;
+      Standard_Real aParam = NAN;
       if (!theTessellator->Value(i, aPoint, aParam))
         continue;
 
@@ -286,7 +288,7 @@ void BRepMesh_EdgeDiscret::Tessellate3d(
   if (theUpdateEnds)
   {
     gp_Pnt aPoint;
-    Standard_Real aParam;
+    Standard_Real aParam = NAN;
     theTessellator->Value(theTessellator->PointsNb(), aPoint, aParam);
     aCurve->AddPoint(BRep_Tool::Pnt(aLastVertex), aParam);
   }
@@ -311,7 +313,7 @@ void BRepMesh_EdgeDiscret::Tessellate2d(
 
     const Handle(Adaptor2d_Curve2d)& aGeomPCurve = aProvider.GetPCurve();
 
-    Standard_Integer aParamIdx, aParamNb;
+    Standard_Integer aParamIdx = 0, aParamNb = 0;
     if (theUpdateEnds)
     {
       aParamIdx = 0;

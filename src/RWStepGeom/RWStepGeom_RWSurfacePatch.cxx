@@ -75,13 +75,13 @@ void RWStepGeom_RWSurfacePatch::ReadStep
   
   // --- own field : uSense ---
   
-  Standard_Boolean aUSense;
+  Standard_Boolean aUSense = 0;
   //szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
   data->ReadBoolean (num,4,"u_sense",ach,aUSense);
   
   // --- own field : vSense ---
   
-  Standard_Boolean aVSense;
+  Standard_Boolean aVSense = 0;
   //szv#4:S4163:12Mar99 `Standard_Boolean stat5 =` not needed
   data->ReadBoolean (num,5,"v_sense",ach,aVSense);
   

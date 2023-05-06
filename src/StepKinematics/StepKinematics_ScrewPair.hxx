@@ -52,7 +52,7 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_ScrewPair, StepKinematics_LowOrderKinematicPairWithMotionCoupling)
 
 private:
-  Standard_Real myPitch;
+  Standard_Real myPitch{};
 
 };
 #endif // _StepKinematics_ScrewPair_HeaderFile_

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <algorithm>
 #include <GeomInt_IntSS.hxx>
 
@@ -62,7 +64,7 @@
   const Standard_Real aEps=Precision::PConfusion();//1.e-9
   const Standard_Real aEpsilon=Epsilon(10.);//1.77e-15 
   //
-  Standard_Real umin,umax,vmin,vmax;
+  Standard_Real umin = NAN,umax = NAN,vmin = NAN,vmax = NAN;
   aS->Bounds(umin,umax,vmin,vmax);
   const Standard_Real aPeriod = aS->UPeriod();
   
@@ -267,8 +269,8 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
 			                        const Standard_Boolean ApproxS2)
 
 {
-  Standard_Boolean myApprox1, myApprox2, myApprox;
-  Standard_Real Tolpc, myTolApprox;
+  Standard_Boolean myApprox1 = 0, myApprox2 = 0, myApprox = 0;
+  Standard_Real Tolpc = NAN, myTolApprox = NAN;
   IntPatch_IType typl;
   Handle(Geom2d_BSplineCurve) H1;
   Handle(Geom_Surface) aS1, aS2;
@@ -299,9 +301,9 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
     return;
   }
   // Do the Curve
-  Standard_Boolean ok;
-  Standard_Integer i, j,  aNbParts;
-  Standard_Real fprm, lprm;
+  Standard_Boolean ok = 0;
+  Standard_Integer i = 0, j = 0,  aNbParts = 0;
+  Standard_Real fprm = NAN, lprm = NAN;
   Handle(Geom_Curve) newc;
 
   switch (typl) {
@@ -370,9 +372,9 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
             slineS2.Append(H1);
             continue;
         }
-        Standard_Boolean bFNIt, bLPIt;
-        Standard_Real aTestPrm, dT=100.;
-        Standard_Real u1, v1, u2, v2, TolX;
+        Standard_Boolean bFNIt = 0, bLPIt = 0;
+        Standard_Real aTestPrm = NAN, dT=100.;
+        Standard_Real u1 = NAN, v1 = NAN, u2 = NAN, v2 = NAN, TolX = NAN;
         //
         bFNIt=Precision::IsNegativeInfinite(fprm);
         bLPIt=Precision::IsPositiveInfinite(lprm);
@@ -419,7 +421,7 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
         (Handle(IntPatch_GLine)::DownCast(L)->Ellipse());
     }
     //
-    Standard_Real aPeriod, aRealEpsilon;
+    Standard_Real aPeriod = NAN, aRealEpsilon = NAN;
     //
     aRealEpsilon=RealEpsilon();
     aPeriod=M_PI+M_PI;
@@ -501,7 +503,7 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
           }
         }
         //
-        Standard_Real aTwoPIdiv17, u1, v1, u2, v2, TolX;
+        Standard_Real aTwoPIdiv17 = NAN, u1 = NAN, v1 = NAN, u2 = NAN, v2 = NAN, TolX = NAN;
         //
         aTwoPIdiv17=2.*M_PI/17.;
         //
@@ -568,7 +570,7 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
 #endif
 
     //
-    Standard_Integer ifprm, ilprm;
+    Standard_Integer ifprm = 0, ilprm = 0;
     //
     if (!myApprox) {
       aNbParts=myLConstruct.NbParts();
@@ -595,11 +597,11 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
     }
     //
     else {
-      Standard_Boolean bIsDecomposited;
-      Standard_Integer nbiter, aNbSeqOfL;
+      Standard_Boolean bIsDecomposited = 0;
+      Standard_Integer nbiter = 0, aNbSeqOfL = 0;
       GeomInt_WLApprox theapp3d;
       IntPatch_SequenceOfLine aSeqOfL;
-      Standard_Real tol2d, aTolSS;
+      Standard_Real tol2d = NAN, aTolSS = NAN;
       // 	
       tol2d = myTolApprox;
       aTolSS=2.e-7;
@@ -705,7 +707,7 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
             myTolReached3d = theapp3d.TolReached3d();
           }
 
-          Standard_Integer aNbMultiCurves, nbpoles;
+          Standard_Integer aNbMultiCurves = 0, nbpoles = 0;
           //
           aNbMultiCurves=theapp3d.NbMultiCurves(); 
           for (j=1; j<=aNbMultiCurves; j++) {
@@ -719,7 +721,7 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
               mbspc.Curve(1,tpoles2d);
               const gp_Pln&  Pln = myHS1->Plane();
               //
-              Standard_Integer ik; 
+              Standard_Integer ik = 0; 
               for(ik = 1; ik<= nbpoles; ik++) { 
                 tpoles.SetValue(ik,
                   ElSLib::Value(tpoles2d.Value(ik).X(),
@@ -782,7 +784,7 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
               mbspc.Curve((myApprox1==Standard_True)? 2 : 1,tpoles2d);
               const gp_Pln&  Pln = myHS2->Plane();
               //
-              Standard_Integer ik; 
+              Standard_Integer ik = 0; 
               for(ik = 1; ik<= nbpoles; ik++) { 
                 tpoles.SetValue(ik,
                   ElSLib::Value(tpoles2d.Value(ik).X(),
@@ -916,7 +918,7 @@ void GeomInt_IntSS::MakeCurve(const Standard_Integer Index,
         Handle(IntPatch_RLine)::DownCast(L);
       Handle(Geom_Curve) aC3d;
       Handle(Geom2d_Curve) aC2d1, aC2d2;
-      Standard_Real aTolReached;
+      Standard_Real aTolReached = NAN;
       TreatRLine(RL, myHS1, myHS2, aC3d,
                   aC2d1, aC2d2, aTolReached);
 
@@ -1009,7 +1011,7 @@ void GeomInt_IntSS::TreatRLine(const Handle(IntPatch_RLine)& theRL,
 {
   Handle(GeomAdaptor_Surface) aGAHS;
   Handle(Adaptor2d_Curve2d) anAHC2d;
-  Standard_Real tf, tl;
+  Standard_Real tf = NAN, tl = NAN;
   gp_Lin2d aL;
   // It is assumed that 2d curve is 2d line (rectangular surface domain)
   if(theRL->IsArcOnS1())
@@ -1169,8 +1171,8 @@ void GeomInt_IntSS::BuildPCurves (const Standard_Real theFirst, const Standard_R
   //
   if (theSurface->IsUPeriodic() && !theCurve2d.IsNull()) {
     // Recadre dans le domaine UV de la face
-    Standard_Real aTm, U0, aEps, period, du, U0x;
-    Standard_Boolean bAdjust;
+    Standard_Real aTm = NAN, U0 = NAN, aEps = NAN, period = NAN, du = NAN, U0x = NAN;
+    Standard_Boolean bAdjust = 0;
     //
     aEps = Precision::PConfusion();
     period = theSurface->UPeriod();
@@ -1205,7 +1207,7 @@ void GeomInt_IntSS::BuildPCurves (const Standard_Real f,
     return;
   }
   //
-  Standard_Real umin,umax,vmin,vmax;
+  Standard_Real umin = NAN,umax = NAN,vmin = NAN,vmax = NAN;
   // 
   S->Bounds(umin, umax, vmin, vmax);
   
@@ -1360,7 +1362,7 @@ Handle(Geom2d_BSplineCurve) GeomInt_IntSS::
   Standard_Integer i = 1, ipidebm1 = ideb;
   for(; i <= nbpnt; ipidebm1++, i++)
   {
-    Standard_Real U, V;
+    Standard_Real U = NAN, V = NAN;
     if(onFirst)
 	  theWLine->Point(ipidebm1).ParametersOnS1(U, V);
     else

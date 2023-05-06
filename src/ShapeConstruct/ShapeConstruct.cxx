@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom2d_Conic.hxx>
@@ -309,7 +311,7 @@ Standard_Boolean ShapeConstruct::JoinPCurves(const Handle(TopTools_HSequenceOfSh
       
       resOrient = TopAbs_FORWARD;
       Handle(Geom2d_Curve) c2d,c2d2;
-      Standard_Real first, last,first2, last2;
+      Standard_Real first = NAN, last = NAN,first2 = NAN, last2 = NAN;
       if(!sae.PCurve ( Edge, theFace, c2d, first, last, Standard_False ))
         break;
       
@@ -329,7 +331,7 @@ Standard_Boolean ShapeConstruct::JoinPCurves(const Handle(TopTools_HSequenceOfSh
       }
       else {
         Handle(Geom2d_Curve) newCrv;
-        Standard_Boolean isRev1,isRev2;
+        Standard_Boolean isRev1 = 0,isRev2 = 0;
         if(!JoinCurves(aCrvRes1,c2d,resOrient,Edge.Orientation(),newf,newl,first, last,newCrv,isRev1,isRev2)) 
           break;
         

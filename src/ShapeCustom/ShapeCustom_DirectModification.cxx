@@ -18,6 +18,8 @@
 // locations into account
 //szv 03.01.01 PositiveCones merged in
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_GCurve.hxx>
 #include <BRep_TEdge.hxx>
@@ -147,7 +149,7 @@ Standard_Boolean ShapeCustom_DirectModification::NewCurve (const TopoDS_Edge& E,
     Handle(Geom_Surface) S = GC->Surface();
     TopLoc_Location Loc = GC->Location();
     if ( ! IsIndirectSurface ( S, Loc ) ) continue;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     C = BRep_Tool::Curve ( E, L, f, l );
     if ( ! C.IsNull() ) C = Handle(Geom_Curve)::DownCast ( C->Copy() );
     Tol = BRep_Tool::Tolerance(E);
@@ -187,7 +189,7 @@ Standard_Boolean ShapeCustom_DirectModification::NewCurve2d (const TopoDS_Edge& 
   Standard_Integer result = IsIndirectSurface ( S, L );
   if ( !result && E.IsSame(NewE) ) return Standard_False;
 
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   C = BRep_Tool::CurveOnSurface( E, F, f, l );
   Tol = BRep_Tool::Tolerance(E);
 

@@ -36,7 +36,7 @@ void RWStepRepr_RWIntegerRepresentationItem::ReadStep
   data->ReadString (num,1,"name",ach,aName);
 
   // --- own field : value ---
-  Standard_Integer aValue;
+  Standard_Integer aValue = 0;
   data->ReadInteger (num,2,"value",ach,aValue);
 
   //--- Initialisation of the read entity ---

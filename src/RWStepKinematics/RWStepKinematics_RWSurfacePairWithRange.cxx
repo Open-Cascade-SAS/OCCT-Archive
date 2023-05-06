@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWSurfacePairWithRange.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -86,7 +88,7 @@ void RWStepKinematics_RWSurfacePairWithRange::ReadStep (const Handle(StepData_St
   Handle(StepGeom_Surface) aSurfacePair_Surface2;
   theData->ReadEntity (theNum, 8, "surface_pair.surface2", theArch, STANDARD_TYPE(StepGeom_Surface), aSurfacePair_Surface2);
 
-  Standard_Boolean aSurfacePair_Orientation;
+  Standard_Boolean aSurfacePair_Orientation = 0;
   theData->ReadBoolean (theNum, 9, "surface_pair.orientation", theArch, aSurfacePair_Orientation);
 
   // Own fields of SurfacePairWithRange
@@ -97,7 +99,7 @@ void RWStepKinematics_RWSurfacePairWithRange::ReadStep (const Handle(StepData_St
   Handle(StepGeom_RectangularTrimmedSurface) aRangeOnSurface2;
   theData->ReadEntity (theNum, 11, "range_on_surface2", theArch, STANDARD_TYPE(StepGeom_RectangularTrimmedSurface), aRangeOnSurface2);
 
-  Standard_Real aLowerLimitActualRotation;
+  Standard_Real aLowerLimitActualRotation = NAN;
   Standard_Boolean hasLowerLimitActualRotation = Standard_True;
   if ( theData->IsParamDefined (theNum,12) ) {
     theData->ReadReal (theNum, 12, "lower_limit_actual_rotation", theArch, aLowerLimitActualRotation);
@@ -107,7 +109,7 @@ void RWStepKinematics_RWSurfacePairWithRange::ReadStep (const Handle(StepData_St
     aLowerLimitActualRotation = 0;
   }
 
-  Standard_Real aUpperLimitActualRotation;
+  Standard_Real aUpperLimitActualRotation = NAN;
   Standard_Boolean hasUpperLimitActualRotation = Standard_True;
   if ( theData->IsParamDefined (theNum,13) ) {
     theData->ReadReal (theNum, 13, "upper_limit_actual_rotation", theArch, aUpperLimitActualRotation);

@@ -18,6 +18,8 @@
 // + (-1) selection mode token into account 
 // (SAMTECH specific)
 
+#include <math.h>
+
 #include <AIS_Line.hxx>
 #include <AIS_PlaneTrihedron.hxx>
 #include <AIS_Point.hxx>
@@ -153,7 +155,7 @@ void AIS_PlaneTrihedron::Compute (const Handle(PrsMgr_PresentationManager)& ,
   gp_Dir xDir = myPlane->Position().Ax2().XDirection();
 
   gp_Pnt orig = myPlane->Position().Ax2().Location();
-  Standard_Real xo,yo,zo,x,y,z;
+  Standard_Real xo = NAN,yo = NAN,zo = NAN,x = NAN,y = NAN,z = NAN;
   orig.Coord( xo, yo, zo );
   xDir.Coord( x, y, z );
   first.SetCoord( xo, yo, zo );
@@ -188,7 +190,7 @@ void AIS_PlaneTrihedron::Compute (const Handle(PrsMgr_PresentationManager)& ,
 void AIS_PlaneTrihedron::ComputeSelection(const Handle(SelectMgr_Selection)& aSelection,
 					     const Standard_Integer aMode)
 {
-  Standard_Integer Prior;
+  Standard_Integer Prior = 0;
   Handle(SelectMgr_EntityOwner) eown;
   TColgp_Array1OfPnt PP(1,4),PO(1,4);
 //  ExtremityPoints(PP);

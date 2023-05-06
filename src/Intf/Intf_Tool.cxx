@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <Bnd_Box2d.hxx>
 #include <ElCLib.hxx>
@@ -70,12 +72,12 @@ void  Intf_Tool::Lin2dBox(const gp_Lin2d& L2d,
   }
   else if   (domain.IsVoid())  return;
 
-  Standard_Real xmin, xmax, ymin, ymax;
+  Standard_Real xmin = NAN, xmax = NAN, ymin = NAN, ymax = NAN;
   Standard_Real Xmin=0, Xmax=0, Ymin=0, Ymax=0;
   Standard_Real parmin=-Precision::Infinite();
   Standard_Real parmax=Precision::Infinite();
-  Standard_Real parcur, par1,par2;
-  Standard_Boolean xToSet, yToSet;
+  Standard_Real parcur = NAN, par1 = NAN,par2 = NAN;
+  Standard_Boolean xToSet = 0, yToSet = 0;
 
   domain.Get(xmin,ymin,xmax,ymax);
 
@@ -172,11 +174,11 @@ void  Intf_Tool::Hypr2dBox(const gp_Hypr2d& theHypr2d,
   Standard_Integer nbPi=Inters2d(theHypr2d, domain);
 
   if (nbPi>0) {
-    Standard_Real Xmin, Xmax, Ymin, Ymax;
+    Standard_Real Xmin = NAN, Xmax = NAN, Ymin = NAN, Ymax = NAN;
 
     domain.Get(Xmax, Ymax, Xmin, Ymin);
 
-    Standard_Integer npi;
+    Standard_Integer npi = 0;
     for (npi=0; npi<nbPi; npi++) {
       Xmin=Min(Xmin, xint[npi]);
       Xmax=Max(Xmax, xint[npi]);
@@ -185,8 +187,8 @@ void  Intf_Tool::Hypr2dBox(const gp_Hypr2d& theHypr2d,
     }
     boxHypr2d.Update(Xmin, Ymin, Xmax, Ymax);
 
-    Standard_Integer npj, npk;
-    Standard_Real parmin;
+    Standard_Integer npj = 0, npk = 0;
+    Standard_Real parmin = NAN;
     for (npi=0; npi<nbPi; npi++) {
       npk=npi;
       for (npj=npi+1; npj<nbPi; npj++) 
@@ -236,11 +238,11 @@ void  Intf_Tool::Hypr2dBox(const gp_Hypr2d& theHypr2d,
 	  endOnCurve[nbSeg-1]=parint[npi];
 	  out=Standard_True;
 
-	  Standard_Integer ipmin;
+	  Standard_Integer ipmin = 0;
 	  if(beginOnCurve[nbSeg-1] < -10.) ipmin = -10;
 	  else ipmin =  (Standard_Integer)(beginOnCurve[nbSeg-1]);
 
-	  Standard_Integer ipmax;
+	  Standard_Integer ipmax = 0;
 	  if(endOnCurve[nbSeg-1] > 10.) ipmax = 10;
 	  else ipmax =  (Standard_Integer)(endOnCurve[nbSeg-1]);
 
@@ -250,7 +252,7 @@ void  Intf_Tool::Hypr2dBox(const gp_Hypr2d& theHypr2d,
 		//		     10);
 	  ipmin=ipmin*10+1;
 	  ipmax=ipmax*10-1;
-	  Standard_Integer ip, pas=1;
+	  Standard_Integer ip = 0, pas=1;
 	  for (ip=ipmin; ip<=ipmax; ip+=pas) {
 	    boxHypr2d.Add(ElCLib::Value(Standard_Real(ip)/10., theHypr2d));
 	    if (Abs(ip)<=10) pas=1;
@@ -277,8 +279,8 @@ Standard_Integer Intf_Tool::Inters2d(const gp_Hypr2d& theCurv,
 				    const Bnd_Box2d& Domain)
 {
   Standard_Integer nbpi=0;
-  Standard_Integer npi;
-  Standard_Real xmin, xmax, ymin, ymax;
+  Standard_Integer npi = 0;
+  Standard_Real xmin = NAN, xmax = NAN, ymin = NAN, ymax = NAN;
 
   Domain.Get(xmin,ymin,xmax,ymax);
 
@@ -379,11 +381,11 @@ void  Intf_Tool::Parab2dBox(const gp_Parab2d& theParab2d,
   Standard_Integer nbPi=Inters2d(theParab2d, domain);
 
   if (nbPi>0) {
-    Standard_Real Xmin, Xmax, Ymin, Ymax;
+    Standard_Real Xmin = NAN, Xmax = NAN, Ymin = NAN, Ymax = NAN;
 
     domain.Get(Xmax, Ymax, Xmin, Ymin);
 
-    Standard_Integer npi;
+    Standard_Integer npi = 0;
     for (npi=0; npi<nbPi; npi++) {
       Xmin=Min(Xmin, xint[npi]);
       Xmax=Max(Xmax, xint[npi]);
@@ -392,8 +394,8 @@ void  Intf_Tool::Parab2dBox(const gp_Parab2d& theParab2d,
     }
     boxParab2d.Update(Xmin, Ymin, Xmax, Ymax);
 
-    Standard_Integer npj, npk;
-    Standard_Real parmin;
+    Standard_Integer npj = 0, npk = 0;
+    Standard_Real parmin = NAN;
     for (npi=0; npi<nbPi; npi++) {
       npk=npi;
       for (npj=npi+1; npj<nbPi; npj++) 
@@ -443,11 +445,11 @@ void  Intf_Tool::Parab2dBox(const gp_Parab2d& theParab2d,
 	  endOnCurve[nbSeg-1]=parint[npi];
 	  out=Standard_True;
 
-	  Standard_Integer ipmin;
+	  Standard_Integer ipmin = 0;
 	  if(beginOnCurve[nbSeg-1] < -10.) ipmin = -10;
 	  else ipmin =  (Standard_Integer)(beginOnCurve[nbSeg-1]);
 
-	  Standard_Integer ipmax;
+	  Standard_Integer ipmax = 0;
 	  if(endOnCurve[nbSeg-1] > 10.) ipmax = 10;
 	  else ipmax =  (Standard_Integer)(endOnCurve[nbSeg-1]);
 
@@ -457,7 +459,7 @@ void  Intf_Tool::Parab2dBox(const gp_Parab2d& theParab2d,
 		//		     10);
 	  ipmin=ipmin*10+1;
 	  ipmax=ipmax*10-1;
-	  Standard_Integer ip, pas=1;
+	  Standard_Integer ip = 0, pas=1;
 	  for (ip=ipmin; ip<=ipmax; ip+=pas) {
 	    boxParab2d.Add(ElCLib::Value(Standard_Real(ip)/10., theParab2d));
 	    if (Abs(ip)<=10) pas=1;
@@ -484,8 +486,8 @@ Standard_Integer Intf_Tool::Inters2d(const gp_Parab2d& theCurv,
 				    const Bnd_Box2d& Domain)
 {
   Standard_Integer nbpi=0;
-  Standard_Integer npi;
-  Standard_Real xmin, xmax, ymin, ymax;
+  Standard_Integer npi = 0;
+  Standard_Real xmin = NAN, xmax = NAN, ymin = NAN, ymax = NAN;
 
   Domain.Get(xmin,ymin,xmax,ymax);
 
@@ -587,12 +589,12 @@ void  Intf_Tool::LinBox(const gp_Lin& L,
   }
   else if   (domain.IsVoid())  return;
 
-  Standard_Real xmin, xmax, ymin, ymax, zmin, zmax;
+  Standard_Real xmin = NAN, xmax = NAN, ymin = NAN, ymax = NAN, zmin = NAN, zmax = NAN;
   Standard_Real Xmin=0, Xmax=0, Ymin=0, Ymax=0, Zmin=0, Zmax=0;
   Standard_Real parmin=-Precision::Infinite();
   Standard_Real parmax=Precision::Infinite();
-  Standard_Real parcur, par1,par2;
-  Standard_Boolean xToSet, yToSet, zToSet;
+  Standard_Real parcur = NAN, par1 = NAN,par2 = NAN;
+  Standard_Boolean xToSet = 0, yToSet = 0, zToSet = 0;
 
   domain.Get(xmin,ymin,zmin,xmax,ymax,zmax);
 
@@ -723,12 +725,12 @@ void Intf_Tool::HyprBox(const gp_Hypr& theHypr,
     return;
   }
   //
-  Standard_Integer nbPi;
+  Standard_Integer nbPi = 0;
   //
   nbPi=Inters3d(theHypr, domain);
   if (nbPi>0) {
-    Standard_Integer npi;
-    Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    Standard_Integer npi = 0;
+    Standard_Real Xmin = NAN, Ymin = NAN, Zmin = NAN, Xmax = NAN, Ymax = NAN, Zmax = NAN;
     //
     domain.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
     //
@@ -778,7 +780,7 @@ void Intf_Tool::HyprBox(const gp_Hypr& theHypr,
 	  out=Standard_True;
 	  //
 	  //modified by NIZNHY-PKV Fri Jul 11 13:54:54 2008f
-	  Standard_Real ipmin, ipmax, ip, pas;
+	  Standard_Real ipmin = NAN, ipmax = NAN, ip = NAN, pas = NAN;
 	  //
 	  ipmin=-10.;
 	  if (beginOnCurve[nbSeg-1]>ipmin) {
@@ -841,8 +843,8 @@ Standard_Integer Intf_Tool::Inters3d(const gp_Hypr& theCurv,
 				    const Bnd_Box& Domain)
 {
   Standard_Integer nbpi=0;
-  Standard_Integer npi;
-  Standard_Real xmin, ymin, zmin, xmax, ymax, zmax;
+  Standard_Integer npi = 0;
+  Standard_Real xmin = NAN, ymin = NAN, zmin = NAN, xmax = NAN, ymax = NAN, zmax = NAN;
 
   Domain.Get(xmin, ymin, zmin, xmax, ymax, zmax);
 
@@ -1016,8 +1018,8 @@ Standard_Integer Intf_Tool::Inters3d(const gp_Parab& theCurv,
                     const Bnd_Box& Domain)
 {
   Standard_Integer nbpi=0;
-  Standard_Integer npi;
-  Standard_Real xmin, ymin, zmin, xmax, ymax, zmax;
+  Standard_Integer npi = 0;
+  Standard_Real xmin = NAN, ymin = NAN, zmin = NAN, xmax = NAN, ymax = NAN, zmax = NAN;
 
   Domain.Get(xmin, ymin, zmin, xmax, ymax, zmax);
 
@@ -1200,8 +1202,8 @@ void  Intf_Tool::ParabBox(const gp_Parab& theParab,
   Standard_Integer nbPi = Inters3d(theParab, domain);
 
   if (nbPi > 0) {
-    Standard_Integer npi;
-    Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    Standard_Integer npi = 0;
+    Standard_Real Xmin = NAN, Ymin = NAN, Zmin = NAN, Xmax = NAN, Ymax = NAN, Zmax = NAN;
 
     domain.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
 
@@ -1245,17 +1247,17 @@ void  Intf_Tool::ParabBox(const gp_Parab& theParab,
           endOnCurve[nbSeg - 1] = parint[npi];
           out = Standard_True;
 
-          Standard_Integer ipmin;
+          Standard_Integer ipmin = 0;
           if (beginOnCurve[nbSeg - 1] < -10.) ipmin = -10;
           else ipmin = (Standard_Integer)(beginOnCurve[nbSeg - 1]);
 
-          Standard_Integer ipmax;
+          Standard_Integer ipmax = 0;
           if (endOnCurve[nbSeg - 1] > 10.) ipmax = 10;
           else ipmax = (Standard_Integer)(endOnCurve[nbSeg - 1]);
           
           ipmin = ipmin * 10 + 1;
           ipmax = ipmax * 10 - 1;
-          Standard_Integer ip, pas = 1;
+          Standard_Integer ip = 0, pas = 1;
           for (ip = ipmin; ip <= ipmax; ip += pas) {
             boxParab.Add(ElCLib::Value(Standard_Real(ip) / 10., theParab));
             if (Abs(ip) <= 10) pas = 1;

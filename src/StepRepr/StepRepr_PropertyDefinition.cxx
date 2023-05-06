@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepRepr_PropertyDefinition,Standard_Transient)
 //function : StepRepr_PropertyDefinition
 //purpose  : 
 //=======================================================================
-StepRepr_PropertyDefinition::StepRepr_PropertyDefinition ()
+StepRepr_PropertyDefinition::StepRepr_PropertyDefinition () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

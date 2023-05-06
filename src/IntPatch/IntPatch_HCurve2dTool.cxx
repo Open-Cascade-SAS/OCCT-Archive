@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <IntPatch_HCurve2dTool.hxx>
 
 //============================================================
@@ -22,7 +24,7 @@ Standard_Integer IntPatch_HCurve2dTool::NbSamples (const Handle(Adaptor2d_Curve2
                                                    const Standard_Real U0,
                                                    const Standard_Real U1)
 {
-  Standard_Real nbs;
+  Standard_Real nbs = NAN;
   switch (C->GetType())
   {
     case GeomAbs_Line: return 2;

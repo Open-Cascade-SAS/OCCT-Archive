@@ -15,6 +15,8 @@
 //============================================ IntAna2d_AnaIntersection_8.cxx
 //============================================================================
 
+#include <math.h>
+
 #include <gp_Circ2d.hxx>
 #include <gp_Hypr2d.hxx>
 #include <IntAna2d_AnaIntersection.hxx>
@@ -42,12 +44,12 @@ void IntAna2d_AnaIntersection::Perform(const gp_Hypr2d& H,
 				       const IntAna2d_Conic& Conic)
   {
     Standard_Boolean HIsDirect = H.IsDirect();
-    Standard_Real A,B,C,D,E,F;
-    Standard_Real px0,px1,px2,px3,px4;
+    Standard_Real A = NAN,B = NAN,C = NAN,D = NAN,E = NAN,F = NAN;
+    Standard_Real px0 = NAN,px1 = NAN,px2 = NAN,px3 = NAN,px4 = NAN;
     Standard_Real minor_radius=H.MinorRadius();
     Standard_Real major_radius=H.MajorRadius();
-    Standard_Integer i;
-    Standard_Real tx,ty,S;
+    Standard_Integer i = 0;
+    Standard_Real tx = NAN,ty = NAN,S = NAN;
 
     done = Standard_False;
     nbp = 0;

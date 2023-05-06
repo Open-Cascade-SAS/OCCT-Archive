@@ -36,7 +36,7 @@ void RWHeaderSection_RWFileSchema::ReadStep
 
 	Handle(Interface_HArray1OfHAsciiString) aSchemaIdentifiers;
 	Handle(TCollection_HAsciiString) aSchemaIdentifiersItem;
-	Standard_Integer nsub1;
+	Standard_Integer nsub1 = 0;
 	nsub1 = data->SubListNumber(num, 1, Standard_False);
 	if (nsub1 !=0) {
 	  Standard_Integer nb1 = data->NbParams(nsub1);

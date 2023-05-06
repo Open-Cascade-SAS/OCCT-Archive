@@ -61,7 +61,7 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_UniversalPair, StepKinematics_LowOrderKinematicPair)
 
 private:
-  Standard_Real myInputSkewAngle; //!< optional
+  Standard_Real myInputSkewAngle{}; //!< optional
   Standard_Boolean defInputSkewAngle; //!< flag "is InputSkewAngle defined"
 
 };

@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_MidPointRelation.hxx>
 
 #include <PrsDim.hxx>
@@ -72,7 +74,7 @@ void PrsDim_MidPointRelation::Compute (const Handle(PrsMgr_PresentationManager)&
   if (myTool.ShapeType() == TopAbs_VERTEX)
     {
       gp_Pnt pp;
-      Standard_Boolean isonplane;
+      Standard_Boolean isonplane = 0;
       if ( PrsDim::ComputeGeometry(TopoDS::Vertex(myTool),pp,myPlane,isonplane) )
 	{
 	  if ( !isonplane ) ComputeProjVertexPresentation(aprs,TopoDS::Vertex(myTool),pp);
@@ -163,7 +165,7 @@ void PrsDim_MidPointRelation::ComputeSelection(const Handle(SelectMgr_Selection)
 
   Handle(Geom_Curve) curv;
   gp_Pnt firstp,lastp;
-  Standard_Boolean isInfinite,isOnPlane;
+  Standard_Boolean isInfinite = 0,isOnPlane = 0;
   Handle(Geom_Curve) extCurv;
 
   // segment on first curve
@@ -260,7 +262,7 @@ void PrsDim_MidPointRelation::ComputeEdgeFromPnt(const Handle(Prs3d_Presentation
   Handle(Geom_Curve) geom;
   gp_Pnt ptat1,ptat2;
   Handle(Geom_Curve) extCurv;
-  Standard_Boolean isInfinite,isOnPlane;
+  Standard_Boolean isInfinite = 0,isOnPlane = 0;
   if ( !PrsDim::ComputeGeometry(E, geom, ptat1, ptat2, extCurv, isInfinite, isOnPlane, myPlane) ) return;
 
   gp_Ax2 ax = myPlane->Pln().Position().Ax2();
@@ -314,7 +316,7 @@ void PrsDim_MidPointRelation::ComputeVertexFromPnt(const Handle(Prs3d_Presentati
   gp_Ax2 ax = myPlane->Pln().Position().Ax2();
   if ( first )
     {
-      Standard_Boolean isOnPlane;
+      Standard_Boolean isOnPlane = 0;
       TopoDS_Vertex V = TopoDS::Vertex(myFShape);
       PrsDim::ComputeGeometry(V, myFAttach, myPlane, isOnPlane);
       DsgPrs_MidPointPresentation::Add(aprs,myDrawer,ax,myMidPoint,myPosition,myFAttach,first);
@@ -322,7 +324,7 @@ void PrsDim_MidPointRelation::ComputeVertexFromPnt(const Handle(Prs3d_Presentati
     }
   else
     {
-      Standard_Boolean isOnPlane;
+      Standard_Boolean isOnPlane = 0;
       TopoDS_Vertex V = TopoDS::Vertex(mySShape);
       PrsDim::ComputeGeometry(V, mySAttach, myPlane, isOnPlane);
       DsgPrs_MidPointPresentation::Add(aprs,myDrawer,ax,myMidPoint,myPosition,mySAttach,first);
@@ -454,10 +456,10 @@ void PrsDim_MidPointRelation::ComputePointsOnCirc(const gp_Circ& aCirc,
   Standard_Real pcurpos = ElCLib::Parameter(aCirc,curpos);
 
   Standard_Real rad = M_PI / 5.0;
-  Standard_Real segm;
+  Standard_Real segm = NAN;
 
-  Standard_Real pFPnt;
-  Standard_Real pSPnt;
+  Standard_Real pFPnt = NAN;
+  Standard_Real pSPnt = NAN;
 
   if ( pnt1.IsEqual(pnt2,confusion) ) // full circle
     {
@@ -581,10 +583,10 @@ void PrsDim_MidPointRelation::ComputePointsOnElips(const gp_Elips& anEll,
   Standard_Real pcurpos = ElCLib::Parameter(anEll,curpos);
 
   Standard_Real rad = M_PI / 5.0;
-  Standard_Real segm;
+  Standard_Real segm = NAN;
 
-  Standard_Real pFPnt;
-  Standard_Real pSPnt;
+  Standard_Real pFPnt = NAN;
+  Standard_Real pSPnt = NAN;
 
   if ( pnt1.IsEqual(pnt2,confusion) ) // full circle
     {

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElSLib.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Cone.hxx>
@@ -94,7 +96,7 @@ void  ProjLib_Cone::Project(const gp_Lin& L)
 
   Standard_Real aDeltaV = 0.0;
 
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
   if (aPnt.IsEqual(anApex, Precision::Confusion()))
   {
     //Take another point in the line L, which does not coincide with the cone apex.
@@ -148,7 +150,7 @@ void  ProjLib_Cone::Project(const gp_Circ& C)
   gp_Dir ZCone = ConePos.XDirection().Crossed(ConePos.YDirection());
   gp_Dir ZCir =  CircPos.XDirection().Crossed(CircPos.YDirection());
 
-  Standard_Real U, V;
+  Standard_Real U = NAN, V = NAN;
   Standard_Real x = ConePos.XDirection().Dot(CircPos.XDirection());
   Standard_Real y = ConePos.YDirection().Dot(CircPos.XDirection());
   Standard_Real z 

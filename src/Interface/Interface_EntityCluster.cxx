@@ -36,13 +36,13 @@ Interface_EntityCluster::Interface_EntityCluster ()    {  }
       {  theents[0] = ent;  }
 
     Interface_EntityCluster::Interface_EntityCluster
-  (const Handle(Interface_EntityCluster)& ec)
-      {  thenext = ec;  }
+  (const Handle(Interface_EntityCluster)& ec) : thenext(ec)
+      {   }
 
     Interface_EntityCluster::Interface_EntityCluster
   (const Handle(Standard_Transient)& ent,
-   const Handle(Interface_EntityCluster)& ec)
-      {  theents[0] = ent;  thenext = ec;  }
+   const Handle(Interface_EntityCluster)& ec) : thenext(ec)
+      {  theents[0] = ent;   }
 
 //  ....                        AJOUT - SUPPRESSION                        ....
 
@@ -69,7 +69,7 @@ Interface_EntityCluster::Interface_EntityCluster ()    {  }
   (const Handle(Standard_Transient)& ent)
 {
   if (ent.IsNull()) throw Standard_NullObject("Interface_EntityCluster Remove");
-  Standard_Integer i;
+  Standard_Integer i = 0;
 //  <ent> est-il ici ? si oui, on a son rang
   if      (ent == theents[0]) i = 1;
   else if (ent == theents[1]) i = 2;
@@ -174,7 +174,7 @@ Standard_Boolean  Interface_EntityCluster::IsLocalFull () const
 
     Standard_Integer  Interface_EntityCluster::NbLocal () const
 {
-  Standard_Integer nb;
+  Standard_Integer nb = 0;
   if      (!theents[3].IsNull()) nb = 4;
   else if (!theents[2].IsNull()) nb = 3;
   else if (!theents[1].IsNull()) nb = 2;

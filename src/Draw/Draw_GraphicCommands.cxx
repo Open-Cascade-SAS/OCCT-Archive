@@ -28,6 +28,7 @@
 #include <Message.hxx>
 #include <Standard_Stream.hxx>
 
+#include <math.h>
 #include <stdio.h>
 #ifdef _WIN32
 extern Draw_Viewer dout;
@@ -126,8 +127,8 @@ static Standard_Integer zoom(Draw_Interpretor& , Standard_Integer n, const char*
 
 static Standard_Integer wzoom(Draw_Interpretor& di, Standard_Integer argc, const char** argv)
 {
-  Standard_Integer id,X,Y,W,H,X1,Y1,X2 = 0,Y2 = 0,b;
-  Standard_Real dX1,dY1,dX2,dY2,zx,zy;
+  Standard_Integer id = 0,X = 0,Y = 0,W = 0,H = 0,X1 = 0,Y1 = 0,X2 = 0,Y2 = 0,b = 0;
+  Standard_Real dX1 = NAN,dY1 = NAN,dX2 = NAN,dY2 = NAN,zx = NAN,zy = NAN;
   if(argc != 1 && argc != 6)
   {
     di<<"Usage : " << argv[0] << " [view-id X1 Y1 X2 Y2]\n";
@@ -234,7 +235,7 @@ static Standard_Integer wzoom(Draw_Interpretor& di, Standard_Integer argc, const
 
 static Standard_Integer wclick(Draw_Interpretor& di, Standard_Integer, const char**)
 {
-  Standard_Integer id1,X1,Y1,b;
+  Standard_Integer id1 = 0,X1 = 0,Y1 = 0,b = 0;
   dout.Flush();
   di << "Just click.\n";
   dout.Select(id1,X1,Y1,b);
@@ -332,7 +333,7 @@ static Standard_Integer fit(Draw_Interpretor& , Standard_Integer n, const char**
   Standard_Boolean f2d = !strcasecmp(a[0],"2dfit");
   if (n == 1) {
     Standard_Real zoom = RealLast();
-    Standard_Integer id;
+    Standard_Integer id = 0;
     for ( id = 0; id < MAXVIEW; id++) {
       if (dout.HasView(id)) {
 	if ((f2d && !dout.Is3D(id)) || (!f2d && dout.Is3D(id))) {
@@ -520,7 +521,7 @@ static Standard_Integer panning(Draw_Interpretor& , Standard_Integer n, const ch
   }
   Standard_Integer DX = 0;
   Standard_Integer DY = 0;
-  Standard_Integer X,Y,W,H;
+  Standard_Integer X = 0,Y = 0,W = 0,H = 0;
 
   Standard_Boolean v2d = (a[0][0] == '2');     // pu2d, pd2d, pr2d, pl2d
   const char* com = a[0];
@@ -555,7 +556,7 @@ static Standard_Integer panning(Draw_Interpretor& , Standard_Integer n, const ch
 
 static Standard_Integer ptv(Draw_Interpretor& , Standard_Integer n, const char** a)
 {
-  Standard_Real X,Y,Z;
+  Standard_Real X = NAN,Y = NAN,Z = NAN;
   Standard_Integer start = 0;
   Standard_Integer end = MAXVIEW-1;
   if (n < 4) return 1;
@@ -594,7 +595,7 @@ static Standard_Integer ptv(Draw_Interpretor& , Standard_Integer n, const char**
 
 static Standard_Integer dptv(Draw_Interpretor& , Standard_Integer n, const char** a)
 {
-  Standard_Real DX,DY,DZ;
+  Standard_Real DX = NAN,DY = NAN,DZ = NAN;
   Standard_Integer start = 0;
   Standard_Integer end = MAXVIEW-1;
   if (n < 4) return 1;
@@ -729,7 +730,7 @@ static Standard_Integer hardcopy(Draw_Interpretor& ,
 
   std::ofstream os(file);
 
-  Standard_Integer vxmin,vymin,vxmax,vymax;
+  Standard_Integer vxmin = 0,vymin = 0,vxmax = 0,vymax = 0;
   if (dout.HasView(iview)) {
     dout.GetFrame(iview,vxmin,vymin,vxmax,vymax);
     Standard_Real kx = (Standard_Real) (pxmax - pxmin) / (vxmax - vxmin);
@@ -853,7 +854,7 @@ static Standard_Integer xwd(Draw_Interpretor& , Standard_Integer n, const char**
 
 static Standard_Integer grid (Draw_Interpretor& , Standard_Integer NbArg, const char **Arg)
 {
-  Standard_Real StepX, StepY, StepZ ;
+  Standard_Real StepX = NAN, StepY = NAN, StepZ = NAN ;
 
   switch (NbArg) {
     case 1 :
@@ -913,9 +914,9 @@ static Standard_Integer dflush (Draw_Interpretor& , Standard_Integer, const char
 static Standard_Integer dtext(Draw_Interpretor& di, Standard_Integer n, const char** a)
 {
   gp_Pnt P;
-  Standard_Boolean is3d;
+  Standard_Boolean is3d = 0;
   if (n == 2) {
-    Standard_Integer id,X,Y,b;
+    Standard_Integer id = 0,X = 0,Y = 0,b = 0;
     di << "Pick position with button 1, other button escape\n";
     dout.Select(id,X,Y,b);
     if (b != 1)

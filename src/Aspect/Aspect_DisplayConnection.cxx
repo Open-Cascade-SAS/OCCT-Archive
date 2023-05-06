@@ -27,13 +27,13 @@ IMPLEMENT_STANDARD_RTTIEXT(Aspect_DisplayConnection,Standard_Transient)
 // function : Aspect_DisplayConnection
 // purpose  :
 // =======================================================================
-Aspect_DisplayConnection::Aspect_DisplayConnection()
+Aspect_DisplayConnection::Aspect_DisplayConnection() : myDisplay(NULL), myDefVisualInfo(NULL), myDefFBConfig(NULL), myIsOwnDisplay(false)
 {
 #if defined(HAVE_XLIB)
-  myDisplay = NULL;
-  myDefVisualInfo = NULL;
-  myDefFBConfig = NULL;
-  myIsOwnDisplay = false;
+  
+  
+  
+  
   OSD_Environment anEnv ("DISPLAY");
   myDisplayName = anEnv.Value();
   Init (NULL);
@@ -67,9 +67,9 @@ Aspect_DisplayConnection::Aspect_DisplayConnection (const TCollection_AsciiStrin
 : myDisplay (NULL),
   myDefVisualInfo (NULL),
   myDefFBConfig (NULL),
-  myIsOwnDisplay (false)
+  myDisplayName(theDisplayName), myIsOwnDisplay (false)
 {
-  myDisplayName = theDisplayName;
+  
   Init (NULL);
 }
 

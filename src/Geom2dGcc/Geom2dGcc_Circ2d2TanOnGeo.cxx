@@ -24,6 +24,8 @@
 //                                                  Courbes.              +
 //=========================================================================
 
+#include <math.h>
+
 #include <Adaptor2d_OffsetCurve.hxx>
 #include <ElCLib.hxx>
 #include <GccAna_Circ2dBisec.hxx>
@@ -52,7 +54,7 @@ Geom2dGcc_Circ2d2TanOnGeo (const GccEnt_QualifiedCirc&     Qualified1 ,
                            const GccEnt_QualifiedCirc&     Qualified2 ,
                            const Geom2dAdaptor_Curve&      OnCurv     ,
                            const Standard_Real             Tolerance  ):
-  cirsol(1, aNbSolMAX)    ,
+  WellDone(Standard_False), NbrSol(0), cirsol(1, aNbSolMAX)    ,
   qualifier1(1, aNbSolMAX),
   qualifier2(1, aNbSolMAX),
   TheSame1(1, aNbSolMAX)  ,
@@ -66,13 +68,13 @@ Geom2dGcc_Circ2d2TanOnGeo (const GccEnt_QualifiedCirc&     Qualified1 ,
   pararg2(1, aNbSolMAX)   ,
   parcen3(1, aNbSolMAX)
 {
-  WellDone = Standard_False;
+  
   Standard_Real thefirst = -100000.;
   Standard_Real thelast  =  100000.;
-  Standard_Real firstparam;
-  Standard_Real lastparam;
+  Standard_Real firstparam = NAN;
+  Standard_Real lastparam = NAN;
   Standard_Real Tol = Abs(Tolerance);
-  NbrSol = 0;
+  
   TColStd_Array1OfReal Rbid(1,2);
   TColStd_Array1OfReal RBid(1,2);
   TColStd_Array1OfReal Radius(1,2);
@@ -277,7 +279,7 @@ Geom2dGcc_Circ2d2TanOnGeo (const GccEnt_QualifiedCirc&     Qualified1 ,
                            const GccEnt_QualifiedLin&      Qualified2 , 
                            const Geom2dAdaptor_Curve&                 OnCurv     ,
                            const Standard_Real             Tolerance  ):
-cirsol(1, aNbSolMAX)    ,
+WellDone(Standard_False), NbrSol(0), cirsol(1, aNbSolMAX)    ,
 qualifier1(1, aNbSolMAX),
 qualifier2(1, aNbSolMAX),
 TheSame1(1, aNbSolMAX)  ,
@@ -292,14 +294,14 @@ pararg2(1, aNbSolMAX)   ,
 parcen3(1, aNbSolMAX)
 {
 
-  WellDone = Standard_False;
+  
   Standard_Real thefirst = -100000.;
   Standard_Real thelast  =  100000.;
-  Standard_Real firstparam;
-  Standard_Real lastparam;
-  NbrSol = 0;
+  Standard_Real firstparam = NAN;
+  Standard_Real lastparam = NAN;
+  
   Standard_Real Tol = Abs(Tolerance);
-  Standard_Real Radius;
+  Standard_Real Radius = NAN;
   if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
     Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
     !(Qualified2.IsEnclosed() ||
@@ -455,7 +457,7 @@ Geom2dGcc_Circ2d2TanOnGeo (const GccEnt_QualifiedLin&      Qualified1 ,
                            const GccEnt_QualifiedLin&      Qualified2 , 
                            const Geom2dAdaptor_Curve&                 OnCurv     ,
                            const Standard_Real             Tolerance  ):
-cirsol(1, aNbSolMAX)    ,
+WellDone(Standard_False), NbrSol(0), cirsol(1, aNbSolMAX)    ,
 qualifier1(1, aNbSolMAX),
 qualifier2(1, aNbSolMAX),
 TheSame1(1, aNbSolMAX)  ,
@@ -470,12 +472,12 @@ pararg2(1, aNbSolMAX)   ,
 parcen3(1, aNbSolMAX)
 {
 
-  WellDone = Standard_False;
+  
   Standard_Real thefirst = -100000.;
   Standard_Real thelast  =  100000.;
-  Standard_Real firstparam;
-  Standard_Real lastparam;
-  NbrSol = 0;
+  Standard_Real firstparam = NAN;
+  Standard_Real lastparam = NAN;
+  
   if (!(Qualified1.IsEnclosed() || 
     Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
     !(Qualified2.IsEnclosed() ||
@@ -610,7 +612,7 @@ Geom2dGcc_Circ2d2TanOnGeo (const GccEnt_QualifiedCirc&     Qualified1 ,
                            const gp_Pnt2d&                 Point2     , 
                            const Geom2dAdaptor_Curve&                 OnCurv     ,
                            const Standard_Real             Tolerance  ):
-cirsol(1, aNbSolMAX)    ,
+WellDone(Standard_False), NbrSol(0), cirsol(1, aNbSolMAX)    ,
 qualifier1(1, aNbSolMAX),
 qualifier2(1, aNbSolMAX),
 TheSame1(1, aNbSolMAX)  ,
@@ -625,19 +627,19 @@ pararg2(1, aNbSolMAX)   ,
 parcen3(1, aNbSolMAX)
 {
 
-  WellDone = Standard_False;
+  
   Standard_Real thefirst = -100000.;
   Standard_Real thelast  =  100000.;
-  Standard_Real firstparam;
-  Standard_Real lastparam;
-  NbrSol = 0;
+  Standard_Real firstparam = NAN;
+  Standard_Real lastparam = NAN;
+  
   if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
     Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
       throw GccEnt_BadQualifier();
       return;
   }
   Standard_Real Tol = Abs(Tolerance);
-  Standard_Real Radius;
+  Standard_Real Radius = NAN;
   gp_Dir2d dirx(1.,0.);
   gp_Circ2d C1 = Qualified1.Qualified();
   Standard_Real R1 = C1.Radius();
@@ -772,7 +774,7 @@ Geom2dGcc_Circ2d2TanOnGeo (const GccEnt_QualifiedLin&      Qualified1 ,
                            const gp_Pnt2d&                 Point2     , 
                            const Geom2dAdaptor_Curve&                 OnCurv     ,
                            const Standard_Real             Tolerance  ):
-cirsol(1, aNbSolMAX)    ,
+WellDone(Standard_False), NbrSol(0), cirsol(1, aNbSolMAX)    ,
 qualifier1(1, aNbSolMAX),
 qualifier2(1, aNbSolMAX),
 TheSame1(1, aNbSolMAX)  ,
@@ -787,13 +789,13 @@ pararg2(1, aNbSolMAX)   ,
 parcen3(1, aNbSolMAX)
 {
 
-  WellDone = Standard_False;
+  
   Standard_Real thefirst = -100000.;
   Standard_Real thelast  =  100000.;
-  Standard_Real firstparam;
-  Standard_Real lastparam;
+  Standard_Real firstparam = NAN;
+  Standard_Real lastparam = NAN;
   Standard_Real Tol = Abs(Tolerance);
-  NbrSol = 0;
+  
   if (!(Qualified1.IsEnclosed() ||
     Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
       throw GccEnt_BadQualifier();
@@ -909,7 +911,7 @@ Geom2dGcc_Circ2d2TanOnGeo (const gp_Pnt2d&               Point1    ,
                            const gp_Pnt2d&               Point2    ,
                            const Geom2dAdaptor_Curve&               OnCurv    ,
                            const Standard_Real           Tolerance ):
-cirsol(1, aNbSolMAX)    ,
+WellDone(Standard_False), NbrSol(0), cirsol(1, aNbSolMAX)    ,
 qualifier1(1, aNbSolMAX),
 qualifier2(1, aNbSolMAX),
 TheSame1(1, aNbSolMAX)  ,
@@ -924,13 +926,13 @@ pararg2(1, aNbSolMAX)   ,
 parcen3(1, aNbSolMAX)
 {
 
-  WellDone = Standard_False;
+  
   Standard_Real thefirst = -100000.;
   Standard_Real thelast  =  100000.;
-  Standard_Real firstparam;
-  Standard_Real lastparam;
+  Standard_Real firstparam = NAN;
+  Standard_Real lastparam = NAN;
   Standard_Real Tol = Abs(Tolerance);
-  NbrSol = 0;
+  
   gp_Dir2d dirx(1.,0.);
   GccAna_Pnt2dBisec Bis(Point1,Point2);
   if (Bis.IsDone()) {

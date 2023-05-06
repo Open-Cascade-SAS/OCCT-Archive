@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWLinearFlexibleAndPinionPair.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -78,7 +80,7 @@ void RWStepKinematics_RWLinearFlexibleAndPinionPair::ReadStep (const Handle(Step
 
   // Own fields of LinearFlexibleAndPinionPair
 
-  Standard_Real aPinionRadius;
+  Standard_Real aPinionRadius = NAN;
   theData->ReadReal (theNum, 7, "pinion_radius", theArch, aPinionRadius);
 
   // Initialize entity

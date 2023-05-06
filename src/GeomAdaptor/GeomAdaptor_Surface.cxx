@@ -21,6 +21,8 @@
 #define No_Standard_RangeError
 #define No_Standard_OutOfRange
 
+#include <math.h>
+
 #include <GeomAdaptor_Surface.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -80,7 +82,7 @@ GeomAbs_Shape LocalContinuity(Standard_Integer         Degree,
   Standard_DomainError_Raise_if( (TK.Length()!=Nb || TM.Length()!=Nb )," ");
   Standard_Integer Index1 = 0;
   Standard_Integer Index2 = 0;
-  Standard_Real newFirst, newLast;
+  Standard_Real newFirst = NAN, newLast = NAN;
   BSplCLib::LocateParameter(Degree,TK,TM,PFirst,IsPeriodic,1,Nb,Index1,newFirst);
   BSplCLib::LocateParameter(Degree,TK,TM,PLast, IsPeriodic,1,Nb,Index2,newLast );
   const Standard_Real EpsKnot = Precision::PConfusion();
@@ -92,7 +94,7 @@ GeomAbs_Shape LocalContinuity(Standard_Integer         Degree,
 
   if (Index2!=Index1)
   {
-    Standard_Integer i, Multmax = TM(Index1+1);
+    Standard_Integer i = 0, Multmax = TM(Index1+1);
 	for (i = Index1+1; i<=Index2; i++) {
       if (TM(i)>Multmax) Multmax=TM(i);
     }
@@ -607,7 +609,7 @@ Standard_Boolean GeomAdaptor_Surface::IsUClosed() const
   if (!mySurface->IsUClosed())
     return Standard_False;
 
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   mySurface->Bounds(U1,U2,V1,V2);
   if (mySurface->IsUPeriodic())
     return (Abs(Abs(U1-U2)-Abs(myUFirst-myULast))<Precision::PConfusion());
@@ -626,7 +628,7 @@ Standard_Boolean GeomAdaptor_Surface::IsVClosed() const
   if (!mySurface->IsVClosed())
     return Standard_False;
 
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   mySurface->Bounds(U1,U2,V1,V2);
   if (mySurface->IsVPeriodic())
     return (Abs(Abs(V1-V2)-Abs(myVFirst-myVLast))<Precision::PConfusion());
@@ -767,7 +769,7 @@ void GeomAdaptor_Surface::D1(const Standard_Real U,
                                    gp_Vec&       D1U, 
                                    gp_Vec&       D1V ) const 
 {
-  Standard_Integer Ideb, Ifin, IVdeb, IVfin, USide=0, VSide=0;
+  Standard_Integer Ideb = 0, Ifin = 0, IVdeb = 0, IVfin = 0, USide=0, VSide=0;
   Standard_Real u = U, v = V;
   if (Abs(U-myUFirst) <= myTolU) {USide= 1; u = myUFirst;}
   else if (Abs(U-myULast) <= myTolU) {USide= -1; u = myULast;}
@@ -817,7 +819,7 @@ void GeomAdaptor_Surface::D2(const Standard_Real U,
                                    gp_Vec&       D2V, 
                                    gp_Vec&       D2UV) const 
 { 
-  Standard_Integer Ideb, Ifin, IVdeb, IVfin, USide=0, VSide=0;
+  Standard_Integer Ideb = 0, Ifin = 0, IVdeb = 0, IVfin = 0, USide=0, VSide=0;
   Standard_Real u = U, v = V;
   if (Abs(U-myUFirst) <= myTolU) {USide= 1; u = myUFirst;}
   else if (Abs(U-myULast) <= myTolU) {USide= -1; u = myULast;}
@@ -865,7 +867,7 @@ void GeomAdaptor_Surface::D3(const Standard_Real U, const Standard_Real V,
                              gp_Vec& D3U, gp_Vec& D3V, gp_Vec& D3UUV,
                              gp_Vec& D3UVV) const
 {  
-  Standard_Integer Ideb,Ifin,IVdeb,IVfin,USide=0,VSide=0;
+  Standard_Integer Ideb = 0,Ifin = 0,IVdeb = 0,IVfin = 0,USide=0,VSide=0;
   Standard_Real u = U, v = V;
   if (Abs(U-myUFirst) <= myTolU) {USide= 1; u = myUFirst;}
   else if (Abs(U-myULast) <= myTolU) {USide= -1; u = myULast;}
@@ -909,7 +911,7 @@ gp_Vec GeomAdaptor_Surface::DN(const Standard_Real    U,
                                const Standard_Integer Nu,
                                const Standard_Integer Nv) const 
 {
-  Standard_Integer Ideb,Ifin,IVdeb,IVfin,USide=0,VSide=0;
+  Standard_Integer Ideb = 0,Ifin = 0,IVdeb = 0,IVfin = 0,USide=0,VSide=0;
   Standard_Real u = U, v = V;
   if (Abs(U-myUFirst) <= myTolU) {USide= 1; u = myUFirst;}
   else if (Abs(U-myULast) <= myTolU) {USide= -1; u = myULast;}
@@ -1012,13 +1014,13 @@ Standard_Real GeomAdaptor_Surface::UResolution(const Standard_Real R3d) const
     }
     case GeomAbs_BezierSurface:
     {
-      Standard_Real Ures,Vres;
+      Standard_Real Ures = NAN,Vres = NAN;
       Handle(Geom_BezierSurface)::DownCast (mySurface)->Resolution(R3d,Ures,Vres);
       return Ures;
     }
     case GeomAbs_BSplineSurface:
     {
-      Standard_Real Ures,Vres;
+      Standard_Real Ures = NAN,Vres = NAN;
       myBSplineSurface->Resolution(R3d,Ures,Vres);
       return Ures;
     }
@@ -1079,13 +1081,13 @@ Standard_Real GeomAdaptor_Surface::VResolution(const Standard_Real R3d) const
     }
     case GeomAbs_BezierSurface:
     {
-      Standard_Real Ures,Vres;
+      Standard_Real Ures = NAN,Vres = NAN;
       Handle(Geom_BezierSurface)::DownCast (mySurface)->Resolution(R3d,Ures,Vres);
       return Vres;
     }
     case GeomAbs_BSplineSurface:
     {
-      Standard_Real Ures,Vres;
+      Standard_Real Ures = NAN,Vres = NAN;
       myBSplineSurface->Resolution(R3d,Ures,Vres);
       return Vres;
     }
@@ -1408,14 +1410,14 @@ Standard_Boolean GeomAdaptor_Surface::IfUVBound(const Standard_Real U,
                                                 const Standard_Integer USide,
                                                 const Standard_Integer VSide) const
 {
-  Standard_Integer Ideb,Ifin;
+  Standard_Integer Ideb = 0,Ifin = 0;
   Standard_Integer anUFKIndx = myBSplineSurface->FirstUKnotIndex(),
     anULKIndx = myBSplineSurface->LastUKnotIndex(), 
     aVFKIndx = myBSplineSurface->FirstVKnotIndex(), aVLKIndx = myBSplineSurface->LastVKnotIndex();
   myBSplineSurface->LocateU(U, PosTol, Ideb, Ifin, Standard_False);
   Standard_Boolean Local = (Ideb == Ifin);
   Span(USide,Ideb,Ifin,Ideb,Ifin,anUFKIndx,anULKIndx);
-  Standard_Integer IVdeb,IVfin;
+  Standard_Integer IVdeb = 0,IVfin = 0;
   myBSplineSurface->LocateV(V, PosTol, IVdeb, IVfin, Standard_False); 
   if(IVdeb == IVfin) Local = Standard_True;
   Span(VSide,IVdeb,IVfin,IVdeb,IVfin,aVFKIndx,aVLKIndx);

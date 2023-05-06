@@ -49,7 +49,7 @@ void RWStepVisual_RWCoordinatesList::ReadStep
   data->ReadInteger(num, 2, "number_points", ach,nbP);
   
   Handle(TColgp_HArray1OfXYZ) aPoints;// = new TColgp_HArray1OfXYZ(1, nbP);
-  Standard_Integer nsub2;
+  Standard_Integer nsub2 = 0;
   if (data->ReadSubList (num,3,"items",ach,nsub2)) 
   {
     Standard_Integer nb2 = data->NbParams(nsub2);
@@ -59,7 +59,7 @@ void RWStepVisual_RWCoordinatesList::ReadStep
     for (Standard_Integer i = 1; i <= nb2; i++) 
     {
       gp_XYZ aXYZ(0.,0.,0.);
-      Standard_Integer nsub3;
+      Standard_Integer nsub3 = 0;
       if (data->ReadSubList (nsub2,i,"coordinates",ach,nsub3)) {
         Standard_Integer nb3 = data->NbParams(nsub3);
         if(nb3 > 3) {

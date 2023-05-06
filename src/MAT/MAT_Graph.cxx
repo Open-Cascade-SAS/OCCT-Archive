@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <MAT_Arc.hxx>
 #include <MAT_Bisector.hxx>
 #include <MAT_DataMapIteratorOfDataMapOfIntegerBasicElt.hxx>
@@ -57,15 +59,15 @@ void MAT_Graph::Perform(const Standard_Boolean             SemiInfinite,
 			const Standard_Integer             NbBasicElts,
 			const Standard_Integer             NbArcs)
 {
-  Standard_Integer        NbRoots;
+  Standard_Integer        NbRoots = 0;
   Handle(MAT_Arc)         FirstArc;
   Handle(MAT_Arc)         CurrentArc;
   Handle(MAT_Node)        Extremite;
   Standard_Integer        IndTabArcs = 1;
-  Standard_Integer        IndTabNodes;
-  Standard_Integer        i;
-  Standard_Real           DistExt;
-  Standard_Integer        IndExt;
+  Standard_Integer        IndTabNodes = 0;
+  Standard_Integer        i = 0;
+  Standard_Real           DistExt = NAN;
+  Standard_Integer        IndExt = 0;
   Handle(MAT_Arc)         PreviousArc = CurrentArc;
 
   //------------------------
@@ -251,7 +253,7 @@ void MAT_Graph::FusionOfBasicElts(const Standard_Integer  IndexElt1,
   
   if (Elt1 == Elt2) return;
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Handle(MAT_Zone) Zone2   = new MAT_Zone(Elt2);
 
   //--------------------------------------------------------------------
@@ -386,7 +388,7 @@ void MAT_Graph::FusionOfArcs(const Handle(MAT_Arc)& Arc1,
   // Note: the Arc2 is actually a reference to a handle contained in theArcs map;
   // it is necessary to create copy of that handle and use only it to access
   // that object, since the handle contained in the map is destroyed by UnBind()
-  Handle(MAT_Arc) anArc2 = Arc2;
+  const Handle(MAT_Arc)& anArc2 = Arc2;
   theArcs .UnBind(Arc2->Index());
   numberOfArcs--;
   
@@ -484,7 +486,7 @@ Handle(MAT_BasicElt)  MAT_Graph::ChangeBasicElt(const Standard_Integer Index)
 //=============================================================================
 void MAT_Graph::UpDateNodes (Standard_Integer&  IndTabNodes)
 {  
-  Standard_Integer    i;
+  Standard_Integer    i = 0;
   Handle(MAT_Node)    Bout;
   Handle(MAT_Arc)     CurrentArc;
   
@@ -512,7 +514,7 @@ static Handle(MAT_Arc) MakeArc(const Handle(MAT_Bisector)&     aBisector,
   Handle(MAT_Arc)              NextArc;
   Handle(MAT_Node)             Extremite;
   Handle(MAT_ListOfBisector)   BisectorList;
-  Standard_Real                DistExt;
+  Standard_Real                DistExt = NAN;
   
 #ifdef OCCT_DEBUG_Graph
   std::cout<<"Construction Arc : Index"<<aBisector->IndexNumber()<<std::endl;

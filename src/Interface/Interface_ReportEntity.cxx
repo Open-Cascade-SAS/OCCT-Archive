@@ -24,10 +24,10 @@ IMPLEMENT_STANDARD_RTTIEXT(Interface_ReportEntity,Standard_Transient)
 //purpose  : 
 //=======================================================================
 Interface_ReportEntity::Interface_ReportEntity
-  (const Handle(Standard_Transient)& unknown)
+  (const Handle(Standard_Transient)& unknown) : theconcerned(unknown), thecontent(unknown)
 {
-  theconcerned = unknown;
-  thecontent = unknown;
+  
+  
 }
 
 
@@ -39,9 +39,9 @@ Interface_ReportEntity::Interface_ReportEntity
 Interface_ReportEntity::Interface_ReportEntity
   (const Handle(Interface_Check)& acheck,
    const Handle(Standard_Transient)& concerned)
-:  thecheck(acheck)
+:  thecheck(acheck), theconcerned(concerned)
 {
-  theconcerned = concerned;
+  
   thecheck->SetEntity(concerned);
 }
 

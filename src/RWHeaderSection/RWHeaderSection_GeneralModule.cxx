@@ -61,7 +61,7 @@ void RWHeaderSection_GeneralModule::CopyCase(const Standard_Integer CN, const Ha
   switch (CN) {
 
     case 1 : {
-      Standard_Integer i;
+      Standard_Integer i = 0;
       DeclareAndCast(HeaderSection_FileName,enfr,entfrom);
       DeclareAndCast(HeaderSection_FileName,ento,entto);
       Handle(TCollection_HAsciiString) name =
@@ -89,7 +89,7 @@ void RWHeaderSection_GeneralModule::CopyCase(const Standard_Integer CN, const Ha
     break;
 
     case 2 : {
-      Standard_Integer i;
+      Standard_Integer i = 0;
       DeclareAndCast(HeaderSection_FileDescription,enfr,entfrom);
       DeclareAndCast(HeaderSection_FileDescription,ento,entto);
       Standard_Integer nbd = enfr->NbDescription();
@@ -104,7 +104,7 @@ void RWHeaderSection_GeneralModule::CopyCase(const Standard_Integer CN, const Ha
     break;
 
     case 3 : {
-      Standard_Integer i;
+      Standard_Integer i = 0;
       DeclareAndCast(HeaderSection_FileSchema,enfr,entfrom);
       DeclareAndCast(HeaderSection_FileSchema,ento,entto);
       Standard_Integer nbs = enfr->NbSchemaIdentifiers();

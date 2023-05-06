@@ -34,11 +34,11 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_SplitCurve3dContinuity,ShapeUpgrade_Spli
 //function : ShapeUpgrade_SplitCurve3dContinuity
 //purpose  : 
 //=======================================================================
-ShapeUpgrade_SplitCurve3dContinuity::ShapeUpgrade_SplitCurve3dContinuity()
+ShapeUpgrade_SplitCurve3dContinuity::ShapeUpgrade_SplitCurve3dContinuity() : myCriterion(GeomAbs_C1), myTolerance(Precision::Confusion()), myCont(1)
 {
-  myCriterion = GeomAbs_C1;
-  myTolerance = Precision::Confusion();
-  myCont =1;
+  
+  
+  
 }
 
 //=======================================================================

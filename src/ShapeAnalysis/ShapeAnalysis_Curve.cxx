@@ -20,6 +20,8 @@
 //    gka 21.06.99 S4208: adding method NextProject(Adaptor_Curve)
 //    msv 30.05.00 correct IsPlanar for a conic curve
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <Bnd_Box2d.hxx>
 #include <ElCLib.hxx>
@@ -67,7 +69,7 @@ static void ProjectOnSegments (const Adaptor3d_Curve& AC, const gp_Pnt& P3D,
   //  On considere <nbseg> points sur [uMin,uMax]
   //  Quel est le plus proche. Et quel est le nouvel intervalle
   //  (il ne peut pas deborder l ancien)
-  Standard_Real u, dist2, delta = (nbseg == 0)? 0 : (uMax-uMin)/nbseg; //szv#4:S4163:12Mar99 anti-exception
+  Standard_Real u = NAN, dist2 = NAN, delta = (nbseg == 0)? 0 : (uMax-uMin)/nbseg; //szv#4:S4163:12Mar99 anti-exception
   Standard_Real  distmin2 = distmin * distmin;
   Standard_Boolean aHasChanged = Standard_False;
   for (Standard_Integer i = 0; i <= nbseg; i ++) {
@@ -119,7 +121,7 @@ Standard_Real ShapeAnalysis_Curve::Project(const Handle(Geom_Curve)& C3D,
 					   const Standard_Real cl,
 					   const Standard_Boolean AdjustToEnds) const
 {
-  Standard_Real distmin;
+  Standard_Real distmin = NAN;
   Standard_Real uMin = (cf < cl ? cf : cl);
   Standard_Real uMax = (cf < cl ? cl : cf);
   
@@ -232,7 +234,7 @@ Standard_Real ShapeAnalysis_Curve::ProjectAct(const Adaptor3d_Curve& C3D,
   try {
     OCC_CATCH_SIGNALS
     Extrema_ExtPC myExtPC(P3D,C3D);
-    Standard_Real dist2Min = RealLast() , dist2;
+    Standard_Real dist2Min = RealLast() , dist2 = NAN;
     Standard_Integer index = 0;
     if ( myExtPC.IsDone() && ( myExtPC.NbExt() > 0) )
     {
@@ -388,7 +390,7 @@ Standard_Real ShapeAnalysis_Curve::ProjectAct(const Adaptor3d_Curve& C3D,
   
   if (IsHaveOldSol) {
     // PTV 29.05.2002 Compare old solution and new;
-    Standard_Real adist1, adist2;
+    Standard_Real adist1 = NAN, adist2 = NAN;
     adist1 = anOldProj.SquareDistance(P3D);
     adist2 = proj.SquareDistance (P3D);
     if (adist1 < adist2) {
@@ -636,7 +638,7 @@ static Standard_Integer SearchForExtremum (const Handle(Geom2d_Curve)& C2d,
 					   Standard_Real &par,
 					   gp_Pnt2d &res)
 {
-  Standard_Real prevpar;
+  Standard_Real prevpar = NAN;
   Standard_Integer nbOut = 0;
   for (Standard_Integer i = 0; i <10; i++) {
     prevpar = par;
@@ -753,7 +755,7 @@ Standard_Integer ShapeAnalysis_Curve::SelectForwardSeam(const Handle(Geom2d_Curv
     L2 = new Geom2d_Line(StartBC2, VecBC2);
   }
 
-  Standard_Boolean UdirPos, UdirNeg, VdirPos, VdirNeg;
+  Standard_Boolean UdirPos = 0, UdirNeg = 0, VdirPos = 0, VdirNeg = 0;
   UdirPos = UdirNeg = VdirPos = VdirNeg = Standard_False;
 
   gp_Dir2d theDir  = L1->Direction();
@@ -939,7 +941,7 @@ Standard_Boolean ShapeAnalysis_Curve::IsPlanar (const TColgp_Array1OfPnt& pnts,
   }
   Normal = Normal / nrm;
 
-  Standard_Real mind = RealLast(), maxd = -RealLast(), dev;
+  Standard_Real mind = RealLast(), maxd = -RealLast(), dev = NAN;
   for (Standard_Integer i = 1; i <= pnts.Length(); i++) {
     dev = pnts(i).XYZ() * Normal;
     if (dev < mind) mind = dev;
@@ -1017,7 +1019,7 @@ Standard_Boolean ShapeAnalysis_Curve::IsPlanar (const TColgp_Array1OfPnt& pnts,
     //DeclareAndCast(ShapeExtend_ComplexCurve, Complex, curve);
     Handle(ShapeExtend_ComplexCurve) Complex = Handle(ShapeExtend_ComplexCurve)::DownCast (curve);
     TColgp_SequenceOfPnt sequence;
-    Standard_Integer i; // svv Jan11 2000 : porting on DEC
+    Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
     for (i = 1; i <= Complex->NbCurves(); i++)
       AppendControlPoles(sequence,Complex->Curve(i));
     TColgp_Array1OfPnt Poles(1,sequence.Length());
@@ -1193,7 +1195,7 @@ Standard_Boolean ShapeAnalysis_Curve::IsClosed(const Handle(Geom_Curve)& theCurv
   
   Standard_Real prec = Max (preci, Precision::Confusion());
 
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   f = theCurve->FirstParameter();
   l = theCurve->LastParameter();
   

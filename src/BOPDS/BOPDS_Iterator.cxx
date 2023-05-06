@@ -43,7 +43,7 @@ class BOPDS_TSR : public BOPTools_BoxTreeSelector
     myHasBRep(Standard_False), 
     myIndex(-1) {}
   //
-  virtual ~BOPDS_TSR() {
+  ~BOPDS_TSR() override {
   }
   //
   void SetHasBRep(const Standard_Boolean bFlag) {
@@ -76,13 +76,13 @@ typedef NCollection_Vector<BOPDS_TSR> BOPDS_VectorOfTSR;
 BOPDS_Iterator::BOPDS_Iterator()
 :
   myAllocator(NCollection_BaseAllocator::CommonBaseAllocator()),
-  myRunParallel(Standard_False),
+  myDS(NULL), myLength(0), myRunParallel(Standard_False),
   myUseExt(Standard_False)
 {
-  Standard_Integer i, aNb;
+  Standard_Integer i = 0, aNb = 0;
   //
-  myDS=NULL;
-  myLength=0;
+  
+  
   //
   aNb=BOPDS_DS::NbInterfTypes();
   myLists.SetIncrement(aNb);
@@ -104,15 +104,15 @@ BOPDS_Iterator::BOPDS_Iterator
   (const Handle(NCollection_BaseAllocator)& theAllocator)
 :
   myAllocator(theAllocator),
-  myLists(0, theAllocator),
+  myDS(NULL), myLength(0), myLists(0, theAllocator),
   myRunParallel(Standard_False),
   myExtLists(0, theAllocator),
   myUseExt(Standard_False)
 {
-  Standard_Integer i, aNb;
+  Standard_Integer i = 0, aNb = 0;
   //
-  myDS=NULL; 
-  myLength=0;
+  
+  
   //
   aNb=BOPDS_DS::NbInterfTypes();
   myLists.SetIncrement(aNb);
@@ -179,7 +179,7 @@ Standard_Integer BOPDS_Iterator::ExpectedLength() const
 //=======================================================================
 Standard_Integer BOPDS_Iterator::BlockLength() const
 {
-  Standard_Integer aNbIIs;
+  Standard_Integer aNbIIs = 0;
   Standard_Real aCfPredict=.5;
   
   aNbIIs=ExpectedLength();
@@ -198,7 +198,7 @@ Standard_Integer BOPDS_Iterator::BlockLength() const
 void BOPDS_Iterator::Initialize(const TopAbs_ShapeEnum aType1,
     const TopAbs_ShapeEnum aType2)
 {
-  Standard_Integer iX;
+  Standard_Integer iX = 0;
   //
   myLength=0;
   iX=BOPDS_Tools::TypeToInteger(aType1, aType2);
@@ -236,7 +236,7 @@ void BOPDS_Iterator::Next()
 void BOPDS_Iterator::Value(Standard_Integer& theI1,
                            Standard_Integer& theI2) const
 {
-  Standard_Integer iT1, iT2, n1, n2;
+  Standard_Integer iT1 = 0, iT2 = 0, n1 = 0, n2 = 0;
   //
   const BOPDS_Pair& aPair = myIterator.Value();
   aPair.Indices(n1, n2);
@@ -259,7 +259,7 @@ void BOPDS_Iterator::Prepare(const Handle(IntTools_Context)& theCtx,
                              const Standard_Boolean theCheckOBB,
                              const Standard_Real theFuzzyValue)
 {
-  Standard_Integer i, aNbInterfTypes;
+  Standard_Integer i = 0, aNbInterfTypes = 0;
   //
   aNbInterfTypes=BOPDS_DS::NbInterfTypes();
   myLength=0;

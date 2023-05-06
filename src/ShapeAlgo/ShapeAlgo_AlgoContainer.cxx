@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -55,9 +57,9 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeAlgo_AlgoContainer,Standard_Transient)
 //function : ShapeAlgo_AlgoContainer
 //purpose  : 
 //=======================================================================
-ShapeAlgo_AlgoContainer::ShapeAlgo_AlgoContainer()
+ShapeAlgo_AlgoContainer::ShapeAlgo_AlgoContainer() : myTC(new ShapeAlgo_ToolContainer)
 {
-  myTC = new ShapeAlgo_ToolContainer;
+  
 }
 
 //=======================================================================
@@ -83,7 +85,7 @@ Standard_Boolean ShapeAlgo_AlgoContainer::ConnectNextWire (const Handle(ShapeAna
     return Standard_True;
   }
   
-  Standard_Real tailhead, tailtail, headtail, headhead;
+  Standard_Real tailhead = NAN, tailtail = NAN, headtail = NAN, headhead = NAN;
   saw->CheckShapeConnect (tailhead, tailtail, headtail, headhead, nextsewd->Wire(), maxtol);
   distmin = tailhead;
   Standard_Real precision = saw->Precision();
@@ -149,7 +151,7 @@ void ShapeAlgo_AlgoContainer::ApproxBSplineCurve (const Handle(Geom_BSplineCurve
   Standard_Integer deg = bspline->Degree();
   
   Standard_Integer jpole = 1;
-  Standard_Integer j, PoleIndex, I1;
+  Standard_Integer j = 0, PoleIndex = 0, I1 = 0;
   PoleIndex = 1;
   I1 = 1;
   for ( Standard_Integer ipole = 1; ipole < NbPoles; ipole++) {
@@ -200,7 +202,7 @@ void ShapeAlgo_AlgoContainer::ApproxBSplineCurve (const Handle(Geom_BSplineCurve
       TColgp_Array1OfPnt newP(1,jpole);      
       mycurve->Poles(newP);
       Handle(IntSurf_LineOn2S) R = new IntSurf_LineOn2S();
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       u1 = v1 = 0.;
       u2 = v2 = 1.;
       for( j=1; j<=jpole; j++) {
@@ -281,7 +283,7 @@ void ShapeAlgo_AlgoContainer::ApproxBSplineCurve (const Handle(Geom2d_BSplineCur
   Standard_Integer deg = bspline->Degree();
   
   Standard_Integer jpole = 1;
-  Standard_Integer j, PoleIndex, I1;
+  Standard_Integer j = 0, PoleIndex = 0, I1 = 0;
   PoleIndex = 1;
   I1 = 1;
   for ( Standard_Integer ipole = 1; ipole < NbPoles; ipole++) {
@@ -333,7 +335,7 @@ void ShapeAlgo_AlgoContainer::ApproxBSplineCurve (const Handle(Geom2d_BSplineCur
       TColgp_Array1OfPnt2d newP(1,jpole);      
       mycurve->Poles(newP);
       Handle(IntSurf_LineOn2S) R = new IntSurf_LineOn2S();
-      Standard_Real u2,v2;
+      Standard_Real u2 = NAN,v2 = NAN;
       u2 = v2 = 1.;
       for( j=1; j<=jpole; j++) {
 	IntSurf_PntOn2S POn2S;
@@ -423,12 +425,12 @@ void ShapeAlgo_AlgoContainer::ApproxBSplineCurve (const Handle(Geom2d_BSplineCur
   TopLoc_Location  loc1,      loc2;
 //  BRepBuilderAPI_MakeWire makeWire1, makeWire2;
   ShapeExtend_WireData makeWire1, makeWire2;
-  Standard_Boolean iterCook,  iterPerry;
-  Standard_Integer nEdges1,   nEdges2;
-  Standard_Real    length1,   length2;
-  Standard_Real    first1,    first2;
-  Standard_Real    last1,     last2;
-  Standard_Real    delta1,    delta2;
+  Standard_Boolean iterCook = 0,  iterPerry = 0;
+  Standard_Integer nEdges1 = 0,   nEdges2 = 0;
+  Standard_Real    length1 = NAN,   length2 = NAN;
+  Standard_Real    first1 = NAN,    first2 = NAN;
+  Standard_Real    last1 = NAN,     last2 = NAN;
+  Standard_Real    delta1 = NAN,    delta2 = NAN;
 
   Handle (Geom_Curve) crv1;
   Handle (Geom_Curve) crv2;

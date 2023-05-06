@@ -16,6 +16,8 @@
 
 // Modified:     Portage NT 7-5-97 DPF (strcasecmp)
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_CurveOnClosedSurface.hxx>
 #include <BRep_CurveOnSurface.hxx>
@@ -409,7 +411,7 @@ void  BRepTools_ShapeSet::DumpGeometry(const TopoDS_Shape& S,
     if (TE->SameRange())     OS << "     same range on curves\n";
     if (TE->Degenerated())   OS << "     degenerated\n";
     
-    Standard_Real first, last;
+    Standard_Real first = NAN, last = NAN;
     BRep_ListIteratorOfListOfCurveRepresentation itrc = TE->Curves();
     while (itrc.More()) {
       const Handle(BRep_CurveRepresentation)& CR = itrc.Value();
@@ -571,7 +573,7 @@ void  BRepTools_ShapeSet::WriteGeometry (const TopoDS_Shape& S, Standard_OStream
     OS << ((TE->SameRange())     ? 1 : 0) << " ";
     OS << ((TE->Degenerated())   ? 1 : 0) << "\n";
     
-    Standard_Real first, last;
+    Standard_Real first = NAN, last = NAN;
     BRep_ListIteratorOfListOfCurveRepresentation itrc = TE->Curves();
     while (itrc.More()) {
       const Handle(BRep_CurveRepresentation)& CR = itrc.Value();
@@ -754,11 +756,11 @@ void  BRepTools_ShapeSet::ReadGeometry (const TopAbs_ShapeEnum T,
 {
   // Read the geometry
 
-  Standard_Integer val,c,pc,pc2 = 0,s,s2,l,l2,t, pt, pt2 = 0;
-  Standard_Real tol,X,Y,Z,first,last,p1,p2;
-  Standard_Real PfX,PfY,PlX,PlY;
+  Standard_Integer val = 0,c = 0,pc = 0,pc2 = 0,s = 0,s2 = 0,l = 0,l2 = 0,t = 0, pt = 0, pt2 = 0;
+  Standard_Real tol = NAN,X = NAN,Y = NAN,Z = NAN,first = NAN,last = NAN,p1 = NAN,p2 = NAN;
+  Standard_Real PfX = NAN,PfY = NAN,PlX = NAN,PlY = NAN;
   gp_Pnt2d aPf, aPl;
-  Standard_Boolean closed;
+  Standard_Boolean closed = 0;
   GeomAbs_Shape reg = GeomAbs_C0;
   switch (T) {
 
@@ -1170,7 +1172,7 @@ void BRepTools_ShapeSet::WritePolygonOnTriangulation(Standard_OStream&      OS,
                                                      const Standard_Boolean Compact,
                                                      const Message_ProgressRange& theProgress)const
 {
-  Standard_Integer i, j, nbpOntri = myNodes.Extent();
+  Standard_Integer i = 0, j = 0, nbpOntri = myNodes.Extent();
 
   Message_ProgressScope aPS(theProgress, "Polygons On Triangulation", nbpOntri);
   if (Compact)
@@ -1237,9 +1239,9 @@ void BRepTools_ShapeSet::ReadPolygonOnTriangulation(Standard_IStream& IS,
   char buffer[255];
   IS >> buffer;
   if (strstr(buffer,"PolygonOnTriangulations") == NULL) return;
-  Standard_Integer i, j, val, nbpol = 0, nbnodes =0;
-  Standard_Integer hasparameters;
-  Standard_Real par;
+  Standard_Integer i = 0, j = 0, val = 0, nbpol = 0, nbnodes =0;
+  Standard_Integer hasparameters = 0;
+  Standard_Real par = NAN;
   Handle(TColStd_HArray1OfReal) Param;
   Handle(Poly_PolygonOnTriangulation) Poly;
   IS >> nbpol;
@@ -1254,7 +1256,7 @@ void BRepTools_ShapeSet::ReadPolygonOnTriangulation(Standard_IStream& IS,
     }
     IS >> buffer;
 //      if (!strcasecmp(buffer, "p")) {
-      Standard_Real def;
+      Standard_Real def = NAN;
       GeomTools::GetReal(IS, def);
       IS >> hasparameters;
       if (hasparameters) {
@@ -1289,7 +1291,7 @@ void BRepTools_ShapeSet::WritePolygon3D(Standard_OStream&      OS,
                                         const Standard_Boolean Compact,
                                         const Message_ProgressRange& theProgress)const
 {
-  Standard_Integer i, j, nbpol = myPolygons3D.Extent();
+  Standard_Integer i = 0, j = 0, nbpol = myPolygons3D.Extent();
   
   Message_ProgressScope aPS(theProgress, "3D Polygons", nbpol);
 
@@ -1321,7 +1323,7 @@ void BRepTools_ShapeSet::WritePolygon3D(Standard_OStream&      OS,
     // write the nodes
     if (!Compact) OS << "\nNodes :\n";
     
-    Standard_Integer i1, nbNodes = P->NbNodes();
+    Standard_Integer i1 = 0, nbNodes = P->NbNodes();
     const TColgp_Array1OfPnt& Nodes = P->Nodes();
     for (j = 1; j <= nbNodes; j++) {
       if (!Compact) OS << std::setw(10) << j << " : ";
@@ -1367,8 +1369,8 @@ void BRepTools_ShapeSet::ReadPolygon3D(Standard_IStream& IS, const Message_Progr
 {
   char buffer[255];
   //  Standard_Integer i, j, p, val, nbpol, nbnodes, hasparameters;
-  Standard_Integer i, j, p, nbpol=0, nbnodes =0, hasparameters = Standard_False;
-  Standard_Real d, x, y, z;
+  Standard_Integer i = 0, j = 0, p = 0, nbpol=0, nbnodes =0, hasparameters = Standard_False;
+  Standard_Real d = NAN, x = NAN, y = NAN, z = NAN;
 
   IS >> buffer;
   if (strstr(buffer,"Polygon3D") == NULL) return;
@@ -1411,8 +1413,8 @@ void BRepTools_ShapeSet::WriteTriangulation(Standard_OStream&      OS,
                                             const Standard_Boolean Compact,
                                             const Message_ProgressRange& theProgress)const
 {
-  Standard_Integer i, j, nbNodes, nbtri = myTriangulations.Extent();
-  Standard_Integer nbTriangles = 0, n1, n2, n3;
+  Standard_Integer i = 0, j = 0, nbNodes = 0, nbtri = myTriangulations.Extent();
+  Standard_Integer nbTriangles = 0, n1 = 0, n2 = 0, n3 = 0;
 
   Message_ProgressScope aPS(theProgress, "Triangulations", nbtri);
 
@@ -1547,8 +1549,8 @@ void BRepTools_ShapeSet::DumpTriangulation(Standard_OStream& OS)const
 void BRepTools_ShapeSet::ReadTriangulation(Standard_IStream& IS, const Message_ProgressRange& theProgress)
 {
   char buffer[255];
-  Standard_Integer i, j, nbtri =0;
-  Standard_Real d, x, y, z;
+  Standard_Integer i = 0, j = 0, nbtri =0;
+  Standard_Real d = NAN, x = NAN, y = NAN, z = NAN;
   Standard_Integer nbNodes =0, nbTriangles=0;
   Standard_Boolean hasUV= Standard_False;
   Standard_Boolean hasNormals= Standard_False;
@@ -1588,7 +1590,7 @@ void BRepTools_ShapeSet::ReadTriangulation(Standard_IStream& IS, const Message_P
     }
       
     // read the triangles
-    Standard_Integer n1,n2,n3;
+    Standard_Integer n1 = 0,n2 = 0,n3 = 0;
     for (j = 1; j <= nbTriangles; j++) {
       IS >> n1 >> n2 >> n3;
       T->SetTriangle (j, Poly_Triangle (n1, n2, n3));

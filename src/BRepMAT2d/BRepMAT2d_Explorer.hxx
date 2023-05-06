@@ -121,8 +121,8 @@ private:
 
 
   MAT2d_SequenceOfSequenceOfCurve theCurves;
-  Standard_Integer current;
-  Standard_Integer currentContour;
+  Standard_Integer current{};
+  Standard_Integer currentContour{};
   TopoDS_Shape myShape;
   TColStd_SequenceOfBoolean myIsClosed;
   TopTools_IndexedDataMapOfShapeShape myModifShapes;

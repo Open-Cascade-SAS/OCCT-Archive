@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Poly.hxx>
 
 #include <gp_Ax1.hxx>
@@ -117,7 +119,7 @@ void Poly::Write(const Handle(Poly_Triangulation)& T,
 
   if (!Compact) OS << "\n3D Nodes :\n";
 
-  Standard_Integer i, nbNodes = T->NbNodes();
+  Standard_Integer i = 0, nbNodes = T->NbNodes();
   for (i = 1; i <= nbNodes; i++)
   {
     const gp_Pnt aNode = T->Node (i);
@@ -146,7 +148,7 @@ void Poly::Write(const Handle(Poly_Triangulation)& T,
 
   if (!Compact) OS << "\nTriangles :\n";
   Standard_Integer nbTriangles = T->NbTriangles();
-  Standard_Integer n1, n2, n3;
+  Standard_Integer n1 = 0, n2 = 0, n3 = 0;
   for (i = 1; i <= nbTriangles; i++)
   {
     if (!Compact) OS << std::setw(10) << i << " : ";
@@ -189,7 +191,7 @@ void Poly::Write(const Handle(Poly_Polygon3D)& P,
 
   if (!Compact) OS << "\nNodes :\n";
 
-  Standard_Integer i, nbNodes = P->NbNodes();
+  Standard_Integer i = 0, nbNodes = P->NbNodes();
   const TColgp_Array1OfPnt& Nodes = P->Nodes();
   for (i = 1; i <= nbNodes; i++) {
     if (!Compact) OS << std::setw(10) << i << " : ";
@@ -240,7 +242,7 @@ void Poly::Write(const Handle(Poly_Polygon2D)& P,
 
   if (!Compact) OS << "\nNodes :\n";
 
-  Standard_Integer i, nbNodes = P->NbNodes();
+  Standard_Integer i = 0, nbNodes = P->NbNodes();
   const TColgp_Array1OfPnt2d& Nodes = P->Nodes();
   for (i = 1; i <= nbNodes; i++) {
     if (!Compact) OS << std::setw(10) << i << " : ";
@@ -304,16 +306,16 @@ Handle(Poly_Triangulation) Poly::ReadTriangulation(Standard_IStream& IS)
     return Handle(Poly_Triangulation)();
   }
 
-  Standard_Integer nbNodes, nbTriangles;
-  Standard_Boolean hasUV;
+  Standard_Integer nbNodes = 0, nbTriangles = 0;
+  Standard_Boolean hasUV = 0;
   IS >> nbNodes >> nbTriangles >> hasUV;
 
-  Standard_Real d;
+  Standard_Real d = NAN;
   IS >> d;
 
   // read the 3d nodes
-  Standard_Real x,y,z;
-  Standard_Integer i;
+  Standard_Real x = NAN,y = NAN,z = NAN;
+  Standard_Integer i = 0;
   TColgp_Array1OfPnt Nodes(1, nbNodes);
   TColgp_Array1OfPnt2d UVNodes(1, nbNodes);
 
@@ -333,7 +335,7 @@ Handle(Poly_Triangulation) Poly::ReadTriangulation(Standard_IStream& IS)
 
 
   // read the triangles
-  Standard_Integer n1,n2,n3;
+  Standard_Integer n1 = 0,n2 = 0,n3 = 0;
   Poly_Array1OfTriangle Triangles(1, nbTriangles);
   for (i = 1; i <= nbTriangles; i++) {
     IS >> n1 >> n2 >> n3;
@@ -370,18 +372,18 @@ Handle(Poly_Polygon3D) Poly::ReadPolygon3D(Standard_IStream& IS)
     return Handle(Poly_Polygon3D)();
   }
 
-  Standard_Integer nbNodes;
+  Standard_Integer nbNodes = 0;
   IS >> nbNodes;
 
-  Standard_Boolean hasparameters;
+  Standard_Boolean hasparameters = 0;
   IS >> hasparameters;
 
-  Standard_Real d;
+  Standard_Real d = NAN;
   IS >> d;
 
   // read the nodes
-  Standard_Real x,y,z;
-  Standard_Integer i;
+  Standard_Real x = NAN,y = NAN,z = NAN;
+  Standard_Integer i = 0;
   TColgp_Array1OfPnt Nodes(1, nbNodes);
 
   for (i = 1; i <= nbNodes; i++) {
@@ -425,15 +427,15 @@ Handle(Poly_Polygon2D) Poly::ReadPolygon2D(Standard_IStream& IS)
     return Handle(Poly_Polygon2D)();
   }
 
-  Standard_Integer nbNodes;
+  Standard_Integer nbNodes = 0;
   IS >> nbNodes;
 
-  Standard_Real d;
+  Standard_Real d = NAN;
   IS >> d;
 
   // read the nodes
-  Standard_Real x,y;
-  Standard_Integer i;
+  Standard_Real x = NAN,y = NAN;
+  Standard_Integer i = 0;
   TColgp_Array1OfPnt2d Nodes(1, nbNodes);
 
   for (i = 1; i <= nbNodes; i++) {

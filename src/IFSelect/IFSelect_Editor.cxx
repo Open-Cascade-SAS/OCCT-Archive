@@ -104,7 +104,7 @@ Standard_Integer  IFSelect_Editor::MaxList (const Standard_Integer num) const
 
     void  IFSelect_Editor::PrintNames (Standard_OStream& S) const
 {
-  Standard_Integer i, nb = NbValues();
+  Standard_Integer i = 0, nb = NbValues();
   S<<"****    Editor : "<<Label()<<std::endl;
   S<<"****    Nb Values = "<<nb<<"    ****    Names / Labels"<<std::endl;
   S<<" Num ";
@@ -126,7 +126,7 @@ Standard_Integer  IFSelect_Editor::MaxList (const Standard_Integer num) const
     void  IFSelect_Editor::PrintDefs
   (Standard_OStream& S, const Standard_Boolean labels) const
 {
-  Standard_Integer i, nb = NbValues();
+  Standard_Integer i = 0, nb = NbValues();
   S<<"****    Editor : "<<Label()<<std::endl;
   S<<"****    Nb Values = "<<nb<<"    ****    "<<(labels ? "Labels" : "Names")<<"  /  Definitions"<<std::endl;
   S<<" Num ";
@@ -184,7 +184,7 @@ Standard_Integer  IFSelect_Editor::MaxList (const Standard_Integer num) const
     Standard_Integer  IFSelect_Editor::NameNumber
   (const Standard_CString name) const
 {
-  Standard_Integer res;
+  Standard_Integer res = 0;
   if (thenames.Find(name,res))
     return res;
   res = atoi (name);  // si c est un entier, on tente le coup

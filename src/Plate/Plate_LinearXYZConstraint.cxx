@@ -43,10 +43,10 @@ Plate_LinearXYZConstraint::Plate_LinearXYZConstraint(const Plate_Array1OfPinpoin
 }
 
 
-Plate_LinearXYZConstraint::Plate_LinearXYZConstraint(const Standard_Integer ColLen,const Standard_Integer RowLen)
+Plate_LinearXYZConstraint::Plate_LinearXYZConstraint(const Standard_Integer ColLen,const Standard_Integer RowLen) : myPPC(new Plate_HArray1OfPinpointConstraint(1,RowLen)), myCoef(new TColStd_HArray2OfReal(1,ColLen,1,RowLen))
 {
-  myPPC = new Plate_HArray1OfPinpointConstraint(1,RowLen);
-  myCoef = new TColStd_HArray2OfReal(1,ColLen,1,RowLen);
+  
+  
   myCoef->Init(0.0);
 }
 

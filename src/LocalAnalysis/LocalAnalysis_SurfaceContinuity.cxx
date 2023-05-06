@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Curve.hxx>
 #include <Geom_Surface.hxx>
 #include <GeomLProp_SLProps.hxx>
@@ -38,7 +40,7 @@ void LocalAnalysis_SurfaceContinuity::SurfC0 (const GeomLProp_SLProps& Surf1,
 void LocalAnalysis_SurfaceContinuity::SurfC1(  GeomLProp_SLProps& Surf1, 
                                        GeomLProp_SLProps & Surf2) 
 { gp_Vec V1u, V2u, V1v, V2v;
-  Standard_Real norm1u, norm2u, norm1v, norm2v,angu,angv; 
+  Standard_Real norm1u = NAN, norm2u = NAN, norm1v = NAN, norm2v = NAN,angu = NAN,angv = NAN; 
   
   V1u = Surf1.D1U();
   V2u = Surf2.D1U();
@@ -75,8 +77,8 @@ void LocalAnalysis_SurfaceContinuity::SurfC2(  GeomLProp_SLProps& Surf1,
                                                GeomLProp_SLProps& Surf2)
 
 { gp_Vec V11u, V12u, V21u, V22u, V11v, V12v, V21v, V22v;
-  Standard_Real norm11u, norm12u, norm21u, norm22u, norm11v, norm12v, norm21v, norm22v;
-  Standard_Real ang;
+  Standard_Real norm11u = NAN, norm12u = NAN, norm21u = NAN, norm22u = NAN, norm11v = NAN, norm12v = NAN, norm21v = NAN, norm22v = NAN;
+  Standard_Real ang = NAN;
   V11u = Surf1.D1U();
   V12u = Surf2.D1U();
   V21u = Surf1.D2U();
@@ -150,8 +152,8 @@ void LocalAnalysis_SurfaceContinuity::SurfG1(  GeomLProp_SLProps& Surf1,
 void   LocalAnalysis_SurfaceContinuity::SurfG2 ( GeomLProp_SLProps& Surf1, 
                                           GeomLProp_SLProps & Surf2)
 { gp_Dir DMIN1, DMIN2, DMAX1, DMAX2;
-  Standard_Real RMIN1,RMIN2,RMAX1,RMAX2;
-  Standard_Real  x1, x2, y1, y2, z1, z2;
+  Standard_Real RMIN1 = NAN,RMIN2 = NAN,RMAX1 = NAN,RMAX2 = NAN;
+  Standard_Real  x1 = NAN, x2 = NAN, y1 = NAN, y2 = NAN, z1 = NAN, z2 = NAN;
  
   if ( Surf1.IsCurvatureDefined() && Surf2.IsCurvatureDefined())
     { 
@@ -175,7 +177,7 @@ void   LocalAnalysis_SurfaceContinuity::SurfG2 ( GeomLProp_SLProps& Surf1,
       myZETA1 = (RMAX1-RMIN1)/2;
       myZETA2 = (RMAX2-RMIN2)/2;
       myZETA = (myZETA1+myZETA2)/2;
-      Standard_Real DETA,DZETA; 
+      Standard_Real DETA = NAN,DZETA = NAN; 
       DETA = ( myETA1- myETA2)/2;
       DZETA =( myZETA1- myZETA2)/2;
        myGap= Abs(DETA) + sqrt( DZETA*DZETA*Cos(myAlpha)*Cos(myAlpha)
@@ -209,15 +211,15 @@ LocalAnalysis_SurfaceContinuity::LocalAnalysis_SurfaceContinuity(const Standard_
   myZETA2(0.0),
   myZETA(0.0),
   myAlpha(0.0),
-  myGap(0.0)
-{ myepsnul=EpsNul;
-  myepsC0= EpsC0;
-  myepsC1= EpsC1;
-  myepsC2= EpsC2;
-  myepsG1= EpsG1;
-  myperce= Percent;
-  mymaxlen= Maxlen;
-  myIsDone = Standard_True;
+  myepsnul(EpsNul), myepsC0(EpsC0), myepsC1(EpsC1), myepsC2(EpsC2), myepsG1(EpsG1), myperce(Percent), mymaxlen(Maxlen), myGap(0.0), myIsDone(Standard_True)
+{ 
+  
+  
+  
+  
+  
+  
+  
 }
  void LocalAnalysis_SurfaceContinuity::ComputeAnalysis(GeomLProp_SLProps& Surf1,
 						       GeomLProp_SLProps& Surf2,
@@ -281,16 +283,16 @@ LocalAnalysis_SurfaceContinuity::LocalAnalysis_SurfaceContinuity( const Handle(G
   myZETA2(0.0),
   myZETA(0.0),
   myAlpha(0.0),
-  myGap(0.0)
-{ myTypeCont = Ordre;
-  myepsnul=EpsNul;
-  myepsC0= EpsC0;
-  myepsC1= EpsC1;
-  myepsC2= EpsC2;
-  myepsG1= EpsG1;
-  myperce= Percent;
-  mymaxlen= Maxlen;
-  myIsDone = Standard_True;
+  myTypeCont(Ordre), myepsnul(EpsNul), myepsC0(EpsC0), myepsC1(EpsC1), myepsC2(EpsC2), myepsG1(EpsG1), myperce(Percent), mymaxlen(Maxlen), myGap(0.0), myIsDone(Standard_True)
+{ 
+  
+  
+  
+  
+  
+  
+  
+  
   switch ( Ordre )
 	{ case GeomAbs_C0 : {
 			       GeomLProp_SLProps Surfa1 ( Surf1, u1, v1, 0, myepsnul);
@@ -359,18 +361,18 @@ LocalAnalysis_SurfaceContinuity::LocalAnalysis_SurfaceContinuity(const Handle(Ge
   myZETA2(0.0),
   myZETA(0.0),
   myAlpha(0.0),
-  myGap(0.0)
-{ Standard_Real pard1, parf1, pard2, parf2, u1, v1, u2, v2;
+  myTypeCont(Ordre), myepsnul(EpsNul), myepsC0(EpsC0), myepsC1(EpsC1), myepsC2(EpsC2), myepsG1(EpsG1), myperce(Percent), mymaxlen(Maxlen), myGap(0.0), myIsDone(Standard_True)
+{ Standard_Real pard1 = NAN, parf1 = NAN, pard2 = NAN, parf2 = NAN, u1 = NAN, v1 = NAN, u2 = NAN, v2 = NAN;
   
-  myTypeCont = Ordre;
-  myepsnul=EpsNul;
-  myepsC0= EpsC0;
-  myepsC1= EpsC1;
-  myepsC2= EpsC2;
-  myepsG1= EpsG1;
-  myperce= Percent;
-  mymaxlen= Maxlen;
-  myIsDone = Standard_True;
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   pard1 = curv1->FirstParameter();
   pard2 = curv2->FirstParameter();
@@ -444,7 +446,7 @@ Standard_Boolean LocalAnalysis_SurfaceContinuity::IsC1() const
 /*********************************************************************************/
 
 Standard_Boolean LocalAnalysis_SurfaceContinuity::IsC2() const 
-{ Standard_Real eps1u, eps1v, eps2u, eps2v;
+{ Standard_Real eps1u = NAN, eps1v = NAN, eps2u = NAN, eps2v = NAN;
 
   if (!myIsDone) { throw StdFail_NotDone();}
   if ( IsC1())
@@ -478,8 +480,8 @@ Standard_Boolean LocalAnalysis_SurfaceContinuity::IsG1() const
 /*********************************************************************************/
 
 Standard_Boolean LocalAnalysis_SurfaceContinuity::IsG2()const 
-{ Standard_Real EPSNL;
-  Standard_Integer itype;
+{ Standard_Real EPSNL = NAN;
+  Standard_Integer itype = 0;
  
   if (!myIsDone) { throw StdFail_NotDone();} 
   itype =0;

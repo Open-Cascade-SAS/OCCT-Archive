@@ -70,7 +70,7 @@ private:
 
   gp_Pnt myAttach;
   gp_Dir myDir;
-  Standard_Real myLength;
+  Standard_Real myLength{};
   Standard_Integer myExternRef;
 
 };

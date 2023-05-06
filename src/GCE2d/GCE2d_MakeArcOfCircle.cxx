@@ -29,7 +29,7 @@
 
 GCE2d_MakeArcOfCircle::GCE2d_MakeArcOfCircle(const gp_Pnt2d&        P1     ,
 					     const gp_Pnt2d&        P2     ,
-					     const gp_Pnt2d&        P3     ) 
+					     const gp_Pnt2d&        P3     ) : GCE2d_Root() 
 {
   gce_MakeCirc2d Cir = gce_MakeCirc2d(P1,P2,P3);
   TheError = Cir.Status();
@@ -44,9 +44,9 @@ GCE2d_MakeArcOfCircle::GCE2d_MakeArcOfCircle(const gp_Pnt2d&        P1     ,
 
 GCE2d_MakeArcOfCircle::GCE2d_MakeArcOfCircle(const gp_Pnt2d& P1 ,
 					     const gp_Vec2d& V  ,
-					     const gp_Pnt2d& P2 )
+					     const gp_Pnt2d& P2 ) : GCE2d_Root()
 {
-  Standard_Boolean Sense;
+  Standard_Boolean Sense = 0;
   gp_Circ2d cir;
   gp_Lin2d corde = gce_MakeLin2d(P1,P2);
   gp_Dir2d dir(corde.Direction());
@@ -82,7 +82,7 @@ GCE2d_MakeArcOfCircle::GCE2d_MakeArcOfCircle(const gp_Pnt2d& P1 ,
 GCE2d_MakeArcOfCircle::GCE2d_MakeArcOfCircle(const gp_Circ2d&        Circ   ,
 					     const gp_Pnt2d&         P1     ,
 					     const gp_Pnt2d&         P2     ,
-					     const Standard_Boolean  Sense  ) 
+					     const Standard_Boolean  Sense  ) : GCE2d_Root() 
 {
   Standard_Real Alpha1 = ElCLib::Parameter(Circ,P1);
   Standard_Real Alpha2 = ElCLib::Parameter(Circ,P2);
@@ -94,7 +94,7 @@ GCE2d_MakeArcOfCircle::GCE2d_MakeArcOfCircle(const gp_Circ2d&        Circ   ,
 GCE2d_MakeArcOfCircle::GCE2d_MakeArcOfCircle(const gp_Circ2d&       Circ  ,
 					     const gp_Pnt2d&        P     ,
 					     const Standard_Real    Alpha ,
-					     const Standard_Boolean Sense ) 
+					     const Standard_Boolean Sense ) : GCE2d_Root() 
 {
   Standard_Real Alphafirst = ElCLib::Parameter(Circ,P);
   Handle(Geom2d_Circle) C = new Geom2d_Circle(Circ);
@@ -105,7 +105,7 @@ GCE2d_MakeArcOfCircle::GCE2d_MakeArcOfCircle(const gp_Circ2d&       Circ  ,
 GCE2d_MakeArcOfCircle::GCE2d_MakeArcOfCircle(const gp_Circ2d&       Circ   ,
 					     const Standard_Real    Alpha1 ,
 					     const Standard_Real    Alpha2 ,
-					     const Standard_Boolean Sense  ) 
+					     const Standard_Boolean Sense  ) : GCE2d_Root() 
 {
   Handle(Geom2d_Circle) C = new Geom2d_Circle(Circ);
   TheArc= new Geom2d_TrimmedCurve(C,Alpha1,Alpha2,Sense);

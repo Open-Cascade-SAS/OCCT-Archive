@@ -14,6 +14,8 @@
 
 //JCV 16/10/91
 
+#include <math.h>
+
 #include <Convert_ConeToBSplineSurface.hxx>
 #include <gp.hxx>
 #include <gp_Cone.hxx>
@@ -38,7 +40,7 @@ static void ComputePoles( const Standard_Real R,
 {
   Standard_Real deltaU = U2 - U1;
   
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   // Number of spans : maximum opening = 150 degrees ( = PI / 1.2 rds)
   Standard_Integer 
@@ -99,7 +101,7 @@ Convert_ConeToBSplineSurface::Convert_ConeToBSplineSurface
   isuperiodic = Standard_False;
   isvperiodic = Standard_False;
 
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   // construction of cone in the reference mark xOy.
 
   // Number of spans : maximum opening = 150 degrees ( = PI / 1.2 rds)
@@ -128,7 +130,7 @@ Convert_ConeToBSplineSurface::Convert_ConeToBSplineSurface
 
   // Replace the bspline in the mark of the sphere.
   // and calculate the weight of the bspline.
-  Standard_Real W1;
+  Standard_Real W1 = NAN;
   gp_Trsf Trsf;
   Trsf.SetTransformation( C.Position(), gp::XOY());
 
@@ -160,7 +162,7 @@ Convert_ConeToBSplineSurface::Convert_ConeToBSplineSurface
   Standard_DomainError_Raise_if( Abs(V2-V1) <= Abs(Epsilon(V1)),
 				 "Convert_ConeToBSplineSurface");
 
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
 
   isuperiodic = Standard_True;
   isvperiodic = Standard_False;
@@ -186,7 +188,7 @@ Convert_ConeToBSplineSurface::Convert_ConeToBSplineSurface
 
   // replace bspline in the mark of the cone.
   // and calculate the weight of bspline.
-  Standard_Real W;
+  Standard_Real W = NAN;
   gp_Trsf Trsf;
   Trsf.SetTransformation( C.Position(), gp::XOY());
 

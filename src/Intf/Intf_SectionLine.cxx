@@ -32,9 +32,9 @@ Intf_SectionLine::Intf_SectionLine ()
 //=======================================================================
 
 Intf_SectionLine::Intf_SectionLine (const Intf_SectionLine& Other)
-     : closed(Standard_False)
+     : myPoints(Other.myPoints), closed(Standard_False)
 {
-  myPoints=Other.myPoints;
+  
 }
 
 

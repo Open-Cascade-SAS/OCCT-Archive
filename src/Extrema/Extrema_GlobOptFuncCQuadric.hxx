@@ -64,7 +64,7 @@ private:
 
 
   const Adaptor3d_Curve   *myC;
-  const Adaptor3d_Surface *myS;
+  const Adaptor3d_Surface *myS{};
   GeomAbs_SurfaceType mySType;
   gp_Pln myPln;
   gp_Cone myCone;
@@ -75,10 +75,10 @@ private:
   // Boundaries
   Standard_Real myTf;
   Standard_Real myTl;
-  Standard_Real myUf;
-  Standard_Real myUl;
-  Standard_Real myVf;
-  Standard_Real myVl;
+  Standard_Real myUf{};
+  Standard_Real myUl{};
+  Standard_Real myVf{};
+  Standard_Real myVl{};
 
 };
 

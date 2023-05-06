@@ -642,7 +642,7 @@ void Geom_BSplineCurve::Weights
   if (IsRational())
     W = weights->Array1();
   else {
-    Standard_Integer i;
+    Standard_Integer i = 0;
 
     for (i = W.Lower(); i <= W.Upper(); i++)
       W(i) = 1.;
@@ -747,7 +747,7 @@ void Geom_BSplineCurve::Resolution (const Standard_Real Tolerance3D,
   {
     if (periodic)
     {
-      Standard_Integer NbKnots, NbPoles;
+      Standard_Integer NbKnots = 0, NbPoles = 0;
       BSplCLib::PrepareUnperiodize (deg, mults->Array1(), NbKnots, NbPoles);
       TColgp_Array1OfPnt   new_poles  (1, NbPoles);
       TColStd_Array1OfReal new_weights(1, NbPoles);

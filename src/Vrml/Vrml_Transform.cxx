@@ -43,13 +43,13 @@ Vrml_Transform::Vrml_Transform(const gp_Vec& aTranslation,
 			       const Vrml_SFRotation& aRotation,
 			       const gp_Vec& aScaleFactor,
 			       const Vrml_SFRotation& aScaleOrientation,
-			       const gp_Vec& aCenter)
+			       const gp_Vec& aCenter) : myTranslation(aTranslation), myRotation(aRotation), myScaleFactor(aScaleFactor), myScaleOrientation(aScaleOrientation), myCenter(aCenter)
 {
-  myTranslation = aTranslation;
-  myRotation = aRotation;
-  myScaleFactor = aScaleFactor;
-  myScaleOrientation = aScaleOrientation;
-  myCenter = aCenter;
+  
+  
+  
+  
+  
 }
 
  void Vrml_Transform::SetTranslation(const gp_Vec& aTranslation) 

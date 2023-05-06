@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <MoniTool_Stat.hxx>
 #include <TCollection_HAsciiString.hxx>
 
@@ -19,13 +21,13 @@
 //static MoniTool_Stat Statact ("");
 //not Used
 //static Standard_CString voidname = "";
-MoniTool_Stat::MoniTool_Stat (const Standard_CString title)
+MoniTool_Stat::MoniTool_Stat (const Standard_CString title) : thetit(new TCollection_HAsciiString(title)), thelev(0), thetot(new TColStd_HArray1OfInteger (1,20)), thedone(new TColStd_HArray1OfInteger (1,20)), thecurr(new TColStd_HArray1OfInteger (1,20))
 {
-  thetit  = new TCollection_HAsciiString(title);
-  thelev  = 0;
-  thetot  = new TColStd_HArray1OfInteger (1,20);  thetot->Init(0);
-  thedone = new TColStd_HArray1OfInteger (1,20);  thetot->Init(0);
-  thecurr = new TColStd_HArray1OfInteger (1,20);  thetot->Init(0);
+  
+  
+   thetot->Init(0);
+   thetot->Init(0);
+   thetot->Init(0);
 }
 
     MoniTool_Stat::MoniTool_Stat (const MoniTool_Stat& )
@@ -84,7 +86,7 @@ Standard_Integer  MoniTool_Stat::Level () const
 Standard_Real  MoniTool_Stat::Percent (const Standard_Integer fromlev) const
 {
   if (fromlev > thelev) return 0;
-  Standard_Real r1,r2,r3;
+  Standard_Real r1 = NAN,r2 = NAN,r3 = NAN;
   Standard_Integer tot  = thetot->Value(fromlev);
   Standard_Integer done = thedone->Value(fromlev);
   if (done >= tot) return 100.;

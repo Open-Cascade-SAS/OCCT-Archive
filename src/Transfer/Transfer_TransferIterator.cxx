@@ -21,12 +21,12 @@
 static Handle(Standard_Transient)   nultrans;  // pour retour const&(Null)
 
 
-    Transfer_TransferIterator::Transfer_TransferIterator ()
+    Transfer_TransferIterator::Transfer_TransferIterator () : theitems(new Transfer_HSequenceOfBinder()), theselect(new TColStd_HSequenceOfInteger()), themaxi(0), thecurr(1)
 {
-  theitems  = new Transfer_HSequenceOfBinder();
-  theselect = new TColStd_HSequenceOfInteger();
-  themaxi = 0;
-  thecurr = 1;
+  
+  
+  
+  
 }
 
     void  Transfer_TransferIterator::AddItem
@@ -57,7 +57,7 @@ static Handle(Standard_Transient)   nultrans;  // pour retour const&(Null)
   for (Standard_Integer i = theitems->Length(); i > 0; i --) {
     Handle(Transfer_Binder) atr = theitems->Value(i);
     Handle(Standard_Type) btype = ResultType();
-    Standard_Boolean matchtype;
+    Standard_Boolean matchtype = 0;
     if      (!atr->HasResult()) matchtype = Standard_False;
     else if (atr->IsMultiple()) matchtype = Standard_False;
     else if (casetype == 0) matchtype = (atype == btype);         // Type fixe
@@ -93,7 +93,7 @@ static Handle(Standard_Transient)   nultrans;  // pour retour const&(Null)
 
     Standard_Integer  Transfer_TransferIterator::Number () const
 {
-  Standard_Integer numb,i;  numb = 0;
+  Standard_Integer numb = 0,i = 0;  numb = 0;
   for (i = 1; i <= themaxi; i ++) {
     if (theselect->Value(i) != 0) numb ++;
   }

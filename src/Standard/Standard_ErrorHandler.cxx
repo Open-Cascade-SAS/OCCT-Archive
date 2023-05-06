@@ -65,13 +65,13 @@ static inline Standard_ThreadId GetThreadID()
 //============================================================================
 
 Standard_ErrorHandler::Standard_ErrorHandler () : 
-       myStatus(Standard_HandlerVoid), myCallbackPtr(0)
+       myPrevious(Top), myStatus(Standard_HandlerVoid), myThread(GetThreadID()), myCallbackPtr(0)
 {
-  myThread   = GetThreadID();
+  
   memset (&myLabel, 0, sizeof(myLabel));
 
   GetMutex().Lock();
-  myPrevious = Top;
+  
   Top        = this;
   GetMutex().Unlock();
 }

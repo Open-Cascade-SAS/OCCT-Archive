@@ -19,6 +19,7 @@
 #include <OSD_Timer.hxx>
 #include <Standard_Type.hxx>
 
+#include <math.h>
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(MoniTool_Timer,Standard_Transient)
 
@@ -28,8 +29,8 @@ IMPLEMENT_STANDARD_RTTIEXT(MoniTool_Timer,Standard_Transient)
 //=======================================================================
 void MoniTool_Timer::Dump(Standard_OStream &ostr)
 {
-  Standard_Integer hours, minutes;
-  Standard_Real seconds, CPUtime, user, system;
+  Standard_Integer hours = 0, minutes = 0;
+  Standard_Real seconds = NAN, CPUtime = NAN, user = NAN, system = NAN;
     
   myTimer.Show(seconds,minutes,hours,CPUtime);
   myTimer.OSD_Chronometer::Show(user,system);
@@ -131,7 +132,7 @@ void MoniTool_Timer::ComputeAmendments ()
 {
   const Standard_Integer NBTESTS = 100000;
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   Handle(MoniTool_Timer) MT0 = MoniTool_Timer::Timer("_mt_amend_0_");
   Handle(MoniTool_Timer) MT1 = MoniTool_Timer::Timer("_mt_amend_1_");
@@ -180,7 +181,7 @@ void MoniTool_Timer::ComputeAmendments ()
   MT3->Stop();
   
   // analyze results
-  Standard_Real cpu0, cpu1, cpu2, cpu3, cput1, cput2, cput3;
+  Standard_Real cpu0 = NAN, cpu1 = NAN, cpu2 = NAN, cpu3 = NAN, cput1 = NAN, cput2 = NAN, cput3 = NAN;
   cpu0 = MoniTool_Timer::Timer("_mt_amend_0_")->CPU();
   cpu1 = MoniTool_Timer::Timer("_mt_amend_1_")->CPU();
   cput1 = MT->CPU();

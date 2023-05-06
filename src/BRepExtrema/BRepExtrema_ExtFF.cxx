@@ -17,6 +17,8 @@
 // modified by mps (juillet 96 ): on utilise BRepAdaptor a la place de 
 // GeomAdaptor dans Initialize et Perform.
 
+#include <math.h>
+
 #include <BRepExtrema_ExtFF.hxx>
 
 #include <BRep_Tool.hxx>
@@ -52,7 +54,7 @@ void BRepExtrema_ExtFF::Initialize(const TopoDS_Face& F2)
   Standard_Real Tol = Min(BRep_Tool::Tolerance(F2), Precision::Confusion());
   Tol = Min(Surf.UResolution(Tol), Surf.VResolution(Tol));
   Tol = Max(Tol, Precision::PConfusion());
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   BRepTools::UVBounds(F2, U1, U2, V1, V2);
   myExtSS.Initialize (*myHS, U1, U2, V1, V2, Tol);
 }
@@ -76,7 +78,7 @@ void BRepExtrema_ExtFF::Perform(const TopoDS_Face& F1, const TopoDS_Face& F2)
   Standard_Real Tol1 = Min(BRep_Tool::Tolerance(F1), Precision::Confusion());
   Tol1 = Min(Surf1.UResolution(Tol1), Surf1.VResolution(Tol1));
   Tol1 = Max(Tol1, Precision::PConfusion());
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   BRepTools::UVBounds(F1, U1, U2, V1, V2);
   myExtSS.Perform (*HS1, U1, U2, V1, V2, Tol1);
 
@@ -92,7 +94,7 @@ void BRepExtrema_ExtFF::Perform(const TopoDS_Face& F1, const TopoDS_Face& F2)
     const Standard_Real Tol2 = BRep_Tool::Tolerance(F2);
     Extrema_POnSurf P1, P2;
 
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i = 1; i <= myExtSS.NbExt(); i++)
     {
       myExtSS.Points(i, P1, P2);

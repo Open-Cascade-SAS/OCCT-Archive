@@ -49,12 +49,12 @@ protected:
 protected:
 
   gp_Elips myEllipse;
-  Standard_Real myFirstPar;
-  Standard_Real myLastPar;
-  Standard_Boolean myIsAnArc;
+  Standard_Real myFirstPar{};
+  Standard_Real myLastPar{};
+  Standard_Boolean myIsAnArc{};
   Handle(Geom_OffsetCurve) myOffsetCurve;
-  Standard_Real myOffset;
-  Standard_Boolean myIsOffset;
+  Standard_Real myOffset{};
+  Standard_Boolean myIsOffset{};
 
 private:
 

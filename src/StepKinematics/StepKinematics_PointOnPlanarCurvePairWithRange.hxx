@@ -111,12 +111,12 @@ DEFINE_STANDARD_RTTIEXT(StepKinematics_PointOnPlanarCurvePairWithRange, StepKine
 
 private:
   Handle(StepGeom_TrimmedCurve) myRangeOnPairCurve;
-  Standard_Real myLowerLimitYaw; //!< optional
-  Standard_Real myUpperLimitYaw; //!< optional
-  Standard_Real myLowerLimitPitch; //!< optional
-  Standard_Real myUpperLimitPitch; //!< optional
-  Standard_Real myLowerLimitRoll; //!< optional
-  Standard_Real myUpperLimitRoll; //!< optional
+  Standard_Real myLowerLimitYaw{}; //!< optional
+  Standard_Real myUpperLimitYaw{}; //!< optional
+  Standard_Real myLowerLimitPitch{}; //!< optional
+  Standard_Real myUpperLimitPitch{}; //!< optional
+  Standard_Real myLowerLimitRoll{}; //!< optional
+  Standard_Real myUpperLimitRoll{}; //!< optional
   Standard_Boolean defLowerLimitYaw; //!< flag "is LowerLimitYaw defined"
   Standard_Boolean defUpperLimitYaw; //!< flag "is UpperLimitYaw defined"
   Standard_Boolean defLowerLimitPitch; //!< flag "is LowerLimitPitch defined"

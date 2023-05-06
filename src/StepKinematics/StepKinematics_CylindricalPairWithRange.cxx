@@ -22,12 +22,12 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_CylindricalPairWithRange, StepKinemati
 //function : StepKinematics_CylindricalPairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_CylindricalPairWithRange::StepKinematics_CylindricalPairWithRange ()
+StepKinematics_CylindricalPairWithRange::StepKinematics_CylindricalPairWithRange () : defLowerLimitActualTranslation(Standard_False), defUpperLimitActualTranslation(Standard_False), defLowerLimitActualRotation(Standard_False), defUpperLimitActualRotation(Standard_False)
 {
-  defLowerLimitActualTranslation = Standard_False;
-  defUpperLimitActualTranslation = Standard_False;
-  defLowerLimitActualRotation = Standard_False;
-  defUpperLimitActualRotation = Standard_False;
+  
+  
+  
+  
 }
 
 //=======================================================================

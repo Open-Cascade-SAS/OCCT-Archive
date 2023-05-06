@@ -49,7 +49,7 @@ void RWStepVisual_RWPresentationLayerAssignment::ReadStep
 
 	Handle(StepVisual_HArray1OfLayeredItem) aAssignedItems;
 	StepVisual_LayeredItem aAssignedItemsItem;
-	Standard_Integer nsub3;
+	Standard_Integer nsub3 = 0;
 	if (data->ReadSubList (num,3,"assigned_items",ach,nsub3)) {
 	  Standard_Integer nb3 = data->NbParams(nsub3);
     if (nb3 > 0)

@@ -124,8 +124,8 @@ private:
   AIS_TypeOfAxis myTypeOfAxis;
   Standard_Boolean myIsXYZAxis;
   gp_Dir myDir;
-  Standard_Real myVal;
-  Standard_CString myText;
+  Standard_Real myVal{};
+  Standard_CString myText{};
   Handle(Prs3d_LineAspect) myLineAspect;
 
 };

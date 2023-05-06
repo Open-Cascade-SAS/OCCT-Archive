@@ -22,10 +22,10 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_PrismaticPairWithRange, StepKinematics
 //function : StepKinematics_PrismaticPairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_PrismaticPairWithRange::StepKinematics_PrismaticPairWithRange ()
+StepKinematics_PrismaticPairWithRange::StepKinematics_PrismaticPairWithRange () : defLowerLimitActualTranslation(Standard_False), defUpperLimitActualTranslation(Standard_False)
 {
-  defLowerLimitActualTranslation = Standard_False;
-  defUpperLimitActualTranslation = Standard_False;
+  
+  
 }
 
 //=======================================================================

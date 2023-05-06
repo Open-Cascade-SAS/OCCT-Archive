@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRepPrim_GWedge.hxx>
 #include <ElCLib.hxx>
 #include <ElSLib.hxx>
@@ -95,7 +97,7 @@ static void BRepPrim_Wedge_Check(const Standard_Boolean V[],
 				   const Standard_Boolean W[],
 				   const Standard_Boolean F[])
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 0; i < NBVERTICES; i++)
     if (V[i]) throw Standard_DomainError();
   for (i = 0; i < NBEDGES; i++)
@@ -117,7 +119,7 @@ static void BRepPrim_Wedge_Init(Standard_Boolean& S,
 				  Standard_Boolean W[],
 				  Standard_Boolean F[])
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   S = Standard_False;
   for (i = 0; i < NBVERTICES; i++)
     V[i] = Standard_False;
@@ -482,7 +484,7 @@ const TopoDS_Face& BRepPrim_GWedge::Face
     gp_Lin L;
     gp_Dir DX = P.XAxis().Direction();
     gp_Dir DY = P.YAxis().Direction();
-    Standard_Real U,V,DU,DV;
+    Standard_Real U = NAN,V = NAN,DU = NAN,DV = NAN;
     if (HasEdge(d1,dd4)) {
       L = Line(d1,dd4);
     ElSLib::Parameters(P,L.Location(),U,V);

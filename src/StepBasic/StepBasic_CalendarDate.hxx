@@ -60,8 +60,8 @@ protected:
 private:
 
 
-  Standard_Integer dayComponent;
-  Standard_Integer monthComponent;
+  Standard_Integer dayComponent{};
+  Standard_Integer monthComponent{};
 
 
 };

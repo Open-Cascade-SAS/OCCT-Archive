@@ -17,6 +17,8 @@
 // *******************************************************************
 // *******************************************************************
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Geom_BezierSurface.hxx>
 #include <Geom_Curve.hxx>
@@ -246,7 +248,7 @@ void Geom_RectangularTrimmedSurface::SetTrim(const Standard_Real U1,
   
   Standard_Boolean UsameSense = Standard_True;
   Standard_Boolean VsameSense = Standard_True;
-  Standard_Real Udeb, Ufin, Vdeb, Vfin;
+  Standard_Real Udeb = NAN, Ufin = NAN, Vdeb = NAN, Vfin = NAN;
 
   basisSurf->Bounds(Udeb, Ufin, Vdeb, Vfin);
 

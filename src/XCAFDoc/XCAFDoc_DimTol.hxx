@@ -78,7 +78,7 @@ protected:
 private:
 
 
-  Standard_Integer myKind;
+  Standard_Integer myKind{};
   Handle(TColStd_HArray1OfReal) myVal;
   Handle(TCollection_HAsciiString) myName;
   Handle(TCollection_HAsciiString) myDescription;

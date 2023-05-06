@@ -22,8 +22,8 @@ IMPLEMENT_STANDARD_RTTIEXT(Transfer_DispatchControl,Interface_CopyControl)
 
 Transfer_DispatchControl::Transfer_DispatchControl
   (const Handle(Interface_InterfaceModel)& model,
-   const Handle(Transfer_TransientProcess)& TP)
-      { themodel = model;  theTP = TP;  }
+   const Handle(Transfer_TransientProcess)& TP) : themodel(model), theTP(TP)
+      {   }
 
 
     const Handle(Transfer_TransientProcess)&

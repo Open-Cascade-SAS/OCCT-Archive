@@ -61,7 +61,7 @@ protected:
 private:
 
 
-  Standard_Real radius;
+  Standard_Real radius{};
   Handle(StepGeom_Point) centre;
 
 

@@ -16,6 +16,8 @@
 
 // 09-Aug-95 : xab : changed the ProjLib_ProjectOnPlane in the case
 //                   of the line and the parameteriation is kept
+#include <math.h>
+
 #include <ProjLib_ProjectOnPlane.hxx>
 #include <Approx_FitAndDivide.hxx>
 #include <AppParCurves_MultiCurve.hxx>
@@ -110,7 +112,7 @@ static Standard_Boolean OnPlane_D1(const Standard_Real U,
   const gp_Ax3& Pl,
   const gp_Dir& D)
 {
-  Standard_Real Alpha;
+  Standard_Real Alpha = NAN;
   gp_Pnt Point;
   gp_Vec Vector;
 
@@ -152,7 +154,7 @@ static Standard_Boolean OnPlane_D2(const Standard_Real U,
   const gp_Ax3& Pl,
   const gp_Dir& D)
 {
-  Standard_Real Alpha;
+  Standard_Real Alpha = NAN;
   gp_Pnt Point;
   gp_Vec Vector1,
     Vector2;
@@ -200,7 +202,7 @@ static Standard_Boolean OnPlane_D3(const Standard_Real U,
   const gp_Ax3& Pl,
   const gp_Dir& D)
 {
-  Standard_Real Alpha;
+  Standard_Real Alpha = NAN;
   gp_Pnt Point;
   gp_Vec Vector1,
     Vector2,
@@ -264,19 +266,19 @@ public:
     myNbPnt2d = 0;
   }
 
-  Standard_Real FirstParameter() const
+  Standard_Real FirstParameter() const override
   {
     return myCurve->FirstParameter();
   }
 
-  Standard_Real LastParameter() const
+  Standard_Real LastParameter() const override
   {
     return myCurve->LastParameter();
   }
 
   Standard_Boolean Value(const Standard_Real   theT,
     NCollection_Array1<gp_Pnt2d>& /*thePnt2d*/,
-    NCollection_Array1<gp_Pnt>&   thePnt) const
+    NCollection_Array1<gp_Pnt>&   thePnt) const override
   {
     thePnt(1) = OnPlane_Value(theT, myCurve, myPlane, myDirection);
     return Standard_True;
@@ -284,7 +286,7 @@ public:
 
   Standard_Boolean D1(const Standard_Real   theT,
     NCollection_Array1<gp_Vec2d>& /*theVec2d*/,
-    NCollection_Array1<gp_Vec>&   theVec) const
+    NCollection_Array1<gp_Vec>&   theVec) const override
   {
     gp_Pnt aDummyPnt;
     return OnPlane_D1(theT, aDummyPnt, theVec(1), myCurve, myPlane, myDirection);
@@ -309,7 +311,7 @@ public:
   {
   }
 
-  virtual Standard_Boolean Value(const Standard_Real X, Standard_Real& F)
+  Standard_Boolean Value(const Standard_Real X, Standard_Real& F) override
   {
     myProps->SetParameter(X);
     F = -myProps->Curvature();
@@ -346,7 +348,7 @@ static void  PerformApprox(const Handle(Adaptor3d_Curve)& C,
 {
   ProjLib_OnPlane F(C, Pl, D);
 
-  Standard_Integer Deg1, Deg2;
+  Standard_Integer Deg1 = 0, Deg2 = 0;
   Deg1 = 8; Deg2 = 8;
   if (C->GetType() == GeomAbs_Parabola)
   {
@@ -367,7 +369,7 @@ static void  PerformApprox(const Handle(Adaptor3d_Curve)& C,
   {
     return;
   }
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer NbCurves = Fit.NbMultiCurves();
   Standard_Integer MaxDeg = 0;
 
@@ -387,7 +389,7 @@ static void  PerformApprox(const Handle(Adaptor3d_Curve)& C,
   TColStd_Array1OfReal Knots(1, NbCurves + 1);  //Noeuds de la BSpline
 
   Standard_Integer Compt = 1;
-  Standard_Real anErrMax = 0., anErr3d, anErr2d;
+  Standard_Real anErrMax = 0., anErr3d = NAN, anErr2d = NAN;
   for (i = 1; i <= Fit.NbMultiCurves(); i++) {
     Fit.Parameters(i, Knots(i), Knots(i + 1));
     Fit.Error(i, anErr3d, anErr2d);
@@ -595,7 +597,7 @@ void ProjLib_ProjectOnPlane::Load(const Handle(Adaptor3d_Curve)&    C,
   gp_Elips Elips;
   //  gp_Hypr  Hypr ;
 
-  Standard_Integer num_knots;
+  Standard_Integer num_knots = 0;
   GeomAbs_CurveType Type = C->GetType();
 
   gp_Ax2 Axis;
@@ -648,7 +650,7 @@ void ProjLib_ProjectOnPlane::Load(const Handle(Adaptor3d_Curve)&    C,
       myType = GeomAbs_Line;
       gp_Pnt P = ProjectPnt(myPlane, myDirection, L.Location());
       aLine = gp_Lin(P, gp_Dir(Xc));
-      Standard_Real Udeb, Ufin;
+      Standard_Real Udeb = NAN, Ufin = NAN;
 
       // eval the first and last parameters of the projected curve
       Udeb = myCurve->FirstParameter();
@@ -1620,7 +1622,7 @@ Standard_Boolean ProjLib_ProjectOnPlane::BuildParabolaByApex(Handle(Geom_Curve)&
     return Standard_False;
   }
   
-  Standard_Real aT;
+  Standard_Real aT = NAN;
   aT = aSolver.Location();
   aProps.SetParameter(aT);
   gp_Pnt aP0 = aProps.Value();
@@ -1678,7 +1680,7 @@ Standard_Boolean ProjLib_ProjectOnPlane::BuildHyperbolaByApex(Handle(Geom_Curve)
 
   if (aSolver.IsDone())
   {
-    Standard_Real aT;
+    Standard_Real aT = NAN;
     aT = aSolver.Location();
     aProps.SetParameter(aT);
     Standard_Real aCurv = aProps.Curvature();

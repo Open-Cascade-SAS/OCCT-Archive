@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Approx_CurveOnSurface.hxx>
 
 #include <Adaptor2d_Curve2d.hxx>
@@ -55,17 +57,17 @@ class Approx_CurveOnSurface_Eval : public AdvApprox_EvaluatorFunction
     : fonct(theFunc), fonct2d(theFunc2d) 
       { StartEndSav[0] = First; StartEndSav[1] = Last; }
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Handle(Adaptor3d_Curve) fonct;
   Handle(Adaptor2d_Curve2d) fonct2d;
-  Standard_Real StartEndSav[2];
+  Standard_Real StartEndSav[2]{};
 };
 
 void Approx_CurveOnSurface_Eval::Evaluate (Standard_Integer *Dimension,
@@ -154,16 +156,16 @@ class Approx_CurveOnSurface_Eval3d : public AdvApprox_EvaluatorFunction
                                 Standard_Real First, Standard_Real Last)
     : fonct(theFunc) { StartEndSav[0] = First; StartEndSav[1] = Last; }
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Handle(Adaptor3d_Curve) fonct;
-  Standard_Real StartEndSav[2];
+  Standard_Real StartEndSav[2]{};
 };
 
 void Approx_CurveOnSurface_Eval3d::Evaluate (Standard_Integer *Dimension,
@@ -235,16 +237,16 @@ class Approx_CurveOnSurface_Eval2d : public AdvApprox_EvaluatorFunction
                                 Standard_Real First, Standard_Real Last)
     : fonct2d(theFunc2d) { StartEndSav[0] = First; StartEndSav[1] = Last; }
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Handle(Adaptor2d_Curve2d) fonct2d;
-  Standard_Real StartEndSav[2];
+  Standard_Real StartEndSav[2]{};
 };
 
 void Approx_CurveOnSurface_Eval2d::Evaluate (Standard_Integer *Dimension,
@@ -381,8 +383,8 @@ void Approx_CurveOnSurface::Perform(const Standard_Integer theMaxSegments,
 
   Handle( Adaptor2d_Curve2d ) TrimmedC2D = myC2D->Trim( myFirst, myLast, Precision::PConfusion() );
 
-  Standard_Boolean isU, isForward;
-  Standard_Real aParam;
+  Standard_Boolean isU = 0, isForward = 0;
+  Standard_Real aParam = NAN;
   if (theOnly3d && isIsoLine(TrimmedC2D, isU, aParam, isForward))
   {
     if (buildC3dOnIsoLine(TrimmedC2D, isU, aParam, isForward))
@@ -404,7 +406,7 @@ void Approx_CurveOnSurface::Perform(const Standard_Integer theMaxSegments,
   Approx_CurveOnSurface_Eval3d Eval3dCvOnSurf (HCOnS,             myFirst, myLast);
   Approx_CurveOnSurface_Eval2d Eval2dCvOnSurf (       TrimmedC2D, myFirst, myLast);
   Approx_CurveOnSurface_Eval   EvalCvOnSurf   (HCOnS, TrimmedC2D, myFirst, myLast);
-  AdvApprox_EvaluatorFunction* EvalPtr;
+  AdvApprox_EvaluatorFunction* EvalPtr = nullptr;
   if ( theOnly3d ) EvalPtr = &Eval3dCvOnSurf;
   else if ( theOnly2d ) EvalPtr = &Eval2dCvOnSurf;
   else EvalPtr = &EvalCvOnSurf;
@@ -414,7 +416,7 @@ void Approx_CurveOnSurface::Perform(const Standard_Integer theMaxSegments,
     Num1DSS = 2;
     OneDTol = new TColStd_HArray1OfReal(1,Num1DSS);
 
-    Standard_Real TolU, TolV;
+    Standard_Real TolU = NAN, TolV = NAN;
 
     TolU = mySurf->UResolution(myTol) / 2.;
     TolV = mySurf->VResolution(myTol) / 2.;
@@ -445,7 +447,7 @@ void Approx_CurveOnSurface::Perform(const Standard_Integer theMaxSegments,
     ThreeDTol->Init(myTol/2);
   }
 
-  AdvApprox_Cutting* CutTool;
+  AdvApprox_Cutting* CutTool = nullptr;
 
   if (aContinuity <= myC2D->Continuity() &&
       aContinuity <= mySurf->UContinuity() &&
@@ -556,7 +558,7 @@ void Approx_CurveOnSurface::Perform(const Standard_Integer theMaxSegments,
 //function : isIsoLine
 //purpose  :
 //=============================================================================
-Standard_Boolean Approx_CurveOnSurface::isIsoLine(const Handle(Adaptor2d_Curve2d) theC2D,
+Standard_Boolean Approx_CurveOnSurface::isIsoLine(const Handle(Adaptor2d_Curve2d)& theC2D,
                                                   Standard_Boolean&                theIsU,
                                                   Standard_Real&                   theParam,
                                                   Standard_Boolean&                theIsForward) const
@@ -638,7 +640,7 @@ Standard_Boolean Approx_CurveOnSurface::isIsoLine(const Handle(Adaptor2d_Curve2d
 //function : buildC3dOnIsoLine
 //purpose  :
 //=============================================================================
-Standard_Boolean Approx_CurveOnSurface::buildC3dOnIsoLine(const Handle(Adaptor2d_Curve2d) theC2D,
+Standard_Boolean Approx_CurveOnSurface::buildC3dOnIsoLine(const Handle(Adaptor2d_Curve2d)& theC2D,
                                                           const Standard_Boolean           theIsU,
                                                           const Standard_Real              theParam,
                                                           const Standard_Boolean           theIsForward)
@@ -659,7 +661,7 @@ Standard_Boolean Approx_CurveOnSurface::buildC3dOnIsoLine(const Handle(Adaptor2d
   gp_Pnt2d aL2d = theC2D->Value(theC2D->LastParameter());
 
   Standard_Boolean isToTrim = Standard_True;
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   aSurf->Bounds(U1, U2, V1, V2);
 
   if (theIsU)

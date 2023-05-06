@@ -49,7 +49,7 @@ void RWStepGeom_RWOrientedSurface::ReadStep (const Handle(StepData_StepReaderDat
 
   // Own fields of OrientedSurface
 
-  Standard_Boolean aOrientation;
+  Standard_Boolean aOrientation = 0;
   data->ReadBoolean (num, 2, "orientation", ach, aOrientation);
 
   // Initialize entity

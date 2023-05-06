@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepExtrema_ProximityValueTool.hxx>
 #include <BRepExtrema_ProximityDistTool.hxx>
 
@@ -351,9 +353,9 @@ static void getNodesOfTrg (const Standard_Integer theTriIdx,
                            const Handle (Poly_Triangulation)& theTr,
                            gp_Pnt (&theTrg)[3])
 {
-  Standard_Integer aVtxIdx1;
-  Standard_Integer aVtxIdx2;
-  Standard_Integer aVtxIdx3;
+  Standard_Integer aVtxIdx1 = 0;
+  Standard_Integer aVtxIdx2 = 0;
+  Standard_Integer aVtxIdx3 = 0;
 
   theTr->Triangle (theTriIdx).Get (aVtxIdx1, aVtxIdx2, aVtxIdx3);
 
@@ -575,7 +577,7 @@ NCollection_CellFilter_Action BRepExtrema_VertexInspector::Inspect (const Standa
   myIsNeedAdd = Standard_True;
 
   const gp_XYZ& aPnt = myPoints.Value (theTarget - 1);
-  Standard_Real aDx, aDy, aDz;
+  Standard_Real aDx = NAN, aDy = NAN, aDz = NAN;
   aDx = myCurrent.X() - aPnt.X();
   aDy = myCurrent.Y() - aPnt.Y();
   aDz = myCurrent.Z() - aPnt.Z();

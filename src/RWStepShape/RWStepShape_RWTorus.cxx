@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepShape_RWTorus.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -47,13 +49,13 @@ void RWStepShape_RWTorus::ReadStep
 
 	// --- own field : majorRadius ---
 
-	Standard_Real aMajorRadius;
+	Standard_Real aMajorRadius = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"major_radius",ach,aMajorRadius);
 
 	// --- own field : minorRadius ---
 
-	Standard_Real aMinorRadius;
+	Standard_Real aMinorRadius = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"minor_radius",ach,aMinorRadius);
 

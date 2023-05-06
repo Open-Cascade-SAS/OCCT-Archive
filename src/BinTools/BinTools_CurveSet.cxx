@@ -205,7 +205,7 @@ static BinTools_OStream& operator <<(BinTools_OStream& OS, const Handle(Geom_Bez
   Standard_Boolean aRational = B->IsRational() ? 1:0;
   OS << aRational; // rational
   // poles and weights
-  Standard_Integer i, aDegree = B->Degree(); 
+  Standard_Integer i = 0, aDegree = B->Degree(); 
   OS << (Standard_ExtCharacter)aDegree; //<< Degree
   for (i = 1; i <= aDegree+1; i++) {
     OS << B->Pole(i); // Pnt
@@ -228,7 +228,7 @@ static BinTools_OStream& operator <<(BinTools_OStream& OS, const Handle(Geom_BSp
   Standard_Boolean aPeriodic = B->IsPeriodic() ? 1:0;
   OS << aPeriodic; // periodic
   // poles and weights
-  Standard_Integer i,aDegree,aNbPoles,aNbKnots;
+  Standard_Integer i = 0,aDegree = 0,aNbPoles = 0,aNbKnots = 0;
   aDegree = B->Degree();
   aNbPoles = B->NbPoles();
   aNbKnots = B->NbKnots();
@@ -334,7 +334,7 @@ void BinTools_CurveSet::WriteCurve(const Handle(Geom_Curve)& C,
 void  BinTools_CurveSet::Write (Standard_OStream& OS,
                                 const Message_ProgressRange& theRange)const
 {
-  Standard_Integer i, nbcurv = myMap.Extent();
+  Standard_Integer i = 0, nbcurv = myMap.Extent();
   Message_ProgressScope aPS (theRange, "Writing curves", nbcurv);
   OS << "Curves "<< nbcurv << "\n";
   BinTools_OStream aStream (OS);
@@ -703,7 +703,7 @@ void  BinTools_CurveSet::Read (Standard_IStream& IS,
   }
 
   Handle(Geom_Curve) C;
-  Standard_Integer i, nbcurve;
+  Standard_Integer i = 0, nbcurve = 0;
   IS >> nbcurve;
 
   Message_ProgressScope aPS(theRange, "Reading curves", nbcurve);

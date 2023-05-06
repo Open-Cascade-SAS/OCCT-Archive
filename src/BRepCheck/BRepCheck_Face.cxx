@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box2d.hxx>
 #include <BndLib_Add2dCurve.hxx>
 #include <BRep_Builder.hxx>
@@ -79,15 +81,15 @@ static Standard_Boolean CheckThin(const TopoDS_Shape& w,
 //=======================================================================
 
 BRepCheck_Face::BRepCheck_Face (const TopoDS_Face& F)
-: myIntres(BRepCheck_NoError),
-  myImbres(BRepCheck_NoError),
-  myOrires(BRepCheck_NoError)
+: myIntdone(Standard_False), myIntres(BRepCheck_NoError),
+  myImbdone(Standard_False), myImbres(BRepCheck_NoError),
+  myOridone(Standard_False), myOrires(BRepCheck_NoError), myGctrl(Standard_True)
 {
   Init(F);
-  myIntdone = Standard_False;
-  myImbdone = Standard_False;
-  myOridone = Standard_False;
-  myGctrl   = Standard_True;
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -217,7 +219,7 @@ BRepCheck_Status BRepCheck_Face::IntersectWires(const Standard_Boolean Update)
   }
 
   Geom2dAdaptor_Curve aC;
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   DataMapOfShapeBox2d aMapShapeBox2d;
   for (exp1.Init (myShape, TopAbs_WIRE); exp1.More(); exp1.Next()) 
   {
@@ -245,7 +247,7 @@ BRepCheck_Status BRepCheck_Face::IntersectWires(const Standard_Boolean Update)
     aMapShapeBox2d.Bind (aWire, aBoxW);
   }
 
-  Standard_Integer Nbwire, Index,Indexbis;
+  Standard_Integer Nbwire = 0, Index = 0,Indexbis = 0;
   Nbwire = myMapImb.Extent();
 
   Index = 1;
@@ -625,7 +627,7 @@ static Standard_Boolean Intersect(const TopoDS_Wire& wir1,
     MapW1.Add( exp1.Current() );
   for (exp2.Init( wir2, TopAbs_VERTEX ); exp2.More(); exp2.Next())
     {
-      TopoDS_Shape V = exp2.Current();
+      const TopoDS_Shape& V = exp2.Current();
       if (MapW1.Contains( V ))
 	CommonVertices.Append( V );
     }
@@ -635,7 +637,7 @@ static Standard_Boolean Intersect(const TopoDS_Wire& wir1,
   BRepAdaptor_Surface Surf(F,Standard_False);
 
   TColgp_SequenceOfPnt PntSeq;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= CommonVertices.Length(); i++)
     {
       TopoDS_Vertex V = TopoDS::Vertex( CommonVertices(i) );
@@ -646,7 +648,7 @@ static Standard_Boolean Intersect(const TopoDS_Wire& wir1,
 
   Geom2dAdaptor_Curve   C1,C2;
   gp_Pnt2d              pfirst1,plast1,pfirst2,plast2;
-  Standard_Real         first1,last1,first2,last2;
+  Standard_Real         first1 = NAN,last1 = NAN,first2 = NAN,last2 = NAN;
   Geom2dInt_GInter      Inter;
   IntRes2d_Domain myDomain1,myDomain2;
   Bnd_Box2d Box1, Box2;
@@ -774,7 +776,7 @@ static Standard_Boolean IsInside(const TopoDS_Wire& theWire,
 				 const BRepTopAdaptor_FClass2d& FClass2d,
 				 const TopoDS_Face& theFace)
 {
-  Standard_Real aParameter, aFirst, aLast;
+  Standard_Real aParameter = NAN, aFirst = NAN, aLast = NAN;
 
   TopExp_Explorer anExplorer(theWire, TopAbs_EDGE);
   for( ; anExplorer.More(); anExplorer.Next() )
@@ -796,7 +798,7 @@ static Standard_Boolean IsInside(const TopoDS_Wire& theWire,
       }
 
 	  //Edge is skipped if its length is too small
-	  Standard_Real aFirst3D, aLast3D;
+	  Standard_Real aFirst3D = NAN, aLast3D = NAN;
 	  Handle(Geom_Curve) aCurve = BRep_Tool::Curve( anEdge, aFirst3D, aLast3D );      
       if ( aCurve.IsNull() )
       {

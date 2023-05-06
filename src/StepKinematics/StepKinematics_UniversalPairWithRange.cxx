@@ -22,12 +22,12 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_UniversalPairWithRange, StepKinematics
 //function : StepKinematics_UniversalPairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_UniversalPairWithRange::StepKinematics_UniversalPairWithRange ()
+StepKinematics_UniversalPairWithRange::StepKinematics_UniversalPairWithRange () : defLowerLimitFirstRotation(Standard_False), defUpperLimitFirstRotation(Standard_False), defLowerLimitSecondRotation(Standard_False), defUpperLimitSecondRotation(Standard_False)
 {
-  defLowerLimitFirstRotation = Standard_False;
-  defUpperLimitFirstRotation = Standard_False;
-  defLowerLimitSecondRotation = Standard_False;
-  defUpperLimitSecondRotation = Standard_False;
+  
+  
+  
+  
 }
 
 //=======================================================================

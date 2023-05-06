@@ -19,6 +19,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_FunctionAllRoots.hxx>
 #include <math_FunctionRoots.hxx>
 #include <math_FunctionSample.hxx>
@@ -29,18 +31,18 @@ math_FunctionAllRoots::math_FunctionAllRoots (
                            math_FunctionWithDerivative& F,
 			   const math_FunctionSample& S,
 			   const Standard_Real EpsX, const Standard_Real EpsF,
-			   const Standard_Real EpsNul) {
+			   const Standard_Real EpsNul) : done(Standard_False) {
 
-    done=Standard_False;
+    
 
 
 
-    Standard_Boolean Nul, PNul, InterNul, Nuld, Nulf;
+    Standard_Boolean Nul = 0, PNul = 0, InterNul = 0, Nuld = 0, Nulf = 0;
     Standard_Real DebNul = 0., FinNul = 0.;
     Standard_Integer Indd = 0, Indf = 0;
-    Standard_Real cst,val,valsav=0,valbid;
-    Standard_Boolean fini;
-    Standard_Integer Nbp,i;
+    Standard_Real cst = NAN,val = NAN,valsav=0,valbid = NAN;
+    Standard_Boolean fini = 0;
+    Standard_Integer Nbp = 0,i = 0;
 
     Nbp=S.NbPoints();
     F.Value(S.GetParameter(1),val);
@@ -162,7 +164,7 @@ math_FunctionAllRoots::math_FunctionAllRoots (
     }
     else {
       Standard_Integer NbpMin = 3;
-      Standard_Integer Nbrpt;
+      Standard_Integer Nbrpt = 0;
       if (!Nuld) {          // Recherche des solutions entre S.GetParameter(1) 
                             // et le debut du 1er intervalle nul
 

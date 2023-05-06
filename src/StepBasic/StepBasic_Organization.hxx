@@ -72,7 +72,7 @@ private:
   Handle(TCollection_HAsciiString) id;
   Handle(TCollection_HAsciiString) name;
   Handle(TCollection_HAsciiString) description;
-  Standard_Boolean hasId;
+  Standard_Boolean hasId{};
 
 
 };

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_ExtPS.hxx>
 #include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <gp_Pnt.hxx>
@@ -95,7 +97,7 @@ GeomAPI_ProjectPointOnSurf::GeomAPI_ProjectPointOnSurf()
 
   if ( myIsDone) {
     // evaluate the lower distance and its index;
-    Standard_Real Dist2, Dist2Min = myExtPS.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtPS.SquareDistance(1);
     myIndex = 1;
     
     for ( Standard_Integer i = 2; i <= myExtPS.NbExt(); i++) {
@@ -133,7 +135,7 @@ GeomAPI_ProjectPointOnSurf::GeomAPI_ProjectPointOnSurf()
   //myExtPS = Extrema_ExtPS (P, TheSurface, Tolerance, Tolerance);
   
   //modified by NIZNHY-PKV Mon Apr  8 11:13:37 2002 f XXX
-  Standard_Real Umin, Usup, Vmin, Vsup;
+  Standard_Real Umin = NAN, Usup = NAN, Vmin = NAN, Vsup = NAN;
   Surface->Bounds(Umin, Usup, Vmin, Vsup);
   myGeomAdaptor.Load(Surface, Umin, Usup, Vmin, Vsup);
   //

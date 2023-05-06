@@ -97,7 +97,7 @@ void IntRes2d_Intersection::Insert(const IntRes2d_IntersectionPoint& Pnt) {
 }
 
 void IntRes2d_Intersection::SetValues(const IntRes2d_Intersection& Other) {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   if(Other.done) {
     lseg.Clear();
     lpnt.Clear();
@@ -168,7 +168,7 @@ void IntRes2d_Intersection::Append( const IntRes2d_Intersection& Other
   if(Other.done) {
     //-- Verification of the Position of the IntersectionPoints
     Standard_Integer n=Other.lpnt.Length();
-    Standard_Integer i ;
+    Standard_Integer i = 0 ;
     for( i=1; i<=n ; i++) {
       
       const IntRes2d_IntersectionPoint& P=Other.lpnt(i);

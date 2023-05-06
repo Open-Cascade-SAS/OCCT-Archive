@@ -281,7 +281,7 @@ Standard_Boolean OSD_Thread::Wait (const Standard_Integer theTimeMs,
   #endif
 
   #ifdef HAS_TIMED_NP
-    struct timespec aTimeout;
+    struct timespec aTimeout{};
     if (clock_gettime (CLOCK_REALTIME, &aTimeout) == -1)
     {
       return Standard_False;

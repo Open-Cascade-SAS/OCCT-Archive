@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Approx_CurvilinearParameter.hxx>
 
 #include <Adaptor2d_Curve2d.hxx>
@@ -73,16 +75,16 @@ class Approx_CurvilinearParameter_EvalCurv : public AdvApprox_EvaluatorFunction
                                         Standard_Real First, Standard_Real Last)
     : fonct(theFunc) { StartEndSav[0] = First; StartEndSav[1] = Last; }
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Handle(Approx_CurvlinFunc) fonct;
-  Standard_Real StartEndSav[2];
+  Standard_Real StartEndSav[2]{};
 };
 
 void Approx_CurvilinearParameter_EvalCurv::Evaluate (Standard_Integer * Dimension,
@@ -95,7 +97,7 @@ void Approx_CurvilinearParameter_EvalCurv::Evaluate (Standard_Integer * Dimensio
   *ErrorCode = 0;
   Standard_Real S = *Param;
   TColStd_Array1OfReal Res(0, 2);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   
 // Dimension is incorrect
   if (*Dimension != 3) {
@@ -126,7 +128,7 @@ Approx_CurvilinearParameter::Approx_CurvilinearParameter(const Handle(Adaptor3d_
 							 const GeomAbs_Shape Order,
 							 const Standard_Integer MaxDegree,
 							 const Standard_Integer MaxSegments)
-: myMaxError2d1(0.0),
+: myCase(1), myMaxError2d1(0.0),
   myMaxError2d2(0.0)
 {
 #ifdef OCCT_DEBUG_CHRONO
@@ -134,7 +136,7 @@ Approx_CurvilinearParameter::Approx_CurvilinearParameter(const Handle(Adaptor3d_
   uparam_count = 0;
   InitChron(chr_total);
 #endif
-  myCase = 1;
+  
 // Initialisation of input parameters of AdvApprox
 
   Standard_Integer Num1DSS=0, Num2DSS=0, Num3DSS=1;
@@ -212,16 +214,16 @@ class Approx_CurvilinearParameter_EvalCurvOnSurf : public AdvApprox_EvaluatorFun
                                               Standard_Real First, Standard_Real Last)
     : fonct(theFunc) { StartEndSav[0] = First; StartEndSav[1] = Last; }
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Handle(Approx_CurvlinFunc) fonct;
-  Standard_Real StartEndSav[2];
+  Standard_Real StartEndSav[2]{};
 };
 
 void Approx_CurvilinearParameter_EvalCurvOnSurf::Evaluate (Standard_Integer * Dimension,
@@ -234,7 +236,7 @@ void Approx_CurvilinearParameter_EvalCurvOnSurf::Evaluate (Standard_Integer * Di
   *ErrorCode = 0;
   Standard_Real S = *Param;
   TColStd_Array1OfReal Res(0, 4);
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
 // Dimension is incorrect
   if (*Dimension != 5) {
@@ -265,21 +267,21 @@ Approx_CurvilinearParameter::Approx_CurvilinearParameter(const Handle(Adaptor2d_
 							 const Standard_Real Tol,
 							 const GeomAbs_Shape Order,
 							 const Standard_Integer MaxDegree,
-							 const Standard_Integer MaxSegments)
+							 const Standard_Integer MaxSegments) : myCase(2)
 {
 #ifdef OCCT_DEBUG_CHRONO
   t_total = t_init = t_approx = t_uparam = 0;
   uparam_count = 0;
   InitChron(chr_total);
 #endif
-  myCase = 2;
+  
 
   // Initialisation of input parameters of AdvApprox
 
-  Standard_Integer Num1DSS=2, Num2DSS=0, Num3DSS=1, i;
+  Standard_Integer Num1DSS=2, Num2DSS=0, Num3DSS=1, i = 0;
 
   Handle(TColStd_HArray1OfReal) OneDTol = new TColStd_HArray1OfReal(1,Num1DSS);
-  Standard_Real TolV,TolW;
+  Standard_Real TolV = NAN,TolW = NAN;
 
   ToleranceComputation(C2D,Surf,10,Tol,TolV,TolW);
   OneDTol->SetValue(1,TolV);
@@ -373,16 +375,16 @@ class Approx_CurvilinearParameter_EvalCurvOn2Surf : public AdvApprox_EvaluatorFu
                                                Standard_Real First, Standard_Real Last)
     : fonct(theFunc) { StartEndSav[0] = First; StartEndSav[1] = Last; }
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Handle(Approx_CurvlinFunc) fonct;
-  Standard_Real StartEndSav[2];
+  Standard_Real StartEndSav[2]{};
 };
 
 void Approx_CurvilinearParameter_EvalCurvOn2Surf::Evaluate (Standard_Integer * Dimension,
@@ -395,7 +397,7 @@ void Approx_CurvilinearParameter_EvalCurvOn2Surf::Evaluate (Standard_Integer * D
   *ErrorCode = 0;
   Standard_Real S = *Param;
   TColStd_Array1OfReal Res(0, 6);
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
 // Dimension is incorrect
   if (*Dimension != 7) {
@@ -428,23 +430,23 @@ Approx_CurvilinearParameter::Approx_CurvilinearParameter(const Handle(Adaptor2d_
 							 const Standard_Real Tol,
 							 const GeomAbs_Shape Order,
 							 const Standard_Integer MaxDegree,
-							 const Standard_Integer MaxSegments)
+							 const Standard_Integer MaxSegments) : myCase(3)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
 #ifdef OCCT_DEBUG_CHRONO
   t_total = t_init = t_approx = t_uparam = 0;
   uparam_count = 0;
   InitChron(chr_total);
 #endif
-  myCase = 3;
+  
 
   // Initialisation of input parameters of AdvApprox
 
   Standard_Integer Num1DSS=4, Num2DSS=0, Num3DSS=1;
   Handle(TColStd_HArray1OfReal) OneDTol = new TColStd_HArray1OfReal(1,Num1DSS); 
 
-  Standard_Real TolV,TolW;
+  Standard_Real TolV = NAN,TolW = NAN;
   ToleranceComputation(C2D1,Surf1,10,Tol,TolV,TolW);
   OneDTol->SetValue(1,TolV); 
   OneDTol->SetValue(2,TolW); 

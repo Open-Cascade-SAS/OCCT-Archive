@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWRotationAboutDirection.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -53,7 +55,7 @@ void RWStepKinematics_RWRotationAboutDirection::ReadStep (const Handle(StepData_
   Handle(StepGeom_Direction) aDirectionOfAxis;
   theData->ReadEntity (theNum, 2, "direction_of_axis", theArch, STANDARD_TYPE(StepGeom_Direction), aDirectionOfAxis);
 
-  Standard_Real aRotationAngle;
+  Standard_Real aRotationAngle = NAN;
   theData->ReadReal (theNum, 3, "rotation_angle", theArch, aRotationAngle);
 
   // Initialize entity

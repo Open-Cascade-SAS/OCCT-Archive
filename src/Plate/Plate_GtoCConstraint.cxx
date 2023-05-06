@@ -28,19 +28,19 @@ static const Standard_Real NORMIN = 1.e-10;
 static const Standard_Real COSMIN = 1.e-2;
 
 Plate_GtoCConstraint::Plate_GtoCConstraint(const Plate_GtoCConstraint& ref)
-:myD1SurfInit(ref.myD1SurfInit)
+:myD1SurfInit(ref.myD1SurfInit), pnt2d(ref.pnt2d), nb_PPConstraints(ref.nb_PPConstraints)
 {
-  pnt2d = ref.pnt2d;  
-  nb_PPConstraints = ref.nb_PPConstraints;
+   
+  
   for(Standard_Integer i = 0; i<nb_PPConstraints; i++)
     myPPC[i] = ref.myPPC[i];
 }
 
 Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d, const Plate_D1& D1S, const Plate_D1& D1T)
-:myD1SurfInit(D1S)
+:myD1SurfInit(D1S), pnt2d(point2d), nb_PPConstraints(0)
 {
-  pnt2d = point2d;
-  nb_PPConstraints = 0;
+  
+  
 
   gp_XYZ normale = D1T.Du^D1T.Dv;
 //alr le 12/11/96
@@ -69,10 +69,10 @@ Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d, const Plate_D1&
 
 Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d, 
   const Plate_D1& D1S, const Plate_D1& D1T, const gp_XYZ& nP)
-:myD1SurfInit(D1S)
+:myD1SurfInit(D1S), pnt2d(point2d), nb_PPConstraints(0)
 {
-  pnt2d = point2d;
-  nb_PPConstraints = 0;
+  
+  
 
   gp_XYZ normale = D1T.Du^D1T.Dv;
   if(normale.Modulus() < NORMIN) return;
@@ -104,11 +104,11 @@ Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d,
 
 Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d, const Plate_D1& D1S, const Plate_D1& D1T, 
 					   const Plate_D2& D2S, const Plate_D2& D2T)
-:myD1SurfInit(D1S)
+:myD1SurfInit(D1S), pnt2d(point2d), nb_PPConstraints(0)
 {
 
-  pnt2d = point2d;
-  nb_PPConstraints = 0;
+  
+  
 
   gp_XYZ normale = D1T.Du^D1T.Dv;
 //alr le 12/11/96
@@ -179,11 +179,11 @@ Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d, const Plate_D1&
 
 Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d, const Plate_D1& D1S, const Plate_D1& D1T, 
 					   const Plate_D2& D2S, const Plate_D2& D2T, const gp_XYZ& nP)
-:myD1SurfInit(D1S)
+:myD1SurfInit(D1S), pnt2d(point2d), nb_PPConstraints(0)
 {
 
-  pnt2d = point2d;
-  nb_PPConstraints = 0;
+  
+  
 
   gp_XYZ normale = D1T.Du^D1T.Dv;
 //alr le 12/11/96
@@ -258,10 +258,10 @@ Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d, const Plate_D1&
 Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d, const Plate_D1& D1S, const Plate_D1& D1T, 
 					   const Plate_D2& D2S, const Plate_D2& D2T,
 					   const Plate_D3& D3S, const Plate_D3& D3T)
-:myD1SurfInit(D1S)
+:myD1SurfInit(D1S), pnt2d(point2d), nb_PPConstraints(0)
 {
-  pnt2d = point2d;
-  nb_PPConstraints = 0;
+  
+  
 
   gp_XYZ normale = D1T.Du^D1T.Dv;
   if(normale.Modulus() < NORMIN) return;
@@ -377,11 +377,11 @@ Plate_GtoCConstraint::Plate_GtoCConstraint(const gp_XY& point2d, const Plate_D1&
 					   const Plate_D3& D3S, const Plate_D3& D3T,
 //                                           const gp_XYZ& nP)
                                            const gp_XYZ& )
-:myD1SurfInit(D1S)
+:myD1SurfInit(D1S), pnt2d(point2d), nb_PPConstraints(0)
 {
 
-  pnt2d = point2d;
-  nb_PPConstraints = 0;
+  
+  
 
   gp_XYZ normale = D1T.Du^D1T.Dv;
   if(normale.Modulus() < NORMIN) return;

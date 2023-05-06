@@ -25,8 +25,8 @@
 //=========================================================================
 //   Creation d une symetrie de Geom2d par rapport a un point.              +
 //=========================================================================
-GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Pnt2d&  Point ) {
-  TheMirror = new Geom2d_Transformation();
+GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Pnt2d&  Point ) : TheMirror(new Geom2d_Transformation()) {
+  
   TheMirror->SetMirror(Point);
 }
 
@@ -34,8 +34,8 @@ GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Pnt2d&  Point ) {
 //   Creation d une symetrie de Geom2d par rapport a une droite.            +
 //=========================================================================
 
-GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Ax2d&  Axis ) {
-  TheMirror = new Geom2d_Transformation();
+GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Ax2d&  Axis ) : TheMirror(new Geom2d_Transformation()) {
+  
   TheMirror->SetMirror(Axis);
 }
 
@@ -43,8 +43,8 @@ GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Ax2d&  Axis ) {
 //   Creation d une symetrie de Geom2d par rapport a une droite.            +
 //=========================================================================
 
-GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Lin2d&  Line ) {
-  TheMirror = new Geom2d_Transformation();
+GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Lin2d&  Line ) : TheMirror(new Geom2d_Transformation()) {
+  
   TheMirror->SetMirror(gp_Ax2d(Line.Location(),Line.Direction()));
 }
 
@@ -54,8 +54,8 @@ GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Lin2d&  Line ) {
 //=========================================================================
 
 GCE2d_MakeMirror::GCE2d_MakeMirror(const gp_Pnt2d&  Point ,
-				   const gp_Dir2d&  Direc ) {
-  TheMirror = new Geom2d_Transformation();
+				   const gp_Dir2d&  Direc ) : TheMirror(new Geom2d_Transformation()) {
+  
   TheMirror->SetMirror(gp_Ax2d(Point,Direc));
 }
 

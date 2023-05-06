@@ -66,8 +66,8 @@ protected:
 private:
 
 
-  Standard_Integer theAxis;
-  Standard_Real theAngle;
+  Standard_Integer theAxis{};
+  Standard_Real theAngle{};
 
 
 };

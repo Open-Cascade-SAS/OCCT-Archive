@@ -65,9 +65,9 @@ protected:
 private:
 
 
-  Standard_Real red;
-  Standard_Real green;
-  Standard_Real blue;
+  Standard_Real red{};
+  Standard_Real green{};
+  Standard_Real blue{};
 
 
 };

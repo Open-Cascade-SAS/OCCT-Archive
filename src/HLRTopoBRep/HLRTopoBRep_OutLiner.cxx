@@ -194,7 +194,7 @@ void HLRTopoBRep_OutLiner::ProcessFace(const TopoDS_Face& F,
 		Standard_Integer aNe = anExt.NbExt();
 		if(aNe > 0) {
 		  Standard_Real dist = RealLast();
-		  Standard_Integer ec;
+		  Standard_Integer ec = 0;
 		  for(ec = 1; ec <= aNe; ++ec) {
 //		    dist = Min(dist, anExt.Value(ec));
 		    dist = Min(dist, anExt.SquareDistance(ec));

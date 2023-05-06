@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepAdaptor_CompCurve.hxx>
 
 #include <BRep_Tool.hxx>
@@ -105,7 +107,7 @@ Handle(Adaptor3d_Curve) BRepAdaptor_CompCurve::ShallowCopy() const
  void BRepAdaptor_CompCurve::Initialize(const TopoDS_Wire& W,
 					const Standard_Boolean AC)
 {
-  Standard_Integer ii, NbEdge;
+  Standard_Integer ii = 0, NbEdge = 0;
   BRepTools_WireExplorer wexp;
   TopoDS_Edge E;
 
@@ -174,8 +176,8 @@ Handle(Adaptor3d_Curve) BRepAdaptor_CompCurve::ShallowCopy() const
 
   // Trim the extremal curves.
   Handle (BRepAdaptor_Curve) HC;
-  Standard_Integer i1, i2;
-  Standard_Real f=TFirst, l=TLast, d;
+  Standard_Integer i1 = 0, i2 = 0;
+  Standard_Real f=TFirst, l=TLast, d = NAN;
   i1 = i2 = CurIndex;
   Prepare(f, d, i1);
   Prepare(l, d, i2);
@@ -190,7 +192,7 @@ Handle(Adaptor3d_Curve) BRepAdaptor_CompCurve::ShallowCopy() const
   else {
     const BRepAdaptor_Curve& c1 = myCurves->Value(i1);
     const BRepAdaptor_Curve& c2 = myCurves->Value(i2);
-    Standard_Real k;
+    Standard_Real k = NAN;
 
     k = c1.LastParameter();
     if (k>f)
@@ -217,7 +219,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 				  TopoDS_Edge& E,
 				  Standard_Real& UonE) const
 {
-  Standard_Real d;
+  Standard_Real d = NAN;
   Standard_Integer index = CurIndex;
   UonE = U;
   Prepare(UonE, d, index);
@@ -242,7 +244,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 
  Standard_Integer BRepAdaptor_CompCurve::NbIntervals(const GeomAbs_Shape S) const
 {
-  Standard_Integer NbInt, ii;
+  Standard_Integer NbInt = 0, ii = 0;
   for (ii=1, NbInt=0; ii<=myCurves->Length(); ii++)
     NbInt += myCurves->ChangeValue(ii).NbIntervals(S);
 
@@ -252,8 +254,8 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
  void BRepAdaptor_CompCurve::Intervals(TColStd_Array1OfReal& T,
                                        const GeomAbs_Shape S) const
 {
-  Standard_Integer ii, jj, kk, n;
-  Standard_Real f, F, delta;
+  Standard_Integer ii = 0, jj = 0, kk = 0, n = 0;
+  Standard_Real f = NAN, F = NAN, delta = NAN;
 
   // First curve (direction of parsing of the edge)
   n = myCurves->ChangeValue(1).NbIntervals(S);
@@ -318,7 +320,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 
  gp_Pnt BRepAdaptor_CompCurve::Value(const Standard_Real U) const
 {
-  Standard_Real u = U, d;
+  Standard_Real u = U, d = NAN;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
   return myCurves->Value(index).Value(u);
@@ -327,7 +329,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
  void BRepAdaptor_CompCurve::D0(const Standard_Real U,
 				gp_Pnt& P) const
 {
-  Standard_Real u = U, d;
+  Standard_Real u = U, d = NAN;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
   myCurves->Value(index).D0(u, P);
@@ -337,7 +339,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 				gp_Pnt& P,
 				gp_Vec& V) const
 {
-  Standard_Real u = U, d;
+  Standard_Real u = U, d = NAN;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
   myCurves->Value(index).D1(u, P, V);
@@ -349,7 +351,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 				gp_Vec& V1,
 				gp_Vec& V2) const
 {
-  Standard_Real u = U, d;
+  Standard_Real u = U, d = NAN;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
   myCurves->Value(index).D2(u, P, V1, V2);
@@ -362,7 +364,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 				gp_Vec& V2,
 				gp_Vec& V3) const
 {
-  Standard_Real u = U, d;
+  Standard_Real u = U, d = NAN;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
   myCurves->Value(index).D3(u, P, V1, V2, V3);
@@ -374,7 +376,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
  gp_Vec BRepAdaptor_CompCurve::DN(const Standard_Real U,
 				  const Standard_Integer N) const
 {
-  Standard_Real u = U, d;
+  Standard_Real u = U, d = NAN;
   Standard_Integer index = CurIndex;
   Prepare(u, d, index);
 
@@ -383,8 +385,8 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 
  Standard_Real BRepAdaptor_CompCurve::Resolution(const Standard_Real R3d) const
 {
-  Standard_Real Res = 1.e200, r;
-  Standard_Integer ii, L = myCurves->Length();
+  Standard_Real Res = 1.e200, r = NAN;
+  Standard_Integer ii = 0, L = myCurves->Length();
   for (ii=1; ii<=L; ii++) {
     r = myCurves->Value(ii).Resolution(R3d);
     if (r < Res) Res = r;
@@ -467,8 +469,8 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
 				     Standard_Real& Delta,
 				     Standard_Integer& theCurIndex) const
 {
-  Standard_Real f,l, Wtest, Eps;
-  Standard_Integer ii;
+  Standard_Real f = NAN,l = NAN, Wtest = NAN, Eps = NAN;
+  Standard_Integer ii = 0;
   if (W-TFirst < TLast-W) { Eps = PTol; }
   else                    { Eps = -PTol;}
 
@@ -498,7 +500,7 @@ const TopoDS_Wire& BRepAdaptor_CompCurve::Wire() const
   // Invert ?
   const TopoDS_Edge& E = myCurves->Value(theCurIndex).Edge();
   TopAbs_Orientation Or = E.Orientation();
-  Standard_Boolean Reverse;
+  Standard_Boolean Reverse = 0;
   Reverse = (Forward && (Or == TopAbs_REVERSED)) ||
             (!Forward && (Or != TopAbs_REVERSED));
 
@@ -523,13 +525,13 @@ void  BRepAdaptor_CompCurve::InvPrepare(const Standard_Integer index,
   // Invert?
   const TopoDS_Edge& E = myCurves->Value(index).Edge();
   TopAbs_Orientation Or = E.Orientation();
-  Standard_Boolean Reverse;
+  Standard_Boolean Reverse = 0;
   Reverse = (Forward && (Or == TopAbs_REVERSED)) ||
             (!Forward && (Or != TopAbs_REVERSED));
 
   // Calculate the parameters of reparametrisation
   // such as : T = Ti + (t-First)*Delta
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   BRep_Tool::Range(E, f, l);
   Delta = myKnots->Value(index+1) - myKnots->Value(index);
   if (l-f > PTol*1.e-9) Delta /= (l-f);

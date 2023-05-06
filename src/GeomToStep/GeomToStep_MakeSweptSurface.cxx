@@ -32,7 +32,7 @@
 // SweptSurface de Geom
 //=============================================================================
 GeomToStep_MakeSweptSurface::GeomToStep_MakeSweptSurface
-  ( const Handle(Geom_SweptSurface)& S)
+  ( const Handle(Geom_SweptSurface)& S) : GeomToStep_Root()
 {
   done = Standard_True;
   if (S->IsKind(STANDARD_TYPE(Geom_SurfaceOfLinearExtrusion))) {

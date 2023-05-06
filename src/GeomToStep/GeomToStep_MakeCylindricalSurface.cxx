@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_CylindricalSurface.hxx>
 #include <GeomToStep_MakeAxis2Placement3d.hxx>
 #include <GeomToStep_MakeCylindricalSurface.hxx>
@@ -29,12 +31,12 @@
 // CylindricalSurface de Geom
 //=============================================================================
 GeomToStep_MakeCylindricalSurface::GeomToStep_MakeCylindricalSurface
-  ( const Handle(Geom_CylindricalSurface)& CS )
+  ( const Handle(Geom_CylindricalSurface)& CS ) : GeomToStep_Root()
 	
 {
   Handle(StepGeom_CylindricalSurface) CSstep;
   Handle(StepGeom_Axis2Placement3d) aPosition;
-  Standard_Real aRadius;
+  Standard_Real aRadius = NAN;
   
   GeomToStep_MakeAxis2Placement3d MkAxis2(CS->Position());
   aPosition = MkAxis2.Value();

@@ -23,11 +23,11 @@
 Plate_LinearScalarConstraint::Plate_LinearScalarConstraint() {}
 
 Plate_LinearScalarConstraint::Plate_LinearScalarConstraint
-   (const Plate_PinpointConstraint& PPC1,const gp_XYZ& coeff)
+   (const Plate_PinpointConstraint& PPC1,const gp_XYZ& coeff) : myPPC(new Plate_HArray1OfPinpointConstraint(1,1)), myCoef(new TColgp_HArray2OfXYZ(1,1,1,1))
 
 {
-  myPPC = new Plate_HArray1OfPinpointConstraint(1,1);
-  myCoef = new TColgp_HArray2OfXYZ(1,1,1,1);
+  
+  
 
   myPPC->ChangeValue(1) = PPC1;
   myCoef->ChangeValue(1,1) = coeff;
@@ -57,10 +57,10 @@ Plate_LinearScalarConstraint::Plate_LinearScalarConstraint
 }
 
 
-Plate_LinearScalarConstraint::Plate_LinearScalarConstraint(const Standard_Integer ColLen,const Standard_Integer RowLen)
+Plate_LinearScalarConstraint::Plate_LinearScalarConstraint(const Standard_Integer ColLen,const Standard_Integer RowLen) : myPPC(new Plate_HArray1OfPinpointConstraint(1,RowLen)), myCoef(new TColgp_HArray2OfXYZ(1,ColLen,1,RowLen))
 {
-  myPPC = new Plate_HArray1OfPinpointConstraint(1,RowLen);
-  myCoef = new TColgp_HArray2OfXYZ(1,ColLen,1,RowLen);
+  
+  
   myCoef->Init(gp_XYZ(0.,0.,0.));
 }
 

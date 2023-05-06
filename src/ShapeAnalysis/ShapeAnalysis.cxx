@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <ShapeAnalysis.hxx>
 
 #include <Bnd_Box2d.hxx>
@@ -126,12 +128,12 @@ static inline void ReverseSeq (HSequence& Seq)
 Standard_Real ShapeAnalysis::TotCross2D(const Handle(ShapeExtend_WireData)& sewd,
                                         const TopoDS_Face& aFace)
 {
-  Standard_Integer i, nbc = 0;
+  Standard_Integer i = 0, nbc = 0;
   gp_Pnt2d fuv,luv, uv0;
   Standard_Real totcross=0;
   for(i=1; i<=sewd->NbEdges(); i++) {
     TopoDS_Edge edge = sewd->Edge(i);
-    Standard_Real f2d, l2d;
+    Standard_Real f2d = NAN, l2d = NAN;
     Handle(Geom2d_Curve) c2d = BRep_Tool::CurveOnSurface(edge,aFace,f2d,l2d);
     if ( !c2d.IsNull() ) {
       nbc++;
@@ -172,7 +174,7 @@ Standard_Real ShapeAnalysis::ContourArea(const TopoDS_Wire& theWire)
   //for(i=1; i<=sewd->NbEdges(); i++) {
   for( ; aIte.More(); aIte.Next()) {
     TopoDS_Edge edge = TopoDS::Edge(aIte.Value()); //sewd->Edge(i);
-    Standard_Real first, last;
+    Standard_Real first = NAN, last = NAN;
     Handle(Geom_Curve) c3d = BRep_Tool::Curve(edge,first, last);
     if ( !c3d.IsNull() ) {
       
@@ -282,7 +284,7 @@ void ShapeAnalysis::GetFaceUVBounds (const TopoDS_Face& F,
   for (;ex.More();ex.Next()) {
     TopoDS_Edge edge = TopoDS::Edge(ex.Current());
     Handle(Geom2d_Curve) c2d;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     if ( ! sae.PCurve ( edge, F, c2d, f, l, Standard_False ) ) continue;
     sac.FillBndBox ( c2d, f, l, 20, Standard_True, B );
   }

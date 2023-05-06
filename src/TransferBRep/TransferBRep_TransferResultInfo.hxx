@@ -78,14 +78,14 @@ protected:
 private:
 
 
-  Standard_Integer myR;
-  Standard_Integer myRW;
-  Standard_Integer myRF;
-  Standard_Integer myRWF;
-  Standard_Integer myNR;
-  Standard_Integer myNRW;
-  Standard_Integer myNRF;
-  Standard_Integer myNRWF;
+  Standard_Integer myR{};
+  Standard_Integer myRW{};
+  Standard_Integer myRF{};
+  Standard_Integer myRWF{};
+  Standard_Integer myNR{};
+  Standard_Integer myNRW{};
+  Standard_Integer myNRF{};
+  Standard_Integer myNRWF{};
 
 
 };

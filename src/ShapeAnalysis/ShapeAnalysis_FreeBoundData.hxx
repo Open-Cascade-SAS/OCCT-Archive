@@ -126,10 +126,10 @@ private:
 
 
   TopoDS_Wire myBound;
-  Standard_Real myArea;
-  Standard_Real myPerimeter;
-  Standard_Real myRatio;
-  Standard_Real myWidth;
+  Standard_Real myArea{};
+  Standard_Real myPerimeter{};
+  Standard_Real myRatio{};
+  Standard_Real myWidth{};
   Handle(TopTools_HSequenceOfShape) myNotches;
   TopTools_DataMapOfShapeReal myNotchesParams;
 

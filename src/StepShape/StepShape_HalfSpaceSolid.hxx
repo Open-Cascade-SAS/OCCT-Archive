@@ -62,7 +62,7 @@ private:
 
 
   Handle(StepGeom_Surface) baseSurface;
-  Standard_Boolean agreementFlag;
+  Standard_Boolean agreementFlag{};
 
 
 };

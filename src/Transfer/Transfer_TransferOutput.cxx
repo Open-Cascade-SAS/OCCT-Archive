@@ -27,20 +27,20 @@
 #include <Message_ProgressScope.hxx>
 
 Transfer_TransferOutput::Transfer_TransferOutput (const Handle(Transfer_ActorOfTransientProcess)& actor,
-						  const Handle(Interface_InterfaceModel)& amodel)
+						  const Handle(Interface_InterfaceModel)& amodel) : theproc(new Transfer_TransientProcess (amodel->NbEntities())), themodel(amodel)
 {
-  theproc  = new Transfer_TransientProcess (amodel->NbEntities());
+  
   theproc->SetActor(actor);
-  themodel = amodel;
+  
 //  thescope = Standard_False;
 //  theundef = Transfer_UndefIgnore;
 }
 
 Transfer_TransferOutput::Transfer_TransferOutput (const Handle(Transfer_TransientProcess)& proc,
-						  const Handle(Interface_InterfaceModel)& amodel)
+						  const Handle(Interface_InterfaceModel)& amodel) : theproc(proc), themodel(amodel)
 {
-  theproc  = proc;
-  themodel = amodel;
+  
+  
 //  thescope = Standard_False; //szv#4:S4163:12Mar99 initialization needed
 //  theundef = Transfer_UndefIgnore;
 }
@@ -93,7 +93,7 @@ void Transfer_TransferOutput::TransferRoots (const Handle(Interface_Protocol)& p
   Interface_EntityIterator list = tool.RootEntities();
   Message_ProgressScope aPS(theProgress, NULL, list.NbEntities());
   for (list.Start(); list.More() && aPS.More(); list.Next()) {
-    Handle(Standard_Transient) ent = list.Value();
+    const Handle(Standard_Transient)& ent = list.Value();
 //    Standard_Integer scope = 0;
 //    if (thescope) scope = theproc->NewScope (ent);
     if (theproc->Transfer (ent, aPS.Next())) theproc->SetRoot(ent);
@@ -110,7 +110,7 @@ void Transfer_TransferOutput::TransferRoots (const Interface_Graph& G,
   Interface_EntityIterator list = tool.RootEntities();
   Message_ProgressScope aPS(theProgress, NULL, list.NbEntities());
   for (list.Start(); list.More() && aPS.More(); list.Next()) {
-    Handle(Standard_Transient) ent = list.Value();
+    const Handle(Standard_Transient)& ent = list.Value();
 //    Standard_Integer scope = 0;
 //    if (thescope) scope = theproc->NewScope (ent);
     if (theproc->Transfer (ent, aPS.Next())) theproc->SetRoot(ent);

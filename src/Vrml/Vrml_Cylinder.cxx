@@ -16,11 +16,11 @@
 
 Vrml_Cylinder::Vrml_Cylinder(const Vrml_CylinderParts aParts,
 			     const Standard_Real aRadius,
-			     const Standard_Real aHeight)
+			     const Standard_Real aHeight) : myParts(aParts), myRadius(aRadius), myHeight(aHeight)
 {
-    myParts = aParts;   
-    myRadius = aRadius;
-    myHeight = aHeight;
+      
+    
+    
 }
 
  void Vrml_Cylinder::SetParts(const Vrml_CylinderParts aParts) 

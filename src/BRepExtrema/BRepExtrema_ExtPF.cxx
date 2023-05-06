@@ -17,6 +17,8 @@
 // modified by MPS (june 96) : on utilise BRepClass_FaceClassifier seulement 
 //  si IsDone de Extrema est vrai  
 
+#include <math.h>
+
 #include <BRepExtrema_ExtPF.hxx>
 
 #include <BRep_Tool.hxx>
@@ -54,10 +56,10 @@ void BRepExtrema_ExtPF::Initialize(const TopoDS_Face& TheFace,
     return;  // protect against non-geometric type (e.g. triangulation)
 
   Standard_Real Tol = Min(BRep_Tool::Tolerance(TheFace), Precision::Confusion());
-  Standard_Real aTolU, aTolV;
+  Standard_Real aTolU = NAN, aTolV = NAN;
   aTolU = Max(mySurf.UResolution(Tol), Precision::PConfusion());
   aTolV = Max(mySurf.VResolution(Tol), Precision::PConfusion()); 
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   BRepTools::UVBounds(TheFace, U1, U2, V1, V2);
   myExtPS.SetFlag(TheFlag);
   myExtPS.SetAlgo(TheAlgo);
@@ -84,7 +86,7 @@ void BRepExtrema_ExtPF::Perform(const TopoDS_Vertex& TheVertex, const TopoDS_Fac
   if (myExtPS.IsDone())
   {
     BRepClass_FaceClassifier classifier;
-    Standard_Real U1, U2;
+    Standard_Real U1 = NAN, U2 = NAN;
     const Standard_Real Tol = BRep_Tool::Tolerance(TheFace);
     for (Standard_Integer i = 1; i <= myExtPS.NbExt(); i++)
     {

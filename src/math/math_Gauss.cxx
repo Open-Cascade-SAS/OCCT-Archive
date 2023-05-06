@@ -22,14 +22,13 @@
 
 math_Gauss::math_Gauss(const math_Matrix& A, 
                        const Standard_Real MinPivot, 
-                       const Message_ProgressRange& theProgress) 
-                           : LU   (1, A.RowNumber(), 1, A.ColNumber()),
-  Index(1, A.RowNumber()),
+                       const Message_ProgressRange& theProgress) :
+  LU(A), Index(1, A.RowNumber()),
   D (0.0),
   Done (Standard_False)
 {
       math_NotSquare_Raise_if(A.RowNumber() != A.ColNumber(), " ");     
-      LU = A;
+      
       Standard_Integer Error = LU_Decompose(LU, 
                                   Index, 
                                   D,
@@ -88,7 +87,7 @@ math_Gauss::math_Gauss(const math_Matrix& A,
        Standard_Integer LowerCol = Inv.LowerCol();
        math_Vector Column(1, LU.UpperRow());
 
-       Standard_Integer I, J;
+       Standard_Integer I = 0, J = 0;
        for(J = 1; J <= LU.UpperRow(); J++) {
          for(I = 1; I <= LU.UpperRow(); I++) {
            Column(I) = 0.0;

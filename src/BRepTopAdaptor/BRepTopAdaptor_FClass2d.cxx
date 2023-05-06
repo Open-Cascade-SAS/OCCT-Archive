@@ -19,6 +19,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
@@ -104,7 +106,7 @@ BRepTopAdaptor_FClass2d::BRepTopAdaptor_FClass2d(const TopoDS_Face& aFace,const 
   
   TopoDS_Edge  edge;
   TopAbs_Orientation Or;
-  Standard_Real u,du,Tole = 0.0,Tol=0.0;
+  Standard_Real u = NAN,du = NAN,Tole = 0.0,Tol=0.0;
   BRepTools_WireExplorer WireExplorer;
   TopExp_Explorer FaceExplorer;
 
@@ -139,7 +141,7 @@ BRepTopAdaptor_FClass2d::BRepTopAdaptor_FClass2d(const TopoDS_Face& aFace,const 
 	  Or = edge.Orientation();
 	  if(Or == TopAbs_FORWARD || Or == TopAbs_REVERSED)
 	    {
-	      Standard_Real pfbid,plbid;
+	      Standard_Real pfbid = NAN,plbid = NAN;
 	      if(BRep_Tool::CurveOnSurface(edge,Face,pfbid,plbid).IsNull()) return;
 	      BRepAdaptor_Curve2d C(edge,Face);
 	
@@ -344,7 +346,7 @@ BRepTopAdaptor_FClass2d::BRepTopAdaptor_FClass2d(const TopoDS_Face& aFace,const 
                   Or = edge.Orientation();
                   if (Or == TopAbs_FORWARD || Or == TopAbs_REVERSED)
                   {
-                    Standard_Real pfbid, plbid;
+                    Standard_Real pfbid = NAN, plbid = NAN;
                     BRep_Tool::Range(edge, Face, pfbid, plbid);
                     if (Abs(plbid - pfbid) < 1.e-9) continue;
                     BRepAdaptor_Curve2d C(edge, Face);
@@ -499,7 +501,7 @@ TopAbs_State BRepTopAdaptor_FClass2d::Perform(const gp_Pnt2d& _Puv,
   STAT.NbPerform++;
 #endif
   
-  Standard_Integer dedans;
+  Standard_Integer dedans = 0;
   Standard_Integer nbtabclass = TabClass.Length();
   
   if(nbtabclass==0) { 
@@ -633,7 +635,7 @@ TopAbs_State BRepTopAdaptor_FClass2d::TestOnRestriction(const gp_Pnt2d& _Puv,
   STAT.NbConstrShape++;
 #endif
   
-  Standard_Integer dedans;
+  Standard_Integer dedans = 0;
   Standard_Integer nbtabclass = TabClass.Length();
   
   if(nbtabclass==0) { 

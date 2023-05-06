@@ -316,7 +316,7 @@ static void Print(const Handle(Geom_BezierCurve)& B,
   }
 
   // poles and weights
-  Standard_Integer i,degree = B->Degree();
+  Standard_Integer i = 0,degree = B->Degree();
   if (!compact) OS << "\n  Degree :";
   OS << degree << " ";
   
@@ -364,7 +364,7 @@ static void Print(const Handle(Geom_BSplineCurve)& B,
   }
 
   // poles and weights
-  Standard_Integer i,degree,nbpoles,nbknots;
+  Standard_Integer i = 0,degree = 0,nbpoles = 0,nbknots = 0;
   degree = B->Degree();
   nbpoles = B->NbPoles();
   nbknots = B->NbKnots();
@@ -494,7 +494,7 @@ void GeomTools_CurveSet::PrintCurve(const Handle(Geom_Curve)& C,
 
 void  GeomTools_CurveSet::Dump(Standard_OStream& OS)const 
 {
-  Standard_Integer i, nbsurf = myMap.Extent();
+  Standard_Integer i = 0, nbsurf = myMap.Extent();
   OS << "\n -------\n";
   OS << "Dump of "<< nbsurf << " Curves ";
   OS << "\n -------\n\n";
@@ -515,7 +515,7 @@ void  GeomTools_CurveSet::Write(Standard_OStream& OS, const Message_ProgressRang
 {
   std::streamsize  prec = OS.precision(17);
 
-  Standard_Integer i, nbcurve = myMap.Extent();
+  Standard_Integer i = 0, nbcurve = myMap.Extent();
   OS << "Curves "<< nbcurve << "\n";
   Message_ProgressScope aPS(theProgress, "3D Curves", nbcurve);
   for (i = 1; i <= nbcurve && aPS.More(); i++, aPS.Next()) {
@@ -754,7 +754,7 @@ static Standard_IStream& operator>>(Standard_IStream& IS,
 
 Handle(Geom_Curve) GeomTools_CurveSet::ReadCurve (Standard_IStream& IS)
 {
-  Standard_Integer ctype;
+  Standard_Integer ctype = 0;
 
   Handle(Geom_Curve) C;
   try {
@@ -866,7 +866,7 @@ void  GeomTools_CurveSet::Read(Standard_IStream& IS, const Message_ProgressRange
     return;
   }
 
-  Standard_Integer i, nbcurve;
+  Standard_Integer i = 0, nbcurve = 0;
   IS >> nbcurve;
   Message_ProgressScope aPS(theProgress, "3D Curves", nbcurve);
   for (i = 1; i <= nbcurve && aPS.More(); i++, aPS.Next()) {

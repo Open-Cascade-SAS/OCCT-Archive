@@ -138,7 +138,7 @@ private:
   Handle(CDM_Document) myMainDocument;
   Handle(CDM_Document) myCurrentDocument;
   Standard_Boolean myHasSubComponents;
-  Standard_Boolean myIsMainDocument;
+  Standard_Boolean myIsMainDocument{};
   TCollection_ExtendedString myPath;
   TCollection_ExtendedString myText;
   PCDM_StoreStatus myStatus;

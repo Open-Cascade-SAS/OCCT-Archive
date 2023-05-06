@@ -43,9 +43,9 @@ BRepBuilderAPI_ModifyShape::BRepBuilderAPI_ModifyShape (const TopoDS_Shape& S):
 //=======================================================================
 
 BRepBuilderAPI_ModifyShape::BRepBuilderAPI_ModifyShape 
-    (const Handle(BRepTools_Modification)& M)
+    (const Handle(BRepTools_Modification)& M) : myModification(M)
 {
-  myModification = M;
+  
 }
 
 
@@ -56,9 +56,9 @@ BRepBuilderAPI_ModifyShape::BRepBuilderAPI_ModifyShape
 
 BRepBuilderAPI_ModifyShape::BRepBuilderAPI_ModifyShape 
   (const TopoDS_Shape& S,
-   const Handle(BRepTools_Modification)& M): myModifier(S),myInitialShape(S)
+   const Handle(BRepTools_Modification)& M): myModifier(S),myInitialShape(S), myModification(M)
 {
-  myModification = M;
+  
   DoModif();
 }
 

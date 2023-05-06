@@ -119,7 +119,7 @@ private:
   Standard_EXPORT void SetDirection();
 
 
-  Standard_Integer myType;
+  Standard_Integer myType{};
   Standard_Boolean myPersp;
   Standard_Real myFocus;
   gp_Trsf myScaledTrsf;

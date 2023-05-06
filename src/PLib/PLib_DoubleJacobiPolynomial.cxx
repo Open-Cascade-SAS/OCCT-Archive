@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math_Vector.hxx>
 #include <PLib_DoubleJacobiPolynomial.hxx>
 #include <PLib_JacobiPolynomial.hxx>
@@ -61,8 +63,8 @@ PLib_DoubleJacobiPolynomial::MaxErrorU(const Standard_Integer Dimension,
 				       const Standard_Integer dJacCoeff, 
 				       const TColStd_Array1OfReal& JacCoeff) const 
 {
-  Standard_Integer ii,idim,dJac,MinU,MinV,WorkDegreeU,WorkDegreeV;
-  Standard_Real Bid0;
+  Standard_Integer ii = 0,idim = 0,dJac = 0,MinU = 0,MinV = 0,WorkDegreeU = 0,WorkDegreeV = 0;
+  Standard_Real Bid0 = NAN;
 
   math_Vector MaxErrDim(1,Dimension,0.);
 
@@ -94,8 +96,8 @@ PLib_DoubleJacobiPolynomial::MaxErrorV(const Standard_Integer Dimension,
 				       const Standard_Integer dJacCoeff, 
 				       const TColStd_Array1OfReal& JacCoeff) const 
 {
-  Standard_Integer jj,idim,dJac,MinU,MinV,WorkDegreeU,WorkDegreeV;
-  Standard_Real Bid0;
+  Standard_Integer jj = 0,idim = 0,dJac = 0,MinU = 0,MinV = 0,WorkDegreeU = 0,WorkDegreeV = 0;
+  Standard_Real Bid0 = NAN;
 
   math_Vector MaxErrDim(1,Dimension,0.);
 
@@ -130,8 +132,8 @@ PLib_DoubleJacobiPolynomial::MaxError(const Standard_Integer Dimension,
 				      const TColStd_Array1OfReal& JacCoeff,
 				      const Standard_Real Error) const 
 {
-  Standard_Integer ii,jj,idim,dJac,MinU,MinV,WorkDegreeU,WorkDegreeV;
-  Standard_Real Bid0,Bid1;
+  Standard_Integer ii = 0,jj = 0,idim = 0,dJac = 0,MinU = 0,MinV = 0,WorkDegreeU = 0,WorkDegreeV = 0;
+  Standard_Real Bid0 = NAN,Bid1 = NAN;
 
   math_Vector MaxErrDim(1,Dimension,0.);
 
@@ -182,8 +184,8 @@ void PLib_DoubleJacobiPolynomial::ReduceDegree(const Standard_Integer Dimension,
 					       Standard_Integer& NewDegreeU, 
 					       Standard_Integer& NewDegreeV) const
 {
-  Standard_Integer NewU,NewV;
-  Standard_Real ErrU,ErrV;
+  Standard_Integer NewU = 0,NewV = 0;
+  Standard_Real ErrU = NAN,ErrV = NAN;
 
   NewU = MaxDegreeU;
   NewV = MaxDegreeV;
@@ -253,8 +255,8 @@ PLib_DoubleJacobiPolynomial::AverageError(const Standard_Integer Dimension,
 					      const Standard_Integer dJacCoeff, 
 					      const TColStd_Array1OfReal& JacCoeff) const 
 {
-  Standard_Integer ii,jj,idim,dJac,IDebU,IDebV,MinU,MinV,WorkDegreeU,WorkDegreeV;
-  Standard_Real Bid0,Bid1,AverageErr;
+  Standard_Integer ii = 0,jj = 0,idim = 0,dJac = 0,IDebU = 0,IDebV = 0,MinU = 0,MinV = 0,WorkDegreeU = 0,WorkDegreeV = 0;
+  Standard_Real Bid0 = NAN,Bid1 = NAN,AverageErr = NAN;
 
 //----------------------------- Initialisations ------------------------
 
@@ -300,7 +302,7 @@ void PLib_DoubleJacobiPolynomial::WDoubleJacobiToCoefficients(const Standard_Int
 							      const TColStd_Array1OfReal& JacCoeff, 
 							      TColStd_Array1OfReal& Coefficients) const 
 {
-  Standard_Integer iu,iv,idim,WorkDegreeU,WorkDegreeV;
+  Standard_Integer iu = 0,iv = 0,idim = 0,WorkDegreeU = 0,WorkDegreeV = 0;
 
   Coefficients.Init(0.);
 

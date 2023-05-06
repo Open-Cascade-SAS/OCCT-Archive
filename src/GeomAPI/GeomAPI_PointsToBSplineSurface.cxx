@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AppDef_BSplineCompute.hxx>
 #include <AppDef_Variational.hxx>
 #include <AppParCurves_ConstraintCouple.hxx>
@@ -37,8 +39,8 @@ static void BuildParameters(const AppDef_MultiLine& theLine,
   const Approx_ParametrizationType theParT,
   TColStd_Array1OfReal&  thePars)
 {
-  Standard_Integer i, j, nbP3d = theLine.NbPoints();
-  Standard_Real dist;
+  Standard_Integer i = 0, j = 0, nbP3d = theLine.NbPoints();
+  Standard_Real dist = NAN;
   Standard_Integer firstP = 1, lastP = theLine.NbMultiPoints();
   const Standard_Integer aNbp = lastP - firstP + 1;
 
@@ -99,10 +101,10 @@ static void BuildPeriodicTangent(const AppDef_MultiLine& theLine,
     return;
   }
   //
-  Standard_Integer i, nnpol, nnp = Min(nbpoints, 9);
+  Standard_Integer i = 0, nnpol = 0, nnp = Min(nbpoints, 9);
   nnpol = nnp;
   Standard_Integer lastp = Min(lastpt, firstpt + nnp - 1);
-  Standard_Real U;
+  Standard_Real U = NAN;
   AppParCurves_Constraint Cons = AppParCurves_TangencyPoint;
   if (nnp <= 4)
   {
@@ -121,7 +123,7 @@ static void BuildPeriodicTangent(const AppDef_MultiLine& theLine,
   SQ1.Perform(P1);
   const AppParCurves_MultiCurve& C1 = SQ1.BezierValue();
   U = 0.0;
-  Standard_Integer  j, nbP3d = theLine.NbPoints();
+  Standard_Integer  j = 0, nbP3d = theLine.NbPoints();
 
   gp_Pnt aP;
   gp_Vec aV;
@@ -276,7 +278,7 @@ void GeomAPI_PointsToBSplineSurface::Interpolate(const TColgp_Array2OfPnt& Point
                                           const Approx_ParametrizationType ParType,
                                           const Standard_Boolean thePeriodic)
 {
-  Standard_Integer DegMin, DegMax;
+  Standard_Integer DegMin = 0, DegMax = 0;
   DegMin = DegMax = 3;
   GeomAbs_Shape CC  = GeomAbs_C2;
   Standard_Real Tol3d = -1.0;
@@ -324,7 +326,7 @@ void GeomAPI_PointsToBSplineSurface::Init(const TColgp_Array2OfPnt& Points,
     add = 2;
   }
   AppDef_MultiLine Line(Jmax-Jmin+1);
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
   for (j = Jmin; j <= Jmax; j++) {
     AppDef_MultiPointConstraint MP(Imax-Imin+add, 0);
@@ -490,7 +492,7 @@ void GeomAPI_PointsToBSplineSurface::Init(const TColgp_Array2OfPnt& Points,
   // first approximate the U isos:
   Standard_Integer NbPointJ = Jmax-Jmin+1;
   Standard_Integer NbPointI = Imax-Imin+1;
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
   AppDef_MultiLine Line(NbPointJ);
 
@@ -643,7 +645,7 @@ void GeomAPI_PointsToBSplineSurface::Interpolate(const TColStd_Array2OfReal& ZPo
 						 const Standard_Real Y0, 
 						 const Standard_Real dY)
 {
-  Standard_Integer DegMin, DegMax;
+  Standard_Integer DegMin = 0, DegMax = 0;
   DegMin = DegMax = 3;
   Standard_Real Tol3D  = -1.0;
   GeomAbs_Shape CC = GeomAbs_C2;
@@ -669,14 +671,14 @@ void GeomAPI_PointsToBSplineSurface::Init(const TColStd_Array2OfReal& ZPoints,
   Standard_Integer Imax = ZPoints.UpperRow();
   Standard_Integer Jmin = ZPoints.LowerCol();
   Standard_Integer Jmax = ZPoints.UpperCol();
-  Standard_Real length;
+  Standard_Real length = NAN;
 
   Standard_Real Tol2D = Tol3D;
 
   // first approximate the U isos:
   AppDef_MultiLine Line(Jmax-Jmin+1);
   math_Vector Param(Jmin, Jmax);
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 //  Standard_Real X, Y;
   length = dY * (Jmax-Jmin);
 

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomFill_Frenet.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -150,7 +152,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
 
  void GeomFill_Frenet::Init()
 {
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   GeomFill_SnglrFunc Func(myCurve);
   Standard_Real TolF = 1.0e-10, Tol = 10*TolF, Tol2 = Tol * Tol,
                 PTol = Precision::PConfusion();
@@ -166,7 +168,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
   TColStd_Array1OfReal AveFunc(1,  NbIntC2);
   myCurve->Intervals(myC2Disc->ChangeArray1(), GeomAbs_C2);
   Standard_Integer NbControl = 10;
-  Standard_Real Step, Average = 0, modulus;
+  Standard_Real Step = NAN, Average = 0, modulus = NAN;
   gp_Pnt C, C1;
   for(i = 1; i <= NbIntC2; i++) {
     Step = (myC2Disc->Value(i+1) - myC2Disc->Value(i))/NbControl;
@@ -197,7 +199,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
   TColStd_SequenceOfReal * SeqArray = new TColStd_SequenceOfReal[ NbIntC2 ];
   TColStd_SequenceOfReal SnglSeq;
 //  Standard_Real Value2, preValue=1.e200, t;
-  Standard_Real Value2, t;
+  Standard_Real Value2 = NAN, t = NAN;
   Extrema_ExtPC Ext;
   gp_Pnt Origin(0, 0, 0);
 
@@ -297,7 +299,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
 // computation of length of singular interval
     mySnglLen = new TColStd_HArray1OfReal(1, mySngl->Length());
     gp_Vec SnglDer, SnglDer2;
-    Standard_Real norm;
+    Standard_Real norm = NAN;
     for(i = 1; i <= mySngl->Length(); i++) {
       Func.D2(mySngl->Value(i), C, SnglDer, SnglDer2);
       if ((norm = SnglDer.Magnitude()) > gp::Resolution())
@@ -315,7 +317,7 @@ Standard_Boolean GeomFill_Frenet::SetCurve(const Handle(Adaptor3d_Curve)& C)
 // we have to merge singular points that have common parts of singular intervals
     TColgp_SequenceOfPnt2d tmpSeq;
     tmpSeq.Append(gp_Pnt2d(mySngl->Value(1), mySnglLen->Value(1)));
-    Standard_Real U11, U12, U21, U22;
+    Standard_Real U11 = NAN, U12 = NAN, U21 = NAN, U22 = NAN;
     for(i = 2; i<= mySngl->Length(); i++) {
       U12 = tmpSeq.Last().X() + tmpSeq.Last().Y();
       U21 = mySngl->Value(i) - mySnglLen->Value(i);
@@ -418,8 +420,8 @@ Standard_Boolean
 {
   const Standard_Real aTol = gp::Resolution();
 
-  Standard_Real norm;
-  Standard_Integer Index;
+  Standard_Real norm = NAN;
+  Standard_Integer Index = 0;
   Standard_Real Delta = 0.;
   if(IsSingular(theParam, Index)) 
     if (SingularD0(theParam, Index, Tangent, Normal, BiNormal, Delta))
@@ -453,7 +455,7 @@ Standard_Boolean
 
     if(isDeriveFound)
       {
-      Standard_Real u;
+      Standard_Real u = NAN;
       
       if(theParam-anUinfium < aDelta)
         u = theParam+aDelta;
@@ -476,7 +478,7 @@ Standard_Boolean
 
       gp_Pnt Ptemp(0.0,0.0,0.0); //(0,0,0)-coordinate
       gp_Pnt P1, P2, P3;
-      Standard_Boolean IsParameterGrown;
+      Standard_Boolean IsParameterGrown = 0;
                 
       if(theParam-anUinfium < 2*aDelta)
         {
@@ -560,7 +562,7 @@ Standard_Boolean
                                       gp_Vec& BiNormal,
                                       gp_Vec& DBiNormal) 
 {
-  Standard_Integer Index;
+  Standard_Integer Index = 0;
   Standard_Real Delta = 0.;
   if(IsSingular(Param, Index)) 
     if (SingularD1(Param, Index, Tangent, DTangent, Normal, DNormal, BiNormal, DBiNormal, Delta))
@@ -614,7 +616,7 @@ Standard_Boolean
                                       gp_Vec& DBiNormal,
                                       gp_Vec& D2BiNormal) 
 {
-  Standard_Integer Index;
+  Standard_Integer Index = 0;
   Standard_Real Delta = 0.;
   if(IsSingular(Param, Index)) 
     if(SingularD2(Param, Index, Tangent, DTangent, D2Tangent, 
@@ -674,7 +676,7 @@ Standard_Boolean
  Standard_Integer GeomFill_Frenet::NbIntervals(const GeomAbs_Shape S) const
 {
   GeomAbs_Shape tmpS = GeomAbs_C0;
-  Standard_Integer NbTrimmed;
+  Standard_Integer NbTrimmed = 0;
   switch (S) {
   case GeomAbs_C0: tmpS = GeomAbs_C2; break;
   case GeomAbs_C1: tmpS = GeomAbs_C3; break;
@@ -706,7 +708,7 @@ Standard_Boolean
                                  const GeomAbs_Shape S) const
 {
   GeomAbs_Shape tmpS = GeomAbs_C0;
-  Standard_Integer NbTrimmed;
+  Standard_Integer NbTrimmed = 0;
   switch (S) {
   case GeomAbs_C0: tmpS = GeomAbs_C2; break;
   case GeomAbs_C1: tmpS = GeomAbs_C3; break;
@@ -743,7 +745,7 @@ Standard_Boolean
   ABiNormal = gp_Vec(0, 0, 0);
   Standard_Real Step = (myTrimmed->LastParameter() - 
                         myTrimmed->FirstParameter()) / Num;
-  Standard_Real Param;
+  Standard_Real Param = NAN;
   for (Standard_Integer i = 0; i <= Num; i++) {
     Param = myTrimmed->FirstParameter() + i*Step;
     if (Param > myTrimmed->LastParameter()) Param = myTrimmed->LastParameter();
@@ -787,7 +789,7 @@ Standard_Boolean
 
 Standard_Boolean GeomFill_Frenet::IsSingular(const Standard_Real U, Standard_Integer& Index) const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   if(!isSngl) return Standard_False;
   for(i = 1; i <= mySngl->Length(); i++) {
     if (Abs(U - mySngl->Value(i)) < mySnglLen->Value(i)) {
@@ -813,12 +815,12 @@ Standard_Boolean GeomFill_Frenet::DoSingular(const Standard_Real U,
                                              Standard_Integer& BNFlag,
                                              Standard_Real& Delta)
 {
-  Standard_Integer i, MaxN = 20;
+  Standard_Integer i = 0, MaxN = 20;
   Delta = 0.;
-  Standard_Real h;
+  Standard_Real h = NAN;
   h = 2*mySnglLen->Value(Index);
 
-  Standard_Real A, B;
+  Standard_Real A = NAN, B = NAN;
   gp_Vec T, N, BN;
   TFlag = 1;
   BNFlag = 1;
@@ -874,7 +876,7 @@ Standard_Boolean GeomFill_Frenet::DoSingular(const Standard_Real U,
                                               gp_Vec& BiNormal,
                                               Standard_Real& Delta)
 {
-  Standard_Integer n, k, TFlag, BNFlag;
+  Standard_Integer n = 0, k = 0, TFlag = 0, BNFlag = 0;
   if(!DoSingular(Param, Index, Tangent, BiNormal, 
                  n, k, TFlag, BNFlag, Delta))
     return Standard_False;
@@ -894,7 +896,7 @@ Standard_Boolean GeomFill_Frenet::DoSingular(const Standard_Real U,
                                               gp_Vec& BiNormal,gp_Vec& DBiNormal,
                                               Standard_Real& Delta) 
 {
-  Standard_Integer n, k, TFlag, BNFlag;
+  Standard_Integer n = 0, k = 0, TFlag = 0, BNFlag = 0;
   if(!DoSingular(Param, Index, Tangent, BiNormal, n, k, TFlag, BNFlag, Delta))
     return Standard_False;
 
@@ -937,7 +939,7 @@ Standard_Boolean GeomFill_Frenet::DoSingular(const Standard_Real U,
                                               gp_Vec& D2BiNormal,
                                               Standard_Real& Delta)
 {
-  Standard_Integer n, k, TFlag, BNFlag;
+  Standard_Integer n = 0, k = 0, TFlag = 0, BNFlag = 0;
   if(!DoSingular(Param, Index, Tangent, BiNormal, n, k, TFlag, BNFlag, Delta)) 
     return Standard_False;
 

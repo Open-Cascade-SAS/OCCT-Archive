@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp_Circ2d.hxx>
 #include <gp_Vec2d.hxx>
 #include <IntAna2d_AnaIntersection.hxx>
@@ -97,7 +99,7 @@ void IntAna2d_AnaIntersection::Perform (const gp_Circ2d& C1,
     Standard_Real sint2=h     /R2;
     Standard_Real cost2=(l1-d)/R2;
 
-    Standard_Real ang1,ang2;
+    Standard_Real ang1 = NAN,ang2 = NAN;
 
     // ang1 et ang2 correspondent aux solutions avec sinus positif
     // si l'axe de reference est l'axe des centres C1C2

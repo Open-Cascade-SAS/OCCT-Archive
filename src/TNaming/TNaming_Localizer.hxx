@@ -81,7 +81,7 @@ private:
 
 
 
-  Standard_Integer myCurTrans;
+  Standard_Integer myCurTrans{};
   Handle(TNaming_UsedShapes) myUS;
   TopTools_ListOfShape myShapeWithSubShapes;
   TNaming_ListOfMapOfShape mySubShapes;

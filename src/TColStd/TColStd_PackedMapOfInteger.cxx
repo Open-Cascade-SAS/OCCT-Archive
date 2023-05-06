@@ -552,9 +552,9 @@ void TColStd_PackedMapOfInteger::Intersection
   else if (myData1 == theMap2.myData1)
     Intersect (theMap1);
   else {
-    const TColStd_intMapNode* const* aData1;
-    const TColStd_intMapNode* const* aData2;
-    Standard_Integer nBuckets1, nBuckets2;
+    const TColStd_intMapNode* const* aData1 = nullptr;
+    const TColStd_intMapNode* const* aData2 = nullptr;
+    Standard_Integer nBuckets1 = 0, nBuckets2 = 0;
     if (theMap1.Extent() < theMap2.Extent())
     {
       aData1 = theMap1.myData1;
@@ -841,7 +841,7 @@ void TColStd_PackedMapOfInteger::Difference  (const TColStd_PackedMapOfInteger& 
   else if (myData1 == theMap2.myData1)
     Differ(theMap1);
   else {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     const Standard_Integer nBuckets1 = theMap1.myNbBuckets;
     const Standard_Integer nBuckets2 = theMap2.myNbBuckets;
     Clear();

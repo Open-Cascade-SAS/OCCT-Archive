@@ -26,10 +26,10 @@ IntTools_Range::IntTools_Range():myFirst(0.), myLast(0.) {}
 //function : IntTools_Range::IntTools_Range
 //purpose  : 
 //=======================================================================
-  IntTools_Range::IntTools_Range(const Standard_Real aFirst,const Standard_Real aLast)
+  IntTools_Range::IntTools_Range(const Standard_Real aFirst,const Standard_Real aLast) : myFirst(aFirst), myLast(aLast)
 {
-  myFirst=aFirst;
-  myLast=aLast;
+  
+  
 }
 //=======================================================================
 //function : SetFirst

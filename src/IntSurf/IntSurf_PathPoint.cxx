@@ -27,9 +27,9 @@ IntSurf_PathPoint::IntSurf_PathPoint ():
 IntSurf_PathPoint::IntSurf_PathPoint (const gp_Pnt& P,
 				      const Standard_Real U,
 				      const Standard_Real V):
-       pt(P),ispass(Standard_True),istgt(Standard_True) 
+       pt(P),ispass(Standard_True),istgt(Standard_True), sequv(new TColgp_HSequenceOfXY ()) 
 {
-  sequv = new TColgp_HSequenceOfXY ();
+  
   sequv->Append(gp_XY(U,V));
 }
 

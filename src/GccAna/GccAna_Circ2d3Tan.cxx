@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <GccAna_Circ2d3Tan.hxx>
 #include <GccEnt_BadQualifier.hxx>
@@ -39,7 +41,7 @@ GccAna_Circ2d3Tan::
 //   Initialization of fields.                                           +
 //=========================================================================
 
-  cirsol(1,16)   ,
+  WellDone(Standard_False), NbrSol(0), cirsol(1,16)   ,
   qualifier1(1,16),
   qualifier2(1,16),
   qualifier3(1,16),
@@ -59,8 +61,8 @@ GccAna_Circ2d3Tan::
 
   gp_Dir2d dirx(1.0,0.0);
   Standard_Real Tol = Abs(Tolerance);
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
       !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -130,14 +132,14 @@ GccAna_Circ2d3Tan::
   TColStd_Array1OfReal A3(1, 8), B3(1, 8), C3(1, 8), D3(1, 8), E3(1, 8), F3(1, 8); 
   TColStd_Array1OfReal Beta2(1, 8), Gamma2(1, 8), Delta2(1, 8);
   TColStd_Array1OfReal Beta3(1, 8), Gamma3(1, 8), Delta3(1, 8);
-  Standard_Real a2, b2, c2, d2, e2, f2;
-  Standard_Real a3, b3, c3, d3, e3, f3;
-  Standard_Real A, B, C, D, E;
-  Standard_Boolean IsSame;
-  Standard_Boolean IsTouch;
-  Standard_Integer FirstIndex;
+  Standard_Real a2 = NAN, b2 = NAN, c2 = NAN, d2 = NAN, e2 = NAN, f2 = NAN;
+  Standard_Real a3 = NAN, b3 = NAN, c3 = NAN, d3 = NAN, e3 = NAN, f3 = NAN;
+  Standard_Real A = NAN, B = NAN, C = NAN, D = NAN, E = NAN;
+  Standard_Boolean IsSame = 0;
+  Standard_Boolean IsTouch = 0;
+  Standard_Integer FirstIndex = 0;
 
-  Standard_Integer i, j, k, l;
+  Standard_Integer i = 0, j = 0, k = 0, l = 0;
   TColStd_Array1OfReal xSol(1, 64);
   TColStd_Array1OfReal ySol(1, 64);
   TColStd_Array1OfReal rSol(1, 16);
@@ -146,12 +148,12 @@ GccAna_Circ2d3Tan::
   TColStd_Array1OfReal ySol1(1, 32);
   TColStd_Array1OfReal rSol1(1, 32);
   TColStd_Array1OfInteger FirstSol1(1, 9);
-  Standard_Real x, y, r;
-  Standard_Real m, n, t, s, v;
-  Standard_Real p, q;
-  Standard_Real Epsilon;
+  Standard_Real x = NAN, y = NAN, r = NAN;
+  Standard_Real m = NAN, n = NAN, t = NAN, s = NAN, v = NAN;
+  Standard_Real p = NAN, q = NAN;
+  Standard_Real Epsilon = NAN;
 
-  Standard_Integer CurSol;
+  Standard_Integer CurSol = 0;
 
 //*********************************************************************************************
 //*********************************************************************************************

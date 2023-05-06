@@ -95,17 +95,17 @@ public:
     myExtPS = new Extrema_ExtPS (P, *S, Tol, Tol);
   }
 
-  ~ProjLib_OnSurface() { delete myExtPS; }
+  ~ProjLib_OnSurface() override { delete myExtPS; }
 
-  Standard_Real FirstParameter() const
+  Standard_Real FirstParameter() const override
     {return myCurve->FirstParameter();}
 
-  Standard_Real LastParameter() const
+  Standard_Real LastParameter() const override
     {return myCurve->LastParameter();}
 
   Standard_Boolean Value(const Standard_Real   theT,
                          NCollection_Array1<gp_Pnt2d>& /*thePnt2d*/,
-                         NCollection_Array1<gp_Pnt>&   thePnt) const
+                         NCollection_Array1<gp_Pnt>&   thePnt) const override
   {
       thePnt(1) = OnSurface_Value(theT, myCurve, myExtPS);
       return Standard_True;
@@ -113,7 +113,7 @@ public:
 
   Standard_Boolean D1(const Standard_Real   theT,
                       NCollection_Array1<gp_Vec2d>& /*theVec2d*/,
-                      NCollection_Array1<gp_Vec>&   theVec) const
+                      NCollection_Array1<gp_Vec>&   theVec) const override
   {
     gp_Pnt aPnt;
     return OnSurface_D1(theT, aPnt, theVec(1), myCurve, myExtPS);
@@ -155,10 +155,10 @@ myIsDone(Standard_False)
 //=======================================================================
 ProjLib_ProjectOnSurface::ProjLib_ProjectOnSurface
 (const Handle(Adaptor3d_Surface)& S ) :
-myTolerance(0.0),
+mySurface(S), myTolerance(0.0),
 myIsDone(Standard_False)
 {
-  mySurface = S;
+  
 }
 
 //=======================================================================
@@ -185,12 +185,12 @@ void ProjLib_ProjectOnSurface::Load(const Handle(Adaptor3d_Curve)& C,
       
     ProjLib_OnSurface F(myCurve, mySurface);
 
-    Standard_Integer Deg1, Deg2;
+    Standard_Integer Deg1 = 0, Deg2 = 0;
     Deg1 = 8; Deg2 = 8;
     
     Approx_FitAndDivide Fit(F,Deg1,Deg2,Precision::Approximation(),
 			    Precision::PApproximation(),Standard_True);
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Integer NbCurves = Fit.NbMultiCurves();
     Standard_Integer MaxDeg = 0;
     

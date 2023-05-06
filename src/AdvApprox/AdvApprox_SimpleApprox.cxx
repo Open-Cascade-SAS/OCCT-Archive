@@ -16,6 +16,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <AdvApprox_EvaluatorFunction.hxx>
 #include <AdvApprox_SimpleApprox.hxx>
 #include <math_Vector.hxx>
@@ -90,7 +92,7 @@ void AdvApprox_SimpleApprox::Perform(const TColStd_Array1OfInteger& LocalDimensi
 // ======= the computation of Pp(t) = Rr(t) + W(t)*Qq(t) =======
 
   done = Standard_False;
-  Standard_Integer i,idim,k,numss;
+  Standard_Integer i = 0,idim = 0,k = 0,numss = 0;
 
   Standard_Integer Dimension = myTotalDimension;
   AdvApprox_EvaluatorFunction& Evaluator = 
@@ -106,10 +108,10 @@ void AdvApprox_SimpleApprox::Perform(const TColStd_Array1OfInteger& LocalDimensi
   FirstLast[1] = Last;
 
   math_Vector Result(1,myTotalDimension);
-  Standard_Integer ErrorCode,derive,i_idim;
+  Standard_Integer ErrorCode = 0,derive = 0,i_idim = 0;
   Standard_Real Fact=(Last-First)/2;
   Standard_Real *pResult = (Standard_Real*) &Result.Value(1);
-  Standard_Real param;  
+  Standard_Real param = NAN;  
 
   for (param = First, derive = myNivConstr; 
        derive >= 0 ; derive--) {
@@ -148,7 +150,7 @@ void AdvApprox_SimpleApprox::Perform(const TColStd_Array1OfInteger& LocalDimensi
   Standard_Real* Coef1 = (Standard_Real*) &(myCoeff->ChangeArray1().Value(0));
 
   derive = 0;
-  Standard_Real ti, tip, tin, alin = (Last-First)/2, blin = (Last+First)/2.;
+  Standard_Real ti = NAN, tip = NAN, tin = NAN, alin = (Last-First)/2, blin = (Last+First)/2.;
 
   i_idim = myTotalDimension;
   for (i=1; i<=myNbGaussPoints/2; i++) {
@@ -234,8 +236,8 @@ void AdvApprox_SimpleApprox::Perform(const TColStd_Array1OfInteger& LocalDimensi
   // the computing of NewDegree
   TColStd_Array1OfReal JacCoeff(0, myTotalDimension*(myWorkDegree+1)-1);
  
-  Standard_Real MaxErr,AverageErr;
-  Standard_Integer Dim, RangSS, RangCoeff, RangJacCoeff, RangDim, NewDegree, NewDegreeMax = 0;
+  Standard_Real MaxErr = NAN,AverageErr = NAN;
+  Standard_Integer Dim = 0, RangSS = 0, RangCoeff = 0, RangJacCoeff = 0, RangDim = 0, NewDegree = 0, NewDegreeMax = 0;
 
   myMaxError =  new TColStd_HArray1OfReal (1,myTotalNumSS);
   myAverageError = new TColStd_HArray1OfReal (1,myTotalNumSS);
@@ -377,7 +379,7 @@ Standard_Real AdvApprox_SimpleApprox::AverageError(const Standard_Integer Index)
 
 void AdvApprox_SimpleApprox::Dump(Standard_OStream& o) const
 {
-  Standard_Integer ii;
+  Standard_Integer ii = 0;
   o << "Dump of SimpleApprox " << std::endl;
   for (ii=1; ii <= myTotalNumSS; ii++) {
     o << "Error   " << MaxError(ii) << std::endl;

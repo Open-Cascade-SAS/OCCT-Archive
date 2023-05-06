@@ -45,7 +45,7 @@ void RWStepShape_RWFaceSurface::ReadStep
 
 	Handle(StepShape_HArray1OfFaceBound) aBounds;
 	Handle(StepShape_FaceBound) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"bounds",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aBounds = new StepShape_HArray1OfFaceBound (1, nb2);
@@ -64,7 +64,7 @@ void RWStepShape_RWFaceSurface::ReadStep
 
 	// --- own field : sameSense ---
 
-	Standard_Boolean aSameSense;
+	Standard_Boolean aSameSense = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadBoolean (num,4,"same_sense",ach,aSameSense);
 

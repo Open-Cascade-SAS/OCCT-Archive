@@ -17,6 +17,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <HLRAlgo_Coincidence.hxx>
 #include <HLRBRep_Data.hxx>
 #include <HLRBRep_EdgeBuilder.hxx>
@@ -136,7 +138,7 @@ void HLRBRep_Hider::Hide(const Standard_Integer FI,
       }
       
       //-- ============================================================
-      Standard_Boolean Modif;
+      Standard_Boolean Modif = 0;
       do { 
 	Modif = Standard_False; 
 	HLRAlgo_ListIteratorOfInterferenceList ItSegHidden1(ILHidden);
@@ -447,7 +449,7 @@ void HLRBRep_Hider::Hide(const Standard_Integer FI,
 	  TopAbs_State aBuildIN = TopAbs_IN;
 	  Standard_Boolean IsSuspicion = Standard_True;
 	  
-	  Standard_Real pmax, pmin;
+	  Standard_Real pmax = NAN, pmin = NAN;
 	  Standard_Boolean allInt = Standard_False;
 	  Standard_Boolean allFor = Standard_False;
 	  Standard_Boolean allRev = Standard_False;

@@ -15,16 +15,18 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <GeomLib_LogSample.hxx>
 #include <Standard_OutOfRange.hxx>
 
 GeomLib_LogSample::GeomLib_LogSample(const Standard_Real A,
 				      const Standard_Real B,
 				      const Standard_Integer N)
-                   :math_FunctionSample(A, B, N)
+                   :math_FunctionSample(A, B, N), myF(A - 1), myexp(Log(B-A)/N)
 {
-  myF = A - 1;
-  myexp = Log(B-A)/N;
+  
+  
 }
 
 Standard_Real GeomLib_LogSample::GetParameter(const Standard_Integer Index) const
@@ -33,7 +35,7 @@ Standard_Real GeomLib_LogSample::GetParameter(const Standard_Integer Index) cons
  
 
   if ((Index >= aN) || (Index <= 1)) {
-    Standard_Real aA, aB;
+    Standard_Real aA = NAN, aB = NAN;
     Bounds(aA, aB);
     if (Index == 1) return aA;
     else if (Index == aN) return aB;

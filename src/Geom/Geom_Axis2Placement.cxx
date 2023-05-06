@@ -51,10 +51,10 @@ Handle(Geom_Geometry) Geom_Axis2Placement::Copy() const {
 //purpose  : 
 //=======================================================================
 
-Geom_Axis2Placement::Geom_Axis2Placement (const gp_Ax2& A2) {
+Geom_Axis2Placement::Geom_Axis2Placement (const gp_Ax2& A2) : vxdir(A2. XDirection()), vydir(A2. YDirection()) {
 
-   vxdir = A2. XDirection();
-   vydir = A2. YDirection();
+   
+   
    axis  = A2.Axis();
 }
 

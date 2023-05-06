@@ -125,7 +125,7 @@ public:
 private:
 
   TColStd_SequenceOfReal myRangeSetStorer;
-  Standard_Integer myRangeNumber;
+  Standard_Integer myRangeNumber{};
   TColStd_SequenceOfInteger myFlags;
   TColStd_SequenceOfInteger myFoundIndices;
 

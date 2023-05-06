@@ -34,9 +34,9 @@
 //function : TDocStd_XLinkTool
 //purpose  : 
 //=======================================================================
-TDocStd_XLinkTool::TDocStd_XLinkTool () {
-  isDone = Standard_False;
-  myRT = new TDF_RelocationTable();
+TDocStd_XLinkTool::TDocStd_XLinkTool () : isDone(Standard_False), myRT(new TDF_RelocationTable()) {
+  
+  
 }
 
 //=======================================================================

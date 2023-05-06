@@ -60,7 +60,7 @@ static const Standard_ExtString   voidext = { 0 };
     void  XSControl_Utils::TraceLines (const Handle(Standard_Transient)& lines) const
 {
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
-  Standard_Integer i,nb;
+  Standard_Integer i = 0,nb = 0;
   DeclareAndCast(TColStd_HSequenceOfHAsciiString,linha,lines);
   if (!linha.IsNull()) {
     nb = linha->Length();
@@ -229,7 +229,7 @@ static const Standard_ExtString   voidext = { 0 };
     Standard_CString  XSControl_Utils::ExtendedToAscii (const Standard_ExtString str) const
 {
   bufext.Clear();  bufext.AssignCat (str);  bufasc.Clear();
-  Standard_Integer i, nb = bufext.Length();
+  Standard_Integer i = 0, nb = bufext.Length();
   for (i = 1; i <= nb; i ++) {
     int unext = bufext.Value(i);
     unext = unext & 127;
@@ -340,7 +340,7 @@ static const Standard_ExtString   voidext = { 0 };
   BRep_Builder B;
   TopoDS_Compound C;
   B.MakeCompound(C);
-  Standard_Integer i,n = seqval->Length();
+  Standard_Integer i = 0,n = seqval->Length();
   for (i = 1; i <= n ; i ++)  B.Add(C,seqval->Value(i));
   return C;
 }
@@ -353,7 +353,7 @@ static const Standard_ExtString   voidext = { 0 };
   if (!compound || res != TopAbs_COMPOUND) return res;
   res = TopAbs_SHAPE;
   for (TopoDS_Iterator iter(shape); iter.More(); iter.Next()) {
-    TopoDS_Shape sh = iter.Value();
+    const TopoDS_Shape& sh = iter.Value();
     if (sh.IsNull()) continue;
     TopAbs_ShapeEnum typ = sh.ShapeType();
     if (typ == TopAbs_COMPOUND) typ = ShapeType (sh,compound);
@@ -522,7 +522,7 @@ static const Standard_ExtString   voidext = { 0 };
     Handle(Standard_Transient)  XSControl_Utils::SeqToArr
   (const Handle(Standard_Transient)& seqval, const Standard_Integer first) const
 {
-  Standard_Integer i,lng;
+  Standard_Integer i = 0,lng = 0;
   Handle(Standard_Transient) val;
   if (seqval.IsNull()) return val;
   DeclareAndCast(TColStd_HSequenceOfHAsciiString,seqs,seqval);
@@ -548,7 +548,7 @@ static const Standard_ExtString   voidext = { 0 };
     Handle(Standard_Transient)  XSControl_Utils::ArrToSeq
   (const Handle(Standard_Transient)& arrval) const
 {
-  Standard_Integer i,first,last;
+  Standard_Integer i = 0,first = 0,last = 0;
   Handle(Standard_Transient) val;
   if (arrval.IsNull()) return val;
   DeclareAndCast(Interface_HArray1OfHAsciiString,arrs,arrval);

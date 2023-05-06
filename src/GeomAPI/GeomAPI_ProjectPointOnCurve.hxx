@@ -123,8 +123,8 @@ Standard_EXPORT operator Standard_Real() const;
 
 private:
 
-  Standard_Boolean myIsDone;
-  Standard_Integer myIndex;
+  Standard_Boolean myIsDone{};
+  Standard_Integer myIndex{};
   Extrema_ExtPC myExtPC;
   GeomAdaptor_Curve myC;
 

@@ -42,6 +42,7 @@
 #include <TopTools_Array1OfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 
+#include <math.h>
 #include <stdio.h>
 // memory management
 #ifdef _WIN32
@@ -668,7 +669,7 @@ static Standard_Integer nexplode(Draw_Interpretor& di,
   IMOStmp.Add(S);
   TopExp::MapShapes(S,typ,IMOStmp);
   TopExp_Explorer Exp(S,typ);
-  Standard_Integer MaxShapes, Index = 0;
+  Standard_Integer MaxShapes = 0, Index = 0;
   MaxShapes = IMOStmp.Extent()-1;
   TopTools_Array1OfShape aShapes(1,MaxShapes);
   
@@ -684,7 +685,7 @@ static Standard_Integer nexplode(Draw_Interpretor& di,
   TColStd_Array1OfInteger OrderInd(1,MaxShapes);
   gp_Pnt GPoint;
   GProp_GProps GPr;
-  Standard_Integer aTemp;
+  Standard_Integer aTemp = 0;
   TColStd_Array1OfReal MidXYZ(1,MaxShapes); //X,Y,Z;
   Standard_Boolean NoSort = Standard_True;
   //
@@ -851,7 +852,7 @@ static Standard_Integer numshapes(Draw_Interpretor& di,
 {
   if (n < 2) return 1;
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   TopExp_Explorer ex;
   for (i = 1; i < n; i++) {
     TopoDS_Shape S = DBRep::Get(a[i]);
@@ -888,7 +889,7 @@ static void DumpExtent(const TopoDS_Shape& aS,
     " EDGE      : ",
     " VERTEX    : "
   };
-  Standard_Integer i, aNb, aNbSh;
+  Standard_Integer i = 0, aNb = 0, aNbSh = 0;
   TopAbs_ShapeEnum aType;
   TopTools_IndexedMapOfShape aM;
   //
@@ -914,8 +915,8 @@ static Standard_Integer nbshapes(Draw_Interpretor& di,
 {
   if (n < 2) return 1;
 
-  Standard_Integer i;
-  Standard_Boolean aTotal;
+  Standard_Integer i = 0;
+  Standard_Boolean aTotal = 0;
   TopExp_Explorer ex;
   //
   aTotal = !strcmp(a[n-1], "-t") ? Standard_True : Standard_False;
@@ -948,7 +949,7 @@ static Standard_Integer countshapes(Draw_Interpretor& di,
 {
   if (n < 2) return 1;
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   TopExp_Explorer ex;
   for (i = 1; i < n; i++) {
     TopoDS_Shape Sh = DBRep::Get(a[i]);
@@ -1050,7 +1051,7 @@ static Standard_Integer countshapes(Draw_Interpretor& di,
 //=======================================================================
 void setProp(TopoDS_Shape Sh, const char** a, Standard_Integer n)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for(i = 2; i < n; i++) {
     if (strstr ( a[i], "free" )) {
       if(a[i][0] == '-') {
@@ -1134,17 +1135,17 @@ static Standard_Integer setFlags(Draw_Interpretor& ,
 
   setProp(Sh, a, n);
   for (ex.Init (Sh,TopAbs_VERTEX); ex.More(); ex.Next()) {
-    TopoDS_Shape S = ex.Current();
+    const TopoDS_Shape& S = ex.Current();
     setProp(S, a, n);
   }
 
   for (ex.Init (Sh,TopAbs_EDGE); ex.More(); ex.Next()) {
-    TopoDS_Shape S = ex.Current();
+    const TopoDS_Shape& S = ex.Current();
     setProp(S, a, n);
   }
 
   for (ex.Init (Sh,TopAbs_FACE); ex.More(); ex.Next()) {
-    TopoDS_Shape S = ex.Current();
+    const TopoDS_Shape& S = ex.Current();
     setProp(S, a, n);
   }
 
@@ -1169,7 +1170,7 @@ static Standard_Integer check(Draw_Interpretor& ,
 {
   if (n < 2) return 1;
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   TopExp_Explorer ex;
   for (i = 1; i < n; i++) {
     TopoDS_Shape S = DBRep::Get(a[i]);
@@ -1364,7 +1365,7 @@ TopoDS_Shape DBRep::getShape (Standard_CString& theName,
    && toPick)
   {
     // try to find prom pick
-    Standard_Real u, v;
+    Standard_Real u = NAN, v = NAN;
     DBRep_DrawableShape::LastPick (aShape, u, v);
   }
   if (theType != TopAbs_SHAPE

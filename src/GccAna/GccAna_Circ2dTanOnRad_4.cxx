@@ -47,7 +47,7 @@ GccAna_Circ2dTanOnRad::
 //  Initialization of fields.                                            +
 //=========================================================================
 
-   cirsol(1,4)   ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,4)   ,
    qualifier1(1,4) ,
    TheSame1(1,4) ,
    pnttg1sol(1,4),
@@ -60,8 +60,8 @@ GccAna_Circ2dTanOnRad::
      TheSame1.Init(0);
    gp_Dir2d dirx(1.0,0.0);
    Standard_Real Tol = Abs(Tolerance);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() ||
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
      throw GccEnt_BadQualifier();

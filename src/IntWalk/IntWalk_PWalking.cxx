@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <Adaptor3d_HSurfaceTool.hxx>
 #include <Extrema_GenLocateExtPS.hxx>
@@ -136,7 +138,7 @@ static void IsParallel(const Handle(IntSurf_LineOn2S)& theLine,
     if (aNPoint > aNbLinePnts)
       aNPoint = aNbLinePnts;
 
-    Standard_Real u, v;
+    Standard_Real u = NAN, v = NAN;
     if(theCheckSurf1)
       theLine->Value(RealToInt(aNPoint)).ParametersOnS1(u, v);
     else
@@ -206,10 +208,9 @@ tgfirst(Standard_False),
 tglast(Standard_False),
 myTangentIdx(0),
 fleche(Deflection),
-pasMax(0.0),
-tolconf(Epsilon),
+pasMax(Increment*0.2), tolconf(Epsilon),
 myTolTang(TolTangency),
-sensCheminement(1),
+Um1(Adaptor3d_HSurfaceTool::FirstUParameter(Caro1)), UM1(Adaptor3d_HSurfaceTool::LastUParameter(Caro1)), Vm1(Adaptor3d_HSurfaceTool::FirstVParameter(Caro1)), VM1(Adaptor3d_HSurfaceTool::LastVParameter(Caro1)), Um2(Adaptor3d_HSurfaceTool::FirstUParameter(Caro2)), UM2(Adaptor3d_HSurfaceTool::LastUParameter(Caro2)), Vm2(Adaptor3d_HSurfaceTool::FirstVParameter(Caro2)), VM2(Adaptor3d_HSurfaceTool::LastVParameter(Caro2)), ResoU1(Adaptor3d_HSurfaceTool::UResolution(Caro1,Precision::Confusion())), ResoU2(Adaptor3d_HSurfaceTool::UResolution(Caro2,Precision::Confusion())), ResoV1(Adaptor3d_HSurfaceTool::VResolution(Caro1,Precision::Confusion())), ResoV2(Adaptor3d_HSurfaceTool::VResolution(Caro2,Precision::Confusion())), sensCheminement(1),
 previoustg(Standard_False),
 myIntersectionOn2S(Caro1,Caro2,TolTangency),
 STATIC_BLOCAGE_SUR_PAS_TROP_GRAND(0),
@@ -217,26 +218,26 @@ STATIC_PRECEDENT_INFLEXION(0)
 {
   Standard_Real KELARG=20.;
   //
-  pasMax=Increment*0.2; //-- June 25 99 after problems with precision 
-  Um1 = Adaptor3d_HSurfaceTool::FirstUParameter(Caro1);
-  Vm1 = Adaptor3d_HSurfaceTool::FirstVParameter(Caro1);
-  UM1 = Adaptor3d_HSurfaceTool::LastUParameter(Caro1);
-  VM1 = Adaptor3d_HSurfaceTool::LastVParameter(Caro1);
+  //-- June 25 99 after problems with precision 
+  
+  
+  
+  
 
-  Um2 = Adaptor3d_HSurfaceTool::FirstUParameter(Caro2);
-  Vm2 = Adaptor3d_HSurfaceTool::FirstVParameter(Caro2);
-  UM2 = Adaptor3d_HSurfaceTool::LastUParameter(Caro2);
-  VM2 = Adaptor3d_HSurfaceTool::LastVParameter(Caro2);
+  
+  
+  
+  
 
-  ResoU1 = Adaptor3d_HSurfaceTool::UResolution(Caro1,Precision::Confusion());
-  ResoV1 = Adaptor3d_HSurfaceTool::VResolution(Caro1,Precision::Confusion());
+  
+  
 
-  ResoU2 = Adaptor3d_HSurfaceTool::UResolution(Caro2,Precision::Confusion());
-  ResoV2 = Adaptor3d_HSurfaceTool::VResolution(Caro2,Precision::Confusion());
+  
+  
 
-  Standard_Real NEWRESO;
-  Standard_Real MAXVAL;
-  Standard_Real MAXVAL2;
+  Standard_Real NEWRESO = NAN;
+  Standard_Real MAXVAL = NAN;
+  Standard_Real MAXVAL2 = NAN;
   //
   MAXVAL  = Abs(Um1);  MAXVAL2 = Abs(UM1);
   if(MAXVAL2 > MAXVAL) MAXVAL = MAXVAL2;
@@ -354,34 +355,34 @@ IntWalk_PWalking::IntWalk_PWalking(const Handle(Adaptor3d_Surface)& Caro1,
 done(Standard_True),
 close(Standard_False),
 fleche(Deflection),
-tolconf(Epsilon),
+pasMax(Increment*0.2), tolconf(Epsilon),
 myTolTang(TolTangency),
-sensCheminement(1),
+Um1(Adaptor3d_HSurfaceTool::FirstUParameter(Caro1)), UM1(Adaptor3d_HSurfaceTool::LastUParameter(Caro1)), Vm1(Adaptor3d_HSurfaceTool::FirstVParameter(Caro1)), VM1(Adaptor3d_HSurfaceTool::LastVParameter(Caro1)), Um2(Adaptor3d_HSurfaceTool::FirstUParameter(Caro2)), UM2(Adaptor3d_HSurfaceTool::LastUParameter(Caro2)), Vm2(Adaptor3d_HSurfaceTool::FirstVParameter(Caro2)), VM2(Adaptor3d_HSurfaceTool::LastVParameter(Caro2)), ResoU1(Adaptor3d_HSurfaceTool::UResolution(Caro1,Precision::Confusion())), ResoU2(Adaptor3d_HSurfaceTool::UResolution(Caro2,Precision::Confusion())), ResoV1(Adaptor3d_HSurfaceTool::VResolution(Caro1,Precision::Confusion())), ResoV2(Adaptor3d_HSurfaceTool::VResolution(Caro2,Precision::Confusion())), sensCheminement(1),
 myIntersectionOn2S(Caro1,Caro2,TolTangency),
 STATIC_BLOCAGE_SUR_PAS_TROP_GRAND(0),
 STATIC_PRECEDENT_INFLEXION(0)
 {
   Standard_Real KELARG=20.;
   //
-  pasMax=Increment*0.2; //-- June 25 99 after problems with precision 
+  //-- June 25 99 after problems with precision 
   //
-  Um1 = Adaptor3d_HSurfaceTool::FirstUParameter(Caro1);
-  Vm1 = Adaptor3d_HSurfaceTool::FirstVParameter(Caro1);
-  UM1 = Adaptor3d_HSurfaceTool::LastUParameter(Caro1);
-  VM1 = Adaptor3d_HSurfaceTool::LastVParameter(Caro1);
+  
+  
+  
+  
 
-  Um2 = Adaptor3d_HSurfaceTool::FirstUParameter(Caro2);
-  Vm2 = Adaptor3d_HSurfaceTool::FirstVParameter(Caro2);
-  UM2 = Adaptor3d_HSurfaceTool::LastUParameter(Caro2);
-  VM2 = Adaptor3d_HSurfaceTool::LastVParameter(Caro2);
+  
+  
+  
+  
 
-  ResoU1 = Adaptor3d_HSurfaceTool::UResolution(Caro1,Precision::Confusion());
-  ResoV1 = Adaptor3d_HSurfaceTool::VResolution(Caro1,Precision::Confusion());
+  
+  
 
-  ResoU2 = Adaptor3d_HSurfaceTool::UResolution(Caro2,Precision::Confusion());
-  ResoV2 = Adaptor3d_HSurfaceTool::VResolution(Caro2,Precision::Confusion());
+  
+  
   //
-  Standard_Real NEWRESO, MAXVAL, MAXVAL2;
+  Standard_Real NEWRESO = NAN, MAXVAL = NAN, MAXVAL2 = NAN;
   //
   MAXVAL  = Abs(Um1);  
   MAXVAL2 = Abs(UM1);
@@ -517,7 +518,7 @@ Standard_Boolean IntWalk_PWalking::PerformFirstPoint  (const TColStd_Array1OfRea
   sensCheminement = 1;
   close = Standard_False;
   //
-  Standard_Integer i;
+  Standard_Integer i = 0;
   TColStd_Array1OfReal Param(1,4);
   //
   for (i=1; i<=4; ++i) {
@@ -720,9 +721,9 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
     return;
   }
   //
-  Standard_Boolean Arrive, DejaReparti;
+  Standard_Boolean Arrive = 0, DejaReparti = 0;
   const Standard_Integer RejectIndexMAX = 250000;
-  Standard_Integer IncKey, RejectIndex;
+  Standard_Integer IncKey = 0, RejectIndex = 0;
   gp_Pnt pf,pl;
   //
   DejaReparti = Standard_False;
@@ -757,7 +758,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
   //
   IntWalk_StatusDeflection aStatus = IntWalk_OK, aPrevStatus = IntWalk_OK;
   Standard_Boolean NoTestDeflection = Standard_False;
-  Standard_Real SvParam[4], f;
+  Standard_Real SvParam[4], f = NAN;
   Standard_Integer LevelOfEmptyInmyIntersectionOn2S=0;
   Standard_Integer LevelOfPointConfondu = 0; 
   Standard_Integer LevelOfIterWithoutAppend = -1;
@@ -803,7 +804,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
     previousPoint.Parameters(Param(1),Param(2),Param(3),Param(4));
     //
     //--ofv.begin
-    Standard_Real aIncKey, aEps, dP1, dP2, dP3, dP4;
+    Standard_Real aIncKey = NAN, aEps = NAN, dP1 = NAN, dP2 = NAN, dP3 = NAN, dP4 = NAN;
     //
     dP1 = sensCheminement * pasuv[0] * previousd1.X() /f;
     dP2 = sensCheminement * pasuv[1] * previousd1.Y() /f;
@@ -917,7 +918,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
       //== Calculation of exact point from Param(.) is possible
       if (myIntersectionOn2S.IsEmpty())
       {
-        Standard_Real u1,v1,u2,v2;
+        Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
         previousPoint.Parameters(u1,v1,u2,v2);
         //
         Arrive = Standard_False;
@@ -1006,8 +1007,8 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
           if(NbPasOKConseq >= 5)
           {
             NbPasOKConseq=0;
-            Standard_Boolean pastroppetit;
-            Standard_Real t;
+            Standard_Boolean pastroppetit = 0;
+            Standard_Real t = NAN;
             //
             do
             {
@@ -1126,7 +1127,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
 
             if(LevelOfPointConfondu>5)
             {
-              Standard_Boolean pastroppetit;
+              Standard_Boolean pastroppetit = 0;
               //
               do
               {
@@ -1233,7 +1234,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
               //== Check on the current point of myInters
               Standard_Boolean pointisvalid = Standard_False;
               {
-                Standard_Real u1,v1,u2,v2; 
+                Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN; 
                 myIntersectionOn2S.Point().Parameters(u1,v1,u2,v2);
 
                 //
@@ -1260,7 +1261,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
                 //=====================================================
                 //== Check on the previous Point
                 {
-                  Standard_Real u1,v1,u2,v2;
+                  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
                   previousPoint.Parameters(u1,v1,u2,v2); 
                   if( u1 <= UM1  && u2 <= UM2 && v1 <= VM1 &&
                     v2 <= VM2  && u1 >= Um1 && u2 >= Um2 &&
@@ -1428,7 +1429,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
                     //== Check on PreviousPoint @@
 
                     {
-                      Standard_Real u1,v1,u2,v2;
+                      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
                       previousPoint.Parameters(u1,v1,u2,v2);
 
                       //To save initial 2d points
@@ -1443,7 +1444,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
                       //
 
                       //xf
-                      Standard_Boolean bFlag1, bFlag2;
+                      Standard_Boolean bFlag1 = 0, bFlag2 = 0;
                       Standard_Real aTol2D=1.e-11;
                       //
                       bFlag1=u1 >= Um1-aTol2D && v1 >= Vm1-aTol2D && u1 <= UM1+aTol2D && v1 <= VM1+aTol2D;
@@ -1453,9 +1454,9 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
                         if (line->NbPoints() > 1)
                         {
                           IntSurf_PntOn2S prevprevPoint = line->Value(line->NbPoints()-1);
-                          Standard_Real ppU1, ppV1, ppU2, ppV2;
+                          Standard_Real ppU1 = NAN, ppV1 = NAN, ppU2 = NAN, ppV2 = NAN;
                           prevprevPoint.Parameters(ppU1, ppV1, ppU2, ppV2);
-                          Standard_Real pU1, pV1, pU2, pV2;
+                          Standard_Real pU1 = NAN, pV1 = NAN, pU2 = NAN, pV2 = NAN;
                           previousPointSave.Parameters(pU1, pV1, pU2, pV2);
                           gp_Vec2d V1onS1(gp_Pnt2d(ppU1, ppV1), gp_Pnt2d(pU1, pV1));
                           gp_Vec2d V2onS1(gp_Pnt2d(pU1, pV1), gp_Pnt2d(u1, v1));
@@ -1504,7 +1505,7 @@ void IntWalk_PWalking::Perform(const TColStd_Array1OfReal& ParDep,
                           //There are three consecutive points:
                           //previousPointSave -> ParamPnt -> curPnt.
 
-                          Standard_Real prevU1, prevV1, prevU2, prevV2;
+                          Standard_Real prevU1 = NAN, prevV1 = NAN, prevU2 = NAN, prevV2 = NAN;
                           previousPointSave.Parameters(prevU1, prevV1, prevU2, prevV2);
                           gp_Pnt2d prevPntOnS1(prevU1, prevV1), prevPntOnS2(prevU2, prevV2);
                           gp_Pnt2d curPntOnS1(u1, v1), curPntOnS2(u2, v2);
@@ -1863,9 +1864,9 @@ Standard_Boolean IntWalk_PWalking::ExtendLineInCommonZone(const IntImp_ConstIsop
 
           //
           if(!bStop) {
-            Standard_Real u11,v11,u12,v12; 
+            Standard_Real u11 = NAN,v11 = NAN,u12 = NAN,v12 = NAN; 
             myIntersectionOn2S.Point().Parameters(u11,v11,u12,v12); 
-            Standard_Real u21,v21,u22,v22;
+            Standard_Real u21 = NAN,v21 = NAN,u22 = NAN,v22 = NAN;
             previousPoint.Parameters(u21,v21,u22,v22); 
 
             if(((fabs(u11-u21) < ResoU1) && (fabs(v11-v21) < ResoV1)) ||
@@ -1883,7 +1884,7 @@ Standard_Boolean IntWalk_PWalking::ExtendLineInCommonZone(const IntImp_ConstIsop
 
           if(!bStop) {
             Standard_Boolean pointisvalid = Standard_False;
-            Standard_Real u1,v1,u2,v2; 
+            Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN; 
             myIntersectionOn2S.Point().Parameters(u1,v1,u2,v2); 
 
             if(u1 <= UM1  && u2 <= UM2 && v1 <= VM1 && 
@@ -1962,7 +1963,7 @@ Standard_Boolean IntWalk_PWalking::ExtendLineInCommonZone(const IntImp_ConstIsop
                 Standard_Boolean pointisvalid = Standard_False;
 
                 previousPoint = myIntersectionOn2S.Point();
-                Standard_Real u1,v1,u2,v2; 
+                Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN; 
                 previousPoint.Parameters(u1,v1,u2,v2); 
 
                 if(u1 <= UM1  && u2 <= UM2 && v1 <= VM1 && 
@@ -2374,10 +2375,10 @@ Standard_Boolean IntWalk_PWalking::HandleSingleSingularPoint(const Handle(Adapto
       gp_Pnt aP;
       gp_Vec aDU, aDV;
       gp_Pnt aPInt;
-      Standard_Integer k;
+      Standard_Integer k = 0;
       for (k = 0; k < 2; ++k)
       {
-        Standard_Integer iu, iv;
+        Standard_Integer iu = 0, iv = 0;
         iu = 2*k;
         iv = iu + 1;
         aSurfs[k]->D1(aPars[iu], aPars[iv], aPInt, aDU, aDV);
@@ -2418,7 +2419,7 @@ Standard_Boolean IntWalk_PWalking::HandleSingleSingularPoint(const Handle(Adapto
       }
       //
       //
-      Standard_Integer j;
+      Standard_Integer j = 0;
       for (j = 1; j <= 4; ++j)
       {
         thePnt(j) = aPars[j - 1];
@@ -2704,7 +2705,7 @@ PutToBoundary(const Handle(Adaptor3d_Surface)& theASurf1,
   IsParallel(line, Standard_True, aTol, isU1parallel, isV1parallel);
   IsParallel(line, Standard_False, aTol, isU2parallel, isV2parallel);
 
-  Standard_Real u1, v1, u2, v2;
+  Standard_Real u1 = NAN, v1 = NAN, u2 = NAN, v2 = NAN;
   line->Value(1).Parameters(u1, v1, u2, v2);
   Standard_Real aDelta = 0.0;
 
@@ -2916,8 +2917,8 @@ SeekAdditionalPoints( const Handle(Adaptor3d_Surface)& theASurf1,
     aNbPointsPrev = aNbPoints;
     for(Standard_Integer fp = 1, lp = 2; fp < aNbPoints; fp = lp + 1)
     {
-      Standard_Real U1f, V1f, U2f, V2f; //first point in 1st and 2nd surafaces
-      Standard_Real U1l, V1l, U2l, V2l; //last  point in 1st and 2nd surafaces
+      Standard_Real U1f = NAN, V1f = NAN, U2f = NAN, V2f = NAN; //first point in 1st and 2nd surafaces
+      Standard_Real U1l = NAN, V1l = NAN, U2l = NAN, V2l = NAN; //last  point in 1st and 2nd surafaces
 
       lp = fp+1;
       line->Value(fp).Parameters(U1f, V1f, U2f, V2f);
@@ -3038,8 +3039,8 @@ RepartirOuDiviser(Standard_Boolean& DejaReparti,
       pasuv[2]=pasSav[2];
       pasuv[3]=pasSav[3];
 #else 
-      Standard_Real u1,v1,u2,v2;
-      Standard_Real U1,V1,U2,V2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
+      Standard_Real U1 = NAN,V1 = NAN,U2 = NAN,V2 = NAN;
       Standard_Integer nn=line->NbPoints();
       if(nn>2) { 
         line->Value(nn).Parameters(u1,v1,u2,v2);
@@ -3088,8 +3089,8 @@ RepartirOuDiviser(Standard_Boolean& DejaReparti,
           pasuv[2]=pasSav[2];
           pasuv[3]=pasSav[3];
 #else 
-          Standard_Real u1,v1,u2,v2;
-          Standard_Real U1,V1,U2,V2;
+          Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
+          Standard_Real U1 = NAN,V1 = NAN,U2 = NAN,V2 = NAN;
           Standard_Integer nn=line->NbPoints();
           if(nn>2) { 
             line->Value(nn).Parameters(u1,v1,u2,v2);
@@ -3141,7 +3142,7 @@ IntWalk_StatusDeflection  IntWalk_PWalking::TestDeflection(const IntImp_ConstIso
   }
 
   IntWalk_StatusDeflection aStatus = IntWalk_OK;
-  Standard_Real FlecheCourante , Ratio = 1.0;
+  Standard_Real FlecheCourante = NAN , Ratio = 1.0;
 
   // Caro1 and Caro2
   const Handle(Adaptor3d_Surface)& Caro1 = myIntersectionOn2S.Function().AuxillarSurface1();
@@ -3208,7 +3209,7 @@ IntWalk_StatusDeflection  IntWalk_PWalking::TestDeflection(const IntImp_ConstIso
     //Compute local resolution: for OCC26717
     if (Abs(pasuv[choixIso] - pasInit[choixIso]) <= Precision::Confusion())
     {
-      Standard_Real CurU, CurV;
+      Standard_Real CurU = NAN, CurV = NAN;
       if (choixIso == IntImp_UIsoparametricOnCaro1 ||
           choixIso == IntImp_VIsoparametricOnCaro1)
         previousPoint.ParametersOnS1(CurU, CurV);
@@ -3259,8 +3260,8 @@ IntWalk_StatusDeflection  IntWalk_PWalking::TestDeflection(const IntImp_ConstIso
   }
 
   //==================================================================================
-  Standard_Real Up1,Vp1,Uc1,Vc1,Du1,Dv1,AbsDu1,AbsDu2,AbsDv1,AbsDv2;
-  Standard_Real Up2,Vp2,Uc2,Vc2,Du2,Dv2;
+  Standard_Real Up1 = NAN,Vp1 = NAN,Uc1 = NAN,Vc1 = NAN,Du1 = NAN,Dv1 = NAN,AbsDu1 = NAN,AbsDu2 = NAN,AbsDv1 = NAN,AbsDv2 = NAN;
+  Standard_Real Up2 = NAN,Vp2 = NAN,Uc2 = NAN,Vc2 = NAN,Du2 = NAN,Dv2 = NAN;
 
   previousPoint.Parameters(Up1,Vp1,Up2,Vp2);
   CurrentPoint.Parameters(Uc1,Vc1,Uc2,Vc2);               
@@ -3289,8 +3290,8 @@ IntWalk_StatusDeflection  IntWalk_PWalking::TestDeflection(const IntImp_ConstIso
     ResoV2 < Precision::PConfusion() )
     tolArea =  tolArea*2.0;
 
-  Standard_Real Cosi1, CosRef1, Ang1, AngRef1, ResoUV1, Duv1, d1, tolCoeff1;   
-  Standard_Real Cosi2, CosRef2, Ang2, AngRef2, ResoUV2, Duv2, d2, tolCoeff2;   
+  Standard_Real Cosi1 = NAN, CosRef1 = NAN, Ang1 = NAN, AngRef1 = NAN, ResoUV1 = NAN, Duv1 = NAN, d1 = NAN, tolCoeff1 = NAN;   
+  Standard_Real Cosi2 = NAN, CosRef2 = NAN, Ang2 = NAN, AngRef2 = NAN, ResoUV2 = NAN, Duv2 = NAN, d2 = NAN, tolCoeff2 = NAN;   
   Cosi1 = Du1*previousd1.X() + Dv1*previousd1.Y();
   Cosi2 = Du2*previousd2.X() + Dv2*previousd2.Y();
   Duv1 = Du1*Du1 + Dv1*Dv1;
@@ -3402,7 +3403,7 @@ IntWalk_StatusDeflection  IntWalk_PWalking::TestDeflection(const IntImp_ConstIso
     if(pasuv[2]<ResoU2) pasuv[2]=ResoU2;
     if(pasuv[3]<ResoV2) pasuv[3]=ResoV2;
     //-- if(Ratio>10.0 ) { Ratio=10.0; } 
-    Standard_Real R1,R = pasInit[0]/pasuv[0];
+    Standard_Real R1 = NAN,R = pasInit[0]/pasuv[0];
     R1= pasInit[1]/pasuv[1];     if(R1<R) R=R1;
     R1= pasInit[2]/pasuv[2];     if(R1<R) R=R1;
     R1= pasInit[3]/pasuv[3];     if(R1<R) R=R1;
@@ -3566,8 +3567,8 @@ TestArret(const Standard_Boolean DejaReparti,
           // otherwise test if closed line is present  
           // 
 {
-  Standard_Real Uvd[4],Uvf[4],Epsuv[4],Duv[4],Uvp[4],dv,dv2,ParC[4];
-  Standard_Real DPc,DPb;
+  Standard_Real Uvd[4],Uvf[4],Epsuv[4],Duv[4],Uvp[4],dv = NAN,dv2 = NAN,ParC[4];
+  Standard_Real DPc = NAN,DPb = NAN;
   Standard_Integer i = 0, k = 0;
   Epsuv[0] = ResoU1;
   Epsuv[1] = ResoV1;
@@ -3583,7 +3584,7 @@ TestArret(const Standard_Boolean DejaReparti,
   Uvd[0]=Um1;   Uvf[0]=UM1;   Uvd[1]=Vm1;   Uvf[1]=VM1;
   Uvd[2]=Um2;   Uvf[2]=UM2;   Uvd[3]=Vm2;   Uvf[3]=VM2;
 
-  Standard_Integer im1;
+  Standard_Integer im1 = 0;
   for ( i = 1,im1 = 0;i<=4;i++,im1++) {
     switch(i) { 
     case 1: k=2; break;
@@ -3671,7 +3672,7 @@ TestArret(const Standard_Boolean DejaReparti,
   {  
     if (!DejaReparti) { // find if line closed
 
-      Standard_Real u,v;
+      Standard_Real u = NAN,v = NAN;
       const IntSurf_PntOn2S& POn2S1=line->Value(1);
       //On S1
       POn2S1.ParametersOnS1(u,v);

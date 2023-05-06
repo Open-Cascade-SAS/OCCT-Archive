@@ -22,20 +22,20 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_LowOrderKinematicPairWithRange, StepKi
 //function : StepKinematics_LowOrderKinematicPairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_LowOrderKinematicPairWithRange::StepKinematics_LowOrderKinematicPairWithRange ()
+StepKinematics_LowOrderKinematicPairWithRange::StepKinematics_LowOrderKinematicPairWithRange () : defLowerLimitActualRotationX(Standard_False), defUpperLimitActualRotationX(Standard_False), defLowerLimitActualRotationY(Standard_False), defUpperLimitActualRotationY(Standard_False), defLowerLimitActualRotationZ(Standard_False), defUpperLimitActualRotationZ(Standard_False), defLowerLimitActualTranslationX(Standard_False), defUpperLimitActualTranslationX(Standard_False), defLowerLimitActualTranslationY(Standard_False), defUpperLimitActualTranslationY(Standard_False), defLowerLimitActualTranslationZ(Standard_False), defUpperLimitActualTranslationZ(Standard_False)
 {
-  defLowerLimitActualRotationX = Standard_False;
-  defUpperLimitActualRotationX = Standard_False;
-  defLowerLimitActualRotationY = Standard_False;
-  defUpperLimitActualRotationY = Standard_False;
-  defLowerLimitActualRotationZ = Standard_False;
-  defUpperLimitActualRotationZ = Standard_False;
-  defLowerLimitActualTranslationX = Standard_False;
-  defUpperLimitActualTranslationX = Standard_False;
-  defLowerLimitActualTranslationY = Standard_False;
-  defUpperLimitActualTranslationY = Standard_False;
-  defLowerLimitActualTranslationZ = Standard_False;
-  defUpperLimitActualTranslationZ = Standard_False;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================

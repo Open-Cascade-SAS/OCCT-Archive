@@ -74,8 +74,8 @@ private:
   Standard_EXPORT void Perform (math_Function& F, const Standard_Real Lower, const Standard_Real Upper, const Standard_Integer Order);
 
 
-  Standard_Real Val;
-  Standard_Boolean Done;
+  Standard_Real Val{};
+  Standard_Boolean Done{};
 
 
 };

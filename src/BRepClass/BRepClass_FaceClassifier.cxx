@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepClass_FaceClassifier.hxx>
 
 #include <BRepAdaptor_Surface.hxx>
@@ -97,8 +99,8 @@ void  BRepClass_FaceClassifier::Perform(const TopoDS_Face& theF,
           const Standard_Boolean theUseBndBox,
           const Standard_Real theGapCheckTol)
 {
-  Standard_Integer aNbExt, aIndice, i; 
-  Standard_Real aU1, aU2, aV1, aV2, aMaxDist, aD;
+  Standard_Integer aNbExt = 0, aIndice = 0, i = 0; 
+  Standard_Real aU1 = NAN, aU2 = NAN, aV1 = NAN, aV2 = NAN, aMaxDist = NAN, aD = NAN;
   gp_Pnt2d aPuv;
   Extrema_ExtPS aExtrema;
   //

@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <Interface_ShareTool.hxx>
 #include <RWStepGeom_RWVector.hxx>
@@ -48,7 +50,7 @@ void RWStepGeom_RWVector::ReadStep
 
 	// --- own field : magnitude ---
 
-	Standard_Real aMagnitude;
+	Standard_Real aMagnitude = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"magnitude",ach,aMagnitude);
 

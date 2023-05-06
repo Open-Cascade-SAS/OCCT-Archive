@@ -58,7 +58,7 @@ void RWStepBasic_RWProduct::ReadStep
 
 	Handle(StepBasic_HArray1OfProductContext) aFrameOfReference;
 	Handle(StepBasic_ProductContext) anent4;
-	Standard_Integer nsub4;
+	Standard_Integer nsub4 = 0;
 	if (data->ReadSubList (num,4,"frame_of_reference",ach,nsub4)) {
 	  Standard_Integer nb4 = data->NbParams(nsub4);
 	  aFrameOfReference = new StepBasic_HArray1OfProductContext (1, nb4);

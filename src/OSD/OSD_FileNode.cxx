@@ -74,7 +74,7 @@ void OSD_FileNode::SetPath (const OSD_Path& Name){
 // Test if specified file/directory exists
  
 Standard_Boolean  OSD_FileNode::Exists(){
-int status;
+int status = 0;
 
 
 // if (myPath.Name().Length()==0)  A directory can have a null name field (ex: root)
@@ -111,7 +111,7 @@ void  OSD_FileNode::Remove(){
      return;
    }
 
- struct stat  stat_buf;
+ struct stat  stat_buf{};
 
  if(stat(aBuffer.ToCString(), &stat_buf))
    {
@@ -147,7 +147,7 @@ void  OSD_FileNode::Remove(){
 // Move a file/directory to another path
 
 void  OSD_FileNode::Move(const OSD_Path& NewPath){
-int status;
+int status = 0;
 TCollection_AsciiString thisPath;
 
 // if (myPath.Name().Length()==0)
@@ -206,7 +206,7 @@ int static copy_file( const char* src, const char* trg )
 
 void  OSD_FileNode::Copy(const OSD_Path& ToPath)
 {
-int status;
+int status = 0;
 TCollection_AsciiString second_name;
 
 // if (myPath.Name().Length()==0)   Copy .login would raise !!
@@ -232,9 +232,9 @@ TCollection_AsciiString second_name;
 
 OSD_Protection  OSD_FileNode::Protection(){
 OSD_Protection thisProt;
-struct stat myStat;
-int status;
-int s,u,g,w;
+struct stat myStat{};
+int status = 0;
+int s = 0,u = 0,g = 0,w = 0;
 
 // if (myPath.Name().Length()==0)
 //  throw OSD_OSDError("OSD_FileNode::Protection : no name was given");
@@ -273,7 +273,7 @@ int s,u,g,w;
 // Set protections of a file/directory
 
 void  OSD_FileNode::SetProtection(const OSD_Protection& Prot){
-int status;
+int status = 0;
 
 //  if (myPath.Name().Length()==0)
 //  throw OSD_OSDError("OSD_FileNode::SetProtection : no name was given");
@@ -291,8 +291,8 @@ int status;
 Quantity_Date  OSD_FileNode::CreationMoment(){
 
  Quantity_Date result;
- struct tm *decode;
- struct stat buffer;
+ struct tm *decode = nullptr;
+ struct stat buffer{};
 
 // if (myPath.Name().Length()==0)
 //  throw OSD_OSDError("OSD_FileNode::CreationMoment : no name was given");
@@ -319,8 +319,8 @@ Quantity_Date  OSD_FileNode::CreationMoment(){
 Quantity_Date  OSD_FileNode::AccessMoment(){
 
  Quantity_Date result;
- struct tm *decode;
- struct stat buffer;
+ struct tm *decode = nullptr;
+ struct stat buffer{};
 
 // if (myPath.Name().Length()==0)
 //  throw OSD_OSDError("OSD_FileNode::AccessMoment : no name was given");

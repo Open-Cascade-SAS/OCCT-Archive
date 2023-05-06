@@ -17,6 +17,8 @@
 //  Modified by skv - Thu Jul 13 17:42:58 2006 OCC12627
 //  Total rewriting of the method Segment; add the method OtherSegment.
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepClass_Edge.hxx>
 #include <BRepClass_FaceExplorer.hxx>
@@ -143,13 +145,13 @@ Standard_Boolean BRepClass_FaceExplorer::OtherSegment(const gp_Pnt2d& P,
 						      Standard_Real& Par)
 {
   TopExp_Explorer      anExpF(myFace, TopAbs_EDGE);
-  Standard_Integer     i;
-  Standard_Real        aFPar;
-  Standard_Real        aLPar;
+  Standard_Integer     i = 0;
+  Standard_Real        aFPar = NAN;
+  Standard_Real        aLPar = NAN;
   Handle(Geom2d_Curve) aC2d;
   Standard_Real        aTolParConf2 = Precision::PConfusion() * Precision::PConfusion();
   gp_Pnt2d             aPOnC;
-  Standard_Real        aParamIn;
+  Standard_Real        aParamIn = NAN;
 
   for (i = 1; anExpF.More(); anExpF.Next(), i++) {
     if (i != myCurEdgeInd)

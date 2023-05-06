@@ -104,7 +104,7 @@ private:
 
   gp_Trsf myTrsf;
   TopLoc_Location myLocation;
-  Standard_Boolean myUseModif;
+  Standard_Boolean myUseModif{};
 
 
 };

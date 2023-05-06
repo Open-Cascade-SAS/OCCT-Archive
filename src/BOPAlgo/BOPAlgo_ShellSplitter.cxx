@@ -165,8 +165,8 @@ void BOPAlgo_ShellSplitter::Perform(const Message_ProgressRange& theRange)
 //=======================================================================
 void BOPAlgo_ShellSplitter::SplitBlock(BOPTools_ConnexityBlock& aCB)
 {
-  Standard_Integer aNbLF, aNbOff, aNbFP;
-  Standard_Integer i;
+  Standard_Integer aNbLF = 0, aNbOff = 0, aNbFP = 0;
+  Standard_Integer i = 0;
   TopAbs_Orientation anOr;
   TopoDS_Edge aEL;
   BRep_Builder aBB;
@@ -437,7 +437,7 @@ void RefineShell(TopoDS_Shell& theShell,
   // edges on which the input shell should be split
   TopTools_MapOfShape aMEStop;
   //
-  Standard_Integer i, aNbMEF = theMEF.Extent();
+  Standard_Integer i = 0, aNbMEF = theMEF.Extent();
   for (i = 1; i <= aNbMEF; ++i) {
     const TopoDS_Edge& aE = TopoDS::Edge(theMEF.FindKey(i));
     const TopTools_ListOfShape& aLF = theMEF(i);
@@ -579,8 +579,8 @@ void RefineShell(TopoDS_Shell& theShell,
 //=======================================================================
 void BOPAlgo_ShellSplitter::MakeShells(const Message_ProgressRange& theRange)
 {
-  Standard_Boolean bIsRegular;
-  Standard_Integer aNbVCBK, k;
+  Standard_Boolean bIsRegular = 0;
+  Standard_Integer aNbVCBK = 0, k = 0;
   BOPTools_ListIteratorOfListOfConnexityBlock aItCB;
   TopTools_ListIteratorOfListOfShape aIt;
   BOPAlgo_VectorOfCBK aVCBK;

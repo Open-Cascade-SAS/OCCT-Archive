@@ -44,7 +44,7 @@ void RWStepShape_RWShellBasedSurfaceModel::ReadStep
 
 	Handle(StepShape_HArray1OfShell) aSbsmBoundary;
 	StepShape_Shell aSbsmBoundaryItem;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"sbsm_boundary",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aSbsmBoundary = new StepShape_HArray1OfShell (1, nb2);

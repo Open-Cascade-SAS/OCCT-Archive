@@ -22,10 +22,10 @@
 IMPLEMENT_STANDARD_RTTIEXT(NLPlate_HPG0G1Constraint,NLPlate_HPG0Constraint)
 
 NLPlate_HPG0G1Constraint::NLPlate_HPG0G1Constraint(const gp_XY& UV,const gp_XYZ& Value,const Plate_D1& D1T)
-: NLPlate_HPG0Constraint(UV,Value),myG1Target(D1T)
+: NLPlate_HPG0Constraint(UV,Value),myG1Target(D1T), myOrientation(0)
 {
   SetActiveOrder(1);
-  myOrientation = 0;
+  
 }
 
 void NLPlate_HPG0G1Constraint::SetOrientation(const Standard_Integer Orient) 

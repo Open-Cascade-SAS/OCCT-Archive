@@ -18,6 +18,8 @@
 //                            EvalBsplineBasis,
 //                            EvalPolynomial : Horners method
 
+#include <math.h>
+
 #include <Standard_Stream.hxx>
 
 #include <BSplCLib.hxx>
@@ -46,9 +48,9 @@ struct BSplCLib_DataContainer
         "BSplCLib: bspline degree is greater than maximum supported");
   }
 
-  Standard_Real poles[2*(25+1)];
-  Standard_Real knots[2*25];
-  Standard_Real ders[4];
+  Standard_Real poles[2*(25+1)]{};
+  Standard_Real knots[2*25]{};
+  Standard_Real ders[4]{};
 };
 
 // methods for 1 dimensional BSplines
@@ -66,9 +68,9 @@ void  BSplCLib::BuildEval(const Standard_Integer         Degree,
 {
   Standard_Integer PLower = Poles.Lower();
   Standard_Integer PUpper = Poles.Upper();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer ip = PLower + Index - 1;
-  Standard_Real w, *pole = &LP;
+  Standard_Real w = NAN, *pole = &LP;
   if (Weights == NULL) {
     
     for (i = 0; i <= Degree; i++) {
@@ -153,9 +155,9 @@ void BSplCLib::D0
  const TColStd_Array1OfInteger* Mults,  
  Standard_Real&                 P) 
 {                    
-  Standard_Integer dim,index = Index;
+  Standard_Integer dim = 0,index = Index;
   Standard_Real    u = U;
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
   BSplCLib_DataContainer dc(Degree);
   PrepareEval(u,index,dim,rational,Degree,Periodic,Poles,Weights,Knots,Mults,dc);
   BSplCLib::Eval(u,Degree,*dc.knots,dim,*dc.poles);
@@ -180,9 +182,9 @@ void BSplCLib::D1
  Standard_Real&                 P,
  Standard_Real&                 V) 
 {                    
-  Standard_Integer dim,index = Index;
+  Standard_Integer dim = 0,index = Index;
   Standard_Real    u = U;
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
   BSplCLib_DataContainer dc(Degree);
   PrepareEval(u,index,dim,rational,Degree,Periodic,Poles,Weights,Knots,Mults,dc);
   BSplCLib::Bohm(u,Degree,1,*dc.knots,dim,*dc.poles);
@@ -213,9 +215,9 @@ void BSplCLib::D2
  Standard_Real&                 V1,
  Standard_Real&                 V2) 
 {                    
-  Standard_Integer dim,index = Index;
+  Standard_Integer dim = 0,index = Index;
   Standard_Real    u = U;
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
   BSplCLib_DataContainer dc(Degree);
   PrepareEval(u,index,dim,rational,Degree,Periodic,Poles,Weights,Knots,Mults,dc);
   BSplCLib::Bohm(u,Degree,2,*dc.knots,dim,*dc.poles);
@@ -249,9 +251,9 @@ void BSplCLib::D3
  Standard_Real&                 V2,
  Standard_Real&                 V3) 
 {                    
-  Standard_Integer dim,index = Index;
+  Standard_Integer dim = 0,index = Index;
   Standard_Real    u = U;
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
   BSplCLib_DataContainer dc(Degree);
   PrepareEval(u,index,dim,rational,Degree,Periodic,Poles,Weights,Knots,Mults,dc);
   BSplCLib::Bohm(u,Degree,3,*dc.knots,dim,*dc.poles);
@@ -285,14 +287,14 @@ void BSplCLib::DN
  const TColStd_Array1OfInteger* Mults,  
  Standard_Real&                 VN) 
 {                    
-  Standard_Integer dim,index = Index;
+  Standard_Integer dim = 0,index = Index;
   Standard_Real    u = U;
-  Standard_Boolean rational;
+  Standard_Boolean rational = 0;
   BSplCLib_DataContainer dc(Degree);
   PrepareEval(u,index,dim,rational,Degree,Periodic,Poles,Weights,Knots,Mults,dc);
   BSplCLib::Bohm(u,Degree,N,*dc.knots,dim,*dc.poles);
   if (rational) {
-    Standard_Real v;
+    Standard_Real v = NAN;
     PLib::RationalDerivative(Degree,N,1,*dc.poles,v,Standard_False);
     VN = v;
   }
@@ -316,15 +318,15 @@ BSplCLib::BuildBSpMatrix(const  TColStd_Array1OfReal&     Parameters,
 			 Standard_Integer&                UpperBandWidth,
 			 Standard_Integer&                LowerBandWidth) 
 {
-  Standard_Integer ii,
-  jj,
-  Index,
-  ErrorCode,
+  Standard_Integer ii = 0,
+  jj = 0,
+  Index = 0,
+  ErrorCode = 0,
   ReturnCode = 0,
-  FirstNonZeroBsplineIndex,
-  BandWidth,
+  FirstNonZeroBsplineIndex = 0,
+  BandWidth = 0,
   MaxOrder = BSplCLib::MaxDegree() + 1,
-  Order ;
+  Order = 0 ;
   
   math_Matrix   BSplineBasis(1, MaxOrder,
                              1, MaxOrder) ;
@@ -384,16 +386,16 @@ BSplCLib::FactorBandedMatrix(math_Matrix&   Matrix,
 			     const Standard_Integer LowerBandWidth,
 			     Standard_Integer&  PivotIndexProblem) 
 {
-  Standard_Integer ii,
-  jj,
-  kk,
-  Index,
-  MinIndex,
-  MaxIndex,
+  Standard_Integer ii = 0,
+  jj = 0,
+  kk = 0,
+  Index = 0,
+  MinIndex = 0,
+  MaxIndex = 0,
   ReturnCode = 0,
   BandWidth = UpperBandWidth + LowerBandWidth + 1 ;
   
-  Standard_Real Inverse ;
+  Standard_Real Inverse = NAN ;
   PivotIndexProblem = 0 ;
 
   for (ii = Matrix.LowerRow() + 1 ; ii <= Matrix.UpperRow() ; ii++) {
@@ -460,20 +462,20 @@ BSplCLib::EvalBsplineBasis
   //    i       i+1                       i+k-1
   //
   Standard_Integer  
-    ReturnCode,
-  ii,
-  pp,
-  qq,
-  ss,
-  NumPoles,
-  LocalRequest ;
+    ReturnCode = 0,
+  ii = 0,
+  pp = 0,
+  qq = 0,
+  ss = 0,
+  NumPoles = 0,
+  LocalRequest = 0 ;
 //  ,Index ;
   
-  Standard_Real NewParameter,
-  Inverse,
-  Factor,
-  LocalInverse,
-  Saved ;
+  Standard_Real NewParameter = NAN,
+  Inverse = NAN,
+  Factor = NAN,
+  LocalInverse = NAN,
+  Saved = NAN ;
 // , *FlatKnotsArray ;
   
   ReturnCode = 0 ;
@@ -575,30 +577,30 @@ void BSplCLib::MovePointAndTangent(const Standard_Real    U,
 				   Standard_Real&        NewPoles,
 				   Standard_Integer&     ErrorStatus) 
 {
-  Standard_Integer num_poles,
-  num_knots,
-  ii,
-  jj,
-  conditions,
-  start_num_poles,
-  end_num_poles,
-  index,
-  start_index,
-  end_index,
-  other_index,
-  type,
-  order ;
+  Standard_Integer num_poles = 0,
+  num_knots = 0,
+  ii = 0,
+  jj = 0,
+  conditions = 0,
+  start_num_poles = 0,
+  end_num_poles = 0,
+  index = 0,
+  start_index = 0,
+  end_index = 0,
+  other_index = 0,
+  type = 0,
+  order = 0 ;
   
-  Standard_Real    new_parameter,
-  value,
-  divide,
-  end_value,
-  start_value,
-  *poles_array,
-  *new_poles_array,
-  *delta_array,
-  *derivatives_array,
-  *weights_array ;
+  Standard_Real    new_parameter = NAN,
+  value = NAN,
+  divide = NAN,
+  end_value = NAN,
+  start_value = NAN,
+  *poles_array = nullptr,
+  *new_poles_array = nullptr,
+  *delta_array = nullptr,
+  *derivatives_array = nullptr,
+  *weights_array = nullptr ;
   
   ErrorStatus = 0 ;
   weights_array = NULL ;
@@ -883,18 +885,18 @@ void BSplCLib::FunctionMultiply
  Standard_Real &                    NewPoles,
  Standard_Integer &                 theStatus)
 {
-  Standard_Integer ii,
-  jj,
-  index ;
+  Standard_Integer ii = 0,
+  jj = 0,
+  index = 0 ;
   Standard_Integer extrap_mode[2],
-  error_code,
-  num_new_poles,
+  error_code = 0,
+  num_new_poles = 0,
   derivative_request = 0 ;
   Standard_Boolean  periodic_flag = Standard_False ;
-  Standard_Real  result,
+  Standard_Real  result = NAN,
   start_end[2],
-  *array_of_poles,
-  *array_of_new_poles ;
+  *array_of_poles = nullptr,
+  *array_of_new_poles = nullptr ;
   
   array_of_poles = (Standard_Real *) &NewPoles ;
   extrap_mode[0] = 
@@ -982,18 +984,18 @@ void BSplCLib::FunctionReparameterise
  Standard_Real &                    NewPoles,
  Standard_Integer &                 theStatus)
 {
-  Standard_Integer ii,
+  Standard_Integer ii = 0,
 //  jj,
-  index ;
+  index = 0 ;
   Standard_Integer extrap_mode[2],
-  error_code,
-  num_new_poles,
+  error_code = 0,
+  num_new_poles = 0,
   derivative_request = 0 ;
   Standard_Boolean  periodic_flag = Standard_False ;
-  Standard_Real  result,
+  Standard_Real  result = NAN,
   start_end[2],
-  *array_of_poles,
-  *array_of_new_poles ;
+  *array_of_poles = nullptr,
+  *array_of_new_poles = nullptr ;
   
   array_of_poles = (Standard_Real *) &NewPoles ;
   extrap_mode[0] = 
@@ -1149,13 +1151,13 @@ void BSplCLib::MergeBSplineKnots
  Handle(TColStd_HArray1OfReal) &     NewKnots,
  Handle(TColStd_HArray1OfInteger) &  NewMults) 
 {
-  Standard_Integer ii,
-  jj,
-  continuity,
-  set_mults_flag,
-  degree,
-  index,
-  num_knots ;
+  Standard_Integer ii = 0,
+  jj = 0,
+  continuity = 0,
+  set_mults_flag = 0,
+  degree = 0,
+  index = 0,
+  num_knots = 0 ;
   if (StartValue < EndValue - Tolerance) {
     TColStd_Array1OfReal knots1(1, Knots1.Length());
     TColStd_Array1OfReal knots2(1, Knots2.Length());

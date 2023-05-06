@@ -80,7 +80,7 @@ private:
   Standard_EXPORT Handle(MAT_Node) NodeForTurn (const Handle(MAT_Arc)& anArc, const Handle(MAT_BasicElt)& aBasicElt, const MAT_Side aSide) const;
 
   MAT_SequenceOfArc frontier;
-  Standard_Boolean limited;
+  Standard_Boolean limited{};
 
 
 };

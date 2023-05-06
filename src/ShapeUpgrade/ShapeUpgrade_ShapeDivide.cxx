@@ -42,15 +42,15 @@
 //function : ShapeUpgrade_ShapeDivide
 //purpose  : 
 //=======================================================================
-ShapeUpgrade_ShapeDivide::ShapeUpgrade_ShapeDivide() : myStatus(0)
+ShapeUpgrade_ShapeDivide::ShapeUpgrade_ShapeDivide() : myMaxTol(1), myContext(new ShapeBuild_ReShape), mySegmentMode(Standard_True), myStatus(0), mySplitFaceTool(new ShapeUpgrade_FaceDivide), myEdgeMode(2)
 {
   myPrecision = myMinTol = Precision::Confusion();
-  myMaxTol = 1; //Precision::Infinite() ?? pdn
-  mySplitFaceTool = new ShapeUpgrade_FaceDivide;
-  myContext = new ShapeBuild_ReShape;
+  //Precision::Infinite() ?? pdn
+  
+  
   //myMsgReg = new ShapeExtend_BasicMsgRegistrator;
-  mySegmentMode = Standard_True;
-  myEdgeMode = 2;
+  
+  
 }
 
 //=======================================================================
@@ -58,14 +58,14 @@ ShapeUpgrade_ShapeDivide::ShapeUpgrade_ShapeDivide() : myStatus(0)
 //purpose  : 
 //=======================================================================
 
-ShapeUpgrade_ShapeDivide::ShapeUpgrade_ShapeDivide(const TopoDS_Shape &S) : myStatus(0)
+ShapeUpgrade_ShapeDivide::ShapeUpgrade_ShapeDivide(const TopoDS_Shape &S) : myMaxTol(1), myContext(new ShapeBuild_ReShape), mySegmentMode(Standard_True), myStatus(0), mySplitFaceTool(new ShapeUpgrade_FaceDivide), myEdgeMode(2)
 {
   myPrecision = myMinTol = Precision::Confusion();
-  myMaxTol = 1; //Precision::Infinite() ?? pdn
-  mySplitFaceTool = new ShapeUpgrade_FaceDivide;
-  myContext = new ShapeBuild_ReShape;
-  mySegmentMode = Standard_True;
-  myEdgeMode = 2;
+  //Precision::Infinite() ?? pdn
+  
+  
+  
+  
   Init(S);
 }
 

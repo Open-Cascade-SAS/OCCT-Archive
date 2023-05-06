@@ -14,6 +14,7 @@
 // AdvApp2Var_SysBase.cxx
 #include <assert.h>
 #include <cmath>
+#include <math.h>
 #include <string.h>
 #include <AdvApp2Var_SysBase.hxx>
 #include <AdvApp2Var_Data.hxx>
@@ -273,7 +274,7 @@ int AdvApp2Var_SysBase::macrai4_(integer *nbelem,
   /* ***********************************************************************
    */
   
-  integer  iunit; 
+  integer  iunit = 0; 
   
   
   iunit = sizeof(integer);    
@@ -372,10 +373,10 @@ int macrbrk_()
 int AdvApp2Var_SysBase::macrchk_()
 {
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
   
   /* Local variables */
-  integer  i__, j;
+  integer  i__ = 0, j = 0;
   
 /* ***********************************************************************
  */
@@ -557,7 +558,7 @@ int AdvApp2Var_SysBase::macrdi4_(integer *nbelem,
 /* > */
 /* ***********************************************************************
  */
-  integer iunit;
+  integer iunit = 0;
   
   iunit = sizeof(integer); 
   /* Function Body */
@@ -713,7 +714,7 @@ int macrgfl_(intptr_t *iadfld,
   integer ifois = 1;
   
   char cbid[1] = {};
-  integer ibid, ienr;
+  integer ibid = 0, ienr = 0;
   integer novfl = 0;
   
   /* ***********************************************************************
@@ -849,7 +850,7 @@ int macrmsg_(const char *,//crout,
 {
   
   /* Local variables */
-  integer inum;
+  integer inum = 0;
   char /*cfm[80],*/ cln[3];
   
 /* ***********************************************************************
@@ -1152,7 +1153,7 @@ int magtlog_(const char *cnmlog,
  
   /* Local variables */
   char cbid[255];
-  integer ibid, ier;
+  integer ibid = 0, ier = 0;
   
 
 /* ********************************************************************** 
@@ -1307,12 +1308,12 @@ int AdvApp2Var_SysBase::maitbr8_(integer *itaill,
     };
   
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
   
   /* Local variables */
-  integer i__;
+  integer i__ = 0;
   doublereal buffx[63];
-  integer nbfois, noffst, nreste, nufois;
+  integer nbfois = 0, noffst = 0, nreste = 0, nufois = 0;
 
 /* ***********************************************************************
  */
@@ -1552,7 +1553,7 @@ int maostrb_()
 //=======================================================================
 int maostrd_()
 {
-  integer imod;
+  integer imod = 0;
   
 /* ***********************************************************************
  */
@@ -1615,12 +1616,12 @@ int maoverf_(integer *nbentr,
   integer ifois = 0;
   
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
   
   /* Local variables */
-  integer ibid;
+  integer ibid = 0;
   doublereal buff[63];
-  integer ioct, indic, nrest, icompt;
+  integer ioct = 0, indic = 0, nrest = 0, icompt = 0;
 
 /* ***********************************************************************
  */
@@ -1789,7 +1790,7 @@ int maoverf_(integer *nbentr,
     /* Loop. The upper limit is the integer value of the logarithm of base 2
      */
     /* of NBENTR/NLONGR. */
-    i__1 = (integer) (log((real) (*nbentr) / (float)63.) / log((float)2.))
+    i__1 = (integer) (std::log((real) (*nbentr) / (float)63.) / std::log((float)2.))
       ;
     for (ibid = 1; ibid <= i__1; ++ibid) {
       
@@ -1943,14 +1944,14 @@ int mcrcomm_(integer *kop,
   integer ntab = 0;
   
   /* System generated locals */
-  integer i__1, i__2;
+  integer i__1 = 0, i__2 = 0;
   
   /* Local variables */
-  intptr_t ideb;
+  intptr_t ideb = 0;
   doublereal dtab[32000];
   intptr_t itab[160]	/* was [4][40] */;
-  intptr_t ipre;
-  integer i__, j, k;
+  intptr_t ipre = 0;
+  integer i__ = 0, j = 0, k = 0;
   
 
 /************************************************************************
@@ -2118,12 +2119,12 @@ int AdvApp2Var_SysBase::mcrdelt_(integer *iunit,
 				 integer *iercod)
 
 {
-  integer ibid;
-  doublereal xbid;
-  integer noct, iver, ksys, i__, n, nrang, 
-  ibyte, ier;
-  intptr_t iadfd,  iadff, iaddr, loc; /* Les adrresses en long*/
-  integer kop;
+  integer ibid = 0;
+  doublereal xbid = NAN;
+  integer noct = 0, iver = 0, ksys = 0, i__ = 0, n = 0, nrang = 0, 
+  ibyte = 0, ier = 0;
+  intptr_t iadfd = 0,  iadff = 0, iaddr = 0, loc = 0; /* Les adrresses en long*/
+  integer kop = 0;
   
 /* ***********************************************************************
  */
@@ -2516,14 +2517,14 @@ int AdvApp2Var_SysBase::mcrlist_(integer *ier) const
 
 {
   /* System generated locals */
-  integer i__1;
+  integer i__1 = 0;
   
   /* Builtin functions */
   
   /* Local variables */
   char cfmt[1];
-  doublereal dfmt;
-  integer ifmt, i__, nufmt, ntotal;
+  doublereal dfmt = NAN;
+  integer ifmt = 0, i__ = 0, nufmt = 0, ntotal = 0;
   char subrou[7];
   
 
@@ -2664,15 +2665,15 @@ int AdvApp2Var_SysBase::mcrrqst_(integer *iunit,
 
 {
 
-  integer i__1, i__2;
+  integer i__1 = 0, i__2 = 0;
 
   /* Local variables */
-  doublereal dfmt;
-  integer ifmt, iver;
+  doublereal dfmt = NAN;
+  integer ifmt = 0, iver = 0;
   char subr[7];
-  integer ksys , ibyte, irest, ier;
-  intptr_t iadfd, iadff, iaddr,lofset, loc;
-  integer izu;
+  integer ksys = 0 , ibyte = 0, irest = 0, ier = 0;
+  intptr_t iadfd = 0, iadff = 0, iaddr = 0,lofset = 0, loc = 0;
+  integer izu = 0;
 
   
 /* ********************************************************************** 
@@ -3064,7 +3065,7 @@ void AdvApp2Var_SysBase::miraz_(integer *taille,
 //=======================================================================
 integer AdvApp2Var_SysBase::mnfndeb_()
 {
-  integer ret_val;
+  integer ret_val = 0;
   ret_val = 0;
   return ret_val;
 } /* mnfndeb_ */
@@ -3077,7 +3078,7 @@ int AdvApp2Var_SysBase::msifill_(integer *nbintg,
 				 integer *ivecin,
 				 integer *ivecou)
 {
-  integer nocte;
+  integer nocte = 0;
   
 /* ***********************************************************************
  */
@@ -3132,7 +3133,7 @@ int AdvApp2Var_SysBase::msrfill_(integer *nbreel,
 				 doublereal *vecent,
 				 doublereal * vecsor)
 {
-  integer nocte;
+  integer nocte = 0;
   
 
 /* ***********************************************************************
@@ -3309,7 +3310,7 @@ void AdvApp2Var_SysBase::mvriraz_(integer *taille,
 				  void *adt)
 
 {
-  integer offset;
+  integer offset = 0;
   offset = *taille * 8 ;
   /*    printf(" adt %d  long %d\n",adt,offset); */
   memset(adt , '\0' , offset) ;

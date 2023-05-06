@@ -27,6 +27,8 @@
 #define No_Standard_DimensionError
 
 
+#include <math.h>
+
 #include <Geom_BezierCurve.hxx>
 #include <Geom_Geometry.hxx>
 #include <gp.hxx>
@@ -51,7 +53,7 @@ IMPLEMENT_STANDARD_RTTIEXT(Geom_BezierCurve,Geom_BoundedCurve)
 //=======================================================================
 static Standard_Boolean Rational(const TColStd_Array1OfReal& W)
 {
-  Standard_Integer i, n = W.Length();
+  Standard_Integer i = 0, n = W.Length();
   Standard_Boolean rat = Standard_False;
   for (i = 1; i < n; i++) {
     rat =  Abs(W(i) - W(i+1)) > gp::Resolution();
@@ -105,7 +107,7 @@ Geom_BezierCurve::Geom_BezierCurve(const TColgp_Array1OfPnt&  Poles,
   if (Weights.Length() != nbpoles)
     throw Standard_ConstructionError();
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= nbpoles; i++) {
     if (Weights(i) <= gp::Resolution()) {
       throw Standard_ConstructionError();
@@ -211,7 +213,7 @@ void Geom_BezierCurve::InsertPoleAfter
   if(Index < 0 || Index > nbpoles)
     throw Standard_OutOfRange("Geom_BezierCurve::InsertPoleAfter");
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   // Insert the pole
   Handle(TColgp_HArray1OfPnt) npoles =
@@ -297,7 +299,7 @@ void Geom_BezierCurve::RemovePole
   if(Index < 1 || Index > nbpoles)
     throw Standard_OutOfRange("Geom_BezierCurve::RemovePole");
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   // Remove the pole
   Handle(TColgp_HArray1OfPnt) npoles =
@@ -339,7 +341,7 @@ void Geom_BezierCurve::RemovePole
 void Geom_BezierCurve::Reverse ()
 {
   gp_Pnt P;
-  Standard_Integer i, nbpoles = NbPoles();
+  Standard_Integer i = 0, nbpoles = NbPoles();
   TColgp_Array1OfPnt & cpoles = poles->ChangeArray1();
   
   // reverse poles
@@ -352,7 +354,7 @@ void Geom_BezierCurve::Reverse ()
   // reverse weights
   if (IsRational()) {
     TColStd_Array1OfReal & cweights = weights->ChangeArray1();
-    Standard_Real w;
+    Standard_Real w = NAN;
     for (i = 1; i <= nbpoles / 2; i++) {
       w = cweights(i);
       cweights(i) = cweights(nbpoles-i+1);
@@ -716,7 +718,7 @@ void Geom_BezierCurve::Weights
   if (IsRational())
     W = weights->Array1();
   else {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i = 1; i <= nbpoles; i++)
       W(i) = 1.;
   }

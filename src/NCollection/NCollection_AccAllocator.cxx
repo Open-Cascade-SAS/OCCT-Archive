@@ -48,7 +48,7 @@ NCollection_AccAllocator::~NCollection_AccAllocator()
 void* NCollection_AccAllocator::Allocate(const size_t theSize)
 {
   const AlignedSize aSize(theSize);
-  Block* aBlock;
+  Block* aBlock = nullptr;
 
   if (aSize <= mypLastBlock->FreeSize())
   {
@@ -91,7 +91,7 @@ void* NCollection_AccAllocator::Allocate(const size_t theSize)
 //=======================================================================
 void NCollection_AccAllocator::Free(void* theAddress)
 {
-  Key aKey;
+  Key aKey{};
   Block* aBlock = findBlock(theAddress, aKey);
 
 #if !defined No_Exception && !defined No_Standard_ProgramError
@@ -111,7 +111,7 @@ void NCollection_AccAllocator::Free(void* theAddress)
     if (myBlocks.Size() > 1)
     {
       Standard::Free(anAddress);
-      Block** appBlock;
+      Block** appBlock = nullptr;
       for (appBlock = &mypLastBlock;
           *appBlock != 0L;
            appBlock = &(*appBlock)->prevBlock)

@@ -33,17 +33,17 @@ class math_MyFunctionSetWithDerivatives : public math_FunctionSetWithDerivatives
 
     math_MyFunctionSetWithDerivatives (math_FunctionWithDerivative& F );
     
-    Standard_Integer NbVariables () const;
-    Standard_Integer NbEquations () const;
-    Standard_Boolean Value (const math_Vector& X, math_Vector& F) ;
-    Standard_Boolean Derivatives (const math_Vector& X, math_Matrix& D) ;    
-    Standard_Boolean Values (const math_Vector& X, math_Vector& F, math_Matrix& D) ;    
+    Standard_Integer NbVariables () const override;
+    Standard_Integer NbEquations () const override;
+    Standard_Boolean Value (const math_Vector& X, math_Vector& F) override ;
+    Standard_Boolean Derivatives (const math_Vector& X, math_Matrix& D) override ;    
+    Standard_Boolean Values (const math_Vector& X, math_Vector& F, math_Matrix& D) override ;    
 };
 
 
     math_MyFunctionSetWithDerivatives::math_MyFunctionSetWithDerivatives
-              (math_FunctionWithDerivative& F ) {
-                  Ff = &F ;
+              (math_FunctionWithDerivative& F ) : Ff(&F) {
+                  
      
 	      }
     

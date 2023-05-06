@@ -14,14 +14,14 @@
 
 #include <Vrml_NormalBinding.hxx>
 
-Vrml_NormalBinding::Vrml_NormalBinding(const Vrml_MaterialBindingAndNormalBinding aValue)
+Vrml_NormalBinding::Vrml_NormalBinding(const Vrml_MaterialBindingAndNormalBinding aValue) : myValue(aValue)
 {
- myValue = aValue;
+ 
 }
 
- Vrml_NormalBinding::Vrml_NormalBinding()
+ Vrml_NormalBinding::Vrml_NormalBinding() : myValue(Vrml_DEFAULT)
 {
- myValue = Vrml_DEFAULT;
+ 
 }
 
 void Vrml_NormalBinding::SetValue(const Vrml_MaterialBindingAndNormalBinding aValue)

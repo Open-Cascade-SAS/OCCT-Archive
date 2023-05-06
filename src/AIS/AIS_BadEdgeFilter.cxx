@@ -28,9 +28,9 @@ IMPLEMENT_STANDARD_RTTIEXT(AIS_BadEdgeFilter,SelectMgr_Filter)
 //function : AIS_BadEdgeFilter
 //purpose  : 
 //=======================================================================
-AIS_BadEdgeFilter::AIS_BadEdgeFilter()
+AIS_BadEdgeFilter::AIS_BadEdgeFilter() : myContour(0)
 {
-  myContour=0;
+  
 }
 
 //=======================================================================

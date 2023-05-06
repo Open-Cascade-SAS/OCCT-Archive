@@ -28,7 +28,7 @@
 
 GC_MakeConicalSurface::GC_MakeConicalSurface(const gp_Ax2&       A2    ,
 					       const Standard_Real Ang   ,
-					       const Standard_Real Radius)
+					       const Standard_Real Radius) : GC_Root()
 {
   if (Radius < 0.) { TheError = gce_NegativeRadius; }
   else if (Ang <= gp::Resolution() || Ang >= M_PI/2. - gp::Resolution()) {
@@ -40,10 +40,10 @@ GC_MakeConicalSurface::GC_MakeConicalSurface(const gp_Ax2&       A2    ,
   }
 }
 
-GC_MakeConicalSurface::GC_MakeConicalSurface(const gp_Cone& C)
+GC_MakeConicalSurface::GC_MakeConicalSurface(const gp_Cone& C) : GC_Root(), TheCone(new Geom_ConicalSurface(C))
 {
   TheError = gce_Done;
-  TheCone = new Geom_ConicalSurface(C);
+  
 }
 
 //=========================================================================
@@ -56,7 +56,7 @@ GC_MakeConicalSurface::GC_MakeConicalSurface(const gp_Cone& C)
 GC_MakeConicalSurface::GC_MakeConicalSurface(const gp_Pnt& P1 ,
 					       const gp_Pnt& P2 ,
 					       const gp_Pnt& P3 ,
-					       const gp_Pnt& P4 ) 
+					       const gp_Pnt& P4 ) : GC_Root() 
 {
   gce_MakeCone C = gce_MakeCone(P1,P2,P3,P4);
   TheError = C.Status();
@@ -72,7 +72,7 @@ GC_MakeConicalSurface::GC_MakeConicalSurface(const gp_Pnt& P1 ,
 GC_MakeConicalSurface::GC_MakeConicalSurface(const gp_Pnt&       P1 ,
 					       const gp_Pnt&       P2 ,
 					       const Standard_Real R1 ,
-					       const Standard_Real R2 ) 
+					       const Standard_Real R2 ) : GC_Root() 
 {
   gce_MakeCone C = gce_MakeCone(P1,P2,R1,R2);
   TheError = C.Status();

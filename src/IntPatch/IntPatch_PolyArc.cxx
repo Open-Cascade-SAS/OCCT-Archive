@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor2d_Curve2d.hxx>
 #include <gp_Pnt2d.hxx>
 #include <IntPatch_PolyArc.hxx>
@@ -63,15 +65,15 @@ IntPatch_PolyArc::IntPatch_PolyArc(const Handle(Adaptor2d_Curve2d)& Line ,
   Standard_Integer IndexInf = NbSample+1;
   Standard_Integer IndexSup = 0;
   
-  Standard_Real bx0,by0,bxmin,bxmax,bymin,bymax,r,r2;
+  Standard_Real bx0 = NAN,by0 = NAN,bxmin = NAN,bxmax = NAN,bymin = NAN,bymax = NAN,r = NAN,r2 = NAN;
   
   BoxOtherPolygon.Get(bxmin,bymin,bxmax,bymax);
   r=(bxmax-bxmin)+(bymax-bymin);
   bx0=(bxmax+bxmin)*0.5;
   by0=(bymax+bymin)*0.5;
   
-  Standard_Real Pas;
-  Standard_Real X,Y,Xs,Ys,Xm,Ym,XXs,YYs;
+  Standard_Real Pas = NAN;
+  Standard_Real X = NAN,Y = NAN,Xs = NAN,Ys = NAN,Xm = NAN,Ym = NAN,XXs = NAN,YYs = NAN;
   
   r*=0.8;
   r2 = r*r*49.;
@@ -108,7 +110,7 @@ IntPatch_PolyArc::IntPatch_PolyArc(const Handle(Adaptor2d_Curve2d)& Line ,
       if(!isMidPtInBox) {
 	Standard_Real d = (X-Xs)*(X-Xs)+(Y-Ys)*(Y-Ys);
 	if (d > r2) {
-	  Standard_Real xmin,xmax,ymin,ymax;
+	  Standard_Real xmin = NAN,xmax = NAN,ymin = NAN,ymax = NAN;
 	  MinMax (Xs,X, xmin,xmax);
 	  MinMax (Ys,Y, ymin,ymax);
 	  isSegOut = (xmax < bxmin || xmin > bxmax ||
@@ -184,7 +186,7 @@ Standard_Real IntPatch_PolyArc::Parameter(const Standard_Integer Index ) const
 
 
 void IntPatch_PolyArc::SetOffset(const Standard_Real ox,const Standard_Real oy) { 
-  Standard_Real xmin,ymin,xmax,ymax,g;
+  Standard_Real xmin = NAN,ymin = NAN,xmax = NAN,ymax = NAN,g = NAN;
   myBox.Get(xmin,ymin,xmax,ymax);
   g = myBox.GetGap();
   

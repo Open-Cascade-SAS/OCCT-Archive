@@ -40,9 +40,9 @@ RWObj_ConfigurationNode::RWObj_ConfigurationNode() :
 // purpose  :
 //=======================================================================
 RWObj_ConfigurationNode::RWObj_ConfigurationNode(const Handle(RWObj_ConfigurationNode)& theNode)
-  :DE_ConfigurationNode(theNode)
+  :DE_ConfigurationNode(theNode), InternalParameters(theNode->InternalParameters)
 {
-  InternalParameters = theNode->InternalParameters;
+  
 }
 
 //=======================================================================

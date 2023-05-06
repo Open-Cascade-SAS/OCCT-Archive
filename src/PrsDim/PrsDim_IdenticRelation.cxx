@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_IdenticRelation.hxx>
 
 #include <PrsDim.hxx>
@@ -78,7 +80,7 @@ static void PrsDim_Sort(Standard_Real tab1[4],
 		     Standard_Integer tab3[4])
 {
   Standard_Boolean found = Standard_True;
-  Standard_Real cur; gp_Pnt cur1; Standard_Integer cur2;
+  Standard_Real cur = NAN; gp_Pnt cur1; Standard_Integer cur2 = 0;
   
   while (found) {
     found = Standard_False;
@@ -377,7 +379,7 @@ void PrsDim_IdenticRelation::ComputeSelection(const Handle(SelectMgr_Selection)&
 	{
 	  Handle(Geom_Curve) curv1,curv2;
 	  gp_Pnt firstp1,lastp1,firstp2,lastp2;
-	  Standard_Boolean isInfinite1,isInfinite2;
+	  Standard_Boolean isInfinite1 = 0,isInfinite2 = 0;
 	  Handle(Geom_Curve) extCurv;
 	  if ( !PrsDim::ComputeGeometry(TopoDS::Edge(myFShape),TopoDS::Edge(mySShape),
 				     myExtShape,curv1,curv2,
@@ -454,7 +456,7 @@ void PrsDim_IdenticRelation::ComputeTwoEdgesPresentation(const Handle(Prs3d_Pres
 {
   Handle(Geom_Curve) curv1,curv2;
   gp_Pnt firstp1,lastp1,firstp2,lastp2;
-  Standard_Boolean isInfinite1,isInfinite2;
+  Standard_Boolean isInfinite1 = 0,isInfinite2 = 0;
 
   Handle(Geom_Curve) extCurv;
   if (!PrsDim::ComputeGeometry(TopoDS::Edge(myFShape),
@@ -552,7 +554,7 @@ void PrsDim_IdenticRelation::ComputeTwoLinesPresentation(const Handle(Prs3d_Pres
   }
   else {
     // Computation of the parameters of the 4 points on the line <thelin>
-    Standard_Real pf1, pf2, pl1, pl2;    
+    Standard_Real pf1 = NAN, pf2 = NAN, pl1 = NAN, pl2 = NAN;    
 
     pf1 = ElCLib::Parameter(thelin->Lin(), firstp1);
     pl1 = ElCLib::Parameter(thelin->Lin(), lastp1);
@@ -760,7 +762,7 @@ void PrsDim_IdenticRelation::ComputeTwoCirclesPresentation(const Handle(Prs3d_Pr
   else if ( !circ1complete && !circ2complete )
     {
       // We project all the points on the circle
-      Standard_Real pf1, pf2, pl1, pl2;
+      Standard_Real pf1 = NAN, pf2 = NAN, pl1 = NAN, pl2 = NAN;
       pf1 = ElCLib::Parameter(thecirc->Circ(), firstp1);
       pf2 = ElCLib::Parameter(thecirc->Circ(), firstp2);
       pl1 = ElCLib::Parameter(thecirc->Circ(), lastp1);
@@ -1115,7 +1117,7 @@ void PrsDim_IdenticRelation::ComputeTwoEllipsesPresentation(const Handle(Prs3d_P
   else if ( !circ1complete && !circ2complete )
     {
       // We project all the points on the circle
-      Standard_Real pf1, pf2, pl1, pl2;
+      Standard_Real pf1 = NAN, pf2 = NAN, pl1 = NAN, pl2 = NAN;
       pf1 = ElCLib::Parameter(theEll->Elips(), firstp1);
       pf2 = ElCLib::Parameter(theEll->Elips(), firstp2);
       pl1 = ElCLib::Parameter(theEll->Elips(), lastp1);
@@ -1407,7 +1409,7 @@ void PrsDim_IdenticRelation::ComputeNotAutoArcPresentation(const Handle(Geom_Ell
 //=======================================================================
 void PrsDim_IdenticRelation::ComputeTwoVerticesPresentation(const Handle(Prs3d_Presentation)& aPrs)
 {
-  Standard_Boolean isOnPlane1, isOnPlane2;
+  Standard_Boolean isOnPlane1 = 0, isOnPlane2 = 0;
   const TopoDS_Vertex& FVertex = TopoDS::Vertex(myFShape);
   const TopoDS_Vertex& SVertex = TopoDS::Vertex(mySShape);
   
@@ -1624,7 +1626,7 @@ void PrsDim_IdenticRelation::ComputeOneEdgeOVertexPresentation(const Handle(Prs3
 {
   TopoDS_Vertex V;
   TopoDS_Edge E;
-  Standard_Integer numedge;
+  Standard_Integer numedge = 0;
   
   if (myFShape.ShapeType() == TopAbs_VERTEX) {
     V = TopoDS::Vertex(myFShape);
@@ -1639,8 +1641,8 @@ void PrsDim_IdenticRelation::ComputeOneEdgeOVertexPresentation(const Handle(Prs3
   gp_Pnt ptonedge1,ptonedge2;
   Handle(Geom_Curve) aCurve;
   Handle(Geom_Curve) extCurv;
-  Standard_Boolean isInfinite;
-  Standard_Boolean isOnPlanEdge, isOnPlanVertex;
+  Standard_Boolean isInfinite = 0;
+  Standard_Boolean isOnPlanEdge = 0, isOnPlanVertex = 0;
   if (!PrsDim::ComputeGeometry(E,aCurve,ptonedge1,ptonedge2,extCurv,isInfinite,isOnPlanEdge,myPlane))
     return;
   aPrs->SetInfiniteState(isInfinite);

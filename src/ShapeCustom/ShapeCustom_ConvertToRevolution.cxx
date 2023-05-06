@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_GCurve.hxx>
 #include <BRep_TEdge.hxx>
@@ -156,7 +158,7 @@ Standard_Boolean ShapeCustom_ConvertToRevolution::NewSurface (const TopoDS_Face&
     if ( S->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface)) ) {
       Handle(Geom_RectangularTrimmedSurface) RTS = 
 	Handle(Geom_RectangularTrimmedSurface)::DownCast ( S );
-      Standard_Real U1, U2, V1, V2;
+      Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
       RTS->Bounds ( U1, U2, V1, V2 );
       S = new Geom_RectangularTrimmedSurface ( Rev, U1, U2, V1, V2 );
     }
@@ -195,7 +197,7 @@ Standard_Boolean ShapeCustom_ConvertToRevolution::NewCurve (const TopoDS_Edge& E
     Handle(Geom_Surface) S = GC->Surface();
     Handle(Geom_ElementarySurface) ES;
     if ( ! IsToConvert ( S, ES ) ) continue;
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     C = BRep_Tool::Curve ( E, L, f, l );
     if ( ! C.IsNull() ) C = Handle(Geom_Curve)::DownCast ( C->Copy() );
     Tol = BRep_Tool::Tolerance ( E );
@@ -235,7 +237,7 @@ Standard_Boolean ShapeCustom_ConvertToRevolution::NewCurve2d (const TopoDS_Edge&
   // just copy pcurve if either its surface is changing or edge was copied
   if ( ! IsToConvert ( S, ES ) && E.IsSame ( NewE ) ) return Standard_False;
   
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   C = BRep_Tool::CurveOnSurface(E,F,f,l);
   if ( ! C.IsNull() ) {
     C = Handle(Geom2d_Curve)::DownCast ( C->Copy() );

@@ -34,13 +34,13 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_ConvertCurve3dToBezier,ShapeUpgrade_SplitCurve3d)
 
-ShapeUpgrade_ConvertCurve3dToBezier::ShapeUpgrade_ConvertCurve3dToBezier()
+ShapeUpgrade_ConvertCurve3dToBezier::ShapeUpgrade_ConvertCurve3dToBezier() : mySegments(new TColGeom_HSequenceOfCurve), mySplitParams(new TColStd_HSequenceOfReal), myLineMode(Standard_True), myCircleMode(Standard_True), myConicMode(Standard_True)
 {
-  mySegments = new TColGeom_HSequenceOfCurve;
-  mySplitParams = new TColStd_HSequenceOfReal;
-  myLineMode = Standard_True;
-  myCircleMode = Standard_True;
-  myConicMode = Standard_True;
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -161,7 +161,7 @@ void ShapeUpgrade_ConvertCurve3dToBezier::Compute()
     TColStd_Array1OfReal knots(1,nbArcs+1);
     tool.Knots(knots);
     mySplitParams->Append(First+Shift);
-    Standard_Integer j; // svv Jan 10 2000 : porting on DEC
+    Standard_Integer j = 0; // svv Jan 10 2000 : porting on DEC
     for(j = 1; j <=nbArcs; j++) {
       Standard_Real nextKnot = knots(j+1)+Shift;
       if(nextKnot - mySplitParams->Value(mySplitParams->Length()) > precision) {

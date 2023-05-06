@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BSplineSurface.hxx>
 #include <Geom_Curve.hxx>
@@ -31,13 +33,13 @@
 
 // ============================================================================
 GeomConvert_CompBezierSurfacesToBSplineSurface::
-GeomConvert_CompBezierSurfacesToBSplineSurface(const TColGeom_Array2OfBezierSurface& Beziers)
+GeomConvert_CompBezierSurfacesToBSplineSurface(const TColGeom_Array2OfBezierSurface& Beziers) : myDone(Standard_True), myUKnots(new (TColStd_HArray1OfReal) (1, Beziers.ColLength()+1))
 // ============================================================================
 {
-  Standard_Integer ii;
-  myDone = Standard_True;
+  Standard_Integer ii = 0;
+  
   // Choix des noeuds 
-  myUKnots = new (TColStd_HArray1OfReal) (1, Beziers.ColLength()+1);
+  
   for (ii=0; ii<myUKnots->Length(); ii++) { myUKnots->SetValue(ii+1, ii); }
 
   myVKnots = new (TColStd_HArray1OfReal) (1, Beziers.RowLength()+1);
@@ -53,22 +55,22 @@ GeomConvert_CompBezierSurfacesToBSplineSurface::
 GeomConvert_CompBezierSurfacesToBSplineSurface(
       const TColGeom_Array2OfBezierSurface& Beziers,
       const Standard_Real Tolerance,
-      const Standard_Boolean RemoveKnots)
+      const Standard_Boolean RemoveKnots) : myDone(Standard_True), myUKnots(new (TColStd_HArray1OfReal) (1, Beziers.ColLength()+1)), myVKnots(new (TColStd_HArray1OfReal) (1, Beziers.RowLength()+1))
 // ============================================================================
 {
-  Standard_Integer ii, jj, multU=0, multV, minus;
-  Standard_Boolean Ok;
+  Standard_Integer ii = 0, jj = 0, multU=0, multV = 0, minus = 0;
+  Standard_Boolean Ok = 0;
   gp_Vec vec;
-  Standard_Real V1, V2, V3, Ratio, L1, L2, Tol, val;
+  Standard_Real V1 = NAN, V2 = NAN, V3 = NAN, Ratio = NAN, L1 = NAN, L2 = NAN, Tol = NAN, val = NAN;
   gp_Pnt P1, P2, P3;
   Handle(Geom_Curve) FirstCurve, SecondCurve;
 
-  myDone = Standard_True;
+  
 
   // Choix des noeuds 
 
-  myUKnots = new (TColStd_HArray1OfReal) (1, Beziers.ColLength()+1);
-  myVKnots = new (TColStd_HArray1OfReal) (1, Beziers.RowLength()+1);
+  
+  
 
   // --> en U
   myUKnots->SetValue(1, 0);
@@ -220,19 +222,19 @@ GeomConvert_CompBezierSurfacesToBSplineSurface(
 				 const TColStd_Array1OfReal& VKnots, 
 				 const GeomAbs_Shape UContinuity, 
 				 const GeomAbs_Shape VContinuity,
-				 const Standard_Real Tolerance)
+				 const Standard_Real Tolerance) : myDone(Standard_True), myUKnots(new (TColStd_HArray1OfReal) (1, Beziers.ColLength()+1)), myVKnots(new (TColStd_HArray1OfReal) (1, Beziers.RowLength()+1))
 // ============================================================================
 {
   Standard_Integer decu=0, decv=0;
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
 
-  myDone = Standard_True;
+  
 
   // Recuperation des noeuds 
-  myUKnots = new (TColStd_HArray1OfReal) (1, Beziers.ColLength()+1);
+  
   myUKnots->ChangeArray1() =  UKnots;
 
-  myVKnots = new (TColStd_HArray1OfReal) (1, Beziers.RowLength()+1);
+  
   myVKnots->ChangeArray1() = VKnots;
 
   // Calcul des Poles
@@ -279,7 +281,7 @@ GeomConvert_CompBezierSurfacesToBSplineSurface(
   
   if ( (decu>0) || (decv>0) ) {
  
-    Standard_Integer ii;
+    Standard_Integer ii = 0;
     Standard_Integer multU = myUDegree - decu;
     Standard_ConstructionError_Raise_if( 
     ((multU <= 0) && (myUKnots->Length()>2)) , 
@@ -328,7 +330,7 @@ void GeomConvert_CompBezierSurfacesToBSplineSurface::Perform(
 				     const TColGeom_Array2OfBezierSurface& Beziers)
 // ================================================================================
 {
-  Standard_Integer IU, IV;
+  Standard_Integer IU = 0, IV = 0;
 
   // (1) Determination des degrees et si le resultat est rationnel.
   isrational = Standard_False;
@@ -355,8 +357,8 @@ void GeomConvert_CompBezierSurfacesToBSplineSurface::Perform(
   // (2) Boucle sur les carreaux  -----------------------------
 
   Handle(Geom_BezierSurface) Patch;
-  Standard_Integer  UIndex,  VIndex,  uindex,  vindex,  udeb,  vdeb;
-  Standard_Integer  upol, vpol, ii;
+  Standard_Integer  UIndex = 0,  VIndex = 0,  uindex = 0,  vindex = 0,  udeb = 0,  vdeb = 0;
+  Standard_Integer  upol = 0, vpol = 0, ii = 0;
 
 
   myPoles = new (TColgp_HArray2OfPnt) 

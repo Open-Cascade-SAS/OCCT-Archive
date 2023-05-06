@@ -63,7 +63,7 @@ void RWStepBasic_RWProductDefinitionWithAssociatedDocuments::ReadStep
  
         Handle(StepBasic_HArray1OfDocument) aDocIds;
         Handle(StepBasic_Document) anent5;
-        Standard_Integer nsub5;
+        Standard_Integer nsub5 = 0;
         if (data->ReadSubList (num,5,"frame_of_reference",ach,nsub5)) {
           Standard_Integer nb5 = data->NbParams(nsub5);
           if (nb5 > 0) aDocIds = new StepBasic_HArray1OfDocument (1, nb5);
@@ -104,7 +104,7 @@ void RWStepBasic_RWProductDefinitionWithAssociatedDocuments::WriteStep
 	// -- own : list
 
 	SW.OpenSub();
-	Standard_Integer i,nb = ent->NbDocIds();
+	Standard_Integer i = 0,nb = ent->NbDocIds();
 	for (i = 1; i <= nb; i ++) SW.Send (ent->DocIdsValue(i));
 	SW.CloseSub();
 
@@ -119,6 +119,6 @@ void RWStepBasic_RWProductDefinitionWithAssociatedDocuments::Share(const Handle(
 
 	iter.GetOneItem(ent->FrameOfReference());
 
-	Standard_Integer i,nb = ent->NbDocIds();
+	Standard_Integer i = 0,nb = ent->NbDocIds();
 	for (i = 1; i <= nb; i ++) iter.AddItem (ent->DocIdsValue(i));
 }

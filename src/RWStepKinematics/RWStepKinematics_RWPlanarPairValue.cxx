@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWPlanarPairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -55,13 +57,13 @@ void RWStepKinematics_RWPlanarPairValue::ReadStep (const Handle(StepData_StepRea
 
   // Own fields of PlanarPairValue
 
-  Standard_Real aActualRotation;
+  Standard_Real aActualRotation = NAN;
   theData->ReadReal (theNum, 3, "actual_rotation", theArch, aActualRotation);
 
-  Standard_Real aActualTranslationX;
+  Standard_Real aActualTranslationX = NAN;
   theData->ReadReal (theNum, 4, "actual_translation_x", theArch, aActualTranslationX);
 
-  Standard_Real aActualTranslationY;
+  Standard_Real aActualTranslationY = NAN;
   theData->ReadReal (theNum, 5, "actual_translation_y", theArch, aActualTranslationY);
 
   // Initialize entity

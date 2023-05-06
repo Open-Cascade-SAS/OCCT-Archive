@@ -169,13 +169,13 @@ private:
   Standard_Boolean myIsFindSingleSolution; // Default value is false.
   Extrema_ECC myECC;
   Standard_Boolean myDone;
-  Standard_Boolean myIsParallel;
+  Standard_Boolean myIsParallel{};
   Extrema_SequenceOfPOnCurv mypoints;
   TColStd_SequenceOfReal mySqDist;
-  const Adaptor3d_Curve* myC[2];
-  Standard_Real myInf[2];
-  Standard_Real mySup[2];
-  Standard_Real myTol[2];
+  const Adaptor3d_Curve* myC[2]{};
+  Standard_Real myInf[2]{};
+  Standard_Real mySup[2]{};
+  Standard_Real myTol[2]{};
   gp_Pnt myP1f;
   gp_Pnt myP1l;
   gp_Pnt myP2f;

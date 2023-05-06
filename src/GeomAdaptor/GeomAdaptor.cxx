@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomAdaptor.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -156,7 +158,7 @@ Handle(Geom_Surface) GeomAdaptor::MakeSurface(const Adaptor3d_Surface& HS,
     return S;
 
   // trim the surface if necassary.
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   S->Bounds(U1, U2, V1, V2);
   if ((HS.FirstUParameter() != U1 ) ||
       (HS.LastUParameter () != U2 ) ||

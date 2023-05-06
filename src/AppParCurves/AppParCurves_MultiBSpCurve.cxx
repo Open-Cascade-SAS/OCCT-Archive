@@ -32,7 +32,7 @@
 static Standard_Integer ComputeDegree(const TColStd_Array1OfInteger& mults,
 				      const Standard_Integer nbPoles)
 {
-  Standard_Integer i, sum = 0;
+  Standard_Integer i = 0, sum = 0;
   for (i = mults.Lower(); i <= mults.Upper(); i++) {
     sum += mults(i);
   }
@@ -73,13 +73,13 @@ AppParCurves_MultiBSpCurve::AppParCurves_MultiBSpCurve
   (const AppParCurves_Array1OfMultiPoint& tabMU,
    const TColStd_Array1OfReal& Knots,
    const TColStd_Array1OfInteger& Mults):
-  AppParCurves_MultiCurve(tabMU)
+  AppParCurves_MultiCurve(tabMU), myknots(new TColStd_HArray1OfReal(Knots.Lower(), Knots.Upper())), mymults(new TColStd_HArray1OfInteger(Mults.Lower(), Mults.Upper())), myDegree(ComputeDegree(Mults,NbPoles()))
 {
-  myknots = new TColStd_HArray1OfReal(Knots.Lower(), Knots.Upper());
+  
   myknots->ChangeArray1() = Knots;
-  mymults = new TColStd_HArray1OfInteger(Mults.Lower(), Mults.Upper());
+  
   mymults->ChangeArray1() = Mults;
-  myDegree = ComputeDegree(Mults,NbPoles());
+  
 }
 
 
@@ -92,13 +92,13 @@ AppParCurves_MultiBSpCurve::AppParCurves_MultiBSpCurve
   (const AppParCurves_MultiCurve& SC,
    const TColStd_Array1OfReal& Knots,
    const TColStd_Array1OfInteger& Mults):
-  AppParCurves_MultiCurve(SC)
+  AppParCurves_MultiCurve(SC), myknots(new TColStd_HArray1OfReal(Knots.Lower(), Knots.Upper())), mymults(new TColStd_HArray1OfInteger(Mults.Lower(), Mults.Upper())), myDegree(ComputeDegree(Mults,NbPoles()))
 {
-  myknots = new TColStd_HArray1OfReal(Knots.Lower(), Knots.Upper());
+  
   myknots->ChangeArray1() = Knots;
-  mymults = new TColStd_HArray1OfInteger(Mults.Lower(), Mults.Upper());
+  
   mymults->ChangeArray1() = Mults;
-  myDegree = ComputeDegree(Mults,NbPoles());
+  
 }
 
 

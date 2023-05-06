@@ -388,7 +388,7 @@ Standard_OStream& TDF_Attribute::Dump(Standard_OStream& anOS) const
   if (IsBackuped())  anOS<<" Backuped";
   if (IsForgotten()) anOS<<" Forgotten";
   char toto[45];
-  Standard_PCharacter pStr;
+  Standard_PCharacter pStr = nullptr;
   //
   pStr=toto;
   ID().ToCString(pStr);

@@ -14,18 +14,20 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math_Array1OfValueAndWeight.hxx>
 #include <math_ComputeKronrodPointsAndWeights.hxx>
 #include <math_EigenValuesSearcher.hxx>
 #include <Standard_ErrorHandler.hxx>
 
 #include <algorithm>
-math_ComputeKronrodPointsAndWeights::math_ComputeKronrodPointsAndWeights(const Standard_Integer Number)
+math_ComputeKronrodPointsAndWeights::math_ComputeKronrodPointsAndWeights(const Standard_Integer Number) : myIsDone(Standard_False)
 {
-  myIsDone = Standard_False;
+  
 
   try {
-    Standard_Integer i, j;
+    Standard_Integer i = 0, j = 0;
     Standard_Integer a2NP1 = 2*Number + 1;
   
     myPoints  = new TColStd_HArray1OfReal(1, a2NP1);
@@ -76,11 +78,11 @@ math_ComputeKronrodPointsAndWeights::math_ComputeKronrodPointsAndWeights(const S
       aa[i] = aDiag(i);
       bb[i] = aSubDiag(i);
     }
-    Standard_Real    *ptrtmp;
-    Standard_Real     u;
-    Standard_Integer  m;
-    Standard_Integer  k;
-    Standard_Integer  l;
+    Standard_Real    *ptrtmp = nullptr;
+    Standard_Real     u = NAN;
+    Standard_Integer  m = 0;
+    Standard_Integer  k = 0;
+    Standard_Integer  l = 0;
 
     Standard_Real *a = aa+1;
     Standard_Real *b = bb+1;

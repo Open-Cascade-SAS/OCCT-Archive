@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math_BrentMinimum.hxx>
 #include <math_Function.hxx>
 #include <StdFail_NotDone.hxx>
@@ -94,9 +96,9 @@ void math_BrentMinimum::Perform(math_Function& F,
                                 const Standard_Real    bx,
                                 const Standard_Real    cx)
 {
-  Standard_Boolean OK;  
-  Standard_Real etemp, fu, p, q, r;  
-  Standard_Real tol1, tol2, u, v, w, xm;
+  Standard_Boolean OK = 0;  
+  Standard_Real etemp = NAN, fu = NAN, p = NAN, q = NAN, r = NAN;  
+  Standard_Real tol1 = NAN, tol2 = NAN, u = NAN, v = NAN, w = NAN, xm = NAN;
   Standard_Real e = 0.0;
   Standard_Real d = RealLast();
 

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWRackAndPinionPairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -55,7 +57,7 @@ void RWStepKinematics_RWRackAndPinionPairValue::ReadStep (const Handle(StepData_
 
   // Own fields of RackAndPinionPairValue
 
-  Standard_Real aActualDisplacement;
+  Standard_Real aActualDisplacement = NAN;
   theData->ReadReal (theNum, 3, "actual_displacement", theArch, aActualDisplacement);
 
   // Initialize entity

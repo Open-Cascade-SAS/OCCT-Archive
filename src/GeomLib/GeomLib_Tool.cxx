@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomLib_Tool.hxx>
 
 #include <ElCLib.hxx>
@@ -192,11 +194,11 @@ public:
                      const gp_XY& thePf,
                      const gp_XY& thePl):
     myCurve(theCurve),
-    myPRef(thePf)
+    myIsValid(mySqMod > Precision::SquarePConfusion()), myPRef(thePf)
   {
     myDirRef = thePl - thePf;
     mySqMod = myDirRef.SquareModulus();
-    myIsValid = (mySqMod > Precision::SquarePConfusion());
+    
   }
 
   //! Compute additional parameters depending on the argument
@@ -231,7 +233,7 @@ public:
   }
 
   //! Returns number of variables
-  virtual Standard_Integer NbVariables() const Standard_OVERRIDE
+  Standard_Integer NbVariables() const Standard_OVERRIDE
   {
     return 1;
   }
@@ -265,18 +267,18 @@ public:
   }
 
   //! Returns value of *this (square deviation)
-  virtual Standard_Boolean Value(const math_Vector& thePrm,
+  Standard_Boolean Value(const math_Vector& thePrm,
                                  Standard_Real& theVal) Standard_OVERRIDE
   {
-    Standard_Real aD1;
-    Standard_Real aD2;
+    Standard_Real aD1 = NAN;
+    Standard_Real aD2 = NAN;
     ValueAndDerives(thePrm.Value(thePrm.Lower()), theVal, aD1, aD2);
     theVal = -theVal;
     return Standard_True;
   }
 
   //! Always returns 0. It is used for compatibility with the parent class.
-  virtual Standard_Integer GetStateNumber() Standard_OVERRIDE
+  Standard_Integer GetStateNumber() Standard_OVERRIDE
   {
     return 0;
   }
@@ -350,7 +352,7 @@ Standard_Real GeomLib_Tool::ComputeDeviation(const Geom2dAdaptor_Curve& theCurve
   Standard_Real aD2 = 0.0;
   Standard_Real aU0 = theStartParameter;
   Standard_Real aUmax = theStartParameter;
-  Standard_Real aSqDefl;
+  Standard_Real aSqDefl = NAN;
   aFunc.ValueAndDerives(aU0, aSqDefl, aD1, aD2);
   for (Standard_Integer anItr = 1; anItr <= theNbIters; anItr++)
   {

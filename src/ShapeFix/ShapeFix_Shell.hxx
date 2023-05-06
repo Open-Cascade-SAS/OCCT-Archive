@@ -132,7 +132,7 @@ protected:
   Handle(ShapeFix_Face) myFixFace;
   Standard_Integer myFixFaceMode;
   Standard_Integer myFixOrientationMode;
-  Standard_Integer myNbShells;
+  Standard_Integer myNbShells{};
   Standard_Boolean myNonManifold;
 
 private:

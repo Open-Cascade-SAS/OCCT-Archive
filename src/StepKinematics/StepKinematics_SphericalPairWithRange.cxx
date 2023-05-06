@@ -22,14 +22,14 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_SphericalPairWithRange, StepKinematics
 //function : StepKinematics_SphericalPairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_SphericalPairWithRange::StepKinematics_SphericalPairWithRange ()
+StepKinematics_SphericalPairWithRange::StepKinematics_SphericalPairWithRange () : defLowerLimitYaw(Standard_False), defUpperLimitYaw(Standard_False), defLowerLimitPitch(Standard_False), defUpperLimitPitch(Standard_False), defLowerLimitRoll(Standard_False), defUpperLimitRoll(Standard_False)
 {
-  defLowerLimitYaw = Standard_False;
-  defUpperLimitYaw = Standard_False;
-  defLowerLimitPitch = Standard_False;
-  defUpperLimitPitch = Standard_False;
-  defLowerLimitRoll = Standard_False;
-  defUpperLimitRoll = Standard_False;
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================

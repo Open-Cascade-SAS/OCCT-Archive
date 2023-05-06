@@ -28,9 +28,9 @@
 //function : ShapeUpgrade_ShellSewing
 //purpose  : 
 //=======================================================================
-ShapeUpgrade_ShellSewing::ShapeUpgrade_ShellSewing()
+ShapeUpgrade_ShellSewing::ShapeUpgrade_ShellSewing() : myReShape(new ShapeBuild_ReShape)
 {
-  myReShape = new ShapeBuild_ReShape;
+  
 }
 
 //=======================================================================

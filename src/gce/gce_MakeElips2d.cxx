@@ -32,7 +32,7 @@
 //=========================================================================
 gce_MakeElips2d::gce_MakeElips2d(const gp_Pnt2d&   S1     ,
 				 const gp_Pnt2d&   S2     ,
-				 const gp_Pnt2d&   Center ) 
+				 const gp_Pnt2d&   Center ) : gce_Root() 
 {
   Standard_Real D1 = S1.Distance(Center);
   gp_Dir2d XAxis(gp_XY(S1.XY()-Center.XY()));
@@ -49,7 +49,7 @@ gce_MakeElips2d::gce_MakeElips2d(const gp_Pnt2d&   S1     ,
 gce_MakeElips2d::gce_MakeElips2d(const gp_Ax2d&         MajorAxis   ,
 				 const Standard_Real    MajorRadius ,
 				 const Standard_Real    MinorRadius ,
-				 const Standard_Boolean Sense       ) 
+				 const Standard_Boolean Sense       ) : gce_Root() 
 {
   if (MajorRadius < 0.0) { TheError = gce_NegativeRadius; }
   else if (MajorRadius < MinorRadius) { TheError = gce_InvertRadius; }
@@ -61,7 +61,7 @@ gce_MakeElips2d::gce_MakeElips2d(const gp_Ax2d&         MajorAxis   ,
 
 gce_MakeElips2d::gce_MakeElips2d(const gp_Ax22d&     A           ,
 				 const Standard_Real MajorRadius ,
-				 const Standard_Real MinorRadius ) 
+				 const Standard_Real MinorRadius ) : gce_Root() 
 {
   if (MajorRadius < 0.0) { TheError = gce_NegativeRadius; }
   else if (MajorRadius < MinorRadius) { TheError = gce_InvertRadius; }

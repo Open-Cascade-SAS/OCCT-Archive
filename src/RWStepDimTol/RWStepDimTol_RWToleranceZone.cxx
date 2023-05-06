@@ -65,7 +65,7 @@ void RWStepDimTol_RWToleranceZone::ReadStep (const Handle(StepData_StepReaderDat
 
   Handle(StepDimTol_HArray1OfToleranceZoneTarget) anItems;
   StepDimTol_ToleranceZoneTarget anEnt;
-  Standard_Integer nbSub;
+  Standard_Integer nbSub = 0;
   if (data->ReadSubList (num,5,"defining_tolerance",ach,nbSub)) {
     Standard_Integer nbElements = data->NbParams(nbSub);
     anItems = new StepDimTol_HArray1OfToleranceZoneTarget (1, nbElements);
@@ -131,7 +131,7 @@ void RWStepDimTol_RWToleranceZone::Share (const Handle(StepDimTol_ToleranceZone)
   iter.AddItem (ent->OfShape());
   
   // Own fields of ToleranceZone
-  Standard_Integer i, nb = ent->NbDefiningTolerances();
+  Standard_Integer i = 0, nb = ent->NbDefiningTolerances();
   for (i = 1; i <= nb; i++)  
     iter.AddItem (ent->DefiningToleranceValue(i).Value());
 }

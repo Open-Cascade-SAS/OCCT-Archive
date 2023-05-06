@@ -28,12 +28,12 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(TransferBRep_ShapeListBinder,Transfer_Binder)
 
-TransferBRep_ShapeListBinder::TransferBRep_ShapeListBinder  ()
-      {  theres = new TopTools_HSequenceOfShape();  }
+TransferBRep_ShapeListBinder::TransferBRep_ShapeListBinder  () : theres(new TopTools_HSequenceOfShape())
+      {   }
 
     TransferBRep_ShapeListBinder::TransferBRep_ShapeListBinder
-  (const Handle(TopTools_HSequenceOfShape)& list)
-      {  theres = list;  }
+  (const Handle(TopTools_HSequenceOfShape)& list) : theres(list)
+      {   }
 
     Standard_Boolean  TransferBRep_ShapeListBinder::IsMultiple () const
       {  return (NbShapes() > 1);  }

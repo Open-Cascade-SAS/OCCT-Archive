@@ -76,11 +76,11 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_GearPair, StepKinematics_LowOrderKinematicPairWithMotionCoupling)
 
 private:
-  Standard_Real myRadiusFirstLink;
-  Standard_Real myRadiusSecondLink;
-  Standard_Real myBevel;
-  Standard_Real myHelicalAngle;
-  Standard_Real myGearRatio;
+  Standard_Real myRadiusFirstLink{};
+  Standard_Real myRadiusSecondLink{};
+  Standard_Real myBevel{};
+  Standard_Real myHelicalAngle{};
+  Standard_Real myGearRatio{};
 
 };
 #endif // _StepKinematics_GearPair_HeaderFile_

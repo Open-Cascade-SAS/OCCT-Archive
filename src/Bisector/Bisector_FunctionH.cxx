@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bisector_FunctionH.hxx>
 #include <Geom2d_Curve.hxx>
 #include <gp_Pnt2d.hxx>
@@ -27,10 +29,10 @@
 Bisector_FunctionH::Bisector_FunctionH (const Handle(Geom2d_Curve)& C2,
 					const gp_Pnt2d&             P1,
 					const gp_Vec2d&             T1)
-     :p1(P1),t1(T1)
+     :curve2(C2), p1(P1),t1(T1)
 {
   t1.Normalize();
-  curve2 = C2;
+  
 }
 
 //=============================================================================
@@ -61,7 +63,7 @@ Standard_Boolean Bisector_FunctionH::Value (const Standard_Real  X,
 Standard_Boolean Bisector_FunctionH::Derivative(const Standard_Real  X,
 						      Standard_Real& D)
 {
-  Standard_Real F;
+  Standard_Real F = NAN;
   return Values (X,F,D);
 }
 

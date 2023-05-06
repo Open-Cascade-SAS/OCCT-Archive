@@ -1453,7 +1453,7 @@ protected: //! @name internal fields
   Handle(SelectMgr_SelectionManager) mgrSelector;
   Handle(PrsMgr_PresentationManager) myMainPM;
   Handle(V3d_Viewer) myMainVwr;
-  V3d_View* myLastActiveView;
+  V3d_View* myLastActiveView{};
   Handle(SelectMgr_EntityOwner) myLastPicked;
   Standard_Boolean myToHilightSelected;
   Handle(AIS_Selection) mySelection;

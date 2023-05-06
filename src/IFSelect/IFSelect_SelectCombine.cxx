@@ -34,7 +34,7 @@ IFSelect_SelectCombine::IFSelect_SelectCombine ()    {  }
   (const Handle(IFSelect_Selection)& sel) const 
 {
   if (sel.IsNull()) return 0;
-  Standard_Integer i, nb = thelist.Length();
+  Standard_Integer i = 0, nb = thelist.Length();
   for (i = 1; i <= nb; i ++)
     if (sel == thelist.Value(i)) return i;
   return 0;

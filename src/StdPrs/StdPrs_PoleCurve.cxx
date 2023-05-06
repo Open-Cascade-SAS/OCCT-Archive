@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <Geom_BezierCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -42,7 +44,7 @@ void StdPrs_PoleCurve::Add (const Handle (Prs3d_Presentation)& aPresentation,
 
   GeomAbs_CurveType CType = aCurve.GetType();
   if (CType == GeomAbs_BezierCurve || CType == GeomAbs_BSplineCurve) {
-    Standard_Integer i, Nb;
+    Standard_Integer i = 0, Nb = 0;
     if (CType == GeomAbs_BezierCurve) {
       Handle(Geom_BezierCurve) Bz = aCurve.Bezier();
       Nb = Bz->NbPoles();
@@ -87,8 +89,8 @@ Standard_Boolean StdPrs_PoleCurve::Match(const Standard_Real        X,
 					 const Handle (Prs3d_Drawer)& /*aDrawer*/) 
 {
   GeomAbs_CurveType CType = aCurve.GetType();
-  Standard_Integer i, Nb = 0;
-  Standard_Real x,y,z;
+  Standard_Integer i = 0, Nb = 0;
+  Standard_Real x = NAN,y = NAN,z = NAN;
   if (CType == GeomAbs_BezierCurve) {
     Handle(Geom_BezierCurve) Bz = aCurve.Bezier();
     Nb = Bz->NbPoles();
@@ -123,9 +125,9 @@ Standard_Integer StdPrs_PoleCurve::Pick
 	      const Adaptor3d_Curve&        aCurve,
 	      const Handle(Prs3d_Drawer)& /*aDrawer*/) 
 {
-  Standard_Real x, y, z, DistMin = RealLast();
-  Standard_Integer num = 0, i, Nb = 0;
-  Standard_Real dist;
+  Standard_Real x = NAN, y = NAN, z = NAN, DistMin = RealLast();
+  Standard_Integer num = 0, i = 0, Nb = 0;
+  Standard_Real dist = NAN;
   GeomAbs_CurveType CType = aCurve.GetType();
 
   if (CType == GeomAbs_BezierCurve) {

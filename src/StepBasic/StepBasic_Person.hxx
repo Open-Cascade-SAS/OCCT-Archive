@@ -116,11 +116,11 @@ private:
   Handle(Interface_HArray1OfHAsciiString) middleNames;
   Handle(Interface_HArray1OfHAsciiString) prefixTitles;
   Handle(Interface_HArray1OfHAsciiString) suffixTitles;
-  Standard_Boolean hasLastName;
-  Standard_Boolean hasFirstName;
-  Standard_Boolean hasMiddleNames;
-  Standard_Boolean hasPrefixTitles;
-  Standard_Boolean hasSuffixTitles;
+  Standard_Boolean hasLastName{};
+  Standard_Boolean hasFirstName{};
+  Standard_Boolean hasMiddleNames{};
+  Standard_Boolean hasPrefixTitles{};
+  Standard_Boolean hasSuffixTitles{};
 
 
 };

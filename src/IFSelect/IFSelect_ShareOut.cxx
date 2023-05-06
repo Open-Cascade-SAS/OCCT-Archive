@@ -23,9 +23,9 @@
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(IFSelect_ShareOut,Standard_Transient)
 
-IFSelect_ShareOut::IFSelect_ShareOut ()
+IFSelect_ShareOut::IFSelect_ShareOut () : thedefrt(new TCollection_HAsciiString ("Default"))
 {
-  thedefrt  = new TCollection_HAsciiString ("Default");
+  
   thenbdefs = thelastrun = 0;
 }
 
@@ -166,7 +166,7 @@ IFSelect_ShareOut::IFSelect_ShareOut ()
     Standard_Integer  IFSelect_ShareOut::ModifierRank
   (const Handle(IFSelect_GeneralModifier)& modifier) const 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Boolean formodel = modifier->IsKind(STANDARD_TYPE(IFSelect_Modifier));
   if (formodel) {
     for (i = themodelmodifiers.Length(); i >= 1; i --)
@@ -200,7 +200,7 @@ IFSelect_ShareOut::IFSelect_ShareOut ()
   (const Standard_Boolean formodel,
    const Standard_Integer before,   const Standard_Integer after)
 {
-  Standard_Integer nb;
+  Standard_Integer nb = 0;
   if (before <= 0 || after <= 0) return Standard_False;
   if (before == after) return Standard_True;
   if (formodel) {

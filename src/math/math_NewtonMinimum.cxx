@@ -21,6 +21,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_Gauss.hxx>
 #include <math_Jacobi.hxx>
 #include <math_MultipleVarFunctionWithHessian.hxx>
@@ -95,8 +97,8 @@ void math_NewtonMinimum::Perform(math_MultipleVarFunctionWithHessian& F,
   math_Vector* auxiliaire = precedent;
 
   Standard_Boolean Ok = Standard_True;
-  Standard_Integer NbConv = 0, ii, Nreduction;
-  Standard_Real    VPrecedent, VItere; 
+  Standard_Integer NbConv = 0, ii = 0, Nreduction = 0;
+  Standard_Real    VPrecedent = NAN, VItere = NAN; 
 
   Done = Standard_True;
   TheStatus = math_OK;

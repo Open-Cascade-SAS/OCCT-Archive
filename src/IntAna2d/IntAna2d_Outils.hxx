@@ -38,8 +38,8 @@ public:
   Standard_Real    IsDone() const { return(nbsol>-1); }
   Standard_Boolean InfiniteRoots() const { return(same); } 
 private:
-  Standard_Real      sol[16];
-  Standard_Real      val[16];
+  Standard_Real      sol[16]{};
+  Standard_Real      val[16]{};
   Standard_Integer   nbsol;
   Standard_Boolean   same;
 }; 

@@ -17,6 +17,8 @@
 // Modified by skv - Fri Mar  4 15:50:09 2005
 // Add methods for supporting history.
 
+#include <math.h>
+
 #include <BRep_TEdge.hxx>
 #include <BRepLib.hxx>
 #include <BRepPrimAPI_MakeRevol.hxx>
@@ -314,7 +316,7 @@ Standard_Boolean BRepPrimAPI_MakeRevol::CheckValidity(const TopoDS_Shape& theSha
     }
 
     TopLoc_Location L;
-    Standard_Real First, Last;
+    Standard_Real First = NAN, Last = NAN;
     Handle(Geom_Curve) C = BRep_Tool::Curve(anE, L, First, Last);
     gp_Trsf Tr = L.Transformation();
     C = Handle(Geom_Curve)::DownCast(C->Copy());
@@ -326,7 +328,7 @@ Standard_Boolean BRepPrimAPI_MakeRevol::CheckValidity(const TopoDS_Shape& theSha
     //Checking coincidence axe of revolution and basis curve
     //This code is taken directly from GeomAdaptor_SurfaceOfRevolution
     Standard_Integer Ratio = 1;
-    Standard_Real Dist;
+    Standard_Real Dist = NAN;
     gp_Pnt PP;
     do {
       PP = HC->Value(First + (Last - First) / Ratio);

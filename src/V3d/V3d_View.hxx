@@ -1035,8 +1035,8 @@ private:
 
 protected:
 
-  Standard_Real myOldMouseX;
-  Standard_Real myOldMouseY;
+  Standard_Real myOldMouseX{};
+  Standard_Real myOldMouseY{};
   gp_Dir myCamStartOpUp;
   gp_Dir myCamStartOpDir;
   gp_Pnt myCamStartOpEye;
@@ -1051,23 +1051,23 @@ private:
   V3d_Viewer* MyViewer;
 
   NCollection_Sequence<Handle(V3d_View)> mySubviews;
-  V3d_View* myParentView;
+  V3d_View* myParentView{};
 
   V3d_ListOfLight myActiveLights;
   gp_Dir myDefaultViewAxis;
   gp_Pnt myDefaultViewPoint;
   Handle(Aspect_Window) MyWindow;
   V3d_ListOfLight::Iterator myActiveLightsIterator;
-  Standard_Integer sx;
-  Standard_Integer sy;
-  Standard_Real rx;
-  Standard_Real ry;
+  Standard_Integer sx{};
+  Standard_Integer sy{};
+  Standard_Real rx{};
+  Standard_Real ry{};
   gp_Pnt myRotateGravity;
-  Standard_Boolean myComputedMode;
+  Standard_Boolean myComputedMode{};
   Standard_Boolean SwitchSetFront;
   Standard_Boolean myZRotation;
-  Standard_Integer MyZoomAtPointX;
-  Standard_Integer MyZoomAtPointY;
+  Standard_Integer MyZoomAtPointX{};
+  Standard_Integer MyZoomAtPointY{};
   Handle(V3d_Trihedron) myTrihedron;
   Handle(Aspect_Grid) MyGrid;
   gp_Ax3 MyPlane;
@@ -1079,8 +1079,8 @@ private:
   gp_Vec myZscreenAxis;
   gp_Dir myViewAxis;
   Graphic3d_Vertex myGravityReferencePoint;
-  Standard_Boolean myAutoZFitIsOn;
-  Standard_Real myAutoZFitScaleFactor;
+  Standard_Boolean myAutoZFitIsOn{};
+  Standard_Real myAutoZFitScaleFactor{};
 
 };
 

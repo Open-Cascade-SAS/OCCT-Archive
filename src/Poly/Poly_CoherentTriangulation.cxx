@@ -49,7 +49,7 @@ Poly_CoherentTriangulation::Poly_CoherentTriangulation
 {
   if (theTriangulation.IsNull() == Standard_False) {
     const Standard_Integer nNodes = theTriangulation->NbNodes();
-    Standard_Integer i;
+    Standard_Integer i = 0;
 
     // Copy the nodes
     for (i = 0; i < nNodes; i++) {
@@ -174,7 +174,7 @@ Standard_Boolean Poly_CoherentTriangulation::GetFreeNodes
                         (NCollection_List<Standard_Integer>& lstNodes) const
 {
   lstNodes.Clear();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 0; i < myNodes.Length(); i++) {
     const Poly_CoherentNode& aNode = myNodes(i);
     if (aNode.IsFreeNode())
@@ -687,7 +687,7 @@ Standard_Integer Poly_CoherentTriangulation::ComputeLinks ()
   // Above algorithm does not create all boundary links, so
   // it is necessary to check triangles and add absentee links
   anIter.Init(myTriangles);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (; anIter.More(); anIter.Next()) {
     Poly_CoherentTriangle& aTriangle = anIter.ChangeValue();
 

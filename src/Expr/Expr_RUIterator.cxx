@@ -22,12 +22,12 @@
 #include <Expr_UnknownIterator.hxx>
 #include <Standard_NoMoreObject.hxx>
 
-Expr_RUIterator::Expr_RUIterator (const Handle(Expr_GeneralRelation)& rel)
+Expr_RUIterator::Expr_RUIterator (const Handle(Expr_GeneralRelation)& rel) : myCurrent(1)
 {
   Expr_RelationIterator ri(rel);
   Handle(Expr_SingleRelation) srel;
   Handle(Expr_NamedUnknown) var;
-  myCurrent =1;
+  
   while (ri.More()) {
     srel = ri.Value();
     ri.Next();

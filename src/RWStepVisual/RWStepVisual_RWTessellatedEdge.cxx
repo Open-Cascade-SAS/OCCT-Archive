@@ -81,7 +81,7 @@ void RWStepVisual_RWTessellatedEdge::ReadStep (const Handle(StepData_StepReaderD
     Standard_Integer num2 = sub4;
     for (Standard_Integer i0 = 1; i0 <= nb0; i0++)
     {
-      Standard_Integer anIt0;
+      Standard_Integer anIt0 = 0;
       theData->ReadInteger(num2, i0, "integer", theCheck, anIt0);
       aLineStrip->SetValue(i0, anIt0);
     }

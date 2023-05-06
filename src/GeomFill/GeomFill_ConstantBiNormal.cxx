@@ -52,9 +52,9 @@ static gp_Vec DDeriv(const gp_Vec& F, const gp_Vec& DF, const gp_Vec& D2F)
   return Result;
 }
 
-GeomFill_ConstantBiNormal::GeomFill_ConstantBiNormal(const gp_Dir& BiNormal) : BN(BiNormal)
+GeomFill_ConstantBiNormal::GeomFill_ConstantBiNormal(const gp_Dir& BiNormal) : BN(BiNormal), frenet(new GeomFill_Frenet())
 {
-  frenet = new GeomFill_Frenet();
+  
 }
 
  Handle(GeomFill_TrihedronLaw) GeomFill_ConstantBiNormal::Copy() const

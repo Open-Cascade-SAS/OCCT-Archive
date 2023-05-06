@@ -62,7 +62,7 @@ private:
 
 
   Handle(StepGeom_Direction) orientation;
-  Standard_Real magnitude;
+  Standard_Real magnitude{};
 
 
 };

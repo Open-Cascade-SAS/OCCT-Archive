@@ -66,7 +66,7 @@ BOPAlgo_Section::~BOPAlgo_Section()
 //=======================================================================
 void BOPAlgo_Section::CheckData()
 {
-  Standard_Integer aNbArgs;
+  Standard_Integer aNbArgs = 0;
   //
   aNbArgs=myArguments.Extent();
   if (!aNbArgs) {
@@ -174,8 +174,8 @@ void BOPAlgo_Section::PerformInternal1
 void BOPAlgo_Section::BuildSection(const Message_ProgressRange& theRange)
 {
   Message_ProgressScope aPS(theRange, "Building the result of Section operation", 1);
-  Standard_Integer i, aNbMS, aNbLE;
-  Standard_Integer j,  nE, nV, aNb, aNbF, aNbPBSc;
+  Standard_Integer i = 0, aNbMS = 0, aNbLE = 0;
+  Standard_Integer j = 0,  nE = 0, nV = 0, aNb = 0, aNbF = 0, aNbPBSc = 0;
   TopoDS_Shape aRC, aRC1;
   BRep_Builder aBB;
   TopExp_Explorer aExp;

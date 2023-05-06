@@ -29,6 +29,7 @@
 #include <TColStd_Array1OfInteger.hxx>
 #include <TColStd_Array1OfReal.hxx>
 
+#include <math.h>
 #include <stdio.h>
 IMPLEMENT_STANDARD_RTTIEXT(GeomFill_EvolvedSection,GeomFill_SectionLaw)
 
@@ -41,12 +42,12 @@ static Standard_Boolean Affich = 0;
 #endif
 
 GeomFill_EvolvedSection::GeomFill_EvolvedSection(const Handle(Geom_Curve)& C,
-						 const Handle(Law_Function)& L)
+						 const Handle(Law_Function)& L) : TLaw(myLaw)
 {
   L->Bounds(First, Last);
   mySection = Handle(Geom_Curve)::DownCast(C->Copy());
   myLaw =  L->Trim(First, Last, 1.e-20);
-  TLaw = myLaw;
+  
   myCurve =  Handle(Geom_BSplineCurve)::DownCast(C);
   if (myCurve.IsNull()) {
     myCurve = GeomConvert::CurveToBSplineCurve(C, Convert_QuasiAngular);
@@ -72,8 +73,8 @@ GeomFill_EvolvedSection::GeomFill_EvolvedSection(const Handle(Geom_Curve)& C,
 					      TColgp_Array1OfPnt& Poles,
 					      TColStd_Array1OfReal& Weights) 
 {
-  Standard_Real val;
-  Standard_Integer ii, L =  Poles.Length();
+  Standard_Real val = NAN;
+  Standard_Integer ii = 0, L =  Poles.Length();
   val= TLaw->Value(U);
   myCurve->Poles(Poles);
   for (ii=1; ii<=L; ii++) {
@@ -93,8 +94,8 @@ GeomFill_EvolvedSection::GeomFill_EvolvedSection(const Handle(Geom_Curve)& C,
 					      TColStd_Array1OfReal& Weights,
 					      TColStd_Array1OfReal& DWeights) 
 {
- Standard_Real val, dval;
- Standard_Integer ii, L =  Poles.Length();
+ Standard_Real val = NAN, dval = NAN;
+ Standard_Integer ii = 0, L =  Poles.Length();
  TLaw->D1(U, val, dval);
 
  myCurve->Poles(Poles);
@@ -120,8 +121,8 @@ GeomFill_EvolvedSection::GeomFill_EvolvedSection(const Handle(Geom_Curve)& C,
 					      TColStd_Array1OfReal& DWeights,
 					      TColStd_Array1OfReal& D2Weights) 
 { 
-  Standard_Real val, dval, d2val;
-  Standard_Integer ii, L =  Poles.Length();
+  Standard_Real val = NAN, dval = NAN, d2val = NAN;
+  Standard_Integer ii = 0, L =  Poles.Length();
   TLaw->D2(U, val, dval, d2val);
   myCurve->Poles(Poles);
   myCurve->Weights(Weights);
@@ -291,8 +292,8 @@ GeomFill_EvolvedSection::GeomFill_EvolvedSection(const Handle(Geom_Curve)& C,
 //=======================================================
  gp_Pnt GeomFill_EvolvedSection::BarycentreOfSurf() const
 {
-  Standard_Real U = mySection->FirstParameter(), Delta, b;
-  Standard_Integer ii;
+  Standard_Real U = mySection->FirstParameter(), Delta = NAN, b = NAN;
+  Standard_Integer ii = 0;
   gp_Pnt P, Bary;
   
   Delta = ( myCurve->LastParameter() - U ) / 20;
@@ -313,8 +314,8 @@ GeomFill_EvolvedSection::GeomFill_EvolvedSection(const Handle(Geom_Curve)& C,
 
  Standard_Real GeomFill_EvolvedSection::MaximalSection() const
 {
-  Standard_Real L, val, max, U, Delta;
-  Standard_Integer ii;
+  Standard_Real L = NAN, val = NAN, max = NAN, U = NAN, Delta = NAN;
+  Standard_Integer ii = 0;
   GeomAdaptor_Curve AC (mySection);
   L = GCPnts_AbscissaPoint::Length(AC);
 
@@ -346,7 +347,7 @@ void GeomFill_EvolvedSection::GetMinimalWeight(TColStd_Array1OfReal& Weights) co
 
  Handle(Geom_Curve) GeomFill_EvolvedSection::ConstantSection() const
 {
-  Standard_Real Err, scale;
+  Standard_Real Err = NAN, scale = NAN;
   if (!IsConstant(Err)) throw StdFail_NotDone("The Law is not Constant!");
   gp_Trsf T;
   gp_Pnt P(0, 0, 0);

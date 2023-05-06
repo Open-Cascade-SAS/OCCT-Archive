@@ -89,7 +89,7 @@ namespace
       ManipSensRotation (theCircle.Position().Direction()) {}
 
     //! Checks whether the circle overlaps current selecting volume
-    virtual Standard_Boolean Matches (SelectBasics_SelectingVolumeManager& theMgr,
+    Standard_Boolean Matches (SelectBasics_SelectingVolumeManager& theMgr,
                                       SelectBasics_PickResult& thePickResult) Standard_OVERRIDE
     {
       return isValidRay (theMgr)
@@ -108,7 +108,7 @@ namespace
       ManipSensRotation (thePlaneNormal) {}
 
     //! Checks whether the circle overlaps current selecting volume
-    virtual Standard_Boolean Matches (SelectBasics_SelectingVolumeManager& theMgr,
+    Standard_Boolean Matches (SelectBasics_SelectingVolumeManager& theMgr,
                                       SelectBasics_PickResult& thePickResult) Standard_OVERRIDE
     {
       return isValidRay (theMgr)

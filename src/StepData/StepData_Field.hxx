@@ -197,9 +197,9 @@ private:
 
 
 
-  Standard_Integer thekind;
-  Standard_Integer theint;
-  Standard_Real thereal;
+  Standard_Integer thekind{};
+  Standard_Integer theint{};
+  Standard_Real thereal{};
   Handle(Standard_Transient) theany;
 
 

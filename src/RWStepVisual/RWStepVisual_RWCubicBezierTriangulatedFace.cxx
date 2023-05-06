@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepVisual_RWCubicBezierTriangulatedFace.hxx>
 #include <StepVisual_CubicBezierTriangulatedFace.hxx>
 #include <Interface_EntityIterator.hxx>
@@ -65,7 +67,7 @@ void RWStepVisual_RWCubicBezierTriangulatedFace::ReadStep(
   theData->ReadEntity(theNum, 2, "tessellated_face.coordinates", theCheck,
     STANDARD_TYPE(StepVisual_CoordinatesList), aTessellatedFace_Coordinates);
 
-  Standard_Integer aTessellatedFace_Pnmax;
+  Standard_Integer aTessellatedFace_Pnmax = 0;
   theData->ReadInteger(theNum, 3, "tessellated_face.pnmax", theCheck, aTessellatedFace_Pnmax);
 
   Handle(TColStd_HArray2OfReal) aTessellatedFace_Normals;
@@ -82,7 +84,7 @@ void RWStepVisual_RWCubicBezierTriangulatedFace::ReadStep(
         Standard_Integer num4 = subj4;
         for (Standard_Integer j0 = 1; j0 <= nbj0; j0++)
         {
-          Standard_Real anIt0;
+          Standard_Real anIt0 = NAN;
           theData->ReadReal(num4, j0, "real", theCheck, anIt0);
           aTessellatedFace_Normals->SetValue(i0,j0, anIt0);
         }
@@ -118,7 +120,7 @@ void RWStepVisual_RWCubicBezierTriangulatedFace::ReadStep(
         Standard_Integer num4 = subj6;
         for (Standard_Integer j0 = 1; j0 <= nbj0; j0++)
         {
-          Standard_Integer anIt0;
+          Standard_Integer anIt0 = 0;
           theData->ReadInteger(num4, j0, "integer", theCheck, anIt0);
           aCtriangles->SetValue(i0,j0, anIt0);
         }

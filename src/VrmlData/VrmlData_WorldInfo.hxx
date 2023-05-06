@@ -91,7 +91,7 @@ class VrmlData_WorldInfo : public VrmlData_Node
  private:
   // ---------- PRIVATE FIELDS ----------
 
-  const char                    * myTitle;
+  const char                    * myTitle{};
   NCollection_List <const char *> myInfo;
 
  public:

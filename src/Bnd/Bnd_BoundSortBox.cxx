@@ -24,6 +24,7 @@
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 
+#include <math.h>
 #include <stdio.h>
 //-- ================================================================================
 //--  lbr le 27 fev 97
@@ -219,7 +220,7 @@ BSB_T3Bits::BSB_T3Bits(int size)
   case  16: {  _DECAL=4;   _DECAL2= 8;   _BASE= 16;  _BASEM1= 15;  break; } 
   default : {  _DECAL=3;   _DECAL2= 6;   _BASE=  8;  _BASEM1=  7;  break; } 
   }
-  Standard_Integer i ;    
+  Standard_Integer i = 0 ;    
   unsigned int nb = (size*size*size)>>5;
   Isize = nb;
   ssize = size;
@@ -316,9 +317,9 @@ void BSB_T3Bits::AppendAxisX(const Standard_Integer i,
 //purpose  : 
 //=======================================================================
 Bnd_BoundSortBox::Bnd_BoundSortBox()
-     : discrX(0), discrY(0), discrZ(0)
+     : discrX(0), discrY(0), discrZ(0), TabBits(0)
 {
-  TabBits=0;
+  
 #if DEBUG
   NBCOMPARE=0L;   NBBOITES=0L;   NBBOITESATESTER=0L;
   APPELREJECTION=0L;  REJECTNIV0=0L;  REJECTNIV1=0L;
@@ -336,7 +337,7 @@ void Bnd_BoundSortBox::Initialize(const Bnd_Box& CompleteBox,
   myBndComponents=SetOfBox;
   const Bnd_Array1OfBox & taBox=myBndComponents->Array1();
   discrX=discrY=discrZ=ComputeSize(taBox.Upper()-taBox.Lower());
-  Standard_Real Xmax, Ymax, Zmax;
+  Standard_Real Xmax = NAN, Ymax = NAN, Zmax = NAN;
   if(CompleteBox.IsVoid()) 
     return;
   CompleteBox.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
@@ -353,17 +354,17 @@ void Bnd_BoundSortBox::Initialize(const Handle(Bnd_HArray1OfBox)& SetOfBox)
 {
   myBndComponents=SetOfBox;
   const Bnd_Array1OfBox & taBox=myBndComponents->Array1();
-  Standard_Integer i0,i1;
+  Standard_Integer i0 = 0,i1 = 0;
   i0=taBox.Lower();
   i1=taBox.Upper();
   discrX=discrY=discrZ=ComputeSize(i1-i0);
-  Standard_Integer labox;
+  Standard_Integer labox = 0;
   for (labox=i0; labox<=i1; labox++) {
     if (!taBox(labox).IsVoid()) {
       myBox.Add(taBox(labox));
     }
   }
-  Standard_Real Xmax, Ymax, Zmax;
+  Standard_Real Xmax = NAN, Ymax = NAN, Zmax = NAN;
   if(myBox.IsVoid()) 
     return;
   myBox.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
@@ -378,11 +379,11 @@ void Bnd_BoundSortBox::Initialize(const Handle(Bnd_HArray1OfBox)& SetOfBox)
 //=======================================================================
 void Bnd_BoundSortBox::SortBoxes() 
 {
-  Standard_Integer labox;
-  Standard_Integer lacaseX, firstcaseX, lastcaseX;
-  Standard_Integer lacaseY, firstcaseY, lastcaseY;
-  Standard_Integer lacaseZ, firstcaseZ, lastcaseZ;
-  Standard_Real xmin, ymin, zmin, xmax, ymax, zmax;
+  Standard_Integer labox = 0;
+  Standard_Integer lacaseX = 0, firstcaseX = 0, lastcaseX = 0;
+  Standard_Integer lacaseY = 0, firstcaseY = 0, lastcaseY = 0;
+  Standard_Integer lacaseZ = 0, firstcaseZ = 0, lastcaseZ = 0;
+  Standard_Real xmin = NAN, ymin = NAN, zmin = NAN, xmax = NAN, ymax = NAN, zmax = NAN;
   const Bnd_Array1OfBox & taBox=myBndComponents->Array1();
   Standard_Integer i0=taBox.Lower();
   Standard_Integer i1=taBox.Upper();
@@ -401,7 +402,7 @@ void Bnd_BoundSortBox::SortBoxes()
       Map->ToTest[i]=i0-1;
     }
   }
-  Standard_Real _Xmax,_Xmin,_Ymax,_Ymin,_Zmin,_Zmax;
+  Standard_Real _Xmax = NAN,_Xmin = NAN,_Ymax = NAN,_Ymin = NAN,_Zmin = NAN,_Zmax = NAN;
   myBox.Get(_Xmin,_Ymin,_Zmin,_Xmax,_Ymax,_Zmax);
   Map->Xmax=_Xmax; Map->Ymax=_Ymax; Map->Zmax=_Zmax;
   Map->Xmin=_Xmin; Map->Ymin=_Ymin; Map->Zmin=_Zmin;
@@ -484,7 +485,7 @@ void Bnd_BoundSortBox::Initialize(const Bnd_Box& CompleteBox,
   //***<<< JCD - End  
 
   discrX=discrY=discrZ=ComputeSize(nbComponents);
-  Standard_Real Xmax, Ymax, Zmax;
+  Standard_Real Xmax = NAN, Ymax = NAN, Zmax = NAN;
 
   if(CompleteBox.IsVoid())
     return;
@@ -513,10 +514,10 @@ void Bnd_BoundSortBox::Add(const Bnd_Box& theBox,
   if (!theBox.IsVoid()) {
     Standard_Integer i0=myBndComponents->Lower();
     Standard_Integer i1=myBndComponents->Upper();
-    Standard_Integer theGapX, firstGapX , lastGapX;
-    Standard_Integer theGapY, firstGapY , lastGapY;
-    Standard_Integer theGapZ, firstGapZ , lastGapZ;
-    Standard_Real xmin, ymin, zmin, xmax, ymax, zmax;
+    Standard_Integer theGapX = 0, firstGapX = 0 , lastGapX = 0;
+    Standard_Integer theGapY = 0, firstGapY = 0 , lastGapY = 0;
+    Standard_Integer theGapZ = 0, firstGapZ = 0 , lastGapZ = 0;
+    Standard_Real xmin = NAN, ymin = NAN, zmin = NAN, xmax = NAN, ymax = NAN, zmax = NAN;
     myBndComponents->SetValue(boxIndex, theBox);
     theBox.Get(xmin, ymin, zmin, xmax, ymax, zmax);
     BSB_T3Bits* Map = (BSB_T3Bits *)TabBits;
@@ -528,7 +529,7 @@ void Bnd_BoundSortBox::Add(const Bnd_Box& theBox,
 	Map->ToTest[i]=i0-1;
       }
     }
-    Standard_Real _Xmax,_Ymax,_Zmax;
+    Standard_Real _Xmax = NAN,_Ymax = NAN,_Zmax = NAN;
     _Xmax=Map->Xmax; _Ymax=Map->Ymax; _Zmax=Map->Zmax;
     if(xmin>Xmin) firstGapX=(Standard_Integer )((xmin-Xmin)*deltaX)-1; else  firstGapX=1;
     if(ymin>Ymin) firstGapY=(Standard_Integer )((ymin-Ymin)*deltaY)-1; else  firstGapY=1;
@@ -629,7 +630,7 @@ static void VerifCompare(const TColStd_ListOfInteger& lastResult,
 const TColStd_ListOfInteger& Bnd_BoundSortBox::Compare (const Bnd_Box& theBox)
 
 {
- Standard_Integer lacase ;
+ Standard_Integer lacase = 0 ;
 #if DEBUG
   NBCOMPARE++;
 #endif
@@ -645,12 +646,12 @@ const TColStd_ListOfInteger& Bnd_BoundSortBox::Compare (const Bnd_Box& theBox)
   //-- Rejection with the table of bits
   Standard_Boolean touch = Standard_True;
   touch = Standard_False;
-  Standard_Real _Xmax,_Ymax,_Zmax;
+  Standard_Real _Xmax = NAN,_Ymax = NAN,_Zmax = NAN;
   BSB_T3Bits* Map = (BSB_T3Bits *)TabBits;
-  Standard_Real xmin, ymin, zmin, xmax, ymax, zmax;
+  Standard_Real xmin = NAN, ymin = NAN, zmin = NAN, xmax = NAN, ymax = NAN, zmax = NAN;
   _Xmax=Map->Xmax; _Ymax=Map->Ymax; _Zmax=Map->Zmax;
   theBox.Get(xmin, ymin, zmin, xmax, ymax, zmax);
-  Standard_Integer i0,i1,j0,j1,k0,k1;
+  Standard_Integer i0 = 0,i1 = 0,j0 = 0,j1 = 0,k0 = 0,k1 = 0;
   if(xmin>Xmin) i0=(Standard_Integer )((xmin-Xmin)*deltaX)-1; else  i0=1;
   if(ymin>Ymin) j0=(Standard_Integer )((ymin-Ymin)*deltaY)-1; else  j0=1;
   if(zmin>Zmin) k0=(Standard_Integer )((zmin-Zmin)*deltaZ)-1; else  k0=1;
@@ -770,7 +771,7 @@ const TColStd_ListOfInteger& Bnd_BoundSortBox::Compare(const gp_Pln& thePlane)
 
 {
   lastResult.Clear();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   const Bnd_Array1OfBox& boxes = myBndComponents->Array1();
   for (i = boxes.Lower(); i <= boxes.Upper(); i++) {
     if (!boxes(i).IsOut(thePlane))

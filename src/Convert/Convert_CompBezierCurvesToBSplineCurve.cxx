@@ -92,7 +92,7 @@ Standard_Integer  Convert_CompBezierCurvesToBSplineCurve::NbPoles() const
 void  Convert_CompBezierCurvesToBSplineCurve::Poles
   (TColgp_Array1OfPnt& Poles) const
 {
-  Standard_Integer i, Lower = Poles.Lower(), Upper = Poles.Upper();
+  Standard_Integer i = 0, Lower = Poles.Lower(), Upper = Poles.Upper();
   Standard_Integer k = 1;
   for (i = Lower; i <= Upper; i++) {
     Poles(i) = CurvePoles(k++);
@@ -120,7 +120,7 @@ void  Convert_CompBezierCurvesToBSplineCurve::KnotsAndMults
   (TColStd_Array1OfReal&    Knots, 
    TColStd_Array1OfInteger& Mults ) const
 {
-  Standard_Integer i, LowerK = Knots.Lower(), UpperK = Knots.Upper();
+  Standard_Integer i = 0, LowerK = Knots.Lower(), UpperK = Knots.Upper();
   Standard_Integer LowerM = Mults.Lower(), UpperM = Mults.Upper();
   Standard_Integer k = 1;
   for (i = LowerK; i <= UpperK; i++) {
@@ -151,7 +151,7 @@ void Convert_CompBezierCurvesToBSplineCurve::Perform()
 //  Standard_Integer NbKnotsSpl = NbrCurv + 1 ;
   TColStd_Array1OfReal     CurveKnVals         (1,NbrCurv);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   myDegree = 0;
   for ( i = 1; i <= mySequence.Length(); i++) {
     myDegree = Max( myDegree, (mySequence(i))->Length() -1);
@@ -159,7 +159,7 @@ void Convert_CompBezierCurvesToBSplineCurve::Perform()
 
   Standard_Real Det=0;
   gp_Pnt P1, P2, P3;
-  Standard_Integer Deg, Inc, MaxDegree = myDegree;
+  Standard_Integer Deg = 0, Inc = 0, MaxDegree = myDegree;
   TColgp_Array1OfPnt Points(1, myDegree+1);
 
   for (i = LowerI ; i <= UpperI ; i++) {

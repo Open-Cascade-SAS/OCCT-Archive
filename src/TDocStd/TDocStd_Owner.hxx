@@ -87,7 +87,7 @@ protected:
 private:
 
   //! It keeps pointer to the document to avoid handles cyclic dependency
-  TDocStd_Document* myDocument;
+  TDocStd_Document* myDocument{};
 
 
 };

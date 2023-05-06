@@ -44,13 +44,13 @@ void RWStepGeom_RWRectangularCompositeSurface::ReadStep
 
 	Handle(StepGeom_HArray2OfSurfacePatch) aSegments;
 	Handle(StepGeom_SurfacePatch) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"segments",ach,nsub2)) {
 	  Standard_Integer nbi2 = data->NbParams(nsub2);
 	  Standard_Integer nbj2 = data->NbParams(data->ParamNumber(nsub2,1));
 	  aSegments = new StepGeom_HArray2OfSurfacePatch (1, nbi2, 1, nbj2);
 	  for (Standard_Integer i2 = 1; i2 <= nbi2; i2 ++) {
-	    Standard_Integer nsi2;
+	    Standard_Integer nsi2 = 0;
 	    if (data->ReadSubList (nsub2,i2,"sub-part(segments)",ach,nsi2)) {
 	      for (Standard_Integer j2 =1; j2 <= nbj2; j2 ++) {
 		//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed

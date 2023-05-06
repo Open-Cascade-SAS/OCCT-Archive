@@ -23,9 +23,9 @@
 //purpose  :
 //=======================================================================
 BRepExtrema_SelfIntersection::BRepExtrema_SelfIntersection (const Standard_Real theTolerance)
-: myTolerance (theTolerance)
+: myTolerance (theTolerance), myIsInit(Standard_False)
 {
-  myIsInit = Standard_False;
+  
 }
 
 //=======================================================================
@@ -148,8 +148,8 @@ BRepExtrema_ElementFilter::FilterResult BRepExtrema_SelfIntersection::isRegularS
   BVH_Vec3d aCrossLine = BVH_Vec3d::Cross (aTrng0Normal,
                                            aTrng1Normal);
 
-  Standard_Integer anX;
-  Standard_Integer anY;
+  Standard_Integer anX = 0;
+  Standard_Integer anY = 0;
 
   if (aCrossLine.SquareModulus() < Precision::SquareConfusion()) // coplanar case
   {
@@ -223,8 +223,8 @@ BRepExtrema_ElementFilter::FilterResult BRepExtrema_SelfIntersection::isRegularS
     return BRepExtrema_ElementFilter::NoCheck;
   }
 
-  Standard_Integer anX;
-  Standard_Integer anY;
+  Standard_Integer anX = 0;
+  Standard_Integer anY = 0;
 
   getProjectionAxes (aTrng0Normal, anX, anY);
 

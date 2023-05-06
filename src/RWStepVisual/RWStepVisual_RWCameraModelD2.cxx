@@ -47,7 +47,7 @@ void RWStepVisual_RWCameraModelD2::ReadStep
 
 	// --- own field : viewWindowClipping ---
 
-	Standard_Boolean aViewWindowClipping;
+	Standard_Boolean aViewWindowClipping = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadBoolean (num,3,"view_window_clipping",ach,aViewWindowClipping);
 

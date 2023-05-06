@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <RWStepVisual_RWCurveStyleFontPattern.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
@@ -33,13 +35,13 @@ void RWStepVisual_RWCurveStyleFontPattern::ReadStep
 
 	// --- own field : visibleSegmentLength ---
 
-	Standard_Real aVisibleSegmentLength;
+	Standard_Real aVisibleSegmentLength = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadReal (num,1,"visible_segment_length",ach,aVisibleSegmentLength);
 
 	// --- own field : invisibleSegmentLength ---
 
-	Standard_Real aInvisibleSegmentLength;
+	Standard_Real aInvisibleSegmentLength = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadReal (num,2,"invisible_segment_length",ach,aInvisibleSegmentLength);
 

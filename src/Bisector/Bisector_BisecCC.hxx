@@ -216,19 +216,19 @@ private:
 
   Handle(Geom2d_Curve) curve1;
   Handle(Geom2d_Curve) curve2;
-  Standard_Real sign1;
-  Standard_Real sign2;
+  Standard_Real sign1{};
+  Standard_Real sign2{};
   TColStd_SequenceOfReal startIntervals;
   TColStd_SequenceOfReal endIntervals;
-  Standard_Integer currentInterval;
+  Standard_Integer currentInterval{};
   Bisector_PolyBis myPolygon;
-  Standard_Real shiftParameter;
-  Standard_Real distMax;
-  Standard_Boolean isEmpty;
-  Standard_Boolean isConvex1;
-  Standard_Boolean isConvex2;
-  Standard_Boolean extensionStart;
-  Standard_Boolean extensionEnd;
+  Standard_Real shiftParameter{};
+  Standard_Real distMax{};
+  Standard_Boolean isEmpty{};
+  Standard_Boolean isConvex1{};
+  Standard_Boolean isConvex2{};
+  Standard_Boolean extensionStart{};
+  Standard_Boolean extensionEnd{};
   gp_Pnt2d pointStart;
   gp_Pnt2d pointEnd;
 

@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DrawTrSurf_BSplineSurface.hxx>
 
 #include <Adaptor3d_IsoCurve.hxx>
@@ -32,14 +34,14 @@ IMPLEMENT_STANDARD_RTTIEXT(DrawTrSurf_BSplineSurface, DrawTrSurf_Surface)
 
 DrawTrSurf_BSplineSurface::DrawTrSurf_BSplineSurface (const Handle(Geom_BSplineSurface)& S)
 : DrawTrSurf_Surface (S, S->NbUKnots()-2, S->NbVKnots()-2,
-                      Draw_jaune, Draw_bleu, 30, 0.05, 0)
+                      Draw_jaune, Draw_bleu, 30, 0.05, 0), drawPoles(Standard_True), drawKnots(Standard_True), knotsIsos(Standard_True), knotsForm(Draw_Losange), knotsDim(5)
 {
-  drawPoles = Standard_True;
-  drawKnots = Standard_True;
-  knotsIsos  = Standard_True;
-  knotsForm = Draw_Losange;
+  
+  
+  
+  
   knotsLook = Draw_violet;
-  knotsDim  = 5;
+  
   polesLook = Draw_rouge;
 }
 
@@ -49,15 +51,15 @@ DrawTrSurf_BSplineSurface::DrawTrSurf_BSplineSurface (const Handle(Geom_BSplineS
                                                       const Standard_Integer KnotsSize, const Standard_Boolean ShowPoles, const Standard_Boolean ShowKnots,
                                                       const Standard_Integer Discret, const Standard_Real Deflection, const Standard_Integer DrawMode)
 : DrawTrSurf_Surface (S, S->NbUKnots()-2, S->NbVKnots()-2, BoundsColor,
-                      IsosColor, Discret, Deflection, DrawMode)
+                      IsosColor, Discret, Deflection, DrawMode), knotsIsos(Standard_True), drawPoles(ShowPoles), drawKnots(ShowKnots), knotsForm(KnotsShape), knotsLook(KnotsColor), knotsDim(KnotsSize), polesLook(PolesColor)
 {
-  knotsIsos  = Standard_True;
-  drawPoles = ShowPoles;
-  drawKnots = ShowKnots;
-  knotsForm = KnotsShape;
-  knotsLook = KnotsColor;
-  knotsDim  = KnotsSize;
-  polesLook = PolesColor;
+  
+  
+  
+  
+  
+  
+  
 }
 
 DrawTrSurf_BSplineSurface::DrawTrSurf_BSplineSurface (const Handle(Geom_BSplineSurface)& S, const Standard_Integer NbUIsos,
@@ -67,23 +69,23 @@ DrawTrSurf_BSplineSurface::DrawTrSurf_BSplineSurface (const Handle(Geom_BSplineS
                                                       const Standard_Integer KnotsSize, const Standard_Boolean ShowPoles, const Standard_Boolean ShowKnots,
                                                       const Standard_Integer Discret, const Standard_Real Deflection, const Standard_Integer DrawMode) 
 : DrawTrSurf_Surface (S, Abs(NbUIsos), Abs(NbVIsos), BoundsColor,
-                      IsosColor, Discret, Deflection, DrawMode)
+                      IsosColor, Discret, Deflection, DrawMode), knotsIsos(Standard_False), drawPoles(ShowPoles), drawKnots(ShowKnots), knotsForm(KnotsShape), knotsLook(KnotsColor), knotsDim(KnotsSize), polesLook(PolesColor)
 {
-  knotsIsos  = Standard_False;
-  drawPoles  = ShowPoles;
-  drawKnots  = ShowKnots;
-  knotsForm  = KnotsShape;
-  knotsLook  = KnotsColor;
-  knotsDim   = KnotsSize;
-  polesLook  = PolesColor;
+  
+  
+  
+  
+  
+  
+  
 }
 
 void DrawTrSurf_BSplineSurface::DrawOn (Draw_Display& dis) const
 {
   Handle(Geom_BSplineSurface) S = Handle(Geom_BSplineSurface)::DownCast(surf);
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
-  Standard_Real Ua,Ub,Va,Vb;
+  Standard_Real Ua = NAN,Ub = NAN,Va = NAN,Vb = NAN;
   S->Bounds(Ua,Ub,Va,Vb);
 
   if (drawPoles)
@@ -121,7 +123,7 @@ void DrawTrSurf_BSplineSurface::DrawOn (Draw_Display& dis) const
 
   if (knotsIsos)
   {
-    Standard_Integer first, last;
+    Standard_Integer first = 0, last = 0;
     Handle(GeomAdaptor_Surface) HS = new GeomAdaptor_Surface();
     HS->Load(surf);
     
@@ -146,7 +148,7 @@ void DrawTrSurf_BSplineSurface::DrawOn (Draw_Display& dis) const
 
   if (drawKnots)
   {
-    Standard_Integer first, last;
+    Standard_Integer first = 0, last = 0;
     Standard_Integer NbUKnots = S->NbUKnots();
     TColStd_Array1OfReal SUKnots (1, NbUKnots);
     S->UKnots (SUKnots); 
@@ -225,7 +227,7 @@ void DrawTrSurf_BSplineSurface::FindUKnot (const Standard_Real X, const Standard
   gp_Pnt2d p1(X,Y);
   UIndex++;
   Standard_Integer NbUKnots = bs->NbUKnots();
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   surf->Bounds (U1, U2, V1, V2);
   while (UIndex <= NbUKnots)
   {
@@ -245,7 +247,7 @@ void DrawTrSurf_BSplineSurface::FindVKnot (const Standard_Real X, const Standard
   gp_Pnt2d p1(X,Y);
   VIndex++;
   Standard_Integer NbVKnots = bs->NbVKnots();
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   surf->Bounds (U1, U2, V1, V2);
   while (VIndex <= NbVKnots)
   {

@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_CartesianPoint.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom_CartesianPoint.hxx>
@@ -45,8 +47,8 @@ static OSD_Timer& chrono() {
 
     MoniTool_CaseData::MoniTool_CaseData
   (const Standard_CString caseid, const Standard_CString name)
-    : thesubst (0) , thecase (caseid) , thename (name)  
-      {  thecheck = DefCheck(caseid);  }
+    : thecheck(DefCheck(caseid)), thesubst (0) , thecase (caseid) , thename (name)  
+      {   }
 
     void  MoniTool_CaseData::SetCaseId (const Standard_CString caseid)
       {  thecase.Clear();  thecase.AssignCat (caseid);  thecheck = DefCheck(caseid);  thesubst = 0;  }
@@ -141,7 +143,7 @@ static OSD_Timer& chrono() {
 {
   Standard_Real cpu = curCPU;
   if (cpu == 0.) {
-    Standard_Real sec;  Standard_Integer i1,i2;
+    Standard_Real sec = NAN;  Standard_Integer i1 = 0,i2 = 0;
     chrono().Show (sec,i1,i2,cpu);
   }
   cpu = cpu - lastCPU;
@@ -151,7 +153,7 @@ static OSD_Timer& chrono() {
     Standard_Real  MoniTool_CaseData::GetCPU () const
 {
   if (!stachr) { chrono().Start(); stachr = Standard_True; }
-  Standard_Real sec,cpu;  Standard_Integer i1,i2;
+  Standard_Real sec = NAN,cpu = NAN;  Standard_Integer i1 = 0,i2 = 0;
   chrono().Show (sec,i1,i2,cpu);
   return cpu;
 }
@@ -162,7 +164,7 @@ static OSD_Timer& chrono() {
 {
   Standard_Real cpu = curCPU;
   if (cpu == 0.) {
-    Standard_Real sec;  Standard_Integer i1,i2;
+    Standard_Real sec = NAN;  Standard_Integer i1 = 0,i2 = 0;
     chrono().Show (sec,i1,i2,cpu);
   }
   cpu = cpu - lastCPU;
@@ -285,7 +287,7 @@ static Standard_Integer NameRank (const Standard_CString name)
   (const Standard_CString name) const
 {
   if (!name || name[0] == '\0') return 0;
-  Standard_Integer nd, nn = 0, nb = NbData();
+  Standard_Integer nd = 0, nn = 0, nb = NbData();
   for (nd = 1; nd <= nb; nd ++) {
     if (thednam(nd).IsEqual(name)) return nd;
   }
@@ -399,7 +401,7 @@ Message_Msg  MoniTool_CaseData::Msg () const
 
     Standard_Integer  MoniTool_CaseData::DefCheck (const Standard_CString acode)
 {
-  Standard_Integer val;
+  Standard_Integer val = 0;
   if (!defch.Find(acode, val))
     val = 0;
   return val;

@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math_BissecNewton.hxx>
 #include <math_FunctionWithDerivative.hxx>
 #include <StdFail_NotDone.hxx>
@@ -49,10 +51,10 @@ void math_BissecNewton::Perform(math_FunctionWithDerivative& F,
                                 const Standard_Real    Bound2,
                                 const Standard_Integer NbIterations)
 {
-  Standard_Boolean GOOD;
-  Standard_Integer j;
-  Standard_Real dxold, fh, fl;
-  Standard_Real swap, temp, xh, xl;
+  Standard_Boolean GOOD = 0;
+  Standard_Integer j = 0;
+  Standard_Real dxold = NAN, fh = NAN, fl = NAN;
+  Standard_Real swap = NAN, temp = NAN, xh = NAN, xl = NAN;
   
   GOOD = F.Values(Bound1, fl, df);
   if(!GOOD) {

@@ -50,9 +50,9 @@
 //=========================================================================
 Geom2dGcc_FunctionTanCirCu::
 Geom2dGcc_FunctionTanCirCu(const gp_Circ2d& Circ   ,
-                           const Geom2dAdaptor_Curve&  Curv   ) {
-                             Curve = Curv;
-                             TheCirc = Circ;
+                           const Geom2dAdaptor_Curve&  Curv   ) : Curve(Curv), TheCirc(Circ) {
+                             
+                             
 
                              //  Modified by Sergey KHROMOV - Thu Apr  5 09:51:21 2001 Begin
                              Standard_Integer aNbSamp = Geom2dGcc_CurveTool::NbSamples(Curve);

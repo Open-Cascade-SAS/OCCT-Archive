@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntPatch_ALineToWLine.hxx>
 
 #include <Adaptor3d_Surface.hxx>
@@ -263,7 +265,7 @@ void IntPatch_ALineToWLine::CorrectEndPoint(Handle(IntSurf_LineOn2S)& theLine,
   const Standard_Real aSqTol = 1.e-10;
 
   //Perform linear extrapolation from two previous points
-  Standard_Integer anIndFirst, anIndSecond;
+  Standard_Integer anIndFirst = 0, anIndSecond = 0;
   if (theIndex == 1)
   {
     anIndFirst  = 3;
@@ -290,7 +292,7 @@ void IntPatch_ALineToWLine::CorrectEndPoint(Handle(IntSurf_LineOn2S)& theLine,
     }
     else if (aQuad.TypeQuadric() == GeomAbs_Sphere)
     {
-      Standard_Real aU, aV;
+      Standard_Real aU = NAN, aV = NAN;
       aPntOn2S.ParametersOnSurface(anIsOnFirst, aU, aV);
       if (Abs(aV - M_PI/2) > aTol &&
           Abs(aV + M_PI/2) > aTol)
@@ -303,7 +305,7 @@ void IntPatch_ALineToWLine::CorrectEndPoint(Handle(IntSurf_LineOn2S)& theLine,
     gp_Pnt2d PrevP2d     = theLine->Value (anIndSecond).ValueOnSurface(anIsOnFirst);
     gp_Dir2d aDir = gp_Vec2d(PrevPrevP2d, PrevP2d);
     Standard_Real aX0 = PrevPrevP2d.X(), aY0 = PrevPrevP2d.Y();
-    Standard_Real aXend, aYend;
+    Standard_Real aXend = NAN, aYend = NAN;
     aPntOn2S.ParametersOnSurface(anIsOnFirst, aXend, aYend);
 
     if (Abs(aDir.Y()) < gp::Resolution())
@@ -363,7 +365,7 @@ Standard_Real IntPatch_ALineToWLine::GetSectionRadius(const gp_Pnt& thePnt3d) co
 void IntPatch_ALineToWLine::MakeWLine(const Handle(IntPatch_ALine)& theAline,
                                       IntPatch_SequenceOfLine& theLines) const
 { 
-  Standard_Boolean included;
+  Standard_Boolean included = 0;
   Standard_Real f = theAline->FirstParameter(included); 
   if(!included) {
     f+=myTolOpenDomain;
@@ -615,7 +617,7 @@ void IntPatch_ALineToWLine::MakeWLine(const Handle(IntPatch_ALine)& theALine,
           }
 
           const gp_Pnt aPnt3d(theALine->Value(aPrt));
-          Standard_Real u1, v1, u2, v2;
+          Standard_Real u1 = NAN, v1 = NAN, u2 = NAN, v2 = NAN;
           myQuad1.Parameters(aPnt3d, u1, v1);
           myQuad2.Parameters(aPnt3d, u2, v2);
           aRPT.SetValue(aPnt3d, u1, v1, u2, v2);

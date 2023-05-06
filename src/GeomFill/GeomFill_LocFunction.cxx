@@ -23,10 +23,10 @@
 #include <TColgp_Array1OfVec2d.hxx>
 
 GeomFill_LocFunction::GeomFill_LocFunction(const Handle(GeomFill_LocationLaw)& Law) 
-                                          :V(1,4), DV(1,4), D2V(1,4)
+                                          :myLaw(Law), V(1,4), DV(1,4), D2V(1,4)
 
 {
-  myLaw = Law;
+  
 }
 
  Standard_Boolean GeomFill_LocFunction::D0(const Standard_Real Param,
@@ -36,7 +36,7 @@ GeomFill_LocFunction::GeomFill_LocFunction(const Handle(GeomFill_LocationLaw)& L
 					   const Standard_Real ) 
 {
   gp_Mat aM;
-  Standard_Boolean B;
+  Standard_Boolean B = 0;
   B = myLaw->D0(Param, aM, V.ChangeValue(1));
   V(2).SetXYZ(aM.Column(1));
   V(3).SetXYZ(aM.Column(2));
@@ -53,7 +53,7 @@ GeomFill_LocFunction::GeomFill_LocFunction(const Handle(GeomFill_LocationLaw)& L
   TColgp_Array1OfPnt2d T1(1,1);
   TColgp_Array1OfVec2d T2(1,1);
   gp_Mat aM, aDM;
-  Standard_Boolean B;
+  Standard_Boolean B = 0;
   B = myLaw->D1(Param, aM, V.ChangeValue(1),
 		aDM, DV.ChangeValue(1),
 		T1, T2);
@@ -77,7 +77,7 @@ GeomFill_LocFunction::GeomFill_LocFunction(const Handle(GeomFill_LocationLaw)& L
   TColgp_Array1OfPnt2d T1(1,1);
   TColgp_Array1OfVec2d T2(1,1), T3(1,1);
   gp_Mat aM, aDM, aD2M;
-  Standard_Boolean B;
+  Standard_Boolean B = 0;
   B = myLaw->D2(Param, aM, V.ChangeValue(1),
 		aDM, DV.ChangeValue(1),
 		aD2M, D2V.ChangeValue(1),
@@ -105,7 +105,7 @@ GeomFill_LocFunction::GeomFill_LocFunction(const Handle(GeomFill_LocationLaw)& L
 					   Standard_Real& Result,
 					   Standard_Integer& Ier) 
 {
-  Standard_Boolean B;
+  Standard_Boolean B = 0;
   Standard_Real * AddrResult =  &Result;
   const Standard_Real * LocalResult=NULL;
     

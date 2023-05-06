@@ -67,7 +67,7 @@ void BRepAlgoAPI_Splitter::Build(const Message_ProgressRange& theRange)
   // Initialization of the building tool
   myBuilder = new BOPAlgo_Splitter(myAllocator);
   myBuilder->SetArguments(myArguments);
-  ((BOPAlgo_Splitter*)myBuilder)->SetTools(myTools);
+  (dynamic_cast<BOPAlgo_Splitter*>(myBuilder))->SetTools(myTools);
 
   // Build result shape basing on the intersection results
   BuildResult(aPS.Next(30));

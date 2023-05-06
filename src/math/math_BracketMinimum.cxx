@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math_BracketMinimum.hxx>
 #include <math_Function.hxx>
 #include <StdFail_NotDone.hxx>
@@ -47,7 +49,7 @@ Standard_Boolean math_BracketMinimum::LimitAndMayBeSwap
   if ((theA - theB) * (theB - theC) < 0)
   {
     // swap B and C
-    Standard_Real dum;
+    Standard_Real dum = NAN;
     SHFT(dum, theB, theC, dum);
     SHFT(dum, theFB, theFC, dum);
   }
@@ -57,8 +59,8 @@ Standard_Boolean math_BracketMinimum::LimitAndMayBeSwap
     void math_BracketMinimum::Perform(math_Function& F)
     {
 
-     Standard_Boolean OK;
-     Standard_Real ulim, u, r, q, fu, dum;
+     Standard_Boolean OK = 0;
+     Standard_Real ulim = NAN, u = NAN, r = NAN, q = NAN, fu = NAN, dum = NAN;
 
      Done = Standard_False; 
      Standard_Real Lambda = GOLD;

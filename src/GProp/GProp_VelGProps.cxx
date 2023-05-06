@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp_Cone.hxx>
 #include <gp_Cylinder.hxx>
 #include <gp_Pnt.hxx>
@@ -83,7 +85,7 @@ void GProp_VelGProps::Perform(const gp_Cylinder&    S,
 			      const Standard_Real Z1,
 			      const Standard_Real Z2)
 {
-  Standard_Real X0,Y0,Z0,Xa1,Ya1,Za1,Xa2,Ya2,Za2,Xa3,Ya3,Za3;
+  Standard_Real X0 = NAN,Y0 = NAN,Z0 = NAN,Xa1 = NAN,Ya1 = NAN,Za1 = NAN,Xa2 = NAN,Ya2 = NAN,Za2 = NAN,Xa3 = NAN,Ya3 = NAN,Za3 = NAN;
   S.Location().Coord(X0,Y0,Z0);
   Standard_Real Rayon = S.Radius();
   S.Position().XDirection().Coord(Xa1,Ya1,Za1);
@@ -150,7 +152,7 @@ void GProp_VelGProps::Perform(const gp_Cone&    S,
 			      const Standard_Real Z1,
 			      const Standard_Real Z2)
 {
-  Standard_Real X0,Y0,Z0,Xa1,Ya1,Za1,Xa2,Ya2,Za2,Xa3,Ya3,Za3;
+  Standard_Real X0 = NAN,Y0 = NAN,Z0 = NAN,Xa1 = NAN,Ya1 = NAN,Za1 = NAN,Xa2 = NAN,Ya2 = NAN,Za2 = NAN,Xa3 = NAN,Ya3 = NAN,Za3 = NAN;
   S.Location().Coord(X0,Y0,Z0);
   S.Position().XDirection().Coord(Xa1,Ya1,Za1);
   S.Position().YDirection().Coord(Xa2,Ya2,Za2);
@@ -230,7 +232,7 @@ void GProp_VelGProps::Perform(const gp_Sphere&    S,
 			      const Standard_Real Alpha1,
 			      const Standard_Real Alpha2)
 {
-  Standard_Real X0,Y0,Z0,Xa1,Ya1,Za1,Xa2,Ya2,Za2,Xa3,Ya3,Za3;
+  Standard_Real X0 = NAN,Y0 = NAN,Z0 = NAN,Xa1 = NAN,Ya1 = NAN,Za1 = NAN,Xa2 = NAN,Ya2 = NAN,Za2 = NAN,Xa3 = NAN,Ya3 = NAN,Za3 = NAN;
   S.Location().Coord(X0,Y0,Z0);
   S.Position().XDirection().Coord(Xa1,Ya1,Za1);
   S.Position().YDirection().Coord(Xa2,Ya2,Za2);
@@ -310,7 +312,7 @@ void GProp_VelGProps::Perform(const gp_Torus&    S,
 			      const Standard_Real Alpha1,
 			      const Standard_Real Alpha2)
 {
-  Standard_Real X0,Y0,Z0,Xa1,Ya1,Za1,Xa2,Ya2,Za2,Xa3,Ya3,Za3;
+  Standard_Real X0 = NAN,Y0 = NAN,Z0 = NAN,Xa1 = NAN,Ya1 = NAN,Za1 = NAN,Xa2 = NAN,Ya2 = NAN,Za2 = NAN,Xa3 = NAN,Ya3 = NAN,Za3 = NAN;
   S.Location().Coord(X0,Y0,Z0);
   S.Position().XDirection().Coord(Xa1,Ya1,Za1);
   S.Position().YDirection().Coord(Xa2,Ya2,Za2);

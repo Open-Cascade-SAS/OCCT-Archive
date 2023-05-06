@@ -24,10 +24,10 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeFix_Root,Standard_Transient)
 //function : ShapeFix_Root
 //purpose  : 
 //=======================================================================
-ShapeFix_Root::ShapeFix_Root()
+ShapeFix_Root::ShapeFix_Root() : myMsgReg(new ShapeExtend_BasicMsgRegistrator)
 {
   myPrecision = myMinTol = myMaxTol = Precision::Confusion();
-  myMsgReg = new ShapeExtend_BasicMsgRegistrator;
+  
 }
 
 //=======================================================================

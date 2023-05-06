@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Lin.hxx>
@@ -36,7 +38,7 @@ void GProp_CelGProps::Perform(const gp_Circ& C,
 			      const Standard_Real U1,
 			      const Standard_Real U2)
 {
-  Standard_Real X0,Y0,Z0,Xa1,Ya1,Za1,Xa2,Ya2,Za2,Xa3,Ya3,Za3;
+  Standard_Real X0 = NAN,Y0 = NAN,Z0 = NAN,Xa1 = NAN,Ya1 = NAN,Za1 = NAN,Xa2 = NAN,Ya2 = NAN,Za2 = NAN,Xa3 = NAN,Ya3 = NAN,Za3 = NAN;
   C.Location().Coord(X0,Y0,Z0);
   C.XAxis().Direction().Coord(Xa1,Ya1,Za1);
   C.YAxis().Direction().Coord(Xa2,Ya2,Za2);
@@ -92,7 +94,7 @@ void GProp_CelGProps::Perform(const gp_Lin& C,
   dim =Abs(U2-U1);
   gp_Pnt P2 = ElCLib::LineValue(U2,Pos);
   g.SetCoord((P1.X()+P2.X())/2.,(P1.Y()+P2.Y())/2.,(P1.Z()+P2.Z())/2.);
-  Standard_Real Vx,Vy,Vz,X0,Y0,Z0;
+  Standard_Real Vx = NAN,Vy = NAN,Vz = NAN,X0 = NAN,Y0 = NAN,Z0 = NAN;
   Pos.Direction().Coord(Vx,Vy,Vz);
   Pos.Location().Coord(X0,Y0,Z0);
   Standard_Real alfa1 = (Vz*Vz+Vy*Vy)/3.;

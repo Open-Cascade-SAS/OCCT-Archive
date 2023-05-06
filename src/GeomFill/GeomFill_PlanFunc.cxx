@@ -23,10 +23,10 @@
 GeomFill_PlanFunc::GeomFill_PlanFunc(const gp_Pnt& theP,
 				      const gp_Vec& theV,
 				      const Handle(Adaptor3d_Curve)& theC) :
-				      myCurve(theC)
+				      myPnt(theP.XYZ()), myVec(theV.XYZ()), myCurve(theC)
 {
-  myPnt = theP.XYZ();
-  myVec = theV.XYZ();
+  
+  
 }
 
 

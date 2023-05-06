@@ -65,7 +65,7 @@ private:
 
 
   Handle(StepElement_HArray1OfSurfaceSection) theDefinitions;
-  Standard_Boolean theAdditionalNodeValues;
+  Standard_Boolean theAdditionalNodeValues{};
 
 
 };

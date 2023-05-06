@@ -23,15 +23,15 @@
 #include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
 
-GC_MakeHyperbola::GC_MakeHyperbola(const gp_Hypr& H)
+GC_MakeHyperbola::GC_MakeHyperbola(const gp_Hypr& H) : GC_Root(), TheHyperbola(new Geom_Hyperbola(H))
 {
   TheError = gce_Done;
-  TheHyperbola = new Geom_Hyperbola(H);
+  
 }
 
 GC_MakeHyperbola::GC_MakeHyperbola(const gp_Ax2&       A2         ,
 				     const Standard_Real MajorRadius,
-				     const Standard_Real MinorRadius)
+				     const Standard_Real MinorRadius) : GC_Root()
 {
   if (MajorRadius < 0. || MinorRadius < 0.0) { TheError = gce_NegativeRadius; }
   else {
@@ -42,7 +42,7 @@ GC_MakeHyperbola::GC_MakeHyperbola(const gp_Ax2&       A2         ,
 
 GC_MakeHyperbola::GC_MakeHyperbola(const gp_Pnt& S1     ,
 				     const gp_Pnt& S2     ,
-				     const gp_Pnt& Center ) {
+				     const gp_Pnt& Center ) : GC_Root() {
   gce_MakeHypr H = gce_MakeHypr(S1,S2,Center);
   TheError = H.Status();
   if (TheError == gce_Done) {

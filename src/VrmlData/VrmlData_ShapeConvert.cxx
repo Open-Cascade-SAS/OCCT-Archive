@@ -246,7 +246,7 @@ void VrmlData_ShapeConvert::Convert (const Standard_Boolean theExtractFaces,
 
   Standard_Boolean Extract[2] = {theExtractFaces, theExtractEdges};
   TopAbs_ShapeEnum ShapeType[2] = {TopAbs_FACE, TopAbs_EDGE};
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   const Handle(NCollection_IncAllocator) anAlloc = new NCollection_IncAllocator;
 
@@ -321,7 +321,7 @@ Handle(VrmlData_Geometry) VrmlData_ShapeConvert::triToIndexedFaceSet
                                    const TopoDS_Face&                theFace,
                                    const Handle(VrmlData_Coordinate)& theCoord)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   const Standard_Integer nNodes         (theTri->NbNodes());
   const Standard_Integer nTriangles     (theTri->NbTriangles());
 
@@ -480,7 +480,7 @@ Handle(VrmlData_Geometry) VrmlData_ShapeConvert::triToIndexedFaceSet
 Handle(VrmlData_Geometry) VrmlData_ShapeConvert::polToIndexedLineSet
                                         (const Handle(Poly_Polygon3D)& thePol)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   const Standard_Integer    nNodes (thePol->NbNodes());
   const TColgp_Array1OfPnt& arrPolyNodes = thePol->Nodes();
   const Handle(NCollection_IncAllocator)& anAlloc = myScene.Allocator();

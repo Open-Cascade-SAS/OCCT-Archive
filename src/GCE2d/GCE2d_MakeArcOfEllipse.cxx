@@ -26,7 +26,7 @@
 GCE2d_MakeArcOfEllipse::GCE2d_MakeArcOfEllipse(const gp_Elips2d&      Elips ,
 					       const gp_Pnt2d&        P1    ,
 					       const gp_Pnt2d&        P2    ,
-					       const Standard_Boolean Sense ) 
+					       const Standard_Boolean Sense ) : GCE2d_Root() 
 {
   Standard_Real Alpha1 = ElCLib::Parameter(Elips,P1);
   Standard_Real Alpha2 = ElCLib::Parameter(Elips,P2);
@@ -38,7 +38,7 @@ GCE2d_MakeArcOfEllipse::GCE2d_MakeArcOfEllipse(const gp_Elips2d&      Elips ,
 GCE2d_MakeArcOfEllipse::GCE2d_MakeArcOfEllipse(const gp_Elips2d&      Elips ,
 					       const gp_Pnt2d&        P     ,
 					       const Standard_Real    Alpha ,
-					       const Standard_Boolean Sense ) 
+					       const Standard_Boolean Sense ) : GCE2d_Root() 
 {
   Standard_Real Alphafirst = ElCLib::Parameter(Elips,P);
   Handle(Geom2d_Ellipse) E = new Geom2d_Ellipse(Elips);
@@ -49,7 +49,7 @@ GCE2d_MakeArcOfEllipse::GCE2d_MakeArcOfEllipse(const gp_Elips2d&      Elips ,
 GCE2d_MakeArcOfEllipse::GCE2d_MakeArcOfEllipse(const gp_Elips2d&      Elips  ,
 					       const Standard_Real    Alpha1 ,
 					       const Standard_Real    Alpha2 ,
-					       const Standard_Boolean Sense  ) 
+					       const Standard_Boolean Sense  ) : GCE2d_Root() 
 {
   Handle(Geom2d_Ellipse) E = new Geom2d_Ellipse(Elips);
   TheArc = new Geom2d_TrimmedCurve(E,Alpha1,Alpha2,Sense);

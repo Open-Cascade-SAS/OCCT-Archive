@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomConvert.hxx>
 
 #include <Convert_ConeToBSplineSurface.hxx>
@@ -82,7 +84,7 @@ static Handle(Geom_BSplineSurface) BSplineSurfaceBuilder (const Convert_Elementa
   Array1OfReal    VKnots  (1, NbVKnots);
   Array1OfInteger UMults  (1, NbUKnots);
   Array1OfInteger VMults  (1, NbVKnots);
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   for (j = 1; j <= NbVPoles; j++) {
     for (i = 1; i <= NbUPoles; i++) {
       Poles   (i, j) = Convert.Pole   (i, j);
@@ -320,7 +322,7 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
   (const Handle(Geom_Surface)& Sr) 
 {
  
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   Sr->Bounds (U1, U2, V1, V2);
   Standard_Real UFirst = Min (U1, U2);
   Standard_Real ULast  = Max (U1, U2);
@@ -518,8 +520,8 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
           new Geom_TrimmedCurve( Meridian, VFirst, VLast);
         C =  GeomConvert::CurveToBSplineCurve (CT);
       }
-      Standard_Integer NbUPoles, NbUKnots;
-      Standard_Integer NbVPoles, NbVKnots;
+      Standard_Integer NbUPoles = 0, NbUKnots = 0;
+      Standard_Integer NbVPoles = 0, NbVKnots = 0;
       Standard_Boolean periodic = Standard_False;
 
       // Poles of meridian = Vpoles
@@ -530,8 +532,8 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
       Weights.Init(1.);
       if ( C->IsRational()) C->Weights(Weights);
 
-      Standard_Integer nbUSpans;
-      Standard_Real AlfaU;
+      Standard_Integer nbUSpans = 0;
+      Standard_Real AlfaU = NAN;
       if (Strim->IsUPeriodic()) {
         NbUKnots = 4;
         nbUSpans = 3;
@@ -550,7 +552,7 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
       // Compute Knots and Mults
       TColStd_Array1OfReal    UKnots(1, NbUKnots);
       TColStd_Array1OfInteger UMults( 1, NbUKnots);
-      Standard_Integer i,j;
+      Standard_Integer i = 0,j = 0;
       for ( i = 1; i <= NbUKnots; i++) {
         UKnots(i) = UFirst + (i-1) * 2 * AlfaU;
         UMults(i) = 2;
@@ -683,7 +685,7 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
     else if (Surf->IsKind(STANDARD_TYPE(Geom_BSplineSurface))) {
       Handle(Geom_BSplineSurface) BS = 
         Handle(Geom_BSplineSurface)::DownCast(Surf->Copy());
-      Standard_Real umin, umax, vmin, vmax;
+      Standard_Real umin = NAN, umax = NAN, vmin = NAN, vmax = NAN;
       BS->Bounds(umin, umax, vmin, vmax);
       if (!BS->IsUPeriodic()) {
         if (U1 < umin)
@@ -707,7 +709,7 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
 
     else {
       Standard_Real Tol3d=1.e-4;
-      Standard_Integer MaxDegree =14, MaxSeg;
+      Standard_Integer MaxDegree =14, MaxSeg = 0;
       GeomAbs_Shape cont;
       GeomAdaptor_Surface AS(Sr);
       if (AS.NbUIntervals(GeomAbs_C2) > 1 || AS.NbVIntervals(GeomAbs_C2) > 1 ) 
@@ -752,8 +754,8 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
       Handle(Geom_BSplineCurve) C 
         = GeomConvert::CurveToBSplineCurve (Meridian);
 
-      Standard_Integer NbUPoles, NbUKnots;
-      Standard_Integer NbVPoles, NbVKnots;
+      Standard_Integer NbUPoles = 0, NbUKnots = 0;
+      Standard_Integer NbVPoles = 0, NbVKnots = 0;
       Standard_Boolean periodic = Standard_True;
 
       // Poles of meridian = Vpoles
@@ -764,7 +766,7 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
       Weights.Init(1.);
       if ( C->IsRational()) C->Weights(Weights);
 
-      Standard_Real AlfaU;
+      Standard_Real AlfaU = NAN;
       NbUKnots = 4;
       AlfaU    = M_PI / 3.;
       NbUPoles = 6;
@@ -772,7 +774,7 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
       // Compute Knots and Mults
       TColStd_Array1OfReal    UKnots(1, NbUKnots);
       TColStd_Array1OfInteger UMults( 1, NbUKnots);
-      Standard_Integer i,j;
+      Standard_Integer i = 0,j = 0;
       for ( i = 1; i <= NbUKnots; i++) {
         UKnots(i) = UFirst + (i-1) * 2 * AlfaU;
         UMults(i) = 2;
@@ -862,7 +864,7 @@ Handle(Geom_BSplineSurface) GeomConvert::SurfaceToBSplineSurface
 
     else { // In other cases => Approx
       Standard_Real Tol3d=1.e-4;
-      Standard_Integer MaxDegree = 14, MaxSeg;
+      Standard_Integer MaxDegree = 14, MaxSeg = 0;
       GeomAbs_Shape ucont = GeomAbs_C0, vcont = GeomAbs_C0;
       GeomAdaptor_Surface AS(Sr);
       //

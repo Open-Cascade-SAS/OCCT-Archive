@@ -50,7 +50,7 @@ void RWStepAP214_RWAutoDesignNominalDateAssignment::ReadStep
 
 	Handle(StepAP214_HArray1OfAutoDesignDatedItem) aItems;
 	StepAP214_AutoDesignDatedItem aItemsItem;
-	Standard_Integer nsub3;
+	Standard_Integer nsub3 = 0;
 	if (data->ReadSubList (num,3,"items",ach,nsub3)) {
 	  Standard_Integer nb3 = data->NbParams(nsub3);
 	  aItems = new StepAP214_HArray1OfAutoDesignDatedItem (1, nb3);

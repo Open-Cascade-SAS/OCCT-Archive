@@ -51,6 +51,6 @@ public:
   DEFINE_STANDARD_RTTIEXT(StepRepr_IntegerRepresentationItem,StepRepr_RepresentationItem)
 
 private:
-  Standard_Integer value;
+  Standard_Integer value{};
 };
 #endif // _StepRepr_IntegerRepresentationItem_HeaderFile

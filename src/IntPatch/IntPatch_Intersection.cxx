@@ -12,6 +12,7 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
 #include <stdio.h>
 #include <IntPatch_Intersection.hxx>
 
@@ -260,7 +261,7 @@ static void FUN_TrimInfSurf(const gp_Pnt& Pmin,
   Extrema_ExtPS ext2(Pmax, *InfSurf, 1.e-7, 1.e-7);
   if(ext1.IsDone() || ext2.IsDone())
   {
-    Standard_Real Umax = -1.e+100, Umin = 1.e+100, Vmax = -1.e+100, Vmin = 1.e+100, cU, cV;
+    Standard_Real Umax = -1.e+100, Umin = 1.e+100, Vmax = -1.e+100, Vmin = 1.e+100, cU = NAN, cV = NAN;
     if(ext1.IsDone())
     {
       for(Standard_Integer i = 1; i <= ext1.NbExt(); i++)
@@ -358,7 +359,7 @@ static void FUN_GetUiso(const Handle(Geom_Surface)& GS,
     }
     else//Offset Line, Parab, Hyperb
     {
-      Standard_Real VmTr, VMTr;
+      Standard_Real VmTr = NAN, VMTr = NAN;
       if(GACT != GeomAbs_Hyperbola)
       {
         if(FirstV >= 0. && LastV >= 0.){ VmTr = FirstV; VMTr = ((LastV - FirstV) > 1.e+4) ? (FirstV + 1.e+4) : LastV; }
@@ -428,7 +429,7 @@ static void FUN_GetViso(const Handle(Geom_Surface)& GS,
     }
     else//Offset Line, Parab, Hyperb
     {
-      Standard_Real UmTr, UMTr;
+      Standard_Real UmTr = NAN, UMTr = NAN;
       if(GACT != GeomAbs_Hyperbola)
       {
         if(FirstU >= 0. && LastU >= 0.){ UmTr = FirstU; UMTr = ((LastU - FirstU) > 1.e+4) ? (FirstU + 1.e+4) : LastU; }
@@ -472,8 +473,8 @@ static void FUN_PL_Intersection(const Handle(Adaptor3d_Surface)& S1,
   Standard_Boolean isoS1isLine[2] = {0, 0};
   Standard_Boolean isoS2isLine[2] = {0, 0};
   Handle(Geom_Curve) C1, C2;
-  const GeomAdaptor_Surface & gas1 = *(GeomAdaptor_Surface*)(S1.get());
-  const GeomAdaptor_Surface & gas2 = *(GeomAdaptor_Surface*)(S2.get());
+  const GeomAdaptor_Surface & gas1 = *dynamic_cast<GeomAdaptor_Surface*>(S1.get());
+  const GeomAdaptor_Surface & gas2 = *dynamic_cast<GeomAdaptor_Surface*>(S2.get());
   const Handle(Geom_Surface) gs1 = gas1.Surface();
   const Handle(Geom_Surface) gs2 = gas2.Surface();
   Standard_Real MS1[2], MS2[2];
@@ -672,8 +673,8 @@ static void FUN_TrimBothSurf(const Handle(Adaptor3d_Surface)& S1,
                              Handle(Adaptor3d_Surface)&       NS1,
                              Handle(Adaptor3d_Surface)&       NS2)
 {
-  const GeomAdaptor_Surface & gas1 = *(GeomAdaptor_Surface*)(S1.get());
-  const GeomAdaptor_Surface & gas2 = *(GeomAdaptor_Surface*)(S2.get());
+  const GeomAdaptor_Surface & gas1 = *dynamic_cast<GeomAdaptor_Surface*>(S1.get());
+  const GeomAdaptor_Surface & gas2 = *dynamic_cast<GeomAdaptor_Surface*>(S2.get());
   const Handle(Geom_Surface) gs1 = gas1.Surface();
   const Handle(Geom_Surface) gs2 = gas2.Surface();
   const Standard_Real UM1 = 0.5 * (S1->LastUParameter() + S1->FirstUParameter());
@@ -708,7 +709,7 @@ static void FUN_TrimBothSurf(const Handle(Adaptor3d_Surface)& S1,
   Standard_Boolean TrmV1 = Standard_False;
   Standard_Boolean TrmU2 = Standard_False;
   Standard_Boolean TrmV2 = Standard_False;
-  Standard_Real V1S1,V2S1,U1S1,U2S1, V1S2,V2S2,U1S2,U2S2;
+  Standard_Real V1S1 = NAN,V2S1 = NAN,U1S1 = NAN,U2S1 = NAN, V1S2 = NAN,V2S2 = NAN,U1S2 = NAN,U2S2 = NAN;
   FUN_NewFirstLast(GA_U1,S1->FirstVParameter(),S1->LastVParameter(),TV,V1S1,V2S1,TrmV1);
   FUN_NewFirstLast(GA_V1,S1->FirstUParameter(),S1->LastUParameter(),TV,U1S1,U2S1,TrmU1);
   FUN_NewFirstLast(GA_U2,S2->FirstVParameter(),S2->LastVParameter(),TV,V1S2,V2S2,TrmV2);
@@ -774,7 +775,7 @@ void IntPatch_Intersection::Perform(const Handle(Adaptor3d_Surface)&  theS1,
       typs1 == GeomAbs_Torus || typs2 == GeomAbs_Torus) {
     gp_Ax1 aCTAx, aGeomAx;
     GeomAbs_SurfaceType aCTType;
-    Standard_Boolean bToCheck;
+    Standard_Boolean bToCheck = 0;
     //
     const Handle(Adaptor3d_Surface)& aCTSurf = 
       (typs1 == GeomAbs_Cone || typs1 == GeomAbs_Torus) ? theS1 : theS2;
@@ -1032,7 +1033,7 @@ void IntPatch_Intersection::Perform(const Handle(Adaptor3d_Surface)&  theS1,
       typs1 == GeomAbs_Torus || typs2 == GeomAbs_Torus) {
     gp_Ax1 aCTAx, aGeomAx;
     GeomAbs_SurfaceType aCTType;
-    Standard_Boolean bToCheck;
+    Standard_Boolean bToCheck = 0;
     //
     const Handle(Adaptor3d_Surface)& aCTSurf = 
       (typs1 == GeomAbs_Cone || typs1 == GeomAbs_Torus) ? theS1 : theS2;
@@ -1802,7 +1803,7 @@ Standard_Boolean IntPatch_Intersection::CheckSingularPoints(
   //
   const Standard_Integer aNbBndPnts = 5;
   const Standard_Real aTol = Precision::Confusion();
-  Standard_Integer i;
+  Standard_Integer i = 0;
   theD1->Init();
   Standard_Boolean isU = Standard_True;
   for (; theD1->More(); theD1->Next())
@@ -1813,7 +1814,7 @@ Standard_Boolean IntPatch_Intersection::CheckSingularPoints(
     {
       continue;
     }
-    Standard_Real t, dt = (psup - pinf) / (aNbBndPnts - 1);
+    Standard_Real t = NAN, dt = (psup - pinf) / (aNbBndPnts - 1);
     gp_Pnt2d aP1;
     gp_Vec2d aDir;
     aBnd->D1((pinf + psup) / 2., aP1, aDir);
@@ -1930,7 +1931,7 @@ static void splitCone(
 
   gp_Cone aCone = theS->Cone();
 
-  Standard_Real aU0, aV0;
+  Standard_Real aU0 = NAN, aV0 = NAN;
   Adaptor3d_TopolTool::GetConeApexParam (aCone, aU0, aV0);
 
   TopAbs_State aState = theD->Classify (gp_Pnt2d (aU0, aV0), theTol);

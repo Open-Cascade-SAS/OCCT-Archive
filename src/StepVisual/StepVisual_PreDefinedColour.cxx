@@ -18,9 +18,9 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(StepVisual_PreDefinedColour,StepVisual_Colour)
 
-StepVisual_PreDefinedColour::StepVisual_PreDefinedColour ()  
+StepVisual_PreDefinedColour::StepVisual_PreDefinedColour () : myItem(new StepVisual_PreDefinedItem)  
 {
-  myItem = new StepVisual_PreDefinedItem;
+  
 }
 
 void StepVisual_PreDefinedColour::SetPreDefinedItem (const Handle(StepVisual_PreDefinedItem) &item)  

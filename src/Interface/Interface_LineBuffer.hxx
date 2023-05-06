@@ -112,7 +112,7 @@ private:
   Standard_Integer myGet;
   Standard_Integer myLen;
   Standard_Integer myFriz;
-  Standard_Character myKept;
+  Standard_Character myKept{};
 
 };
 

@@ -24,8 +24,8 @@
 //   Creation d un homothetie de gp de centre Point et de rapport Scale.  +
 //=========================================================================
 GC_MakeScale::GC_MakeScale(const gp_Pnt&  Point ,
-			     const Standard_Real     Scale ) {
-  TheScale = new Geom_Transformation();
+			     const Standard_Real     Scale ) : TheScale(new Geom_Transformation()) {
+  
   TheScale->SetScale(Point,Scale);
 }
 

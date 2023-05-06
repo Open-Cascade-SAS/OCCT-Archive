@@ -48,10 +48,10 @@ inline Standard_Boolean compareStrings (char * const           str,
 
 inline LDOM_MemManager::MemBlock::MemBlock (const Standard_Integer aSize,
                                             LDOM_MemManager::MemBlock * aFirst)
-     : mySize (aSize), myNext (aFirst)
+     : mySize (aSize), myFreeSpace(myBlock = new Standard_Integer [aSize]), myEndBlock(myBlock + aSize), myNext (aFirst)
 {
-  myFreeSpace = myBlock = new Standard_Integer [aSize];
-  myEndBlock = myBlock + aSize;
+  
+  
 }
 
 //=======================================================================
@@ -118,7 +118,7 @@ LDOM_MemManager::HashTable::HashTable (/* const Standard_Integer   aMask, */
                                        LDOM_MemManager&         aMemManager)
      : myManager        (aMemManager)
 {
-  Standard_Integer m, nKeys = HASH_MASK + 1;
+  Standard_Integer m = 0, nKeys = HASH_MASK + 1;
 /*
   Standard_Integer m     = aMask;
   Standard_Integer nKeys = 1;
@@ -330,7 +330,7 @@ void LDOM_MemManager::HashedAllocate         (const char             * aString,
                                               LDOMBasicString&       theResult)
 {
   theResult.myType = LDOMBasicString::LDOM_AsciiHashed;
-  Standard_Integer aDummy;
+  Standard_Integer aDummy = 0;
   const char * aHashedString = HashedAllocate (aString, theLen, aDummy);
   if (aHashedString != NULL)
     theResult.myVal.ptr = (void *) aHashedString;

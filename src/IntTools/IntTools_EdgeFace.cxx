@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntTools_EdgeFace.hxx>
 
 #include <BRep_Tool.hxx>
@@ -53,13 +55,13 @@ static
 //function : IntTools_EdgeFace::IntTools_EdgeFace
 //purpose  : 
 //=======================================================================
-  IntTools_EdgeFace::IntTools_EdgeFace()
+  IntTools_EdgeFace::IntTools_EdgeFace() : myFuzzyValue(Precision::Confusion()), myIsDone(Standard_False), myErrorStatus(1), myQuickCoincidenceCheck(Standard_False), myMinDistance(RealLast())
 {
-  myFuzzyValue = Precision::Confusion();
-  myIsDone=Standard_False;
-  myErrorStatus=1;
-  myQuickCoincidenceCheck=Standard_False;
-  myMinDistance = RealLast();
+  
+  
+  
+  
+  
 }
 //=======================================================================
 //function :  IsCoincident
@@ -67,8 +69,8 @@ static
 //=======================================================================
 Standard_Boolean IntTools_EdgeFace::IsCoincident() 
 {
-  Standard_Integer i, iCnt;
-  Standard_Real dT, aT, aD, aT1, aT2, aU, aV;
+  Standard_Integer i = 0, iCnt = 0;
+  Standard_Real dT = NAN, aT = NAN, aD = NAN, aT1 = NAN, aT2 = NAN, aU = NAN, aV = NAN;
 
   gp_Pnt aP;
   TopAbs_State aState;
@@ -172,7 +174,7 @@ void IntTools_EdgeFace::CheckData()
 Standard_Boolean IntTools_EdgeFace::IsProjectable
   (const Standard_Real aT) const
 {
-  Standard_Boolean bFlag; 
+  Standard_Boolean bFlag = 0; 
   gp_Pnt aPC;
   //
   myC.D0(aT, aPC);
@@ -187,13 +189,13 @@ Standard_Boolean IntTools_EdgeFace::IsProjectable
 Standard_Real IntTools_EdgeFace::DistanceFunction
   (const Standard_Real t)
 {
-  Standard_Real aD;
+  Standard_Real aD = NAN;
 
   //
   gp_Pnt P;
   myC.D0(t, P);
   //
-  Standard_Boolean bIsEqDistance;
+  Standard_Boolean bIsEqDistance = 0;
 
   bIsEqDistance= IntTools_EdgeFace::IsEqDistance(P, myS, 1.e-7, aD); 
   if (bIsEqDistance) {
@@ -243,7 +245,7 @@ Standard_Boolean IntTools_EdgeFace::IsEqDistance
     gp_Cylinder aCyl=aBAS.Cylinder();
     const gp_Ax1& anAx1  =aCyl.Axis();
     gp_Lin aLinAxis(anAx1);
-    Standard_Real aDC, aRadius=aCyl.Radius();
+    Standard_Real aDC = NAN, aRadius=aCyl.Radius();
     aDC=aLinAxis.Distance(aP);
     if (aDC < aTol) {
       aD=aRadius;
@@ -255,7 +257,7 @@ Standard_Boolean IntTools_EdgeFace::IsEqDistance
     gp_Cone aCone=aBAS.Cone();
     const gp_Ax1& anAx1  =aCone.Axis();
     gp_Lin aLinAxis(anAx1);
-    Standard_Real aDC, aRadius, aDS, aSemiAngle;
+    Standard_Real aDC = NAN, aRadius = NAN, aDS = NAN, aSemiAngle = NAN;
     aDC=aLinAxis.Distance(aP);
     if (aDC < aTol) {
       gp_Pnt anApex=aCone.Apex();
@@ -269,7 +271,7 @@ Standard_Boolean IntTools_EdgeFace::IsEqDistance
   }
 
   if (aSurfType==GeomAbs_Torus) {
-    Standard_Real aMajorRadius, aMinorRadius, aDC;
+    Standard_Real aMajorRadius = NAN, aMinorRadius = NAN, aDC = NAN;
 
     gp_Torus aTorus=aBAS.Torus();
     gp_Pnt aPLoc=aTorus.Location();
@@ -292,9 +294,9 @@ Standard_Boolean IntTools_EdgeFace::IsEqDistance
 Standard_Integer IntTools_EdgeFace::MakeType
   (IntTools_CommonPrt&  aCommonPrt)
 {
-  Standard_Real  af1, al1;
-  Standard_Real  df1, tm;
-  Standard_Boolean bAllNullFlag;
+  Standard_Real  af1 = NAN, al1 = NAN;
+  Standard_Real  df1 = NAN, tm = NAN;
+  Standard_Boolean bAllNullFlag = 0;
   //
   bAllNullFlag=aCommonPrt.AllNullFlag();
   if (bAllNullFlag) {
@@ -349,14 +351,14 @@ Standard_Boolean IntTools_EdgeFace::CheckTouch
   (const IntTools_CommonPrt& aCP,
    Standard_Real&            aTx) 
 {
-  Standard_Real aTF, aTL, Tol, U1f, U1l, V1f, V1l, af, al,aDist2, aMinDist2;
+  Standard_Real aTF = NAN, aTL = NAN, Tol = NAN, U1f = NAN, U1l = NAN, V1f = NAN, V1l = NAN, af = NAN, al = NAN,aDist2 = NAN, aMinDist2 = NAN;
   Standard_Boolean theflag=Standard_False;
-  Standard_Integer aNbExt, iLower;
+  Standard_Integer aNbExt = 0, iLower = 0;
 
   aCP.Range1(aTF, aTL);
 
   //
-  Standard_Real aCR;
+  Standard_Real aCR = NAN;
   aCR=myC.Resolution(myCriteria);
   if((Abs(aTF - myRange.First()) < aCR) &&
      (Abs(aTL - myRange.Last())  < aCR)) {
@@ -429,7 +431,7 @@ Standard_Boolean IntTools_EdgeFace::CheckTouch
     }
   }
 
-  Standard_Real aBoundaryDist;
+  Standard_Real aBoundaryDist = NAN;
 
   aBoundaryDist = DistanceFunction(aTF) + myCriteria;
   if(aBoundaryDist * aBoundaryDist < aDist2) {
@@ -475,7 +477,7 @@ Standard_Boolean IntTools_EdgeFace::CheckTouch
 //=======================================================================
 void IntTools_EdgeFace::Perform() 
 {
-  Standard_Integer i, aNb;
+  Standard_Integer i = 0, aNb = 0;
   IntTools_CommonPrt aCommonPrt;
   //
   aCommonPrt.SetEdge1(myEdge);
@@ -554,7 +556,7 @@ void IntTools_EdgeFace::Perform()
   for (i=1; i<=aNb; i++) {
     IntTools_CommonPrt& aCP=mySeqOfCommonPrts.ChangeValue(i);
     //
-    Standard_Real aTx1, aTx2;
+    Standard_Real aTx1 = NAN, aTx2 = NAN;
     gp_Pnt aPx1, aPx2;
     //
     aCP.Range1(aTx1, aTx2);
@@ -569,8 +571,8 @@ void IntTools_EdgeFace::Perform()
     GeomAbs_CurveType   aCType;
     GeomAbs_SurfaceType aSType;
     TopAbs_ShapeEnum aType;
-    Standard_Boolean bIsTouch;
-    Standard_Real aTx;
+    Standard_Boolean bIsTouch = 0;
+    Standard_Real aTx = NAN;
     
     aCType=myC.GetType();
     aSType=myS.GetType();
@@ -600,7 +602,7 @@ void IntTools_EdgeFace::Perform()
     // Circle\Plane's Common Parts treatment
     
     if (aCType==GeomAbs_Circle && aSType==GeomAbs_Plane) {
-      Standard_Boolean bIsCoplanar, bIsRadius;
+      Standard_Boolean bIsCoplanar = 0, bIsRadius = 0;
       bIsCoplanar=IsCoplanar(myC, myS);
       bIsRadius=IsRadius(myC, myS, myCriteria);
       if (!bIsCoplanar && !bIsRadius) {
@@ -637,10 +639,10 @@ Standard_Boolean IntTools_EdgeFace::CheckTouchVertex
   (const IntTools_CommonPrt& aCP,
    Standard_Real& aTx) 
 {
-  Standard_Real aTF, aTL, Tol, U1f,U1l,V1f,V1l;
-  Standard_Real aEpsT, af, al,aDist2, aMinDist2, aTm, aDist2New;
+  Standard_Real aTF = NAN, aTL = NAN, Tol = NAN, U1f = NAN,U1l = NAN,V1f = NAN,V1l = NAN;
+  Standard_Real aEpsT = NAN, af = NAN, al = NAN,aDist2 = NAN, aMinDist2 = NAN, aTm = NAN, aDist2New = NAN;
   Standard_Boolean theflag=Standard_False;
-  Standard_Integer aNbExt, i, iLower ;
+  Standard_Integer aNbExt = 0, i = 0, iLower = 0 ;
   GeomAbs_CurveType aType;
   //
   aCP.Range1(aTF, aTL);
@@ -788,7 +790,7 @@ Standard_Integer AdaptiveDiscret (const Standard_Integer iDiscret,
                                   const BRepAdaptor_Curve& aCurve ,
                                   const BRepAdaptor_Surface& aSurface)
 {
-  Standard_Integer iDiscretNew;
+  Standard_Integer iDiscretNew = 0;
 
   iDiscretNew=iDiscret;
 
@@ -797,7 +799,7 @@ Standard_Integer AdaptiveDiscret (const Standard_Integer iDiscret,
   aSType=aSurface.GetType();
     
   if (aSType==GeomAbs_Cylinder) {
-   Standard_Real aELength, aRadius, dLR;
+   Standard_Real aELength = NAN, aRadius = NAN, dLR = NAN;
 
    aELength=IntTools::Length(aCurve.Edge());
    

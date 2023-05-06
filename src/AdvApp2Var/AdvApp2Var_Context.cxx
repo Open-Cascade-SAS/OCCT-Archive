@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AdvApp2Var_ApproxF2var.hxx>
 #include <AdvApp2Var_Context.hxx>
 #include <Standard_ConstructionError.hxx>
@@ -108,7 +110,7 @@ myNb2DSS(nb2Dss),
 myNb3DSS(nb3Dss)
 {
 Standard_Integer ErrorCode=0,NbPntU=0,JDegU=0,NbPntV=0,JDegV=0;
-Standard_Integer ncfl;
+Standard_Integer ncfl = 0;
 
 // myNbURoot,myJDegU
 ncfl = nlimu;
@@ -120,7 +122,7 @@ myJDegU = JDegU;
 if (iu>-1) NbPntU = myNbURoot - 2;
 
 // myJMaxU
-Standard_Integer i,j,size = JDegU-2*iu-1;
+Standard_Integer i = 0,j = 0,size = JDegU-2*iu-1;
 Handle (TColStd_HArray1OfReal) JMaxU =
   new TColStd_HArray1OfReal(1,size);
 Standard_Real *JU_array =
@@ -223,7 +225,7 @@ for (j=1;j<=4;j++) {
 }
 }
 if (iu>-1||iv>-1) {
-  Standard_Real tolmin, poids, hmax[4];
+  Standard_Real tolmin = NAN, poids = NAN, hmax[4];
   hmax[0] = 0;
   hmax[1] = 1;
   hmax[2] = 1.5;

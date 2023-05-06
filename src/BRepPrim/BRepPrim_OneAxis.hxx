@@ -287,13 +287,13 @@ private:
   TopoDS_Shell myShell;
   Standard_Boolean ShellBuilt;
   TopoDS_Vertex myVertices[6];
-  Standard_Boolean VerticesBuilt[6];
+  Standard_Boolean VerticesBuilt[6]{};
   TopoDS_Edge myEdges[9];
-  Standard_Boolean EdgesBuilt[9];
+  Standard_Boolean EdgesBuilt[9]{};
   TopoDS_Wire myWires[9];
-  Standard_Boolean WiresBuilt[9];
+  Standard_Boolean WiresBuilt[9]{};
   TopoDS_Face myFaces[5];
-  Standard_Boolean FacesBuilt[5];
+  Standard_Boolean FacesBuilt[5]{};
 
 
 };

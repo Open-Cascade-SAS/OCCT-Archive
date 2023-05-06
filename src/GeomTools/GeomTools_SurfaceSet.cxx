@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_BezierSurface.hxx>
 #include <Geom_ConicalSurface.hxx>
 #include <Geom_CylindricalSurface.hxx>
@@ -388,7 +390,7 @@ static void Print(const Handle(Geom_BezierSurface)& S,
   }
 
   // poles and weights
-  Standard_Integer i,j,udegree,vdegree;
+  Standard_Integer i = 0,j = 0,udegree = 0,vdegree = 0;
   udegree = S->UDegree();
   vdegree = S->VDegree();
   if (!compact) OS << "\n  Degrees :";
@@ -465,7 +467,7 @@ static void Print(const Handle(Geom_BSplineSurface)& S,
   
 
   // poles and weights
-  Standard_Integer i,j,udegree,vdegree,nbupoles,nbvpoles,nbuknots,nbvknots;
+  Standard_Integer i = 0,j = 0,udegree = 0,vdegree = 0,nbupoles = 0,nbvpoles = 0,nbuknots = 0,nbvknots = 0;
   udegree = S->UDegree();
   vdegree = S->VDegree();
   nbupoles = S->NbUPoles();
@@ -522,7 +524,7 @@ static void Print(const Handle(Geom_RectangularTrimmedSurface)& S,
   else
     OS << "RectangularTrimmedSurface";
 
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   S->Bounds(U1,U2,V1,V2);
   if (!compact) OS << "\nParameters : ";
   OS << U1 << " " << U2 << " " << V1 << " " << V2 <<"\n";
@@ -612,7 +614,7 @@ void GeomTools_SurfaceSet::PrintSurface(const Handle(Geom_Surface)& S,
 
 void  GeomTools_SurfaceSet::Dump(Standard_OStream& OS)const 
 {
-  Standard_Integer i, nbsurf = myMap.Extent();
+  Standard_Integer i = 0, nbsurf = myMap.Extent();
   OS << "\n -------\n";
   OS << "Dump of "<< nbsurf << " surfaces ";
   OS << "\n -------\n\n";
@@ -633,7 +635,7 @@ void  GeomTools_SurfaceSet::Write(Standard_OStream& OS, const Message_ProgressRa
 {
   std::streamsize  prec = OS.precision(17);
 
-  Standard_Integer i, nbsurf = myMap.Extent();
+  Standard_Integer i = 0, nbsurf = myMap.Extent();
   OS << "Surfaces "<< nbsurf << "\n";
   Message_ProgressScope aPS(theProgress, "Surfaces", nbsurf);
   for (i = 1; i <= nbsurf && aPS.More(); i++, aPS.Next()) {
@@ -817,7 +819,7 @@ static Standard_IStream& operator>>(Standard_IStream& IS,
   TColgp_Array2OfPnt poles(1,udegree+1,1,vdegree+1);
   TColStd_Array2OfReal weights(1,udegree+1,1,vdegree+1);
   
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   for (i = 1; i <= udegree+1; i++) {
     for (j = 1; j <= vdegree+1; j++) {
       IS >> poles(i,j);
@@ -853,7 +855,7 @@ static Standard_IStream& operator>>(Standard_IStream& IS,
   TColgp_Array2OfPnt poles(1,nbupoles,1,nbvpoles);
   TColStd_Array2OfReal weights(1,nbupoles,1,nbvpoles);
   
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   for (i = 1; i <= nbupoles; i++) {
     for (j = 1; j <= nbvpoles; j++) {
       IS >> poles(i,j);
@@ -926,7 +928,7 @@ static Standard_IStream& operator>>(Standard_IStream& IS,
 
 Handle(Geom_Surface) GeomTools_SurfaceSet::ReadSurface (Standard_IStream& IS)
 {
-  Standard_Integer stype;
+  Standard_Integer stype = 0;
 
   Handle(Geom_Surface) S;
   try {
@@ -1055,7 +1057,7 @@ void  GeomTools_SurfaceSet::Read(Standard_IStream& IS, const Message_ProgressRan
     return;
   }
 
-  Standard_Integer i, nbsurf;
+  Standard_Integer i = 0, nbsurf = 0;
   IS >> nbsurf;
   Message_ProgressScope aPS(theProgress, "Surfaces", nbsurf);
   for (i = 1; i <= nbsurf && aPS.More(); i++, aPS.Next()) {

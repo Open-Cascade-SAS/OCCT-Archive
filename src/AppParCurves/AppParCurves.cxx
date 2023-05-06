@@ -16,6 +16,8 @@
 #define No_Standard_OutOfRange
 
 
+#include <math.h>
+
 #include <AppParCurves.hxx>
 #include <BSplCLib.hxx>
 #include <math_Matrix.hxx>
@@ -25,8 +27,8 @@ void AppParCurves::BernsteinMatrix(const Standard_Integer NbPoles,
 				   const math_Vector& U,
 				   math_Matrix& A) {
 
-  Standard_Integer i, j, id;
-  Standard_Real u0, u1, y0, y1, xs;
+  Standard_Integer i = 0, j = 0, id = 0;
+  Standard_Real u0 = NAN, u1 = NAN, y0 = NAN, y1 = NAN, xs = NAN;
   Standard_Integer first = U.Lower(), last = U.Upper();
   math_Vector B(1, NbPoles-1);
 
@@ -62,8 +64,8 @@ void AppParCurves::Bernstein(const Standard_Integer NbPoles,
 			     math_Matrix& A,
 			     math_Matrix& DA) {
   
-  Standard_Integer i, j, id, Ndeg = NbPoles-1;
-  Standard_Real u0, u1, y0, y1, xs, bj, bj1;
+  Standard_Integer i = 0, j = 0, id = 0, Ndeg = NbPoles-1;
+  Standard_Real u0 = NAN, u1 = NAN, y0 = NAN, y1 = NAN, xs = NAN, bj = NAN, bj1 = NAN;
   Standard_Integer first = U.Lower(), last = U.Upper();
   math_Vector B(1, NbPoles-1);
 
@@ -101,9 +103,9 @@ void AppParCurves::Bernstein(const Standard_Integer NbPoles,
 void AppParCurves::SecondDerivativeBernstein(const Standard_Real U,
 					     math_Vector&        DDA) {
 //  Standard_Real U1 = 1-U, Y0, Y1, Xs;
-  Standard_Real Y0, Y1, Xs;
+  Standard_Real Y0 = NAN, Y1 = NAN, Xs = NAN;
   Standard_Integer NbPoles = DDA.Length();
-  Standard_Integer id, j, N4, deg = NbPoles-1;
+  Standard_Integer id = 0, j = 0, N4 = 0, deg = NbPoles-1;
   N4 = deg*(deg-1);
   math_Vector B(1, deg-1);
   B(1) = 1.;
@@ -155,13 +157,13 @@ void AppParCurves::SplineFunction(const Standard_Integer nbpoles,
 				  math_IntegerVector&    index)
 {
 //  Standard_Real U, NewU, co, diff, t1, t2;
-  Standard_Real U, NewU;
+  Standard_Real U = NAN, NewU = NAN;
 //  gp_Pnt2d Pt, P0;
 //  gp_Vec2d V1;
 //  Standard_Integer i, j, k, iter, in, ik, deg1 = deg+1;
-  Standard_Integer i, j, deg1 = deg+1;
+  Standard_Integer i = 0, j = 0, deg1 = deg+1;
 //  Standard_Integer oldkindex, kindex, theindex, ttindex;
-  Standard_Integer oldkindex, kindex, theindex;
+  Standard_Integer oldkindex = 0, kindex = 0, theindex = 0;
   math_Vector locpoles(1 , deg1);
   math_Vector locdpoles(1 , deg1);
   Standard_Integer firstp = Parameters.Lower(), lastp = Parameters.Upper();
@@ -174,8 +176,8 @@ void AppParCurves::SplineFunction(const Standard_Integer nbpoles,
 
   oldkindex = 1;
   
-  Standard_Integer pp, qq;
-  Standard_Real Saved, Inverse, LocalInverse, locqq, locdqq, val;
+  Standard_Integer pp = 0, qq = 0;
+  Standard_Real Saved = NAN, Inverse = NAN, LocalInverse = NAN, locqq = NAN, locdqq = NAN, val = NAN;
 
   for (i = firstp; i <= lastp; i++) {
     U = Parameters(i);

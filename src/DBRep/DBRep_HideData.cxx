@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <DBRep_HideData.hxx>
 #include <Draw_Color.hxx>
 #include <Draw_Display.hxx>
@@ -64,14 +66,14 @@ void DBRep_HideData::Set(const Standard_Integer viewID,
   hider->Projector(HLRAlgo_Projector(myTrsf,myFocal > 0.,myFocal));
   hider->Update();
 
-  Standard_Real sta,end,dx,dy,dz;
-  Standard_ShortReal tolsta,tolend;
+  Standard_Real sta = NAN,end = NAN,dx = NAN,dy = NAN,dz = NAN;
+  Standard_ShortReal tolsta = NAN,tolend = NAN;
   HLRAlgo_EdgeIterator It;
   myBiPntVis.Clear();
   myBiPntHid.Clear();
   TopoDS_Shape Sori;
-  Standard_Boolean reg1,regn,outl,intl;
-  Standard_Address Coordinates;
+  Standard_Boolean reg1 = 0,regn = 0,outl = 0,intl = 0;
+  Standard_Address Coordinates = nullptr;
   HLRAlgo_EdgeStatus status;
 
   for (hider->InitHide(); hider->MoreHide(); hider->NextHide()) {

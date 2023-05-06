@@ -38,7 +38,7 @@ void RWStepGeom_RWGeomRepContextAndGlobUnitAssCtxAndGlobUncertaintyAssCtx::ReadS
   
   // --- field : coordinateSpaceDimension ---
   
-  Standard_Integer aCoordinateSpaceDimension;
+  Standard_Integer aCoordinateSpaceDimension = 0;
   //szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
   data->ReadInteger (num,1,"coordinate_space_dimension",ach,aCoordinateSpaceDimension);
 
@@ -54,7 +54,7 @@ void RWStepGeom_RWGeomRepContextAndGlobUnitAssCtxAndGlobUncertaintyAssCtx::ReadS
   
   Handle(StepBasic_HArray1OfUncertaintyMeasureWithUnit) aUncertainty;
   Handle(StepBasic_UncertaintyMeasureWithUnit) anent3;
-  Standard_Integer nsub3;
+  Standard_Integer nsub3 = 0;
   if (data->ReadSubList (num,1,"uncertainty",ach,nsub3)) {
     Standard_Integer nb3 = data->NbParams(nsub3);
     aUncertainty = new StepBasic_HArray1OfUncertaintyMeasureWithUnit (1, nb3);
@@ -78,7 +78,7 @@ void RWStepGeom_RWGeomRepContextAndGlobUnitAssCtxAndGlobUncertaintyAssCtx::ReadS
   
   Handle(StepBasic_HArray1OfNamedUnit) aUnits;
   Handle(StepBasic_NamedUnit) anent2;
-  Standard_Integer nsub2;
+  Standard_Integer nsub2 = 0;
   if (data->ReadSubList (num,1,"units",ach,nsub2)) {
     Standard_Integer nb2 = data->NbParams(nsub2);
     aUnits = new StepBasic_HArray1OfNamedUnit (1, nb2);

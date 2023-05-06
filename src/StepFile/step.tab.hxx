@@ -405,7 +405,7 @@ namespace step {
 
 #if 201103L <= YY_CPLUSPLUS
       /// Move constructor.
-      by_kind (by_kind&& that);
+      by_kind (by_kind&& that) noexcept;
 #endif
 
       /// Copy constructor.
@@ -655,7 +655,7 @@ namespace step {
       /// Construct an empty symbol.
       stack_symbol_type ();
       /// Move or copy construction.
-      stack_symbol_type (YY_RVREF (stack_symbol_type) that);
+      stack_symbol_type (YY_RVREF (stack_symbol_type) that) noexcept;
       /// Steal the contents from \a sym to build this.
       stack_symbol_type (state_type s, YY_MOVE_REF (symbol_type) sym);
 #if YY_CPLUSPLUS < 201103L

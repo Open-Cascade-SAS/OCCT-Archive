@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepGeom_RWPointOnSurface.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -47,13 +49,13 @@ void RWStepGeom_RWPointOnSurface::ReadStep
 
 	// --- own field : pointParameterU ---
 
-	Standard_Real aPointParameterU;
+	Standard_Real aPointParameterU = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadReal (num,3,"point_parameter_u",ach,aPointParameterU);
 
 	// --- own field : pointParameterV ---
 
-	Standard_Real aPointParameterV;
+	Standard_Real aPointParameterV = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"point_parameter_v",ach,aPointParameterV);
 

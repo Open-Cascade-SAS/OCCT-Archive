@@ -77,22 +77,22 @@ void RWStepKinematics_RWLowOrderKinematicPair::ReadStep (const Handle(StepData_S
 
   // Own fields of LowOrderKinematicPair
 
-  Standard_Boolean aTX;
+  Standard_Boolean aTX = 0;
   theData->ReadBoolean (theNum, 7, "t_x", theArch, aTX);
 
-  Standard_Boolean aTY;
+  Standard_Boolean aTY = 0;
   theData->ReadBoolean (theNum, 8, "t_y", theArch, aTY);
 
-  Standard_Boolean aTZ;
+  Standard_Boolean aTZ = 0;
   theData->ReadBoolean (theNum, 9, "t_z", theArch, aTZ);
 
-  Standard_Boolean aRX;
+  Standard_Boolean aRX = 0;
   theData->ReadBoolean (theNum, 10, "r_x", theArch, aRX);
 
-  Standard_Boolean aRY;
+  Standard_Boolean aRY = 0;
   theData->ReadBoolean (theNum, 11, "r_y", theArch, aRY);
 
-  Standard_Boolean aRZ;
+  Standard_Boolean aRZ = 0;
   theData->ReadBoolean (theNum, 12, "r_z", theArch, aRZ);
 
   // Initialize entity

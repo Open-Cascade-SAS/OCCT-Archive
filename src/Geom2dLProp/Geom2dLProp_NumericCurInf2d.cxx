@@ -61,7 +61,7 @@ void Geom2dLProp_NumericCurInf2d::PerformCurExt (const Handle(Geom2d_Curve)& C,
 
   Geom2dLProp_FuncCurExt    F(C,EpsH);
   Standard_Integer NbSamples = 100;
-  Standard_Boolean SolType;
+  Standard_Boolean SolType = 0;
 
   math_FunctionRoots SolRoot (F,UMin,UMax,NbSamples,EpsH,EpsH,EpsH);
 

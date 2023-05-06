@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepClass3d.hxx>
 
 #include <BRep_Builder.hxx>
@@ -33,8 +35,8 @@ static
 //=======================================================================
 TopoDS_Shell BRepClass3d::OuterShell(const TopoDS_Solid& aSolid)
 {
-  Standard_Boolean bFound;
-  Standard_Real aTol;
+  Standard_Boolean bFound = 0;
+  Standard_Real aTol = NAN;
   TopoDS_Solid aSDx;
   TopoDS_Shell aShell, aDummy;
   TopoDS_Iterator aIt;
@@ -98,7 +100,7 @@ TopoDS_Shell BRepClass3d::OuterShell(const TopoDS_Solid& aSolid)
 //=======================================================================
 Standard_Boolean IsInternal(const TopoDS_Shell& aSx)
 {
-  Standard_Boolean bInternal;
+  Standard_Boolean bInternal = 0;
   TopAbs_Orientation aOr;
   TopoDS_Iterator aIt; 
   //

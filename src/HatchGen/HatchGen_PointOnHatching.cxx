@@ -63,7 +63,7 @@ void HatchGen_PointOnHatching::AddPoint (const HatchGen_PointOnElement& Point,
 {
   Standard_Integer NbPnt = myPoints.Length() ;
  // for (Standard_Integer IPnt = 1 ;
-  Standard_Integer IPnt;
+  Standard_Integer IPnt = 0;
   for ( IPnt = 1 ;
        IPnt <= NbPnt && myPoints(IPnt).IsDifferent (Point, Confusion) ;
        IPnt++) ;

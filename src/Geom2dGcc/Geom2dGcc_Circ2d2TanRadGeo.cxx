@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor2d_OffsetCurve.hxx>
 #include <ElCLib.hxx>
 #include <GccEnt_BadQualifier.hxx>
@@ -59,7 +61,7 @@ Geom2dGcc_Circ2d2TanRadGeo (const GccEnt_QualifiedLin&  Qualified1,
 // initialisation des champs.                                            +
 //========================================================================
 
-cirsol(1,aNbSolMAX)   ,
+WellDone(Standard_False), NbrSol(0), cirsol(1,aNbSolMAX)   ,
 qualifier1(1,aNbSolMAX),
 qualifier2(1,aNbSolMAX),
 TheSame1(1,aNbSolMAX) ,
@@ -79,15 +81,15 @@ pararg2(1,aNbSolMAX)
   Standard_Real Tol = Abs(Tolerance);
   Standard_Real thefirst = -100000.;
   Standard_Real thelast  =  100000.;
-  Standard_Real firstparam;
-  Standard_Real lastparam;
+  Standard_Real firstparam = NAN;
+  Standard_Real lastparam = NAN;
   gp_Dir2d dirx(1.,0.);
   TColStd_Array1OfReal cote1(1,2);
   TColStd_Array1OfReal cote2(1,2);
   Standard_Integer nbrcote1=0;
   Standard_Integer nbrcote2=0;
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   if (!(Qualified1.IsEnclosed() ||
     Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
     !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -248,7 +250,7 @@ Geom2dGcc_Circ2d2TanRadGeo (const GccEnt_QualifiedCirc& Qualified1,
 // initialisation des champs.                                            +
 //========================================================================
 
-cirsol(1,aNbSolMAX)   ,
+WellDone(Standard_False), NbrSol(0), cirsol(1,aNbSolMAX)   ,
 qualifier1(1,aNbSolMAX),
 qualifier2(1,aNbSolMAX),
 TheSame1(1,aNbSolMAX) ,
@@ -268,15 +270,15 @@ pararg2(1,aNbSolMAX)
   Standard_Real Tol = Abs(Tolerance);
   Standard_Real thefirst = -100000.;
   Standard_Real thelast  =  100000.;
-  Standard_Real firstparam;
-  Standard_Real lastparam;
+  Standard_Real firstparam = NAN;
+  Standard_Real lastparam = NAN;
   gp_Dir2d dirx(1.,0.);
   TColStd_Array1OfReal cote1(1,2);
   TColStd_Array1OfReal cote2(1,2);
   Standard_Integer nbrcote1=0;
   Standard_Integer nbrcote2=0;
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
     Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
     !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -442,7 +444,7 @@ Geom2dGcc_Circ2d2TanRadGeo (const Geom2dGcc_QCurve& Qualified1,
 // initialisation des champs.                                            +
 //========================================================================
 
-cirsol(1,aNbSolMAX)   ,
+WellDone(Standard_False), NbrSol(0), cirsol(1,aNbSolMAX)   ,
 qualifier1(1,aNbSolMAX),
 qualifier2(1,aNbSolMAX),
 TheSame1(1,aNbSolMAX) ,
@@ -462,13 +464,13 @@ pararg2(1,aNbSolMAX)
   Standard_Real Tol = Abs(Tolerance);
   Standard_Real thefirst = -100000.;
   Standard_Real thelast  =  100000.;
-  Standard_Real firstparam;
-  Standard_Real lastparam;
+  Standard_Real firstparam = NAN;
+  Standard_Real lastparam = NAN;
   gp_Dir2d dirx(1.,0.);
   TColStd_Array1OfReal cote1(1,2);
   Standard_Integer nbrcote1=0;
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
     Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
       throw GccEnt_BadQualifier();
@@ -722,7 +724,7 @@ Geom2dGcc_Circ2d2TanRadGeo (const Geom2dGcc_QCurve& Qualified1,
 // initialisation des champs.                                            +
 //========================================================================
 
-cirsol(1,aNbSolMAX)   ,
+WellDone(Standard_False), NbrSol(0), cirsol(1,aNbSolMAX)   ,
 qualifier1(1,aNbSolMAX),
 qualifier2(1,aNbSolMAX),
 TheSame1(1,aNbSolMAX) ,
@@ -749,8 +751,8 @@ pararg2(1,aNbSolMAX)
   TColStd_Array1OfReal cote2(1,2);
   Standard_Integer nbrcote1=0;
   Standard_Integer nbrcote2=0;
-  WellDone = Standard_False;
-  NbrSol = 0;
+  
+  
   if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
     Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
     !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 

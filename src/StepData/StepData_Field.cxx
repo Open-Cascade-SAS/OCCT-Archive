@@ -99,7 +99,7 @@ static Standard_Integer TrueKind (const Standard_Integer kind)
   }
 //    Les listes ...
   if ((thekind & KindArity) == KindList)  {
-    Standard_Integer i, low, up;
+    Standard_Integer i = 0, low = 0, up = 0;
     DeclareAndCast(TColStd_HArray1OfInteger,hi,theany);
     if (!hi.IsNull()) {
       low = hi->Lower();  up = hi->Upper();

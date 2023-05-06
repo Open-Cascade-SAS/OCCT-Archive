@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <CSLib_NormalPolyDef.hxx>
 #include <PLib.hxx>
 
@@ -22,9 +24,9 @@
 CSLib_NormalPolyDef::CSLib_NormalPolyDef(const Standard_Integer k0,
 						const TColStd_Array1OfReal& li)
 //=============================================================================
- :myTABli(0,k0)
+ :myK0(k0), myTABli(0,k0)
 {
-  myK0=k0;
+  
   for(Standard_Integer i=0;i<=k0;i++)
     myTABli(i)=li(i);
 }
@@ -35,7 +37,7 @@ Standard_Boolean CSLib_NormalPolyDef::Value(const Standard_Real X,
 //=============================================================================
 {
   F=0.0;
-  Standard_Real co,si;
+  Standard_Real co = NAN,si = NAN;
   co=cos(X);
   si=sin(X);
 
@@ -56,7 +58,7 @@ Standard_Boolean CSLib_NormalPolyDef::Derivative(const Standard_Real X,
 //=============================================================================
 {
   D=0.0;
-  Standard_Real co,si;
+  Standard_Real co = NAN,si = NAN;
   co=cos(X);
   si=sin(X);
   if(Abs(co) <= RealSmall() || Abs(si) <= RealSmall())
@@ -78,7 +80,7 @@ Standard_Boolean CSLib_NormalPolyDef::Values(const Standard_Real X,
 {
   F=0;
   D=0;
-  Standard_Real co,si;
+  Standard_Real co = NAN,si = NAN;
   co=cos(X);
   si=sin(X);
   if(Abs(co) <= RealSmall() || Abs(si) <= RealSmall())

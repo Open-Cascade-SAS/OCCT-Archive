@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <V3d_View.hxx>
 
 #include <Aspect_CircularGrid.hxx>
@@ -63,7 +65,8 @@ namespace
 //purpose  :
 //=============================================================================
 V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const V3d_TypeOfView theType)
-: myIsInvalidatedImmediate (Standard_True),
+: myDefaultCamera(new Graphic3d_Camera()), myImmediateUpdate(Standard_True),
+  myIsInvalidatedImmediate (Standard_True),
   MyViewer (theViewer.operator->()),
   SwitchSetFront (Standard_False),
   myZRotation (Standard_False),
@@ -85,9 +88,9 @@ V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const V3d_TypeOfView th
     ? Graphic3d_Camera::Projection_Orthographic
     : Graphic3d_Camera::Projection_Perspective);
 
-  myDefaultCamera = new Graphic3d_Camera();
+  
 
-  myImmediateUpdate = Standard_False;
+  
   SetAutoZFitMode (Standard_True, 1.0);
   SetBackFacingModel (V3d_TOBM_AUTOMATIC);
   SetCamera (aCamera);
@@ -104,7 +107,7 @@ V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const V3d_TypeOfView th
   SetViewOrientationDefault();
   theViewer->AddView (this);
   Init();
-  myImmediateUpdate = Standard_True;
+  
 }
 
 //=============================================================================
@@ -112,25 +115,25 @@ V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const V3d_TypeOfView th
 //purpose  :
 //=============================================================================
 V3d_View::V3d_View (const Handle(V3d_Viewer)& theViewer, const Handle(V3d_View)& theView)
-: myIsInvalidatedImmediate (Standard_True),
+: myDefaultCamera(new Graphic3d_Camera (theView->DefaultCamera())), myImmediateUpdate(Standard_True), myIsInvalidatedImmediate (Standard_True),
   MyViewer (theViewer.operator->()),
-  SwitchSetFront(Standard_False),
+  myDefaultViewAxis(theView->myDefaultViewAxis), myDefaultViewPoint(theView->myDefaultViewPoint), SwitchSetFront(Standard_False),
   myZRotation (Standard_False),
   MyTrsf (1, 4, 1, 4)
 {
   myView = theViewer->Driver()->CreateView (theViewer->StructureManager());
 
   myView->CopySettings (theView->View());
-  myDefaultViewPoint = theView->myDefaultViewPoint;
-  myDefaultViewAxis  = theView->myDefaultViewAxis;
+  
+  
 
-  myDefaultCamera = new Graphic3d_Camera (theView->DefaultCamera());
+  
 
-  myImmediateUpdate = Standard_False;
+  
   SetAutoZFitMode (theView->AutoZFitMode(), theView->AutoZFitScaleFactor());
   theViewer->AddView (this);
   Init();
-  myImmediateUpdate = Standard_True;
+  
 }
 
 //=============================================================================
@@ -179,7 +182,7 @@ void V3d_View::SetMagnify (const Handle(Aspect_Window)& theWindow,
 {
   if (!myView->IsRemoved() && !myView->IsDefined())
   {
-    Standard_Real aU1, aV1, aU2, aV2;
+    Standard_Real aU1 = NAN, aV1 = NAN, aU2 = NAN, aV2 = NAN;
     thePreviousView->Convert (theX1, theY1, aU1, aV1);
     thePreviousView->Convert (theX2, theY2, aU2, aV2);
     myView->SetWindow (Handle(Graphic3d_CView)(), theWindow, nullptr);
@@ -756,7 +759,7 @@ void V3d_View::SetVisualization (const V3d_TypeOfVisualization theType)
 void V3d_View::SetFront()
 {
   gp_Ax3 a = MyViewer->PrivilegedPlane();
-  Standard_Real xo, yo, zo, vx, vy, vz, xu, yu, zu;
+  Standard_Real xo = NAN, yo = NAN, zo = NAN, vx = NAN, vy = NAN, vz = NAN, xu = NAN, yu = NAN, zu = NAN;
 
   a.Direction().Coord(vx,vy,vz);
   a.YDirection().Coord(xu,yu,zu);
@@ -1374,7 +1377,7 @@ void V3d_View::Reset (const Standard_Boolean theToUpdate)
 void V3d_View::SetCenter (const Standard_Integer theXp,
                           const Standard_Integer theYp)
 {
-  Standard_Real aXv, aYv;
+  Standard_Real aXv = NAN, aYv = NAN;
   Convert (theXp, theYp, aXv, aYv);
   Translate (Camera(), aXv, aYv);
 
@@ -1589,9 +1592,9 @@ void V3d_View::FitAll (const Bnd_Box& theBox, const Standard_Real theMargin, con
 void V3d_View::DepthFitAll(const Standard_Real Aspect,
                            const Standard_Real Margin)
 {
-  Standard_Real Xmin,Ymin,Zmin,Xmax,Ymax,Zmax,U,V,W,U1,V1,W1 ;
-  Standard_Real Umin,Vmin,Wmin,Umax,Vmax,Wmax ;
-  Standard_Real Dx,Dy,Dz,Size;
+  Standard_Real Xmin = NAN,Ymin = NAN,Zmin = NAN,Xmax = NAN,Ymax = NAN,Zmax = NAN,U = NAN,V = NAN,W = NAN,U1 = NAN,V1 = NAN,W1 = NAN ;
+  Standard_Real Umin = NAN,Vmin = NAN,Wmin = NAN,Umax = NAN,Vmax = NAN,Wmax = NAN ;
+  Standard_Real Dx = NAN,Dy = NAN,Dz = NAN,Size = NAN;
 
   Standard_Integer Nstruct = myView->NumberOfDisplayedStructures() ;
 
@@ -1669,7 +1672,7 @@ void V3d_View::WindowFit (const Standard_Integer theMinXp,
   if (!aCamera->IsOrthographic())
   {
     // normalize view coordinates
-    Standard_Integer aWinWidth, aWinHeight;
+    Standard_Integer aWinWidth = 0, aWinHeight = 0;
     MyWindow->Size (aWinWidth, aWinHeight);
 
     // z coordinate of camera center
@@ -1702,7 +1705,7 @@ void V3d_View::WindowFit (const Standard_Integer theMinXp,
   }
   else
   {
-    Standard_Real aX1, aY1, aX2, aY2;
+    Standard_Real aX1 = NAN, aY1 = NAN, aX2 = NAN, aY2 = NAN;
     Convert (theMinXp, theMinYp, aX1, aY1);
     Convert (theMaxXp, theMaxYp, aX2, aY2);
     FitAll (aX1, aY1, aX2, aY2);
@@ -1768,12 +1771,12 @@ void V3d_View::ConvertToGrid(const Standard_Real theX,
 //=======================================================================
 Standard_Real V3d_View::Convert(const Standard_Integer Vp) const
 {
-  Standard_Integer aDxw, aDyw ;
+  Standard_Integer aDxw = 0, aDyw = 0 ;
 
   V3d_UnMapped_Raise_if (!myView->IsDefined(), "view has no window");
 
   MyWindow->Size (aDxw, aDyw);
-  Standard_Real aValue;
+  Standard_Real aValue = NAN;
 
   gp_Pnt aViewDims = Camera()->ViewDimensions();
   aValue = aViewDims.X() * (Standard_Real)Vp / (Standard_Real)aDxw;
@@ -1790,7 +1793,7 @@ void V3d_View::Convert(const Standard_Integer Xp,
                        Standard_Real& Xv,
                        Standard_Real& Yv) const
 {
-  Standard_Integer aDxw, aDyw;
+  Standard_Integer aDxw = 0, aDyw = 0;
 
   V3d_UnMapped_Raise_if (!myView->IsDefined(), "view has no window");
 
@@ -1811,7 +1814,7 @@ Standard_Integer V3d_View::Convert(const Standard_Real Vv) const
 {
   V3d_UnMapped_Raise_if (!myView->IsDefined(), "view has no window");
 
-  Standard_Integer aDxw, aDyw;
+  Standard_Integer aDxw = 0, aDyw = 0;
   MyWindow->Size (aDxw, aDyw);
 
   gp_Pnt aViewDims = Camera()->ViewDimensions();
@@ -1831,7 +1834,7 @@ void V3d_View::Convert(const Standard_Real Xv,
 {
   V3d_UnMapped_Raise_if (!myView->IsDefined(), "view has no window");
 
-  Standard_Integer aDxw, aDyw;
+  Standard_Integer aDxw = 0, aDyw = 0;
   MyWindow->Size (aDxw, aDyw);
 
   gp_Pnt aPoint (Xv, Yv, 0.0);
@@ -1914,7 +1917,7 @@ void V3d_View::Convert(const Standard_Real X,
                        Standard_Integer& Yp) const
 {
   V3d_UnMapped_Raise_if (!myView->IsDefined(), "view has no window");
-  Standard_Integer aHeight, aWidth;
+  Standard_Integer aHeight = 0, aWidth = 0;
   MyWindow->Size (aWidth, aHeight);
 
   gp_Pnt aPoint = Camera()->Project (gp_Pnt (X, Y, Z));
@@ -1933,7 +1936,7 @@ void V3d_View::Project (const Standard_Real theX,
                         Standard_Real& theXp,
                         Standard_Real& theYp) const
 {
-  Standard_Real aZp;
+  Standard_Real aZp = NAN;
   Project (theX, theY, theZ, theXp, theYp, aZp);
 }
 
@@ -2058,8 +2061,8 @@ Standard_Integer V3d_View::MinMax(Standard_Real& Umin,
                                   Standard_Real& Umax,
                                   Standard_Real& Vmax) const
 {
-  Standard_Real Wmin,Wmax,U,V,W ;
-  Standard_Real Xmin,Ymin,Zmin,Xmax,Ymax,Zmax ;
+  Standard_Real Wmin = NAN,Wmax = NAN,U = NAN,V = NAN,W = NAN ;
+  Standard_Real Xmin = NAN,Ymin = NAN,Zmin = NAN,Xmax = NAN,Ymax = NAN,Zmax = NAN ;
   // CAL 6/11/98
   Standard_Integer Nstruct = myView->NumberOfDisplayedStructures() ;
 
@@ -2139,7 +2142,7 @@ gp_Pnt V3d_View::GravityPoint() const
     }
   }
 
-  Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+  Standard_Real Xmin = NAN, Ymin = NAN, Zmin = NAN, Xmax = NAN, Ymax = NAN, Zmax = NAN;
   Standard_Integer aNbPoints = 0;
   gp_XYZ aResult (0.0, 0.0, 0.0);
   for (Graphic3d_MapIteratorOfMapOfStructure aStructIter (aSetOfStructures);
@@ -2251,7 +2254,7 @@ void V3d_View::ProjReferenceAxe(const Standard_Integer Xpix,
                                 Standard_Real& VY,
                                 Standard_Real& VZ) const
 {
-  Standard_Real Xo,Yo,Zo;
+  Standard_Real Xo = NAN,Yo = NAN,Zo = NAN;
 
   Convert (Xpix, Ypix, XP, YP, ZP);
   if ( Type() == V3d_PERSPECTIVE ) 
@@ -2472,7 +2475,7 @@ gp_XYZ V3d_View::TrsPoint (const Graphic3d_Vertex& thePnt, const TColStd_Array2O
     return gp_XYZ (thePnt.X(), thePnt.Y(), thePnt.Z());
   }
 
-  Standard_Real X, Y, Z;
+  Standard_Real X = NAN, Y = NAN, Z = NAN;
   thePnt.Coord (X,Y,Z);
   const Standard_Real XX = (theMat(lr,lc+3)   + X*theMat(lr,lc)   + Y*theMat(lr,lc+1)   + Z*theMat(lr,lc+2)) / theMat(lr+3,lc+3);
   const Standard_Real YY = (theMat(lr+1,lc+3) + X*theMat(lr+1,lc) + Y*theMat(lr+1,lc+1) + Z*theMat(lr+1,lc+2))/theMat(lr+3,lc+3);
@@ -2622,7 +2625,7 @@ void V3d_View::AxialScale (const Standard_Integer Dx,
                            const V3d_TypeOfAxe Axis)
 {
   if( Dx != 0. || Dy != 0. ) {
-    Standard_Real Sx, Sy, Sz;
+    Standard_Real Sx = NAN, Sy = NAN, Sz = NAN;
     AxialScale( Sx, Sy, Sz );
     Standard_Real dscale = Sqrt(Dx*Dx + Dy*Dy) / 100. + 1;
     dscale = (Dx > 0) ?  dscale : 1./dscale;
@@ -2672,7 +2675,7 @@ void V3d_View::StartRotation(const Standard_Integer X,
                              const Standard_Real zRotationThreshold)
 {
   sx = X; sy = Y;
-  Standard_Real x,y;
+  Standard_Real x = NAN,y = NAN;
   Size(x,y);
   rx = Standard_Real(Convert(x));
   ry = Standard_Real(Convert(y));
@@ -2783,7 +2786,7 @@ void V3d_View::Init()
 Standard_Boolean V3d_View::Dump (const Standard_CString      theFile,
                                  const Graphic3d_BufferType& theBufferType)
 {
-  Standard_Integer aWinWidth, aWinHeight;
+  Standard_Integer aWinWidth = 0, aWinHeight = 0;
   MyWindow->Size (aWinWidth, aWinHeight);
   Image_AlienPixMap anImage;
 
@@ -3372,7 +3375,7 @@ void V3d_View::Move (const Standard_Real theDx,
     }
   }
 
-  Standard_Real XX, XY, XZ, YX, YY, YZ, ZX, ZY, ZZ;
+  Standard_Real XX = NAN, XY = NAN, XZ = NAN, YX = NAN, YY = NAN, YZ = NAN, ZX = NAN, ZY = NAN, ZZ = NAN;
   myXscreenAxis.Coord (XX,XY,XZ);
   myYscreenAxis.Coord (YX,YY,YZ);
   myZscreenAxis.Coord (ZX,ZY,ZZ);
@@ -3532,10 +3535,10 @@ void V3d_View::SetGrid (const gp_Ax3& aPlane, const Handle(Aspect_Grid)& aGrid)
   MyPlane	= aPlane;
   MyGrid	= aGrid;
 
-  Standard_Real xl, yl, zl;
-  Standard_Real xdx, xdy, xdz;
-  Standard_Real ydx, ydy, ydz;
-  Standard_Real dx, dy, dz;
+  Standard_Real xl = NAN, yl = NAN, zl = NAN;
+  Standard_Real xdx = NAN, xdy = NAN, xdz = NAN;
+  Standard_Real ydx = NAN, ydy = NAN, ydz = NAN;
+  Standard_Real dx = NAN, dy = NAN, dz = NAN;
   aPlane.Location ().Coord (xl, yl, zl);
   aPlane.XDirection ().Coord (xdx, xdy, xdz);
   aPlane.YDirection ().Coord (ydx, ydy, ydz);
@@ -3580,10 +3583,10 @@ void V3d_View::SetGrid (const gp_Ax3& aPlane, const Handle(Aspect_Grid)& aGrid)
   Trsf2 (2, 3) = 0.0,
   Trsf2 (3, 3) = 1.0;
 
-  Standard_Real valuetrsf;
-  Standard_Real valueoldtrsf;
-  Standard_Real valuenewtrsf;
-  Standard_Integer i, j, k;
+  Standard_Real valuetrsf = NAN;
+  Standard_Real valueoldtrsf = NAN;
+  Standard_Real valuenewtrsf = NAN;
+  Standard_Integer i = 0, j = 0, k = 0;
   // Calculation of the product of matrices
   for (i=1; i<=4; i++)
       for (j=1; j<=4; j++) {

@@ -64,6 +64,7 @@
 #include <TColStd_SequenceOfInteger.hxx>
 #include <Message_ProgressScope.hxx>
 
+#include <math.h>
 #include <stdio.h>
 
 #ifdef DRAW
@@ -108,18 +109,18 @@ GeomPlate_BuildPlateSurface::GeomPlate_BuildPlateSurface (
 		    const Standard_Real ,
 		    const Standard_Boolean Anisotropie
 ) :
-myAnisotropie(Anisotropie),
+myLinCont(new GeomPlate_HSequenceOfCurveConstraint), myPntCont(new GeomPlate_HSequenceOfPointConstraint), myAnisotropie(Anisotropie),
 myDegree(Degree),
-myNbIter(NbIter),
+myNbPtsOnCur(0), myNbIter(NbIter),
 myProj(),
 myTol2d(Tol2d),
 myTol3d(Tol3d),
 myTolAng(TolAng),
 myNbBounds(0)
 { Standard_Integer NTCurve=TabCurve->Length();// Number of linear constraints
-  myNbPtsOnCur = 0; // Different calculation of the number of points depending on the length
-  myLinCont = new GeomPlate_HSequenceOfCurveConstraint;
-  myPntCont = new GeomPlate_HSequenceOfPointConstraint;
+  // Different calculation of the number of points depending on the length
+  
+  
   if (myNbIter<1)
     throw Standard_ConstructionError("GeomPlate :  Number of iteration must be >= 1");
     
@@ -128,7 +129,7 @@ myNbBounds(0)
   if (Tang->Length()==0) 
     throw Standard_ConstructionError("GeomPlate : the constraints Array is null");
   Standard_Integer nbp = 0;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for ( i=1;i<=NTCurve;i++) 
     { nbp+=NPoints->Value(i);
     }
@@ -262,7 +263,7 @@ Handle(Geom2d_Curve)  GeomPlate_BuildPlateSurface::ProjectCurve(const Handle(Ada
 
  Handle(ProjLib_HCompProjectedCurve) HProjector = new ProjLib_HCompProjectedCurve (hsur, Curv, myTol3d/10, myTol3d/10);
 
- Standard_Real UdebCheck, UfinCheck, ProjUdeb, ProjUfin;
+ Standard_Real UdebCheck = NAN, UfinCheck = NAN, ProjUdeb = NAN, ProjUfin = NAN;
  UdebCheck = Curv->FirstParameter();
  UfinCheck = Curv->LastParameter();
  HProjector->Bounds( 1, ProjUdeb, ProjUfin );
@@ -288,8 +289,8 @@ Handle(Geom2d_Curve)  GeomPlate_BuildPlateSurface::ProjectCurve(const Handle(Ada
    }
  else {
    GeomAbs_Shape Continuity = GeomAbs_C1;
-   Standard_Integer MaxDegree = 10, MaxSeg;
-   Standard_Real Udeb, Ufin;
+   Standard_Integer MaxDegree = 10, MaxSeg = 0;
+   Standard_Real Udeb = NAN, Ufin = NAN;
    HProjector->Bounds(1, Udeb, Ufin);
    
    MaxSeg = 20 + HProjector->NbIntervals(GeomAbs_C3);
@@ -326,7 +327,7 @@ Handle(Adaptor2d_Curve2d)  GeomPlate_BuildPlateSurface::ProjectedCurve( Handle(A
    }
  else
    { 
-     Standard_Real First1,Last1,First2,Last2;
+     Standard_Real First1 = NAN,Last1 = NAN,First2 = NAN,Last2 = NAN;
      First1=Curv->FirstParameter();
      Last1 =Curv->LastParameter();
      HProjector->Bounds(1,First2,Last2);
@@ -369,7 +370,7 @@ gp_Pnt2d GeomPlate_BuildPlateSurface::ProjectPoint(const gp_Pnt &p3d)
       }  
   }
   P=myProj.Point(nearest);
-  Standard_Real u,v;
+  Standard_Real u = NAN,v = NAN;
   P.Parameter(u,v);
   gp_Pnt2d p2d;
   p2d.SetCoord(u,v);
@@ -500,7 +501,7 @@ void GeomPlate_BuildPlateSurface::Perform(const Message_ProgressRange& theProgre
     return;
   }
 
-  Standard_Real u1,v1,u2,v2;
+  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
   mySurfInit->Bounds(u1,v1,u2,v2);
   GeomAdaptor_Surface aSurfInit(mySurfInit);
   myTolU = aSurfInit.UResolution(myTol3d);
@@ -659,7 +660,7 @@ void GeomPlate_BuildPlateSurface::Perform(const Message_ProgressRange& theProgre
           }
 
           myGeomPlateSurface = new GeomPlate_Surface(mySurfInit,myPlate);
-	  Standard_Real Umin,Umax,Vmin,Vmax; 
+	  Standard_Real Umin = NAN,Umax = NAN,Vmin = NAN,Vmax = NAN; 
           myPlate.UVBox(Umin,Umax,Vmin,Vmax);
 	  myGeomPlateSurface->SetBounds(Umin,Umax,Vmin,Vmax);
 
@@ -673,7 +674,7 @@ void GeomPlate_BuildPlateSurface::Perform(const Message_ProgressRange& theProgre
 	    }
 
 	  if ((NTPntCont != 0)&&(Fini))
-	    { Standard_Real di,an,cu;
+	    { Standard_Real di = NAN,an = NAN,cu = NAN;
 	      VerifPoints(di,an,cu);
 	    }
 	}
@@ -698,11 +699,11 @@ void GeomPlate_BuildPlateSurface::Perform(const Message_ProgressRange& theProgre
           }
 
           myGeomPlateSurface = new GeomPlate_Surface(mySurfInit,myPlate);
-	  Standard_Real Umin,Umax,Vmin,Vmax; 
+	  Standard_Real Umin = NAN,Umax = NAN,Vmin = NAN,Vmax = NAN; 
           myPlate.UVBox(Umin,Umax,Vmin,Vmax);
 	  myGeomPlateSurface->SetBounds(Umin,Umax,Vmin,Vmax);
 	  Fini = Standard_True;
-          Standard_Real di,an,cu;
+          Standard_Real di = NAN,an = NAN,cu = NAN;
           VerifPoints(di,an,cu);
 	}
     } while (!Fini); // End loop for better surface
@@ -734,14 +735,14 @@ EcartContraintesMil  ( const Standard_Integer c,
 		      Handle(TColStd_HArray1OfReal)& courb)
 { 
   Standard_Integer NbPt=myParCont->Value(c).Length();
-  Standard_Real U;
+  Standard_Real U = NAN;
   if (NbPt<3)
     NbPt=4;
   else 
     NbPt=myParCont->Value(c).Length();
   gp_Vec v1i, v1f, v2i, v2f, v3i, v3f;
   gp_Pnt Pi, Pf;
-  gp_Pnt2d P2d;Standard_Integer i;
+  gp_Pnt2d P2d;Standard_Integer i = 0;
   Handle(GeomPlate_CurveConstraint) LinCont = myLinCont->Value(c);
   switch (LinCont->Order())
     { case 0 :
@@ -836,8 +837,8 @@ void GeomPlate_BuildPlateSurface::
   gp_Pnt2d P2d;
   gp_XY UV;
   gp_Pnt PP;
-  Standard_Real u1,v1,u2,v2;
-  Standard_Integer i ;
+  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
+  Standard_Integer i = 0 ;
 
   mySurfInit->Bounds(u1,v1,u2,v2);
   GeomAdaptor_Surface Surf(mySurfInit);
@@ -969,7 +970,7 @@ Disc3dContour (const Standard_Integer /*nbp*/,
   //  initialization
   Seq3d.Clear();
   //  sampling in "cosine" + 3 points on each interval
-  Standard_Real u1,v1,u2,v2;
+  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
   mySurfInit->Bounds(u1,v1,u2,v2);
   GeomAdaptor_Surface Surf(mySurfInit);
   myProj.Initialize(Surf,u1,v1,u2,v2,
@@ -981,7 +982,7 @@ Disc3dContour (const Standard_Integer /*nbp*/,
   gp_Pnt P3d;
   gp_Vec v1h,v2h,v3h;
   gp_XYZ Pos;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
 
   for( i=1; i<=NTPntCont; i++) 
     if (myPntCont->Value(i)->Order()!=-1) 
@@ -1253,10 +1254,10 @@ Handle(GeomPlate_PointConstraint) GeomPlate_BuildPlateSurface::PointConstraint( 
 Standard_Boolean GeomPlate_BuildPlateSurface::
                                   CourbeJointive(const Standard_Real tolerance) 
 { Standard_Integer nbf = myLinCont->Length();
-  Standard_Real Ufinal1,Uinit1,Ufinal2,Uinit2;
+  Standard_Real Ufinal1 = NAN,Uinit1 = NAN,Ufinal2 = NAN,Uinit2 = NAN;
   mySense = new TColStd_HArray1OfInteger(1,nbf,0);
   Standard_Boolean result=Standard_True;
-  Standard_Integer j=1,i;
+  Standard_Integer j=1,i = 0;
   gp_Pnt P1,P2;
 
   while (j <= (myNbBounds-1))
@@ -1374,9 +1375,9 @@ void GeomPlate_BuildPlateSurface::ComputeSurfInit(const Message_ProgressRange& t
       Handle( TColgp_HArray1OfPnt ) Pts = new TColgp_HArray1OfPnt( 1, (NbPoint+1)*NTLinCont+NTPntCont );
       TColgp_SequenceOfVec Vecs, NewVecs;
       GeomPlate_SequenceOfAij Aset;
-      Standard_Real Uinit, Ufinal, Uif;
+      Standard_Real Uinit = NAN, Ufinal = NAN, Uif = NAN;
       gp_Vec LastVec;
-      Standard_Integer i ;
+      Standard_Integer i = 0 ;
       for ( i = 1; i <= NTLinCont; i++)
 	{ 
 	  Standard_Integer Order = myLinCont->Value(i)->Order();
@@ -1417,7 +1418,7 @@ void GeomPlate_BuildPlateSurface::ComputeSurfInit(const Message_ProgressRange& t
 		  if (ToReverse)
 		    Normal.Reverse();
 		  Standard_Boolean isNew = Standard_True;
-                  Standard_Integer k ;
+                  Standard_Integer k = 0 ;
 		  for ( k = 1; k <= Vecs.Length(); k++)
 		    if (Vecs(k).IsEqual( Normal, LinTol, AngTol ))
 		      {
@@ -1496,7 +1497,7 @@ void GeomPlate_BuildPlateSurface::ComputeSurfInit(const Message_ProgressRange& t
 		      }
 		}
 	      GeomPlate_BuildAveragePlane BAP( Vecs, Pts );
-	      Standard_Real u1,u2,v1,v2;
+	      Standard_Real u1 = NAN,u2 = NAN,v1 = NAN,v2 = NAN;
 	      BAP.MinMaxBox(u1,u2,v1,v2);
 	      // The space is greater for projections
 	      Standard_Real du = u2 - u1;
@@ -1533,7 +1534,7 @@ void GeomPlate_BuildPlateSurface::ComputeSurfInit(const Message_ProgressRange& t
       Standard_Real LenT=0;
       Standard_Integer Npt=0;
       Standard_Integer NTPoint=20*NTLinCont;
-      Standard_Integer i ;
+      Standard_Integer i = 0 ;
       for ( i=1;i<=NTLinCont;i++) 
 	LenT+=myLinCont->Value(i)->Length();
       for (i=1;i<=NTLinCont;i++) 
@@ -1547,7 +1548,7 @@ void GeomPlate_BuildPlateSurface::ComputeSurfInit(const Message_ProgressRange& t
       // Table containing a cloud of points for calculation of the plane
       Handle(TColgp_HArray1OfPnt) Pts = new TColgp_HArray1OfPnt(1,20*NTLinCont+NTPntCont);
       Standard_Integer  NbPoint=20;
-      Standard_Real Uinit,Ufinal, Uif;
+      Standard_Real Uinit = NAN,Ufinal = NAN, Uif = NAN;
       for ( i=1;i<=NTLinCont;i++)
 	{ Uinit=myLinCont->Value(i)->FirstParameter();
 	  Ufinal=myLinCont->Value(i)->LastParameter();
@@ -1581,7 +1582,7 @@ void GeomPlate_BuildPlateSurface::ComputeSurfInit(const Message_ProgressRange& t
 
         return;
       }
-      Standard_Real u1,u2,v1,v2;
+      Standard_Real u1 = NAN,u2 = NAN,v1 = NAN,v2 = NAN;
       BAP.MinMaxBox(u1,u2,v1,v2);
       // The space is greater for projections
       Standard_Real du = u2 - u1;
@@ -1657,7 +1658,7 @@ void GeomPlate_BuildPlateSurface::ComputeSurfInit(const Message_ProgressRange& t
 	DrawTrSurf::Set(name, mySurfInit);
       }
 #endif
-      Standard_Real u1,v1,u2,v2;
+      Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
       mySurfInit->Bounds(u1,v1,u2,v2);
       GeomAdaptor_Surface Surf(mySurfInit);
       myTolU = Surf.UResolution(myTol3d);
@@ -1668,7 +1669,7 @@ void GeomPlate_BuildPlateSurface::ComputeSurfInit(const Message_ProgressRange& t
       //======================================================================
       // Projection of curves
       //======================================================================
-      Standard_Integer i;
+      Standard_Integer i = 0;
       for (i = 1; i <= NTLinCont; i++)
 	if (myLinCont->Value(i)->Curve2dOnSurf().IsNull())
 	  myLinCont->ChangeValue(i)->SetCurve2dOnSurf(ProjectCurve(myLinCont->Value(i)->Curve3d()));
@@ -1840,9 +1841,9 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 			      ||(Abs(ant)>myTol3d/1000))  
 			    // Non-compatible ==> remove zone in constraint G1
 			    // corresponding to 3D tolerance of 0.01
-			    { Standard_Real coin;
+			    { Standard_Real coin = NAN;
 			      Standard_Real Tol= 100 * myTol3d;
-			      Standard_Real A1;
+			      Standard_Real A1 = NAN;
 			      gp_Pnt2d P1temp,P2temp;
 			      gp_Vec2d V1,V2;
 			      myLinCont->Value(i)->Curve2dOnSurf()->D1( int2d.ParamOnFirst(), P1temp, V1);
@@ -1894,9 +1895,9 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 			    {
  			      // Non-compatible ==> one removes zone in constraint G0 and G1
 			      // corresponding to 3D tolerance of 0.01
-			      Standard_Real coin;
+			      Standard_Real coin = NAN;
 			      Standard_Real Tol= 100 * myTol3d;
-			      Standard_Real A1;
+			      Standard_Real A1 = NAN;
 			      gp_Pnt2d P1temp,P2temp;
 			      gp_Vec2d V1,V2;
 			      myLinCont->Value(i)->Curve2dOnSurf()->D1( int2d.ParamOnFirst(), P1temp, V1);
@@ -1946,7 +1947,7 @@ Intersect(Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 		    // the point on curve j is preserved.
 		    // The length of interval is 2D length
 		    // corresponding to the distance of points in 3D to myTol3d  
-		    Standard_Real tolint, Dist;
+		    Standard_Real tolint = NAN, Dist = NAN;
 		    Dist = P1.Distance(P2);
 		    tolint = Ci.Resolution(Dist);
 		    PntInter->ChangeValue(i).Append( int2d.ParamOnFirst() - tolint);
@@ -1995,7 +1996,7 @@ Discretise(const Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
 	   const Handle(GeomPlate_HArray1OfSequenceOfReal)& PntG1G1) 
 { 
   Standard_Integer NTLinCont = myLinCont->Length();
-  Standard_Boolean ACR;
+  Standard_Boolean ACR = 0;
   Handle(Geom2d_Curve) C2d; 
   Geom2dAdaptor_Curve AC2d;
 //  Handle(Adaptor_HCurve2d) HC2d;
@@ -2007,9 +2008,9 @@ Discretise(const Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
   //===========================================================================
   // Construction of the table containing parameters of constraint points 
   //=========================================================================== 
-  Standard_Real  Uinit, Ufinal,  Length2d=0, Inter;
-  Standard_Real   CurLength;
-  Standard_Integer NbPnt_i, NbPtInter, NbPtG1G1;
+  Standard_Real  Uinit = NAN, Ufinal = NAN,  Length2d=0, Inter = NAN;
+  Standard_Real   CurLength = NAN;
+  Standard_Integer NbPnt_i = 0, NbPtInter = 0, NbPtG1G1 = 0;
   Handle(GeomPlate_CurveConstraint) LinCont;
   
   for (Standard_Integer i=1;i<=NTLinCont;i++) {
@@ -2025,8 +2026,8 @@ Discretise(const Handle(GeomPlate_HArray1OfSequenceOfReal)& PntInter,
       // Construct a law close to curvilinear abscissa
       if(!C2d.IsNull()) AC2d.Load(C2d);
 //      AC2d.Load(LinCont->Curve2dOnSurf());
-      Standard_Integer ii, Nbint = 20;
-      Standard_Real U;
+      Standard_Integer ii = 0, Nbint = 20;
+      Standard_Real U = NAN;
       TColgp_Array1OfPnt2d tabP2d(1,  Nbint+1);
       tabP2d(1).SetY(Uinit);
       tabP2d(1).SetX(0.);
@@ -2192,7 +2193,7 @@ void GeomPlate_BuildPlateSurface::CalculNbPtsInit ()
   Standard_Real LenT=0;
   Standard_Integer NTLinCont=myLinCont->Length();
   Standard_Integer NTPoint=(Standard_Integer )( myNbPtsOnCur*NTLinCont);
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
 
   for ( i=1;i<=NTLinCont;i++) 
     LenT+=myLinCont->Value(i)->Length();
@@ -2226,8 +2227,8 @@ void GeomPlate_BuildPlateSurface::LoadCurve(const Standard_Integer NbBoucle,
 { 
   gp_Pnt P3d,Pdif,PP;
   gp_Pnt2d P2d;
-  Standard_Integer NTLinCont=myLinCont->Length(), i, j;
-  Standard_Integer  Tang, Nt;
+  Standard_Integer NTLinCont=myLinCont->Length(), i = 0, j = 0;
+  Standard_Integer  Tang = 0, Nt = 0;
 
   
   for (i=1; i<=NTLinCont; i++){
@@ -2330,7 +2331,7 @@ void GeomPlate_BuildPlateSurface::LoadPoint(const Standard_Integer ,
   gp_Pnt P3d,Pdif,PP;
   gp_Pnt2d P2d;
   Standard_Integer NTPntCont=myPntCont->Length();
-  Standard_Integer Tang, i;
+  Standard_Integer Tang = 0, i = 0;
 //  gp_Vec  V1,V2,V3,V4,V5,V6,V7,V8,V9,V10;
  
   // Loading of points of point constraints
@@ -2428,13 +2429,13 @@ VerifSurface(const Standard_Integer NbBoucle)
 	    myG1Error=tang->Value(j);
 	  if (tcourb->Value(j)>myG2Error)
 	    myG2Error=tcourb->Value(j);
-	  Standard_Real U;
+	  Standard_Real U = NAN;
 	  if (myParCont->Value(i).Length()>3)
 	    U=(myParCont->Value(i).Value(j)+myParCont->Value(i).Value(j+1))/2;
 	  else 
 	    U=LinCont->FirstParameter()+
 	      ( LinCont->LastParameter()-LinCont->FirstParameter())*(j-1)/(NbPts_i-2);
-	  Standard_Real diffDist=tdist->Value(j)-LinCont->G0Criterion(U),diffAng;
+	  Standard_Real diffDist=tdist->Value(j)-LinCont->G0Criterion(U),diffAng = NAN;
 	  if (LinCont->Order()>0)
 	    diffAng=tang->Value(j)-LinCont->G1Criterion(U);
 	  else diffAng=0;
@@ -2492,7 +2493,7 @@ VerifSurface(const Standard_Integer NbBoucle)
         }
 
 	if (NdiffDist>0) {// at least one point is not acceptable in G0
-	  Standard_Real Coef;
+	  Standard_Real Coef = NAN;
 	  if(LinCont->Order()== 0)
 	    Coef = 0.6*Log(diffDistMax+7.4);                     
 	  //7.4 corresponds to the calculation of min. coefficient = 1.2 is e^1.2/0.6

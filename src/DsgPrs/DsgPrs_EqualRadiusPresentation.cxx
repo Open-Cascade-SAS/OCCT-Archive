@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <DsgPrs.hxx>
 #include <DsgPrs_EqualRadiusPresentation.hxx>
 #include <gce_MakeDir.hxx>
@@ -57,7 +59,7 @@ void DsgPrs_EqualRadiusPresentation::Add( const Handle( Prs3d_Presentation )& aP
 
 //ota === beging ===
   gp_Pnt Middle( (FirstCenter.XYZ() + SecondCenter.XYZ()) *0.5 ), aTextPos;
-  Standard_Real SmallDist;
+  Standard_Real SmallDist = NAN;
   //Mark of constraint
   TCollection_ExtendedString aText("==");
   

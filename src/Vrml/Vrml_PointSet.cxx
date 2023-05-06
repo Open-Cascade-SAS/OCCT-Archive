@@ -15,10 +15,10 @@
 #include <Vrml_PointSet.hxx>
 
 Vrml_PointSet::Vrml_PointSet(const Standard_Integer aStartIndex, 
-			      const Standard_Integer aNumPoints)
+			      const Standard_Integer aNumPoints) : myStartIndex(aStartIndex), myNumPoints(aNumPoints)
 {
- myStartIndex = aStartIndex;
- myNumPoints  = aNumPoints;
+ 
+ 
 }
 
 void Vrml_PointSet::SetStartIndex(const Standard_Integer aStartIndex)

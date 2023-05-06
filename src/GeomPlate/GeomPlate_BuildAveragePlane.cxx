@@ -22,6 +22,8 @@
 //    by:	Joelle CHAUVET
 //              correction sur le tri des valeurs propres quand valeurs egales
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <ElSLib.hxx>
 #include <Geom_Line.hxx>
@@ -72,7 +74,7 @@ myNbBoundPoints(NbBoundPoints)
       gp_Ax3 triedre(myG,NDir,UDir);
       myPlane = new Geom_Plane(triedre);
     }
-    Standard_Integer i,nb=myPts->Length();
+    Standard_Integer i = 0,nb=myPts->Length();
     gp_Pln P=myPlane->Pln();
     ElSLib::Parameters(P,myG,myUmax,myVmax);
     myUmin=myUmax;
@@ -96,7 +98,7 @@ GeomPlate_BuildAveragePlane::GeomPlate_BuildAveragePlane( const TColgp_SequenceO
 							  const Handle( TColgp_HArray1OfPnt )& Pts ) :
 myPts(Pts)
 {
-  Standard_Integer i, j, k, n, m;
+  Standard_Integer i = 0, j = 0, k = 0, n = 0, m = 0;
 
   gp_Vec BestVec;
   Standard_Integer NN = Normals.Length();
@@ -198,7 +200,7 @@ myPts(Pts)
 
   //Making the plane myPlane
   gp_Ax2 Axe;
-  Standard_Boolean IsSingular;
+  Standard_Boolean IsSingular = 0;
   TColgp_Array1OfPnt PtsArray( 1, myPts->Length() );
   for (i = 1; i <= myPts->Length(); i++)
     PtsArray(i) = myPts->Value(i);
@@ -215,7 +217,7 @@ myPts(Pts)
   ElSLib::Parameters( Pln, Axe.Location(), myUmax, myVmax );
   myUmin = myUmax;
   myVmin = myVmax;
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
   for (i = 1; i <= myPts->Length(); i++)
     {
       gp_Vec aVec( Pln.Location(), myPts->Value(i) );
@@ -278,7 +280,7 @@ gp_Vec GeomPlate_BuildAveragePlane::DefPlan(const Standard_Integer NOption)
   gp_Pnt GB;
   gp_Vec A,B,C,D;
   gp_Vec OZ;
-  Standard_Integer i,nb=myPts->Length();
+  Standard_Integer i = 0,nb=myPts->Length();
   GB.SetCoord(0.,0.,0.);
   for (i=1; i<=nb; i++) {
       GB.SetCoord(1,(GB.Coord(1)+myPts->Value(i).Coord(1)));
@@ -291,7 +293,7 @@ gp_Vec GeomPlate_BuildAveragePlane::DefPlan(const Standard_Integer NOption)
 
   if (NOption==1) {
     gp_Ax2 Axe;
-    Standard_Boolean IsSingular;
+    Standard_Boolean IsSingular = 0;
     GeomLib::AxeOfInertia( myPts->Array1(), Axe, IsSingular, myTol );
 
     myOX = Axe.XDirection();
@@ -353,8 +355,8 @@ void GeomPlate_BuildAveragePlane::BasePlan(const gp_Vec& OZ)
     math_Matrix M (1, 3, 1, 3);
     M.Init(0.);
     gp_Vec Proj;
-    Standard_Integer i,nb=myPts->Length();
-    Standard_Real scal;
+    Standard_Integer i = 0,nb=myPts->Length();
+    Standard_Real scal = NAN;
 
     for (i=1; i<=nb; i++) {
       Proj.SetCoord(1,myPts->Value(i).Coord(1) - myG.Coord(1));
@@ -380,14 +382,14 @@ void GeomPlate_BuildAveragePlane::BasePlan(const gp_Vec& OZ)
     M(3,1) = M(1,3) ;
     M(3,2) = M(2,3) ;
     math_Jacobi J(M);
-    Standard_Real n1,n2,n3;
+    Standard_Real n1 = NAN,n2 = NAN,n3 = NAN;
     math_Vector V1(1,3),V2(1,3),V3(1,3);
     n1=J.Value(1);
     n2=J.Value(2);
     n3=J.Value(3);
 
-    Standard_Real r1 = Min(Min(n1,n2),n3), r2;
-    Standard_Integer m1, m2, m3;
+    Standard_Real r1 = Min(Min(n1,n2),n3), r2 = NAN;
+    Standard_Integer m1 = 0, m2 = 0, m3 = 0;
     if (r1==n1) {
       m1 = 1;
       r2 = Min(n2,n3);
@@ -501,7 +503,7 @@ Standard_Boolean GeomPlate_BuildAveragePlane::HalfSpace( const TColgp_SequenceOf
 
   gp_Vec Cross, NullVec( 0, 0, 0 );
   GeomPlate_SequenceOfAij B1set, B2set;
-  Standard_Integer i, j, k;
+  Standard_Integer i = 0, j = 0, k = 0;
   
   i = 1;
   if (Normals.IsEmpty())
@@ -527,7 +529,7 @@ Standard_Boolean GeomPlate_BuildAveragePlane::HalfSpace( const TColgp_SequenceOf
   for (; i <= NewNormals.Length(); i++)
     {
       // 3
-      Standard_Real Scal;
+      Standard_Real Scal = NAN;
       for (j = 1; j <= Bset.Length(); j++)
 	if ((Scal = Bset(j).Vec * NewNormals(i)) >= -LinTol)
 	  B2set.Append( Bset(j) );

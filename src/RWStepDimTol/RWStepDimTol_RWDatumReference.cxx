@@ -45,7 +45,7 @@ void RWStepDimTol_RWDatumReference::ReadStep (const Handle(StepData_StepReaderDa
 
   // Own fields of DatumReference
 
-  Standard_Integer aPrecedence;
+  Standard_Integer aPrecedence = 0;
   data->ReadInteger (num, 1, "precedence", ach, aPrecedence);
 
   Handle(StepDimTol_Datum) aReferencedDatum;

@@ -48,7 +48,7 @@ Standard_Boolean Storage_RootData::Read (const Handle(Storage_BaseDriver)& theDr
   }
 
   TCollection_AsciiString aRootName, aTypeName;
-  Standard_Integer aRef;
+  Standard_Integer aRef = 0;
 
   Standard_Integer len = theDriver->RootSectionSize();
   for (Standard_Integer i = 1; i <= len; i++)

@@ -28,9 +28,9 @@
 IMPLEMENT_STANDARD_RTTIEXT(DrawTrSurf_BezierSurface, DrawTrSurf_Surface)
 
 DrawTrSurf_BezierSurface::DrawTrSurf_BezierSurface (const Handle(Geom_BezierSurface)& S)
-: DrawTrSurf_Surface (S, 1, 1, Draw_jaune, Draw_bleu, 30, 0.05, 0)
+: DrawTrSurf_Surface (S, 1, 1, Draw_jaune, Draw_bleu, 30, 0.05, 0), drawPoles(Standard_True)
 {
-  drawPoles = Standard_True;
+  
   polesLook = Draw_rouge;
 }
 
@@ -41,15 +41,15 @@ DrawTrSurf_BezierSurface::DrawTrSurf_BezierSurface (const Handle(Geom_BezierSurf
                                                     const Standard_Integer Discret,const Standard_Real Deflection,
                                                     const Standard_Integer DrawMode)
 : DrawTrSurf_Surface (S, NbUIsos, NbVIsos, BoundsColor, IsosColor, 
-  Discret, Deflection, DrawMode)
+  Discret, Deflection, DrawMode), drawPoles(ShowPoles), polesLook(PolesColor)
 {
-  drawPoles = ShowPoles;
-  polesLook = PolesColor;
+  
+  
 }
 
 void DrawTrSurf_BezierSurface::DrawOn (Draw_Display& dis) const
 {
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   Handle(Geom_BezierSurface) S = Handle(Geom_BezierSurface)::DownCast(surf);
   if (drawPoles)
   {

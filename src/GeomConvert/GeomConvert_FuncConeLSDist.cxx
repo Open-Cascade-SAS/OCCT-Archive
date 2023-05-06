@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <GeomConvert_FuncConeLSDist.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
@@ -51,10 +53,10 @@ Standard_Boolean GeomConvert_FuncConeLSDist::Value(const math_Vector& X, Standar
   gp_Ax3 aPos(aLoc, myDir);
 
   F = 0.;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = myPoints->Lower(); i <= myPoints->Upper(); ++i)
   {
-    Standard_Real u, v;
+    Standard_Real u = NAN, v = NAN;
     gp_Pnt aPi(myPoints->Value(i));
     ElSLib::ConeParameters(aPos, anR, aSemiAngle, aPi, u, v);
     gp_Pnt aPp;

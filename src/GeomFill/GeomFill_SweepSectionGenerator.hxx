@@ -115,12 +115,12 @@ private:
   Handle(Adaptor3d_Curve) myAdpFirstSect;
   Handle(Adaptor3d_Curve) myAdpLastSect;
   gp_Ax1 myCircPathAxis;
-  Standard_Real myRadius;
-  Standard_Boolean myIsDone;
-  Standard_Integer myNbSections;
+  Standard_Real myRadius{};
+  Standard_Boolean myIsDone{};
+  Standard_Integer myNbSections{};
   GeomFill_SequenceOfTrsf myTrsfs;
-  Standard_Integer myType;
-  Standard_Boolean myPolynomial;
+  Standard_Integer myType{};
+  Standard_Boolean myPolynomial{};
 
 
 };

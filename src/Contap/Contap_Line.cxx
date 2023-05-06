@@ -23,9 +23,9 @@
 #include <IntSurf_LineOn2S.hxx>
 #include <Standard_DomainError.hxx>
 
-Contap_Line::Contap_Line () {
-  svtx = new Contap_TheHSequenceOfPoint ();
-  Trans = IntSurf_Undecided;
+Contap_Line::Contap_Line () : svtx(new Contap_TheHSequenceOfPoint ()), Trans(IntSurf_Undecided) {
+  
+  
 }
 
 void Contap_Line::ResetSeqOfVertex() {

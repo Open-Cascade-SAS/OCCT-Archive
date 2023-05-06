@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BSplSLib.hxx>
 #include <Convert_GridPolynomialToPoles.hxx>
 #include <Geom_BezierSurface.hxx>
@@ -122,8 +124,8 @@ void Geom_OsculatingSurface::Init(const Handle(Geom_Surface)& BS,
       {
         myKdeg = new TColStd_HSequenceOfInteger();
         Standard_Integer k=0;
-        Standard_Boolean IsQPunc;
-        Standard_Integer UKnot,VKnot;
+        Standard_Boolean IsQPunc = 0;
+        Standard_Integer UKnot = 0,VKnot = 0;
         if (myAlong(1) || myAlong(2)) 
         {
           for (i=1;i<InitSurf->NbUKnots();i++) 
@@ -332,10 +334,10 @@ Standard_Boolean Geom_OsculatingSurface::UOscSurf
   if (myAlong(1) || myAlong(2)) 
   {
     Standard_Integer NU = 1, NV = 1;
-    Standard_Real u1,u2,v1,v2;
+    Standard_Real u1 = NAN,u2 = NAN,v1 = NAN,v2 = NAN;
     t = Standard_False;
     myBasisSurf->Bounds(u1,u2,v1,v2);
-    Standard_Integer NbUK,NbVK;
+    Standard_Integer NbUK = 0,NbVK = 0;
     Standard_Boolean isToSkipSecond = Standard_False;
     if (myBasisSurf->IsKind(STANDARD_TYPE(Geom_BSplineSurface))) 
     {
@@ -391,10 +393,10 @@ Standard_Boolean Geom_OsculatingSurface::VOscSurf
   if (myAlong(3) || myAlong(4)) 
   {
     Standard_Integer NU = 1, NV = 1;
-    Standard_Real u1,u2,v1,v2;
+    Standard_Real u1 = NAN,u2 = NAN,v1 = NAN,v2 = NAN;
     t = Standard_False;
     myBasisSurf->Bounds(u1,u2,v1,v2);
-    Standard_Integer NbUK,NbVK;
+    Standard_Integer NbUK = 0,NbVK = 0;
     Standard_Boolean isToSkipSecond = Standard_False;
     if (myBasisSurf->IsKind(STANDARD_TYPE(Geom_BSplineSurface))) 
     {
@@ -451,9 +453,9 @@ Standard_Boolean  Geom_OsculatingSurface::BuildOsculatingSurface
 #endif
 
   // for cache
-  Standard_Integer MinDegree,
-    MaxDegree ;
-  Standard_Real udeg, vdeg;
+  Standard_Integer MinDegree = 0,
+    MaxDegree = 0 ;
+  Standard_Real udeg = NAN, vdeg = NAN;
   udeg = BS->UDegree();
   vdeg = BS->VDegree();
   if( (IsAlongU() && vdeg <=1) || (IsAlongV() && udeg <=1))
@@ -473,8 +475,8 @@ Standard_Boolean  Geom_OsculatingSurface::BuildOsculatingSurface
     // end for cache
 
     // for polynomial grid 
-    Standard_Integer MaxUDegree, MaxVDegree;
-    Standard_Integer UContinuity, VContinuity;
+    Standard_Integer MaxUDegree = 0, MaxVDegree = 0;
+    Standard_Integer UContinuity = 0, VContinuity = 0;
 
     Handle(TColStd_HArray2OfInteger) NumCoeffPerSurface = 
       new TColStd_HArray2OfInteger(1, 1, 1, 2);
@@ -528,8 +530,8 @@ Standard_Boolean  Geom_OsculatingSurface::BuildOsculatingSurface
     //    end for polynomial grid
 
     //    building the cache
-    Standard_Integer ULocalIndex, VLocalIndex;
-    Standard_Real ucacheparameter, vcacheparameter,uspanlength, vspanlength;
+    Standard_Integer ULocalIndex = 0, VLocalIndex = 0;
+    Standard_Real ucacheparameter = NAN, vcacheparameter = NAN,uspanlength = NAN, vspanlength = NAN;
     TColgp_Array2OfPnt NewPoles(1, BS->NbUPoles(), 1, BS->NbVPoles());
 
     Standard_Integer aUfKnotsLength = BS->NbUPoles() + BS->UDegree() + 1;
@@ -589,7 +591,7 @@ Standard_Boolean  Geom_OsculatingSurface::BuildOsculatingSurface
       BSplSLib::NoWeights(),
       cachepoles,
       BSplSLib::NoWeights());
-    Standard_Integer m, n, index;
+    Standard_Integer m = 0, n = 0, index = 0;
     TColgp_Array2OfPnt OscCoeff(1,OscUNumCoeff , 1, OscVNumCoeff);
 
     if (IsAlongU()) 
@@ -690,12 +692,12 @@ Standard_Boolean Geom_OsculatingSurface::IsQPunctual
   const Standard_Real         TolMin,
   const Standard_Real         TolMax) const
 {
-  Standard_Real U1=0,U2=0,V1=0,V2=0,T;
+  Standard_Real U1=0,U2=0,V1=0,V2=0,T = NAN;
   Standard_Boolean Along = Standard_True;
   S->Bounds(U1,U2,V1,V2);
   gp_Vec D1U,D1V;
   gp_Pnt P;
-  Standard_Real Step,D1NormMax;
+  Standard_Real Step = NAN,D1NormMax = NAN;
   if (IT == GeomAbs_IsoV) 
   {
     Step = (U2 - U1)/10;

@@ -83,11 +83,11 @@ public:
 
   //! Return maximum number of threads to be locked by a single Launcher object by default;
   //! the entire thread pool size is returned by default.
-  int NbDefaultThreadsToLaunch() const { return myNbDefThreads; }
+  int NbDefaultThreadsToLaunch() const { return NbThreads(); }
 
   //! Set maximum number of threads to be locked by a single Launcher object by default.
   //! Should be set BEFORE first usage.
-  void SetNbDefaultThreadsToLaunch (int theNbThreads) { myNbDefThreads = theNbThreads; }
+  void SetNbDefaultThreadsToLaunch (int) {}
 
   //! Checks if thread pools has active consumers.
   Standard_EXPORT bool IsInUse();
@@ -326,7 +326,6 @@ private:
 private:
 
   NCollection_Array1<EnumeratedThread> myThreads; //!< array of defined threads (excluding self-thread)
-  int  myNbDefThreads; //!< maximum number of threads to be locked by a single Launcher by default
   bool myShutDown;     //!< flag to shut down (destroy) the thread pool
 
 };

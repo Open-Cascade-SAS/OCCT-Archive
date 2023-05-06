@@ -523,7 +523,7 @@ Standard_Boolean BRepSweep_NumLinearRegularSweep::IsUsed(const TopoDS_Shape& aGe
   {
     return Standard_False;
   }
-  Standard_Integer j;
+  Standard_Integer j = 0;
   Standard_Boolean isBuilt = Standard_False;
   Standard_Boolean isUsed = Standard_False;
   for (j = 2; j <= myBuiltShapes.UpperCol(); ++j)

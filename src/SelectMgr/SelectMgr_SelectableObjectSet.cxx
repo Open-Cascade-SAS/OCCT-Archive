@@ -39,7 +39,7 @@ namespace
     BVHBuilderAdaptorRegular (ObjectsMap& theObjects) : myObjects (theObjects) {};
 
     //! Returns bounding box of object with index theIndex
-    virtual Select3D_BndBox3d Box (const Standard_Integer theIndex) const Standard_OVERRIDE
+    Select3D_BndBox3d Box (const Standard_Integer theIndex) const Standard_OVERRIDE
     {
       const Handle(SelectMgr_SelectableObject)& anObject = myObjects.FindKey (theIndex + 1);
       Bnd_Box aBox;
@@ -52,7 +52,7 @@ namespace
     }
 
     //! Returns bounding box of the whole subset.
-    virtual Select3D_BndBox3d Box() const Standard_OVERRIDE
+    Select3D_BndBox3d Box() const Standard_OVERRIDE
     {
       if (!myBox.IsValid())
       {
@@ -66,7 +66,7 @@ namespace
 
     //! Returns center of object with index theIndex in the set
     //! along the given axis theAxis
-    virtual Standard_Real Center (const Standard_Integer theIndex,
+    Standard_Real Center (const Standard_Integer theIndex,
                                   const Standard_Integer theAxis) const Standard_OVERRIDE
     {
       const Select3D_BndBox3d aBndBox = Box (theIndex);
@@ -76,19 +76,19 @@ namespace
     }
 
     //! Returns size of objects set.
-    virtual Standard_Integer Size() const Standard_OVERRIDE
+    Standard_Integer Size() const Standard_OVERRIDE
     {
       return myObjects.Size();
     }
 
     //! Swaps items with indexes theIndex1 and theIndex2 in the set
-    virtual void Swap (const Standard_Integer theIndex1, const Standard_Integer theIndex2) Standard_OVERRIDE
+    void Swap (const Standard_Integer theIndex1, const Standard_Integer theIndex2) Standard_OVERRIDE
     {
       myObjects.Swap (theIndex1 + 1, theIndex2 + 1);
     }
 
   private:
-    BVHBuilderAdaptorRegular& operator=(BVHBuilderAdaptorRegular) { return *this; }
+    BVHBuilderAdaptorRegular& operator=(const BVHBuilderAdaptorRegular&) { return *this; }
 
   private:
     ObjectsMap& myObjects;
@@ -178,13 +178,13 @@ namespace
     }
 
     //! Returns bounding box of object with index theIndex
-    virtual Select3D_BndBox3d Box (const Standard_Integer theIndex) const Standard_OVERRIDE
+    Select3D_BndBox3d Box (const Standard_Integer theIndex) const Standard_OVERRIDE
     {
       return *myBoundings (theIndex + 1);
     }
 
     //! Returns bounding box of the whole subset.
-    virtual Select3D_BndBox3d Box() const Standard_OVERRIDE
+    Select3D_BndBox3d Box() const Standard_OVERRIDE
     {
       if (!myBox.IsValid())
       {
@@ -198,7 +198,7 @@ namespace
 
     //! Returns center of object with index theIndex in the set
     //! along the given axis theAxis
-    virtual Standard_Real Center (const Standard_Integer theIndex,
+    Standard_Real Center (const Standard_Integer theIndex,
                                   const Standard_Integer theAxis) const Standard_OVERRIDE
     {
       const Select3D_BndBox3d& aBoundingBox = *myBoundings (theIndex + 1);
@@ -207,13 +207,13 @@ namespace
     }
 
     //! Returns size of objects set.
-    virtual Standard_Integer Size() const Standard_OVERRIDE
+    Standard_Integer Size() const Standard_OVERRIDE
     {
       return myObjects.Size();
     }
 
     //! Swaps items with indexes theIndex1 and theIndex2 in the set
-    virtual void Swap (const Standard_Integer theIndex1, const Standard_Integer theIndex2) Standard_OVERRIDE
+    void Swap (const Standard_Integer theIndex1, const Standard_Integer theIndex2) Standard_OVERRIDE
     {
       const Standard_Integer aStructIdx1 = theIndex1 + 1;
       const Standard_Integer aStructIdx2 = theIndex2 + 1;
@@ -223,7 +223,7 @@ namespace
     }
 
   private:
-    BVHBuilderAdaptorPersistent& operator=(BVHBuilderAdaptorPersistent) { return *this; }
+    BVHBuilderAdaptorPersistent& operator=(const BVHBuilderAdaptorPersistent&) { return *this; }
 
   private:
     ObjectsMap& myObjects;

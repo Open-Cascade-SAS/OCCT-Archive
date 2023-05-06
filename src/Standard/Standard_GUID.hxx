@@ -130,16 +130,16 @@ private:
 
 
 
-  Standard_Integer my32b;
-  Standard_ExtCharacter my16b1;
-  Standard_ExtCharacter my16b2;
-  Standard_ExtCharacter my16b3;
-  Standard_Byte my8b1;
-  Standard_Byte my8b2;
-  Standard_Byte my8b3;
-  Standard_Byte my8b4;
-  Standard_Byte my8b5;
-  Standard_Byte my8b6;
+  Standard_Integer my32b{};
+  Standard_ExtCharacter my16b1{};
+  Standard_ExtCharacter my16b2{};
+  Standard_ExtCharacter my16b3{};
+  Standard_Byte my8b1{};
+  Standard_Byte my8b2{};
+  Standard_Byte my8b3{};
+  Standard_Byte my8b4{};
+  Standard_Byte my8b5{};
+  Standard_Byte my8b6{};
 
 
 };

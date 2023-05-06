@@ -32,9 +32,9 @@
   BOPDS_SubIterator::BOPDS_SubIterator()
 :
   myAllocator(NCollection_BaseAllocator::CommonBaseAllocator()),
-  myList(1, myAllocator)
+  myDS(NULL), myList(1, myAllocator)
 {
-  myDS=NULL;
+  
 }
 //=======================================================================
 //function : BOPDS_SubIterator
@@ -43,9 +43,9 @@
   BOPDS_SubIterator::BOPDS_SubIterator(const Handle(NCollection_BaseAllocator)& theAllocator)
 :
   myAllocator(theAllocator),
-  myList(1, myAllocator)
+  myDS(NULL), myList(1, myAllocator)
 {
-  myDS=NULL;
+  
 }
 //=======================================================================
 //function : ~
@@ -72,7 +72,7 @@ void BOPDS_SubIterator::Initialize()
   void BOPDS_SubIterator::Value(Standard_Integer& theI1,
                                 Standard_Integer& theI2) const
 {
-  Standard_Integer iT1, iT2, n1, n2;
+  Standard_Integer iT1 = 0, iT2 = 0, n1 = 0, n2 = 0;
   //
   const BOPDS_Pair& aPKB = myIterator.Value();
   aPKB.Indices(n1, n2);

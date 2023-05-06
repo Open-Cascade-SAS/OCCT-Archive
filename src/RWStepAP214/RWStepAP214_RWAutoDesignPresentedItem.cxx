@@ -39,7 +39,7 @@ void RWStepAP214_RWAutoDesignPresentedItem::ReadStep
 
 	Handle(StepAP214_HArray1OfAutoDesignPresentedItemSelect) aItems;
 	StepAP214_AutoDesignPresentedItemSelect anent1;
-	Standard_Integer nsub1;
+	Standard_Integer nsub1 = 0;
 	if (data->ReadSubList (num,1,"items",ach,nsub1)) {
 	  Standard_Integer nb1 = data->NbParams(nsub1);
 	  aItems = new StepAP214_HArray1OfAutoDesignPresentedItemSelect (1, nb1);

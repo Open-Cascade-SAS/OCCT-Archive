@@ -87,7 +87,7 @@ static char intval[20];
   if (exact) return text.IsEqual (val);
   // NB: no regexp
   char cardeb = text.Value(1);
-  Standard_Integer ln,lnt,i,j;
+  Standard_Integer ln = 0,lnt = 0,i = 0,j = 0;
   ln  = text.Length();
   lnt = (Standard_Integer)(strlen(val) - ln);
   for (i = 0; i <= lnt; i ++) {

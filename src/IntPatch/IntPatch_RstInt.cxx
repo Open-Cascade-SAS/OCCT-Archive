@@ -25,6 +25,8 @@
 //--      - Pour rester coherent avec cette facon de faire, 
 //--      Chercher(Nbvtx++). 
 
+#include <math.h>
+
 #include <Adaptor2d_Curve2d.hxx>
 #include <Adaptor3d_TopolTool.hxx>
 #include <gp_Pnt2d.hxx>
@@ -57,7 +59,7 @@ static void Recadre(GeomAbs_SurfaceType typeS1,
 {
   Standard_Integer nbpnts = wlin->NbPnts();
   if(Param<1) Param=1; else if(Param>nbpnts) Param=nbpnts;
-  Standard_Real U1p,V1p,U2p,V2p;
+  Standard_Real U1p = NAN,V1p = NAN,U2p = NAN,V2p = NAN;
 
   wlin->Point(Param).Parameters(U1p,V1p,U2p,V2p);
   switch(typeS1) { 
@@ -153,7 +155,7 @@ static void VerifyTgline(const Handle(IntPatch_WLine)& wlin,
      && Abs(Tgl.Z())<Tol) { 
     //-- On construit une tangente plus grande
     //-- (Eviter des points tres proches ds Walking)		    
-    Standard_Integer i, n, nbpt=wlin->NbPnts();
+    Standard_Integer i = 0, n = 0, nbpt=wlin->NbPnts();
     Standard_Boolean forward = (nbpt-param) >= (param-1);
     for (n = 2; n > 0; n--, forward = !forward) {
       if (forward) {
@@ -203,7 +205,7 @@ static void GetLinePoint2d (const Handle(IntPatch_Line)& L,
   else
     par = Abs(param-par);
 
-  Standard_Real us1,vs1,us2,vs2;
+  Standard_Real us1 = NAN,vs1 = NAN,us2 = NAN,vs2 = NAN;
   if (typL == IntPatch_Walking) {
     if (OnFirst) {
       wlin->Point(Irang).ParametersOnS1(us1,vs1);
@@ -281,8 +283,8 @@ static Standard_Boolean FindParameter(const Handle(IntPatch_Line)& L,
   }
 
   else if (typL == IntPatch_Walking) {
-    Standard_Integer i, is, nbpt=wlin->NbPnts();
-    Standard_Real norm1,norm2;
+    Standard_Integer i = 0, is = 0, nbpt=wlin->NbPnts();
+    Standard_Real norm1 = NAN,norm2 = NAN;
     Standard_Integer ParamSearchInf=1;
     Standard_Integer ParamSearchSup=nbpt;
 
@@ -375,10 +377,10 @@ void IntPatch_RstInt::PutVertexOnLine (const Handle(IntPatch_Line)& L,
 
   IntPatch_SearchPnt Commun;
 
-  Standard_Real U,V,W;
-  Standard_Real U1,V1,U2 = 0.,V2 = 0.;
+  Standard_Real U = NAN,V = NAN,W = NAN;
+  Standard_Real U1 = NAN,V1 = NAN,U2 = 0.,V2 = 0.;
   Standard_Real paramarc=0.,paramline=0.;
-  Standard_Integer i,j,k;
+  Standard_Integer i = 0,j = 0,k = 0;
   TColgp_SequenceOfPnt locpt;
   TColgp_SequenceOfPnt2d locpt2;
   Handle(IntPatch_RLine) rlin (Handle(IntPatch_RLine)::DownCast (L)); //-- aucune verification n est 
@@ -389,8 +391,8 @@ void IntPatch_RstInt::PutVertexOnLine (const Handle(IntPatch_Line)& L,
   tolPLin = Min (tolPLin, Precision::Confusion());
   IntPatch_PolyLine PLin(tolPLin);
 
-  Standard_Real PFirst,PLast;
-  Standard_Integer NbEchant;
+  Standard_Real PFirst = NAN,PLast = NAN;
+  Standard_Integer NbEchant = 0;
   gp_Pnt ptsommet, ptbid;
   gp_Vec tgline, tgrst, d1u, d1v, normsurf;
 
@@ -400,7 +402,7 @@ void IntPatch_RstInt::PutVertexOnLine (const Handle(IntPatch_Line)& L,
   IntPatch_Point Sommet, ptline;
   Handle(Adaptor3d_HVertex) vtxarc,vtxline;
   Handle(Adaptor2d_Curve2d) arc;
-  Standard_Boolean VtxOnArc, duplicate, found;
+  Standard_Boolean VtxOnArc = 0, duplicate = 0, found = 0;
   IntSurf_Transition transarc,transline;
 
   IntPatch_IType typL = L->ArcType();
@@ -502,7 +504,7 @@ void IntPatch_RstInt::PutVertexOnLine (const Handle(IntPatch_Line)& L,
         {
           NbEchant=10;
           
-          Standard_Real aXmin, aYmin, aXmax, aYmax;
+          Standard_Real aXmin = NAN, aYmin = NAN, aXmax = NAN, aYmax = NAN;
           BPLin.Get(aXmin, aYmin, aXmax, aYmax);
           gp_Lin2d aLin = arc->Line();
           const gp_Pnt2d& aLoc = aLin.Location();
@@ -550,7 +552,7 @@ void IntPatch_RstInt::PutVertexOnLine (const Handle(IntPatch_Line)& L,
     }
 
     if(SurfaceIsPeriodic) { 
-      Standard_Real xmin,ymin,xmax,ymax,g;
+      Standard_Real xmin = NAN,ymin = NAN,xmax = NAN,ymax = NAN,g = NAN;
       BPLin.Get(xmin,ymin,xmax,ymax);
       g = BPLin.GetGap();
       BPLin.SetVoid();
@@ -559,7 +561,7 @@ void IntPatch_RstInt::PutVertexOnLine (const Handle(IntPatch_Line)& L,
       BPLin.SetGap(g);
     }
     if(SurfaceIsBiPeriodic) { 
-      Standard_Real xmin,ymin,xmax,ymax,g;
+      Standard_Real xmin = NAN,ymin = NAN,xmax = NAN,ymax = NAN,g = NAN;
       BPLin.Get(xmin,ymin,xmax,ymax);
       g = BPLin.GetGap();
       BPLin.SetVoid();
@@ -709,7 +711,7 @@ void IntPatch_RstInt::PutVertexOnLine (const Handle(IntPatch_Line)& L,
 	      }
 
 	      VtxOnArc = CoincideOnArc(ptsommet,arc,Surf,edgeTol,Domain,vtxarc);
-	      Standard_Real vtxTol;
+	      Standard_Real vtxTol = NAN;
 	      if (VtxOnArc) {
 		vtxTol = Tol3d(vtxarc,Domain);
 		if (edgeTol > vtxTol) vtxTol = edgeTol;
@@ -1000,7 +1002,7 @@ void IntPatch_RstInt::PutVertexOnLine (const Handle(IntPatch_Line)& L,
   //-- On reprend la ligne et on recale les parametres des vertex.
   //-- 
   if (typL == IntPatch_Walking) {
-    Standard_Real pu1,pv1,pu2,pv2;
+    Standard_Real pu1 = NAN,pv1 = NAN,pu2 = NAN,pv2 = NAN;
     pu1=pv1=pu2=pv2=0.0;
     switch(TypeS1) { 
     case GeomAbs_Cylinder:

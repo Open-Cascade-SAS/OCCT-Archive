@@ -157,7 +157,7 @@ void Draw_Window::RemoveCallbackBeforeTerminate (FCallbackBeforeTerminate theCB)
 //! Side effects: A prompt gets output, and a Tcl script may be evaluated in interp.
 static void Prompt (Tcl_Interp* theInterp, int thePartial)
 {
-  Tcl_Channel errChannel;
+  Tcl_Channel errChannel = nullptr;
   Tcl_Channel outChannel = Tcl_GetStdChannel(TCL_STDOUT);
   const char* promptCmd = Tcl_GetVar (theInterp, thePartial ? "tcl_prompt2" : "tcl_prompt1", TCL_GLOBAL_ONLY);
   if (promptCmd == NULL)
@@ -244,15 +244,19 @@ Draw_Window::Draw_Window (const char* theTitle,
                           const NCollection_Vec2<int>& theSize,
                           Aspect_Drawable theParent,
                           Aspect_Drawable theWin)
-: myWindow (0),
+:
 #if defined(_WIN32)
+  myWindow (0),
   myMemHbm (NULL),
   myCurrPen  (0),
   myCurrMode (0),
 #elif defined(HAVE_XLIB)
+  myWindow((Window )theWin),
   myMother ((Window )theParent),
   myImageBuffer (0),
   myBase (new Base_Window()),
+#else
+  myWindow (0),
 #endif
   myCurrentColor (0),
   myUseBuffer (Standard_False)
@@ -262,7 +266,7 @@ Draw_Window::Draw_Window (const char* theTitle,
   myWindow = (HWND )theWin;
   (void )theParent;
 #elif defined(HAVE_XLIB)
-  myWindow = (Window )theWin;
+  
   if (theParent == 0)
   {
     myMother = RootWindow (Draw_WindowDisplay, Draw_WindowScreen);
@@ -1053,7 +1057,7 @@ Standard_Boolean Draw_Window::Save (const char* theFileName) const
     XWindowAttributes aWinAttrRoot;
     XGetWindowAttributes (Draw_WindowDisplay, XRootWindowOfScreen (aWinAttr.screen), &aWinAttrRoot);
 
-    Window aWinChildDummy;
+    Window aWinChildDummy = 0;
     int aWinLeft = 0, aWinTop = 0;
     XTranslateCoordinates (Draw_WindowDisplay, myWindow, XRootWindowOfScreen (aWinAttr.screen),
                            0, 0, &aWinLeft, &aWinTop, &aWinChildDummy);

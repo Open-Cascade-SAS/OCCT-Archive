@@ -27,6 +27,8 @@
 #define No_Standard_DimensionError
 
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <Geom_BezierCurve.hxx>
 #include <Geom_BezierSurface.hxx>
@@ -56,7 +58,7 @@ static void Rational(const TColStd_Array2OfReal& Weights,
 		     Standard_Boolean& Urational,
 		     Standard_Boolean& Vrational)
 {
-  Standard_Integer I,J;
+  Standard_Integer I = 0,J = 0;
   J = Weights.LowerCol ();
   Vrational = Standard_False;
   while (!Vrational && J <= Weights.UpperCol()) {
@@ -96,7 +98,7 @@ static void AddPoleCol
   Standard_Integer InsertIndex = AfterIndex + NewPoles.LowerCol();
   Standard_Integer Offset = NewPoles.LowerRow() - PoleCol.Lower();
   Standard_Integer ColIndex = NewPoles.LowerCol();
-  Standard_Integer RowIndex;
+  Standard_Integer RowIndex = 0;
   while (ColIndex < InsertIndex) {
     RowIndex = NewPoles.LowerRow();
     while (RowIndex <= NewPoles.UpperRow()){
@@ -140,7 +142,7 @@ static void AddRatPoleCol
   Standard_Integer OffsetW     = NewWeights.LowerRow() - PoleWeightCol.Lower();
   
   Standard_Integer ColIndex = NewPoles.LowerCol();
-  Standard_Integer RowIndex;
+  Standard_Integer RowIndex = 0;
   while (ColIndex < InsertIndex) {
     RowIndex = NewPoles.LowerRow();
     while (RowIndex <= NewPoles.UpperRow()){
@@ -182,7 +184,7 @@ static void AddPoleRow
   Standard_Integer InsertIndex = AfterIndex + NewPoles.LowerRow();
   Standard_Integer Offset = NewPoles.LowerCol() - PoleRow.Lower();
   Standard_Integer RowIndex = NewPoles.LowerRow();
-  Standard_Integer ColIndex;
+  Standard_Integer ColIndex = 0;
   while (RowIndex < InsertIndex) {
     ColIndex = NewPoles.LowerCol();
     while (ColIndex <= NewPoles.UpperCol()){
@@ -225,7 +227,7 @@ static void AddRatPoleRow
   Standard_Integer OffsetPol = NewPoles.LowerCol() - PoleRow.Lower();
   Standard_Integer OffsetW = NewWeights.LowerCol() - PoleWeightRow.Lower();
   
-  Standard_Integer ColIndex;
+  Standard_Integer ColIndex = 0;
   Standard_Integer RowIndex = NewPoles.LowerRow();
   while (RowIndex < InsertIndex) {
     ColIndex = NewPoles.LowerCol();
@@ -265,7 +267,7 @@ static void DeletePoleCol
          TColgp_Array2OfPnt& NewPoles)
 {
   Standard_Integer Offset = 0;
-  Standard_Integer RowIndex;
+  Standard_Integer RowIndex = 0;
   Standard_Integer ColIndex = NewPoles.LowerCol();
   while (ColIndex <= NewPoles.UpperCol()) {
     RowIndex = NewPoles.LowerRow();
@@ -291,7 +293,7 @@ static void DeleteRatPoleCol
          TColStd_Array2OfReal& NewWeights)
 {
   Standard_Integer Offset = 0;
-  Standard_Integer RowIndex;
+  Standard_Integer RowIndex = 0;
   Standard_Integer ColIndex = NewPoles.LowerCol();
   while (ColIndex <= NewPoles.UpperCol()) {
     RowIndex = NewPoles.LowerRow();
@@ -316,7 +318,7 @@ static void DeletePoleRow
          TColgp_Array2OfPnt& NewPoles)
 {
   Standard_Integer Offset = 0;
-  Standard_Integer ColIndex;
+  Standard_Integer ColIndex = 0;
   Standard_Integer RowIndex = NewPoles.LowerRow();
   while (RowIndex <= NewPoles.UpperRow()) {
     ColIndex = NewPoles.LowerCol();
@@ -342,7 +344,7 @@ static void DeleteRatPoleRow
          TColStd_Array2OfReal& NewWeights)
 {
   Standard_Integer Offset = 0;
-  Standard_Integer ColIndex;
+  Standard_Integer ColIndex = 0;
   Standard_Integer RowIndex = NewPoles.LowerRow();
   while (RowIndex <= NewPoles.UpperRow()) {
     ColIndex = NewPoles.LowerCol();
@@ -421,7 +423,7 @@ Geom_BezierSurface::Geom_BezierSurface
     npoles = new TColgp_HArray2OfPnt   (1, NbUPoles, 1, NbVPoles);
   npoles->ChangeArray2() = SurfacePoles;
 
-  Standard_Integer I, J;
+  Standard_Integer I = 0, J = 0;
   urational = Standard_False;
   vrational = Standard_False;
   J = PoleWeights.LowerCol ();
@@ -466,10 +468,10 @@ Geom_BezierSurface::Geom_BezierSurface
    const Handle(TColStd_HArray2OfReal)& PoleWeights,
    const Standard_Boolean               IsURational,
    const Standard_Boolean               IsVRational)
-:maxderivinvok(Standard_False)
+:urational(IsURational), vrational(IsVRational), maxderivinvok(Standard_False)
 {
-  urational = IsURational;
-  vrational = IsVRational;
+  
+  
   Standard_Integer NbUPoles = SurfacePoles->ColLength();
   Standard_Integer NbVPoles = SurfacePoles->RowLength();
 
@@ -949,7 +951,7 @@ void Geom_BezierSurface::Segment
   if(UDegree() <= VDegree()) {
     Handle(TColgp_HArray2OfPnt)  coeffs = Coefs;
     Handle(TColStd_HArray2OfReal) wcoeffs = WCoefs;
-    Standard_Integer ii, jj;
+    Standard_Integer ii = 0, jj = 0;
     Coefs = new  (TColgp_HArray2OfPnt)(1,UDegree()+1,1,VDegree()+1);
     if (rat) {
       WCoefs = new  (TColStd_HArray2OfReal)(1,UDegree()+1,1,VDegree()+1);
@@ -1052,7 +1054,7 @@ void Geom_BezierSurface::SetPoleCol
     throw Standard_ConstructionError();
   }
      
-  Standard_Integer I;
+  Standard_Integer I = 0;
   for (I = CPoles.Lower();  I <= CPoles.Upper(); I++) {
     Poles (I, VIndex) = CPoles (I);
   }
@@ -1124,7 +1126,7 @@ void Geom_BezierSurface::SetPoleRow
     throw Standard_ConstructionError();
   }
 
-  Standard_Integer I;
+  Standard_Integer I = 0;
 
   for (I = CPoles.Lower(); I <= CPoles.Upper(); I++) {
     Poles   (UIndex, I) = CPoles (I);
@@ -1182,7 +1184,7 @@ void Geom_BezierSurface::SetWeightCol
   (const Standard_Integer      VIndex,
    const TColStd_Array1OfReal& CPoleWeights)
 {
-  Standard_Integer I;
+  Standard_Integer I = 0;
    // compute new rationality
   Standard_Boolean wasrat = (urational||vrational);
   if (!wasrat) {   
@@ -1223,7 +1225,7 @@ void Geom_BezierSurface::SetWeightRow
   (const Standard_Integer      UIndex,
    const TColStd_Array1OfReal& CPoleWeights)
 {
-  Standard_Integer I;
+  Standard_Integer I = 0;
    // compute new rationality
   Standard_Boolean wasrat = (urational||vrational);
   if (!wasrat) {    
@@ -1266,11 +1268,11 @@ void Geom_BezierSurface::SetWeightRow
 void Geom_BezierSurface::UReverse ()
 {
   gp_Pnt Pol;
-  Standard_Integer Row,Col;
+  Standard_Integer Row = 0,Col = 0;
   TColgp_Array2OfPnt & Poles = poles->ChangeArray2();
   if (urational || vrational) {
     TColStd_Array2OfReal & Weights = weights->ChangeArray2();
-    Standard_Real W;
+    Standard_Real W = NAN;
     for (Col = 1; Col <= Poles.RowLength(); Col++) {
       for (Row = 1; Row <= IntegerPart (Poles.ColLength() / 2); Row++) {
         W = Weights (Row, Col);
@@ -1312,11 +1314,11 @@ Standard_Real Geom_BezierSurface::UReversedParameter
 void Geom_BezierSurface::VReverse ()
 {
   gp_Pnt Pol;
-  Standard_Integer Row,Col;
+  Standard_Integer Row = 0,Col = 0;
   TColgp_Array2OfPnt & Poles = poles->ChangeArray2();
   if (urational || vrational) {
     TColStd_Array2OfReal & Weights = weights->ChangeArray2();
-    Standard_Real W;
+    Standard_Real W = NAN;
     for (Row = 1; Row <= Poles.ColLength(); Row++) {
       for (Col = 1; Col <= IntegerPart (Poles.RowLength()/2); Col++) {
         W = Weights (Row, Col);

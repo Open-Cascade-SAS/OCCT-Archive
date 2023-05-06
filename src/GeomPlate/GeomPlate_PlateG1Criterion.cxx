@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AdvApp2Var_Context.hxx>
 #include <AdvApp2Var_Patch.hxx>
 #include <GeomPlate_PlateG1Criterion.hxx>
@@ -35,10 +37,10 @@ GeomPlate_PlateG1Criterion(const TColgp_SequenceOfXY& Data,
 			   const TColgp_SequenceOfXYZ& G1Data,
 			   const Standard_Real Maximum,
 			   const AdvApp2Var_CriterionType Type,
-			   const AdvApp2Var_CriterionRepartition Repart)
+			   const AdvApp2Var_CriterionRepartition Repart) : myData(Data), myXYZ(G1Data)
 {
-  myData=Data;
-  myXYZ=G1Data;
+  
+  
   myMaxValue = Maximum;
   myType = Type;
   myRepartition = Repart;
@@ -67,7 +69,7 @@ void GeomPlate_PlateG1Criterion::Value(AdvApp2Var_Patch& P,
   VInt[0] = P.V0();
   VInt[1] = P.V1();
 
-  Standard_Real up,vp, ang = 0.;
+  Standard_Real up = NAN,vp = NAN, ang = 0.;
   
   Standard_Integer dimension = 3 * NbCoeff[1];
   TColStd_Array1OfReal Patch(1, NbCoeff[0] * dimension);
@@ -76,7 +78,7 @@ void GeomPlate_PlateG1Criterion::Value(AdvApp2Var_Patch& P,
   Standard_Real * Coeffs =  (Standard_Real *) &Patch.ChangeValue(1);
   Standard_Real * Digit  =  (Standard_Real *) &Point.ChangeValue(1);
   
-  Standard_Integer k1, k2, pos, ll=1;
+  Standard_Integer k1 = 0, k2 = 0, pos = 0, ll=1;
   for (k1 = 1; k1 <= NbCoeff[0]; k1++) {
 // JAG 99.04.29    pos = 3*(MaxNbCoeff[0])*(k1-1);
     pos = 3*(MaxNbCoeff[1])*(k1-1);
@@ -88,7 +90,7 @@ void GeomPlate_PlateG1Criterion::Value(AdvApp2Var_Patch& P,
     }
   }
 
-  Standard_Integer i, NbCtr = myData.Length();
+  Standard_Integer i = 0, NbCtr = myData.Length();
   for(i=1; i<=NbCtr; i++) {
     gp_Vec v1s,v2s,v3s;
     gp_Vec v3h(myXYZ.Value(i).X(),myXYZ.Value(i).Y(),myXYZ.Value(i).Z());

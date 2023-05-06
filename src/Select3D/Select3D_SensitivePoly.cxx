@@ -197,8 +197,14 @@ Select3D_SensitivePoly::Select3D_SensitivePoly (const Handle(SelectMgr_EntityOwn
                                                 const Standard_Integer theNbPnts)
 : Select3D_SensitivePoly (theOwnerId, !theIsFilled, GetCircleNbPoints (theCircle, theNbPnts, theU1, theU2, theIsFilled))
 {
-  mySensType = theIsFilled ? Select3D_TOS_INTERIOR : Select3D_TOS_BOUNDARY;
-
+  if (theIsFilled)
+  {
+    mySensType = Select3D_TOS_INTERIOR;
+  }
+  else
+  {
+    mySensType = Select3D_TOS_BOUNDARY;
+  }
   if (myPolyg.Size() != 1)
   {
     initCircle (myPolyg, theCircle, Min (theU1, theU2), Max (theU1, theU2), theIsFilled, theNbPnts);

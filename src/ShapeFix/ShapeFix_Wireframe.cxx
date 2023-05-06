@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom2d_BSplineCurve.hxx>
@@ -55,11 +57,11 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeFix_Wireframe,ShapeFix_Root)
 //function : ShapeFix_Wireframe
 //purpose  : 
 //=======================================================================
-ShapeFix_Wireframe::ShapeFix_Wireframe()
+ShapeFix_Wireframe::ShapeFix_Wireframe() : myModeDrop(Standard_False), myLimitAngle(-1)
 {
   ClearStatuses();
-  myModeDrop = Standard_False;
-  myLimitAngle = -1;
+  
+  
 }
 
 //=======================================================================
@@ -67,12 +69,12 @@ ShapeFix_Wireframe::ShapeFix_Wireframe()
 //purpose  : 
 //=======================================================================
 
-ShapeFix_Wireframe::ShapeFix_Wireframe(const TopoDS_Shape& shape)
+ShapeFix_Wireframe::ShapeFix_Wireframe(const TopoDS_Shape& shape) : myShape(shape), myModeDrop(Standard_False), myLimitAngle(-1)
 {
   ClearStatuses();
-  myShape = shape;
-  myModeDrop = Standard_False;
-  myLimitAngle = -1;
+  
+  
+  
 }
 
 //=======================================================================
@@ -282,7 +284,7 @@ ShapeFix_Wireframe::ShapeFix_Wireframe(const TopoDS_Shape& shape)
   Standard_Boolean isSame = (V11.IsSame(V12) || V22.IsSame(V21));
   BRep_Builder B;
   B.MakeEdge(newedge);
-  Standard_Real cf1,cf2,cl1,cl2,first1,first2,last1,last2;
+  Standard_Real cf1 = NAN,cf2 = NAN,cl1 = NAN,cl2 = NAN,first1 = NAN,first2 = NAN,last1 = NAN,last2 = NAN;
   newedge.Orientation(TopAbs_FORWARD);
   try 
   {
@@ -295,7 +297,7 @@ ShapeFix_Wireframe::ShapeFix_Wireframe(const TopoDS_Shape& shape)
     B.Add(newedge,V22.Oriented(TopAbs_REVERSED));
     
     Handle(Geom_Curve) CRes;
-    Standard_Boolean isRev1,isRev2;
+    Standard_Boolean isRev1 = 0,isRev2 = 0;
 //     Standard_Real newf,newl;
     if(!ShapeConstruct::JoinCurves(c3d1,c3d2,E1.Orientation(),E2.Orientation(),cf1, cl1,cf2, cl2,CRes,isRev1,isRev2))
       return  ReplaceFirst;
@@ -335,7 +337,7 @@ ShapeFix_Wireframe::ShapeFix_Wireframe(const TopoDS_Shape& shape)
       if(!sae.PCurve ( E2, face, c2d2, first2, last2, Standard_False )) return ReplaceFirst;
       
       Handle(Geom2d_Curve) C2dRes;
-      Standard_Boolean isRev12,isRev22;
+      Standard_Boolean isRev12 = 0,isRev22 = 0;
       if(!ShapeConstruct::JoinCurves(c2d1,c2d2,OrEdge1,OrEdge2,first1, last1,first2, last2,C2dRes,isRev12,isRev22,isSame))
       return  ReplaceFirst;
       
@@ -490,7 +492,7 @@ Standard_Boolean ShapeFix_Wireframe::CheckSmallEdges(TopTools_MapOfShape& theSma
       SAW.Init(aswd,face,Precision());
       // pnd protection on seam edges
       TopTools_DataMapOfShapeInteger EdgeMap;
-      Standard_Integer i;
+      Standard_Integer i = 0;
       for (i=1; i<=SAW.NbEdges(); i++) 
       {
 	edge = SAW.WireData()->Edge(i);
@@ -541,7 +543,7 @@ Standard_Boolean ShapeFix_Wireframe::CheckSmallEdges(TopTools_MapOfShape& theSma
   {
     SAW.SetPrecision(Precision());
     TopTools_DataMapOfShapeInteger EdgeMap;
-    Standard_Integer i;
+    Standard_Integer i = 0;
     TopoDS_Wire theWire=TopoDS::Wire(expw1.Current());
     TopTools_ListOfShape theEdgeList;
     SAW.Load(theWire);
@@ -655,7 +657,7 @@ Standard_Boolean ShapeFix_Wireframe::MergeSmallEdges(TopTools_MapOfShape& theSma
 	    //SFW->Load(aWire);
 	    SFW->Load(aswd);
 	    SFW->FixReorder();
-	    Standard_Integer prev, next, index = 1;
+	    Standard_Integer prev = 0, next = 0, index = 1;
 	    
 	    while (index <= SFW->WireData()->NbEdges() && SFW->NbEdges()>1) 
             {
@@ -683,7 +685,7 @@ Standard_Boolean ShapeFix_Wireframe::MergeSmallEdges(TopTools_MapOfShape& theSma
 		Standard_Boolean take_next = IsAnyJoin; //Standard_False;
 		Standard_Boolean isLimAngle = Standard_False;
 		Handle(Geom_Curve) C1, C2, C3;
-		Standard_Real aux, last1, first2, last2, first3;
+		Standard_Real aux = NAN, last1 = NAN, first2 = NAN, last2 = NAN, first3 = NAN;
 		Standard_Real Ang1 = 0., Ang2 =0.;
 		if (SAE.Curve3d(edge1,C1,aux,last1) &&
 		    SAE.Curve3d(edge2,C2,first2,last2) &&
@@ -1017,7 +1019,7 @@ Standard_Boolean ShapeFix_Wireframe::MergeSmallEdges(TopTools_MapOfShape& theSma
                   TopoDS_Edge ed = (take_next ? edge1 : edge2);
                   ShapeAnalysis_Edge sae;
                   Handle(Geom_Curve) c3d;
-                  Standard_Real f1,l1;
+                  Standard_Real f1 = NAN,l1 = NAN;
                   if(sae.Curve3d(ed,c3d,f1,l1,Standard_False)) 
                   {
                     gp_Pnt p1,p2,p3;
@@ -1105,7 +1107,7 @@ Standard_Boolean ShapeFix_Wireframe::MergeSmallEdges(TopTools_MapOfShape& theSma
 	    TopoDS_Wire aWire = TopoDS::Wire(expw1.Current());
 	    SFW->Load(aWire);
 	    SFW->FixReorder();
-	    Standard_Integer prev, next, index = 1;
+	    Standard_Integer prev = 0, next = 0, index = 1;
 	    while (index <= SFW->NbEdges() && SFW->NbEdges()>1) 
             {
 	      prev = (index==1)? SFW->NbEdges() : index-1;
@@ -1132,7 +1134,7 @@ Standard_Boolean ShapeFix_Wireframe::MergeSmallEdges(TopTools_MapOfShape& theSma
 		Standard_Boolean take_next = IsAnyJoin; //Standard_False;
 		Standard_Boolean isLimAngle = Standard_False;
 		Handle(Geom_Curve) C1, C2, C3;
-		Standard_Real aux, last1, first2, last2, first3;
+		Standard_Real aux = NAN, last1 = NAN, first2 = NAN, last2 = NAN, first3 = NAN;
 		Standard_Real Ang1 = 0., Ang2 =0.;
 		if (SAE.Curve3d(edge1,C1,aux,last1) &&
 		    SAE.Curve3d(edge2,C2,first2,last2) &&
@@ -1465,7 +1467,7 @@ Standard_Boolean ShapeFix_Wireframe::MergeSmallEdges(TopTools_MapOfShape& theSma
                   TopoDS_Edge ed = (take_next ? edge1 : edge2);
                   ShapeAnalysis_Edge sae;
                   Handle(Geom_Curve) c3d;
-                  Standard_Real f1,l1;
+                  Standard_Real f1 = NAN,l1 = NAN;
                   if(sae.Curve3d(ed,c3d,f1,l1,Standard_False)) 
                   {
                     gp_Pnt p1,p2,p3;

@@ -55,7 +55,7 @@ void RWStepShape_RWMeasureQualification::ReadStep
 	// --- own field : qualifiers ---
 
 	Handle(StepShape_HArray1OfValueQualifier) quals;
-	Standard_Integer nsub4;
+	Standard_Integer nsub4 = 0;
 	if (data->ReadSubList (num,4,"qualifiers",ach,nsub4)) {
 	  Standard_Integer nb4 = data->NbParams(nsub4);
 	  quals = new StepShape_HArray1OfValueQualifier (1,nb4);
@@ -79,7 +79,7 @@ void RWStepShape_RWMeasureQualification::WriteStep
   SW.Send(ent->Name());
   SW.Send(ent->Description());
   SW.Send(ent->QualifiedMeasure());
-  Standard_Integer i, nbq = ent->NbQualifiers();
+  Standard_Integer i = 0, nbq = ent->NbQualifiers();
   SW.OpenSub();
   for (i = 1; i <= nbq; i ++) SW.Send (ent->QualifiersValue(i).Value());
   SW.CloseSub();
@@ -88,7 +88,7 @@ void RWStepShape_RWMeasureQualification::WriteStep
 
 void RWStepShape_RWMeasureQualification::Share(const Handle(StepShape_MeasureQualification)& ent, Interface_EntityIterator& iter) const
 {
-  Standard_Integer i, nbq = ent->NbQualifiers();
+  Standard_Integer i = 0, nbq = ent->NbQualifiers();
   for (i = 1; i <= nbq; i ++) iter.AddItem (ent->QualifiersValue(i).Value());
 }
 

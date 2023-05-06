@@ -1231,8 +1231,8 @@ private:
   Handle(TColStd_HArray1OfReal) vknots;
   Handle(TColStd_HArray1OfInteger) umults;
   Handle(TColStd_HArray1OfInteger) vmults;
-  Standard_Real umaxderivinv;
-  Standard_Real vmaxderivinv;
+  Standard_Real umaxderivinv{};
+  Standard_Real vmaxderivinv{};
   Standard_Boolean maxderivinvok;
 
 

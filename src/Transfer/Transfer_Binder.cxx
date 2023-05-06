@@ -26,11 +26,11 @@ IMPLEMENT_STANDARD_RTTIEXT(Transfer_Binder,Standard_Transient)
 //function : Transfer_Binder
 //purpose  : 
 //=======================================================================
-Transfer_Binder::Transfer_Binder ()
+Transfer_Binder::Transfer_Binder () : thestatus(Transfer_StatusVoid), theexecst(Transfer_StatusInitial), thecheck(new Interface_Check)
 {  
-  thestatus = Transfer_StatusVoid; 
-  theexecst = Transfer_StatusInitial;
-  thecheck = new Interface_Check;
+  
+  
+  
 } 
 
 //=======================================================================

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim.hxx>
 
 #include <Bnd_Box.hxx>
@@ -82,7 +84,7 @@ const Standard_Real SquareTolerance = Precision::SquareConfusion();
 gp_Pnt PrsDim::Nearest(const TopoDS_Shape& ashape, const gp_Pnt& apoint)
 {
   Standard_Real dist2 = RealLast();
-  Standard_Real curdist2;
+  Standard_Real curdist2 = NAN;
   gp_Pnt result(0.0,0.0,0.0);
   gp_Pnt curpnt(0.0,0.0,0.0);
   TopExp_Explorer explo(ashape,TopAbs_VERTEX);
@@ -143,7 +145,7 @@ Standard_Boolean PrsDim::Nearest (const Handle(Geom_Curve)& theCurve,
 //=======================================================================
 gp_Pnt PrsDim::Farest( const TopoDS_Shape& aShape, const gp_Pnt& aPoint )
 {
-  Standard_Real MaxDist2 = 0.0e0, curdist2;
+  Standard_Real MaxDist2 = 0.0e0, curdist2 = NAN;
   gp_Pnt Result(0.0,0.0,0.0);
   gp_Pnt curpnt(0.0,0.0,0.0);
   TopExp_Explorer Explo( aShape, TopAbs_VERTEX );
@@ -171,7 +173,7 @@ Standard_Boolean PrsDim::ComputeGeometry (const TopoDS_Edge&  theEdge,
                                           gp_Pnt&             theLastPnt)
 {
   TopLoc_Location anEdgeLoc;
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   theCurve = BRep_Tool::Curve (theEdge, anEdgeLoc, aFirst, aLast);
   if (theCurve.IsNull())
   {
@@ -363,7 +365,7 @@ Standard_Boolean PrsDim::ComputeGeometry (const TopoDS_Edge& theFirstEdge,
   }
 
   TopLoc_Location aFirstEdgeLoc, aSecondEdgeLoc;
-  Standard_Real aFirst1, aLast1, aFirst2, aLast2;
+  Standard_Real aFirst1 = NAN, aLast1 = NAN, aFirst2 = NAN, aLast2 = NAN;
   
   theFirstCurve = BRep_Tool::Curve (theFirstEdge, aFirstEdgeLoc, aFirst1, aLast1);
   theSecondCurve = BRep_Tool::Curve (theSecondEdge, aSecondEdgeLoc, aFirst2, aLast2);
@@ -542,7 +544,7 @@ Standard_Boolean PrsDim::ComputeGeometry (const TopoDS_Edge& theFirstEdge,
   theExtCurve.Nullify();
   theExtIndex = 0;
 
-  Standard_Real aFirst1, aLast1, aFirst2, aLast2;
+  Standard_Real aFirst1 = NAN, aLast1 = NAN, aFirst2 = NAN, aLast2 = NAN;
   theIsInfinite1 = theIsInfinite2 = Standard_False;
 
   BRepAdaptor_Curve aFirstAdaptor (theFirstEdge);
@@ -577,7 +579,7 @@ Standard_Boolean PrsDim::ComputeGeometry (const TopoDS_Edge& theFirstEdge,
   Handle(Geom_Curve) aSecondSaved = theSecondCurve;
 
   // Checks that the projected curve is not in the plane
-  Standard_Boolean isFirstOnPlane, isSecondOnPlane;
+  Standard_Boolean isFirstOnPlane = 0, isSecondOnPlane = 0;
 
   if ((!ComputeGeomCurve (theFirstCurve, aFirst1, aLast1, theFirstPnt1, theLastPnt1, thePlane, isFirstOnPlane))
       || (!ComputeGeomCurve( theSecondCurve, aFirst2, aLast2, theFirstPnt2, theLastPnt2, thePlane,isSecondOnPlane)))
@@ -895,7 +897,7 @@ Standard_Boolean PrsDim::InitAngleBetweenPlanarFaces (const TopoDS_Face& theFirs
   }
 
   // Get intersect line.
-  Handle(Geom_Curve) anIntersectCurve = aPlaneIntersector.Line (1);
+  const Handle(Geom_Curve)& anIntersectCurve = aPlaneIntersector.Line (1);
 
   Handle(Geom_Line) anIntersectLine = Handle(Geom_Line)::DownCast (anIntersectCurve);
 
@@ -907,8 +909,8 @@ Standard_Boolean PrsDim::InitAngleBetweenPlanarFaces (const TopoDS_Face& theFirs
   gp_Lin anIntersectLin = anIntersectLine->Lin();
 
   gp_Pnt aFirstCenter, aSecondCenter;
-  Standard_Real anU1Min, anU1Max, aV1Min, aV1Max;
-  Standard_Real anU2Min, anU2Max, aV2Min, aV2Max;
+  Standard_Real anU1Min = NAN, anU1Max = NAN, aV1Min = NAN, aV1Max = NAN;
+  Standard_Real anU2Min = NAN, anU2Max = NAN, aV2Min = NAN, aV2Max = NAN;
 
   BRepTools::UVBounds (theFirstFace, anU1Min, anU1Max, aV1Min, aV1Max);
   BRepTools::UVBounds (theSecondFace, anU2Min, anU2Max, aV2Min, aV2Max);
@@ -982,8 +984,7 @@ Standard_Boolean PrsDim::InitAngleBetweenCurvilinearFaces (const TopoDS_Face& th
   }
 
   // Get intersect line.
-  Handle(Geom_Curve) anIntersectCurve = aSurfaceIntersector.Line (1);
-
+  
   Handle(Geom_Line) aFirstLine, aSecondLine;
   Standard_Real aFirstU = 0.0;
   Standard_Real aFirstV = 0.0;
@@ -1056,7 +1057,7 @@ Standard_Boolean PrsDim::InitAngleBetweenCurvilinearFaces (const TopoDS_Face& th
       theFirstAttach = theCenter.Translated (aDir);
 
       // theFirstAttach should be on theFirstSurf.
-      Standard_Real anU, aV;
+      Standard_Real anU = NAN, aV = NAN;
       if (theFirstSurfType == PrsDim_KOS_Cylinder)
       {
         ElSLib::Parameters ((Handle(Geom_CylindricalSurface)::DownCast (aFirstSurf))->Cylinder(),
@@ -1084,7 +1085,7 @@ Standard_Boolean PrsDim::InitAngleBetweenCurvilinearFaces (const TopoDS_Face& th
     {
       return Standard_False;
     }
-    Standard_Real anU, aV;
+    Standard_Real anU = NAN, aV = NAN;
     aProjector.LowerDistanceParameters (anU, aV);
     theSecondAttach = aSecondSurf->Value (anU, aV);
   }
@@ -1110,7 +1111,7 @@ void PrsDim::InitLengthBetweenCurvilinearFaces (const TopoDS_Face&    theFirstFa
                                                 gp_Dir&               theDirOnPlane)
 {
   GeomAPI_ProjectPointOnSurf aProjector;
-  Standard_Real aPU, aPV;
+  Standard_Real aPU = NAN, aPV = NAN;
 
   TopExp_Explorer anExplorer (theFirstFace, TopAbs_VERTEX);
 
@@ -1193,7 +1194,7 @@ gp_Pnt PrsDim::TranslatePointToBound( const gp_Pnt & aPoint, const gp_Dir & aDir
       TColStd_Array2OfReal Bound( 1, 3, 1, 2 );
       TColStd_Array1OfReal Origin( 1, 3 );
       TColStd_Array1OfReal Dir( 1, 3 );
-      Standard_Real t;
+      Standard_Real t = NAN;
       
       aBndBox.Get( Bound(1,1), Bound(2,1), Bound(3,1), Bound(1,2),  Bound(2,2), Bound(3,2) );
       aPoint.Coord( Origin(1), Origin(2), Origin(3) );
@@ -1240,7 +1241,7 @@ Standard_Boolean PrsDim::InDomain(const Standard_Real fpar,
       return ((para >= fpar) && (para <= lpar));
     else { // fpar > lpar
       Standard_Real delta = 2*M_PI-fpar;
-      Standard_Real lp, par, fp;
+      Standard_Real lp = NAN, par = NAN, fp = NAN;
       lp = lpar + delta;
       par = para + delta;
       while(lp > 2*M_PI) lp-=2*M_PI;
@@ -1264,7 +1265,7 @@ Standard_Real PrsDim::DistanceFromApex(const gp_Elips & elips,
 				    const gp_Pnt   & Apex,
 				    const Standard_Real par)
 {
-  Standard_Real dist;
+  Standard_Real dist = NAN;
   Standard_Real parApex = ElCLib::Parameter ( elips, Apex );
   if(parApex == 0.0 || parApex == M_PI) 
     {//Major case
@@ -1315,7 +1316,7 @@ gp_Pnt PrsDim::NearestApex(const gp_Elips & elips,
 			const Standard_Real lpara,
 			      Standard_Boolean & IsInDomain)
 {
-  Standard_Real parP, parN;
+  Standard_Real parP = NAN, parN = NAN;
   gp_Pnt EndOfArrow(0.0,0.0,0.0);
   IsInDomain = Standard_True;
   parP = ElCLib::Parameter ( elips, pApex );
@@ -1367,10 +1368,10 @@ void PrsDim::ComputeProjEdgePresentation (const Handle(Prs3d_Presentation)& aPre
     li->SetWidth(aWidth);
   }
 
-  Standard_Real pf, pl;
+  Standard_Real pf = NAN, pl = NAN;
   TopLoc_Location loc;
   Handle(Geom_Curve) curve;
-  Standard_Boolean isInfinite;
+  Standard_Boolean isInfinite = 0;
   curve = BRep_Tool::Curve(anEdge,loc,pf,pl);
   isInfinite = (Precision::IsInfinite(pf) || Precision::IsInfinite(pl));
 

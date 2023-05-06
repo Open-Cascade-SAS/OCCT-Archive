@@ -73,15 +73,15 @@ private:
 
 
   Handle(GeomAdaptor_SurfaceOfRevolution) myS;
-  Standard_Real myvinf;
-  Standard_Real myvsup;
-  Standard_Real mytolv;
+  Standard_Real myvinf{};
+  Standard_Real myvsup{};
+  Standard_Real mytolv{};
   gp_Ax2 myPosition;
   Extrema_GenExtPS myExtPS;
-  Standard_Boolean myIsAnalyticallyComputable;
-  Standard_Boolean myDone;
-  Standard_Integer myNbExt;
-  Standard_Real mySqDist[8];
+  Standard_Boolean myIsAnalyticallyComputable{};
+  Standard_Boolean myDone{};
+  Standard_Integer myNbExt{};
+  Standard_Real mySqDist[8]{};
   Extrema_POnSurf myPoint[8];
 
 

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Convert_CompPolynomialToPoles.hxx>
 #include <GeomFill_PolynomialConvertor.hxx>
 #include <gp_Mat.hxx>
@@ -41,8 +43,8 @@ Standard_Boolean GeomFill_PolynomialConvertor::Initialized() const
 void GeomFill_PolynomialConvertor::Init() 
 {
   if (myinit) return; //On n'initialise qu'une fois
-  Standard_Integer ii, jj;
-  Standard_Real terme;
+  Standard_Integer ii = 0, jj = 0;
+  Standard_Real terme = NAN;
   math_Matrix H(1,Ordre, 1,Ordre), B(1,Ordre, 1,Ordre);
   Handle(TColStd_HArray1OfReal) 
     Coeffs = new (TColStd_HArray1OfReal) (1, Ordre*Ordre),  
@@ -105,9 +107,9 @@ void GeomFill_PolynomialConvertor::Section(const gp_Pnt& FirstPnt,
 {
   math_Vector Vx(1, Ordre), Vy(1, Ordre);
   math_Vector Px(1, Ordre), Py(1, Ordre);
-  Standard_Integer ii;
+  Standard_Integer ii = 0;
   Standard_Real Cos_b = Cos(Angle), Sin_b = Sin(Angle);
-  Standard_Real beta, beta2, beta3;
+  Standard_Real beta = NAN, beta2 = NAN, beta3 = NAN;
   gp_Vec V1(Center, FirstPnt), V2;
   V2 =  Dir^V1;
   beta = Angle/2;
@@ -156,9 +158,9 @@ void GeomFill_PolynomialConvertor::Section(const gp_Pnt& FirstPnt,
               DVx(1, Ordre), DVy(1, Ordre);
   math_Vector Px(1, Ordre), Py(1, Ordre),
               DPx(1, Ordre), DPy(1, Ordre);
-  Standard_Integer ii;
+  Standard_Integer ii = 0;
   Standard_Real Cos_b = Cos(Angle), Sin_b = Sin(Angle);
-  Standard_Real beta, beta2, beta3, bprim;
+  Standard_Real beta = NAN, beta2 = NAN, beta3 = NAN, bprim = NAN;
   gp_Vec V1(Center, FirstPnt), V1Prim, V2;
   V2 =  Dir^V1;
   beta = Angle/2;
@@ -243,9 +245,9 @@ void GeomFill_PolynomialConvertor::Section(const gp_Pnt& FirstPnt,
               DPx(1, Ordre), DPy(1, Ordre),
               D2Px(1, Ordre), D2Py(1, Ordre);
 
-  Standard_Integer ii;
-  Standard_Real aux, Cos_b = Cos(Angle), Sin_b = Sin(Angle);
-  Standard_Real beta, beta2, beta3, bprim, bprim2, bsecn;
+  Standard_Integer ii = 0;
+  Standard_Real aux = NAN, Cos_b = Cos(Angle), Sin_b = Sin(Angle);
+  Standard_Real beta = NAN, beta2 = NAN, beta3 = NAN, bprim = NAN, bprim2 = NAN, bsecn = NAN;
   gp_Vec V1(Center, FirstPnt), V1Prim, V1Secn, V2;
   V2 =  Dir^V1;
   beta = Angle/2;

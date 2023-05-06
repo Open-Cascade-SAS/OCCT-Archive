@@ -23,9 +23,9 @@
 //=======================================================================
 BRepExtrema_OverlapTool::BRepExtrema_OverlapTool()
 : myFilter (NULL),
-  myTolerance (0.0)
+  myIsDone(Standard_False), myTolerance (0.0)
 {
-  myIsDone = Standard_False;
+  
 }
 
 //=======================================================================
@@ -77,7 +77,7 @@ namespace
     BVH_Vec3d EdgeNormals[3];
 
     //! Is prism initialized?
-    Standard_Boolean IsInited;
+    Standard_Boolean IsInited{};
 
   public:
 
@@ -348,8 +348,8 @@ namespace
     }
     else // triangles are co-planar
     {
-      Standard_Integer anX;
-      Standard_Integer anY;
+      Standard_Integer anX = 0;
+      Standard_Integer anY = 0;
 
       if (fabs (aTrng1Normal[0]) > fabs (aTrng1Normal[1]))
       {

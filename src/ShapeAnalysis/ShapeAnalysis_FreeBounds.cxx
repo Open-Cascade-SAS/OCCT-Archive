@@ -140,7 +140,7 @@ ShapeAnalysis_FreeBounds::ShapeAnalysis_FreeBounds(const TopoDS_Shape& shape,
   Handle(TopTools_HSequenceOfShape) iwires = new TopTools_HSequenceOfShape;
   BRep_Builder B;
   
-  Standard_Integer i; // svv #1
+  Standard_Integer i = 0; // svv #1
   for (i = 1; i <= edges->Length(); i++) {
     TopoDS_Wire wire;
     B.MakeWire (wire);
@@ -183,7 +183,7 @@ ShapeAnalysis_FreeBounds::ShapeAnalysis_FreeBounds(const TopoDS_Shape& shape,
   if (iwires.IsNull() || !iwires->Length()) return;
   Handle(TopTools_HArray1OfShape) arrwires = new TopTools_HArray1OfShape(1, iwires->Length());
   //amv
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= arrwires->Length(); i++)
     arrwires->SetValue(i, iwires->Value(i));
   owires = new TopTools_HSequenceOfShape;
@@ -224,7 +224,7 @@ ShapeAnalysis_FreeBounds::ShapeAnalysis_FreeBounds(const TopoDS_Shape& shape,
   }
 
   aTreeFiller.Fill();
-  Standard_Integer nsel;
+  Standard_Integer nsel = 0;
   
   ShapeAnalysis_Edge sae; //szv#4:S4163:12Mar99 moved
   Standard_Boolean done = Standard_False;
@@ -414,14 +414,14 @@ static void SplitWire(const TopoDS_Wire& wire,
   statuses.Init (0);
 
   //building closed wires
-  Standard_Integer i; // svv #1
+  Standard_Integer i = 0; // svv #1
   for (i = 1; i <= nbedges; i++)
     if (statuses.Value (i) == 0) {
       ces.Append (i); statuses.SetValue (i, 1); //putting into CES
       Standard_Boolean SearchBackward = Standard_True;
 
       for(;;) {
-	Standard_Boolean found;
+	Standard_Boolean found = 0;
 	TopoDS_Edge edge;
 	TopoDS_Vertex lvertex;
 	gp_Pnt lpoint;
@@ -433,7 +433,7 @@ static void SplitWire(const TopoDS_Wire& wire,
 	  edge = sewd->Edge (ces.Last());
 	  lvertex = sae.LastVertex (edge);
 	  lpoint = BRep_Tool::Pnt (lvertex);
-	  Standard_Integer j; // svv #1
+	  Standard_Integer j = 0; // svv #1
 	  for (j = ces.Length(); (j >= 1) && !found; j--) {
 	    TopoDS_Vertex fv = sae.FirstVertex (sewd->Edge (ces.Value (j)) );
 	    gp_Pnt fp = BRep_Tool::Pnt (fv);
@@ -463,7 +463,7 @@ static void SplitWire(const TopoDS_Wire& wire,
 	edge = sewd->Edge (ces.Last());
 	lvertex = sae.LastVertex (edge);
 	lpoint = BRep_Tool::Pnt (lvertex);
-	Standard_Integer j; // svv #1
+	Standard_Integer j = 0; // svv #1
 	for (j = 1; (j <= nbedges) && !found; j++)
 	  if (statuses.Value (j) == 0) {
 	    TopoDS_Vertex fv = sae.FirstVertex (sewd->Edge (j));

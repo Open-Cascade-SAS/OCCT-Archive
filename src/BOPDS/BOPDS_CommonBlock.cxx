@@ -143,7 +143,7 @@ void BOPDS_CommonBlock::SetRealPaveBlock(const Handle(BOPDS_PaveBlock)& thePB)
 {
   static Handle(BOPDS_PaveBlock) aPBs;
   //
-  Standard_Integer aIOr;
+  Standard_Integer aIOr = 0;
   BOPDS_ListIteratorOfListOfPaveBlock anIt;
   //
   anIt.Initialize(myPaveBlocks);
@@ -162,8 +162,8 @@ void BOPDS_CommonBlock::SetRealPaveBlock(const Handle(BOPDS_PaveBlock)& thePB)
 //=======================================================================
   Standard_Boolean BOPDS_CommonBlock::IsPaveBlockOnFace(const Standard_Integer aIx)const
 {
-  Standard_Boolean bFound;
-  Standard_Integer nF;
+  Standard_Boolean bFound = 0;
+  Standard_Integer nF = 0;
   TColStd_ListIteratorOfListOfInteger anIt;
   //
   bFound=Standard_False;
@@ -182,8 +182,8 @@ void BOPDS_CommonBlock::SetRealPaveBlock(const Handle(BOPDS_PaveBlock)& thePB)
 //=======================================================================
   Standard_Boolean BOPDS_CommonBlock::IsPaveBlockOnEdge(const Standard_Integer aIx)const
 {
-  Standard_Boolean bFound;
-  Standard_Integer aIOr;
+  Standard_Boolean bFound = 0;
+  Standard_Integer aIOr = 0;
   BOPDS_ListIteratorOfListOfPaveBlock anIt;
   //
   bFound=Standard_False;
@@ -229,8 +229,8 @@ void BOPDS_CommonBlock::SetRealPaveBlock(const Handle(BOPDS_PaveBlock)& thePB)
 //=======================================================================
   Standard_Boolean BOPDS_CommonBlock::Contains(const Handle(BOPDS_PaveBlock)& aPBx)const
 {
-  Standard_Boolean bFound;
-  Standard_Integer aNb1;
+  Standard_Boolean bFound = 0;
+  Standard_Integer aNb1 = 0;
   BOPDS_ListIteratorOfListOfPaveBlock anIt;
   //
   bFound=Standard_False;
@@ -255,7 +255,7 @@ void BOPDS_CommonBlock::SetRealPaveBlock(const Handle(BOPDS_PaveBlock)& thePB)
 //=======================================================================
   Standard_Boolean BOPDS_CommonBlock::Contains(const Standard_Integer theF)const
 {
-  Standard_Boolean bFound;
+  Standard_Boolean bFound = 0;
   TColStd_ListIteratorOfListOfInteger aIt;
   //
   bFound=Standard_False;
@@ -273,7 +273,7 @@ void BOPDS_CommonBlock::SetRealPaveBlock(const Handle(BOPDS_PaveBlock)& thePB)
 //=======================================================================
   void BOPDS_CommonBlock::Dump()const
 {
-  Standard_Integer nF;
+  Standard_Integer nF = 0;
   TColStd_ListIteratorOfListOfInteger aIt;
   BOPDS_ListIteratorOfListOfPaveBlock aItPB;
   //

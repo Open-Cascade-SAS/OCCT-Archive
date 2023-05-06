@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Units_Lexicon.hxx>
 #include <Units_NoSuchType.hxx>
 #include <Units_Operators.hxx>
@@ -51,14 +53,14 @@ static Handle(Units_Token) CreateTokenForNumber(const Standard_CString str)
 //=======================================================================
 
 Units_Sentence::Units_Sentence(const Handle(Units_Lexicon)& alexicon,
-			       const Standard_CString astring)
+			       const Standard_CString astring) : thesequenceoftokens(new Units_TokensSequence())
 {
-  Standard_Integer index;
-  Standard_Size i,limchain;
+  Standard_Integer index = 0;
+  Standard_Size i = 0,limchain = 0;
   Handle(Units_Token) token;
   Handle(Units_Token) referencetoken;
   
-  thesequenceoftokens = new Units_TokensSequence();
+  
   Handle(Units_TokensSequence) lstlexicon=alexicon->Sequence();
   if(lstlexicon.IsNull())
     throw Units_NoSuchType("BAD LEXICON descriptor");
@@ -131,8 +133,8 @@ Units_Sentence::Units_Sentence(const Handle(Units_Lexicon)& alexicon,
 
 void Units_Sentence::SetConstants()
 {
-  Standard_Integer index;
-  Standard_Real value;
+  Standard_Integer index = 0;
+  Standard_Real value = NAN;
   Handle(Units_Token) token;
   TCollection_AsciiString string;
 
@@ -163,7 +165,7 @@ static Handle(Units_Token) CalculateLocal(const Handle(Units_TokensSequence)& aS
   //}
   //std::cout<<std::endl;
   Handle(Units_Token) tok1,tok2;
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
 
   if(aSeq->Length()==1) {
     return aSeq->Value(1);

@@ -41,6 +41,8 @@
 // Purpose:	
 // Declarations:	
 
+#include <math.h>
+
 #include <GeomLib.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -145,7 +147,7 @@ static void ComputeLambda(const math_Matrix& Constraint,
 {
   Standard_Integer size = Hermit.RowNumber();
   Standard_Integer Continuity = size-2;
-  Standard_Integer ii, jj, ip, pp;
+  Standard_Integer ii = 0, jj = 0, ip = 0, pp = 0;
 
   //Minimization
   math_Matrix HDer(1, size-1, 1, size);
@@ -165,7 +167,7 @@ static void ComputeLambda(const math_Matrix& Constraint,
   Standard_Real * valhder =  &V(1);
   Vec2 =  Constraint.Col(2);
   Vec2 /= Length;
-  Standard_Real t,  squared1 = Vec2.Norm2(), GW;
+  Standard_Real t = NAN,  squared1 = Vec2.Norm2(), GW = NAN;
 //  math_Matrix Vec(1, Constraint.RowNumber(), 1, size-1);
 //  gp_Vec Vfirst(p0.XYZ()), Vlast(Point.XYZ());
 //  TColgp_Array1OfVec Der(2, 4);
@@ -233,7 +235,7 @@ static void ComputeLambda(const math_Matrix& Constraint,
     }
   }
 
-  Standard_Real EMin, E;
+  Standard_Real EMin = NAN, E = NAN;
   PLib::NoDerivativeEvalPolynomial(Lambda , pol4.Length()-1, 1, 
 				   pol4.Length()-1,
 				   pol4(1), EMin); 
@@ -270,14 +272,14 @@ void GeomLib::RemovePointsFromArray(const Standard_Integer NumPoints,
 				    const TColStd_Array1OfReal& InParameters,
 				    Handle(TColStd_HArray1OfReal)& OutParameters) 
 {
- Standard_Integer ii,
-   jj,
-   add_one_point,
-   loc_num_points,
-   num_points,
-   index ;
- Standard_Real delta,
-   current_parameter ;
+ Standard_Integer ii = 0,
+   jj = 0,
+   add_one_point = 0,
+   loc_num_points = 0,
+   num_points = 0,
+   index = 0 ;
+ Standard_Real delta = NAN,
+   current_parameter = NAN ;
 
    loc_num_points = Max(0,NumPoints-2) ;
    delta = InParameters(InParameters.Upper()) - InParameters(InParameters.Lower()) ;
@@ -326,13 +328,13 @@ void GeomLib::DensifyArray1OfReal(const Standard_Integer MinNumPoints,
 				  const TColStd_Array1OfReal& InParameters,
 				  Handle(TColStd_HArray1OfReal)& OutParameters) 
 {
- Standard_Integer ii,
-   in_order,
-   num_points,
-   num_parameters_to_add,
-   index ;
- Standard_Real delta,
-   current_parameter ;
+ Standard_Integer ii = 0,
+   in_order = 0,
+   num_points = 0,
+   num_parameters_to_add = 0,
+   index = 0 ;
+ Standard_Real delta = NAN,
+   current_parameter = NAN ;
 
  in_order = 1 ;
  if (MinNumPoints > InParameters.Length()) {
@@ -408,7 +410,7 @@ void GeomLib::FuseIntervals(const  TColStd_Array1OfReal& I1,
                             const Standard_Boolean IsAdjustToFirstInterval)
 {
  Standard_Integer ind1=1, ind2=1;
- Standard_Real    v1, v2;
+ Standard_Real    v1 = NAN, v2 = NAN;
 // Initialisations : les IND1 et IND2 pointent sur le 1er element
 // de chacune des 2 tables a traiter.INDS pointe sur le dernier
 // element cree de TABSOR
@@ -474,11 +476,11 @@ void GeomLib::EvalMaxParametricDistance(const Adaptor3d_Curve& ACurve,
 			       const TColStd_Array1OfReal& Parameters,
 			       Standard_Real& MaxDistance) 
 {
-  Standard_Integer ii ;
+  Standard_Integer ii = 0 ;
 
   Standard_Real max_squared = 0.0e0,
 //    tolerance_squared,
-    local_distance_squared ;
+    local_distance_squared = NAN ;
 
 //  tolerance_squared = Tolerance * Tolerance ;
   gp_Pnt Point1 ;
@@ -511,12 +513,12 @@ void GeomLib::EvalMaxDistanceAlongParameter(const Adaptor3d_Curve& ACurve,
 			       const TColStd_Array1OfReal& Parameters,
 			       Standard_Real& MaxDistance) 
 {
-  Standard_Integer ii ;
+  Standard_Integer ii = 0 ;
   Standard_Real max_squared = 0.0e0,
     tolerance_squared = Tolerance * Tolerance,
-    other_parameter,
-    para_tolerance,
-    local_distance_squared ;
+    other_parameter = NAN,
+    para_tolerance = NAN,
+    local_distance_squared = NAN ;
   gp_Pnt Point1 ;
   gp_Pnt Point2 ;
 
@@ -912,7 +914,7 @@ void GeomLib::SameRange(const Standard_Real         Tolerance,
       Handle(Geom2d_Circle) Circ = 
         Handle(Geom2d_Circle)::DownCast(NewCurvePtr);
       gp_Pnt2d P = Circ->Location();
-      Standard_Real dU;
+      Standard_Real dU = NAN;
       if (Circ->Circ2d().IsDirect()) {
         dU = FirstOnCurve - RequestedFirst;
       }
@@ -1017,12 +1019,12 @@ class GeomLib_CurveOnSurfaceEvaluator : public AdvApprox_EvaluatorFunction
                                    Standard_Real theFirst, Standard_Real theLast)
     : CurveOnSurface(theCurveOnSurface), FirstParam(theFirst), LastParam(theLast) {}
   
-  virtual void Evaluate (Standard_Integer *Dimension,
+  void Evaluate (Standard_Integer *Dimension,
 		         Standard_Real     StartEnd[2],
                          Standard_Real    *Parameter,
                          Standard_Integer *DerivativeRequest,
                          Standard_Real    *Result, // [Dimension]
-                         Standard_Integer *ErrorCode);
+                         Standard_Integer *ErrorCode) override;
   
  private:
   Adaptor3d_CurveOnSurface& CurveOnSurface;
@@ -1125,8 +1127,8 @@ void GeomLib::BuildCurve3d(const Standard_Real           Tolerance,
 
     Handle(Adaptor2d_Curve2d) TrimmedC2D = geom_adaptor_curve_ptr->Trim (FirstParameter, LastParameter, Precision::PConfusion());
 
-    Standard_Boolean isU, isForward;
-    Standard_Real aParam;
+    Standard_Boolean isU = 0, isForward = 0;
+    Standard_Real aParam = NAN;
     if (isIsoLine(TrimmedC2D, isU, aParam, isForward))
     {
       NewCurvePtr = buildC3dOnIsoLine (TrimmedC2D, geom_adaptor_surface_ptr, FirstParameter, LastParameter, Tolerance, isU, aParam, isForward);
@@ -1204,7 +1206,7 @@ void GeomLib::AdjustExtremity(Handle(Geom_BoundedCurve)& Curve,
   Handle(Geom_BSplineCurve) aIn, aDef;  
   aIn = GeomConvert::CurveToBSplineCurve(Curve, Convert_QuasiAngular);
 
-  Standard_Integer ii, jj;
+  Standard_Integer ii = 0, jj = 0;
   gp_Pnt P;
   gp_Vec V, Vtan, DV;
   TColgp_Array1OfPnt PolesDef(1,4), Coeffs(1,4);
@@ -1289,10 +1291,10 @@ void GeomLib::ExtendCurveToPoint(Handle(Geom_BoundedCurve)& Curve,
 {
   if(Continuity < 1 || Continuity > 3) return;
   Standard_Integer size = Continuity + 2;
-  Standard_Real Ubord, Tol=1.e-6;
+  Standard_Real Ubord = NAN, Tol=1.e-6;
   math_Matrix  MatCoefs(1,size, 1,size);
-  Standard_Real Lambda, L1;
-  Standard_Integer ii, jj;
+  Standard_Real Lambda = NAN, L1 = NAN;
+  Standard_Integer ii = 0, jj = 0;
   gp_Vec d1, d2, d3;
   gp_Pnt p0;
 // il faut Convertir l'entree (en preservant si possible le parametrage)
@@ -1326,7 +1328,7 @@ void GeomLib::ExtendCurveToPoint(Handle(Geom_BoundedCurve)& Curve,
     // a sur la courbe.
     gp_Vec daux;
     gp_Pnt pp;
-    Standard_Real f= Curve->FirstParameter(), t, dt, norm; 
+    Standard_Real f= Curve->FirstParameter(), t = NAN, dt = NAN, norm = NAN; 
     dt = (Curve->LastParameter()-f)/9;
     norm = d1.Magnitude();
     for (ii=1, t=f+dt; ii<=8; ii++, t+=dt) {
@@ -1385,7 +1387,7 @@ void GeomLib::ExtendCurveToPoint(Handle(Geom_BoundedCurve)& Curve,
   Handle(Geom_BezierCurve) Bezier = new (Geom_BezierCurve) (ExtrapPoles);
 
   Standard_Real dist = ExtrapPoles(1).Distance(p0);
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   Tol += dist;
 
   // Concatenation
@@ -1410,7 +1412,7 @@ ExtendKPart(Handle(Geom_RectangularTrimmedSurface)& Surface,
   if  (Surface.IsNull()) return Standard_False;
 
   Standard_Boolean Ok=Standard_True;
-  Standard_Real Uf, Ul, Vf, Vl;
+  Standard_Real Uf = NAN, Ul = NAN, Vf = NAN, Vl = NAN;
   Handle(Geom_Surface) Support = Surface->BasisSurface();
   GeomAbs_SurfaceType Type;
 
@@ -1498,7 +1500,7 @@ void GeomLib::ExtendSurfByLength(Handle(Geom_BoundedSurface)& Surface,
 
   // si BS etait periodique dans le sens de l'extension, elle ne le sera plus
   if ( (InU&&(BS->IsUPeriodic())) || (!InU&&(BS->IsVPeriodic())) ) {
-    Standard_Real U0,U1,V0,V1;
+    Standard_Real U0 = NAN,U1 = NAN,V0 = NAN,V1 = NAN;
     BS->Bounds(U0,U1,V0,V1);
     BS->Segment(U0,U1,V0,V1);
   }     
@@ -1508,7 +1510,7 @@ void GeomLib::ExtendSurfByLength(Handle(Geom_BoundedSurface)& Surface,
 //   Standard_Boolean rational = ( InU && BS->IsURational() ) 
 //                                   || ( !InU && BS->IsVRational() ) ;
   Standard_Boolean rational = (BS->IsURational() ||  BS->IsVRational());
-  Standard_Boolean NullWeight;
+  Standard_Boolean NullWeight = 0;
    Standard_Real EpsW = 10*Precision::PConfusion();
   Standard_Integer gap = 3;
   if ( rational ) gap++;
@@ -1516,10 +1518,10 @@ void GeomLib::ExtendSurfByLength(Handle(Geom_BoundedSurface)& Surface,
 
         
   Standard_Integer Cdeg = 0, Cdim = 0, NbP = 0, Ksize = 0, Psize = 1;
-  Standard_Integer ii, jj, ipole, Kount;  
-  Standard_Real Tbord, lambmin=Length;
+  Standard_Integer ii = 0, jj = 0, ipole = 0, Kount = 0;  
+  Standard_Real Tbord = NAN, lambmin=Length;
   Standard_Real * Padr = NULL;
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   Handle(TColStd_HArray1OfReal)  FKnots, Point, lambda, Tgte, Poles;
 
   
@@ -1614,7 +1616,7 @@ void GeomLib::ExtendSurfByLength(Handle(Geom_BoundedSurface)& Surface,
 
     gp_Vec CurT, OldT;
   
-    Standard_Real NTgte, val, Tgtol = 1.e-12, OldN = 0.0;
+    Standard_Real NTgte = NAN, val = NAN, Tgtol = 1.e-12, OldN = 0.0;
     if (rational) {
       for (ii=gap;ii<=Cdim;ii+=gap) {
 	tgte(ii) = 0.;
@@ -1701,14 +1703,14 @@ void GeomLib::ExtendSurfByLength(Handle(Geom_BoundedSurface)& Surface,
   }
   
 //  tableaux necessaires pour l'extension
-  Standard_Integer Ksize2 = Ksize+Cdeg, NbPoles, NbKnots = 0;
+  Standard_Integer Ksize2 = Ksize+Cdeg, NbPoles = 0, NbKnots = 0;
   TColStd_Array1OfReal  FK(1, Ksize2) ; 
   Standard_Real * FKRadr = &FK(1);
 
   Standard_Integer Psize2 = Psize+Cdeg*Cdim;
   TColStd_Array1OfReal  PRes(1, Psize2) ; 
   Standard_Real * PRadr = &PRes(1);
-  Standard_Real ww;
+  Standard_Real ww = NAN;
   Standard_Boolean ExtOk = Standard_False;
   Handle(TColgp_HArray2OfPnt) NewPoles;
   Handle(TColStd_HArray2OfReal) NewWeights;
@@ -1723,7 +1725,7 @@ void GeomLib::ExtendSurfByLength(Handle(Geom_BoundedSurface)& Surface,
 				     NbPoles, NbKnots,*FKRadr, *PRadr);
 
     //  recopie des poles du resultat sous forme de points 3D et de poids
-    Standard_Integer NU, NV, indice ;
+    Standard_Integer NU = 0, NV = 0, indice = 0 ;
     if (InU) {
       NU = NbPoles;
       NV = BS->NbVPoles();
@@ -1801,7 +1803,7 @@ void GeomLib::ExtendSurfByLength(Handle(Geom_BoundedSurface)& Surface,
 
 // recopie des noeuds plats sous forme de noeuds avec leurs multiplicites
 // calcul des degres du resultat
-  Standard_Integer Usize = BS->NbUKnots(), Vsize = BS->NbVKnots(), UDeg, VDeg;
+  Standard_Integer Usize = BS->NbUKnots(), Vsize = BS->NbVKnots(), UDeg = 0, VDeg = 0;
   if (InU) 
     Usize++;
   else
@@ -1860,7 +1862,7 @@ void GeomLib::Inertia(const TColgp_Array1OfPnt& Points,
   gp_XYZ GB(0., 0., 0.), Diff;
 //  gp_Vec A,B,C,D;
 
-  Standard_Integer i,nb=Points.Length();
+  Standard_Integer i = 0,nb=Points.Length();
   GB.SetCoord(0.,0.,0.);
   for (i=1; i<=nb; i++) 
       GB += Points(i).XYZ();
@@ -1893,14 +1895,14 @@ void GeomLib::Inertia(const TColgp_Array1OfPnt& Points,
 #endif
   }
 
-  Standard_Real n1,n2,n3;
+  Standard_Real n1 = NAN,n2 = NAN,n3 = NAN;
 
   n1=J.Value(1);
   n2=J.Value(2);
   n3=J.Value(3);
 
-  Standard_Real r1 = Min(Min(n1,n2),n3), r2;
-  Standard_Integer m1, m2, m3;
+  Standard_Real r1 = Min(Min(n1,n2),n3), r2 = NAN;
+  Standard_Integer m1 = 0, m2 = 0, m3 = 0;
   if (r1==n1) {
     m1 = 1;
     r2 = Min(n2,n3);
@@ -1963,7 +1965,7 @@ void GeomLib::AxeOfInertia(const TColgp_Array1OfPnt& Points,
 {
   gp_Pnt Bary;
   gp_Dir OX,OY,OZ;
-  Standard_Real gx, gy, gz;
+  Standard_Real gx = NAN, gy = NAN, gz = NAN;
 
   GeomLib::Inertia(Points, Bary, OX, OY, gx, gy, gz);
   
@@ -1990,8 +1992,8 @@ void GeomLib::AxeOfInertia(const TColgp_Array1OfPnt& Points,
 
 static Standard_Boolean CanBeTreated(Handle(Geom_BSplineSurface)& BSurf)
      
-{Standard_Integer i;
- Standard_Real    lambda;                                    //proportionnality coefficient
+{Standard_Integer i = 0;
+ Standard_Real    lambda = NAN;                                    //proportionnality coefficient
  Standard_Boolean AlreadyTreated=Standard_True;
  
  if (!BSurf->IsURational()||(BSurf->IsUPeriodic()))
@@ -2030,11 +2032,11 @@ public:
   law_evaluator (const GeomLib_DenominatorMultiplierPtr theDenominatorPtr)
   : myDenominator (theDenominatorPtr) {}
 
-  virtual void Evaluate (const Standard_Integer theDerivativeRequest,
+  void Evaluate (const Standard_Integer theDerivativeRequest,
                          const Standard_Real    theUParameter,
                          const Standard_Real    theVParameter,
                          Standard_Real&         theResult,
-                         Standard_Integer&      theErrorCode) const
+                         Standard_Integer&      theErrorCode) const override
   {
     if ((myDenominator != NULL) && (theDerivativeRequest == 0))
     {
@@ -2061,7 +2063,7 @@ private:
 static Standard_Boolean CheckIfKnotExists(const TColStd_Array1OfReal&           surface_knots,
 					  const Standard_Real                   knot)
 
-{Standard_Integer    i;
+{Standard_Integer    i = 0;
  for (i=1;i<=surface_knots.Length();i++)
    if ((surface_knots(i)-Precision::Confusion()<=knot)&&(surface_knots(i)+Precision::Confusion()>=knot))
      return Standard_True;
@@ -2082,7 +2084,7 @@ static void AddAKnot(const TColStd_Array1OfReal&           knots,
 		     Handle(TColStd_HArray1OfReal) &       newknots,
 		     Handle(TColStd_HArray1OfInteger) &    newmults)
 
-{Standard_Integer      i;
+{Standard_Integer      i = 0;
 
  newknots=new TColStd_HArray1OfReal(1,knots.Length()+1);
  newmults=new TColStd_HArray1OfInteger(1,knots.Length()+1); 
@@ -2117,7 +2119,7 @@ static void BuildFlatKnot(const TColStd_Array1OfReal&           surface_knots,
 		 Handle(TColStd_HArray1OfInteger)&     ResultMults)
 		 
 {
-  Standard_Integer  i;
+  Standard_Integer  i = 0;
  
  if (CheckIfKnotExists(surface_knots,knotmin) &&
      CheckIfKnotExists(surface_knots,knotmax)){
@@ -2168,7 +2170,7 @@ static void FunctionMultiply(Handle(Geom_BSplineSurface)&          BSurf,
 					 1,BSurf->NbVPoles()) ;
  TColStd_Array2OfReal      surface_weights(1,BSurf->NbUPoles(),
 					   1,BSurf->NbVPoles()) ;
- Standard_Integer          i,j,k,status,new_num_u_poles,new_num_v_poles,length=0;
+ Standard_Integer          i = 0,j = 0,k = 0,status = 0,new_num_u_poles = 0,new_num_v_poles = 0,length=0;
  Handle(TColStd_HArray1OfReal)     newuknots,newvknots;
  Handle(TColStd_HArray1OfInteger)  newumults,newvmults;
 
@@ -2274,11 +2276,11 @@ static void FunctionMultiply(Handle(Geom_BSplineSurface)&          BSurf,
 
 static void CancelDenominatorDerivative1D(Handle(Geom_BSplineSurface) & BSurf)
      
-{Standard_Integer            i,j;
+{Standard_Integer            i = 0,j = 0;
  Standard_Real               uknotmin=1.0,uknotmax=0.0,
-                             x,y,
-                             startu_value,
-                             endu_value;
+                             x = NAN,y = NAN,
+                             startu_value = NAN,
+                             endu_value = NAN;
  TColStd_Array1OfReal        BSurf_u_knots(1,BSurf->NbUKnots()) ;
 
  startu_value=BSurf->UKnot(1);
@@ -2404,7 +2406,7 @@ Standard_Integer GeomLib::NormEstim (const Handle(Geom_Surface)& theSurf,
     return aStatus == CSLib_D1NIsNull ? 2 : 3;
   }
 
-  Standard_Real Umin, Umax, Vmin, Vmax;
+  Standard_Real Umin = NAN, Umax = NAN, Vmin = NAN, Vmax = NAN;
   Standard_Real step = 1.0e-5;
   Standard_Real eps  = 1.0e-16;
   Standard_Real sign = -1.0;
@@ -2516,7 +2518,7 @@ void GeomLib::IsClosed (const Handle(Geom_Surface)& S,
   GeomAdaptor_Surface aGAS(S);
   GeomAbs_SurfaceType aSType = aGAS.GetType();
   //
-  Standard_Real u1, u2, v1, v2;
+  Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
   u1 = aGAS.FirstUParameter();
   u2 = aGAS.LastUParameter();
   v1 = aGAS.FirstVParameter();
@@ -2646,8 +2648,8 @@ void GeomLib::IsClosed (const Handle(Geom_Surface)& S,
         nbp = Max(nbp, 2);
         dt = (v2 - v1) / (nbp - 1);
       }
-      Standard_Real t;
-      Standard_Integer i;
+      Standard_Real t = NAN;
+      Standard_Integer i = 0;
       for(i = 0; i < nbp;  ++i)
       {
         t = (i == nbp-1 ? v2 : v1 + i * dt);
@@ -2816,7 +2818,7 @@ static Standard_Boolean CompareWeightPoles(const TColgp_Array1OfPnt& thePoles1,
 //function : isIsoLine
 //purpose  :
 //=============================================================================
-Standard_Boolean GeomLib::isIsoLine (const Handle(Adaptor2d_Curve2d) theC2D,
+Standard_Boolean GeomLib::isIsoLine (const Handle(Adaptor2d_Curve2d)& theC2D,
                                      Standard_Boolean&                theIsU,
                                      Standard_Real&                   theParam,
                                      Standard_Boolean&                theIsForward)
@@ -2896,8 +2898,8 @@ Standard_Boolean GeomLib::isIsoLine (const Handle(Adaptor2d_Curve2d) theC2D,
 //function : buildC3dOnIsoLine
 //purpose  :
 //=============================================================================
-Handle(Geom_Curve) GeomLib::buildC3dOnIsoLine (const Handle(Adaptor2d_Curve2d) theC2D,
-                                               const Handle(Adaptor3d_Surface) theSurf,
+Handle(Geom_Curve) GeomLib::buildC3dOnIsoLine (const Handle(Adaptor2d_Curve2d)& theC2D,
+                                               const Handle(Adaptor3d_Surface)& theSurf,
                                                const Standard_Real              theFirst,
                                                const Standard_Real              theLast,
                                                const Standard_Real              theTolerance,
@@ -2921,7 +2923,7 @@ Handle(Geom_Curve) GeomLib::buildC3dOnIsoLine (const Handle(Adaptor2d_Curve2d) t
   gp_Pnt2d aL2d = theC2D->Value(theC2D->LastParameter());
 
   Standard_Boolean isToTrim = Standard_True;
-  Standard_Real U1, U2, V1, V2;
+  Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
   aSurf->Bounds(U1, U2, V1, V2);
 
   if (theIsU)

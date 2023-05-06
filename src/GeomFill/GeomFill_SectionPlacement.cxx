@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Curve.hxx>
 #include <Bnd_Box.hxx>
 #include <BndLib_Add3dCurve.hxx>
@@ -74,7 +76,7 @@ static void Tangente(const Adaptor3d_Curve& Path,
 static Standard_Real Penalite(const Standard_Real angle,
 			      const Standard_Real dist)
 {
-  Standard_Real penal;
+  Standard_Real penal = NAN;
   
   if (dist < 1)
     penal = Sqrt(dist);
@@ -96,7 +98,7 @@ static Standard_Real Penalite(const Standard_Real angle,
 static Standard_Real EvalAngle(const gp_Vec& V1, 
 			       const gp_Vec& V2)
 {
- Standard_Real angle;
+ Standard_Real angle = NAN;
  angle = V1.Angle(V2);
  if (angle > M_PI/2) angle = M_PI - angle;
  return angle;
@@ -111,8 +113,8 @@ static void DistMini(const Extrema_ExtPC& Ext,
 		     Standard_Real& Dist,
 		     Standard_Real& Param)
 {
-  Standard_Real dist1, dist2;
-  Standard_Integer ii;
+  Standard_Real dist1 = NAN, dist2 = NAN;
+  Standard_Integer ii = 0;
   gp_Pnt P1, P2;
   Standard_Real Dist2 = RealLast();
 
@@ -148,14 +150,14 @@ static void DistMini(const Extrema_ExtPC& Ext,
 GeomFill_SectionPlacement::
 GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
               const Handle(Geom_Geometry)& Section) :
-              myLaw(L), /* myAdpSection(Section),  mySection(Section), */
+              done(Standard_False), isplan(Standard_False), myLaw(L), /* myAdpSection(Section),  mySection(Section), */
               SecParam(0.0), PathParam(0.0),
-              Dist(RealLast()), AngleMax(0.)
+              Dist(RealLast()), AngleMax(0.), myIsPoint(Standard_False)
 {
 
-  done   = Standard_False;
-  isplan = Standard_False;
-  myIsPoint = Standard_False;
+  
+  
+  
 
   if (Section->IsInstance(STANDARD_TYPE(Geom_CartesianPoint)))
     {
@@ -170,8 +172,8 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
       mySection = CurveSection;
     }
 
-  Standard_Integer i, j, NbPoles=0;
-  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+  Standard_Integer i = 0, j = 0, NbPoles=0;
+  Standard_Real aXmin = NAN, aYmin = NAN, aZmin = NAN, aXmax = NAN, aYmax = NAN, aZmax = NAN;
 
   // Boite d'encombrement de la section pour en deduire le gabarit
   Bnd_Box box;
@@ -264,12 +266,12 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
             if (Abs(last - U2) <= Precision::PConfusion())
               last = U2;
           }
-	  Standard_Real t, delta;
+	  Standard_Real t = NAN, delta = NAN;
 	  if (myAdpSection.GetType() == GeomAbs_BSplineCurve)
 	    {
 	      Handle(Geom_BSplineCurve) BC =
 		Handle(Geom_BSplineCurve)::DownCast(myAdpSection.Curve());
-	      Standard_Integer I1, I2, I3, I4;
+	      Standard_Integer I1 = 0, I2 = 0, I3 = 0, I4 = 0;
 	      BC->LocateU( first, Precision::Confusion(), I1, I2 );
 	      BC->LocateU( last,  Precision::Confusion(), I3, I4 );
 	      Standard_Integer NbKnots = I3 - I2 + 1;
@@ -335,7 +337,7 @@ GeomFill_SectionPlacement(const Handle(GeomFill_LocationLaw)& L,
 		Pnts->SetValue( NbPnts, myAdpSection.Value(last) );
 	    }
 	  
-	  Standard_Boolean issing;
+	  Standard_Boolean issing = 0;
 	  gp_Ax2 axe;
 	  GeomLib::AxeOfInertia(Pnts->Array1(), axe, issing, Precision::Confusion());
 	  if (!issing) {
@@ -395,7 +397,7 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
       PathParam = Path->FirstParameter();
       SecParam =  myAdpSection.FirstParameter();
       
-      Standard_Real distaux, taux = 0.0, alpha;
+      Standard_Real distaux = NAN, taux = 0.0, alpha = NAN;
       gp_Pnt PonPath, PonSec, P;
       gp_Vec VRef, dp1;
       VRef.SetXYZ(TheAxe.Direction().XYZ());
@@ -414,11 +416,11 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
       if (isplan) AngleMax = M_PI/2 - AngleMax;
       
       Standard_Boolean Trouve = Standard_False; 
-      Standard_Integer ii;
+      Standard_Integer ii = 0;
       
       if (isplan) {
 	// (1.1) Distances Point-Plan
-	Standard_Real DistPlan;
+	Standard_Real DistPlan = NAN;
 	gp_Vec V1 (PonPath, TheAxe.Location());
 	DistPlan = Abs(V1.Dot(VRef));
 	if (DistPlan <= IntTol)
@@ -447,8 +449,8 @@ void GeomFill_SectionPlacement::Perform(const Handle(Adaptor3d_Curve)& Path,
 	Intersector.Perform(Path, adplan);
 	if (Intersector.IsDone())
 	  {
-	    Standard_Real w;
-	    Standard_Real aDist;
+	    Standard_Real w = NAN;
+	    Standard_Real aDist = NAN;
 	    for (ii=1; ii<=Intersector.NbPoints(); ii++)
 	      {
 		w = Intersector.Point(ii).W();
@@ -782,7 +784,7 @@ void GeomFill_SectionPlacement::Perform(const Standard_Real Param,
   gp_Trsf Rot;
 
   if (WithCorrection && !myIsPoint) { 
-    Standard_Real angle;
+    Standard_Real angle = NAN;
     
     if (!isplan)
       throw Standard_Failure("Illegal usage: can't rotate non-planar profile");
@@ -919,7 +921,7 @@ void GeomFill_SectionPlacement::Perform(const Standard_Real Param,
  Standard_Boolean GeomFill_SectionPlacement::Choix(const Standard_Real dist,
 						   const Standard_Real  angle) const
 {
-  Standard_Real evoldist, evolangle;
+  Standard_Real evoldist = NAN, evolangle = NAN;
   evoldist = dist - Dist;
   evolangle = angle - AngleMax;
   // (1) Si la gain en distance est > que le gabarit, on prend

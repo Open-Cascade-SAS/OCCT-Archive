@@ -51,7 +51,7 @@ void  RWStepAP214_RWAutoDesignDocumentReference::ReadStep
  
         Handle(StepAP214_HArray1OfAutoDesignReferencingItem) aItems;
 	StepAP214_AutoDesignReferencingItem anItem;
-        Standard_Integer nsub3;
+        Standard_Integer nsub3 = 0;
         if (data->ReadSubList (num,3,"items",ach,nsub3)) {
           Standard_Integer nb3 = data->NbParams(nsub3);
           aItems = new StepAP214_HArray1OfAutoDesignReferencingItem (1, nb3);

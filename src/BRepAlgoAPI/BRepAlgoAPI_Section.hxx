@@ -203,9 +203,9 @@ protected:
 
 private:
 
-  Standard_Boolean myApprox;
-  Standard_Boolean myComputePCurve1;
-  Standard_Boolean myComputePCurve2;
+  Standard_Boolean myApprox{};
+  Standard_Boolean myComputePCurve1{};
+  Standard_Boolean myComputePCurve2{};
 
 };
 

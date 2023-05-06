@@ -25,9 +25,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepRepr_ShapeAspectRelationship,Standard_Transient)
 //function : StepRepr_ShapeAspectRelationship
 //purpose  : 
 //=======================================================================
-StepRepr_ShapeAspectRelationship::StepRepr_ShapeAspectRelationship ()
+StepRepr_ShapeAspectRelationship::StepRepr_ShapeAspectRelationship () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

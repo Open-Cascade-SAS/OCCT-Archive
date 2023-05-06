@@ -116,20 +116,20 @@ private:
 
 private:
 
-  Standard_Boolean myDone;
-  Standard_Real mytmin;
-  Standard_Real mytsup;
-  Standard_Real myumin;
-  Standard_Real myusup;
-  Standard_Real myvmin;
-  Standard_Real myvsup;
-  Standard_Integer mytsample;
-  Standard_Integer myusample;
-  Standard_Integer myvsample;
-  Standard_Real mytol1;
-  Standard_Real mytol2;
+  Standard_Boolean myDone{};
+  Standard_Real mytmin{};
+  Standard_Real mytsup{};
+  Standard_Real myumin{};
+  Standard_Real myusup{};
+  Standard_Real myvmin{};
+  Standard_Real myvsup{};
+  Standard_Integer mytsample{};
+  Standard_Integer myusample{};
+  Standard_Integer myvsample{};
+  Standard_Real mytol1{};
+  Standard_Real mytol2{};
   Extrema_FuncExtCS myF;
-  const Adaptor3d_Surface* myS;
+  const Adaptor3d_Surface* myS{};
   Handle(TColgp_HArray2OfPnt) mySurfPnts;
 
 };

@@ -47,7 +47,7 @@
 //=============================================================================
 // Creation d' une Curve de prostep a partir d' une Curve de Geom
 //=============================================================================
-GeomToStep_MakeCurve::GeomToStep_MakeCurve ( const Handle(Geom_Curve)& C)
+GeomToStep_MakeCurve::GeomToStep_MakeCurve ( const Handle(Geom_Curve)& C) : GeomToStep_Root()
 {
   done = Standard_True;
   if (C->IsKind(STANDARD_TYPE(Geom_Line))) {
@@ -98,7 +98,7 @@ GeomToStep_MakeCurve::GeomToStep_MakeCurve ( const Handle(Geom_Curve)& C)
 // Creation d'une Curve de prostep a partir d' une Curve de Geom2d
 //=============================================================================
 
-GeomToStep_MakeCurve::GeomToStep_MakeCurve ( const Handle(Geom2d_Curve)& C)
+GeomToStep_MakeCurve::GeomToStep_MakeCurve ( const Handle(Geom2d_Curve)& C) : GeomToStep_Root()
 {
   done = Standard_True;
   if (C->IsKind(STANDARD_TYPE(Geom2d_Line))) {

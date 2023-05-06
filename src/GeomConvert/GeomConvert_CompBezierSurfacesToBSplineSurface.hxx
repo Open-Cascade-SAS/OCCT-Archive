@@ -286,14 +286,14 @@ private:
   Standard_EXPORT void Perform (const TColGeom_Array2OfBezierSurface& Beziers);
 
 
-  Standard_Integer myUDegree;
-  Standard_Integer myVDegree;
+  Standard_Integer myUDegree{};
+  Standard_Integer myVDegree{};
   Handle(TColStd_HArray1OfInteger) myVMults;
   Handle(TColStd_HArray1OfInteger) myUMults;
   Handle(TColStd_HArray1OfReal) myUKnots;
   Handle(TColStd_HArray1OfReal) myVKnots;
   Handle(TColgp_HArray2OfPnt) myPoles;
-  Standard_Boolean isrational;
+  Standard_Boolean isrational{};
   Standard_Boolean myDone;
 
 

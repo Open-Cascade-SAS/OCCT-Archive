@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Circle.hxx>
 #include <Geom_Circle.hxx>
 #include <GeomToStep_MakeAxis2Placement2d.hxx>
@@ -32,7 +34,7 @@
 //=============================================================================
 // Creation d' un cercle de prostep a partir d' un cercle 3d de gp
 //=============================================================================
-GeomToStep_MakeCircle::GeomToStep_MakeCircle( const gp_Circ& C)
+GeomToStep_MakeCircle::GeomToStep_MakeCircle( const gp_Circ& C) : GeomToStep_Root()
 {
 #include "GeomToStep_MakeCircle_gen.pxx"
 }
@@ -43,7 +45,7 @@ GeomToStep_MakeCircle::GeomToStep_MakeCircle( const gp_Circ& C)
 // Geom
 //=============================================================================
 
-GeomToStep_MakeCircle::GeomToStep_MakeCircle( const Handle(Geom_Circle)& Cer)
+GeomToStep_MakeCircle::GeomToStep_MakeCircle( const Handle(Geom_Circle)& Cer) : GeomToStep_Root()
 {
   gp_Circ C;
   C = Cer->Circ();
@@ -56,7 +58,7 @@ GeomToStep_MakeCircle::GeomToStep_MakeCircle( const Handle(Geom_Circle)& Cer)
 // Geom2d
 //=============================================================================
 
-GeomToStep_MakeCircle::GeomToStep_MakeCircle( const Handle(Geom2d_Circle)& Cer)
+GeomToStep_MakeCircle::GeomToStep_MakeCircle( const Handle(Geom2d_Circle)& Cer) : GeomToStep_Root()
 {
   gp_Circ2d C2d;
   C2d = Cer->Circ2d();
@@ -64,7 +66,7 @@ GeomToStep_MakeCircle::GeomToStep_MakeCircle( const Handle(Geom2d_Circle)& Cer)
   Handle(StepGeom_Circle) CStep = new StepGeom_Circle;
   StepGeom_Axis2Placement Ax2;
   Handle(StepGeom_Axis2Placement2d) Ax2Step;
-  Standard_Real Rayon;
+  Standard_Real Rayon = NAN;
   
   GeomToStep_MakeAxis2Placement2d MkAxis2(C2d.Position());
   Ax2Step = MkAxis2.Value();

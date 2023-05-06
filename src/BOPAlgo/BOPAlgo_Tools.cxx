@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BOPAlgo_Tools.hxx>
 
 #include <BOPAlgo_Builder.hxx>
@@ -111,7 +113,7 @@ void BOPAlgo_Tools::PerformCommonBlocks(BOPDS_IndexedDataMapOfPaveBlockListOfPav
                                         BOPDS_PDS& pDS,
                                         const Handle(IntTools_Context)& theContext)
 {
-  Standard_Integer aNbCB;
+  Standard_Integer aNbCB = 0;
   //
   aNbCB=aMPBLPB.Extent();
   if (!aNbCB) {
@@ -183,7 +185,7 @@ void BOPAlgo_Tools::PerformCommonBlocks(const BOPDS_IndexedDataMapOfPaveBlockLis
                                         BOPDS_PDS& pDS,
                                         const Handle(IntTools_Context)& theContext)
 {
-  Standard_Integer nF, i, aNb;
+  Standard_Integer nF = 0, i = 0, aNb = 0;
   TColStd_ListIteratorOfListOfInteger aItLI;
   Handle(BOPDS_PaveBlock) aPB;
   Handle(BOPDS_CommonBlock) aCB;
@@ -250,7 +252,7 @@ Standard_Real BOPAlgo_Tools::ComputeToleranceOfCB
   }
   //
   const Standard_Integer aNbPnt = 11;
-  Standard_Real aTol, aT, aT1, aT2, aDt;
+  Standard_Real aTol = NAN, aT = NAN, aT1 = NAN, aT2 = NAN, aDt = NAN;
   gp_Pnt aP;
   //
   const Handle(Geom_Curve)& aC3D = BRep_Tool::Curve(aEOr, aT1, aT2);
@@ -436,7 +438,7 @@ Standard_Integer BOPAlgo_Tools::EdgesToWires(const TopoDS_Shape& theEdges,
   TopTools_MapOfShape aMEFence;
   //
   // look for a planes on the single edges
-  Standard_Integer i, j, aNbPlanes = aDMEdgePln.Extent(), aNbEdges = aDMEdgeTgt.Extent();
+  Standard_Integer i = 0, j = 0, aNbPlanes = aDMEdgePln.Extent(), aNbEdges = aDMEdgeTgt.Extent();
   for (i = 1; i <= aNbPlanes; ++i) {
     const TopoDS_Shape& aEI = aDMEdgePln.FindKey(i);
     if (!aMEFence.Add(aEI)) {
@@ -629,7 +631,7 @@ Standard_Boolean BOPAlgo_Tools::WiresToFaces(const TopoDS_Shape& theWires,
     }
   }
   //
-  Standard_Integer i, j, aNb = aDMWirePln.Extent();
+  Standard_Integer i = 0, j = 0, aNb = aDMWirePln.Extent();
   for (i = 1; i <= aNb; ++i) {
     const TopoDS_Shape& aWireI = aDMWirePln.FindKey(i);
     if (aMFence.Contains(aWireI)) {
@@ -732,7 +734,7 @@ void MakeWires(const TopTools_IndexedMapOfShape& theEdges,
 {
   TopoDS_Compound aCE;
   BRep_Builder().MakeCompound(aCE);
-  Standard_Integer i, aNbE = theEdges.Extent();
+  Standard_Integer i = 0, aNbE = theEdges.Extent();
   for (i = 1; i <= aNbE; ++i) {
     BRep_Builder().Add(aCE, theEdges(i));
   }
@@ -800,7 +802,7 @@ Standard_Boolean FindEdgeTangent(const BRepAdaptor_Curve& theCurve,
   }
   //
   // for other curves take D1 and check for its length
-  Standard_Real aT, aT1(theCurve.FirstParameter()), aT2(theCurve.LastParameter());
+  Standard_Real aT = NAN, aT1(theCurve.FirstParameter()), aT2(theCurve.LastParameter());
   const Standard_Integer aNbP = 11;
   const Standard_Real aDt = (aT2 - aT1) / aNbP;
   //
@@ -847,7 +849,7 @@ Standard_Boolean FindPlane(const BRepAdaptor_Curve& theCurve,
       // for all other types of curve compute two tangent vectors
       // on the curve and cross them
       bFound = Standard_False;
-      Standard_Real aT, aT1(theCurve.FirstParameter()), aT2(theCurve.LastParameter());
+      Standard_Real aT = NAN, aT1(theCurve.FirstParameter()), aT2(theCurve.LastParameter());
       const Standard_Integer aNbP = 11;
       const Standard_Real aDt = (aT2 - aT1) / aNbP;
       //
@@ -971,7 +973,7 @@ public:
   }
 
   //! Checks and accepts the pair of elements.
-  virtual Standard_Boolean Accept (const Standard_Integer theID1,
+  Standard_Boolean Accept (const Standard_Integer theID1,
                                    const Standard_Integer theID2) Standard_OVERRIDE
   {
     if (!RejectElement (theID1, theID2))
@@ -1145,14 +1147,14 @@ public:
   DEFINE_STANDARD_ALLOC
 
   //! Constructor
-  BOPAlgo_FillIn3DParts()
+  BOPAlgo_FillIn3DParts() : myBBTree(NULL), myVShapeBox(NULL)
   {
-    myBBTree = NULL;
-    myVShapeBox = NULL;
+    
+    
   };
 
   //! Destructor
-  virtual ~BOPAlgo_FillIn3DParts() {};
+  ~BOPAlgo_FillIn3DParts() override {};
 
   //! Sets the solid
   void SetSolid(const TopoDS_Solid& theSolid)
@@ -1215,7 +1217,7 @@ public:
   }
 
   //! Performs the classification
-  virtual void Perform();
+  void Perform() override;
 
   //! Returns the faces classified as IN for solid
   const TopTools_ListOfShape& InFaces() const
@@ -1309,7 +1311,7 @@ void BOPAlgo_FillIn3DParts::Perform()
   // 4. Classify faces relatively solid.
   //    Store faces that are IN mySolid into <myInFaces>
 
-  Standard_Integer k, aNbFP = aIVec.Length();
+  Standard_Integer k = 0, aNbFP = aIVec.Length();
   // Sort indices if necessary
   if (aNbFP > 1)
     std::sort(aIVec.begin(), aIVec.end());

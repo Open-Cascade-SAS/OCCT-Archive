@@ -53,7 +53,7 @@ void  Hatch_Line::AddIntersection
    const Standard_Real theToler)
 {
   Hatch_Parameter P(Par1,Start,Index,Par2);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= myInters.Length(); i++) {
     Standard_Real dfIntPar1 = myInters(i).myPar1;
     // akm OCC109 vvv : Two intersections too close

@@ -209,7 +209,7 @@ private:
   Standard_Integer myNbSamples1; //!< Number of samples points on the first shape
 
   //! Is vertex corresponding to proximity point of 1st shape from additional set
-  Standard_Integer myIsProxVtx1FromAddSet;
+  Standard_Integer myIsProxVtx1FromAddSet{};
   BVH_Array3d myAddVertices1; //!< Additional vertices on the 1st shape
   NCollection_Vector<ProxPnt_Status> myAddStatus1; //!< Status of additional vertices on the 1st shape
 

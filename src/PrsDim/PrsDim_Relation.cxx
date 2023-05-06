@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_Relation.hxx>
 
 #include <PrsDim.hxx>
@@ -86,10 +88,10 @@ void PrsDim_Relation::ComputeProjEdgePresentation(const Handle(Prs3d_Presentatio
     li->SetWidth(width);
   }
 
-  Standard_Real pf, pl;
+  Standard_Real pf = NAN, pl = NAN;
   TopLoc_Location loc;
   Handle(Geom_Curve) curve;
-  Standard_Boolean isInfinite;
+  Standard_Boolean isInfinite = 0;
   curve = BRep_Tool::Curve(anEdge,loc,pf,pl);
   isInfinite = (Precision::IsInfinite(pf) || Precision::IsInfinite(pl));
 

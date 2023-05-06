@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DBRep_DrawableShape.hxx>
 
 #include <BRepAdaptor_Curve.hxx>
@@ -81,7 +83,7 @@ DBRep_DrawableShape::DBRep_DrawableShape
    const Standard_Real size,
    const Standard_Integer nbisos,
    const Standard_Integer discret) :
-  mySize(size),
+  myShape(aShape), mySize(size),
   myDiscret(discret),
   myFreeCol(FreeCol),
   myConnCol(ConnCol),
@@ -96,7 +98,7 @@ DBRep_DrawableShape::DBRep_DrawableShape
   myRgN(Standard_False),
   myHid(Standard_False)
 {
-  myShape = aShape;
+  
 }
 
 //=======================================================================
@@ -145,7 +147,7 @@ void DBRep_DrawableShape::updateDisplayData () const
   
   TopTools_IndexedDataMapOfShapeListOfShape edgemap;
   TopExp::MapShapesAndAncestors(myShape,TopAbs_EDGE,TopAbs_FACE,edgemap);
-  Standard_Integer iedge;
+  Standard_Integer iedge = 0;
   
   for (iedge = 1; iedge <= edgemap.Extent(); iedge++) {
     
@@ -359,11 +361,11 @@ void  DBRep_DrawableShape::DrawOn(Draw_Display& dis) const
   }
 
   GeomAbs_IsoType T;
-  Standard_Real Par,T1,T2;
-  Standard_Real U1,U2,V1,V2,stepU=0.,stepV=0.;
+  Standard_Real Par = NAN,T1 = NAN,T2 = NAN;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN,stepU=0.,stepV=0.;
 //  gp_Pnt P, P1;
   gp_Pnt P;
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
 
   // Faces
   Handle(Poly_Triangulation) Tr;
@@ -424,7 +426,7 @@ void  DBRep_DrawableShape::DrawOn(Draw_Display& dis) const
 
       Standard_Integer N = F->NbIsos();
 
-      Standard_Integer Intrv, nbIntv;
+      Standard_Integer Intrv = 0, nbIntv = 0;
       Standard_Integer nbUIntv = S.NbUIntervals(GeomAbs_CN);
       Standard_Integer nbVIntv = S.NbVIntervals(GeomAbs_CN);
       TColStd_Array1OfReal TI(1,Max(nbUIntv, nbVIntv)+1);
@@ -623,7 +625,7 @@ void  DBRep_DrawableShape::DrawOn(Draw_Display& dis) const
 
     // display geometrical curve if exists.
     Standard_Boolean isgeom = BRep_Tool::IsGeometric(E->Edge());
-    Standard_Real aCheckU1, aCheckU2;
+    Standard_Real aCheckU1 = NAN, aCheckU2 = NAN;
 
     if (isgeom) {
       // check the range (to report bad edges)
@@ -661,7 +663,7 @@ void  DBRep_DrawableShape::DrawOn(Draw_Display& dis) const
       Handle(Adaptor3d_Curve) HC = C.Trim(f, l, Precision::Confusion());
       GeomAbs_CurveType CurvType = HC->GetType();
 
-      Standard_Integer intrv, nbintv = HC->NbIntervals(GeomAbs_CN);
+      Standard_Integer intrv = 0, nbintv = HC->NbIntervals(GeomAbs_CN);
       TColStd_Array1OfReal TI(1,nbintv+1);
       HC->Intervals(TI,GeomAbs_CN);
 
@@ -751,7 +753,7 @@ void  DBRep_DrawableShape::DrawOn(Draw_Display& dis) const
       Handle(Poly_Polygon3D) Polyg = BRep_Tool::Polygon3D(E->Edge(), loc);
       if (!Polyg.IsNull()) {
 	const TColgp_Array1OfPnt& Points = Polyg->Nodes();
-	Standard_Integer po;
+	Standard_Integer po = 0;
 	for (po = Points.Lower()+1; po <= Points.Upper(); po++) {
 	  dis.Draw((Points.Value(po-1)).Transformed(loc), 
 		   (Points.Value(po)).Transformed(loc));
@@ -832,7 +834,7 @@ void DBRep_DrawableShape::DisplayHiddenLines(Draw_Display& dis)
   dout.GetTrsf(id,T);
   Standard_Real focal = -1;
   if (!strcmp(dout.GetType(id),"PERS")) focal = dout.Focal(id);
-  Standard_Real Ang,Def;
+  Standard_Real Ang = NAN,Def = NAN;
   HLRBRep::PolyHLRAngleAndDeflection(myAng,Ang,Def);
   IMeshTools_Parameters aMeshParams;
   aMeshParams.Relative   = Standard_True;
@@ -1098,7 +1100,7 @@ void  DBRep_DrawableShape::display(const Handle(Poly_Triangulation)& T,
     // Build the connect tool
   Poly_Connect pc(T);
 
-  Standard_Integer i,j, nFree, nbTriangles = T->NbTriangles();
+  Standard_Integer i = 0,j = 0, nFree = 0, nbTriangles = T->NbTriangles();
   Standard_Integer t[3];
 
   // count the free edges
@@ -1136,7 +1138,7 @@ void  DBRep_DrawableShape::display(const Handle(Poly_Triangulation)& T,
   // Display the edges
   
   // free edges
-  Standard_Integer nn;
+  Standard_Integer nn = 0;
   dis.SetColor(Draw_rouge);
   nn = Free.Length() / 2;
   for (i = 1; i <= nn; i++) {

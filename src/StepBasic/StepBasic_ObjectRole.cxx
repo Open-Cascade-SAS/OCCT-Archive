@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_ObjectRole,Standard_Transient)
 //function : StepBasic_ObjectRole
 //purpose  : 
 //=======================================================================
-StepBasic_ObjectRole::StepBasic_ObjectRole ()
+StepBasic_ObjectRole::StepBasic_ObjectRole () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

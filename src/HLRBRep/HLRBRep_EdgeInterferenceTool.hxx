@@ -92,7 +92,7 @@ private:
 
   Handle(HLRBRep_Data) myDS;
   HLRAlgo_Intersection inter[2];
-  Standard_Integer cur;
+  Standard_Integer cur{};
 
 
 };

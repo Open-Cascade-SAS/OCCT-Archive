@@ -26,9 +26,9 @@ Vrml_DirectionalLight::Vrml_DirectionalLight():
  Vrml_DirectionalLight::Vrml_DirectionalLight(const Standard_Boolean aOnOff, 
 					      const Standard_Real aIntensity, 
 					      const Quantity_Color& aColor, 
-					      const gp_Vec& aDirection)
+					      const gp_Vec& aDirection) : myOnOff(aOnOff)
 {
-  myOnOff = aOnOff;
+  
   if (aIntensity < 0. || aIntensity > 1.)
     {
       throw Standard_Failure("Error : Light intensity must be in the range 0.0 to 1.0, inclusive.");

@@ -295,9 +295,9 @@ Standard_Boolean TNaming_Selector::IsIdentified (const TDF_Label& L,
 //purpose  : 
 //=======================================================================
 
-TNaming_Selector::TNaming_Selector (const TDF_Label& L) 
+TNaming_Selector::TNaming_Selector (const TDF_Label& L) : myLabel(L) 
 {
-  myLabel = L;
+  
 }
 
 //=======================================================================

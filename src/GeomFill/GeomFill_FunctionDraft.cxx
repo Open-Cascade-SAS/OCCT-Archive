@@ -35,10 +35,10 @@
 // Purpose : Initialisation de la section et de la surface d'arret
 //*******************************************************
 GeomFill_FunctionDraft::GeomFill_FunctionDraft
-  (const Handle(Adaptor3d_Surface)& S, const Handle(Adaptor3d_Curve)& C)
+  (const Handle(Adaptor3d_Surface)& S, const Handle(Adaptor3d_Curve)& C) : TheCurve(C), TheSurface(S)
 {
-  TheCurve = C ;
-  TheSurface = S;
+  
+  
 }
 
 //*******************************************************
@@ -84,7 +84,7 @@ GeomFill_FunctionDraft::GeomFill_FunctionDraft
  Standard_Boolean GeomFill_FunctionDraft::Derivatives(const math_Vector& X,
 						      math_Matrix& D) 
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   gp_Pnt P,P1;
   gp_Vec DP,DP1U,DP1V;
   TheCurve->D1(X(1),P,DP);
@@ -107,7 +107,7 @@ GeomFill_FunctionDraft::GeomFill_FunctionDraft
 						math_Vector& F,
 						math_Matrix& D) 
 { 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   gp_Pnt P,P1;
   gp_Vec DP,DP1U,DP1V;
   TheCurve->D1(X(1),P,DP); //derivee de la generatrice
@@ -183,7 +183,7 @@ GeomFill_FunctionDraft::GeomFill_FunctionDraft
 //  gp_Pnt P;
 //  gp_Vec DP,D2P;
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i=1;i<=3;i++)
     {
       D(i,1) = dN.Coord(i)*Sin(teta); //derivee / W
@@ -204,7 +204,7 @@ GeomFill_FunctionDraft::GeomFill_FunctionDraft
   gp_Pnt P;
   gp_Vec DPu,DPv;
   gp_Vec D2Pu, D2Pv, D2Puv;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   TheSurface->D2(X(2), X(3), P, DPu, DPv, D2Pu, D2Pv, D2Puv);
  

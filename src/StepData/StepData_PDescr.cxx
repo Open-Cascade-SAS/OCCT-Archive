@@ -98,7 +98,7 @@ StepData_PDescr::StepData_PDescr  ()
 {
   if (other.IsNull()) return;
   thekind = other->Kind();
-  Standard_Integer i, maxenum = other->EnumMax ();
+  Standard_Integer i = 0, maxenum = other->EnumMax ();
   for (i = 0; i <= maxenum; i ++)    AddEnumDef (other->EnumText(i));
 //  ne sont pas reprises : les SELECT
   thetype = other->Type();

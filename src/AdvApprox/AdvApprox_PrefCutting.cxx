@@ -15,14 +15,14 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AdvApprox_PrefCutting.hxx>
 #include <Precision.hxx>
 
 AdvApprox_PrefCutting::AdvApprox_PrefCutting(const TColStd_Array1OfReal& CutPnts):
-  myPntOfCutting(1, CutPnts.Length()) 
-{
-  myPntOfCutting = CutPnts;
-}
+  myPntOfCutting(CutPnts)
+{}
 
 Standard_Boolean AdvApprox_PrefCutting::Value(const Standard_Real a,
 					      const Standard_Real b,
@@ -31,8 +31,8 @@ Standard_Boolean AdvApprox_PrefCutting::Value(const Standard_Real a,
 //  longueur minimum d'un intervalle parametrique : PConfusion()
 //                                    pour F(U,V) : EPS1=1.e-9 (cf.MMEPS1)
   Standard_Real lgmin = 10 * Precision::PConfusion();
-  Standard_Integer i;
-  Standard_Real cut, mil=(a+b)/2,
+  Standard_Integer i = 0;
+  Standard_Real cut = NAN, mil=(a+b)/2,
                 dist = Abs((a-b)/2);
   cut = mil;
   for ( i=myPntOfCutting.Lower(); i<= myPntOfCutting.Upper(); i++) {

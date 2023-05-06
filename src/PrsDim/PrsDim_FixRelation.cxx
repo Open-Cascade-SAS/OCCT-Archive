@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_FixRelation.hxx>
 
 #include <PrsDim.hxx>
@@ -367,7 +369,7 @@ void PrsDim_FixRelation::ComputeEdge(const TopoDS_Edge& FixEdge, gp_Pnt& curpos)
         //--> In case of a circle
   else if (curEdge->IsKind(STANDARD_TYPE(Geom_Circle))) {
     gp_Circ  gcirc = Handle(Geom_Circle)::DownCast(curEdge)->Circ();
-    Standard_Real pfirst, plast;
+    Standard_Real pfirst = NAN, plast = NAN;
     BRepAdaptor_Curve cu(FixEdge);
     pfirst = cu.FirstParameter();
     plast = cu.LastParameter();
@@ -415,7 +417,7 @@ void PrsDim_FixRelation::ComputeLinePosition(const gp_Lin& glin,
     // of the edge : the point closest to the projection is chosen 
     // as the attach point
     else {
-      Standard_Real pOnLin;
+      Standard_Real pOnLin = NAN;
       if (linparam > plast)
 	pOnLin = plast;
       else

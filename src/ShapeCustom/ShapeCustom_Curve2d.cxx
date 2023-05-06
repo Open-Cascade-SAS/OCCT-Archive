@@ -61,7 +61,7 @@ Standard_Boolean ShapeCustom_Curve2d::IsLinear(const TColgp_Array1OfPnt2d& thePo
   Standard_Real dMax = 0;
   Standard_Integer iMax1=0,iMax2=0;
   
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for(i = 1; i < nbPoles; i++)
     for(Standard_Integer j = i+1; j <= nbPoles; j++) {
       Standard_Real dist = thePoles(i).SquareDistance(thePoles(j));
@@ -149,7 +149,7 @@ Handle(Geom2d_Line) ShapeCustom_Curve2d::ConvertToLine2d (const Handle(Geom2d_Cu
 Standard_Boolean ShapeCustom_Curve2d::SimplifyBSpline2d (Handle(Geom2d_BSplineCurve)& theBSpline2d,
                                                          const Standard_Real theTolerance)
 {
-  Standard_Integer aInitNbK;
+  Standard_Integer aInitNbK = 0;
   Standard_Integer NbK = aInitNbK = theBSpline2d->NbKnots();
   // search knot to remove
   Standard_Boolean IsToRemove = Standard_True;

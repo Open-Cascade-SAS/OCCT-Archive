@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Hatch_Hatcher.hxx>
 #include <Graphic3d_Group.hxx>
 #include <Prs3d_IsoAspect.hxx>
@@ -46,8 +48,8 @@ void StdPrs_WFRestrictedFace::Add
   StdPrs_ToolRFace aToolRst (theFace);
 
   // Compute bounds of the restriction
-  Standard_Real aUMin,aUMax,aVMin,aVMax;
-  Standard_Integer anI;
+  Standard_Real aUMin = NAN,aUMax = NAN,aVMin = NAN,aVMax = NAN;
+  Standard_Integer anI = 0;
   gp_Pnt2d aPoint1,aPoint2;
   Bnd_Box2d aBndBox;
 
@@ -109,7 +111,7 @@ void StdPrs_WFRestrictedFace::Add
   }
 
   // Trim the isos
-  Standard_Real anU1, anU2, anU, aDU;
+  Standard_Real anU1 = NAN, anU2 = NAN, anU = NAN, aDU = NAN;
 
   for (aToolRst.Init(); aToolRst.More(); aToolRst.Next())
   {
@@ -229,9 +231,9 @@ Standard_Boolean StdPrs_WFRestrictedFace::Match
   StdPrs_ToolRFace aToolRst (theFace);
 
   // Compute bounds of the restriction
-  Standard_Real anUMin,anUMax,aVMin,aVMax;
-  Standard_Real anU,aV,aStep;
-  Standard_Integer anI,anNbP = 10;
+  Standard_Real anUMin = NAN,anUMax = NAN,aVMin = NAN,aVMax = NAN;
+  Standard_Real anU = NAN,aV = NAN,aStep = NAN;
+  Standard_Integer anI = 0,anNbP = 10;
   anUMin = aVMin = RealLast();
   anUMax = aVMax = RealFirst();
   gp_Pnt2d aPoint1,aPoint2;
@@ -309,7 +311,7 @@ Standard_Boolean StdPrs_WFRestrictedFace::Match
   }
 
   // Trim the isos
-  Standard_Real anU1, anU2, aDU;
+  Standard_Real anU1 = NAN, anU2 = NAN, aDU = NAN;
 
   for (aToolRst.Init(); aToolRst.More(); aToolRst.Next())
   {

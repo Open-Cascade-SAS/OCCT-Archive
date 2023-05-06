@@ -274,7 +274,7 @@ Standard_Integer XCAFDoc_GraphNode::FatherIndex(const Handle(XCAFDoc_GraphNode)&
 
  Standard_Integer XCAFDoc_GraphNode::ChildIndex(const Handle(XCAFDoc_GraphNode)& Ch) const
 {
-  Standard_Integer Chindex;
+  Standard_Integer Chindex = 0;
   if (NbChildren() != 0)
   {
     for (Chindex = 1; Chindex <= NbChildren(); Chindex++)
@@ -418,7 +418,7 @@ Handle(TDF_Attribute) XCAFDoc_GraphNode::NewEmpty() const
 
 void XCAFDoc_GraphNode::References(const Handle(TDF_DataSet)& aDataSet) const
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Handle(XCAFDoc_GraphNode) fct;
   for ( i = 1; i <= NbChildren(); i++ ) {
     fct = myChildren(i);

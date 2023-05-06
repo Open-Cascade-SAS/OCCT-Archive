@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_GenExtCS.hxx>
 #include <Geom_OffsetCurve.hxx>
 #include <Extrema_GlobOptFuncCS.hxx>
@@ -206,7 +208,7 @@ void Extrema_GenExtCS::Initialize (const Adaptor3d_Surface& S,
   myvsup = Vsup;
   mytol2 = Tol2;
 
-  Standard_Real umaxpar, vmaxpar;
+  Standard_Real umaxpar = NAN, vmaxpar = NAN;
   GetSurfMaxParamVals(*myS, umaxpar, vmaxpar);
 
   if(Precision::IsInfinite (myusup))
@@ -323,7 +325,7 @@ void Extrema_GenExtCS::Perform (const Adaptor3d_Curve& C,
     }
   }
 
-  Standard_Integer anInt;
+  Standard_Integer anInt = 0;
   Standard_Real dT = (mytsup - mytmin) / aNbIntC;
   for (anInt = 1; anInt <= aNbIntC; anInt++)
   {
@@ -363,7 +365,7 @@ void Extrema_GenExtCS::Perform (const Adaptor3d_Curve& C,
     Extrema_SequenceOfPOnSurf aPntsOnSurf1(aPntsOnSurf);
 
     Standard_Real aMinDist = aSqDists(1);
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i = 2; i <= aSqDists.Length(); ++i)
     {
       Standard_Real aDist = aSqDists(i);
@@ -478,7 +480,7 @@ void Extrema_GenExtCS::GlobMinGenCS(const Adaptor3d_Curve& theC,
   aStep(3) = aStepSV;
 
   // Find min approximation
-  Standard_Real aValue;
+  Standard_Real aValue = NAN;
   Extrema_GlobOptFuncCS aFunc(&theC, myS);
   math_PSO aPSO(&aFunc, theTUVinf, theTUVsup, aStep);
   aPSO.Perform(aParticles, theNbParticles, aValue, theTUV);
@@ -496,7 +498,7 @@ void Extrema_GenExtCS::GlobMinConicS(const Adaptor3d_Curve& theC,
 {
   Standard_Integer aNbVar = 2;
   math_Vector  anUVinf(1, aNbVar), anUVsup(1, aNbVar), anUV(1, aNbVar);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for (i = 1; i <= aNbVar; ++i)
   {
     anUVinf(i) = theTUVinf(i + 1);
@@ -535,7 +537,7 @@ void Extrema_GenExtCS::GlobMinConicS(const Adaptor3d_Curve& theC,
     for (Standard_Integer aSVI = 0; aSVI <= aVsample; aSVI++, aSV += aStepSV)
     {
       anUV(2) = aSV;
-      Standard_Real aSqDist;
+      Standard_Real aSqDist = NAN;
       if (!aFunc.Value(anUV, aSqDist))
       {
         aSqDist = Precision::Infinite();
@@ -562,7 +564,7 @@ void Extrema_GenExtCS::GlobMinConicS(const Adaptor3d_Curve& theC,
   aStep(2) = aStepSV;
 
   // Find min approximation
-  Standard_Real aValue;
+  Standard_Real aValue = NAN;
   math_PSO aPSO(&aFunc, anUVinf, anUVsup, aStep);
   aPSO.Perform(aParticles, theNbParticles, aValue, anUV);
   //
@@ -603,7 +605,7 @@ void Extrema_GenExtCS::GlobMinConicS(const Adaptor3d_Curve& theC,
     // PcPs is perpendicular to surface normal, it means that
     // aPOnC can be on surface, but far from aPOnS
     isBadSol = Standard_True;
-    Standard_Integer iu, iv;
+    Standard_Integer iu = 0, iv = 0;
     for (iu = -1; iu <= 1; ++iu)
     {
       Standard_Real u = anUV(1) + iu * aStepSU;
@@ -736,7 +738,7 @@ void Extrema_GenExtCS::GlobMinCQuadric(const Adaptor3d_Curve& theC,
   for (Standard_Integer aCUI = 0; aCUI <= aNewCsample; aCUI++, aCT += aStepCT)
   {
     aT(1) = aCT;
-    Standard_Real aSqDist; 
+    Standard_Real aSqDist = NAN; 
     if (!aFunc.Value(aT, aSqDist))
     {
       aSqDist = Precision::Infinite();
@@ -759,7 +761,7 @@ void Extrema_GenExtCS::GlobMinCQuadric(const Adaptor3d_Curve& theC,
   aStep(1) = aStepCT;
 
   // Find min approximation
-  Standard_Real aValue;
+  Standard_Real aValue = NAN;
   math_PSO aPSO(&aFunc, aTinf, aTsup, aStep);
   aPSO.Perform(aParticles, theNbParticles, aValue, aT);
   //

@@ -141,7 +141,7 @@ void Interface_CheckIterator::Add(const Handle(Interface_Check)& ach,
     else nm = -1;
   }
   if (nm >= 0 && nm <= - (thecurr->Value()) ) {
-    Standard_Integer i , numpos = 0 , nb = thelist->Length();
+    Standard_Integer i = 0 , numpos = 0 , nb = thelist->Length();
     for (i = nb; i > 0; i --)
       if (thenums->Value(i) == nm) {  numpos = i; break;  }
     if (numpos > 0 && nm >= 0) {
@@ -164,7 +164,7 @@ void Interface_CheckIterator::Add(const Handle(Interface_Check)& ach,
 const Handle(Interface_Check)& Interface_CheckIterator::Check
        (const Standard_Integer num) const
 {
-  Standard_Integer i, nb = thelist->Length();
+  Standard_Integer i = 0, nb = thelist->Length();
   for (i = 1; i <= nb; i ++) {
     if (num == thenums->Value(i)) return thelist->Value(i);
   }
@@ -184,7 +184,7 @@ const Handle(Interface_Check)& Interface_CheckIterator::Check
   if (!themod.IsNull()) num = themod->Number(ent);
   if (num > 0) return Check(num);
 
-  Standard_Integer i, nb = thelist->Length();
+  Standard_Integer i = 0, nb = thelist->Length();
   for (i = 1; i <= nb; i ++) {
     if (ent == thelist->Value(i)->Entity()) return thelist->Value(i);
   }
@@ -200,7 +200,7 @@ const Handle(Interface_Check)& Interface_CheckIterator::Check
 Handle(Interface_Check)& Interface_CheckIterator::CCheck
        (const Standard_Integer num)
 {
-  Standard_Integer i, nb = thenums->Length();
+  Standard_Integer i = 0, nb = thenums->Length();
   for (i = 1; i <= nb; i ++) {
     if (num == thenums->Value(i)) return thelist->ChangeValue(i);
   }
@@ -222,7 +222,7 @@ Handle(Interface_Check)& Interface_CheckIterator::CCheck
   if (!themod.IsNull()) num = themod->Number(ent);
   if (num > 0) return CCheck(num);
 
-  Standard_Integer i, nb = thelist->Length();
+  Standard_Integer i = 0, nb = thelist->Length();
   for (i = 1; i <= nb; i ++) {
     if (ent == thelist->Value(i)->Entity()) return thelist->ChangeValue(i);
   }
@@ -243,7 +243,7 @@ Standard_Boolean Interface_CheckIterator::IsEmpty
 {
   if (thelist->IsEmpty()) return Standard_True;
   if (!failsonly) return Standard_False;
-  Standard_Integer i, nb = thelist->Length();
+  Standard_Integer i = 0, nb = thelist->Length();
   for (i = 1; i <= nb; i ++) {
     if (thelist->Value(i)->HasFailed()) return Standard_False;
   }
@@ -259,7 +259,7 @@ Standard_Boolean Interface_CheckIterator::IsEmpty
 Interface_CheckStatus Interface_CheckIterator::Status () const
 {
   Interface_CheckStatus stat = Interface_CheckOK;
-  Standard_Integer i, nb = thelist->Length();
+  Standard_Integer i = 0, nb = thelist->Length();
   for (i = 1; i <= nb; i ++) {
     const Handle(Interface_Check) ach = thelist->Value(i);
     if (ach->HasFailed()) return Interface_CheckFail;
@@ -351,7 +351,7 @@ Interface_CheckIterator Interface_CheckIterator::Extract
 {
   Interface_CheckIterator res;
   res.SetModel (themod);  res.SetName (thename.ToCString());
-  Standard_Integer i, nb = thelist->Length();
+  Standard_Integer i = 0, nb = thelist->Length();
   for (i = 1; i <= nb; i ++) {
     const Handle(Interface_Check) ach = thelist->Value(i);
     Standard_Integer nbf = ach->NbFails(), nbw = ach->NbWarnings();
@@ -383,7 +383,7 @@ Interface_CheckIterator Interface_CheckIterator::Extract
   Handle(TCollection_HAsciiString) str = new TCollection_HAsciiString (mess);
   Interface_CheckIterator res;
   res.SetModel (themod);  res.SetName (thename.ToCString());
-  Standard_Integer i, nb = thelist->Length();
+  Standard_Integer i = 0, nb = thelist->Length();
   for (i = 1; i <= nb; i ++) {
     const Handle(Interface_Check) ach = thelist->Value(i);
     if (ach->Complies(str,incl,stat)) res.Add (ach,thenums->Value(i));
@@ -403,7 +403,7 @@ Standard_Boolean Interface_CheckIterator::Remove(const Standard_CString mess,
 {
   Handle(TCollection_HAsciiString) str = new TCollection_HAsciiString (mess);
   Standard_Boolean res = Standard_False;
-  Standard_Integer i, nb = thelist->Length();
+  Standard_Integer i = 0, nb = thelist->Length();
   for (i = 1; i <= nb; i ++) {
     Handle(Interface_Check) ach = thelist->ChangeValue(i);
     if (ach->Remove (str,incl,stat)) res = Standard_True;
@@ -423,7 +423,7 @@ Handle(TColStd_HSequenceOfTransient) Interface_CheckIterator::Checkeds
   Handle(TColStd_HSequenceOfTransient) list;
   if (themod.IsNull()) return list;
   list = new TColStd_HSequenceOfTransient();
-  Standard_Integer num, i, nb = thelist->Length();
+  Standard_Integer num = 0, i = 0, nb = thelist->Length();
   for (i = 1; i <= nb; i ++) {
     const Handle(Interface_Check) chk = thelist->Value(i);
     if (failsonly && !chk->HasFailed()) continue;
@@ -523,7 +523,7 @@ void Interface_CheckIterator::Print(Standard_OStream& S,
     Standard_CString mesnum0 = ":";
     Standard_CString mesnum1 = " (original):";
     Standard_CString mesnum2 = " (computed):";    */
-  Standard_Integer i, nbch = 0, nb = thelist->Length();//,j; svv #2
+  Standard_Integer i = 0, nbch = 0, nb = thelist->Length();//,j; svv #2
   Standard_Boolean yamod = !model.IsNull();
   for (i = 1; i <= nb; i ++) {
     const Handle(Interface_Check) ach = thelist->Value(i);

@@ -47,10 +47,10 @@ IMPLEMENT_STANDARD_RTTIEXT(Express_Entity, Express_Item)
 Express_Entity::Express_Entity (const Standard_CString theName,
                                 const Handle(TColStd_HSequenceOfHAsciiString)& theInherit,
                                 const Handle(Express_HSequenceOfField)& theFields)
-: Express_Item (theName), mySupers (theInherit), myFields (theFields)
+: Express_Item (theName), mySupers (theInherit), myInherit(new Express_HSequenceOfEntity), myFields (theFields)
 {
   // make empty lists to avoid checking every time
-  myInherit = new Express_HSequenceOfEntity;
+  
   if (mySupers.IsNull())
   {
     mySupers = new TColStd_HSequenceOfHAsciiString;

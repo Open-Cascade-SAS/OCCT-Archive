@@ -19,6 +19,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
 #include <HLRBRep_Data.hxx>
@@ -75,7 +77,7 @@ HLRBRep_ShapeToHLR::Load(const Handle(HLRTopoBRep_OutLiner)& S,
   
   TopExp::MapShapes(S->OutLinedShape(),TopAbs_EDGE,EM);
 
-  Standard_Integer i;
+  Standard_Integer i = 0;
   Standard_Integer nbEdge = EM.Extent ();
 
   for (i = 1; i <= nbEdge; i++)                 // vertices back to edges
@@ -87,11 +89,11 @@ HLRBRep_ShapeToHLR::Load(const Handle(HLRTopoBRep_OutLiner)& S,
 
   TopoDS_Vertex VF, VL;
   TopTools_ListIteratorOfListOfShape itn;
-  Standard_Integer   i1, i2;
-  Standard_Boolean   o1, o2;
-  Standard_Boolean   c1, c2;
-  Standard_Real      pf, pl;
-  Standard_ShortReal tf, tl;
+  Standard_Integer   i1 = 0, i2 = 0;
+  Standard_Boolean   o1 = 0, o2 = 0;
+  Standard_Boolean   c1 = 0, c2 = 0;
+  Standard_Real      pf = NAN, pl = NAN;
+  Standard_ShortReal tf = NAN, tl = NAN;
 
   // Create the data structure
   Handle(HLRBRep_Data) DS = new HLRBRep_Data (nbVert, nbEdge, nbFace);
@@ -245,7 +247,7 @@ HLRBRep_ShapeToHLR::ExploreShape (const Handle(HLRTopoBRep_OutLiner)& S,
     Standard_Boolean closed = exshell.Current().Closed();
 
     if (!closed) {
-      Standard_Integer ie;
+      Standard_Integer ie = 0;
       Standard_Integer nbEdge = EM.Extent ();
       Standard_Integer *flag = new Standard_Integer[nbEdge + 1];
 

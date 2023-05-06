@@ -97,15 +97,15 @@ Standard_Persistent* Storage_Bucket::Value
 Storage_BucketOfPersistent::Storage_BucketOfPersistent
                          (const Standard_Integer theBucketSize,
                           const Standard_Integer theBucketNumber)
-: myNumberOfBucket(1),myNumberOfBucketAllocated(theBucketNumber),myBucketSize
+: myBuckets((Storage_Bucket**)Standard::Allocate
+                         (sizeof(Storage_Bucket*) * theBucketNumber)), myNumberOfBucket(1),myNumberOfBucketAllocated(theBucketNumber),myCurrentBucket(myBuckets[0]), myLength(0), myCurrentBucketNumber(0), myBucketSize
                          (theBucketSize)
 {
-  myBuckets =  (Storage_Bucket**)Standard::Allocate
-                         (sizeof(Storage_Bucket*) * theBucketNumber);
+  
   myBuckets[0] = new Storage_Bucket(myBucketSize);
-  myCurrentBucket = myBuckets[0];
-  myLength = 0;
-  myCurrentBucketNumber = 0;
+  
+  
+  
 }
 
 //=======================================================================
@@ -116,7 +116,7 @@ Storage_BucketOfPersistent::Storage_BucketOfPersistent
 void Storage_BucketOfPersistent::Clear()
 {
   if (myBuckets) {
-    Standard_Integer i;
+    Standard_Integer i = 0;
 
     for (i = 1; i < myNumberOfBucket; i++) delete myBuckets[i];
     myNumberOfBucket = 1;
@@ -143,7 +143,7 @@ Storage_BucketOfPersistent::~Storage_BucketOfPersistent()
 Standard_Persistent* Storage_BucketOfPersistent::Value
                          (const Standard_Integer theIndex)
 {
-  Standard_Integer theInd,theCurrentBucketNumber,tecurrentind = theIndex - 1;
+  Standard_Integer theInd = 0,theCurrentBucketNumber = 0,tecurrentind = theIndex - 1;
   theCurrentBucketNumber = tecurrentind / myBucketSize;
   theInd = tecurrentind - (myBucketSize * theCurrentBucketNumber);
 
@@ -269,11 +269,11 @@ void Storage_BucketIterator::Next()
 //           IMPLEMENTATION BucketOfPersistent
 //=======================================================================
 
-Storage_Schema::Storage_Schema()
+Storage_Schema::Storage_Schema() : myCallBackState(Standard_False)
 {
   Clear();
   ResetDefaultCallBack();
-  myCallBackState = Standard_False;
+  
 }
 
 //=======================================================================
@@ -332,7 +332,7 @@ void Storage_Schema::Write (const Handle(Storage_BaseDriver)& theDriver,
 
   // add all the persistent to write...
   //
-  Standard_Integer                 posfrom,posto;
+  Standard_Integer                 posfrom = 0,posto = 0;
   Handle(Standard_Persistent)      p;
   Handle(Storage_HSeqOfRoot)       plist;
   TCollection_AsciiString          errorContext("AddPersistent");
@@ -359,8 +359,8 @@ void Storage_Schema::Write (const Handle(Storage_BaseDriver)& theDriver,
 
   // ...and now we write
   //
-  Standard_Integer            i,
-                              len;
+  Standard_Integer            i = 0,
+                              len = 0;
 
  aData->HeaderData()->SetCreationDate(ICreationDate());
  aData->HeaderData()->SetStorageVersion(Storage::Version());
@@ -662,7 +662,7 @@ Standard_Boolean Storage_Schema::AddPersistent
     Handle(Storage_InternalData)     iData = Storage_Schema::ICurrentData()->InternalData();
 
     if (sp->_typenum == 0) {
-      Standard_Integer         aTypenum;
+      Standard_Integer         aTypenum = 0;
       static TCollection_AsciiString  aTypeName;
       aTypeName = tName;
       Handle(Storage_TypeData) tData = Storage_Schema::ICurrentData()->TypeData();
@@ -830,8 +830,8 @@ Handle(Storage_Data)& Storage_Schema::ICurrentData()
 TCollection_AsciiString Storage_Schema::ICreationDate()
 {
   char nowstr[SLENGTH];
-  time_t nowbin;
-  struct tm *nowstruct;
+  time_t nowbin = 0;
+  struct tm *nowstruct = nullptr;
   if (time(&nowbin) == (time_t)-1)
   {
 #ifdef OCCT_DEBUG

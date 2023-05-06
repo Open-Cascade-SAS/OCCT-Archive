@@ -31,11 +31,11 @@ Interface_EntityIterator::Interface_EntityIterator ()
 }
 
     Interface_EntityIterator::Interface_EntityIterator
-  (const Handle(TColStd_HSequenceOfTransient)& list)
+  (const Handle(TColStd_HSequenceOfTransient)& list) : thecurr(new Interface_IntVal), thelist(list)
 {
-  thecurr = new Interface_IntVal;
+  
   thecurr->CValue() = 0;
-  thelist = list;
+  
 }
 
     void Interface_EntityIterator::AddList
@@ -78,7 +78,7 @@ Interface_EntityIterator::Interface_EntityIterator ()
   (const Handle(Standard_Type)& atype, const Standard_Boolean keep)
 {
   if (thelist.IsNull()) return;
-  Standard_Integer i, n = thelist->Length();
+  Standard_Integer i = 0, n = thelist->Length();
   Handle(TColStd_HSequenceOfTransient) nlist = new TColStd_HSequenceOfTransient();
   for (i = 1 ; i <= n ; i ++) {
     if (thelist->Value(i)->IsKind(atype) == keep) nlist->Append(thelist->Value(i));
@@ -100,7 +100,7 @@ Interface_EntityIterator::Interface_EntityIterator ()
 {
   Standard_Integer res = 0;
   if (thelist.IsNull()) return res;
-  Standard_Integer i, n = thelist->Length();
+  Standard_Integer i = 0, n = thelist->Length();
   for (i = 1 ; i <= n ; i ++) {
     if (thelist->Value(i)->IsKind(atype)) res ++;
   }
@@ -112,7 +112,7 @@ Interface_EntityIterator::Interface_EntityIterator ()
 {
   Interface_EntityIterator res;
   if (thelist.IsNull()) return res;
-  Standard_Integer i, n = thelist->Length();
+  Standard_Integer i = 0, n = thelist->Length();
   for (i = 1 ; i <= n ; i ++) {
     if (thelist->Value(i)->IsKind(atype)) res.AddItem (thelist->Value(i));
   }

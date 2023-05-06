@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepGProp_Cinert.hxx>
 #include <BRepGProp_EdgeTool.hxx>
@@ -30,7 +32,7 @@ void BRepGProp_Cinert::SetLocation(const gp_Pnt& CLocation)
 void BRepGProp_Cinert::Perform (const BRepAdaptor_Curve& C)
 {
 
-  Standard_Real Ix, Iy, Iz, Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
+  Standard_Real Ix = NAN, Iy = NAN, Iz = NAN, Ixx = NAN, Iyy = NAN, Izz = NAN, Ixy = NAN, Ixz = NAN, Iyz = NAN;
   dim = Ix = Iy = Iz = Ixx = Iyy = Izz = Ixy = Ixz = Iyz = 0.0;
 
   Standard_Real Lower    = BRepGProp_EdgeTool::FirstParameter  (C);
@@ -40,10 +42,10 @@ void BRepGProp_Cinert::Perform (const BRepAdaptor_Curve& C)
 
   gp_Pnt P;    //value on the curve
   gp_Vec V1;   //first derivative on the curve
-  Standard_Real ds;  //curvilign abscissae
-  Standard_Real ur, um, u;
-  Standard_Real x, y, z; 
-  Standard_Real xloc, yloc, zloc;
+  Standard_Real ds = NAN;  //curvilign abscissae
+  Standard_Real ur = NAN, um = NAN, u = NAN;
+  Standard_Real x = NAN, y = NAN, z = NAN; 
+  Standard_Real xloc = NAN, yloc = NAN, zloc = NAN;
 
   math_Vector GaussP (1, Order);
   math_Vector GaussW (1, Order);
@@ -77,13 +79,13 @@ void BRepGProp_Cinert::Perform (const BRepAdaptor_Curve& C)
       Upper = UU2;
     }
 
-    Standard_Real dimLocal, IxLocal, IyLocal, IzLocal, IxxLocal, IyyLocal, IzzLocal, IxyLocal, IxzLocal, IyzLocal;
+    Standard_Real dimLocal = NAN, IxLocal = NAN, IyLocal = NAN, IzLocal = NAN, IxxLocal = NAN, IyyLocal = NAN, IzzLocal = NAN, IxyLocal = NAN, IxzLocal = NAN, IyzLocal = NAN;
     dimLocal = IxLocal = IyLocal = IzLocal = IxxLocal = IyyLocal = IzzLocal = IxyLocal = IxzLocal = IyzLocal = 0.0;
     // modified by NIZHNY-MKK  Thu Jun  9 12:13:32 2005.END
 
     loc.Coord (xloc, yloc, zloc);
 
-    Standard_Integer i;
+    Standard_Integer i = 0;
 
     // Calcul des integrales aux points de gauss :
     um = 0.5 * (Upper + Lower);

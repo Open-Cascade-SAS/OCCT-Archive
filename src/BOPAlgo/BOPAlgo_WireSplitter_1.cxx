@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BOPAlgo_WireEdgeSet.hxx>
 #include <BOPAlgo_WireSplitter.hxx>
 #include <BOPTools_AlgoTools2D.hxx>
@@ -144,9 +146,9 @@ void BOPAlgo_WireSplitter::SplitBlock(const TopoDS_Face& myFace,
                                       BOPTools_ConnexityBlock& aCB,
                                       const Handle(IntTools_Context)& theContext)
 {
-  Standard_Boolean bNothingToDo, bIsClosed, bIsIN;
-  Standard_Integer aIx, aNb, i, aCntIn, aCntOut;
-  Standard_Real aAngle;
+  Standard_Boolean bNothingToDo = 0, bIsClosed = 0, bIsIN = 0;
+  Standard_Integer aIx = 0, aNb = 0, i = 0, aCntIn = 0, aCntOut = 0;
+  Standard_Real aAngle = NAN;
   TopAbs_Orientation aOr;
   TopoDS_Iterator aItS;
   TopoDS_Vertex aVV;
@@ -238,8 +240,8 @@ void BOPAlgo_WireSplitter::SplitBlock(const TopoDS_Face& myFace,
   // We must check edges on TShape coincidence.
   // If there are such edges there is something to do with.
   if (bNothingToDo) {
-    Standard_Integer aNbE, aNbMapEE;
-    Standard_Boolean bFlag;
+    Standard_Integer aNbE = 0, aNbMapEE = 0;
+    Standard_Boolean bFlag = 0;
     //
     TopTools_IndexedDataMapOfShapeListOfShape aMapEE(100);
     aNbE=myEdges.Extent();
@@ -321,7 +323,7 @@ void BOPAlgo_WireSplitter::SplitBlock(const TopoDS_Face& myFace,
   //
   // 4. Do
   //
-  Standard_Boolean bIsOut, bIsNotPassed;
+  Standard_Boolean bIsOut = 0, bIsNotPassed = 0;
   TopTools_SequenceOfShape aLS, aVertVa;
   TColgp_SequenceOfPnt2d aCoordVa;
   //
@@ -363,11 +365,11 @@ void Path (const GeomAdaptor_Surface& aGAS,
            BOPTools_ConnexityBlock& aCB,
            BOPAlgo_IndexedDataMapOfShapeListOfEdgeInfo& mySmartMap)
 {
-  Standard_Integer i, j, aNb, aNbj;
-  Standard_Real anAngleIn, anAngleOut, anAngle, aMinAngle;
-  Standard_Real aTol2D, aTol2D2, aD2, aTwoPI;
-  Standard_Boolean anIsSameV2d, anIsSameV, anIsOut, anIsNotPassed;
-  Standard_Boolean bIsClosed;
+  Standard_Integer i = 0, j = 0, aNb = 0, aNbj = 0;
+  Standard_Real anAngleIn = NAN, anAngleOut = NAN, anAngle = NAN, aMinAngle = NAN;
+  Standard_Real aTol2D = NAN, aTol2D2 = NAN, aD2 = NAN, aTwoPI = NAN;
+  Standard_Boolean anIsSameV2d = 0, anIsSameV = 0, anIsOut = 0, anIsNotPassed = 0;
+  Standard_Boolean bIsClosed = 0;
   TopoDS_Vertex aVa, aVb;
   TopoDS_Edge aEOuta;
   BOPAlgo_ListIteratorOfListOfEdgeInfo anIt;
@@ -452,7 +454,7 @@ void Path (const GeomAdaptor_Surface& aGAS,
         }//if (anIsSameV) {
         //
         if (anIsSameV && anIsSameV2d) {
-          Standard_Integer iPriz;
+          Standard_Integer iPriz = 0;
           iPriz=1;
           if (aBuf.Extent()==2) {
             if(aBuf.First().IsSame(aBuf.Last())) {
@@ -592,7 +594,7 @@ void Path (const GeomAdaptor_Surface& aGAS,
                               const Standard_Real aAngleOut)
 {
   Standard_Real aTwoPi=M_PI+M_PI;
-  Standard_Real dA, A1, A2, AIn, AOut ;
+  Standard_Real dA = NAN, A1 = NAN, A2 = NAN, AIn = NAN, AOut = NAN ;
 
   AIn=aAngleIn;
   AOut=aAngleOut;
@@ -631,7 +633,7 @@ void Path (const GeomAdaptor_Surface& aGAS,
                    const TopoDS_Edge& aE1,
                    const TopoDS_Face& aF)
 {
-  Standard_Real aT, aFirst, aLast;
+  Standard_Real aT = NAN, aFirst = NAN, aLast = NAN;
   Handle(Geom2d_Curve) aC2D;
   gp_Pnt2d aP2D1;
   //
@@ -671,7 +673,7 @@ void Path (const GeomAdaptor_Surface& aGAS,
 //=======================================================================
 Standard_Integer NbWaysOut(const BOPAlgo_ListOfEdgeInfo& aLEInfo)
 {
-  Standard_Boolean bIsOut, bIsNotPassed;
+  Standard_Boolean bIsOut = 0, bIsNotPassed = 0;
   Standard_Integer iCnt=0;
   BOPAlgo_ListIteratorOfListOfEdgeInfo anIt;
   //
@@ -695,8 +697,8 @@ Standard_Integer NbWaysOut(const BOPAlgo_ListOfEdgeInfo& aLEInfo)
  Standard_Real AngleIn(const TopoDS_Edge& aEIn,
                        const BOPAlgo_ListOfEdgeInfo& aLEInfo)
 {
-  Standard_Real anAngleIn;
-  Standard_Boolean anIsIn;
+  Standard_Real anAngleIn = NAN;
+  Standard_Boolean anIsIn = 0;
   BOPAlgo_ListIteratorOfListOfEdgeInfo anIt;
 
   anIt.Initialize(aLEInfo);
@@ -744,7 +746,7 @@ Standard_Integer NbWaysOut(const BOPAlgo_ListOfEdgeInfo& aLEInfo)
                          const Standard_Boolean bIsIN,
                          const Handle(IntTools_Context)& theContext)
 {
-  Standard_Real aFirst, aLast, aToler, dt, aTV, aTV1, anAngle, aTX;
+  Standard_Real aFirst = NAN, aLast = NAN, aToler = NAN, dt = NAN, aTV = NAN, aTV1 = NAN, anAngle = NAN, aTX = NAN;
   gp_Pnt2d aPV, aPV1;
   gp_Vec2d aV2D;
   Handle(Geom2d_Curve) aC2D;
@@ -813,7 +815,7 @@ Standard_Integer NbWaysOut(const BOPAlgo_ListOfEdgeInfo& aLEInfo)
 Standard_Real Angle (const gp_Dir2d& aDir2D)
 {
   gp_Dir2d aRefDir(1., 0.);
-  Standard_Real anAngle;
+  Standard_Real anAngle = NAN;
   
   anAngle = aRefDir.Angle(aDir2D);
   if (anAngle < 0.)
@@ -827,7 +829,7 @@ Standard_Real Angle (const gp_Dir2d& aDir2D)
  Standard_Real Tolerance2D (const TopoDS_Vertex& aV,
                             const GeomAdaptor_Surface& aGAS)	     
 {
-  Standard_Real aTol2D, anUr, aVr, aTolV3D;
+  Standard_Real aTol2D = NAN, anUr = NAN, aVr = NAN, aTolV3D = NAN;
   GeomAbs_SurfaceType aType;
   //
   aType=aGAS.GetType();
@@ -905,9 +907,9 @@ void RefineAngles(const TopoDS_Vertex& aV,
                   BOPAlgo_ListOfEdgeInfo& aLEI,
                   const Handle(IntTools_Context)& theContext)
 {
-  Standard_Boolean bIsIn, bIsBoundary, bRefined; 
-  Standard_Integer iCntBnd, iCntInt;
-  Standard_Real aA, aA1, aA2;
+  Standard_Boolean bIsIn = 0, bIsBoundary = 0, bRefined = 0; 
+  Standard_Integer iCntBnd = 0, iCntInt = 0;
+  Standard_Real aA = NAN, aA1 = NAN, aA2 = NAN;
   TopTools_DataMapOfShapeReal aDMSR;
   BOPAlgo_ListIteratorOfListOfEdgeInfo aItLEI;
   //
@@ -1004,10 +1006,10 @@ Standard_Boolean RefineAngle2D(const TopoDS_Vertex& aV,
                                Standard_Real& aA,
                                const Handle(IntTools_Context)& theContext)
 {
-  Standard_Boolean bRet;
-  Standard_Integer i, j, aNbP;
-  Standard_Real aTV, aTol, aT1, aT2, dT, aAngle, aT, aTOp;
-  Standard_Real aTolInt, aAi, aXi, aYi, aT1j, aT2j, aT1max, aT2max, aCf; 
+  Standard_Boolean bRet = 0;
+  Standard_Integer i = 0, j = 0, aNbP = 0;
+  Standard_Real aTV = NAN, aTol = NAN, aT1 = NAN, aT2 = NAN, dT = NAN, aAngle = NAN, aT = NAN, aTOp = NAN;
+  Standard_Real aTolInt = NAN, aAi = NAN, aXi = NAN, aYi = NAN, aT1j = NAN, aT2j = NAN, aT1max = NAN, aT2max = NAN, aCf = NAN; 
   gp_Pnt2d aPV, aP, aP1, aP2;
   Handle(Geom2d_Curve) aC2D;
   Handle(Geom2d_Line) aLi;

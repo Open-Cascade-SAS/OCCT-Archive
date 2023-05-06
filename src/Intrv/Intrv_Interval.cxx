@@ -36,10 +36,10 @@
 //purpose  : 
 //=======================================================================
 Intrv_Interval::Intrv_Interval 
-  () : myStart(RealFirst()), myEnd  (RealLast ())
+  () : myStart(RealFirst()), myEnd  (RealLast ()), myTolStart((Standard_ShortReal)Epsilon(RealFirst())), myTolEnd((Standard_ShortReal)Epsilon(RealLast ()))
 {
-  myTolStart = (Standard_ShortReal)Epsilon(RealFirst());
-  myTolEnd   = (Standard_ShortReal)Epsilon(RealLast ());
+  
+  
 }
 
 //=======================================================================
@@ -49,10 +49,10 @@ Intrv_Interval::Intrv_Interval
 
 Intrv_Interval::Intrv_Interval 
   (const Standard_Real Start, const Standard_Real End) :
-  myStart(Start), myEnd  (End)
+  myStart(Start), myEnd  (End), myTolStart((Standard_ShortReal)Epsilon(myStart)), myTolEnd((Standard_ShortReal)Epsilon(myEnd))
 {
-  myTolStart = (Standard_ShortReal)Epsilon(myStart);
-  myTolEnd   = (Standard_ShortReal)Epsilon(myEnd);
+  
+  
 }
 
 //=======================================================================

@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement
 
+#include <math.h>
+
 #include <math_GlobOptMin.hxx>
 
 #include <math_BFGS.hxx>
@@ -55,13 +57,13 @@ math_GlobOptMin::math_GlobOptMin(math_MultipleVarFunction* theFunc,
                                  const Standard_Real theC,
                                  const Standard_Real theDiscretizationTol,
                                  const Standard_Real theSameTol)
-: myN(theFunc->NbVariables()),
+: myFunc(theFunc), myN(theFunc->NbVariables()),
   myA(1, myN),
   myB(1, myN),
   myGlobA(1, myN),
   myGlobB(1, myN),
-  myIsConstLocked(Standard_False),
-  myX(1, myN),
+  myC(theC), myInitC(theC), myIsFindSingleSolution(Standard_False), myFunctionalMinimalValue(-Precision::Infinite()), myIsConstLocked(Standard_False),
+  myZ(-1), mySolCount(0), myX(1, myN),
   myTmp(1, myN),
   myV(1, myN),
   myMaxV(1, myN),
@@ -70,15 +72,15 @@ math_GlobOptMin::math_GlobOptMin(math_MultipleVarFunction* theFunc,
   myCont(2),
   myF(Precision::Infinite())
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
-  myFunc = theFunc;
-  myC = theC;
-  myInitC = theC;
-  myIsFindSingleSolution = Standard_False;
-  myFunctionalMinimalValue = -Precision::Infinite();
-  myZ = -1;
-  mySolCount = 0;
+  
+  
+  
+  
+  
+  
+  
 
   for(i = 1; i <= myN; i++)
   {
@@ -117,7 +119,7 @@ void math_GlobOptMin::SetGlobalParams(math_MultipleVarFunction* theFunc,
                                       const Standard_Real theDiscretizationTol,
                                       const Standard_Real theSameTol)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   myFunc = theFunc;
   myC = theC;
@@ -155,7 +157,7 @@ void math_GlobOptMin::SetGlobalParams(math_MultipleVarFunction* theFunc,
 void math_GlobOptMin::SetLocalParams(const math_Vector& theLocalA,
                                      const math_Vector& theLocalB)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   myZ = -1;
   for(i = 1; i <= myN; i++)
@@ -271,7 +273,7 @@ Standard_Boolean math_GlobOptMin::computeLocalExtremum(const math_Vector& thePnt
                                                        Standard_Real& theVal,
                                                        math_Vector& theOutPnt)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   //Newton method
   if (myCont >= 2 &&
@@ -346,14 +348,14 @@ void math_GlobOptMin::computeInitialValues()
   const Standard_Real aMaxLC = 1000.;
   const Standard_Real aMinEps = 0.1;
   const Standard_Real aMaxEps = 100.;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   math_Vector aCurrPnt(1, myN);
   math_Vector aBestPnt(1, myN);
   math_Vector aParamStep(1, myN);
   Standard_Real aCurrVal = RealLast();
 
   // Lipchitz const approximation.
-  Standard_Real aLipConst = 0.0, aPrevValDiag, aPrevValProj;
+  Standard_Real aLipConst = 0.0, aPrevValDiag = NAN, aPrevValProj = NAN;
   Standard_Integer aPntNb = 13;
   myFunc->Value(myA, aPrevValDiag);
   aPrevValProj = aPrevValDiag;
@@ -389,15 +391,15 @@ void math_GlobOptMin::computeInitialValues()
 //=======================================================================
 void math_GlobOptMin::computeGlobalExtremum(Standard_Integer j)
 {
-  Standard_Integer i;
-  Standard_Real d = RealLast(), aPrevVal; // Functional in original and moved points.
+  Standard_Integer i = 0;
+  Standard_Real d = RealLast(), aPrevVal = NAN; // Functional in original and moved points.
   Standard_Real val = RealLast(); // Local extrema computed in moved point.
   Standard_Real aStepBestValue = RealLast();
   math_Vector aStepBestPoint(1, myN);
   Standard_Boolean isInside = Standard_False,
                    isReached = Standard_False;
 
-  Standard_Real r1, r2, r;
+  Standard_Real r1 = NAN, r2 = NAN, r = NAN;
 
   for(myX(j) = myA(j) + myE1; !isReached; myX(j) += myV(j))
   {
@@ -479,7 +481,7 @@ void math_GlobOptMin::computeGlobalExtremum(Standard_Integer j)
 //=======================================================================
 Standard_Boolean math_GlobOptMin::isInside(const math_Vector& thePnt)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
  for(i = 1; i <= myN; i++)
  {
@@ -495,7 +497,7 @@ Standard_Boolean math_GlobOptMin::isInside(const math_Vector& thePnt)
 //=======================================================================
 Standard_Boolean math_GlobOptMin::isStored(const math_Vector& thePnt)
 {
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   Standard_Boolean isSame = Standard_True;
   math_Vector aTol(1, myN);
   aTol = (myB -  myA) * mySameTol;
@@ -559,7 +561,7 @@ Standard_Boolean math_GlobOptMin::isStored(const math_Vector& thePnt)
 //=======================================================================
 void math_GlobOptMin::Points(const Standard_Integer theIndex, math_Vector& theSol)
 {
-  Standard_Integer j;
+  Standard_Integer j = 0;
 
   for(j = 1; j <= myN; j++)
     theSol(j) = myY((theIndex - 1) * myN + j);
@@ -598,7 +600,7 @@ Standard_Boolean math_GlobOptMin::CheckFunctionalStopCriteria()
 //=======================================================================
 void math_GlobOptMin::ComputeInitSol()
 {
-  Standard_Real aVal;
+  Standard_Real aVal = NAN;
   math_Vector aPnt(1, myN);
 
   // Check functional value in midpoint. It is necessary since local optimization

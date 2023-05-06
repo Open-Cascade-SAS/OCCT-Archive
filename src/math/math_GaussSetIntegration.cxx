@@ -19,6 +19,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math.hxx>
 #include <math_FunctionSet.hxx>
 #include <math_GaussSetIntegration.hxx>
@@ -30,11 +32,11 @@ math_GaussSetIntegration::math_GaussSetIntegration(math_FunctionSet& F,
                                                     const math_Vector& Lower,
                                                     const math_Vector& Upper,
                                                     const math_IntegerVector& Order)
-                          : Val(1, F.NbEquations()) {
+                          : Val(1, F.NbEquations()), Done(Standard_False) {
 
    Standard_Integer NbEqua = F.NbEquations() , NbVar = F.NbVariables();
-   Standard_Integer i;
-   Standard_Boolean IsOk;
+   Standard_Integer i = 0;
+   Standard_Boolean IsOk = 0;
    math_Vector FVal1(1, NbEqua), FVal2(1, NbEqua), Tval(1, NbVar); 
 
 
@@ -44,12 +46,12 @@ math_GaussSetIntegration::math_GaussSetIntegration(math_FunctionSet& F,
             "GaussSetIntegration ");
 
 // Initialisations
-   Done = Standard_False;
+   
 
    Standard_Real Xdeb = Lower.Value( Lower.Lower() );
    Standard_Real Xfin = Upper.Value( Upper.Lower() );
    Standard_Integer Ordre = Order.Value(Order.Lower());
-   Standard_Real Xm, Xr;
+   Standard_Real Xm = NAN, Xr = NAN;
    math_Vector GaussP(1, Ordre), GaussW(1, Ordre);
 
 // Recuperation des points de Gauss dans le fichier GaussPoints.

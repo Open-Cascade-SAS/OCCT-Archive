@@ -27,23 +27,23 @@
 #include <StdFail_NotDone.hxx>
 #include <TColgp_Array1OfPnt.hxx>
 
-GC_MakePlane::GC_MakePlane(const gp_Pln& Pl)
+GC_MakePlane::GC_MakePlane(const gp_Pln& Pl) : GC_Root(), ThePlane(new Geom_Plane(Pl))
 {
   TheError = gce_Done;
-  ThePlane = new Geom_Plane(Pl);
+  
 }
 
 GC_MakePlane::GC_MakePlane(const gp_Pnt& P,
-			     const gp_Dir& V)
+			     const gp_Dir& V) : GC_Root(), ThePlane(new Geom_Plane(P,V))
 {
   TheError = gce_Done;
-  ThePlane = new Geom_Plane(P,V);
+  
 }
 
 GC_MakePlane::GC_MakePlane(const Standard_Real A,
 			     const Standard_Real B,
 			     const Standard_Real C,
-			     const Standard_Real D)
+			     const Standard_Real D) : GC_Root()
 {
   if (Sqrt(A*A + B*B +C*C) <= gp::Resolution()) {
     TheError = gce_BadEquation; 
@@ -60,7 +60,7 @@ GC_MakePlane::GC_MakePlane(const Standard_Real A,
 
 GC_MakePlane::GC_MakePlane(const gp_Pnt& P1    ,
 			     const gp_Pnt& P2    ,
-			     const gp_Pnt& P3    ) {
+			     const gp_Pnt& P3    ) : GC_Root() {
   gce_MakePln Pl(P1,P2,P3);
   TheError = Pl.Status();
   if (TheError == gce_Done) {
@@ -73,7 +73,7 @@ GC_MakePlane::GC_MakePlane(const gp_Pnt& P1    ,
 //=========================================================================
 
 GC_MakePlane::GC_MakePlane(const gp_Pln& Pl   ,
-			     const Standard_Real    Dist ) {
+			     const Standard_Real    Dist ) : GC_Root() {
   gp_Pln Pln = gce_MakePln(Pl,Dist);
   TheError = gce_Done;
   ThePlane = new Geom_Plane(Pln);
@@ -85,7 +85,7 @@ GC_MakePlane::GC_MakePlane(const gp_Pln& Pl   ,
 //=========================================================================
 
 GC_MakePlane::GC_MakePlane(const gp_Pln& Pl    ,
-			     const gp_Pnt& Point ) {
+			     const gp_Pnt& Point ) : GC_Root() {
   gp_Pln Pln= gce_MakePln(Pl,Point);
   TheError = gce_Done;
   ThePlane = new Geom_Plane(Pln);
@@ -95,7 +95,7 @@ GC_MakePlane::GC_MakePlane(const gp_Pln& Pl    ,
 //  Creation d un Geom_Plane a partir d un Ax1 (Point + Normale).         +
 //=========================================================================
 
-GC_MakePlane::GC_MakePlane(const gp_Ax1& Axis ) {
+GC_MakePlane::GC_MakePlane(const gp_Ax1& Axis ) : GC_Root() {
   gp_Pln Pln = gce_MakePln(Axis);
   TheError = gce_Done;
   ThePlane = new Geom_Plane(Pln);

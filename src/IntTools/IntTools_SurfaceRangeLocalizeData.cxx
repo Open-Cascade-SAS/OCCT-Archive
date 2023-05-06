@@ -21,18 +21,18 @@
 #include <IntTools_SurfaceRangeSample.hxx>
 #include <Precision.hxx>
 
-IntTools_SurfaceRangeLocalizeData::IntTools_SurfaceRangeLocalizeData()
+IntTools_SurfaceRangeLocalizeData::IntTools_SurfaceRangeLocalizeData() : myNbSampleU(1), myNbSampleV(1), myMinRangeU(0.), myMinRangeV(0.), myDeflection(0.), myUIndMin(0), myUIndMax(0), myVIndMin(0), myVIndMax(0)
 {
-  myNbSampleU = 1;
-  myNbSampleV = 1;
-  myMinRangeU = 0.;
-  myMinRangeV = 0.;
+  
+  
+  
+  
 //  Modified by skv - Thu Nov  3 11:58:24 2005 Optimization Begin
-  myDeflection = 0.;
-  myUIndMin    = 0;
-  myUIndMax    = 0;
-  myVIndMin    = 0;
-  myVIndMax    = 0;
+  
+  
+  
+  
+  
 //  Modified by skv - Thu Nov  3 11:58:24 2005 Optimization End
 }
 
@@ -40,18 +40,18 @@ IntTools_SurfaceRangeLocalizeData::IntTools_SurfaceRangeLocalizeData()
 IntTools_SurfaceRangeLocalizeData::IntTools_SurfaceRangeLocalizeData(const Standard_Integer theNbSampleU,
 								     const Standard_Integer theNbSampleV,
 								     const Standard_Real theMinRangeU,
-								     const Standard_Real theMinRangeV)
+								     const Standard_Real theMinRangeV) : myNbSampleU(theNbSampleU), myNbSampleV(theNbSampleV), myMinRangeU(theMinRangeU), myMinRangeV(theMinRangeV), myDeflection(0.), myUIndMin(0), myUIndMax(0), myVIndMin(0), myVIndMax(0)
 {
-  myNbSampleU = theNbSampleU;
-  myNbSampleV = theNbSampleV;
-  myMinRangeU = theMinRangeU;
-  myMinRangeV = theMinRangeV;
+  
+  
+  
+  
 //  Modified by skv - Thu Nov  3 11:58:24 2005 Optimization Begin
-  myDeflection = 0.;
-  myUIndMin    = 0;
-  myUIndMax    = 0;
-  myVIndMin    = 0;
-  myVIndMax    = 0;
+  
+  
+  
+  
+  
 //  Modified by skv - Thu Nov  3 11:58:24 2005 Optimization End
 }
 
@@ -181,8 +181,8 @@ void IntTools_SurfaceRangeLocalizeData::SetFrame(const Standard_Real theUMin,
     return;
   }
 
-  Standard_Integer i;
-  Standard_Integer aLmI;
+  Standard_Integer i = 0;
+  Standard_Integer aLmI = 0;
   Standard_Integer aLen = myUParams->Length();
 
   // Compute frame along U.

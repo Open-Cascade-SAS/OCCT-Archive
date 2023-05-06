@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <TNaming.hxx>
 
 #include <BRep_Builder.hxx>
@@ -108,7 +110,7 @@ static void SubstituteShape(const TopoDS_Shape& oldShape,
   if (!amap.IsBound(oldShape)) {
       return;
   }
-  TNaming_RefShape* pos;
+  TNaming_RefShape* pos = nullptr;
   pos = amap.ChangeFind(oldShape);
   pos->Shape(newShape);
   amap.UnBind(oldShape);
@@ -170,7 +172,7 @@ Standard_Boolean TNaming::SubstituteSShape(const TDF_Label& Lab, const TopoDS_Sh
   TNaming_DataMapOfShapePtrRefShape& amap = US->Map();
   if (!amap.IsBound(To)) 
     return Standard_False;
-  TNaming_RefShape* pos;
+  TNaming_RefShape* pos = nullptr;
   pos = amap.ChangeFind(To);
   if(!amap.UnBind(To)) return Standard_False;
   //update shape
@@ -207,7 +209,7 @@ static Standard_Boolean  Rebuild (const TopoDS_Shape& S,
   TopoDS_Shape NewS = S.Oriented(TopAbs_FORWARD);
   NewS.EmptyCopy();
   if (NewS.ShapeType() == TopAbs_EDGE) {
-    Standard_Real f,l;
+    Standard_Real f = NAN,l = NAN;
     BRep_Tool::Range(TopoDS::Edge(S),f,l);
     B.Range(TopoDS::Edge(NewS),f,l);
   }
@@ -547,7 +549,7 @@ static TopoDS_Shape  ShapeCopy(const TopoDS_Shape& S,
   TopoDS_Shape NewS = S.Oriented(TopAbs_FORWARD);
   NewS.EmptyCopy();
   if (NewS.ShapeType() == TopAbs_EDGE) {
-    Standard_Real f,l;
+    Standard_Real f = NAN,l = NAN;
     BRep_Tool::Range(TopoDS::Edge(S),f,l);
     B.Range(TopoDS::Edge(NewS),f,l);
   }

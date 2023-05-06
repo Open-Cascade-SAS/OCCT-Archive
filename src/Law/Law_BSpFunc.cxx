@@ -16,6 +16,8 @@
 
 // pmn -> 17/01/1996 added : Continuity, (Nb)Intervals, D2, Trim
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <Law_BSpFunc.hxx>
 #include <Law_BSpline.hxx>
@@ -68,7 +70,7 @@ Standard_Integer Law_BSpFunc::NbIntervals(const GeomAbs_Shape S) const
 {
   Standard_Integer myNbIntervals = 1;
   if ( S > Continuity()) {
-    Standard_Integer Cont;
+    Standard_Integer Cont = 0;
     switch ( S) {
     case GeomAbs_G1:
     case GeomAbs_G2:
@@ -94,7 +96,7 @@ Standard_Integer Law_BSpFunc::NbIntervals(const GeomAbs_Shape S) const
 	Standard_Integer Nb = curv->NbKnots();
 	Standard_Integer Index1 = 0;
 	Standard_Integer Index2 = 0;
-	Standard_Real newFirst, newLast;
+	Standard_Real newFirst = NAN, newLast = NAN;
 	TColStd_Array1OfReal    TK(1,Nb);
 	TColStd_Array1OfInteger TM(1,Nb);
 	curv->Knots(TK);
@@ -131,7 +133,7 @@ void Law_BSpFunc::Intervals(TColStd_Array1OfReal& T,
 {
   Standard_Integer myNbIntervals = 1;
   if ( S > Continuity()) {
-    Standard_Integer Cont;
+    Standard_Integer Cont = 0;
     switch ( S) {
     case GeomAbs_G1:
     case GeomAbs_G2:
@@ -157,7 +159,7 @@ void Law_BSpFunc::Intervals(TColStd_Array1OfReal& T,
 	Standard_Integer Nb = curv->NbKnots();
 	Standard_Integer Index1 = 0;
 	Standard_Integer Index2 = 0;
-	Standard_Real newFirst, newLast;
+	Standard_Real newFirst = NAN, newLast = NAN;
 	TColStd_Array1OfReal    TK(1,Nb);
 	TColStd_Array1OfInteger TM(1,Nb);
 	curv->Knots(TK);

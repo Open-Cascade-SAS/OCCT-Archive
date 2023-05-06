@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <GeomFill_Tensor.hxx>
 #include <math_Matrix.hxx>
 
@@ -39,8 +41,8 @@ void GeomFill_Tensor::Init(const Standard_Real InitialValue)
 void GeomFill_Tensor::Multiply(const math_Vector& Right, 
 				math_Matrix& M) const 
 {
-  Standard_Integer i, j, k;
-  Standard_Real Somme;
+  Standard_Integer i = 0, j = 0, k = 0;
+  Standard_Real Somme = NAN;
   for ( i=1; i<=nbrow; i++) 
     {
       for ( j=1; j<=nbcol; j++) 

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <MAT2d_Mat2d.hxx>
 #include <MAT2d_Tool2d.hxx>
 #include <MAT_Bisector.hxx>
@@ -30,12 +32,12 @@
 //  purpose  :
 //========================================================================
 MAT2d_Mat2d::MAT2d_Mat2d(const Standard_Boolean IsOpenResult)
-: semiInfinite(Standard_False),
+: myIsOpenResult(IsOpenResult), thenumberofbisectors(0), thenumberofedges(0), semiInfinite(Standard_False),
   isDone(Standard_False)
 {
-  myIsOpenResult = IsOpenResult;
-  thenumberofbisectors = 0;
-  thenumberofedges     = 0;
+  
+  
+  
 }
 
 
@@ -133,12 +135,12 @@ void MAT2d_Mat2d::CreateMatOpen(MAT2d_Tool2d& atool)
   Handle(MAT_Edge) edgetoremove;
   Handle(MAT_Edge) previousedge,currentedge;
 
-  Standard_Integer      noofbisectorstoremove;
+  Standard_Integer      noofbisectorstoremove = 0;
   Handle(MAT_Bisector)  firstbisector,secondbisector;
   Handle(MAT_Edge)      edge;
-  Standard_Integer      intersectionpoint;
-  Standard_Integer      beginbisector;
-  Standard_Integer      noofbisectors;
+  Standard_Integer      intersectionpoint = 0;
+  Standard_Integer      beginbisector = 0;
+  Standard_Integer      noofbisectors = 0;
 
   Standard_Integer	NbIterBis = 0;
   Standard_Integer	EvenNbIterBis = 10;
@@ -151,10 +153,10 @@ void MAT2d_Mat2d::CreateMatOpen(MAT2d_Tool2d& atool)
   Handle(MAT_Bisector) bisectortoremove,lastbisector,currentbisector;
   Handle(MAT_Bisector) previousbisector;
 
-  Standard_Integer     i,j,k,narea,shift,compact,all;
-  Standard_Integer     noofedges;
-  Standard_Integer     NumberMaxOfIte;
-  Standard_Real        toleranceofconfusion;
+  Standard_Integer     i = 0,j = 0,k = 0,narea = 0,shift = 0,compact = 0,all = 0;
+  Standard_Integer     noofedges = 0;
+  Standard_Integer     NumberMaxOfIte = 0;
+  Standard_Real        toleranceofconfusion = NAN;
 
   noofedges            = atool.NumberOfItems();
   toleranceofconfusion = atool.ToleranceOfConfusion();
@@ -198,7 +200,7 @@ void MAT2d_Mat2d::CreateMatOpen(MAT2d_Tool2d& atool)
 //---------------------------------------------------
 // Initialisation des bissectrices issues du contour.
 //---------------------------------------------------
-  Standard_Real Dist;
+  Standard_Real Dist = NAN;
   theedgelist->First();
 
   for(i=0; i<theedgelist->Number()-1; i++) {
@@ -800,12 +802,12 @@ void MAT2d_Mat2d::CreateMat(MAT2d_Tool2d& atool)
   Handle(MAT_Edge) edgetoremove;
   Handle(MAT_Edge) previousedge,currentedge;
 
-  Standard_Integer      noofbisectorstoremove;
+  Standard_Integer      noofbisectorstoremove = 0;
   Handle(MAT_Bisector)  firstbisector,secondbisector;
   Handle(MAT_Edge)      edge;
-  Standard_Integer      intersectionpoint;
-  Standard_Integer      beginbisector;
-  Standard_Integer      noofbisectors;
+  Standard_Integer      intersectionpoint = 0;
+  Standard_Integer      beginbisector = 0;
+  Standard_Integer      noofbisectors = 0;
 
   Standard_Integer	NbIterBis = 0;
   Standard_Integer	EvenNbIterBis = 10;
@@ -818,10 +820,10 @@ void MAT2d_Mat2d::CreateMat(MAT2d_Tool2d& atool)
   Handle(MAT_Bisector) bisectortoremove,lastbisector,currentbisector;
   Handle(MAT_Bisector) previousbisector;
 
-  Standard_Integer     i,j,k,narea,shift,compact,all;
-  Standard_Integer     noofedges;
-  Standard_Integer     NumberMaxOfIte;
-  Standard_Real        toleranceofconfusion;
+  Standard_Integer     i = 0,j = 0,k = 0,narea = 0,shift = 0,compact = 0,all = 0;
+  Standard_Integer     noofedges = 0;
+  Standard_Integer     NumberMaxOfIte = 0;
+  Standard_Real        toleranceofconfusion = NAN;
 
   noofedges            = atool.NumberOfItems();
   toleranceofconfusion = atool.ToleranceOfConfusion();
@@ -869,7 +871,7 @@ void MAT2d_Mat2d::CreateMat(MAT2d_Tool2d& atool)
   //---------------------------------------------------
   // Initialisation des bissectrices issues du contour.
   //---------------------------------------------------
-  Standard_Real Dist;
+  Standard_Real Dist = NAN;
   theedgelist->First();
 
   for(i=0; i<theedgelist->Number(); i++) {
@@ -1510,7 +1512,7 @@ void MAT2d_Mat2d::LoadBisectorsToRemove
   const Handle(MAT_Bisector)& lastbisectortoremove2  )
 {
 
-  Standard_Integer found,index;
+  Standard_Integer found = 0,index = 0;
   Handle(MAT_Bisector) firstbisectortoremove[2];
   Handle(MAT_Bisector) lastbisectortoremove[2];
 
@@ -1573,10 +1575,10 @@ void MAT2d_Mat2d::Intersect(      MAT2d_Tool2d&                 atool,
   const Handle(MAT_Bisector)& firstbisector,
   const Handle(MAT_Bisector)& secondbisector)
 {
-  Standard_Integer      bisectornumber;
-  Standard_Real         distant,saveparameter;
+  Standard_Integer      bisectornumber = 0;
+  Standard_Real         distant = NAN,saveparameter = NAN;
   Standard_Real         distance[2];
-  Standard_Integer      intersectionpoint;
+  Standard_Integer      intersectionpoint = 0;
   Handle(MAT_Bisector)  lastbisector,previousbisector;
   Handle(MAT_Bisector)  firstbisectortoremove[2];
   Handle(MAT_Bisector)  lastbisectortoremove[2];
@@ -1727,7 +1729,7 @@ MAT2d_Mat2d::~MAT2d_Mat2d()
   MAT_DataMapIteratorOfDataMapOfIntegerBisector itmap(bisectormap);
   for (; itmap.More(); itmap.Next())
   {
-    Handle(MAT_Bisector) aBisector = itmap.Value();
+    const Handle(MAT_Bisector)& aBisector = itmap.Value();
     aBisector->FirstEdge(NULL);
     aBisector->SecondEdge(NULL);
   }

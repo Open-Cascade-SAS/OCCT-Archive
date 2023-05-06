@@ -130,7 +130,7 @@ private:
 
 
 
-  Standard_Boolean myIsDone;
+  Standard_Boolean myIsDone{};
   Handle(Geom2d_Curve) myCurve1;
   Handle(Geom2d_Curve) myCurve2;
   Geom2dInt_GInter myIntersector;

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp_Ax3.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Elips.hxx>
@@ -107,7 +109,7 @@ static gp_Pnt2d EvalPnt2d( const gp_Pnt& P, const gp_Cylinder& Cy )
   Standard_Real X = OP.Dot(gp_Vec(Cy.Position().XDirection()));
   Standard_Real Y = OP.Dot(gp_Vec(Cy.Position().YDirection()));
   Standard_Real Z = OP.Dot(gp_Vec(Cy.Position().Direction()));
-  Standard_Real U ;
+  Standard_Real U = NAN ;
 
   if ( Abs(X) > Precision::PConfusion() ||
        Abs(Y) > Precision::PConfusion() ) {

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWLowOrderKinematicPairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -55,22 +57,22 @@ void RWStepKinematics_RWLowOrderKinematicPairValue::ReadStep (const Handle(StepD
 
   // Own fields of LowOrderKinematicPairValue
 
-  Standard_Real aActualTranslationX;
+  Standard_Real aActualTranslationX = NAN;
   theData->ReadReal (theNum, 3, "actual_translation_x", theArch, aActualTranslationX);
 
-  Standard_Real aActualTranslationY;
+  Standard_Real aActualTranslationY = NAN;
   theData->ReadReal (theNum, 4, "actual_translation_y", theArch, aActualTranslationY);
 
-  Standard_Real aActualTranslationZ;
+  Standard_Real aActualTranslationZ = NAN;
   theData->ReadReal (theNum, 5, "actual_translation_z", theArch, aActualTranslationZ);
 
-  Standard_Real aActualRotationX;
+  Standard_Real aActualRotationX = NAN;
   theData->ReadReal (theNum, 6, "actual_rotation_x", theArch, aActualRotationX);
 
-  Standard_Real aActualRotationY;
+  Standard_Real aActualRotationY = NAN;
   theData->ReadReal (theNum, 7, "actual_rotation_y", theArch, aActualRotationY);
 
-  Standard_Real aActualRotationZ;
+  Standard_Real aActualRotationZ = NAN;
   theData->ReadReal (theNum, 8, "actual_rotation_z", theArch, aActualRotationZ);
 
   // Initialize entity

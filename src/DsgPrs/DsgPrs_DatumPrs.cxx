@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DsgPrs_DatumPrs.hxx>
 #include <DsgPrs_XYZAxisPresentation.hxx>
 #include <gp_Dir.hxx>
@@ -38,7 +40,7 @@ void DsgPrs_DatumPrs::Add (const Handle(Prs3d_Presentation)& thePresentation,
   gp_Dir aYDir = anAxis.YDirection();
   gp_Dir aZDir = anAxis.Direction();
 
-  Standard_Real anAxisLength;
+  Standard_Real anAxisLength = NAN;
   const Standard_Boolean toDrawLabels = theDrawer->DatumAspect()->ToDrawLabels();
 
   Prs3d_DatumAxes anAxes = aDatumAspect->DatumAxes();

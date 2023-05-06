@@ -25,36 +25,36 @@
 #include <TColStd_HSequenceOfTransient.hxx>
 
 Interface_ShareTool::Interface_ShareTool (const Handle(Interface_InterfaceModel)& amodel,
-                                          const Interface_GeneralLib& lib)
+                                          const Interface_GeneralLib& lib) : theHGraph(new Interface_HGraph(amodel,lib))
 {
-  theHGraph = new Interface_HGraph(amodel,lib);
+  
 }
 
 Interface_ShareTool::Interface_ShareTool (const Handle(Interface_InterfaceModel)& amodel,
-                                          const Handle(Interface_GTool)& gtool)
+                                          const Handle(Interface_GTool)& gtool) : theHGraph(new Interface_HGraph(amodel,gtool))
 {
-  theHGraph = new Interface_HGraph(amodel,gtool);
+  
 }
 
 Interface_ShareTool::Interface_ShareTool (const Handle(Interface_InterfaceModel)& amodel,
-                                          const Handle(Interface_Protocol)& protocol)
+                                          const Handle(Interface_Protocol)& protocol) : theHGraph(new Interface_HGraph(amodel,protocol))
 {
-  theHGraph = new Interface_HGraph(amodel,protocol);
+  
 }
 
-Interface_ShareTool::Interface_ShareTool (const Handle(Interface_InterfaceModel)& amodel)
+Interface_ShareTool::Interface_ShareTool (const Handle(Interface_InterfaceModel)& amodel) : theHGraph(new Interface_HGraph(amodel))
 {
-  theHGraph = new Interface_HGraph(amodel);
+  
 }
 
-Interface_ShareTool::Interface_ShareTool (const Interface_Graph& agraph)
+Interface_ShareTool::Interface_ShareTool (const Interface_Graph& agraph) : theHGraph(new Interface_HGraph(agraph.Model()))
 {
-  theHGraph = new Interface_HGraph(agraph.Model());
+  
 }
 
-Interface_ShareTool::Interface_ShareTool (const Handle(Interface_HGraph)& ahgraph)
+Interface_ShareTool::Interface_ShareTool (const Handle(Interface_HGraph)& ahgraph) : theHGraph(ahgraph)
 {
-  theHGraph = ahgraph;
+  
 }
 
 //    Ajout des "Implied" sur toutes les Entites du Graphe
@@ -156,7 +156,7 @@ Interface_ShareTool::Interface_ShareTool (const Handle(Interface_HGraph)& ahgrap
 {
   Handle(Interface_InterfaceModel) model = Model();
   Interface_EntityIterator list;
-  Standard_Integer i, n0 = 0, nb = model->NbEntities();
+  Standard_Integer i = 0, n0 = 0, nb = model->NbEntities();
   Handle(TColStd_HArray1OfInteger) fl = new TColStd_HArray1OfInteger (0,nb);
   fl->Init(0);
   if (ent == model) {
@@ -202,7 +202,7 @@ void  Interface_ShareTool::Print (const Interface_EntityIterator& iter, Standard
 {
   S << " Nb.Entities : " << iter.NbEntities() << " : ";
   for (iter.Start(); iter.More(); iter.Next()) {
-    Handle(Standard_Transient) ent = iter.Value();
+    const Handle(Standard_Transient)& ent = iter.Value();
     S << " n0/id:"; 
     Model()->Print (ent, S);
   }

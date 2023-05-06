@@ -149,9 +149,9 @@ private:
 
 
 
-  Standard_Integer thenbitems;
-  Standard_Integer thenbwords;
-  Standard_Integer thenbflags;
+  Standard_Integer thenbitems{};
+  Standard_Integer thenbwords{};
+  Standard_Integer thenbflags{};
   Handle(TColStd_HArray1OfInteger) theflags;
   Handle(TColStd_HSequenceOfAsciiString) thenames;
 

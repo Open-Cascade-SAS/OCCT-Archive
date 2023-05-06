@@ -22,10 +22,10 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_ScrewPairWithRange, StepKinematics_Scr
 //function : StepKinematics_ScrewPairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_ScrewPairWithRange::StepKinematics_ScrewPairWithRange ()
+StepKinematics_ScrewPairWithRange::StepKinematics_ScrewPairWithRange () : defLowerLimitActualRotation(Standard_False), defUpperLimitActualRotation(Standard_False)
 {
-  defLowerLimitActualRotation = Standard_False;
-  defUpperLimitActualRotation = Standard_False;
+  
+  
 }
 
 //=======================================================================

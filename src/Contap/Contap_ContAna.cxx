@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Contap_ContAna.hxx>
 #include <gp_Cone.hxx>
 #include <gp_Cylinder.hxx>
@@ -163,7 +165,7 @@ void Contap_ContAna::Perform (const gp_Cylinder& C,
     // and sinus to the solutions are obtained.
 
     prm = Sqrt(norm1 - Coefcst*Coefcst);
-    Standard_Real cost0,sint0,cost1,sint1;
+    Standard_Real cost0 = NAN,sint0 = NAN,cost1 = NAN,sint1 = NAN;
 
     cost0 = (Coefcos*Coefcst - Coefsin*prm)/norm1;
     cost1 = (Coefcos*Coefcst + Coefsin*prm)/norm1;
@@ -252,7 +254,7 @@ void Contap_ContAna::Perform (const gp_Cone& C,
     // and sinus to the solutions are obtained.
 
     prm = Sqrt(norm1 - Coefcst*Coefcst);
-    Standard_Real cost0,sint0,cost1,sint1;
+    Standard_Real cost0 = NAN,sint0 = NAN,cost1 = NAN,sint1 = NAN;
 
     cost0 = (Coefcos*Coefcst - Coefsin*prm)/norm1;
     cost1 = (Coefcos*Coefcst + Coefsin*prm)/norm1;
@@ -314,7 +316,7 @@ void Contap_ContAna::Perform (const gp_Cone& C,
     // and sinus to the solutions are obtained.
 
     prm = Sqrt(norm1 - Coefcst*Coefcst);
-    Standard_Real cost0,sint0,cost1,sint1;
+    Standard_Real cost0 = NAN,sint0 = NAN,cost1 = NAN,sint1 = NAN;
 
     cost0 = (Coefcos*Coefcst - Coefsin*prm)/norm1;
     cost1 = (Coefcos*Coefcst + Coefsin*prm)/norm1;
@@ -346,7 +348,7 @@ void Contap_ContAna::Perform (const gp_Cone& C,
     pt4 = pt3;
 
     prm = Sqrt(norm1 - Coefcst*Coefcst);
-    Standard_Real cost0,sint0,cost1,sint1;
+    Standard_Real cost0 = NAN,sint0 = NAN,cost1 = NAN,sint1 = NAN;
 
     cost0 = (Coefcos*Coefcst - Coefsin*prm)/norm1;
     cost1 = (Coefcos*Coefcst + Coefsin*prm)/norm1;
@@ -416,7 +418,7 @@ void Contap_ContAna::Perform (const gp_Cone& C,
     // and sinus to the solutions are obtained.
 
     prm = Sqrt(norm1 - Coefcst*Coefcst);
-    Standard_Real cost0,sint0,cost1,sint1;
+    Standard_Real cost0 = NAN,sint0 = NAN,cost1 = NAN,sint1 = NAN;
 
     cost0 = (Coefcos*Coefcst - Coefsin*prm)/norm1;
     cost1 = (Coefcos*Coefcst + Coefsin*prm)/norm1;

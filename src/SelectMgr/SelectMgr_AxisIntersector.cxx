@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <SelectMgr_AxisIntersector.hxx>
 
 #include <BVH_Tools.hxx>
@@ -230,7 +232,7 @@ Standard_Boolean SelectMgr_AxisIntersector::OverlapsBox (const SelectMgr_Vec3& t
     "Error! SelectMgr_AxisIntersector::OverlapsBox() should be called after selection axis initialization");
 
   (void )theInside;
-  Standard_Real aTimeEnter, aTimeLeave;
+  Standard_Real aTimeEnter = NAN, aTimeLeave = NAN;
   if (!hasIntersection (theBoxMin, theBoxMax, aTimeEnter, aTimeLeave))
   {
     return Standard_False;
@@ -254,7 +256,7 @@ Standard_Boolean SelectMgr_AxisIntersector::OverlapsBox (const SelectMgr_Vec3& t
   Standard_ASSERT_RAISE(mySelectionType == SelectMgr_SelectionType_Point,
     "Error! SelectMgr_AxisIntersector::OverlapsBox() should be called after selection axis initialization");
 
-  Standard_Real aTimeEnter, aTimeLeave;
+  Standard_Real aTimeEnter = NAN, aTimeLeave = NAN;
   if (!hasIntersection (theBoxMin, theBoxMax, aTimeEnter, aTimeLeave))
   {
     return Standard_False;

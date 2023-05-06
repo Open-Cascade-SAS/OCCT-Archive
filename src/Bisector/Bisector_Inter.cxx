@@ -16,6 +16,8 @@
 
 //  Modified by skv - Mon May  5 15:06:39 2003 OCC616
 
+#include <math.h>
+
 #include <Bisector_Bisec.hxx>
 #include <Bisector_BisecAna.hxx>
 #include <Bisector_BisecCC.hxx>
@@ -106,8 +108,8 @@ void Bisector_Inter::Perform(const Bisector_Bisec&  C1,
   IntRes2d_Domain*       SD2   = new IntRes2d_Domain [Bis2->NbIntervals()+1];
 
   Standard_Integer NB1 = 0; Standard_Integer NB2 = 0;
-  Standard_Real    MinDomain,MaxDomain;
-  Standard_Real    UMin,UMax;
+  Standard_Real    MinDomain = NAN,MaxDomain = NAN;
+  Standard_Real    UMin = NAN,UMax = NAN;
   gp_Pnt2d         PMin,PMax;
 
   //------------------------------------------------------
@@ -124,7 +126,7 @@ void Bisector_Inter::Perform(const Bisector_Bisec&  C1,
   // continuity taking account of D1
   //----------------------------------------------------------
 //for (Standard_Integer IB1 = 1; IB1 <= Bis1->NbIntervals(); IB1++) {
-  Standard_Integer IB1;
+  Standard_Integer IB1 = 0;
   for ( IB1 = 1; IB1 <= Bis1->NbIntervals(); IB1++) {
     UMin = Bis1->IntervalFirst(IB1);
     UMax = Bis1->IntervalLast (IB1);
@@ -164,7 +166,7 @@ void Bisector_Inter::Perform(const Bisector_Bisec&  C1,
   // continuity taking account of D2
   //----------------------------------------------------------
 //for (Standard_Integer IB2 = 1; IB2 <= Bis2->NbIntervals(); IB2++) {
-  Standard_Integer IB2;
+  Standard_Integer IB2 = 0;
   for ( IB2 = 1; IB2 <= Bis2->NbIntervals(); IB2++) {
     UMin = Bis2->IntervalFirst(IB2);
     UMax = Bis2->IntervalLast  (IB2);
@@ -217,8 +219,8 @@ void Bisector_Inter::SinglePerform(const Handle(Geom2d_Curve)&    CBis1,
 				   const Standard_Real            Tol,
 				   const Standard_Boolean         ComunElement) 
 {
-  Handle(Geom2d_Curve)   Bis1 = CBis1;
-  Handle(Geom2d_Curve)   Bis2 = CBis2;
+  const Handle(Geom2d_Curve)&   Bis1 = CBis1;
+  const Handle(Geom2d_Curve)&   Bis2 = CBis2;
 
   Handle(Standard_Type)  Type1 = Bis1->DynamicType();
   Handle(Standard_Type)  Type2 = Bis2->DynamicType();
@@ -322,7 +324,7 @@ void Bisector_Inter::NeighbourPerform(const Handle(Bisector_BisecCC)&  Bis1,
 				      const IntRes2d_Domain&           D2,
 				      const Standard_Real              Tol)
 {
-  Standard_Real USol,U1,U2,Dist;
+  Standard_Real USol = NAN,U1 = NAN,U2 = NAN,Dist = NAN;
   Standard_Real UMin =0.,UMax =0.;  
   Standard_Real Eps = Precision::PConfusion();
   gp_Pnt2d PSol;

@@ -14,6 +14,8 @@
 
 //JCV 16/10/91
 
+#include <math.h>
+
 #include <Convert_SphereToBSplineSurface.hxx>
 #include <gp.hxx>
 #include <gp_Sphere.hxx>
@@ -38,7 +40,7 @@ static void ComputePoles ( const Standard_Real R,
   Standard_Real deltaU = U2 - U1;
   Standard_Real deltaV = V2 - V1;
 
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
 
   // Number of spans : maximum opening = 150 degrees ( = PI / 1.2 rds)
   Standard_Integer 
@@ -107,7 +109,7 @@ Convert_SphereToBSplineSurface::Convert_SphereToBSplineSurface
   isuperiodic = Standard_False;
   isvperiodic = Standard_False;
 
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   // construction of the sphere in the reference mark xOy.
 
   // Number of spans : maximum opening = 150 degrees ( = PI / 1.2 rds)
@@ -141,7 +143,7 @@ Convert_SphereToBSplineSurface::Convert_SphereToBSplineSurface
 
   // Replace the bspline in the reference of the sphere.
   // and calculate the weight of the bspline.
-  Standard_Real W1, W2;
+  Standard_Real W1 = NAN, W2 = NAN;
   gp_Trsf Trsf;
   Trsf.SetTransformation( Sph.Position(), gp::XOY());
 
@@ -180,15 +182,15 @@ Convert_SphereToBSplineSurface::Convert_SphereToBSplineSurface
   Standard_DomainError_Raise_if( (delta>2*M_PI) || (delta<0.),
 				"Convert_SphereToBSplineSurface");
 
-  Standard_Integer i, j;
-  Standard_Real deltaU, deltaV;
+  Standard_Integer i = 0, j = 0;
+  Standard_Real deltaU = NAN, deltaV = NAN;
 
   isuperiodic = !UTrim;
   isvperiodic = Standard_False;
 
   Standard_Real R = Sph.Radius();
   
-  Standard_Real W1, W2, CosU, CosV;
+  Standard_Real W1 = NAN, W2 = NAN, CosU = NAN, CosV = NAN;
   
   if ( isuperiodic) {
     ComputePoles(R, 0., 2.*M_PI, Param1, Param2, poles);
@@ -276,8 +278,8 @@ Convert_SphereToBSplineSurface::Convert_SphereToBSplineSurface
   isuperiodic = Standard_True;
   isvperiodic = Standard_False;
 
-  Standard_Real W1, W2;
-  Standard_Integer i, j;
+  Standard_Real W1 = NAN, W2 = NAN;
+  Standard_Integer i = 0, j = 0;
 
   nbUPoles = 6;
   nbVPoles = 5;

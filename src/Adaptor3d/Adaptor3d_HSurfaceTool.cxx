@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Adaptor3d_HSurfaceTool.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -102,7 +104,7 @@ Standard_Boolean Adaptor3d_HSurfaceTool::IsSurfG1(const Handle(Adaptor3d_Surface
                                                   const Standard_Boolean theAlongU,
                                                   const Standard_Real theAngTol)
 {
-  Standard_Real aUf, aUl, aVf, aVl;
+  Standard_Real aUf = NAN, aUl = NAN, aVf = NAN, aVl = NAN;
   aUf = theSurf->FirstUParameter();
   aUl = theSurf->LastUParameter();
   aVf = theSurf->FirstVParameter();

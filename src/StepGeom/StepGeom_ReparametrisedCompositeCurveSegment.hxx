@@ -57,7 +57,7 @@ protected:
 private:
 
 
-  Standard_Real paramLength;
+  Standard_Real paramLength{};
 
 
 };

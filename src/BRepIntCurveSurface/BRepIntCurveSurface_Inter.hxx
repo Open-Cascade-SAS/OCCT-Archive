@@ -132,17 +132,17 @@ private:
 
 
 
-  Standard_Real myTolerance;
+  Standard_Real myTolerance{};
   Handle(GeomAdaptor_Curve) myCurve;
   IntCurveSurface_HInter myIntcs;
-  Standard_Integer myCurrentindex;
-  Standard_Integer myCurrentnbpoints;
+  Standard_Integer myCurrentindex{};
+  Standard_Integer myCurrentnbpoints{};
   Handle(BRepTopAdaptor_TopolTool) myFastClass;
   TopAbs_State myCurrentstate;
-  Standard_Real myCurrentU;
-  Standard_Real myCurrentV;
+  Standard_Real myCurrentU{};
+  Standard_Real myCurrentV{};
   Bnd_Box myCurveBox;
-  Standard_Integer myIndFace;
+  Standard_Integer myIndFace{};
   TopTools_SequenceOfShape myFaces;
   Handle(Bnd_HArray1OfBox) myFaceBoxes;
 

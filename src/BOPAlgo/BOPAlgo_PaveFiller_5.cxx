@@ -16,6 +16,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <Bnd_Tools.hxx>
 #include <BOPAlgo_PaveFiller.hxx>
@@ -67,7 +69,7 @@ class BOPAlgo_EdgeFace :
     myIE(-1), myIF(-1) {
   };
   //
-  virtual ~BOPAlgo_EdgeFace(){
+  ~BOPAlgo_EdgeFace() override{
   };
   //
   void SetIndices(const Standard_Integer nE,
@@ -109,7 +111,7 @@ class BOPAlgo_EdgeFace :
     myBox2 = theBox2;
   }
   //
-  virtual void Perform() {
+  void Perform() override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (UserBreak(aPS))
     {
@@ -179,7 +181,7 @@ void BOPAlgo_PaveFiller::PerformEF(const Message_ProgressRange& theRange)
     return; 
   }
   //
-  Standard_Integer nE, nF;
+  Standard_Integer nE = 0, nF = 0;
   //
   if (myGlue == BOPAlgo_GlueFull) {
     // there is no need to intersect edges with faces in this mode
@@ -193,12 +195,12 @@ void BOPAlgo_PaveFiller::PerformEF(const Message_ProgressRange& theRange)
     return;
   }
   //
-  Standard_Boolean bV[2], bIsPBSplittable;
-  Standard_Boolean bV1, bV2, bExpressCompute;
-  Standard_Integer nV1, nV2;
-  Standard_Integer i, aNbCPrts, iX, nV[2];
-  Standard_Integer aNbEdgeFace, k;
-  Standard_Real aTolE, aTolF, aTS1, aTS2, aT1, aT2;
+  Standard_Boolean bV[2], bIsPBSplittable = 0;
+  Standard_Boolean bV1 = 0, bV2 = 0, bExpressCompute = 0;
+  Standard_Integer nV1 = 0, nV2 = 0;
+  Standard_Integer i = 0, aNbCPrts = 0, iX = 0, nV[2];
+  Standard_Integer aNbEdgeFace = 0, k = 0;
+  Standard_Real aTolE = NAN, aTolF = NAN, aTS1 = NAN, aTS2 = NAN, aT1 = NAN, aT2 = NAN;
   Handle(NCollection_BaseAllocator) aAllocator;
   TopAbs_ShapeEnum aType;
   BOPDS_ListIteratorOfListOfPaveBlock aIt;
@@ -388,8 +390,8 @@ void BOPAlgo_PaveFiller::PerformEF(const Message_ProgressRange& theRange)
       switch (aType) {
         case TopAbs_VERTEX: {
           Standard_Boolean bIsOnPave[2];
-          Standard_Integer j;
-          Standard_Real aT, aTolToDecide; 
+          Standard_Integer j = 0;
+          Standard_Real aT = NAN, aTolToDecide = NAN; 
           TopoDS_Vertex aVnew;
           //
           IntTools_Tools::VertexParameter(aCPart, aT);
@@ -573,8 +575,8 @@ Standard_Boolean BOPAlgo_PaveFiller::CheckFacePaves
    const TColStd_MapOfInteger& aMIFOn,
    const TColStd_MapOfInteger& aMIFIn)
 {
-  Standard_Boolean bRet;
-  Standard_Integer nV;
+  Standard_Boolean bRet = 0;
+  Standard_Integer nV = 0;
   TColStd_MapIteratorOfMapOfInteger aIt;
   //
   bRet=Standard_False;
@@ -606,8 +608,8 @@ Standard_Boolean BOPAlgo_PaveFiller::CheckFacePaves
   (const TopoDS_Vertex& aVnew,
    const TColStd_MapOfInteger& aMIF)
 {
-  Standard_Boolean bRet;
-  Standard_Integer nV, iFlag;
+  Standard_Boolean bRet = 0;
+  Standard_Integer nV = 0, iFlag = 0;
   TColStd_MapIteratorOfMapOfInteger aIt;
   //
   bRet=Standard_True;
@@ -632,9 +634,9 @@ Standard_Boolean BOPAlgo_PaveFiller::ForceInterfVF
   (const Standard_Integer nV, 
    const Standard_Integer nF)
 {
-  Standard_Boolean bRet;
-  Standard_Integer iFlag, nVx;
-  Standard_Real U, V, aTolVNew;
+  Standard_Boolean bRet = 0;
+  Standard_Integer iFlag = 0, nVx = 0;
+  Standard_Real U = NAN, V = NAN, aTolVNew = NAN;
   //
   bRet = Standard_False;
   const TopoDS_Vertex& aV = *(TopoDS_Vertex*)&myDS->Shape(nV);
@@ -705,8 +707,8 @@ void BOPAlgo_PaveFiller::ReduceIntersectionRange(const Standard_Integer theV1,
     return;
   }
   //
-  Standard_Integer i, nV, nE1, nE2;
-  Standard_Real aTR1, aTR2;
+  Standard_Integer i = 0, nV = 0, nE1 = 0, nE2 = 0;
+  Standard_Real aTR1 = NAN, aTR2 = NAN;
   //
   // get face's edges to check that E/E contains the edge from the face
   TColStd_MapOfInteger aMFE;
@@ -844,9 +846,9 @@ void BOPAlgo_PaveFiller::ForceInterfEF(const BOPDS_IndexedMapOfPaveBlock& theMPB
       return;
     }
 
-    Standard_Real f, l;
+    Standard_Real f = NAN, l = NAN;
     Bnd_Box aPBBox;
-    Standard_Boolean isSplit;
+    Standard_Boolean isSplit = 0;
     aPB->ShrunkData(f, l, aPBBox, isSplit);
 
     aBBTree.Add(aPBMap.Add(aPB), Bnd_Tools::Bnd2BVH(aPBBox));
@@ -931,14 +933,14 @@ void BOPAlgo_PaveFiller::ForceInterfEF(const BOPDS_IndexedMapOfPaveBlock& theMPB
         continue;
 
       // Check if the face contains both vertices of the pave block
-      Standard_Integer nV1, nV2;
+      Standard_Integer nV1 = 0, nV2 = 0;
       aPB->Indices(nV1, nV2);
       if (!aMVF.Contains(nV1) || !aMVF.Contains(nV2))
         // Face does not contain the vertices
         continue;
 
       // Get the edge
-      Standard_Integer nE;
+      Standard_Integer nE = 0;
       if (!aPB->HasEdge(nE))
       {
         nE = aPB->OriginalEdge();
@@ -962,7 +964,7 @@ void BOPAlgo_PaveFiller::ForceInterfEF(const BOPDS_IndexedMapOfPaveBlock& theMPB
 
       Standard_Real aTS[2];
       Bnd_Box aPBBox;
-      Standard_Boolean isSplit;
+      Standard_Boolean isSplit = 0;
       aPB->ShrunkData(aTS[0], aTS[1], aPBBox, isSplit);
 
       // Middle point
@@ -991,7 +993,7 @@ void BOPAlgo_PaveFiller::ForceInterfEF(const BOPDS_IndexedMapOfPaveBlock& theMPB
       if (aProjPS.LowerDistance() > aTolCheck + myFuzzyValue)
         continue;
 
-      Standard_Real U, V;
+      Standard_Real U = NAN, V = NAN;
       aProjPS.LowerDistanceParameters(U, V);
       if (!myContext->IsPointInFace(aF, gp_Pnt2d(U, V)))
         continue;
@@ -1119,7 +1121,7 @@ void BOPAlgo_PaveFiller::ForceInterfEF(const BOPDS_IndexedMapOfPaveBlock& theMPB
     if (aCP.Type() != TopAbs_EDGE)
       continue;
 
-    Standard_Integer nE, nF;
+    Standard_Integer nE = 0, nF = 0;
     anEdgeFace.Indices(nE, nF);
     if (theAddInterf)
     {

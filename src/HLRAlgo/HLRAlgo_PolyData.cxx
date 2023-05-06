@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <HLRAlgo_PolyData.hxx>
 
 #include <HLRAlgo_EdgeStatus.hxx>
@@ -66,8 +68,8 @@ void HLRAlgo_PolyData::HPHDat(const Handle(HLRAlgo_HArray1OfPHDat)& HPHDat)
 void
 HLRAlgo_PolyData::UpdateGlobalMinMax (Box& theBox)
 {
-  Standard_Integer i;
-  Standard_Real X1,X2,X3,Y1,Y2,Y3,Z1,Z2,Z3;
+  Standard_Integer i = 0;
+  Standard_Real X1 = NAN,X2 = NAN,X3 = NAN,Y1 = NAN,Y2 = NAN,Y3 = NAN,Z1 = NAN,Z2 = NAN,Z3 = NAN;
   const TColgp_Array1OfXYZ& Nodes = myHNodes->Array1();
   HLRAlgo_Array1OfTData&    TData = myHTData->ChangeArray1();
   Standard_Integer          nbT   = TData.Upper();
@@ -125,12 +127,12 @@ void HLRAlgo_PolyData::HideByPolyData (const HLRAlgo_BiPoint::PointsT& thePoints
       ((theIndices.MaxSeg - myFaceIndices.Min) & 0x80100000) == 0) {
     HLRAlgo_Array1OfPHDat& PHDat = myHPHDat->ChangeArray1();
     const HLRAlgo_Array1OfTData& TData = myHTData->Array1();
-    Standard_Real d1,d2;
+    Standard_Real d1 = NAN,d2 = NAN;
     Standard_Boolean NotConnex    = Standard_False;
     Standard_Boolean isCrossing   = Standard_False;
     Standard_Boolean toHideBefore = Standard_False;
     Standard_Integer TFlag = 0;
-    Standard_Integer h,h2 = PHDat.Upper();
+    Standard_Integer h = 0,h2 = PHDat.Upper();
     HLRAlgo_PolyHidingData* PH = &(PHDat(1));
     
     for (h = 1; h <= h2; h++) {
@@ -709,7 +711,7 @@ void HLRAlgo_PolyData::hideByOneTriangle (const HLRAlgo_BiPoint::PointsT& thePoi
     }
   }
 
-  Standard_Boolean total;
+  Standard_Boolean total = 0;
   if (psta > 0) total = psta < theTriangle.TolParam;
   else          total = psta > -theTriangle.TolParam;
   if (total) {

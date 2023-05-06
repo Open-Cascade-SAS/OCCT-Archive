@@ -21,6 +21,7 @@
 
 #ifndef _WIN32
 
+#include <math.h>
 #include <sys/times.h>
 #include <unistd.h>
 
@@ -58,7 +59,7 @@ void OSD_Chronometer::GetProcessCPU (Standard_Real& theUserSeconds,
   static const long aCLK_TCK = CLK_TCK;
 #endif
 
-  tms aCurrentTMS;
+  tms aCurrentTMS{};
   times (&aCurrentTMS);
 
   theUserSeconds   = (Standard_Real)aCurrentTMS.tms_utime / aCLK_TCK;
@@ -84,7 +85,7 @@ void OSD_Chronometer::GetThreadCPU (Standard_Real& theUserSeconds,
   }
 #elif (defined(_POSIX_TIMERS) && defined(_POSIX_THREAD_CPUTIME)) || defined(__ANDROID__) || defined(__QNX__)
   // on Linux, only user times are available for threads via clock_gettime()
-  struct timespec t;
+  struct timespec t{};
   if (!clock_gettime (CLOCK_THREAD_CPUTIME_ID, &t))
   {
     theUserSeconds = t.tv_sec + 0.000000001 * t.tv_nsec;
@@ -226,7 +227,7 @@ void OSD_Chronometer::Stop()
 {
   if (!myIsStopped)
   {
-    Standard_Real Curr_user, Curr_sys;
+    Standard_Real Curr_user = NAN, Curr_sys = NAN;
     if (myIsThreadOnly)
       GetThreadCPU (Curr_user, Curr_sys);
     else
@@ -292,7 +293,7 @@ void OSD_Chronometer::Show (Standard_Real& theUserSec, Standard_Real& theSystemS
     return;
   }
 
-  Standard_Real aCurrUser, aCurrSys;
+  Standard_Real aCurrUser = NAN, aCurrSys = NAN;
   if (myIsThreadOnly)
     GetThreadCPU  (aCurrUser, aCurrSys);
   else

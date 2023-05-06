@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomLProp.hxx>
 
 #include <Geom_BSplineCurve.hxx>
@@ -68,13 +70,13 @@ GeomAbs_Shape GeomLProp::Continuity(const Handle(Geom_Curve)& C1,
 				    const Standard_Real ta)
 {
   GeomAbs_Shape cont = GeomAbs_C0;
-  Standard_Integer index1,
-    index2 ;
-  Standard_Real  tolerance ;
+  Standard_Integer index1 = 0,
+    index2 = 0 ;
+  Standard_Real  tolerance = NAN ;
   Standard_Boolean fini = Standard_False;
   gp_Vec d1,d2;
   gp_Dir dir1,dir2;
-  Standard_Integer cont1, cont2 ;
+  Standard_Integer cont1 = 0, cont2 = 0 ;
   GeomAbs_Shape gcont1 = C1->Continuity(), gcont2 = C2->Continuity();
   cont1 = GeomAbsToInteger(gcont1) ;
   cont2 = GeomAbsToInteger(gcont2) ;

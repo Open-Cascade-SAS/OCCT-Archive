@@ -28,9 +28,9 @@ IMPLEMENT_STANDARD_RTTIEXT(Express_NamedType, Express_Type)
 // purpose  :
 //=======================================================================
 
-Express_NamedType::Express_NamedType (const Standard_CString theName)
+Express_NamedType::Express_NamedType (const Standard_CString theName) : myName(new TCollection_HAsciiString (theName))
 {
-  myName = new TCollection_HAsciiString (theName);
+  
 }
 
 //=======================================================================
@@ -38,9 +38,9 @@ Express_NamedType::Express_NamedType (const Standard_CString theName)
 // purpose  :
 //=======================================================================
 
-Express_NamedType::Express_NamedType (const Handle(TCollection_HAsciiString)& theName)
+Express_NamedType::Express_NamedType (const Handle(TCollection_HAsciiString)& theName) : myName(theName)
 {
-  myName = theName;
+  
 }
 
 //=======================================================================

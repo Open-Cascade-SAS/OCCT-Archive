@@ -81,7 +81,7 @@ private:
 
   Handle(TCollection_HAsciiString) myName;
   Handle(TCollection_HAsciiString) myDescription;
-  Standard_Real myDensity;
+  Standard_Real myDensity{};
   Handle(TCollection_HAsciiString) myDensName;
   Handle(TCollection_HAsciiString) myDensValType;
 

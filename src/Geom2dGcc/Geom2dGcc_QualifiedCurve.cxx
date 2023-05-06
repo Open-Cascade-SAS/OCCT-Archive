@@ -17,9 +17,9 @@
 
 Geom2dGcc_QualifiedCurve::
    Geom2dGcc_QualifiedCurve (const Geom2dAdaptor_Curve& Curve    ,
-			     const GccEnt_Position      Qualifier) {
-   TheQualified = Curve;
-   TheQualifier = Qualifier;
+			     const GccEnt_Position      Qualifier) : TheQualified(Curve), TheQualifier(Qualifier) {
+   
+   
  }
 
 Geom2dAdaptor_Curve Geom2dGcc_QualifiedCurve::

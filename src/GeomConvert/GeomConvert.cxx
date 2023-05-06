@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomConvert.hxx>
 
 #include <Convert_CircleToBSplineCurve.hxx>
@@ -76,7 +78,7 @@ static Handle(Geom_BSplineCurve) BSplineCurveBuilder
   TColStd_Array1OfReal    Weights (1, NbPoles);
   TColStd_Array1OfReal    Knots   (1, NbKnots);
   TColStd_Array1OfInteger Mults   (1, NbKnots);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   gp_Pnt2d P2d;
   gp_Pnt   P3d;
   for (i = 1; i <= NbPoles; i++) {
@@ -482,11 +484,11 @@ public:
   GeomConvert_law_evaluator (const Handle(Geom2d_BSplineCurve)& theAncore)
   : myAncore (theAncore) {}
 
-  virtual void Evaluate (const Standard_Integer theDerivativeRequest,
+  void Evaluate (const Standard_Integer theDerivativeRequest,
                          const Standard_Real*   theStartEnd,
                          const Standard_Real    theParameter,
                          Standard_Real&         theResult,
-                         Standard_Integer&      theErrorCode) const
+                         Standard_Integer&      theErrorCode) const override
   {
     theErrorCode = 0;
     if (!myAncore.IsNull() &&
@@ -528,11 +530,11 @@ static Handle(Geom_BSplineCurve) MultNumandDenom(const Handle(Geom2d_BSplineCurv
   Handle(Geom_BSplineCurve)          res;
   Handle(TColStd_HArray1OfReal)      resKnots;
   Handle(TColStd_HArray1OfInteger)   resMults; 
-  Standard_Real                      start_value,end_value;
+  Standard_Real                      start_value = NAN,end_value = NAN;
   Standard_Real                      tolerance=Precision::PConfusion();
-  Standard_Integer                   resNbPoles,degree,
-                                     ii,jj,
-				     aStatus;
+  Standard_Integer                   resNbPoles = 0,degree = 0,
+                                     ii = 0,jj = 0,
+				     aStatus = 0;
   
   BS->Knots(BSKnots);            //storage of the two BSpline 
   BS->Multiplicities(BSMults);   //features
@@ -598,8 +600,8 @@ static Handle(Geom_BSplineCurve) MultNumandDenom(const Handle(Geom2d_BSplineCurv
 
 static void Pretreatment(TColGeom_Array1OfBSplineCurve& tab)
 
-{Standard_Integer i,j;
- Standard_Real a;
+{Standard_Integer i = 0,j = 0;
+ Standard_Real a = NAN;
 
  for (i=0;i<=(tab.Length()-1);i++){
    if (tab(i)->IsRational()) {
@@ -652,7 +654,7 @@ static Standard_Boolean NeedToBeTreated(const Handle(Geom_BSplineCurve)& BS)
 
 static Standard_Boolean Need2DegRepara(const TColGeom_Array1OfBSplineCurve& tab)
 
-{Standard_Integer        i;
+{Standard_Integer        i = 0;
  gp_Vec                  Vec1,Vec2;
  gp_Pnt                  Pint;
  Standard_Real           Rapport=1.0e0;
@@ -697,7 +699,7 @@ static void ReorderArrayOfG1Curves(TColGeom_Array1OfBSplineCurve&    ArrayOfCurv
 			   const Standard_Integer            StartIndex,
 			   const Standard_Real               ClosedTolerance)
 
-{Standard_Integer i;
+{Standard_Integer i = 0;
  TColGeom_Array1OfBSplineCurve  ArraybisOfCurves(0,ArrayOfCurves.Length()-1);  //temporary
  TColStd_Array1OfReal           ArraybisOfToler(0,ArrayOfToler.Length()-1);    //arrays
  TColStd_Array1OfBoolean        tabbisG1(0,tabG1.Length()-1);
@@ -749,11 +751,11 @@ public:
     memcpy (myPolynomialCoefficient, thePolynomialCoefficient, sizeof(myPolynomialCoefficient));
   }
 
-  virtual void Evaluate (const Standard_Integer theDerivativeRequest,
+  void Evaluate (const Standard_Integer theDerivativeRequest,
                          const Standard_Real*   /*theStartEnd*/,
                          const Standard_Real    theParameter,
                          Standard_Real&         theResult,
-                         Standard_Integer&      theErrorCode) const
+                         Standard_Integer&      theErrorCode) const override
   {
     theErrorCode = 0;
     PLib::EvalPolynomial (theParameter,
@@ -766,7 +768,7 @@ public:
 
 private:
 
-  Standard_Real myPolynomialCoefficient[3];
+  Standard_Real myPolynomialCoefficient[3]{};
 
 };
 
@@ -784,11 +786,11 @@ private:
 {Standard_Integer             nb_curve=ArrayOfCurves.Length(),
                               nb_vertexG1=0,
                               nb_group=0,
-                              index=0,i,ii,j,jj,
-                              indexmin,
+                              index=0,i = 0,ii = 0,j = 0,jj = 0,
+                              indexmin = 0,
                               nb_vertex_group0=0;
- Standard_Real                lambda,                      //G1 coefficient
-                              First;
+ Standard_Real                lambda = NAN,                      //G1 coefficient
+                              First = NAN;
  Standard_Real PreLast = 0.;
  GeomAbs_Shape                Cont;
  gp_Vec                       Vec1,Vec2;                   //concecutive tangential vectors 
@@ -842,7 +844,7 @@ private:
  }
 
  ArrayOfConcatenated = new TColGeom_HArray1OfBSplineCurve(0,nb_group-1);
- Standard_Boolean       fusion;
+ Standard_Boolean       fusion = 0;
 
  index=0;
  Pretreatment(ArrayOfCurves);
@@ -876,7 +878,7 @@ private:
        Curve1->D1(Curve1->LastParameter(),Pint,Vec2);
        ArrayOfCurves(0)->D1(ArrayOfCurves(0)->FirstParameter(),Pint,Vec1);
        Standard_Real lambda2=Vec1.Magnitude()/Vec2.Magnitude();
-       Standard_Real tmax,a,b,c,
+       Standard_Real tmax = NAN,a = NAN,b = NAN,c = NAN,
        umin=Curve1->FirstParameter(),umax=Curve1->LastParameter();
        tmax=2*lambda*(umax-umin)/(1+lambda*lambda2);
        a=(lambda*lambda2-1)/(2*lambda*tmax);
@@ -904,7 +906,7 @@ private:
        
        BSplCLib::KnotSequence(KnotC1,KnotC1Mults,FlatKnots);
        TColgp_Array1OfPnt  NewPoles(1,FlatKnots.Length()-(2*Curve1->Degree()+1));
-       Standard_Integer      aStatus;
+       Standard_Integer      aStatus = 0;
        TColStd_Array1OfReal Curve1Weights(1,Curve1->NbPoles());
        Curve1->Weights(Curve1Weights);
        for (ii=1;ii<=Curve1->NbPoles();ii++)
@@ -1009,13 +1011,13 @@ void  GeomConvert::ConcatC1(TColGeom_Array1OfBSplineCurve&           ArrayOfCurv
 			    const Standard_Real                      AngularTolerance)
 
 {Standard_Integer             nb_curve=ArrayOfCurves.Length(),
-                              nb_vertexG1,
+                              nb_vertexG1 = 0,
                               nb_group=0,
-                              index=0,i,ii,j,jj,
-                              indexmin,
+                              index=0,i = 0,ii = 0,j = 0,jj = 0,
+                              indexmin = 0,
                               nb_vertex_group0=0;
- Standard_Real                lambda,                      //G1 coefficient
-                              First;
+ Standard_Real                lambda = NAN,                      //G1 coefficient
+                              First = NAN;
  Standard_Real PreLast = 0.;
 
  GeomAbs_Shape                Cont;
@@ -1077,7 +1079,7 @@ void  GeomConvert::ConcatC1(TColGeom_Array1OfBSplineCurve&           ArrayOfCurv
  ArrayOfConcatenated = 
    new TColGeom_HArray1OfBSplineCurve(0,nb_group-1);
 
- Standard_Boolean       fusion;
+ Standard_Boolean       fusion = 0;
  Standard_Integer       k=0;
  index=0;
  Pretreatment(ArrayOfCurves);
@@ -1119,7 +1121,7 @@ void  GeomConvert::ConcatC1(TColGeom_Array1OfBSplineCurve&           ArrayOfCurv
 	 Curve1->D1(Curve1->LastParameter(),Pint,Vec2);
 	 ArrayOfCurves(0)->D1(ArrayOfCurves(0)->FirstParameter(),Pint,Vec1);
 	 Standard_Real lambda2=Vec1.Magnitude()/Vec2.Magnitude();
-	 Standard_Real tmax,a,b,c,
+	 Standard_Real tmax = NAN,a = NAN,b = NAN,c = NAN,
 	 umin=Curve1->FirstParameter(),umax=Curve1->LastParameter();
 	 tmax=2*lambda*(umax-umin)/(1+lambda*lambda2);
 	 a=(lambda*lambda2-1)/(2*lambda*tmax);
@@ -1147,7 +1149,7 @@ void  GeomConvert::ConcatC1(TColGeom_Array1OfBSplineCurve&           ArrayOfCurv
 	 
 	 BSplCLib::KnotSequence(KnotC1,KnotC1Mults,FlatKnots);
 	 TColgp_Array1OfPnt  NewPoles(1,FlatKnots.Length()-(2*Curve1->Degree()+1));
-	 Standard_Integer      aStatus;
+	 Standard_Integer      aStatus = 0;
 	 TColStd_Array1OfReal Curve1Weights(1,Curve1->NbPoles());
 	 Curve1->Weights(Curve1Weights);
 	 for (ii=1;ii<=Curve1->NbPoles();ii++)
@@ -1248,7 +1250,7 @@ void GeomConvert::C0BSplineToC1BSplineCurve(Handle(Geom_BSplineCurve)& BS,
 					    const Standard_Real AngularTol)
 
 {
-  Standard_Boolean fusion;
+  Standard_Boolean fusion = 0;
   Handle(TColGeom_HArray1OfBSplineCurve) ArrayOfConcatenated; 
   //the array with the resulting curves
     
@@ -1257,7 +1259,7 @@ void GeomConvert::C0BSplineToC1BSplineCurve(Handle(Geom_BSplineCurve)& BS,
     
   GeomConvert_CompCurveToBSplineCurve C (ArrayOfConcatenated->Value(0));
   if (ArrayOfConcatenated->Length()>=2){
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i=1;i<ArrayOfConcatenated->Length();i++){
       fusion=C.Add(ArrayOfConcatenated->Value(i),tolerance);
       if (fusion==Standard_False)
@@ -1296,8 +1298,8 @@ void GeomConvert::C0BSplineToArrayOfC1BSplineCurve(
 
 {TColStd_Array1OfInteger          BSMults(1,BS->NbKnots());
  TColStd_Array1OfReal             BSKnots(1,BS->NbKnots());
- Standard_Integer                 i,j,nbcurveC1=1;
- Standard_Real                    U1,U2;
+ Standard_Integer                 i = 0,j = 0,nbcurveC1=1;
+ Standard_Real                    U1 = NAN,U2 = NAN;
  Standard_Boolean                 closed_flag= Standard_False ;
  gp_Pnt                           point;
  gp_Vec                           V1,V2;

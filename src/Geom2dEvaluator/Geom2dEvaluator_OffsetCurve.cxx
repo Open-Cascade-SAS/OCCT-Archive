@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Geom2dEvaluator_OffsetCurve.hxx>
 #include <Geom2dEvaluator.hxx>
 #include <Geom2dAdaptor_Curve.hxx>
@@ -211,8 +213,8 @@ Standard_Boolean Geom2dEvaluator_OffsetCurve::AdjustDerivative(
   static const Standard_Integer aMaxDerivOrder = 3;
 
   Standard_Boolean isDirectionChange = Standard_False;
-  Standard_Real anUinfium;
-  Standard_Real anUsupremum;
+  Standard_Real anUinfium = NAN;
+  Standard_Real anUsupremum = NAN;
   if (!myBaseAdaptor.IsNull())
   {
     anUinfium = myBaseAdaptor->FirstParameter();
@@ -225,7 +227,7 @@ Standard_Boolean Geom2dEvaluator_OffsetCurve::AdjustDerivative(
   }
 
   static const Standard_Real DivisionFactor = 1.e-3;
-  Standard_Real du;
+  Standard_Real du = NAN;
   if ((anUsupremum >= RealLast()) || (anUinfium <= RealFirst()))
     du = 0.0;
   else
@@ -242,7 +244,7 @@ Standard_Boolean Geom2dEvaluator_OffsetCurve::AdjustDerivative(
     V = BaseDN(theU, ++anIndex);
   } while ((V.SquareMagnitude() <= aTol) && anIndex < aMaxDerivOrder);
 
-  Standard_Real u;
+  Standard_Real u = NAN;
 
   if (theU - anUinfium < aDelta)
     u = theU + aDelta;

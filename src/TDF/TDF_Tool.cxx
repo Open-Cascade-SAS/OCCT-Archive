@@ -172,7 +172,7 @@ static Standard_Boolean TDF_Tool_DescendantRef
 	   attMItr.More(); attMItr.Next()) {
 	// CLE
 	// const Handle(TDF_Attribute)& att = attMItr.Key();
-	Handle(TDF_Attribute) att = attMItr.Key();
+	const Handle(TDF_Attribute)& att = attMItr.Key();
         if (!att.IsNull() && !att->Label().IsNull())
         {
 	  // ENDCLE
@@ -242,7 +242,7 @@ static void TDF_Tool_OutReferers(const TDF_Label& aRefLabel,
 	 attMItr.More(); attMItr.Next()) {
       // CLE
       // const Handle(TDF_Attribute)& att = attMItr.Key();
-      Handle(TDF_Attribute) att = attMItr.Key();
+      const Handle(TDF_Attribute)& att = attMItr.Key();
       // ENDCLE
       if (aFilterForReferences.IsKept(att) &&
           !att->Label().IsNull() &&
@@ -316,7 +316,7 @@ static void TDF_Tool_OutReferences(const TDF_Label& aRefLabel,
     itr.Value()->References(ds);
     const TDF_AttributeMap& attMap = ds->Attributes();
     for (TDF_MapIteratorOfAttributeMap attMItr(attMap);attMItr.More();attMItr.Next()) {
-      Handle(TDF_Attribute) att = attMItr.Key();
+      const Handle(TDF_Attribute)& att = attMItr.Key();
       if (aFilterForReferences.IsKept(att) &&
           !att->Label().IsNull() &&
           !att->Label().IsDescendant(aRefLabel))
@@ -650,7 +650,7 @@ void TDF_Tool::ExtendedDeepDump
   anOS<<std::endl<<"Extended dump of filtered attribute(s):"<<std::endl;
   Standard_Integer nba = 0;
   TCollection_AsciiString entry;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   for ( i = 1; i<= map.Extent(); ++i) {
     const Handle(TDF_Attribute)& att = map.FindKey(i);
     if (aFilter.IsKept(att)) {

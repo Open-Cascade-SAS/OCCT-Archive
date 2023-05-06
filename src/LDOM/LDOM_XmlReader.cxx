@@ -90,7 +90,7 @@ LDOM_XmlReader::RecordType LDOM_XmlReader::ReadRecord (Standard_IStream& theIStr
   theData.Clear();
   myError.Clear();
   ParserState aState = STATE_WAITING;
-  const char * aStartData = NULL, * aNameEnd = NULL, * aPtr;
+  const char * aStartData = NULL, * aNameEnd = NULL, * aPtr = nullptr;
   LDOMBasicString anAttrName, anAttrValue;
   char anAttDelimiter = '\0';
   Standard_Boolean aHasRead = Standard_False;
@@ -129,7 +129,7 @@ LDOM_XmlReader::RecordType LDOM_XmlReader::ReadRecord (Standard_IStream& theIStr
 
         // Read the full buffer and reset start and end buffer pointers
         myPtr    = &myBuffer[0];
-        Standard_Size aNBytes;
+        Standard_Size aNBytes = 0;
 
         if (myTagPerStep)
         {
@@ -578,7 +578,7 @@ attr_name:
             ePtr = strchr (aDataString, '\0');
           }
 
-          Standard_Integer aDataLen;
+          Standard_Integer aDataLen = 0;
           aDataString = LDOM_CharReference::Decode (aDataString, aDataLen);
           if (IsDigit(aDataString[0])) {
             if (getInteger (anAttrValue, aDataString, ePtr))
@@ -635,7 +635,7 @@ static Standard_Boolean isName (const char  * aString,
                                 const char  * aStringEnd,
                                 const char  *& aNameEnd)
 {
-  Standard_Boolean aResult;
+  Standard_Boolean aResult = 0;
   char aCh = aString[0];
   if (IsAlphabetic(aCh) || aCh == '_' || aCh == ':') {
     const char * aPtr = &aString[1];
@@ -692,7 +692,7 @@ Standard_Boolean LDOM_XmlReader::getInteger (LDOMBasicString&    theValue,
                                              const char          * theStart,
                                              const char          * theEnd)
 {
-  char * ptr;
+  char * ptr = nullptr;
   errno = 0;
   if (theEnd - theStart == 1 || theStart[0] != '0')
   {

@@ -16,6 +16,8 @@
 
 //    gka 30.04.99 S4137: extended for all types of surfaces
 
+#include <math.h>
+
 #include <Geom_BezierSurface.hxx>
 #include <Geom_OffsetSurface.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
@@ -68,7 +70,7 @@ void ShapeUpgrade_SplitSurface::Init(const Handle(Geom_Surface)& S)
   myResSurfaces = new ShapeExtend_CompositeSurface();
   myNbResultingRow =1;
   myNbResultingCol =1;
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   mySurface->Bounds(U1,U2,V1,V2);
 
   myUSplitValues->Append(U1);
@@ -100,14 +102,14 @@ void ShapeUpgrade_SplitSurface::Init(const Handle(Geom_Surface)& S,
 
   myArea = theArea;
 
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   mySurface->Bounds(U1,U2,V1,V2);
   Standard_Real precision = Precision::PConfusion();
   if ( mySurface->IsUPeriodic() && 
        ULast - UFirst <= U2 - U1 + precision ) { U1 = UFirst; U2 = U1 + mySurface->UPeriod(); }
   if ( mySurface->IsVPeriodic() && 
        VLast - VFirst <= V2 - V1 + precision ) { V1 = VFirst; V2 = V1 + mySurface->VPeriod(); }
-  Standard_Real UF,UL,VF,VL;
+  Standard_Real UF = NAN,UL = NAN,VF = NAN,VL = NAN;
   if( UFirst > U2-precision || 
       ULast  < U1-precision ) {
     UF =U1; UL = U2;
@@ -225,7 +227,7 @@ void ShapeUpgrade_SplitSurface::Build(const Standard_Boolean Segment)
   if(myUSplitValues->Length() > 2 || myVSplitValues->Length() > 2)
     myStatus = ShapeExtend::EncodeStatus (ShapeExtend_DONE1);
   
-  Standard_Real U1,U2,V1,V2;
+  Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
   mySurface->Bounds(U1, U2, V1, V2);
   if (mySurface->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution))) {      
     Handle(Geom_SurfaceOfRevolution) Surface = Handle(Geom_SurfaceOfRevolution)::DownCast(mySurface);
@@ -242,7 +244,7 @@ void ShapeUpgrade_SplitSurface::Build(const Standard_Boolean Segment)
       for(Standard_Integer nc =1; nc <= myNbResultingCol; nc++) {
 	Handle(Geom_SurfaceOfRevolution) NewSurfaceRev = 
 	  new Geom_SurfaceOfRevolution(spc.GetCurves()->Value(nc),Surface->Axis()); 
-	Standard_Real U1p,U2p,V1p,V2p;
+	Standard_Real U1p = NAN,U2p = NAN,V1p = NAN,V2p = NAN;
 	NewSurfaceRev->Bounds(U1p,U2p,V1p,V2p);
 	for(Standard_Integer nc1 =1; nc1 <= myNbResultingRow; nc1++) { 
 	  Handle(Geom_RectangularTrimmedSurface) NewSurf = 
@@ -295,7 +297,7 @@ void ShapeUpgrade_SplitSurface::Build(const Standard_Boolean Segment)
       for(Standard_Integer nc1 =1; nc1 <= myNbResultingRow; nc1++) {
 	Handle(Geom_SurfaceOfLinearExtrusion) NewSurfaceEx = new Geom_SurfaceOfLinearExtrusion(spc.GetCurves()->Value(nc1),
 											       Surface->Direction()); 
-	Standard_Real U1p,U2p,V1p,V2p;
+	Standard_Real U1p = NAN,U2p = NAN,V1p = NAN,V2p = NAN;
 	NewSurfaceEx->Bounds(U1p,U2p,V1p,V2p);
 	for(Standard_Integer nc2 =1; nc2 <= myNbResultingCol; nc2++) {
 	  Handle(Geom_RectangularTrimmedSurface) NewSurf = new Geom_RectangularTrimmedSurface
@@ -489,7 +491,7 @@ void ShapeUpgrade_SplitSurface::Build(const Standard_Boolean Segment)
   }
   Standard_Integer nbU =  myUSplitValues->Length();
   TColStd_Array1OfReal UJoints(1,nbU);
-  Standard_Integer i;//svv Jan 10 2000 : porting on DEC
+  Standard_Integer i = 0;//svv Jan 10 2000 : porting on DEC
   for(i = 1; i <= nbU; i++)
     UJoints(i) = myUSplitValues->Value(i);
   

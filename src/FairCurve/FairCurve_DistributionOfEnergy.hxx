@@ -57,7 +57,7 @@ protected:
   Handle(TColgp_HArray1OfPnt2d) MyPoles;
   Standard_Integer MyDerivativeOrder;
   Standard_Integer MyNbVar;
-  Standard_Integer MyNbEqua;
+  Standard_Integer MyNbEqua{};
   Standard_Integer MyNbValAux;
 
 

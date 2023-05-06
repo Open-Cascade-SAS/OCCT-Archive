@@ -59,8 +59,8 @@ protected:
 private:
 
 
-  Standard_Real visibleSegmentLength;
-  Standard_Real invisibleSegmentLength;
+  Standard_Real visibleSegmentLength{};
+  Standard_Real invisibleSegmentLength{};
 
 
 };

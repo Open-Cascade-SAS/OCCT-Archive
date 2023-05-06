@@ -35,7 +35,7 @@
 // de Geom
 //=============================================================================
 GeomToStep_MakeBoundedSurface::GeomToStep_MakeBoundedSurface
-  ( const Handle(Geom_BoundedSurface)& S)
+  ( const Handle(Geom_BoundedSurface)& S) : GeomToStep_Root()
 {
   done = Standard_True;
   if (S->IsKind(STANDARD_TYPE(Geom_BSplineSurface))) {

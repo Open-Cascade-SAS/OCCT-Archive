@@ -41,7 +41,7 @@ Handle(Standard_Transient) Plugin::Load (const Standard_GUID& aGUID,
   aGUID.ToCString(thePluginId);
   TCollection_AsciiString pid(thePluginId);
   static Plugin_MapOfFunctions theMapOfFunctions;
-  OSD_Function f;
+  OSD_Function f = nullptr;
 
   if(!theMapOfFunctions.IsBound(pid)) {
    

@@ -33,7 +33,7 @@ void RWStepBasic_RWDate::ReadStep
 
 	// --- own field : yearComponent ---
 
-	Standard_Integer aYearComponent;
+	Standard_Integer aYearComponent = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadInteger (num,1,"year_component",ach,aYearComponent);
 

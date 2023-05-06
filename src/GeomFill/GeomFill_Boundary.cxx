@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <GeomFill_Boundary.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
@@ -73,7 +75,7 @@ void GeomFill_Boundary::D1Norm(const Standard_Real , gp_Vec& , gp_Vec& ) const
 
 void GeomFill_Boundary::Points(gp_Pnt& PFirst, gp_Pnt& PLast) const
 {
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   Bounds(f,l);
   PFirst = Value(f);
   PLast  = Value(l);

@@ -182,7 +182,7 @@ Standard_Integer BRepMesh_BaseMeshAlgo::addLinkToMesh(
   const Standard_Integer   theLastNodeId,
   const TopAbs_Orientation theOrientation)
 {
-  Standard_Integer aLinkIndex;
+  Standard_Integer aLinkIndex = 0;
   if (theOrientation == TopAbs_REVERSED)
     aLinkIndex = myStructure->AddLink(BRepMesh_Edge(theLastNodeId, theFirstNodeId, BRepMesh_Frontier));
   else if (theOrientation == TopAbs_INTERNAL)

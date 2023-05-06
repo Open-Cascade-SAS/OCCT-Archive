@@ -302,8 +302,8 @@ private:
   Handle(TColGeom_HArray2OfSurface) myPatches;
   Handle(TColStd_HArray1OfReal) myUJointValues;
   Handle(TColStd_HArray1OfReal) myVJointValues;
-  Standard_Boolean myUClosed;
-  Standard_Boolean myVClosed;
+  Standard_Boolean myUClosed{};
+  Standard_Boolean myVClosed{};
 
 
 };

@@ -14,6 +14,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
@@ -61,7 +63,7 @@ Standard_Boolean ShapeFix_SplitTool::SplitEdge(const TopoDS_Edge& edge,
                                                const Standard_Real tol3d,
                                                const Standard_Real tol2d) const
 {
-  Standard_Real a, b;
+  Standard_Real a = NAN, b = NAN;
   ShapeAnalysis_Edge sae;
   Handle(Geom2d_Curve) c2d;
   sae.PCurve(edge,face,c2d,a,b,Standard_True );
@@ -71,7 +73,7 @@ Standard_Boolean ShapeFix_SplitTool::SplitEdge(const TopoDS_Edge& edge,
   gp_Pnt P1;
   TopLoc_Location L;
   if(BRep_Tool::SameParameter(edge)) {
-    Standard_Real f,l;
+    Standard_Real f = NAN,l = NAN;
     const Handle(Geom_Curve) c3d = BRep_Tool::Curve(edge,L,f,l);
     if(c3d.IsNull())
       return Standard_False;
@@ -95,7 +97,7 @@ Standard_Boolean ShapeFix_SplitTool::SplitEdge(const TopoDS_Edge& edge,
     new ShapeAnalysis_TransferParametersProj;
   transferParameters->SetMaxTolerance(tol3d);
   transferParameters->Init(edge,face);
-  Standard_Real first, last;
+  Standard_Real first = NAN, last = NAN;
   if (a < b ) {
     first = a; 
     last = b;
@@ -154,9 +156,9 @@ Standard_Boolean ShapeFix_SplitTool::SplitEdge(const TopoDS_Edge& edge,
   Standard_Real param = (param1+param2)/2;
   if(SplitEdge(edge,param,vert,face,newE1,newE2,tol3d,tol2d)) {
     // cut new edges by param1 and param2
-    Standard_Boolean IsCutLine;
+    Standard_Boolean IsCutLine = 0;
     Handle(Geom2d_Curve) Crv1, Crv2;
-    Standard_Real fp1,lp1,fp2,lp2;
+    Standard_Real fp1 = NAN,lp1 = NAN,fp2 = NAN,lp2 = NAN;
     ShapeAnalysis_Edge sae;
     if(sae.PCurve ( newE1, face, Crv1, fp1, lp1, Standard_False )) {
       if(sae.PCurve ( newE2, face, Crv2, fp2, lp2, Standard_False )) {
@@ -201,7 +203,7 @@ Standard_Boolean ShapeFix_SplitTool::CutEdge(const TopoDS_Edge &edge,
 {
   if( Abs(cut-pend)<10.*Precision::PConfusion() ) return Standard_False;
   Standard_Real aRange = Abs(cut-pend);
-  Standard_Real a, b;
+  Standard_Real a = NAN, b = NAN;
   BRep_Tool::Range(edge, a, b);
   iscutline = Standard_False;
   if( aRange<10.*Precision::PConfusion() ) return Standard_False;
@@ -210,7 +212,7 @@ Standard_Boolean ShapeFix_SplitTool::CutEdge(const TopoDS_Edge &edge,
   if( !BRep_Tool::SameParameter(edge) ) {
     ShapeAnalysis_Edge sae;
     Handle(Geom2d_Curve) Crv;
-    Standard_Real fp,lp;
+    Standard_Real fp = NAN,lp = NAN;
     if ( sae.PCurve(edge,face,Crv,fp,lp,Standard_False) ) {
       if(Crv->IsKind(STANDARD_TYPE(Geom2d_TrimmedCurve))) {
         Handle(Geom2d_TrimmedCurve) tc = Handle(Geom2d_TrimmedCurve)::DownCast(Crv);
@@ -291,7 +293,7 @@ Standard_Boolean ShapeFix_SplitTool::SplitEdge(const TopoDS_Edge& edge,
   aNum = 0;
   SeqE.Clear();
   BRep_Builder B;
-  Standard_Real a, b;
+  Standard_Real a = NAN, b = NAN;
   ShapeAnalysis_Edge sae;
   Handle(Geom2d_Curve) c2d;
   sae.PCurve(edge,face,c2d,a,b,Standard_True);
@@ -306,7 +308,7 @@ Standard_Boolean ShapeFix_SplitTool::SplitEdge(const TopoDS_Edge& edge,
   gp_Pnt PV1 = BRep_Tool::Pnt(V1);
   gp_Pnt PV2 = BRep_Tool::Pnt(V2);
 
-  Standard_Real par1,par2;
+  Standard_Real par1 = NAN,par2 = NAN;
   Standard_Boolean IsReverse = Standard_False;
   if( (b-a)*(lp-fp)>0 ) {
     par1 = fp;

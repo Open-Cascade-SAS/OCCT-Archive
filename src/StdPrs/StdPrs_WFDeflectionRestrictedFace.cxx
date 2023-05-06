@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_IsoCurve.hxx>
 #include <Bnd_Box2d.hxx>
 #include <GCPnts_QuasiUniformDeflection.hxx>
@@ -123,7 +125,7 @@ void StdPrs_WFDeflectionRestrictedFace::Add
 
   // update min max for the hatcher.
   gp_Pnt2d P1,P2;
-  Standard_Real U1, U2;
+  Standard_Real U1 = NAN, U2 = NAN;
   gp_Pnt dummypnt;
   Standard_Real ddefle= Max(UMax-UMin, VMax-VMin) * aDrawer->DeviationCoefficient();
   TColgp_SequenceOfPnt2d tabP;
@@ -401,9 +403,9 @@ Standard_Boolean StdPrs_WFDeflectionRestrictedFace::Match
    const Standard_Real aLimit = aDrawer->MaximalParameterValue();
 
   // compute bounds of the restriction
-  Standard_Real UMin,UMax,VMin,VMax;
-  Standard_Real u,v,step;
-  Standard_Integer i,nbPoints = 10;
+  Standard_Real UMin = NAN,UMax = NAN,VMin = NAN,VMax = NAN;
+  Standard_Real u = NAN,v = NAN,step = NAN;
+  Standard_Integer i = 0,nbPoints = 10;
   UMin = VMin = RealLast();
   UMax = VMax = RealFirst();
   

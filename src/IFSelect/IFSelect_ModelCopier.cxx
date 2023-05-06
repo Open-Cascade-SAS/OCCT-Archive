@@ -141,7 +141,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
     Handle(Interface_InterfaceModel) model;
     TCollection_AsciiString filename = eval.FileName();
     Standard_Integer dispnum = eval.DispatchRank();
-    Standard_Integer numod, nbmod;
+    Standard_Integer numod = 0, nbmod = 0;
     eval.PacketsInDispatch (numod,nbmod);
     Handle(IFSelect_AppliedModifiers) curapp;
     CopiedModel (G, WL,protocol, eval.PacketRoot(), filename,dispnum,numod, TC,
@@ -220,7 +220,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
     Handle(Interface_InterfaceModel) model;
     TCollection_AsciiString filename = eval.FileName();
     Standard_Integer dispnum = eval.DispatchRank();
-    Standard_Integer numod, nbmod;
+    Standard_Integer numod = 0, nbmod = 0;
     eval.PacketsInDispatch (numod,nbmod);
     Handle(IFSelect_AppliedModifiers) curapp;
     CopiedModel (G, WL,protocol, eval.PacketRoot(), filename,dispnum,numod, TC,
@@ -259,11 +259,11 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
   Interface_CheckIterator checks;
   checks.SetName ("X-STEP WorkSession : Send All");
   Message::SendInfo() << "** WorkSession : Sending all data"<<std::endl;
-  Handle(Interface_InterfaceModel)  model = G.Model();
+  const Handle(Interface_InterfaceModel)&  model = G.Model();
   if (model.IsNull() || protocol.IsNull() || WL.IsNull()) return checks;
 
   Interface_CopyTool TC (model, protocol);
-  Standard_Integer i, nb = model->NbEntities();
+  Standard_Integer i = 0, nb = model->NbEntities();
   for (i = 1; i <= nb; i ++)  TC.Bind (model->Value(i),model->Value(i));
 
   Interface_EntityIterator pipo;
@@ -298,7 +298,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
   Interface_CheckIterator checks;
   checks.SetName ("X-STEP WorkSession : Send Selected");
   Message::SendInfo() << "** WorkSession : Sending selected data"<<std::endl;
-  Handle(Interface_InterfaceModel)  original = G.Model();
+  const Handle(Interface_InterfaceModel)&  original = G.Model();
   if (original.IsNull() || protocol.IsNull() || WL.IsNull()) return checks;
   Handle(Interface_InterfaceModel) newmod  = original->NewEmptyModel();
   Interface_CopyTool TC (original, protocol);
@@ -309,7 +309,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
   for (list.Start(); list.More(); list.Next()) {
     newmod->AddWithRefs (list.Value(),lib);
   }
-  Standard_Integer i, nb = newmod->NbEntities();
+  Standard_Integer i = 0, nb = newmod->NbEntities();
   for (i = 1; i <= nb; i ++)  TC.Bind (newmod->Value(i),newmod->Value(i));
   if (theremain.IsNull())
     { theremain = new TColStd_HArray1OfInteger(0,G.Size()); theremain->Init(0); }
@@ -361,7 +361,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
 //                             et aussi : pas de Dispatch (envoi en bloc)
 
   applied.Nullify();
-  Handle(Interface_InterfaceModel) original = G.Model();
+  const Handle(Interface_InterfaceModel)& original = G.Model();
   if (dispnum > 0) {
     newmod  = original->NewEmptyModel();
     TC.Clear();
@@ -380,7 +380,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
 //  ...  Ensuite : On prend en compte les Model Modifiers  ...
   Standard_Integer nbmod = 0;
   if (!theshareout.IsNull()) nbmod = theshareout->NbModifiers(Standard_True);
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = 1; i <= nbmod; i ++) {
     Handle(IFSelect_Modifier) unmod = theshareout->ModelModifier(i);
 
@@ -441,7 +441,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
   (const Interface_Graph& G, const Handle(IFSelect_WorkLibrary)& WL,
    Interface_CopyTool& TC,   Handle(Interface_InterfaceModel)& newmod)
 {
-  Handle(Interface_InterfaceModel) original = G.Model();
+  const Handle(Interface_InterfaceModel)& original = G.Model();
 //  Interface_CopyTool TC(original,protocol);
   newmod  = original->NewEmptyModel();
   TC.Clear();

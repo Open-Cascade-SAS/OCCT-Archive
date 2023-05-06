@@ -45,11 +45,11 @@ AdvApp2Var_Framework::AdvApp2Var_Framework()
 
 AdvApp2Var_Framework::AdvApp2Var_Framework(const AdvApp2Var_SequenceOfNode& Frame,
 					   const AdvApp2Var_SequenceOfStrip& UFrontier,
-					   const AdvApp2Var_SequenceOfStrip& VFrontier)
+					   const AdvApp2Var_SequenceOfStrip& VFrontier) : myNodeConstraints(Frame), myUConstraints(UFrontier), myVConstraints(VFrontier)
 {
-  myNodeConstraints = Frame;
-  myUConstraints = UFrontier;
-  myVConstraints = VFrontier;
+  
+  
+  
 }
 
 //==========================================================================================
@@ -92,7 +92,7 @@ Standard_Integer AdvApp2Var_Framework::FirstNode(const GeomAbs_IsoType Type,
 						 const Standard_Integer IndexIso,
 						 const Standard_Integer IndexStrip) const 
 {
-  Standard_Integer NbIso,Index;
+  Standard_Integer NbIso = 0,Index = 0;
   NbIso = myUConstraints.Length()+1;
   if (Type==GeomAbs_IsoU) {
     Index = NbIso * (IndexStrip-1) + IndexIso;
@@ -113,7 +113,7 @@ Standard_Integer AdvApp2Var_Framework::LastNode(const GeomAbs_IsoType Type,
 					       const Standard_Integer IndexIso,
 					       const Standard_Integer IndexStrip) const 
 {
-  Standard_Integer NbIso,Index;
+  Standard_Integer NbIso = 0,Index = 0;
   NbIso = myUConstraints.Length()+1;
   if (Type==GeomAbs_IsoU) {
     Index = NbIso * IndexStrip + IndexIso;

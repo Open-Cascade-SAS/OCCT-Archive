@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_CircleTool.hxx>
 #include <BRepMesh_GeomTool.hxx>
 #include <gp_Circ2d.hxx>
@@ -147,7 +149,7 @@ Standard_Boolean BRepMesh_CircleTool::Bind(const Standard_Integer theIndex,
                                            const gp_XY&           thePoint3)
 {
   gp_XY aLocation;
-  Standard_Real aRadius;
+  Standard_Real aRadius = NAN;
   if (!MakeCircle(thePoint1, thePoint2, thePoint3, aLocation, aRadius))
     return Standard_False;
 

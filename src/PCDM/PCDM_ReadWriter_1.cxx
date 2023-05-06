@@ -52,7 +52,7 @@ IMPLEMENT_STANDARD_RTTIEXT(PCDM_ReadWriter_1,PCDM_ReadWriter)
 PCDM_ReadWriter_1::PCDM_ReadWriter_1() {}
 static Standard_Integer RemoveExtraSeparator(TCollection_AsciiString& aString) {
 
-  Standard_Integer i, j, len ;
+  Standard_Integer i = 0, j = 0, len = 0 ;
 
   len = aString.Length() ;
 #ifdef _WIN32
@@ -85,7 +85,7 @@ static TCollection_AsciiString AbsolutePath(
     return aRelFilePath ;
   
   TCollection_AsciiString DirPath = aDirPath, RelFilePath = aRelFilePath  ;
-  Standard_Integer i,len ;
+  Standard_Integer i = 0,len = 0 ;
   
 #ifdef _WIN32
   if(DirPath.Search(":") != 2 &&
@@ -226,7 +226,7 @@ void PCDM_ReadWriter_1::WriteVersion(const Handle(Storage_Data)& aData, const Ha
 Standard_Integer PCDM_ReadWriter_1::ReadReferenceCounter(const TCollection_ExtendedString& aFileName, const Handle(Message_Messenger)& theMsgDriver) const {
 
   Standard_Integer theReferencesCounter(0) ;
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   Handle(Storage_BaseDriver) theFileDriver;
   TCollection_AsciiString aFileNameU(aFileName);
   if(PCDM::FileDriverType(aFileNameU, theFileDriver) == PCDM_TOFD_Unknown)
@@ -278,9 +278,9 @@ void PCDM_ReadWriter_1::ReadReferences(const TCollection_ExtendedString& aFileNa
   
   ReadUserInfo(aFileName,START_REF,END_REF,ReadReferences, theMsgDriver);
 
-  Standard_Integer theReferenceIdentifier;
+  Standard_Integer theReferenceIdentifier = 0;
   TCollection_ExtendedString theFileName;
-  Standard_Integer theDocumentVersion;
+  Standard_Integer theDocumentVersion = 0;
 
   TCollection_AsciiString theAbsoluteDirectory=GetDirFromFile(aFileName);
 
@@ -337,7 +337,7 @@ void PCDM_ReadWriter_1::ReadUserInfo(const TCollection_ExtendedString& aFileName
                                      TColStd_SequenceOfExtendedString& theUserInfo,
                                      const Handle(Message_Messenger)&)
 {
-  Standard_Integer i ;
+  Standard_Integer i = 0 ;
   Handle(Storage_BaseDriver) theFileDriver;
   TCollection_AsciiString aFileNameU(aFileName);
   if(PCDM::FileDriverType(aFileNameU, theFileDriver) == PCDM_TOFD_Unknown)
@@ -389,7 +389,7 @@ Standard_Integer PCDM_ReadWriter_1::ReadDocumentVersion(const TCollection_Extend
     hd.Read (theFileDriver);
     const TColStd_SequenceOfAsciiString &refUserInfo = hd.UserInfo();
 
-    Standard_Integer i ;
+    Standard_Integer i = 0 ;
     for ( i =1; i<=  refUserInfo.Length() ; i++) {
       if(refUserInfo(i).Search(MODIFICATION_COUNTER) != -1) {
 	try { OCC_CATCH_SIGNALS theVersion=refUserInfo(i).Token(" ",2).IntegerValue();}

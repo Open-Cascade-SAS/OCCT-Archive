@@ -528,24 +528,24 @@ protected:
   Handle(ShapeExtend_WireData) myWire;
   TopoDS_Face myFace;
   Handle(ShapeAnalysis_Surface) mySurf;
-  Standard_Real myPrecision;
-  Standard_Real myMin3d;
-  Standard_Real myMin2d;
-  Standard_Real myMax3d;
-  Standard_Real myMax2d;
-  Standard_Integer myStatusOrder;
-  Standard_Integer myStatusConnected;
-  Standard_Integer myStatusEdgeCurves;
-  Standard_Integer myStatusDegenerated;
-  Standard_Integer myStatusClosed;
-  Standard_Integer myStatusSmall;
-  Standard_Integer myStatusSelfIntersection;
-  Standard_Integer myStatusLacking;
-  Standard_Integer myStatusGaps3d;
-  Standard_Integer myStatusGaps2d;
-  Standard_Integer myStatusCurveGaps;
-  Standard_Integer myStatusLoop;
-  Standard_Integer myStatus;
+  Standard_Real myPrecision{};
+  Standard_Real myMin3d{};
+  Standard_Real myMin2d{};
+  Standard_Real myMax3d{};
+  Standard_Real myMax2d{};
+  Standard_Integer myStatusOrder{};
+  Standard_Integer myStatusConnected{};
+  Standard_Integer myStatusEdgeCurves{};
+  Standard_Integer myStatusDegenerated{};
+  Standard_Integer myStatusClosed{};
+  Standard_Integer myStatusSmall{};
+  Standard_Integer myStatusSelfIntersection{};
+  Standard_Integer myStatusLacking{};
+  Standard_Integer myStatusGaps3d{};
+  Standard_Integer myStatusGaps2d{};
+  Standard_Integer myStatusCurveGaps{};
+  Standard_Integer myStatusLoop{};
+  Standard_Integer myStatus{};
 
 
 private:

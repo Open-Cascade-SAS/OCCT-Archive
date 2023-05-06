@@ -84,9 +84,9 @@ void  NCollection_BaseMap::Destroy (NCollection_DelMapNode fDel,
 {
   if (!IsEmpty()) 
   {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     NCollection_ListNode** data = (NCollection_ListNode**) myData1;
-    NCollection_ListNode *p,*q;
+    NCollection_ListNode *p = nullptr,*q = nullptr;
     for (i = 0; i <= NbBuckets(); i++) 
     {
       if (data[i]) 
@@ -129,9 +129,9 @@ void NCollection_BaseMap::Statistics(Standard_OStream& S) const
 
   // compute statistics on 1
   Standard_Integer * sizes = new Standard_Integer [mySize+1];
-  Standard_Integer i,l,nb;
-  NCollection_ListNode* p;
-  NCollection_ListNode** data;
+  Standard_Integer i = 0,l = 0,nb = 0;
+  NCollection_ListNode* p = nullptr;
+  NCollection_ListNode** data = nullptr;
   
   S << "\nStatistics for the first Key\n";
   for (i = 0; i <= mySize; i++) sizes[i] = 0;

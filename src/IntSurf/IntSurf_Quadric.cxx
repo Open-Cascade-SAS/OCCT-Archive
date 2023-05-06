@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <ElSLib.hxx>
 #include <gp_Cone.hxx>
@@ -32,52 +34,52 @@ IntSurf_Quadric::IntSurf_Quadric ():typ(GeomAbs_OtherSurface),
 }
 // ============================================================
 IntSurf_Quadric::IntSurf_Quadric (const gp_Pln& P):
-      ax3(P.Position()),typ(GeomAbs_Plane)
+      ax3(P.Position()),typ(GeomAbs_Plane), ax3direc(ax3.Direct())
 {
-  ax3direc = ax3.Direct();
+  
   P.Coefficients(prm1,prm2,prm3,prm4); 
 }
 // ============================================================
 IntSurf_Quadric::IntSurf_Quadric (const gp_Cylinder& C):
 
-       ax3(C.Position()),lin(ax3.Axis()),typ(GeomAbs_Cylinder)
+       ax3(C.Position()),lin(ax3.Axis()),typ(GeomAbs_Cylinder), ax3direc(ax3.Direct()), prm1(C.Radius())
 {
   prm2=prm3=prm4=0.0;
-  ax3direc=ax3.Direct();
-  prm1=C.Radius();
+  
+  
 }
 // ============================================================
 IntSurf_Quadric::IntSurf_Quadric (const gp_Sphere& S):
 
-       ax3(S.Position()),lin(ax3.Axis()),typ(GeomAbs_Sphere)
+       ax3(S.Position()),lin(ax3.Axis()),typ(GeomAbs_Sphere), ax3direc(ax3.Direct()), prm1(S.Radius())
 {
   prm2=prm3=prm4=0.0;
-  ax3direc = ax3.Direct();
-  prm1=S.Radius();
+  
+  
 }
 // ============================================================
 IntSurf_Quadric::IntSurf_Quadric (const gp_Cone& C):
 
-       ax3(C.Position()),typ(GeomAbs_Cone)
+       ax3(C.Position()),typ(GeomAbs_Cone), ax3direc(ax3.Direct()), prm1(C.RefRadius()), prm2(C.SemiAngle()), prm3(Cos(prm2)), prm4(0.0)
 {
-  ax3direc = ax3.Direct();
+  
   lin.SetPosition(ax3.Axis());
-  prm1 = C.RefRadius();
-  prm2 = C.SemiAngle();
-  prm3 = Cos(prm2);
-  prm4 = 0.0;
+  
+  
+  
+  
 }
 // ============================================================
 IntSurf_Quadric::IntSurf_Quadric (const gp_Torus& T):
 
-       ax3(T.Position()),typ(GeomAbs_Torus)
+       ax3(T.Position()),typ(GeomAbs_Torus), ax3direc(ax3.Direct()), prm1(T.MajorRadius()), prm2(T.MinorRadius()), prm3(0.0), prm4(0.0)
 {
-  ax3direc = ax3.Direct();
+  
   lin.SetPosition(ax3.Axis());
-  prm1 = T.MajorRadius();
-  prm2 = T.MinorRadius();
-  prm3 = 0.0;
-  prm4 = 0.0;
+  
+  
+  
+  
 }
 // ============================================================
 void IntSurf_Quadric::SetValue (const gp_Pln& P)
@@ -143,7 +145,7 @@ Standard_Real IntSurf_Quadric::Distance (const gp_Pnt& P) const {
   case GeomAbs_Cone:   // cone
     {
       Standard_Real dist = lin.Distance(P);
-      Standard_Real U,V;
+      Standard_Real U = NAN,V = NAN;
       ElSLib::ConeParameters(ax3,prm1,prm2,P,U,V);
       gp_Pnt Pp = ElSLib::ConeValue(U,V,ax3,prm1,prm2);
       Standard_Real distp = lin.Distance(Pp);
@@ -200,7 +202,7 @@ gp_Vec IntSurf_Quadric::Gradient (const gp_Pnt& P) const {
     break;
   case GeomAbs_Cone:   // cone
     {
-      Standard_Real U,V;
+      Standard_Real U = NAN,V = NAN;
       ElSLib::ConeParameters(ax3,prm1,prm2,P,U,V);
       gp_Pnt Pp = ElSLib::ConeValue(U,V,ax3,prm1,prm2);
       gp_Vec D1u,D1v;
@@ -273,7 +275,7 @@ void IntSurf_Quadric::ValAndGrad (const gp_Pnt& P,
   case GeomAbs_Cone:  
     {
       Standard_Real dist = lin.Distance(P);
-      Standard_Real U,V;
+      Standard_Real U = NAN,V = NAN;
       gp_Vec D1u,D1v;
       gp_Pnt Pp;
       ElSLib::ConeParameters(ax3,prm1,prm2,P,U,V);
@@ -473,7 +475,7 @@ gp_Vec IntSurf_Quadric::Normale (const gp_Pnt& P) const
     }
   case GeomAbs_Cone:   
     {
-      Standard_Real U,V;
+      Standard_Real U = NAN,V = NAN;
       ElSLib::ConeParameters(ax3,prm1,prm2,P,U,V);
       return Normale(U,V);
     }

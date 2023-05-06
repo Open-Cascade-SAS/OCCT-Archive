@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Draw_Appli.hxx>
 #include <Draw_Color.hxx>
 #include <Draw_ColorKind.hxx>
@@ -70,17 +72,17 @@ void Draw_Grid::DrawOn (Draw_Display& Out) const
 {
   if (!myIsActive) return ;
   
-  Standard_Integer xmin, xmax, ymin, ymax ;
-  Standard_Integer IndexX, IndexY ;
-  Standard_Real StepX, StepY ;
-  Standard_Integer MinIndexX, MaxIndexX, MinIndexY, MaxIndexY ;
-  Standard_Real Offset ;
-  Standard_Real zoom, Xmin, Xmax, Ymin, Ymax ;
+  Standard_Integer xmin = 0, xmax = 0, ymin = 0, ymax = 0 ;
+  Standard_Integer IndexX = 0, IndexY = 0 ;
+  Standard_Real StepX = NAN, StepY = NAN ;
+  Standard_Integer MinIndexX = 0, MaxIndexX = 0, MinIndexY = 0, MaxIndexY = 0 ;
+  Standard_Real Offset = NAN ;
+  Standard_Real zoom = NAN, Xmin = NAN, Xmax = NAN, Ymin = NAN, Ymax = NAN ;
   gp_Trsf T ;
   gp_Pnt Pnt1, Pnt2 ;
 
-  Standard_Integer IdtView ;
-  char *Type ;
+  Standard_Integer IdtView = 0 ;
+  char *Type = nullptr ;
 
   IdtView = Out.ViewId () ;
   if (!dout.HasView (IdtView)) return ;

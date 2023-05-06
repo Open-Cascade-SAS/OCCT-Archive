@@ -16,6 +16,8 @@
 
 // IFV 04.06.99 - PRO18974 - processing of INTERNAL shapes.
 
+#include <math.h>
+
 #include <BRepTools_Modification.hxx>
 #include <BRepTools_Modifier.hxx>
 #include <TColStd_ListOfTransient.hxx>
@@ -138,7 +140,7 @@ void BRepTools_Modifier::Perform(const Handle(BRepTools_Modification)& M,
   if (!myMutableInput)
     CreateOtherVertices(aMVE, aMEF, M);
 
-  Standard_Boolean aNewGeom;
+  Standard_Boolean aNewGeom = 0;
   Rebuild(myShape, M, aNewGeom, aPS.Next());
 
   if (!aPS.More())
@@ -251,7 +253,7 @@ Standard_Boolean BRepTools_Modifier::Rebuild
   Standard_Boolean rebuild = Standard_False, RevWires = Standard_False;
   TopAbs_Orientation ResOr = TopAbs_FORWARD;
   BRep_Builder B;
-  Standard_Real tol;
+  Standard_Real tol = NAN;
   Standard_Boolean No3DCurve = Standard_False; // en fait, si on n`a pas de 
   //modif geometry 3d , it is necessary to test the existence of a curve 3d.
 
@@ -454,7 +456,7 @@ Standard_Boolean BRepTools_Modifier::Rebuild
             aLocalResult.Orientation(TopAbs_FORWARD);
             TopoDS_Face CurF = TopoDS::Face(aLocalResult);
             Handle(Geom2d_Curve) curve2d1, currcurv;
-            Standard_Real f,l;
+            Standard_Real f = NAN,l = NAN;
             if ((!RevWires && fcor != edge.Orientation()) ||
               ( RevWires && fcor == edge.Orientation())) {
                 CurE.Orientation(TopAbs_FORWARD);
@@ -478,10 +480,10 @@ Standard_Boolean BRepTools_Modifier::Rebuild
           }
 
           TopLoc_Location theLoc;
-          Standard_Real theF,theL;
+          Standard_Real theF = NAN,theL = NAN;
           Handle(Geom_Curve) C3D = BRep_Tool::Curve(TopoDS::Edge(myMap(ex.Current())), theLoc, theF, theL);
           if (C3D.IsNull()) { // Update vertices
-            Standard_Real param;
+            Standard_Real param = NAN;
             TopExp_Explorer ex2(edge,TopAbs_VERTEX);
             while (ex2.More()) {
               const TopoDS_Vertex& vertex = TopoDS::Vertex(ex2.Current());
@@ -548,7 +550,7 @@ Standard_Boolean BRepTools_Modifier::Rebuild
 //    else if (ts == TopAbs_EDGE) {
     else if (ts == TopAbs_EDGE && !No3DCurve) {
       // Vertices
-      Standard_Real param;
+      Standard_Real param = NAN;
       const TopoDS_Edge& edge = TopoDS::Edge(S);
       TopAbs_Orientation edor = edge.Orientation();
       if(edor != TopAbs_REVERSED) edor = TopAbs_FORWARD;
@@ -599,7 +601,7 @@ Standard_Boolean BRepTools_Modifier::Rebuild
 
 void BRepTools_Modifier::CreateNewVertices( const TopTools_IndexedDataMapOfShapeListOfShape& theMVE, const Handle(BRepTools_Modification)& M)
 {
-  double aToler;
+  double aToler = NAN;
   BRep_Builder aBB;
   gp_Pnt aPnt;  
   for (int i = 1; i <= theMVE.Extent(); i++ )
@@ -625,7 +627,7 @@ void BRepTools_Modifier::FillNewCurveInfo(const TopTools_IndexedDataMapOfShapeLi
   Handle(Geom_Curve) aCurve;
   TopLoc_Location aLocation;
   BRepTools_Modifier::NewCurveInfo aNCinfo;
-  double aToler;
+  double aToler = NAN;
   for (int i = 1; i <= theMEF.Extent(); i++ )
   {
     const TopoDS_Edge& anE = TopoDS::Edge(theMEF.FindKey(i));
@@ -649,11 +651,11 @@ void BRepTools_Modifier::FillNewSurfaceInfo(const Handle(BRepTools_Modification)
   for (int i = 1; i <= aMF.Extent(); i++ )
   {
     const TopoDS_Face& aF = TopoDS::Face(aMF(i));
-    Standard_Boolean RevFace;
-    Standard_Boolean RevWires;
+    Standard_Boolean RevFace = 0;
+    Standard_Boolean RevWires = 0;
     Handle(Geom_Surface) aSurface;
     TopLoc_Location aLocation;
-    double aToler1;
+    double aToler1 = NAN;
     Standard_Boolean IsNewSur = M->NewSurface(aF, aSurface, aLocation, aToler1, RevWires,RevFace);
     if (IsNewSur)
     {
@@ -705,7 +707,7 @@ void BRepTools_Modifier::CreateOtherVertices(const TopTools_IndexedDataMapOfShap
                                              const TopTools_IndexedDataMapOfShapeListOfShape& theMEF, 
                                              const Handle(BRepTools_Modification)& M)
 {
-  double aToler;
+  double aToler = NAN;
   //The following logic in some ways repeats the logic from the Rebuild() method.
   //If the face with its subshapes is not going to be modified 
   //(i.e. NewSurface() for this face and NewCurve(), NewPoint() for its edges/vertices returns false)

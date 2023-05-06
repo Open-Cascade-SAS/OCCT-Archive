@@ -19,10 +19,10 @@
 #include <Expr_UnknownIterator.hxx>
 #include <Standard_NoMoreObject.hxx>
 
-Expr_UnknownIterator::Expr_UnknownIterator (const Handle(Expr_GeneralExpression)& exp)
+Expr_UnknownIterator::Expr_UnknownIterator (const Handle(Expr_GeneralExpression)& exp) : myCurrent(1)
 {
   Perform(exp);
-  myCurrent = 1;
+  
 }
 
 void Expr_UnknownIterator::Perform(const Handle(Expr_GeneralExpression)& exp)

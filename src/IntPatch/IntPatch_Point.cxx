@@ -21,6 +21,7 @@
 #include <IntSurf_PntOn2S.hxx>
 #include <IntSurf_Transition.hxx>
 
+#include <math.h>
 #include <stdio.h>
 void IntPatch_Point::SetValue (const gp_Pnt& Pt,
                                const Standard_Real Tol,
@@ -147,7 +148,7 @@ static void DumpTransition(const IntSurf_Transition& T)
 
 void IntPatch_Point::Dump() const { 
   std::cout<<"----------- IntPatch_Point : "<<std::endl;
-  Standard_Real u1,v1,u2,v2;
+  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
   pt.Parameters(u1,v1,u2,v2);
 
   printf("P(%+10.20f,%+10.20f,%+10.20f) UV1(%+10.20f,%+10.20f)  UV2(%+10.20f,%+10.20f) (Para:%+10.20f)\n",

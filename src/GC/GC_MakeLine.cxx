@@ -28,26 +28,26 @@
 //   Constructions of 3d geometrical elements from Geom.
 //=========================================================================
 GC_MakeLine::GC_MakeLine(const gp_Pnt& P ,
-			   const gp_Dir& V )
+			   const gp_Dir& V ) : GC_Root(), TheLine(new Geom_Line(P,V))
 {
   TheError = gce_Done;
-  TheLine = new Geom_Line(P,V);
+  
 }
 
-GC_MakeLine::GC_MakeLine(const gp_Ax1& A1 )
+GC_MakeLine::GC_MakeLine(const gp_Ax1& A1 ) : GC_Root(), TheLine(new Geom_Line(A1))
 {
   TheError = gce_Done;
-  TheLine = new Geom_Line(A1);
+  
 }
 
-GC_MakeLine::GC_MakeLine(const gp_Lin& L )
+GC_MakeLine::GC_MakeLine(const gp_Lin& L ) : GC_Root(), TheLine(new Geom_Line(L))
 {
   TheError = gce_Done;
-  TheLine = new Geom_Line(L);
+  
 }
 
 GC_MakeLine::GC_MakeLine(const gp_Pnt& P1 ,
-			   const gp_Pnt& P2 ) 
+			   const gp_Pnt& P2 ) : GC_Root() 
 {
   gce_MakeLin L(P1,P2);
   TheError = L.Status();
@@ -57,7 +57,7 @@ GC_MakeLine::GC_MakeLine(const gp_Pnt& P1 ,
 }
 
 GC_MakeLine::GC_MakeLine(const gp_Lin& Lin   ,
-			   const gp_Pnt& Point ) 
+			   const gp_Pnt& Point ) : GC_Root() 
 {
   gce_MakeLin L(Lin,Point);
   TheError = L.Status();

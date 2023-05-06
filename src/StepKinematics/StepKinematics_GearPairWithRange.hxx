@@ -69,8 +69,8 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_GearPairWithRange, StepKinematics_GearPair)
 
 private:
-  Standard_Real myLowerLimitActualRotation1; //!< optional
-  Standard_Real myUpperLimitActualRotation1; //!< optional
+  Standard_Real myLowerLimitActualRotation1{}; //!< optional
+  Standard_Real myUpperLimitActualRotation1{}; //!< optional
   Standard_Boolean defLowerLimitActualRotation1; //!< flag "is LowerLimitActualRotation1 defined"
   Standard_Boolean defUpperLimitActualRotation1; //!< flag "is UpperLimitActualRotation1 defined"
 

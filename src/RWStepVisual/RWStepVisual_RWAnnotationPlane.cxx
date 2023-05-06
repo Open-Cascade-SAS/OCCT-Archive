@@ -47,7 +47,7 @@ void RWStepVisual_RWAnnotationPlane::ReadStep
   // Inherited field : styles
   Handle(StepVisual_HArray1OfPresentationStyleAssignment) aStyles;
   Handle(StepVisual_PresentationStyleAssignment) anent2;
-  Standard_Integer nsub2;
+  Standard_Integer nsub2 = 0;
   if (data->ReadSubList (num,2,"styles",ach,nsub2)) {
     Standard_Integer nb2 = data->NbParams(nsub2);
     aStyles = new StepVisual_HArray1OfPresentationStyleAssignment (1, nb2);
@@ -65,7 +65,7 @@ void RWStepVisual_RWAnnotationPlane::ReadStep
   // Own field: elements
   Handle(StepVisual_HArray1OfAnnotationPlaneElement) anElements;
   StepVisual_AnnotationPlaneElement anEnt;
-  Standard_Integer nbSub;
+  Standard_Integer nbSub = 0;
   if (data->ReadSubList (num, 4, "elements", ach, nbSub)) {
     Standard_Integer nbElements = data->NbParams(nbSub);
     anElements = new StepVisual_HArray1OfAnnotationPlaneElement (1, nbElements);
@@ -123,7 +123,7 @@ void RWStepVisual_RWAnnotationPlane::Share(const Handle(StepVisual_AnnotationPla
   iter.GetOneItem(ent->Item());
     
   // Own field: contents
-  Standard_Integer i, nb = ent->NbElements();
+  Standard_Integer i = 0, nb = ent->NbElements();
   for (i = 1; i <= nb; i++)  
     iter.AddItem (ent->ElementsValue(i).Value());
 }

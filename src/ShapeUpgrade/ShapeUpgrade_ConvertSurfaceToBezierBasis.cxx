@@ -16,6 +16,8 @@
 
 //   svv  10.01.00 porting on DEC
 
+#include <math.h>
+
 #include <Geom_BezierCurve.hxx>
 #include <Geom_Curve.hxx>
 #include <Geom_OffsetCurve.hxx>
@@ -44,12 +46,12 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_ConvertSurfaceToBezierBasis,ShapeUpgrade_SplitSurface)
 
-ShapeUpgrade_ConvertSurfaceToBezierBasis::ShapeUpgrade_ConvertSurfaceToBezierBasis()
+ShapeUpgrade_ConvertSurfaceToBezierBasis::ShapeUpgrade_ConvertSurfaceToBezierBasis() : myPlaneMode(Standard_True), myRevolutionMode(Standard_True), myExtrusionMode(Standard_True), myBSplineMode(Standard_True)
 {
-  myPlaneMode      = Standard_True;
-  myRevolutionMode = Standard_True;
-  myExtrusionMode  = Standard_True;
-  myBSplineMode    = Standard_True;
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -60,7 +62,7 @@ ShapeUpgrade_ConvertSurfaceToBezierBasis::ShapeUpgrade_ConvertSurfaceToBezierBas
 void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Segment)
 {
   if(!Segment) {
-    Standard_Real UF,UL,VF,VL;
+    Standard_Real UF = NAN,UL = NAN,VF = NAN,VL = NAN;
     mySurface->Bounds(UF,UL,VF,VL);
     if(!Precision::IsInfinite(UF)) myUSplitValues->SetValue(1,UF);
     if(!Precision::IsInfinite(UL)) myUSplitValues->SetValue(myUSplitValues->Length(),UL);
@@ -148,7 +150,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Se
   } else if(mySurface->IsKind(STANDARD_TYPE(Geom_BSplineSurface))&&myBSplineMode) {
     Handle(Geom_BSplineSurface) bspline = Handle(Geom_BSplineSurface)::DownCast(mySurface);
     //pdn
-    Standard_Real u1,u2,v1,v2;
+    Standard_Real u1 = NAN,u2 = NAN,v1 = NAN,v2 = NAN;
     bspline->Bounds(u1,u2,v1,v2);
     GeomConvert_BSplineSurfaceToBezierSurface converter(bspline);//,UFirst,ULast,VFirst,VLast,precision;
     Standard_Integer nbUPatches = converter.NbUPatches();
@@ -165,7 +167,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Se
     converter.UKnots(UJoints);
     TColStd_SequenceOfReal UFilteredJoints;
     UFilteredJoints.Append(UJoints(1));
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for(i = 2; i <= nbUPatches+1; i++)
       if(UJoints(i)-UJoints(i-1) < precision) {
 	NbUFiltered++;
@@ -216,7 +218,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Se
     
     mySegments = new ShapeExtend_CompositeSurface(srf,uj,vj);
     
-    Standard_Integer j; // svv #1
+    Standard_Integer j = 0; // svv #1
     for(j = 2; j <= myUSplitValues->Length(); j++) {
       ULast =  myUSplitValues->Value(j);
       for(Standard_Integer ii = 2; ii <= nbUPatches+1; ii++) {
@@ -247,7 +249,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Se
       basis = tc->BasisCurve();
     }
     Handle(TColGeom_HArray1OfCurve) curves;
-    Standard_Integer nbCurves;
+    Standard_Integer nbCurves = 0;
     Handle(TColStd_HSequenceOfReal) vPar = new TColStd_HSequenceOfReal;
     Handle(TColStd_HSequenceOfReal) vSVal= new TColStd_HSequenceOfReal;
     if(basis->IsKind(STANDARD_TYPE(Geom_OffsetCurve))) {
@@ -288,9 +290,9 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Se
     
     gp_Ax1 axis = revol->Axis();
     Handle(TColGeom_HArray2OfSurface) surf = new TColGeom_HArray2OfSurface(1,1,1,nbCurves);
-    Standard_Real Umin,Umax,Vmin,Vmax;
+    Standard_Real Umin = NAN,Umax = NAN,Vmin = NAN,Vmax = NAN;
     mySurface->Bounds(Umin,Umax,Vmin,Vmax);
-    Standard_Integer i; // svv #1
+    Standard_Integer i = 0; // svv #1
     for(i = 1; i <= nbCurves; i++) {
       Handle(Geom_SurfaceOfRevolution) rev = new Geom_SurfaceOfRevolution(curves->Value(i),axis);
       if( UFirst-Umin < Precision::PConfusion() &&
@@ -326,7 +328,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Se
     //gp_Dir direction = extr->Direction(); // direction not used (skl)
     
     Handle(TColGeom_HArray1OfCurve) curves;
-    Standard_Integer nbCurves;
+    Standard_Integer nbCurves = 0;
     Handle(TColStd_HSequenceOfReal) uPar = new TColStd_HSequenceOfReal;
     Handle(TColStd_HSequenceOfReal) uSVal= new TColStd_HSequenceOfReal;
     ShapeUpgrade_ConvertCurve3dToBezier converter;
@@ -342,7 +344,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Se
     shiftL.SetTranslation(extr->Value(UFirst,0),extr->Value(UFirst,VLast));
     Handle(TColGeom_HArray2OfSurface) surf = new TColGeom_HArray2OfSurface(1,nbCurves,1,1);
     
-    Standard_Integer i; // svv #1
+    Standard_Integer i = 0; // svv #1
     for(i = 1; i <= nbCurves; i++) {
       Handle(Geom_BezierCurve) bez = Handle(Geom_BezierCurve)::DownCast(curves->Value(i));
       Standard_Integer nbPoles = bez->NbPoles();
@@ -384,7 +386,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Se
     TColStd_Array1OfReal VJoints(1,2);
     VJoints(1) = VFirst; VJoints(2) = VLast;
     Handle(TColGeom_HArray2OfSurface) surf = new TColGeom_HArray2OfSurface(1,1,1,1);
-    Standard_Real U1,U2,V1,V2;
+    Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
     mySurface->Bounds(U1,U2,V1,V2);
     Handle(Geom_Surface) S;
     if(U1-UFirst < precision && ULast - U2 < precision &&
@@ -406,7 +408,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Compute(const Standard_Boolean Se
 //purpose  : 
 //=======================================================================
 
-static Handle(Geom_Surface) GetSegment(const Handle(Geom_Surface) surf,
+static Handle(Geom_Surface) GetSegment(const Handle(Geom_Surface)& surf,
 				       const Standard_Real U1,
 				       const Standard_Real U2,
 				       const Standard_Real V1,
@@ -440,7 +442,7 @@ static Handle(Geom_Surface) GetSegment(const Handle(Geom_Surface) surf,
   
   if(S->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution))) {
     Handle(Geom_SurfaceOfRevolution) revol = Handle(Geom_SurfaceOfRevolution)::DownCast(S->Copy());
-    Standard_Real Umin,Umax,Vmin,Vmax;
+    Standard_Real Umin = NAN,Umax = NAN,Vmin = NAN,Vmax = NAN;
     revol->Bounds(Umin,Umax,Vmin,Vmax);
     Handle(Geom_Curve) basis = revol->BasisCurve();
     if(basis->IsKind(STANDARD_TYPE(Geom_OffsetCurve))) {
@@ -464,7 +466,7 @@ static Handle(Geom_Surface) GetSegment(const Handle(Geom_Surface) surf,
     return res;
   }
   else {
-    Standard_Real Umin,Umax,Vmin,Vmax;
+    Standard_Real Umin = NAN,Umax = NAN,Vmin = NAN,Vmax = NAN;
     surf->Bounds(Umin,Umax,Vmin,Vmax);
     if( U1-Umin < Precision::PConfusion() &&
         Umax-U2 < Precision::PConfusion() &&
@@ -523,7 +525,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Build(const Standard_Boolean /*Se
 	  break;
       
       Handle(Geom_Surface) patch = mySegments->Patch(j1-1,j2-1);
-      Standard_Real U1, U2, V1, V2;
+      Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN;
       patch->Bounds(U1,U2,V1,V2);
       //linear recomputation of part:
       Standard_Real uFirst = myUSplitParams->Value(j1-1);
@@ -549,7 +551,7 @@ void ShapeUpgrade_ConvertSurfaceToBezierBasis::Build(const Standard_Boolean /*Se
   }
   
   TColStd_Array1OfReal UJoints(1,nbU);
-  Standard_Integer i; // svv #1
+  Standard_Integer i = 0; // svv #1
   for(i = 1; i <= nbU; i++)
     UJoints(i) = myUSplitValues->Value(i);
   

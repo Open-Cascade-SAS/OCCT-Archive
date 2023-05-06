@@ -27,7 +27,7 @@
 
 GCE2d_MakeSegment::GCE2d_MakeSegment(const gp_Pnt2d& P1 ,
 				     const gp_Dir2d& V  ,
-				     const gp_Pnt2d& P2 ) 
+				     const gp_Pnt2d& P2 ) : GCE2d_Root() 
 {
   gp_Lin2d Line(P1,V);
   Standard_Real Ulast = ElCLib::Parameter(Line,P2);
@@ -40,7 +40,7 @@ GCE2d_MakeSegment::GCE2d_MakeSegment(const gp_Pnt2d& P1 ,
 }
 
 GCE2d_MakeSegment::GCE2d_MakeSegment(const gp_Pnt2d& P1 ,
-				     const gp_Pnt2d& P2 ) 
+				     const gp_Pnt2d& P2 ) : GCE2d_Root() 
 {
   Standard_Real dist = P1.Distance(P2);
   if (dist != 0.0) {
@@ -52,7 +52,7 @@ GCE2d_MakeSegment::GCE2d_MakeSegment(const gp_Pnt2d& P1 ,
 }
 GCE2d_MakeSegment::GCE2d_MakeSegment(const gp_Lin2d&     Line  ,
 				     const gp_Pnt2d&     Point ,
-				     const Standard_Real U     ) 
+				     const Standard_Real U     ) : GCE2d_Root() 
 {
   Standard_Real Ufirst = ElCLib::Parameter(Line,Point);
   Handle(Geom2d_Line) L = new Geom2d_Line(Line);
@@ -62,7 +62,7 @@ GCE2d_MakeSegment::GCE2d_MakeSegment(const gp_Lin2d&     Line  ,
 
 GCE2d_MakeSegment::GCE2d_MakeSegment(const gp_Lin2d& Line  ,
 				     const gp_Pnt2d& P1    ,
-				     const gp_Pnt2d& P2    ) 
+				     const gp_Pnt2d& P2    ) : GCE2d_Root() 
 {
   Standard_Real Ufirst = ElCLib::Parameter(Line,P1);
   Standard_Real Ulast = ElCLib::Parameter(Line,P2);
@@ -73,7 +73,7 @@ GCE2d_MakeSegment::GCE2d_MakeSegment(const gp_Lin2d& Line  ,
 
 GCE2d_MakeSegment::GCE2d_MakeSegment(const gp_Lin2d&     Line  ,
 				     const Standard_Real U1    ,
-				     const Standard_Real U2    ) 
+				     const Standard_Real U2    ) : GCE2d_Root() 
 {
   Handle(Geom2d_Line) L = new Geom2d_Line(Line);
   TheSegment = new Geom2d_TrimmedCurve(L,U1,U2,Standard_True);

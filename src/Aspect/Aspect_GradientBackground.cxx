@@ -16,23 +16,23 @@
 #include <Aspect_GradientBackground.hxx>
 
 
-Aspect_GradientBackground::Aspect_GradientBackground () {
+Aspect_GradientBackground::Aspect_GradientBackground () : MyGradientMethod(Aspect_GradientFillMethod_None) {
 
   Quantity_Color Black (Quantity_NOC_BLACK);
 
   SetColor( Black );
   MyColor2 = Black;
-  MyGradientMethod = Aspect_GradientFillMethod_None;
+  
 
 }
 
 Aspect_GradientBackground::Aspect_GradientBackground( const Quantity_Color& AColor1,
                                                       const Quantity_Color& AColor2,
-                                                      const Aspect_GradientFillMethod AMethod ) 
+                                                      const Aspect_GradientFillMethod AMethod ) : MyColor2(AColor2), MyGradientMethod(AMethod) 
 {
   SetColor( AColor1 );
-  MyColor2 = AColor2;
-  MyGradientMethod = AMethod;
+  
+  
 }
 
 

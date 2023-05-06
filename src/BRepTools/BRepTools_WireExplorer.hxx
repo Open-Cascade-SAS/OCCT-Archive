@@ -116,9 +116,9 @@ private:
   TopoDS_Vertex myVertex;
   TopoDS_Face myFace;
   TopTools_MapOfShape myDoubles;
-  Standard_Boolean myReverse;
-  Standard_Real myTolU;
-  Standard_Real myTolV;
+  Standard_Boolean myReverse{};
+  Standard_Real myTolU{};
+  Standard_Real myTolV{};
 
 
 };

@@ -173,8 +173,8 @@ void FSD_CmpFile::WriteExtendedLine(const TCollection_ExtendedString& buffer)
 
   myStream << (char)0 << "\n";
 #endif
-  Standard_ExtString extBuffer;
-  Standard_Integer   i;
+  Standard_ExtString extBuffer = nullptr;
+  Standard_Integer   i = 0;
 
   extBuffer = buffer.ToExtString();
   PutInteger(buffer.Length());
@@ -192,8 +192,8 @@ void FSD_CmpFile::WriteExtendedLine(const TCollection_ExtendedString& buffer)
 
 void FSD_CmpFile::ReadExtendedLine(TCollection_ExtendedString& buffer)
 {
-  Standard_ExtCharacter c;
-  Standard_Integer i;
+  Standard_ExtCharacter c = 0;
+  Standard_Integer i = 0;
 
   GetInteger(i);
 

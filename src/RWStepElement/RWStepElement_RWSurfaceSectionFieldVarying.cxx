@@ -59,7 +59,7 @@ void RWStepElement_RWSurfaceSectionFieldVarying::ReadStep (const Handle(StepData
     }
   }
 
-  Standard_Boolean aAdditionalNodeValues;
+  Standard_Boolean aAdditionalNodeValues = 0;
   data->ReadBoolean (num, 2, "additional_node_values", ach, aAdditionalNodeValues);
 
   // Initialize entity

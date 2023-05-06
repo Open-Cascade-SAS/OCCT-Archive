@@ -14,6 +14,8 @@
 //:r5 abv 06.04.99: ec_turbine-A.stp, #4313: protect against null curve
 //    abv 09.04.99  S4136: add parameter preci (to eliminate BRepAPI::Precision)
 
+#include <math.h>
+
 #include <ShapeFix_EdgeProjAux.hxx>
 
 #include <Adaptor3d_CurveOnSurface.hxx>
@@ -239,7 +241,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
   gp_Pnt Pt1,Pt2;
   // pdn 28.12.98: r_39-db.stp #605: use ends of 3d curve instead of vertices 
   ShapeAnalysis_Edge sae;
-  Standard_Real a,b;
+  Standard_Real a = NAN,b = NAN;
   Handle(Geom_Curve) C3d;
   if(sae.Curve3d(myEdge,C3d,a,b,Standard_False)) {
     Pt1 = C3d->Value(a);
@@ -254,7 +256,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
   if (V1.IsSame(V2)) {
     Handle(ShapeAnalysis_Surface) stsu = new ShapeAnalysis_Surface (theSurface);
     gp_Pnt2d aPt1,aPt2;
-    Standard_Real firstpar,lastpar;
+    Standard_Real firstpar = NAN,lastpar = NAN;
     if (stsu->DegeneratedValues(Pt1,preci,aPt1,aPt2,firstpar,lastpar)){
 
       if(theCurve2d->IsKind(STANDARD_TYPE(Geom2d_Line))) {
@@ -282,7 +284,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
   //pdn cutting pcurve by surface bounds
   if (Precision::IsInfinite(cf)||Precision::IsInfinite(cl)) {
     if(theCurve2d->IsKind(STANDARD_TYPE(Geom2d_Line))) {
-      Standard_Real uf,ul,vf,vl;
+      Standard_Real uf = NAN,ul = NAN,vf = NAN,vl = NAN;
       theSurface->Bounds(uf,ul,vf,vl);
       //Correct surface limits for extrusion/revolution surfaces based on hyperbola
       //23 is ln(1.0e+10)
@@ -304,7 +306,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
       }
       if(!Precision::IsInfinite(uf)&&!Precision::IsInfinite(ul)&&
          !Precision::IsInfinite(vf)&&!Precision::IsInfinite(vl)) {
-          Standard_Real cfi,cli;
+          Standard_Real cfi = NAN,cli = NAN;
           Handle(Geom2d_Line) lin = Handle(Geom2d_Line)::DownCast(theCurve2d);
           gp_Pnt2d pnt = lin->Location();
           gp_Dir2d dir = lin->Direction();
@@ -319,7 +321,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
             cli = (vl-pnt.Y())/dir.Y();
           } 
           else {//common case
-            Standard_Real xfi, xli, yfi, yli;
+            Standard_Real xfi = NAN, xli = NAN, yfi = NAN, yli = NAN;
             xfi = (uf-pnt.X())/dir.X();
             xli = (ul-pnt.X())/dir.X();
             yfi = (vf-pnt.Y())/dir.Y();
@@ -441,7 +443,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
 
   //pdn adjust parameters in periodic case
   if(parU || parV) {
-    Standard_Real uf,ul,vf,vl;
+    Standard_Real uf = NAN,ul = NAN,vf = NAN,vl = NAN;
     theSurface->Bounds(uf,ul,vf,vl);
     Standard_Real period = (parU ? ul-uf : vl-vf);
     w1+=ShapeAnalysis::AdjustToPeriod(w1,0,period);
@@ -454,7 +456,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
       return;
     }
     gp_Pnt mid = C3d1->Value((cf+cl)/2);
-    Standard_Real wmid;
+    Standard_Real wmid = NAN;
     sac.Project(COnS,mid,preci,pnt,wmid,Standard_False);
     wmid+=ShapeAnalysis::AdjustToPeriod(wmid,0,period);
     if(w1>=w2) {
@@ -492,7 +494,7 @@ void ShapeFix_EdgeProjAux::Init2d (const Standard_Real preci)
 
 void ShapeFix_EdgeProjAux::Init3d (const Standard_Real preci) 
 {
-  Standard_Real cl, cf;
+  Standard_Real cl = NAN, cf = NAN;
 
   // Extract Geometries
   Handle(Geom_Surface) theSurface = BRep_Tool::Surface(myFace);

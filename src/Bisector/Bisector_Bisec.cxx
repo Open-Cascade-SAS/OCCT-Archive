@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bisector.hxx>
 #include <Bisector_Bisec.hxx>
 #include <Bisector_BisecAna.hxx>
@@ -86,7 +88,7 @@ void Bisector_Bisec::Perform(const Handle(Geom2d_Curve)& afirstcurve   ,
   Handle(Standard_Type)  Type1 = afirstcurve ->DynamicType();
   Handle(Standard_Type)  Type2 = asecondcurve->DynamicType();
   Handle(Bisector_Curve) Bis;
-  Standard_Real          UFirst,ULast;
+  Standard_Real          UFirst = NAN,ULast = NAN;
 
   if (Type1 == STANDARD_TYPE(Geom2d_TrimmedCurve)) {
     Type1 = Handle(Geom2d_TrimmedCurve)::DownCast(afirstcurve)
@@ -209,7 +211,7 @@ void Bisector_Bisec::Perform(const Handle(Geom2d_Curve)& afirstcurve   ,
         gp_Pnt2d aP1 = afirstcurve1->Value(afirstcurve1->LastParameter());
         gp_Pnt2d aP2 = asecondcurve1->Value(asecondcurve1->FirstParameter());
         gp_Pnt2d aPm(.5*(aP1.XY()+aP2.XY()));
-        Standard_Real Nx, Ny;
+        Standard_Real Nx = NAN, Ny = NAN;
         if(aPm.Distance(apoint) > 10.*Precision::Confusion())
         {
           Nx = apoint.X() - aPm.X();
@@ -295,7 +297,7 @@ void Bisector_Bisec::Perform(const Handle(Geom2d_Curve)& afirstcurve  ,
 
   Handle(Bisector_Curve) Bis;
   Handle(Standard_Type)  Type1 = afirstcurve ->DynamicType();
-  Standard_Real          UFirst,ULast;
+  Standard_Real          UFirst = NAN,ULast = NAN;
 
   if (Type1 == STANDARD_TYPE(Geom2d_TrimmedCurve)) {
     Type1 = Handle(Geom2d_TrimmedCurve)::DownCast(afirstcurve)
@@ -443,7 +445,7 @@ void Bisector_Bisec::Perform(const Handle(Geom2d_Point)& afirstpoint  ,
 
   Handle(Bisector_Curve) Bis;
   Handle(Standard_Type)  Type1 = asecondcurve ->DynamicType();
-  Standard_Real          UFirst,ULast;
+  Standard_Real          UFirst = NAN,ULast = NAN;
 
   if (Type1 == STANDARD_TYPE(Geom2d_TrimmedCurve)) {
     Type1 = Handle(Geom2d_TrimmedCurve)::DownCast(asecondcurve)
@@ -667,13 +669,13 @@ static Standard_Boolean  IsMaxRC (const Handle(Geom2d_Curve)& C,
   Standard_Real         U,
   Standard_Real&        R)
 {  
-  Standard_Real KF,KL;
+  Standard_Real KF = NAN,KL = NAN;
   Standard_Real US = C->FirstParameter();
   Standard_Real UL = C->LastParameter();
 
   gp_Vec2d      D1,D2;
   gp_Pnt2d      P;
-  Standard_Real Norm2;
+  Standard_Real Norm2 = NAN;
 
   C->D2(US,P,D1,D2);
   Norm2 = D1.SquareMagnitude();

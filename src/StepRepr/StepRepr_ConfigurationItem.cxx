@@ -26,10 +26,10 @@ IMPLEMENT_STANDARD_RTTIEXT(StepRepr_ConfigurationItem,Standard_Transient)
 //function : StepRepr_ConfigurationItem
 //purpose  : 
 //=======================================================================
-StepRepr_ConfigurationItem::StepRepr_ConfigurationItem ()
+StepRepr_ConfigurationItem::StepRepr_ConfigurationItem () : defDescription(Standard_False), defPurpose(Standard_False)
 {
-  defDescription = Standard_False;
-  defPurpose = Standard_False;
+  
+  
 }
 
 //=======================================================================

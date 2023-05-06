@@ -207,17 +207,17 @@ private:
   NCollection_Vector<ProxPnt_Status> myAddStatus1; //!< Status of additional vertices on the 1st shape.
   NCollection_Vector<ProxPnt_Status> myAddStatus2; //!< Status of additional vertices on the 2nd shape.
 
-  Standard_Boolean myIsInitS1; //!< Is the 1st shape initialized?
-  Standard_Boolean myIsInitS2; //!< Is the 2nd shape initialized?
+  Standard_Boolean myIsInitS1{}; //!< Is the 1st shape initialized?
+  Standard_Boolean myIsInitS2{}; //!< Is the 2nd shape initialized?
 
   Standard_Boolean myIsRefinementRequired1; //!< Flag about the need to refine the 1st shape.
   Standard_Boolean myIsRefinementRequired2; //!< Flag about the need to refine the 2nd shape.
 
-  Standard_Integer myNbNodes1; //!< Number of nodes in triangulation of the 1st shape.
-  Standard_Integer myNbNodes2; //!< Number of nodes in triangulation of the 2nd shape.
+  Standard_Integer myNbNodes1{}; //!< Number of nodes in triangulation of the 1st shape.
+  Standard_Integer myNbNodes2{}; //!< Number of nodes in triangulation of the 2nd shape.
 
-  Standard_Real myStep1; //!< Step for getting vertices on the 1st shape.
-  Standard_Real myStep2; //!< Step for getting vertices on the 2nd shape.
+  Standard_Real myStep1{}; //!< Step for getting vertices on the 1st shape.
+  Standard_Real myStep2{}; //!< Step for getting vertices on the 2nd shape.
 
   BRepExtrema_CellFilter myCells;
   BRepExtrema_VertexInspector myInspector;

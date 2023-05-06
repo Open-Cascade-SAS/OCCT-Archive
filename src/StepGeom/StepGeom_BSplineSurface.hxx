@@ -91,8 +91,8 @@ protected:
 private:
 
 
-  Standard_Integer uDegree;
-  Standard_Integer vDegree;
+  Standard_Integer uDegree{};
+  Standard_Integer vDegree{};
   Handle(StepGeom_HArray2OfCartesianPoint) controlPointsList;
   StepGeom_BSplineSurfaceForm surfaceForm;
   StepData_Logical uClosed;

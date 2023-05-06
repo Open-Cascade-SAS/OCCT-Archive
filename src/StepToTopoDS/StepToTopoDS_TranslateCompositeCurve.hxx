@@ -78,7 +78,7 @@ private:
 
 
   TopoDS_Wire myWire;
-  Standard_Boolean myInfiniteSegment;
+  Standard_Boolean myInfiniteSegment{};
 
 
 };

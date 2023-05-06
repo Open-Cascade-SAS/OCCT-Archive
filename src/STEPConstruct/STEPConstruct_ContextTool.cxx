@@ -70,7 +70,7 @@ void STEPConstruct_ContextTool::SetModel (const Handle(StepData_StepModel)& aSte
 {
   theAPD.Nullify();  //thePRPC.Nullify();
 
-  Standard_Integer i, nb = aStepModel->NbEntities();
+  Standard_Integer i = 0, nb = aStepModel->NbEntities();
   for(i = 1; i<=nb && theAPD.IsNull(); i ++) {
     Handle(Standard_Transient) ent = aStepModel->Value(i);
     if (ent->IsKind(STANDARD_TYPE(StepBasic_ApplicationProtocolDefinition))) {

@@ -51,7 +51,7 @@ const Handle(StepVisual_AnnotationFillArea)& ent) const
   // Own field : boundaries
   Handle(StepShape_HArray1OfGeometricSetSelect) aElements;
   StepShape_GeometricSetSelect aElementsItem;
-  Standard_Integer nsub;
+  Standard_Integer nsub = 0;
   if (data->ReadSubList(num, 2, "boundaries", ach, nsub)) {
     Standard_Integer nb = data->NbParams(nsub);
     aElements = new StepShape_HArray1OfGeometricSetSelect(1, nb);

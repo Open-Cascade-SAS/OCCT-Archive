@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <math_BracketedRoot.hxx>
 #include <math_Function.hxx>
 #include <StdFail_NotDone.hxx>
@@ -25,13 +27,13 @@ math_BracketedRoot::math_BracketedRoot (math_Function& F,
                                            const Standard_Real Bound2, 
                                            const Standard_Real Tolerance, 
                                            const Standard_Integer NbIterations,
-                                           const Standard_Real ZEPS ) {
+                                           const Standard_Real ZEPS ) : TheRoot(Bound2) {
 
-    Standard_Real Fa,Fc,a,c=0,d=0,e=0;
-    Standard_Real min1,min2,p,q,r,s,tol1,xm;
+    Standard_Real Fa = NAN,Fc = NAN,a = NAN,c=0,d=0,e=0;
+    Standard_Real min1 = NAN,min2 = NAN,p = NAN,q = NAN,r = NAN,s = NAN,tol1 = NAN,xm = NAN;
   
     a = Bound1;
-    TheRoot = Bound2;
+    
     F.Value(a,Fa);
     F.Value(TheRoot,TheError);
     if (Fa*TheError > 0.) { Done = Standard_False;}

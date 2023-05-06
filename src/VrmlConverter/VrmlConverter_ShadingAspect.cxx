@@ -18,14 +18,14 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(VrmlConverter_ShadingAspect,Standard_Transient)
 
-VrmlConverter_ShadingAspect::VrmlConverter_ShadingAspect()
+VrmlConverter_ShadingAspect::VrmlConverter_ShadingAspect() : myHasNormals(Standard_False), myHasMaterial(Standard_False)
 {
  Handle(Vrml_Material) m = new Vrml_Material;
  Vrml_ShapeHints sh;
  myFrontMaterial = m;
  myShapeHints = sh;
- myHasNormals = Standard_False;
- myHasMaterial = Standard_False;
+ 
+ 
 }
 void VrmlConverter_ShadingAspect::SetFrontMaterial(const Handle(Vrml_Material)& aMaterial)
 {

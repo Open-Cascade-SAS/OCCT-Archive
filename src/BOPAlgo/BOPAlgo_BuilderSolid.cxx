@@ -141,8 +141,8 @@ void BOPAlgo_BuilderSolid::Perform(const Message_ProgressRange& theRange)
 //=======================================================================
 void BOPAlgo_BuilderSolid::PerformShapesToAvoid(const Message_ProgressRange& theRange)
 {
-  Standard_Boolean bFound;
-  Standard_Integer i, iCnt, aNbE, aNbF;
+  Standard_Boolean bFound = 0;
+  Standard_Integer i = 0, iCnt = 0, aNbE = 0, aNbF = 0;
   TopAbs_Orientation aOrE;
   TopTools_IndexedDataMapOfShapeListOfShape aMEF;
   TopTools_ListIteratorOfListOfShape aIt;
@@ -226,7 +226,7 @@ void BOPAlgo_BuilderSolid::PerformShapesToAvoid(const Message_ProgressRange& the
 //=======================================================================
 void BOPAlgo_BuilderSolid::PerformLoops(const Message_ProgressRange& theRange)
 {
-  Standard_Integer i, aNbSh;
+  Standard_Integer i = 0, aNbSh = 0;
   TopTools_ListIteratorOfListOfShape aIt;
   TopoDS_Iterator aItS;
   Handle(NCollection_BaseAllocator) aAlr;
@@ -446,7 +446,7 @@ void BOPAlgo_BuilderSolid::PerformAreas(const Message_ProgressRange& theRange)
 
   // Prepare tree with the boxes of the hole shells
   BOPTools_BoxTree aBBTree;
-  Standard_Integer i, aNbH = aHoleShells.Extent();
+  Standard_Integer i = 0, aNbH = aHoleShells.Extent();
   aBBTree.SetSize (aNbH);
   for (i = 1; i <= aNbH; ++i)
   {
@@ -632,7 +632,7 @@ void BOPAlgo_BuilderSolid::PerformInternalShapes(const Message_ProgressRange& th
 
   // Prepare list of faces to classify
   TopTools_ListOfShape aLFaces;
-  Standard_Integer i, aNbF = aMFs.Extent();
+  Standard_Integer i = 0, aNbF = aMFs.Extent();
   for (i = 1; i <= aNbF; ++i)
     aLFaces.Append(aMFs(i));
 
@@ -725,7 +725,7 @@ void BOPAlgo_BuilderSolid::PerformInternalShapes(const Message_ProgressRange& th
 void MakeInternalShells(const TopTools_IndexedMapOfShape& theMF,
                         TopTools_ListOfShape& theShells)
 {
-  Standard_Integer i, aNbF;
+  Standard_Integer i = 0, aNbF = 0;
   BRep_Builder aBB;
   TopTools_ListIteratorOfListOfShape aItF;
   TopTools_IndexedDataMapOfShapeListOfShape aMEF;
@@ -733,7 +733,7 @@ void MakeInternalShells(const TopTools_IndexedMapOfShape& theMF,
   //
   aNbF = theMF.Extent();
   for (i = 1; i <= aNbF; ++i) {
-    TopoDS_Shape aF = theMF(i);
+    const TopoDS_Shape& aF = theMF(i);
     TopExp::MapShapesAndAncestors(aF, 
         TopAbs_EDGE, TopAbs_FACE, 
         aMEF);

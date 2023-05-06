@@ -70,7 +70,7 @@ void  Interface_BitMap::Reservate (const Standard_Integer moreflags)
   if (nbflags >= thenbflags + moreflags) return;
   Standard_Integer nbw = thenbwords * (thenbflags+moreflags+2);
   Handle(TColStd_HArray1OfInteger) flags = new TColStd_HArray1OfInteger(0,nbw);
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = 0; i <= nb; i ++)
     flags->SetValue (i,theflags->Value(i));
   for (i = nb+1; i <= nbw; i ++) flags->SetValue (i,0);
@@ -104,7 +104,7 @@ Standard_Integer  Interface_BitMap::AddFlag (const Standard_CString name)
   Standard_Integer deja = 0;
   if (thenames.IsNull()) thenames = new TColStd_HSequenceOfAsciiString();
   else {
-    Standard_Integer i, nb = thenames->Length();
+    Standard_Integer i = 0, nb = thenames->Length();
     for (i = 1; i <= nb; i ++) {
       if (thenames->Value(i).IsEqual("."))
       {  thenames->ChangeValue(i).AssignCat(name);  deja = i;  }
@@ -165,7 +165,7 @@ Standard_Integer  Interface_BitMap::FlagNumber
 {
   if (name[0] == '\0') return 0;
   if (thenames.IsNull()) return 0;
-  Standard_Integer i, nb = thenames->Length();
+  Standard_Integer i = 0, nb = thenames->Length();
   for (i = 1; i <= nb; i ++)
     if (thenames->Value(i).IsEqual(name)) return i;
   return 0;
@@ -217,7 +217,7 @@ Standard_Boolean  Interface_BitMap::CTrue
   Standard_Integer numw = (thenbwords * flag) + (item >> 5);
   Standard_Integer numb = item & 31;
   Standard_Integer& val = theflags->ChangeValue (numw);
-  Standard_Integer  res, mot = (1 << numb);
+  Standard_Integer  res = 0, mot = (1 << numb);
 
   if (val == 0)  {  val = mot;  return Standard_False;  }
   else           {  res = val & mot;  val |= mot;  }
@@ -230,7 +230,7 @@ Standard_Boolean  Interface_BitMap::CFalse
   Standard_Integer numw = (thenbwords * flag) + (item >> 5);
   Standard_Integer numb = item & 31;
   Standard_Integer& val = theflags->ChangeValue (numw);
-  Standard_Integer  res, mot = ~(1 << numb);
+  Standard_Integer  res = 0, mot = ~(1 << numb);
 
   if (val == ~(0))  {  val = mot;  return Standard_False;  }
   else              {  res = val | mot;  val &= mot;  }
@@ -241,7 +241,7 @@ Standard_Boolean  Interface_BitMap::CFalse
 void  Interface_BitMap::Init
 (const Standard_Boolean val, const Standard_Integer flag) const
 {
-  Standard_Integer i, ii = thenbwords, i1 = thenbwords *flag;
+  Standard_Integer i = 0, ii = thenbwords, i1 = thenbwords *flag;
   if (flag < 0)  {  i1 = 0;  ii = thenbwords*(thenbflags+1);  }
   if (val)  for (i = 0; i < ii; i ++) theflags->SetValue (i1+i,~(0));
   else      for (i = 0; i < ii; i ++) theflags->SetValue (i1+i,  0 );

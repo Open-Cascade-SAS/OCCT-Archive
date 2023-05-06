@@ -31,9 +31,9 @@ Units_ShiftedToken::Units_ShiftedToken(const Standard_CString aword,
 				       const Standard_Real avalue,
 				       const Standard_Real amove,
 				       const Handle(Units_Dimensions)& adimensions)
-     : Units_Token(aword,amean,avalue,adimensions)
+     : Units_Token(aword,amean,avalue,adimensions), themove(amove)
 {
-  themove = amove;
+  
 }
 
 //=======================================================================

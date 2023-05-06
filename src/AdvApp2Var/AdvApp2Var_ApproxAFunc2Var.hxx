@@ -193,7 +193,7 @@ private:
   Standard_EXPORT void ConvertBS();
 
 
-  Standard_Integer myNumSubSpaces[3];
+  Standard_Integer myNumSubSpaces[3]{};
   Handle(TColStd_HArray1OfReal) my1DTolerances;
   Handle(TColStd_HArray1OfReal) my2DTolerances;
   Handle(TColStd_HArray1OfReal) my3DTolerances;

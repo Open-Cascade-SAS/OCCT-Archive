@@ -31,7 +31,7 @@
 //=========================================================================
 gce_MakeHypr2d::gce_MakeHypr2d(const gp_Pnt2d&   S1     ,
 			       const gp_Pnt2d&   S2     ,
-			       const gp_Pnt2d&   Center )
+			       const gp_Pnt2d&   Center ) : gce_Root()
 {
   gp_Dir2d XAxis(gp_XY(S1.XY()-Center.XY()));
   gp_Dir2d YAxis(gp_XY(S2.XY()-Center.XY()));
@@ -49,7 +49,7 @@ gce_MakeHypr2d::gce_MakeHypr2d(const gp_Pnt2d&   S1     ,
 gce_MakeHypr2d::gce_MakeHypr2d(const gp_Ax2d&         MajorAxis   ,
 			       const Standard_Real    MajorRadius ,
 			       const Standard_Real    MinorRadius ,
-			       const Standard_Boolean Sense       )
+			       const Standard_Boolean Sense       ) : gce_Root()
 {
   if (MajorRadius < 0.0 || MinorRadius < 0.0) { TheError = gce_NegativeRadius;}
   else {
@@ -60,7 +60,7 @@ gce_MakeHypr2d::gce_MakeHypr2d(const gp_Ax2d&         MajorAxis   ,
 
 gce_MakeHypr2d::gce_MakeHypr2d(const gp_Ax22d&     A           ,
 			       const Standard_Real MajorRadius ,
-			       const Standard_Real MinorRadius )
+			       const Standard_Real MinorRadius ) : gce_Root()
 {
   if (MajorRadius < 0.0 || MinorRadius < 0.0) { TheError = gce_NegativeRadius;}
   else {

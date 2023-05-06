@@ -26,14 +26,14 @@
 #include <gp_Pnt.hxx>
 #include <StdFail_NotDone.hxx>
 
-GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Cylinder& C)
+GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Cylinder& C) : GC_Root(), TheCylinder(new Geom_CylindricalSurface(C))
 {
   TheError = gce_Done;
-  TheCylinder = new Geom_CylindricalSurface(C);
+  
 }
 
 GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Ax2& A2    ,
-						const Standard_Real  Radius)
+						const Standard_Real  Radius) : GC_Root()
 {
   if (Radius < 0.0) { TheError = gce_NegativeRadius; }
   else {
@@ -47,7 +47,7 @@ GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Ax2& A2    ,
 //=========================================================================
 
 GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Ax1& A1     ,
-						 const Standard_Real Radius ) 
+						 const Standard_Real Radius ) : GC_Root() 
 {
   gce_MakeCylinder Cyl = gce_MakeCylinder(A1,Radius);
   TheError = Cyl.Status();
@@ -60,7 +60,7 @@ GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Ax1& A1     ,
 //   Construction of a cylinder by a circle <Cir>.                      +
 //=========================================================================
 
-GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Circ& Circ ) {
+GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Circ& Circ ) : GC_Root() {
   gp_Cylinder Cyl = gce_MakeCylinder(Circ);
   TheCylinder=new Geom_CylindricalSurface(Cyl);
   TheError = gce_Done;
@@ -74,7 +74,7 @@ GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Circ& Circ ) {
 
 GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Pnt& P1 ,
 						       const gp_Pnt& P2 ,
-						       const gp_Pnt& P3 ) {
+						       const gp_Pnt& P3 ) : GC_Root() {
   gce_MakeCylinder Cyl = gce_MakeCylinder(P1,P2,P3);
   TheError = Cyl.Status();
   if (TheError == gce_Done) {
@@ -83,16 +83,16 @@ GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Pnt& P1 ,
 }
 
 GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Cylinder& Cyl ,
-						     const Standard_Real  Dist)
+						     const Standard_Real  Dist) : GC_Root(), TheCylinder(new Geom_CylindricalSurface(Cyl))
 {
   TheError = gce_Done;
   Standard_Real R = Abs(Cyl.Radius()-Dist);
-  TheCylinder = new Geom_CylindricalSurface(Cyl);
+  
   TheCylinder->SetRadius(R);
 }
 
 GC_MakeCylindricalSurface::GC_MakeCylindricalSurface(const gp_Cylinder& Cyl ,
-						       const gp_Pnt&     Point)
+						       const gp_Pnt&     Point) : GC_Root()
 {
   TheError = gce_Done;
   gp_Cylinder C(Cyl);

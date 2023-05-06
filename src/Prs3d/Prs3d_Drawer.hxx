@@ -966,9 +966,9 @@ protected:
   Standard_Boolean              myHasOwnTypeOfDeflection;
   Prs3d_TypeOfHLR               myTypeOfHLR;
   Standard_Real                 myDeviationCoefficient;
-  Standard_Real                 myPreviousDeviationCoefficient;
+  Standard_Real                 myPreviousDeviationCoefficient{};
   Standard_Real                 myDeviationAngle;
-  Standard_Real                 myPreviousDeviationAngle;
+  Standard_Real                 myPreviousDeviationAngle{};
   Standard_Boolean              myIsoOnPlane;
   Standard_Boolean              myHasOwnIsoOnPlane;
   Standard_Boolean              myIsoOnTriangulation;

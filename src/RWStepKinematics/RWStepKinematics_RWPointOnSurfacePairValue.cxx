@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWPointOnSurfacePairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -69,7 +71,7 @@ void RWStepKinematics_RWPointOnSurfacePairValue::ReadStep (const Handle(StepData
       aItems = new TColStd_HArray1OfReal(1, nb);
       Standard_Integer num2 = nsub;
       for (Standard_Integer i0 = 1; i0 <= nb; i0++) {
-        Standard_Real anIt0;
+        Standard_Real anIt0 = NAN;
         theData->ReadReal(num2, i0, "real", theArch, anIt0);
         aItems->SetValue(i0, anIt0);
       }

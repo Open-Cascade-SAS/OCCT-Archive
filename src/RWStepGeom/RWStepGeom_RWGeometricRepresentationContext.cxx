@@ -45,7 +45,7 @@ void RWStepGeom_RWGeometricRepresentationContext::ReadStep
 
 	// --- own field : coordinateSpaceDimension ---
 
-	Standard_Integer aCoordinateSpaceDimension;
+	Standard_Integer aCoordinateSpaceDimension = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadInteger (num,3,"coordinate_space_dimension",ach,aCoordinateSpaceDimension);
 

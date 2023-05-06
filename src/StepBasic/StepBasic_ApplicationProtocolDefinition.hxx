@@ -76,7 +76,7 @@ private:
 
   Handle(TCollection_HAsciiString) status;
   Handle(TCollection_HAsciiString) applicationInterpretedModelSchemaName;
-  Standard_Integer applicationProtocolYear;
+  Standard_Integer applicationProtocolYear{};
   Handle(StepBasic_ApplicationContext) application;
 
 

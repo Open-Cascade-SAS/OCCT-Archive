@@ -15,6 +15,8 @@
 //    abv 28.04.99  S4137: added method Add(WireData), method SetLast fixed
 //    abv 05.05.99  S4174: protection against INTERNAL/EXTERNAL edges
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
@@ -63,7 +65,7 @@ ShapeExtend_WireData::ShapeExtend_WireData (const TopoDS_Wire& wire,
 void ShapeExtend_WireData::Init (const Handle(ShapeExtend_WireData)& other) 
 {
   Clear();
-  Standard_Integer i, nb = other->NbEdges();
+  Standard_Integer i = 0, nb = other->NbEdges();
   for (i = 1; i <= nb; i++) Add ( other->Edge(i) );
   nb = other->NbNonManifoldEdges();
   for (i = 1; i <= nb; i++) Add ( other->NonmanifoldEdge(i) );
@@ -155,7 +157,7 @@ void ShapeExtend_WireData::ComputeSeams (const Standard_Boolean enforce)
   mySeams = new TColStd_HSequenceOfInteger();
   mySeamF = mySeamR = 0;
   TopoDS_Shape S;
-  Standard_Integer i, nb = NbEdges();
+  Standard_Integer i = 0, nb = NbEdges();
   TopTools_IndexedMapOfShape ME;
   Standard_Integer* SE = new Standard_Integer [nb+1];
 
@@ -191,7 +193,7 @@ void ShapeExtend_WireData::ComputeSeams (const Standard_Boolean enforce)
 void ShapeExtend_WireData::SetLast (const Standard_Integer num) 
 {
   if (num == 0) return;
-  Standard_Integer i, nb = NbEdges();
+  Standard_Integer i = 0, nb = NbEdges();
   for (i = nb; i > num; i--) {
     TopoDS_Edge edge = TopoDS::Edge ( myEdges->Value(nb) );
     myEdges->Remove (nb);
@@ -207,7 +209,7 @@ void ShapeExtend_WireData::SetLast (const Standard_Integer num)
 
 void ShapeExtend_WireData::SetDegeneratedLast() 
 {
-  Standard_Integer i, nb = NbEdges();
+  Standard_Integer i = 0, nb = NbEdges();
   for (i = 1; i <= nb; i ++) {
     if ( BRep_Tool::Degenerated ( Edge(i) ) ) {
       SetLast ( i );
@@ -412,7 +414,7 @@ void ShapeExtend_WireData::Set (const TopoDS_Edge& edge,
 
 void ShapeExtend_WireData::Reverse () 
 {
-  Standard_Integer i, nb = NbEdges();
+  Standard_Integer i = 0, nb = NbEdges();
 
   // inverser les edges + les permuter pour inverser le wire
   for (i = 1; i <= nb/2; i ++) {
@@ -447,7 +449,7 @@ static void SwapSeam (const TopoDS_Shape& S, const TopoDS_Face& F)
   
 //:S4136  Standard_Real Tol = BRep_Tool::Tolerance(theface);
   Handle(Geom2d_Curve) c2df,c2dr;
-  Standard_Real uff,ulf,ufr,ulr;
+  Standard_Real uff = NAN,ulf = NAN,ufr = NAN,ulr = NAN;
 
   // d abord FWD puis REV
   c2df = BRep_Tool::CurveOnSurface (E,theface,uff,ulf);
@@ -552,7 +554,7 @@ Standard_Boolean ShapeExtend_WireData::IsSeam (const Standard_Integer num)
   
   if (num == mySeamF || num == mySeamR) return Standard_True;
 //  Pas suffisant : on regarde dans la liste
-  Standard_Integer i, nb = mySeams->Length();
+  Standard_Integer i = 0, nb = mySeams->Length();
   for (i = 1; i <= nb; i ++) {
     if (num == mySeams->Value(i)) return Standard_True;
   }
@@ -569,7 +571,7 @@ TopoDS_Wire ShapeExtend_WireData::Wire() const
   TopoDS_Wire W;
   BRep_Builder B;
   B.MakeWire (W); 
-  Standard_Integer i, nb = NbEdges();
+  Standard_Integer i = 0, nb = NbEdges();
   Standard_Boolean ismanifold = Standard_True;
   for (i = 1; i <= nb; i ++) {
     TopoDS_Edge aE =  Edge(i);
@@ -599,7 +601,7 @@ TopoDS_Wire ShapeExtend_WireData::WireAPIMake() const
 {
   TopoDS_Wire W;
   BRepBuilderAPI_MakeWire MW;
-  Standard_Integer i, nb = NbEdges();
+  Standard_Integer i = 0, nb = NbEdges();
   for (i = 1; i <= nb; i ++)  MW.Add (Edge(i));
   if(myManifoldMode) {
     nb = NbNonManifoldEdges();

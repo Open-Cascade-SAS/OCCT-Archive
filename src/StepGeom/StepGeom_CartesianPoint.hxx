@@ -66,8 +66,8 @@ protected:
 private:
 
 
-  Standard_Integer nbcoord;
-  Standard_Real coords[3];
+  Standard_Integer nbcoord{};
+  Standard_Real coords[3]{};
 
 
 };

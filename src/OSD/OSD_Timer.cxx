@@ -19,7 +19,8 @@
 #ifdef _WIN32
   #include <windows.h>
 #else
-  #include <sys/time.h>
+  #include <math.h>
+#include <sys/time.h>
 #endif
 
 namespace
@@ -74,7 +75,7 @@ Standard_Real OSD_Timer::GetWallClockTime()
        : 0.001 * GetTickCount();
        #endif
 #else
-  struct timeval aTime;
+  struct timeval aTime{};
   // use time of first call as base for computing total time,
   // to avoid loss of precision due to big values of tv_sec (counted since 1970)
   static const time_t aStartSec = (gettimeofday (&aTime, NULL) == 0 ? aTime.tv_sec : 0);
@@ -183,8 +184,8 @@ void OSD_Timer::Show (Standard_OStream& theOStream) const
 {
   const Standard_Real aTimeCumul = ElapsedTime();
 
-  Standard_Integer anHours, aMinutes;
-  Standard_Real    aSeconds;
+  Standard_Integer anHours = 0, aMinutes = 0;
+  Standard_Real    aSeconds = NAN;
   timeToHoursMinutesSeconds (aTimeCumul, anHours, aMinutes, aSeconds);
 
   std::streamsize prec = theOStream.precision (12);

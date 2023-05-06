@@ -26,10 +26,10 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Expr_FunctionDerivative,Expr_GeneralFunction)
 
-Expr_FunctionDerivative::Expr_FunctionDerivative (const Handle(Expr_GeneralFunction)& func, const Handle(Expr_NamedUnknown)& withX, const Standard_Integer deg)
+Expr_FunctionDerivative::Expr_FunctionDerivative (const Handle(Expr_GeneralFunction)& func, const Handle(Expr_NamedUnknown)& withX, const Standard_Integer deg) : myFunction(func), myDerivate(withX)
 {
-  myFunction = func;
-  myDerivate = withX;
+  
+  
   if (deg <= 0) {
     throw Standard_OutOfRange();
   }

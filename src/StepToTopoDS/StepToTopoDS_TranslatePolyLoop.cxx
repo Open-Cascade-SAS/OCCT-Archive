@@ -16,6 +16,8 @@
 
 //gka,abv 14.09.99: S4136: eliminate BRepAPI::Precision()
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <ElSLib.hxx>
 #include <Geom2d_Line.hxx>
@@ -72,7 +74,7 @@ void StepToTopoDS_TranslatePolyLoop::Init(const Handle(StepShape_PolyLoop)& PL, 
     Handle(Transfer_TransientProcess) TP = aTool.TransientProcess();
 
 //:S4136    Standard_Real preci = BRepAPI::Precision();
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Handle(StepGeom_CartesianPoint) P1,P2;
     Handle(Geom_CartesianPoint) GP1, GP2;
     TopoDS_Vertex V1, V2;
@@ -82,7 +84,7 @@ void StepToTopoDS_TranslatePolyLoop::Init(const Handle(StepShape_PolyLoop)& PL, 
     Handle(Geom2d_Line) L2d;
     gp_Vec V;
     gp_Vec2d V2d;
-    Standard_Real Magn;
+    Standard_Real Magn = NAN;
     Handle(Geom_Plane) SP = Handle(Geom_Plane)::DownCast(GeomSurf);
     if (SP.IsNull()) TP->AddFail(PL,"Surface not planar in a FacetedBRep !");
     Handle(ShapeAnalysis_Surface) STSU = new ShapeAnalysis_Surface ( GeomSurf );

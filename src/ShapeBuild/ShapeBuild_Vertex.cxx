@@ -14,6 +14,8 @@
 //    rln 22.03.99: syntax correction in CombineVertex
 //szv#4 S4163
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <gp_Pnt.hxx>
@@ -45,7 +47,7 @@ TopoDS_Vertex ShapeBuild_Vertex::CombineVertex (const gp_Pnt& pnt1,
 						const Standard_Real tolFactor) const
 {
   gp_Pnt pos;
-  Standard_Real tol;
+  Standard_Real tol = NAN;
   
   gp_Vec v = pnt2.XYZ() - pnt1.XYZ();
   Standard_Real dist = v.Magnitude();

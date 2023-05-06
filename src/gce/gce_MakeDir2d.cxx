@@ -27,7 +27,7 @@
 //   Creation d une direction 2d (Dir2d) de gp a partir de 2 Pnt2d de gp. +
 //=========================================================================
 gce_MakeDir2d::gce_MakeDir2d(const gp_Pnt2d& P1,
-			     const gp_Pnt2d& P2)
+			     const gp_Pnt2d& P2) : gce_Root()
 {
   if (P1.Distance(P2) <= gp::Resolution()) { TheError = gce_ConfusedPoints; }
   else {
@@ -36,7 +36,7 @@ gce_MakeDir2d::gce_MakeDir2d(const gp_Pnt2d& P1,
   }
 }
 
-gce_MakeDir2d::gce_MakeDir2d(const gp_XY& Coord)
+gce_MakeDir2d::gce_MakeDir2d(const gp_XY& Coord) : gce_Root()
 {
   if (Coord.Modulus() <= gp::Resolution()) { TheError = gce_NullVector; }
   else {
@@ -45,7 +45,7 @@ gce_MakeDir2d::gce_MakeDir2d(const gp_XY& Coord)
   }
 }
 
-gce_MakeDir2d::gce_MakeDir2d(const gp_Vec2d& V)
+gce_MakeDir2d::gce_MakeDir2d(const gp_Vec2d& V) : gce_Root()
 {
   if (V.Magnitude() <= gp::Resolution()) { TheError = gce_NullVector; }
   else {
@@ -55,7 +55,7 @@ gce_MakeDir2d::gce_MakeDir2d(const gp_Vec2d& V)
 }
 
 gce_MakeDir2d::gce_MakeDir2d(const Standard_Real Xv,
-			     const Standard_Real Yv)
+			     const Standard_Real Yv) : gce_Root()
 {
   if (Xv*Xv+Yv*Yv <= gp::Resolution()) { TheError = gce_NullVector; }
   else {

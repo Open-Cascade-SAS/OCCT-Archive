@@ -14,6 +14,8 @@
 
 // pmn -> modified 17/01/1996 : utilisation de Curve() et SetCurve()
 
+#include <math.h>
+
 #include <gp_Pnt2d.hxx>
 #include <Law_Interpol.hxx>
 #include <Law_Interpolate.hxx>
@@ -113,8 +115,8 @@ void Law_Interpol::Set(const TColgp_Array1OfPnt2d& ParAndRad,
   Handle(TColStd_HArray1OfReal) rad;
   if(Periodic) rad = new TColStd_HArray1OfReal(1,nbp - 1);
   else rad = new TColStd_HArray1OfReal(1,nbp);
-  Standard_Real x,y;
-  Standard_Integer i;
+  Standard_Real x = NAN,y = NAN;
+  Standard_Integer i = 0;
   for(i = 1; i <= nbp; i++){
     ParAndRad(l + i - 1).Coord(x,y);
     par->SetValue(i,x);
@@ -150,8 +152,8 @@ void Law_Interpol::SetInRelative(const TColgp_Array1OfPnt2d& ParAndRad,
   Handle(TColStd_HArray1OfReal) rad;
   if(Periodic) rad = new TColStd_HArray1OfReal(1,nbp - 1);
   else rad = new TColStd_HArray1OfReal(1,nbp);
-  Standard_Real x,y;
-  Standard_Integer i;
+  Standard_Real x = NAN,y = NAN;
+  Standard_Integer i = 0;
   for(i = 1; i <= nbp; i++){
     ParAndRad(l + i - 1).Coord(x,y);
     par->SetValue(i,(Uf*(x-wd)+Ud*(wf-x))/(wf-wd));
@@ -187,8 +189,8 @@ void Law_Interpol::Set(const TColgp_Array1OfPnt2d& ParAndRad,
   Handle(TColStd_HArray1OfReal) rad;
   if(Periodic) rad = new TColStd_HArray1OfReal(1,nbp - 1);
   else rad = new TColStd_HArray1OfReal(1,nbp);
-  Standard_Real x,y;
-  Standard_Integer i;
+  Standard_Real x = NAN,y = NAN;
+  Standard_Integer i = 0;
   for(i = 1; i <= nbp; i++){
     ParAndRad(l + i - 1).Coord(x,y);
     par->SetValue(i,x);
@@ -219,8 +221,8 @@ void Law_Interpol::SetInRelative(const TColgp_Array1OfPnt2d& ParAndRad,
   Handle(TColStd_HArray1OfReal) rad;
   if(Periodic) rad = new TColStd_HArray1OfReal(1,nbp - 1);
   else rad = new TColStd_HArray1OfReal(1,nbp);
-  Standard_Real x,y;
-  Standard_Integer i;
+  Standard_Real x = NAN,y = NAN;
+  Standard_Integer i = 0;
   for(i = 1; i <= nbp; i++){
     ParAndRad(l + i - 1).Coord(x,y);
     par->SetValue(i,(Uf*(x-wd)+Ud*(wf-x))/(wf-wd));

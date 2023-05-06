@@ -26,11 +26,11 @@
 #include <Standard_OutOfRange.hxx>
 #include <StdFail_NotDone.hxx>
 
-Extrema_ExtElSS::Extrema_ExtElSS()
+Extrema_ExtElSS::Extrema_ExtElSS() : myDone(Standard_False), myIsPar(Standard_False), myNbExt(0)
 {
-  myDone = Standard_False;
-  myIsPar = Standard_False;
-  myNbExt = 0;
+  
+  
+  
 }
 
 

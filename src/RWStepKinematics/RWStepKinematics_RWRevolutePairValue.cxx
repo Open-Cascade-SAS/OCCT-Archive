@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWRevolutePairValue.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -55,7 +57,7 @@ void RWStepKinematics_RWRevolutePairValue::ReadStep (const Handle(StepData_StepR
 
   // Own fields of RevolutePairValue
 
-  Standard_Real aActualRotation;
+  Standard_Real aActualRotation = NAN;
   theData->ReadReal (theNum, 3, "actual_rotation", theArch, aActualRotation);
 
   // Initialize entity

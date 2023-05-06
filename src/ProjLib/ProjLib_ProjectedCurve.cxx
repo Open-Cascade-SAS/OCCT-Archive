@@ -16,6 +16,8 @@
 
 //  Modified by skv - Wed Aug 11 15:45:58 2004 OCC6272
 
+#include <math.h>
+
 #include <Standard_NoSuchObject.hxx>
 #include <Standard_NotImplemented.hxx>
 #include <ProjLib_ProjectedCurve.hxx>
@@ -94,7 +96,7 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
 				   const Standard_Real      TolMin,
 				   const Standard_Real      TolMax) 
 {
-    Standard_Real U1=0.,U2=0.,V1=0.,V2=0.,T;
+    Standard_Real U1=0.,U2=0.,V1=0.,V2=0.,T = NAN;
     Standard_Boolean Along = Standard_True;
     U1 = S.FirstUParameter();
     U2 = S.LastUParameter();
@@ -102,7 +104,7 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
     V2 = S.LastVParameter();
     gp_Vec D1U,D1V;
     gp_Pnt P;
-    Standard_Real Step,D1NormMax;
+    Standard_Real Step = NAN,D1NormMax = NAN;
     if (IT == GeomAbs_IsoV) 
     {
       Step = (U2 - U1)/10;
@@ -507,7 +509,7 @@ void ProjLib_ProjectedCurve::Perform(const Handle(Adaptor3d_Curve)& C)
     case GeomAbs_BSplineSurface:
       {
         isAnalyticalSurf = Standard_False;
-        Standard_Real f, l;
+        Standard_Real f = NAN, l = NAN;
         f = myCurve->FirstParameter();
         l = myCurve->LastParameter();
         dt = (l - f) * eps;
@@ -716,7 +718,7 @@ void ProjLib_ProjectedCurve::Perform(const Handle(Adaptor3d_Curve)& C)
           if(IsTrimmed[0] || IsTrimmed[1])
           {
             // Treatment only for surface of revolution
-            Standard_Real u1, u2, v1, v2;
+            Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
             u1 = mySurface->FirstUParameter();
             u2 = mySurface->LastUParameter();
             v1 = mySurface->FirstVParameter();

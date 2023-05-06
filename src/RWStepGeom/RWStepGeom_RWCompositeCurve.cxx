@@ -45,7 +45,7 @@ void RWStepGeom_RWCompositeCurve::ReadStep
 
 	Handle(StepGeom_HArray1OfCompositeCurveSegment) aSegments;
 	Handle(StepGeom_CompositeCurveSegment) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"segments",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
 	  aSegments = new StepGeom_HArray1OfCompositeCurveSegment (1, nb2);

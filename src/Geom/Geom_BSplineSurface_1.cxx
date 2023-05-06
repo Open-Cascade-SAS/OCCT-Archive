@@ -23,6 +23,8 @@
 //                 + bon appel a LocateParameter (PRO6973).
 // RBD : 15/10/98 ; Le cache est desormais defini sur [-1,1] (pro15537).
 
+#include <math.h>
+
 #include <BSplCLib.hxx>
 #include <BSplSLib.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -790,7 +792,7 @@ void Geom_BSplineSurface::Transform (const gp_Trsf& T)
 
 void Geom_BSplineSurface::SetUPeriodic ()
 {
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
 
   Standard_Integer first = FirstUKnotIndex();
   Standard_Integer last  = LastUKnotIndex();
@@ -856,7 +858,7 @@ void Geom_BSplineSurface::SetUPeriodic ()
 
 void Geom_BSplineSurface::SetVPeriodic ()
 {
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
 
   Standard_Integer first = FirstVKnotIndex();
   Standard_Integer last  = LastVKnotIndex();
@@ -918,7 +920,7 @@ void Geom_BSplineSurface::SetUOrigin(const Standard_Integer Index)
   if (!uperiodic)
     throw Standard_NoSuchObject("Geom_BSplineSurface::SetUOrigin: surface is not U periodic");
 
-  Standard_Integer i,j,k;
+  Standard_Integer i = 0,j = 0,k = 0;
   Standard_Integer first = FirstUKnotIndex();
   Standard_Integer last  = LastUKnotIndex();
 
@@ -1016,7 +1018,7 @@ void Geom_BSplineSurface::SetVOrigin(const Standard_Integer Index)
   if (!vperiodic)
     throw Standard_NoSuchObject("Geom_BSplineSurface::SetVOrigin: surface is not V periodic");
 
-  Standard_Integer i,j,k;
+  Standard_Integer i = 0,j = 0,k = 0;
   Standard_Integer first = FirstVKnotIndex();
   Standard_Integer last  = LastVKnotIndex();
 
@@ -1112,7 +1114,7 @@ void Geom_BSplineSurface::SetVOrigin(const Standard_Integer Index)
 void Geom_BSplineSurface::SetUNotPeriodic () 
 { 
   if ( uperiodic) {
-    Standard_Integer NbKnots, NbPoles;
+    Standard_Integer NbKnots = 0, NbPoles = 0;
     BSplCLib::PrepareUnperiodize( udeg, umults->Array1(), NbKnots, NbPoles);
 
     Handle(TColgp_HArray2OfPnt) npoles = 
@@ -1164,7 +1166,7 @@ void Geom_BSplineSurface::SetUNotPeriodic ()
 void Geom_BSplineSurface::SetVNotPeriodic ()
 {
   if ( vperiodic) {
-    Standard_Integer NbKnots, NbPoles;
+    Standard_Integer NbKnots = 0, NbPoles = 0;
     BSplCLib::PrepareUnperiodize( vdeg, vmults->Array1(), NbKnots, NbPoles);
 
     Handle(TColgp_HArray2OfPnt) npoles = 
@@ -1218,7 +1220,7 @@ Standard_Boolean Geom_BSplineSurface::IsUClosed () const
   if (uperiodic)
     return Standard_True;
 
-  Standard_Real aU1, aU2, aV1, aV2;
+  Standard_Real aU1 = NAN, aU2 = NAN, aV1 = NAN, aV2 = NAN;
   Bounds( aU1, aU2, aV1, aV2 );
   Handle(Geom_Curve) aCUF = UIso( aU1 );
   Handle(Geom_Curve) aCUL = UIso( aU2 );
@@ -1239,7 +1241,7 @@ Standard_Boolean Geom_BSplineSurface::IsVClosed () const
   if (vperiodic)
     return Standard_True;
   
-  Standard_Real aU1, aU2, aV1, aV2;
+  Standard_Real aU1 = NAN, aU2 = NAN, aV1 = NAN, aV2 = NAN;
   Bounds( aU1, aU2, aV1, aV2 );
   Handle(Geom_Curve) aCVF = VIso( aV1 );
   Handle(Geom_Curve) aCVL = VIso( aV2 );
@@ -1431,7 +1433,7 @@ void Geom_BSplineSurface::UReverse ()
 {
   BSplCLib::Reverse(umults->ChangeArray1());
   BSplCLib::Reverse(uknots->ChangeArray1());
-  Standard_Integer last;
+  Standard_Integer last = 0;
   if (uperiodic)
     last = ufknots->Upper() - udeg -1;
   else
@@ -1462,7 +1464,7 @@ void Geom_BSplineSurface::VReverse ()
 {
   BSplCLib::Reverse(vmults->ChangeArray1());
   BSplCLib::Reverse(vknots->ChangeArray1());
-  Standard_Integer last;
+  Standard_Integer last = 0;
   if (vperiodic)
     last = vfknots->Upper() - vdeg -1;
   else
@@ -1777,7 +1779,7 @@ void  Geom_BSplineSurface::InsertUKnots
    const Standard_Boolean         Add)
 {
   // Check and compute new sizes
-  Standard_Integer nbpoles, nbknots;
+  Standard_Integer nbpoles = 0, nbknots = 0;
 
   if ( !BSplCLib::PrepareInsertKnots(udeg,uperiodic,
 				     uknots->Array1(),umults->Array1(),
@@ -1844,7 +1846,7 @@ void  Geom_BSplineSurface::InsertVKnots
    const Standard_Boolean Add)
 {
   // Check and compute new sizes
-  Standard_Integer nbpoles, nbknots;
+  Standard_Integer nbpoles = 0, nbknots = 0;
 
   if ( !BSplCLib::PrepareInsertKnots(vdeg,vperiodic,
 				     vknots->Array1(),vmults->Array1(),

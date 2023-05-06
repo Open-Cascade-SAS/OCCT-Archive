@@ -13,6 +13,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepMesh_TorusRangeSplitter.hxx>
 #include <GCPnts_TangentialDeflection.hxx>
 
@@ -42,7 +44,7 @@ Handle(IMeshData::ListOfPnt2d) BRepMesh_TorusRangeSplitter::GenerateSurfaceNodes
   const Standard_Integer nbV = Max((Standard_Integer) (aDiffV / Dv), 2);
   Dv = aDiffV / (nbV + 1);
 
-  Standard_Real Du;
+  Standard_Real Du = NAN;
   const Standard_Real ru = R + r;
   if (ru > 1.e-16)
   {
@@ -188,8 +190,8 @@ Handle(IMeshData::SequenceOfReal) BRepMesh_TorusRangeSplitter::fillParams(
 Standard_Real BRepMesh_TorusRangeSplitter::FUN_CalcAverageDUV(
   TColStd_Array1OfReal& P, const Standard_Integer PLen) const
 {
-  Standard_Integer i, j, n = 0;
-  Standard_Real p, result = 0.;
+  Standard_Integer i = 0, j = 0, n = 0;
+  Standard_Real p = NAN, result = 0.;
 
   for (i = 1; i <= PLen; i++)
   {

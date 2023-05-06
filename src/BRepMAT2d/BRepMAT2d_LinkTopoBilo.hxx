@@ -88,8 +88,8 @@ private:
   BRepMAT2d_DataMapOfShapeSequenceOfBasicElt myMap;
   BRepMAT2d_DataMapOfBasicEltShape myBEShape;
   TopoDS_Shape myKey;
-  Standard_Integer current;
-  Standard_Boolean isEmpty;
+  Standard_Integer current{};
+  Standard_Boolean isEmpty{};
 
 
 };

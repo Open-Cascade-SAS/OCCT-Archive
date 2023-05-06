@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <algorithm>
 
 #include <Approx_CurveOnSurface.hxx>
@@ -224,7 +226,7 @@ static void d2(const Standard_Real t,
   // Computation of (d2E/dX2)*(dX/dt)2 = S3
 
   // Row11 = (d2E1/du2, d2E1/dudv)
-  Standard_Real tmp;
+  Standard_Real tmp = NAN;
   gp_Vec2d Row11(3*DS1_u*DS2_u + Ort*DS3_u,
     tmp = 2*DS1_u*DS2_uv + 
     DS1_v*DS2_u + Ort*DS3_uuv);  
@@ -338,7 +340,7 @@ static void d2CurvOnSurf(const Standard_Real t,
   // Computation of (d2E/dX2)*(dX/dt)2 = S3
 
   // Row11 = (d2E1/du2, d2E1/dudv)
-  Standard_Real tmp;
+  Standard_Real tmp = NAN;
   gp_Vec2d Row11(3*DS1_u*DS2_u + Ort*DS3_u,
     tmp = 2*DS1_u*DS2_uv + 
     DS1_v*DS2_u + Ort*DS3_uuv);  
@@ -382,7 +384,7 @@ static Standard_Boolean ExactBound(gp_Pnt& Sol,
   const Handle(Adaptor3d_Curve)& Curve, 
   const Handle(Adaptor3d_Surface)& Surface)
 {
-  Standard_Real U0, V0, t, t1, t2, FirstU, LastU, FirstV, LastV;
+  Standard_Real U0 = NAN, V0 = NAN, t = NAN, t1 = NAN, t2 = NAN, FirstU = NAN, LastU = NAN, FirstV = NAN, LastV = NAN;
   gp_Pnt2d POnS;
   U0 = Sol.Y();
   V0 = Sol.Z();
@@ -394,7 +396,7 @@ static Standard_Boolean ExactBound(gp_Pnt& Sol,
   gp_Vec2d D2d;
   //these variables are to estimate which boundary has more apportunity 
   //to be intersected
-  Standard_Real RU1, RU2, RV1, RV2; 
+  Standard_Real RU1 = NAN, RU2 = NAN, RV1 = NAN, RV2 = NAN; 
   d1(Sol.X(), U0, V0, D2d, Curve, Surface);
   // Here we assume that D2d != (0, 0)
   if(Abs(D2d.X()) < gp::Resolution()) 
@@ -427,7 +429,7 @@ static Standard_Boolean ExactBound(gp_Pnt& Sol,
   Seq.Append(gp_Pnt(LastU, RU2, 2));
   Seq.Append(gp_Pnt(FirstV, RV1, 3));
   Seq.Append(gp_Pnt(LastV, RV2, 3));
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   for(i = 1; i <= 3; i++)
   {
     for(j = 1; j <= 4-i; j++)
@@ -497,7 +499,7 @@ static void DichExactBound(gp_Pnt& Sol,
   InitChron(chr_dicho_bound);
 #endif
 
-  Standard_Real U0, V0, t;
+  Standard_Real U0 = NAN, V0 = NAN, t = NAN;
   gp_Pnt2d POnS;
   U0 = Sol.Y();
   V0 = Sol.Z();
@@ -544,7 +546,7 @@ static Standard_Boolean InitialPoint(const gp_Pnt& Point,
 {
 
   ProjLib_PrjResolve aPrjPS (*C, *S, 1);
-  Standard_Real ParU,ParV;
+  Standard_Real ParU = NAN,ParV = NAN;
   Extrema_ExtPS aExtPS;
   aExtPS.Initialize (*S, S->FirstUParameter(), 
     S->LastUParameter(), S->FirstVParameter(), 
@@ -559,7 +561,7 @@ static Standard_Boolean InitialPoint(const gp_Pnt& Point,
   }
   if (aExtPS.IsDone() && aExtPS.NbExt()) 
   {
-    Standard_Integer i, Nend;
+    Standard_Integer i = 0, Nend = 0;
     // Search for the nearest solution which is also a normal projection
     Nend = aExtPS.NbExt();
     for(i = 1; i <= Nend; i++)
@@ -675,10 +677,10 @@ ProjLib_CompProjectedCurve::ProjLib_CompProjectedCurve
   myMaxSeg    (16),
   myProj2d    (Standard_True),
   myProj3d    (Standard_False),
-  myMaxDist   (theMaxDist)
+  myMaxDist   (theMaxDist), myTolU(Max(Precision::PConfusion(), mySurface->UResolution(theTol3d))), myTolV(Max(Precision::PConfusion(), mySurface->VResolution(theTol3d)))
 {
-  myTolU = Max(Precision::PConfusion(), mySurface->UResolution(theTol3d));
-  myTolV = Max(Precision::PConfusion(), mySurface->VResolution(theTol3d));
+  
+  
 
   Init();
 }
@@ -724,8 +726,8 @@ void ProjLib_CompProjectedCurve::Init()
   NCollection_Vector<Standard_Real> aSplits;
   aSplits.Clear();
 
-  Standard_Real Tol;// Tolerance for ExactBound
-  Standard_Integer i, Nend = 0, aSplitIdx = 0;
+  Standard_Real Tol = NAN;// Tolerance for ExactBound
+  Standard_Integer i = 0, Nend = 0, aSplitIdx = 0;
   Standard_Boolean FromLastU = Standard_False,
                    isSplitsComputed = Standard_False;
 
@@ -739,7 +741,7 @@ void ProjLib_CompProjectedCurve::Init()
 
        mySurface->GetType() != GeomAbs_SurfaceOfExtrusion)
     {
-      Standard_Real min_val2;
+      Standard_Real min_val2 = NAN;
       min_val2 = CExt.SquareDistance(1);
 
       Nend = CExt.NbExt();
@@ -753,7 +755,7 @@ void ProjLib_CompProjectedCurve::Init()
     }
   }
 
-  Standard_Real FirstU, LastU, Step, SearchStep, WalkStep, t;
+  Standard_Real FirstU = NAN, LastU = NAN, Step = NAN, SearchStep = NAN, WalkStep = NAN, t = NAN;
 
   FirstU = myCurve->FirstParameter();
   LastU  = myCurve->LastParameter();
@@ -771,7 +773,7 @@ void ProjLib_CompProjectedCurve::Init()
   ProjLib_PrjResolve aPrjPS (*myCurve, *mySurface, 1);
 
   t = FirstU;
-  Standard_Boolean new_part; 
+  Standard_Boolean new_part = 0; 
   Standard_Real prevDeb=0.;
   Standard_Boolean SameDeb=Standard_False;
 
@@ -792,7 +794,7 @@ void ProjLib_CompProjectedCurve::Init()
       Standard_Boolean initpoint=Standard_False;
       Standard_Real U = 0., V = 0.;
       gp_Pnt CPoint;
-      Standard_Real ParT,ParU,ParV; 
+      Standard_Real ParT = NAN,ParU = NAN,ParV = NAN; 
 
       // Search an initial point in the list of Extrema Curve-Surface
       if(Nend != 0 && !CExt.IsParallel()) 
@@ -875,7 +877,7 @@ void ProjLib_CompProjectedCurve::Init()
           // Here we are going to stop if the distance between projection and 
           // corresponding curve point is greater than myMaxDist
           gp_Pnt POnS;
-          Standard_Real d;
+          Standard_Real d = NAN;
           mySurface->D0(U, V, POnS);
           d = CPoint.Distance(POnS);
           if (d > myMaxDist) 
@@ -930,7 +932,7 @@ void ProjLib_CompProjectedCurve::Init()
 
     //Computation of WalkStep
     gp_Vec D1, D2;
-    Standard_Real MagnD1, MagnD2;
+    Standard_Real MagnD1 = NAN, MagnD2 = NAN;
     d2CurvOnSurf(Triple.X(), Triple.Y(), Triple.Z(), D1, D2, myCurve, mySurface);
     MagnD1 = D1.Magnitude();
     MagnD2 = D2.Magnitude();
@@ -942,7 +944,7 @@ void ProjLib_CompProjectedCurve::Init()
     t = Triple.X() + Step;
     if (t > LastU) t = LastU;
     Standard_Real prevStep = Step;
-    Standard_Real U0, V0;
+    Standard_Real U0 = NAN, V0 = NAN;
 
     //Here we are trying to prolong continuous part
     while (t <= LastU && new_part) 
@@ -1087,7 +1089,7 @@ void ProjLib_CompProjectedCurve::Init()
   }
 
   // Sequence post-proceeding.
-  Standard_Integer j;
+  Standard_Integer j = 0;
 
   // 1. Removing poor parts
   Standard_Integer NbPart=myNbCurves;
@@ -1122,7 +1124,7 @@ void ProjLib_CompProjectedCurve::Init()
     for(j = 1; j <= mySequence->Value(i)->Length(); j++)
     {
       gp_Pnt POnC, POnS, aTriple;
-      Standard_Real Distance;
+      Standard_Real Distance = NAN;
       aTriple = mySequence->Value(i)->Value(j);
       myCurve->D0(aTriple.X(), POnC);
       mySurface->D0(aTriple.Y(), aTriple.Z(), POnS);
@@ -1137,7 +1139,7 @@ void ProjLib_CompProjectedCurve::Init()
   // 4. Check the projection to be a single point
 
   gp_Pnt2d Pmoy, Pcurr, P;
-  Standard_Real AveU, AveV;
+  Standard_Real AveU = NAN, AveV = NAN;
   mySnglPnts = new TColStd_HArray1OfBoolean(1, myNbCurves);
   mySnglPnts->Init (Standard_True);
 
@@ -1228,7 +1230,7 @@ void ProjLib_CompProjectedCurve::Perform()
 
   Standard_Boolean approx2d = myProj2d;
   Standard_Boolean approx3d = myProj3d;
-  Standard_Real Udeb, Ufin, UIso, VIso;
+  Standard_Real Udeb = NAN, Ufin = NAN, UIso = NAN, VIso = NAN;
   gp_Pnt2d P2d, Pdeb, Pfin;
   gp_Pnt P;
   Handle(Adaptor2d_Curve2d) HPCur;
@@ -1320,7 +1322,7 @@ void ProjLib_CompProjectedCurve::Perform()
       {
         if (!mySurface->IsUPeriodic())
         {
-          Standard_Real U1, U2;
+          Standard_Real U1 = NAN, U2 = NAN;
           Standard_Real dU = 10. * myTolU;
 
           U1 = mySurface->FirstUParameter();
@@ -1333,7 +1335,7 @@ void ProjLib_CompProjectedCurve::Perform()
 
         if (!mySurface->IsVPeriodic())
         {
-          Standard_Real V1, V2;
+          Standard_Real V1 = NAN, V2 = NAN;
           Standard_Real dV = 10. * myTolV;
 
           V1 = mySurface->FirstVParameter();
@@ -1351,7 +1353,7 @@ void ProjLib_CompProjectedCurve::Perform()
 
       if (approx2d || approx3d)
       {
-        Standard_Boolean only2d, only3d;
+        Standard_Boolean only2d = 0, only3d = 0;
         if (approx2d && approx3d)
         {
           only2d = !approx2d;
@@ -1576,8 +1578,8 @@ gp_Pnt2d ProjLib_CompProjectedCurve::Value(const Standard_Real t) const
 
 void ProjLib_CompProjectedCurve::D0(const Standard_Real U,gp_Pnt2d& P) const
 {
-  Standard_Integer i, j;
-  Standard_Real Udeb, Ufin;
+  Standard_Integer i = 0, j = 0;
+  Standard_Real Udeb = NAN, Ufin = NAN;
   Standard_Boolean found = Standard_False;
 
   for(i = 1; i <= myNbCurves; i++) 
@@ -1594,7 +1596,7 @@ void ProjLib_CompProjectedCurve::D0(const Standard_Real U,gp_Pnt2d& P) const
     throw Standard_DomainError("ProjLib_CompProjectedCurve::D0");
   }
 
-  Standard_Real U0, V0;
+  Standard_Real U0 = NAN, V0 = NAN;
 
   Standard_Integer End = mySequence->Value(i)->Length();
   for(j = 1; j < End; j++)
@@ -1623,7 +1625,7 @@ void ProjLib_CompProjectedCurve::D0(const Standard_Real U,gp_Pnt2d& P) const
       j = mySequence->Value(i)->Length() - 2;
 
     gp_Vec2d I1, I2, I3, I21, I22, I31, Y1, Y2, Y3, Y4, Res;
-    Standard_Real X1, X2, X3, X4;
+    Standard_Real X1 = NAN, X2 = NAN, X3 = NAN, X4 = NAN;
 
     X1 = mySequence->Value(i)->Value(j - 1).X();
     X2 = mySequence->Value(i)->Value(j).X();
@@ -1673,14 +1675,14 @@ void ProjLib_CompProjectedCurve::D0(const Standard_Real U,gp_Pnt2d& P) const
     Extrema_ExtPS aExtPS(thePoint, *mySurface, myTolU, myTolV);
     if (aExtPS.IsDone() && aExtPS.NbExt()) 
     {
-      Standard_Integer k, Nend, imin = 1;
+      Standard_Integer k = 0, Nend = 0, imin = 1;
       // Search for the nearest solution which is also a normal projection
       Nend = aExtPS.NbExt();
       for(k = 2; k <= Nend; k++)
         if (aExtPS.SquareDistance(k) < aExtPS.SquareDistance(imin))
           imin = k;
       const Extrema_POnSurf& POnS = aExtPS.Point(imin);
-      Standard_Real ParU,ParV;
+      Standard_Real ParU = NAN,ParV = NAN;
       POnS.Parameter(ParU, ParV);
       P.SetCoord(ParU, ParV);
     }
@@ -1697,7 +1699,7 @@ void ProjLib_CompProjectedCurve::D1(const Standard_Real t,
   gp_Pnt2d& P,
   gp_Vec2d& V) const
 {
-  Standard_Real u, v;
+  Standard_Real u = NAN, v = NAN;
   D0(t, P);
   u = P.X();
   v = P.Y();
@@ -1713,7 +1715,7 @@ void ProjLib_CompProjectedCurve::D2(const Standard_Real t,
   gp_Vec2d& V1,
   gp_Vec2d& V2) const
 {
-  Standard_Real u, v;
+  Standard_Real u = NAN, v = NAN;
   D0(t, P);
   u = P.X();
   v = P.Y();
@@ -1853,7 +1855,7 @@ void ProjLib_CompProjectedCurve::BuildIntervals(const GeomAbs_Shape S) const
   default: 
     throw Standard_OutOfRange();
   }
-  Standard_Integer i, j, k;
+  Standard_Integer i = 0, j = 0, k = 0;
   Standard_Integer NbIntCur = myCurve->NbIntervals(S);
   Standard_Integer NbIntSurU = mySurface->NbUIntervals(SforS);
   Standard_Integer NbIntSurV = mySurface->NbVIntervals(SforS);
@@ -1866,7 +1868,7 @@ void ProjLib_CompProjectedCurve::BuildIntervals(const GeomAbs_Shape S) const
   mySurface->UIntervals(CutPntsU, SforS);
   mySurface->VIntervals(CutPntsV, SforS);
 
-  Standard_Real Tl, Tr, Ul, Ur, Vl, Vr, Tol;
+  Standard_Real Tl = NAN, Tr = NAN, Ul = NAN, Ur = NAN, Vl = NAN, Vr = NAN, Tol = NAN;
 
   Handle(TColStd_HArray1OfReal) BArr = NULL, 
     CArr = NULL, 
@@ -1908,7 +1910,7 @@ void ProjLib_CompProjectedCurve::BuildIntervals(const GeomAbs_Shape S) const
         else if((Ul < CutPntsU(k) && CutPntsU(k) < Ur) ||
           (Ur < CutPntsU(k) && CutPntsU(k) < Ul)) 
         {
-          Standard_Real V;
+          Standard_Real V = NAN;
           V = (mySequence->Value(i)->Value(j).Z() 
             + mySequence->Value(i)->Value(j +1).Z())/2;
           ProjLib_PrjResolve Solver (*myCurve, *mySurface, 2);
@@ -1974,7 +1976,7 @@ void ProjLib_CompProjectedCurve::BuildIntervals(const GeomAbs_Shape S) const
         else if((Vl < CutPntsV(k) && CutPntsV(k) < Vr) ||
           (Vr < CutPntsV(k) && CutPntsV(k) < Vl)) 
         {
-          Standard_Real U;
+          Standard_Real U = NAN;
           U = (mySequence->Value(i)->Value(j).Y() 
             + mySequence->Value(i)->Value(j +1).Y())/2;
           ProjLib_PrjResolve Solver (*myCurve, *mySurface, 3);
@@ -2217,7 +2219,7 @@ void ProjLib_CompProjectedCurve::UpdateTripleByTrapCriteria(gp_Pnt &thePoint) co
   if (!isProblemsPossible)
     return;
 
-  Standard_Real U,V;
+  Standard_Real U = NAN,V = NAN;
   Standard_Boolean isDone = 
     InitialPoint(myCurve->Value(thePoint.X()), thePoint.X(), myCurve, mySurface, 
                  Precision::PConfusion(), Precision::PConfusion(), U, V, myMaxDist);
@@ -2357,7 +2359,7 @@ void FindSplitPoint(SplitDS &theSplitDS,
 
       // Check that is point will be projected to the periodic border.
       const Extrema_POnSurf &aPOnS = theSplitDS.myExtPS->Point(aMinIdx);
-      Standard_Real U, V, aProjParam;
+      Standard_Real U = NAN, V = NAN, aProjParam = NAN;
       aPOnS.Parameter(U, V);
       aProjParam = theSplitDS.myPeriodicDir ? V : U;
 

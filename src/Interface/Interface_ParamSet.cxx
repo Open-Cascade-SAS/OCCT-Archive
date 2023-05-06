@@ -20,13 +20,13 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(Interface_ParamSet,Standard_Transient)
 
-Interface_ParamSet::Interface_ParamSet (const Standard_Integer nres, const Standard_Integer )//nst)
+Interface_ParamSet::Interface_ParamSet (const Standard_Integer nres, const Standard_Integer ) : thelist(new Interface_ParamList), themxpar(nres), thenbpar(0), thelnval(0), thelnres(100)//nst)
 {
-  thelist = new Interface_ParamList;// (nst,nst+nres+2);
-  themxpar = nres;
-  thenbpar = 0;
-  thelnval = 0;
-  thelnres = 100; // *20;  // 10 caracteres par Param (\0 inclus) : raisonnable
+  // (nst,nst+nres+2);
+  
+  
+  
+  // *20;  // 10 caracteres par Param (\0 inclus) : raisonnable
   theval   = new char[thelnres]; //szv#4:S4163:12Mar99 `thelnres+1` chars was wrong
 }
 
@@ -53,7 +53,7 @@ Standard_Integer  Interface_ParamSet::Append (const Standard_CString val, const 
   }
   else {
     //    ..  Gestion locale des caracteres  ..
-    Standard_Integer i;
+    Standard_Integer i = 0;
     if (thelnval + lnval + 1 > thelnres) {
       //      Reservation de caracteres insuffisante : d abord augmenter
       Standard_Integer newres = (Standard_Integer)(thelnres*2 + lnval);
@@ -131,7 +131,7 @@ void Interface_ParamSet::SetParam (const Standard_Integer num, const Interface_F
 Handle(Interface_ParamList) Interface_ParamSet::Params (const Standard_Integer num,
 							const Standard_Integer nb) const 
 {
-  Standard_Integer i, n0 = num-1, nbp = nb;
+  Standard_Integer i = 0, n0 = num-1, nbp = nb;
   if (num > themxpar) 
     return thenext->Params (num-themxpar,nb);
   if (num == 0 && nb == 0) {

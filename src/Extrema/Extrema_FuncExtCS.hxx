@@ -95,18 +95,18 @@ public:
 
 private:
 
-  const Adaptor3d_Curve* myC;
-  const Adaptor3d_Surface* myS;
+  const Adaptor3d_Curve* myC{};
+  const Adaptor3d_Surface* myS{};
   gp_Pnt myP1;
   gp_Pnt myP2;
-  Standard_Real myt;
-  Standard_Real myU;
-  Standard_Real myV;
+  Standard_Real myt{};
+  Standard_Real myU{};
+  Standard_Real myV{};
   TColStd_SequenceOfReal mySqDist;
   Extrema_SequenceOfPOnCurv myPoint1;
   Extrema_SequenceOfPOnSurf myPoint2;
-  Standard_Boolean myCinit;
-  Standard_Boolean mySinit;
+  Standard_Boolean myCinit{};
+  Standard_Boolean mySinit{};
 
 };
 

@@ -88,7 +88,7 @@ private:
   Handle(StepGeom_Curve) basisCurve;
   Handle(StepGeom_HArray1OfTrimmingSelect) trim1;
   Handle(StepGeom_HArray1OfTrimmingSelect) trim2;
-  Standard_Boolean senseAgreement;
+  Standard_Boolean senseAgreement{};
   StepGeom_TrimmingPreference masterRepresentation;
 
 

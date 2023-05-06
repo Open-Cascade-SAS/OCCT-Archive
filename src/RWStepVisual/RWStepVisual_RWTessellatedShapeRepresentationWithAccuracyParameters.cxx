@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepVisual_RWTessellatedShapeRepresentationWithAccuracyParameters.hxx>
 #include <StepVisual_TessellatedShapeRepresentationWithAccuracyParameters.hxx>
 #include <Interface_EntityIterator.hxx>
@@ -85,7 +87,7 @@ void RWStepVisual_RWTessellatedShapeRepresentationWithAccuracyParameters::ReadSt
     Standard_Integer num2 = sub4;
     for (Standard_Integer i0 = 1; i0 <= nb0; i0++)
     {
-      Standard_Real anIt0;
+      Standard_Real anIt0 = NAN;
       theData->ReadReal(num2, i0, "tessellation_accuracy_parameter_item", theCheck, anIt0);
       aTessellationAccuracyParameters->SetValue(i0, anIt0);
     }

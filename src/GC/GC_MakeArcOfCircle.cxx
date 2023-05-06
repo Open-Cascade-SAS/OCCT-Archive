@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Extrema_ExtElC.hxx>
 #include <Extrema_POnCurv.hxx>
@@ -34,14 +36,14 @@
 //=======================================================================
 GC_MakeArcOfCircle::GC_MakeArcOfCircle(const gp_Pnt&  P1 ,
 				       const gp_Pnt&  P2 ,
-				       const gp_Pnt&  P3  ) 
+				       const gp_Pnt&  P3  ) : GC_Root() 
 {
-  Standard_Boolean sense;
+  Standard_Boolean sense = 0;
   //
   gce_MakeCirc Cir(P1, P2, P3);
   TheError = Cir.Status();
   if (TheError == gce_Done) {
-    Standard_Real Alpha1, Alpha3;//,Alpha2
+    Standard_Real Alpha1 = NAN, Alpha3 = NAN;//,Alpha2
     gp_Circ C(Cir.Value());
     //modified by NIZNHY-PKV Thu Mar  3 10:53:02 2005f
     //Alpha1 is always =0.
@@ -69,7 +71,7 @@ GC_MakeArcOfCircle::GC_MakeArcOfCircle(const gp_Pnt&  P1 ,
 //=======================================================================
 GC_MakeArcOfCircle::GC_MakeArcOfCircle(const gp_Pnt& P1 ,
 				       const gp_Vec& V  ,
-				       const gp_Pnt& P2 )
+				       const gp_Pnt& P2 ) : GC_Root()
 {
   gp_Circ cir;
   gce_MakeLin Corde(P1,P2);
@@ -122,7 +124,7 @@ GC_MakeArcOfCircle::GC_MakeArcOfCircle(const gp_Pnt& P1 ,
 GC_MakeArcOfCircle::GC_MakeArcOfCircle(const gp_Circ& Circ   ,
 				       const gp_Pnt&  P1     ,
 				       const gp_Pnt&  P2     ,
-				       const Standard_Boolean  Sense  ) 
+				       const Standard_Boolean  Sense  ) : GC_Root() 
 {
   Standard_Real Alpha1 = ElCLib::Parameter(Circ,P1);
   Standard_Real Alpha2 = ElCLib::Parameter(Circ,P2);
@@ -137,7 +139,7 @@ GC_MakeArcOfCircle::GC_MakeArcOfCircle(const gp_Circ& Circ   ,
 GC_MakeArcOfCircle::GC_MakeArcOfCircle(const gp_Circ& Circ   ,
 				       const gp_Pnt&  P      ,
 				       const Standard_Real     Alpha  ,
-				       const Standard_Boolean  Sense  ) 
+				       const Standard_Boolean  Sense  ) : GC_Root() 
 {
   Standard_Real Alphafirst = ElCLib::Parameter(Circ,P);
   Handle(Geom_Circle) C = new Geom_Circle(Circ);
@@ -151,7 +153,7 @@ GC_MakeArcOfCircle::GC_MakeArcOfCircle(const gp_Circ& Circ   ,
 GC_MakeArcOfCircle::GC_MakeArcOfCircle(const gp_Circ& Circ   ,
 					 const Standard_Real     Alpha1 ,
 					 const Standard_Real     Alpha2 ,
-					 const Standard_Boolean  Sense  ) 
+					 const Standard_Boolean  Sense  ) : GC_Root() 
 {
   Handle(Geom_Circle) C = new Geom_Circle(Circ);
   TheArc= new Geom_TrimmedCurve(C,Alpha1,Alpha2,Sense);

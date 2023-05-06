@@ -36,14 +36,14 @@ static const Standard_Integer theStackSize = 20;
 //purpose  :
 //=======================================================================
 TopExp_Explorer::TopExp_Explorer()
-: myStack (0L),
+: myStack((TopoDS_Iterator*)Standard::Allocate(theStackSize*sizeof(TopoDS_Iterator))),
   myTop (-1),
   mySizeOfStack (theStackSize),
   toFind  (TopAbs_SHAPE),
   toAvoid (TopAbs_SHAPE),
   hasMore (Standard_False)
 {
-  myStack = (TopoDS_Iterator*)Standard::Allocate(theStackSize*sizeof(TopoDS_Iterator));
+  
 }
 
 //=======================================================================
@@ -53,15 +53,13 @@ TopExp_Explorer::TopExp_Explorer()
 TopExp_Explorer::TopExp_Explorer (const TopoDS_Shape& theS,
                                   const TopAbs_ShapeEnum theToFind,
                                   const TopAbs_ShapeEnum theToAvoid)
-: myStack (0L),
+: myStack((TopoDS_Iterator*)Standard::Allocate(theStackSize*sizeof(TopoDS_Iterator))),
   myTop (-1),
   mySizeOfStack (theStackSize),
   toFind  (theToFind),
   toAvoid (theToAvoid),
   hasMore (Standard_False)
 {
-  myStack = (TopoDS_Iterator*)Standard::Allocate(theStackSize*sizeof(TopoDS_Iterator));
-
   Init (theS, theToFind, theToAvoid);
 }
 
@@ -137,7 +135,7 @@ const TopoDS_Shape&  TopExp_Explorer::Current()const
 //=======================================================================
 void TopExp_Explorer::Next()
 {
-  Standard_Integer NewSize;
+  Standard_Integer NewSize = 0;
   TopoDS_Shape ShapTop;
   TopAbs_ShapeEnum ty;
   Standard_NoMoreObject_Raise_if(!hasMore,"TopExp_Explorer::Next");
@@ -161,7 +159,7 @@ void TopExp_Explorer::Next()
       if(++myTop >= mySizeOfStack) {
 	NewSize = mySizeOfStack + theStackSize;
 	TopExp_Stack newStack = (TopoDS_Iterator*)Standard::Allocate(NewSize*sizeof(TopoDS_Iterator));
-	Standard_Integer i;
+	Standard_Integer i = 0;
 	for ( i =0; i < myTop; i++) {
 	  new (&newStack[i]) TopoDS_Iterator(myStack[i]);
 	  myStack[i].~TopoDS_Iterator();
@@ -187,7 +185,7 @@ void TopExp_Explorer::Next()
 	if(++myTop >= mySizeOfStack) {
 	  NewSize = mySizeOfStack + theStackSize;
 	  TopExp_Stack newStack = (TopoDS_Iterator*)Standard::Allocate(NewSize*sizeof(TopoDS_Iterator));
-	  Standard_Integer i;
+	  Standard_Integer i = 0;
 	  for (i =0; i < myTop; i++) {
 	    new (&newStack[i]) TopoDS_Iterator(myStack[i]);
 	    myStack[i].~TopoDS_Iterator();

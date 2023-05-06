@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRepPrim_FaceBuilder.hxx>
 #include <Geom2d_Line.hxx>
@@ -72,7 +74,7 @@ BRepPrim_FaceBuilder::BRepPrim_FaceBuilder(const BRep_Builder& B,
 void BRepPrim_FaceBuilder::Init(const BRep_Builder& B,
 				const Handle(Geom_Surface)& S)
 { 
-  Standard_Real UMin,UMax,VMin,VMax;
+  Standard_Real UMin = NAN,UMax = NAN,VMin = NAN,VMax = NAN;
   S->Bounds(UMin,UMax,VMin,VMax);
   Init(B,S,UMin,UMax,VMin,VMax);
 }
@@ -90,7 +92,7 @@ void BRepPrim_FaceBuilder::Init(const BRep_Builder& B,
 				const Standard_Real VMax) 
 {
   // Check the values
-  Standard_Real USMin,USMax,VSMin,VSMax;
+  Standard_Real USMin = NAN,USMax = NAN,VSMin = NAN,VSMax = NAN;
   S->Bounds(USMin,USMax,VSMin,VSMax);
   
   if (UMin >= UMax) throw Standard_ConstructionError("BRepPrim_FaceBuilder");

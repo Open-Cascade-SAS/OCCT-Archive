@@ -329,12 +329,12 @@ private:
 private:
 
   HLRAlgo_Projector myProj;
-  Standard_Real TMat[3][3];
-  Standard_Real TLoc[3];
-  Standard_Real TTMa[3][3];
-  Standard_Real TTLo[3];
-  Standard_Real TIMa[3][3];
-  Standard_Real TILo[3];
+  Standard_Real TMat[3][3]{};
+  Standard_Real TLoc[3]{};
+  Standard_Real TTMa[3][3]{};
+  Standard_Real TTLo[3]{};
+  Standard_Real TIMa[3][3]{};
+  Standard_Real TILo[3]{};
   TopTools_SequenceOfShape myShapes;
   TopTools_IndexedMapOfShape myEMap;
   TopTools_IndexedMapOfShape myFMap;

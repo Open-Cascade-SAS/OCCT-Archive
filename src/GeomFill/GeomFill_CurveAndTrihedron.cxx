@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <GeomFill_CurveAndTrihedron.hxx>
 
 #include <Adaptor3d_Curve.hxx>
@@ -35,12 +37,12 @@ IMPLEMENT_STANDARD_RTTIEXT(GeomFill_CurveAndTrihedron,GeomFill_LocationLaw)
 //Purpose :
 //==================================================================
 GeomFill_CurveAndTrihedron::GeomFill_CurveAndTrihedron(
-       const Handle(GeomFill_TrihedronLaw)& Trihedron )
+       const Handle(GeomFill_TrihedronLaw)& Trihedron ) : myLaw(Trihedron), WithTrans(Standard_False)
 {
-  myLaw = Trihedron;
+  
   myCurve.Nullify();
   Trans.SetIdentity();
-  WithTrans = Standard_False;
+  
 }
 
 //==================================================================
@@ -99,7 +101,7 @@ Handle(GeomFill_LocationLaw) GeomFill_CurveAndTrihedron::Copy() const
 						 gp_Mat& M,
 						 gp_Vec& V) 
 {
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   myTrimmed->D0(Param, Point);
   V.SetXYZ(Point.XYZ());
    
@@ -121,7 +123,7 @@ Handle(GeomFill_LocationLaw) GeomFill_CurveAndTrihedron::Copy() const
 						 gp_Vec& V,
 						 TColgp_Array1OfPnt2d&) 
 {
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   myTrimmed->D0(Param, Point);
   V.SetXYZ(Point.XYZ());
    
@@ -146,7 +148,7 @@ Handle(GeomFill_LocationLaw) GeomFill_CurveAndTrihedron::Copy() const
 						 TColgp_Array1OfPnt2d& ,
 						 TColgp_Array1OfVec2d& ) 
 {
-  Standard_Boolean Ok;
+  Standard_Boolean Ok = 0;
   myTrimmed->D1(Param, Point, DV);
   V.SetXYZ(Point.XYZ());
    
@@ -181,7 +183,7 @@ Handle(GeomFill_LocationLaw) GeomFill_CurveAndTrihedron::Copy() const
 						 TColgp_Array1OfVec2d&,
 						 TColgp_Array1OfVec2d&) 
 {
- Standard_Boolean Ok;
+ Standard_Boolean Ok = 0;
  myTrimmed->D2(Param, Point, DV, D2V);
  V.SetXYZ(Point.XYZ());
    
@@ -211,7 +213,7 @@ Handle(GeomFill_LocationLaw) GeomFill_CurveAndTrihedron::Copy() const
 //==================================================================
  Standard_Integer GeomFill_CurveAndTrihedron::NbIntervals(const GeomAbs_Shape S) const
 {
-  Standard_Integer Nb_Sec, Nb_Law;
+  Standard_Integer Nb_Sec = 0, Nb_Law = 0;
   Nb_Sec  =  myTrimmed->NbIntervals(S);
   Nb_Law  =  myLaw->NbIntervals(S);
 
@@ -238,7 +240,7 @@ Handle(GeomFill_LocationLaw) GeomFill_CurveAndTrihedron::Copy() const
  void GeomFill_CurveAndTrihedron::Intervals(TColStd_Array1OfReal& T,
 					    const GeomAbs_Shape S) const
 {
-  Standard_Integer Nb_Sec, Nb_Law;
+  Standard_Integer Nb_Sec = 0, Nb_Law = 0;
   Nb_Sec  =  myTrimmed->NbIntervals(S);
   Nb_Law  =  myLaw->NbIntervals(S);
 
@@ -309,8 +311,8 @@ Handle(GeomFill_LocationLaw) GeomFill_CurveAndTrihedron::Copy() const
  void GeomFill_CurveAndTrihedron::GetAverageLaw(gp_Mat& AM,
 						gp_Vec& AV) 
 {
-  Standard_Integer ii;
-  Standard_Real U, delta;
+  Standard_Integer ii = 0;
+  Standard_Real U = NAN, delta = NAN;
   gp_Vec V;
   
   myLaw->GetAverageLaw(V1, V2, V3);

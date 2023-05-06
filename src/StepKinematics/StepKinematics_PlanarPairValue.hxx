@@ -58,9 +58,9 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_PlanarPairValue, StepKinematics_PairValue)
 
 private:
-  Standard_Real myActualRotation;
-  Standard_Real myActualTranslationX;
-  Standard_Real myActualTranslationY;
+  Standard_Real myActualRotation{};
+  Standard_Real myActualTranslationX{};
+  Standard_Real myActualTranslationY{};
 
 };
 #endif // _StepKinematics_PlanarPairValue_HeaderFile_

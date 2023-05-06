@@ -26,9 +26,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_DocumentProductAssociation,Standard_Transie
 //function : StepBasic_DocumentProductAssociation
 //purpose  : 
 //=======================================================================
-StepBasic_DocumentProductAssociation::StepBasic_DocumentProductAssociation ()
+StepBasic_DocumentProductAssociation::StepBasic_DocumentProductAssociation () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

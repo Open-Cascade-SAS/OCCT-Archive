@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepShape_RWExtrudedAreaSolid.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -54,7 +56,7 @@ void RWStepShape_RWExtrudedAreaSolid::ReadStep
 
 	// --- own field : depth ---
 
-	Standard_Real aDepth;
+	Standard_Real aDepth = NAN;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat4 =` not needed
 	data->ReadReal (num,4,"depth",ach,aDepth);
 

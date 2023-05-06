@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Convert_CompPolynomialToPoles.hxx>
 #include <GeomFill_QuasiAngularConvertor.hxx>
 #include <gp_Mat.hxx>
@@ -69,8 +71,8 @@ Standard_Boolean GeomFill_QuasiAngularConvertor::Initialized() const
 void GeomFill_QuasiAngularConvertor::Init() 
 {
   if (myinit) return; //On n'initialise qu'une fois
-  Standard_Integer ii, jj, Ordre=7;
-  Standard_Real terme;
+  Standard_Integer ii = 0, jj = 0, Ordre=7;
+  Standard_Real terme = NAN;
   TColStd_Array1OfReal Coeffs(1, Ordre*Ordre), TrueInter(1,2), Inter(1,2);
   Handle(TColStd_HArray2OfReal) 
     Poles1d = new (TColStd_HArray2OfReal) (1, Ordre, 1, Ordre);
@@ -118,9 +120,9 @@ void GeomFill_QuasiAngularConvertor::Section(const gp_Pnt& FirstPnt,
 				       TColgp_Array1OfPnt& Poles,
 				       TColStd_Array1OfReal& Weights) 
 { 
-  Standard_Real b, b2, c, c2,tan_b;
-  Standard_Integer ii;
-  Standard_Real beta, beta2, beta3, beta4, beta5, beta6, wi;
+  Standard_Real b = NAN, b2 = NAN, c = NAN, c2 = NAN,tan_b = NAN;
+  Standard_Integer ii = 0;
+  Standard_Real beta = NAN, beta2 = NAN, beta3 = NAN, beta4 = NAN, beta5 = NAN, beta6 = NAN, wi = NAN;
   gp_XYZ aux;
   gp_Mat Rot;
   // Calcul de la transformation
@@ -208,15 +210,15 @@ void GeomFill_QuasiAngularConvertor::Section(const gp_Pnt& FirstPnt,
   Standard_Integer Ordre = 7;
   math_Vector DVx(1, Ordre), DVy(1, Ordre), DVw(1, Ordre),
               DPx(1, Ordre), DPy(1, Ordre), DW(1, Ordre);
-  Standard_Real b, b2, c, c2,tan_b;
-  Standard_Real bpr, dtan_b;
-  Standard_Integer ii;
-  Standard_Real beta, beta2, beta3, beta4, beta5, beta6, betaprim;
+  Standard_Real b = NAN, b2 = NAN, c = NAN, c2 = NAN,tan_b = NAN;
+  Standard_Real bpr = NAN, dtan_b = NAN;
+  Standard_Integer ii = 0;
+  Standard_Real beta = NAN, beta2 = NAN, beta3 = NAN, beta4 = NAN, beta5 = NAN, beta6 = NAN, betaprim = NAN;
   gp_Vec V1(Center, FirstPnt), V1Prim, V2;
 
   // Calcul des  transformations
   gp_XYZ aux;
-  Standard_Real Sina, Cosa;
+  Standard_Real Sina = NAN, Cosa = NAN;
   gp_Mat Rot, RotPrim, D, DPrim;
   // La rotation s'ecrit I +  sin(Ang) * D + (1. - cos(Ang)) * D*D
   // ou D est l'application x -> Dir ^ x
@@ -262,7 +264,7 @@ void GeomFill_QuasiAngularConvertor::Section(const gp_Pnt& FirstPnt,
   if (Abs(beta) < NullAngle) {
     // On calcul b par D.L
      Standard_Real cf = 2.0/(3*5*7);
-     Standard_Real Num, Denom;
+     Standard_Real Num = NAN, Denom = NAN;
      Num = 0.2 + cf*beta2;
      Denom = 1+0.2*beta2;
      b = - Num/Denom;
@@ -326,7 +328,7 @@ void GeomFill_QuasiAngularConvertor::Section(const gp_Pnt& FirstPnt,
   DW.Multiply(B, DVw);
 
   gp_XYZ P, DP;
-  Standard_Real wi;
+  Standard_Real wi = NAN;
 
   for (ii=1; ii<=Ordre; ii++) {
     wi = W(ii);
@@ -369,13 +371,13 @@ void GeomFill_QuasiAngularConvertor::Section(const gp_Pnt& FirstPnt,
   math_Vector DPx(1, Ordre), DPy(1, Ordre), DW(1, Ordre),
               D2Px(1, Ordre), D2Py(1, Ordre), D2W(1, Ordre);
  
-  Standard_Integer ii;
-  Standard_Real daux, b, b2, c, c2, bpr, bsc;
+  Standard_Integer ii = 0;
+  Standard_Real daux = NAN, b = NAN, b2 = NAN, c = NAN, c2 = NAN, bpr = NAN, bsc = NAN;
   gp_Vec V1(Center, FirstPnt), V1Prim, V1Secn, V2;
 
   // Calcul des  transformations
   gp_XYZ auxyz;
-  Standard_Real Sina, Cosa;
+  Standard_Real Sina = NAN, Cosa = NAN;
   gp_Mat Rot, RotPrim, RotSecn, D, DPrim, DSecn, DDP, Maux;
   // La rotation s'ecrit I +  sin(Ang) * D + (1. - cos(Ang)) * D*D
   // ou D est l'application x -> Dir ^ x
@@ -442,9 +444,9 @@ void GeomFill_QuasiAngularConvertor::Section(const gp_Pnt& FirstPnt,
 
      
   // Calcul des coeff  -----------
-  Standard_Real tan_b, dtan_b, d2tan_b;
-  Standard_Real beta, beta2, beta3, beta4, beta5, beta6, betaprim, betasecn;
-  Standard_Real betaprim2, bpr2;
+  Standard_Real tan_b = NAN, dtan_b = NAN, d2tan_b = NAN;
+  Standard_Real beta = NAN, beta2 = NAN, beta3 = NAN, beta4 = NAN, beta5 = NAN, beta6 = NAN, betaprim = NAN, betasecn = NAN;
+  Standard_Real betaprim2 = NAN, bpr2 = NAN;
   beta = Angle/4;
   betaprim = DAngle/4;
   betasecn = D2Angle/4;
@@ -458,7 +460,7 @@ void GeomFill_QuasiAngularConvertor::Section(const gp_Pnt& FirstPnt,
  if (Abs(beta) < NullAngle) {
     // On calcul b par D.L
      Standard_Real cf =-2.0/21;
-     Standard_Real Num, Denom, aux;
+     Standard_Real Num = NAN, Denom = NAN, aux = NAN;
      Num = 0.2 + cf*beta2;
      Denom = 1+0.2*beta2;
      aux = (cf*Denom - 0.2*Num)/(Denom*Denom);
@@ -559,7 +561,7 @@ void GeomFill_QuasiAngularConvertor::Section(const gp_Pnt& FirstPnt,
   D2W.Multiply(B, D2Vw);
 
   gp_XYZ P, DP, D2P;
-  Standard_Real wi, dwi;
+  Standard_Real wi = NAN, dwi = NAN;
   for (ii=1; ii<=Ordre; ii++) {
      wi = W(ii);
      dwi = DW(ii);

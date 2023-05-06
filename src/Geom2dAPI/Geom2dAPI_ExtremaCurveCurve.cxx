@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Extrema_ExtCC2d.hxx>
 #include <Extrema_POnCurv2d.hxx>
 #include <Geom2dAPI_ExtremaCurveCurve.hxx>
@@ -53,7 +55,7 @@ Geom2dAPI_ExtremaCurveCurve::Geom2dAPI_ExtremaCurveCurve
   if ( myIsDone ) {
     // evaluate the lower distance and its index;
     
-    Standard_Real Dist2, Dist2Min = myExtCC.SquareDistance(1);
+    Standard_Real Dist2 = NAN, Dist2Min = myExtCC.SquareDistance(1);
     myIndex = 1;
 
     for ( Standard_Integer i = 2; i <= myExtCC.NbExt(); i++) {

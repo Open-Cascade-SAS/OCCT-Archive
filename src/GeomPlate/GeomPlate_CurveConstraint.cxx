@@ -63,12 +63,12 @@ GeomPlate_CurveConstraint :: GeomPlate_CurveConstraint (const Handle(Adaptor3d_C
 						const Standard_Real TolAng,
 						const Standard_Real TolCurv
 ) :
-myLProp(2,TolDist),
+myOrder(Tang), myLProp(2,TolDist),
 myTolDist(TolDist),
 myTolAng(TolAng),
 myTolCurv(TolCurv)
 {
-  myOrder=Tang;
+  
   if ((Tang<-1)||(Tang>2))
     throw Standard_Failure("GeomPlate : The continuity is not G0 G1 or G2");
   myNbPoints=NPt;

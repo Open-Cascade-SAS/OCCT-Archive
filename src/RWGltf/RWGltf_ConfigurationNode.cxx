@@ -40,9 +40,9 @@ RWGltf_ConfigurationNode::RWGltf_ConfigurationNode() :
 // purpose  :
 //=======================================================================
 RWGltf_ConfigurationNode::RWGltf_ConfigurationNode(const Handle(RWGltf_ConfigurationNode)& theNode)
-  :DE_ConfigurationNode(theNode)
+  :DE_ConfigurationNode(theNode), InternalParameters(theNode->InternalParameters)
 {
-  InternalParameters = theNode->InternalParameters;
+  
 }
 
 //=======================================================================

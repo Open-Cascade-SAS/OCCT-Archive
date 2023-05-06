@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_Curve.hxx>
 #include <Geom_Geometry.hxx>
 #include <gp_Pnt.hxx>
@@ -319,7 +321,7 @@ Standard_Real ShapeExtend_CompositeSurface::ULocalToGlobal (const Standard_Integ
 							    const Standard_Integer j,
 							    const Standard_Real u) const
 {
-  Standard_Real u1, u2, v1, v2;
+  Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
   myPatches->Value(i,j)->Bounds ( u1, u2, v1, v2 );
   Standard_Real scale = ( myUJointValues->Value(i+1) - myUJointValues->Value(i) ) / ( u2 - u1 );
   return u * scale + ( myUJointValues->Value(i) - u1 * scale ); // ! this formula is stable if u1 is infinite
@@ -334,7 +336,7 @@ Standard_Real ShapeExtend_CompositeSurface::VLocalToGlobal (const Standard_Integ
 							    const Standard_Integer j,
 							    const Standard_Real v) const
 {
-  Standard_Real u1, u2, v1, v2;
+  Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
   myPatches->Value(i,j)->Bounds ( u1, u2, v1, v2 );
   Standard_Real scale = ( myVJointValues->Value(j+1) - myVJointValues->Value(j) ) / ( v2 - v1 );
   return v * scale + ( myVJointValues->Value(j) - v1 * scale ); // ! this formula is stable if v1 is infinite
@@ -349,7 +351,7 @@ gp_Pnt2d ShapeExtend_CompositeSurface::LocalToGlobal (const Standard_Integer i,
 						      const Standard_Integer j,
 						      const gp_Pnt2d &uv) const
 {
-  Standard_Real u1, u2, v1, v2;
+  Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
   myPatches->Value(i,j)->Bounds ( u1, u2, v1, v2 );
   Standard_Real scaleu = ( myUJointValues->Value(i+1) - myUJointValues->Value(i) ) / ( u2 - u1 );
   Standard_Real scalev = ( myVJointValues->Value(j+1) - myVJointValues->Value(j) ) / ( v2 - v1 );
@@ -366,7 +368,7 @@ Standard_Real ShapeExtend_CompositeSurface::UGlobalToLocal (const Standard_Integ
 							    const Standard_Integer j,
 							    const Standard_Real U) const
 {
-  Standard_Real u1, u2, v1, v2;
+  Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
   myPatches->Value(i,j)->Bounds ( u1, u2, v1, v2 );
   Standard_Real scale = ( u2 - u1 ) / ( myUJointValues->Value(i+1) - myUJointValues->Value(i) );
   return U * scale + ( u1 - myUJointValues->Value(i) * scale ); // ! this formula is stable if u1 is infinite
@@ -381,7 +383,7 @@ Standard_Real ShapeExtend_CompositeSurface::VGlobalToLocal (const Standard_Integ
 							    const Standard_Integer j,
 							    const Standard_Real V) const
 {
-  Standard_Real u1, u2, v1, v2;
+  Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
   myPatches->Value(i,j)->Bounds ( u1, u2, v1, v2 );
   Standard_Real scale = ( v2 - v1 ) / ( myVJointValues->Value(j+1) - myVJointValues->Value(j) );
   return V * scale + ( v1 - myVJointValues->Value(j) * scale ); // ! this formula is stable if v1 is infinite
@@ -396,7 +398,7 @@ gp_Pnt2d ShapeExtend_CompositeSurface::GlobalToLocal (const Standard_Integer i,
 						      const Standard_Integer j,
 						      const gp_Pnt2d &UV) const
 {
-  Standard_Real u1, u2, v1, v2;
+  Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
   myPatches->Value(i,j)->Bounds ( u1, u2, v1, v2 );
   Standard_Real scaleu = ( u2 - u1 ) / ( myUJointValues->Value(i+1) - myUJointValues->Value(i) );
   Standard_Real scalev = ( v2 - v1 ) / ( myVJointValues->Value(j+1) - myVJointValues->Value(j) );
@@ -414,7 +416,7 @@ Standard_Boolean ShapeExtend_CompositeSurface::GlobalToLocalTransformation (cons
 									    Standard_Real &uFact,
 									    gp_Trsf2d &Trsf) const
 {
-  Standard_Real u1, u2, v1, v2;
+  Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
   myPatches->Value(i,j)->Bounds ( u1, u2, v1, v2 );
 
   Standard_Real scaleu = ( u2 - u1 ) / ( myUJointValues->Value(i+1) - myUJointValues->Value(i) );
@@ -732,8 +734,8 @@ void ShapeExtend_CompositeSurface::ComputeJointValues (const ShapeExtend_Paramet
   myVJointValues = new TColStd_HArray1OfReal(1,NbV+1);
   
   if ( param == ShapeExtend_Natural ) {
-    Standard_Real U1, U2, V1, V2, U=0, V=0;
-    Standard_Integer i; // svv Jan 10 2000 : porting on DEC
+    Standard_Real U1 = NAN, U2 = NAN, V1 = NAN, V2 = NAN, U=0, V=0;
+    Standard_Integer i = 0; // svv Jan 10 2000 : porting on DEC
     for ( i = 1; i <= NbU; i++ ) {
       myPatches->Value(i,1)->Bounds(U1,U2,V1,V2);
       if ( i ==1 ) myUJointValues->SetValue ( 1, U = U1 );
@@ -753,7 +755,7 @@ void ShapeExtend_CompositeSurface::ComputeJointValues (const ShapeExtend_Paramet
       stepu /= NbU; 
       stepv /= NbV;
     }
-    Standard_Integer i; // svv Jan 10 2000 : porting on DEC
+    Standard_Integer i = 0; // svv Jan 10 2000 : porting on DEC
     for ( i=0; i <= NbU; i++ )
       myUJointValues->SetValue ( i+1, i * stepu );
     for ( i=0; i <= NbV; i++ )
@@ -790,15 +792,15 @@ Standard_Boolean ShapeExtend_CompositeSurface::CheckConnectivity (const Standard
   Standard_Integer NbV = NbVPatches();
   
   // check in u direction
-  Standard_Integer i,j; // svv Jan 10 2000 : porting on DEC
+  Standard_Integer i = 0,j = 0; // svv Jan 10 2000 : porting on DEC
   for ( i=1, j = NbU; i <= NbU; j = i++ ) {
     Standard_Real maxdist2 = 0.;
     for ( Standard_Integer k=1; k <= NbV; k++ ) {
       Handle(Geom_Surface) sj = myPatches->Value(j,k);
       Handle(Geom_Surface) si = myPatches->Value(i,k);
-      Standard_Real Uj1, Uj2, Vj1, Vj2;
+      Standard_Real Uj1 = NAN, Uj2 = NAN, Vj1 = NAN, Vj2 = NAN;
       GetLimitedBounds ( sj, Uj1, Uj2, Vj1, Vj2 );
-      Standard_Real Ui1, Ui2, Vi1, Vi2;
+      Standard_Real Ui1 = NAN, Ui2 = NAN, Vi1 = NAN, Vi2 = NAN;
       GetLimitedBounds ( si, Ui1, Ui2, Vi1, Vi2 );
       Standard_Real stepj = ( Vj2 - Vj1 ) / ( NPOINTS - 1 );
       Standard_Real stepi = ( Vi2 - Vi1 ) / ( NPOINTS - 1 );
@@ -819,9 +821,9 @@ Standard_Boolean ShapeExtend_CompositeSurface::CheckConnectivity (const Standard
     for ( Standard_Integer k=1; k <= NbU; k++ ) {
       Handle(Geom_Surface) sj = myPatches->Value(k,j);
       Handle(Geom_Surface) si = myPatches->Value(k,i);
-      Standard_Real Uj1, Uj2, Vj1, Vj2;
+      Standard_Real Uj1 = NAN, Uj2 = NAN, Vj1 = NAN, Vj2 = NAN;
       GetLimitedBounds ( sj, Uj1, Uj2, Vj1, Vj2 );
-      Standard_Real Ui1, Ui2, Vi1, Vi2;
+      Standard_Real Ui1 = NAN, Ui2 = NAN, Vi1 = NAN, Vi2 = NAN;
       GetLimitedBounds ( si, Ui1, Ui2, Vi1, Vi2 );
       Standard_Real stepj = ( Uj2 - Uj1 ) / ( NPOINTS - 1 );
       Standard_Real stepi = ( Ui2 - Ui1 ) / ( NPOINTS - 1 );

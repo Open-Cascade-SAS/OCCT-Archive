@@ -19,6 +19,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <ElCLib.hxx>
 #include <gp_Lin.hxx>
@@ -106,8 +108,8 @@ void  HLRBRep_Intersector::Perform (const Standard_Address A1,
   myTypePerform = 1;
 
   gp_Pnt2d pa,pb;//,pa1,pb1;
-  Standard_Real a,b,d,tol;
-  Standard_ShortReal ta,tb;
+  Standard_Real a = NAN,b = NAN,d = NAN,tol = NAN;
+  Standard_ShortReal ta = NAN,tb = NAN;
   
   ((HLRBRep_EdgeData*) A1)->Status().Bounds(a,ta,b,tb);
   d = b - a;
@@ -156,8 +158,8 @@ void  HLRBRep_Intersector::Perform (const Standard_Integer /*nA*/,
 
   gp_Pnt2d pa1,pb1,pa2,pb2;
   gp_Vec2d va1,vb1,va2,vb2;
-  Standard_Real a1,b1,a2,b2,d,dd,tol,tol1,tol2;
-  Standard_ShortReal ta,tb;
+  Standard_Real a1 = NAN,b1 = NAN,a2 = NAN,b2 = NAN,d = NAN,dd = NAN,tol = NAN,tol1 = NAN,tol2 = NAN;
+  Standard_ShortReal ta = NAN,tb = NAN;
 
   //modified by jgv, 18.04.2016 for OCC27341
   //tol1 = (Standard_Real)(((HLRBRep_EdgeData*) A1)->Tolerance());
@@ -169,7 +171,7 @@ void  HLRBRep_Intersector::Perform (const Standard_Integer /*nA*/,
   else             tol = tol2;
 
 
-  Standard_Boolean PasBon;
+  Standard_Boolean PasBon = 0;
   Standard_Real    decalagea1=100.0;
   Standard_Real    decalagea2=100.0;
   Standard_Real    decalageb1=100.0;
@@ -458,8 +460,8 @@ void  HLRBRep_Intersector::Perform (const gp_Lin& L,
     default :
     {
       if (myPolyhedron == NULL) {
-	Standard_Integer nbsu,nbsv;
-	Standard_Real u1,v1,u2,v2;
+	Standard_Integer nbsu = 0,nbsv = 0;
+	Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
 	u1   = HLRBRep_SurfaceTool::FirstUParameter(mySurface);
 	v1   = HLRBRep_SurfaceTool::FirstVParameter(mySurface);
 	u2   = HLRBRep_SurfaceTool::LastUParameter(mySurface);
@@ -469,7 +471,7 @@ void  HLRBRep_Intersector::Perform (const gp_Lin& L,
 	myPolyhedron =
     new HLRBRep_ThePolyhedronOfInterCSurf(mySurface,nbsu,nbsv,u1,v1,u2,v2);
       }
-      Standard_Real x0,y0,z0,x1,y1,z1,pmin,pmax;//,pp;
+      Standard_Real x0 = NAN,y0 = NAN,z0 = NAN,x1 = NAN,y1 = NAN,z1 = NAN,pmin = NAN,pmax = NAN;//,pp;
       myPolyhedron->Bounding().Get(x0,y0,z0,x1,y1,z1);
 #if 0
       pmax = pmin = ElCLib::Parameter(L, gp_Pnt((x1+x0)*0.5,
@@ -487,7 +489,7 @@ void  HLRBRep_Intersector::Perform (const gp_Lin& L,
       break;
 #else 
       //-- On va rejeter tous les points de parametres > P
-      Standard_Real p;
+      Standard_Real p = NAN;
       p = ElCLib::Parameter(L, gp_Pnt(x0,y0,z0));  pmin=pmax=p;
       p = ElCLib::Parameter(L, gp_Pnt(x0,y0,z1));  if(pmin>p) pmin=p; if(pmax<p) pmax=p;
 

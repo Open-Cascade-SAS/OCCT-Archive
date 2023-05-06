@@ -39,7 +39,7 @@ IFSelect_GraphCounter::IFSelect_GraphCounter
 {
   if (theapplied.IsNull())  {  AddList (list,graph.Model());  return;  }
   if (list.IsNull()) return;
-  Standard_Integer i, nb = list->Length();
+  Standard_Integer i = 0, nb = list->Length();
   for (i = 1; i <= nb; i ++) {
     char val[12];
     Handle(Standard_Transient) ent = list->Value(i);

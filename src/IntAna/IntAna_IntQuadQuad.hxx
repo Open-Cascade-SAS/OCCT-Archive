@@ -121,13 +121,13 @@ protected:
 
 protected:
 
-  Standard_Boolean done;
-  Standard_Boolean identical;
+  Standard_Boolean done{};
+  Standard_Boolean identical{};
   IntAna_Curve TheCurve[12];
-  Standard_Integer previouscurve[12];
-  Standard_Integer nextcurve[12];
-  Standard_Integer NbCurves;
-  Standard_Integer Nbpoints;
+  Standard_Integer previouscurve[12]{};
+  Standard_Integer nextcurve[12]{};
+  Standard_Integer NbCurves{};
+  Standard_Integer Nbpoints{};
   gp_Pnt Thepoints[2];
   Standard_Integer myNbMaxCurves;
   Standard_Real myEpsilon;

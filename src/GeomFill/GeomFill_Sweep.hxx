@@ -144,14 +144,14 @@ private:
   Standard_EXPORT Standard_Boolean BuildKPart();
 
 
-  Standard_Real First;
-  Standard_Real Last;
+  Standard_Real First{};
+  Standard_Real Last{};
   Standard_Real SFirst;
   Standard_Real SLast;
-  Standard_Real Tol3d;
-  Standard_Real BoundTol;
-  Standard_Real Tol2d;
-  Standard_Real TolAngular;
+  Standard_Real Tol3d{};
+  Standard_Real BoundTol{};
+  Standard_Real Tol2d{};
+  Standard_Real TolAngular{};
   Standard_Real SError;
   Standard_Boolean myForceApproxC1;
   Handle(GeomFill_LocationLaw) myLoc;
@@ -160,9 +160,9 @@ private:
   Handle(TColGeom2d_HArray1OfCurve) myCurve2d;
   Handle(TColStd_HArray2OfReal) CError;
   Standard_Boolean done;
-  Standard_Boolean myExchUV;
-  Standard_Boolean isUReversed;
-  Standard_Boolean isVReversed;
+  Standard_Boolean myExchUV{};
+  Standard_Boolean isUReversed{};
+  Standard_Boolean isVReversed{};
   Standard_Boolean myKPart;
 
 

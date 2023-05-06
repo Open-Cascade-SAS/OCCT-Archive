@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Adaptor3d_InterFunc.hxx>
 
 #include <Adaptor2d_Curve2d.hxx>
@@ -40,7 +42,7 @@ Standard_Boolean Adaptor3d_InterFunc::Value(const Standard_Real X , Standard_Rea
 }
 Standard_Boolean Adaptor3d_InterFunc::Derivative(const Standard_Real X , Standard_Real& D)
 {
-   Standard_Real F;
+   Standard_Real F = NAN;
    return Values(X,F,D);
 }
 Standard_Boolean Adaptor3d_InterFunc::Values(const Standard_Real X , Standard_Real& F,Standard_Real& D)

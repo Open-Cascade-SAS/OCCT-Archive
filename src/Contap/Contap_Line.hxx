@@ -107,7 +107,7 @@ private:
   gp_Pnt pt;
   gp_Dir dir1;
   gp_Dir dir2;
-  Standard_Real rad;
+  Standard_Real rad{};
 
 
 };

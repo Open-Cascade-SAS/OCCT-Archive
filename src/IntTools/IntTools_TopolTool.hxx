@@ -97,8 +97,8 @@ private:
 
   Standard_Integer myNbSmplU;
   Standard_Integer myNbSmplV;
-  Standard_Real myU0;
-  Standard_Real myV0;
+  Standard_Real myU0{};
+  Standard_Real myV0{};
   Standard_Real myDU;
   Standard_Real myDV;
 

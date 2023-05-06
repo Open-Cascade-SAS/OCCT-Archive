@@ -246,9 +246,9 @@ private:
   Handle(TColStd_HArray1OfInteger) mySense;
   Standard_Integer myDegree;
   Handle(TColStd_HArray1OfInteger) myInitOrder;
-  Standard_Real myG0Error;
-  Standard_Real myG1Error;
-  Standard_Real myG2Error;
+  Standard_Real myG0Error{};
+  Standard_Real myG1Error{};
+  Standard_Real myG2Error{};
   Standard_Integer myNbPtsOnCur;
   Standard_Boolean mySurfInitIsGive;
   Standard_Integer myNbIter;
@@ -256,8 +256,8 @@ private:
   Standard_Real myTol2d;
   Standard_Real myTol3d;
   Standard_Real myTolAng;
-  Standard_Real myTolU;
-  Standard_Real myTolV;
+  Standard_Real myTolU{};
+  Standard_Real myTolV{};
   Standard_Integer myNbBounds;
   Standard_Boolean myIsLinear;
   Standard_Boolean myFree;

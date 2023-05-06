@@ -28,15 +28,15 @@ Standard_Integer Express_Item::myIndex = -1;
 // purpose  :
 //=======================================================================
 
-Express_Item::Express_Item (const Standard_CString theName)
+Express_Item::Express_Item (const Standard_CString theName) : myName(new TCollection_HAsciiString (theName)), myGenMode(GM_Undefined), myShortName(new TCollection_HAsciiString), myCategory(new TCollection_HAsciiString), myhasCheck(Standard_False), myhasFillShared(Standard_False), myLoopFlag(Standard_False)
 {
-  myName = new TCollection_HAsciiString (theName);
-  myGenMode = GM_Undefined;
-  myShortName = new TCollection_HAsciiString;
-  myCategory = new TCollection_HAsciiString;
-  myhasCheck = Standard_False;
-  myhasFillShared = Standard_False;
-  myLoopFlag = Standard_False;
+  
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================
@@ -44,15 +44,15 @@ Express_Item::Express_Item (const Standard_CString theName)
 // purpose  :
 //=======================================================================
 
-Express_Item::Express_Item (const Handle(TCollection_HAsciiString)& theName)
+Express_Item::Express_Item (const Handle(TCollection_HAsciiString)& theName) : myName(theName), myGenMode(GM_Undefined), myShortName(new TCollection_HAsciiString), myCategory(new TCollection_HAsciiString), myhasCheck(Standard_False), myhasFillShared(Standard_False), myLoopFlag(Standard_False)
 {
-  myName = theName;
-  myGenMode = GM_Undefined;
-  myShortName = new TCollection_HAsciiString;
-  myCategory = new TCollection_HAsciiString;
-  myhasCheck = Standard_False;
-  myhasFillShared = Standard_False;
-  myLoopFlag = Standard_False;
+  
+  
+  
+  
+  
+  
+  
 }
 
 //=======================================================================

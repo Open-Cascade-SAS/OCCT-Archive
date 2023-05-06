@@ -36,7 +36,7 @@ IntTools_Root::IntTools_Root():
 //=======================================================================
   IntTools_Root::IntTools_Root(const Standard_Real aRoot,
 			       const Standard_Integer aType):
-  myLayerHeight(0.),
+  myRoot(aRoot), myType(aType), myLayerHeight(0.),
   myStateBefore(TopAbs_UNKNOWN), 
   myStateAfter(TopAbs_UNKNOWN),
   myt1(0.), 
@@ -44,8 +44,8 @@ IntTools_Root::IntTools_Root():
   myf1(0.), 
   myf2(0.)  
 {
-  myRoot=aRoot;
-  myType=aType;
+  
+  
 } 
 
 //=======================================================================

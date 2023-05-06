@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom_Curve.hxx>
 #include <GeomLProp_CLProps.hxx>
 #include <gp_Dir.hxx>
@@ -32,10 +34,10 @@ void LocalAnalysis_CurveContinuity::CurvC0( GeomLProp_CLProps& Curv1,
 void LocalAnalysis_CurveContinuity::CurvC1(  GeomLProp_CLProps& Curv1, 
 					        GeomLProp_CLProps& Curv2)
 { gp_Vec V1, V2;
-  Standard_Real ang; 
+  Standard_Real ang = NAN; 
   V1 = Curv1.D1();
   V2 = Curv2.D1();
-  Standard_Real norm1,norm2; 
+  Standard_Real norm1 = NAN,norm2 = NAN; 
   norm1 = V1.Magnitude();
   norm2 = V2.Magnitude();
  
@@ -57,7 +59,7 @@ void LocalAnalysis_CurveContinuity::CurvC2(GeomLProp_CLProps& Curv1,
 				     GeomLProp_CLProps& Curv2)
 { gp_Vec V1, V2, V12, V22;
 //  gp_Dir D1, D2;
-  Standard_Real norm1, norm2, norm12, norm22,ang;
+  Standard_Real norm1 = NAN, norm2 = NAN, norm12 = NAN, norm22 = NAN,ang = NAN;
   V1 = Curv1.D1();
   V2 = Curv2.D1();
   V12 = Curv1.D2();
@@ -91,7 +93,7 @@ void LocalAnalysis_CurveContinuity::CurvC2(GeomLProp_CLProps& Curv1,
 void LocalAnalysis_CurveContinuity::CurvG1 (   GeomLProp_CLProps& Curv1, 
 				        GeomLProp_CLProps & Curv2) 
 { gp_Dir Tang1,Tang2;
-  Standard_Real ang;
+  Standard_Real ang = NAN;
    if (Curv1.IsTangentDefined() && Curv2.IsTangentDefined ()) 
      {   Curv1.Tangent(Tang1);
          Curv2.Tangent(Tang2);
@@ -109,7 +111,7 @@ void LocalAnalysis_CurveContinuity::CurvG2( GeomLProp_CLProps& Curv1,
 				      GeomLProp_CLProps & Curv2 ) 
 { gp_Vec V1, V2;
   gp_Dir D1, D2;
-  Standard_Real ang;
+  Standard_Real ang = NAN;
   Standard_Real epscrb= 8*myepsC0/(myMaxLon*myMaxLon);	
  
   if (Curv1.IsTangentDefined() && Curv2.IsTangentDefined())
@@ -155,18 +157,18 @@ LocalAnalysis_CurveContinuity::LocalAnalysis_CurveContinuity(const Handle(Geom_C
   myCourbC2(0.0),
   myG2Variation(0.0),
   myLambda1(0.0),
-  myLambda2(0.0)
-{ myTypeCont = Order;
-  myepsnul= Epsnul; 
-  myMaxLon=Maxlen;
-  myepsC0= EpsC0;
-  myepsC1= EpsC1;
-  myepsC2= EpsC2;
-  myepsG1= EpsG1;
-  myepsG2= EpsG2;
-  myperce=Percent;
+  myLambda2(0.0), myTypeCont(Order), myepsnul(Epsnul), myMaxLon(Maxlen), myepsC0(EpsC0), myepsC1(EpsC1), myepsC2(EpsC2), myepsG1(EpsG1), myepsG2(EpsG2), myperce(Percent), myIsDone(Standard_True)
+{ 
+  
+  
+  
+  
+  
+  
+  
+  
 
-  myIsDone = Standard_True;
+  
  
   switch ( Order)
 	{ case GeomAbs_C0 : { //TypeCont=GeomAbs_C0;
@@ -229,7 +231,7 @@ Standard_Boolean LocalAnalysis_CurveContinuity::IsC1() const
 /*********************************************************************************/
 
 Standard_Boolean LocalAnalysis_CurveContinuity::IsC2() const  
-{ Standard_Real epsil1, epsil2;
+{ Standard_Real epsil1 = NAN, epsil2 = NAN;
 
   if (!myIsDone) { throw StdFail_NotDone();}
   if ( IsC1())
@@ -258,8 +260,8 @@ Standard_Boolean LocalAnalysis_CurveContinuity::IsG1() const
 /*********************************************************************************/
 
 Standard_Boolean LocalAnalysis_CurveContinuity::IsG2()const 
-{ Standard_Real CRBINF, CRBNUL;
-  Standard_Integer IETA1, IETA2;
+{ Standard_Real CRBINF = NAN, CRBNUL = NAN;
+  Standard_Integer IETA1 = 0, IETA2 = 0;
         // etat des coubures IETA. -> 0 Crbure nulle 
 	//			   -> 1 Crbure finie
 	//			   -> 2 Crbure infinie

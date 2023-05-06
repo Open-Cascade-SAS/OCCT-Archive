@@ -16,6 +16,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BOPAlgo_BuilderFace.hxx>
 #include <BOPAlgo_WireEdgeSet.hxx>
 #include <BOPAlgo_WireSplitter.hxx>
@@ -66,9 +68,9 @@ static
 //=======================================================================
 BOPAlgo_BuilderFace::BOPAlgo_BuilderFace()
 :
-  BOPAlgo_BuilderArea()
+  BOPAlgo_BuilderArea(), myOrientation(TopAbs_EXTERNAL)
 {
-  myOrientation=TopAbs_EXTERNAL;
+  
 }
 //=======================================================================
 //function : 
@@ -77,9 +79,9 @@ BOPAlgo_BuilderFace::BOPAlgo_BuilderFace()
 BOPAlgo_BuilderFace::BOPAlgo_BuilderFace
   (const Handle(NCollection_BaseAllocator)& theAllocator)
 :
-  BOPAlgo_BuilderArea(theAllocator)
+  BOPAlgo_BuilderArea(theAllocator), myOrientation(TopAbs_EXTERNAL)
 { 
-  myOrientation=TopAbs_EXTERNAL;
+  
 }
 //=======================================================================
 //function : ~
@@ -166,8 +168,8 @@ void BOPAlgo_BuilderFace::Perform(const Message_ProgressRange& theRange)
 //=======================================================================
 void BOPAlgo_BuilderFace::PerformShapesToAvoid(const Message_ProgressRange& theRange)
 {
-  Standard_Boolean bFound;
-  Standard_Integer i, iCnt, aNbV, aNbE;
+  Standard_Boolean bFound = 0;
+  Standard_Integer i = 0, iCnt = 0, aNbV = 0, aNbE = 0;
   TopTools_IndexedDataMapOfShapeListOfShape aMVE;
   TopTools_ListIteratorOfListOfShape aIt;
   //
@@ -244,8 +246,8 @@ void BOPAlgo_BuilderFace::PerformShapesToAvoid(const Message_ProgressRange& theR
 //=======================================================================
 void BOPAlgo_BuilderFace::PerformLoops(const Message_ProgressRange& theRange)
 {
-  Standard_Boolean bFlag;
-  Standard_Integer i, aNbEA;
+  Standard_Boolean bFlag = 0;
+  Standard_Integer i = 0, aNbEA = 0;
   TopTools_ListIteratorOfListOfShape aIt;
   TopTools_IndexedDataMapOfShapeListOfShape aVEMap;
   TopTools_MapOfOrientedShape aMAdded;
@@ -456,7 +458,7 @@ void BOPAlgo_BuilderFace::PerformAreas(const Message_ProgressRange& theRange)
 
   // Prepare tree with the boxes of the hole faces
   BOPTools_Box2dTree aBoxTree;
-  Standard_Integer i, aNbH = aHoleFaces.Extent();
+  Standard_Integer i = 0, aNbH = aHoleFaces.Extent();
   aBoxTree.SetSize (aNbH);
   for (i = 1; i <= aNbH; ++i)
   {
@@ -746,7 +748,7 @@ void BOPAlgo_BuilderFace::PerformInternalShapes(const Message_ProgressRange& the
 void MakeInternalWires(const TopTools_IndexedMapOfShape& theME,
                        TopTools_ListOfShape& theWires)
 {
-  Standard_Integer i, aNbE;
+  Standard_Integer i = 0, aNbE = 0;
   TopTools_MapOfShape aAddedMap;
   TopTools_ListIteratorOfListOfShape aItE;
   TopTools_IndexedDataMapOfShapeListOfShape aMVE;
@@ -828,7 +830,7 @@ Standard_Boolean IsInside(const TopoDS_Shape& theWire,
       return isInside;
 
     // Get 2d curve of the edge on the face
-    Standard_Real aT1, aT2;
+    Standard_Real aT1 = NAN, aT2 = NAN;
     const Handle(Geom2d_Curve)& aC2D = BRep_Tool::CurveOnSurface(aE, aF, aT1, aT2);
     if (aC2D.IsNull())
       continue;

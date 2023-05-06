@@ -157,7 +157,7 @@ private:
 
 
   Standard_Real myErrorReached;
-  Standard_Real myAbsolutError;
+  Standard_Real myAbsolutError{};
 };
 
 

@@ -14,6 +14,8 @@
 
 //-----------------------------------------------------------------
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Extrema_ExtPExtS.hxx>
 #include <Extrema_ExtPRevS.hxx>
@@ -37,7 +39,7 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
 				   const Standard_Real      TolMin,
 				   const Standard_Real      TolMax) 
 {
-    Standard_Real U1=0.,U2=0.,V1=0.,V2=0.,T;
+    Standard_Real U1=0.,U2=0.,V1=0.,V2=0.,T = NAN;
     Standard_Boolean Along = Standard_True;
     U1 = S.FirstUParameter();
     U2 = S.LastUParameter();
@@ -45,7 +47,7 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
     V2 = S.LastVParameter();
     gp_Vec D1U,D1V;
     gp_Pnt P;
-    Standard_Real Step,D1NormMax;
+    Standard_Real Step = NAN,D1NormMax = NAN;
     if (IT == GeomAbs_IsoV) 
     {
       if( !Precision::IsInfinite(U1) &&  !Precision::IsInfinite(U2) )
@@ -99,7 +101,7 @@ static Standard_Boolean IsoIsDeg  (const Adaptor3d_Surface& S,
 void Extrema_ExtPS::TreatSolution (const Extrema_POnSurf& PS,
 				   const Standard_Real Val)
 {
-  Standard_Real U, V;
+  Standard_Real U = NAN, V = NAN;
   PS.Parameter(U, V);
   if (myS->IsUPeriodic()) {
     U = ElCLib::InPeriod(U, myuinf, myuinf + myS->UPeriod());

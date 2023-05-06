@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Geom2d_Hyperbola.hxx>
 #include <Geom_Hyperbola.hxx>
 #include <GeomToStep_MakeAxis2Placement2d.hxx>
@@ -30,7 +32,7 @@
 // Creation d'une hyperbola de prostep a partir d'une hyperbola de
 // Geom2d
 //=============================================================================
-GeomToStep_MakeHyperbola::GeomToStep_MakeHyperbola(const Handle(Geom2d_Hyperbola)& C)
+GeomToStep_MakeHyperbola::GeomToStep_MakeHyperbola(const Handle(Geom2d_Hyperbola)& C) : GeomToStep_Root()
 {
   gp_Hypr2d gpHyp;
   gpHyp = C->Hypr2d();
@@ -38,7 +40,7 @@ GeomToStep_MakeHyperbola::GeomToStep_MakeHyperbola(const Handle(Geom2d_Hyperbola
   Handle(StepGeom_Hyperbola) HStep = new StepGeom_Hyperbola;
   StepGeom_Axis2Placement            Ax2;
   Handle(StepGeom_Axis2Placement2d)  Ax2Step;
-  Standard_Real                   majorR, minorR;
+  Standard_Real                   majorR = NAN, minorR = NAN;
   
   GeomToStep_MakeAxis2Placement2d MkAxis2(gpHyp.Axis());
   Ax2Step = MkAxis2.Value();
@@ -56,7 +58,7 @@ GeomToStep_MakeHyperbola::GeomToStep_MakeHyperbola(const Handle(Geom2d_Hyperbola
 // Geom
 //=============================================================================
 
- GeomToStep_MakeHyperbola::GeomToStep_MakeHyperbola(const Handle(Geom_Hyperbola)& C)
+ GeomToStep_MakeHyperbola::GeomToStep_MakeHyperbola(const Handle(Geom_Hyperbola)& C) : GeomToStep_Root()
 {
   gp_Hypr gpHyp;
   gpHyp = C->Hypr();
@@ -64,7 +66,7 @@ GeomToStep_MakeHyperbola::GeomToStep_MakeHyperbola(const Handle(Geom2d_Hyperbola
   Handle(StepGeom_Hyperbola) HStep = new StepGeom_Hyperbola;
   StepGeom_Axis2Placement            Ax2;
   Handle(StepGeom_Axis2Placement3d)  Ax2Step;
-  Standard_Real                   majorR, minorR;
+  Standard_Real                   majorR = NAN, minorR = NAN;
   
   GeomToStep_MakeAxis2Placement3d MkAxis2(gpHyp.Position());
   Ax2Step = MkAxis2.Value();

@@ -162,7 +162,7 @@ private:
 
   TColStd_Array1OfInteger myEdges;
   TColStd_Array1OfInteger myFlags;
-  MinMaxIndices myMinMax;
+  MinMaxIndices myMinMax{};
 };
 
 #endif // _HLRAlgo_EdgesBlock_HeaderFile

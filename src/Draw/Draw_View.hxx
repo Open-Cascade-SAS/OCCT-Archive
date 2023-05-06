@@ -103,7 +103,7 @@ protected:
 
   Standard_Integer       myId;
   Draw_Viewer*           myViewer;
-  char                   myType[5];
+  char                   myType[5]{};
   Standard_Boolean       myIsPers;
   Standard_Boolean       myIs2D;
   Standard_Real          myFocalDistance;

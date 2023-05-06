@@ -53,7 +53,7 @@ void RWStepRepr_RWCharacterizedRepresentation::ReadStep
   // items
   Handle(StepRepr_HArray1OfRepresentationItem) anItems;
   Handle(StepRepr_RepresentationItem) anItem;
-  Standard_Integer nsub;
+  Standard_Integer nsub = 0;
   if (data->ReadSubList (num, 3, "items", ach, nsub)) {
     Standard_Integer nb = data->NbParams(nsub);
     anItems = new StepRepr_HArray1OfRepresentationItem (1, nb);

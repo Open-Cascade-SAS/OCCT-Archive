@@ -33,9 +33,9 @@ CDF_Store::CDF_Store()
   myStatus(PCDM_SS_No_Obj)
 {
 }
-CDF_Store::CDF_Store(const Handle(CDM_Document)& aDocument):myHasSubComponents(Standard_False) {
+CDF_Store::CDF_Store(const Handle(CDM_Document)& aDocument):myMainDocument(aDocument), myHasSubComponents(Standard_False) {
   
-  myMainDocument = aDocument;
+  
   Init();
 }
 

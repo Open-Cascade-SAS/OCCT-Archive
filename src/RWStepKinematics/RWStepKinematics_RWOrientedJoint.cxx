@@ -61,7 +61,7 @@ void RWStepKinematics_RWOrientedJoint::ReadStep (const Handle(StepData_StepReade
   Handle(StepShape_Edge) aOrientedEdge_EdgeElement;
   theData->ReadEntity (theNum, 4, "oriented_edge.edge_element", theArch, STANDARD_TYPE(StepShape_Edge), aOrientedEdge_EdgeElement);
 
-  Standard_Boolean aOrientedEdge_Orientation;
+  Standard_Boolean aOrientedEdge_Orientation = 0;
   theData->ReadBoolean (theNum, 5, "oriented_edge.orientation", theArch, aOrientedEdge_Orientation);
 
   // Initialize entity

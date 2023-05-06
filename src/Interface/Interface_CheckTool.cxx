@@ -70,9 +70,9 @@ static void raisecheck (Standard_Failure& theException,Handle(Interface_Check)& 
 Interface_CheckTool::Interface_CheckTool(const Handle(Interface_InterfaceModel)& model,
                                          const Handle(Interface_Protocol)& protocol)
      :  thegtool ( new Interface_GTool(protocol,model->NbEntities()) ) ,
-       theshare (model,protocol)
+       theshare (model,protocol), thestat(0)
 {
-  thestat = 0;
+  
 }
 
 
@@ -82,9 +82,9 @@ Interface_CheckTool::Interface_CheckTool(const Handle(Interface_InterfaceModel)&
 //=======================================================================
 
 Interface_CheckTool::Interface_CheckTool(const Handle(Interface_InterfaceModel)& model)
-     :  thegtool(model->GTool()) , theshare (model,model->GTool())
+     :  thegtool(model->GTool()) , theshare (model,model->GTool()), thestat(0)
 {
-  thestat = 0;
+  
   thegtool->Reservate(model->NbEntities());
 }
 
@@ -121,7 +121,7 @@ void Interface_CheckTool::FillCheck(const Handle(Standard_Transient)& ent,
                                     Handle(Interface_Check)& ach)
 {
   Handle(Interface_GeneralModule) module;
-  Standard_Integer CN;
+  Standard_Integer CN = 0;
   if (thegtool->Select(ent,module,CN)) {
 //    Sans try/catch (fait par l appelant, evite try/catch en boucle)
     if (!errh) {
@@ -155,7 +155,7 @@ void Interface_CheckTool::FillCheck(const Handle(Standard_Transient)& ent,
 void Interface_CheckTool::Print(const Handle(Interface_Check)& ach,
                                 Standard_OStream& S) const 
 {
-  Standard_Integer i, nb;
+  Standard_Integer i = 0, nb = 0;
   nb = ach->NbFails();
   if (nb > 0) S << " Fail Messages : " << nb << " :\n";
   for (i = 1; i <= nb; i ++) {

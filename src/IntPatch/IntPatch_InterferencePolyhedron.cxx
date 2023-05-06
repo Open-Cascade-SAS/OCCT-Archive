@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_BoundSortBox.hxx>
 #include <Bnd_HArray1OfBox.hxx>
 #include <gp_Pnt.hxx>
@@ -142,7 +144,7 @@ void IntPatch_InterferencePolyhedron::Interference
   Standard_Boolean  gridOnFirst=Standard_True;
   Standard_Integer  NbTrianglesFirstPol  = IntPatch_PolyhedronTool::NbTriangles(FirstPol);
   Standard_Integer  NbTrianglesSecondPol = IntPatch_PolyhedronTool::NbTriangles(SeconPol);  
-  Standard_Integer iFirst, iSecon;
+  Standard_Integer iFirst = 0, iSecon = 0;
 
   //------------------------------------------------------------------------------------------
   //-- the same number of triangles it is necessary to test better on
@@ -156,7 +158,7 @@ void IntPatch_InterferencePolyhedron::Interference
   if(!SelfIntf) { 
     if(NbTrianglesFirstPol > NbTrianglesSecondPol+NbTrianglesSecondPol) gridOnFirst=Standard_False;
 
-    Standard_Real vol1,vol2,Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    Standard_Real vol1 = NAN,vol2 = NAN,Xmin = NAN, Ymin = NAN, Zmin = NAN, Xmax = NAN, Ymax = NAN, Zmax = NAN;
     IntPatch_PolyhedronTool::Bounding(FirstPol).Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
     vol1 = (Xmax-Xmin)*(Ymax-Ymin)*(Zmax-Zmin);
 
@@ -252,7 +254,7 @@ void IntPatch_InterferencePolyhedron::Intersect
   
   // Equation of the triangle plane of the objet 
   gp_XYZ ONor; // Normal vector.
-  Standard_Real Odp;    // Polar Distance.
+  Standard_Real Odp = NAN;    // Polar Distance.
   Intf::PlaneEquation(IntPatch_PolyhedronTool::Point(FirstPol, OI[0]),
 		      IntPatch_PolyhedronTool::Point(FirstPol, OI[1]),
 		      IntPatch_PolyhedronTool::Point(FirstPol, OI[2]),
@@ -261,7 +263,7 @@ void IntPatch_InterferencePolyhedron::Intersect
   
 // Equation of the triangle plane of the tool
   gp_XYZ TNor; // Normal vector.
-  Standard_Real Tdp;    // Polar distance.
+  Standard_Real Tdp = NAN;    // Polar distance.
   Intf::PlaneEquation(IntPatch_PolyhedronTool::Point(SeconPol, TI[0]),
 		      IntPatch_PolyhedronTool::Point(SeconPol, TI[1]),
 		      IntPatch_PolyhedronTool::Point(SeconPol, TI[2]),
@@ -309,7 +311,7 @@ void IntPatch_InterferencePolyhedron::Intersect
 
 // Otherwise line of section is calculated:
   else {
-    Standard_Integer iObj, iToo;
+    Standard_Integer iObj = 0, iToo = 0;
 
     // Zone de stockage des resultats :
     Standard_Integer nbpiOT=0;
@@ -364,7 +366,7 @@ void IntPatch_InterferencePolyhedron::Intersect
       
       
       // Singularite VERTEX EDGE
-    Standard_Integer inext, jnext;
+    Standard_Integer inext = 0, jnext = 0;
     for (iObj=0; iObj<3; iObj++) {
       if (parO[iObj]==-1.) {
 	for (iToo=0; iToo<3; iToo++) {
@@ -452,7 +454,7 @@ void IntPatch_InterferencePolyhedron::Intersect
     // Singularite EDGE EDGE
     gp_Pnt piO;
     gp_XYZ piT;
-    Standard_Real lg;
+    Standard_Real lg = NAN;
     for (iObj=0; iObj<3; iObj++) {
       inext=Pourcent3[iObj+1];
       if (edOT[iObj]==1 && (dpOfT[iObj]*dpOfT[inext])<0.) {
@@ -580,12 +582,12 @@ void IntPatch_InterferencePolyhedron::Intersect
 
       gp_XYZ dir=ONor^TNor;
       NCollection_LocalArray <Standard_Real> d(nbpiOT);
-      Standard_Integer iPi, iPs;
+      Standard_Integer iPi = 0, iPs = 0;
       for (iPi=0; iPi<nbpiOT; iPi++) {
 	d[iPi]=dir*piOT(iPi+1).Pnt().XYZ();
       }
 
-      Standard_Integer di;
+      Standard_Integer di = 0;
       id[0]=0;
       for (iPi=1; iPi<nbpiOT; iPi++) {
 	id[iPi]=iPi;
@@ -751,8 +753,8 @@ Standard_Boolean IntPatch_InterferencePolyhedron::TangentZoneValue
   // ------------------------
 
   Standard_Boolean finished=Standard_False;
-  Standard_Integer nob, nou, nob2, nou2;
-  Standard_Real par;
+  Standard_Integer nob = 0, nou = 0, nob2 = 0, nou2 = 0;
+  Standard_Real par = NAN;
 
   Intf_PIType tOP[3];
   Intf_PIType tTP[3];
@@ -941,8 +943,8 @@ Standard_Boolean IntPatch_InterferencePolyhedron::TangentZoneValue
 void IntPatch_InterferencePolyhedron::CoupleCharacteristics (const IntPatch_Polyhedron& FirstPol,
                                                          const IntPatch_Polyhedron& SeconPol)
 {
-  Standard_Integer n1, n2;
-  Standard_Real lg;
+  Standard_Integer n1 = 0, n2 = 0;
+  Standard_Real lg = NAN;
 
   for (n1=0; n1<3; n1++) {
     n2=Pourcent3[n1+1];

@@ -21,6 +21,8 @@
 #define No_Standard_RangeError
 #define No_Standard_OutOfRange
 
+#include <math.h>
+
 #include <Geom2dAdaptor_Curve.hxx>
 
 #include <Adaptor2d_Curve2d.hxx>
@@ -96,7 +98,7 @@ GeomAbs_Shape Geom2dAdaptor_Curve::LocalContinuity(const Standard_Real U1,
        Standard_Integer Nb = myBSplineCurve->NbKnots();
        Standard_Integer Index1 = 0;
        Standard_Integer Index2 = 0;
-       Standard_Real newFirst, newLast;
+       Standard_Real newFirst = NAN, newLast = NAN;
        TColStd_Array1OfReal    TK(1,Nb);
        TColStd_Array1OfInteger TM(1,Nb);
        myBSplineCurve->Knots(TK);
@@ -110,7 +112,7 @@ GeomAbs_Shape Geom2dAdaptor_Curve::LocalContinuity(const Standard_Real U1,
        }
        if ( Abs(newLast-TK(Index2))<Precision::PConfusion())
 	 Index2--;
-       Standard_Integer MultMax;
+       Standard_Integer MultMax = 0;
        // attention aux courbes peridiques.
        if ( myBSplineCurve->IsPeriodic() && Index1 == Nb )
 	 Index1 = 1;
@@ -310,7 +312,7 @@ Standard_Integer Geom2dAdaptor_Curve::NbIntervals(const GeomAbs_Shape S) const
     }
     
     Standard_Integer aDegree = myBSplineCurve->Degree();
-    Standard_Integer aCont;
+    Standard_Integer aCont = 0;
 
     switch (S)
     {
@@ -384,7 +386,7 @@ void Geom2dAdaptor_Curve::Intervals (TColStd_Array1OfReal& T, const GeomAbs_Shap
     }
 
     Standard_Integer aDegree = myBSplineCurve->Degree();
-    Standard_Integer aCont;
+    Standard_Integer aCont = 0;
 
     switch (S)
     {
@@ -770,12 +772,12 @@ Standard_Real Geom2dAdaptor_Curve::Resolution(const Standard_Real Ruv) const {
     return Ruv / Handle(Geom2d_Ellipse)::DownCast (myCurve)->MajorRadius();
   }
   case GeomAbs_BezierCurve: {
-    Standard_Real res;
+    Standard_Real res = NAN;
     Handle(Geom2d_BezierCurve)::DownCast (myCurve)->Resolution(Ruv,res);
     return res;
   }
   case GeomAbs_BSplineCurve: {
-    Standard_Real res;
+    Standard_Real res = NAN;
     Handle(Geom2d_BSplineCurve)::DownCast (myCurve)->Resolution(Ruv,res);
     return res;
   }

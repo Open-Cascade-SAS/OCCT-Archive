@@ -177,7 +177,7 @@ void TDataStd_ByteArray::ChangeArray (const Handle(TColStd_HArray1OfByte)& newAr
   Standard_Integer aLower    = newArray->Lower();
   Standard_Integer anUpper   = newArray->Upper();
   Standard_Boolean aDimEqual = Standard_False;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 
   if ( Lower() == aLower && Upper() == anUpper ) {
     aDimEqual = Standard_True;

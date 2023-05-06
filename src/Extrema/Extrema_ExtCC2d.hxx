@@ -96,25 +96,25 @@ private:
 
 
   Standard_Boolean myIsFindSingleSolution; // Default value is false.
-  Standard_Boolean myDone;
-  Standard_Boolean myIsPar;
+  Standard_Boolean myDone{};
+  Standard_Boolean myIsPar{};
   Extrema_SequenceOfPOnCurv2d mypoints;
   TColStd_SequenceOfReal mySqDist;
-  Standard_Integer mynbext;
-  Standard_Boolean inverse;
-  const Adaptor2d_Curve2d* myC;
-  Standard_Real myv1;
-  Standard_Real myv2;
-  Standard_Real mytolc1;
-  Standard_Real mytolc2;
+  Standard_Integer mynbext{};
+  Standard_Boolean inverse{};
+  const Adaptor2d_Curve2d* myC{};
+  Standard_Real myv1{};
+  Standard_Real myv2{};
+  Standard_Real mytolc1{};
+  Standard_Real mytolc2{};
   gp_Pnt2d P1f;
   gp_Pnt2d P1l;
   gp_Pnt2d P2f;
   gp_Pnt2d P2l;
-  Standard_Real mydist11;
-  Standard_Real mydist12;
-  Standard_Real mydist21;
-  Standard_Real mydist22;
+  Standard_Real mydist11{};
+  Standard_Real mydist12{};
+  Standard_Real mydist21{};
+  Standard_Real mydist22{};
 
 
 };

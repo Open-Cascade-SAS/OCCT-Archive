@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <Extrema_FuncExtSS.hxx>
 #include <Extrema_GenLocateExtSS.hxx>
@@ -67,13 +69,13 @@ void Extrema_GenLocateExtSS::Perform(const Adaptor3d_Surface& S1,
 {
   myDone = Standard_False;
 
-  Standard_Real Uinf1, Usup1, Vinf1, Vsup1;
+  Standard_Real Uinf1 = NAN, Usup1 = NAN, Vinf1 = NAN, Vsup1 = NAN;
   Uinf1 = S1.FirstUParameter();
   Usup1 = S1.LastUParameter();
   Vinf1 = S1.FirstVParameter();
   Vsup1 = S1.LastVParameter();
 
-  Standard_Real Uinf2, Usup2, Vinf2, Vsup2;
+  Standard_Real Uinf2 = NAN, Usup2 = NAN, Vinf2 = NAN, Vsup2 = NAN;
   Uinf2 = S2.FirstUParameter();
   Usup2 = S2.LastUParameter();
   Vinf2 = S2.FirstVParameter();

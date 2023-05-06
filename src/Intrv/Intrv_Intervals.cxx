@@ -147,7 +147,7 @@ void Intrv_Intervals::Subtract (const Intrv_Interval& Tool)
 
 void Intrv_Intervals::Subtract (const Intrv_Intervals& Tool)
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   for (index = 1; index <= Tool.myInter.Length(); index++)
     Subtract (Tool.myInter(index));
 }
@@ -246,7 +246,7 @@ void Intrv_Intervals::Unite (const Intrv_Interval& Tool)
 
 void Intrv_Intervals::Unite (const Intrv_Intervals& Tool)
 {
-  Standard_Integer index;
+  Standard_Integer index = 0;
   for (index = 1; index<=Tool.myInter.Length(); index++)
     Unite (Tool.myInter(index));
 }

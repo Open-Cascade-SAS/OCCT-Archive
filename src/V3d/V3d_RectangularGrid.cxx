@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <V3d_RectangularGrid.hxx>
 
 #include <Graphic3d_ArrayOfPoints.hxx>
@@ -40,7 +42,7 @@ public:
   : Graphic3d_Structure (theManager), myGrid (theGrid) {}
 
   //! Override method initiating recomputing in V3d_RectangularGrid.
-  virtual void Compute() Standard_OVERRIDE
+  void Compute() Standard_OVERRIDE
   {
     GraphicClear (Standard_False);
     myGrid->myGroup = NewGroup();
@@ -121,10 +123,10 @@ void V3d_RectangularGrid::UpdateDisplay ()
   gp_Ax3 ThePlane = myViewer->PrivilegedPlane ();
 
   Standard_Boolean MakeTransform = Standard_False;
-  Standard_Real xl, yl, zl;
-  Standard_Real xdx, xdy, xdz;
-  Standard_Real ydx, ydy, ydz;
-  Standard_Real dx, dy, dz;
+  Standard_Real xl = NAN, yl = NAN, zl = NAN;
+  Standard_Real xdx = NAN, xdy = NAN, xdz = NAN;
+  Standard_Real ydx = NAN, ydy = NAN, ydz = NAN;
+  Standard_Real dx = NAN, dy = NAN, dz = NAN;
   ThePlane.Location ().Coord (xl, yl, zl);
   ThePlane.XDirection ().Coord (xdx, xdy, xdz);
   ThePlane.YDirection ().Coord (ydx, ydy, ydz);
@@ -135,10 +137,10 @@ void V3d_RectangularGrid::UpdateDisplay ()
     if (RotationAngle() != myCurAngle || XOrigin() != myCurXo || YOrigin() != myCurYo)
       MakeTransform = Standard_True;
     if (! MakeTransform) {
-      Standard_Real curxl, curyl, curzl;
-      Standard_Real curxdx, curxdy, curxdz;
-      Standard_Real curydx, curydy, curydz;
-      Standard_Real curdx, curdy, curdz;
+      Standard_Real curxl = NAN, curyl = NAN, curzl = NAN;
+      Standard_Real curxdx = NAN, curxdy = NAN, curxdz = NAN;
+      Standard_Real curydx = NAN, curydy = NAN, curydz = NAN;
+      Standard_Real curdx = NAN, curdy = NAN, curdz = NAN;
       myCurViewPlane.Location ().Coord (curxl, curyl, curzl);
       myCurViewPlane.XDirection ().Coord (curxdx, curxdy, curxdz);
       myCurViewPlane.YDirection ().Coord (curydx, curydy, curydz);
@@ -215,8 +217,8 @@ void V3d_RectangularGrid::DefineLines ()
   myToComputePrs = Standard_False;
   myGroup->Clear();
 
-  Standard_Integer nblines;
-  Standard_Real xl, yl, zl = myOffSet;
+  Standard_Integer nblines = 0;
+  Standard_Real xl = NAN, yl = NAN, zl = myOffSet;
 
   TColgp_SequenceOfPnt aSeqLines, aSeqTenth;
 
@@ -298,7 +300,7 @@ void V3d_RectangularGrid::DefinePoints ()
   myGroup->Clear();
 
   // horizontals
-  Standard_Real xl, yl;
+  Standard_Real xl = NAN, yl = NAN;
   TColgp_SequenceOfPnt aSeqPnts;
   for (xl = 0.0; xl <= myXSize; xl += aXStep) {
     aSeqPnts.Append(gp_Pnt( xl, 0.0, -myOffSet));
@@ -312,8 +314,8 @@ void V3d_RectangularGrid::DefinePoints ()
   }
   if (aSeqPnts.Length())
   {
-    Standard_Integer i;
-    Standard_Real X,Y,Z;
+    Standard_Integer i = 0;
+    Standard_Real X = NAN,Y = NAN,Z = NAN;
     const Standard_Integer nbv = aSeqPnts.Length();
     Handle(Graphic3d_ArrayOfPoints) Vertical = new Graphic3d_ArrayOfPoints (nbv);
     for (i=1; i<=nbv; i++)

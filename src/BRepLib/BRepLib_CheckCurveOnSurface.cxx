@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Adaptor3d_CurveOnSurface.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -61,7 +63,7 @@ void BRepLib_CheckCurveOnSurface::Init(const TopoDS_Edge& theEdge, const TopoDS_
   // Surface initialization
 
   TopLoc_Location aLocation;
-  Standard_Real aFirstParam, aLastParam;
+  Standard_Real aFirstParam = NAN, aLastParam = NAN;
 
   Handle(Geom2d_Curve) aGeom2dCurve = BRep_Tool::CurveOnSurface(theEdge, theFace, aFirstParam, aLastParam);
   Handle(Geom_Surface) aGeomSurface = BRep_Tool::Surface(theFace);

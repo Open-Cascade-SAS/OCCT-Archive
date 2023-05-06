@@ -65,7 +65,7 @@ Standard_Boolean ShapeUpgrade::Debug()
   BS->Multiplicities(Mults);
   BS->KnotSequence (KnotSequence);
 	
-  Standard_Integer StartKnotIndex, EndKnotIndex, j;
+  Standard_Integer StartKnotIndex = 0, EndKnotIndex = 0, j = 0;
 
   StartKnotIndex = BS->FirstUKnotIndex();
   for ( EndKnotIndex = StartKnotIndex + 1; EndKnotIndex <= BS->LastUKnotIndex(); EndKnotIndex++ ) {

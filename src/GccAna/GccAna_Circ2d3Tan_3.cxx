@@ -46,7 +46,7 @@ GccAna_Circ2d3Tan::
 //   Initialization of fields.                                           +
 //=========================================================================
 
-   cirsol(1,4)     ,
+   WellDone(Standard_False), NbrSol(0), cirsol(1,4)     ,
    qualifier1(1,4) ,
    qualifier2(1,4) ,
    qualifier3(1,4) ,
@@ -68,8 +68,8 @@ GccAna_Circ2d3Tan::
    TheSame2.Init(0);
    TheSame3.Init(0);
    gp_Dir2d dirx(1.0,0.0);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() ||
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
        !(Qualified2.IsEnclosed() ||

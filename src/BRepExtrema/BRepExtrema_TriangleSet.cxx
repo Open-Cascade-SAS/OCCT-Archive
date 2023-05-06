@@ -273,9 +273,9 @@ Standard_Boolean BRepExtrema_TriangleSet::initFace (const TopoDS_Face& theFace, 
 
   for (Standard_Integer aTriIdx = 1; aTriIdx <= aTriangulation->NbTriangles(); ++aTriIdx)
   {
-    Standard_Integer aVertex1;
-    Standard_Integer aVertex2;
-    Standard_Integer aVertex3;
+    Standard_Integer aVertex1 = 0;
+    Standard_Integer aVertex2 = 0;
+    Standard_Integer aVertex3 = 0;
 
     aTriangulation->Triangle (aTriIdx).Get (aVertex1,
                                             aVertex2,

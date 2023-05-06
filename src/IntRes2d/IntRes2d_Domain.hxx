@@ -129,15 +129,15 @@ private:
 
 
 
-  Standard_Integer status;
-  Standard_Real first_param;
-  Standard_Real last_param;
-  Standard_Real first_tol;
-  Standard_Real last_tol;
+  Standard_Integer status{};
+  Standard_Real first_param{};
+  Standard_Real last_param{};
+  Standard_Real first_tol{};
+  Standard_Real last_tol{};
   gp_Pnt2d first_point;
   gp_Pnt2d last_point;
-  Standard_Real periodfirst;
-  Standard_Real periodlast;
+  Standard_Real periodfirst{};
+  Standard_Real periodlast{};
 
 
 };

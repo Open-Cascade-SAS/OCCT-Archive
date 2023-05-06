@@ -50,7 +50,7 @@ IFSelect_SelectExplore::IFSelect_SelectExplore (const Standard_Integer level)
   TColStd_IndexedMapOfTransient entrees (nb);
   TColStd_IndexedMapOfTransient result  (nb);
 //  Initialisation
-  Standard_Integer i, j, level = 1, ilev = 0;
+  Standard_Integer i = 0, j = 0, level = 1, ilev = 0;
   Interface_EntityIterator input; input = InputResult(G);
   for (input.Start(); input.More(); input.Next())
     i = entrees.Add (input.Value());

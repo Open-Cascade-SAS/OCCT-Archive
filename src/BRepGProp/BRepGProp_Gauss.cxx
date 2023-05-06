@@ -11,6 +11,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <math.hxx>
 #include <Standard_Assert.hxx>
 #include <BRepGProp_Face.hxx>
@@ -153,10 +155,10 @@ void BRepGProp_Gauss::Inertia::Reset()
 //purpose  : Constructor
 //=======================================================================
 BRepGProp_Gauss::BRepGProp_Gauss(const BRepGProp_GaussType theType)
-: myType(theType)
+: myType(theType), add(::Add), mult(::Mult)
 {
-  add  = (::Add );
-  mult = (::Mult);
+  
+  
 }
 
 //=======================================================================
@@ -576,7 +578,7 @@ Standard_Real BRepGProp_Gauss::Compute(
   NCollection_Handle<math_Vector> ErrUL = new math_Vector(1, SM, 0.0);
 
   // Face parametrization in U and V direction
-  Standard_Real BV1, BV2, BU1, BU2;
+  Standard_Real BV1 = NAN, BV2 = NAN, BU1 = NAN, BU2 = NAN;
   theSurface.Bounds(BU1, BU2, BV1, BV2);
   checkBounds(BU1, BU2, BV1, BV2);
 
@@ -585,22 +587,22 @@ Standard_Real BRepGProp_Gauss::Compute(
   const TopoDS_Face& aF = theSurface.GetFace(); 
   const Standard_Boolean isNaturalRestriction = (aF.NbChildren () == 0); //theSurface.NaturalRestriction();
 
-  Standard_Real CIx, CIy, CIz, CIxy, CIxz, CIyz;
+  Standard_Real CIx = NAN, CIy = NAN, CIz = NAN, CIxy = NAN, CIxz = NAN, CIyz = NAN;
   Standard_Real CDim[2], CIxx[2], CIyy[2], CIzz[2];
 
   // Boundary curve parametrization
-  Standard_Real u1 = BU1, u2, l1, l2, lm, lr, l, v;
+  Standard_Real u1 = BU1, u2 = NAN, l1 = NAN, l2 = NAN, lm = NAN, lr = NAN, l = NAN, v = NAN;
 
   // On the boundary curve u-v
   gp_Pnt2d Puv;
   gp_Vec2d Vuv;
-  Standard_Real Dul;  // Dul = Du / Dl
+  Standard_Real Dul = NAN;  // Dul = Du / Dl
 
-  Standard_Integer iLS, iLSubEnd, iGL, iGLEnd, NbLGaussP[2], LRange[2], iL, kL, kLEnd, IL, JL;
-  Standard_Integer i, iUSubEnd, NbUGaussP[2], URange[2], kU, kUEnd, IU, JU;
-  Standard_Integer UMaxSubs, LMaxSubs;
+  Standard_Integer iLS = 0, iLSubEnd = 0, iGL = 0, iGLEnd = 0, NbLGaussP[2], LRange[2], iL = 0, kL = 0, kLEnd = 0, IL = 0, JL = 0;
+  Standard_Integer i = 0, iUSubEnd = 0, NbUGaussP[2], URange[2], kU = 0, kUEnd = 0, IU = 0, JU = 0;
+  Standard_Integer UMaxSubs = 0, LMaxSubs = 0;
 
-  Standard_Real ErrorU, ErrorL, ErrorLMax = 0.0, Eps = 0.0, EpsL = 0.0, EpsU = 0.0;
+  Standard_Real ErrorU = NAN, ErrorL = NAN, ErrorLMax = 0.0, Eps = 0.0, EpsL = 0.0, EpsU = 0.0;
   iGLEnd = isErrorCalculation ? 2 : 1;
 
   NbUGaussP[0] = theSurface.SIntOrder(anEpsilon);
@@ -1097,7 +1099,7 @@ void BRepGProp_Gauss::Compute(BRepGProp_Face&   theSurface,
 {
   Standard_ASSERT_RAISE(myType == Sinert, "BRepGProp_Gauss: Incorrect type");
 
-  Standard_Real u1, u2, v1, v2;
+  Standard_Real u1 = NAN, u2 = NAN, v1 = NAN, v2 = NAN;
   theSurface.Bounds (u1, u2, v1, v2);
   checkBounds(u1, u2, v1, v2);
 
@@ -1195,7 +1197,7 @@ void BRepGProp_Gauss::Compute(BRepGProp_Face&         theSurface,
 {
   Standard_ASSERT_RAISE(myType == Vinert, "BRepGProp_Gauss: Incorrect type");
 
-  Standard_Real u1, v1, u2, v2;
+  Standard_Real u1 = NAN, v1 = NAN, u2 = NAN, v2 = NAN;
   theSurface.Bounds (u1, u2, v1, v2);
   checkBounds(u1, u2, v1, v2);
 
@@ -1287,7 +1289,7 @@ void BRepGProp_Gauss::Compute(const BRepGProp_Face&  theSurface,
                               gp_Pnt&                theOutGravityCenter,
                               gp_Mat&                theOutInertia)
 {
-  Standard_Real LowerU, UpperU, LowerV, UpperV;
+  Standard_Real LowerU = NAN, UpperU = NAN, LowerV = NAN, UpperV = NAN;
   theSurface.Bounds(LowerU, UpperU, LowerV, UpperV);
   checkBounds(LowerU, UpperU, LowerV, UpperV);
 

@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BOPDS_DS.hxx>
 #include <BOPDS_FaceInfo.hxx>
 #include <BOPDS_IndexRange.hxx>
@@ -63,7 +65,7 @@ BOPDS_DS::BOPDS_DS()
 :
   myAllocator(NCollection_BaseAllocator::CommonBaseAllocator()),
   myArguments(myAllocator),
-  myRanges(0,myAllocator),
+  myNbShapes(0), myNbSourceShapes(0), myRanges(0,myAllocator),
   myLines(0, myAllocator), 
   myMapShapeIndex(100, myAllocator),
   myPaveBlocksPool(0,myAllocator),
@@ -84,8 +86,8 @@ BOPDS_DS::BOPDS_DS()
   myInterfZZ(0, myAllocator),
   myInterfered(100, myAllocator)
 {
-  myNbShapes=0;
-  myNbSourceShapes=0;
+  
+  
 }
 //=======================================================================
 //function : 
@@ -95,7 +97,7 @@ BOPDS_DS::BOPDS_DS(const Handle(NCollection_BaseAllocator)& theAllocator)
 :
   myAllocator(theAllocator),
   myArguments(myAllocator),
-  myRanges(0, myAllocator),
+  myNbShapes(0), myNbSourceShapes(0), myRanges(0, myAllocator),
   myLines(0, myAllocator),
   myMapShapeIndex(100, myAllocator),
   myPaveBlocksPool(0, myAllocator),
@@ -116,8 +118,8 @@ BOPDS_DS::BOPDS_DS(const Handle(NCollection_BaseAllocator)& theAllocator)
   myInterfZZ(0, myAllocator),
   myInterfered(100, myAllocator)
 {
-  myNbShapes=0;
-  myNbSourceShapes=0;
+  
+  
 }
 //=======================================================================
 //function : ~
@@ -221,7 +223,7 @@ const BOPDS_IndexRange& BOPDS_DS::Range(const Standard_Integer theI)const
 //=======================================================================
 Standard_Integer BOPDS_DS::Rank(const Standard_Integer theI)const
 {
-  Standard_Integer i, aNb, iErr;
+  Standard_Integer i = 0, aNb = 0, iErr = 0;
   //
   iErr=-1;
   aNb=NbRanges();
@@ -247,7 +249,7 @@ Standard_Boolean BOPDS_DS::IsNewShape(const Standard_Integer theI)const
 //=======================================================================
 Standard_Integer BOPDS_DS::Append(const BOPDS_ShapeInfo& theSI)
 {
-  Standard_Integer iX;
+  Standard_Integer iX = 0;
   //
   myLines.Appended()=theSI;
   iX=myLines.Length()-1;
@@ -261,7 +263,7 @@ Standard_Integer BOPDS_DS::Append(const BOPDS_ShapeInfo& theSI)
 //=======================================================================
 Standard_Integer BOPDS_DS::Append(const TopoDS_Shape& theS)
 {
-  Standard_Integer iX;
+  Standard_Integer iX = 0;
   //
   myLines.Appended().SetShape(theS);
   iX=myLines.Length()-1;
@@ -283,7 +285,7 @@ const BOPDS_ShapeInfo& BOPDS_DS::ShapeInfo
 //=======================================================================
 BOPDS_ShapeInfo& BOPDS_DS::ChangeShapeInfo(const Standard_Integer theI)
 {
-  BOPDS_ShapeInfo *pSI;
+  BOPDS_ShapeInfo *pSI = nullptr;
   //
   const BOPDS_ShapeInfo& aSI=ShapeInfo(theI);
   pSI=(BOPDS_ShapeInfo *)&aSI;
@@ -305,7 +307,7 @@ const TopoDS_Shape& BOPDS_DS::Shape(const Standard_Integer theI)const
 //=======================================================================
 Standard_Integer BOPDS_DS::Index(const TopoDS_Shape& theS)const
 {
-  Standard_Integer iRet;
+  Standard_Integer iRet = 0;
   //
   iRet=-1;
   if (myMapShapeIndex.IsBound(theS)) {
@@ -319,9 +321,9 @@ Standard_Integer BOPDS_DS::Index(const TopoDS_Shape& theS)const
 //=======================================================================
 void BOPDS_DS::Init(const Standard_Real theFuzz)
 {
-  Standard_Integer i1, i2, j, aI, aNb, aNbS, aNbE, aNbSx;
-  Standard_Integer n1, n2, n3, nV, nW, nE, aNbF;
-  Standard_Real aTol, aTolAdd;
+  Standard_Integer i1 = 0, i2 = 0, j = 0, aI = 0, aNb = 0, aNbS = 0, aNbE = 0, aNbSx = 0;
+  Standard_Integer n1 = 0, n2 = 0, n3 = 0, nV = 0, nW = 0, nE = 0, aNbF = 0;
+  Standard_Real aTol = NAN, aTolAdd = NAN;
   TopAbs_ShapeEnum aTS;
   TopoDS_Iterator aItS;
   TColStd_ListIteratorOfListOfInteger aIt1, aIt2, aIt3;
@@ -408,9 +410,9 @@ void BOPDS_DS::Init(const Standard_Real theFuzz)
       aTol = BRep_Tool::Tolerance(aE);
       //
       if (!BRep_Tool::Degenerated(aE)) {
-        Standard_Boolean bInf1, bInf2;
-        Standard_Integer aIx;
-        Standard_Real aT1, aT2;
+        Standard_Boolean bInf1 = 0, bInf2 = 0;
+        Standard_Integer aIx = 0;
+        Standard_Real aT1 = NAN, aT2 = NAN;
         gp_Pnt aPx;
         Handle(Geom_Curve) aC3D;
         TopoDS_Vertex aVx; 
@@ -645,7 +647,7 @@ void BOPDS_DS::InitShape
   (const Standard_Integer aI,
    const TopoDS_Shape& aS)
 {
-  Standard_Integer aIx;
+  Standard_Integer aIx = 0;
   TopoDS_Iterator aIt;
   TColStd_ListIteratorOfListOfInteger aIt1;
   //
@@ -683,8 +685,8 @@ Standard_Boolean BOPDS_DS::HasInterfShapeSubShapes
    const Standard_Integer theI2,
    const Standard_Boolean theFlag)const
 {
-  Standard_Boolean bRet;
-  Standard_Integer n2;
+  Standard_Boolean bRet = 0;
+  Standard_Integer n2 = 0;
   TColStd_ListIteratorOfListOfInteger aIt;
   bRet = Standard_False;
   //
@@ -715,8 +717,8 @@ Standard_Boolean BOPDS_DS::HasInterfSubShapes
   (const Standard_Integer theI1,
    const Standard_Integer theI2)const
 {
-  Standard_Boolean bRet;
-  Standard_Integer n1;
+  Standard_Boolean bRet = 0;
+  Standard_Integer n1 = 0;
   TColStd_ListIteratorOfListOfInteger aIt;
   bRet = Standard_False;
   //
@@ -766,7 +768,7 @@ const BOPDS_ListOfPaveBlock& BOPDS_DS::PaveBlocks
   (const Standard_Integer theI)const
 {
   static BOPDS_ListOfPaveBlock sLPB;
-  Standard_Integer aRef;
+  Standard_Integer aRef = 0;
   //
   if (HasPaveBlocks(theI)) { 
     aRef=ShapeInfo(theI).Reference();
@@ -783,8 +785,8 @@ const BOPDS_ListOfPaveBlock& BOPDS_DS::PaveBlocks
 BOPDS_ListOfPaveBlock& BOPDS_DS::ChangePaveBlocks
   (const Standard_Integer theI)
 {
-  Standard_Boolean bHasReference;
-  Standard_Integer aRef;
+  Standard_Boolean bHasReference = 0;
+  Standard_Integer aRef = 0;
   //
   BOPDS_ShapeInfo& aSI=ChangeShapeInfo(theI);
   bHasReference=aSI.HasReference();
@@ -801,8 +803,8 @@ BOPDS_ListOfPaveBlock& BOPDS_DS::ChangePaveBlocks
 //=======================================================================
 void BOPDS_DS::InitPaveBlocks(const Standard_Integer theI)
 {
-  Standard_Integer nV=0, iRef, aNbV, nVSD;
-  Standard_Real aT;
+  Standard_Integer nV=0, iRef = 0, aNbV = 0, nVSD = 0;
+  Standard_Real aT = NAN;
   TopAbs_Orientation aOrE;
   TopoDS_Vertex aV;
   TColStd_ListIteratorOfListOfInteger aIt;
@@ -894,7 +896,7 @@ void BOPDS_DS::InitPaveBlocks(const Standard_Integer theI)
 //=======================================================================
 void BOPDS_DS::UpdatePaveBlocks()
 {
-  Standard_Integer i, aNbPBP;
+  Standard_Integer i = 0, aNbPBP = 0;
   BOPDS_ListOfPaveBlock aLPBN(myAllocator);
   BOPDS_ListIteratorOfListOfPaveBlock aItPB;
   //
@@ -932,7 +934,7 @@ void BOPDS_DS::UpdatePaveBlock(const Handle(BOPDS_PaveBlock)& thePB)
     return;
   }
   //
-  Standard_Integer nE, iRef;
+  Standard_Integer nE = 0, iRef = 0;
   BOPDS_ListIteratorOfListOfPaveBlock aItPB, aItPBN;
   BOPDS_ListOfPaveBlock aLPBN(myAllocator);
   Handle(BOPDS_PaveBlock) aPB;
@@ -962,7 +964,7 @@ void BOPDS_DS::UpdatePaveBlock(const Handle(BOPDS_PaveBlock)& thePB)
 void BOPDS_DS::UpdateCommonBlock(const Handle(BOPDS_CommonBlock)& theCB,
                                  const Standard_Real theFuzz)
 {
-  Standard_Integer nE, iRef, n1, n2;
+  Standard_Integer nE = 0, iRef = 0, n1 = 0, n2 = 0;
   BOPDS_ListIteratorOfListOfPaveBlock aItPB, aItPBCB, aItPBN;
   BOPDS_ListOfPaveBlock aLPBN;
   NCollection_DataMap<BOPDS_Pair, BOPDS_ListOfPaveBlock, BOPDS_PairMapHasher> aMPKLPB;
@@ -1024,7 +1026,7 @@ void BOPDS_DS::UpdateCommonBlock(const Handle(BOPDS_CommonBlock)& theCB,
     BOPDS_ListOfPaveBlock& aLPBx=aItMPKLPB.ChangeValue();
     //
     while (aLPBx.Extent()) {
-      Standard_Boolean bCoinside;
+      Standard_Boolean bCoinside = 0;
       BOPDS_ListOfPaveBlock aLPBxN;
       //
       aItPB.Initialize(aLPBx);
@@ -1152,7 +1154,7 @@ Standard_Boolean BOPDS_DS::HasFaceInfo(const Standard_Integer theI)const
 const BOPDS_FaceInfo& BOPDS_DS::FaceInfo(const Standard_Integer theI)const
 {
   static BOPDS_FaceInfo sFI;
-  Standard_Integer aRef;
+  Standard_Integer aRef = 0;
   //
   if (HasFaceInfo(theI)) { 
     aRef=ShapeInfo(theI).Reference();
@@ -1167,9 +1169,9 @@ const BOPDS_FaceInfo& BOPDS_DS::FaceInfo(const Standard_Integer theI)const
 //=======================================================================
 BOPDS_FaceInfo& BOPDS_DS::ChangeFaceInfo(const Standard_Integer theI)
 {
-  Standard_Boolean bHasReference;
-  Standard_Integer aRef;
-  BOPDS_FaceInfo* pFI;
+  Standard_Boolean bHasReference = 0;
+  Standard_Integer aRef = 0;
+  BOPDS_FaceInfo* pFI = nullptr;
   //
   BOPDS_ShapeInfo& aSI=ChangeShapeInfo(theI);
   bHasReference=aSI.HasReference();
@@ -1188,7 +1190,7 @@ BOPDS_FaceInfo& BOPDS_DS::ChangeFaceInfo(const Standard_Integer theI)
 //=======================================================================
 void BOPDS_DS::InitFaceInfo(const Standard_Integer theI)
 {
-  Standard_Integer iRef;
+  Standard_Integer iRef = 0;
   //
   BOPDS_ShapeInfo& aSI=ChangeShapeInfo(theI);
   BOPDS_FaceInfo &aFI=myFaceInfoPool.Appended();
@@ -1229,7 +1231,7 @@ void BOPDS_DS::InitFaceInfoIn (const Standard_Integer theI)
 //=======================================================================
 void BOPDS_DS::UpdateFaceInfoIn(const Standard_Integer theI)
 {
-  Standard_Integer iRef;
+  Standard_Integer iRef = 0;
   //
   BOPDS_ShapeInfo& aSI=ChangeShapeInfo(theI);
   if (aSI.HasReference()) {
@@ -1249,7 +1251,7 @@ void BOPDS_DS::UpdateFaceInfoIn(const Standard_Integer theI)
 //=======================================================================
 void BOPDS_DS::UpdateFaceInfoOn(const Standard_Integer theI)
 {
-  Standard_Integer iRef;
+  Standard_Integer iRef = 0;
   //
   BOPDS_ShapeInfo& aSI=ChangeShapeInfo(theI);
   if (aSI.HasReference()) {
@@ -1271,7 +1273,7 @@ void BOPDS_DS::FaceInfoOn(const Standard_Integer theF,
                           BOPDS_IndexedMapOfPaveBlock& theMPB,
                           TColStd_MapOfInteger& theMI)
 {
-  Standard_Integer nS, nSD, nV1, nV2;
+  Standard_Integer nS = 0, nSD = 0, nV1 = 0, nV2 = 0;
   TColStd_ListIteratorOfListOfInteger aIt;
   BOPDS_ListIteratorOfListOfPaveBlock aItPB;
   //
@@ -1310,7 +1312,7 @@ void BOPDS_DS::FaceInfoIn(const Standard_Integer theF,
                           BOPDS_IndexedMapOfPaveBlock& theMPB,
                           TColStd_MapOfInteger& theMI)
 {
-  Standard_Integer i, aNbVF, aNbEF, nV, nE, nVSD;
+  Standard_Integer i = 0, aNbVF = 0, aNbEF = 0, nV = 0, nE = 0, nVSD = 0;
   TopoDS_Iterator aItS;
   BOPDS_ListIteratorOfListOfPaveBlock aItPB;
   //
@@ -1421,7 +1423,7 @@ void BOPDS_DS::UpdateFaceInfoIn (const TColStd_MapOfInteger& theFaces)
     if (theFaces.Contains (nF))
     {
       BOPDS_FaceInfo& aFI = myFaceInfoPool (ShapeInfo (nF).Reference());
-      Standard_Integer nVNew;
+      Standard_Integer nVNew = 0;
       if (aEF.HasIndexNew (nVNew))
       {
         HasShapeSD (nVNew, nVNew);
@@ -1478,7 +1480,7 @@ void BOPDS_DS::UpdateFaceInfoOn (const TColStd_MapOfInteger& theFaces)
 //=======================================================================
 void BOPDS_DS::RefineFaceInfoOn()
 {
-  Standard_Integer i, aNb, nF, aNbPB, j;
+  Standard_Integer i = 0, aNb = 0, nF = 0, aNbPB = 0, j = 0;
   BOPDS_IndexedMapOfPaveBlock aMPB;
   //
   aNb=myFaceInfoPool.Length();
@@ -1548,7 +1550,7 @@ void BOPDS_DS::AloneVertices(const Standard_Integer theI,
 {
   if (HasFaceInfo(theI)) {
     //
-    Standard_Integer i, j, nV1, nV2, nV, aNbPB;
+    Standard_Integer i = 0, j = 0, nV1 = 0, nV2 = 0, nV = 0, aNbPB = 0;
     TColStd_MapIteratorOfMapOfInteger aItMI;
     //
     TColStd_MapOfInteger aMI(100, myAllocator);
@@ -1593,7 +1595,7 @@ void BOPDS_DS::SubShapesOnIn(const Standard_Integer theNF1,
                              BOPDS_IndexedMapOfPaveBlock& thePBOnIn,
                              BOPDS_MapOfPaveBlock& theCommonPB)const
 {
-  Standard_Integer i, j, nV, nV1, nV2, aNbPB;
+  Standard_Integer i = 0, j = 0, nV = 0, nV1 = 0, nV2 = 0, aNbPB = 0;
   TColStd_MapIteratorOfMapOfInteger aIt;
   BOPDS_IndexedMapOfPaveBlock pMPB[4];
   //
@@ -1660,7 +1662,7 @@ void BOPDS_DS::SharedEdges(const Standard_Integer nF1,
       TColStd_ListOfInteger& theLI,
       const Handle(NCollection_BaseAllocator)& aAllocator)
 {
-  Standard_Integer nE, nSp;
+  Standard_Integer nE = 0, nSp = 0;
   TColStd_ListIteratorOfListOfInteger aItLI;
   BOPDS_ListIteratorOfListOfPaveBlock aItLPB;
   TColStd_MapOfInteger aMI(100, aAllocator);
@@ -1759,7 +1761,7 @@ Standard_Boolean BOPDS_DS::HasShapeSD
 //=======================================================================
 void BOPDS_DS::Dump()const
 {
-  Standard_Integer i, aNb, aNbSS;
+  Standard_Integer i = 0, aNb = 0, aNbSS = 0;
   //
   printf(" *** DS ***\n");
   aNb=NbRanges();
@@ -1794,9 +1796,9 @@ Standard_Boolean BOPDS_DS::CheckCoincidence
    const Handle(BOPDS_PaveBlock)& aPB2,
    const Standard_Real theFuzz)
 {
-  Standard_Boolean bRet;
-  Standard_Integer nE1, nE2, aNbPoints;
-  Standard_Real aT11, aT12, aT21, aT22, aT1m, aD, aTol, aT2x;
+  Standard_Boolean bRet = 0;
+  Standard_Integer nE1 = 0, nE2 = 0, aNbPoints = 0;
+  Standard_Real aT11 = NAN, aT12 = NAN, aT21 = NAN, aT22 = NAN, aT1m = NAN, aD = NAN, aTol = NAN, aT2x = NAN;
   gp_Pnt aP1m;
   //
   bRet=Standard_False;
@@ -1811,7 +1813,7 @@ Standard_Boolean BOPDS_DS::CheckCoincidence
   nE2=aPB2->OriginalEdge();
   const TopoDS_Edge& aE2=(*(TopoDS_Edge*)(&Shape(nE2)));
   //
-  Standard_Real f, l;
+  Standard_Real f = NAN, l = NAN;
   Handle(Geom_Curve)aC2 = BRep_Tool::Curve (aE2, f, l);
   GeomAPI_ProjectPointOnCurve aPPC;
   aPPC.Init(aC2, f, l);
@@ -1839,8 +1841,8 @@ Standard_Boolean BOPDS_DS::IsSubShape
   (const Standard_Integer theI1,
    const Standard_Integer theI2)
 {
-  Standard_Boolean bRet;
-  Standard_Integer nS;
+  Standard_Boolean bRet = 0;
+  Standard_Integer nS = 0;
   bRet = Standard_False;
   //
   TColStd_ListIteratorOfListOfInteger aItLI;
@@ -1865,7 +1867,7 @@ Standard_Boolean BOPDS_DS::IsSubShape
 void BOPDS_DS::Paves(const Standard_Integer theEdge,
                      BOPDS_ListOfPave& theLP)
 {
-  Standard_Integer aNb, i;
+  Standard_Integer aNb = 0, i = 0;
   BOPDS_ListIteratorOfListOfPaveBlock aIt;
   BOPDS_MapOfPave aMP;
   //
@@ -1929,7 +1931,7 @@ void TotalShapes(const TopoDS_Shape& aS,
 Standard_Real ComputeParameter(const TopoDS_Vertex& aV,
                                const TopoDS_Edge& aE)
 {
-  Standard_Real aT1, aT2, aTRet, aTolE2, aD2;
+  Standard_Real aT1 = NAN, aT2 = NAN, aTRet = NAN, aTolE2 = NAN, aD2 = NAN;
   gp_Pnt aPC, aPV;
   Handle(Geom_Curve) aC3D;
   TopoDS_Edge aEE;
@@ -1968,9 +1970,9 @@ void BOPDS_DS::BuildBndBoxSolid(const Standard_Integer theIndex,
                                 Bnd_Box& aBoxS,
                                 const Standard_Boolean theCheckInverted)
 {
-  Standard_Boolean bIsOpenBox, bIsInverted;
-  Standard_Integer nSh, nFc;
-  Standard_Real aTolS, aTolFc;
+  Standard_Boolean bIsOpenBox = 0, bIsInverted = 0;
+  Standard_Integer nSh = 0, nFc = 0;
+  Standard_Real aTolS = NAN, aTolFc = NAN;
   TColStd_ListIteratorOfListOfInteger aItLI, aItLI1;
   //
   const BOPDS_ShapeInfo& aSI=ShapeInfo(theIndex);
@@ -2044,7 +2046,7 @@ void BOPDS_DS::BuildBndBoxSolid(const Standard_Integer theIndex,
 //=======================================================================
 void BOPDS_DS::UpdatePaveBlocksWithSDVertices()
 {
-  Standard_Integer i, aNbPBP;
+  Standard_Integer i = 0, aNbPBP = 0;
   BOPDS_ListIteratorOfListOfPaveBlock aItPB;
   //
   BOPDS_VectorOfListOfPaveBlock& aPBP=myPaveBlocksPool;
@@ -2067,7 +2069,7 @@ void BOPDS_DS::UpdatePaveBlocksWithSDVertices()
 void BOPDS_DS::UpdatePaveBlockWithSDVertices
   (const Handle(BOPDS_PaveBlock)& thePB)
 {
-  Standard_Integer nV1, nV2;
+  Standard_Integer nV1 = 0, nV2 = 0;
   BOPDS_Pave aPave1, aPave2;
   //
   aPave1 = thePB->Pave1();
@@ -2142,7 +2144,7 @@ void BOPDS_DS::ReleasePaveBlocks()
     if (aLPB.Extent() == 1) {
       const Handle(BOPDS_PaveBlock)& aPB = aLPB.First();
       if (!IsCommonBlock(aPB)) {
-        Standard_Integer nV1, nV2;
+        Standard_Integer nV1 = 0, nV2 = 0;
         aPB->Indices(nV1, nV2);
         if (!IsNewShape(nV1) && !IsNewShape(nV2)) {
           // Both vertices are original, thus the PB is untouched.
@@ -2174,7 +2176,7 @@ Standard_Boolean BOPDS_DS::IsValidShrunkData(const Handle(BOPDS_PaveBlock)& theP
   // Shrunk range
   Standard_Real aTS[2];
   Bnd_Box aBox;
-  Standard_Boolean bIsSplit;
+  Standard_Boolean bIsSplit = 0;
   //
   thePB->ShrunkData(aTS[0], aTS[1], aBox, bIsSplit);
   //

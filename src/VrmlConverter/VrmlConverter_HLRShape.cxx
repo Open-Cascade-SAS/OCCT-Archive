@@ -12,6 +12,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bnd_Box.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepBndLib.hxx>
@@ -38,17 +40,17 @@ void VrmlConverter_HLRShape::Add(Standard_OStream&                          anOS
   StdPrs_HLRToolShape Tool(aShape,aProjector->Projector());
 
   Standard_Integer NbEdge = Tool.NbEdges();
-  Standard_Integer i;
-  Standard_Real U1,U2;
+  Standard_Integer i = 0;
+  Standard_Real U1 = NAN,U2 = NAN;
   BRepAdaptor_Curve TheCurve;
 
-  Standard_Real theRequestedDeflection;
+  Standard_Real theRequestedDeflection = NAN;
   if(aDrawer->TypeOfDeflection() == Aspect_TOD_RELATIVE)   // TOD_RELATIVE, TOD_ABSOLUTE
     {
       Bnd_Box box;
       BRepBndLib::AddClose(aShape, box);
       
-      Standard_Real  Xmin, Xmax, Ymin, Ymax, Zmin, Zmax, diagonal;
+      Standard_Real  Xmin = NAN, Xmax = NAN, Ymin = NAN, Ymax = NAN, Zmin = NAN, Zmax = NAN, diagonal = NAN;
       box.Get( Xmin, Ymin, Zmin, Xmax, Ymax, Zmax );
       if (!(box.IsOpenXmin() || box.IsOpenXmax() ||
 	    box.IsOpenYmin() || box.IsOpenYmax() ||

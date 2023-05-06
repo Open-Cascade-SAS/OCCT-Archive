@@ -40,7 +40,7 @@
 //=============================================================================
 // Creation d' une Conic de prostep a partir d' une Conic de Geom
 //=============================================================================
-GeomToStep_MakeConic::GeomToStep_MakeConic ( const Handle(Geom_Conic)& C)
+GeomToStep_MakeConic::GeomToStep_MakeConic ( const Handle(Geom_Conic)& C) : GeomToStep_Root()
 {
   done = Standard_True;
   if (C->IsKind(STANDARD_TYPE(Geom_Circle))) {
@@ -75,7 +75,7 @@ GeomToStep_MakeConic::GeomToStep_MakeConic ( const Handle(Geom_Conic)& C)
 // Creation d' une Conic2d de prostep a partir d' une Conic de Geom2d
 //=============================================================================
 
-GeomToStep_MakeConic::GeomToStep_MakeConic ( const Handle(Geom2d_Conic)& C)
+GeomToStep_MakeConic::GeomToStep_MakeConic ( const Handle(Geom2d_Conic)& C) : GeomToStep_Root()
 {
   done = Standard_True;
   if (C->IsKind(STANDARD_TYPE(Geom2d_Circle))) {

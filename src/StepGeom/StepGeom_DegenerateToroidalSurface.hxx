@@ -57,7 +57,7 @@ protected:
 private:
 
 
-  Standard_Boolean selectOuter;
+  Standard_Boolean selectOuter{};
 
 
 };

@@ -120,17 +120,17 @@ private:
   StepToTopoDS_DataMapOfTRI myDataMap;
   StepToTopoDS_PointVertexMap myVertexMap;
   StepToTopoDS_PointEdgeMap myEdgeMap;
-  Standard_Boolean myComputePC;
+  Standard_Boolean myComputePC{};
   Handle(Transfer_TransientProcess) myTransProc;
-  Standard_Integer myNbC0Surf;
-  Standard_Integer myNbC1Surf;
-  Standard_Integer myNbC2Surf;
-  Standard_Integer myNbC0Cur2;
-  Standard_Integer myNbC1Cur2;
-  Standard_Integer myNbC2Cur2;
-  Standard_Integer myNbC0Cur3;
-  Standard_Integer myNbC1Cur3;
-  Standard_Integer myNbC2Cur3;
+  Standard_Integer myNbC0Surf{};
+  Standard_Integer myNbC1Surf{};
+  Standard_Integer myNbC2Surf{};
+  Standard_Integer myNbC0Cur2{};
+  Standard_Integer myNbC1Cur2{};
+  Standard_Integer myNbC2Cur2{};
+  Standard_Integer myNbC0Cur3{};
+  Standard_Integer myNbC1Cur3{};
+  Standard_Integer myNbC2Cur3{};
 
 
 };

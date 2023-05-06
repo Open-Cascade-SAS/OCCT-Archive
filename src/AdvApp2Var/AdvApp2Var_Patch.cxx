@@ -22,6 +22,8 @@
 //   by:	Joelle CHAUVET / Jean-Marc LACHAUME
 //		Initialisation de myCritValue pour OSF
 
+#include <math.h>
+
 #include <AdvApp2Var_ApproxF2var.hxx>
 #include <AdvApp2Var_Context.hxx>
 #include <AdvApp2Var_Criterion.hxx>
@@ -109,21 +111,21 @@ void AdvApp2Var_Patch::Discretise(const AdvApp2Var_Context& Conditions,
 {
 
 // data stored in the Context
-  Standard_Integer NDIMEN, ISOFAV;
+  Standard_Integer NDIMEN = 0, ISOFAV = 0;
   NDIMEN = Conditions.TotalDimension();
 // Attention : works only for 3D
   ISOFAV = Conditions.FavorIso();
 
 // data related to the patch to be discretized
-  Standard_Integer NBPNTU, NBPNTV;
+  Standard_Integer NBPNTU = 0, NBPNTV = 0;
   Standard_Integer IORDRU = myOrdInU, IORDRV = myOrdInV;
   Handle (TColStd_HArray1OfReal) HUROOT  = Conditions.URoots();
   Handle (TColStd_HArray1OfReal) HVROOT  = Conditions.VRoots();
-  Standard_Real * UROOT;
+  Standard_Real * UROOT = nullptr;
     UROOT =  (Standard_Real *) &HUROOT ->ChangeArray1()(HUROOT ->Lower());
   NBPNTU = (Conditions.URoots())->Length();
   if (myOrdInU>-1) NBPNTU -= 2;
-  Standard_Real * VROOT;
+  Standard_Real * VROOT = nullptr;
     VROOT =  (Standard_Real *) &HVROOT ->ChangeArray1()(HVROOT ->Lower());
   NBPNTV = (Conditions.VRoots())->Length();
   if (myOrdInV>-1) NBPNTV -= 2;
@@ -135,8 +137,8 @@ void AdvApp2Var_Patch::Discretise(const AdvApp2Var_Context& Conditions,
     new TColStd_HArray1OfReal(1,SIZE*4);
   HCOINS->Init(0.);
 
-  Standard_Integer iu,iv;
-  Standard_Real du=(myU1-myU0)/2,dv=(myV1-myV0)/2,rho,valnorm;
+  Standard_Integer iu = 0,iv = 0;
+  Standard_Real du=(myU1-myU0)/2,dv=(myV1-myV0)/2,rho = NAN,valnorm = NAN;
 
   for (iu=0;iu<=myOrdInU;iu++) {
     for (iv=0;iv<=myOrdInV;iv++) {
@@ -209,7 +211,7 @@ void AdvApp2Var_Patch::Discretise(const AdvApp2Var_Context& Conditions,
     ( (Constraints.IsoU(myU1,myV0,myV1)).DifTab() ) ->Array1();
 
 // normalization
-  Standard_Integer ideb1,ideb2,ideb3,ideb4,jj;
+  Standard_Integer ideb1 = 0,ideb2 = 0,ideb3 = 0,ideb4 = 0,jj = 0;
   for (iu=1;iu<=IORDRU;iu++) {
     rho = pow(du,iu);
     ideb1 = HSU0->Lower() + iu*SIZE -1;
@@ -402,8 +404,8 @@ void AdvApp2Var_Patch::AddConstraints(const AdvApp2Var_Context& Conditions,
 				      const AdvApp2Var_Framework& Constraints)
 {
 // data stored in the  Context
-  Standard_Integer NDIMEN;
-  Standard_Integer IERCOD, NCFLMU, NCFLMV, NDegU, NDegV;
+  Standard_Integer NDIMEN = 0;
+  Standard_Integer IERCOD = 0, NCFLMU = 0, NCFLMV = 0, NDegU = 0, NDegV = 0;
   NDIMEN = Conditions.TotalDimension();
 // Attention : works only for 3D
   NCFLMU = Conditions.ULimit();
@@ -443,9 +445,9 @@ void AdvApp2Var_Patch::AddConstraints(const AdvApp2Var_Context& Conditions,
   HCFU1->Init( (Constraints.IsoU(myU1,myV0,myV1)).NbCoeff() );
 
 // normalization of Isos U
-  Standard_Integer iu,iv;
-  Standard_Real du=(myU1-myU0)/2,dv=(myV1-myV0)/2,rho,valnorm;
-  Standard_Integer ideb0,ideb1,jj;
+  Standard_Integer iu = 0,iv = 0;
+  Standard_Real du=(myU1-myU0)/2,dv=(myV1-myV0)/2,rho = NAN,valnorm = NAN;
+  Standard_Integer ideb0 = 0,ideb1 = 0,jj = 0;
 
   for (iu=1;iu<=IORDRU;iu++) {
     rho = pow(du,iu);
@@ -532,7 +534,7 @@ void AdvApp2Var_Patch::AddConstraints(const AdvApp2Var_Context& Conditions,
   }
 
 // add constraints at the corners
-  Standard_Integer ideb;
+  Standard_Integer ideb = 0;
   SIZE=NDIMEN*(IORDRU+2)*(IORDRV+2);
   Handle (TColStd_HArray1OfReal) HCOINS  =
     new TColStd_HArray1OfReal(1,SIZE*4);
@@ -590,8 +592,8 @@ void AdvApp2Var_Patch::AddConstraints(const AdvApp2Var_Context& Conditions,
   Standard_Real *FACT = 
     (Standard_Real *) &HFACT ->ChangeArray1()(HFACT ->Lower());
 
-  Standard_Integer idim,ncf0,ncf1,iun=1;
-  Standard_Real *Is;
+  Standard_Integer idim = 0,ncf0 = 0,ncf1 = 0,iun=1;
+  Standard_Real *Is = nullptr;
 
 // add extremities of isos U
   for (iu=1;iu<=IORDRU+1;iu++) {
@@ -656,10 +658,10 @@ void AdvApp2Var_Patch::AddConstraints(const AdvApp2Var_Context& Conditions,
 
 void AdvApp2Var_Patch::AddErrors(const AdvApp2Var_Framework& Constraints)
 {
-  Standard_Integer NBSESP = 1, iesp;
-  Standard_Integer iu,iv;
+  Standard_Integer NBSESP = 1, iesp = 0;
+  Standard_Integer iu = 0,iv = 0;
 
-  Standard_Real errU,errV,error,hmax[4];
+  Standard_Real errU = NAN,errV = NAN,error = NAN,hmax[4];
   hmax[0] = 0;
   hmax[1] = 1;
   hmax[2] = 1.5;
@@ -718,7 +720,7 @@ void AdvApp2Var_Patch::AddErrors(const AdvApp2Var_Framework& Constraints)
 	      ((Constraints.IsoU(myU1,myV0,myV1)).MaxErrors())->Value(iesp,1));
 
 // calculate max errors at the corners
-    Standard_Real emax1=0.,emax2=0.,emax3=0.,emax4=0.,err1,err2,err3,err4;
+    Standard_Real emax1=0.,emax2=0.,emax3=0.,emax4=0.,err1 = NAN,err2 = NAN,err3 = NAN,err4 = NAN;
     for (iu=0;iu<=myOrdInU;iu++) {
       for (iv=0;iv<=myOrdInV;iv++) {
     error = (Constraints.Node(myU0,myV0))->Error(iu,iv);
@@ -766,9 +768,9 @@ void AdvApp2Var_Patch::MakeApprox(const AdvApp2Var_Context& Conditions,
 {
 
 // data stored in the Context
-  Standard_Integer NDIMEN, NBSESP, NDIMSE;
-  Standard_Integer NBPNTU, NBPNTV, NCFLMU, NCFLMV, NDJACU, NDJACV;
-  Standard_Integer NDegU, NDegV, NJacU, NJacV;
+  Standard_Integer NDIMEN = 0, NBSESP = 0, NDIMSE = 0;
+  Standard_Integer NBPNTU = 0, NBPNTV = 0, NCFLMU = 0, NCFLMV = 0, NDJACU = 0, NDJACV = 0;
+  Standard_Integer NDegU = 0, NDegV = 0, NJacU = 0, NJacV = 0;
   NDIMEN = Conditions.TotalDimension();
   NBSESP = Conditions.TotalNumberSSP();
   NDIMSE = 3;
@@ -787,7 +789,7 @@ void AdvApp2Var_Patch::MakeApprox(const AdvApp2Var_Context& Conditions,
 
 // data relative to the processed patch
   Standard_Integer IORDRU = myOrdInU, IORDRV = myOrdInV,
-                   NDMINU = 1, NDMINV = 1, NCOEFU, NCOEFV;
+                   NDMINU = 1, NDMINV = 1, NCOEFU = 0, NCOEFV = 0;
 // NDMINU and NDMINV depend on the nb of coeff of neighboring isos
 // and of the required order of continuity
   NDMINU = Max(1,2*IORDRU+1);
@@ -807,7 +809,7 @@ void AdvApp2Var_Patch::MakeApprox(const AdvApp2Var_Context& Conditions,
     new TColStd_HArray1OfReal(1,NBSESP);
   Handle (TColStd_HArray1OfReal) HEPSFRO =
     new TColStd_HArray1OfReal(1,NBSESP*8);
-  Standard_Integer iesp;
+  Standard_Integer iesp = 0;
   for (iesp=1;iesp<=NBSESP;iesp++) {
     HEPSAPR->SetValue(iesp,(Conditions.IToler())->Value(iesp));
     HEPSFRO->SetValue(iesp,(Conditions.FToler())->Value(iesp,1));
@@ -937,7 +939,7 @@ void AdvApp2Var_Patch::MakeApprox(const AdvApp2Var_Context& Conditions,
 				     &myNbCoeffInV);
     
 // transposition (NCFLMU,NCFLMV,NDIMEN)Fortran-C++
-    Standard_Integer aIU, aIN, dim, ii, jj;
+    Standard_Integer aIU = 0, aIN = 0, dim = 0, ii = 0, jj = 0;
     for (dim=1; dim<=NDIMEN; dim++){
        aIN = (dim-1)*NCFLMU*NCFLMV;
        for (ii=1; ii<=NCFLMU; ii++) {

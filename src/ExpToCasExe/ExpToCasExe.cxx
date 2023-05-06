@@ -67,12 +67,12 @@ static Standard_Boolean LoadList (const char *theFileName,
   while (anIS.getline (aBuf, 512))
   {
     char* aCurPos = aBuf;
-    char* anItemName;
-    char* aPackageName;
-    char* aShortName;
-    char* aCheckFlag;
-    char* aFillSharedFlag;
-    char* aCategoryName;
+    char* anItemName = nullptr;
+    char* aPackageName = nullptr;
+    char* aShortName = nullptr;
+    char* aCheckFlag = nullptr;
+    char* aFillSharedFlag = nullptr;
+    char* aCategoryName = nullptr;
     Standard_Size aSepIdx = 0;
     aLineNum += 1;
     // -------------------------------------------------------------
@@ -358,7 +358,7 @@ Standard_Integer main (const Standard_Integer argc, const char* argv[])
   Standard_Integer anIndex = -1;
   if (argc > 4)
   {
-    char* aStopSymbol;
+    char* aStopSymbol = nullptr;
     anIndex = (Standard_Integer) strtol (argv[4], &aStopSymbol, 10);
     if (*aStopSymbol != '\0')
     {

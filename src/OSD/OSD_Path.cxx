@@ -59,8 +59,8 @@ static OSD_SysType whereAmI()
 #include <Standard_ConstructionError.hxx>
 #include <OSD_WhoAmI.hxx>
 
-OSD_Path::OSD_Path(){
- mySysDep = whereAmI();
+OSD_Path::OSD_Path() : mySysDep(whereAmI()){
+ 
 }
 
 static void VmsExtract(const TCollection_AsciiString& what,
@@ -73,7 +73,7 @@ static void VmsExtract(const TCollection_AsciiString& what,
                 TCollection_AsciiString& ext){
 
  TCollection_AsciiString buffer;
- Standard_Integer pos;
+ Standard_Integer pos = 0;
 
  buffer = what;
 
@@ -152,10 +152,10 @@ static void UnixExtract(const TCollection_AsciiString& what,
 			TCollection_AsciiString& name,
 			TCollection_AsciiString& ext){
 
- Standard_Integer pos;
+ Standard_Integer pos = 0;
  TCollection_AsciiString buffer;   // To manipulate 'what' without modifying it
 
- Standard_PCharacter p;
+ Standard_PCharacter p = nullptr;
  buffer = what;
 
 #ifdef TOTO  // Username, password and node are no longer given in the string (LD)
@@ -242,8 +242,8 @@ static void DosExtract(const TCollection_AsciiString& what,
                 TCollection_AsciiString& ext){
 
  TCollection_AsciiString buffer;
- Standard_Integer pos;
- Standard_PCharacter p;
+ Standard_Integer pos = 0;
+ Standard_PCharacter p = nullptr;
 
  buffer = what;
 
@@ -291,8 +291,8 @@ static void MacExtract(const TCollection_AsciiString& what,
                 TCollection_AsciiString& name,
                 TCollection_AsciiString& ){
 
-  Standard_Integer pos;
-  Standard_PCharacter p;
+  Standard_Integer pos = 0;
+  Standard_PCharacter p = nullptr;
   
   // I don't know how to distinguish a disk from a trek !
   
@@ -321,9 +321,9 @@ static void MacExtract(const TCollection_AsciiString& what,
 
 
 OSD_Path::OSD_Path(const TCollection_AsciiString& aDependentName,
-		   const OSD_SysType aSysType){
+		   const OSD_SysType aSysType) : mySysDep(whereAmI()){
 
- mySysDep = whereAmI();
+ 
 
  OSD_SysType todo;
 //  Standard_Integer i,l;
@@ -368,9 +368,9 @@ OSD_Path::OSD_Path(const TCollection_AsciiString& Nod,
                    const TCollection_AsciiString& Dsk,
                    const TCollection_AsciiString& Trk,
                    const TCollection_AsciiString& Nam,
-		   const TCollection_AsciiString& ext){
+		   const TCollection_AsciiString& ext) : mySysDep(whereAmI()){
 
- mySysDep = whereAmI();
+ 
 
  SetValues ( Nod, UsrNm, Passwd, Dsk, Trk, Nam, ext);
 
@@ -418,7 +418,7 @@ void OSD_Path::UpTrek(){
 
  if (length == 0) return;
 
- Standard_Integer awhere,aHowmany;
+ Standard_Integer awhere = 0,aHowmany = 0;
  TCollection_AsciiString tok;
 
  tok = myTrek.Token("|",length);
@@ -456,7 +456,7 @@ void OSD_Path::RemoveATrek(const Standard_Integer thewhere){
  if (length <= 0 || thewhere > length)
   throw Standard_NumericError("OSD_Path::RemoveATrek : where has an invalid value");
 
- Standard_Integer posit,aHowmany;
+ Standard_Integer posit = 0,aHowmany = 0;
  TCollection_AsciiString tok;
 
  tok = myTrek.Token("|",thewhere);
@@ -475,7 +475,7 @@ void OSD_Path::RemoveATrek(const TCollection_AsciiString& aName){
 
  if (length == 0) return;
 
- Standard_Integer awhere;
+ Standard_Integer awhere = 0;
 
  awhere = myTrek.Search(aName);
  if (awhere != -1){
@@ -545,7 +545,7 @@ static void P2VMS (TCollection_AsciiString & Way){
 // Convert a Trek to MAC syntax
 
 static void P2MAC (TCollection_AsciiString & Way){
- int i,l;
+ int i = 0,l = 0;
  Way.ChangeAll('|',':');
 
  l = (int)Way.Length();
@@ -561,7 +561,7 @@ static void P2MAC (TCollection_AsciiString & Way){
 // Convert a Trek to UNIX syntax
 
 static void P2UNIX (TCollection_AsciiString & Way){
- int i,l;
+ int i = 0,l = 0;
  Standard_Integer length = Way.Length();
 
  if (length == 0) return;
@@ -585,7 +585,7 @@ static void P2UNIX (TCollection_AsciiString & Way){
 // Convert a Trek to DOS like syntax
 
 static void P2DOS (TCollection_AsciiString & Way){
- int i,l;
+ int i = 0,l = 0;
  Standard_Integer len = Way.Length();
 
  if (len == 0) return;
@@ -1493,7 +1493,7 @@ Standard_Boolean OSD_Path::IsValid (const TCollection_AsciiString& theDependentN
 
 static Standard_Integer RemoveExtraSeparator(TCollection_AsciiString& aString) {
 
-  Standard_Integer i, j, len,start = 1 ;
+  Standard_Integer i = 0, j = 0, len = 0,start = 1 ;
 
   len = aString.Length() ;
 #ifdef _WIN32
@@ -1520,8 +1520,8 @@ TCollection_AsciiString OSD_Path::RelativePath(
 {
   TCollection_AsciiString EmptyString = "" ;
   TCollection_AsciiString FilePath ;
-  Standard_Integer len ;
-  Standard_Integer i, n ;
+  Standard_Integer len = 0 ;
+  Standard_Integer i = 0, n = 0 ;
   Standard_Boolean Wnt = 0 ;
 
   FilePath = aAbsFilePath ;
@@ -1596,7 +1596,7 @@ TCollection_AsciiString OSD_Path::AbsolutePath(
   if (aRelFilePath.Search("/") == 1 || aRelFilePath.Search(":") == 2)
       return aRelFilePath ;
   TCollection_AsciiString DirPath = aDirPath, RelFilePath = aRelFilePath  ;
-  Standard_Integer i,len ;
+  Standard_Integer i = 0,len = 0 ;
 
   if (DirPath.Search("/") != 1 && DirPath.Search(":") != 2)
       return EmptyString ;

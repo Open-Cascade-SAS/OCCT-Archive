@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepGProp.hxx>
 #include <BRepGProp_Cinert.hxx>
 #include <BRepGProp_Sinert.hxx>
@@ -33,7 +35,7 @@ static Standard_Integer AffichEps = 0;
 #endif
 
 static gp_Pnt roughBaryCenter(const TopoDS_Shape& S){
-  Standard_Integer i;  TopExp_Explorer ex;
+  Standard_Integer i = 0;  TopExp_Explorer ex;
   gp_XYZ xyz(0,0,0);
   for (ex.Init(S,TopAbs_VERTEX), i = 0; ex.More(); ex.Next(), i++) 
     xyz += BRep_Tool::Pnt(TopoDS::Vertex(ex.Current())).XYZ();
@@ -113,11 +115,11 @@ void  BRepGProp::LinearProperties(const TopoDS_Shape& S, GProp_GProps& SProps, c
 static Standard_Real surfaceProperties(const TopoDS_Shape& S, GProp_GProps& Props, const Standard_Real Eps, const Standard_Boolean SkipShared,
                                        const Standard_Boolean UseTriangulation)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 #ifdef OCCT_DEBUG
   Standard_Integer iErrorMax = 0;
 #endif
-  Standard_Real ErrorMax = 0.0, Error;
+  Standard_Real ErrorMax = 0.0, Error = NAN;
   TopExp_Explorer ex; 
   gp_Pnt P(roughBaryCenter(S));
   BRepGProp_Sinert G;  G.SetLocation(P);
@@ -216,7 +218,7 @@ Standard_Real BRepGProp::SurfaceProperties(const TopoDS_Shape& S, GProp_GProps& 
 static Standard_Real volumeProperties(const TopoDS_Shape& S, GProp_GProps& Props, const Standard_Real Eps, const Standard_Boolean SkipShared,
                                       const Standard_Boolean UseTriangulation)
 {
-  Standard_Integer i;
+  Standard_Integer i = 0;
 #ifdef OCCT_DEBUG
   Standard_Integer iErrorMax = 0;
 #endif
@@ -337,7 +339,7 @@ Standard_Real BRepGProp::VolumeProperties(const TopoDS_Shape& S, GProp_GProps& P
   // find the origin
   gp_Pnt P(0,0,0);  P.Transform(S.Location());
   Props = GProp_GProps(P);
-  Standard_Integer i;
+  Standard_Integer i = 0;
 #ifdef OCCT_DEBUG
   Standard_Integer iErrorMax = 0;
 #endif
@@ -393,7 +395,7 @@ static Standard_Real volumePropertiesGK(const TopoDS_Shape     &theShape,
   BRepGProp_VinertGK aVProps;
   BRepGProp_Face   aPropFace(IsUseSpan);
   BRepGProp_Domain aPropDomain;
-  Standard_Real    aLocalError;
+  Standard_Real    aLocalError = NAN;
   Standard_Real    anError = 0.;
   TopTools_MapOfShape aFwdFMap;
   TopTools_MapOfShape aRvsFMap;
@@ -495,7 +497,7 @@ Standard_Real BRepGProp::VolumePropertiesGK(const TopoDS_Shape     &S,
 
     // Compute the properties for each closed shell.
     Standard_Real aTol    = Eps;
-    Standard_Real aLocalError;
+    Standard_Real aLocalError = NAN;
     TopTools_ListIteratorOfListOfShape anIter(aClosedShells);
 
     for (; anIter.More(); anIter.Next()) {
@@ -540,7 +542,7 @@ static Standard_Real volumePropertiesGK(const TopoDS_Shape     &theShape,
   BRepGProp_VinertGK aVProps;
   BRepGProp_Face   aPropFace(IsUseSpan);
   BRepGProp_Domain aPropDomain;
-  Standard_Real    aLocalError;
+  Standard_Real    aLocalError = NAN;
   Standard_Real    anError = 0.;
   TopTools_MapOfShape aFwdFMap;
   TopTools_MapOfShape aRvsFMap;
@@ -643,7 +645,7 @@ Standard_Real BRepGProp::VolumePropertiesGK(const TopoDS_Shape     &S,
 
     // Compute the properties for each closed shell.
     Standard_Real aTol    = Eps;
-    Standard_Real aLocalError;
+    Standard_Real aLocalError = NAN;
     TopTools_ListIteratorOfListOfShape anIter(aClosedShells);
 
     for (; anIter.More(); anIter.Next()) {

@@ -15,6 +15,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BOPAlgo_CheckerSI.hxx>
 
 #include <BOPDS_DS.hxx>
@@ -103,7 +105,7 @@ class BOPAlgo_VertexSolid {
       return;
     }
 
-    Standard_Real aTol;
+    Standard_Real aTol = NAN;
     gp_Pnt aPV;
     //
     BRepClass3d_SolidClassifier& aSC=myContext->SolidClassifier(myZ);
@@ -179,7 +181,7 @@ class BOPAlgo_ShapeSolid {
       return;
     }
 
-    Standard_Boolean bHasInterf;
+    Standard_Boolean bHasInterf = 0;
     //
     myHasInterf=Standard_False;
     //
@@ -212,17 +214,17 @@ class BOPAlgo_SolidSolid : public  BOPAlgo_ShapeSolid {
     BOPAlgo_ShapeSolid() {
   };
   //
-  virtual ~BOPAlgo_SolidSolid(){
+  ~BOPAlgo_SolidSolid() override{
   };
   //
-  virtual void Perform() {
+  void Perform() override {
     Message_ProgressScope aPS(myProgressRange, NULL, 1);
     if (!aPS.More())
     {
       return;
     }
 
-    Standard_Boolean bFlag;
+    Standard_Boolean bFlag = 0;
     //
     bFlag=Standard_False;
     myHasInterf=Standard_False;
@@ -244,7 +246,7 @@ void BOPAlgo_CheckerSI::PerformVZ(const Message_ProgressRange& theRange)
 {
   Message_ProgressScope aPSOuter(theRange, NULL, 1);
 
-  Standard_Integer iSize, nV, nZ, k, aNbVVS;
+  Standard_Integer iSize = 0, nV = 0, nZ = 0, k = 0, aNbVVS = 0;
   TopAbs_State aState;
   BOPDS_MapOfPair aMPK;
   //
@@ -339,8 +341,8 @@ void BOPAlgo_CheckerSI::PerformZZ(const Message_ProgressRange& theRange)
 {
   Message_ProgressScope aPSOuter(theRange, NULL, 1);
 
-  Standard_Boolean bHasInterf;
-  Standard_Integer iSize, nZ1, nZ, k, aNbSolidSolid;
+  Standard_Boolean bHasInterf = 0;
+  Standard_Integer iSize = 0, nZ1 = 0, nZ = 0, k = 0, aNbSolidSolid = 0;
   //
   myIterator->Initialize(TopAbs_SOLID, TopAbs_SOLID);
   iSize=myIterator->ExpectedLength();
@@ -398,8 +400,8 @@ void BOPAlgo_CheckerSI::PerformSZ(const TopAbs_ShapeEnum theTS, const Message_Pr
 {
   Message_ProgressScope aPSOuter(theRange, NULL, 1);
 
-  Standard_Boolean bHasInterf;
-  Standard_Integer iSize, nS, nZ, k, aNbShapeSolid;
+  Standard_Boolean bHasInterf = 0;
+  Standard_Integer iSize = 0, nS = 0, nZ = 0, k = 0, aNbShapeSolid = 0;
   //
   myIterator->Initialize(theTS, TopAbs_SOLID);
   iSize=myIterator->ExpectedLength();

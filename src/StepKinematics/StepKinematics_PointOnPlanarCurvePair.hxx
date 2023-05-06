@@ -60,7 +60,7 @@ DEFINE_STANDARD_RTTIEXT(StepKinematics_PointOnPlanarCurvePair, StepKinematics_Hi
 
 private:
   Handle(StepGeom_Curve) myPairCurve;
-  Standard_Boolean myOrientation;
+  Standard_Boolean myOrientation{};
 
 };
 #endif // _StepKinematics_PointOnPlanarCurvePair_HeaderFile_

@@ -25,9 +25,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_ActionMethod,Standard_Transient)
 //function : StepBasic_ActionMethod
 //purpose  : 
 //=======================================================================
-StepBasic_ActionMethod::StepBasic_ActionMethod ()
+StepBasic_ActionMethod::StepBasic_ActionMethod () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

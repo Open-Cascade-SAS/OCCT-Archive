@@ -33,7 +33,7 @@ Transfer_FinderProcess::Transfer_FinderProcess (const Standard_Integer nb)
     Standard_Integer  Transfer_FinderProcess::NextMappedWithAttribute
   (const Standard_CString name, const Standard_Integer num0) const
 {
-  Standard_Integer num, nb = NbMapped();
+  Standard_Integer num = 0, nb = NbMapped();
   for (num = num0+1; num <= nb; num ++) {
     Handle(Transfer_Finder) fnd = Mapped (num);
     if (fnd.IsNull()) continue;
@@ -64,7 +64,7 @@ void  Transfer_FinderProcess::PrintStats (const Standard_Integer mode, Standard_
     S<< "********                 Basic Statistics                  ********"<<std::endl;
 
     Standard_Integer nbr = 0, nbe = 0, nbw = 0;
-    Standard_Integer i, max = NbMapped(), nbroots = NbRoots();
+    Standard_Integer i = 0, max = NbMapped(), nbroots = NbRoots();
     S<< "****        Nb Final Results    : "<< nbroots <<std::endl;
 
     for (i = 1; i <= max; i ++) {

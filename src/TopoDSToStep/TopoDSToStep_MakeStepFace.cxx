@@ -21,6 +21,8 @@
 //szv#4 S4163
 // abv 30.11.99: fix %30 pdn changed to produce SurfaceOfRevolution instead of DegenerateToroidalSurface
 
+#include <math.h>
+
 #include <Bnd_Box2d.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
@@ -141,7 +143,7 @@ void TopoDSToStep_MakeStepFace::Init(const TopoDS_Face& aFace,
     return;
   }
   
-  Standard_Integer i;
+  Standard_Integer i = 0;
   
   //BRepAdaptor_Surface SA = BRepAdaptor_Surface(ForwardFace);  
 
@@ -237,7 +239,7 @@ void TopoDSToStep_MakeStepFace::Init(const TopoDS_Face& aFace,
       gp_Dir dir = Ax3.Direction();
       gp_Dir X = Ax3.XDirection();
       // create basis curve
-      Standard_Real UF, VF, UL, VL;
+      Standard_Real UF = NAN, VF = NAN, UL = NAN, VL = NAN;
       ShapeAlgo::AlgoContainer()->GetFaceUVBounds(aFace, UF, UL, VF, VL);
       gp_Ax2 Ax2(pos.XYZ() + X.XYZ() * TS->MajorRadius(), X ^ dir, X);
       Handle(Geom_Curve) BasisCurve = new Geom_Circle(Ax2, TS->MinorRadius());
@@ -351,7 +353,7 @@ void TopoDSToStep_MakeStepFace::Init(const TopoDS_Face& aFace,
     
     for (;Ex.More(); Ex.Next()) {
       TopoDS_Edge E = TopoDS::Edge(Ex.Current());
-      Standard_Real cf, cl;
+      Standard_Real cf = NAN, cl = NAN;
       Handle(Geom2d_Curve) C2d = BRep_Tool::CurveOnSurface(E, ForwardFace, cf, cl);
 
       //CA = BRepAdaptor_Curve(E, ForwardFace);

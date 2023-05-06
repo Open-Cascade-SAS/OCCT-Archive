@@ -72,8 +72,8 @@ char * LDOM_CharReference::Decode (char * theSrc, Standard_Integer& theLen)
       memmove (aDstPtr, aSrcPtr, aByteCount);
     aSrcPtr = aPtr;
     if (aSrcPtr[1] == '#') {
-      unsigned long aChar;
-      char *        aNewPtr;
+      unsigned long aChar = 0;
+      char *        aNewPtr = nullptr;
       aDstPtr = aSrcPtr - anIncrCount + 1;
       if (aSrcPtr[2] == 'x')
         aChar = strtoul (&aSrcPtr[3], &aNewPtr, 16);         // hex encoding
@@ -147,7 +147,7 @@ char * LDOM_CharReference::Encode (const char* theSrc, Standard_Integer& theLen,
     entityRef("&apos;", 6)
   };
 
-  const char * endSrc, * ptrSrc = theSrc;
+  const char * endSrc = nullptr, * ptrSrc = theSrc;
   char       * aDest = (char *) theSrc;
   Standard_Integer aCount = 0;
   //    Analyse if there is a non-standard character in the string

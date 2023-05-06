@@ -185,7 +185,7 @@ private:
 
 
 
-  Standard_Boolean done;
+  Standard_Boolean done{};
   Handle(HeaderSection_FileName) fn;
   Handle(HeaderSection_FileSchema) fs;
   Handle(HeaderSection_FileDescription) fd;

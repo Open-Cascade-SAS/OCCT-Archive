@@ -96,7 +96,7 @@ GccAna_Lin2dTanObl::
    GccAna_Lin2dTanObl (const GccEnt_QualifiedCirc& Qualified1 ,
                        const gp_Lin2d&             TheLine    ,
                        const Standard_Real         TheAngle   ):
-   linsol(1,2)   ,
+   WellDone(Standard_False), NbrSol(0), linsol(1,2)   ,
    qualifier1(1,2) ,
    pnttg1sol(1,2),
    pntint2sol(1,2),
@@ -106,8 +106,8 @@ GccAna_Lin2dTanObl::
    pararg2(1,2)
 {
 
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified())) {
      throw GccEnt_BadQualifier();

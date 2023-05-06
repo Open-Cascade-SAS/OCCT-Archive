@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <AIS_Shape.hxx>
 
 #include <AIS_GraphicTool.hxx>
@@ -856,7 +858,7 @@ void AIS_Shape::SetOwnDeviationAngle (const Standard_Real theAngle)
 
 void AIS_Shape::SetAngleAndDeviation ( const Standard_Real  anAngle )
 {
-  Standard_Real OutAngl,OutDefl;
+  Standard_Real OutAngl = NAN,OutDefl = NAN;
   HLRBRep::PolyHLRAngleAndDeflection(anAngle,OutAngl,OutDefl);
   SetOwnDeviationAngle(anAngle) ;
   SetOwnDeviationCoefficient(OutDefl) ;

@@ -20,15 +20,15 @@
 #include <Standard_ErrorHandler.hxx>
 
 #include <algorithm>
-math_ComputeGaussPointsAndWeights::math_ComputeGaussPointsAndWeights(const Standard_Integer Number)
+math_ComputeGaussPointsAndWeights::math_ComputeGaussPointsAndWeights(const Standard_Integer Number) : myIsDone(Standard_False)
 {
-  myIsDone = Standard_False;
+  
 
   try {
     myPoints  = new TColStd_HArray1OfReal(1, Number);
     myWeights = new TColStd_HArray1OfReal(1, Number);
 
-    Standard_Integer i;
+    Standard_Integer i = 0;
 
     TColStd_Array1OfReal aDiag(1, Number);
     TColStd_Array1OfReal aSubDiag(1, Number);

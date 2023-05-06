@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <AppDef_LinearCriteria.hxx>
 #include <AppDef_MultiLine.hxx>
 #include <AppDef_MyLineTool.hxx>
@@ -218,7 +220,7 @@ Handle(FEmTool_HAssemblyTable) AppDef_LinearCriteria::AssemblyTable() const
 
   Handle(TColStd_HArray1OfInteger) GlobIndex, Aux;
 
-  Standard_Integer i, el = 1, dim = 1, NbGlobVar = 0, gi0;
+  Standard_Integer i = 0, el = 1, dim = 1, NbGlobVar = 0, gi0 = 0;
   
   // For dim = 1
   // For first element (el = 1)
@@ -288,7 +290,7 @@ Handle(TColStd_HArray2OfInteger) AppDef_LinearCriteria::DependenceTable() const
 
   Handle(TColStd_HArray2OfInteger) DepTab = 
     new TColStd_HArray2OfInteger(1, Dim, 1, Dim, 0);
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for(i=1; i <= Dim; i++) DepTab->SetValue(i,i,1);
   
   return DepTab;
@@ -315,8 +317,8 @@ Standard_Integer AppDef_LinearCriteria::QualityValues(const Standard_Real J1min,
   TColStd_Array1OfReal& Knots = myCurve->Knots();
   Handle(TColStd_HArray2OfReal) Coeff; 
 
-  Standard_Integer el, deg = 0, curdeg, i;
-  Standard_Real UFirst, ULast;
+  Standard_Integer el = 0, deg = 0, curdeg = 0, i = 0;
+  Standard_Real UFirst = NAN, ULast = NAN;
 
   J1 = J2 = J3 = 0.;
   for(el = 1; el <= NbElm; el++) {
@@ -451,8 +453,8 @@ void AppDef_LinearCriteria::ErrorValues(Standard_Real& MaxError,
   gp_Pnt2d P2d;
   gp_Pnt P3d;
 
-  Standard_Integer i, ipnt, c0 = 0;
-  Standard_Real SqrDist, Dist;
+  Standard_Integer i = 0, ipnt = 0, c0 = 0;
+  Standard_Real SqrDist = NAN, Dist = NAN;
 
   MaxError = QuadraticError = AverageError = 0.;
 
@@ -510,11 +512,11 @@ void AppDef_LinearCriteria::Hessian(const Standard_Integer Element,
   math_Matrix AuxH(0, H.RowNumber()-1, 0, H.ColNumber()-1, 0.);
 
   TColStd_Array1OfReal& Knots = myCurve->Knots();
-  Standard_Real UFirst, ULast;
+  Standard_Real UFirst = NAN, ULast = NAN;
 
   UFirst = Knots(Element); ULast = Knots(Element + 1);
 
-  Standard_Integer icrit;
+  Standard_Integer icrit = 0;
 
   // Quality criterion part of Hessian
 
@@ -530,12 +532,12 @@ void AppDef_LinearCriteria::Hessian(const Standard_Integer Element,
 
   AuxH.Init(0.);
 
-  Standard_Real coeff = (ULast - UFirst)/2., curcoeff, poid;
-  Standard_Integer ipnt, ii, degH = 2 * Order+1;
+  Standard_Real coeff = (ULast - UFirst)/2., curcoeff = NAN, poid = NAN;
+  Standard_Integer ipnt = 0, ii = 0, degH = 2 * Order+1;
 
 
   Handle(PLib_Base) myBase = myCurve->Base();
-  Standard_Integer k1, k2, i, j, i0 = H.LowerRow(), j0 = H.LowerCol(), i1, j1,
+  Standard_Integer k1 = 0, k2 = 0, i = 0, j = 0, i0 = H.LowerRow(), j0 = H.LowerCol(), i1 = 0, j1 = 0,
                    di = myPntWeight.Lower() - myParameters->Lower();
 
   //BuilCache
@@ -603,8 +605,8 @@ void AppDef_LinearCriteria::Gradient(const Standard_Integer Element,
   TColgp_Array1OfPnt TabP3d(1, Max(1,myNbP3d));
   TColgp_Array1OfPnt2d TabP2d(1, Max(1,myNbP2d));    
 
-  Standard_Boolean In3d;
-  Standard_Integer IndPnt, IndCrd;
+  Standard_Boolean In3d = 0;
+  Standard_Integer IndPnt = 0, IndCrd = 0;
 
   if(Dimension <= 3*myNbP3d) {
     In3d = Standard_True;
@@ -622,7 +624,7 @@ void AppDef_LinearCriteria::Gradient(const Standard_Integer Element,
   }
     
   TColStd_Array1OfReal& Knots = myCurve->Knots();
-  Standard_Real UFirst, ULast, Pnt;
+  Standard_Real UFirst = NAN, ULast = NAN, Pnt = NAN;
   UFirst = Knots(Element); ULast = Knots(Element + 1);
   Standard_Real coeff = (ULast-UFirst)/2;
 
@@ -632,9 +634,9 @@ void AppDef_LinearCriteria::Gradient(const Standard_Integer Element,
   Handle(PLib_Base) myBase = myCurve->Base();
   Standard_Integer MxDeg = myBase->WorkDegree();
 
-  Standard_Real curcoeff;
+  Standard_Real curcoeff = NAN;
   Standard_Integer degH = 2 * Order + 1;
-  Standard_Integer ipnt, k, i, ii, i0 = G.Lower(),
+  Standard_Integer ipnt = 0, k = 0, i = 0, ii = 0, i0 = G.Lower(),
                    di = myPntWeight.Lower() - myParameters->Lower();
 
   if (myE != Element) BuildCache(Element);
@@ -686,7 +688,7 @@ void AppDef_LinearCriteria::InputVector(const math_Vector& X,
 
   Handle(TColStd_HArray1OfInteger) GlobIndex;
   
-  Standard_Integer el, dim, i, i0 = X.Lower() - 1;
+  Standard_Integer el = 0, dim = 0, i = 0, i0 = X.Lower() - 1;
 
   for(el = 1; el <= NbElm; el++) {
     for(dim = 1; dim <= NbDim; dim++) {
@@ -751,9 +753,9 @@ void AppDef_LinearCriteria::SetWeight(const TColStd_Array1OfReal& Weight)
 //=======================================================================
 void AppDef_LinearCriteria::BuildCache(const Standard_Integer Element)
 {
-  Standard_Real t; 
-  Standard_Real UFirst, ULast;
-  Standard_Integer ipnt;
+  Standard_Real t = NAN; 
+  Standard_Real UFirst = NAN, ULast = NAN;
+  Standard_Integer ipnt = 0;
 
   UFirst = myCurve->Knots()(Element); 
   ULast =  myCurve->Knots()(Element + 1);
@@ -770,7 +772,7 @@ void AppDef_LinearCriteria::BuildCache(const Standard_Integer Element)
 
   if (IF != 0) {
     Handle(PLib_Base) myBase = myCurve->Base();
-    Standard_Integer order = myBase->WorkDegree()+1, ii; 
+    Standard_Integer order = myBase->WorkDegree()+1, ii = 0; 
     myCache = new TColStd_HArray1OfReal (1, (IL-IF+1)*(order));
     
     ii =1;
@@ -778,7 +780,7 @@ void AppDef_LinearCriteria::BuildCache(const Standard_Integer Element)
       Standard_Real * cache = &myCache->ChangeValue(ii);
       TColStd_Array1OfReal BasicValue(cache[0], 0, order-1);
       t = myParameters->Value(ipnt);
-      Standard_Real coeff = 2./(ULast - UFirst), c0 = -(ULast + UFirst)/2., s;
+      Standard_Real coeff = 2./(ULast - UFirst), c0 = -(ULast + UFirst)/2., s = NAN;
       s = (t + c0) * coeff;
       myBase->D0(s, BasicValue);
     }

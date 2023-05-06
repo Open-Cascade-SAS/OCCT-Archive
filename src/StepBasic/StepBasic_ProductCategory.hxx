@@ -67,7 +67,7 @@ private:
 
   Handle(TCollection_HAsciiString) name;
   Handle(TCollection_HAsciiString) description;
-  Standard_Boolean hasDescription;
+  Standard_Boolean hasDescription{};
 
 
 };

@@ -46,7 +46,7 @@ void RWStepShape_RWAdvancedFace::ReadStep
 
 	Handle(StepShape_HArray1OfFaceBound) aBounds;
 	Handle(StepShape_FaceBound) anent2;
-	Standard_Integer nsub2;
+	Standard_Integer nsub2 = 0;
 	if (data->ReadSubList (num,2,"bounds",ach,nsub2)) {
 	  Standard_Integer nb2 = data->NbParams(nsub2);
     if( nb2)

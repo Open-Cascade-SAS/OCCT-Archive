@@ -12,6 +12,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BndLib.hxx>
 
 #include <Bnd_Box.hxx>
@@ -51,8 +53,8 @@ namespace
                 const PointType& theXd, const PointType& theYd, const PointType& theO,
                 BndBoxType& theB)
   {
-    Standard_Real aTeta1;
-    Standard_Real aTeta2;
+    Standard_Real aTeta1 = NAN;
+    Standard_Real aTeta2 = NAN;
     if(theP2 < theP1)
     { 
       aTeta1 = theP2;
@@ -84,13 +86,13 @@ namespace
     }
 
     // One places already both ends
-    Standard_Real aCn1, aSn1 ,aCn2, aSn2;
+    Standard_Real aCn1 = NAN, aSn1 = NAN ,aCn2 = NAN, aSn2 = NAN;
     aCn1 = Cos(aTeta1); aSn1 = Sin(aTeta1);
     aCn2 = Cos(aTeta2); aSn2 = Sin(aTeta2);
     theB.Add(PointType( theO.Coord() +theRa*aCn1*theXd.Coord() +theRb*aSn1*theYd.Coord()));
     theB.Add(PointType(theO.Coord() +theRa*aCn2*theXd.Coord() +theRb*aSn2*theYd.Coord()));
     
-    Standard_Real aRam, aRbm;
+    Standard_Real aRam = NAN, aRbm = NAN;
     if (aDelta > M_PI/8.)
     {
       // Main radiuses to take into account only 8 points (/cos(Pi/8.))
@@ -433,8 +435,8 @@ void BndLib::Add(const gp_Circ& C,
   gp_XYZ Yd = C.YAxis().Direction().XYZ();
   const gp_Ax2& pos = C.Position();
   //
-  Standard_Real tt;
-  Standard_Real xmin, xmax, txmin, txmax;
+  Standard_Real tt = NAN;
+  Standard_Real xmin = NAN, xmax = NAN, txmin = NAN, txmax = NAN;
   if(Abs(Xd.X()) > gp::Resolution())
   {
     txmin = ATan(Yd.X() / Xd.X());
@@ -457,7 +459,7 @@ void BndLib::Add(const gp_Circ& C,
     txmax = tt;
   }
   //
-  Standard_Real ymin, ymax, tymin, tymax;
+  Standard_Real ymin = NAN, ymax = NAN, tymin = NAN, tymax = NAN;
   if(Abs(Xd.Y()) > gp::Resolution())
   {
     tymin = ATan(Yd.Y() / Xd.Y());
@@ -480,7 +482,7 @@ void BndLib::Add(const gp_Circ& C,
     tymax = tt;
   }
   //
-  Standard_Real zmin, zmax, tzmin, tzmax;
+  Standard_Real zmin = NAN, zmax = NAN, tzmin = NAN, tzmax = NAN;
   if(Abs(Xd.Z()) > gp::Resolution())
   {
     tzmin = ATan(Yd.Z() / Xd.Z());
@@ -513,7 +515,7 @@ void BndLib::Add(const gp_Circ& C,
     B.Add(P);
     P = ElCLib::CircleValue(utrim2, pos, R);
     B.Add(P);
-    Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    Standard_Real Xmin = NAN, Ymin = NAN, Zmin = NAN, Xmax = NAN, Ymax = NAN, Zmax = NAN;
     B.FinitePart().Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
     Standard_Real gap = B.GetGap();
     Xmin += gap;
@@ -618,8 +620,8 @@ void BndLib::Add(const gp_Elips& C,
   gp_XYZ Yd = C.YAxis().Direction().XYZ();
   const gp_Ax2& pos = C.Position();
   //
-  Standard_Real tt;
-  Standard_Real xmin, xmax, txmin, txmax;
+  Standard_Real tt = NAN;
+  Standard_Real xmin = NAN, xmax = NAN, txmin = NAN, txmax = NAN;
   if(Abs(Xd.X()) > gp::Resolution())
   {
     txmin = ATan((MinR*Yd.X()) / (MajR*Xd.X()));
@@ -642,7 +644,7 @@ void BndLib::Add(const gp_Elips& C,
     txmax = tt;
   }
   //
-  Standard_Real ymin, ymax, tymin, tymax;
+  Standard_Real ymin = NAN, ymax = NAN, tymin = NAN, tymax = NAN;
   if(Abs(Xd.Y()) > gp::Resolution())
   {
     tymin = ATan((MinR*Yd.Y()) / (MajR*Xd.Y()));
@@ -665,7 +667,7 @@ void BndLib::Add(const gp_Elips& C,
     tymax = tt;
   }
   //
-  Standard_Real zmin, zmax, tzmin, tzmax;
+  Standard_Real zmin = NAN, zmax = NAN, tzmin = NAN, tzmax = NAN;
   if(Abs(Xd.Z()) > gp::Resolution())
   {
     tzmin = ATan((MinR*Yd.Z()) / (MajR*Xd.Z()));
@@ -698,7 +700,7 @@ void BndLib::Add(const gp_Elips& C,
     B.Add(P);
     P = ElCLib::EllipseValue(utrim2, pos, MajR, MinR);
     B.Add(P);
-    Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    Standard_Real Xmin = NAN, Ymin = NAN, Zmin = NAN, Xmax = NAN, Ymax = NAN, Zmax = NAN;
     B.FinitePart().Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
     Standard_Real gap = B.GetGap();
     Xmin += gap;
@@ -1136,7 +1138,7 @@ static void ComputeSphere (const gp_Sphere& Sphere,
 {
   gp_Pnt P = Sphere.Location();
   Standard_Real R = Sphere.Radius();
-  Standard_Real xmin, ymin, zmin, xmax, ymax, zmax;
+  Standard_Real xmin = NAN, ymin = NAN, zmin = NAN, xmax = NAN, ymax = NAN, zmax = NAN;
   xmin = P.X() - R;
   xmax = P.X() + R;
   ymin = P.Y() - R;
@@ -1153,7 +1155,7 @@ static void ComputeSphere (const gp_Sphere& Sphere,
   }
   else
   {
-    Standard_Real u, v;
+    Standard_Real u = NAN, v = NAN;
     Standard_Real umax = UMin + 2. * M_PI;
     const gp_Ax3& Pos = Sphere.Position();
     gp_Pnt PExt = P;
@@ -1234,7 +1236,7 @@ static void computeDegeneratedTorus (const gp_Torus& theTorus,
   gp_Pnt aP = theTorus.Location();
   Standard_Real aRa = theTorus.MajorRadius();
   Standard_Real aRi = theTorus.MinorRadius();
-  Standard_Real aXmin,anYmin,aZmin,aXmax,anYmax,aZmax;
+  Standard_Real aXmin = NAN,anYmin = NAN,aZmin = NAN,aXmax = NAN,anYmax = NAN,aZmax = NAN;
   aXmin = aP.X() - aRa - aRi;
   aXmax = aP.X() + aRa + aRi;
   anYmin = aP.Y() - aRa - aRi;
@@ -1253,7 +1255,7 @@ static void computeDegeneratedTorus (const gp_Torus& theTorus,
     return;
   }
   
-  Standard_Real anU,aV;
+  Standard_Real anU = NAN,aV = NAN;
   Standard_Real anUmax = theUMin + 2. * M_PI;
   const gp_Ax3& aPos = theTorus.Position();
   gp_Pnt aPExt = aP;
@@ -1332,7 +1334,7 @@ void BndLib::Add( const gp_Sphere& S,const Standard_Real Tol, Bnd_Box& B)
 {
   gp_Pnt P = S.Location();
   Standard_Real R = S.Radius();
-  Standard_Real xmin, ymin, zmin, xmax, ymax, zmax;
+  Standard_Real xmin = NAN, ymin = NAN, zmin = NAN, xmax = NAN, ymax = NAN, zmax = NAN;
   xmin = P.X() - R;
   xmax = P.X() + R;
   ymin = P.Y() - R;
@@ -1347,8 +1349,8 @@ void BndLib::Add(const gp_Torus& S,const Standard_Real UMin,
    const Standard_Real UMax,const Standard_Real VMin,
    const Standard_Real VMax,const Standard_Real Tol, Bnd_Box& B) {
 
-  Standard_Integer Fi1;
-  Standard_Integer Fi2;
+  Standard_Integer Fi1 = 0;
+  Standard_Integer Fi2 = 0;
   if (VMax<VMin) {
     Fi1 = (Standard_Integer )( VMax/(M_PI/4.));
     Fi2 = (Standard_Integer )( VMin/(M_PI/4.));
@@ -1492,8 +1494,8 @@ Standard_Integer ComputeBox(const gp_Hypr& aHypr,
                             const Standard_Real aT2, 
                             Bnd_Box& aBox)
 {
-  Standard_Integer i, iErr;
-  Standard_Real aRmaj, aRmin, aA, aB, aABP, aBAM, aT3, aCf, aEps;
+  Standard_Integer i = 0, iErr = 0;
+  Standard_Real aRmaj = NAN, aRmin = NAN, aA = NAN, aB = NAN, aABP = NAN, aBAM = NAN, aT3 = NAN, aCf = NAN, aEps = NAN;
   gp_Pnt aP1, aP2, aP3, aP0;
   //
   //

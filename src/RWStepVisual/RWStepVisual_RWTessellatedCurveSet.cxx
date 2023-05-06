@@ -49,7 +49,7 @@ void RWStepVisual_RWTessellatedCurveSet::ReadStep
   Handle(StepVisual_CoordinatesList) aCoordList;
   data->ReadEntity (num, 2,"coord_list",ach,STANDARD_TYPE(StepVisual_CoordinatesList), aCoordList);
   //--- Initialisation of the read entity ---
-  Standard_Integer nsub2;
+  Standard_Integer nsub2 = 0;
   NCollection_Handle<StepVisual_VectorOfHSequenceOfInteger> aCurves = new StepVisual_VectorOfHSequenceOfInteger;
   if (data->ReadSubList (num,3,"curves",ach,nsub2)) 
   {
@@ -60,7 +60,7 @@ void RWStepVisual_RWTessellatedCurveSet::ReadStep
     for (Standard_Integer i = 1; i <= nb2; i++) 
     {
       Handle(TColStd_HSequenceOfInteger) aCurve = new TColStd_HSequenceOfInteger;
-      Standard_Integer nsub3;
+      Standard_Integer nsub3 = 0;
       if (data->ReadSubList (nsub2,i,"number_coordinates",ach,nsub3)) {
         Standard_Integer nb3 = data->NbParams(nsub3);
         for (Standard_Integer j = 1; j <= nb3; j++) {

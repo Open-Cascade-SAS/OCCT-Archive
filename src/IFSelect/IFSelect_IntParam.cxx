@@ -18,8 +18,8 @@
 
 IMPLEMENT_STANDARD_RTTIEXT(IFSelect_IntParam,Standard_Transient)
 
-IFSelect_IntParam::IFSelect_IntParam ()
-      {  theval = 0;  }
+IFSelect_IntParam::IFSelect_IntParam () : theval(0)
+      {   }
 
     void  IFSelect_IntParam::SetStaticName (const Standard_CString statname)
       {  thestn.Clear();  thestn.AssignCat (statname);  }

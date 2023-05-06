@@ -21,6 +21,8 @@
 //                               facilement approchable ont de petites erreurs.
 // Modified     PMN 15/04/1997 : Gestion fine de la continuite aux lieux de decoupes 
 
+#include <math.h>
+
 #include <AdvApprox_ApproxAFunction.hxx>
 #include <AdvApprox_DichoCutting.hxx>
 #include <AdvApprox_EvaluatorFunction.hxx>
@@ -138,13 +140,13 @@ static void PrepareConvert(const Standard_Integer NumCurves,
 	     
 {
   // Declaration
-  Standard_Boolean isCi;
-  Standard_Integer icurve, idim, iordre, ii, 
+  Standard_Boolean isCi = 0;
+  Standard_Integer icurve = 0, idim = 0, iordre = 0, ii = 0, 
                    Dimension=Num1DSS + 2*Num2DSS + 3*Num3DSS,
                    NbSpace  = Num1DSS + Num2DSS + Num3DSS;
-  Standard_Real diff, moy, facteur1,  facteur2, normal1, normal2, eps;
-  Standard_Real *Res1, *Res2, *Val1, *Val2;
-  Standard_Real *Coef1, *Coef2; 
+  Standard_Real diff = NAN, moy = NAN, facteur1 = NAN,  facteur2 = NAN, normal1 = NAN, normal2 = NAN, eps = NAN;
+  Standard_Real *Res1 = nullptr, *Res2 = nullptr, *Val1 = nullptr, *Val2 = nullptr;
+  Standard_Real *Coef1 = nullptr, *Coef2 = nullptr; 
   Standard_Integer RealDegree = Max(MaxDegree + 1, 2 * ContinuityOrder + 2);
   
   gp_Vec V1,V2;
@@ -194,7 +196,7 @@ static void PrepareConvert(const Standard_Integer NumCurves,
       Standard_Real f2_dividend = PolynomialIntervals(icurve+1,2)-PolynomialIntervals(icurve+1,1);
       Standard_Real f1_divizor = TrueIntervals(icurve+1)-TrueIntervals(icurve); 
       Standard_Real f2_divizor = TrueIntervals(icurve+2)-TrueIntervals(icurve+1);
-      Standard_Real fract1, fract2;
+      Standard_Real fract1 = NAN, fract2 = NAN;
       
       if( Abs(f1_divizor) < Toler ) 	 // this is to avoid divizion by zero 
 	//in this case fract1 =  5.14755758946803e-85 
@@ -419,7 +421,7 @@ void AdvApprox_ApproxAFunction::Approximation(
 					      Standard_Integer& ErrorCode)
 {
 //  Standard_Real EpsPar =  Precision::Confusion();
-  Standard_Integer IDIM, NUPIL,TheDeg;
+  Standard_Integer IDIM = 0, NUPIL = 0,TheDeg = 0;
 #ifdef OCCT_DEBUG
   Standard_Integer NDIMEN = TotalDimension;
 #endif
@@ -465,7 +467,7 @@ void AdvApprox_ApproxAFunction::Approximation(
 //-->  NDJAC est le degre de "travail" dans la base orthogonale.
 
 
-      Standard_Integer NbGaussPoints, WorkDegree;
+      Standard_Integer NbGaussPoints = 0, WorkDegree = 0;
 
       PLib::JacobiParameters(Continuity, NumMaxCoeffs-1, code_precis, 
 			     NbGaussPoints, WorkDegree);
@@ -483,8 +485,8 @@ void AdvApprox_ApproxAFunction::Approximation(
 //C**********************************************************************
   Handle(PLib_JacobiPolynomial) JacobiBase = new (PLib_JacobiPolynomial) (WorkDegree, Continuity);
 //Portage HP le compilateur refuse le debranchement
-  Standard_Integer IS ;
-  Standard_Boolean goto_fin_de_boucle;
+  Standard_Integer IS = 0 ;
+  Standard_Boolean goto_fin_de_boucle = 0;
   Standard_Integer MaxDegree = NumMaxCoeffs-1;
   AdvApprox_SimpleApprox Approx (TotalDimension, TotalNumSS,  
                                  Continuity,
@@ -531,8 +533,8 @@ void AdvApprox_ApproxAFunction::Approximation(
        else 
           {
 //-> ...sinon on essai de decouper l' intervalle courant en 2...
-	   Standard_Real TMIL;
-	   Standard_Boolean Large;
+	   Standard_Real TMIL = NAN;
+	   Standard_Boolean Large = 0;
 
            Large = CutTool.Value(TABINT[NumCurves], TABINT[NumCurves+1], 
 				   TMIL);
@@ -581,7 +583,7 @@ void AdvApprox_ApproxAFunction::Approximation(
 	TColStd_Array1OfReal Coefficients(0,(TheDeg+1)*TotalDimension-1);
 	JacobiBase->ToCoefficients (TotalDimension, TheDeg, 
 				    HJacCoeff->Array1(), Coefficients);
-	Standard_Integer i,j, f = (TheDeg+1)*TotalDimension;
+	Standard_Integer i = 0,j = 0, f = (TheDeg+1)*TotalDimension;
 	for (i=0,j=(NumCurves-1)*TotalDimension*NumMaxCoeffs+1;
 	     i<f; i++, j++) {
 	  CoefficientArray.SetValue(j, Coefficients.Value(i));
@@ -693,15 +695,15 @@ void AdvApprox_ApproxAFunction::Perform(const Standard_Integer Num1DSS,
   myNumSubSpaces[2] = Num3DSS ;
   Standard_Integer  TotalNumSS  =
     Num1DSS + Num2DSS + Num3DSS,
-  ii,
-  jj,
-  kk,
-  index,
-  dim_index,
-  local_index;
+  ii = 0,
+  jj = 0,
+  kk = 0,
+  index = 0,
+  dim_index = 0,
+  local_index = 0;
   Standard_Integer  TotalDimension =
     myNumSubSpaces[0] + 2 * myNumSubSpaces[1] + 3 * myNumSubSpaces[2] ;
-  Standard_Real  error_value ;
+  Standard_Real  error_value = NAN ;
 
   Standard_Integer ContinuityOrder=0 ;
   switch (myContinuity) {
@@ -754,7 +756,7 @@ void AdvApprox_ApproxAFunction::Perform(const Standard_Integer Num1DSS,
   //
   
   Standard_Integer ErrorCode = 0,
-  NumCurves,
+  NumCurves = 0,
   size = 
     myMaxSegments * NumMaxCoeffs * TotalDimension ;
   Handle(TColStd_HArray1OfInteger)  NumCoeffPerCurvePtr =
@@ -961,7 +963,7 @@ void AdvApprox_ApproxAFunction::Perform(const Standard_Integer Num1DSS,
 void AdvApprox_ApproxAFunction::Poles(const Standard_Integer Index,
 				      TColgp_Array1OfPnt&   P) const 
 {
-  Standard_Integer ii ;
+  Standard_Integer ii = 0 ;
   for (ii = P.Lower() ; ii <= P.Upper() ; ii++) {
     P.SetValue(ii,my3DPoles->Value(ii,Index)) ;
   }
@@ -987,7 +989,7 @@ Standard_Integer AdvApprox_ApproxAFunction::NbPoles()  const
 void AdvApprox_ApproxAFunction::Poles2d(const Standard_Integer Index,
 					TColgp_Array1OfPnt2d&   P) const 
 {
-  Standard_Integer ii ;
+  Standard_Integer ii = 0 ;
   for (ii = P.Lower() ; ii <= P.Upper() ; ii++) {
     P.SetValue(ii,my2DPoles->Value(ii,Index)) ;
   }
@@ -1000,7 +1002,7 @@ void AdvApprox_ApproxAFunction::Poles2d(const Standard_Integer Index,
 void AdvApprox_ApproxAFunction::Poles1d(const Standard_Integer Index,
 					TColStd_Array1OfReal&   P) const 
 {
-  Standard_Integer ii ;
+  Standard_Integer ii = 0 ;
   for (ii = P.Lower() ; ii <= P.Upper() ; ii++) {
     P.SetValue(ii,my1DPoles->Value(ii,Index)) ;
   }
@@ -1089,7 +1091,7 @@ Standard_Real  AdvApprox_ApproxAFunction::AverageError(
 
 void  AdvApprox_ApproxAFunction::Dump(Standard_OStream& o) const 
 {
-  Standard_Integer ii;
+  Standard_Integer ii = 0;
   o << "Dump of ApproxAFunction" << std::endl;
   if (myNumSubSpaces[0] > 0) {
     o << "Error(s) 1d = " << std::endl;

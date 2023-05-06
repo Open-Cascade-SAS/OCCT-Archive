@@ -79,7 +79,7 @@ public :
 private:
 
   Handle(StepVisual_CoordinatesList) myCoordinates;
-  Standard_Integer myPnmax;
+  Standard_Integer myPnmax{};
   Handle(TColStd_HArray2OfReal) myNormals;
   StepVisual_FaceOrSurface myGeometricLink; //!< optional
   Standard_Boolean myHasGeometricLink; //!< flag "is GeometricLink defined"

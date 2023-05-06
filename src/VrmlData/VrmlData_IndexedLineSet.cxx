@@ -58,7 +58,7 @@ const Handle(TopoDS_TShape)& VrmlData_IndexedLineSet::TShape ()
   if (myNbPolygons == 0)
     myTShape.Nullify();
   else if (myIsModified) {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     BRep_Builder aBuilder;
     const gp_XYZ * arrNodes = myCoords->Values();
 
@@ -66,7 +66,7 @@ const Handle(TopoDS_TShape)& VrmlData_IndexedLineSet::TShape ()
     TopoDS_Wire aWire;
     aBuilder.MakeWire(aWire);
     for (i = 0; i < (int)myNbPolygons; i++) {
-      const Standard_Integer * arrIndice;
+      const Standard_Integer * arrIndice = nullptr;
       const Standard_Integer nNodes = Polygon(i, arrIndice);
       TColgp_Array1OfPnt   arrPoint (1, nNodes);
       TColStd_Array1OfReal arrParam (1, nNodes);

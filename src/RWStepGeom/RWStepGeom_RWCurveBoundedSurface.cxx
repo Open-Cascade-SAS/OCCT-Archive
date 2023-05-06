@@ -70,7 +70,7 @@ void RWStepGeom_RWCurveBoundedSurface::ReadStep (const Handle(StepData_StepReade
     }
   }
 
-  Standard_Boolean aImplicitOuter;
+  Standard_Boolean aImplicitOuter = 0;
   data->ReadBoolean (num, 4, "implicit_outer", ach, aImplicitOuter);
 
   // Initialize entity

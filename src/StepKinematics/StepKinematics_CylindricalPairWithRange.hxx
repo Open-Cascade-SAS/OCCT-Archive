@@ -88,10 +88,10 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_CylindricalPairWithRange, StepKinematics_CylindricalPair)
 
 private:
-  Standard_Real myLowerLimitActualTranslation; //!< optional
-  Standard_Real myUpperLimitActualTranslation; //!< optional
-  Standard_Real myLowerLimitActualRotation; //!< optional
-  Standard_Real myUpperLimitActualRotation; //!< optional
+  Standard_Real myLowerLimitActualTranslation{}; //!< optional
+  Standard_Real myUpperLimitActualTranslation{}; //!< optional
+  Standard_Real myLowerLimitActualRotation{}; //!< optional
+  Standard_Real myUpperLimitActualRotation{}; //!< optional
   Standard_Boolean defLowerLimitActualTranslation; //!< flag "is LowerLimitActualTranslation defined"
   Standard_Boolean defUpperLimitActualTranslation; //!< flag "is UpperLimitActualTranslation defined"
   Standard_Boolean defLowerLimitActualRotation; //!< flag "is LowerLimitActualRotation defined"

@@ -26,9 +26,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepRepr_ProductConcept,Standard_Transient)
 //function : StepRepr_ProductConcept
 //purpose  : 
 //=======================================================================
-StepRepr_ProductConcept::StepRepr_ProductConcept ()
+StepRepr_ProductConcept::StepRepr_ProductConcept () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

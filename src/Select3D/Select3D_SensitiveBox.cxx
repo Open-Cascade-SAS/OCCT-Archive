@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Select3D_SensitiveBox.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(Select3D_SensitiveBox,Select3D_SensitiveEntity)
@@ -26,8 +28,8 @@ Select3D_SensitiveBox::Select3D_SensitiveBox (const Handle(SelectMgr_EntityOwner
                                               const Bnd_Box& theBox)
 : Select3D_SensitiveEntity (theOwnerId)
 {
-  Standard_Real aXMax, aYMax, aZMax;
-  Standard_Real aXMin, aYMin, aZMin;
+  Standard_Real aXMax = NAN, aYMax = NAN, aZMax = NAN;
+  Standard_Real aXMin = NAN, aYMin = NAN, aZMin = NAN;
   theBox.Get (aXMin, aYMin, aZMin, aXMax, aYMax, aZMax);
   myBox = Select3D_BndBox3d (SelectMgr_Vec3 (aXMin, aYMin, aZMin),
                              SelectMgr_Vec3 (aXMax, aYMax, aZMax));

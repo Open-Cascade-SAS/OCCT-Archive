@@ -35,9 +35,9 @@ class StepFile_ReadData::CharactersPage {
 
 public:
 
-  CharactersPage(const Standard_Integer theMaxCar) :myNext(NULL), myUsed(0)
+  CharactersPage(const Standard_Integer theMaxCar) :myNext(NULL), myCharacters(new char[theMaxCar]), myUsed(0)
   {
-    myCharacters = new char[theMaxCar];
+    
   }
 
   ~CharactersPage()
@@ -83,9 +83,9 @@ public:
 
 public:
 
-  ArgumentsPage(Standard_Integer theMaxArg) :myNext(NULL), myUsed(0)
+  ArgumentsPage(Standard_Integer theMaxArg) :myNext(NULL), myArgs(new Argument[theMaxArg]), myUsed(0)
   {
-    myArgs = new Argument[theMaxArg];
+    
   }
 
   ~ArgumentsPage()
@@ -151,9 +151,9 @@ class StepFile_ReadData::RecordsPage
 
 public:
 
-  RecordsPage(const Standard_Integer theMaxRec) :myNext(NULL), myUsed(0)
+  RecordsPage(const Standard_Integer theMaxRec) :myNext(NULL), myRecords(new Record[theMaxRec]), myUsed(0)
   {
-    myRecords = new Record[theMaxRec];
+    
   }
 
   ~RecordsPage()
@@ -205,11 +205,11 @@ StepFile_ReadData::StepFile_ReadData()
   myNbRec(0), myNbHead(0), myNbPar(0), myYaRec(0),
   myNumSub(0), myErrorArg(Standard_False), myResText(NULL), myCurrType(TextValue::SubList),
   mySubArg(NULL), myTypeArg(Interface_ParamSub), myCurrArg(NULL), myFirstRec(NULL),
-  myCurRec(NULL), myLastRec(NULL), myCurScope(NULL), myFirstError(NULL), myCurError(NULL)
+  myCurRec(NULL), myLastRec(NULL), myCurScope(NULL), myFirstError(NULL), myCurError(NULL), myOneCharPage(new CharactersPage(myMaxChar)), myOneArgPage(new ArgumentsPage(myMaxArg)), myOneRecPage(new RecordsPage(myMaxRec))
 {
-  myOneCharPage = new CharactersPage(myMaxChar);
-  myOneArgPage = new ArgumentsPage(myMaxArg);
-  myOneRecPage = new RecordsPage(myMaxRec);
+  
+  
+  
 };
 
 //=======================================================================
@@ -310,7 +310,7 @@ void StepFile_ReadData::RecordListStart()
 {
   if (myNumSub > 0)
   {
-    Record* aSubRec;
+    Record* aSubRec = nullptr;
     aSubRec = CreateNewRecord();
     switch (myNumSub)
     {
@@ -344,11 +344,11 @@ void StepFile_ReadData::RecordListStart()
 
 void StepFile_ReadData::CreateNewArg()
 {
-  Argument* aNewArg;
+  Argument* aNewArg = nullptr;
   myNbPar++;
   if (myOneArgPage->myUsed >= myMaxArg)
   {
-    ArgumentsPage* aNewArgPage;
+    ArgumentsPage* aNewArgPage = nullptr;
     aNewArgPage = new ArgumentsPage(myMaxArg);
     aNewArgPage->myNext = myOneArgPage;
     myOneArgPage = aNewArgPage;
@@ -409,8 +409,8 @@ void StepFile_ReadData::CreateErrorArg()
 
 void StepFile_ReadData::AddNewScope()
 {
-  Scope* aNewScope;
-  Record* aRecord;
+  Scope* aNewScope = nullptr;
+  Record* aRecord = nullptr;
   aNewScope = new Scope;
   aNewScope->myRecord = myCurRec;
   aNewScope->myPrevious = myCurScope;
@@ -429,8 +429,8 @@ void StepFile_ReadData::AddNewScope()
 
 void StepFile_ReadData::FinalOfScope()
 {
-  Scope* anOldScope;
-  Record* aRecord;
+  Scope* anOldScope = nullptr;
+  Record* aRecord = nullptr;
   if (myCurScope == NULL) return;
 
   aRecord = CreateNewRecord();
@@ -687,8 +687,8 @@ Standard_CString StepFile_ReadData::GetLastError() const
 
 char* StepFile_ReadData::RecordNewText(char* theText)
 {
-  char* aSavResText;
-  char* aNewText;
+  char* aSavResText = nullptr;
+  char* aNewText = nullptr;
   aSavResText = myResText;
   CreateNewText(theText, (int)strlen(theText));
   aNewText = myResText;
@@ -726,10 +726,10 @@ void StepFile_ReadData::AddNewRecord(Record* theNewRecord)
 
 StepFile_ReadData::Record* StepFile_ReadData::CreateNewRecord()
 {
-  Record* aNewRecord;
+  Record* aNewRecord = nullptr;
   if (myOneRecPage->myUsed >= myMaxRec)
   {
-    RecordsPage* aNewRecPage;
+    RecordsPage* aNewRecPage = nullptr;
     aNewRecPage = new RecordsPage(myMaxRec);
     aNewRecPage->myNext = myOneRecPage;
     myOneRecPage = aNewRecPage;

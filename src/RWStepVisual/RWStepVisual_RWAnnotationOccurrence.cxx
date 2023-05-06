@@ -47,7 +47,7 @@ void RWStepVisual_RWAnnotationOccurrence::ReadStep
   // Inherited field : styles
   Handle(StepVisual_HArray1OfPresentationStyleAssignment) aStyles;
   Handle(StepVisual_PresentationStyleAssignment) anent2;
-  Standard_Integer nsub2;
+  Standard_Integer nsub2 = 0;
   if (data->ReadSubList (num,2,"styles",ach,nsub2)) {
     Standard_Integer nb2 = data->NbParams(nsub2);
     aStyles = new StepVisual_HArray1OfPresentationStyleAssignment (1, nb2);

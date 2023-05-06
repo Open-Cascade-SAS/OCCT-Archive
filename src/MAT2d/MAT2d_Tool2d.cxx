@@ -29,6 +29,8 @@
 #include <GCE2d_MakeSegment.hxx>
 #endif
 
+#include <math.h>
+
 #include <Bisector_Bisec.hxx>
 #include <Bisector_BisecAna.hxx>
 #include <Bisector_BisecCC.hxx>
@@ -102,13 +104,13 @@ static Standard_Real MAT2d_TOLCONF = 1.e-7;
 //function : 
 //purpose  :
 //============================================================================
-MAT2d_Tool2d::MAT2d_Tool2d()
+MAT2d_Tool2d::MAT2d_Tool2d() : theDirection(1.), theJoinType(GeomAbs_Arc), theNumberOfBisectors(0), theNumberOfPnts(0), theNumberOfVecs(0)
 {
-  theDirection         = 1.;
-  theJoinType = GeomAbs_Arc; //default
-  theNumberOfBisectors = 0;
-  theNumberOfVecs      = 0;
-  theNumberOfPnts      = 0;
+  
+  //default
+  
+  
+  
 }
 
 //=============================================================================
@@ -207,7 +209,7 @@ Standard_Integer MAT2d_Tool2d::FirstPoint(const Standard_Integer anitem,
 Standard_Integer MAT2d_Tool2d::TangentBefore(const Standard_Integer anitem,
                                              const Standard_Boolean IsOpenResult)
 {
-  Standard_Integer     item;
+  Standard_Integer     item = 0;
   Handle(Geom2d_Curve) curve;
   theNumberOfVecs++;
 
@@ -216,7 +218,7 @@ Standard_Integer MAT2d_Tool2d::TangentBefore(const Standard_Integer anitem,
   else
     item = (anitem == theCircuit->NumberOfItems()) ? (anitem - 1) : (anitem + 1);
   if (theCircuit->ConnexionOn(item)){
-    Standard_Real x1,y1,x2,y2;
+    Standard_Real x1 = NAN,y1 = NAN,x2 = NAN,y2 = NAN;
     theCircuit->Connexion(item)->PointOnFirst().Coord(x1,y1);
     theCircuit->Connexion(item)->PointOnSecond().Coord(x2,y2);
     theGeomVecs.Bind(theNumberOfVecs,gp_Vec2d((x2-x1),(y2-y1)));
@@ -258,13 +260,13 @@ Standard_Integer MAT2d_Tool2d::TangentBefore(const Standard_Integer anitem,
 Standard_Integer MAT2d_Tool2d::TangentAfter(const Standard_Integer anitem,
                                             const Standard_Boolean IsOpenResult)
 {
-  Standard_Integer     item;
+  Standard_Integer     item = 0;
   Handle(Geom2d_Curve) curve;
   gp_Vec2d             thevector;
   theNumberOfVecs++;
 
   if (theCircuit->ConnexionOn(anitem)){
-    Standard_Real x1,y1,x2,y2;
+    Standard_Real x1 = NAN,y1 = NAN,x2 = NAN,y2 = NAN;
     theCircuit->Connexion(anitem)->PointOnFirst().Coord(x1,y1);
     theCircuit->Connexion(anitem)->PointOnSecond().Coord(x2,y2);
     theGeomVecs.Bind(theNumberOfVecs,gp_Vec2d((x1-x2),(y1-y2)));
@@ -466,7 +468,7 @@ void MAT2d_Tool2d::TrimBisec (      Bisector_Bisec&  B1,
 
   //gp_Vec2d             Tan1,Tan2;
   gp_Pnt2d             Ori; //PEdge;
-  Standard_Integer     INext;
+  Standard_Integer     INext = 0;
   INext = (IndexEdge == theCircuit->NumberOfItems()) ? 1  : (IndexEdge + 1);
 
   Handle(Standard_Type) EdgeType = theCircuit->Value(IndexEdge)->DynamicType();
@@ -553,7 +555,7 @@ Standard_Boolean MAT2d_Tool2d::TrimBisector
   (const Handle(MAT_Bisector)& abisector,
   const Standard_Integer      apoint)
 {
-  Standard_Real Param;
+  Standard_Real Param = NAN;
   Handle(Geom2d_TrimmedCurve) Bisector =
     ChangeGeomBis(abisector->BisectorNumber()).ChangeValue();
 
@@ -591,7 +593,7 @@ Standard_Boolean MAT2d_Tool2d::Projection (const Standard_Integer IEdge   ,
   Handle(Geom2d_Geometry)     Elt    = theCircuit->Value(IEdge);
   Handle(Standard_Type)       Type   = Elt->DynamicType();	
   Handle(Geom2d_TrimmedCurve) Curve; 
-  Standard_Integer            INext;   
+  Standard_Integer            INext = 0;   
   Standard_Real               Eps = MAT2d_TOLCONF;//*10.;
 
   if (Type == STANDARD_TYPE(Geom2d_CartesianPoint)) {	
@@ -672,7 +674,7 @@ Standard_Boolean MAT2d_Tool2d::IsSameDistance (
 {
   TColStd_Array1OfReal Dist(1,4);
   const Standard_Real eps = 1.e-7;
-  Standard_Integer     IEdge1,IEdge2,IEdge3,IEdge4;
+  Standard_Integer     IEdge1 = 0,IEdge2 = 0,IEdge3 = 0,IEdge4 = 0;
 
   IEdge1 = BisectorOne->FirstEdge() ->EdgeNumber();
   IEdge2 = BisectorOne->SecondEdge()->EdgeNumber();
@@ -782,10 +784,10 @@ Standard_Real MAT2d_Tool2d::IntersectBisector (
   Standard_Integer&           IntPnt)
 {
   Standard_Real    Tolerance     = MAT2d_TOLCONF;
-  Standard_Real    Param1,Param2;
-  Standard_Real    Parama,Paramb;
-  Standard_Real    Distance = 0.,DistanceMini;
-  Standard_Boolean SolutionValide;
+  Standard_Real    Param1 = NAN,Param2 = NAN;
+  Standard_Real    Parama = NAN,Paramb = NAN;
+  Standard_Real    Distance = 0.,DistanceMini = NAN;
+  Standard_Boolean SolutionValide = 0;
   gp_Pnt2d         PointSolution;
 
   Handle(Geom2d_TrimmedCurve) Bisector1 =
@@ -890,7 +892,7 @@ Standard_Real MAT2d_Tool2d::IntersectBisector (
       // ----------------------------------------------------------------
       if ((Segment.HasFirstPoint() && Segment.HasLastPoint())) { 
         gp_Pnt2d      P1,P2;
-        Standard_Real SegmentLength;
+        Standard_Real SegmentLength = NAN;
         P1 = Segment.FirstPoint().Value();
         P2 = Segment.LastPoint().Value();
         SegmentLength = P1.Distance(P2);
@@ -980,7 +982,7 @@ Standard_Real MAT2d_Tool2d::IntersectBisector (
   // et un cote).
   //-----------------------------------------------------------------------
 
-  Standard_Integer IndexEdge1,IndexEdge2,IndexEdge3,IndexEdge4;
+  Standard_Integer IndexEdge1 = 0,IndexEdge2 = 0,IndexEdge3 = 0,IndexEdge4 = 0;
   Standard_Boolean ExtremiteControle = Standard_True;
 
   IndexEdge1 = BisectorOne->FirstEdge() ->EdgeNumber();
@@ -1178,7 +1180,7 @@ Handle(MAT2d_Circuit) MAT2d_Tool2d::Circuit()const
 void MAT2d_Tool2d::BisecFusion(const Standard_Integer I1,
   const Standard_Integer I2) 
 {
-  Standard_Real               DU,UL1,UF1;
+  Standard_Real               DU = NAN,UL1 = NAN,UF1 = NAN;
   Handle(Geom2d_TrimmedCurve) Bisector1;
   Handle(Geom2d_TrimmedCurve) Bisector2;
 
@@ -1267,7 +1269,7 @@ Standard_Boolean AreNeighbours(const Standard_Integer IEdge1,
 static void SetTrim(Bisector_Bisec& Bis, const Handle(Geom2d_Curve)& Line1)
 {  
   Geom2dInt_GInter Intersect; 
-  Standard_Real    Distance;  
+  Standard_Real    Distance = NAN;  
   Standard_Real    Tolerance = MAT2d_TOLCONF;  
   Handle(Geom2d_TrimmedCurve) Bisector = Bis.ChangeValue();
 
@@ -1320,7 +1322,7 @@ IntRes2d_Domain  Domain(const Handle(Geom2d_TrimmedCurve)& Bisector1,
     }
     gp_Parab2d gpParabola;
     gp_Hypr2d  gpHyperbola;
-    Standard_Real Focus;
+    Standard_Real Focus = NAN;
     Standard_Real Limit = 50000.;
     if (Type1 == STANDARD_TYPE(Geom2d_Parabola)) {
       gpParabola = Handle(Geom2d_Parabola)::DownCast(BasisCurve)->Parab2d();

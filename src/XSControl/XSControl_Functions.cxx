@@ -304,7 +304,7 @@ static IFSelect_ReturnStatus XSControl_trstat(const Handle(IFSelect_SessionPilot
     if (!TR->IsRecorded(ent)) { sout<<" Entity "<<num<<" not recorded"<<std::endl; return IFSelect_RetError; }
     Handle(Transfer_ResultFromModel) RM = TR->FinalResult(ent);
     Handle(TColStd_HSequenceOfTransient) list = TR->CheckedList(ent);
-    Standard_Integer i, nb = list->Length();
+    Standard_Integer i = 0, nb = list->Length();
     if (nb > 0) sout<<" Entities implied by Check/Result :"<<nb<<" i.e.:";
     for (i = 1; i <= nb; i ++) { sout<<"  "; mdl->Print(list->Value(i), sout); }
     sout<<std::endl;
@@ -404,7 +404,7 @@ static IFSelect_ReturnStatus XSControl_twmode(const Handle(IFSelect_SessionPilot
   //        ****    twmode         ****
   Handle(XSControl_TransferWriter) TW = XSControl::Session(pilot)->TransferWriter();
   Handle(XSControl_Controller) control = XSControl::Session(pilot)->NormAdaptor();
-  Standard_Integer modemin,modemax;
+  Standard_Integer modemin = 0,modemax = 0;
   Message_Messenger::StreamBuffer sout = Message::SendInfo();
   if (control->ModeWriteBounds (modemin,modemax)) {
     sout<<"Write Mode : allowed values  "<<modemin<<" to "<<modemax<<std::endl;

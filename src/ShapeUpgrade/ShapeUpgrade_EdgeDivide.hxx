@@ -76,8 +76,8 @@ protected:
 
 
   TopoDS_Face myFace;
-  Standard_Boolean myHasCurve2d;
-  Standard_Boolean myHasCurve3d;
+  Standard_Boolean myHasCurve2d{};
+  Standard_Boolean myHasCurve3d{};
   Handle(TColStd_HSequenceOfReal) myKnots2d;
   Handle(TColStd_HSequenceOfReal) myKnots3d;
 

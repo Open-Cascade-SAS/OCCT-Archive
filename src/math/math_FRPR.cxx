@@ -19,6 +19,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_BracketMinimum.hxx>
 #include <math_BrentMinimum.hxx>
 #include <math_FRPR.hxx>
@@ -45,18 +47,18 @@ public :
 
      void Initialize(const math_Vector& p0, const math_Vector& dir);
 
-     virtual Standard_Boolean Value(const Standard_Real x, Standard_Real& fval);
+     Standard_Boolean Value(const Standard_Real x, Standard_Real& fval) override;
 };
 
      DirFunctionTer::DirFunctionTer(math_Vector& V1, 
                               math_Vector& V2,
                               math_Vector& V3,
-                              math_MultipleVarFunction& f) {
+                              math_MultipleVarFunction& f) : P0(&V1), Dir(&V2), P(&V3), F(&f) {
         
-        P0  = &V1;
-        Dir = &V2;
-        P   = &V3;
-        F   = &f;
+        
+        
+        
+        
      }
 
      void DirFunctionTer::Initialize(const math_Vector& p0, 
@@ -80,7 +82,7 @@ static Standard_Boolean MinimizeDirection(math_Vector& P,
                                  Standard_Real& Result,
                                  DirFunctionTer& F) {
 
-     Standard_Real ax, xx, bx;
+     Standard_Real ax = NAN, xx = NAN, bx = NAN;
 
      F.Initialize(P, Dir);
      math_BracketMinimum Bracket(F, 0.0, 1.0);
@@ -138,10 +140,10 @@ math_FRPR::~math_FRPR()
 void  math_FRPR::Perform(math_MultipleVarFunctionWithGradient& F,
                          const math_Vector& StartingPoint)
 {
-       Standard_Boolean Good;
+       Standard_Boolean Good = 0;
        Standard_Integer n = TheLocation.Length();
-       Standard_Integer j, its;
-       Standard_Real gg, gam, dgg;
+       Standard_Integer j = 0, its = 0;
+       Standard_Real gg = NAN, gam = NAN, dgg = NAN;
 
        math_Vector g(1, n), h(1, n);
  

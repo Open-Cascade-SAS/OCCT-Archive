@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BRepSweep_Translation.hxx>
 
 #include <GeomAdaptor_SurfaceOfLinearExtrusion.hxx>
@@ -56,7 +58,7 @@ static void SetThePCurve(const BRep_Builder& B,
 			 const Handle(Geom2d_Curve)& C)
 {
   // check if there is already a pcurve on non planar faces
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   Handle(Geom2d_Curve) OC;
   TopLoc_Location SL;
   Handle(Geom_Plane) GP = Handle(Geom_Plane)::DownCast(BRep_Tool::Surface(F,SL));
@@ -158,7 +160,7 @@ TopoDS_Shape  BRepSweep_Translation::MakeEmptyGeneratingEdge
   else
   {
     TopLoc_Location L;
-    Standard_Real First,Last;
+    Standard_Real First = NAN,Last = NAN;
     Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(aGenE),L,First,Last);
     if(!C.IsNull())
     {
@@ -244,12 +246,12 @@ TopoDS_Shape  BRepSweep_Translation::MakeEmptyFace
   (const TopoDS_Shape& aGenS, 
    const Sweep_NumShape& aDirS)
 {
-  Standard_Real toler;
+  Standard_Real toler = NAN;
   TopoDS_Face F;
   Handle(Geom_Surface) S;
   if (myDirShapeTool.Type(aDirS)==TopAbs_EDGE){
     TopLoc_Location L;
-    Standard_Real First,Last;
+    Standard_Real First = NAN,Last = NAN;
     Handle(Geom_Curve) C = BRep_Tool::Curve(TopoDS::Edge(aGenS),L,First,Last);
     toler = BRep_Tool::Tolerance(TopoDS::Edge(aGenS));
     gp_Trsf Tr = L.Transformation();
@@ -311,7 +313,7 @@ void  BRepSweep_Translation::SetPCurve
   Standard_Boolean isclosed = BRep_Tool::IsClosed(TopoDS::Edge(aGenE), TopoDS::Face(aGenF));
   if(isclosed)
   {
-    Standard_Real First, Last;
+    Standard_Real First = NAN, Last = NAN;
     TopoDS_Edge anE = TopoDS::Edge(aGenE.Oriented(TopAbs_FORWARD));
     Handle(Geom2d_Curve) aC1 = BRep_Tool::CurveOnSurface(anE, TopoDS::Face(aGenF), First, Last);
     anE.Reverse();
@@ -320,7 +322,7 @@ void  BRepSweep_Translation::SetPCurve
   }
   else
   {
-    Standard_Real First,Last;
+    Standard_Real First = NAN,Last = NAN;
     myBuilder.Builder().UpdateEdge(TopoDS::Edge(aNewEdge),
       BRep_Tool::CurveOnSurface(TopoDS::Edge(aGenE),TopoDS::Face(aGenF),First,Last),
          TopoDS::Face(aNewFace),Precision::PConfusion());

@@ -16,11 +16,11 @@
 
 Vrml_Cone::Vrml_Cone(const Vrml_ConeParts aParts,
 		     const Standard_Real aBottomRadius,
-		     const Standard_Real aHeight)
+		     const Standard_Real aHeight) : myParts(aParts), myBottomRadius(aBottomRadius), myHeight(aHeight)
 {
-    myParts = aParts;
-    myBottomRadius = aBottomRadius;
-    myHeight = aHeight;
+    
+    
+    
 }
 
  void Vrml_Cone::SetParts(const Vrml_ConeParts aParts) 

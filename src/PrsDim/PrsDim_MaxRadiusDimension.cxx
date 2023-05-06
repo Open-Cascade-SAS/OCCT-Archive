@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim.hxx>
 #include <PrsDim_MaxRadiusDimension.hxx>
 #include <BRepAdaptor_Curve.hxx>
@@ -116,7 +118,7 @@ void PrsDim_MaxRadiusDimension::ComputeEllipse(const Handle(Prs3d_Presentation)&
   }
   arr->SetLength(myArrowSize);
 
-  Standard_Real U;//,V;
+  Standard_Real U = NAN;//,V;
   gp_Pnt curPos, Center;
   Center = myEllipse.Location();
   if( myAutomaticPosition )
@@ -165,7 +167,7 @@ void PrsDim_MaxRadiusDimension::ComputeArcOfEllipse(const Handle(Prs3d_Presentat
   }
   arr->SetLength(myArrowSize);
   
-  Standard_Real par;
+  Standard_Real par = NAN;
   gp_Pnt curPos, Center;
   Center = myEllipse.Location();
   Standard_Boolean IsInDomain = Standard_True;
@@ -258,7 +260,7 @@ void PrsDim_MaxRadiusDimension::ComputeSelection(const Handle(SelectMgr_Selectio
 	Standard_Real parEnd = ElCLib::Parameter ( myEllipse, myEndOfArrow );
 	if(!PrsDim::InDomain(myFirstPar, myLastPar, parEnd))
 	  {
-	    Standard_Real parStart, par;
+	    Standard_Real parStart = NAN, par = NAN;
 	    if(PrsDim::DistanceFromApex (myEllipse, myEndOfArrow, myFirstPar) <
 	       PrsDim::DistanceFromApex (myEllipse, myEndOfArrow, myLastPar))
 	      par = myFirstPar;

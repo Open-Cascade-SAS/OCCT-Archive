@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <Bisector.hxx>
 #include <Bisector_BisecCC.hxx>
 #include <Bisector_BisecPC.hxx>
@@ -118,7 +120,7 @@ void  Bisector_BisecCC::Perform(const Handle(Geom2d_Curve)& Cu1,
   isConvex1 = Bisector::IsConvex(curve1,sign1);
   isConvex2 = Bisector::IsConvex(curve2,sign2);
 
-  Standard_Real    U,UC1,UC2,Dist,dU,USol;  
+  Standard_Real    U = NAN,UC1 = NAN,UC2 = NAN,Dist = NAN,dU = NAN,USol = NAN;  
   gp_Pnt2d         P;
   Standard_Integer NbPnts    = 21;
   Standard_Real    EpsMin    = 10*Precision::Confusion();
@@ -277,7 +279,7 @@ void  Bisector_BisecCC::Perform(const Handle(Geom2d_Curve)& Cu1,
       }
       if (extensionEnd) {
         gp_Pnt2d       P1;
-        Standard_Real  UFirst,ULast;
+        Standard_Real  UFirst = NAN,ULast = NAN;
         P1     = myPolygon.Last().Point();
         UFirst = endIntervals.Last();      
         ULast  = UFirst + pointEnd.Distance(P1);
@@ -553,7 +555,7 @@ static Standard_Real Curvature (const Handle(Geom2d_Curve)& C,
   Standard_Real         U,
   Standard_Real         Tol)
 {
-  Standard_Real K1; 
+  Standard_Real K1 = NAN; 
   gp_Vec2d      D1,D2;
   gp_Pnt2d      P;
   C->D2(U,P,D1,D2);
@@ -619,7 +621,7 @@ gp_Pnt2d Bisector_BisecCC::ValueAndDist (const Standard_Real  U,
   Standard_Real    UMax = myPolygon.Value(IntervalIndex + 1).ParamOnBis();
   Standard_Real    VMin = myPolygon.Value(IntervalIndex    ).ParamOnC2();
   Standard_Real    VMax = myPolygon.Value(IntervalIndex + 1).ParamOnC2(); 
-  Standard_Real    Alpha,VInit;
+  Standard_Real    Alpha = NAN,VInit = NAN;
 
   if (Abs(UMax - UMin) < gp::Resolution()) {
     VInit = VMin;
@@ -648,7 +650,7 @@ gp_Pnt2d Bisector_BisecCC::ValueAndDist (const Standard_Real  U,
   }
   else {
     Bisector_FunctionH H  (curve2,P1,sign1*sign2*T1);
-    Standard_Real FInit;
+    Standard_Real FInit = NAN;
     H.Value(VInit,FInit);
     if (Abs(FInit) < EpsH) {
       U2 = VInit;
@@ -795,11 +797,11 @@ gp_Pnt2d Bisector_BisecCC::ValueByInt (const Standard_Real  U,
 
   Standard_Boolean YaSol = Standard_False;
   Standard_Real    DMin  = Precision::Infinite();
-  Standard_Real    USol;
+  Standard_Real    USol = NAN;
   Standard_Real    EpsMax = 1.E-6;
-  Standard_Real    EpsX;
+  Standard_Real    EpsX = NAN;
   Standard_Real    EpsH   = 1.E-8;
-  Standard_Real    DistPP1;
+  Standard_Real    DistPP1 = NAN;
   Standard_Integer NbSamples =20;
   Standard_Real    UFirstOnC2 = curve2->FirstParameter();
   Standard_Real    ULastOnC2  = curve2->LastParameter();
@@ -933,7 +935,7 @@ gp_Pnt2d Bisector_BisecCC::ValueByInt (const Standard_Real  U,
 void Bisector_BisecCC::D0(const Standard_Real     U,
   gp_Pnt2d&         P) const
 {
-  Standard_Real U1,U2,Dist;
+  Standard_Real U1 = NAN,U2 = NAN,Dist = NAN;
 
   P = ValueAndDist(U,U1,U2,Dist);
 }
@@ -1038,7 +1040,7 @@ void  Bisector_BisecCC::Values (const Standard_Real     U,
   // Calculate the current point on the bisectrice and the parameters on each  
   // curve.
   //-------------------------------------------------------------------------
-  Standard_Real U0,V0,Dist;  
+  Standard_Real U0 = NAN,V0 = NAN,Dist = NAN;  
 
   //-----------------------------------------------
   // is the polygon reduced to a point or empty?
@@ -1080,10 +1082,10 @@ void  Bisector_BisecCC::Values (const Standard_Real     U,
   //-----------------------------
   // Calculate dH/du and dH/dv.
   //-----------------------------
-  Standard_Real TuTu,TvTv,TuTv;
-  Standard_Real TuPuPv,TvPuPv  ;
-  Standard_Real TuuPuPv,TuTuu  ;
-  Standard_Real TvvPuPv,TvTvv  ;
+  Standard_Real TuTu = NAN,TvTv = NAN,TuTv = NAN;
+  Standard_Real TuPuPv = NAN,TvPuPv = NAN  ;
+  Standard_Real TuuPuPv = NAN,TuTuu = NAN  ;
+  Standard_Real TvvPuPv = NAN,TvTvv = NAN  ;
 
   TuTu    = Tu.Dot(Tu)    ; TvTv   = Tv.Dot(Tv)  ; TuTv = Tu.Dot(Tv);
   TuPuPv  = Tu.Dot(PuPv)  ; TvPuPv = Tv.Dot(PuPv);
@@ -1098,8 +1100,8 @@ void  Bisector_BisecCC::Values (const Standard_Real     U,
   //-----------------------------
   // Calculate dF/du and dF/dv.
   //-----------------------------
-  Standard_Real NorPuPv,NuPuPv,NorTv;
-  Standard_Real A,B,dAdu,dAdv,dBdu,dBdv,BB;
+  Standard_Real NorPuPv = NAN,NuPuPv = NAN,NorTv = NAN;
+  Standard_Real A = NAN,B = NAN,dAdu = NAN,dAdv = NAN,dBdu = NAN,dBdv = NAN,BB = NAN;
 
   NorPuPv = Nor.Dot(PuPv); 
   NuPuPv  = Nu .Dot(PuPv);  
@@ -1273,7 +1275,7 @@ static Standard_Boolean PointByInt(const Handle(Geom2d_Curve)& CA,
   }
 
   Standard_Real    DMin = Precision::Infinite();
-  Standard_Real    UPC;
+  Standard_Real    UPC = NAN;
   Standard_Boolean YaSol = Standard_False; 
   //--------------------------------------------------------------------
   // Construction of the bisectrice point curve and of the straight line passing
@@ -1369,7 +1371,7 @@ void Bisector_BisecCC::SupLastParameter()
   // of curve2 following the values of sign1 and sign2.
   // the bissectrice is limited by the obtained parameters.
   //------------------------------------------------------------------------
-  Standard_Real    UOnC1,UOnC2,Dist;
+  Standard_Real    UOnC1 = NAN,UOnC2 = NAN,Dist = NAN;
   if (sign1 == sign2) {
     UOnC2 =  curve2->FirstParameter();
   }
@@ -1438,7 +1440,7 @@ const Bisector_PolyBis&  Bisector_BisecCC::Polygon() const
 //==========================================================================
 Standard_Real Bisector_BisecCC::Parameter(const gp_Pnt2d& P) const
 {
-  Standard_Real UOnCurve;
+  Standard_Real UOnCurve = NAN;
 
   if (P.IsEqual(Value(FirstParameter()),Precision::Confusion())) {
     UOnCurve = FirstParameter();
@@ -1623,8 +1625,8 @@ void Bisector_BisecCC::LastParameter (const Standard_Real U)
 Standard_Real Bisector_BisecCC::SearchBound (const Standard_Real U1,
   const Standard_Real U2) const
 {
-  Standard_Real UMid,Dist1,Dist2,DistMid,U11,U22;
-  Standard_Real UC1,UC2;
+  Standard_Real UMid = NAN,Dist1 = NAN,Dist2 = NAN,DistMid = NAN,U11 = NAN,U22 = NAN;
+  Standard_Real UC1 = NAN,UC2 = NAN;
   gp_Pnt2d PBis,PBisPrec;
   Standard_Real TolPnt   = Precision::Confusion();
   Standard_Real TolPar   = Precision::PConfusion();
@@ -1756,8 +1758,8 @@ static Standard_Boolean TestExtension (const Handle(Geom2d_Curve)& C1,
 //=============================================================================
 void  Bisector_BisecCC::ComputePointEnd  ()
 {  
-  Standard_Real U1,U2;  
-  Standard_Real KC,RC;
+  Standard_Real U1 = NAN,U2 = NAN;  
+  Standard_Real KC = NAN,RC = NAN;
   U1 = curve1->FirstParameter();
   if (sign1 == sign2) {
     U2 = curve2->LastParameter();

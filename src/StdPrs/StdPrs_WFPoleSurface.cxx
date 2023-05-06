@@ -28,7 +28,7 @@ static void AddPoles(const Handle (Prs3d_Presentation)& aPresentation,
                      const TColgp_Array2OfPnt&          A,
                      const Handle (Prs3d_Drawer)&       aDrawer)
 {
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   const Standard_Integer n = A.ColLength();
   const Standard_Integer m = A.RowLength();
 
@@ -64,7 +64,7 @@ void StdPrs_WFPoleSurface::Add (const Handle (Prs3d_Presentation)& aPresentation
 
   GeomAbs_SurfaceType SType = aSurface.GetType();
   if (SType == GeomAbs_BezierSurface || SType == GeomAbs_BSplineSurface) {
-    Standard_Integer n , m;
+    Standard_Integer n = 0 , m = 0;
     if (SType == GeomAbs_BezierSurface) {
       Handle(Geom_BezierSurface) B = aSurface.Bezier();
       n = aSurface.NbUPoles();

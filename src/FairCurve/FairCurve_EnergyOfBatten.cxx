@@ -52,7 +52,7 @@ FairCurve_EnergyOfBatten::FairCurve_EnergyOfBatten(const Standard_Integer BSplOr
 Standard_Boolean FairCurve_EnergyOfBatten::Variable(math_Vector& X) const
 //======================================================================= 
 {
- Standard_Boolean Ok;
+ Standard_Boolean Ok = 0;
  Ok = FairCurve_Energy::Variable(X);
  if (MyWithAuxValue) { X(X.Upper()) = MyLengthSliding; }
  return Ok;
@@ -97,7 +97,7 @@ Standard_Boolean FairCurve_EnergyOfBatten::Compute(const Standard_Integer Deriva
   // on decoupe afin d'avoir au moins 2 points d'integration par poles
   // 24 points de Gauss => 12 poles maximum.
 
-  Standard_Integer NbInterv = (MyPoles->Length()-1) / 12 + 1, ii;
+  Standard_Integer NbInterv = (MyPoles->Length()-1) / 12 + 1, ii = 0;
   Standard_Real Delta = 1./ NbInterv;
   Result.Init(0);
 

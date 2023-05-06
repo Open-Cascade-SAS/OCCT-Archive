@@ -14,6 +14,7 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
 #include <stdio.h>
 
 #include <Standard_Stream.hxx>
@@ -117,7 +118,7 @@ static void AddSpecialPoints(const IntAna_Quadric& theQuad,
 class TrigonometricRoots {
 
  private:
-  Standard_Real Roots[4];
+  Standard_Real Roots[4]{};
   Standard_Boolean done;
   Standard_Integer NbRoots;
   Standard_Boolean infinite_roots;
@@ -136,7 +137,7 @@ class TrigonometricRoots {
   }
   //IsARoot
   Standard_Boolean IsARoot(Standard_Real u) {
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real aEps=RealEpsilon();
     Standard_Real PIpPI = M_PI + M_PI;
     //
@@ -183,13 +184,13 @@ TrigonometricRoots::TrigonometricRoots(const Standard_Real CC,
 				       const Standard_Real Cte,
 				       const Standard_Real Binf,
 				       const Standard_Real Bsup)
-: infinite_roots(Standard_False)
+: done(Standard_False), infinite_roots(Standard_False)
 {
-  Standard_Integer i, j, SvNbRoots;
-  Standard_Boolean Triee;
+  Standard_Integer i = 0, j = 0, SvNbRoots = 0;
+  Standard_Boolean Triee = 0;
   Standard_Real PIpPI = M_PI + M_PI;
   //
-  done=Standard_False;
+  
   //
   //-- F= AA*CN*CN+2*BB*CN*SN+CC*CN+DD*SN+EE;
   math_TrigonometricFunctionRoots MTFR(CC, SC, C, S, Cte, Binf, Bsup); 
@@ -218,7 +219,7 @@ TrigonometricRoots::TrigonometricRoots(const Standard_Real CC,
   //-- La recherche directe donne n importe quoi. 
   SvNbRoots=NbRoots;
   for(i=0; i<SvNbRoots; ++i) {
-    Standard_Real y;
+    Standard_Real y = NAN;
     Standard_Real co=cos(Roots[i]);
     Standard_Real si=sin(Roots[i]);
     y=co*(CC*co + (SC+SC)*si + C) + S*si + Cte;
@@ -269,17 +270,17 @@ class MyTrigonometricFunction {
 			  const Standard_Real xSC,
 			  const Standard_Real xC,
 			  const Standard_Real xS,
-			  const Standard_Real xCte) {
-    CC=xCC; 
-    SS=xSS; 
-    SC=xSC; 
-    S=xS; 
-    C=xC; 
-    Cte=xCte;
+			  const Standard_Real xCte) : CC(xCC), SS(xSS), SC(xSC), S(xS), C(xC), Cte(xCte) {
+    
+    
+    
+    
+    
+    
   }
  
   Standard_Real Value(const Standard_Real& U) {
-    Standard_Real sinus, cosinus, aRet;
+    Standard_Real sinus = NAN, cosinus = NAN, aRet = NAN;
     //
     sinus=sin(U);
     cosinus=cos(U);
@@ -292,7 +293,7 @@ class MyTrigonometricFunction {
   }  
   //
   Standard_Real Derivative(const Standard_Real& U) {
-    Standard_Real sinus, cosinus;
+    Standard_Real sinus = NAN, cosinus = NAN;
     //
     sinus=sin(U);
     cosinus=cos(U);
@@ -309,14 +310,14 @@ class MyTrigonometricFunction {
 //function : IntAna_IntQuadQuad::IntAna_IntQuadQuad
 //purpose  : C o n s t r u c t e u r    v i d e   
 //=======================================================================
-IntAna_IntQuadQuad::IntAna_IntQuadQuad(void) {
-  done=Standard_False;
-  identical = Standard_False;
-  NbCurves=0;
-  Nbpoints=0;
-  myNbMaxCurves=12;
-  myEpsilon=0.00000001;
-  myEpsilonCoeffPolyNull=0.00000001;
+IntAna_IntQuadQuad::IntAna_IntQuadQuad(void) : done(Standard_False), identical(Standard_False), NbCurves(0), Nbpoints(0), myNbMaxCurves(12), myEpsilon(0.00000001), myEpsilonCoeffPolyNull(0.00000001) {
+  
+  
+  
+  
+  
+  
+  
   memset (nextcurve, 0, sizeof (nextcurve));
   memset (previouscurve, 0, sizeof (previouscurve));
 }
@@ -326,10 +327,10 @@ IntAna_IntQuadQuad::IntAna_IntQuadQuad(void) {
 //=======================================================================
 IntAna_IntQuadQuad::IntAna_IntQuadQuad(const gp_Cylinder& Cyl,
 				       const IntAna_Quadric& Quad,
-				       const Standard_Real Tol) {
-  myNbMaxCurves=12;
-  myEpsilon=0.00000001;
-  myEpsilonCoeffPolyNull=0.00000001;
+				       const Standard_Real Tol) : myNbMaxCurves(12), myEpsilon(0.00000001), myEpsilonCoeffPolyNull(0.00000001) {
+  
+  
+  
   Perform(Cyl,Quad,Tol);
 }
 //=======================================================================
@@ -345,8 +346,8 @@ void IntAna_IntQuadQuad::Perform(const gp_Cylinder& Cyl,
   NbCurves=0;
   Nbpoints=0;
   //
-  Standard_Boolean UN_SEUL_Z_PAR_THETA, DEUX_Z_PAR_THETA, 
-                   Z_POSITIF, Z_INDIFFERENT, Z_NEGATIF;
+  Standard_Boolean UN_SEUL_Z_PAR_THETA = 0, DEUX_Z_PAR_THETA = 0, 
+                   Z_POSITIF = 0, Z_INDIFFERENT = 0, Z_NEGATIF = 0;
   //
   UN_SEUL_Z_PAR_THETA=Standard_False;
   DEUX_Z_PAR_THETA=Standard_True;
@@ -354,7 +355,7 @@ void IntAna_IntQuadQuad::Perform(const gp_Cylinder& Cyl,
   Z_INDIFFERENT=Standard_True;
   Z_NEGATIF=Standard_False;
   //
-  Standard_Real Qxx,Qyy,Qzz,Qxy,Qxz,Qyz,Qx,Qy,Qz,Q1, aRealEpsilon, RCyl, R2;
+  Standard_Real Qxx = NAN,Qyy = NAN,Qzz = NAN,Qxy = NAN,Qxz = NAN,Qyz = NAN,Qx = NAN,Qy = NAN,Qz = NAN,Q1 = NAN, aRealEpsilon = NAN, RCyl = NAN, R2 = NAN;
   Standard_Real PIpPI = M_PI + M_PI;
   //
   for(Standard_Integer raz = 0 ; raz < myNbMaxCurves ; raz++) {
@@ -536,8 +537,8 @@ void IntAna_IntQuadQuad::Perform(const gp_Cylinder& Cyl,
 	  //-- On a au plus nbsol intervalles ( en fait 2 )
 	  //--  (1,2) (2,3) .. (nbsol,1+2PI)
 	  //-------------------------------------------------------------
-	  Standard_Integer i;
-	  Standard_Real Theta1, Theta2, Theta3, autrepar, qwet;
+	  Standard_Integer i = 0;
+	  Standard_Real Theta1 = NAN, Theta2 = NAN, Theta3 = NAN, autrepar = NAN, qwet = NAN;
 	  Standard_Boolean UnPtTg = Standard_False;
 	  //
 	  NbCurves=0;
@@ -644,11 +645,11 @@ void IntAna_IntQuadQuad::Perform(const gp_Cylinder& Cyl,
 //=======================================================================
 IntAna_IntQuadQuad::IntAna_IntQuadQuad(const gp_Cone& Cone,
 				       const IntAna_Quadric& Quad,
-				       const Standard_Real Tol) 
+				       const Standard_Real Tol) : myNbMaxCurves(12), myEpsilon(0.00000001), myEpsilonCoeffPolyNull(0.00000001) 
 { 
-  myNbMaxCurves=12;
-  myEpsilon=0.00000001;
-  myEpsilonCoeffPolyNull=0.00000001;
+  
+  
+  
   Perform(Cone,Quad,Tol);
 }
 //=======================================================================
@@ -660,16 +661,16 @@ void IntAna_IntQuadQuad::Perform(const gp_Cone& Cone,
 				 const Standard_Real)  
 { 
   //
-  Standard_Boolean UN_SEUL_Z_PAR_THETA,
-                   Z_POSITIF, Z_NEGATIF;
+  Standard_Boolean UN_SEUL_Z_PAR_THETA = 0,
+                   Z_POSITIF = 0, Z_NEGATIF = 0;
   //
   UN_SEUL_Z_PAR_THETA=Standard_False;
   Z_POSITIF=Standard_True;
   Z_NEGATIF=Standard_False;
   //
-  Standard_Integer i;
-  Standard_Real Qxx,Qyy,Qzz,Qxy,Qxz,Qyz,Qx,Qy,Qz,Q1;
-  Standard_Real Theta1, Theta2, TgAngle;
+  Standard_Integer i = 0;
+  Standard_Real Qxx = NAN,Qyy = NAN,Qzz = NAN,Qxy = NAN,Qxz = NAN,Qyz = NAN,Qx = NAN,Qy = NAN,Qz = NAN,Q1 = NAN;
+  Standard_Real Theta1 = NAN, Theta2 = NAN, TgAngle = NAN;
   Standard_Real PIpPI = M_PI + M_PI;
   //
   done=Standard_True;
@@ -707,10 +708,10 @@ void IntAna_IntQuadQuad::Perform(const gp_Cone& Cone,
   //   
   // 1. Try to solve A(t)=0 -> PolZ2
   //
-  Standard_Integer nbsol, nbsol1, nbsolZ2;
-  Standard_Real Z2CC, Z2SS, Z2Cte, Z2SC, Z2C, Z2S;
-  Standard_Real Z1CC, Z1SS, Z1Cte, Z1SC, Z1C, Z1S; 
-  Standard_Real C_1,C_SS, C_CC, C_S, C_C, C_SC;
+  Standard_Integer nbsol = 0, nbsol1 = 0, nbsolZ2 = 0;
+  Standard_Real Z2CC = NAN, Z2SS = NAN, Z2Cte = NAN, Z2SC = NAN, Z2C = NAN, Z2S = NAN;
+  Standard_Real Z1CC = NAN, Z1SS = NAN, Z1Cte = NAN, Z1SC = NAN, Z1C = NAN, Z1S = NAN; 
+  Standard_Real C_1 = NAN,C_SS = NAN, C_CC = NAN, C_S = NAN, C_C = NAN, C_SC = NAN;
   //
   Z2CC = Qxx;
   Z2SS = Qyy;
@@ -882,9 +883,9 @@ void IntAna_IntQuadQuad::Perform(const gp_Cone& Cone,
     //--
     //-- Seule la courbe Z_NEGATIF est affectee
     //----------------------------------------------------------------------
-    Standard_Boolean RacinesdePolZ2DansTheta1Theta2;
-    Standard_Integer i2;
-    Standard_Real r;
+    Standard_Boolean RacinesdePolZ2DansTheta1Theta2 = 0;
+    Standard_Integer i2 = 0;
+    Standard_Real r = NAN;
     //
     //nbsolZ2=PolZ2.NbSolutions();
     RacinesdePolZ2DansTheta1Theta2=Standard_False;
@@ -916,8 +917,8 @@ void IntAna_IntQuadQuad::Perform(const gp_Cone& Cone,
     }
     
     else { //#1
-      Standard_Boolean NoChanges;
-      Standard_Real NewMin, NewMax, to;
+      Standard_Boolean NoChanges = 0;
+      Standard_Real NewMin = NAN, NewMax = NAN, to = NAN;
       //
       NewMin=Theta1;
       NewMax=Theta2;
@@ -1059,10 +1060,10 @@ void IntAna_IntQuadQuad::Perform(const gp_Cone& Cone,
 //=======================================================================
 void IntAna_IntQuadQuad::InternalSetNextAndPrevious() 
 {
-  Standard_Boolean NotLastOpenC2, NotFirstOpenC2;
-  Standard_Integer c1,c2;
-  Standard_Real aEps, aEPSILON_DISTANCE;
-  Standard_Real DInfC1,DSupC1, DInfC2,DSupC2;
+  Standard_Boolean NotLastOpenC2 = 0, NotFirstOpenC2 = 0;
+  Standard_Integer c1 = 0,c2 = 0;
+  Standard_Real aEps = NAN, aEPSILON_DISTANCE = NAN;
+  Standard_Real DInfC1 = NAN,DSupC1 = NAN, DInfC2 = NAN,DSupC2 = NAN;
   //
   aEps=0.0000001;
   aEPSILON_DISTANCE=0.0000000001;

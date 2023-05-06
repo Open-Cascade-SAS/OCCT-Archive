@@ -15,6 +15,8 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
+#include <math.h>
+
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <RWStepFEA_RWCurveElementEndOffset.hxx>
@@ -57,7 +59,7 @@ void RWStepFEA_RWCurveElementEndOffset::ReadStep (const Handle(StepData_StepRead
     aOffsetVector = new TColStd_HArray1OfReal (1, nb0);
     Standard_Integer num2 = sub2;
     for ( Standard_Integer i0=1; i0 <= nb0; i0++ ) {
-      Standard_Real anIt0;
+      Standard_Real anIt0 = NAN;
       data->ReadReal (num2, i0, "real", ach, anIt0);
       aOffsetVector->SetValue(i0, anIt0);
     }

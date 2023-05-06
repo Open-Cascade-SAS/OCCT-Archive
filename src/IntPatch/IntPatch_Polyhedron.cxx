@@ -23,6 +23,7 @@
 #include <IntPatch_Polyhedron.hxx>
 #include <TColStd_Array2OfReal.hxx>
 
+#include <math.h>
 #include <stdio.h>
 #define MSG_DEBUG                   0
 
@@ -90,8 +91,8 @@ IntPatch_Polyhedron::IntPatch_Polyhedron (const Handle(Adaptor3d_Surface)& Surfa
   const Standard_Real V1mV0sNbdeltaV = (v1-v0)/(Standard_Real)nbdeltaV;
 
   gp_Pnt TP;
-  Standard_Real    U,V;
-  Standard_Integer i1, i2, Index=1;
+  Standard_Real    U = NAN,V = NAN;
+  Standard_Integer i1 = 0, i2 = 0, Index=1;
   for (i1 = 0, U = u0; i1 <= nbdeltaU; i1++, U+= U1mU0sNbdeltaU) {
     for (i2 = 0, V = v0; i2 <= nbdeltaV; i2++, V+= V1mV0sNbdeltaV ) {
       Surface->D0(U,V,TP);
@@ -149,8 +150,8 @@ IntPatch_Polyhedron::IntPatch_Polyhedron (const Handle(Adaptor3d_Surface)& Surfa
   const Standard_Real V1mV0sNbdeltaV = (v1-v0)/(Standard_Real)nbdeltaV;
 
   gp_Pnt TP;
-  Standard_Real U,V;
-  Standard_Integer i1, i2, Index=1;
+  Standard_Real U = NAN,V = NAN;
+  Standard_Integer i1 = 0, i2 = 0, Index=1;
   for (i1 = 0, U = u0; i1 <= nbdeltaU; i1++, U+= U1mU0sNbdeltaU) {
     for (i2 = 0, V = v0; i2 <= nbdeltaV; i2++, V+= V1mV0sNbdeltaV ) {
       Surface->D0(U,V,TP);
@@ -185,11 +186,11 @@ Standard_Real IntPatch_Polyhedron::DeflectionOnTriangle
   (const Handle(Adaptor3d_Surface)& Surface,
    const Standard_Integer Triang) const 
 {
-  Standard_Integer i1,i2,i3;    
+  Standard_Integer i1 = 0,i2 = 0,i3 = 0;    
 
   Triangle(Triang,i1,i2,i3);
   //-- Calcul de l eqution du plan
-  Standard_Real u1,v1,u2,v2,u3,v3;
+  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN,u3 = NAN,v3 = NAN;
   gp_Pnt P1,P2,P3;
   P1 = Point(i1,u1,v1);
   P2 = Point(i2,u2,v2);
@@ -268,7 +269,7 @@ void IntPatch_Polyhedron::FillBounding()
 {
   TheComponentsBnd=new Bnd_HArray1OfBox(1, NbTriangles());
   Bnd_Box Boite;
-  Standard_Integer p1, p2, p3;
+  Standard_Integer p1 = 0, p2 = 0, p3 = 0;
   Standard_Integer nbtriangles = NbTriangles();
   for (Standard_Integer iTri=1; iTri<=nbtriangles; iTri++) {
     Triangle(iTri, p1, p2, p3);
@@ -354,7 +355,7 @@ Standard_Integer IntPatch_Polyhedron::TriConnex (const Standard_Integer Triang,
 // Triangle position General case :
   Standard_Integer linT = 0, colT = 0;
   Standard_Integer linO = 0, colO = 0;
-  Standard_Integer t,tt;
+  Standard_Integer t = 0,tt = 0;
   if (Triang!=0) {
     t = (Triang-1)/(nbdeltaVm2);
     tt= (Triang-1)-t*nbdeltaVm2;
@@ -530,7 +531,7 @@ void IntPatch_Polyhedron::PlaneEquation (const Standard_Integer Triang,
 					 gp_XYZ&        NormalVector,
 					 Standard_Real& PolarDistance)  const
 {
-  Standard_Integer i1,i2,i3;
+  Standard_Integer i1 = 0,i2 = 0,i3 = 0;
   Triangle(Triang,i1,i2,i3);
 
   gp_XYZ Pointi1(Point(i1).XYZ());
@@ -563,7 +564,7 @@ void IntPatch_Polyhedron::PlaneEquation (const Standard_Integer Triang,
 Standard_Boolean IntPatch_Polyhedron::Contain (const Standard_Integer Triang,
 					       const gp_Pnt& ThePnt) const
 {  
-  Standard_Integer i1,i2,i3;
+  Standard_Integer i1 = 0,i2 = 0,i3 = 0;
   Triangle(Triang,i1,i2,i3);
   gp_XYZ Pointi1(Point(i1).XYZ());
   gp_XYZ Pointi2(Point(i2).XYZ());

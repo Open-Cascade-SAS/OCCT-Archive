@@ -190,10 +190,10 @@ private:
 private:
 
   Quantity_ColorRGBA myColor;     //!< albedo color with alpha component [0, 1]
-  Standard_ShortReal myMetallic;  //!< metallic coefficient of material [0, 1]
-  Standard_ShortReal myRoughness; //!< roughness coefficient of material [0, 1]
+  Standard_ShortReal myMetallic{};  //!< metallic coefficient of material [0, 1]
+  Standard_ShortReal myRoughness{}; //!< roughness coefficient of material [0, 1]
   Graphic3d_Vec3     myEmission;  //!< light intensity emitted by material [>= 0]
-  Standard_ShortReal myIOR;       //!< index of refraction [1, 3]
+  Standard_ShortReal myIOR{};       //!< index of refraction [1, 3]
 
 };
 

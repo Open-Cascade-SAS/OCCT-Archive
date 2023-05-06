@@ -46,7 +46,7 @@ public :
 DEFINE_STANDARD_RTTIEXT(StepKinematics_PrismaticPairValue, StepKinematics_PairValue)
 
 private:
-  Standard_Real myActualTranslation;
+  Standard_Real myActualTranslation{};
 
 };
 #endif // _StepKinematics_PrismaticPairValue_HeaderFile_

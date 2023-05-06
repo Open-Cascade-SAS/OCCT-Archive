@@ -127,7 +127,7 @@ protected:
   Handle(Prs3d_TextAspect)    myTextAspects[Prs3d_DatumParts_NB];
   Handle(Prs3d_PointAspect)   myPointAspect;
   Handle(Prs3d_ArrowAspect)   myArrowAspect;
-  Standard_Real               myAttributes[Prs3d_DatumAttribute_NB];
+  Standard_Real               myAttributes[Prs3d_DatumAttribute_NB]{};
   Prs3d_DatumAxes             myAxes;
   Standard_Boolean            myToDrawLabels;
   Standard_Boolean            myToDrawArrows;

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <LProp_AnalyticCurInf.hxx>
 #include <LProp_CurAndInf.hxx>
@@ -45,7 +47,7 @@ void LProp_AnalyticCurInf::Perform (const GeomAbs_CurveType  CType,
   
   case GeomAbs_Ellipse: 
     {
-      Standard_Real U1,U2,U3,U4;
+      Standard_Real U1 = NAN,U2 = NAN,U3 = NAN,U4 = NAN;
       Standard_Real UFPlus2PI = UFirst + 2*M_PI;
       
       U1 = ElCLib::InPeriod(0.0     ,UFirst,UFPlus2PI);

@@ -16,11 +16,11 @@
 
 Vrml_WWWAnchor::Vrml_WWWAnchor(const TCollection_AsciiString& aName,
 			       const TCollection_AsciiString& aDescription,
-			       const Vrml_WWWAnchorMap aMap)
+			       const Vrml_WWWAnchorMap aMap) : myName(aName), myDescription(aDescription), myMap(aMap)
 {
- myName = aName;
- myDescription = aDescription;
- myMap = aMap;
+ 
+ 
+ 
 }
 
  void Vrml_WWWAnchor::SetName(const TCollection_AsciiString& aName) 

@@ -20,12 +20,12 @@ IMPLEMENT_STANDARD_RTTIEXT(Vrml_IndexedLineSet,Standard_Transient)
 Vrml_IndexedLineSet::Vrml_IndexedLineSet(const Handle(TColStd_HArray1OfInteger)& aCoordIndex, 
 					  const Handle(TColStd_HArray1OfInteger)& aMaterialIndex, 
 					  const Handle(TColStd_HArray1OfInteger)& aNormalIndex, 
-					  const Handle(TColStd_HArray1OfInteger)& aTextureCoordIndex)
+					  const Handle(TColStd_HArray1OfInteger)& aTextureCoordIndex) : myCoordIndex(aCoordIndex), myMaterialIndex(aMaterialIndex), myNormalIndex(aNormalIndex), myTextureCoordIndex(aTextureCoordIndex)
 {
- myCoordIndex = aCoordIndex;
- myMaterialIndex = aMaterialIndex;
- myNormalIndex = aNormalIndex;
- myTextureCoordIndex = aTextureCoordIndex;
+ 
+ 
+ 
+ 
 }
 
  Vrml_IndexedLineSet::Vrml_IndexedLineSet()
@@ -78,7 +78,7 @@ Handle(TColStd_HArray1OfInteger) Vrml_IndexedLineSet::TextureCoordIndex() const
 
 Standard_OStream& Vrml_IndexedLineSet::Print(Standard_OStream& anOStream) const 
 {
- Standard_Integer i;
+ Standard_Integer i = 0;
 
  anOStream  << "IndexedLineSet {" << '\n';
  

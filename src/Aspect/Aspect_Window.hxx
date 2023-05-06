@@ -170,7 +170,7 @@ protected:
   Aspect_Background MyBackground;
   Aspect_GradientBackground MyGradientBackground;
   Aspect_FillMethod MyBackgroundFillMethod;
-  Standard_Boolean MyIsVirtual;
+  Standard_Boolean MyIsVirtual{};
 
 };
 

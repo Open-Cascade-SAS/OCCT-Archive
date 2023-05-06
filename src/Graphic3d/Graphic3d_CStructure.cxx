@@ -26,7 +26,7 @@ IMPLEMENT_STANDARD_RTTIEXT(Graphic3d_CStructure,Standard_Transient)
 //=============================================================================
 Graphic3d_CStructure::Graphic3d_CStructure (const Handle(Graphic3d_StructureManager)& theManager)
 : myGraphicDriver  (theManager->GraphicDriver()),
-  myId             (-1),
+  myId(myGraphicDriver->NewIdentification()),
   myZLayer         (Graphic3d_ZLayerId_Default),
   myPriority        (Graphic3d_DisplayPriority_Normal),
   myPreviousPriority(Graphic3d_DisplayPriority_Normal),
@@ -43,7 +43,7 @@ Graphic3d_CStructure::Graphic3d_CStructure (const Handle(Graphic3d_StructureMana
   IsMutable        (Standard_False),
   Is2dText         (Standard_False)
 {
-  myId = myGraphicDriver->NewIdentification();
+  
 }
 
 //=======================================================================

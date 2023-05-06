@@ -16,11 +16,11 @@
 
 Vrml_Cube::Vrml_Cube(const Standard_Real aWidth,
 		     const Standard_Real aHeight,
-		     const Standard_Real aDepth)
+		     const Standard_Real aDepth) : myWidth(aWidth), myHeight(aHeight), myDepth(aDepth)
 {
-    myWidth = aWidth;
-    myHeight = aHeight;
-    myDepth = aDepth;
+    
+    
+    
 }
 
  void Vrml_Cube::SetWidth(const Standard_Real aWidth) 

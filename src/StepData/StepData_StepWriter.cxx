@@ -64,13 +64,13 @@ static TCollection_AsciiString  textunknown  (".U.");
 //=======================================================================
 
 StepData_StepWriter::StepData_StepWriter(const Handle(StepData_StepModel)& amodel)
-    : thecurr (StepLong) , thefloatw (12)
+    : themodel(amodel), thefile(new TColStd_HSequenceOfHAsciiString()), thecurr (StepLong) , thesect(Standard_False), thecomm(Standard_False), thefirst(Standard_True), themult(Standard_False), theindent(Standard_False), thefloatw (12), thelabmode(thetypmode = 0)
 {
-  themodel = amodel;  thelabmode = thetypmode = 0;
-  thefile  = new TColStd_HSequenceOfHAsciiString();
-  thesect  = Standard_False;  thefirst = Standard_True;
-  themult  = Standard_False;  thecomm  = Standard_False;
-  thelevel = theindval = 0;   theindent = Standard_False;
+   
+  
+   
+   
+  thelevel = theindval = 0;   
 //  Format flottant : reporte dans le FloatWriter
 }
 
@@ -172,10 +172,10 @@ void StepData_StepWriter::SendModel(const Handle(StepData_Protocol)& protocol,
   Interface_EntityIterator header = themodel->Header();
   thenum = 0;
   for (header.Start(); header.More(); header.Next()) {
-    Handle(Standard_Transient) anent = header.Value();
+    const Handle(Standard_Transient)& anent = header.Value();
 
 //   Write Entity via Lib  (similaire a SendEntity)
-    Handle(StepData_ReadWriteModule) module;  Standard_Integer CN;
+    Handle(StepData_ReadWriteModule) module;  Standard_Integer CN = 0;
     if (lib.Select(anent,module,CN)) {
       if (module->IsComplex(CN))   StartComplex();
       else {
@@ -331,7 +331,7 @@ void StepData_StepWriter::SendEntity(const Standard_Integer num,
 
 //   Write Entity via Lib
   thenum = num;
-  Handle(StepData_ReadWriteModule) module;  Standard_Integer CN;
+  Handle(StepData_ReadWriteModule) module;  Standard_Integer CN = 0;
   if (themodel->IsRedefinedContent(num)) {
 //    Entite Erreur : Ecrire le Contenu + les Erreurs en Commentaires
     Handle(Interface_ReportEntity) rep = themodel->ReportEntity(num);
@@ -586,7 +586,7 @@ void StepData_StepWriter::SendField(const StepData_Field& fild,
   if (arity == 0) {  SendUndef();  return;  }    // PAS NORMAL
   if (arity == 1) {
     OpenSub();
-    Standard_Integer i,low = fild.Lower(), up = low + fild.Length() - 1;
+    Standard_Integer i = 0,low = fild.Lower(), up = low + fild.Length() - 1;
     for (i = low; i <= up; i ++) {
       kind = fild.ItemKind(i);
       done = Standard_True;
@@ -607,7 +607,7 @@ void StepData_StepWriter::SendField(const StepData_Field& fild,
   }
   if (arity == 2) {
     OpenSub();
-    Standard_Integer   j,low1 = fild.Lower(1), up1 = low1 + fild.Length(1) - 1;
+    Standard_Integer   j = 0,low1 = fild.Lower(1), up1 = low1 + fild.Length(1) - 1;
     for (j = low1; j <= up1; j ++) {
       Standard_Integer i=0,low2 = fild.Lower(2), up2 = low2 + fild.Length(2) - 1;
       OpenSub();
@@ -677,11 +677,11 @@ void  StepData_StepWriter::SendList(const StepData_FieldList& list,
                                     const Handle(StepData_ESDescr)& descr)
 {
 // start entity  ?
-  Standard_Integer i, nb = list.NbFields();
+  Standard_Integer i = 0, nb = list.NbFields();
   for (i = 1; i <= nb; i ++) {
     Handle(StepData_PDescr) pde;
     if (!descr.IsNull()) pde  = descr->Field(i);
-    const StepData_Field fild = list.Field(i);
+    const StepData_Field& fild = list.Field(i);
     SendField (fild,pde);
   }
 // end entity  ?

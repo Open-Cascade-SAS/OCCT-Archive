@@ -17,6 +17,8 @@
 // 25.12.98 pdn renaming of ShapeAnalysis_FreeBounds and ShapeAnalysis_Wire methods
 //szv#4 S4163
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <Geom_Curve.hxx>
@@ -39,7 +41,7 @@
 
 #define NbControl 23
 
-static void ContourProperties(TopoDS_Wire wire,
+static void ContourProperties(const TopoDS_Wire& wire,
 			      Standard_Real& countourArea,
 			      Standard_Real& countourLength)
 {
@@ -49,9 +51,9 @@ static void ContourProperties(TopoDS_Wire wire,
   gp_XYZ prev, cont;
   
   for (BRepTools_WireExplorer exp(wire); exp.More(); exp.Next()) {
-    TopoDS_Edge Edge = exp.Current();  nbe++;
+    const TopoDS_Edge& Edge = exp.Current();  nbe++;
       
-    Standard_Real First, Last;
+    Standard_Real First = NAN, Last = NAN;
     Handle(Geom_Curve) c3d;
     ShapeAnalysis_Edge sae;
     if (!sae.Curve3d(Edge,c3d,First,Last)) continue;
@@ -85,11 +87,11 @@ static void ContourProperties(TopoDS_Wire wire,
 //purpose  : Empty constructor
 //=======================================================================
 
-ShapeAnalysis_FreeBoundsProperties::ShapeAnalysis_FreeBoundsProperties()
+ShapeAnalysis_FreeBoundsProperties::ShapeAnalysis_FreeBoundsProperties() : myTolerance(0.), myClosedFreeBounds(new ShapeAnalysis_HSequenceOfFreeBounds()), myOpenFreeBounds(new ShapeAnalysis_HSequenceOfFreeBounds())
 {
-  myClosedFreeBounds = new ShapeAnalysis_HSequenceOfFreeBounds();
-  myOpenFreeBounds   = new ShapeAnalysis_HSequenceOfFreeBounds();
-  myTolerance = 0.;
+  
+  
+  
 }
 
 //=======================================================================
@@ -101,10 +103,10 @@ ShapeAnalysis_FreeBoundsProperties::ShapeAnalysis_FreeBoundsProperties()
 ShapeAnalysis_FreeBoundsProperties::ShapeAnalysis_FreeBoundsProperties(const TopoDS_Shape& shape,
 								       const Standard_Real tolerance,
 								       const Standard_Boolean splitclosed,
-								       const Standard_Boolean splitopen)
+								       const Standard_Boolean splitopen) : myClosedFreeBounds(new ShapeAnalysis_HSequenceOfFreeBounds()), myOpenFreeBounds(new ShapeAnalysis_HSequenceOfFreeBounds())
 {
-  myClosedFreeBounds = new ShapeAnalysis_HSequenceOfFreeBounds();
-  myOpenFreeBounds   = new ShapeAnalysis_HSequenceOfFreeBounds();
+  
+  
   Init(shape, tolerance, splitclosed, splitopen);
 }
 
@@ -116,11 +118,11 @@ ShapeAnalysis_FreeBoundsProperties::ShapeAnalysis_FreeBoundsProperties(const Top
 
 ShapeAnalysis_FreeBoundsProperties::ShapeAnalysis_FreeBoundsProperties(const TopoDS_Shape& shape,
 								       const Standard_Boolean splitclosed,
-								       const Standard_Boolean splitopen)
+								       const Standard_Boolean splitopen) : myTolerance(0.), myClosedFreeBounds(new ShapeAnalysis_HSequenceOfFreeBounds()), myOpenFreeBounds(new ShapeAnalysis_HSequenceOfFreeBounds())
 {
-  myClosedFreeBounds = new ShapeAnalysis_HSequenceOfFreeBounds();
-  myOpenFreeBounds   = new ShapeAnalysis_HSequenceOfFreeBounds();
-  myTolerance =0.;
+  
+  
+  
   Init(shape, splitclosed, splitopen);
 }
 
@@ -205,7 +207,7 @@ Standard_Boolean ShapeAnalysis_FreeBoundsProperties::DispatchBounds()
   
   ShapeExtend_Explorer shexpl;
   Handle(TopTools_HSequenceOfShape) tmpSeq = shexpl.SeqFromCompound(tmpClosedBounds,Standard_False);
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for (i = 1; i<=tmpSeq->Length(); i++) { 
     TopoDS_Wire wire = TopoDS::Wire(tmpSeq->Value(i));
     Handle(ShapeAnalysis_FreeBoundData) fbData= new ShapeAnalysis_FreeBoundData() ;
@@ -232,7 +234,7 @@ Standard_Boolean ShapeAnalysis_FreeBoundsProperties::DispatchBounds()
 
 Standard_Boolean ShapeAnalysis_FreeBoundsProperties::CheckNotches(const Standard_Real prec) 
 {
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for(i = 1; i <= myClosedFreeBounds->Length(); i++) {
     Handle(ShapeAnalysis_FreeBoundData) fbData = myClosedFreeBounds->Value(i);
     CheckNotches(fbData, prec);
@@ -257,7 +259,7 @@ Standard_Boolean ShapeAnalysis_FreeBoundsProperties::CheckNotches(Handle(ShapeAn
   if (swd.NbEdges() > 1)
     for (Standard_Integer j=1; j <= swd.NbEdges(); j++) {
       TopoDS_Wire notch;
-      Standard_Real dMax;
+      Standard_Real dMax = NAN;
       if (CheckNotches(fbData->FreeBound(), j, notch, dMax, prec))
 	fbData->AddNotch(notch, dMax);
     }
@@ -273,7 +275,7 @@ Standard_Boolean ShapeAnalysis_FreeBoundsProperties::CheckNotches(Handle(ShapeAn
 Standard_Boolean ShapeAnalysis_FreeBoundsProperties::CheckContours(const Standard_Real prec) 
 {
   Standard_Boolean status = Standard_False;
-  Standard_Integer i; // svv Jan11 2000 : porting on DEC
+  Standard_Integer i = 0; // svv Jan11 2000 : porting on DEC
   for( i = 1; i <= myClosedFreeBounds->Length(); i++) {
     Handle(ShapeAnalysis_FreeBoundData) fbData = myClosedFreeBounds->Value(i);
     status |= FillProperties(fbData,prec);
@@ -322,7 +324,7 @@ Standard_Boolean ShapeAnalysis_FreeBoundsProperties::CheckNotches(const TopoDS_W
   TopoDS_Edge E2 = wdt->Edge(n2);
   B.Add(notch,E2);
   
-  Standard_Real First1, Last1, First2, Last2;
+  Standard_Real First1 = NAN, Last1 = NAN, First2 = NAN, Last2 = NAN;
   Handle(Geom_Curve) c3d1, c3d2;
   ShapeAnalysis_Edge sae;
   //szv#4:S4163:12Mar99 optimized
@@ -343,7 +345,7 @@ Standard_Boolean ShapeAnalysis_FreeBoundsProperties::CheckNotches(const TopoDS_W
       Standard_Real prm = ((NbControl-1-i)*First1 + i*Last1)/(NbControl-1);
       gp_Pnt pntCurr = c3d1->Value(prm);
 
-      Standard_Real p1, p2;
+      Standard_Real p1 = NAN, p2 = NAN;
       if ( First2 < Last2 ) {
 	p1 = First2;
 	p2 = Last2;
@@ -374,7 +376,7 @@ Standard_Boolean ShapeAnalysis_FreeBoundsProperties::CheckNotches(const TopoDS_W
 Standard_Boolean ShapeAnalysis_FreeBoundsProperties::FillProperties(Handle(ShapeAnalysis_FreeBoundData)& fbData,
 								    const Standard_Real /*prec*/) 
 {  
-  Standard_Real area, length;
+  Standard_Real area = NAN, length = NAN;
   ContourProperties(fbData->FreeBound(), area, length);
 
   Standard_Real r = 0;

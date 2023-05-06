@@ -21,12 +21,12 @@ Vrml_SFRotation::Vrml_SFRotation()
 Vrml_SFRotation::Vrml_SFRotation( const Standard_Real aRotationX, 
 				  const Standard_Real aRotationY, 
 				  const Standard_Real aRotationZ, 
-				  const Standard_Real anAngle )
+				  const Standard_Real anAngle ) : myRotationX(aRotationX), myRotationY(aRotationY), myRotationZ(aRotationZ), myAngle(anAngle)
 {
-    myRotationX = aRotationX;
-    myRotationY = aRotationY;
-    myRotationZ = aRotationZ;
-    myAngle     = anAngle;
+    
+    
+    
+    
 }
 
 void Vrml_SFRotation::SetRotationX(const Standard_Real aRotationX)

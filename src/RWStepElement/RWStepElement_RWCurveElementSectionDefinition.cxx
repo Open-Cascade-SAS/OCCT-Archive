@@ -15,6 +15,8 @@
 
 // Generator:	ExpToCas (EXPRESS -> CASCADE/XSTEP Translator) V1.2
 
+#include <math.h>
+
 #include <Interface_EntityIterator.hxx>
 #include <RWStepElement_RWCurveElementSectionDefinition.hxx>
 #include <StepData_StepReaderData.hxx>
@@ -47,7 +49,7 @@ void RWStepElement_RWCurveElementSectionDefinition::ReadStep (const Handle(StepD
   Handle(TCollection_HAsciiString) aDescription;
   data->ReadString (num, 1, "description", ach, aDescription);
 
-  Standard_Real aSectionAngle;
+  Standard_Real aSectionAngle = NAN;
   data->ReadReal (num, 2, "section_angle", ach, aSectionAngle);
 
   // Initialize entity

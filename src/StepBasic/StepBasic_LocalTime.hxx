@@ -77,12 +77,12 @@ protected:
 private:
 
 
-  Standard_Integer hourComponent;
-  Standard_Integer minuteComponent;
-  Standard_Real secondComponent;
+  Standard_Integer hourComponent{};
+  Standard_Integer minuteComponent{};
+  Standard_Real secondComponent{};
   Handle(StepBasic_CoordinatedUniversalTimeOffset) zone;
-  Standard_Boolean hasMinuteComponent;
-  Standard_Boolean hasSecondComponent;
+  Standard_Boolean hasMinuteComponent{};
+  Standard_Boolean hasSecondComponent{};
 
 
 };

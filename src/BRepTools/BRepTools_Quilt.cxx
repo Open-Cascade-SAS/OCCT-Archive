@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools_Quilt.hxx>
@@ -79,7 +81,7 @@ static void CopyShape(const TopoDS_Edge& E,TopTools_IndexedDataMapOfShapeShape& 
     }
   }
   // set the 3d range
-  Standard_Real f,l;
+  Standard_Real f = NAN,l = NAN;
   BRep_Tool::Range(E,f,l);
   B.Range(NE,f,l);
   myBounds.Add(E,NE.Oriented(TopAbs_FORWARD));
@@ -209,7 +211,7 @@ void BRepTools_Quilt::Add(const TopoDS_Shape& S)
 	  TopoDS_Wire NW;
 	  B.MakeWire(NW);
 	  TopoDS_Iterator ite(W,Standard_False);
-	  Standard_Real   UFirst,ULast;
+	  Standard_Real   UFirst = NAN,ULast = NAN;
 	  
 	  // Reconstruction des wires.
 	  
@@ -462,7 +464,7 @@ TopoDS_Shape BRepTools_Quilt::Shells() const
 //		 itm.More(); ) {
               if(!M.IsBound(aexp.Current()))
                  continue;
-              TopoDS_Shape ae = aexp.Current();
+              const TopoDS_Shape& ae = aexp.Current();
               TopoDS_Shape as = M.Find(ae);
 	      if (as.IsSame(oldShell)) {
 		// update the orientation of free edges in SH.

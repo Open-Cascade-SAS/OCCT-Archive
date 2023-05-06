@@ -33,19 +33,19 @@ void RWStepBasic_RWCalendarDate::ReadStep
 
 	// --- inherited field : yearComponent ---
 
-	Standard_Integer aYearComponent;
+	Standard_Integer aYearComponent = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat1 =` not needed
 	data->ReadInteger (num,1,"year_component",ach,aYearComponent);
 
 	// --- own field : dayComponent ---
 
-	Standard_Integer aDayComponent;
+	Standard_Integer aDayComponent = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat2 =` not needed
 	data->ReadInteger (num,2,"day_component",ach,aDayComponent);
 
 	// --- own field : monthComponent ---
 
-	Standard_Integer aMonthComponent;
+	Standard_Integer aMonthComponent = 0;
 	//szv#4:S4163:12Mar99 `Standard_Boolean stat3 =` not needed
 	data->ReadInteger (num,3,"month_component",ach,aMonthComponent);
 

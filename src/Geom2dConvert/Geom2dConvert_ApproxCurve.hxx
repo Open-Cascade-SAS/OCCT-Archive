@@ -88,10 +88,10 @@ private:
   Standard_EXPORT void Approximate (const Handle(Adaptor2d_Curve2d)& theCurve, const Standard_Real theTol3d, const GeomAbs_Shape theOrder, const Standard_Integer theMaxSegments, const Standard_Integer theMaxDegree);
 
 
-  Standard_Boolean myIsDone;
-  Standard_Boolean myHasResult;
+  Standard_Boolean myIsDone{};
+  Standard_Boolean myHasResult{};
   Handle(Geom2d_BSplineCurve) myBSplCurve;
-  Standard_Real myMaxError;
+  Standard_Real myMaxError{};
 
 
 };

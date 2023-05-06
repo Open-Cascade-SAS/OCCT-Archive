@@ -30,6 +30,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_Crout.hxx>
 #include <math_Matrix.hxx>
 #include <math_Uzawa.hxx>
@@ -74,10 +76,10 @@ void math_Uzawa::Perform(const math_Matrix& Cont, const math_Vector& Secont,
 		         const Standard_Real EpsLix, const Standard_Real EpsLic,
 		         const Standard_Integer NbIterations)  {
 
-  Standard_Integer i,j, k;
-  Standard_Real scale;
-  Standard_Real Normat, Normli, Xian, Xmax=0, Xmuian;
-  Standard_Real Rho, Err, Err1, ErrMax=0, Coef = 1./Sqrt(2.);
+  Standard_Integer i = 0,j = 0, k = 0;
+  Standard_Real scale = NAN;
+  Standard_Real Normat = NAN, Normli = NAN, Xian = NAN, Xmax=0, Xmuian = NAN;
+  Standard_Real Rho = NAN, Err = NAN, Err1 = NAN, ErrMax=0, Coef = 1./Sqrt(2.);
   Standard_Integer Nlig = Cont.RowNumber();
   Standard_Integer Ncol = Cont.ColNumber();
 

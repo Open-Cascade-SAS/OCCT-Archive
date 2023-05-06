@@ -13,6 +13,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <GccAna_Circ2d2TanRad.hxx>
 #include <GccEnt_BadQualifier.hxx>
@@ -45,11 +47,11 @@ GccAna_Circ2d2TanRad::
                          const GccEnt_QualifiedCirc& Qualified2 ,
                          const Standard_Real         Radius     ,
                          const Standard_Real         Tolerance  ):
-   qualifier1(1,8) ,
+   WellDone(Standard_False), qualifier1(1,8) ,
    qualifier2(1,8),
    TheSame1(1,8)   ,
    TheSame2(1,8)   ,
-   cirsol(1,8)     ,
+   NbrSol(0), cirsol(1,8)     ,
    pnttg1sol(1,8)  ,
    pnttg2sol(1,8)  ,
    par1sol(1,8)    ,
@@ -60,8 +62,8 @@ GccAna_Circ2d2TanRad::
 
    Standard_Real Tol = Abs(Tolerance);
    gp_Dir2d dirx(1.,0.);
-   WellDone = Standard_False;
-   NbrSol = 0;
+   
+   
    if (!(Qualified1.IsEnclosed() || Qualified1.IsEnclosing() || 
 	 Qualified1.IsOutside() || Qualified1.IsUnqualified()) ||
        !(Qualified2.IsEnclosed() || Qualified2.IsEnclosing() || 
@@ -76,8 +78,8 @@ GccAna_Circ2d2TanRad::
    Standard_Real R2 = C2.Radius();
    Standard_Real rbid = 0.;
    Standard_Integer signe=0;
-   Standard_Real R3;
-   Standard_Real dist;
+   Standard_Real R3 = NAN;
+   Standard_Real dist = NAN;
    TColgp_Array1OfCirc2d C(1,8);
    C(1) = gp_Circ2d(C1);
    C(2) = gp_Circ2d(C2);

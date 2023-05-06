@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Builder.hxx>
 #include <BRep_GCurve.hxx>
 #include <BRep_TEdge.hxx>
@@ -241,25 +243,25 @@ static Standard_Boolean IsConvertCurve2d(const Handle(Geom2d_Curve)& aCurve,
 //purpose  : 
 //=======================================================================
 
-ShapeCustom_BSplineRestriction::ShapeCustom_BSplineRestriction()
+ShapeCustom_BSplineRestriction::ShapeCustom_BSplineRestriction() : myApproxSurfaceFlag(Standard_True), myApproxCurve3dFlag(Standard_True), myApproxCurve2dFlag(Standard_True), myTol3d(0.01), myTol2d(1E-6), myContinuity3d(GeomAbs_C1), myContinuity2d(GeomAbs_C2), myMaxDegree(9), myNbMaxSeg(10000), mySurfaceError(Precision::Confusion()), myCurve3dError(Precision::Confusion()), myCurve2dError(Precision::PConfusion()), myNbOfSpan(0), myConvert(Standard_False), myDeg(Standard_True), myRational(Standard_False), myParameters(new ShapeCustom_RestrictionParameters)
 {
-  myApproxSurfaceFlag = Standard_True;
-  myApproxCurve3dFlag = Standard_True;
-  myApproxCurve2dFlag = Standard_True; 
-  myTol3d = 0.01;
-  myTol2d = 1E-6;
-  myContinuity3d = GeomAbs_C1;
-  myContinuity2d =GeomAbs_C2 ;
-  myMaxDegree = 9;
-  myNbMaxSeg = 10000;
-  mySurfaceError = Precision::Confusion();
-  myCurve3dError = Precision::Confusion();
-  myCurve2dError = Precision::PConfusion();
-  myNbOfSpan = 0;
-  myConvert = Standard_False;
-  myDeg =Standard_True;
-  myRational = Standard_False;
-  myParameters = new ShapeCustom_RestrictionParameters;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 }
 
@@ -273,25 +275,25 @@ ShapeCustom_BSplineRestriction::ShapeCustom_BSplineRestriction(const Standard_Bo
                                                                const Standard_Integer aMaxDegree,
                                                                const Standard_Integer aNbMaxSeg,
                                                                const Standard_Boolean Deg,
-                                                               const Standard_Boolean Rational)
+                                                               const Standard_Boolean Rational) : myApproxSurfaceFlag(anApproxSurfaceFlag), myApproxCurve3dFlag(anApproxCurve3dFlag), myApproxCurve2dFlag(anApproxCurve2dFlag), myTol3d(aTol3d), myTol2d(aTol2d), myMaxDegree(aMaxDegree), myContinuity3d(aContinuity3d), myContinuity2d(aContinuity2d), myNbMaxSeg(aNbMaxSeg), mySurfaceError(Precision::Confusion()), myCurve3dError(Precision::Confusion()), myCurve2dError(Precision::PConfusion()), myNbOfSpan(0), myConvert(Standard_False), myDeg(Deg), myRational(Rational), myParameters(new ShapeCustom_RestrictionParameters)
 {
-  myApproxSurfaceFlag = anApproxSurfaceFlag;
-  myApproxCurve3dFlag = anApproxCurve3dFlag;
-  myApproxCurve2dFlag = anApproxCurve2dFlag;
-  myTol3d = aTol3d;
-  myTol2d = aTol2d;
-  myMaxDegree = aMaxDegree;
-  myContinuity3d = aContinuity3d;
-  myContinuity2d = aContinuity2d;
-  myNbMaxSeg = aNbMaxSeg;
-  mySurfaceError = Precision::Confusion();
-  myCurve3dError = Precision::Confusion();
-  myCurve2dError = Precision::PConfusion();
-  myNbOfSpan = 0;
-  myConvert = Standard_False;
-  myDeg = Deg;
-  myRational = Rational;
-  myParameters = new ShapeCustom_RestrictionParameters;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 }
 
@@ -306,25 +308,25 @@ ShapeCustom_BSplineRestriction::ShapeCustom_BSplineRestriction(const Standard_Bo
                                                                const Standard_Integer aNbMaxSeg,
                                                                const Standard_Boolean Deg,
                                                                const Standard_Boolean Rational,
-                                                               const Handle(ShapeCustom_RestrictionParameters)& aModes)
+                                                               const Handle(ShapeCustom_RestrictionParameters)& aModes) : myApproxSurfaceFlag(anApproxSurfaceFlag), myApproxCurve3dFlag(anApproxCurve3dFlag), myApproxCurve2dFlag(anApproxCurve2dFlag), myTol3d(aTol3d), myTol2d(aTol2d), myMaxDegree(aMaxDegree), myContinuity3d(aContinuity3d), myContinuity2d(aContinuity2d), myNbMaxSeg(aNbMaxSeg), mySurfaceError(Precision::Confusion()), myCurve3dError(Precision::Confusion()), myCurve2dError(Precision::PConfusion()), myNbOfSpan(0), myConvert(Standard_False), myDeg(Deg), myRational(Rational), myParameters(aModes)
 {
-  myApproxSurfaceFlag = anApproxSurfaceFlag;
-  myApproxCurve3dFlag = anApproxCurve3dFlag;
-  myApproxCurve2dFlag = anApproxCurve2dFlag;
-  myTol3d = aTol3d;
-  myTol2d = aTol2d;
-  myMaxDegree = aMaxDegree;
-  myContinuity3d = aContinuity3d;
-  myContinuity2d = aContinuity2d;
-  myNbMaxSeg = aNbMaxSeg;
-  mySurfaceError = Precision::Confusion();
-  myCurve3dError = Precision::Confusion();
-  myCurve2dError = Precision::PConfusion();
-  myNbOfSpan = 0;
-  myConvert = Standard_False;
-  myDeg = Deg;
-  myRational = Rational;
-  myParameters = aModes;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 }
 
@@ -349,9 +351,9 @@ Standard_Boolean ShapeCustom_BSplineRestriction::NewSurface(const TopoDS_Face& F
   if(aSurface.IsNull()) return Standard_False;
   Standard_Boolean IsOf = Standard_True;
   if(myParameters->ConvertOffsetSurf()) IsOf = Standard_False;
-  Standard_Real UF,UL,VF,VL;
+  Standard_Real UF = NAN,UL = NAN,VF = NAN,VL = NAN;
   aSurface->Bounds(UF,UL,VF,VL);
-  Standard_Real Umin, Umax, Vmin, Vmax;
+  Standard_Real Umin = NAN, Umax = NAN, Vmin = NAN, Vmax = NAN;
   BRepTools::UVBounds(F,Umin, Umax, Vmin, Vmax);
   if(myParameters->SegmentSurfaceMode()) {
     UF = Umin; UL =  Umax;
@@ -515,7 +517,7 @@ Standard_Boolean ShapeCustom_BSplineRestriction::ConvertSurface(const Handle(Geo
   if (aSurf->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
     Handle(Geom_RectangularTrimmedSurface) tmp = Handle(Geom_RectangularTrimmedSurface)::
       DownCast (aSurf);
-    Standard_Real U1,U2,V1,V2;
+    Standard_Real U1 = NAN,U2 = NAN,V1 = NAN,V2 = NAN;
     tmp->Bounds(U1,U2,V1,V2);
     Handle(Geom_Surface) theSurf = tmp->BasisSurface();
     Handle(Geom_Surface) ResSurface;
@@ -609,11 +611,11 @@ Standard_Boolean ShapeCustom_BSplineRestriction::ConvertSurface(const Handle(Geo
 
   }*/
 
-  Standard_Real aTol3d;
-  Standard_Integer nbOfSpan,imax=10;
+  Standard_Real aTol3d = NAN;
+  Standard_Integer nbOfSpan = 0,imax=10;
   Standard_Integer MaxSeg = myNbMaxSeg;
   Standard_Integer MaxDeg = myMaxDegree;
-  Standard_Real u1,u2,v1,v2;
+  Standard_Real u1 = NAN,u2 = NAN,v1 = NAN,v2 = NAN;
   aSurf->Bounds(u1,u2,v1,v2);
   Standard_Real ShiftU = 0, ShiftV = 0;
   if( Abs(u1-UF) > Precision::PConfusion() || Abs(u2- UL) > Precision::PConfusion() || 
@@ -641,7 +643,7 @@ Standard_Boolean ShapeCustom_BSplineRestriction::ConvertSurface(const Handle(Geo
 
       if(isTrim && (u1 != u2) && (v1 != v2)) {
         Handle(Geom_RectangularTrimmedSurface) trSurface = new Geom_RectangularTrimmedSurface(aSurf,u1,u2,v1,v2);
-        Standard_Real ur1,ur2,vr1,vr2;
+        Standard_Real ur1 = NAN,ur2 = NAN,vr1 = NAN,vr2 = NAN;
         trSurface->Bounds(ur1,ur2,vr1,vr2);
         ShiftU = u1-ur1;
         ShiftV = v1-vr1;
@@ -781,7 +783,7 @@ Standard_Boolean ShapeCustom_BSplineRestriction::NewCurve(const TopoDS_Edge& E,
 {
   if ( ! myApproxCurve3dFlag )
     return Standard_False;
-  Standard_Real First, Last;
+  Standard_Real First = NAN, Last = NAN;
   Handle(Geom_Curve) aCurve = BRep_Tool::Curve(E,L,First, Last);
   Standard_Real TolCur = BRep_Tool::Tolerance(E);
   //if(aCurve.IsNull()) return Standard_False;
@@ -1089,7 +1091,7 @@ Standard_Boolean ShapeCustom_BSplineRestriction::NewCurve2d(const TopoDS_Edge& E
 {
   if ( ! myApproxCurve2dFlag && !myApproxSurfaceFlag)
     return Standard_False;
-  Standard_Real First, Last,F1,L1;
+  Standard_Real First = NAN, Last = NAN,F1 = NAN,L1 = NAN;
   TopLoc_Location L,Loc1;
   Handle(Geom_Surface) aSurface = BRep_Tool::Surface(F,L);
   GeomAdaptor_Surface AdS(aSurface);

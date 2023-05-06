@@ -205,7 +205,7 @@ private:
 
 
   Handle(TCollection_HAsciiString) thetitle;
-  Standard_Real thetotal;
+  Standard_Real thetotal{};
   Handle(TColStd_HSequenceOfAsciiString) thephnam;
   Handle(TColStd_HSequenceOfReal) thephw;
   Handle(TColStd_HSequenceOfInteger) thephdeb;

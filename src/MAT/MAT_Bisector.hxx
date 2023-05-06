@@ -111,18 +111,18 @@ private:
 
 
   Standard_Integer thebisectornumber;
-  Standard_Integer theindexnumber;
+  Standard_Integer theindexnumber{};
   Handle(MAT_Edge) thefirstedge;
   Handle(MAT_Edge) thesecondedge;
   Handle(MAT_ListOfBisector) thelistofbisectors;
-  Standard_Integer theissuepoint;
-  Standard_Integer theendpoint;
-  Standard_Integer thefirstvector;
-  Standard_Integer thesecondvector;
-  Standard_Real thesense;
+  Standard_Integer theissuepoint{};
+  Standard_Integer theendpoint{};
+  Standard_Integer thefirstvector{};
+  Standard_Integer thesecondvector{};
+  Standard_Real thesense{};
   Standard_Real thefirstparameter;
   Standard_Real thesecondparameter;
-  Standard_Real distissuepoint;
+  Standard_Real distissuepoint{};
 
 
 };

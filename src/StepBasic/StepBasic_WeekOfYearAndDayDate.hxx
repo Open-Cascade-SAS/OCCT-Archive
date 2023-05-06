@@ -64,9 +64,9 @@ protected:
 private:
 
 
-  Standard_Integer weekComponent;
-  Standard_Integer dayComponent;
-  Standard_Boolean hasDayComponent;
+  Standard_Integer weekComponent{};
+  Standard_Integer dayComponent{};
+  Standard_Boolean hasDayComponent{};
 
 
 };

@@ -296,21 +296,21 @@ protected:
 
   // for caching clip points projections onto viewing area normals once per traverse
   // ORDER: LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR
-  Standard_Real myMaxClipProjectionPts[PlanesNB]; //!< Max view volume's vertices projections onto its normals
-  Standard_Real myMinClipProjectionPts[PlanesNB]; //!< Min view volume's vertices projections onto its normals
+  Standard_Real myMaxClipProjectionPts[PlanesNB]{}; //!< Max view volume's vertices projections onto its normals
+  Standard_Real myMinClipProjectionPts[PlanesNB]{}; //!< Min view volume's vertices projections onto its normals
 
   // for caching clip points projections onto AABB normals once per traverse
   // ORDER: E0, E1, E2
-  Standard_Real myMaxOrthoProjectionPts[3]; //!< Max view volume's vertices projections onto normalized dimensions of AABB
-  Standard_Real myMinOrthoProjectionPts[3]; //!< Min view volume's vertices projections onto normalized dimensions of AABB
+  Standard_Real myMaxOrthoProjectionPts[3]{}; //!< Max view volume's vertices projections onto normalized dimensions of AABB
+  Standard_Real myMinOrthoProjectionPts[3]{}; //!< Min view volume's vertices projections onto normalized dimensions of AABB
 
   Standard_Boolean myIsProjectionParallel;
 
   Graphic3d_Mat4d myProjectionMat;
   Graphic3d_Mat4d myWorldViewMat;
 
-  Standard_Integer myViewportWidth;
-  Standard_Integer myViewportHeight;
+  Standard_Integer myViewportWidth{};
+  Standard_Integer myViewportHeight{};
 
   Graphic3d_WorldViewProjState myWorldViewProjState; //!< State of world view projection matrices.
 

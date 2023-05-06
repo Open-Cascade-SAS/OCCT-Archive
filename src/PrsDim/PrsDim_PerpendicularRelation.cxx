@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <PrsDim_PerpendicularRelation.hxx>
 
 #include <PrsDim.hxx>
@@ -164,7 +166,7 @@ void PrsDim_PerpendicularRelation::ComputeTwoEdgesPerpendicular(const Handle(Prs
   // 3d lines
   Handle(Geom_Curve) geom1,geom2;
   gp_Pnt pint3d,p1,p2,pAx1,pAx2,ptat11,ptat12,ptat21,ptat22;
-  Standard_Boolean isInfinite1,isInfinite2;
+  Standard_Boolean isInfinite1 = 0,isInfinite2 = 0;
   Handle(Geom_Curve) extCurv;
   if ( !PrsDim::ComputeGeometry(TopoDS::Edge(myFShape),TopoDS::Edge(mySShape),
 			    myExtShape,
@@ -218,8 +220,7 @@ void PrsDim_PerpendicularRelation::ComputeTwoEdgesPerpendicular(const Handle(Prs
 
   // current face
   BRepBuilderAPI_MakeFace makeface (myPlane->Pln());
-  TopoDS_Face face (makeface.Face());  
-  BRepAdaptor_Surface adp (makeface.Face());
+   BRepAdaptor_Surface adp (makeface.Face());
   
   // 2d lines => projection of 3d on current plane
   Handle(Geom2d_Curve) aGeom2dCurve = GeomAPI::To2d(geom_lin1,myPlane->Pln());
@@ -235,7 +236,7 @@ void PrsDim_PerpendicularRelation::ComputeTwoEdgesPerpendicular(const Handle(Prs
 
   myPosition = pint3d;
   // recherche points attache
-  Standard_Real par1,par2,curpar,pmin,pmax;//,dist,sign;
+  Standard_Real par1 = NAN,par2 = NAN,curpar = NAN,pmin = NAN,pmax = NAN;//,dist,sign;
   Standard_Real length(0.);
   
   if ( isInfinite1 && isInfinite2 )

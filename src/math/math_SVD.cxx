@@ -29,10 +29,10 @@
 math_SVD::math_SVD (const math_Matrix& A) :
    U    (1, Max(A.RowNumber(),A.ColNumber()), 1, A.ColNumber()) ,
    V    (1, A.ColNumber(), 1, A.ColNumber()),
-   Diag (1, A.ColNumber())
+   Diag (1, A.ColNumber()), RowA(A.RowNumber())
 {
    U.Init(0.0);
-   RowA = A.RowNumber() ;
+   
    U.Set(1, A.RowNumber(), 1, A.ColNumber(), A) ;
    Standard_Integer Error = SVD_Decompose(U, Diag, V) ;
    Done = (!Error) ? Standard_True : Standard_False ;
@@ -60,7 +60,7 @@ void math_SVD::Solve (const math_Vector& B,
 void  math_SVD::PseudoInverse (math_Matrix& Result,
 			       const Standard_Real Eps)
 {
-   Standard_Integer i, j ;
+   Standard_Integer i = 0, j = 0 ;
 
    StdFail_NotDone_Raise_if(!Done, " ");
 

@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <GeomFill_Curved.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
@@ -112,12 +114,12 @@ void  GeomFill_Curved::Init(const TColgp_Array1OfPnt& P1,
   myPoles = new TColgp_HArray2OfPnt( 1, NPolU, 1, NPolV);
   
   // The boundaries are not modified
-  Standard_Integer i,j,k;
+  Standard_Integer i = 0,j = 0,k = 0;
   for ( i=1; i<=NPolU; i++) {
     myPoles->SetValue( i, 1    , P1(i));
     myPoles->SetValue( i, NPolV, P3(i));
   }
-  Standard_Real PU,PU1,PV,PV1;
+  Standard_Real PU = NAN,PU1 = NAN,PV = NAN,PV1 = NAN;
   
   for ( j=2; j<=NPolV-1; j++) {
     PV  = (j-1)/NV;
@@ -177,12 +179,12 @@ void  GeomFill_Curved::Init(const TColgp_Array1OfPnt&   P1,
   myWeights = new TColStd_HArray2OfReal( 1, NPolU, 1, NPolV);
   
   // The boundaries are not modified
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   for ( i=1; i<=NPolU; i++) {
     myWeights->SetValue( i, 1    , W1(i));
     myWeights->SetValue( i, NPolV, W3(i));
   }
-  Standard_Real PU,PU1,PV,PV1;
+  Standard_Real PU = NAN,PU1 = NAN,PV = NAN,PV1 = NAN;
   
   for ( j=2; j<=NPolV-1; j++) {
     PV  = (j-1)/NV;
@@ -220,7 +222,7 @@ void  GeomFill_Curved::Init(const TColgp_Array1OfPnt& P1,
   
   myPoles = new TColgp_HArray2OfPnt( 1, NPolU, 1, NPolV);
   
-  Standard_Integer i,j;
+  Standard_Integer i = 0,j = 0;
   
   for ( j=1; j<=NPolV; j++) {
     gp_Vec Tra(P2(1),P2(j));

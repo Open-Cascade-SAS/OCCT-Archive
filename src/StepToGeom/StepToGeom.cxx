@@ -767,7 +767,7 @@ Handle(TBSplineCurve) MakeBSplineCurveCommon
     aSummaryMuultypisity += aUniqueKnotMultiplicities.Value(i);
   }
 
-  Standard_Boolean shouldBePeriodic;
+  Standard_Boolean shouldBePeriodic = 0;
   if (aSummaryMuultypisity == (NbPoles + aDegree + 1))
   {
     shouldBePeriodic = Standard_False;
@@ -834,7 +834,7 @@ Handle(Geom2d_BSplineCurve) StepToGeom::MakeBSplineCurve2d (const Handle(StepGeo
 
 Handle(Geom_BSplineSurface) StepToGeom::MakeBSplineSurface (const Handle(StepGeom_BSplineSurface)& SS)
 {
-  Standard_Integer                    i, j;
+  Standard_Integer                    i = 0, j = 0;
   Handle(StepGeom_BSplineSurfaceWithKnots) BS;
   Handle(StepGeom_BSplineSurfaceWithKnotsAndRationalBSplineSurface) BSR;
 
@@ -1899,7 +1899,7 @@ static Standard_Boolean  ExtractParameter
  Standard_Real & aParam)
 {
   Handle(StepGeom_CartesianPoint) aPoint;
-  Standard_Integer i;
+  Standard_Integer i = 0;
 //:S4136  Standard_Real precBrep = BRepAPI::Precision();
   for ( i = 1 ; i <= nbSel ; i++) {
     StepGeom_TrimmingSelect theSel = TS->Value(i);
@@ -1995,7 +1995,7 @@ Handle(Geom_TrimmedCurve) StepToGeom::MakeTrimmedCurve (const Handle(StepGeom_Tr
   const Standard_Integer nbSel1 = SC->NbTrim1();
   const Standard_Integer nbSel2 = SC->NbTrim2();
 
-  Standard_Integer MasterRep;
+  Standard_Integer MasterRep = 0;
   switch (SC->MasterRepresentation())
   {
     case StepGeom_tpCartesian: MasterRep = 1; break;
@@ -2007,7 +2007,7 @@ Handle(Geom_TrimmedCurve) StepToGeom::MakeTrimmedCurve (const Handle(StepGeom_Tr
   //and parameters are specified as CARTESIAN_POINT
   Standard_Boolean isPoint = Standard_False;
   if(MasterRep == 0 || (MasterRep == 2 && nbSel1 >1 && nbSel2 > 1)) {
-    Standard_Integer ii;
+    Standard_Integer ii = 0;
     for(ii = 1; ii <= nbSel1; ii++)
     {
       if (!(theTrimSel1->Value(ii).CartesianPoint().IsNull()))

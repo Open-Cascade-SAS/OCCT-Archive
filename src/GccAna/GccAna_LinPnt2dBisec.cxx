@@ -31,9 +31,9 @@
 //=========================================================================
 GccAna_LinPnt2dBisec::
    GccAna_LinPnt2dBisec (const gp_Lin2d& Line1 ,
-		         const gp_Pnt2d& Point2) {
+		         const gp_Pnt2d& Point2) : WellDone(Standard_False) {
 
-   WellDone = Standard_False;
+   
 
    Standard_Real xdir = Line1.Direction().X();
    Standard_Real ydir = Line1.Direction().Y();

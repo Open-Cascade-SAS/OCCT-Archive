@@ -22,10 +22,10 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_GearPairWithRange, StepKinematics_Gear
 //function : StepKinematics_GearPairWithRange
 //purpose  :
 //=======================================================================
-StepKinematics_GearPairWithRange::StepKinematics_GearPairWithRange ()
+StepKinematics_GearPairWithRange::StepKinematics_GearPairWithRange () : defLowerLimitActualRotation1(Standard_False), defUpperLimitActualRotation1(Standard_False)
 {
-  defLowerLimitActualRotation1 = Standard_False;
-  defUpperLimitActualRotation1 = Standard_False;
+  
+  
 }
 
 //=======================================================================

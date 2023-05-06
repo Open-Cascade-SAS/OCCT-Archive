@@ -61,8 +61,8 @@ protected:
 private:
 
 
-  Standard_Real majorRadius;
-  Standard_Real minorRadius;
+  Standard_Real majorRadius{};
+  Standard_Real minorRadius{};
 
 
 };

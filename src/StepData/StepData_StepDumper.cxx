@@ -29,9 +29,9 @@ StepData_StepDumper::StepData_StepDumper
   (const Handle(StepData_StepModel)& amodel,
    const Handle(StepData_Protocol)& protocol,
    const Standard_Integer mode)
-    : theslib (protocol) , thewlib (protocol) , thewriter (amodel)
+    : themodel(amodel), theslib (protocol) , thewlib (protocol) , thewriter (amodel)
 {
-  themodel = amodel;
+  
   if (mode > 0) thewriter.LabelMode () = 2;
 }
 
@@ -46,7 +46,7 @@ Standard_Boolean  StepData_StepDumper::Dump
   (Standard_OStream& S, const Handle(Standard_Transient)& ent,
    const Standard_Integer level)
 {
-  Standard_Integer i, nb = themodel->NbEntities();
+  Standard_Integer i = 0, nb = themodel->NbEntities();
   TColStd_Array1OfInteger ids(0,nb); ids.Init(0);
   Standard_Integer num  = themodel->Number(ent);
   Standard_Integer nlab = themodel->IdentLabel(ent);
@@ -54,7 +54,7 @@ Standard_Boolean  StepData_StepDumper::Dump
 
   if (level <= 0) {
     Handle(StepData_ReadWriteModule) module;
-    Standard_Integer CN;
+    Standard_Integer CN = 0;
     if (num > 0) S << "#" << num << " = ";
     else S << "#??? = ";
     if (thewlib.Select(ent,module,CN)) {
@@ -79,7 +79,7 @@ Standard_Boolean  StepData_StepDumper::Dump
   else if (level == 1) {
 //  ...  Idents  ...
     Handle(Standard_Transient) anent;
-    Handle(Interface_GeneralModule) module;  Standard_Integer CN;
+    Handle(Interface_GeneralModule) module;  Standard_Integer CN = 0;
     if (theslib.Select(ent,module,CN)) {
       Interface_EntityIterator iter;
       module->FillSharedCase  (CN,ent,iter);
@@ -100,7 +100,7 @@ Standard_Boolean  StepData_StepDumper::Dump
 //  ...  Envoi  ...
     TColStd_Array1OfInteger tab(0,nb); tab.Init(0);
     tab.SetValue(num,1);
-    Handle(Interface_GeneralModule) module;  Standard_Integer CN;
+    Handle(Interface_GeneralModule) module;  Standard_Integer CN = 0;
     if (theslib.Select(ent,module,CN)) {
       Interface_EntityIterator iter;
       module->FillSharedCase  (CN,ent,iter);

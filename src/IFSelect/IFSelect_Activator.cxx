@@ -63,7 +63,7 @@ static TColStd_SequenceOfTransient theacts;
   (const Standard_CString command, Standard_Integer& number,
    Handle(IFSelect_Activator)& actor)
 {
-  Standard_Integer num;
+  Standard_Integer num = 0;
   if (!thedico.Find(command, num)) return Standard_False;
   number = thenums(num);
   actor = Handle(IFSelect_Activator)::DownCast(theacts(num));
@@ -73,7 +73,7 @@ static TColStd_SequenceOfTransient theacts;
     Standard_Integer IFSelect_Activator::Mode
   (const Standard_CString command)
 {
-  Standard_Integer num;
+  Standard_Integer num = 0;
   if (!thedico.Find(command, num)) return -1;
   return themodes(num);
 }
@@ -82,7 +82,7 @@ static TColStd_SequenceOfTransient theacts;
     Handle(TColStd_HSequenceOfAsciiString) IFSelect_Activator::Commands
   (const Standard_Integer mode, const Standard_CString command)
 {
-  Standard_Integer num;
+  Standard_Integer num = 0;
   NCollection_DataMap<TCollection_AsciiString, Standard_Integer>::Iterator iter(thedico);
   Handle(TColStd_HSequenceOfAsciiString) list =
     new  TColStd_HSequenceOfAsciiString();

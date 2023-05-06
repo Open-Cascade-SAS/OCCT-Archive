@@ -16,6 +16,8 @@
 
 // Modified: Sergey ZERCHANINOV
 
+#include <math.h>
+
 #include <BRepExtrema_DistanceSS.hxx>
 
 #include <TopExp.hxx>
@@ -104,7 +106,7 @@ static void TRIM_INFINIT_EDGE(const TopoDS_Edge& S1, const TopoDS_Edge& S2, Topo
     return;
 
   aResEdge = S2;
-  Standard_Real aFirst1, aLast1, aFirst2, aLast2;
+  Standard_Real aFirst1 = NAN, aLast1 = NAN, aFirst2 = NAN, aLast2 = NAN;
   Handle(Geom_Curve) pCurv1 = BRep_Tool::Curve(S1, aFirst1, aLast1);
   Handle(Geom_Curve) pCurv2 = BRep_Tool::Curve(S2, aFirst2, aLast2);
 
@@ -115,7 +117,7 @@ static void TRIM_INFINIT_EDGE(const TopoDS_Edge& S1, const TopoDS_Edge& S2, Topo
     return;
 
   Standard_Real Umin = 0., Umax = 0.;
-  Standard_Boolean bUmin, bUmax;
+  Standard_Boolean bUmin = 0, bUmax = 0;
   bUmin = bUmax = Standard_False;
 
   Handle(Geom_Curve) pCurv;
@@ -156,7 +158,7 @@ static void TRIM_INFINIT_EDGE(const TopoDS_Edge& S1, const TopoDS_Edge& S2, Topo
       BRepBndLib::Add(S2, aEdgeBox);
     if (bIsTrim2)
       BRepBndLib::Add(S1, aEdgeBox);
-    Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    Standard_Real Xmin = NAN, Ymin = NAN, Zmin = NAN, Xmax = NAN, Ymax = NAN, Zmax = NAN;
     aEdgeBox.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
 
     const gp_Pnt aPnt0(Xmin, Ymin, Zmin);
@@ -252,9 +254,9 @@ static void TRIM_INFINIT_FACE(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
 
   const Standard_Boolean bRestrict = BRep_Tool::NaturalRestriction(aF);
 
-  Standard_Real U1, V1, U2, V2;
+  Standard_Real U1 = NAN, V1 = NAN, U2 = NAN, V2 = NAN;
   Standard_Real Umin = RealLast(), Umax = RealFirst(), Vmin = RealLast(), Vmax = RealFirst();
-  Standard_Boolean bUmin, bUmax, bVmin, bVmax;
+  Standard_Boolean bUmin = 0, bUmax = 0, bVmin = 0, bVmax = 0;
   bUmin = bUmax = bVmin = bVmax = Standard_False;
   Standard_Boolean bIsTrim = Standard_False;
 
@@ -311,7 +313,7 @@ static void TRIM_INFINIT_FACE(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
     if (aEdgeBox.IsWhole())
       return;
 
-    Standard_Real Xmin, Ymin, Zmin, Xmax, Ymax, Zmax;
+    Standard_Real Xmin = NAN, Ymin = NAN, Zmin = NAN, Xmax = NAN, Ymax = NAN, Zmax = NAN;
     aEdgeBox.Get(Xmin, Ymin, Zmin, Xmax, Ymax, Zmax);
 
     const gp_Pnt aPnt0(Xmin, Ymin, Zmin);
@@ -400,7 +402,7 @@ static void PERFORM_C0(const TopoDS_Edge& S1, const TopoDS_Edge& S2,
   if (BRep_Tool::Degenerated(S1) || BRep_Tool::Degenerated(S2))
     return;
 
-  Standard_Integer iE;
+  Standard_Integer iE = 0;
   for (iE = 0; iE < 2; iE++)
   {
     TopoDS_Edge E, Eother;
@@ -415,10 +417,10 @@ static void PERFORM_C0(const TopoDS_Edge& S1, const TopoDS_Edge& S2,
       Eother = S1;
     }
 
-    Standard_Real aFirst, aLast;
+    Standard_Real aFirst = NAN, aLast = NAN;
     Handle(Geom_Curve) pCurv = BRep_Tool::Curve(E, aFirst, aLast);
 
-    Standard_Real aFOther, aLOther;
+    Standard_Real aFOther = NAN, aLOther = NAN;
     Handle(Geom_Curve) pCurvOther = BRep_Tool::Curve(Eother, aFOther, aLOther);
 
     if (pCurv->Continuity() == GeomAbs_C0)
@@ -436,11 +438,11 @@ static void PERFORM_C0(const TopoDS_Edge& S1, const TopoDS_Edge& S2,
       TColStd_Array1OfReal arrInterOther(1, 1 + nbIntervalsOther);
       aAdaptorCurveOther.Intervals(arrInterOther, GeomAbs_C1);
 
-      Standard_Real Udeb, Ufin;
+      Standard_Real Udeb = NAN, Ufin = NAN;
       BRep_Tool::Range(Eother, Udeb, Ufin);
 
       gp_Pnt P1, Pt;
-      Standard_Integer i, ii;
+      Standard_Integer i = 0, ii = 0;
       BRepClass_FaceClassifier classifier;
       for (i = 1; i <= arrInter.Length(); i++)
       {
@@ -612,7 +614,7 @@ void BRepExtrema_DistanceSS::Perform(const TopoDS_Shape& theS1, const TopoDS_Sha
         {
           TopoDS_Face aF2 = TopoDS::Face (theS2);
           TopoDS_Face aTrimFace;
-          Standard_Boolean bIsInfinit;
+          Standard_Boolean bIsInfinit = 0;
           TRIM_INFINIT_FACE (aE1, aF2, aTrimFace, bIsInfinit);
           if (bIsInfinit)
             aF2 = aTrimFace;
@@ -639,7 +641,7 @@ void BRepExtrema_DistanceSS::Perform(const TopoDS_Shape& theS1, const TopoDS_Sha
         {
           TopoDS_Edge aE2 = TopoDS::Edge (theS2);
           TopoDS_Face aTrimFace;
-          Standard_Boolean bIsInfinit;
+          Standard_Boolean bIsInfinit = 0;
           TRIM_INFINIT_FACE (aF1, aE2, aTrimFace, bIsInfinit);
           if (bIsInfinit)
             aF1 = aTrimFace;
@@ -704,7 +706,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Vertex& theS1,
   if (NbExtrema > 0)
   {
     // Search minimum distance Dstmin
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real Dstmin = Ext.SquareDistance(1);
     for (i = 2; i <= NbExtrema; i++)
     {
@@ -758,7 +760,7 @@ void BRepExtrema_DistanceSS::Perform(const TopoDS_Vertex& theS1,
   if (NbExtrema > 0)
   {
     // Search minimum distance Dstmin
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real Dstmin = Ext.SquareDistance(1);
     for (i = 2; i <= NbExtrema; i++)
     {
@@ -769,7 +771,7 @@ void BRepExtrema_DistanceSS::Perform(const TopoDS_Vertex& theS1,
     Dstmin = sqrt(Dstmin);
     if ((Dstmin < myDstRef - myEps) || (fabs(Dstmin - myDstRef) < myEps))
     {
-      Standard_Real U, V;
+      Standard_Real U = NAN, V = NAN;
       gp_Pnt Pt, P1 = BRep_Tool::Pnt(theS1);
       BRepClass_FaceClassifier classifier;
       const Standard_Real tol = BRep_Tool::Tolerance(theS2);
@@ -821,7 +823,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1,
   if (NbExtrema > 0)
   {
     // Search minimum distance Dstmin
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real Dstmin = Ext.SquareDistance(1);
     for (i = 2; i <= NbExtrema; i++)
     {
@@ -910,7 +912,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1, const TopoDS_Fac
   if (NbExtrema > 0)
   {
     // Search minimum distance Dstmin
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real Dstmin = Ext.SquareDistance(1);
     for (i = 2; i <= NbExtrema; i++)
     {
@@ -921,7 +923,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1, const TopoDS_Fac
     Dstmin = sqrt(Dstmin);
     if ((Dstmin < myDstRef - myEps) || (fabs(Dstmin - myDstRef) < myEps))
     {
-      Standard_Real U, V;
+      Standard_Real U = NAN, V = NAN;
       const Standard_Real tol = BRep_Tool::Tolerance(theS2);
 
       gp_Pnt Pt1, Pt2;
@@ -959,7 +961,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1, const TopoDS_Fac
     }
   }
 
-  Standard_Real aFirst, aLast;
+  Standard_Real aFirst = NAN, aLast = NAN;
   Handle(Geom_Curve) pCurv = BRep_Tool::Curve(theS1, aFirst, aLast);
   if (pCurv->Continuity() == GeomAbs_C0)
   {
@@ -973,10 +975,10 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1, const TopoDS_Fac
     aAdaptorCurve.Intervals(arrInter, GeomAbs_C1);
 
     gp_Pnt Pt;
-    Standard_Real U, V;
+    Standard_Real U = NAN, V = NAN;
     const Standard_Real tol = BRep_Tool::Tolerance(theS2);
 
-    Standard_Integer i;
+    Standard_Integer i = 0;
     for (i = 1; i <= arrInter.Length(); i++)
     {
       const Standard_Real aParameter = arrInter(i);
@@ -988,7 +990,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1, const TopoDS_Fac
       if (NbExtremaPF > 0)
       {
         // Search minimum distance Dstmin
-        Standard_Integer ii;
+        Standard_Integer ii = 0;
         Standard_Real Dstmin = ExtPF.SquareDistance(1);
         for (ii = 2; ii <= NbExtremaPF; ii++)
         {
@@ -1051,7 +1053,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Face& theS1,
   if (NbExtrema > 0)
   {
     // Search minimum distance Dstmin
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real Dstmin = Ext.SquareDistance(1);
     for (i = 2; i <= NbExtrema; i++)
     {
@@ -1067,7 +1069,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Face& theS1,
 
       gp_Pnt Pt1, Pt2;
       gp_Pnt2d PUV;
-      Standard_Real U1, V1, U2, V2;
+      Standard_Real U1 = NAN, V1 = NAN, U2 = NAN, V2 = NAN;
       BRepClass_FaceClassifier classifier;
 
       for (i = 1; i <= NbExtrema; i++)

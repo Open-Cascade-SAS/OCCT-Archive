@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_FindPlane.hxx>
 #include <Geom_BezierCurve.hxx>
@@ -77,11 +79,11 @@ void BRepBuilderAPI_FindPlane::Init(const TopoDS_Shape&    S,
   Standard_Real tol2 = tolerance*tolerance;
   // try to find an analytical curve and calculate points
   TopLoc_Location loc;
-  Standard_Real first, last;
+  Standard_Real first = NAN, last = NAN;
   Standard_Boolean found = Standard_False;  
   Handle(Geom_Plane) P;
   TColgp_SequenceOfPnt points;
-  Standard_Integer nbPnts;
+  Standard_Integer nbPnts = 0;
 
   for (ex.Init(S,TopAbs_EDGE); ex.More(); ex.Next()) {
     Handle(Geom_Curve) c3d = 

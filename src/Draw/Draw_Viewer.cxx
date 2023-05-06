@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <Draw_Viewer.hxx>
 #include <Draw_View.hxx>
 
@@ -61,7 +63,7 @@ static DrawingMode CurrentMode = DRAW;
 Draw_Viewer::Draw_Viewer()
 {
   if (Draw_Batch) return;
-  Standard_Integer i;
+  Standard_Integer i = 0;
   for ( i = 0; i < MAXVIEW; i++) myViews[i] = NULL;
   for (i = 0; i < MAXCOLOR; i++) {
     ps_width[i] = 1;
@@ -205,7 +207,7 @@ void Draw_Viewer::SetZoom (const Standard_Integer id, const Standard_Real z)
   {
     Standard_Real zz = z / aView->GetZoom();
     aView->SetZoom(z);
-    Standard_Integer X,Y,W,H;
+    Standard_Integer X = 0,Y = 0,W = 0,H = 0;
     GetPosSize(id,X,Y,W,H);
 
     const Standard_Real w = 0.5 * static_cast<Standard_Real>(W);
@@ -382,7 +384,7 @@ void Draw_Viewer::GetFrame(const Standard_Integer id,
 {
   if (Draw_Batch) return;
   if (myViews[id]) {
-    Standard_Integer X,Y,H,W;
+    Standard_Integer X = 0,Y = 0,H = 0,W = 0;
     GetPosSize(id,X,Y,W,H);
     xminf =   - myViews[id]->GetDx();
     xmaxf = W - myViews[id]->GetDx();
@@ -403,7 +405,7 @@ void Draw_Viewer::FitView(const Standard_Integer id, const Standard_Integer fram
 
     // is this the only view in its category
     Standard_Boolean is2d = myViews[id]->Is2D();
-    Standard_Integer i,nbviews = 0;
+    Standard_Integer i = 0,nbviews = 0;
     for (i = 1; i < MAXVIEW; i++) {
       if (myViews[i]) {
         if (myViews[i]->Is2D() == is2d)
@@ -412,15 +414,15 @@ void Draw_Viewer::FitView(const Standard_Integer id, const Standard_Integer fram
     }
     Standard_Boolean only = (nbviews == 1);
 
-    Standard_Integer X,Y,H,W;
+    Standard_Integer X = 0,Y = 0,H = 0,W = 0;
     GetPosSize(id,X,Y,W,H);
     // compute the min max
     Standard_Integer n = myDrawables.Length();
     if (n == 0) return;
 //    Draw_Display DF;
     curview = myViews[id];
-    Standard_Real umin,umax,vmin,vmax;
-    Standard_Real u1,u2,v1,v2;
+    Standard_Real umin = NAN,umax = NAN,vmin = NAN,vmax = NAN;
+    Standard_Real u1 = NAN,u2 = NAN,v1 = NAN,v2 = NAN;
     umin = vmin = DRAWINFINITE;
     umax = vmax = -DRAWINFINITE;
 
@@ -437,7 +439,7 @@ void Draw_Viewer::FitView(const Standard_Integer id, const Standard_Integer fram
 	if (v2 > vmax) vmax = v2;
       }
     }
-    Standard_Real z;
+    Standard_Real z = NAN;
     umin = umin / curview->GetZoom();
     vmin = vmin / curview->GetZoom();
     umax = umax / curview->GetZoom();
@@ -907,7 +909,7 @@ void Draw_Viewer::RemoveDrawable (const Handle(Draw_Drawable3D)& D)
 {
   if (Draw_Batch) return;
   if (!D.IsNull() && D->Visible()) {
-    Standard_Integer index;
+    Standard_Integer index = 0;
     for (index = 1; index <= myDrawables.Length(); index++) {
       if (myDrawables(index) == D) {
 	D->Visible(Standard_False);
@@ -1022,7 +1024,7 @@ void Draw_Viewer::Select (Standard_Integer& theId,
   Standard_Boolean again = Standard_True;
   while (again)
   {
-    Draw_Window::Draw_XEvent ev;
+    Draw_Window::Draw_XEvent ev{};
     ev.type = 0;
     Draw_Window::GetNextEvent (ev);
     switch (ev.type)
@@ -1124,7 +1126,7 @@ Standard_Integer Draw_Viewer::Pick(const Standard_Integer id,
 
   // is this the only view in its category
   Standard_Boolean is2d = myViews[id]->Is2D();
-  Standard_Integer i,nbviews = 0;
+  Standard_Integer i = 0,nbviews = 0;
   for (i = 0; i < MAXVIEW; i++)
   {
     if (myViews[i])
@@ -1138,7 +1140,7 @@ Standard_Integer Draw_Viewer::Pick(const Standard_Integer id,
   ypick = Y;
   precpick = Prec;
   found = Standard_False;
-  Standard_Real x1,x2,y1,y2;
+  Standard_Real x1 = NAN,x2 = NAN,y1 = NAN,y2 = NAN;
   for (i = first+1; i <= myDrawables.Length(); i++) {
     Standard_Boolean reject = Standard_False;
     // rejection if only view
@@ -1402,7 +1404,7 @@ void Draw_Display::Project(const gp_Pnt& p, gp_Pnt2d& p2d) const
   if (Draw_Batch) return;
   gp_Pnt pt = p;
   pt.Transform(curview->GetMatrix());
-  Standard_Real xp,yp,zp;
+  Standard_Real xp = NAN,yp = NAN,zp = NAN;
   pt.Coord(xp,yp,zp);
   if (curview->IsPerspective()) {
     const Standard_Real aDistance = curview->GetFocalDistance();
@@ -1473,7 +1475,7 @@ inline  Standard_Integer CalculRegion(const Standard_Real x,
 				      const Standard_Real y1,
 				      const Standard_Real x2,
 				      const Standard_Real y2) {
-  Standard_Integer r;
+  Standard_Integer r = 0;
   if(x<x1) { r=1; }  else { if(x>x2) { r=2; } else { r=0; } }
   if(y<y1) { r|=4; } else { if(y>y2) { r|=8; } }
   return(r);
@@ -1497,7 +1499,7 @@ Standard_Boolean Trim(gp_Pnt2d& P1,gp_Pnt2d& P2,
     dx/=dab;
     dy/=dab;
 
-    Standard_Real xm,ym,mfenx,mfeny;
+    Standard_Real xm = NAN,ym = NAN,mfenx = NAN,mfeny = NAN;
     mfenx=xm=0.5*(x0+x1);
     mfeny=ym=0.5*(y0+y1);
     x1-=x0;     y1-=y0;
@@ -1564,7 +1566,7 @@ void Draw_Display::DrawTo (const gp_Pnt2d& pp2)
   case DRAW : {
 
 #if 1
-    Standard_Integer x0,y0,x1,y1;
+    Standard_Integer x0 = 0,y0 = 0,x1 = 0,y1 = 0;
     curview->GetFrame(x0,y0,x1,y1);
 
 

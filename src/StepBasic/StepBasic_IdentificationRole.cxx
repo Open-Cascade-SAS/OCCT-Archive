@@ -24,9 +24,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepBasic_IdentificationRole,Standard_Transient)
 //function : StepBasic_IdentificationRole
 //purpose  : 
 //=======================================================================
-StepBasic_IdentificationRole::StepBasic_IdentificationRole ()
+StepBasic_IdentificationRole::StepBasic_IdentificationRole () : defDescription(Standard_False)
 {
-  defDescription = Standard_False;
+  
 }
 
 //=======================================================================

@@ -22,9 +22,9 @@ IMPLEMENT_STANDARD_RTTIEXT(StepKinematics_UniversalPair, StepKinematics_LowOrder
 //function : StepKinematics_UniversalPair
 //purpose  :
 //=======================================================================
-StepKinematics_UniversalPair::StepKinematics_UniversalPair ()
+StepKinematics_UniversalPair::StepKinematics_UniversalPair () : defInputSkewAngle(Standard_False)
 {
-  defInputSkewAngle = Standard_False;
+  
 }
 
 //=======================================================================

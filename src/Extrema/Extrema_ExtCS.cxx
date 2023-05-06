@@ -16,6 +16,8 @@
 
 //  Modified by skv - Thu Jul  7 12:29:34 2005 OCC9134
 
+#include <math.h>
+
 #include <Adaptor3d_Surface.hxx>
 #include <Bnd_Box.hxx>
 #include <BndLib_AddSurface.hxx>
@@ -112,8 +114,8 @@ void Extrema_ExtCS::Perform(const Adaptor3d_Curve& C,
   myPOnS.Clear();
   myPOnC.Clear();
   mySqDist.Clear();
-  Standard_Integer i, j;
-  Standard_Integer NbT, NbU, NbV;
+  Standard_Integer i = 0, j = 0;
+  Standard_Integer NbT = 0, NbU = 0, NbV = 0;
   NbT = 12; NbU = NbV = 10;
   GeomAbs_CurveType myCtype  = C.GetType();
 
@@ -155,12 +157,12 @@ void Extrema_ExtCS::Perform(const Adaptor3d_Curve& C,
             Precision::IsInfinite(vfirst) || Precision::IsInfinite(vlast)))
           {
             Standard_Real tmin = Precision::Infinite(), tmax = -tmin;
-            Standard_Real xmin, ymin, zmin, xmax, ymax, zmax;
+            Standard_Real xmin = NAN, ymin = NAN, zmin = NAN, xmax = NAN, ymax = NAN, zmax = NAN;
             Bnd_Box aSurfBox;
             BndLib_AddSurface::Add(*myS, ufirst, ulast, vfirst, vlast, Precision::Confusion(), aSurfBox);
             aSurfBox.Get(xmin, ymin, zmin, xmax, ymax, zmax);
             gp_Lin aLin = C.Line();
-            Standard_Real aParOnLin;
+            Standard_Real aParOnLin = NAN;
             gp_Pnt aLimPntArray[8];
 
             aLimPntArray[0].SetCoord(xmin, ymin, zmin);
@@ -195,7 +197,7 @@ void Extrema_ExtCS::Perform(const Adaptor3d_Curve& C,
             myDone = anExtPS.IsDone();
             if (myDone) {
               Standard_Integer NbExt = anExtPS.NbExt();
-              Standard_Real T = aCPar, U, V;
+              Standard_Real T = aCPar, U = NAN, V = NAN;
               Extrema_POnCurv PC;
               Extrema_POnSurf PS;
               for (i = 1; i <= NbExt; i++) {
@@ -213,7 +215,7 @@ void Extrema_ExtCS::Perform(const Adaptor3d_Curve& C,
           myDone = Ext.IsDone();
           if (myDone) {
             Standard_Integer NbExt = Ext.NbExt();
-            Standard_Real T,U,V;
+            Standard_Real T = NAN,U = NAN,V = NAN;
             Extrema_POnCurv PC;
             Extrema_POnSurf PS;
             for (i = 1; i <= NbExt; i++) {
@@ -283,7 +285,7 @@ void Extrema_ExtCS::Perform(const Adaptor3d_Curve& C,
           Extrema_POnSurf PS;
           myExtElCS.Points(i, PC, PS);
           Standard_Real Ucurve = PC.Parameter();
-          Standard_Real U, V;
+          Standard_Real U = NAN, V = NAN;
           PS.Parameter(U, V);
           AddSolution(C, Ucurve, U, V, PC.Value(), PS.Value(), myExtElCS.SquareDistance(i));
         }
@@ -395,7 +397,7 @@ void Extrema_ExtCS::Perform(const Adaptor3d_Curve& C,
   myDone = Ext.IsDone();
   if (myDone) {
     Standard_Integer NbExt = Ext.NbExt();
-    Standard_Real T, U, V;
+    Standard_Real T = NAN, U = NAN, V = NAN;
     Extrema_POnCurv PC;
     Extrema_POnSurf PS;
     for (i = 1; i <= NbExt; i++) {
@@ -564,7 +566,7 @@ Standard_Boolean Extrema_ExtCS::AddSolution(const Adaptor3d_Curve& theCurve,
       aPC = myPOnC(j);
       aPS = myPOnS(j);
       Standard_Real Tj = aPC.Parameter();
-      Standard_Real Uj, Vj;
+      Standard_Real Uj = NAN, Vj = NAN;
       aPS.Parameter(Uj, Vj);
       if (Abs(T - Tj) <= mytolC &&
         Abs(U - Uj) <= mytolS &&

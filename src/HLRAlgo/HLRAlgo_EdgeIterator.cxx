@@ -19,6 +19,8 @@
 #endif
 
 
+#include <math.h>
+
 #include <HLRAlgo_EdgeIterator.hxx>
 #include <HLRAlgo_EdgeStatus.hxx>
 
@@ -56,8 +58,8 @@ void HLRAlgo_EdgeIterator::InitHidden (HLRAlgo_EdgeStatus& status)
   }
   else {
     myNbHid = ((HLRAlgo_EdgeStatus*)EHid)->NbVisiblePart();
-    Standard_Real B1;
-    Standard_ShortReal B2;
+    Standard_Real B1 = NAN;
+    Standard_ShortReal B2 = NAN;
     ((HLRAlgo_EdgeStatus*)EHid)->Bounds
       (myHidStart,myHidTolStart,B1,B2);
     ((HLRAlgo_EdgeStatus*)EHid)->VisiblePart
@@ -77,8 +79,8 @@ void HLRAlgo_EdgeIterator::NextHidden ()
 {
   if (iHid >= myNbHid + 1) iHid++;
   else {
-    Standard_Real B1;
-    Standard_ShortReal B2;
+    Standard_Real B1 = NAN;
+    Standard_ShortReal B2 = NAN;
     ((HLRAlgo_EdgeStatus*)EHid)->VisiblePart
       (iHid,B1,B2,myHidStart,myHidTolStart);
     iHid++;

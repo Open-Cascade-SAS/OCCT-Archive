@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <NCollection_LocalArray.hxx>
 #include <PLib.hxx>
 #include <PLib_HermitJacobi.hxx>
@@ -31,12 +33,12 @@ PLib_HermitJacobi::PLib_HermitJacobi(const Standard_Integer WorkDegree,
 				     const GeomAbs_Shape ConstraintOrder) :
                                      myH(1,2*(PLib::NivConstr(ConstraintOrder)+1),
 					 1,2*(PLib::NivConstr(ConstraintOrder)+1)),
-				     myWCoeff(1,2*(PLib::NivConstr(ConstraintOrder)+1)+1)
+				     myJacobi(new PLib_JacobiPolynomial (WorkDegree,ConstraintOrder)), myWCoeff(1,2*(PLib::NivConstr(ConstraintOrder)+1)+1)
 {
   Standard_Integer NivConstr = PLib::NivConstr(ConstraintOrder);
   PLib::HermiteCoefficients(-1.,1.,NivConstr,NivConstr,myH);
 
-  myJacobi = new PLib_JacobiPolynomial (WorkDegree,ConstraintOrder);
+  
   
   myWCoeff.Init(0.);
   myWCoeff(1) = 1.;
@@ -97,11 +99,11 @@ void PLib_HermitJacobi::ToCoefficients(const Standard_Integer Dimension,
 				       const TColStd_Array1OfReal& HermJacCoeff,
 				       TColStd_Array1OfReal& Coefficients) const
 {
-  Standard_Integer i,k,idim,i1,i2;
-  Standard_Real h1, h2;
+  Standard_Integer i = 0,k = 0,idim = 0,i1 = 0,i2 = 0;
+  Standard_Real h1 = NAN, h2 = NAN;
   Standard_Integer NivConstr  = this->NivConstr(),
                    DegreeH    = 2*NivConstr+1;
-  Standard_Integer ibegHJC = HermJacCoeff.Lower(), kdim;
+  Standard_Integer ibegHJC = HermJacCoeff.Lower(), kdim = 0;
 
   TColStd_Array1OfReal AuxCoeff(0,(Degree+1)*Dimension-1);
   AuxCoeff.Init(0.);
@@ -153,7 +155,7 @@ void PLib_HermitJacobi::D0123(const Standard_Integer NDeriv,
   NCollection_LocalArray<Standard_Real> jac3 (4 * 20);
   NCollection_LocalArray<Standard_Real> wvalues (4);
 
-  Standard_Integer i, j;
+  Standard_Integer i = 0, j = 0;
   Standard_Integer NivConstr  = this->NivConstr(),
                    WorkDegree = this->WorkDegree(),
                    DegreeH    = 2*NivConstr+1;
@@ -162,7 +164,7 @@ void PLib_HermitJacobi::D0123(const Standard_Integer NDeriv,
                    ibeg2 = BasisD2.Lower(),
                    ibeg3 = BasisD3.Lower();
   Standard_Integer JacDegree = WorkDegree-DegreeH-1;
-  Standard_Real W0;
+  Standard_Real W0 = NAN;
 
   TColStd_Array1OfReal JacValue0(jac0[0], 0, Max(0,JacDegree)); 
   TColStd_Array1OfReal WValues(wvalues[0],0,NDeriv); 

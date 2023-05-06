@@ -23,6 +23,8 @@
 #define PERFORM void IntAna_IntConicQuad::Perform
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <gp_Circ.hxx>
 #include <gp_Circ2d.hxx>
@@ -47,11 +49,11 @@ static Standard_Real PIpPI = M_PI + M_PI;
 //=============================================================================
 //==                                          E m p t y   C o n s t r u c t o r
 //== 
-CREATE(void) {
-  done=Standard_False;
-  parallel = Standard_False;
-  inquadric = Standard_False;
-  nbpts = 0;
+CREATE(void) : done(Standard_False), parallel(Standard_False), inquadric(Standard_False), nbpts(0) {
+  
+  
+  
+  
   memset (paramonc, 0, sizeof (paramonc));
 }
 //=============================================================================
@@ -63,7 +65,7 @@ CREATE(const gp_Lin& L,const IntAna_Quadric& Quad) {
 
 PERFORM(const gp_Lin& L,const IntAna_Quadric& Quad) {
 
-  Standard_Real Qxx,Qyy,Qzz,Qxy,Qxz,Qyz,Qx,Qy,Qz,QCte;
+  Standard_Real Qxx = NAN,Qyy = NAN,Qzz = NAN,Qxy = NAN,Qxz = NAN,Qyz = NAN,Qx = NAN,Qy = NAN,Qz = NAN,QCte = NAN;
   done=inquadric=parallel=Standard_False;
 
   //----------------------------------------------------------------------
@@ -80,7 +82,7 @@ PERFORM(const gp_Lin& L,const IntAna_Quadric& Quad) {
   //----------------------------------------------------------------------
 
 
-  Standard_Real Lx0,Ly0,Lz0,Lx,Ly,Lz;
+  Standard_Real Lx0 = NAN,Ly0 = NAN,Lz0 = NAN,Lx = NAN,Ly = NAN,Lz = NAN;
 
 
   nbpts=0;
@@ -135,7 +137,7 @@ CREATE(const gp_Circ& C,const IntAna_Quadric& Quad) {
 
 PERFORM(const gp_Circ& C,const IntAna_Quadric& Quad) {
   
-  Standard_Real Qxx,Qyy,Qzz,Qxy,Qxz,Qyz,Qx,Qy,Qz,QCte;
+  Standard_Real Qxx = NAN,Qyy = NAN,Qzz = NAN,Qxy = NAN,Qxz = NAN,Qyz = NAN,Qx = NAN,Qy = NAN,Qz = NAN,QCte = NAN;
   
   //----------------------------------------------------------------------
   //-- Dans le repere liee a C.Position() : 
@@ -197,7 +199,7 @@ CREATE(const gp_Elips& E,const IntAna_Quadric& Quad) {
 
 PERFORM(const gp_Elips& E,const IntAna_Quadric& Quad) {
   
-  Standard_Real Qxx,Qyy,Qzz,Qxy,Qxz,Qyz,Qx,Qy,Qz,QCte;
+  Standard_Real Qxx = NAN,Qyy = NAN,Qzz = NAN,Qxy = NAN,Qxz = NAN,Qyz = NAN,Qx = NAN,Qy = NAN,Qz = NAN,QCte = NAN;
   
   done=inquadric=parallel=Standard_False;  
   
@@ -259,7 +261,7 @@ CREATE(const gp_Parab& P,const IntAna_Quadric& Quad) {
 
 PERFORM(const gp_Parab& P,const IntAna_Quadric& Quad) {
   
-  Standard_Real Qxx,Qyy,Qzz,Qxy,Qxz,Qyz,Qx,Qy,Qz,QCte;
+  Standard_Real Qxx = NAN,Qyy = NAN,Qzz = NAN,Qxy = NAN,Qxz = NAN,Qyz = NAN,Qx = NAN,Qy = NAN,Qz = NAN,QCte = NAN;
   
   done=inquadric=parallel=Standard_False;
 
@@ -315,7 +317,7 @@ CREATE(const gp_Hypr& H,const IntAna_Quadric& Quad) {
 
 PERFORM(const gp_Hypr& H,const IntAna_Quadric& Quad) {
   
-  Standard_Real Qxx,Qyy,Qzz,Qxy,Qxz,Qyz,Qx,Qy,Qz,QCte;
+  Standard_Real Qxx = NAN,Qyy = NAN,Qzz = NAN,Qxy = NAN,Qxz = NAN,Qyz = NAN,Qx = NAN,Qy = NAN,Qz = NAN,QCte = NAN;
 
   done=inquadric=parallel=Standard_False;  
 
@@ -420,9 +422,9 @@ void IntAna_IntConicQuad::Perform (const gp_Lin& L, const gp_Pln& P,
   
   done=Standard_False;
   
-  Standard_Real A,B,C,D;
-  Standard_Real Al,Bl,Cl;
-  Standard_Real Dis,Direc;
+  Standard_Real A = NAN,B = NAN,C = NAN,D = NAN;
+  Standard_Real Al = NAN,Bl = NAN,Cl = NAN;
+  Standard_Real Dis = NAN,Direc = NAN;
   
   P.Coefficients(A,B,C,D);
   gp_Pnt Orig(L.Location());

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <IntPatch_ImpPrmIntersection.hxx>
 
 #include <Adaptor3d_Surface.hxx>
@@ -99,8 +101,8 @@ static IntPatch_SpecPntType IsSeamOrPole(const Handle(Adaptor3d_Surface)& theQSu
     return IntPatch_SPntNone;
 
   //Parameters on Quadric and on parametric for reference point
-  Standard_Real aUQRef, aVQRef, aUPRef, aVPRef;
-  Standard_Real aUQNext, aVQNext, aUPNext, aVPNext;
+  Standard_Real aUQRef = NAN, aVQRef = NAN, aUPRef = NAN, aVPRef = NAN;
+  Standard_Real aUQNext = NAN, aVQNext = NAN, aUPNext = NAN, aVPNext = NAN;
 
   const gp_Pnt &aP3d = theLine->Value(theRefIndex + 1).Value();
 
@@ -234,9 +236,9 @@ void ComputeTangency (const IntPatch_TheSOnBounds& solrst,
   const Handle(Adaptor3d_Surface)& PSurf,
   TColStd_Array1OfInteger& Destination)
 {
-  Standard_Integer i,k, NbPoints, seqlength;
-  Standard_Real theparam,test;
-  Standard_Boolean fairpt, ispassing;
+  Standard_Integer i = 0,k = 0, NbPoints = 0, seqlength = 0;
+  Standard_Real theparam = NAN,test = NAN;
+  Standard_Boolean fairpt = 0, ispassing = 0;
   TopAbs_Orientation arcorien,vtxorien;
   Handle(Adaptor2d_Curve2d) thearc;
   Handle(Adaptor3d_HVertex) vtx,vtxbis;
@@ -451,7 +453,7 @@ void Recadre(const Standard_Boolean ,
   Standard_Real U2,
   Standard_Real V2)
 {
-  Standard_Real U1p,V1p,U2p,V2p;
+  Standard_Real U1p = NAN,V1p = NAN,U2p = NAN,V2p = NAN;
   iwline->Line()->Value(Param).Parameters(U1p,V1p,U2p,V2p);
   switch(typeS1)
   {
@@ -518,7 +520,7 @@ Standard_Real GetLocalStep(const Handle(Adaptor3d_Surface)& theSurf,
     {
       TColStd_Array1OfReal anInts(1, aNbInt + 1);
       theSurf->UIntervals(anInts, GeomAbs_C1);
-      Standard_Integer i;
+      Standard_Integer i = 0;
       Standard_Real aMinInt = Precision::Infinite();
       for (i = 1; i <= aNbInt; ++i)
       {
@@ -541,7 +543,7 @@ Standard_Real GetLocalStep(const Handle(Adaptor3d_Surface)& theSurf,
     {
       TColStd_Array1OfReal anInts(1, aNbInt + 1);
       theSurf->VIntervals(anInts, GeomAbs_C1);
-      Standard_Integer i;
+      Standard_Integer i = 0;
       Standard_Real aMinInt = Precision::Infinite();
       for (i = 1; i <= aNbInt; ++i)
       {
@@ -572,10 +574,10 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
   const Standard_Real Fleche,
   const Standard_Real Pas)
 {
-  Standard_Boolean reversed, procf, procl, dofirst, dolast;
-  Standard_Integer indfirst = 0, indlast = 0, ind2, NbSegm;
-  Standard_Integer NbPointIns, NbPointRst, Nblines, Nbpts, NbPointDep;
-  Standard_Real U1,V1,U2,V2,paramf,paraml,currentparam;
+  Standard_Boolean reversed = 0, procf = 0, procl = 0, dofirst = 0, dolast = 0;
+  Standard_Integer indfirst = 0, indlast = 0, ind2 = 0, NbSegm = 0;
+  Standard_Integer NbPointIns = 0, NbPointRst = 0, Nblines = 0, Nbpts = 0, NbPointDep = 0;
+  Standard_Real U1 = NAN,V1 = NAN,U2 = NAN,V2 = NAN,paramf = NAN,paraml = NAN,currentparam = NAN;
 
   IntPatch_TheSegmentOfTheSOnBounds thesegm;
   IntSurf_PathPoint PPoint;
@@ -778,7 +780,7 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
       return;
     }
 
-    Standard_Real Vmin, Vmax, TolV = 1.e-14;
+    Standard_Real Vmin = NAN, Vmax = NAN, TolV = 1.e-14;
     if (!reversed) { //Surf1 is quadric
       Vmin = Surf1->FirstVParameter();
       Vmax = Surf1->LastVParameter();
@@ -822,7 +824,7 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
         }
 
         //
-        Standard_Real AnU1,AnU2,AnV2;
+        Standard_Real AnU1 = NAN,AnU2 = NAN,AnV2 = NAN;
 
         GeomAbs_SurfaceType typQuad = Quad.TypeQuadric();
         Standard_Boolean arecadr=Standard_False;
@@ -860,7 +862,7 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
           //
           if(arecadr) {
             //modified by NIZNHY-PKV Fri Mar 28 15:06:01 2008f
-            Standard_Real aCf, aTwoPI;
+            Standard_Real aCf = NAN, aTwoPI = NAN;
             //
             aCf=0.;
             aTwoPI=M_PI+M_PI;
@@ -1263,7 +1265,7 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
       Standard_Boolean TransitionOK=Standard_False;
 
       if(thesegm.HasFirstPoint()) { 
-        Standard_Real _u1,_v1,_u2,_v2;
+        Standard_Real _u1 = NAN,_v1 = NAN,_u2 = NAN,_v2 = NAN;
 
         dofirst = Standard_True;
         PStartf = thesegm.FirstPoint();
@@ -1318,7 +1320,7 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
         }
       }
       if(thesegm.HasLastPoint()) {  
-        Standard_Real _u1,_v1,_u2,_v2;
+        Standard_Real _u1 = NAN,_v1 = NAN,_u2 = NAN,_v2 = NAN;
 
         dolast = Standard_True;
         PStartl = thesegm.LastPoint();
@@ -1410,11 +1412,11 @@ void IntPatch_ImpPrmIntersection::Perform (const Handle(Adaptor3d_Surface)& Surf
 
       // Polygone sur restriction solution
       if (dofirst && dolast) {
-        Standard_Real prm;
+        Standard_Real prm = NAN;
         gp_Pnt ptpoly;
         IntSurf_PntOn2S p2s;
         Handle(IntSurf_LineOn2S) Thelin = new IntSurf_LineOn2S ();
-        Handle(Adaptor2d_Curve2d) arcsegm = thesegm.Curve();
+        const Handle(Adaptor2d_Curve2d)& arcsegm = thesegm.Curve();
         Standard_Integer nbsample = 100;
 
         if (!reversed) {
@@ -2572,7 +2574,7 @@ static void DetectOfBoundaryAchievement(const Handle(Adaptor3d_Surface)& theQSur
 
   const IntSurf_PntOn2S &aPPrev = theSourceLine->Value(thePointIndex - 1),
                         &aPCurr = theSourceLine->Value(thePointIndex);
-  Standard_Real aUPrev, aVPrev, aUCurr, aVCurr;
+  Standard_Real aUPrev = NAN, aVPrev = NAN, aUCurr = NAN, aVCurr = NAN;
   if (theIsReversed)
   {
     aPPrev.ParametersOnS2(aUPrev, aVPrev);   // S2 - quadric, set U,V by Pnt3D
@@ -3314,7 +3316,7 @@ Standard_Boolean IsCoincide(IntPatch_TheSurfFunction& theFunc,
 
     const Standard_Real aUl = aPmin.X(), aVl = aPmin.Y();
 
-    Standard_Real aU, aV;
+    Standard_Real aU = NAN, aV = NAN;
     Standard_Real dU = aUl - aUf, dV = aVl - aVf;
     for(Standard_Integer i = 0; i < 7; i++)
     {

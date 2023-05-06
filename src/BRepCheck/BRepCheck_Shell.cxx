@@ -288,7 +288,7 @@ BRepCheck_Status BRepCheck_Shell::Closed(const Standard_Boolean Update)
 
   myCstat = BRepCheck_NoError;
   //
-  Standard_Integer index, aNbF;
+  Standard_Integer index = 0, aNbF = 0;
   TopExp_Explorer exp, ede;
   TopTools_IndexedMapOfShape mapS;
   TopTools_MapOfShape aMEToAvoid;
@@ -394,7 +394,7 @@ BRepCheck_Status BRepCheck_Shell::Closed(const Standard_Boolean Update)
   }
   //
   //
-  Standard_Integer i, Nbedges, nboc, nbSet;
+  Standard_Integer i = 0, Nbedges = 0, nboc = 0, nbSet = 0;
   //
   Nbedges = myMapEF.Extent();
   for (i = 1; i<=Nbedges; ++i)
@@ -884,7 +884,7 @@ Standard_Integer BRepCheck_Shell::NbConnectedSet(TopTools_ListOfShape& theSets)
   TopExp_Explorer exsh(myShape, TopAbs_FACE);
   for (; exsh.More(); exsh.Next()) theFaces.Add(exsh.Current());
   // The edges that are not oriented or have more than 2 connections are missing
-  Standard_Integer iCur;
+  Standard_Integer iCur = 0;
   TopTools_MapOfShape theMultiEd;
   TopTools_MapOfShape theUnOriEd;
   for (iCur=1; iCur<=parents.Extent(); iCur++) {

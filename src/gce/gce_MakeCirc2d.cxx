@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <gce_MakeCirc2d.hxx>
 #include <gp.hxx>
@@ -47,7 +49,7 @@
 //=========================================================================
 gce_MakeCirc2d::gce_MakeCirc2d(const gp_Pnt2d&  P1 ,
 			       const gp_Pnt2d&  P2 ,
-			       const gp_Pnt2d&  P3 )
+			       const gp_Pnt2d&  P3 ) : gce_Root()
 {
   gp_Dir2d dirx(1.0,0.0);
 
@@ -67,7 +69,7 @@ gce_MakeCirc2d::gce_MakeCirc2d(const gp_Pnt2d&  P1 ,
   else {
     gp_Lin2d L1;
     gp_Lin2d L2;
-    Standard_Real x1,y1,x2,y2,x3,y3;
+    Standard_Real x1 = NAN,y1 = NAN,x2 = NAN,y2 = NAN,x3 = NAN,y3 = NAN;
     P1.Coord(x1,y1);
     P2.Coord(x2,y2);
     P3.Coord(x3,y3);
@@ -95,7 +97,7 @@ gce_MakeCirc2d::gce_MakeCirc2d(const gp_Pnt2d&  P1 ,
 	dist1 = P1.Distance(pInt);
 	dist2 = P2.Distance(pInt);
 	dist3 = P3.Distance(pInt);
-	Standard_Real xc,yc;
+	Standard_Real xc = NAN,yc = NAN;
 	pInt.Coord(xc,yc);
 	gp_Dir2d d1(x1-xc,y1-yc);
 	gp_Dir2d d2(xc-x3,yc-y3);
@@ -121,7 +123,7 @@ gce_MakeCirc2d::gce_MakeCirc2d(const gp_Pnt2d&  P1 ,
 
 gce_MakeCirc2d::gce_MakeCirc2d(const gp_Ax2d&         XAxis   ,
 			       const Standard_Real    Radius  ,
-			       const Standard_Boolean Sense   )
+			       const Standard_Boolean Sense   ) : gce_Root()
 {
   if (Radius >= 0.) {
     TheCirc2d = gp_Circ2d(XAxis,Radius,Sense);
@@ -137,7 +139,7 @@ gce_MakeCirc2d::gce_MakeCirc2d(const gp_Ax2d&         XAxis   ,
 //==========================================================================
 
 gce_MakeCirc2d::gce_MakeCirc2d(const gp_Ax22d&     Axis   ,
-			       const Standard_Real Radius  )
+			       const Standard_Real Radius  ) : gce_Root()
 {
   if (Radius >= 0.) {
     TheCirc2d = gp_Circ2d(Axis,Radius);
@@ -155,7 +157,7 @@ gce_MakeCirc2d::gce_MakeCirc2d(const gp_Ax22d&     Axis   ,
 
 gce_MakeCirc2d::gce_MakeCirc2d(const gp_Pnt2d&        Center  ,
 			       const Standard_Real    Radius  ,
-			       const Standard_Boolean Sense   ) 
+			       const Standard_Boolean Sense   ) : gce_Root() 
 {
   if (Radius >= 0.) {
     TheCirc2d = gp_Circ2d(gp_Ax2d(Center,gp_Dir2d(1.0,0.0)),Radius,Sense);
@@ -173,7 +175,7 @@ gce_MakeCirc2d::gce_MakeCirc2d(const gp_Pnt2d&        Center  ,
 
 gce_MakeCirc2d::gce_MakeCirc2d(const gp_Pnt2d&        Center ,
 			       const gp_Pnt2d&        Point  , 
-			       const Standard_Boolean Sense  ) 
+			       const Standard_Boolean Sense  ) : gce_Root() 
 {
   TheCirc2d = gp_Circ2d(gp_Ax2d(Center,gp_Dir2d(1.0,0.0)),
 			Point.Distance(Center),Sense);
@@ -186,7 +188,7 @@ gce_MakeCirc2d::gce_MakeCirc2d(const gp_Pnt2d&        Center ,
 //==========================================================================
 
 gce_MakeCirc2d::gce_MakeCirc2d(const gp_Circ2d& Circ  ,
-			       const gp_Pnt2d&  Point ) 
+			       const gp_Pnt2d&  Point ) : gce_Root() 
 {
   TheCirc2d = gp_Circ2d(Circ.Axis(),Point.Distance(Circ.Location()));
   TheError = gce_Done;
@@ -198,7 +200,7 @@ gce_MakeCirc2d::gce_MakeCirc2d(const gp_Circ2d& Circ  ,
 //==========================================================================
 
 gce_MakeCirc2d::gce_MakeCirc2d(const gp_Circ2d&    Circ  ,
-			       const Standard_Real Dist1 ) 
+			       const Standard_Real Dist1 ) : gce_Root() 
 {
   TheCirc2d = gp_Circ2d(Circ.Axis(),Abs(Circ.Radius()+Dist1));
   TheError = gce_Done;

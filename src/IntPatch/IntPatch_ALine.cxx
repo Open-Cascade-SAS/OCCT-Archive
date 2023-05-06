@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <gp_Pnt.hxx>
 #include <IntPatch_ALine.hxx>
 #include <IntPatch_Point.hxx>
@@ -29,13 +31,13 @@ IntPatch_ALine::IntPatch_ALine (const IntAna_Curve& C,
 				const IntSurf_TypeTrans Trans1,
 				const IntSurf_TypeTrans Trans2) :
   IntPatch_Line(Tang,Trans1,Trans2),
-  fipt(Standard_False),
+  curv(C), fipt(Standard_False),
   lapt(Standard_False),
   indf(0),
   indl(0)
 {
   typ = IntPatch_Analytic;
-  curv = C;
+  
 }
 
 
@@ -44,26 +46,26 @@ IntPatch_ALine::IntPatch_ALine (const IntAna_Curve& C,
 				const IntSurf_Situation Situ1,
 				const IntSurf_Situation Situ2) :
   IntPatch_Line(Tang,Situ1,Situ2),
-  fipt(Standard_False),
+  curv(C), fipt(Standard_False),
   lapt(Standard_False),
   indf(0),
   indl(0)
 {
   typ = IntPatch_Analytic;
-  curv = C;
+  
 }
 
 
 IntPatch_ALine::IntPatch_ALine (const IntAna_Curve& C,
 				const Standard_Boolean Tang) :
   IntPatch_Line(Tang),
-  fipt(Standard_False),
+  curv(C), fipt(Standard_False),
   lapt(Standard_False),
   indf(0),
   indl(0)
 {
   typ = IntPatch_Analytic;
-  curv = C;
+  
 }
 
 const IntAna_Curve&  IntPatch_ALine::Curve() const { 
@@ -234,11 +236,11 @@ void IntPatch_ALine::AddVertex (const IntPatch_Point& VTXj) {
 
 
 void IntPatch_ALine::ComputeVertexParameters(const Standard_Real Tol) { 
-  Standard_Boolean   SortIsOK,APointDeleted;
+  Standard_Boolean   SortIsOK = 0,APointDeleted = 0;
   Standard_Boolean   SortAgain = Standard_True;
-  Standard_Integer   nbvtx,i,j;
-  Standard_Real ParamMinOnLine,ParamMaxOnLine;
-  Standard_Boolean OpenFirst,OpenLast;
+  Standard_Integer   nbvtx = 0,i = 0,j = 0;
+  Standard_Real ParamMinOnLine = NAN,ParamMaxOnLine = NAN;
+  Standard_Boolean OpenFirst = 0,OpenLast = 0;
   
   ParamMinOnLine = FirstParameter(OpenFirst);
   ParamMaxOnLine = LastParameter(OpenLast);
@@ -605,7 +607,7 @@ void IntPatch_ALine::ComputeVertexParameters(const Standard_Real Tol) {
 	  IntPatch_Point CopyVtx = VTXm1;
 	  VTXm1.SetParameter(VTX.ParameterOnLine());
 	  VTXm1.SetValue(VTX.Value(),VTX.Tolerance(),VTX.IsTangencyPoint());
-	  Standard_Real u1,v1,u2,v2;
+	  Standard_Real u1 = NAN,v1 = NAN,u2 = NAN,v2 = NAN;
 	  VTX.Parameters(u1,v1,u2,v2);
 	  VTXm1.SetParameters(u1,v1,u2,v2);
 	  if(CopyVtx.IsOnDomS1()) { 

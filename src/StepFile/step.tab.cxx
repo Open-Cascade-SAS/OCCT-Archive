@@ -174,7 +174,7 @@ namespace step {
   template <typename Base>
   parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, YY_RVREF (semantic_type) v)
     : Base (t)
-    , value (YY_MOVE (v))
+    , value (v)
   {}
 
   template <typename Base>
@@ -206,7 +206,7 @@ namespace step {
 
 #if 201103L <= YY_CPLUSPLUS
   parser::by_kind::by_kind (by_kind&& that)
-    : kind_ (that.kind_)
+ noexcept     : kind_ (that.kind_)
   {
     that.clear ();
   }
@@ -285,7 +285,7 @@ namespace step {
   {}
 
   parser::stack_symbol_type::stack_symbol_type (YY_RVREF (stack_symbol_type) that)
-    : super_type (YY_MOVE (that.state), YY_MOVE (that.value))
+ noexcept     : super_type (that.state, YY_MOVE (that.value))
   {
 #if 201103L <= YY_CPLUSPLUS
     // that is emptied.
@@ -434,7 +434,7 @@ namespace step {
   int
   parser::parse ()
   {
-    int yyn;
+    int yyn = 0;
     /// Length of the RHS of the rule being reduced.
     int yylen = 0;
 
@@ -446,7 +446,7 @@ namespace step {
     symbol_type yyla;
 
     /// The return value of parse ().
-    int yyresult;
+    int yyresult = 0;
 
 #if YY_EXCEPTIONS
     try
@@ -686,7 +686,7 @@ namespace step {
         ++yynerrs_;
         context yyctx (*this, yyla);
         std::string msg = yysyntax_error_ (yyctx);
-        error (YY_MOVE (msg));
+        error (msg);
       }
 
 

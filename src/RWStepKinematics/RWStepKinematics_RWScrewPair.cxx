@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <RWStepKinematics_RWScrewPair.hxx>
 
 #include <Interface_EntityIterator.hxx>
@@ -78,7 +80,7 @@ void RWStepKinematics_RWScrewPair::ReadStep (const Handle(StepData_StepReaderDat
 
   // Own fields of ScrewPair
 
-  Standard_Real aPitch;
+  Standard_Real aPitch = NAN;
   theData->ReadReal (theNum, 7, "pitch", theArch, aPitch);
 
   // Initialize entity

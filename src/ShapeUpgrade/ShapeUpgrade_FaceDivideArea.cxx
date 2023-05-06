@@ -32,12 +32,12 @@ IMPLEMENT_STANDARD_RTTIEXT(ShapeUpgrade_FaceDivideArea,ShapeUpgrade_FaceDivide)
 //function : ShapeUpgrade_FaceDivideArea
 //purpose  : 
 //=======================================================================
-ShapeUpgrade_FaceDivideArea::ShapeUpgrade_FaceDivideArea()
+ShapeUpgrade_FaceDivideArea::ShapeUpgrade_FaceDivideArea() : myMaxArea(Precision::Infinite()), myNbParts(0), myIsSplittingByNumber(Standard_False)
 {
-  myMaxArea = Precision::Infinite();
-  myNbParts = 0;
+  
+  
   myUnbSplit = myVnbSplit = -1;
-  myIsSplittingByNumber = Standard_False;
+  
   SetPrecision(1.e-5);
   SetSplitSurfaceTool (new ShapeUpgrade_SplitSurfaceArea);
 }
@@ -47,12 +47,12 @@ ShapeUpgrade_FaceDivideArea::ShapeUpgrade_FaceDivideArea()
 //purpose  : 
 //=======================================================================
 
-ShapeUpgrade_FaceDivideArea::ShapeUpgrade_FaceDivideArea(const TopoDS_Face& F)
+ShapeUpgrade_FaceDivideArea::ShapeUpgrade_FaceDivideArea(const TopoDS_Face& F) : myMaxArea(Precision::Infinite()), myNbParts(0), myIsSplittingByNumber(Standard_False)
 {
-  myMaxArea = Precision::Infinite();
-  myNbParts = 0;
+  
+  
   myUnbSplit = myVnbSplit = -1;
-  myIsSplittingByNumber = Standard_False;
+  
   SetPrecision(1.e-5);
   SetSplitSurfaceTool (new ShapeUpgrade_SplitSurfaceArea);
   Init(F);

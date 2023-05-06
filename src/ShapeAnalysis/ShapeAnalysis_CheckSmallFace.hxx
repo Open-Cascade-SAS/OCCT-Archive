@@ -188,15 +188,15 @@ private:
 
 
   TopoDS_Shape myComp;
-  Standard_Integer myStatus;
+  Standard_Integer myStatus{};
   Standard_Integer myStatusSpot;
   Standard_Integer myStatusStrip;
   Standard_Integer myStatusPin;
   Standard_Integer myStatusTwisted;
   Standard_Integer myStatusSplitVert;
-  Standard_Integer myStatusPinFace;
-  Standard_Integer myStatusPinEdges;
-  Standard_Real myPrecision;
+  Standard_Integer myStatusPinFace{};
+  Standard_Integer myStatusPinEdges{};
+  Standard_Real myPrecision{};
 
 
 };

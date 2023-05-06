@@ -42,7 +42,7 @@ Standard_Boolean BRepTools_PurgeLocations::Perform(const TopoDS_Shape& theShape)
   AddShape(myShape);
 
   //Check locations;
-  Standard_Integer ind;
+  Standard_Integer ind = 0;
   NCollection_Vector<Standard_Integer> aBadTrsfInds;
   for (ind = 1; ; ++ind)
   {
@@ -67,7 +67,7 @@ Standard_Boolean BRepTools_PurgeLocations::Perform(const TopoDS_Shape& theShape)
 
   Standard_Integer aNbShapes = myMapShapes.Extent();
   myMapNewShapes.Clear();
-  Standard_Integer inds;
+  Standard_Integer inds = 0;
   for (inds = 1; inds <= aNbShapes; ++inds)
   {
     const TopoDS_Shape& anS = myMapShapes(inds);
@@ -76,7 +76,7 @@ Standard_Boolean BRepTools_PurgeLocations::Perform(const TopoDS_Shape& theShape)
     {
       continue;
     }
-    Standard_Integer il;
+    Standard_Integer il = 0;
     for (il = 0; il < aBadTrsfInds.Size(); ++il)
     {
       if (aBadTrsfInds(il) == aLocInd)

@@ -63,7 +63,7 @@ private:
 
 
   Handle(StepGeom_Direction) extrudedDirection;
-  Standard_Real depth;
+  Standard_Real depth{};
 
 
 };

@@ -14,6 +14,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <DsgPrs_DiameterPresentation.hxx>
 
 #include <DsgPrs.hxx>
@@ -101,7 +103,7 @@ static Standard_Boolean DsgPrs_InDomain(const Standard_Real fpar,
       return ((para >= fpar) && (para <= lpar));
     else { // fpar > lpar
       Standard_Real delta = 2.*M_PI-fpar;
-      Standard_Real lp, par, fp;
+      Standard_Real lp = NAN, par = NAN, fp = NAN;
       lp = lpar + delta;
       par = para + delta;
       while(lp > 2*M_PI) lp-=2*M_PI;

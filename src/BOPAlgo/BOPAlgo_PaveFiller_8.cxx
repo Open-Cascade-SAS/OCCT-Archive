@@ -15,6 +15,8 @@
 // Alternatively, this file may be used under the terms of Open CASCADE
 // commercial license or contractual agreement.
 
+#include <math.h>
+
 #include <BOPAlgo_PaveFiller.hxx>
 #include <BOPDS_DS.hxx>
 #include <BOPDS_FaceInfo.hxx>
@@ -58,7 +60,7 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
 {
   Message_ProgressScope aPSOuter(theRange, NULL, 1);
 
-  Standard_Integer nF, aNb, nE, nV, nVSD, aNbPB;
+  Standard_Integer nF = 0, aNb = 0, nE = 0, nV = 0, nVSD = 0, aNbPB = 0;
   Handle(NCollection_BaseAllocator) aAllocator;
   Handle(BOPDS_PaveBlock) aPBD;
   TColStd_ListIteratorOfListOfInteger aItLI;
@@ -106,7 +108,7 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
         }
         if (aSIF.ShapeType() == TopAbs_EDGE) {
           Standard_Real aTol=1.e-7;
-          Standard_Integer nEn;
+          Standard_Integer nEn = 0;
           BRep_Builder BB;
           const TopoDS_Edge& aDE=(*(TopoDS_Edge *)(&myDS->Shape(nE))); 
           const TopoDS_Vertex& aVn = (*(TopoDS_Vertex *)(&myDS->Shape(nV)));
@@ -141,7 +143,7 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
                                           const Standard_Integer nF,
                                           BOPDS_ListOfPaveBlock& aLPBOut)
 {
-  Standard_Integer i, aNbPBOn, aNbPBIn, aNbPBSc, nV1, nV2;
+  Standard_Integer i = 0, aNbPBOn = 0, aNbPBIn = 0, aNbPBSc = 0, nV1 = 0, nV2 = 0;
   //
   const BOPDS_FaceInfo& aFI=myDS->ChangeFaceInfo(nF);
   // In
@@ -183,8 +185,8 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
   void BOPAlgo_PaveFiller::MakeSplitEdge (const Standard_Integer nDE,
                                           const Standard_Integer nDF)
 { 
-  Standard_Integer nSp, nV1, nV2, aNbPB;
-  Standard_Real aT1, aT2;
+  Standard_Integer nSp = 0, nV1 = 0, nV2 = 0, aNbPB = 0;
+  Standard_Real aT1 = NAN, aT2 = NAN;
   TopoDS_Edge aDE, aSp;
   TopoDS_Vertex aV1, aV2;
   BOPDS_ListIteratorOfListOfPaveBlock aItLPB;
@@ -271,7 +273,7 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
   // in the direction of the 2D curve of degenerated edge
   Standard_Real aTolCmp = Precision::PConfusion();
   // Get 2D curve
-  Standard_Real aTD1, aTD2;
+  Standard_Real aTD1 = NAN, aTD2 = NAN;
   Handle(Geom2d_Curve) aC2DDE = BRep_Tool::CurveOnSurface(aDE, aDF, aTD1, aTD2);
   // Get direction of the curve
   Standard_Boolean bUDir = Abs(aC2DDE->Value(aTD1).Y() - aC2DDE->Value(aTD2).Y()) < Precision::PConfusion();
@@ -290,7 +292,7 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
       continue;
     }
     const TopoDS_Edge& aE = (*(TopoDS_Edge *)(&myDS->Shape(nE)));
-    Standard_Real aT1, aT2;
+    Standard_Real aT1 = NAN, aT2 = NAN;
     Handle(Geom2d_Curve) aC2D = BRep_Tool::CurveOnSurface(aE, aDF, aT1, aT2);
     if (aC2D.IsNull()) {
       continue;
@@ -311,7 +313,7 @@ void BOPAlgo_PaveFiller::ProcessDE(const Message_ProgressRange& theRange)
     if (aGInter.IsDone() && aGInter.NbPoints())
     {
       // Analyze intersection points
-      Standard_Integer i, aNbPoints = aGInter.NbPoints();
+      Standard_Integer i = 0, aNbPoints = aGInter.NbPoints();
       for (i = 1; i <= aNbPoints; ++i) {
         Standard_Real aX = aGInter.Point(i).ParamOnFirst();
         aPave.SetParameter(aX);
@@ -376,7 +378,7 @@ Standard_Boolean AddSplitPoint(const Handle(BOPDS_PaveBlock)& thePBD,
                                const BOPDS_Pave& thePave,
                                const Standard_Real theTol)
 {
-  Standard_Real aTD1, aTD2;
+  Standard_Real aTD1 = NAN, aTD2 = NAN;
   thePBD->Range(aTD1, aTD2);
 
   Standard_Real aT = thePave.Parameter();
@@ -385,7 +387,7 @@ Standard_Boolean AddSplitPoint(const Handle(BOPDS_PaveBlock)& thePBD,
     return Standard_False;
 
   // Check that the pave block does not contain the same parameter
-  Standard_Integer anInd;
+  Standard_Integer anInd = 0;
   if (thePBD->ContainsParameter(aT, theTol, anInd))
     return Standard_False;
 

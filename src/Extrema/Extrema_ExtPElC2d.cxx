@@ -15,6 +15,8 @@
 // commercial license or contractual agreement.
 
 
+#include <math.h>
+
 #include <ElCLib.hxx>
 #include <Extrema_ExtPElC2d.hxx>
 #include <Extrema_POnCurv2d.hxx>
@@ -32,10 +34,10 @@
 #include <StdFail_NotDone.hxx>
 
 //=============================================================================
-Extrema_ExtPElC2d::Extrema_ExtPElC2d()
+Extrema_ExtPElC2d::Extrema_ExtPElC2d() : myDone(Standard_False), myNbExt(0)
 {
-  myDone = Standard_False;
-  myNbExt = 0;
+  
+  
 
   for (Standard_Integer i = 0; i < 4; i++)
   {
@@ -108,7 +110,7 @@ void Extrema_ExtPElC2d::Perform(const gp_Pnt2d&     P,
   }
   else
   {
-    Standard_Real radius, U1, U2;
+    Standard_Real radius = NAN, U1 = NAN, U2 = NAN;
     gp_Pnt2d P1, P2;
 
     myDone = Standard_True;
@@ -179,7 +181,7 @@ void Extrema_ExtPElC2d::Perform (const gp_Pnt2d&     P,
   gp_Pnt2d OR;
   OR = E.Location();
 
-  Standard_Integer NoSol, NbSol;
+  Standard_Integer NoSol = 0, NbSol = 0;
   Standard_Real A = E.MajorRadius();
   Standard_Real B = E.MinorRadius();
   gp_Vec2d V(OR,P);
@@ -196,7 +198,7 @@ void Extrema_ExtPElC2d::Perform (const gp_Pnt2d&     P,
 
     if (!Sol.IsDone()) { return; }
     gp_Pnt2d Cu;
-    Standard_Real Us;
+    Standard_Real Us = NAN;
     NbSol = Sol.NbSolutions();
     myNbExt = 0;
     for (NoSol = 1; NoSol <= NbSol; NoSol++) {
@@ -242,10 +244,10 @@ void Extrema_ExtPElC2d::Perform(const gp_Pnt2d&     P,
   math_DirectPolynomialRoots Sol(C1,-(X*R+Y*r)/2.,0.,(X*R-Y*r)/2.,-C1);
   if (!Sol.IsDone()) { return; }
   gp_Pnt2d Cu;
-  Standard_Real Us, Vs;
+  Standard_Real Us = NAN, Vs = NAN;
   Standard_Integer NbSol = Sol.NbSolutions();
-  Standard_Boolean DejaEnr;
-  Standard_Integer NoExt;
+  Standard_Boolean DejaEnr = 0;
+  Standard_Integer NoExt = 0;
   gp_Pnt2d TbExt[4];
   for (Standard_Integer NoSol = 1; NoSol <= NbSol; NoSol++) {
     Vs = Sol.Value(NoSol);
@@ -304,10 +306,10 @@ void Extrema_ExtPElC2d::Perform(const gp_Pnt2d&     P,
   math_DirectPolynomialRoots Sol(1./(4.*F),0.,2.*F-X,-2.*F*Y);
   if (!Sol.IsDone()) { return; }
   gp_Pnt2d Cu;
-  Standard_Real Us;
+  Standard_Real Us = NAN;
   Standard_Integer NbSol = Sol.NbSolutions();
-  Standard_Boolean DejaEnr;
-  Standard_Integer NoExt;
+  Standard_Boolean DejaEnr = 0;
+  Standard_Integer NoExt = 0;
   gp_Pnt2d TbExt[3];
   for (Standard_Integer NoSol = 1; NoSol <= NbSol; NoSol++) {
     Us = Sol.Value(NoSol);

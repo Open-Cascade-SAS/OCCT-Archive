@@ -220,12 +220,12 @@ private:
 
   XCAFDimTolObjects_GeomToleranceType myType;
   XCAFDimTolObjects_GeomToleranceTypeValue myTypeOfValue;
-  Standard_Real myValue;
+  Standard_Real myValue{};
   XCAFDimTolObjects_GeomToleranceMatReqModif myMatReqModif;
   XCAFDimTolObjects_GeomToleranceZoneModif myZoneModif;
-  Standard_Real myValueOfZoneModif;
+  Standard_Real myValueOfZoneModif{};
   XCAFDimTolObjects_GeomToleranceModifiersSequence myModifiers;
-  Standard_Real myMaxValueModif;
+  Standard_Real myMaxValueModif{};
   gp_Ax2 myAxis;
   Standard_Boolean myHasAxis;
   gp_Ax2 myPlane;

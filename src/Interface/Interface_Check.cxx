@@ -39,9 +39,9 @@ Interface_Check::Interface_Check()
 //purpose  : 
 //=======================================================================
 
-Interface_Check::Interface_Check(const Handle(Standard_Transient)& anentity)
+Interface_Check::Interface_Check(const Handle(Standard_Transient)& anentity) : theent(anentity)
 {
-  theent = anentity;
+  
 }
 
 // ....      Ajout de message d Erreur vraie (Fail)
@@ -421,7 +421,7 @@ Standard_Boolean Interface_Check::Complies(const Handle(TCollection_HAsciiString
   if (mess.IsNull()) return Standard_False;
   Standard_Integer lng = mess->Length();
   if (status == Interface_CheckWarning || status == Interface_CheckAny) {
-    Standard_Integer i, nb = NbWarnings();
+    Standard_Integer i = 0, nb = NbWarnings();
     for (i = nb; i > 0; i --) {
       Handle(TCollection_HAsciiString) ames = Warning(i);
       if (incl == 0)  {  if (mess->IsSameString (ames)) return Standard_True;  }
@@ -430,7 +430,7 @@ Standard_Boolean Interface_Check::Complies(const Handle(TCollection_HAsciiString
     }
   }
   if (status == Interface_CheckFail || status == Interface_CheckAny) {
-    Standard_Integer i, nb = NbWarnings();
+    Standard_Integer i = 0, nb = NbWarnings();
     for (i = nb; i > 0; i --) {
       Handle(TCollection_HAsciiString) ames = Warning(i);
       if (incl == 0)  {  if (mess->IsSameString (ames)) return Standard_True;  }
@@ -528,7 +528,7 @@ Standard_Boolean Interface_Check::Remove(const Handle(TCollection_HAsciiString)&
   Standard_Boolean res = Standard_False;
   Standard_Integer lng = mess->Length();
   if (status == Interface_CheckWarning || status == Interface_CheckAny) {
-    Standard_Integer i, nb = NbWarnings();
+    Standard_Integer i = 0, nb = NbWarnings();
     for (i = nb; i > 0; i --) {
       Standard_Boolean rem = Standard_False;
       Handle(TCollection_HAsciiString) ames = Warning(i);
@@ -539,7 +539,7 @@ Standard_Boolean Interface_Check::Remove(const Handle(TCollection_HAsciiString)&
     }
   }
   if (status == Interface_CheckFail || status == Interface_CheckAny) {
-    Standard_Integer i, nb = NbWarnings();
+    Standard_Integer i = 0, nb = NbWarnings();
     for (i = nb; i > 0; i --) {
       Standard_Boolean rem = Standard_False;
       Handle(TCollection_HAsciiString) ames = Warning(i);
@@ -561,7 +561,7 @@ Standard_Boolean Interface_Check::Remove(const Handle(TCollection_HAsciiString)&
 Standard_Boolean  Interface_Check::Mend(const Standard_CString pref,
                                         const Standard_Integer num)
 {
-  Standard_Integer i, n1 = num, n2 = num;
+  Standard_Integer i = 0, n1 = num, n2 = num;
   if (pref && pref[2] == '\0') {
     if (pref[0] == 'F' && pref[1] == 'M') return Mend ("Mended",num);
     if (pref[0] == 'C' && pref[1] == 'A') {  Clear();  return Standard_True;  }
@@ -634,7 +634,7 @@ void Interface_Check::GetEntity(const Handle(Standard_Transient)& anentity)
 
 void Interface_Check::GetMessages (const Handle(Interface_Check)& other)
 {
-  Standard_Integer nb,i;
+  Standard_Integer nb = 0,i = 0;
   if ( (nb = other->NbFails()) != 0) {
     if (thefails.IsNull()) thefails = new TColStd_HSequenceOfHAsciiString();
     if (thefailo.IsNull()) thefailo = new TColStd_HSequenceOfHAsciiString();
@@ -664,7 +664,7 @@ void Interface_Check::GetMessages (const Handle(Interface_Check)& other)
 void Interface_Check::GetAsWarning(const Handle(Interface_Check)& other,
                                    const Standard_Boolean failsonly)
 {
-  Standard_Integer nb,i;
+  Standard_Integer nb = 0,i = 0;
   if ( (nb = other->NbFails()) != 0) {
     if (thewarns.IsNull()) thewarns = new TColStd_HSequenceOfHAsciiString();
     if (thewarno.IsNull()) thewarno = new TColStd_HSequenceOfHAsciiString();
@@ -688,7 +688,7 @@ void Interface_Check::GetAsWarning(const Handle(Interface_Check)& other,
 void Interface_Check::Print(Standard_OStream& S, const Standard_Integer level,
                             const Standard_Integer final) const
 {
-  Standard_Integer j, nb = NbFails();
+  Standard_Integer j = 0, nb = NbFails();
 
   if (level >= 1) {
     nb = NbFails();

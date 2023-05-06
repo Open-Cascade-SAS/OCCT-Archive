@@ -19,6 +19,8 @@
 
 //#endif
 
+#include <math.h>
+
 #include <math_DirectPolynomialRoots.hxx>
 #include <math_FunctionRoots.hxx>
 #include <math_FunctionWithDerivative.hxx>
@@ -44,7 +46,7 @@ public:
     : myF (&theF)
   {}
 
-  virtual Standard_Boolean Value(const Standard_Real theX, Standard_Real& theFval)
+  Standard_Boolean Value(const Standard_Real theX, Standard_Real& theFval) override
   {
     return myF->Derivative(theX, theFval);
   }
@@ -59,7 +61,7 @@ static void  AppendRoot(TColStd_SequenceOfReal& Sol,
 			const Standard_Real dX) { 
 
   Standard_Integer n=Sol.Length();
-  Standard_Real t;
+  Standard_Real t = NAN;
 #ifdef OCCT_DEBUG
  if (myDebug) {
    std::cout << "   Ajout de la solution numero : " << n+1 << std::endl;
@@ -120,7 +122,7 @@ static void  Solve(math_FunctionWithDerivative& F,
 
   Standard_Integer iter=0;
   Standard_Real tols2 = 0.5*tol;
-  Standard_Real a,b,c,d=0,e=0,fa,fb,fc,p,q,r,s,tol1,xm,min1,min2;
+  Standard_Real a = NAN,b = NAN,c = NAN,d=0,e=0,fa = NAN,fb = NAN,fc = NAN,p = NAN,q = NAN,r = NAN,s = NAN,tol1 = NAN,xm = NAN,min1 = NAN,min2 = NAN;
   a=x1;b=c=x2;fa=y1; fb=fc=y2;
   for(iter=1;iter<=ITMAX;iter++) { 
     if((fb>0.0 && fc>0.0) || (fb<0.0 && fc<0.0)) { 
@@ -133,9 +135,9 @@ static void  Solve(math_FunctionWithDerivative& F,
     xm=0.5*(c-b);
     if(Abs(xm)<tol1 || fb==0) { 
       //-- On tente une iteration de newton
-      Standard_Real Xp,Yp,Dp;      
+      Standard_Real Xp = NAN,Yp = NAN,Dp = NAN;      
       Standard_Integer itern=5;
-      Standard_Boolean Ok;
+      Standard_Boolean Ok = 0;
       Xp=b;
       do { 
 	Ok = F.Values(Xp,Yp,Dp);
@@ -261,9 +263,9 @@ math_FunctionRoots::math_FunctionRoots(math_FunctionWithDerivative& F,
     //-- recherche d un intervalle ou F(xi) et F(xj) sont de signes differents
     //-- A .............................................................. B
     //-- X0   X1   X2 ........................................  Xn-1      Xn
-    Standard_Integer i;
+    Standard_Integer i = 0;
     Standard_Real X=X0;
-    Standard_Boolean Ok;
+    Standard_Boolean Ok = 0;
     double dx = (XN-X0)/N;
     TColStd_Array1OfReal ptrval(0, N);
     Standard_Integer Nvalid = -1;
@@ -295,10 +297,10 @@ math_FunctionRoots::math_FunctionRoots(math_FunctionWithDerivative& F,
     else { 
       //-- Il y a des points hors tolerance 
       //-- on detecte les changements de signes STRICTS 
-      Standard_Integer ip1;
+      Standard_Integer ip1 = 0;
 //      Standard_Boolean chgtsign=Standard_False;
       Standard_Real tol = EpsX;
-      Standard_Real X2;
+      Standard_Real X2 = NAN;
       for(i=0,ip1=1,X=X0;i<N; i++,ip1++,X+=dx) { 
         X2=X+dx;
         if(X2 > XN) X2 = XN;
@@ -328,14 +330,14 @@ math_FunctionRoots::math_FunctionRoots(math_FunctionWithDerivative& F,
 //	  Standard_Real Val,Deriv;
 	  X=X0+i*dx;
           if (X>XN) X=XN;
-	  Standard_Real u0,u1;
+	  Standard_Real u0 = NAN,u1 = NAN;
 	  u0=dx*0.5; 	  u1=X+u0; 	  u0+=X;
 	  if(u0<X0)  u0=X0;
 	  if(u0>XN)  u0=XN;
 	  if(u1<X0)  u1=X0;
 	  if(u1>XN)  u1=XN;
 
-	  Standard_Real y0,y1;
+	  Standard_Real y0 = NAN,y1 = NAN;
 	  F.Value(u0,y0); y0-=K;
 	  F.Value(u1,y1); y1-=K;
 	  if(y0*y1 < 0.0) { 
@@ -364,9 +366,9 @@ math_FunctionRoots::math_FunctionRoots(math_FunctionWithDerivative& F,
       //-- On reprend une discretisation plus fine au voisinage de ces extremums
       //--
       //-- Recherche d un minima positif
-      Standard_Real xm,ym,dym,xm1,xp1;
+      Standard_Real xm = NAN,ym = NAN,dym = NAN,xm1 = NAN,xp1 = NAN;
       Standard_Real majdx = 5.0*dx;
-      Standard_Boolean Rediscr;
+      Standard_Boolean Rediscr = 0;
 //      Standard_Real ptrvalbis[MAXBIS];
       Standard_Integer im1=0;
       ip1=2;
@@ -460,7 +462,7 @@ math_FunctionRoots::math_FunctionRoots(math_FunctionWithDerivative& F,
           //-- et |f(x0)| > |f(x1)|   et |f(x3)| > |f(x2)|
           //--
           //-- En entree : a=xm-dx  b=xm c=xm+dx
-          Standard_Real x1, x2, f0, f3;
+          Standard_Real x1 = NAN, x2 = NAN, f0 = NAN, f3 = NAN;
           Standard_Real R = 0.61803399;
           Standard_Real C = 1.0 - R;
           Standard_Real tolCR = NEpsX*10.0;
@@ -470,7 +472,7 @@ math_FunctionRoots::math_FunctionRoots(math_FunctionWithDerivative& F,
 
           if (Abs(x3 - xm) > Abs(x0 - xm)) { x1 = xm; x2 = xm + C*(x3 - xm); }
           else                        { x2 = xm; x1 = xm - C*(xm - x0); }
-          Standard_Real f1, f2;
+          Standard_Real f1 = NAN, f2 = NAN;
           F.Value(x1, f1); f1 -= K;
           F.Value(x2, f2); f2 -= K;
           //-- printf("\n *************** RECHERCHE MINIMUM **********\n");
