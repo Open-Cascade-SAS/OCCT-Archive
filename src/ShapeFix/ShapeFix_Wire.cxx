@@ -442,14 +442,12 @@ Standard_Boolean ShapeFix_Wire::FixReorder()
   ShapeAnalysis_WireOrder sawo;
   myAnalyzer->CheckOrder ( sawo, myClosedMode, Standard_True );
   
-  //:abv revolCuts.sat -23: in case of bi-periodic surface check case
-  // of reversed wire specifically. This is necessary because degenerated
+  // Check case of reversed wire specifically. This is necessary because degenerated
   // cases are possible when direct evaluation will give bad result.
   Standard_Boolean isReorder = Standard_False;
-  if ( sawo.Status() != 0 &&
-       ! myAnalyzer->Surface().IsNull() &&
-       myAnalyzer->Surface()->Surface()->IsUPeriodic() &&
-       myAnalyzer->Surface()->Surface()->IsVPeriodic() ) {
+  if ( sawo.Status() != 0 && ! myAnalyzer->Surface().IsNull() &&
+     (myAnalyzer->Surface()->Surface()->IsUPeriodic() ||
+      myAnalyzer->Surface()->Surface()->IsVPeriodic())) {
     Handle(ShapeExtend_WireData) sbwd2 = new ShapeExtend_WireData;
     for ( Standard_Integer i=WireData()->NbEdges(); i >=1; i-- )
       sbwd2->Add ( WireData()->Edge(i) );

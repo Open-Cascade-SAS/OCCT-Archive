@@ -31,7 +31,8 @@
 #include <BRep_TEdge.hxx>
 #include <BRep_Tool.hxx>
 #include <ElCLib.hxx>
-#include <Geom2d_BoundedCurve.hxx>#include <Geom2d_Line.hxx>
+#include <Geom2d_BoundedCurve.hxx>
+#include <Geom2d_Line.hxx>
 #include <Geom_Curve.hxx>
 #include <gp_Dir.hxx>
 #include <Geom_Plane.hxx>
