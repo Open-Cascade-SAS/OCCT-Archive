@@ -174,7 +174,7 @@ void TopoDSToStep_MakeStepWire::Init (const TopoDS_Wire& aWire,
     const TopoDS_Wire ForwardWire = TopoDS::Wire (aWire.Oriented (TopAbs_FORWARD));
     Handle(ShapeFix_Wire) STW = new ShapeFix_Wire (ForwardWire, aTool.CurrentFace(), Precision::Confusion());
     // for toroidal like surfaces we need to use both (3d and 2d) mode to correctly reorder the edges
-    STW->FixReorder (Standard_True);
+    STW->FixReorder ();
     Handle(ShapeExtend_WireData) anExtWire = STW->WireData();
 
     //:abv 04.05.00: CAX-IF TRJ4: writing complete sphere with single vertex_loop
