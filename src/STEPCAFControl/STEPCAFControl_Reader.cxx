@@ -3246,7 +3246,6 @@ Standard_Boolean STEPCAFControl_Reader::findReferenceGeometry(const Handle(Stand
     mySupplementalLabel = theShTool->NewShape();
     TDataStd_Name::Set(mySupplementalLabel, "Supplemental Geometry");
     TDataStd_UAttribute::Set(mySupplementalLabel, XCAFDoc::SupplementalContainerGUID());
-    TDataStd_UAttribute::Set(mySupplementalLabel, XCAFDoc::InvisibleGUID());
   }
   TDF_Label aSupGeomLabel = theShTool->AddComponent(mySupplementalLabel, aSh);
   if (aSupGeomLabel.IsNull())
