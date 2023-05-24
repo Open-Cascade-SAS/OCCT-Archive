@@ -1,6 +1,4 @@
-// Created on: 2000-09-08
-// Created by: data exchange team
-// Copyright (c) 2000-2014 OPEN CASCADE SAS
+// Copyright (c) 2000-2023 OPEN CASCADE SAS
 //
 // This file is part of Open CASCADE Technology software library.
 //
