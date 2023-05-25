@@ -15,7 +15,7 @@
 #define _XCAFAnimObjects_Transform_HeaderFile
 
 #include <XCAFAnimObjects_Operation.hxx>
-#include <gp_GTrsf.hxx>
+#include <NCollection_Mat4.hxx>
 
 //! 
 class XCAFAnimObjects_Transform : public XCAFAnimObjects_Operation
@@ -23,21 +23,31 @@ class XCAFAnimObjects_Transform : public XCAFAnimObjects_Operation
 public:
 
   //! 
-  Standard_EXPORT XCAFAnimObjects_Transform(const gp_GTrsf& theTransform);
+  Standard_EXPORT XCAFAnimObjects_Transform(const NCollection_Mat4<double>& theTransform);
 
   //! 
-  Standard_EXPORT XCAFAnimObjects_Transform(const NCollection_Array1<gp_GTrsf>& theTransform,
+  Standard_EXPORT XCAFAnimObjects_Transform(const NCollection_Array1<NCollection_Mat4<double>>& theTransform,
+                                            const NCollection_Array1<double>& theTimeStamps);
+
+  //! 
+  Standard_EXPORT XCAFAnimObjects_Transform(const NCollection_Array2<double>& theGeneralPresentation,
                                             const NCollection_Array1<double>& theTimeStamps);
 
   //! 
   XCAFAnimObjects_OperationType GetType() const Standard_OVERRIDE { return XCAFAnimObjects_OperationType_Transform; }
 
   //! 
-  const NCollection_Array1<gp_GTrsf>& TransformPresentation() const { return myTransformPresentation; }
+  TCollection_AsciiString GetTypeName() const Standard_OVERRIDE { return "Transform"; }
+
+  //! 
+  Standard_EXPORT NCollection_Array2<double> GeneralPresentation() const Standard_OVERRIDE;
+
+  //! 
+  const NCollection_Array1<NCollection_Mat4<double>>& TransformPresentation() const { return myTransformPresentation; }
 
 private:
 
-  NCollection_Array1<gp_GTrsf> myTransformPresentation; //!< 
+  NCollection_Array1<NCollection_Mat4<double>> myTransformPresentation; //!< 
 };
 
 #endif // _XCAFAnimObjects_Transform_HeaderFile

@@ -17,11 +17,9 @@
 //function : XCAFAnimObjects_CustomOperation
 //purpose  :
 //=======================================================================
-XCAFAnimObjects_CustomOperation::XCAFAnimObjects_CustomOperation(const int theObjectSize,
-                                                                 const TCollection_AsciiString& theCustomTypeName,
-                                                                 const NCollection_Array1<char>& thePresentation) :
+XCAFAnimObjects_CustomOperation::XCAFAnimObjects_CustomOperation(const NCollection_Array1<double>& thePresentation,
+                                                                 const TCollection_AsciiString& theCustomTypeName) :
   XCAFAnimObjects_Operation(false),
-  myObjectSize(theObjectSize),
   myTypeName(theCustomTypeName),
   myPresentation(1, 1, thePresentation.Lower(), thePresentation.Upper())
 {
@@ -35,12 +33,10 @@ XCAFAnimObjects_CustomOperation::XCAFAnimObjects_CustomOperation(const int theOb
 //function : XCAFAnimObjects_CustomOperation
 //purpose  :
 //=======================================================================
-XCAFAnimObjects_CustomOperation::XCAFAnimObjects_CustomOperation(const int theObjectSize,
-                                                                 const TCollection_AsciiString& theCustomTypeName,
-                                                                 const NCollection_Array2<char>& thePresentation,
-                                                                 const NCollection_Array1<double>& theTimeStamps) :
+XCAFAnimObjects_CustomOperation::XCAFAnimObjects_CustomOperation(const NCollection_Array2<double>& thePresentation,
+                                                                 const NCollection_Array1<double>& theTimeStamps,
+                                                                 const TCollection_AsciiString& theCustomTypeName) :
   XCAFAnimObjects_Operation(theTimeStamps),
-  myObjectSize(theObjectSize),
   myTypeName(theCustomTypeName),
   myPresentation(thePresentation)
 {}

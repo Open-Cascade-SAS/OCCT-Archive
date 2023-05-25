@@ -30,7 +30,17 @@ public:
                                             const NCollection_Array1<double>& theTimeStamps);
 
   //! 
+  Standard_EXPORT XCAFAnimObjects_Translate(const NCollection_Array2<double>& theGeneralPresentation,
+                                            const NCollection_Array1<double>& theTimeStamps);
+
+  //! 
   XCAFAnimObjects_OperationType GetType() const Standard_OVERRIDE { return XCAFAnimObjects_OperationType_Translate; }
+
+  //! 
+  TCollection_AsciiString GetTypeName() const Standard_OVERRIDE { return "Translate"; }
+
+  //! 
+  Standard_EXPORT NCollection_Array2<double> GeneralPresentation() const Standard_OVERRIDE;
 
   //! 
   const NCollection_Array1<gp_XYZ>& TranslatePresentation() const { return myTranslatePresentation; }

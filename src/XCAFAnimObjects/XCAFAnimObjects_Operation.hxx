@@ -15,6 +15,8 @@
 #define _XCAFAnimObjects_Operation_HeaderFile
 
 #include <NCollection_Array1.hxx>
+#include <NCollection_Array2.hxx>
+#include <TCollection_AsciiString.hxx>
 #include <XCAFAnimObjects_OperationType.hxx>
 
 //! 
@@ -39,10 +41,16 @@ public:
   Standard_EXPORT virtual XCAFAnimObjects_OperationType GetType() const = 0;
 
   //! 
+  Standard_EXPORT virtual TCollection_AsciiString GetTypeName() const = 0;
+
+  //! 
   bool IsInverse() const { return myIsInverse; }
 
   //! 
   void SetInverse(const bool theIsInverse) { myIsInverse = theIsInverse; }
+
+  //! 
+  Standard_EXPORT virtual NCollection_Array2<double> GeneralPresentation() const = 0;
 
 private:
   bool myIsInverse; //!

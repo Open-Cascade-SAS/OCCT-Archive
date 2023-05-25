@@ -39,7 +39,17 @@ public:
                                        const NCollection_Array1<double>& theTimeStamps);
 
   //! 
+  Standard_EXPORT XCAFAnimObjects_Skew(const NCollection_Array2<double>& theGeneralPresentation,
+                                       const NCollection_Array1<double>& theTimeStamps);
+
+  //! 
   XCAFAnimObjects_OperationType GetType() const Standard_OVERRIDE { return XCAFAnimObjects_OperationType_Skew; }
+
+  //! 
+  TCollection_AsciiString GetTypeName() const Standard_OVERRIDE { return "Skew"; }
+
+  //! 
+  Standard_EXPORT NCollection_Array2<double> GeneralPresentation() const Standard_OVERRIDE;
 
   //! 
   const NCollection_Array1<Skew>& SkewPresentation() const { return mySkewPresentation; }
