@@ -24,33 +24,30 @@ class XCAFAnimObjects_CustomOperation : public XCAFAnimObjects_Operation
 public:
 
   //! 
-  Standard_EXPORT XCAFAnimObjects_CustomOperation(const int theObjectSize,
-                                                  const TCollection_AsciiString& theCustomTypeName,
-                                                  const NCollection_Array1<char>& thePresentation);
+  Standard_EXPORT XCAFAnimObjects_CustomOperation(const NCollection_Array1<double>& thePresentation,
+                                                  const TCollection_AsciiString& theCustomTypeName);
 
   //! 
-  Standard_EXPORT XCAFAnimObjects_CustomOperation(const int theObjectSize,
-                                                  const TCollection_AsciiString& theCustomTypeName,
-                                                  const NCollection_Array2<char>& thePresentation,
-                                                  const NCollection_Array1<double>& theTimeStamps);
+  Standard_EXPORT XCAFAnimObjects_CustomOperation(const NCollection_Array2<double>& thePresentation,
+                                                  const NCollection_Array1<double>& theTimeStamps,
+                                                  const TCollection_AsciiString& theCustomTypeName);
 
   //! 
   XCAFAnimObjects_OperationType GetType() const Standard_OVERRIDE { return XCAFAnimObjects_OperationType_Custom; }
 
   //! 
-  int ObjectSize() const { return myObjectSize; }
+  NCollection_Array2<double> GeneralPresentation() const Standard_OVERRIDE { return myPresentation; }
 
   //! 
-  const TCollection_AsciiString& CustomTypeName() const { return myTypeName; }
+  TCollection_AsciiString GetTypeName() const Standard_OVERRIDE { return myTypeName; }
 
   //! 
-  const NCollection_Array2<char>& CustomPresentation() const { return myPresentation; }
+  const NCollection_Array2<double>& CustomPresentation() const { return myPresentation; }
 
 private:
 
-  int myObjectSize; //!< 
   TCollection_AsciiString myTypeName; //!< 
-  NCollection_Array2<char> myPresentation; //!< 
+  NCollection_Array2<double> myPresentation; //!< 
 };
 
 #endif // _XCAFAnimObjects_CustomOperation_HeaderFile

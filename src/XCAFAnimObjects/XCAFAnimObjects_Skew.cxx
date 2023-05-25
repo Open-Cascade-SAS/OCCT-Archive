@@ -13,6 +13,8 @@
 
 #include "XCAFAnimObjects_Skew.hxx"
 
+#include <Message.hxx>
+
 //=======================================================================
 //function : XCAFAnimObjects_Skew
 //purpose  :
@@ -33,3 +35,51 @@ XCAFAnimObjects_Skew::XCAFAnimObjects_Skew(const NCollection_Array1<Skew>& theSk
   XCAFAnimObjects_Operation(theTimeStamps),
   mySkewPresentation(theSkew)
 {}
+
+//=======================================================================
+//function : XCAFAnimObjects_Skew
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Skew::XCAFAnimObjects_Skew(const NCollection_Array2<double>& theGeneralPresentation,
+                                           const NCollection_Array1<double>& theTimeStamps) :
+  XCAFAnimObjects_Operation(false),
+  mySkewPresentation(1, theGeneralPresentation.RowLength())
+{
+  if (theGeneralPresentation.ColLength() != 7)
+  {
+    Message::SendWarning() << "Warning: XCAFAnimObjects_Skew: Incorrect Skew general presentation";
+    return;
+  }
+  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.RowLength(); aRowInd++)
+  {
+    Skew aSkew{ theGeneralPresentation.Value(aRowInd, 1),
+               {theGeneralPresentation.Value(aRowInd, 2),
+               theGeneralPresentation.Value(aRowInd, 3),
+               theGeneralPresentation.Value(aRowInd, 4) },
+               {theGeneralPresentation.Value(aRowInd, 5),
+               theGeneralPresentation.Value(aRowInd, 6),
+               theGeneralPresentation.Value(aRowInd, 7)} };
+    mySkewPresentation.SetValue(aRowInd, aSkew);
+  }
+}
+
+//=======================================================================
+//function : GeneralPresentation
+//purpose  :
+//=======================================================================
+NCollection_Array2<double> XCAFAnimObjects_Skew::GeneralPresentation() const
+{
+  NCollection_Array2<double> aRes(1, mySkewPresentation.Length(), 1, 7);
+  for (int aRowInd = 1; aRowInd <= mySkewPresentation.Length(); aRowInd++)
+  {
+    const Skew& aSkew = mySkewPresentation.Value(aRowInd);
+
+    aRes.SetValue(aRowInd, 1, aSkew.Angle);
+    aRes.SetValue(aRowInd, 2, aSkew.Axis1.X());
+    aRes.SetValue(aRowInd, 3, aSkew.Axis1.Y());
+    aRes.SetValue(aRowInd, 4, aSkew.Axis1.Z());
+    aRes.SetValue(aRowInd, 5, aSkew.Axis2.X());
+    aRes.SetValue(aRowInd, 6, aSkew.Axis2.Y());
+    aRes.SetValue(aRowInd, 7, aSkew.Axis2.Z());
+  }
+}

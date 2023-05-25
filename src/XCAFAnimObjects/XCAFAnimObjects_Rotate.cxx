@@ -13,6 +13,8 @@
 
 #include "XCAFAnimObjects_Rotate.hxx"
 
+#include <Message.hxx>
+
 //=======================================================================
 //function : XCAFAnimObjects_Rotate
 //purpose  :
@@ -52,3 +54,45 @@ XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const NCollection_Array1<gp_Quate
   XCAFAnimObjects_Operation(theTimeStamps),
   myRotatePresentation(theRotate)
 {}
+
+//=======================================================================
+//function : XCAFAnimObjects_Rotate
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const NCollection_Array2<double>& theGeneralPresentation,
+                                               const NCollection_Array1<double>& theTimeStamps) :
+  XCAFAnimObjects_Operation(false),
+  myRotatePresentation(1, theGeneralPresentation.RowLength())
+{
+  if (theGeneralPresentation.ColLength() != 4)
+  {
+    Message::SendWarning() << "Warning: XCAFAnimObjects_Rotate: Incorrect Quaternion general presentation";
+    return;
+  }
+  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.RowLength(); aRowInd++)
+  {
+    gp_Quaternion aQuat(theGeneralPresentation.Value(aRowInd, 1),
+                        theGeneralPresentation.Value(aRowInd, 2),
+                        theGeneralPresentation.Value(aRowInd, 3),
+                        theGeneralPresentation.Value(aRowInd, 4));
+    myRotatePresentation.SetValue(aRowInd, aQuat);
+  }
+}
+
+//=======================================================================
+//function : GeneralPresentation
+//purpose  :
+//=======================================================================
+NCollection_Array2<double> XCAFAnimObjects_Rotate::GeneralPresentation() const
+{
+  NCollection_Array2<double> aRes(1, myRotatePresentation.Length(), 1, 4);
+  for (int aRowInd = 1; aRowInd <= myRotatePresentation.Length(); aRowInd++)
+  {
+    const gp_Quaternion& aQuat = myRotatePresentation.Value(aRowInd);
+
+    aRes.SetValue(aRowInd, 1, aQuat.X());
+    aRes.SetValue(aRowInd, 2, aQuat.Y());
+    aRes.SetValue(aRowInd, 3, aQuat.Z());
+    aRes.SetValue(aRowInd, 4, aQuat.W());
+  }
+}

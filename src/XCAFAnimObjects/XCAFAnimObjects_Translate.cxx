@@ -13,6 +13,8 @@
 
 #include "XCAFAnimObjects_Translate.hxx"
 
+#include <Message.hxx>
+
 //=======================================================================
 //function : XCAFAnimObjects_Translate
 //purpose  :
@@ -34,3 +36,43 @@ XCAFAnimObjects_Translate::XCAFAnimObjects_Translate(const NCollection_Array1<gp
   XCAFAnimObjects_Operation(theTimeStamps),
   myTranslatePresentation(theTranslate)
 {}
+
+//=======================================================================
+//function : XCAFAnimObjects_Translate
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Translate::XCAFAnimObjects_Translate(const NCollection_Array2<double>& theGeneralPresentation,
+                                                     const NCollection_Array1<double>& theTimeStamps) :
+  XCAFAnimObjects_Operation(false),
+  myTranslatePresentation(1, theGeneralPresentation.RowLength())
+{
+  if (theGeneralPresentation.ColLength() != 3)
+  {
+    Message::SendWarning() << "Warning: XCAFAnimObjects_Translate: Incorrect XYZ general presentation";
+    return;
+  }
+  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.RowLength(); aRowInd++)
+  {
+    gp_XYZ aXYZ(theGeneralPresentation.Value(aRowInd, 1),
+                theGeneralPresentation.Value(aRowInd, 2),
+                theGeneralPresentation.Value(aRowInd, 3));
+    myTranslatePresentation.SetValue(aRowInd, aXYZ);
+  }
+}
+
+//=======================================================================
+//function : GeneralPresentation
+//purpose  :
+//=======================================================================
+NCollection_Array2<double> XCAFAnimObjects_Translate::GeneralPresentation() const
+{
+  NCollection_Array2<double> aRes(1, myTranslatePresentation.Length(), 1, 3);
+  for (int aRowInd = 1; aRowInd <= myTranslatePresentation.Length(); aRowInd++)
+  {
+    const gp_XYZ& aXYZ = myTranslatePresentation.Value(aRowInd);
+
+    aRes.SetValue(aRowInd, 1, aXYZ.X());
+    aRes.SetValue(aRowInd, 2, aXYZ.Y());
+    aRes.SetValue(aRowInd, 3, aXYZ.Z());
+  }
+}

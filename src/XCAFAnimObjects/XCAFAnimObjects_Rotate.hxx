@@ -33,7 +33,17 @@ public:
                                          const NCollection_Array1<double>& theTimeStamps);
 
   //! 
+  Standard_EXPORT XCAFAnimObjects_Rotate(const NCollection_Array2<double>& theGeneralPresentation,
+                                         const NCollection_Array1<double>& theTimeStamps);
+
+  //! 
   XCAFAnimObjects_OperationType GetType() const Standard_OVERRIDE { return XCAFAnimObjects_OperationType_Rotate; }
+
+  //! 
+  TCollection_AsciiString GetTypeName() const Standard_OVERRIDE { return "Rotate"; }
+
+  //! 
+  Standard_EXPORT NCollection_Array2<double> GeneralPresentation() const Standard_OVERRIDE;
 
   //! 
   const NCollection_Array1<gp_Quaternion>& RotatePresentation() const { return myRotatePresentation; }

@@ -13,6 +13,8 @@
 
 #include "XCAFAnimObjects_Scale.hxx"
 
+#include <Message.hxx>
+
 //=======================================================================
 //function : XCAFAnimObjects_Scale
 //purpose  :
@@ -33,3 +35,43 @@ XCAFAnimObjects_Scale::XCAFAnimObjects_Scale(const NCollection_Array1<gp_XYZ>& t
   XCAFAnimObjects_Operation(theTimeStamps),
   myScalePresentation(theScale)
 {}
+
+//=======================================================================
+//function : XCAFAnimObjects_Scale
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Scale::XCAFAnimObjects_Scale(const NCollection_Array2<double>& theGeneralPresentation,
+                                             const NCollection_Array1<double>& theTimeStamps) :
+  XCAFAnimObjects_Operation(false),
+  myScalePresentation(1, theGeneralPresentation.RowLength())
+{
+  if (theGeneralPresentation.ColLength() != 3)
+  {
+    Message::SendWarning() << "Warning: XCAFAnimObjects_Scale: Incorrect XYZ general presentation";
+    return;
+  }
+  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.RowLength(); aRowInd++)
+  {
+    gp_XYZ aXYZ(theGeneralPresentation.Value(aRowInd, 1),
+                theGeneralPresentation.Value(aRowInd, 2),
+                theGeneralPresentation.Value(aRowInd, 3));
+    myScalePresentation.SetValue(aRowInd, aXYZ);
+  }
+}
+
+//=======================================================================
+//function : GeneralPresentation
+//purpose  :
+//=======================================================================
+NCollection_Array2<double> XCAFAnimObjects_Scale::GeneralPresentation() const
+{
+  NCollection_Array2<double> aRes(1, myScalePresentation.Length(), 1, 3);
+  for (int aRowInd = 1; aRowInd <= myScalePresentation.Length(); aRowInd++)
+  {
+    const gp_XYZ& aXYZ = myScalePresentation.Value(aRowInd);
+
+    aRes.SetValue(aRowInd, 1, aXYZ.X());
+    aRes.SetValue(aRowInd, 2, aXYZ.Y());
+    aRes.SetValue(aRowInd, 3, aXYZ.Z());
+  }
+}

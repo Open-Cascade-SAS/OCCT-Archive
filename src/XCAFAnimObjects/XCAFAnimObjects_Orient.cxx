@@ -13,13 +13,15 @@
 
 #include <XCAFAnimObjects_Orient.hxx>
 
+#include <Message.hxx>
+
 //=======================================================================
 //function : XCAFAnimObjects_Orient
 //purpose  :
 //=======================================================================
 XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const gp_Quaternion& theOrient) :
   XCAFAnimObjects_Operation(false),
-  myOrientPresentation(1,1)
+  myOrientPresentation(1, 1)
 {
   myOrientPresentation.SetValue(1, theOrient);
 }
@@ -30,7 +32,49 @@ XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const gp_Quaternion& theOrient) :
 //=======================================================================
 XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const NCollection_Array1<gp_Quaternion>& theOrient,
                                                const NCollection_Array1<double>& theTimeStamps) :
-  
+
   XCAFAnimObjects_Operation(theTimeStamps),
   myOrientPresentation(theOrient)
 {}
+
+//=======================================================================
+//function : XCAFAnimObjects_Orient
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const NCollection_Array2<double>& theGeneralPresentation,
+                                               const NCollection_Array1<double>& theTimeStamps) :
+  XCAFAnimObjects_Operation(false),
+  myOrientPresentation(1, theGeneralPresentation.RowLength())
+{
+  if (theGeneralPresentation.ColLength() != 4)
+  {
+    Message::SendWarning() << "Warning: XCAFAnimObjects_Orient: Incorrect Quaternion general presentation";
+    return;
+  }
+  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.RowLength(); aRowInd++)
+  {
+    gp_Quaternion aQuat(theGeneralPresentation.Value(aRowInd, 1),
+                        theGeneralPresentation.Value(aRowInd, 2),
+                        theGeneralPresentation.Value(aRowInd, 3),
+                        theGeneralPresentation.Value(aRowInd, 4));
+    myOrientPresentation.SetValue(aRowInd, aQuat);
+  }
+}
+
+//=======================================================================
+//function : GeneralPresentation
+//purpose  :
+//=======================================================================
+NCollection_Array2<double> XCAFAnimObjects_Orient::GeneralPresentation() const
+{
+  NCollection_Array2<double> aRes(1, myOrientPresentation.Length(), 1, 4);
+  for (int aRowInd = 1; aRowInd <= myOrientPresentation.Length(); aRowInd++)
+  {
+    const gp_Quaternion& aQuat = myOrientPresentation.Value(aRowInd);
+
+    aRes.SetValue(aRowInd, 1, aQuat.X());
+    aRes.SetValue(aRowInd, 2, aQuat.Y());
+    aRes.SetValue(aRowInd, 3, aQuat.Z());
+    aRes.SetValue(aRowInd, 4, aQuat.W());
+  }
+}
