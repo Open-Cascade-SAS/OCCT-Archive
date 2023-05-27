@@ -32,6 +32,9 @@ public:
                                                   const NCollection_Array1<double>& theTimeStamps,
                                                   const TCollection_AsciiString& theCustomTypeName);
 
+  //!
+  Standard_EXPORT XCAFAnimObjects_CustomOperation(const Handle(XCAFAnimObjects_CustomOperation)& theOperation);
+
   //! 
   XCAFAnimObjects_OperationType GetType() const Standard_OVERRIDE { return XCAFAnimObjects_OperationType_Custom; }
 

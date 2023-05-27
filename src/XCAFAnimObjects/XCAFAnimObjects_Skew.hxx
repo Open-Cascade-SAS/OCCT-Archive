@@ -42,6 +42,9 @@ public:
   Standard_EXPORT XCAFAnimObjects_Skew(const NCollection_Array2<double>& theGeneralPresentation,
                                        const NCollection_Array1<double>& theTimeStamps);
 
+  //!
+  Standard_EXPORT XCAFAnimObjects_Skew(const Handle(XCAFAnimObjects_Skew)& theOperation);
+
   //! 
   XCAFAnimObjects_OperationType GetType() const Standard_OVERRIDE { return XCAFAnimObjects_OperationType_Skew; }
 

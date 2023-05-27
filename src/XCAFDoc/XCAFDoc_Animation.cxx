@@ -13,92 +13,384 @@
 
 #include <XCAFDoc_Animation.hxx>
 
-#include <TDF_RelocationTable.hxx>
-#include <TDF_ChildIterator.hxx>
-#include <XCAFDoc.hxx>
-#include <TDataStd_TreeNode.hxx>
-#include <TColgp_HArray1OfPnt.hxx>
-#include <TDataStd_Integer.hxx>
-#include <TDataStd_IntegerArray.hxx>
-#include <TDataStd_ExtStringArray.hxx>
-#include <TDataStd_Real.hxx>
-#include <TDataStd_RealArray.hxx>
-#include <TNaming_Builder.hxx>
-#include <TColStd_HArray1OfReal.hxx>
-#include <TopoDS.hxx>
-#include <XCAFDimTolObjects_DimensionObject.hxx>
-#include <TNaming_Tool.hxx>
+#include <TDF_Label.hxx>
+#include <Standard_GUID.hxx>
 #include <TDataStd_Name.hxx>
+#include <TDF_ChildIterator.hxx>
+#include <TDataStd_Integer.hxx>
+#include <TDataStd_UAttribute.hxx>
+#include <TCollection_ExtendedString.hxx>
+#include <XCAFAnimObjects_Rotate.hxx>
+#include <TDataStd_RealArray.hxx>
+#include <TDataStd_IntegerArray.hxx>
+#include <XCAFAnimObjects_AnimObject.hxx>
 
 IMPLEMENT_DERIVED_ATTRIBUTE(XCAFDoc_Animation, TDataStd_GenericEmpty)
-enum ChildLab
-{
-  ChildLab_Begin = 1,
-  ChildLab_Type = ChildLab_Begin,
 
-  ChildLab_End
-};
-
-//=======================================================================
-//function : XCAFDoc_Animation
-//purpose  : 
-//=======================================================================
-XCAFDoc_Animation::XCAFDoc_Animation()
+namespace
 {
+  //=======================================================================
+  //function : AnimRotateRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimRotateRefGUID()
+  {
+    static const Standard_GUID ID("09135874-3B7E-4379-8BDB-E781422B8DD7");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimCustomRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimCustomRefGUID()
+  {
+    static const Standard_GUID ID("1D0BC396-328D-45CC-B968-FD58DB7109A0");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimOrientRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimOrientRefGUID()
+  {
+    static const Standard_GUID ID("F601BE38-D3F8-4594-90C8-04B790ACD08A");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimScaleRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimScaleRefGUID()
+  {
+    static const Standard_GUID ID("40602308-A430-4912-A480-66DF8788338B");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimSkewRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimSkewRefGUID()
+  {
+    static const Standard_GUID ID("9A260C95-B2D6-472D-AEB4-D802C7528FEE");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimTransformRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimTransformRefGUID()
+  {
+    static const Standard_GUID ID("F26898A6-C7A8-4FC8-B328-4B442F935E7A");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimTranslateRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimTranslateRefGUID()
+  {
+    static const Standard_GUID ID("A8777A51-B13E-417A-82A0-6176246DD441");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimInterpolationRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimInterpolationRefGUID()
+  {
+    static const Standard_GUID ID("4C565EBB-70C2-4934-B451-0B45C3460412");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimInvertRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimInvertRefGUID()
+  {
+    static const Standard_GUID ID("7898D79A-6CCE-434C-A494-A37FC1931CC2");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimInvertRefGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimValuesDimensionGUID()
+  {
+    static const Standard_GUID ID("95CBDC47-5A79-4229-9851-B6F04EAEE482");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimValuesGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimValuesGUID()
+  {
+    static const Standard_GUID ID("C3CDFA73-1C9B-4674-BCAA-D1B7038AFE86");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimValuesGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimTimeStampsValuesGUID()
+  {
+    static const Standard_GUID ID("AAF6F1A2-F764-4A4B-8984-BF7CF09B7646");
+    return ID;
+  }
+
+  //=======================================================================
+  //function : AnimValuesGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& AnimRotateSubTypeGUID()
+  {
+    static const Standard_GUID ID("A1E22D67-CD3E-4F8D-BD75-1DF04EF45266");
+    return ID;
+  }
 }
 
 //=======================================================================
+//function : XCAFDoc_Animation
+//purpose  :
+//=======================================================================
+XCAFDoc_Animation::XCAFDoc_Animation()
+{}
+
+//=======================================================================
 //function : GetID
-//purpose  : 
+//purpose  :
 //=======================================================================
 const Standard_GUID& XCAFDoc_Animation::GetID()
 {
-  static Standard_GUID DGTID("58ed092c-44de-11d8-8776-001083004c77");
-  //static Standard_GUID ID("efd212e9-6dfd-11d4-b9c8-0060b0ee281b");
+  static Standard_GUID DGTID("D755686B-872E-421E-8871-E98BE8051644");
   return DGTID;
-  //return ID;
 }
 
 //=======================================================================
 //function : Set
-//purpose  : 
+//purpose  :
 //=======================================================================
 Handle(XCAFDoc_Animation) XCAFDoc_Animation::Set(const TDF_Label& theLabel)
 {
-  Handle(XCAFDoc_Animation) A;
-  if (!theLabel.FindAttribute(XCAFDoc_Animation::GetID(), A)) {
-    A = new XCAFDoc_Animation();
-    theLabel.AddAttribute(A);
+  Handle(XCAFDoc_Animation) anAnimAttr;
+  if (!theLabel.FindAttribute(XCAFDoc_Animation::GetID(), anAnimAttr)) {
+    anAnimAttr = new XCAFDoc_Animation();
+    theLabel.AddAttribute(anAnimAttr);
   }
-  return A;
+  return anAnimAttr;
 }
 
 //=======================================================================
 //function : SetObject
-//purpose  : 
+//purpose  :
 //=======================================================================
 void XCAFDoc_Animation::SetObject(const Handle(XCAFAnimObjects_AnimObject)& theObject)
 {
   Backup();
 
+  // Setting name
+  const static TCollection_ExtendedString anObjName("Animation");
+  TDataStd_Name::Set(Label(), anObjName);
+
+  // Setting Interpolation type
+  TDataStd_Integer::Set(Label(), AnimInterpolationRefGUID(), theObject->GetInterpolationType());
+
+  Standard_Integer anOperInd = 1;
+  // Setting ordered operations
+  for (NCollection_List<Handle(XCAFAnimObjects_Operation)>::Iterator anIter(theObject->GetOrderedOperations());
+       anIter.More(); anIter.Next(), anOperInd++)
+  {
+    const TDF_Label aChild = Label().FindChild(anOperInd, true);
+    aChild.ForgetAllAttributes(); // Clear old values
+
+    const Handle(XCAFAnimObjects_Operation)& anOperation = anIter.Value();
+    // Setting inverse flag
+    if (anOperation->IsInverse())
+    {
+      TDataStd_UAttribute::Set(aChild, AnimInvertRefGUID());
+    }
+    // Setting operation type and name
+    TDataStd_Name::Set(aChild, anOperation->GetTypeName());
+    switch (anOperation->GetType())
+    {
+      case XCAFAnimObjects_OperationType_Custom:
+        TDataStd_UAttribute::Set(aChild, AnimCustomRefGUID());
+        break;
+      case XCAFAnimObjects_OperationType_Orient:
+        TDataStd_UAttribute::Set(aChild, AnimOrientRefGUID());
+        break;
+      case XCAFAnimObjects_OperationType_Rotate:
+      {
+        TDataStd_UAttribute::Set(aChild, AnimRotateRefGUID());
+        const Handle(XCAFAnimObjects_Rotate) aRotate = Handle(XCAFAnimObjects_Rotate)::DownCast(anOperation);
+        TDataStd_Integer::Set(aChild, AnimRotateSubTypeGUID(), aRotate->GetRotateType());
+        break;
+      }
+      case XCAFAnimObjects_OperationType_Scale:
+        TDataStd_UAttribute::Set(aChild, AnimScaleRefGUID());
+        break;
+      case XCAFAnimObjects_OperationType_Skew:
+        TDataStd_UAttribute::Set(aChild, AnimSkewRefGUID());
+        break;
+      case XCAFAnimObjects_OperationType_Transform:
+        TDataStd_UAttribute::Set(aChild, AnimTransformRefGUID());
+        break;
+      case XCAFAnimObjects_OperationType_Translate:
+        TDataStd_UAttribute::Set(aChild, AnimTranslateRefGUID());
+        break;
+    }
+    // Setting operation values
+    const NCollection_Array2<double> anOperPresentation = anOperation->GeneralPresentation();
+    Handle(TDataStd_IntegerArray) aDimArr = TDataStd_IntegerArray::Set(aChild, AnimValuesDimensionGUID(), 1, 2);
+    aDimArr->SetValue(1, anOperPresentation.RowLength());
+    aDimArr->SetValue(2, anOperPresentation.ColLength());
+    const int aNbValues = anOperPresentation.Length();
+    Handle(TDataStd_RealArray) aValuesArr = TDataStd_RealArray::Set(aChild, AnimValuesGUID(), 1, aNbValues);
+    int anOperValueInd = 1;
+    for (NCollection_Array2<double>::Iterator aOperValIter(anOperPresentation);
+         aOperValIter.More(); aOperValIter.Next())
+    {
+      aValuesArr->SetValue(anOperValueInd++, aOperValIter.Value());
+    }
+    if (anOperation->HasTimeStamps())
+    {
+      const NCollection_Array1<double>& aTimeStamps = anOperation->TimeStamps();
+      Handle(TDataStd_RealArray) aTimeStampsAttr =
+        TDataStd_RealArray::Set(aChild, AnimTimeStampsValuesGUID(), aTimeStamps.Lower(), aTimeStamps.Upper());
+      for (int aTimeStampInd = 1; aTimeStampInd <= aTimeStamps.Length(); aTimeStampInd++)
+      {
+        aTimeStampsAttr->SetValue(aTimeStampInd, aTimeStamps.Value(aTimeStampInd));
+      }
+    }
+  }
 }
 
 //=======================================================================
 //function : GetObject
-//purpose  : 
+//purpose  :
 //=======================================================================
 Handle(XCAFAnimObjects_AnimObject) XCAFDoc_Animation::GetObject()  const
 {
   Handle(XCAFAnimObjects_AnimObject) anObj = new XCAFAnimObjects_AnimObject();
-
+  Handle(TDataStd_Integer) anIntType;
+  if (Label().FindAttribute(AnimInterpolationRefGUID(), anIntType))
+  {
+    const XCAFAnimObjects_InterpolationType aType =
+      static_cast<XCAFAnimObjects_InterpolationType>(anIntType->Get());
+    anObj->SetInterpolationType(aType);
+  }
+  NCollection_List<Handle(XCAFAnimObjects_Operation)> anOrderedOperations;
+  for (TDF_ChildIterator aChildIterator(Label());
+       aChildIterator.More(); aChildIterator.Next())
+  {
+    const TDF_Label& anOperL = aChildIterator.Value();
+    XCAFAnimObjects_OperationType anOperType = XCAFAnimObjects_OperationType_Custom;
+    Handle(TDataStd_UAttribute) anOperTypeAttr;
+    if (anOperL.FindAttribute(AnimCustomRefGUID(), anOperTypeAttr))
+    {
+      anOperType = XCAFAnimObjects_OperationType_Custom;
+    }
+    else if (anOperL.FindAttribute(AnimOrientRefGUID(), anOperTypeAttr))
+    {
+      anOperType = XCAFAnimObjects_OperationType_Orient;
+    }
+    else if (anOperL.FindAttribute(AnimRotateRefGUID(), anOperTypeAttr))
+    {
+      anOperType = XCAFAnimObjects_OperationType_Rotate;
+    }
+    else if (anOperL.FindAttribute(AnimScaleRefGUID(), anOperTypeAttr))
+    {
+      anOperType = XCAFAnimObjects_OperationType_Scale;
+    }
+    else if (anOperL.FindAttribute(AnimSkewRefGUID(), anOperTypeAttr))
+    {
+      anOperType = XCAFAnimObjects_OperationType_Skew;
+    }
+    else if (anOperL.FindAttribute(AnimTransformRefGUID(), anOperTypeAttr))
+    {
+      anOperType = XCAFAnimObjects_OperationType_Transform;
+    }
+    else if (anOperL.FindAttribute(AnimTranslateRefGUID(), anOperTypeAttr))
+    {
+      anOperType = XCAFAnimObjects_OperationType_Translate;
+    }
+    if (anOperTypeAttr.IsNull())
+    {
+      continue;
+    }
+    Handle(TDataStd_IntegerArray) aDimArr;
+    if (!anOperL.FindAttribute(AnimValuesDimensionGUID(), aDimArr))
+    {
+      continue;
+    }
+    Handle(TDataStd_RealArray) aTimeStampsAttr;
+    anOperL.FindAttribute(AnimTimeStampsValuesGUID(), aTimeStampsAttr);
+    Handle(TDataStd_UAttribute) anInvertAttr;
+    const bool anIsInvert = anOperL.FindAttribute(AnimInvertRefGUID(), anInvertAttr);
+    Handle(XCAFAnimObjects_Operation) aNewOperObj;
+    switch (anOperType)
+    {
+      case XCAFAnimObjects_OperationType_Custom:
+      {
+        Handle(TDataStd_Name) aOperNameAttr;
+        if (!anOperL.FindAttribute(TDataStd_Name::GetID(), aOperNameAttr))
+        {
+          continue;
+        }
+        TCollection_AsciiString aOperName = aOperNameAttr->Get();
+        break;
+      }
+      case XCAFAnimObjects_OperationType_Orient:
+      {
+        break;
+      }
+      case XCAFAnimObjects_OperationType_Rotate:
+      {
+        Handle(TDataStd_Integer) aRotateTypeAttr;
+        if (!anOperL.FindAttribute(AnimRotateSubTypeGUID(), aRotateTypeAttr))
+        {
+          continue;
+        }
+        const XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate_Type aRotateType =
+          static_cast<XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate_Type>(aRotateTypeAttr->Get());
+        break;
+      }
+      case XCAFAnimObjects_OperationType_Scale:
+      {
+        break;
+      }
+      case XCAFAnimObjects_OperationType_Skew:
+      {
+        break;
+      }
+      case XCAFAnimObjects_OperationType_Transform:
+      {
+        break;
+      }
+      case XCAFAnimObjects_OperationType_Translate:
+      {
+        break;
+      }
+    }
+  }
   return anObj;
 }
 
 //=======================================================================
 //function : ID
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 const Standard_GUID& XCAFDoc_Animation::ID() const
 {
   return GetID();
@@ -110,5 +402,6 @@ const Standard_GUID& XCAFDoc_Animation::ID() const
 //=======================================================================
 void XCAFDoc_Animation::DumpJson(Standard_OStream& theOStream, Standard_Integer theDepth) const
 {
-
+  (void)theOStream;
+  (void)theDepth;
 }

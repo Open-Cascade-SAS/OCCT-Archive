@@ -75,6 +75,15 @@ XCAFAnimObjects_Transform::XCAFAnimObjects_Transform(const NCollection_Array2<do
 }
 
 //=======================================================================
+//function : XCAFAnimObjects_Transform
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Transform::XCAFAnimObjects_Transform(const Handle(XCAFAnimObjects_Transform)& theOperation) :
+  XCAFAnimObjects_Operation(theOperation),
+  myTransformPresentation(theOperation->myTransformPresentation)
+{}
+
+//=======================================================================
 //function : GeneralPresentation
 //purpose  :
 //=======================================================================

@@ -323,6 +323,16 @@ const Standard_GUID& XCAFDoc::LockGUID()
 }
 
 //=======================================================================
+//function : AnimRefShapeGUID
+//purpose  :
+//=======================================================================
+const Standard_GUID& XCAFDoc::AnimRefShapeGUID()
+{
+  static const Standard_GUID ID("0BE692B6-2E38-4FDC-A349-27615CF8784F");
+  return ID;
+}
+
+//=======================================================================
 //function : AttributeInfo
 //purpose  :
 //=======================================================================

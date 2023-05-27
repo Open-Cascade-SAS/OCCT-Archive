@@ -33,6 +33,9 @@ public:
   Standard_EXPORT XCAFAnimObjects_Translate(const NCollection_Array2<double>& theGeneralPresentation,
                                             const NCollection_Array1<double>& theTimeStamps);
 
+  //!
+  Standard_EXPORT XCAFAnimObjects_Translate(const Handle(XCAFAnimObjects_Translate)& theOperation);
+
   //! 
   XCAFAnimObjects_OperationType GetType() const Standard_OVERRIDE { return XCAFAnimObjects_OperationType_Translate; }
 

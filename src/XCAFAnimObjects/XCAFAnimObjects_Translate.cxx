@@ -61,6 +61,15 @@ XCAFAnimObjects_Translate::XCAFAnimObjects_Translate(const NCollection_Array2<do
 }
 
 //=======================================================================
+//function : XCAFAnimObjects_Translate
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Translate::XCAFAnimObjects_Translate(const Handle(XCAFAnimObjects_Translate)& theOperation) :
+  XCAFAnimObjects_Operation(theOperation),
+  myTranslatePresentation(theOperation->myTranslatePresentation)
+{}
+
+//=======================================================================
 //function : GeneralPresentation
 //purpose  :
 //=======================================================================

@@ -114,6 +114,9 @@ public:
   //! Returns GUID for UAttribute identifying lock flag
   Standard_EXPORT static const Standard_GUID& LockGUID();
 
+  //! Return GUIDs for TreeNode representing connections Animation-Shape
+  Standard_EXPORT static const Standard_GUID& AnimRefShapeGUID();
+
   //! Prints attribute information into a string.
   //! @param theAtt an XDE attribute
   //! @return the generated info value
