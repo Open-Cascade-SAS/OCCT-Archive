@@ -40,3 +40,13 @@ XCAFAnimObjects_CustomOperation::XCAFAnimObjects_CustomOperation(const NCollecti
   myTypeName(theCustomTypeName),
   myPresentation(thePresentation)
 {}
+
+//=======================================================================
+//function : XCAFAnimObjects_CustomOperation
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_CustomOperation::XCAFAnimObjects_CustomOperation(const Handle(XCAFAnimObjects_CustomOperation)& theOperation) :
+  XCAFAnimObjects_Operation(theOperation),
+  myTypeName(theOperation->myTypeName),
+  myPresentation(theOperation->myPresentation)
+{}

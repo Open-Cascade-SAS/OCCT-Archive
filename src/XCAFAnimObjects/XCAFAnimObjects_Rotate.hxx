@@ -23,34 +23,62 @@ class XCAFAnimObjects_Rotate : public XCAFAnimObjects_Operation
 public:
 
   //! 
-  Standard_EXPORT XCAFAnimObjects_Rotate(const gp_Quaternion& theRotate);
+  enum XCAFAnimObjects_Rotate_Type
+  {
+    XCAFAnimObjects_Rotate_Type_XYZ = 0,
+    XCAFAnimObjects_Rotate_Type_XZY,
+    XCAFAnimObjects_Rotate_Type_YZX,
+    XCAFAnimObjects_Rotate_Type_YXZ,
+    XCAFAnimObjects_Rotate_Type_ZXY,
+    XCAFAnimObjects_Rotate_Type_ZYX,
+    XCAFAnimObjects_Rotate_Type_XY,
+    XCAFAnimObjects_Rotate_Type_XZ,
+    XCAFAnimObjects_Rotate_Type_YX,
+    XCAFAnimObjects_Rotate_Type_YZ,
+    XCAFAnimObjects_Rotate_Type_ZX,
+    XCAFAnimObjects_Rotate_Type_ZY,
+    XCAFAnimObjects_Rotate_Type_X,
+    XCAFAnimObjects_Rotate_Type_Y,
+    XCAFAnimObjects_Rotate_Type_Z
+  };
+
+public:
 
   //! 
-  Standard_EXPORT XCAFAnimObjects_Rotate(const gp_XYZ& theRotate);
-
-  //! 
-  Standard_EXPORT XCAFAnimObjects_Rotate(const NCollection_Array1<gp_Quaternion>& theRotate,
-                                         const NCollection_Array1<double>& theTimeStamps);
+  Standard_EXPORT XCAFAnimObjects_Rotate(const NCollection_Array1<double>& theRotate,
+                                         const NCollection_Array1<double>& theTimeStamps,
+                                         const XCAFAnimObjects_Rotate_Type theRotateType = XCAFAnimObjects_Rotate_Type_XYZ);
 
   //! 
   Standard_EXPORT XCAFAnimObjects_Rotate(const NCollection_Array2<double>& theGeneralPresentation,
-                                         const NCollection_Array1<double>& theTimeStamps);
+                                         const NCollection_Array1<double>& theTimeStamps,
+                                         const XCAFAnimObjects_Rotate_Type theRotateType = XCAFAnimObjects_Rotate_Type_XYZ);
+
+  //!
+  Standard_EXPORT XCAFAnimObjects_Rotate(const Handle(XCAFAnimObjects_Rotate)& theOperation);
 
   //! 
   XCAFAnimObjects_OperationType GetType() const Standard_OVERRIDE { return XCAFAnimObjects_OperationType_Rotate; }
 
   //! 
+  XCAFAnimObjects_Rotate_Type GetRotateType() const { return myRotateType; }
+
+  //! 
+  void SetRotateType(const XCAFAnimObjects_Rotate_Type theRotateType) { myRotateType = theRotateType; }
+
+  //! 
   TCollection_AsciiString GetTypeName() const Standard_OVERRIDE { return "Rotate"; }
 
   //! 
-  Standard_EXPORT NCollection_Array2<double> GeneralPresentation() const Standard_OVERRIDE;
+  NCollection_Array2<double> GeneralPresentation() const { return myRotatePresentation; }
 
   //! 
-  const NCollection_Array1<gp_Quaternion>& RotatePresentation() const { return myRotatePresentation; }
+  const NCollection_Array2<double>& RotatePresentation() const { return myRotatePresentation; }
 
 private:
 
-  NCollection_Array1<gp_Quaternion> myRotatePresentation; //!< 
+  XCAFAnimObjects_Rotate_Type myRotateType; //!< 
+  NCollection_Array2<double> myRotatePresentation; //!< 
 };
 
 #endif // _XCAFAnimObjects_Rotate_HeaderFile

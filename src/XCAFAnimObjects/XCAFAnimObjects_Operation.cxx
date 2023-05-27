@@ -13,6 +13,8 @@
 
 #include <XCAFAnimObjects_Operation.hxx>
 
+IMPLEMENT_STANDARD_RTTIEXT(XCAFAnimObjects_Operation, Standard_Transient)
+
 //=======================================================================
 //function : XCAFAnimObjects_Operation
 //purpose  :
@@ -29,4 +31,13 @@ XCAFAnimObjects_Operation::XCAFAnimObjects_Operation(const NCollection_Array1<do
                                                      const bool theIsInverse) :
   myIsInverse(theIsInverse),
   myTimeStamps(theTimeStamps)
+{}
+
+//=======================================================================
+//function : XCAFAnimObjects_Operation
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Operation::XCAFAnimObjects_Operation(const Handle(XCAFAnimObjects_Operation)& theOperation) :
+  myIsInverse(theOperation->myIsInverse),
+  myTimeStamps(theOperation->myTimeStamps)
 {}

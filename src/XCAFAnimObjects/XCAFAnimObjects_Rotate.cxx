@@ -19,80 +19,68 @@
 //function : XCAFAnimObjects_Rotate
 //purpose  :
 //=======================================================================
-XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const gp_Quaternion& theRotate) :
+XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const NCollection_Array1<double>& theRotate,
+                                               const NCollection_Array1<double>& theTimeStamps,
+                                               const XCAFAnimObjects_Rotate_Type theRotateType) :
   XCAFAnimObjects_Operation(false),
-  myRotatePresentation(1, 1)
+  myRotateType(theRotateType),
+  myRotatePresentation(1, 1, theRotate.Lower(), theRotate.Upper())
 {
-  myRotatePresentation.SetValue(1, theRotate);
+  for (int anInd = theRotate.Lower(); anInd <= theRotate.Upper(); anInd++)
+  {
+    myRotatePresentation.SetValue(1, anInd, theRotate.Value(anInd));
+  }
+  Standard_Integer aNbDouble = 3;
+  if (theRotateType >= XCAFAnimObjects_Rotate_Type_XY &&
+      theRotateType <= XCAFAnimObjects_Rotate_Type_ZY)
+  {
+    aNbDouble = 2;
+  }
+  if (theRotateType >= XCAFAnimObjects_Rotate_Type_X &&
+      theRotateType <= XCAFAnimObjects_Rotate_Type_Z)
+  {
+    aNbDouble = 1;
+  }
+  if (theRotate.Length() != aNbDouble)
+  {
+    Message::SendWarning() << "Warning: XCAFAnimObjects_Rotate: Incorrect Rotate presentation";
+  }
 }
-
-//=======================================================================
-//function : XCAFAnimObjects_Rotate
-//purpose  :
-//=======================================================================
-XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const gp_XYZ& theRotate) :
-  XCAFAnimObjects_Operation(false),
-  myRotatePresentation(1, 1)
-{
-  // Convert angles from degrees to radians and create quaternions for each rotation.
-  gp_Quaternion aQuaternionX(gp_Dir(1, 0, 0), theRotate.X() * M_PI / 180.0);
-  gp_Quaternion aQuaternionY(gp_Dir(0, 1, 0), theRotate.Y() * M_PI / 180.0);
-  gp_Quaternion aQuaternionZ(gp_Dir(0, 0, 1), theRotate.Z() * M_PI / 180.0);
-
-  // Combine the rotations. The order depends on the rotation order in the original Euler angles.
-  gp_Quaternion aCombinedQuaternion = aQuaternionX * aQuaternionY * aQuaternionZ;
-
-  myRotatePresentation.SetValue(1, aCombinedQuaternion);
-}
-
-//=======================================================================
-//function : XCAFAnimObjects_Rotate
-//purpose  :
-//=======================================================================
-XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const NCollection_Array1<gp_Quaternion>& theRotate,
-                                               const NCollection_Array1<double>& theTimeStamps) :
-  XCAFAnimObjects_Operation(theTimeStamps),
-  myRotatePresentation(theRotate)
-{}
 
 //=======================================================================
 //function : XCAFAnimObjects_Rotate
 //purpose  :
 //=======================================================================
 XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const NCollection_Array2<double>& theGeneralPresentation,
-                                               const NCollection_Array1<double>& theTimeStamps) :
+                                               const NCollection_Array1<double>& theTimeStamps,
+                                               const XCAFAnimObjects_Rotate_Type theRotateType) :
   XCAFAnimObjects_Operation(false),
-  myRotatePresentation(1, theGeneralPresentation.RowLength())
+  myRotateType(theRotateType),
+  myRotatePresentation(theGeneralPresentation)
 {
-  if (theGeneralPresentation.ColLength() != 4)
+  Standard_Integer aNbDouble = 3;
+  if (theRotateType >= XCAFAnimObjects_Rotate_Type_XY &&
+      theRotateType <= XCAFAnimObjects_Rotate_Type_ZY)
   {
-    Message::SendWarning() << "Warning: XCAFAnimObjects_Rotate: Incorrect Quaternion general presentation";
-    return;
+    aNbDouble = 2;
   }
-  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.RowLength(); aRowInd++)
+  if (theRotateType >= XCAFAnimObjects_Rotate_Type_X &&
+      theRotateType <= XCAFAnimObjects_Rotate_Type_Z)
   {
-    gp_Quaternion aQuat(theGeneralPresentation.Value(aRowInd, 1),
-                        theGeneralPresentation.Value(aRowInd, 2),
-                        theGeneralPresentation.Value(aRowInd, 3),
-                        theGeneralPresentation.Value(aRowInd, 4));
-    myRotatePresentation.SetValue(aRowInd, aQuat);
+    aNbDouble = 1;
+  }
+  if (theGeneralPresentation.ColLength() != aNbDouble)
+  {
+    Message::SendWarning() << "Warning: XCAFAnimObjects_Rotate: Incorrect Rotate presentation";
   }
 }
 
 //=======================================================================
-//function : GeneralPresentation
+//function : XCAFAnimObjects_Rotate
 //purpose  :
 //=======================================================================
-NCollection_Array2<double> XCAFAnimObjects_Rotate::GeneralPresentation() const
-{
-  NCollection_Array2<double> aRes(1, myRotatePresentation.Length(), 1, 4);
-  for (int aRowInd = 1; aRowInd <= myRotatePresentation.Length(); aRowInd++)
-  {
-    const gp_Quaternion& aQuat = myRotatePresentation.Value(aRowInd);
-
-    aRes.SetValue(aRowInd, 1, aQuat.X());
-    aRes.SetValue(aRowInd, 2, aQuat.Y());
-    aRes.SetValue(aRowInd, 3, aQuat.Z());
-    aRes.SetValue(aRowInd, 4, aQuat.W());
-  }
-}
+XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const Handle(XCAFAnimObjects_Rotate)& theOperation) :
+  XCAFAnimObjects_Operation(theOperation),
+  myRotateType(theOperation->myRotateType),
+  myRotatePresentation(theOperation->myRotatePresentation)
+{}

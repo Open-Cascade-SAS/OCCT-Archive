@@ -14,13 +14,15 @@
 #ifndef _XCAFAnimObjects_Operation_HeaderFile
 #define _XCAFAnimObjects_Operation_HeaderFile
 
+#include <Standard_Type.hxx>
+#include <Standard_Transient.hxx>
 #include <NCollection_Array1.hxx>
 #include <NCollection_Array2.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <XCAFAnimObjects_OperationType.hxx>
 
 //! 
-class XCAFAnimObjects_Operation
+class XCAFAnimObjects_Operation : public Standard_Transient
 {
 public:
 
@@ -30,6 +32,9 @@ public:
   //! 
   Standard_EXPORT XCAFAnimObjects_Operation(const NCollection_Array1<double>& theTimeStamps,
                                             const bool theIsInverse = false);
+
+  //!
+  Standard_EXPORT XCAFAnimObjects_Operation(const Handle(XCAFAnimObjects_Operation)& theOperation);
 
   //! 
   const NCollection_Array1<double>& TimeStamps() const { return myTimeStamps; }
@@ -51,6 +56,8 @@ public:
 
   //! 
   Standard_EXPORT virtual NCollection_Array2<double> GeneralPresentation() const = 0;
+
+  DEFINE_STANDARD_RTTIEXT(XCAFAnimObjects_Operation, Standard_Transient)
 
 private:
   bool myIsInverse; //!

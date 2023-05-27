@@ -62,6 +62,15 @@ XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const NCollection_Array2<double>&
 }
 
 //=======================================================================
+//function : XCAFAnimObjects_Orient
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const Handle(XCAFAnimObjects_Orient)& theOperation) :
+  XCAFAnimObjects_Operation(theOperation),
+  myOrientPresentation(theOperation->myOrientPresentation)
+{}
+
+//=======================================================================
 //function : GeneralPresentation
 //purpose  :
 //=======================================================================

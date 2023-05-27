@@ -64,6 +64,15 @@ XCAFAnimObjects_Skew::XCAFAnimObjects_Skew(const NCollection_Array2<double>& the
 }
 
 //=======================================================================
+//function : XCAFAnimObjects_Skew
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Skew::XCAFAnimObjects_Skew(const Handle(XCAFAnimObjects_Skew)& theOperation) :
+  XCAFAnimObjects_Operation(theOperation),
+  mySkewPresentation(theOperation->mySkewPresentation)
+{}
+
+//=======================================================================
 //function : GeneralPresentation
 //purpose  :
 //=======================================================================

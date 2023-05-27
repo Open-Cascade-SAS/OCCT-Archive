@@ -60,6 +60,15 @@ XCAFAnimObjects_Scale::XCAFAnimObjects_Scale(const NCollection_Array2<double>& t
 }
 
 //=======================================================================
+//function : XCAFAnimObjects_Scale
+//purpose  :
+//=======================================================================
+XCAFAnimObjects_Scale::XCAFAnimObjects_Scale(const Handle(XCAFAnimObjects_Scale)& theOperation) :
+  XCAFAnimObjects_Operation(theOperation),
+  myScalePresentation(theOperation->myScalePresentation)
+{}
+
+//=======================================================================
 //function : GeneralPresentation
 //purpose  :
 //=======================================================================
