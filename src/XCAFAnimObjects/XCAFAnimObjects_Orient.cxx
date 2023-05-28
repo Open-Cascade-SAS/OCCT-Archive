@@ -44,14 +44,14 @@ XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const NCollection_Array1<gp_Quate
 XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const NCollection_Array2<double>& theGeneralPresentation,
                                                const NCollection_Array1<double>& theTimeStamps) :
   XCAFAnimObjects_Operation(theTimeStamps),
-  myOrientPresentation(1, theGeneralPresentation.RowLength())
+  myOrientPresentation(1, theGeneralPresentation.NbRows())
 {
-  if (theGeneralPresentation.ColLength() != 4)
+  if (theGeneralPresentation.NbColumns() != 4)
   {
     Message::SendWarning() << "Warning: XCAFAnimObjects_Orient: Incorrect Quaternion general presentation";
     return;
   }
-  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.RowLength(); aRowInd++)
+  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.NbRows(); aRowInd++)
   {
     gp_Quaternion aQuat(theGeneralPresentation.Value(aRowInd, 1),
                         theGeneralPresentation.Value(aRowInd, 2),
