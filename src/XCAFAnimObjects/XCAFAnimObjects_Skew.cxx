@@ -42,7 +42,7 @@ XCAFAnimObjects_Skew::XCAFAnimObjects_Skew(const NCollection_Array1<Skew>& theSk
 //=======================================================================
 XCAFAnimObjects_Skew::XCAFAnimObjects_Skew(const NCollection_Array2<double>& theGeneralPresentation,
                                            const NCollection_Array1<double>& theTimeStamps) :
-  XCAFAnimObjects_Operation(false),
+  XCAFAnimObjects_Operation(theTimeStamps),
   mySkewPresentation(1, theGeneralPresentation.RowLength())
 {
   if (theGeneralPresentation.ColLength() != 7)
@@ -91,4 +91,5 @@ NCollection_Array2<double> XCAFAnimObjects_Skew::GeneralPresentation() const
     aRes.SetValue(aRowInd, 6, aSkew.Axis2.Y());
     aRes.SetValue(aRowInd, 7, aSkew.Axis2.Z());
   }
+  return aRes;
 }
