@@ -13,17 +13,23 @@
 
 #include <XCAFDoc_Animation.hxx>
 
-#include <TDF_Label.hxx>
 #include <Standard_GUID.hxx>
-#include <TDataStd_Name.hxx>
-#include <TDF_ChildIterator.hxx>
-#include <TDataStd_Integer.hxx>
-#include <TDataStd_UAttribute.hxx>
 #include <TCollection_ExtendedString.hxx>
-#include <XCAFAnimObjects_Rotate.hxx>
-#include <TDataStd_RealArray.hxx>
+#include <TDataStd_Integer.hxx>
 #include <TDataStd_IntegerArray.hxx>
+#include <TDataStd_Name.hxx>
+#include <TDataStd_RealArray.hxx>
+#include <TDataStd_UAttribute.hxx>
+#include <TDF_ChildIterator.hxx>
+#include <TDF_Label.hxx>
 #include <XCAFAnimObjects_AnimObject.hxx>
+#include <XCAFAnimObjects_CustomOperation.hxx>
+#include <XCAFAnimObjects_Orient.hxx>
+#include <XCAFAnimObjects_Rotate.hxx>
+#include <XCAFAnimObjects_Scale.hxx>
+#include <XCAFAnimObjects_Skew.hxx>
+#include <XCAFAnimObjects_Transform.hxx>
+#include <XCAFAnimObjects_Translate.hxx>
 
 IMPLEMENT_DERIVED_ATTRIBUTE(XCAFDoc_Animation, TDataStd_GenericEmpty)
 
@@ -329,13 +335,36 @@ Handle(XCAFAnimObjects_AnimObject) XCAFDoc_Animation::GetObject()  const
     {
       continue;
     }
-    Handle(TDataStd_IntegerArray) aDimArr;
-    if (!anOperL.FindAttribute(AnimValuesDimensionGUID(), aDimArr))
+    Handle(TDataStd_IntegerArray) aDimAtrArr;
+    if (!anOperL.FindAttribute(AnimValuesDimensionGUID(), aDimAtrArr) ||
+        aDimAtrArr->Length() != 2)
     {
       continue;
     }
+    Handle(TDataStd_RealArray) aValuesAtrArr;
+    if (!anOperL.FindAttribute(AnimValuesGUID(), aValuesAtrArr) ||
+        (aDimAtrArr->Value(1) * aDimAtrArr->Value(2)) != aValuesAtrArr->Length())
+    {
+      continue;
+    }
+    NCollection_Array2<double> aValuesArr(1, aDimAtrArr->Value(1), 1, aDimAtrArr->Value(2));
+    int aValuesInd = 1;
+    for (NCollection_Array2<double>::Iterator aOperValIter(aValuesArr);
+         aOperValIter.More(); aOperValIter.Next(), aValuesInd++)
+    {
+      aOperValIter.ChangeValue() = aValuesAtrArr->Value(aValuesInd);
+    }
     Handle(TDataStd_RealArray) aTimeStampsAttr;
-    anOperL.FindAttribute(AnimTimeStampsValuesGUID(), aTimeStampsAttr);
+    NCollection_Array1<double> aTimeStampsArr;
+    if (anOperL.FindAttribute(AnimTimeStampsValuesGUID(), aTimeStampsAttr) &&
+        aTimeStampsAttr->Length() == aValuesArr.NbRows())
+    {
+      aTimeStampsArr.Resize(1, aTimeStampsAttr->Length(), false);
+      for (int anTimeStampInd = 1; anTimeStampInd <= aTimeStampsAttr->Length(); anTimeStampInd++)
+      {
+        aTimeStampsArr.SetValue(anTimeStampInd, aTimeStampsAttr->Value(anTimeStampInd));
+      }
+    }
     Handle(TDataStd_UAttribute) anInvertAttr;
     const bool anIsInvert = anOperL.FindAttribute(AnimInvertRefGUID(), anInvertAttr);
     Handle(XCAFAnimObjects_Operation) aNewOperObj;
@@ -349,10 +378,12 @@ Handle(XCAFAnimObjects_AnimObject) XCAFDoc_Animation::GetObject()  const
           continue;
         }
         TCollection_AsciiString aOperName = aOperNameAttr->Get();
+        aNewOperObj = new XCAFAnimObjects_CustomOperation(aValuesArr, aTimeStampsArr, aOperName);
         break;
       }
       case XCAFAnimObjects_OperationType_Orient:
       {
+        aNewOperObj = new XCAFAnimObjects_Orient(aValuesArr, aTimeStampsArr);
         break;
       }
       case XCAFAnimObjects_OperationType_Rotate:
@@ -364,25 +395,35 @@ Handle(XCAFAnimObjects_AnimObject) XCAFDoc_Animation::GetObject()  const
         }
         const XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate_Type aRotateType =
           static_cast<XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate_Type>(aRotateTypeAttr->Get());
+        aNewOperObj = new XCAFAnimObjects_Rotate(aValuesArr, aTimeStampsArr, aRotateType);
         break;
       }
       case XCAFAnimObjects_OperationType_Scale:
       {
+        aNewOperObj = new XCAFAnimObjects_Scale(aValuesArr, aTimeStampsArr);
         break;
       }
       case XCAFAnimObjects_OperationType_Skew:
       {
+        aNewOperObj = new XCAFAnimObjects_Skew(aValuesArr, aTimeStampsArr);
         break;
       }
       case XCAFAnimObjects_OperationType_Transform:
       {
+        aNewOperObj = new XCAFAnimObjects_Transform(aValuesArr, aTimeStampsArr);
         break;
       }
       case XCAFAnimObjects_OperationType_Translate:
       {
+        aNewOperObj = new XCAFAnimObjects_Translate(aValuesArr, aTimeStampsArr);
         break;
       }
     }
+    if (aNewOperObj.IsNull())
+    {
+      continue;
+    }
+    anOrderedOperations.Append(aNewOperObj);
   }
   return anObj;
 }
