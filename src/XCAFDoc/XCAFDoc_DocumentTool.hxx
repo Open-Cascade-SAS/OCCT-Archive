@@ -26,6 +26,7 @@
 class Standard_GUID;
 class TDF_Label;
 class TDocStd_Document;
+class XCAFDoc_AnimationTool;
 class XCAFDoc_ShapeTool;
 class XCAFDoc_ColorTool;
 class XCAFDoc_ClippingPlaneTool;
@@ -92,6 +93,9 @@ public:
   //! Returns sub-label of DocLabel() with tag 10.
   Standard_EXPORT static TDF_Label VisMaterialLabel (const TDF_Label& theLabel);
 
+  //! Returns sub-label of DocLabel() with tag 18.
+  Standard_EXPORT static TDF_Label AnimationlLabel(const TDF_Label& theLabel);
+
   //! Creates (if it does not exist) ShapeTool attribute on ShapesLabel().
   Standard_EXPORT static Handle(XCAFDoc_ShapeTool) ShapeTool (const TDF_Label& acces);
 
@@ -110,9 +114,16 @@ public:
   //! Should not be confused with MaterialTool() defining physical/manufacturing materials.
   Standard_EXPORT static Handle(XCAFDoc_VisMaterialTool) VisMaterialTool (const TDF_Label& theLabel);
 
+  //! Creates (if it does not exist) XCAFDoc_AnimationTool attribute on AnimationLabell().
+  Standard_EXPORT static Handle(XCAFDoc_AnimationTool) AnimationTool(const TDF_Label& theLabel);
+
   //! Checks for the VisMaterialTool attribute on the label's document
   //! Returns TRUE if Tool exists, ELSE if it has not been created
   Standard_EXPORT static Standard_Boolean CheckVisMaterialTool(const TDF_Label& theAcces);
+
+  //! Checks for the AnimationTool attribute on the label's document
+  //! Returns TRUE if Tool exists, ELSE if it has not been created
+  Standard_EXPORT static Standard_Boolean CheckAnimationTool(const TDF_Label& theAcces);
 
   //! Creates (if it does not exist) LayerTool attribute on LayersLabel().
   Standard_EXPORT static Handle(XCAFDoc_LayerTool) LayerTool (const TDF_Label& acces);

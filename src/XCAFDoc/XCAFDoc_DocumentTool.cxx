@@ -23,6 +23,7 @@
 #include <TDF_Label.hxx>
 #include <TDF_Tool.hxx>
 #include <TDocStd_Document.hxx>
+#include <XCAFDoc_AnimationTool.hxx>
 #include <XCAFDoc_ColorTool.hxx>
 #include <XCAFDoc_ClippingPlaneTool.hxx>
 #include <XCAFDoc_DimTolTool.hxx>
@@ -88,6 +89,7 @@ Handle(XCAFDoc_DocumentTool) XCAFDoc_DocumentTool::Set(const TDF_Label& L,
     XCAFDoc_NotesTool::Set(NotesLabel(L));
     XCAFDoc_ViewTool::Set(ViewsLabel(L));
     XCAFDoc_ClippingPlaneTool::Set(ClippingPlanesLabel(L));
+    XCAFDoc_AnimationTool::Set(AnimationlLabel(L));
   }
   return A;
 }
@@ -238,6 +240,17 @@ TDF_Label XCAFDoc_DocumentTool::VisMaterialLabel (const TDF_Label& theLabel)
 }
 
 //=======================================================================
+//function : AnimationlLabel
+//purpose  :
+//=======================================================================
+TDF_Label XCAFDoc_DocumentTool::AnimationlLabel(const TDF_Label& theLabel)
+{
+  TDF_Label aLabel = DocLabel(theLabel).FindChild(18, Standard_True);
+  TDataStd_Name::Set(aLabel, "Animation");
+  return aLabel;
+}
+
+//=======================================================================
 //function : ShapeTool
 //purpose  : 
 //=======================================================================
@@ -295,6 +308,15 @@ Handle(XCAFDoc_VisMaterialTool) XCAFDoc_DocumentTool::VisMaterialTool (const TDF
 }
 
 //=======================================================================
+//function : AnimationTool
+//purpose  :
+//=======================================================================
+Handle(XCAFDoc_AnimationTool) XCAFDoc_DocumentTool::AnimationTool(const TDF_Label& theLabel)
+{
+  return XCAFDoc_AnimationTool::Set(AnimationlLabel(theLabel));
+}
+
+//=======================================================================
 //function : CheckVisMaterialTool
 //purpose  :
 //=======================================================================
@@ -309,11 +331,25 @@ Standard_Boolean XCAFDoc_DocumentTool::CheckVisMaterialTool(const TDF_Label& the
 }
 
 //=======================================================================
+//function : CheckAnimationTool
+//purpose  :
+//=======================================================================
+Standard_Boolean XCAFDoc_DocumentTool::CheckAnimationTool(const TDF_Label& theAcces)
+{
+  TDF_Label aLabel = DocLabel(theAcces).FindChild(18, Standard_False);
+  if (aLabel.IsNull())
+  {
+    return Standard_False;
+  }
+  return aLabel.IsAttribute(XCAFDoc_AnimationTool::GetID());
+}
+
+//=======================================================================
 //function : LayerTool
 //purpose  : 
 //=======================================================================
 
-Handle(XCAFDoc_LayerTool) XCAFDoc_DocumentTool::LayerTool (const TDF_Label& acces) 
+Handle(XCAFDoc_LayerTool) XCAFDoc_DocumentTool::LayerTool (const TDF_Label& acces)
 {
   return XCAFDoc_LayerTool::Set(LayersLabel(acces));
 }

@@ -44,14 +44,14 @@ XCAFAnimObjects_Translate::XCAFAnimObjects_Translate(const NCollection_Array1<gp
 XCAFAnimObjects_Translate::XCAFAnimObjects_Translate(const NCollection_Array2<double>& theGeneralPresentation,
                                                      const NCollection_Array1<double>& theTimeStamps) :
   XCAFAnimObjects_Operation(theTimeStamps),
-  myTranslatePresentation(1, theGeneralPresentation.RowLength())
+  myTranslatePresentation(1, theGeneralPresentation.NbRows())
 {
-  if (theGeneralPresentation.ColLength() != 3)
+  if (theGeneralPresentation.NbColumns() != 3)
   {
     Message::SendWarning() << "Warning: XCAFAnimObjects_Translate: Incorrect XYZ general presentation";
     return;
   }
-  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.RowLength(); aRowInd++)
+  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.NbRows(); aRowInd++)
   {
     gp_XYZ aXYZ(theGeneralPresentation.Value(aRowInd, 1),
                 theGeneralPresentation.Value(aRowInd, 2),

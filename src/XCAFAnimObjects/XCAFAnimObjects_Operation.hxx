@@ -40,7 +40,7 @@ public:
   const NCollection_Array1<double>& TimeStamps() const { return myTimeStamps; }
 
   //! 
-  bool HasTimeStamps() const { return myTimeStamps.IsEmpty(); }
+  bool HasTimeStamps() const { return !myTimeStamps.IsEmpty(); }
 
   //! 
   Standard_EXPORT virtual XCAFAnimObjects_OperationType GetType() const = 0;

@@ -43,14 +43,14 @@ XCAFAnimObjects_Scale::XCAFAnimObjects_Scale(const NCollection_Array1<gp_XYZ>& t
 XCAFAnimObjects_Scale::XCAFAnimObjects_Scale(const NCollection_Array2<double>& theGeneralPresentation,
                                              const NCollection_Array1<double>& theTimeStamps) :
   XCAFAnimObjects_Operation(theTimeStamps),
-  myScalePresentation(1, theGeneralPresentation.RowLength())
+  myScalePresentation(1, theGeneralPresentation.NbRows())
 {
-  if (theGeneralPresentation.ColLength() != 3)
+  if (theGeneralPresentation.NbColumns() != 3)
   {
     Message::SendWarning() << "Warning: XCAFAnimObjects_Scale: Incorrect XYZ general presentation";
     return;
   }
-  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.RowLength(); aRowInd++)
+  for (int aRowInd = 1; aRowInd <= theGeneralPresentation.NbRows(); aRowInd++)
   {
     gp_XYZ aXYZ(theGeneralPresentation.Value(aRowInd, 1),
                 theGeneralPresentation.Value(aRowInd, 2),

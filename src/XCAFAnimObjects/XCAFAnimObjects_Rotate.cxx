@@ -69,7 +69,7 @@ XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const NCollection_Array2<double>&
   {
     aNbDouble = 1;
   }
-  if (theGeneralPresentation.ColLength() != aNbDouble)
+  if (theGeneralPresentation.NbColumns() != aNbDouble)
   {
     Message::SendWarning() << "Warning: XCAFAnimObjects_Rotate: Incorrect Rotate presentation";
   }

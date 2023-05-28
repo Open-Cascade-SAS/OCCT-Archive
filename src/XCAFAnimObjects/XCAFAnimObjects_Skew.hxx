@@ -15,8 +15,8 @@
 #define _XCAFAnimObjects_Skew_HeaderFile
 
 #include <XCAFAnimObjects_Operation.hxx>
-#include <gp_Quaternion.hxx>
-#include <gp_Ax3.hxx>
+#include <gp_XYZ.hxx>
+
 
 //! 
 class XCAFAnimObjects_Skew : public XCAFAnimObjects_Operation
@@ -24,18 +24,10 @@ class XCAFAnimObjects_Skew : public XCAFAnimObjects_Operation
 public:
 
   //! 
-  struct Skew
-  {
-    double Angle = 0.; //!< 
-    gp_Dir Axis1; //!< 
-    gp_Dir Axis2; //!< 
-  };
+  Standard_EXPORT XCAFAnimObjects_Skew(const gp_XYZ& theSkew);
 
   //! 
-  Standard_EXPORT XCAFAnimObjects_Skew(const Skew& theSkew);
-
-  //! 
-  Standard_EXPORT XCAFAnimObjects_Skew(const NCollection_Array1<Skew>& theSkew,
+  Standard_EXPORT XCAFAnimObjects_Skew(const NCollection_Array1<gp_XYZ>& theSkew,
                                        const NCollection_Array1<double>& theTimeStamps);
 
   //! 
@@ -55,11 +47,11 @@ public:
   Standard_EXPORT NCollection_Array2<double> GeneralPresentation() const Standard_OVERRIDE;
 
   //! 
-  const NCollection_Array1<Skew>& SkewPresentation() const { return mySkewPresentation; }
+  const NCollection_Array1<gp_XYZ>& SkewPresentation() const { return mySkewPresentation; }
 
 private:
 
-  NCollection_Array1<Skew> mySkewPresentation; //!< 
+  NCollection_Array1<gp_XYZ> mySkewPresentation; //!< 
 };
 
 #endif // _XCAFAnimObjects_Skew_HeaderFile

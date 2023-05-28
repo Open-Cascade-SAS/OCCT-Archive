@@ -377,7 +377,7 @@ Handle(XCAFAnimObjects_AnimObject) XCAFDoc_Animation::GetObject()  const
         {
           continue;
         }
-        TCollection_AsciiString aOperName = aOperNameAttr->Get();
+        const TCollection_AsciiString aOperName = aOperNameAttr->Get();
         aNewOperObj = new XCAFAnimObjects_CustomOperation(aValuesArr, aTimeStampsArr, aOperName);
         break;
       }
