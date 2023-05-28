@@ -22,7 +22,7 @@
 XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const NCollection_Array1<double>& theRotate,
                                                const NCollection_Array1<double>& theTimeStamps,
                                                const XCAFAnimObjects_Rotate_Type theRotateType) :
-  XCAFAnimObjects_Operation(false),
+  XCAFAnimObjects_Operation(theTimeStamps),
   myRotateType(theRotateType),
   myRotatePresentation(1, 1, theRotate.Lower(), theRotate.Upper())
 {
@@ -54,7 +54,7 @@ XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const NCollection_Array1<double>&
 XCAFAnimObjects_Rotate::XCAFAnimObjects_Rotate(const NCollection_Array2<double>& theGeneralPresentation,
                                                const NCollection_Array1<double>& theTimeStamps,
                                                const XCAFAnimObjects_Rotate_Type theRotateType) :
-  XCAFAnimObjects_Operation(false),
+  XCAFAnimObjects_Operation(theTimeStamps),
   myRotateType(theRotateType),
   myRotatePresentation(theGeneralPresentation)
 {

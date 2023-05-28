@@ -43,7 +43,7 @@ XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const NCollection_Array1<gp_Quate
 //=======================================================================
 XCAFAnimObjects_Orient::XCAFAnimObjects_Orient(const NCollection_Array2<double>& theGeneralPresentation,
                                                const NCollection_Array1<double>& theTimeStamps) :
-  XCAFAnimObjects_Operation(false),
+  XCAFAnimObjects_Operation(theTimeStamps),
   myOrientPresentation(1, theGeneralPresentation.RowLength())
 {
   if (theGeneralPresentation.ColLength() != 4)
@@ -86,4 +86,5 @@ NCollection_Array2<double> XCAFAnimObjects_Orient::GeneralPresentation() const
     aRes.SetValue(aRowInd, 3, aQuat.Z());
     aRes.SetValue(aRowInd, 4, aQuat.W());
   }
+  return aRes;
 }

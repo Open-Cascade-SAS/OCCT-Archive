@@ -42,7 +42,7 @@ XCAFAnimObjects_Transform::XCAFAnimObjects_Transform(const NCollection_Array1<NC
 //=======================================================================
 XCAFAnimObjects_Transform::XCAFAnimObjects_Transform(const NCollection_Array2<double>& theGeneralPresentation,
                                                      const NCollection_Array1<double>& theTimeStamps) :
-  XCAFAnimObjects_Operation(false),
+  XCAFAnimObjects_Operation(theTimeStamps),
   myTransformPresentation(1, theGeneralPresentation.RowLength())
 {
   if (theGeneralPresentation.ColLength() != 16)
@@ -111,4 +111,5 @@ NCollection_Array2<double> XCAFAnimObjects_Transform::GeneralPresentation() cons
     aRes.SetValue(aRowInd, 15, aTransform.GetValue(4, 3));
     aRes.SetValue(aRowInd, 16, aTransform.GetValue(4, 4));
   }
+  return aRes;
 }

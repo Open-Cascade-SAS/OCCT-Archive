@@ -42,7 +42,7 @@ XCAFAnimObjects_Scale::XCAFAnimObjects_Scale(const NCollection_Array1<gp_XYZ>& t
 //=======================================================================
 XCAFAnimObjects_Scale::XCAFAnimObjects_Scale(const NCollection_Array2<double>& theGeneralPresentation,
                                              const NCollection_Array1<double>& theTimeStamps) :
-  XCAFAnimObjects_Operation(false),
+  XCAFAnimObjects_Operation(theTimeStamps),
   myScalePresentation(1, theGeneralPresentation.RowLength())
 {
   if (theGeneralPresentation.ColLength() != 3)
@@ -83,4 +83,5 @@ NCollection_Array2<double> XCAFAnimObjects_Scale::GeneralPresentation() const
     aRes.SetValue(aRowInd, 2, aXYZ.Y());
     aRes.SetValue(aRowInd, 3, aXYZ.Z());
   }
+  return aRes;
 }
