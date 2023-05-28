@@ -15,13 +15,13 @@
 
 #include <Standard_GUID.hxx>
 #include <TDataStd_Name.hxx>
+#include <TDataStd_Real.hxx>
+#include <TDataStd_TreeNode.hxx>
+#include <TDataStd_UAttribute.hxx>
 #include <TDF_ChildIterator.hxx>
 #include <XCAFDoc.hxx>
-#include <TDataStd_TreeNode.hxx>
-#include <XCAFDoc_GraphNode.hxx>
-#include <TDataStd_Real.hxx>
-#include <TDataStd_UAttribute.hxx>
 #include <XCAFDoc_Animation.hxx>>
+#include <XCAFDoc_GraphNode.hxx>
 
 IMPLEMENT_DERIVED_ATTRIBUTE_WITH_TYPE(XCAFDoc_AnimationTool, TDataStd_GenericEmpty, "xcaf", "AnimationTool")
 

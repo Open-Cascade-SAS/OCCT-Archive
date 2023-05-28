@@ -15,8 +15,8 @@
 #ifndef _XCAFDoc_AnimationTool_HeaderFile
 #define _XCAFDoc_AnimationTool_HeaderFile
 
-#include <TDataStd_GenericEmpty.hxx>
 #include <TDF_LabelSequence.hxx>
+#include <TDataStd_GenericEmpty.hxx>
 
 //! A tool to store shapes in an XDE
 //! document in the form of assembly structure, and to maintain this structure.
