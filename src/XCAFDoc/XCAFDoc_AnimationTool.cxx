@@ -36,6 +36,26 @@ namespace
     static Standard_GUID aGlobalFPSID("C7E7AF70-2FB3-40FD-BD38-CC79D9343D7A");
     return aGlobalFPSID;
   }
+
+  //=======================================================================
+  //function : GetStartTimeCodeGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& GetStartTimeCodeGUID()
+  {
+    static Standard_GUID aStartTimeCodeGUID("379BC1C5-E9DA-4B57-9938-B2612158722A");
+    return aStartTimeCodeGUID;
+  }
+
+  //=======================================================================
+  //function : GetEndTimeCodeGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& GetEndTimeCodeGUID()
+  {
+    static Standard_GUID aEndTimeCodeGUID("EF5305A3-961D-48AE-9A78-AC744A110A26");
+    return aEndTimeCodeGUID;
+  }
 }
 
 //=======================================================================
@@ -145,6 +165,66 @@ void XCAFDoc_AnimationTool::SetGlobalFPS(const double theFPS) const
     return;
   }
   TDataStd_Real::Set(BaseLabel(), GetGlobalFPSGUID(), theFPS);
+}
+
+//=======================================================================
+//function : GetStartTimeCode
+//purpose  :
+//=======================================================================
+bool XCAFDoc_AnimationTool::GetStartTimeCode(double& theCode) const
+{
+  Handle(TDataStd_Real) aCodeAttr;
+  if (BaseLabel().FindAttribute(GetStartTimeCodeGUID(), aCodeAttr))
+  {
+    theCode = aCodeAttr->Get();
+    return true;
+  }
+  return false;
+}
+
+//=======================================================================
+//function : SetStartTimeCode
+//purpose  :
+//=======================================================================
+void XCAFDoc_AnimationTool::SetStartTimeCode(const double theCode) const
+{
+  Handle(TDataStd_Real) aCodeAttr;
+  if (BaseLabel().FindAttribute(GetStartTimeCodeGUID(), aCodeAttr))
+  {
+    aCodeAttr->Set(theCode);
+    return;
+  }
+  TDataStd_Real::Set(BaseLabel(), GetStartTimeCodeGUID(), theCode);
+}
+
+//=======================================================================
+//function : GetEndTimeCode
+//purpose  :
+//=======================================================================
+bool XCAFDoc_AnimationTool::GetEndTimeCode(double& theCode) const
+{
+  Handle(TDataStd_Real) aCodeAttr;
+  if (BaseLabel().FindAttribute(GetEndTimeCodeGUID(), aCodeAttr))
+  {
+    theCode = aCodeAttr->Get();
+    return true;
+  }
+  return false;
+}
+
+//=======================================================================
+//function : SetEndTimeCode
+//purpose  :
+//=======================================================================
+void XCAFDoc_AnimationTool::SetEndTimeCode(const double theCode) const
+{
+  Handle(TDataStd_Real) aCodeAttr;
+  if (BaseLabel().FindAttribute(GetEndTimeCodeGUID(), aCodeAttr))
+  {
+    aCodeAttr->Set(theCode);
+    return;
+  }
+  TDataStd_Real::Set(BaseLabel(), GetEndTimeCodeGUID(), theCode);
 }
 
 //=======================================================================

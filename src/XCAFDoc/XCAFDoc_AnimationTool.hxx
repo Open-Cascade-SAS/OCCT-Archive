@@ -64,6 +64,18 @@ public:
   //!
   Standard_EXPORT void SetGlobalFPS(const double theFPS) const;
 
+  //!
+  Standard_EXPORT bool GetStartTimeCode(double& theCode) const;
+
+  //!
+  Standard_EXPORT void SetStartTimeCode(const double theCode) const;
+
+  //!
+  Standard_EXPORT bool GetEndTimeCode(double& theCode) const;
+
+  //!
+  Standard_EXPORT void SetEndTimeCode(const double theCode) const;
+
   //! Returns a sequence of Animation labels currently stored
   //! in the Animation table.
   Standard_EXPORT void GetAnimationLabels(TDF_LabelSequence& theLabels) const;
