@@ -86,9 +86,7 @@ int ec_error ( const std::string& s, const std::string& text )
 
 %top{
 // Pre-include stdlib.h to avoid redefinition of integer type macros (INT8_MIN and similar in generated code)
-#if !defined(_MSC_VER) || (_MSC_VER >= 1600) // Visual Studio 2010+
-#include "stdint.h"
-#endif
+#include <Standard_TypeDef.hxx>
 }
 
 %{
