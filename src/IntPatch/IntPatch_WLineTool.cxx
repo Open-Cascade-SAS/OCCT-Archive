@@ -1507,6 +1507,9 @@ void IntPatch_WLineTool::JoinWLines(IntPatch_SequenceOfLine& theSlin,
 
       const Standard_Integer aNbPntsWL2 = aWLine2->NbPnts();
 
+      if (aNbPntsWL1 < 2 || aNbPntsWL2 < 2)
+        continue;
+
       const IntSurf_PntOn2S& aPntFWL2 = aWLine2->Point(1);
       const IntSurf_PntOn2S& aPntLWL2 = aWLine2->Point(aNbPntsWL2);
 
