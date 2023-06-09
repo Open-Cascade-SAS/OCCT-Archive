@@ -10,6 +10,8 @@ FREETYPE_DIR="$OCCT3RDPARTY/freetype-2.7.1"
 #BUILD_DIR=build
 INSTALL_DIR="$SrcRoot/../3rdparty/occt77"
 
+BUILD_CPP_STANDARD=C++14
+
 #BUILD_DOC_Overview=OFF
 #BUILD_Inspector=OFF
 #BUILD_LIBRARY_TYPE=Shared

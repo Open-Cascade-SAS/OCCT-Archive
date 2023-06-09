@@ -15,6 +15,8 @@ rem ------------------------------------
 rem set "BUILD_DIR=build-vs%VS%-%VSPLATFORM%"
 set "INSTALL_DIR=%SrcRoot%\..\3rdparty\occt77-vc14-64"
 
+set BUILD_CPP_STANDARD=C++14
+
 rem set BUILD_DOC_Overview=OFF
 rem set BUILD_Inspector=OFF
 rem set BUILD_LIBRARY_TYPE=Shared

@@ -44,6 +44,28 @@ rem Archive tool
 set "THE_7Z_PARAMS=-t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on"
 set "THE_7Z_PATH=%ProgramW6432%\7-Zip\7z.exe"
 
+set "aBuildType=Release"
+set "aBuildTypePrefix="
+set "anExtraCxxFlags="
+if /I ["%USE_PTHREADS%"] == ["ON"] (
+  set "anExtraCxxFlags=-pthread"
+  set "aBuildTypePrefix=%aBuildTypePrefix%-pthread"
+)
+if ["%toDebug%"] == ["1"] (
+  set "aBuildType=Debug"
+  set "aBuildTypePrefix=%aBuildTypePrefix%-debug"
+)
+
+set "aPlatformAndCompiler=wasm32%aBuildTypePrefix%"
+set "aWorkDir=%aBuildRoot%\occt-%aPlatformAndCompiler%-make"
+set "aDestDir=%aBuildRoot%\occt-%aPlatformAndCompiler%"
+set "aLogFile=%aBuildRoot%\occt-%aPlatformAndCompiler%-build.log"
+
+set "aSrcRootSmpl=%aCasSrc%\samples\webgl"
+set "aWorkDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-make"
+set "aDestDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%"
+set "aLogFileSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-build.log"
+
 rem Configuration file
 if exist "%~dp0wasm_custom.bat" call "%~dp0wasm_custom.bat"
 
@@ -57,18 +79,6 @@ set "aGitBranch="
 for /f tokens^=2^ delims^=^" %%i in ('findstr /b /c:"#define OCC_VERSION_DEVELOPMENT" "%aCasSrc%\src\Standard\Standard_Version.hxx"') do ( set "anOcctVerSuffix=%%i" )
 for /f tokens^=2^ delims^=^" %%i in ('findstr /b /c:"#define OCC_VERSION_COMPLETE" "%aCasSrc%\src\Standard\Standard_Version.hxx"') do ( set "anOcctVersion=%%i" )
 for /f %%i in ('git symbolic-ref --short HEAD') do ( set "aGitBranch=%%i" )
-
-set "aBuildType=Release"
-set "aBuildTypePrefix="
-set "anExtraCxxFlags="
-if /I ["%USE_PTHREADS%"] == ["ON"] (
-  set "anExtraCxxFlags=-pthread"
-  set "aBuildTypePrefix=%aBuildTypePrefix%-pthread"
-)
-if ["%toDebug%"] == ["1"] (
-  set "aBuildType=Debug"
-  set "aBuildTypePrefix=%aBuildTypePrefix%-debug"
-)
 
 call :cmakeGenerate
 if errorlevel 1 (
@@ -115,10 +125,6 @@ if not ["%1"] == ["-nopause"] (
 goto :eof
 
 :cmakeGenerate
-set "aPlatformAndCompiler=wasm32%aBuildTypePrefix%"
-set "aWorkDir=%aBuildRoot%\occt-%aPlatformAndCompiler%-make"
-set "aDestDir=%aBuildRoot%\occt-%aPlatformAndCompiler%"
-set "aLogFile=%aBuildRoot%\occt-%aPlatformAndCompiler%-build.log"
 if ["%toCMake%"] == ["1"] (
   if ["%toClean%"] == ["1"] (
     rmdir /S /Q %aWorkDir%"
@@ -128,10 +134,6 @@ if ["%toCMake%"] == ["1"] (
 if not exist "%aWorkDir%" ( mkdir "%aWorkDir%" )
 if     exist "%aLogFile%" ( del   "%aLogFile%" )
 
-set "aSrcRootSmpl=%aCasSrc%\samples\webgl"
-set "aWorkDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-make"
-set "aDestDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%"
-set "aLogFileSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-build.log"
 if ["%toBuildSample%"] == ["1"] (
   if ["%toCMake%"] == ["1"] (
     if ["%toClean%"] == ["1"] (
