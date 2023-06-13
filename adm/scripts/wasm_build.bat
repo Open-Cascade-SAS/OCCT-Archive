@@ -26,6 +26,12 @@ set "toDebug=0"
 set "toBuildSample=0"
 set "sourceMapBase="
 
+set "aBuildType=Release"
+if /I ["%1"] == ["-d"] (
+  set "toDebug=1"
+  set "aBuildType=Debug"
+)
+
 rem OCCT Modules to build
 set "BUILD_ModelingData=ON"
 set "BUILD_ModelingAlgorithms=ON"
@@ -44,7 +50,19 @@ rem Archive tool
 set "THE_7Z_PARAMS=-t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on"
 set "THE_7Z_PATH=%ProgramW6432%\7-Zip\7z.exe"
 
-set "aBuildType=Release"
+set "aPlatformAndCompiler="
+set "aWorkDir="
+set "aDestDir="
+set "aLogFile="
+
+set "aSrcRootSmpl=%aCasSrc%\samples\webgl"
+set "aWorkDirSmpl="
+set "aDestDirSmpl="
+set "aLogFileSmpl="
+
+rem Configuration file
+if exist "%~dp0wasm_custom.bat" call "%~dp0wasm_custom.bat"
+
 set "aBuildTypePrefix="
 set "anExtraCxxFlags="
 if /I ["%USE_PTHREADS%"] == ["ON"] (
@@ -52,22 +70,17 @@ if /I ["%USE_PTHREADS%"] == ["ON"] (
   set "aBuildTypePrefix=%aBuildTypePrefix%-pthread"
 )
 if ["%toDebug%"] == ["1"] (
-  set "aBuildType=Debug"
   set "aBuildTypePrefix=%aBuildTypePrefix%-debug"
 )
 
-set "aPlatformAndCompiler=wasm32%aBuildTypePrefix%"
-set "aWorkDir=%aBuildRoot%\occt-%aPlatformAndCompiler%-make"
-set "aDestDir=%aBuildRoot%\occt-%aPlatformAndCompiler%"
-set "aLogFile=%aBuildRoot%\occt-%aPlatformAndCompiler%-build.log"
+if ["%aPlatformAndCompiler%"] == [""] ( set "aPlatformAndCompiler=wasm32%aBuildTypePrefix%" )
+if ["%aWorkDir%"] == [""] ( set "aWorkDir=%aBuildRoot%\occt-%aPlatformAndCompiler%-make" )
+if ["%aDestDir%"] == [""] ( set "aDestDir=%aBuildRoot%\occt-%aPlatformAndCompiler%" )
+if ["%aLogFile%"] == [""] ( set "aLogFile=%aBuildRoot%\occt-%aPlatformAndCompiler%-build.log" )
 
-set "aSrcRootSmpl=%aCasSrc%\samples\webgl"
-set "aWorkDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-make"
-set "aDestDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%"
-set "aLogFileSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-build.log"
-
-rem Configuration file
-if exist "%~dp0wasm_custom.bat" call "%~dp0wasm_custom.bat"
+if ["%aWorkDirSmpl%"] == [""] ( set "aWorkDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-make" )
+if ["%aDestDirSmpl%"] == [""] ( set "aDestDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%" )
+if ["%aLogFileSmpl%"] == [""] ( set "aLogFileSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-build.log" )
 
 call "%EMSDK_ROOT%\emsdk_env.bat"
 set "aToolchain=%EMSDK%/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
@@ -82,9 +95,6 @@ for /f %%i in ('git symbolic-ref --short HEAD') do ( set "aGitBranch=%%i" )
 
 call :cmakeGenerate
 if errorlevel 1 (
-  if not ["%1"] == ["-nopause"] (
-    pause
-  )
   exit /B 1
   goto :eof
 )

@@ -14,7 +14,6 @@ rem set "toClean=0"
 rem set "toMake=1"
 rem set "toInstall=1"
 set "toPack=0"
-set "toDebug=0"
 set "toBuildSample=0"
 rem Source map base (should point to server where C++ sources will be copied)
 rem enables -g4 debug building option for WebGL sample and allows navigating C++ source code within JavaScript debugger.
