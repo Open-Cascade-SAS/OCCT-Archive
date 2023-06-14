@@ -426,6 +426,7 @@ Handle(XCAFAnimObjects_AnimObject) XCAFDoc_Animation::GetObject()  const
     aNewOperObj->SetInverse(anIsInvert);
     anOrderedOperations.Append(aNewOperObj);
   }
+  anObj->ChangeOrderedOperations() = anOrderedOperations;
   return anObj;
 }
 
