@@ -32,11 +32,13 @@
 #include <Bnd_Box.hxx>
 #include <BndLib_Add3dCurve.hxx>
 #include <ElSLib.hxx>
+#include <Extrema_ExtElC.hxx>
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BoundedSurface.hxx>
 #include <Geom_BSplineSurface.hxx>
 #include <Geom_ConicalSurface.hxx>
 #include <Geom_Curve.hxx>
+#include <Geom_Line.hxx>
 #include <Geom_OffsetSurface.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_SphericalSurface.hxx>
@@ -218,44 +220,72 @@ void ShapeAnalysis_Surface::ComputeSingularities()
   }
   else if ((mySurf->IsKind(STANDARD_TYPE(Geom_BoundedSurface))) ||
     (mySurf->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution))) || //:b2 abv 18 Feb 98
-    (mySurf->IsKind(STANDARD_TYPE(Geom_OffsetSurface)))) { //rln S4135
+    (mySurf->IsKind(STANDARD_TYPE(Geom_OffsetSurface))))
+  {
+    Handle(Geom_SurfaceOfRevolution) aSoR = Handle(Geom_SurfaceOfRevolution)::DownCast(mySurf);
+    if (mySurf->IsKind(STANDARD_TYPE(Geom_OffsetSurface)))
+    {
+      aSoR = Handle(Geom_SurfaceOfRevolution)::DownCast((Handle(Geom_OffsetSurface)::DownCast(mySurf))->BasisSurface());
+    }
+    if (!aSoR.IsNull() &&
+        aSoR->BasisCurve()->IsKind(STANDARD_TYPE(Geom_Line)))
+    {
+      const gp_Lin aLine(aSoR->Axis());
+      Extrema_ExtElC anExtrema(aLine, (Handle(Geom_Line)::DownCast(aSoR->BasisCurve()))->Lin(), Precision::Angular());
+      if (anExtrema.IsDone() &&
+        anExtrema.NbExt() == 1)
+      {
+        Extrema_POnCurv anExPnts[2];
+        anExtrema.Points(1, anExPnts[0], anExPnts[1]);
+        myPreci[0] = 0;
+        myP3d[0] = anExPnts[1].Value();
+        myFirstP2d[0].SetCoord(su1, anExPnts[1].Parameter());
+        myLastP2d[0].SetCoord(su2, anExPnts[1].Parameter());
+        myFirstPar[0] = su1;
+        myLastPar[0] = su2;
+        myUIsoDeg[0] = Standard_False;
+        myNbDeg = 1;
+      }
+    }
+    else
+    {
+      //rln S4135 //:r3
+      myP3d[0] = myAdSur->Value(su1, 0.5 * (sv1 + sv2));
+      myFirstP2d[0].SetCoord(su1, sv2);
+      myLastP2d[0].SetCoord(su1, sv1);
 
-                                                           //rln S4135 //:r3
-    myP3d[0] = myAdSur->Value(su1, 0.5 * (sv1 + sv2));
-    myFirstP2d[0].SetCoord(su1, sv2);
-    myLastP2d[0].SetCoord(su1, sv1);
+      myP3d[1] = myAdSur->Value(su2, 0.5 * (sv1 + sv2));
+      myFirstP2d[1].SetCoord(su2, sv1);
+      myLastP2d[1].SetCoord(su2, sv2);
 
-    myP3d[1] = myAdSur->Value(su2, 0.5 * (sv1 + sv2));
-    myFirstP2d[1].SetCoord(su2, sv1);
-    myLastP2d[1].SetCoord(su2, sv2);
+      myP3d[2] = myAdSur->Value(0.5 * (su1 + su2), sv1);
+      myFirstP2d[2].SetCoord(su1, sv1);
+      myLastP2d[2].SetCoord(su2, sv1);
 
-    myP3d[2] = myAdSur->Value(0.5 * (su1 + su2), sv1);
-    myFirstP2d[2].SetCoord(su1, sv1);
-    myLastP2d[2].SetCoord(su2, sv1);
+      myP3d[3] = myAdSur->Value(0.5 * (su1 + su2), sv2);
+      myFirstP2d[3].SetCoord(su2, sv2);
+      myLastP2d[3].SetCoord(su1, sv2);
 
-    myP3d[3] = myAdSur->Value(0.5 * (su1 + su2), sv2);
-    myFirstP2d[3].SetCoord(su2, sv2);
-    myLastP2d[3].SetCoord(su1, sv2);
+      myFirstPar[0] = myFirstPar[1] = sv1;
+      myLastPar[0] = myLastPar[1] = sv2;
+      myUIsoDeg[0] = myUIsoDeg[1] = Standard_True;
 
-    myFirstPar[0] = myFirstPar[1] = sv1;
-    myLastPar[0] = myLastPar[1] = sv2;
-    myUIsoDeg[0] = myUIsoDeg[1] = Standard_True;
+      myFirstPar[2] = myFirstPar[3] = su1;
+      myLastPar[2] = myLastPar[3] = su2;
+      myUIsoDeg[2] = myUIsoDeg[3] = Standard_False;
 
-    myFirstPar[2] = myFirstPar[3] = su1;
-    myLastPar[2] = myLastPar[3] = su2;
-    myUIsoDeg[2] = myUIsoDeg[3] = Standard_False;
+      gp_Pnt Corner1 = myAdSur->Value(su1, sv1);
+      gp_Pnt Corner2 = myAdSur->Value(su1, sv2);
+      gp_Pnt Corner3 = myAdSur->Value(su2, sv1);
+      gp_Pnt Corner4 = myAdSur->Value(su2, sv2);
 
-    gp_Pnt Corner1 = myAdSur->Value(su1, sv1);
-    gp_Pnt Corner2 = myAdSur->Value(su1, sv2);
-    gp_Pnt Corner3 = myAdSur->Value(su2, sv1);
-    gp_Pnt Corner4 = myAdSur->Value(su2, sv2);
+      myPreci[0] = Max(Corner1.Distance(Corner2), Max(myP3d[0].Distance(Corner1), myP3d[0].Distance(Corner2)));
+      myPreci[1] = Max(Corner3.Distance(Corner4), Max(myP3d[1].Distance(Corner3), myP3d[1].Distance(Corner4)));
+      myPreci[2] = Max(Corner1.Distance(Corner3), Max(myP3d[2].Distance(Corner1), myP3d[2].Distance(Corner3)));
+      myPreci[3] = Max(Corner2.Distance(Corner4), Max(myP3d[3].Distance(Corner2), myP3d[3].Distance(Corner4)));
 
-    myPreci[0] = Max(Corner1.Distance(Corner2), Max(myP3d[0].Distance(Corner1), myP3d[0].Distance(Corner2)));
-    myPreci[1] = Max(Corner3.Distance(Corner4), Max(myP3d[1].Distance(Corner3), myP3d[1].Distance(Corner4)));
-    myPreci[2] = Max(Corner1.Distance(Corner3), Max(myP3d[2].Distance(Corner1), myP3d[2].Distance(Corner3)));
-    myPreci[3] = Max(Corner2.Distance(Corner4), Max(myP3d[3].Distance(Corner2), myP3d[3].Distance(Corner4)));
-
-    myNbDeg = 4;
+      myNbDeg = 4;
+    }
   }
   SortSingularities();
 }
