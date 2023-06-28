@@ -14,6 +14,7 @@
 #include <XCAFDoc_AnimationTool.hxx>
 
 #include <Standard_GUID.hxx>
+#include <TDataStd_AsciiString.hxx>
 #include <TDataStd_Name.hxx>
 #include <TDataStd_Real.hxx>
 #include <TDataStd_TreeNode.hxx>
@@ -55,6 +56,26 @@ namespace
   {
     static Standard_GUID aEndTimeCodeGUID("EF5305A3-961D-48AE-9A78-AC744A110A26");
     return aEndTimeCodeGUID;
+  }
+
+  //=======================================================================
+  //function : GetFileLengthUnitGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& GetFileLengthUnitGUID()
+  {
+    static Standard_GUID aFileLengthUnitGUID("492f5372-9a28-4611-a663-d8394f98df00");
+    return aFileLengthUnitGUID;
+  }
+
+  //=======================================================================
+  //function : GetFileLengthUnitGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& GetUpAxisGUID()
+  {
+    static Standard_GUID anUpAxisGUID("05d55dd9-7175-44a7-97aa-43909ad6f9c7");
+    return anUpAxisGUID;
   }
 }
 
@@ -225,6 +246,66 @@ void XCAFDoc_AnimationTool::SetEndTimeCode(const double theCode) const
     return;
   }
   TDataStd_Real::Set(BaseLabel(), GetEndTimeCodeGUID(), theCode);
+}
+
+//=======================================================================
+//function : GetFileLengthUnit
+//purpose  :
+//=======================================================================
+bool XCAFDoc_AnimationTool::GetFileLengthUnit(double& theLengthUnit) const
+{
+  Handle(TDataStd_Real) aLengthUnitAttr;
+  if (BaseLabel().FindAttribute(GetFileLengthUnitGUID(), aLengthUnitAttr))
+  {
+    theLengthUnit = aLengthUnitAttr->Get();
+    return true;
+  }
+  return false;
+}
+
+//=======================================================================
+//function : SetFileLengthUnit
+//purpose  :
+//=======================================================================
+void XCAFDoc_AnimationTool::SetFileLengthUnit(const double theLengthUnit) const
+{
+  Handle(TDataStd_Real) aLengthUnitAttr;
+  if (BaseLabel().FindAttribute(GetFileLengthUnitGUID(), aLengthUnitAttr))
+  {
+    aLengthUnitAttr->Set(theLengthUnit);
+    return;
+  }
+  TDataStd_Real::Set(BaseLabel(), GetFileLengthUnitGUID(), theLengthUnit);
+}
+
+//=======================================================================
+//function : GetUpAxis
+//purpose  :
+//=======================================================================
+bool XCAFDoc_AnimationTool::GetUpAxis(TCollection_AsciiString& theAxis) const
+{
+  Handle(TDataStd_AsciiString) anAxisAttr;
+  if (BaseLabel().FindAttribute(GetUpAxisGUID(), anAxisAttr))
+  {
+    theAxis = anAxisAttr->Get();
+    return true;
+  }
+  return false;
+}
+
+//=======================================================================
+//function : SetUpAxis
+//purpose  :
+//=======================================================================
+void XCAFDoc_AnimationTool::SetUpAxis(const TCollection_AsciiString theAxis) const
+{
+  Handle(TDataStd_AsciiString) anAxisAttr;
+  if (BaseLabel().FindAttribute(GetUpAxisGUID(), anAxisAttr))
+  {
+    anAxisAttr->Set(theAxis);
+    return;
+  }
+  TDataStd_AsciiString::Set(BaseLabel(), GetUpAxisGUID(), theAxis);
 }
 
 //=======================================================================

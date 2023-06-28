@@ -76,6 +76,18 @@ public:
   //!
   Standard_EXPORT void SetEndTimeCode(const double theCode) const;
 
+  //!
+  Standard_EXPORT bool GetFileLengthUnit(double& theLengthUnit) const;
+
+  //!
+  Standard_EXPORT void SetFileLengthUnit(const double theLengthUnit) const;
+
+  //!
+  Standard_EXPORT bool GetUpAxis(TCollection_AsciiString& theAxis) const;
+
+  //!
+  Standard_EXPORT void SetUpAxis(const TCollection_AsciiString theAxis) const;
+
   //! Returns a sequence of Animation labels currently stored
   //! in the Animation table.
   Standard_EXPORT void GetAnimationLabels(TDF_LabelSequence& theLabels) const;
