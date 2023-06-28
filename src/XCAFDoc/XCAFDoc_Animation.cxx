@@ -347,7 +347,7 @@ Handle(XCAFAnimObjects_AnimObject) XCAFDoc_Animation::GetObject()  const
     {
       continue;
     }
-    NCollection_Array2<double> aValuesArr(1, aDimAtrArr->Value(1), 1, aDimAtrArr->Value(2));
+    NCollection_Array2<double> aValuesArr(1, aDimAtrArr->Value(2), 1, aDimAtrArr->Value(1));
     int aValuesInd = 1;
     for (NCollection_Array2<double>::Iterator aOperValIter(aValuesArr);
          aOperValIter.More(); aOperValIter.Next(), aValuesInd++)

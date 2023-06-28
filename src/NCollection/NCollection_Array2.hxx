@@ -179,10 +179,10 @@ public:
   Standard_Integer NbColumns() const { return myUpperCol - myLowerCol + 1; }
 
   //! Returns length of the row, i.e. number of columns
-  Standard_Integer RowLength() const { return NbRows(); }
+  Standard_Integer RowLength() const { return NbColumns(); }
 
   //! Returns length of the column, i.e. number of rows
-  Standard_Integer ColLength() const { return NbColumns(); }
+  Standard_Integer ColLength() const { return NbRows(); }
 
   //! LowerRow
   Standard_Integer LowerRow (void) const
