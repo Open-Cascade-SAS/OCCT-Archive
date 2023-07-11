@@ -24,6 +24,7 @@
 #include <TCollection_HAsciiString.hxx>
 #include <TColStd_SequenceOfHAsciiString.hxx>
 #include <TDataStd_Name.hxx>
+#include <TDataStd_RealArray.hxx>
 #include <TDataStd_TreeNode.hxx>
 #include <TDataStd_UAttribute.hxx>
 #include <TDF_Attribute.hxx>
@@ -51,7 +52,21 @@
 
 IMPLEMENT_DERIVED_ATTRIBUTE_WITH_TYPE(XCAFDoc_ShapeTool,TDataStd_GenericEmpty,"xcaf","ShapeTool")
 
-static Standard_Boolean theAutoNaming = Standard_True;
+namespace
+{
+  static Standard_Boolean THE_AUTO_NAMING_FLAG = Standard_True;
+  static Standard_Boolean THE_UNIFORM_SCALING_SUPPORT_FLAG = Standard_False;
+
+  //=======================================================================
+  //function : GetUniformScaleGUID
+  //purpose  :
+  //=======================================================================
+  const Standard_GUID& GetUniformScaleGUID()
+  {
+    static Standard_GUID anUniformScaleID("D4DA66EA-EBAD-4775-ACEC-1A018C6A4501");
+    return anUniformScaleID;
+  }
+}
 
 // attribute methods //////////////////////////////////////////////////
 
@@ -412,7 +427,7 @@ void XCAFDoc_ShapeTool::MakeReference (const TDF_Label &L,
   refNode->Remove(); // abv: fix against bug in TreeNode::Append()
   mainNode->Append(refNode);
 
-  if (theAutoNaming)
+  if (THE_AUTO_NAMING_FLAG)
     SetLabelNameByLink(L);
 }
 
@@ -487,7 +502,7 @@ TDF_Label XCAFDoc_ShapeTool::addShape (const TopoDS_Shape& S, const Standard_Boo
 //  }
   A->SetShape(S);
   
-  if (theAutoNaming)
+  if (THE_AUTO_NAMING_FLAG)
     SetLabelNameByShape(ShapeLabel);
 
   // if shape is Compound and flag is set, create assembly
@@ -495,7 +510,7 @@ TDF_Label XCAFDoc_ShapeTool::addShape (const TopoDS_Shape& S, const Standard_Boo
     // mark assembly by assigning UAttribute
     Handle(TDataStd_UAttribute) Uattr;
     Uattr = TDataStd_UAttribute::Set ( ShapeLabel, XCAFDoc::AssemblyGUID() );
-    if (theAutoNaming)
+    if (THE_AUTO_NAMING_FLAG)
       TDataStd_Name::Set(ShapeLabel, TCollection_ExtendedString("ASSEMBLY"));
 
     // iterate on components
@@ -644,31 +659,87 @@ void XCAFDoc_ShapeTool::Init()
 
 //=======================================================================
 //function : SetAutoNaming
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 void XCAFDoc_ShapeTool::SetAutoNaming (const Standard_Boolean V)
 {
-  theAutoNaming = V;
+  THE_AUTO_NAMING_FLAG = V;
 }
-
 
 //=======================================================================
 //function : AutoNaming
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 Standard_Boolean XCAFDoc_ShapeTool::AutoNaming()
 {
-  return theAutoNaming;
+  return THE_AUTO_NAMING_FLAG;
 }
 
+//=======================================================================
+//function : SetUniformScalingSupport
+//purpose  :
+//=======================================================================
+void XCAFDoc_ShapeTool::SetUniformScalingSupport(const Standard_Boolean theSupportFlag)
+{
+  THE_UNIFORM_SCALING_SUPPORT_FLAG = theSupportFlag;
+}
+
+//=======================================================================
+//function : UniformScalingSupport
+//purpose  :
+//=======================================================================
+Standard_Boolean XCAFDoc_ShapeTool::UniformScalingSupport()
+{
+  return THE_UNIFORM_SCALING_SUPPORT_FLAG;
+}
+
+//=======================================================================
+//function : GetShapeUniformScale
+//purpose  :
+//=======================================================================
+Standard_Boolean XCAFDoc_ShapeTool::GetShapeUniformScale(const TDF_Label& theShLabel,
+                                                         double& theDX,
+                                                         double& theDY,
+                                                         double& theDZ)
+{
+  if (theShLabel.IsNull())
+  {
+    return Standard_False;
+  }
+  Handle(TDataStd_RealArray) anArrAttr;
+  if (!theShLabel.FindAttribute(GetUniformScaleGUID(), anArrAttr) ||
+      anArrAttr->Length() != 3)
+  {
+    return Standard_False;
+  }
+  theDX = anArrAttr->Value(1);
+  theDY = anArrAttr->Value(2);
+  theDZ = anArrAttr->Value(3);
+}
+
+//=======================================================================
+//function : SetShapeUniformScale
+//purpose  :
+//=======================================================================
+Standard_Boolean XCAFDoc_ShapeTool::SetShapeUniformScale(const TDF_Label& theShLabel,
+                                                         const double theDX,
+                                                         const double theDY,
+                                                         const double theDZ)
+{
+  if (!IsShape(theShLabel))
+  {
+    return Standard_False;
+  }
+  Handle(TDataStd_RealArray) anArray = TDataStd_RealArray::Set(theShLabel, GetUniformScaleGUID(), 1, 3);
+  anArray->SetValue(1, theDX);
+  anArray->SetValue(2, theDY);
+  anArray->SetValue(3, theDZ);
+}
 
 //=======================================================================
 //function : ComputeShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 void XCAFDoc_ShapeTool::ComputeShapes(const TDF_Label& L)
 {
   TDF_ChildIterator it(L); 
@@ -1522,7 +1593,7 @@ Standard_Boolean XCAFDoc_ShapeTool::SetSHUO (const TDF_LabelSequence& labels,
   
   TDF_TagSource aTag;
   TDF_Label UpperSubL = aTag.NewChild( labels( 1 ) );
-  if (theAutoNaming) {
+  if (THE_AUTO_NAMING_FLAG) {
     TCollection_ExtendedString Entry("SHUO");
     TDataStd_Name::Set(UpperSubL, TCollection_ExtendedString( Entry ));
   }
@@ -1533,7 +1604,7 @@ Standard_Boolean XCAFDoc_ShapeTool::SetSHUO (const TDF_LabelSequence& labels,
   // add other next_usage occurrences.
   for (i = 2; i <= labels.Length(); i++) {
     TDF_Label NextSubL = aTag.NewChild( labels( i ) );
-    if (theAutoNaming) {
+    if (THE_AUTO_NAMING_FLAG) {
       TCollection_ExtendedString EntrySub("SHUO-");
       EntrySub += i;
       TDataStd_Name::Set(NextSubL, TCollection_ExtendedString( EntrySub ));
