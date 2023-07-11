@@ -238,6 +238,34 @@ public:
   //! Returns current auto-naming mode. See SetAutoNaming() for
   //! description.
   Standard_EXPORT static Standard_Boolean AutoNaming();
+
+  //! Sets uniform scaling support mode to <theSupportFlag>.
+  //! If True then some DataExchange components be able to keep
+  //! uniform scale information into special XCAF attribute.
+  //!
+  //! This setting is global; it cannot be made a member function
+  //! as it is used by static methods as well.
+  //! By default, uniform scaling support is disable.
+  //! See also UniformScalingSupport().
+  Standard_EXPORT static void SetUniformScalingSupport (const Standard_Boolean theSupportFlag);
+  
+  //! Returns current niform scaling support mode.
+  //! See SetUniformScalingSupport() for description.
+  Standard_EXPORT static Standard_Boolean UniformScalingSupport();
+
+  //! Gets uniform scale values from the label.
+  //! @return true if scaling is support and attribute is exist
+  Standard_EXPORT static Standard_Boolean GetShapeUniformScale(const TDF_Label& theShLabel,
+                                                               double& theDX,
+                                                               double& theDY,
+                                                               double& theDZ);
+
+  //! Sets uniform scale values on the label.
+  //! @return true if scaling is support and label contains shape
+  Standard_EXPORT static Standard_Boolean SetShapeUniformScale(const TDF_Label& theShLabel,
+                                                               const double theDX,
+                                                               const double theDY,
+                                                               const double theDZ);
   
   //! recursive
   Standard_EXPORT void ComputeShapes (const TDF_Label& L);
