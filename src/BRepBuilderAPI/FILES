@@ -16,6 +16,8 @@ BRepBuilderAPI_FindPlane.cxx
 BRepBuilderAPI_FindPlane.hxx
 BRepBuilderAPI_GTransform.cxx
 BRepBuilderAPI_GTransform.hxx
+BRepBuilderAPI_HullTransform.cxx
+BRepBuilderAPI_HullTransform.hxx
 BRepBuilderAPI_MakeEdge.cxx
 BRepBuilderAPI_MakeEdge.hxx
 BRepBuilderAPI_MakeEdge2d.cxx

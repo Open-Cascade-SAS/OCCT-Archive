@@ -39,6 +39,7 @@ class BRepBuilderAPI_ModifyShape;
 class BRepBuilderAPI_Transform;
 class BRepBuilderAPI_NurbsConvert;
 class BRepBuilderAPI_GTransform;
+class BRepBuilderAPI_HullTransform;
 class BRepBuilderAPI_Copy;
 class BRepBuilderAPI_Collect;
 
@@ -151,6 +152,7 @@ friend class BRepBuilderAPI_ModifyShape;
 friend class BRepBuilderAPI_Transform;
 friend class BRepBuilderAPI_NurbsConvert;
 friend class BRepBuilderAPI_GTransform;
+friend class BRepBuilderAPI_HullTransform;
 friend class BRepBuilderAPI_Copy;
 friend class BRepBuilderAPI_Collect;
 

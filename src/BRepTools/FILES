@@ -6,6 +6,8 @@ BRepTools_GTrsfModification.cxx
 BRepTools_GTrsfModification.hxx
 BRepTools_History.hxx
 BRepTools_History.cxx
+BRepTools_HullTransformation.cxx
+BRepTools_HullTransformation.hxx
 BRepTools_MapOfVertexPnt2d.hxx
 BRepTools_Modification.cxx
 BRepTools_Modification.hxx
