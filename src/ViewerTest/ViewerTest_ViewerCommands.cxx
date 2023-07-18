@@ -13914,7 +13914,7 @@ static int VSelBvhBuild (Draw_Interpretor& /*theDI*/, Standard_Integer theNbArgs
 //function : VMouseGesture
 //purpose  :
 //=======================================================================
-static int VMouseGesture (Draw_Interpretor& /*theDI*/,
+static int VMouseGesture (Draw_Interpretor&,
                           Standard_Integer  theArgsNb,
                           const char**      theArgVec)
 {
