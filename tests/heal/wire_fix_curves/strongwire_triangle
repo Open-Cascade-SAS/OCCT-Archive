@@ -1,0 +1,17 @@
+#############################################################
+## Fix wire algo
+## moves a curve of invalid wire to make it valid
+#############################################################
+
+vertex v1   0   0 0
+vertex v2 100   0 0
+vertex v3  50 100 0
+
+edge e1 v1 v2
+edge e2 v2 v3
+edge e3 v3 v1
+
+strongwire w1 e1 e2 e3
+
+checkshape w1
+whatis w1

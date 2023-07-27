@@ -1,0 +1,18 @@
+#############################################################
+## Fix wire algo
+## moves a curve of invalid wire to make it valid
+#############################################################
+
+point px 100   0   0
+point py   0 100   0
+point pz   0   0 100
+
+vertex vx px
+vertex vy py
+
+edge exy vx vy
+gcarc arc cir py pz px
+mkedge earc arc
+
+strongwire w exy earc
+whatis w
