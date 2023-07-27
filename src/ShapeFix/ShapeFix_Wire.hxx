@@ -279,6 +279,7 @@ public:
   //! flag ClosedMode is True
   //! If <prec> is -1 then MaxTolerance() is taken.
   Standard_EXPORT Standard_Boolean FixConnected (const Standard_Real prec = -1.0);
+  Standard_EXPORT Standard_Boolean FixCurves();
   
   //! Groups the fixes dealing with 3d and pcurves of the edges.
   //! The order of the fixes and the default behaviour are:
@@ -348,6 +349,7 @@ public:
   //! Tests with starting preci or, if given greater, <prec>
   //! If <prec> is -1 then MaxTolerance() is taken.
   Standard_EXPORT Standard_Boolean FixConnected (const Standard_Integer num, const Standard_Real prec);
+  Standard_EXPORT Standard_Boolean FixCurves(const Standard_Integer num);
   
   //! Fixes a seam edge
   //! A Seam edge has two pcurves, one for forward. one for reversed
