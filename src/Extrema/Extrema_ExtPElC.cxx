@@ -217,6 +217,10 @@ Method:
      Then, (1) <=> (A*Cos-X,B*Sin-Y).(-A*Sin,B*Cos) = 0.
                     (B**2-A**2)*Cos*Sin - B*Y*Cos + A*X*Sin = 0.
      Use algorithm math_TrigonometricFunctionRoots to solve this equation.
+
+  Addition:
+    In case, when MajorRadius == MinorRadius calcualtion errors may occur
+    This case should be processed as Circle
 -----------------------------------------------------------------------------*/
 {
   myDone = Standard_False;
@@ -228,6 +232,53 @@ Method:
   gp_Vec Axe (C.Axis().Direction());
   gp_Vec Trsl = Axe.Multiplied(-(gp_Vec(O,P).Dot(Axe)));
   gp_Pnt Pp = P.Translated(Trsl);
+
+  if (Abs(C.MajorRadius() - C.MinorRadius() < Precision::Confusion()))
+  {
+    gp_Vec OPp(O, Pp);
+    if (OPp.Magnitude() < Tol) { return; }
+    Standard_Real Usol[2];
+    Usol[0] = C.XAxis().Direction().AngleWithRef(OPp, Axe); // -M_PI<U1<M_PI
+
+    const Standard_Real aAngTol = Precision::Angular();
+    if (Usol[0] + M_PI < aAngTol)
+      Usol[0] = -M_PI;
+    else if (Usol[0] - M_PI > -aAngTol)
+      Usol[0] = M_PI;
+
+    Usol[1] = Usol[0] + M_PI;
+
+    Standard_Real myuinf = Uinf;
+    Standard_Real TolU, aR;
+    aR = C.MajorRadius();
+    TolU = Precision::Infinite();
+    if (aR > gp::Resolution()) {
+      TolU = Tol / aR;
+    }
+    //
+    ElCLib::AdjustPeriodic(Uinf, Uinf + 2 * M_PI, TolU, myuinf, Usol[0]);
+    ElCLib::AdjustPeriodic(Uinf, Uinf + 2 * M_PI, TolU, myuinf, Usol[1]);
+    if (((Usol[0] - 2 * M_PI - Uinf) < TolU) && ((Usol[0] - 2 * M_PI - Uinf) > -TolU)) Usol[0] = Uinf;
+    if (((Usol[1] - 2 * M_PI - Uinf) < TolU) && ((Usol[1] - 2 * M_PI - Uinf) > -TolU)) Usol[1] = Uinf;
+
+
+    // 3- Calculate extrema in [Umin,Umax] ...
+
+    gp_Pnt Cu;
+    Standard_Real Us;
+    for (Standard_Integer NoSol = 0; NoSol <= 1; NoSol++) {
+      Us = Usol[NoSol];
+      if (((Uinf - Us) < TolU) && ((Us - Usup) < TolU)) {
+        Cu = ElCLib::Value(Us, C);
+        mySqDist[myNbExt] = Cu.SquareDistance(P);
+        myIsMin[myNbExt] = (NoSol == 0);
+        myPoint[myNbExt] = Extrema_POnCurv(Us, Cu);
+        myNbExt++;
+      }
+    }
+    myDone = Standard_True;
+    return;
+  }
 
 // 2- Calculation of solutions ...
 
