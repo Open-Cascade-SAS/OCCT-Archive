@@ -217,6 +217,10 @@ Method:
      Then, (1) <=> (A*Cos-X,B*Sin-Y).(-A*Sin,B*Cos) = 0.
                     (B**2-A**2)*Cos*Sin - B*Y*Cos + A*X*Sin = 0.
      Use algorithm math_TrigonometricFunctionRoots to solve this equation.
+
+  Addition:
+    In case, when MajorRadius == MinorRadius calcualtion errors may occur
+    This case should be processed as Circle
 -----------------------------------------------------------------------------*/
 {
   myDone = Standard_False;
@@ -228,6 +232,12 @@ Method:
   gp_Vec Axe (C.Axis().Direction());
   gp_Vec Trsl = Axe.Multiplied(-(gp_Vec(O,P).Dot(Axe)));
   gp_Pnt Pp = P.Translated(Trsl);
+
+  if (Abs(C.MajorRadius() - C.MinorRadius() < Precision::Confusion()))
+  {
+    Perform(P, gp_Circ(gp_Ax2(O, C.Axis().Direction()), C.MajorRadius()), Tol, Uinf, Usup);
+    return;
+  }
 
 // 2- Calculation of solutions ...
 

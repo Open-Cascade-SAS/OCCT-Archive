@@ -1,0 +1,13 @@
+puts "================================================================="
+puts "0033418: Modeling Algorithms - BRepExtrema_DistShapeShape wrong arc ellipse - point result"
+puts "================================================================="
+puts ""
+
+ellipse el 0 0 0 0 1 0 1 1
+trim el el 4.71238898038 1.57079632679
+mkedge el el
+vertex v 0 0 1.5
+distmini d el v
+if {[dval d_val] > 0.5000001} {
+  puts "ERROR: Wrong distance calculation"
+}
