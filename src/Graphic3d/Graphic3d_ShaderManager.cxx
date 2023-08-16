@@ -2217,7 +2217,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
     EOL"}";
 
   TCollection_AsciiString aSrcFrag = TCollection_AsciiString()
-  + EOL"vec4 grid (vec3 theFragPos3D, vec3 theColor, float theScale, bool theIsDrawAxis)"
+  + EOL"vec4 grid (vec3 theFragPos3D, vec3 theColor, float theScale, bool theIsDrawAxis, float theThickness)"
     EOL"{"
     EOL"  vec2 aCoord = theFragPos3D.xy * theScale;"
     EOL"  vec2 aDerivative = fwidth (aCoord);"
@@ -2225,6 +2225,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
     EOL"  float aLine = min (aGrid.x, aGrid.y);"
     EOL"  float aMinY = min (aDerivative.y, 1);"
     EOL"  float aMinX = min (aDerivative.x, 1);"
+
     EOL"  vec4 aColor = vec4 (theColor, round (1.0 - min (aLine, 1.0)));"
     EOL"  if (uIsDrawAxis && theIsDrawAxis)"
     EOL"  {"
@@ -2255,14 +2256,60 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
     EOL"  float aParam = -NearPoint.z / (FarPoint.z - NearPoint.z);"
     EOL"  vec3 aFragPos3D = NearPoint + aParam * (FarPoint - NearPoint);"
     EOL"  float aLinearDepth = computeLinearDepth (aFragPos3D);"
-    // TODO : Compute scale
-    //EOL"  float aScale = 100.0 / pow (10.0, uScale);"
-    EOL"  float aScaleBig = 10.0 / pow (2.0, 10.0);"
-    EOL"  float aScale = 10.0 / pow (2.0, uScale);"
-    EOL"  vec4 aBigGridColor = grid (aFragPos3D, vec3 (0.8), aScaleBig, true);"
-    //EOL"  vec4 aColor = aBigGridColor;"
+
+    //EOL"  float aScale = /*0.001*/ 1.0 / uScale;"
+
+/*
+pload ALL
+vinit
+vcamera -persp
+box b 100 100 100
+vdisplay b -dispmode 1
+vfit
+*/
+
+    /*EOL"  float aScale;"
+    EOL"  if (uScale < 10.0) {"
+    EOL"    aScale = 1.0;"
+    EOL"  }"
+    EOL"  else if (uScale < 100.0) {"
+    EOL"    aScale = 0.1;"
+    EOL"  }"
+    EOL"  else if (uScale < 1000.0) {"
+    EOL"    aScale = 0.01;"
+    EOL"  }"
+    EOL"  else if (uScale < 10000.0) {"
+    EOL"    aScale = 0.001;"
+    EOL"  }"
+    EOL"  else if (uScale < 100000.0) {"
+    EOL"    aScale = 0.0001;"
+    EOL"  }"
+    EOL"  else if (uScale < 1000000.0) {"
+    EOL"    aScale = 0.00001;"
+    EOL"  }"
+    EOL"  else if (uScale < 10000000.0) {"
+    EOL"    aScale = 0.000001;"
+    EOL"  }"
+    EOL"  else if (uScale < 100000000.0) {"
+    EOL"    aScale = 0.0000001;"
+    EOL"  }"
+    EOL"  else if (uScale < 1000000000.0) {"
+    EOL"    aScale = 0.00000001;"
+    EOL"  }"
+    EOL"  else if (uScale < 10000000000.0) {"
+    EOL"    aScale = 0.000000001;"
+    EOL"  }"
+    EOL"  else if (uScale < 100000000000.0) {"
+    EOL"    aScale = 0.0000000001;"
+    EOL"  }"
+    EOL"  else {"
+    EOL"    aScale = 0.00000000001;"
+    EOL"  }"*/
+
+
+    EOL"  vec4 aBigGridColor = grid (aFragPos3D, vec3 (0.8), uScale, true, 500.0);"
     EOL"  vec4 aColor = aBigGridColor.a == 0.0"
-    EOL"              ? grid (aFragPos3D, vec3 (0.2), aScale, false)"
+    EOL"              ? grid (aFragPos3D, vec3 (0.2), uScale * 10.0, false, 0.1)"
     EOL"              : aBigGridColor;"
     EOL"  float aDepth = computeDepth (aFragPos3D);"
     EOL"  float aFar  = gl_DepthRange.far;"
@@ -2273,30 +2320,28 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
     EOL"    discard;"
     EOL"  };"
     // TODO : Get actual background color
-    EOL"  vec4 aBackgroundColor = vec4 (0.0, 0.0, 0.0, 1.0);"
+    EOL"  vec4 aBackgroundColor = vec4 (0.0, 0.0, 0.0, aColor.a);"
     EOL"  if (abs (aLinearDepth) > 1.0)"
     EOL"  {"
-    EOL"    float anInterpVal = float (aLinearDepth > 0.0) - sign (aLinearDepth) * clamp (1.0 / (abs (aLinearDepth) - 1.0), 0.5, 1.0);"
-    EOL"    aColor = mix (aColor, aBackgroundColor, anInterpVal);"
+    EOL"    float aFading;"
+    //EOL"    if (aLinearDepth > 0.0) { aFading = 1.0 - (3.0 - aLinearDepth + 2.0) * 0.25; }"
+    //EOL"    else                    { aFading = 1.0 + (3.0 + aLinearDepth - 2.0) * 0.25; }"
+    EOL"    if (aLinearDepth > 0.0) { aFading = (aLinearDepth - 1.0) / ( 1.0 - 2.0) * (0.5 - 0.0) + 0.0; }"
+    EOL"    else                    { aFading = (aLinearDepth + 2.0) / (-1.0 + 2.0) * (1.0 - 0.5) + 0.5; }"
+    EOL"    aColor = mix (aColor, aBackgroundColor, aFading);"
+
+    //EOL"    float anInterpVal = float (aLinearDepth > 0.0) - sign (aLinearDepth) * clamp (1.0 / (abs (aLinearDepth) - 1.0), 0.5, 1.0);"
+    //EOL"    aColor = mix (aColor, aBackgroundColor, anInterpVal);"
     //EOL"    aColor = mix (aColor, aBackgroundColor, 0.99);"
     EOL"  }"
 
-    /*EOL"  if (aLinearDepth < -1.0)"
-    EOL"  {"
-    EOL"    aColor = vec4 (1.0, 0.0, 0.0, 1.0);"
-    EOL"  }"
-    EOL"  else if (aLinearDepth < 0.0)"
-    EOL"  {"
-    EOL"    aColor = vec4 (0.0, 1.0, 0.0, 1.0);"
-    EOL"  }"
-    EOL"  else if (aLinearDepth < 1.0)"
-    EOL"  {"
-    EOL"    aColor = vec4 (0.0, 0.0, 1.0, 1.0);"
-    EOL"  }"
-    EOL"  else"
-    EOL"  {"
-    EOL"    aColor = vec4 (1.0, 1.0, 0.0, 1.0);"
-    EOL"  }"*/
+    EOL"  if (aLinearDepth < -1.5)      { aColor = vec4 (0.0, 1.0, 1.0, 1.0); }"
+    EOL"  else if (aLinearDepth < -1.0) { aColor = vec4 (1.0, 0.0, 0.0, 1.0); }"
+    EOL"  else if (aLinearDepth < 0.0)  { aColor = vec4 (0.0, 1.0, 0.0, 1.0); }"
+    EOL"  else if (aLinearDepth < 1.0)  { aColor = vec4 (0.0, 0.0, 1.0, 1.0); }"
+    EOL"  else if (aLinearDepth < 1.5)  { aColor = vec4 (1.0, 0.0, 1.0, 1.0); }"
+    EOL"  else if (aLinearDepth < 2.0)  { aColor = vec4 (1.0, 0.0, 0.0, 1.0); }"
+    EOL"  else                          { aColor = vec4 (1.0, 1.0, 0.0, 1.0); }"
 
     EOL"  gl_FragDepth = aDepth;"
     EOL"  occFragColor = aColor;"

@@ -98,16 +98,16 @@ void Graphic3d_StructureManager::DisplayedStructures (Graphic3d_MapOfStructure& 
 
   SG.Assign(myDisplayedStructure);
 
-  //JMBStandard_Integer Length  = myDisplayedStructure.Length ();
+  //JMBStandard_Integer Length  = myDisplayedStructure.Length();
 
   //JMBfor (Standard_Integer i=1; i<=Length; i++)
   //JMB SG.Add (myDisplayedStructure.Value (i));
 
 }
 
-Standard_Integer Graphic3d_StructureManager::NumberOfDisplayedStructures () const {
+Standard_Integer Graphic3d_StructureManager::NumberOfDisplayedStructures() const {
 
-Standard_Integer Length = myDisplayedStructure.Extent ();
+Standard_Integer Length = myDisplayedStructure.Extent();
 
         return (Length);
 
@@ -138,7 +138,7 @@ Handle(Graphic3d_Structure) Graphic3d_StructureManager::Identification (const St
 
   for (; it.More() && notfound; it.Next()) {
     const Handle(Graphic3d_Structure)& SG = it.Key();
-    if ( SG->Identification () == AId) {
+    if ( SG->Identification() == AId) {
       notfound  = Standard_False;
       SGfound = SG;
     }
@@ -152,7 +152,7 @@ Handle(Graphic3d_Structure) Graphic3d_StructureManager::Identification (const St
 
 }
 
-const Handle(Graphic3d_GraphicDriver)& Graphic3d_StructureManager::GraphicDriver () const 
+const Handle(Graphic3d_GraphicDriver)& Graphic3d_StructureManager::GraphicDriver() const 
 {
   return (myGraphicDriver);
 }

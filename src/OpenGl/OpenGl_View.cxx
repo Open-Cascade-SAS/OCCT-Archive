@@ -2671,7 +2671,9 @@ void OpenGl_View::renderGrid()
 
   int k = (int)(log10 (aContext->Camera()->Scale()) / log10(2));
 
-  Standard_Integer aScale = k;
+  //Standard_Integer aScale = k;
+  const Standard_Real aCameraScale = aContext->Camera()->Scale();
+  Standard_Real aScale = 10.0 / pow (10.0, floor (log10 (Max (aCameraScale, 1.0))) + 1.0);
   //std::cout << "Scale: " << aScale << std::endl;
 
   //aContext->Camera()->SetZRange (aContext->Camera()->ZNear(), aContext->Camera()->ZFar() + 1.0);
@@ -2682,6 +2684,8 @@ void OpenGl_View::renderGrid()
     aProg->SetUniform (aContext, "uZNear", GLfloat (aContext->Camera()->ZNear()));
     aProg->SetUniform (aContext, "uZFar",  GLfloat (aContext->Camera()->ZFar()));
     aProg->SetUniform (aContext, "uScale", GLfloat (aScale));
+    std::cout << aContext->Camera()->Scale() << std::endl;
+    std::cout << aScale << std::endl;
     // TODO : add param to draw command
     aProg->SetUniform (aContext, "uIsDrawAxis", GLboolean (true));
 
