@@ -951,38 +951,51 @@ void AIS_Manipulator::SetPosition (const gp_Ax2& thePosition)
 //=======================================================================
 void AIS_Manipulator::updateTransformation()
 {
-  gp_Trsf aTrsf;
+    gp_Trsf aTrsf;
 
-  if (!myIsZoomPersistentMode)
-  {
-    aTrsf.SetTransformation (myPosition, gp::XOY());
-  }
-  else
-  {
-    const gp_Dir& aVDir = myPosition.Direction();
-    const gp_Dir& aXDir = myPosition.XDirection();
-    aTrsf.SetTransformation (gp_Ax2 (gp::Origin(), aVDir, aXDir), gp::XOY());
-  }
-
-  Handle(TopLoc_Datum3D) aGeomTrsf = new TopLoc_Datum3D (aTrsf);
-  // we explicitly call here setLocalTransformation() of the base class
-  // since AIS_Manipulator::setLocalTransformation() implementation throws exception
-  // as protection from external calls
-  AIS_InteractiveObject::setLocalTransformation (aGeomTrsf);
-  for (Standard_Integer anIt = 0; anIt < 3; ++anIt)
-  {
-    myAxes[anIt].Transform (aGeomTrsf);
-  }
-
-  if (myIsZoomPersistentMode)
-  {
-    if (TransformPersistence().IsNull()
-    ||  TransformPersistence()->Mode() != Graphic3d_TMF_ZoomPers
-    || !TransformPersistence()->AnchorPoint().IsEqual (myPosition.Location(), 0.0))
+    Handle(AIS_InteractiveObject) anObject = Object();
+    if (!anObject.IsNull())
     {
-      setTransformPersistence (new Graphic3d_TransformPers (Graphic3d_TMF_ZoomPers, myPosition.Location()));
+        Handle(Graphic3d_TransformPers) aTransPers = anObject->TransformPersistence();
+        if (!aTransPers.IsNull())
+        {
+            anObject->TransformPersistence()->SetAnchorPoint(myPosition.Location());
+            aTrsf.SetTransformation(myPosition, gp::XOY());
+        }
+        else
+        {
+            if (!myIsZoomPersistentMode)
+            {
+                aTrsf.SetTransformation(myPosition, gp::XOY());
+            }
+            else
+            {
+                const gp_Dir& aVDir = myPosition.Direction();
+                const gp_Dir& aXDir = myPosition.XDirection();
+                aTrsf.SetTransformation(gp_Ax2(gp::Origin(), aVDir, aXDir), gp::XOY());
+            }
+        }
     }
-  }
+
+    Handle(TopLoc_Datum3D) aGeomTrsf = new TopLoc_Datum3D(aTrsf);
+    // we explicitly call here setLocalTransformation() of the base class
+    // since AIS_Manipulator::setLocalTransformation() implementation throws exception
+    // as protection from external calls
+    AIS_InteractiveObject::setLocalTransformation(aGeomTrsf);
+    for (Standard_Integer anIt = 0; anIt < 3; ++anIt)
+    {
+        myAxes[anIt].Transform(aGeomTrsf);
+    }
+
+    if (myIsZoomPersistentMode)
+    {
+        if (TransformPersistence().IsNull()
+            || TransformPersistence()->Mode() != Graphic3d_TMF_ZoomPers
+            || !TransformPersistence()->AnchorPoint().IsEqual(myPosition.Location(), 0.0))
+        {
+            setTransformPersistence(new Graphic3d_TransformPers(Graphic3d_TMF_ZoomPers, myPosition.Location()));
+        }
+    }
 }
 
 //=======================================================================
