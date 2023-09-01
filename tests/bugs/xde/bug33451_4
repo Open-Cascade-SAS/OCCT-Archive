@@ -1,0 +1,30 @@
+puts "========"
+puts "0033451: Saving texture to buffer"
+puts "Checks store texture in .xbf file"
+puts "========"
+
+Close D -silent
+XNewDoc D
+#XSetUseTextureBuffer D on
+ReadObj D [locate_data_file ship_boat.obj] -noCreateDoc
+
+set aTmpFile ${imagedir}/result.xml
+Format D XmlXCAF
+XSave D $aTmpFile
+Close D
+XOpen $aTmpFile D
+set data [XGetVisMaterial D 0:1:10:3]
+
+if {[string first "Common.DiffuseTexture" $data] == -1} {
+  puts "Error: Texture is not found"
+}
+
+vinit View1
+XDisplay -dispMode 1 D
+vfit
+if { [vreadpixel 130 300 rgb name] != "ROSYBROWN" } { puts "Error: color not match" }
+if { [vreadpixel 150 250 rgb name] != "ORANGE2" } { puts "Error: color not match" }
+if { [vreadpixel 250 250 rgb name] != "GRAY43" } { puts "Error: color not match" }
+
+Close D
+file delete -force $aTmpFile

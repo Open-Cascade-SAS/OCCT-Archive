@@ -1,0 +1,37 @@
+puts "========"
+puts "0033451: Saving texture to buffer"
+puts "Checks store texture in .xbf file"
+puts "========"
+
+Close D -silent
+XNewDoc D
+XSetUseTextureBuffer D on
+ReadGltf D [locate_data_file bug31706_launchvehicle.glb] -noCreateDoc
+
+set aTmpFile ${imagedir}/result.xbf
+XSave D $aTmpFile
+Close D
+Open $aTmpFile D
+set data1 [XGetVisMaterial D 0:1:10:1]
+set data2 [XGetVisMaterial D 0:1:10:5]
+
+if {[string first "PBR.BaseColorTexture" $data1] == -1
+    || [string first "PBR.EmissiveTexture" $data1] == -1} {
+  puts "Error: Texture is not found"
+}
+if {[string first "PBR.BaseColorTexture" $data2] == -1
+    || [string first "PBR.MetallicRoughnessTexture" $data2] == -1
+    || [string first "PBR.OcclusionTexture" $data2] == -1
+    || [string first "PBR.NormalTexture" $data2] == -1} {
+  puts "Error: Texture is not found"
+}
+
+vinit View1
+XDisplay -dispMode 1 D
+vfit
+if { [vreadpixel 50 300 rgb name] != "WHITE" || [vreadpixel 120 250 rgb name] != "LEMONCHIFFON1" } {
+  puts "Error: color not match"
+}
+
+Close D
+file delete -force $aTmpFile

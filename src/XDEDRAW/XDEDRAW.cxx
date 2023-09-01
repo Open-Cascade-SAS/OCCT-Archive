@@ -98,6 +98,7 @@
 #include <XCAFDoc_LayerTool.hxx>
 #include <XCAFDoc_Material.hxx>
 #include <XCAFDoc_ShapeTool.hxx>
+#include <XCAFDoc_VisMaterialTool.hxx>
 #include <XCAFDoc_Volume.hxx>
 #include <XCAFPrs.hxx>
 #include <XCAFPrs_AISObject.hxx>
@@ -1721,6 +1722,69 @@ static Standard_Integer testDoc (Draw_Interpretor&,
   return 0;
 }
 
+//=======================================================================
+// function: XGetUseTextureBuffer
+// purpose:  return current value of parameter
+//=======================================================================
+static Standard_Integer XGetUseTextureBuffer(Draw_Interpretor& di,
+                                             Standard_Integer argc,
+                                             const char** argv)
+{
+  if (argc < 2)
+  {
+    return 1;
+  }
+  Handle(TDocStd_Document) aDoc;
+  if (!DDocStd::GetDocument(argv[1], aDoc))
+  {
+    return 1;
+  }
+
+  Handle(XCAFDoc_VisMaterialTool) aVisMatTool = XCAFDoc_DocumentTool::VisMaterialTool(aDoc->Main());
+  if (aVisMatTool.IsNull())
+  {
+    return 1;
+  }
+  const char* aStr = aVisMatTool->GetUseTextureBuffer() ? "on" : "off";
+  di << "Current value is \"" << aStr << "\"" << "\n";
+
+  return 0;
+}
+
+//=======================================================================
+// function: XSetUseTextureBuffer
+// purpose:  change parameter for store texture (on/off),
+//           file path is use by default in case "off"
+//=======================================================================
+static Standard_Integer XSetUseTextureBuffer(Draw_Interpretor& di,
+                                             Standard_Integer argc,
+                                             const char** argv)
+{
+  if (argc < 3)
+  {
+    return 1;
+  }
+  Handle(TDocStd_Document) aDoc;
+  if (!DDocStd::GetDocument(argv[1], aDoc))
+  {
+    return 1;
+  }
+  bool aBuffOn = false;
+  if (!Draw::ParseOnOff(argv[2], aBuffOn))
+  {
+    return 1;
+  }
+
+  Handle(XCAFDoc_VisMaterialTool) aVisMatTool = XCAFDoc_DocumentTool::VisMaterialTool(aDoc->Main());
+  if (aVisMatTool.IsNull())
+  {
+    return 1;
+  }
+  aVisMatTool->SetUseTextureBuffer(aBuffOn);
+
+  (void)di;
+  return 0;
+}
 
 //=======================================================================
 //function : Init
@@ -1838,6 +1902,14 @@ void XDEDRAW::Init(Draw_Interpretor& di)
   di.Add("XRescaleGeometry",
          "Doc factor [-root label] [-force]: Applies geometrical scale to assembly",
          __FILE__, XRescaleGeometry, g);
+  di.Add("XGetUseTextureBuffer",
+         "Doc : return value of parameter for texture buffer usage",
+         __FILE__, XGetUseTextureBuffer, g);
+  di.Add("XSetUseTextureBuffer",
+         "Doc {on|off} : turns on/off texture buffer usage; \"off\" is use by default,\n"
+         "it means texture will store length, offset and will be read from file;\n"
+         "in case \"on\" texture data will be store in buffer",
+         __FILE__, XSetUseTextureBuffer, g);
 
   // Specialized commands
   XDEDRAW_Shapes::InitCommands ( di );

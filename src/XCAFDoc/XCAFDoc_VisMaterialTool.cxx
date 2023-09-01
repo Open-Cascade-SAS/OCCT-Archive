@@ -59,7 +59,7 @@ Handle(XCAFDoc_VisMaterialTool) XCAFDoc_VisMaterialTool::Set (const TDF_Label& t
 //=======================================================================
 XCAFDoc_VisMaterialTool::XCAFDoc_VisMaterialTool()
 {
-  //
+  myUseTextureBuffer = false;
 }
 
 //=======================================================================
@@ -95,6 +95,8 @@ TDF_Label XCAFDoc_VisMaterialTool::AddMaterial (const Handle(XCAFDoc_VisMaterial
 {
   TDF_TagSource aTag;
   TDF_Label aLab = aTag.NewChild (Label());
+  if (myUseTextureBuffer)
+    changeVisMaterial(theMat);
   aLab.AddAttribute (theMat);
   if (!theName.IsEmpty())
   {
@@ -282,4 +284,24 @@ Handle(XCAFDoc_VisMaterial) XCAFDoc_VisMaterialTool::GetShapeMaterial (const Top
   return GetShapeMaterial (theShape, aMatLabel)
        ? GetMaterial (aMatLabel)
        : Handle(XCAFDoc_VisMaterial)();
+}
+
+//=======================================================================
+//function : changeVisMaterial
+//purpose  :
+//=======================================================================
+void XCAFDoc_VisMaterialTool::changeVisMaterial(const Handle(XCAFDoc_VisMaterial)& theMat) const
+{
+  if (theMat->HasCommonMaterial())
+  {
+    theMat->CommonMaterial().DiffuseTexture->WriteToBuffer();
+  }
+  if (theMat->HasPbrMaterial())
+  {
+    theMat->PbrMaterial().BaseColorTexture->WriteToBuffer();
+    theMat->PbrMaterial().MetallicRoughnessTexture->WriteToBuffer();
+    theMat->PbrMaterial().EmissiveTexture->WriteToBuffer();
+    theMat->PbrMaterial().OcclusionTexture->WriteToBuffer();
+    theMat->PbrMaterial().NormalTexture->WriteToBuffer();
+  }
 }

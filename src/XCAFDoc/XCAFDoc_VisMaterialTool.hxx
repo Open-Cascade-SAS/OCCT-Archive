@@ -113,6 +113,12 @@ public:
   //! Returns material assigned to shape or NULL if not assigned.
   Standard_EXPORT Handle(XCAFDoc_VisMaterial) GetShapeMaterial (const TopoDS_Shape& theShape);
 
+  //! Return parameter for use texture buffer
+  const Standard_Boolean GetUseTextureBuffer() { return myUseTextureBuffer; }
+
+  //! Set parameter for use texture buffer
+  void SetUseTextureBuffer(const Standard_Boolean theUseBuffer) { myUseTextureBuffer = theUseBuffer; }
+
 public:
 
   //! Returns GUID of this attribute type.
@@ -128,8 +134,14 @@ public:
   virtual void Paste (const Handle(TDF_Attribute)& ,
                       const Handle(TDF_RelocationTable)& ) const Standard_OVERRIDE {}
 
+protected:
+
+  //! Reading a texture from file and save it to buffer
+  void changeVisMaterial(const Handle(XCAFDoc_VisMaterial)& theMat) const;
+
 private:
 
+  Standard_Boolean myUseTextureBuffer;
   Handle(XCAFDoc_ShapeTool) myShapeTool;
 
 };

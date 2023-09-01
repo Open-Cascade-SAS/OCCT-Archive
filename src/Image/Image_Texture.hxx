@@ -103,6 +103,10 @@ public: //! @name hasher interface
   //! Dumps the content of me into the stream
   Standard_EXPORT virtual void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const;
 
+  //! Write texture to buffer, if file path, offset and length are known
+  //! This function is use only when user has turn on parameter by XSetUseTextureBuffer function
+  Standard_EXPORT void WriteToBuffer();
+
 protected:
 
   //! Read image from normal image file.

@@ -420,3 +420,38 @@ void Image_Texture::DumpJson (Standard_OStream& theOStream, Standard_Integer the
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myOffset)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myLength)
 }
+
+// ================================================================
+// Function : WriteToBuffer
+// Purpose  :
+// ================================================================
+void Image_Texture::WriteToBuffer()
+{
+  if (this == nullptr || myImagePath.IsEmpty())
+  {
+    return;
+  }
+
+  const Handle(OSD_FileSystem)& aFileSystem = OSD_FileSystem::DefaultFileSystem();
+  std::shared_ptr<std::istream> aFileIn = aFileSystem->OpenIStream(myImagePath, std::ios::in | std::ios::binary);
+  if (aFileIn.get() == nullptr)
+  {
+    Message::SendFail(TCollection_AsciiString("Error: Unable to open file ") + myImagePath + "!");
+    return;
+  }
+
+  int64_t aLength = myLength;
+  if (myOffset == -1 && myLength == -1)
+  {
+    aFileIn->seekg(0, std::ios::end);
+    aLength = aFileIn->tellg();
+    aFileIn->seekg(0, std::ios::beg);
+  }
+  else
+  {
+    aFileIn->seekg(myOffset);
+  }
+  myBuffer = new NCollection_Buffer(NCollection_BaseAllocator::CommonBaseAllocator(), aLength);
+  aFileIn->read((char*)myBuffer->ChangeData(), aLength);
+  myImagePath.Clear();
+}
