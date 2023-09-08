@@ -715,6 +715,7 @@ Standard_Boolean XCAFDoc_ShapeTool::GetShapeUniformScale(const TDF_Label& theShL
   theDX = anArrAttr->Value(1);
   theDY = anArrAttr->Value(2);
   theDZ = anArrAttr->Value(3);
+  return true;
 }
 
 //=======================================================================
@@ -734,6 +735,7 @@ Standard_Boolean XCAFDoc_ShapeTool::SetShapeUniformScale(const TDF_Label& theShL
   anArray->SetValue(1, theDX);
   anArray->SetValue(2, theDY);
   anArray->SetValue(3, theDZ);
+  return true;
 }
 
 //=======================================================================
