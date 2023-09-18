@@ -3708,8 +3708,11 @@ void ShapeUpgrade_UnifySameDomain::IntUnifyFaces(const TopoDS_Shape& theInpShape
               TopoDS_Edge anEdge = TopoDS::Edge(itl.Value());
               if (anEdge.IsSame(EndEdges[ii]))
                 continue;
-              found = Standard_True;
-              InternalEdges.RemoveKey(anEdge);
+              found = InternalEdges.RemoveKey(anEdge);
+              if (!found)
+              {
+                break;
+              }
               BB.Add(anInternalWire, anEdge);
               TopoDS_Vertex V1, V2;
               TopExp::Vertices(anEdge, V1, V2);
