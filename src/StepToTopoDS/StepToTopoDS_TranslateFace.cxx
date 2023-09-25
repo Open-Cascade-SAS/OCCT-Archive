@@ -96,7 +96,7 @@
 // To proceed with I-DEAS-like STP (ssv; 15.11.2010)
 //#define DEBUG
 // ============================================================================
-// Method  : StepToTopoDS_TranslateFace::StepToTopoDS_TranslateFace
+// Method  : StepToTopoDS_TranslateFace
 // Purpose : Empty Constructor
 // ============================================================================
 StepToTopoDS_TranslateFace::StepToTopoDS_TranslateFace()
@@ -540,24 +540,25 @@ StepToTopoDS_TranslateFace::createMesh(const Handle(StepVisual_ComplexTriangulat
 {
   Handle(StepVisual_CoordinatesList) aCoords = theTF->Coordinates();
   Handle(TColgp_HArray1OfXYZ) aNodes = aCoords->Points();
-  Handle(TColStd_HArray2OfInteger) aTriaStrips = theTF->TriangleStrips();
-  Handle(TColStd_HArray2OfInteger) aTriaFans = theTF->TriangleFans();
+  Handle(TColStd_HArray1OfTransient) aTriaStrips = theTF->TriangleStrips();
+  Handle(TColStd_HArray1OfTransient) aTriaFans = theTF->TriangleFans();
   const Standard_Boolean aHasUVNodes = Standard_False;
   const Standard_Boolean aHasNormals = (theTF->NbNormals() > 0);
 
   Standard_Integer aNbTriaStrips = 0;
   for (Standard_Integer i = 1; i <= theTF->NbTriangleStrips(); ++i)
   {
-    for (Standard_Integer j = 3; j <= aTriaStrips->UpperCol(); j += 2)
+    Handle(TColStd_HArray1OfInteger) aTriangleStrip = Handle(TColStd_HArray1OfInteger)::DownCast(aTriaStrips->Value(i));
+    for (Standard_Integer j = 3; j <= aTriangleStrip->Length(); j += 2)
     {
-      if (aTriaStrips->Value(i, j) != aTriaStrips->Value(i, j - 2) &&
-        aTriaStrips->Value(i, j) != aTriaStrips->Value(i, j - 1))
+      if (aTriangleStrip->Value(j) != aTriangleStrip->Value(j - 2) &&
+          aTriangleStrip->Value(j) != aTriangleStrip->Value(j - 1))
         ++aNbTriaStrips;
     }
-    for (Standard_Integer j = 4; j <= aTriaStrips->UpperCol(); j += 2)
+    for (Standard_Integer j = 4; j <= aTriangleStrip->Length(); j += 2)
     {
-      if (aTriaStrips->Value(i, j) != aTriaStrips->Value(i, j - 2) &&
-        aTriaStrips->Value(i, j) != aTriaStrips->Value(i, j - 1))
+      if (aTriangleStrip->Value(j) != aTriangleStrip->Value(j - 2) &&
+          aTriangleStrip->Value(j) != aTriangleStrip->Value(j - 1))
         ++aNbTriaStrips;
     }
   }
@@ -565,12 +566,8 @@ StepToTopoDS_TranslateFace::createMesh(const Handle(StepVisual_ComplexTriangulat
   Standard_Integer aNbTriaFans = 0;
   for (Standard_Integer i = 1; i <= theTF->NbTriangleFans(); ++i)
   {
-    Standard_Integer v1 = aTriaStrips->Value(i, 1);
-    for (Standard_Integer j = 3; j <= aTriaStrips->UpperCol(); ++j)
-    {
-      if (aTriaStrips->Value(i, j) != v1 && aTriaStrips->Value(i, j - 1) != v1)
-        ++aNbTriaFans;
-    }
+    Handle(TColStd_HArray1OfInteger) aTriangleFan = Handle(TColStd_HArray1OfInteger)::DownCast(aTriaFans->Value(i));
+    aNbTriaFans += aTriangleFan->Length() - 2;
   }
 
   Handle(Poly_Triangulation) aMesh = new Poly_Triangulation(theTF->NbPnindex(), 
@@ -583,27 +580,42 @@ StepToTopoDS_TranslateFace::createMesh(const Handle(StepVisual_ComplexTriangulat
     aMesh->SetNode(j, aLF * aPoint);
   }
 
-  Standard_Integer k = 1;
-  for (Standard_Integer i = 1; i <= theTF->NbTriangleStrips(); ++i)
+  Standard_Integer aTriangleIndex = 1;
+  for (Standard_Integer aTrianStripIndex = 1; aTrianStripIndex <= theTF->NbTriangleStrips(); ++aTrianStripIndex)
   {
-    for (Standard_Integer j = 3; j <= aTriaStrips->UpperCol(); j += 2)
+    Handle(TColStd_HArray1OfInteger) aTriangleStrip = Handle(TColStd_HArray1OfInteger)::DownCast(aTriaStrips->Value(aTrianStripIndex));
+    for (Standard_Integer anIndex = 3; anIndex <= aTriangleStrip->Length(); anIndex += 2)
     {
-      if (aTriaStrips->Value(i, j) != aTriaStrips->Value(i, j - 2) &&
-        aTriaStrips->Value(i, j) != aTriaStrips->Value(i, j - 1))
+      if (aTriangleStrip->Value(anIndex) != aTriangleStrip->Value(anIndex - 2) &&
+          aTriangleStrip->Value(anIndex) != aTriangleStrip->Value(anIndex - 1))
       {
-        aMesh->SetTriangle(k++, Poly_Triangle(aTriaStrips->Value(i, j - 2), 
-                                              aTriaStrips->Value(i, j), 
-                                              aTriaStrips->Value(i, j - 1)));
+        aMesh->SetTriangle(aTriangleIndex++, Poly_Triangle(aTriangleStrip->Value(anIndex - 2),
+                           aTriangleStrip->Value(anIndex),
+                           aTriangleStrip->Value(anIndex - 1)));
       }
     }
-    for (Standard_Integer j = 4; j <= aTriaStrips->UpperCol(); j += 2)
+    for (Standard_Integer anIndex = 4; anIndex <= aTriangleStrip->Length(); anIndex += 2)
     {
-      if (aTriaStrips->Value(i, j) != aTriaStrips->Value(i, j - 2) &&
-        aTriaStrips->Value(i, j) != aTriaStrips->Value(i, j - 1))
+      if (aTriangleStrip->Value(anIndex) != aTriangleStrip->Value(anIndex - 2) &&
+          aTriangleStrip->Value(anIndex) != aTriangleStrip->Value(anIndex - 1))
       {
-        aMesh->SetTriangle(k++, Poly_Triangle(aTriaStrips->Value(i, j - 2),
-                                              aTriaStrips->Value(i, j - 1),
-                                              aTriaStrips->Value(i, j)));
+        aMesh->SetTriangle(aTriangleIndex++, Poly_Triangle(aTriangleStrip->Value(anIndex - 2),
+                           aTriangleStrip->Value(anIndex - 1),
+                           aTriangleStrip->Value(anIndex)));
+      }
+    }
+  }
+  for (Standard_Integer aTrianFanIndex = 1; aTrianFanIndex <= theTF->NbTriangleFans(); ++aTrianFanIndex)
+  {
+    Handle(TColStd_HArray1OfInteger) aTriangleFan = Handle(TColStd_HArray1OfInteger)::DownCast(aTriaFans->Value(aTrianFanIndex));
+    for (Standard_Integer anIndex = 3; anIndex <= aTriangleFan->Length(); ++anIndex)
+    {
+      if (aTriangleFan->Value(anIndex) != aTriangleFan->Value(anIndex - 2) &&
+        aTriangleFan->Value(anIndex - 1) != aTriangleFan->Value(anIndex - 2))
+      {
+        aMesh->SetTriangle(aTriangleIndex++, Poly_Triangle(aTriangleFan->Value(1),
+          aTriangleFan->Value(anIndex),
+          aTriangleFan->Value(anIndex - 1)));
       }
     }
   }
