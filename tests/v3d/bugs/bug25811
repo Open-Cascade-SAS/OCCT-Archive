@@ -1,0 +1,53 @@
+puts "========"
+puts "0025811: Visualization - Incorrect texture mapping on faces with reversed orientation"
+puts "========"
+puts ""
+
+pload MODELING VISUALIZATION
+vclear
+vinit View1
+vsetdispmode 1
+vaxo
+box b 10 10 10
+vdisplay b
+#dump image off textured box
+vtexture b [locate_data_file bug25809_salome.png] 
+vfit
+vdump $imagedir/${casename}_box.png
+vviewparams -scale 60.0 -proj 1.0 -1.0 1.0 -up 0.0 0.0 1.0 -at 0 10 0
+vrotate 3.14 0 0
+vdump $imagedir/${casename}_box2.png
+
+#dump image of capped sphere
+vclear
+psphere s 15 -60 60 90
+vdisplay s
+vtexture s [locate_data_file bug25809_salome.png]
+vviewparams -scale 40.0 -proj 1.0 1.0 1.0 -up 0.0 0.0 1.0 -at 0 0 0
+vfit
+vdump $imagedir/${casename}_sphere.png
+vrotate 3.14 0 0
+vfit
+vdump $imagedir/${casename}_sphere2.png
+vviewparams -scale 40.0 -proj 1.0 1.0 1.0 -up 1.0 1.0 0.0 -at 0 0 0
+vrotate 0 1 0
+vfit
+vdump $imagedir/${casename}_sphere3.png
+vrotate 0 3.14 0
+vfit
+vdump $imagedir/${casename}_sphere4.png
+
+#dump image off textured cylinder
+vclear
+pcylinder c 3 10
+vdisplay c
+vtexture c [locate_data_file bug25809_salome.png] 
+vviewparams -scale 60.0 -proj 1.0 1.0 1.0 -up 0.0 0.0 1.0 -at 0 0 5
+vfit
+vdump $imagedir/${casename}_cylinder.png
+vviewparams -scale 60.0 -proj 1.0 1.0 1.0 -up 0.0 1.0 0.0 -at 0 0 5
+vfit
+vdump $imagedir/${casename}_cylinder2.png
+vrotate 0 0 3.14
+vfit
+vdump $imagedir/${casename}_cylinder3.png

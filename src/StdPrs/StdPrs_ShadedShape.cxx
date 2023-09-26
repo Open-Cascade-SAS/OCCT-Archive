@@ -192,6 +192,7 @@ namespace
       }
 
       const Standard_Integer aDecal = anArray->VertexNumber();
+      Standard_Real aMaxX = -FLT_MAX, aMinX = FLT_MAX;
       for (Standard_Integer aNodeIter = 1; aNodeIter <= aT->NbNodes(); ++aNodeIter)
       {
         aPoint = aT->Node (aNodeIter);
@@ -199,13 +200,19 @@ namespace
         if ((aFace.Orientation() == TopAbs_REVERSED) ^ isMirrored)
         {
           aNorm.Reverse();
+          if (aT->HasUVNodes())
+          {
+            gp_Pnt2d aTmpPnt = aT->UVNode(aNodeIter);
+            if (aMaxX < aTmpPnt.X()) { aMaxX = aTmpPnt.X(); }
+            if (aMinX > aTmpPnt.X()) { aMinX = aTmpPnt.X(); }
+          }
         }
         if (!aLoc.IsIdentity())
         {
           aPoint.Transform (aTrsf);
           aNorm .Transform (aTrsf);
         }
-
+        
         if (theHasTexels && aT->HasUVNodes())
         {
           const gp_Pnt2d aNode2d = aT->UVNode (aNodeIter);
@@ -218,6 +225,18 @@ namespace
         else
         {
           anArray->AddVertex (aPoint, aNorm);
+        }
+      }
+
+      // changes uvs for reversed faces depending on number of vertex
+      // by flipping the uv coordinates according to face normal
+      if (((aFace.Orientation() == TopAbs_REVERSED) ^ isMirrored) && aT->HasUVNodes())
+      {
+        for (Standard_Integer anIndex = 1; anIndex <= aT->NbNodes(); anIndex++)
+        {
+          gp_Pnt2d aTmpPnt = aT->UVNode (anIndex);
+          aTmpPnt.SetX (aMaxX + aMinX - aTmpPnt.X());
+          aT->SetUVNode (anIndex, aTmpPnt);
         }
       }
 
