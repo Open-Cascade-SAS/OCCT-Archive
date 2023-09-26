@@ -18,7 +18,6 @@
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <RWStepRepr_RWMakeFromUsageOption.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepBasic_ProductDefinition.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
@@ -76,8 +75,8 @@ void RWStepRepr_RWMakeFromUsageOption::ReadStep (const Handle(StepData_StepReade
   Handle(TCollection_HAsciiString) aRankingRationale;
   data->ReadString (num, 7, "ranking_rationale", ach, aRankingRationale);
 
-  Handle(StepBasic_MeasureWithUnit) aQuantity;
-  data->ReadEntity (num, 8, "quantity", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aQuantity);
+  Handle(Standard_Transient) aQuantity;
+  data->ReadEntity (num, 8, "quantity", ach, STANDARD_TYPE(Standard_Transient), aQuantity);
 
   // Initialize entity
   ent->Init(aProductDefinitionRelationship_Id,

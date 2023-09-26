@@ -17,7 +17,6 @@
 #include <StepBasic_ConversionBasedUnitAndMassUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
 #include <StepBasic_MassUnit.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(StepBasic_ConversionBasedUnitAndMassUnit,StepBasic_ConversionBasedUnit)
@@ -36,17 +35,16 @@ StepBasic_ConversionBasedUnitAndMassUnit::StepBasic_ConversionBasedUnitAndMassUn
 //purpose  : 
 //=======================================================================
 
-void StepBasic_ConversionBasedUnitAndMassUnit::Init
-  (const Handle(StepBasic_DimensionalExponents)& aDimensions,
-   const Handle(TCollection_HAsciiString)& aName,
-   const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+void StepBasic_ConversionBasedUnitAndMassUnit::Init(const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                                                    const Handle(TCollection_HAsciiString)& theName,
+                                                    const Handle(Standard_Transient)& theConversionFactor)
 {
   // --- ANDOR componant fields ---
-  StepBasic_ConversionBasedUnit::Init(aDimensions, aName, aConversionFactor);
+  StepBasic_ConversionBasedUnit::Init(theDimensions, theName, theConversionFactor);
   
   // --- ANDOR componant fields ---
-  massUnit = new StepBasic_MassUnit();
-  massUnit->Init(aDimensions);
+  myMassUnit = new StepBasic_MassUnit();
+  myMassUnit->Init(theDimensions);
 }
 
 
@@ -55,10 +53,9 @@ void StepBasic_ConversionBasedUnitAndMassUnit::Init
 //purpose  : 
 //=======================================================================
 
-void StepBasic_ConversionBasedUnitAndMassUnit::SetMassUnit
-  (const Handle(StepBasic_MassUnit)& aMassUnit)
+void StepBasic_ConversionBasedUnitAndMassUnit::SetMassUnit(const Handle(StepBasic_MassUnit)& theMassUnit)
 {
-  massUnit = aMassUnit;
+  myMassUnit = theMassUnit;
 }
 
 
@@ -69,6 +66,6 @@ void StepBasic_ConversionBasedUnitAndMassUnit::SetMassUnit
 
 Handle(StepBasic_MassUnit) StepBasic_ConversionBasedUnitAndMassUnit::MassUnit() const
 {
-  return massUnit;
+  return myMassUnit;
 }
 

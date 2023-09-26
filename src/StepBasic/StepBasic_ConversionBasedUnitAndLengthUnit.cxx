@@ -17,33 +17,32 @@
 #include <StepBasic_ConversionBasedUnitAndLengthUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
 #include <StepBasic_LengthUnit.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(StepBasic_ConversionBasedUnitAndLengthUnit,StepBasic_ConversionBasedUnit)
 
 StepBasic_ConversionBasedUnitAndLengthUnit::StepBasic_ConversionBasedUnitAndLengthUnit ()  {}
 
-void StepBasic_ConversionBasedUnitAndLengthUnit::Init(const Handle(StepBasic_DimensionalExponents)& aDimensions,
-						      const Handle(TCollection_HAsciiString)& aName,
-						      const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+void StepBasic_ConversionBasedUnitAndLengthUnit::Init(const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                                                      const Handle(TCollection_HAsciiString)& theName,
+                                                      const Handle(Standard_Transient)& theConversionFactor)
 {
   // --- ANDOR componant fields ---
-  StepBasic_ConversionBasedUnit::Init(aDimensions, aName, aConversionFactor);
+  StepBasic_ConversionBasedUnit::Init(theDimensions, theName, theConversionFactor);
   
   // --- ANDOR componant fields ---
-  lengthUnit = new StepBasic_LengthUnit();
-  lengthUnit->Init(aDimensions);
+  myLengthUnit = new StepBasic_LengthUnit();
+  myLengthUnit->Init(theDimensions);
 }
 
 
-void StepBasic_ConversionBasedUnitAndLengthUnit::SetLengthUnit(const Handle(StepBasic_LengthUnit)& aLengthUnit)
+void StepBasic_ConversionBasedUnitAndLengthUnit::SetLengthUnit(const Handle(StepBasic_LengthUnit)& theLengthUnit)
 {
-  lengthUnit = aLengthUnit;
+  myLengthUnit = theLengthUnit;
 }
 
 Handle(StepBasic_LengthUnit) StepBasic_ConversionBasedUnitAndLengthUnit::LengthUnit() const
 {
-  return lengthUnit;
+  return myLengthUnit;
 }
 

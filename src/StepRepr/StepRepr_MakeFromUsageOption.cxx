@@ -36,28 +36,28 @@ StepRepr_MakeFromUsageOption::StepRepr_MakeFromUsageOption ()
 //purpose  : 
 //=======================================================================
 
-void StepRepr_MakeFromUsageOption::Init (const Handle(TCollection_HAsciiString) &aProductDefinitionRelationship_Id,
-                                         const Handle(TCollection_HAsciiString) &aProductDefinitionRelationship_Name,
+void StepRepr_MakeFromUsageOption::Init (const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Id,
+                                         const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Name,
                                          const Standard_Boolean hasProductDefinitionRelationship_Description,
-                                         const Handle(TCollection_HAsciiString) &aProductDefinitionRelationship_Description,
-                                         const Handle(StepBasic_ProductDefinition) &aProductDefinitionRelationship_RelatingProductDefinition,
-                                         const Handle(StepBasic_ProductDefinition) &aProductDefinitionRelationship_RelatedProductDefinition,
-                                         const Standard_Integer aRanking,
-                                         const Handle(TCollection_HAsciiString) &aRankingRationale,
-                                         const Handle(StepBasic_MeasureWithUnit) &aQuantity)
+                                         const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Description,
+                                         const Handle(StepBasic_ProductDefinition)& theProductDefinitionRelationship_RelatingProductDefinition,
+                                         const Handle(StepBasic_ProductDefinition)& theProductDefinitionRelationship_RelatedProductDefinition,
+                                         const Standard_Integer theRanking,
+                                         const Handle(TCollection_HAsciiString)& theRankingRationale,
+                                         const Handle(Standard_Transient)& theQuantity)
 {
-  StepRepr_ProductDefinitionUsage::Init(aProductDefinitionRelationship_Id,
-                                        aProductDefinitionRelationship_Name,
+  StepRepr_ProductDefinitionUsage::Init(theProductDefinitionRelationship_Id,
+                                        theProductDefinitionRelationship_Name,
                                         hasProductDefinitionRelationship_Description,
-                                        aProductDefinitionRelationship_Description,
-                                        aProductDefinitionRelationship_RelatingProductDefinition,
-                                        aProductDefinitionRelationship_RelatedProductDefinition);
+                                        theProductDefinitionRelationship_Description,
+                                        theProductDefinitionRelationship_RelatingProductDefinition,
+                                        theProductDefinitionRelationship_RelatedProductDefinition);
 
-  theRanking = aRanking;
+  myRanking = theRanking;
 
-  theRankingRationale = aRankingRationale;
+  myRankingRationale = theRankingRationale;
 
-  theQuantity = aQuantity;
+  myQuantity = theQuantity;
 }
 
 //=======================================================================
@@ -65,28 +65,28 @@ void StepRepr_MakeFromUsageOption::Init (const Handle(TCollection_HAsciiString) 
 //purpose  : 
 //=======================================================================
 
-void StepRepr_MakeFromUsageOption::Init (const Handle(TCollection_HAsciiString) &aProductDefinitionRelationship_Id,
-                                         const Handle(TCollection_HAsciiString) &aProductDefinitionRelationship_Name,
+void StepRepr_MakeFromUsageOption::Init (const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Id,
+                                         const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Name,
                                          const Standard_Boolean hasProductDefinitionRelationship_Description,
-                                         const Handle(TCollection_HAsciiString) &aProductDefinitionRelationship_Description,
-                                         const StepBasic_ProductDefinitionOrReference &aProductDefinitionRelationship_RelatingProductDefinition,
-                                         const StepBasic_ProductDefinitionOrReference &aProductDefinitionRelationship_RelatedProductDefinition,
-                                         const Standard_Integer aRanking,
-                                         const Handle(TCollection_HAsciiString) &aRankingRationale,
-                                         const Handle(StepBasic_MeasureWithUnit) &aQuantity)
+                                         const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Description,
+                                         const StepBasic_ProductDefinitionOrReference& theProductDefinitionRelationship_RelatingProductDefinition,
+                                         const StepBasic_ProductDefinitionOrReference& theProductDefinitionRelationship_RelatedProductDefinition,
+                                         const Standard_Integer theRanking,
+                                         const Handle(TCollection_HAsciiString)& theRankingRationale,
+                                         const Handle(Standard_Transient)& theQuantity)
 {
-  StepRepr_ProductDefinitionUsage::Init(aProductDefinitionRelationship_Id,
-                                        aProductDefinitionRelationship_Name,
+  StepRepr_ProductDefinitionUsage::Init(theProductDefinitionRelationship_Id,
+                                        theProductDefinitionRelationship_Name,
                                         hasProductDefinitionRelationship_Description,
-                                        aProductDefinitionRelationship_Description,
-                                        aProductDefinitionRelationship_RelatingProductDefinition,
-                                        aProductDefinitionRelationship_RelatedProductDefinition);
+                                        theProductDefinitionRelationship_Description,
+                                        theProductDefinitionRelationship_RelatingProductDefinition,
+                                        theProductDefinitionRelationship_RelatedProductDefinition);
 
-  theRanking = aRanking;
+  myRanking = theRanking;
 
-  theRankingRationale = aRankingRationale;
+  myRankingRationale = theRankingRationale;
 
-  theQuantity = aQuantity;
+  myQuantity = theQuantity;
 }
 
 //=======================================================================
@@ -96,7 +96,7 @@ void StepRepr_MakeFromUsageOption::Init (const Handle(TCollection_HAsciiString) 
 
 Standard_Integer StepRepr_MakeFromUsageOption::Ranking () const
 {
-  return theRanking;
+  return myRanking;
 }
 
 //=======================================================================
@@ -104,9 +104,9 @@ Standard_Integer StepRepr_MakeFromUsageOption::Ranking () const
 //purpose  : 
 //=======================================================================
 
-void StepRepr_MakeFromUsageOption::SetRanking (const Standard_Integer aRanking)
+void StepRepr_MakeFromUsageOption::SetRanking (const Standard_Integer theRanking)
 {
-  theRanking = aRanking;
+  myRanking = theRanking;
 }
 
 //=======================================================================
@@ -116,7 +116,7 @@ void StepRepr_MakeFromUsageOption::SetRanking (const Standard_Integer aRanking)
 
 Handle(TCollection_HAsciiString) StepRepr_MakeFromUsageOption::RankingRationale () const
 {
-  return theRankingRationale;
+  return myRankingRationale;
 }
 
 //=======================================================================
@@ -124,9 +124,9 @@ Handle(TCollection_HAsciiString) StepRepr_MakeFromUsageOption::RankingRationale 
 //purpose  : 
 //=======================================================================
 
-void StepRepr_MakeFromUsageOption::SetRankingRationale (const Handle(TCollection_HAsciiString) &aRankingRationale)
+void StepRepr_MakeFromUsageOption::SetRankingRationale (const Handle(TCollection_HAsciiString)& theRankingRationale)
 {
-  theRankingRationale = aRankingRationale;
+  myRankingRationale = theRankingRationale;
 }
 
 //=======================================================================
@@ -134,9 +134,9 @@ void StepRepr_MakeFromUsageOption::SetRankingRationale (const Handle(TCollection
 //purpose  : 
 //=======================================================================
 
-Handle(StepBasic_MeasureWithUnit) StepRepr_MakeFromUsageOption::Quantity () const
+Handle(Standard_Transient) StepRepr_MakeFromUsageOption::Quantity () const
 {
-  return theQuantity;
+  return myQuantity;
 }
 
 //=======================================================================
@@ -144,7 +144,7 @@ Handle(StepBasic_MeasureWithUnit) StepRepr_MakeFromUsageOption::Quantity () cons
 //purpose  : 
 //=======================================================================
 
-void StepRepr_MakeFromUsageOption::SetQuantity (const Handle(StepBasic_MeasureWithUnit) &aQuantity)
+void StepRepr_MakeFromUsageOption::SetQuantity (const Handle(Standard_Transient)& theQuantity)
 {
-  theQuantity = aQuantity;
+  myQuantity = theQuantity;
 }

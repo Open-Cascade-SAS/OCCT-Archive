@@ -17,7 +17,6 @@
 #include <Interface_Check.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <RWStepDimTol_RWGeoTolAndGeoTolWthDatRefAndGeoTolWthMod.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepData_StepReaderData.hxx>
 #include <StepData_StepWriter.hxx>
 #include <StepDimTol_DatumReference.hxx>
@@ -55,8 +54,10 @@ void RWStepDimTol_RWGeoTolAndGeoTolWthDatRefAndGeoTolWthMod::ReadStep
   data->ReadString (num, 1, "name", ach, aName);
   Handle(TCollection_HAsciiString) aDescription;
   data->ReadString (num, 2, "description", ach, aDescription);
-  Handle(StepBasic_MeasureWithUnit) aMagnitude;
-  data->ReadEntity (num, 3, "magnitude", ach, STANDARD_TYPE(StepBasic_MeasureWithUnit), aMagnitude);
+
+  Handle(Standard_Transient) aMagnitude;
+  data->ReadEntity (num, 3, "magnitude", ach, STANDARD_TYPE(Standard_Transient), aMagnitude);
+
   StepDimTol_GeometricToleranceTarget aTolerancedShapeAspect;
   data->ReadEntity (num, 4, "toleranced_shape_aspect", ach, aTolerancedShapeAspect);
 

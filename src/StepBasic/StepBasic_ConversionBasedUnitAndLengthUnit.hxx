@@ -24,7 +24,6 @@
 class StepBasic_LengthUnit;
 class StepBasic_DimensionalExponents;
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 
 
 class StepBasic_ConversionBasedUnitAndLengthUnit;
@@ -40,9 +39,11 @@ public:
   //! Returns a ConversionBasedUnitAndLengthUnit
   Standard_EXPORT StepBasic_ConversionBasedUnitAndLengthUnit();
   
-  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions, const Handle(TCollection_HAsciiString)& aName, const Handle(StepBasic_MeasureWithUnit)& aConversionFactor);
+  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                             const Handle(TCollection_HAsciiString)& theName,
+                             const Handle(Standard_Transient)& theConversionFactor);
   
-  Standard_EXPORT void SetLengthUnit (const Handle(StepBasic_LengthUnit)& aLengthUnit);
+  Standard_EXPORT void SetLengthUnit (const Handle(StepBasic_LengthUnit)& theLengthUnit);
   
   Standard_EXPORT Handle(StepBasic_LengthUnit) LengthUnit() const;
 
@@ -59,7 +60,7 @@ protected:
 private:
 
 
-  Handle(StepBasic_LengthUnit) lengthUnit;
+  Handle(StepBasic_LengthUnit) myLengthUnit;
 
 
 };

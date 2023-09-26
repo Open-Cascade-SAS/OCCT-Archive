@@ -16,7 +16,6 @@
 #include <StepBasic_ConversionBasedUnit.hxx>
 #include <StepBasic_ConversionBasedUnitAndTimeUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepBasic_TimeUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 
@@ -26,26 +25,26 @@ StepBasic_ConversionBasedUnitAndTimeUnit::StepBasic_ConversionBasedUnitAndTimeUn
 {
 }
 
-void StepBasic_ConversionBasedUnitAndTimeUnit::Init(const Handle(StepBasic_DimensionalExponents)& aDimensions,
-						    const Handle(TCollection_HAsciiString)& aName,
-						    const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+void StepBasic_ConversionBasedUnitAndTimeUnit::Init(const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                                                    const Handle(TCollection_HAsciiString)& theName,
+                                                    const Handle(Standard_Transient)& theConversionFactor)
 {
   // --- ANDOR componant fields ---
-  StepBasic_ConversionBasedUnit::Init(aDimensions, aName, aConversionFactor);
+  StepBasic_ConversionBasedUnit::Init(theDimensions, theName, theConversionFactor);
   
   // --- ANDOR componant fields ---
-  timeUnit = new StepBasic_TimeUnit();
-  timeUnit->Init(aDimensions);
+  myTimeUnit = new StepBasic_TimeUnit();
+  myTimeUnit->Init(theDimensions);
 }
 
 
-void StepBasic_ConversionBasedUnitAndTimeUnit::SetTimeUnit(const Handle(StepBasic_TimeUnit)& aTimeUnit)
+void StepBasic_ConversionBasedUnitAndTimeUnit::SetTimeUnit(const Handle(StepBasic_TimeUnit)& theTimeUnit)
 {
-  timeUnit = aTimeUnit;
+  myTimeUnit = theTimeUnit;
 }
 
 Handle(StepBasic_TimeUnit) StepBasic_ConversionBasedUnitAndTimeUnit::TimeUnit() const
 {
-  return timeUnit;
+  return myTimeUnit;
 }
 

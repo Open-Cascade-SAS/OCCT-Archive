@@ -12,8 +12,6 @@
 // commercial license or contractual agreement.
 
 
-#include <Standard_Type.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <StepShape_ToleranceValue.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(StepShape_ToleranceValue,Standard_Transient)

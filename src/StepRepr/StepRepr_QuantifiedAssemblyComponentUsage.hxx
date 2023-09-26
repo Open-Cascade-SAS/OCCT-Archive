@@ -20,8 +20,7 @@
 #include <Standard_Type.hxx>
 
 #include <StepRepr_AssemblyComponentUsage.hxx>
-#include <Standard_Boolean.hxx>
-class StepBasic_MeasureWithUnit;
+
 class TCollection_HAsciiString;
 class StepBasic_ProductDefinition;
 
@@ -40,16 +39,32 @@ public:
   Standard_EXPORT StepRepr_QuantifiedAssemblyComponentUsage();
   
   //! Initialize all fields (own and inherited)
-  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Id, const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Name, const Standard_Boolean hasProductDefinitionRelationship_Description, const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Description, const Handle(StepBasic_ProductDefinition)& aProductDefinitionRelationship_RelatingProductDefinition, const Handle(StepBasic_ProductDefinition)& aProductDefinitionRelationship_RelatedProductDefinition, const Standard_Boolean hasAssemblyComponentUsage_ReferenceDesignator, const Handle(TCollection_HAsciiString)& aAssemblyComponentUsage_ReferenceDesignator, const Handle(StepBasic_MeasureWithUnit)& aQuantity);
+  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Id,
+                             const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Name,
+                             const Standard_Boolean hasProductDefinitionRelationship_Description,
+                             const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Description,
+                             const Handle(StepBasic_ProductDefinition)& theProductDefinitionRelationship_RelatingProductDefinition,
+                             const Handle(StepBasic_ProductDefinition)& theProductDefinitionRelationship_RelatedProductDefinition,
+                             const Standard_Boolean hasAssemblyComponentUsage_ReferenceDesignator,
+                             const Handle(TCollection_HAsciiString)& theAssemblyComponentUsage_ReferenceDesignator,
+                             const Handle(Standard_Transient)& theQuantity);
 
   //! Initialize all fields (own and inherited)
-  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Id, const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Name, const Standard_Boolean hasProductDefinitionRelationship_Description, const Handle(TCollection_HAsciiString)& aProductDefinitionRelationship_Description, const StepBasic_ProductDefinitionOrReference& aProductDefinitionRelationship_RelatingProductDefinition, const StepBasic_ProductDefinitionOrReference& aProductDefinitionRelationship_RelatedProductDefinition, const Standard_Boolean hasAssemblyComponentUsage_ReferenceDesignator, const Handle(TCollection_HAsciiString)& aAssemblyComponentUsage_ReferenceDesignator, const Handle(StepBasic_MeasureWithUnit)& aQuantity);
+  Standard_EXPORT void Init (const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Id,
+                             const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Name,
+                             const Standard_Boolean hasProductDefinitionRelationship_Description,
+                             const Handle(TCollection_HAsciiString)& theProductDefinitionRelationship_Description,
+                             const StepBasic_ProductDefinitionOrReference& theProductDefinitionRelationship_RelatingProductDefinition,
+                             const StepBasic_ProductDefinitionOrReference& theProductDefinitionRelationship_RelatedProductDefinition,
+                             const Standard_Boolean hasAssemblyComponentUsage_ReferenceDesignator,
+                             const Handle(TCollection_HAsciiString)& theAssemblyComponentUsage_ReferenceDesignator,
+                             const Handle(Standard_Transient)& theQuantity);
   
   //! Returns field Quantity
-  Standard_EXPORT Handle(StepBasic_MeasureWithUnit) Quantity() const;
+  Standard_EXPORT Handle(Standard_Transient) Quantity() const;
   
   //! Set field Quantity
-  Standard_EXPORT void SetQuantity (const Handle(StepBasic_MeasureWithUnit)& Quantity);
+  Standard_EXPORT void SetQuantity (const Handle(Standard_Transient)& theQuantity);
 
 
 
@@ -64,7 +79,7 @@ protected:
 private:
 
 
-  Handle(StepBasic_MeasureWithUnit) theQuantity;
+  Handle(Standard_Transient) myQuantity;
 
 
 };

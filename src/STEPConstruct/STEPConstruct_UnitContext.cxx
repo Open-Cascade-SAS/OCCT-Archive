@@ -48,6 +48,7 @@
 #include <StepGeom_GeomRepContextAndGlobUnitAssCtxAndGlobUncertaintyAssCtx.hxx>
 #include <StepRepr_GlobalUncertaintyAssignedContext.hxx>
 #include <StepRepr_GlobalUnitAssignedContext.hxx>
+#include <StepRepr_ReprItemAndMeasureWithUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 #include <UnitsMethods.hxx>
 
@@ -121,13 +122,13 @@ void STEPConstruct_UnitContext::Init(const Standard_Real Tol3d)
 
     Handle(StepBasic_DimensionalExponents) theDimExp = new StepBasic_DimensionalExponents;
     theDimExp->Init ( 1., 0., 0., 0., 0., 0., 0. );
-    
-    Handle(TCollection_HAsciiString) convName = new TCollection_HAsciiString ( uName );
-    Handle(StepBasic_ConversionBasedUnitAndLengthUnit) convUnit =
+
+    Handle(TCollection_HAsciiString) aConvName = new TCollection_HAsciiString(uName);
+    Handle(StepBasic_ConversionBasedUnitAndLengthUnit) aConvUnit =
       new StepBasic_ConversionBasedUnitAndLengthUnit;
-    convUnit->Init ( theDimExp, convName, measure );
-    
-    lengthUnit = convUnit;
+    aConvUnit->Init(theDimExp, aConvName, measure);
+
+    lengthUnit = aConvUnit;
   }
   else lengthUnit = siUnit;
   
@@ -287,60 +288,74 @@ Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepRepr
 } 
 
 
-Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepBasic_NamedUnit)& aUnit)
+Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepBasic_NamedUnit)& theUnit)
 {
-
   //:f3 abv 8 Apr 98: ProSTEP TR8 tr8_as_sd_sw: the case of unrecognized entity
-  if ( aUnit.IsNull() ) 
+  if (theUnit.IsNull())
     return -1;
 
   Standard_Integer status = 0;
-  Standard_Real theFactor= 0.; 
-  Standard_Real theSIUNF  = 0.;
+  Standard_Real theFactor = 0.; 
+  Standard_Real theSIUNF = 0.;
   
   Standard_Real parameter= 0.;
   Standard_Boolean parameterDone = Standard_False;
-  if(aUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnit))) {
-    Handle(StepBasic_ConversionBasedUnit) theCBU =
-      Handle(StepBasic_ConversionBasedUnit)::DownCast(aUnit);
+  if(theUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnit)))
+  {
+    Handle(StepBasic_ConversionBasedUnit) aCBU =
+      Handle(StepBasic_ConversionBasedUnit)::DownCast(theUnit);
 //    Handle(StepBasic_DimensionalExponents) theDimExp = theCBU->Dimensions();
-    Handle(StepBasic_MeasureWithUnit) theMWU;
-    if(!theCBU.IsNull()) {
-       theMWU = theCBU->ConversionFactor();
-       // sln 8.10.2001: the case of unrecognized entity
-       if(theMWU.IsNull())
-         return -1;
+    Handle(StepBasic_MeasureWithUnit) aMWU;
+    if(!aCBU.IsNull())
+    {
+      Handle(Standard_Transient) aConvFactor = aCBU->ConversionFactor();
+      if (aConvFactor->IsKind(STANDARD_TYPE(StepBasic_MeasureWithUnit)))
+      {
+        aMWU = Handle(StepBasic_MeasureWithUnit)::DownCast(aConvFactor);
+      }
+      else if (aConvFactor->IsKind(STANDARD_TYPE(StepRepr_ReprItemAndMeasureWithUnit)))
+      {
+        Handle(StepRepr_ReprItemAndMeasureWithUnit) aReprMeasureItem =
+          Handle(StepRepr_ReprItemAndMeasureWithUnit)::DownCast(aConvFactor);
+        aMWU = aReprMeasureItem->GetMeasureWithUnit();
+      }
+      // sln 8.10.2001: the case of unrecognized entity
+      if(aMWU.IsNull())
+        return -1;
       //if (!theMWU->IsKind(STANDARD_TYPE(StepBasic_LengthMeasureWithUnit))) { gka
-      //	return 2;
+      //  return 2;
       //}
-      Handle(StepBasic_NamedUnit) theTargetUnit = theMWU->UnitComponent().NamedUnit();
+      Handle(StepBasic_NamedUnit) theTargetUnit = aMWU->UnitComponent().NamedUnit();
       //StepBasic_Unit theTargetUnit = theMWU->UnitComponent();
       Standard_Real theSIPFactor = 1.;
-	
+
       //:f5 abv 24 Apr 98: ProSTEP TR8 tr8_bv1_tc: INCHES
-//gka   Handle(StepBasic_SiUnitAndLengthUnit) theSUALU =
-//	Handle(StepBasic_SiUnitAndLengthUnit)::DownCast(theTargetUnit);
-//      Handle(StepBasic_SiUnit) theSIU;
-//      if ( ! theSUALU.IsNull() ) theSIU = Handle(StepBasic_SiUnit)::DownCast(theSUALU);
-    Handle(StepBasic_SiUnit) theSIU =  //f5
-      Handle(StepBasic_SiUnit)::DownCast(theTargetUnit);//f5
-      
-      if (!theSIU.IsNull()) {
-	if (theSIU->HasPrefix()) {
-	  // Treat the prefix
-	  StepBasic_SiPrefix aPrefix = theSIU->Prefix();
-	  theSIPFactor = ConvertSiPrefix(aPrefix); 
-	}
-	// Treat the SiUnitName
-	if (!SiUnitNameFactor(theSIU,theSIUNF)) status = 11; // et continue
-	//std::cout << "The SiUnitNameFactor is :";
-	//std::cout << theSIUNF << std::endl;
+      //gka
+      //Handle(StepBasic_SiUnitAndLengthUnit) theSUALU =
+      //Handle(StepBasic_SiUnitAndLengthUnit)::DownCast(theTargetUnit);
+      //Handle(StepBasic_SiUnit) theSIU;
+      //if ( ! theSUALU.IsNull() ) theSIU = Handle(StepBasic_SiUnit)::DownCast(theSUALU);
+      Handle(StepBasic_SiUnit) theSIU = Handle(StepBasic_SiUnit)::DownCast(theTargetUnit); //f5
+
+      if (!theSIU.IsNull())
+      {
+        if (theSIU->HasPrefix())
+        {
+          // Treat the prefix
+          StepBasic_SiPrefix aPrefix = theSIU->Prefix();
+          theSIPFactor = ConvertSiPrefix(aPrefix);
+        }
+        // Treat the SiUnitName
+        if (!SiUnitNameFactor(theSIU,theSIUNF)) status = 11; // et continue
+        //std::cout << "The SiUnitNameFactor is :";
+        //std::cout << theSIUNF << std::endl;
       }
-      else {
-	//      std::cout << "Recursive algo required - Aborted" << std::endl;
-	return 3;
+      else
+      {
+        //std::cout << "Recursive algo required - Aborted" << std::endl;
+        return 3;
       }
-      Standard_Real theMVAL = theMWU->ValueComponent();
+      Standard_Real theMVAL = aMWU->ValueComponent();
       theFactor = theSIPFactor * theMVAL; // * theSIUNF * pow(10.,theLExp)
     }
     parameter = theFactor;
@@ -353,9 +368,10 @@ Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepBasi
       std::cout << "Error in the file : parameter double defined" << std::endl;
 #endif
     }
-  }    
-  else if (aUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnit))) {
-    Handle(StepBasic_SiUnit) theSIU = Handle(StepBasic_SiUnit)::DownCast(aUnit);
+  }
+  else if (theUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnit)))
+  {
+    Handle(StepBasic_SiUnit) theSIU = Handle(StepBasic_SiUnit)::DownCast(theUnit);
     Standard_Real theSIPFactor = 1.;
     if (theSIU->HasPrefix()) {
       // Treat the prefix
@@ -388,8 +404,9 @@ Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepBasi
     return 0;
   }
   
-  if (aUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndLengthUnit))||
-      aUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndLengthUnit))) {
+  if (theUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndLengthUnit))||
+      theUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndLengthUnit)))
+  {
 #ifdef METER
     lengthFactor = parameter;
 #else
@@ -404,18 +421,21 @@ Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepBasi
 #endif    
     }
   }  // end of LengthUnit
-  else if (aUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndPlaneAngleUnit))||
-	   aUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndPlaneAngleUnit))) {
+  else if (theUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndPlaneAngleUnit)) ||
+           theUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndPlaneAngleUnit)))
+  {
     planeAngleFactor = parameter;
     planeAngleDone = Standard_True;	
   }  // end of PlaneAngleUnit
-  else if (aUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndSolidAngleUnit))||
-	   aUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndSolidAngleUnit))) {
+  else if (theUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndSolidAngleUnit)) ||
+           theUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndSolidAngleUnit)))
+  {
     solidAngleFactor = parameter;
     solidAngleDone = Standard_True;
   }  // end of SolidAngleUnit 
-  else if (aUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndAreaUnit)) ||
-	   aUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndAreaUnit))) {
+  else if (theUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndAreaUnit)) ||
+           theUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndAreaUnit)))
+  {
     Standard_Real af;
 #ifdef METER   
     af = parameter;
@@ -425,8 +445,9 @@ Standard_Integer STEPConstruct_UnitContext::ComputeFactors(const Handle(StepBasi
     areaDone = Standard_True;
     areaFactor = pow(af,2);
   }
-  else if (aUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndVolumeUnit)) ||
-	   aUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndVolumeUnit))) {
+  else if (theUnit->IsKind(STANDARD_TYPE(StepBasic_ConversionBasedUnitAndVolumeUnit)) ||
+           theUnit->IsKind(STANDARD_TYPE(StepBasic_SiUnitAndVolumeUnit)))
+  {
     Standard_Real af;
 #ifdef METER   
     af = parameter;

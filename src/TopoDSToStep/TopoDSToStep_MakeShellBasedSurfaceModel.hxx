@@ -25,6 +25,7 @@
 #include <Message_ProgressRange.hxx>
 
 class StepShape_ShellBasedSurfaceModel;
+class StepVisual_TessellatedItem;
 class StdFail_NotDone;
 class TopoDS_Face;
 class Transfer_FinderProcess;
@@ -56,7 +57,7 @@ public:
                                   const Message_ProgressRange& theProgress = Message_ProgressRange());
   
   Standard_EXPORT const Handle(StepShape_ShellBasedSurfaceModel)& Value() const;
-
+  Standard_EXPORT const Handle(StepVisual_TessellatedItem)& TessellatedValue() const;
 
 
 
@@ -71,6 +72,7 @@ private:
 
 
   Handle(StepShape_ShellBasedSurfaceModel) theShellBasedSurfaceModel;
+  Handle(StepVisual_TessellatedItem) theTessellatedItem;
 
 
 };

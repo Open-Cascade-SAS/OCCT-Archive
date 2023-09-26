@@ -1,5 +1,7 @@
 001 stl_read
 002 shape_write_stl
 003 gltf_read
-004 obj_read
-005 gltf_write
+004 gltf_write
+005 obj_read
+006 step_read
+007 step_write

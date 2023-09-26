@@ -247,6 +247,22 @@ STEPControl_Controller::STEPControl_Controller ()
     Interface_Static::Init("step", "read.step.codepage", '&', "eval iso8859-9");    // Resource_FormatType_iso8859_9
     Interface_Static::SetCVal("read.step.codepage", "UTF8");
 
+    // Tessellated geometry reading: Off by default
+    Interface_Static::Init("step", "read.step.tessellated", 'e', "");
+    Interface_Static::Init("step", "read.step.tessellated", '&', "enum 0");
+    Interface_Static::Init("step", "read.step.tessellated", '&', "eval Off");       // 0
+    Interface_Static::Init("step", "read.step.tessellated", '&', "eval On");        // 1
+    Interface_Static::Init("step", "read.step.tessellated", '&', "eval OnNoBRep");  // 2
+    Interface_Static::SetCVal("read.step.tessellated", "On");
+
+    // Tessellated geometry writing: Off by default
+    Interface_Static::Init("step", "write.step.tessellated", 'e', "");
+    Interface_Static::Init("step", "write.step.tessellated", '&', "enum 0");
+    Interface_Static::Init("step", "write.step.tessellated", '&', "eval Off");      // 0
+    Interface_Static::Init("step", "write.step.tessellated", '&', "eval On");       // 1
+    Interface_Static::Init("step", "write.step.tessellated", '&', "eval OnNoBRep"); // 2
+    Interface_Static::SetCVal("write.step.tessellated", "OnNoBRep");
+
     Standard_STATIC_ASSERT((int)Resource_FormatType_iso8859_9 - (int)Resource_FormatType_CP1250 == 17); // "Error: Invalid Codepage Enumeration"
 
     init = Standard_True;

@@ -24,7 +24,6 @@
 class StepBasic_PlaneAngleUnit;
 class StepBasic_DimensionalExponents;
 class TCollection_HAsciiString;
-class StepBasic_MeasureWithUnit;
 
 
 class StepBasic_ConversionBasedUnitAndPlaneAngleUnit;
@@ -40,9 +39,11 @@ public:
   //! Returns a ConversionBasedUnitAndPlaneAngleUnit
   Standard_EXPORT StepBasic_ConversionBasedUnitAndPlaneAngleUnit();
   
-  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& aDimensions, const Handle(TCollection_HAsciiString)& aName, const Handle(StepBasic_MeasureWithUnit)& aConversionFactor);
+  Standard_EXPORT void Init (const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                             const Handle(TCollection_HAsciiString)& theName,
+                             const Handle(Standard_Transient)& theConversionFactor);
   
-  Standard_EXPORT void SetPlaneAngleUnit (const Handle(StepBasic_PlaneAngleUnit)& aPlaneAngleUnit);
+  Standard_EXPORT void SetPlaneAngleUnit (const Handle(StepBasic_PlaneAngleUnit)& thePlaneAngleUnit);
   
   Standard_EXPORT Handle(StepBasic_PlaneAngleUnit) PlaneAngleUnit() const;
 
@@ -59,7 +60,7 @@ protected:
 private:
 
 
-  Handle(StepBasic_PlaneAngleUnit) planeAngleUnit;
+  Handle(StepBasic_PlaneAngleUnit) myPlaneAngleUnit;
 
 
 };

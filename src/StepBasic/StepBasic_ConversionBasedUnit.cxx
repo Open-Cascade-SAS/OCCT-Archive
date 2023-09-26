@@ -15,42 +15,40 @@
 #include <Standard_Type.hxx>
 #include <StepBasic_ConversionBasedUnit.hxx>
 #include <StepBasic_DimensionalExponents.hxx>
-#include <StepBasic_MeasureWithUnit.hxx>
 #include <TCollection_HAsciiString.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(StepBasic_ConversionBasedUnit,StepBasic_NamedUnit)
 
 StepBasic_ConversionBasedUnit::StepBasic_ConversionBasedUnit ()  {}
 
-void StepBasic_ConversionBasedUnit::Init(
-	const Handle(StepBasic_DimensionalExponents)& aDimensions,
-	const Handle(TCollection_HAsciiString)& aName,
-	const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+void StepBasic_ConversionBasedUnit::Init(const Handle(StepBasic_DimensionalExponents)& theDimensions,
+                                         const Handle(TCollection_HAsciiString)& theName,
+                                         const Handle(Standard_Transient)& theConversionFactor)
 {
-	// --- classe own fields ---
-	name = aName;
-	conversionFactor = aConversionFactor;
-	// --- classe inherited fields ---
-	StepBasic_NamedUnit::Init(aDimensions);
+  // --- classe own fields ---
+  myName = theName;
+  myConversionFactor = theConversionFactor;
+  // --- classe inherited fields ---
+  StepBasic_NamedUnit::Init(theDimensions);
 }
 
 
-void StepBasic_ConversionBasedUnit::SetName(const Handle(TCollection_HAsciiString)& aName)
+void StepBasic_ConversionBasedUnit::SetName(const Handle(TCollection_HAsciiString)& theName)
 {
-	name = aName;
+  myName = theName;
 }
 
 Handle(TCollection_HAsciiString) StepBasic_ConversionBasedUnit::Name() const
 {
-	return name;
+  return myName;
 }
 
-void StepBasic_ConversionBasedUnit::SetConversionFactor(const Handle(StepBasic_MeasureWithUnit)& aConversionFactor)
+void StepBasic_ConversionBasedUnit::SetConversionFactor(const Handle(Standard_Transient)& theConversionFactor)
 {
-	conversionFactor = aConversionFactor;
+  myConversionFactor = theConversionFactor;
 }
 
-Handle(StepBasic_MeasureWithUnit) StepBasic_ConversionBasedUnit::ConversionFactor() const
+Handle(Standard_Transient) StepBasic_ConversionBasedUnit::ConversionFactor() const
 {
-	return conversionFactor;
+  return myConversionFactor;
 }
