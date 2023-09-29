@@ -84,7 +84,8 @@ void SelectMgr_RectangularFrustum::segmentSegmentDistance (const gp_Pnt& theSegP
   aTc = (Abs (aTd) < gp::Resolution() ? 0.0 : aTn / aTd);
 
   const gp_Pnt aClosestPnt = myNearPickedPnt.XYZ() + aV * aTc;
-  thePickResult.SetDepth (myNearPickedPnt.Distance (aClosestPnt) * myScale);
+  Standard_Real aPenalty = Max(aC/anA, anA/aC);
+  thePickResult.SetDepth (myNearPickedPnt.Distance (aClosestPnt) * myScale * aPenalty);
 
   const gp_Vec aPickedVec = aClosestPnt.XYZ() - theSegPnt1.XYZ();
   const gp_Vec aFigureVec = theSegPnt2.XYZ()  - theSegPnt1.XYZ();
@@ -733,8 +734,8 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsTriangle (const gp_Pnt& t
     {
       aNearestEdgeIdx2 = aNearestEdgeIdx1 == 0 ? 2 : aNearestEdgeIdx1 - 1;
     }
-    segmentSegmentDistance (aPnts[aNearestEdgeIdx1], aPnts[aNearestEdgeIdx2], thePickResult);
     thePickResult.SetSurfaceNormal (aTriangleNormal);
+    segmentSegmentDistance (aPnts[aNearestEdgeIdx1], aPnts[aNearestEdgeIdx2], thePickResult);
   }
 
   return !theClipRange.IsClipped (thePickResult.Depth());
