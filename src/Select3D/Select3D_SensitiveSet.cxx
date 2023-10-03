@@ -111,7 +111,7 @@ Standard_Boolean Select3D_SensitiveSet::processElements (SelectBasics_SelectingV
         continue;
       }
 
-      if (thePickResult.Depth() > aPickResult.Depth())
+      if ((thePickResult.Depth() > aPickResult.Depth()) && (aPickResult.IsDirectHit()))
       {
         thePickResult = aPickResult;
         myDetectedIdx = anIdx;

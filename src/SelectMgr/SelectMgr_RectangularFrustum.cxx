@@ -84,8 +84,7 @@ void SelectMgr_RectangularFrustum::segmentSegmentDistance (const gp_Pnt& theSegP
   aTc = (Abs (aTd) < gp::Resolution() ? 0.0 : aTn / aTd);
 
   const gp_Pnt aClosestPnt = myNearPickedPnt.XYZ() + aV * aTc;
-  Standard_Real aPenalty = Max(aC/anA, anA/aC);
-  thePickResult.SetDepth (myNearPickedPnt.Distance (aClosestPnt) * myScale * aPenalty);
+  thePickResult.SetDepth (myNearPickedPnt.Distance (aClosestPnt) * myScale);
 
   const gp_Vec aPickedVec = aClosestPnt.XYZ() - theSegPnt1.XYZ();
   const gp_Vec aFigureVec = theSegPnt2.XYZ()  - theSegPnt1.XYZ();
@@ -504,6 +503,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsBox (const SelectMgr_Vec3
 
     aDepth = aNearestPnt.Distance (myNearPickedPnt);
     thePickResult.SetDepth (aDepth);
+    thePickResult.SetDirectHit(Standard_False);
     return !theClipRange.IsClipped (thePickResult.Depth());
   }
 
@@ -516,6 +516,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsBox (const SelectMgr_Vec3
   }
 
   thePickResult.SetDepth (aDepth);
+  thePickResult.SetDirectHit(Standard_True);
 
   return Standard_True;
 }
@@ -539,6 +540,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsPoint (const gp_Pnt& theP
 
   thePickResult.SetDepth (Abs (aDepth) * myScale);
   thePickResult.SetPickedPoint (thePnt);
+  thePickResult.SetDirectHit(Standard_True);
 
   return !theClipRange.IsClipped (thePickResult.Depth());
 }
@@ -571,6 +573,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsSegment (const gp_Pnt& th
     return Standard_False;
 
   segmentSegmentDistance (thePnt1, thePnt2, thePickResult);
+  thePickResult.SetDirectHit(Standard_True);
 
   return !theClipRange.IsClipped (thePickResult.Depth());
 }
@@ -606,6 +609,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsPolygon (const TColgp_Arr
         aMatchingSegmentsNb++;
         segmentSegmentDistance (aStartPnt, aEndPnt, aPickResult);
         thePickResult = SelectBasics_PickResult::Min (thePickResult, aPickResult);
+        thePickResult.SetDirectHit(Standard_True);
       }
     }
 
@@ -711,9 +715,10 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsTriangle (const gp_Pnt& t
       thePickResult.SetDepth (myNearPickedPnt.Distance (aPtOnPlane) * myScale);
       thePickResult.SetPickedPoint (aPtOnPlane);
       thePickResult.SetSurfaceNormal (aTriangleNormal);
+      thePickResult.SetDirectHit(Standard_True);
       return !theClipRange.IsClipped (thePickResult.Depth());
     }
-
+    
     Standard_Real aMinDist = RealLast();
     Standard_Integer aNearestEdgeIdx1 = -1;
     for (Standard_Integer anEdgeIdx = 0; anEdgeIdx < 3; ++anEdgeIdx)
@@ -736,6 +741,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsTriangle (const gp_Pnt& t
     }
     thePickResult.SetSurfaceNormal (aTriangleNormal);
     segmentSegmentDistance (aPnts[aNearestEdgeIdx1], aPnts[aNearestEdgeIdx2], thePickResult);
+    thePickResult.SetDirectHit(Standard_False);
   }
 
   return !theClipRange.IsClipped (thePickResult.Depth());
@@ -786,6 +792,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsCylinder (const Standard_
     thePickResult.SetSurfaceNormal (gp_Vec (aPntOnCylinder.X(), aPntOnCylinder.Y(), 0.0).Transformed (theTrsf));
   }
   thePickResult.SetPickedPoint (aPntOnCylinder.Transformed (theTrsf));
+  thePickResult.SetDirectHit(Standard_True);
   return !theClipRange.IsClipped (thePickResult.Depth());
 }
 
@@ -822,6 +829,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsCircle (const Standard_Re
   }
 
   thePickResult.SetDepth (aTime * myScale);
+  thePickResult.SetDirectHit(Standard_True);
   if (theClipRange.IsClipped (thePickResult.Depth()))
   {
     thePickResult.SetDepth (aTime * myScale);
@@ -1011,6 +1019,7 @@ Standard_Boolean SelectMgr_RectangularFrustum::OverlapsSphere (const gp_Pnt& the
   }
 
   thePickResult.SetDepth (aTimeEnter * myScale);
+  thePickResult.SetDirectHit(Standard_True);
   if (theClipRange.IsClipped (thePickResult.Depth()))
   {
     thePickResult.SetDepth (aTimeLeave * myScale);

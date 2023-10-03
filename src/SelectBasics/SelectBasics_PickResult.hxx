@@ -35,7 +35,8 @@ public:
   SelectBasics_PickResult()
   : myObjPickedPnt (RealLast(), 0.0, 0.0),
     myDepth (RealLast()),
-    myDistToCenter (RealLast()) {}
+    myDistToCenter (RealLast()), 
+    myIsDirectHit(Standard_False) {}
 
   //! Constructor with initialization.
   SelectBasics_PickResult (Standard_Real theDepth,
@@ -43,7 +44,8 @@ public:
                            const gp_Pnt& theObjPickedPnt)
   : myObjPickedPnt (theObjPickedPnt),
     myDepth (theDepth),
-    myDistToCenter (theDistToCenter) {}
+    myDistToCenter (theDistToCenter),
+    myIsDirectHit(Standard_False) {}
 
 public:
 
@@ -56,6 +58,7 @@ public:
     myDepth = RealLast();
     myObjPickedPnt = gp_Pnt (RealLast(), 0.0, 0.0);
     myNormal.SetValues (0.0f, 0.0f, 0.0f);
+    myIsDirectHit = Standard_False;
   }
 
   //! Return depth along picking ray.
@@ -93,11 +96,18 @@ public:
     myNormal.SetValues ((float )theNormal.X(), (float )theNormal.Y(), (float )theNormal.Z());
   }
 
+  //! Set boolean value for pick result direct hit (true) or indirect hit (false) 
+  void SetDirectHit(Standard_Boolean theIsDirectHit) { myIsDirectHit = theIsDirectHit; }
+
+  //! Return value for direct hit test
+  Standard_Boolean IsDirectHit() const { return myIsDirectHit; }
+
 private:
   gp_Pnt                  myObjPickedPnt; //!< User-picked selection point onto object
   NCollection_Vec3<float> myNormal;       //!< surface normal
   Standard_Real           myDepth;        //!< Depth to detected point
   Standard_Real           myDistToCenter; //!< Distance from 3d projection user-picked selection point to entity's geometry center
+  Standard_Boolean        myIsDirectHit;  //!< Checks if the detected point was obtained from a direct hit
 };
 
 #endif // _SelectBasics_PickResult_HeaderFile
