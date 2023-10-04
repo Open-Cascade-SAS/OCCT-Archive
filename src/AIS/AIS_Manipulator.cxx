@@ -398,17 +398,25 @@ void AIS_Manipulator::Attach (const Handle(AIS_ManipulatorObjectSequence)& theOb
   const Handle(AIS_InteractiveContext)& aContext = Object()->GetContext();
   if (!aContext.IsNull())
   {
-    if (!aContext->IsDisplayed (this))
+    if (!aCurObject.IsNull())
     {
-      aContext->Display (this, Standard_False);
+      Handle(Graphic3d_TransformPers) aTransPers = aCurObject->TransformPersistence();
+      if (!aTransPers.IsNull())
+      {
+        aCurObject->TransformPersistence()->SetAnchorPoint(myPosition.Location());
+      }
+    }
+    if (!aContext->IsDisplayed(this))
+    {
+      aContext->Display(this, Standard_False);
     }
     else
     {
-      aContext->Update (this, Standard_False);
-      aContext->RecomputeSelectionOnly (this);
+      aContext->Update(this, Standard_False);
+      aContext->RecomputeSelectionOnly(this);
     }
 
-    aContext->Load (this);
+    aContext->Load(this);
   }
 
   if (theOptions.EnableModes)
@@ -750,6 +758,11 @@ void AIS_Manipulator::Transform (const gp_Trsf& theTrsf)
       {
         anObj->SetLocalTransformation (theTrsf * anOldTrsf);
       }
+      Handle(Graphic3d_TransformPers) aTransPers = anObj->TransformPersistence();
+      if (!aTransPers.IsNull())
+      {
+        anObj->TransformPersistence()->SetAnchorPoint(myPosition.Location());
+      }
     }
   }
 
@@ -806,15 +819,32 @@ void AIS_Manipulator::updateTransformation()
 {
   gp_Trsf aTrsf;
 
-  if (!myIsZoomPersistentMode)
+  Handle(AIS_ManipulatorObjectSequence) anObjects = Objects();
+  Handle(AIS_InteractiveObject) anObj = Object();
+  for (AIS_ManipulatorObjectSequence::Iterator anObjIter(*anObjects); anObjIter.More(); anObjIter.Next())
   {
-    aTrsf.SetTransformation (myPosition, gp::XOY());
+    anObj = anObjIter.Value();
   }
-  else
+  if (!anObj.IsNull())
   {
-    const gp_Dir& aVDir = myPosition.Direction();
-    const gp_Dir& aXDir = myPosition.XDirection();
-    aTrsf.SetTransformation (gp_Ax2 (gp::Origin(), aVDir, aXDir), gp::XOY());
+    Handle(Graphic3d_TransformPers) aTransPers = anObj->TransformPersistence();
+    if (!aTransPers.IsNull())
+    {
+      aTrsf.SetTransformation(myPosition, gp::XOY());
+    }
+    else
+    {
+      if (!myIsZoomPersistentMode)
+      {
+        aTrsf.SetTransformation(myPosition, gp::XOY());
+      }
+      else
+      {
+        const gp_Dir& aVDir = myPosition.Direction();
+        const gp_Dir& aXDir = myPosition.XDirection();
+        aTrsf.SetTransformation(gp_Ax2(gp::Origin(), aVDir, aXDir), gp::XOY());
+      }
+    }
   }
 
   Handle(TopLoc_Datum3D) aGeomTrsf = new TopLoc_Datum3D (aTrsf);
