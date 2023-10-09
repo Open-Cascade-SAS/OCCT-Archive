@@ -763,6 +763,27 @@ void OpenGl_View::FBOChangeViewport (const Handle(Standard_Transient)& theFbo,
   aFrameBuffer->ChangeViewport (theWidth, theHeight);
 }
 
+
+//=======================================================================
+//function : updateStructure
+//purpose  :
+//=======================================================================
+void OpenGl_View::updateStructure (const Handle(Graphic3d_CStructure)& theStructure,
+                                   const Standard_Integer thePriority)
+{
+  if (theStructure->HasGroupZLayer())
+  {
+    static Standard_Integer aDummyPriority;
+    // Remove existing structure references before adding them in case 
+    // there were changes in a group's zlayer.
+    for (NCollection_List<Handle(Graphic3d_Layer)>::Iterator aLayerIter(myZLayers.Layers()); aLayerIter.More(); aLayerIter.Next())
+    {
+      aLayerIter.Value()->Remove (theStructure.get(), aDummyPriority);
+    }
+    displayStructure (theStructure, thePriority);
+  }
+}
+
 //=======================================================================
 //function : displayStructure
 //purpose  :
@@ -770,9 +791,26 @@ void OpenGl_View::FBOChangeViewport (const Handle(Standard_Transient)& theFbo,
 void OpenGl_View::displayStructure (const Handle(Graphic3d_CStructure)& theStructure,
                                     const Standard_Integer              thePriority)
 {
-  const OpenGl_Structure*  aStruct = static_cast<const OpenGl_Structure*> (theStructure.get());
-  const Graphic3d_ZLayerId aZLayer = aStruct->ZLayer();
-  myZLayers.AddStructure (aStruct, aZLayer, thePriority);
+  const OpenGl_Structure* aStruct = static_cast<const OpenGl_Structure*> (theStructure.get());
+  Graphic3d_SequenceOfGroup aSeqGroups = aStruct->Groups();
+  if (aStruct->HasGroupZLayer())
+  {
+    // Add structure reference to the different zlayers that each group is assigned to.
+    NCollection_List<Graphic3d_ZLayerId> aZList;
+    for (OpenGl_Structure::GroupIterator aGroupIter(aSeqGroups); aGroupIter.More(); aGroupIter.Next())
+    {
+      Graphic3d_ZLayerId aLayerId = aGroupIter.Value()->GetZLayer();
+      if (!aZList.Contains(aLayerId))
+      {
+        aZList.Append (aLayerId);
+        myZLayers.AddStructure (aStruct, aLayerId, thePriority);
+      }
+    }
+  }
+  else
+  {
+    myZLayers.AddStructure (aStruct, aStruct->ZLayer(), thePriority);
+  }
 }
 
 //=======================================================================

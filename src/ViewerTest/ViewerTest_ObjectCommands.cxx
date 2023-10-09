@@ -107,6 +107,7 @@
 #include <Graphic3d_AttribBuffer.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
 #include <Graphic3d_Group.hxx>
+#include <Graphic3d_Text.hxx>
 #include <Standard_Real.hxx>
 
 #include <AIS_Circle.hxx>
@@ -6845,6 +6846,142 @@ static int VNormals (Draw_Interpretor& theDI,
 }
 
 //=======================================================================
+//function : vAddGroup
+//purpose  : add group to existing interactive object
+//=======================================================================
+static int vAddGroup (Draw_Interpretor& /*theDI*/, Standard_Integer theNbArgs, const char** theArgVec)
+{
+  const Handle(AIS_InteractiveContext)& aContext = ViewerTest::GetAISContext();
+  const Handle(V3d_View)& aView = ViewerTest::CurrentView();
+  if (aContext.IsNull() || aView.IsNull())
+  {
+    Message::SendFail ("Error: no active viewer");
+    return 1;
+  }
+
+  if (theNbArgs < 3)
+  {
+    Message::SendFail ("Error: wrong number of arguments.");
+    return 1;
+  }
+
+  Standard_Integer anArgIter = 1;
+  Handle(AIS_InteractiveObject) anObj;
+
+  const TCollection_AsciiString aName (theArgVec[anArgIter++]);
+  GetMapOfAIS().Find2 (aName, anObj);
+  if (anObj.IsNull())
+  {
+    Message::SendFail() << "Error: object '" << aName << "' is not displayed";
+    return 1;
+  }
+  // Check for zlayer and color parameters.
+  Quantity_Color aColor(Quantity_NOC_INDIANRED);
+  Graphic3d_ZLayerId aLayerID = anObj->ZLayer();
+  for (Standard_Integer anIter = anArgIter; anIter < theNbArgs; ++anIter)
+  {
+    const TCollection_AsciiString anArg(theArgVec[anIter]);
+    if (anArg == "-zlayer")
+    {
+      if (!ViewerTest::ParseZLayer (theArgVec[++anIter], aLayerID))
+      {
+        Message::SendFail() << "Specified zlayer does not exist.";
+        return 1;
+      }
+      if (aLayerID == Graphic3d_ZLayerId_UNKNOWN)
+      {
+        std::cout << "Warning: you set this group with unknown zlayer.";
+        aLayerID = anObj->ZLayer();
+      }
+    }
+    else if (anArg == "-color")
+    {
+      if (theNbArgs - anIter > 3)
+      {
+        Standard_Integer aNbParsed = Draw::ParseColor (3, theArgVec + anIter + 1, aColor);
+        if (aNbParsed == 0)
+        {
+          Message::SendFail() << "Syntax error for color.";
+          return 1;
+        }
+      }
+      else
+      {
+        std::cout << "\nIncorrect number of color values (RGB).\n";
+      }
+
+    }
+  }
+  // For the given type create primitive.
+  const TCollection_AsciiString aType(theArgVec[anArgIter++]);
+  if (aType == "quad")
+  {
+    if (theNbArgs < 8)
+    {
+      Message::SendFail ("Error: wrong number of arguments for quad group.");
+      return 1;
+    }
+    if (anObj->Presentation().IsNull())
+    {
+      Message::SendFail ("Error: Interactive object does not have current presentation.");
+      return 1;
+    }
+    // Get quad dimensions
+    Handle(Graphic3d_Group) aNewGroup = anObj->Presentation()->NewGroup();
+    Standard_Real aPx = Draw::Atof (theArgVec[anArgIter++]);
+    Standard_Real aPy = Draw::Atof (theArgVec[anArgIter++]);
+    Standard_Real aDx = Draw::Atof (theArgVec[anArgIter++]);
+    Standard_Real aDy = Draw::Atof (theArgVec[anArgIter++]);
+    Standard_Real aZ = Draw::Atof (theArgVec[anArgIter++]);
+
+    aNewGroup->SetZLayer (aLayerID, Standard_True);
+    Handle(Prs3d_LineAspect) anAspectQuadTop = new Prs3d_LineAspect(aColor, (Aspect_TypeOfLine)0, 2.0);
+    aNewGroup->SetGroupPrimitivesAspect (anAspectQuadTop->Aspect());
+    Handle(Graphic3d_ArrayOfTriangles) aPrim = new Graphic3d_ArrayOfTriangles(4, 6, Graphic3d_ArrayFlags_None);
+    aPrim->AddVertex (aPx - aDx, aPy, aZ);
+    aPrim->AddVertex (aPx + aDx, aPy, aZ);
+    aPrim->AddVertex (aPx, aPy + aDy, aZ);
+    aPrim->AddVertex (aPx, aPy - aDy, aZ);
+    aPrim->AddEdges (1, 2, 3);
+    aPrim->AddEdges (1, 2, 4);
+    aNewGroup->AddPrimitiveArray (aPrim);
+  }
+  else if (aType == "text")
+  {
+    if (theNbArgs < 8)
+    {
+      Message::SendFail ("Error: wrong number of arguments for text group.");
+      return 1;
+    }
+    if (anObj->Presentation().IsNull())
+    {
+      Message::SendFail ("Error: Interactive object does not have current presentation.");
+      return 1;
+    }
+    // Get text properties
+    Handle(Graphic3d_Group) aNewGroup = anObj->Presentation()->NewGroup();
+    const TCollection_AsciiString aTextValue (theArgVec[anArgIter++]);
+    Standard_Real aPx = Draw::Atof (theArgVec[anArgIter++]);
+    Standard_Real aPy = Draw::Atof (theArgVec[anArgIter++]);
+    Standard_Real aPz = Draw::Atof (theArgVec[anArgIter++]);
+    Standard_Real aHeight = Draw::Atof (theArgVec[anArgIter++]);
+
+    aNewGroup->SetZLayer (aLayerID, Standard_True);
+    Handle(Graphic3d_AspectText3d) aTextAspect = new Graphic3d_AspectText3d (aColor, Font_NOF_MONOSPACE, 1.0, 0.0);
+    aNewGroup->SetGroupPrimitivesAspect (aTextAspect);
+    Graphic3d_Vertex aMarker (aPx, aPy, aPz);
+    Handle(Graphic3d_Text) aText = new Graphic3d_Text (aHeight);
+    aText->SetText (aTextValue);
+    aText->SetOrientation (gp_Ax2(gp_Pnt(aPx, aPy, aPz), gp::DZ()));
+    aText->SetOwnAnchorPoint (Standard_False);
+    aNewGroup->AddText (aText);
+  }
+  aContext->Display (anObj, Standard_True);
+  return 0;
+}
+
+
+//=======================================================================
 //function : ObjectsCommands
 //purpose  :
 //=======================================================================
@@ -7235,4 +7372,12 @@ void ViewerTest::ObjectCommands(Draw_Interpretor& theCommands)
                    "\n\t\t:        [-useMesh] [-oriented {0}1}=0]"
                    "\n\t\t:  Displays/Hides normals calculated on shape geometry or retrieved from triangulation",
                    __FILE__, VNormals, group);
+
+  theCommands.Add ("vaddgroup",
+                   "vaddgroup name [type=quad|text] -zlayer=value\n"
+                   "quad: [x y dx dy depth color]\n"
+                   "text: [val px py pz height color]\n"
+                   "zlayer id of the zlayer\n"
+                   "add graphic3d_group to existing object",
+                   __FILE__, vAddGroup, group);
 }

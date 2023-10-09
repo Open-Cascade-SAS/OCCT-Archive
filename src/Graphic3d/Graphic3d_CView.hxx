@@ -540,6 +540,10 @@ public: //! @name obsolete Graduated Trihedron functionality
 
 private:
 
+  //! Updates the structure for display lists of the view.
+  virtual void updateStructure (const Handle(Graphic3d_CStructure)& theStructure,
+                                const Standard_Integer thePriority) = 0;
+
   //! Adds the structure to display lists of the view.
   virtual void displayStructure (const Handle(Graphic3d_CStructure)& theStructure,
                                  const Standard_Integer thePriority) = 0;

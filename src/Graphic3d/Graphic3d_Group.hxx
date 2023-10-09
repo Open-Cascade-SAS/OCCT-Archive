@@ -32,6 +32,7 @@
 #include <Graphic3d_IndexBuffer.hxx>
 #include <Graphic3d_Buffer.hxx>
 #include <Graphic3d_BoundBuffer.hxx>
+#include <Graphic3d_ZLayerId.hxx>
 #include <gp_Ax2.hxx>
 #include <TCollection_ExtendedString.hxx>
 
@@ -127,6 +128,14 @@ public:
 
   //! Creates a primitive array with single marker using AddPrimitiveArray().
   Standard_EXPORT void Marker (const Graphic3d_Vertex& thePoint, const Standard_Boolean theToEvalMinMax = Standard_True);
+
+  //! Get ID of Z layer for main presentation.
+  Standard_EXPORT Graphic3d_ZLayerId GetZLayer() const { return myZLayerId; }
+
+  //! Set Z layer ID and update all presentations of the presentable object.
+  //! The layers mechanism allows drawing objects in higher layers in overlay of objects in lower layers.
+  //! @theToUpdate is used to check if the group zlayer setting requires the updating in the zlayers list (FALSE by default).
+  Standard_EXPORT virtual void SetZLayer (const Graphic3d_ZLayerId theLayerId, Standard_Boolean theToUpdate = Standard_False);
 
 public:
 
@@ -294,7 +303,7 @@ protected:
   Graphic3d_BndBox4f   myBounds;        //!< bounding box
   bool                 myIsClosed;      //!< flag indicating closed volume
   bool                 myContainsFacet; //!< flag indicating that this group contains face primitives
-
+  Graphic3d_ZLayerId   myZLayerId;      //!< current zlayer ID for this group
 };
 
 DEFINE_STANDARD_HANDLE(Graphic3d_Group, Standard_Transient)

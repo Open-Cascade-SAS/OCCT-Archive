@@ -1023,7 +1023,7 @@ void Graphic3d_Structure::Update (const bool theUpdateLayer) const
 //function : SetZLayer
 //purpose  :
 //=======================================================================
-void Graphic3d_Structure::SetZLayer (const Graphic3d_ZLayerId theLayerId)
+void Graphic3d_Structure::SetZLayer (const Graphic3d_ZLayerId theLayerId, const Standard_Boolean theToPropagate)
 {
   // if the structure is not displayed, unable to change its display layer
   if (IsDeleted ())
@@ -1031,6 +1031,13 @@ void Graphic3d_Structure::SetZLayer (const Graphic3d_ZLayerId theLayerId)
 
   myStructureManager->ChangeZLayer (this, theLayerId);
   myCStructure->SetZLayer (theLayerId);
+  if (theToPropagate)
+  {
+    for (Graphic3d_SequenceOfGroup::Iterator aGroupIter(Groups()); aGroupIter.More(); aGroupIter.Next())
+    {
+      aGroupIter.Value()->SetZLayer (theLayerId, Standard_True);
+    }
+  }
 }
 
 //=======================================================================

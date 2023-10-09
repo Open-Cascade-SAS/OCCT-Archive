@@ -429,6 +429,10 @@ protected: //! @name Rendering of GL graphics (with prepared drawing buffer).
 
 private:
 
+  //! Updates the structure for display lists of the view.
+  Standard_EXPORT virtual void updateStructure (const Handle(Graphic3d_CStructure)& theStructure,
+                                                const Standard_Integer thePriority) Standard_OVERRIDE;
+
   //! Adds the structure to display lists of the view.
   Standard_EXPORT virtual void displayStructure (const Handle(Graphic3d_CStructure)& theStructure,
                                                  const Standard_Integer thePriority) Standard_OVERRIDE;

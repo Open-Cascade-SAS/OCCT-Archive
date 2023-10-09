@@ -1,0 +1,37 @@
+puts "========"
+puts "0033504: Visualization - Request OCC function extension AIS_InteractiveObject"
+puts "========"
+puts ""
+
+pload MODELING VISUALIZATION
+vclear
+vinit
+vcylinder cyl 1 2 10 -nbSlices 100
+box b1 5 5 5 3 3 3
+vdisplay b1 -dispmode 1 -layer 0
+vobjzlayer set b1 -2
+vobjzlayer set b1 0
+vfit
+#add groups with different zlayer settings
+vaddgroup b1 quad 5 5 1 1 3 -zlayer 0 -color 0.0 0.0 1.0
+vaddgroup b1 quad 5 5 1 1 5 -zlayer -3 -color 0.0 1.0 0.0
+vaddgroup b1 quad 5 5 1 1 7 -zlayer -2 -color 1.0 0.0 0.0
+vaddgroup b1 text myKindOfText 5 5 10 20 -zlayer -4 -color 1.0 0.0 1.0
+
+#general perspective
+vviewparams -scale 40.0 -proj 0.0 -1.0 1.0 -up 0.0 0.0 1.0 -at 2.5 2.5 0.0
+vdump $imagedir/${casename}_generalperpective.png
+#front perspective
+vviewparams -scale 40.0 -proj 0.0 0.0 1.0 -up 0.0 0.0 1.0 -at 2.5 2.5 0.0
+if { [vreadpixel 245 150 rgb name] != "GREEN" } { puts "Error: Green quad should be visible." }
+vdump $imagedir/${casename}_front.png
+#back perspective
+vviewparams -scale 40.0 -proj 0.0 0.0 -1.0 -up 0.0 0.0 1.0 -at 2.5 2.5 0.0
+if { [vreadpixel 165 150 rgb name] != "GREEN" } { puts "Error: Green quad should be visible." }
+vdump $imagedir/${casename}_back.png
+#front cylinder
+vviewparams -scale 40.0 -proj -1.0 -1.0 -0.6 -up 0.0 0.0 1.0 -at -2.5 -2.5 0.0
+vdump $imagedir/${casename}_cylinderperpective.png
+#different perspective
+vviewparams -scale 40.0 -proj -1.0 -1.0 -1.9 -up 0.0 0.0 1.0 -at -0.5 -0.5 0.0
+vdump $imagedir/${casename}_generalperspective2.png

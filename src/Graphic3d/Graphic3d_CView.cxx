@@ -284,6 +284,12 @@ void Graphic3d_CView::ReCompute (const Handle(Graphic3d_Structure)& theStruct)
     InvalidateBVHData (aLayerId);
   }
 
+  if (theStruct->CStructure()->HasGroupZLayer())
+  {
+    updateStructure (theStruct->CStructure(), theStruct->DisplayPriority());
+    return;
+  }
+
   if (!ComputedMode()
    || !IsActive()
    || !theStruct->IsDisplayed())

@@ -49,7 +49,8 @@ IMPLEMENT_STANDARD_RTTIEXT(Graphic3d_Group,Standard_Transient)
 Graphic3d_Group::Graphic3d_Group (const Handle(Graphic3d_Structure)& theStruct)
 : myStructure     (theStruct.operator->()),
   myIsClosed      (false),
-  myContainsFacet (false)
+  myContainsFacet (false),
+  myZLayerId      (Graphic3d_ZLayerId_UNKNOWN)
 {
   //
 }
@@ -307,6 +308,21 @@ void Graphic3d_Group::Marker (const Graphic3d_Vertex& thePoint,
   AddPrimitiveArray (aPoints, theToEvalMinMax);
 }
 
+//=======================================================================
+//function : SetZLayer
+//purpose  : Set the value of the ZLayer for the group structure
+//           and update zlayer structures
+//=======================================================================
+void Graphic3d_Group::SetZLayer (const Graphic3d_ZLayerId theLayerId, Standard_Boolean theToUpdate)
+{
+  myZLayerId = theLayerId;
+  myStructure->myCStructure->SetGroupZLayer (Standard_True);
+  if (theToUpdate)
+  {
+    myStructure->ReCompute();
+  }
+}
+
 // =======================================================================
 // function : Text
 // purpose  :
@@ -463,4 +479,5 @@ void Graphic3d_Group::DumpJson (Standard_OStream& theOStream, Standard_Integer t
 
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIsClosed)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myContainsFacet)
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myZLayerId)
 }

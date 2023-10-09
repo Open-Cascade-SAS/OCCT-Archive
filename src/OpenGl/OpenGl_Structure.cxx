@@ -388,11 +388,14 @@ void OpenGl_Structure::renderGeometry (const Handle(OpenGl_Workspace)& theWorksp
   {
     myInstancedStructure->renderGeometry (theWorkspace, theHasClosed);
   }
-
   for (OpenGl_Structure::GroupIterator aGroupIter (myGroups); aGroupIter.More(); aGroupIter.Next())
   {
-    theHasClosed = theHasClosed || aGroupIter.Value()->IsClosed();
-    aGroupIter.Value()->Render (theWorkspace);
+    Handle(OpenGl_Group) aGroup = aGroupIter.Value();
+    theHasClosed = theHasClosed || aGroup->IsClosed();
+    if (aGroup->GetZLayer() == CurrentZLayerMode())
+    {
+      aGroup->Render (theWorkspace);
+    }
   }
 }
 

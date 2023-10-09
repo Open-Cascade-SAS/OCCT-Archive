@@ -149,7 +149,19 @@ public:
   Standard_Boolean BndBoxClipCheck() const { return myBndBoxClipCheck; }
 
   //! Enable/disable check of object's bounding box clipping before drawing of object.
-  void SetBndBoxClipCheck(Standard_Boolean theBndBoxClipCheck) { myBndBoxClipCheck = theBndBoxClipCheck; }
+  void SetBndBoxClipCheck (Standard_Boolean theBndBoxClipCheck) { myBndBoxClipCheck = theBndBoxClipCheck; }
+
+  //! Returns TRUE if some groups possess different zlayers; FALSE by default;
+  Standard_Boolean HasGroupZLayer() const { return myHasGroupZLayer; }
+
+  //! Set value defining if some groups possess different zlayers;
+  void SetGroupZLayer (Standard_Boolean theValue) { myHasGroupZLayer = theValue; }
+
+  //! Returns the current zlayer that is being rendered; Returns invalid layer if not initialized;
+  Graphic3d_ZLayerId CurrentZLayerMode() const { return myCurrentZLayerMode; }
+
+  //! Set value defining the current zlayer that is being rendered. Set invalid if not rendering;
+  void SetCurrentZLayerMode (const Graphic3d_ZLayerId theValue) const { myCurrentZLayerMode = theValue; }
 
   //! Checks if the structure should be included into BVH tree or not.
   Standard_Boolean IsAlwaysRendered() const
@@ -232,8 +244,10 @@ protected:
   Handle(Graphic3d_SequenceOfHClipPlane) myClipPlanes;
   Handle(Graphic3d_PresentationAttributes) myHighlightStyle; //! Current highlight style; is set only if highlight flag is true
 
-  mutable Standard_Boolean myIsCulled; //!< A status specifying is structure needs to be rendered after BVH tree traverse
-  Standard_Boolean myBndBoxClipCheck;  //!< Flag responsible for checking of bounding box clipping before drawing of object
+  mutable Standard_Boolean myIsCulled;            //!< A status specifying is structure needs to be rendered after BVH tree traverse
+  Standard_Boolean myBndBoxClipCheck;             //!< Flag responsible for checking of bounding box clipping before drawing of object
+  Standard_Boolean myHasGroupZLayer;              //!< Flag specifying that some groups might have different zlayers
+  mutable Graphic3d_ZLayerId myCurrentZLayerMode; //!< Index of the zlayer that is being used during render stage for groups
 
 public:
 

@@ -319,6 +319,32 @@ void OpenGl_LayerList::RemoveStructure (const OpenGl_Structure* theStructure)
 
   Standard_Integer aPriority = -1;
 
+  // Check if structure has groups in multiple zlayers.
+  if (theStructure->HasGroupZLayer())
+  {
+    // Remove every reference of this structure from all zlayers
+    for (NCollection_List<Handle(Graphic3d_Layer)>::Iterator aLayerIter(myLayers); aLayerIter.More(); aLayerIter.Next())
+    {
+      const Handle(Graphic3d_Layer)& aLayerEx = aLayerIter.ChangeValue();
+
+      if (aLayerEx->Remove (theStructure, aPriority))
+      {
+        --myNbStructures;
+        if (aLayerEx->IsImmediate())
+        {
+          --myImmediateNbStructures;
+        }
+
+        if (aLayerEx->LayerSettings().IsRaytracable()
+          && theStructure->IsRaytracable())
+        {
+          ++myModifStateOfRaytraceable;
+        }
+      }
+    }
+    return;
+  }
+
   // remove structure from associated list
   // if the structure is not found there,
   // scan through layers and remove it
@@ -658,7 +684,11 @@ void OpenGl_LayerList::renderLayer (const Handle(OpenGl_Workspace)& theWorkspace
       {
         continue;
       }
-
+      // Check if within the structure, there are multiple groups assigned to different zlayers.
+      if (aStruct->HasGroupZLayer())
+      {
+        aStruct->SetCurrentZLayerMode (theLayer.LayerId());
+      }
       aStruct->Render (theWorkspace);
     }
   }

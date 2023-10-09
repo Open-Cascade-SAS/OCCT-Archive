@@ -135,7 +135,8 @@ public:
   //! allows to display structures presented in higher layers in overlay
   //! of structures in lower layers by switching off z buffer depth
   //! test between layers
-  Standard_EXPORT void SetZLayer (const Graphic3d_ZLayerId theLayerId);
+  //! @theToPropagate - flag to determine if structure zlayer should be the same for every group (TRUE by default.)
+  Standard_EXPORT void SetZLayer (const Graphic3d_ZLayerId theLayerId, const Standard_Boolean theToPropagate = Standard_True);
   
   //! Get Z layer ID of displayed structure.
   //! The method returns -1 if the structure has no ID (deleted from graphic driver).

@@ -27,21 +27,23 @@ IMPLEMENT_STANDARD_RTTIEXT(Graphic3d_CStructure,Standard_Transient)
 //purpose  :
 //=============================================================================
 Graphic3d_CStructure::Graphic3d_CStructure (const Handle(Graphic3d_StructureManager)& theManager)
-: myZLayer         (Graphic3d_ZLayerId_Default),
-  Priority         (Structure_MAX_PRIORITY / 2),
-  PreviousPriority (Structure_MAX_PRIORITY / 2),
-  ContainsFacet    (0),
-  IsInfinite       (0),
-  stick            (0),
-  highlight        (0),
-  visible          (1),
-  HLRValidation    (0),
-  IsForHighlight   (Standard_False),
-  IsMutable        (Standard_False),
-  Is2dText         (Standard_False),
-  myGraphicDriver  (theManager->GraphicDriver()),
-  myIsCulled       (Standard_True),
-  myBndBoxClipCheck(Standard_True)
+: myZLayer            (Graphic3d_ZLayerId_Default),
+  Priority            (Structure_MAX_PRIORITY / 2),
+  PreviousPriority    (Structure_MAX_PRIORITY / 2),
+  ContainsFacet       (0),
+  IsInfinite          (0),
+  stick               (0),
+  highlight           (0),
+  visible             (1),
+  HLRValidation       (0),
+  IsForHighlight      (Standard_False),
+  IsMutable           (Standard_False),
+  Is2dText            (Standard_False),
+  myGraphicDriver     (theManager->GraphicDriver()),
+  myIsCulled          (Standard_True),
+  myBndBoxClipCheck   (Standard_True),
+  myHasGroupZLayer    (Standard_False),
+  myCurrentZLayerMode (Graphic3d_ZLayerId_UNKNOWN)
 {
   Id = myGraphicDriver->NewIdentification();
 }
@@ -85,4 +87,6 @@ void Graphic3d_CStructure::DumpJson (Standard_OStream& theOStream, Standard_Inte
 
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myIsCulled)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myBndBoxClipCheck)
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myHasGroupZLayer)
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myCurrentZLayerMode)
 }
