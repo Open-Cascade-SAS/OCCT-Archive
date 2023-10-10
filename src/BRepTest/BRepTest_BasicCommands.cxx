@@ -1404,7 +1404,7 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
 {
   if (n < 3)
   {
-    di << "Usage result hull [-l cm cb_new cb_old lpp] or [-q incrX aftlim cca ccf forelim aft_coef fore_coef modify_aft_zone modify_fore_zone] ";
+    di << "Usage result hull [-l cm cb_new cb_old lpp] or [-q aftlim cca ccf forelim aft_coef fore_coef modify_aft_zone modify_fore_zone] ";
     di << "[-s XCoord_section1 ... XCoord_sectionN]\n";
     return 1;
   }
@@ -1426,7 +1426,7 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
       double _cb_new = Atof(a[i + 2]);
       double _cb_old = Atof(a[i + 3]);
       double _lpp = Atof(a[i + 4]);
-      aHTrsf.InitLinear(_cm, _cb_old, _cb_new, _lpp);
+      aHTrsf.InitLinear(_cm, _cb_new, _cb_old, _lpp);
       i += 4;
     }
     if (a[i][0] == '-' && a[i][1] == 'q' && n > i+8)
@@ -1484,6 +1484,7 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
     aShapeFixTool->Init(aHTrsf.Shape());
     aShapeFixTool->Perform();
     DBRep::Set(a[1], aShapeFixTool->Shape());
+    //DBRep::Set(a[1], aHTrsf.Shape());
   }
   else {
     return 1;
@@ -1659,7 +1660,7 @@ void  BRepTest::BasicCommands(Draw_Interpretor& theCommands)
   theCommands.Add("hulltrsf", 
                   "hulltrsf result hull "
                   "[-l cm cb_new cb_old lpp] for linear or "
-                  "[-q incrX aftlim cca ccf forelim aft_coef fore_coef modify_aft_zone modify_fore_zone] for quad "
+                  "[-q aftlim cca ccf forelim aft_coef fore_coef modify_aft_zone modify_fore_zone] for quad "
                   "[-s XCoord_section1 ... XCoord_sectionN] to add sections\n",
                   __FILE__,
                   hulltrsf, g);

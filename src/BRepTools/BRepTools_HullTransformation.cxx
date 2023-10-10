@@ -15,6 +15,7 @@
 
 
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 #include <BRepTools_HullTransformation.hxx>
 #include <Geom_BezierCurve.hxx>
 #include <Geom_BezierSurface.hxx>
@@ -46,7 +47,7 @@ void BRepTools_HullTransformation::InitLinear(const double theCM,
   _cb_new = theCBNew;
   _cb_old = theCBOld;
   _lpp = theLPP;
-  myScale = (_cm - _cb_new) / (_cm - _cb_old);
+  myScale = 1.0;// (_cm - _cb_new) / (_cm - _cb_old);
 }
 
 //=======================================================================
@@ -107,19 +108,17 @@ gp_Pnt BRepTools_HullTransformation::NewPointFrom(const gp_Pnt& theOldPoint)
   else
   {
     if (_modify_aft_zone &&          // Aft
-      oldX >= _aftlim && oldX <= _cca)
+        oldX >= _aftlim && oldX <= _cca)
     {
       incrX = _aft_coef * (oldX - _aftlim)*(oldX - _cca);
     }
-
     else if (_modify_fore_zone &&   // Fore
-      oldX >= _ccf && oldX <= _forelim)
+             oldX >= _ccf && oldX <= _forelim)
     {
       incrX = _fore_coef * (oldX - _ccf)*(oldX - _forelim);
     }
     newX = oldX + incrX;
   }
-
   return gp_Pnt(newX, theOldPoint.Y(), theOldPoint.Z());
 }
 
@@ -141,28 +140,25 @@ Standard_Boolean BRepTools_HullTransformation::NewSurface(const TopoDS_Face& F,
   RevWires = Standard_False;
   RevFace = (myScale > 0);
   S = Handle(Geom_Surface)::DownCast(S->Transformed(L.Transformation()));
+  if (S.IsNull())
+    return Standard_True;
   
   Handle(Standard_Type) TheTypeS = S->DynamicType();
-  if (TheTypeS == STANDARD_TYPE(Geom_BSplineSurface)) {
-    Handle(Geom_BSplineSurface) S2 = Handle(Geom_BSplineSurface)::DownCast(S);
-    for(Standard_Integer i = 1; i <= S2->NbUPoles(); i++) 
-      for(Standard_Integer j = 1; j <= S2->NbVPoles(); j++) {
-        gp_Pnt P = NewPointFrom(S2->Pole(i, j));
-        S2->SetPole(i, j, P);
-      }
+  if (TheTypeS != STANDARD_TYPE(Geom_BSplineSurface))
+  {
+    throw Standard_NoSuchObject("BRepTools_HullTransformation : Not BSpline Type of Surface");
   }
-  else
-    if (TheTypeS == STANDARD_TYPE(Geom_BezierSurface)) {
-      Handle(Geom_BezierSurface) S2 = Handle(Geom_BezierSurface)::DownCast(S);
-      for(Standard_Integer i = 1; i <= S2->NbUPoles(); i++) 
-        for(Standard_Integer j = 1; j <= S2->NbVPoles(); j++) {
-          gp_Pnt P =  NewPointFrom(S2->Pole(i, j));
-          S2->SetPole(i, j, P);
-        }
+  Handle(Geom_BSplineSurface) S2 = Handle(Geom_BSplineSurface)::DownCast(S);
+  Standard_Real aUMin, aUMax, aVMin, aVMax;
+  BRepTools::UVBounds(F, aUMin, aUMax, aVMin, aVMax);
+  S2->CheckAndSegment(aUMin, aUMax, aVMin, aVMax);
+  for (Standard_Integer i = 1; i <= S2->NbUPoles(); i++)
+  {
+    for (Standard_Integer j = 1; j <= S2->NbVPoles(); j++) {
+      gp_Pnt P = NewPointFrom(S2->Pole(i, j));
+      S2->SetPole(i, j, P);
     }
-    else{
-      throw Standard_NoSuchObject("BRepTools_HullTransformation : Pb no BSpline/Bezier Type Surface");
-    }
+  }
 
   L.Identity();
   return Standard_True;
@@ -180,29 +176,24 @@ Standard_Boolean BRepTools_HullTransformation::NewCurve(const TopoDS_Edge& E,
   Standard_Real f,l;
   Tol = BRep_Tool::Tolerance(E) * myScale;
   C = BRep_Tool::Curve(E, L, f, l);
+  if (C.IsNull())
+    return Standard_True;
   
-  if (!C.IsNull()) {
-    C = Handle(Geom_Curve)::DownCast(C->Copy()->Transformed(L.Transformation()));
-    Handle(Standard_Type) TheTypeC = C->DynamicType();
-    if (TheTypeC == STANDARD_TYPE(Geom_BSplineCurve)) {
-      Handle(Geom_BSplineCurve) C2 = Handle(Geom_BSplineCurve)::DownCast(C);
-      for(Standard_Integer i = 1; i <= C2->NbPoles(); i++) {
-        gp_Pnt P = NewPointFrom(C2->Pole(i));
-        C2->SetPole(i, P);
-      }
-    }
-    else
-      if(TheTypeC == STANDARD_TYPE(Geom_BezierCurve)) {
-        Handle(Geom_BezierCurve) C2 = Handle(Geom_BezierCurve)::DownCast(C);
-        for(Standard_Integer i = 1; i <= C2->NbPoles(); i++) {
-          gp_Pnt P = NewPointFrom(C2->Pole(i));
-          C2->SetPole(i, P);
-        }
-      }
-      else {
-        throw Standard_NoSuchObject("BRepTools_HullTransformation : Pb no BSpline/Bezier Type Curve");
-      }
+  C = Handle(Geom_Curve)::DownCast(C->Copy()->Transformed(L.Transformation()));
+  Handle(Standard_Type) TheTypeC = C->DynamicType();
+  if (TheTypeC != STANDARD_TYPE(Geom_BSplineCurve))
+  {
+    throw Standard_NoSuchObject("BRepTools_HullTransformation : Not BSpline Type of Curve");
   }
+
+  Handle(Geom_BSplineCurve) C2 = Handle(Geom_BSplineCurve)::DownCast(C);
+  C2->Segment(f, l);
+  for(Standard_Integer i = 1; i <= C2->NbPoles(); i++)
+  {
+    gp_Pnt P = NewPointFrom(C2->Pole(i));
+    C2->SetPole(i, P);
+  }
+
   L.Identity();
   return Standard_True;
 }
