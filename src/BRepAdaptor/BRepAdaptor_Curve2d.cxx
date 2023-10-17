@@ -76,7 +76,10 @@ void  BRepAdaptor_Curve2d::Initialize(const TopoDS_Edge& E,
   myFace = F;
   Standard_Real pf,pl;
   const Handle(Geom2d_Curve) PC = BRep_Tool::CurveOnSurface(E,F,pf,pl);
-  Geom2dAdaptor_Curve::Load(PC,pf,pl);
+  if (PC)
+  {
+    Geom2dAdaptor_Curve::Load(PC,pf,pl);
+  }
 }
 
 //=======================================================================
