@@ -192,6 +192,29 @@ namespace
       }
 
       const Standard_Integer aDecal = anArray->VertexNumber();
+      //check for duplicated vertices in the same face and average the normals
+      //to remove potential bad seams
+      for (Standard_Integer aNodeIter = 1; aNodeIter <= aT->NbNodes(); ++aNodeIter)
+      {
+        aPoint = aT->Node(aNodeIter);
+        gp_Dir aNorm = aT->Normal(aNodeIter);
+        for (Standard_Integer aSeekPtr = aNodeIter - 1; aSeekPtr > 0; --aSeekPtr)
+        {
+          gp_Pnt aMatchPnt = aT->Node(aSeekPtr);
+          gp_Dir aMatchNormal = aT->Normal(aSeekPtr);
+          if (aMatchPnt.Distance(aPoint) < Precision::Confusion())
+          {
+            gp_Vec aAuxVec((aNorm.X() + aMatchNormal.X()) * 0.5,
+                             (aNorm.Y() + aMatchNormal.Y()) * 0.5,
+                             (aNorm.Z() + aMatchNormal.Z()) * 0.5);
+            aAuxVec.Normalize();
+            gp_Dir aNewNormal(aAuxVec.X(), aAuxVec.Y(), aAuxVec.Z());
+            aT->SetNormal(aNodeIter, aNewNormal);
+            aT->SetNormal(aSeekPtr, aNewNormal);
+          }
+        }
+      }
+
       for (Standard_Integer aNodeIter = 1; aNodeIter <= aT->NbNodes(); ++aNodeIter)
       {
         aPoint = aT->Node (aNodeIter);
@@ -210,9 +233,9 @@ namespace
         {
           const gp_Pnt2d aNode2d = aT->UVNode (aNodeIter);
           const gp_Pnt2d aTexel = (dUmax == 0.0 || dVmax == 0.0)
-                                ? aNode2d
-                                : gp_Pnt2d ((-theUVOrigin.X() + (theUVRepeat.X() * (aNode2d.X() - aUmin)) / dUmax) / theUVScale.X(),
-                                            (-theUVOrigin.Y() + (theUVRepeat.Y() * (aNode2d.Y() - aVmin)) / dVmax) / theUVScale.Y());
+            ? aNode2d
+            : gp_Pnt2d ((-theUVOrigin.X() + (theUVRepeat.X() * (aNode2d.X() - aUmin)) / dUmax) / theUVScale.X(),
+              (-theUVOrigin.Y() + (theUVRepeat.Y() * (aNode2d.Y() - aVmin)) / dVmax) / theUVScale.Y());
           anArray->AddVertex (aPoint, aNorm, aTexel);
         }
         else

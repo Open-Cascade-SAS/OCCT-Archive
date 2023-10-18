@@ -35,13 +35,17 @@ std::pair<Standard_Real, Standard_Real> BRepMesh_ConeRangeSplitter::GetSplitStep
   Standard_Real aRadius = Max(Abs(aRefR + aRangeV.first  * Sin(aSAng)),
                               Abs(aRefR + aRangeV.second * Sin(aSAng)));
 
+  //Face deflection used to determine circle subdivisions needs to match the one used previously
   Standard_Real Dv, Du = GCPnts_TangentialDeflection::ArcAngularStep(
-    aRadius, GetDFace()->GetDeflection(),
+    aRadius, GetDFace()->GetDeflection()*0.5,
     theParameters.Angle, theParameters.MinSize);
 
   const Standard_Real aDiffU = aRangeU.second - aRangeU.first;
   const Standard_Real aDiffV = aRangeV.second - aRangeV.first;
-  const Standard_Real aScale = (Du * aRadius);
+  //compute subdivision factor acounting for the difference between the bottom and top radius of the cone
+  const Standard_Real aTopRadius = aRefR > Precision::Confusion() ? aRefR : 1.0;
+  const Standard_Real aSubDivFactor = Max(theParameters.MinSize, Min(1.0, aTopRadius > aRadius ? aRadius / aTopRadius : aTopRadius / aRadius));
+  const Standard_Real aScale = (Du * aRadius * aSubDivFactor);
   const Standard_Real aRatio = Max(1., Log(aDiffV / aScale));
   const Standard_Integer nbU = (Standard_Integer)(aDiffU / Du);
   const Standard_Integer nbV = (Standard_Integer)(aDiffV / aScale / aRatio);
