@@ -415,9 +415,7 @@ void Graphic3d_TransformPers::Apply (const Handle(Graphic3d_Camera)& theCamera,
     Standard_Real anAxialX = anAxialScale.X();
     Standard_Real anAxialY = anAxialScale.Y();
     Standard_Real anAxialZ = anAxialScale.Z();
-    if ((anAxialX > Precision::Confusion() && 
-         anAxialY > Precision::Confusion() && 
-         anAxialZ > Precision::Confusion()))
+    if (anAxialX > 0 && anAxialY > 0 && anAxialZ > 0)
     {
       Graphic3d_TransformUtils::Scale(aWorldView, 1.0 / anAxialX, 1.0 / anAxialY, 1.0 / anAxialZ);
     }
