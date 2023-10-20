@@ -409,6 +409,19 @@ void Graphic3d_TransformPers::Apply (const Handle(Graphic3d_Camera)& theCamera,
     }
 
     NCollection_Mat4<Standard_Real> aWorldView = theCamera->OrientationMatrix();
+    
+    //Adjust the camera axial scale for trihedron behaviour 
+    gp_XYZ anAxialScale = theCamera->AxialScale();
+    Standard_Real anAxialX = anAxialScale.X();
+    Standard_Real anAxialY = anAxialScale.Y();
+    Standard_Real anAxialZ = anAxialScale.Z();
+    if ((anAxialX > Precision::Confusion() && 
+         anAxialY > Precision::Confusion() && 
+         anAxialZ > Precision::Confusion()))
+    {
+      Graphic3d_TransformUtils::Scale(aWorldView, 1.0 / anAxialX, 1.0 / anAxialY, 1.0 / anAxialZ);
+    }
+    
     Graphic3d_TransformUtils::Translate (aWorldView, aCenter.X(), aCenter.Y(), aCenter.Z());
     Graphic3d_TransformUtils::Scale     (aWorldView, aScale,      aScale,      aScale);
     theWorldView.ConvertFrom (aWorldView);
