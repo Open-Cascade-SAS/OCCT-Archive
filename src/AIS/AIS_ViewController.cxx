@@ -838,6 +838,7 @@ bool AIS_ViewController::UpdateMouseButtons (const Graphic3d_Vec2i& thePoint,
         }
         case AIS_MouseGesture_Zoom:
         case AIS_MouseGesture_ZoomWindow:
+        case AIS_MouseGesture_ZoomVertical:
         {
           if (!myToAllowZooming)
           {
@@ -1048,6 +1049,25 @@ bool AIS_ViewController::UpdateMousePosition (const Graphic3d_Vec2i& thePoint,
       if (double (Abs (aDelta.x())) > aZoomTol)
       {
         if (UpdateZoom (Aspect_ScrollDelta (aDelta.x())))
+        {
+          toUpdateView = true;
+        }
+        myMouseProgressPoint = thePoint;
+      }
+      break;
+    }
+    case AIS_MouseGesture_ZoomVertical:
+    {
+      if (!myToAllowZooming)
+      {
+        break;
+      }
+      const double aZoomTol = theIsEmulated
+                            ? double(myTouchToleranceScale) * myTouchZoomThresholdPx
+                            : 0.0;
+      if (double (Abs (aDelta.y())) > aZoomTol)
+      {
+        if (UpdateZoom (Aspect_ScrollDelta (aDelta.y())))
         {
           toUpdateView = true;
         }
