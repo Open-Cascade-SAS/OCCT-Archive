@@ -83,6 +83,7 @@
 #include <GeomAPI_ProjectPointOnCurve.hxx>
 #include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <GeomConvert_CompCurveToBSplineCurve.hxx>
+#include <gp_Elips.hxx>
 #include <gp_Pln.hxx>
 #include <IntRes2d_IntersectionPoint.hxx>
 #include <IntRes2d_SequenceOfIntersectionPoint.hxx>
@@ -248,6 +249,7 @@ void ShapeFix_Wire::ClearStatuses()
   myStatusReorder          = emptyStatus;
   myStatusSmall            = emptyStatus;
   myStatusConnected        = emptyStatus;
+  myStatusCurves           = emptyStatus;
   myStatusEdgeCurves       = emptyStatus;
   myStatusDegenerated      = emptyStatus;
   myStatusSelfIntersection = emptyStatus;
@@ -534,17 +536,15 @@ Standard_Boolean ShapeFix_Wire::FixConnected (const Standard_Real prec)
 //=======================================================================
 Standard_Boolean ShapeFix_Wire::FixCurves()
 {
-  myStatusConnected = ShapeExtend::EncodeStatus(ShapeExtend_OK);
+  myStatusCurves = ShapeExtend::EncodeStatus(ShapeExtend_OK);
   if (!IsLoaded()) return Standard_False;
 
-  Standard_Integer stop = (myClosedMode ? 0 : 1);
-  for (Standard_Integer anIdx = NbEdges(); anIdx > stop; anIdx--) 
-  {
+  for (Standard_Integer anIdx = NbEdges(); anIdx > 0; anIdx--) {
     FixCurves(anIdx);
-    myStatusConnected |= myLastFixStatus;
+    myStatusCurves |= myLastFixStatus;
   }
 
-  return StatusConnected(ShapeExtend_DONE);
+  return StatusCurves(ShapeExtend_DONE);
 }
 
 //=======================================================================
@@ -1366,14 +1366,12 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
   aCurve3d->D0(aCurBounds[0], aGeomEnds[0]);
   aCurve3d->D0(aCurBounds[2], aGeomEnds[1]);
 
-  // TODO: precise, if IsReversed flag should be considered here
   Standard_Real aGap0 = Min(anEnds[0].Distance(aGeomEnds[0]), anEnds[0].Distance(aGeomEnds[1]));
   Standard_Real aGap2 = Min(anEnds[2].Distance(aGeomEnds[0]), anEnds[2].Distance(aGeomEnds[1]));
-  if (Max (aGap0, aGap2) < aPrec) // nothing to do
+  if (Max (aGap0, aGap2) < Precision::Confusion()) // nothing to do
     return true;
 
-  if (aCurve3d->IsKind(STANDARD_TYPE(Geom_Circle))) 
-  {
+  if (aCurve3d->IsKind(STANDARD_TYPE(Geom_Circle))) {
     Standard_Real anOldR = Handle(Geom_Circle)::DownCast(aCurve3d)->Circ().Radius();
     gp_Vec anArcNorm = gp_Vec(anEnds[2], anEnds[0]) / 2;
     gp_Pnt aCenter(anEnds[0].XYZ() - anArcNorm.XYZ());
@@ -1390,15 +1388,20 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
     anSbwd->Set(aNewEdge, theIdx);
     return true;
   }
-  else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_Ellipse)))
-  {
+  else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_Ellipse))) {
+    /// aaajfa: BEGIN - to provide elliptic edge FORWARD orientation
+    gp_Pnt tmpPnt = anEnds[0];
+    anEnds[0] = anEnds[2];
+    anEnds[2] = tmpPnt;
+    /// aaajfa: END - to provide elliptic edge FORWARD orientation
+
     Handle(Geom_Ellipse) anOld = Handle(Geom_Ellipse)::DownCast(aCurve3d);
     Handle(Geom_Plane) aPln = new Geom_Plane(anEnds[0], gp_Vec(anEnds[2], anEnds[0]).Crossed(gp_Vec(anEnds[1], anEnds[0])));
     GeomAPI_ProjectPointOnSurf aProjector(anOld->Elips().Location(), aPln);
     gp_Pnt anOrigin = aProjector.NearestPoint();
     aProjector.Init(anOld->Elips().Location().XYZ() + anOld->Elips().XAxis().Direction().XYZ(), aPln);
     gp_Ax2 anAx(anOrigin, aPln->Axis().Direction(), aProjector.NearestPoint().XYZ() - anOrigin.XYZ());
-    
+
     // compute angle
     Standard_Real aRec = DBL_MAX;
     Standard_Real anAngle = 0.;
@@ -1406,7 +1409,8 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
     for (Standard_Integer anIdxI = -aSplNum; anIdxI < aSplNum; ++anIdxI)
     {
       Handle(Geom_Ellipse) anEll = new Geom_Ellipse(anAx, anOld->MajorRadius(), anOld->MinorRadius());
-      anEll->Rotate(anAx.Axis(), aPrec*anIdxI / anEll->MajorRadius() / aSplNum);
+      Standard_Real anAnglei = aPrec*anIdxI / anEll->MajorRadius() / aSplNum;
+      anEll->Rotate(anAx.Axis(), anAnglei);
       GeomAPI_ProjectPointOnCurve aProjector1(anEnds[0], anEll);
       Standard_Real aDist = 0.;
       for (Standard_Integer anIdxJ = 0; anIdxJ < 2; ++anIdxJ)
@@ -1417,7 +1421,7 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
       if (aDist < aRec)
       {
         aRec = aDist;
-        anAngle = aPrec*anIdxI / anEll->MajorRadius() / aSplNum;
+        anAngle = anAnglei;
       }
     }
     gp_Elips aTemp(anAx, anOld->MajorRadius(), anOld->MinorRadius());
@@ -1428,7 +1432,7 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
     gp_Vec aY = aTemp.YAxis().Direction();
     gp_Pnt2d aP1((anEnds[0].XYZ() - anOrigin.XYZ()).Dot(aX.XYZ()), (anEnds[0].XYZ() - anOrigin.XYZ()).Dot(aY.XYZ()));
     gp_Pnt2d aP2((anEnds[2].XYZ() - anOrigin.XYZ()).Dot(aX.XYZ()), (anEnds[2].XYZ() - anOrigin.XYZ()).Dot(aY.XYZ()));
-    
+
     // x = ky + p   linear equation
     // where (x, y) shift point, 
     // k, p constant coefficients
@@ -1452,14 +1456,14 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
     Standard_Real y2 = (-b + sqrt(b*b - 4 * a*c)) / 2 / a;
     Standard_Real x1 = k*y1 + p;
     Standard_Real x2 = k*y2 + p;
-    
+
     gp_Pnt anOri = anOld->Location();
     if (x1*x1 + y1*y1 < x2*x2 + y2*y2) 
       anOri = anOri.XYZ() + aX.XYZ()*x1 + aY.XYZ()*y1;
     else
       anOri = anOri.XYZ() + aX.XYZ()*x2 + aY.XYZ()*y2;
     aTemp.SetLocation(anOri);
-    
+
     GC_MakeArcOfEllipse anArc(aTemp, anEnds[2], anEnds[0], true);
     TopoDS_Edge aNewEdge = BRepBuilderAPI_MakeEdge(anArc.Value()).Edge();
     anSbwd->Set(aNewEdge, theIdx);
@@ -1467,7 +1471,7 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
   }
   else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_Line)))
   {
-    TopoDS_Edge aNewEdge = BRepBuilderAPI_MakeEdge(anEnds[2], anEnds[0]).Edge();
+    TopoDS_Edge aNewEdge = BRepBuilderAPI_MakeEdge(anEnds[0], anEnds[2]).Edge();
     anSbwd->Set(aNewEdge, theIdx);
     return true;
   }
@@ -1488,12 +1492,6 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
     anOld->SetPole(anOld->NbPoles(), anEnds[2-p]);
     return true;
   }
-
-  // TODO: question: the below code works only for other curve types (not line/arc/circle/ellipse/bspline)
-  //                 Is it really needed?
-  myAnalyzer->CheckConnected(theIdx, aPrec);
-  if (myAnalyzer->LastCheckStatus(ShapeExtend_FAIL))
-    myLastFixStatus |= ShapeExtend::EncodeStatus(ShapeExtend_FAIL1);
 
   return true;
 }

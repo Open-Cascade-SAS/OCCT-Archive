@@ -416,6 +416,8 @@ public:
   
     Standard_Boolean StatusConnected (const ShapeExtend_Status status) const;
   
+    Standard_Boolean StatusCurves (const ShapeExtend_Status status) const;
+  
     Standard_Boolean StatusEdgeCurves (const ShapeExtend_Status status) const;
   
     Standard_Boolean StatusDegenerated (const ShapeExtend_Status status) const;
@@ -501,6 +503,7 @@ protected:
   Standard_Integer myStatusReorder;
   Standard_Integer myStatusSmall;
   Standard_Integer myStatusConnected;
+  Standard_Integer myStatusCurves;
   Standard_Integer myStatusEdgeCurves;
   Standard_Integer myStatusDegenerated;
   Standard_Integer myStatusClosed;

@@ -11,8 +11,14 @@ vertex vx px
 vertex vy py
 
 edge exy vx vy
+
 gcarc arc cir py pz px
+
+# Here we have an error during automatic grid execution with test and testgrid:
+# Tcl Exception: EMPTY
+# But in line-by-line entering or script sourcing mode this line doesn't produce any error
+
 mkedge earc arc
 
-strongwire w exy earc
-whatis w
+strongwire result exy earc
+whatis result

@@ -283,7 +283,7 @@ static Standard_Integer wire(Draw_Interpretor& di, Standard_Integer n, const cha
 //=======================================================================
 // strongwire
 //=======================================================================
-static Standard_Integer strongwire(Draw_Interpretor& theDI, Standard_Integer theArgC, const char** theArgV)
+static Standard_Integer strongwire(Draw_Interpretor&, Standard_Integer theArgC, const char** theArgV)
 {
   enum StrongWireMode {
     StrongWireMode_FixTolerance = 1,
@@ -358,12 +358,12 @@ static Standard_Integer strongwire(Draw_Interpretor& theDI, Standard_Integer the
   aFW->Load(aWire);
   aFW->FixReorder();
 
-  if (aFW->StatusReorder(ShapeExtend_FAIL1)) 
+  if (aFW->StatusReorder(ShapeExtend_FAIL1))
   {
     Message::SendFail() << "Error: Wire construction failed: several loops detected";
     return 1;
   }
-  else if (aFW->StatusReorder(ShapeExtend_FAIL)) 
+  else if (aFW->StatusReorder(ShapeExtend_FAIL))
   {
     Message::SendFail() << "Wire construction failed";
     return 1;
@@ -371,7 +371,7 @@ static Standard_Integer strongwire(Draw_Interpretor& theDI, Standard_Integer the
 
   bool isClosed = false;
   Handle(ShapeAnalysis_Wire) aSaw = aFW->Analyzer();
-  if (aSaw->CheckGap3d(1)) // between last and first edges 
+  if (aSaw->CheckGap3d(1)) // between last and first edges
   {
     Standard_Real aDist = aSaw->MinDistance3d();
     if (aDist < aTolerance)
@@ -379,8 +379,6 @@ static Standard_Integer strongwire(Draw_Interpretor& theDI, Standard_Integer the
   }
   aFW->ClosedWireMode() = isClosed;
   aFW->FixConnected(aTolerance);
-  if (aMode == StrongWireMode_KeepCurveType)
-    aFW->FixCurves();
 
   if (aFW->StatusConnected(ShapeExtend_FAIL))
   {
@@ -388,16 +386,25 @@ static Standard_Integer strongwire(Draw_Interpretor& theDI, Standard_Integer the
     return 1;
   }
 
-  if (aFW->StatusConnected(ShapeExtend_DONE3)) 
+  if (aMode == StrongWireMode_KeepCurveType)
+  {
+    aFW->FixCurves();
+    if (aFW->StatusCurves(ShapeExtend_FAIL))
+    {
+      Message::SendFail() << "Wire construction failed: cannot rebuild curves through new points";
+      return 1;
+    }
+  }
+  else if (aFW->StatusConnected(ShapeExtend_DONE3))
   {
     if (aMode != StrongWireMode_Approximation)
-      aFW->SetPrecision(aTolerance); 
+      aFW->SetPrecision(aTolerance);
     aFW->FixGapsByRangesMode() = Standard_True;
     if (aFW->FixGaps3d())
     {
       Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
       Handle(ShapeFix_Edge) aFe = new ShapeFix_Edge;
-      for (Standard_Integer anIdx = 1; anIdx <= sbwd->NbEdges(); anIdx++) 
+      for (Standard_Integer anIdx = 1; anIdx <= sbwd->NbEdges(); anIdx++)
       {
         TopoDS_Edge aEdge = TopoDS::Edge(sbwd->Edge(anIdx));
         aFe->FixVertexTolerance(aEdge);
