@@ -1478,10 +1478,9 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
   else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_BSplineCurve))) 
   {
     Handle(Geom_BSplineCurve) anOld = Handle(Geom_BSplineCurve)::DownCast(aCurve3d);
-    Standard_Integer f, l;
     int p = anEnds[0].Distance(aGeomEnds[0]) < anEnds[1].Distance(aGeomEnds[0]) ? 0 : 2;
-    anOld->MovePoint(aCurBounds[0], anEnds[p], 1, 1, f, l);
-    anOld->MovePoint(aCurBounds[2], anEnds[2-p], anOld->NbPoles(), anOld->NbPoles(), f, l);
+    anOld->SetPole(1, anEnds[p]);
+    anOld->SetPole(anOld->NbPoles(), anEnds[2-p]);
     return true;
   }
   else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_BezierCurve))) 
