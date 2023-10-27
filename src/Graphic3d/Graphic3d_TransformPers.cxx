@@ -45,6 +45,7 @@ void Graphic3d_TransformPers::DumpJson (Standard_OStream& theOStream, Standard_I
   OCCT_DUMP_TRANSIENT_CLASS_BEGIN (theOStream)
 
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myMode)
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, myZoomPersScale)
 
   OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, &myParams.Params3d)
   OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, &myParams.Params2d)

@@ -5100,6 +5100,26 @@ static int VDisplay2 (Draw_Interpretor& theDI,
         aTrsfPers = new Graphic3d_TransformPers (aTrsfPers->Mode(), Aspect_TypeOfTriedronPosition (aCorner), Graphic3d_Vec2i (aZ.IntegerValue()));
       }
     }
+    else if (aNameCase == "-trsfperszoom")
+    {
+      if (anArgIter + 1 >= theArgNb
+        || aTrsfPers.IsNull())
+      {
+        Message::SendFail() << "Error: wrong syntax at " << aName << ".";
+        return 1;
+      }
+
+      TCollection_AsciiString aZoomScaleFactor(theArgVec[++anArgIter]);
+      if (!aZoomScaleFactor.IsRealValue(Standard_True))
+      {
+        Message::SendFail() << "Error: wrong syntax at " << aName << ".";
+        return 1;
+      }
+      if (aTrsfPers->IsZoomOrRotate())
+      {
+        aTrsfPers->SetZoomPersScale(aZoomScaleFactor.RealValue());
+      }
+    }
     else if (aNameCase == "-layer"
           || aNameCase == "-zlayer")
     {

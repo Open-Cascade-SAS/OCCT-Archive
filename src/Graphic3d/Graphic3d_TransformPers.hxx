@@ -62,7 +62,8 @@ public:
 
   //! Set transformation persistence.
   Graphic3d_TransformPers (const Graphic3d_TransModeFlags theMode)
-  : myMode (theMode)
+  : myMode (theMode),
+    myZoomPersScale(1.0)
   {
     if (IsZoomOrRotate (theMode))
     {
@@ -87,9 +88,22 @@ public:
   //! Throws an exception if persistence mode is not Graphic3d_TMF_ZoomPers, Graphic3d_TMF_ZoomRotatePers or Graphic3d_TMF_RotatePers.
   Graphic3d_TransformPers (const Graphic3d_TransModeFlags theMode,
                            const gp_Pnt& thePnt)
-  : myMode (Graphic3d_TMF_None)
+  : myMode (Graphic3d_TMF_None),
+    myZoomPersScale(1.0)
   {
     SetPersistence (theMode, thePnt);
+  }
+
+  //! Set Zoom/Rotate transformation persistence with an anchor 3D point and a scaling factor for zoom persistence.
+  //! Anchor point defines the origin of Local Coordinate system within World Coordinate system.
+  //! Throws an exception if persistence mode is not Graphic3d_TMF_ZoomPers, Graphic3d_TMF_ZoomRotatePers or Graphic3d_TMF_RotatePers.
+  Graphic3d_TransformPers(const Graphic3d_TransModeFlags theMode,
+                          const gp_Pnt& thePnt,
+                          const Standard_Real theZoomPersScale)
+    : myMode(Graphic3d_TMF_None),
+      myZoomPersScale(1.0)
+  {
+    SetPersistence(theMode, thePnt, theZoomPersScale);
   }
 
   //! Set 2d/trihedron transformation persistence with a corner and 2D offset.
@@ -99,7 +113,8 @@ public:
   Graphic3d_TransformPers (const Graphic3d_TransModeFlags theMode,
                            const Aspect_TypeOfTriedronPosition theCorner,
                            const Graphic3d_Vec2i& theOffset = Graphic3d_Vec2i (0, 0))
-  : myMode (Graphic3d_TMF_None)
+  : myMode (Graphic3d_TMF_None),
+    myZoomPersScale(1.0)
   {
     SetPersistence (theMode, theCorner, theOffset);
   }
@@ -116,6 +131,9 @@ public:
   //! Transformation persistence mode flags.
   Graphic3d_TransModeFlags Flags() const { return myMode; }
 
+  //! Zoom persistence scale value.
+  Standard_Real ZoomPersScale() const { return myZoomPersScale; }
+
   //! Set Zoom/Rotate transformation persistence with an anchor 3D point.
   //! Throws an exception if persistence mode is not Graphic3d_TMF_ZoomPers, Graphic3d_TMF_ZoomRotatePers or Graphic3d_TMF_RotatePers.
   void SetPersistence (const Graphic3d_TransModeFlags theMode,
@@ -130,6 +148,24 @@ public:
     myParams.Params3d.PntX = thePnt.X();
     myParams.Params3d.PntY = thePnt.Y();
     myParams.Params3d.PntZ = thePnt.Z();
+  }
+
+  //! Set Zoom/Rotate transformation persistence with an anchor 3D point.
+  //! Throws an exception if persistence mode is not Graphic3d_TMF_ZoomPers, Graphic3d_TMF_ZoomRotatePers or Graphic3d_TMF_RotatePers.
+  void SetPersistence(const Graphic3d_TransModeFlags theMode,
+                      const gp_Pnt& thePnt,
+                      const Standard_Real theZoomPersScale)
+  {
+    if (!IsZoomOrRotate(theMode))
+    {
+      throw Standard_ProgramError("Graphic3d_TransformPers::SetPersistence(), wrong persistence mode.");
+    }
+
+    myMode = theMode;
+    myParams.Params3d.PntX = thePnt.X();
+    myParams.Params3d.PntY = thePnt.Y();
+    myParams.Params3d.PntZ = thePnt.Z();
+    myZoomPersScale = theZoomPersScale;
   }
 
   //! Set 2d/trihedron transformation persistence with a corner and 2D offset.
@@ -173,6 +209,17 @@ public:
     myParams.Params3d.PntX = thePnt.X();
     myParams.Params3d.PntY = thePnt.Y();
     myParams.Params3d.PntZ = thePnt.Z();
+  }
+
+  //! Set the scaling factor for zoom transformation persistence.
+  void SetZoomPersScale(const Standard_Real theZoomPersScale)
+  {
+    if (!IsZoomOrRotate())
+    {
+      throw Standard_ProgramError("Graphic3d_TransformPers::SetZoomPersScale(), wrong persistence mode.");
+    }
+
+    myZoomPersScale = theZoomPersScale;
   }
 
   //! Return the corner for 2d/trihedron transformation persistence.
@@ -238,7 +285,8 @@ public:
     gp_Vec aVecToObj (theCamera->Eye(), gp_Pnt (myParams.Params3d.PntX, myParams.Params3d.PntY, myParams.Params3d.PntZ));
     const Standard_Real aFocus = aVecToObj.Dot (aVecToEye);
     const gp_XYZ aViewDim = theCamera->ViewDimensions (aFocus);
-    return Abs(aViewDim.Y()) / Standard_Real(aVPSizeY);
+    //return Abs(aViewDim.Y()) / Standard_Real(aVPSizeY);
+    return myZoomPersScale > 0 ? Abs(aViewDim.Y()) / Standard_Real(aVPSizeY) * myZoomPersScale : Abs(aViewDim.Y()) / Standard_Real(aVPSizeY);
   }
 
   //! Apply transformation to bounding box of presentation.
@@ -332,6 +380,7 @@ private:
 private:
 
   Graphic3d_TransModeFlags myMode;  //!< Transformation persistence mode flags
+  Standard_Real myZoomPersScale;    //!< Scale factor for zoom persistence mode
   union
   {
     PersParams3d Params3d;

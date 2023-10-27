@@ -1,0 +1,23 @@
+puts "========"
+puts "0032135: Visualization - possibility to redefine zoom persistent scale compute in Graphic3d_TransformPers"
+puts "========"
+
+pload ALL
+vclear
+vinit
+box b 10 10 10
+#display box with zoompersistence and a predefined scale
+#test if zoom changes the box position
+vdisplay b -dispmode 1 -trsfPers zoom
+vzoom 5
+if { [vreadpixel 210 200 -rgb -name] != "DARKGOLDENROD" } { puts "Error" }
+if { [vreadpixel 210 210 -rgb -name] != "BLACK" } { puts "Error" }
+
+vdump ${imagedir}/${casename}_1.png
+
+#display box with zoom persistence but with a bigger scale
+vzoom 0.2
+vdisplay b -dispmode 1 -trsfPers zoom -trsfperszoom 5.0
+if { [vreadpixel 230 215 -rgb -name] != "DARKGOLDENROD" } { puts "Error" }
+
+vdump ${imagedir}/${casename}_2.png
