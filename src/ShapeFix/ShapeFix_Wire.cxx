@@ -1478,17 +1478,45 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
   else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_BSplineCurve))) 
   {
     Handle(Geom_BSplineCurve) anOld = Handle(Geom_BSplineCurve)::DownCast(aCurve3d);
+
+    if (anOld->Pole(1).Distance(aGeomEnds[0]) > Precision::Confusion() ||
+        anOld->Pole(anOld->NbPoles()).Distance(aGeomEnds[1]) > Precision::Confusion()) {
+      // FAIL1 means we cannot fix Bezier or B-Spline curve
+      // because its ends do not correspond to first and last poles
+      // (i.e. it is a piece of entire curve)
+      myLastFixStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_FAIL1 );
+      return false;
+    }
+
+    Handle(Geom_Geometry) aNewG = anOld->Copy();
+    Handle(Geom_BSplineCurve) aNewC = Handle(Geom_BSplineCurve)::DownCast(aNewG);
     int p = anEnds[0].Distance(aGeomEnds[0]) < anEnds[1].Distance(aGeomEnds[0]) ? 0 : 2;
-    anOld->SetPole(1, anEnds[p]);
-    anOld->SetPole(anOld->NbPoles(), anEnds[2-p]);
+    aNewC->SetPole(1, anEnds[p]);
+    aNewC->SetPole(anOld->NbPoles(), anEnds[2-p]);
+    TopoDS_Edge aNewEdge = BRepBuilderAPI_MakeEdge(aNewC).Edge();
+    anSbwd->Set(aNewEdge, theIdx);
     return true;
   }
   else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_BezierCurve))) 
   {
     Handle(Geom_BezierCurve) anOld = Handle(Geom_BezierCurve)::DownCast(aCurve3d);
+
+    if (anOld->Pole(1).Distance(aGeomEnds[0]) > Precision::Confusion() ||
+        anOld->Pole(anOld->NbPoles()).Distance(aGeomEnds[1]) > Precision::Confusion()) {
+      // FAIL1 means we cannot fix Bezier or B-Spline curve
+      // because its ends do not correspond to first and last poles
+      // (i.e. it is a piece of entire curve)
+      myLastFixStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_FAIL1 );
+      return false;
+    }
+
+    Handle(Geom_Geometry) aNewG = anOld->Copy();
+    Handle(Geom_BezierCurve) aNewC = Handle(Geom_BezierCurve)::DownCast(aNewG);
     int p = anEnds[0].Distance(aGeomEnds[0]) < anEnds[1].Distance(aGeomEnds[0]) ? 0 : 2;
-    anOld->SetPole(1, anEnds[p]);
-    anOld->SetPole(anOld->NbPoles(), anEnds[2-p]);
+    aNewC->SetPole(1, anEnds[p]);
+    aNewC->SetPole(anOld->NbPoles(), anEnds[2-p]);
+    TopoDS_Edge aNewEdge = BRepBuilderAPI_MakeEdge(aNewC).Edge();
+    anSbwd->Set(aNewEdge, theIdx);
     return true;
   }
 
