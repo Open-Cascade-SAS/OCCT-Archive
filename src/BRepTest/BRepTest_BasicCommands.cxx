@@ -29,7 +29,7 @@
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_GTransform.hxx>
-#include <BRepBuilderAPI_HullTransform.hxx>
+#include <BRepAlgoAPI_HullTransform.hxx>
 #include <BRepBuilderAPI_NurbsConvert.hxx>
 #include <gp_Ax2.hxx>
 #include <gp_Mat.hxx>
@@ -59,13 +59,6 @@
 #include <BRepPrimAPI_MakeBox.hxx>
 
 #include <Standard_Dump.hxx>
-
-#include <ShapeFix_Shape.hxx>
-#include <BOPAlgo_PaveFiller.hxx>
-#include <BOPTest_Objects.hxx>
-#include <BOPAlgo_Splitter.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
-#include <list>
 
 #include <stdio.h>
 
@@ -1397,7 +1390,7 @@ static Standard_Integer issubshape(Draw_Interpretor& di,
   return 0;
 }
 
-///=======================================================================
+//=======================================================================
 // hulltrsf
 //=======================================================================
 static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const char** a)
@@ -1405,17 +1398,23 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
   if (n < 3)
   {
     di << "Usage result hull [-l cm cb_new cb_old lpp] or [-q aftlim cca ccf forelim aft_coef fore_coef modify_aft_zone modify_fore_zone] ";
-    di << "[-s XCoord_section1 ... XCoord_sectionN]\n";
+    di << "[-s XCoord_section1 ... XCoord_sectionN] or [-a minSectionTol]\n";
     return 1;
   }
 
-  TopoDS_Shape S = DBRep::Get(a[2]);
-  if (S.IsNull()) {
+  //
+  // Load data
+  //
+  TopoDS_Shape aS = DBRep::Get(a[2]);
+  if (aS.IsNull()) {
     di << a[2] << " is not a valid shape\n";
     return 0;
   }
-  BRepBuilderAPI_HullTransform aHTrsf;
+  BRepAlgoAPI_HullTransform aHTrsf;
+  aHTrsf.SetHull(aS);
+
   std::list<double> aSections;
+  bool isAutoSection = false;
   int i = 3;
   while (i < n)
   {
@@ -1428,6 +1427,7 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
       double _lpp = Atof(a[i + 4]);
       aHTrsf.InitLinear(_cm, _cb_new, _cb_old, _lpp);
       i += 4;
+      continue;
     }
     if (a[i][0] == '-' && a[i][1] == 'q' && n > i+8)
     {
@@ -1442,6 +1442,7 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
       bool _modify_fore_zone = (Draw::Atoi(a[i + 8]) == 1);
       aHTrsf.InitQuad(_aftlim, _cca, _ccf, _forelim, _aft_coef, _fore_coef, _modify_aft_zone, _modify_fore_zone);
       i += 8;
+      continue;
     }
     if (a[i][0] == '-' && a[i][1] == 's')
     {
@@ -1451,45 +1452,31 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
         aSections.push_back(Atof(a[i]));
         i++;
       }
+      aHTrsf.SetSections(aSections);
+      continue;
+    }
+    if (a[i][0] == '-' && a[i][1] == 'a')
+    {
+      isAutoSection = true;
+      double aTol = Atof(a[i + 1]);
+      i+=2;
+      aHTrsf.SetAutoSections(true, aTol);
+      continue;
     }
     i++;
   }
-  if (aSections.size() > 0)
+
+  TopoDS_Shape aResult = aHTrsf.Perform();
+
+  DBRep::Set(a[1], aResult);
+  auto aResSections = aHTrsf.Sections();
+  if (aResSections.size() > 0)
   {
-    // Add splitting edges
-    TopTools_ListOfShape aLSObjects;
-    aLSObjects.Append(S);
-    TopTools_ListOfShape aLSTools;
-    for each (double aPlaneX in aSections)
-    {
-      Handle(Geom_Plane) aPlane = new Geom_Plane(gp_Pnt(aPlaneX, 0, 0), gp_Dir(1, 0, 0));
-      TopoDS_Face aFace =
-        BRepBuilderAPI_MakeFace(aPlane, -1000, 1000, -1000, 1000, Precision::Confusion());
-      aLSTools.Append(aFace);
-    }
-
-    BOPAlgo_Splitter pSplitter;
-    pSplitter.Clear();
-    pSplitter.SetArguments(aLSObjects);
-    pSplitter.SetTools(aLSTools);
-    pSplitter.Perform();
-    S = pSplitter.Shape();
+    std::cout << "Sections: ";
+    for (const double aSection : aResSections)
+      std::cout << aSection << " ";
+    std::cout << std::endl;
   }
-
-  // Perform transformation
-  aHTrsf.Perform(S, true);
-  if (aHTrsf.IsDone()) {
-    // Fix shape
-    Handle(ShapeFix_Shape) aShapeFixTool = new ShapeFix_Shape;
-    aShapeFixTool->Init(aHTrsf.Shape());
-    aShapeFixTool->Perform();
-    DBRep::Set(a[1], aShapeFixTool->Shape());
-    //DBRep::Set(a[1], aHTrsf.Shape());
-  }
-  else {
-    return 1;
-  }
-
   return 0;
 }
 
@@ -1661,10 +1648,11 @@ void  BRepTest::BasicCommands(Draw_Interpretor& theCommands)
                   "hulltrsf result hull "
                   "[-l cm cb_new cb_old lpp] for linear or "
                   "[-q aftlim cca ccf forelim aft_coef fore_coef modify_aft_zone modify_fore_zone] for quad "
-                  "[-s XCoord_section1 ... XCoord_sectionN] to add sections\n",
+                  "[-s XCoord_section1 ... XCoord_sectionN] to add sections or "
+                  "[-a tol (min distance between sections)] for auto sectioning\n",
                   __FILE__,
                   hulltrsf, g);
-  
+
   theCommands.Add("findplane",
 		  "findplane name planename ",
 		  __FILE__,

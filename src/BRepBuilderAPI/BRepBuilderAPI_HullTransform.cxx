@@ -15,7 +15,6 @@
 
 
 #include <BRepBuilderAPI_HullTransform.hxx>
-#include <BRepBuilderAPI_NurbsConvert.hxx>
 #include <BRepTools_HullTransformation.hxx>
 
 //=======================================================================
@@ -64,15 +63,11 @@ void BRepBuilderAPI_HullTransform::InitQuad(const double theAftlim,
 //=======================================================================
 
 void BRepBuilderAPI_HullTransform::Perform(const TopoDS_Shape& S,
-                                           const Standard_Boolean Copy)
+                                           const Standard_Boolean)
 {
-  BRepBuilderAPI_NurbsConvert nc;
-  nc.Perform(S, Copy);
-  myHist.Add(S,nc);
-  TopoDS_Shape Slocal = nc.Shape();
   Handle(BRepTools_HullTransformation) theModif =
     Handle(BRepTools_HullTransformation)::DownCast(myModification);
-  DoModif(Slocal,myModification);
+  DoModif(S,myModification);
 }
 
 
