@@ -98,6 +98,8 @@
 #include <RWStepBasic_RWExternalIdentificationAssignment.hxx>
 #include <RWStepBasic_RWExternallyDefinedItem.hxx>
 #include <RWStepBasic_RWGeneralProperty.hxx>
+#include <RWStepBasic_RWGeneralPropertyAssociation.hxx>
+#include <RWStepBasic_RWGeneralPropertyRelationship.hxx>
 #include <RWStepBasic_RWGroupRelationship.hxx>
 #include <RWStepBasic_RWIdentificationAssignment.hxx>
 #include <RWStepBasic_RWIdentificationRole.hxx>
@@ -570,6 +572,8 @@
 #include <StepBasic_ExternalIdentificationAssignment.hxx>
 #include <StepBasic_ExternalSource.hxx>
 #include <StepBasic_GeneralProperty.hxx>
+#include <StepBasic_GeneralPropertyAssociation.hxx>
+#include <StepBasic_GeneralPropertyRelationship.hxx>
 #include <StepBasic_Group.hxx>
 #include <StepBasic_GroupRelationship.hxx>
 #include <StepBasic_IdentificationAssignment.hxx>
@@ -1188,7 +1192,9 @@ IMPLEMENT_STANDARD_RTTIEXT(RWStepAP214_GeneralModule,StepData_GeneralModule)
 #include <StepDimTol_GeoTolAndGeoTolWthDatRefAndUneqDisGeoTol.hxx>
 #include <StepRepr_CompGroupShAspAndCompShAspAndDatumFeatAndShAsp.hxx>
 #include <StepRepr_CompShAspAndDatumFeatAndShAsp.hxx>
+#include <StepRepr_BooleanRepresentationItem.hxx>
 #include <StepRepr_IntegerRepresentationItem.hxx>
+#include <StepRepr_RealRepresentationItem.hxx>
 #include <StepRepr_ValueRepresentationItem.hxx>
 #include <StepAP242_DraughtingModelItemAssociation.hxx>
 #include <StepDimTol_GeoTolAndGeoTolWthDatRefAndGeoTolWthMaxTol.hxx>
@@ -5867,6 +5873,20 @@ void RWStepAP214_GeneralModule::FillSharedCase(const Standard_Integer CN,
     aTool.Share(anEnt, iter);
   }
   break;
+  case 819:
+  {
+    DeclareAndCast(StepBasic_GeneralPropertyAssociation, anEnt, ent);
+    RWStepBasic_RWGeneralPropertyAssociation aTool;
+    aTool.Share(anEnt, iter);
+  }
+  break;
+  case 820:
+  {
+    DeclareAndCast(StepBasic_GeneralPropertyRelationship, anEnt, ent);
+    RWStepBasic_RWGeneralPropertyRelationship aTool;
+    aTool.Share(anEnt, iter);
+  }
+  break;
   default : break;
   }
 }
@@ -8172,6 +8192,18 @@ Standard_Boolean RWStepAP214_GeneralModule::NewVoid
      break;
    case 818:
      ent = new StepVisual_CubicBezierTriangulatedFace;
+     break;
+   case 819:
+     ent = new StepBasic_GeneralPropertyAssociation;
+     break;
+   case 820:
+     ent = new StepBasic_GeneralPropertyRelationship;
+     break;
+   case 821:
+     ent = new StepRepr_BooleanRepresentationItem;
+     break;
+   case 822:
+     ent = new StepRepr_RealRepresentationItem;
      break;
 
   default: 
