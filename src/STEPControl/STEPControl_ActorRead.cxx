@@ -1469,7 +1469,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity
     }
     else if (start->IsKind(STANDARD_TYPE(StepVisual_TessellatedSurfaceSet)))
     {
-      myShapeBuilder.Init(GetCasted(StepVisual_TessellatedSurfaceSet, start), TP, aLocalFactors, aHasGeom);
+      myShapeBuilder.Init(GetCasted(StepVisual_TessellatedSurfaceSet, start), TP, aHasGeom, aLocalFactors);
       found = Standard_True;
     }
   }
