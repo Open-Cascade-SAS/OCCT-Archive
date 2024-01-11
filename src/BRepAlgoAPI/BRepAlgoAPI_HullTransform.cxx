@@ -109,23 +109,24 @@ TopoDS_Shape BRepAlgoAPI_HullTransform::Perform()
       Handle(ShapeFix_Shape) aShapeFixTool = new ShapeFix_Shape;
       aShapeFixTool->Init(aHTrsf.Shape());
       aShapeFixTool->Perform();
+      TopoDS_Shape aResShape = aShapeFixTool->Shape();
       ShapeAnalysis_ShapeTolerance aSat;
       aSat.InitTolerance();
-      aSat.AddTolerance(aShapeFixTool->Shape());
+      aSat.AddTolerance(aResShape);
 
       // Check the necessarity of the next step
-      if (myIsAutoSection && aHullsList.size() > 0 && aSat.GlobalTolerance(1) >= aTolerances.back())
+      if (myIsAutoSection && aHullsList.size() > 0 && aSat.GlobalTolerance(0) >= aTolerances.back())
       {
         isToProceed = false;
         mySections.pop_back();
       }
       else
       {
-        aTolerances.push_back(aSat.GlobalTolerance(1));
-        aHullsList.push_back(aShapeFixTool->Shape());
+        aTolerances.push_back(aSat.GlobalTolerance(0));
+        aHullsList.push_back(aResShape);
         aSectionsList.push_back(mySections);
         if (myIsAutoSection)
-          addSection(aShapeFixTool->Shape());
+          addSection(aResShape);
       }
     }
   } while (isToProceed);

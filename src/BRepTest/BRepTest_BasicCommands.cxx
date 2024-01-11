@@ -1398,7 +1398,7 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
   if (n < 3)
   {
     di << "Usage result hull [-l cm cb_new cb_old lpp] or [-q aftlim cca ccf forelim aft_coef fore_coef modify_aft_zone modify_fore_zone] ";
-    di << "[-s XCoord_section1 ... XCoord_sectionN] or [-a minSectionTol]\n";
+    di << "[-s XCoord_section1 ... XCoord_sectionN] or [-a minSectionTol] or [-f step]\n";
     return 1;
   }
 
@@ -1415,6 +1415,12 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
 
   std::list<double> aSections;
   bool isAutoSection = false;
+  bool isQuad = false;
+  double _aftlim = 0;
+  double _cca = 0;
+  double _ccf = 0;
+  double _forelim = 0;
+  double _lpp = 0;
   int i = 3;
   while (i < n)
   {
@@ -1424,7 +1430,7 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
       double _cm = Atof(a[i + 1]);
       double _cb_new = Atof(a[i + 2]);
       double _cb_old = Atof(a[i + 3]);
-      double _lpp = Atof(a[i + 4]);
+      _lpp = Atof(a[i + 4]);
       aHTrsf.InitLinear(_cm, _cb_new, _cb_old, _lpp);
       i += 4;
       continue;
@@ -1432,10 +1438,11 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
     if (a[i][0] == '-' && a[i][1] == 'q' && n > i+8)
     {
       // init quad transformation parameters
-      double _aftlim = Atof(a[i + 1]);
-      double _cca = Atof(a[i + 2]);
-      double _ccf = Atof(a[i + 3]);
-      double _forelim = Atof(a[i + 4]);
+      isQuad = true;
+      _aftlim = Atof(a[i + 1]);
+      _cca = Atof(a[i + 2]);
+      _ccf = Atof(a[i + 3]);
+      _forelim = Atof(a[i + 4]);
       double _aft_coef = Atof(a[i + 5]);
       double _fore_coef = Atof(a[i + 6]);
       bool _modify_aft_zone = (Draw::Atoi(a[i + 7]) == 1);
@@ -1461,6 +1468,25 @@ static Standard_Integer hulltrsf(Draw_Interpretor& di, Standard_Integer n, const
       double aTol = Atof(a[i + 1]);
       i+=2;
       aHTrsf.SetAutoSections(true, aTol);
+      continue;
+    }
+    if (a[i][0] == '-' && a[i][1] == 'f')
+    {
+      double aStep = Atof(a[i + 1]);
+      i += 2;
+      if (isQuad)
+      {
+        aSections.push_back(_aftlim - aStep);
+        aSections.push_back(_aftlim + aStep);
+        aSections.push_back(_forelim - aStep);
+        aSections.push_back(_forelim + aStep);
+      }
+      else
+      {
+        aSections.push_back(_lpp / 2 - aStep);
+        aSections.push_back(_lpp / 2 + aStep);
+      }
+      aHTrsf.SetSections(aSections);
       continue;
     }
     i++;
@@ -1649,7 +1675,8 @@ void  BRepTest::BasicCommands(Draw_Interpretor& theCommands)
                   "[-l cm cb_new cb_old lpp] for linear or "
                   "[-q aftlim cca ccf forelim aft_coef fore_coef modify_aft_zone modify_fore_zone] for quad "
                   "[-s XCoord_section1 ... XCoord_sectionN] to add sections or "
-                  "[-a tol (min distance between sections)] for auto sectioning\n",
+                  "[-f step (step in both sides) for making section fence around behavior-changing points ] and/or"
+                  "[-a tol (min distance between sections)] for auto sectioning",
                   __FILE__,
                   hulltrsf, g);
 
