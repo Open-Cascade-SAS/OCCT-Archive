@@ -296,7 +296,24 @@ void SelectMgr_ViewerSelector::checkOverlap (const Handle(Select3D_SensitiveEnti
   {
     aCriterion.NbOwnerMatches = 1;
     updatePoint3d (aCriterion, aPickResult, theEntity, theInversedTrsf, theMgr);
-    mystored.Add (anOwner, aCriterion);
+    Standard_Boolean anExists = Standard_False;
+    for (Standard_Integer aStoredIter = 1; aStoredIter <= mystored.Extent(); ++aStoredIter)
+    {
+      const SelectMgr_SortCriterion& aSearchCriterion = mystored.FindFromIndex (aStoredIter);
+      const Handle(SelectMgr_EntityOwner)& aSearchOwner = aSearchCriterion.Entity->OwnerId();
+      Handle(SelectMgr_SelectableObject) aSearchSelectable = !aSearchOwner.IsNull() ? aSearchOwner->Selectable() : Handle(SelectMgr_SelectableObject)();
+      if (!aSearchSelectable.IsNull() && !aSelectable.IsNull())
+      {
+        if (aSearchSelectable == aSelectable)
+        {
+          anExists = Standard_True;
+        }
+      }
+    }
+    if(!anExists)
+    {
+      mystored.Add (anOwner, aCriterion);
+    }
   }
 }
 
