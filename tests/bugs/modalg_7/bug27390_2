@@ -19,14 +19,14 @@ checkprops result -s 34566
 set nbshapes_expected "
 Number of shapes in shape
  VERTEX    : 13
- EDGE      : 20
+ EDGE      : 21
  WIRE      : 8
  FACE      : 8
  SHELL     : 1
  SOLID     : 1
  COMPSOLID : 0
  COMPOUND  : 1
- SHAPE     : 52
+ SHAPE     : 53
 "
 checknbshapes result -ref ${nbshapes_expected} -t -m "Boolean operations cut"
 

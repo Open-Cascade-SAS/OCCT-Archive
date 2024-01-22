@@ -2126,8 +2126,6 @@ void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
 #ifdef CHRONO
         Chronrsnld.Stop();
 #endif
-        Standard_Boolean isOnDegeneratedBorder = Standard_False;
-
         if (Cadre)
         { // update of limits.
           BornInf(1) = Um;
@@ -2220,7 +2218,6 @@ void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
                       aScaleCoeff = Abs((Uvap(aCoordIdx) - uv[aCoordIdx - 1]) / (uv[aCoordIdx - 1] - uvprev[aCoordIdx - 1]));
                     Standard_Integer aFixIdx = aCoordIdx == 1 ? 2 : 1; // Fixing index;
                     Uvap(aFixIdx)            = uv[aFixIdx - 1] + (uv[aFixIdx - 1] - uvprev[aFixIdx - 1]) * aScaleCoeff;
-                    isOnDegeneratedBorder    = Standard_True;
                   }
                 }
               }
@@ -2276,17 +2273,13 @@ void IntWalk_IWalking::ComputeCloseLine(const TColStd_SequenceOfReal& Umult,
                 { // jag 941017
                   MakeWalkingPoint(2, Uvap(1), Uvap(2), Func, Psol);
                   Tgtend = Func.IsTangent(); // jag 940616
-                  if (isOnDegeneratedBorder)
-                    Tgtend = Standard_True;
-                  N = -N;
+                  N      = -N;
                 }
                 Arrive = (wd2[I].etat == 12); // the line is open
               }
             }
-            aStatus = TestDeflection(Func, Arrive, Uvap, StatusPrecedent, NbDivision, PasC, StepSign);
-
-            if (isOnDegeneratedBorder && Tgtend)
-              aStatus = IntWalk_ArretSurPoint;
+            aStatus =
+              TestDeflection(Func, Arrive, Uvap, StatusPrecedent, NbDivision, PasC, StepSign);
 
             StatusPrecedent = aStatus;
             if (aStatus == IntWalk_PasTropGrand)
