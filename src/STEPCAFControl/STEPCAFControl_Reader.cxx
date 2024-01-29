@@ -573,6 +573,7 @@ Standard_Boolean STEPCAFControl_Reader::Transfer (STEPControl_Reader &reader,
 {
   reader.ClearShapes();
   Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(reader.Model());
+  myReader.WS()->TransferReader()->SetEncodeRegAngle(aModel->InternalParameters.EncodeRegAngle);
   StepData_Factors aLocalFactors;
   prepareUnits(aModel, doc, aLocalFactors);
   Standard_Integer i;

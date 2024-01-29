@@ -46,7 +46,8 @@ class XSControl_TransferWriter : public Standard_Transient
   //! with an empty FinderProcess (but no controller, etc)
   XSControl_TransferWriter()
   : myTransferWriter(new Transfer_FinderProcess),
-    myTransferMode(0)
+    myTransferMode(0),
+    myNonmanifoldMode(0)
   {}
   
   //! Returns the FinderProcess itself
@@ -83,6 +84,14 @@ class XSControl_TransferWriter : public Standard_Transient
   //! Changes the Transfer Mode
   void SetTransferMode (const Standard_Integer theMode)
   { myTransferMode = theMode; }
+
+  //! Returns Nonmanifold Mode
+  Standard_Integer NonmanifoldMode() const
+  { return myNonmanifoldMode; }
+
+  //! Changes Nonmanifold Mode
+  void SetNonmanifoldMode (const Standard_Integer theNonmMode)
+  { myNonmanifoldMode = theNonmMode; }
 
   //! Prints statistics on current Trace File, according what,mode
   //! See PrintStatsProcess for details
@@ -134,6 +143,7 @@ class XSControl_TransferWriter : public Standard_Transient
   Handle(XSControl_Controller) myController;
   Handle(Transfer_FinderProcess) myTransferWriter;
   Standard_Integer myTransferMode;
+  Standard_Integer myNonmanifoldMode;
 };
 
 #endif // _XSControl_TransferWriter_HeaderFile

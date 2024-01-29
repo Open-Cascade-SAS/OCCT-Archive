@@ -65,6 +65,7 @@ class XSControl_TransferReader : public Standard_Transient
 
   //! Creates a TransferReader, empty
   XSControl_TransferReader()
+  : myEncodeRegAngle(0.01)
   {}
   
   //! Sets a Controller. It is required to generate the Actor.
@@ -113,6 +114,14 @@ class XSControl_TransferReader : public Standard_Transient
   //! Returns actual value of file name
   Standard_CString FileName() const
   { return myFileName.ToCString(); }
+
+  //! Sets value for EncodeRegularityAngle
+  void SetEncodeRegAngle(const Standard_Real theEncRegAngle)
+  { myEncodeRegAngle = theEncRegAngle; }
+
+  //! Returns value of EncodeRegularityAngle
+  Standard_Real EncodeRegAngle() const
+  { return myEncodeRegAngle; }
   
   //! Clears data, according mode :
   //! -1 all
@@ -359,6 +368,7 @@ class XSControl_TransferReader : public Standard_Transient
   Handle(Transfer_TransientProcess) myTP;
   TColStd_DataMapOfIntegerTransient myResults;
   Handle(TopTools_HSequenceOfShape) myShapeResult;
+  Standard_Real myEncodeRegAngle;
 };
 
 #endif // _XSControl_TransferReader_HeaderFile

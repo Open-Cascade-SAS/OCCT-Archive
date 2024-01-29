@@ -141,7 +141,7 @@ IFSelect_ReturnStatus XSControl_TransferWriter::TransferWriteShape
   if (theModel.IsNull()) return IFSelect_RetVoid;
 
   TopoDS_Shape aShape = theShape;
-  Standard_Boolean isNMMode = Interface_Static::IVal("write.step.nonmanifold") != 0;
+  Standard_Boolean isNMMode = NonmanifoldMode() != 0;
   if (isNMMode)
   {
     ShapeUpgrade_RemoveLocations aRemLoc;

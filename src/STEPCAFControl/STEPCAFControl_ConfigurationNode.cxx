@@ -151,6 +151,8 @@ bool STEPCAFControl_ConfigurationNode::Load(const Handle(DE_ConfigurationContext
     theResource->BooleanVal("write.props", InternalParameters.WriteProps, aScope);
   InternalParameters.WriteModelType = (STEPControl_StepModelType)
     theResource->IntegerVal("write.model.type", InternalParameters.WriteModelType, aScope);
+  InternalParameters.WriteNonmanifold =
+    theResource->IntegerVal("write.nonmanifold", InternalParameters.WriteNonmanifold, aScope);
 
   return true;
 }

@@ -74,12 +74,12 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   aReader.SetLayerMode(aNode->InternalParameters.ReadLayer);
   aReader.SetPropsMode(aNode->InternalParameters.ReadProps);
   IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
-  StepData_ConfParameters aParams;
-  aReadStat = aReader.ReadFile(thePath.ToCString(), aParams);
+  aReadStat = aReader.ReadFile(thePath.ToCString(), aNode->InternalParameters);
   if (aReadStat != IFSelect_RetDone)
   {
     Message::SendFail() << "Error in the STEPCAFControl_Provider during reading the file " <<
       thePath << "\t: abandon";
+    aNode->InternalParameters.Reset();
     return false;
   }
 
@@ -87,8 +87,10 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   {
     Message::SendFail() << "Error in the STEPCAFControl_Provider during reading the file " <<
       thePath << "\t: Cannot read any relevant data from the STEP file";
+    aNode->InternalParameters.Reset();
     return false;
   }
+  aNode->InternalParameters.Reset();
   return true;
 }
 
@@ -122,13 +124,13 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   aWriter.SetNameMode(aNode->InternalParameters.WriteName);
   aWriter.SetLayerMode(aNode->InternalParameters.WriteLayer);
   aWriter.SetPropsMode(aNode->InternalParameters.WriteProps);
-
+  aModel->SetWriteLengthUnit(UnitsMethods::GetLengthUnitScale(aNode->InternalParameters.WriteUnit, UnitsMethods_LengthUnit_Millimeter));
   TDF_Label aLabel;
-  StepData_ConfParameters aParams;
-  if (!aWriter.Transfer(theDocument, aParams, aMode, 0, theProgress))
+  if (!aWriter.Transfer(theDocument, aNode->InternalParameters, aMode, 0, theProgress))
   {
     Message::SendFail() << "Error in the STEPCAFControl_Provider during writing the file " <<
       thePath << "\t: The document cannot be translated or gives no result";
+    aNode->InternalParameters.Reset();
     return false;
   }
   IFSelect_ReturnStatus aStatus = aWriter.Write(thePath.ToCString());
@@ -138,6 +140,7 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
     {
       Message::SendFail() << "Error in the STEPCAFControl_Provider during writing the file " <<
         thePath << "\t: No file written";
+      aNode->InternalParameters.Reset();
       return false;;
     }
     case IFSelect_RetDone:
@@ -148,9 +151,11 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
     {
       Message::SendFail() << "Error in the STEPCAFControl_Provider during writing the file " <<
         thePath << "\t: Error on writing file";
+      aNode->InternalParameters.Reset();
       return false;
     }
   }
+  aNode->InternalParameters.Reset();
   return true;
 }
 
@@ -199,13 +204,13 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   STEPControl_Reader aReader;
   aReader.SetWS(theWS);
   IFSelect_ReturnStatus aReadstat = IFSelect_RetVoid;
-  StepData_ConfParameters aParams;
-  aReadstat = aReader.ReadFile(thePath.ToCString(), aParams);
+  aReadstat = aReader.ReadFile(thePath.ToCString(), aNode->InternalParameters);
   Handle(StepData_StepModel) aModel = aReader.StepModel();
   if (aReadstat != IFSelect_RetDone)
   {
     Message::SendFail() << "Error in the STEPCAFControl_Provider during reading the file " <<
       thePath << "\t: abandon, no model loaded";
+    aNode->InternalParameters.Reset();
     return false;
   }
   aModel->SetLocalLengthUnit(aNode->GlobalParameters.LengthUnit);
@@ -213,9 +218,11 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   {
     Message::SendFail() << "Error in the STEPCAFControl_Provider during reading the file " <<
       thePath << "\t:Cannot read any relevant data from the STEP file";
+    aNode->InternalParameters.Reset();
     return false;
   }
   theShape = aReader.OneShape();
+  aNode->InternalParameters.Reset();
   return true;
 }
 
@@ -242,19 +249,21 @@ bool STEPCAFControl_Provider::Write(const TCollection_AsciiString& thePath,
   IFSelect_ReturnStatus aWritestat = IFSelect_RetVoid;
   Handle(StepData_StepModel) aModel = aWriter.Model();
   aModel->SetWriteLengthUnit(UnitsMethods::GetLengthUnitScale(aNode->InternalParameters.WriteUnit, UnitsMethods_LengthUnit_Millimeter));
-  StepData_ConfParameters aParams;
-  aWritestat = aWriter.Transfer(theShape, aNode->InternalParameters.WriteModelType, aParams, true, theProgress);
+  aWritestat = aWriter.Transfer(theShape, aNode->InternalParameters.WriteModelType, aNode->InternalParameters, true, theProgress);
   if (aWritestat != IFSelect_RetDone)
   {
     Message::SendFail() << "Error in the STEPCAFControl_Provider during reading the file " <<
       thePath << "\t: abandon, no model loaded";
+    aNode->InternalParameters.Reset();
     return false;
   }
   if (aWriter.Write(thePath.ToCString()) != IFSelect_RetDone)
   {
     Message::SendFail() << "STEPCAFControl_Provider: Error on writing file";
+    aNode->InternalParameters.Reset();
     return false;
   }
+  aNode->InternalParameters.Reset();
   return true;
 }
 

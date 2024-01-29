@@ -13,6 +13,7 @@
 
 #include <STEPControl_Writer.hxx>
 
+#include <APIHeaderSection_MakeHeader.hxx>
 #include <Interface_InterfaceModel.hxx>
 #include <Interface_Macros.hxx>
 #include <STEPControl_ActorWrite.hxx>
@@ -162,7 +163,12 @@ IFSelect_ReturnStatus STEPControl_Writer::Transfer
   }
   if (!thesession->Model().IsNull())
   {
-    Handle(StepData_StepModel)::DownCast(thesession->Model())->InternalParameters = theParams;
+    Handle(StepData_StepModel) aStepModel = Handle(StepData_StepModel)::DownCast(thesession->Model());
+    aStepModel->InternalParameters = theParams;
+    thesession->TransferWriter()->SetNonmanifoldMode(aStepModel->InternalParameters.WriteNonmanifold);
+    aStepModel->ClearHeader();
+    APIHeaderSection_MakeHeader aHeaderApi;
+    aHeaderApi.Apply(aStepModel);
   }
   Handle(STEPControl_ActorWrite) ActWrite =
     Handle(STEPControl_ActorWrite)::DownCast(WS()->NormAdaptor()->ActorWrite());
