@@ -67,6 +67,14 @@ public:
   //! To be redefined by each sub-class
   //! Here, SchemaName returns "(DEFAULT)"
   //! was C++ : return const
+  Standard_EXPORT virtual Standard_CString SchemaName(const Handle(Interface_InterfaceModel)& theModel) const;
+
+  //! Returns the Schema Name attached to each class of Protocol
+  //! To be redefined by each sub-class
+  //! Here, SchemaName returns "(DEFAULT)"
+  //! was C++ : return const
+  Standard_DEPRECATED("USED old static interface to extract active schema.\n"\
+    "Recommended to use method with input model to extract from current session")
   Standard_EXPORT virtual Standard_CString SchemaName() const;
   
   //! Creates an empty Model for Step Norm
