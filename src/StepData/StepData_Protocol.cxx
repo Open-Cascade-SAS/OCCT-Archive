@@ -67,9 +67,14 @@ Standard_Integer  StepData_Protocol::TypeNumber
   return 0;
 }
 
-
-Standard_CString StepData_Protocol::SchemaName () const
+Standard_CString StepData_Protocol::SchemaName() const
 {
+  return thename;
+}
+
+Standard_CString StepData_Protocol::SchemaName (const Handle(Interface_InterfaceModel)& theModel) const
+{
+  (void)theModel;
   return thename;
 }
 

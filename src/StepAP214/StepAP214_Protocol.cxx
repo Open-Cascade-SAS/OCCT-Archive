@@ -27,6 +27,7 @@ static Standard_CString schemaAP242DIS = "AP242_MANAGED_MODEL_BASED_3D_ENGINEERI
 
 #include <HeaderSection_Protocol.hxx>
 
+#include <StepData_StepModel.hxx>
 #include <StepShape_AdvancedBrepShapeRepresentation.hxx>
 #include <StepShape_AdvancedFace.hxx>
 // Removed from CC1-Rev2 to Rev4 : <StepVisual_AnnotationCurveOccurrence.hxx>
@@ -1576,6 +1577,39 @@ Handle(Standard_Type)& atype) const
   else return 0;
 }
 
+
+//=======================================================================
+//function : SchemaName
+//purpose  :
+//=======================================================================
+Standard_CString StepAP214_Protocol::SchemaName(const Handle(Interface_InterfaceModel)& theModel) const
+{	
+  Handle(StepData_StepModel) aModel = Handle(StepData_StepModel)::DownCast(theModel);
+  StepData_ConfParameters aParam;
+  if (!aModel.IsNull())
+  {
+    aParam = aModel->InternalParameters;
+  }
+  switch (aModel->InternalParameters.WriteSchema)
+  {
+    case StepData_ConfParameters::WriteMode_StepSchema_AP214CD:
+      return schemaAP214CD;
+      break;
+    case StepData_ConfParameters::WriteMode_StepSchema_AP214DIS:
+      return schemaAP214DIS;
+      break;
+    case StepData_ConfParameters::WriteMode_StepSchema_AP203:
+      return schemaAP203;
+      break;
+    case StepData_ConfParameters::WriteMode_StepSchema_AP214IS:
+      return schemaAP214IS;
+      break;
+    case StepData_ConfParameters::WriteMode_StepSchema_AP242DIS:
+      return schemaAP242DIS;
+      break;
+  }
+  return "";
+}
 
 //=======================================================================
 //function : SchemaName
