@@ -128,9 +128,6 @@ if ["%toPack%"] == ["1"] (
 
   "%THE_7Z_PATH%" a -r %THE_7Z_PARAMS% "%aBuildRoot%/%anArchName%.7z" "%aTarget%"
 )
-if not ["%1"] == ["-nopause"] (
-  pause
-)
 
 goto :eof
 
@@ -284,7 +281,6 @@ if ["%toCMake%"] == ["1"] (
 
   if errorlevel 1 (
     popd
-    pause
     exit /B
     goto :eof
   )
@@ -299,7 +295,6 @@ if ["%toMake%"] == ["1"] (
   if errorlevel 1 (
     type "%aLogFileSmpl%"
     popd
-    pause
     exit /B
     goto :eof
   )
@@ -311,7 +306,6 @@ if ["%toInstall%"] == ["1"] (
   if errorlevel 1 (
     type "%aLogFileSmpl%"
     popd
-    pause
     exit /B
     goto :eof
   )
