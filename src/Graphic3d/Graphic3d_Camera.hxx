@@ -202,6 +202,12 @@ public:
 //! @name Public camera properties
 public:
 
+  //! return default valut for znear.
+  Standard_EXPORT Standard_Real GetDefaultZNear();
+
+  //! return default valut for zfar.
+  Standard_EXPORT Standard_Real GetDefaultZFar();
+
   //! Get camera look direction.
   //! @return camera look direction.
   const gp_Dir& Direction() const { return myDirection; }

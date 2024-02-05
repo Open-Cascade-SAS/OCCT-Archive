@@ -201,6 +201,24 @@ void Graphic3d_Camera::Copy (const Handle(Graphic3d_Camera)& theOther)
 }
 
 // =======================================================================
+// function : GetDefaultZNear
+// purpose  :
+// =======================================================================
+Standard_Real Graphic3d_Camera::GetDefaultZNear()
+{
+  return DEFAULT_ZNEAR;
+}
+
+// =======================================================================
+// function : GetDefaultZFar
+// purpose  :
+// =======================================================================
+Standard_Real Graphic3d_Camera::GetDefaultZFar()
+{
+  return DEFAULT_ZFAR;
+}
+
+// =======================================================================
 // function : SetIdentityOrientation
 // purpose  :
 // =======================================================================

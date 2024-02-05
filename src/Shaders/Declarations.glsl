@@ -113,6 +113,10 @@
 #define INV_PI   0.318309886
 #define INV_PI_2 0.159154943
 
+// Point light depth range values
+#define POINTLIGHT_ZNEAR 1.0
+#define POINTLIGHT_ZFAR  3000.0
+
 // Matrix state
 uniform mat4 occWorldViewMatrix;  //!< World-view  matrix
 uniform mat4 occProjectionMatrix; //!< Projection  matrix

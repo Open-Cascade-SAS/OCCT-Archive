@@ -87,6 +87,35 @@ Standard_Boolean Graphic3d_LightSet::Remove (const Handle(Graphic3d_CLight)& the
 }
 
 // =======================================================================
+// function : CalculateNbShadows
+// purpose  :
+// =======================================================================
+void Graphic3d_LightSet::CalculateNbShadows (Standard_Integer& theNb2DShadows, Standard_Integer& theNbPointShadows)
+{
+  theNb2DShadows = 0;
+  theNbPointShadows = 0;
+  for (NCollection_IndexedDataMap<Handle(Graphic3d_CLight), Standard_Size>::Iterator aLightIter(myLights); aLightIter.More(); aLightIter.Next())
+  {
+    const Handle(Graphic3d_CLight)& aLight = aLightIter.Key();
+    //if (!aLight->IsEnabled())
+    //{
+    //  continue;
+    //}
+    if (aLight->ToCastShadows())
+    {
+      if (aLight->Type() == Graphic3d_TypeOfLightSource_Positional)
+      {
+        ++theNbPointShadows;
+      }
+      else
+      {
+        ++theNb2DShadows;
+      }
+    }
+  }
+}
+
+// =======================================================================
 // function : UpdateRevision
 // purpose  :
 // =======================================================================

@@ -227,6 +227,7 @@ OpenGl_Context::OpenGl_Context (const Handle(OpenGl_Caps)& theCaps)
   myPBRDiffIBLMapSHTexUnit (Graphic3d_TextureUnit_PbrIblDiffuseSH),
   myPBRSpecIBLMapTexUnit   (Graphic3d_TextureUnit_PbrIblSpecular),
   myShadowMapTexUnit       (Graphic3d_TextureUnit_ShadowMap),
+  myShadowCubeMapTexUnit   (Graphic3d_TextureUnit_ShadowCubeMap),
   myDepthPeelingDepthTexUnit (Graphic3d_TextureUnit_DepthPeelingDepth),
   myDepthPeelingFrontColorTexUnit (Graphic3d_TextureUnit_DepthPeelingFrontColor),
   myFrameStats (new OpenGl_FrameStats()),
@@ -1653,6 +1654,7 @@ void OpenGl_Context::init (const Standard_Boolean theIsCoreProfile)
     }
   }
 
+  myShadowCubeMapTexUnit          = static_cast<Graphic3d_TextureUnit>(myMaxTexCombined + Graphic3d_TextureUnit_ShadowCubeMap);          // -7
   myDepthPeelingDepthTexUnit      = static_cast<Graphic3d_TextureUnit>(myMaxTexCombined + Graphic3d_TextureUnit_DepthPeelingDepth);      // -6
   myDepthPeelingFrontColorTexUnit = static_cast<Graphic3d_TextureUnit>(myMaxTexCombined + Graphic3d_TextureUnit_DepthPeelingFrontColor); // -5
   myShadowMapTexUnit              = static_cast<Graphic3d_TextureUnit>(myMaxTexCombined + Graphic3d_TextureUnit_ShadowMap);              // -4
@@ -1661,6 +1663,7 @@ void OpenGl_Context::init (const Standard_Boolean theIsCoreProfile)
   myPBRSpecIBLMapTexUnit          = static_cast<Graphic3d_TextureUnit>(myMaxTexCombined + Graphic3d_TextureUnit_PbrIblSpecular);         // -1
   if (!myHasPBR)
   {
+    myShadowCubeMapTexUnit          = static_cast<Graphic3d_TextureUnit>(myShadowCubeMapTexUnit + 3);
     myDepthPeelingDepthTexUnit      = static_cast<Graphic3d_TextureUnit>(myDepthPeelingDepthTexUnit + 3);
     myDepthPeelingFrontColorTexUnit = static_cast<Graphic3d_TextureUnit>(myDepthPeelingFrontColorTexUnit + 3);
     myShadowMapTexUnit              = static_cast<Graphic3d_TextureUnit>(myShadowMapTexUnit + 3);

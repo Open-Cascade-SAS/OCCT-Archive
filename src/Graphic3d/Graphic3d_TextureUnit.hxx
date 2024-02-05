@@ -67,6 +67,10 @@ enum Graphic3d_TextureUnit
   //! Note that it can be overridden to Graphic3d_TextureUnit_0 for FFP fallback on hardware without multi-texturing.
   Graphic3d_TextureUnit_PointSprite = Graphic3d_TextureUnit_1,
 
+  //! samplerCube occShadowCubeMapSampler.
+  //! Point light source shadowmap texture.
+  Graphic3d_TextureUnit_ShadowCubeMap = -7,
+
   //! sampler2D occDepthPeelingDepth.
   //! 1st texture unit for Depth Peeling lookups.
   Graphic3d_TextureUnit_DepthPeelingDepth = -6,

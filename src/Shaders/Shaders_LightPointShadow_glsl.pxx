@@ -1,0 +1,27 @@
+// This file has been automatically generated from resource file src/Shaders/LightShadow.glsl
+
+static const char Shaders_LightPointShadow_glsl[] =
+  "//! Function computes point light shadow attenuation (1.0 means no shadow).\n"
+  "float occLightPointShadow (in samplerCube theShadow,\n"
+  "                           //in vec2 theDepthRange,\n"
+  "                           in int  theId,\n"
+  "                           in vec3 thePoint,\n"
+  "                           in vec3 theNormal)\n"
+  "{\n"
+  "  vec4 aPosLightSpace = PosLightSpace[occLight_Index(theId)];\n"
+  "  vec3 aLightDir = thePoint - occLight_Position (theId);\n"
+  "  // convert light-to-fragment vector to a depth value.\n"
+  "  vec3 anAbsVec = abs (aLightDir);\n"
+  "  float aLocalZcomp = max (anAbsVec.x, max (anAbsVec.y, anAbsVec.z));\n"
+  "  // set znear and zfar\n"
+  "  float aNear = POINTLIGHT_ZNEAR;\n"
+  "  float aFar = POINTLIGHT_ZFAR;\n"
+  "  float aNormZComp = (aFar + aNear) / (aFar-aNear) - (2.0 * aFar * aNear) / (aFar - aNear) / aLocalZcomp;\n"
+  "  float aDist = (aNormZComp + 1.0) * 0.5;\n"
+  "  // calculate bias and test depth.\n"
+  "  aLightDir = normalize (aLightDir);\n"
+  "  float aBias = min (occShadowMapSizeBias.y * (1.0 - dot (theNormal, aLightDir)), occShadowMapSizeBias.y * 0.1);\n"
+  "  float aClosestDepth = occTextureCube (theShadow, aLightDir).r;\n"
+  "  float aShadow = (aDist - aBias) > aClosestDepth ? 1.0 : 0.0;\n"
+  "  return 1.0 - aShadow;\n"
+  "}\n";

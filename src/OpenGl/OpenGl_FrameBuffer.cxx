@@ -330,7 +330,8 @@ Standard_Boolean OpenGl_FrameBuffer::Init (const Handle(OpenGl_Context)& theGlCo
                                            const Graphic3d_Vec2i&        theSize,
                                            const OpenGl_ColorFormats&    theColorFormats,
                                            const Standard_Integer        theDepthFormat,
-                                           const Standard_Integer        theNbSamples)
+                                           const Standard_Integer        theNbSamples,
+                                           const Standard_Boolean        theIsCubeMap)
 {
   myColorFormats = theColorFormats;
 
@@ -423,9 +424,10 @@ Standard_Boolean OpenGl_FrameBuffer::Init (const Handle(OpenGl_Context)& theGlCo
 
     // extensions (GL_OES_packed_depth_stencil, GL_OES_depth_texture) + GL version might be used to determine supported formats
     // instead of just trying to create such texture
+    Graphic3d_TypeOfTexture aTypeOfTexture = theIsCubeMap ? Graphic3d_TypeOfTexture_CUBEMAP : Graphic3d_TypeOfTexture_2D;
     const OpenGl_TextureFormat aDepthFormat = OpenGl_TextureFormat::FindSizedFormat (theGlContext, myDepthFormat);
     if (aDepthFormat.IsValid()
-    && !myDepthStencilTexture->Init (theGlContext, aDepthFormat, Graphic3d_Vec2i (aSizeX, aSizeY), Graphic3d_TypeOfTexture_2D))
+    && !myDepthStencilTexture->Init (theGlContext, aDepthFormat, Graphic3d_Vec2i (aSizeX, aSizeY), aTypeOfTexture))
     {
       theGlContext->PushMessage (GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_PORTABILITY, 0, GL_DEBUG_SEVERITY_HIGH,
                                  "Warning! Depth textures are not supported by hardware!");
@@ -470,15 +472,42 @@ Standard_Boolean OpenGl_FrameBuffer::Init (const Handle(OpenGl_Context)& theGlCo
   {
     if (hasDepthStencilAttach (theGlContext))
     {
-      theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                                                    myDepthStencilTexture->GetTarget(), myDepthStencilTexture->TextureId(), 0);
+      if (theIsCubeMap)
+      {
+        for (Standard_Integer aCubeFace = 0; aCubeFace < 6; ++aCubeFace)
+        {
+          theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                                        GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeFace),
+                                                        myDepthStencilTexture->TextureId(), 0);
+        }
+      }
+      else
+      {
+        theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                                      myDepthStencilTexture->GetTarget(), myDepthStencilTexture->TextureId(), 0);
+      }
     }
     else
     {
-      theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                                    myDepthStencilTexture->GetTarget(), myDepthStencilTexture->TextureId(), 0);
-      theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                                    myDepthStencilTexture->GetTarget(), myDepthStencilTexture->TextureId(), 0);
+      if (theIsCubeMap)
+      {
+        for (Standard_Integer aCubeFace = 0; aCubeFace < 6; ++aCubeFace)
+        {
+          theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                                        GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeFace),
+                                                        myDepthStencilTexture->TextureId(), 0);
+          theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                                        GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeFace),
+                                                        myDepthStencilTexture->TextureId(), 0);
+        }
+      }
+      else
+      {
+        theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                                      myDepthStencilTexture->GetTarget(), myDepthStencilTexture->TextureId(), 0);
+        theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                                      myDepthStencilTexture->GetTarget(), myDepthStencilTexture->TextureId(), 0);
+      }
     }
   }
   else if (myGlDepthRBufferId != NO_RENDERBUFFER)
@@ -499,8 +528,17 @@ Standard_Boolean OpenGl_FrameBuffer::Init (const Handle(OpenGl_Context)& theGlCo
       }
     }
   }
+  const GLenum aRendImgErr = theGlContext->core11fwd->glGetError();
+  if (aRendImgErr != GL_NO_ERROR)
+  {
+    theGlContext->PushMessage (GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0, GL_DEBUG_SEVERITY_HIGH,
+                               TCollection_AsciiString("Error: in setup of glFramebufferTexture2D: ") + OpenGl_Context::FormatGlError(aRendImgErr) + ".");
+    Release (theGlContext.get());
+    return Standard_False;
+  }
   if (theGlContext->arbFBO->glCheckFramebufferStatus (GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
   {
+    std::cout << "\n\nIncomplete framebuffer: " << theGlContext->arbFBO->glCheckFramebufferStatus (GL_FRAMEBUFFER) << "\n\n";
     Release (theGlContext.operator->());
     return Standard_False;
   }
@@ -908,6 +946,18 @@ void OpenGl_FrameBuffer::BindReadBuffer (const Handle(OpenGl_Context)& theGlCtx)
 }
 
 // =======================================================================
+// function : BindBufferCube
+// purpose  :
+// =======================================================================
+void OpenGl_FrameBuffer::BindBufferCube (const Handle(OpenGl_Context)& theGlCtx, const Standard_Integer theFace)
+{
+  theGlCtx->arbFBO->glBindFramebuffer (GL_DRAW_FRAMEBUFFER, myGlFBufferId);
+  theGlCtx->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                            GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + theFace),
+                                            myDepthStencilTexture->TextureId(), 0);
+}
+
+// =======================================================================
 // function : UnbindBuffer
 // purpose  :
 // =======================================================================
@@ -957,7 +1007,8 @@ inline void convertRowFromRgba (T* theRgbRow,
 Standard_Boolean OpenGl_FrameBuffer::BufferDump (const Handle(OpenGl_Context)& theGlCtx,
                                                  const Handle(OpenGl_FrameBuffer)& theFbo,
                                                  Image_PixMap& theImage,
-                                                 Graphic3d_BufferType theBufferType)
+                                                 Graphic3d_BufferType theBufferType,
+                                                 const Standard_Integer theCubeFace)
 {
   if (theGlCtx.IsNull()
    || theImage.IsEmpty())
@@ -1117,6 +1168,38 @@ Standard_Boolean OpenGl_FrameBuffer::BufferDump (const Handle(OpenGl_Context)& t
    && aFormat != GL_DEPTH_COMPONENT)
   {
     return Standard_False;
+  }
+
+  if (theCubeFace >= 0)
+  {
+    theGlCtx->core11fwd->glBindTexture (GL_TEXTURE_CUBE_MAP, theFbo->DepthStencilTexture()->TextureId());
+    theFbo->BindBufferCube (theGlCtx, theCubeFace);
+    const GLint anAligment = Min(GLint(theImage.MaxRowAligmentBytes()), 8); // limit to 8 bytes for OpenGL
+    theGlCtx->core11fwd->glPixelStorei (GL_PACK_ALIGNMENT, anAligment);
+    if (theGlCtx->hasPackRowLength)
+    {
+      theGlCtx->core11fwd->glPixelStorei (GL_PACK_ROW_LENGTH, 0);
+    }
+    theGlCtx->core11fwd->glGetTexImage (GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + theCubeFace),
+                                        0, aFormat, aType, theImage.ChangeData());
+    const bool hasErrors = theGlCtx->ResetErrors (true);
+    if (hasErrors)
+    {
+      std::cout << "\nError saving cubemap face texture to image.\n";
+      return Standard_False;
+    }
+
+    theGlCtx->core11fwd->glPixelStorei (GL_PACK_ALIGNMENT, 1);
+    
+    if (!theFbo.IsNull() && theFbo->IsValid())
+    {
+      theFbo->UnbindBuffer(theGlCtx);
+    }
+    else if (theGlCtx->GraphicsLibrary() != Aspect_GraphicsLibrary_OpenGLES)
+    {
+      theGlCtx->core11fwd->glReadBuffer(aReadBufferPrev);
+    }
+    return Standard_True;
   }
 
   // bind FBO if used

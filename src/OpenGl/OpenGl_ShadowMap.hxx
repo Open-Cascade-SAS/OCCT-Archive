@@ -76,8 +76,10 @@ public:
   //! Compute camera.
   //! @param theView   [in] active view
   //! @param theOrigin [in] when not-NULL - displace shadow map camera to specified Z-Layer origin
+  //! @param theFace   [in] if light is point light calculate for given cubemap face index
   Standard_EXPORT bool UpdateCamera (const Graphic3d_CView& theView,
-                                     const gp_XYZ* theOrigin = NULL);
+                                     const gp_XYZ* theOrigin = NULL,
+                                     const Standard_Integer theFace = -1);
 
 private:
 

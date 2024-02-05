@@ -52,3 +52,89 @@ Graphic3d_CubeMap::~Graphic3d_CubeMap()
 {
   //
 }
+
+// =======================================================================
+// function : GetCubeDirection
+// purpose  :
+// =======================================================================
+gp_Dir Graphic3d_CubeMap::GetCubeDirection (Graphic3d_CubeMapSide theFace)
+{
+  gp_Dir aResult;
+  switch (theFace)
+  {
+    case (Graphic3d_CMS_POS_X):
+    {
+      aResult = gp_Dir(1.0, 0.0, 0.0);
+    }
+    break;
+    case (Graphic3d_CMS_NEG_X):
+    {
+      aResult = gp_Dir(-1.0, 0.0, 0.0);
+    }
+    break;
+    case (Graphic3d_CMS_POS_Y):
+    {
+      aResult = gp_Dir(0.0, 1.0, 0.0);
+    }
+    break;
+    case (Graphic3d_CMS_NEG_Y):
+    {
+      aResult = gp_Dir(0.0, -1.0, 0.0);
+    }
+    break;
+    case (Graphic3d_CMS_POS_Z):
+    {
+      aResult = gp_Dir(0.0, 0.0, 1.0);
+    }
+    break;
+    case (Graphic3d_CMS_NEG_Z):
+    {
+      aResult = gp_Dir(0.0, 0.0, -1.0);
+    }
+    break;
+  }
+  return aResult;
+}
+
+// =======================================================================
+// function : GetCubeUp
+// purpose  :
+// =======================================================================
+gp_Dir Graphic3d_CubeMap::GetCubeUp (Graphic3d_CubeMapSide theFace)
+{
+  gp_Dir aResult;
+  switch (theFace)
+  {
+    case (Graphic3d_CMS_POS_X):
+    {
+      aResult = -gp_Dir(0.0, -1.0, 0.0);
+    }
+    break;
+    case (Graphic3d_CMS_NEG_X):
+    {
+      aResult = -gp_Dir(0.0, -1.0, 0.0);
+    }
+    break;
+    case (Graphic3d_CMS_POS_Y):
+    {
+      aResult = gp_Dir(0.0, 0.0, 1.0);
+    }
+    break;
+    case (Graphic3d_CMS_NEG_Y):
+    {
+      aResult = gp_Dir(0.0, 0.0, -1.0);
+    }
+    break;
+    case (Graphic3d_CMS_POS_Z):
+    {
+      aResult = gp_Dir(0.0, -1.0, 0.0);
+    }
+    break;
+    case (Graphic3d_CMS_NEG_Z):
+    {
+      aResult = gp_Dir(0.0, -1.0, 0.0);
+    }
+    break;
+  }
+  return aResult;
+}

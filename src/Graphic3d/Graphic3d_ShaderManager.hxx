@@ -134,7 +134,8 @@ protected:
                                                                       const Standard_Integer theBits,
                                                                       const Standard_Boolean theIsFlatNormal,
                                                                       const Standard_Boolean theIsPBR,
-                                                                      const Standard_Integer theNbShadowMaps) const;
+                                                                      const Standard_Integer theNbShadowMaps,
+                                                                      const Standard_Integer theNbShadowCubeMaps) const;
 
   //! Prepare standard GLSL program for bounding box.
   Standard_EXPORT Handle(Graphic3d_ShaderProgram) getStdProgramBoundBox() const;
@@ -207,10 +208,11 @@ protected:
   //! @param theNbShadowMaps [in]  flag to include shadow map
   Standard_EXPORT TCollection_AsciiString stdComputeLighting (Standard_Integer& theNbLights,
                                                               const Handle(Graphic3d_LightSet)& theLights,
-                                                              Standard_Boolean  theHasVertColor,
-                                                              Standard_Boolean  theIsPBR,
-                                                              Standard_Boolean  theHasTexColor,
-                                                              Standard_Integer  theNbShadowMaps) const;
+                                                              Standard_Boolean theHasVertColor,
+                                                              Standard_Boolean theIsPBR,
+                                                              Standard_Boolean theHasTexColor,
+                                                              Standard_Integer theNbShadowMaps,
+                                                              Standard_Integer theNbShadowCubeMaps) const;
 
 protected:
 

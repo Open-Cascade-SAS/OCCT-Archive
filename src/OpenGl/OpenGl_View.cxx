@@ -1583,31 +1583,73 @@ bool OpenGl_View::prepareFrameBuffers (Graphic3d_Camera::Projection& theProj)
                      && myRenderParams.Method != Graphic3d_RM_RAYTRACING;
   if (toUseShadowMap)
   {
+    Standard_Integer aNbShadows = 0;
+    Standard_Integer aNbPointShadows = 0;
+    Standard_Boolean aToReviewLights = Standard_False;
+    for (Graphic3d_LightSet::Iterator aLightIter(myLights); aLightIter.More(); aLightIter.Next())
+    {
+      Handle(Graphic3d_CLight) aLight = aLightIter.Value();
+      if (aLight->Type() == Graphic3d_TypeOfLightSource_Positional)
+      {
+        // point lights shadows are not currently supported on opengles 2.0
+        if (aCtx->GraphicsLibrary() == Aspect_GraphicsLibrary_OpenGLES
+         && aCtx->VersionMajor() <= 2)
+        {
+          aLight->SetCastShadows (Standard_False);
+          aToReviewLights = Standard_True;
+        }
+        else if (aLight->ToCastShadows())
+        {
+          ++aNbPointShadows;
+        }
+      }
+      else
+      {
+        if (aLight->ToCastShadows())
+        {
+          ++aNbShadows;
+        }
+      }
+    }
+    if (aToReviewLights)
+    {
+      myLights->UpdateRevision();
+    }
     if (myShadowMaps->Size() != myLights->NbCastShadows())
     {
       myShadowMaps->Release (aCtx.get());
       myShadowMaps->Resize (0, myLights->NbCastShadows() - 1, true);
     }
-
-    const GLint aSamplFrom = GLint(aCtx->ShadowMapTexUnit()) - myLights->NbCastShadows() + 1;
-    for (Standard_Integer aShadowIter = 0; aShadowIter < myShadowMaps->Size(); ++aShadowIter)
+    const GLint aSampleFrom = GLint(aCtx->ShadowMapTexUnit()) - myLights->NbCastShadows() + aNbPointShadows + 1;
+    const GLint aSampleCubeFrom = GLint(aCtx->ShadowCubeMapTexUnit()) - aNbPointShadows + 1;
+    Standard_Integer aLightIndex = 0;
+    Standard_Integer a2DShadowIndex = 0;
+    Standard_Integer aCubeShadowIndex = 0;
+    for (Graphic3d_LightSet::Iterator aLightIter(myLights); aLightIter.More(); aLightIter.Next())
     {
-      Handle(OpenGl_ShadowMap)& aShadow = myShadowMaps->ChangeValue (aShadowIter);
-      if (aShadow.IsNull())
+      Handle(Graphic3d_CLight) aLight = aLightIter.Value();
+      if (aLight->ToCastShadows())
       {
-        aShadow = new OpenGl_ShadowMap();
-      }
-      aShadow->SetShadowMapBias (myRenderParams.ShadowMapBias);
-      aShadow->Texture()->Sampler()->Parameters()->SetTextureUnit ((Graphic3d_TextureUnit )(aSamplFrom + aShadowIter));
-
-      const Handle(OpenGl_FrameBuffer)& aShadowFbo = aShadow->FrameBuffer();
-      if (aShadowFbo->GetVPSizeX() != myRenderParams.ShadowMapResolution
-       && toUseShadowMap)
-      {
-        OpenGl_ColorFormats aDummy;
-        if (!aShadowFbo->Init (aCtx, Graphic3d_Vec2i (myRenderParams.ShadowMapResolution), aDummy, myFboDepthFormat, 0))
+        Handle(OpenGl_ShadowMap)& aShadow = myShadowMaps->ChangeValue (aLightIndex++);
+        if (aShadow.IsNull())
         {
-          toUseShadowMap = false;
+          aShadow = new OpenGl_ShadowMap();
+        }
+        aShadow->SetShadowMapBias (myRenderParams.ShadowMapBias);
+        Standard_Integer aTexUnit = aLight->Type() == Graphic3d_TypeOfLightSource_Positional
+                                                    ? aSampleCubeFrom + aCubeShadowIndex++
+                                                    : aSampleFrom + a2DShadowIndex++;
+        aShadow->Texture()->Sampler()->Parameters()->SetTextureUnit ((Graphic3d_TextureUnit)(aTexUnit));
+        const Handle(OpenGl_FrameBuffer)& aShadowFbo = aShadow->FrameBuffer();
+        if (aShadowFbo->GetVPSizeX() != myRenderParams.ShadowMapResolution
+          && toUseShadowMap)
+        {
+          OpenGl_ColorFormats aDummy;
+          if (!aShadowFbo->Init (aCtx, Graphic3d_Vec2i(myRenderParams.ShadowMapResolution), aDummy, myFboDepthFormat, 0,
+                                 aLight->Type() == Graphic3d_TypeOfLightSource_Positional))
+          {
+            toUseShadowMap = false;
+          }
         }
       }
     }
@@ -1688,7 +1730,22 @@ void OpenGl_View::Redraw()
       {
         const Handle(OpenGl_ShadowMap)& aShadowMap = myShadowMaps->ChangeValue (aShadowIndex);
         aShadowMap->SetLightSource (aLight);
-        renderShadowMap (aShadowMap);
+        if (aLight->Type() == Graphic3d_TypeOfLightSource_Positional)
+        {
+          // point light shadows are not currently supported on opengles 2.0.
+          if (aCtx->GraphicsLibrary() != Aspect_GraphicsLibrary_OpenGLES
+           || aCtx->VersionMajor() >= 3)
+          {
+            for (Standard_Integer aCubeFace = 0; aCubeFace < 6; ++aCubeFace)
+            {
+              renderShadowMap (aShadowMap, aCubeFace);
+            }
+          }
+        }
+        else
+        {
+          renderShadowMap (aShadowMap, -1);
+        }
         ++aShadowIndex;
       }
     }
@@ -2297,10 +2354,11 @@ bool OpenGl_View::blitSubviews (const Graphic3d_Camera::Projection ,
 //function : renderShadowMap
 //purpose  :
 //=======================================================================
-void OpenGl_View::renderShadowMap (const Handle(OpenGl_ShadowMap)& theShadowMap)
+void OpenGl_View::renderShadowMap (const Handle(OpenGl_ShadowMap)& theShadowMap,
+                                   const Standard_Integer theFace)
 {
   const Handle(OpenGl_Context)& aCtx = myWorkspace->GetGlContext();
-  if (!theShadowMap->UpdateCamera (*this))
+  if (!theShadowMap->UpdateCamera (*this, NULL, theFace))
   {
     return;
   }
@@ -2319,7 +2377,14 @@ void OpenGl_View::renderShadowMap (const Handle(OpenGl_ShadowMap)& theShadowMap)
   aCtx->ShaderManager()->SetShadingModel (Graphic3d_TypeOfShadingModel_Unlit);
 
   const Handle(OpenGl_FrameBuffer)& aShadowBuffer = theShadowMap->FrameBuffer();
-  aShadowBuffer->BindBuffer    (aCtx);
+  if (theFace < 0)
+  {
+    aShadowBuffer->BindBuffer (aCtx);
+  }
+  else 
+  {
+    aShadowBuffer->BindBufferCube (aCtx, theFace);
+  }
   aShadowBuffer->SetupViewport (aCtx);
 
   aCtx->SetColorMask (false);
@@ -2329,9 +2394,9 @@ void OpenGl_View::renderShadowMap (const Handle(OpenGl_ShadowMap)& theShadowMap)
   myWorkspace->UseZBuffer()    = true;
   myWorkspace->UseDepthWrite() = true;
   aCtx->core11fwd->glDepthFunc (GL_LEQUAL);
-  aCtx->core11fwd->glDepthMask (GL_TRUE);
   aCtx->core11fwd->glEnable (GL_DEPTH_TEST);
   aCtx->core11fwd->glClearDepth (1.0);
+  aCtx->core11fwd->glDepthMask (GL_TRUE);
   aCtx->core11fwd->glClear (GL_DEPTH_BUFFER_BIT);
 
   Graphic3d_Camera::Projection aProjection = theShadowMap->LightSource()->Type() == Graphic3d_TypeOfLightSource_Directional
@@ -2345,10 +2410,9 @@ void OpenGl_View::renderShadowMap (const Handle(OpenGl_ShadowMap)& theShadowMap)
   myWorkspace->ResetAppliedAspect();
   aCtx->BindProgram (Handle(OpenGl_ShaderProgram)());
 
-//Image_AlienPixMap anImage; anImage.InitZero (Image_Format_Gray, aShadowBuffer->GetVPSizeX(), aShadowBuffer->GetVPSizeY());
-//OpenGl_FrameBuffer::BufferDump (aCtx, aShadowBuffer, anImage, Graphic3d_BT_Depth);
-//anImage.Save (TCollection_AsciiString ("shadow") + theShadowMap->Texture()->Sampler()->Parameters()->TextureUnit() + ".png");
-
+  //Image_AlienPixMap anImage; anImage.InitZero (Image_Format_GrayF, aShadowBuffer->GetVPSizeX(), aShadowBuffer->GetVPSizeY());
+  //OpenGl_FrameBuffer::BufferDump (aCtx, aShadowBuffer, anImage, Graphic3d_BT_Depth);
+  //anImage.Save (TCollection_AsciiString("shadow") + theShadowMap->Texture()->Sampler()->Parameters()->TextureUnit() + ".png");
   bindDefaultFbo();
 }
 

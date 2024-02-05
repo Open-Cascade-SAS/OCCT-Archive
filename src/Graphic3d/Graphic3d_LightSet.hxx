@@ -143,6 +143,9 @@ public:
   //! Returns total amount of lights of specified type.
   Standard_Integer NbLightsOfType (Graphic3d_TypeOfLightSource theType) const { return myLightTypes[theType]; }
 
+  //! Calculates total amount of enabled lights castings shadows (point lights and others).
+  Standard_EXPORT void CalculateNbShadows (Standard_Integer& theNb2DShadows, Standard_Integer& theNbPointShadows);
+
 //! @name cached state of lights set updated by UpdateRevision()
 public:
 

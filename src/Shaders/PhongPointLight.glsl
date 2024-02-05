@@ -9,7 +9,8 @@ void occPointLight (in int  theId,
                     in vec3 theNormal,
                     in vec3 theView,
                     in vec3 thePoint,
-                    in bool theIsFront)
+                    in bool theIsFront,
+                    in float theShadow)
 {
   vec3 aLight = occLight_Position (theId) - thePoint;
 
@@ -31,6 +32,6 @@ void occPointLight (in int  theId,
     aSpecl = pow (aNdotH, occMaterial_Shininess (theIsFront));
   }
 
-  Diffuse  += occLight_Diffuse (theId) * aNdotL * anAtten;
-  Specular += occLight_Specular(theId) * aSpecl * anAtten;
+  Diffuse  += occLight_Diffuse (theId) * aNdotL * anAtten * theShadow;
+  Specular += occLight_Specular(theId) * aSpecl * anAtten * theShadow;
 }

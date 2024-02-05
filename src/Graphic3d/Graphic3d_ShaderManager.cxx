@@ -19,6 +19,7 @@
 #include <Message.hxx>
 
 #include "../Shaders/Shaders_LightShadow_glsl.pxx"
+#include "../Shaders/Shaders_LightPointShadow_glsl.pxx"
 #include "../Shaders/Shaders_PBRDistribution_glsl.pxx"
 #include "../Shaders/Shaders_PBRDirectionalLight_glsl.pxx"
 #include "../Shaders/Shaders_PBRGeometry_glsl.pxx"
@@ -516,6 +517,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramFont() con
   aProgramSrc->SetDefaultSampler (false);
   aProgramSrc->SetNbLightsMax (0);
   aProgramSrc->SetNbShadowMaps (0);
+  aProgramSrc->SetNbShadowCubeMaps (0);
   aProgramSrc->SetNbClipPlanesMax (0);
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcVert, Graphic3d_TOS_VERTEX,   aUniforms, aStageInOuts));
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcFrag, Graphic3d_TOS_FRAGMENT, aUniforms, aStageInOuts));
@@ -645,6 +647,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramFboBlit (S
   aProgramSrc->SetDefaultSampler (false);
   aProgramSrc->SetNbLightsMax (0);
   aProgramSrc->SetNbShadowMaps (0);
+  aProgramSrc->SetNbShadowCubeMaps (0);
   aProgramSrc->SetNbClipPlanesMax (0);
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcVert, Graphic3d_TOS_VERTEX,   aUniforms, aStageInOuts));
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcFrag, Graphic3d_TOS_FRAGMENT, aUniforms, aStageInOuts));
@@ -700,6 +703,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramOitComposi
   aProgramSrc->SetDefaultSampler (false);
   aProgramSrc->SetNbLightsMax (0);
   aProgramSrc->SetNbShadowMaps (0);
+  aProgramSrc->SetNbShadowCubeMaps (0);
   aProgramSrc->SetNbClipPlanesMax (0);
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcVert, Graphic3d_TOS_VERTEX,   aUniforms, aStageInOuts));
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcFrag, Graphic3d_TOS_FRAGMENT, aUniforms, aStageInOuts));
@@ -1137,6 +1141,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramUnlit (Sta
   aProgramSrc->SetDefaultSampler (false);
   aProgramSrc->SetNbLightsMax (0);
   aProgramSrc->SetNbShadowMaps (0);
+  aProgramSrc->SetNbShadowCubeMaps (0);
   aProgramSrc->SetNbClipPlanesMax (aNbClipPlanes);
   aProgramSrc->SetAlphaTest ((theBits & Graphic3d_ShaderFlags_AlphaTest) != 0);
   const Standard_Integer aNbGeomInputVerts = !aSrcGeom.IsEmpty() ? 3 : 0;
@@ -1152,10 +1157,11 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramUnlit (Sta
 // =======================================================================
 TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting (Standard_Integer& theNbLights,
                                                                      const Handle(Graphic3d_LightSet)& theLights,
-                                                                     Standard_Boolean  theHasVertColor,
-                                                                     Standard_Boolean  theIsPBR,
-                                                                     Standard_Boolean  theHasTexColor,
-                                                                     Standard_Integer  theNbShadowMaps) const
+                                                                     Standard_Boolean theHasVertColor,
+                                                                     Standard_Boolean theIsPBR,
+                                                                     Standard_Boolean theHasTexColor,
+                                                                     Standard_Integer theNbShadowMaps,
+                                                                     Standard_Integer theNbShadowCubeMaps) const
 {
   TCollection_AsciiString aLightsFunc, aLightsLoop;
   theNbLights = 0;
@@ -1165,6 +1171,8 @@ TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting (Standard_In
     if (theNbLights <= THE_NB_UNROLLED_LIGHTS_MAX)
     {
       Standard_Integer anIndex = 0;
+      Standard_Integer a2DSamplerIndex = 0;
+      Standard_Integer aCubeSamplerIndex = 0;
       for (Graphic3d_LightSet::Iterator aLightIter (theLights, Graphic3d_LightSet::IterationFilter_ExcludeDisabledAndAmbient);
            aLightIter.More(); aLightIter.Next())
       {
@@ -1181,7 +1189,7 @@ TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting (Standard_In
             {
               aLightsLoop = aLightsLoop +
                 EOL"    occDirectionalLight (" + anIndex + ", theNormal, theView, theIsFront,"
-                EOL"                         occLightShadow (occShadowMapSamplers[" + anIndex + "], " + anIndex + ", theNormal));";
+                EOL"                         occLightShadow (occShadowMapSamplers[" + a2DSamplerIndex++ + "], " + anIndex + ", theNormal));";
             }
             else
             {
@@ -1192,7 +1200,18 @@ TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting (Standard_In
           }
           case Graphic3d_TypeOfLightSource_Positional:
           {
-            aLightsLoop = aLightsLoop + EOL"    occPointLight (" + anIndex + ", theNormal, theView, aPoint, theIsFront);";
+            if (theNbShadowCubeMaps > 0
+              && aLightIter.Value()->ToCastShadows())
+            {
+              aLightsLoop = aLightsLoop +
+                EOL"    occPointLight (" + anIndex + ", theNormal, theView, aPoint, theIsFront,"
+                EOL"                   occLightPointShadow (occShadowCubeMapSamplers[" + aCubeSamplerIndex++ + "],"
+                EOL"                                        " + anIndex + ", aPoint, theNormal)); ";
+            }
+            else
+            {
+              aLightsLoop = aLightsLoop + EOL"    occPointLight (" + anIndex + ", theNormal, theView, aPoint, theIsFront, 1.0);";
+            }
             ++anIndex;
             break;
           }
@@ -1203,7 +1222,7 @@ TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting (Standard_In
             {
               aLightsLoop = aLightsLoop +
                 EOL"    occSpotLight (" + anIndex + ", theNormal, theView, aPoint, theIsFront,"
-                EOL"                  occLightShadow (occShadowMapSamplers[" + anIndex + "], " + anIndex + ", theNormal));";
+                EOL"                  occLightShadow (occShadowMapSamplers[" + a2DSamplerIndex++ + "], " + anIndex + ", theNormal));";
             }
             else
             {
@@ -1242,7 +1261,7 @@ TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting (Standard_In
         aLightsLoop +=
           EOL"      if (aType == OccLightType_Point)"
           EOL"      {"
-          EOL"        occPointLight (anIndex, theNormal, theView, aPoint, theIsFront);"
+          EOL"        occPointLight (anIndex, theNormal, theView, aPoint, theIsFront, 1.0);"
           EOL"      }";
       }
       if (theLights->NbEnabledLightsOfType (Graphic3d_TypeOfLightSource_Spot) > 0)
@@ -1271,6 +1290,7 @@ TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting (Standard_In
     }
 
     bool isShadowShaderAdded = false;
+    bool isShadowCubeShaderAdded = false;
     if (theLights->NbEnabledLightsOfType (Graphic3d_TypeOfLightSource_Directional) == 1
      && theNbLights == 1
      && !theIsPBR
@@ -1291,6 +1311,11 @@ TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting (Standard_In
     }
     if (theLights->NbEnabledLightsOfType (Graphic3d_TypeOfLightSource_Positional) > 0)
     {
+      if (theNbShadowCubeMaps > 0 && !isShadowCubeShaderAdded)
+      {
+        aLightsFunc += Shaders_LightPointShadow_glsl;
+        isShadowCubeShaderAdded = true;
+      }
       aLightsFunc += theIsPBR ? Shaders_PBRPointLight_glsl : Shaders_PhongPointLight_glsl;
     }
     if (theLights->NbEnabledLightsOfType (Graphic3d_TypeOfLightSource_Spot) > 0)
@@ -1475,7 +1500,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramGouraud (c
   aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec4 BackColor",  Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
 
   Standard_Integer aNbLights = 0;
-  const TCollection_AsciiString aLights = stdComputeLighting (aNbLights, theLights, !aSrcVertColor.IsEmpty(), false, toUseTexColor, 0);
+  const TCollection_AsciiString aLights = stdComputeLighting (aNbLights, theLights, !aSrcVertColor.IsEmpty(), false, toUseTexColor, 0, 0);
   aSrcVert = TCollection_AsciiString()
     + THE_FUNC_transformNormal_world
     + EOL
@@ -1520,6 +1545,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramGouraud (c
   aProgramSrc->SetDefaultSampler (false);
   aProgramSrc->SetNbLightsMax (aNbLights);
   aProgramSrc->SetNbShadowMaps (0);
+  aProgramSrc->SetNbShadowCubeMaps (0);
   aProgramSrc->SetNbClipPlanesMax (aNbClipPlanes);
   aProgramSrc->SetAlphaTest ((theBits & Graphic3d_ShaderFlags_AlphaTest) != 0);
   const Standard_Integer aNbGeomInputVerts = !aSrcGeom.IsEmpty() ? 3 : 0;
@@ -1537,7 +1563,8 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramPhong (con
                                                                              const Standard_Integer theBits,
                                                                              const Standard_Boolean theIsFlatNormal,
                                                                              const Standard_Boolean theIsPBR,
-                                                                             const Standard_Integer theNbShadowMaps) const
+                                                                             const Standard_Integer theNbShadowMaps,
+                                                                             const Standard_Integer theNbShadowCubeMaps) const
 {
   TCollection_AsciiString aPhongCompLight = TCollection_AsciiString() +
     "computeLighting (normalize (Normal), normalize (View), PositionWorld, gl_FrontFacing)";
@@ -1690,12 +1717,18 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramPhong (con
 
   aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec4 PositionWorld", Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
   aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec3 View",          Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
-  if (theNbShadowMaps > 0)
+  if (theNbShadowMaps + theNbShadowCubeMaps > 0)
   {
-    aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("mat4      occShadowMapMatrices[THE_NB_SHADOWMAPS]", Graphic3d_TOS_VERTEX));
-    aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("sampler2D occShadowMapSamplers[THE_NB_SHADOWMAPS]", Graphic3d_TOS_FRAGMENT));
-    aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("vec2      occShadowMapSizeBias",                    Graphic3d_TOS_FRAGMENT));
-
+    aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("mat4 occShadowMapMatrices[THE_NB_SHADOWMAPS]", Graphic3d_TOS_VERTEX));
+    aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("vec2 occShadowMapSizeBias", Graphic3d_TOS_FRAGMENT));
+    if (theNbShadowMaps > 0)
+    {
+      aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("sampler2D occShadowMapSamplers[THE_NB_SHADOWMAPS2D]", Graphic3d_TOS_FRAGMENT));
+    }
+    if (theNbShadowCubeMaps > 0)
+    {
+      aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("samplerCube occShadowCubeMapSamplers[THE_NB_SHADOWMAPSCUBE]", Graphic3d_TOS_FRAGMENT));
+    }
     aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec4 PosLightSpace[THE_NB_SHADOWMAPS]", Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
     aSrcVertExtraMain +=
       EOL"  for (int aShadowIter = 0; aShadowIter < THE_NB_SHADOWMAPS; ++aShadowIter)"
@@ -1729,7 +1762,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramPhong (con
 
   Standard_Integer aNbLights = 0;
   const TCollection_AsciiString aLights = stdComputeLighting (aNbLights, theLights, !aSrcFragGetVertColor.IsEmpty(),
-                                                              theIsPBR, toUseTexColor, theNbShadowMaps);
+                                                              theIsPBR, toUseTexColor, theNbShadowMaps, theNbShadowCubeMaps);
   aSrcFrag += TCollection_AsciiString()
     + EOL
     + aSrcFragGetVertColor
@@ -1745,11 +1778,12 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramPhong (con
     + EOL"}";
 
   const TCollection_AsciiString aProgId = TCollection_AsciiString (theIsFlatNormal ? "flat-" : "phong-") + (theIsPBR ? "pbr-" : "")
-                                        + genLightKey (theLights, theNbShadowMaps > 0) + "-";
+                                        + genLightKey (theLights, (theNbShadowMaps + theNbShadowCubeMaps) > 0) + "-";
   defaultGlslVersion (aProgramSrc, aProgId, theBits, isFlatNormal);
   aProgramSrc->SetDefaultSampler (false);
   aProgramSrc->SetNbLightsMax (aNbLights);
   aProgramSrc->SetNbShadowMaps (theNbShadowMaps);
+  aProgramSrc->SetNbShadowCubeMaps (theNbShadowCubeMaps);
   aProgramSrc->SetNbClipPlanesMax (aNbClipPlanes);
   aProgramSrc->SetAlphaTest ((theBits & Graphic3d_ShaderFlags_AlphaTest) != 0);
 
@@ -1944,6 +1978,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramStereo (Gr
   aProgramSrc->SetDefaultSampler (false);
   aProgramSrc->SetNbLightsMax (0);
   aProgramSrc->SetNbShadowMaps (0);
+  aProgramSrc->SetNbShadowCubeMaps (0);
   aProgramSrc->SetNbClipPlanesMax (0);
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcVert, Graphic3d_TOS_VERTEX,   aUniforms, aStageInOuts));
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcFrag, Graphic3d_TOS_FRAGMENT, aUniforms, aStageInOuts));
@@ -1980,6 +2015,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramBoundBox()
   aProgramSrc->SetDefaultSampler (false);
   aProgramSrc->SetNbLightsMax (0);
   aProgramSrc->SetNbShadowMaps (0);
+  aProgramSrc->SetNbShadowCubeMaps (0);
   aProgramSrc->SetNbClipPlanesMax (0);
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcVert, Graphic3d_TOS_VERTEX,   aUniforms, aStageInOuts));
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcFrag, Graphic3d_TOS_FRAGMENT, aUniforms, aStageInOuts));
@@ -2041,6 +2077,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getPBREnvBakingProgram 
   aProgramSrc->SetDefaultSampler (false);
   aProgramSrc->SetNbLightsMax (0);
   aProgramSrc->SetNbShadowMaps (0);
+  aProgramSrc->SetNbShadowCubeMaps (0);
   aProgramSrc->SetNbClipPlanesMax (0);
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcVert, Graphic3d_TOS_VERTEX,   aUniforms, aStageInOuts));
   aProgramSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcFrag, Graphic3d_TOS_FRAGMENT, aUniforms, aStageInOuts));
@@ -2107,6 +2144,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getBgCubeMapProgram() c
   aProgSrc->SetDefaultSampler (false);
   aProgSrc->SetNbLightsMax (0);
   aProgSrc->SetNbShadowMaps (0);
+  aProgSrc->SetNbShadowCubeMaps (0);
   aProgSrc->SetNbClipPlanesMax (0);
   aProgSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcVert, Graphic3d_TOS_VERTEX,   aUniforms, aStageInOuts));
   aProgSrc->AttachShader (Graphic3d_ShaderObject::CreateFromSource (aSrcFrag, Graphic3d_TOS_FRAGMENT, aUniforms, aStageInOuts));

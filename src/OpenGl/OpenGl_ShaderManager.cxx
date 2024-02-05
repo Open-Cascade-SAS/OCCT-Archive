@@ -554,9 +554,10 @@ void OpenGl_ShaderManager::pushLightSourceState (const Handle(OpenGl_ShaderProgr
   // update shadow map variables
   if (const OpenGl_ShaderUniformLocation aShadowMatLoc = theProgram->GetStateLocation (OpenGl_OCC_LIGHT_SHADOWMAP_MATRICES))
   {
-    if (myShadowMatArray.Size() < theProgram->NbShadowMaps())
+    Standard_Integer aNbShadowMaps = theProgram->NbShadowMaps() + theProgram->NbShadowCubeMaps();
+    if (myShadowMatArray.Size() < aNbShadowMaps)
     {
-      myShadowMatArray.Resize (0, theProgram->NbShadowMaps() - 1, false);
+      myShadowMatArray.Resize (0, aNbShadowMaps - 1, false);
     }
 
     Graphic3d_Vec2 aSizeBias;
@@ -564,7 +565,7 @@ void OpenGl_ShaderManager::pushLightSourceState (const Handle(OpenGl_ShaderProgr
     {
       aSizeBias.SetValues (1.0f / (float )myLightSourceState.ShadowMaps()->First()->Texture()->SizeX(),
                            myLightSourceState.ShadowMaps()->First()->ShadowMapBias());
-      const Standard_Integer aNbShadows = Min (theProgram->NbShadowMaps(), myLightSourceState.ShadowMaps()->Size());
+      const Standard_Integer aNbShadows = Min (aNbShadowMaps, myLightSourceState.ShadowMaps()->Size());
       for (Standard_Integer aShadowIter = 0; aShadowIter < aNbShadows; ++aShadowIter)
       {
         const Handle(OpenGl_ShadowMap)& aShadow = myLightSourceState.ShadowMaps()->Value (aShadowIter);
@@ -572,7 +573,7 @@ void OpenGl_ShaderManager::pushLightSourceState (const Handle(OpenGl_ShaderProgr
       }
     }
 
-    theProgram->SetUniform (myContext, aShadowMatLoc, theProgram->NbShadowMaps(), &myShadowMatArray.First());
+    theProgram->SetUniform (myContext, aShadowMatLoc, aNbShadowMaps, &myShadowMatArray.First());
     theProgram->SetUniform (myContext, theProgram->GetStateLocation (OpenGl_OCC_LIGHT_SHADOWMAP_SIZE_BIAS), aSizeBias);
   }
 }
@@ -1229,10 +1230,16 @@ Standard_Boolean OpenGl_ShaderManager::prepareStdProgramPhong (Handle(OpenGl_Sha
                                                                const Standard_Boolean        theIsFlatNormal,
                                                                const Standard_Boolean        theIsPBR)
 {
-  Standard_Integer aNbShadowMaps = myLightSourceState.HasShadowMaps()
-                                 ? myLightSourceState.LightSources()->NbCastShadows()
-                                 : 0;
-  Handle(Graphic3d_ShaderProgram) aProgramSrc = getStdProgramPhong (myLightSourceState.LightSources(), theBits, theIsFlatNormal, theIsPBR, aNbShadowMaps);
+  Standard_Integer aNbShadowMaps, aNbShadowCubeMaps;
+  myLightSourceState.LightSources()->CalculateNbShadows (aNbShadowMaps, aNbShadowCubeMaps);
+  // point light shadows are not currently supported on opengles 2.0.
+  if (myContext->GraphicsLibrary() == Aspect_GraphicsLibrary_OpenGLES
+   && myContext->VersionMajor() <= 2)
+  {
+    aNbShadowCubeMaps = 0;
+  }
+  Handle(Graphic3d_ShaderProgram) aProgramSrc = getStdProgramPhong (myLightSourceState.LightSources(), theBits, theIsFlatNormal,
+                                                                    theIsPBR, aNbShadowMaps, aNbShadowCubeMaps);
   TCollection_AsciiString aKey;
   if (!Create (aProgramSrc, aKey, theProgram))
   {

@@ -443,7 +443,6 @@ bool OpenGl_Texture::Init (const Handle(OpenGl_Context)& theCtx,
           return false;
         }
       }
-
       theCtx->core11fwd->glTexImage2D (GL_TEXTURE_2D, 0, anIntFormat,
                                        theSizeXYZ.x(), theSizeXYZ.y(), 0,
                                        theFormat.PixelFormat(), theFormat.DataType(), aDataPtr);
@@ -520,9 +519,48 @@ bool OpenGl_Texture::Init (const Handle(OpenGl_Context)& theCtx,
     }
     case Graphic3d_TypeOfTexture_CUBEMAP:
     {
-      Unbind (theCtx);
-      Release (theCtx.get());
-      return false;
+      Bind (theCtx);
+      applyDefaultSamplerParams (theCtx);
+      if (theCtx->GraphicsLibrary() == Aspect_GraphicsLibrary_OpenGL)
+      {
+        // use proxy to check texture could be created or not
+        theCtx->core11fwd->glTexImage2D (GL_PROXY_TEXTURE_2D, 0, anIntFormat,
+                                         theSizeXYZ.x(), theSizeXYZ.y(), 0,
+                                         theFormat.PixelFormat(), theFormat.DataType(), NULL);
+        theCtx->core11fwd->glGetTexLevelParameteriv (GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &aTestWidth);
+        theCtx->core11fwd->glGetTexLevelParameteriv (GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &aTestHeight);
+        theCtx->core11fwd->glGetTexLevelParameteriv (GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &mySizedFormat);
+        if (aTestWidth == 0 || aTestHeight == 0)
+        {
+          // no memory or broken input parameters
+          Unbind(theCtx);
+          Release(theCtx.get());
+          return false;
+        }
+      }
+      for (Standard_Integer aCubeIndex = 0; aCubeIndex < 6; ++aCubeIndex)
+      {
+        theCtx->core11fwd->glTexImage2D (GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeIndex), 0, anIntFormat,
+                                         theSizeXYZ.x(), theSizeXYZ.y(), 0,
+                                         theFormat.PixelFormat(), theFormat.DataType(), aDataPtr);
+        GLenum anErr = theCtx->core11fwd->glGetError();
+        if (anErr != GL_NO_ERROR)
+        {
+          theCtx->PushMessage (GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0, GL_DEBUG_SEVERITY_HIGH,
+                               TCollection_AsciiString ("Error: Cubemap texture ") + theSizeXYZ.x() + "x" + theSizeXYZ.y()
+                                                     + " IF: " + OpenGl_TextureFormat::FormatFormat (anIntFormat)
+                                                     + " PF: " + OpenGl_TextureFormat::FormatFormat (theFormat.PixelFormat())
+                                                     + " DT: " + OpenGl_TextureFormat::FormatDataType (theFormat.DataType())
+                                                     + " can not be created with error " + OpenGl_Context::FormatGlError (anErr)
+                                                     + " [" + myResourceId + "]");
+          Unbind (theCtx);
+          Release (theCtx.get());
+          return false;
+        }
+      }
+
+      mySize.SetValues (theSizeXYZ.xy(), 1);
+      break;
     }
   }
 

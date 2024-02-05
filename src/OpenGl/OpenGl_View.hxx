@@ -354,7 +354,9 @@ protected: //! @name Rendering of GL graphics (with prepared drawing buffer).
 
   //! Renders the graphical contents of the view into the preprepared shadowmap framebuffer.
   //! @param theShadowMap [in] the framebuffer for rendering shadowmap.
-  Standard_EXPORT virtual void renderShadowMap (const Handle(OpenGl_ShadowMap)& theShadowMap);
+  //! @param theFace      [in] value for cubemap face.
+  Standard_EXPORT virtual void renderShadowMap (const Handle(OpenGl_ShadowMap)& theShadowMap,
+                                                const Standard_Integer theFace);
 
   //! Renders the graphical contents of the view into the preprepared window or framebuffer.
   //! @param theProjection [in] the projection that should be used for rendering.

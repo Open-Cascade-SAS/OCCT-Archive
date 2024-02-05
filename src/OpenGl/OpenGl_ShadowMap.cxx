@@ -83,7 +83,8 @@ const Handle(OpenGl_Texture)& OpenGl_ShadowMap::Texture() const
 // purpose  :
 // =======================================================================
 bool OpenGl_ShadowMap::UpdateCamera (const Graphic3d_CView& theView,
-                                     const gp_XYZ* theOrigin)
+                                     const gp_XYZ* theOrigin,
+                                     const Standard_Integer theFace)
 {
   const Bnd_Box aMinMaxBox  = theOrigin == NULL ? theView.MinMaxValues (false) : Bnd_Box(); // applicative min max boundaries
   const Bnd_Box aGraphicBox = aMinMaxBox;
@@ -134,7 +135,19 @@ bool OpenGl_ShadowMap::UpdateCamera (const Graphic3d_CView& theView,
     case Graphic3d_TypeOfLightSource_Positional:
     {
       // render into cubemap shadowmap texture
-      return false; // not implemented
+      myShadowCamera->SetZeroToOneDepth (theView.Camera()->IsZeroToOneDepth());
+      myShadowCamera->SetProjectionType (Graphic3d_Camera::Projection_Perspective);
+      myShadowCamera->SetFOVy (90.0);
+      const gp_Pnt& aLightPos = myShadowLight->Position();
+      myShadowCamera->MoveEyeTo (aLightPos);
+      // calculate direction and up vector for the given cubemap face
+      myShadowCamera->SetDirectionFromEye (Graphic3d_CubeMap::GetCubeDirection ((Graphic3d_CubeMapSide)theFace));
+      myShadowCamera->SetUp (Graphic3d_CubeMap::GetCubeUp ((Graphic3d_CubeMapSide)theFace));
+      // setup znear and zfar (default value)
+      myShadowCamera->SetZRange (1.0, myShadowCamera->GetDefaultZFar());
+      myLightMatrix = myShadowCamera->ProjectionMatrixF() * myShadowCamera->OrientationMatrixF();
+
+      return true;
     }
     case Graphic3d_TypeOfLightSource_Spot:
     {

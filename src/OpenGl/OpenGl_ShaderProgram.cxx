@@ -50,43 +50,44 @@ Standard_CString OpenGl_ShaderProgram::PredefinedKeywords[] =
   "occWorldViewMatrixInverseTranspose",  // OpenGl_OCC_WORLD_VIEW_MATRIX_INVERSE_TRANSPOSE
   "occProjectionMatrixInverseTranspose", // OpenGl_OCC_PROJECTION_MATRIX_INVERSE_TRANSPOSE
 
-  "occClipPlaneEquations",  // OpenGl_OCC_CLIP_PLANE_EQUATIONS
-  "occClipPlaneChains",     // OpenGl_OCC_CLIP_PLANE_CHAINS
-  "occClipPlaneCount",      // OpenGl_OCC_CLIP_PLANE_COUNT
+  "occClipPlaneEquations",    // OpenGl_OCC_CLIP_PLANE_EQUATIONS
+  "occClipPlaneChains",       // OpenGl_OCC_CLIP_PLANE_CHAINS
+  "occClipPlaneCount",        // OpenGl_OCC_CLIP_PLANE_COUNT
 
-  "occLightSourcesCount",   // OpenGl_OCC_LIGHT_SOURCE_COUNT
-  "occLightSourcesTypes",   // OpenGl_OCC_LIGHT_SOURCE_TYPES
-  "occLightSources",        // OpenGl_OCC_LIGHT_SOURCE_PARAMS
-  "occLightAmbient",        // OpenGl_OCC_LIGHT_AMBIENT
-  "occShadowMapSizeBias",   // OpenGl_OCC_LIGHT_SHADOWMAP_SIZE_BIAS
-  "occShadowMapSamplers",   // OpenGl_OCC_LIGHT_SHADOWMAP_SAMPLERS,
-  "occShadowMapMatrices",   // OpenGl_OCC_LIGHT_SHADOWMAP_MATRICES,
+  "occLightSourcesCount",     // OpenGl_OCC_LIGHT_SOURCE_COUNT
+  "occLightSourcesTypes",     // OpenGl_OCC_LIGHT_SOURCE_TYPES
+  "occLightSources",          // OpenGl_OCC_LIGHT_SOURCE_PARAMS
+  "occLightAmbient",          // OpenGl_OCC_LIGHT_AMBIENT
+  "occShadowMapSizeBias",     // OpenGl_OCC_LIGHT_SHADOWMAP_SIZE_BIAS
+  "occShadowMapSamplers",     // OpenGl_OCC_LIGHT_SHADOWMAP_SAMPLERS,
+  "occShadowCubeMapSamplers", // OpenGl_OCC_LIGHT_SHADOWCUBEMAP_SAMPLERS,
+  "occShadowMapMatrices",     // OpenGl_OCC_LIGHT_SHADOWMAP_MATRICES,
 
-  "occTextureEnable",       // OpenGl_OCCT_TEXTURE_ENABLE
-  "occDistinguishingMode",  // OpenGl_OCCT_DISTINGUISH_MODE
-  "occPbrMaterial",         // OpenGl_OCCT_PBR_MATERIAL
-  "occCommonMaterial",      // OpenGl_OCCT_COMMON_MATERIAL
-  "occAlphaCutoff",         // OpenGl_OCCT_ALPHA_CUTOFF
-  "occColor",               // OpenGl_OCCT_COLOR
+  "occTextureEnable",         // OpenGl_OCCT_TEXTURE_ENABLE
+  "occDistinguishingMode",    // OpenGl_OCCT_DISTINGUISH_MODE
+  "occPbrMaterial",           // OpenGl_OCCT_PBR_MATERIAL
+  "occCommonMaterial",        // OpenGl_OCCT_COMMON_MATERIAL
+  "occAlphaCutoff",           // OpenGl_OCCT_ALPHA_CUTOFF
+  "occColor",                 // OpenGl_OCCT_COLOR
 
-  "occOitOutput",           // OpenGl_OCCT_OIT_OUTPUT
-  "occOitDepthFactor",      // OpenGl_OCCT_OIT_DEPTH_FACTOR
+  "occOitOutput",             // OpenGl_OCCT_OIT_OUTPUT
+  "occOitDepthFactor",        // OpenGl_OCCT_OIT_DEPTH_FACTOR
 
-  "occTexTrsf2d",           // OpenGl_OCCT_TEXTURE_TRSF2D
-  "occPointSize",           // OpenGl_OCCT_POINT_SIZE
+  "occTexTrsf2d",             // OpenGl_OCCT_TEXTURE_TRSF2D
+  "occPointSize",             // OpenGl_OCCT_POINT_SIZE
 
-  "occViewport",            // OpenGl_OCCT_VIEWPORT
-  "occLineWidth",           // OpenGl_OCCT_LINE_WIDTH
-  "occLineFeather",         // OpenGl_OCCT_LINE_FEATHER
-  "occStipplePattern",      // OpenGl_OCCT_LINE_STIPPLE_PATTERN
-  "occStippleFactor",       // OpenGl_OCCT_LINE_STIPPLE_FACTOR
-  "occWireframeColor",      // OpenGl_OCCT_WIREFRAME_COLOR
-  "occIsQuadMode",          // OpenGl_OCCT_QUAD_MODE_STATE
+  "occViewport",              // OpenGl_OCCT_VIEWPORT
+  "occLineWidth",             // OpenGl_OCCT_LINE_WIDTH
+  "occLineFeather",           // OpenGl_OCCT_LINE_FEATHER
+  "occStipplePattern",        // OpenGl_OCCT_LINE_STIPPLE_PATTERN
+  "occStippleFactor",         // OpenGl_OCCT_LINE_STIPPLE_FACTOR
+  "occWireframeColor",        // OpenGl_OCCT_WIREFRAME_COLOR
+  "occIsQuadMode",            // OpenGl_OCCT_QUAD_MODE_STATE
 
-  "occOrthoScale",          // OpenGl_OCCT_ORTHO_SCALE
-  "occSilhouetteThickness", // OpenGl_OCCT_SILHOUETTE_THICKNESS
+  "occOrthoScale",            // OpenGl_OCCT_ORTHO_SCALE
+  "occSilhouetteThickness",   // OpenGl_OCCT_SILHOUETTE_THICKNESS
 
-  "occNbSpecIBLLevels"      // OpenGl_OCCT_NB_SPEC_IBL_LEVELS
+  "occNbSpecIBLLevels"        // OpenGl_OCCT_NB_SPEC_IBL_LEVELS
 };
 
 namespace
@@ -165,6 +166,7 @@ OpenGl_ShaderProgram::OpenGl_ShaderProgram (const Handle(Graphic3d_ShaderProgram
   myShareCount(1),
   myNbLightsMax (0),
   myNbShadowMaps (0),
+  myNbShadowCubeMaps (0),
   myNbClipPlanesMax (0),
   myNbFragOutputs (1),
   myTextureSetBits (Graphic3d_TextureSetBits_NONE),
@@ -419,15 +421,24 @@ Standard_Boolean OpenGl_ShaderProgram::Initialize (const Handle(OpenGl_Context)&
     }
 
     TCollection_AsciiString aHeaderConstants;
-    myNbLightsMax     = !myProxy.IsNull() ? myProxy->NbLightsMax() : 0;
-    myNbShadowMaps    = !myProxy.IsNull() ? myProxy->NbShadowMaps() : 0;
-    myNbClipPlanesMax = !myProxy.IsNull() ? myProxy->NbClipPlanesMax() : 0;
+    myNbLightsMax      = !myProxy.IsNull() ? myProxy->NbLightsMax() : 0;
+    myNbShadowMaps     = !myProxy.IsNull() ? myProxy->NbShadowMaps() : 0;
+    myNbShadowCubeMaps = !myProxy.IsNull() ? myProxy->NbShadowCubeMaps() : 0;
+    myNbClipPlanesMax  = !myProxy.IsNull() ? myProxy->NbClipPlanesMax() : 0;
     aHeaderConstants += TCollection_AsciiString("#define THE_MAX_LIGHTS ") + myNbLightsMax + "\n";
     aHeaderConstants += TCollection_AsciiString("#define THE_MAX_CLIP_PLANES ") + myNbClipPlanesMax + "\n";
     aHeaderConstants += TCollection_AsciiString("#define THE_NB_FRAG_OUTPUTS ") + myNbFragOutputs + "\n";
+    if (myNbShadowMaps + myNbShadowCubeMaps > 0)
+    {
+      aHeaderConstants += TCollection_AsciiString("#define THE_NB_SHADOWMAPS ") + (myNbShadowMaps + myNbShadowCubeMaps) + "\n";
+    }
     if (myNbShadowMaps > 0)
     {
-      aHeaderConstants += TCollection_AsciiString("#define THE_NB_SHADOWMAPS ") + myNbShadowMaps + "\n";
+      aHeaderConstants += TCollection_AsciiString("#define THE_NB_SHADOWMAPS2D ") + myNbShadowMaps + "\n";
+    }
+    if (myNbShadowCubeMaps > 0)
+    {
+      aHeaderConstants += TCollection_AsciiString("#define THE_NB_SHADOWMAPSCUBE ") + myNbShadowCubeMaps + "\n";
     }
     if (theCtx->caps->useZeroToOneDepth
      && theCtx->arbClipControl)
@@ -590,7 +601,16 @@ Standard_Boolean OpenGl_ShaderProgram::Initialize (const Handle(OpenGl_Context)&
     }
     SetUniform (theCtx, aLocSampler, myNbShadowMaps, &aShadowSamplers.front());
   }
-
+  if (const OpenGl_ShaderUniformLocation aLocSampler = GetUniformLocation (theCtx, "occShadowCubeMapSamplers"))
+  {
+    std::vector<GLint> aShadowSamplers (myNbShadowCubeMaps);
+    const GLint aSamplFrom = GLint(theCtx->ShadowCubeMapTexUnit()) - myNbShadowCubeMaps + 1;
+    for (Standard_Integer aSamplerIter = 0; aSamplerIter < myNbShadowCubeMaps; ++aSamplerIter)
+    {
+      aShadowSamplers[aSamplerIter] = aSamplFrom + aSamplerIter;
+    }
+    SetUniform (theCtx, aLocSampler, myNbShadowCubeMaps, &aShadowSamplers.front());
+  }
   if (const OpenGl_ShaderUniformLocation aLocSampler = GetUniformLocation (theCtx, "occDepthPeelingDepth"))
   {
     SetUniform (theCtx, aLocSampler, GLint(theCtx->DepthPeelingDepthTexUnit()));

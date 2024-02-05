@@ -48,11 +48,13 @@ public:
   //! @param theFbo        FBO to dump (or window buffer, if NULL)
   //! @param theImage      target image
   //! @param theBufferType buffer type (attachment) to dump
+  //! @param theCubeFace   id of the cubemap face (only used for fbo's rendering to cubemaps)
   //! @return TRUE on success
   Standard_EXPORT static Standard_Boolean BufferDump (const Handle(OpenGl_Context)& theGlCtx,
                                                       const Handle(OpenGl_FrameBuffer)& theFbo,
                                                       Image_PixMap& theImage,
-                                                      Graphic3d_BufferType theBufferType);
+                                                      Graphic3d_BufferType theBufferType,
+                                                      const Standard_Integer theCubeFace = -1);
 
 public:
 
@@ -142,12 +144,14 @@ public:
   //! @param theColorFormats list of color texture sized format (0 means no color attachment), e.g. GL_RGBA8
   //! @param theDepthFormat  depth-stencil texture sized format (0 means no depth attachment), e.g. GL_DEPTH24_STENCIL8
   //! @param theNbSamples    MSAA number of samples (0 means normal texture)
+  //! @param theIsCubeMap    flag to setup texture target to cubemap (FALSE by default)
   //! @return true on success
   Standard_EXPORT Standard_Boolean Init (const Handle(OpenGl_Context)& theGlCtx,
                                          const Graphic3d_Vec2i&        theSize,
                                          const OpenGl_ColorFormats&    theColorFormats,
                                          const Standard_Integer        theDepthFormat,
-                                         const Standard_Integer        theNbSamples = 0);
+                                         const Standard_Integer        theNbSamples = 0,
+                                         const Standard_Boolean        theIsCubeMap = Standard_False);
 
   //! (Re-)initialize FBO with specified dimensions.
   Standard_EXPORT Standard_Boolean InitLazy (const Handle(OpenGl_Context)& theGlCtx,
@@ -224,6 +228,9 @@ public:
 
   //! Bind frame buffer for reading GL_READ_FRAMEBUFFER
   Standard_EXPORT virtual void BindReadBuffer (const Handle(OpenGl_Context)& theGlCtx);
+
+  //! Bind frame buffer for reading cubemap with the target @theFace.
+  Standard_EXPORT virtual void BindBufferCube (const Handle(OpenGl_Context)& theGlCtx, const Standard_Integer theFace);
 
   //! Unbind frame buffer.
   Standard_EXPORT virtual void UnbindBuffer (const Handle(OpenGl_Context)& theGlCtx);

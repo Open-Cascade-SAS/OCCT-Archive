@@ -9,7 +9,8 @@ void occPointLight (in int  theId,
                     in vec3 theNormal,
                     in vec3 theView,
                     in vec3 thePoint,
-                    in bool theIsFront)
+                    in bool theIsFront,
+                    in float theShadow)
 {
   vec3 aLight = occLight_Position (theId) - thePoint;
 
@@ -23,5 +24,5 @@ void occPointLight (in int  theId,
   DirectLighting += occPBRIllumination (theView, aLight, theNormal,
                                         BaseColor, Metallic, Roughness, IOR,
                                         occLight_Specular (theId),
-                                        occLight_Intensity(theId) * anAtten);
+                                        occLight_Intensity(theId) * anAtten) * theShadow;
 }

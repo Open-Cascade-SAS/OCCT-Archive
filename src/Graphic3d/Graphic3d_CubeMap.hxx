@@ -15,6 +15,7 @@
 #ifndef _Graphic3d_CubeMap_HeaderFile
 #define _Graphic3d_CubeMap_HeaderFile
 
+#include <gp_Dir.hxx>
 #include <Graphic3d_CubeMapOrder.hxx>
 #include <Graphic3d_TextureMap.hxx>
 
@@ -89,6 +90,12 @@ public:
 
   //! Empty destructor.
   Standard_EXPORT virtual ~Graphic3d_CubeMap();
+
+  //! Returns direction vector for cubemap's @theFace
+  Standard_EXPORT gp_Dir static GetCubeDirection (Graphic3d_CubeMapSide theFace);
+
+  //! Returns up vector for cubemap's @theFace
+  Standard_EXPORT gp_Dir static GetCubeUp (Graphic3d_CubeMapSide theFace);
 
 protected:
 

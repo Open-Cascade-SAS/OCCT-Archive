@@ -57,9 +57,10 @@ enum OpenGl_StateVariable
   OpenGl_OCC_LIGHT_SOURCE_TYPES,
   OpenGl_OCC_LIGHT_SOURCE_PARAMS,
   OpenGl_OCC_LIGHT_AMBIENT,
-  OpenGl_OCC_LIGHT_SHADOWMAP_SIZE_BIAS,// occShadowMapSizeBias
-  OpenGl_OCC_LIGHT_SHADOWMAP_SAMPLERS, // occShadowMapSamplers
-  OpenGl_OCC_LIGHT_SHADOWMAP_MATRICES, // occShadowMapMatrices
+  OpenGl_OCC_LIGHT_SHADOWMAP_SIZE_BIAS,    // occShadowMapSizeBias
+  OpenGl_OCC_LIGHT_SHADOWMAP_SAMPLERS,     // occShadowMapSamplers
+  OpenGl_OCC_LIGHT_SHADOWCUBEMAP_SAMPLERS, // occShadowCubeMapSamplers
+  OpenGl_OCC_LIGHT_SHADOWMAP_MATRICES,     // occShadowMapMatrices
 
   // Material state
   OpenGl_OCCT_TEXTURE_ENABLE,
@@ -283,8 +284,11 @@ public:
   //! to be used for initialization occLightSources (OpenGl_OCC_LIGHT_SOURCE_PARAMS).
   Standard_Integer NbLightsMax() const { return myNbLightsMax; }
 
-  //! Return the length of array of shadow maps (THE_NB_SHADOWMAPS); 0 by default.
+  //! Return the length of array of 2D shadow maps (THE_NB_SHADOWMAP2D); 0 by default.
   Standard_Integer NbShadowMaps() const { return myNbShadowMaps; }
+
+  //! Return the length of array of shadow cube maps (THE_NB_SHADOWMAPCUBE); 0 by default.
+  Standard_Integer NbShadowCubeMaps() const { return myNbShadowCubeMaps; }
 
   //! Return the length of array of clipping planes (THE_MAX_CLIP_PLANES),
   //! to be used for initialization occClipPlaneEquations (OpenGl_OCC_CLIP_PLANE_EQUATIONS) and occClipPlaneChains (OpenGl_OCC_CLIP_PLANE_CHAINS).
@@ -643,18 +647,19 @@ protected:
 
 protected:
 
-  GLuint                          myProgramID;     //!< Handle of OpenGL shader program
-  OpenGl_ShaderList               myShaderObjects; //!< List of attached shader objects
-  Handle(Graphic3d_ShaderProgram) myProxy;         //!< Proxy shader program (from application layer)
-  Standard_Integer                myShareCount;    //!< program users count, initialized with 1 (already shared by one user)
-  Standard_Integer                myNbLightsMax;   //!< length of array of light sources (THE_MAX_LIGHTS)
-  Standard_Integer                myNbShadowMaps;  //!< length of array of shadow maps (THE_NB_SHADOWMAPS)
-  Standard_Integer                myNbClipPlanesMax; //!< length of array of clipping planes (THE_MAX_CLIP_PLANES)
-  Standard_Integer                myNbFragOutputs; //!< length of array of Fragment Shader outputs (THE_NB_FRAG_OUTPUTS)
-  Standard_Integer                myTextureSetBits;//!< texture units declared within the program, @sa Graphic3d_TextureSetBits
-  Graphic3d_RenderTransparentMethod myOitOutput;   //!< flag indicating that Fragment Shader includes OIT outputs
-  Standard_Boolean                myHasAlphaTest;  //!< flag indicating that Fragment Shader should perform alpha-test
-  Standard_Boolean                myHasTessShader; //!< flag indicating that program defines tessellation stage
+  GLuint                          myProgramID;        //!< Handle of OpenGL shader program
+  OpenGl_ShaderList               myShaderObjects;    //!< List of attached shader objects
+  Handle(Graphic3d_ShaderProgram) myProxy;            //!< Proxy shader program (from application layer)
+  Standard_Integer                myShareCount;       //!< program users count, initialized with 1 (already shared by one user)
+  Standard_Integer                myNbLightsMax;      //!< length of array of light sources (THE_MAX_LIGHTS)
+  Standard_Integer                myNbShadowMaps;     //!< length of array of shadow maps (THE_NB_SHADOWMAP2D)
+  Standard_Integer                myNbShadowCubeMaps; //!< length of array of shadow maps (THE_NB_SHADOWMAPCUBE)
+  Standard_Integer                myNbClipPlanesMax;  //!< length of array of clipping planes (THE_MAX_CLIP_PLANES)
+  Standard_Integer                myNbFragOutputs;    //!< length of array of Fragment Shader outputs (THE_NB_FRAG_OUTPUTS)
+  Standard_Integer                myTextureSetBits;   //!< texture units declared within the program, @sa Graphic3d_TextureSetBits
+  Graphic3d_RenderTransparentMethod myOitOutput;      //!< flag indicating that Fragment Shader includes OIT outputs
+  Standard_Boolean                myHasAlphaTest;     //!< flag indicating that Fragment Shader should perform alpha-test
+  Standard_Boolean                myHasTessShader;    //!< flag indicating that program defines tessellation stage
 
 protected:
 
