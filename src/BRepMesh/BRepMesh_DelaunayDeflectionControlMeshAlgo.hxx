@@ -231,8 +231,55 @@ private:
                                  aNodesInfo[1].Point2d +
                                  aNodesInfo[2].Point2d) / 3.;
 
-        usePoint(aCenter2d, NormalDeviation(aNodesInfo[0].Point, aNormal));
-        splitLinks(aNodesInfo, aNodexIndices);
+        const gp_XY aCenter2dLink1 = (aNodesInfo[0].Point2d + aNodesInfo[1].Point2d) / 2.;
+        const gp_XY aCenter2dLink2 = (aNodesInfo[1].Point2d + aNodesInfo[2].Point2d) / 2.;
+        const gp_XY aCenter2dLink3 = (aNodesInfo[2].Point2d + aNodesInfo[0].Point2d) / 2.;
+
+        const gp_Pnt aCenter3dLink1 = getPoint3d(aCenter2dLink1);
+        const gp_Pnt aCenter3dLink2 = getPoint3d(aCenter2dLink2);
+        const gp_Pnt aCenter3dLink3 = getPoint3d(aCenter2dLink3);
+
+        std::vector<gp_XY> aCenters;
+        aCenters.push_back(aCenter2d);
+        aCenters.push_back(aCenter2dLink1);
+        aCenters.push_back(aCenter2dLink2);
+        aCenters.push_back(aCenter2dLink3);
+
+        const gp_Pnt aCenter3d = getPoint3d(aCenter2d);
+        //Standard_Real aMaxDeviation = NormalDeviation(aNodesInfo[0].Point, aNormal).SquareDeviation(aCenter3d);
+        std::vector<Standard_Real> aDevs; 
+        aDevs.push_back(NormalDeviation(aNodesInfo[0].Point, aNormal).SquareDeviation(aCenter3d));
+        aDevs.push_back(NormalDeviation(aNodesInfo[0].Point, aNormal).SquareDeviation(aCenter3dLink1));
+        aDevs.push_back(NormalDeviation(aNodesInfo[0].Point, aNormal).SquareDeviation(aCenter3dLink2));
+        aDevs.push_back(NormalDeviation(aNodesInfo[0].Point, aNormal).SquareDeviation(aCenter3dLink3));
+
+        Standard_Real aMaxDeviation = aDevs[0];
+        int a = 0;
+        if (!checkDeflectionOfPointAndUpdateCache(aCenter2d, aCenter3d, aMaxDeviation))
+        {
+          for (int i = 1; i < 4; i++)
+          {
+            if (aMaxDeviation < aDevs[i])
+            {
+              a = i;
+              aMaxDeviation = aDevs[i];
+            }
+          }
+          myControlNodes->Append(aCenters[a]);
+          //splitLinks(aNodesInfo, aNodexIndices);
+        }
+        else
+        {
+          splitLinks(aNodesInfo, aNodexIndices);
+        }
+        //splitLinks(aNodesInfo, aNodexIndices);
+
+        /*if (usePoint(aCenter2d, NormalDeviation(aNodesInfo[0].Point, aNormal)))
+        {
+          splitLinks(aNodesInfo, aNodexIndices);
+        }*/
+        /*usePoint(aCenter2d, NormalDeviation(aNodesInfo[0].Point, aNormal));
+        splitLinks(aNodesInfo, aNodexIndices);*/
       }
     }
   }
