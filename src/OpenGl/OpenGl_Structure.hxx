@@ -96,6 +96,9 @@ public:
   //! Renders the structure.
   Standard_EXPORT virtual void Render  (const Handle(OpenGl_Workspace)& theWorkspace) const;
 
+  //! Render Occluder presenation of this structure 
+  Standard_EXPORT void RenderOccluder(const Handle(OpenGl_Workspace)& theWorkspace) const;
+  
   //! Releases structure resources.
   Standard_EXPORT virtual void Release (const Handle(OpenGl_Context)& theGlCtx);
 

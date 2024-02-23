@@ -872,6 +872,98 @@ void OpenGl_LayerList::Render (const Handle(OpenGl_Workspace)& theWorkspace,
 }
 
 //=======================================================================
+//function : updateOcclusion
+//purpose  : update Occlsuion state for each struct in each layer 
+//=======================================================================
+void OpenGl_LayerList::UpdateOcclusion( const Handle(OpenGl_Workspace) & theWorkspace,
+                                        const Standard_Boolean theToDrawImmediate,
+                                        const OpenGl_FrameBuffer *theReadDrawFbo,
+                                        const OpenGl_FrameBuffer *theOitAccumFbo)
+{
+  const Handle(OpenGl_Context) &aCtx = theWorkspace->GetGlContext();
+  aCtx->core11fwd->glEnable(GL_DEPTH_TEST);
+  aCtx->core11fwd->glDepthFunc (GL_LESS);
+
+
+  // Remember global settings for glDepth mask and write mask
+  GLboolean aPrevColorMask;
+  GLboolean aPrevDepthMask;
+  aCtx->core11fwd->glGetBooleanv(GL_COLOR_WRITEMASK, &aPrevColorMask);
+  aCtx->core11fwd->glGetBooleanv(GL_DEPTH_WRITEMASK, &aPrevDepthMask);
+
+  // Turn off writing to depth and color buffers 
+  aCtx->core11fwd->glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+  aCtx->core11fwd->glDepthMask(GL_FALSE);
+
+  // Start record occlusion test computational cost  
+  const Handle(OpenGl_FrameStats) &aStats = theWorkspace->GetGlContext()->FrameStats();
+  OSD_Timer &aTimer = aStats->ActiveDataFrame().ChangeTimer( Graphic3d_FrameStatsTimer_OcclusionCulling);
+  aTimer.Start();
+
+  // Loop for all layers
+  for (NCollection_List<Handle(Graphic3d_Layer)>::Iterator aLayerIter(myLayers);
+       aLayerIter.More(); aLayerIter.Next()) {
+
+    const Handle(Graphic3d_Layer) &aLayer = aLayerIter.ChangeValue();
+
+    // Exclude frustum culled layer
+    if (aLayer->IsCulled())
+      continue;
+
+    /// TODO Change below to Graphic3d_Query
+    GLuint query_ID;
+    GLint samplesPassed;
+    
+    aCtx->core20->glGenQueries(1, &query_ID);
+
+    // Render priority list
+    const Standard_Integer aViewId = theWorkspace->View()->Identification();
+
+    for (Standard_Integer aPriorityIter = Graphic3d_DisplayPriority_Bottom; aPriorityIter <= Graphic3d_DisplayPriority_Topmost; ++aPriorityIter) 
+    {
+      const Graphic3d_IndexedMapOfStructure &aStructures = aLayer->Structures((Graphic3d_DisplayPriority)aPriorityIter);
+      for (OpenGl_Structure::StructIterator aStructIter(aStructures); aStructIter.More(); aStructIter.Next()) 
+      {
+        const OpenGl_Structure *aStruct = aStructIter.Value();  
+       
+        // Exclude view frustum culled structs
+        if (aStruct->IsCulled() || !aStruct->IsVisible(aViewId))
+          continue;
+        
+        // Begin occlusion query 
+        aCtx->core20->glBeginQuery(GL_SAMPLES_PASSED, query_ID);
+
+        // Dry rendering for conservative approximation of the complex object
+        aStruct->RenderOccluder(theWorkspace);
+
+        // End query and count no of samples 
+        aCtx->core20->glEndQuery(GL_SAMPLES_PASSED);
+        aCtx->core20->glGetQueryObjectiv(query_ID, GL_QUERY_RESULT, &samplesPassed);        
+        
+        if (samplesPassed <= 0)
+          aStruct->SetOccluded(aViewId);
+    
+        std::cout << "layerID: " << aLayer->LayerId()
+                  << " structureID: " << aStruct->Identification()
+                  << " clocation: " << aStruct->BoundingBox().Center().z()
+                  << " queryID: " << query_ID
+                  << " sample passsed : " << samplesPassed << std::endl;
+        samplesPassed=0;
+      }
+    }
+    // Release query resources
+    aCtx->core20->glDeleteQueries(1, &query_ID);
+  }
+
+  // Back to prev settings 
+  aCtx->core11fwd->glDepthMask(aPrevDepthMask);
+  aCtx->core11fwd->glColorMask(aPrevColorMask, aPrevColorMask, aPrevColorMask, aPrevColorMask);
+
+  aTimer.Stop();
+  aStats->ActiveDataFrame()[Graphic3d_FrameStatsTimer_CpuCulling] = aTimer.UserTimeCPU();
+}
+
+//=======================================================================
 //function : renderTransparent
 //purpose  : Render transparent objects using blending operator.
 //=======================================================================

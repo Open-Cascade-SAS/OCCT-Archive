@@ -13992,6 +13992,70 @@ static int VChangeMouseGesture (Draw_Interpretor&,
   return 0;
 }
 
+//==============================================================================
+//function : VOccluded
+//purpose  : Returns number of Occluded objects
+//==============================================================================
+static Standard_Integer VNbOccluded(Draw_Interpretor & /*theDi*/,
+                                  Standard_Integer theArgNb,
+                                  const char **theArgVec) {
+  NCollection_List<TCollection_AsciiString> aViewList;
+  if (theArgNb > 1)
+  {
+    TCollection_AsciiString anArg (theArgVec[1]);
+    anArg.UpperCase();
+    if (anArg.IsEqual ("ALL")
+     || anArg.IsEqual ("*"))
+    {
+      for (ViewerTest_ViewerCommandsViewMap::Iterator anIter (ViewerTest_myViews);
+           anIter.More(); anIter.Next())
+      {
+        aViewList.Append (anIter.Key1());
+      }
+      if (aViewList.IsEmpty())
+      {
+        std::cout << "No views available\n";
+        return 0;
+      }
+    }
+    else
+    {
+      ViewerTest_Names aViewName (theArgVec[1]);
+      if (!ViewerTest_myViews.IsBound1 (aViewName.GetViewName()))
+      {
+        Message::SendFail() << "Error: the view with name '" << theArgVec[1] << "' does not exist";
+        return 1;
+      }
+      aViewList.Append (aViewName.GetViewName());
+    }
+  }
+  else
+  {
+    // query from the active view
+    if (ViewerTest::CurrentView().IsNull())
+    {
+      Message::SendFail ("Error: no active view");
+      return 1;
+    }
+    aViewList.Append (ViewerTest_myViews.Find2 (ViewerTest::CurrentView()));
+  }
+
+  for (NCollection_List<TCollection_AsciiString>::Iterator anIter(aViewList);
+       anIter.More(); anIter.Next()) {
+    Handle(V3d_View) aView = ViewerTest_myViews.Find1(anIter.Value());
+    aView->ChangeRenderingParams().OcculsionQueryState = Graphic3d_RenderingParams::OcculsionQuery_NoUpdate;
+    aView->Redraw();
+    
+    Graphic3d_MapOfStructure aOcculdedStructs;
+    aView->View()->OccludedStructures(aOcculdedStructs);
+
+    printf("No Occluded Objects in view id: %d --> %d\n",
+           aView->View()->Identification(), aOcculdedStructs.Extent());
+  }
+
+  return 0;
+}
+
 //=======================================================================
 //function : ViewerTest_ExitProc
 //purpose  :
@@ -15018,4 +15082,9 @@ Changes the gesture for the mouse button.
  -button  the mouse button;
  -gesture the new gesture for the button.
 )" /* [vchangemousegesture] */);
+
+  addCmd("vnboccluded", VNbOccluded, /* [vnboccluded] */ R"(
+vnboccluded  ALL - print nb of occluded objects for all created views
+vnboccluded [view_id] print nb of occluded objects for specified view_id  . 
+)" /* [vnboccluded] */);
 }

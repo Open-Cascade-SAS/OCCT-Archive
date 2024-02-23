@@ -22,6 +22,7 @@
 #include <Graphic3d_ViewAffinity.hxx>
 #include <Graphic3d_TransformPers.hxx>
 #include <Graphic3d_ZLayerId.hxx>
+#include <Graphic3d_ViewOcclusionMask.hxx>
 #include <TopLoc_Datum3D.hxx>
 #include <NCollection_IndexedMap.hxx>
 
@@ -164,6 +165,17 @@ public:
   //! The method is called during traverse of BVH tree.
   void MarkAsNotCulled() const { myIsCulled = Standard_False; }
 
+  //! Returns True if the structure occulded in specified view, otherwise
+  //! returns False.
+  Standard_Boolean IsOccluded(const Standard_Integer theViewId) const {
+    return (!OcclusionMask->IsVisible(theViewId));
+  }
+
+  //! Marks structure as Occluded by other strcuture in specified view,!
+  void SetOccluded(const Standard_Integer theViewId) const {
+    OcclusionMask->SetVisible(Standard_False, theViewId);
+  }
+
   //! Returns whether check of object's bounding box clipping is enabled before drawing of object; TRUE by default.
   Standard_Boolean BndBoxClipCheck() const { return myBndBoxClipCheck; }
 
@@ -218,6 +230,7 @@ public:
 public:
 
   Handle(Graphic3d_ViewAffinity) ViewAffinity; //!< view affinity mask
+  Handle(Graphic3d_ViewOcclusionMask) OcclusionMask; //!< view occlusion mask
 
 protected:
 

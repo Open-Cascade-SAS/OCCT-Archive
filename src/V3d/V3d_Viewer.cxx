@@ -879,6 +879,7 @@ void V3d_Viewer::ShowGridEcho (const Handle(V3d_View)& theView,
   myGridEchoStructure->CStructure()->ViewAffinity = new Graphic3d_ViewAffinity();
   myGridEchoStructure->CStructure()->ViewAffinity->SetVisible (Standard_False);
   myGridEchoStructure->CStructure()->ViewAffinity->SetVisible (theView->View()->Identification(), true);
+  myGridEchoStructure->CStructure()->OcclusionMask = new Graphic3d_ViewOcclusionMask();
   myGridEchoStructure->Display();
 }
 

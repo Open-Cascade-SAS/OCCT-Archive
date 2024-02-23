@@ -1,0 +1,29 @@
+puts "=============================================================================================="
+puts "CR33607: Visualization - Test occlusion query on two boxes using two orthographic projections"
+puts "=============================================================================================="
+
+pload MODELING VISUALIZATION
+vclear
+vclose ALL
+
+box b 10 10 10
+box c 12 0 0 10 10 10
+
+# check left side
+vinit name=View1
+vsetdispmode 1
+vdisplay b c
+vright
+vfit
+vzoom 0.5
+
+# check front side
+vinit name=View2
+vsetdispmode 1
+vdisplay b c
+vfront
+vfit
+
+#run occlusion query for each view 
+vnboccluded View1
+vnboccluded View2

@@ -65,6 +65,7 @@ void Graphic3d_RenderingParams::DumpJson (Standard_OStream& theOStream, Standard
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, CameraApertureRadius)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, CameraFocalPlaneDist)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, FrustumCullingState)
+  OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, OcculsionQueryState)
   
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, ToneMappingMethod)
   OCCT_DUMP_FIELD_VALUE_NUMERICAL (theOStream, Exposure)

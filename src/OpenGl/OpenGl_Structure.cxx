@@ -627,6 +627,17 @@ void OpenGl_Structure::Render (const Handle(OpenGl_Workspace) &theWorkspace) con
 }
 
 // =======================================================================
+// function : RenderOccluder 
+// purpose  : 
+// =======================================================================
+void OpenGl_Structure::RenderOccluder(const Handle(OpenGl_Workspace)& theWorkspace) const 
+{
+  const Handle(OpenGl_Context) &aCtx = theWorkspace->GetGlContext();
+  aCtx->ApplyModelViewMatrix();
+  renderBoundingBox(theWorkspace);
+}
+
+// =======================================================================
 // function : Release
 // purpose  :
 // =======================================================================

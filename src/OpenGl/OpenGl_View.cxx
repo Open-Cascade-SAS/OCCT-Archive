@@ -1766,7 +1766,7 @@ void OpenGl_View::Redraw()
     aCtx->SetReadDrawBuffer (aStereoMode == Graphic3d_StereoMode_QuadBuffer ? GL_BACK_LEFT : GL_BACK);
     aCtx->SetResolution (myRenderParams.Resolution, myRenderParams.ResolutionRatio(),
                          aMainFbos[0] != NULL ? myRenderParams.RenderResolutionScale : 1.0f);
-
+    
     redraw (Graphic3d_Camera::Projection_MonoLeftEye, aMainFbos[0], aMainFbosOit[0]);
     myBackBufferRestored = Standard_True;
     myIsImmediateDrawn   = Standard_False;
@@ -2129,8 +2129,8 @@ void OpenGl_View::redraw (const Graphic3d_Camera::Projection theProjection,
   aCtx->core11fwd->glClearColor (aBgColor.r(), aBgColor.g(), aBgColor.b(), aCtx->caps->buffersOpaqueAlpha ? 1.0f : 0.0f);
   aCtx->core11fwd->glClear (toClear);
   aCtx->SetColorMask (true); // restore default alpha component write state
-
-  render (theProjection, theReadDrawFbo, theOitAccumFbo, Standard_False);
+  
+    render (theProjection, theReadDrawFbo, theOitAccumFbo, Standard_False);
 }
 
 // =======================================================================
@@ -2407,6 +2407,10 @@ void OpenGl_View::render (Graphic3d_Camera::Projection theProjection,
   {
     myAccumFrames = 0;
     myWorldViewProjState = aWVPState;
+
+    // Invalidiate occlusion query if camera has changed.
+    if (myRenderParams.OcculsionQueryState == Graphic3d_RenderingParams::OcculsionQuery_On)
+      myRenderParams.OcculsionQueryState = Graphic3d_RenderingParams::OcculsionQuery_NoUpdate;
   }
 
   myLocalOrigin.SetCoord (0.0, 0.0, 0.0);
@@ -2535,6 +2539,19 @@ void OpenGl_View::InvalidateBVHData (const Graphic3d_ZLayerId theLayerId)
 }
 
 //=======================================================================
+//function : updateOcclusionState
+//purpose  :
+//=======================================================================
+void OpenGl_View::updateOcclusion(OpenGl_FrameBuffer*          theReadDrawFbo,
+                                  OpenGl_FrameBuffer*          theOitAccumFbo,
+                                  const Standard_Boolean       theToDrawImmediate)
+{
+  myZLayers.UpdateOcclusion(myWorkspace, theToDrawImmediate,theReadDrawFbo, theOitAccumFbo);
+ 
+  // re-validate occlusion results  
+  myRenderParams.OcculsionQueryState = Graphic3d_RenderingParams::OcculsionQuery_On;
+}
+//=======================================================================
 //function : renderStructs
 //purpose  :
 //=======================================================================
@@ -2547,12 +2564,16 @@ void OpenGl_View::renderStructs (Graphic3d_Camera::Projection theProjection,
   {
     return;
   }
-
+    
   myZLayers.UpdateCulling (myWorkspace, theToDrawImmediate);
   if (myZLayers.NbStructures() <= 0)
   {
     return;
   }
+
+  // update occlusion here after update culling to ensure the frusrum culling updated
+  if (myRenderParams.OcculsionQueryState == Graphic3d_RenderingParams::OcculsionQuery_NoUpdate)
+    updateOcclusion(theReadDrawFbo, theOitAccumFbo, theToDrawImmediate);
 
   Handle(OpenGl_Context) aCtx = myWorkspace->GetGlContext();
   Standard_Boolean toRenderGL = theToDrawImmediate ||
