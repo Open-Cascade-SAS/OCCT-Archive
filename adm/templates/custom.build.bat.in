@@ -14,6 +14,7 @@ if /I "%VCVER%" == "@COMPILER@" (
     set "TBB_DIR=@3RDPARTY_TBB_DLL_DIR@"
     set "VTK_DIR=@3RDPARTY_VTK_DLL_DIR@"
     set "FFMPEG_DIR=@3RDPARTY_FFMPEG_DLL_DIR@"
+    set "JEMALLOC_DIR=@3RDPARTY_JEMALLOC_LIBRARY_DIR@"
     set "OPENVR_DIR=@3RDPARTY_OPENVR_DLL_DIRS@"
 
     if not "@3RDPARTY_QT_DIR@" == "" (
@@ -40,7 +41,7 @@ if /I "%VCVER%" == "@COMPILER@" (
     set "CSF_OCCTTestsPath=@CMAKE_SOURCE_DIR@/tests"
     set "CSF_OCCTDocPath=@CMAKE_SOURCE_DIR@/doc"
 
-    rem for compatability with external application using CASROOT
+    rem for compatibility with external application using CASROOT
     set "CASROOT=@CMAKE_SOURCE_DIR@"
   ) 
 )
