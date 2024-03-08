@@ -11,9 +11,12 @@ set(FLAGS_ALREADY_INCLUDED 1)
 # project can be switched later to use Intel Compiler (ICC).
 # Enforcing -fp:precise ensures that in such case ICC will use correct
 # option instead of its default -fp:fast which is harmful for OCCT.
+# Enforcing OMP only for internal test env
 if (MSVC)
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:precise")
   set (CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   /fp:precise")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+  set (CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   /openmp")
 endif()
 
 # add SSE2 option for old MSVC compilers (VS 2005 - 2010, 32 bit only)

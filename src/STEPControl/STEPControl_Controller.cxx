@@ -217,6 +217,12 @@ STEPControl_Controller::STEPControl_Controller ()
     Interface_Static::Init("step", "read.step.root.transformation", '&', "eval OFF");
     Interface_Static::SetCVal("read.step.root.transformation", "ON");
 
+    Interface_Static::Init("step", "read.step.parallel.healing", 'e', "");
+    Interface_Static::Init("step", "read.step.parallel.healing", '&', "enum 0");
+    Interface_Static::Init("step", "read.step.parallel.healing", '&', "eval ON");
+    Interface_Static::Init("step", "read.step.parallel.healing", '&', "eval OFF");
+    Interface_Static::SetCVal("read.step.parallel.healing", "ON");
+
     // STEP file encoding for names translation
     // Note: the numbers should be consistent with Resource_FormatType enumeration
     Interface_Static::Init("step", "read.step.codepage", 'e', "");
