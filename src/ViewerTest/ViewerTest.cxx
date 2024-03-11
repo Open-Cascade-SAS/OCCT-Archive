@@ -1713,6 +1713,11 @@ struct ViewerTest_AspectsChangeSet
   Standard_Integer             ToSetTypeOfFaceBoundaryLine;
   Aspect_TypeOfLine            TypeOfFaceBoundaryLine;
 
+  Standard_Integer             ToSetFaceBoundaryShading;
+  Standard_Integer             ToFaceBoundaryEdgeColorOverride;
+  Graphic3d_TypeOfShadingModel FaceBoundaryShading;
+  TCollection_AsciiString      FaceBoundaryShadingModelName;
+
   Standard_Integer             ToSetMaxParamValue;
   Standard_Real                MaxParamValue;
 
@@ -1787,6 +1792,9 @@ struct ViewerTest_AspectsChangeSet
     FaceBoundaryWidth          (1.0f),
     ToSetTypeOfFaceBoundaryLine(0),
     TypeOfFaceBoundaryLine     (Aspect_TOL_SOLID),
+    ToSetFaceBoundaryShading   (0),
+    ToFaceBoundaryEdgeColorOverride (0),
+    FaceBoundaryShading        (Graphic3d_TypeOfShadingModel_DEFAULT),
     //
     ToSetMaxParamValue         (0),
     MaxParamValue              (500000),
@@ -1828,6 +1836,7 @@ struct ViewerTest_AspectsChangeSet
         && ToSetFaceBoundaryUpperContinuity == 0
         && ToSetFaceBoundaryColor == 0
         && ToSetFaceBoundaryWidth == 0
+        && ToSetFaceBoundaryShading == 0
         && ToSetTypeOfFaceBoundaryLine == 0
         && ToSetMaxParamValue     == 0
         && ToSetSensitivity       == 0
@@ -1873,6 +1882,12 @@ struct ViewerTest_AspectsChangeSet
      || FreeBoundaryWidth >  10.0)
     {
       Message::SendFail() << "Error: the free boundary width should be within [1; 10] range (specified " << FreeBoundaryWidth << ")";
+      isOk = Standard_False;
+    }
+    if (ToSetFaceBoundaryShading == 1
+      && (FaceBoundaryShading < Graphic3d_TypeOfShadingModel_DEFAULT || FaceBoundaryShading > Graphic3d_TypeOfShadingModel_PbrFacet))
+    {
+      Message::SendFail() << "Error: unknown face boundary shading model " << FaceBoundaryShadingModelName << ".";
       isOk = Standard_False;
     }
     if (MaxParamValue < 0.0)
@@ -2032,6 +2047,16 @@ struct ViewerTest_AspectsChangeSet
       {
         toRecompute = theDrawer->SetupOwnFaceBoundaryAspect (aDefDrawer) || toRecompute;
         theDrawer->FaceBoundaryAspect()->SetWidth (FaceBoundaryWidth);
+      }
+    }
+    if (ToSetFaceBoundaryShading != 0)
+    {
+      if (ToSetFaceBoundaryShading != -1
+        || theDrawer->HasOwnFaceBoundaryAspect())
+      {
+        toRecompute = theDrawer->SetupOwnFaceBoundaryAspect (aDefDrawer) || toRecompute;
+        theDrawer->FaceBoundaryAspect()->Aspect()->SetShadingModel (FaceBoundaryShading);
+        theDrawer->SetFaceBoundaryShadingOverride (ToFaceBoundaryEdgeColorOverride);
       }
     }
     if (ToSetTypeOfFaceBoundaryLine != 0)
@@ -2389,6 +2414,17 @@ static Standard_Integer VAspects (Draw_Interpretor& theDI,
     if (aNames.Size() >= 2
      && aNames.Value (2).IsIntegerValue())
     {
+      if (aNames.Size() == 9 && aNames.Value (9).IsIntegerValue())
+      {
+        if (ViewerTest::ParseShadingModel (aNames.Value (8).ToCString(), aChangeSet->FaceBoundaryShading)
+         && (aNames.Value (9).IsIntegerValue() == 0 || aNames.Value (9).IsIntegerValue() == 1))
+        {
+          aChangeSet->ToSetFaceBoundaryShading = 1;
+          aChangeSet->ToFaceBoundaryEdgeColorOverride = aNames.Value (9).IsIntegerValue();
+          aNames.Remove (9);
+          aNames.Remove (8);
+        }
+      }
       if (aNames.Size() == 7)
       {
         if (ViewerTest::ParseLineType (aNames.Value (7).ToCString(), aChangeSet->TypeOfFaceBoundaryLine))
@@ -3148,6 +3184,29 @@ static Standard_Integer VAspects (Draw_Interpretor& theDI,
       aChangeSet->ToSetShadingModel = -1;
       aChangeSet->ShadingModel = Graphic3d_TypeOfShadingModel_DEFAULT;
     }
+    else if (anArg == "-setboundaryshading")
+    {
+      aChangeSet->ToSetFaceBoundaryShading = 1;
+      aChangeSet->FaceBoundaryShadingModelName = theArgVec[++anArgIter];
+      if (!ViewerTest::ParseShadingModel (theArgVec[anArgIter], aChangeSet->FaceBoundaryShading))
+      {
+        Message::SendFail() << "Error: wrong syntax at " << anArg;
+        return 1;
+      }
+      Standard_Integer anOverrideFlag = Draw::Atoi (theArgVec[++anArgIter]);
+      if (!(anOverrideFlag == 0 || anOverrideFlag == 1))
+      {
+        Message::SendFail() << "Error: wrong syntax at " << anArg;
+        return 1;
+      }
+      aChangeSet->ToFaceBoundaryEdgeColorOverride = anOverrideFlag;
+    }
+    else if (anArg == "-unsetboundaryshading")
+    {
+      aChangeSet->ToSetFaceBoundaryShading = -1;
+      aChangeSet->ToFaceBoundaryEdgeColorOverride = 0;
+      aChangeSet->FaceBoundaryShading = Graphic3d_TypeOfShadingModel_Unlit;
+      }
     else if (anArg == "-setinterior"
           || anArg == "-setinteriorstyle"
           || anArg == "-interior"
@@ -3272,6 +3331,8 @@ static Standard_Integer VAspects (Draw_Interpretor& theDI,
       aChangeSet->FaceBoundaryWidth = 1.0f;
       aChangeSet->ToSetTypeOfFaceBoundaryLine = -1;
       aChangeSet->TypeOfFaceBoundaryLine = Aspect_TOL_SOLID;
+      aChangeSet->ToSetFaceBoundaryShading = -1;
+      aChangeSet->FaceBoundaryShading = Graphic3d_TypeOfShadingModel_DEFAULT;
       //
       aChangeSet->ToSetHatch = -1;
       aChangeSet->StdHatchStyle = -1;
@@ -6804,6 +6865,8 @@ vaspects [-noupdate|-update] [name1 [name2 [...]] | -defaults] [-subshapes subna
          [-sensitivity {selection_mode} {value}]
          [-shadingModel {unlit|flat|gouraud|phong|pbr|pbr_facet}]
            [-unsetShadingModel]
+         [-setboundaryshading {unlit|flat|gouraud|phong|pbr|pbr_facet}]
+           [-unsetboundaryshading]
          [-interior {solid|hatch|hidenline|point}] [-setHatch HatchStyle]
            [-unsetInterior]
          [-faceBoundaryDraw {0|1}] [-mostContinuity {c0|g1|c1|g2|c2|c3|cn}]

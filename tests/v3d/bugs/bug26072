@@ -1,0 +1,40 @@
+puts "========"
+puts "0026072: Visualization - more realistic display of face edges"
+puts "========"
+
+pload MODELING VISUALIZATION XDE
+testreadstep [locate_data_file as1-oc-214-mat.stp] s
+vclear 
+vinit
+vdisplay s -dispmode 1
+vfit
+vshowfaceboundary s -setboundaryshading phong 1 -boundarycolor 50 250 50
+vviewparams -scale 4.0 -proj 1.0 1.0 1.0 -up -1.0 -1.0 0.0 -at 20.0 0.0 -20.0
+vdump $::imagedir/${::casename}_shading_1.png
+vviewparams -scale 4.0 -proj 2.0 -1.5 3.0 -up 0.0 1.0 1.0 -at 20.0 130.0 -50.0
+vdump $::imagedir/${::casename}_shading_2.png
+
+vshowfaceboundary s -setboundaryshading phong 0 -boundarycolor 50 250 50
+vviewparams -scale 4.0 -proj 1.0 1.0 1.0 -up -1.0 -1.0 0.0 -at 20.0 0.0 -20.0
+vdump $::imagedir/${::casename}_noshading_1.png
+vviewparams -scale 4.0 -proj 2.0 -1.5 3.0 -up 0.0 1.0 1.0 -at 20.0 130.0 -50.0
+vdump $::imagedir/${::casename}_noshading_2.png
+
+vclear
+vclose
+ReadStep D [locate_data_file as1-oc-214-mat.stp]
+XShow D
+vfit
+vsetdispmode 1
+
+XShowFaceBoundary D 0:1:1:1 1 156 156 156 1 0 phong 1
+vviewparams -scale 4.0 -proj 1.0 1.0 1.0 -up -1.0 -1.0 0.0 -at 20.0 0.0 -20.0
+vdump $::imagedir/${::casename}_xview_shading_1.png
+vviewparams -scale 4.0 -proj 2.0 -1.5 3.0 -up 0.0 1.0 1.0 -at 20.0 130.0 -50.0
+vdump $::imagedir/${::casename}_xview_shading_2.png
+
+XShowFaceBoundary D 0:1:1:1 1 156 156 156 1 0 phong 0
+vviewparams -scale 4.0 -proj 1.0 1.0 1.0 -up -1.0 -1.0 0.0 -at 20.0 0.0 -20.0
+vdump $::imagedir/${::casename}_xview_noshading_1.png
+vviewparams -scale 4.0 -proj 2.0 -1.5 3.0 -up 0.0 1.0 1.0 -at 20.0 130.0 -50.0
+vdump $::imagedir/${::casename}_xview_noshading_2.png

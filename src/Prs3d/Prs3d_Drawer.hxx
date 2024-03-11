@@ -772,6 +772,17 @@ public:
     myFaceBoundaryDraw = false;
   }
 
+  //! Return flag value for boundary shading edge color override
+  Standard_Boolean FaceBoundaryShadingOverride() const
+  {
+    return myHasOwnFaceBoundaryDraw || myLink.IsNull()
+      ? myFaceBoundaryShadingOverride
+      : myLink->FaceBoundaryShadingOverride();
+  }
+  
+  //! Return flag value for boundary shading edge color override
+  void SetFaceBoundaryShadingOverride (Standard_Boolean theFlag) { myFaceBoundaryShadingOverride = theFlag; }
+
   //! Returns true if the drawer has its own attribute for face boundaries upper edge continuity class that overrides the one in the link.
   Standard_Boolean HasOwnFaceBoundaryUpperContinuity() const { return myFaceBoundaryUpperContinuity != -1; }
 
@@ -1008,6 +1019,7 @@ protected:
   Standard_Integer              myFaceBoundaryUpperContinuity; //!< the most edge continuity class (GeomAbs_Shape) to be included to face boundaries presentation, or -1 if undefined
   Standard_Boolean              myFaceBoundaryDraw;
   Standard_Boolean              myHasOwnFaceBoundaryDraw;
+  Standard_Boolean              myFaceBoundaryShadingOverride;
 
   Handle(Prs3d_DimensionAspect) myDimensionAspect;
   Prs3d_DimensionUnits          myDimensionModelUnits;

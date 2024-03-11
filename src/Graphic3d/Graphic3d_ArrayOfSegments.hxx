@@ -54,11 +54,16 @@ public:
   //! @param theMaxVertexs defines the maximum allowed vertex number in the array
   //! @param theMaxEdges   defines the maximum allowed edge   number in the array
   //! @param theHasVColors when TRUE, AddVertex(Point,Color) should be used for specifying vertex color
+  //! @param theHasVNormals when TRUE,  AddVertex(Point,Normal) or AddVertex(Point,Normal,Color) should be used to specify vertex normal;
+  //!                       vertex normals should be specified coherent to the edge's neighbour triangle face's orientation
+  //!                       (defined by order of vertexes within triangle) for proper rendering
   Graphic3d_ArrayOfSegments (Standard_Integer theMaxVertexs,
-                             Standard_Integer theMaxEdges   = 0,
-                             Standard_Boolean theHasVColors = Standard_False)
-  : Graphic3d_ArrayOfPrimitives (Graphic3d_TOPA_SEGMENTS, theMaxVertexs, 0, theMaxEdges, theHasVColors ? Graphic3d_ArrayFlags_VertexColor : Graphic3d_ArrayFlags_None) {}
-
+                             Standard_Integer theMaxEdges = 0,
+                             Standard_Boolean theHasVColors = Standard_False,
+                             Standard_Boolean theHasVNormals = Standard_False)
+  : Graphic3d_ArrayOfPrimitives (Graphic3d_TOPA_SEGMENTS, theMaxVertexs, 0, theMaxEdges,
+                                 (theHasVNormals ? Graphic3d_ArrayFlags_VertexNormal : Graphic3d_ArrayFlags_None)
+                               | (theHasVColors  ? Graphic3d_ArrayFlags_VertexColor  : Graphic3d_ArrayFlags_None)) {}
 
 };
 

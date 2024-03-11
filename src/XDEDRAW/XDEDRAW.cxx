@@ -1197,7 +1197,7 @@ static Standard_Integer XShowFaceBoundary (Draw_Interpretor& di,
                                            Standard_Integer argc,
                                            const char ** argv)
 {
-  if (( argc != 4 && argc < 7 ) || argc > 9)
+  if (( argc != 4 && argc < 7 ) || argc > 11)
   {
     di << "Usage :\n " << argv[0]
        << " Doc Label IsOn [R G B [LineWidth [LineStyle]]]\n"
@@ -1216,7 +1216,11 @@ static Standard_Integer XShowFaceBoundary (Draw_Interpretor& di,
        << "                 1 - dashed \n"
        << "                 2 - dot    \n"
        << "                 3 - dashdot\n"
-       << "                (default is solid)";
+       << "                (default is solid)\n"
+       << "   Shading   - flag indicating if the boundaries\n"
+       << "               should be shaded:"
+       << "                 0 - no override edge color"
+       << "                 1 - override edge color";
 
     return 1;
   }
@@ -1309,6 +1313,17 @@ static Standard_Integer XShowFaceBoundary (Draw_Interpretor& di,
     new Prs3d_LineAspect (aColor, aLineType, aWidth);
 
   aDrawer->SetFaceBoundaryAspect (aBoundaryAspect);
+
+  // set shading properties for face boundaries
+  if (argc == 11)
+  {
+    Graphic3d_TypeOfShadingModel aShadingModel;
+    if (ViewerTest::ParseShadingModel (argv[9], aShadingModel))
+    {
+      aDrawer->FaceBoundaryAspect()->Aspect()->SetShadingModel (aShadingModel);
+      aDrawer->SetFaceBoundaryShadingOverride (Draw::Atoi (argv[10]) == 1 ? Standard_True : Standard_False);
+    }
+  }
 
   aContext->Redisplay (anInteractive, Standard_True);
   

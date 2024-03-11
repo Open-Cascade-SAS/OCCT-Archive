@@ -636,12 +636,22 @@ void AIS_ColoredShape::addShapesWithCustomProps (const Handle(Prs3d_Presentation
         {
           if (Handle(Graphic3d_ArrayOfSegments) aBndSegments = StdPrs_ShadedShape::FillFaceBoundaries (aShapeDraw, aDrawer->FaceBoundaryUpperContinuity()))
           {
-            if (anEdgesGroup.IsNull())
+            Handle(Graphic3d_AspectLine3d) aLineAspect = aDrawer->FaceBoundaryAspect()->Aspect();
+            if (aDrawer->FaceBoundaryShadingOverride())
+            {
+              Quantity_Color aColor = aDrawer->Color();
+              if (aDrawer->HasOwnShadingAspect())
+              {
+                aColor = aDrawer->ShadingAspect()->Color();
+              }
+              aLineAspect->SetColor (aColor);
+              anEdgesGroup = thePrs->NewGroup();
+            }
+            else if (anEdgesGroup.IsNull())
             {
               anEdgesGroup = thePrs->NewGroup();
             }
-
-            anEdgesGroup->SetPrimitivesAspect (aDrawer->FaceBoundaryAspect()->Aspect());
+            anEdgesGroup->SetGroupPrimitivesAspect (aLineAspect);
             anEdgesGroup->AddPrimitiveArray (aBndSegments);
           }
         }
