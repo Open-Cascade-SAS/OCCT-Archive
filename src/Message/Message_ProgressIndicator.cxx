@@ -48,6 +48,7 @@ Message_ProgressRange Message_ProgressIndicator::Start()
   myRootScope->myValue = 0.;
   Reset();
   Show (*myRootScope, Standard_False);
+  myRootScope->myIsActive = IsActive();
   return myRootScope->Next();
 }
 

@@ -65,6 +65,11 @@ public:
   //! Clears/erases opened TCL windows if any
   //! and sets myBreak to False
   Standard_EXPORT virtual void Reset() Standard_OVERRIDE;
+
+  Standard_Boolean IsActive() const Standard_OVERRIDE
+  {
+    return myGraphMode || myTclMode || myConsoleMode;
+  }
   
   //! Defines method Show of Progress Indicator
   Standard_EXPORT virtual void Show (const Message_ProgressScope& theScope, 

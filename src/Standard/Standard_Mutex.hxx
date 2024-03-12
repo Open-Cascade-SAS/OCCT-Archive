@@ -29,6 +29,8 @@
   #include <time.h>
 #endif
 
+#include <mutex>
+
 /** 
   * @brief Mutex: a class to synchronize access to shared data. 
   *
@@ -122,9 +124,9 @@ public:
     }
 
     //! This method should not be called (prohibited).
-    Sentry (const Sentry &);
+    Sentry (const Sentry &) = delete;
     //! This method should not be called (prohibited).
-    Sentry& operator = (const Sentry &);
+    Sentry& operator = (const Sentry &) = delete;
 
   private:
     Standard_Mutex* myMutex;
@@ -135,22 +137,22 @@ public:
   //! Constructor: creates a mutex object and initializes it.
   //! It is strongly recommended that mutexes were created as 
   //! static objects whenever possible.
-  Standard_EXPORT Standard_Mutex ();
+  Standard_Mutex() {};
   
   //! Destructor: destroys the mutex object
-  Standard_EXPORT ~Standard_Mutex ();
+  ~Standard_Mutex() {};
   
   //! Method to lock the mutex; waits until the mutex is released
   //! by other threads, locks it and then returns
-  Standard_EXPORT void Lock ();
+  void Lock() { myMutex.lock(); }
 
   //! Method to test the mutex; if the mutex is not hold by other thread,
   //! locks it and returns True; otherwise returns False without waiting
   //! mutex to be released.
-  Standard_EXPORT Standard_Boolean TryLock ();
+  Standard_Boolean TryLock () { return myMutex.try_lock(); }
 
   //! Method to unlock the mutex; releases it to other users
-  void Unlock ();
+  void Unlock() { myMutex.unlock(); }
 
 private:
 
@@ -158,29 +160,14 @@ private:
   Standard_EXPORT virtual void DestroyCallback() Standard_OVERRIDE;
   
   //! This method should not be called (prohibited).
-  Standard_Mutex (const Standard_Mutex &);
+  Standard_Mutex (const Standard_Mutex &) = delete;
   //! This method should not be called (prohibited).
-  Standard_Mutex& operator = (const Standard_Mutex &);
+  Standard_Mutex& operator = (const Standard_Mutex &) = delete;
   
 private:
-#if (defined(_WIN32) || defined(__WIN32__))
-  CRITICAL_SECTION myMutex;
-#else
-  pthread_mutex_t myMutex;
-#endif  
+  std::recursive_mutex myMutex;
 };
 
 typedef NCollection_Shared<Standard_Mutex> Standard_HMutex;
-
-// Implementation of the method Unlock is inline, since it is 
-// just a shortcut to system function
-inline void Standard_Mutex::Unlock ()
-{
-#if (defined(_WIN32) || defined(__WIN32__))
-  LeaveCriticalSection (&myMutex);
-#else
-  pthread_mutex_unlock (&myMutex);
-#endif
-}
 
 #endif /* _Standard_Mutex_HeaderFile */

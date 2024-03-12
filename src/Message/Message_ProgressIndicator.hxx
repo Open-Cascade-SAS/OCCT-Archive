@@ -67,6 +67,8 @@ public:
   //! Use this method to get the top level range for progress indication.
   Standard_EXPORT Message_ProgressRange Start();
 
+  virtual Standard_Boolean IsActive() const { return true; }
+
   //! If argument is non-null handle, returns theProgress->Start().
   //! Otherwise, returns dummy range that can be safely used in the algorithms
   //! but not bound to progress indicator.
