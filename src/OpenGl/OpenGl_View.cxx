@@ -2542,11 +2542,9 @@ void OpenGl_View::InvalidateBVHData (const Graphic3d_ZLayerId theLayerId)
 //function : updateOcclusionState
 //purpose  :
 //=======================================================================
-void OpenGl_View::updateOcclusion(OpenGl_FrameBuffer*          theReadDrawFbo,
-                                  OpenGl_FrameBuffer*          theOitAccumFbo,
-                                  const Standard_Boolean       theToDrawImmediate)
+void OpenGl_View::UpdateOcclusion()
 {
-  myZLayers.UpdateOcclusion(myWorkspace, theToDrawImmediate,theReadDrawFbo, theOitAccumFbo);
+  myZLayers.UpdateOcclusion(myWorkspace);
  
   // re-validate occlusion results  
   myRenderParams.OcculsionQueryState = Graphic3d_RenderingParams::OcculsionQuery_On;
@@ -2573,7 +2571,7 @@ void OpenGl_View::renderStructs (Graphic3d_Camera::Projection theProjection,
 
   // update occlusion here after update culling to ensure the frusrum culling updated
   if (myRenderParams.OcculsionQueryState == Graphic3d_RenderingParams::OcculsionQuery_NoUpdate)
-    updateOcclusion(theReadDrawFbo, theOitAccumFbo, theToDrawImmediate);
+    UpdateOcclusion();
 
   Handle(OpenGl_Context) aCtx = myWorkspace->GetGlContext();
   Standard_Boolean toRenderGL = theToDrawImmediate ||

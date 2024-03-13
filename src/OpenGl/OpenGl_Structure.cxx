@@ -103,7 +103,8 @@ OpenGl_Structure::OpenGl_Structure (const Handle(Graphic3d_StructureManager)& th
   myInstancedStructure (NULL),
   myIsRaytracable      (Standard_False),
   myModificationState  (0),
-  myIsMirrored         (Standard_False)
+  myIsMirrored         (Standard_False),
+  myQuery(new OpenGl_OcclusionQuery())
 {
   updateLayerTransformation();
 }
@@ -636,6 +637,33 @@ void OpenGl_Structure::RenderOccluder(const Handle(OpenGl_Workspace)& theWorkspa
   aCtx->ApplyModelViewMatrix();
   renderBoundingBox(theWorkspace);
 }
+// =======================================================================
+// function : OcclusionTest 
+// purpose  : 
+// =======================================================================
+void OpenGl_Structure::UpdateOcclusion(const Handle(OpenGl_Workspace)& theWorkspace) const
+{
+  const Handle(OpenGl_Context) &aCtx = theWorkspace->GetGlContext();
+  if (myQuery->GetID()==0)
+      myQuery->Create(aCtx, GL_ANY_SAMPLES_PASSED);
+
+  if(myQuery->IsResultsReady(aCtx))
+  {
+    int aResult = myQuery->GetResults(aCtx);
+    const Standard_Integer aViewId = theWorkspace->View()->Identification();
+    if (aResult<=0)
+      SetOccluionSate(aViewId, Standard_False);
+    else
+      SetOccluionSate(aViewId, Standard_True);
+  }
+
+  if(!myQuery->IsInUse())
+  {
+    myQuery->Begin(aCtx);
+    RenderOccluder(theWorkspace);
+    myQuery->End(aCtx);
+  }
+}
 
 // =======================================================================
 // function : Release
@@ -658,6 +686,8 @@ void OpenGl_Structure::ReleaseGlResources (const Handle(OpenGl_Context)& theGlCt
   {
     aGroupIter.ChangeValue()->Release (theGlCtx);
   }
+
+  myQuery->Release(theGlCtx.get());
 }
 
 //=======================================================================

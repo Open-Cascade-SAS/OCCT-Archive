@@ -25,6 +25,7 @@
 #include <OpenGl_VertexBuffer.hxx>
 #include <OpenGl_View.hxx>
 #include <OpenGl_Workspace.hxx>
+#include <OpenGl_OcclusionQuery.hxx>
 
 namespace
 {
@@ -875,11 +876,8 @@ void OpenGl_LayerList::Render (const Handle(OpenGl_Workspace)& theWorkspace,
 //function : updateOcclusion
 //purpose  : update Occlsuion state for each struct in each layer 
 //=======================================================================
-void OpenGl_LayerList::UpdateOcclusion( const Handle(OpenGl_Workspace) & theWorkspace,
-                                        const Standard_Boolean theToDrawImmediate,
-                                        const OpenGl_FrameBuffer *theReadDrawFbo,
-                                        const OpenGl_FrameBuffer *theOitAccumFbo)
-{
+void OpenGl_LayerList::UpdateOcclusion( const Handle(OpenGl_Workspace) & theWorkspace)
+{  
   const Handle(OpenGl_Context) &aCtx = theWorkspace->GetGlContext();
   aCtx->core11fwd->glEnable(GL_DEPTH_TEST);
   aCtx->core11fwd->glDepthFunc (GL_LESS);
@@ -893,7 +891,6 @@ void OpenGl_LayerList::UpdateOcclusion( const Handle(OpenGl_Workspace) & theWork
 
   // Turn off writing to depth and color buffers 
   aCtx->core11fwd->glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-  aCtx->core11fwd->glDepthMask(GL_FALSE);
 
   // Start record occlusion test computational cost  
   const Handle(OpenGl_FrameStats) &aStats = theWorkspace->GetGlContext()->FrameStats();
@@ -910,11 +907,7 @@ void OpenGl_LayerList::UpdateOcclusion( const Handle(OpenGl_Workspace) & theWork
     if (aLayer->IsCulled())
       continue;
 
-    /// TODO Change below to Graphic3d_Query
-    GLuint query_ID;
-    GLint samplesPassed;
-    
-    aCtx->core20->glGenQueries(1, &query_ID);
+    aCtx->core11fwd->glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
     // Render priority list
     const Standard_Integer aViewId = theWorkspace->View()->Identification();
@@ -930,29 +923,9 @@ void OpenGl_LayerList::UpdateOcclusion( const Handle(OpenGl_Workspace) & theWork
         if (aStruct->IsCulled() || !aStruct->IsVisible(aViewId))
           continue;
         
-        // Begin occlusion query 
-        aCtx->core20->glBeginQuery(GL_SAMPLES_PASSED, query_ID);
-
-        // Dry rendering for conservative approximation of the complex object
-        aStruct->RenderOccluder(theWorkspace);
-
-        // End query and count no of samples 
-        aCtx->core20->glEndQuery(GL_SAMPLES_PASSED);
-        aCtx->core20->glGetQueryObjectiv(query_ID, GL_QUERY_RESULT, &samplesPassed);        
-        
-        if (samplesPassed <= 0)
-          aStruct->SetOccluded(aViewId);
-    
-        std::cout << "layerID: " << aLayer->LayerId()
-                  << " structureID: " << aStruct->Identification()
-                  << " clocation: " << aStruct->BoundingBox().Center().z()
-                  << " queryID: " << query_ID
-                  << " sample passsed : " << samplesPassed << std::endl;
-        samplesPassed=0;
+        aStruct->UpdateOcclusion(theWorkspace);
       }
     }
-    // Release query resources
-    aCtx->core20->glDeleteQueries(1, &query_ID);
   }
 
   // Back to prev settings 

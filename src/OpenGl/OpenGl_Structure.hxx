@@ -21,6 +21,7 @@
 #include <OpenGl_GraphicDriver.hxx>
 #include <OpenGl_Group.hxx>
 #include <OpenGl_Workspace.hxx>
+#include <OpenGl_OcclusionQuery.hxx>
 
 #include <NCollection_List.hxx>
 
@@ -96,8 +97,11 @@ public:
   //! Renders the structure.
   Standard_EXPORT virtual void Render  (const Handle(OpenGl_Workspace)& theWorkspace) const;
 
-  //! Render Occluder presenation of this structure 
+  //! Renders occluder presenation of the structure 
   Standard_EXPORT void RenderOccluder(const Handle(OpenGl_Workspace)& theWorkspace) const;
+
+  //! Peforms occlusion test for the strcuture
+  Standard_EXPORT void UpdateOcclusion(const Handle(OpenGl_Workspace)& theWorkspace) const;
   
   //! Releases structure resources.
   Standard_EXPORT virtual void Release (const Handle(OpenGl_Context)& theGlCtx);
@@ -168,12 +172,14 @@ protected:
 protected:
 
   OpenGl_Structure*          myInstancedStructure;
-  Graphic3d_Mat4             myRenderTrsf; //!< transformation, actually used for rendering (includes Local Origin shift)
+  Graphic3d_Mat4             myRenderTrsf;                //!< transformation, actually used for rendering (includes Local Origin shift)
 
   mutable Standard_Boolean   myIsRaytracable;
   mutable Standard_Size      myModificationState;
 
-  Standard_Boolean           myIsMirrored; //!< Used to tell OpenGl to interpret polygons in clockwise order.
+  Standard_Boolean           myIsMirrored;                //!< Used to tell OpenGl to interpret polygons in clockwise order.
+
+  Handle(OpenGl_OcclusionQuery)      myQuery;             //! test the occlusion status of the structure;
 
 };
 

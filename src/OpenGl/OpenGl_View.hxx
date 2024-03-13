@@ -183,6 +183,9 @@ public:
   //! Returns additional buffers for depth peeling OIT.
   const Handle(OpenGl_DepthPeeling)& DepthPeelingFbos() const { return myDepthPeelingFbos; }
 
+  //! Perform occlusion test for the set of structures presented in the view  
+  Standard_EXPORT virtual void UpdateOcclusion()  Standard_OVERRIDE;
+
 public:
 
   //! Returns gradient background fill colors.
@@ -379,14 +382,6 @@ protected: //! @name Rendering of GL graphics (with prepared drawing buffer).
   //! Draw background (gradient / image / cubemap)
   Standard_EXPORT virtual void drawBackground (const Handle(OpenGl_Workspace)& theWorkspace,
                                                Graphic3d_Camera::Projection theProjection);
-
-  //! Update occlusion state for the set of structures presented in the view  
-  //! @param theReadDrawFbo [in] the framebuffer for rendering graphics.
-  //! @param theOitAccumFbo [in] the framebuffer for accumulating color and coverage for OIT process.
-  //! @param theToDrawImmediate [in] the flag indicates whether the rendering performs in immediate mode.
-  Standard_EXPORT virtual void updateOcclusion(OpenGl_FrameBuffer*    theReadDrawFbo,
-                                              OpenGl_FrameBuffer*    theOitAccumFbo,
-                                              const Standard_Boolean       theToDrawImmediate);
 
   //! Render set of structures presented in the view.
   //! @param theProjection [in] the projection that is used for rendering.

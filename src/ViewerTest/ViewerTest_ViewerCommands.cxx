@@ -14045,11 +14045,11 @@ static Standard_Integer VNbOccluded(Draw_Interpretor & /*theDi*/,
     Handle(V3d_View) aView = ViewerTest_myViews.Find1(anIter.Value());
     aView->ChangeRenderingParams().OcculsionQueryState = Graphic3d_RenderingParams::OcculsionQuery_NoUpdate;
     aView->Redraw();
-    
+    aView->View()->UpdateOcclusion();
     Graphic3d_MapOfStructure aOcculdedStructs;
     aView->View()->OccludedStructures(aOcculdedStructs);
 
-    printf("No Occluded Objects in view id: %d --> %d\n",
+    printf("Occluded objects in view: %d = %d\n",
            aView->View()->Identification(), aOcculdedStructs.Extent());
   }
 

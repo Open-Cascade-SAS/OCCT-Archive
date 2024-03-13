@@ -132,6 +132,9 @@ public:
 
   //! Returns number of occluded strcutures in the view
   Standard_EXPORT void OccludedStructures(Graphic3d_MapOfStructure& theStructures) const;
+ 
+  //! update occlusion test for dispalyed strcutures in the view
+  Standard_EXPORT virtual void UpdateOcclusion() = 0 ;
 
   //! Returns number of displayed structures in the view.
   virtual Standard_Integer NumberOfDisplayedStructures() const { return myStructsDisplayed.Extent(); }

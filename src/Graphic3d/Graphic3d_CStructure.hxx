@@ -167,13 +167,15 @@ public:
 
   //! Returns True if the structure occulded in specified view, otherwise
   //! returns False.
-  Standard_Boolean IsOccluded(const Standard_Integer theViewId) const {
+  Standard_Boolean IsOccluded(const Standard_Integer theViewId) const 
+  {
     return (!OcclusionMask->IsVisible(theViewId));
   }
 
   //! Marks structure as Occluded by other strcuture in specified view,!
-  void SetOccluded(const Standard_Integer theViewId) const {
-    OcclusionMask->SetVisible(Standard_False, theViewId);
+  void SetOccluionSate(const Standard_Integer theViewId, const bool theIsVisible) const 
+  {
+    OcclusionMask->SetVisible(theViewId, !theIsVisible);
   }
 
   //! Returns whether check of object's bounding box clipping is enabled before drawing of object; TRUE by default.
@@ -229,8 +231,8 @@ public:
 
 public:
 
-  Handle(Graphic3d_ViewAffinity) ViewAffinity; //!< view affinity mask
-  Handle(Graphic3d_ViewOcclusionMask) OcclusionMask; //!< view occlusion mask
+  Handle(Graphic3d_ViewAffinity) ViewAffinity;        //!< view affinity mask
+  Handle(Graphic3d_ViewOcclusionMask) OcclusionMask;  //!< view occlusion mask
 
 protected:
 
