@@ -42,9 +42,16 @@
 
 #include <stdio.h>
 
+#include <Standard_Mutex.hxx>
+
 #ifdef OCCT_DEBUG
 #define CHRONOMESURE
 #endif
+
+namespace
+{
+  static Standard_Mutex THE_GLOBAL_READ_MUTEX;
+}
 
 void StepFile_Interrupt(Standard_CString theErrorMessage, const Standard_Boolean theIsFail)
 {
@@ -109,7 +116,7 @@ static Standard_Integer StepFile_Read (const char* theName,
 #endif
 
   sout << "      ...    STEP File   Read    ...\n";
-
+  Standard_Mutex::Sentry aLocker(THE_GLOBAL_READ_MUTEX);
   Standard_Integer nbhead, nbrec, nbpar;
   aFileDataModel.GetFileNbR (&nbhead,&nbrec,&nbpar);  // renvoi par lex/yacc
   Handle(StepData_StepReaderData) undirec =
