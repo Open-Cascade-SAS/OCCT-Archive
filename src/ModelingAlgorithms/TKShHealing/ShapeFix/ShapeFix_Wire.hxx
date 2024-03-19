@@ -284,6 +284,9 @@ public:
   //! If <prec> is -1 then MaxTolerance() is taken.
   Standard_EXPORT bool FixConnected(const double prec = -1.0);
 
+  //! Applies FixCurves(num) to all edges in the wire
+  Standard_EXPORT Standard_Boolean FixCurves();
+
   //! Groups the fixes dealing with 3d and pcurves of the edges.
   //! The order of the fixes and the default behaviour are:
   //! ShapeFix_Edge::FixReversed2d
@@ -356,6 +359,9 @@ public:
                                     const double prec,
                                     const bool   theUpdateWire = true);
 
+  //! Fixes curves
+  Standard_EXPORT Standard_Boolean FixCurves(const Standard_Integer num);
+
   //! Fixes a seam edge
   //! A Seam edge has two pcurves, one for forward. one for reversed
   //! The forward pcurve must be set as first
@@ -420,6 +426,10 @@ public:
   bool StatusSmall(const ShapeExtend_Status status) const;
 
   bool StatusConnected(const ShapeExtend_Status status) const;
+
+  bool StatusEdgeCurves(const ShapeExtend_Status status) const;
+
+  bool StatusCurves(const ShapeExtend_Status status) const;
 
   bool StatusEdgeCurves(const ShapeExtend_Status status) const;
 
@@ -501,6 +511,7 @@ protected:
   int                             myStatusReorder;
   int                             myStatusSmall;
   int                             myStatusConnected;
+  int                             myStatusCurves;
   int                             myStatusEdgeCurves;
   int                             myStatusDegenerated;
   int                             myStatusClosed;
