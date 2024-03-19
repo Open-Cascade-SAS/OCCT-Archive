@@ -448,6 +448,16 @@ inline Standard_Boolean ShapeFix_Wire::StatusConnected(const ShapeExtend_Status 
 }
 
 //=======================================================================
+// function : StatusCurves
+// purpose  :
+//=======================================================================
+
+inline  Standard_Boolean ShapeFix_Wire::StatusCurves(const ShapeExtend_Status status) const
+{
+  return ShapeExtend::DecodeStatus(myStatusCurves, status); 
+}
+
+//=======================================================================
 // function : StatusEdgeCurves
 // purpose  :
 //=======================================================================

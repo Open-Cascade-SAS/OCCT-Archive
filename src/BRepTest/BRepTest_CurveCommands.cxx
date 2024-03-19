@@ -42,9 +42,12 @@
 #include <Geom2d_Circle.hxx>
 #include <Geom2dAPI_Interpolate.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
+#include <Message.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
+#include <ShapeFix_Wire.hxx>
+#include <ShapeFix_Edge.hxx>
 
 #include <DBRep.hxx>
 #include <DBRep_DrawableShape.hxx>
@@ -298,6 +301,149 @@ static Standard_Integer wire(Draw_Interpretor& di, Standard_Integer n, const cha
   }
   else
     DBRep::Set(a[1], MW);
+  return 0;
+}
+
+//=======================================================================
+// strongwire
+//=======================================================================
+static Standard_Integer strongwire(Draw_Interpretor&, Standard_Integer theArgC, const char** theArgV)
+{
+  enum StrongWireMode {
+    StrongWireMode_FixTolerance = 1,
+    StrongWireMode_Approximation = 2,
+    StrongWireMode_KeepCurveType = 3
+  };
+
+  BRep_Builder aB;
+
+  TopoDS_Wire aWire;
+  aB.MakeWire(aWire);
+
+  if (theArgC < 3)
+    return 1;
+
+  // Tolerance
+  double aTolerance = Precision::Confusion();
+
+  // mode
+  StrongWireMode aMode = StrongWireMode_KeepCurveType;
+
+  // add edges
+  for (Standard_Integer anArgIter = 2; anArgIter < theArgC; anArgIter++)
+  {
+    TCollection_AsciiString aParam(theArgV[anArgIter]);
+    if (aParam == "-t")
+    {
+      anArgIter++;
+      if (anArgIter < theArgC)
+        aTolerance = Draw::Atof(theArgV[anArgIter]);
+    }
+    else if (aParam == "-m")
+    {
+      anArgIter++;
+      if (anArgIter < theArgC)
+      {
+        if (aParam == "keepType" || Draw::Atoi(theArgV[anArgIter]) == 1)
+        {
+          aMode = StrongWireMode_KeepCurveType;
+          continue;
+        }
+        else if (aParam == "approx" || Draw::Atoi(theArgV[anArgIter]) == 2)
+        {
+          aMode = StrongWireMode_Approximation;
+          continue;
+        }
+        else if (aParam == "fixTol" || Draw::Atoi(theArgV[anArgIter]) == 3)
+        {
+          aMode = StrongWireMode_FixTolerance;
+          continue;
+        }
+      }
+    }
+    else
+    {
+      TopoDS_Shape aShape = DBRep::Get(theArgV[anArgIter]);
+      if (aShape.IsNull())
+        Standard_NullObject::Raise("Shape for wire construction is null");
+      if (aShape.ShapeType() == TopAbs_EDGE || aShape.ShapeType() == TopAbs_WIRE)
+      {
+        TopExp_Explorer anExp(aShape, TopAbs_EDGE);
+        for (; anExp.More(); anExp.Next())
+          aB.Add(aWire, TopoDS::Edge(anExp.Current()));
+      }
+      else
+        Standard_TypeMismatch::Raise("Shape for wire construction is neither an edge nor a wire");
+    }
+  }
+
+  // fix edges order
+  Handle(ShapeFix_Wire) aFW = new ShapeFix_Wire;
+  aFW->Load(aWire);
+  aFW->FixReorder();
+
+  if (aFW->StatusReorder(ShapeExtend_FAIL1))
+  {
+    Message::SendFail() << "Error: Wire construction failed: several loops detected";
+    return 1;
+  }
+  else if (aFW->StatusReorder(ShapeExtend_FAIL))
+  {
+    Message::SendFail() << "Wire construction failed";
+    return 1;
+  }
+
+  bool isClosed = false;
+  Handle(ShapeAnalysis_Wire) aSaw = aFW->Analyzer();
+  if (aSaw->CheckGap3d(1)) // between last and first edges
+  {
+    Standard_Real aDist = aSaw->MinDistance3d();
+    if (aDist < aTolerance)
+      isClosed = true;
+  }
+  aFW->ClosedWireMode() = isClosed;
+  aFW->FixConnected(aTolerance);
+
+  if (aFW->StatusConnected(ShapeExtend_FAIL))
+  {
+    Message::SendFail() << "Wire construction failed: cannot build connected wire";
+    return 1;
+  }
+
+  if (aMode == StrongWireMode_KeepCurveType)
+  {
+    aFW->FixCurves();
+    if (aFW->StatusCurves(ShapeExtend_FAIL))
+    {
+      Message::SendFail() << "Wire construction failed: cannot rebuild curves through new points";
+      return 1;
+    }
+  }
+  else if (aFW->StatusConnected(ShapeExtend_DONE3))
+  {
+    if (aMode != StrongWireMode_Approximation)
+      aFW->SetPrecision(aTolerance);
+    aFW->FixGapsByRangesMode() = Standard_True;
+    if (aFW->FixGaps3d())
+    {
+      Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
+      Handle(ShapeFix_Edge) aFe = new ShapeFix_Edge;
+      for (Standard_Integer anIdx = 1; anIdx <= sbwd->NbEdges(); anIdx++)
+      {
+        TopoDS_Edge aEdge = TopoDS::Edge(sbwd->Edge(anIdx));
+        aFe->FixVertexTolerance(aEdge);
+        aFe->FixSameParameter(aEdge);
+      }
+    }
+    else if (aFW->StatusGaps3d(ShapeExtend_FAIL))
+    {
+      Message::SendFail() << "Wire construction failed: cannot fix 3d gaps";
+      return 1;
+    }
+  }
+  aWire = aFW->WireAPIMake();
+
+  DBRep::Set(theArgV[1], aWire);
   return 0;
 }
 
@@ -2131,6 +2277,10 @@ void BRepTest::CurveCommands(Draw_Interpretor& theCommands)
   theCommands.Add("polyvertex", "polyvertex name v1 v2 ...", __FILE__, polyvertex, g);
 
   theCommands.Add("wire", "wire wirename [-unsorted] e1/w1 [e2/w2 ...]", __FILE__, wire, g);
+
+  theCommands.Add("strongwire",
+    "strongwire wirename e1/w1 [e2/w2 ...] [-t tol] [-m mode(keepType/1 | approx/2 | fixTol/3)]", __FILE__,
+    strongwire, g);
 
   theCommands.Add("profile", "profile, no args to get help", __FILE__, profile, g);
 

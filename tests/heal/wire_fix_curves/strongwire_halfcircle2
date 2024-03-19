@@ -1,0 +1,25 @@
+#############################################################
+## Fix wire algo
+## moves a curve of invalid wire to make it valid
+#############################################################
+
+point p1   0   0  0
+point p2 100   0  0
+point p4 100 110  0
+
+gcarc arc cir p1 p2 p4
+
+# Here we have an error during automatic grid execution with test and testgrid:
+# Tcl Exception: EMPTY
+# But in line-by-line entering or script sourcing mode this line doesn't produce any error
+
+mkedge arc1 arc
+mkedge arc2 arc
+
+tmirror arc2 0 0 0 -110 100 0 -copy
+ttranslate arc2 0 0 0.003 -copy
+
+strongwire result arc1 arc2 -t 0.01 -m keepType
+
+checkshape result
+whatis result
