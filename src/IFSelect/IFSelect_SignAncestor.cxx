@@ -32,9 +32,10 @@ Standard_Boolean IFSelect_SignAncestor::Matches(const Handle(Standard_Transient)
 						const TCollection_AsciiString& text,
 						const Standard_Boolean /*exact*/) const
 {
-  if (ent.IsNull()) return Standard_False;
-  DeclareAndCast(Standard_Type,atype,ent);
-  if (atype.IsNull()) atype = ent->DynamicType();
-  return atype->SubType(text.ToCString());
+  return false;
+  // if (ent.IsNull()) return Standard_False;
+  // DeclareAndCast(Standard_Type,atype,ent);
+  // if (atype.IsNull()) atype = ent->DynamicType();
+  // return atype->SubType(text.ToCString());
 }
 						
