@@ -1,0 +1,29 @@
+puts "========================"
+puts "0033591: Modeling Algorithms - Regression: old surface is not removed after translation or rotation with geometry copying"
+puts "========================"
+puts ""
+
+pload MODELING
+pcylinder Cylinder_1 80 200
+pcylinder Cylinder_2 60 200
+psphere Sphere_1 80
+psphere Sphere_2 60
+trotate Sphere_1  0 0 0  0 1 0  90 -copy
+trotate Sphere_2  0 0 0  0 1 0  90 -copy
+ttranslate Sphere_1 0 0 200 -copy
+ttranslate Sphere_2 0 0 200 -copy
+bfuse Fuse_1 Sphere_1 Cylinder_1
+bfuse Fuse_2 Cylinder_2 Sphere_2
+bclear
+baddobjects Fuse_1 Fuse_2
+bfillds
+bbuild Partition_1
+explode Partition_1
+plane pln_1 0 0 200
+mkface Plane_1 pln_1 -100 100 -100 100
+bclear
+baddobjects Partition_1_2
+baddtools Plane_1
+bfillds
+bbuild res
+checkshape res

@@ -630,7 +630,7 @@ void BRepTools_Modifier::FillNewCurveInfo(const TopTools_IndexedDataMapOfShapeLi
   {
     const TopoDS_Edge& anE = TopoDS::Edge(theMEF.FindKey(i));
     Standard_Boolean IsNewCur = M->NewCurve(anE, aCurve, aLocation, aToler);
-    if (IsNewCur)
+    if (IsNewCur || M->IsKind("BRepTools_TrsfModification"))
     {
       aNCinfo.myCurve = aCurve;
       aNCinfo.myLoc = aLocation;
