@@ -307,10 +307,6 @@ Standard_Boolean BRepTools_TrsfModification::NewCurve
 {
   Standard_Real f,l;
   C = BRep_Tool::Curve(E,L,f,l);
-  if (C.IsNull())
-  {
-    return Standard_False;
-  }
 
   Tol = BRep_Tool::Tolerance(E);
   Tol *= Abs(myTrsf.ScaleFactor());
