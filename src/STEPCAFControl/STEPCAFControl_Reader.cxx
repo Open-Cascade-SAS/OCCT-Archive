@@ -4957,9 +4957,47 @@ Standard_Boolean STEPCAFControl_Reader::ReadMetadata(const Handle(XSControl_Work
   Standard_Integer aNb = aModel->NbEntities();
   STEPConstruct_Tool aTool(theWS);
 
+  TDF_LabelMap aGeneralLabelMap;
+  NCollection_DataMap<TDF_Label, NCollection_Sequence<Handle(StepRepr_PropertyDefinition)>, TDF_LabelMapHasher> anAttrMap;
+  NCollection_DataMap<TDF_Label, NCollection_Sequence<std::pair<TCollection_AsciiString, Handle(TCollection_HAsciiString)>>, TDF_LabelMapHasher> anExtraAttrMap;
   for (Standard_Integer anEntityInd = 1; anEntityInd <= aNb; ++anEntityInd)
   {
     Handle(Standard_Transient) anEntity = aModel->Value(anEntityInd);
+
+    // checking for Product attributes
+    Handle(StepBasic_ProductDefinition) aProdDefinition = Handle(StepBasic_ProductDefinition)::DownCast(anEntity);
+    if (!aProdDefinition.IsNull())
+    {
+      Handle(Transfer_Binder) aBinder = aTP->Find(aProdDefinition);
+      if (!aBinder.IsNull())
+      {
+        TopoDS_Shape aShape = TransferBRep::ShapeResult(aTP, aBinder);
+        if (aShape.IsNull())
+          continue;
+
+        TDF_Label aShapeLabel;
+        if (myMap.IsBound(aShape))
+        {
+          aShapeLabel = myMap.Find(aShape);
+        }
+        if (!aShapeLabel.IsNull())
+        {
+          if (!aGeneralLabelMap.Contains(aShapeLabel))
+          {
+            aGeneralLabelMap.Add(aShapeLabel);
+          }
+          NCollection_Sequence<std::pair<TCollection_AsciiString, Handle(TCollection_HAsciiString)>> anAttrSeq;
+          Handle(StepBasic_Product) aProduct = aProdDefinition->Formation()->OfProduct();
+          anAttrSeq.Append({ "ProductID", aProduct->Id() });
+          anAttrSeq.Append({ "ProductName", aProduct->Name() });
+          anAttrSeq.Append({ "Description", aProduct->Description() });
+          anAttrSeq.Append({ "ProductDefinition", aProdDefinition->Description() });
+          anExtraAttrMap.Bind(aShapeLabel, anAttrSeq);
+        }
+      }
+    }
+
+    // checking for User Defined Attributes
     Handle(StepBasic_GeneralProperty) aGeneralProp = Handle(StepBasic_GeneralProperty)::DownCast(anEntity);
     if (aGeneralProp.IsNull())
       continue;
@@ -4979,13 +5017,13 @@ Standard_Boolean STEPCAFControl_Reader::ReadMetadata(const Handle(XSControl_Work
     if (aPropDefinitionList.IsEmpty())
       continue;
 
+    NCollection_List<Handle(StepRepr_PropertyDefinition)> aGroupedProperties;
     NCollection_List< Handle(StepRepr_PropertyDefinition)>::Iterator aPropDefIter(aPropDefinitionList);
     for ( ; aPropDefIter.More(); aPropDefIter.Next())
     {
       Handle(StepRepr_PropertyDefinition) aPropDefinition = aPropDefIter.Value();
 
       // check group of PropertyDefinition
-      NCollection_List<Handle(StepRepr_PropertyDefinition)> aGroupedProperties;
       Interface_EntityIterator aSharingsListOfPD = theWS->Graph().Sharings(aPropDefinition);
       for (aSharingsListOfPD.Start(); aSharingsListOfPD.More(); aSharingsListOfPD.Next())
       {
@@ -5134,28 +5172,78 @@ Standard_Boolean STEPCAFControl_Reader::ReadMetadata(const Handle(XSControl_Work
         if (!aShapeLabel.IsNull())
         {
           aLabelSeq.Append(aShapeLabel);
+          if (!aGeneralLabelMap.Contains(aShapeLabel))
+          {
+            aGeneralLabelMap.Add(aShapeLabel);
+          }
         }
       }
 
-      //create metadata
+      // fill user defined attribute map
       for (TDF_LabelSequence::Iterator aLabelIt(aLabelSeq); aLabelIt.More(); aLabelIt.Next())
       {
-        TDF_Label aLabel = aLabelIt.Value();
-        Handle(TDataStd_NamedData) anAttr;
-        if (!aLabel.FindAttribute(TDataStd_NamedData::GetID(), anAttr))
+        if (anAttrMap.IsBound(aLabelIt.Value()))
         {
-          anAttr = new TDataStd_NamedData;
-          aLabel.AddAttribute(anAttr);
-        }
-
-        fillAttributes(theWS, aPropDefinition, anAttr);
-        if (!aGroupedProperties.IsEmpty())
-        {
-          NCollection_List<Handle(StepRepr_PropertyDefinition)>::Iterator aPropIt(aGroupedProperties);
-          for ( ; aPropIt.More(); aPropIt.Next())
+          anAttrMap.ChangeFind(aLabelIt.Value()).Append(aPropDefinition);
+          if (!aGroupedProperties.IsEmpty())
           {
-            fillAttributes(theWS, aPropIt.Value(), anAttr);
+            NCollection_List<Handle(StepRepr_PropertyDefinition)>::Iterator aPropIt(aGroupedProperties);
+            for (; aPropIt.More(); aPropIt.Next())
+            {
+              anAttrMap.ChangeFind(aLabelIt.Value()).Append(aPropIt.Value());
+            }
           }
+        }
+        else
+        {
+          NCollection_Sequence<Handle(StepRepr_PropertyDefinition)> aPropSeq;
+          aPropSeq.Append(aPropDefinition);
+          if (!aGroupedProperties.IsEmpty())
+          {
+            NCollection_List<Handle(StepRepr_PropertyDefinition)>::Iterator aPropIt(aGroupedProperties);
+            for (; aPropIt.More(); aPropIt.Next())
+            {
+              aPropSeq.Append(aPropIt.Value());
+            }
+          }
+          anAttrMap.Bind(aLabelIt.Value(), aPropSeq);
+        }
+      }
+    }
+  }
+
+  // create metadata
+  for (TDF_LabelMap::Iterator aLabelIt(aGeneralLabelMap); aLabelIt.More(); aLabelIt.Next())
+  {
+    Handle(TDataStd_NamedData) anAttr;
+    if (!aLabelIt.Value().FindAttribute(TDataStd_NamedData::GetID(), anAttr))
+    {
+      anAttr = new TDataStd_NamedData;
+      aLabelIt.Value().AddAttribute(anAttr);
+    }
+    if (anAttrMap.IsBound(aLabelIt.Value()))
+    {
+      NCollection_Sequence<Handle(StepRepr_PropertyDefinition)> anAttrib = anAttrMap.Find(aLabelIt.Value());
+      NCollection_Sequence<Handle(StepRepr_PropertyDefinition)>::Iterator aPropIt(anAttrib);
+      for (; aPropIt.More(); aPropIt.Next())
+      {
+        fillAttributes(theWS, aPropIt.Value(), anAttr);
+      }
+    }
+    if (anExtraAttrMap.IsBound(aLabelIt.Value()))
+    {
+      NCollection_Sequence<std::pair<TCollection_AsciiString, Handle(TCollection_HAsciiString)>> aStrSeq = anExtraAttrMap.Find(aLabelIt.Value());
+      if (!aStrSeq.IsEmpty())
+      {
+        NCollection_Sequence<std::pair<TCollection_AsciiString, Handle(TCollection_HAsciiString)>>::Iterator anIt(aStrSeq);
+        for (; anIt.More(); anIt.Next())
+        {
+          auto aPair = anIt.Value();
+          if (aPair.second.IsNull())
+          {
+            continue;
+          }
+          anAttr->SetString(aPair.first, aPair.second->String());
         }
       }
     }

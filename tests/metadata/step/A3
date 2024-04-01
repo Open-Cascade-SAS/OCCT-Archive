@@ -20,5 +20,7 @@ Iyy : 4.46342e-05
 Iyz : -1.3068999999999999e-06
 zCenterOfGravity : -0.10963042420000001
 Length : 0
+ProductID : NIST PMI FTC 06 ASME1
+Description : NIST PMI test model downloaded from http://go.usa.gov/mGVm
 
 }
