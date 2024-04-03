@@ -18,6 +18,7 @@
 #include <BRep_CurveOnClosedSurface.hxx>
 #include <BRep_CurveOnSurface.hxx>
 #include <BRep_CurveRepresentation.hxx>
+#include <BRep_GCurve.hxx>
 #include <BRep_Polygon3D.hxx>
 #include <BRep_PolygonOnSurface.hxx>
 #include <BRep_PolygonOnTriangulation.hxx>
@@ -25,6 +26,7 @@
 #include <BRep_TFace.hxx>
 #include <BRep_Tool.hxx>
 #include <BRep_TVertex.hxx>
+#include <BRepAdaptor_Surface.hxx>
 #include <ElSLib.hxx>
 #include <Geom2d_Curve.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
@@ -60,7 +62,6 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ShapeMapHasher.hxx>
-#include <BRep_GCurve.hxx>
 
 // modified by NIZNHY-PKV Fri Oct 17 14:13:29 2008f
 static Standard_Boolean IsPlane(const Handle(Geom_Surface)& aS);
@@ -1723,4 +1724,14 @@ Standard_Real BRep_Tool::MaxTolerance(const TopoDS_Shape&    theShape,
   }
 
   return aTol;
+}
+
+//=======================================================================
+//function : Tolerance2d
+//purpose  : 
+//=======================================================================
+Standard_Real BRep_Tool::Tolerance2d(const TopoDS_Face& theFace, const Standard_Real theTolerance)
+{
+  BRepAdaptor_Surface aAdaptorSurface(theFace);
+  return Max(aAdaptorSurface.UResolution(theTolerance), aAdaptorSurface.VResolution(theTolerance));
 }
