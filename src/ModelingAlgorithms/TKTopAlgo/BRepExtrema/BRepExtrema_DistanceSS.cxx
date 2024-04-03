@@ -897,7 +897,7 @@ void BRepExtrema_DistanceSS::Perform(
       double                   U, V;
       gp_Pnt                   Pt, P1 = BRep_Tool::Pnt(theS1);
       BRepClass_FaceClassifier classifier;
-      const double             tol = BRep_Tool::Tolerance(theS2);
+      const double             tol2d = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS2));
 
       for (i = 1; i <= NbExtrema; i++)
       {
@@ -909,7 +909,7 @@ void BRepExtrema_DistanceSS::Perform(
             // Check if the parameter does not correspond to a vertex
             Ext.Parameter(i, U, V);
             const gp_Pnt2d PUV(U, V);
-            classifier.Perform(theS2, PUV, tol);
+            classifier.Perform(theS2, PUV, tol2d);
             if (classifier.State() == TopAbs_IN)
             {
               if (myDstRef > Dstmin)
@@ -1060,7 +1060,7 @@ void BRepExtrema_DistanceSS::Perform(
     if ((Dstmin < myDstRef - myEps) || (fabs(Dstmin - myDstRef) < myEps))
     {
       double       U, V;
-      const double tol = BRep_Tool::Tolerance(theS2);
+      const double tol2d = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS2));
 
       gp_Pnt           Pt1, Pt2;
       constexpr double epsP = Precision::PConfusion();
@@ -1079,7 +1079,7 @@ void BRepExtrema_DistanceSS::Perform(
             {
               Ext.ParameterOnFace(i, U, V);
               const gp_Pnt2d PUV(U, V);
-              classifier.Perform(theS2, PUV, tol);
+              classifier.Perform(theS2, PUV, tol2d);
               if (classifier.State() == TopAbs_IN)
               {
                 if (myDstRef > Dstmin)
@@ -1118,8 +1118,9 @@ void BRepExtrema_DistanceSS::Perform(
     NCollection_Array1<double> arrInter(1, 1 + nbIntervals);
     aAdaptorCurve.Intervals(arrInter, GeomAbs_C1);
 
+    gp_Pnt       Pt;
     double       U, V;
-    const double tol = BRep_Tool::Tolerance(theS2);
+    const double tol2d = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS2));
 
     int i;
     for (i = 1; i <= arrInter.Length(); i++)
@@ -1154,7 +1155,7 @@ void BRepExtrema_DistanceSS::Perform(
               // Check if the parameter does not correspond to a vertex
               ExtPF.Parameter(ii, U, V);
               const gp_Pnt2d PUV(U, V);
-              classifier.Perform(theS2, PUV, tol);
+              classifier.Perform(theS2, PUV, tol2d);
               if (classifier.State() == TopAbs_IN)
               {
                 if (myDstRef > Dstmin)
@@ -1223,8 +1224,8 @@ void BRepExtrema_DistanceSS::Perform(
     Dstmin = sqrt(Dstmin);
     if ((Dstmin < myDstRef - myEps) || (fabs(Dstmin - myDstRef) < myEps))
     {
-      const double tol1 = BRep_Tool::Tolerance(theS1);
-      const double tol2 = BRep_Tool::Tolerance(theS2);
+      const double tol2d1 = BRep_Tool::Tolerance2d(theS1, BRep_Tool::Tolerance(theS1));
+      const double tol2d2 = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS2));
 
       gp_Pnt                   Pt1, Pt2;
       gp_Pnt2d                 PUV;
@@ -1242,12 +1243,12 @@ void BRepExtrema_DistanceSS::Perform(
             // Check if the parameter does not correspond to a vertex
             Ext.ParameterOnFace1(i, U1, V1);
             PUV.SetCoord(U1, V1);
-            classifier.Perform(theS1, PUV, tol1);
+            classifier.Perform(theS1, PUV, tol2d1);
             if (classifier.State() == TopAbs_IN)
             {
               Ext.ParameterOnFace2(i, U2, V2);
               PUV.SetCoord(U2, V2);
-              classifier.Perform(theS2, PUV, tol2);
+              classifier.Perform(theS2, PUV, tol2d2);
               if (classifier.State() == TopAbs_IN)
               {
                 if (myDstRef > Dstmin)
