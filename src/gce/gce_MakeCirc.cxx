@@ -53,7 +53,7 @@ gce_MakeCirc::gce_MakeCirc(const gp_Pnt&  P1 ,
 //=========================================================================
   Standard_Real dist1, dist2, dist3, aResolution;
   //
-  aResolution = gp::Resolution();
+  aResolution = 1e-12;
   //
   dist1 = P1.Distance(P2);
   dist2 = P1.Distance(P3);
