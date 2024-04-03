@@ -96,7 +96,7 @@ Standard_Boolean BRepClass_FaceExplorer::CheckPoint(gp_Pnt2d& thePoint)
   else
   {
     Standard_Real anEpsilon = Epsilon(aDistance);
-    if (anEpsilon > Max (myUMax - myUMin, myVMax - myVMin))
+    if (anEpsilon > Max (myUMax - myUMin, myVMax - myVMin) && anEpsilon > 1e-100)
     {
       gp_Vec2d aLinVec(aCenterPnt, thePoint);
       gp_Dir2d aLinDir(aLinVec);
