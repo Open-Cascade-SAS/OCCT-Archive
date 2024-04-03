@@ -1,0 +1,14 @@
+puts "========================"
+puts "0033394: Modeling Algorithms - Wrong usage of BRepClass_FaceClassifier with 3d tolerance"
+puts "========================"
+puts ""
+
+pload MODELING
+restore [locate_data_file bug33394.brep] fb
+vertex vert 1016.3915670000133 17180 -5689.3758362036951
+distmini aa fb vert
+set tolerance [checkmaxtol aa]
+
+if { [dval aa_val] > ${tolerance} } {
+  puts "Error: The distance should be 0"
+}
