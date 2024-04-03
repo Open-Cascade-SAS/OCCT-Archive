@@ -441,7 +441,6 @@ static void PERFORM_C0(const TopoDS_Edge& S1, const TopoDS_Edge& S2,
 
       gp_Pnt P1, Pt;
       Standard_Integer i, ii;
-      BRepClass_FaceClassifier classifier;
       for (i = 1; i <= arrInter.Length(); i++)
       {
         const Standard_Real aParameter = arrInter(i);
@@ -772,7 +771,7 @@ void BRepExtrema_DistanceSS::Perform(const TopoDS_Vertex& theS1,
       Standard_Real U, V;
       gp_Pnt Pt, P1 = BRep_Tool::Pnt(theS1);
       BRepClass_FaceClassifier classifier;
-      const Standard_Real tol = BRep_Tool::Tolerance(theS2);
+      const Standard_Real tol2d = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS2));
 
       for (i = 1; i <= NbExtrema; i++)
       {
@@ -784,7 +783,7 @@ void BRepExtrema_DistanceSS::Perform(const TopoDS_Vertex& theS1,
             // Check if the parameter does not correspond to a vertex
             Ext.Parameter(i, U, V);
             const gp_Pnt2d PUV(U, V);
-            classifier.Perform(theS2, PUV, tol);
+            classifier.Perform(theS2, PUV, tol2d);
             if (classifier.State() == TopAbs_IN)
             {
               if (myDstRef > Dstmin)
@@ -922,7 +921,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1, const TopoDS_Fac
     if ((Dstmin < myDstRef - myEps) || (fabs(Dstmin - myDstRef) < myEps))
     {
       Standard_Real U, V;
-      const Standard_Real tol = BRep_Tool::Tolerance(theS2);
+      const Standard_Real tol2d = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS2));
 
       gp_Pnt Pt1, Pt2;
       const Standard_Real epsP = Precision::PConfusion();
@@ -941,7 +940,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1, const TopoDS_Fac
             {
               Ext.ParameterOnFace(i, U, V);
               const gp_Pnt2d PUV(U, V);
-              classifier.Perform(theS2, PUV, tol);
+              classifier.Perform(theS2, PUV, tol2d);
               if (classifier.State() == TopAbs_IN)
               {
                 if (myDstRef > Dstmin)
@@ -974,7 +973,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1, const TopoDS_Fac
 
     gp_Pnt Pt;
     Standard_Real U, V;
-    const Standard_Real tol = BRep_Tool::Tolerance(theS2);
+    const Standard_Real tol2d = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS2));
 
     Standard_Integer i;
     for (i = 1; i <= arrInter.Length(); i++)
@@ -1007,7 +1006,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Edge& theS1, const TopoDS_Fac
               // Check if the parameter does not correspond to a vertex
               ExtPF.Parameter(ii, U, V);
               const gp_Pnt2d PUV(U, V);
-              classifier.Perform(theS2, PUV, tol);
+              classifier.Perform(theS2, PUV, tol2d);
               if (classifier.State() == TopAbs_IN)
               {
                 if (myDstRef > Dstmin)
@@ -1062,8 +1061,8 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Face& theS1,
     Dstmin = sqrt(Dstmin);
     if ((Dstmin < myDstRef - myEps) || (fabs(Dstmin - myDstRef) < myEps))
     {
-      const Standard_Real tol1 = BRep_Tool::Tolerance(theS1);
-      const Standard_Real tol2 = BRep_Tool::Tolerance(theS2);
+      const Standard_Real tol2d1 = BRep_Tool::Tolerance2d(theS1, BRep_Tool::Tolerance(theS1));
+      const Standard_Real tol2d2 = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS2));
 
       gp_Pnt Pt1, Pt2;
       gp_Pnt2d PUV;
@@ -1081,12 +1080,12 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Face& theS1,
             // Check if the parameter does not correspond to a vertex
             Ext.ParameterOnFace1(i, U1, V1);
             PUV.SetCoord(U1, V1);
-            classifier.Perform(theS1, PUV, tol1);
+            classifier.Perform(theS1, PUV, tol2d1);
             if (classifier.State() == TopAbs_IN)
             {
               Ext.ParameterOnFace2(i, U2, V2);
               PUV.SetCoord(U2, V2);
-              classifier.Perform(theS2, PUV, tol2);
+              classifier.Perform(theS2, PUV, tol2d2);
               if (classifier.State() == TopAbs_IN)
               {
                 if (myDstRef > Dstmin)
