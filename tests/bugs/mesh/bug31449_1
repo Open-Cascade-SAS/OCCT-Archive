@@ -15,6 +15,6 @@ vfit
 vsetdispmode 1
 
 XGetOneShape result Q
-checktrinfo result -tri 9097 -nod 6634
+checktrinfo result -tri 9223 -nod 6699
 
 checkview -screenshot -3d -path ${imagedir}/${test_image}.png

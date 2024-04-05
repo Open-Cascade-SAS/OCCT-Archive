@@ -14,6 +14,6 @@ XGetOneShape result Q
 
 incmesh result 0.00039624 -a 20 -min 0.0001 -parallel
 
-checktrinfo result -tri 7733 -nod 5882
+checktrinfo result -tri 7743 -nod 5887
 
 checkview -display result -3d -path ${imagedir}/${test_image}.png

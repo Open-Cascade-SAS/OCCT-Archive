@@ -36,12 +36,14 @@ std::pair<Standard_Real, Standard_Real> BRepMesh_ConeRangeSplitter::GetSplitStep
                               Abs(aRefR + aRangeV.second * Sin(aSAng)));
 
   Standard_Real Dv, Du = GCPnts_TangentialDeflection::ArcAngularStep(
-    aRadius, GetDFace()->GetDeflection(),
+    aRadius, GetDFace()->GetDeflection() * 0.5,
     theParameters.Angle, theParameters.MinSize);
 
   const Standard_Real aDiffU = aRangeU.second - aRangeU.first;
   const Standard_Real aDiffV = aRangeV.second - aRangeV.first;
-  const Standard_Real aScale = (Du * aRadius);
+  //compute subdivision factor acounting for the parameters minimum size
+  const Standard_Real aSubDivFactor = Max (theParameters.MinSize, 1.0);
+  const Standard_Real aScale = (Du * aRadius / aSubDivFactor);
   const Standard_Real aRatio = Max(1., Log(aDiffV / aScale));
   const Standard_Integer nbU = (Standard_Integer)(aDiffU / Du);
   const Standard_Integer nbV = (Standard_Integer)(aDiffV / aScale / aRatio);
