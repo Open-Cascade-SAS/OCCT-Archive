@@ -51,9 +51,7 @@ FSD_File::FSD_File()
 Storage_Error FSD_File::IsGoodFileType(const TCollection_AsciiString& aName)
 {
   FSD_File      f;
-  Storage_Error s;
-
-  s = f.Open(aName,Storage_VSRead);
+  Storage_Error s = f.Open(aName,Storage_VSRead);
 
   if (s == Storage_VSOk) {
     TCollection_AsciiString l;
@@ -84,13 +82,9 @@ Storage_Error FSD_File::Open(const TCollection_AsciiString& aName,const Storage_
 
   if (OpenMode() == Storage_VSNone)
   {
-    std::ios_base::openmode anOpenMode = std::ios_base::openmode(0);
+    std::ios_base::openmode anOpenMode;
     switch (aMode)
     {
-      case Storage_VSNone:
-      {
-        break;
-      }
       case Storage_VSRead:
       {
         // std::ios::nocreate is not portable
@@ -107,11 +101,13 @@ Storage_Error FSD_File::Open(const TCollection_AsciiString& aName,const Storage_
         anOpenMode = std::ios::in | std::ios::out;
         break;
       }
+      case Storage_VSNone:
+      default:
+      {
+        return Storage_VSOpenError;
+      }
     }
-    if (anOpenMode != 0)
-    {
-      OSD_OpenStream (myStream, aName.ToCString(), anOpenMode);
-    }
+    OSD_OpenStream (myStream, aName.ToCString(), anOpenMode);
     if (myStream.fail()) {
       result = Storage_VSOpenError;
     }
@@ -237,7 +233,7 @@ void FSD_File::WriteExtendedLine(const TCollection_ExtendedString& buffer)
 void FSD_File::ReadExtendedLine(TCollection_ExtendedString& buffer)
 {
   char c = '\0';
-  Standard_ExtCharacter i = 0,j,count = 0;
+  Standard_ExtCharacter i = 0,count = 0;
   Standard_Boolean fin = Standard_False;
   Standard_CString tg = ENDOFNORMALEXTENDEDSECTION;
  
@@ -249,7 +245,6 @@ void FSD_File::ReadExtendedLine(TCollection_ExtendedString& buffer)
     if (c == tg[count]) count++;
     else count = 0;
     if (count < SIZEOFNORMALEXTENDEDSECTION) {
-      j = 0;
       i = (Standard_ExtCharacter)c;
       if (c == '\0') fin = Standard_True;
       i = (i << 8);
@@ -258,7 +253,7 @@ void FSD_File::ReadExtendedLine(TCollection_ExtendedString& buffer)
       if (c == tg[count]) count++;
       else count = 0;
       if (count < SIZEOFNORMALEXTENDEDSECTION) {
-	j = (Standard_ExtCharacter)c;
+	Standard_ExtCharacter j = (Standard_ExtCharacter)c;
 	if (c != '\n') {
 	  fin = Standard_False;
 	  i |= (0x00FF & j);

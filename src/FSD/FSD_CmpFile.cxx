@@ -69,13 +69,9 @@ Storage_Error FSD_CmpFile::Open(const TCollection_AsciiString& aName, const Stor
   SetName(aName);
 
   if (OpenMode() == Storage_VSNone) {
-    std::ios_base::openmode anOpenMode = std::ios_base::openmode(0);
+    std::ios_base::openmode anOpenMode;
     switch (aMode)
     {
-    case Storage_VSNone:
-    {
-      break;
-    }
     case Storage_VSRead:
     {
       // std::ios::nocreate is not portable
@@ -104,11 +100,13 @@ Storage_Error FSD_CmpFile::Open(const TCollection_AsciiString& aName, const Stor
 #endif
       break;
     }
-    }
-    if (anOpenMode != 0)
+    case Storage_VSNone:
+    default:
     {
-      OSD_OpenStream(myStream, aName, anOpenMode);
+      return Storage_VSOpenError;
     }
+    }
+    OSD_OpenStream(myStream, aName, anOpenMode);
     if (myStream.fail()) {
       result = Storage_VSOpenError;
     }

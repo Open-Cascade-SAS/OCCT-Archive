@@ -151,7 +151,8 @@ void StepFile_ReadData::CreateNewText(const char* theNewText, int theLenText)
     strcpy(myResText + (int)strlen(anOldResText), theNewText);
     return;
   }
-  strcpy(myResText, theNewText);
+  strncpy(myResText, theNewText, aLength);
+  myResText[aLength] = '\0';
 }
 
 //=======================================================================
