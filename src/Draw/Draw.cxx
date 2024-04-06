@@ -719,7 +719,7 @@ void Draw::Load (Draw_Interpretor& theDI,
   }
 
   void (*fp) (Draw_Interpretor&) = NULL;
-  fp = (void (*)(Draw_Interpretor&) )aFunc;
+  fp = (void (*)(Draw_Interpretor&) )(void*)aFunc;
   (*fp) (theDI);
 }
 

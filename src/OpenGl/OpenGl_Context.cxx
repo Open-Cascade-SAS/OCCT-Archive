@@ -813,7 +813,7 @@ Standard_Boolean OpenGl_Context::SetSwapInterval (const Standard_Integer theInte
    && myFuncs->glXSwapIntervalEXT != NULL)
   {
     typedef int (*glXSwapIntervalEXT_t_x)(Display* theDisplay, GLXDrawable theDrawable, int theInterval);
-    glXSwapIntervalEXT_t_x aFuncPtr = (glXSwapIntervalEXT_t_x )myFuncs->glXSwapIntervalEXT;
+    glXSwapIntervalEXT_t_x aFuncPtr = (glXSwapIntervalEXT_t_x )(void*)myFuncs->glXSwapIntervalEXT;
     aFuncPtr ((Display* )myDisplay, (GLXDrawable )myWindow, theInterval);
     return Standard_True;
   }
