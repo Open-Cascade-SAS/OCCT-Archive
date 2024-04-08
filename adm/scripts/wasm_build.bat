@@ -26,6 +26,12 @@ set "toDebug=0"
 set "toBuildSample=0"
 set "sourceMapBase="
 
+set "aBuildType=Release"
+if /I ["%1"] == ["-d"] (
+  set "toDebug=1"
+  set "aBuildType=Debug"
+)
+
 rem OCCT Modules to build
 set "BUILD_ModelingData=ON"
 set "BUILD_ModelingAlgorithms=ON"
@@ -45,8 +51,37 @@ rem Archive tool
 set "THE_7Z_PARAMS=-t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on"
 set "THE_7Z_PATH=%ProgramW6432%\7-Zip\7z.exe"
 
+set "aPlatformAndCompiler="
+set "aWorkDir="
+set "aDestDir="
+set "aLogFile="
+
+set "aSrcRootSmpl=%aCasSrc%\samples\webgl"
+set "aWorkDirSmpl="
+set "aDestDirSmpl="
+set "aLogFileSmpl="
+
 rem Configuration file
 if exist "%~dp0wasm_custom.bat" call "%~dp0wasm_custom.bat"
+
+set "aBuildTypePrefix="
+set "anExtraCxxFlags="
+if /I ["%USE_PTHREADS%"] == ["ON"] (
+  set "anExtraCxxFlags=-pthread"
+  set "aBuildTypePrefix=%aBuildTypePrefix%-pthread"
+)
+if ["%toDebug%"] == ["1"] (
+  set "aBuildTypePrefix=%aBuildTypePrefix%-debug"
+)
+
+if ["%aPlatformAndCompiler%"] == [""] ( set "aPlatformAndCompiler=wasm32%aBuildTypePrefix%" )
+if ["%aWorkDir%"] == [""] ( set "aWorkDir=%aBuildRoot%\occt-%aPlatformAndCompiler%-make" )
+if ["%aDestDir%"] == [""] ( set "aDestDir=%aBuildRoot%\occt-%aPlatformAndCompiler%" )
+if ["%aLogFile%"] == [""] ( set "aLogFile=%aBuildRoot%\occt-%aPlatformAndCompiler%-build.log" )
+
+if ["%aWorkDirSmpl%"] == [""] ( set "aWorkDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-make" )
+if ["%aDestDirSmpl%"] == [""] ( set "aDestDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%" )
+if ["%aLogFileSmpl%"] == [""] ( set "aLogFileSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-build.log" )
 
 call "%EMSDK_ROOT%\emsdk_env.bat"
 set "aToolchain=%EMSDK%/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
@@ -59,23 +94,8 @@ for /f tokens^=2^ delims^=^" %%i in ('findstr /b /c:"#define OCC_VERSION_DEVELOP
 for /f tokens^=2^ delims^=^" %%i in ('findstr /b /c:"#define OCC_VERSION_COMPLETE" "%aCasSrc%\src\Standard\Standard_Version.hxx"') do ( set "anOcctVersion=%%i" )
 for /f %%i in ('git symbolic-ref --short HEAD') do ( set "aGitBranch=%%i" )
 
-set "aBuildType=Release"
-set "aBuildTypePrefix="
-set "anExtraCxxFlags="
-if /I ["%USE_PTHREADS%"] == ["ON"] (
-  set "anExtraCxxFlags=-pthread"
-  set "aBuildTypePrefix=%aBuildTypePrefix%-pthread"
-)
-if ["%toDebug%"] == ["1"] (
-  set "aBuildType=Debug"
-  set "aBuildTypePrefix=%aBuildTypePrefix%-debug"
-)
-
 call :cmakeGenerate
 if errorlevel 1 (
-  if not ["%1"] == ["-nopause"] (
-    pause
-  )
   exit /B 1
   goto :eof
 )
@@ -109,17 +129,10 @@ if ["%toPack%"] == ["1"] (
 
   "%THE_7Z_PATH%" a -r %THE_7Z_PARAMS% "%aBuildRoot%/%anArchName%.7z" "%aTarget%"
 )
-if not ["%1"] == ["-nopause"] (
-  pause
-)
 
 goto :eof
 
 :cmakeGenerate
-set "aPlatformAndCompiler=wasm32%aBuildTypePrefix%"
-set "aWorkDir=%aBuildRoot%\occt-%aPlatformAndCompiler%-make"
-set "aDestDir=%aBuildRoot%\occt-%aPlatformAndCompiler%"
-set "aLogFile=%aBuildRoot%\occt-%aPlatformAndCompiler%-build.log"
 if ["%toCMake%"] == ["1"] (
   if ["%toClean%"] == ["1"] (
     rmdir /S /Q %aWorkDir%"
@@ -129,10 +142,6 @@ if ["%toCMake%"] == ["1"] (
 if not exist "%aWorkDir%" ( mkdir "%aWorkDir%" )
 if     exist "%aLogFile%" ( del   "%aLogFile%" )
 
-set "aSrcRootSmpl=%aCasSrc%\samples\webgl"
-set "aWorkDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-make"
-set "aDestDirSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%"
-set "aLogFileSmpl=%aBuildRoot%\sample-%aPlatformAndCompiler%-build.log"
 if ["%toBuildSample%"] == ["1"] (
   if ["%toCMake%"] == ["1"] (
     if ["%toClean%"] == ["1"] (
@@ -274,7 +283,6 @@ if ["%toCMake%"] == ["1"] (
 
   if errorlevel 1 (
     popd
-    pause
     exit /B
     goto :eof
   )
@@ -289,7 +297,6 @@ if ["%toMake%"] == ["1"] (
   if errorlevel 1 (
     type "%aLogFileSmpl%"
     popd
-    pause
     exit /B
     goto :eof
   )
@@ -301,7 +308,6 @@ if ["%toInstall%"] == ["1"] (
   if errorlevel 1 (
     type "%aLogFileSmpl%"
     popd
-    pause
     exit /B
     goto :eof
   )
