@@ -4,6 +4,11 @@
 # wasm_custom.sh should be configured with paths to CMake, 3rd-parties and Emscripten SDK.
 # FreeType should be specified as mandatory dependency.
 
+CMAKE_BUILD_TYPE=Release
+if [ "$1" = "-d" ]; then
+  CMAKE_BUILD_TYPE=Debug
+fi
+
 export aScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 export aSrcRoot="${aScriptDir}/../.."
 export aBuildRoot=work
@@ -22,6 +27,12 @@ export BUILD_ApplicationFramework=ON
 export BUILD_DataExchange=ON
 export BUILD_DETools=OFF
 
+export aPlatformAndCompiler=wasm
+
+export aWorkDir="${aSrcRoot}/${aBuildRoot}/${aPlatformAndCompiler}-make"
+export aDestDir="${aSrcRoot}/${aBuildRoot}/${aPlatformAndCompiler}"
+export aLogFile="${aSrcRoot}/${aBuildRoot}/build-${aPlatformAndCompiler}.log"
+
 if [ -f "${aScriptDir}/wasm_custom.sh" ] ; then
   . "${aScriptDir}/wasm_custom.sh"
 fi
@@ -34,19 +45,14 @@ export aGitBranch=`git symbolic-ref --short HEAD`
 
 echo "Compilation OCCT branch : $aGitBranch"
 
-export aPlatformAndCompiler=wasm
-
-export aWorkDir="${aSrcRoot}/${aBuildRoot}/${aPlatformAndCompiler}-make"
 if [ ! -d "${aWorkDir}" ]; then
   mkdir -p "${aWorkDir}"
 fi
 
-export aDestDir="${aSrcRoot}/${aBuildRoot}/${aPlatformAndCompiler}"
 if [ ! -d "${aDestDir}" ]; then
   mkdir -p "${aDestDir}"
 fi
 
-export aLogFile="${aSrcRoot}/${aBuildRoot}/build-${aPlatformAndCompiler}.log"
 if [ -f "${aLogFile}" ]; then
   rm "${aLogFile}"
 fi
@@ -61,14 +67,14 @@ if [ "${toCMake}" = "1" ]; then
 
 echo "Configuring OCCT for WASM..."
 echo cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:FILEPATH="${aToolchain}" \
--DCMAKE_BUILD_TYPE:STRING="Release" \
+-DCMAKE_BUILD_TYPE:STRING="$CMAKE_BUILD_TYPE" \
 -DBUILD_LIBRARY_TYPE:STRING="Static" \
 -DINSTALL_DIR:PATH="${aDestDir}" \
 -DINSTALL_DIR_INCLUDE:STRING="inc" \
 -DINSTALL_DIR_RESOURCE:STRING="src" \
 -D3RDPARTY_FREETYPE_DIR:PATH="$aFreeType" \
--D3RDPARTY_FREETYPE_INCLUDE_DIR_freetype2:FILEPATH="$aFreeType/include" \
--D3RDPARTY_FREETYPE_INCLUDE_DIR_ft2build:FILEPATH="$aFreeType/include" \
+-D3RDPARTY_FREETYPE_INCLUDE_DIR_freetype2:FILEPATH="$aFreeType/include/freetype2" \
+-D3RDPARTY_FREETYPE_INCLUDE_DIR_ft2build:FILEPATH="$aFreeType/include/freetype2" \
 -DBUILD_MODULE_FoundationClasses:BOOL="ON" \
 -DBUILD_MODULE_ModelingData:BOOL="${BUILD_ModelingData}" \
 -DBUILD_MODULE_ModelingAlgorithms:BOOL="${BUILD_ModelingAlgorithms}" \
@@ -80,14 +86,14 @@ echo cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:FILEPATH="${aToolchain}" \
 -DBUILD_DOC_Overview:BOOL="OFF" "${aSrcRoot}"
 
 cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE:FILEPATH="${aToolchain}" \
--DCMAKE_BUILD_TYPE:STRING="Release" \
+-DCMAKE_BUILD_TYPE:STRING="$CMAKE_BUILD_TYPE" \
 -DBUILD_LIBRARY_TYPE:STRING="Static" \
 -DINSTALL_DIR:PATH="${aDestDir}" \
 -DINSTALL_DIR_INCLUDE:STRING="inc" \
 -DINSTALL_DIR_RESOURCE:STRING="src" \
 -D3RDPARTY_FREETYPE_DIR:PATH="$aFreeType" \
--D3RDPARTY_FREETYPE_INCLUDE_DIR_freetype2:FILEPATH="$aFreeType/include" \
--D3RDPARTY_FREETYPE_INCLUDE_DIR_ft2build:FILEPATH="$aFreeType/include" \
+-D3RDPARTY_FREETYPE_INCLUDE_DIR_freetype2:FILEPATH="$aFreeType/include/freetype2" \
+-D3RDPARTY_FREETYPE_INCLUDE_DIR_ft2build:FILEPATH="$aFreeType/include/freetype2" \
 -DBUILD_MODULE_FoundationClasses:BOOL="ON" \
 -DBUILD_MODULE_ModelingData:BOOL="${BUILD_ModelingData}" \
 -DBUILD_MODULE_ModelingAlgorithms:BOOL="${BUILD_ModelingAlgorithms}" \
