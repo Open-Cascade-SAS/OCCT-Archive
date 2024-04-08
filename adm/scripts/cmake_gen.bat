@@ -15,6 +15,8 @@ set "BUILD_DIR=build-vs%VS%-%VSPLATFORM%"
 set "OCCT3RDPARTY="
 set "INSTALL_DIR=%SrcRoot%\install"
 
+set BUILD_CPP_STANDARD=C++11
+
 set BUILD_ADDITIONAL_TOOLKITS=
 set BUILD_DOC_Overview=OFF
 set BUILD_Inspector=OFF
@@ -56,6 +58,7 @@ if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 pushd "%BUILD_DIR%"
  
 cmake -G "%arch_compile%" ^
+  -D BUILD_CPP_STANDARD:STRING="%BUILD_CPP_STANDARD%" ^
   -D 3RDPARTY_DIR:STRING="%OCCT3RDPARTY%" ^
   -D BUILD_ADDITIONAL_TOOLKITS:STRING="%BUILD_ADDITIONAL_TOOLKITS%" ^
   -D BUILD_DOC_Overview:BOOL=%BUILD_DOC_Overview% ^
