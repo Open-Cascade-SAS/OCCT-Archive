@@ -1200,7 +1200,7 @@ static Standard_Integer XShowFaceBoundary (Draw_Interpretor& di,
   if (( argc != 4 && argc < 7 ) || argc > 11)
   {
     di << "Usage :\n " << argv[0]
-       << " Doc Label IsOn [R G B [LineWidth [LineStyle]]]\n"
+       << " Doc Label IsOn [R G B [LineWidth [LineStyle]]] Model Shading\n"
        << "   Doc       - is the document name. \n"
        << "   Label     - is the shape label. \n"
        << "   IsOn      - flag indicating whether the boundaries\n"
@@ -1217,6 +1217,7 @@ static Standard_Integer XShowFaceBoundary (Draw_Interpretor& di,
        << "                 2 - dot    \n"
        << "                 3 - dashdot\n"
        << "                (default is solid)\n"
+       << "   Model     - shading model [unlit|phong|pbr|gouraud]\n"
        << "   Shading   - flag indicating if the boundaries\n"
        << "               should be shaded:"
        << "                 0 - no override edge color"

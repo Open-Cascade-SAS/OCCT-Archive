@@ -369,12 +369,19 @@ namespace
 
     // create indexed segments array to pack polylines from different edges into single array
     const Standard_Integer aSegmentEdgeNb = (aNodeNumber - aNbPolylines) * 2;
-    const Standard_Boolean aToAddNormals = Standard_True;
     Handle(Graphic3d_ArrayOfSegments) aSegments = new Graphic3d_ArrayOfSegments (aNodeNumber + aNbExtra, aSegmentEdgeNb + aNbExtra,
-                                                                                 Standard_False, aToAddNormals);
+                                                                                 Standard_False, Standard_True);
     for (TopTools_IndexedDataMapOfShapeListOfShape::Iterator anEdgeIter (anEdgesMap); anEdgeIter.More(); anEdgeIter.Next())
     {
       if (anEdgeIter.Value().Extent() == 0)
+      {
+        continue;
+      }
+
+      const TopoDS_Edge& anEdge = TopoDS::Edge (anEdgeIter.Key());
+      if (theUpperContinuity < GeomAbs_CN
+        && anEdgeIter.Value().Extent() >= 2
+        && BRep_Tool::MaxContinuity (anEdge) > theUpperContinuity)
       {
         continue;
       }
@@ -390,14 +397,7 @@ namespace
           continue;
         }
 
-        const TopoDS_Edge& anEdge = TopoDS::Edge (anEdgeIter.Key());
-        if (theUpperContinuity < GeomAbs_CN
-         && anEdgeIter.Value().Extent() >= 2
-         && BRep_Tool::MaxContinuity (anEdge) > theUpperContinuity)
-        {
-          continue;
-        }
-
+        Standard_Boolean aHasNormals = aTriangulation->HasNormals();
         Handle(Poly_PolygonOnTriangulation) anEdgePoly = BRep_Tool::PolygonOnTriangulation (anEdge, aTriangulation, aLoc);
         if (anEdgePoly.IsNull()
           || anEdgePoly->Nodes().Length () < 2)
@@ -406,7 +406,6 @@ namespace
         }
 
         // get edge nodes indexes from face triangulation
-        ++aFaceIndex;
         const TColStd_Array1OfInteger& anEdgeNodes = anEdgePoly->Nodes();
         const gp_Trsf& aTrsf = aLoc.Transformation();
 
@@ -419,7 +418,7 @@ namespace
           const Standard_Integer aTriIndex = anEdgeNodes.Value (aNodeIdx);
           
           gp_Pnt aTriNode = aTriangulation->Node (aTriIndex);
-          gp_Dir aNorm = aTriangulation->Normal (aTriIndex);
+          gp_Dir aNorm = aHasNormals ? aTriangulation->Normal (aTriIndex) : gp_Dir();
           if (aFace.Orientation() == TopAbs_REVERSED)
           {
             aNorm.Reverse();
@@ -430,7 +429,7 @@ namespace
             aNorm.Transform (aTrsf);
           }
           
-          if (aFaceIndex == 1)
+          if (aFaceIndex == 0)
           {
             aSegments->AddVertex (aTriNode, aNorm);
             if (aNodeIdx != anEdgeNodes.Lower())
@@ -449,6 +448,7 @@ namespace
             ++aSegmentEdge;
           }
         }
+        ++aFaceIndex;
       }
     }
 
@@ -614,7 +614,7 @@ void StdPrs_ShadedShape::Add (const Handle (Prs3d_Presentation)& thePrs,
     if (Handle(Graphic3d_ArrayOfSegments) aBndSegments = fillFaceBoundaries (theShape, theDrawer->FaceBoundaryUpperContinuity()))
     {
       Handle(Graphic3d_Group) aPrsGrp = !theGroup.IsNull() ? theGroup : thePrs->NewGroup();
-      Handle(Graphic3d_AspectLine3d) aLineAspect = theDrawer->FaceBoundaryAspect()->Aspect();
+      Handle(Graphic3d_AspectLine3d) aLineAspect = Handle(Graphic3d_AspectLine3d)(theDrawer->FaceBoundaryAspect()->Aspect());
       if (theDrawer->FaceBoundaryShadingOverride())
       {
         Quantity_Color aColor = theDrawer->ShadingAspect()->Color();

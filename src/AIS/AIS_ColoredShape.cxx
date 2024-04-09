@@ -636,7 +636,7 @@ void AIS_ColoredShape::addShapesWithCustomProps (const Handle(Prs3d_Presentation
         {
           if (Handle(Graphic3d_ArrayOfSegments) aBndSegments = StdPrs_ShadedShape::FillFaceBoundaries (aShapeDraw, aDrawer->FaceBoundaryUpperContinuity()))
           {
-            Handle(Graphic3d_AspectLine3d) aLineAspect = aDrawer->FaceBoundaryAspect()->Aspect();
+            Handle(Graphic3d_AspectLine3d) aLineAspect = Handle(Graphic3d_AspectLine3d)(aDrawer->FaceBoundaryAspect()->Aspect());
             if (aDrawer->FaceBoundaryShadingOverride())
             {
               Quantity_Color aColor = aDrawer->Color();
