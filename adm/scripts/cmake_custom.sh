@@ -8,7 +8,7 @@ FREETYPE_DIR="$OCCT3RDPARTY/freetype-2.7.1"
 # ------------------------------------
 
 #BUILD_DIR=build
-INSTALL_DIR="$SrcRoot/../3rdparty/occt77"
+INSTALL_DIR="$SrcRoot/../3rdparty/occt"
 
 BUILD_CPP_STANDARD=C++14
 

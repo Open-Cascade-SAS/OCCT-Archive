@@ -2,7 +2,7 @@
 export aFreeType="$aSrcRoot/../3rdparty/freetype-2.7.1-wasm"
 export EMSDK_ROOT="$aSrcRoot/../emsdk"
 
-export aDestDir="${aSrcRoot}/../3rdparty/occt77-wasm"
+export aDestDir="${aSrcRoot}/../3rdparty/occt-wasm"
 
 # Uncomment to customize building steps
 #export aBuildRoot=work

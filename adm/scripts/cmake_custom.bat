@@ -13,7 +13,7 @@ rem Uncomment to customize building steps
 rem ------------------------------------
 
 rem set "BUILD_DIR=build-vs%VS%-%VSPLATFORM%"
-set "INSTALL_DIR=%SrcRoot%\..\3rdparty\occt77-vc14-64"
+set "INSTALL_DIR=%SrcRoot%\..\3rdparty\occt-vc14-64"
 
 set BUILD_CPP_STANDARD=C++14
 

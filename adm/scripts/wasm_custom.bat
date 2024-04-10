@@ -5,7 +5,7 @@ rem set "aRapidJson=%aCasSrc%\..\3rdparty\rapidjson-1.1.0"
 rem set "aDraco=%aCasSrc%\..\3rdparty\draco-1.4.1-wasm32"
 rem set "aCmakeBin=%ProgramW6432%\CMake\bin"
 
-set "aDestDir=%aCasSrc%\..\3rdparty\occt77-wasm"
+set "aDestDir=%aCasSrc%\..\3rdparty\occt-wasm"
 
 rem Uncomment to customize building steps
 rem set "aBuildRoot=work"
