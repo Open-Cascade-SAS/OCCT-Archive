@@ -801,6 +801,7 @@ protected:
   mutable NCollection_Array1<Standard_Integer>             myLightTypeArray;
   mutable NCollection_Array1<OpenGl_ShaderLightParameters> myLightParamsArray;
   mutable NCollection_Array1<Graphic3d_Mat4>               myShadowMatArray;
+  mutable NCollection_Array1<Graphic3d_Vec2>               myShadowRangeArray;
   mutable NCollection_Array1<OpenGl_Vec4>                  myClipPlaneArray;
   mutable NCollection_Array1<OpenGl_Vec4d>                 myClipPlaneArrayFfp;
   mutable NCollection_Array1<Standard_Integer>             myClipChainArray;

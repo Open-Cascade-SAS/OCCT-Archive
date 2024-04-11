@@ -474,12 +474,9 @@ Standard_Boolean OpenGl_FrameBuffer::Init (const Handle(OpenGl_Context)& theGlCo
     {
       if (theIsCubeMap)
       {
-        for (Standard_Integer aCubeFace = 0; aCubeFace < 6; ++aCubeFace)
-        {
-          theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                                                        GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeFace),
-                                                        myDepthStencilTexture->TextureId(), 0);
-        }
+        theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                                      GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X),
+                                                      myDepthStencilTexture->TextureId(), 0);
       }
       else
       {
@@ -491,15 +488,12 @@ Standard_Boolean OpenGl_FrameBuffer::Init (const Handle(OpenGl_Context)& theGlCo
     {
       if (theIsCubeMap)
       {
-        for (Standard_Integer aCubeFace = 0; aCubeFace < 6; ++aCubeFace)
-        {
-          theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                                        GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeFace),
-                                                        myDepthStencilTexture->TextureId(), 0);
-          theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                                        GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + aCubeFace),
-                                                        myDepthStencilTexture->TextureId(), 0);
-        }
+        theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                                      GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X),
+                                                      myDepthStencilTexture->TextureId(), 0);
+        theGlContext->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                                      GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X),
+                                                      myDepthStencilTexture->TextureId(), 0);
       }
       else
       {
@@ -952,9 +946,21 @@ void OpenGl_FrameBuffer::BindReadBuffer (const Handle(OpenGl_Context)& theGlCtx)
 void OpenGl_FrameBuffer::BindBufferCube (const Handle(OpenGl_Context)& theGlCtx, const Standard_Integer theFace)
 {
   theGlCtx->arbFBO->glBindFramebuffer (GL_DRAW_FRAMEBUFFER, myGlFBufferId);
-  theGlCtx->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                                            GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + theFace),
-                                            myDepthStencilTexture->TextureId(), 0);
+  if (hasDepthStencilAttach (theGlCtx))
+  {
+    theGlCtx->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                              GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + theFace),
+                                              myDepthStencilTexture->TextureId(), 0);
+  }
+  else
+  {
+    theGlCtx->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                              GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + theFace),
+                                              myDepthStencilTexture->TextureId(), 0);
+    theGlCtx->arbFBO->glFramebufferTexture2D (GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                              GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + theFace),
+                                              myDepthStencilTexture->TextureId(), 0);
+  }
 }
 
 // =======================================================================

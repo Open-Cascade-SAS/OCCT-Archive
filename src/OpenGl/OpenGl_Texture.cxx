@@ -524,12 +524,12 @@ bool OpenGl_Texture::Init (const Handle(OpenGl_Context)& theCtx,
       if (theCtx->GraphicsLibrary() == Aspect_GraphicsLibrary_OpenGL)
       {
         // use proxy to check texture could be created or not
-        theCtx->core11fwd->glTexImage2D (GL_PROXY_TEXTURE_2D, 0, anIntFormat,
+        theCtx->core11fwd->glTexImage2D (GL_PROXY_TEXTURE_CUBE_MAP, 0, anIntFormat,
                                          theSizeXYZ.x(), theSizeXYZ.y(), 0,
                                          theFormat.PixelFormat(), theFormat.DataType(), NULL);
-        theCtx->core11fwd->glGetTexLevelParameteriv (GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &aTestWidth);
-        theCtx->core11fwd->glGetTexLevelParameteriv (GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &aTestHeight);
-        theCtx->core11fwd->glGetTexLevelParameteriv (GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &mySizedFormat);
+        theCtx->core11fwd->glGetTexLevelParameteriv (GL_PROXY_TEXTURE_CUBE_MAP, 0, GL_TEXTURE_WIDTH, &aTestWidth);
+        theCtx->core11fwd->glGetTexLevelParameteriv (GL_PROXY_TEXTURE_CUBE_MAP, 0, GL_TEXTURE_HEIGHT, &aTestHeight);
+        theCtx->core11fwd->glGetTexLevelParameteriv (GL_PROXY_TEXTURE_CUBE_MAP, 0, GL_TEXTURE_INTERNAL_FORMAT, &mySizedFormat);
         if (aTestWidth == 0 || aTestHeight == 0)
         {
           // no memory or broken input parameters

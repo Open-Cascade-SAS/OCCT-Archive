@@ -1732,7 +1732,7 @@ void OpenGl_View::Redraw()
         aShadowMap->SetLightSource (aLight);
         if (aLight->Type() == Graphic3d_TypeOfLightSource_Positional)
         {
-          // point light shadows are not currently supported on opengles 2.0.
+          // cube shadow maps are not currently working on opengles 2.0.
           if (aCtx->GraphicsLibrary() != Aspect_GraphicsLibrary_OpenGLES
            || aCtx->VersionMajor() >= 3)
           {

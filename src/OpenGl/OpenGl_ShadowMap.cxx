@@ -138,13 +138,12 @@ bool OpenGl_ShadowMap::UpdateCamera (const Graphic3d_CView& theView,
       myShadowCamera->SetZeroToOneDepth (theView.Camera()->IsZeroToOneDepth());
       myShadowCamera->SetProjectionType (Graphic3d_Camera::Projection_Perspective);
       myShadowCamera->SetFOVy (90.0);
-      const gp_Pnt& aLightPos = myShadowLight->Position();
-      myShadowCamera->MoveEyeTo (aLightPos);
+      myShadowCamera->MoveEyeTo (myShadowLight->Position());
       // calculate direction and up vector for the given cubemap face
       myShadowCamera->SetDirectionFromEye (Graphic3d_CubeMap::GetCubeDirection ((Graphic3d_CubeMapSide)theFace));
       myShadowCamera->SetUp (Graphic3d_CubeMap::GetCubeUp ((Graphic3d_CubeMapSide)theFace));
       // setup znear and zfar (default value)
-      myShadowCamera->SetZRange (1.0, myShadowCamera->GetDefaultZFar());
+      myShadowCamera->SetZRange (1.0, myShadowLight->Range() <= 1.0 ? Graphic3d_Camera::GetDefaultZFar() : myShadowLight->Range());
       myLightMatrix = myShadowCamera->ProjectionMatrixF() * myShadowCamera->OrientationMatrixF();
 
       return true;

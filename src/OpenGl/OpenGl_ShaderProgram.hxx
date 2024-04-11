@@ -61,6 +61,7 @@ enum OpenGl_StateVariable
   OpenGl_OCC_LIGHT_SHADOWMAP_SAMPLERS,     // occShadowMapSamplers
   OpenGl_OCC_LIGHT_SHADOWCUBEMAP_SAMPLERS, // occShadowCubeMapSamplers
   OpenGl_OCC_LIGHT_SHADOWMAP_MATRICES,     // occShadowMapMatrices
+  OpenGl_OCC_LIGHT_SHADOWMAP_RANGEPARAMS,  // occShadowMapRangeParams
 
   // Material state
   OpenGl_OCCT_TEXTURE_ENABLE,

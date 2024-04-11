@@ -59,41 +59,11 @@ Graphic3d_CubeMap::~Graphic3d_CubeMap()
 // =======================================================================
 gp_Dir Graphic3d_CubeMap::GetCubeDirection (Graphic3d_CubeMapSide theFace)
 {
-  gp_Dir aResult;
-  switch (theFace)
-  {
-    case (Graphic3d_CMS_POS_X):
-    {
-      aResult = gp_Dir(1.0, 0.0, 0.0);
-    }
-    break;
-    case (Graphic3d_CMS_NEG_X):
-    {
-      aResult = gp_Dir(-1.0, 0.0, 0.0);
-    }
-    break;
-    case (Graphic3d_CMS_POS_Y):
-    {
-      aResult = gp_Dir(0.0, 1.0, 0.0);
-    }
-    break;
-    case (Graphic3d_CMS_NEG_Y):
-    {
-      aResult = gp_Dir(0.0, -1.0, 0.0);
-    }
-    break;
-    case (Graphic3d_CMS_POS_Z):
-    {
-      aResult = gp_Dir(0.0, 0.0, 1.0);
-    }
-    break;
-    case (Graphic3d_CMS_NEG_Z):
-    {
-      aResult = gp_Dir(0.0, 0.0, -1.0);
-    }
-    break;
-  }
-  return aResult;
+  const Standard_Integer aDiv2 = theFace / 2;
+  const Standard_Integer aMod2 = theFace % 2;
+  return gp_Dir (aDiv2 == 0 ? aMod2 == 0 ? 1.0 : -1.0 : 0.0,
+                 aDiv2 == 1 ? aMod2 == 0 ? 1.0 : -1.0 : 0.0,
+                 aDiv2 == 2 ? aMod2 == 0 ? 1.0 : -1.0 : 0.0);
 }
 
 // =======================================================================
@@ -102,39 +72,9 @@ gp_Dir Graphic3d_CubeMap::GetCubeDirection (Graphic3d_CubeMapSide theFace)
 // =======================================================================
 gp_Dir Graphic3d_CubeMap::GetCubeUp (Graphic3d_CubeMapSide theFace)
 {
-  gp_Dir aResult;
-  switch (theFace)
-  {
-    case (Graphic3d_CMS_POS_X):
-    {
-      aResult = -gp_Dir(0.0, -1.0, 0.0);
-    }
-    break;
-    case (Graphic3d_CMS_NEG_X):
-    {
-      aResult = -gp_Dir(0.0, -1.0, 0.0);
-    }
-    break;
-    case (Graphic3d_CMS_POS_Y):
-    {
-      aResult = gp_Dir(0.0, 0.0, 1.0);
-    }
-    break;
-    case (Graphic3d_CMS_NEG_Y):
-    {
-      aResult = gp_Dir(0.0, 0.0, -1.0);
-    }
-    break;
-    case (Graphic3d_CMS_POS_Z):
-    {
-      aResult = gp_Dir(0.0, -1.0, 0.0);
-    }
-    break;
-    case (Graphic3d_CMS_NEG_Z):
-    {
-      aResult = gp_Dir(0.0, -1.0, 0.0);
-    }
-    break;
-  }
-  return aResult;
+  const Standard_Integer aDiv2 = theFace / 2;
+  const Standard_Integer aMod2 = theFace % 2;
+  return gp_Dir (0.0,
+                 aDiv2 == 0 ? 1.0 : aDiv2 == 2 ? -1.0 : 0.0,
+                 aDiv2 == 1 ? aMod2 == 0 ? 1.0 : -1.0 : 0.0);
 }

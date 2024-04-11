@@ -1720,6 +1720,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramPhong (con
   if (theNbShadowMaps + theNbShadowCubeMaps > 0)
   {
     aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("mat4 occShadowMapMatrices[THE_NB_SHADOWMAPS]", Graphic3d_TOS_VERTEX));
+    aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("vec2 occShadowMapRangeParams[THE_NB_SHADOWMAPS]", Graphic3d_TOS_FRAGMENT));
     aUniforms.Append (Graphic3d_ShaderObject::ShaderVariable ("vec2 occShadowMapSizeBias", Graphic3d_TOS_FRAGMENT));
     if (theNbShadowMaps > 0)
     {

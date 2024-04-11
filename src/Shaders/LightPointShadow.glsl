@@ -1,6 +1,5 @@
 //! Function computes point light shadow attenuation (1.0 means no shadow).
 float occLightPointShadow (in samplerCube theShadow,
-                           //in vec2 theDepthRange,
                            in int  theId,
                            in vec3 thePoint,
                            in vec3 theNormal)
@@ -11,8 +10,9 @@ float occLightPointShadow (in samplerCube theShadow,
   vec3 anAbsVec = abs (aLightDir);
   float aLocalZcomp = max (anAbsVec.x, max (anAbsVec.y, anAbsVec.z));
   // set znear and zfar
-  float aNear = POINTLIGHT_ZNEAR;
-  float aFar = POINTLIGHT_ZFAR;
+  float aRange = occShadowMapRangeParams[theId].y;
+  float aNear = occShadowMapRangeParams[theId].x;
+  float aFar = aRange <= aNear ? POINTLIGHT_ZFAR : aRange;
   float aNormZComp = (aFar + aNear) / (aFar - aNear) - (2.0 * aFar * aNear) / (aFar - aNear) / aLocalZcomp;
   float aDist = (aNormZComp + 1.0) * 0.5;
   // calculate bias and test depth.

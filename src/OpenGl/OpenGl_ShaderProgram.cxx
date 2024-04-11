@@ -62,6 +62,7 @@ Standard_CString OpenGl_ShaderProgram::PredefinedKeywords[] =
   "occShadowMapSamplers",     // OpenGl_OCC_LIGHT_SHADOWMAP_SAMPLERS,
   "occShadowCubeMapSamplers", // OpenGl_OCC_LIGHT_SHADOWCUBEMAP_SAMPLERS,
   "occShadowMapMatrices",     // OpenGl_OCC_LIGHT_SHADOWMAP_MATRICES,
+  "occShadowMapRangeParams",  // OpenGl_OCC_LIGHT_SHADOWMAP_RANGEPARAMS,
 
   "occTextureEnable",         // OpenGl_OCCT_TEXTURE_ENABLE
   "occDistinguishingMode",    // OpenGl_OCCT_DISTINGUISH_MODE

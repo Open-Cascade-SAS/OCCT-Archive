@@ -97,10 +97,6 @@ void Graphic3d_LightSet::CalculateNbShadows (Standard_Integer& theNb2DShadows, S
   for (NCollection_IndexedDataMap<Handle(Graphic3d_CLight), Standard_Size>::Iterator aLightIter(myLights); aLightIter.More(); aLightIter.Next())
   {
     const Handle(Graphic3d_CLight)& aLight = aLightIter.Key();
-    //if (!aLight->IsEnabled())
-    //{
-    //  continue;
-    //}
     if (aLight->ToCastShadows())
     {
       if (aLight->Type() == Graphic3d_TypeOfLightSource_Positional)

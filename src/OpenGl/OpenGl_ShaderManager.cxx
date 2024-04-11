@@ -15,6 +15,7 @@
 
 #include <OpenGl_ShaderManager.hxx>
 
+#include <Graphic3d_Camera.hxx>
 #include <Graphic3d_CubeMapPacked.hxx>
 #include <Graphic3d_TextureParams.hxx>
 #include <OpenGl_Aspects.hxx>
@@ -575,6 +576,25 @@ void OpenGl_ShaderManager::pushLightSourceState (const Handle(OpenGl_ShaderProgr
 
     theProgram->SetUniform (myContext, aShadowMatLoc, aNbShadowMaps, &myShadowMatArray.First());
     theProgram->SetUniform (myContext, theProgram->GetStateLocation (OpenGl_OCC_LIGHT_SHADOWMAP_SIZE_BIAS), aSizeBias);
+  }
+  if (const OpenGl_ShaderUniformLocation aShadowRangeLoc = theProgram->GetStateLocation (OpenGl_OCC_LIGHT_SHADOWMAP_RANGEPARAMS))
+  {
+    Standard_Integer aNbShadowMaps = theProgram->NbShadowMaps() + theProgram->NbShadowCubeMaps();
+    if (myShadowRangeArray.Size() < aNbShadowMaps)
+    {
+      myShadowRangeArray.Resize (0, aNbShadowMaps - 1, false);
+    }
+
+    if (myLightSourceState.HasShadowMaps())
+    {
+      const Standard_Integer aNbShadows = Min (aNbShadowMaps, myLightSourceState.ShadowMaps()->Size());
+      for (Standard_Integer aShadowIter = 0; aShadowIter < aNbShadows; ++aShadowIter)
+      {
+        const Handle(OpenGl_ShadowMap)& aShadow = myLightSourceState.ShadowMaps()->Value (aShadowIter);
+        myShadowRangeArray[aShadowIter] = Graphic3d_Vec2 (aShadow->Camera()->ZNear(), aShadow->Camera()->ZFar());
+      }
+    }
+    theProgram->SetUniform (myContext, aShadowRangeLoc, aNbShadowMaps, &myShadowRangeArray.First());
   }
 }
 

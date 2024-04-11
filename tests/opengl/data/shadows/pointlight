@@ -28,7 +28,7 @@ vsetcolor b6 SALMON3
 vsetcolor b7 PURPLE3
 # add light
 vlight -clear
-vlight pntlight1 -type POSITIONAL -pos 0 100 0 -intensity 1000 -castShadows 1
+vlight pntlight1 -type POSITIONAL -pos 0 100 0 -intensity 1000 -castShadows 1 -range 1000
 
 #dump single light phong
 vviewparams -scale 8.0 -proj 0.0 1.0 0.0 -up 0.0 0.0 1.0 -at 0.0 0.0 0.0

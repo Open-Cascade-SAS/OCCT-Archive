@@ -203,10 +203,10 @@ public:
 public:
 
   //! return default valut for znear.
-  Standard_EXPORT Standard_Real GetDefaultZNear();
+  Standard_EXPORT static Standard_Real GetDefaultZNear();
 
   //! return default valut for zfar.
-  Standard_EXPORT Standard_Real GetDefaultZFar();
+  Standard_EXPORT static Standard_Real GetDefaultZFar();
 
   //! Get camera look direction.
   //! @return camera look direction.
