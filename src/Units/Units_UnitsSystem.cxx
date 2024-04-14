@@ -100,7 +100,7 @@ void Units_UnitsSystem::Specify(const Standard_CString aquantity,const Standard_
 
   Units_UnitSentence unitsentence(aunit);
   if(!unitsentence.IsDone()) {
-    std::cout<<"Units_UnitsSystem::Specify : incorrect unit"<<std::endl;
+    std::cout<<"Units_UnitsSystem::Specify : incorrect unit"<<'\n';
     return;
   }
   Handle(Units_Token) token = unitsentence.Evaluate();
@@ -130,7 +130,7 @@ void Units_UnitsSystem::Specify(const Standard_CString aquantity,const Standard_
   
 //  Units_NoSuchType_Raise_if(quantity.IsNull(),aquantity);
   if( quantity.IsNull() ) {
-    std::cout<<"Warning: in Units_UnitsSystem : Units_NoSuchType '" << aquantity << "'" << std::endl;
+    std::cout<<"Warning: in Units_UnitsSystem : Units_NoSuchType '" << aquantity << "'" << '\n';
     return;
   }
   
@@ -289,7 +289,7 @@ Standard_Real Units_UnitsSystem::ConvertValueToUserSystem
 {
   Units_UnitSentence unitsentence(aunit);
   if(!unitsentence.IsDone()) {
-    std::cout<<"Units_UnitsSystem::ConvertValueToUserSystem : incorrect unit => return 0"<<std::endl;
+    std::cout<<"Units_UnitsSystem::ConvertValueToUserSystem : incorrect unit => return 0"<<'\n';
     return 0.;
   }
   return ConvertSIValueToUserSystem(aquantity,avalue*(unitsentence.Evaluate())->Value());
@@ -403,11 +403,11 @@ void Units_UnitsSystem::Dump() const
   Handle(Standard_Transient) transient = This();
   Handle(Units_UnitsSystem) unitssystem = Handle(Units_UnitsSystem)::DownCast (transient);
   Units_Explorer explorer(unitssystem);
-  std::cout<<" UNITSSYSTEM : "<<std::endl;
+  std::cout<<" UNITSSYSTEM : "<<'\n';
   for(; explorer.MoreQuantity(); explorer.NextQuantity()) {
-    std::cout<<explorer.Quantity()<<std::endl;
+    std::cout<<explorer.Quantity()<<'\n';
     for(; explorer.MoreUnit(); explorer.NextUnit())
-      std::cout<<"  "<<explorer.Unit()<<std::endl;
+      std::cout<<"  "<<explorer.Unit()<<'\n';
   }
 }
 

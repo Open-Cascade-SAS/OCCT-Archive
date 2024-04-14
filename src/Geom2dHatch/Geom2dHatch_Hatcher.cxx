@@ -1593,74 +1593,74 @@ const HatchGen_Domain& Geom2dHatch_Hatcher::Domain (const Standard_Integer IndH,
 
 void Geom2dHatch_Hatcher::Dump () const
 {
-  std::cout << std::endl ;
-  std::cout << "========================================================" << std::endl ;
-  std::cout << "=== Dump of the hatcher ================================" << std::endl ;
-  std::cout << "========================================================" << std::endl ;
-  std::cout << std::endl ;
+  std::cout << '\n' ;
+  std::cout << "========================================================" << '\n' ;
+  std::cout << "=== Dump of the hatcher ================================" << '\n' ;
+  std::cout << "========================================================" << '\n' ;
+  std::cout << '\n' ;
 
   std::cout << "The points   are "
        << (myKeepPoints   ? "    " : "not ")
        << "considered."
-       << std::endl ;
+       << '\n' ;
   std::cout << "The segments are "
        << (myKeepSegments ? "    " : "not ")
        << "considered."
-       << std::endl ;
-  std::cout << "2D Confusion tolerance : " << myConfusion2d << std::endl ;
-  std::cout << "3D Confusion tolerance : " << myConfusion3d << std::endl ;
+       << '\n' ;
+  std::cout << "2D Confusion tolerance : " << myConfusion2d << '\n' ;
+  std::cout << "3D Confusion tolerance : " << myConfusion3d << '\n' ;
   
   std::cout << myNbHatchings
        << " hatching"
        << ((myNbHatchings == 1) ? "" : "s")
-       << std::endl ;
+       << '\n' ;
   std::cout << myNbElements
        << " element"
        << ((myNbElements  == 1) ? "" : "s")
-       << std::endl ;
+       << '\n' ;
   
-  std::cout << std::endl ;
-  std::cout << "========================================================" << std::endl ;
-  std::cout << "=== Hatchings ==========================================" << std::endl ;
-  std::cout << "========================================================" << std::endl ;
-  std::cout << std::endl ;
+  std::cout << '\n' ;
+  std::cout << "========================================================" << '\n' ;
+  std::cout << "=== Hatchings ==========================================" << '\n' ;
+  std::cout << "========================================================" << '\n' ;
+  std::cout << '\n' ;
   
   for (Standard_Integer IndH = 1 ; IndH <= myNbHatchings ; IndH++) {
     std::cout << "Hatching # " << IndH ;
     if (!myHatchings.IsBound (IndH)) {
-      std::cout << " is not bound" << std::endl ;
+      std::cout << " is not bound" << '\n' ;
     } else {
       const Geom2dHatch_Hatching& Hatching = myHatchings.Find (IndH) ;
       Standard_Integer NbPnt = Hatching.NbPoints() ;
-      std::cout << " contains " << NbPnt << " restriction points :"  << std::endl ;
+      std::cout << " contains " << NbPnt << " restriction points :"  << '\n' ;
       for (Standard_Integer IPnt = 1 ; IPnt <= NbPnt ; IPnt++) {
 	const HatchGen_PointOnHatching& PntH = Hatching.Point (IPnt) ;
         PntH.Dump (IPnt) ;
       }
-      std::cout << "----------------------------------------------" << std::endl ;
+      std::cout << "----------------------------------------------" << '\n' ;
     }
   }
 
-  std::cout << std::endl ;
-  std::cout << "========================================================" << std::endl ;
-  std::cout << "=== Elements ===========================================" << std::endl ;
-  std::cout << "========================================================" << std::endl ;
-  std::cout << std::endl ;
+  std::cout << '\n' ;
+  std::cout << "========================================================" << '\n' ;
+  std::cout << "=== Elements ===========================================" << '\n' ;
+  std::cout << "========================================================" << '\n' ;
+  std::cout << '\n' ;
   
   for (Standard_Integer IndE = 1 ; IndE <= myNbElements ; IndE++) {
     std::cout << "Element # " << IndE ;
     if (!myElements.IsBound (IndE)) {
-      std::cout << " is not bound" << std::endl ;
+      std::cout << " is not bound" << '\n' ;
     } else {
       const Geom2dHatch_Element& Element = myElements.Find (IndE) ;
       switch (Element.Orientation()) {
-        case TopAbs_FORWARD  : std::cout << " is FORWARD"  << std::endl ; break ;
-        case TopAbs_REVERSED : std::cout << " is REVERSED" << std::endl ; break ;
-        case TopAbs_INTERNAL : std::cout << " is INTERNAL" << std::endl ; break ;
-        case TopAbs_EXTERNAL : std::cout << " is EXTERNAL" << std::endl ; break ;
+        case TopAbs_FORWARD  : std::cout << " is FORWARD"  << '\n' ; break ;
+        case TopAbs_REVERSED : std::cout << " is REVERSED" << '\n' ; break ;
+        case TopAbs_INTERNAL : std::cout << " is INTERNAL" << '\n' ; break ;
+        case TopAbs_EXTERNAL : std::cout << " is EXTERNAL" << '\n' ; break ;
       }
     }
   }
 
-  std::cout << std::endl ;
+  std::cout << '\n' ;
 }

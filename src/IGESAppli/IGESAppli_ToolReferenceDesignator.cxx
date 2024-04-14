@@ -123,5 +123,5 @@ void  IGESAppli_ToolReferenceDesignator::OwnDump
   S << "Number of Property Values : " << ent->NbPropertyValues() << "\n";
   S << "ReferenceDesignator : ";
   IGESData_DumpString(S,ent->RefDesignatorText());
-  S << std::endl;
+  S << '\n';
 }

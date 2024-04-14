@@ -1325,7 +1325,7 @@ Standard_Boolean Init_Appli()
     }
     catch (Standard_Failure const& theFail)
     {
-      std::cout << "Cannot open display (" << theFail << "). Interpret commands in batch mode." << std::endl;
+      std::cout << "Cannot open display (" << theFail << "). Interpret commands in batch mode." << '\n';
       return Standard_False;
     }
   }

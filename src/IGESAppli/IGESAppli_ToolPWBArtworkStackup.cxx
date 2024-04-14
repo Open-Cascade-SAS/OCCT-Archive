@@ -119,5 +119,5 @@ void  IGESAppli_ToolPWBArtworkStackup::OwnDump
   S << "\n";
   S << "Level Numbers : ";
   IGESData_DumpVals(S,level,1, ent->NbLevelNumbers(),ent->LevelNumber);
-  S << std::endl;
+  S << '\n';
 }

@@ -304,7 +304,7 @@ Standard_OStream& TDataStd_BooleanList::Dump (Standard_OStream& anOS) const
   Standard_Character sguid[Standard_GUID_SIZE_ALLOC];
   myID.ToCString(sguid);
   anOS << sguid;
-  anOS << std::endl;
+  anOS << '\n';
   return anOS;
 }
 

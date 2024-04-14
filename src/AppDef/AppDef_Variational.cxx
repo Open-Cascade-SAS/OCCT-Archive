@@ -878,34 +878,34 @@ Standard_Integer AppDef_Variational::NbIterations() const
 //
 void AppDef_Variational::Dump(Standard_OStream& o) const 
 {
-  o << " \nVariational Smoothing " << std::endl;
-  o << " Number of multipoints                   "  << myNbPoints << std::endl;
-  o << " Number of 2d par multipoint "  << myNbP2d << std::endl;
-  o << " Nombre of 3d par multipoint "  << myNbP3d << std::endl;
-  o << " Number of PassagePoint      "  << myNbPassPoints << std::endl;
-  o << " Number of TangencyPoints    "  << myNbTangPoints << std::endl;
-  o << " Number of CurvaturePoints   "  << myNbCurvPoints << std::endl;
+  o << " \nVariational Smoothing " << '\n';
+  o << " Number of multipoints                   "  << myNbPoints << '\n';
+  o << " Number of 2d par multipoint "  << myNbP2d << '\n';
+  o << " Nombre of 3d par multipoint "  << myNbP3d << '\n';
+  o << " Number of PassagePoint      "  << myNbPassPoints << '\n';
+  o << " Number of TangencyPoints    "  << myNbTangPoints << '\n';
+  o << " Number of CurvaturePoints   "  << myNbCurvPoints << '\n';
   o << " \nTolerance " << o.setf(std::ios::scientific) << std::setprecision(3) << std::setw(9) << myTolerance;
-  if ( WithMinMax()) { o << "  as Max Error." << std::endl;}
-  else { o << "  as size Error." << std::endl;}
+  if ( WithMinMax()) { o << "  as Max Error." << '\n';}
+  else { o << "  as size Error." << '\n';}
   o << "CriteriumWeights : " << myPercent[0] << " , " 
-    << myPercent[1] << " , " << myPercent[2] << std::endl;
+    << myPercent[1] << " , " << myPercent[2] << '\n';
 
   if (myIsDone ) {
-    o << " MaxError             " << std::setprecision(3) << std::setw(9) << myMaxError << std::endl;
-    o << " Index of  MaxError   " << myMaxErrorIndex << std::endl;
-    o << " Average Error        " << std::setprecision(3) << std::setw(9) << myAverageError << std::endl;
-    o << " Quadratic Error      " << std::setprecision(3) << std::setw(9) << myCriterium[0] << std::endl;
-    o << " Tension Criterium    " << std::setprecision(3) << std::setw(9) << myCriterium[1] << std::endl;
-    o << " Flexion  Criterium   " << std::setprecision(3) << std::setw(9) << myCriterium[2] << std::endl;
-    o << " Jerk  Criterium      " << std::setprecision(3) << std::setw(9) << myCriterium[3] << std::endl;
-    o << " NbSegments           "  << myKnots->Length()-1 << std::endl;
+    o << " MaxError             " << std::setprecision(3) << std::setw(9) << myMaxError << '\n';
+    o << " Index of  MaxError   " << myMaxErrorIndex << '\n';
+    o << " Average Error        " << std::setprecision(3) << std::setw(9) << myAverageError << '\n';
+    o << " Quadratic Error      " << std::setprecision(3) << std::setw(9) << myCriterium[0] << '\n';
+    o << " Tension Criterium    " << std::setprecision(3) << std::setw(9) << myCriterium[1] << '\n';
+    o << " Flexion  Criterium   " << std::setprecision(3) << std::setw(9) << myCriterium[2] << '\n';
+    o << " Jerk  Criterium      " << std::setprecision(3) << std::setw(9) << myCriterium[3] << '\n';
+    o << " NbSegments           "  << myKnots->Length()-1 << '\n';
   }
   else
   {
     o << (myIsOverConstr
        ? " The problem is overconstraint"
-       : " Error in approximation") << std::endl;
+       : " Error in approximation") << '\n';
   }
 }
 

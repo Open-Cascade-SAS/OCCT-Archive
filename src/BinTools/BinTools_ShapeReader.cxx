@@ -146,7 +146,7 @@ TopoDS_Shape BinTools_ShapeReader::ReadShape (BinTools_IStream& theStream)
           default:
           {
             Standard_SStream aMsg;
-            aMsg << "BinTools_ShapeReader::Read: UnExpected BRep_PointRepresentation = " << aPrsType << std::endl;
+            aMsg << "BinTools_ShapeReader::Read: UnExpected BRep_PointRepresentation = " << aPrsType << '\n';
             throw Standard_Failure (aMsg.str().c_str());
           }
           }
@@ -255,7 +255,7 @@ TopoDS_Shape BinTools_ShapeReader::ReadShape (BinTools_IStream& theStream)
           default:
           {
             Standard_SStream aMsg;
-            aMsg << "Unexpected Curve Representation =" << aPrsType << std::endl;
+            aMsg << "Unexpected Curve Representation =" << aPrsType << '\n';
             throw Standard_Failure (aMsg.str().c_str());
           }
 
@@ -295,7 +295,7 @@ TopoDS_Shape BinTools_ShapeReader::ReadShape (BinTools_IStream& theStream)
       default:
       {
         Standard_SStream aMsg;
-        aMsg << "Unexpected topology type = " << aShapeType << std::endl;
+        aMsg << "Unexpected topology type = " << aShapeType << '\n';
         throw Standard_Failure (aMsg.str().c_str());
         break;
       }
@@ -304,8 +304,8 @@ TopoDS_Shape BinTools_ShapeReader::ReadShape (BinTools_IStream& theStream)
   catch (Standard_Failure const& anException)
   {
     Standard_SStream aMsg;
-    aMsg << "EXCEPTION in BinTools_ShapeReader::Read" << std::endl;
-    aMsg << anException << std::endl;
+    aMsg << "EXCEPTION in BinTools_ShapeReader::Read" << '\n';
+    aMsg << anException << '\n';
     throw Standard_Failure (aMsg.str().c_str());
   }
   // read flags and subs

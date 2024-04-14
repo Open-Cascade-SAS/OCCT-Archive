@@ -461,5 +461,5 @@ void IGESGeom_ToolBoundary::OwnDump(const Handle(IGESGeom_Boundary)& ent,
   }
 	S << "\n";
       }
-  S << std::endl;
+  S << '\n';
 }

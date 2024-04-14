@@ -126,5 +126,5 @@ void IGESGraph_ToolColor::OwnDump
     << "Blue  (in % Of Full Intensity) : " << Blue  << "\n"
     << "Color Name : ";
   IGESData_DumpString(S,ent->ColorName());
-  S << std::endl;
+  S << '\n';
 }

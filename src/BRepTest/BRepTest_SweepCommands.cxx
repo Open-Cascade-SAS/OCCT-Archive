@@ -247,7 +247,7 @@ static Standard_Integer geompipe(Draw_Interpretor&,
   }
 
   Standard_Real Accuracy = aPipe.ErrorOnSurf();
-  std::cout << "Accuracy of approximation = " << Accuracy << std::endl;
+  std::cout << "Accuracy of approximation = " << Accuracy << '\n';
   
   Handle(Geom_Surface) Sur = aPipe.Surface();
   TopoDS_Face F;

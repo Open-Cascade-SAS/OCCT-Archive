@@ -1742,12 +1742,12 @@ Handle(TNaming_NamedShape) TNaming_Naming::Name (const TDF_Label&       F,
 	theName.ContextLabel(aNamedShape->Label());
 	if (Geom) return aNamedShape;
 	if(aNamedShape.IsNull()) {
-	std::cout <<" %%% WARNING: TNaming_Naming::Name:  FAILED"<<std::endl;
+	std::cout <<" %%% WARNING: TNaming_Naming::Name:  FAILED"<<'\n';
 	return BuildNS (F,S, TNaming_UNKNOWN);
       }
 
         if (!Geom && TestSolution(MDF, aNamedShape,S)) return aNamedShape;
-	std::cout <<" %%% WARNING: TNaming_Naming::Name:  FAILED"<<std::endl;
+	std::cout <<" %%% WARNING: TNaming_Naming::Name:  FAILED"<<'\n';
 
 	// Naming n is  unsatisfactory
 	return BuildNS (F,S, TNaming_UNKNOWN);
@@ -1849,7 +1849,7 @@ Handle(TNaming_NamedShape) TNaming_Naming::Name (const TDF_Label&       F,
     if (!Geom && TestSolution(MDF,NS,S)) return NS; 
   }
   
-      std::cout <<" %%% WARNING: TNaming_Naming::Name:  FAILED"<<std::endl;
+      std::cout <<" %%% WARNING: TNaming_Naming::Name:  FAILED"<<'\n';
 
   // Naming n is not satisfactory
   return BuildNS (F,S, TNaming_UNKNOWN); 

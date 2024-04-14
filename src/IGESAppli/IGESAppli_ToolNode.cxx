@@ -118,5 +118,5 @@ void  IGESAppli_ToolNode::OwnDump
     dumper.Dump(ent->System(),S, level);
   else
     S << "Global Cartesian Coordinate System (default)";
-  S << std::endl;
+  S << '\n';
 }

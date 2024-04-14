@@ -328,5 +328,5 @@ void IGESDraw_ToolSegmentedViewsVisible::OwnDump
       }
       break;
     }
-  S << std::endl;
+  S << '\n';
 }

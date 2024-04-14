@@ -317,7 +317,7 @@ Standard_OStream& TDataStd_IntegerArray::Dump (Standard_OStream& anOS) const
   Standard_Character sguid[Standard_GUID_SIZE_ALLOC];
   myID.ToCString(sguid);
   anOS << sguid;
-  anOS << std::endl;
+  anOS << '\n';
 
   // anOS <<"\nAttribute fields: ";
   //  anOS << TDF_Attribute::Dump(anOS);

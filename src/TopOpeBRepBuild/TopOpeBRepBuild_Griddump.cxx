@@ -295,7 +295,7 @@ void TopOpeBRepBuild_Builder::GdumpSAMDOM(const TopTools_ListOfShape& L,
                                           const Standard_Address astr) const 
 {
   TopOpeBRepDS_Dumper Dumper(myDataStructure);
-  std::cout<<Dumper.SPrintShapeRefOri(L,(char*)astr)<<std::endl;
+  std::cout<<Dumper.SPrintShapeRefOri(L,(char*)astr)<<'\n';
   std::cout.flush();
 }
 

@@ -1090,25 +1090,25 @@ Standard_Real  AdvApprox_ApproxAFunction::AverageError(
 void  AdvApprox_ApproxAFunction::Dump(Standard_OStream& o) const 
 {
   Standard_Integer ii;
-  o << "Dump of ApproxAFunction" << std::endl;
+  o << "Dump of ApproxAFunction" << '\n';
   if (myNumSubSpaces[0] > 0) {
-    o << "Error(s) 1d = " << std::endl;
+    o << "Error(s) 1d = " << '\n';
     for (ii=1; ii <= myNumSubSpaces[0]; ii++) {
-      o << "   " << MaxError(1, ii) << std::endl;
+      o << "   " << MaxError(1, ii) << '\n';
     }
   }
 
   if (myNumSubSpaces[1] > 0) {
-    o << "Error(s) 2d = " << std::endl;
+    o << "Error(s) 2d = " << '\n';
     for (ii=1; ii <= myNumSubSpaces[1]; ii++) {
-      o << "   " << MaxError(2, ii) << std::endl;
+      o << "   " << MaxError(2, ii) << '\n';
     }
   }
 
   if (myNumSubSpaces[2] > 0) {
-    o << "Error(s) 3d = " << std::endl;
+    o << "Error(s) 3d = " << '\n';
     for (ii=1; ii <= myNumSubSpaces[2]; ii++) {
-      o << "   " << MaxError(3, ii) << std::endl;
+      o << "   " << MaxError(3, ii) << '\n';
     }
   }
 }

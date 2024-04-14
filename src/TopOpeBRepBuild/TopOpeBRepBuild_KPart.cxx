@@ -1865,7 +1865,7 @@ static void LocalKPisdisjanalyse(const TopAbs_State Stsol1, const TopAbs_State  
     break;
   }
   default: {
-    std::cout << "Warning: given operation is unknown"   << std::endl;
+    std::cout << "Warning: given operation is unknown"   << '\n';
     break;
   }
   } //end switch
@@ -2051,7 +2051,7 @@ static Standard_Boolean disjPerformFuse(const TopTools_IndexedMapOfShape& theMap
       Standard_Integer ires=RESUNDEF, icla1=SHEUNDEF, icla2=SHEUNDEF;
       LocalKPisdisjanalyse(stsol1, stsol2, TopOpeBRepBuild_KPart_Operation_Fuse, ires, icla1, icla2);
       if (ires == RESUNDEF || icla1 == SHEUNDEF || icla2 == SHEUNDEF || ires == RESNULL) {
-	std::cout << "Warning: disjPerformFuse: can not determine solid's states"  << std::endl;
+	std::cout << "Warning: disjPerformFuse: can not determine solid's states"  << '\n';
 	continue;
       }
       if(ires == RESSHAPE12)
@@ -2067,7 +2067,7 @@ static Standard_Boolean disjPerformFuse(const TopTools_IndexedMapOfShape& theMap
       }
     } //end while(j)
     if(acheckiterator > aMaxNumberOfIterations) {
-      std::cout << "disjPerformFuse: programming error"  << std::endl;
+      std::cout << "disjPerformFuse: programming error"  << '\n';
       return Standard_False;
     }
     theMapOfResult.Add(acurrentsolid);
@@ -2115,7 +2115,7 @@ static Standard_Boolean disjPerformCommon(const TopTools_IndexedMapOfShape& theM
 
       LocalKPisdisjanalyse(stsol1, stsol2, TopOpeBRepBuild_KPart_Operation_Common, ires, icla1, icla2);
       if (ires == RESUNDEF || icla1 == SHEUNDEF || icla2 == SHEUNDEF) {
-	std::cout << "Warning: disjPerformCommon: can not determine solid's states"  << std::endl;
+	std::cout << "Warning: disjPerformCommon: can not determine solid's states"  << '\n';
 	continue;
       }      
       switch (ires) {
@@ -2192,7 +2192,7 @@ static Standard_Boolean disjPerformCut(const TopTools_IndexedMapOfShape& theMapO
 
       LocalKPisdisjanalyse(stsol1, stsol2, TopOpeBRepBuild_KPart_Operation_Cut12, ires, icla1, icla2);
       if (ires == RESUNDEF || icla1 == SHEUNDEF || icla2 == SHEUNDEF) {
-	std::cout << "Warning: disjPerformCut: can not determine solid's states"  << std::endl;
+	std::cout << "Warning: disjPerformCut: can not determine solid's states"  << '\n';
 	continue;
       }
       switch (ires) {

@@ -232,12 +232,12 @@ static Standard_Boolean StaticPath(const Handle(TCollection_HAsciiString)& val)
 {
   S <<"--- Typed Value : "<<Name();
   if (thelabel.Length() > 0) S <<"  Label : "<<Label();
-  S <<std::endl<<"--- Type : "<<Definition()<<std::endl<<"--- Value : ";
+  S <<'\n'<<"--- Type : "<<Definition()<<'\n'<<"--- Value : ";
 
   PrintValue (S);
-  S <<std::endl;
+  S <<'\n';
 
-  if (thesatisf) S <<" -- Specific Function for Satisfies : "<<thesatisn.ToCString()<<std::endl;
+  if (thesatisf) S <<" -- Specific Function for Satisfies : "<<thesatisn.ToCString()<<'\n';
 }
 
 

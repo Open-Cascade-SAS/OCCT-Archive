@@ -161,6 +161,6 @@ void  IGESDimen_ToolDimensionTolerance::OwnDump
     << "Lower Tolerance          : " << ent->LowerTolerance() << "\n"
     << "Sign Suppression Flag    : " << ( ent->SignSuppressionFlag() ? "True" : "False" ) << "\n"
     << "Fraction Flag            : " << ent->FractionFlag() << "\n"
-    << "Precision                : " << ent->Precision() << std::endl;
+    << "Precision                : " << ent->Precision() << '\n';
 }
 

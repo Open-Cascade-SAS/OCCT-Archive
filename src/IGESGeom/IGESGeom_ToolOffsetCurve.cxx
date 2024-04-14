@@ -369,5 +369,5 @@ void IGESGeom_ToolOffsetCurve::OwnDump(const Handle(IGESGeom_OffsetCurve)& ent,
     << "Normal Vector : ";
   IGESData_DumpXYZL(S,level, ent->NormalVector(), ent->VectorLocation());  S <<"\n";
   S << "Offset curve Parameters. Starting : " << ent->StartParameter() << "  "
-    << "Ending : " << ent->EndParameter()   << std::endl;
+    << "Ending : " << ent->EndParameter()   << '\n';
 }

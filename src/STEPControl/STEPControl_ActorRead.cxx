@@ -590,7 +590,7 @@ static void getSDR(const Handle(StepRepr_ProductDefinitionShape)& PDS,
       
 #ifdef TRANSLOG
     if (TP->TraceLevel() > 1) 
-      sout<<" -- Actor : Ent.n0 "<<TP->Model()->Number(PD)<<" -> Shared Ent.no"<<TP->Model()->Number(NAUO)<<std::endl;
+      sout<<" -- Actor : Ent.n0 "<<TP->Model()->Number(PD)<<" -> Shared Ent.no"<<TP->Model()->Number(NAUO)<<'\n';
 #endif
     Handle(Transfer_Binder) binder;
     Message_ProgressRange aRange = PS.Next();
@@ -814,7 +814,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(
   Message_Messenger::StreamBuffer sout = TP->Messenger()->SendInfo();
   #ifdef TRANSLOG
   if (TP->TraceLevel() > 2) 
-    sout<<" -- Actor : case  ShapeRepr. NbItems="<<nb<<std::endl;
+    sout<<" -- Actor : case  ShapeRepr. NbItems="<<nb<<'\n';
   #endif
   
     // Compute unit conversion factors and geometric Accuracy
@@ -868,7 +868,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(
     Message_ProgressRange aRange = aPS.Next();
     #ifdef TRANSLOG
     if (TP->TraceLevel() > 2) 
-      sout<<" -- Actor, shape_representation.item n0. "<<i<<std::endl;
+      sout<<" -- Actor, shape_representation.item n0. "<<i<<'\n';
     #endif
     Handle(StepRepr_RepresentationItem) anitem = sr->ItemsValue(i);
     if(anitem.IsNull())
@@ -1363,7 +1363,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::OldWay
 
 #ifdef TRANSLOG
   if (TP->TraceLevel() > 2) 
-    sout<<" -- Actor : case  shape_definition_representation."<<std::endl;
+    sout<<" -- Actor : case  shape_definition_representation."<<'\n';
 #endif
   Handle(Transfer_Binder) binder = TP->Find(rep);
   {
@@ -1414,7 +1414,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::OldWay
 //      if (anitem.IsNull()) continue;
 #ifdef TRANSLOG
     if (TP->TraceLevel() > 1) 
-      sout<<" -- Actor : Ent.n0 "<<TP->Model()->Number(start)<<" -> Shared Ent.no"<<TP->Model()->Number(anitem)<<std::endl;
+      sout<<" -- Actor : Ent.n0 "<<TP->Model()->Number(start)<<" -> Shared Ent.no"<<TP->Model()->Number(anitem)<<'\n';
 #endif
 
     if (!TP->IsBound(anitem)) binder = TP->Transferring(anitem, aRange);
@@ -1456,7 +1456,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity
   OSD_Timer chrono;
   if (TP->TraceLevel() > 2) 
     sout << "Begin transfer STEP -> CASCADE, Type "
-         << start->DynamicType()->Name() << std::endl;
+         << start->DynamicType()->Name() << '\n';
   chrono.Start();
 #endif
   Handle(StepData_StepModel) aStepModel = Handle(StepData_StepModel)::DownCast(TP->Model());
@@ -1568,7 +1568,7 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity
 #ifdef TRANSLOG
   chrono.Stop();
   if (TP->TraceLevel() > 2) 
-    sout<<"End transfer STEP -> CASCADE :" << (found ? "OK" : " : no result")<<std::endl;
+    sout<<"End transfer STEP -> CASCADE :" << (found ? "OK" : " : no result")<<'\n';
   if (TP->TraceLevel() > 2) 
     chrono.Show();
 #endif
@@ -1771,7 +1771,7 @@ Handle(Transfer_Binder) STEPControl_ActorRead::TransferShape(
 #ifdef TRANSLOG
 //  POUR MISE AU POINT, a supprimer ensuite
   if (TP->TraceLevel() > 1) 
-    sout<<" -- Actor : Transfer Ent.n0 "<<TP->Model()->Number(start)<<"  Type "<<start->DynamicType()->Name()<<std::endl;
+    sout<<" -- Actor : Transfer Ent.n0 "<<TP->Model()->Number(start)<<"  Type "<<start->DynamicType()->Name()<<'\n';
 #endif
   
   Handle(TransferBRep_ShapeBinder) shbinder;
@@ -1928,7 +1928,7 @@ void STEPControl_ActorRead::PrepareUnits(const Handle(StepRepr_Representation)& 
   // Assign uncertainty
 #ifdef TRANSLOG
   if (TP->TraceLevel() > 1) 
-    TP->Messenger()->SendInfo() <<"  Cc1ToTopoDS : Length Unit = "<<myUnit.LengthFactor()<<"  Tolerance CASCADE = "<<myPrecision<<std::endl;
+    TP->Messenger()->SendInfo() <<"  Cc1ToTopoDS : Length Unit = "<<myUnit.LengthFactor()<<"  Tolerance CASCADE = "<<myPrecision<<'\n';
 #endif
 }
 

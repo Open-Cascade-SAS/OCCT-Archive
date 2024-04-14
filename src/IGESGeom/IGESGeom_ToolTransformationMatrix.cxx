@@ -222,11 +222,11 @@ void IGESGeom_ToolTransformationMatrix::OwnDump
     << ent->Data(3, 3) << ", " << ent->Data(3, 4) << "\n";
 
   switch (ent->FormNumber()) {
-    case  0 : S << "-- Direct Orthogonal Matrix"      << std::endl;  break;
-    case  1 : S << "-- Reverse Orthogonal Matrix"     << std::endl;  break;
-    case 10 : S << "-- Cartesien Coordinate System"   << std::endl;  break;
-    case 11 : S << "-- Cylindrical Coordinate System" << std::endl;  break;
-    case 12 : S << "-- Spherical Coordinate System"   << std::endl;  break;
-    default : S << "--  (Incorrect Form Number)"      << std::endl;  break;
+    case  0 : S << "-- Direct Orthogonal Matrix"      << '\n';  break;
+    case  1 : S << "-- Reverse Orthogonal Matrix"     << '\n';  break;
+    case 10 : S << "-- Cartesien Coordinate System"   << '\n';  break;
+    case 11 : S << "-- Cylindrical Coordinate System" << '\n';  break;
+    case 12 : S << "-- Spherical Coordinate System"   << '\n';  break;
+    default : S << "--  (Incorrect Form Number)"      << '\n';  break;
   }
 }

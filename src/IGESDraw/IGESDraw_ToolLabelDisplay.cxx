@@ -229,5 +229,5 @@ void IGESDraw_ToolLabelDisplay::OwnDump
 	  S << "\n";
 	}
     }
-  S << std::endl;
+  S << '\n';
 }

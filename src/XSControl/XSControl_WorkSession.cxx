@@ -200,16 +200,16 @@ Standard_Boolean  XSControl_WorkSession::PrintTransferStatus(const Standard_Inte
     {
       S<<"  ** Transfer Root n0."<<ne;
     }
-    S<<std::endl;
+    S<<'\n';
     ent = FP->FindTransient(finder);
-    S<<" -> Type "<<finder->DynamicType()->Name()<<std::endl;
+    S<<" -> Type "<<finder->DynamicType()->Name()<<'\n';
     FP->StartTrace (binder,finder,0,0);  // pb sout/S
     if (!ent.IsNull()) {
       S<<" ** Resultat Transient, type "<<ent->DynamicType()->Name();
       const Handle(Interface_InterfaceModel) &model = Model();
       if (!model.IsNull())
 	{  S<<" In output Model, Entity ";  model->Print(ent, S);  }
-      S<<std::endl;
+      S<<'\n';
     }
   }
 
@@ -217,8 +217,8 @@ Standard_Boolean  XSControl_WorkSession::PrintTransferStatus(const Standard_Inte
   else {
     if (TP.IsNull()) return Standard_False;
     Handle(Interface_InterfaceModel) model = TP->Model();
-    if (model.IsNull()) std::cout<<"No Model"<<std::endl;
-    else if (model != Model()) std::cout<<"Model different from the session"<<std::endl;
+    if (model.IsNull()) std::cout<<"No Model"<<'\n';
+    else if (model != Model()) std::cout<<"Model different from the session"<<'\n';
     if (num == 0) return Standard_False;
 
     Standard_Integer  ne=0, nr=0, max = TP->NbMapped() ,maxr = TP->NbRoots();
@@ -239,10 +239,10 @@ Standard_Boolean  XSControl_WorkSession::PrintTransferStatus(const Standard_Inte
     {
       S<<"  ** Transfer Root n0."<<ne;
     }
-    S<<std::endl;
+    S<<'\n';
     if (!model.IsNull())  {  S<<" In Model, Entity ";  model->Print(ent, S); }
     binder = TP->MapItem (ne);
-    S<<std::endl;
+    S<<'\n';
     TP->StartTrace (binder,ent,0,0);
 
   }
@@ -253,11 +253,11 @@ Standard_Boolean  XSControl_WorkSession::PrintTransferStatus(const Standard_Inte
     Standard_Integer i,nbw = ch->NbWarnings(), nbf = ch->NbFails();
     if (nbw > 0) {
       S<<" - Warnings : "<<nbw<<" :\n";
-      for (i = 1; i <= nbw; i ++) S<<ch->CWarning(i)<<std::endl;
+      for (i = 1; i <= nbw; i ++) S<<ch->CWarning(i)<<'\n';
     }
     if (nbf > 0) {
       S<<" - Fails : "<<nbf<<" :\n";
-      for (i = 1; i <= nbf; i ++) S<<ch->CFail(i)<<std::endl;
+      for (i = 1; i <= nbf; i ++) S<<ch->CFail(i)<<'\n';
     }
   }
   return Standard_True;

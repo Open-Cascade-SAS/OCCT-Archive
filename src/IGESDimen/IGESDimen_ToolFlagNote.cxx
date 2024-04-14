@@ -159,5 +159,5 @@ void  IGESDimen_ToolFlagNote::OwnDump
   S << "\n"
     << "Number of Leaders : " << ent->NbLeaders() << "   Leaders : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbLeaders(),ent->Leader);
-  S << std::endl;
+  S << '\n';
 }

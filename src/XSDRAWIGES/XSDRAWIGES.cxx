@@ -58,7 +58,7 @@ void WriteShape(const TopoDS_Shape& shape,
   char fname[110];
   sprintf(fname, "Shape_%d", number);
   std::ofstream f(fname, std::ios::out | std::ios::binary);
-  std::cout << "Output file name : " << fname << std::endl;
+  std::cout << "Output file name : " << fname << '\n';
   f << "DBRep_DrawableShape\n";
 
   BRepTools::Write(shape, f);
@@ -304,9 +304,9 @@ static Standard_Integer igesbrep(Draw_Interpretor& theDI,
 
     else if (modepri == 3)
     {  // One Entity
-      std::cout << "Only One Entity" << std::endl;
-      std::cout << "spline_continuity (read) : " << Interface_Static::IVal("read.iges.bspline.continuity") << " (0 : no modif, 1 : C1, 2 : C2)" << std::endl;
-      std::cout << "  To modify : command  param read.iges.bspline.continuity" << std::endl;
+      std::cout << "Only One Entity" << '\n';
+      std::cout << "spline_continuity (read) : " << Interface_Static::IVal("read.iges.bspline.continuity") << " (0 : no modif, 1 : C1, 2 : C2)" << '\n';
+      std::cout << "  To modify : command  param read.iges.bspline.continuity" << '\n';
       std::cout << " give the number of the Entity : " << std::flush;
       nent = GiveEntityNumber(aWS, "");
 
@@ -395,7 +395,7 @@ static Standard_Integer igesbrep(Draw_Interpretor& theDI,
       {
         std::cout << "Name of Selection :" << std::flush;
         list = XSDRAW::Session()->GiveList("");
-        if (list.IsNull()) { std::cout << "No list defined" << std::endl; continue; }
+        if (list.IsNull()) { std::cout << "No list defined" << '\n'; continue; }
       }
 
       Standard_Integer nbl = list->Length();

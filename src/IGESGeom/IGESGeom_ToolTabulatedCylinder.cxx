@@ -140,5 +140,5 @@ void IGESGeom_ToolTabulatedCylinder::OwnDump
   S << "\n"
     << "Terminate Point : ";
   IGESData_DumpXYZL(S,level, ent->EndPoint(), ent->Location());
-  S << std::endl;
+  S << '\n';
 }

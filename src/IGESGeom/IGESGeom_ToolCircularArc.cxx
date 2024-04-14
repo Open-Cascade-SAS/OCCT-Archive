@@ -153,5 +153,5 @@ void IGESGeom_ToolCircularArc::OwnDump
   S << "\n";
   if (level <= 5) return;
   S << "  Normal Axis : ";  IGESData_DumpXYZL(S,level,ent->Axis(),ent->VectorLocation());
-  S << std::endl;
+  S << '\n';
 }

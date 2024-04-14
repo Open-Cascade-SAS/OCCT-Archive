@@ -161,8 +161,8 @@ void  IGESAppli_ToolLineWidening::OwnDump
     S << "incorrect value\n";
 
   if (ent->ExtensionFlag() == 2)
-    S << "Extension Value : " << ent->ExtensionValue()  << std::endl;
+    S << "Extension Value : " << ent->ExtensionValue()  << '\n';
   else
-    S << "No Extension Value (Extension Flag != 2)" << std::endl;
+    S << "No Extension Value (Extension Flag != 2)" << '\n';
 }
 

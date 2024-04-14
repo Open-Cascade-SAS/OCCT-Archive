@@ -164,5 +164,5 @@ void  IGESBasic_ToolSingularSubfigure::OwnDump
     << " Translation Data : ";
   IGESData_DumpXYZL(S,level, ent->Translation(), ent->Location());
   S << "  Scale Factors : " << ent->ScaleFactor() << "\n"
-    << std::endl;
+    << '\n';
 }

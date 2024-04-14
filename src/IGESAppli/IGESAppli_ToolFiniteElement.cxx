@@ -132,5 +132,5 @@ void  IGESAppli_ToolFiniteElement::OwnDump
   S << "Nodes : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbNodes(),ent->Node);
   S << "\nElement Name : " << ent->Name()->String();
-  S << std::endl;
+  S << '\n';
 }

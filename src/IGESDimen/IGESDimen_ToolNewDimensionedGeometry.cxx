@@ -235,5 +235,5 @@ void  IGESDimen_ToolNewDimensionedGeometry::OwnDump
 	  << "Point : ";
 	IGESData_DumpXYZL(S,level, ent->Point(i), ent->Location());
       }
-  S << std::endl;
+  S << '\n';
 }

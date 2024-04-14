@@ -39,9 +39,9 @@ void Units_Quantity::Dump(const Standard_Integer ashift,
 			  const Standard_Integer alevel) const
 {
   Standard_Integer index;
-  std::cout<<std::endl;
+  std::cout<<'\n';
   for(int i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<Name()<<std::endl;
+  std::cout<<Name()<<'\n';
 //  thedimensions->Dump(ashift+1);
   if(alevel > 0)
     {

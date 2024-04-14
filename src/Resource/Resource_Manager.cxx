@@ -79,7 +79,7 @@ Resource_Manager::Resource_Manager (const TCollection_AsciiString& theName,
   }
   else if (myVerbose)
   {
-    std::cout << "Resource Manager Warning: aDefaultsDirectory is empty." << std::endl;
+    std::cout << "Resource Manager Warning: aDefaultsDirectory is empty." << '\n';
   }
 
   if (!theUserDefaultsDirectory.IsEmpty())
@@ -97,7 +97,7 @@ Resource_Manager::Resource_Manager (const TCollection_AsciiString& theName,
   }
   else if (myVerbose)
   {
-    std::cout << "Resource Manager Warning: anUserDefaultsDirectory is empty." << std::endl;
+    std::cout << "Resource Manager Warning: anUserDefaultsDirectory is empty." << '\n';
   }
 }
 
@@ -120,12 +120,12 @@ Resource_Manager::Resource_Manager(const Standard_CString aName,
   if (!aPath.IsEmpty())
     Load(aPath,myRefMap);
   else if (myVerbose)
-    std::cout << "Resource Manager Warning: Environment variable \"CSF_" << aName << "Defaults\" not set." << std::endl;
+    std::cout << "Resource Manager Warning: Environment variable \"CSF_" << aName << "Defaults\" not set." << '\n';
 
   if (!aUserPath.IsEmpty())
     Load(aUserPath,myRefMap);
   else if (myVerbose)
-    std::cout << "Resource Manager Warning: Environment variable \"CSF_" << aName << "UserDefaults\" not set." << std::endl;
+    std::cout << "Resource Manager Warning: Environment variable \"CSF_" << aName << "UserDefaults\" not set." << '\n';
 }
 
 // =======================================================================
@@ -154,7 +154,7 @@ void Resource_Manager::Load(const TCollection_AsciiString& thePath,
   if (File.Failed()) {
     if (myVerbose)
       std::cout << "Resource Manager Warning: Cannot read file \"" << FileName
-	   << "\". File not found or permission denied." << std::endl;
+	   << "\". File not found or permission denied." << '\n';
     return;
   }
   Standard_Integer LineNumber = 1;
@@ -171,7 +171,7 @@ void Resource_Manager::Load(const TCollection_AsciiString& thePath,
     case Resource_KOL_Error:
       if (myVerbose)
 	std::cout << "Resource Manager: Syntax error at line "
-	  << LineNumber << " in file : " << FileName << std::endl;
+	  << LineNumber << " in file : " << FileName << '\n';
       break;
     }
     LineNumber++;
@@ -179,7 +179,7 @@ void Resource_Manager::Load(const TCollection_AsciiString& thePath,
   File.Close();
   if (myVerbose)
     std::cout << "Resource Manager: " << ((&aMap == &myUserMap) ? "User" : "Reference")
-         << " file \"" << FileName << "\" loaded" << std::endl;
+         << " file \"" << FileName << "\" loaded" << '\n';
 }
 
 static Resource_KindOfLine WhatKindOfLine(OSD_File& aFile,
@@ -237,7 +237,7 @@ static Resource_KindOfLine WhatKindOfLine(OSD_File& aFile,
     aToken2 = Line;
   }
   if (Debug)
-    std::cout << "'\t Value = '" << aToken2 << "'" << std::endl << std::flush;
+    std::cout << "'\t Value = '" << aToken2 << "'" << '\n' << std::flush;
   return Resource_KOL_Resource;
 }
 
@@ -279,7 +279,7 @@ Standard_Boolean Resource_Manager::Save() const
   if (dir.IsEmpty()) {
     if (myVerbose)
       std::cout << "Resource Manager Warning: environment variable \""
-	   << anEnvVar << "\" not set.  Cannot save resources." << std::endl ;
+	   << anEnvVar << "\" not set.  Cannot save resources." << '\n' ;
     return Standard_False;
   }
 
@@ -301,7 +301,7 @@ Standard_Boolean Resource_Manager::Save() const
     if (!aStatus) {
       if (myVerbose)
         std::cout << "Resource Manager: Error opening or creating directory \"" << aFilePath
-             << "\". Permission denied. Cannot save resources." << std::endl;
+             << "\". Permission denied. Cannot save resources." << '\n';
       return Standard_False;
     }
   }
@@ -330,7 +330,7 @@ Standard_Boolean Resource_Manager::Save() const
   if (!aStatus) {
     if (myVerbose)
       std::cout << "Resource Manager: Error opening or creating file \"" << aFilePath
-           << "\". Permission denied. Cannot save resources." << std::endl;
+           << "\". Permission denied. Cannot save resources." << '\n';
     return Standard_False;
   }
 
@@ -360,12 +360,12 @@ Standard_Boolean Resource_Manager::Save() const
       Line = KeyArray(Index) + ":\t" + Value + "\n";
 
       if (Debug)
-        std::cout << "Line = '" << Line << "'" << std::endl;
+        std::cout << "Line = '" << Line << "'" << '\n';
 
       File.Write(Line, Line.Length());
     }
     if (myVerbose)
-      std::cout << "Resource Manager: Resources saved in file " << aFilePath << std::endl;
+      std::cout << "Resource Manager: Resources saved in file " << aFilePath << '\n';
   }
   File.Close();
   return Standard_True;

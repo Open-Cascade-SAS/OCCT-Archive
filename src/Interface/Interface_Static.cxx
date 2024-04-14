@@ -87,10 +87,10 @@ void  Interface_Static::PrintStatic (Standard_OStream& S) const
   S <<"--- Static Value : "<<Name()<<"  Family:"<<Family();
   Print (S);
   if (!thewild.IsNull())
-    S <<" -- Attached to wild-card : "<<thewild->Name()<<std::endl;
+    S <<" -- Attached to wild-card : "<<thewild->Name()<<'\n';
   S <<"--- Actual status : "<<(theupdate ? "" : "original")<<"  Value : ";
 
-  if (thesatisf) S <<" -- Specific Function for Satisfies : "<<thesatisn.ToCString()<<std::endl;
+  if (thesatisf) S <<" -- Specific Function for Satisfies : "<<thesatisn.ToCString()<<'\n';
 }
 
 

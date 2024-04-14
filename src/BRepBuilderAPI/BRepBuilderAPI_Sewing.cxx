@@ -2184,23 +2184,23 @@ void BRepBuilderAPI_Sewing::Dump() const
       mapVertices.Add(V2);
     }
   }
-  std::cout << " " << std::endl;
-  std::cout << "                        Information                         " << std::endl;
-  std::cout << " ===========================================================" << std::endl;
-  std::cout << " " << std::endl;
-  std::cout << " Number of input shapes      : " << myOldShapes.Extent() << std::endl;
-  std::cout << " Number of actual shapes     : " << myNbShapes << std::endl;
-  std::cout << " Number of Bounds            : " << NbBounds << std::endl;
-  std::cout << " Number of Sections          : " << NbSections << std::endl;
-  std::cout << " Number of Edges             : " << mapEdges.Extent() << std::endl;
-  std::cout << " Number of Vertices          : " << myNbVertices << std::endl;
-  std::cout << " Number of Nodes             : " << mapVertices.Extent() << std::endl;
-  std::cout << " Number of Free Edges        : " << myFreeEdges.Extent() << std::endl;
-  std::cout << " Number of Contigous Edges   : " << myContigousEdges.Extent() << std::endl;
-  std::cout << " Number of Multiple Edges    : " << myMultipleEdges.Extent() << std::endl;
-  std::cout << " Number of Degenerated Edges : " << myDegenerated.Extent() << std::endl;
-  std::cout << " ===========================================================" << std::endl;
-  std::cout << " " << std::endl;
+  std::cout << " " << '\n';
+  std::cout << "                        Information                         " << '\n';
+  std::cout << " ===========================================================" << '\n';
+  std::cout << " " << '\n';
+  std::cout << " Number of input shapes      : " << myOldShapes.Extent() << '\n';
+  std::cout << " Number of actual shapes     : " << myNbShapes << '\n';
+  std::cout << " Number of Bounds            : " << NbBounds << '\n';
+  std::cout << " Number of Sections          : " << NbSections << '\n';
+  std::cout << " Number of Edges             : " << mapEdges.Extent() << '\n';
+  std::cout << " Number of Vertices          : " << myNbVertices << '\n';
+  std::cout << " Number of Nodes             : " << mapVertices.Extent() << '\n';
+  std::cout << " Number of Free Edges        : " << myFreeEdges.Extent() << '\n';
+  std::cout << " Number of Contigous Edges   : " << myContigousEdges.Extent() << '\n';
+  std::cout << " Number of Multiple Edges    : " << myMultipleEdges.Extent() << '\n';
+  std::cout << " Number of Degenerated Edges : " << myDegenerated.Extent() << '\n';
+  std::cout << " ===========================================================" << '\n';
+  std::cout << " " << '\n';
 }
 
 //=======================================================================

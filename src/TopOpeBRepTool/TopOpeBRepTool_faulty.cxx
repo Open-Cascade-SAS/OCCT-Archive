@@ -57,5 +57,5 @@ Standard_EXPORT void FUN_tool_trace(const Standard_Integer Index)
 }
 Standard_EXPORT void FUN_tool_trace(const gp_Pnt2d p2d)
 {
-  std::cout<<" = ("<<p2d.X()<<" "<<p2d.Y()<<")"<<std::endl;
+  std::cout<<" = ("<<p2d.X()<<" "<<p2d.Y()<<")"<<'\n';
 }

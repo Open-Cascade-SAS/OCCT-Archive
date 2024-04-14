@@ -630,7 +630,7 @@ void  DBRep_DrawableShape::DrawOn(Draw_Display& dis) const
       BRep_Tool::Range(E->Edge(), aCheckU1, aCheckU2);
       if (aCheckU2 < aCheckU1) {
 	// bad orientation
-	std::cout << "DBRep_DrawableShape : Bad parameters on edge."<<std::endl;
+	std::cout << "DBRep_DrawableShape : Bad parameters on edge."<<'\n';
 	BRepTools::Dump(E->Edge(),std::cout);
 	ite.Next();
 	continue;

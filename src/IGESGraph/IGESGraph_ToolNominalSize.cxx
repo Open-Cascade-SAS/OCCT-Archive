@@ -151,5 +151,5 @@ void IGESGraph_ToolNominalSize::OwnDump
   S << "\n"
     << "Name of relevant engineering standard : ";
   IGESData_DumpString(S,ent->StandardName());
-  S << std::endl;
+  S << '\n';
 }

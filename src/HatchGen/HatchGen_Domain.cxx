@@ -76,19 +76,19 @@ void HatchGen_Domain::Dump (const Standard_Integer Index) const
   } else {
     std::cout << "======" ;
   }
-  std::cout << "=============================" << std::endl ;
+  std::cout << "=============================" << '\n' ;
 
   if (myHasFirstPoint) {
     myFirstPoint.Dump (1) ;
   } else {
-    std::cout << "    Has not a first point" << std::endl ;
+    std::cout << "    Has not a first point" << '\n' ;
   }
 
   if (myHasSecondPoint) {
     mySecondPoint.Dump (2) ;
   } else {
-    std::cout << "    Has not a second point" << std::endl ;
+    std::cout << "    Has not a second point" << '\n' ;
   }
 
-  std::cout << "==============================================" << std::endl ;
+  std::cout << "==============================================" << '\n' ;
 }

@@ -174,5 +174,5 @@ void  IGESDimen_ToolCurveDimension::OwnDump
   S << "\n"
     << "Second Witness Entity : ";
   dumper.Dump(ent->SecondWitnessLine(),S, sublevel);
-  S << std::endl;
+  S << '\n';
 }

@@ -430,12 +430,12 @@ void GeomConvert_ApproxSurface::Approximate(const Handle(Adaptor3d_Surface)& the
 
 void GeomConvert_ApproxSurface::Dump(Standard_OStream& o) const 
 {
-  o<<std::endl;
-  if (!myHasResult) { o<<"No result"<<std::endl; }
+  o<<'\n';
+  if (!myHasResult) { o<<"No result"<<'\n'; }
   else {
-    o<<"Result max error :"<< myMaxError <<std::endl;
+    o<<"Result max error :"<< myMaxError <<'\n';
     }
-  o<<std::endl;
+  o<<'\n';
 }
 
 

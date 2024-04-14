@@ -61,7 +61,7 @@ Standard_EXPORT void DBRep_WriteColorOrientation ()
   std::cout << "\nrouge  FORWARD";
   std::cout << "\nbleu   REVERSED";
   std::cout << "\nrose   EXTERNAL";
-  std::cout << "\norange INTERNAL"<<std::endl;
+  std::cout << "\norange INTERNAL"<<'\n';
 }
 
 Standard_EXPORT Draw_Color DBRep_ColorOrientation (const TopAbs_Orientation Or) 
@@ -1376,7 +1376,7 @@ TopoDS_Shape DBRep::getShape (Standard_CString& theName,
       TopAbs::Print (theType, std::cout);
       std::cout << " but a ";
       TopAbs::Print (aShape.ShapeType(), std::cout);
-      std::cout << std::endl;
+      std::cout << '\n';
     }
     return TopoDS_Shape();
   }

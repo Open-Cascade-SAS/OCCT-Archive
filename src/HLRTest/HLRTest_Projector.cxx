@@ -67,7 +67,7 @@ void HLRTest_Projector::Dump (Standard_OStream& S) const
     }
     S << "\n";
   }
-  S << std::endl;
+  S << '\n';
 }
 
 //=======================================================================

@@ -353,7 +353,7 @@ void DDataStd_DrawPresentation::DrawBuild ()
     DDataStd_DrawDriver::Set(DD);
   }
   Handle(Draw_Drawable3D) D3D = DD->Drawable(Label()); 
-  if (D3D.IsNull()) std::cout<< "DDataStd_DrawPresentation::DrawBuild : null drawable" << std::endl;
+  if (D3D.IsNull()) std::cout<< "DDataStd_DrawPresentation::DrawBuild : null drawable" << '\n';
   myDrawable = D3D;
 }
 
@@ -380,7 +380,7 @@ void DDataStd_DrawPresentation::DrawDisplay (const TDF_Label& L,
       return;
     }
   }
-  std::cout<< "DDataStd_DrawPresentation::DrawDisplay : null Label" << std::endl;
+  std::cout<< "DDataStd_DrawPresentation::DrawDisplay : null Label" << '\n';
 }
 
 //=======================================================================
@@ -401,7 +401,7 @@ void DDataStd_DrawPresentation::DrawErase (const TDF_Label& L,
       return;
     }
   }
-  std::cout<< "DDataStd_DrawPresentation::DrawErase : null Label" << std::endl;
+  std::cout<< "DDataStd_DrawPresentation::DrawErase : null Label" << '\n';
 }
 
 

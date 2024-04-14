@@ -2064,7 +2064,7 @@ void BiTgte_Blend::ComputeSurfaces()
 	if (MKE.IsDone()) 
 	  E1 = MKE.Edge();
 	else  {
-	  std::cout << "Edge Not Done" << std::endl;
+	  std::cout << "Edge Not Done" << '\n';
 	  E1 = MKE.Edge();
 	}
 	  
@@ -2103,7 +2103,7 @@ void BiTgte_Blend::ComputeSurfaces()
 	if (MKE.IsDone()) 
 	  E2 = MKE.Edge();
 	else {
-	  std::cout << "edge not Done" << std::endl;
+	  std::cout << "edge not Done" << '\n';
 	  E2 = MKE.Edge();
 	}
 	KPartCurve3d(E2,PC2,GS2);

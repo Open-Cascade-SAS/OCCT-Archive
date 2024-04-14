@@ -195,8 +195,8 @@ void  BinTools_LocationSet::Write(Standard_OStream& OS) const
   }
   catch(Standard_Failure const& anException) {
     Standard_SStream aMsg;
-    aMsg << "EXCEPTION in BinTools_LocatioSet::Write(..)" << std::endl;
-    aMsg << anException << std::endl;
+    aMsg << "EXCEPTION in BinTools_LocatioSet::Write(..)" << '\n';
+    aMsg << anException << '\n';
     throw Standard_Failure(aMsg.str().c_str());
   }
 }
@@ -215,7 +215,7 @@ void  BinTools_LocationSet::Read(Standard_IStream& IS)
   IS >> buffer;
   if (IS.fail() || (strcmp(buffer,"Locations"))) {
     Standard_SStream aMsg;
-    aMsg << "BinTools_LocationSet::Read: Not a location table"<<std::endl;
+    aMsg << "BinTools_LocationSet::Read: Not a location table"<<'\n';
     throw Standard_Failure(aMsg.str().c_str());
     return;
   }
@@ -247,7 +247,7 @@ void  BinTools_LocationSet::Read(Standard_IStream& IS)
 	}
       } else {
 	Standard_SStream aMsg;
-	aMsg << "Unexpected location's type = " << aTypLoc << std::endl;
+	aMsg << "Unexpected location's type = " << aTypLoc << '\n';
 	throw Standard_Failure(aMsg.str().c_str());
       }    
       if (!L.IsIdentity()) myMap.Add(L);
@@ -255,8 +255,8 @@ void  BinTools_LocationSet::Read(Standard_IStream& IS)
   }
   catch(Standard_Failure const& anException) {
     Standard_SStream aMsg;
-    aMsg << "EXCEPTION in BinTools_LocationSet::Read(..)" << std::endl;
-    aMsg << anException << std::endl;
+    aMsg << "EXCEPTION in BinTools_LocationSet::Read(..)" << '\n';
+    aMsg << anException << '\n';
     throw Standard_Failure(aMsg.str().c_str());
   }
 }

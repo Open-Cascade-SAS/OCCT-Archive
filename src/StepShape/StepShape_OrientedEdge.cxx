@@ -62,7 +62,7 @@ void StepShape_OrientedEdge::SetEdgeStart(const Handle(StepShape_Vertex)& /*aEdg
 {
 	// WARNING : the field is redefined.
 	// field set up forbidden.
-	std::cout << "Field is redefined, SetUp Forbidden" << std::endl;
+	std::cout << "Field is redefined, SetUp Forbidden" << '\n';
 }
 
 Handle(StepShape_Vertex) StepShape_OrientedEdge::EdgeStart() const
@@ -83,7 +83,7 @@ void StepShape_OrientedEdge::SetEdgeEnd(const Handle(StepShape_Vertex)& /*aEdgeE
 {
 	// WARNING : the field is redefined.
 	// field set up forbidden.
-	std::cout << "Field is redefined, SetUp Forbidden" << std::endl;
+	std::cout << "Field is redefined, SetUp Forbidden" << '\n';
 }
 
 Handle(StepShape_Vertex) StepShape_OrientedEdge::EdgeEnd() const

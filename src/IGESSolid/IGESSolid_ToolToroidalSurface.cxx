@@ -152,7 +152,7 @@ void  IGESSolid_ToolToroidalSurface::OwnDump
     {
       S << "Surface is Parametrised  -  Reference direction : ";
       dumper.Dump(ent->ReferenceDir(),S, sublevel);
-      S << std::endl;
+      S << '\n';
     }
-  else S << "Surface is UnParametrised" << std::endl;
+  else S << "Surface is UnParametrised" << '\n';
 }

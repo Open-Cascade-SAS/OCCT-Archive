@@ -108,5 +108,5 @@ void  IGESBasic_ToolExternalReferenceFile::OwnDump
   S << "IGESBasic_ExternalReferenceFile\n"
     << "External Reference Names : ";
   IGESData_DumpStrings(S,level,1, ent->NbListEntries(),ent->Name);
-  S << std::endl;
+  S << '\n';
 }

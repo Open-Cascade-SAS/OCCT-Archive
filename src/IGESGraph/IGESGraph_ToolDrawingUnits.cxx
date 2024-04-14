@@ -226,5 +226,5 @@ void IGESGraph_ToolDrawingUnits::OwnDump
     << "  Units Name : ";
   IGESData_DumpString(S,ent->Unit());
   S << "  computed Value (in meters) : " << ent->UnitValue()
-    << std::endl;
+    << '\n';
 }

@@ -304,5 +304,5 @@ void IGESDraw_ToolDrawingWithRotation::OwnDump
     }
   S << "Annotation Entities : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbAnnotations(),ent->Annotation);
-  S << std::endl;
+  S << '\n';
 }

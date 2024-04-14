@@ -184,7 +184,7 @@ void  IGESDefs_ToolAssociativityDef::OwnDump
     << "Number Of Items per Entry :\n"
     << "Items :\n";
   IGESData_DumpVals(S,-level,1, ent->NbClassDefs(),ent->BackPointerReq);
-  S << std::endl;
+  S << '\n';
   if (level > 4)
     {
 // Warning : Item is a JAGGED Array
@@ -208,6 +208,6 @@ void  IGESDefs_ToolAssociativityDef::OwnDump
 	S << "]\n";
       }
     }
-  S << std::endl;
+  S << '\n';
 }
 

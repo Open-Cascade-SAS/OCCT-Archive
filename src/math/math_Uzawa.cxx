@@ -234,8 +234,8 @@ void math_Uzawa::Dump(Standard_OStream& o) const {
   o << "math_Uzawa";
   if(Done) {
     o << " Status = Done \n";
-    o << " Number of iterations = " << NbIter << std::endl;
-    o << " The solution vector is: " << Resul << std::endl;
+    o << " Number of iterations = " << NbIter << '\n';
+    o << " The solution vector is: " << Resul << '\n';
   }
   else {
     o << " Status = not Done \n";

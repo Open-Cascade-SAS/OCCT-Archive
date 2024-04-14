@@ -257,13 +257,13 @@ void math_NewtonMinimum::Perform(math_MultipleVarFunctionWithHessian& F,
 void math_NewtonMinimum::Dump(Standard_OStream& o) const 
 {
   o<< "math_Newton Optimisation: ";
-  o << " Done   ="  << Done << std::endl; 
-  o << " Status = " << (Standard_Integer)TheStatus << std::endl;
-  o << " Location Vector = " << Location() << std::endl;
-  o << " Minimum value = "<< Minimum()<< std::endl;
-  o << " Previous value = "<< PreviousMinimum << std::endl;
-  o << " Number of iterations = " <<NbIterations() << std::endl;
-  o << " Convexity = " << Convex << std::endl;
-  o << " Eigen Value = " << MinEigenValue << std::endl;
+  o << " Done   ="  << Done << '\n'; 
+  o << " Status = " << (Standard_Integer)TheStatus << '\n';
+  o << " Location Vector = " << Location() << '\n';
+  o << " Minimum value = "<< Minimum()<< '\n';
+  o << " Previous value = "<< PreviousMinimum << '\n';
+  o << " Number of iterations = " <<NbIterations() << '\n';
+  o << " Convexity = " << Convex << '\n';
+  o << " Eigen Value = " << MinEigenValue << '\n';
 }
 

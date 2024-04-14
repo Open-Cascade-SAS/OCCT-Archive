@@ -127,14 +127,14 @@ void  IGESAppli_ToolDrilledHole::OwnDump
   (const Handle(IGESAppli_DrilledHole)& ent, const IGESData_IGESDumper& /*dumper*/,
    Standard_OStream& S, const Standard_Integer /*level*/) const
 {
-  S << "IGESAppli_DrilledHole" << std::endl;
+  S << "IGESAppli_DrilledHole" << '\n';
 
-  S << "Number of property values : " << ent->NbPropertyValues() << std::endl;
+  S << "Number of property values : " << ent->NbPropertyValues() << '\n';
   S << "Drill  diameter size :" << ent->DrillDiaSize() << "  ";
-  S << "Finish diameter size : "  << ent->FinishDiaSize() << std::endl;
+  S << "Finish diameter size : "  << ent->FinishDiaSize() << '\n';
   S << "Plating indication flag : ";
   if (!ent->IsPlating())   S << "NO"  << "  -  ";
   else                     S << "YES  -  ";
   S << "Lower Numbered Layer  : " << ent->NbLowerLayer() << "  ";
-  S << "Higher Numbered Layer : " << ent->NbHigherLayer() << std::endl;
+  S << "Higher Numbered Layer : " << ent->NbHigherLayer() << '\n';
 }

@@ -130,6 +130,6 @@ void  IGESDimen_ToolBasicDimension::OwnDump
   IGESData_DumpXY(S, ent->UpperRight());
   S << "\n  Upper left corner  : ";
   IGESData_DumpXY(S, ent->UpperLeft());
-  S << std::endl;
+  S << '\n';
 }
 

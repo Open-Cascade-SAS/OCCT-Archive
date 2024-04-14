@@ -117,5 +117,5 @@ void IGESGeom_ToolDirection::OwnDump
   S << "IGESGeom_Direction\n\n"
     << "Value : ";
   IGESData_DumpXYZL(S,level, ent->Value(), ent->VectorLocation());
-  S << std::endl;
+  S << '\n';
 }

@@ -162,7 +162,7 @@ void VrmlConverter_WFDeflectionRestrictedFace::Add
 	  }
 	}
 	else {
-	  std::cout << "Cannot evaluate curve on surface"<<std::endl;
+	  std::cout << "Cannot evaluate curve on surface"<<'\n';
 	}
       }
       else {

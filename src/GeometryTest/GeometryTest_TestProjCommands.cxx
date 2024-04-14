@@ -35,7 +35,7 @@ static Standard_Integer xdistcc(Draw_Interpretor& , Standard_Integer n, const ch
 {
   if (n < 5)
   {
-    std::cout<<" Use xdistcc c1 c2 t1 t2 nbp"<<std::endl;
+    std::cout<<" Use xdistcc c1 c2 t1 t2 nbp"<<'\n';
     return 0;
   }
 
@@ -49,14 +49,14 @@ static Standard_Integer xdistcc(Draw_Interpretor& , Standard_Integer n, const ch
   aC1=DrawTrSurf::GetCurve(a[1]);
   if (aC1.IsNull())
   {
-    std::cout<<a[1]<<" is null curve"<<std::endl;
+    std::cout<<a[1]<<" is null curve"<<'\n';
     return 0;
   }
 
   aC2=DrawTrSurf::GetCurve(a[2]);
   if (aC2.IsNull())
   {
-    std::cout<<a[2]<<" is null curve"<<std::endl;
+    std::cout<<a[2]<<" is null curve"<<'\n';
     return 0;
   }
 
@@ -98,8 +98,8 @@ static Standard_Integer xdistcc(Draw_Interpretor& , Standard_Integer n, const ch
     dout << aMr;
   }
 
-  std::cout << "Max distance = "  << aMaxDist << std::endl;
-  std::cout << "Param = " << aMaxParam << std::endl;
+  std::cout << "Max distance = "  << aMaxDist << '\n';
+  std::cout << "Param = " << aMaxParam << '\n';
 
   return 0;
 }
@@ -112,7 +112,7 @@ static Standard_Integer xdistc2dc2dss(Draw_Interpretor& , Standard_Integer n, co
 {
   if (n < 7)
   {
-    std::cout<<" Use xdistc2dc2dss c2d_1 c2d_2 s1 s2 t1 t2 nbp"<<std::endl;
+    std::cout<<" Use xdistc2dc2dss c2d_1 c2d_2 s1 s2 t1 t2 nbp"<<'\n';
     return 0;
   }
 
@@ -128,28 +128,28 @@ static Standard_Integer xdistc2dc2dss(Draw_Interpretor& , Standard_Integer n, co
   aC2d1=DrawTrSurf::GetCurve2d(a[1]);
   if (aC2d1.IsNull())
   {
-    std::cout<<a[1]<<" is null 2dcurve"<<std::endl;
+    std::cout<<a[1]<<" is null 2dcurve"<<'\n';
     return 0;
   }
 
   aC2d2=DrawTrSurf::GetCurve2d(a[2]);
   if (aC2d2.IsNull())
   {
-    std::cout<<a[2]<<" is null 2dcurve"<<std::endl;
+    std::cout<<a[2]<<" is null 2dcurve"<<'\n';
     return 0;
   }
 
   aS1=DrawTrSurf::GetSurface(a[3]);
   if (aS1.IsNull())
   {
-    std::cout<<a[3]<<" is null surface"<<std::endl;
+    std::cout<<a[3]<<" is null surface"<<'\n';
     return 0;
   }
 
   aS2=DrawTrSurf::GetSurface(a[4]);
   if (aS2.IsNull())
   {
-    std::cout<<a[4]<<" is null surface"<<std::endl;
+    std::cout<<a[4]<<" is null surface"<<'\n';
     return 0;
   }
 
@@ -194,8 +194,8 @@ static Standard_Integer xdistc2dc2dss(Draw_Interpretor& , Standard_Integer n, co
     dout << aMr;
   }
 
-  std::cout << "Max distance = "  << aMaxDist << std::endl;
-  std::cout << "Param = " << aMaxParam << std::endl;
+  std::cout << "Max distance = "  << aMaxDist << '\n';
+  std::cout << "Param = " << aMaxParam << '\n';
 
   return 0;
 }
@@ -208,7 +208,7 @@ static Standard_Integer xdistcc2ds(Draw_Interpretor& , Standard_Integer n, const
 {
   if (n < 6)
   {
-    std::cout<<" Use xdistcc2ds c c2d s t1 t2 nbp"<<std::endl;
+    std::cout<<" Use xdistcc2ds c c2d s t1 t2 nbp"<<'\n';
     return 0;
   }
 
@@ -225,21 +225,21 @@ static Standard_Integer xdistcc2ds(Draw_Interpretor& , Standard_Integer n, const
   aC=DrawTrSurf::GetCurve(a[1]);
   if (aC.IsNull())
   {
-    std::cout<<a[1]<<" is null curve"<<std::endl;
+    std::cout<<a[1]<<" is null curve"<<'\n';
     return 0;
   }
 
   aC2d=DrawTrSurf::GetCurve2d(a[2]);
   if (aC2d.IsNull())
   {
-    std::cout<<a[2]<<" is null 2dcurve"<<std::endl;
+    std::cout<<a[2]<<" is null 2dcurve"<<'\n';
     return 0;
   }
 
   aS=DrawTrSurf::GetSurface(a[3]);
   if (aS.IsNull())
   {
-    std::cout<<a[3]<<" is null surface"<<std::endl;
+    std::cout<<a[3]<<" is null surface"<<'\n';
     return 0;
   }
 
@@ -283,8 +283,8 @@ static Standard_Integer xdistcc2ds(Draw_Interpretor& , Standard_Integer n, const
     dout << aMr;
   }
 
-  std::cout << "Max distance = "  << aMaxDist << std::endl;
-  std::cout << "Param = " << aMaxParam << std::endl;
+  std::cout << "Max distance = "  << aMaxDist << '\n';
+  std::cout << "Param = " << aMaxParam << '\n';
 
   return 0;
 }
@@ -296,10 +296,10 @@ static Standard_Integer xdistcc2ds(Draw_Interpretor& , Standard_Integer n, const
 static Standard_Integer xdistcs(Draw_Interpretor& di, Standard_Integer n, const char** a)
 {
   if (n < 6) {
-    std::cout << "Use: xdistcs curve surface t1 t2 nbpoints [tol [warn_tol]]" << std::endl;
-    std::cout << "Measures distances from curve to surface by nbpoints probing points on a curve" << std::endl;
-    std::cout << "Error will be reported for points where distance is greater than tol" << std::endl;
-    std::cout << "Warning will be reported for points where distance is greater than warn_tol" << std::endl;
+    std::cout << "Use: xdistcs curve surface t1 t2 nbpoints [tol [warn_tol]]" << '\n';
+    std::cout << "Measures distances from curve to surface by nbpoints probing points on a curve" << '\n';
+    std::cout << "Error will be reported for points where distance is greater than tol" << '\n';
+    std::cout << "Warning will be reported for points where distance is greater than warn_tol" << '\n';
     return 0;
   }
   //

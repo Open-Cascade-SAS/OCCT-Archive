@@ -149,5 +149,5 @@ void  IGESBasic_ToolExternalRefFileIndex::OwnDump
 	dumper.Dump (ent->Entity(i),S, 1);
 	S << "\n";
       }
-  S << std::endl;
+  S << '\n';
 }

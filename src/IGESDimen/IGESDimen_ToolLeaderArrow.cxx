@@ -151,5 +151,5 @@ void  IGESDimen_ToolLeaderArrow::OwnDump
   S << "\nSegment Tails : "; 
   IGESData_DumpListXYLZ(S,level,1, ent->NbSegments(),ent->SegmentTail,
 			ent->Location(), ent->ZDepth());
-  S << std::endl;
+  S << '\n';
 }

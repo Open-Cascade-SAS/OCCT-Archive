@@ -154,7 +154,7 @@ void LocOpe_SplitDrafts::Perform(const TopoDS_Face& F,
   }
 
   if (!FinS) {
-    std::cout << "LocOpe_SplitDrafts:!Fins throw Standard_ConstructionError()" << std::endl;
+    std::cout << "LocOpe_SplitDrafts:!Fins throw Standard_ConstructionError()" << '\n';
     throw Standard_ConstructionError();
   }    
 
@@ -647,7 +647,7 @@ void LocOpe_SplitDrafts::Perform(const TopoDS_Face& F,
 	  }
 	}
 	if (!itl.More()) {
-	  std::cout << "LocOpe_SplitDrafts: betite probleme "<< std::endl;
+	  std::cout << "LocOpe_SplitDrafts: betite probleme "<< '\n';
 	  return;
 	}
 
@@ -1376,7 +1376,7 @@ static Standard_Boolean NewPlane(const TopoDS_Face& F,
       }
     }
   }
-  std::cout << "fin newplane return standard_false" << std::endl;
+  std::cout << "fin newplane return standard_false" << '\n';
   return Standard_False;
 }
 
@@ -1445,7 +1445,7 @@ static void MakeFace(TopoDS_Face& F,
 	}
       }
       if (C2d.IsNull()) {
-	std::cout << "Ca merde violemment" << std::endl;
+	std::cout << "Ca merde violemment" << '\n';
       }
     }
   }
@@ -1535,7 +1535,7 @@ static void MakeFace(TopoDS_Face& F,
     B.Add(F,lwires.First());
   }
   else {
-    std::cout << "Not yet implemented : nbwire >= 2" << std::endl;
+    std::cout << "Not yet implemented : nbwire >= 2" << '\n';
   }
 
 }

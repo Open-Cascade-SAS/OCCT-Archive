@@ -205,5 +205,5 @@ void  IGESSolid_ToolRightAngularWedge::OwnDump
   IGESData_DumpXYZL(S,level, ent->XAxis(), ent->VectorLocation());
   S << "\nZAxis : ";
   IGESData_DumpXYZL(S,level, ent->ZAxis(), ent->VectorLocation());
-  S << std::endl;
+  S << '\n';
 }

@@ -1645,7 +1645,7 @@ static Standard_Integer intersection (Draw_Interpretor& di,
       Standard_Integer Compt = 1;
 
       if(nblines >= 1)
-        std::cout << "   Lines: " << std::endl;
+        std::cout << "   Lines: " << '\n';
 
       for (i = 1; i <= nblines; i++, Compt++)
       {
@@ -1657,7 +1657,7 @@ static Standard_Integer intersection (Draw_Interpretor& di,
       }
 
       if(nbpoints >= 1)
-        std::cout << "   Points: " << std::endl;
+        std::cout << "   Points: " << '\n';
 
       const Standard_Integer imax = nblines+nbpoints;
 

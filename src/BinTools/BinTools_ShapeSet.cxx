@@ -391,7 +391,7 @@ void  BinTools_ShapeSet::Read (Standard_IStream& IS,
   } 
   while ( ! IS.fail());
   if (IS.fail()) {
-    std::cout << "BinTools_ShapeSet::Read: File was not written with this version of the topology" << std::endl;
+    std::cout << "BinTools_ShapeSet::Read: File was not written with this version of the topology" << '\n';
     return;
   }
 
@@ -414,7 +414,7 @@ void  BinTools_ShapeSet::Read (Standard_IStream& IS,
   IS >> buffer;
   if (IS.fail() || strcmp(buffer,"TShapes")) {
     Standard_SStream aMsg;
-    aMsg << "BinTools_ShapeSet::Read: Not a TShape table"<<std::endl;
+    aMsg << "BinTools_ShapeSet::Read: Not a TShape table"<<'\n';
     throw Standard_Failure(aMsg.str().c_str());
     return;
   }
@@ -760,8 +760,8 @@ void BinTools_ShapeSet::WriteShape (const TopoDS_Shape& S,
   }
   catch(Standard_Failure const& anException) {
     Standard_SStream aMsg;
-    aMsg << "EXCEPTION in BinTools_ShapeSet::WriteGeometry(S,OS)" << std::endl;
-    aMsg << anException << std::endl;
+    aMsg << "EXCEPTION in BinTools_ShapeSet::WriteGeometry(S,OS)" << '\n';
+    aMsg << anException << '\n';
     throw Standard_Failure(aMsg.str().c_str());
   }
 }
@@ -880,7 +880,7 @@ void  BinTools_ShapeSet::ReadShape (const TopAbs_ShapeEnum T,
           default:
           {
             Standard_SStream aMsg;
-            aMsg << "BinTools_SurfaceSet::ReadGeometry: UnExpected BRep_PointRepresentation = " << val << std::endl;
+            aMsg << "BinTools_SurfaceSet::ReadGeometry: UnExpected BRep_PointRepresentation = " << val << '\n';
             throw Standard_Failure(aMsg.str().c_str());
           }
           }
@@ -1081,7 +1081,7 @@ void  BinTools_ShapeSet::ReadShape (const TopAbs_ShapeEnum T,
           default:
           {
             Standard_SStream aMsg;
-            aMsg << "Unexpected Curve Representation =" << val << std::endl;
+            aMsg << "Unexpected Curve Representation =" << val << '\n';
             throw Standard_Failure(aMsg.str().c_str());
           }
 
@@ -1167,7 +1167,7 @@ void  BinTools_ShapeSet::ReadShape (const TopAbs_ShapeEnum T,
       default:
       {
         Standard_SStream aMsg;
-        aMsg << "Unexpected topology type = " << T << std::endl;
+        aMsg << "Unexpected topology type = " << T << '\n';
         throw Standard_Failure(aMsg.str().c_str());
         break;
       }
@@ -1175,8 +1175,8 @@ void  BinTools_ShapeSet::ReadShape (const TopAbs_ShapeEnum T,
   }
   catch (Standard_Failure const& anException) {
     Standard_SStream aMsg;
-    aMsg << "EXCEPTION in BinTools_ShapeSet::ReadGeometry(S,OS)" << std::endl;
-    aMsg << anException << std::endl;
+    aMsg << "EXCEPTION in BinTools_ShapeSet::ReadGeometry(S,OS)" << '\n';
+    aMsg << anException << '\n';
     throw Standard_Failure(aMsg.str().c_str());
   }
 }

@@ -1395,11 +1395,11 @@ static Standard_Integer XDumpAssemblyTree(Draw_Interpretor& di,
         }
         aSS << anIt.Value();
       }
-      aSS << std::endl;
+      aSS << '\n';
     }
     else
     {
-      aSS << theItem.ToString() << std::endl;
+      aSS << theItem.ToString() << '\n';
     }
     return Standard_True;
   });
@@ -1513,7 +1513,7 @@ static Standard_Integer XDumpAssemblyGraph(Draw_Interpretor& di,
           aSS << " " << anIt1.Key();
         }
       }
-      aSS << std::endl;
+      aSS << '\n';
 
       return Standard_True;
     }
@@ -1596,7 +1596,7 @@ static Standard_Integer XDumpNomenclature(Draw_Interpretor& di,
       }
 
       aSS << theNode << " " << graphNodeTypename(aNodeType) << " " << aNodeEntry << " "
-          << theGraph->NbOccurrences(theNode) << std::endl;
+          << theGraph->NbOccurrences(theNode) << '\n';
 
       return Standard_True;
     }
@@ -1679,7 +1679,7 @@ static Standard_Integer testDoc (Draw_Interpretor&,
 {
   if( argc < 2 )
   {
-    std::cout<<"Invalid numbers of arguments should be: XTestDoc shape"<<std::endl;
+    std::cout<<"Invalid numbers of arguments should be: XTestDoc shape"<<'\n';
     return 1;
   }
   TopoDS_Shape shape = DBRep::Get(argv[1]);

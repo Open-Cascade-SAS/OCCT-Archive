@@ -256,7 +256,7 @@ void  IGESDefs_ToolGenericData::OwnDump
     << "Number of property values : " << ent->NbPropertyValues() << "\n"
     << "Property Name : ";
   IGESData_DumpString(S,ent->Name());
-  S << std::endl;
+  S << '\n';
   switch (level)
     {
     case 4:
@@ -292,5 +292,5 @@ void  IGESDefs_ToolGenericData::OwnDump
           }
       }
     }
-  S << std::endl;
+  S << '\n';
 }

@@ -255,7 +255,7 @@ GeomFill_FunctionGuide::GeomFill_FunctionGuide
 
    gp_XYZ& Q  = Pc.ChangeCoord(), DQ(0, 0, 0); //Q
    if (!isconst) {
-     std::cout << "Not implemented" << std::endl;
+     std::cout << "Not implemented" << '\n';
    }
 
 

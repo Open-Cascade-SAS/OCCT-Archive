@@ -132,7 +132,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
    const Handle(Interface_Protocol)& protocol,
    Interface_CopyTool& TC)
 {
-  Message::SendInfo() << "** WorkSession : Copying split data before sending"<<std::endl;
+  Message::SendInfo() << "** WorkSession : Copying split data before sending"<<'\n';
   const Interface_Graph& G = eval.Graph();
   Interface_CheckIterator checks;
   theshareout = eval.ShareOut();
@@ -161,7 +161,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
   (const Handle(IFSelect_WorkLibrary)& WL,
    const Handle(Interface_Protocol)& protocol)
 {
-  Message::SendInfo() << "** WorkSession : Sending split data already copied"<<std::endl;
+  Message::SendInfo() << "** WorkSession : Sending split data already copied"<<'\n';
   Standard_Integer nb = NbFiles();
   Interface_CheckIterator checks;
   if (nb > 0) {
@@ -180,7 +180,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
       if (!res) {
 	char mess[100];  sprintf(mess,"Split Send (WriteFile) abandon on file n0.%d",i);
 	checks.CCheck(0)->AddFail (mess);
-	Message::SendInfo() << "  **  Sending File n0."<<i<<" has failed, abandon  **"<<std::endl;
+	Message::SendInfo() << "  **  Sending File n0."<<i<<" has failed, abandon  **"<<'\n';
 	return checks;
       }
       AddSentFile (FileName(i).ToCString());
@@ -212,7 +212,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
   const Interface_Graph& G = eval.Graph();
   Interface_CheckIterator checks;
   Standard_Integer i = 0;
-  Message::SendInfo() << "** WorkSession : Copying then sending split data"<<std::endl;
+  Message::SendInfo() << "** WorkSession : Copying then sending split data"<<'\n';
   theshareout = eval.ShareOut();
   theremain = new TColStd_HArray1OfInteger(0,G.Size()); theremain->Init(0);
   for (eval.Evaluate(); eval.More(); eval.Next()) {
@@ -237,7 +237,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
     if (!res) {
       char mess[100];  sprintf(mess,"Split Send (WriteFile) abandon on file n0.%d",i);
       checks.CCheck(0)->AddFail (mess);
-      Message::SendInfo() << "  **  Sending File "<<filename<<" has failed, abandon  **"<<std::endl;
+      Message::SendInfo() << "  **  Sending File "<<filename<<" has failed, abandon  **"<<'\n';
       checks.SetName ("X-STEP WorkSession : Split Send (only Write)");
       return checks;
     }
@@ -258,7 +258,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
 {
   Interface_CheckIterator checks;
   checks.SetName ("X-STEP WorkSession : Send All");
-  Message::SendInfo() << "** WorkSession : Sending all data"<<std::endl;
+  Message::SendInfo() << "** WorkSession : Sending all data"<<'\n';
   const Handle(Interface_InterfaceModel)&  model = G.Model();
   if (model.IsNull() || protocol.IsNull() || WL.IsNull()) return checks;
 
@@ -297,7 +297,7 @@ IFSelect_ModelCopier::IFSelect_ModelCopier ()    {  }
 {
   Interface_CheckIterator checks;
   checks.SetName ("X-STEP WorkSession : Send Selected");
-  Message::SendInfo() << "** WorkSession : Sending selected data"<<std::endl;
+  Message::SendInfo() << "** WorkSession : Sending selected data"<<'\n';
   const Handle(Interface_InterfaceModel)&  original = G.Model();
   if (original.IsNull() || protocol.IsNull() || WL.IsNull()) return checks;
   Handle(Interface_InterfaceModel) newmod  = original->NewEmptyModel();

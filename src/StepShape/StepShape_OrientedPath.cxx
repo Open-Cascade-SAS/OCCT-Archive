@@ -60,7 +60,7 @@ void StepShape_OrientedPath::SetEdgeList(const Handle(StepShape_HArray1OfOriente
 {
 	// WARNING : the field is redefined.
 	// field set up forbidden.
-	std::cout << "Field is redefined, SetUp Forbidden" << std::endl;
+	std::cout << "Field is redefined, SetUp Forbidden" << '\n';
 }
 
 Handle(StepShape_HArray1OfOrientedEdge) StepShape_OrientedPath::EdgeList() const

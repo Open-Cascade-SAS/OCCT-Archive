@@ -47,7 +47,7 @@ static Standard_Integer QATestExtremaSS (Draw_Interpretor& theInterpretor,
   if (theArgNb < 3
    || theArgNb > 4)
   {
-    std::cerr << "Usage: type help " << theArgs[0] << std::endl;
+    std::cerr << "Usage: type help " << theArgs[0] << '\n';
     return 1;
   }
 

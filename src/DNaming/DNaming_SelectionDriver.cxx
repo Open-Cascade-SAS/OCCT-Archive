@@ -124,15 +124,15 @@ Standard_Integer DNaming_SelectionDriver::Execute(Handle(TFunction_Logbook)& the
     theLog->SetValid(aRLabel);
     Handle(TNaming_NamedShape) aNS;
     if(!aRLabel.FindAttribute(TNaming_NamedShape::GetID(),aNS)) {
-      std::cout <<"%%%WARNING: DNaming_SelectionDriver::NamedShape is not found"<<std::endl;
+      std::cout <<"%%%WARNING: DNaming_SelectionDriver::NamedShape is not found"<<'\n';
     }
     else {
       if(aNS.IsNull()) {
-	std::cout << "%%%WARNING: DNaming_SelectionDriver::NamedShape is NULL" <<std::endl;
+	std::cout << "%%%WARNING: DNaming_SelectionDriver::NamedShape is NULL" <<'\n';
       } else 
 	if(aNS->IsEmpty()) {
 	  std::cout << "%%%WARNING: DNaming_SelectionDriver::NamedShape is EMPTY on Label = ";
-	  aNS->Label().EntryDump(std::cout); std::cout << std::endl;
+	  aNS->Label().EntryDump(std::cout); std::cout << '\n';
 	  
 	} else {
 #ifdef OCCT_DEBUG
@@ -159,7 +159,7 @@ Standard_Integer DNaming_SelectionDriver::Execute(Handle(TFunction_Logbook)& the
   }
   else {
     aFunction->SetFailure(NOTDONE);
-    std::cout << "%%%WARNING: DNaming_SelectionDriver::Execute: Selection is Not solved !!!" << std::endl;
+    std::cout << "%%%WARNING: DNaming_SelectionDriver::Execute: Selection is Not solved !!!" << '\n';
     return 1;
   }
   return 0;

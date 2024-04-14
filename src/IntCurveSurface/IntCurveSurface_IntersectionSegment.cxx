@@ -58,9 +58,9 @@ const IntCurveSurface_IntersectionPoint &
 }
 //================================================================================
 void IntCurveSurface_IntersectionSegment::Dump() const { 
-  std::cout<<"\nIntersectionSegment : "<<std::endl;
+  std::cout<<"\nIntersectionSegment : "<<'\n';
   myP1.Dump();
   myP2.Dump();
-  std::cout<<std::endl;
+  std::cout<<'\n';
 }
 

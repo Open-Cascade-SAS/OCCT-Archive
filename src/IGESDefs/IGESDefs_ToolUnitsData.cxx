@@ -173,5 +173,5 @@ void  IGESDefs_ToolUnitsData::OwnDump
             << "     ScaleFactor: " << ent->ScaleFactor(i) << "\n";
 	}
     }
-  S << std::endl;
+  S << '\n';
 }

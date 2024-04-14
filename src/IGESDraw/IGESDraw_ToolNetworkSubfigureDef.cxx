@@ -234,5 +234,5 @@ void IGESDraw_ToolNetworkSubfigureDef::OwnDump
   dumper.Dump(ent->DesignatorTemplate(),S, tempSubLevel);
   S << "\nConnect Point Entities       : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbPointEntities(),ent->PointEntity);
-  S << std::endl;
+  S << '\n';
 }

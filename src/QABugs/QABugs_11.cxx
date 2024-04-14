@@ -1491,7 +1491,7 @@ static Standard_Integer OCC670 (Draw_Interpretor& di, Standard_Integer argc, con
   }
   catch (Standard_Failure const& anException) {
     std::cout << "Caught successfully: ";
-    std::cout << anException << std::endl;
+    std::cout << anException << '\n';
   }
   return 0;
 }
@@ -2121,7 +2121,7 @@ static Standard_Integer OCC6143 (Draw_Interpretor& di, Standard_Integer argc, co
   {//==== Test Divide ByZero (Integer) ========================================
     try{
       OCC_CATCH_SIGNALS
-      std::cout << "(Integer) Divide By Zero..." << std::endl;
+      std::cout << "(Integer) Divide By Zero..." << '\n';
       di << "(Integer) Divide By Zero...";
       //std::cout.flush();
       di << "\n";
@@ -2154,7 +2154,7 @@ static Standard_Integer OCC6143 (Draw_Interpretor& di, Standard_Integer argc, co
   {//==== Test Divide ByZero (Real) ===========================================
     try{
       OCC_CATCH_SIGNALS
-      std::cout << "(Real) Divide By Zero..." << std::endl;
+      std::cout << "(Real) Divide By Zero..." << '\n';
       di << "(Real) Divide By Zero...";
       //std::cout.flush();
       di << "\n";
@@ -2183,7 +2183,7 @@ static Standard_Integer OCC6143 (Draw_Interpretor& di, Standard_Integer argc, co
   {//==== Test Overflow (Integer) =============================================
     try{
       OCC_CATCH_SIGNALS
-      std::cout << "(Integer) Overflow..." << std::endl;
+      std::cout << "(Integer) Overflow..." << '\n';
       di << "(Integer) Overflow...";
       //std::cout.flush();
       di << "\n";
@@ -2208,7 +2208,7 @@ static Standard_Integer OCC6143 (Draw_Interpretor& di, Standard_Integer argc, co
   {//==== Test Overflow (Real) ================================================ 
     try{
       OCC_CATCH_SIGNALS
-      std::cout << "(Real) Overflow..." << std::endl;
+      std::cout << "(Real) Overflow..." << '\n';
       di << "(Real) Overflow...";
       //std::cout.flush();
       di << "\n";
@@ -2240,7 +2240,7 @@ static Standard_Integer OCC6143 (Draw_Interpretor& di, Standard_Integer argc, co
   {//==== Test Underflow (Real) ===============================================
     try{
       OCC_CATCH_SIGNALS
-      std::cout << "(Real) Underflow" << std::endl; // to have message in log even if process crashed
+      std::cout << "(Real) Underflow" << '\n'; // to have message in log even if process crashed
       di << "(Real) Underflow";
       //std::cout.flush();
       di << "\n";
@@ -2273,7 +2273,7 @@ static Standard_Integer OCC6143 (Draw_Interpretor& di, Standard_Integer argc, co
   {//==== Test Invalid Operation (Real) ===============================================
     try{
       OCC_CATCH_SIGNALS
-      std::cout << "(Real) Invalid Operation..." << std::endl;
+      std::cout << "(Real) Invalid Operation..." << '\n';
       di << "(Real) Invalid Operation...";
       //std::cout.flush();
       di << "\n";
@@ -2297,7 +2297,7 @@ static Standard_Integer OCC6143 (Draw_Interpretor& di, Standard_Integer argc, co
   {//==== Test Access Violation ===============================================
     try {
       OCC_CATCH_SIGNALS
-      std::cout << "Segmentation Fault..." << std::endl;
+      std::cout << "Segmentation Fault..." << '\n';
       di << "Segmentation Fault...";
       //std::cout.flush();
       di << "\n";
@@ -2714,10 +2714,10 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
   Handle(TDataStd_RealArray) array;
   if (label1.FindAttribute(TDataStd_RealArray::GetID(), array) && 
       array->Lower() == LOWER && array->Upper() == UPPER)
-    std::cout<<"1: OK"<<std::endl;
+    std::cout<<"1: OK"<<'\n';
   else
   {
-    std::cout<<"1: Failed.."<<std::endl;
+    std::cout<<"1: Failed.."<<'\n';
     return 1;
   }
   doc->CommitCommand();
@@ -2731,11 +2731,11 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
   {  
     if (array->Value(i) != i)
     {
-      std::cout<<"2: Failed.."<<std::endl;
+      std::cout<<"2: Failed.."<<'\n';
       return 2;
     }
   }
-  std::cout<<"2: OK"<<std::endl;
+  std::cout<<"2: OK"<<'\n';
   doc->CommitCommand();
 
   //! 3. Re-init the array
@@ -2743,7 +2743,7 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
   array->Init(LOWER + 2, UPPER + 4);
   if (array->Lower() != LOWER + 2 && array->Upper() != UPPER + 4)
   {
-    std::cout<<"3: Failed.."<<std::endl;
+    std::cout<<"3: Failed.."<<'\n';
     return 3;
   }
   for (i = LOWER + 2; i <= UPPER + 4; i++)
@@ -2752,11 +2752,11 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
   {  
     if (array->Value(i) != i)
     {
-      std::cout<<"3: Failed.."<<std::endl;
+      std::cout<<"3: Failed.."<<'\n';
       return 3;
     }
   }
-  std::cout<<"3: OK"<<std::endl;
+  std::cout<<"3: OK"<<'\n';
   doc->CommitCommand();
 
   //! 4. Change array
@@ -2769,11 +2769,11 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
   {  
     if (array->Value(i) != i)
     {
-      std::cout<<"4: Failed.."<<std::endl;
+      std::cout<<"4: Failed.."<<'\n';
       return 4;
     }
   }
-  std::cout<<"4: OK"<<std::endl;
+  std::cout<<"4: OK"<<'\n';
   doc->CommitCommand();
 
   //! 5. Copy the array
@@ -2782,24 +2782,24 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
   copier.Perform();
   if (!copier.IsDone())
   {
-    std::cout<<"5: Failed.."<<std::endl;
+    std::cout<<"5: Failed.."<<'\n';
     return 5;
   }
   Handle(TDataStd_RealArray) array2;
   if (!label2.FindAttribute(TDataStd_RealArray::GetID(), array2))
   {
-    std::cout<<"5: Failed.."<<std::endl;
+    std::cout<<"5: Failed.."<<'\n';
     return 5;
   }
   for (i = LOWER + 5; i <= UPPER + 5; i++)
   {  
     if (array->Value(i) != i)
     {
-      std::cout<<"5: Failed.."<<std::endl;
+      std::cout<<"5: Failed.."<<'\n';
       return 5;
     }
   }
-  std::cout<<"5: OK"<<std::endl;
+  std::cout<<"5: OK"<<'\n';
   doc->CommitCommand();
 
   //! 6. Undo/Redo
@@ -2808,7 +2808,7 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
   if (!label1.FindAttribute(TDataStd_RealArray::GetID(), array) ||
       label2.FindAttribute(TDataStd_RealArray::GetID(), array2))
   {
-    std::cout<<"6.a: Failed.."<<std::endl;
+    std::cout<<"6.a: Failed.."<<'\n';
     return 6;
   }
   //! 6.b: undoes the 4th action: the array should be changed to (lower+2,upper+4)
@@ -2817,14 +2817,14 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
       array->Lower() != LOWER + 2 ||
       array->Upper() != UPPER + 4)
   {
-    std::cout<<"6.b: Failed.."<<std::endl;
+    std::cout<<"6.b: Failed.."<<'\n';
     return 6;
   }
   for (i = LOWER + 2; i <= UPPER + 4; i++)
   {
     if (array->Value(i) != i)
     {
-      std::cout<<"6.b: Failed.."<<std::endl;
+      std::cout<<"6.b: Failed.."<<'\n';
       return 6;
     }
   }
@@ -2834,14 +2834,14 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
       array->Lower() != LOWER ||
       array->Upper() != UPPER)
   {
-    std::cout<<"6.c: Failed.."<<std::endl;
+    std::cout<<"6.c: Failed.."<<'\n';
     return 6;
   }
   for (i = LOWER; i <= UPPER; i++)
   {
     if (array->Value(i) != i)
     {
-      std::cout<<"6.c: Failed.."<<std::endl;
+      std::cout<<"6.c: Failed.."<<'\n';
       return 6;
     }
   }
@@ -2852,25 +2852,25 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
       array->Lower() != LOWER ||
       array->Upper() != UPPER)
   {
-    std::cout<<"6.d: Failed.."<<std::endl;
+    std::cout<<"6.d: Failed.."<<'\n';
     return 6;
   }
   for (i = LOWER; i <= UPPER; i++)
   {
     if (array->Value(i) != i)
     {
-      std::cout<<"6.d: Failed.."<<std::endl;
+      std::cout<<"6.d: Failed.."<<'\n';
       return 6;
     }
   }
-  std::cout<<"6: OK"<<std::endl;
+  std::cout<<"6: OK"<<'\n';
 
   //! 7. Re-set the array
   doc->OpenCommand();
   array = TDataStd_RealArray::Set(label1, LOWER + 1, UPPER + 1);
   if (array->Lower() != LOWER + 1 && array->Upper() != UPPER + 1)
   {
-    std::cout<<"7: Failed.."<<std::endl;
+    std::cout<<"7: Failed.."<<'\n';
     return 7;
   }
   for (i = LOWER + 1; i <= UPPER + 1; i++)
@@ -2879,11 +2879,11 @@ static Standard_Integer OCC10138 (Draw_Interpretor& di, Standard_Integer argc, c
   {  
     if (array->Value(i) != i)
     {
-      std::cout<<"7: Failed.."<<std::endl;
+      std::cout<<"7: Failed.."<<'\n';
       return 7;
     }
   }
-  std::cout<<"7: OK"<<std::endl;
+  std::cout<<"7: OK"<<'\n';
   doc->CommitCommand();
 
   //! 8.Test of speed: set LOWER and UPPER equal to great integer number and 
@@ -2973,16 +2973,16 @@ static Standard_Integer OCC8797 (Draw_Interpretor& di, Standard_Integer argc, co
   GeomAdaptor_Curve adaptor_spline(spline);
   GCPnts_AbscissaPoint temp;
   l_abcissa=temp.Length(adaptor_spline);
-  std::cout<<"Length Spline(abcissa_Pnt): "<<l_abcissa<<std::endl;
+  std::cout<<"Length Spline(abcissa_Pnt): "<<l_abcissa<<'\n';
 
   //length!! 2.
   TopoDS_Edge edge = BRepBuilderAPI_MakeEdge (spline);
   GProp_GProps prop;
   BRepGProp::LinearProperties(edge,prop);
   l_gprop=prop.Mass();
-  std::cout<<"Length Spline(GProp_GProps): "<<l_gprop<<std::endl;
+  std::cout<<"Length Spline(GProp_GProps): "<<l_gprop<<'\n';
 
-  std::cout<<"Difference (abcissa_Pnt<->GProp_GProps): "<<l_gprop-l_abcissa<<std::endl;
+  std::cout<<"Difference (abcissa_Pnt<->GProp_GProps): "<<l_gprop-l_abcissa<<'\n';
 
   return 0;
 }
@@ -4806,7 +4806,7 @@ Standard_Integer OCC31189 (Draw_Interpretor& theDI, Standard_Integer /*argc*/, c
     // check that messages output to sender and directly to messenger do not intermix
     aSender << "Sender message 1: start ...";
     aMsgMgr->Send ("Direct message 1");
-    aSender << "... end" << std::endl; // endl should send the message
+    aSender << "... end" << '\n'; // endl should send the message
 
 	// check that empty stream buffer does not produce output on destruction
 	Message::SendInfo();
@@ -4815,7 +4815,7 @@ Standard_Integer OCC31189 (Draw_Interpretor& theDI, Standard_Integer /*argc*/, c
     aMsgMgr->Send ("Direct message 2");
 
 	// check that empty stream buffer does produce empty line if std::endl is passed
-	Message::SendInfo() << std::endl;
+	Message::SendInfo() << '\n';
 
     // last message should be sent on destruction of a sender
 	aSender << "Sender message 2";

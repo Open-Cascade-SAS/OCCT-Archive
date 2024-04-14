@@ -385,7 +385,7 @@ void Draw_Appli(int argc, char** argv, const FDraw_InitAppli Draw_InitAppli)
 #endif
   else
   {
-    std::cout << "DRAW is running in batch mode" << std::endl;
+    std::cout << "DRAW is running in batch mode" << '\n';
     theCommands.Init();
     Tcl_Init(theCommands.Interp());
   }
@@ -397,7 +397,7 @@ void Draw_Appli(int argc, char** argv, const FDraw_InitAppli Draw_InitAppli)
     {
       if (!dout.DefineColor (i, ColorNames[i]))
       {
-        std::cout <<"Could not allocate default color " << ColorNames[i] << std::endl;
+        std::cout <<"Could not allocate default color " << ColorNames[i] << '\n';
       }
     }
   }
@@ -479,8 +479,8 @@ void Draw_Appli(int argc, char** argv, const FDraw_InitAppli Draw_InitAppli)
 #ifdef _WIN32
       ReadInitFile ("ddefault");
 #else
-      std::cout << " the CASROOT variable is mandatory to Run OpenCascade "<< std::endl;
-      std::cout << "No default file" << std::endl;
+      std::cout << " the CASROOT variable is mandatory to Run OpenCascade "<< '\n';
+      std::cout << "No default file" << '\n';
 #endif
     }
   }
@@ -621,7 +621,7 @@ Standard_Boolean Draw_Interprete(const char* com)
     {
       Message_PrinterOStream::SetConsoleTextColor (&std::cout, Message_ConsoleColor_Red, true);
     }
-    std::cout << theCommands.Result() << std::endl;
+    std::cout << theCommands.Result() << '\n';
     if (c > 0 && theCommands.ToColorize())
     {
       Message_PrinterOStream::SetConsoleTextColor (&std::cout, Message_ConsoleColor_Default, false);
@@ -656,7 +656,7 @@ Standard_Integer Tcl_AppInit (Tcl_Interp *)
 Standard_Integer  Draw_Call (char *c)
 {
    Standard_Integer r = theCommands.Eval(c);
-   std::cout << theCommands.Result() << std::endl;
+   std::cout << theCommands.Result() << '\n';
    return r;
 }
 
@@ -679,7 +679,7 @@ void Draw::Load (Draw_Interpretor& theDI,
     if (!aPluginResource->Find (theKey, aPluginLibrary))
     {
       Message::SendFail() << "could not find the resource:" << theKey;
-      Standard_SStream aMsg; aMsg << "Could not find the resource:" << theKey << std::endl;
+      Standard_SStream aMsg; aMsg << "Could not find the resource:" << theKey << '\n';
       throw Draw_Failure (aMsg.str().c_str());
     }
 

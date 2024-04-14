@@ -279,5 +279,5 @@ void IGESGeom_ToolPlane::OwnDump(const Handle(IGESGeom_Plane)& ent,
   S << "\n"
     << "Display Symbol Location : ";
   IGESData_DumpXYZL(S,level, ent->SymbolAttach(), ent->Location());
-  S << "  Size  : " << ent->SymbolSize() << std::endl;
+  S << "  Size  : " << ent->SymbolSize() << '\n';
 }

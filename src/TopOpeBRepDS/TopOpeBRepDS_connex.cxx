@@ -300,7 +300,7 @@ Standard_EXPORT void FDSCNX_Dump(const Handle(TopOpeBRepDS_HDataStructure)& HDS,
     {
       std::cout<<"tsee f "<<BDS.Shape(ils.Value())<<";";
     }
-    std::cout<<"tsee e "<<is<<";### edge "<<is<<" connexity"<<std::endl;
+    std::cout<<"tsee e "<<is<<";### edge "<<is<<" connexity"<<'\n';
   }
   else if (ts == TopAbs_FACE)
   {
@@ -324,7 +324,7 @@ Standard_EXPORT void FDSCNX_Dump(const Handle(TopOpeBRepDS_HDataStructure)& HDS,
       {
         std::cout<<"tsee f "<<BDS.Shape(ilf.Value())<<";";
       }
-      std::cout<<"tsee e "<<ie<<";### face "<<is<<" connexity"<<std::endl;
+      std::cout<<"tsee e "<<ie<<";### face "<<is<<" connexity"<<'\n';
     }
   }
 }

@@ -256,6 +256,6 @@ void IGESSolid_ToolFace::OwnDump(const Handle(IGESSolid_Face)& ent,
   else                      S << "Outer loop is not present\n";
   S << "Loops : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbLoops(),ent->Loop);
-  S << std::endl;
+  S << '\n';
 }
 

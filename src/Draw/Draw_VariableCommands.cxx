@@ -230,7 +230,7 @@ static Standard_Integer erase(Draw_Interpretor& di, Standard_Integer n, const ch
 	Handle(Draw_Drawable3D) D = Draw::Get(a[i]);
 	if (D.IsNull()) {
 	  if ((a[i][0] == '.') && (a[i][1] == '\0'))
-	    std::cout << "Missed !!!" << std::endl;
+	    std::cout << "Missed !!!" << '\n';
 	  return 0;
 	}
       }
@@ -714,7 +714,7 @@ void Draw::Set(const Standard_CString name,
     Handle(Draw_Drawable3D) anOldD(reinterpret_cast<Draw_Drawable3D*>(aCD));
     if (!anOldD.IsNull()) {
       if (Draw::Drawables().Contains(anOldD) && anOldD->Protected()) {
-        std::cout << "variable is protected" << std::endl;
+        std::cout << "variable is protected" << '\n';
         return;
       }
       anOldD.Nullify();
@@ -776,7 +776,7 @@ Handle(Draw_Drawable3D) Draw::getDrawable (Standard_CString& theName,
     return Handle(Draw_Drawable3D)();
   }
 
-  std::cout << "Pick an object" << std::endl;
+  std::cout << "Pick an object" << '\n';
   Handle(Draw_Drawable3D) aDrawable;
   dout.Select (p_id, p_X, p_Y, p_b);
   dout.Pick (p_id, p_X, p_Y, 5, aDrawable, 0);
@@ -889,7 +889,7 @@ static Standard_Real ParseValue (char*& theName)
       x = Parse (theName);
       if (*theName != ')')
       {
-        std::cout << "Mismatched parenthesis" << std::endl;
+        std::cout << "Mismatched parenthesis" << '\n';
       }
       ++theName;
       break;
@@ -949,7 +949,7 @@ static Standard_Real ParseValue (char*& theName)
           }
           if (pc > 0)
           {
-            std::cout << "Unclosed parenthesis"<< std::endl;
+            std::cout << "Unclosed parenthesis"<< '\n';
             x = 0;
           }
           else
@@ -989,7 +989,7 @@ static Standard_Real ParseValue (char*& theName)
               }
               if (aCommands.Eval (theName) != 0)
               {
-                std::cout << "Call of function " << theName << " failed" << std::endl;
+                std::cout << "Call of function " << theName << " failed" << '\n';
                 x = 0;
               }
               else

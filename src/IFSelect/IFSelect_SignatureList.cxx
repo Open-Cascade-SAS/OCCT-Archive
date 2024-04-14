@@ -149,15 +149,15 @@ IFSelect_SignatureList::IFSelect_SignatureList
 {
   Standard_Integer nbtot = 0, nbsign = 0;
   NCollection_IndexedDataMap<TCollection_AsciiString, Standard_Integer>::Iterator iter(thedicount);
-  S << " Count	"<<thename->ToCString()<<"\n -----	-----------"<<std::endl;
+  S << " Count	"<<thename->ToCString()<<"\n -----	-----------"<<'\n';
   for (; iter.More(); iter.Next()) {
     Standard_Integer val = iter.Value();
-    S << Interface_MSG::Blanks(val,6) << val <<"	"<<iter.Key()<<std::endl;
+    S << Interface_MSG::Blanks(val,6) << val <<"	"<<iter.Key()<<'\n';
     nbtot += val;
     nbsign ++;
   }
-  if (thenbnuls > 0) S << thename->ToCString()<< " Nul : " << thenbnuls <<std::endl;
-  S << "    Nb Total:"<<nbtot<<"  for "<<nbsign<<" items"<<std::endl;
+  if (thenbnuls > 0) S << thename->ToCString()<< " Nul : " << thenbnuls <<'\n';
+  S << "    Nb Total:"<<nbtot<<"  for "<<nbsign<<" items"<<'\n';
 }
 
     void  IFSelect_SignatureList::PrintList
@@ -168,7 +168,7 @@ IFSelect_SignatureList::IFSelect_SignatureList
   if (mod == IFSelect_CountByItem)   {  PrintCount (S);  return;  }
   if (mod == IFSelect_CountSummary)  {  PrintSum   (S);  return;  }
   if (!HasEntities()) {
-    S <<" SignatureList "<<Name()<<" : PrintList, list not available"<<std::endl;
+    S <<" SignatureList "<<Name()<<" : PrintList, list not available"<<'\n';
     PrintCount(S);
     return;
   }
@@ -176,8 +176,8 @@ IFSelect_SignatureList::IFSelect_SignatureList
   NCollection_IndexedDataMap<TCollection_AsciiString, Handle(Standard_Transient)>::Iterator iter(thediclist);
   for (; iter.More(); iter.Next()) {
     DeclareAndCast(TColStd_HSequenceOfTransient,list,iter.Value());
-    S<<Name()<<" : "<<iter.Key()<<std::endl;
-    if (list.IsNull())  {  S<<"  - (empty list)"<<std::endl; continue;  }
+    S<<Name()<<" : "<<iter.Key()<<'\n';
+    if (list.IsNull())  {  S<<"  - (empty list)"<<'\n'; continue;  }
     Standard_Integer nb = list->Length();
     S<<"  - Nb: "<<nb<<" : ";
     Standard_Integer nc = nb;  if (nb > 5 && mod == IFSelect_ShortByItem) nc = 5;
@@ -194,18 +194,18 @@ IFSelect_SignatureList::IFSelect_SignatureList
 	{  S<<":";  model->PrintLabel(list->Value(i), S);  }
     }
     if (nc < nb) S<<"  .. etc";
-    S<<std::endl;
+    S<<'\n';
     nbtot += nb;
     nbsign ++;
   }
-  S <<" Nb Total:"<<nbtot<<"  for "<<nbsign<<" items"<<std::endl;
+  S <<" Nb Total:"<<nbtot<<"  for "<<nbsign<<" items"<<'\n';
 }
 
 
     void  IFSelect_SignatureList::PrintSum (Standard_OStream& S) const
 {
   NCollection_IndexedDataMap<TCollection_AsciiString, Standard_Integer>::Iterator iter(thedicount);
-  S << " Summary "<<thename->ToCString()<<"\n -----	-----------"<<std::endl;
+  S << " Summary "<<thename->ToCString()<<"\n -----	-----------"<<'\n';
   Standard_Integer nbtot = 0, nbsign = 0, maxent = 0, nbval = 0, nbve = 0, minval = 0, maxval = 0, totval = 0;
   for (; iter.More(); iter.Next()) {
     Standard_Integer nbent = iter.Value();
@@ -231,18 +231,18 @@ IFSelect_SignatureList::IFSelect_SignatureList
     nbve += nbent;
     totval += (val*nbent);
   }
-  S << "    Nb Total:"<<nbtot<<"  for "<<nbsign<<" items"<<std::endl;
-  S << "    Highest count of entities : "<<maxent<<" on one item"<<std::endl;
+  S << "    Nb Total:"<<nbtot<<"  for "<<nbsign<<" items"<<'\n';
+  S << "    Highest count of entities : "<<maxent<<" on one item"<<'\n';
   if (nbval > 0) {
-    S<<"    Summary on Integer Values"<<std::endl;
-    S<<"    Nb Integer Items : "<<nbval<<std::endl;
-    S<<"    For Nb Entities  : "<<nbve<<std::endl;
-    S<<"    Cumulated Values : "<<totval<<std::endl;
-    S <<"    Maximum Value    : "<<maxval<<std::endl;
+    S<<"    Summary on Integer Values"<<'\n';
+    S<<"    Nb Integer Items : "<<nbval<<'\n';
+    S<<"    For Nb Entities  : "<<nbve<<'\n';
+    S<<"    Cumulated Values : "<<totval<<'\n';
+    S <<"    Maximum Value    : "<<maxval<<'\n';
     Standard_Integer avg1, avg2;
     avg1 = totval/nbve;
     avg2 = ((totval - (avg1*nbve)) * 10) / nbve;
-    S <<"    Average Value    : "<<avg1<<" "<<avg2<<"/10"<<std::endl;
-    S <<"    Minimum Value    : "<<minval<<std::endl;
+    S <<"    Average Value    : "<<avg1<<" "<<avg2<<"/10"<<'\n';
+    S <<"    Minimum Value    : "<<minval<<'\n';
   }
 }

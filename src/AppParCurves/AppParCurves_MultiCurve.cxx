@@ -283,9 +283,9 @@ void AppParCurves_MultiCurve::D2 (const Standard_Integer CuIndex,
 
 void AppParCurves_MultiCurve::Dump(Standard_OStream& o) const
 {
-  o << "AppParCurves_MultiCurve dump:" << std::endl;
-  o << " It contains " << NbCurves() << " Bezier curves of degree " << tabPoint->Length()-1 << std::endl;
-  o << " The poles are: " << std::endl;
+  o << "AppParCurves_MultiCurve dump:" << '\n';
+  o << " It contains " << NbCurves() << " Bezier curves of degree " << tabPoint->Length()-1 << '\n';
+  o << " The poles are: " << '\n';
 /*  for (Standard_Integer i = 1; i <= NbCurves(); i++) {
     o << " Curve No. " << i << std::endl;
     if (Dimension(i) == 3) {

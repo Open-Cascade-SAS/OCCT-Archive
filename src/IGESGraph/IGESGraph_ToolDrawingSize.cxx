@@ -114,5 +114,5 @@ void IGESGraph_ToolDrawingSize::OwnDump
     << "No. of property values : " << ent->NbPropertyValues() << "\n"
     << "Drawing extent along positive X-axis : " << ent->XSize() << "\n"
     << "Drawing extent along positive Y-axis : " << ent->YSize() << "\n"
-    << std::endl;
+    << '\n';
 }

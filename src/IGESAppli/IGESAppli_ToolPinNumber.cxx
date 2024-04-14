@@ -118,5 +118,5 @@ void  IGESAppli_ToolPinNumber::OwnDump
   S << "Number of Property Values : " << ent->NbPropertyValues() << "\n";
   S << "PinNumber : ";
   IGESData_DumpString(S,ent->PinNumberVal());
-  S << std::endl;
+  S << '\n';
 }

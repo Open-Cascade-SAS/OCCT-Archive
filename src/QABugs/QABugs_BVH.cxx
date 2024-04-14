@@ -184,7 +184,7 @@ static Standard_Integer QABVH_ShapeSelect (Draw_Interpretor& theDI,
   TopoDS_Shape aShape = DBRep::Get (theArgv [2]);
   if (aShape.IsNull())
   {
-    std::cout << theArgv[2] << " does not exist" << std::endl;
+    std::cout << theArgv[2] << " does not exist" << '\n';
     return 1;
   }
 
@@ -192,7 +192,7 @@ static Standard_Integer QABVH_ShapeSelect (Draw_Interpretor& theDI,
   TopoDS_Shape aBShape = DBRep::Get (theArgv [3]);
   if (aBShape.IsNull())
   {
-    std::cout << theArgv[3] << " does not exist" << std::endl;
+    std::cout << theArgv[3] << " does not exist" << '\n';
     return 1;
   }
 
@@ -390,7 +390,7 @@ static Standard_Integer QABVH_PairSelect (Draw_Interpretor& theDI,
   aShape[0] = DBRep::Get (theArgv [2]);
   if (aShape[0].IsNull())
   {
-    std::cout << theArgv[2] << " does not exist" << std::endl;
+    std::cout << theArgv[2] << " does not exist" << '\n';
     return 1;
   }
 
@@ -398,7 +398,7 @@ static Standard_Integer QABVH_PairSelect (Draw_Interpretor& theDI,
   aShape[1] = DBRep::Get (theArgv [3]);
   if (aShape[1].IsNull())
   {
-    std::cout << theArgv[3] << " does not exist" << std::endl;
+    std::cout << theArgv[3] << " does not exist" << '\n';
     return 1;
   }
 
@@ -614,7 +614,7 @@ static Standard_Integer QABVH_PairDistance (Draw_Interpretor& theDI,
   aShape[0] = DBRep::Get (theArgv [1]);
   if (aShape[0].IsNull())
   {
-    std::cout << theArgv[1] << " does not exist" << std::endl;
+    std::cout << theArgv[1] << " does not exist" << '\n';
     return 1;
   }
 
@@ -622,7 +622,7 @@ static Standard_Integer QABVH_PairDistance (Draw_Interpretor& theDI,
   aShape[1] = DBRep::Get (theArgv [2]);
   if (aShape[1].IsNull())
   {
-    std::cout << theArgv[2] << " does not exist" << std::endl;
+    std::cout << theArgv[2] << " does not exist" << '\n';
     return 1;
   }
 
@@ -680,7 +680,7 @@ static Standard_Integer QABVH_PairDistance (Draw_Interpretor& theDI,
   aDistTool.SetBVHSets (aTriangleBoxSet[0].get(), aTriangleBoxSet[1].get());
   Standard_Real aSqDist = aDistTool.ComputeDistance();
   if (!aDistTool.IsDone())
-    std::cout << "Not Done" << std::endl;
+    std::cout << "Not Done" << '\n';
   else
     theDI << "Distance " << sqrt (aSqDist) << "\n";
 
@@ -784,7 +784,7 @@ static Standard_Integer QABVH_DistanceField (Draw_Interpretor& theDI,
   aShape = DBRep::Get (theArgv [1]);
   if (aShape.IsNull())
   {
-    std::cout << theArgv[1] << " does not exist" << std::endl;
+    std::cout << theArgv[1] << " does not exist" << '\n';
     return 1;
   }
 
@@ -807,7 +807,7 @@ static Standard_Integer QABVH_DistanceField (Draw_Interpretor& theDI,
       for (Standard_Integer iZ = 0; iZ < aDField.DimensionZ(); ++iZ)
       {
         Standard_Real aDist = aDField.Voxel (iX, iY, iZ);
-        std::cout << "(" << iX << ", " << iY << ", " << iZ << "): " << aDist << std::endl;
+        std::cout << "(" << iX << ", " << iY << ", " << iZ << "): " << aDist << '\n';
       }
     }
   }

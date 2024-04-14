@@ -138,7 +138,7 @@ Standard_OStream& XCAFDoc_LengthUnit::Dump(Standard_OStream& theOS) const
   anOS << " UnitScaleValue=|" << myUnitScaleValue << "|";
   Standard_Character aSGUID[Standard_GUID_SIZE_ALLOC];
   ID().ToCString(aSGUID);
-  anOS << aSGUID << "|" << std::endl;
+  anOS << aSGUID << "|" << '\n';
   return anOS;
 }
 

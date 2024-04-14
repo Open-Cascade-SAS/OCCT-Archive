@@ -337,5 +337,5 @@ void IGESGraph_ToolTextFontDef::OwnDump
 	  }
 	}
     }
-  S << std::endl;
+  S << '\n';
 }

@@ -194,5 +194,5 @@ void IGESDraw_ToolPerspectiveView::OwnDump
   }
   S << "Back Plane Distance  : " << ent->BackPlaneDistance()  << "  "
     << "Front Plane Distance : " << ent->FrontPlaneDistance() << "\n"
-    << std::endl;
+    << '\n';
 }

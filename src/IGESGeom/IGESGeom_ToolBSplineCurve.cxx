@@ -419,5 +419,5 @@ void IGESGeom_ToolBSplineCurve::OwnDump(const Handle(IGESGeom_BSplineCurve)& ent
     << "  Ending Parameter Value : " << ent->UMax() << "\n"
     << "Unit Normal : ";
   IGESData_DumpXYZL(S,level, ent->Normal(), ent->Location());
-  S << std::endl;
+  S << '\n';
 }

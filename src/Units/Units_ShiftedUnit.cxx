@@ -111,6 +111,6 @@ void Units_ShiftedUnit::Dump(const Standard_Integer ,
       if(index != 1) std::cout << " or " ;
       std::cout<<"\""<<string.ToCString()<<"\"";
     }
-  std::cout<< "		Name:  " <<Name().ToCString()<<"		(= *" << thevalue << " SI + " << themove << ")"<<std::endl;
+  std::cout<< "		Name:  " <<Name().ToCString()<<"		(= *" << thevalue << " SI + " << themove << ")"<<'\n';
 }
 

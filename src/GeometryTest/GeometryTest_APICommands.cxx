@@ -153,7 +153,7 @@ static Standard_Integer proj (Draw_Interpretor& di, Standard_Integer n, const ch
 
     if(proj.NbPoints() == 0)
     {
-      std::cout << "No project point was found." << std::endl;
+      std::cout << "No project point was found." << '\n';
       return 0;
     }
 

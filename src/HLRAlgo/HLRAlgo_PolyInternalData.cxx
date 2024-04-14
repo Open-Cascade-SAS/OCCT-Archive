@@ -635,7 +635,7 @@ void HLRAlgo_PolyInternalData::Dump () const
     std::cout << std::setw(20)<< Nod1RValues.Point.X();
     std::cout << std::setw(20)<< Nod1RValues.Point.Y();
     std::cout << std::setw(20)<< Nod1RValues.Point.Z();
-    std::cout << std::endl;
+    std::cout << '\n';
   }
 
   for (i = 1; i <= myNbPISeg; i++) {
@@ -647,7 +647,7 @@ void HLRAlgo_PolyInternalData::Dump () const
     std::cout << std::setw(6) << aSegIndices->NxtSg2;
     std::cout << std::setw(6) << aSegIndices->Conex1;
     std::cout << std::setw(6) << aSegIndices->Conex2;
-    std::cout << std::endl;
+    std::cout << '\n';
   }
 
   for (i = 1; i <= myNbTData; i++) {
@@ -656,7 +656,7 @@ void HLRAlgo_PolyInternalData::Dump () const
     std::cout << std::setw(6) << aTriangle.Node1;
     std::cout << std::setw(6) << aTriangle.Node2;
     std::cout << std::setw(6) << aTriangle.Node3;
-    std::cout << std::endl;
+    std::cout << '\n';
   }
 }
 

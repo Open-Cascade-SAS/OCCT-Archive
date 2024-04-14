@@ -187,7 +187,7 @@ static Handle(TFunction_Driver) GetDriver(const TCollection_AsciiString& name)
   else if(name == "Section") 
     aDrv = new DNaming_BooleanOperationDriver();
   else 
-    std::cout << "the specified driver is not supported" <<std::endl;
+    std::cout << "the specified driver is not supported" <<'\n';
   return aDrv;
 }
 //=======================================================================
@@ -504,7 +504,7 @@ static Standard_Integer DNaming_SolveFlatFrom (Draw_Interpretor& /*theDI*/,
       Handle(TFunction_Function) aFun;
       funLabel.FindAttribute(TFunction_Function::GetID(), aFun);
       if(aFun.IsNull()) {
-	std::cout << "DNaming_SolveFlatFrom:: Null function is found!" << std::endl;
+	std::cout << "DNaming_SolveFlatFrom:: Null function is found!" << '\n';
 	continue;
       } 
       else {
@@ -521,7 +521,7 @@ static Standard_Integer DNaming_SolveFlatFrom (Draw_Interpretor& /*theDI*/,
 	  std::cout <<"DNaming_SolveFlatFrom : function from label " << entry << " is recomputed" << std::endl;
 #endif
 	} catch (EXCEPTION) {
-	  std::cout <<"DNaming_SolveFlatFrom : Exception computing function at label " << entry << std::endl;
+	  std::cout <<"DNaming_SolveFlatFrom : Exception computing function at label " << entry << '\n';
 	}
       }
     }
@@ -576,15 +576,15 @@ static Standard_Integer DNaming_CheckLogBook (Draw_Interpretor& /*theDI*/,
     if (!DDocStd::GetDocument(aDocS, aDoc)) return 1;
     Handle(TFunction_Logbook) logbook = TFunction_Logbook::Set(aDoc->Main());
     if(logbook->IsEmpty())
-      std::cout << "DNaming_CheckLogBook : is empty" <<std::endl;
+      std::cout << "DNaming_CheckLogBook : is empty" <<'\n';
     else {
       const TDF_LabelMap& aMap = logbook->GetValid();
       TDF_MapIteratorOfLabelMap it(aMap);
       TCollection_AsciiString entry;
-      std::cout << "DNaming_CheckLogBook : LogBook current state:" <<std::endl;
+      std::cout << "DNaming_CheckLogBook : LogBook current state:" <<'\n';
       for (;it.More();it.Next()) {
 	TDF_Tool::Entry(it.Key(), entry);
-	std::cout << entry <<std::endl;
+	std::cout << entry <<'\n';
       }
     }
     return 0;
@@ -688,7 +688,7 @@ static Standard_Integer DNaming_AttachShape (Draw_Interpretor& di,
 	      return 1;
 	  }
           catch (Standard_Failure const&) {
-	    std::cout << "EXCEPTION: SELECTION_IMPOSSIBLE" <<std::endl;
+	    std::cout << "EXCEPTION: SELECTION_IMPOSSIBLE" <<'\n';
 	  }
     
 	  if(!aCont.IsNull()) {
@@ -756,7 +756,7 @@ static Standard_Integer DNaming_XAttachShape (Draw_Interpretor& di,
 	  Handle(TNaming_NamedShape) aCont =  DNaming::GetObjectValue(aContext);
 
 	  if(aCont.IsNull() || aCont->IsEmpty())
-	    std::cout <<"Wrong Context ..." <<std::endl;
+	    std::cout <<"Wrong Context ..." <<'\n';
 	  else {
 	    TopoDS_Shape aCONTEXT = aCont->Get();
 	    try{
@@ -765,7 +765,7 @@ static Standard_Integer DNaming_XAttachShape (Draw_Interpretor& di,
 		return 1;
 	    }
             catch (Standard_Failure const&) {
-	      std::cout << "EXCEPTION: SELECTION_IMPOSSIBLE" <<std::endl;
+	      std::cout << "EXCEPTION: SELECTION_IMPOSSIBLE" <<'\n';
 	    }
     
 	    TDF_Reference::Set(aFun->Label().FindChild(FUNCTION_ARGUMENTS_LABEL).FindChild(ATTACH_ARG), 
@@ -1546,7 +1546,7 @@ static Standard_Integer DNaming_PntOffset (Draw_Interpretor& theDI,
       if(isDX || isDY || isDZ)
 	DDF::ReturnLabel(theDI, objLabel);
       else
-	std::cout <<"DNaming_PntOffset : Nothing changed" << std::endl; 
+	std::cout <<"DNaming_PntOffset : Nothing changed" << '\n'; 
       return 0;
     }
   }
@@ -1691,7 +1691,7 @@ static Standard_Boolean MakeSelection (const Handle(TDataStd_UAttribute)& Obj,
 	  if(!aSelector.Select(Selection, aContext, Geometry, KeepOrientation))
 	    return Standard_False;
 	}catch (...) {
-	  std::cout << "EXCEPTION: SELECTION_IMPOSSIBLE" <<std::endl;
+	  std::cout << "EXCEPTION: SELECTION_IMPOSSIBLE" <<'\n';
 	}
 
 	if(!aNS.IsNull()) {
@@ -1749,7 +1749,7 @@ static Standard_Boolean MakeXSelection (const Handle(TDataStd_UAttribute)& Obj,
 	  if(!aSelector.Select(Selection, aContext, Geometry, KeepOrientation))
 	    return Standard_False;
 	}catch (...) {
-	  std::cout << "EXCEPTION: SELECTION_IMPOSSIBLE" <<std::endl;
+	  std::cout << "EXCEPTION: SELECTION_IMPOSSIBLE" <<'\n';
 	}
 
 	if(!aNS.IsNull()) {
@@ -1923,7 +1923,7 @@ static Standard_Integer DNaming_TestSingle (Draw_Interpretor& theDI,
 	}
 	catch (Standard_Failure const& anException) {
 	  std::cout << "%%%INFO:Error: ::TestSingleSelection failed :";
-	  std::cout << anException.GetMessageString() << std::endl;
+	  std::cout << anException.GetMessageString() << '\n';
 	}
 	catch(...) {
 	  std::cout << "%%%INFO:Error: ::TestSingleSelection selection failed : unknown exception type";
@@ -1960,9 +1960,9 @@ static Standard_Integer DNaming_TestSingle (Draw_Interpretor& theDI,
 	}
 	if(aResult.Length()) {
 	  if(aResult.Search("Warning") == -1)
-	    std::cout << "Failed units: " << aResult << " at " << entry << std::endl;
+	    std::cout << "Failed units: " << aResult << " at " << entry << '\n';
 	  else 
-	    std::cout << aResult << " at " << entry << std::endl;
+	    std::cout << aResult << " at " << entry << '\n';
 	  TDataStd_Name::Set(auxObj->Label(), aResult);
 	}
       } 
@@ -1976,7 +1976,7 @@ static Standard_Integer DNaming_TestSingle (Draw_Interpretor& theDI,
 	  B.Generated(it1.Value());
 	  TCollection_AsciiString entry;
 	  TDF_Tool::Entry(aLabel, entry);
-	  std::cout << "\t" <<entry <<std::endl;
+	  std::cout << "\t" <<entry <<'\n';
 	}
       }
       if(!FirstAuxObj.IsNull())
@@ -2057,7 +2057,7 @@ static Standard_Integer DNaming_Multiple (Draw_Interpretor& theDI,
 	}
 	catch (Standard_Failure const& anException) {
 	  std::cout << "%%%INFO:Error: ::TestSingleSelection failed :";
-	  std::cout << anException.GetMessageString() << std::endl;
+	  std::cout << anException.GetMessageString() << '\n';
 	}
 	catch(...) {
 	  std::cout << "%%%INFO:Error: ::TestSingleSelection selection failed : unknown exception type";
@@ -2093,7 +2093,7 @@ static Standard_Integer DNaming_Multiple (Draw_Interpretor& theDI,
 	  aFailedList.Append(aCurShape);
 	}
 	if(aResult.Length())
-	  std::cout << "Failed units: " << aResult << std::endl;
+	  std::cout << "Failed units: " << aResult << '\n';
       }
  
       if(aFailedList.Extent()) {

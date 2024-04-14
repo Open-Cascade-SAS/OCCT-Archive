@@ -847,18 +847,18 @@ void Bisector_BisecPC::Dump(const Standard_Integer ,
 			    const Standard_Integer Offset) const 
 {
   Indent (Offset);
-  std::cout <<"Bisector_BisecPC :"<<std::endl;
+  std::cout <<"Bisector_BisecPC :"<<'\n';
   Indent (Offset);
-  std::cout <<"Point :"<<std::endl;
-  std::cout <<" X = "<<point.X()<<std::endl;
-  std::cout <<" Y = "<<point.Y()<<std::endl;
-  std::cout <<"Sign  :"<<sign<<std::endl;
-  std::cout <<"Number Of Intervals :"<<startIntervals.Length()<<std::endl;
+  std::cout <<"Point :"<<'\n';
+  std::cout <<" X = "<<point.X()<<'\n';
+  std::cout <<" Y = "<<point.Y()<<'\n';
+  std::cout <<"Sign  :"<<sign<<'\n';
+  std::cout <<"Number Of Intervals :"<<startIntervals.Length()<<'\n';
   for (Standard_Integer i = 1; i <= startIntervals.Length(); i++) {
     std::cout <<"Interval number :"<<i<<"Start :"<<startIntervals.Value(i)
-                                 <<"  end :"<<  endIntervals.Value(i)<<std::endl ;
+                                 <<"  end :"<<  endIntervals.Value(i)<<'\n' ;
   }
-  std::cout <<"Index Current Interval :"<<currentInterval<<std::endl;
+  std::cout <<"Index Current Interval :"<<currentInterval<<'\n';
 }
 
 

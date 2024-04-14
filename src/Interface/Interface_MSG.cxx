@@ -153,7 +153,7 @@ Standard_Integer  Interface_MSG::Read (Standard_IStream& S)
 {
   Standard_Integer nb = 0;
   if (thedic.IsEmpty()) return nb;
-  if (rootkey[0] != '\0') S<<"@@ ROOT:"<<rootkey<<std::endl;
+  if (rootkey[0] != '\0') S<<"@@ ROOT:"<<rootkey<<'\n';
   NCollection_DataMap<TCollection_AsciiString, Handle(TCollection_HAsciiString)>::Iterator iter(thedic);
   for (; iter.More(); iter.Next()) {
     if (!iter.Key().StartsWith(rootkey)) continue;
@@ -184,7 +184,7 @@ Standard_CString  Interface_MSG::Translated (const Standard_CString key)
     if (thedic.Find(key, str))
       return str->ToCString();
   }
-  if (theprint) std::cout<<" **  Interface_MSG:Translate ?? "<<key<<"  **"<<std::endl;
+  if (theprint) std::cout<<" **  Interface_MSG:Translate ?? "<<key<<"  **"<<'\n';
   if (therec) {
     if (thelist.IsBound(key)) {
       thelist.ChangeFind(key)++;
@@ -207,7 +207,7 @@ void  Interface_MSG::Record
     thedic.Bind(key,str);
     return;
   }
-  if (theprint) std::cout<<" **  Interface_MSG:Record ?? "<<key<<" ** "<<item<<"  **"<<std::endl;
+  if (theprint) std::cout<<" **  Interface_MSG:Record ?? "<<key<<" ** "<<item<<"  **"<<'\n';
   if (therec) {
     if (thedup.IsNull()) thedup = new TColStd_HSequenceOfHAsciiString();
     dup = new TCollection_HAsciiString(key);
@@ -243,13 +243,13 @@ void  Interface_MSG::PrintTrace (Standard_OStream& S)
     dup = thedup->Value(2*i-1);
     S<<"** DUP:"<<dup->ToCString();
     dup = thedup->Value(2*i);
-    S<<" ** "<<dup->ToCString()<<std::endl;
+    S<<" ** "<<dup->ToCString()<<'\n';
   }
 
   if (thelist.IsEmpty()) return;
   NCollection_DataMap<TCollection_AsciiString, Standard_Integer>::Iterator iter(thelist);
   for (; iter.More(); iter.Next()) {
-    S<<"** MSG(NB="<<iter.Value()<<"): "<<iter.Key()<<std::endl;
+    S<<"** MSG(NB="<<iter.Value()<<"): "<<iter.Key()<<'\n';
   }
 }
 

@@ -368,7 +368,7 @@ Standard_Boolean OSD_MAllocHook::LogFileHandler::MakeReport
            << std::setw(10) << "NbLeftPeak "
            << std::setw(20) << "AllocSize "
            << std::setw(20) << "LeftSize "
-           << std::setw(20) << "PeakSize " << std::endl;
+           << std::setw(20) << "PeakSize " << '\n';
 
   Standard_Size aTotAlloc = 0;
   for (std::set<StorageInfo>::const_iterator it = aStMap.begin();
@@ -386,7 +386,7 @@ Standard_Boolean OSD_MAllocHook::LogFileHandler::MakeReport
              << std::setw(10) << aInfo.nbLeftPeak << ' '
              << std::setw(20) << aSizeAlloc << ' '
              << std::setw(20) << aSizeLeft << ' '
-             << std::setw(20) << aSizePeak << std::endl;
+             << std::setw(20) << aSizePeak << '\n';
 
     if (aTotAlloc + aSizeAlloc < aTotAlloc) // overflow ?
       aTotAlloc = SIZE_MAX;
@@ -406,7 +406,7 @@ Standard_Boolean OSD_MAllocHook::LogFileHandler::MakeReport
            << (aTotAlloc == SIZE_MAX ? '>' : ' ')
            << std::setw(20) << aTotAlloc << ' '
            << std::setw(20) << aTotalLeftSize << ' '
-           << std::setw(20) << aTotalPeakSize << std::endl;
+           << std::setw(20) << aTotalPeakSize << '\n';
 
   aRepFile.close();
   return Standard_True;
@@ -425,7 +425,7 @@ void OSD_MAllocHook::LogFileHandler::AllocEvent
   {
     myMutex.Lock();
     myLogFile << "alloc "<< std::setw(10) << theRequestNum
-              << std::setw(20) << theSize << std::endl;
+              << std::setw(20) << theSize << '\n';
     if (myBreakSize == theSize)
       place_for_breakpoint();
     myMutex.Unlock();
@@ -446,7 +446,7 @@ void OSD_MAllocHook::LogFileHandler::FreeEvent
   {
     myMutex.Lock();
     myLogFile << "free " << std::setw(20) << theRequestNum
-              << std::setw(20) << theSize << std::endl;
+              << std::setw(20) << theSize << '\n';
     myMutex.Unlock();
   }
 }
@@ -524,7 +524,7 @@ Standard_Boolean OSD_MAllocHook::CollectBySize::MakeReport(const char* theOutFil
            << std::setw(10) << "NbLeftPeak "
            << std::setw(20) << "AllocSize "
            << std::setw(20) << "LeftSize "
-           << std::setw(20) << "PeakSize " << std::endl;
+           << std::setw(20) << "PeakSize " << '\n';
 
   Standard_Size aTotAlloc = 0;
   for (int i = 0; i < MAX_ALLOC_SIZE; i++)
@@ -543,7 +543,7 @@ Standard_Boolean OSD_MAllocHook::CollectBySize::MakeReport(const char* theOutFil
                << std::setw(10) << myArray[i].nbLeftPeak << ' '
                << std::setw(20) << aSizeAlloc << ' '
                << std::setw(20) << aSizeLeft << ' '
-               << std::setw(20) << aSizePeak << std::endl;
+               << std::setw(20) << aSizePeak << '\n';
 
       if (aTotAlloc + aSizeAlloc < aTotAlloc) // overflow ?
         aTotAlloc = SIZE_MAX;
@@ -558,7 +558,7 @@ Standard_Boolean OSD_MAllocHook::CollectBySize::MakeReport(const char* theOutFil
            << (aTotAlloc == SIZE_MAX ? '>' : ' ')
            << std::setw(20) << aTotAlloc  << ' '
            << std::setw(20) << myTotalLeftSize  << ' '
-           << std::setw(20) << myTotalPeakSize << std::endl;
+           << std::setw(20) << myTotalPeakSize << '\n';
   aRepFile.close();
   return Standard_True;
 }

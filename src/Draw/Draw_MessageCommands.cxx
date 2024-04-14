@@ -114,7 +114,7 @@ static Standard_Integer PrintMessenger (Draw_Interpretor& theDI, Standard_Intege
   Standard_SStream aSStream;
   aMessenger->DumpJson (aSStream);
   theDI << aSStream;
-  std::cout << aSStream.str() << std::endl;
+  std::cout << aSStream.str() << '\n';
 
   return 0;
 }

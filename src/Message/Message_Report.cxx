@@ -458,7 +458,7 @@ void Message_Report::dumpMessages (Standard_OStream& theOS, Message_Gravity theG
   const Message_ListOfAlert& anAlerts = theCompositeAlert->Alerts (theGravity);
   for (Message_ListOfAlert::Iterator anIt (anAlerts); anIt.More(); anIt.Next())
   {
-    theOS << anIt.Value()->GetMessageKey() << std::endl;
+    theOS << anIt.Value()->GetMessageKey() << '\n';
 
     Handle(Message_AlertExtended) anExtendedAlert = Handle(Message_AlertExtended)::DownCast (anIt.Value());
     if (anExtendedAlert.IsNull())

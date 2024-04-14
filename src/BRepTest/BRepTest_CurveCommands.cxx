@@ -1800,15 +1800,15 @@ static Standard_Integer arclinconvert (Draw_Interpretor& /*dout*/, Standard_Inte
 {
   // Check the command arguments
   if (n < 3) {
-    std::cout<<"Error: "<<a[0]<<" - invalid number of arguments"<<std::endl;
-    std::cout<<"Usage: type help "<<a[0]<<std::endl;
+    std::cout<<"Error: "<<a[0]<<" - invalid number of arguments"<<'\n';
+    std::cout<<"Usage: type help "<<a[0]<<'\n';
     return 1; //TCL_ERROR
   }
 
   //read shape
   const TopoDS_Shape aShape = DBRep::Get(a[2]);
   if (aShape.IsNull()) {
-    std::cout<<"Error: "<<a[2]<<" is null"<<std::endl;
+    std::cout<<"Error: "<<a[2]<<" is null"<<'\n';
     return 1; //TCL_ERROR
   }
 
@@ -1816,7 +1816,7 @@ static Standard_Integer arclinconvert (Draw_Interpretor& /*dout*/, Standard_Inte
   if (aType != TopAbs_WIRE &&
       aType != TopAbs_FACE)
   {
-    std::cout<<"Error: "<<a[2]<<" is neither wire no face"<<std::endl;
+    std::cout<<"Error: "<<a[2]<<" is neither wire no face"<<'\n';
     return 1; //TCL_ERROR
   }
 
@@ -1824,7 +1824,7 @@ static Standard_Integer arclinconvert (Draw_Interpretor& /*dout*/, Standard_Inte
   Standard_Real aTol = 0.01;
   if (n > 3)
     aTol = Draw::Atof(a[3]);
-  std::cout<<"Info: tolerance is set to "<<aTol<<std::endl;
+  std::cout<<"Info: tolerance is set to "<<aTol<<'\n';
 
   TopoDS_Shape aResult;
   
@@ -1834,7 +1834,7 @@ static Standard_Integer arclinconvert (Draw_Interpretor& /*dout*/, Standard_Inte
     BRepBuilderAPI_MakeFace aFaceMaker (TopoDS::Wire(aShape), OnlyPlane);
     if (aFaceMaker.Error() != BRepBuilderAPI_FaceDone)
     {
-      std::cout<<"Error: failed to find a face for the wire "<<a[2]<<std::endl;
+      std::cout<<"Error: failed to find a face for the wire "<<a[2]<<'\n';
       return 1; //TCL_ERROR
     }
     const TopoDS_Face& aFace = aFaceMaker.Face();
@@ -1849,7 +1849,7 @@ static Standard_Integer arclinconvert (Draw_Interpretor& /*dout*/, Standard_Inte
   }
 
   if (aResult.IsNull()) {
-    std::cout<<"Error: could not convert "<<a[2]<<std::endl;
+    std::cout<<"Error: could not convert "<<a[2]<<'\n';
     return 1; //TCL_ERROR
   }
 

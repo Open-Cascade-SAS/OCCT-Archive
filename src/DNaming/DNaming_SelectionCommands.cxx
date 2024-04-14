@@ -184,7 +184,7 @@ static Standard_Integer DNaming_SolveSelection (Draw_Interpretor& di, Standard_I
 
     Handle(TNaming_Naming) naming;    
     if (!L.FindAttribute(TNaming_Naming::GetID(),naming)) {  
-      std::cout <<"DNaming__SolveSelection  : not a selection" << std::endl;
+      std::cout <<"DNaming__SolveSelection  : not a selection" << '\n';
       return 1;
     }
 	TDF_LabelMap aValidMap;

@@ -180,8 +180,8 @@ void Intf_SectionLine::Dump
 {
   for (Standard_Integer id=0; id<Indent; id++) std::cout << " ";
   std::cout << "LS ";
-  if (IsClosed()) std::cout << "Closed :" << std::endl;
-  else std::cout << "Open :" << std::endl;
+  if (IsClosed()) std::cout << "Closed :" << '\n';
+  else std::cout << "Open :" << '\n';
   for (Standard_Integer p=1; p<=myPoints.Length(); p++) {
     myPoints.Value(p).Dump(Indent+2);
   }

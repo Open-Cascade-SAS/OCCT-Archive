@@ -149,5 +149,5 @@ void  IGESBasic_ToolSubfigureDef::OwnDump
   S << "\n"
     << "The Associated Entities : ";
   IGESData_DumpEntities(S,dumper,level,1,ent->NbEntities(),ent->AssociatedEntity);
-  S << std::endl;
+  S << '\n';
 }

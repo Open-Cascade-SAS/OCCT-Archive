@@ -228,7 +228,7 @@ void IGESDraw_ToolViewsVisible::OwnDump
   S << "\n"
     << "Entities Displayed : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbDisplayedEntities(),ent->DisplayedEntity);
-  S << std::endl;
+  S << '\n';
 }
 
 Standard_Boolean  IGESDraw_ToolViewsVisible::OwnCorrect

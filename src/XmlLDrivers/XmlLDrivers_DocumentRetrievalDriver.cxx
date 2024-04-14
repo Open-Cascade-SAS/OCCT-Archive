@@ -211,7 +211,7 @@ void XmlLDrivers_DocumentRetrievalDriver::Read (Standard_IStream&              t
   if (aParser.parse(theIStream, Standard_False, aWithoutRoot))
   {
     TCollection_AsciiString aData;
-    std::cout << aParser.GetError(aData) << ": " << aData << std::endl;
+    std::cout << aParser.GetError(aData) << ": " << aData << '\n';
     myReaderStatus = PCDM_RS_FormatFailure;
     return;
   }

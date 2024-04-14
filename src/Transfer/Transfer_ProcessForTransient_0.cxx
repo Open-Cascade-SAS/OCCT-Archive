@@ -403,7 +403,7 @@ void  Transfer_ProcessForTransient::SendMsg(const Handle(Standard_Transient)& st
     aSender << amsg.Value();
     if (amsg.IsEdited() && thetrace > 2)
       aSender << " [from: " << amsg.Original() << "]";
-    aSender << std::endl;
+    aSender << '\n';
   }
 }
 
@@ -428,7 +428,7 @@ void Transfer_ProcessForTransient::AddFail(const Handle(Standard_Transient)& sta
     Message_Messenger::StreamBuffer aSender = themessenger->SendFail();
     aSender << "    --> Fail : " << mess;
     if (orig[0] != '\0' && thetrace > 2) aSender << " [from: " << orig << "]";
-    aSender << std::endl;
+    aSender << '\n';
   }
 }
 
@@ -476,7 +476,7 @@ void Transfer_ProcessForTransient::AddWarning(const Handle(Standard_Transient)& 
     Message_Messenger::StreamBuffer aSender = themessenger->SendWarning();
     aSender << "    --> Warning : " << mess;
     if (orig[0] != '\0' && thetrace > 2) aSender << " [from: " << orig << "]";
-    aSender << std::endl;
+    aSender << '\n';
   }
 }
 
@@ -781,7 +781,7 @@ Handle(Transfer_Binder) Transfer_ProcessForTransient::Transferring(const Handle(
       case Transfer_StatusInitial:
         break;
       case Transfer_StatusDone:
-        aSender << " .. and Transfer done" << std::endl;
+        aSender << " .. and Transfer done" << '\n';
         return former;
       case Transfer_StatusRun:
         former->SetStatusExec(Transfer_StatusLoop);
@@ -789,7 +789,7 @@ Handle(Transfer_Binder) Transfer_ProcessForTransient::Transferring(const Handle(
       case Transfer_StatusError:
         if (thetrace)
         {
-          aSender << "                  *** Transfer in Error Status  :" << std::endl;
+          aSender << "                  *** Transfer in Error Status  :" << '\n';
           StartTrace(former, start, thelevel, 0);
         }
         else StartTrace(former, start, thelevel, 4);
@@ -797,7 +797,7 @@ Handle(Transfer_Binder) Transfer_ProcessForTransient::Transferring(const Handle(
       case Transfer_StatusLoop:
         if (thetrace)
         {
-          aSender << "                  *** Transfer  Head of Dead Loop  :" << std::endl;
+          aSender << "                  *** Transfer  Head of Dead Loop  :" << '\n';
           StartTrace(former, start, thelevel, 0);
         }
         else StartTrace(former, start, thelevel, 4);
@@ -825,7 +825,7 @@ Handle(Transfer_Binder) Transfer_ProcessForTransient::Transferring(const Handle(
     {
       if (binder.IsNull())
       {
-        aSender << "                  *** Dead Loop with no Result" << std::endl;
+        aSender << "                  *** Dead Loop with no Result" << '\n';
         if (thetrace) StartTrace(binder, start, thelevel - 1, 0);
         binder = new Transfer_VoidBinder;
         Bind(start, binder);  newbind = Standard_True;
@@ -834,7 +834,7 @@ Handle(Transfer_Binder) Transfer_ProcessForTransient::Transferring(const Handle(
       {
         if (thetrace)
         {
-          aSender << "                  *** Dead Loop : Finding head of Loop :" << std::endl;
+          aSender << "                  *** Dead Loop : Finding head of Loop :" << '\n';
           StartTrace(binder, start, thelevel - 1, 0);
         }
         else StartTrace(binder, start, thelevel - 1, 4);
@@ -845,7 +845,7 @@ Handle(Transfer_Binder) Transfer_ProcessForTransient::Transferring(const Handle(
       {
         if (thetrace)
         {
-          aSender << "                  *** Dead Loop : Actor in Loop :" << std::endl;
+          aSender << "                  *** Dead Loop : Actor in Loop :" << '\n';
           StartTrace(binder, start, thelevel - 1, 0);
         }
       }
@@ -856,14 +856,14 @@ Handle(Transfer_Binder) Transfer_ProcessForTransient::Transferring(const Handle(
     {
       if (binder.IsNull())
       {
-        aSender << "                  *** Exception Raised with no Result" << std::endl;
+        aSender << "                  *** Exception Raised with no Result" << '\n';
         binder = new Transfer_VoidBinder;
         Bind(start, binder);  newbind = Standard_True;
       }
       binder->AddFail("Transfer stopped by exception raising");
       if (thetrace)
       {
-        aSender << "    *** Raised : " << anException.GetMessageString() << std::endl;
+        aSender << "    *** Raised : " << anException.GetMessageString() << '\n';
         StartTrace(binder, start, thelevel - 1, 4);
       }
       thelevel = oldlev;
@@ -1020,7 +1020,7 @@ void Transfer_ProcessForTransient::StartTrace(const Handle(Transfer_Binder)& bin
       aSender << "\n  ---  No Result recorded";
     }
   }
-  aSender << std::endl;
+  aSender << '\n';
 }
 
 //=======================================================================

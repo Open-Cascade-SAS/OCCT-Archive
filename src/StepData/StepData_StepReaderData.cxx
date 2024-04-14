@@ -404,7 +404,7 @@ void StepData_StepReaderData::SetRecord(const Standard_Integer num,
             sout << "  ***  Incorrect record " << num << " (on " << NbRecords()
                  << " -> " << num * 100 / NbRecords() << " % in File)  ***";
             if (prev > 0) sout << "  Ident #" << theidents(prev);
-            sout << "\n" << errm << std::endl;
+            sout << "\n" << errm << '\n';
             thecheck->AddWarning(errm.ToCString(), "Complex Type incorrect : ");
           }
           break;
@@ -1801,7 +1801,7 @@ void StepData_StepReaderData::SetEntityNumbers(const Standard_Boolean withmap)
         Standard_Integer numsub = FP.EntityNumber();
         if (numsub > thelastn) {
           Message::SendInfo()
-            << "Bad Sub.N0, Record " << num << " Param " << na << ":$" << numsub << std::endl;
+            << "Bad Sub.N0, Record " << num << " Param " << na << ":$" << numsub << '\n';
           continue;
         }
         FP.SetEntityNumber(subn(numsub));
@@ -1826,7 +1826,7 @@ void StepData_StepReaderData::SetEntityNumbers(const Standard_Boolean withmap)
           //  ...  Et sortir message un peu plus complet
           sout << "*** ERR StepReaderData *** Entite #" << ident
                << "\n    Type:" << RecordType(num)
-               << "  Param.n0 " << na << ": #" << id << " Not found" << std::endl;
+               << "  Param.n0 " << na << ": #" << id << " Not found" << '\n';
         }      // FIN  Mapping
       }        // FIN  Traitement Reference
     }          // FIN  Boucle Parametres
@@ -1893,7 +1893,7 @@ void StepData_StepReaderData::SetEntityNumbers(const Standard_Boolean withmap)
             char ligne[80];
             sprintf(ligne, "Ident defined SEVERAL TIMES : #%d", ident);
             thecheck->AddFail(ligne, "Ident defined SEVERAL TIMES : #%d");
-            sout << "StepReaderData : SetEntityNumbers, " << ligne << std::endl;
+            sout << "StepReaderData : SetEntityNumbers, " << ligne << '\n';
           }
           if (indm(indmap) > 0) indm(indmap) = -indm(indmap);  // Pas pour Map
       //  Cas Normal pour la Map
@@ -2087,7 +2087,7 @@ void StepData_StepReaderData::SetEntityNumbers(const Standard_Boolean withmap)
           sout << "*** ERR StepReaderData *** Entite " << nument
                << ", a " << (nr * 100) / nbseq << "% de DATA : #" << ident
                << "\n    Type:" << RecordType(num)
-               << "  Param.n0 " << na << ": #" << id << " Not found" << std::endl;
+               << "  Param.n0 " << na << ": #" << id << " Not found" << '\n';
 
           FP.SetEntityNumber(0);  // -> Reference non resolue
         }

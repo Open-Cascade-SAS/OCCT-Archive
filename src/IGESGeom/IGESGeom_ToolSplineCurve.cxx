@@ -339,7 +339,7 @@ void IGESGeom_ToolSplineCurve::OwnDump
     << "Segment Break Points : ";
   IGESData_DumpVals(S,level,1, nbSegments+1,ent->BreakPoint);
   if (level <= 4) {
-    S << " [ also ask level > 4 for X-Y-Z Polynomials ]" << std::endl;
+    S << " [ also ask level > 4 for X-Y-Z Polynomials ]" << '\n';
     return;
   }
   S << "  --  Polynomial  Values  --\n";
@@ -363,5 +363,5 @@ void IGESGeom_ToolSplineCurve::OwnDump
     << " Value        	"<<AX<<"	"<<AY<<"	"<<AZ<<"\n"
     << " 1st Derivative	"<<BX<<"	"<<BY<<"	"<<BZ<<"\n"
     << " 2nd Der./2!   	"<<CX<<"	"<<CY<<"	"<<CZ<<"\n"
-    << " 3rd Der./3!   	"<<DX<<"	"<<DY<<"	"<<DZ<<std::endl;
+    << " 3rd Der./3!   	"<<DX<<"	"<<DY<<"	"<<DZ<<'\n';
 }

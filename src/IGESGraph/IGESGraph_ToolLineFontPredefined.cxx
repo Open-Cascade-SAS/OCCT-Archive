@@ -108,5 +108,5 @@ void IGESGraph_ToolLineFontPredefined::OwnDump
   S << "IGESGraph_LineFontPredefined\n"
     << "No. of property values : " << ent->NbPropertyValues() << "\n"
     << "Line font pattern code : " << ent->LineFontPatternCode() << "\n"
-    << std::endl;
+    << '\n';
 }

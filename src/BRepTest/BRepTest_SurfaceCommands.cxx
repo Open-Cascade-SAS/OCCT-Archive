@@ -245,7 +245,7 @@ static Standard_Integer pcurve(Draw_Interpretor& , Standard_Integer n, const cha
       const Handle(Geom2d_Curve) c = BRep_Tool::CurveOnSurface
 	(TopoDS::Edge(ex.Current()),TopoDS::Face(S),f,l);
       if ( c.IsNull() ) {
-        std::cout << "Error: Edge " << i << " does not have pcurve" << std::endl;
+        std::cout << "Error: Edge " << i << " does not have pcurve" << '\n';
         continue;
       }
       col = DBRep_ColorOrientation(ex.Current().Orientation());

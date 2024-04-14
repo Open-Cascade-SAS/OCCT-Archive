@@ -118,11 +118,11 @@ void TNaming_Translator::DumpMap(const Standard_Boolean isWrite) const
 
   if (!myMap.Extent()) return;
   else 
-    std::cout <<"TNaming_Translator:: IndexedDataMap Extent = "<< myMap.Extent() << std::endl;
+    std::cout <<"TNaming_Translator:: IndexedDataMap Extent = "<< myMap.Extent() << '\n';
   
   for (Standard_Integer i=1; i <= myMap.Extent(); i++)
     {
-      std::cout <<"TNaming_Translator::DumpMap:  Index = "<< i << " Type = "<< (myMap.FindKey(i))->DynamicType() << std::endl;
+      std::cout <<"TNaming_Translator::DumpMap:  Index = "<< i << " Type = "<< (myMap.FindKey(i))->DynamicType() << '\n';
       Handle(Standard_Type) T = (myMap.FindKey(i))->DynamicType();
       if((T == STANDARD_TYPE (BRep_TVertex)) ||(T == STANDARD_TYPE (BRep_TEdge)) ||
 	 T == STANDARD_TYPE (BRep_TFace)|| T == STANDARD_TYPE (TopoDS_TWire)||
@@ -143,14 +143,14 @@ void TNaming_Translator::DumpMap(const Standard_Boolean isWrite) const
 	  if(isWrite) {
 	    const Handle(TopLoc_Datum3D) key = Handle(TopLoc_Datum3D)::DownCast(myMap.FindKey(i));
 	    const Handle(TopLoc_Datum3D) Item = Handle(TopLoc_Datum3D)::DownCast(myMap.FindFromIndex(i));
-	    std::cout << "TNaming_Translator::DumpMap: Location_Key_name  = "<< keyname.Cat(i).ToCString()<< std::endl;
+	    std::cout << "TNaming_Translator::DumpMap: Location_Key_name  = "<< keyname.Cat(i).ToCString()<< '\n';
 	    key->ShallowDump(std::cout);
-	    std::cout << "TNaming_Translator::DumpMap: Location_Item_name = "<< itemname.Cat(i).ToCString()<< std::endl;
+	    std::cout << "TNaming_Translator::DumpMap: Location_Item_name = "<< itemname.Cat(i).ToCString()<< '\n';
 	    Item->ShallowDump(std::cout);
 	  }						       
 	}
       else {
-	std::cout <<"TNaming_Translator::DumpMap: Unexpected Type >> Idex = "<< i << " Type = "<<(myMap.FindKey(i))->DynamicType()<< std::endl;
+	std::cout <<"TNaming_Translator::DumpMap: Unexpected Type >> Idex = "<< i << " Type = "<<(myMap.FindKey(i))->DynamicType()<< '\n';
 	continue;
       }
     }

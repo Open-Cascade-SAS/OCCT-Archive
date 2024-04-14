@@ -61,11 +61,11 @@ void  Transfer_FinderProcess::PrintStats (const Standard_Integer mode, Standard_
 {
   S<<"\n*******************************************************************\n";
   if (mode == 1) {    //  Statistiques de base
-    S<< "********                 Basic Statistics                  ********"<<std::endl;
+    S<< "********                 Basic Statistics                  ********"<<'\n';
 
     Standard_Integer nbr = 0, nbe = 0, nbw = 0;
     Standard_Integer i, max = NbMapped(), nbroots = NbRoots();
-    S<< "****        Nb Final Results    : "<< nbroots <<std::endl;
+    S<< "****        Nb Final Results    : "<< nbroots <<'\n';
 
     for (i = 1; i <= max; i ++) {
       const Handle(Transfer_Binder)& binder = MapItem(i);
@@ -87,5 +87,5 @@ void  Transfer_FinderProcess::PrintStats (const Standard_Integer mode, Standard_
       S<<"****                Warnings on : "<<Interface_MSG::Blanks(nbw,4)<<nbw<<" Entities\n";
     S<<"*******************************************************************";
   }
-  S<<std::endl;
+  S<<'\n';
 }

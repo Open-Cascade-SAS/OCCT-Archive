@@ -378,9 +378,9 @@ Standard_Real AdvApprox_SimpleApprox::AverageError(const Standard_Integer Index)
 void AdvApprox_SimpleApprox::Dump(Standard_OStream& o) const
 {
   Standard_Integer ii;
-  o << "Dump of SimpleApprox " << std::endl;
+  o << "Dump of SimpleApprox " << '\n';
   for (ii=1; ii <= myTotalNumSS; ii++) {
-    o << "Error   " << MaxError(ii) << std::endl;
+    o << "Error   " << MaxError(ii) << '\n';
   }
 }
 

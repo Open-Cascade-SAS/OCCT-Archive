@@ -161,7 +161,7 @@ void Message_PrinterOStream::send (const TCollection_AsciiString& theString,
   {
     *aStream << theString;
   }
-  (*aStream) << std::endl;
+  (*aStream) << '\n';
 }
 
 //=======================================================================

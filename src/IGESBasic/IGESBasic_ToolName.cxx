@@ -107,5 +107,5 @@ void  IGESBasic_ToolName::OwnDump
     << "Number of property values : " << ent->NbPropertyValues() << "\n"
     << "Name : ";
   IGESData_DumpString(S,ent->Value());
-  S << std::endl;
+  S << '\n';
 }

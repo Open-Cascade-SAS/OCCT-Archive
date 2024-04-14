@@ -167,5 +167,5 @@ void  IGESSolid_ToolTorus::OwnDump
   IGESData_DumpXYZL(S,level, ent->AxisPoint(), ent->Location());
   S << "\nAxis direction : ";
   IGESData_DumpXYZL(S,level, ent->Axis(), ent->VectorLocation());
-  S << std::endl;
+  S << '\n';
 }

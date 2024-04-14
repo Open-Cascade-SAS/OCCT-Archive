@@ -64,11 +64,11 @@ static Standard_Integer ViewId(const Standard_CString a)
 {
   Standard_Integer id = Draw::Atoi(a);
   if ((id < 0) || (id >= MAXVIEW)) {
-    std::cout << "Incorrect view-id, must be in 0.."<<MAXVIEW-1<<std::endl;
+    std::cout << "Incorrect view-id, must be in 0.."<<MAXVIEW-1<<'\n';
     return -1;
   }
   if (!dout.HasView(id)) {
-    std::cout <<"View "<<id<<" does not exist."<<std::endl;
+    std::cout <<"View "<<id<<" does not exist."<<'\n';
     return -1;
   }
   return id;

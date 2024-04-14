@@ -121,7 +121,7 @@ IFSelect_ReturnStatus STEPControl_Reader::ReadFile(const Standard_CString filena
     Message_Messenger::StreamBuffer sout = Message::SendInfo();
     sout << "    ****    Interruption ReadFile par Exception :   ****\n";
     sout << anException.GetMessageString();
-    sout << "\n    Abandon" << std::endl;
+    sout << "\n    Abandon" << '\n';
     status = IFSelect_RetFail;
   }
   if (status != IFSelect_RetDone) return status;
@@ -157,7 +157,7 @@ IFSelect_ReturnStatus STEPControl_Reader::ReadFile(const Standard_CString filena
     Message_Messenger::StreamBuffer sout = Message::SendInfo();
     sout << "    ****    Interruption ReadFile par Exception :   ****\n";
     sout << anException.GetMessageString();
-    sout << "\n    Abandon" << std::endl;
+    sout << "\n    Abandon" << '\n';
     status = IFSelect_RetFail;
   }
   if (status != IFSelect_RetDone) return status;
@@ -193,7 +193,7 @@ IFSelect_ReturnStatus STEPControl_Reader::ReadStream(const Standard_CString theN
     Message_Messenger::StreamBuffer sout = Message::SendInfo();
     sout << "    ****    Interruption ReadFile par Exception :   ****\n";
     sout << anException.GetMessageString();
-    sout << "\n    Abandon" << std::endl;
+    sout << "\n    Abandon" << '\n';
     status = IFSelect_RetFail;
   }
   if (status != IFSelect_RetDone) return status;
@@ -230,7 +230,7 @@ IFSelect_ReturnStatus STEPControl_Reader::ReadStream(const Standard_CString theN
     Message_Messenger::StreamBuffer sout = Message::SendInfo();
     sout << "    ****    Interruption ReadFile par Exception :   ****\n";
     sout << anException.GetMessageString();
-    sout << "\n    Abandon" << std::endl;
+    sout << "\n    Abandon" << '\n';
     status = IFSelect_RetFail;
   }
   if (status != IFSelect_RetDone) return status;

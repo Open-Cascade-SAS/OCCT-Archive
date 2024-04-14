@@ -107,7 +107,7 @@ void math_Gauss::Dump(Standard_OStream& o) const {
        o << "math_Gauss ";
        if(Done) {
          o<< " Status = Done \n";
-	 o << " Determinant of A = " << D << std::endl;
+	 o << " Determinant of A = " << D << '\n';
        }
        else {
          o << " Status = not Done \n";

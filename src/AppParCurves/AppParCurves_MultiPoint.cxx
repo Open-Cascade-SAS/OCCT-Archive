@@ -172,20 +172,20 @@ const gp_Pnt2d& AppParCurves_MultiPoint::Point2d (const Standard_Integer Index) 
 
 void AppParCurves_MultiPoint::Dump(Standard_OStream& o) const
 {
-  o << "AppParCurves_MultiPoint dump:" << std::endl;
+  o << "AppParCurves_MultiPoint dump:" << '\n';
   const Standard_Integer  aNbPnts3D = NbPoints(),
                           aNbPnts2D = NbPoints2d();
-  o << "It contains " << aNbPnts3D << " 3d points and " << aNbPnts2D <<" 2d points." << std::endl;
+  o << "It contains " << aNbPnts3D << " 3d points and " << aNbPnts2D <<" 2d points." << '\n';
   
   if(aNbPnts3D > 0)
   {
     for(Standard_Integer i = tabPoint->Lower(); i <= tabPoint->Upper(); i++)
     {
-      o << "3D-Point #" << i << std::endl;
+      o << "3D-Point #" << i << '\n';
 
-      o << " Pole x = " << (tabPoint->Value(i)/*->Point(j)*/).X() << std::endl;
-      o << " Pole y = " << (tabPoint->Value(i)/*->Point(j)*/).Y() << std::endl;
-      o << " Pole z = " << (tabPoint->Value(i)/*->Point(j)*/).Z() << std::endl;
+      o << " Pole x = " << (tabPoint->Value(i)/*->Point(j)*/).X() << '\n';
+      o << " Pole y = " << (tabPoint->Value(i)/*->Point(j)*/).Y() << '\n';
+      o << " Pole z = " << (tabPoint->Value(i)/*->Point(j)*/).Z() << '\n';
     }
   }
   
@@ -193,10 +193,10 @@ void AppParCurves_MultiPoint::Dump(Standard_OStream& o) const
   {
     for(Standard_Integer i = tabPoint2d->Lower(); i <= tabPoint2d->Upper(); i++)
     {
-      o << "2D-Point #" << i << std::endl;
+      o << "2D-Point #" << i << '\n';
 
-      o << " Pole x = " << (tabPoint2d->Value(i)/*->Point2d(j)*/).X() << std::endl;
-      o << " Pole y = " << (tabPoint2d->Value(i)/*->Point2d(j)*/).Y() << std::endl;
+      o << " Pole x = " << (tabPoint2d->Value(i)/*->Point2d(j)*/).X() << '\n';
+      o << " Pole y = " << (tabPoint2d->Value(i)/*->Point2d(j)*/).Y() << '\n';
     }
   }
 }

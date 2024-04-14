@@ -155,7 +155,7 @@ void  IGESSolid_ToolSphericalSurface::OwnDump
       S << "\n"
         << "Reference direction : ";
       dumper.Dump(ent->ReferenceDir(),S, sublevel);
-      S << std::endl;
+      S << '\n';
     }
-  else S << "Surface is UnParametrised" << std::endl;
+  else S << "Surface is UnParametrised" << '\n';
 }

@@ -142,5 +142,5 @@ void  IGESSolid_ToolSolidOfLinearExtrusion::OwnDump
     << "Extrusion length    : " << ent->ExtrusionLength() << "\n"
     << "Extrusion direction : ";
   IGESData_DumpXYZL(S,level, ent->ExtrusionDirection(), ent->VectorLocation());
-  S << std::endl;
+  S << '\n';
 }

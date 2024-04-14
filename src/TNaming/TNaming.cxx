@@ -102,7 +102,7 @@ static void SubstituteShape(const TopoDS_Shape& oldShape,
 			    TNaming_DataMapOfShapePtrRefShape& amap) 
 {
   if (oldShape.IsSame(newShape)) {
-    std::cout <<"import_tool::Substitute : oldShape IsSame newShape"<<std::endl;
+    std::cout <<"import_tool::Substitute : oldShape IsSame newShape"<<'\n';
   }
 
   if (!amap.IsBound(oldShape)) {

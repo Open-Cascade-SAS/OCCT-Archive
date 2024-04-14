@@ -1065,44 +1065,44 @@ Standard_Real
 void AdvApp2Var_ApproxAFunc2Var::Dump(Standard_OStream& o) const 
 {
   Standard_Integer iesp=1,NbKU,NbKV,ik;
-  o<<std::endl;
-  if (!myHasResult) { o<<"No result"<<std::endl; }
+  o<<'\n';
+  if (!myHasResult) { o<<"No result"<<'\n'; }
   else {
     o<<"There is a result";
     if (myDone) {
-      o<<" within the requested tolerance "<<my3DTolerances->Value(iesp)<<std::endl;
+      o<<" within the requested tolerance "<<my3DTolerances->Value(iesp)<<'\n';
     }
     else if (my3DMaxError->Value(iesp)>my3DTolerances->Value(iesp)) {
-      o<<" WITHOUT the requested tolerance "<<my3DTolerances->Value(iesp)<<std::endl;
+      o<<" WITHOUT the requested tolerance "<<my3DTolerances->Value(iesp)<<'\n';
     }
     else {
-      o<<" WITHOUT the requested continuities "<<std::endl;
+      o<<" WITHOUT the requested continuities "<<'\n';
     }
-    o<<std::endl;
-    o<<"Result max error :"<<my3DMaxError->Value(iesp)<<std::endl;
-    o<<"Result average error :"<<my3DAverageError->Value(iesp)<<std::endl;
-    o<<"Result max error on U frontiers :"<<my3DUFrontError->Value(iesp)<<std::endl;
-    o<<"Result max error on V frontiers :"<<my3DVFrontError->Value(iesp)<<std::endl;
-    o<<std::endl;
+    o<<'\n';
+    o<<"Result max error :"<<my3DMaxError->Value(iesp)<<'\n';
+    o<<"Result average error :"<<my3DAverageError->Value(iesp)<<'\n';
+    o<<"Result max error on U frontiers :"<<my3DUFrontError->Value(iesp)<<'\n';
+    o<<"Result max error on V frontiers :"<<my3DVFrontError->Value(iesp)<<'\n';
+    o<<'\n';
     o<<"Degree of Bezier patches in U : "<<myDegreeInU
-      <<"  in V : "<<myDegreeInV<<std::endl;
-    o<<std::endl;
+      <<"  in V : "<<myDegreeInV<<'\n';
+    o<<'\n';
     Handle(Geom_BSplineSurface) S
       = Handle(Geom_BSplineSurface)::DownCast(mySurfaces->Value(iesp));
     o<<"Number of poles in U : "<<S->NbUPoles()
-      <<"  in V : "<<S->NbVPoles()<<std::endl;
-    o<<std::endl;
+      <<"  in V : "<<S->NbVPoles()<<'\n';
+    o<<'\n';
     NbKU = S->NbUKnots();
     NbKV = S->NbVKnots();
-    o<<"Number of knots in U : "<<NbKU<<std::endl;
+    o<<"Number of knots in U : "<<NbKU<<'\n';
     for (ik=1;ik<=NbKU;ik++) {
-      o<<"   "<<ik<<" : "<<S->UKnot(ik)<<"   mult : "<<S->UMultiplicity(ik)<<std::endl;
+      o<<"   "<<ik<<" : "<<S->UKnot(ik)<<"   mult : "<<S->UMultiplicity(ik)<<'\n';
     }
-    o<<std::endl;
-    o<<"Number of knots in V : "<<NbKV<<std::endl;
+    o<<'\n';
+    o<<"Number of knots in V : "<<NbKV<<'\n';
     for (ik=1;ik<=NbKV;ik++) {
-      o<<"   "<<ik<<" : "<<S->VKnot(ik)<<"   mult : "<<S->VMultiplicity(ik)<<std::endl;
+      o<<"   "<<ik<<" : "<<S->VKnot(ik)<<"   mult : "<<S->VMultiplicity(ik)<<'\n';
     }
-    o<<std::endl;
+    o<<'\n';
   }
 }

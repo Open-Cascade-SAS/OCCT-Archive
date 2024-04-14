@@ -170,5 +170,5 @@ void IGESGraph_ToolUniformRectGrid::OwnDump
   IGESData_DumpXY(S, ent->GridSpacing());  S << "\n";
   if (ent->IsFinite())
     S << "No. of points/lines in direction :  X : " << ent->NbPointsX()
-      << "  -  Y : " << ent->NbPointsY() << std::endl;
+      << "  -  Y : " << ent->NbPointsY() << '\n';
 }

@@ -127,7 +127,7 @@ void Units_Unit::Dump(const Standard_Integer /*ashift*/,
       if(index != 1) std::cout << " or " ;
       std::cout<<"\""<<string.ToCString()<<"\"";
     }
-  std::cout<< "		Name:  " <<Name().ToCString()<<"		(= " << thevalue << " SI)" <<std::endl;
+  std::cout<< "		Name:  " <<Name().ToCString()<<"		(= " << thevalue << " SI)" <<'\n';
 }
 
 //=======================================================================

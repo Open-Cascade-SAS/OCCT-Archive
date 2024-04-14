@@ -193,5 +193,5 @@ void IGESGeom_ToolFlash::OwnDump
     << " Rotation about reference entity : " << ent->Rotation() << "\n"
     << "Reference Entity         : ";
   dumper.Dump(ent->ReferenceEntity(),S, sublevel);
-  S << std::endl;
+  S << '\n';
 }

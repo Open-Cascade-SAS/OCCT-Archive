@@ -1244,7 +1244,7 @@ void IntAna_IntQuadQuad::Parameters (const Standard_Integer, //i,
 				     Standard_Real& , 
 				     Standard_Real& ) const
 {
-  std::cout << "IntAna_IntQuadQuad::Parameters(...) is not yet implemented" << std::endl;
+  std::cout << "IntAna_IntQuadQuad::Parameters(...) is not yet implemented" << '\n';
 }
 
 /*********************************************************************************

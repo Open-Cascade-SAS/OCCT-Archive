@@ -876,14 +876,14 @@ static Standard_Integer QANColTestVector (Draw_Interpretor&, Standard_Integer, c
 
   aVec.Append(5);
   if (aVec(0) != 5)
-    std::cout << "Error: wrong value in original vector!" << std::endl;
+    std::cout << "Error: wrong value in original vector!" << '\n';
   aVec2.Append(5);
   if (aVec2(0) != 5)
-    std::cout << "Error: wrong value in copy-constructed vector!" << std::endl;
+    std::cout << "Error: wrong value in copy-constructed vector!" << '\n';
   aVec3.Append(5);
   if (aVec3(0) != 5)
-    std::cout << "Error: wrong value in copied vector!" << std::endl;
-  std::cout << "Test OK" << std::endl;
+    std::cout << "Error: wrong value in copied vector!" << '\n';
+  std::cout << "Test OK" << '\n';
 
   return 0;
 }
@@ -933,7 +933,7 @@ static bool CheckArrayByValue(NCollection_Array1<double> theArray)
   {
     if (theArray.Value(i) != i + 113.)
     {
-      std::cout << "Error at item " << i << ": value = " << theArray.Value(i) << ", expected " << i + 113. << std::endl;
+      std::cout << "Error at item " << i << ": value = " << theArray.Value(i) << ", expected " << i + 113. << '\n';
       return false;
     }
   }

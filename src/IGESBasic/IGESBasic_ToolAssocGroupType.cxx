@@ -115,5 +115,5 @@ void  IGESBasic_ToolAssocGroupType::OwnDump
     << "Type of attached associativity : " << ent->AssocType() << "\n"
     << "Name of attached associativity : ";
   IGESData_DumpString(S,ent->Name());
-  S << std::endl;
+  S << '\n';
 }

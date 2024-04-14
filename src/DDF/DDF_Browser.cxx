@@ -82,7 +82,7 @@ Handle(Draw_Drawable3D) DDF_Browser::Copy() const
 
 void DDF_Browser::Dump(Standard_OStream& S) const
 {
-  S<<"DDF_Browser on a DF:"<<std::endl;
+  S<<"DDF_Browser on a DF:"<<'\n';
   S<<myDF;
 }
 

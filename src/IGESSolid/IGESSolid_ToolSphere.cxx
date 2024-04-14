@@ -125,5 +125,5 @@ void  IGESSolid_ToolSphere::OwnDump
     << "Radius : " << ent->Radius() << "\n"
     << "Center : ";
   IGESData_DumpXYZL(S,level, ent->Center(), ent->Location());
-  S << std::endl;
+  S << '\n';
 }

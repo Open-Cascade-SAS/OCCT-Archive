@@ -148,5 +148,5 @@ void IGESGeom_ToolPoint::OwnDump
   S << "\n"
     << " Display Symbol : ";
   dumper.Dump(ent->DisplaySymbol(),S, (level <= 4) ? 0 : 1);
-  S << std::endl;
+  S << '\n';
 }

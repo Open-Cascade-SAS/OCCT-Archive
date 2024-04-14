@@ -623,12 +623,12 @@ Approx_CurvilinearParameter::Approx_CurvilinearParameter(const Handle(Adaptor2d_
 
 void Approx_CurvilinearParameter::Dump(Standard_OStream& o) const
 {
-  o << "Dump of Approx_CurvilinearParameter" << std::endl;
+  o << "Dump of Approx_CurvilinearParameter" << '\n';
   if (myCase==2 || myCase==3) 
-    o << "myMaxError2d1 = " << myMaxError2d1 << std::endl;
+    o << "myMaxError2d1 = " << myMaxError2d1 << '\n';
   if (myCase==3) 
-    o << "myMaxError2d2 = " << myMaxError2d2 << std::endl;
-  o << "myMaxError3d = " << myMaxError3d << std::endl;
+    o << "myMaxError2d2 = " << myMaxError2d2 << '\n';
+  o << "myMaxError3d = " << myMaxError3d << '\n';
 }
 
 //=======================================================================

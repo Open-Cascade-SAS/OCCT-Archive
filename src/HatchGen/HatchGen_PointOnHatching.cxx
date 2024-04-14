@@ -166,10 +166,10 @@ void HatchGen_PointOnHatching::Dump (const Standard_Integer Index) const
   } else {
     std::cout << "------" ;
   }
-  std::cout << "------------------" << std::endl ;
+  std::cout << "------------------" << '\n' ;
 
-  std::cout << "    Index of the hatching = " << myIndex << std::endl ;
-  std::cout << "    Parameter on hatching = " << myParam << std::endl ;
+  std::cout << "    Index of the hatching = " << myIndex << '\n' ;
+  std::cout << "    Parameter on hatching = " << myParam << '\n' ;
   std::cout << "    Position  on hatching = " ;
   switch (myPosit) {
       case TopAbs_FORWARD  : std::cout << "FORWARD  (i.e. BEGIN  )" ; break ;
@@ -177,7 +177,7 @@ void HatchGen_PointOnHatching::Dump (const Standard_Integer Index) const
       case TopAbs_REVERSED : std::cout << "REVERSED (i.e. END    )" ; break ;
       case TopAbs_EXTERNAL : std::cout << "EXTERNAL (i.e. UNKNOWN)" ; break ;
   }
-  std::cout << std::endl ;
+  std::cout << '\n' ;
   std::cout << "    State Before          = " ;
   switch (myBefore) {
       case TopAbs_IN      : std::cout << "IN"      ; break ;
@@ -185,7 +185,7 @@ void HatchGen_PointOnHatching::Dump (const Standard_Integer Index) const
       case TopAbs_ON      : std::cout << "ON"      ; break ;
       case TopAbs_UNKNOWN : std::cout << "UNKNOWN" ; break ;
   }
-  std::cout << std::endl ;
+  std::cout << '\n' ;
   std::cout << "    State After           = " ;
   switch (myAfter) {
       case TopAbs_IN      : std::cout << "IN"      ; break ;
@@ -193,20 +193,20 @@ void HatchGen_PointOnHatching::Dump (const Standard_Integer Index) const
       case TopAbs_ON      : std::cout << "ON"      ; break ;
       case TopAbs_UNKNOWN : std::cout << "UNKNOWN" ; break ;
   }
-  std::cout << std::endl ;
-  std::cout << "    Beginning of segment  = " << (mySegBeg ? "TRUE" : "FALSE") << std::endl ;
-  std::cout << "    End       of segment  = " << (mySegEnd ? "TRUE" : "FALSE") << std::endl ;
+  std::cout << '\n' ;
+  std::cout << "    Beginning of segment  = " << (mySegBeg ? "TRUE" : "FALSE") << '\n' ;
+  std::cout << "    End       of segment  = " << (mySegEnd ? "TRUE" : "FALSE") << '\n' ;
 
   Standard_Integer NbPnt = myPoints.Length () ;
   if (NbPnt == 0) {
-    std::cout << "    No points on element" << std::endl ;
+    std::cout << "    No points on element" << '\n' ;
   } else {
-    std::cout << "    Contains " << NbPnt << " points on element" << std::endl ;
+    std::cout << "    Contains " << NbPnt << " points on element" << '\n' ;
     for (Standard_Integer IPnt = 1 ; IPnt <= NbPnt ; IPnt++) {
       const HatchGen_PointOnElement& Point = myPoints.Value (IPnt) ;
       Point.Dump (IPnt) ;
     }
   }
 
-  std::cout << "----------------------------------------------" << std::endl ;
+  std::cout << "----------------------------------------------" << '\n' ;
 }

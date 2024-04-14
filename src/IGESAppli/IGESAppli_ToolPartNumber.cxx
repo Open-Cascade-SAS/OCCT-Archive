@@ -142,5 +142,5 @@ void  IGESAppli_ToolPartNumber::OwnDump
   S << "\n";
   S << "Internal Number or Name : ";
   IGESData_DumpString(S,ent->InternalNumber());
-  S << std::endl;
+  S << '\n';
 }

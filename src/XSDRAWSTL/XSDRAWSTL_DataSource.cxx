@@ -33,7 +33,7 @@ XSDRAWSTL_DataSource::XSDRAWSTL_DataSource (const Handle(Poly_Triangulation)& aM
   {
     const Standard_Integer aNbNodes = myMesh->NbNodes();
     myNodeCoords = new TColStd_HArray2OfReal (1, aNbNodes, 1, 3);
-    std::cout << "Nodes : " << aNbNodes << std::endl;
+    std::cout << "Nodes : " << aNbNodes << '\n';
 
     for (Standard_Integer i = 1; i <= aNbNodes; i++)
     {
@@ -49,7 +49,7 @@ XSDRAWSTL_DataSource::XSDRAWSTL_DataSource (const Handle(Poly_Triangulation)& aM
     myElemNormals = new TColStd_HArray2OfReal(1, aNbTris, 1, 3);
     myElemNodes = new TColStd_HArray2OfInteger(1, aNbTris, 1, 3);
 
-    std::cout << "Elements : " << aNbTris << std::endl;
+    std::cout << "Elements : " << aNbTris << '\n';
 
     for (Standard_Integer i = 1; i <= aNbTris; i++)
     {
@@ -83,7 +83,7 @@ XSDRAWSTL_DataSource::XSDRAWSTL_DataSource (const Handle(Poly_Triangulation)& aM
       myElemNormals->SetValue (i, 3, aN.Z());
     }
   }
-  std::cout << "Construction is finished" << std::endl;
+  std::cout << "Construction is finished" << '\n';
 }
 
 //================================================================

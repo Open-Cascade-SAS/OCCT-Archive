@@ -206,5 +206,5 @@ void  Interface_ShareTool::Print (const Interface_EntityIterator& iter, Standard
     S << " n0/id:"; 
     Model()->Print (ent, S);
   }
-  S <<std::endl;
+  S <<'\n';
 }

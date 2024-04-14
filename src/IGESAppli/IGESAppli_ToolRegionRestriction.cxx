@@ -132,5 +132,5 @@ void  IGESAppli_ToolRegionRestriction::OwnDump
     << "Electrical components restriction : "
     << ent->ElectricalComponentRestriction() << "\n"
     << "Electrical circuitary restriction : "
-    << ent->ElectricalCktRestriction()  << std::endl;
+    << ent->ElectricalCktRestriction()  << '\n';
 }

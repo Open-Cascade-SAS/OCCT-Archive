@@ -1414,7 +1414,7 @@ static Standard_Integer OCC27021(Draw_Interpretor& theDI,
 {
   if (theNArg != 2)
   {
-    std::cout << "Use: " << theArgVal[0] << " shape" << std::endl;
+    std::cout << "Use: " << theArgVal[0] << " shape" << '\n';
     return 1;
   }
 
@@ -1546,7 +1546,7 @@ static Standard_Integer OCC26930(Draw_Interpretor& theDI,
 {
   if (theNArg != 5)
   {
-    std::cout << "Use: " << theArgVal[0] <<" surface curve start end" << std::endl;
+    std::cout << "Use: " << theArgVal[0] <<" surface curve start end" << '\n';
     return 1;
   }
 
@@ -1598,7 +1598,7 @@ static Standard_Integer OCC27466(Draw_Interpretor& theDI,
 {
   if (theNArg != 4)
   {
-    std::cout << "Use: " << theArgVal[0] << " face point start_pnt2d" << std::endl;
+    std::cout << "Use: " << theArgVal[0] << " face point start_pnt2d" << '\n';
     return 1;
   }
 
@@ -2373,7 +2373,7 @@ static Standard_Integer OCC28784(Draw_Interpretor&, Standard_Integer argc, const
 static Standard_Integer OCC28829 (Draw_Interpretor&, Standard_Integer, const char**)
 {
   // do something that causes FPE exception
-  std::cout << "sqrt(-1) = " << sqrt (-1.) << std::endl;
+  std::cout << "sqrt(-1) = " << sqrt (-1.) << '\n';
   return 0;
 }
 
@@ -2473,7 +2473,7 @@ static Standard_Integer OCC28131 (Draw_Interpretor&, Standard_Integer theNbArgs,
 {
   if (theNbArgs != 2)
   {
-    std::cerr << "Error: wrong number of arguments" << std::endl;
+    std::cerr << "Error: wrong number of arguments" << '\n';
     return 1;
   }
 
@@ -2629,7 +2629,7 @@ Standard_Boolean IsSameGuid (const Standard_GUID& aGuidNull, const Standard_GUID
     isSame = Standard_True;
   } else {
     aGuid2.ShallowDump(std::cout);
-    std::cout <<std::endl;
+    std::cout <<'\n';
   }
   return isSame;
 }
@@ -2829,7 +2829,7 @@ static Standard_Integer OCC29064 (Draw_Interpretor& theDI, Standard_Integer theA
 {
   if (theArgc < 2)
   {
-    std::cout << "Error: give argument indicating type of map (map, doublemap, datamap, indexedmap, indexeddatamap)" << std::endl;
+    std::cout << "Error: give argument indicating type of map (map, doublemap, datamap, indexedmap, indexeddatamap)" << '\n';
     return 1;
   }
 
@@ -2846,7 +2846,7 @@ static Standard_Integer OCC29064 (Draw_Interpretor& theDI, Standard_Integer theA
     AllocDummyArr<NCollection_IndexedDataMap<int, int> > (theDI, nbm1, nbm2);
   else
   {
-    std::cout << "Error: unrecognized argument " << theArgv[1] << std::endl;
+    std::cout << "Error: unrecognized argument " << theArgv[1] << '\n';
     return 1;
   }
   return 0;
@@ -3025,7 +3025,7 @@ static Standard_Integer OCC29311 (Draw_Interpretor& theDI, Standard_Integer theA
 {
   if (theArgc < 4)
   {
-    std::cerr << "Use: " << theArgv[0] << " shape counter_name nb_iterations" << std::endl;
+    std::cerr << "Use: " << theArgv[0] << " shape counter_name nb_iterations" << '\n';
     return 1;
   }
 
@@ -3268,7 +3268,7 @@ static Standard_Integer OCC29195(Draw_Interpretor&, Standard_Integer theArgC, co
   {
     std::cout << "\nOCC29195 [nbRep] doc1.cbf doc1.xml doc1.std outDoc1.cbf outDoc1.xml doc2.cbf doc2.xml doc2.std outDoc2.cbf outDoc2.xml ...], where:";
     std::cout << "\nnbRep - number repetitions of a thread function (by default - 50)";
-    std::cout << "\ndocN - names (5 in each group) of OCAF documents names (3 input files, 2 output)\n" << std::endl;
+    std::cout << "\ndocN - names (5 in each group) of OCAF documents names (3 input files, 2 output)\n" << '\n';
     return 1;
   }
   int iThread(0), off(0);
@@ -4277,9 +4277,9 @@ static Standard_Integer OCC33048(Draw_Interpretor&, Standard_Integer, const char
   }
 
   if (isOK)
-    std::cout << "OK: Kronrod points and weights are calculated successfully." << std::endl;
+    std::cout << "OK: Kronrod points and weights are calculated successfully." << '\n';
   else
-    std::cout << "Error: Problem occurred during calculation of Kronrod points and weights." << std::endl;
+    std::cout << "Error: Problem occurred during calculation of Kronrod points and weights." << '\n';
 
   return 0;
 }

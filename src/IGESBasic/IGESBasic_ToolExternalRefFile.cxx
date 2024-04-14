@@ -93,5 +93,5 @@ void  IGESBasic_ToolExternalRefFile::OwnDump
   S << "IGESBasic_ExternalRefFile\n"
     << "External Reference File Identifier : ";
   IGESData_DumpString(S,ent->FileId());
-  S << std::endl;
+  S << '\n';
 }

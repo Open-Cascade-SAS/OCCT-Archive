@@ -247,5 +247,5 @@ void IGESSolid_ToolShell::OwnDump(const Handle(IGESSolid_Shell)& ent,
           else                     S << "False\n";
 	}
     }
-  S << std::endl;
+  S << '\n';
 }

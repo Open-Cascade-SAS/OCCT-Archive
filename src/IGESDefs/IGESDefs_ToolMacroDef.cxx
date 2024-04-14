@@ -151,5 +151,5 @@ void  IGESDefs_ToolMacroDef::OwnDump
   IGESData_DumpStrings(S,level,1, ent->NbStatements(),ent->LanguageStatement);
   S << "END MACRO : ";
   IGESData_DumpString(S,ent->ENDMACRO());
-  S << std::endl;
+  S << '\n';
 }

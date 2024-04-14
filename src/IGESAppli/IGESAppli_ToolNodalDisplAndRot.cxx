@@ -231,7 +231,7 @@ void  IGESAppli_ToolNodalDisplAndRot::OwnDump
 //      IGESData_DumpListXYZL(S,-level,1,nbcases,ent->TranslationParameter,loca);
       S << "Rotational Parameters : ";
 //      IGESData_DumpListXYZL(S,-level,1,nbcases,ent->RotationalParameter,loca);
-      S << "  TO BE DONE" << std::endl;
+      S << "  TO BE DONE" << '\n';
       break;
     case 5:
     case 6: {
@@ -239,7 +239,7 @@ void  IGESAppli_ToolNodalDisplAndRot::OwnDump
 	{
 	  S << "[" << i << "]: ";
 	  dumper.Dump (ent->Note(i),S, 1);
-	  S << std::endl;
+	  S << '\n';
 	}
       S << "Nodes :\n";
       S << "Node Identifiers :\n";
@@ -273,5 +273,5 @@ void  IGESAppli_ToolNodalDisplAndRot::OwnDump
       break;
     default: break;
     }
-  S << std::endl;
+  S << '\n';
 }

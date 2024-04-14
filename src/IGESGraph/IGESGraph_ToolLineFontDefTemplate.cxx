@@ -126,6 +126,6 @@ void IGESGraph_ToolLineFontDefTemplate::OwnDump
   S << "\n"
     << "Length Between Successive Template Figure : " << ent->Distance()<< "\n"
     << "Scale Factor for Subfigure : " << ent->Scale() << "\n"
-    << std::endl;
+    << '\n';
 }
 

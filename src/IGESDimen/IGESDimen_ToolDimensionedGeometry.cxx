@@ -155,5 +155,5 @@ void  IGESDimen_ToolDimensionedGeometry::OwnDump
   S << "\n"
     << "Geometry Entities : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbGeometryEntities(),ent->GeometryEntity);
-  S << std::endl;
+  S << '\n';
 }

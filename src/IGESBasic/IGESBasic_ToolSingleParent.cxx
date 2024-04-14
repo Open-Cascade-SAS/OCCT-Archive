@@ -184,5 +184,5 @@ void  IGESBasic_ToolSingleParent::OwnDump
   S << "\n"
     << "Children : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbChildren(),ent->Child);
-  S << std::endl;
+  S << '\n';
 }

@@ -298,31 +298,31 @@ void TopOpeBRepBuild_GTopo::Dump(Standard_OStream& OS,
   DumpType(OS);
   OS<<" "; TopOpeBRepDS::Print(myConfig1,OS);
   OS<<" "; TopOpeBRepDS::Print(myConfig2,OS);
-  OS<<std::endl;
+  OS<<'\n';
 
-  if (myReverseForce) OS<<"reverse value : "<<myReverseValue<<std::endl;
+  if (myReverseForce) OS<<"reverse value : "<<myReverseValue<<'\n';
 
   if(s) OS<<s;
   OS<<"\\ I N O";
-  OS<<std::endl;
+  OS<<'\n';
 
   if(s) OS<<s;
   OS<<"I ";
   DumpVal(OS,TopAbs_IN,TopAbs_IN); OS<<" ";
   DumpVal(OS,TopAbs_IN,TopAbs_ON); OS<<" ";
-  DumpVal(OS,TopAbs_IN,TopAbs_OUT); OS<<std::endl;
+  DumpVal(OS,TopAbs_IN,TopAbs_OUT); OS<<'\n';
 
   if(s) OS<<s;
   OS<<"N ";
   DumpVal(OS,TopAbs_ON,TopAbs_IN); OS<<" ";
   DumpVal(OS,TopAbs_ON,TopAbs_ON); OS<<" ";
-  DumpVal(OS,TopAbs_ON,TopAbs_OUT); OS<<std::endl;
+  DumpVal(OS,TopAbs_ON,TopAbs_OUT); OS<<'\n';
 
   if(s) OS<<s;
   OS<<"O ";
   DumpVal(OS,TopAbs_OUT,TopAbs_IN); OS<<" ";
   DumpVal(OS,TopAbs_OUT,TopAbs_ON); OS<<" ";
-  DumpVal(OS,TopAbs_OUT,TopAbs_OUT); OS<<std::endl;
+  DumpVal(OS,TopAbs_OUT,TopAbs_OUT); OS<<'\n';
 }
 
 //=======================================================================

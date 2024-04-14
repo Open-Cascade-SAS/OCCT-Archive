@@ -415,5 +415,5 @@ void IGESSolid_ToolLoop::OwnDump(const Handle(IGESSolid_Loop)& ent,
 	}
       S << " ]";
     }
-  S << std::endl;
+  S << '\n';
 }

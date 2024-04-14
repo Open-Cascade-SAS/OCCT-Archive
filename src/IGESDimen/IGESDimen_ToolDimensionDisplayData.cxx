@@ -348,5 +348,5 @@ void  IGESDimen_ToolDimensionDisplayData::OwnDump
 	  << ", Start Index : " << ent->StartIndex(i)
 	  << ", End Index : "   << ent->EndIndex(i) << "\n";
       }
-  S << std::endl;
+  S << '\n';
 }

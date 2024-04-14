@@ -1005,7 +1005,7 @@ Handle(Resource_Manager) CDM_Document::StorageResource()
   if(myApplication.IsNull()) {
     Standard_SStream aMsg;
     aMsg << "this document of format "<< StorageFormat()
-         << " has not yet been opened by any application. "<< std::endl;
+         << " has not yet been opened by any application. "<< '\n';
     throw Standard_Failure(aMsg.str().c_str());
   }
   return myApplication->Resources();

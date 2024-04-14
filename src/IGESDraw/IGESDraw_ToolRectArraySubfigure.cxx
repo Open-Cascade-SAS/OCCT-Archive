@@ -193,5 +193,5 @@ void IGESDraw_ToolRectArraySubfigure::OwnDump
   else                   S << "(0)Do  ";
   S << "Do-Dont List : ";
   IGESData_DumpVals(S,level,1, ent->ListCount(),ent->ListPosition);
-  S << std::endl;
+  S << '\n';
 }

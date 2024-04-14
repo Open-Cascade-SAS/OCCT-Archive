@@ -1120,18 +1120,18 @@ void BRepExtrema_DistShapeShape::Dump(Standard_OStream& o) const
   Standard_Integer i;
   Standard_Real r1,r2;
   
-  o<< "the distance  value is :  " << Value()<<std::endl;
-  o<< "the number of solutions is :"<<NbSolution()<<std::endl;
-  o<<std::endl;
+  o<< "the distance  value is :  " << Value()<<'\n';
+  o<< "the number of solutions is :"<<NbSolution()<<'\n';
+  o<<'\n';
   for (i=1;i<=NbSolution();i++)
   {
-    o<<"solution number "<<i<<": "<< std::endl;
-    o<<"the type of the solution on the first shape is " <<Standard_Integer( SupportTypeShape1(i)) <<std::endl; 
-    o<<"the type of the solution on the second shape is "<<Standard_Integer( SupportTypeShape2(i))<< std::endl;
-    o<< "the coordinates of  the point on the first shape are: "<<std::endl; 
-    o<<"X=" <<PointOnShape1(i).X()<<" Y=" <<PointOnShape1(i).Y()<<" Z="<<PointOnShape1(i).Z()<<std::endl;
-    o<< "the coordinates of  the point on the second shape are: "<<std::endl; 
-    o<<"X="<< PointOnShape2(i).X()<< " Y="<<PointOnShape2(i).Y()<<" Z="<< PointOnShape2(i).Z()<<std::endl;
+    o<<"solution number "<<i<<": "<< '\n';
+    o<<"the type of the solution on the first shape is " <<Standard_Integer( SupportTypeShape1(i)) <<'\n'; 
+    o<<"the type of the solution on the second shape is "<<Standard_Integer( SupportTypeShape2(i))<< '\n';
+    o<< "the coordinates of  the point on the first shape are: "<<'\n'; 
+    o<<"X=" <<PointOnShape1(i).X()<<" Y=" <<PointOnShape1(i).Y()<<" Z="<<PointOnShape1(i).Z()<<'\n';
+    o<< "the coordinates of  the point on the second shape are: "<<'\n'; 
+    o<<"X="<< PointOnShape2(i).X()<< " Y="<<PointOnShape2(i).Y()<<" Z="<< PointOnShape2(i).Z()<<'\n';
     
     switch (SupportTypeShape1(i))
     {
@@ -1139,11 +1139,11 @@ void BRepExtrema_DistShapeShape::Dump(Standard_OStream& o) const
         break;
       case BRepExtrema_IsOnEdge:
         ParOnEdgeS1(i,r1);
-        o << "parameter on the first edge :  t= " << r1 << std::endl;
+        o << "parameter on the first edge :  t= " << r1 << '\n';
         break;
       case BRepExtrema_IsInFace:
         ParOnFaceS1(i,r1,r2);
-        o << "parameters on the first face :  u= " << r1 << " v=" <<  r2 << std::endl;
+        o << "parameters on the first face :  u= " << r1 << " v=" <<  r2 << '\n';
         break;
     }
     switch (SupportTypeShape2(i))
@@ -1152,13 +1152,13 @@ void BRepExtrema_DistShapeShape::Dump(Standard_OStream& o) const
         break;
       case BRepExtrema_IsOnEdge:
         ParOnEdgeS2(i,r1);
-        o << "parameter on the second edge : t=" << r1 << std::endl;
+        o << "parameter on the second edge : t=" << r1 << '\n';
         break;
       case BRepExtrema_IsInFace:
         ParOnFaceS2(i,r1,r2);
-        o << "parameters on the second face : u= " << r1 << " v=" <<  r2 << std::endl;
+        o << "parameters on the second face : u= " << r1 << " v=" <<  r2 << '\n';
         break;
     }
-    o<<std::endl;
+    o<<'\n';
   } 
 }

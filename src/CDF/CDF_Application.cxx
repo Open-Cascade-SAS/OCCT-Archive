@@ -264,13 +264,13 @@ Handle(CDM_Document) CDF_Application::Retrieve (const Handle(CDM_MetaData)& aMet
     myRetrievableStatus = CanRetrieve(aMetaData, isAppendMode);
     switch (myRetrievableStatus) {
     case PCDM_RS_UnknownDocument: 
-      aMsg << "could not find the referenced document: " << aMetaData->Path() << "; not found."  <<(char)0 << std::endl;
+      aMsg << "could not find the referenced document: " << aMetaData->Path() << "; not found."  <<(char)0 << '\n';
       break;
     case PCDM_RS_PermissionDenied:      
-      aMsg << "Could not find the referenced document: " << aMetaData->Path() << "; permission denied. " <<(char)0 << std::endl;
+      aMsg << "Could not find the referenced document: " << aMetaData->Path() << "; permission denied. " <<(char)0 << '\n';
       break;
     case PCDM_RS_NoDocument:
-      aMsg << "Document for appending is not defined." << (char)0 << std::endl;
+      aMsg << "Document for appending is not defined." << (char)0 << '\n';
       break;
     default:
       myRetrievableStatus = PCDM_RS_OK;
@@ -319,7 +319,7 @@ Handle(CDM_Document) CDF_Application::Retrieve (const Handle(CDM_MetaData)& aMet
       myRetrievableStatus = theReader->GetStatus();
       if (myRetrievableStatus > PCDM_RS_AlreadyRetrieved) {
         Standard_SStream aMsg;
-        aMsg << anException << std::endl;
+        aMsg << anException << '\n';
         throw Standard_Failure(aMsg.str().c_str());
       }
     }
@@ -392,7 +392,7 @@ void CDF_Application::Read (Standard_IStream& theIStream,
     myRetrievableStatus = PCDM_RS_FormatFailure;
     
     Standard_SStream aMsg;
-    aMsg << anException << std::endl;
+    aMsg << anException << '\n';
     throw Standard_Failure(aMsg.str().c_str());
   }
 
@@ -437,7 +437,7 @@ void CDF_Application::Read (Standard_IStream& theIStream,
     if (myRetrievableStatus  > PCDM_RS_AlreadyRetrieved)
     {
       Standard_SStream aMsg;
-      aMsg << anException << std::endl;
+      aMsg << anException << '\n';
       throw Standard_Failure(aMsg.str().c_str());
     }	
   }

@@ -209,15 +209,15 @@ void TDF_Delta::Labels(TDF_LabelList& aLabelList) const
 
 void TDF_Delta::Dump(Standard_OStream& OS) const
 {
-  OS<<"DELTA available from time \t#"<<myBeginTime<<" to time \t#"<<myEndTime<<std::endl;
+  OS<<"DELTA available from time \t#"<<myBeginTime<<" to time \t#"<<myEndTime<<'\n';
   Standard_Integer n = 0;
 //  for (TDF_ListIteratorOfAttributeDeltaList itr(myAttDeltaList);
   TDF_ListIteratorOfAttributeDeltaList itr(myAttDeltaList) ;
   for ( ; itr.More(); itr.Next()) ++n;
-  OS<<"Nb Attribute Delta(s): "<<n<<std::endl;
+  OS<<"Nb Attribute Delta(s): "<<n<<'\n';
   for (itr.Initialize(myAttDeltaList); itr.More(); itr.Next()) {
     const Handle(TDF_AttributeDelta)& attDelta = itr.Value();
-    OS<<"| "; attDelta->Dump(OS); OS<<std::endl;
+    OS<<"| "; attDelta->Dump(OS); OS<<'\n';
   }
 }
 

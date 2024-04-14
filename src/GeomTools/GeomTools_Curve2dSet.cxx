@@ -841,7 +841,7 @@ void  GeomTools_Curve2dSet::Read(Standard_IStream& IS, const Message_ProgressRan
   char buffer[255];
   IS >> buffer;
   if (strcmp(buffer,"Curve2ds")) {
-    std::cout << "Not a Curve2d table"<<std::endl;
+    std::cout << "Not a Curve2d table"<<'\n';
     return;
   }
 

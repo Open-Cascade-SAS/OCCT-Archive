@@ -81,7 +81,7 @@ void Units_Measurement::Convert(const Standard_CString aunit)
   Handle(Units_Token) oldtoken = thetoken;
   Units_UnitSentence newunit(aunit);
   if(!newunit.IsDone()) {
-    std::cout<<"Units_Measurement: can not convert - incorrect unit => result is not correct"<<std::endl;
+    std::cout<<"Units_Measurement: can not convert - incorrect unit => result is not correct"<<'\n';
     return;
   }
   Handle(Units_Token) newtoken=newunit.Evaluate();
@@ -274,7 +274,7 @@ Standard_Boolean Units_Measurement::HasToken() const
 
 void Units_Measurement::Dump() const
 {
-  std::cout<<" Measurement : "<<themeasurement<<std::endl;
+  std::cout<<" Measurement : "<<themeasurement<<'\n';
   thetoken->Dump(1,1);
 }
 

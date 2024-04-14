@@ -144,5 +144,5 @@ void IGESDimen_ToolRadiusDimension::OwnDump
       dumper.Dump(ent->Leader2(),S, sublevel);
       S << "\n";
     }
-  S << std::endl;
+  S << '\n';
 }

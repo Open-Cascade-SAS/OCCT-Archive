@@ -539,11 +539,11 @@ void Interface_CheckIterator::Print(Standard_OStream& S,
 //  mesnum = mesnum0;
 //    if (yamod) mesnum = (nm0 > 0 ? mesnum1 : mesnum2);
 
-    if (!titre)        S <<" **  " << Name() << "  **"<<std::endl;
+    if (!titre)        S <<" **  " << Name() << "  **"<<'\n';
     titre = Standard_True;
     S <<"Check:"; if(nb > 9 && i < 10) S <<" "; if (nb > 99 && i < 100) S <<" ";
     S <<i;
-    if      (num <  0) S <<" -- Global Check"<<std::endl;
+    if      (num <  0) S <<" -- Global Check"<<'\n';
     else if (num == 0) S <<" -- Entity n0 ??:";
     else {
       if (yamod) { S <<" -- Entity (n0:id) "; model->Print (ent, S); }
@@ -551,10 +551,10 @@ void Interface_CheckIterator::Print(Standard_OStream& S,
 //      S<<" -- Entity n0 "<<num<<mesnum;
 //      if (yamod) model->PrintLabel(ent,S);
     }
-    if      (num >= 0 &&  entnul) S <<" (unknown Type)"<<std::endl;
+    if      (num >= 0 &&  entnul) S <<" (unknown Type)"<<'\n';
     else if (num >= 0 && !entnul) {
-      if (yamod) S <<"   Type:"<<model->TypeName(ent)<<std::endl;
-      else       S <<"   Type:"<<ent->DynamicType()->Name()<<std::endl;
+      if (yamod) S <<"   Type:"<<model->TypeName(ent)<<'\n';
+      else       S <<"   Type:"<<ent->DynamicType()->Name()<<'\n';
     }
 
     ach->Print (S, (failsonly ? 1 : 3));

@@ -160,9 +160,9 @@ void Standard_ErrorHandler::Abort (const Handle(Standard_Failure)& theError)
 
   //==== Check if can do the "longjmp" =======================================
   if(anActive == NULL) {
-    std::cerr << "*** Abort *** an exception was raised, but no catch was found." << std::endl;
+    std::cerr << "*** Abort *** an exception was raised, but no catch was found." << '\n';
     if (!theError.IsNull())
-      std::cerr << "\t... The exception is:" << theError->GetMessageString() << std::endl;
+      std::cerr << "\t... The exception is:" << theError->GetMessageString() << '\n';
     exit(1);
   }
 

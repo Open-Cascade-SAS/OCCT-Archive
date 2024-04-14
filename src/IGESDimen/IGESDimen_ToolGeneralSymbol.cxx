@@ -179,5 +179,5 @@ void  IGESDimen_ToolGeneralSymbol::OwnDump
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbGeomEntities(),ent->GeomEntity);
   S << "\nLeader Arrows : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbLeaders(),ent->LeaderArrow);
-  S << std::endl;
+  S << '\n';
 }

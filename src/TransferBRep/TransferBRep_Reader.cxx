@@ -153,7 +153,7 @@ TransferBRep_Reader::TransferBRep_Reader ()
     Message_Messenger::StreamBuffer sout = theProc->Messenger()->SendInfo();
     sout<<"--  Transfer(Read) : ";  
     theModel->Print (ent, sout);
-    sout<<std::endl;
+    sout<<'\n';
   }
   TP.Transfer(ent, theProgress);
   theProc->SetRoot(ent);
@@ -172,7 +172,7 @@ TransferBRep_Reader::TransferBRep_Reader ()
   Message_Messenger::StreamBuffer sout = theProc->Messenger()->SendInfo();
 
   if (theProc->TraceLevel() > 1) 
-    sout<<"--  Transfer(Read-List) : "<<nb<<" Items"<<std::endl;
+    sout<<"--  Transfer(Read-List) : "<<nb<<" Items"<<'\n';
   Message_ProgressScope aPS(theProgress, NULL, nb);
   for (i = 1; i <= nb && aPS.More(); i++) {
     Message_ProgressRange aRange = aPS.Next();
@@ -183,7 +183,7 @@ TransferBRep_Reader::TransferBRep_Reader ()
     {
       sout<<"--  Transfer(Read-List), Item "<<i<<" : ";
       theModel->Print (ent, sout);
-      sout<<std::endl;
+      sout<<'\n';
     }
     TP.Transfer (ent, aRange);
     theProc->SetRoot(ent);

@@ -951,7 +951,7 @@ Standard_Boolean LocOpe_SplitShape::AddOpenWire(const TopoDS_Wire& W,
       }
       //MODIFICATION PIERRE SMEYERS : si pas de possibilite, on sort avec erreur
       else{
-        std::cout<<"erreur Spliter : pas de chainage du wire"<<std::endl;
+        std::cout<<"erreur Spliter : pas de chainage du wire"<<'\n';
         return Standard_False;
       }
       //fin MODIF.
@@ -1035,7 +1035,7 @@ Standard_Boolean LocOpe_SplitShape::AddOpenWire(const TopoDS_Wire& W,
         else {
           // Ce wire est ni dans newF2 ni dans newF1
           // Peut etre faut il construire une troisieme face
-          std::cout << "WARNING: LocOpe_SPlitShape : Ce wire est ni dans newF2 ni dans newF1" << std::endl;
+          std::cout << "WARNING: LocOpe_SPlitShape : Ce wire est ni dans newF2 ni dans newF1" << '\n';
         }
       }
     }

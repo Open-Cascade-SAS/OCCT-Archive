@@ -177,5 +177,5 @@ void IGESDraw_ToolCircArraySubfigure::OwnDump
   else                       S << "Do\n";
   S << "The Do-Dont List : ";
   IGESData_DumpVals(S,level,1, ent->ListCount(),ent->ListPosition);
-  S << std::endl;
+  S << '\n';
 }

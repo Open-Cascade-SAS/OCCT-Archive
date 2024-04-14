@@ -294,11 +294,11 @@ void DBRep_IsoBuilder::LoadIsos (const Handle(DBRep_Face)& Face) const
       if (!IsDone (UInd)) {
 	std::cout << "DBRep_IsoBuilder:: U iso of parameter: " << UPrm ;
 	switch (Status (UInd)) {
-	  case HatchGen_NoProblem          : std::cout << " No Problem"          << std::endl ; break ;
-	  case HatchGen_TrimFailure        : std::cout << " Trim Failure"        << std::endl ; break ;
-	  case HatchGen_TransitionFailure  : std::cout << " Transition Failure"  << std::endl ; break ;
-	  case HatchGen_IncoherentParity   : std::cout << " Incoherent Parity"   << std::endl ; break ;
-	  case HatchGen_IncompatibleStates : std::cout << " Incompatible States" << std::endl ; break ;
+	  case HatchGen_NoProblem          : std::cout << " No Problem"          << '\n' ; break ;
+	  case HatchGen_TrimFailure        : std::cout << " Trim Failure"        << '\n' ; break ;
+	  case HatchGen_TransitionFailure  : std::cout << " Transition Failure"  << '\n' ; break ;
+	  case HatchGen_IncoherentParity   : std::cout << " Incoherent Parity"   << '\n' ; break ;
+	  case HatchGen_IncompatibleStates : std::cout << " Incompatible States" << '\n' ; break ;
 	}
       } else {
 	Standard_Integer NbDom = Geom2dHatch_Hatcher::NbDomains (UInd) ;
@@ -320,11 +320,11 @@ void DBRep_IsoBuilder::LoadIsos (const Handle(DBRep_Face)& Face) const
       if (!IsDone (VInd)) {
 	std::cout << "DBRep_IsoBuilder:: V iso of parameter: " << VPrm ;
 	switch (Status (VInd)) {
-	  case HatchGen_NoProblem          : std::cout << " No Problem"          << std::endl ; break ;
-	  case HatchGen_TrimFailure        : std::cout << " Trim Failure"        << std::endl ; break ;
-	  case HatchGen_TransitionFailure  : std::cout << " Transition Failure"  << std::endl ; break ;
-	  case HatchGen_IncoherentParity   : std::cout << " Incoherent Parity"   << std::endl ; break ;
-	  case HatchGen_IncompatibleStates : std::cout << " Incompatible States" << std::endl ; break ;
+	  case HatchGen_NoProblem          : std::cout << " No Problem"          << '\n' ; break ;
+	  case HatchGen_TrimFailure        : std::cout << " Trim Failure"        << '\n' ; break ;
+	  case HatchGen_TransitionFailure  : std::cout << " Transition Failure"  << '\n' ; break ;
+	  case HatchGen_IncoherentParity   : std::cout << " Incoherent Parity"   << '\n' ; break ;
+	  case HatchGen_IncompatibleStates : std::cout << " Incompatible States" << '\n' ; break ;
 	}
       } else {
 	Standard_Integer NbDom = Geom2dHatch_Hatcher::NbDomains (VInd) ;

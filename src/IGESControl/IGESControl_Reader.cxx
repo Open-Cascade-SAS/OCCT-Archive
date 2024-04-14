@@ -240,7 +240,7 @@ void  IGESControl_Reader::PrintTransferInfo
       for(; aMapCountIter.More() && aMapListIter.More();
             aMapCountIter.Next(), aMapListIter.Next()) {
         Message_Messenger::StreamBuffer aSender = TF->SendInfo();
-        aSender << aMapCountIter.Value() << aMapCountIter.Key() << std::endl;
+        aSender << aMapCountIter.Value() << aMapCountIter.Key() << '\n';
         if (mode == IFSelect_ListByItem) {
           const Handle(TColStd_HSequenceOfInteger)& entityList = aMapListIter.Value();
           Standard_Integer length = entityList->Length();
@@ -260,7 +260,7 @@ void  IGESControl_Reader::PrintTransferInfo
               aSender << line;
             }
           }
-          aSender << std::endl;
+          aSender << '\n';
         }
       }
       break;
@@ -274,7 +274,7 @@ void  IGESControl_Reader::PrintTransferInfo
       NCollection_DataMap<TCollection_AsciiString, Standard_Integer>::Iterator aMapIter(aMapCountResult);
       for (; aMapIter.More(); aMapIter.Next())
       {
-        TF->SendInfo() << aMapIter.Key() << aMapIter.Value() << std::endl;
+        TF->SendInfo() << aMapIter.Key() << aMapIter.Value() << '\n';
       }
       break;
     }
@@ -304,7 +304,7 @@ void  IGESControl_Reader::PrintTransferInfo
       for(; aMapCountIter.More(); aMapCountIter.Next()) {
         char mess[80];
         sprintf(mess, aMapCountIter.Key().ToCString(), aMapCountIter.Value());
-        TF->SendInfo() << mess << std::endl; //dicoCountIter.Value() << dicoCountIter.Name() << std::endl;
+        TF->SendInfo() << mess << '\n'; //dicoCountIter.Value() << dicoCountIter.Name() << std::endl;
       }
       break;
     }

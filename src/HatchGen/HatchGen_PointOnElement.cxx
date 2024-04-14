@@ -206,10 +206,10 @@ void HatchGen_PointOnElement::Dump (const Standard_Integer Index) const
   } else {
     std::cout << "------" ;
   }
-  std::cout << "---------------" << std::endl ;
+  std::cout << "---------------" << '\n' ;
 
-  std::cout << "        Index of the element = " << myIndex << std::endl ;
-  std::cout << "        Parameter on element = " << myParam << std::endl ;
+  std::cout << "        Index of the element = " << myIndex << '\n' ;
+  std::cout << "        Parameter on element = " << myParam << '\n' ;
   std::cout << "        Position  on element = " ;
   switch (myPosit) {
       case TopAbs_FORWARD  : std::cout << "FORWARD  (i.e. BEGIN  )" ; break ;
@@ -217,7 +217,7 @@ void HatchGen_PointOnElement::Dump (const Standard_Integer Index) const
       case TopAbs_REVERSED : std::cout << "REVERSED (i.e. END    )" ; break ;
       case TopAbs_EXTERNAL : std::cout << "EXTERNAL (i.e. UNKNOWN)" ; break ;
   }
-  std::cout << std::endl ;
+  std::cout << '\n' ;
   std::cout << "        Intersection Type    = " ;
   switch (myType) {
       case HatchGen_TRUE         : std::cout << "TRUE"         ; break ;
@@ -225,7 +225,7 @@ void HatchGen_PointOnElement::Dump (const Standard_Integer Index) const
       case HatchGen_TANGENT      : std::cout << "TANGENT"      ; break ;
       case HatchGen_UNDETERMINED : std::cout << "UNDETERMINED" ; break ;
   }
-  std::cout << std::endl ;
+  std::cout << '\n' ;
   std::cout << "        State Before         = " ;
   switch (myBefore) {
       case TopAbs_IN      : std::cout << "IN"      ; break ;
@@ -233,7 +233,7 @@ void HatchGen_PointOnElement::Dump (const Standard_Integer Index) const
       case TopAbs_ON      : std::cout << "ON"      ; break ;
       case TopAbs_UNKNOWN : std::cout << "UNKNOWN" ; break ;
   }
-  std::cout << std::endl ;
+  std::cout << '\n' ;
   std::cout << "        State After          = " ;
   switch (myAfter) {
       case TopAbs_IN      : std::cout << "IN"      ; break ;
@@ -241,9 +241,9 @@ void HatchGen_PointOnElement::Dump (const Standard_Integer Index) const
       case TopAbs_ON      : std::cout << "ON"      ; break ;
       case TopAbs_UNKNOWN : std::cout << "UNKNOWN" ; break ;
   }
-  std::cout << std::endl ;
-  std::cout << "        Beginning of segment = " << (mySegBeg ? "TRUE" : "FALSE") << std::endl ;
-  std::cout << "        End       of segment = " << (mySegEnd ? "TRUE" : "FALSE") << std::endl ;
+  std::cout << '\n' ;
+  std::cout << "        Beginning of segment = " << (mySegBeg ? "TRUE" : "FALSE") << '\n' ;
+  std::cout << "        End       of segment = " << (mySegEnd ? "TRUE" : "FALSE") << '\n' ;
 
-  std::cout << "    ------------------------------------------" << std::endl ;
+  std::cout << "    ------------------------------------------" << '\n' ;
 }

@@ -4675,7 +4675,7 @@ static Standard_Integer VListConnected (Draw_Interpretor& /*di*/,
     {
       std::cout << " connected to " << aMap.Find1 (aConnected->ConnectedTo());
     }
-    std::cout << std::endl;
+    std::cout << '\n';
     
     ++aCounter;
   }
@@ -5481,23 +5481,23 @@ static Standard_Integer VPolygonOffset(Draw_Interpretor& /*di*/,
     if (anInterObj->HasPolygonOffsets())
     {
       anInterObj->PolygonOffsets(aMode, aFactor, aUnits);
-      std::cout << "Current polygon offset parameters for " << argv[1] << ":" << std::endl;
-      std::cout << "\tMode: "   << aMode   << std::endl;
-      std::cout << "\tFactor: " << aFactor << std::endl;
-      std::cout << "\tUnits: "  << aUnits  << std::endl;
+      std::cout << "Current polygon offset parameters for " << argv[1] << ":" << '\n';
+      std::cout << "\tMode: "   << aMode   << '\n';
+      std::cout << "\tFactor: " << aFactor << '\n';
+      std::cout << "\tUnits: "  << aUnits  << '\n';
       return 0;
     }
     else
     {
-      std::cout << "Specific polygon offset parameters are not set for " << argv[1] << std::endl;
+      std::cout << "Specific polygon offset parameters are not set for " << argv[1] << '\n';
     }
   }
 
-  std::cout << "Default polygon offset parameters:" << std::endl;
+  std::cout << "Default polygon offset parameters:" << '\n';
   aContext->DefaultDrawer()->ShadingAspect()->Aspect()->PolygonOffsets(aMode, aFactor, aUnits);
-  std::cout << "\tMode: "   << aMode   << std::endl;
-  std::cout << "\tFactor: " << aFactor << std::endl;
-  std::cout << "\tUnits: "  << aUnits  << std::endl;
+  std::cout << "\tMode: "   << aMode   << '\n';
+  std::cout << "\tFactor: " << aFactor << '\n';
+  std::cout << "\tUnits: "  << aUnits  << '\n';
 
   return 0;
 }

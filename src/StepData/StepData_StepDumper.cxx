@@ -62,18 +62,18 @@ Standard_Boolean  StepData_StepDumper::Dump
 	TColStd_SequenceOfAsciiString listypes;
 	if (!module->ComplexType(CN,listypes))
 	  S << "(Complex Type : ask level > 0) cdl = "
-	    << ent->DynamicType()->Name() << " (...);" << std::endl;
+	    << ent->DynamicType()->Name() << " (...);" << '\n';
 	else {
 	  Standard_Integer n = listypes.Length();
 	  for (i = 1; i <= n; i ++) S << listypes.Value(i) << " (...)";
-	  S << std::endl;
+	  S << '\n';
 	}
       }
-      else S << module->StepType(CN)  << " (...);" << std::endl;
+      else S << module->StepType(CN)  << " (...);" << '\n';
     }
     else S << "(Unrecognized Type for protocol) cdl = "
-        << ent->DynamicType()->Name() << " (...);" << std::endl;
-    if (nlab > 0) S << "/*   Ident in file for "<<num<<" : #"<<nlab<<"   */"<<std::endl;
+        << ent->DynamicType()->Name() << " (...);" << '\n';
+    if (nlab > 0) S << "/*   Ident in file for "<<num<<" : #"<<nlab<<"   */"<<'\n';
   }
 
   else if (level == 1) {
@@ -144,24 +144,24 @@ Standard_Boolean  StepData_StepDumper::Dump
       S <<" (no ident): ";
       for (i = 1; i <= nb; i ++)
 	{  if (ids.Value(i) >=  0) continue;	S <<" #"<<i;      }
-      S <<std::endl;
+      S <<'\n';
     }
     if (nbq > 0) {
       S <<" (ident = num): ";
       for (i = 1; i <= nb; i ++)  {  if (ids.Value(i) == i) S <<" #"<<i;  }
-      S <<std::endl;
+      S <<'\n';
     }
     if (nbi < 0) {  // on n affiche plus num:#id , on envoie un petit help
       Standard_Integer nbl = 0, nbr = 0, nbr0 = 0, nbc = 0;
       char unid[30];
 //      S <<" (proper ident):  #num	     #ident"<<std::endl;
-      S <<" (proper ident):  num:#ident  num:#ident  ..."<<std::endl;
+      S <<" (proper ident):  num:#ident  num:#ident  ..."<<'\n';
       for (i = 1; i <= nb; i ++)  {
 	if (ids.Value(i) <= 0 || ids.Value(i) == i) continue;
 	sprintf (unid,"%d:#%d",i,ids.Value(i));
 	nbc = (Standard_Integer) strlen (unid);  nbr = ((80-nbc) %4) +2;
 	nbl +=  nbc;
-	if (nbl+nbr0 > 79) { nbl  = nbc;  S <<std::endl; }
+	if (nbl+nbr0 > 79) { nbl  = nbc;  S <<'\n'; }
 	else               { nbl += nbr0; for (; nbr0 > 0; nbr0 --) S << " "; }
 	S <<unid;
 	nbr0 = nbr;
@@ -173,9 +173,9 @@ Standard_Boolean  StepData_StepDumper::Dump
 //	S<<"  "<<i<<" ->#"<<ids.Value(i);
 //	nbl ++; if (nbl > 5) {  nbl = nbr = 0;  S<<std::endl;  }
       }
-      if (nbl > 0) S <<std::endl;
+      if (nbl > 0) S <<'\n';
     }
-    if (nbi > 0) S <<"In dump, iii:#jjj means : entity rank iii has step ident #jjj"<<std::endl;
+    if (nbi > 0) S <<"In dump, iii:#jjj means : entity rank iii has step ident #jjj"<<'\n';
 //    S<<" --   Dumping data, entity "<<num<<"  level "<<level<<" :"<<std::endl;
   }
   if (level > 0) 

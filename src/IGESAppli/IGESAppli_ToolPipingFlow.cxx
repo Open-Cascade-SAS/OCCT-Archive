@@ -302,6 +302,6 @@ void  IGESAppli_ToolPipingFlow::OwnDump
   S << "Continuation Flow Associativities : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbContFlowAssociativities(),
 			ent->ContFlowAssociativity);
-  S << std::endl;
+  S << '\n';
 }
 

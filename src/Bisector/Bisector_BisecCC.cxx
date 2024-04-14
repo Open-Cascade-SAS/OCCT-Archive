@@ -1464,19 +1464,19 @@ void Bisector_BisecCC::Dump(const Standard_Integer ,
   const Standard_Integer Offset) const 
 {
   Indent (Offset);
-  std::cout <<"Bisector_BisecCC :"<<std::endl;
+  std::cout <<"Bisector_BisecCC :"<<'\n';
   Indent (Offset);
   //  std::cout <<"Curve1 :"<<curve1<<std::endl;
   //  std::cout <<"Curve2 :"<<curve2<<std::endl;
-  std::cout <<"Sign1  :"<<sign1<<std::endl;
-  std::cout <<"Sign2  :"<<sign2<<std::endl;
+  std::cout <<"Sign1  :"<<sign1<<'\n';
+  std::cout <<"Sign2  :"<<sign2<<'\n';
 
-  std::cout <<"Number Of Intervals :"<<startIntervals.Length()<<std::endl;
+  std::cout <<"Number Of Intervals :"<<startIntervals.Length()<<'\n';
   for (Standard_Integer i = 1; i <= startIntervals.Length(); i++) {
     std::cout <<"Interval number :"<<i<<"Start :"<<startIntervals.Value(i)
-      <<"  end :"<<  endIntervals.Value(i)<<std::endl ;
+      <<"  end :"<<  endIntervals.Value(i)<<'\n' ;
   }
-  std::cout <<"Index Current Interval :"<<currentInterval<<std::endl;
+  std::cout <<"Index Current Interval :"<<currentInterval<<'\n';
 }
 
 //=============================================================================

@@ -329,7 +329,7 @@ Standard_OStream& TDataStd_ReferenceArray::Dump (Standard_OStream& anOS) const
   anOS << "\nReferenceArray: ";
   Standard_Character sguid[Standard_GUID_SIZE_ALLOC];
   myID.ToCString(sguid);
-  anOS << sguid << std::endl;
+  anOS << sguid << '\n';
   return anOS;
 }
 

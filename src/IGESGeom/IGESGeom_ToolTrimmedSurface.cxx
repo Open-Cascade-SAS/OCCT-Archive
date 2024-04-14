@@ -308,5 +308,5 @@ void IGESGeom_ToolTrimmedSurface::OwnDump(const Handle(IGESGeom_TrimmedSurface)&
   S << "\n"
     << "Inner Boundaries : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbInnerContours(),ent->InnerContour);
-  S << std::endl;
+  S << '\n';
 }

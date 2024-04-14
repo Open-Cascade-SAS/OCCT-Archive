@@ -121,5 +121,5 @@ void  IGESAppli_ToolPWBDrilledHole::OwnDump
     << "Number of property values : " << ent->NbPropertyValues() << "\n"
     << "Drill Diameter Size  : " << ent->DrillDiameterSize() << "\n"
     << "Finish Diameter Size : " << ent->FinishDiameterSize() << "\n"
-    << "Drilled Hole Function Code : " << ent->FunctionCode() << std::endl;
+    << "Drilled Hole Function Code : " << ent->FunctionCode() << '\n';
 }

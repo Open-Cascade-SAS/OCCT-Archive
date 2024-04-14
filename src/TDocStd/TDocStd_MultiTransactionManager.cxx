@@ -189,7 +189,7 @@ void TDocStd_MultiTransactionManager::DumpTransaction(Standard_OStream& anOS) co
 {
   Standard_Integer i;
   if(myDocuments.Length() == 0)
-    anOS << "Manager is empty" << std::endl;
+    anOS << "Manager is empty" << '\n';
   else {
     if(myDocuments.Length() == 1)
       anOS << "There is one document ( ";
@@ -200,14 +200,14 @@ void TDocStd_MultiTransactionManager::DumpTransaction(Standard_OStream& anOS) co
       anOS << "\"" << aDoc.get();
       anOS << "\" ";
     }
-    anOS << ") in the manager "  << std::endl;
+    anOS << ") in the manager "  << '\n';
 
     if(myIsNestedTransactionMode)
-      anOS << "Nested transaction mode is on" << std::endl;
+      anOS << "Nested transaction mode is on" << '\n';
     else
-      anOS << "Nested transaction mode is off" << std::endl;
+      anOS << "Nested transaction mode is off" << '\n';
 
-    anOS << " " << std::endl;
+    anOS << " " << '\n';
   }
 
   for (i = myUndos.Length(); i > 0; i--) {
@@ -215,16 +215,16 @@ void TDocStd_MultiTransactionManager::DumpTransaction(Standard_OStream& anOS) co
     anOS<<" Undo: ";
     delta->Dump(anOS);
     if (i == 1) {
-      anOS<<"  < Last action"<<std::endl;
+      anOS<<"  < Last action"<<'\n';
     } else {
-      anOS<<std::endl;
+      anOS<<'\n';
     }
   }
   for (i = 1; i <= myRedos.Length(); i++) {
     Handle(TDocStd_ApplicationDelta) delta = myRedos.Value(i);
     anOS<<" Redo: ";
     delta->Dump(anOS);
-    anOS<<std::endl;
+    anOS<<'\n';
   }
 }
 

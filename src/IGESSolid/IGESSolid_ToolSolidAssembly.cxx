@@ -159,5 +159,5 @@ void  IGESSolid_ToolSolidAssembly::OwnDump
   S << "\n"
     << "Matrices : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbItems(),ent->TransfMatrix);
-  S << std::endl;
+  S << '\n';
 }

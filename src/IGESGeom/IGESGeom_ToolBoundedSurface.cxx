@@ -257,5 +257,5 @@ void IGESGeom_ToolBoundedSurface::OwnDump(const Handle(IGESGeom_BoundedSurface)&
   S << "\n"
     << "Boundary Entities     : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbBoundaries(),ent->Boundary);
-  S << std::endl;
+  S << '\n';
 }

@@ -57,7 +57,7 @@ namespace {
   {
     for (int i=0; i < argc; i++)
       os << argv[i] << " ";
-    os << std::endl;
+    os << '\n';
   }
 
   void flush_standard_streams ()
@@ -216,7 +216,7 @@ static Standard_Integer CommandCmd (ClientData theClientData, Tcl_Interp* interp
     const char* aResultStr = Tcl_GetStringResult (interp);
     if (aResultStr != 0 && aResultStr[0] != '\0' )
     {
-      std::cout << aResultStr << std::endl;
+      std::cout << aResultStr << '\n';
     }
   }
 

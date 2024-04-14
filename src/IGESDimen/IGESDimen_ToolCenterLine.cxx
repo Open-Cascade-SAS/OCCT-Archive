@@ -166,5 +166,5 @@ void  IGESDimen_ToolCenterLine::OwnDump
     << "Data Points :\n";
   IGESData_DumpListXYLZ(S,level,1, ent->NbPoints(),ent->Point,
 			ent->Location(), ent->ZDisplacement());
-  S << std::endl;
+  S << '\n';
 }

@@ -138,5 +138,5 @@ void  IGESAppli_ToolNodalConstraint::OwnDump
   S << "\n";
   S << "Tabular Data Properties : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbCases(),ent->TabularData);
-  S << std::endl;
+  S << '\n';
 }

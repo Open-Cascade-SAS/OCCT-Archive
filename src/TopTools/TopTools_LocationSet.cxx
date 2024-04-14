@@ -250,7 +250,7 @@ void  TopTools_LocationSet::Read(Standard_IStream& IS, const Message_ProgressRan
 
   IS >> buffer;
   if (strcmp(buffer,"Locations")) {
-    std::cout << "Not a location table "<<std::endl;
+    std::cout << "Not a location table "<<'\n';
     return;
   }
 

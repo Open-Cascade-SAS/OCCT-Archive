@@ -1244,7 +1244,7 @@ void ComputeInternalPoints
           rsnld.Perform(SFunc,X,infb,supb);
 
           if (!rsnld.IsDone()) {
-            std::cout << "Echec recherche internal points" << std::endl;
+            std::cout << "Echec recherche internal points" << '\n';
             solution = Standard_True;
             ok = Standard_False;
           }
@@ -1282,7 +1282,7 @@ void ComputeInternalPoints
               }
             }
             else { // on n est pas sur une solution
-              std::cout << "Echec recherche internal points" << std::endl;
+              std::cout << "Echec recherche internal points" << '\n';
               solution = Standard_True;
               ok = Standard_False;
             }

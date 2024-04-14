@@ -205,5 +205,5 @@ void IGESGraph_ToolTextDisplayTemplate::OwnDump
   else
     S << "Increments from coordinates : "; 
   IGESData_DumpXYZL(S,level, ent->StartingCorner(), ent->Location());
-  S << std::endl;
+  S << '\n';
 }

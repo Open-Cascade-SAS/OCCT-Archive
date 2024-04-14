@@ -52,7 +52,7 @@ void StepFile_Interrupt(Standard_CString theErrorMessage, const Standard_Boolean
     return;
 
   Message_Messenger::StreamBuffer sout = theIsFail ? Message::SendFail() : Message::SendTrace();
-  sout << "**** ERR StepFile : " << theErrorMessage << "    ****" << std::endl;
+  sout << "**** ERR StepFile : " << theErrorMessage << "    ****" << '\n';
 }
 
 static Standard_Integer StepFile_Read (const char* theName,

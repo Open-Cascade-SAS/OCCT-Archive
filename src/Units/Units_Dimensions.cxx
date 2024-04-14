@@ -183,25 +183,25 @@ void Units_Dimensions::Dump(const Standard_Integer ashift) const
 {
   int i;
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<" with the physical dimensions : "<<std::endl;
+  std::cout<<" with the physical dimensions : "<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"         mass                      : "<<themass<<std::endl;
+  std::cout<<"         mass                      : "<<themass<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"         length                    : "<<thelength<<std::endl;
+  std::cout<<"         length                    : "<<thelength<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"         time                      : "<<thetime<<std::endl;
+  std::cout<<"         time                      : "<<thetime<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"         electric current          : "<<theelectriccurrent<<std::endl;
+  std::cout<<"         electric current          : "<<theelectriccurrent<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"         thermodynamic temperature : "<<thethermodynamictemperature<<std::endl;
+  std::cout<<"         thermodynamic temperature : "<<thethermodynamictemperature<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"         amount of substance       : "<<theamountofsubstance<<std::endl;
+  std::cout<<"         amount of substance       : "<<theamountofsubstance<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"         luminous intensity        : "<<theluminousintensity<<std::endl;
+  std::cout<<"         luminous intensity        : "<<theluminousintensity<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"         plane angle               : "<<theplaneangle<<std::endl;
+  std::cout<<"         plane angle               : "<<theplaneangle<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"         solid angle               : "<<thesolidangle<<std::endl;
+  std::cout<<"         solid angle               : "<<thesolidangle<<'\n';
 }
 
 //=======================================================================

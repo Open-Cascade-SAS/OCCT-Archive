@@ -111,5 +111,5 @@ void IGESGraph_ToolIntercharacterSpacing::OwnDump
   S << "IGESGraph_IntercharacterSpacing\n"
     << "No. of property values : " << ent->NbPropertyValues() << "\n"
     << "Intercharacter space in % of text height : " << ent->ISpace() << "\n"
-    << std::endl;
+    << '\n';
 }

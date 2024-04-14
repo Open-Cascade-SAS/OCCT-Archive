@@ -86,7 +86,7 @@ void PrintShape(const TopoDS_Shape& theShape) {
   if (!theShape.IsNull()) {
     size_t code = TopTools_ShapeMapHasher{}(theShape);
     std::cout << TopAbs::ShapeTypeToString (theShape.ShapeType()) << " : " << code
-       << " " << TopAbs::ShapeOrientationToString(theShape.Orientation()) << std::endl;
+       << " " << TopAbs::ShapeOrientationToString(theShape.Orientation()) << '\n';
   }
 }
     

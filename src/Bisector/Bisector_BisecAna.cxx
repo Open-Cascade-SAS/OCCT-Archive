@@ -283,7 +283,7 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Curve)& afirstcurve   ,
       line2   = L2->Lin2d();
     }
     else {
-      std::cout << "Not yet implemented" << std::endl;
+      std::cout << "Not yet implemented" << '\n';
     }
   }
   else if (type1 == STANDARD_TYPE(Geom2d_Line)) {
@@ -302,11 +302,11 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Curve)& afirstcurve   ,
       line2   = L2->Lin2d();
     }
     else {
-      std::cout << "Not yet implemented" << std::endl;
+      std::cout << "Not yet implemented" << '\n';
     }
   }
   else {
-    std::cout << "Not yet implemented" << std::endl;
+    std::cout << "Not yet implemented" << '\n';
   }
 
   switch(cas) {
@@ -842,7 +842,7 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Curve)& afirstcurve  ,
     line   = L1->Lin2d();
   }
   else {
-    std::cout << "Not yet implemented" << std::endl;
+    std::cout << "Not yet implemented" << '\n';
   }
 
   switch(cas) {
@@ -997,7 +997,7 @@ void Bisector_BisecAna::Perform(const Handle(Geom2d_Curve)& afirstcurve  ,
 
     default:
       {
-	std::cout << "Not yet implemented" << std::endl;
+	std::cout << "Not yet implemented" << '\n';
 	break;
       }
     }
@@ -1633,7 +1633,7 @@ void Bisector_BisecAna::Dump(const Standard_Integer ,
 			     const Standard_Integer Offset) const 
 {
   Indent (Offset);
-  std::cout<<"Bisector_BisecAna"<<std::endl;
+  std::cout<<"Bisector_BisecAna"<<'\n';
   Indent (Offset);
 //  thebisector->Dump();
 }

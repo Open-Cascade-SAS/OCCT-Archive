@@ -862,7 +862,7 @@ void  GeomTools_CurveSet::Read(Standard_IStream& IS, const Message_ProgressRange
   char buffer[255];
   IS >> buffer;
   if (strcmp(buffer,"Curves")) {
-    std::cout << "Not a Curve table"<<std::endl;
+    std::cout << "Not a Curve table"<<'\n';
     return;
   }
 

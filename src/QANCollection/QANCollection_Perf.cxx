@@ -741,7 +741,7 @@ static void CompDoubleMap (Draw_Interpretor& theDI,
   printAllMeters(theDI);
   if (iFail1 || iFail2)
     std::cout << "Warning : N map failed " << iFail1 << " times, T map - " << 
-      iFail2 << std::endl;
+      iFail2 << '\n';
 }
 
 // ===================== Test perform of IndexedMap type ==========================

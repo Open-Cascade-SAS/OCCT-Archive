@@ -164,6 +164,6 @@ void  IGESDimen_ToolAngularDimension::OwnDump
   S << "\n"
     << "Second Leader Entity  : ";
   dumper.Dump(ent->SecondLeader(),S, sublevel);
-  S << std::endl;
+  S << '\n';
 }
 

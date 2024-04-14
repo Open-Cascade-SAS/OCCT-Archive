@@ -1564,7 +1564,7 @@ static Standard_Integer compBsplSur (Draw_Interpretor& , Standard_Integer n, con
       if(aDist > Precision::SquareConfusion())
       {
         Standard_Real aD = sqrt(aDist);
-        std::cout<<"Surfaces differ for U,V,Dist: "<<aU<<" "<<aV<<" "<<aD<<std::endl;
+        std::cout<<"Surfaces differ for U,V,Dist: "<<aU<<" "<<aV<<" "<<aD<<'\n';
       }
     }
   }

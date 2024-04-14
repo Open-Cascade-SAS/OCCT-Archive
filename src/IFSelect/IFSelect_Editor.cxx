@@ -105,11 +105,11 @@ Standard_Integer  IFSelect_Editor::MaxList (const Standard_Integer num) const
     void  IFSelect_Editor::PrintNames (Standard_OStream& S) const
 {
   Standard_Integer i, nb = NbValues();
-  S<<"****    Editor : "<<Label()<<std::endl;
-  S<<"****    Nb Values = "<<nb<<"    ****    Names / Labels"<<std::endl;
+  S<<"****    Editor : "<<Label()<<'\n';
+  S<<"****    Nb Values = "<<nb<<"    ****    Names / Labels"<<'\n';
   S<<" Num ";
   if (themaxsh > 0) S<<"Short"<<Interface_MSG::Blanks("Short",themaxsh)<<" ";
-  S<<"Complete"<<Interface_MSG::Blanks("Complete",themaxco)<<"  Label"<<std::endl;
+  S<<"Complete"<<Interface_MSG::Blanks("Complete",themaxco)<<"  Label"<<'\n';
 
   for (i = 1; i <= nb; i ++) {
     Handle(Interface_TypedValue) tv = TypedValue(i);
@@ -119,7 +119,7 @@ Standard_Integer  IFSelect_Editor::MaxList (const Standard_Integer num) const
       const TCollection_AsciiString& sho = theshorts(i);
       S<<sho<<Interface_MSG::Blanks(sho.ToCString(),themaxsh)<<" ";
     }
-    S<<tv->Name()<<Interface_MSG::Blanks(tv->Name(),themaxco)<<"  "<<tv->Label()<<std::endl;
+    S<<tv->Name()<<Interface_MSG::Blanks(tv->Name(),themaxco)<<"  "<<tv->Label()<<'\n';
   }
 }
 
@@ -127,15 +127,15 @@ Standard_Integer  IFSelect_Editor::MaxList (const Standard_Integer num) const
   (Standard_OStream& S, const Standard_Boolean labels) const
 {
   Standard_Integer i, nb = NbValues();
-  S<<"****    Editor : "<<Label()<<std::endl;
-  S<<"****    Nb Values = "<<nb<<"    ****    "<<(labels ? "Labels" : "Names")<<"  /  Definitions"<<std::endl;
+  S<<"****    Editor : "<<Label()<<'\n';
+  S<<"****    Nb Values = "<<nb<<"    ****    "<<(labels ? "Labels" : "Names")<<"  /  Definitions"<<'\n';
   S<<" Num ";
   if (labels) S<<"Label"<<Interface_MSG::Blanks("Label",themaxla);
   else {
     if (themaxsh > 0) S<<"Short"<<Interface_MSG::Blanks("Short",themaxsh+1);
     S<<"Complete"<<Interface_MSG::Blanks("Complete",themaxco);
   }
-  S<<"  Edit Mode  &  Definition"<<std::endl;
+  S<<"  Edit Mode  &  Definition"<<'\n';
 
   for (i = 1; i <= nb; i ++) {
     Handle(Interface_TypedValue) tv = TypedValue(i);
@@ -166,7 +166,7 @@ Standard_Integer  IFSelect_Editor::MaxList (const Standard_Integer num) const
       default :                     S<<"?????????";  break;
     }
 
-    S<<" "<<tv->Definition()<<std::endl;
+    S<<" "<<tv->Definition()<<'\n';
   }
 }
 

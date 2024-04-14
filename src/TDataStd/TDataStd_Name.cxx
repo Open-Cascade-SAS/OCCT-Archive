@@ -126,6 +126,6 @@ Standard_OStream& TDataStd_Name::Dump (Standard_OStream& anOS) const
   anOS << " Name=|"<<myString<<"|";
   Standard_Character sguid[Standard_GUID_SIZE_ALLOC];
   myID.ToCString(sguid);
-  anOS << sguid << std::endl;
+  anOS << sguid << '\n';
   return anOS;
 }

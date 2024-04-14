@@ -58,7 +58,7 @@ void StepShape_OrientedOpenShell::SetCfsFaces(const Handle(StepShape_HArray1OfFa
 {
 	// WARNING : the field is redefined.
 	// field set up forbidden.
-	std::cout << "Field is redefined, SetUp Forbidden" << std::endl;
+	std::cout << "Field is redefined, SetUp Forbidden" << '\n';
 }
 
 Handle(StepShape_HArray1OfFace) StepShape_OrientedOpenShell::CfsFaces() const

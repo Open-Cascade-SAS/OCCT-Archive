@@ -618,7 +618,7 @@ static void EdgeInter(const TopoDS_Face&              F,
 //  Modified by skv - Thu Jan 22 18:19:05 2004 OCC4455 End
             LV1.Remove(it1LV1);
             LV2.Remove(it1LV2);
-            if (AffichPurge) std::cout <<"Doubles removed in EdgeInter."<<std::endl;
+            if (AffichPurge) std::cout <<"Doubles removed in EdgeInter."<<'\n';
             Purge = Standard_True;
             break;
           }
@@ -900,7 +900,7 @@ static void RefEdgeInter(const TopoDS_Face&              F,
           if (P1.IsEqual(P2, Tol)) {
             LV1.Remove(it1LV1);
             LV2.Remove(it1LV2);
-            if (AffichPurge) std::cout <<"Doubles removed in EdgeInter."<<std::endl;
+            if (AffichPurge) std::cout <<"Doubles removed in EdgeInter."<<'\n';
             Purge = Standard_True;
             break;
           }

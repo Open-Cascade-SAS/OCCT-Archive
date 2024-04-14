@@ -122,5 +122,5 @@ void  IGESGeom_ToolCompositeCurve::OwnDump
   S << "IGESGeom_CompositeCurve\n"
     << "Curve Entities :\n";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbCurves(),ent->Curve);
-  S << std::endl;
+  S << '\n';
 }

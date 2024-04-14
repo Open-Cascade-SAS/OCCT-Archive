@@ -90,7 +90,7 @@ Standard_Boolean  StepSelect_WorkLibrary::WriteFile
 
   if (aStream.get() == NULL) {
     ctx.CCheck(0)->AddFail("Step File could not be created");
-    sout<<" Step File could not be created : " << ctx.FileName() << std::endl; return 0;
+    sout<<" Step File could not be created : " << ctx.FileName() << '\n'; return 0;
   }
   sout << " Step File Name : "<<ctx.FileName();
   StepData_StepWriter SW(stepmodel);
@@ -116,14 +116,14 @@ Standard_Boolean  StepSelect_WorkLibrary::WriteFile
     ctx.CCheck(chl.Number())->GetMessages(chl.Value());
   sout<<" Write ";
   Standard_Boolean isGood = SW.Print (*aStream);                 
-  sout<<" Done"<<std::endl;
+  sout<<" Done"<<'\n';
       
   errno = 0;
   aStream->flush();
   isGood = aStream->good() && isGood && !errno;
   aStream.reset();
   if(errno)
-    sout << strerror(errno) << std::endl;
+    sout << strerror(errno) << '\n';
   return isGood;  
 }
 
@@ -152,14 +152,14 @@ void  StepSelect_WorkLibrary::DumpEntity
   Handle(Standard_Transient) ent, con;  ent = entity;
   S <<" --- (STEP) Entity ";  model->Print(entity, S);
   if (iserr) con = model->ReportEntity(nument)->Content();
-  if (entity.IsNull()) {  S <<" Null"<<std::endl; return;  }
+  if (entity.IsNull()) {  S <<" Null"<<'\n'; return;  }
 
 //  On attaque le dump : d abord cas de l Erreur
-  S << " Type cdl : " << entity->DynamicType()->Name() << std::endl;
+  S << " Type cdl : " << entity->DynamicType()->Name() << '\n';
   if (iserr)
-    S <<" ***  NOT WELL LOADED : CONTENT FROM FILE  ***"<<std::endl;
+    S <<" ***  NOT WELL LOADED : CONTENT FROM FILE  ***"<<'\n';
   else if (model->IsUnknownEntity(nument))
-    S <<" ***  UNKNOWN TYPE  ***"<<std::endl;
+    S <<" ***  UNKNOWN TYPE  ***"<<'\n';
 
   StepData_StepDumper dump(GetCasted(StepData_StepModel,model),
                            GetCasted(StepData_Protocol,protocol),thelabmode);

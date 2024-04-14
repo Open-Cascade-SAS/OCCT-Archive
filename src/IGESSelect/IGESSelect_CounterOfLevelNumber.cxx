@@ -133,7 +133,7 @@ IGESSelect_CounterOfLevelNumber::IGESSelect_CounterOfLevelNumber
   (Standard_OStream& S) const
 {
   IFSelect_SignatureList::PrintCount (S);
-  S <<" Highest value : " << thehigh << std::endl;
+  S <<" Highest value : " << thehigh << '\n';
   if (thenblists > 0) S <<"REMARK for LEVEL LIST : Entities are counted in"
-    <<" <LEVEL LIST>\n, and in each Level value of their list"<<std::endl;
+    <<" <LEVEL LIST>\n, and in each Level value of their list"<<'\n';
 }

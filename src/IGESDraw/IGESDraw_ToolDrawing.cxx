@@ -290,5 +290,5 @@ void IGESDraw_ToolDrawing::OwnDump
     }
   S << "\nAnnotation Entities : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbAnnotations(),ent->Annotation);
-  S << std::endl;
+  S << '\n';
 }

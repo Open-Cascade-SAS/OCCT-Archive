@@ -1080,9 +1080,9 @@ void math_FunctionRoots::Dump(Standard_OStream& o) const
   o << "math_FunctionRoots ";
   if(Done) {
     o << " Status = Done \n";
-    o << " Number of solutions = " << Sol.Length() << std::endl;
+    o << " Number of solutions = " << Sol.Length() << '\n';
     for (Standard_Integer i = 1; i <= Sol.Length(); i++) {
-      o << " Solution Number " << i << "= " << Sol.Value(i) << std::endl;
+      o << " Solution Number " << i << "= " << Sol.Value(i) << '\n';
     }
   }
   else {

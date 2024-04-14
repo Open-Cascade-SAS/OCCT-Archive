@@ -114,9 +114,9 @@ class math_MyFunctionSetWithDerivatives : public math_FunctionSetWithDerivatives
        o<< "math_FunctionRoot ";
        if(Done) {
          o<< " Status = Done \n";
-	 o << " Number of iterations = " << NbIter << std::endl;
-	 o << " The Root is: " << TheRoot << std::endl;
-	 o << "The value at the root is: " << TheError << std::endl;
+	 o << " Number of iterations = " << NbIter << '\n';
+	 o << " The Root is: " << TheRoot << '\n';
+	 o << "The value at the root is: " << TheError << '\n';
        }
        else {
          o<< " Status = not Done \n";

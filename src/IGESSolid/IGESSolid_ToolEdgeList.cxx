@@ -382,5 +382,5 @@ void IGESSolid_ToolEdgeList::OwnDump(const Handle(IGESSolid_EdgeList)& ent,
       default :
 	break;
     }
-  S << std::endl;
+  S << '\n';
 }

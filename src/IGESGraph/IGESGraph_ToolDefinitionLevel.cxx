@@ -114,6 +114,6 @@ void IGESGraph_ToolDefinitionLevel::OwnDump
   S << "IGESGraph_DefinitionLevel\n"
     << "Level Numbers : ";
   IGESData_DumpVals(S,level,1, ent->NbPropertyValues(),ent->LevelNumber);
-  S << std::endl;
+  S << '\n';
 }
 

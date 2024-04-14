@@ -391,8 +391,8 @@ void BinTools_SurfaceSet::WriteSurface (const Handle(Geom_Surface)& S,
   }
    catch(Standard_Failure const& anException) {
      Standard_SStream aMsg;
-    aMsg << "EXCEPTION in BinTools_SurfaceSet::WriteSurface(..)" << std::endl;
-    aMsg << anException << std::endl;
+    aMsg << "EXCEPTION in BinTools_SurfaceSet::WriteSurface(..)" << '\n';
+    aMsg << anException << '\n';
     throw Standard_Failure(aMsg.str().c_str());
   }  
 }
@@ -830,8 +830,8 @@ Standard_IStream& BinTools_SurfaceSet::ReadSurface(Standard_IStream& IS,
   catch(Standard_Failure const& anException) {
     S = NULL;
     Standard_SStream aMsg;
-    aMsg << "EXCEPTION in BinTools_SurfaceSet::ReadSurface(..)" << std::endl;
-    aMsg << anException << std::endl;
+    aMsg << "EXCEPTION in BinTools_SurfaceSet::ReadSurface(..)" << '\n';
+    aMsg << anException << '\n';
     throw Standard_Failure(aMsg.str().c_str());
   }
   return IS;
@@ -849,7 +849,7 @@ void  BinTools_SurfaceSet::Read (Standard_IStream& IS,
   IS >> buffer;
   if (IS.fail() || strcmp(buffer,"Surfaces")) {
     Standard_SStream aMsg;
-    aMsg << "BinTools_SurfaceSet::Read:  Not a surface table"<<std::endl;
+    aMsg << "BinTools_SurfaceSet::Read:  Not a surface table"<<'\n';
 #ifdef OCCT_DEBUG
     std::cout <<"SurfaceSet buffer: " << buffer << std::endl;
 #endif

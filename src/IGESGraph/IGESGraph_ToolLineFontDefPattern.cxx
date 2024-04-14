@@ -140,6 +140,6 @@ void IGESGraph_ToolLineFontDefPattern::OwnDump
     for (Standard_Integer I = 1; I <= nb; I ++) {
       if (ent->IsVisible(I)) S << "  " << I;
     }
-    S << std::endl;
+    S << '\n';
   }
 }

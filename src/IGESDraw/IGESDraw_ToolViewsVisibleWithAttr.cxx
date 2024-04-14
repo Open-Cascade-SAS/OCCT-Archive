@@ -362,7 +362,7 @@ void IGESDraw_ToolViewsVisibleWithAttr::OwnDump
       if (ent->IsColorDefinition(I)) {
 	S << "Color Definition : ";
 	dumper.Dump (ent->ColorDefinition(I),S, tempSubLevel);
-	S << std::endl;
+	S << '\n';
       }
       else S << "Color Value      : " << ent->ColorValue(I) << "\n";
 
@@ -371,7 +371,7 @@ void IGESDraw_ToolViewsVisibleWithAttr::OwnDump
   }
   S << "Displayed Entities : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbDisplayedEntities(),ent->DisplayedEntity);
-  S << std::endl;
+  S << '\n';
 }
 
 Standard_Boolean  IGESDraw_ToolViewsVisibleWithAttr::OwnCorrect

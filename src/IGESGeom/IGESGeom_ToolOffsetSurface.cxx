@@ -155,5 +155,5 @@ void IGESGeom_ToolOffsetSurface::OwnDump
     << "Offset Distance      : " << ent->Distance() << "  "
     << "Surface to be offset : ";
   dumper.Dump(ent->Surface(),S, sublevel);
-  S << std::endl;
+  S << '\n';
 }

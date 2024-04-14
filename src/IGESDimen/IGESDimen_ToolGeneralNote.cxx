@@ -379,5 +379,5 @@ void  IGESDimen_ToolGeneralNote::OwnDump
           S << "\n";
 	}
     }
-  S << std::endl;
+  S << '\n';
 }

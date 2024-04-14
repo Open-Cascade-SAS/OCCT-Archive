@@ -168,5 +168,5 @@ void IGESDraw_ToolView::OwnDump
   S << "Back Plane Of View Volume   : ";
   dumper.Dump(ent->BackPlane(),S, tempSubLevel);    S << "\n";
   S << "Front Plane Of View Volume  : ";
-  dumper.Dump(ent->FrontPlane(),S, tempSubLevel);   S << std::endl;
+  dumper.Dump(ent->FrontPlane(),S, tempSubLevel);   S << '\n';
 }

@@ -347,5 +347,5 @@ void  IGESDefs_ToolAttributeTable::OwnDump
 	    S << "\n";
 	  }
       }
-  S << std::endl;
+  S << '\n';
 }

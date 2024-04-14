@@ -312,7 +312,7 @@ void LDOM_XmlWriter::Write (Standard_OStream& theOStream, const LDOM_Node& theNo
   default:
 #ifndef _MSC_VER
       std::cerr << "Unrecognized node type = "
-        << (long)theNode.getNodeType() << std::endl
+        << (long)theNode.getNodeType() << '\n'
 #endif
   ; }
 }

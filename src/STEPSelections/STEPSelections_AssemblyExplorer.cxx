@@ -163,7 +163,7 @@ static void PrintSubAssembly(Standard_OStream &os,
   //for ( Standard_Integer j=0; j < level; j++ ) os << "\t";
   os << "SDR: " <<Model->StringLabel(cmp->GetSDR())->ToCString()<<"\t";
   
-  os << "Product: "<<GetProductName(cmp->GetSDR())<<std::endl;
+  os << "Product: "<<GetProductName(cmp->GetSDR())<<'\n';
   for ( Standard_Integer i = 1; i <= cmp->GetList()->Length(); i++) {
     for ( Standard_Integer j=0; j < level+1; j++ ) os << "\t";
     os << "NAUO :"<<Model->StringLabel(cmp->GetList()->Value(i)->GetNAUO())->ToCString()<<";\t";
@@ -183,7 +183,7 @@ void STEPSelections_AssemblyExplorer::Dump(Standard_OStream &os) const
 {
   Handle(Interface_InterfaceModel) model = myGraph.Model();
   for(Standard_Integer i = 1 ; i <=myRoots.Length(); i++) {
-    os<<"Assembly N: "<<i<<std::endl<<std::endl;
+    os<<"Assembly N: "<<i<<'\n'<<'\n';
     PrintSubAssembly(os,myRoots.Value(i),model,0);
   }
 }

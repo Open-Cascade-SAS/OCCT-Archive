@@ -171,5 +171,5 @@ void  IGESSolid_ToolCylinder::OwnDump
   IGESData_DumpXYZL(S,level, ent->FaceCenter(), ent->Location());
   S << "\nAxis : ";
   IGESData_DumpXYZL(S,level, ent->Axis(), ent->VectorLocation());
-  S << std::endl;
+  S << '\n';
 }

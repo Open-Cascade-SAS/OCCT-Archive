@@ -139,7 +139,7 @@ TopoDS_Shape ShapeBuild_ReShape::Apply (const TopoDS_Shape& shape,
       return S;
     }
   }
-  std::cout<<"BRepTools_ReShape::Apply NOT YET IMPLEMENTED"<<std::endl;
+  std::cout<<"BRepTools_ReShape::Apply NOT YET IMPLEMENTED"<<'\n';
   return shape;
 }
 

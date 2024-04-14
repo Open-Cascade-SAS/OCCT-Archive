@@ -464,10 +464,10 @@ void TestForwardIterator ()
   it2 = it; // assignment
   it2 = it++; // postfix increment
   if (it2 == it || ! (it2 != it))
-    std::cout << "Failed " << typeid(it).name() << " equality check" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " equality check" << '\n';
   it2 = ++it; // prefix increment
   if (it2 != it || ! (it2 == it))
-    std::cout << "Failed " << typeid(it).name() << " equality check" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " equality check" << '\n';
 
   typename CollectionType::iterator::value_type t = *it;
   *it2 = t;
@@ -479,10 +479,10 @@ void TestForwardIterator ()
   cit2 = cit; // assignment
   cit2 = cit++; // postfix increment
   if (cit2 == cit || ! (cit2 != cit))
-    std::cout << "Failed " << typeid(cit).name() << " equality check" << std::endl;
+    std::cout << "Failed " << typeid(cit).name() << " equality check" << '\n';
   cit2 = ++cit; // prefix increment
   if (cit2 != it || ! (cit2 == cit))
-    std::cout << "Failed " << typeid(cit).name() << " equality check" << std::endl;
+    std::cout << "Failed " << typeid(cit).name() << " equality check" << '\n';
 
   typename CollectionType::const_iterator::value_type ct = *cit;
   ct = *cit;
@@ -508,10 +508,10 @@ void TestBidirIterator ()
   typename CollectionType::iterator it = aCollec->end(); // copy construction
   typename CollectionType::iterator it2 = it--; // postfix decrement
   if (it2 == it || ! (it2 != it))
-    std::cout << "Failed " << typeid(it).name() << " equality check" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " equality check" << '\n';
   it2 = --it; // prefix decrement
   if (it2 != it || ! (it2 == it))
-    std::cout << "Failed " << typeid(it).name() << " equality check" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " equality check" << '\n';
 
   delete aCollec;
 }
@@ -531,20 +531,20 @@ void TestRandomIterator ()
   typename CollectionType::iterator it = aCollec->begin(); // copy construction
   typename CollectionType::iterator it2 = it + 5;
   if ((it2 - it) != 5)
-    std::cout << "Failed " << typeid(it).name() << " arithmetics" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " arithmetics" << '\n';
   if (it2 < it || it2 <= it || ! (it2 > it) || ! (it2 >= it))
-    std::cout << "Failed " << typeid(it).name() << " comparison" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " comparison" << '\n';
   it += 5;
   if (it2 != it)
-    std::cout << "Failed " << typeid(it).name() << " arithmetics" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " arithmetics" << '\n';
   it2 = it - 5;
   if ((it2 - it) != -5)
-    std::cout << "Failed " << typeid(it).name() << " arithmetics" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " arithmetics" << '\n';
   if (it2 > it || it2 >= it || ! (it2 < it) || ! (it2 <= it))
-    std::cout << "Failed " << typeid(it).name() << " comparison" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " comparison" << '\n';
   it -= 5;
   if (it2 != it)
-    std::cout << "Failed " << typeid(it).name() << " arithmetics" << std::endl;
+    std::cout << "Failed " << typeid(it).name() << " arithmetics" << '\n';
 
   typename CollectionType::value_type t = it[5]; // offset dereference
   *it = t;
@@ -564,35 +564,35 @@ static Standard_Integer QANListStlIterator (Draw_Interpretor&, Standard_Integer,
   // run-time tests
   Standard_Boolean aResult = TestIteration<NCollection_List<int>, std::list<int> >();
   std::cout << "NCollection_List<int> Iteration:                " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestIteration<NCollection_List<double>, std::list<double> >();
   std::cout << "NCollection_List<double> Iteration:             " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMinMax<NCollection_List<int>, std::list<int> >();
   std::cout << "NCollection_List<int> Min-Max:                  " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMinMax<NCollection_List<double>, std::list<double> >();
   std::cout << "NCollection_List<double> Min-Max:               " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReplace<NCollection_List<int>, std::list<int> >();
   std::cout << "NCollection_List<int> Replace:                  " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReplace<NCollection_List<double>, std::list<double> >();
   std::cout << "NCollection_List<double> Replace:               " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestParallel< NCollection_List<int>, std::list<int> >();
   std::cout << "NCollection_List<int> Parallel:                 " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestParallel<NCollection_List<double>, std::list<double> >();
   std::cout << "NCollection_List<double> Parallel:              " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   return 0;
 }
@@ -609,11 +609,11 @@ static Standard_Integer QANMapStlIterator (Draw_Interpretor&, Standard_Integer, 
   // run-time tests
   Standard_Boolean aResult = TestMapIteration<NCollection_Map<Standard_Integer>, Standard_Integer>();
   std::cout << "NCollection_Map<int> Iteration:                 " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMapIteration<NCollection_Map<Standard_Real>, Standard_Real>();
   std::cout << "NCollection_Map<double> Iteration:              " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   return 0;
 }
@@ -631,11 +631,11 @@ static Standard_Integer QANIndexedMapStlIterator (Draw_Interpretor&, Standard_In
   // run-time tests
   Standard_Boolean aResult = TestMapIteration<NCollection_IndexedMap<Standard_Integer>, Standard_Integer>();
   std::cout << "NCollection_IndexedMap<int> Iteration:          " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMapIteration<NCollection_IndexedMap<Standard_Real>, Standard_Real>();
   std::cout << "NCollection_IndexedMap<double> Iteration:       " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   return 0;
 }
@@ -653,19 +653,19 @@ static Standard_Integer QANDataMapStlIterator (Draw_Interpretor&, Standard_Integ
   // run-time tests
   Standard_Boolean aResult = TestMapIteration<NCollection_DataMap<Standard_Integer, Standard_Integer>, Standard_Integer>();
   std::cout << "NCollection_DataMap<int> Iteration:             " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMapIteration<NCollection_DataMap<Standard_Real, Standard_Real>, Standard_Real>();
   std::cout << "NCollection_DataMap<double> Iteration:          " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestDataMapParallel<NCollection_DataMap<Standard_Integer, Standard_Integer>, Standard_Integer>();
   std::cout << "NCollection_DataMap<int> Parallel:              " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestDataMapParallel<NCollection_DataMap<Standard_Real, Standard_Real>, Standard_Real>();
   std::cout << "NCollection_DataMap<double> Parallel:           " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   return 0;
 }
@@ -683,19 +683,19 @@ static Standard_Integer QANIndexedDataMapStlIterator (Draw_Interpretor&, Standar
   // run-time tests
   Standard_Boolean aResult = TestMapIteration<NCollection_IndexedDataMap<Standard_Integer, Standard_Integer>, Standard_Integer>();
   std::cout << "NCollection_IndexedDataMap<int> Iteration:      " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMapIteration<NCollection_IndexedDataMap<Standard_Real, Standard_Real>, Standard_Real>();
   std::cout << "NCollection_IndexedDataMap<double> Iteration:   " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestDataMapParallel<NCollection_IndexedDataMap<Standard_Integer, Standard_Integer>, Standard_Integer>();
   std::cout << "NCollection_IndexedDataMap<int> Parallel:       " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestDataMapParallel<NCollection_IndexedDataMap<Standard_Real, Standard_Real>, Standard_Real>();
   std::cout << "NCollection_IndexedDataMap<double> Parallel:    " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   return 0;
 }
@@ -713,43 +713,43 @@ static Standard_Integer QANSequenceStlIterator (Draw_Interpretor&, Standard_Inte
   // run-time tests
   Standard_Boolean aResult = TestIteration<NCollection_Sequence<int>, std::list<int> >();
   std::cout << "NCollection_Sequence<int> Iteration:            " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestIteration<NCollection_Sequence<double>, std::list<double> >();
   std::cout << "NCollection_Sequence<double> Iteration:         " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMinMax<NCollection_Sequence<int>, std::list<int> >();
   std::cout << "NCollection_Sequence<int> Min-Max:              " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMinMax<NCollection_Sequence<double>, std::list<double> >();
   std::cout << "NCollection_Sequence<double> Min-Max:           " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReplace<NCollection_Sequence<int>, std::list<int> >();
   std::cout << "NCollection_Sequence<int> Replace:              " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReplace<NCollection_Sequence<double>, std::list<double> >();
   std::cout << "NCollection_Sequence<double> Replace:           " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReverse<NCollection_Sequence<int>, std::list<int> >();
   std::cout << "NCollection_Sequence<int> Reverse:              " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReverse<NCollection_Sequence<double>, std::list<double> >();
   std::cout << "NCollection_Sequence<double> Reverse:           " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestParallel<NCollection_Sequence<int>, std::list<int> >();
   std::cout << "NCollection_Sequence<int> Parallel:             " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestParallel<NCollection_Sequence<double>, std::list<double> >();
   std::cout << "NCollection_Sequence<double> Parallel:          " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   return 0;
 }
@@ -768,51 +768,51 @@ static Standard_Integer QANVectorStlIterator (Draw_Interpretor&, Standard_Intege
   // run-time tests
   Standard_Boolean aResult = TestIteration<NCollection_Vector<int>, std::vector<int> >();
   std::cout << "NCollection_Vector<int> Iteration:              " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestIteration<NCollection_Vector<double>, std::vector<double> >();
   std::cout << "NCollection_Vector<double> Iteration:           " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMinMax<NCollection_Vector<int>, std::vector<int> >();
   std::cout << "NCollection_Vector<int> Min-Max:                " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMinMax<NCollection_Vector<double>, std::vector<double> >();
   std::cout << "NCollection_Vector<double> Min-Max:             " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReplace<NCollection_Vector<int>, std::vector<int> >();
   std::cout << "NCollection_Vector<int> Replace:                " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReplace<NCollection_Vector<double>, std::vector<double> >();
   std::cout << "NCollection_Vector<double> Replace:             " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReverse<NCollection_Vector<int>, std::vector<int> >();
   std::cout << "NCollection_Vector<int> Reverse:                " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReverse<NCollection_Vector<double>, std::vector<double> >();
   std::cout << "NCollection_Vector<double> Reverse:             " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestSort<NCollection_Vector<int>, std::vector<int> >();
   std::cout << "NCollection_Vector<int> Sort:                   " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestSort<NCollection_Vector<double>, std::vector<double> >();
   std::cout << "NCollection_Vector<double> Sort:                " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestParallel<NCollection_Vector<int>, std::vector<int> >();
   std::cout << "NCollection_Vector<int> Parallel:               " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestParallel<NCollection_Vector<double>, std::vector<double> >();
   std::cout << "NCollection_Vector<double> Parallel:            " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   {
     // Test case for a corner case described in a bug #0027941
@@ -833,7 +833,7 @@ static Standard_Integer QANVectorStlIterator (Draw_Interpretor&, Standard_Intege
     NCollection_Vector<int>::iterator aShift = aBegin + THE_INCREMENT;
     aResult = (aShift == anEnd);
     std::cout << "NCollection_Vector<int> Offset:                 " <<
-      (aResult ? "SUCCESS" : "FAIL") << std::endl;
+      (aResult ? "SUCCESS" : "FAIL") << '\n';
 
     std::stable_sort (aVector.begin(), aVector.end());
   }
@@ -855,51 +855,51 @@ static Standard_Integer QANArray1StlIterator (Draw_Interpretor&, Standard_Intege
   // run-time tests
   Standard_Boolean aResult = TestIteration<NCollection_Array1<int>, std::vector<int> >();
   std::cout << "NCollection_Array1<int> Iteration:              " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestIteration<NCollection_Array1<double>, std::vector<double> >();
   std::cout << "NCollection_Array1<double> Iteration:           " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMinMax<NCollection_Array1<int>, std::vector<int> >();
   std::cout << "NCollection_Array1<int> Min-Max:                " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestMinMax<NCollection_Array1<double>, std::vector<double> >();
   std::cout << "NCollection_Array1<double> Min-Max:             " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReplace<NCollection_Array1<int>, std::vector<int> >();
   std::cout << "NCollection_Array1<int> Replace:                " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReplace<NCollection_Array1<double>, std::vector<double> >();
   std::cout << "NCollection_Array1<double> Replace:             " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReverse<NCollection_Array1<int>, std::vector<int> >();
   std::cout << "NCollection_Array1<int> Reverse:                " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestReverse<NCollection_Array1<double>, std::vector<double> >();
   std::cout << "NCollection_Array1<double> Reverse:             " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestSort<NCollection_Array1<int>, std::vector<int> >();
   std::cout << "NCollection_Array1<int> Sort:                   " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestSort<NCollection_Array1<double>, std::vector<double> >();
   std::cout << "NCollection_Array1<double> Sort:                " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestParallel<NCollection_Array1<int>, std::vector<int> >();
   std::cout << "NCollection_Array1<int> Parallel:               " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   aResult = TestParallel<NCollection_Array1<double>, std::vector<double> >();
   std::cout << "NCollection_Array1<double> Parallel:            " <<
-    (aResult ? "SUCCESS" : "FAIL") << std::endl;
+    (aResult ? "SUCCESS" : "FAIL") << '\n';
 
   return 0;
 }

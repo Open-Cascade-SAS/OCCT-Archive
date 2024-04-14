@@ -212,9 +212,9 @@ void XSDRAW::LoadDraw (Draw_Interpretor& theCommands)
     void  XSDRAW::SetController (const Handle(XSControl_Controller)& control)
 {
   if (thepilot.IsNull()) XSDRAW::LoadSession();
-  if (control.IsNull()) std::cout<<"XSTEP Controller not defined"<<std::endl;
+  if (control.IsNull()) std::cout<<"XSTEP Controller not defined"<<'\n';
   else if (!Session().IsNull()) Session()->SetController (control);
-  else std::cout<<"XSTEP Session badly or not defined"<<std::endl;
+  else std::cout<<"XSTEP Session badly or not defined"<<'\n';
 }
 
 

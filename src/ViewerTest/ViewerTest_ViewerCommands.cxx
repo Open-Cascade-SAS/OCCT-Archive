@@ -5868,7 +5868,7 @@ static int VReadPixel (Draw_Interpretor& theDI,
   Standard_CString aWarnLog = theDI.Result();
   if (aWarnLog != NULL && aWarnLog[0] != '\0')
   {
-    std::cout << aWarnLog << std::endl;
+    std::cout << aWarnLog << '\n';
   }
   theDI.Reset();
 
@@ -13829,7 +13829,7 @@ static int VColorDiff (Draw_Interpretor& theDI, Standard_Integer  theNbArgs, con
 {
   if (theNbArgs != 7)
   {
-    std::cerr << "Error: command syntax is incorrect, see help" << std::endl;
+    std::cerr << "Error: command syntax is incorrect, see help" << '\n';
     return 1;
   }
 

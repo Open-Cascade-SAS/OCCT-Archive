@@ -508,10 +508,10 @@ void IGESDefs_ToolAttributeDef::OwnDump
                       S << "  Attribute Value Pointer : ";
                       dumper.Dump (ent->AttributeTextDisplay(i,j),S, sublevel);
 		    }
-		  S << std::endl;
+		  S << '\n';
 		}
 	    }
 	}
     }
-  S << std::endl;
+  S << '\n';
 }

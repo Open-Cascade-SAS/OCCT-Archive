@@ -302,7 +302,7 @@ void IGESGeom_ToolConicArc::OwnDump(const Handle(IGESGeom_ConicArc)& ent,
     << "End   Point : ";
   IGESData_DumpXYLZ(S,level, ent->EndPoint(), ent->Location(), ent->ZPlane());
   S << "\n";
-  if (level <= 4) S <<" -- Computed Definition : ask level > 4" << std::endl;
+  if (level <= 4) S <<" -- Computed Definition : ask level > 4" << '\n';
   else {
     gp_Pnt Cen;  gp_Dir Ax;  Standard_Real Rmin,Rmax;
     ent->Definition (Cen,Ax,Rmin,Rmax);
@@ -319,6 +319,6 @@ void IGESGeom_ToolConicArc::OwnDump(const Handle(IGESGeom_ConicArc)& ent,
     else S << " Major Radius : " << Rmax << "  Minor Radius : " << Rmin <<"\n";
     
     S << "  Normal Axis : ";  IGESData_DumpXYZL(S,level,ent->Axis(),ent->VectorLocation());
-    S << std::endl;
+    S << '\n';
   }
 }

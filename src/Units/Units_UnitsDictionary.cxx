@@ -349,6 +349,6 @@ TCollection_AsciiString Units_UnitsDictionary::ActiveUnit(const Standard_CString
     }
   }
 
-  std::cout<<" La grandeur physique "<<aquantity<<" n'existe pas."<<std::endl;
+  std::cout<<" La grandeur physique "<<aquantity<<" n'existe pas."<<'\n';
   return "";
 }

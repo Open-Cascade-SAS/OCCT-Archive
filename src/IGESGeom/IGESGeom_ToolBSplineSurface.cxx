@@ -500,7 +500,7 @@ void IGESGeom_ToolBSplineSurface::OwnDump(const Handle(IGESGeom_BSplineSurface)&
   S << "\n"
     << "Control Points (Poles) : ";
 //IGESData_DumpRectXYZL(S,level,1, ent->NbPoles(),ent->Pole, ent->Location());
-  if (level < 5) {  S << " [ content : ask level > 4 ]" << std::endl; return;  }
+  if (level < 5) {  S << " [ content : ask level > 4 ]" << '\n'; return;  }
   gp_GTrsf loca = ent->Location();
   for (Standard_Integer JP = 0; JP <= indV; JP ++)
     for (Standard_Integer IP = 0; IP <= indU; IP ++) {
@@ -508,5 +508,5 @@ void IGESGeom_ToolBSplineSurface::OwnDump(const Handle(IGESGeom_BSplineSurface)&
       S <<"  -  ["<<IP<<","<<JP<<"]: ";
       IGESData_DumpXYZL(S,level,ent->Pole(IP,JP),loca);
     }
-  S << std::endl;
+  S << '\n';
 }

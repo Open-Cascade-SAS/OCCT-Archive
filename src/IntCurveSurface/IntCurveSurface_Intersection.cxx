@@ -136,6 +136,6 @@ void IntCurveSurface_Intersection::Dump() const {
     for(i=1;i<=ni;i++) {   Segment(i).Dump(); }
   }
   else { 
-    std::cout<<" Intersection NotDone"<<std::endl;
+    std::cout<<" Intersection NotDone"<<'\n';
   }
 }

@@ -112,5 +112,5 @@ void IGESGraph_ToolPick::OwnDump
     << "No. of property values : " << ent->NbPropertyValues() << "\n"
     << "Pick flag : " << ent->PickFlag()
     << (ent->PickFlag() == 0 ? " NO" : " YES" )
-    << std::endl;
+    << '\n';
 }

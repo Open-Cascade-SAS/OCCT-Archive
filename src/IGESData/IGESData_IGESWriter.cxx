@@ -127,7 +127,7 @@ void IGESData_IGESWriter::SendStartLine (const Standard_CString startline)
 #endif
 //  Attention aux cas d erreur : contenu redefini
     if (themodel->IsRedefinedContent(i)) {
-      sout << " --  IGESWriter : Erroneous Entity N0."<<i<<"  --"<<std::endl;
+      sout << " --  IGESWriter : Erroneous Entity N0."<<i<<"  --"<<'\n';
       Handle(Interface_ReportEntity) rep = themodel->ReportEntity(i);
       if (!rep.IsNull()) cnt = GetCasted(IGESData_IGESEntity,rep->Content());
       if (cnt.IsNull())  cnt = ent;    // secours
@@ -146,7 +146,7 @@ void IGESData_IGESWriter::SendStartLine (const Standard_CString startline)
       undent->WriteOwnParams (*this);
     }
     else sout<<" -- IGESWriter : Not Processed for n0."<<i<<" in file,  Type "
-      <<cnt->TypeNumber()<<"  Form "<<cnt->FormNumber()<<std::endl;
+      <<cnt->TypeNumber()<<"  Form "<<cnt->FormNumber()<<'\n';
 
     Associativities (cnt);
     Properties      (cnt);
@@ -492,12 +492,12 @@ Standard_Boolean IGESData_IGESWriter::Print (Standard_OStream& S) const
   Standard_Integer nbs = 1;
   if (thestar.IsNull()) {
     if (fnes) {
-      S << "                              ***  EUCLID/STRIM  DESKTOP CLIPBOARD  ***"<<std::endl;
+      S << "                              ***  EUCLID/STRIM  DESKTOP CLIPBOARD  ***"<<'\n';
       writefnes (S,"                                                                        S0000001");
     }
     else S <<"                                                                        S0000001";
 //      123456789 123456789 123456789 123456789 123456789 123456789 123456789 12
-    S << std::endl;
+    S << '\n';
   } else {
     nbs = thestar->Length();
     for (i = 1; i <= nbs; i ++) {
@@ -511,7 +511,7 @@ Standard_Boolean IGESData_IGESWriter::Print (Standard_OStream& S) const
       S << &blancs[line->Length()];
       if (fnes) writefnes (S,finlin);
       else S << finlin;
-      S << std::endl;
+      S << '\n';
     }
   }
 #ifdef PATIENCELOG
@@ -531,7 +531,7 @@ Standard_Boolean IGESData_IGESWriter::Print (Standard_OStream& S) const
     S << &blancs[line->Length()];
     if (fnes) writefnes (S,finlin);
     else S << finlin;
-    S << std::endl;
+    S << '\n';
     isGood = S.good();
   }
   if(!isGood)
@@ -591,7 +591,7 @@ Standard_Boolean IGESData_IGESWriter::Print (Standard_OStream& S) const
       S << &blancs[line->Length()];
       if (fnes) writefnes (S,finlin);
       else S << finlin;
-      S << std::endl;
+      S << '\n';
       isGood = S.good();
 #ifdef PATIENCELOG
       lignespatience --;

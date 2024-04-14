@@ -146,7 +146,7 @@ static void DumpTransition(const IntSurf_Transition& T)
 #include <Standard_Transient.hxx>
 
 void IntPatch_Point::Dump() const { 
-  std::cout<<"----------- IntPatch_Point : "<<std::endl;
+  std::cout<<"----------- IntPatch_Point : "<<'\n';
   Standard_Real u1,v1,u2,v2;
   pt.Parameters(u1,v1,u2,v2);
 
@@ -179,8 +179,8 @@ void IntPatch_Point::Dump() const {
       std::cout<<"\n-traline2  : ";   DumpTransition(traline2);
       std::cout<<"  -tra2  : ";      DumpTransition(tra2);
     }
-    std::cout<<std::endl;
+    std::cout<<'\n';
   }
   std::cout << "\nToler = " << Tolerance();
-  std::cout << std::endl;
+  std::cout << '\n';
 }

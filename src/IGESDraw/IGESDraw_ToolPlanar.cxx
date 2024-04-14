@@ -178,5 +178,5 @@ void IGESDraw_ToolPlanar::OwnDump
   S << "\n"
     << "Array of Entities on the specified plane : ";
   IGESData_DumpEntities(S,dumper ,level,1, ent->NbEntities(),ent->Entity);
-  S << std::endl;
+  S << '\n';
 }

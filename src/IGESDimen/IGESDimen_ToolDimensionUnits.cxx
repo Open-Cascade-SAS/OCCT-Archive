@@ -159,5 +159,5 @@ void  IGESDimen_ToolDimensionUnits::OwnDump
     << "Fraction Flag   : " << ent->FractionFlag();
   if (ent->FractionFlag() == 0) S << " Decimal  , Precision   : ";
   else                          S << " Fraction , Denominator : ";
-  S << ent->PrecisionOrDenominator() << std::endl;
+  S << ent->PrecisionOrDenominator() << '\n';
 }

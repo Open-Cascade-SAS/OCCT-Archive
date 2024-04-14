@@ -1335,8 +1335,8 @@ void GeomFill_ConstrainedFilling::CheckTgteField(const Standard_Integer I)
       if(Abs(alpha) > maxang) maxang = Abs(alpha);
     }
   }
-  std::cout<<"KAlgo angle max sur bord "<<I<<" : "<<maxang<<std::endl;
-  if(caplisse) std::cout<<"sur bord "<<I<<" le champ tangent change de cote!"<<std::endl;
+  std::cout<<"KAlgo angle max sur bord "<<I<<" : "<<maxang<<'\n';
+  if(caplisse) std::cout<<"sur bord "<<I<<" le champ tangent change de cote!"<<'\n';
 }
 
 
@@ -1381,11 +1381,11 @@ void GeomFill_ConstrainedFilling::CheckApprox(const Standard_Integer I)
     }
     if(papp.Distance(pbound) > maxdist) maxdist = papp.Distance(pbound);
   }
-  std::cout<<"Controle approx/contrainte sur bord "<<I<<" : "<<std::endl;
-  std::cout<<"Distance max : "<<maxdist<<std::endl;
+  std::cout<<"Controle approx/contrainte sur bord "<<I<<" : "<<'\n';
+  std::cout<<"Distance max : "<<maxdist<<'\n';
   if (donor) {
     maxang = maxang*180./M_PI;
-    std::cout<<"Angle max    : "<<maxang<<" deg"<<std::endl;
+    std::cout<<"Angle max    : "<<maxang<<" deg"<<'\n';
   }
 }
 
@@ -1461,11 +1461,11 @@ void GeomFill_ConstrainedFilling::CheckResult(const Standard_Integer I)
     vv += dvv;
     ww += dww;
   }
-  std::cout<<"Controle resultat/contrainte sur bord "<<I<<" : "<<std::endl;
-  std::cout<<"Distance max : "<<maxdist<<std::endl;
+  std::cout<<"Controle resultat/contrainte sur bord "<<I<<" : "<<'\n';
+  std::cout<<"Distance max : "<<maxdist<<'\n';
   if (donor) {
     Standard_Real angdeg = maxang*180./M_PI;
-    std::cout<<"Angle max    : "<<angdeg<<" deg"<<std::endl;
+    std::cout<<"Angle max    : "<<angdeg<<" deg"<<'\n';
   }
 #ifdef DRAW
   Standard_Boolean scale = maxang>1.e-10;

@@ -480,9 +480,9 @@ void TDF_Data::RegisterLabel(const TDF_Label& aLabel)
 
 Standard_OStream& TDF_Data::Dump(Standard_OStream& anOS) const
 {
-  anOS<<"Dump of a TDF_Data."<<std::endl;
+  anOS<<"Dump of a TDF_Data."<<'\n';
   anOS<<"Current transaction: "<<myTransaction;
-  anOS<<"; Current tick: "<<myTime<<";"<<std::endl;
+  anOS<<"; Current tick: "<<myTime<<";"<<'\n';
   return anOS;
 }
 

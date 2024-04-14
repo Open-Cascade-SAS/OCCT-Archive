@@ -894,7 +894,7 @@ ChFi3d_ChBuilder::SimulSurf(Handle(ChFiDS_SurfData)&            Data,
       
       if (OffsetHGuide.IsNull())
       {
-        std::cout<<std::endl<<"Construction of offset guide failed!"<<std::endl;
+        std::cout<<'\n'<<"Construction of offset guide failed!"<<'\n';
         //exception
       }
       pFunc.reset(new BRepBlend_ConstThroatWithPenetration(S1,S2,OffsetHGuide));
@@ -1271,7 +1271,7 @@ Standard_Boolean ChFi3d_ChBuilder::PerformFirstSection
       
       if (OffsetHGuide.IsNull())
       {
-        std::cout<<std::endl<<"Construction of offset guide failed!"<<std::endl;
+        std::cout<<'\n'<<"Construction of offset guide failed!"<<'\n';
         //exception
       }
       pFunc.reset(new BRepBlend_ConstThroatWithPenetration(S1,S2,OffsetHGuide));
@@ -1518,7 +1518,7 @@ ChFi3d_ChBuilder::PerformSurf(ChFiDS_SequenceOfSurfData&          SeqData,
       
       if (OffsetHGuide.IsNull())
       {
-        std::cout<<std::endl<<"Construction of offset guide failed!"<<std::endl;
+        std::cout<<'\n'<<"Construction of offset guide failed!"<<'\n';
         //exception
       }
       pFunc.reset(new BRepBlend_ConstThroatWithPenetration(S1,S2,OffsetHGuide));

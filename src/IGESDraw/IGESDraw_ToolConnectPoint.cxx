@@ -227,5 +227,5 @@ void IGESDraw_ToolConnectPoint::OwnDump
     << "Swap Flag : "        << ( ent->SwapFlag() ? "True" : "False" ) << "\n"
     << "Owner Subfigure Entity : ";
   dumper.Dump(ent->OwnerSubfigure(),S, tempSubLevel);
-  S << std::endl;
+  S << '\n';
 }

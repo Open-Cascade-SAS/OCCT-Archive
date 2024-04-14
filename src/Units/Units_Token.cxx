@@ -176,7 +176,7 @@ void Units_Token::Update(const Standard_CString amean)
 {
   TCollection_AsciiString string = Mean();
   if(string.Search(amean) != -1)
-    std::cout<<Word()<<" encountered twice with the same signification : "<<amean<<std::endl;
+    std::cout<<Word()<<" encountered twice with the same signification : "<<amean<<'\n';
   string = string + amean;
   themean = string;
 }
@@ -363,13 +363,13 @@ void Units_Token::Dump(const Standard_Integer ashift,
   TCollection_AsciiString mean = Mean();
 
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout << "Units_Token::Dump of " << this << std::endl;
+  std::cout << "Units_Token::Dump of " << this << '\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<word.ToCString()<<std::endl;
+  std::cout<<word.ToCString()<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"  value : "<<thevalue<<std::endl;
+  std::cout<<"  value : "<<thevalue<<'\n';
   for(i=0; i<ashift; i++)std::cout<<"  ";
-  std::cout<<"  mean  : "<<mean.ToCString()<<std::endl;
+  std::cout<<"  mean  : "<<mean.ToCString()<<'\n';
   if(alevel)thedimensions->Dump(ashift);
 }
 

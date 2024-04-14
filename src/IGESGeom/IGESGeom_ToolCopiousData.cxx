@@ -305,9 +305,9 @@ void IGESGeom_ToolCopiousData::OwnDump(const Handle(IGESGeom_CopiousData)& ent,
 	  S << " Transformed ("<< T.X() << "," << T.Y() << "," << T.Z() << ")";
 	}
       }
-      S << std::endl;
+      S << '\n';
     }
   }
   else S << " [ for content, ask level > 4 ]";
-  S << std::endl;
+  S << '\n';
 }

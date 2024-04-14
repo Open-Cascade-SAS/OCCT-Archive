@@ -591,7 +591,7 @@ void IntPatch_RstInt::PutVertexOnLine (const Handle(IntPatch_Line)& L,
 	
 	static int debug_polygon2d =0;
 	if(debug_polygon2d) { 
-	  std::cout<<" ***** Numero Restriction : "<<NumeroEdge<<" *****"<<std::endl;
+	  std::cout<<" ***** Numero Restriction : "<<NumeroEdge<<" *****"<<'\n';
 	  PLin.Dump();
 	  Brise.Dump();
 	}

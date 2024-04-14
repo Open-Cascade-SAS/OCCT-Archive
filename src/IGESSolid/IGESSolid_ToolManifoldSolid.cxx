@@ -217,7 +217,7 @@ void  IGESSolid_ToolManifoldSolid::OwnDump
     S << "Orientation does not agrees with the underlying surface\n";
   S << "Void shells :\nOrientation flags : ";
   IGESData_DumpEntities(S,dumper,-level,1, ent->NbVoidShells(),ent->VoidShell);
-  S << std::endl;
+  S << '\n';
   if (level > 4)
     {
       S << "[\n";
@@ -236,6 +236,6 @@ void  IGESSolid_ToolManifoldSolid::OwnDump
 	}
       S << " ]\n";
     }
-  S << std::endl;
+  S << '\n';
 }
 

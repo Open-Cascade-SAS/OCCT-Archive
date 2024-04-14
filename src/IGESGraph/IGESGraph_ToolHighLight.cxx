@@ -109,5 +109,5 @@ void IGESGraph_ToolHighLight::OwnDump
   S << "IGESGraph_HighLight\n"
     << "No. of property values : " << ent->NbPropertyValues() << "\n"
     << "Highlight Status : " << ent->HighLightStatus() << "\n"
-    << std::endl;
+    << '\n';
 }

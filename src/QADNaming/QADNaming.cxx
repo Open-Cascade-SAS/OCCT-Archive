@@ -79,7 +79,7 @@ TopoDS_Shape QADNaming::CurrentShape (const Standard_CString  LabelName,
   TDF_Label Label; 
   Standard_Boolean Found =  DDF::AddLabel (DF, LabelName, Label);
   if (!Found) {
-    std::cout <<"no labels"<<std::endl;
+    std::cout <<"no labels"<<'\n';
     return S;
   }
   if (Found) { 
@@ -87,7 +87,7 @@ TopoDS_Shape QADNaming::CurrentShape (const Standard_CString  LabelName,
     Label.FindAttribute(TNaming_NamedShape::GetID(),NS);
     S =  TNaming_Tool::CurrentShape(NS);
     if (S.IsNull())
-      std::cout <<"current shape from "<< LabelName <<" is deleted"<<std::endl;
+      std::cout <<"current shape from "<< LabelName <<" is deleted"<<'\n';
     return S;
   }
   return S;
@@ -131,12 +131,12 @@ Standard_Boolean QADNaming::Entry(const Standard_Address theArguments,
   const char** arg = (const char**)theArguments;
   Handle(TDF_Data) DF;
   if (!DDF::GetDF(arg[1],DF)) {
-    std::cout<<"Wrong df"<<std::endl;
+    std::cout<<"Wrong df"<<'\n';
     return Standard_False;
   }
   DDF::AddLabel(DF,arg[2],theLabel);
   if (!theLabel.IsNull()) return Standard_True;
-  std::cout<<"Wrong entry"<<std::endl;
+  std::cout<<"Wrong entry"<<'\n';
   return Standard_False;
 }
 

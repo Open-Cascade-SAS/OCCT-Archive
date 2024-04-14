@@ -320,8 +320,8 @@ void BinTools_CurveSet::WriteCurve(const Handle(Geom_Curve)& C,
   }
    catch(Standard_Failure const& anException) {
      Standard_SStream aMsg;
-     aMsg << "EXCEPTION in BinTools_CurveSet::WriteCurve(..)" << std::endl;
-     aMsg << anException << std::endl;
+     aMsg << "EXCEPTION in BinTools_CurveSet::WriteCurve(..)" << '\n';
+     aMsg << anException << '\n';
      throw Standard_Failure(aMsg.str().c_str());
    }  
 }
@@ -675,8 +675,8 @@ Standard_IStream& BinTools_CurveSet::ReadCurve(Standard_IStream& IS,
   catch(Standard_Failure const& anException) {
     C = NULL;
     Standard_SStream aMsg;
-    aMsg <<"EXCEPTION in BinTools_CurveSet::ReadCurve(..)" << std::endl;
-    aMsg << anException << std::endl;
+    aMsg <<"EXCEPTION in BinTools_CurveSet::ReadCurve(..)" << '\n';
+    aMsg << anException << '\n';
     throw Standard_Failure(aMsg.str().c_str());
   }
   return IS;
@@ -694,7 +694,7 @@ void  BinTools_CurveSet::Read (Standard_IStream& IS,
   IS >> buffer;
   if (IS.fail() || strcmp(buffer,"Curves")) {
     Standard_SStream aMsg;
-    aMsg << "BinTools_CurveSet::Read:  Not a Curve table"<<std::endl;
+    aMsg << "BinTools_CurveSet::Read:  Not a Curve table"<<'\n';
 #ifdef OCCT_DEBUG
     std::cout <<"CurveSet buffer: " << buffer << std::endl;
 #endif

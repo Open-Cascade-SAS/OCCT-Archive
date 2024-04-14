@@ -136,5 +136,5 @@ void  IGESBasic_ToolHierarchy::OwnDump
     << "Entity level : " << ent->NewEntityLevel() << "\n"
     << "Blank status : " << ent->NewBlankStatus() << "\n"
     << "Line weight  : " << ent->NewLineWeight() << "\n"
-    << "Color number : " << ent->NewColorNum() << std::endl;
+    << "Color number : " << ent->NewColorNum() << '\n';
 }

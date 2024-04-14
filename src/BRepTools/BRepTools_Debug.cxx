@@ -54,7 +54,7 @@ const char* BRepTools_Dump (void* theShapePtr)
 
     std::cout <<"\n\n";
     BRepTools::Dump (*(TopoDS_Shape*)theShapePtr, std::cout);
-    std::cout << std::endl;
+    std::cout << '\n';
 
     return "Shape dumped to std::cout";
   }
@@ -78,7 +78,7 @@ const char* BRepTools_DumpLoc (void* theLocationPtr)
     TopTools_LocationSet LS;
     LS.Add(*(TopLoc_Location*)theLocationPtr);
     LS.Dump(std::cout);
-    std::cout <<std::endl;
+    std::cout <<'\n';
 
     return "Location dumped to std::cout";
   }

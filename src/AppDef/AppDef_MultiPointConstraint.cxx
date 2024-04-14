@@ -316,5 +316,5 @@ Standard_Boolean AppDef_MultiPointConstraint::IsCurvaturePoint() const
 
 void AppDef_MultiPointConstraint::Dump(Standard_OStream& o) const
 {
-  o << "AppDef_MultiPointConstraint dump:" << std::endl;
+  o << "AppDef_MultiPointConstraint dump:" << '\n';
 }

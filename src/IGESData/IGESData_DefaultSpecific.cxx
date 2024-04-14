@@ -54,5 +54,5 @@ IGESData_DefaultSpecific::IGESData_DefaultSpecific ()
     else {  S <<"	["<<i<<"]=" << cont->ParamValue(i)->String();  }
     if ( i == (i%5)*5) S << "\n";
   }
-  S << std::endl;
+  S << '\n';
 }

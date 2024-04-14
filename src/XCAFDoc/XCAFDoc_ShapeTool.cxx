@@ -1339,7 +1339,7 @@ static void DumpAssembly(Standard_OStream& theDumpLog,
       theDumpLog<<", "<< *(void**)&S.Location();
     theDumpLog<<") ";
   }
-  theDumpLog<<std::endl;
+  theDumpLog<<'\n';
   
   Handle(TDataStd_TreeNode) Node;
   TDF_ChildIterator NodeIterator(L);
@@ -1347,7 +1347,7 @@ static void DumpAssembly(Standard_OStream& theDumpLog,
     DumpAssembly(theDumpLog, NodeIterator.Value(), level+1, deep);
   }
   if(level == 0)
-    theDumpLog<<std::endl;
+    theDumpLog<<'\n';
 }
 
 //=======================================================================
@@ -1362,7 +1362,7 @@ Standard_OStream& XCAFDoc_ShapeTool::Dump(Standard_OStream& theDumpLog, const St
   TDF_LabelSequence SeqLabels;
   GetShapes( SeqLabels);
 
-  if (SeqLabels.Length()>0) theDumpLog<<std::endl;
+  if (SeqLabels.Length()>0) theDumpLog<<'\n';
   Standard_Integer i;
   for (i=1; i<=SeqLabels.Length(); i++) {
     DumpAssembly(theDumpLog, SeqLabels.Value(i), level, deep);
@@ -1370,10 +1370,10 @@ Standard_OStream& XCAFDoc_ShapeTool::Dump(Standard_OStream& theDumpLog, const St
 
   SeqLabels.Clear();
   GetFreeShapes(SeqLabels);
-  theDumpLog<<std::endl<<"Free Shapes: "<<SeqLabels.Length()<<std::endl;
+  theDumpLog<<'\n'<<"Free Shapes: "<<SeqLabels.Length()<<'\n';
   for (i = 1; i<=SeqLabels.Length(); i++) {
     DumpShape(theDumpLog, SeqLabels.Value(i), level, deep);
-    theDumpLog<<std::endl;
+    theDumpLog<<'\n';
   }
   return theDumpLog;
 }

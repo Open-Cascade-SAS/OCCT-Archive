@@ -236,19 +236,19 @@ void IGESDefs_ToolTabularData::OwnDump
   S << "\nNumber of values of independent variables : ";
   IGESData_DumpVals(S,level,1, nbIndeps,ent->NbValues);
 // ?? JAGGED ??
-  S << std::endl << "Values of the independent variable : ";
+  S << '\n' << "Values of the independent variable : ";
   if (level < 5) S << " [ask level > 4]";
   else {
     for (Standard_Integer ind = 1; ind <= nbIndeps; ind ++) {
-      S << std::endl << "[" << ind << "]:";
+      S << '\n' << "[" << ind << "]:";
       Standard_Integer nbi = ent->NbValues(ind);
       for (Standard_Integer iv = 1; iv <= nbi; iv ++)
 	S << " " << ent->IndependentValue(ind,iv);
     }
   }
 //  IGESData_DumpVals(aSender,level,1, nbIndeps,ent->IndependentValue);
-  S << std::endl << "Values of the dependent variable : ";
+  S << '\n' << "Values of the dependent variable : ";
 //  IGESData_DumpVals(aSender,level,1, nbDeps,ent->DependentValue);
   S << "  TO BE DONE"
-    << std::endl;
+    << '\n';
 }

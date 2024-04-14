@@ -574,7 +574,7 @@ static unsigned int __stdcall CpuFunc (void * /*param*/)
 #else
 static void cpulimitSignalHandler (int)
 {
-  std::cout << "Process killed by CPU limit  (" << CPU_LIMIT << " sec)" << std::endl;
+  std::cout << "Process killed by CPU limit  (" << CPU_LIMIT << " sec)" << '\n';
   exit(2);
 }
 static void *CpuFunc(void* /*threadarg*/)
@@ -585,7 +585,7 @@ static void *CpuFunc(void* /*threadarg*/)
     sleep (5);
     anElapCurrent = clock_t(aTimer.ElapsedTime());
     if (CPU_LIMIT >0 && (anElapCurrent) >= CPU_LIMIT) {
-      std::cout << "Process killed by elapsed limit  (" << CPU_LIMIT << " sec)" << std::endl;
+      std::cout << "Process killed by elapsed limit  (" << CPU_LIMIT << " sec)" << '\n';
       exit(2);
     }
   }
@@ -827,7 +827,7 @@ static int dlocale (Draw_Interpretor& di, Standard_Integer n, const char** argv)
   if (result)
     di << result;
   else 
-    std::cout << "Error: unsupported locale specification: " << locale << std::endl;
+    std::cout << "Error: unsupported locale specification: " << locale << '\n';
   return 0;
 }
 
@@ -1271,7 +1271,7 @@ static int dputs (Draw_Interpretor& theDI,
       *aStream << theArgVec[anArgIter];
       if (!isNoNewline)
       {
-        *aStream << std::endl;
+        *aStream << '\n';
       }
 
       if (toIntense || aColor != Message_ConsoleColor_Default)
