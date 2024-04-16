@@ -634,7 +634,7 @@ Standard_Boolean STEPConstruct_Styles::GetColors (const Handle(StepVisual_Styled
 	    for ( Standard_Integer m=1; m <= FAS->NbFillStyles(); m++ ) {
 	      StepVisual_FillStyleSelect FSS = FAS->FillStylesValue ( m );
 	      Handle(StepVisual_FillAreaStyleColour) FASC = FSS.FillAreaStyleColour();
-	      if ( SurfCol.IsNull() || SSU->Side() != StepVisual_ssNegative ) //abv 30 Mar 00: trj3_s1-pe.stp
+	      if ( !FASC.IsNull() && (SurfCol.IsNull() || SSU->Side() != StepVisual_ssNegative) ) //abv 30 Mar 00: trj3_s1-pe.stp
 		SurfCol = FASC->FillColour();
 	    }
 	    continue;
