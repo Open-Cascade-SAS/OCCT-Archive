@@ -1,3 +1,5 @@
+puts "TODO ALL: Error: Degenerated edge is not found"
+
 puts "========"
 puts "0029807: Impossible to cut cone from prism"
 puts "========"

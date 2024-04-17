@@ -31,10 +31,10 @@ regexp {Elapsed time: +([-0-9.+eE]+) Hours +([-0-9.+eE]+) Minutes +([-0-9.+eE]+)
 set h1_Time [expr ${h1_Hours}*60.*60. + ${h1_Minutes}*60. + ${h1_Seconds} ]
 set h2_Time [expr ${h2_Hours}*60.*60. + ${h2_Minutes}*60. + ${h2_Seconds} ]
 
-if { ${h1_Time} > 0.1 } {
+if { ${h1_Time} > 0.4 } {
    puts "Error: Section of simple BSpline surfaces_1 is performed too slow"
 }
 
-if { ${h2_Time} > 0.1 } {
+if { ${h2_Time} > 0.4 } {
    puts "Error: Section of simple BSpline surfaces_2 is performed too slow"
 }

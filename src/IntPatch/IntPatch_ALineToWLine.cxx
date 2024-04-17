@@ -530,6 +530,7 @@ void IntPatch_ALineToWLine::MakeWLine(const Handle(IntPatch_ALine)& theALine,
 
     Standard_Boolean isLast = Standard_False;
     Standard_Real aPrevParam = aParameter;
+    Standard_Boolean isToReCheckBound = Standard_True;
     for(; !isLast; aParameter += aStep)
     {
       IntSurf_PntOn2S aPOn2S;
@@ -646,6 +647,13 @@ void IntPatch_ALineToWLine::MakeWLine(const Handle(IntPatch_ALine)& theALine,
         else if(aParameter == theLPar)
         {// Strictly equal!!!
           break;
+        }
+        else if (isToReCheckBound)
+        {
+          aPrevLPoint = aRPT;
+          aPrevParam = aParameter;
+          isToReCheckBound = Standard_False;
+          continue;
         }
       }
 

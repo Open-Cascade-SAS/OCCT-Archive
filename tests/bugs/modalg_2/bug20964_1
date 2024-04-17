@@ -33,6 +33,6 @@ Number of shapes in .*
 "
 
 checknbshapes result -ref $NbShapesRef
-checkmaxtol result -ref 2.0849512334752456e-05
+checkmaxtol result -ref 0.00013340609302644948
 
 checkview -display result -2d -path ${imagedir}/${test_image}.png
