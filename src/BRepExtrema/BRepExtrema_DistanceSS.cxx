@@ -1061,7 +1061,7 @@ void BRepExtrema_DistanceSS::Perform (const TopoDS_Face& theS1,
     Dstmin = sqrt(Dstmin);
     if ((Dstmin < myDstRef - myEps) || (fabs(Dstmin - myDstRef) < myEps))
     {
-      const Standard_Real tol2d1 = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS1));
+      const Standard_Real tol2d1 = BRep_Tool::Tolerance2d(theS1, BRep_Tool::Tolerance(theS1));
       const Standard_Real tol2d2 = BRep_Tool::Tolerance2d(theS2, BRep_Tool::Tolerance(theS2));
 
       gp_Pnt Pt1, Pt2;
