@@ -1103,6 +1103,13 @@ void OpenGl_View::drawBackground (const Handle(OpenGl_Workspace)& theWorkspace,
       if (myBackgrounds[Graphic3d_TOB_GRADIENT]->GradientFillMethod() >= Aspect_GradientFillMethod_Corner1
        && myBackgrounds[Graphic3d_TOB_GRADIENT]->GradientFillMethod() <= Aspect_GradientFillMethod_Corner4)
       {
+        // Set colored quad shader program
+        Quantity_Color aColor1, aColor2;
+        GradientBackground().Colors(aColor1, aColor2);
+        myColoredQuadParams->Aspect()->SetShaderProgram(aCtx->ShaderManager()->GetColoredQuadProgram());
+        myColoredQuadParams->Aspect()->ShaderProgram()->PushVariableVec3 ("uColor1", aColor1.Rgb());
+        myColoredQuadParams->Aspect()->ShaderProgram()->PushVariableVec3 ("uColor2", aColor2.Rgb());
+       
         const OpenGl_Aspects* anOldAspectFace = theWorkspace->SetAspects (myColoredQuadParams);
 
         myBackgrounds[Graphic3d_TOB_GRADIENT]->Render (theWorkspace, theProjection);

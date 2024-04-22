@@ -211,8 +211,8 @@ static struct
     }
   }
 
-} ViewerTest_DefaultBackground = { Quantity_NOC_BLACK, Quantity_NOC_BLACK, Quantity_NOC_BLACK, Aspect_GradientFillMethod_None };
-
+ } ViewerTest_DefaultBackground = { Quantity_NOC_BLACK, Quantity_NOC_BLACK, Quantity_NOC_BLACK, Aspect_GradientFillMethod_None };
+ 
 //==============================================================================
 //  EVENT GLOBAL VARIABLES
 //==============================================================================
@@ -795,7 +795,6 @@ TCollection_AsciiString ViewerTest::ViewerInit (const ViewerTest_VinitParams& th
 #endif
 
   VT_GetWindow()->Map();
-
   // Set the handle of created view in the event manager
   ViewerTest::ResetEventManager();
 
