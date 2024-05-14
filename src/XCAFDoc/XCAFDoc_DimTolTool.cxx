@@ -13,6 +13,8 @@
 
 #include <XCAFDoc_DimTolTool.hxx>
 
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
 #include <Standard_Type.hxx>
 #include <TColStd_MapOfAsciiString.hxx>
 #include <TDataStd_Name.hxx>
@@ -1056,6 +1058,51 @@ void XCAFDoc_DimTolTool::SetGDTPresentations(NCollection_IndexedDataMap<TDF_Labe
       continue;
     }
   }
+}
+
+//=======================================================================
+//function : GetNumberOfPlaces
+//purpose  :
+//=======================================================================
+Standard_Integer XCAFDoc_DimTolTool::GetNumberOfPlaces(const TDF_Label& theLabel)
+{
+  TDF_LabelSequence aFirstShapes, aSecondShapes;
+  GetRefShapeLabel(theLabel, aFirstShapes, aSecondShapes);
+
+  NCollection_Sequence<Bnd_Box> aBoxes;
+  for (Standard_Integer anI = 1; anI <= aFirstShapes.Size(); anI++)
+  {
+    Bnd_Box aBox;
+    BRepBndLib::Add(ShapeTool()->GetShape(aFirstShapes(anI)), aBox, Standard_True);
+    aBoxes.Append(aBox);
+  }
+
+  // Fill bounded boxes of number of places - this will exclude duplications
+  NCollection_Sequence<Bnd_Box> aPlaces;
+  for (Standard_Integer anI = 1; anI <= aBoxes.Size(); anI++)
+  {
+    Standard_Boolean toAddPlace = Standard_True;
+    Standard_Integer aBoxesIndex = 1;
+    for (Standard_Integer aJ = 1; aJ <= aPlaces.Size(); aJ++)
+    {
+      if (!aPlaces(aJ).IsOut(aBoxes(anI)))
+      {
+        toAddPlace = Standard_False;
+        aBoxesIndex = aJ;
+        break;
+      }
+    }
+
+    if (toAddPlace)
+    {
+      aPlaces.Append(aBoxes(anI));
+    }
+    else
+    {
+      aPlaces.ChangeValue(aBoxesIndex).Add(aBoxes(anI));
+    }
+  }
+  return aPlaces.Size();
 }
 
 //=======================================================================

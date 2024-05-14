@@ -229,6 +229,10 @@ public:
   Standard_EXPORT Standard_Boolean GetRefDatumLabel (const TDF_Label& theShapeL, 
                                                      TDF_LabelSequence& theDatum)  const;
 
+  //! @param theLabel [in] geometrical tolerance TDF label.
+  //! @return Number Of Places corresponding to the Geometrical Tolerance or Dimensional Tolerance TDF label.
+  Standard_EXPORT Standard_Integer GetNumberOfPlaces (const TDF_Label& theLabel);
+
   //! Returns true if the given GDT is marked as locked.
   Standard_EXPORT Standard_Boolean IsLocked(const TDF_Label& theViewL) const;
 
