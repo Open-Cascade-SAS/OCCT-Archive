@@ -323,6 +323,17 @@ private:
     const Handle(XSControl_WorkSession)& theWS,
     const StepData_Factors& theLocalFactors);
 
+  //! Finds reference geometry or create supplemental geometry label
+  //! @param[in] theShapeStart step entity to get reference
+  //! @param[in] theShTool tool to work with shape labels
+  //! @param[out] theShLabelSeq container to put reference label
+  //! @param[in] theLocalFactors structure to calculate units.
+  //! @return TRUE if a reference is found or supplemental geometry is added
+    Standard_Boolean findReferenceGeometry(const Handle(Standard_Transient)& theShapeStart,
+                                           const Handle(XCAFDoc_ShapeTool)& theShTool,
+                                           TDF_LabelSequence& theShLabelSeq,
+                                           const StepData_Factors& theLocalFactors);
+
   //! Internal method. Read Dimension or GeomTolerance.
   TDF_Label createGDTObjectInXCAF(const Handle(Standard_Transient)& theEnt,
     const Handle(TDocStd_Document)& theDoc,
@@ -339,6 +350,7 @@ private:
   STEPControl_Reader myReader;
   NCollection_DataMap<TCollection_AsciiString, Handle(STEPCAFControl_ExternFile)> myFiles;
   XCAFDoc_DataMapOfShapeLabel myMap;
+  TDF_Label mySupplementalLabel;
   Standard_Boolean myColorMode;
   Standard_Boolean myNameMode;
   Standard_Boolean myLayerMode;

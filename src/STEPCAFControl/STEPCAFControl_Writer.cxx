@@ -25,6 +25,8 @@
 #include <BRep_Builder.hxx>
 #include <GeomToStep_MakeAxis2Placement3d.hxx>
 #include <GeomToStep_MakeCartesianPoint.hxx>
+#include <GeomToStep_MakeCurve.hxx>
+#include <GeomToStep_MakeSurface.hxx>
 #include <HeaderSection_FileSchema.hxx>
 #include <Interface_EntityIterator.hxx>
 #include <Interface_Static.hxx>
@@ -93,6 +95,7 @@
 #include <StepDimTol_TotalRunoutTolerance.hxx>
 #include <StepGeom_Axis2Placement3d.hxx>
 #include <StepGeom_CartesianPoint.hxx>
+#include <StepGeom_Curve.hxx>
 #include <StepGeom_Direction.hxx>
 #include <StepGeom_GeometricRepresentationContextAndGlobalUnitAssignedContext.hxx>
 #include <StepGeom_GeomRepContextAndGlobUnitAssCtxAndGlobUncertaintyAssCtx.hxx>
@@ -175,6 +178,7 @@
 #include <TDF_Label.hxx>
 #include <TDF_LabelSequence.hxx>
 #include <TDocStd_Document.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
@@ -594,6 +598,12 @@ Standard_Boolean STEPCAFControl_Writer::transfer(STEPControl_Writer& theWriter,
     TDF_Label aCurL = aLabelIter.Value();
     if (myLabels.IsBound(aCurL))
       continue; // already processed
+
+    Handle(TDataStd_UAttribute) aSupGeomAttr;
+    if (aCurL.FindAttribute(XCAFDoc::SupplementalContainerGUID(), aSupGeomAttr))
+    {
+      continue;
+    }
 
     TopoDS_Shape aCurShape = XCAFDoc_ShapeTool::GetShape(aCurL);
     if (aCurShape.IsNull())
@@ -2521,6 +2531,111 @@ Handle(StepRepr_ShapeAspect) STEPCAFControl_Writer::writeShapeAspect(const Handl
 }
 
 //=======================================================================
+//function : WriteSupplementalGeometry
+//purpose  :
+//=======================================================================
+Handle(StepRepr_ShapeAspect) WriteSupplementalGeometry(const Handle(XSControl_WorkSession)& WS,
+                                                       const Handle(StepRepr_ConstructiveGeometryRepresentation)& theCGRepr,
+                                                       const TDF_Label& theLabel,
+                                                       const TopoDS_Shape& theShape,
+                                                       Handle(StepRepr_RepresentationContext)& theRC,
+                                                       Handle(StepAP242_GeometricItemSpecificUsage)& theGISU,
+                                                       NCollection_Vector<Handle(StepGeom_GeometricRepresentationItem)>& theGeomItems,
+                                                       const StepData_Factors& theLocalFactors)
+{
+  Handle(StepRepr_ShapeAspect) aResSA;
+  // Get working data
+  const Handle(Interface_InterfaceModel)& aModel = WS->Model();
+  const Handle(XSControl_TransferWriter)& aTW = WS->TransferWriter();
+  const Handle(Transfer_FinderProcess)& aFP = aTW->FinderProcess();
+  const Handle(Interface_HGraph) aHGraph = WS->HGraph();
+  if (aHGraph.IsNull())
+  {
+    return aResSA;
+  }
+  Interface_Graph aGraph = aHGraph->Graph();
+
+  // Shape_Aspect
+  Handle(TCollection_HAsciiString) aName = new TCollection_HAsciiString();
+  Handle(TDataStd_Name) aNameAttr;
+  if (theLabel.FindAttribute(TDataStd_Name::GetID(), aNameAttr))
+  {
+    aName = new TCollection_HAsciiString(TCollection_AsciiString(aNameAttr->Get()));
+  }
+  Handle(TCollection_HAsciiString) aDescription = new TCollection_HAsciiString();
+
+  Handle(TDataStd_TreeNode) aRefNode;
+  if (!theLabel.FindAttribute(XCAFDoc::SupplementalRefGUID(), aRefNode)
+      || aRefNode->Father().IsNull() || aRefNode->Father()->Label().IsNull())
+  {
+    return aResSA;
+  }
+  TopoDS_Shape aMainShape = XCAFDoc_ShapeTool::GetShape(aRefNode->Father()->Label());
+  TopLoc_Location aLoc;
+  TColStd_SequenceOfTransient aSeqRI;
+  FindEntities(aFP, aMainShape, aLoc, aSeqRI);
+  if (aSeqRI.Length() <= 0)
+  {
+    aFP->Messenger()->SendInfo() << "Warning: Cannot find RI for " << aMainShape.TShape()->DynamicType()->Name() << std::endl;
+    return aResSA;
+  }
+
+  Handle(StepRepr_ProductDefinitionShape) aPDS;
+  Handle(StepRepr_RepresentationContext) aRC;
+  Handle(Standard_Transient) anEnt = aSeqRI.Value(1);
+  aPDS = FindPDS(aGraph, anEnt, aRC);
+  if (aPDS.IsNull())
+    return aResSA;
+
+  theRC = aRC;
+
+  Handle(StepGeom_GeometricRepresentationItem) anIdentifiedItem;
+  if (theShape.ShapeType() == TopAbs_FACE)
+  {
+    const TopoDS_Face& aFace = TopoDS::Face(theShape);
+    const Handle(Geom_Surface) aSurf = BRep_Tool::Surface(aFace);
+    GeomToStep_MakeSurface aMaker(aSurf, theLocalFactors);
+    if (aMaker.IsDone())
+    {
+      anIdentifiedItem = aMaker.Value();
+    }
+  }
+  else if (theShape.ShapeType() == TopAbs_EDGE)
+  {
+    const TopoDS_Edge& anEdge = TopoDS::Edge(theShape);
+    Standard_Real aTmpFirst, aTmpLast;
+    const Handle(Geom_Curve) aCurv = BRep_Tool::Curve(anEdge, aTmpFirst, aTmpLast);
+    GeomToStep_MakeCurve aMaker(aCurv, theLocalFactors);
+    if (aMaker.IsDone())
+    {
+      anIdentifiedItem = aMaker.Value();
+    }
+  }
+  if (anIdentifiedItem.IsNull())
+  {
+    return aResSA;
+  }
+  aResSA = new StepRepr_ShapeAspect();
+  aResSA->Init(aName, aDescription, aPDS, StepData_LTrue);
+  // Geometric_Item_Specific_Usage
+  Handle(StepAP242_GeometricItemSpecificUsage) aGISU = new StepAP242_GeometricItemSpecificUsage();
+  StepAP242_ItemIdentifiedRepresentationUsageDefinition aDefinition;
+  aDefinition.SetValue(aResSA);
+  Handle(StepRepr_HArray1OfRepresentationItem) anReprItems = new StepRepr_HArray1OfRepresentationItem(1, 1);
+
+  anIdentifiedItem->SetName(aName);
+  theGISU = aGISU;
+  anReprItems->SetValue(1, anIdentifiedItem);
+  theGeomItems.Append(anIdentifiedItem);
+
+  // Set entities to model
+  aGISU->Init(aName, aDescription, aDefinition, theCGRepr, anReprItems);
+  aModel->AddWithRefs(aResSA);
+  aModel->AddWithRefs(aGISU);
+  return aResSA;
+}
+
+//=======================================================================
 //function : writePresentation
 //purpose  : auxiliary (write annotation plane and presentation)
 //======================================================================
@@ -3106,7 +3221,7 @@ static void WriteDerivedGeometry(const Handle(XSControl_WorkSession)& theWS,
                                  const Handle(StepRepr_ConstructiveGeometryRepresentation)& theRepr,
                                  Handle(StepRepr_ShapeAspect)& theFirstSA,
                                  Handle(StepRepr_ShapeAspect)& theSecondSA,
-                                 NCollection_Vector<Handle(StepGeom_CartesianPoint)>& thePnts,
+                                 NCollection_Vector<Handle(StepGeom_GeometricRepresentationItem)>& theGeoms,
                                  const StepData_Factors& theLocalFactors)
 {
   const Handle(Interface_InterfaceModel)& aModel = theWS->Model();
@@ -3115,7 +3230,7 @@ static void WriteDerivedGeometry(const Handle(XSControl_WorkSession)& theWS,
   {
     GeomToStep_MakeCartesianPoint aPointMaker(theObject->GetPoint(), theLocalFactors.LengthFactor());
     Handle(StepGeom_CartesianPoint) aPoint = aPointMaker.Value();
-    thePnts.Append(aPoint);
+    theGeoms.Append(aPoint);
     Handle(StepRepr_DerivedShapeAspect) aDSA = new StepRepr_DerivedShapeAspect();
     aDSA->Init(new TCollection_HAsciiString(), new TCollection_HAsciiString(), theFirstSA->OfShape(), StepData_LFalse);
     Handle(StepAP242_GeometricItemSpecificUsage) aGISU = new StepAP242_GeometricItemSpecificUsage();
@@ -3136,7 +3251,7 @@ static void WriteDerivedGeometry(const Handle(XSControl_WorkSession)& theWS,
   {
     GeomToStep_MakeCartesianPoint aPointMaker(theObject->GetPoint2(), theLocalFactors.LengthFactor());
     Handle(StepGeom_CartesianPoint) aPoint = aPointMaker.Value();
-    thePnts.Append(aPoint);
+    theGeoms.Append(aPoint);
     Handle(StepRepr_DerivedShapeAspect) aDSA = new StepRepr_DerivedShapeAspect();
     aDSA->Init(new TCollection_HAsciiString(), new TCollection_HAsciiString(), theFirstSA->OfShape(), StepData_LFalse);
     Handle(StepAP242_GeometricItemSpecificUsage) aGISU = new StepAP242_GeometricItemSpecificUsage();
@@ -3439,14 +3554,30 @@ void STEPCAFControl_Writer::writeGeomTolerance(const Handle(XSControl_WorkSessio
   aLMWU->Init(aValueMember, aUnit);
   aModel->AddWithRefs(aLMWU);
 
+  // Auxiliary entities for derived geometry
+  Handle(StepRepr_ConstructiveGeometryRepresentation) aCGRepr =
+    new StepRepr_ConstructiveGeometryRepresentation();
+  Handle(StepRepr_ConstructiveGeometryRepresentationRelationship) aCGReprRel =
+    new StepRepr_ConstructiveGeometryRepresentationRelationship();
+  NCollection_Vector<Handle(StepGeom_GeometricRepresentationItem)> aConnectionGeometry;
+
   // Geometric_Tolerance target
   Handle(StepRepr_ShapeAspect) aMainSA;
   Handle(StepRepr_RepresentationContext) dummyRC;
   Handle(StepAP242_GeometricItemSpecificUsage) dummyGISU;
   if (theShapeSeqL.Length() == 1)
   {
-    TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(theShapeSeqL.Value(1));
-    aMainSA = writeShapeAspect(theWS, theGeomTolL, aShape, dummyRC, dummyGISU);
+    const TDF_Label& aShLabel = theShapeSeqL.Value(1);
+    Handle(TDataStd_UAttribute) aSupAttr;
+    TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aShLabel);
+    if (aShLabel.FindAttribute(XCAFDoc::SupplementalGeometryGUID(), aSupAttr))
+    {
+      aMainSA = WriteSupplementalGeometry(theWS, aCGRepr, aShLabel, aShape, dummyRC, dummyGISU, aConnectionGeometry, theLocalFactors);
+    }
+    else
+    {
+      aMainSA = writeShapeAspect(theWS, theGeomTolL, aShape, dummyRC, dummyGISU);
+    }
     aModel->AddWithRefs(aMainSA);
   }
   else
@@ -3455,8 +3586,18 @@ void STEPCAFControl_Writer::writeGeomTolerance(const Handle(XSControl_WorkSessio
     for (TDF_LabelSequence::Iterator aShIter(theShapeSeqL);
          aShIter.More(); aShIter.Next())
     {
-      TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aShIter.Value());
-      Handle(StepRepr_ShapeAspect) aSA = writeShapeAspect(theWS, theGeomTolL, aShape, dummyRC, dummyGISU);
+      const TDF_Label& aShLabel = aShIter.Value();
+      Handle(TDataStd_UAttribute) aSupAttr;
+      TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aShLabel);
+      Handle(StepRepr_ShapeAspect) aSA;
+      if (aShLabel.FindAttribute(XCAFDoc::SupplementalGeometryGUID(), aSupAttr))
+      {
+        aSA = WriteSupplementalGeometry(theWS, aCGRepr, aShLabel, aShape, dummyRC, dummyGISU, aConnectionGeometry, theLocalFactors);
+      }
+      else
+      {
+        aSA = writeShapeAspect(theWS, theGeomTolL, aShape, dummyRC, dummyGISU);
+      }
       if (aSA.IsNull())
         continue;
       if (aCSA.IsNull())
@@ -3470,6 +3611,17 @@ void STEPCAFControl_Writer::writeGeomTolerance(const Handle(XSControl_WorkSessio
       aModel->AddWithRefs(aSAR);
     }
     aMainSA = aCSA;
+  }
+
+  // Write Derived geometry
+  if (aConnectionGeometry.Length() > 0)
+  {
+    Handle(StepRepr_HArray1OfRepresentationItem) anItems = new StepRepr_HArray1OfRepresentationItem(1, aConnectionGeometry.Length());
+    for (Standard_Integer i = 0; i < aConnectionGeometry.Length(); i++)
+      anItems->SetValue(i + 1, aConnectionGeometry(i));
+    aCGRepr->Init(new TCollection_HAsciiString(), anItems, dummyRC);
+    aCGReprRel->Init(new TCollection_HAsciiString(), new TCollection_HAsciiString(), dummyGISU->UsedRepresentation(), aCGRepr);
+    aModel->AddWithRefs(aCGReprRel);
   }
   StepDimTol_GeometricToleranceTarget aGTTarget;
   aGTTarget.SetValue(aMainSA);
@@ -4078,7 +4230,7 @@ Standard_Boolean STEPCAFControl_Writer::writeDGTsAP242(const Handle(XSControl_Wo
     new StepRepr_ConstructiveGeometryRepresentation();
   Handle(StepRepr_ConstructiveGeometryRepresentationRelationship) aCGReprRel =
     new StepRepr_ConstructiveGeometryRepresentationRelationship();
-  NCollection_Vector<Handle(StepGeom_CartesianPoint)> aConnectionPnts;
+  NCollection_Vector<Handle(StepGeom_GeometricRepresentationItem)> aConnectionGeometry;
   Handle(StepRepr_RepresentationContext) dummyRC;
   Handle(StepAP242_GeometricItemSpecificUsage) dummyGISU;
   for (TDF_LabelSequence::Iterator aDGTIter(aDGTLabels);
@@ -4108,8 +4260,17 @@ Standard_Boolean STEPCAFControl_Writer::writeDGTsAP242(const Handle(XSControl_Wo
     Handle(StepRepr_ShapeAspect) aFirstSA, aSecondSA;
     if (aFirstShapeL.Length() == 1)
     {
-      TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aFirstShapeL.Value(1));
-      aFirstSA = writeShapeAspect(theWS, aDimensionL, aShape, dummyRC, dummyGISU);
+      const TDF_Label& aShLabel = aFirstShapeL.Value(1);
+      TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aShLabel);
+      Handle(TDataStd_UAttribute) aSupAttr;
+      if (aShLabel.FindAttribute(XCAFDoc::SupplementalGeometryGUID(), aSupAttr))
+      {
+        aFirstSA = WriteSupplementalGeometry(theWS,aCGRepr, aShLabel, aShape, dummyRC, dummyGISU,aConnectionGeometry, theLocalFactors);
+      }
+      else
+      {
+        aFirstSA = writeShapeAspect(theWS, aDimensionL, aShape, dummyRC, dummyGISU);
+      }
       if (aRC.IsNull() && !dummyRC.IsNull())
         aRC = dummyRC;
     }
@@ -4118,8 +4279,18 @@ Standard_Boolean STEPCAFControl_Writer::writeDGTsAP242(const Handle(XSControl_Wo
       Handle(StepRepr_CompositeShapeAspect) aCSA;
       for (Standard_Integer shIt = 1; shIt <= aFirstShapeL.Length(); shIt++)
       {
-        TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aFirstShapeL.Value(shIt));
-        Handle(StepRepr_ShapeAspect) aSA = writeShapeAspect(theWS, aDimensionL, aShape, dummyRC, dummyGISU);
+        const TDF_Label& aShLabel = aFirstShapeL.Value(shIt);
+        TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aShLabel);
+        Handle(TDataStd_UAttribute) aSupAttr;
+        Handle(StepRepr_ShapeAspect) aSA;
+        if (aShLabel.FindAttribute(XCAFDoc::SupplementalGeometryGUID(), aSupAttr))
+        {
+          aSA = WriteSupplementalGeometry(theWS, aCGRepr, aShLabel, aShape, dummyRC, dummyGISU, aConnectionGeometry, theLocalFactors);
+        }
+        else
+        {
+          aSA = writeShapeAspect(theWS, aDimensionL, aShape, dummyRC, dummyGISU);
+        }
         if (aSA.IsNull())
           continue;
         if (aCSA.IsNull())
@@ -4138,8 +4309,17 @@ Standard_Boolean STEPCAFControl_Writer::writeDGTsAP242(const Handle(XSControl_Wo
     }
     if (aSecondShapeL.Length() == 1)
     {
-      TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aSecondShapeL.Value(1));
-      aSecondSA = writeShapeAspect(theWS, aDimensionL, aShape, dummyRC, dummyGISU);
+      const TDF_Label& aShLabel = aSecondShapeL.Value(1);
+      TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aShLabel);
+      Handle(TDataStd_UAttribute) aSupAttr;
+      if (aShLabel.FindAttribute(XCAFDoc::SupplementalGeometryGUID(), aSupAttr))
+      {
+        aSecondSA = WriteSupplementalGeometry(theWS, aCGRepr, aShLabel, aShape, dummyRC, dummyGISU, aConnectionGeometry, theLocalFactors);
+      }
+      else
+      {
+        aSecondSA = writeShapeAspect(theWS, aDimensionL, aShape, dummyRC, dummyGISU);
+      }
       if (aRC.IsNull() && !dummyRC.IsNull())
         aRC = dummyRC;
     }
@@ -4148,8 +4328,18 @@ Standard_Boolean STEPCAFControl_Writer::writeDGTsAP242(const Handle(XSControl_Wo
       Handle(StepRepr_CompositeShapeAspect) aCSA;
       for (Standard_Integer shIt = 1; shIt <= aSecondShapeL.Length(); shIt++)
       {
-        TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aSecondShapeL.Value(shIt));
-        Handle(StepRepr_ShapeAspect) aSA = writeShapeAspect(theWS, aDimensionL, aShape, dummyRC, dummyGISU);
+        const TDF_Label& aShLabel = aSecondShapeL.Value(shIt);
+        TopoDS_Shape aShape = XCAFDoc_ShapeTool::GetShape(aShLabel);
+        Handle(TDataStd_UAttribute) aSupAttr;
+        Handle(StepRepr_ShapeAspect) aSA;
+        if (aShLabel.FindAttribute(XCAFDoc::SupplementalGeometryGUID(), aSupAttr))
+        {
+          aSA = WriteSupplementalGeometry(theWS, aCGRepr, aShLabel, aShape, dummyRC, dummyGISU, aConnectionGeometry, theLocalFactors);
+        }
+        else
+        {
+          aSA = writeShapeAspect(theWS, aDimensionL, aShape, dummyRC, dummyGISU);
+        }
         if (aCSA.IsNull() && !aSA.IsNull())
         {
           aCSA = new StepRepr_CompositeShapeAspect();
@@ -4177,7 +4367,7 @@ Standard_Boolean STEPCAFControl_Writer::writeDGTsAP242(const Handle(XSControl_Wo
     // Write dimensions
     StepShape_DimensionalCharacteristic aDimension;
     if (anObject->HasPoint() || anObject->HasPoint2())
-      WriteDerivedGeometry(theWS, anObject, aCGRepr, aFirstSA, aSecondSA, aConnectionPnts, theLocalFactors);
+      WriteDerivedGeometry(theWS, anObject, aCGRepr, aFirstSA, aSecondSA, aConnectionGeometry, theLocalFactors);
     XCAFDimTolObjects_DimensionType aDimType = anObject->GetType();
     if (STEPCAFControl_GDTProperty::IsDimensionalLocation(aDimType))
     {
@@ -4257,11 +4447,11 @@ Standard_Boolean STEPCAFControl_Writer::writeDGTsAP242(const Handle(XSControl_Wo
                       anObject->GetPlane(), anObject->GetPointTextAttach(), aDimension.Value(), theLocalFactors);
   }
   // Write Derived geometry
-  if (aConnectionPnts.Length() > 0)
+  if (aConnectionGeometry.Length() > 0)
   {
-    Handle(StepRepr_HArray1OfRepresentationItem) anItems = new StepRepr_HArray1OfRepresentationItem(1, aConnectionPnts.Length());
-    for (Standard_Integer i = 0; i < aConnectionPnts.Length(); i++)
-      anItems->SetValue(i + 1, aConnectionPnts(i));
+    Handle(StepRepr_HArray1OfRepresentationItem) anItems = new StepRepr_HArray1OfRepresentationItem(1, aConnectionGeometry.Length());
+    for (Standard_Integer i = 0; i < aConnectionGeometry.Length(); i++)
+      anItems->SetValue(i + 1, aConnectionGeometry(i));
     aCGRepr->Init(new TCollection_HAsciiString(), anItems, dummyRC);
     aCGReprRel->Init(new TCollection_HAsciiString(), new TCollection_HAsciiString(), dummyGISU->UsedRepresentation(), aCGRepr);
     aModel->AddWithRefs(aCGReprRel);
