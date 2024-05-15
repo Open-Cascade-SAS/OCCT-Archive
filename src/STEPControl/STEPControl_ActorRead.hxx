@@ -26,6 +26,7 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <Message_ProgressRange.hxx>
+#include <NCollection_IndexedMap.hxx>
 #include <Interface_InterfaceModel.hxx>
 
 class StepRepr_Representation;
@@ -115,7 +116,14 @@ public:
                                                  const StepData_Factors& theLocalFactors);
 
 
+  //! Heals the collected during transferring shapes
+  Standard_EXPORT void PostHealing(const Handle(Transfer_TransientProcess)& TP);
 
+  //! Cleans collected for post healing shapes.
+  inline void CleanShapesToHeal()
+  {
+    myShapesToHeal.Clear();
+  }
 
   DEFINE_STANDARD_RTTIEXT(STEPControl_ActorRead,Transfer_ActorOfTransientProcess)
 
@@ -219,6 +227,7 @@ private:
   Standard_Real myMaxTol;
   Handle(StepRepr_Representation) mySRContext;
   Handle(Interface_InterfaceModel) myModel;
+  NCollection_IndexedMap<TopoDS_Shape> myShapesToHeal;
 
 };
 

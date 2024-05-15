@@ -17,6 +17,7 @@
 //gka,abv 14.04.99 S4136: maintain unit context, precision and maxtolerance values
 
 #include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepCheck_Status.hxx>
 #include <Geom_Axis2Placement.hxx>
@@ -30,8 +31,10 @@
 #include <Interface_Static.hxx>
 #include <Message_Messenger.hxx>
 #include <Message_ProgressScope.hxx>
+#include <OSD_Parallel.hxx>
 #include <OSD_Timer.hxx>
 #include <Precision.hxx>
+#include <ShapeProcess_ShapeContext.hxx>
 #include <Standard_ErrorHandler.hxx>
 #include <Standard_Failure.hxx>
 #include <Standard_Transient.hxx>
@@ -334,7 +337,10 @@ Handle(Transfer_Binder)  STEPControl_ActorRead::Transfer
   }
   // [END] Get version of preprocessor (to detect I-Deas case) (ssv; 23.11.2010)
   Standard_Boolean aTrsfUse = (aStepModel->InternalParameters.ReadRootTransformation == 1);
-  return TransferShape(start, TP, aLocalFactors, Standard_True, aTrsfUse, theProgress);
+  auto aResult = TransferShape(start, TP, aLocalFactors, Standard_True, aTrsfUse, theProgress);
+  if (Interface_Static::IVal("read.step.parallel.healing") == 0)
+    PostHealing(TP);
+  return aResult;
 }
 
 
@@ -1487,13 +1493,18 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity
     // Apply ShapeFix (on manifold shapes only. Non-manifold topology is processed separately: ssv; 13.11.2010)
     if (isManifold && aHasGeom) 
     {
-      Handle(Standard_Transient) info;
-      mappedShape = 
-        XSAlgo::AlgoContainer()->ProcessShape( mappedShape, myPrecision, myMaxTol,
-                                               "read.step.resource.name", 
-                                               "read.step.sequence", info,
-                                               aPS.Next());
-      XSAlgo::AlgoContainer()->MergeTransferInfo(TP, info, nbTPitems);
+      if (Interface_Static::IVal("read.step.parallel.healing") != 0)
+      {
+        Handle(Standard_Transient) info;
+        mappedShape =
+          XSAlgo::AlgoContainer()->ProcessShape(mappedShape, myPrecision, myMaxTol,
+            "read.step.resource.name",
+            "read.step.sequence", info,
+            aPS.Next());
+        XSAlgo::AlgoContainer()->MergeTransferInfo(TP, info, nbTPitems);
+      }
+      else
+        myShapesToHeal.Add(mappedShape);
     }
   }
   found = !mappedShape.IsNull();
@@ -2136,4 +2147,68 @@ TopoDS_Shape STEPControl_ActorRead::TransferRelatedSRR(const Handle(Transfer_Tra
     }
   }
   return aResult;
+}
+
+//=======================================================================
+// Method  : PostHealing
+// Purpose : postprocess shape healing
+//=======================================================================
+Standard_EXPORT void STEPControl_ActorRead::PostHealing(const Handle(Transfer_TransientProcess)& TP)
+{
+  NCollection_Array1<Handle(ShapeProcess_ShapeContext)> aInfos(1, myShapesToHeal.Size());
+  NCollection_Array1<TopTools_DataMapOfShapeShape> aOrigToCopyMapArr(1, myShapesToHeal.Size());
+  NCollection_Array1<TopTools_DataMapOfShapeShape> aCopyToOrigMapArr(1, myShapesToHeal.Size());
+
+  auto aForLoop = [&](const int i) {
+    auto& anOrig = myShapesToHeal.FindKey(i);
+    BRepBuilderAPI_Copy aCurCopy(anOrig, true, true);
+    TopoDS_Shape aCopy = aCurCopy.Shape();
+    // Collect all the modified shapes in Copy() for further update of binders not to lost attached attributes
+    for (int aTypeIt = anOrig.ShapeType() + 1; aTypeIt <= TopAbs_VERTEX; aTypeIt++)
+    {
+      for (TopExp_Explorer anExp(anOrig, (TopAbs_ShapeEnum)aTypeIt); anExp.More(); anExp.Next())
+      {
+        const TopoDS_Shape& aSx = anExp.Current();
+        const TopoDS_Shape& aModifShape = aCurCopy.ModifiedShape(aSx);
+        aOrigToCopyMapArr.ChangeValue(i).Bind(aSx, aModifShape);
+        aCopyToOrigMapArr.ChangeValue(i).Bind(aModifShape, aSx);
+      }
+    }
+    Handle(Standard_Transient) anInfo;
+    aCopy = XSAlgo::AlgoContainer()->ProcessShape(aCopy, myPrecision, myMaxTol,
+      "read.step.resource.name",
+      "read.step.sequence", aInfos[i],
+      Message_ProgressRange());
+    *(Handle(TopoDS_TShape)&)anOrig.TShape() = *aCopy.TShape();
+  };
+  OSD_Parallel::For(1, myShapesToHeal.Size() + 1, aForLoop);
+
+  // Update Shape context for correct attributes attaching
+  Handle(ShapeProcess_ShapeContext) aFullContext = new ShapeProcess_ShapeContext(TopoDS_Shape(), "", "");
+  TopTools_DataMapOfShapeShape& aHealedMap = (TopTools_DataMapOfShapeShape&)aFullContext->Map();
+
+  // Copy maps to the common binders map
+  for (int i = 1; i <= aOrigToCopyMapArr.Size(); i++)
+  {
+    const auto& aForwMap = aOrigToCopyMapArr.Value(i);
+    const auto& aRevMap = aCopyToOrigMapArr.Value(i);
+    Handle(ShapeProcess_ShapeContext) aContext = aInfos.Value(i);
+
+    for (TopTools_DataMapOfShapeShape::Iterator aMapIt(aForwMap); aMapIt.More(); aMapIt.Next())
+    {
+      aHealedMap.Bind(aMapIt.Key(), aMapIt.Value());
+    }
+    for (TopTools_DataMapOfShapeShape::Iterator anIter(aContext->Map()); anIter.More(); anIter.Next())
+    {
+      TopoDS_Shape aShape;
+      if (aRevMap.Find(anIter.Key(), aShape))
+      {
+        aHealedMap.Bind(aShape, anIter.Value());
+      }
+    }
+  }
+
+  XSAlgo::AlgoContainer()->MergeTransferInfo(TP, aFullContext);
+
+  CleanShapesToHeal();
 }
