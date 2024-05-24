@@ -18,6 +18,6 @@ bapibop result 2
 
 checkshape result
 checkprops result -v 1.52043e+7
-checknbshapes result -vertex 234 -edge 354 -wire 122 -face 121 -shell 1 -solid 1 -compsolid 0 -compound 1 -shape 834
+checknbshapes result -vertex 235 -edge 355 -wire 122 -face 121 -shell 1 -solid 1 -compsolid 0 -compound 1 -shape 836
 
 checkview -display result -2d -path ${imagedir}/${test_image}.png

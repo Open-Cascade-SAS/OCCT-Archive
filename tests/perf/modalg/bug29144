@@ -1,0 +1,27 @@
+puts "========"
+puts "0029144: Modeling Algorithms - BOP PaveFiller hangs in some case"
+puts "========"
+puts ""
+
+puts "TODO OCC29145 ALL : Faulty shapes in variables faulty_1 to faulty_"
+
+bclearobjects;
+bcleartools;
+
+restore [locate_data_file bug29093_hung3.brep] a
+explode a So
+baddobjects a_7
+baddtools a_11
+
+dchrono cr restart
+
+bfillds
+bbuild result
+
+dchrono cr stop counter bbuild
+
+checkshape result
+checkprops result -s 1313890 -v 46778600
+checknbshapes result -vertex 9 -edge 20 -wire 12 -face 12 -shell 3 -solid 3 
+
+checkview -display result -2d -path ${imagedir}/${test_image}.png

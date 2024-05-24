@@ -1166,7 +1166,7 @@ void IntTools_BeanFaceIntersector::ComputeRangeFromStartPoint(const Standard_Boo
     if(anExtrema.IsDone()) {
       if(anExtrema.SquareDistance() < myCriteria * myCriteria) {
         Extrema_POnSurf aPOnSurf = anExtrema.Point();
-	aPOnSurf.Parameter(U, V);
+        aPOnSurf.Parameter(U, V);
         pointfound = Standard_True;
       }
     }
@@ -1182,13 +1182,13 @@ void IntTools_BeanFaceIntersector::ComputeRangeFromStartPoint(const Standard_Boo
         break;
     }
     else {
-      aDeltaRestrictor = aDelta;
+      aDeltaRestrictor *= 0.5;
     }
     
     // if point found decide to increase aDelta using derivative of distance function
     //
     
-    aDelta = (pointfound) ? (aDelta * 2.) : (aDelta * 0.5);
+    aDelta *= (pointfound) ? 2.0 : 0.5;
     aDelta = (aDelta < aDeltaRestrictor) ? aDelta : aDeltaRestrictor;
 
     aCurPar = (ToIncreaseParameter) ? (aPrevPar + aDelta) : (aPrevPar - aDelta);
@@ -1197,8 +1197,10 @@ void IntTools_BeanFaceIntersector::ComputeRangeFromStartPoint(const Standard_Boo
     // prevent infinite loop when (aPrevPar +/- aDelta) == aPrevPar == 0.
     //
     
-    if( aCurPar == aPrevPar )
+    if (Abs(aCurPar - aPrevPar) < myCurveResolution)
+    {
       break;
+    }
     
     BoundaryCondition  = (ToIncreaseParameter) ? (aCurPar > aCurrentRange.Last()) : (aCurPar < aCurrentRange.First());
     
