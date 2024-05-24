@@ -221,6 +221,11 @@ void BRepBndLib::AddClose(const TopoDS_Shape& S, Bnd_Box& B)
   for (ex.Init(S,TopAbs_VERTEX,TopAbs_EDGE); ex.More(); ex.Next()) {
     B.Add(BRep_Tool::Pnt(TopoDS::Vertex(ex.Current())));
   }
+
+  if (!B.IsVoid() && B.CornerMax().IsEqual(B.CornerMin(), Precision::Confusion()))
+  {
+    B.SetVoid();
+  }
 }
 
 //=======================================================================
