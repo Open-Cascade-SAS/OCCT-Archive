@@ -69,7 +69,7 @@ TopoDS_Shape ShapeCustom::ApplyModifier (const TopoDS_Shape &S,
       if ( context.IsBound ( shape ) )
         res = context.Find ( shape ).Oriented ( shape.Orientation() );
       else
-        res = ApplyModifier ( shape, M, context ,MD, aRange);
+        res = ApplyModifier ( shape, M, context ,MD, aRange, aReShape );
 
       if ( ! res.IsSame ( shape ) ) {
         context.Bind ( shape, res );
