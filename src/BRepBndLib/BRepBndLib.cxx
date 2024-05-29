@@ -207,7 +207,8 @@ void BRepBndLib::AddClose(const TopoDS_Shape& S, Bnd_Box& B)
 
   BRepAdaptor_Curve BC;
 
-  for (ex.Init (S,TopAbs_EDGE); ex.More(); ex.Next()) {
+  for (ex.Init (S, TopAbs_EDGE); ex.More(); ex.Next())
+  {
     const TopoDS_Edge& anEdge = TopoDS::Edge (ex.Current());
     if (BRep_Tool::IsGeometric (anEdge))
     {
@@ -218,8 +219,9 @@ void BRepBndLib::AddClose(const TopoDS_Shape& S, Bnd_Box& B)
 
   // Add the vertices not in edges
 
-  for (ex.Init (S,TopAbs_VERTEX,TopAbs_EDGE); ex.More(); ex.Next()) {
-    B.Add(BRep_Tool::Pnt(TopoDS::Vertex(ex.Current())));
+  for (ex.Init (S, TopAbs_VERTEX, TopAbs_EDGE); ex.More(); ex.Next())
+  {
+    B.Add (BRep_Tool::Pnt (TopoDS::Vertex (ex.Current())));
   }
 
   if (!B.IsVoid() && B.CornerMax().IsEqual (B.CornerMin(), Precision::Confusion() + 2*B.GetGap()))
