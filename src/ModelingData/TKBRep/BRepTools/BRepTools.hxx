@@ -285,7 +285,7 @@ public:
                     Standard_OStream&            theStream,
                     const Message_ProgressRange& theProgress = Message_ProgressRange())
   {
-    Write(theShape, theStream, true, false, TopTools_FormatVersion_CURRENT, theProgress);
+    Write(theShape, theStream, true, false, TopTools_FormatVersion_VERSION_1, theProgress);
   }
 
   //! Writes the shape to the stream in an ASCII format of specified version.
@@ -324,7 +324,7 @@ public:
                     const char* const            theFile,
                     const Message_ProgressRange& theProgress = Message_ProgressRange())
   {
-    return Write(theShape, theFile, true, false, TopTools_FormatVersion_CURRENT, theProgress);
+    return Write(theShape, theFile, true, false, TopTools_FormatVersion_VERSION_1, theProgress);
   }
 
   //! Writes the shape to the file in an ASCII format of specified version.
