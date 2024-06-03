@@ -263,7 +263,7 @@ public:
                      const Message_ProgressRange& theProgress = Message_ProgressRange())
   {
     Write (theShape, theStream, Standard_True, Standard_False,
-           TopTools_FormatVersion_CURRENT, theProgress);
+           TopTools_FormatVersion_VERSION_1, theProgress);
   }
 
   //! Writes the shape to the stream in an ASCII format of specified version.
@@ -297,7 +297,7 @@ public:
                                  const Message_ProgressRange& theProgress = Message_ProgressRange())
   {
     return Write (theShape, theFile, Standard_True, Standard_False,
-                  TopTools_FormatVersion_CURRENT, theProgress);
+                  TopTools_FormatVersion_VERSION_1, theProgress);
   }
 
   //! Writes the shape to the file in an ASCII format of specified version.
