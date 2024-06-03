@@ -290,7 +290,7 @@ public:
           theStream,
           Standard_True,
           Standard_False,
-          TopTools_FormatVersion_CURRENT,
+          TopTools_FormatVersion_VERSION_1,
           theProgress);
   }
 
@@ -334,7 +334,7 @@ public:
                  theFile,
                  Standard_True,
                  Standard_False,
-                 TopTools_FormatVersion_CURRENT,
+                 TopTools_FormatVersion_VERSION_1,
                  theProgress);
   }
 
