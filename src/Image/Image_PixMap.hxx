@@ -51,6 +51,9 @@ public:
   //! Convert image to Black/White.
   Standard_EXPORT static void ToBlackWhite (Image_PixMap& theImage);
 
+  //! Isolating a foreground object against a background area of uniform color 
+  Standard_EXPORT static void ColorKeying(const Quantity_Color& theKey, Image_PixMap& theImage);
+
   //! Reverse line order as it draws it from bottom to top.
   Standard_EXPORT static bool FlipY (Image_PixMap& theImage);
 

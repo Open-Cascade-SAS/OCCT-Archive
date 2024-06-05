@@ -856,7 +856,8 @@ public:
                              const Standard_Integer theHeight,
                              const Graphic3d_BufferType& theBufferType     = Graphic3d_BT_RGB,
                              const Standard_Boolean      theToAdjustAspect = Standard_True,
-                             const V3d_StereoDumpOptions theStereoOptions  = V3d_SDO_MONO)
+                             const V3d_StereoDumpOptions theStereoOptions  = V3d_SDO_MONO,
+                             const Standard_Boolean theRemoveBackground = Standard_False)
   {
     V3d_ImageDumpOptions aParams;
     aParams.Width  = theWidth;
@@ -864,6 +865,7 @@ public:
     aParams.BufferType = theBufferType;
     aParams.StereoOptions  = theStereoOptions;
     aParams.ToAdjustAspect = theToAdjustAspect;
+    aParams.ToRemoveBackground = theRemoveBackground;
     return ToPixMap (theImage, aParams);
   }
 

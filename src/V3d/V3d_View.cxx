@@ -2941,6 +2941,17 @@ Standard_Boolean V3d_View::ToPixMap (Image_PixMap&               theImage,
     aCamera->SetAspect (Standard_Real(aTargetSize.x()) / Standard_Real(aTargetSize.y()));
   }
 
+  // backup background
+  Aspect_Background theBackground = myView->Background();
+  Quantity_Color aChroma = Quantity_NOC_MAGENTA;
+  // backup antialiasing settings
+  Standard_Boolean aIsAntialiasingEnabled = myView->RenderingParams().IsAntialiasingEnabled;
+  if (theParams.ToRemoveBackground)
+  {
+    myView->SetBackground(Aspect_Background(aChroma));
+    myView->ChangeRenderingParams().IsAntialiasingEnabled = Standard_False;
+  }
+
   // render immediate structures into back buffer rather than front
   const Standard_Boolean aPrevImmediateMode = myView->SetImmediateModeDrawToFront (Standard_False);
 
@@ -3012,6 +3023,16 @@ Standard_Boolean V3d_View::ToPixMap (Image_PixMap&               theImage,
     }
   }
 
+  if(theParams.ToRemoveBackground)
+  {
+    // color keying
+    Image_PixMap::ColorKeying(aChroma, theImage);
+    // restore original background
+    myView->SetBackground(theBackground);
+    // restore Antialiasing settings
+    myView->ChangeRenderingParams().IsAntialiasingEnabled = aIsAntialiasingEnabled;
+  }
+  
   // restore state
   myView->SetImmediateModeDrawToFront (aPrevImmediateMode);
   aCamera->Copy (aStoreMapping);

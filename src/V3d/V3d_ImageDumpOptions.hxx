@@ -21,12 +21,13 @@
 struct V3d_ImageDumpOptions
 {
 
-  Standard_Integer      Width;          //!< width  of image dump to allocate an image, 0 by default (meaning that image should be already allocated)
-  Standard_Integer      Height;         //!< height of image dump to allocate an image, 0 by default (meaning that image should be already allocated)
-  Graphic3d_BufferType  BufferType;     //!< which buffer to dump (color / depth), Graphic3d_BT_RGB by default
-  V3d_StereoDumpOptions StereoOptions;  //!< dumping stereoscopic camera, V3d_SDO_MONO by default (middle-point monographic projection)
-  Standard_Integer      TileSize;       //!< the view dimension limited for tiled dump, 0 by default (automatic tiling depending on hardware capabilities)
-  Standard_Boolean      ToAdjustAspect; //!< flag to override active view aspect ratio by (Width / Height) defined for image dump (TRUE by default)
+  Standard_Integer      Width;              //!< width  of image dump to allocate an image, 0 by default (meaning that image should be already allocated)
+  Standard_Integer      Height;             //!< height of image dump to allocate an image, 0 by default (meaning that image should be already allocated)
+  Graphic3d_BufferType  BufferType;         //!< which buffer to dump (color / depth), Graphic3d_BT_RGB by default
+  V3d_StereoDumpOptions StereoOptions;      //!< dumping stereoscopic camera, V3d_SDO_MONO by default (middle-point monographic projection)
+  Standard_Integer      TileSize;           //!< the view dimension limited for tiled dump, 0 by default (automatic tiling depending on hardware capabilities)
+  Standard_Boolean      ToAdjustAspect;     //!< flag to override active view aspect ratio by (Width / Height) defined for image dump (TRUE by default)
+  Standard_Boolean      ToRemoveBackground; //!< flag to override background with chroma key background
 
 public:
 
