@@ -845,18 +845,20 @@ public:
   //! Dumps the full contents of the view to a pixmap.
   //! Internally this method calls Redraw() with an offscreen render buffer of requested target size (theWidth x theHeight),
   //! so that there is no need resizing a window control for making a dump of different size.
-  //! @param theImage          target image, will be re-allocated to match theWidth x theHeight
-  //! @param theWidth          target image width
-  //! @param theHeight         target image height
-  //! @param theBufferType     type of the view buffer to dump (color / depth)
-  //! @param theToAdjustAspect when true, active view aspect ratio will be overridden by (theWidth / theHeight)
-  //! @param theStereoOptions  how to dump stereographic camera
+  //! @param theImage             target image, will be re-allocated to match theWidth x theHeight
+  //! @param theWidth             target image width
+  //! @param theHeight            target image height
+  //! @param theBufferType        type of the view buffer to dump (color / depth)
+  //! @param theToAdjustAspect    when true, active view aspect ratio will be overridden by (theWidth / theHeight)
+  //! @param theStereoOptions     how to dump stereographic camera
+  //! @param theRemoveBackground  flag to remove view background
   Standard_Boolean ToPixMap (Image_PixMap& theImage,
                              const Standard_Integer theWidth,
                              const Standard_Integer theHeight,
                              const Graphic3d_BufferType& theBufferType     = Graphic3d_BT_RGB,
                              const Standard_Boolean      theToAdjustAspect = Standard_True,
-                             const V3d_StereoDumpOptions theStereoOptions  = V3d_SDO_MONO)
+                             const V3d_StereoDumpOptions theStereoOptions  = V3d_SDO_MONO,
+                             const Standard_Boolean theRemoveBackground = Standard_False)
   {
     V3d_ImageDumpOptions aParams;
     aParams.Width  = theWidth;
@@ -864,6 +866,7 @@ public:
     aParams.BufferType = theBufferType;
     aParams.StereoOptions  = theStereoOptions;
     aParams.ToAdjustAspect = theToAdjustAspect;
+    aParams.ToRemoveBackground = theRemoveBackground;
     return ToPixMap (theImage, aParams);
   }
 

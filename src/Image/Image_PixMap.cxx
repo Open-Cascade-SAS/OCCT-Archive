@@ -17,6 +17,7 @@
 
 #include <NCollection_AlignedAllocator.hxx>
 #include <Standard_ProgramError.hxx>
+#include <Message.hxx>
 
 #include <algorithm>
 
@@ -829,6 +830,42 @@ void Image_PixMap::ToBlackWhite (Image_PixMap& theImage)
   }
 }
 
+// =======================================================================
+// function : ColorKeying
+// purpose  :
+// =======================================================================
+void Image_PixMap::ColorKeying(const Quantity_Color& theKey, Image_PixMap& theImage)
+{
+  if (theImage.myImgFormat != Image_Format_RGBA && theImage.myImgFormat != Image_Format_BGRA)
+  {
+    Message::SendWarning("Warning: Image format should support alpha channel");
+  }
+
+  const Standard_Byte aRed = (Standard_Byte) (theKey.Red() * 255);
+  const Standard_Byte aGreen = (Standard_Byte) (theKey.Green() * 255);
+  const Standard_Byte aBlue = (Standard_Byte) (theKey.Blue() * 255);
+
+  if (theImage.myImgFormat == Image_Format_RGBA)
+  {
+    for (Standard_Size i = 0; i < theImage.myData.Size(); i += 4)
+    {
+      if (theImage.myData.ChangeData()[i] == aRed && theImage.myData.ChangeData()[i + 1] == aGreen && theImage.myData.ChangeData()[i + 2] == aBlue)
+      {
+        theImage.myData.ChangeData()[i + 3] = 0;
+      }
+    }
+  }
+  if (theImage.myImgFormat == Image_Format_BGRA)
+  {
+    for (Standard_Size i = 0; i < theImage.myData.Size(); i += 4)
+    {
+      if (theImage.myData.ChangeData()[i] == aBlue && theImage.myData.ChangeData()[i + 1] == aGreen && theImage.myData.ChangeData()[i + 2] == aRed)
+      {
+        theImage.myData.ChangeData()[i + 3] = 0;
+      }
+    }
+  }
+}
 // =======================================================================
 // function : FlipY
 // purpose  :
