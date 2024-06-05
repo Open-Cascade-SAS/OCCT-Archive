@@ -16,6 +16,7 @@
 
 
 #include <ElCLib.hxx>
+#include <Extrema_ExtPC.hxx>
 #include <gce_MakeCirc.hxx>
 #include <Geom_BezierCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -24,6 +25,7 @@
 #include <Geom_Ellipse.hxx>
 #include <Geom_Line.hxx>
 #include <Geom_TrimmedCurve.hxx>
+#include <GeomAdaptor_Curve.hxx>
 #include <gp_Ax2.hxx>
 #include <gp_Ax3.hxx>
 #include <gp_Circ.hxx>
@@ -622,6 +624,33 @@ if (Q2 > 0 && Q1*Q3 < 0) {
     cl = ElCLib::InPeriod(cl, cm, cm + PI2);
 
     res = gell;
+
+    // reverse test for 20 points for cases of very thin and long ellipse (#33796)
+    if ((1 - anEllipse.Eccentricity()) < tol)
+    {
+      GeomAdaptor_Curve anAdpt(c3d);
+      Extrema_ExtPC aProj;
+      aProj.Initialize(anAdpt, c1, c2);
+      Standard_Real aTol2 = tol * tol;
+      Standard_Real aDelta = (cl - cf) / 20;
+      for (int aPntId = 1; aPntId <= 20; aPntId++)
+      {
+        gp_Pnt anEllPnt = res->Value(cf + aPntId * aDelta);
+        aProj.Perform(anEllPnt);
+        if (aProj.IsDone())
+        {
+          Standard_Real anExtDist = aProj.SquareDistance(1);
+          for (int anExtInd = 2; anExtInd <= aProj.NbExt(); anExtInd++)
+          {
+            Standard_Real aDist = aProj.SquareDistance(anExtInd);
+            if (anExtDist < aDist)
+              aDist = anExtDist;
+          }
+          if (anExtDist > aTol2)
+            return NULL;  // not done
+        }
+      }
+    }
   }
 }
 /*
