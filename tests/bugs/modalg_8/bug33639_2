@@ -1,0 +1,16 @@
+puts "================================"
+puts "	0033639: Modeling Algorithms - Boolean torus cut cone incorrect"
+puts "================================"
+puts ""
+
+ptorus t 750 250 360
+pcone c 500 0 2000
+
+trotate c 0 0 0 1 0 0 90
+ttranslate c 0 1000 0
+trotate c 0 -1000 0 1 0 0 45
+
+bcut result t c
+
+checknbshapes result -vertex 4 -edge 7 -wire 3 -face 2
+checkview -display result -2d -path ${imagedir}/${test_image}.png

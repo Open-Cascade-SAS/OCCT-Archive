@@ -827,6 +827,16 @@ Standard_Boolean IntPatch_SpecialPoints::
     return Standard_False;
   }
 
+  if (theQSurf->GetType() == GeomAbs_Cone && thePSurf->GetType() == GeomAbs_Torus)
+  {
+    const gp_Pnt anApex = theQSurf->Cone().Apex();
+    Standard_Real aSqDist = anApex.SquareDistance(aPQuad);
+    if (aSqDist < aTol * aTol)
+    {
+      return Standard_False;
+    }
+  }
+
   //Pole is an intersection point
   //(lies in the quadric and the parametric surface)
 
