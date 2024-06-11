@@ -36,6 +36,41 @@
 
 #include <Message_ProgressScope.hxx>
 
+namespace
+{
+  //=======================================================================
+  //function : UpdateShapeBuild
+  //purpose  : Recursively updates ShapeBuild_ReShape to add information of all sub-shapes
+  //=======================================================================
+
+  void UpdateShapeBuild(const TopoDS_Shape & SF,
+                        const BRepTools_Modifier & MD,
+                        const Handle(ShapeBuild_ReShape) & aReShape)
+  {
+    for ( TopoDS_Iterator theIterator ( SF, Standard_False ); theIterator.More(); theIterator.Next() )
+    {
+      const TopoDS_Shape & current = theIterator.Value();
+      TopoDS_Shape result;
+      try
+      {
+        OCC_CATCH_SIGNALS
+        result = MD.ModifiedShape ( current );
+      }
+      catch ( Standard_NoSuchObject const & )
+      {
+        // the sub shape isn't in the map
+        result.Nullify();
+      }
+
+      if ( !result.IsNull() && !current.IsSame ( result ) )
+      {
+        aReShape->Replace ( current, result );
+        UpdateShapeBuild ( current, MD, aReShape );
+      }
+    }
+  }
+}
+
 //=======================================================================
 //function : ApplyModifier
 //purpose  : static
@@ -98,26 +133,7 @@ TopoDS_Shape ShapeCustom::ApplyModifier (const TopoDS_Shape &S,
   if ( !aPS.More() || !MD.IsDone() ) return S;
   if ( !aReShape.IsNull() )
   {
-    for(TopoDS_Iterator theIterator(SF,Standard_False);theIterator.More();theIterator.Next())
-    {
-      const TopoDS_Shape & current = theIterator.Value();
-      TopoDS_Shape result;
-      try
-      {
-        OCC_CATCH_SIGNALS
-        result = MD.ModifiedShape( current );
-      }
-      catch (Standard_NoSuchObject const&)
-      {
-        // the sub shape isn't in the map
-        result.Nullify();
-      }
-
-      if (!result.IsNull() && !current.IsSame(result))
-      {
-        aReShape->Replace(current, result);
-      }
-    }
+    UpdateShapeBuild ( SF, MD, aReShape );
   }
 
   return MD.ModifiedShape(SF).Oriented(S.Orientation());
