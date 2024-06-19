@@ -313,27 +313,11 @@ BRepFill_SectionPlacement(const Handle(BRepFill_LocationLaw)& Law,
   }
   
   if (Bof) throw Standard_ConstructionError("Interval non trouve !!");
-  //Search of the <Ind1> by vertex <TheV>
-  if (!TheV.IsNull())
-    for (Ind1 = 1; Ind1 <= myLaw->NbLaw(); Ind1++)
-    {
-      TopoDS_Edge anEdge = myLaw->Edge(Ind1);
-      TopoDS_Vertex V1, V2;
-      TopExp::Vertices(anEdge, V1, V2);
-      if (V1.IsSame(TheV) || V2.IsSame(TheV))
-        break;
-    }
-  ////////////////////
   
   // Positioning on the localized edge (or 2 Edges)
   Standard_Real Angle;
   Place.SetLocation(myLaw->Law(Ind1));
-  if(TheV.IsNull())
-    Place.Perform(Precision::Confusion());
-  else {
-    Place.Perform(SearchParam(myLaw, Ind1, TheV), 
-		  Precision::Confusion());    
-  }
+  Place.Perform(Precision::Confusion());
 
   myTrsf = Place.Transformation(WithContact, WithCorrection);
   myIndex = Ind1;
@@ -342,13 +326,7 @@ BRepFill_SectionPlacement(const Handle(BRepFill_LocationLaw)& Law,
 
   if (Ind2) {
     Place.SetLocation(myLaw->Law(Ind2));
-    if (TheV.IsNull())
       Place.Perform(Precision::Confusion());
-    else {
-      if (Ind1 == Ind2) TheV.Reverse();
-      Place.Perform(SearchParam(myLaw, Ind2,TheV), 
-		    Precision::Confusion()); 
-    }
     if (Place.Angle() > Angle) {
       myTrsf = Place.Transformation(WithContact, WithCorrection);
       myIndex = Ind2;
