@@ -4408,7 +4408,40 @@ ellipse e 0 0 0 50 50*sin(angle)
 offset l1 e 20 0 0 1 
 ~~~~
 
-@subsubsection occt_draw_6_3_10  revsurf
+@subsubsection occt_draw_6_3_10 offsetperform
+
+Creates a new figure by moving faces of an initial figure. Can move any number of faces. The offset direction is set by a positive or negative step value in the «offsetload» or «offsetonface» commands.
+
+**Example:** 
+~~~~{.php}
+# create a 3d box
+box b 10 10 10
+
+# get individual faces of the box
+explode b f
+# b_1 b_2 b_3 b_4 b_5 b_6
+
+# specify the tolerance and other parameters
+# offsetparameter Tol Inter(c/p) JoinType(a/i/t) [RemoveInternalEdges(r/k)]
+offsetparameter 1e-7 c i r
+
+# specify 0 here to move only specific faces and not all of them
+offsetload b 0
+
+# specify which faces to move with a step for each
+offsetonface b_2 5 b_3 5 b_6 -2
+
+# perform the offset
+offsetperform r
+~~~~
+
+If you want to move all faces for example on step=2 you should specify it in the «offsetload» command like this:
+~~~~{.php}
+offsetload b 2
+~~~~
+The «offsetonface» command is not needed in this case.
+
+@subsubsection occt_draw_6_3_11  revsurf
 
 Syntax:
 ~~~~{.php}
@@ -4428,7 +4461,7 @@ circle c 50 0 0 20
 revsurf s c 0 0 0 0 1 0 
 ~~~~
 
-@subsubsection occt_draw_6_3_11  extsurf
+@subsubsection occt_draw_6_3_12  extsurf
 
 Syntax:
 ~~~~{.php}
@@ -4450,7 +4483,7 @@ extsurf s e 0 0 1
 trimv s s 0 10 
 ~~~~
 
-@subsubsection occt_draw_6_3_12  convert
+@subsubsection occt_draw_6_3_13  convert
 
 Syntax:
 ~~~~{.php}

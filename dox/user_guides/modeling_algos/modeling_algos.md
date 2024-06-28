@@ -2237,7 +2237,52 @@ The snippets below show usage examples:
       NewShape = OffsetMaker2.Shape();
 ~~~~
 
-@subsubsection occt_modalg_7_2 Shelling 
+@subsubsection occt_modalg_7_2 “offsetperform“ function.
+This functon uses 2 algorithms presented by 2 methods of the *BRepOffset_MakeOffset* class:
+* MakeThickSolid: makes a thick solid from the initial one.
+* MakeOffsetShape: makes offset of the initial shape.
+
+Let’s consider the *MakeOffsetShape* method.
+
+*MakeOffsetShape* can use 2 algorithms:
+* BuildOffsetByArc: simply makes offset faces and then creates arcs between them.
+* BuildOffsetByInter: constructs offset using intersections.
+
+The *BuildOffsetByArc* algorithm is quite simple while *BuildOffsetByInter* is more complex.
+Let’s consider *BuildOffsetByInter* in detail.
+*BuildOffsetByInter* calls *MakeOffsetFaces* and passes to it a map of faces that should be offset.
+~~~~{.cpp}
+MakeOffsetFaces(/*BRepOffset_DataMapOfShapeOffset&*/ theMapSF,
+				/*const Message_ProgressRange&*/ theRange)
+~~~~
+To make an offset, *MakeOffsetFaces* uses the *BRepOffset_Offset* class.
+~~~~{.cpp}
+BRepOffset_Offset OF(/*const TopoDS_Face&*/  Face, 
+				     /*const Standard_Real*/ Offset,
+				     /*const Standard_Boolean*/ OffsetOutside,
+				     /*const GeomAbs_JoinType*/ JoinType);
+~~~~
+*BRepOffset_Offset class* makes an offset of one face. *MakeOffsetFaces* calls BRepOffset_Offset in a cycle to offset all faces.
+
+After the *MakeOffsetFaces* function is finished, *BuildOffsetByInter* uses the *BRepOffset_Inter3d* class to extend our faces if needed and to find intersections between them.
+~~~~{.cpp}
+BRepOffset_Inter3d Inter3 (/*const Handle (BRepAlgo_AsDes)&*/ AsDes,
+                           /*const TopAbs_State*/ Side,
+                           /*const Standard_Real*/ Tol);
+
+~~~~
+Firstly, we find intersections between parallel faces using the *BRepOffset_Inter3d::ConnexIntByInt()* function.
+To extend the necessary faces (to ensure that they intersect), *ConnexIntByInt* calls the *BRepOffset_Tool::EnLargeFace* function.
+Then we find intersections with caps using the *BRepOffset_Inter3d::ContextIntByInt* function.
+After that, the *BRepOffset_MakeOffset::IntersectEdges* function finds intersections between extended faces - intersected edges, which are then trimmed by the *TrimEdges* function.
+
+Now we have offset intersecting faces and a set of intersecting trimmed edges. They need to be combined to obtain the final result. For this purpose there is the *BRepOffset_MakeOffset* class and the *BRepOffset_MakeOffset::BuildSplitsOfExtendedFaces* function. It calls the *IntersectTrimmedEdges* function to fuse all trimmed offset edges and avoid self-intersections in the splits. There are a few key steps here:
+* Build splits of faces: performed by the BuildSplitsOfFaces function. At this step we first check if there are any invalid faces or edges. If everything is fine we build the splits.
+* Intersect faces: performed by the IntersectFaces function.
+
+Finally, we collect all the history of the operations in the maps of myAsDes - a pointer to the *BRepAlgo_AsDes* class.
+
+@subsubsection occt_modalg_7_3 Shelling 
 
 Shelling is used to offset given faces of a solid by a specific value. It rounds or intersects adjacent faces along its edges depending on the convexity of the edge. 
 The MakeThickSolidByJoin method of the *BRepOffsetAPI_MakeThickSolid* takes the solid, the list of faces to remove and an offset value as input.
@@ -2275,7 +2320,7 @@ Also it is possible to create solid between shell, offset shell. This functional
       Solid = SolidMaker.Shape();
 ~~~~
 
-@subsubsection occt_modalg_7_3  Draft Angle
+@subsubsection occt_modalg_7_4  Draft Angle
 
 *BRepOffsetAPI_DraftAngle* class allows modifying a shape by applying draft angles to its planar, cylindrical and conical faces. 
 
@@ -2327,7 +2372,7 @@ else {
 
 @figure{/user_guides/modeling_algos/images/modeling_algos_image043.png,"DraftAngle",420}
 
-@subsubsection occt_modalg_7_4 Pipe  Constructor
+@subsubsection occt_modalg_7_5 Pipe  Constructor
 
 *BRepOffsetAPI_MakePipe* class allows creating a pipe from a Spine,  which is a Wire and a Profile which is a Shape. This implementation is limited  to spines with smooth transitions, sharp transitions are precessed by  *BRepOffsetAPI_MakePipeShell*. To be more precise the continuity must be G1,  which means that the tangent must have the same direction, though not necessarily the same magnitude, at neighboring edges. 
 
@@ -2341,7 +2386,7 @@ TopoDS_Shape Pipe =  BRepOffsetAPI_MakePipe(Spine,Profile);
 
 @figure{/user_guides/modeling_algos/images/modeling_algos_image044.png,"Example of a Pipe",320}
 
-@subsubsection occt_modalg_7_5 Evolved Solid
+@subsubsection occt_modalg_7_6 Evolved Solid
 
 *BRepOffsetAPI_MakeEvolved* class allows creating an evolved solid from a Spine (planar face or wire) and a profile (wire). 
 
