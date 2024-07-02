@@ -2237,27 +2237,27 @@ The snippets below show usage examples:
       NewShape = OffsetMaker2.Shape();
 ~~~~
 
-@subsubsection occt_modalg_7_2 “offsetperform“ function.
-This functon uses 2 algorithms presented by 2 methods of the *BRepOffset_MakeOffset* class:
+@subsubsection occt_modalg_7_2 Offsetperform function.
+The offsetperform functon uses 2 algorithms presented by 2 methods of the *BRepOffset_MakeOffset* class:
 * MakeThickSolid: makes a thick solid from the initial one.
 * MakeOffsetShape: makes offset of the initial shape.
 
-Let’s consider the *MakeOffsetShape* method.
+*MakeOffsetShape* method.
 
 *MakeOffsetShape* can use 2 algorithms:
 * BuildOffsetByArc: simply makes offset faces and then creates arcs between them.
 * BuildOffsetByInter: constructs offset using intersections.
 
 The *BuildOffsetByArc* algorithm is quite simple while *BuildOffsetByInter* is more complex.
-Let’s consider *BuildOffsetByInter* in detail.
 *BuildOffsetByInter* calls *MakeOffsetFaces* and passes to it a map of faces that should be offset.
 ~~~~{.cpp}
-MakeOffsetFaces(/*BRepOffset_DataMapOfShapeOffset&*/ theMapSF,
-				/*const Message_ProgressRange&*/ theRange)
+BRepOffset_MakeOffset theOffsetShape;
+theOffsetShape.MakeOffsetFaces(/*BRepOffset_DataMapOfShapeOffset&*/ theMapSF,
+							   /*const Message_ProgressRange&*/ theRange);
 ~~~~
 To make an offset, *MakeOffsetFaces* uses the *BRepOffset_Offset* class.
 ~~~~{.cpp}
-BRepOffset_Offset OF(/*const TopoDS_Face&*/  Face, 
+BRepOffset_Offset theOffset(/*const TopoDS_Face&*/  Face, 
 				     /*const Standard_Real*/ Offset,
 				     /*const Standard_Boolean*/ OffsetOutside,
 				     /*const GeomAbs_JoinType*/ JoinType);
@@ -2266,7 +2266,7 @@ BRepOffset_Offset OF(/*const TopoDS_Face&*/  Face,
 
 After the *MakeOffsetFaces* function is finished, *BuildOffsetByInter* uses the *BRepOffset_Inter3d* class to extend our faces if needed and to find intersections between them.
 ~~~~{.cpp}
-BRepOffset_Inter3d Inter3 (/*const Handle (BRepAlgo_AsDes)&*/ AsDes,
+BRepOffset_Inter3d theInter3d (/*const Handle (BRepAlgo_AsDes)&*/ AsDes,
                            /*const TopAbs_State*/ Side,
                            /*const Standard_Real*/ Tol);
 

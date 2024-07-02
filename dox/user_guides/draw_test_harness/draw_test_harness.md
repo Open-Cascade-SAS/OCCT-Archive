@@ -4408,9 +4408,32 @@ ellipse e 0 0 0 50 50*sin(angle)
 offset l1 e 20 0 0 1 
 ~~~~
 
-@subsubsection occt_draw_6_3_10 offsetperform
+@subsubsection occt_draw_6_3_10  offsetload
 
-Creates a new figure by moving faces of an initial figure. Can move any number of faces. The offset direction is set by a positive or negative step value in the «offsetload» or «offsetonface» commands.
+Syntax:
+~~~~{.php}
+offsetload shape step
+~~~~
+
+The offsetload function defines the step by which all the shape's faces will be offset. The step value can be positive or negative that defines the direction of the offset.
+
+@subsubsection occt_draw_6_3_11  offsetonface
+
+Syntax:
+~~~~{.php}
+offsetonface face_1 step_1 face_2 step_2 ... face_n step_n
+~~~~
+
+The offsetonface function defines specific faces of the shape and the specific step for each face by which they will be offset. The step value can be positive or negative that defines the direction of the offset.
+
+@subsubsection occt_draw_6_3_12  offsetperform
+
+Syntax:
+~~~~{.php}
+offsetperform name
+~~~~
+
+The offsetperform function creates a new figure by moving faces of an initial figure. Can move any number of faces. The offset direction is set by a positive or negative step value in the «offsetload» or «offsetonface» commands.
 
 **Example:** 
 ~~~~{.php}
@@ -4435,13 +4458,13 @@ offsetonface b_2 5 b_3 5 b_6 -2
 offsetperform r
 ~~~~
 
-If you want to move all faces for example on step=2 you should specify it in the «offsetload» command like this:
+If you want to move all the faces for example on step=2 you should specify it in the «offsetload» command like this:
 ~~~~{.php}
 offsetload b 2
 ~~~~
 The «offsetonface» command is not needed in this case.
 
-@subsubsection occt_draw_6_3_11  revsurf
+@subsubsection occt_draw_6_3_13  revsurf
 
 Syntax:
 ~~~~{.php}
@@ -4461,7 +4484,7 @@ circle c 50 0 0 20
 revsurf s c 0 0 0 0 1 0 
 ~~~~
 
-@subsubsection occt_draw_6_3_12  extsurf
+@subsubsection occt_draw_6_3_14  extsurf
 
 Syntax:
 ~~~~{.php}
@@ -4483,7 +4506,7 @@ extsurf s e 0 0 1
 trimv s s 0 10 
 ~~~~
 
-@subsubsection occt_draw_6_3_13  convert
+@subsubsection occt_draw_6_3_15  convert
 
 Syntax:
 ~~~~{.php}
