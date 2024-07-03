@@ -1,0 +1,10 @@
+puts "===================================================================="
+puts "0033558: Modeling Algorithms - The solids does not preserve geometry topology after applying offset to all faces"
+puts "===================================================================="
+puts ""
+
+pload MODELING
+restore [locate_data_file bug33558.brep] bb
+offsetshape r bb -50
+checkshape r
+checkview -display r -2d -path ${imagedir}/${test_image}.png

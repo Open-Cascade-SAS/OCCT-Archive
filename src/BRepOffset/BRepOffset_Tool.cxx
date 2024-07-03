@@ -3915,9 +3915,10 @@ TopoDS_Shape BRepOffset_Tool::Deboucle3D(const TopoDS_Shape& S,
               continue;
             }
           }
-          if (!Boundary.Contains(anEdge) &&
-              !BRep_Tool::Degenerated(anEdge))
+          if (!Boundary.IsEmpty() && !Boundary.Contains(anEdge) && !BRep_Tool::Degenerated(anEdge))
+          {
             JeGarde = Standard_False;
+          }
         }
       }
       if (JeGarde) SS = S;

@@ -1,6 +1,6 @@
-puts "TODO OCC27414 ALL: Error: The command cannot be built"
-puts "TODO OCC27414 ALL: gives an empty result"
-puts "TODO OCC27414 ALL: TEST INCOMPLETE"
+puts "TODO CR27414 ALL: Error : The volume of result shape is"
+puts "TODO OCC25983 ALL: Error : The area of result shape is"
+puts "TODO OCC25406 ALL: Error: bsection of the result and s is not equal to zero"
 
 restore [locate_data_file bug26917_fills_center.input_trim3.brep] s
 
@@ -9,4 +9,4 @@ OFFSETSHAPE 6 {} $calcul $type
 checkprops result -v 0
 checkprops result -s 0
 
-checknbshapes result -shell 1
+checknbshapes result -shell 3

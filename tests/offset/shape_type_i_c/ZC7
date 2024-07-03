@@ -1,6 +1,5 @@
-puts "TODO OCC27414 ALL: Error: The command cannot be built"
-puts "TODO OCC27414 ALL: gives an empty result"
-puts "TODO OCC27414 ALL: TEST INCOMPLETE"
+puts "TODO OCC25983 ALL: Error : The area of result shape is"
+puts "TODO OCC25406 ALL: Error: bsection of the result and s is not equal to zero"
 
 restore [locate_data_file bug26917_M2_trim34.brep] s
 

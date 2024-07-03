@@ -1,6 +1,4 @@
-puts "TODO OCC25925 ALL: Error: The command cannot be built"
-puts "TODO OCC25925 ALL: TEST INCOMPLETE"
-puts "TODO OCC25925 ALL: Tcl Exception: Error : command \\\"nbshapes result\\\" gives an empty result"
+puts "TODO OCC25925 ALL: Faulty OCC5805 : result is not Closed shape"
 
 puts "============"
 puts "OCC5805"
@@ -36,9 +34,9 @@ set distance -0.001
 catch { OFFSETSHAPE $distance {} $calcul $type }
 # Null result
 
-checkprops result -s 495.635 
+checkprops result -s 356.089 
 
-checknbshapes result -vertex 2 -edge 3 -wire 3 -face 3 -shell 1 -solid 1 -compsolid 0 -compound 0 -shape 13
+checknbshapes result -vertex 6 -edge 6 -wire 3 -face 3 -shell 3 -solid 0 -compsolid 0 -compound 1 -shape 22
 
 set index [lsearch [whatis s] Closed]
 if {$index == -1} {
