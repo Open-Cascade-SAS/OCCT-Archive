@@ -884,9 +884,9 @@ void OpenGl_LayerList::UpdateOcclusion( const Handle(OpenGl_Workspace) & theWork
 
 
   // Remember global settings for glDepth mask and write mask
-  GLboolean aPrevColorMask;
+  GLboolean aPrevColorMask[4];
   GLboolean aPrevDepthMask;
-  aCtx->core11fwd->glGetBooleanv(GL_COLOR_WRITEMASK, &aPrevColorMask);
+  aCtx->core11fwd->glGetBooleanv(GL_COLOR_WRITEMASK, aPrevColorMask);
   aCtx->core11fwd->glGetBooleanv(GL_DEPTH_WRITEMASK, &aPrevDepthMask);
 
   // Turn off writing to depth and color buffers 
@@ -930,7 +930,7 @@ void OpenGl_LayerList::UpdateOcclusion( const Handle(OpenGl_Workspace) & theWork
 
   // Back to prev settings 
   aCtx->core11fwd->glDepthMask(aPrevDepthMask);
-  aCtx->core11fwd->glColorMask(aPrevColorMask, aPrevColorMask, aPrevColorMask, aPrevColorMask);
+  aCtx->core11fwd->glColorMask(aPrevColorMask[0], aPrevColorMask[1], aPrevColorMask[2], aPrevColorMask[3]);
 
   aTimer.Stop();
   aStats->ActiveDataFrame()[Graphic3d_FrameStatsTimer_CpuCulling] = aTimer.UserTimeCPU();
