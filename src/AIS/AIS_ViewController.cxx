@@ -1827,12 +1827,26 @@ void AIS_ViewController::handleViewRotation (const Handle(V3d_View)& theView,
   }
   if (myGL.ViewRotation.ToStart)
   {
+    gp_Dir aCamDirection = aCam->Direction();
+    if (aCam->OrthogonalizedUp().IsParallel (gp::DY(), Precision::Angular()))
+    {
+      aCamDirection = aCamDirection.Dot (gp::DZ()) > 0
+                    ? gp::DZ()
+                    : gp::DZ().Reversed();
+    }
+
     gp_Trsf aTrsf;
-    aTrsf.SetTransformation (gp_Ax3 (gp::Origin(), aCam->OrthogonalizedUp(), aCam->Direction()),
+    aTrsf.SetTransformation (gp_Ax3 (gp::Origin(), aCam->OrthogonalizedUp(), aCamDirection),
                              gp_Ax3 (gp::Origin(), gp::DZ(), gp::DX()));
     const gp_Quaternion aRot = aTrsf.GetRotation();
     double aRollDummy = 0.0;
     aRot.GetEulerAngles (gp_YawPitchRoll, myRotateStartYawPitchRoll[0], myRotateStartYawPitchRoll[1], aRollDummy);
+    if (aCamDirection.IsParallel (gp::DZ(), Precision::Angular()))
+    {
+      myRotateStartYawPitchRoll[0] = aCamDirection.IsEqual (gp::DZ(), Precision::Angular())
+                                   ? aRollDummy
+                                   : -aRollDummy;
+    }
   }
   if (toRotateAnyway)
   {
