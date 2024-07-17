@@ -72,18 +72,18 @@ AIS_SelectStatus AIS_Selection::Select (const Handle(SelectMgr_EntityOwner)& the
   const Standard_Boolean wasSelected = theOwner->IsSelected();
   const Standard_Boolean toSelect = theOwner->Select (theSelScheme, isDetected);
 
-  if (toSelect && !wasSelected)
+  if (!wasSelected || !myResultMap.IsBound (theOwner))
   {
+    if (!toSelect)
+    {
+      return AIS_SS_NotDone;
+    }
+    
     AIS_NListOfEntityOwner::Iterator aListIter;
     myresult.Append  (theOwner, aListIter);
     myResultMap.Bind (theOwner, aListIter);
     theOwner->SetSelected (Standard_True);
     return AIS_SS_Added;
-  }
-
-  if (!toSelect && !wasSelected)
-  {
-    return AIS_SS_NotDone;
   }
 
   AIS_NListOfEntityOwner::Iterator aListIter = myResultMap.Find (theOwner);
