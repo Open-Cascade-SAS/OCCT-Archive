@@ -579,11 +579,11 @@ static Standard_Real getCylinderHeight (const Handle(Poly_Triangulation)& theTri
 //function : isCylinderOrCone
 //purpose  :
 //=======================================================================
-static Standard_Boolean isCylinderOrCone (const TopoDS_Face& theHollowCylinder, const gp_Pnt& theLocation, gp_Dir& theDirection)
+static Standard_Boolean isCylinderOrCone (const TopoDS_Face& theHollowCylinder, gp_Pnt& theLocation, gp_Dir& theDirection)
 {
-  Standard_Integer aCirclesNb = 0;
+  Standard_Size aCirclesNb = 0;
   Standard_Boolean isCylinder = Standard_False;
-  gp_Pnt aPos;
+  gp_Pnt aPos[2];
 
   TopExp_Explorer anEdgeExp;
   for (anEdgeExp.Init (theHollowCylinder, TopAbs_EDGE); anEdgeExp.More(); anEdgeExp.Next())
@@ -596,16 +596,28 @@ static Standard_Boolean isCylinderOrCone (const TopoDS_Face& theHollowCylinder, 
     {
       aCirclesNb++;
       isCylinder = Standard_True;
+      aPos[aCirclesNb - 1] = anAdaptor.Circle().Location();
       if (aCirclesNb == 2)
       {
-        // Reverse the direction of the cylinder, relevant if the cylinder was created as a prism
-        if (aPos.IsEqual (theLocation, Precision::Confusion()))
-        {
-          theDirection.Reverse();
-        }
-        return Standard_True;
+        break;
       }
-      aPos = anAdaptor.Circle().Location().XYZ();
+    }
+  }
+
+  switch (aCirclesNb)
+  {
+    case 2:
+    {
+      if (!aPos[0].IsEqual (aPos[1], Precision::Confusion()))
+      {
+        theDirection = gp_Dir(aPos[1].XYZ() - aPos[0].XYZ());
+      }
+      Standard_FALLTHROUGH;
+    }
+    case 1:
+    {
+      theLocation = aPos[0];
+      break;
     }
   }
 
@@ -659,7 +671,8 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace (const TopoDS_
     else if (Handle(Geom_ConicalSurface) aGeomCone = Handle(Geom_ConicalSurface)::DownCast (aSurf))
     {
       gp_Dir aDummyDir;
-      if (isCylinderOrCone (theFace, gp_Pnt(), aDummyDir))
+      gp_Pnt aDummyLoc;
+      if (isCylinderOrCone (theFace, aDummyLoc, aDummyDir))
       {
         const gp_Cone aCone = BRepAdaptor_Surface (theFace).Cone();
         const Standard_Real aRad1 = aCone.RefRadius();
@@ -691,17 +704,16 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace (const TopoDS_
     else if (Handle(Geom_CylindricalSurface) aGeomCyl = Handle(Geom_CylindricalSurface)::DownCast (aSurf))
     {
       const gp_Cylinder aCyl = BRepAdaptor_Surface (theFace).Cylinder();
-      gp_Ax3 aPos = aCyl.Position();
-      gp_Dir aDirection = aPos.Direction();
+      gp_Pnt aPos = aCyl.Position().Location();
+      gp_Dir aDirection = aCyl.Position().Direction();
 
-      if (isCylinderOrCone (theFace, aPos.Location(), aDirection))
+      if (isCylinderOrCone (theFace, aPos, aDirection))
       {
         const Standard_Real aRad = aCyl.Radius();
         const Standard_Real aHeight = getCylinderHeight (aTriangulation, aLoc);
 
         gp_Trsf aTrsf;
-        aPos.SetDirection (aDirection);
-        aTrsf.SetTransformation (aPos, gp::XOY());
+        aTrsf.SetTransformation (gp_Ax3 (aPos, aDirection), gp::XOY());
 
         Handle(Select3D_SensitiveCylinder) aSensSCyl = new Select3D_SensitiveCylinder (theOwner, aRad, aRad, aHeight, aTrsf, true);
         theSensitiveList.Append (aSensSCyl);
