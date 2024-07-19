@@ -24,6 +24,11 @@ vdisplay c b
 vfront
 vfit
 
-#run occlusion query for each view 
-vnboccluded View1
-vnboccluded View2
+#run occlusion query test for each view 
+if {[vnboccluded View1] != "1"} {
+    puts "ERROR: occluded objects in view 1 expected to be 1"
+  }
+
+if {[vnboccluded View2] != "0"} {
+    puts "ERROR: occluded objects in view 2 expected to be 0"
+  }

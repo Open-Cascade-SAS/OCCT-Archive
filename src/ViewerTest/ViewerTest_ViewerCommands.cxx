@@ -13996,7 +13996,7 @@ static int VChangeMouseGesture (Draw_Interpretor&,
 //function : VOccluded
 //purpose  : Returns number of Occluded objects
 //==============================================================================
-static Standard_Integer VNbOccluded(Draw_Interpretor & /*theDi*/,
+static Standard_Integer VNbOccluded(Draw_Interpretor & theDi,
                                   Standard_Integer theArgNb,
                                   const char **theArgVec) {
   NCollection_List<TCollection_AsciiString> aViewList;
@@ -14045,12 +14045,12 @@ static Standard_Integer VNbOccluded(Draw_Interpretor & /*theDi*/,
     Handle(V3d_View) aView = ViewerTest_myViews.Find1(anIter.Value());
     aView->ChangeRenderingParams().OcculsionQueryState = Graphic3d_RenderingParams::OcculsionQuery_NoUpdate;
     aView->Redraw();
+    aView->Redraw();
     aView->View()->UpdateOcclusion();
     Graphic3d_MapOfStructure aOcculdedStructs;
     aView->View()->OccludedStructures(aOcculdedStructs);
 
-    printf("Occluded objects in view: %d = %d\n",
-           aView->View()->Identification(), aOcculdedStructs.Extent());
+    theDi << aOcculdedStructs.Extent() << "\n";
   }
 
   return 0;
