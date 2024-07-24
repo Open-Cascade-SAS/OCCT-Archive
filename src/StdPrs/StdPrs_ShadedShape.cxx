@@ -19,6 +19,7 @@
 #include <BRepTools.hxx>
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
+#include <Geom_SphericalSurface.hxx>
 #include <Graphic3d_ArrayOfSegments.hxx>
 #include <Graphic3d_ArrayOfTriangles.hxx>
 #include <Graphic3d_Group.hxx>
@@ -206,6 +207,14 @@ namespace
       aNbVertices  += aT->NbNodes();
 
       // estimate number of degenerated nodes to be duplicated
+      TopLoc_Location aLocSurf;
+      const Handle(Geom_Surface)& aSurf = BRep_Tool::Surface (aFace, aLocSurf);
+      if (Handle(Geom_SphericalSurface) aGeomSphere = Handle(Geom_SphericalSurface)::DownCast(aSurf))
+      {
+        // do not change normals in sphere
+        continue;
+      }
+
       for (TopExp_Explorer anEdgeIt (aFace, TopAbs_EDGE); anEdgeIt.More(); anEdgeIt.Next())
       {
         const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeIt.Current());
