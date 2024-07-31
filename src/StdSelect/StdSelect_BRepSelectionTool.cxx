@@ -61,6 +61,7 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
+#include <iostream>
 
 #define BVH_PRIMITIVE_LIMIT 800000
 
@@ -649,14 +650,14 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace (const TopoDS_
         }
         else
         {
-          aRad1 = aCircles.First().Radius();
-          aRad2 = aCircles.Last().Radius();
           aHeight = aCircles.First().Location().Distance (aCircles.Last().Location());
-
-          const gp_Pnt aPos = aCircles.First().Location();
-          const gp_Dir aDirection (aCircles.Last().Location().XYZ() - aPos.XYZ());
-
-          aTrsf.SetTransformation (gp_Ax3(aPos, aDirection), gp::XOY());
+          const gp_Circ& aFirstCircle = aCircles.First();
+          const gp_Circ& aLastCircle = aCircles.Last();
+          const gp_Circ& aSmallerCircle = (aFirstCircle.Radius() < aLastCircle.Radius()) ? aFirstCircle : aLastCircle;
+          const gp_Circ& aLargerCircle = (aFirstCircle.Radius() > aLastCircle.Radius()) ? aFirstCircle : aLastCircle;
+          aRad1 = aSmallerCircle.Radius();
+          aRad2 = aLargerCircle.Radius();
+          aTrsf.SetTranslationPart(aSmallerCircle.Location().XYZ());
         }
 
         Handle(Select3D_SensitiveCylinder) aSensSCyl = new Select3D_SensitiveCylinder (theOwner, aRad1, aRad2, aHeight, aTrsf, true);
