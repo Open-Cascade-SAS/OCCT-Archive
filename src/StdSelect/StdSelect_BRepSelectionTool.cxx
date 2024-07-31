@@ -569,17 +569,23 @@ void StdSelect_BRepSelectionTool::GetEdgeSensitive (const TopoDS_Shape& theShape
 static NCollection_Sequence<gp_Circ> getCylinderCircles (const TopoDS_Face& theHollowCylinder)
 {
   NCollection_Sequence<gp_Circ> aCircles;
+  Standard_Integer aLinesNb = 0;
 
   TopExp_Explorer anEdgeExp;
   for (anEdgeExp.Init (theHollowCylinder, TopAbs_EDGE); anEdgeExp.More(); anEdgeExp.Next())
   {
     const TopoDS_Edge& anEdge = TopoDS::Edge (anEdgeExp.Current());
     BRepAdaptor_Curve anAdaptor (anEdge);
+    aLinesNb++;
 
     if (anAdaptor.GetType() == GeomAbs_Circle
      && BRep_Tool::IsClosed (anEdge))
     {
       aCircles.Append (anAdaptor.Circle());
+    }
+    else if (anAdaptor.GetType() != GeomAbs_Line || aLinesNb > 4)
+    {
+      return NCollection_Sequence<gp_Circ>();
     }
   }
 
