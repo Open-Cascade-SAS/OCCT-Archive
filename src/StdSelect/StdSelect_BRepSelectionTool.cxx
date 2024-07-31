@@ -648,10 +648,12 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace (const TopoDS_
           aRad2 = aCircles.First().Radius();
           aHeight = aRad2 * Tan (aCone.SemiAngle());
         }
-        else if (aCircles.Size() == 2)
+        else
         {
-          aRad1 = Min (aCircles.First().Radius(), aCircles.Last().Radius());
-          aRad2 = Max (aCircles.First().Radius(), aCircles.Last().Radius());
+          aRad1 = aCone.RefRadius();
+          aRad2 = IsEqual (aRad1, aCircles.First().Radius()) 
+            ? aCircles.Last().Radius()
+            : aCircles.First().Radius();
           aHeight = aCircles.First().Location().Distance (aCircles.Last().Location());
         }
 
