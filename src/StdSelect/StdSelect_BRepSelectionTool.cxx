@@ -637,8 +637,6 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace (const TopoDS_
         const gp_Cone aCone = BRepAdaptor_Surface (theFace).Cone();
 
         gp_Trsf aTrsf;
-        aTrsf.SetTransformation (aCone.Position(), gp::XOY());
-
         Standard_Real aRad1;
         Standard_Real aRad2;
         Standard_Real aHeight;
@@ -647,14 +645,18 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace (const TopoDS_
           aRad1 = 0.0;
           aRad2 = aCircles.First().Radius();
           aHeight = aRad2 * Tan (aCone.SemiAngle());
+          aTrsf.SetTransformation (aCone.Position(), gp::XOY());
         }
         else
         {
-          aRad1 = aCone.RefRadius();
-          aRad2 = IsEqual (aRad1, aCircles.First().Radius()) 
-            ? aCircles.Last().Radius()
-            : aCircles.First().Radius();
+          aRad1 = aCircles.First().Radius();
+          aRad2 = aCircles.Last().Radius();
           aHeight = aCircles.First().Location().Distance (aCircles.Last().Location());
+
+          const gp_Pnt aPos = aCircles.First().Location();
+          const gp_Dir aDirection (aCircles.Last().Location().XYZ() - aPos.XYZ());
+
+          aTrsf.SetTransformation (gp_Ax3(aPos, aDirection), gp::XOY());
         }
 
         Handle(Select3D_SensitiveCylinder) aSensSCyl = new Select3D_SensitiveCylinder (theOwner, aRad1, aRad2, aHeight, aTrsf, true);

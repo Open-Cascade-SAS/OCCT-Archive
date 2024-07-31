@@ -18,4 +18,4 @@ if {[vnbselected] != "1"} {
 }
 
 vselect 0 0
-vdump $::imagedir/${::casename}.png
+vdump $::imagedir/${::casename}_cylinder.png
