@@ -61,7 +61,6 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
-#include <iostream>
 
 #define BVH_PRIMITIVE_LIMIT 800000
 
@@ -639,7 +638,7 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace (const TopoDS_
     else if (Handle(Geom_ConicalSurface) aGeomCone = Handle(Geom_ConicalSurface)::DownCast (aSurf))
     {
       NCollection_Sequence<gp_Circ> aCircles = getCylinderCircles (theFace);
-      if (aCircles.Size() > 0)
+      if (aCircles.Size() > 0 && aCircles.Size() < 3)
       {
         const gp_Cone aCone = BRepAdaptor_Surface (theFace).Cone();
 
@@ -663,7 +662,7 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace (const TopoDS_
           const gp_Circ& aLargerCircle = (aFirstCircle.Radius() > aLastCircle.Radius()) ? aFirstCircle : aLastCircle;
           aRad1 = aSmallerCircle.Radius();
           aRad2 = aLargerCircle.Radius();
-          aTrsf.SetTranslationPart(aSmallerCircle.Location().XYZ());
+          aTrsf.SetTranslationPart (aSmallerCircle.Location().XYZ());
         }
 
         Handle(Select3D_SensitiveCylinder) aSensSCyl = new Select3D_SensitiveCylinder (theOwner, aRad1, aRad2, aHeight, aTrsf, true);
