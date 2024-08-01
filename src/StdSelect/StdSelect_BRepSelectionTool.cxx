@@ -66,45 +66,10 @@
 
 #define BVH_PRIMITIVE_LIMIT 800000
 
-namespace
-{
-//=======================================================================
-// function : getCylinderCircles
-// purpose  : Extracts up to two circular edges from a hollow cylinder face
-//=======================================================================
-std::array<gp_Circ, 2> getCylinderCircles(const TopoDS_Face& theHollowCylinder,
-                                          Standard_Size&     theNumCircles)
-{
-  std::array<gp_Circ, 2> aCircles; // Array to store up to two circles
-  theNumCircles             = 0;   // Initialize the number of circles found
-  Standard_Integer aLinesNb = 0;   // Counter for the number of edges processed
-
-  for (TopExp_Explorer anEdgeExp(theHollowCylinder, TopAbs_EDGE); anEdgeExp.More();
-       anEdgeExp.Next())
-  {
-    const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
-    BRepAdaptor_Curve  anAdaptor(anEdge);
-    aLinesNb++;
-
-    if (anAdaptor.GetType() == GeomAbs_Circle && BRep_Tool::IsClosed(anEdge))
-    {
-      theNumCircles++;
-      aCircles[theNumCircles - 1] = anAdaptor.Circle();
-    }
-    else if (anAdaptor.GetType() != GeomAbs_Line || aLinesNb > 4)
-    {
-      theNumCircles = 0;
-      return std::array<gp_Circ, 2>();
-    }
-    if (theNumCircles == 2)
-    {
-      break;
-    }
-  }
-
-  return aCircles;
-}
-} // namespace
+// The following flag can be used to enable optimization of cone/cylinder selection
+// Unfortunately, this optimization is not stable and may lead to incorrect selection
+// in some cases. It is disabled by default.
+//#define OPTIMIZE_CONE_CYLINDER_SELECTION
 
 //==================================================
 // function: PreBuildBVH
@@ -642,6 +607,48 @@ void StdSelect_BRepSelectionTool::GetEdgeSensitive(const TopoDS_Shape&          
   }
 }
 
+#ifdef OPTIMIZE_CONE_CYLINDER_SELECTION
+namespace
+{
+//=======================================================================
+// function : getCylinderCircles
+// purpose  : Extracts up to two circular edges from a hollow cylinder face
+//=======================================================================
+std::array<gp_Circ, 2> getCylinderCircles(const TopoDS_Face& theHollowCylinder,
+                                          Standard_Size&     theNumCircles)
+{
+  std::array<gp_Circ, 2> aCircles; // Array to store up to two circles
+  theNumCircles             = 0;   // Initialize the number of circles found
+  Standard_Integer aLinesNb = 0;   // Counter for the number of edges processed
+
+  for (TopExp_Explorer anEdgeExp(theHollowCylinder, TopAbs_EDGE); anEdgeExp.More();
+       anEdgeExp.Next())
+  {
+    const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
+    BRepAdaptor_Curve  anAdaptor(anEdge);
+    aLinesNb++;
+
+    if (anAdaptor.GetType() == GeomAbs_Circle && BRep_Tool::IsClosed(anEdge))
+    {
+      theNumCircles++;
+      aCircles[theNumCircles - 1] = anAdaptor.Circle();
+    }
+    else if (anAdaptor.GetType() != GeomAbs_Line || aLinesNb > 4)
+    {
+      theNumCircles = 0;
+      return std::array<gp_Circ, 2>();
+    }
+    if (theNumCircles == 2)
+    {
+      break;
+    }
+  }
+
+  return aCircles;
+}
+} // namespace
+#endif /*OPTIMIZE_CONE_CYLINDER_SELECTION*/
+
 //=================================================================================================
 
 Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace(
@@ -688,6 +695,7 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace(
         return Standard_True;
       }
     }
+#ifdef OPTIMIZE_CONE_CYLINDER_SELECTION
     else if (Handle(Geom_ConicalSurface) aGeomCone = Handle(Geom_ConicalSurface)::DownCast(aSurf))
     {
       Standard_Size                aNumCircles;
@@ -748,6 +756,7 @@ Standard_Boolean StdSelect_BRepSelectionTool::GetSensitiveForFace(
         return Standard_True;
       }
     }
+#endif /*OPTIMIZE_CONE_CYLINDER_SELECTION*/
     else if (Handle(Geom_Plane) aGeomPlane = Handle(Geom_Plane)::DownCast(aSurf))
     {
       TopTools_IndexedMapOfShape aSubfacesMap;
