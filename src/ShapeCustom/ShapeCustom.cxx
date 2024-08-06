@@ -36,6 +36,41 @@
 
 #include <Message_ProgressScope.hxx>
 
+namespace
+{
+  //=======================================================================
+  //function : UpdateShapeBuild
+  //purpose  : Recursively updates ShapeBuild_ReShape to add information of all sub-shapes
+  //=======================================================================
+
+  void UpdateShapeBuild (const TopoDS_Shape&               theShape,
+                         const BRepTools_Modifier&         theModifier,
+                         const Handle(ShapeBuild_ReShape)& theReShape)
+  {
+    for (TopoDS_Iterator anIterator (theShape, Standard_False); anIterator.More(); anIterator.Next())
+    {
+      const TopoDS_Shape& aCurrent = anIterator.Value();
+      TopoDS_Shape aResult;
+      try
+      {
+        OCC_CATCH_SIGNALS
+        aResult = theModifier.ModifiedShape (aCurrent);
+      }
+      catch (Standard_NoSuchObject const &)
+      {
+        // the sub shape isn't in the map
+        aResult.Nullify();
+      }
+
+      if (!aResult.IsNull() && !aCurrent.IsSame (aResult))
+      {
+        theReShape->Replace (aCurrent, aResult);
+        UpdateShapeBuild (aCurrent, theModifier, theReShape);
+      }
+    }
+  }
+}
+
 //=======================================================================
 //function : ApplyModifier
 //purpose  : static
@@ -69,7 +104,7 @@ TopoDS_Shape ShapeCustom::ApplyModifier (const TopoDS_Shape &S,
       if ( context.IsBound ( shape ) )
         res = context.Find ( shape ).Oriented ( shape.Orientation() );
       else
-        res = ApplyModifier ( shape, M, context ,MD, aRange);
+        res = ApplyModifier ( shape, M, context ,MD, aRange, aReShape );
 
       if ( ! res.IsSame ( shape ) ) {
         context.Bind ( shape, res );
@@ -98,26 +133,7 @@ TopoDS_Shape ShapeCustom::ApplyModifier (const TopoDS_Shape &S,
   if ( !aPS.More() || !MD.IsDone() ) return S;
   if ( !aReShape.IsNull() )
   {
-    for(TopoDS_Iterator theIterator(SF,Standard_False);theIterator.More();theIterator.Next())
-    {
-      const TopoDS_Shape & current = theIterator.Value();
-      TopoDS_Shape result;
-      try
-      {
-        OCC_CATCH_SIGNALS
-        result = MD.ModifiedShape( current );
-      }
-      catch (Standard_NoSuchObject const&)
-      {
-        // the sub shape isn't in the map
-        result.Nullify();
-      }
-
-      if (!result.IsNull() && !current.IsSame(result))
-      {
-        aReShape->Replace(current, result);
-      }
-    }
+    UpdateShapeBuild (SF, MD, aReShape);
   }
 
   return MD.ModifiedShape(SF).Oriented(S.Orientation());
