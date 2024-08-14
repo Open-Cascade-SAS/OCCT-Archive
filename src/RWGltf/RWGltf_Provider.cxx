@@ -166,6 +166,7 @@ bool RWGltf_Provider::Write(const TCollection_AsciiString& thePath,
   aWriter.SetToEmbedTexturesInGlb(aNode->InternalParameters.WriteEmbedTexturesInGlb);
   aWriter.SetMergeFaces(aNode->InternalParameters.WriteMergeFaces);
   aWriter.SetSplitIndices16(aNode->InternalParameters.WriteSplitIndices16);
+  aWriter.SetCompressionParameters(aNode->InternalParameters.DracoParameters);
   if (!aWriter.Perform(theDocument, aFileInfo, theProgress))
   {
     Message::SendFail() << "Error in the RWGltf_Provider during writing the file " << thePath;

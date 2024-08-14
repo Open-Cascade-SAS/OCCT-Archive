@@ -17,6 +17,7 @@
 #include <DE_ConfigurationNode.hxx>
 #include <RWMesh_CoordinateSystem.hxx>
 #include <RWGltf_WriterTrsfFormat.hxx>
+#include <RWGltf_DracoParameters.hxx>
 #include <RWMesh_NameFormat.hxx>
 
 //! The purpose of this class is to configure the transfer process for glTF format
@@ -111,6 +112,7 @@ public:
     bool WriteEmbedTexturesInGlb = true; //!< Flag to write image textures into GLB file
     bool WriteMergeFaces = false; //!< Flag to merge faces within a single part
     bool WriteSplitIndices16 = false; //!< Flag to prefer keeping 16-bit indexes while merging face
+    RWGltf_DracoParameters DracoParameters; //!< Struct with all draco parameters, default values on the corresponding header
   } InternalParameters;
 };
 
