@@ -21,11 +21,11 @@ struct DE_ShapeFixParameters
   enum class FixMode : char
   {
     FixOrNot = -1, //!< Procedure will be executed or not (depending on the situation)
-    NotFix = 0,    //!< Procedure will be executed
-    Fix = 1        //!< Procedure will be executed anyway
+    NotFix   = 0,  //!< Procedure will be executed
+    Fix      = 1   //!< Procedure will be executed anyway
   };
 
-  double Tolerance3d = 1.e-6;
+  double Tolerance3d = 1.e-3;
   double MaxTolerance3d = 1.0;
   double MinTolerance3d = 1.e-7;
   FixMode FixFreeShellMode = FixMode::FixOrNot;
