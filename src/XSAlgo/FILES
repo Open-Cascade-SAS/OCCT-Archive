@@ -3,6 +3,8 @@ XSAlgo.hxx
 XSAlgo_AlgoContainer.cxx
 XSAlgo_AlgoContainer.hxx
 XSAlgo_AlgoContainer.lxx
+XSAlgo_AlgoProcessShape.cxx
+XSAlgo_AlgoProcessShape.hxx
 XSAlgo_Caller.hxx
 XSAlgo_ToolContainer.cxx
 XSAlgo_ToolContainer.hxx

@@ -56,6 +56,7 @@
 #include <TransferBRep_ShapeMapper.hxx>
 #include <UnitsMethods.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
+#include <XSAlgo_AlgoProcessShape.hxx>
 #include <XSAlgo_ToolContainer.hxx>
 #include <TopExp_Explorer.hxx>
 
@@ -66,6 +67,7 @@ IMPLEMENT_STANDARD_RTTIEXT(XSAlgo_AlgoContainer,Standard_Transient)
 //purpose  : 
 //=======================================================================
 XSAlgo_AlgoContainer::XSAlgo_AlgoContainer()
+  : myDEHealingParamsUsage(false)
 {
   myTC = new XSAlgo_ToolContainer;
 }
@@ -100,88 +102,21 @@ TopoDS_Shape XSAlgo_AlgoContainer::ProcessShape(const TopoDS_Shape& theShape,
     return theShape;
   }
 
-  Handle(ShapeProcess_ShapeContext) aContext = Handle(ShapeProcess_ShapeContext)::DownCast(theInfo);
-  if (aContext.IsNull())
-  {
-    Standard_CString aRscfile = Interface_Static::CVal(thePrscfile);
-    aContext = new ShapeProcess_ShapeContext(theShape, aRscfile);
-    if (!aContext->ResourceManager()->IsInitialized())
-    {
-      // If resource file wasn't found, use static values instead
-      Interface_Static::FillMap(aContext->ResourceManager()->GetMap());
-    }
-    aContext->SetDetalisation(theDetalisationLevel);
-  }
-  aContext->SetNonManifold(theNonManifold);
-  theInfo = aContext;
+  XSAlgo_AlgoProcessShape aProcessShape;
+  aProcessShape.SetShape(theShape);
+  aProcessShape.SetPrscfile(thePrscfile);
+  aProcessShape.SetPseq(thePseq);
+  aProcessShape.SetInfo(theInfo);
+  aProcessShape.SetHealingParamsFlag(myDEHealingParamsUsage);
+  aProcessShape.SetHealingParameters(myHealingParameters);
+  aProcessShape.SetDetalisationLevel(theDetalisationLevel);
+  aProcessShape.SetNonManifold(theNonManifold);
+  aProcessShape.SetProgressRange(theProgress);
+  aProcessShape.SetPrecision(thePrec);
+  aProcessShape.SetMaxTol(theMaxTol);
+  aProcessShape.SetReShape(theReShape);
 
-  Standard_CString aSeq = Interface_Static::CVal(thePseq);
-  if (!aSeq) aSeq = thePseq;
-
-  // if resource file is not loaded or does not define <seq>.exec.op, 
-  // do default fixes
-  Handle(Resource_Manager) aRsc = aContext->ResourceManager();
-  TCollection_AsciiString aStr(aSeq);
-  aStr += ".exec.op";
-  if (!aRsc->Find(aStr.ToCString()))
-  {
-#ifdef OCCT_DEBUG
-    {
-      static Standard_Integer aTime = 0;
-      if (!aTime)
-        std::cout << "Warning: XSAlgo_AlgoContainer::ProcessShape(): Sequence " << aStr.ToCString() <<
-        " is not defined in " << thePrscfile << " resource; do default processing" << std::endl;
-      aTime++;
-    }
-#endif
-    // if reading, do default ShapeFix
-    if (!strncmp(thePseq, "read.", 5))
-    {
-      try {
-        OCC_CATCH_SIGNALS
-        Handle(ShapeExtend_MsgRegistrator) aMsg = new ShapeExtend_MsgRegistrator;
-        Handle(ShapeFix_Shape) aSfs = ShapeAlgo::AlgoContainer()->ToolContainer()->FixShape();
-        aSfs->Init(theShape);
-        aSfs->SetMsgRegistrator(aMsg);
-        aSfs->SetPrecision(thePrec);
-        aSfs->SetMaxTolerance(theMaxTol);
-        aSfs->FixFaceTool()->FixWireTool()->FixSameParameterMode() = Standard_False;
-        aSfs->FixSolidTool()->CreateOpenSolidMode() = Standard_False;
-        aSfs->SetContext(theReShape);
-        aSfs->Perform(theProgress);
-
-        TopoDS_Shape aShape = aSfs->Shape();
-        if (!aShape.IsNull() && aShape != theShape)
-        {
-          aContext->RecordModification(aSfs->Context(), aMsg);
-          aContext->SetResult(aShape);
-        }
-      }
-      catch (Standard_Failure const& anException)
-      {
-#ifdef OCCT_DEBUG
-        std::cout << "Error: XSAlgo_AlgoContainer::ProcessShape(): Exception in ShapeFix::Shape" << std::endl;
-        anException.Print(std::cout); std::cout << std::endl;
-#endif
-        (void)anException;
-      }
-      return aContext->Result();
-    }
-    // for writing, define default sequence of DirectFaces
-    else if (!strncmp(thePseq, "write.", 6))
-    {
-      aRsc->SetResource(aStr.ToCString(), "DirectFaces");
-    }
-  }
-
-  // Define runtime tolerances and do Shape Processing 
-  aRsc->SetResource("Runtime.Tolerance", thePrec);
-  aRsc->SetResource("Runtime.MaxTolerance", theMaxTol);
-
-  if (!ShapeProcess::Perform(aContext, aSeq, theProgress))
-    return theShape; // return original shape
-
-  return aContext->Result();
+  return aProcessShape.ProcessShape();
 }
 
 //=======================================================================
