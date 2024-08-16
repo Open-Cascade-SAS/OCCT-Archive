@@ -29,6 +29,7 @@ SelectMgr_SensitiveEntitySet::SelectMgr_SensitiveEntitySet (const Handle(Select3
 : BVH_PrimitiveSet3d (theBuilder)
 {
   myNbEntityWithPersistence = 0;
+  myNbEntityWithFlipping = 0;
 }
 
 //=======================================================================
@@ -50,6 +51,10 @@ void SelectMgr_SensitiveEntitySet::Append (const Handle(SelectMgr_SensitiveEntit
   if (!theEntity->BaseSensitive()->TransformPersistence().IsNull())
   {
     ++myNbEntityWithPersistence;
+  }
+  if (!theEntity->BaseSensitive()->Flipper().IsNull())
+  {
+    ++myNbEntityWithFlipping;
   }
   MarkDirty();
 }
@@ -79,6 +84,10 @@ void SelectMgr_SensitiveEntitySet::Append (const Handle(SelectMgr_Selection)& th
     {
       ++myNbEntityWithPersistence;
     }
+    if (!aSensEnt->BaseSensitive()->Flipper().IsNull())
+    {
+      ++myNbEntityWithFlipping;
+    }
   }
   MarkDirty();
 }
@@ -106,6 +115,10 @@ void SelectMgr_SensitiveEntitySet::Remove (const Handle(SelectMgr_Selection)& th
     if (!aSensEnt->BaseSensitive()->TransformPersistence().IsNull())
     {
       --myNbEntityWithPersistence;
+    }
+    if (!aSensEnt->BaseSensitive()->Flipper().IsNull())
+    {
+      --myNbEntityWithFlipping;
     }
 
     mySensitives.RemoveLast();

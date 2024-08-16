@@ -79,6 +79,9 @@ public:
   //! Returns map of entities.
   Standard_Boolean HasEntityWithPersistence() const { return myNbEntityWithPersistence > 0; }
 
+  //! Returns true if exists entities with flipping parameters.
+  Standard_Boolean HasEntityWithFlipping() const { return myNbEntityWithFlipping > 0; }
+
 protected:
 
   //! Adds entity owner to the map of owners (or increases its counter if it is already there).
@@ -92,6 +95,7 @@ private:
   SelectMgr_IndexedMapOfHSensitive mySensitives;              //!< Map of entities and its corresponding index in BVH
   SelectMgr_MapOfOwners            myOwnersMap;               //!< Map of entity owners and its corresponding number of sensitives
   Standard_Integer                 myNbEntityWithPersistence; //!< number of sensitive entities that have own transform persistence
+  Standard_Integer                 myNbEntityWithFlipping;    //!< number of sensitive entities that have own flipping options
 };
 
 #endif // _SelectMgr_SensitiveEntitySet_HeaderFile

@@ -21,6 +21,7 @@
 #include <Graphic3d_AspectFillArea3d.hxx>
 #include <Graphic3d_MapOfAspectsToAspects.hxx>
 #include <Standard_CString.hxx>
+#include <Graphic3d_Flipper.hxx>
 #include <Graphic3d_Vertex.hxx>
 #include <Graphic3d_TextPath.hxx>
 #include <Graphic3d_HorizontalTextAlignment.hxx>
@@ -127,6 +128,9 @@ public:
 
   //! sets the stencil test to theIsEnabled state;
   Standard_EXPORT virtual void SetStencilTestOptions (const Standard_Boolean theIsEnabled) = 0;
+
+  //! Return flipper.
+  const Handle(Graphic3d_Flipper)& Flipper() const { return myFlipper; }
 
   //! sets the flipping to theIsEnabled state.
   Standard_EXPORT virtual void SetFlippingOptions (const Standard_Boolean theIsEnabled, const gp_Ax2& theRefPlane) = 0;
@@ -292,6 +296,7 @@ protected:
 protected:
 
   Handle(Graphic3d_TransformPers) myTrsfPers; //!< current transform persistence
+  Handle(Graphic3d_Flipper)       myFlipper;  //!< current transform persistence
   Graphic3d_Structure* myStructure;     //!< pointer to the parent structure
   Graphic3d_BndBox4f   myBounds;        //!< bounding box
   bool                 myIsClosed;      //!< flag indicating closed volume
