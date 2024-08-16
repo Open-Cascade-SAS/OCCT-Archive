@@ -200,7 +200,8 @@ private:
       for (PrsMgr_Presentations::Iterator aPrsIter (aPresentations); aPrsIter.More(); aPrsIter.Next())
       {
         const Handle(PrsMgr_Presentation)& aPrs3d = aPrsIter.ChangeValue();
-        if (aPrs3d->CStructure()->HasGroupTransformPersistence())
+        if (aPrs3d->CStructure()->HasGroupTransformPersistence()
+         || aPrs3d->CStructure()->HasGroupFlipping())
         {
           return SelectMgr_SelectableObjectSet::BVHSubset_3dPersistent;
         }

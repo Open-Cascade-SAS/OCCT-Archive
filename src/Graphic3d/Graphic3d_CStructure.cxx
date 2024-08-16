@@ -25,14 +25,15 @@ IMPLEMENT_STANDARD_RTTIEXT(Graphic3d_CStructure,Standard_Transient)
 //purpose  :
 //=============================================================================
 Graphic3d_CStructure::Graphic3d_CStructure (const Handle(Graphic3d_StructureManager)& theManager)
-: myGraphicDriver  (theManager->GraphicDriver()),
-  myId             (-1),
-  myZLayer         (Graphic3d_ZLayerId_Default),
+: myGraphicDriver   (theManager->GraphicDriver()),
+  myId              (-1),
+  myZLayer          (Graphic3d_ZLayerId_Default),
   myPriority        (Graphic3d_DisplayPriority_Normal),
   myPreviousPriority(Graphic3d_DisplayPriority_Normal),
-  myIsCulled       (Standard_True),
-  myBndBoxClipCheck(Standard_True),
-  myHasGroupTrsf   (Standard_False),
+  myIsCulled        (Standard_True),
+  myBndBoxClipCheck (Standard_True),
+  myHasGroupTrsf    (Standard_False),
+  myHasGroupFlipping(Standard_False),
   //
   IsInfinite       (0),
   stick            (0),

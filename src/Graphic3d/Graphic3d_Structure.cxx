@@ -81,6 +81,7 @@ void Graphic3d_Structure::clear (const Standard_Boolean theWithDestruction)
   GraphicClear (theWithDestruction);
 
   myCStructure->SetGroupTransformPersistence (false);
+  myCStructure->SetGroupFlipping (false);
   myStructureManager->Clear (this, theWithDestruction);
 
   Update (true);

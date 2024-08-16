@@ -203,6 +203,10 @@ void SelectMgr::ComputeSensitivePrs (const Handle(Graphic3d_Structure)& thePrs,
   for (NCollection_Vector<Handle(SelectMgr_SensitiveEntity)>::Iterator aSelEntIter (theSel->Entities()); aSelEntIter.More(); aSelEntIter.Next())
   {
     const Handle(Select3D_SensitiveEntity)& anEnt = aSelEntIter.Value()->BaseSensitive();
+    if (!anEnt->Flipper().IsNull())
+    {
+      thePrs->CurrentGroup()->SetFlippingOptions (Standard_True, anEnt->Flipper()->RefPlane());
+    }
     if (Handle(Select3D_SensitiveBox) aSensBox = Handle(Select3D_SensitiveBox)::DownCast (anEnt))
     {
       addBoundingBox (aSeqLines, aSensBox, theLoc);

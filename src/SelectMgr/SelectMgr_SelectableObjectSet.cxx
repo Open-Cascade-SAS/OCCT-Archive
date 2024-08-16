@@ -124,6 +124,35 @@ namespace
 
         Bnd_Box aBoundingBox;
         anObject->BoundingBox (aBoundingBox);
+
+        // processing presentations with own flipping
+        for (PrsMgr_Presentations::Iterator aPrsIter(anObject->Presentations()); aPrsIter.More(); aPrsIter.Next())
+        {
+          const Handle(PrsMgr_Presentation)& aPrs3d = aPrsIter.Value();
+          if (!aPrs3d->CStructure()->HasGroupTransformPersistence() && !aPrs3d->CStructure()->HasGroupFlipping())
+          {
+            continue;
+          }
+
+          for (Graphic3d_SequenceOfGroup::Iterator aGroupIter(aPrs3d->Groups()); aGroupIter.More(); aGroupIter.Next())
+          {
+            const Handle(Graphic3d_Group)& aGroup = aGroupIter.Value();
+            const Graphic3d_BndBox4f& aBndBox = aGroup->BoundingBox();
+            if (aGroup->Flipper().IsNull()
+             || !aBndBox.IsValid())
+            {
+              continue;
+            }
+
+            Bnd_Box aGroupBox;
+            aGroupBox.Update (aBndBox.CornerMin().x(), aBndBox.CornerMin().y(), aBndBox.CornerMin().z(),
+                              aBndBox.CornerMax().x(), aBndBox.CornerMax().y(), aBndBox.CornerMax().z());
+            aGroup->Flipper()->Apply (theWorldViewMat, aGroupBox);
+
+            aBoundingBox.Add (aGroupBox);
+          }
+        }
+
         if (!aBoundingBox.IsVoid()
          && !anObject->TransformPersistence().IsNull())
         {
