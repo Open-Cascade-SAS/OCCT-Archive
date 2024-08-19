@@ -58,6 +58,7 @@ static const char Shaders_Declarations_glsl[] =
   "  THE_ATTRIBUTE vec3 occNormal;\n"
   "  THE_ATTRIBUTE vec4 occTexCoord;\n"
   "  THE_ATTRIBUTE vec4 occVertColor;\n"
+  "  THE_ATTRIBUTE vec4 occVertColorBack;\n"
   "#elif defined(FRAGMENT_SHADER)\n"
   "  #if (__VERSION__ >= 130)\n"
   "    #ifdef OCC_ENABLE_draw_buffers\n"

@@ -55,6 +55,7 @@
   THE_ATTRIBUTE vec3 occNormal;
   THE_ATTRIBUTE vec4 occTexCoord;
   THE_ATTRIBUTE vec4 occVertColor;
+  THE_ATTRIBUTE vec4 occVertColorBack;
 #elif defined(FRAGMENT_SHADER)
   #if (__VERSION__ >= 130)
     #ifdef OCC_ENABLE_draw_buffers

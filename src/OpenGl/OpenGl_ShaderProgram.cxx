@@ -510,6 +510,7 @@ Standard_Boolean OpenGl_ShaderProgram::Initialize (const Handle(OpenGl_Context)&
   SetAttributeName (theCtx, Graphic3d_TOA_NORM,  "occNormal");
   SetAttributeName (theCtx, Graphic3d_TOA_UV,    "occTexCoord");
   SetAttributeName (theCtx, Graphic3d_TOA_COLOR, "occVertColor");
+  SetAttributeName (theCtx, Graphic3d_TOA_COLOR_BACK, "occVertColorBack");
 
   // bind custom Vertex Attributes
   if (!myProxy.IsNull())

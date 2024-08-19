@@ -1019,8 +1019,10 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramUnlit (Sta
   if ((theBits & Graphic3d_ShaderFlags_VertColor) != 0)
   {
     aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec4 VertColor", Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
+    aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec4 VertColorBack", Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
     aSrcVertExtraMain += EOL"  VertColor = occVertColor;";
-    aSrcFragGetColor  =  EOL"vec4 getColor(void) { return VertColor; }";
+    aSrcVertExtraMain += EOL"  VertColorBack = occVertColorBack;";
+    aSrcFragGetColor  =  EOL"vec4 getColor(void) { return gl_FrontFacing ? VertColor : VertColorBack; }";
   }
 
   int aNbClipPlanes = 0;
@@ -1430,7 +1432,7 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramGouraud (c
 
   if ((theBits & Graphic3d_ShaderFlags_VertColor) != 0)
   {
-    aSrcVertColor = EOL"vec4 getVertColor(void) { return occVertColor; }";
+    aSrcVertColor = EOL"vec4 getVertColor(void) { return gl_FrontFacing ? VertColor : VertColorBack; }";
   }
 
   int aNbClipPlanes = 0;
@@ -1617,8 +1619,10 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getStdProgramPhong (con
   if ((theBits & Graphic3d_ShaderFlags_VertColor) != 0)
   {
     aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec4 VertColor", Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
+    aStageInOuts.Append (Graphic3d_ShaderObject::ShaderVariable ("vec4 VertColorBack", Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
     aSrcVertExtraMain   += EOL"  VertColor = occVertColor;";
-    aSrcFragGetVertColor = EOL"vec4 getVertColor(void) { return VertColor; }";
+    aSrcVertExtraMain   += EOL"  VertColorBack = occVertColorBack;";
+    aSrcFragGetVertColor = EOL"vec4 getVertColor(void) { return gl_FrontFacing ? VertColor : VertColorBack; }";
   }
 
   int aNbClipPlanes = 0;
