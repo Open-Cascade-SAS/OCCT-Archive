@@ -806,7 +806,7 @@ protected: //! @name protected constructors
                                Standard_Integer theMaxBounds,
                                Standard_Integer theMaxEdges,
                                Graphic3d_ArrayFlags theArrayFlags)
-  : myNormData (NULL), myTexData (NULL), myColData (NULL), myPosStride (0), myNormStride (0), myTexStride (0), myColStride (0),
+  : myNormData (NULL), myTexData (NULL), myColData (NULL), myColDataBack (NULL), myPosStride (0), myNormStride (0), myTexStride (0), myColStride (0),
     myType (Graphic3d_TOPA_UNDEFINED)
   {
     init (theType, theMaxVertexs, theMaxBounds, theMaxEdges, theArrayFlags);
@@ -827,10 +827,12 @@ private: //! @name private fields
   Standard_Byte* myNormData;
   Standard_Byte* myTexData;
   Standard_Byte* myColData;
+  Standard_Byte* myColDataBack;
   Standard_Size  myPosStride;
   Standard_Size  myNormStride;
   Standard_Size  myTexStride;
   Standard_Size  myColStride;
+  Standard_Size  myColStrideBack;
   Graphic3d_TypeOfPrimitiveArray myType;
 
 };
