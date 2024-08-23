@@ -60,12 +60,14 @@ public:
                                  Standard_Boolean theHasVNormals = Standard_False,
                                  Standard_Boolean theHasVColors  = Standard_False,
                                  Standard_Boolean theHasBColors  = Standard_False,
-                                 Standard_Boolean theHasVTexels  = Standard_False)
+                                 Standard_Boolean theHasVTexels  = Standard_False,
+                                 Standard_Boolean theHasVColorsBack = Standard_False)
   : Graphic3d_ArrayOfPrimitives (Graphic3d_TOPA_TRIANGLEFANS, theMaxVertexs, theMaxFans, 0,
                                  (theHasVNormals ? Graphic3d_ArrayFlags_VertexNormal : Graphic3d_ArrayFlags_None)
                                | (theHasVColors  ? Graphic3d_ArrayFlags_VertexColor  : Graphic3d_ArrayFlags_None)
                                | (theHasVTexels  ? Graphic3d_ArrayFlags_VertexTexel  : Graphic3d_ArrayFlags_None)
-                               | (theHasBColors  ? Graphic3d_ArrayFlags_BoundColor   : Graphic3d_ArrayFlags_None)) {}
+                               | (theHasBColors  ? Graphic3d_ArrayFlags_BoundColor   : Graphic3d_ArrayFlags_None)
+                               | (theHasVColorsBack ? Graphic3d_ArrayFlags_VertexColorBack : Graphic3d_ArrayFlags_None)) {}
 
 };
 

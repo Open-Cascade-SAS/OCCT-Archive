@@ -38,10 +38,12 @@ public:
   //! @param theHasVNormals when TRUE, AddVertex(Point,Normal) should be used for specifying vertex normal
   Graphic3d_ArrayOfPoints (Standard_Integer theMaxVertexs,
                            Standard_Boolean theHasVColors  = Standard_False,
-                           Standard_Boolean theHasVNormals = Standard_False)
+                           Standard_Boolean theHasVNormals = Standard_False,
+                           Standard_Boolean theHasVColorsBack = Standard_False)
   : Graphic3d_ArrayOfPrimitives (Graphic3d_TOPA_POINTS, theMaxVertexs, 0, 0,
                                  (theHasVColors  ? Graphic3d_ArrayFlags_VertexColor  : Graphic3d_ArrayFlags_None)
-                               | (theHasVNormals ? Graphic3d_ArrayFlags_VertexNormal : Graphic3d_ArrayFlags_None)) {}
+                               | (theHasVNormals ? Graphic3d_ArrayFlags_VertexNormal : Graphic3d_ArrayFlags_None)
+                               | (theHasVColorsBack ? Graphic3d_ArrayFlags_VertexColorBack : Graphic3d_ArrayFlags_None)) {}
 
 };
 

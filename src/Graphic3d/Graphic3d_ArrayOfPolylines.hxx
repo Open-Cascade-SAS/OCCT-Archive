@@ -104,10 +104,12 @@ public:
                               Standard_Integer theMaxBounds  = 0,
                               Standard_Integer theMaxEdges   = 0,
                               Standard_Boolean theHasVColors = Standard_False,
-                              Standard_Boolean theHasBColors = Standard_False)
+                              Standard_Boolean theHasBColors = Standard_False,
+                              Standard_Boolean theHasVColorsBack = Standard_False)
   : Graphic3d_ArrayOfPrimitives (Graphic3d_TOPA_POLYLINES, theMaxVertexs, theMaxBounds, theMaxEdges,
                                  (theHasVColors  ? Graphic3d_ArrayFlags_VertexColor  : Graphic3d_ArrayFlags_None)
-                               | (theHasBColors  ? Graphic3d_ArrayFlags_BoundColor   : Graphic3d_ArrayFlags_None)) {}
+                               | (theHasBColors  ? Graphic3d_ArrayFlags_BoundColor   : Graphic3d_ArrayFlags_None)
+                               | (theHasVColorsBack ? Graphic3d_ArrayFlags_VertexColorBack : Graphic3d_ArrayFlags_None)) {}
 
 };
 
