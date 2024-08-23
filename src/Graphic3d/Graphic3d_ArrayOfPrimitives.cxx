@@ -172,7 +172,9 @@ void Graphic3d_ArrayOfPrimitives::init (Graphic3d_TypeOfPrimitiveArray theType,
     anAttribs[aNbAttribs].Id       = Graphic3d_TOA_COLOR;
     anAttribs[aNbAttribs].DataType = Graphic3d_TOD_VEC4UB;
     ++aNbAttribs;
-
+  }
+  if ((theArrayOptions & Graphic3d_ArrayFlags_VertexColorBack) != 0)
+  {
     anAttribs[aNbAttribs].Id = Graphic3d_TOA_COLOR_BACK;
     anAttribs[aNbAttribs].DataType = Graphic3d_TOD_VEC4UB;
     ++aNbAttribs;

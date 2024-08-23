@@ -806,7 +806,15 @@ protected: //! @name protected constructors
                                Standard_Integer theMaxBounds,
                                Standard_Integer theMaxEdges,
                                Graphic3d_ArrayFlags theArrayFlags)
-  : myNormData (NULL), myTexData (NULL), myColData (NULL), myColDataBack (NULL), myPosStride (0), myNormStride (0), myTexStride (0), myColStride (0),
+  : myNormData (NULL),
+    myTexData (NULL),
+    myColData (NULL),
+    myColDataBack (NULL),
+    myPosStride (0),
+    myNormStride (0),
+    myTexStride (0),
+    myColStride (0),
+    myColStrideBack (0),
     myType (Graphic3d_TOPA_UNDEFINED)
   {
     init (theType, theMaxVertexs, theMaxBounds, theMaxEdges, theArrayFlags);
