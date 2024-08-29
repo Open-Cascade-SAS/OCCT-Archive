@@ -20,9 +20,12 @@
 #include <IGESControl_Controller.hxx>
 #include <IGESData.hxx>
 #include <IGESData_IGESModel.hxx>
+#include <IGESToBRep_Actor.hxx>
 #include <Interface_Static.hxx>
 #include <Message.hxx>
+#include <MoniTool_Macros.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
+#include <XSControl_TransferReader.hxx>
 #include <XSControl_WorkSession.hxx>
 #include <UnitsMethods.hxx>
 
@@ -187,14 +190,19 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   IGESCAFControl_Reader aReader;
   aReader.SetWS(theWS);
 
-  aReader.SetReadVisible(aNode->InternalParameters.ReadOnlyVisible);
+  DE_ShapeFixParameters::HealingParamMap aMap = aReader.DEHealingParameters();
+  aNode->HealingParameters.FillParamsMap(aMap);
+  aReader.SetDEHealingParameters(aMap);
 
+  aReader.SetReadVisible(aNode->InternalParameters.ReadOnlyVisible);
   aReader.SetColorMode(aNode->InternalParameters.ReadColor);
   aReader.SetNameMode(aNode->InternalParameters.ReadName);
   aReader.SetLayerMode(aNode->InternalParameters.ReadLayer);
 
   IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
   aReadStat = aReader.ReadFile(thePath.ToCString());
+  DeclareAndCast(IGESToBRep_Actor, anActor, aReader.WS()->TransferReader()->Actor());
+  anActor->SetDEHealingParameters(aMap);
   if (aReadStat != IFSelect_RetDone)
   {
     Message::SendFail() << "Error in the IGESCAFControl_Provider during reading the file " <<
@@ -302,8 +310,15 @@ bool IGESCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   IGESControl_Reader aReader;
   aReader.SetWS(theWS);
   aReader.SetReadVisible(aNode->InternalParameters.ReadOnlyVisible);
+
+  DE_ShapeFixParameters::HealingParamMap aMap = aReader.DEHealingParameters();
+  aNode->HealingParameters.FillParamsMap(aMap);
+  aReader.SetDEHealingParameters(aMap);
+
   IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
   aReadStat = aReader.ReadFile(thePath.ToCString());
+  DeclareAndCast(IGESToBRep_Actor, anActor, aReader.WS()->TransferReader()->Actor());
+  anActor->SetDEHealingParameters(aMap);
   if (aReadStat != IFSelect_RetDone)
   {
     Message::SendFail() << "Error in the IGESCAFControl_Provider during reading the file " <<

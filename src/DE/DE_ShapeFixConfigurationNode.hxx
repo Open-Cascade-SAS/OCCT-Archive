@@ -42,6 +42,9 @@ public:
   //! @return result resource string
   Standard_EXPORT virtual TCollection_AsciiString Save() const Standard_OVERRIDE;
 
+  //! Redefined some healing parameters, depending on format
+  Standard_EXPORT virtual void ChangeHealingParams();
+
 public:
 
   DE_ShapeFixParameters HealingParameters; //!< Shape healing parameters

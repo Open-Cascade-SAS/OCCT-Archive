@@ -47,9 +47,6 @@ public:
   //! Shape processing with specified tolerances
   Standard_EXPORT TopoDS_Shape ProcessShape();
 
-  //! Fill map from DE shape healing parameters
-  void FillMap(NCollection_DataMap<TCollection_AsciiString, TCollection_AsciiString>& theMap) const;
-
   //! Get shape for processing
   const TopoDS_Shape& GetShape() { return myShape; }
 
@@ -73,19 +70,6 @@ public:
 
   //! Set information to be recorded in the translation map
   void SetInfo(const Handle(Standard_Transient)& theInfo) { myInfo = theInfo; }
-
-  //! Get flag of healing parameters
-  const bool GetHealingParamsFlag() { return myDEHealingParamsUsage; }
-
-  //! Set flag of healing parameters
-  //! Uses defined DE healing parameters (if true) or parameters from resource file/Static_Interface
-  void SetHealingParamsFlag(const bool theHealingParamsFlag) { myDEHealingParamsUsage = theHealingParamsFlag; }
-
-  //! Get healing parameters
-  const DE_ShapeFixParameters& GetHealingParameters() { return myHealingParameters; }
-
-  //! Set healing parameters
-  void SetHealingParameters(const DE_ShapeFixParameters& theHealingParams) { myHealingParameters = theHealingParams; }
 
   //! Get flag to proceed with non-manifold topology
   const bool GetNonManifold() { return myNonManifold; }
@@ -123,6 +107,12 @@ public:
   //! Set tool to record the modifications of input shape
   void SetReShape(const Handle(ShapeBuild_ReShape)& theReShape) { myReShape = theReShape; }
 
+  //! Returns healing parameters map
+  DE_ShapeFixParameters::HealingParamMap DEHealingParameters() const { return myDEParameters; }
+
+  //! Sets healing parameters map
+  void SetDEHealingParameters(DE_ShapeFixParameters::HealingParamMap theDEHealingParams) { myDEParameters = theDEHealingParams; }
+
   DEFINE_STANDARD_RTTIEXT(XSAlgo_AlgoProcessShape, Standard_Transient)
 
 private:
@@ -134,11 +124,10 @@ private:
   double           myMaxTol;
   bool             myNonManifold;
   TopAbs_ShapeEnum myDetalisationLevel;
-  bool myDEHealingParamsUsage;
-  DE_ShapeFixParameters myHealingParameters;
   Message_ProgressRange myProgressRange;
   Handle(Standard_Transient) myInfo;
   Handle(ShapeBuild_ReShape) myReShape;
+  DE_ShapeFixParameters::HealingParamMap myDEParameters;
 
 };
 

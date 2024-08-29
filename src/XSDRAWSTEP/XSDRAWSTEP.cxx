@@ -17,6 +17,7 @@
 #include <DDF.hxx>
 #include <DDocStd.hxx>
 #include <DDocStd_DrawDocument.hxx>
+#include <DE_ShapeFixParameters.hxx>
 #include <Draw.hxx>
 #include <Draw_Interpretor.hxx>
 #include <Draw_PluginMacro.hxx>
@@ -693,6 +694,11 @@ static Standard_Integer ReadStep(Draw_Interpretor& theDI,
   }
 
   STEPCAFControl_Reader aReader(XSDRAW::Session(), isFileMode);
+  DE_ShapeFixParameters aParameters;
+  DE_ShapeFixParameters::HealingParamMap aDEHealingParams = aReader.ChangeReader().DEHealingParameters();
+  aParameters.FillParamsMap(aDEHealingParams);
+  aReader.ChangeReader().SetDEHealingParameters(aDEHealingParams);
+
   if (!aModeStr.IsEmpty())
   {
     Standard_Boolean aMode = Standard_True;

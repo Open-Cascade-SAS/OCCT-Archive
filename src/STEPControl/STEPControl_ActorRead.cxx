@@ -120,6 +120,7 @@
 #include <UnitsMethods.hxx>
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
+#include <XSAlgo_AlgoProcessShape.hxx>
 #include <StepRepr_ConstructiveGeometryRepresentationRelationship.hxx>
 #include <StepRepr_ConstructiveGeometryRepresentation.hxx>
 #include <StepRepr_MechanicalDesignAndDraughtingRelationship.hxx>
@@ -935,11 +936,16 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity(
 
     Handle(Standard_Transient) info;
     // IMPORTANT: any fixing on non-manifold topology must be done after the shape is transferred from STEP
-    TopoDS_Shape fixedResult = 
-      XSAlgo::AlgoContainer()->ProcessShape( comp, myPrecision, myMaxTol,
-                                             "read.step.resource.name", 
-                                             "read.step.sequence", info,
-                                             aPS1.Next(), Standard_True);
+    XSAlgo_AlgoProcessShape aProcessShape;
+    aProcessShape.SetShape(comp);
+    aProcessShape.SetPrscfile("read.step.resource.name");
+    aProcessShape.SetPseq("read.step.sequence");
+    aProcessShape.SetInfo(info);
+    aProcessShape.SetNonManifold(Standard_True);
+    aProcessShape.SetProgressRange(theProgress);
+    aProcessShape.SetPrecision(myPrecision);
+    aProcessShape.SetMaxTol(myMaxTol);
+    TopoDS_Shape fixedResult = aProcessShape.ProcessShape();
     XSAlgo::AlgoContainer()->MergeTransferInfo(TP, info, nbTPitems);
 
     if (fixedResult.ShapeType() == TopAbs_COMPOUND)
@@ -1555,11 +1561,15 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity
     if (isManifold && aHasGeom) 
     {
       Handle(Standard_Transient) info;
-      mappedShape = 
-        XSAlgo::AlgoContainer()->ProcessShape( mappedShape, myPrecision, myMaxTol,
-                                               "read.step.resource.name", 
-                                               "read.step.sequence", info,
-                                               aPS.Next());
+      XSAlgo_AlgoProcessShape aProcessShape;
+      aProcessShape.SetShape(mappedShape);
+      aProcessShape.SetPrscfile("read.step.resource.name");
+      aProcessShape.SetPseq("read.step.sequence");
+      aProcessShape.SetInfo(info);
+      aProcessShape.SetProgressRange(aPS.Next());
+      aProcessShape.SetPrecision(myPrecision);
+      aProcessShape.SetMaxTol(myMaxTol);
+      mappedShape = aProcessShape.ProcessShape();
       XSAlgo::AlgoContainer()->MergeTransferInfo(TP, info, nbTPitems);
     }
   }
@@ -1727,10 +1737,15 @@ Handle(TransferBRep_ShapeBinder) STEPControl_ActorRead::TransferEntity
       TopoDS_Shape S = sb->Result();
 
       Handle(Standard_Transient) info;
-      TopoDS_Shape shape = XSAlgo::AlgoContainer()->ProcessShape(S, myPrecision, myMaxTol,
-        "read.step.resource.name",
-        "read.step.sequence", info,
-        theProgress);
+      XSAlgo_AlgoProcessShape aProcessShape;
+      aProcessShape.SetShape(S);
+      aProcessShape.SetPrscfile("read.step.resource.name");
+      aProcessShape.SetPseq("read.step.sequence");
+      aProcessShape.SetInfo(info);
+      aProcessShape.SetProgressRange(theProgress);
+      aProcessShape.SetPrecision(myPrecision);
+      aProcessShape.SetMaxTol(myMaxTol);
+      TopoDS_Shape shape = aProcessShape.ProcessShape();
       //      TopoDS_Shape shape = XSAlgo::AlgoContainer()->PerformFixShape( S, TP, myPrecision, myMaxTol );
       if (shape != S)
         sb->SetResult(shape);

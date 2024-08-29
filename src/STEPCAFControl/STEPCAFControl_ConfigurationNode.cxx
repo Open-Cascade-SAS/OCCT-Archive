@@ -14,11 +14,12 @@
 #include <STEPCAFControl_ConfigurationNode.hxx>
 
 #include <DE_ConfigurationContext.hxx>
+#include <DE_ShapeFixConfigurationNode.hxx>
 #include <DE_PluginHolder.hxx>
 #include <NCollection_Buffer.hxx>
 #include <STEPCAFControl_Provider.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(STEPCAFControl_ConfigurationNode, DE_ConfigurationNode)
+IMPLEMENT_STANDARD_RTTIEXT(STEPCAFControl_ConfigurationNode, DE_ShapeFixConfigurationNode)
 
 namespace
 {
@@ -37,17 +38,19 @@ namespace
 // purpose  :
 //=======================================================================
 STEPCAFControl_ConfigurationNode::STEPCAFControl_ConfigurationNode() :
-  DE_ConfigurationNode()
-{}
+  DE_ShapeFixConfigurationNode()
+{
+}
 
 //=======================================================================
 // function : STEPCAFControl_ConfigurationNode
 // purpose  :
 //=======================================================================
 STEPCAFControl_ConfigurationNode::STEPCAFControl_ConfigurationNode(const Handle(STEPCAFControl_ConfigurationNode)& theNode)
-  :DE_ConfigurationNode(theNode),
+  :DE_ShapeFixConfigurationNode(theNode),
   InternalParameters(theNode->InternalParameters)
-{}
+{
+}
 
 //=======================================================================
 // function : Load

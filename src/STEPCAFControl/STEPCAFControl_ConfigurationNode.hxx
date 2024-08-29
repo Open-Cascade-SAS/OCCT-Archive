@@ -14,7 +14,7 @@
 #ifndef _STEPCAFControl_ConfigurationNode_HeaderFile
 #define _STEPCAFControl_ConfigurationNode_HeaderFile
 
-#include <DE_ConfigurationNode.hxx>
+#include <DE_ShapeFixConfigurationNode.hxx>
 #include <STEPControl_StepModelType.hxx>
 #include <StepData_ConfParameters.hxx>
 #include <Resource_FormatType.hxx>
@@ -30,9 +30,9 @@
 //! The supported CAD extensions are ".stp", ".step", ".stpz"
 //! The import process is supported.
 //! The export process is supported.
-class STEPCAFControl_ConfigurationNode : public DE_ConfigurationNode
+class STEPCAFControl_ConfigurationNode : public DE_ShapeFixConfigurationNode
 {
-  DEFINE_STANDARD_RTTIEXT(STEPCAFControl_ConfigurationNode, DE_ConfigurationNode)
+  DEFINE_STANDARD_RTTIEXT(STEPCAFControl_ConfigurationNode, DE_ShapeFixConfigurationNode)
 public:
 
   //! Initializes all field by default

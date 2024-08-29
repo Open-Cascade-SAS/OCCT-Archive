@@ -1003,7 +1003,6 @@ Handle(Transfer_Binder) STEPControl_ActorWrite::TransferShape
     if (hasGeometry(aShape)) 
     {
       Standard_Real maxTol = aStepModel->InternalParameters.ReadMaxPrecisionVal;
-
       aShape = XSAlgo::AlgoContainer()->ProcessShape(xShape, Tol, maxTol,
         "write.step.resource.name",
         "write.step.sequence", info,

@@ -33,6 +33,7 @@
 #include <TransferBRep_ShapeBinder.hxx>
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
+#include <XSAlgo_AlgoProcessShape.hxx>
 
 IMPLEMENT_STANDARD_RTTIEXT(IGESToBRep_Actor,Transfer_ActorOfTransientProcess)
 
@@ -194,11 +195,17 @@ Handle(Transfer_Binder) IGESToBRep_Actor::Transfer
     
     // fixing shape
     Handle(Standard_Transient) info;
-    shape = XSAlgo::AlgoContainer()->ProcessShape(shape, theeps, CAS.GetMaxTol(),
-                                                  "read.iges.resource.name",
-                                                  "read.iges.sequence",
-                                                  info, mymodel->ReShape(),
-                                                  aPS.Next(), false, TopAbs_EDGE);
+    XSAlgo_AlgoProcessShape aProcessShape;
+    aProcessShape.SetShape(shape);
+    aProcessShape.SetPrscfile("read.iges.resource.name");
+    aProcessShape.SetPseq("read.iges.sequence");
+    aProcessShape.SetInfo(info);
+    aProcessShape.SetDetalisationLevel(TopAbs_EDGE);
+    aProcessShape.SetProgressRange(aPS.Next());
+    aProcessShape.SetPrecision(theeps);
+    aProcessShape.SetMaxTol(CAS.GetMaxTol());
+    aProcessShape.SetReShape(mymodel->ReShape());
+    shape = aProcessShape.ProcessShape();
     XSAlgo::AlgoContainer()->MergeTransferInfo(TP, info, nbTPitems);
   }
 

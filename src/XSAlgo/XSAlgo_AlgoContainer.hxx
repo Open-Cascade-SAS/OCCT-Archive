@@ -48,31 +48,6 @@ public:
   
   //! Sets ToolContainer
   void SetToolContainer (const Handle(XSAlgo_ToolContainer)& TC);
-
-  //! Gets healing parameters flag
-  const bool GetHealingParameteresFlag()
-  {
-    return myDEHealingParamsUsage;
-  }
-
-  //! Sets healing parameters flag
-  //! Uses defined DE healing parameters (if true) or parameters from resource file/Static_Interface
-  void SetHealingParametersFlag(const bool theHealingParamsFlag)
-  {
-    myDEHealingParamsUsage = theHealingParamsFlag;
-  }
-
-  //! Gets healing parameters
-  const DE_ShapeFixParameters& GetHealingParameteres()
-  {
-    return myHealingParameters;
-  }
-
-  //! Sets healing parameters
-  void SetHealingParameters(const DE_ShapeFixParameters& theHealingParams)
-  {
-    myHealingParameters = theHealingParams;
-  }
   
   //! Returns ToolContainer
   Handle(XSAlgo_ToolContainer) ToolContainer() const;
@@ -137,8 +112,6 @@ public:
   Standard_EXPORT virtual void MergeTransferInfo (const Handle(Transfer_FinderProcess)& FP, const Handle(Standard_Transient)& info) const;
 
 
-
-
   DEFINE_STANDARD_RTTIEXT(XSAlgo_AlgoContainer,Standard_Transient)
 
 protected:
@@ -148,10 +121,7 @@ protected:
 
 private:
 
-  bool myDEHealingParamsUsage;
   Handle(XSAlgo_ToolContainer) myTC;
-  DE_ShapeFixParameters myHealingParameters;
-
 
 };
 

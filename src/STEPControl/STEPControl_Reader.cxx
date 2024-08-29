@@ -130,7 +130,8 @@ IFSelect_ReturnStatus STEPControl_Reader::ReadFile(const Standard_CString filena
   WS()->InitTransferReader(4);
   return status;
 }
-
+#include <STEPControl_ActorRead.hxx>
+#include <MoniTool_Macros.hxx>
 //=======================================================================
 //function : ReadFile
 //purpose  : 
@@ -164,6 +165,8 @@ IFSelect_ReturnStatus STEPControl_Reader::ReadFile(const Standard_CString filena
   WS()->SetModel(aStepModel);
   WS()->SetLoadedFile(filename);
   WS()->InitTransferReader(4);
+  //DeclareAndCast(STEPControl_ActorRead, anActor, WS()->TransferReader()->Actor());
+  //anActor->SetDEHealingParameters(DEHealingParameters());
   return status;
 }
 

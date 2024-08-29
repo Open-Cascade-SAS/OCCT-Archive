@@ -18,7 +18,7 @@
 #include <IGESCAFControl_Provider.hxx>
 #include <NCollection_Buffer.hxx>
 
-IMPLEMENT_STANDARD_RTTIEXT(IGESCAFControl_ConfigurationNode, DE_ConfigurationNode)
+IMPLEMENT_STANDARD_RTTIEXT(IGESCAFControl_ConfigurationNode, DE_ShapeFixConfigurationNode)
 
 namespace
 {
@@ -37,17 +37,20 @@ namespace
 // purpose  : 
 //=======================================================================
 IGESCAFControl_ConfigurationNode::IGESCAFControl_ConfigurationNode() :
-  DE_ConfigurationNode()
-{}
+  DE_ShapeFixConfigurationNode()
+{
+  ChangeHealingParams();
+}
 
 //=======================================================================
 // function : IGESCAFControl_ConfigurationNode
 // purpose  : 
 //=======================================================================
 IGESCAFControl_ConfigurationNode::IGESCAFControl_ConfigurationNode(const Handle(IGESCAFControl_ConfigurationNode)& theNode)
-  :DE_ConfigurationNode(theNode)
+  :DE_ShapeFixConfigurationNode(theNode)
 {
   InternalParameters = theNode->InternalParameters;
+  ChangeHealingParams();
 }
 
 //=======================================================================
@@ -455,4 +458,13 @@ bool IGESCAFControl_ConfigurationNode::CheckContent(const Handle(NCollection_Buf
     }
   }
   return false;
+}
+
+//=======================================================================
+// function : ChangeHealingParams
+// purpose  :
+//=======================================================================
+void IGESCAFControl_ConfigurationNode::ChangeHealingParams()
+{
+  HealingParameters.CreateOpenSolidMode = DE_ShapeFixParameters::FixMode::Fix;
 }

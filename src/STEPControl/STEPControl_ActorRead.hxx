@@ -28,6 +28,7 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <Message_ProgressRange.hxx>
 #include <Interface_InterfaceModel.hxx>
+#include <DE_ShapeFixParameters.hxx>
 
 class StepRepr_Representation;
 class Standard_Transient;
@@ -115,7 +116,11 @@ public:
                                                  gp_Trsf& Trsf,
                                                  const StepData_Factors& theLocalFactors = StepData_Factors());
 
+  //! Returns healing parameters map
+  Standard_EXPORT DE_ShapeFixParameters::HealingParamMap DEHealingParameters() const { return myDEParameters; }
 
+  //! Sets healing parameters map
+  Standard_EXPORT void SetDEHealingParameters(DE_ShapeFixParameters::HealingParamMap theDEHealingParams) { myDEParameters = theDEHealingParams; }
 
 
   DEFINE_STANDARD_RTTIEXT(STEPControl_ActorRead,Transfer_ActorOfTransientProcess)
@@ -226,6 +231,7 @@ private:
   Standard_Real myMaxTol;
   Handle(StepRepr_Representation) mySRContext;
   Handle(Interface_InterfaceModel) myModel;
+  DE_ShapeFixParameters::HealingParamMap myDEParameters;
 
 };
 

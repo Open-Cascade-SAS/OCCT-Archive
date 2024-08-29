@@ -67,7 +67,6 @@ IMPLEMENT_STANDARD_RTTIEXT(XSAlgo_AlgoContainer,Standard_Transient)
 //purpose  : 
 //=======================================================================
 XSAlgo_AlgoContainer::XSAlgo_AlgoContainer()
-  : myDEHealingParamsUsage(false)
 {
   myTC = new XSAlgo_ToolContainer;
 }
@@ -107,8 +106,6 @@ TopoDS_Shape XSAlgo_AlgoContainer::ProcessShape(const TopoDS_Shape& theShape,
   aProcessShape.SetPrscfile(thePrscfile);
   aProcessShape.SetPseq(thePseq);
   aProcessShape.SetInfo(theInfo);
-  aProcessShape.SetHealingParamsFlag(myDEHealingParamsUsage);
-  aProcessShape.SetHealingParameters(myHealingParameters);
   aProcessShape.SetDetalisationLevel(theDetalisationLevel);
   aProcessShape.SetNonManifold(theNonManifold);
   aProcessShape.SetProgressRange(theProgress);

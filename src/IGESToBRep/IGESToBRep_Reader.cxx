@@ -46,6 +46,7 @@
 #include <TransferBRep.hxx>
 #include <XSAlgo.hxx>
 #include <XSAlgo_AlgoContainer.hxx>
+#include <XSAlgo_AlgoProcessShape.hxx>
 
 #include <stdio.h>
 //#include <ShapeCustom.hxx>
@@ -549,10 +550,17 @@ Standard_Boolean  IGESToBRep_Reader::Transfer(const Standard_Integer num,
 //    shape = XSAlgo::AlgoContainer()->PerformFixShape ( shape, theProc, eps*CAS.GetUnitFactor(), CAS.GetMaxTol() );
 
     Handle(Standard_Transient) info;
-    shape = XSAlgo::AlgoContainer()->ProcessShape( shape, eps*CAS.GetUnitFactor(), CAS.GetMaxTol(),
-                                                   "read.iges.resource.name", 
-                                                   "read.iges.sequence", info,
-                                                   aPS.Next(), false, TopAbs_EDGE);
+    XSAlgo_AlgoProcessShape aProcessShape;
+    aProcessShape.SetShape(shape);
+    aProcessShape.SetPrscfile("read.iges.resource.name");
+    aProcessShape.SetPseq("read.iges.sequence");
+    aProcessShape.SetInfo(info);
+    aProcessShape.SetDetalisationLevel(TopAbs_EDGE);
+    aProcessShape.SetProgressRange(theProgress);
+    aProcessShape.SetPrecision(eps * CAS.GetUnitFactor());
+    aProcessShape.SetMaxTol(CAS.GetMaxTol());
+    shape = aProcessShape.ProcessShape();
+
     if (aPS.UserBreak())
       return Standard_False;
 

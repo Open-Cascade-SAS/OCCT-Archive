@@ -16,6 +16,7 @@
 #ifndef _STEPCAFControl_Reader_HeaderFile
 #define _STEPCAFControl_Reader_HeaderFile
 
+#include <DE_ShapeFixParameters.hxx>
 #include <STEPControl_Reader.hxx>
 #include <StepData_Factors.hxx>
 #include <IFSelect_ReturnStatus.hxx>
@@ -207,6 +208,13 @@ public:
   //! Get View mode
   Standard_EXPORT Standard_Boolean GetViewMode() const;
 
+  //! Returns healing parameters map
+  Standard_EXPORT DE_ShapeFixParameters::HealingParamMap DEHealingParameters() const { return myDEParameters; }
+
+  //! Sets healing parameters map
+  Standard_EXPORT void SetDEHealingParameters(DE_ShapeFixParameters::HealingParamMap theDEHealingParams) { myDEParameters = theDEHealingParams; }
+
+
   const XCAFDoc_DataMapOfShapeLabel& GetShapeLabelMap() const { return myMap; }
 
 protected:
@@ -375,6 +383,7 @@ private:
   Standard_Boolean myMatMode;
   Standard_Boolean myViewMode;
   NCollection_DataMap<Handle(Standard_Transient), TDF_Label> myGDTMap;
+  DE_ShapeFixParameters::HealingParamMap myDEParameters;
 
 };
 

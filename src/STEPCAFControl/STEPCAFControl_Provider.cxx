@@ -14,6 +14,7 @@
 #include <STEPCAFControl_Provider.hxx>
 
 #include <BinXCAFDrivers.hxx>
+#include <DE_ShapeFixParameters.hxx>
 #include <Interface_Static.hxx>
 #include <Message.hxx>
 #include <StepData_StepModel.hxx>
@@ -23,6 +24,8 @@
 #include <STEPCAFControl_Reader.hxx>
 #include <STEPCAFControl_Writer.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
+#include <XSAlgo.hxx>
+#include <XSAlgo_AlgoContainer.hxx>
 #include <XSControl_WorkSession.hxx>
 #include <UnitsMethods.hxx>
 
@@ -68,12 +71,17 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   personizeWS(theWS);
   XCAFDoc_DocumentTool::SetLengthUnit(theDocument, aNode->GlobalParameters.LengthUnit, UnitsMethods_LengthUnit_Millimeter);
   STEPCAFControl_Reader aReader;
+  DE_ShapeFixParameters aParameters;
+  DE_ShapeFixParameters::HealingParamMap aDEHealingParams = aReader.ChangeReader().DEHealingParameters();
+  aNode->HealingParameters.FillParamsMap(aDEHealingParams);
+  aReader.ChangeReader().SetDEHealingParameters(aDEHealingParams);
   aReader.Init(theWS);
   aReader.SetColorMode(aNode->InternalParameters.ReadColor);
   aReader.SetNameMode(aNode->InternalParameters.ReadName);
   aReader.SetLayerMode(aNode->InternalParameters.ReadLayer);
   aReader.SetPropsMode(aNode->InternalParameters.ReadProps);
   aReader.SetMetaMode(aNode->InternalParameters.ReadMetadata);
+  aReader.SetDEHealingParameters(aReader.ChangeReader().DEHealingParameters());
 
   IFSelect_ReturnStatus aReadStat = IFSelect_RetVoid;
   StepData_ConfParameters aParams;
@@ -200,6 +208,9 @@ bool STEPCAFControl_Provider::Read(const TCollection_AsciiString& thePath,
   personizeWS(theWS);
   STEPControl_Reader aReader;
   aReader.SetWS(theWS);
+  DE_ShapeFixParameters::HealingParamMap aDEHealingParams = aReader.DEHealingParameters();
+  aNode->HealingParameters.FillParamsMap(aDEHealingParams);
+  aReader.SetDEHealingParameters(aDEHealingParams);
   IFSelect_ReturnStatus aReadstat = IFSelect_RetVoid;
   StepData_ConfParameters aParams;
   aReadstat = aReader.ReadFile(thePath.ToCString(), aParams);

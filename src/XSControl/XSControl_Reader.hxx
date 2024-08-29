@@ -21,6 +21,7 @@
 #include <Standard_DefineAlloc.hxx>
 #include <Standard_Handle.hxx>
 
+#include <DE_ShapeFixParameters.hxx>
 #include <TColStd_SequenceOfTransient.hxx>
 #include <TopTools_SequenceOfShape.hxx>
 #include <Standard_CString.hxx>
@@ -260,7 +261,11 @@ public:
   //! Gives statistics about Transfer
   Standard_EXPORT void GetStatsTransfer (const Handle(TColStd_HSequenceOfTransient)& list, Standard_Integer& nbMapped, Standard_Integer& nbWithResult, Standard_Integer& nbWithFail) const;
 
+  //! Returns healing parameters map
+  Standard_EXPORT DE_ShapeFixParameters::HealingParamMap DEHealingParameters() const { return myDEParameters; }
 
+  //! Sets healing parameters map
+  Standard_EXPORT void SetDEHealingParameters(DE_ShapeFixParameters::HealingParamMap theDEHealingParams) { myDEParameters = theDEHealingParams; }
 
 
 protected:
@@ -280,6 +285,7 @@ private:
 
   Handle(XSControl_WorkSession) thesession;
   TopTools_SequenceOfShape theshapes;
+  DE_ShapeFixParameters::HealingParamMap myDEParameters;
 
 
 };

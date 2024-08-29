@@ -20,6 +20,7 @@
 #include <Standard.hxx>
 #include <Standard_Type.hxx>
 
+#include <DE_ShapeFixParameters.hxx>
 #include <Standard_Integer.hxx>
 #include <Transfer_ActorOfTransientProcess.hxx>
 #include <Message_ProgressRange.hxx>
@@ -66,7 +67,11 @@ public:
   //! the file or from statics
   Standard_EXPORT Standard_Real UsedTolerance() const;
 
+  //! Returns healing parameters map
+  Standard_EXPORT DE_ShapeFixParameters::HealingParamMap DEHealingParameters() const { return myDEHealingParameters; }
 
+  //! Sets healing parameters map
+  Standard_EXPORT void SetDEHealingParameters(DE_ShapeFixParameters::HealingParamMap theDEHealingParams) { myDEHealingParameters = theDEHealingParams; }
 
 
   DEFINE_STANDARD_RTTIEXT(IGESToBRep_Actor,Transfer_ActorOfTransientProcess)
@@ -82,7 +87,7 @@ private:
   Handle(Interface_InterfaceModel) themodel;
   Standard_Integer thecontinuity;
   Standard_Real theeps;
-
+  DE_ShapeFixParameters::HealingParamMap myDEHealingParameters;
 
 };
 

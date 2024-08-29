@@ -14,9 +14,15 @@
 #ifndef _DE_ShapeFixParameters_HeaderFile
 #define _DE_ShapeFixParameters_HeaderFile
 
+#include <NCollection_DataMap.hxx>
+#include <NCollection_Shared.hxx>
+#include <TCollection_AsciiString.hxx>
+
 //! Struct for shape healing parameters storage
 struct DE_ShapeFixParameters
 {
+  typedef NCollection_Shared<NCollection_DataMap<TCollection_AsciiString, TCollection_AsciiString>> HealingParamMap;
+
   //! Enum, classifying a type of value for parameters
   enum class FixMode : char
   {
@@ -47,7 +53,7 @@ struct DE_ShapeFixParameters
   FixMode FixIntersectingWiresMode = FixMode::FixOrNot;
   FixMode FixLoopWiresMode = FixMode::FixOrNot;
   FixMode FixSplitFaceMode = FixMode::FixOrNot;
-  FixMode AutoCorrectPrecisionMode = FixMode::FixOrNot;
+  FixMode AutoCorrectPrecisionMode = FixMode::Fix;
   FixMode ModifyTopologyMode = FixMode::NotFix;
   FixMode ModifyGeometryMode = FixMode::Fix;
   FixMode ClosedWireMode = FixMode::Fix;
@@ -77,6 +83,10 @@ struct DE_ShapeFixParameters
   FixMode FixNonAdjacentIntersectingEdgesMode = FixMode::FixOrNot;
   FixMode FixVertexPositionMode = FixMode::NotFix;
   FixMode FixVertexToleranceMode = FixMode::FixOrNot;
+
+  //! Fill healing parameters map
+  Standard_EXPORT void DE_ShapeFixParameters::FillParamsMap(DE_ShapeFixParameters::HealingParamMap& theMap);
+
 };
 
 #endif // _DE_ShapeFixParameters_HeaderFile

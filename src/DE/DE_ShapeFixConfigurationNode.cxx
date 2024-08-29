@@ -490,3 +490,11 @@ TCollection_AsciiString DE_ShapeFixConfigurationNode::Save() const
 
   return aResult;
 }
+
+//=======================================================================
+// function : ChangeHealingParams
+// purpose  :
+//=======================================================================
+void DE_ShapeFixConfigurationNode::ChangeHealingParams()
+{
+}

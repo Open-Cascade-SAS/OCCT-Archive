@@ -24,6 +24,7 @@
 #include <HeaderSection_FileSchema.hxx>
 #include <Interface_Static.hxx>
 #include <Message_ProgressScope.hxx>
+#include <MoniTool_Macros.hxx>
 #include <NCollection_DataMap.hxx>
 #include <OSD_Path.hxx>
 #include <Quantity_ColorRGBA.hxx>
@@ -2341,7 +2342,8 @@ Standard_Boolean readAnnotationPlane(const Handle(StepVisual_AnnotationPlane)& t
 void readAnnotation(const Handle(XSControl_TransferReader)& theTR,
   const Handle(Standard_Transient)& theGDT,
   const Handle(Standard_Transient)& theDimObject,
-  const StepData_Factors& theLocalFactors)
+  const StepData_Factors& theLocalFactors,
+  DE_ShapeFixParameters::HealingParamMap theDEParams)
 {
   if (theGDT.IsNull() || theDimObject.IsNull())
     return;
@@ -2370,6 +2372,7 @@ void readAnnotation(const Handle(XSControl_TransferReader)& theTR,
     Handle(StepVisual_DraughtingModel)::DownCast(aDMIA->UsedRepresentation());
   XSAlgo::AlgoContainer()->PrepareForTransfer();
   STEPControl_ActorRead anActor(aTP->Model());
+  anActor.SetDEHealingParameters(theDEParams);
   StepData_Factors aLocalFactors = theLocalFactors;
   anActor.PrepareUnits(aDModel, aTP, aLocalFactors);
   Standard_Real aFact = aLocalFactors.LengthFactor();
@@ -2457,7 +2460,8 @@ void readAnnotation(const Handle(XSControl_TransferReader)& theTR,
 void readConnectionPoints(const Handle(XSControl_TransferReader)& theTR,
   const Handle(Standard_Transient)& theGDT,
   const Handle(XCAFDimTolObjects_DimensionObject)& theDimObject,
-  const StepData_Factors& theLocalFactors)
+  const StepData_Factors& theLocalFactors,
+  DE_ShapeFixParameters::HealingParamMap theDEParams)
 {
   if (theGDT.IsNull() || theDimObject.IsNull())
     return;
@@ -2479,6 +2483,7 @@ void readConnectionPoints(const Handle(XSControl_TransferReader)& theTR,
   {
     XSAlgo::AlgoContainer()->PrepareForTransfer();
     STEPControl_ActorRead anActor(theTR->Model());
+    anActor.SetDEHealingParameters(theDEParams);
     StepData_Factors aLocalFactors = theLocalFactors;
     anActor.PrepareUnits(aSDR, aTP, aLocalFactors);
     aFact = aLocalFactors.LengthFactor();
@@ -2783,7 +2788,7 @@ Standard_Boolean STEPCAFControl_Reader::setDatumToXCAF(const Handle(StepDimTol_D
     collectShapeAspect(aSAR->RelatingShapeAspect(), theWS, aSAs);
     Handle(StepDimTol_DatumFeature) aDF = Handle(StepDimTol_DatumFeature)::DownCast(aSAR->RelatingShapeAspect());
     if (!aSAR->RelatingShapeAspect()->IsKind(STANDARD_TYPE(StepDimTol_DatumTarget)))
-      readAnnotation(aTR, aSAR->RelatingShapeAspect(), aDatObj, theLocalFactors);
+      readAnnotation(aTR, aSAR->RelatingShapeAspect(), aDatObj, theLocalFactors, myDEParameters);
   }
 
   // Collect shape labels
@@ -2917,6 +2922,7 @@ Standard_Boolean STEPCAFControl_Reader::setDatumToXCAF(const Handle(StepDimTol_D
                   = Handle(StepGeom_Axis2Placement3d)::DownCast(aSRWP->ItemsValue(j));
                 XSAlgo::AlgoContainer()->PrepareForTransfer();
                 STEPControl_ActorRead anActor(aTP->Model());
+                anActor.SetDEHealingParameters(myDEParameters);
                 StepData_Factors aLocalFactors = theLocalFactors;
                 anActor.PrepareUnits(aSRWP, aTP, aLocalFactors);
                 Handle(Geom_Axis2Placement) anAxis = StepToGeom::MakeAxis2Placement(anAx, aLocalFactors);
@@ -2964,7 +2970,7 @@ Standard_Boolean STEPCAFControl_Reader::setDatumToXCAF(const Handle(StepDimTol_D
       aDGTTool->SetDatumToGeomTol(aDatL, theGDTL);
       aDatTargetObj->IsDatumTarget(Standard_True);
       aDatTargetObj->SetDatumTargetNumber(aDT->TargetId()->IntegerValue());
-      readAnnotation(aTR, aDT, aDatTargetObj, theLocalFactors);
+      readAnnotation(aTR, aDT, aDatTargetObj, theLocalFactors, myDEParameters);
       aDat->SetObject(aDatTargetObj);
       isExistDatumTarget = Standard_True;
     }
@@ -2993,7 +2999,7 @@ Standard_Boolean STEPCAFControl_Reader::setDatumToXCAF(const Handle(StepDimTol_D
     aDGTTool->SetDatumToGeomTol(aDatL, theGDTL);
     if (aDatObj->GetPresentation().IsNull()) {
       // Try find annotation connected to datum entity (not right case, according recommended practices)
-      readAnnotation(aTR, theDat, aDatObj, theLocalFactors);
+      readAnnotation(aTR, theDat, aDatObj, theLocalFactors, myDEParameters);
     }
     aDat->SetObject(aDatObj);
   }
@@ -3638,7 +3644,8 @@ static void setDimObjectToXCAF(const Handle(Standard_Transient)& theEnt,
   const TDF_Label& aDimL,
   const Handle(TDocStd_Document)& theDoc,
   const Handle(XSControl_WorkSession)& theWS,
-  const StepData_Factors& theLocalFactors)
+  const StepData_Factors& theLocalFactors,
+  DE_ShapeFixParameters::HealingParamMap theUseDEHealingParams)
 {
   Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDoc->Main());
   Handle(XCAFDoc_DimTolTool) aDGTTool = XCAFDoc_DocumentTool::DimTolTool(theDoc->Main());
@@ -4057,8 +4064,8 @@ static void setDimObjectToXCAF(const Handle(Standard_Transient)& theEnt,
 
     if (aDimL.FindAttribute(XCAFDoc_Dimension::GetID(), aDim))
     {
-      readAnnotation(aTR, theEnt, aDimObj, theLocalFactors);
-      readConnectionPoints(aTR, theEnt, aDimObj, theLocalFactors);
+      readAnnotation(aTR, theEnt, aDimObj, theLocalFactors, theUseDEHealingParams);
+      readConnectionPoints(aTR, theEnt, aDimObj, theLocalFactors, theUseDEHealingParams);
       aDim->SetObject(aDimObj);
     }
   }
@@ -4180,7 +4187,8 @@ static void setGeomTolObjectToXCAF(const Handle(Standard_Transient)& theEnt,
   const TDF_Label& theTolL,
   const Handle(TDocStd_Document)& theDoc,
   const Handle(XSControl_WorkSession)& theWS,
-  const StepData_Factors& theLocalFactors)
+  const StepData_Factors& theLocalFactors,
+  DE_ShapeFixParameters::HealingParamMap theUseDEHealingParams)
 {
   Handle(XCAFDoc_ShapeTool) aSTool = XCAFDoc_DocumentTool::ShapeTool(theDoc->Main());
   Handle(XCAFDoc_DimTolTool) aDGTTool = XCAFDoc_DocumentTool::DimTolTool(theDoc->Main());
@@ -4327,7 +4335,7 @@ static void setGeomTolObjectToXCAF(const Handle(Standard_Transient)& theEnt,
     aTolObj->SetMaxValueModifier(aVal);
   }
 
-  readAnnotation(aTR, theEnt, aTolObj, theLocalFactors);
+  readAnnotation(aTR, theEnt, aTolObj, theLocalFactors, theUseDEHealingParams);
   aGTol->SetObject(aTolObj);
 }
 
@@ -4361,10 +4369,10 @@ Standard_Boolean STEPCAFControl_Reader::ReadGDTs(const Handle(XSControl_WorkSess
       TDF_Label aGDTL = createGDTObjectInXCAF(anEnt, theDoc, theWS, theLocalFactors);
       if (!aGDTL.IsNull()) {
         if (anEnt->IsKind(STANDARD_TYPE(StepDimTol_GeometricTolerance))) {
-          setGeomTolObjectToXCAF(anEnt, aGDTL, theDoc, theWS, theLocalFactors);
+          setGeomTolObjectToXCAF(anEnt, aGDTL, theDoc, theWS, theLocalFactors, myDEParameters);
         }
         else {
-          setDimObjectToXCAF(anEnt, aGDTL, theDoc, theWS, theLocalFactors);
+          setDimObjectToXCAF(anEnt, aGDTL, theDoc, theWS, theLocalFactors, myDEParameters);
         }
       }
     }
@@ -4457,6 +4465,7 @@ Standard_Boolean STEPCAFControl_Reader::ReadGDTs(const Handle(XSControl_WorkSess
       {
         XSAlgo::AlgoContainer()->PrepareForTransfer();
         STEPControl_ActorRead anActor(aModel);
+        anActor.SetDEHealingParameters(myDEParameters);
         Handle(Transfer_TransientProcess) aTP = aTR->TransientProcess();
         anActor.PrepareUnits(aDMIA->UsedRepresentation(), aTP, aLocalFactors);
         aFact = aLocalFactors.LengthFactor();
@@ -4813,6 +4822,7 @@ Standard_Boolean STEPCAFControl_Reader::ReadViews(const Handle(XSControl_WorkSes
     {
       XSAlgo::AlgoContainer()->PrepareForTransfer();
       STEPControl_ActorRead anActor(aTP->Model());
+      anActor.SetDEHealingParameters(myDEParameters);
       anActor.PrepareUnits(aDModel, aTP, aLocalFactors);
     }
 

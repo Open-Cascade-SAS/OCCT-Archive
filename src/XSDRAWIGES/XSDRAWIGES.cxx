@@ -835,6 +835,11 @@ static Standard_Integer ReadIges(Draw_Interpretor& theDI,
   Standard_Integer onlyVisible = Interface_Static::IVal("read.iges.onlyvisible");
   aReader.SetReadVisible(onlyVisible == 1);
 
+  DE_ShapeFixParameters aParameters;
+  DE_ShapeFixParameters::HealingParamMap aDEHealingParams = aReader.DEHealingParameters();
+  aParameters.FillParamsMap(aDEHealingParams);
+  aReader.SetDEHealingParameters(aDEHealingParams);
+
   if (theNbArgs == 4)
   {
     Standard_Boolean mode = Standard_True;

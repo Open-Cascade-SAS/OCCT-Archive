@@ -14,7 +14,7 @@
 #ifndef _IGESCAFControl_ConfigurationNode_HeaderFile
 #define _IGESCAFControl_ConfigurationNode_HeaderFile
 
-#include <DE_ConfigurationNode.hxx>
+#include <DE_ShapeFixConfigurationNode.hxx>
 #include <UnitsMethods_LengthUnit.hxx>
 
 //! The purpose of this class is to configure the transfer process for IGES format
@@ -27,9 +27,9 @@
 //! The supported CAD extensions are ".igs", ".iges"
 //! The import process is supported.
 //! The export process is supported.
-class IGESCAFControl_ConfigurationNode : public DE_ConfigurationNode
+class IGESCAFControl_ConfigurationNode : public DE_ShapeFixConfigurationNode
 {
-  DEFINE_STANDARD_RTTIEXT(IGESCAFControl_ConfigurationNode, DE_ConfigurationNode)
+  DEFINE_STANDARD_RTTIEXT(IGESCAFControl_ConfigurationNode, DE_ShapeFixConfigurationNode)
 public:
 
   //! Initializes all fields by default
@@ -83,6 +83,9 @@ public:
   //! @param[in] theBuffer read stream buffer to check content
   //! @return Standard_True if file is supported by a current provider
   Standard_EXPORT virtual bool CheckContent(const Handle(NCollection_Buffer)& theBuffer) const Standard_OVERRIDE;
+
+  //! Redefined some healing parameters, depending on format
+  Standard_EXPORT virtual void ChangeHealingParams() Standard_OVERRIDE;
 
 public:
 

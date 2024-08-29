@@ -39,7 +39,6 @@ XSAlgo_AlgoProcessShape::XSAlgo_AlgoProcessShape()
   myMaxTol(1.),
   myNonManifold(false),
   myDetalisationLevel(TopAbs_VERTEX),
-  myDEHealingParamsUsage(false),
   myProgressRange(Message_ProgressRange())
 {
 }
@@ -55,18 +54,21 @@ TopoDS_Shape XSAlgo_AlgoProcessShape::ProcessShape()
     return myShape;
   }
 
+  if (myReShape.IsNull())
+  {
+    myReShape = new ShapeBuild_ReShape();
+  }
+
   Standard_CString aRscfile = "";
   Handle(ShapeProcess_ShapeContext) aContext = Handle(ShapeProcess_ShapeContext)::DownCast(myInfo);
   if (aContext.IsNull())
   {
     aRscfile = Interface_Static::CVal(myPrscfile);
     aContext = new ShapeProcess_ShapeContext(myShape, aRscfile);
-    if (myDEHealingParamsUsage)
-    {
-      // Use defined shape healing parameters
-      FillMap(aContext->ResourceManager()->GetMap());
-    }
-    else if (!aContext->ResourceManager()->IsInitialized())
+  }
+  if (myDEParameters.IsEmpty())
+  {
+    if (!aContext->ResourceManager()->IsInitialized())
     {
       // If resource file wasn't found, use static values instead
       Interface_Static::FillMap(aContext->ResourceManager()->GetMap());
@@ -144,65 +146,4 @@ TopoDS_Shape XSAlgo_AlgoProcessShape::ProcessShape()
     return myShape; // return original shape
 
   return aContext->Result();
-}
-
-//=======================================================================
-//function : FillMap
-//purpose  :
-//=======================================================================
-void XSAlgo_AlgoProcessShape::FillMap(NCollection_DataMap<TCollection_AsciiString, TCollection_AsciiString>& theMap) const
-{
-  theMap.Clear();
-  theMap.Bind("Tolerance3d", TCollection_AsciiString(myHealingParameters.Tolerance3d));
-  theMap.Bind("MinTolerance3d", TCollection_AsciiString(myHealingParameters.MinTolerance3d));
-  theMap.Bind("MaxTolerance3d", TCollection_AsciiString(myHealingParameters.MaxTolerance3d));
-  theMap.Bind("FixFreeShellMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixFreeShellMode)));
-  theMap.Bind("FixFreeFaceMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixFreeFaceMode)));
-  theMap.Bind("FixFreeFaceMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixFreeFaceMode)));
-  theMap.Bind("FixFreeWireMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixFreeWireMode)));
-  theMap.Bind("FixSameParameterMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixSameParameterMode)));
-  theMap.Bind("FixSolidMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixSolidMode)));
-  theMap.Bind("FixShellOrientationMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixShellOrientationMode)));
-  theMap.Bind("CreateOpenSolidMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.CreateOpenSolidMode)));
-  theMap.Bind("FixShellMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixShellMode)));
-  theMap.Bind("FixFaceOrientationMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixFaceOrientationMode)));
-  theMap.Bind("FixFaceMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixFaceMode)));
-  theMap.Bind("FixWireMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixWireMode)));
-  theMap.Bind("FixOrientationMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixOrientationMode)));
-  theMap.Bind("FixAddNaturalBoundMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixAddNaturalBoundMode)));
-  theMap.Bind("FixMissingSeamMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixMissingSeamMode)));
-  theMap.Bind("FixSmallAreaWireMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixSmallAreaWireMode)));
-  theMap.Bind("RemoveSmallAreaFaceMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.RemoveSmallAreaFaceMode)));
-  theMap.Bind("FixIntersectingWiresMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixIntersectingWiresMode)));
-  theMap.Bind("FixLoopWiresMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixLoopWiresMode)));
-  theMap.Bind("FixSplitFaceMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixSplitFaceMode)));
-  theMap.Bind("AutoCorrectPrecisionMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.AutoCorrectPrecisionMode)));
-  theMap.Bind("ModifyTopologyMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.ModifyTopologyMode)));
-  theMap.Bind("ClosedWireMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.ClosedWireMode)));
-  theMap.Bind("PreferencePCurveMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.PreferencePCurveMode)));
-  theMap.Bind("FixReorderMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixReorderMode)));
-  theMap.Bind("FixSmallMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixSmallMode)));
-  theMap.Bind("FixConnectedMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixConnectedMode)));
-  theMap.Bind("FixEdgeCurvesMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixEdgeCurvesMode)));
-  theMap.Bind("FixDegeneratedMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixDegeneratedMode)));
-  theMap.Bind("FixLackingMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixLackingMode)));
-  theMap.Bind("FixSelfIntersectionMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixSelfIntersectionMode)));
-  theMap.Bind("RemoveLoopMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.RemoveLoopMode)));
-  theMap.Bind("FixReversed2dMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixReversed2dMode)));
-  theMap.Bind("FixRemovePCurveMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixRemovePCurveMode)));
-  theMap.Bind("FixRemoveCurve3dMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixRemoveCurve3dMode)));
-  theMap.Bind("FixAddPCurveMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixAddPCurveMode)));
-  theMap.Bind("FixAddCurve3dMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixAddCurve3dMode)));
-  theMap.Bind("FixSeamMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixSeamMode)));
-  theMap.Bind("FixShiftedMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixShiftedMode)));
-  theMap.Bind("FixEdgeSameParameterMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixEdgeSameParameterMode)));
-  theMap.Bind("FixNotchedEdgesMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixNotchedEdgesMode)));
-  theMap.Bind("FixTailMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixTailMode)));
-  theMap.Bind("MaxTailAngle", TCollection_AsciiString(static_cast<int>(myHealingParameters.MaxTailAngle)));
-  theMap.Bind("MaxTailWidth", TCollection_AsciiString(static_cast<int>(myHealingParameters.MaxTailWidth)));
-  theMap.Bind("FixSelfIntersectingEdgeMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixSelfIntersectingEdgeMode)));
-  theMap.Bind("FixIntersectingEdgesMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixIntersectingEdgesMode)));
-  theMap.Bind("FixNonAdjacentIntersectingEdgesMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixNonAdjacentIntersectingEdgesMode)));
-  theMap.Bind("FixVertexPositionMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixVertexPositionMode)));
-  theMap.Bind("FixVertexToleranceMode", TCollection_AsciiString(static_cast<int>(myHealingParameters.FixVertexToleranceMode)));
 }
