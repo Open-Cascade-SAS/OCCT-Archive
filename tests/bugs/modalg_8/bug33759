@@ -1,0 +1,39 @@
+puts "==========================================================="
+puts "0033759: Modeling Algorithms - Offset is in wrong direction"
+puts "==========================================================="
+puts ""
+
+pload MODELING
+circle c1 0 0 0 30
+
+# make and check FORWARD, NOT CLOSED edge
+mkedge e1 c1 1.5*pi 0
+wire w1 e1
+plane pln1 0 0 0  0 0 1  1 0 0
+mkface f1 pln1 w1
+openoffset of1 f1 1 7
+checkprops of1_1 -l 58.1195
+
+# make and check REVERSED, NOT CLOSED edge
+complement e1
+wire w1 e1
+plane pln1 0 0 0  0 0 1  1 0 0
+mkface f1 pln1 w1
+openoffset of1 f1 1 7
+checkprops of1_1 -l 58.1195
+
+# make and check FORWARD CLOSED edge
+mkedge e1 c1 0 0
+wire w1 e1
+plane pln1 0 0 0  0 0 1  1 0 0
+mkface f1 pln1 w1
+openoffset of1 f1 1 7
+checkprops of1_1 -l 232.478
+
+# make and check REVERSED CLOSED edge
+complement e1
+wire w1 e1
+plane pln1 0 0 0  0 0 1  1 0 0
+mkface f1 pln1 w1
+openoffset of1 f1 1 7
+checkprops of1_1 -l 232.478

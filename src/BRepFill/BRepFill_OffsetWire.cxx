@@ -264,12 +264,12 @@ static Standard_Boolean KPartCircle
     }
     else if (AHC->GetType() == GeomAbs_Circle)
     {
-      if (E.Orientation() == TopAbs_FORWARD)
-        anOffset *= -1;
-      if (!BRep_Tool::IsClosed(E))
+      // Reverse the offset function when the edge is FORWARD and CLOSED
+      if (E.Orientation() == TopAbs_FORWARD && BRep_Tool::IsClosed(E))
       {
         anOffset *= -1;
       }
+
       gp_Circ2d theCirc = AHC->Circle();
       if (anOffset > 0. || Abs(anOffset) < theCirc.Radius())
         OC = new Geom2d_Circle (theCirc.Position(), theCirc.Radius() + anOffset);
