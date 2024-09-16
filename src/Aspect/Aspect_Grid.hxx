@@ -87,7 +87,7 @@ public:
   //! Display the grid at screen.
   Standard_EXPORT virtual void Display() = 0;
 
-  //! 
+  //! Update grid presentation
   Standard_EXPORT virtual void Update() = 0;
   
   //! Erase the grid from screen.

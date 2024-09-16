@@ -505,12 +505,6 @@ void Graphic3d_Camera::SetZRange (const Standard_Real theZNear,
     return;
   }
 
-  if (theZFar != 3000)
-  {
-    //std::cout << "SetZRange: " << theZNear << " " << theZFar << std::endl;
-  }
-  //std::cout << "SetZRange: " << theZNear << " " << theZFar << std::endl;
-
   myZNear = theZNear;
   myZFar  = theZFar;
 

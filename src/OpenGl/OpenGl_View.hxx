@@ -306,6 +306,12 @@ public: //! @name obsolete Graduated Trihedron functionality
   //! Erases Graduated Trihedron.
   Standard_EXPORT virtual void GraduatedTrihedronErase() Standard_OVERRIDE;
 
+  //! Displays Grid.
+  Standard_EXPORT virtual void GridDisplay (const Aspect_GridParams& theGridParams) Standard_OVERRIDE;
+
+  //! Erases Grid.
+  Standard_EXPORT virtual void GridErase() Standard_OVERRIDE;
+
   //! Sets minimum and maximum points of scene bounding box for Graduated Trihedron stored in graphic view object.
   //! @param theMin [in] the minimum point of scene.
   //! @param theMax [in] the maximum point of scene.
@@ -452,7 +458,9 @@ protected:
   gp_XYZ                          myLocalOrigin;
   Handle(OpenGl_FrameBuffer)      myFBO;
   Standard_Boolean                myToShowGradTrihedron;
+  Standard_Boolean                myToShowGrid;
   Graphic3d_GraduatedTrihedron    myGTrihedronData;
+  Aspect_GridParams               myGridParams;
 
   Handle(Graphic3d_LightSet)      myNoShadingLight;
   Handle(Graphic3d_LightSet)      myLights;

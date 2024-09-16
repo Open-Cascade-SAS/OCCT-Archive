@@ -108,6 +108,7 @@ OpenGl_View::OpenGl_View (const Handle(Graphic3d_StructureManager)& theMgr,
   myCaps           (theCaps),
   myWasRedrawnGL   (Standard_False),
   myToShowGradTrihedron  (false),
+  myToShowGrid           (false),
   myStateCounter         (theCounter),
   myCurrLightSourceState (theCounter->Increment()),
   myLightsRevision       (0),
@@ -500,6 +501,25 @@ void OpenGl_View::GraduatedTrihedronErase()
 {
   myGraduatedTrihedron.Release (myWorkspace->GetGlContext().operator->());
   myToShowGradTrihedron = false;
+}
+
+// =======================================================================
+// function : GridDisplay
+// purpose  :
+// =======================================================================
+void OpenGl_View::GridDisplay (const Aspect_GridParams& theGridParams)
+{
+  myGridParams = theGridParams;
+  myToShowGrid = true;
+}
+
+// =======================================================================
+// function : GridErase
+// purpose  :
+// =======================================================================
+void OpenGl_View::GridErase()
+{
+  myToShowGrid = false;
 }
 
 // =======================================================================
@@ -2602,16 +2622,17 @@ void OpenGl_View::render (Graphic3d_Camera::Projection theProjection,
 // =======================================================================
 void OpenGl_View::renderGrid()
 {
-  const Handle(OpenGl_Context)& aContext = myWorkspace->GetGlContext();
+  if (!myToShowGrid)
+  {
+    return;
+  }
 
-  /*aContext->ShaderManager()->UpdateModelWorldStateTo (aContext->ModelWorldState.Current());
-  aContext->ShaderManager()->UpdateProjectionStateTo (aContext->ProjectionState.Current());
-  aContext->ShaderManager()->UpdateWorldViewStateTo (aContext->WorldViewState.Current());*/
+  const Handle(OpenGl_Context)& aContext = myWorkspace->GetGlContext();
 
   if (MinMaxValues (Standard_True).IsVoid())
   {
     Bnd_Box aDummy;
-    aDummy.Set (gp::Origin());
+    aDummy.Set (myGridParams.Position());
     aContext->Camera()->ZFitAll (1.0, aDummy, aDummy);
   }
 
@@ -2623,60 +2644,33 @@ void OpenGl_View::renderGrid()
   aContext->ProjectionState.SetCurrent (aContext->Camera()->ProjectionMatrixF());
 
   aContext->ApplyProjectionMatrix();
+
+  OpenGl_Mat4 aCurrent = aContext->WorldViewState.Current();
+  aContext->WorldViewState.Push();
+
+  OpenGl_Mat4 aMat;
+  if (!myGridParams.IsHorizontal())
+  {
+    aMat.SetRow (0, Graphic3d_Vec4 (1, 0,  0, 0));
+    aMat.SetRow (1, Graphic3d_Vec4 (0, 0, -1, 0));
+    aMat.SetRow (2, Graphic3d_Vec4 (0, 1,  0, 0));
+    aMat.SetRow (3, Graphic3d_Vec4 (0, 0,  0, 1));
+  }
+  const gp_Pnt& aPosition = myGridParams.Position();
+  aMat.SetColumn (3, Graphic3d_Vec4 ((float)aPosition.X(), (float)aPosition.Y(), (float)aPosition.Z(), 1.0));
+
+  aContext->WorldViewState.SetCurrent (aCurrent * aMat);
   aContext->ApplyWorldViewMatrix();
 
   aContext->core11fwd->glEnable (GL_BLEND);
   aContext->core11fwd->glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  aContext->core11fwd->glEnable(GL_MULTISAMPLE);
+  aContext->core11fwd->glEnable (GL_MULTISAMPLE);
 
-  Graphic3d_Vec3 gridPlane[4] = { Graphic3d_Vec3 (1.0,  1.0, 0.0), Graphic3d_Vec3(-1.0,  1.0, 0.0),
-                                  Graphic3d_Vec3(-1.0, -1.0, 0.0), Graphic3d_Vec3 (1.0, -1.0, 0.0) };
-
-  for (int i = 0; i < 4; i++)
-  {
-    if (!aContext->WorldViewState.Current().Inverted().IsEqual (aContext->ShaderManager()->WorldViewState().WorldViewMatrixInverse()))
-    {
-      std::cout << "WorldViewState not equal" << std::endl;
-    }
-    if (!aContext->ProjectionState.Current().Inverted().IsEqual (aContext->ShaderManager()->ProjectionState().ProjectionMatrixInverse()))
-    {
-      std::cout << "ProjectionState not equal" << std::endl;
-    }
-    Graphic3d_Vec4 aNearPntVar = aContext->ShaderManager()->WorldViewState().WorldViewMatrixInverse() * aContext->ShaderManager()->ProjectionState().ProjectionMatrixInverse()
-      * Graphic3d_Vec4 (gridPlane[i].x(), gridPlane[i].y(), 0.0, 1.0);
-    Graphic3d_Vec3 aNearPnt = aNearPntVar.xyz() / aNearPntVar.w();
-    Graphic3d_Vec4 aFarPntVar = aContext->WorldViewState.Current().Inverted() * aContext->ProjectionState.Current().Inverted()
-      * Graphic3d_Vec4 (gridPlane[i].x(), gridPlane[i].y(), 1.0, 1.0);
-    Graphic3d_Vec3 aFarPnt = aFarPntVar.xyz() / aFarPntVar.w();
-    float aParam = -aNearPnt.z() / (aFarPnt.z() - aNearPnt.z());
-    Graphic3d_Vec3 aFragPos3D = aNearPnt + (aFarPnt - aNearPnt).Multiplied (aParam);
-
-    //std::cout << aFragPos3D.x() << " " << aFragPos3D.y() << " " << aFragPos3D.z() << std::endl;
-  }
-
-  //std::cout << "ZNear: " << aContext->Camera()->ZNear() << std::endl;
-  //std::cout << "ZFar : " << aContext->Camera()->ZFar() << std::endl;
-
-  //Standard_Integer aScale = TCollection_AsciiString(RealToInt(aContext->Camera()->Scale())).Length();
-
-  unsigned x = (unsigned) aContext->Camera()->Scale();
-  x = x - 1;
-  x = x | (x >> 1);
-  x = x | (x >> 2);
-  x = x | (x >> 4);
-  x = x | (x >> 8);
-  x = x | (x >> 16);
-  x = x + 1;
-
-  int k = (int)(log10 (aContext->Camera()->Scale()) / log10(2));
-
-  //Standard_Integer aScale = k;
   const Standard_Real aCameraScale = aContext->Camera()->Scale();
-  Standard_Real aScale = 10.0 / pow (10.0, floor (log10 (Max (aCameraScale, 1.0))) + 1.0);
-  //std::cout << "Scale: " << aScale << std::endl;
-
-  //aContext->Camera()->SetZRange (aContext->Camera()->ZNear(), aContext->Camera()->ZFar() + 1.0);
+  Standard_Real aScale = myGridParams.IsInfinity()
+                       ? 10.0 / pow (10.0, floor (log10 (Max (aCameraScale, 1.0))) + 1.0)
+                       : myGridParams.Scale();
 
   if (aContext->ShaderManager()->BindGridProgram())
   {
@@ -2684,16 +2678,18 @@ void OpenGl_View::renderGrid()
     aProg->SetUniform (aContext, "uZNear", GLfloat (aContext->Camera()->ZNear()));
     aProg->SetUniform (aContext, "uZFar",  GLfloat (aContext->Camera()->ZFar()));
     aProg->SetUniform (aContext, "uScale", GLfloat (aScale));
-    std::cout << aContext->Camera()->Scale() << std::endl;
-    std::cout << aScale << std::endl;
-    // TODO : add param to draw command
-    aProg->SetUniform (aContext, "uIsDrawAxis", GLboolean (true));
+    aProg->SetUniform (aContext, "uThickness", GLfloat (myGridParams.LineThickness()));
+    aProg->SetUniform (aContext, "uColor", OpenGl_Vec3 (myGridParams.Color().Rgb()));
+    aProg->SetUniform(aContext, "uIsDrawAxis", GLboolean(myGridParams.IsDrawAxis()));
 
     aContext->core20fwd->glDrawArrays (GL_TRIANGLES, 0, 6);
     aContext->BindProgram (NULL);
   }
 
   aContext->Camera()->SetZRange (aZNear, aZFar);
+
+  aContext->WorldViewState.Pop();
+  aContext->ApplyWorldViewMatrix();
 }
 
 // =======================================================================

@@ -225,7 +225,7 @@ public:
     return myContext->BindProgram (myPBREnvBakingProgram[theIndex]);
   }
 
-  //! Bind program for IBL maps generation in PBR pipeline.
+  //! Bind program for grid visualisation.
   Standard_Boolean BindGridProgram()
   {
     if (myGridProgram.IsNull())
@@ -719,6 +719,7 @@ protected:
   Standard_Boolean IsPbrAllowed() const { return myShadingModel == Graphic3d_TypeOfShadingModel_Pbr
                                               || myShadingModel == Graphic3d_TypeOfShadingModel_PbrFacet; }
 
+  //! Generate standard GLSL program for grid.
   Standard_EXPORT Standard_Boolean prepareGridProgram();
 
 protected:

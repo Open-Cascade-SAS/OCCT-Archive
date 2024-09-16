@@ -27,8 +27,6 @@
 #include <V3d_Viewer.hxx>
 #include <WNT_HIDSpaceMouse.hxx>
 
-#include <iostream>
-
 // =======================================================================
 // function : AIS_ViewController
 // purpose  :

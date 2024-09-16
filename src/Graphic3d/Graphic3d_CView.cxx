@@ -573,38 +573,6 @@ Bnd_Box Graphic3d_CView::MinMaxValues (const Standard_Boolean theToIncludeAuxili
                                         aCamera,
                                         aWinSize.x(), aWinSize.y(),
                                         theToIncludeAuxiliary);
-    /*std::cout << "Identification: " << Identification() << std::endl;
-    std::cout << "aWinSize: " << aWinSize.x() << " " << aWinSize.y() << std::endl;
-    std::cout << "theToIncludeAuxiliary: " << (theToIncludeAuxiliary ? "true" : "false") << std::endl;
-    std::cout << "ProjectionMatrix: " << std::endl;
-    for (int i = 0; i < 4; i++)
-    {
-      for (int j = 0; j < 4; j++)
-      {
-        std::cout << aCamera->ProjectionMatrix().GetValue(i, j) << " ";
-      }
-      std::cout << std::endl;
-    }
-    std::cout << std::endl;
-    std::cout << "OrientationMatrix: " << std::endl;
-    for (int i = 0; i < 4; i++)
-    {
-      for (int j = 0; j < 4; j++)
-      {
-        std::cout << aCamera->OrientationMatrix().GetValue(i, j) << " ";
-      }
-      std::cout << std::endl;
-    }
-    std::cout << std::endl;*/
-
-    if (aBox.IsVoid())
-    {
-      //std::cout << "add void box" << std::endl;
-    }
-    else
-    {
-      //std::cout << "add NOT void box" << std::endl;
-    }
     aResult.Add (aBox);
   }
   return aResult;
