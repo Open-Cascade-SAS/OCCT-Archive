@@ -354,29 +354,54 @@ void QuasiFleche (const TheCurve& C,
     Vdelta = Vfin;
   }
 
+  // square length of chord
   Standard_Real Norme = gp_Vec (Pdeb, Pdelta).SquareMagnitude();
   Standard_Real theFleche = 0;
   Standard_Boolean flecheok = Standard_False;
-  if (Norme > Eps)
+  if (Norme > Eps && Norme > 16. * Deflection2)
   {
     // Evaluation de la fleche par interpolation . Voir IntWalk_IWalking_5.gxx
     Standard_Real N1 = Vdeb.SquareMagnitude();
     Standard_Real N2 = Vdelta.SquareMagnitude();
     if (N1 > Eps && N2 > Eps)
     {
+      // square distance between ends of two normalized vectors [0; 4]
       Standard_Real Normediff = (Vdeb.Normalized().XYZ() - Vdelta.Normalized().XYZ()).SquareModulus();
       if (Normediff > Eps)
       {
         theFleche = Normediff * Norme / 64.;
+        // So, fleche <= (Norme / 16), independently of Vdeb and Vdelta.
+        // And if (Norme / 16) < Deflection2, this approach gives
+        // fleche < Deflection2 independently of real curve.
+        // That is why we exclude case Norme < (16. * Deflection2)
         flecheok = Standard_True;
       }
     }
   }
-  if (!flecheok)
+
+  gp_Pnt Pmid ((Pdeb.XYZ() + Pdelta.XYZ()) * 0.5);
+  gp_Pnt Pverif (Value (C, Udeb + Udelta * 0.5));
+  Standard_Real FlecheMidMid = Pmid.SquareDistance (Pverif);
+
+  if (flecheok)
   {
-    gp_Pnt Pmid ((Pdeb.XYZ() + Pdelta.XYZ()) * 0.5);
-    gp_Pnt Pverif (Value(C, Udeb + Udelta * 0.5));
-    theFleche = Pmid.SquareDistance (Pverif);
+    // Algorithm, evaluating "fleche" by interpolation,
+    // can give false-positive result.
+    // So we check also distance between Pmid and Pverif (FlecheMidMid).
+    // But FlecheMidMid gives worse result in case of non-uniform parameterisation.
+    // Maximum FlecheMidMid, that seems reasonable, is (chord/2)^2 + Deflection2
+    //   .---------------.Pverif  .
+    //   |               |        | Deflection
+    //   ._______. ______.        .
+    // Pdeb    Pmid    Pdelta
+    if (FlecheMidMid > Norme/4. + Deflection2)
+    {
+      theFleche = FlecheMidMid;
+    }
+  }
+  else
+  {
+    theFleche = FlecheMidMid;
   }
 
   if (theFleche < Deflection2)
