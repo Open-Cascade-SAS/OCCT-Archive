@@ -16,7 +16,12 @@ if /I "%VCVER%" == "@COMPILER@" (
     set "FFMPEG_DIR=@3RDPARTY_FFMPEG_DLL_DIR@"
     set "JEMALLOC_DIR=@3RDPARTY_JEMALLOC_LIBRARY_DIR@"
     set "OPENVR_DIR=@3RDPARTY_OPENVR_DLL_DIRS@"
-
+    if exist "@3RDPARTY_DRACO_DLL_DIR_draco@%3" (
+      set "DRACO_DIR=@3RDPARTY_DRACO_DLL_DIR_draco@%3"
+    ) else (
+      set "DRACO_DIR=@3RDPARTY_DRACO_DLL_DIR_draco@"
+    )
+    
     if not "@3RDPARTY_QT_DIR@" == "" (
       set "QTDIR=@3RDPARTY_QT_DIR@"
     )

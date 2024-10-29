@@ -6,6 +6,137 @@ endif()
 set(3RDPARTY_MACRO_ALREADY_INCLUDED 1)
 
 
+macro(THIRDPARTY_PRODUCT_LIBRARY PRODUCT_NAME LIBRARY_CSF_NAME LIBRARY_PATH_DEBUG_SUFFIX VARIABLE_DEBUG_SUFFIX)
+  OCCT_MAKE_OS_WITH_BITNESS()
+  OCCT_MAKE_COMPILER_SHORT_NAME()
+
+  foreach (LIBRARY_NAME ${${LIBRARY_CSF_NAME}})
+    string (REPLACE "." "" LIBRARY_NAME_SUFFIX "${LIBRARY_NAME}")
+#    if (BUILD_SHARED_LIBS)
+      # library
+      if (NOT 3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}")
+        set (CMAKE_FIND_LIBRARY_SUFFIXES .lib .so .dylib .a)
+
+        set (${PRODUCT_NAME}_PATH_SUFFIXES lib${LIBRARY_PATH_DEBUG_SUFFIX})
+        if (WIN32)
+          set (${PRODUCT_NAME}_PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES} win${COMPILER_BITNESS}/${COMPILER}/lib${LIBRARY_PATH_DEBUG_SUFFIX})
+          set (${PRODUCT_NAME}_PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES} lib${LIBRARY_PATH_DEBUG_SUFFIX}/win${COMPILER_BITNESS})
+        endif()
+        if (ANDROID)
+          set (${PRODUCT_NAME}_PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES} libs/${ANDROID_ABI})
+        endif()
+        if(UNIX AND NOT APPLE AND NOT ANDROID)
+          set (${PRODUCT_NAME}_PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES} lib/linux${COMPILER_BITNESS})
+        endif()
+
+        # set 3RDPARTY_${PRODUCT_NAME}_LIBRARY as notfound, otherwise find_library can't assign a new value to 3RDPARTY_${PRODUCT_NAME}_LIBRARY
+        set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}-NOTFOUND" CACHE FILEPATH "The path to ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
+
+        if ((3RDPARTY_${PRODUCT_NAME}_DIR AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DIR}") OR (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}${VARIABLE_DEBUG_SUFFIX} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}${VARIABLE_DEBUG_SUFFIX}}"))
+          find_library (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} NAMES ${LIBRARY_NAME}
+                                                                                PATHS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}${VARIABLE_DEBUG_SUFFIX}}" "${3RDPARTY_${PRODUCT_NAME}_DIR}"
+                                                                                PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES}
+                                                                                CMAKE_FIND_ROOT_PATH_BOTH
+                                                                                NO_DEFAULT_PATH)
+          if ("${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}" STREQUAL "3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}-NOTFOUND")
+            # find directory recursive
+            FIND_SUBDIRECTORY (${3RDPARTY_${PRODUCT_NAME}_DIR} "${${PRODUCT_NAME}_PATH_SUFFIXES}" SUBDIR_NAME)
+            if (NOT "${SUBDIR_NAME}" STREQUAL "")
+              find_library (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} NAMES ${LIBRARY_NAME_SUFFIX}
+                                                           PATHS "${SUBDIR_NAME}"
+                                                           PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES}
+                                                           CMAKE_FIND_ROOT_PATH_BOTH
+                                                           NO_DEFAULT_PATH)
+            endif()
+          endif()
+        else()
+          find_library (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} NAMES ${LIBRARY_NAME}
+                                                                                PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES}
+                                                                                CMAKE_FIND_ROOT_PATH_BOTH)
+        endif()
+
+        if (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}")
+          get_filename_component (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}" PATH)
+          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}" CACHE PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
+        else()
+          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "" CACHE PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
+        endif()
+      endif()
+
+      if (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}")
+        list (APPEND 3RDPARTY_LIBRARY_DIRS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}")
+      else()
+        list (APPEND 3RDPARTY_NO_LIBS 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX})
+
+        set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "" CACHE FILEPATH "The path to ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
+      endif()
+
+      # shared library
+      if (WIN32)
+        if (NOT 3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}")
+
+          set (CMAKE_FIND_LIBRARY_SUFFIXES .dll)
+
+          # set 3RDPARTY_${PRODUCT_NAME}_DLL as notfound, otherwise find_library can't assign a new value to 3RDPARTY_${PRODUCT_NAME}_DLL
+          set (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}-NOTFOUND" CACHE FILEPATH "The path to ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
+
+          if ((3RDPARTY_${PRODUCT_NAME}_DIR AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DIR}") OR (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}${VARIABLE_DEBUG_SUFFIX} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}${VARIABLE_DEBUG_SUFFIX}}"))
+            find_library (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}  NAMES ${LIBRARY_NAME}
+                                                                               PATHS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}${VARIABLE_DEBUG_SUFFIX}}" "${3RDPARTY_${PRODUCT_NAME}_DIR}"
+                                                                               PATH_SUFFIXES bin${LIBRARY_PATH_DEBUG_SUFFIX} win${COMPILER_BITNESS}/${COMPILER}/bin${LIBRARY_PATH_DEBUG_SUFFIX} bin${LIBRARY_PATH_DEBUG_SUFFIX}/win${COMPILER_BITNESS}
+                                                                               NO_DEFAULT_PATH)
+            if (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} STREQUAL "3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}-NOTFOUND")
+              # find directory recursive
+              FIND_SUBDIRECTORY (${3RDPARTY_${PRODUCT_NAME}_DIR} bin${LIBRARY_PATH_DEBUG_SUFFIX} SUBDIR_NAME)
+              if (NOT "${SUBDIR_NAME}" STREQUAL "")
+                find_library (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} NAMES ${LIBRARY_NAME_SUFFIX}
+                                                             PATHS "${SUBDIR_NAME}"
+                                                             PATH_SUFFIXES bin${LIBRARY_PATH_DEBUG_SUFFIX}
+                                                             NO_DEFAULT_PATH)
+              endif()
+            endif()
+          else()
+            find_library (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} NAMES ${LIBRARY_NAME} PATH_SUFFIXES bin${LIBRARY_PATH_DEBUG_SUFFIX})
+          endif()
+
+          if (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}")
+            get_filename_component (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}" PATH)
+            set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}" CACHE PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
+          else()
+            set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "" CACHE PATH "The directory containing ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
+
+            set (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} "" CACHE FILEPATH "${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
+          endif()
+        endif()
+
+        if (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} OR EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}")
+          list (APPEND 3RDPARTY_DLL_DIRS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX}}")
+        else()
+          list (APPEND 3RDPARTY_NO_DLLS 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX})
+        endif()
+      endif()
+
+      if (WIN32)
+        set (3RDPARTY_${PRODUCT_NAME}_DLL_DIRS${VARIABLE_DEBUG_SUFFIX} "")
+      else()
+        set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIRS${VARIABLE_DEBUG_SUFFIX} "")
+      endif()
+
+      foreach (LIBRARY_NAME ${${LIBRARY_CSF_NAME}})
+        string (REPLACE "." "" LIBRARY_NAME_SUFFIX "${LIBRARY_NAME}")
+        if (WIN32)
+          set (3RDPARTY_${PRODUCT_NAME}_DLL_DIRS${VARIABLE_DEBUG_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}};${3RDPARTY_${PRODUCT_NAME}_DLL_DIRS}")
+          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIRS${VARIABLE_DEBUG_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}")
+        else()
+          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIRS${VARIABLE_DEBUG_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}:${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIRS}")
+        endif()
+      endforeach()
+
+      mark_as_advanced (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX} 3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}${VARIABLE_DEBUG_SUFFIX})
+#    endif()
+  endforeach()
+endmacro()
+
 macro (THIRDPARTY_PRODUCT PRODUCT_NAME HEADER_NAME LIBRARY_CSF_NAME LIBRARY_NAME_DEBUG_SUFFIX)
 
   if (NOT DEFINED INSTALL_${PRODUCT_NAME} AND BUILD_SHARED_LIBS)
@@ -53,11 +184,26 @@ macro (THIRDPARTY_PRODUCT PRODUCT_NAME HEADER_NAME LIBRARY_CSF_NAME LIBRARY_NAME
         if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME} OR NOT 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME} OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}}")
           set (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME}                 "" CACHE FILEPATH "${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
         endif()
-      endif()
 
-      if (WIN32)
         if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME})
           set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}             "" CACHE PATH "The directory containing ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"")
+        endif()
+
+        #Debug
+        if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME}_DEBUG OR NOT 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}_DEBUG OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}_DEBUG}")
+          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME}_DEBUG       "" CACHE FILEPATH "${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
+        endif()
+
+        if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}_DEBUG)
+          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}_DEBUG   "" CACHE PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"")
+        endif()
+
+        if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME}_DEBUG OR NOT 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}_DEBUG OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}_DEBUG}")
+          set (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME}_DEBUG           "" CACHE FILEPATH "${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
+        endif()
+
+        if (NOT DEFINED 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}_DEBUG)
+          set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}_DEBUG       "" CACHE PATH "The directory containing ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"")
         endif()
       endif()
     endif()
@@ -83,6 +229,25 @@ macro (THIRDPARTY_PRODUCT PRODUCT_NAME HEADER_NAME LIBRARY_CSF_NAME LIBRARY_NAME
             set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME} "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}}" CACHE PATH "The directory containing ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
           else()
             CHECK_PATH_FOR_CONSISTENCY (3RDPARTY_${PRODUCT_NAME}_DIR 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME} PATH "The directory containing ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"")
+          endif()
+
+          #Debug
+          CHECK_PATH_FOR_CONSISTENCY (3RDPARTY_${PRODUCT_NAME}_DIR 3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME}_DEBUG FILEPATH "the path to ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"")
+
+          if (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME}_DEBUG AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME}_DEBUG}")
+            get_filename_component (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}_DEBUG "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME}_DEBUG}" PATH)
+            set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}_DEBUG "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}_DEBUG}" CACHE PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
+          else()
+            CHECK_PATH_FOR_CONSISTENCY (3RDPARTY_${PRODUCT_NAME}_DIR 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}_DEBUG PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"")
+          endif()
+
+          CHECK_PATH_FOR_CONSISTENCY (3RDPARTY_${PRODUCT_NAME}_DIR 3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME}_DEBUG FILEPATH "the path to ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"")
+
+          if (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME}_DEBUG AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME}_DEBUG}")
+            get_filename_component (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}_DEBUG "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME}_DEBUG}" PATH)
+            set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}_DEBUG "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}_DEBUG}" CACHE PATH "The directory containing ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
+          else()
+            CHECK_PATH_FOR_CONSISTENCY (3RDPARTY_${PRODUCT_NAME}_DIR 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}_DEBUG PATH "The directory containing ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"")
           endif()
         endif()
       endif()
@@ -116,192 +281,97 @@ macro (THIRDPARTY_PRODUCT PRODUCT_NAME HEADER_NAME LIBRARY_CSF_NAME LIBRARY_NAME
     set (3RDPARTY_${PRODUCT_NAME}_INCLUDE_DIR "" CACHE FILEPATH "The path to ${HEADER_NAME}" FORCE)
   endif()
 
-  foreach (LIBRARY_NAME ${${LIBRARY_CSF_NAME}})
-    string (REPLACE "." "" LIBRARY_NAME_SUFFIX "${LIBRARY_NAME}")
-#    if (BUILD_SHARED_LIBS)
-      # library
-      if (NOT 3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX} OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}}")
-        set (CMAKE_FIND_LIBRARY_SUFFIXES .lib .so .dylib .a)
-
-        set (${PRODUCT_NAME}_PATH_SUFFIXES lib)
-        if (WIN32)
-          set (${PRODUCT_NAME}_PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES} win${COMPILER_BITNESS}/${COMPILER}/lib)
-          set (${PRODUCT_NAME}_PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES} lib/win${COMPILER_BITNESS})
-        endif()
-        if (ANDROID)
-          set (${PRODUCT_NAME}_PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES} libs/${ANDROID_ABI})
-        endif()
-        if(UNIX AND NOT APPLE AND NOT ANDROID)
-          set (${PRODUCT_NAME}_PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES} lib/linux${COMPILER_BITNESS})
-        endif()
-
-        # set 3RDPARTY_${PRODUCT_NAME}_LIBRARY as notfound, otherwise find_library can't assign a new value to 3RDPARTY_${PRODUCT_NAME}_LIBRARY
-        set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX} "3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}-NOTFOUND" CACHE FILEPATH "The path to ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
-
-        if ((3RDPARTY_${PRODUCT_NAME}_DIR AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DIR}") OR (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}}"))
-          find_library (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX} NAMES ${LIBRARY_NAME}
-                                                                                PATHS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME}}" "${3RDPARTY_${PRODUCT_NAME}_DIR}"
-                                                                                PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES}
-                                                                                CMAKE_FIND_ROOT_PATH_BOTH
-                                                                                NO_DEFAULT_PATH)
-          if ("${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}}" STREQUAL "3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}-NOTFOUND")
-            # find directory recursive
-            FIND_SUBDIRECTORY (${3RDPARTY_${PRODUCT_NAME}_DIR} "${${PRODUCT_NAME}_PATH_SUFFIXES}" SUBDIR_NAME)
-            if (NOT "${SUBDIR_NAME}" STREQUAL "")
-              find_library (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX} NAMES ${LIBRARY_NAME_SUFFIX}
-                                                           PATHS "${SUBDIR_NAME}"
-                                                           PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES}
-                                                           CMAKE_FIND_ROOT_PATH_BOTH
-                                                           NO_DEFAULT_PATH)
-            endif()
-          endif()
-        else()
-          find_library (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX} NAMES ${LIBRARY_NAME}
-                                                                                PATH_SUFFIXES ${${PRODUCT_NAME}_PATH_SUFFIXES}
-                                                                                CMAKE_FIND_ROOT_PATH_BOTH)
-        endif()
-
-        if (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}}")
-          get_filename_component (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}}" PATH)
-          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}" CACHE PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
-        else()
-          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX} "" CACHE PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
-        endif()
+  THIRDPARTY_PRODUCT_LIBRARY (${PRODUCT_NAME} ${LIBRARY_CSF_NAME} ""  "")
+  if (NOT SINGLE_GENERATOR)
+    THIRDPARTY_PRODUCT_LIBRARY (${PRODUCT_NAME} ${LIBRARY_CSF_NAME} "d" "_DEBUG")
+    foreach (LIBRARY_NAME ${${LIBRARY_CSF_NAME}})
+      string (REPLACE "." "" LIBRARY_NAME_SUFFIX "${LIBRARY_NAME}")
+      if (NOT 3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}_DEBUG)
+        set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}_DEBUG "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}}" CACHE FILEPATH "The path to ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
       endif()
 
-      if (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}")
-        list (APPEND 3RDPARTY_LIBRARY_DIRS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}")
-      else()
-        list (APPEND 3RDPARTY_NO_LIBS 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX})
-
-        set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX} "" CACHE FILEPATH "The path to ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
-      endif()
-
-      # shared library
-      if (WIN32)
-        if (NOT 3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX} OR NOT EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}")
-
-          set (CMAKE_FIND_LIBRARY_SUFFIXES .dll)
-
-          # set 3RDPARTY_${PRODUCT_NAME}_DLL as notfound, otherwise find_library can't assign a new value to 3RDPARTY_${PRODUCT_NAME}_DLL
-          set (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX} "3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}-NOTFOUND" CACHE FILEPATH "The path to ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
-
-          if ((3RDPARTY_${PRODUCT_NAME}_DIR AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DIR}") OR (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}}"))
-            find_library (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}  NAMES ${LIBRARY_NAME}
-                                                                               PATHS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME}}" "${3RDPARTY_${PRODUCT_NAME}_DIR}"
-                                                                               PATH_SUFFIXES bin win${COMPILER_BITNESS}/${COMPILER}/bin bin/win${COMPILER_BITNESS}
-                                                                               NO_DEFAULT_PATH)
-            if (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX} STREQUAL "3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}-NOTFOUND")
-              # find directory recursive
-              FIND_SUBDIRECTORY (${3RDPARTY_${PRODUCT_NAME}_DIR} bin SUBDIR_NAME)
-              if (NOT "${SUBDIR_NAME}" STREQUAL "")
-                find_library (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX} NAMES ${LIBRARY_NAME_SUFFIX}
-                                                             PATHS "${SUBDIR_NAME}"
-                                                             PATH_SUFFIXES bin
-                                                             NO_DEFAULT_PATH)
-              endif()
-            endif()
-          else()
-            find_library (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX} NAMES ${LIBRARY_NAME} PATH_SUFFIXES bin)
-          endif()
-
-          if (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX} AND EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}")
-            get_filename_component (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}" PATH)
-            set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX} "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}}" CACHE PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
-          else()
-            set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX} "" CACHE PATH "The directory containing ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
-
-            set (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX} "" CACHE FILEPATH "${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
-          endif()
-        endif()
-
-        if (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX} OR EXISTS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}}")
-          list (APPEND 3RDPARTY_DLL_DIRS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}}")
-        else()
-          list (APPEND 3RDPARTY_NO_DLLS 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX})
+      if (NOT 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}_DEBUG)
+        set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}_DEBUG "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}" CACHE PATH "The directory containing ${PRODUCT_NAME} library \"${LIBRARY_NAME}\"" FORCE)
+        if (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}_DEBUG)
+          list (REMOVE_ITEM 3RDPARTY_NO_LIBS 3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}_DEBUG)
         endif()
       endif()
 
       if (WIN32)
-        set (3RDPARTY_${PRODUCT_NAME}_DLL_DIRS "")
-      else()
-        set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIRS "")
+        if (NOT 3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}_DEBUG)
+          set (3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}_DEBUG "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}" CACHE FILEPATH "${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
+        endif()
+
+        if (NOT 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}_DEBUG)
+          set (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}_DEBUG "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}}" CACHE PATH "The directory containing ${PRODUCT_NAME} shared library \"${LIBRARY_NAME}\"" FORCE)
+          if (3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}_DEBUG)
+            list (REMOVE_ITEM 3RDPARTY_NO_DLLS 3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}_DEBUG)
+          endif()
+        endif()
       endif()
+    endforeach()
+  endif()
 
-      foreach (LIBRARY_NAME ${${LIBRARY_CSF_NAME}})
-        string (REPLACE "." "" LIBRARY_NAME_SUFFIX "${LIBRARY_NAME}")
-        if (WIN32)
-          set (3RDPARTY_${PRODUCT_NAME}_DLL_DIRS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}};${3RDPARTY_${PRODUCT_NAME}_DLL_DIRS}")
-          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIRS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}")
-        else()
-          set (3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIRS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}:${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIRS}")
-        endif()
-      endforeach()
+  set (USED_3RDPARTY_${PRODUCT_NAME}_DIRS "")
 
-      set (USED_3RDPARTY_${PRODUCT_NAME}_DIRS "")
+  if (INSTALL_${PRODUCT_NAME})
+    set (USED_3RDPARTY_${PRODUCT_NAME}_DIR "")
 
-      if (INSTALL_${PRODUCT_NAME})
-        OCCT_MAKE_OS_WITH_BITNESS()
-        OCCT_MAKE_COMPILER_SHORT_NAME()
-        set (USED_3RDPARTY_${PRODUCT_NAME}_DIR "")
-
-        if (WIN32)
-          if (SINGLE_GENERATOR)
-            install (FILES "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}" DESTINATION "${INSTALL_DIR_BIN}")
-          else()
-            install (FILES "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}"
-                     CONFIGURATIONS Release
-                     DESTINATION "${INSTALL_DIR_BIN}")
-            install (FILES "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}"
-                     CONFIGURATIONS RelWithDebInfo
-                     DESTINATION "${INSTALL_DIR_BIN}i")
-            install (FILES "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}"
-                     CONFIGURATIONS Debug
-                     DESTINATION "${INSTALL_DIR_BIN}d")
-          endif()
-        else()
-          get_filename_component(ABS_PATH ${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}} REALPATH)
-
-          if ("${PRODUCT_NAME}" STREQUAL "FREEIMAGE")
-            get_filename_component(FREEIMLIB ${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}} NAME)
-
-            if (SINGLE_GENERATOR)
-              install (FILES "${ABS_PATH}" DESTINATION "${INSTALL_DIR_LIB}" RENAME ${FREEIMLIB}.3)
-            else()
-              install (FILES "${ABS_PATH}"
-                       CONFIGURATIONS Release
-                       DESTINATION "${INSTALL_DIR_LIB}"
-                       RENAME ${FREEIMLIB}.3)
-              install (FILES "${ABS_PATH}"
-                       CONFIGURATIONS RelWithDebInfo
-                       DESTINATION "${INSTALL_DIR_LIB}i"
-                       RENAME ${FREEIMLIB}.3)
-              install (FILES "${ABS_PATH}"
-                       CONFIGURATIONS Debug
-                       DESTINATION "${INSTALL_DIR_LIB}d"
-                       RENAME ${FREEIMLIB}.3)
-            endif()
-          endif()
-
-        endif()
+    if (WIN32)
+      if (SINGLE_GENERATOR)
+        install (FILES "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}" DESTINATION "${INSTALL_DIR_BIN}")
       else()
-        # the library directory for using by the executable
-        foreach (LIBRARY_NAME ${${LIBRARY_CSF_NAME}})
-          string (REPLACE "." "" LIBRARY_NAME_SUFFIX "${LIBRARY_NAME}")
-          if (WIN32)
-            set (USED_3RDPARTY_${PRODUCT_NAME}_DIRS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}};${USED_3RDPARTY_${PRODUCT_NAME}_DIRS}")
-          else()
-            set (USED_3RDPARTY_${PRODUCT_NAME}_DIRS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}:${USED_3RDPARTY_${PRODUCT_NAME}_DIRS}")
-          endif()
-        endforeach()
-        if (WIN32)
-          set (USED_3RDPARTY_${PRODUCT_NAME}_DIR ${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}})
+        install (FILES "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}"
+                  CONFIGURATIONS Release
+                  DESTINATION "${INSTALL_DIR_BIN}")
+        install (FILES "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}}"
+                  CONFIGURATIONS RelWithDebInfo
+                  DESTINATION "${INSTALL_DIR_BIN}i")
+        install (FILES "${3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX}_DEBUG}"
+                  CONFIGURATIONS Debug
+                  DESTINATION "${INSTALL_DIR_BIN}d")
+      endif()
+    else()
+      get_filename_component(ABS_PATH ${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}} REALPATH)
+
+      if ("${PRODUCT_NAME}" STREQUAL "FREEIMAGE")
+        get_filename_component(FREEIMLIB ${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}} NAME)
+
+        if (SINGLE_GENERATOR)
+          install (FILES "${ABS_PATH}" DESTINATION "${INSTALL_DIR_LIB}" RENAME ${FREEIMLIB}.3)
+        else()
+          install (FILES "${ABS_PATH}"
+                    CONFIGURATIONS Release
+                    DESTINATION "${INSTALL_DIR_LIB}"
+                    RENAME ${FREEIMLIB}.3)
+          install (FILES "${ABS_PATH}"
+                    CONFIGURATIONS RelWithDebInfo
+                    DESTINATION "${INSTALL_DIR_LIB}i"
+                    RENAME ${FREEIMLIB}.3)
+
+          get_filename_component(FREEIMLIB_DEBUG ${3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX}_DEBUG} NAME)
+          install (FILES "${ABS_PATH}"
+                    CONFIGURATIONS Debug
+                    DESTINATION "${INSTALL_DIR_LIB}d"
+                    RENAME ${FREEIMLIB_DEBUG}.3)
         endif()
       endif()
 
-      mark_as_advanced (3RDPARTY_${PRODUCT_NAME}_LIBRARY_${LIBRARY_NAME_SUFFIX} 3RDPARTY_${PRODUCT_NAME}_DLL_${LIBRARY_NAME_SUFFIX})
-#    endif()
-  endforeach()
+    endif()
+  else()
+    # the library directory for using by the executable
+    foreach (LIBRARY_NAME ${${LIBRARY_CSF_NAME}})
+      string (REPLACE "." "" LIBRARY_NAME_SUFFIX "${LIBRARY_NAME}")
+      if (WIN32)
+        set (USED_3RDPARTY_${PRODUCT_NAME}_DIRS "${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}};${USED_3RDPARTY_${PRODUCT_NAME}_DIRS}")
+      else()
+        set (USED_3RDPARTY_${PRODUCT_NAME}_DIRS "${3RDPARTY_${PRODUCT_NAME}_LIBRARY_DIR_${LIBRARY_NAME_SUFFIX}}:${USED_3RDPARTY_${PRODUCT_NAME}_DIRS}")
+      endif()
+    endforeach()
+    if (WIN32)
+      set (USED_3RDPARTY_${PRODUCT_NAME}_DIR ${3RDPARTY_${PRODUCT_NAME}_DLL_DIR_${LIBRARY_NAME_SUFFIX}})
+    endif()
+  endif()
 endmacro()
 
 macro (COMPLIANCE_PRODUCT_CONSISTENCY LIBNAME)
@@ -361,28 +431,6 @@ macro (COMPLIANCE_PRODUCT_CONSISTENCY LIBNAME)
       if (NOT DOES_PATH_CONTAIN)
         set (3RDPARTY_${LIBNAME}_DLL "" CACHE FILEPATH "${LIBNAME} shared library" FORCE)
       endif()
-    endif()
-  endif()
-endmacro()
-
-macro(CONFIGURE_DRACO_DEPS)
-  if (USE_DRACO)
-    set (USED_LIB_RELEASE ${3RDPARTY_DRACO_LIBRARY})
-    if (WIN32)
-      set (USED_LIB_DEBUG ${3RDPARTY_DRACO_LIBRARY_DEBUG})
-    else()
-      set (USED_LIB_DEBUG ${3RDPARTY_DRACO_LIBRARY})
-    endif()
-    set (USED_LIB_CONF)
-    if (EXISTS ${USED_LIB_DEBUG})
-      set (USED_LIB_CONF "$<$<CONFIG:DEBUG>:${USED_LIB_DEBUG}>;${USED_LIB_CONF}")
-    endif()
-    if (EXISTS ${USED_LIB_RELEASE})
-      set (USED_LIB_CONF "$<$<CONFIG:RELEASE>:${USED_LIB_RELEASE}>;${USED_LIB_CONF}")
-      set (USED_LIB_CONF "$<$<CONFIG:RELWITHDEBINFO>:${USED_LIB_RELEASE}>;${USED_LIB_CONF}")
-    endif()
-    if (DEFINED USED_LIB_CONF)
-      set_property (TARGET ${PROJECT_NAME} APPEND PROPERTY LINK_LIBRARIES "${USED_LIB_CONF}")
     endif()
   endif()
 endmacro()
