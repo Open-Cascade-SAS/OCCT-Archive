@@ -2565,8 +2565,11 @@ void OpenGl_View::renderGrid()
   const Handle(OpenGl_Context)& aContext = myWorkspace->GetGlContext();
 
   Bnd_Box aBnd = MinMaxValues (Standard_True);
-  aBnd.Add (myGridParams.Position());
-  aContext->Camera()->ZFitAll (1.0, aBnd, aBnd);
+  if (myGridParams.IsBackground() || aBnd.IsOut (myGridParams.Position()))
+  {
+    aBnd.Add (myGridParams.Position());
+    aContext->Camera()->ZFitAll (1.0, aBnd, aBnd);
+  }
 
   const Standard_Real aZNear = aContext->Camera()->ZNear();
   const Standard_Real aZFar = aContext->Camera()->ZFar();
@@ -2586,7 +2589,7 @@ void OpenGl_View::renderGrid()
                               ? OpenGl_Mat4()
                               : aContext->WorldViewState.Current();
   OpenGl_Mat4 aMat;
-  const gp_Pnt& aPosition = myGridParams.Position();
+  const gp_Pnt& aPosition = myGridParams.IsBackground() ? gp_Pnt (0.0, 0.0, -aZFar) : myGridParams.Position();
   aMat.SetColumn (3, Graphic3d_Vec4 ((float)aPosition.X(), (float)aPosition.Y(), (float)aPosition.Z(), 1.0));
 
   aContext->WorldViewState.Push();
@@ -2594,9 +2597,10 @@ void OpenGl_View::renderGrid()
   aContext->ApplyWorldViewMatrix();
 
   aContext->core11fwd->glEnable (GL_DEPTH_TEST);
-  aContext->core11fwd->glDepthFunc (GL_LESS);
+  aContext->core11fwd->glDepthFunc (GL_LEQUAL);
+  aContext->core11fwd->glDepthMask (GL_TRUE);
   aContext->core11fwd->glEnable (GL_BLEND);
-  aContext->core11fwd->glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  aContext->core20fwd->glBlendFuncSeparate (GL_SRC_ALPHA, GL_DST_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   const Standard_Real aCameraScale = aContext->Camera()->Scale();
   Standard_Real aScale = myGridParams.IsInfinity()
@@ -2620,6 +2624,7 @@ void OpenGl_View::renderGrid()
 
   aContext->Camera()->SetZRange (aZNear, aZFar);
   aContext->Camera()->SetProjectionType (aProjectionType);
+  aContext->core11fwd->glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   aContext->WorldViewState.Pop();
   aContext->ProjectionState.Pop();
