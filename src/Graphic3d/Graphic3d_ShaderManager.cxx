@@ -2280,7 +2280,8 @@ Handle(Graphic3d_ShaderProgram) Graphic3d_ShaderManager::getGridProgram() const
     EOL"    aColor.a *= aFading;"
     EOL"  }"
 
-    EOL"  gl_FragDepth = uIsBackground ? 1.0 : min (aDepth, 1.0);"
+    EOL"  float aMaxDepth = 1.0 - 1e-5;"
+    EOL"  gl_FragDepth = uIsBackground ? aMaxDepth : min (aDepth, aMaxDepth);"
     EOL"  occFragColor = aColor;"
     EOL"}";
 

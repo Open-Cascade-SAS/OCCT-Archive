@@ -2597,10 +2597,14 @@ void OpenGl_View::renderGrid()
   aContext->ApplyWorldViewMatrix();
 
   aContext->core11fwd->glEnable (GL_DEPTH_TEST);
-  aContext->core11fwd->glDepthFunc (GL_LEQUAL);
+  aContext->core11fwd->glDepthFunc (GL_LESS);
   aContext->core11fwd->glDepthMask (GL_TRUE);
   aContext->core11fwd->glEnable (GL_BLEND);
-  aContext->core20fwd->glBlendFuncSeparate (GL_SRC_ALPHA, GL_DST_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  const bool wasDepthClamped = aContext->arbDepthClamp && aContext->core11fwd->glIsEnabled (GL_DEPTH_CLAMP);
+  if (aContext->arbDepthClamp && !wasDepthClamped)
+  {
+    aContext->core11fwd->glEnable (GL_DEPTH_CLAMP);
+  }
 
   const Standard_Real aCameraScale = aContext->Camera()->Scale();
   Standard_Real aScale = myGridParams.IsInfinity()
@@ -2625,6 +2629,10 @@ void OpenGl_View::renderGrid()
   aContext->Camera()->SetZRange (aZNear, aZFar);
   aContext->Camera()->SetProjectionType (aProjectionType);
   aContext->core11fwd->glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  if (aContext->arbDepthClamp && !wasDepthClamped)
+  {
+    aContext->core11fwd->glDisable (GL_DEPTH_CLAMP);
+  }
 
   aContext->WorldViewState.Pop();
   aContext->ProjectionState.Pop();
