@@ -2585,15 +2585,16 @@ void OpenGl_View::renderGrid()
   aContext->ProjectionState.SetCurrent (aContext->Camera()->ProjectionMatrixF());
   aContext->ApplyProjectionMatrix();
 
-  OpenGl_Mat4 aWorldViewState = myGridParams.IsBackground()
-                              ? OpenGl_Mat4()
-                              : aContext->WorldViewState.Current();
-  OpenGl_Mat4 aMat;
-  const gp_Pnt& aPosition = myGridParams.IsBackground() ? gp_Pnt (0.0, 0.0, -aZFar) : myGridParams.Position();
-  aMat.SetColumn (3, Graphic3d_Vec4 ((float)aPosition.X(), (float)aPosition.Y(), (float)aPosition.Z(), 1.0));
+  const OpenGl_Mat4& aWorldViewCurrent = aContext->WorldViewState.Current();
+  OpenGl_Mat4 aWorldViewState = myGridParams.IsBackground() ? OpenGl_Mat4() : aWorldViewCurrent;
+  const gp_Pnt& aPosition = myGridParams.IsBackground()
+                          ? gp_Pnt (aWorldViewCurrent.GetValue (0, 3), aWorldViewCurrent.GetValue (1, 3), -aZFar)
+                          : myGridParams.Position();
+  OpenGl_Mat4 aTranslation;
+  aTranslation.SetColumn (3, Graphic3d_Vec4 ((float)aPosition.X(), (float)aPosition.Y(), (float)aPosition.Z(), 1.0));
 
   aContext->WorldViewState.Push();
-  aContext->WorldViewState.SetCurrent (aWorldViewState * aMat);
+  aContext->WorldViewState.SetCurrent (aWorldViewState * aTranslation);
   aContext->ApplyWorldViewMatrix();
 
   aContext->core11fwd->glEnable (GL_DEPTH_TEST);
