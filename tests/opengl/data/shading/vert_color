@@ -15,6 +15,12 @@ set aColors {
   {{0.5 0.0 0.0} {0.0 0.0 0.5} {0.0 0.5 0.0}}
   {{0.5 0.5 0.0} {0.0 0.5 0.5} {0.5 0.0 0.5}}
 }
+set aColorsBack {
+  {{1.0 0.0 0.0} {0.0 1.0 0.0} {1.0 0.0 0.0}}
+  {{0.0 1.0 0.0} {1.0 0.0 0.0} {0.0 1.0 0.0}}
+  {{0.0 0.0 1.0} {1.0 0.0 0.0} {0.0 0.0 1.0}}
+  {{1.0 1.0 1.0} {1.0 0.0 0.0} {1.0 1.0 1.0}}
+}
 set aNormals {
   { 0  0 -1}
   { 1  1  1}
@@ -26,11 +32,12 @@ proc genTris {theFrom theTo theColors} {
   set aTris ""
   for {set t $theFrom} {$t <= $theTo} {incr t} {
     for {set n 0} {$n < 3} {incr n} {
-      set aVert [lindex $::aVerts   $t]
-      set aCol  [lindex $::aColors  $t]
-      set aNorm [lindex $::aNormals $t]
+      set aVert    [lindex $::aVerts      $t]
+      set aCol     [lindex $::aColors     $t]
+      set aColBack [lindex $::aColorsBack $t]
+      set aNorm    [lindex $::aNormals    $t]
       set aTris "$aTris v [lindex $aVert $n] n $aNorm"
-      if { $theColors == 1 } { set aTris "$aTris c [lindex $aCol $n]" }
+      if { $theColors == 1 } { set aTris "$aTris c [lindex $aCol $n] cb [lindex $aColBack $n]" }
     }
   }
   return $aTris

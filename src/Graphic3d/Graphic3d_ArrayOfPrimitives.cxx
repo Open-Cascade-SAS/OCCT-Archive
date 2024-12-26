@@ -150,7 +150,7 @@ void Graphic3d_ArrayOfPrimitives::init (Graphic3d_TypeOfPrimitiveArray theType,
     myIndices->NbElements = 0;
   }
 
-  Graphic3d_Attribute anAttribs[4];
+  Graphic3d_Attribute anAttribs[5];
   Standard_Integer    aNbAttribs = 0;
   anAttribs[aNbAttribs].Id       = Graphic3d_TOA_POS;
   anAttribs[aNbAttribs].DataType = Graphic3d_TOD_VEC3;
