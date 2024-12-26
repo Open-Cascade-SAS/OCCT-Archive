@@ -3432,6 +3432,12 @@ Standard_Boolean MyPArrayObject::Init (Graphic3d_TypeOfPrimitiveArray thePrimTyp
         anArrayFlags = anArrayFlags | Graphic3d_ArrayFlags_VertexColor;
       }
 
+      // vertex has a color back
+      if (CheckInputCommand("cb", theDesc, anArgIndex, 3, anArgsCount))
+      {
+        anArrayFlags = anArrayFlags | Graphic3d_ArrayFlags_VertexColorBack;
+      }
+
       // vertex has a texel
       if (CheckInputCommand ("t", theDesc, anArgIndex, 2, anArgsCount))
       {
@@ -3556,6 +3562,13 @@ Standard_Boolean MyPArrayObject::Init (Graphic3d_TypeOfPrimitiveArray thePrimTyp
                                     theDesc->Value (anArgIndex - 2).RealValue(),
                                     theDesc->Value (anArgIndex - 1).RealValue());
         myPArray->SetVertexColor (aVertIndex, aCol.r(), aCol.g(), aCol.b());
+      }
+      if (CheckInputCommand("cb", theDesc, anArgIndex, 3, anArgsCount))
+      {
+        const Graphic3d_Vec3d aColBack (theDesc->Value(anArgIndex - 3).RealValue(),
+                                        theDesc->Value(anArgIndex - 2).RealValue(),
+                                        theDesc->Value(anArgIndex - 1).RealValue());
+        myPArray->SetVertexColorBack (aVertIndex, aColBack.r(), aColBack.g(), aColBack.b());
       }
       if (CheckInputCommand ("t", theDesc, anArgIndex, 2, anArgsCount))
       {
@@ -7051,7 +7064,7 @@ Use vtop to see projected HLR shape.
 vdrawparray name TypeOfArray={points|segments|polylines|triangles
                    |trianglefans|trianglestrips|quads|quadstrips|polygons}
             [-deinterleaved|-mutable]
-            [vertex={'v' x y z [normal={'n' nx ny nz}] [color={'c' r g b}] [texel={'t' tx ty}]]
+            [vertex={'v' x y z [normal={'n' nx ny nz}] [color={'c' r g b}] [colorBack={'cb' r g b}] [texel={'t' tx ty}]]
             [bound= {'b' nbVertices [bound_color={'c' r g b}]]
             [edge=  {'e' vertexId]
             [-shape shapeName] [-patch]

@@ -381,6 +381,62 @@ public:
     }
   }
 
+  //! Change the vertex color back in the array.
+  //! @param[in] theIndex node index within [1, VertexNumberAllocated()] range
+  //! @param[in] theColor node color
+  void SetVertexColorBack (const Standard_Integer theIndex, const Quantity_Color& theColor)
+  {
+    SetVertexColorBack (theIndex, theColor.Red(), theColor.Green(), theColor.Blue());
+  }
+
+  //! Change the vertex color back in the array.
+  //! @param[in] theIndex node index within [1, VertexNumberAllocated()] range
+  //! @param[in] theR red   color value within [0, 1] range
+  //! @param[in] theG green color value within [0, 1] range
+  //! @param[in] theB blue  color value within [0, 1] range
+  void SetVertexColorBack (const Standard_Integer theIndex, const Standard_Real theR, const Standard_Real theG, const Standard_Real theB)
+  {
+    Standard_OutOfRange_Raise_if(theIndex < 1 || theIndex > myAttribs->NbMaxElements(), "BAD VERTEX index");
+    if (myColDataBack != NULL)
+    {
+      Graphic3d_Vec4ub* aColorPtr = reinterpret_cast<Graphic3d_Vec4ub* >(myColDataBack + myColStrideBack * ((Standard_Size)theIndex - 1));
+      aColorPtr->SetValues (Standard_Byte(theR * 255.0),
+                            Standard_Byte(theG * 255.0),
+                            Standard_Byte(theB * 255.0), 255);
+    }
+    myAttribs->NbElements = Max (theIndex, myAttribs->NbElements);
+  }
+
+  //! Change the vertex color back in the array.
+  //! @param[in] theIndex node index within [1, VertexNumberAllocated()] range
+  //! @param[in] theColor node RGBA color values within [0, 255] range
+  void SetVertexColorBack (const Standard_Integer  theIndex,
+                           const Graphic3d_Vec4ub& theColor)
+  {
+    Standard_OutOfRange_Raise_if(theIndex < 1 || theIndex > myAttribs->NbMaxElements(), "BAD VERTEX index");
+    if (myColDataBack != NULL)
+    {
+      Graphic3d_Vec4ub* aColorPtr = reinterpret_cast<Graphic3d_Vec4ub* >(myColDataBack + myColStrideBack * ((Standard_Size)theIndex - 1));
+      (*aColorPtr) = theColor;
+    }
+    myAttribs->NbElements = Max (theIndex, myAttribs->NbElements);
+  }
+
+  //! Change the vertex color back in the array.
+  //! @code
+  //!   theColor32 = Alpha << 24 + Blue << 16 + Green << 8 + Red
+  //! @endcode
+  //! @param[in] theIndex   node index within [1, VertexNumberAllocated()] range
+  //! @param[in] theColor32 packed RGBA color values
+  void SetVertexColorBack (const Standard_Integer theIndex, const Standard_Integer theColor32)
+  {
+    Standard_OutOfRange_Raise_if(theIndex < 1 || theIndex > myAttribs->NbMaxElements(), "BAD VERTEX index");
+    if (myColDataBack != NULL)
+    {
+      *reinterpret_cast<Standard_Integer* >(myColDataBack + myColStrideBack * ((Standard_Size)theIndex - 1)) = theColor32;
+    }
+  }
+
   //! Change the vertex normal in the array.
   //! @param[in] theIndex  node index within [1, VertexNumberAllocated()] range
   //! @param[in] theNormal normalized surface normal
