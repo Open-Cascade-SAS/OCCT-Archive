@@ -1728,6 +1728,7 @@ void AIS_ViewController::handleOrbitRotation (const Handle(V3d_View)& theView,
     myCamStartOpToEye    = gp_Vec (myRotatePnt3d, aCam->Eye()).Transformed (aTrsf);
     myCamStartOpToCenter = gp_Vec (myRotatePnt3d, aCam->Center()).Transformed (aTrsf);
 
+    aCam->SetRotationPoint (myRotatePnt3d);
     theView->Invalidate();
   }
 
@@ -1840,6 +1841,7 @@ void AIS_ViewController::handleViewRotation (const Handle(V3d_View)& theView,
     const gp_Quaternion aRot = aTrsf.GetRotation();
     double aRollDummy = 0.0;
     aRot.GetEulerAngles (gp_YawPitchRoll, myRotateStartYawPitchRoll[0], myRotateStartYawPitchRoll[1], aRollDummy);
+    aCam->SetRotationPoint (gp::Origin());
   }
   if (toRotateAnyway)
   {

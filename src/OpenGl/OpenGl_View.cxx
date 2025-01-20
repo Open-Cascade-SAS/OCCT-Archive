@@ -2563,33 +2563,43 @@ void OpenGl_View::renderGrid()
   }
 
   const Handle(OpenGl_Context)& aContext = myWorkspace->GetGlContext();
+  const Handle(Graphic3d_Camera)& aCamera = aContext->Camera();
 
   Bnd_Box aBnd = MinMaxValues (Standard_True);
   if (myGridParams.IsBackground() || aBnd.IsOut (myGridParams.Position()))
   {
     aBnd.Add (myGridParams.Position());
-    aContext->Camera()->ZFitAll (1.0, aBnd, aBnd);
+    aCamera->ZFitAll (1.0, aBnd, aBnd);
   }
 
-  const Standard_Real aZNear = aContext->Camera()->ZNear();
-  const Standard_Real aZFar = aContext->Camera()->ZFar();
-  const Graphic3d_Camera::Projection aProjectionType = aContext->Camera()->ProjectionType();
+  const Standard_Real aZNear = aCamera->ZNear();
+  const Standard_Real aZFar = aCamera->ZFar();
+  const Graphic3d_Camera::Projection aProjectionType = aCamera->ProjectionType();
 
-  aContext->Camera()->SetZRange (aZNear, Max (aZNear * 1.001, aZFar));
+  aCamera->SetZRange (aZNear, Max (aZNear * 1.001, aZFar));
   if (myGridParams.IsBackground())
   {
-    aContext->Camera()->SetProjectionType (Graphic3d_Camera::Projection_Orthographic);
+    aCamera->SetProjectionType (Graphic3d_Camera::Projection_Orthographic);
   }
 
   aContext->ProjectionState.Push();
-  aContext->ProjectionState.SetCurrent (aContext->Camera()->ProjectionMatrixF());
+  aContext->ProjectionState.SetCurrent (aCamera->ProjectionMatrixF());
   aContext->ApplyProjectionMatrix();
 
   const OpenGl_Mat4& aWorldViewCurrent = aContext->WorldViewState.Current();
   OpenGl_Mat4 aWorldViewState = myGridParams.IsBackground() ? OpenGl_Mat4() : aWorldViewCurrent;
-  const gp_Pnt& aPosition = myGridParams.IsBackground()
-                          ? gp_Pnt (aWorldViewCurrent.GetValue (0, 3), aWorldViewCurrent.GetValue (1, 3), -aZFar)
-                          : myGridParams.Position();
+
+  gp_Pnt aPosition = myGridParams.Position();
+  if (myGridParams.IsBackground())
+  {
+    gp_Pnt aRotationPoint = aCamera->RotationPoint();
+    Graphic3d_Vec4 aRotationVec ((float)aRotationPoint.X(), (float)aRotationPoint.Y(), (float)aRotationPoint.Z(), 1.0);
+    OpenGl_Mat4 aTranslation, aTranslationInv;
+    aTranslation.SetColumn (3, aRotationVec);
+    aTranslationInv.SetColumn (3, -aRotationVec);
+    OpenGl_Mat4 aWorldViewStateCorrected = aTranslationInv * aWorldViewCurrent * aTranslation;
+    aPosition.ChangeCoord() += gp_XYZ (aWorldViewStateCorrected (0, 3), aWorldViewStateCorrected (1, 3), -aZFar);
+  }
   OpenGl_Mat4 aTranslation;
   aTranslation.SetColumn (3, Graphic3d_Vec4 ((float)aPosition.X(), (float)aPosition.Y(), (float)aPosition.Z(), 1.0));
 
@@ -2607,7 +2617,7 @@ void OpenGl_View::renderGrid()
     aContext->core11fwd->glEnable (GL_DEPTH_CLAMP);
   }
 
-  const Standard_Real aCameraScale = aContext->Camera()->Scale();
+  const Standard_Real aCameraScale = aCamera->Scale();
   Standard_Real aScale = myGridParams.IsInfinity()
                        ? 10.0 / pow (10.0, floor (log10 (Max (aCameraScale, 1.0))) + 1.0)
                        : myGridParams.Scale();
@@ -2615,8 +2625,8 @@ void OpenGl_View::renderGrid()
   if (aContext->ShaderManager()->BindGridProgram())
   {
     const Handle(OpenGl_ShaderProgram)& aProg = aContext->ActiveProgram();
-    aProg->SetUniform (aContext, "uZNear", GLfloat (aContext->Camera()->ZNear()));
-    aProg->SetUniform (aContext, "uZFar",  GLfloat (aContext->Camera()->ZFar()));
+    aProg->SetUniform (aContext, "uZNear", GLfloat (aCamera->ZNear()));
+    aProg->SetUniform (aContext, "uZFar",  GLfloat (aCamera->ZFar()));
     aProg->SetUniform (aContext, "uScale", GLfloat (aScale));
     aProg->SetUniform (aContext, "uThickness", GLfloat (myGridParams.LineThickness()));
     aProg->SetUniform (aContext, "uColor", OpenGl_Vec3 (myGridParams.Color().Rgb()));
@@ -2627,8 +2637,8 @@ void OpenGl_View::renderGrid()
     aContext->BindProgram (NULL);
   }
 
-  aContext->Camera()->SetZRange (aZNear, aZFar);
-  aContext->Camera()->SetProjectionType (aProjectionType);
+  aCamera->SetZRange (aZNear, aZFar);
+  aCamera->SetProjectionType (aProjectionType);
   aContext->core11fwd->glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   if (aContext->arbDepthClamp && !wasDepthClamped)
   {
