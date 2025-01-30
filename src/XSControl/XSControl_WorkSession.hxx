@@ -196,11 +196,14 @@ private:
   //! Clears binders
   Standard_EXPORT void ClearBinders();
 
+private:
   Handle(XSControl_Controller)     myController;
   Handle(XSControl_TransferReader) myTransferReader;
   Handle(XSControl_TransferWriter) myTransferWriter;
   XSControl_WorkSessionMap         myContext;
   Handle(XSControl_Vars)           myVars;
+
+  static Standard_Mutex myGlobalMutex; //!< Mutex to prevent data races during reading and writing.
 };
 
 #endif // _XSControl_WorkSession_HeaderFile

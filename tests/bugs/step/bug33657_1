@@ -1,0 +1,3 @@
+# Check performance of STEPCAFControl_Reader/Writer constructors in multithreading environment.
+# If no crash occures, its fine.
+OCC33657_1
