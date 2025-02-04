@@ -1510,6 +1510,10 @@ void AIS_ViewController::handlePanning (const Handle(V3d_View)& theView)
   AbortViewAnimation();
 
   const Handle(Graphic3d_Camera)& aCam = theView->Camera();
+  aCam->SetPanningVector(aCam->PanningVector() +
+                         gp_Vec2d(theView->Convert(myGL.Panning.Delta.x()),
+                                  theView->Convert(myGL.Panning.Delta.y())));
+
   if (aCam->IsOrthographic()
   || !hasPanningAnchorPoint())
   {

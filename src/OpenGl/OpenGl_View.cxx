@@ -2599,6 +2599,9 @@ void OpenGl_View::renderGrid()
     aTranslationInv.SetColumn (3, -aRotationVec);
     OpenGl_Mat4 aWorldViewStateCorrected = aTranslationInv * aWorldViewCurrent * aTranslation;
     aPosition.ChangeCoord() += gp_XYZ (aWorldViewStateCorrected (0, 3), aWorldViewStateCorrected (1, 3), -aZFar);
+
+    gp_XYZ aPanningVector (aCamera->PanningVector().X(), aCamera->PanningVector().Y(), 0.0);
+    aPosition.ChangeCoord() -= aPanningVector;
   }
   OpenGl_Mat4 aTranslation;
   aTranslation.SetColumn (3, Graphic3d_Vec4 ((float)aPosition.X(), (float)aPosition.Y(), (float)aPosition.Z(), 1.0));
