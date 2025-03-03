@@ -35,13 +35,11 @@ IMPLEMENT_STANDARD_RTTIEXT(BRepMesh_CurveTessellator, IMeshTools_CurveTessellato
 //=======================================================================
 BRepMesh_CurveTessellator::BRepMesh_CurveTessellator(
   const IMeshData::IEdgeHandle& theEdge,
-  const IMeshTools_Parameters&  theParameters,
-  const Standard_Integer        theMinPointsNb)
+  const IMeshTools_Parameters&  theParameters)
   : myDEdge(theEdge),
     myParameters(theParameters),
     myEdge(theEdge->GetEdge()),
-    myCurve(myEdge),
-    myMinPointsNb (theMinPointsNb)
+    myCurve(myEdge)
 {
   init();
 }
@@ -54,13 +52,11 @@ BRepMesh_CurveTessellator::BRepMesh_CurveTessellator (
   const IMeshData::IEdgeHandle& theEdge,
   const TopAbs_Orientation      theOrientation,
   const IMeshData::IFaceHandle& theFace,
-  const IMeshTools_Parameters&  theParameters,
-  const Standard_Integer        theMinPointsNb)
+  const IMeshTools_Parameters&  theParameters)
   : myDEdge(theEdge),
     myParameters(theParameters),
     myEdge(TopoDS::Edge(theEdge->GetEdge().Oriented(theOrientation))),
-    myCurve(myEdge, theFace->GetFace()),
-    myMinPointsNb (theMinPointsNb)
+    myCurve(myEdge, theFace->GetFace())
 {
   init();
 }
@@ -101,21 +97,20 @@ void BRepMesh_CurveTessellator::init()
   myEdgeSqTol  = BRep_Tool::Tolerance (myEdge);
   myEdgeSqTol *= myEdgeSqTol;
 
-  Standard_Integer aMinPntThreshold = 2;
+  Standard_Integer aMinPntNb = 2;
   switch (myCurve.GetType())
   {
     case GeomAbs_Circle:
     case GeomAbs_Ellipse:
     case GeomAbs_Parabola:
     case GeomAbs_Hyperbola:
-      aMinPntThreshold = 4;
+      aMinPntNb = 4;
       break;
 
     default:
       break;
   }
 
-  const Standard_Integer aMinPntNb = Max (myMinPointsNb, aMinPntThreshold); //OCC287
   myDiscretTool.Initialize (myCurve,
                             myCurve.FirstParameter(), myCurve.LastParameter(),
                             aPreciseAngDef, aPreciseLinDef, aMinPntNb,
