@@ -2056,6 +2056,8 @@ void STEPControl_ActorRead::computeIDEASClosings(const TopoDS_Compound& comp,
 //=======================================================================
 Standard_EXPORT void STEPControl_ActorRead::PostHealing(const Handle(Transfer_TransientProcess)& TP)
 {
+  if (myShapesToHeal.IsEmpty())
+    return;
   NCollection_Array1<Handle(ShapeProcess_ShapeContext)> aInfos(1, myShapesToHeal.Size());
   NCollection_Array1<TopTools_DataMapOfShapeShape> aOrigToCopyMapArr(1, myShapesToHeal.Size());
   NCollection_Array1<TopTools_DataMapOfShapeShape> aCopyToOrigMapArr(1, myShapesToHeal.Size());

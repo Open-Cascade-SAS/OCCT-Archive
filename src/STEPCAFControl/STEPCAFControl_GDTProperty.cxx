@@ -191,8 +191,12 @@ void STEPCAFControl_GDTProperty::GetDimClassOfTolerance(const Handle(StepShape_L
                                    XCAFDimTolObjects_DimensionFormVariance& theFV,
                                    XCAFDimTolObjects_DimensionGrade& theG)
 {
-  Handle(TCollection_HAsciiString) aFormV = theLAF->FormVariance();
-  Handle(TCollection_HAsciiString) aGrade = theLAF->Grade();
+  Handle(TCollection_HAsciiString) aFormV = theLAF->FormVariance().IsNull() ?
+                                            new TCollection_HAsciiString() :
+                                            theLAF->FormVariance();
+  Handle(TCollection_HAsciiString) aGrade = theLAF->Grade().IsNull() ?
+                                            new TCollection_HAsciiString() :
+                                            theLAF->Grade();
   theFV = XCAFDimTolObjects_DimensionFormVariance_None;
   Standard_Boolean aFound;
   theHolle = Standard_False;
