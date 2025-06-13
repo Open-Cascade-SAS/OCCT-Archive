@@ -1010,7 +1010,7 @@ void Intf_InterferencePolygonPolyhedron::Intersect
 	      if(IsInSegment(VecPol,gp_Vec(BegO,PO),NVecPol,ParamOnO,Tolerance)) {
 		if(IsInSegment(VecTri,gp_Vec(BegT,PT),NVecTri,ParamOnT,Tolerance)) {
 		  //-- cout<<" * "<<endl;
-		  gp_XYZ spLieu=BegT.XYZ()+((EndT.XYZ()-BegT.XYZ())*param);
+		  gp_XYZ spLieu=BegO.XYZ()+((EndO.XYZ()-BegO.XYZ())*ParamOnO);
 		  Standard_Integer tmin,tmax;
 		  if(pTri_i>pTri_ip1pc3) { 
 		    tmin=pTri_ip1pc3; tmax=pTri_i; 
@@ -1022,7 +1022,7 @@ void Intf_InterferencePolygonPolyhedron::Intersect
 				       typOnG, 0, iLin, ParamOnO, 
 				       Intf_EDGE, 
 				       tmin, 
-				       tmax, 0.,
+				       tmax, ParamOnT,
 				       1.);
 		  mySPoins.Append(SP);
 		}
