@@ -396,6 +396,23 @@ bool Select3D_SensitivePrimitiveArray::InitTriangulation (const Handle(Graphic3d
 }
 
 // =======================================================================
+// function : GetVertex
+// purpose  :
+// =======================================================================
+std::vector<Graphic3d_Vec3> Select3D_SensitivePrimitiveArray::GetVertex (const Standard_Integer theIndex) const
+{
+  std::vector<Graphic3d_Vec3> aVertices;
+  aVertices.reserve(3);
+  Graphic3d_Vec3i aTriNodes;
+  const Standard_Integer anIndexOffset = theIndex * 3;
+  getTriIndices(myIndices, anIndexOffset, aTriNodes);
+  aVertices.push_back (getPosVec3(aTriNodes[0]));
+  aVertices.push_back (getPosVec3(aTriNodes[1]));
+  aVertices.push_back (getPosVec3(aTriNodes[2]));
+  return aVertices;
+}
+
+// =======================================================================
 // function : InitPoints
 // purpose  :
 // =======================================================================
