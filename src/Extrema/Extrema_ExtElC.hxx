@@ -28,6 +28,7 @@ class gp_Circ;
 class gp_Elips;
 class gp_Hypr;
 class gp_Parab;
+class gp_Pln;
 
 //! It calculates all the distance between two elementary
 //! curves.
@@ -85,7 +86,13 @@ public:
 protected:
   //! Computes extrema in case when considered line and circle are in one plane
   Standard_EXPORT Standard_Boolean PlanarLineCircleExtrema(const gp_Lin& C1, const gp_Circ& C2);
-
+  //! Computes extrema in case when two circles are in almost perpendicular planes
+  //! and their centers are on the intersection line of these planes
+  //! (angle between planes > 45 degrees)
+  Standard_EXPORT Standard_Boolean PerpendicularCirclesExtrema(const gp_Circ& C1, const gp_Circ& C2,
+                                                               const gp_Pln& aPlc1, const gp_Pln& aPlc2,
+                                                               const Standard_Real aTolD,
+                                                               const Standard_Real angPlanes);
 private:
   Standard_Boolean myDone;
   Standard_Boolean myIsPar;

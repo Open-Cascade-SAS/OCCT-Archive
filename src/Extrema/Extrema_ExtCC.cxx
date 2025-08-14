@@ -646,6 +646,15 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
                                 Precision::Confusion(),
                                 theUt11,
                                 theUt12);
+        // if (!ExtPCir.IsDone())
+        // {
+        //   // The point is in the center of the circle => there are infinite solutions
+        //   ClearSolutions();
+        //   const Standard_Real aRadius = Extrema_CurveTool::Circle(*myC[0]).Radius();
+        //   mySqDist.Append(aRadius * aRadius);
+        //   myIsParallel = Standard_True;
+        //   break;
+        // }
         if (ExtPCir.NbExt() < 1)
         {
           continue;
@@ -702,6 +711,15 @@ void Extrema_ExtCC::PrepareParallelResult(const Standard_Real theUt11,
                                 Precision::Confusion(),
                                 theUt11,
                                 theUt12);
+        // if (!ExtPCir.IsDone())
+        // {
+        //   // The point is in the center of the circle => there are infinite solutions
+        //   ClearSolutions();
+        //   const Standard_Real aRadius = Extrema_CurveTool::Circle(*myC[0]).Radius();
+        //   mySqDist.Append(aRadius * aRadius);
+        //   myIsParallel = Standard_True;
+        //   break;
+        // }
 
         Standard_Boolean isFound = !myIsParallel;
 
@@ -809,13 +827,13 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ExtElC&  AlgExt,
   if (myDone)
   {
     myIsParallel = AlgExt.IsParallel();
-    if (myIsParallel)
+    NbExt = AlgExt.NbExt();
+    if (myIsParallel && NbExt == 0)
     {
       PrepareParallelResult(Ut11, Ut12, Ut21, Ut22, AlgExt.SquareDistance());
     }
     else
     {
-      NbExt = AlgExt.NbExt();
       for (i = 1; i <= NbExt; i++)
       {
         // Verification de la validite des parametres
@@ -833,11 +851,25 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ExtElC&  AlgExt,
 
         if (Extrema_CurveTool::IsPeriodic(*myC[0]))
         {
-          U = ElCLib::InPeriod(U, Ut11, Ut11 + Extrema_CurveTool::Period(*myC[0]));
+          if (Abs(U - Ut11) < Precision::Confusion())
+          {
+            U = Ut11;
+          }
+          else
+          {
+            U = ElCLib::InPeriod(U, Ut11, Ut11 + Extrema_CurveTool::Period(*myC[0]));
+          }
         }
         if (Extrema_CurveTool::IsPeriodic(*myC[1]))
         {
-          U2 = ElCLib::InPeriod(U2, Ut21, Ut21 + Extrema_CurveTool::Period(*myC[1]));
+          if (Abs(U2 - Ut21) < Precision::Confusion())
+          {
+            U2 = Ut21;
+          }
+          else
+          {
+            U2 = ElCLib::InPeriod(U2, Ut21, Ut21 + Extrema_CurveTool::Period(*myC[1]));
+          }
         }
 
         if ((U >= Ut11 - RealEpsilon()) && (U <= Ut12 + RealEpsilon())

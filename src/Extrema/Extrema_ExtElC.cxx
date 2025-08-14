@@ -436,6 +436,137 @@ Standard_Boolean Extrema_ExtElC::PlanarLineCircleExtrema(const gp_Lin&  theLin,
   return Standard_True;
 }
 
+//=================================================================================================
+
+Standard_Boolean Extrema_ExtElC::PerpendicularCirclesExtrema(const gp_Circ&      C1,
+                                                             const gp_Circ&      C2,
+                                                             const gp_Pln&       aPlc1,
+                                                             const gp_Pln&       aPlc2,
+                                                             const Standard_Real aTolD,
+                                                             const Standard_Real angPlanes)
+{
+  if (angPlanes <= M_PI_4)
+  {
+    return Standard_False; // The planes are more "parallel" than "perpendicular"
+  }
+
+  Standard_Real aTolD2 = aTolD * aTolD;
+  gp_Pnt aPc1 = C1.Location();
+  gp_Pnt aPc2 = C2.Location();
+  Standard_Real aD1 = aPlc2.SquareDistance(aPc1);
+  if (aD1 < aTolD2)
+  {
+    // The center of the first circle is on the plane of the second circle,
+    // and the center of the second circle is on the plane of the first circle.
+    // => the intersection line of the two planes is along the connection of the circles' centers.
+    // Compute the number of extremes based on the distance between the centers of the circles.
+    Standard_Real aDist = aPc1.Distance(aPc2);
+    Standard_Real aMinR = Min(C1.Radius(), C2.Radius());
+    Standard_Real aMaxR = Max(C1.Radius(), C2.Radius());
+    if (aDist >= aMaxR + aMinR - aTolD)
+    {
+      // The circles are either far apart or just touching.
+      // There is one solution for the closest points on the circles.
+      myNbExt = 1;
+      gp_Vec aVec(aPc1, aPc2);
+      aVec.Normalize();
+      gp_Pnt aP1 = aPc1.Translated(aVec * C1.Radius());
+      gp_Pnt aP2 = aPc2.Translated(-aVec * C2.Radius());
+      aDist -= aMaxR + aMinR;
+      mySqDist[0] = aDist * aDist;
+      myPoint[0][0].SetValues(ElCLib::Parameter(C1, aP1), aP1);
+      myPoint[0][1].SetValues(ElCLib::Parameter(C2, aP2), aP2);
+      myIsPar = Standard_False;
+      return Standard_True;
+    }
+
+    if (Abs(aDist - aMaxR) < aTolD)
+    {
+      // The bigger circle is going through the center of the smaller circle.
+      // There are infinite solutions on the small circle.
+      myNbExt = 1;
+      gp_Vec aVec(aPc1, aPc2);
+      aVec.Normalize();
+      gp_Pnt aP1  = aPc1.Translated(aVec * C1.Radius());
+      gp_Pnt aP2  = aPc2.Translated(-aVec * C2.Radius());
+      aDist       = aMinR;
+      mySqDist[0] = aDist * aDist;
+      myPoint[0][0].SetValues(ElCLib::Parameter(C1, aP1), aP1);
+      myPoint[0][1].SetValues(ElCLib::Parameter(C2, aP2), aP2);
+      myIsPar = Standard_True; // indicator for infinite solutions
+      return Standard_True;
+    }
+
+    if (aDist <= aMaxR - aMinR + aTolD)
+    {
+      // The smaller circle is completely inside the bigger circle.
+      // There is one solution for the closest points on the circles.
+      myNbExt = 1;
+      gp_Vec aVec(aPc1, aPc2);
+      if (aVec.Magnitude() < aTolD)
+      {
+        // Both circle centers are coincident.
+        aVec = aPlc1.Axis().Direction().Crossed(aPlc2.Axis().Direction());
+        myNbExt++;
+      }
+      aVec.Normalize();
+      if (C1.Radius() < C2.Radius())
+      {
+        aVec.Reverse();
+      }
+      gp_Pnt        aP1 = aPc1.Translated(aVec * C1.Radius());
+      gp_Pnt        aP2 = aPc2.Translated(aVec * C2.Radius());
+      Standard_Real aD  = aMaxR - aDist - aMinR;
+      mySqDist[0]       = aD * aD;
+      myPoint[0][0].SetValues(ElCLib::Parameter(C1, aP1), aP1);
+      myPoint[0][1].SetValues(ElCLib::Parameter(C2, aP2), aP2);
+      if (myNbExt > 1)
+      {
+        gp_Pnt aP3 = aPc1.Translated(-aVec * C1.Radius());
+        gp_Pnt aP4 = aPc2.Translated(-aVec * C2.Radius());
+        mySqDist[1] = mySqDist[0];
+        myPoint[1][0].SetValues(ElCLib::Parameter(C1, aP3), aP3);
+        myPoint[1][1].SetValues(ElCLib::Parameter(C2, aP4), aP4);
+      }
+      myIsPar = Standard_False;
+      return Standard_True;
+    }
+
+    if (aDist < aMaxR + aMinR - aTolD)
+    {
+      // The circles are intersecting.
+      // There is one solution for the closest points on the circles.
+      myNbExt = 1;
+      gp_Vec aVec(aPc2, aPc1);
+      if (aVec.Magnitude() < aMaxR)
+      {
+        // The center of the small circle is inside the big circle.
+        aVec.Reverse();
+      }
+      aVec.Normalize();
+      if (C1.Radius() < C2.Radius())
+      {
+        aVec.Reverse();
+      }
+      gp_Pnt        aP1 = aPc1.Translated(aVec * C1.Radius());
+      gp_Pnt        aP2 = aPc2.Translated(aVec * C2.Radius());
+      Standard_Real aD  = (aMaxR + aMinR - aDist);
+      mySqDist[0]       = aD * aD;
+      myPoint[0][0].SetValues(ElCLib::Parameter(C1, aP1), aP1);
+      myPoint[0][1].SetValues(ElCLib::Parameter(C2, aP2), aP2);
+      myIsPar = Standard_False;
+      return Standard_True;
+    }
+
+    // std::cout << "====> Extrema_ExtElC: unsupported case for circles in different planes." << std::endl;
+    // std::cout << "  Distance between centers: " << aDist << std::endl;
+    // std::cout << "  Angle between planes ...: " << angPlanes * 180.0 / M_PI << " deg" << std::endl;
+    // std::cout << "  Radius Circle 1 ........: " << C1.Radius() << std::endl;
+    // std::cout << "  Radius Circle 2 ........: " << C2.Radius() << std::endl;
+  }
+  return Standard_False;
+}
+
 //=======================================================================
 // function : Extrema_ExtElC
 // purpose  :
@@ -973,6 +1104,22 @@ Extrema_ExtElC::Extrema_ExtElC(const gp_Circ& C1, const gp_Circ& C2)
   bIsSamePlane = aDc1.IsParallel(aDc2, aTolA) && aD2 < aTolD2;
   if (!bIsSamePlane)
   {
+    // Handle the specific case:
+    //  * where both planes are "almost perpendicular" (=> angle between planes > 45 deg)
+    //  * where the center of each circle is on the plane of the other circle
+    //    (=> the circle centers are on the intersection line of the two planes)
+    const Standard_Real angPlanes = aDc1.Angle(aDc2);
+    if (aD2 < aTolD2 && angPlanes > M_PI_4)
+    {
+      // The center of the second circle is on the plane of the first circle and
+      // both planes are "almost perpendicular".
+      gp_Pln aPlc2(aPc2, aDc2);
+      if (PerpendicularCirclesExtrema(C1, C2, aPlc1, aPlc2, aTolD, angPlanes))
+      {
+        myDone = Standard_True;
+        return;
+      }
+    }
     return;
   }
 
