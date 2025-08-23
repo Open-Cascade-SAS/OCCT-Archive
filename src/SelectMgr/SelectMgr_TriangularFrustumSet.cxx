@@ -258,28 +258,9 @@ Standard_Boolean SelectMgr_TriangularFrustumSet::OverlapsBox (const SelectMgr_Ve
       return Standard_True;
     }
 
-    gp_Pnt aMinMaxPnts[2] = { gp_Pnt (theMinPnt.x(), theMinPnt.y(), theMinPnt.z()),
-                              gp_Pnt (theMaxPnt.x(), theMaxPnt.y(), theMaxPnt.z())};
-
-    gp_Pnt anOffset[3] = { gp_Pnt (aMinMaxPnts[1].X() - aMinMaxPnts[0].X(), 0.0, 0.0),
-                            gp_Pnt (0.0, aMinMaxPnts[1].Y() - aMinMaxPnts[0].Y(), 0.0),
-                            gp_Pnt (0.0, 0.0, aMinMaxPnts[1].Z() - aMinMaxPnts[0].Z()) };
-
-    Standard_Integer aSign = 1;
-    for (Standard_Integer aPntsIdx = 0; aPntsIdx < 2; aPntsIdx++)
-    {
-      for (Standard_Integer aCoordIdx = 0; aCoordIdx < 3; aCoordIdx++)
-      {
-        gp_Pnt anOffsetPnt = aMinMaxPnts [aPntsIdx].XYZ() + aSign * anOffset [aCoordIdx].XYZ();
-        if (isIntersectBoundary (aMinMaxPnts [aPntsIdx], anOffsetPnt)
-          || isIntersectBoundary (anOffsetPnt, anOffsetPnt.XYZ() + aSign * anOffset [(aCoordIdx + 1) % 3].XYZ()))
-        {
+    // Disable full-inside optimization for AABB nodes in polyline mode to avoid false inclusions.
+    // Force per-element checks downstream (elementIsInside).
           *theInside &= Standard_False;
-          return Standard_True;
-        }
-      }
-      aSign = -aSign;
-    }
     return Standard_True;
   }
 
@@ -306,6 +287,15 @@ Standard_Boolean SelectMgr_TriangularFrustumSet::OverlapsPoint (const gp_Pnt& th
   }
 
   return Standard_False;
+}
+
+// =======================================================================
+// function : OverlapsPoint
+// purpose  :
+// =======================================================================
+Standard_Boolean SelectMgr_TriangularFrustumSet::OverlapsPoint (const gp_Pnt& thePnt) const
+{
+  return IsInsideByProjection (thePnt);
 }
 
 // =======================================================================
@@ -989,4 +979,60 @@ void SelectMgr_TriangularFrustumSet::DumpJson (Standard_OStream& theOStream, Sta
     const Handle(SelectMgr_TriangularFrustum)& aFrustum = anIter.Value();
     OCCT_DUMP_FIELD_VALUES_DUMPED (theOStream, theDepth, aFrustum.get())
   }
+}
+
+// =======================================================================
+// function : IsInsideByProjection
+// purpose  : Robust 2D inclusion test using original polyline (fills gaps)
+// =======================================================================
+Standard_Boolean SelectMgr_TriangularFrustumSet::IsInsideByProjection (const gp_Pnt& thePnt) const
+{
+  if (myBoundaryPoints.Size() < 6) // at least 3 near + 3 far
+  {
+    return Standard_False;
+  }
+
+  // Build plane by first frustum triangle (near plane)
+  const gp_Pnt& p0 = myFrustums.First()->myVertices[0];
+  const gp_Pnt& p1 = myFrustums.First()->myVertices[1];
+  const gp_Pnt& p2 = myFrustums.First()->myVertices[2];
+  gp_Pln aPln (p0, gp_Vec(p0,p1).Crossed (gp_Vec(p0,p2)));
+
+  // Project point onto plane along plane normal
+  gp_Pnt aProj = thePnt;
+  Standard_Real aA, aB, aC, aD; aPln.Coefficients (aA, aB, aC, aD);
+  const Standard_Real n2 = aA*aA + aB*aB + aC*aC;
+  if (n2 > gp::Resolution())
+  {
+    const Standard_Real s = (aA * aProj.X() + aB * aProj.Y() + aC * aProj.Z() + aD) / n2;
+    aProj.SetCoord (aProj.X() - aA * s,
+                    aProj.Y() - aB * s,
+                    aProj.Z() - aC * s);
+  }
+
+  // Project near boundary loop and perform winding test in 2D
+  const Standard_Integer aFacesNb = myBoundaryPoints.Size() / 2;
+  const Standard_Integer aLowerIdx = myBoundaryPoints.Lower();
+
+  // Choose 2D axes by dominant plane normal component
+  int drop = 0; if (Abs(aB) > Abs(aA) && Abs(aB) >= Abs(aC)) drop = 1; else if (Abs(aC) > Abs(aA) && Abs(aC) > Abs(aB)) drop = 2;
+  auto proj2d = [drop](const gp_Pnt& P) {
+    if (drop == 0) return gp_XY (P.Y(), P.Z());
+    if (drop == 1) return gp_XY (P.X(), P.Z());
+    return gp_XY (P.X(), P.Y());
+  };
+
+  gp_XY P = proj2d (aProj);
+  Standard_Boolean inside = Standard_False;
+  for (Standard_Integer i = 0, j = aFacesNb - 1; i < aFacesNb; j = i++)
+  {
+    const gp_Pnt& Pi3d = myBoundaryPoints.Value (aLowerIdx + i);
+    const gp_Pnt& Pj3d = myBoundaryPoints.Value (aLowerIdx + j);
+    const gp_XY Ai = proj2d (Pi3d);
+    const gp_XY Aj = proj2d (Pj3d);
+    const Standard_Boolean intersect = ((Ai.Y() > P.Y()) != (Aj.Y() > P.Y()))
+                                    && (P.X() < (Aj.X()-Ai.X()) * (P.Y()-Ai.Y()) / (Aj.Y()-Ai.Y() + 1e-300) + Ai.X());
+    if (intersect) inside = !inside;
+  }
+  return inside;
 }

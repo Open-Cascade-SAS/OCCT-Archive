@@ -84,11 +84,7 @@ public:
                                                           const SelectMgr_ViewClipRange& theClipRange,
                                                           SelectBasics_PickResult& thePickResult) const Standard_OVERRIDE;
 
-  //! Always returns FALSE (not applicable to this selector).
-  virtual Standard_Boolean OverlapsPoint (const gp_Pnt& ) const Standard_OVERRIDE
-  {
-    return Standard_False;
-  }
+  Standard_EXPORT virtual Standard_Boolean OverlapsPoint (const gp_Pnt& thePnt) const Standard_OVERRIDE;
 
   Standard_EXPORT virtual Standard_Boolean OverlapsPolygon (const TColgp_Array1OfPnt& theArrayOfPnts,
                                                             Select3D_TypeOfSensitivity theSensType,
@@ -169,6 +165,10 @@ public:
 
   //! Dumps the content of me into the stream
   Standard_EXPORT virtual void DumpJson (Standard_OStream& theOStream, Standard_Integer theDepth = -1) const Standard_OVERRIDE;
+
+public:
+  //! 2D inclusion test: project 3D point onto selection plane and check inside original polyline
+  Standard_EXPORT Standard_Boolean IsInsideByProjection (const gp_Pnt& thePnt) const;
 
 private:
 
