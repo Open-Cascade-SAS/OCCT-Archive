@@ -897,10 +897,12 @@ Handle(Geom_Surface) GeomConvert_SurfToAnaSurf::ConvertToAnalytical(
     }
   }
 
-  Standard_Real diagonal = mySurf->Value(U1, V1).Distance(mySurf->Value((U1 + U2), (V1 + V2) / 2));
-  Standard_Real twist    = 1000;
-  if (toler > diagonal / twist)
-    toler = diagonal / twist;
+  // jfa 30.10.2025 for bos #36133
+  // Do not limit tolerance value, consider InitialToler, given as argument
+  //Standard_Real diagonal = mySurf->Value(U1, V1).Distance(mySurf->Value((U1 + U2), (V1 + V2) / 2));
+  //Standard_Real twist    = 1000;
+  //if (toler > diagonal / twist)
+  //  toler = diagonal / twist;
 
   isurf                           = 1; // set cylinder
   Standard_Boolean aCylinderConus = Standard_False;
