@@ -6877,7 +6877,7 @@ static int vAddGroup (Draw_Interpretor& /*theDI*/, Standard_Integer theNbArgs, c
   }
   // Check for zlayer and color parameters.
   Quantity_Color aColor(Quantity_NOC_INDIANRED);
-  Graphic3d_ZLayerId aLayerID = anObj->ZLayer();
+  Graphic3d_ZLayerId aLayerID = Graphic3d_ZLayerId_UNKNOWN;
   for (Standard_Integer anIter = anArgIter; anIter < theNbArgs; ++anIter)
   {
     const TCollection_AsciiString anArg(theArgVec[anIter]);
@@ -6887,11 +6887,6 @@ static int vAddGroup (Draw_Interpretor& /*theDI*/, Standard_Integer theNbArgs, c
       {
         Message::SendFail() << "Specified zlayer does not exist.";
         return 1;
-      }
-      if (aLayerID == Graphic3d_ZLayerId_UNKNOWN)
-      {
-        std::cout << "Warning: you set this group with unknown zlayer.";
-        aLayerID = anObj->ZLayer();
       }
     }
     else if (anArg == "-color")
@@ -6934,7 +6929,9 @@ static int vAddGroup (Draw_Interpretor& /*theDI*/, Standard_Integer theNbArgs, c
     Standard_Real aDy = Draw::Atof (theArgVec[anArgIter++]);
     Standard_Real aZ = Draw::Atof (theArgVec[anArgIter++]);
 
-    aNewGroup->SetZLayer (aLayerID, Standard_True);
+    if (aLayerID != Graphic3d_ZLayerId_UNKNOWN)
+      aNewGroup->SetZLayer (aLayerID, Standard_True);
+
     Handle(Prs3d_LineAspect) anAspectQuadTop = new Prs3d_LineAspect(aColor, (Aspect_TypeOfLine)0, 2.0);
     aNewGroup->SetGroupPrimitivesAspect (anAspectQuadTop->Aspect());
     Handle(Graphic3d_ArrayOfTriangles) aPrim = new Graphic3d_ArrayOfTriangles(4, 6, Graphic3d_ArrayFlags_None);
@@ -6966,7 +6963,9 @@ static int vAddGroup (Draw_Interpretor& /*theDI*/, Standard_Integer theNbArgs, c
     Standard_Real aPz = Draw::Atof (theArgVec[anArgIter++]);
     Standard_Real aHeight = Draw::Atof (theArgVec[anArgIter++]);
 
-    aNewGroup->SetZLayer (aLayerID, Standard_True);
+    if (aLayerID != Graphic3d_ZLayerId_UNKNOWN)
+      aNewGroup->SetZLayer(aLayerID, Standard_True);
+
     Handle(Graphic3d_AspectText3d) aTextAspect = new Graphic3d_AspectText3d (aColor, Font_NOF_MONOSPACE, 1.0, 0.0);
     aNewGroup->SetGroupPrimitivesAspect (aTextAspect);
     Graphic3d_Vertex aMarker (aPx, aPy, aPz);

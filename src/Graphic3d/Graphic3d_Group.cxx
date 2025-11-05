@@ -315,6 +315,11 @@ void Graphic3d_Group::Marker (const Graphic3d_Vertex& thePoint,
 //=======================================================================
 void Graphic3d_Group::SetZLayer (const Graphic3d_ZLayerId theLayerId, Standard_Boolean theToUpdate)
 {
+  if (theLayerId == myZLayerId)
+  {
+    return;
+  }
+
   myZLayerId = theLayerId;
   myStructure->myCStructure->SetGroupZLayer (Standard_True);
   if (theToUpdate)
