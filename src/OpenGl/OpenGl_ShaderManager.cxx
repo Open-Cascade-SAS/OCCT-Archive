@@ -2346,19 +2346,14 @@ TCollection_AsciiString OpenGl_ShaderManager::stdComputeLighting (Standard_Integ
 
   TCollection_AsciiString aGetMatAmbient = "theIsFront ? occFrontMaterial_Ambient()  : occBackMaterial_Ambient();";
   TCollection_AsciiString aGetMatDiffuse = "theIsFront ? occFrontMaterial_Diffuse()  : occBackMaterial_Diffuse();";
-  if (theHasVertColor)
-  {
-    aGetMatAmbient = "getVertColor();";
-    aGetMatDiffuse = "getVertColor();";
-  }
 
   if (!theIsPBR)
   {
     return TCollection_AsciiString()
-    + THE_FUNC_lightDef
-    + Shaders_PointLightAttenuation_glsl
-    + aLightsFunc
-    + EOL
+      + THE_FUNC_lightDef
+      + Shaders_PointLightAttenuation_glsl
+      + aLightsFunc
+      + EOL
       EOL"vec4 computeLighting (in vec3 theNormal,"
       EOL"                      in vec3 theView,"
       EOL"                      in vec4 thePoint,"
@@ -2368,16 +2363,19 @@ TCollection_AsciiString OpenGl_ShaderManager::stdComputeLighting (Standard_Integ
       EOL"  Diffuse  = vec3 (0.0);"
       EOL"  Specular = vec3 (0.0);"
       EOL"  vec3 aPoint = thePoint.xyz / thePoint.w;"
-    + aLightsLoop
-    + EOL"  vec4 aMatAmbient  = " + aGetMatAmbient
-    + EOL"  vec4 aMatDiffuse  = " + aGetMatDiffuse
-    + EOL"  vec4 aMatSpecular = theIsFront ? occFrontMaterial_Specular() : occBackMaterial_Specular();"
-      EOL"  vec3 aColor = Ambient * aMatAmbient.rgb + Diffuse * aMatDiffuse.rgb + Specular * aMatSpecular.rgb;"
-      EOL"  occTextureOcclusion(aColor, TexCoord.st);"
-    + (theHasEmissive
-    ? EOL"  vec4 aMatEmission = theIsFront ? occFrontMaterial_Emission() : occBackMaterial_Emission();"
-      EOL"  aColor += aMatEmission.rgb;" : "")
-    + EOL"  return vec4 (aColor, aMatDiffuse.a);"
+      + aLightsLoop
+      + EOL"  vec4 aMatAmbient  = " + aGetMatAmbient
+      + EOL"  vec4 aMatDiffuse  = " + aGetMatDiffuse
+      + EOL"  vec4 aMatSpecular = theIsFront ? occFrontMaterial_Specular() : occBackMaterial_Specular();"
+      + EOL"  vec3 aVertColor = " + (theHasVertColor ? "getVertColor().rgb;" : "vec3(1.0);")
+      + EOL"  vec3 aColor = Ambient * aMatAmbient.rgb * aVertColor"
+      + EOL"                + Diffuse * aMatDiffuse.rgb * aVertColor"
+      + EOL"                + Specular * aMatSpecular.rgb;"
+      + EOL"  occTextureOcclusion(aColor, TexCoord.st);"
+      + (theHasEmissive
+        ? EOL"  vec4 aMatEmission = theIsFront ? occFrontMaterial_Emission() : occBackMaterial_Emission();"
+        EOL"  aColor += aMatEmission.rgb;" : "")
+      + EOL"  return vec4 (aColor, aMatDiffuse.a);"
       EOL"}";
   }
   else
