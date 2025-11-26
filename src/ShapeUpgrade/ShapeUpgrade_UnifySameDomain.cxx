@@ -748,8 +748,6 @@ static void ReconstructMissedSeam(const TopTools_SequenceOfShape& theRemovedEdge
                                   TopoDS_Edge&                    theSeamEdge,
                                   gp_Pnt2d&                       theNextPoint)
 {
-  Handle(Geom_Surface) RefSurf = BRep_Tool::Surface(theFrefFace);
-
   // Find seam edge between removed edges
   theSeamEdge.Nullify();
   for (Standard_Integer i = 1; i <= theRemovedEdges.Length(); i++)
@@ -768,6 +766,13 @@ static void ReconstructMissedSeam(const TopTools_SequenceOfShape& theRemovedEdge
     if ((aFirstVertex.IsSame(theCurVertex) || aLastVertex.IsSame(theCurVertex))
         && BRep_Tool::IsClosed(anEdge, theFrefFace))
     {
+      // Problem with mirrored cylinder BEGIN
+      if (!aFirstVertex.IsSame(theCurVertex)) {
+        anEdge.Reverse();
+        aPC = BRep_Tool::CurveOnSurface(anEdge, theFrefFace, Param1, Param2);
+        TopExp::Vertices(anEdge, aFirstVertex, aLastVertex, Standard_True);
+      }
+      // Problem with mirrored cylinder END
       Standard_Real aParam = (anEdge.Orientation() == TopAbs_FORWARD) ? Param1 : Param2;
       gp_Pnt2d      aPoint = aPC->Value(aParam);
       Standard_Real aUdiff = Abs(aPoint.X() - theCurPoint.X());
