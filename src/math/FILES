@@ -26,7 +26,6 @@ math_Crout.hxx
 math_Crout.lxx
 math_DirectPolynomialRoots.cxx
 math_DirectPolynomialRoots.hxx
-math_DirectPolynomialRoots.lxx
 math_DoubleTab.cxx
 math_DoubleTab.hxx
 math_DoubleTab.lxx
