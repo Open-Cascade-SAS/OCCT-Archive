@@ -799,6 +799,24 @@ void IntTools_FaceFace::MakeCurve(const Standard_Integer Index,
       newc = 
         new Geom_Hyperbola (Handle(IntPatch_GLine)::DownCast(L)->Hyperbola());
     }
+      // Compute maximum vertex tolerance from GLine vertices.
+      // This tolerance accounts for boundary intersection computation errors
+      // (e.g., pcurve-to-3D-curve deviation) and must be propagated to the curve
+      // to ensure vertices from different FF intersections can be unified.
+      double aMaxVertTol = 0.0;
+      if (myHS1->GetType() == GeomAbs_Cylinder || myHS2->GetType() == GeomAbs_Cylinder)
+      {
+        opencascade::handle<IntPatch_GLine> aGL    = opencascade::handle<IntPatch_GLine>::DownCast(L);
+        int                                 aNbVtx = aGL->NbVertex();
+        for (int iv = 1; iv <= aNbVtx; ++iv)
+        {
+          const IntPatch_Point& aVtx = aGL->Vertex(iv);
+          if (aVtx.Tolerance() > aMaxVertTol)
+          {
+            aMaxVertTol = aVtx.Tolerance();
+          }
+        }
+      }
     //
     aNbParts=myLConstruct.NbParts();
     for (i=1; i<=aNbParts; i++) {
@@ -841,6 +859,11 @@ void IntTools_FaceFace::MakeCurve(const Standard_Integer Index,
 
           aCurve.SetSecondCurve2d(new Geom2d_TrimmedCurve(C2d, fprm, lprm));
         }
+          // Ensure curve tolerance is at least the maximum vertex tolerance
+          if (aCurve.Tolerance() < aMaxVertTol)
+          {
+            aCurve.SetTolerance(aMaxVertTol);
+          }
         //
         mySeqOfCurve.Append(aCurve);
       } //if (!bFNIt && !bLPIt) {
