@@ -18,7 +18,7 @@
 #define _ShapeFix_Wire_HeaderFile
 
 #include <Standard.hxx>
-
+#include <Message_ProgressRange.hxx>
 #include <Standard_Integer.hxx>
 #include <Standard_Real.hxx>
 #include <ShapeFix_Root.hxx>
@@ -263,7 +263,7 @@ public:
   //! FixDegenerated (if wire is ordered)
   //! FixSelfIntersection (if wire is ordered and ClosedMode is True)
   //! FixLacking (if wire is ordered)
-  Standard_EXPORT Standard_Boolean Perform();
+  Standard_EXPORT bool Perform(const Message_ProgressRange& theProgress = Message_ProgressRange());
   
   //! Performs an analysis and reorders edges in the wire using class WireOrder.
   //! Flag <theModeBoth> determines the use of miscible mode if necessary.
@@ -345,7 +345,10 @@ public:
   //! the same one
   //! Tests with starting preci or, if given greater, <prec>
   //! If <prec> is -1 then MaxTolerance() is taken.
-  Standard_EXPORT Standard_Boolean FixConnected (const Standard_Integer num, const Standard_Real prec);
+  //! If <theUpdateWire> is true, synchronizes wire data with context replacements.
+  Standard_EXPORT bool FixConnected(const int    num,
+                                    const double prec,
+                                    const bool   theUpdateWire = true);
   
   //! Fixes a seam edge
   //! A Seam edge has two pcurves, one for forward. one for reversed

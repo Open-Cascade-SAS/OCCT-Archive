@@ -324,7 +324,7 @@ Standard_Integer ShapeFix_Wire::NbEdges() const
 //           are limited if order of edges in the wire is not OK
 //=======================================================================
 
-Standard_Boolean ShapeFix_Wire::Perform() 
+Standard_Boolean ShapeFix_Wire::Perform(const Message_ProgressRange& theProgress) 
 {
   ClearStatuses();
   if ( ! IsLoaded() ) return Standard_False;
@@ -345,6 +345,9 @@ Standard_Boolean ShapeFix_Wire::Perform()
     ReorderOK = ! StatusReorder ( ShapeExtend_FAIL );
   }
 
+  if (theProgress.UserBreak())
+    return false;
+
   // FixSmall is allowed to change topology only if mode is set and FixReorder 
   // did not failed
   if ( NeedFix ( myFixSmallMode, myTopoMode ) ) {
@@ -358,9 +361,15 @@ Standard_Boolean ShapeFix_Wire::Perform()
     }
   }
 
+  if (theProgress.UserBreak())
+    return false;
+
   if ( NeedFix ( myFixConnectedMode, ReorderOK ) ) {
     if ( FixConnected() ) Fixed = Standard_True;
   }
+
+  if (theProgress.UserBreak())
+    return false;
 
   if ( NeedFix ( myFixEdgeCurvesMode ) ) {
     Standard_Integer savFixShiftedMode = myFixShiftedMode;
@@ -369,10 +378,16 @@ Standard_Boolean ShapeFix_Wire::Perform()
     if ( FixEdgeCurves() ) Fixed = Standard_True;
     myFixShiftedMode = savFixShiftedMode;
   }
+
+  if (theProgress.UserBreak())
+    return false;
   
   if ( NeedFix ( myFixDegeneratedMode ) ) {
     if ( FixDegenerated() ) Fixed = Standard_True; // ?? if ! ReorderOK ??
   }
+
+  if (theProgress.UserBreak())
+    return false;
   
   //pdn - temporary to test
   if (myFixTailMode <= 0 && NeedFix(myFixNotchedEdgesMode, ReorderOK))
@@ -390,6 +405,9 @@ Standard_Boolean ShapeFix_Wire::Perform()
     }
   }
 
+  if (theProgress.UserBreak())
+    return false;
+
   if ( NeedFix ( myFixSelfIntersectionMode, myClosedMode ) ) {
     Standard_Integer savFixIntersectingEdgesMode = myFixIntersectingEdgesMode;
     // switch off FixIntEdges if reorder not done
@@ -400,9 +418,15 @@ Standard_Boolean ShapeFix_Wire::Perform()
     myFixIntersectingEdgesMode = savFixIntersectingEdgesMode;
   }
 
+  if (theProgress.UserBreak())
+    return false;
+
   if ( NeedFix ( myFixLackingMode, ReorderOK ) ) {
     if ( FixLacking() ) Fixed = Standard_True;
   }
+
+  if (theProgress.UserBreak())
+    return false;
 
   // TEMPORARILY without special mode !!!
   Handle(ShapeExtend_WireData) sbwd = WireData();
@@ -411,6 +435,9 @@ Standard_Boolean ShapeFix_Wire::Perform()
     {
       Fixed = Standard_True;
     }
+
+  if (theProgress.UserBreak())
+    return false;
 
   if (  !Context().IsNull() )
     UpdateWire();
@@ -505,9 +532,15 @@ Standard_Boolean ShapeFix_Wire::FixConnected (const Standard_Real prec)
   
   Standard_Integer stop = ( myClosedMode ? 0 : 1 );
   for ( Standard_Integer i = NbEdges(); i > stop; i-- ) {
-    FixConnected ( i, prec );
+    // Call without UpdateWire to avoid O(n^2) behavior in the loop
+    FixConnected(i, prec, false);
     myStatusConnected |= myLastFixStatus;
   }
+
+  // Update wire once after all connections are fixed
+  // Using Value() in UpdateWire() prevents edge explosion from replacement chains
+  if (!Context().IsNull())
+    UpdateWire();
 
   return StatusConnected ( ShapeExtend_DONE );
 }
@@ -1203,7 +1236,8 @@ Standard_Boolean ShapeFix_Wire::FixSmall (const Standard_Integer num,
 //=======================================================================
 
 Standard_Boolean ShapeFix_Wire::FixConnected (const Standard_Integer num,
-					      const Standard_Real prec) 
+					                                    const Standard_Real prec,
+                                              const bool theUpdateWire) 
 {
   myLastFixStatus = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
   if ( ! IsLoaded() || NbEdges() <=0 ) return Standard_False;
@@ -1294,7 +1328,10 @@ Standard_Boolean ShapeFix_Wire::FixConnected (const Standard_Integer num,
       }
     }
   }
-  if ( ! Context().IsNull() ) UpdateWire();
+
+  // Optionally update wire data with context replacements
+  if (theUpdateWire && !Context().IsNull())
+    UpdateWire();
   
   return Standard_True;
 }
@@ -3462,10 +3499,24 @@ void ShapeFix_Wire::FixDummySeam(const Standard_Integer num)
 void ShapeFix_Wire::UpdateWire () 
 {
   Handle(ShapeExtend_WireData) sbwd = WireData();
+  // Track already-expanded edges to prevent exponential growth from shared context
+  // (especially important for non-orientable surfaces like Moebius strips where
+  // edges are shared across faces and accumulated replacements can cascade)
+  NCollection_Map<TopoDS_Shape, TopTools_ShapeMapHasher> anExpandedEdges;
   for ( Standard_Integer i=1; i <= sbwd->NbEdges(); i++ ) {
     TopoDS_Edge E = sbwd->Edge(i);
+    // Use Value() instead of Apply() to get only the direct replacement
+    // without recursively following replacement chains. This prevents
+    // exponential edge explosion on Moebius strips where shared edges
+    // accumulate cascading replacements across multiple faces.
+    // The full chain resolution happens at final shell-level Apply().
+    // Note: Now again we are using Apply() because using Value() breaks test de step_2 R7
     TopoDS_Shape S = Context()->Apply ( E );
     if ( S == E ) continue;
+    // Skip if this edge was already expanded in this call to prevent duplicates
+    if (!anExpandedEdges.Add(E))
+      continue;
+
     for ( TopExp_Explorer exp(S,TopAbs_EDGE); exp.More(); exp.Next() )
       sbwd->Add ( exp.Current(), i++ );
     sbwd->Remove ( i-- );

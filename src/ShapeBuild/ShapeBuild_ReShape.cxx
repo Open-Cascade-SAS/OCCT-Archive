@@ -147,88 +147,116 @@ TopoDS_Shape ShapeBuild_ReShape::Apply (const TopoDS_Shape& shape,
 //function : Apply
 //purpose  : 
 //=======================================================================
-
-TopoDS_Shape ShapeBuild_ReShape::Apply (const TopoDS_Shape& shape,
-					const TopAbs_ShapeEnum until) 
+TopoDS_Shape ShapeBuild_ReShape::Apply(const TopoDS_Shape&    theShape,
+                                       const TopAbs_ShapeEnum theUntil)
 {
-  myStatus = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
-  if ( shape.IsNull() ) return shape;
+  LoopDetector aVisited;
+  return applyImpl(theShape, theUntil, aVisited);
+}
 
-  // apply direct replacement
-  TopoDS_Shape newsh = Value ( shape );
-  
-  // if shape removed, return NULL
-  if ( newsh.IsNull() ) {
-    myStatus = ShapeExtend::EncodeStatus ( ShapeExtend_DONE2 );
-    return newsh;
-  }
-  
-  // if shape replaced, apply modifications to the result recursively 
-  Standard_Boolean aConsLoc = ModeConsiderLocation();
-  if ( (aConsLoc && ! newsh.IsPartner (shape)) || 
-      (!aConsLoc &&! newsh.IsSame ( shape )) )
-  {
-    TopoDS_Shape res = Apply ( newsh, until );
-    myStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE1 );
-    return res;
-  }
+//==================================================================================================
 
-  TopAbs_ShapeEnum st = shape.ShapeType();
-  if ( st >= until ) return newsh;    // critere d arret
-  if(st == TopAbs_VERTEX || st == TopAbs_SHAPE)
-    return shape;
-  // define allowed types of components
+TopoDS_Shape ShapeBuild_ReShape::applyImpl(const TopoDS_Shape&    theShape,
+                                           const TopAbs_ShapeEnum theUntil,
+                                           LoopDetector&          theVisited)
+{
+    myStatus = ShapeExtend::EncodeStatus(ShapeExtend_OK);
+    if (theShape.IsNull())
+        return theShape;
 
-  BRep_Builder B;
-  
-  TopoDS_Shape result = shape.EmptyCopied();
-  TopAbs_Orientation orient = shape.Orientation(); //JR/Hp: or -> orient
-  result.Orientation(TopAbs_FORWARD); // protect against INTERNAL or EXTERNAL shapes
-  Standard_Boolean modif = Standard_False;
-  Standard_Integer locStatus = myStatus;
-  
-  // apply recorded modifications to subshapes
-  for ( TopoDS_Iterator it(shape,Standard_False); it.More(); it.Next() ) {
-    const TopoDS_Shape& sh = it.Value();
-    newsh = Apply ( sh, until );
-    if ( newsh != sh ) {
-      if ( ShapeExtend::DecodeStatus ( myStatus, ShapeExtend_DONE4 ) )
-	locStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE4 );
-      modif = 1;
+    // Apply direct replacement
+    TopoDS_Shape aNewShape = Value(theShape);
+
+    // If shape removed, return NULL
+    if (aNewShape.IsNull())
+    {
+        myStatus = ShapeExtend::EncodeStatus(ShapeExtend_DONE2);
+        return aNewShape;
     }
-    if ( newsh.IsNull() ) {
-      locStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE4 );
-      continue;
-    }
-    locStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_DONE3 );
-    if ( st == TopAbs_COMPOUND || newsh.ShapeType() == sh.ShapeType()) { //fix for SAMTECH bug OCC322 about abcense internal vertices after sewing.
-      B.Add ( result, newsh );
-      continue;
-    }
-    Standard_Integer nitems = 0;
-    for ( TopoDS_Iterator subit(newsh); subit.More(); subit.Next(), nitems++ ) {
-      const TopoDS_Shape& subsh = subit.Value();
-      if ( subsh.ShapeType() == sh.ShapeType() ) B.Add ( result, subsh );
-      else locStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_FAIL1 );
-    }
-    if ( ! nitems ) locStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_FAIL1 );
-  }
-  if ( ! modif ) return shape;
 
-  // restore Range on edge broken by EmptyCopied()
-  if ( st == TopAbs_EDGE ) {
-    ShapeBuild_Edge sbe;
-    sbe.CopyRanges ( TopoDS::Edge ( result ), TopoDS::Edge ( shape ));
-  }
-  else if (st == TopAbs_WIRE || st == TopAbs_SHELL)
-    result.Closed (BRep_Tool::IsClosed (result));
-  result.Orientation(orient);
-  myStatus = locStatus;
+    // Check if this shape was already visited to prevent infinite recursion
+    // on shapes with shared sub-shapes (e.g., Moebius strip with shared edges).
+    if (!theVisited.CanContinue(theShape))
+    {
+        // Already processed this shape, return the replacement from map
+        return aNewShape;
+    }
 
-  replace(shape, result,
-    result.IsNull() ? TReplacementKind_Remove : TReplacementKind_Modify);
+    // If shape was replaced, apply modifications to the result recursively
+    bool aConsLoc = ModeConsiderLocation();
+    if ((aConsLoc && !aNewShape.IsPartner(theShape)) || (!aConsLoc && !aNewShape.IsSame(theShape)))
+    {
+        TopoDS_Shape aRes = applyImpl(aNewShape, theUntil, theVisited);
+        myStatus |= ShapeExtend::EncodeStatus(ShapeExtend_DONE1);
+        return aRes;
+    }
 
-  return result;
+    TopAbs_ShapeEnum aST = theShape.ShapeType();
+    if (aST >= theUntil)
+        return aNewShape; // stop criterion
+    if (aST == TopAbs_VERTEX || aST == TopAbs_SHAPE)
+        return theShape;
+
+    BRep_Builder aBuilder;
+
+    TopoDS_Shape aResult = theShape.EmptyCopied();
+    TopAbs_Orientation anOrient = theShape.Orientation();
+    aResult.Orientation(TopAbs_FORWARD); // protect against INTERNAL or EXTERNAL shapes
+    bool aModif = false;
+    int aLocStatus = myStatus;
+
+    // Apply recorded modifications to subshapes
+    for (TopoDS_Iterator anIt(theShape, false); anIt.More(); anIt.Next())
+    {
+        const TopoDS_Shape &aSh = anIt.Value();
+        aNewShape = applyImpl(aSh, theUntil, theVisited);
+        if (aNewShape != aSh)
+        {
+            if (ShapeExtend::DecodeStatus(myStatus, ShapeExtend_DONE4))
+                aLocStatus |= ShapeExtend::EncodeStatus(ShapeExtend_DONE4);
+            aModif = true;
+        }
+        if (aNewShape.IsNull())
+        {
+            aLocStatus |= ShapeExtend::EncodeStatus(ShapeExtend_DONE4);
+            continue;
+        }
+        aLocStatus |= ShapeExtend::EncodeStatus(ShapeExtend_DONE3);
+        if (aST == TopAbs_COMPOUND || aNewShape.ShapeType() == aSh.ShapeType())
+        {
+            // Fix for SAMTECH bug OCC322 about absence internal vertices after sewing
+            aBuilder.Add(aResult, aNewShape);
+            continue;
+        }
+        int aNbItems = 0;
+        for (TopoDS_Iterator aSubIt(aNewShape); aSubIt.More(); aSubIt.Next(), aNbItems++)
+        {
+            const TopoDS_Shape &aSubSh = aSubIt.Value();
+            if (aSubSh.ShapeType() == aSh.ShapeType())
+                aBuilder.Add(aResult, aSubSh);
+            else
+                aLocStatus |= ShapeExtend::EncodeStatus(ShapeExtend_FAIL1);
+        }
+        if (!aNbItems)
+            aLocStatus |= ShapeExtend::EncodeStatus(ShapeExtend_FAIL1);
+    }
+    if (!aModif)
+        return theShape;
+
+    // Restore range on edge broken by EmptyCopied()
+    if (aST == TopAbs_EDGE)
+    {
+        ShapeBuild_Edge anSBE;
+        anSBE.CopyRanges(TopoDS::Edge(aResult), TopoDS::Edge(theShape));
+    }
+    else if (aST == TopAbs_WIRE || aST == TopAbs_SHELL)
+        aResult.Closed(BRep_Tool::IsClosed(aResult));
+    aResult.Orientation(anOrient);
+    myStatus = aLocStatus;
+
+    replace(theShape, aResult, aResult.IsNull() ? TReplacementKind_Remove : TReplacementKind_Modify);
+
+    return aResult;
 }
 
 //=======================================================================
@@ -251,4 +279,24 @@ Standard_Integer ShapeBuild_ReShape::Status(const TopoDS_Shape& ashape,
 Standard_Boolean ShapeBuild_ReShape::Status (const ShapeExtend_Status status) const
 {
   return ShapeExtend::DecodeStatus ( myStatus, status );
+}
+
+//=================================================================================================
+
+bool ShapeBuild_ReShape::LoopDetector::CanContinue(const TopoDS_Shape& theShape)
+{
+  int* aVisitCount = myVisited.ChangeSeek(theShape);
+  if (aVisitCount == nullptr)
+  {
+    // First visit
+    myVisited.Bind(theShape, 1);
+    return true;
+  }
+  else
+  {
+    // Allow to visit twice.
+    // If we allow only one visit, it breaks test heal fix_gaps B2.
+    // If we allow unlimited visits, it may lead to infinite loops.
+    return ++(*aVisitCount) < 3;
+  }
 }

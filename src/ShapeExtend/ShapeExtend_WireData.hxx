@@ -24,6 +24,7 @@
 #include <TColStd_HSequenceOfInteger.hxx>
 #include <Standard_Integer.hxx>
 #include <Standard_Transient.hxx>
+#include <TColStd_PackedMapOfInteger.hxx>
 class TopoDS_Wire;
 class TopoDS_Edge;
 class TopoDS_Shape;
@@ -232,6 +233,7 @@ private:
   Handle(TopTools_HSequenceOfShape) myEdges;
   Handle(TopTools_HSequenceOfShape) myNonmanifoldEdges;
   Handle(TColStd_HSequenceOfInteger) mySeams;
+  TColStd_PackedMapOfInteger mySeamsCache;
   Standard_Integer mySeamF;
   Standard_Integer mySeamR;
   Standard_Boolean myManifoldMode;

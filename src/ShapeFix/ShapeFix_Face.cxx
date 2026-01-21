@@ -308,6 +308,9 @@ static Standard_Boolean SplitWire(const TopoDS_Face &face, const TopoDS_Wire& wi
         Standard_Real a1,b1,a2,b2;
         Handle (Geom2d_Curve) curve1 = BRep_Tool::CurveOnSurface(E1,face,a1,b1);
         Handle (Geom2d_Curve) curve2 = BRep_Tool::CurveOnSurface(E2,face,a2,b2);
+        if (curve1.IsNull() || curve2.IsNull())
+          continue;
+
         gp_Pnt2d v0,v1;
         if (E1.Orientation() == TopAbs_REVERSED)
           a1 = b1;
@@ -347,7 +350,7 @@ static Standard_Boolean SplitWire(const TopoDS_Face &face, const TopoDS_Wire& wi
 //purpose  : 
 //=======================================================================
 
-Standard_Boolean ShapeFix_Face::Perform() 
+Standard_Boolean ShapeFix_Face::Perform(const Message_ProgressRange& theProgress) 
 {
   myStatus = ShapeExtend::EncodeStatus ( ShapeExtend_OK );
   myFixWire->SetContext ( Context() );
@@ -438,7 +441,7 @@ Standard_Boolean ShapeFix_Face::Perform()
         }
 	continue;
       }
-      if ( theAdvFixWire->Perform() ) {
+      if ( theAdvFixWire->Perform(theProgress) ) {
 	//fixed = Standard_True; 
         isfixReorder =  (theAdvFixWire->StatusReorder(ShapeExtend_DONE) || isfixReorder);
         fixed = (theAdvFixWire->StatusSmall(ShapeExtend_DONE) || 

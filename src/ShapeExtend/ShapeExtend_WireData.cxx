@@ -180,6 +180,12 @@ void ShapeExtend_WireData::ComputeSeams (const Standard_Boolean enforce)
     else { mySeams->Append(i); mySeams->Append( SE[num] ); }
   }
 
+  mySeamsCache.Clear();
+  for (i = 1; i <= mySeams->Length(); i++)
+  {
+    mySeamsCache.Add(mySeams->Value(i));
+  }
+
   delete [] SE;  // ne pas oublier !!
 }
 
@@ -547,16 +553,17 @@ Standard_Integer ShapeExtend_WireData::Index (const TopoDS_Edge& edge)
 
 Standard_Boolean ShapeExtend_WireData::IsSeam (const Standard_Integer num) 
 {
-  if (mySeamF < 0) ComputeSeams();
-  if (mySeamF == 0) return Standard_False;
-  
-  if (num == mySeamF || num == mySeamR) return Standard_True;
-//  Pas suffisant : on regarde dans la liste
-  Standard_Integer i, nb = mySeams->Length();
-  for (i = 1; i <= nb; i ++) {
-    if (num == mySeams->Value(i)) return Standard_True;
-  }
-  return Standard_False;
+  if (mySeamF < 0)
+    ComputeSeams();
+
+  if (mySeamF == 0)
+    return Standard_False;
+
+  if (num == mySeamF || num == mySeamR)
+    return Standard_True;
+
+  // Use hash set for O(1) lookup instead of O(n) linear search
+  return mySeamsCache.Contains(num);
 }
 
 //=======================================================================

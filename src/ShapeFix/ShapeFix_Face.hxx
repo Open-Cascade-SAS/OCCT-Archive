@@ -20,6 +20,7 @@
 #include <Standard.hxx>
 #include <Standard_Type.hxx>
 
+#include <Message_ProgressRange.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <Standard_Integer.hxx>
@@ -160,7 +161,7 @@ public:
   //! ShapeExtend_FAIL2: cannot fix orientation of wires
   //! ShapeExtend_FAIL3: cannot add missing seam
   //! ShapeExtend_FAIL4: cannot remove small area wire
-  Standard_EXPORT Standard_Boolean Perform();
+  Standard_EXPORT Standard_Boolean Perform(const Message_ProgressRange& theProgress = Message_ProgressRange());
   
   //! Fixes orientation of wires on the face
   //! It tries to make all wires lie outside all others (according
