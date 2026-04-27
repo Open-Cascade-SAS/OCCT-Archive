@@ -457,8 +457,13 @@ public:
     return myUVSurf2;
   }
 
+  // theU1Prev is the walker's previous U1 sample. Together with theU1 it
+  // forms the bracket across which the straddle on V_bound was detected and
+  // in which the V-boundary crossing is resolved by 1D branch-aware
+  // bisection on the analytical intersection curve.
   void AddBoundaryPoint(const Handle(IntPatch_WLine)& theWL,
                         const Standard_Real theU1,
+                        const Standard_Real theU1Prev,
                         const Standard_Real theU1Min,
                         const Standard_Real theU2,
                         const Standard_Real theV1,
@@ -480,19 +485,6 @@ public:
                           Bnd_Range& theOutBoxS2) const;
 
 protected:
-
-  //Solves equation (2) (see declaration of ComputationMethods class) in case,
-  //when V1 or V2 (is set by theSBType argument) is known (corresponds to the boundary
-  //and equal to theVzad) but U1 is unknown. Computation is made by numeric methods and
-  //requires initial values (theVInit, theInitU2 and theInitMainVar).
-  Standard_Boolean
-              SearchOnVBounds(const SearchBoundType theSBType,
-                              const Standard_Real theVzad,
-                              const Standard_Real theVInit,
-                              const Standard_Real theInitU2,
-                              const Standard_Real theInitMainVar,
-                              Standard_Real& theMainVariableValue) const;
-
   const WorkWithBoundaries& operator=(const WorkWithBoundaries&);
 
 private:
@@ -1537,144 +1529,6 @@ Standard_Boolean ComputationMethods::CylCylComputeParameters(const Standard_Real
 }
 
 //=======================================================================
-//function : SearchOnVBounds
-//purpose  : 
-//=======================================================================
-Standard_Boolean WorkWithBoundaries::
-                        SearchOnVBounds(const SearchBoundType theSBType,
-                                        const Standard_Real theVzad,
-                                        const Standard_Real theVInit,
-                                        const Standard_Real theInitU2,
-                                        const Standard_Real theInitMainVar,
-                                        Standard_Real& theMainVariableValue) const
-{
-  const Standard_Integer aNbDim = 3;
-  const Standard_Real aMaxError = 4.0*M_PI; // two periods
-  
-  theMainVariableValue = theInitMainVar;
-  const Standard_Real aTol2 = 1.0e-18;
-  Standard_Real aMainVarPrev = theInitMainVar, aU2Prev = theInitU2, anOtherVar = theVInit;
-  
-  //Structure of aMatr:
-  //  C_{1}*U_{1} & C_{2}*U_{2} & C_{3}*V_{*},
-  //where C_{1}, C_{2} and C_{3} are math_Vector.
-  math_Matrix aMatr(1, aNbDim, 1, aNbDim);
-
-  Standard_Real anError = RealLast();
-  Standard_Real anErrorPrev = anError;
-  Standard_Integer aNbIter = 0;
-  do
-  {
-    if(++aNbIter > 1000)
-      return Standard_False;
-
-    const Standard_Real aSinU1 = sin(aMainVarPrev),
-                        aCosU1 = cos(aMainVarPrev),
-                        aSinU2 = sin(aU2Prev),
-                        aCosU2 = cos(aU2Prev);
-
-    math_Vector aVecFreeMem = (myCoeffs.mVecA2 * aU2Prev +
-                                              myCoeffs.mVecB2) * aSinU2 -
-                              (myCoeffs.mVecB2 * aU2Prev -
-                                              myCoeffs.mVecA2) * aCosU2 +
-                              (myCoeffs.mVecA1 * aMainVarPrev +
-                                              myCoeffs.mVecB1) * aSinU1 -
-                              (myCoeffs.mVecB1 * aMainVarPrev -
-                                              myCoeffs.mVecA1) * aCosU1 +
-                                                            myCoeffs.mVecD;
-
-    math_Vector aMSum(1, 3);
-
-    switch(theSBType)
-    {
-    case SearchV1:
-      aMatr.SetCol(3, myCoeffs.mVecC2);
-      aMSum = myCoeffs.mVecC1 * theVzad;
-      aVecFreeMem -= aMSum;
-      aMSum += myCoeffs.mVecC2*anOtherVar;
-      break;
-
-    case SearchV2:
-      aMatr.SetCol(3, myCoeffs.mVecC1);
-      aMSum = myCoeffs.mVecC2 * theVzad;
-      aVecFreeMem -= aMSum;
-      aMSum += myCoeffs.mVecC1*anOtherVar;
-      break;
-
-    default:
-      return Standard_False;
-    }
-
-    aMatr.SetCol(1, myCoeffs.mVecA1 * aSinU1 - myCoeffs.mVecB1 * aCosU1);
-    aMatr.SetCol(2, myCoeffs.mVecA2 * aSinU2 - myCoeffs.mVecB2 * aCosU2);
-
-    Standard_Real aDetMainSyst = aMatr.Determinant();
-
-    if(Abs(aDetMainSyst) < aNulValue)
-    {
-      return Standard_False;
-    }
-
-    math_Matrix aM1(aMatr), aM2(aMatr), aM3(aMatr);
-    aM1.SetCol(1, aVecFreeMem);
-    aM2.SetCol(2, aVecFreeMem);
-    aM3.SetCol(3, aVecFreeMem);
-
-    const Standard_Real aDetMainVar = aM1.Determinant();
-    const Standard_Real aDetVar1    = aM2.Determinant();
-    const Standard_Real aDetVar2    = aM3.Determinant();
-
-    Standard_Real aDelta = aDetMainVar/aDetMainSyst-aMainVarPrev;
-
-    if(Abs(aDelta) > aMaxError)
-      return Standard_False;
-
-    anError = aDelta*aDelta;
-    aMainVarPrev += aDelta;
-        
-    ///
-    aDelta = aDetVar1/aDetMainSyst-aU2Prev;
-
-    if(Abs(aDelta) > aMaxError)
-      return Standard_False;
-
-    anError += aDelta*aDelta;
-    aU2Prev += aDelta;
-
-    ///
-    aDelta = aDetVar2/aDetMainSyst-anOtherVar;
-    anError += aDelta*aDelta;
-    anOtherVar += aDelta;
-
-    if(anError > anErrorPrev)
-    {//Method diverges. Keep the best result
-      const Standard_Real aSinU1Last = sin(aMainVarPrev),
-                          aCosU1Last = cos(aMainVarPrev),
-                          aSinU2Last = sin(aU2Prev),
-                          aCosU2Last = cos(aU2Prev);
-      aMSum -= (myCoeffs.mVecA1*aCosU1Last + 
-                myCoeffs.mVecB1*aSinU1Last +
-                myCoeffs.mVecA2*aCosU2Last +
-                myCoeffs.mVecB2*aSinU2Last +
-                myCoeffs.mVecD);
-      const Standard_Real aSQNorm = aMSum.Norm2();
-      return (aSQNorm < aTol2);
-    }
-    else
-    {
-      theMainVariableValue = aMainVarPrev;
-    }
-
-    anErrorPrev = anError;
-  }
-  while(anError > aTol2);
-
-  theMainVariableValue = aMainVarPrev;
-
-  return Standard_True;
-}
-
-//=======================================================================
 //function : InscribePoint
 //purpose  : If theFlForce==TRUE theUGiven will be changed forcefully
 //            even if theUGiven is already inscibed in the boundary
@@ -2011,11 +1865,134 @@ static Standard_Boolean AddPointIntoWL( const IntSurf_Quadric& theQuad1,
 }
 
 //=======================================================================
+//function : BrentRoot
+//purpose  : Brent's method for robust bracketed 1D root finding.
+//           Combines bisection, secant, and inverse quadratic interpolation.
+//           Guaranteed to converge if a valid bracket [theLower, theUpper] is
+//           provided with f(theLower)*f(theUpper) < 0.
+//           theFLo / theFHi are pre-evaluated function values at the bounds.
+//=======================================================================
+template <typename Function>
+static Standard_Boolean BrentRoot(Function&            theFunc,
+                                  const Standard_Real  theLower,
+                                  const Standard_Real  theUpper,
+                                  const Standard_Real  theFLo,
+                                  const Standard_Real  theFHi,
+                                  const Standard_Real  theXTol,
+                                  Standard_Real&       theRoot)
+{
+  const Standard_Real    aFTol   = 1.0e-10;
+  const Standard_Integer aMaxIter = 100;
+
+  Standard_Real aA  = theLower;
+  Standard_Real aB  = theUpper;
+  Standard_Real aFa = theFLo;
+  Standard_Real aFb = theFHi;
+
+  // Ensure |f(a)| >= |f(b)| (b is the better approximation)
+  if (Abs(aFa) < Abs(aFb))
+  {
+    std::swap(aA, aB);
+    std::swap(aFa, aFb);
+  }
+
+  Standard_Real aC  = aA;
+  Standard_Real aFc = aFa;
+  Standard_Real aD  = aB - aA;
+  Standard_Real aE  = aD;
+
+  for (Standard_Integer anIter = 0; anIter < aMaxIter; ++anIter)
+  {
+    const Standard_Real aMachTol = 2.0 * Epsilon(Abs(aB)) + 0.5 * theXTol;
+    const Standard_Real aM       = 0.5 * (aC - aB);
+
+    if (Abs(aFb) < aFTol || aFb == 0.0 || Abs(aM) <= aMachTol)
+    {
+      theRoot = aB;
+      return Standard_True;
+    }
+
+    Standard_Real aS = 0.0;
+
+    // Try inverse quadratic interpolation if three distinct points
+    if (Abs(aFa - aFc) > 1.0e-15 && Abs(aFb - aFc) > 1.0e-15)
+    {
+      aS = aA * aFb * aFc / ((aFa - aFb) * (aFa - aFc))
+         + aB * aFa * aFc / ((aFb - aFa) * (aFb - aFc))
+         + aC * aFa * aFb / ((aFc - aFa) * (aFc - aFb));
+    }
+    else
+    {
+      // Secant method
+      aS = aB - aFb * (aB - aA) / (aFb - aFa);
+    }
+
+    // Decide whether to accept the interpolation step
+    Standard_Boolean aUseInterp = Standard_False;
+    const Standard_Real aBound1 = (3.0 * aA + aB) / 4.0;
+    if (aS > Min(aBound1, aB) && aS < Max(aBound1, aB))
+    {
+      if (Abs(aS - aB) < Abs(aE) / 2.0)
+      {
+        aUseInterp = Standard_True;
+      }
+    }
+
+    if (!aUseInterp)
+    {
+      aS = aB + aM;
+      aE = aM;
+      aD = aM;
+    }
+    else
+    {
+      aE = aD;
+      aD = aS - aB;
+    }
+
+    aA  = aB;
+    aFa = aFb;
+
+    if (Abs(aD) > aMachTol)
+    {
+      aB = aS;
+    }
+    else
+    {
+      aB += (aM > 0.0) ? aMachTol : -aMachTol;
+    }
+
+    if (!theFunc.Value(aB, aFb))
+      return Standard_False;
+
+    // Update bracket
+    if (aFb * aFc > 0.0)
+    {
+      aC  = aA;
+      aFc = aFa;
+      aD  = aB - aA;
+      aE  = aD;
+    }
+    else if (Abs(aFc) < Abs(aFb))
+    {
+      aA  = aB;
+      aFa = aFb;
+      std::swap(aB, aC);
+      std::swap(aFb, aFc);
+    }
+  }
+
+  // Maximum iterations reached
+  return Standard_False;
+}
+
+//=======================================================================
 //function : AddBoundaryPoint
 //purpose  : Find intersection point on V-boundary.
 //=======================================================================
 void WorkWithBoundaries::AddBoundaryPoint(const Handle(IntPatch_WLine)& theWL,
                                           const Standard_Real theU1,
+                                          const Standard_Real theU1Prev,
                                           const Standard_Real theU1Min,
                                           const Standard_Real theU2,
                                           const Standard_Real theV1,
@@ -2044,6 +2021,60 @@ void WorkWithBoundaries::AddBoundaryPoint(const Handle(IntPatch_WLine)& theWL,
 
   StPInfo aUVPoint[aSize];
 
+  // Branch-aware 1D root-finder for V(U1) = V_bound on the analytical
+  // intersection curve, used in place of the original rank-deficient 3x3
+  // Newton (SearchOnVBounds). The intersection curve is 1D in U1 on each
+  // arccos branch, so the correct numerical tool is a bracketed 1D root
+  // finder. We use MathRoot::Brent, which converges robustly even when the
+  // curve grazes V_bound at a near-tangent (two close crossings on opposite
+  // sides of a V-extremum) -- the configuration that makes the 3x3 Newton
+  // Jacobian rank-deficient. The only tolerance is Precision::PConfusion()
+  // (OCCT standard parametric equality) for termination on U.
+  struct VBoundDelta
+  {
+    const ComputationMethods::stCoeffsValue& Coeffs;
+    int                                      WLIndex;
+    bool                                     IsV1;
+    double                                   VBound;
+
+    bool Value(double theX, double& theF) const
+    {
+      double aU2 = 0.0, aV1 = 0.0, aV2 = 0.0;
+      if (!ComputationMethods::CylCylComputeParameters(theX, WLIndex, Coeffs, aU2, aV1, aV2))
+        return false;
+      theF = (IsV1 ? aV1 : aV2) - VBound;
+      return true;
+    }
+  };
+
+  auto findVBoundCrossing = [this, theWLIndex](const bool   theIsV1,
+                                               const double theVBound,
+                                               const double theULo,
+                                               const double theUHi,
+                                               double&      theU1Star) -> bool {
+    if (!(theULo < theUHi))
+      return false;
+    VBoundDelta aFunc{myCoeffs, theWLIndex, theIsV1, theVBound};
+    double      aFlo = 0.0, aFhi = 0.0;
+    if (!aFunc.Value(theULo, aFlo) || !aFunc.Value(theUHi, aFhi))
+      return false;
+    if (aFlo == 0.0)
+    {
+      theU1Star = theULo;
+      return true;
+    }
+    if (aFhi == 0.0)
+    {
+      theU1Star = theUHi;
+      return true;
+    }
+    if (aFlo * aFhi > 0.0)
+      return false; // no bracketed crossing
+
+    return BrentRoot(aFunc, theULo, theUHi, aFlo, aFhi,
+                     Precision::PConfusion(), theU1Star);
+  };
+
   for(Standard_Integer anIDSurf = 0; anIDSurf < 4; anIDSurf+=2)
   {
     const Standard_Real aVf = (anIDSurf == 0) ? theV1 : theV2,
@@ -2063,14 +2094,12 @@ void WorkWithBoundaries::AddBoundaryPoint(const Handle(IntPatch_WLine)& theWL,
         continue;
       }
 
-      //Segment [aVf, aVl] intersects at least one V-boundary (first or last)
-      // (in general, case is possible, when aVf > aVl).
-
-      // Precise intersection point
-      const Standard_Boolean aRes = SearchOnVBounds(aTS, anArrVzad[anIndex],
-                                                    (anIDSurf == 0) ? theV2 : theV1,
-                                                    theU2, theU1,
-                                                    aUVPoint[anIndex].myU1);
+      // Segment [aVf, aVl] intersects at least one V-boundary (first or last).
+      // Resolve the crossing by 1D bisection on the analytical curve.
+      const double aULo = std::min(theU1Prev, theU1);
+      const double aUHi = std::max(theU1Prev, theU1);
+      const bool   aRes =
+        findVBoundCrossing(aTS == SearchV1, anArrVzad[anIndex], aULo, aUHi, aUVPoint[anIndex].myU1);
 
       // aUVPoint[anIndex].myU1 is considered to be nearer to theU1 than
       // to theU1+/-Period
@@ -2891,7 +2920,8 @@ static IntPatch_ImpImpIntersection::IntStatus
       }
 
       Standard_Real anU1 = anUf, aMinCriticalParam = anUf;
-      Standard_Boolean isFirst = Standard_True;
+      double anU1Prev = anUf;
+      bool   isFirst  = true;
 
       while (anU1 <= anUl)
       {
@@ -3117,7 +3147,7 @@ static IntPatch_ImpImpIntersection::IntStatus
             }
           }
 
-          theBW.AddBoundaryPoint(aWLine[i], anU1, aMinCriticalParam, aU2[i],
+          theBW.AddBoundaryPoint(aWLine[i], anU1, anU1Prev, aMinCriticalParam, aU2[i],
                                  aV1[i], aV1Prev[i], aV2[i], aV2Prev[i], i, isForce,
                                  isFound1, isFound2);
 
@@ -3216,7 +3246,7 @@ static IntPatch_ImpImpIntersection::IntStatus
 
             Standard_Boolean isFound1 = Standard_False, isFound2 = Standard_False;
 
-            theBW.AddBoundaryPoint(aWLine[i], anU1, aMinCriticalParam, aU2[i],
+            theBW.AddBoundaryPoint(aWLine[i], anU1, anU1Prev, aMinCriticalParam, aU2[i],
                                    aV1[i], aV1Prev[i], aV2[i], aV2Prev[i], i,
                                    Standard_False, isFound1, isFound2);
 
@@ -3404,7 +3434,8 @@ static IntPatch_ImpImpIntersection::IntStatus
             aMinUexp = Min(aMinUexp, anUexpect[i]);
           }
 
-          anU1 = aMinUexp;
+          anU1Prev = anU1;
+          anU1     = aMinUexp;
         }
 
         if (Precision::PConfusion() >= (anUl - anU1))
@@ -3795,6 +3826,14 @@ IntPatch_ImpImpIntersection::IntStatus IntCyCy(const IntSurf_Quadric& theQuad1,
     {
       return IntPatch_ImpImpIntersection::IntStatus_OK;
     }
+
+    // Analytical handler declined: discard anything it may have appended
+    // or flipped so the numerical path starts from a clean output state.
+    isTheEmpty         = true;
+    isTheSameSurface   = false;
+    isTheMultiplePoint = false;
+    theSlin.Clear();
+    theSPnt.Clear();
   }
   
   //Here, intersection line is not an analytical curve(line, circle, ellipsis etc.)
