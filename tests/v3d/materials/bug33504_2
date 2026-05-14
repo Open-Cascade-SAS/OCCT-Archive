@@ -1,0 +1,33 @@
+puts "========"
+puts "0033504: Visualization - inherited and explicit Z-layers within one AIS presentation"
+puts "========"
+puts ""
+
+pload MODELING VISUALIZATION
+vclear
+vinit
+
+box cover 6 4 4 2 2 2
+box b1 5 5 5 3 3 3
+
+vdisplay cover -dispMode 1
+vdisplay b1 -dispMode 0 -layer 0
+vsetcolor cover RED
+vobjzlayer set b1 -3
+vfit
+
+# The green quad inherits the object's Topmost layer.
+vaddgroup b1 quad 5 5 1 1 5 -color 0.0 1.0 0.0
+# The blue quad explicitly stays on the Default layer and should be occluded by the red cover box.
+vaddgroup b1 quad 7 5 1 1 5 -zlayer 0 -color 0.0 0.0 1.0
+
+vviewparams -scale 40.0 -proj 0.0 0.0 1.0 -up 0.0 0.0 1.0 -at 2.5 2.5 0.0
+
+if { [vreadpixel 240 160 rgb name] != "GREEN" } {
+  puts "Error: Quad inheriting the object Topmost Z-layer should stay visible."
+}
+if { [vreadpixel 280 160 rgb name] == "BLUE" } {
+  puts "Error: Quad with explicit Default Z-layer should be hidden by the cover box."
+}
+
+vdump $imagedir/${casename}.png
