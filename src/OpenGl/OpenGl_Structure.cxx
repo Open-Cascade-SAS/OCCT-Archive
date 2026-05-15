@@ -393,7 +393,13 @@ void OpenGl_Structure::renderGeometry (const Handle(OpenGl_Workspace)& theWorksp
   {
     Handle(OpenGl_Group) aGroup = aGroupIter.Value();
     theHasClosed = theHasClosed || aGroup->IsClosed();
-    if (aGroup->GetZLayer() == CurrentZLayerMode())
+    Graphic3d_ZLayerId aLayerId = aGroup->GetZLayer();
+    if (aLayerId == Graphic3d_ZLayerId_UNKNOWN)
+    {
+      aLayerId = ZLayer();
+    }
+
+    if (aLayerId == CurrentZLayerMode())
     {
       aGroup->Render (theWorkspace);
     }

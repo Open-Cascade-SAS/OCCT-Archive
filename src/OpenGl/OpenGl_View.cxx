@@ -773,6 +773,8 @@ void OpenGl_View::updateStructure (const Handle(Graphic3d_CStructure)& theStruct
 {
   if (theStructure->HasGroupZLayer())
   {
+    // const OpenGl_Structure* aStruct = static_cast<const OpenGl_Structure*> (theStructure.get());
+    // myZLayers.RemoveStructure (aStruct);
     static Standard_Integer aDummyPriority;
     // Remove existing structure references before adding them in case 
     // there were changes in a group's zlayer.
@@ -800,6 +802,11 @@ void OpenGl_View::displayStructure (const Handle(Graphic3d_CStructure)& theStruc
     for (OpenGl_Structure::GroupIterator aGroupIter(aSeqGroups); aGroupIter.More(); aGroupIter.Next())
     {
       Graphic3d_ZLayerId aLayerId = aGroupIter.Value()->GetZLayer();
+      if (aLayerId == Graphic3d_ZLayerId_UNKNOWN)
+      {
+        aLayerId = aStruct->ZLayer();
+      }
+
       if (!aZList.Contains(aLayerId))
       {
         aZList.Append (aLayerId);
@@ -832,6 +839,18 @@ void OpenGl_View::changeZLayer (const Handle(Graphic3d_CStructure)& theStructure
 {
   const Graphic3d_ZLayerId anOldLayer = theStructure->ZLayer();
   const OpenGl_Structure* aStruct = static_cast<const OpenGl_Structure*> (theStructure.get());
+  // if (aStruct->HasGroupZLayer())
+  // {
+  //   // The structure is registered in multiple Z-layers. Remove all registrations
+  //   // and re-register using theNewLayerId as the inherited base for UNKNOWN groups.
+  //   theStructure->SetZLayer (theNewLayerId);
+  //   myZLayers.RemoveStructure (aStruct);
+  //   displayStructure (theStructure, theStructure->Priority);
+  // }
+  // else
+  // {
+  //   myZLayers.ChangeLayer (aStruct, anOldLayer, theNewLayerId);
+  // }
   myZLayers.ChangeLayer (aStruct, anOldLayer, theNewLayerId);
   Update (anOldLayer);
   Update (theNewLayerId);

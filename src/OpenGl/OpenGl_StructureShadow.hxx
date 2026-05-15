@@ -36,6 +36,13 @@ public:
   //! Raise exception on API misuse.
   Standard_EXPORT virtual void Disconnect (Graphic3d_CStructure& ) Standard_OVERRIDE;
 
+  //! Renders all groups of the parent structure without Z-layer filtering.
+  //! The shadow Z-layer is already enforced at the structure level; applying
+  //! per-group Z-layer filtering would prevent groups from appearing in the
+  //! target highlight layer when they carry a different individual layer.
+  Standard_EXPORT virtual void renderGeometry (const Handle(OpenGl_Workspace)& theWorkspace,
+                                               bool&                           theHasClosed) const Standard_OVERRIDE;
+
 private:
 
   Handle(OpenGl_Structure) myParent;

@@ -1,0 +1,42 @@
+puts "========"
+puts "0033504: Visualization - groups without per-group Z-layer inherit structure Z-layer"
+puts "========"
+puts ""
+
+pload MODELING VISUALIZATION QABugs
+
+proc has_color_pixels { theXmin theYmin theXmax theYmax theStep theColor } {
+  for {set y $theYmin} {$y <= $theYmax} {incr y $theStep} {
+    for {set x $theXmin} {$x <= $theXmax} {incr x $theStep} {
+      if { [vreadpixel $x $y rgb name] == $theColor } {
+        return 1
+      }
+    }
+  }
+  return 0
+}
+
+vclear
+vinit View1
+vfront
+
+# Create the mixed-Z-layer object: green group inherits Topmost, red group is Default.
+OCC33504 mixedobj
+vfit
+
+# Trigger LocalDynamic highlight; both groups must appear as CYAN1.
+vmoveto 200 150
+
+if { ![has_color_pixels 20 20 380 280 5 CYAN1] } {
+  puts "Error: dynamic highlight (CYAN1) not visible over mixed-Z-layer object."
+}
+
+# Redisplay the object and re-hover to verify the shadow still works after group recreation.
+vdisplay -update mixedobj
+vmoveto 200 150
+
+if { ![has_color_pixels 20 20 380 280 5 CYAN1] } {
+  puts "Error: dynamic highlight missing after Redisplay() of mixed-Z-layer object."
+}
+
+vdump $imagedir/${casename}.png

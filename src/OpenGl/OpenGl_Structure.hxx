@@ -141,8 +141,8 @@ protected:
   //! Renders groups of structure without applying any attributes (i.e. transform, material etc).
   //! @param theWorkspace current workspace
   //! @param theHasClosed flag will be set to TRUE if structure contains at least one group of closed primitives
-  Standard_EXPORT void renderGeometry (const Handle(OpenGl_Workspace)& theWorkspace,
-                                       bool&                           theHasClosed) const;
+  Standard_EXPORT virtual void renderGeometry (const Handle(OpenGl_Workspace)& theWorkspace,
+                                               bool&                           theHasClosed) const;
 
   //! Render the bounding box.
   Standard_EXPORT void renderBoundingBox(const Handle(OpenGl_Workspace)& theWorkspace) const;

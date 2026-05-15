@@ -60,3 +60,23 @@ void OpenGl_StructureShadow::Disconnect (Graphic3d_CStructure& )
 {
   throw Standard_ProgramError("Error! OpenGl_StructureShadow::Disconnect() should not be called!");
 }
+
+//==================================================================================================
+
+void OpenGl_StructureShadow::renderGeometry (const Handle(OpenGl_Workspace)& theWorkspace,
+                                             bool&                           theHasClosed) const
+{
+  // Render all parent groups without per-group Z-layer filtering; the shadow's
+  // structure-level Z-layer already controls which rendering pass it participates in.
+  for (const OpenGl_Structure* aStruct = myInstancedStructure;
+       aStruct != NULL;
+       aStruct = aStruct->InstancedStructure())
+  {
+    for (GroupIterator aGroupIter (aStruct->Groups()); aGroupIter.More(); aGroupIter.Next())
+    {
+      theHasClosed = theHasClosed || aGroupIter.Value()->IsClosed();
+      aGroupIter.Value()->Render (theWorkspace);
+    }
+  }
+  // Shadow structures carry no own groups; base-class own-group iteration is intentionally skipped.
+}
