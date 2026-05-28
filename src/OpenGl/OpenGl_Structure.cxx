@@ -305,7 +305,6 @@ void OpenGl_Structure::Disconnect (Graphic3d_CStructure& theStructure)
 Handle(Graphic3d_Group) OpenGl_Structure::NewGroup (const Handle(Graphic3d_Structure)& theStruct)
 {
   Handle(OpenGl_Group) aGroup = new OpenGl_Group (theStruct);
-  aGroup->SetZLayer (ZLayer());
   myGroups.Append (aGroup);
   return aGroup;
 }
@@ -389,11 +388,24 @@ void OpenGl_Structure::renderGeometry (const Handle(OpenGl_Workspace)& theWorksp
   {
     myInstancedStructure->renderGeometry (theWorkspace, theHasClosed);
   }
+  const Standard_Boolean hasGroupZLayer = HasGroupZLayer();
   for (OpenGl_Structure::GroupIterator aGroupIter (myGroups); aGroupIter.More(); aGroupIter.Next())
   {
     Handle(OpenGl_Group) aGroup = aGroupIter.Value();
     theHasClosed = theHasClosed || aGroup->IsClosed();
-    if (aGroup->GetZLayer() == CurrentZLayerMode())
+    if (!hasGroupZLayer)
+    {
+      aGroup->Render (theWorkspace);
+      continue;
+    }
+
+    Graphic3d_ZLayerId aLayerId = aGroup->GetZLayer();
+    if (aLayerId == Graphic3d_ZLayerId_UNKNOWN)
+    {
+      aLayerId = ZLayer();
+    }
+
+    if (aLayerId == CurrentZLayerMode())
     {
       aGroup->Render (theWorkspace);
     }

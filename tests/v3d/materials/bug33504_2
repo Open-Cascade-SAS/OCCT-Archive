@@ -1,0 +1,30 @@
+puts "========"
+puts "0033504: Visualization - inherited and explicit Z-layers within one AIS presentation behind red cover box"
+puts "========"
+puts ""
+
+pload MODELING VISUALIZATION QAcommands
+vclear
+vinit
+
+box cover 4 3 4 5 4 2
+
+vdisplay cover -dispMode 1
+vsetcolor cover RED
+OCC33504 mixedobj
+vfit
+
+# The red cover box stays in Default layer and is intentionally larger than both quads.
+# The mixed-layer AIS object creates the same geometry in Compute():
+# an inherited Topmost green quad and an explicit Default blue quad.
+
+vviewparams -scale 40.0 -proj 0.0 0.0 1.0 -up 0.0 0.0 1.0 -at 2.5 2.5 0.0
+
+if { [vreadpixel 240 160 rgb name] != "GREEN" } {
+  puts "Error: Quad inheriting the object Topmost Z-layer should stay visible."
+}
+if { [vreadpixel 280 160 rgb name] == "BLUE" } {
+  puts "Error: Quad with explicit Default Z-layer should be hidden by the cover box."
+}
+
+vdump $imagedir/${casename}.png

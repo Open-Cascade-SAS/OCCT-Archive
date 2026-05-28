@@ -800,6 +800,11 @@ void OpenGl_View::displayStructure (const Handle(Graphic3d_CStructure)& theStruc
     for (OpenGl_Structure::GroupIterator aGroupIter(aSeqGroups); aGroupIter.More(); aGroupIter.Next())
     {
       Graphic3d_ZLayerId aLayerId = aGroupIter.Value()->GetZLayer();
+      if (aLayerId == Graphic3d_ZLayerId_UNKNOWN)
+      {
+        aLayerId = aStruct->ZLayer();
+      }
+
       if (!aZList.Contains(aLayerId))
       {
         aZList.Append (aLayerId);
