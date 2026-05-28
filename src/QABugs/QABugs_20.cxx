@@ -68,7 +68,98 @@
 #include <BRepBndLib.hxx>
 #include <OSD_Timer.hxx>
 
+#include <AIS_InteractiveContext.hxx>
+#include <AIS_InteractiveObject.hxx>
+#include <Graphic3d_ArrayOfTriangles.hxx>
+#include <Graphic3d_Group.hxx>
+#include <Graphic3d_ZLayerId.hxx>
+#include <Prs3d_Presentation.hxx>
+#include <Quantity_Color.hxx>
+#include <SelectMgr_Selection.hxx>
+#include <ViewerTest.hxx>
+#include <ViewerTest_DoubleMapOfInteractiveAndName.hxx>
+
 #include <limits>
+
+#if !defined(_WIN32)
+extern ViewerTest_DoubleMapOfInteractiveAndName& GetMapOfAIS();
+#else
+Standard_EXPORT ViewerTest_DoubleMapOfInteractiveAndName& GetMapOfAIS();
+#endif
+
+namespace
+{
+class OCC33504_MixedLayerObject : public AIS_InteractiveObject
+{
+  DEFINE_STANDARD_RTTI_INLINE(OCC33504_MixedLayerObject, AIS_InteractiveObject)
+public:
+  OCC33504_MixedLayerObject() = default;
+
+protected:
+  void Compute (const Handle(PrsMgr_PresentationManager)&,
+                const Handle(Prs3d_Presentation)&        thePresentation,
+                const Standard_Integer) override
+  {
+    SetZLayer (Graphic3d_ZLayerId_Topmost);
+
+    Handle(Graphic3d_ArrayOfTriangles) aGreenQuad =
+      new Graphic3d_ArrayOfTriangles (4, 6, Graphic3d_ArrayFlags_VertexColor);
+    aGreenQuad->AddVertex (gp_Pnt (4.0, 5.0, 5.0), Quantity_Color (Quantity_NOC_GREEN));
+    aGreenQuad->AddVertex (gp_Pnt (6.0, 5.0, 5.0), Quantity_Color (Quantity_NOC_GREEN));
+    aGreenQuad->AddVertex (gp_Pnt (5.0, 6.0, 5.0), Quantity_Color (Quantity_NOC_GREEN));
+    aGreenQuad->AddVertex (gp_Pnt (5.0, 4.0, 5.0), Quantity_Color (Quantity_NOC_GREEN));
+    aGreenQuad->AddEdges (1, 2, 3);
+    aGreenQuad->AddEdges (1, 2, 4);
+    thePresentation->CurrentGroup()->AddPrimitiveArray (aGreenQuad);
+
+    Handle(Graphic3d_ArrayOfTriangles) aBlueQuad =
+      new Graphic3d_ArrayOfTriangles (4, 6, Graphic3d_ArrayFlags_VertexColor);
+    aBlueQuad->AddVertex (gp_Pnt (6.0, 5.0, 5.0), Quantity_Color (Quantity_NOC_BLUE));
+    aBlueQuad->AddVertex (gp_Pnt (8.0, 5.0, 5.0), Quantity_Color (Quantity_NOC_BLUE));
+    aBlueQuad->AddVertex (gp_Pnt (7.0, 6.0, 5.0), Quantity_Color (Quantity_NOC_BLUE));
+    aBlueQuad->AddVertex (gp_Pnt (7.0, 4.0, 5.0), Quantity_Color (Quantity_NOC_BLUE));
+    aBlueQuad->AddEdges (1, 2, 3);
+    aBlueQuad->AddEdges (1, 2, 4);
+
+    Handle(Graphic3d_Group) aGroup2 = thePresentation->NewGroup();
+    aGroup2->AddPrimitiveArray (aBlueQuad);
+    aGroup2->SetZLayer (Graphic3d_ZLayerId_Default, Standard_False);
+  }
+
+  void ComputeSelection (const Handle(SelectMgr_Selection)&,
+                         const Standard_Integer) override
+  {
+  }
+};
+}
+
+static Standard_Integer OCC33504 (Draw_Interpretor& theDI,
+                                  Standard_Integer  theArgC,
+                                  const char**      theArgV)
+{
+  if (theArgC < 2)
+  {
+    theDI << "Syntax: " << theArgV[0] << " name\n"
+          << "\t: Create AIS object that calls SetZLayer(Topmost) inside Compute(),\n"
+          << "\t: leaves one group inherited, and sets one group explicitly to Default.\n"
+          << "\t: Test script should add a red cover object in Default layer so the\n"
+          << "\t: inherited group stays visible while the explicit Default group is hidden.\n";
+    return 1;
+  }
+
+  const Handle(AIS_InteractiveContext)& aCtx = ViewerTest::GetAISContext();
+  if (aCtx.IsNull())
+  {
+    theDI << "Error: no active viewer, call vinit first.\n";
+    return 1;
+  }
+
+  Handle(OCC33504_MixedLayerObject) anObj = new OCC33504_MixedLayerObject();
+  aCtx->Display (anObj, Standard_False);
+  GetMapOfAIS().Bind (anObj, theArgV[1]);
+  aCtx->UpdateCurrentViewer();
+  return 0;
+}
 
 //=======================================================================
 //function : SurfaceGenOCC26675_1 
@@ -3944,6 +4035,13 @@ void QABugs::Commands_20(Draw_Interpretor& theCommands) {
   theCommands.Add("OCC31785",
                   "OCC31785 file.xbf : test reading XBF file in another thread",
                   __FILE__, OCC31785, group);
+
+  theCommands.Add("OCC33504",
+                  "OCC33504 name\n"
+                  "\t\t: Create AIS object that calls SetZLayer(Topmost) in Compute(),\n"
+                  "\t\t: has one inherited group and one explicit Default-layer group.\n"
+                  "\t\t: Test script should add a red cover object in Default layer.",
+                  __FILE__, OCC33504, group);
 
   return;
 }
