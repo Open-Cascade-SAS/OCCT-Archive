@@ -793,7 +793,7 @@ void OpenGl_View::displayStructure (const Handle(Graphic3d_CStructure)& theStruc
 {
   const OpenGl_Structure* aStruct = static_cast<const OpenGl_Structure*> (theStructure.get());
   Graphic3d_SequenceOfGroup aSeqGroups = aStruct->Groups();
-  if (aStruct->HasGroupZLayer())
+  if (aStruct->HasGroupZLayer() && !aSeqGroups.IsEmpty())
   {
     // Add structure reference to the different zlayers that each group is assigned to.
     NCollection_List<Graphic3d_ZLayerId> aZList;
