@@ -305,7 +305,10 @@ void OpenGl_Structure::Disconnect (Graphic3d_CStructure& theStructure)
 Handle(Graphic3d_Group) OpenGl_Structure::NewGroup (const Handle(Graphic3d_Structure)& theStruct)
 {
   Handle(OpenGl_Group) aGroup = new OpenGl_Group (theStruct);
-  aGroup->SetZLayer (ZLayer());
+  if (myHasGroupZLayer)
+  {
+    aGroup->SetZLayer (ZLayer());
+  }
   myGroups.Append (aGroup);
   return aGroup;
 }
