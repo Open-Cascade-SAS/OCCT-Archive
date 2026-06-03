@@ -470,6 +470,7 @@ void OpenGl_PrimitiveArray::drawArray(const occ::handle<OpenGl_Workspace>& theWo
   {
     // disable per-vertex color
     OpenGl_VertexBuffer::unbindAttribute(aGlContext, Graphic3d_TOA_COLOR);
+    OpenGl_VertexBuffer::unbindAttribute(aGlContext, Graphic3d_TOA_COLOR_BACK);
   }
   if (!myVboIndices.IsNull())
   {

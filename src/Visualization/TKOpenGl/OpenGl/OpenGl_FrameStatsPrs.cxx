@@ -441,6 +441,12 @@ void OpenGl_FrameStatsPrs::Render(const occ::handle<OpenGl_Workspace>& theWorksp
                                    GL_UNSIGNED_BYTE,
                                    myChartVertices->GetComponentsNb(),
                                    (void*)sizeof(NCollection_Vec3<float>));
+    myChartVertices->bindAttribute(aCtx,
+                                   Graphic3d_TOA_COLOR_BACK,
+                                   5,
+                                   GL_UNSIGNED_BYTE,
+                                   myChartVertices->GetComponentsNb(),
+                                   (void*)sizeof(NCollection_Vec3<float>));
 
     myChartIndices->Bind(aCtx);
     aCtx->core15fwd->glDrawElements(GL_TRIANGLES,
@@ -449,6 +455,7 @@ void OpenGl_FrameStatsPrs::Render(const occ::handle<OpenGl_Workspace>& theWorksp
                                     nullptr);
     myChartIndices->Unbind(aCtx);
     myChartVertices->Unbind(aCtx);
+    myChartVertices->unbindAttribute(aCtx, Graphic3d_TOA_COLOR_BACK);
     myChartVertices->unbindAttribute(aCtx, Graphic3d_TOA_COLOR);
     myChartVertices->unbindAttribute(aCtx, Graphic3d_TOA_POS);
     aCtx->core15fwd->glDisable(GL_BLEND);
@@ -466,8 +473,15 @@ void OpenGl_FrameStatsPrs::Render(const occ::handle<OpenGl_Workspace>& theWorksp
                                 GL_UNSIGNED_BYTE,
                                 myChartLines->GetComponentsNb(),
                                 (void*)sizeof(NCollection_Vec3<float>));
+    myChartLines->bindAttribute(aCtx,
+                                Graphic3d_TOA_COLOR_BACK,
+                                5,
+                                GL_UNSIGNED_BYTE,
+                                myChartLines->GetComponentsNb(),
+                                (void*)sizeof(NCollection_Vec3<float>));
     aCtx->core15fwd->glDrawArrays(GL_LINES, 0, myChartLines->GetElemsNb());
     myChartLines->Unbind(aCtx);
+    myChartLines->unbindAttribute(aCtx, Graphic3d_TOA_COLOR_BACK);
     myChartLines->unbindAttribute(aCtx, Graphic3d_TOA_COLOR);
     myChartLines->unbindAttribute(aCtx, Graphic3d_TOA_POS);
 

@@ -975,8 +975,12 @@ occ::handle<Graphic3d_ShaderProgram> Graphic3d_ShaderManager::getStdProgramUnlit
     aStageInOuts.Append(
       Graphic3d_ShaderObject::ShaderVariable("vec4 VertColor",
                                              Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
+    aStageInOuts.Append(Graphic3d_ShaderObject::ShaderVariable(
+      "vec4 VertColorBack",
+      Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
     aSrcVertExtraMain += EOL "  VertColor = occVertColor;";
-    aSrcFragGetColor = EOL "vec4 getColor(void) { return VertColor; }";
+    aSrcVertExtraMain += EOL "  VertColorBack = occVertColorBack;";
+    aSrcFragGetColor = EOL "vec4 getColor(void) { return gl_FrontFacing ? VertColor : VertColorBack; }";
   }
 
   int aNbClipPlanes = 0;
@@ -1283,7 +1287,7 @@ TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting(
                  "  vec3 aMatSpecular = occMaterial_Specular(theIsFront);" EOL
                  "  vec4 aColor = vec4(Ambient * aMatAmbient + Diffuse * aMatDiffuse.rgb + "
                  "Specular * aMatSpecular, aMatDiffuse.a);"
-           + (theHasVertColor ? EOL "  aColor *= getVertColor();" : "")
+           + (theHasVertColor ? EOL "  aColor *= getVertColor(theIsFront);" : "")
            + (theHasTexColor ? EOL
                 "#if defined(THE_HAS_TEXTURE_COLOR) && defined(FRAGMENT_SHADER)" EOL
                 "  aColor *= occTexture2D(occSamplerBaseColor, TexCoord.st / TexCoord.w);" EOL
@@ -1305,7 +1309,7 @@ TCollection_AsciiString Graphic3d_ShaderManager::stdComputeLighting(
            "                      in bool theIsFront)" EOL "{" EOL
            "  DirectLighting = vec3(0.0);" EOL
            "  BaseColor           = occMaterialBaseColor(theIsFront, TexCoord.st / TexCoord.w)"
-           + (theHasVertColor ? " * getVertColor()" : "") + ";"
+           + (theHasVertColor ? " * getVertColor(theIsFront)" : "") + ";"
            + EOL
            "  Emission            = occMaterialEmission(theIsFront, TexCoord.st / TexCoord.w);" EOL
            "  Metallic            = occMaterialMetallic(theIsFront, TexCoord.st / TexCoord.w);" EOL
@@ -1368,7 +1372,7 @@ occ::handle<Graphic3d_ShaderProgram> Graphic3d_ShaderManager::getStdProgramGoura
       aUniforms.Append(Graphic3d_ShaderObject::ShaderVariable("sampler2D occSamplerBaseColor",
                                                               Graphic3d_TOS_VERTEX));
       aSrcVertColor = EOL
-        "vec4 getVertColor(void) { return occTexture2D (occSamplerBaseColor, occTexCoord.xy); }";
+        "vec4 getVertColor(in bool theIsFront) { return occTexture2D (occSamplerBaseColor, occTexCoord.xy); }";
     }
   }
   else
@@ -1393,7 +1397,8 @@ occ::handle<Graphic3d_ShaderProgram> Graphic3d_ShaderManager::getStdProgramGoura
 
   if ((theBits & Graphic3d_ShaderFlags_VertColor) != 0)
   {
-    aSrcVertColor = EOL "vec4 getVertColor(void) { return occVertColor; }";
+    aSrcVertColor =
+      EOL "vec4 getVertColor(in bool theIsFront) { return theIsFront ? occVertColor : occVertColorBack; }";
   }
 
   int aNbClipPlanes = 0;
@@ -1559,7 +1564,7 @@ occ::handle<Graphic3d_ShaderProgram> Graphic3d_ShaderManager::getStdProgramPhong
                                                Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
 
       aSrcVertExtraMain += EOL "  VertColor = occTexture2D (occSamplerBaseColor, occTexCoord.xy);";
-      aSrcFragGetVertColor = EOL "vec4 getVertColor(void) { return VertColor; }";
+      aSrcFragGetVertColor = EOL "vec4 getVertColor(in bool theIsFront) { return VertColor; }";
     }
   }
   else
@@ -1602,8 +1607,13 @@ occ::handle<Graphic3d_ShaderProgram> Graphic3d_ShaderManager::getStdProgramPhong
     aStageInOuts.Append(
       Graphic3d_ShaderObject::ShaderVariable("vec4 VertColor",
                                              Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
+    aStageInOuts.Append(Graphic3d_ShaderObject::ShaderVariable(
+      "vec4 VertColorBack",
+      Graphic3d_TOS_VERTEX | Graphic3d_TOS_FRAGMENT));
     aSrcVertExtraMain += EOL "  VertColor = occVertColor;";
-    aSrcFragGetVertColor = EOL "vec4 getVertColor(void) { return VertColor; }";
+    aSrcVertExtraMain += EOL "  VertColorBack = occVertColorBack;";
+    aSrcFragGetVertColor =
+      EOL "vec4 getVertColor(in bool theIsFront) { return theIsFront ? VertColor : VertColorBack; }";
   }
 
   int aNbClipPlanes = 0;

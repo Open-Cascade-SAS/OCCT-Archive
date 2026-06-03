@@ -888,10 +888,12 @@ protected: //! @name protected constructors
       : myNormData(nullptr),
         myTexData(nullptr),
         myColData(nullptr),
+        myColDataBack(nullptr),
         myPosStride(0),
         myNormStride(0),
         myTexStride(0),
         myColStride(0),
+        myColStrideBack(0),
         myType(Graphic3d_TOPA_UNDEFINED)
   {
     init(theType, theMaxVertexs, theMaxBounds, theMaxEdges, theArrayFlags);
@@ -911,10 +913,12 @@ private: //! @name private fields
   uint8_t*                           myNormData;
   uint8_t*                           myTexData;
   uint8_t*                           myColData;
+  uint8_t*                           myColDataBack;
   size_t                             myPosStride;
   size_t                             myNormStride;
   size_t                             myTexStride;
   size_t                             myColStride;
+  size_t                             myColStrideBack;
   Graphic3d_TypeOfPrimitiveArray     myType;
 };
 

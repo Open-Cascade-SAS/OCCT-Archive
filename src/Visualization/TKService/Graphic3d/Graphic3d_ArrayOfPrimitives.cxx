@@ -102,6 +102,7 @@ void Graphic3d_ArrayOfPrimitives::init(Graphic3d_TypeOfPrimitiveArray theType,
   myNormData = nullptr;
   myTexData  = nullptr;
   myColData  = nullptr;
+  myColDataBack = nullptr;
   myAttribs.Nullify();
   myIndices.Nullify();
   myBounds.Nullify();
@@ -153,7 +154,7 @@ void Graphic3d_ArrayOfPrimitives::init(Graphic3d_TypeOfPrimitiveArray theType,
     myIndices->NbElements = 0;
   }
 
-  Graphic3d_Attribute anAttribs[4];
+  Graphic3d_Attribute anAttribs[5];
   int                 aNbAttribs = 0;
   anAttribs[aNbAttribs].Id       = Graphic3d_TOA_POS;
   anAttribs[aNbAttribs].DataType = Graphic3d_TOD_VEC3;
@@ -175,6 +176,10 @@ void Graphic3d_ArrayOfPrimitives::init(Graphic3d_TypeOfPrimitiveArray theType,
     anAttribs[aNbAttribs].Id       = Graphic3d_TOA_COLOR;
     anAttribs[aNbAttribs].DataType = Graphic3d_TOD_VEC4UB;
     ++aNbAttribs;
+
+    anAttribs[aNbAttribs].Id       = Graphic3d_TOA_COLOR_BACK;
+    anAttribs[aNbAttribs].DataType = Graphic3d_TOD_VEC4UB;
+    ++aNbAttribs;
   }
 
   if (!myAttribs->Init(theMaxVertexs, anAttribs, aNbAttribs))
@@ -189,6 +194,8 @@ void Graphic3d_ArrayOfPrimitives::init(Graphic3d_TypeOfPrimitiveArray theType,
   myNormData = myAttribs->ChangeAttributeData(Graphic3d_TOA_NORM, anAttribDummy, myNormStride);
   myTexData  = myAttribs->ChangeAttributeData(Graphic3d_TOA_UV, anAttribDummy, myTexStride);
   myColData  = myAttribs->ChangeAttributeData(Graphic3d_TOA_COLOR, anAttribDummy, myColStride);
+  myColDataBack =
+    myAttribs->ChangeAttributeData(Graphic3d_TOA_COLOR_BACK, anAttribDummy, myColStrideBack);
 
   memset(myAttribs->ChangeData(),
          0,
