@@ -48,7 +48,6 @@
 #include <Geom_Curve.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <Geom_SphericalSurface.hxx>
-#include <Geom_ToroidalSurface.hxx>
 #include <Geom_Surface.hxx>
 #include <GProp_GProps.hxx>
 #include <Message_Msg.hxx>
@@ -1880,17 +1879,7 @@ bool ShapeFix_Face::FixMissingSeam()
     }
   }
 
-  BRep_Builder                      B;
-  occ::handle<Geom_ToroidalSurface> aTorSurf =
-    occ::down_cast<Geom_ToroidalSurface>(mySurf->Surface());
-  bool anIsDegeneratedTor =
-    (aTorSurf.IsNull() ? false : aTorSurf->MajorRadius() < aTorSurf->MinorRadius());
-  // if the second wire is not null, we don't need mark the torus as degenerated
-  // and should process it as a regular one.
-  if (anIsDegeneratedTor && !w2.IsNull())
-  {
-    anIsDegeneratedTor = false;
-  }
+  BRep_Builder B;
 
   if (w1.IsNull())
   {
@@ -1906,18 +1895,7 @@ bool ShapeFix_Face::FixMissingSeam()
     gp_Dir2d d;
     double   aRange;
 
-    if (ismodeu && anIsDegeneratedTor)
-    {
-      double aRa  = aTorSurf->MajorRadius();
-      double aRi  = aTorSurf->MinorRadius();
-      double aPhi = std::acos(-aRa / aRi);
-      p.SetCoord(0.0, (ismodeu > 0 ? M_PI + aPhi : aPhi));
-
-      double aXCoord = -ismodeu;
-      d.SetCoord(aXCoord, 0.);
-      aRange = 2. * M_PI;
-    }
-    else if (ismodeu && mySurf->Surface()->IsKind(STANDARD_TYPE(Geom_SphericalSurface)))
+    if (ismodeu && mySurf->Surface()->IsKind(STANDARD_TYPE(Geom_SphericalSurface)))
     {
       p.SetCoord((ismodeu < 0 ? 0. : 2. * M_PI), ismodeu * 0.5 * M_PI);
       double aXCoord = -ismodeu;
@@ -2010,7 +1988,7 @@ bool ShapeFix_Face::FixMissingSeam()
   // In case of U closed surface wire with minimal V coordinate should be directed in positive
   // direction by U In case of V closed surface wire with minimal U coordinate should be directed in
   // negative direction by V
-  if (!vclosed || !uclosed || anIsDegeneratedTor)
+  if (!vclosed || !uclosed)
   {
     double deltaOther = 0.5 * (m2[coord][0] + m2[coord][1]) - 0.5 * (m1[coord][0] + m1[coord][1]);
     if (deltaOther * isneg < 0)
@@ -2068,7 +2046,7 @@ bool ShapeFix_Face::FixMissingSeam()
   // A special kind of FixShifted is necessary for torus-like
   // surfaces to adjust wires by period ALONG the missing SEAM direction
   // tr9_r0501-ug.stp #187640
-  if (uclosed && vclosed && !anIsDegeneratedTor)
+  if (uclosed && vclosed)
   {
     double shiftw2 = ShapeAnalysis::AdjustByPeriod(
       0.5 * (m2[coord][0] + m2[coord][1]),
