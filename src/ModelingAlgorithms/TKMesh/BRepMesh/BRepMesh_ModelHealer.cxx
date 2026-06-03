@@ -51,24 +51,8 @@ public:
   {
     const IMeshData::IEdgeHandle aDEdge = theDEdge;
 
-    int aPointsNb = aDEdge->GetCurve()->ParametersNb();
-
     aDEdge->Clear(true);
     aDEdge->SetDeflection(std::max(aDEdge->GetDeflection() / 3., Precision::Confusion()));
-
-    for (int aPCurveIt = 0; aPCurveIt < aDEdge->PCurvesNb(); ++aPCurveIt)
-    {
-      const IMeshData::IPCurveHandle& aPCurve = aDEdge->GetPCurve(aPCurveIt);
-      const IMeshData::IFaceHandle    aDFace  = aPCurve->GetFace();
-
-      // Check that outer wire contains 2 edges or less and add an additional point.
-      const IMeshData::IWireHandle& aDWire = aDFace->GetWire(0);
-      if (aDWire->EdgesNb() <= 2)
-      {
-        ++aPointsNb;
-        break;
-      }
-    }
 
     const IMeshData::IPCurveHandle&          aPCurve = aDEdge->GetPCurve(0);
     const IMeshData::IFaceHandle             aDFace  = aPCurve->GetFace();
@@ -76,8 +60,7 @@ public:
       BRepMesh_EdgeDiscret::CreateEdgeTessellator(aDEdge,
                                                   aPCurve->GetOrientation(),
                                                   aDFace,
-                                                  myParameters,
-                                                  aPointsNb);
+                                                  myParameters);
 
     BRepMesh_EdgeDiscret::Tessellate3d(aDEdge, aTessellator, false);
     BRepMesh_EdgeDiscret::Tessellate2d(aDEdge, false);

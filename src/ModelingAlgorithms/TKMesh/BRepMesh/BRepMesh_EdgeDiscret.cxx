@@ -39,10 +39,9 @@ BRepMesh_EdgeDiscret::~BRepMesh_EdgeDiscret() = default;
 
 occ::handle<IMeshTools_CurveTessellator> BRepMesh_EdgeDiscret::CreateEdgeTessellator(
   const IMeshData::IEdgeHandle& theDEdge,
-  const IMeshTools_Parameters&  theParameters,
-  const int                     theMinPointsNb)
+  const IMeshTools_Parameters&  theParameters)
 {
-  return new BRepMesh_CurveTessellator(theDEdge, theParameters, theMinPointsNb);
+  return new BRepMesh_CurveTessellator(theDEdge, theParameters);
 }
 
 //=================================================================================================
@@ -51,16 +50,11 @@ occ::handle<IMeshTools_CurveTessellator> BRepMesh_EdgeDiscret::CreateEdgeTessell
   const IMeshData::IEdgeHandle& theDEdge,
   const TopAbs_Orientation      theOrientation,
   const IMeshData::IFaceHandle& theDFace,
-  const IMeshTools_Parameters&  theParameters,
-  const int                     theMinPointsNb)
+  const IMeshTools_Parameters&  theParameters)
 {
   return theDEdge->GetSameParam()
-           ? new BRepMesh_CurveTessellator(theDEdge, theParameters, theMinPointsNb)
-           : new BRepMesh_CurveTessellator(theDEdge,
-                                           theOrientation,
-                                           theDFace,
-                                           theParameters,
-                                           theMinPointsNb);
+           ? new BRepMesh_CurveTessellator(theDEdge, theParameters)
+           : new BRepMesh_CurveTessellator(theDEdge, theOrientation, theDFace, theParameters);
 }
 
 //=================================================================================================
