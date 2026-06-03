@@ -58,13 +58,19 @@ public:
   //! @param theMaxEdges   defines the maximum allowed edge   number in the array
   //! @param theHasVColors when TRUE, AddVertex(Point,Color) should be used for specifying vertex
   //! color
-  Graphic3d_ArrayOfSegments(int theMaxVertexs, int theMaxEdges = 0, bool theHasVColors = false)
+  Graphic3d_ArrayOfSegments(int  theMaxVertexs,
+                            int  theMaxEdges = 0,
+                            bool theHasVColors = false,
+                            bool theHasVColorsBack = false)
       : Graphic3d_ArrayOfPrimitives(Graphic3d_TOPA_SEGMENTS,
                                     theMaxVertexs,
                                     0,
                                     theMaxEdges,
-                                    theHasVColors ? Graphic3d_ArrayFlags_VertexColor
-                                                  : Graphic3d_ArrayFlags_None)
+                                    (theHasVColors ? Graphic3d_ArrayFlags_VertexColor
+                                                   : Graphic3d_ArrayFlags_None)
+                                      | (theHasVColorsBack
+                                           ? Graphic3d_ArrayFlags_VertexColorBack
+                                           : Graphic3d_ArrayFlags_None))
   {
   }
 };

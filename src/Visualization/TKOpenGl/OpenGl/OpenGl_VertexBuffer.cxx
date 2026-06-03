@@ -168,7 +168,7 @@ void OpenGl_VertexBuffer::bindFixed(const occ::handle<OpenGl_Context>& theCtx,
     case Graphic3d_TOA_COLOR: {
       theCtx->core11ffp->glEnableClientState(GL_COLOR_ARRAY);
       theCtx->core11ffp->glColorPointer(theNbComp, theDataType, theStride, theOffset);
-      theCtx->core11ffp->glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+      theCtx->core11ffp->glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
       theCtx->core11fwd->glEnable(GL_COLOR_MATERIAL);
       return;
     }
@@ -205,6 +205,8 @@ void OpenGl_VertexBuffer::unbindFixed(const occ::handle<OpenGl_Context>& theCtx,
       unbindFixedColor(theCtx);
       return;
     case Graphic3d_TOA_COLOR_BACK:
+      unbindFixedColor(theCtx);
+      return;
     case Graphic3d_TOA_CUSTOM: {
       return;
     }

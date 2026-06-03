@@ -66,7 +66,8 @@ public:
                                 bool theHasVNormals = false,
                                 bool theHasVColors  = false,
                                 bool theHasBColors  = false,
-                                bool theHasVTexels  = false)
+                                bool theHasVTexels  = false,
+                                bool theHasVColorsBack = false)
       : Graphic3d_ArrayOfPrimitives(
           Graphic3d_TOPA_TRIANGLEFANS,
           theMaxVertexs,
@@ -75,7 +76,9 @@ public:
           (theHasVNormals ? Graphic3d_ArrayFlags_VertexNormal : Graphic3d_ArrayFlags_None)
             | (theHasVColors ? Graphic3d_ArrayFlags_VertexColor : Graphic3d_ArrayFlags_None)
             | (theHasVTexels ? Graphic3d_ArrayFlags_VertexTexel : Graphic3d_ArrayFlags_None)
-            | (theHasBColors ? Graphic3d_ArrayFlags_BoundColor : Graphic3d_ArrayFlags_None))
+            | (theHasBColors ? Graphic3d_ArrayFlags_BoundColor : Graphic3d_ArrayFlags_None)
+            | (theHasVColorsBack ? Graphic3d_ArrayFlags_VertexColorBack
+                                  : Graphic3d_ArrayFlags_None))
   {
   }
 };

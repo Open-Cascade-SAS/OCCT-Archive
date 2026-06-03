@@ -443,7 +443,7 @@ void OpenGl_FrameStatsPrs::Render(const occ::handle<OpenGl_Workspace>& theWorksp
                                    (void*)sizeof(NCollection_Vec3<float>));
     myChartVertices->bindAttribute(aCtx,
                                    Graphic3d_TOA_COLOR_BACK,
-                                   5,
+                                   4,
                                    GL_UNSIGNED_BYTE,
                                    myChartVertices->GetComponentsNb(),
                                    (void*)sizeof(NCollection_Vec3<float>));
@@ -475,7 +475,7 @@ void OpenGl_FrameStatsPrs::Render(const occ::handle<OpenGl_Workspace>& theWorksp
                                 (void*)sizeof(NCollection_Vec3<float>));
     myChartLines->bindAttribute(aCtx,
                                 Graphic3d_TOA_COLOR_BACK,
-                                5,
+                                4,
                                 GL_UNSIGNED_BYTE,
                                 myChartLines->GetComponentsNb(),
                                 (void*)sizeof(NCollection_Vec3<float>));
