@@ -185,8 +185,7 @@ bool OpenGl_BackgroundArray::createGradientArray(const occ::handle<OpenGl_Contex
 {
   // Initialize data for primitive array
   Graphic3d_Attribute aGragientAttribInfo[] = {{Graphic3d_TOA_POS, Graphic3d_TOD_VEC2},
-                                               {Graphic3d_TOA_COLOR, Graphic3d_TOD_VEC3},
-                                               {Graphic3d_TOA_COLOR_BACK, Graphic3d_TOD_VEC3}};
+                                               {Graphic3d_TOA_COLOR, Graphic3d_TOD_VEC3}};
 
   if (!myAttribs->Init(4, aGragientAttribInfo, 2))
   {
