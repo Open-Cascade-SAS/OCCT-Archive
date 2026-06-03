@@ -154,7 +154,7 @@ public:
   //! Clear myItems
   void Clear() noexcept { myItems.Clear(); }
 
-  static constexpr double ScalePrec() noexcept { return 1.e-14; }
+  static constexpr double ScalePrec() noexcept { return 1.e-13; }
 
 private:
   TopLoc_SListOfItemLocation myItems;
