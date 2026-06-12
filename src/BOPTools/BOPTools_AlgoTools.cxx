@@ -1016,6 +1016,13 @@ Standard_Boolean BOPTools_AlgoTools::GetFaceOff
       else if (aF2.IsSame(theF1)) {
         aAngle=aTwoPI;
       }
+      else {
+        // Near-zero angle between different faces (coplanar due to near-degenerate geometry,
+        // e.g. very thin box creating nearly-coincident intersection curves).
+        // Treat as maximum angle (2*PI) to prevent incorrect selection of a coplanar
+        // continuation face over a proper closing face.
+        aAngle=aTwoPI;
+      }
     }
     //
     if (Abs(aAngle) < anAngleCriteria ||
