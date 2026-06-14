@@ -522,6 +522,11 @@ static void PERFORM_C0(const TopoDS_Edge&                              S1,
       return;
     }
 
+    if (pCurv.IsNull())
+    {
+      return;
+    }
+
     if (pCurv->Continuity() == GeomAbs_C0)
     {
       constexpr double epsP = Precision::PConfusion();
