@@ -444,6 +444,11 @@ static void PERFORM_C0(const TopoDS_Edge&         S1,
     Standard_Real      aFOther, aLOther;
     Handle(Geom_Curve) pCurvOther = BRep_Tool::Curve(Eother, aFOther, aLOther);
 
+    if (pCurv.IsNull())
+    {
+      return;
+    }
+
     if (pCurv->Continuity() == GeomAbs_C0)
     {
       constexpr Standard_Real epsP = Precision::PConfusion();
@@ -985,6 +990,12 @@ void BRepExtrema_DistanceSS::Perform(const TopoDS_Edge&         theS1,
 
   Standard_Real      aFirst, aLast;
   Handle(Geom_Curve) pCurv = BRep_Tool::Curve(theS1, aFirst, aLast);
+
+  if (pCurv.IsNull())
+  {
+    return;
+  }
+
   if (pCurv->Continuity() == GeomAbs_C0)
   {
     BRepExtrema_SeqOfSolution SeqSolution1;
