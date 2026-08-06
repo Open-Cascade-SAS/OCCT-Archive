@@ -71,7 +71,7 @@
 // The following flag can be used to enable optimization of cone/cylinder selection
 // Unfortunately, this optimization is not stable and may lead to incorrect selection
 // in some cases. It is disabled by default.
-//#define OPTIMIZE_CONE_CYLINDER_SELECTION
+// #define OPTIMIZE_CONE_CYLINDER_SELECTION
 
 namespace
 {
@@ -750,13 +750,13 @@ bool StdSelect_BRepSelectionTool::GetSensitiveForFace(
       BRepTools::UVBounds(theFace, aURange[0], aURange[1], aVRange[0], aVRange[1]);
 
       const gp_Circ aCirc1  = ElSLib::ConeVIso(aGeomCone->Position(),
-                                              aGeomCone->RefRadius(),
-                                              aGeomCone->SemiAngle(),
-                                              aVRange[0]);
+                                               aGeomCone->RefRadius(),
+                                               aGeomCone->SemiAngle(),
+                                               aVRange[0]);
       const gp_Circ aCirc2  = ElSLib::ConeVIso(aGeomCone->Position(),
-                                              aGeomCone->RefRadius(),
-                                              aGeomCone->SemiAngle(),
-                                              aVRange[1]);
+                                               aGeomCone->RefRadius(),
+                                               aGeomCone->SemiAngle(),
+                                               aVRange[1]);
       const double  aHeight = aCirc1.Location().Distance(aCirc2.Location());
 
       gp_Ax3 aPos = aGeomCone->Position();
@@ -1073,7 +1073,7 @@ bool StdSelect_BRepSelectionTool::GetSensitiveForCylinder(
       const double  aRad1 = aCone.RefRadius();
       const double  aHeight =
         (aRad1 != 0.0) ? aRad1 / std::abs(std::tan(aCone.SemiAngle()))
-                        : aCone.Location().Distance(
+                       : aCone.Location().Distance(
                            aGeomPln->Location().Transformed(aLocSurf[aConIndex == 0 ? 1 : 0]));
       const double aRad2 = (aRad1 != 0.0) ? 0.0 : std::tan(aCone.SemiAngle()) * aHeight;
       gp_Trsf      aTrsf;
@@ -1168,19 +1168,19 @@ bool StdSelect_BRepSelectionTool::GetSensitiveForCylinder(
                                                                Precision::Angular()))
       {
         const gp_Cylinder aCyl = BRepAdaptor_Surface(*aFaces[aConIndex]).Cylinder();
-        Standard_Real u1, u2, v1, v2;
+        double            u1, u2, v1, v2;
         BRepTools::UVBounds(*aFaces[aConIndex], u1, u2, v1, v2);
-        const double      aRad = aCyl.Radius();
-        const double      aHeight =
+        const double aRad = aCyl.Radius();
+        const double aHeight =
           aGeomPlanes[0]
             ->Location()
             .Transformed(*aGeomPlanesLoc[0])
             .Distance(aGeomPlanes[1]->Location().Transformed(*aGeomPlanesLoc[1]));
 
-        gp_Trsf aTrsf;
-        gp_Ax3  aPos = aCyl.Position();
-        gp_Pnt p1 = aPos.Location();
-        const gp_Dir &d1 = aPos.Direction();
+        gp_Trsf       aTrsf;
+        gp_Ax3        aPos = aCyl.Position();
+        gp_Pnt        p1   = aPos.Location();
+        const gp_Dir& d1   = aPos.Direction();
         p1.Translate(gp_Vec(d1).Multiplied(v1));
         aPos.SetLocation(p1);
         aPos.SetDirection(d1);

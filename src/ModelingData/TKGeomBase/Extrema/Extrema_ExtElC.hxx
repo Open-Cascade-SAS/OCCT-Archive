@@ -88,10 +88,13 @@ protected:
   //! Computes extrema in case when two circles are in almost perpendicular planes
   //! and their centers are on the intersection line of these planes
   //! (angle between planes > 45 degrees)
-  Standard_EXPORT Standard_Boolean PerpendicularCirclesExtrema(const gp_Circ& C1, const gp_Circ& C2,
-                                                               const gp_Pln& aPlc1, const gp_Pln& aPlc2,
-                                                               const Standard_Real aTolD,
-                                                               const Standard_Real angPlanes);
+  Standard_EXPORT bool PerpendicularCirclesExtrema(const gp_Circ& C1,
+                                                   const gp_Circ& C2,
+                                                   const gp_Pln&  aPlc1,
+                                                   const gp_Pln&  aPlc2,
+                                                   const double   aTolD,
+                                                   const double   angPlanes);
+
 private:
   bool            myDone;
   bool            myIsPar;

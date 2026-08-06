@@ -378,6 +378,9 @@ public:
   //@param theSubShape - Search subshape, only Face, Edge or Vertex are supported.
   Standard_EXPORT static double MaxTolerance(const TopoDS_Shape&    theShape,
                                              const TopAbs_ShapeEnum theSubShape);
+
+  //! Returns the 2d tolerance of the face.
+  Standard_EXPORT static double Tolerance2d(const TopoDS_Face& theFace, const double theTolerance);
 };
 
 #endif // _BRep_Tool_HeaderFile

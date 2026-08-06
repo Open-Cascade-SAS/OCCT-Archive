@@ -20,7 +20,6 @@
 #include <Standard.hxx>
 
 #include <Message_ProgressRange.hxx>
-#include <Standard_Integer.hxx>
 #include <Standard_Real.hxx>
 #include <ShapeFix_Root.hxx>
 #include <TopoDS_Wire.hxx>
@@ -285,7 +284,7 @@ public:
   Standard_EXPORT bool FixConnected(const double prec = -1.0);
 
   //! Applies FixCurves(num) to all edges in the wire
-  Standard_EXPORT Standard_Boolean FixCurves();
+  Standard_EXPORT bool FixCurves();
 
   //! Groups the fixes dealing with 3d and pcurves of the edges.
   //! The order of the fixes and the default behaviour are:
@@ -360,7 +359,7 @@ public:
                                     const bool   theUpdateWire = true);
 
   //! Fixes curves
-  Standard_EXPORT Standard_Boolean FixCurves(const Standard_Integer num);
+  Standard_EXPORT bool FixCurves(const int num);
 
   //! Fixes a seam edge
   //! A Seam edge has two pcurves, one for forward. one for reversed
@@ -430,8 +429,6 @@ public:
   bool StatusEdgeCurves(const ShapeExtend_Status status) const;
 
   bool StatusCurves(const ShapeExtend_Status status) const;
-
-  bool StatusEdgeCurves(const ShapeExtend_Status status) const;
 
   bool StatusDegenerated(const ShapeExtend_Status status) const;
 

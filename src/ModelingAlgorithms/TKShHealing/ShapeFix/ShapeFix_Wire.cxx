@@ -104,7 +104,6 @@
 #include <Standard_Type.hxx>
 #include <gp_Pnt.hxx>
 #include <NCollection_Array1.hxx>
-#include <Standard_Integer.hxx>
 #include <NCollection_HSequence.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopLoc_Location.hxx>
@@ -607,12 +606,14 @@ bool ShapeFix_Wire::FixConnected(const double prec)
 
 //=================================================================================================
 
-Standard_Boolean ShapeFix_Wire::FixCurves()
+bool ShapeFix_Wire::FixCurves()
 {
   myStatusCurves = ShapeExtend::EncodeStatus(ShapeExtend_OK);
-  if (!IsLoaded()) return Standard_False;
+  if (!IsLoaded())
+    return false;
 
-  for (Standard_Integer anIdx = NbEdges(); anIdx > 0; anIdx--) {
+  for (int anIdx = NbEdges(); anIdx > 0; anIdx--)
+  {
     FixCurves(anIdx);
     myStatusCurves |= myLastFixStatus;
   }
@@ -1637,23 +1638,23 @@ bool ShapeFix_Wire::FixConnected(const int num, const double prec, const bool th
 
 //=================================================================================================
 
-Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
+bool ShapeFix_Wire::FixCurves(const int theIdx)
 {
   // assume fix curves step should be after fix vertices
   myLastFixStatus = ShapeExtend::EncodeStatus(ShapeExtend_OK);
-  if (!IsLoaded() || NbEdges() <= 0) 
-    return Standard_False;
+  if (!IsLoaded() || NbEdges() <= 0)
+    return false;
 
   // action: replacing curves in edges
-  Handle(ShapeExtend_WireData) anSbwd = WireData();
-  Standard_Integer anIdx = (theIdx > 0 ? theIdx : anSbwd->NbEdges());
-  TopoDS_Edge anEdge = anSbwd->Edge(anIdx);
-  Standard_Real aPrec = BRep_Tool::Tolerance(anEdge);
-  ShapeAnalysis_Edge aSae;
-  ShapeAnalysis_Wire aSaw;
-  Handle(Geom_Curve) aCurve3d;
-  Standard_Real aCurBounds[3];
-  Standard_Boolean IsReversed = Standard_False;
+  occ::handle<ShapeExtend_WireData> anSbwd = WireData();
+  int                          anIdx  = (theIdx > 0 ? theIdx : anSbwd->NbEdges());
+  TopoDS_Edge                  anEdge = anSbwd->Edge(anIdx);
+  double                       aPrec  = BRep_Tool::Tolerance(anEdge);
+  ShapeAnalysis_Edge           aSae;
+  ShapeAnalysis_Wire           aSaw;
+  occ::handle<Geom_Curve>      aCurve3d;
+  double                       aCurBounds[3];
+  bool                         IsReversed = false;
   aSae.Curve3d(anEdge, aCurve3d, aCurBounds[0], aCurBounds[2], IsReversed);
   aCurBounds[1] = (aCurBounds[0] + aCurBounds[2]) / 2;
   gp_Pnt anEnds[3];
@@ -1665,61 +1666,68 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
   aCurve3d->D0(aCurBounds[0], aGeomEnds[0]);
   aCurve3d->D0(aCurBounds[2], aGeomEnds[1]);
 
-  Standard_Real aGap0 = Min(anEnds[0].Distance(aGeomEnds[0]), anEnds[0].Distance(aGeomEnds[1]));
-  Standard_Real aGap2 = Min(anEnds[2].Distance(aGeomEnds[0]), anEnds[2].Distance(aGeomEnds[1]));
-  if (Max (aGap0, aGap2) < Precision::Confusion()) // nothing to do
+  double aGap0 = std::min(anEnds[0].Distance(aGeomEnds[0]), anEnds[0].Distance(aGeomEnds[1]));
+  double aGap2 = std::min(anEnds[2].Distance(aGeomEnds[0]), anEnds[2].Distance(aGeomEnds[1]));
+  if (std::max(aGap0, aGap2) < Precision::Confusion()) // nothing to do
     return true;
 
-  if (aCurve3d->IsKind(STANDARD_TYPE(Geom_Circle))) {
-    Standard_Real anOldR = Handle(Geom_Circle)::DownCast(aCurve3d)->Circ().Radius();
+  if (aCurve3d->IsKind(STANDARD_TYPE(Geom_Circle)))
+  {
+    double anOldR    = occ::handle<Geom_Circle>::DownCast(aCurve3d)->Circ().Radius();
     gp_Vec anArcNorm = gp_Vec(anEnds[2], anEnds[0]) / 2;
     gp_Pnt aCenter(anEnds[0].XYZ() - anArcNorm.XYZ());
-    int aSign = anEnds[1].Distance(aCenter) > anOldR ? 1 : -1; // for arc length > PI
-    Standard_Real aD = anOldR*anOldR - anArcNorm.SquareMagnitude();
-    aD = abs(aD) < Precision::Confusion() ? 0. : aD;
-    Standard_Real anArcR = anOldR + aSign * sqrt(aD);
-    gp_Ax2 aNormal(aCenter, anArcNorm);
-    Handle(Geom_Circle) anArc = new Geom_Circle(aNormal, anArcR);
+    int    aSign = anEnds[1].Distance(aCenter) > anOldR ? 1 : -1; // for arc length > PI
+    double aD    = anOldR * anOldR - anArcNorm.SquareMagnitude();
+    aD           = std::abs(aD) < Precision::Confusion() ? 0. : aD;
+    double                      anArcR = anOldR + aSign * sqrt(aD);
+    gp_Ax2                      aNormal(aCenter, anArcNorm);
+    occ::handle<Geom_Circle>         anArc = new Geom_Circle(aNormal, anArcR);
     GeomAPI_ProjectPointOnCurve projector(anEnds[1], anArc);
     anEnds[1] = projector.NearestPoint();
     GC_MakeArcOfCircle arc(anEnds[0], anEnds[1], anEnds[2]);
-    TopoDS_Edge aNewEdge = BRepBuilderAPI_MakeEdge(arc.Value()).Edge();
+    TopoDS_Edge        aNewEdge = BRepBuilderAPI_MakeEdge(arc.Value()).Edge();
     anSbwd->Set(aNewEdge, theIdx);
     return true;
   }
-  else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_Ellipse))) {
+  else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_Ellipse)))
+  {
     /// aaajfa: BEGIN - to provide elliptic edge FORWARD orientation
     gp_Pnt tmpPnt = anEnds[0];
-    anEnds[0] = anEnds[2];
-    anEnds[2] = tmpPnt;
+    anEnds[0]     = anEnds[2];
+    anEnds[2]     = tmpPnt;
     /// aaajfa: END - to provide elliptic edge FORWARD orientation
 
-    Handle(Geom_Ellipse) anOld = Handle(Geom_Ellipse)::DownCast(aCurve3d);
-    Handle(Geom_Plane) aPln = new Geom_Plane(anEnds[0], gp_Vec(anEnds[2], anEnds[0]).Crossed(gp_Vec(anEnds[1], anEnds[0])));
+    occ::handle<Geom_Ellipse> anOld = occ::handle<Geom_Ellipse>::DownCast(aCurve3d);
+    occ::handle<Geom_Plane>   aPln =
+      new Geom_Plane(anEnds[0], gp_Vec(anEnds[2], anEnds[0]).Crossed(gp_Vec(anEnds[1], anEnds[0])));
     GeomAPI_ProjectPointOnSurf aProjector(anOld->Elips().Location(), aPln);
-    gp_Pnt anOrigin = aProjector.NearestPoint();
-    aProjector.Init(anOld->Elips().Location().XYZ() + anOld->Elips().XAxis().Direction().XYZ(), aPln);
-    gp_Ax2 anAx(anOrigin, aPln->Axis().Direction(), aProjector.NearestPoint().XYZ() - anOrigin.XYZ());
+    gp_Pnt                     anOrigin = aProjector.NearestPoint();
+    aProjector.Init(anOld->Elips().Location().XYZ() + anOld->Elips().XAxis().Direction().XYZ(),
+                    aPln);
+    gp_Ax2 anAx(anOrigin,
+                aPln->Axis().Direction(),
+                aProjector.NearestPoint().XYZ() - anOrigin.XYZ());
 
     // compute angle
-    Standard_Real aRec = DBL_MAX;
-    Standard_Real anAngle = 0.;
-    Standard_Integer aSplNum = 10;
-    for (Standard_Integer anIdxI = -aSplNum; anIdxI < aSplNum; ++anIdxI)
+    double aRec    = DBL_MAX;
+    double anAngle = 0.;
+    int    aSplNum = 10;
+    for (int anIdxI = -aSplNum; anIdxI < aSplNum; ++anIdxI)
     {
-      Handle(Geom_Ellipse) anEll = new Geom_Ellipse(anAx, anOld->MajorRadius(), anOld->MinorRadius());
-      Standard_Real anAnglei = aPrec*anIdxI / anEll->MajorRadius() / aSplNum;
+      occ::handle<Geom_Ellipse> anEll =
+        new Geom_Ellipse(anAx, anOld->MajorRadius(), anOld->MinorRadius());
+      double anAnglei = aPrec * anIdxI / anEll->MajorRadius() / aSplNum;
       anEll->Rotate(anAx.Axis(), anAnglei);
       GeomAPI_ProjectPointOnCurve aProjector1(anEnds[0], anEll);
-      Standard_Real aDist = 0.;
-      for (Standard_Integer anIdxJ = 0; anIdxJ < 2; ++anIdxJ)
+      double                      aDist = 0.;
+      for (int anIdxJ = 0; anIdxJ < 2; ++anIdxJ)
       {
-        aProjector1.Perform(anEnds[anIdxJ *2]);
-        aDist += std::fmin (aProjector1.Distance(1), aProjector1.Distance(2));
+        aProjector1.Perform(anEnds[anIdxJ * 2]);
+        aDist += std::fmin(aProjector1.Distance(1), aProjector1.Distance(2));
       }
       if (aDist < aRec)
       {
-        aRec = aDist;
+        aRec    = aDist;
         anAngle = anAnglei;
       }
     }
@@ -1727,44 +1735,44 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
     aTemp.Rotate(anAx.Axis(), anAngle);
 
     // compute shift
-    gp_Vec aX = aTemp.XAxis().Direction();
-    gp_Vec aY = aTemp.YAxis().Direction();
-    gp_Pnt2d aP1((anEnds[0].XYZ() - anOrigin.XYZ()).Dot(aX.XYZ()), (anEnds[0].XYZ() - anOrigin.XYZ()).Dot(aY.XYZ()));
-    gp_Pnt2d aP2((anEnds[2].XYZ() - anOrigin.XYZ()).Dot(aX.XYZ()), (anEnds[2].XYZ() - anOrigin.XYZ()).Dot(aY.XYZ()));
+    gp_Vec   aX = aTemp.XAxis().Direction();
+    gp_Vec   aY = aTemp.YAxis().Direction();
+    gp_Pnt2d aP1((anEnds[0].XYZ() - anOrigin.XYZ()).Dot(aX.XYZ()),
+                 (anEnds[0].XYZ() - anOrigin.XYZ()).Dot(aY.XYZ()));
+    gp_Pnt2d aP2((anEnds[2].XYZ() - anOrigin.XYZ()).Dot(aX.XYZ()),
+                 (anEnds[2].XYZ() - anOrigin.XYZ()).Dot(aY.XYZ()));
 
     // x = ky + p   linear equation
-    // where (x, y) shift point, 
+    // where (x, y) shift point,
     // k, p constant coefficients
-    Standard_Real k = 1, p = 0;
-    Standard_Real R = anOld->MajorRadius();
-    Standard_Real r = anOld->MinorRadius();
-    k = (R / r) * (R / r) *
-      (aP1.Y() - aP2.Y()) / (aP2.X() - aP1.X());
-    p = -(1. / 2) * (R / r) * (R / r) *
-      (aP1.Y()*aP1.Y() - aP2.Y()*aP2.Y()) / (aP2.X() - aP1.X()) + aP1.X() / 2 + aP2.X() / 2;
-    // ax^2 + bx + c = 0  square equation 
+    double k = 1, p = 0;
+    double R = anOld->MajorRadius();
+    double r = anOld->MinorRadius();
+    k        = (R / r) * (R / r) * (aP1.Y() - aP2.Y()) / (aP2.X() - aP1.X());
+    p =
+      -(1. / 2) * (R / r) * (R / r) * (aP1.Y() * aP1.Y() - aP2.Y() * aP2.Y()) / (aP2.X() - aP1.X())
+      + aP1.X() / 2 + aP2.X() / 2;
+    // ax^2 + bx + c = 0  square equation
     // a, b, c constant coefficients
-    Standard_Real a = 0., b = 0., c = 0.;
-    a = R*R + k*k*r*r;
-    b = 2 * (k*p*r*r - k*aP1.X()*r*r - aP1.Y()*R*R);
-    c = aP1.X()*aP1.X()*r*r +
-      aP1.Y()*aP1.Y()*R*R -
-      r*r*R*R +
-      p*p*r*r - 2 * aP1.X()*p*r*r;
-    Standard_Real y1 = (-b - sqrt(b*b - 4 * a*c)) / 2 / a;
-    Standard_Real y2 = (-b + sqrt(b*b - 4 * a*c)) / 2 / a;
-    Standard_Real x1 = k*y1 + p;
-    Standard_Real x2 = k*y2 + p;
+    double a = 0., b = 0., c = 0.;
+    a = R * R + k * k * r * r;
+    b = 2 * (k * p * r * r - k * aP1.X() * r * r - aP1.Y() * R * R);
+    c = aP1.X() * aP1.X() * r * r + aP1.Y() * aP1.Y() * R * R - r * r * R * R + p * p * r * r
+        - 2 * aP1.X() * p * r * r;
+    double y1 = (-b - sqrt(b * b - 4 * a * c)) / 2 / a;
+    double y2 = (-b + sqrt(b * b - 4 * a * c)) / 2 / a;
+    double x1 = k * y1 + p;
+    double x2 = k * y2 + p;
 
     gp_Pnt anOri = anOld->Location();
-    if (x1*x1 + y1*y1 < x2*x2 + y2*y2) 
-      anOri = anOri.XYZ() + aX.XYZ()*x1 + aY.XYZ()*y1;
+    if (x1 * x1 + y1 * y1 < x2 * x2 + y2 * y2)
+      anOri = anOri.XYZ() + aX.XYZ() * x1 + aY.XYZ() * y1;
     else
-      anOri = anOri.XYZ() + aX.XYZ()*x2 + aY.XYZ()*y2;
+      anOri = anOri.XYZ() + aX.XYZ() * x2 + aY.XYZ() * y2;
     aTemp.SetLocation(anOri);
 
     GC_MakeArcOfEllipse anArc(aTemp, anEnds[2], anEnds[0], true);
-    TopoDS_Edge aNewEdge = BRepBuilderAPI_MakeEdge(anArc.Value()).Edge();
+    TopoDS_Edge         aNewEdge = BRepBuilderAPI_MakeEdge(anArc.Value()).Edge();
     anSbwd->Set(aNewEdge, theIdx);
     return true;
   }
@@ -1774,46 +1782,48 @@ Standard_Boolean ShapeFix_Wire::FixCurves(const Standard_Integer theIdx)
     anSbwd->Set(aNewEdge, theIdx);
     return true;
   }
-  else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_BSplineCurve))) 
+  else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_BSplineCurve)))
   {
-    Handle(Geom_BSplineCurve) anOld = Handle(Geom_BSplineCurve)::DownCast(aCurve3d);
+    occ::handle<Geom_BSplineCurve> anOld = occ::handle<Geom_BSplineCurve>::DownCast(aCurve3d);
 
-    if (anOld->Pole(1).Distance(aGeomEnds[0]) > Precision::Confusion() ||
-        anOld->Pole(anOld->NbPoles()).Distance(aGeomEnds[1]) > Precision::Confusion()) {
+    if (anOld->Pole(1).Distance(aGeomEnds[0]) > Precision::Confusion()
+        || anOld->Pole(anOld->NbPoles()).Distance(aGeomEnds[1]) > Precision::Confusion())
+    {
       // FAIL1 means we cannot fix Bezier or B-Spline curve
       // because its ends do not correspond to first and last poles
       // (i.e. it is a piece of entire curve)
-      myLastFixStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_FAIL1 );
+      myLastFixStatus |= ShapeExtend::EncodeStatus(ShapeExtend_FAIL1);
       return false;
     }
 
-    Handle(Geom_Geometry) aNewG = anOld->Copy();
-    Handle(Geom_BSplineCurve) aNewC = Handle(Geom_BSplineCurve)::DownCast(aNewG);
+    occ::handle<Geom_Geometry>     aNewG = anOld->Copy();
+    occ::handle<Geom_BSplineCurve> aNewC = occ::handle<Geom_BSplineCurve>::DownCast(aNewG);
     int p = anEnds[0].Distance(aGeomEnds[0]) < anEnds[1].Distance(aGeomEnds[0]) ? 0 : 2;
     aNewC->SetPole(1, anEnds[p]);
-    aNewC->SetPole(anOld->NbPoles(), anEnds[2-p]);
+    aNewC->SetPole(anOld->NbPoles(), anEnds[2 - p]);
     TopoDS_Edge aNewEdge = BRepBuilderAPI_MakeEdge(aNewC).Edge();
     anSbwd->Set(aNewEdge, theIdx);
     return true;
   }
-  else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_BezierCurve))) 
+  else if (aCurve3d->IsKind(STANDARD_TYPE(Geom_BezierCurve)))
   {
-    Handle(Geom_BezierCurve) anOld = Handle(Geom_BezierCurve)::DownCast(aCurve3d);
+    occ::handle<Geom_BezierCurve> anOld = occ::handle<Geom_BezierCurve>::DownCast(aCurve3d);
 
-    if (anOld->Pole(1).Distance(aGeomEnds[0]) > Precision::Confusion() ||
-        anOld->Pole(anOld->NbPoles()).Distance(aGeomEnds[1]) > Precision::Confusion()) {
+    if (anOld->Pole(1).Distance(aGeomEnds[0]) > Precision::Confusion()
+        || anOld->Pole(anOld->NbPoles()).Distance(aGeomEnds[1]) > Precision::Confusion())
+    {
       // FAIL1 means we cannot fix Bezier or B-Spline curve
       // because its ends do not correspond to first and last poles
       // (i.e. it is a piece of entire curve)
-      myLastFixStatus |= ShapeExtend::EncodeStatus ( ShapeExtend_FAIL1 );
+      myLastFixStatus |= ShapeExtend::EncodeStatus(ShapeExtend_FAIL1);
       return false;
     }
 
-    Handle(Geom_Geometry) aNewG = anOld->Copy();
-    Handle(Geom_BezierCurve) aNewC = Handle(Geom_BezierCurve)::DownCast(aNewG);
+    occ::handle<Geom_Geometry>    aNewG = anOld->Copy();
+    occ::handle<Geom_BezierCurve> aNewC = occ::handle<Geom_BezierCurve>::DownCast(aNewG);
     int p = anEnds[0].Distance(aGeomEnds[0]) < anEnds[1].Distance(aGeomEnds[0]) ? 0 : 2;
     aNewC->SetPole(1, anEnds[p]);
-    aNewC->SetPole(anOld->NbPoles(), anEnds[2-p]);
+    aNewC->SetPole(anOld->NbPoles(), anEnds[2 - p]);
     TopoDS_Edge aNewEdge = BRepBuilderAPI_MakeEdge(aNewC).Edge();
     anSbwd->Set(aNewEdge, theIdx);
     return true;
@@ -3880,44 +3890,44 @@ bool ShapeFix_Wire::FixLacking(const int num, const bool force)
   {
     gp_Pnt2d p2d = 0.5 * (p2d1.XY() + p2d2.XY());
     bool     ok1 = TryBendingPCurve(E1,
-                                face,
-                                p2d,
-                                E1.Orientation() == TopAbs_FORWARD,
-                                bendc1,
-                                bendf1,
-                                bendl1,
-                                bendtol1);
+                                    face,
+                                    p2d,
+                                    E1.Orientation() == TopAbs_FORWARD,
+                                    bendc1,
+                                    bendf1,
+                                    bendl1,
+                                    bendtol1);
     bool     ok2 = TryBendingPCurve(E2,
-                                face,
-                                p2d,
-                                E2.Orientation() == TopAbs_REVERSED,
-                                bendc2,
-                                bendf2,
-                                bendl2,
-                                bendtol2);
+                                    face,
+                                    p2d,
+                                    E2.Orientation() == TopAbs_REVERSED,
+                                    bendc2,
+                                    bendf2,
+                                    bendl2,
+                                    bendtol2);
     if (ok1 && !ok2)
     {
       bendtol2 = BRep_Tool::Tolerance(E2);
       ok1      = TryBendingPCurve(E1,
-                             face,
-                             p2d2,
-                             E1.Orientation() == TopAbs_FORWARD,
-                             bendc1,
-                             bendf1,
-                             bendl1,
-                             bendtol1);
+                                  face,
+                                  p2d2,
+                                  E1.Orientation() == TopAbs_FORWARD,
+                                  bendc1,
+                                  bendf1,
+                                  bendl1,
+                                  bendtol1);
     }
     else if (!ok1 && ok2)
     {
       bendtol1 = BRep_Tool::Tolerance(E1);
       ok2      = TryBendingPCurve(E2,
-                             face,
-                             p2d1,
-                             E2.Orientation() == TopAbs_FORWARD,
-                             bendc2,
-                             bendf2,
-                             bendl2,
-                             bendtol2);
+                                  face,
+                                  p2d1,
+                                  E2.Orientation() == TopAbs_FORWARD,
+                                  bendc2,
+                                  bendf2,
+                                  bendl2,
+                                  bendtol2);
     }
     if (!ok1 && !ok2)
     {

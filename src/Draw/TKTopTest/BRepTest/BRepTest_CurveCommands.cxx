@@ -361,10 +361,11 @@ static int wire(Draw_Interpretor& di, int n, const char** a)
 //=======================================================================
 // strongwire
 //=======================================================================
-static Standard_Integer strongwire(Draw_Interpretor&, Standard_Integer theArgC, const char** theArgV)
+static int strongwire(Draw_Interpretor&, int theArgC, const char** theArgV)
 {
-  enum StrongWireMode {
-    StrongWireMode_FixTolerance = 1,
+  enum StrongWireMode
+  {
+    StrongWireMode_FixTolerance  = 1,
     StrongWireMode_Approximation = 2,
     StrongWireMode_KeepCurveType = 3
   };
@@ -384,7 +385,7 @@ static Standard_Integer strongwire(Draw_Interpretor&, Standard_Integer theArgC, 
   StrongWireMode aMode = StrongWireMode_KeepCurveType;
 
   // add edges
-  for (Standard_Integer anArgIter = 2; anArgIter < theArgC; anArgIter++)
+  for (int anArgIter = 2; anArgIter < theArgC; anArgIter++)
   {
     TCollection_AsciiString aParam(theArgV[anArgIter]);
     if (aParam == "-t")
@@ -419,7 +420,7 @@ static Standard_Integer strongwire(Draw_Interpretor&, Standard_Integer theArgC, 
     {
       TopoDS_Shape aShape = DBRep::Get(theArgV[anArgIter]);
       if (aShape.IsNull())
-        Standard_NullObject::Raise("Shape for wire construction is null");
+        throw Standard_NullObject("Shape for wire construction is null");
       if (aShape.ShapeType() == TopAbs_EDGE || aShape.ShapeType() == TopAbs_WIRE)
       {
         TopExp_Explorer anExp(aShape, TopAbs_EDGE);
@@ -427,12 +428,14 @@ static Standard_Integer strongwire(Draw_Interpretor&, Standard_Integer theArgC, 
           aB.Add(aWire, TopoDS::Edge(anExp.Current()));
       }
       else
-        Standard_TypeMismatch::Raise("Shape for wire construction is neither an edge nor a wire");
+      {
+        throw Standard_TypeMismatch("Shape for wire construction is neither an edge nor a wire");
+      }
     }
   }
 
   // fix edges order
-  Handle(ShapeFix_Wire) aFW = new ShapeFix_Wire;
+  occ::handle<ShapeFix_Wire> aFW = new ShapeFix_Wire;
   aFW->Load(aWire);
   aFW->FixReorder();
 
@@ -447,11 +450,11 @@ static Standard_Integer strongwire(Draw_Interpretor&, Standard_Integer theArgC, 
     return 1;
   }
 
-  bool isClosed = false;
-  Handle(ShapeAnalysis_Wire) aSaw = aFW->Analyzer();
+  bool                            isClosed = false;
+  occ::handle<ShapeAnalysis_Wire> aSaw     = aFW->Analyzer();
   if (aSaw->CheckGap3d(1)) // between last and first edges
   {
-    Standard_Real aDist = aSaw->MinDistance3d();
+    double aDist = aSaw->MinDistance3d();
     if (aDist < aTolerance)
       isClosed = true;
   }
@@ -477,12 +480,12 @@ static Standard_Integer strongwire(Draw_Interpretor&, Standard_Integer theArgC, 
   {
     if (aMode != StrongWireMode_Approximation)
       aFW->SetPrecision(aTolerance);
-    aFW->FixGapsByRangesMode() = Standard_True;
+    aFW->FixGapsByRangesMode() = true;
     if (aFW->FixGaps3d())
     {
-      Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
-      Handle(ShapeFix_Edge) aFe = new ShapeFix_Edge;
-      for (Standard_Integer anIdx = 1; anIdx <= sbwd->NbEdges(); anIdx++)
+      occ::handle<ShapeExtend_WireData> sbwd = aFW->WireData();
+      occ::handle<ShapeFix_Edge>        aFe  = new ShapeFix_Edge;
+      for (int anIdx = 1; anIdx <= sbwd->NbEdges(); anIdx++)
       {
         TopoDS_Edge aEdge = TopoDS::Edge(sbwd->Edge(anIdx));
         aFe->FixVertexTolerance(aEdge);
@@ -2499,9 +2502,12 @@ void BRepTest::CurveCommands(Draw_Interpretor& theCommands)
 
   theCommands.Add("wire", "wire wirename [-unsorted] e1/w1 [e2/w2 ...]", __FILE__, wire, g);
 
-  theCommands.Add("strongwire",
-    "strongwire wirename e1/w1 [e2/w2 ...] [-t tol] [-m mode(keepType/1 | approx/2 | fixTol/3)]", __FILE__,
-    strongwire, g);
+  theCommands.Add(
+    "strongwire",
+    "strongwire wirename e1/w1 [e2/w2 ...] [-t tol] [-m mode(keepType/1 | approx/2 | fixTol/3)]",
+    __FILE__,
+    strongwire,
+    g);
 
   theCommands.Add("profile", "profile, no args to get help", __FILE__, profile, g);
 

@@ -97,7 +97,7 @@ void BRepExtrema_ExtFF::Perform(const TopoDS_Face& F1, const TopoDS_Face& F2)
       myExtSS.Points(i, P1, P2);
       P1.Parameter(U1, U2);
       const gp_Pnt2d Puv1(U1, U2);
-      const Standard_Real Tol2d1 = BRep_Tool::Tolerance2d(F1, Tol1);
+      const double   Tol2d1 = BRep_Tool::Tolerance2d(F1, Tol1);
       classifier.Perform(F1, Puv1, Tol2d1);
       const TopAbs_State state1 = classifier.State();
       if (state1 == TopAbs_ON || state1 == TopAbs_IN)

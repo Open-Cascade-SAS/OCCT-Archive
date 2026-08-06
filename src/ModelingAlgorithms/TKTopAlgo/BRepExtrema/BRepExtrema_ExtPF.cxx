@@ -84,7 +84,7 @@ void BRepExtrema_ExtPF::Perform(const TopoDS_Vertex& TheVertex, const TopoDS_Fac
     BRepClass_FaceClassifier classifier;
     double                   U1, U2;
     const double             Tol2d = BRep_Tool::Tolerance2d(TheFace, BRep_Tool::Tolerance(TheFace));
-    for (Standard_Integer i = 1; i <= myExtPS.NbExt(); i++)
+    for (int i = 1; i <= myExtPS.NbExt(); i++)
     {
       myExtPS.Point(i).Parameter(U1, U2);
       const gp_Pnt2d Puv(U1, U2);

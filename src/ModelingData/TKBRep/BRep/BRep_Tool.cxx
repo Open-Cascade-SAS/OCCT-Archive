@@ -1863,12 +1863,11 @@ double BRep_Tool::MaxTolerance(const TopoDS_Shape& theShape, const TopAbs_ShapeE
   return aTol;
 }
 
-//=======================================================================
-//function : Tolerance2d
-//purpose  : 
-//=======================================================================
-Standard_Real BRep_Tool::Tolerance2d(const TopoDS_Face& theFace, const Standard_Real theTolerance)
+//=================================================================================================
+
+double BRep_Tool::Tolerance2d(const TopoDS_Face& theFace, const double theTolerance)
 {
   BRepAdaptor_Surface aAdaptorSurface(theFace);
-  return Max(aAdaptorSurface.UResolution(theTolerance), aAdaptorSurface.VResolution(theTolerance));
+  return std::max(aAdaptorSurface.UResolution(theTolerance),
+                  aAdaptorSurface.VResolution(theTolerance));
 }

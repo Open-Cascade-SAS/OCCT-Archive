@@ -340,6 +340,13 @@ inline bool ShapeFix_Wire::StatusConnected(const ShapeExtend_Status status) cons
 
 //=================================================================================================
 
+inline bool ShapeFix_Wire::StatusCurves(const ShapeExtend_Status status) const
+{
+  return ShapeExtend::DecodeStatus(myStatusCurves, status);
+}
+
+//=================================================================================================
+
 inline bool ShapeFix_Wire::StatusEdgeCurves(const ShapeExtend_Status status) const
 {
   return ShapeExtend::DecodeStatus(myStatusEdgeCurves, status);

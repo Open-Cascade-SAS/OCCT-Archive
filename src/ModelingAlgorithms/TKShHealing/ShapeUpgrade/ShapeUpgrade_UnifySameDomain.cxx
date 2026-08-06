@@ -872,10 +872,11 @@ static void ReconstructMissedSeam(const NCollection_Sequence<TopoDS_Shape>& theR
         && BRep_Tool::IsClosed(anEdge, theFrefFace))
     {
       // Problem with mirrored cylinder BEGIN
-      if (!aFirstVertex.IsSame(theCurVertex)) {
+      if (!aFirstVertex.IsSame(theCurVertex))
+      {
         anEdge.Reverse();
         aPC = BRep_Tool::CurveOnSurface(anEdge, theFrefFace, Param1, Param2);
-        TopExp::Vertices(anEdge, aFirstVertex, aLastVertex, Standard_True);
+        TopExp::Vertices(anEdge, aFirstVertex, aLastVertex, true);
       }
       // Problem with mirrored cylinder END
       double   aParam = (anEdge.Orientation() == TopAbs_FORWARD) ? Param1 : Param2;
@@ -1762,10 +1763,10 @@ static TopoDS_Edge GlueEdgesWith3DCurves(const NCollection_Sequence<TopoDS_Shape
 
   occ::handle<Geom_BSplineCurve> aResCurve = aConcatCurves->Value(aConcatCurves->Lower());
   const TopoDS_Edge              aResEdge  = BRepLib_MakeEdge(aResCurve,
-                                                FirstVertex,
-                                                LastVertex,
-                                                aResCurve->FirstParameter(),
-                                                aResCurve->LastParameter());
+                                                              FirstVertex,
+                                                              LastVertex,
+                                                              aResCurve->FirstParameter(),
+                                                              aResCurve->LastParameter());
   BRep_Builder                   aBuilder;
   aBuilder.SameRange(aResEdge, false);
   aBuilder.SameParameter(aResEdge, false);
@@ -2734,14 +2735,14 @@ void ShapeUpgrade_UnifySameDomain::generateSubSeq(
     edge1 = TopoDS::Edge(anInpEdgeSeq(i));
     edge2 = TopoDS::Edge(anInpEdgeSeq(i + 1));
     isOk  = IsMergingPossible(edge1,
-                             edge2,
-                             theAngTol,
-                             theLinTol,
-                             AvoidEdgeVrt,
-                             isLineDirectionOk,
-                             aFirstPoint,
-                             aDirectionVec,
-                             theVFmap);
+                              edge2,
+                              theAngTol,
+                              theLinTol,
+                              AvoidEdgeVrt,
+                              isLineDirectionOk,
+                              aFirstPoint,
+                              aDirectionVec,
+                              theVFmap);
     if (!isOk)
     {
       SubSequenceOfEdges aSubSeq;

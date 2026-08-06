@@ -886,7 +886,7 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ExtElC& AlgExt,
 
         if (Extrema_CurveTool::IsPeriodic(*myC[0]))
         {
-          if (Abs(U - Ut11) < Precision::Confusion())
+          if (std::abs(U - Ut11) < Precision::Confusion())
           {
             U = Ut11;
           }
@@ -897,7 +897,7 @@ void Extrema_ExtCC::PrepareResults(const Extrema_ExtElC& AlgExt,
         }
         if (Extrema_CurveTool::IsPeriodic(*myC[1]))
         {
-          if (Abs(U2 - Ut21) < Precision::Confusion())
+          if (std::abs(U2 - Ut21) < Precision::Confusion())
           {
             U2 = Ut21;
           }
