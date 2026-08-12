@@ -589,23 +589,11 @@ void BRepExtrema_ProximityValueTool::Perform(double& theTolerance)
     return;
   }
 
-  // min dist of the two max(min) dists
-  if (aProximityDist1 < aProximityDist2)
-  {
-    myDistance = aProximityDist1;
-    myPnt1.SetCoord(aP1_1.x(), aP1_1.y(), aP1_1.z());
-    myPnt2.SetCoord(aP1_2.x(), aP1_2.y(), aP1_2.z());
-    myPntStatus1 = aPointStatus1_1;
-    myPntStatus2 = aPointStatus1_2;
-  }
-  else
-  {
-    myDistance = aProximityDist2;
-    myPnt1.SetCoord(aP2_1.x(), aP2_1.y(), aP2_1.z());
-    myPnt2.SetCoord(aP2_2.x(), aP2_2.y(), aP2_2.z());
-    myPntStatus1 = aPointStatus2_1;
-    myPntStatus2 = aPointStatus2_2;
-  }
+  myDistance = aProximityDist1;
+  myPnt1.SetCoord(aP1_1.x(), aP1_1.y(), aP1_1.z());
+  myPnt2.SetCoord(aP1_2.x(), aP1_2.y(), aP1_2.z());
+  myPntStatus1 = aPointStatus1_1;
+  myPntStatus2 = aPointStatus1_2;
 
   myIsDone     = true;
   theTolerance = myDistance;
